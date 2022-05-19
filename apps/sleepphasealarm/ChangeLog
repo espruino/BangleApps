@@ -6,3 +6,4 @@
 0.06: Add logging
       use Layout library and display ETA
 0.07: Add check for day of week
+0.08: Update to new time_utils module

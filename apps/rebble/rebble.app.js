@@ -1,8 +1,10 @@
 var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
 const SETTINGS_FILE = "rebble.json";
 const LOCATION_FILE = "mylocation.json";
+const GLOBAL_SETTINGS = "setting.json";
 let settings;
 let location;
+let is12Hour;
 
 Graphics.prototype.setFontLECO1976Regular22 = function(scale) {
   // Actual height 22 (21 - 0)
@@ -33,12 +35,26 @@ function loadLocation() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green'};
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'autoCycle': true};
+  is12Hour = (require("Storage").readJSON(GLOBAL_SETTINGS, 1) || {})["12hour"] || false;
+}
+
+const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+function formatHours(h) {
+  if (is12Hour) {
+    if (h == 0) {
+      h = 12;
+    } else if (h > 12) {
+       h -= 12;
+    }
+  }
+  return zeroPad(h, 2);
 }
 
 function extractTime(d){
   var h = d.getHours(), m = d.getMinutes();
-  return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
+  return(formatHours(h) + ":" + zeroPad(m, 2));
 }
 
 function updateSunRiseSunSet(lat, lon){
@@ -78,9 +94,12 @@ const wb = 40; // battery width
 function draw() {
   log_debug("draw()");
   let date = new Date();
-  let da = date.toString().split(" ");
-  let hh = da[4].substr(0,2);
-  let mm = da[4].substr(3,2);
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+  
+  hh = formatHours(hh);
+  mm = zeroPad(mm,2);
+  
   //const t = 6;
 
   if (drawCount % 60 == 0)
@@ -117,8 +136,11 @@ function draw() {
 
 function drawSideBar1() {
   let date = new Date();
-  let da = date.toString().split(" ");
+  let dy=require("date_utils").dow(date.getDay(),1).toUpperCase();
+  let dd=date.getDate();
+  let mm=require("date_utils").month(date.getMonth()+1,1).toUpperCase();
 
+  
   drawBattery(w2 + (w-w2-wb)/2,  h/10, wb, 17);
 
   setTextColor();
@@ -126,7 +148,7 @@ function drawSideBar1() {
   g.setFontAlign(0, -1);
   g.drawString(E.getBattery() + '%', w3,  (h/10) + 17 + 7);
   
-  drawDateAndCalendar(w3, h/2, da[0], da[2], da[1]);
+  drawDateAndCalendar(w3, h/2, dy, dd, mm);
 }
 
 function drawSideBar2() {
@@ -260,7 +282,9 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    nextSidebar();
+    if (!settings.autoCycle) {
+        nextSidebar();
+    }
     draw();
   }, 60000 - (Date.now() % 60000));
 }

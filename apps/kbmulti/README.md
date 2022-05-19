@@ -10,6 +10,7 @@ Uses the multitap keypad logic originally from here: http://www.espruino.com/Mor
 
 ![](screenshot_1.png)
 ![](screenshot_2.png)
+![](screenshot_3.png)
 
 Written by: [Sir Indy](https://github.com/sir-indy) and [Thyttan](https://github.com/thyttan)
 
