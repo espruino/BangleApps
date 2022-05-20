@@ -3,7 +3,7 @@
   "shortName":"Pong Clock",
   "icon": "pongclock.png",
   "version":"0.1",
-  "description": "A clock playing Pong",
+  "description": "A Pong playing clock",
   "tags": "",
   "allow_emulator":true, 
   "supports": ["BANGLEJS", "BANGLEJS2"],
