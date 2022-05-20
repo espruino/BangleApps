@@ -50,7 +50,7 @@ function showMainMenu() {
   alarms.forEach((e, index) => {
     var label = e.timer
       ? require("time_utils").formatDuration(e.timer)
-      : require("time_utils").formatTime(e.t) + (e.dow > 0 ? (" " + decodeDOW(e)) : "");
+      : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : "");
     menu[label] = {
       value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
       onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
@@ -111,8 +111,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
     },
     /*LANG*/"Repeat": {
       value: decodeDOW(alarm),
-      onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.dow, dow => {
-        alarm.rp = dow > 0;
+      onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, alarm.dow, (repeat, dow) => {
+        alarm.rp = repeat;
         alarm.dow = dow;
         alarm.t = require("time_utils").encodeTime(time);
         setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex);
@@ -178,42 +178,46 @@ function decodeDOW(alarm) {
     : "Once"
 }
 
-function showEditRepeatMenu(dow, dowChangeCallback) {
+function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
+  var originalRepeat = repeat;
   var originalDow = dow;
-  var isCustom = dow > 0 && dow != WORKDAYS && dow != WEEKEND && dow != EVERY_DAY;
+  var isCustom = repeat && dow != WORKDAYS && dow != WEEKEND && dow != EVERY_DAY;
 
   const menu = {
     "": { "title": /*LANG*/"Repeat Alarm" },
-    "< Back": () => dowChangeCallback(dow),
-    /*LANG*/"Once": { // No days set: the alarm will fire once
-      value: dow == 0,
-      onchange: () => dowChangeCallback(0)
+    "< Back": () => dowChangeCallback(repeat, dow),
+    /*LANG*/"Once": {
+      // The alarm will fire once. Internally it will be saved
+      // as "fire every days" BUT the repeat flag is false so
+      // we avoid messing up with the scheduler.
+      value: !repeat,
+      onchange: () => dowChangeCallback(false, EVERY_DAY)
     },
     /*LANG*/"Workdays": {
-      value: dow == WORKDAYS,
-      onchange: () => dowChangeCallback(WORKDAYS)
+      value: repeat && dow == WORKDAYS,
+      onchange: () => dowChangeCallback(true, WORKDAYS)
     },
     /*LANG*/"Weekends": {
-      value: dow == WEEKEND,
-      onchange: () => dowChangeCallback(WEEKEND)
+      value: repeat && dow == WEEKEND,
+      onchange: () => dowChangeCallback(true, WEEKEND)
     },
     /*LANG*/"Every Day": {
-      value: dow == EVERY_DAY,
-      onchange: () => dowChangeCallback(EVERY_DAY)
+      value: repeat && dow == EVERY_DAY,
+      onchange: () => dowChangeCallback(true, EVERY_DAY)
     },
     /*LANG*/"Custom": {
       value: isCustom ? decodeDOW({ rp: true, dow: dow }) : false,
-      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalDow)
+      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalRepeat, originalDow)
     }
   };
 
   E.showMenu(menu);
 }
 
-function showCustomDaysMenu(dow, dowChangeCallback, originalDow) {
+function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow) {
   const menu = {
     "": { "title": /*LANG*/"Custom Days" },
-    "< Back": () => dowChangeCallback(dow),
+    "< Back": () => dowChangeCallback(true, dow),
   };
 
   require("date_utils").dows(firstDayOfWeek).forEach((day, i) => {
@@ -223,7 +227,7 @@ function showCustomDaysMenu(dow, dowChangeCallback, originalDow) {
     };
   });
 
-  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalDow, dowChangeCallback)
+  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback)
 
   E.showMenu(menu);
 }
