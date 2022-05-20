@@ -320,7 +320,7 @@ function enableAll(on) {
       buttons: { /*LANG*/"Ok": true }
     }).then(() => showAdvancedMenu());
   } else {
-    E.showPrompt(/*LANG*/"Are you sure?", { title: on ? "/*LANG*/Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
+    E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
       if (confirm) {
         alarms.forEach(alarm => alarm.on = on);
         saveAndReload();
