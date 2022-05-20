@@ -7,6 +7,6 @@
   "tags": "",
   "storage": [
     {"name":"pongclock.app.js","url":"app.js"},
-    {"name":"pongclock.img","url":"pongclock-img.js","evaluate":true}
+    {"name":"pongclock.img","url":"pongclock-icon.js","evaluate":true}
   ]
 }
