@@ -13,8 +13,9 @@ It is using the built in movement calculation to decide your sleeping state. To 
 
 +++ To do list: +++
 * Change README.md to represent new app version.
+* Update screenshots.
 * Add cutom interface.html to download logged data.
-* Test emulator functionallity. 
+* Test emulator functionallity.
 
 Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:
   "data": [
@@ -25,6 +26,8 @@ Temporarily removed logfiles from metadata.json to prevent removal on un-/reinst
 
 ````
 ---
+---
+
 
 #### Operating Principle
 * __ESS calculation__  
