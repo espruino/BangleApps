@@ -52,8 +52,10 @@ But here are some explanations how to use the app and settings:
     days since 1899-12-30 00:00 UTC (`UNIX / (24 * 60 * 60 * 1000) + 25569`)
   5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
     fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(UNIX)` and `require("sleeplog").fnToMs(fortnight)`)
+
 - __Logfiles from before 0.10:__  
   timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
+
 - __View logged data:__
   if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data  
   since & until in UNIX timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
