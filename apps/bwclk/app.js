@@ -304,9 +304,13 @@ function drawTime(){
   g.setColor(g.theme.bg);
   g.setFontAlign(0,0);
 
-  var timeStr = locale.time(date,1);
+  var timeStr;
   if(settings.hideColon){
-    timeStr = timeStr.replace(":", "");
+    var hours = date.getHours();
+    hours -= hours >=12 ? 12 : 0;
+    timeStr = String(hours) + String(date.getMinutes());
+  } else {
+    timeStr = locale.time(date,1);
   }
 
   y += parseInt((H - y)/2) + 5;
