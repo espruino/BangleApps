@@ -56,7 +56,7 @@ But here are some explanations how to use the app and settings:
 - __Logfiles from before 0.10:__  
   timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
 
-- __View logged data:__
+- __View logged data:__  
   if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data  
   since & until in UNIX timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
 
