@@ -28,7 +28,7 @@ class Ball {
     }
 		if (test) {
 			this.velX = -this.velX;
-      this.valY = (3.5 + Math.random()) * this.valY / Math.abs(this.valY);      
+      this.valY = (3.5 + 2 * Math.random()) * this.valY / Math.abs(this.valY);      
 
       if (isLeft) {
 				right.follow = this;
@@ -161,8 +161,16 @@ function redraw() {
 
   g.clearRect(0, top + left.oldY, left.w, top + left.oldY + left.h);
   g.clearRect(width - right.w, top + right.oldY, width, top + right.oldY + right.h);
-  g.clearRect(width / 2 - fontHeight * 1.4,  fontTop, width / 2 + fontHeight * 1.4, fontTop + fontHeight);
+  //g.clearRect(width / 2 - fontHeight * 1.4,  fontTop, width / 2 + fontHeight * 1.4, fontTop + fontHeight);
   g.clearRect(ball.oldX - ball.w, top + ball.oldY - ball.h, ball.oldX + ball.w, top + ball.oldY + ball.h);
+
+  g.setFontVector(fontHeight);
+  /**/
+  g.setFontAlign(1, -1);
+  g.drawString(("0" + left.score).substr(-2), 5 * width / 11, fontTop, true);
+  g.setFontAlign(-1, -1);
+  g.drawString(("0" + right.score).substr(-2), 6 * width / 11, fontTop, true);
+  /**/
 
   g.drawLine(width / 2, top, width / 2, topHeight);
   g.fillRect(0, top + left.y, left.w, top + left.y + left.h);
@@ -172,18 +180,6 @@ function redraw() {
   g.fillCircle(ball.x, top + ball.y, ball.w);
   ball.oldX = ball.x;
   ball.oldY = ball.y;
-
-  g.setFontVector(fontHeight);
-  /*
-  g.setFontAlign(0, -1);  
-  g.drawString(("0" + left.score).substr(-2)+ " " + ("0" + right.score).substr(-2), width / 2, fontTop);
-  */
-  /**/
-  g.setFontAlign(1, -1);  
-  g.drawString(("0" + left.score).substr(-2), 5 * width / 11, fontTop);
-  g.setFontAlign(-1, -1);
-  g.drawString(("0" + right.score).substr(-2), 6 * width / 11, fontTop);
-  /**/
 }
 
 function restart() {
@@ -224,6 +220,7 @@ function pause() {
   pauseTimeout = setTimeout(pause, Date.now() % 60000);
 }
 
+//load settings
 const SETTINGS_FILE = "pongclock.json";
 var settings = Object.assign({
   // default values
@@ -233,11 +230,13 @@ var settings = Object.assign({
 }, require('Storage').readJSON(SETTINGS_FILE, true) || {});
 require('Storage').writeJSON(SETTINGS_FILE, settings);
 
+//make clock
+Bangle.setUI("clock");
+
+//setup play area
 var height = g.getHeight(),
 	width = g.getWidth();
 var top = 0;
-
-Bangle.setUI("clock");
 
 g.reset();
 g.clearRect(0, top, width, height);
@@ -252,10 +251,10 @@ if (settings.withWidgets) {
       var w = WIDGETS[i];
       if (w.area) {
         if (w.area.indexOf("t") >= 0) {
-          top = 25;
+          top = Bangle.appRect.y;
         }
         if (w.area.indexOf("b") >= 0) {
-          bottom = 25;
+          bottom = height - Bangle.appRect.y2;
         }
       }
     }
@@ -269,6 +268,7 @@ if (settings.isInvers) {
 }
 g.clearRect(0, top, width, top + height);
 
+//setup game
 var left = new Paddle("left");
 var right = new Paddle("right");
 var ball = new Ball(true);
@@ -291,6 +291,7 @@ Bangle.on("lock", (on) => {
   }
 });
 
+//start clock
 restart();
 if (!settings.playLocked && Bangle.isLocked()) {
   pause();
@@ -299,6 +300,7 @@ if (!settings.playLocked && Bangle.isLocked()) {
 }
 
 /*
+//local testing
 require("Storage").write("pongclock.info",{
   "id":"pongclock",
   "name":"Pong Clock",
