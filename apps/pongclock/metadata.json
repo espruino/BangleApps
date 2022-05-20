@@ -5,7 +5,7 @@
   "version":"0.1",
   "description": "A clock playing Pong",
   "tags": "",
-  "supports": ["BANGLEJS2", "BANGLEJS2"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme":"README.md",
   "storage": [
     {"name":"pongclock.app.js","url":"app.js"},
