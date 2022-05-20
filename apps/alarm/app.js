@@ -320,10 +320,10 @@ function showAdvancedMenu() {
 
 function enableAll(on) {
   if (alarms.filter(e => e.on == !on).length == 0) {
-    E.showPrompt(on ? /*LANG*/"Nothing to Enable" : /*LANG*/"Nothing to Disable", {
-      title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All",
-      buttons: { /*LANG*/"Ok": true }
-    }).then(() => showAdvancedMenu());
+    E.showAlert(
+      on ? /*LANG*/"Nothing to Enable" : /*LANG*/"Nothing to Disable",
+      on ? /*LANG*/"Enable All" : /*LANG*/"Disable All"
+    ).then(() => showAdvancedMenu());
   } else {
     E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
       if (confirm) {
@@ -339,7 +339,7 @@ function enableAll(on) {
 
 function deleteAll() {
   if (alarms.length == 0) {
-    E.showPrompt(/*LANG*/"Nothing to delete", { title: /*LANG*/"Delete All", buttons: { /*LANG*/"Ok": true } }).then(() => showAdvancedMenu());
+    E.showAlert(/*LANG*/"Nothing to delete", /*LANG*/"Delete All").then(() => showAdvancedMenu());
   } else {
     E.showPrompt(/*LANG*/"Are you sure?", {
       title: /*LANG*/"Delete All"
