@@ -217,7 +217,12 @@ function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
 function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow) {
   const menu = {
     "": { "title": /*LANG*/"Custom Days" },
-    "< Back": () => dowChangeCallback(true, dow),
+    "< Back": () => {
+      // If the user unchecks all the days then we assume repeat = once
+      // and we force the dow to every day.
+      var repeat = dow > 0;
+      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY)
+    }
   };
 
   require("date_utils").dows(firstDayOfWeek).forEach((day, i) => {
