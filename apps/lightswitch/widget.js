@@ -86,7 +86,7 @@
         })(this.image);
 
       // clear widget area
-      g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 24);
+      g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 23);
 
       // draw shine if backlight is active
       if (this.isOn) g.drawImage(atob(icons.shine), this.x, this.y);
