@@ -16,6 +16,7 @@ It is using the built in movement calculation to decide your sleeping state. Whi
 +++ To do list: +++
 * Change README.md to represent new app version.
 * Update screenshots.
+* Add display log functionality.
 * Add cutom interface.html to download logged data.
 
 Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:

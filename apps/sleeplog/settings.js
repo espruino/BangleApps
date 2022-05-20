@@ -138,11 +138,11 @@
             }
           }).then(() => menu = E.showMenu(debugMenu));
         },
-        /*LANG*/"Debug": {
+        /*LANG*/"Enable": {
           value: enabled,
           onchange: v => enabled = v
         },
-        /*LANG*/"File": {
+        /*LANG*/"write File": {
           value: file,
           onchange: v => file = v
         },
