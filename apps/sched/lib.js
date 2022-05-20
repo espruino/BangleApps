@@ -69,7 +69,7 @@ exports.newDefaultAlarm = function () {
     on: true,
     rp: settings.defaultRepeat,
     as: settings.defaultAutoSnooze,
-    dow: settings.defaultRepeat ? 0b1111111 : 0b0000000,
+    dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
   };
