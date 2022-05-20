@@ -42,13 +42,13 @@ But here are some explanations how to use the app and settings:
    1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as UNIX timestamps:  
      seconds since 1970-01-01 00:00 UTC
    2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
-     10 minutes since 1970-01-01 00:00 UTC (`i. / (10 * 60 * 1000)`)
+     10 minutes since 1970-01-01 00:00 UTC (`UNIX / (10 * 60 * 1000)`)
    3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
-     hours since 1970-01-01 00:00 UTC (`i. / (60 * 60 * 1000)`)
+     hours since 1970-01-01 00:00 UTC (`UNIX / (60 * 60 * 1000)`)
    4. logged timestamps inside the debug .csv file are formatted for office calculation software:
-     days since 1899-12-30 00:00 UTC (`i. / (24 * 60 * 60 * 1000) + 25569`)
+     days since 1899-12-30 00:00 UTC (`UNIX / (24 * 60 * 60 * 1000) + 25569`)
    5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
-     fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(UNIX timestamp)` and `require("sleeplog").fnToMs(fortnight)`)
+     fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(UNIX)` and `require("sleeplog").fnToMs(fortnight)`)
  - __Logfiles from before 0.10:__  
     timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
  - __View logged data:__
