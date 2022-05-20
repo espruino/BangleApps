@@ -1,0 +1,12 @@
+{ "id": "pongclock",
+  "name": "Pong Clock",
+  "shortName":"Pong Clock",
+  "icon": "pongclock.png",
+  "version":"0.1",
+  "description": "A clock playing Pong",
+  "tags": "",
+  "storage": [
+    {"name":"pongclock.app.js","url":"app.js"},
+    {"name":"pongclock.img","url":"pongclock-img.js","evaluate":true}
+  ]
+}
