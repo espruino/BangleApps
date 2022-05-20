@@ -18,6 +18,7 @@ const H = g.getHeight();
 let settings = {
   fullscreen: false,
   showLock: true,
+  hideColon: false,
   showInfo: 0,
 };
 
@@ -302,7 +303,12 @@ function drawTime(){
   // Draw time
   g.setColor(g.theme.bg);
   g.setFontAlign(0,0);
+
   var timeStr = locale.time(date,1);
+  if(settings.hideColon){
+    timeStr = timeStr.replace(":", "");
+  }
+
   y += parseInt((H - y)/2) + 5;
 
   var infoEntry = getInfoEntry();
