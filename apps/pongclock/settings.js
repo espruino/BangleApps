@@ -28,15 +28,15 @@
       value: !!settings.isInvers,  // !! converts undefined to false
       format: v => v?"Yes":"No",
       onchange: v => {
-        settings.withWidgets = v;
+        settings.isInvers = v;
         writeSettings();
       }
     },
     'On Lock?': {
-      value: !!settings.isInvers,  // !! converts undefined to false
+      value: !!settings.playLocked,  // !! converts undefined to false
       format: v => v?"Play":"Pause",
       onchange: v => {
-        settings.withWidgets = v;
+        settings.playLocked = v;
         writeSettings();
       }
     }
