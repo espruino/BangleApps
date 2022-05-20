@@ -5,6 +5,7 @@
   "version":"0.1",
   "description": "A clock playing Pong",
   "tags": "",
+  "allow_emulator":true, 
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme":"README.md",
   "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_settings.png" }, { "url":"screenshot_invers_full.png" } ],
