@@ -2,8 +2,29 @@
 
 This app logs and displays the four following states:  
 _unknown, not worn, awake, sleeping_  
-It derived from the [SleepPhaseAlarm](https://banglejs.com/apps/#sleepphasealarm) and uses the accelerometer to estimate sleep and wake states with the principle of Estimation of Stationary Sleep-segments ([ESS](https://ubicomp.eti.uni-siegen.de/home/datasets/ichi14/index.html.en)) and
-also provides a power saving mode using the built in movement calculation. The internal temperature is used to decide if the status is _sleeping_ or _not worn_.
+It is using the built in movement calculation to decide your sleeping state. To detect if you are wearing the watch the internal heartrate sensor is used, except while charging. In this case it is always assumed that you are not weraing the watch.
+
+````diff
+-+-                             -+-
+-+-    !!! BETA Version !!!     -+-
+-+-                             -+-
+
+- The following readme text is not matching this version!
+
++++ To do list: +++
+* Change README.md to represent new app version.
+* Add cutom interface.html to download logged data.
+* Test emulator functionallity. 
+
+Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:
+  "data": [
+    {"name": "sleeplog.log", "storageFile": true},
+    {"wildcard": "sleeplog_????.log"},
+    {"wildcard": "sleeplog_??????.csv"}
+  ],
+
+````
+---
 
 #### Operating Principle
 * __ESS calculation__  
