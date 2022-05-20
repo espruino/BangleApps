@@ -15,7 +15,7 @@
     lightTh: 200, //    threshold for light sleep
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
-    appTimeout: 6E4 //   lock and backlight timeouts for the app
+    appTimeout: 0 //   lock and backlight timeouts for the app
   };
 
   // assign loaded settings to default values
@@ -204,10 +204,11 @@
       /*LANG*/"App Timeout": {
         value: settings.appTimeout / 1E3,
         step: 10,
-        min: 10,
+        min: 0,
         max: 120,
         wrap: true,
         noList: true,
+        format: v => v ? v + "s" : "-",
         onchange: v => {
           settings.appTimeout = v * 1E3;
           writeSetting();
