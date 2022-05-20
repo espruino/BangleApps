@@ -308,7 +308,9 @@ function drawTime(){
   if(settings.hideColon){
     var hours = date.getHours();
     hours -= hours >=12 ? 12 : 0;
-    timeStr = String(hours) + String(date.getMinutes());
+    var minutes = date.getMinutes();
+    minutes = minutes < 10 ? String("0") + minutes : minutes;
+    timeStr = String(hours) + minutes;
   } else {
     timeStr = locale.time(date,1);
   }
