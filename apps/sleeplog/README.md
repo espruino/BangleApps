@@ -23,12 +23,14 @@ I would love to hear about your impressions and like to know your choice of thre
 
 The last piece of work is to rewrite the README.md to show how to use it and show the restrictions and possibilities.
 But here are some explanations how to use the app and settings:
+
 - __On the app screen:__
   - swipe left & right to change the displayed day
   - touch on the "title" (e.g. `Night to Fri 20/05/2022`) to enter a day selection prompt
   - touch on the info area (by default displaying consecutive and true sleeping) to change the displayed information
   - touch on the wrench (upper right corner) to enter the settings
   - exit the app with the UI back button widget on the upper left corner
+
 - __Inside the settings:__
   - the threshold values are accessible through a submenu
   - app timeout lets you specify a separate `lockTimeout` and `backlightTimeout` only for the sleeplog app
@@ -38,22 +40,23 @@ But here are some explanations how to use the app and settings:
     - the `Duration` specifies how long data should be written into the .csv file
     - the .csv file loggs the following data (timestamps are in days since 30.12.1899 as used by office software):  
       _timestamp, movement, status, consecutive, asleepSince, awakeSince, bpm, bpmConfidence_
- - __Timestamps and files:__
-   1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as UNIX timestamps:  
-     seconds since 1970-01-01 00:00 UTC
-   2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
-     10 minutes since 1970-01-01 00:00 UTC (`UNIX / (10 * 60 * 1000)`)
-   3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
-     hours since 1970-01-01 00:00 UTC (`UNIX / (60 * 60 * 1000)`)
-   4. logged timestamps inside the debug .csv file are formatted for office calculation software:
-     days since 1899-12-30 00:00 UTC (`UNIX / (24 * 60 * 60 * 1000) + 25569`)
-   5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
-     fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(UNIX)` and `require("sleeplog").fnToMs(fortnight)`)
- - __Logfiles from before 0.10:__  
-    timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
- - __View logged data:__
-    if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data  
-    since & until in UNIX timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
+
+- __Timestamps and files:__
+  1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as UNIX timestamps:  
+    seconds since 1970-01-01 00:00 UTC
+  2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
+    10 minutes since 1970-01-01 00:00 UTC (`UNIX / (10 * 60 * 1000)`)
+  3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
+    hours since 1970-01-01 00:00 UTC (`UNIX / (60 * 60 * 1000)`)
+  4. logged timestamps inside the debug .csv file are formatted for office calculation software:
+    days since 1899-12-30 00:00 UTC (`UNIX / (24 * 60 * 60 * 1000) + 25569`)
+  5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
+    fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(UNIX)` and `require("sleeplog").fnToMs(fortnight)`)
+- __Logfiles from before 0.10:__  
+  timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
+- __View logged data:__
+  if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data  
+  since & until in UNIX timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
 
 ---
 
