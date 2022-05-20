@@ -28,7 +28,7 @@ class Ball {
     }
 		if (test) {
 			this.velX = -this.velX;
-      this.valY = (3.5 + 2 * Math.random()) * this.valY / Math.abs(this.valY);      
+      this.velY = (3.5 + 2 * Math.random()) * this.velY / Math.abs(this.velY);
 
       if (isLeft) {
 				right.follow = this;
