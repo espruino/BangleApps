@@ -1,8 +1,10 @@
 # Sleep Log
 
-This app logs and displays the four following states:  
-_unknown, not worn, awake, sleeping_  
-It is using the built in movement calculation to decide your sleeping state. To detect if you are wearing the watch the internal heartrate sensor is used, except while charging. In this case it is always assumed that you are not weraing the watch.
+This app logs and displays the following states:  
+- sleepling status: _unknown, not worn, awake, light sleep, deep sleep_
+- consecutive sleep status: _unknown, not consecutive, consecutive_
+
+It is using the built in movement calculation to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
 
 ````diff
 -+-                             -+-
@@ -25,6 +27,7 @@ Temporarily removed logfiles from metadata.json to prevent removal on un-/reinst
 
 ````
 ---
+
 ---
 
 
