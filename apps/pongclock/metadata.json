@@ -5,8 +5,13 @@
   "version":"0.1",
   "description": "A clock playing Pong",
   "tags": "",
+  "readme":"README.md",
   "storage": [
     {"name":"pongclock.app.js","url":"app.js"},
-    {"name":"pongclock.img","url":"pongclock-icon.js","evaluate":true}
+    {"name":"pongclock.img","url":"pongclock-icon.js","evaluate":true},
+    {"name":"pongclock.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"pongclock.json"}
   ]
 }
