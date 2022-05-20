@@ -73,9 +73,9 @@ Temporarily removed logfiles from metadata.json to prevent removal on un-/reinst
 * Edit/complete README.md.
 * Update screenshots.
 * Add display debugging log functionality.
-* Add cutom interface.html to view, down- and upload logged data via App Loader.
+* Add custom interface.html to view, down- and upload logged data via App Loader.
 * Send the logged information to Gadgetbridge.
-  _(For now I have no idea how to achieve this, help is appreciated.)_
+  ___(For now I have no idea how to achieve this, help is appreciated.)___
 
 #### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) (or send me a [mail](mailto:banglejs@storm64.de)).
@@ -87,7 +87,7 @@ Storm64 ([Mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64
 myxor ([github](https://github.com/myxor))
 
 #### Attributions
-Icons used in this app are from [https://icons8.com](https://icons8.com).
+The app icon is downloaded from [https://icons8.com](https://icons8.com).
 
 #### License
 [MIT License](LICENSE)
