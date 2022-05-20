@@ -8,6 +8,8 @@ A clock which is playing Pong while showing the current time as score
 * Loosely based on [https://codepen.io/Rabrennie/pen/WxNEoe](https://codepen.io/Rabrennie/pen/WxNEoe)
 
 ![](screenshot.png)
+![](screenshot_settings.png)
+![](screenshot_invers_full.png)
 
 ## Creator
 [@pidajo](https://github.com/pidajo)
