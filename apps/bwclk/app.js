@@ -287,7 +287,7 @@ function drawDate(){
     g.drawString(dateStr, W/2 - fullDateW / 2, y+1);
 
     g.setSmallFont();
-    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-11);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-12);
     g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+11);
 }
 
