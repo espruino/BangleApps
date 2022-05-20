@@ -2,7 +2,7 @@
 
 A clock based on the Poketch electronic device found in Sinnoh
 
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
+![](https://user-images.githubusercontent.com/44651387/157491789-1b608c11-8af2-4519-a90f-41b8a58a9a14.png)
 
 ## Features
 
@@ -10,7 +10,7 @@ Has a dark mode
 
 ## Requests
 
-Please file any issues here: [https://github.com/elykittytee/BangleApps/issues/new?title=Poketch%20Clock%20Bug](https://github.com/elykittytee/BangleApps/issues/new?title=Poketch%20Clock%20Bug)
+If you have any issues or would like to suggest a feature, click here to send a message -> [here](https://github.com/elykittytee/BangleApps/issues/new?title=Poketch%20Clock%20Bug).
 
 ## Creator
 
