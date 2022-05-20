@@ -2,7 +2,7 @@
   "name": "Pong Clock",
   "shortName":"Pong Clock",
   "icon": "pongclock.png",
-  "version":"0.1",
+  "version":"0.01",
   "description": "A Pong playing clock",
   "tags": "",
   "allow_emulator":true, 
