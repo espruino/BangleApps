@@ -24,7 +24,8 @@
     will then clearInterval() to get rid of this call so it can proceed
     normally.
     If active[0].js is defined, just run that code as-is and not alarm.js */
-    Bangle.SCHED = setTimeout(require("Storage").read(active[0].js.slice(6, -2))!==undefined ? active[0].js : 'load("sched.js")',t);
+    if (active[0].js && require("Storage").read(active[0].js.slice(6, -2))!==undefined) Bangle.SCHED = setTimeout(active[0].js,t);
+    else Bangle.SCHED = setTimeout('load("sched.js")',t);
   } else { // check for new alarms at midnight (so day of week works)
     Bangle.SCHED = setTimeout('eval(require("Storage").read("sched.boot.js"))', 86400000 - (Date.now()%86400000));
   }
