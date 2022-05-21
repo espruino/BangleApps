@@ -112,7 +112,6 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-Bangle.setUI("clock");
