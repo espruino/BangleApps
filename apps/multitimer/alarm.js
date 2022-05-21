@@ -73,7 +73,7 @@ function showAlarm(alarm) {
   const settings = require("sched").getSettings();
 
   let msg = "";
-  msg += require("sched").formatTime(alarm.timer);
+  msg += require("time_utils").formatTime(alarm.timer);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
   }
@@ -84,9 +84,9 @@ function showAlarm(alarm) {
 
   let buzzCount = settings.buzzCount;
 
-  if (alarm.data.hm && alarm.data.hm == true) {
+  if (alarm.data.hm == true) {
     //hard mode extends auto-snooze time
-    buzzCount = buzzCount * 2;
+    buzzCount = buzzCount * 3;
     startHM();
   }
 
