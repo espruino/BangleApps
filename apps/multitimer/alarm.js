@@ -73,7 +73,7 @@ function showAlarm(alarm) {
   const settings = require("sched").getSettings();
 
   let msg = "";
-  msg += require("time_utils").formatTime(alarm.timer);
+  if (alarm.timer) msg += require("time_utils").formatTime(alarm.timer);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
   }
