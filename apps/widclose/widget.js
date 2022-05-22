@@ -2,6 +2,14 @@ if (!Bangle.CLOCK) WIDGETS.close = {
   area: "tr", width: 24, sortorder: 10, // we want the right-most spot please
   draw: function() {
     Bangle.removeListener("touch", this.touch);
+    if (Bangle.CLOCK) {
+      // loaded a clock after all: remove this widget
+      if (global.WIDGETS && WIDGETS.close) {
+        delete WIDGETS.close;
+        Bangle.drawWidgets();
+      }
+      return;
+    }
     Bangle.on("touch", this.touch);
     g.reset().setColor("#f00").drawImage(atob( // hardcoded red to match setUI back button
       // b/w version of preview.png, 24x24
