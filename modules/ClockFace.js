@@ -66,10 +66,10 @@ ClockFace.prototype.tick = function() {
 };
 
 ClockFace.prototype.start = function() {
-  Bangle.loadWidgets();
   if (this.init) this.init.apply(this);
   if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
   else Bangle.setUI("clock");
+  Bangle.loadWidgets();
   delete this._last;
   this.paused = false;
   this.tick();
