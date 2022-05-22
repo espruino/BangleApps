@@ -8,6 +8,7 @@ function ClockFace(options) {
   Object.keys(options).forEach(k => {
     if (![
       "precision",
+      "loadWidgets",
       "init", "draw", "update",
       "pause", "resume",
       "up", "down", "upDown"
@@ -33,6 +34,7 @@ function ClockFace(options) {
   };
   if (options.upDown) this._upDown = options.upDown;
 
+  this.loadWidgets = !!options.loadWidgets;
   this.is12Hour = !!(require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 }
 
@@ -46,7 +48,8 @@ ClockFace.prototype.tick = function() {
   };
   if (!this._last) {
     g.clear(true);
-    Bangle.drawWidgets();
+    if (this.loadWidgets)
+      Bangle.drawWidgets();
     g.reset();
     this.draw.apply(this, [time, {d: true, h: true, m: true, s: true}]);
   } else {
@@ -69,7 +72,8 @@ ClockFace.prototype.start = function() {
   if (this.init) this.init.apply(this);
   if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
   else Bangle.setUI("clock");
-  Bangle.loadWidgets();
+  if (this.loadWidgets)
+    Bangle.loadWidgets();
   delete this._last;
   this.paused = false;
   this.tick();

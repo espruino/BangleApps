@@ -52,6 +52,7 @@ Complete Usage
 var ClockFace = require("ClockFace");
 var clock = new ClockFace({
     precision: 1,   // optional, defaults to 60: how often to call update(), in seconds
+    loadWidgets: true, // optional, defaults to true
     init: function() {    // optional
       // called only once before starting the clock, but after setting up the 
       // screen/widgets, so you can use Bangle.appRect 
