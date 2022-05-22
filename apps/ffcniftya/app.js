@@ -60,7 +60,7 @@ function draw() {
   g.drawString(year, centerDatesScaleX, center.y - 62 * scale);
   g.drawString(month, centerDatesScaleX, center.y - 44 * scale);
   g.drawString(day, centerDatesScaleX, center.y - 26 * scale);
-  if (showWeekNum) g.drawString(d02(ISO8601_week_no(now)), centerDatesScaleX, center.y + 15 * scale);
+  if (showWeekNum) g.drawString(weekNum, centerDatesScaleX, center.y + 15 * scale);
   g.drawString(monthName, centerDatesScaleX, center.y + 48 * scale);
   g.drawString(dayName, centerDatesScaleX, center.y + 66 * scale);
 }
