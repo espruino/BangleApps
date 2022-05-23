@@ -93,7 +93,7 @@ Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
     if (dirUpDown==-1||dirLeftRight==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
-    } else if (dirUpDown==1||dirLeftRight==1){
+    } else if (dirUpDown==1||(dirLeftRight==1 && !settings.swipeExit)){
         --page; if (page<0) page=maxPage;
         drawPage(page);
     }

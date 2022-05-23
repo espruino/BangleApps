@@ -29,6 +29,6 @@ Bangle 2:
 
 **Touch** - icon to select, scond touch launches app
 
-**Swipe Left** -  move to next page of app icons
+**Swipe Left/Up** -  move to next page of app icons
 
-**Swipe Right** - move to previous page of app icons
+**Swipe Right/Down** - move to previous page of app icons

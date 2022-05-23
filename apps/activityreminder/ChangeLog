@@ -2,3 +2,4 @@
 0.02: Fix the settings bug and some tweaking
 0.03: Do not alarm while charging
 0.04: Obey system quiet mode
+0.05: Battery optimisation, add the pause option, bug fixes

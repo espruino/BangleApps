@@ -4,6 +4,7 @@
   var settings = Object.assign({
     HRMinConfidence: 50,
     showDate: true,
+    showAltitude: process.env.HWVERSION != 1 ? true : false,
     showHRM: true,
     showActivity: true,
     showStepCount: true,
@@ -14,7 +15,7 @@
   }
 
   // Show the menu
-  E.showMenu({
+  var menu = {
     "" : { "title" : "Terminal Clock" },
     "< Back" : () => back(),
     'HR confidence': {
@@ -30,6 +31,14 @@
       format: v => v?"Yes":"No",
       onchange: v => {
         settings.showDate = v;
+        writeSettings();
+      }
+    },
+    'Show Altitude': {
+      value: settings.showAltitude,
+      format: v => v?"Yes":"No",
+      onchange: v => {
+        settings.showAltitude = v;
         writeSettings();
       }
     },
@@ -57,5 +66,9 @@
         writeSettings();
       }
     }
-  });
+  }
+  if (process.env.HWVERSION == 1) {
+    delete menu['Show Altitude']
+  }
+  E.showMenu(menu);
 })

@@ -26,3 +26,5 @@
       Add "Enable All", "Disable All" and "Remove All" actions
 0.25: Fix redrawing selected Alarm/Timer entry inside edit submenu
 0.26: Add support for Monday as first day of the week (#1780)
+0.27: New UI!
+0.28: Fix bug with alarms not firing when configured to fire only once

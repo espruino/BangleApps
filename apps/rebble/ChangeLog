@@ -3,3 +3,6 @@
 0.03: Added dependancy on Pedometer Widget
 0.04: Fixed icon and png to 48x48 pixels
 0.05: added charging icon
+0.06: Add 12h support and autocycle control
+0.07: added localization, removed deprecated code
+0.08: removed unused font, fix autocycle,  imported suncalc and trimmed, removed pedometer dependency, "tap to cycle" setting

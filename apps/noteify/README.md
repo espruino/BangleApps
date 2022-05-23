@@ -18,3 +18,6 @@ This app uses the [Scheduler library](https://banglejs.com/apps/?id=sched) and r
 ![](note.png)
 
 ![](timer-alert.png)
+
+## Web interface
+You can also add, edit or delete notes in the web interface, accessible with the download button.

@@ -28,7 +28,7 @@ WIDGETS.bluetooth_notify = {
     disconnect: function() {
         if(WIDGETS.bluetooth_notify.warningEnabled == 1){
             E.showMessage(/*LANG*/'Connection\nlost.', 'Bluetooth');
-            setInterval(()=>{WIDGETS.bluetooth_notify.redrawCurrentApp();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
+            setTimeout(()=>{WIDGETS.bluetooth_notify.redrawCurrentApp();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
             
             WIDGETS.bluetooth_notify.warningEnabled = 0;
             setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // don't buzz for the next 30 seconds.

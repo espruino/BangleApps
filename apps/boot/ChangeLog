@@ -51,3 +51,4 @@
 0.45: Fix 0.44 regression (auto-add semi-colon between each boot code chunk)
 0.46: Fix no clock found error on Bangle.js 2
 0.47: Add polyfill for setUI with an object as an argument (fix regression for 2v12 devices after Layout module changed)
+0.48: Workaround for BTHRM issues on Bangle.js 1 (write .boot files in chunks)

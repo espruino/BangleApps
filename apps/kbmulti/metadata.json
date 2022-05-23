@@ -1,0 +1,18 @@
+{ "id": "kbmulti",
+  "name": "Multitap keyboard",
+  "version":"0.02",
+  "description": "A library for text input via multitap/T9 style keypad",
+  "icon": "app.png",
+  "type":"textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot_1.png"},{"url":"screenshot_2.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"textinput","url":"lib.js"},
+    {"name":"kbmulti.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"kbmulti.settings.json"}
+  ]
+}
