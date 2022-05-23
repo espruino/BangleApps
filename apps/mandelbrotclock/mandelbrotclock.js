@@ -1,4 +1,5 @@
 // MIT License - James Milner 2021
+const locale = require('locale');
 
 const mandelbrotBmp = {
   width: 176,
@@ -15,16 +16,17 @@ const mandelbrotBmp = {
 function draw() {
   g.drawImage(mandelbrotBmp);
   // work out how to display the current time
-  const d = new Date();
-  const h = d.getHours(),
-    m = d.getMinutes();
-  const time = h + ":" + ("0" + m).substr(-2);
+  var date = new Date();
+  var timeStr = locale.time(date,1);
+  var dateStr = locale.dow(date, true).toUpperCase() + ' ' + date.getDate();
 
   // Reset the state of the graphics library
   g.reset();
   g.setColor(1, 1, 1);
   g.setFont("Vector", 30);
-  g.drawString(time, 70, 68, false);
+  g.drawString(timeStr, 70, 58, false);
+  g.setFont("Vector", 20);
+  g.drawString(dateStr, 70, 88, false);
 }
 
 g.clear();
