@@ -80,6 +80,8 @@ The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App
 
 Sample waypoints.json (My sailing waypoints)
 
+**Note** : The waypoints.json file is used by a number of different gps apps. The setting 'Wpt File Suffix' allows one of waypoints1.json, waypoints2.json or waypoints3.json to be used instead. This allows the other apps to be used with a different set of waypoints without losing the speedalt2 waypoint set. 
+
 <pre>
 [
   {
