@@ -13,6 +13,18 @@ const mandelbrotBmp = {
   ),
 };
 
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
 function draw() {
   g.drawImage(mandelbrotBmp);
   // work out how to display the current time
@@ -27,10 +39,25 @@ function draw() {
   g.drawString(timeStr, 70, 58, false);
   g.setFont("Vector", 20);
   g.drawString(dateStr, 70, 88, false);
+  
+  queueDraw();
 }
 
+// Clear the screen once, at startup
 g.clear();
 
 // draw immediately at first
 draw();
-var secondInterval = setInterval(draw, 1000);
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
+});
+
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
