@@ -3,6 +3,7 @@
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
+  var lastMsg;
 
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
@@ -18,7 +19,17 @@
     /* TODO: Call handling, fitness */
     var HANDLERS = {
       // {t:"notify",id:int, src,title,subject,body,sender,tel:string} add
-      "notify" : function() { Object.assign(event,{t:"add",positive:true, negative:true});require("messages").pushMessage(event); },
+      "notify" : function() {
+        Object.assign(event,{t:"add",positive:true, negative:true});
+        // Detect a weird GadgetBridge bug and fix it
+        // For some reason SMS messages send two GB notifications, with different sets of info
+        if (lastMsg && event.body == lastMsg.body && lastMsg.src == undefined && event.src == "Messages") {
+          // Mutate the other message
+          event.id = lastMsg.id;
+        }
+        lastMsg = event;
+        require("messages").pushMessage(event);
+      },
       // {t:"notify~",id:int, title:string} // modified
       "notify~" : function() { event.t="modify";require("messages").pushMessage(event); },
       // {t:"notify-",id:int} // remove
