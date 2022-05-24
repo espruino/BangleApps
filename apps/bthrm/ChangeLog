@@ -21,3 +21,4 @@
       Adds some preset modes and a custom one
       Restructure the settings menu
 0.08: Allow scanning for devices in settings
+0.09: Misc Fixes and improvements (https://github.com/espruino/BangleApps/pull/1655)
