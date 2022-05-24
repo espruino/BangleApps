@@ -1,6 +1,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
   </head>
   <body>
     
@@ -10,31 +11,39 @@
     <script>
 var domTable = document.getElementById("table");
 
-function saveFile(logData, title) {
-  var fileFormat = document.getElementById("fileFormat").selectedIndex;
-console.log(logData)
-  if (fileFormat === 1) {
-    Util.saveCSV(
-      title + ".txt",
-      logData.map(entry => {
-        return new Date(entry[0] * 6E5).toLocaleString(undefined) + " > " +
-          "unknown    ,non consec.,consecutive".split(",")[entry[2]] + " " +
-          "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]];
-      }).join("\n")
-    );
-  } else {
-    var timeFormat = document.getElementById("timeFormat").selectedIndex;
-    Util.saveCSV(
-      title + ".csv",
-      "time,sleep,consecutive\n" +
-      logData.map(entry => {
-        entry[0] *= 6E5;
-        if (timeFormat === 1) entry[0] /= 1E3;
-        if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
-        return entry.join(",");
-      }).join("\n")
-    );
-  }
+function printLog(logData, title) {
+  var html = `
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  logData.forEach(entry => html += `
+        <tr>
+          <td>` +
+            new Date(entry[0] * 6E5).toLocaleString(undefined) + `
+          </td>
+          <td>` +
+            "unknown    ,non consec.,consecutive".split(",")[entry[2]] + " " +
+            "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]] + `
+          </td>
+        </tr>`);
+  html = `
+      </tbody>`;
+  document.getElementById("view").innerHTML = html;
+}
+
+function saveCSV(logData, title) {
+  var timeFormat = document.getElementById("timeFormat").selectedIndex;
+  logData = logData.map(entry => {
+    entry[0] *= 6E5;
+    if (timeFormat === 1) entry[0] /= 1E3;
+    if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
+    return entry.join(",");
+  }).join("\n");
+  Util.saveCSV(title, "time,sleep,consecutive\n" + logData);
 }
 
 function readLog(date, callback) {
@@ -44,6 +53,7 @@ function readLog(date, callback) {
     callback(logData);
   });
 }
+
 function getFnList() {
   Util.showModal("Loading...");
   domTable.innerHTML = "";
@@ -54,7 +64,7 @@ function getFnList() {
       var ret = {
         bName: file,
         date: (parseInt(file.match(/\d{4}/)[0]) + 0.25) * 12096E5,
-      }
+      };
       var thisDates = [new Date(ret.date), new Date(ret.date + 12096E5)];
       ret.dName = thisDates[0].toISOString().substr(0, 10) + "_" + thisDates[1].toISOString().substr(5, 5);
       ret.dateA = thisDates[0].toLocaleDateString(undefined);
@@ -67,7 +77,7 @@ function getFnList() {
       <thead>
         <tr>
           <th>File</th>
-          <th>Date from</th>
+          <th>from</th>
           <th>to</th>
           <th>Actions</th>
         </tr>
@@ -80,9 +90,10 @@ function getFnList() {
           <td>${file.dateA}</td>
           <td>${file.dateB}</td>
           <td>
-            <button class="btn btn-primary" task="download" date="${file.date}" dName="${file.dName}">Download</button>`;
+            <button class="btn" task="view" date="${file.date}" dName="${file.dName}"><i class="icon icon-menu"></i></button>
+            <button class="btn btn-primary" task="csv" date="${file.date}" dName="${file.dName}">CSV</button>`;
       if (file.bName.endsWith(".log")) html += `
-            <button class="btn btn-default" task="delete" bName="${file.bName}">Delete</button>`;
+            <button class="btn" task="del" bName="${file.bName}"><i class="icon icon-delete"></i></button>`;
       html += `
           </td>
         </tr>`;
@@ -90,22 +101,14 @@ function getFnList() {
     html += `
       </tbody>
     </table>
-    <table>
-      <tr>
-        <td>file format:</td>
-        <td><select id="fileFormat">
-          <option>csv</option>
-          <option>text</option>
-        </select></td>
-      </tr>
-      <tr>
-        <td>csv time format:</td>
-        <td><select id="timeFormat">
-          <option>JavaScript (msec since 1970)</option>
-          <option>UNIX (sec since 1970)</option>
-          <option>Office (days since 1900)</option>
-        </select></td>
-      </tr>
+    <p>csv time format:
+      <select id="timeFormat">
+        <option>JavaScript (msec since 1970)</option>
+        <option>UNIX (sec since 1970)</option>
+        <option>Office (days since 1900)</option>
+      </select>
+    </p>
+    <table id="view">
     </table>`;
     domTable.innerHTML = html;
     Util.hideModal();
