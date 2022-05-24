@@ -10,22 +10,32 @@
     <script>
 var domTable = document.getElementById("table");
 
-function saveCSV(logData, title) {
-  var timeFormat = domTable.querySelector("select").selectedIndex;
-  var csv = "time,sleep,consecutive\n";
-
-  logData.forEach(entry => {
-    entry[0] *= 6E5;
-    if (timeFormat === 1) entry[0] /= 1E3;
-    if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
-    csv += [
-      entry[0],
-      entry[1],
-      entry[2]
-    ].join(",")+"\n";
-  });
-
-  Util.saveCSV(title, csv);
+function saveFile(logData, title) {
+  var fileFormat = domTable.getElementById("fileFormat").selectedIndex;
+  var fileStr = fileFormat === 0 ? "time,sleep,consecutive\n" : 0;
+  
+  if (fileFormat === 1) {
+    Util.saveCSV(
+      title + "txt",
+      logData.map(entry => {
+        return new Date(entry[0] *= 6E5).toLocaleString(undefined) + " > " +
+          "unknown    ,non consec.,consecutive".split(",")[entry[2]] + " " +
+          "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]];
+      }).join("\n")
+    );
+  } else {
+    var timeFormat = domTable.getElementById("timeFormat").selectedIndex;
+    Util.saveCSV(
+      title + ".csv",
+      "time,sleep,consecutive\n" +
+      logData.forEach(entry => {
+        entry[0] *= 6E5;
+        if (timeFormat === 1) entry[0] /= 1E3;
+        if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
+        return entry.join(",");
+      }).join("\n");
+    )
+  }
 }
 
 function readLog(date, callback) {
@@ -43,45 +53,58 @@ function getFnList() {
     files.push("" + Math.floor(Date.now() / 12096E5 - 0.25));
     files = files.map(file => {
       var ret = {
-        filename: file,
-        fortnigt: file.match(/\d{4}/)[0], // 1234
+        bName: file,
+        fortnigt: parseInt(file.match(/\d{4}/)[0]) // 1234
       };
       ret.date = (ret.fortnigt + 0.25) * 12096E5;
-      ret.str = new Date(ret.date).toLocaleDateString(undefined) + " - " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
+      ret.dName = new Date(ret.date).toISOString().substr(0, 10) + "_" + new Date(ret.date + 12096E5).toISOString().substr(5, 5);
+      ret.str = new Date(ret.date).toLocaleDateString(undefined) + " to " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
       return ret;
     });
+    files = files.sort((a, b) => a.fortnigt - b.fortnigt);
     var html = `
-<table class="table table-striped table-hover">
-  <thead>
-    <tr>
-      <th>Fortnight</th>
-      <th>
-        time format:
-        <select>
-          <option>JavaScript (msec since 1970-01-01T00:00)</option>
-          <option>UNIX (sec since 1970-01-01T00:00)</option>
-          <option>Office (days since 1900-01-01T00:00)</option>
-        </select>
-      </th>
-    </tr>
-  </thead>
-  <tbody>`;
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Fortnight</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>`;
     files.forEach(file => {
       html += `
-    <tr>
-      <td>${file.fortnigt}</td>
-      <td>
-        ${file.str}
-        <button class="btn btn-primary" task="downloadcsv" date="${file.date}" str="${file.str}">Download CSV</button>`;
-      if (file.filename.endsWith(".log")) html += `
-        <button class="btn btn-default" task="delete" filename="${file.filename}">Delete</button>`;
+        <tr>
+          <td>${file.fortnigt}</td>
+          <td>
+            ${file.str}
+            <button class="btn btn-primary" task="download" date="${file.date}" dName="${file.dName}">Download</button>`;
+      if (file.bName.endsWith(".log")) html += `
+            <button class="btn btn-default" task="delete" bName="${file.bName}">Delete</button>`;
       html += `
-      </td>
-    </tr>`;
+          </td>
+        </tr>`;
     });
     html += `
-  </tbody>
-</table>`;
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td>file format:</td>
+        <td><select>
+          <option>csv</option>
+          <option>text</option>
+        </select></td>
+      </tr>
+      <tr>
+        <td>csv time format:</td>
+        <td><select>
+          <option>JavaScript (msec since 1970)</option>
+          <option>UNIX (sec since 1970)</option>
+          <option>Office (days since 1900)</option>
+        </select></td>
+      </tr>
+    </table>`;
     domTable.innerHTML = html;
     Util.hideModal();
     var buttons = domTable.querySelectorAll("button");
@@ -90,16 +113,16 @@ function getFnList() {
         var button = event.currentTarget;
         var task = button.getAttribute("task");
         if (!task) return;
-        if (task=="downloadcsv") {
+        if (task=="download") {
           var date = button.getAttribute("date");
-          var str = button.getAttribute("str");
-          if (!date || !str) return;
-          readLog(date, logData => saveCSV(logData, "sleeplog_" + str + ".csv"));
+          var dName = button.getAttribute("dName");
+          if (!date || !dName) return;
+          readLog(date, logData => saveFile(logData, dName));
         } else if (task=="delete") {
-          var filename = button.getAttribute("filename");
-          if (!filename) return;
+          var bName = button.getAttribute("bName");
+          if (!bName) return;
           Util.showModal("Deleting...");
-          Util.eraseStorage(filename, () => {
+          Util.eraseStorage(bName, () => {
             Util.hideModal();
             getTrackList();
           });
