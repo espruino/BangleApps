@@ -66,6 +66,10 @@ ClockFace.prototype.tick = function() {
 };
 
 ClockFace.prototype.start = function() {
+  /* Some widgets want to know if we're in a clock or not (like chrono, widget clock, etc). Normally
+  .CLOCK is set by Bangle.setUI('clock') but we want to load widgets so we can check appRect and *then*
+  call setUI. see #1864 */
+  Bangle.CLOCK = 1; 
   Bangle.loadWidgets();
   if (this.init) this.init.apply(this);
   if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));

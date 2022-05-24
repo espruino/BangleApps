@@ -217,7 +217,12 @@ function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
 function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow) {
   const menu = {
     "": { "title": /*LANG*/"Custom Days" },
-    "< Back": () => dowChangeCallback(true, dow),
+    "< Back": () => {
+      // If the user unchecks all the days then we assume repeat = once
+      // and we force the dow to every day.
+      var repeat = dow > 0;
+      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY)
+    }
   };
 
   require("date_utils").dows(firstDayOfWeek).forEach((day, i) => {
@@ -315,12 +320,12 @@ function showAdvancedMenu() {
 
 function enableAll(on) {
   if (alarms.filter(e => e.on == !on).length == 0) {
-    E.showPrompt(on ? /*LANG*/"Nothing to Enable" : /*LANG*/"Nothing to Disable", {
-      title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All",
-      buttons: { /*LANG*/"Ok": true }
-    }).then(() => showAdvancedMenu());
+    E.showAlert(
+      on ? /*LANG*/"Nothing to Enable" : /*LANG*/"Nothing to Disable",
+      on ? /*LANG*/"Enable All" : /*LANG*/"Disable All"
+    ).then(() => showAdvancedMenu());
   } else {
-    E.showPrompt(/*LANG*/"Are you sure?", { title: on ? "/*LANG*/Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
+    E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
       if (confirm) {
         alarms.forEach(alarm => alarm.on = on);
         saveAndReload();
@@ -334,7 +339,7 @@ function enableAll(on) {
 
 function deleteAll() {
   if (alarms.length == 0) {
-    E.showPrompt(/*LANG*/"Nothing to delete", { title: /*LANG*/"Delete All", buttons: { /*LANG*/"Ok": true } }).then(() => showAdvancedMenu());
+    E.showAlert(/*LANG*/"Nothing to delete", /*LANG*/"Delete All").then(() => showAdvancedMenu());
   } else {
     E.showPrompt(/*LANG*/"Are you sure?", {
       title: /*LANG*/"Delete All"
