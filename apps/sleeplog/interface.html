@@ -12,8 +12,7 @@ var domTable = document.getElementById("table");
 
 function saveFile(logData, title) {
   var fileFormat = domTable.getElementById("fileFormat").selectedIndex;
-  var fileStr = fileFormat === 0 ? "time,sleep,consecutive\n" : 0;
-  
+
   if (fileFormat === 1) {
     Util.saveCSV(
       title + "txt",
@@ -33,8 +32,8 @@ function saveFile(logData, title) {
         if (timeFormat === 1) entry[0] /= 1E3;
         if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
         return entry.join(",");
-      }).join("\n");
-    )
+      }).join("\n")
+    );
   }
 }
 
