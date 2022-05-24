@@ -22,6 +22,16 @@
       value: settings.fullscreen == true,
       format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: (m) => { save("fullscreen", m) }
+    },
+    /*LANG*/"Direct launch": {
+      value: settings.direct == true,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: (m) => { save("direct", m) }
+    },
+    /*LANG*/"One click exit": {
+      value: settings.oneClickExit == true,
+      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      onchange: (m) => { save("oneClickExit", m) }
     }
   };
   E.showMenu(appMenu);
