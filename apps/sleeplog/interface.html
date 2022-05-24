@@ -39,19 +39,19 @@ function getFnList() {
   Util.showModal("Loading...");
   domTable.innerHTML = "";
   Puck.eval(`require("Storage").list(/^sleeplog_\\d{4}\.log$/)`, files => {
-    function fnToMs(no) { return (no + 0.25) * 12096E5; }
     // add this fortnight
     files.push("" + Math.floor(Date.now() / 12096E5 - 0.25));
     files = files.map(file => {
-      var ret {
+      var ret = {
         filename: file,
         fortnigt: file.match(/\\d{4})/)[0], // 1234
       };
-      ret.date: (ret.fortnigt + 0.25) * 12096E5;
-      ret.str: new Date(ret.date).toLocaleDateString(undefined) + " - " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
+      ret.date = (ret.fortnigt + 0.25) * 12096E5;
+      ret.str = new Date(ret.date).toLocaleDateString(undefined) + " - " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
       return ret;
-    })
-    var html = `<table class="table table-striped table-hover">
+    });
+    var html = `
+<table class="table table-striped table-hover">
   <thead>
     <tr>
       <th>Fortnight</th>
@@ -68,25 +68,25 @@ function getFnList() {
   <tbody>`;
     files.forEach(file => {
       html += `
-      <tr>
-        <td>${file.fortnigt}</td>
-        <td>
-          ${file.str}
-          <button class="btn btn-primary" task="downloadcsv" date="${file.date}" str="${file.str}">Download CSV</button>`;
+    <tr>
+      <td>${file.fortnigt}</td>
+      <td>
+        ${file.str}
+        <button class="btn btn-primary" task="downloadcsv" date="${file.date}" str="${file.str}">Download CSV</button>`;
       if (file.filename.endsWith(".log")) html += `
-          <button class="btn btn-default" task="delete" filename="${file.filename}">Delete</button>`;
+        <button class="btn btn-default" task="delete" filename="${file.filename}">Delete</button>`;
       html += `
-        </td>
-      </tr>`;
+      </td>
+    </tr>`;
     });
     html += `
-    </tbody>
+  </tbody>
 </table>`;
     domTable.innerHTML = html;
     Util.hideModal();
     var buttons = domTable.querySelectorAll("button");
-    for (var i=0;i<buttons.length;i++) {
-      buttons[i].addEventListener("click",event => {
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener("click", event => {
         var button = event.currentTarget;
         var task = button.getAttribute("task");
         if (!task) return;
@@ -99,20 +99,19 @@ function getFnList() {
           var filename = button.getAttribute("filename");
           if (!filename) return;
           Util.showModal("Deleting...");
-          Util.eraseStorage(filename,()=>{
+          Util.eraseStorage(filename, () => {
             Util.hideModal();
             getTrackList();
           });
         }
       });
     }
-  })
+  });
 }
 
 function onInit() {
   getFnList();
 }
-
     </script>
   </body>
 </html>
