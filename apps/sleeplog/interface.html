@@ -12,12 +12,12 @@ var domTable = document.getElementById("table");
 
 function saveFile(logData, title) {
   var fileFormat = document.getElementById("fileFormat").selectedIndex;
-
+console.log(logData)
   if (fileFormat === 1) {
     Util.saveCSV(
       title + ".txt",
       logData.map(entry => {
-        return new Date(entry[0] *= 6E5).toLocaleString(undefined) + " > " +
+        return new Date(entry[0] * 6E5).toLocaleString(undefined) + " > " +
           "unknown    ,non consec.,consecutive".split(",")[entry[2]] + " " +
           "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]];
       }).join("\n")
@@ -27,7 +27,7 @@ function saveFile(logData, title) {
     Util.saveCSV(
       title + ".csv",
       "time,sleep,consecutive\n" +
-      logData.forEach(entry => {
+      logData.map(entry => {
         entry[0] *= 6E5;
         if (timeFormat === 1) entry[0] /= 1E3;
         if (timeFormat === 2) entry[0] = entry[0] / 864E5 + 25569;
@@ -39,7 +39,7 @@ function saveFile(logData, title) {
 
 function readLog(date, callback) {
   Util.showModal("Downloading logged data...");
-  Puck.eval(`require("sleeplog").readLog(date, date + 12096E5)`, logData => {
+  Puck.eval(`require("sleeplog").readLog(` + date + `, ` + date + ` + 12096E5)`, logData => {
     Util.hideModal();
     callback(logData);
   });
