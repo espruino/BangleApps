@@ -44,7 +44,7 @@ function getFnList() {
     files = files.map(file => {
       var ret = {
         filename: file,
-        fortnigt: file.match(/\\d{4})/)[0], // 1234
+        fortnigt: file.match(/\\d{4}/)[0], // 1234
       };
       ret.date = (ret.fortnigt + 0.25) * 12096E5;
       ret.str = new Date(ret.date).toLocaleDateString(undefined) + " - " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
