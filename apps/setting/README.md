@@ -13,7 +13,6 @@ This is Bangle.js's settings menu
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
 * **Theme** Adjust the colour scheme
 * **Utils** Utilities - including resetting settings (see below)
-* **Turn Off** Turn Bangle.js off
 
 ## BLE - Bluetooth Settings
 
@@ -61,5 +60,7 @@ The exact effects depend on the app.  In general the watch will not wake up by i
 * **Compact Storage** Removes deleted/old files from Storage - this will speed up your Bangle.js
 * **Rewrite Settings** Should not normally be required, but if `.boot0` has been deleted/corrupted (and so no settings are being loaded) this will fix it.
 * **Flatten Battery** Turns on all devices and draws as much power as possible, attempting to flatten the Bangle.js battery. This can still take 5+ hours.  
+* **Calibrate Battery** If you're finding your battery percentage meter isn't accurate, leave your Bangle.js on charge for at least 3 hours, and then choose this menu option. It will measure the battery voltage when full and will allow Bangle.js to report a more accurate battery percentage.
 * **Reset Settings** Reset the settings (as set in this app) to defaults. Does not reset settings for other apps.
 * **Factory Reset** (not available on Bangle.js 1) - wipe **everything** and return to a factory state
+* **Turn Off** Turn Bangle.js off

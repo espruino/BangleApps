@@ -192,7 +192,15 @@
         "Notifications": "Notifiche",
         "Scheduler": "Schedulatore",
         "Stop": "Stop",
-        "Min Font": "Dimensione minima del font"
+        "Min Font": "Dimensione minima del font",
+        "White": "Bianco",
+        "Red": "Rosso",
+        "Yellow": "Giallo",
+        "Cyan": "Ciano",
+        "Green": "Verde",
+        "Blue": "Blu",
+        "Black": "Nero",
+        "Show Week Number": "Mostra numero settimana"
     },
     "//2": "App-specific overrides",
     "alarm": {
