@@ -38,13 +38,13 @@ function readLog(date, callback) {
 function getFnList() {
   Util.showModal("Loading...");
   domTable.innerHTML = "";
-  Puck.eval(`require("Storage").list(/^sleeplog_\\d{4}\.log$/)`, files => {
+  Puck.eval(`require("Storage").list(/^sleeplog_\\d\\d\\d\\d\\.log$/)`, files => {
     // add this fortnight
     files.push("" + Math.floor(Date.now() / 12096E5 - 0.25));
     files = files.map(file => {
       var ret = {
         filename: file,
-        fortnigt: file.match(/\\d{4}/)[0], // 1234
+        fortnigt: file.match(/\d{4}/)[0], // 1234
       };
       ret.date = (ret.fortnigt + 0.25) * 12096E5;
       ret.str = new Date(ret.date).toLocaleDateString(undefined) + " - " + new Date(ret.date + 12096E5).toLocaleDateString(undefined);
