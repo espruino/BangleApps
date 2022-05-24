@@ -55,9 +55,11 @@ function getFnList() {
         bName: file,
         date: (parseInt(file.substr(9, 4)) + 0.25) * 12096E5,
       }
-      ret.dName = new Date(ret.date).toISOString().substr(0, 10) + "_" + new Date(ret.date + 12096E5).toISOString().substr(5, 5);
-      ret.dateA = new Date(ret.date).toLocaleDateString(undefined);
-      ret.dateB = new Date(ret.date + 12096E5).toLocaleDateString(undefined);
+      console.log(ret.date);
+      var thisDates = [new Date(ret.date), new Date(ret.date + 12096E5)];
+      ret.dName = thisDate[0].toISOString().substr(0, 10) + "_" + thisDate[1].toISOString().substr(5, 5);
+      ret.dateA = thisDate[0].toLocaleDateString(undefined);
+      ret.dateB = thisDate[1].toLocaleDateString(undefined);
       return ret;
     });
     files = files.sort((a, b) => a.fortnigt - b.fortnigt);
