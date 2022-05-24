@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../css/spectre.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        
+        Select the city (coordinates) for sunrise and sunset<br>
+        The service used to search the city is
+        <a href="https://nominatim.openstreetmap.org/ui/search.html" target="_blank">https://nominatim.openstreetmap.org/ui/search.html</a><br><br>
+        <p>Search: <input type="text" id="query" class="form-input" list="exampleList">
+
+            <datalist id="exampleList">
+            </datalist>
+      
+        </p> 
+        <p>
+            This data will be saved on your Bangle.js ( you can edit these fields )<br>
+            Leave blank if you don't use the service
+            <table>
+                <tr>
+                    <td>name:</td>
+                    <td><input id="cityName"></td>
+                </tr>
+                <tr>
+                    <td>lat:</td>
+                    <td><input id="lat"></td>
+                </tr>
+                <tr>
+                    <td>lon:</td>
+                    <td><input id="lon"></td>
+                </tr>
+            </table>
+        </p>
+  
+      <p><button id="saveOnly" class="btn btn-primary">Save on Bangle.js</button> <button id="upload" class="btn btn-primary">Upload</button></p>
+  
+      <script src="../../core/lib/interface.js"></script>
+      <script>
+        const LOCATION_FILE = "mylocation.json";
+
+        //TOFIX:
+        //Need this because adding interface.js break customize.js 
+        //"Identifier '__id' has already been declared"
+        //so i removed the customize.js and copied the piece of code to send a custom app
+        function MysendCustomizedApp(app) {
+          console.log("<CUSTOM> sending app");
+          window.postMessage({
+            type : "app",
+            data : app
+          });
+        }
+
+        //I don't know how is the policy for using external libs (like JQuery),
+        //at the moment i used it; in case i try to implement everything in standard js
+        $(document).ready(function(){
+
+            query.oninput=function(){
+                var val = document.getElementById("query").value;
+                var opts = document.getElementById('exampleList').childNodes;
+                for (var i = 0; i < opts.length; i++) {
+                    if (opts[i].value === val) {
+                        data =JSON.parse($(opts[i]).attr("data"));
+                        $("#cityName").val(data["name"]);
+                        $("#lat").val(data["lat"]);
+                        $("#lon").val(data["lon"]);
+                        NoSearch=true;
+                        return false;
+                    }
+                }
+            };
+
+
+            var NoSearch=false;
+            var timeoutSearch;
+            const timeSearchDelay=300; 
+            $("#query").on('input',function(){
+                if(NoSearch)
+                {
+                    NoSearch=false;
+                    return;
+                }
+                clearTimeout(timeoutSearch);         //I use a timer every time I press to avoid making too many requests
+                timeoutSearch = setTimeout(function(){
+                    $.get("https://nominatim.openstreetmap.org/search",{q:$("#query").val(),format:"json",addressdetails:1},function(data){
+                    var toShow=[];
+                    for(var i=0;i<data.length;i++)
+                    {
+                        name=data[i]["address"]["town"] || data[i]["address"]["city"];
+                        if( name!="undefined")
+                            toShow.push({display_name:data[i]["display_name"],lat:data[i]["lat"],lon:data[i]["lon"],name:name })
+                    }
+
+                    $("#exampleList").empty();
+                    toShow.forEach(element => {
+                        var o =$("<option >").val(element.display_name).attr("data",JSON.stringify(element));
+                        $("#exampleList").append(o);      
+                    });
+                   
+                    console.log(toShow);
+                },"json");
+                        
+
+                }, timeSearchDelay);
+            });
+        });
+
+        // When the 'upload' button is clicked...
+        $("#upload").click(function() {
+          // build the app's text using a templated String
+          var json = `{"lat":${$("#lat").val()},"lon":${$("#lon").val()},"location":"${$("#cityName").val()}"}`;
+  
+          MysendCustomizedApp({
+            storage:[
+              {name:LOCATION_FILE, url:LOCATION_FILE, content:json},
+            ]
+          });
+        });
+
+        $("#saveOnly").click(function() {
+          // build the app's text using a templated String
+
+          var settings = `{"lat":${$("#lat").val()},"lon":${$("#lon").val()},"location":"${$("#cityName").val()}"}`;
+          Puck.eval(`require('Storage').write("${LOCATION_FILE}",${settings})`);
+          window.postMessage({
+            type : "close"
+          });
+        });
+
+        onInit = function(){
+          Util.readStorage(LOCATION_FILE,data=>{
+            data = JSON.parse(data || "{'lat':51.5072,'lon':0.1276,'location':'London'}");
+            document.getElementById("cityName").value = data.location;
+            document.getElementById("lat").value = data.lat;
+            document.getElementById("lon").value = data.lon;
+          });
+        };
+
+  
+      </script>
+    </body>
+  </html>
+  
