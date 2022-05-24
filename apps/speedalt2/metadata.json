@@ -17,6 +17,7 @@
   ],
   "data": [
     {"name":"speedalt2.json"},
+    {"name":"waypoints.json"},
     {"name":"waypoints1.json"},
     {"name":"waypoints2.json"},
     {"name":"waypoints3.json"}
