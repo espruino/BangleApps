@@ -1,5 +1,8 @@
 const s = require("Storage");
-const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false };
+const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,oneClickExit:false };
+
+if( settings.oneClickExit)
+  setWatch(_=> load(), BTN1);
 
 if (!settings.fullscreen) {
   Bangle.loadWidgets();
@@ -107,6 +110,11 @@ function drawText(i) {
 function selectItem(id, e) {
   const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
   const appId = id * appsN + iconN;
+  if( settings.direct && apps[appId])
+  {
+    load(apps[appId].src);
+    return;
+  }
   if (appId == selectedItem && apps[appId]) {
     const app = apps[appId];
     if (!app.src || s.read(app.src) === undefined) {
