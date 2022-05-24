@@ -11,7 +11,7 @@
     <script>
 var domTable = document.getElementById("table");
 
-function printLog(logData, title) {
+function viewLog(logData, title) {
   var html = `
       <thead>
         <tr>
@@ -118,11 +118,16 @@ function getFnList() {
         var button = event.currentTarget;
         var task = button.getAttribute("task");
         if (!task) return;
-        if (task=="download") {
+        if (task=="view") {
           var date = button.getAttribute("date");
           var dName = button.getAttribute("dName");
           if (!date || !dName) return;
-          readLog(date, logData => saveFile(logData, dName));
+          readLog(date, logData => viewLog(logData, dName));
+        } else if (task=="csv") {
+          var date = button.getAttribute("date");
+          var dName = button.getAttribute("dName");
+          if (!date || !dName) return;
+          readLog(date, logData => saveCSV(logData, dName));
         } else if (task=="delete") {
           var bName = button.getAttribute("bName");
           if (!bName) return;
