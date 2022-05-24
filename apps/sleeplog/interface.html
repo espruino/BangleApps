@@ -11,7 +11,7 @@
 var domTable = document.getElementById("table");
 
 function saveFile(logData, title) {
-  var fileFormat = domTable.getElementById("fileFormat").selectedIndex;
+  var fileFormat = document.getElementById("fileFormat").selectedIndex;
 
   if (fileFormat === 1) {
     Util.saveCSV(
@@ -23,7 +23,7 @@ function saveFile(logData, title) {
       }).join("\n")
     );
   } else {
-    var timeFormat = domTable.getElementById("timeFormat").selectedIndex;
+    var timeFormat = document.getElementById("timeFormat").selectedIndex;
     Util.saveCSV(
       title + ".csv",
       "time,sleep,consecutive\n" +
