@@ -9,6 +9,7 @@
   "tags": "tool,boot",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name": "sleeplog.app.js", "url": "app.js"},
     {"name": "sleeplog.img", "url": "app-icon.js", "evaluate": true},
