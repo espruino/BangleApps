@@ -53,9 +53,8 @@ function getFnList() {
     files = files.map(file => {
       var ret = {
         bName: file,
-        date: (parseInt(file.substr(9, 4)) + 0.25) * 12096E5,
+        date: (parseInt(file.match(/\d{4}/)[0]) + 0.25) * 12096E5,
       }
-      console.log(ret.date);
       var thisDates = [new Date(ret.date), new Date(ret.date + 12096E5)];
       ret.dName = thisDates[0].toISOString().substr(0, 10) + "_" + thisDates[1].toISOString().substr(5, 5);
       ret.dateA = thisDates[0].toLocaleDateString(undefined);
