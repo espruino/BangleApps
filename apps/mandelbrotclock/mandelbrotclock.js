@@ -1,5 +1,4 @@
 // MIT License - James Milner 2021
-const locale = require('locale');
 
 const mandelbrotBmp = {
   width: 176,
@@ -13,51 +12,23 @@ const mandelbrotBmp = {
   ),
 };
 
-// timeout used to update every minute
-var drawTimeout;
-
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-}
-
 function draw() {
   g.drawImage(mandelbrotBmp);
   // work out how to display the current time
-  var date = new Date();
-  var timeStr = locale.time(date,1);
-  var dateStr = locale.dow(date, true).toUpperCase() + ' ' + date.getDate();
+  const d = new Date();
+  const h = d.getHours(),
+    m = d.getMinutes();
+  const time = h + ":" + ("0" + m).substr(-2);
 
   // Reset the state of the graphics library
   g.reset();
   g.setColor(1, 1, 1);
   g.setFont("Vector", 30);
-  g.drawString(timeStr, 70, 58, false);
-  g.setFont("Vector", 20);
-  g.drawString(dateStr, 70, 88, false);
-  
-  queueDraw();
+  g.drawString(time, 70, 68, false);
 }
 
-// Clear the screen once, at startup
 g.clear();
 
 // draw immediately at first
 draw();
-
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
-  if (on) {
-    draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
-});
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
+var secondInterval = setInterval(draw, 1000);
