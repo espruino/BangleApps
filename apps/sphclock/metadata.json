@@ -1,0 +1,33 @@
+{
+  "id": "sphclock",
+  "name": "SPH Clock",
+  "shortName": "SPH Clock",
+  "type": "clock",
+  "supports": ["BANGLEJS2"],
+  "version": "0.2",
+  "dependencies": {
+    "sphcalendar": "app",
+    "sphweather": "app",
+    "leco1976": "app"
+  },
+  "description": "[WIP] Vintage menu style clock with weather icons and schedule",
+  "icon": "icon.png",
+  "readme": "README.MD",
+  "screenshots": [{ "url": "screenshot.png" }, { "url": "screenshot2.png" }],
+  "storage": [
+    { "name": "sphclock.app.js", "url": "sphclock.app.js" },
+    { "name": "sphclock.agenda.js", "url": "sphclock.agenda.js" },
+    { "name": "sphclock.background.js", "url": "sphclock.background.js" },
+    { "name": "sphclock.bateria.js", "url": "sphclock.bateria.js" },
+    { "name": "sphclock.clock.js", "url": "sphclock.clock.js" },
+    { "name": "sphclock.lock.js", "url": "sphclock.lock.js" },
+    { "name": "sphclock.weather.js", "url": "sphclock.weather.js" },
+    {
+      "name": "sphclock.img",
+      "url": "sphclock.app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "tags": "clock, sph, vintage, menu",
+  "allow_emulator": true
+}
