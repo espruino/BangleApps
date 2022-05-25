@@ -27,7 +27,7 @@ exports.drawCalendar = function (date) {
   // Carrega a agenda pro próximo dia com eventos
   let schedules = require("Storage").readJSON("agenda.json", false) || [];
   // Parse da data
-  schedules.forEach((s) => (s.data = new Date(s.data)));
+  schedules.forEach((s) => (s.data = new Date(s.data.replace('Z', ''))));
   schedules = schedules
     .filter((v) => v.data > new Date()) // Remove eventos que já foram
     .sort((a, b) => a.data - b.data); // Ordena pela data

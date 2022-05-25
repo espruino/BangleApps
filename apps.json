@@ -72,7 +72,7 @@
     "shortName": "SPH Clock",
     "type": "clock",
     "supports": ["BANGLEJS2"],
-    "version": "0.1",
+    "version": "0.2",
     "dependencies": {
       "sphcalendar": "app",
       "sphweather": "app",
@@ -105,7 +105,7 @@
     "shortName": "SPH Weather",
     "type": "app",
     "supports": ["BANGLEJS2"],
-    "version": "0.1",
+    "version": "0.2",
     "dependencies": { "leco1976": "app" },
     "description": "Vintage menu style weather app, with data from json",
     "icon": "icon.png",

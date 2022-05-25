@@ -169,7 +169,7 @@ function drawStringWithFullBorder(text, color, border, x, y) {
 
 function dateToISO(date) {
   ano = date.getFullYear();
-  mes = ("00" + date.getMonth() + 1).slice(-2);
+  mes = ("00" + (date.getMonth() + 1)).slice(-2);
   dia = ("00" + date.getDate()).slice(-2);
   return ano + "-" + mes + "-" + dia;
 }
