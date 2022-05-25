@@ -28,3 +28,4 @@
 0.26: Add support for Monday as first day of the week (#1780)
 0.27: New UI!
 0.28: Fix bug with alarms not firing when configured to fire only once
+0.29: Fix wrong 'dow' handling in new timer if first day of week is Monday
