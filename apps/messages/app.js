@@ -74,7 +74,6 @@ function getNegImage() {
   return atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA=");
 }
 
-
 function showMapMessage(msg) {
   active = "map";
   var m;

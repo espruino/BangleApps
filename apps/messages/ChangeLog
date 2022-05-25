@@ -50,5 +50,5 @@
 0.35: Reset graphics colors before rendering a message (possibly fix #1752)
 0.36: Ensure a new message plus an almost immediate deletion of that message doesn't load the messages app (fix #1362)
 0.37: Now use the setUI 'back' icon in the top left rather than specific buttons/menu items
-0.38: Add notification icons in the widget
-
+0.38: Add telegram foss handling
+0.39: Add notification icons in the widget
