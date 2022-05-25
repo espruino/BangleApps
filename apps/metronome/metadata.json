@@ -1,0 +1,17 @@
+{
+  "id": "metronome",
+  "name": "Metronome",
+  "version": "0.07",
+  "readme": "README.md",
+  "description": "Makes the watch blinking and vibrating with a given rate",
+  "icon": "metronome_icon.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-metronome-screenshot.png"}],
+  "storage": [
+    {"name":"metronome.app.js","url":"metronome.js"},
+    {"name":"metronome.img","url":"metronome-icon.js","evaluate":true},
+    {"name":"metronome.settings.js","url":"settings.js"}
+  ]
+}

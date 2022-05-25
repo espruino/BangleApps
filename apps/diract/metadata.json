@@ -1,0 +1,17 @@
+{
+  "id": "diract",
+  "name": "DirAct",
+  "shortName": "DirAct",
+  "version": "0.02",
+  "description": "Proximity interaction detection.",
+  "icon": "diract.png",
+  "type": "app",
+  "tags": "tool,sensors",
+  "supports" : [ "BANGLEJS2" ],
+  "allow_emulator": false,
+  "readme": "README.md",
+  "storage": [
+    { "name": "diract.app.js", "url": "diract.js" },
+    { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
+  ]
+}

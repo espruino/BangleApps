@@ -5,13 +5,18 @@ if (window.location.host=="banglejs.com") {
   document.title += " [Development]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
+} else if (window.location.hostname==='localhost') {
+  document.title += " [Local]";
+  Const.APPS_JSON_FILE = "apps.local.json";
+  document.getElementById("apploaderlinks").innerHTML =
+    'This is your local Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 } else {
   document.title += " [Unofficial]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v11";
+var RECOMMENDED_VERSION = "2v13";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -20,19 +25,20 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 // Set up source code URL
 (function() {
   let username = "espruino";
-  let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+  let githubMatch = window.location.href.match(/\/([\w-]+)\.github\.io/);
   if (githubMatch) username = githubMatch[1];
   Const.APP_SOURCECODE_URL = `https://github.com/${username}/BangleApps/tree/master/apps`;
 })();
 
 // When a device is found, filter the apps accordingly
 function onFoundDeviceInfo(deviceId, deviceVersion) {
-  var fwURL = "#";
+  var fwURL = "#", fwExtraText = "";
   if (deviceId == "BANGLEJS") {
     fwURL = "https://www.espruino.com/Bangle.js#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold BTN3\nto reload';
   }
   if (deviceId == "BANGLEJS2") {
+    fwExtraText = "with the <b>Firmware Update</b> app in this App Loader, or "
     fwURL = "https://www.espruino.com/Bangle.js2#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
@@ -40,7 +46,7 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can <a href="${fwURL}" target="_blank">update with the instructions here</a>` ,"warning", 20000);
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
   }
 
 
@@ -150,6 +156,29 @@ window.addEventListener('load', (event) => {
   });
 
   // Button to install all default apps in one go
+  document.getElementById("reinstallall").addEventListener("click",event=>{
+    var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
+      getInstalledApps().then(installedapps => {
+        console.log(installedapps);
+        var promise = Promise.resolve();
+        installedapps.forEach(app => {
+          if (app.custom)
+            return console.log(`Ignoring ${app.id} as customised`);
+          var oldApp = app;
+          app = appJSON.find(a => a.id==oldApp.id);
+          if (!app)
+            return console.log(`Ignoring ${oldApp.id} as not found`);
+          promise = promise.then(() => updateApp(app));
+        });
+        return promise;
+      }).catch(err=>{
+        Progress.hide({sticky:true});
+        showToast("App re-install failed, "+err,"error");
+      });
+    });
+  });
+
+  // Button to install all default apps in one go
   document.getElementById("installdefault").addEventListener("click",event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
@@ -165,6 +194,17 @@ window.addEventListener('load', (event) => {
     });
   });
 
+  // BLE Compatibility
+  var selectLang = document.getElementById("settings-ble-compat");
+  if (SETTINGS.bleCompat!==undefined)
+    Puck.increaseMTU = !SETTINGS.bleCompat;
+  selectLang.addEventListener("change",event=>{
+    console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
+    SETTINGS.bleCompat = event.target.checked;
+    Puck.increaseMTU = !SETTINGS.bleCompat;
+    saveSettings();
+  });
+
   // Load language list
   httpGet("lang/index.json").then(languagesJSON=>{
     var languages;
@@ -173,6 +213,7 @@ window.addEventListener('load', (event) => {
     } catch(e) {
       console.error("lang/index.json Corrupted", e);
     }
+    languages = languages.filter( l=> l.disabled===undefined );
 
     function reloadLanguage() {
       LANGUAGE = undefined;
@@ -195,13 +236,12 @@ window.addEventListener('load', (event) => {
     }
 
     var selectLang = document.getElementById("settings-lang");
-    console.log(languages);
     languages.forEach(lang => {
       selectLang.innerHTML += `<option value="${lang.code}" ${SETTINGS.language==lang.code?"selected":""}>${lang.name} (${lang.code})</option>`;
     });
     selectLang.addEventListener("change",event=>{
       SETTINGS.language = event.target.value;
-      reloadLanguage();      
+      reloadLanguage();
       saveSettings();
     });
     reloadLanguage();

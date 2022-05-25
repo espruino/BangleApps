@@ -1,0 +1,14 @@
+{ "id": "ruuviwatch",
+  "name": "Ruuvi Watch",
+  "shortName":"Ruuvi Watch",
+  "icon": "ruuviwatch.png",
+  "version":"0.04",
+  "description": "Keep an eye on RuuviTag devices (https://ruuvi.com). For RuuviTags using the v5 format.",
+  "readme":"README.md",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"ruuviwatch.app.js","url":"ruuviwatch.app.js"},
+    {"name":"ruuviwatch.img","url":"ruuviwatch.app-icon.js","evaluate":true}
+  ]
+}

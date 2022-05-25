@@ -3,9 +3,10 @@
 If you have an Android phone with Gadgetbridge, this app allows you to view
 and control music playback.
 
-| Bangle.js 1                                | Bangle.js 2                                |
-|:-------------------------------------------|:-------------------------------------------|
-| ![Screenshot: Bangle 1](screenshot_v1.png) | ![Screenshot: Bangle 2](screenshot_v2.png) |
+| Bangle.js 1                                              | Bangle.js 2                                              |
+|:---------------------------------------------------------|:---------------------------------------------------------|
+| ![Screenshot: Bangle 1 Dark theme](screenshot_v1_d.png)  | ![Screenshot: Bangle 2 Darm theme](screenshot_v2_d.png)  |
+| ![Screenshot: Bangle 1 Light theme](screenshot_v1_l.png) | ![Screenshot: Bangle 2 Light theme](screenshot_v2_l.png) |
 
 Download the [latest Gadgetbridge for Android here](https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/).
 
@@ -14,7 +15,6 @@ Download the [latest Gadgetbridge for Android here](https://f-droid.org/packages
 * Dynamic colors based on Track/Artist/Album name
 * Scrolling display for long titles
 * Automatic start when music plays
-* Time and date display
 
 ## Settings
 
@@ -40,9 +40,7 @@ Disable double/triple pressing Middle Button: always simply toggle play/pause.
 * Button 3 (*Bangle.js 1*): Volume down
 
 ### Touch
-* Left: Pause/previous song
-* Right: Next song/resume
-* Center: Toggle play/pause
+* Touch: Toggle play/pause
 * Swipe left/right: Next/previous song
 * Swipe up/down (*Bangle.js 2*): Volume up/down
 

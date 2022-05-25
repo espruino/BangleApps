@@ -1,0 +1,17 @@
+{
+  "id": "gbtwist",
+  "name": "Gadgetbridge Twist Control",
+  "shortName": "Twist Control",
+  "version": "0.01",
+  "description": "Shake your wrist to control your music app via Gadgetbridge",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tools,bluetooth,gadgetbridge,music",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": false,
+  "storage": [
+    {"name":"gbtwist.app.js","url":"app.js"},
+    {"name":"gbtwist.img","url":"app-icon.js","evaluate":true}
+  ]
+}

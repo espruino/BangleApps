@@ -1,0 +1,18 @@
+{
+  "id": "trex",
+  "name": "T-Rex",
+  "version": "0.04",
+  "description": "T-Rex game in the style of Chrome's offline game",
+  "icon": "trex.png",
+  "screenshots": [{"url":"screenshot_trex.png"}],
+  "tags": "game",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"trex.app.js","url":"trex.js"},
+    {"name":"trex.img","url":"trex-icon.js","evaluate":true},
+    {"name":"trex.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"trex.score","storageFile":true}]
+}

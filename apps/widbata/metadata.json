@@ -1,0 +1,16 @@
+{
+  "id": "widbata",
+  "name": "Battery Level Widget (Themed)",
+  "shortName":"Battery Theme",
+  "icon": "widbata.png",
+  "screenshots": [{"url":"screenshot_widbata_1.png"}],
+  "version":"0.04",
+  "type": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "description": "Shows the current battery level status in the top right using the clocks colour theme",
+  "tags": "widget,battery",
+  "storage": [
+    {"name":"widbata.wid.js","url":"widbata.wid.js"}
+   ]
+}

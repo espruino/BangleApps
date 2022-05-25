@@ -4,7 +4,9 @@
   var settings = Object.assign({
     showClocks: true,
     showLaunchers: true,
-    direct: false
+    direct: false,
+    oneClickExit:false,
+    swipeExit: false
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -35,6 +37,22 @@
       format: v => v?"On":"Off",
       onchange: v => {
         settings.direct = v;
+        writeSettings();
+      }
+    },
+    'Swipe Exit': {
+      value: settings.swipeExit,
+      format: v => v?"On":"Off",
+      onchange: v => {
+        settings.swipeExit = v;
+        writeSettings();
+      }
+    },
+    'One click exit': {
+      value: settings.oneClickExit,
+      format: v => v?"On":"Off",
+      onchange: v => {
+        settings.oneClickExit = v;
         writeSettings();
       }
     }

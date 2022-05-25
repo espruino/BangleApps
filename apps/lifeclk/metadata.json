@@ -1,0 +1,16 @@
+{
+  "id": "lifeclk",
+  "name": "Game of Life Clock",
+  "shortName": "Conway's Clock",
+  "version": "0.06",
+  "description": "Modification and clockification of Conway's Game of Life",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"lifeclk.app.js","url":"app.min.js"},
+    {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

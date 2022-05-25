@@ -1,0 +1,14 @@
+{
+  "id": "countdowntimer",
+  "name": "Countdown Timer",
+  "version": "0.01",
+  "description": "A simple countdown timer with a focus on usability",
+  "icon": "countdowntimer.png",
+  "tags": "timer,tool",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"countdowntimer.app.js","url":"countdowntimer.js"},
+    {"name":"countdowntimer.img","url":"countdowntimer-icon.js","evaluate":true}
+  ]
+}

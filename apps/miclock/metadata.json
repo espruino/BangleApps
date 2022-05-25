@@ -1,0 +1,16 @@
+{
+  "id": "miclock",
+  "name": "Mixed Clock",
+  "version": "0.05",
+  "description": "A mix of analog and digital Clock",
+  "icon": "clock-mixed.png",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [{"url":"bangle1-mixed-clock-screenshot.png"}],
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"miclock.app.js","url":"clock-mixed.js"},
+    {"name":"miclock.img","url":"clock-mixed-icon.js","evaluate":true}
+  ]
+}

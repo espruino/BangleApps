@@ -1,0 +1,16 @@
+{
+  "id": "cubescramble",
+  "name": "Cube Scramble",
+  "version":"0.04",
+  "description": "A random scramble generator for the 3x3 Rubik's cube with a basic timer",
+  "icon": "cube-scramble.png",
+  "tags": "",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle2-cube-scramble-screenshot.png"},{"url":"bangle1-cube-scramble-screenshot.png"}],
+  "storage": [
+    {"name":"cubescramble.app.js","url":"cube-scramble.js"},
+    {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
+  ]
+}

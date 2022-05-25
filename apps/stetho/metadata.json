@@ -1,0 +1,13 @@
+{
+  "id": "stetho",
+  "name": "Stethoscope",
+  "version": "0.01",
+  "description": "Hear your heart rate",
+  "icon": "stetho.png",
+  "tags": "health",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"stetho.app.js","url":"stetho.js"},
+    {"name":"stetho.img","url":"stetho-icon.js","evaluate":true}
+  ]
+}

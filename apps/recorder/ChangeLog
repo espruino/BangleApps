@@ -11,3 +11,12 @@
 0.07: Add recording for Barometer
       Record all HRM events
       Move recording for CoreTemp to its own app
+0.08: Memory usage improvements for recorder app itself
+0.09: Show correct number for log in overwrite prompt
+0.10: Fix broken recorder settings (when launched from settings app)
+0.11: Fix KML and GPX export when there is no GPS data
+0.12: Fix 'Back' label positioning on track/graph display, make translateable
+0.13: Fix for when widget is used before app
+0.14: Remove unneeded variable assignment
+0.15: Show distance more accurately in conjunction with new locale app (fix #1523)
+0.16: Ability to append to existing track (fix #1712)

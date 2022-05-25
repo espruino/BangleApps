@@ -1,0 +1,18 @@
+{
+  "id": "animclk",
+  "name": "Animated Clock",
+  "shortName": "Anim Clock",
+  "version": "0.03",
+  "description": "An animated clock face using Mark Ferrari's amazing 8 bit game art and palette cycling: http://www.markferrari.com/art/8bit-game-art",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock,animated",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"animclk.app.js","url":"app.js"},
+    {"name":"animclk.pixels1","url":"animclk.pixels1"},
+    {"name":"animclk.pixels2","url":"animclk.pixels2"},
+    {"name":"animclk.pal","url":"animclk.pal"},
+    {"name":"animclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

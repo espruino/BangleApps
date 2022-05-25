@@ -1,0 +1,15 @@
+{
+  "id": "snake",
+  "name": "Snake",
+  "shortName": "Snake",
+  "version": "0.02",
+  "description": "The classic snake game. Eat apples and don't bite your tail.",
+  "icon": "snake.png",
+  "tags": "game,fun",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"snake.app.js","url":"snake.js"},
+    {"name":"snake.img","url":"snake-icon.js","evaluate":true}
+  ]
+}

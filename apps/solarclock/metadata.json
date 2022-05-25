@@ -1,0 +1,29 @@
+{
+  "id": "solarclock",
+  "name": "Solar Clock",
+  "version": "0.02",
+  "description": "Using your current or chosen location the solar watch face shows the Sun's sky position, time and date. Also allows you to wind backwards and forwards in time to see the sun's position",
+  "icon": "solar_clock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "allow_emulator": false,
+  "storage": [
+    {"name":"solarclock.app.js","url":"solar_clock.js"},
+    {"name":"solarclock.img","url":"solar_clock-icon.js","evaluate":true},
+    {"name":"solar_colors.js","url":"solar_colors.js"},
+    {"name":"solar_controller.js","url":"solar_controller.js"},
+    {"name":"solar_date_utils.js","url":"solar_date_utils.js"},
+    {"name":"solar_graphic_utils.js","url":"solar_graphic_utils.js"},
+    {"name":"solar_location.js","url":"solar_location.js"},
+    {"name":"solar_math_utils.js","url":"solar_math_utils.js"},
+    {"name":"solar_loc.Reykjavik.json","url":"solar_loc.Reykjavik.json"},
+    {"name":"solar_loc.Hong_Kong.json","url":"solar_loc.Hong_Kong.json"},
+    {"name":"solar_loc.Honolulu.json","url":"solar_loc.Honolulu.json"},
+    {"name":"solar_loc.Rio.json","url":"solar_loc.Rio.json"},
+    {"name":"solar_loc.Tokyo.json","url":"solar_loc.Tokyo.json"},
+    {"name":"solar_loc.Seoul.json","url":"solar_loc.Seoul.json"}
+  ]
+}

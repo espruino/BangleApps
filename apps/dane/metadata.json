@@ -1,0 +1,16 @@
+{
+  "id": "dane",
+  "name": "Digital Assistant, not EDITH",
+  "shortName": "DANE",
+  "version": "0.16",
+  "description": "A Watchface inspired by Tony Stark's EDITH and based on https://arwes.dev/",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"dane.app.js","url":"app.js"},
+    {"name":"dane.img","url":"app-icon.js","evaluate":true}
+  ]
+}

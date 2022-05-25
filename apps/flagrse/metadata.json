@@ -1,0 +1,14 @@
+{
+  "id": "flagrse",
+  "name": "Espruino Flag Raiser",
+  "version": "0.01",
+  "description": "App to send a command to another Espruino to cause it to raise a flag",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"flagrse.app.js","url":"app.js"},
+    {"name":"flagrse.img","url":"app-icon.js","evaluate":true}
+  ]
+}

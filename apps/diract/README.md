@@ -5,7 +5,7 @@
 
 ## Usage
 
-Real-time interactions will be recognised by [Pareto Anywhere](https://www.reelyactive.com/pareto/anywhere/) open source middleware and any other program which observes the [DirAct open standard](https://reelyactive.github.io/diract/).
+Real-time interactions will be recognised by [Pareto Anywhere](https://www.reelyactive.com/pareto/anywhere/) open source middleware and any other program which observes the [DirAct open standard](https://reelyactive.github.io/diract/).  See our [Bangle.js Development Guide](https://reelyactive.github.io/diy/banglejs-dev/) for details.
 
 
 ## Features

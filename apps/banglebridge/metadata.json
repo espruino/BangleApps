@@ -1,0 +1,17 @@
+{
+  "id": "banglebridge",
+  "name": "BangleBridge",
+  "shortName": "BangleBridge",
+  "version": "0.01",
+  "description": "Widget that allows Bangle Js to record pair and end data using Bluetooth Low Energy in combination with the BangleBridge Android App",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"banglebridge.wid.js","url":"widget.js"},
+    {"name":"banglebridge.watch.img","url":"watch.img"},
+    {"name":"banglebridge.heart.img","url":"heart.img"}
+  ]
+}

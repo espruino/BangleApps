@@ -1,0 +1,14 @@
+{
+  "id": "gpstimeserver",
+  "name": "GPS Time Server",
+  "version": "0.01",
+  "description": "A widget which automatically starts the GPS and turns Bangle.js into a Bluetooth time server.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpstimeserver.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "waveclk",
+  "name": "Wave Clock",
+  "version": "0.03",
+  "description": "A clock using a wave image by [Lillith May](https://www.instagram.com/_lilustrations_/)",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"waveclk.app.js","url":"app.js"},
+    {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

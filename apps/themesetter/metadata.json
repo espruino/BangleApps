@@ -1,0 +1,17 @@
+{ "id": "themesetter",
+  "name": "Theme Setter",
+  "shortName":"Theme Setter",
+  "version":"0.04",
+  "description": "a comfortable way to configure theme colors",
+  "icon": "app-icon.png",
+  "type": "app",
+  "tags": "tool",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"app-screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"themesetter.app.js","url":"app.js"},
+    {"name":"themesetter.img","url":"app-icon.js","evaluate":true}
+  ]
+}

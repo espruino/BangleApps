@@ -1,0 +1,3 @@
+0.01: Display pressure as number and hand
+0.02: Use theme color
+0.03: workaround for some firmwares that return 'undefined' for first call to barometer

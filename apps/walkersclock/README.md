@@ -59,3 +59,8 @@ on the second line of the watch.
 ## Future Enhancements
 * Ability to turn on the heart rate monitor and display the rate on the info line
 * Maybe a simple stopwatch capability
+
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

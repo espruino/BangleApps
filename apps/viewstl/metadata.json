@@ -1,0 +1,18 @@
+{
+  "id": "viewstl",
+  "name": "STL file viewer",
+  "shortName": "ViewSTL",
+  "version": "0.02",
+  "description": "This app allows you to view STL 3D models on your watch",
+  "icon": "icons8-octahedron-48.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"viewstl.app.js","url":"viewstl.min.js"},
+    {"name":"viewstl.img","url":"viewstl-icon.js","evaluate":true},
+    {"name":"tetra.stl","url":"tetra.stl"},
+    {"name":"cube.stl","url":"cube.stl"},
+    {"name":"icosa.stl","url":"icosa.stl"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "jbm8b",
+  "name": "Magic 8 Ball",
+  "shortName": "Magic 8 Ball",
+  "version": "0.03",
+  "description": "A simple fortune telling app",
+  "icon": "app.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"jbm8b.app.js","url":"app.js"},
+    {"name":"jbm8b.img","url":"app-icon.js","evaluate":true}
+  ]
+}

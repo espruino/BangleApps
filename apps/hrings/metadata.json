@@ -1,0 +1,16 @@
+{
+  "id": "hrings",
+  "name": "Hypno Rings",
+  "version": "0.01",
+  "description": "Experiment with trippy rings, press buttons for change",
+  "icon": "hypno-rings.png",
+  "type": "app",
+  "tags": "rings,hypnosis,psychadelic",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-hypno-rings-screenshot.png"}],
+  "storage": [
+    {"name":"hrings.app.js","url":"hypno-rings.js"},
+    {"name":"hrings.img","url":"hypno-rings-icon.js","evaluate":true}
+  ]
+}

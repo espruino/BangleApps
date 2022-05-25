@@ -1,0 +1,15 @@
+{
+  "id": "moonphase",
+  "name": "Moonphase",
+  "version": "0.02",
+  "description": "Shows current moon phase. Now with GPS function.",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-moon-phase-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"moonphase.app.js","url":"app.js"},
+    {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -2,10 +2,10 @@ setInterval(()=>WIDGETS["bata"].draw(), 60000);
 Bangle.on('lcdPower', function(on) {
   if (on) WIDGETS["bata"].draw();
 });
-WIDGETS["bata"]={area:"tr",width:27,draw:function() {
+WIDGETS["bata"]={area:"tr",sortorder:-10,width:27,draw:function() {
   var s = 26;
   var t = 13; // thickness
-  var x = this.x, y = this.y;
+  var x = this.x, y = this.y + 5;
   g.reset();
   g.setColor(g.theme.fg);
   g.fillRect(x,y+2,x+s-4,y+2+t); // outer

@@ -1,0 +1,16 @@
+{
+  "id": "breath",
+  "name": "Breathing App",
+  "shortName": "Breathing App",
+  "version": "0.01",
+  "description": "app to aid relaxation and train breath syncronicity using haptics and visualisation, also displays HR",
+  "icon": "app-icon.png",
+  "tags": "tools,health",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"breath.app.js","url":"app.js"},
+    {"name":"breath.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"breath.settings.json","url":"settings.json"}]
+}

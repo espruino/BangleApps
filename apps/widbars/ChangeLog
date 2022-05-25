@@ -1,1 +1,3 @@
 0.01: New Widget!
+0.02: Battery bar turns yellow on charge
+      Memory status bar does not trigger garbage collect

@@ -1,0 +1,15 @@
+{
+  "id": "widbars",
+  "name": "Bars Widget",
+  "version": "0.02",
+  "description": "Display several measurements as vertical bars.",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widbars.wid.js","url":"widget.js"}
+]
+}

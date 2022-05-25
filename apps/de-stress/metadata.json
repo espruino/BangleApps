@@ -1,0 +1,14 @@
+{
+  "id": "de-stress",
+  "name": "De-Stress",
+  "shortName": "De-Stress",
+  "version": "0.02",
+  "description": "Simple haptic heartbeat",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"de-stress.app.js","url":"app.js"},
+    {"name":"de-stress.img","url":"app-icon.js","evaluate":true}
+  ]
+}

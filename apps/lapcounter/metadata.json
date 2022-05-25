@@ -1,0 +1,17 @@
+{
+  "id": "lapcounter",
+  "name": "Lap Counter",
+  "version": "0.03",
+  "description": "Click button to count laps. Shows count and total time snapshot (like a stopwatch, but laid back).",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "app",
+  "tags": "tool,outdoors",
+  "readme":"README.md",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"lapcounter.app.js","url":"app.js"},
+    {"name":"lapcounter.img","url":"app-icon.js","evaluate":true}
+  ]
+}

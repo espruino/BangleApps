@@ -1,0 +1,18 @@
+{
+  "id": "getup",
+  "name": "Get Up",
+  "shortName": "Get Up",
+  "version": "0.01",
+  "description": "Reminds you to getup every x minutes. Sitting to long is dangerous!",
+  "icon": "app.png",
+  "tags": "tools,health",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "screenshots": [{"url":"bangle1-get-up-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"getup.app.js","url":"app.js"},
+    {"name":"getup.settings.js","url":"settings.js"},
+    {"name":"getup.img","url":"app-icon.js","evaluate":true}
+  ]
+}

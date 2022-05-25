@@ -1,0 +1,16 @@
+{
+  "id": "ctrclk",
+  "name": "Centerclock",
+  "version": "0.03",
+  "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-center-clock-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"ctrclk.app.js","url":"app.js"},
+    {"name":"ctrclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "ncrclk",
+  "name": "NCR Clock",
+  "shortName": "NCR Clock",
+  "version": "0.02",
+  "description": "NodeConf Remote clock",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"ncrclk.app.js","url":"app.js"},
+    {"name":"ncrclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "svclock",
+  "name": "Simple V-Clock",
+  "version": "0.04",
+  "description": "Modification of Simple Clock 0.04 to use Vectorfont",
+  "icon": "vclock-simple.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle2-simple-v-clock-screenshot.png"}],
+  "storage": [
+    {"name":"svclock.app.js","url":"vclock-simple.js"},
+    {"name":"svclock.img","url":"vclock-simple-icon.js","evaluate":true}
+  ]
+}

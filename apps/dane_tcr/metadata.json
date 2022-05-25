@@ -1,0 +1,16 @@
+{
+  "id": "dane_tcr",
+  "name": "DANE Touch Launcher",
+  "shortName": "DANE Toucher",
+  "version": "0.07",
+  "description": "Touch enable left to right launcher in the style of the DANE Watchface",
+  "icon": "app.png",
+  "type": "launch",
+  "tags": "tool,system,launcher",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"dane_tcr.app.js","url":"app.js"},
+    {"name":"dane_tcr.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"dane_tcr.json"}]
+}

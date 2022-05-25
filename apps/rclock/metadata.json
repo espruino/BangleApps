@@ -1,0 +1,15 @@
+{
+  "id": "rclock",
+  "name": "Round clock with seconds,  minutes and date",
+  "shortName": "Round Clock",
+  "version": "0.06",
+  "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"rclock.app.js","url":"rclock.app.js"},
+    {"name":"rclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

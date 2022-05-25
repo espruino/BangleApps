@@ -1,0 +1,16 @@
+{
+  "id": "pomodo",
+  "name": "Pomodoro",
+  "version": "0.02",
+  "description": "A simple pomodoro timer.",
+  "icon": "pomodoro.png",
+  "type": "app",
+  "tags": "pomodoro,cooking,tools",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle2-pomodoro-screenshot.png"}],
+  "storage": [
+    {"name":"pomodo.app.js","url":"pomodoro.js"},
+    {"name":"pomodo.img","url":"pomodoro-icon.js","evaluate":true}
+  ]
+}

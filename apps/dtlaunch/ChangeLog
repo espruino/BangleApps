@@ -5,3 +5,10 @@
 0.05: add Bangle 2 version
 0.06: Adds settings page (hide clocks or launchers)
 0.07: Adds setting for directly launching app on touch for Bangle 2
+0.08: Optimize line wrapping for Bangle 2
+0.09: fix the trasparent widget bar if there are no widgets for Bangle 2
+0.10: added "one click exit" setting  for Bangle 2
+0.11: Fix bangle.js 1 white icons not displaying
+0.12: On Bangle 2 change to swiping up/down to move between pages as to match page indicator. Swiping from left to right now loads the clock.
+0.13: Added swipeExit setting so that left-right to exit is an option
+0.14: Don't move pages when doing exit swipe.

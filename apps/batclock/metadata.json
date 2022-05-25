@@ -1,0 +1,17 @@
+{
+  "id": "batclock",
+  "name": "Bat Clock",
+  "shortName": "Bat Clock",
+  "version": "0.02",
+  "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
+  "icon": "bat-clock.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"batclock.app.js","url":"bat-clock.app.js"},
+    {"name":"batclock.img","url":"bat-clock.icon.js","evaluate":true}
+  ]
+}

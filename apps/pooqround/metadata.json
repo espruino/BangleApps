@@ -1,0 +1,19 @@
+{ "id": "pooqround",
+  "name": "pooq Round watch face",
+  "shortName":"pooq Round",
+  "version":"0.02",
+  "description": "A 24 hour analogue watchface with high legibility and a novel style.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"pooqround.app.js","url":"app.js"},
+    {"name":"pooqround.img","url":"app-icon.js","evaluate":true}
+   ],
+   "data": [
+     {"name":"pooqround.json"}
+   ]
+}

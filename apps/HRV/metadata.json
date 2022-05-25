@@ -1,0 +1,15 @@
+{
+  "id": "HRV",
+  "name": "Heart Rate Variability monitor",
+  "shortName": "HRV monitor",
+  "version": "0.04",
+  "description": "Heart Rate Variability monitor, see Readme for more info",
+  "icon": "hrv.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"HRV.app.js","url":"app.js"},
+    {"name":"HRV.img","url":"app-icon.js","evaluate":true}
+  ]
+}

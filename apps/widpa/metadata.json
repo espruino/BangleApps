@@ -1,0 +1,16 @@
+{
+  "id": "widpa",
+  "name": "Simple Pedometer",
+  "shortName":"Simple Pedometer",
+  "icon": "screenshot_widpa.png",
+  "screenshots": [{"url":"screenshot_widpa.png"}],
+  "version":"0.04",
+  "type": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "description": "Displays the current step count from `Bangle.getHealthStatus(\"day\").steps` in 12x16 font",
+  "tags": "widget,battery",
+  "storage": [
+    {"name":"widpa.wid.js","url":"widpa.wid.js"}
+   ]
+}

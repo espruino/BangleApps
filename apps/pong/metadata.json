@@ -1,0 +1,18 @@
+{
+  "id": "pong",
+  "name": "Pong",
+  "shortName": "Pong",
+  "version": "0.03",
+  "description": "A clone of the Atari game Pong",
+  "icon": "pong.png",
+  "type": "app",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-pong-screenshot.png"}],
+  "storage": [
+    {"name":"pong.app.js","url":"app.js"},
+    {"name":"pong.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "about",
+  "name": "About",
+  "version": "0.12",
+  "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
+  "icon": "app.png",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"bangle1-about-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"about.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
+    {"name":"about.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
+    {"name":"about.img","url":"app-icon.js","evaluate":true}
+  ],
+  "sortorder": -4
+}

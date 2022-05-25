@@ -1,0 +1,17 @@
+{ "id": "simple_clock",
+  "name": "Simple Analog Clock",
+  "shortName":"Simple Clock",
+  "version":"0.02",
+  "description": "a simple, yet stylish, analog clock",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"app-screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"simple_clock.app.js","url":"app.js"},
+    {"name":"simple_clock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

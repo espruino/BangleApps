@@ -1,9 +1,12 @@
 var s = require("Storage");
-let fonts = g.getFonts();
 var scaleval = 1;
 var vectorval = 20;
 var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-let settings = require('Storage').readJSON("launch.json", true) || {};
+let settings = Object.assign({
+  showClocks: true,
+  fullscreen: false
+}, s.readJSON("launch.json", true) || {});
+
 if ("vectorsize" in settings) {
     vectorval = parseInt(settings.vectorsize);
 }
@@ -14,10 +17,10 @@ if ("font" in settings){
     }
     else{
         font = settings.font;
-        scaleval = (font.split('x')[1])/20;
+        scaleval = (font.split("x")[1])/20;
     }
 }
-var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="clock" || !app.type));
+var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type));
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -44,8 +47,11 @@ function drawApp(i, r) {
 }
 
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+
+if (!settings.fullscreen) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}
 
 E.showScroller({
   h : 64*scaleval, c : apps.length,
@@ -54,10 +60,10 @@ E.showScroller({
     var app = apps[i];
     if (!app) return;
     if (!app.src || require("Storage").read(app.src)===undefined) {
-      E.showMessage("App Source\nNot found");
+      E.showMessage(/*LANG*/"App Source\nNot found");
       setTimeout(drawMenu, 2000);
     } else {
-      E.showMessage("Loading...");
+      E.showMessage(/*LANG*/"Loading...");
       load(app.src);
     }
   }
@@ -72,7 +78,7 @@ if (process.env.HWVERSION==2) {
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
 var lockTimeout;
-Bangle.on('lock', locked => {
+Bangle.on("lock", locked => {
   if (lockTimeout) clearTimeout(lockTimeout);
   lockTimeout = undefined;
   if (locked)

@@ -1,0 +1,28 @@
+{
+  "id": "sensible",
+  "name": "SensiBLE",
+  "shortName": "SensiBLE",
+  "version": "0.06",
+  "description": "Collect, display and advertise real-time sensor data.",
+  "icon": "sensible.png",
+  "screenshots": [
+    { "url": "screenshot-top.png" },
+    { "url": "screenshot-acc.png" },
+    { "url": "screenshot-bar.png" },
+    { "url": "screenshot-gps.png" },
+    { "url": "screenshot-hrm.png" },
+    { "url": "screenshot-mag.png" }
+  ],
+  "type": "app",
+  "tags": "tool,sensors,bluetooth",
+  "supports" : [ "BANGLEJS2" ],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "sensible.app.js", "url": "sensible.js" },
+    { "name": "sensible.img", "url": "sensible-icon.js", "evaluate": true }
+  ],
+  "data": [
+    { "name": "sensible.data.json", "url": "settings.json", "storageFile": true }
+  ]
+}

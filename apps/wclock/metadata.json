@@ -1,0 +1,16 @@
+{
+  "id": "wclock",
+  "name": "Word Clock",
+  "version": "0.03",
+  "description": "Display Time as Text",
+  "icon": "clock-word.png",
+  "screenshots": [{"url":"screenshot_word.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"wclock.app.js","url":"clock-word.js"},
+    {"name":"wclock.img","url":"clock-word-icon.js","evaluate":true}
+  ]
+}

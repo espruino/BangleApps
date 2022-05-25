@@ -1,0 +1,15 @@
+{ "id": "golfscore",
+  "name": "Golf Score",
+  "shortName":"golfscore",
+  "version":"0.02",
+  "description": "keeps track of strokes during a golf game",
+  "icon": "app.png",
+  "tags": "outdoors",
+  "allow_emulator": true,
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"golfscore.app.js","url":"app.js"},
+    {"name":"golfscore.img","url":"app-icon.js","evaluate":true}
+  ]
+}

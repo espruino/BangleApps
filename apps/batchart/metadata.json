@@ -1,0 +1,16 @@
+{
+  "id": "batchart",
+  "name": "Battery Chart",
+  "shortName": "Battery Chart",
+  "version": "0.10",
+  "description": "A widget and an app for recording and visualizing battery percentage over time.",
+  "icon": "app.png",
+  "tags": "app,widget,battery,time,record,chart,tool",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"batchart.wid.js","url":"widget.js"},
+    {"name":"batchart.app.js","url":"app.js"},
+    {"name":"batchart.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,235 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/mourner/simplify-js@1.2.4/simplify.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<style>
+  #searchresults {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #searchresults li:hover {
+    background-color: #ccc;
+  }
+</style>
+
+<body>
+  <div class="container">
+    <div class="form-group">
+      <label class="form-label" for="course_id">Course Search</label>
+      <div class="input-group">
+        <input class="form-input" type="text" id="course_id" placeholder="Whistling Straits">
+        <button type="button" class="btn btn-primary input-group-btn" onclick="courseSearch();">Search</button>
+      </div>
+    </div>
+    <div class="columns" id="searchresults"></div>
+
+    <div>
+      <p id="status">No course loaded, please search for a course then choose 'select'.</p>
+      <button id="upload" class="btn btn-primary" disabled="true">Upload to Device</button>
+      <button id="download" class="btn btn-primary" disabled="true">Download Course</button>
+    </div>
+    <div>
+      <p>A course needs a few things to be parsed correctly by this tool.</p>
+      <ul>
+        <li>See official mapping guidelines <a
+            href="https://wiki.openstreetmap.org/wiki/Tag:leisure%3Dgolf_course">here</a>.</li>
+        <li>All holes and features must be within the target course's area.</li>
+        <li>Supported features are greens, fairways, tees, bunkers, water hazards and holes.</li>
+        <li>All features for a given hole should have the "ref" tag with the hole number as value. Shared features
+          should
+          list ref values separated by ';'. <a href="https://www.openstreetmap.org/way/36896320">example</a>.</li>
+        <li>There must be 18 holes and they must have the following tags: handicap, par, ref, dist</li>
+        <li>For any mapping assistance or issues, please file in the <a
+            href="https://github.com/espruino/BangleApps/issues/new?assignees=&labels=bug&template=bangle-bug-report-custom-form.yaml&title=[golfview]+Short+description+of+bug">official
+            repo</a></li>
+      </ul>
+      <a href="https://www.openstreetmap.org/way/25447898">Example Course</a>
+    </div>
+    <footer>
+      <hr />
+      <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</p>
+    </footer>
+  </div>
+
+  <script src="../../core/lib/customize.js"></script>
+  <script src="./maptools.js"></script>
+
+  <script>
+    const url = "https://overpass-api.de/api/interpreter";
+    const search_url = "https://nominatim.openstreetmap.org/search";
+    let search_query = null;
+    let course_input = null;
+    let current_course = null;
+    let search_results = $("#searchresults");
+
+    function buildCourseListElement(title, subtitle, element) {
+      let base_element = $(`<div class="column col-4">
+        <div class="tile">
+          <div class="tile-icon">
+            <figure class="avatar avatar-lg"><img src="./golfview.png" alt="Avatar"></figure>
+          </div>
+          <div class="tile-content">
+            <p class="tile-title">${title}</p>
+            <p class="tile-subtitle">${subtitle}</p>
+            <div class="btn-group btn-group-block">
+            </div>
+          </div>
+        </div>
+      </div>`);
+
+      // add the buttons
+      base_element.find('.btn-group')
+        .append($('<button>').addClass("btn btn-primary").text("select")
+          .on('click', function () {
+            console.log(element);
+            doQuery(element);
+          }))
+        .append($('<a>').attr('href', `https://www.openstreetmap.org/${element.osm_type}/${element.osm_id}`).attr('target', '_blank')
+          .append('<button>').addClass("btn").text("view")
+        );
+      return base_element
+    }
+
+    function courseSearch() {
+      let inputVal = document.getElementById("course_id").value;
+      search_query = {
+        "format": "jsonv2",
+        "q": inputVal,
+      };
+      doSearch();
+    }
+
+    function processFeatures(course_verbose) {
+      let course_processed = {
+        holes: {}
+      };
+      for (let i = 0; i < course_verbose.length; i++) {
+        const element = course_verbose[i];
+
+        if (element.tags.golf === "hole") {
+          // if we find a high-level hole feature
+          // todo check if hole exists
+          let current_hole = parseInt(element.tags.ref); //subsequent way features should be applied to the current hole
+          let tees = []
+          Object.keys(element.tags).forEach((key) => {
+            if (key.includes("dist")) {
+              tees.push(Math.round(element.tags[key]));
+            }
+          })
+          var hole = {
+            hole_number: current_hole,
+            handicap: parseInt(element.tags.handicap),
+            par: parseInt(element.tags.par),
+            nodesXY: preprocessCoords(element.geometry, element.geometry[0]),
+            tees: tees.sort(),
+            way: element.geometry,
+            features: [],
+            angle: 0,
+          }
+
+          hole.angle = angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1])
+          course_processed.holes[current_hole.toString()] = hole;
+        }
+
+        else {
+          if (!("ref" in element.tags)) continue;
+          if (element.type === "relation") {
+            for (member of element.members) {
+              if (member.role === "outer") break; // only use the outer because it is overwritten anyway
+            }
+            Object.assign(element, { "geometry": member.geometry });
+          }
+          // if we find a feature add it to the corresponding hole
+          let active_holes = element.tags.ref.split(";"); // a feature can be on more than one hole
+          for (feature_hole of active_holes) {
+            let new_feature = {
+              nodesXY: preprocessCoords(element.geometry, course_processed.holes[feature_hole].way[0]),
+              type: element.tags.golf,
+              id: element.id,
+            }
+            course_processed.holes[feature_hole].features.push(new_feature);
+          }
+        }
+      }
+
+      return course_processed;
+    }
+
+    function preprocessCoords(coord_array, origin) {
+      let many_points = arraytoXY(coord_array, origin);
+      let less_points = simplify(many_points, 2, true); // from simplify-js
+
+      // convert to int to save some memory
+      less_points = less_points.map(function (pt) {
+        return { x: Math.round(pt.x), y: Math.round(pt.y) }
+      });
+
+      return less_points;
+    }
+
+    var courses = [];
+    $("#upload").click(function () {
+      sendCustomizedApp({
+        storage: courses,
+      });
+    });
+
+    $("#download").click(function () {
+      downloadObjectAsJSON(courses[0].content, "golfcourse-download");
+    });
+
+    function testfunc(params) {
+      console.log(params);
+    }
+
+    // download info from the course
+    function doSearch() {
+      $.get(search_url, search_query, function (result) {
+        if (result.length === 0) {
+          $('#status').text("Course not found!");
+          return;
+        }
+
+        search_results.empty();
+        for (let index = 0; index < result.length; index++) {
+          const element = result[index];
+          if (element.type != "golf_course") continue;
+          search_results.append(buildCourseListElement(element.display_name.split(",")[0], element.display_name, element));
+        }
+
+      })
+    }
+
+    // download info from the course
+    function doQuery(course) {
+      const query = `[out:json][timeout:5];way(${course.osm_id});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+      const course_id = course["osm_id"];
+      $.post(url, query, function (result) {
+        if (result.elements.length === 0) {
+          $('#status').text("Course not found!");
+          return;
+        }
+        console.log(result);
+        out = processFeatures(result.elements);
+        console.log(out);
+        courses.push({
+          name: `golf-${course_id}.json`,
+          content: JSON.stringify(out),
+        });
+        $('#status').text("Course retrieved!");
+        $('#upload').attr("disabled", false);
+        $('#download').attr("disabled", false);
+      })
+    }
+
+  </script>
+</body>
+
+</html>

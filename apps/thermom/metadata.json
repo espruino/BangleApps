@@ -1,0 +1,15 @@
+{
+  "id": "thermom",
+  "name": "Thermometer",
+  "version": "0.05",
+  "description": "Displays the current temperature in degree Celsius/Fahrenheit (depending on locale), updates every 10 seconds with average of last 5 readings.",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"thermom.app.js","url":"app.js"},
+    {"name":"thermom.img","url":"app-icon.js","evaluate":true}
+  ]
+}

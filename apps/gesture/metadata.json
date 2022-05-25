@@ -1,0 +1,16 @@
+{
+  "id": "gesture",
+  "name": "Gesture Test",
+  "version": "0.01",
+  "description": "BETA! Uploads a basic Tensorflow Gesture model, and then outputs each gesture as a message",
+  "icon": "gesture.png",
+  "type": "app",
+  "tags": "gesture,ai",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"gesture.app.js","url":"gesture.js"},
+    {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
+    {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
+    {"name":"gesture.img","url":"gesture-icon.js","evaluate":true}
+  ]
+}

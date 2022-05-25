@@ -1,0 +1,16 @@
+{
+  "id": "bclock",
+  "name": "Binary Clock",
+  "version": "0.03",
+  "description": "A simple binary clock watch face",
+  "icon": "clock-binary.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-binary-clock-screenshot.png"}],
+  "storage": [
+    {"name":"bclock.app.js","url":"clock-binary.js"},
+    {"name":"bclock.img","url":"clock-binary-icon.js","evaluate":true}
+  ]
+}

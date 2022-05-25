@@ -1,0 +1,14 @@
+{
+  "id": "slevel",
+  "name": "Spirit Level",
+  "version": "0.04",
+  "description": "Show the current angle of the watch, so you can use it to make sure something is absolutely flat",
+  "icon": "spiritlevel.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"slevel.app.js","url":"spiritlevel.js"},
+    {"name":"slevel.img","url":"spiritlevel-icon.js","evaluate":true}
+  ]
+}

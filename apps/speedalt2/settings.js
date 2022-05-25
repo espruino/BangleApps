@@ -30,6 +30,11 @@
     writeSettings();
   }
 
+  function setSfx(s) {
+    settings.wptSfx = s;
+    writeSettings();
+  }
+
   
   const appMenu = {
     '': {'title': 'GPS Adv Sprt II'},
@@ -38,6 +43,7 @@
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
     'Kalman Filter' : function() { E.showMenu(kalMenu); },
+    'Wpt File Suffix' : function() { E.showMenu(sfxMenu); },
     'Touch' : {
        value : settings.touch,
        format : v => v?"On":"Off",
@@ -48,7 +54,7 @@
   const unitsMenu = {
     '': {'title': 'Units'},
     '< Back': function() { E.showMenu(appMenu); },
-    'default (spd)' : function() { setUnits(0,''); },
+//    'default (spd)' : function() { setUnits(0,''); },
     'Kph (spd)' : function() { setUnits(1,'kph'); },
     'Knots (spd)' : function() { setUnits(1.852,'kts'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
@@ -67,6 +73,15 @@
     'Hi Contrast' : function() { setColour(1); },
     'Night' : function() { setColour(2); },
     'Inverted' : function() { setColour(3); }
+  };
+  
+  const sfxMenu = {
+    '': {'title': 'Wpt File Suffix'},
+    '< Back': function() { E.showMenu(appMenu); },
+    'Default' : function() { setSfx(''); },
+    '1' : function() { setSfx('1'); },
+    '2' : function() { setSfx('2'); },
+    '3' : function() { setSfx('3'); }
   };
   
   const kalMenu = {

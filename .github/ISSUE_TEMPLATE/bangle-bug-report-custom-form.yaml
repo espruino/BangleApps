@@ -1,0 +1,60 @@
+name: Bangle.js bug report
+description: "Create a issue to help us improve!"
+title: "[app/widget name] Short description of bug"
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **:fire: Attention: If you have a question then please ask on the [Bangle.js forum](http://forum.espruino.com/microcosms/1424/) :fire:**
+        -----------------------------------------------------
+  - type: dropdown
+    id: hwversion
+    attributes:
+      label: Affected hardware version
+      description: |
+        Which Bangle hardware version(s) is/are affected? _You can select multiple entries._
+      options:
+        - Bangle 1
+        - Bangle 2
+      multiple: true
+    validations:
+      required: true
+  - type: input
+    id: fwversion
+    attributes:
+      label: Your firmware version
+      description: |
+        **Please make sure you have installed the latest (released) firmware!**
+        To find your firmware version, check the `About` Bangle.js app or connect with [the App Loader](https://banglejs.com/apps/), click `More...` and look for a `Device Info` heading.
+        If the issue occurs only in "Cutting Edge" builds, please mention this.
+        
+        **FW Update instructions:**
+        * **Bangle 2:** [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)
+        * **Bangle 1:** [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
+        _Hint: The links will open in-place (hold ctrl/cmd-key and click to open in a new tab instead)_
+      placeholder: e.g. 2v12
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: The bug
+      description: |
+        **Please also mention the expected behaviour and steps to reproduce**
+      placeholder: |
+        ### Describe the bug
+        A clear and concise description of what the bug is.
+        
+        ### Expected behavior
+        A clear and concise description of what you expected to happen.
+
+        ### Steps to reproduce
+        1. Do you have other apps/widgets installed that are relevant?
+        2. Start app xy
+        3. Perform some action
+        4. bug occurs
+
+    validations:
+      required: true

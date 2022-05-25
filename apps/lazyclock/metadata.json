@@ -1,0 +1,17 @@
+{
+  "id": "lazyclock",
+  "name": "Lazy Clock",
+  "version": "0.03",
+  "description": "Tells the time, roughly",
+  "icon": "lazyclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "screenshots": [{"url":"bangle1-lazy-clock-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
+    {"name":"lazyclock.img","url":"lazyclock-icon.js","evaluate":true}
+  ]
+}

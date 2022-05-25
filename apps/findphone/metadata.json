@@ -1,0 +1,16 @@
+{
+  "id": "findphone",
+  "name": "Find Phone",
+  "shortName": "Find Phone",
+  "version": "0.03",
+  "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳  Note: The functionality is available even without this app, just go to Settings, App Settings, Gadgetbridge, Find Phone.",
+  "icon": "app.png",
+  "tags": "tool,android",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"findphone.app.js","url":"app.js"},
+    {"name":"findphone.img","url":"app-icon.js","evaluate":true}
+  ]
+}

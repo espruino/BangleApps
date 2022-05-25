@@ -1,0 +1,15 @@
+{
+  "id": "fclock",
+  "name": "fclock",
+  "shortName": "F Clock",
+  "version": "0.02",
+  "description": "Simple design of a digital clock",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"fclock.app.js","url":"fclock.app.js"},
+    {"name":"fclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "worldclock",
+  "name": "World Clock - 4 time zones",
+  "shortName": "World Clock",
+  "version": "0.05",
+  "description": "Current time zone plus up to four others",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_world.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"worldclock.app.js","url":"app.js"},
+    {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"worldclock.settings.json"}]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "heart",
+  "name": "Heart Rate Recorder",
+  "shortName": "HRM Record",
+  "version": "0.07",
+  "description": "Application that allows you to record your heart rate. Can run in background",
+  "icon": "app.png",
+  "tags": "tool,health,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"heart.app.js","url":"app.js"},
+    {"name":"heart.img","url":"app-icon.js","evaluate":true},
+    {"name":"heart.wid.js","url":"widget.js"}
+  ],
+  "data": [{"name":"heart.json"},{"wildcard":".heart?","storageFile":true}]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "miplant",
+  "name": "Xiaomi Plant Sensor",
+  "shortName": "Mi Plant",
+  "version": "0.02",
+  "description": "Reads and displays data from Xiaomi bluetooth plant moisture sensors",
+  "icon": "app.png",
+  "tags": "xiaomi,mi,plant,ble,bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"miplant.app.js","url":"app.js"},
+    {"name":"miplant.img","url":"app-icon.js","evaluate":true}
+  ]
+}

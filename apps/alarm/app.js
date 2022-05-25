@@ -1,181 +1,358 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var alarms = require("Storage").readJSON("alarm.json",1)||[];
-/*alarms = [
-  { on : true,
-    hr : 6.5, // hours + minutes/60
-    msg : "Eat chocolate",
-    last : 0, // last day of the month we alarmed on - so we don't alarm twice in one day!
-    rp : true, // repeat
-    as : false, // auto snooze
-    timer : 5, // OPTIONAL - if set, this is a timer and it's the time in minutes
+// 0 = Sunday (default), 1 = Monday
+const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
+const WORKDAYS = 62
+const WEEKEND = firstDayOfWeek ? 192 : 65;
+const EVERY_DAY = firstDayOfWeek ? 254 : 127;
+
+const iconAlarmOn = "\0" + atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/n+B/n+B/h+B/4+A/+8A//8Af/4AP/wAH/gAB+AAAAAAAAAA==");
+const iconAlarmOff = "\0" + (g.theme.dark
+  ? atob("GBjBAP////8AAAAAAAAGAGAOAHAcfjg5/5wD/8AH/+AP5/AP5/Af5/gf5/gf5wAf5gAf4Hgf+f4P+bYP8wMH84cD84cB8wMAebYAAf4AAHg=")
+  : atob("GBjBAP//AAAAAAAAAAAGAGAOAHAcfjg5/5wD/8AH/+AP5/AP5/Af5/gf5/gf5wAf5gAf4Hgf+f4P+bYP8wMH84cD84cB8wMAebYAAf4AAHg="));
+
+const iconTimerOn = "\0" + (g.theme.dark
+  ? atob("GBjBAP////8AAAAAAAAAAAAH/+AH/+ABgYABgYABgYAA/wAA/wAAfgAAPAAAPAAAfgAA5wAAwwABgYABgYABgYAH/+AH/+AAAAAAAAAAAAA=")
+  : atob("GBjBAP//AAAAAAAAAAAAAAAH/+AH/+ABgYABgYABgYAA/wAA/wAAfgAAPAAAPAAAfgAA5wAAwwABgYABgYABgYAH/+AH/+AAAAAAAAAAAAA="));
+const iconTimerOff = "\0" + (g.theme.dark
+  ? atob("GBjBAP////8AAAAAAAAAAAAH/+AH/+ABgYABgYABgYAA/wAA/wAAfgAAPAAAPAAAfgAA5HgAwf4BgbYBgwMBg4cH84cH8wMAAbYAAf4AAHg=")
+  : atob("GBjBAP//AAAAAAAAAAAAAAAH/+AH/+ABgYABgYABgYAA/wAA/wAAfgAAPAAAPAAAfgAA5HgAwf4BgbYBgwMBg4cH84cH8wMAAbYAAf4AAHg="));
+
+// An array of alarm objects (see sched/README.md)
+var alarms = require("sched").getAlarms();
+
+function handleFirstDayOfWeek(dow) {
+  if (firstDayOfWeek == 1) {
+    if ((dow & 1) == 1) {
+      // In the scheduler API Sunday is 1.
+      // Here the week starts on Monday and Sunday is ON so
+      // when I read the dow I need to move Sunday to 128...
+      dow += 127;
+    } else if ((dow & 128) == 128) {
+      // ... and then when I write the dow I need to move Sunday back to 1.
+      dow -= 127;
+    }
   }
-];*/
-
-function formatTime(t) {
-  var hrs = 0|t;
-  var mins = Math.round((t-hrs)*60);
-  return hrs+":"+("0"+mins).substr(-2);
+  return dow;
 }
 
-function formatMins(t) {
-  mins = (0|t)%60;
-  hrs = 0|(t/60);
-  return hrs+":"+("0"+mins).substr(-2);
-}
-
-function getCurrentHr() {
-  var time = new Date();
-  return time.getHours()+(time.getMinutes()/60)+(time.getSeconds()/3600);
-}
+// Check the first day of week and update the dow field accordingly.
+alarms.forEach(alarm => alarm.dow = handleFirstDayOfWeek(alarm.dow));
 
 function showMainMenu() {
   const menu = {
-    '': { 'title': 'Alarm/Timer' },
-    /*LANG*/'< Back' : ()=>{load();},
-    /*LANG*/'New Alarm': ()=>editAlarm(-1),
-    /*LANG*/'New Timer': ()=>editTimer(-1)
+    "": { "title": /*LANG*/"Alarms & Timers" },
+    "< Back": () => load(),
+    /*LANG*/"New...": () => showNewMenu()
   };
-  alarms.forEach((alarm,idx)=>{
-    if (alarm.timer) {
-      txt = /*LANG*/"TIMER "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatMins(alarm.timer);
-    } else {
-      txt = /*LANG*/"ALARM "+(alarm.on?/*LANG*/"on  ":/*LANG*/"off ")+formatTime(alarm.hr);
-      if (alarm.rp) txt += /*LANG*/" (repeat)";
-    }
-    menu[txt] = function() {
-      if (alarm.timer) editTimer(idx);
-      else editAlarm(idx);
+
+  alarms.forEach((e, index) => {
+    var label = e.timer
+      ? require("time_utils").formatDuration(e.timer)
+      : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : "");
+    menu[label] = {
+      value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
+      onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
     };
   });
 
-  if (WIDGETS["alarm"]) WIDGETS["alarm"].reload();
-  return E.showMenu(menu);
+  menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
+
+  E.showMenu(menu);
 }
 
-function editAlarm(alarmIndex) {
-  var newAlarm = alarmIndex<0;
-  var hrs = 12;
-  var mins = 0;
-  var en = true;
-  var repeat = true;
-  var as = false;
-  if (!newAlarm) {
-    var a = alarms[alarmIndex];
-    hrs = 0|a.hr;
-    mins = Math.round((a.hr-hrs)*60);
-    en = a.on;
-    repeat = a.rp;
-    as = a.as;
-  }
-  const menu = {
-    '': { 'title': /*LANG*/'Alarm' },
-    /*LANG*/'< Back' : showMainMenu,
-    /*LANG*/'Hours': {
-      value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
-    },
-    /*LANG*/'Minutes': {
-      value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
-    },
-    /*LANG*/'Enabled': {
-      value: en,
-      format: v=>v?"On":"Off",
-      onchange: v=>en=v
-    },
-    /*LANG*/'Repeat': {
-      value: en,
-      format: v=>v?"Yes":"No",
-      onchange: v=>repeat=v
-    },
-    /*LANG*/'Auto snooze': {
-      value: as,
-      format: v=>v?"Yes":"No",
-      onchange: v=>as=v
-    }
-  };
-  function getAlarm() {
-    var hr = hrs+(mins/60);
-    var day = 0;
-    // If alarm is for tomorrow not today (eg, in the past), set day
-    if (hr < getCurrentHr())
-      day = (new Date()).getDate();
-    // Save alarm
-    return {
-      on : en, hr : hr,
-      last : day, rp : repeat, as: as
-    };
-  }
-  menu[/*LANG*/"> Save"] = function() {
-    if (newAlarm) alarms.push(getAlarm());
-    else alarms[alarmIndex] = getAlarm();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
-    showMainMenu();
-  };
-  if (!newAlarm) {
-    menu[/*LANG*/"> Delete"] = function() {
-      alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
-      showMainMenu();
-    };
-  }
-  return E.showMenu(menu);
+function showNewMenu() {
+  E.showMenu({
+    "": { "title": /*LANG*/"New..." },
+    "< Back": () => showMainMenu(),
+    /*LANG*/"Alarm": () => showEditAlarmMenu(undefined, undefined),
+    /*LANG*/"Timer": () => showEditTimerMenu(undefined, undefined)
+  });
 }
 
-function editTimer(alarmIndex) {
-  var newAlarm = alarmIndex<0;
-  var hrs = 0;
-  var mins = 5;
-  var en = true;
-  if (!newAlarm) {
-    var a = alarms[alarmIndex];
-    mins = (0|a.timer)%60;
-    hrs = 0|(a.timer/60);
-    en = a.on;
+function showEditAlarmMenu(selectedAlarm, alarmIndex) {
+  var isNew = alarmIndex === undefined;
+
+  var alarm = require("sched").newDefaultAlarm();
+  alarm.dow = handleFirstDayOfWeek(alarm.dow);
+
+  if (selectedAlarm) {
+    Object.assign(alarm, selectedAlarm);
   }
+
+  var time = require("time_utils").decodeTime(alarm.t);
+
   const menu = {
-    '': { 'title': /*LANG*/'Timer' },
-    /*LANG*/'Hours': {
-      value: hrs,
-      onchange: function(v){if (v<0)v=23;if (v>23)v=0;hrs=v;this.value=v;} // no arrow fn -> preserve 'this'
+    "": { "title": isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm" },
+    "< Back": () => {
+      saveAlarm(alarm, alarmIndex, time);
+      showMainMenu();
     },
-    /*LANG*/'Minutes': {
-      value: mins,
-      onchange: function(v){if (v<0)v=59;if (v>59)v=0;mins=v;this.value=v;} // no arrow fn -> preserve 'this'
+    /*LANG*/"Hour": {
+      value: time.h,
+      format: v => ("0" + v).substr(-2),
+      min: 0,
+      max: 23,
+      wrap: true,
+      onchange: v => time.h = v
     },
-    /*LANG*/'Enabled': {
-      value: en,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
-      onchange: v=>en=v
+    /*LANG*/"Minute": {
+      value: time.m,
+      format: v => ("0" + v).substr(-2),
+      min: 0,
+      max: 59,
+      wrap: true,
+      onchange: v => time.m = v
+    },
+    /*LANG*/"Enabled": {
+      value: alarm.on,
+      onchange: v => alarm.on = v
+    },
+    /*LANG*/"Repeat": {
+      value: decodeDOW(alarm),
+      onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, alarm.dow, (repeat, dow) => {
+        alarm.rp = repeat;
+        alarm.dow = dow;
+        alarm.t = require("time_utils").encodeTime(time);
+        setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex);
+      })
+    },
+    /*LANG*/"Vibrate": require("buzz_menu").pattern(alarm.vibrate, v => alarm.vibrate = v),
+    /*LANG*/"Auto Snooze": {
+      value: alarm.as,
+      onchange: v => alarm.as = v
+    },
+    /*LANG*/"Cancel": () => showMainMenu()
+  };
+
+  if (!isNew) {
+    menu[/*LANG*/"Delete"] = () => {
+      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
+        if (confirm) {
+          alarms.splice(alarmIndex, 1);
+          saveAndReload();
+          showMainMenu();
+        } else {
+          alarm.t = require("time_utils").encodeTime(time);
+          setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex);
+        }
+      });
+    };
+  }
+
+  E.showMenu(menu);
+}
+
+function saveAlarm(alarm, alarmIndex, time) {
+  alarm.t = require("time_utils").encodeTime(time);
+  alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
+
+  if (alarmIndex === undefined) {
+    alarms.push(alarm);
+  } else {
+    alarms[alarmIndex] = alarm;
+  }
+
+  saveAndReload();
+}
+
+function saveAndReload() {
+  // Before saving revert the dow to the standard format
+  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+
+  require("sched").setAlarms(alarms);
+  require("sched").reload();
+
+  // Fix after save
+  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+}
+
+function decodeDOW(alarm) {
+  return alarm.rp
+    ? require("date_utils")
+      .dows(firstDayOfWeek, 2)
+      .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
+      .join("")
+      .toLowerCase()
+    : "Once"
+}
+
+function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
+  var originalRepeat = repeat;
+  var originalDow = dow;
+  var isCustom = repeat && dow != WORKDAYS && dow != WEEKEND && dow != EVERY_DAY;
+
+  const menu = {
+    "": { "title": /*LANG*/"Repeat Alarm" },
+    "< Back": () => dowChangeCallback(repeat, dow),
+    /*LANG*/"Once": {
+      // The alarm will fire once. Internally it will be saved
+      // as "fire every days" BUT the repeat flag is false so
+      // we avoid messing up with the scheduler.
+      value: !repeat,
+      onchange: () => dowChangeCallback(false, EVERY_DAY)
+    },
+    /*LANG*/"Workdays": {
+      value: repeat && dow == WORKDAYS,
+      onchange: () => dowChangeCallback(true, WORKDAYS)
+    },
+    /*LANG*/"Weekends": {
+      value: repeat && dow == WEEKEND,
+      onchange: () => dowChangeCallback(true, WEEKEND)
+    },
+    /*LANG*/"Every Day": {
+      value: repeat && dow == EVERY_DAY,
+      onchange: () => dowChangeCallback(true, EVERY_DAY)
+    },
+    /*LANG*/"Custom": {
+      value: isCustom ? decodeDOW({ rp: true, dow: dow }) : false,
+      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalRepeat, originalDow)
     }
   };
-  function getTimer() {
-    var d = new Date(Date.now() + ((hrs*60)+mins)*60000);
-    var hr = d.getHours() + (d.getMinutes()/60) + (d.getSeconds()/3600);
-    // Save alarm
-    return {
-      on : en,
-      timer : (hrs*60)+mins,
-      hr : hr,
-      rp : false, as: false
-    };
-  }
-  menu["> Save"] = function() {
-    if (newAlarm) alarms.push(getTimer());
-    else alarms[alarmIndex] = getTimer();
-    require("Storage").write("alarm.json",JSON.stringify(alarms));
-    showMainMenu();
+
+  E.showMenu(menu);
+}
+
+function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow) {
+  const menu = {
+    "": { "title": /*LANG*/"Custom Days" },
+    "< Back": () => {
+      // If the user unchecks all the days then we assume repeat = once
+      // and we force the dow to every day.
+      var repeat = dow > 0;
+      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY)
+    }
   };
-  if (!newAlarm) {
-    menu["> Delete"] = function() {
-      alarms.splice(alarmIndex,1);
-      require("Storage").write("alarm.json",JSON.stringify(alarms));
+
+  require("date_utils").dows(firstDayOfWeek).forEach((day, i) => {
+    menu[day] = {
+      value: !!(dow & (1 << (i + firstDayOfWeek))),
+      onchange: v => v ? (dow |= 1 << (i + firstDayOfWeek)) : (dow &= ~(1 << (i + firstDayOfWeek)))
+    };
+  });
+
+  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback)
+
+  E.showMenu(menu);
+}
+
+function showEditTimerMenu(selectedTimer, timerIndex) {
+  var isNew = timerIndex === undefined;
+
+  var timer = require("sched").newDefaultTimer();
+
+  if (selectedTimer) {
+    Object.assign(timer, selectedTimer);
+  }
+
+  var time = require("time_utils").decodeTime(timer.timer);
+
+  const menu = {
+    "": { "title": isNew ? /*LANG*/"New Timer" : /*LANG*/"Edit Timer" },
+    "< Back": () => {
+      saveTimer(timer, timerIndex, time);
       showMainMenu();
+    },
+    /*LANG*/"Hours": {
+      value: time.h,
+      min: 0,
+      max: 23,
+      wrap: true,
+      onchange: v => time.h = v
+    },
+    /*LANG*/"Minutes": {
+      value: time.m,
+      min: 0,
+      max: 59,
+      wrap: true,
+      onchange: v => time.m = v
+    },
+    /*LANG*/"Enabled": {
+      value: timer.on,
+      onchange: v => timer.on = v
+    },
+    /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
+  };
+
+  if (!isNew) {
+    menu[/*LANG*/"Delete"] = () => {
+      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
+        if (confirm) {
+          alarms.splice(timerIndex, 1);
+          saveAndReload();
+          showMainMenu();
+        } else {
+          timer.timer = require("time_utils").encodeTime(time);
+          setTimeout(showEditTimerMenu, 10, timer, timerIndex)
+        }
+      });
     };
   }
-  return E.showMenu(menu);
+
+  E.showMenu(menu);
+}
+
+function saveTimer(timer, timerIndex, time) {
+  timer.timer = require("time_utils").encodeTime(time);
+  timer.t = require("time_utils").getCurrentTimeMillis() + timer.timer;
+  timer.last = 0;
+
+  if (timerIndex === undefined) {
+    alarms.push(timer);
+  } else {
+    alarms[timerIndex] = timer;
+  }
+
+  saveAndReload();
+}
+
+function showAdvancedMenu() {
+  E.showMenu({
+    "": { "title": /*LANG*/"Advanced" },
+    "< Back": () => showMainMenu(),
+    /*LANG*/"Scheduler Settings": () => eval(require("Storage").read("sched.settings.js"))(() => showAdvancedMenu()),
+    /*LANG*/"Enable All": () => enableAll(true),
+    /*LANG*/"Disable All": () => enableAll(false),
+    /*LANG*/"Delete All": () => deleteAll()
+  });
+}
+
+function enableAll(on) {
+  if (alarms.filter(e => e.on == !on).length == 0) {
+    E.showAlert(
+      on ? /*LANG*/"Nothing to Enable" : /*LANG*/"Nothing to Disable",
+      on ? /*LANG*/"Enable All" : /*LANG*/"Disable All"
+    ).then(() => showAdvancedMenu());
+  } else {
+    E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
+      if (confirm) {
+        alarms.forEach(alarm => alarm.on = on);
+        saveAndReload();
+        showMainMenu();
+      } else {
+        showAdvancedMenu();
+      }
+    });
+  }
+}
+
+function deleteAll() {
+  if (alarms.length == 0) {
+    E.showAlert(/*LANG*/"Nothing to delete", /*LANG*/"Delete All").then(() => showAdvancedMenu());
+  } else {
+    E.showPrompt(/*LANG*/"Are you sure?", {
+      title: /*LANG*/"Delete All"
+    }).then((confirm) => {
+      if (confirm) {
+        alarms = [];
+        saveAndReload();
+        showMainMenu();
+      } else {
+        showAdvancedMenu();
+      }
+    });
+  }
 }
 
 showMainMenu();

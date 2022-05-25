@@ -1,4 +1,4 @@
-1.00: Release for Bangle 2 (2021/11/18)
-1.01: Internal id update to wid_* as per Gordon's request (2021/11/21)
-1.02: Support dark themes
-1.03: Increase screen update rate when charging
+0.01: Release for Bangle 2 (2021/11/18)
+0.02: Internal id update to wid_* as per Gordon's request (2021/11/21)
+0.03: Support dark themes
+0.04: Increase screen update rate when charging

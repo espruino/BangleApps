@@ -1,0 +1,16 @@
+{
+  "id": "minionclk",
+  "name": "Minion clock",
+  "version": "0.05",
+  "description": "Minion themed clock.",
+  "icon": "minionclk.png",
+  "type": "clock",
+  "tags": "clock,minion",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-minion-clock-screenshot.png"}],
+  "storage": [
+    {"name":"minionclk.app.js","url":"app.js"},
+    {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

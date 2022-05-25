@@ -11,11 +11,12 @@ t can be one of "info", "warn", "error"
 ## report battery level
 
 ```
-{ "t": "status", "bat": 30, "volt": 30 }
+{ "t": "status", "bat": 30, "volt": 30, "chg": 0 }
 ```
 
 * bat is in range 0 to 100
 * volt is optional and should be greater than 0
+* chg is optional and should be either 0 or 1 to indicate the watch is charging
 
 ## find phone
 

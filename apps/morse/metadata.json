@@ -1,0 +1,14 @@
+{
+  "id": "morse",
+  "name": "Morse Code",
+  "version": "0.02",
+  "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
+  "icon": "morse-code.png",
+  "type": "app",
+  "tags": "morse,sound,visual,input",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"morse.app.js","url":"morse-code.js"},
+    {"name":"morse.img","url":"morse-code-icon.js","evaluate":true}
+  ]
+}

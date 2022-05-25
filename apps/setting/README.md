@@ -7,13 +7,12 @@ This is Bangle.js's settings menu
 * **Beep** most Bangle.js do not have a speaker inside, but they can use the vibration motor to beep in different pitches. You can change the behaviour here to use a Piezo speaker if one is connected
 * **Vibration** enable/disable the vibration motor
 * **Quiet Mode** prevent notifications/alarms from vibrating/beeping/turning the screen on - see below
-* **Locale** set time zone/whether the clock is 12/24 hour (for supported clocks)
+* **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
 * **Select Clock** if you have more than one clock face, select the default one
-* **Set Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
+* **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
 * **Theme** Adjust the colour scheme
 * **Utils** Utilities - including resetting settings (see below)
-* **Turn Off** Turn Bangle.js off
 
 ## BLE - Bluetooth Settings
 
@@ -35,11 +34,15 @@ This is Bangle.js's settings menu
     `Wake on Touch` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js.
 * **Twist X** these options adjust the sensitivity of `Wake on Twist` to ensure Bangle.js wakes up with just the right amount of wrist movement.
 
+## Locale
 
+* **Time Zone** your current Time zone. This is usually set automatically by the App Loader
+* **Time Format** whether you want a 24 or 12 hour clock. However not all clocks will honour this.
+* **Start Week On** start the displayed week on Sunday, or Monday. This currently only applies to the Alarm app.
 
 ## Quiet Mode
 
-Quiet Mode is a hint to apps and widgets that you do not want to be disturbed.   
+Quiet Mode is a hint to apps and widgets that you do not want to be disturbed.
 The exact effects depend on the app.  In general the watch will not wake up by itself, but will still respond to button presses.
 
 * **Quiet Mode**
@@ -57,5 +60,7 @@ The exact effects depend on the app.  In general the watch will not wake up by i
 * **Compact Storage** Removes deleted/old files from Storage - this will speed up your Bangle.js
 * **Rewrite Settings** Should not normally be required, but if `.boot0` has been deleted/corrupted (and so no settings are being loaded) this will fix it.
 * **Flatten Battery** Turns on all devices and draws as much power as possible, attempting to flatten the Bangle.js battery. This can still take 5+ hours.  
+* **Calibrate Battery** If you're finding your battery percentage meter isn't accurate, leave your Bangle.js on charge for at least 3 hours, and then choose this menu option. It will measure the battery voltage when full and will allow Bangle.js to report a more accurate battery percentage.
 * **Reset Settings** Reset the settings (as set in this app) to defaults. Does not reset settings for other apps.
 * **Factory Reset** (not available on Bangle.js 1) - wipe **everything** and return to a factory state
+* **Turn Off** Turn Bangle.js off

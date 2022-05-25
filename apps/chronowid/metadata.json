@@ -1,0 +1,17 @@
+{
+  "id": "chronowid",
+  "name": "Chrono Widget",
+  "shortName": "Chrono Widget",
+  "version": "0.05",
+  "description": "Chronometer (timer) which runs as widget.",
+  "icon": "app.png",
+  "tags": "tool,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"chronowid.wid.js","url":"widget.js"},
+    {"name":"chronowid.app.js","url":"app.js"},
+    {"name":"chronowid.img","url":"app-icon.js","evaluate":true}
+  ]
+}

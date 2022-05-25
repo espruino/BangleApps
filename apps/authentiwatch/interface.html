@@ -7,10 +7,13 @@
 <style type="text/css">
 body{font-family:sans-serif}
 body div{display:none}
-body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr div#tokenqr{display:block}
+body.select tr>:first-child,body.export tr>:nth-child(3),body.export tr>:nth-child(4){display:none}
+body.select div.select,body.export div.export{display:block}
+body.select div.export,body.export div.select{display:none}
+body.select div#tokens,body.editing div#edit,body.scanning div#scan,body.showqr div#showqr,body.export div#tokens{display:block}
 #tokens th,#tokens td{padding:5px}
-#tokens tr:nth-child(odd){background-color:#ccc}
-#tokens tr:nth-child(even){background-color:#eee}
+#tokens tr:nth-child(odd){background-color:#f1f1fc}
+#tokens tr:nth-child(even){background-color:#fff}
 #qr-canvas{margin:auto;width:calc(100%-20px);max-width:400px}
 #advbtn,#scan,#tokenqr table{text-align:center}
 #edittoken tbody#adv{display:none}
@@ -33,6 +36,12 @@ form.totp tr.hotp,form.hotp tr.totp{display:none}
 /* Start of all TOTP URLs */
 const otpAuthUrl = 'otpauth://';
 
+/* Start of all OTP migration URLs */
+const otpMigrUrl = 'otpauth-migration://offline?data=';
+
+/* Hash algorithms */
+const otpAlgos = ['SHA1','SHA256','SHA512'];
+
 const tokentypes = ['TOTP (Timed)', 'HOTP (Counter)'];
 
 /* Settings */
@@ -45,11 +54,56 @@ var tokens = settings.tokens;
  */
 function base32clean(val, nows) {
   var ret = val.replaceAll(/\s+/g, ' ');
+  ret = ret.replaceAll('0', 'O');
+  ret = ret.replaceAll('1', 'I');
+  ret = ret.replaceAll('8', 'B');
   ret = ret.replaceAll(/[^A-Za-z2-7 ]/g, '');
   if (nows) {
     ret = ret.replaceAll(/\s+/g, '');
   }
   return ret;
+}
+
+function b32encode(str) {
+  let buf = 0, bitcount = 0, ret = '';
+  while (str.length > 0) {
+    buf <<= 8;
+    buf |= str.charCodeAt(0);
+    bitcount += 8;
+    str = str.substr(1);
+    while (bitcount >= 5) {
+      ret += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[(buf >> (bitcount - 5)) & 31];
+      bitcount -= 5;
+    }
+  }
+  return ret;
+}
+
+function b32decode(seedstr) {
+  // RFC4648
+  var buf = 0, bitcount = 0, ret = '';
+  for (var c of seedstr.toUpperCase()) {
+    c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.indexOf(c);
+    if (c != -1) {
+      buf <<= 5;
+      buf |= c;
+      bitcount += 5;
+      if (bitcount >= 8) {
+        ret += String.fromCharCode(buf >> (bitcount - 8));
+        buf &= (0xFF >> (16 - bitcount));
+        bitcount -= 8;
+      }
+    }
+  }
+  return ret;
+}
+
+function makeLabel(token) {
+  let lbl = token['label'];
+  if (lbl == '') {
+    lbl = (token['issuer'] == '') ? token['account'] : token['issuer'] + ' (' + token['account'] + ')';
+  }
+  token['label'] = lbl.substr(0, 10);
 }
 
 /* Save changes to a token to the global tokens[] array.
@@ -84,9 +138,16 @@ function saveEdit(id, forget) {
   }
 }
 
+function showQr(url) {
+  tokenqr.clear();
+  tokenqr.makeCode(url);
+  qrPreviousClass = document.body.className;
+  document.body.className = 'showqr';
+}
+
 /* Generate and display a QR-code representing the current token.
  */
-function showQrCode() {
+function showTokenQr() {
   var fe = document.forms['edittoken'].elements;
   var url = new String(otpAuthUrl);
   switch (fe['type'].value) {
@@ -122,9 +183,7 @@ function showQrCode() {
   if (fe['algorithm'].value != 'SHA1') {
     url += '&algorithm=' + fe['algorithm'].value;
   }
-  tokenqr.clear();
-  tokenqr.makeCode(url);
-  document.body.className = 'showqr';
+  showQr(url);
 }
 
 function onTypeChanged() {
@@ -138,6 +197,7 @@ function onTypeChanged() {
  * id is the index into the global tokens[].
  */
 function editToken(id) {
+  if (document.body.className == 'export') return;
   var p;
   const selectMarkup = function(name, ary, cur, onchg) {
     var ret = '<select name="' + name + '"' + ((typeof onchg == 'string') ? ' onchange="' + onchg + '"' : '') + '>';
@@ -163,18 +223,21 @@ function editToken(id) {
   markup += selectMarkup('digits', ['6','7','8','9','10'], tokens[id].digits);
   markup += '</td></tr>';
   markup += '<tr><td>Hash:</td><td>';
-  markup += selectMarkup('algorithm', ['SHA1','SHA256','SHA512'], tokens[id].algorithm);
+  markup += selectMarkup('algorithm', otpAlgos, tokens[id].algorithm);
   markup += '</td></tr>';
   markup += '</tbody><tr><td id="advbtn" colspan="2">';
-  markup += '<button type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
+  markup += '<button class="btn" type="button" onclick="document.getElementById(\'edittoken\').classList.toggle(\'showadv\')">Advanced</button>';
   markup += '</td></tr></table></form>';
-  markup += '<button type="button" onclick="updateTokens()">Cancel Edit</button>';
-  markup += '<button type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
+  markup += '<button class="btn" type="button" onclick="updateTokens()">Cancel Edit</button>';
+  markup += '&nbsp;';
+  markup += '<button class="btn" type="button" onclick="saveEdit(' + id + ', false)">Save Changes</button>';
+    markup += '&nbsp;';
   if (tokens[id].isnew) {
-    markup += '<button type="button" onclick="startScan()">Scan QR Code</button>';
+    markup += '<button class="btn" type="button" onclick="startScan(handleTokenQr,cancelTokenQr)">Scan QR</button>';
   } else {
-    markup += '<button type="button" onclick="showQrCode()">Show QR Code</button>';
-    markup += '<button type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
+    markup += '<button class="btn" type="button" onclick="showTokenQr()">Show QR</button>';
+    markup += '&nbsp;';
+    markup += '<button class="btn" type="button" onclick="saveEdit(' + id + ', true)">Forget Token</button>';
   }
   document.getElementById('edit').innerHTML = markup;
   document.body.className = 'editing';
@@ -186,6 +249,46 @@ function editToken(id) {
 function addToken() {
   tokens[tokens.length] = {'algorithm':'SHA1','digits':6,'period':30,'issuer':'','account':'','secret':'','label':'','isnew':true};
   editToken(tokens.length - 1);
+}
+
+/* Convert a number to a proto3 varint.
+ */
+function int2proto3varint(val) {
+  var ret = '';
+  do {
+    let c = val & 0x7F;
+    val >>>= 7;
+    if (val > 0) {
+      c |= 0x80;
+    }
+    ret += String.fromCharCode(c);
+  } while (val > 0);
+  return ret;
+}
+
+/* Convert a string to a proto3 field.
+ */
+function str2proto3(field_number, str) {
+  return int2proto3varint((field_number << 3) + 2) + int2proto3varint(str.length) + str;
+}
+
+/* Convert a number to a proto3 field.
+ */
+function int2proto3(field_number, val) {
+  return int2proto3varint(field_number << 3) + int2proto3varint(val);
+}
+
+/* Convert the specified token to its proto3 representation.
+ */
+function token2proto3(id) {
+  var secret    = str2proto3(1, b32decode(tokens[id].secret));
+  var name      = str2proto3(2, (tokens[id].account == '') ? tokens[id].label : tokens[id].account);
+  var issuer    = (tokens[id].issuer == '') ? '' : str2proto3(3, tokens[id].issuer);
+  var algorithm = int2proto3(4, (tokens[id].algorithm == 'SHA512') ? 3 : ((tokens[id].algorithm == 'SHA256') ? 2 : 1));
+  var digits    = int2proto3(5, (tokens[id].digits == 8) ? 2 : 1);
+  var type      = int2proto3(6, (tokens[id].period <= 0) ? 1 : 2);
+  var counter   = (tokens[id].period <= 0) ? int2proto3(7, -tokens[id].period) : '';
+  return str2proto3(1, secret + name + issuer + algorithm + digits + type + counter);
 }
 
 /* Move the specified token up or down in the global tokens[].
@@ -200,10 +303,29 @@ function moveToken(id, dir) {
 /* Update the display listing all the tokens.
  */
 function updateTokens() {
-  const tokenButton = function(fn, id, label, dir) {
-    return '<button type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
+  const tokenSelect = function(id) {
+    return '<input name="exp_' + id + '" type="checkbox" onclick="exportTokens(false, \'' + id + '\')">';
   };
-  var markup = '<table><tr><th>Token</th><th colspan="2">Order</th></tr>';
+  const tokenButton = function(fn, id, label, dir) {
+    return '<button class="btn" type="button" onclick="' + fn + '(' + id + (dir ? ',' + dir : '') + ')">' + label + '</button>';
+  };
+  var markup = '';
+  markup += '<div class="select">';
+  markup += '<button class="btn" type="button" onclick="addToken()">Add Token</button>';
+  markup += '&nbsp;';
+  markup += '<button class="btn" type="button" onclick="saveTokens()">Save to watch</button>';
+  markup += '&nbsp;';
+  markup += '<button class="btn" type="button" onclick="startScan(handleImportQr,cancelImportQr)">Import</button>';
+  markup += '&nbsp;';
+  markup += '<button class="btn" type="button" onclick="document.body.className=\'export\'">Export</button>';
+  markup += '</div><div class="export">';
+  markup += '<button class="btn" type="button" onclick="document.body.className=\'select\'">Cancel</button>';
+  markup += '&nbsp;';
+  markup += '<button class="btn" type="button" onclick="exportTokens(true, null)">Show QR</button>';
+  markup += '</div>';
+  markup += '<table><tr><th>';
+  markup += tokenSelect('all');
+  markup += '</th><th>Token</th><th colspan="2">Order</th></tr>';
   /* any tokens marked new are cancelled new additions and must be removed */
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i].isnew) {
@@ -212,6 +334,8 @@ function updateTokens() {
   }
   for (let i = 0; i < tokens.length; i++) {
     markup += '<tr><td>';
+    markup += tokenSelect(i);
+    markup += '</td><td>';
     markup += tokenButton('editToken', i, tokens[i].label);
     markup += '</td><td>';
     if (i < (tokens.length - 1)) {
@@ -224,14 +348,11 @@ function updateTokens() {
     markup += '</td></tr>';
   }
   markup += '</table>';
-  markup += '<button type="button" onclick="addToken()">Add Token</button>';
-  markup += '<button type="button" onclick="saveTokens()">Save to watch</button>';
   document.getElementById('tokens').innerHTML = markup;
   document.body.className = 'select';
 }
 
-/* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
-qrcode.callback = res => {
+function handleTokenQr(res) {
   if (res) {
     if (res.startsWith(otpAuthUrl)) {
       res = decodeURIComponent(res);
@@ -243,7 +364,8 @@ qrcode.callback = res => {
         'counter':'0',
         'period':'30',
         'secret':'',
-        'issuer':''
+        'issuer':'',
+        'label':''
       };
       var otpok = true;
       for (let pi in params) {
@@ -261,8 +383,7 @@ qrcode.callback = res => {
       if (otpok) {
         scanning = false;
         editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
-        t['label'] = (t['issuer'] == '') ? t['account'] : t['issuer'] + ' (' + t['account'] + ')';
-        t['label'] = t['label'].substr(0, 10);
+        makeLabel(t);
         var fe = document.forms['edittoken'].elements;
         if (res.startsWith(otpAuthUrl + 'hotp/')) {
           t['period'] = '30';
@@ -283,12 +404,98 @@ qrcode.callback = res => {
       }
     }
   }
+}
+function cancelTokenQr() {
+  scanning = false;
+  editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value));
+}
+class proto3decoder {
+  constructor(str) {
+    this.buf = [];
+    for (let i in str) {
+      this.buf.push(str.charCodeAt(i));
+    }
+  }
+  getVarint() {
+    let c, ret = 0
+    do {
+      c = this.buf.shift();
+      ret = (ret << 7) | (c & 0x7F);
+    } while ((c & 0x80) != 0);
+    return ret;
+  }
+  getString(length) {
+    let ret = '';
+    for (let i = 0; i < length; ++i) {
+      ret += String.fromCharCode(this.buf.shift());
+    }
+    return ret;
+  }
+  parse() {
+    let ret = null;
+    if (this.buf.length > 0) {
+      let field_data = null;
+      let field_type = this.getVarint();
+      let field_number = field_type >>> 3;
+      let wire_type = field_type & 7;
+      switch (wire_type) {
+      case 0: field_data = this.getVarint(); break;
+      case 2: field_data = this.getString(this.getVarint()); break;
+      }
+      ret = {number:field_number,data:field_data};
+    }
+    return ret;
+  }
+}
+function handleImportQr(res) {
+  if (res) {
+    if (res.startsWith(otpMigrUrl)) {
+      scanning = false;
+      let data = new proto3decoder(atob(decodeURIComponent(res.substr(otpMigrUrl.length))));
+      while (data.buf.length > 0) {
+        let field = data.parse();
+        if (field?.number == 1) {
+          let newtoken = {'algorithm':'SHA1','digits':6,'period':30,'issuer':'','account':'','secret':'','label':''};
+          let p3token = new proto3decoder(field.data);
+          while (p3token.buf.length > 0) {
+            let buf = p3token.parse();
+            switch (buf?.number) {
+            case 1: newtoken.secret = b32encode(buf.data); break;
+            case 2: newtoken.account = buf.data; break;
+            case 3: newtoken.issuer = buf.data; break;
+            case 4: newtoken.algorithm = otpAlgos[buf.data - 1]; break;
+            case 5: newtoken.digits = (['6','8'])[buf.data - 1]; break;
+            case 7: newtoken.period = -buf.data; break;
+            }
+          }
+          makeLabel(newtoken);
+          tokens[tokens.length] = newtoken;
+        }
+      }
+      updateTokens();
+    }
+  }
+}
+function cancelImportQr() {
+  scanning = false;
+  document.body.className = 'select';
+}
+/* Original QR-code reader: https://www.sitepoint.com/create-qr-code-reader-mobile-website/ */
+qrcode.callback = res => {
+  if (res) {
+    scanCallback(res);
+    if (scanning) {
+      scanBack();
+    }
+  }
 };
-function startScan() {
+function startScan(handler,cancel) {
+  scanCallback = handler;
+  scanBack = cancel;
   document.body.className = 'scanning';
   navigator.mediaDevices
     .getUserMedia({video:{facingMode:'environment'}})
-    .then(function(stream){
+    .then(stream => {
       scanning=true;
       video.setAttribute('playsinline',true);
       video.srcObject = stream;
@@ -339,36 +546,93 @@ function saveTokens() {
     Util.hideModal();
   });
 }
+/* Handle token export.
+ * showqr is true if the QR code should be shown, if false the checkboxes need updating
+ * id is the name of the clicked checkbox, or null if the export button was pressed
+ */
+function exportTokens(showqr, id) {
+  let allchecked = true, allclear = true;
+  let cball;
+  let exp = '';
+  for (let cb of document.querySelectorAll('input[type=checkbox]')) {
+    let cbid = cb.name.substring(4);
+    if (cbid == 'all') {
+      cball = cb;
+    } else {
+      if (id == 'all') {
+        cb.checked = cball.checked;
+      } else {
+        if (cb.checked) {
+          if (showqr) {
+            exp += token2proto3(parseInt(cbid));
+          }
+          allclear = false;
+        } else {
+          allchecked = false;
+        }
+      }
+    }
+  }
+  if (id != 'all') {
+    if (allclear) {
+      cball.indeterminate = false;
+      cball.checked = false;
+    } else if (allchecked) {
+      cball.indeterminate = false;
+      cball.checked = true;
+    } else {
+      cball.indeterminate = true;
+    }
+  }
+  if (showqr) {
+    if (exp != '') {
+      /* add version, batch_size, batch_index, but no batch_id */
+      exp += int2proto3(2, 1) + int2proto3(3, 1) + int2proto3(4, 0);
+      let url = otpMigrUrl + encodeURIComponent(btoa(exp));
+      showQr(url);
+    }
+  }
+}
 function onInit() {
   loadTokens();
   updateTokens();
+}
+function qrBack() {
+  document.body.className = qrPreviousClass;
 }
 </script>
 </head>
 <body class="select">
 <h1>Authentiwatch</h1>
+
 <div id="tokens">
 <p>No watch comms.</p>
 </div>
+
 <div id="scan">
 <table>
 <tr><td><canvas id="qr-canvas"></canvas></td></tr>
-<tr><td><button type="button" onclick="editToken(parseInt(document.forms['edittoken'].elements['tokenid'].value))">Cancel</button></td></tr>
+<tr><td><button class="btn" type="button" onclick="scanBack()">Cancel</button></td></tr>
 </table>
 </div>
+
 <div id="edit">
 </div>
-<div id="tokenqr">
+
+<div id="showqr">
 <table><tr><td id="qrcode"></td></tr><tr><td>
-<button type="button" onclick="document.body.className='editing'">Back</button>
+<button class="btn" type="button" onclick="qrBack()">Back</button>
 </td></tr></table>
 </div>
+
+</div>
+
 <script type="text/javascript">
 const video=document.createElement('video');
 const canvasElement=document.getElementById('qr-canvas');
 const canvas=canvasElement.getContext('2d');
 let scanning=false;
-const tokenqr=new QRCode(document.getElementById('qrcode'), '');
+const tokenqr=new QRCode(document.getElementById('qrcode'), {width:354,height:354});
 </script>
 <script src="../../core/lib/interface.js"></script>
 </body>

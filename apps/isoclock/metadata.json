@@ -1,0 +1,15 @@
+{
+  "id": "isoclock",
+  "name": "ISO Compliant Clock Face",
+  "shortName": "ISO Clock",
+  "version": "0.02",
+  "description": "Tweaked fork of digiclock for ISO date and time",
+  "icon": "isoclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"isoclock.app.js","url":"isoclock.js"},
+    {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
+  ]
+}

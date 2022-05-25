@@ -1,0 +1,17 @@
+{ "id": "colorful_clock",
+  "name": "Colorful Analog Clock",
+  "shortName":"Colorful Clock",
+  "version":"0.03",
+  "description": "a colorful analog clock",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"app-screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"colorful_clock.app.js","url":"app.js"},
+    {"name":"colorful_clock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

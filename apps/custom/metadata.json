@@ -1,0 +1,14 @@
+{
+  "id": "custom",
+  "name": "Custom Boot Code ",
+  "version": "0.01",
+  "description": "Add code you want to run at boot time",
+  "icon": "custom.png",
+  "type": "bootloader",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "custom": "custom.html",
+  "storage": [
+    {"name":"custom"}
+  ]
+}

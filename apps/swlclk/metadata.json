@@ -1,0 +1,18 @@
+{
+  "id": "swlclk",
+  "name": "SWL Clock / Short Wave Listner Clock",
+  "shortName": "SWL Clock",
+  "version": "0.02",
+  "description": "Display Local, UTC time and some programs on the shorts waves along the day, with the frequencies",
+  "icon": "swlclk.png",
+  "type": "clock",
+  "tags": "tool,clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-SWL-clock-screenshot.png"}],
+  "storage": [
+    {"name":"swlclk.app.js","url":"app.js"},
+    {"name":"swlclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

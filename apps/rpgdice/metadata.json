@@ -1,0 +1,16 @@
+{
+  "id": "rpgdice",
+  "name": "RPG dice",
+  "version": "0.02",
+  "description": "Simple RPG dice rolling app.",
+  "icon": "rpgdice.png",
+  "type": "app",
+  "tags": "game,fun",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-rpg-dice-screenshot.png"}],
+  "storage": [
+    {"name":"rpgdice.app.js","url":"app.js"},
+    {"name":"rpgdice.img","url":"app-icon.js","evaluate":true}
+  ]
+}

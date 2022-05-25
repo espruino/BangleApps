@@ -1,0 +1,15 @@
+{
+  "id": "stepo",
+  "name": "Stepometer Clock",
+  "version": "0.03",
+  "description": "A large font watch, displays step count in a doughnut guage and warns of low battery, requires one of the steps widgets to be installed",
+  "icon": "stepo.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"stepo.app.js","url":"app.js"},
+    {"name":"stepo.img","url":"icon.js","evaluate":true}
+  ]
+}

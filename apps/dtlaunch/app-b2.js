@@ -6,8 +6,13 @@ var settings = Object.assign({
   showClocks: true,
   showLaunchers: true,
   direct: false,
+  oneClickExit:false,
+  swipeExit: false
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
+if( settings.oneClickExit)
+  setWatch(_=> load(), BTN1);
+  
 var s = require("Storage");
 var apps = s.list(/\.info$/).map(app=>{
   var a=s.readJSON(app,1);
@@ -45,11 +50,23 @@ function draw_icon(p,n,selected) {
     g.setColor(g.theme.fg);
     try{g.drawImage(apps[p*4+n].icon,x+12,y+4);} catch(e){}
     g.setFontAlign(0,-1,0).setFont("6x8",1);
-    var txt =  apps[p*4+n].name.split(" ");
-    for (var i = 0; i < txt.length; i++) {
-        txt[i] = txt[i].trim();
-        g.drawString(txt[i],x+36,y+54+i*8);
+    var txt =  apps[p*4+n].name.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
+    var lineY = 0;
+    var line = "";
+    while (txt.length > 0){      
+      var c = txt.shift();
+      
+      if (c.length + 1 + line.length > 13){
+        if (line.length > 0){
+          g.drawString(line.trim(),x+36,y+54+lineY*8);
+          lineY++;
+        }
+        line = c;
+      } else {
+        line += " " + c;
+      }
     }
+    g.drawString(line.trim(),x+36,y+54+lineY*8);
 }
 
 function drawPage(p){
@@ -69,17 +86,24 @@ function drawPage(p){
     g.flip();
 }
 
-Bangle.on("swipe",(dir)=>{
+Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
     selected = 0;
     oldselected=-1;
-    if (dir<0){
+    if(settings.swipeExit && dirLeftRight==1) showClock();
+    if (dirUpDown==-1||dirLeftRight==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
-    } else {
+    } else if (dirUpDown==1||(dirLeftRight==1 && !settings.swipeExit)){
         --page; if (page<0) page=maxPage;
         drawPage(page);
-    }  
+    }
 });
+
+function showClock(){
+  var app = require("Storage").readJSON('setting.json', 1).clock;
+  if (app) load(app);
+  else E.showMessage("clock\nnot found");
+}
 
 function isTouched(p,n){
     if (n<0 || n>3) return false;
@@ -113,5 +137,6 @@ Bangle.on("touch",(_,p)=>{
 });
 
 Bangle.loadWidgets();
+g.clear();
 Bangle.drawWidgets();
 drawPage(0);

@@ -1,5 +1,8 @@
-Bangle.setLCDPower(1);
-Bangle.setLCDTimeout(0);
+if (process.env.HWVERSION == 1) {
+  Bangle.setLCDPower(1);
+  Bangle.setLCDTimeout(0);
+}
+
 Bangle.setHRMPower(1);
 var hrmInfo, hrmOffset = 0;
 var hrmInterval;
@@ -32,15 +35,18 @@ function onHRM(h) {
   g.clearRect(0,24,g.getWidth(),80);
   g.setFont("6x8").drawString("Confidence "+hrmInfo.confidence+"%", px, 75);
   var str = hrmInfo.bpm;
-  g.setFontVector(40).drawString(str,px,45);
+  g.setFontVector(40).setColor(hrmInfo.confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
   px += g.stringWidth(str)/2;
-  g.setFont("6x8");
+  g.setFont("6x8").setColor(g.theme.fg);
   g.drawString("BPM",px+15,45);
 }
 Bangle.on('HRM', onHRM);
+
+var MID = (g.getHeight()+80)/2;
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
 Bangle.on('HRM-raw', function(v) {
+  h=v;
   hrmOffset++;
   if (hrmOffset>g.getWidth()) {
     hrmOffset=0;
@@ -48,9 +54,9 @@ Bangle.on('HRM-raw', function(v) {
     lastHrmPt = [-100,0];
   }
 
-  y = E.clip(btm-v.filt/4,btm-10,btm);
+  y = E.clip(btm-(8+v.filt/2000),btm-16,btm);
   g.setColor(1,0,0).fillRect(hrmOffset,btm, hrmOffset, y);
-  y = E.clip(170 - (v.raw/2),80,btm);
+  y = E.clip(btm - (v.raw/45),84,btm);
   g.setColor(g.theme.fg).drawLine(lastHrmPt[0],lastHrmPt[1],hrmOffset, y);
   lastHrmPt = [hrmOffset, y];
   if (counter !==undefined) {

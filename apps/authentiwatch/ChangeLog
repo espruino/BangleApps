@@ -2,3 +2,6 @@
 0.02: Fix JSON save format
 0.03: Add "Calculating" placeholder, update JSON save format
 0.04: Fix tapping at very bottom of list, exit on inactivity
+0.05: Add support for bulk importing and exporting tokens
+0.06: Add spaces to codes for improved readability (thanks @BartS23)
+0.07: Bangle 2: Improve drag responsiveness and exit on button press

@@ -1,0 +1,16 @@
+{
+  "id": "hralarm",
+  "name": "Heart rate alarm",
+  "shortName":"HR Alarm",
+  "version":"0.01",
+  "description": "This invisible widget vibrates whenever the heart rate gets close to the upper limit or goes over or under the configured limits",
+  "icon": "widget.png",  
+  "type": "widget",
+  "tags": "widget",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"hralarm.wid.js","url":"widget.js"},
+    {"name":"hralarm.settings.js","url":"settings.js"}
+  ]
+}

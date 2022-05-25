@@ -1,0 +1,20 @@
+{
+  "id": "planetarium",
+  "name": "Planetarium",
+  "shortName": "Planetarium",
+  "version": "0.03",
+  "description": "Planetarium showing up to 500 stars using the watch location and time",
+  "icon": "planetarium.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"planetarium.app.js","url":"planetarium.app.js"},
+    {"name":"planetarium.data.csv","url":"planetarium.data.csv"},
+    {"name":"planetarium.const.csv","url":"planetarium.const.csv"},
+    {"name":"planetarium.extra.csv","url":"planetarium.extra.csv"},
+    {"name":"planetarium.settings.js","url":"settings.js"},
+    {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"planetarium.json"}]
+}

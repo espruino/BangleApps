@@ -1,0 +1,14 @@
+{
+  "id": "openloc",
+  "name": "Open Location / Plus Codes",
+  "shortName": "Open Location",
+  "version": "0.01",
+  "description": "Convert your current GPS location to a series of characters",
+  "icon": "app.png",
+  "tags": "tool,outdoors,gps",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"openloc.app.js","url":"app.js"},
+    {"name":"openloc.img","url":"app-icon.js","evaluate":true}
+  ]
+}

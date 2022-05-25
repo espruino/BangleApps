@@ -1,0 +1,13 @@
+{
+  "id": "widbatv",
+  "name": "Battery Level Widget (Vertical)",
+  "version": "0.01",
+  "description": "Slim, vertical battery widget that only takes up 14px",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,battery",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widbatv.wid.js","url":"widget.js"}
+  ]
+}

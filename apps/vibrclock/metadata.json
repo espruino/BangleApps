@@ -1,0 +1,16 @@
+{
+  "id": "vibrclock",
+  "name": "Vibrate Clock",
+  "version": "0.03",
+  "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-vibrate-clock-screenshot.png"}],
+  "storage": [
+    {"name":"vibrclock.app.js","url":"app.js"},
+    {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

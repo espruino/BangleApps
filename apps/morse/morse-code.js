@@ -4,7 +4,7 @@
 /**
  * Constants
 */
-const FONT_NAME = 'Vector12';
+const FONT_NAME = 'Vector';
 const FONT_SIZE = 80;
 const SCREEN_PIXELS = 240;
 const UNIT = 100;

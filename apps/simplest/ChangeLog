@@ -4,3 +4,4 @@
 0.04: Use queueDraw(), update every minute, respect theme, use Lato font
 0.05: Decided against custom font as it inceases the code size
       minimalism is useful when narrowing down issues
+0.06: renamed some files

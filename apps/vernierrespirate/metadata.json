@@ -1,0 +1,17 @@
+{
+  "id": "vernierrespirate",
+  "name": "Vernier Go Direct Respiration Belt",
+  "shortName": "Respiration Belt",
+  "version": "0.01",
+  "description": "Connects to a Go Direct Respiration Belt and shows respiration rate",
+  "icon": "app.png",
+  "tags": "health,bluetooth",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"Vernier-go-direct-respiration-belt-screenshot.png"}],
+  "storage": [
+    {"name":"vernierrespirate.app.js","url":"app.js"},
+    {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"vernierrespirate.json"}]
+}

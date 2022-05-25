@@ -1,0 +1,14 @@
+{ "id": "7chname",
+  "name": "My widget's human readable name",
+  "shortName":"Short Name",
+  "version":"0.01",
+  "description": "A detailed description of my great widget",
+  "icon": "widget.png",  
+  "type": "widget",
+  "tags": "widget",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"7chname.wid.js","url":"widget.js"}
+  ]
+}

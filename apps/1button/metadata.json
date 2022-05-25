@@ -1,0 +1,16 @@
+{
+  "id": "1button",
+  "name": "One-Button-Tracker",
+  "version": "0.01",
+  "description": "A widget that turns BTN1 into a tracker, records time of button press/release.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "tool,quantifiedself,widget",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"1button.wid.js","url":"widget.js"}
+  ],
+  "data": [{"name":"one_button_presses.csv","storageFile":true}]
+}

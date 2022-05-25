@@ -1,0 +1,15 @@
+{
+  "id": "dsdrelay",
+  "name": "DSD BLE Relay controller",
+  "shortName": "DSDRelay",
+  "version": "0.01",
+  "description": "Control BLE relay board from the watch",
+  "icon": "icons8-relay-48.png",
+  "tags": "ble,bluetooth",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"dsdrelay.app.js","url":"dsdrelay.app.js"},
+    {"name":"dsdrelay.img","url":"dsdrelay-icon.js","evaluate":true}
+  ]
+}

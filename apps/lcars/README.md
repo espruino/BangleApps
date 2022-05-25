@@ -1,8 +1,9 @@
 # LCARS clock
 
 A simple LCARS inspired clock.
-Note: To display the steps, the health app is required. If this app is not installed, the data will not be shown.
-To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerdavid/BangleApps)
+To show weather data such as temperature, humidity or window you BangleJS must be connected
+with Gadgetbride and the weather app must be installed. To use the timer
+the "sched" app must be installed on your device.
 
 ## Control
  * Tap left / right to change between screens.
@@ -10,32 +11,36 @@ To contribute you can open a PR at this [GitHub Repo]( https://github.com/peerda
 
 ## Features
  * LCARS Style watch face.
- * Full screen mode - widgets are still loaded but not shown.
+ * Enable or disable fullscreen mode (widgets are always loaded, but hidden if fullscreen).
  * Tab on left/right to switch between different screens.
  * Cusomizable data that is shown on screen 1 (steps, weather etc.)
  * Shows random and real images of planets.
- * Tap on top/bottom of screen 1 to activate an alarm.
+ * Tap on top/bottom of screen 1 to activate an alarm. Depends on widtmr.
  * The lower orange line indicates the battery level.
  * Display graphs (day or month) for steps + hrm on the second screen.
+ * Customizable theming colors in the settings menu of the app.
 
 ## Data that can be configured
- * Steps - Steps loaded via the health module
+ * Steps - Steps loaded via the wpedom app.
  * Battery - Current battery level in %
  * VREF - Voltage of battery
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
  * Humidity - Humidity loaded via the weather module + gadgetbridge
+ * Wind - Wind loaded via the weather module + gadgetbridge. Set kph / mph in the settings.
  * Altitude - Shows the altitude in m.
  * CoreT - Temperature of device
 
 ## Multiple screens support
 Access different screens via tap on the left/ right side of the screen
 
-![](screenshot.png)
+![](screenshot_1.png)
 ![](screenshot_2.png)
 
+## Creator
+- [David Peer](https://github.com/peerdavid)
 
 ## Contributors
-- [David Peer](https://github.com/peerdavid).
-- [Adam Schmalhofer](https://github.com/adamschmalhofer).
-- [Jon Warrington](https://github.com/BartokW).
+- [Adam Schmalhofer](https://github.com/adamschmalhofer)
+- [Jon Warrington](https://github.com/BartokW)
+- [Ronin Stegner](https://github.com/Ronin0000)

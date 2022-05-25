@@ -1,0 +1,19 @@
+{
+  "id": "simpletimer",
+  "name": "Timer",
+  "version": "0.07",
+  "description": "Simple timer, useful when playing board games or cooking",
+  "icon": "app.png",
+  "tags": "timer",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-timer-screenshot.png"}],
+  "storage": [
+    {"name":"simpletimer.app.js","url":"app.js"},
+    {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
+    {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
+    {"name":"simpletimer.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"simpletimer.json"}]
+}

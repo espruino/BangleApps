@@ -1,0 +1,20 @@
+{
+  "id": "gallifr",
+  "name": "Time Traveller's Chronometer",
+  "shortName": "Time Travel Clock",
+  "version": "0.02",
+  "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
+  "icon": "gallifr.png",
+  "screenshots": [{"url":"screenshot_time.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"gallifr.app.js","url":"app.js"},
+    {"name":"gallifr.img","url":"app-icon.js","evaluate":true},
+    {"name":"gallifr.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"gallifr.json"}]
+}

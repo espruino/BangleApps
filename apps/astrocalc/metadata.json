@@ -1,0 +1,23 @@
+{
+  "id": "astrocalc",
+  "name": "Astrocalc",
+  "version": "0.02",
+  "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
+  "icon": "astrocalc.png",
+  "tags": "app,sun,moon,cycles,tool,outdoors",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"astrocalc.app.js","url":"astrocalc-app.js"},
+    {"name":"suncalc.js","url":"suncalc.js"},
+    {"name":"astrocalc.img","url":"astrocalc-icon.js","evaluate":true},
+    {"name":"first-quarter.img","url":"first-quarter-icon.js","evaluate":true},
+    {"name":"last-quarter.img","url":"last-quarter-icon.js","evaluate":true},
+    {"name":"waning-crescent.img","url":"waning-crescent-icon.js","evaluate":true},
+    {"name":"waning-gibbous.img","url":"waning-gibbous-icon.js","evaluate":true},
+    {"name":"full.img","url":"full-icon.js","evaluate":true},
+    {"name":"new.img","url":"new-icon.js","evaluate":true},
+    {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
+    {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
+  ]
+}

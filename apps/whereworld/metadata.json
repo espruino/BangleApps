@@ -1,0 +1,15 @@
+{
+  "id": "whereworld",
+  "name": "Where in the World?",
+  "shortName": "Where World",
+  "version": "0.01",
+  "description": "Shows your current location on the world map",
+  "icon": "app.png",
+  "tags": "gps",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"whereworld.app.js","url":"app.js"},
+    {"name":"whereworld.img","url":"app-icon.js","evaluate":true},
+    {"name":"whereworld.worldmap","url":"worldmap"}
+  ]
+}

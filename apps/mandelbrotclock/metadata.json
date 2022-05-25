@@ -1,0 +1,21 @@
+{
+  "id": "mandelbrotclock",
+  "name": "Mandelbrot Clock",
+  "version": "0.01",
+  "description": "A mandelbrot set themed clock cool",
+  "icon": "mandelbrotclock.png",
+  "screenshots": [{ "url": "screenshot_mandelbrotclock.png" }],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    { "name": "mandelbrotclock.app.js", "url": "mandelbrotclock.js" },
+    {
+      "name": "mandelbrotclock.img",
+      "url": "mandelbrotclock-icon.js",
+      "evaluate": true
+    }
+  ]
+}

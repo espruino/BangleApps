@@ -1,0 +1,17 @@
+{
+  "id": "blobclk",
+  "name": "Large Digit Blob Clock",
+  "shortName": "Blob Clock",
+  "version": "0.06",
+  "description": "A clock with big digits",
+  "icon": "clock-blob.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle2-large-digit-blob-clock-screenshot.png"},{"url":"bangle1-large-digit-blob-clock-screenshot.png"}],
+  "storage": [
+    {"name":"blobclk.app.js","url":"clock-blob.js"},
+    {"name":"blobclk.img","url":"clock-blob-icon.js","evaluate":true}
+  ]
+}

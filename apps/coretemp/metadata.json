@@ -1,0 +1,21 @@
+{
+  "id": "coretemp",
+  "name": "CoreTemp",
+  "version": "0.03",
+  "description": "Display CoreTemp device sensor data",
+  "icon": "coretemp.png",
+  "type": "app",
+  "tags": "health",
+  "readme": "README.md",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"coretemp.wid.js","url":"widget.js"},
+    {"name":"coretemp.app.js","url":"coretemp.js"},
+    {"name":"coretemp.recorder.js","url":"recorder.js"},
+    {"name":"coretemp.settings.js","url":"settings.js"},
+    {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
+    {"name":"coretemp.boot.js","url":"boot.js"}
+  ],
+  "data": [{"name":"coretemp.json","url":"app-settings.json"}],
+  "screenshots": [{"url":"screenshot.png"}]
+}

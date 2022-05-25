@@ -1,0 +1,15 @@
+{
+  "id": "balltastic",
+  "name": "Balltastic",
+  "version": "0.03",
+  "description": "Simple but fun ball eats dots game.",
+  "icon": "app.png",
+  "screenshots": [{"url":"bangle2-balltastic-screenshot.png"}],
+  "type": "app",
+  "tags": "game,fun",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"balltastic.app.js","url":"app.js"},
+    {"name":"balltastic.img","url":"app-icon.js","evaluate":true}
+  ]
+}

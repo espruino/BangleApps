@@ -1,0 +1,20 @@
+{
+  "id": "smtswch",
+  "name": "Smart Switch",
+  "shortName": "Smart Switch",
+  "version": "0.01",
+  "description": "Using EspruinoHub, control your smart devices on and off via Bluetooth Low Energy!",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "bluetooth,btle,smart,switch",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"smtswch.app.js","url":"app.js"},
+    {"name":"smtswch.img","url":"app-icon.js","evaluate":true},
+    {"name":"light-on.img","url":"light-on.js","evaluate":true},
+    {"name":"light-off.img","url":"light-off.js","evaluate":true},
+    {"name":"switch-on.img","url":"switch-on.js","evaluate":true},
+    {"name":"switch-off.img","url":"switch-off.js","evaluate":true}
+  ]
+}

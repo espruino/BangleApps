@@ -1,0 +1,14 @@
+{ "id": "gbdebug",
+  "name": "Gadgetbridge Debug",
+  "shortName":"GB Debug",
+  "version":"0.01",
+  "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"gbdebug.app.js","url":"app.js"},
+    {"name":"gbdebug.img","url":"app-icon.js","evaluate":true}
+  ]
+}

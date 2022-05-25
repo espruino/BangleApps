@@ -1,0 +1,17 @@
+{
+  "id": "marioclock",
+  "name": "Mario Clock",
+  "version": "0.15",
+  "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
+  "icon": "marioclock.png",
+  "type": "clock",
+  "tags": "clock,mario,retro",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": false,
+  "screenshots": [{"url":"bangle1-mario-clock-screenshot.png"}],
+  "storage": [
+    {"name":"marioclock.app.js","url":"marioclock-app.js"},
+    {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
+  ]
+}

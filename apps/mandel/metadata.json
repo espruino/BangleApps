@@ -1,0 +1,15 @@
+{
+  "id": "mandel",
+  "name": "Mandelbrot",
+  "shortName": "Mandel",
+  "version": "0.01",
+  "description": "Draw a zoomable Mandelbrot set",
+  "icon": "mandel.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"mandel.app.js","url":"mandel.min.js"},
+    {"name":"mandel.img","url":"mandel-icon.js","evaluate":true}
+  ]
+}

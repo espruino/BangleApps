@@ -1,0 +1,19 @@
+{
+  "id": "authentiwatch",
+  "name": "2FA Authenticator",
+  "shortName": "AuthWatch",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"}],
+  "version": "0.07",
+  "description": "Google Authenticator compatible tool.",
+  "tags": "tool",
+  "interface": "interface.html",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"authentiwatch.app.js","url":"app.js"},
+    {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"authentiwatch.json"}]
+}

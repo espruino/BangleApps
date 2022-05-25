@@ -1,6 +1,8 @@
 /* Copyright (c) 2020 OmegaRogue. See the file LICENSE for copying permission. */
 /*
 Graphics Functions based on the React Sci-Fi UI Framework Arwes
+
+Take a look at README.md for hints on developing with this library.
 */
 
 var C = {

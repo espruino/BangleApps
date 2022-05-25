@@ -1,0 +1,13 @@
+{
+  "id": "blescan",
+  "name": "BLE Scanner",
+  "version": "0.01",
+  "description": "Scan for advertising BLE devices",
+  "icon": "blescan.png",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"blescan.app.js","url":"blescan.js"},
+    {"name":"blescan.img","url":"blescan-icon.js","evaluate":true}
+  ]
+}

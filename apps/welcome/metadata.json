@@ -1,0 +1,20 @@
+{
+  "id": "welcome",
+  "name": "Welcome",
+  "shortName": "Welcome",
+  "version": "0.14",
+  "description": "Appears at first boot and explains how to use Bangle.js",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_welcome.png"}],
+  "tags": "start,welcome",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"welcome.boot.js","url":"boot.js"},
+    {"name":"welcome.app.js","url":"app-bangle1.js","supports": ["BANGLEJS"]},
+    {"name":"welcome.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2"]},
+    {"name":"welcome.settings.js","url":"settings.js"},
+    {"name":"welcome.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"welcome.json"}]
+}

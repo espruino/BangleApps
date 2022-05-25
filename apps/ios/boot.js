@@ -1,4 +1,5 @@
 bleServiceOptions.ancs = true;
+if (NRF.amsIsActive) bleServiceOptions.ams = true; // amsIsActive was added at the same time as the "am" option
 Bangle.ancsMessageQueue = [];
 
 /* Handle ANCS events coming in, and fire off 'notify' events
@@ -104,15 +105,33 @@ E.on('notify',msg=>{
     "io.robbie.HomeAssistant": "Home Assistant",
     "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
+    "net.superblock.Pushover": "Pushover",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
+    "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
     "tv.twitch": "Twitch",
 
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
-    '2019':"'"
+    '2019':"'",
+    '260':"A",
+    '261':"a",
+    '262':"C",
+    '263':"c",
+    '280':"E",
+    '281':"e",
+    '321':"L",
+    '322':"l",
+    '323':"N",
+    '324':"n",
+    '346':"S",
+    '347':"s",
+    '377':"Z",
+    '378':"z",
+    '379':"Z",
+    '380':"z",
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a

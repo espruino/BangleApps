@@ -1,5 +1,5 @@
 /**
- * Copyright reelyActive 2017-2021
+ * Copyright reelyActive 2017-2022
  * We believe in an open Internet of Things
  *
  * DirAct is jointly developed by reelyActive and Code Blue Consulting
@@ -11,14 +11,14 @@ const NAMESPACE_FILTER_ID = [ 0xc0, 0xde, 0xb1, 0x0e, 0x1d,
                               0xd1, 0xe0, 0x1b, 0xed, 0x0c ];
 const EXCITER_INSTANCE_IDS = new Uint32Array([ 0xe8c17e45 ]);
 const RESETTER_INSTANCE_IDS = new Uint32Array([ 0x4e5e77e4 ]);
-const PROXIMITY_RSSI_THRESHOLD = -65;
-const PROXIMITY_LED_RSSI_THRESHOLD = -65;
+const PROXIMITY_RSSI_THRESHOLD = -85;
+const PROXIMITY_LED_RSSI_THRESHOLD = -85;
 const PROXIMITY_TABLE_SIZE = 8;
 const DIGEST_TABLE_SIZE = 32;
 const OBSERVE_PERIOD_MILLISECONDS = 400;
-const BROADCAST_PERIOD_MILLISECONDS = 3600;
+const BROADCAST_PERIOD_MILLISECONDS = 1600;
 const BROADCAST_DIGEST_PAGE_MILLISECONDS = 400;
-const PROXIMITY_PACKET_INTERVAL_MILLISECONDS = 400;
+const PROXIMITY_PACKET_INTERVAL_MILLISECONDS = 200;
 const DIGEST_PACKET_INTERVAL_MILLISECONDS = 100;
 const DIGEST_TIME_CYCLE_THRESHOLD = 86400;
 const EXCITER_HOLDOFF_SECONDS = 60;

@@ -1,0 +1,17 @@
+{
+  "id": "nixie",
+  "name": "Nixie Clock",
+  "shortName": "Nixie",
+  "version": "0.01",
+  "description": "A nixie tube clock for both Bangle 1 and 2.",
+  "icon": "nixie.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"nixie.app.js","url":"app.js"},
+    {"name":"nixie.img","url":"app-icon.js","evaluate":true},
+    {"name":"m_vatch.js","url":"m_vatch.js"}
+  ]
+}

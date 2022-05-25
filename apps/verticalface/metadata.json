@@ -1,0 +1,17 @@
+{
+  "id": "verticalface",
+  "name": "Vertical watch face",
+  "shortName": "Vertical Face",
+  "version": "0.09",
+  "description": "A simple vertical watch face with the date. Heart rate monitor is toggled with BTN1",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"bangle1-vertical-watch-face-screenshot.png"}],
+  "storage": [
+    {"name":"verticalface.app.js","url":"app.js"},
+    {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
+  ]
+}

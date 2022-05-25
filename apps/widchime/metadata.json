@@ -1,0 +1,15 @@
+{
+  "id": "widchime",
+  "name": "Hour Chime",
+  "version": "0.02",
+  "description": "Buzz or beep on every whole hour.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widchime.wid.js","url":"widget.js"},
+    {"name":"widchime.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widchime.json"}]
+}

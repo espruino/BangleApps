@@ -1,0 +1,14 @@
+{
+  "id": "widhrt",
+  "name": "HRM Widget",
+  "version": "0.03",
+  "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,hrm",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widhrt.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "emojuino",
+  "name": "Emojuino",
+  "shortName": "Emojuino",
+  "version": "0.03",
+  "description": "Emojis & Espruino: broadcast Unicode emojis via Bluetooth Low Energy.",
+  "icon": "emojuino.png",
+  "screenshots": [
+    { "url": "screenshot-tx.png" },
+    { "url": "screenshot-swipe.png" },
+    { "url": "screenshot-welcome.png" }
+  ],
+  "type": "app",
+  "tags": "emoji",
+  "supports" : [ "BANGLEJS2" ],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "emojuino.app.js", "url": "emojuino.js" },
+    { "name": "emojuino.img", "url": "emojuino-icon.js", "evaluate": true }
+  ]
+}

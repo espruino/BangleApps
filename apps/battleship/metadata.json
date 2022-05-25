@@ -1,0 +1,16 @@
+{
+  "id": "battleship",
+  "name": "Battleship",
+  "version": "0.01",
+  "description": "The classic game of battleship",
+  "icon": "battleship-icon.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-battle-ship-screenshot.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"battleship.app.js","url":"battleship.js"},
+    {"name":"battleship.img","url":"battleship-icon.js","evaluate":true}
+  ]
+}

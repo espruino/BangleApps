@@ -1,0 +1,14 @@
+{
+  "id": "smartibot",
+  "name": "Smartibot controller",
+  "shortName": "Smartibot",
+  "version": "0.01",
+  "description": "Control a [Smartibot Robot](https://thecraftyrobot.net/) straight from your Bangle.js",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"smartibot.app.js","url":"app.js"},
+    {"name":"smartibot.img","url":"app-icon.js","evaluate":true}
+  ]
+}

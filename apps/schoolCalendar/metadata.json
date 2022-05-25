@@ -1,0 +1,19 @@
+{ "id": "schoolCalendar",
+  "name": "School Calendar",
+  "shortName":"SCalendar",
+  "icon": "CalenderLogo.png",
+  "version": "0.01",
+  "description": "A simple calendar that you can see your upcoming events that you create in the customizer. Keep in note that your events reapeat weekly.(Beta)",
+  "tags": "tool",
+  "readme":"README.md",
+  "custom":"custom.html",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"screenshot_basic.png"},{"url":"screenshot_info.png"}],
+  "storage": [
+    {"name":"schoolCalendar.app.js"},
+    {"name":"schoolCalendar.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"calendarItems.csv"}
+  ]
+}

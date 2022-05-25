@@ -1,0 +1,16 @@
+{
+  "id": "torch",
+  "name": "Torch",
+  "shortName": "Torch",
+  "version": "0.04",
+  "description": "Turns screen white to help you see in the dark. Select from the launcher or press BTN1,BTN3,BTN1,BTN3 quickly to start when in any app that shows widgets on Bangle.js 1. You can also set the color through the app's setting menu.",
+  "icon": "app.png",
+  "tags": "tool,torch",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"torch.app.js","url":"app.js"},
+    {"name":"torch.wid.js","url":"widget.js","supports": ["BANGLEJS"]},
+    {"name":"torch.img","url":"app-icon.js","evaluate":true},
+    {"name":"torch.settings.js","url":"settings.js"}
+  ]
+}

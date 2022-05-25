@@ -1,0 +1,17 @@
+{
+  "id": "demoapp",
+  "name": "Demo Loop",
+  "version": "0.02",
+  "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "",
+  "screenshots": [{"url":"bangle1-demo-loop-screenshot1.png"},{"url":"bangle1-demo-loop-screenshot2.png"},{"url":"bangle1-demo-loop-screenshot3.png"},{"url":"bangle1-demo-loop-screenshot4.png"}],
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"demoapp.app.js","url":"app.js"},
+    {"name":"demoapp.img","url":"app-icon.js","evaluate":true}
+  ],
+  "sortorder": -9
+}

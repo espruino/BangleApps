@@ -1,0 +1,17 @@
+{
+  "id": "glbasic",
+  "name": "GLBasic Clock",
+  "shortName": "GLBasic",
+  "version": "0.20",
+  "description": "A clock with large numbers",
+  "dependencies": {"widpedom":"app"},
+  "icon": "icon48.png",
+  "screenshots": [{"url":"glbasic_screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"glbasic.app.js","url":"glbasic.app.js"},
+    {"name":"glbasic.img","url":"glbasic.icon.js","evaluate":true}
+  ]
+}

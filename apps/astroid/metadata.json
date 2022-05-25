@@ -1,0 +1,15 @@
+{
+  "id": "astroid",
+  "name": "Asteroids!",
+  "version": "0.03",
+  "description": "Retro asteroids game",
+  "icon": "asteroids.png",
+  "screenshots": [{"url":"screenshot_asteroids.png"}],
+  "tags": "game",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"astroid.app.js","url":"asteroids.js"},
+    {"name":"astroid.img","url":"asteroids-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "life",
+  "name": "Game of Life",
+  "version": "0.04",
+  "description": "Conway's Game of Life - 16x16 board",
+  "icon": "life.png",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "screenshots": [{"url":"bangle1-game-of-life-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"life.app.js","url":"life.min.js"},
+    {"name":"life.img","url":"life-icon.js","evaluate":true}
+  ]
+}

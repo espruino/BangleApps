@@ -1,0 +1,19 @@
+{ "id": "pooqroman",
+  "name": "pooq Roman watch face",
+  "shortName":"pooq Roman",
+  "version":"0.03",
+  "description": "A classic watch face with a certain dynamicity. Most amusing in 24h mode. Slide up to show more hands, down for less(!). By design does not support standard widgets, sorry!",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator":true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"pooqroman.app.js","url":"app.js"},
+    {"name":"pooqroman.img","url":"app-icon.js","evaluate":true}
+   ],
+   "data": [
+     {"name":"pooqroman.json"}
+   ]
+}

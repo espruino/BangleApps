@@ -1,0 +1,24 @@
+{
+  "id": "todolist",
+  "name": "TodoList",
+  "shortName": "TodoList",
+  "version": "0.01",
+  "type": "app",
+  "description": "Simple Todo List",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "tool,todo",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    { "name": "todolist.app.js", "url": "app.js" },
+    { "name": "todolist.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "data": [{ "name": "todolist.json" }],
+  "screenshots": [
+    { "url": "screenshot1.png" },
+    { "url": "screenshot2.png" },
+    { "url": "screenshot3.png" }
+  ]
+}

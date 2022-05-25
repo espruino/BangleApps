@@ -1,0 +1,19 @@
+{
+  "id": "clicompleteclk",
+  "name": "CLI complete clock",
+  "shortName":"CLI cmplt clock",
+  "version":"0.03",
+  "description": "Command line styled clock with lots of information",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "type": "clock",
+  "tags": "clock,cli,command,bash,shell,weather,hrt",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"clicompleteclk.app.js","url":"app.js"},
+    {"name":"clicompleteclk.img","url":"app-icon.js","evaluate":true},
+    {"name":"clicompleteclk.settings.js","url":"settings.js"}
+   ],
+   "data": [{"name":"clicompleteclk.json"}]
+}
