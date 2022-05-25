@@ -67,15 +67,6 @@ function saveMessages() {
   require("Storage").writeJSON("messages.json",MESSAGES)
 }
 
-function getPosImage() {
-  return atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA==");
-}
-function getNegImage() {
-  return atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA=");
-}
-
-
-
 function showMapMessage(msg) {
   active = "map";
   var m;
@@ -302,7 +293,7 @@ function showMessage(msgid) {
   var buttons = [
   ];
   if (msg.positive) {
-    buttons.push({type:"btn", src:getPosImage(), cb:()=>{
+    buttons.push({type:"btn", src:atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA=="), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
@@ -311,7 +302,7 @@ function showMessage(msgid) {
   }
   if (msg.negative) {
     if (buttons.length) buttons.push({width:32}); // nasty hack...
-    buttons.push({type:"btn", src:getNegImage(), cb:()=>{
+    buttons.push({type:"btn", src:atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA="), cb:()=>{
       msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
