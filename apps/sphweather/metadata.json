@@ -1,0 +1,30 @@
+{
+  "id": "sphweather",
+  "name": "SPH Weather",
+  "shortName": "SPH Weather",
+  "type": "app",
+  "supports": ["BANGLEJS2"],
+  "version": "0.2",
+  "dependencies": { "leco1976": "app" },
+  "description": "Vintage menu style weather app, with data from json",
+  "icon": "icon.png",
+  "readme": "README.MD",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "storage": [
+    { "name": "sphweather.app.js", "url": "sphweather.app.js" },
+    { "name": "sphweather.icons.js", "url": "sphweather.icons.js" },
+    {
+      "name": "sphweather.img",
+      "url": "sphweather.app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "weather.json",
+      "storageFile": false
+    }
+  ],
+  "tags": "weather, graph, forecast, sph, vintage, menu",
+  "allow_emulator": true
+}
