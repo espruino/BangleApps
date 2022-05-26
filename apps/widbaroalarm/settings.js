@@ -91,7 +91,7 @@
       value: settings.dismissDelayMin,
       min: 5, max: 60,
       onchange: v => {
-        save('dismissDelayMin', x)
+        save('dismissDelayMin', v)
       },
       format: x => {
         return x + " min";
@@ -101,7 +101,7 @@
       value: settings.pauseDelayMin,
       min: 30, max: 240,
       onchange: v => {
-        save('pauseDelayMin', x)
+        save('pauseDelayMin', v)
       },
       format: x => {
         return x + " min";
