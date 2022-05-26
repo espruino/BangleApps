@@ -168,7 +168,6 @@ Bangle.on('lock', function(on){
 });
 
 Bangle.on('HRM',function(hrmInfo) {
-  console.log('in hrm');
   if(hrmInfo.confidence >= settings.HRMinConfidence)
     heartRate = hrmInfo.bpm;
 });
@@ -176,7 +175,6 @@ Bangle.on('HRM',function(hrmInfo) {
 var MEDIANLENGTH = 20; // technical
 var avr = [], median; // technical
 Bangle.on('pressure', function(e) {
-  console.log('in pressure');
   while (avr.length>MEDIANLENGTH) avr.pop();
   avr.unshift(e.altitude);
   median = avr.slice().sort();
