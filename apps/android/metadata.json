@@ -15,6 +15,6 @@
     {"name":"android.img","url":"app-icon.js","evaluate":true},
     {"name":"android.boot.js","url":"boot.js"}
   ],
-  "data": [{"name":"android.settings.json"}],
+  "data": [{"name":"android.settings.json"}, {"name":"android.calendar.json"}],
   "sortorder": -8
 }

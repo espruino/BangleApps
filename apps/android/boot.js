@@ -90,6 +90,21 @@
         sched.setAlarms(alarms);
         sched.reload();
       },
+      //TODO perhaps move those in a library (like messages), used also for viewing events?
+      "calendar" : function() {
+        var cal;
+        try { cal = require("Storage").readJSON("android.calendar.json"); } catch (e) {}
+        if (!cal) cal = {}; // first event
+        cal[event.id] = event;
+        require("Storage").writeJSON("android.calendar.json", cal);
+      },
+      "calendar-" : function() {
+        var cal;
+        try { cal = require("Storage").readJSON("android.calendar.json"); } catch (e) {}
+        if (!cal) return; //nothing to remove
+        if (event.id in cal) delete cal[event.id];
+        require("Storage").writeJSON("android.calendar.json", cal);
+      }
     };
     var h = HANDLERS[event.t];
     if (h) h(); else console.log("GB Unknown",event);
