@@ -49,3 +49,4 @@
 0.44: Add "Start Week On X" option (#1780)
       UI improvements to Locale and Date & Time menu
 0.45: Add calibrate battery option
+0.46: Fix regression after making 'calibrate battery' only for Bangle.js 2

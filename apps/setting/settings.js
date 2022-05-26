@@ -559,7 +559,7 @@ function showUtilMenu() {
           E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
         }
       });
-    },
+    };
   menu[/*LANG*/'Reset Settings'] = () => {
       E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
         if (v) {
@@ -568,8 +568,8 @@ function showUtilMenu() {
           setTimeout(showMainMenu, 50);
         } else showUtilMenu();
       });
-    },
-  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
+    };
+  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() };
 
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
