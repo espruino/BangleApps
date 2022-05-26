@@ -32,33 +32,38 @@
 
   let history3 = storage.readJSON(LOG_FILE, true) || []; // history of recent 3 hours
 
-  function showAlarm(body, title, key) {
+  function showAlarm(body, key) {
     if (body == undefined) return;
 
     E.showPrompt(body, {
-      title: title || "Pressure",
+      title: "Pressure alarm",
       buttons: { "Ok": 1, "Dismiss": 2, "Pause": 3 }
     }).then(function (v) {
       const tsNow = Math.round(Date.now() / 1000); // seconds
 
+      if (v == 1) {
+        saveSetting(key, tsNow);
+      }
       if (v == 2) {
-        saveSetting(key, tsNow + 60 * settings('dismissDelayMin'));
+        saveSetting(key, tsNow + 60 * setting('dismissDelayMin'));
       }
       if (v == 3) {
-        saveSetting(key, tsNow + 60 * settings('pauseDelayMin'));
+        saveSetting(key, tsNow + 60 * setting('pauseDelayMin'));
       }
+      load();
     });
 
     if (setting("buzz") &&
       !(storage.readJSON('setting.json', 1) || {}).quiet) {
       Bangle.buzz();
     }
+
+    setTimeout(load, 20000);
   }
 
 
   function doWeNeedToWarn(key) {
     const tsNow = Math.round(Date.now() / 1000); // seconds
-
     return setting(key) == 0 || setting(key) < tsNow;
   }
 
@@ -88,8 +93,7 @@
       // Is below the alarm threshold?
       if (pressure <= setting("min")) {
         if (!doWeNeedToWarn("lastLowWarningTs")) {
-          showAlarm("Pressure low: " + Math.round(pressure) + " hPa");
-          saveSetting("lastLowWarningTs", ts);
+          showAlarm("Pressure low: " + Math.round(pressure) + " hPa", "lastLowWarningTs");
           alreadyWarned = true;
         }
       } else {
@@ -102,9 +106,8 @@
     if (setting("highalarm")) {
       // Is above the alarm threshold?
       if (pressure >= setting("max")) {
-        if (!doWeNeedToWarn("lastHighWarningTs")) {
-          showAlarm("Pressure high: " + Math.round(pressure) + " hPa");
-          saveSetting("lastHighWarningTs", ts);
+        if (doWeNeedToWarn("lastHighWarningTs")) {
+          showAlarm("Pressure high: " + Math.round(pressure) + " hPa", "lastHighWarningTs");
           alreadyWarned = true;
         }
       } else {
@@ -132,10 +135,9 @@
           // drop alarm
           if (drop3halarm > 0 && oldestPressure > pressure) {
             if (Math.abs(diff) > drop3halarm) {
-              if (!doWeNeedToWarn("lastDropWarningTs")) {
+              if (doWeNeedToWarn("lastDropWarningTs")) {
                 showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop");
-                saveSetting("lastDropWarningTs", ts);
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop", "lastDropWarningTs");
               }
             } else {
               saveSetting("lastDropWarningTs", 0);
@@ -147,10 +149,9 @@
           // raise alarm
           if (raise3halarm > 0 && oldestPressure < pressure) {
             if (Math.abs(diff) > raise3halarm) {
-              if (!doWeNeedToWarn("lastRaiseWarningTs")) {
+              if (doWeNeedToWarn("lastRaiseWarningTs")) {
                 showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise");
-                saveSetting("lastRaiseWarningTs", ts);
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise", "lastRaiseWarningTs");
               }
             } else {
               saveSetting("lastRaiseWarningTs", 0);
@@ -186,7 +187,7 @@
 
   /*
    turn on barometer power
-   take `numberOfMeasurements` measurements
+   take `numberOfMeasurements` measurements with a delay of 1000ms each
    sort the results
    take the middle one (median)
    turn off barometer power
@@ -196,10 +197,12 @@
     setTimeout(function() {
       currentPressures = [];
 
-      const numberOfMeasurements = 5;
+      const numberOfMeasurements = 7;
 
       for (let i = 0; i < numberOfMeasurements; i++) {
-        Bangle.getPressure().then(baroHandler);
+        setTimeout(function() {
+          Bangle.getPressure().then(baroHandler);
+        }, i * 1000);
       }
 
       setTimeout(function() {
@@ -210,7 +213,7 @@
         // take median value
         medianPressure = currentPressures[Math.round(numberOfMeasurements / 2) + 1];
         checkForAlarms(medianPressure);
-      }, 1000);
+      }, numberOfMeasurements * 1000 + 500);
     }, 500);
   }
 
