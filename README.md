@@ -256,6 +256,7 @@ and which gives information about the app for the Launcher.
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
                               //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
+                              //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
                               //   'RAM' - code that runs and doesn't upload anything to storage
                               //   'launch' - replacement 'Launcher'
                               //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle

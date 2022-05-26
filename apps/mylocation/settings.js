@@ -1,5 +1,4 @@
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+(function(back) {
 
 const SETTINGS_FILE = "mylocation.json";
 let settings;
@@ -18,7 +17,7 @@ function loadSettings() {
   }
 }
 
-function save() {
+function saveSettings() {
   settings = s;
   require('Storage').write(SETTINGS_FILE, settings);
 }
@@ -34,29 +33,29 @@ function setFromGPS() {
     //console.log("fix from GPS");
     s = {'lat': gps.lat, 'lon': gps.lon, 'location': '???' };
     Bangle.buzz(1500); // buzz on first position
-    Bangle.setGPSPower(0);
-    save();
+    Bangle.setGPSPower(0, "mylocation");
+    saveSettings();
 
     Bangle.setUI("updown", ()=>{ load(); });
-    E.showPrompt("Location has been saved from the GPS fix",{
-      title:"Location Saved",
-      buttons : {"OK":1}
+    E.showPrompt(/*LANG*/"Location has been saved from the GPS fix",{
+      title:/*LANG*/"Location Saved",
+      buttons : {/*LANG*/"OK":1}
     }).then(function(v) {
       load(); // load default clock
     });
   });
 
-  Bangle.setGPSPower(1);
-  E.showMessage("Waiting for GPS fix. Place watch in the open. Could take 10 minutes. Long press to abort", "GPS Running");
+  Bangle.setGPSPower(1, "mylocation");
+  E.showMessage(/*LANG*/"Waiting for GPS fix. Place watch in the open. Could take 10 minutes. Long press to abort", "GPS Running");
   Bangle.setUI("updown", undefined);
 }
 
 function showMainMenu() {
   //console.log("showMainMenu");
   const mainmenu = {
-    '': { 'title': 'My Location' },
-    '< Back': ()=>{ load(); },
-    'City': {
+    '': { 'title': /*LANG*/'My Location' },
+    '< Back': ()=>{ back(); },
+    /*LANG*/'City': {
       value: 0 | locations.indexOf(s.location),
       min: 0, max: locations.length - 1,
       format: v => locations[v],
@@ -65,14 +64,15 @@ function showMainMenu() {
           s.location = locations[v];
           s.lat = lats[v];
           s.lon = lons[v];
-          save();
+          saveSettings();
         }
       }
     },
-    'Set From GPS': ()=>{ setFromGPS(); }
+    /*LANG*/'Set From GPS': ()=>{ setFromGPS(); }
   };
   return E.showMenu(mainmenu);
 }
 
 loadSettings();
 showMainMenu();
+})
