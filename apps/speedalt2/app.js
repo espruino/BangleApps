@@ -5,8 +5,9 @@ Mike Bennett mike[at]kereru.com
 1.14 : Add VMG screen
 1.34 : Add bluetooth data stream for Droidscript
 1.43 : Keep GPS in SuperE mode while using Droiscript screen mirroring
+1.50 : Add cfg.wptSfx one char suffix to append to waypoints.json filename. Protects speedalt2 waypoints from other apps that use the same file name for waypoints.
 */
-var v = '1.49';
+var v = '1.50';
 var vDroid = '1.50';    // Required DroidScript program version
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
@@ -209,7 +210,7 @@ function nxtWp(){
 }
 
 function loadWp() {
-  var w = require("Storage").readJSON('waypoints.json')||[{name:"NONE"}];
+  var w = require("Storage").readJSON('waypoints'+cfg.wptSfx+'.json')||[{name:"NONE"}];
   if (cfg.wp>=w.length) cfg.wp=0;
   if (cfg.wp<0) cfg.wp = w.length-1;
   savSettings();
@@ -718,6 +719,7 @@ cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
 cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
 cfg.touch = cfg.touch==undefined?true:cfg.touch;
+cfg.wptSfx = cfg.wptSfx==undefined?'':cfg.wptSfx; 
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
 if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });

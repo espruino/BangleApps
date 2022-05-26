@@ -1,6 +1,6 @@
 const locale = require("locale");
-const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-const CFG = require('Storage').readJSON("ffcniftya.json", 1) || {showWeekNum: true};
+const is12Hour = Object.assign({ "12hour": false }, require("Storage").readJSON("setting.json", true))["12hour"];
+const showWeekNum = Object.assign({ showWeekNum: true }, require('Storage').readJSON("ffcniftya.json", true))["showWeekNum"];
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
@@ -17,16 +17,17 @@ const center = {
   y: Math.round(((viewport.height - widget) / 2) + widget),
 }
 
-function ISO8601_week_no(date) { //copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
-    var tdt = new Date(date.valueOf());
-    var dayn = (date.getDay() + 6) % 7;
-    tdt.setDate(tdt.getDate() - dayn + 3);
-    var firstThursday = tdt.valueOf();
-    tdt.setMonth(0, 1);
-    if (tdt.getDay() !== 4) {
-        tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
-    }
-    return 1 + Math.ceil((firstThursday - tdt) / 604800000);
+// copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
+function ISO8601_week_no(date) {
+  var tdt = new Date(date.valueOf());
+  var dayn = (date.getDay() + 6) % 7;
+  tdt.setDate(tdt.getDate() - dayn + 3);
+  var firstThursday = tdt.valueOf();
+  tdt.setMonth(0, 1);
+  if (tdt.getDay() !== 4) {
+    tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+  }
+  return 1 + Math.ceil((firstThursday - tdt) / 604800000);
 }
 
 function d02(value) {
@@ -59,7 +60,7 @@ function draw() {
   g.drawString(year, centerDatesScaleX, center.y - 62 * scale);
   g.drawString(month, centerDatesScaleX, center.y - 44 * scale);
   g.drawString(day, centerDatesScaleX, center.y - 26 * scale);
-  if (CFG.showWeekNum) g.drawString(d02(ISO8601_week_no(now)), centerDatesScaleX, center.y + 15 * scale);
+  if (showWeekNum) g.drawString(weekNum, centerDatesScaleX, center.y + 15 * scale);
   g.drawString(monthName, centerDatesScaleX, center.y + 48 * scale);
   g.drawString(dayName, centerDatesScaleX, center.y + 66 * scale);
 }
@@ -79,7 +80,6 @@ function clearTickTimer() {
 function queueNextTick() {
   clearTickTimer();
   tickTimer = setTimeout(tick, 60000 - (Date.now() % 60000));
-  // tickTimer = setTimeout(tick, 3000);
 }
 
 function tick() {
@@ -91,21 +91,16 @@ function tick() {
 
 // Clear the screen once, at startup
 g.clear();
-// Start ticking
 tick();
 
-// Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', (on) => {
   if (on) {
-    tick(); // Start ticking
+    tick();
   } else {
-    clearTickTimer(); // stop ticking
+    clearTickTimer();
   }
 });
 
-// Load widgets
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

@@ -1,9 +1,5 @@
-const locale = require("locale");
-const storage = require('Storage');
-
-const is12Hour = (storage.readJSON("setting.json", 1) || {})["12hour"];
-const color = (storage.readJSON("ffcniftyb.json", 1) || {})["color"] || 63488 /* red */;
-
+const is12Hour = Object.assign({ "12hour": false }, require("Storage").readJSON("setting.json", true))["12hour"];
+const color = Object.assign({ color: 63488 }, require("Storage").readJSON("ffcniftyb.json", true)).color; // Default to RED
 
 /* Clock *********************************************/
 const scale = g.getWidth() / 176;
@@ -19,7 +15,7 @@ const center = {
 };
 
 function d02(value) {
-  return ('0' + value).substr(-2);
+  return ("0" + value).substr(-2);
 }
 
 function renderEllipse(g) {
@@ -35,8 +31,8 @@ function renderText(g) {
   const month = d02(now.getMonth() + 1);
   const year = now.getFullYear();
 
-  const month2 = locale.month(now, 3);
-  const day2 = locale.dow(now, 3);
+  const month2 = require("locale").month(now, 3);
+  const day2 = require("locale").dow(now, 3);
 
   g.setFontAlign(1, 0).setFont("Vector", 90 * scale);
   g.drawString(hour, center.x + 32 * scale, center.y - 31 * scale);
@@ -96,7 +92,6 @@ function startTick(run) {
   stopTick();
   run();
   ticker = setTimeout(() => startTick(run), 60000 - (Date.now() % 60000));
-  // ticker = setTimeout(() => startTick(run), 3000);
 }
 
 /* Init **********************************************/
@@ -104,7 +99,7 @@ function startTick(run) {
 g.clear();
 startTick(draw);
 
-Bangle.on('lcdPower', (on) => {
+Bangle.on("lcdPower", (on) => {
   if (on) {
     startTick(draw);
   } else {
@@ -112,7 +107,6 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-Bangle.setUI("clock");

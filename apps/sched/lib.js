@@ -11,16 +11,19 @@ exports.getAlarm = function(id) {
   return exports.getAlarms().find(a=>a.id==id);
 };
 // Given a list of alarms from getAlarms, return a list of active alarms for the given time (or current time if time not specified)
-exports.getActiveAlarms = function(alarms, time) {
+exports.getActiveAlarms = function (alarms, time) {
   if (!time) time = new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000)
-                    +10000;// get current time - 10s in future to ensure we alarm if we've started the app a tad early
-  return alarms.filter(a=>a.on
-          &&(a.t<currentTime)
-          &&(a.last!=time.getDate())
-          && (!a.date || a.date==time.toISOString().substr(0,10))
-          && a.dow >> (time).getDay() & 1)
-        .sort((a,b)=>a.t-b.t);
+  // get current time 10s in future to ensure we alarm if we've started the app a tad early
+  var currentTime = (time.getHours() * 3600000) + (time.getMinutes() * 60000) + (time.getSeconds() * 1000) + 10000;
+  return alarms
+    .filter(a =>
+      a.on // enabled
+      && (a.last != time.getDate()) // not already fired today
+      && (a.t < currentTime)
+      && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
+      && (!a.date || a.date == time.toISOString().substr(0, 10)) // is allowed on this date
+    )
+    .sort((a, b) => a.t - b.t);
 }
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
 exports.setAlarm = function(id, alarm) {
@@ -66,7 +69,7 @@ exports.newDefaultAlarm = function () {
     on: true,
     rp: settings.defaultRepeat,
     as: settings.defaultAutoSnooze,
-    dow: settings.defaultRepeat ? 0b1111111 : 0b0000000,
+    dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
   };

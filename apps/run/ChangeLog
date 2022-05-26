@@ -12,3 +12,4 @@
 0.11: Notifications fixes
 0.12: Fix for recorder not stopping at end of run. Bug introduced in 0.11
 0.13: Revert #1578 (stop duplicate entries) as with 2v12 menus it causes other boxes to be wiped (fix #1643)
+0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
