@@ -4,6 +4,7 @@
   "icon": "widday.png",
   "version":"0.01",
   "description": "Just the day of the current date as widget",
+  readme: "README.md
   "tags": "widget,say,date",
   "storage": [
     {"name":"widday.wid.js","url":"app.js"},
