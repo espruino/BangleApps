@@ -222,9 +222,6 @@ if (sleeplog.conf.enabled) {
       // cache consecutive status to check for changes later on
       data.consecutive = this.consecutive;
 
-      // set disabled move log status
-      var moveLogStatus = false;
-
       // check if changing to deep sleep from non sleepling
       if (data.status === 4 && this.status <= 2) {
         // set asleepSince if undefined
@@ -247,8 +244,6 @@ if (sleeplog.conf.enabled) {
           data.consecutive = 2;
           // reset awakeSince
           this.info.awakeSince = 0;
-          // enabled move log status
-          moveLogStatus = true;
         } else if (data.status <= 2 && this.info.awakeSince &&
           this.info.awakeSince + this.conf.maxAwake <= data.timestamp) {
           // set non consecutive sleep
@@ -257,6 +252,9 @@ if (sleeplog.conf.enabled) {
           this.info.asleepSince = 0;
         }
       }
+
+      // cache change into a known consecutive state
+      var changeIntoConsec = data.consecutive;
 
       // check if the status has changed
       if (data.status !== this.status || data.consecutive !== this.consecutive) {
@@ -282,8 +280,19 @@ if (sleeplog.conf.enabled) {
       // call debugging function if set
       if (this.debug) require("sleeplog").debug(data);
 
-      // call move log function if set
-      if (moveLogStatus) require("sleeplog").moveLog();
+      // check if changed into known consecutive state
+      if (changeIntoConsec) {
+        // check if change is to consecutive sleep or not
+        if (changeIntoConsec === 2) {
+          // call move log function
+          require("sleeplog").moveLog();
+        } else {
+          // update stats cache if available
+          if (this.statsCache) this.statsCache = require("sleeplog").getStats();
+        }
+        // remove module from cache if not on debugging
+        if (!this.debug) Modules.removeCached("sleeplog");
+      }
     },
 
     // define function to append the status to the StorageFile log
@@ -300,8 +309,9 @@ if (sleeplog.conf.enabled) {
 
     // define function to access stats of the last night
     getStats: function() {
-      // check if stats cache is not defined or older than 24h
-      if (this.statsCache === undefined || this.statsCache.calculatedAt + 864E5 < Date.now()) {
+      // check if stats cache is not defined or older than 12h
+      //  if stats cache is set it will be updated on every change to non consecutive sleep
+      if (this.statsCache === undefined || this.statsCache.calculatedAt + 432E5 < Date.now()) {
         // read stats of the last night into cache and remove module from cache
         this.statsCache = require("sleeplog").getStats();
         Modules.removeCached("sleeplog");

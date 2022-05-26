@@ -7,3 +7,5 @@
 0.10: Complete rework off this app!
  - beta01: Add interface.html to view your saved log data
  - beta02: Add "View log" function for debugging log + send data for gadgetbridge
+ - beta03: Change caching for global getStats
+ 

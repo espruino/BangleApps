@@ -12,6 +12,7 @@ It is using the built in movement calculation to decide your sleeping state. Whi
 -+-                       -+-
 ````
 
+
 ---
 ### Introduction
 ---
@@ -60,16 +61,47 @@ But here are some explanations how to use the app and settings:
   if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data  
   since & until in Bangle timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
 
----
 
-Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:
-```
-"data": [
-  {"name": "sleeplog.log", "storageFile": true},
-  {"wildcard": "sleeplog_????.log"},
-  {"wildcard": "sleeplog_??????.csv"}
-],
-````
+---
+### Access statistics
+---
+* Last Asleep Time [Date]:  
+  `Date(sleeplog.awakeSince)`
+* Last Awake Duration [ms]:  
+  `Date() - sleeplog.awakeSince`
+* Last Statistics [object]:
+  ```
+  // get stats of the last night (period as displayed inside the app)
+  //  as this might be the mostly used function the data is cached inside the global object 
+  sleeplog.getStats();
+
+  // get stats of the last 24h
+  require("sleeplog").getStats(0, 24*60*60*1000);
+  // same as
+  require("sleeplog").getStats(Date.now(), 24*60*60*1000);
+  // output as object, timestamps as UNIX timestamp, durations in minutes
+  ={ calculatedAt: 1653123553810, deepSleep: 250, lightSleep: 150, awakeSleep: 10,
+    consecSleep: 320, awakeTime: 1030, notWornTime: 0, unknownTime: 0, logDuration: 1440,
+    firstDate: 1653036600000, lastDate: 1653111600000 }
+  
+  // to get the start of a period defined by "Break TOD" of any date
+  var startOfBreak = require("sleeplog").getLastBreak();
+  // same as
+  var startOfBreak = require("sleeplog").getLastBreak(Date.now());
+  // output as date
+  =Date: Sat May 21 2022 12:00:00 GMT+0200
+  
+  // get stats of this period as displayed inside the app
+  require("sleeplog").getStats(require("sleeplog").getLastBreak(), 24*60*60*1000);
+  // or any other day
+  require("sleeplog").getStats(require("sleeplog").getLastBreak(Date(2022,4,10)), 24*60*60*1000);
+  ```
+* Total Statistics [object]:
+  ```
+  // use with caution, may take a long time !
+  require("sleeplog").getStats(0, 0, require("sleeplog").readLog());
+  ```
+
 
 ---
 ### Worth Mentioning
@@ -94,3 +126,15 @@ The app icon is downloaded from [https://icons8.com](https://icons8.com).
 
 #### License
 [MIT License](LICENSE)
+
+---
+
+
+Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:
+```
+"data": [
+  {"name": "sleeplog.log", "storageFile": true},
+  {"wildcard": "sleeplog_????.log"},
+  {"wildcard": "sleeplog_??????.csv"}
+],
+````
