@@ -546,6 +546,18 @@ function showUtilMenu() {
         var i=1000;while (i--);
       }, 1);
     },
+    /*LANG*/'Calibrate Battery': () => {
+      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
+        if (ok) {
+          var s=require("Storage").readJSON("setting.json");
+          s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
+          require("Storage").writeJSON("setting.json",s);
+          E.showAlert(/*LANG*/"Calibrated!").then(() => load("settings.app.js"));
+        } else {
+          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
+        }
+      });
+    },
     /*LANG*/'Reset Settings': () => {
       E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
         if (v) {

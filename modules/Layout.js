@@ -65,6 +65,8 @@ Other functions:
 * `layout.debug(obj)` - draw outlines for objects on screen
 * `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
 * `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
+* `layout.setUI()` - (called when module initialised) This sets up input (buttons, touch, etc) with Bangle._setUI
+                     This can be useful if you called E.showMenu/showPrompt/etc and those grabbed input away from layour
 */
 
 
@@ -73,11 +75,10 @@ function Layout(layout, options) {
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
 
-  options = options || {};
-  this.lazy = options.lazy || false;
+  this.options = options || {};
+  this.lazy = this.options.lazy || false;
 
-  var btnList, uiSet;
-  Bangle.setUI(); // remove all existing input handlers
+  var btnList;
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
@@ -91,48 +92,19 @@ function Layout(layout, options) {
       this.physBtns = 0;
       this.buttons = btnList;
       this.selectedButton = -1;
-      Bangle.setUI({mode:"updown", back:options.back}, dir=>{
-        var s = this.selectedButton, l=this.buttons.length;
-        if (dir===undefined && this.buttons[s])
-          return this.buttons[s].cb();
-        if (this.buttons[s]) {
-          delete this.buttons[s].selected;
-          this.render(this.buttons[s]);
-        }
-        s = (s+l+dir) % l;
-        if (this.buttons[s]) {
-          this.buttons[s].selected = 1;
-          this.render(this.buttons[s]);
-        }
-        this.selectedButton = s;
-      });
-      uiSet = true;
     }
   }
-  if (options.back && !uiSet) Bangle.setUI({mode: "custom", back: options.back});
 
-  if (options.btns) {
-    var buttons = options.btns;
+  if (this.options.btns) {
+    var buttons = this.options.btns;
     this.b = buttons;
     if (this.physBtns >= buttons.length) {
-      // Handler for button watch events
-      function pressHandler(btn,e) {
-        if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
-          this.b[btn].cbl(e);
-        else
-          if (this.b[btn].cb) this.b[btn].cb(e);
-      }
       // enough physical buttons
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
-      if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
-      Bangle.btnWatches = [];
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle
       while (this.physBtns > buttons.length)
         buttons.push({label:""});
-      if (buttons[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
-      if (buttons[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
-      if (buttons[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
       this._l.width = g.getWidth()-8; // text width
       this._l = {type:"h", filly:1, c: [
         this._l,
@@ -149,19 +121,8 @@ function Layout(layout, options) {
       if (btnList) btnList.push.apply(btnList, this._l.c[1].c);
     }
   }
-  if (process.env.HWVERSION==2) {
-
-    // Handler for touch events
-    function touchHandler(l,e) {
-      if (l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
-        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
-      }
-      if (l.c) l.c.forEach(n => touchHandler(n,e));
-    }
-    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
-    Bangle.on('touch',Bangle.touchHandler);
-  }
-
+  // Link in all buttons/touchscreen/etc
+  this.setUI();
   // recurse over layout doing some fixing up if needed
   var ll = this;
   function recurser(l) {
@@ -175,16 +136,57 @@ function Layout(layout, options) {
   this.updateNeeded = true;
 }
 
-Layout.prototype.remove = function (l) {
-  if (Bangle.btnWatches) {
-    Bangle.btnWatches.forEach(clearWatch);
-    delete Bangle.btnWatches;
+Layout.prototype.setUI = function() {
+  Bangle.setUI(); // remove all existing input handlers
+
+  var uiSet;
+  if (this.buttons) {
+    // multiple buttons so we'll jus use back/next/select
+    Bangle.setUI({mode:"updown", back:this.options.back}, dir=>{
+      var s = this.selectedButton, l=this.buttons.length;
+      if (dir===undefined && this.buttons[s])
+        return this.buttons[s].cb();
+      if (this.buttons[s]) {
+        delete this.buttons[s].selected;
+        this.render(this.buttons[s]);
+      }
+      s = (s+l+dir) % l;
+      if (this.buttons[s]) {
+        this.buttons[s].selected = 1;
+        this.render(this.buttons[s]);
+      }
+      this.selectedButton = s;
+    });
+    uiSet = true;
   }
-  if (Bangle.touchHandler) {
-    Bangle.removeListener("touch",Bangle.touchHandler);
-    delete Bangle.touchHandler;
+  if (this.options.back && !uiSet) Bangle.setUI({mode: "custom", back: this.options.back});
+  // physical buttons -> actual applications
+  if (this.b) {
+    // Handler for button watch events
+    function pressHandler(btn,e) {
+      if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
+        this.b[btn].cbl(e);
+      else
+        if (this.b[btn].cb) this.b[btn].cb(e);
+    }
+    if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
+    Bangle.btnWatches = [];
+    if (this.b[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
+    if (this.b[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
+    if (this.b[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
   }
-};
+  // Handle touch events on new Bangle.js
+  if (process.env.HWVERSION==2) {
+    function touchHandler(l,e) {
+      if (l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
+        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
+      }
+      if (l.c) l.c.forEach(n => touchHandler(n,e));
+    }
+    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
+    Bangle.on('touch',Bangle.touchHandler);
+  }
+}
 
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);
