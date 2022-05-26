@@ -1,14 +1,32 @@
-/* Call this with a pattern like '.-.', '.. .' or '..' to buzz that pattern
-out on the internal vibration motor. use buzz_menu to display a menu
-where the patterns can be chosen. */
+const BUZZ_WEAK = 0.25;
+const BUZZ_STRONG = 1;
+const SHORT_MS = 100;
+const LONG_MS = 500;
+
+/**
+ * Buzz the passed `pattern` out on the internal vibration motor.
+ *
+ * A pattern is a sequence of `.`, `:`, `-` and `=` where
+ * - `:` is one short and strong vibration
+ * - `.` is one short and weak vibration
+ * - `=` is one long and strong vibration
+ * - `-` is one long and weak vibration
+ *
+ * You can use the `buzz_menu` module to display a menu where some common patterns can be chosen.
+ *
+ * @param {string} pattern A string like `.-.`, `..=`, `:.:`, `..`, etc.
+ * @returns a Promise
+ */
 exports.pattern = pattern => new Promise(resolve => {
-  function b() {
-    if (pattern=="") resolve();
+  function doBuzz() {
+    if (pattern == "") resolve();
     var c = pattern[0];
     pattern = pattern.substr(1);
-    if (c==".") Bangle.buzz().then(()=>setTimeout(b,100));
-    else if (c=="-") Bangle.buzz(500).then(()=>setTimeout(b,100));
-    else setTimeout(b,100);
+    if (c == ".") Bangle.buzz(SHORT_MS, BUZZ_WEAK).then(() => setTimeout(doBuzz, 100));
+    else if (c == "-") Bangle.buzz(LONG_MS, BUZZ_WEAK).then(() => setTimeout(doBuzz, 100));
+    else if (c == ":") Bangle.buzz(SHORT_MS, BUZZ_STRONG).then(() => setTimeout(doBuzz, 100));
+    else if (c == "=") Bangle.buzz(LONG_MS, BUZZ_STRONG).then(() => setTimeout(doBuzz, 100));
+    else setTimeout(doBuzz, 100);
   }
-  b();
+  doBuzz();
 });
