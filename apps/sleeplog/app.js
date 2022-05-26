@@ -107,7 +107,7 @@ function drawGraph(log, date, pos) {
 
   // set height and color values:
   // status: unknown, not worn, awake, light sleep, deep sleep, consecutive
-  // color:  black,   red,      green, cyan,        violet,     blue
+  // color:  black,   red,      green, cyan,        blue,       violet
   var heights = [0, 0.4, 0.6, 0.8, 1];
   var colors = [0, 63488, 2016, 2047, 31, 32799];
 

@@ -5,3 +5,5 @@
 0.05: Fix LOW_MEMORY,MEMORY error on to big log size
 0.06: Reduced log size further to 750 entries
 0.10: Complete rework off this app!
+ - beta01: Add interface.html to view your saved log data
+ - beta02: Add "View log" function for debugging log + send data for gadgetbridge

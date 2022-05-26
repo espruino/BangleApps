@@ -270,6 +270,14 @@ if (sleeplog.conf.enabled) {
         // reset saveUpToDate status
         delete this.info.saveUpToDate;
       }
+      
+      // send status to gadgetbridge
+      var gb_kinds = "unknown,not_worn,activity,light_sleep,deep_sleep";
+      Bluetooth.println(JSON.stringify({
+        t: "act",
+        act: gb_kinds.split(",")[data.status],
+        ts: data.timestamp
+      }));
 
       // call debugging function if set
       if (this.debug) require("sleeplog").debug(data);
