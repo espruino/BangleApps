@@ -25,7 +25,7 @@ function run() {
 
 function isNotWorn() {
     // todo in a futur release check temperature and mouvement in a futur release 
-    return Bangle.isCharging();
+    return (Bangle.isCharging() || activityreminder_settings.tempThreshold <= E.getTemperature());
 }
 
 function isDuringAlertHours(h) {

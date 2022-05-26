@@ -71,6 +71,17 @@
         settings.minSteps = v;
         activityreminder.writeSettings(settings);
       }
+    },
+    'Temp Threshold': {
+      value: settings.tempThreshold,
+      step: 0.5,
+      min: 20,
+      max: 40,
+      format: v => v + "°C",
+      onchange: v => {
+        settings.tempThreshold = v;
+        activityreminder.writeSettings(settings);
+      }
     }
   });
 })
