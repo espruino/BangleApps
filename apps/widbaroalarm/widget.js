@@ -32,13 +32,21 @@
 
   let history3 = storage.readJSON(LOG_FILE, true) || []; // history of recent 3 hours
 
-  function showAlarm(body, title) {
+  function showAlarm(body, title, key) {
     if (body == undefined) return;
 
-    require("notify").show({
+    E.showPrompt(body, {
       title: title || "Pressure",
-      body: body,
-      icon: require("heatshrink").decompress(atob("jEY4cA///gH4/++mkK30kiWC4H8x3BGDmSGgYDCgmSoEAg3bsAIDpAIFkmSpMAm3btgIFDQwIGNQpTYkAIJwAHEgMoCA0JgMEyBnBCAW3KoQQDhu3oAIH5JnDBAW24IIBEYm2EYwACBCIACA"))
+      buttons: { "Ok": 1, "Dismiss": 2, "Pause": 3 }
+    }).then(function (v) {
+      const tsNow = Math.round(Date.now() / 1000); // seconds
+
+      if (v == 2) {
+        saveSetting(key, tsNow + 60 * settings('dismissDelayMin'));
+      }
+      if (v == 3) {
+        saveSetting(key, tsNow + 60 * settings('pauseDelayMin'));
+      }
     });
 
     if (setting("buzz") &&
@@ -48,8 +56,10 @@
   }
 
 
-  function didWeAlreadyWarn(key) {
-    return setting(key) == undefined || setting(key) > 0;
+  function doWeNeedToWarn(key) {
+    const tsNow = Math.round(Date.now() / 1000); // seconds
+
+    return setting(key) == 0 || setting(key) < tsNow;
   }
 
   function checkForAlarms(pressure) {
@@ -77,7 +87,7 @@
     if (setting("lowalarm")) {
       // Is below the alarm threshold?
       if (pressure <= setting("min")) {
-        if (!didWeAlreadyWarn("lastLowWarningTs")) {
+        if (!doWeNeedToWarn("lastLowWarningTs")) {
           showAlarm("Pressure low: " + Math.round(pressure) + " hPa");
           saveSetting("lastLowWarningTs", ts);
           alreadyWarned = true;
@@ -92,7 +102,7 @@
     if (setting("highalarm")) {
       // Is above the alarm threshold?
       if (pressure >= setting("max")) {
-        if (!didWeAlreadyWarn("lastHighWarningTs")) {
+        if (!doWeNeedToWarn("lastHighWarningTs")) {
           showAlarm("Pressure high: " + Math.round(pressure) + " hPa");
           saveSetting("lastHighWarningTs", ts);
           alreadyWarned = true;
@@ -122,7 +132,7 @@
           // drop alarm
           if (drop3halarm > 0 && oldestPressure > pressure) {
             if (Math.abs(diff) > drop3halarm) {
-              if (!didWeAlreadyWarn("lastDropWarningTs")) {
+              if (!doWeNeedToWarn("lastDropWarningTs")) {
                 showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
                   Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop");
                 saveSetting("lastDropWarningTs", ts);
@@ -137,7 +147,7 @@
           // raise alarm
           if (raise3halarm > 0 && oldestPressure < pressure) {
             if (Math.abs(diff) > raise3halarm) {
-              if (!didWeAlreadyWarn("lastRaiseWarningTs")) {
+              if (!doWeNeedToWarn("lastRaiseWarningTs")) {
                 showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
                   Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise");
                 saveSetting("lastRaiseWarningTs", ts);
@@ -176,7 +186,7 @@
 
   /*
    turn on barometer power
-   take 5 measurements
+   take `numberOfMeasurements` measurements
    sort the results
    take the middle one (median)
    turn off barometer power
@@ -186,11 +196,11 @@
     setTimeout(function() {
       currentPressures = [];
 
-      Bangle.getPressure().then(baroHandler);
-      Bangle.getPressure().then(baroHandler);
-      Bangle.getPressure().then(baroHandler);
-      Bangle.getPressure().then(baroHandler);
-      Bangle.getPressure().then(baroHandler);
+      const numberOfMeasurements = 5;
+
+      for (let i = 0; i < numberOfMeasurements; i++) {
+        Bangle.getPressure().then(baroHandler);
+      }
 
       setTimeout(function() {
         Bangle.setBarometerPower(false, "widbaroalarm");
@@ -198,7 +208,7 @@
         currentPressures.sort();
 
         // take median value
-        medianPressure = currentPressures[3];
+        medianPressure = currentPressures[Math.round(numberOfMeasurements / 2) + 1];
         checkForAlarms(medianPressure);
       }, 1000);
     }, 500);
