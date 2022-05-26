@@ -1,0 +1,12 @@
+{ "id": "widday",
+  "name": "Day Widget",
+  "shortName":"My Timer",
+  "icon": "widday.png",
+  "version":"0.01",
+  "description": "Just the day of the current date as widget",
+  "tags": "widget,say,date",
+  "storage": [
+    {"name":"widday.wid.js","url":"app.js"},
+    {"name":"widday.img","url":"app-icon.js","evaluate":true}
+  ]
+}
