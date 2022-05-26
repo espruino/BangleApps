@@ -37,8 +37,8 @@ function handleFirstDayOfWeek(dow) {
   return dow;
 }
 
-// Check the first day of week and update the dow field accordingly.
-alarms.forEach(alarm => alarm.dow = handleFirstDayOfWeek(alarm.dow));
+// Check the first day of week and update the dow field accordingly (alarms only!)
+alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
 function showMainMenu() {
   const menu = {
@@ -158,14 +158,14 @@ function saveAlarm(alarm, alarmIndex, time) {
 }
 
 function saveAndReload() {
-  // Before saving revert the dow to the standard format
-  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+  // Before saving revert the dow to the standard format (alarms only!)
+  alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
   require("sched").setAlarms(alarms);
   require("sched").reload();
 
   // Fix after save
-  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+  alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 }
 
 function decodeDOW(alarm) {
