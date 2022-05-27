@@ -2,9 +2,9 @@
   "name": "Invader",
   "shortName":"Invader",
   "version":"0.01",
-  "description": "A Space Invader game-like demo",
+  "description": "A Space Invader game-like demo - work in progress",
   "icon": "app.png",
-  "tags": "",
+  "tags": "game",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
