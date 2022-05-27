@@ -6,20 +6,20 @@ Add screen shots (if possible) to the app folder and link then into this file wi
 
 ## Usage
 
-Describe how to use it
+For fun, I'm learning js with the Bangle
 
 ## Features
 
-Name the function
+Shoot the Alien
 
 ## Controls
 
-Name the buttons and what they are used for
+Lower Left and Right hand sides of the screen to move turret left or right, upper Right hand part of screen to fire
 
 ## Requests
 
-Name who should be contacted for support/update requests
+Brian Kumanchik
 
 ## Creator
 
-Your name
+Brian Kumanchik
