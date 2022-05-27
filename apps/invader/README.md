@@ -1,6 +1,6 @@
 # App Name
 
-Invader, I'm creating this demo to learn JavaScript with the Bangle.js 2
+Invader - I'm creating this demo to learn JavaScript with the Bangle.js 2
 
 ## Usage
 
