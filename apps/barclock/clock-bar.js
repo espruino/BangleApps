@@ -51,6 +51,7 @@ function dateText(date) {
 const ClockFace = require("ClockFace"),
   clock = new ClockFace({
     precision:1,
+    settingsFile:'barclock.settings.json',
     init: function() {
       const Layout = require("Layout");
       this.layout = new Layout({
@@ -62,8 +63,8 @@ const ClockFace = require("ClockFace"),
             ],
           },
           {id: "bar", type: "custom", fraction: 0, fillx: 1, height: 6, col: g.theme.fg2, render: renderBar},
-          {height: 40},
-          {id: "date", type: "txt", font: "10%", valign: 1},
+          this.showDate ? {height: 40} : {},
+          this.showDate ? {id: "date", type: "txt", font: "10%", valign: 1} : {},
         ],
       }, {lazy: true});
       // adjustments based on screen size and whether we display am/pm
@@ -82,7 +83,7 @@ const ClockFace = require("ClockFace"),
     update: function(date, c) {
       if (c.m) this.layout.time.label = timeText(date);
       if (c.h) this.layout.ampm.label = ampmText(date);
-      if (c.d) this.layout.date.label = dateText(date);
+      if (c.d && this.showDate) this.layout.date.label = dateText(date);
       const SECONDS_PER_MINUTE = 60;
       if (c.s) this.layout.bar.fraction = date.getSeconds()/SECONDS_PER_MINUTE;
       this.layout.render();
