@@ -55,7 +55,7 @@
     },
     'Pause delay': {
       value: settings.pauseDelayMin,
-      min: 30, max: 240,
+      min: 30, max: 240, step: 5,
       onchange: v => {
         settings.pauseDelayMin = v;
         activityreminder.writeSettings(settings);
@@ -66,7 +66,7 @@
     },
     'Min steps': {
       value: settings.minSteps,
-      min: 10, max: 500,
+      min: 10, max: 500, step: 10, 
       onchange: v => {
         settings.minSteps = v;
         activityreminder.writeSettings(settings);
@@ -74,9 +74,7 @@
     },
     'Temp Threshold': {
       value: settings.tempThreshold,
-      step: 0.5,
-      min: 20,
-      max: 40,
+      min: 20, max: 40, step: 0.5,
       format: v => v + "°C",
       onchange: v => {
         settings.tempThreshold = v;
