@@ -31,7 +31,7 @@ function isDuringAlertHours(h) {
     if(activityreminder_settings.startHour < activityreminder_settings.endHour){ // not passing through midnight
         return (h >= activityreminder_settings.startHour && h < activityreminder_settings.endHour)
     } else{ // passing through midnight
-        reutn (h >= activityreminder_settings.startHour || h < activityreminder_settings.endHour)
+        return (h >= activityreminder_settings.startHour || h < activityreminder_settings.endHour)
     }
 }
 
