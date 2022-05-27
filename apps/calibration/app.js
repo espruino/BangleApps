@@ -49,7 +49,7 @@ class BanglejsApp {
     this.x = 16 + Math.floor(Math.random() * (g.getWidth() - 32));
     this.y = 40 + Math.floor(Math.random() * (g.getHeight() - 80));
 
-    g.clearRect(0, 24, g.getWidth(), g.getHeight() - 24);
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
     g.drawLine(this.x, this.y - 5, this.x, this.y + 5);
     g.drawLine(this.x - 5, this.y, this.x + 5, this.y);
     g.setFont('Vector', 10);
@@ -64,8 +64,6 @@ class BanglejsApp {
 
 
 E.srand(Date.now());
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 
 calibration = new BanglejsApp();
 calibration.load_settings();
