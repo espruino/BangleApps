@@ -1,24 +1,25 @@
 class BanglejsApp {
   constructor() {
-    this.updateFactor = 0.2;
+    this.maxSamples = 16;
+    this.target = {
+      xMin: Math.floor(0.1 * g.getWidth()),
+      xMax: Math.floor(0.9 * g.getWidth()),
+      yMin: Math.floor(0.1 * g.getHeight()),
+      yMax: Math.floor(0.9 * g.getHeight()),
+    };
     this.x = 0;
     this.y = 0;
     this.step = 0;
     this.settings = {
-      xoffset: 0,
-      yoffset: 0,
-      xscale: 1,
-      yscale: 1,
+      xoffset: [0],
+      yoffset: [0],
+      xMaxActual: [this.target.xMax],
+      yMaxActual: [this.target.yMax],
       };
   }
 
   load_settings() {
     let settings = require('Storage').readJSON('calibration.json', true) || {active: false};
-
-    if (!settings.xoffset) settings.xoffset = 0;
-    if (!settings.yoffset) settings.yoffset = 0;
-    if (!settings.xscale) settings.xscale = 1;
-    if (!settings.yscale) settings.yscale = 1;
 
     console.log('loaded settings:');
     console.log(settings);
@@ -26,13 +27,34 @@ class BanglejsApp {
     return settings;
   }
 
-  save_settings() {
-    this.settings.active = true;
-    this.settings.reload = false;
-    require('Storage').writeJSON('calibration.json', this.settings);
+  getMedian(array){
+    array.sort();
+    let i = Math.floor(array.length/2);
+    if ( array.length % 2 && array.length > 1 ){
+        return (array[i]+array[i+1])/2;
+    } else {
+        return array[i];
+    }
+  }
 
-    console.log('saved settings:');
-    console.log(this.settings);
+  getMedianSettings(){
+    let medianSettings = {
+      xoffset: this.getMedian(this.settings.xoffset),
+      yoffset: this.getMedian(this.settings.yoffset)
+    };
+
+    medianSettings.xscale = this.target.xMax / (medianSettings.xoffset + this.getMedian(this.settings.xMaxActual));
+    medianSettings.yscale = this.target.yMax / (medianSettings.yoffset + this.getMedian(this.settings.yMaxActual));
+    return medianSettings;
+  }
+
+  save_settings() {
+    let settingsToSave =  this.getMedianSettings();
+    settingsToSave.active = true;
+    settingsToSave.reload = false;
+    require('Storage').writeJSON('calibration.json', settingsToSave);
+
+    console.log('saved settings:', settingsToSave);
   }
 
   explain() {
@@ -46,61 +68,61 @@ class BanglejsApp {
   drawTarget() {
     switch (this.step){
       case 0:
-        this.x = Math.floor(0.2 * g.getWidth());
-        this.y = Math.floor(0.2 * g.getHeight());
+        this.x = this.target.xMin;
+        this.y = this.target.yMin;
         break;
       case 1:
-        this.x = Math.floor(0.8 * g.getWidth());
-        this.y = Math.floor(0.2 * g.getHeight());
+        this.x = this.target.xMax;
+        this.y = this.target.yMin;
         break;
       case 2:
-        this.x = Math.floor(0.5 * g.getWidth());
-        this.y = Math.floor(0.5 * g.getHeight());
+        this.x = this.target.xMin;
+        this.y = this.target.yMax;
         break;
       case 3:
-        this.x = Math.floor(0.2 * g.getWidth());
-        this.y = Math.floor(0.8 * g.getHeight());
-        break;
-      case 4:
-        this.x = Math.floor(0.8 * g.getWidth());
-        this.y = Math.floor(0.8 * g.getHeight());
+        this.x = this.target.xMax;
+        this.y = this.target.yMax;
         break;
     }
 
+    g.clearRect(0, 0, g.getWidth(), g.getHeight());
     g.setColor(g.theme.fg);
     g.drawLine(this.x, this.y - 5, this.x, this.y + 5);
     g.drawLine(this.x - 5, this.y, this.x + 5, this.y);
     g.setFont('Vector', 10);
-    g.drawString('current offset: ' + this.settings.xoffset.toFixed(3) + ', ' + this.settings.yoffset.toFixed(3), 2, 2);
-    g.drawString('current scale: ' + this.settings.xscale.toFixed(3) + ', ' + this.settings.yscale.toFixed(3), 2, 12);
+    let medianSettings = this.getMedianSettings();
+    g.drawString('current offset: ' + medianSettings.xoffset.toFixed(3) + ', ' + medianSettings.yoffset.toFixed(3), 2, (g.getHeight()/2)-6);
+    g.drawString('current scale: ' + medianSettings.xscale.toFixed(3) + ', ' + medianSettings.yscale.toFixed(3), 2, (g.getHeight()/2)+6);
   }
-  
+
   setOffset(xy) {
-    this.last=xy;
     switch (this.step){
       case 0:
-        this.settings.xoffset = this.settings.xoffset * (1-this.updateFactor) + (this.x - xy.x) * this.updateFactor;
-        this.settings.yoffset = this.settings.yoffset * (1-this.updateFactor) + (this.y - xy.y) * this.updateFactor;
+        this.settings.xoffset.push(this.x - xy.x);
+        this.settings.yoffset.push(this.y - xy.y);
         break;
       case 1:
-        this.settings.xscale = this.settings.xscale * (1-this.updateFactor) + ((xy.x + this.settings.xoffset) / this.x) * this.updateFactor;
-        this.settings.yoffset = this.settings.yoffset * (1-this.updateFactor) + (this.y - xy.y) * this.updateFactor;
-        break;
-      case 3:
-        this.settings.xoffset = this.settings.xoffset * (1-this.updateFactor) + (this.x - xy.x) * this.updateFactor;
-        this.settings.yscale = this.settings.yscale * (1-this.updateFactor) + ((xy.y + this.settings.yoffset) / this.y) * this.updateFactor;
+        this.settings.xMaxActual.push(xy.x);
+        this.settings.yoffset.push(this.y - xy.y);
         break;
       case 2:
-      case 4:
-        this.settings.xscale = this.settings.xscale * (1-this.updateFactor) + ((xy.x + this.settings.xoffset) / this.x) * this.updateFactor;
-        this.settings.yscale = this.settings.yscale * (1-this.updateFactor) + ((xy.y + this.settings.yoffset) / this.y) * this.updateFactor;
+        this.settings.xoffset.push(this.x - xy.x);
+        this.settings.yMaxActual.push(xy.y);
+        break;
+      case 3:
+        this.settings.xMaxActual.push(xy.x);
+        this.settings.yMaxActual.push(xy.y);
         break;
     }
+
+    for (let c in this.settings){
+      if (this.settings[c].length > this.maxSamples) this.settings[c] = this.settings[c].slice(1, this.maxSamples);
+    }
   }
-  
+
   nextStep() {
     this.step++;
-    if ( this.step == 5 ) this.step = 0;
+    if ( this.step == 4 ) this.step = 0;
   }
 }
 
@@ -112,10 +134,9 @@ calibration.load_settings();
 Bangle.disableCalibration = true;
 
 function touchHandler (btn, xy){
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
   if (xy) calibration.setOffset(xy);
-  calibration.drawTarget();
   calibration.nextStep();
+  calibration.drawTarget();
 }
 
 let modes = {
@@ -127,4 +148,4 @@ let modes = {
   touch : touchHandler,
 };
 Bangle.setUI(modes);
-touchHandler();
+calibration.drawTarget();
