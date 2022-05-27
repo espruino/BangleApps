@@ -7,3 +7,4 @@ A simple digital clock showing seconds as a horizontal bar.
 
 ## Settings
 * `Show date`: display date at the bottom of screen
+* `Font`: choose between bitmap or vector fonts

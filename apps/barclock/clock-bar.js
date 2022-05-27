@@ -58,7 +58,7 @@ const ClockFace = require("ClockFace"),
         type: "v", c: [
           {
             type: "h", c: [
-              {id: "time", label: "88:88", type: "txt", font: "6x8:5", col:g.theme.fg, bgCol: g.theme.bg}, // size updated below
+              {id: "time", label: "88:88", type: "txt", font: "6x8:5", col:g.theme.fg, bgCol: g.theme.bg}, // updated below
               {id: "ampm", label: "  ", type: "txt", font: "6x8:2", col:g.theme.fg, bgCol: g.theme.bg},
             ],
           },
@@ -69,7 +69,7 @@ const ClockFace = require("ClockFace"),
       }, {lazy: true});
       // adjustments based on screen size and whether we display am/pm
       let thickness; // bar thickness, same as time font "pixel block" size
-      if (this.is12Hour) {
+      if (this.is12Hour && locale.hasMeridian) {
         // Maximum font size = (<screen width> - <ampm: 2chars * (2*6)px>) / (5chars * 6px)
         thickness = Math.floor((Bangle.appRect.w-24)/(5*6));
       } else {
@@ -77,7 +77,16 @@ const ClockFace = require("ClockFace"),
         thickness = Math.floor(Bangle.appRect.w/(5*6));
       }
       this.layout.bar.height = thickness+1;
-      this.layout.time.font = "6x8:"+thickness;
+      if (this.font===1) { // vector
+        if (this.is12Hour && locale.hasMeridian) {
+          this.layout.time.font = "Vector:60";
+          this.layout.ampm.font = "Vector:40";
+        } else {
+          this.layout.time.font = "Vector:80";
+        }
+      } else {
+        this.layout.time.font = "6x8:"+thickness;
+      }
       this.layout.update();
     },
     update: function(date, c) {
