@@ -7,21 +7,21 @@ function getFileName(n) {
 
 function showMenu() {
   var menu = {
-    "" : { title : "Accel Logger" },
-    "Exit" : function() {
+    "" : { title : /*LANG*/"Accel Logger" },
+    "< Back" : function() {
       load();
     },
-    "File No" : {
+    /*LANG*/"File No" : {
       value : fileNumber,
       min : 0,
       max : MAXLOGS,
       onchange : v => { fileNumber=v; }
     },
-    "Start" : function() {
+    /*LANG*/"Start" : function() {
       E.showMenu();
       startRecord();
     },
-    "View Logs" : function() {
+    /*LANG*/"View Logs" : function() {
       viewLogs();
     },
   };
@@ -29,7 +29,7 @@ function showMenu() {
 }
 
 function viewLog(n) {
-  E.showMessage("Loading...");
+  E.showMessage(/*LANG*/"Loading...");
   var f = require("Storage").open(getFileName(n), "r");
   var records = 0, l = "", ll="";
   while ((l=f.readLine())!==undefined) {records++;ll=l;}
@@ -37,29 +37,29 @@ function viewLog(n) {
   if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
 
   var menu = {
-    "" : { title : "Log "+n }
+    "" : { title : "Log "+n },
+    "< Back" : () => { viewLogs(); }
   };
-  menu[records+" Records"] = "";
-  menu[length+" Seconds"] = "";
-  menu["DELETE"] = function() {
-    E.showPrompt("Delete Log "+n).then(ok=>{
+  menu[records+/*LANG*/" Records"] = "";
+  menu[length+/*LANG*/" Seconds"] = "";
+  menu[/*LANG*/"DELETE"] = function() {
+    E.showPrompt(/*LANG*/"Delete Log "+n).then(ok=>{
       if (ok) {
-        E.showMessage("Erasing...");
+        E.showMessage(/*LANG*/"Erasing...");
         f.erase();
         viewLogs();
       } else viewLog(n);
     });
   };
-  menu["< Back"] = function() {
-    viewLogs();
-  };
+
 
   E.showMenu(menu);
 }
 
 function viewLogs() {
   var menu = {
-    "" : { title : "Logs" }
+    "" : { title : /*LANG*/"Logs" },
+    "< Back" : () => { showMenu(); }
   };
 
   var hadLogs = false;
@@ -67,14 +67,13 @@ function viewLogs() {
     var f = require("Storage").open(getFileName(i), "r");
     if (f.readLine()!==undefined) {
       (function(i) {
-        menu["Log "+i] = () => viewLog(i);
+        menu[/*LANG*/"Log "+i] = () => viewLog(i);
       })(i);
       hadLogs = true;
     }
   }
   if (!hadLogs)
-    menu["No Logs Found"] = function(){};
-  menu["< Back"] = function() { showMenu(); };
+    menu[/*LANG*/"No Logs Found"] = function(){};
   E.showMenu(menu);
 }
 
@@ -83,7 +82,7 @@ function startRecord(force) {
     // check for existing file
     var f = require("Storage").open(getFileName(fileNumber), "r");
     if (f.readLine()!==undefined)
-      return E.showPrompt("Overwrite Log "+fileNumber+"?").then(ok=>{
+      return E.showPrompt(/*LANG*/"Overwrite Log "+fileNumber+"?").then(ok=>{
         if (ok) startRecord(true); else showMenu();
       });
   }
@@ -93,14 +92,14 @@ function startRecord(force) {
 
   var Layout = require("Layout");
   var layout = new Layout({ type: "v", c: [
-      {type:"txt", font:"6x8", label:"Samples", pad:2},
+      {type:"txt", font:"6x8", label:/*LANG*/"Samples", pad:2},
       {type:"txt", id:"samples", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
-      {type:"txt", font:"6x8", label:"Time", pad:2},
+      {type:"txt", font:"6x8", label:/*LANG*/"Time", pad:2},
       {type:"txt", id:"time", font:"6x8:2", label:"  -  ", pad:5, bgCol:g.theme.bg},
-      {type:"txt", font:"6x8:2", label:"RECORDING", bgCol:"#f00", pad:5, fillx:1},
+      {type:"txt", font:"6x8:2", label:/*LANG*/"RECORDING", bgCol:"#f00", pad:5, fillx:1},
     ]
   },{btns:[ // Buttons...
-    {label:"STOP", cb:()=>{
+    {label:/*LANG*/"STOP", cb:()=>{
       Bangle.removeListener('accel', accelHandler);
       showMenu();
     }}

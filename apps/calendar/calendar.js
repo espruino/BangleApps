@@ -18,8 +18,7 @@ const blue = "#0000ff";
 const yellow = "#ffff00";
 
 let settings = require('Storage').readJSON("calendar.json", true) || {};
-if (settings.startOnSun === undefined)
-  settings.startOnSun = false;
+let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 if (settings.ndColors === undefined)
   if (process.env.HWVERSION == 2) {
     settings.ndColors = true;
@@ -50,14 +49,14 @@ function getDowLbls(locale) {
     case "de_AT":
     case "de_CH":
     case "de_DE":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
       } else {
         dowLbls = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
       }
       break;
     case "nl_NL":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["zo", "ma", "di", "wo", "do", "vr", "za"];
       } else {
         dowLbls = ["ma", "di", "wo", "do", "vr", "za", "zo"];
@@ -66,14 +65,14 @@ function getDowLbls(locale) {
     case "fr_BE":
     case "fr_CH":
     case "fr_FR":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
       } else {
         dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
       }
       break;
     case "sv_SE":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
       } else {
         dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
@@ -81,21 +80,21 @@ function getDowLbls(locale) {
       break;
     case "it_CH":
     case "it_IT":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"];
       } else {
         dowLbls = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"];
       }
       break;
     case "oc_FR":
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["dg", "dl", "dm", "dc", "dj", "dv", "ds"];
       } else {
         dowLbls = ["dl", "dm", "dc", "dj", "dv", "ds", "dg"];
       }
       break;
     default:
-      if (settings.startOnSun) {
+      if (startOnSun) {
         dowLbls = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
       } else {
         dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -110,7 +109,7 @@ function drawCalendar(date) {
   g.clearRect(0, 0, maxX, maxY);
   g.setBgColor(bgColorMonth);
   g.clearRect(0, 0, maxX, headerH);
-  if (settings.startOnSun){
+  if (startOnSun){
     g.setBgColor(bgColorWeekend);
     g.clearRect(0, headerH + rowH, colW, maxY);
     g.setBgColor(bgColorDow);
@@ -150,7 +149,7 @@ function drawCalendar(date) {
   });
 
   date.setDate(1);
-  const dow = date.getDay() + (settings.startOnSun ? 1 : 0);
+  const dow = date.getDay() + (startOnSun ? 1 : 0);
   const dowNorm = dow === 0 ? 7 : dow;
 
   const monthMaxDayMap = {
@@ -242,5 +241,5 @@ Bangle.on("touch", area => {
 });
 
 // Show launcher when button pressed
-Bangle.setUI("clock"); // TODO: ideally don't set 'clock' mode
+setWatch(() => load(), process.env.HWVERSION === 2 ? BTN : BTN3, { repeat: false, edge: "falling" });
 // No space for widgets!

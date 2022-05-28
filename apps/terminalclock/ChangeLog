@@ -1,3 +1,6 @@
 0.01: New App!
 0.02: Rename "Activity" in "Motion" and display the true values for it
 0.03: Add Banglejs 1 compatibility
+0.04: Fix settings bug
+0.05: Add altitude display (only Bangle.js 2)
+0.06: Add power related settings to control the HR and pressure(altitude) sensor from the watchface

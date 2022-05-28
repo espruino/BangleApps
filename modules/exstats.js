@@ -15,6 +15,7 @@ print(ExStats.getList());
   {name: "Distance", id:"dist"},
   {name: "Steps", id:"step"},
   {name: "Heart (BPM)", id:"bpm"},
+  {name: "Max BPM", id:"maxbpm"},
   {name: "Pace (avr)", id:"pacea"},
   {name: "Pace (current)", id:"pacec"},
   {name: "Cadence", id:"caden"},
@@ -72,6 +73,7 @@ var state = {
   // cadence // steps per minute adjusted if <1 minute
   // BPM // beats per minute
   // BPMage // how many seconds was BPM set?
+  // maxBPM // The highest BPM reached while active
   // Notifies: 0 for disabled, otherwise how often to notify in meters, seconds, or steps
   notify: {
       dist: {
@@ -159,6 +161,10 @@ Bangle.on("HRM", function(h) {
   if (h.confidence>=60) {
     state.BPM = h.bpm;
     state.BPMage = 0;
+    if (state.maxBPM < h.bpm) {
+      state.maxBPM = h.bpm;
+      if (stats["maxbpm"]) stats["maxbpm"].emit("changed",stats["maxbpm"]);
+    }
     if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
   }
 });
@@ -170,6 +176,7 @@ exports.getList = function() {
     {name: "Distance", id:"dist"},
     {name: "Steps", id:"step"},
     {name: "Heart (BPM)", id:"bpm"},
+    {name: "Max BPM", id:"maxbpm"},
     {name: "Pace (avg)", id:"pacea"},
     {name: "Pace (curr)", id:"pacec"},
     {name: "Speed", id:"speed"},
@@ -212,7 +219,7 @@ exports.getStats = function(statIDs, options) {
     stats["dist"]={
       title : "Dist",
       getValue : function() { return state.distance; },
-      getString : function() { return require("locale").distance(state.distance); },
+      getString : function() { return require("locale").distance(state.distance,2); },
     };
   }
   if (statIDs.includes("step")) {
@@ -228,6 +235,14 @@ exports.getStats = function(statIDs, options) {
       title : "BPM",
       getValue : function() { return state.BPM; },
       getString : function() { return state.BPM||"--" },
+    };
+  }
+  if (statIDs.includes("maxbpm")) {
+    needHRM = true;
+    stats["maxbpm"]={
+      title : "Max BPM",
+      getValue : function() { return state.maxBPM; },
+      getString : function() { return state.maxBPM||"--" },
     };
   }
   if (statIDs.includes("pacea")) {
@@ -251,7 +266,7 @@ exports.getStats = function(statIDs, options) {
     stats["speed"]={
       title : "Speed",
       getValue : function() { return state.curSpeed*3.6; }, // in kph
-      getString : function() { return require("locale").speed(state.curSpeed*3.6); },
+      getString : function() { return require("locale").speed(state.curSpeed*3.6,2); },
     };
   }
   if (statIDs.includes("caden")) {
@@ -299,8 +314,7 @@ exports.getStats = function(statIDs, options) {
     state.curSpeed = 0;
     state.BPM = 0;
     state.BPMage = 0;
-    state.thisGPS = {};
-    state.lastGPS = {};
+    state.maxBPM = 0;
     state.notify = options.notify;
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;

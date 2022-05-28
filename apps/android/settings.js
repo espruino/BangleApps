@@ -10,8 +10,8 @@
     "" : { "title" : "Android" },
     "< Back" : back,
     /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
-    "Find Phone" : () => E.showMenu({
-        "" : { "title" : "Find Phone" },
+    /*LANG*/"Find Phone" : () => E.showMenu({
+        "" : { "title" : /*LANG*/"Find Phone" },
         "< Back" : ()=>E.showMenu(mainmenu),
         /*LANG*/"On" : _=>gb({t:"findPhone",n:true}),
         /*LANG*/"Off" : _=>gb({t:"findPhone",n:false}),
@@ -24,7 +24,7 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>load("messages.app.js")
+    /*LANG*/"Messages" : ()=>load("messages.app.js"),
   };
   E.showMenu(mainmenu);
 })

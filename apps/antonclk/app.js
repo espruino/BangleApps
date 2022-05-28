@@ -99,7 +99,7 @@ function updateState() {
 }
 
 function isoStr(date) {
-  return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
+  return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
 }
 
 var calWeekBuffer = [false,false,false]; //buffer tz, date, week no (once calculated until other tz or date is requested)
@@ -140,7 +140,7 @@ function draw() {
   g.setFontAlign(0, 0).setFont("Anton").drawString(timeStr, x, y); // draw time
   if (secondsScreen) {
     y += 65;
-    var secStr = (secondsWithColon ? ":" : "") + ("0" + date.getSeconds()).substr(-2);
+    var secStr = (secondsWithColon ? ":" : "") + ("0" + date.getSeconds()).slice(-2);
     if (doColor())
       g.setColor(0, 0, 1);
     g.setFont("AntonSmall");
@@ -193,7 +193,7 @@ function draw() {
     if (calWeek || weekDay) {
       var dowcwStr = "";
       if (calWeek)
-        dowcwStr = " #" + ("0" + ISO8601calWeek(date)).substring(-2);
+        dowcwStr = " #" + ("0" + ISO8601calWeek(date)).slice(-2);
       if (weekDay) 
         dowcwStr = require("locale").dow(date, calWeek ? 1 : 0) + dowcwStr;  //weekDay e.g. Monday or weekDayShort #<calWeek> e.g. Mon #01
       else //week #01

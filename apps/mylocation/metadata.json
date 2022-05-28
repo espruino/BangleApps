@@ -1,17 +1,16 @@
 { "id": "mylocation",
   "name": "My Location",
   "shortName":"My Location",
-  "icon": "mylocation.png",
-  "type": "app",
+  "icon": "app.png",
+  "type": "settings",
   "screenshots": [{"url":"screenshot_1.png"}],
-  "version":"0.03",
+  "version":"0.07",
   "description": "Sets and stores the lat and long of your preferred City or it can be set from the GPS. mylocation.json can be used by other apps that need your main location lat and lon. See README",
   "readme": "README.md",
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
-    {"name":"mylocation.app.js","url":"mylocation.app.js"},
-    {"name":"mylocation.img","url":"mylocation.icon.js","evaluate": true }
+    {"name":"mylocation.settings.js","url":"settings.js"}
   ],
   "data": [
     {"name":"mylocation.json"}

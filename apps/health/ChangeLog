@@ -10,3 +10,7 @@
 0.09: Fix file naming so months are 1-based (not 0) (fix #1119)
 0.10: Adds additional 3 minute setting for HRM
 0.11: Pre-minified boot&lib - folds constants and saves RAM
+0.12: Add setting for Daily Step Goal
+0.13: Add support for internationalization
+0.14: Move settings
+0.15: Fix charts (fix #1366)

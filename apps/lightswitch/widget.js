@@ -3,7 +3,8 @@
   var settings = Object.assign({
     colors: "011",
     image: "default",
-    touchOn: "clock,launch",
+    touchOn: "always",
+    oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
     unlockSide: "",
@@ -85,7 +86,7 @@
         })(this.image);
 
       // clear widget area
-      g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 24);
+      g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 23);
 
       // draw shine if backlight is active
       if (this.isOn) g.drawImage(atob(icons.shine), this.x, this.y);
@@ -162,6 +163,11 @@
       // change brigthness value, skip write to storage while still touching
       w.changeValue(value, event.b);
 
+      // masks this drag event by messing up the event handler
+      // see https://github.com/espruino/Espruino/issues/2151
+      Bangle.removeListener("drag", w.dragListener);
+      Bangle["#ondrag"] = [w.dragListener].concat(Bangle["#ondrag"]);
+
       // on touch release remove drag listener and reset drag status to indicate stopped drag action
       if (!event.b) {
         Bangle.removeListener("drag", w.dragListener);
@@ -184,14 +190,14 @@
       if (w.dragStatus === "off") {
 
         // check if inside widget area
-        if (!(!w || cursor.x < w.x || cursor.x > w.x + w.width ||
-            cursor.y < w.y || cursor.y > w.y + 23)) {
+        if (!(!w || cursor.x < w.x - w.oversize || cursor.x > w.x + w.width + w.oversize ||
+            cursor.y < w.y - w.oversize || cursor.y > w.y + 23 + w.oversize)) {
           // first touch feedback
           Bangle.buzz(25);
           // check if drag is disabled
           if (w.dragDelay) {
-            // add drag listener
-            Bangle.on("drag", w.dragListener);
+            // add drag listener at first position
+            Bangle["#ondrag"] = [w.dragListener].concat(Bangle["#ondrag"]);
             // set drag timeout
             w.dragStatus = setTimeout((w) => {
               // remove drag listener
@@ -204,6 +210,10 @@
           }
           // switch backlight
           w.changeValue();
+          // masks this touch event by messing up the event handler
+          // see https://github.com/espruino/Espruino/issues/2151
+          Bangle.removeListener("touch", w.touchListener);
+          Bangle["#ontouch"] = [w.touchListener].concat(Bangle["#ontouch"]);
         }
 
       }
@@ -236,11 +246,11 @@
       // add lock listener
       Bangle.on("lock", w.draw);
 
-      // add touch listener to control the light depending on settings
+      // add touch listener to control the light depending on settings at first position
       if (w.touchOn === "always" || !global.__FILE__ ||
         w.touchOn.includes(__FILE__) ||
         w.touchOn.includes(require("Storage").readJSON(__FILE__.replace("app.js", "info")).type))
-        Bangle.on("touch", w.touchListener);
+        Bangle["#ontouch"] = [w.touchListener].concat(Bangle["#ontouch"]);
 
       // add tap listener to unlock and/or flash backlight
       if (w.unlockSide || w.tapSide) Bangle.on("tap", require("lightswitch.js").tapListener);

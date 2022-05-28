@@ -14,3 +14,18 @@
 0.13: Alarm widget state now updates when setting/resetting an alarm
 0.14: Order of 'back' menu item
 0.15: Fix hour/minute wrapping code for new menu system
+0.16: Adding alarm library
+0.17: Moving alarm internals to 'sched' library
+0.18: Cope with >1 identical alarm at once (#1667)
+0.19: Ensure rescheduled alarms that already fired have 'last' reset
+0.20: Use the new 'sched' factories to initialize new alarms/timers
+0.21: Fix time reset after a day of week change (#1676)
+0.22: Refactor some methods to scheduling library
+0.23: Fix regression with Days of Week (#1735)
+0.24: Automatically save the alarm/timer when the user returns to the main menu using the back arrow
+      Add "Enable All", "Disable All" and "Remove All" actions
+0.25: Fix redrawing selected Alarm/Timer entry inside edit submenu
+0.26: Add support for Monday as first day of the week (#1780)
+0.27: New UI!
+0.28: Fix bug with alarms not firing when configured to fire only once
+0.29: Fix wrong 'dow' handling in new timer if first day of week is Monday

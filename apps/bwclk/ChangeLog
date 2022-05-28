@@ -1,0 +1,9 @@
+0.01: New App.
+0.02: Use build in function for steps and other improvements.
+0.03: Adapt colors based on the theme of the user.
+0.04: Steps can be hidden now such that the time is even larger.
+0.05: Included icons for information.
+0.06: Design and usability improvements.
+0.07: Improved positioning.
+0.08: Select the color of widgets correctly. Additional settings to hide colon.
+0.09: Larger font size if colon is hidden to improve readability further.

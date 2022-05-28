@@ -1,7 +1,21 @@
-const debugMode = 'off'; // valid values are: off, test, production, development
+let settings = Object.assign({
+  // default values
+  maxUndoLevels: 4,
+  charIndex: 0,
+  clockMode: true,
+  debugMode: false,
+}, require('Storage').readJSON("game1024.settings.json", true) || {});
+
+const clockMode = settings.clockMode!==undefined ? settings.clockMode : true;
+const debugMode = settings.debugMode!==undefined ? settings.debugMode : false; // #settings -- valid values are: true or false
+const maxUndoLevels = settings.maxUndoLevels!==undefined ? settings.maxUndoLevels : 4; // #settings
+const charIndex = settings.charIndex!==undefined ? settings.charIndex : 0; // #settings -- plain numbers on the grid
+
+delete settings; // remove unneeded settings from memory
+
 const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)};
-const rows = 4, cols = 4;
-const borderWidth = 6;
+const rows = 4, cols = 4; // #settings
+const borderWidth = 6; 
 const sqWidth = (Math.floor(Bangle.appRect.w - 48) / rows) - borderWidth;
 const cellColors = [{bg:'#00FFFF', fg: '#000000'},
                     {bg:'#FF00FF', fg: '#000000'}, {bg:'#808000', fg: '#FFFFFF'}, {bg:'#0000FF', fg: '#FFFFFF'}, {bg:'#008000', fg: '#FFFFFF'},
@@ -13,12 +27,8 @@ const cellChars = [
   ['0','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
   ['0','I', 'II', 'III', 'IV', 'V', 'VI', 'VII','VIII', 'IX', 'X']
 ];
-// const numInitialCells = 2;
-const maxUndoLevels = 4;
-const noExceptions = true;
-let charIndex = 0; // plain numbers on the grid
-const themeBg = g.theme.bg;
 
+const themeBg = g.theme.bg;
   
 const scores = {
   currentScore: 0,
@@ -78,12 +88,12 @@ const snapshot = {
   updCounter: function() {
     this.counter = ++this.counter > this.interval ? 0 : this.counter;
   },
-  dump: {gridsize: rows * cols, expVals: [], score: 0, highScore: 0, charIndex: charIndex},
+  dump: {gridsize: rows * cols, expVals: [], score: 0, highScore: 0},
   write: function() {
     require("Storage").writeJSON(this.snFileName, this.dump);
   },
   read: function () {
-    let sn = require("Storage").readJSON(this.snFileName, noExceptions);
+    let sn = require("Storage").readJSON(this.snFileName, true);
     if ((typeof sn == "undefined") || (sn.gridsize !== rows * cols)) {
       require("Storage").writeJSON(this.snFileName, this.dump);
       return false;
@@ -101,7 +111,6 @@ const snapshot = {
     });
     this.dump.score = scores.currentScore;
     this.dump.highScore = scores.highScore;
-    this.dump.charIndex = charIndex;
   },
   make: function () {
     this.updCounter();
@@ -118,7 +127,7 @@ const snapshot = {
       });
       scores.currentScore = this.dump.score ? this.dump.score : 0;
       scores.highScore = this.dump.highScore ? this.dump.highScore : 0 ;
-      charIndex = this.dump.charIndex ? this.dump.charIndex : 0 ;
+      if (this.dump.hasOwnProperty('charIndex')) delete this.dump.charIndex; // depricated in v0.09
     }
   },
   reset: function () {
@@ -129,12 +138,11 @@ const snapshot = {
     }
     this.dump.score = 0;
     this.dump.highScore = scores.highScore;
-    this.dump.charIndex = charIndex;
     this.write();
     debug(() => console.log("reset D U M P E D!", this.dump));
   }
 };
-const btnAtribs = {x: 134, w: 42, h: 42, fg:'#C0C0C0', bg:'#800000'};
+const btnAtribs = {x: 134, w: 42, h: 50, fg:'#C0C0C0', bg:'#800000'};
 const buttons = {
   all: [],
   draw: function () {
@@ -162,18 +170,19 @@ const buttons = {
  */
 
 const mover = {
+  gameWon: false,
   direction: {
     up: {name: 'up', step: 1, innerBegin: 0,    innerEnd: rows-1, outerBegin: 0,    outerEnd: cols-1, iter: rows -1,
-      sqIndex: function (m,n) {return m*(cols) + n;}, sqNextIndex: function (m,n) {return m < rows -1 ? (m+1)*(cols) + n : -1;}
+      sqIndex: function (i,o) {return i*(cols) + o;}, sqNextIndex: function (i,o) {return i < rows -1 ? (i+1)*(cols) + o : -1;}
     }, 
     down: {name: 'down', step:-1, innerBegin: rows-1, innerEnd: 0,    outerBegin: cols-1, outerEnd: 0, iter: rows -1,
-      sqIndex: function (m,n) {return m*(cols) + n;}, sqNextIndex: function (m,n) {return m > 0 ? (m-1)*(cols) + n : -1;}
+      sqIndex: function (i,o) {return i*(cols) + o;}, sqNextIndex: function (i,o) {return i > 0 ? (i-1)*(cols) + o : -1;}
     }, 
     left: {name: 'left', step: 1, innerBegin: 0,    innerEnd: cols-1, outerBegin: 0,    outerEnd: rows-1, iter: cols -1,
-      sqIndex: function (m,n) {return n*(rows) + m;}, sqNextIndex: function (m,n) {return m < cols -1 ? n*(rows) + m +1 : -1;}
+      sqIndex: function (i,o) {return o*(rows) + i;}, sqNextIndex: function (i,o) {return i < cols -1 ? o*(rows) + i +1 : -1;}
     },
     right: {name: 'right', step:-1, innerBegin: cols-1, innerEnd: 0,    outerBegin: rows-1, outerEnd: 0, iter: cols -1,
-      sqIndex: function (m,n) {return n*(rows) + m;}, sqNextIndex: function (m,n) {return m > 0 ? n*(rows) + m -1: -1;}
+      sqIndex: function (i,o) {return o*(rows) + i;}, sqNextIndex: function (i,o) {return i > 0 ? o*(rows) + i -1: -1;}
     }
   },
   anyLeft: function() {
@@ -207,49 +216,39 @@ const mover = {
     });
     return canContinue;
   },
-  nonEmptyCells: function (dir) {
-    debug(() => console.log("Move: ", dir.name));
+  moveAndMerge: function (dir) {
     const step = dir.step;
     // outer loop for all colums/rows
-    for (let n = dir.outerBegin; step*n <= step*dir.outerEnd; n=n+step) {
-      // let rowStr = '| ';
-
-      // Move a number of iteration with the squares to move them all to one side
-      for (let iter = 0; iter < dir.iter; iter++) {
-
-        // lets move squares one position in a row or column, counting backwards starting from the and where the squares will end up
-        for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
-          // get the array of squares index for current cell
-          const idx = dir.sqIndex(m,n);
-          const nextIdx = dir.sqNextIndex(m,n);
-
-          if (allSquares[idx].expVal == 0 && nextIdx >= 0) {
-            allSquares[idx].setExpVal(allSquares[nextIdx].expVal);
-            allSquares[nextIdx].setExpVal(0);
-          }
-        }
-      }
-    }
-  },
-  // add up the conjacent squares with identical values en set next square to empty in the process
-  mergeEqlCells: function(dir) {
-    const step = dir.step;
-    // outer loop for all colums/rows
-    for (let n = dir.outerBegin; step*n <= step*dir.outerEnd; n=n+step) {
-      // lets move squares one position in a row or column, counting backwards starting from the and where the squares will end up
+    for (let o = dir.outerBegin; step*o <= step*dir.outerEnd; o=o+step) {
+      
+      let allVals = allSquares.map(sq=>{return sq.getExpVal()});
+      let allLineVals = [];
       for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
-        const idx = dir.sqIndex(m,n);
-        const nextIdx = dir.sqNextIndex(m,n);
-
-        if ((allSquares[idx].expVal > 0) && nextIdx >= 0) {
-          if (allSquares[idx].expVal == allSquares[nextIdx].expVal) {
-            let expVal = allSquares[idx].expVal;
-            allSquares[idx].setExpVal(++expVal);
-            allSquares[idx].addToScore();
-            allSquares[nextIdx].setExpVal(0);
-          }
-        }
+        allLineVals.push(allVals[dir.sqIndex(m,o)]);
       }
+      
+      let sortedLineVals = allLineVals.filter((val)=>{return val>0;});
+      let zeroLineVals = allLineVals.filter((val)=>{return val==0;});
+      // merge the equally valued adjacent cells
+      let r=0;
+      while (r<sortedLineVals.length-1) {
+        if (sortedLineVals[r] == sortedLineVals[r+1]) {
+          ++sortedLineVals[r];
+          addToScore(sortedLineVals[r]);
+          sortedLineVals[++r] = 0;
+        }
+        r++;
+      }
+      let mergedLineVals = sortedLineVals.filter((val)=>{return val>0;});
+      sortedLineVals.filter((val)=>{return val==0;}).forEach((zero)=>{mergedLineVals.push(zero);});
+      zeroLineVals.forEach((zero)=>{mergedLineVals.push(zero);});
+      
+      let i = 0;
+      for (let m = dir.innerBegin; step*m <= step*dir.innerEnd; m=m+step) {
+        let idx = dir.sqIndex(m,o);
+        allSquares[idx].setExpVal(mergedLineVals[i++]);
+      }
+      debug(()=>console.log("new allSquares values:", allSquares.map(sq=>{return sq.expVal})));
     }
   }
 };
@@ -301,7 +300,7 @@ class Button {
 }
 
 class Cell {
-  constructor(x0, y0, width, idx, cb) {
+  constructor(x0, y0, width, idx) {
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x0 + width;
@@ -309,7 +308,7 @@ class Cell {
     this.expVal = 0;
     this.previousExpVals=[];
     this.idx = idx;
-    this.cb = cb;
+    // this.cb = cb;
     this.isRndm = false;
     this.ax = x0;
     this.ay = Math.floor(0.2*width+y0);
@@ -323,7 +322,7 @@ class Cell {
   }
   drawBg() {
     debug(()=>console.log("Drawbg!!"));
-    if (this.isRndm == true) {
+    if (this.isRndm) {
       debug(()=>console.log('Random: (ax)', this.ax));
       g.setColor(this.getColor(this.expVal).bg)
        .fillRect(this.x0, this.y0, this.x1, this.y1)
@@ -345,6 +344,9 @@ class Cell {
        .drawString(char, strX, strY);
     }
   }
+  getExpVal() {
+    return this.expVal;
+  }
   setExpVal(val) {
     this.expVal = val;
   }
@@ -364,10 +366,6 @@ class Cell {
   removeUndo() {
     this.previousExpVals=[0];
   }
-  addToScore() {if (typeof this.cb === 'function') {
-      this.cb(this.expVal);
-    }
-  }
   setRndmFalse() {
     this.isRndm = false;
   }
@@ -375,7 +373,7 @@ class Cell {
     this.isRndm = true;
   }
   drawRndmIndicator(){
-    if (this.isRndm == true) {
+    if (this.isRndm) {
       debug(()=>console.log('Random: (ax)', this.ax));
       g.setColor(this.getColor(0).bg)
      .fillPoly(this.ax,this.ay,this.bx,this.by,this.cx,this.cy);
@@ -384,8 +382,9 @@ class Cell {
 }
 
 function undoGame() {
-  g.clear();
-  if (scores.lastScores.length > 0) {
+  
+  if (scores.lastScores.length) {
+    g.clear();
     allSquares.forEach(sq => {
       sq.popFromUndo();
       sq.drawBg();
@@ -396,9 +395,9 @@ function undoGame() {
     buttons.draw();
     updUndoLvlIndex();
     snapshot.make();
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
   }
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
 }
 function addToUndo() {
   allSquares.forEach(sq => {
@@ -408,7 +407,7 @@ function addToUndo() {
 }
 function addToScore (val) {
   scores.add(val);
-  if (val == 10) messageYouWin();
+  if (val == 10) mover.gameWon = true;
 }
 function createGrid () {
   let cn =0;
@@ -416,7 +415,7 @@ function createGrid () {
     for (let c = 0; c < cols; c++) {
       let x0 = borderWidth + c*(borderWidth + sqWidth) - (rows/2)*(2*borderWidth + sqWidth) + middle.x + Math.floor(sqWidth/3);
       let y0 = borderWidth + r*(borderWidth + sqWidth) - (cols/2)*(2*borderWidth + sqWidth) + middle.y + Math.floor(sqWidth/3);
-      let cell = new Cell(x0, y0, sqWidth, c + r*cols, addToScore);
+      let cell = new Cell(x0, y0, sqWidth, c + r*cols);
       allSquares.push(cell);
     }
   }
@@ -432,15 +431,30 @@ function messageGameOver () {
     .drawString("O V E R !", middle.x+12, middle.y+25);
 }
 function messageYouWin () {
-  g.setColor("#1a0d00")
+  const c = (g.theme.dark) ? {"fg": "#FFFFFF", "bg": "#808080"} : {"fg": "#FF0000", "bg": "#000000"};
+  g.setColor(c.bg)
    .setFont12x20(2)
    .setFontAlign(0,0,0)
    .drawString("YOU HAVE", middle.x+18, middle.y-24)
    .drawString("W O N ! !", middle.x+18, middle.y+24);
-  g.setColor("#FF0808")
+   g.setColor(c.fg)
    .drawString("YOU HAVE", middle.x+17, middle.y-25)
    .drawString("W O N ! !", middle.x+17, middle.y+25);
-  Bangle.buzz(200, 1);
+   for (let r=0;r<4;r++){
+    Bangle.buzz(200,0.2)
+    .then((result) => {
+      Bangle.buzz(200,0.5)
+      .then((result)=>{
+        Bangle.buzz(200,0.8)
+        .then((result)=>{
+          Bangle.buzz(200,1)
+          .then((result)=>{
+            Bangle.buzz(500,0);
+          })
+        })   
+      }) 
+    })
+  }
 }
 function makeRandomNumber () {
   return Math.ceil(2*Math.random());
@@ -454,7 +468,7 @@ function addRandomNumber() {
     let randomIdx = Math.floor( emptySquaresIdxs.length * Math.random() );
     allSquares[emptySquaresIdxs[randomIdx]].setExpVal(makeRandomNumber());
     allSquares[emptySquaresIdxs[randomIdx]].setRndmTrue();
-  } 
+  }
 }
 function drawGrid() {
   allSquares.forEach(sq => {
@@ -482,8 +496,8 @@ function initGame() {
   drawGrid();
   scores.draw();
   buttons.draw();
-    // Clock mode allows short-press on button to exit
-  Bangle.setUI("clock");
+    // #settings  Clock mode allows short-press on button to exit
+  if(clockMode) Bangle.setUI("clock");
   // Load widgets
   Bangle.loadWidgets();
   Bangle.drawWidgets();
@@ -502,8 +516,8 @@ function drawPopUp(message,cb) {
               rDims.x+10, rDims.y2-40
   ]);
   buttons.all.forEach(btn => {btn.disable();});
-  const btnYes = new Button('yes', rDims.x+16, rDims.y2-80, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
-  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-80, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnYes = new Button('yes', rDims.x+16, rDims.y2-88, 54, btnAtribs.h, 'YES', btnAtribs.fg, btnAtribs.bg, cb, true);
+  const btnNo  = new Button('no', rDims.x2-80, rDims.y2-88, 54, btnAtribs.h, 'NO', btnAtribs.fg, btnAtribs.bg, cb, true);
   btnYes.draw();
   btnNo.draw();
   g.setColor('#000000');
@@ -538,6 +552,7 @@ function handlePopUpClicks(btn) {
 function resetGame() {
   g.clear();
   scores.reset();
+  mover.gameWon=false;
   allSquares.forEach(sq => {sq.setExpVal(0);sq.removeUndo();sq.setRndmFalse();});
   addRandomNumber();
   addRandomNumber();
@@ -554,14 +569,8 @@ function resetGame() {
  * @param {function} func function to call like console.log()
  */
  const debug = (func) => {
-  switch (debugMode) {
-    case "development": 
-      if (typeof func === 'function') {
-        func();
-      }
-      break;
-    case "off":
-    default: break;
+  if (debugMode) {
+    if (typeof func === 'function') func();
   }
 };
 
@@ -651,9 +660,7 @@ dragger.attach();
 function runGame(dir){
   addToUndo();
   updUndoLvlIndex();
-  mover.nonEmptyCells(dir);
-  mover.mergeEqlCells(dir);
-  mover.nonEmptyCells(dir);
+  mover.moveAndMerge(dir);
   allSquares.forEach(sq => {sq.setRndmFalse();});
   addRandomNumber();
   drawGrid();
@@ -666,6 +673,12 @@ function runGame(dir){
     debug(() => console.log("G A M E  O V E R !!"));
     snapshot.reset();
     messageGameOver();
+  } else {
+    if (mover.gameWon) {
+      debug(() => console.log("Y O U  H A V E  W O N !!"));
+      snapshot.reset();
+      messageYouWin();
+    }
   }
 }
 
@@ -680,13 +693,9 @@ function updUndoLvlIndex() {
     .drawString(scores.lastScores.length, x, y);
   }
 }
-function incrCharIndex() {
-  charIndex++;
-  if (charIndex >= cellChars.length) charIndex = 0;
-  drawGrid();
-}
+
 buttons.add(new Button('undo', btnAtribs.x, 25, btnAtribs.w, btnAtribs.h, 'U', btnAtribs.fg, btnAtribs.bg, undoGame, true));
-buttons.add(new Button('chars', btnAtribs.x, 71, btnAtribs.w, 31, '*', btnAtribs.fg, btnAtribs.bg, function(){incrCharIndex();}, true));
+
 buttons.add(new Button('restart', btnAtribs.x, 106, btnAtribs.w, btnAtribs.h, 'R', btnAtribs.fg, btnAtribs.bg, function(){drawPopUp('Do you want\nto restart?',handlePopUpClicks);}, true));
 
 initGame();

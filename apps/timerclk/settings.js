@@ -12,9 +12,12 @@
     "dowFontSize":2,
     "specialFont":"6x8",
     "specialFontSize":2,
+    "srssFont":"6x8",
+    "srssFontSize":2,
     "shortDate":true,
     "showStopwatches":true,
     "showTimers":true,
+    "showSrss":false,
   }, settings.clock||{});
   settings.stopwatch = Object.assign({
     "font":"Vector",
@@ -108,6 +111,23 @@
         writeSettings();
       }
     },
+    "sun font":{
+      value: 0|g.getFonts().indexOf(settings.clock.srssFont),
+      format: v => g.getFonts()[v],
+      min: 0, max: g.getFonts().length-1,
+      onchange: v => {
+        settings.clock.srssFont = g.getFonts()[v];
+        writeSettings();
+      }
+    },
+    "sun size":{
+      value: 0|settings.clock.srssFontSize,
+      min: 0,
+      onchange: v => {
+        settings.clock.srssFontSize = v;
+        writeSettings();
+      }
+    },
     "short date": {
       value: !!settings.clock.shortDate,
       format: BOOL_FORMAT,
@@ -129,6 +149,14 @@
       format: v=>v?/*LANG*/"Show":/*LANG*/"Hide",
       onchange: v => {
         settings.clock.showTimers = v;
+        writeSettings();
+      }
+    },
+    "sun times": {
+      value: !!settings.clock.showSrss,
+      format: v=>v?/*LANG*/"Show":/*LANG*/"Hide",
+      onchange: v => {
+        settings.clock.showSrss = v;
         writeSettings();
       }
     },

@@ -1,3 +1,9 @@
 0.01: New App!
 0.02: Respect Quiet Mode
 0.03: Add compatibility for Bangle.js 2 and new firmware, added "Alarm at " for the alarm time
+0.04: Read alarms from new scheduling library, account for higher acceleration sensor noise on Bangle.js 2
+0.05: Refactor decodeTime() to scheduling library
+0.06: Add logging
+      use Layout library and display ETA
+0.07: Add check for day of week
+0.08: Update to new time_utils module

@@ -74,7 +74,7 @@ try and keep filenames short to avoid overflowing the buffer.
 
 ### Screenshots
 
-In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { url:"screenshot.png" } ],`
+In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { "url":"screenshot.png" } ],`
 
 To get a screenshot you can:
 
@@ -186,7 +186,7 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 
 Widgets are just small bits of code that run whenever an app that supports them
 calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
-widget bar at the top of the screen they can add themselves to the global 
+widget bar at the top of the screen they can add themselves to the global
 `WIDGETS` array with:
 
 ```
@@ -226,10 +226,8 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*myappid", // for Bangle.js menu
   "src":"-myappid", // source file
-  "type":"widget/clock/app/bootloader", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu  
-     // if it's 'clock' then it'll be loaded by default at boot time
-     // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
+  "type":"widget/clock/app/bootloader/...", // optional, default "app"
+     // see 'type' in 'metadata.json format' below for more options/info
   "version":"1.23",
      // added by BangleApps loader on upload based on metadata.json
   "files:"file1,file2,file3",
@@ -252,17 +250,24 @@ and which gives information about the app for the Launcher.
   "version": "0v01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
-  "screenshots" : [ { url:"screenshot.png" } ], // optional screenshot for app
+  "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
-                              //   'launch' - replacement launcher app
-                              //   'bootloader' - code that runs at startup only
+                              //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
+                              //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
                               //   'RAM' - code that runs and doesn't upload anything to storage
+                              //   'launch' - replacement 'Launcher'
+                              //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
+                              //   'scheduler' - provides 'sched' library and boot code for scheduling alarms/timers
+                              //                 (currently only 'sched' app)
+                              //   'notify' - provides 'notify' library for showing notifications
+                              //   'locale' - provides 'locale' library for language-specific date/distance/etc
+                              //              (a version of 'locale' is included in the firmware)
   "tags": "",                 // comma separated tag list for searching
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
-  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
@@ -415,7 +420,7 @@ Example `settings.js`
 // make sure to enclose the function in parentheses
 (function(back) {
   let settings = require('Storage').readJSON('myappid.json',1)||{};
-  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value 
+  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value
   function save(key, value) {
     settings[key] = value;
     require('Storage').write('myappid.json', settings);

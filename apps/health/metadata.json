@@ -1,7 +1,7 @@
 {
   "id": "health",
   "name": "Health Tracking",
-  "version": "0.11",
+  "version": "0.15",
   "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
   "tags": "tool,system,health",
@@ -12,6 +12,8 @@
     {"name":"health.app.js","url":"app.js"},
     {"name":"health.img","url":"app-icon.js","evaluate":true},
     {"name":"health.boot.js","url":"boot.min.js"},
-    {"name":"health","url":"lib.min.js"}
-  ]
+    {"name":"health","url":"lib.min.js"},
+    {"name":"health.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"health.json"}]
 }

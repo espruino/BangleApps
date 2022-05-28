@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/node
 /* Checks for any obvious problems in apps.json
 */
 
@@ -65,6 +65,7 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -94,6 +95,8 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`);
   var isApp = !app.type || app.type=="app";
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`);
+  if (app.type && !METADATA_TYPES.includes(app.type))
+    ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES);
   if (!Array.isArray(app.supports)) ERROR(`App ${app.id} has no 'supports' field or it's not an array`);
   else {
     app.supports.forEach(dev => {
@@ -135,6 +138,9 @@ apps.forEach((app,appIdx) => {
       Object.keys(app.dependencies).forEach(dependency => {
         if (!["type","app"].includes(app.dependencies[dependency]))
           ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`);
+        if (app.dependencies[dependency]=="type" && !METADATA_TYPES.includes(dependency))
+          ERROR(`App ${app.id} 'type' dependency must be one of `+METADATA_TYPES);
+
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`);
@@ -197,10 +203,11 @@ apps.forEach((app,appIdx) => {
     // warn if JS icon is the wrong size
     if (file.name == app.id+".img") {
         let icon;
-        let match = fileContents.match(/E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)/);
+        let match = fileContents.match(/^\s*E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)\s*$/);
+        if (match==null) match = fileContents.match(/^\s*atob\(\"([^"]*)\"\)\s*$/);
         if (match) icon = Buffer.from(match[1], 'base64');
         else {
-          match = fileContents.match(/require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)/);
+          match = fileContents.match(/^\s*require\(\"heatshrink\"\)\.decompress\(\s*atob\(\s*\"([^"]*)\"\s*\)\s*\)\s*$/);
           if (match) icon = heatshrink.decompress(Buffer.from(match[1], 'base64'));
           else ERROR(`JS icon ${file.name} does not match the pattern 'require("heatshrink").decompress(atob("..."))'`);
         }

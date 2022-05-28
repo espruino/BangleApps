@@ -1,7 +1,7 @@
 /* This rewrites boot0.js based on current settings. If settings changed then it
 recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
-E.showMessage("Updating boot0...");
+E.showMessage(/*LANG*/"Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 var boot = "", bootPost = "";
@@ -97,52 +97,20 @@ delete g.theme; // deleting stops us getting confused by our own decl. builtins 
 if (!g.theme) {
   boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
 }
-delete Bangle.setUI; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!Bangle.setUI) { // assume this is just for F18 - Q3 should already have it
-  boot += `Bangle.setUI=function(mode, cb) {
-if (Bangle.btnWatches) {
-  Bangle.btnWatches.forEach(clearWatch);
-  delete Bangle.btnWatches;
-}
-if (Bangle.swipeHandler) {
-  Bangle.removeListener("swipe", Bangle.swipeHandler);
-  delete Bangle.swipeHandler;
-}
-if (Bangle.touchHandler) {
-  Bangle.removeListener("touch", Bangle.touchHandler);
-  delete Bangle.touchHandler;
-}
-if (!mode) return;
-else if (mode=="updown") {
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { cb(); }, BTN2, {repeat:1})
-  ];
-} else if (mode=="leftright") {
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(function() { cb(); }, BTN2, {repeat:1})
-  ];
-  Bangle.swipeHandler = d => {cb(d);};
-  Bangle.on("swipe", Bangle.swipeHandler);
-  Bangle.touchHandler = d => {cb();};
-  Bangle.on("touch", Bangle.touchHandler);
-} else if (mode=="clock") {
-  Bangle.CLOCK=1;
-  Bangle.btnWatches = [
-    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
-  ];
-} else if (mode=="clockupdown") {
-  Bangle.CLOCK=1;
-  Bangle.btnWatches = [
-    setWatch(function() { cb(-1); }, BTN1, {repeat:1}),
-    setWatch(function() { cb(1); }, BTN3, {repeat:1}),
-    setWatch(Bangle.showLauncher, BTN2, {repeat:1,edge:"falling"})
-  ];
-} else
-  throw new Error("Unknown UI mode");
+try {
+  Bangle.setUI({}); // In 2v12.xx we added the option for mode to be an object - for 2v12 and earlier, add a fix if it fails with an object supplied
+} catch(e) {
+  boot += `Bangle._setUI = Bangle.setUI;
+Bangle.setUI=function(mode, cb) {
+  if (Bangle.uiRemove) {
+    Bangle.uiRemove();
+    delete Bangle.uiRemove;
+  }
+  if ("object"==typeof mode) {
+    // TODO: handle mode.back?
+    mode = mode.mode;
+  }
+  Bangle._setUI(mode, cb);
 };\n`;
 }
 delete E.showScroller; // deleting stops us getting confused by our own decl. builtins can't be deleted
@@ -229,8 +197,18 @@ bootFiles.forEach(bootFile=>{
   require('Storage').write('.boot0',"//"+bootFile+"\n",fileOffset);
   fileOffset+=2+bootFile.length+1;
   var bf = require('Storage').read(bootFile);
-  require('Storage').write('.boot0',bf,fileOffset);
-  fileOffset+=bf.length;
+  // we can't just write 'bf' in one go because at least in 2v13 and earlier
+  // Espruino wants to read the whole file into RAM first, and on Bangle.js 1
+  // it can be too big (especially BTHRM).
+  var bflen = bf.length;
+  var bfoffset = 0;
+  while (bflen) {
+    var bfchunk = Math.min(bflen, 2048);
+    require('Storage').write('.boot0',bf.substr(bfoffset, bfchunk),fileOffset);
+    fileOffset+=bfchunk;
+    bfoffset+=bfchunk;
+    bflen-=bfchunk;
+  }
   require('Storage').write('.boot0',";\n",fileOffset);
   fileOffset+=2;
 });
@@ -241,7 +219,7 @@ delete bootPost;
 delete bootFiles;
 delete fileSize;
 delete fileOffset;
-E.showMessage("Reloading...");
+E.showMessage(/*LANG*/"Reloading...");
 eval(require('Storage').read('.boot0'));
 // .bootcde should be run automatically after if required, since
 // we normally get called automatically from '.boot0'

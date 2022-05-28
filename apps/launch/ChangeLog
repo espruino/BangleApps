@@ -12,3 +12,4 @@
 0.11: Merge Bangle.js 1 and 2 launchers, again
 0.12: Add an option to hide clocks from the app list (fix #1015)
       Add /*LANG*/ tags for internationalisation
+0.13: Add fullscreen mode

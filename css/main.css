@@ -19,7 +19,7 @@
 }
 
 .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
-  border: solid 1px #fafafa;
+  border: solid 1px #dadee4;
   margin: 0;
   min-height: 150px;
   padding-top: 0.5rem;
@@ -81,7 +81,7 @@ a.btn.btn-link.dropdown-toggle {
   min-height: 8em;
 }
 
-.tile-content { position: relative; word-break: break-all; }
+.tile-content { position: relative; }
 .link-github {
   position:absolute;
   top: 36px;

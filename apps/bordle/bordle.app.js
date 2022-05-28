@@ -21,7 +21,8 @@ function buttonPushed(b) {
       layout.bt1.bgCol = wordle.keyColors.Z||g.theme.bg;
       layout.bt2.label = "<del>";
       layout.bt4.label = "<ent>";
-      layout.bt3.label = layout.bt5.label = " ";
+      layout.bt3.label = " ";
+      layout.bt5.label = "<stat>";
       layout.bt6.label = "<";
     }
   }
@@ -30,6 +31,10 @@ function buttonPushed(b) {
     if (b!=6) {
       if ((keyStateIdx<=5 || b<=1) && inp.length<5) inp += String.fromCharCode(b+(keyStateIdx-1)*5+64);
       else if (layout.input.label.length>0 && b==2) inp = inp.slice(0,-1);
+      if (keyStateIdx==6 && b==5) {
+        wordle.drawStats();
+        return;
+      }
       layout.input.label = inp;
     }
     layout = getKeyLayout(inp);
@@ -82,6 +87,7 @@ class Wordle {
       this.word = this.words.slice(i, i+5).toUpperCase();
     }
     console.log(this.word);
+    this.stats = require("Storage").readJSON("bordlestats.json") || {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0, 'p':0, 'w':0, 's':0, 'ms':0};
   }
   render(clear) {
     h = g.getHeight();
@@ -104,12 +110,17 @@ class Wordle {
     }
   }
   addGuess(w) {
-    if ((this.words.indexOf(w.toLowerCase())%5)!=0) {
+    let idx = -1;
+    do{
+      idx = this.words.indexOf(w.toLowerCase(), idx+1);
+    }
+    while(idx !== -1 && idx%5 !== 0);
+    if(idx%5 !== 0) {
       E.showAlert(w+"\nis not a word", "Invalid word").then(function() { 
         layout = getKeyLayout("");
         wordle.render(true);
       });
-      return 3;
+      return 1;
     }
     this.guesses.push(w);
     this.nGuesses++;
@@ -130,13 +141,39 @@ class Wordle {
       this.guessColors[this.nGuesses].push(col);
     }
     if (correct==5) { 
-      E.showAlert("The word is\n"+this.word, "You won in "+(this.nGuesses+1)+" guesses!").then(function(){load();});
-      return 1;
-    }
-    if (this.nGuesses==5) {
-      E.showAlert("The word was\n"+this.word, "You lost!").then(function(){load();});
+      E.showAlert("The word is\n"+this.word, "You won in "+(this.nGuesses+1)+" guesses!").then(function(){
+        wordle.stats['p']++; wordle.stats['w']++; wordle.stats['s']++; wordle.stats[wordle.nGuesses+1]++;
+        if (wordle.stats['s']>wordle.stats['ms']) wordle.stats['ms'] = wordle.stats['s'];
+        require("Storage").writeJSON("bordlestats.json", wordle.stats);
+        wordle.drawStats();
+      });
       return 2;
     }
+    if (this.nGuesses==5) {
+      E.showAlert("The word was\n"+this.word, "You lost!").then(function(){
+        wordle.stats['p']++; wordle.stats['s'] = 0;
+        require("Storage").writeJSON("bordlestats.json", wordle.stats);
+        wordle.drawStats();
+      });
+      return 3;
+    }
+  }
+  drawStats() {
+    E.showMessage(" ", "Statistics");
+    var max = 1;
+    for (i=1; i<=6; ++i) if (max<this.stats[i]) max = this.stats[i];
+    var h = g.getHeight();
+    var w = g.getWidth();
+    g.setColor('#00f').setFontVector((h-40)/8).setFontAlign(-1, 0, 0);
+    for (i=1; i<=6; ++i) {
+      tw = this.stats[i]*(w-24)/max;
+      g.setColor("#00f").fillRect(20, 52+(i-1)*(h-52)/6+2, 20+tw, 52+i*(h-52)/6-2);
+      g.setColor("#fff").drawString(i.toString(), 1, 52+(i-0.5)*(h-52)/6);
+      g.drawString(this.stats[i].toString(), tw>20 ? 25 : 25+tw, 52+(i-0.5)*(h-52)/6);
+    }
+    g.setFontVector((h-40)/9).setColor("#fff").drawString("P:"+this.stats["p"]+" W:"+this.stats["w"]+" S:"+this.stats["s"]+" M:"+this.stats["ms"], 4, 34);
+    Bangle.setUI();
+    Bangle.on("touch", (e) => { load(); }); 
   }
 }
 

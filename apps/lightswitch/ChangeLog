@@ -1,3 +1,5 @@
 0.01: New App!
 0.02: Add the option to enable touching the widget only on clock and settings.
 0.03: Settings page now uses built-in min/max/wrap (fix #1607)
+0.04: Add masking widget input to other apps (using espruino/Espruino#2151), add a oversize option to increase the touch area.
+0.05: Prevent drawing into app area.

@@ -6,3 +6,6 @@
 0.05: Fix handling of message actions
 0.06: Option to keep messages after a disconnect (default false) (fix #1186)
 0.07: Include charging state in battery updates to phone
+0.08: Handling of alarms
+0.09: Alarm vibration, repeat, and auto-snooze now handled by sched
+0.10: Fix SMS bug
