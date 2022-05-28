@@ -6,12 +6,6 @@
 // resolution 176x176
 
 
-// to do:
-// random invader restart x
-// stop auto fire
-
-
-
 // - variables -----------------------------------------
 // invader variables
 var inv_x             = 77;
@@ -22,10 +16,10 @@ var ix_speed          = 6;      // march speed
 var i_dir             = 1;      // 1 = right, 0 = left
 var been_hit          = false;  // invader hit state
 // - shoot variables
-var inv_shot_x        = -32; 
-var inv_shot_y        = -32; 
+var inv_shot_x        = -32;
+var inv_shot_y        = -32;
 var inv_fire_pause    = 30;
-var inv_fired = false;          // invader fired state
+var inv_fired         = false;  // invader fired state
 // - explode variables
 var been_hit          = false;  // invader hit state
 var bx                = -32;    // blast x
@@ -42,13 +36,16 @@ var sy                  = -20;   // turret shot starting y - off screen
 var turret_been_hit     = false;
 var turret_blast_delay  = 21;    // keep blast active on screen for 60 frames
 var turret_exp_frame    = 1;     // turret explode start animation frame
-var turret_anim_delay   = 3;    // turret explode animation delay
+var turret_anim_delay   = 3;     // turret explode animation delay
 var explosion_play      = false;
 
 // misc variables
-var score = 0;
-var lives = 3;
-var game_over = false;
+var score               = 0;     // starting score
+var lives               = 3;     // starting lives
+var game_state          = 0;     // game state - 0 = game not started, 1 = game running, 3 = game over
+var ang                 = 0.1;
+var start_been_pressed  = false; // stops double press on restart
+var fire_been_pressed   = false; // stops auto fire
 
 // input(screen controller) variables
 var BTNL, BTNR, BTNF, BTNS; // button - left, right, fire, start
@@ -184,8 +181,9 @@ function invader_hit() {
       been_hit = false;
       bx = -32;                         // move boom off screen (following invader)
       by = -32;
-      //inv_x = rand() % (464 - 16) + 4;  // move invader to random x position
-      inv_x = 77;                       // move invader back up after being hit
+      // to gerate a random rounded number between 10 and 142;
+      inv_x = Math.floor(Math.random() * 142) + 10;      
+      //inv_x = 77;                      // move invader back up after being hit
       inv_y = 20;                       // move invader back up after being hit
       i_dir = 1;                        // reset invader direction
     }
@@ -199,11 +197,68 @@ function gameStart() {
 }
 
 
-// - main loop -----------------------------------------
+// - main loop -------------------------------------------------------------
 function onFrame() {
 
+  // game not started state (title screen)
+  if(game_state == 0) {
+    g.clear();
+
+
+    if (!(BTNS.read())) {
+      start_been_pressed  = false; // stops double press on restart
+    }
+
+
+    // draw text during game over state
+    g.setFont("4x6", 4);  // set font and size x 2
+    g.setColor(0,1,0);    // set color (black)
+    g.drawString("INVADER", 33, 55);
+
+
+    // just animate invader
+    // invader anim code
+    i_anim_delay -= 1;
+    if(i_anim_delay < 0) {
+      i_anim_delay = 25;
+
+      inv_frame += 1;
+      if (inv_frame > 2) {
+        inv_frame = 1;
+      }
+    }
+
+
+    // draw sprites during game over state
+    //ang += 0.1;
+    //g.drawImage(invader_a, 88, 98, {scale:4, rotate:ang});
+    if(inv_frame == 1) {
+      g.drawImage(invader_a, 88-22, 85, {scale:4});
+    }
+    else if(inv_frame == 2) {
+      g.drawImage(invader_b, 88-22, 85, {scale:4});
+    }
+
+    // reset stuff
+    if(BTNS.read() && !(start_been_pressed)) {
+      turret_been_hit  = false;
+      tur_x            = 77;       // reset turret to center of screen
+      tur_y            = 148;      // reset turret y
+      inv_x            = 77;       // reset invader to center of screen
+      inv_y            = 20;       // reset invader back to top
+      i_dir            = 1;        // reset invader direction
+      lives            = 3;        // reset lives
+      score            = 0;        // reset score
+      explosion_play   = false;
+      game_state       = 1;
+  }
+
+
+    g.flip();
+  }
+
   // game over state
-  if(game_over) {
+  if(game_state == 3) {
     g.clear();
 
     // draw text during game over state
@@ -232,7 +287,8 @@ function onFrame() {
       lives            = 3;        // reset lives
       score            = 0;        // reset score
       explosion_play   = false;
-      game_over        = false;
+      game_state       = 0;
+      start_been_pressed  = true;
     }
 
 
@@ -241,8 +297,14 @@ function onFrame() {
 
 
   // not game over state (game running)
-  if(!(game_over)) {
+  if(game_state == 1) {
     g.clear();
+
+
+    if (!(BTNF.read())) {
+      fire_been_pressed  = false; // stops auto fire
+    }
+
 
     // call function to move and animate invader
     move_anim_inv();
@@ -258,8 +320,9 @@ function onFrame() {
     else if(BTNR.read() && tur_x <= 140 && !(turret_been_hit)) {
       tur_x += 6;
     }
-    else if(BTNF.read() && !(turret_been_hit)) {      
+    else if(BTNF.read() && !(turret_been_hit) && !(fire_been_pressed) && !(shot_fired)) {
       shot_fired = true;
+      fire_been_pressed = true; // stops auto fire
       sx=tur_x + 12;
       sy=tur_y - 7;
     }
@@ -301,7 +364,7 @@ function onFrame() {
         lives -= 1;
 
         if (lives == 0) {
-            game_over = true;
+            game_state = 3;
         }
       turret_been_hit = true;
       }
@@ -332,7 +395,7 @@ function onFrame() {
       g.drawImage(inv_shot, -32, -32, {scale:2}); 
     }
 
-    // turret sprites    
+    // turret sprites
     if(!(turret_been_hit)) {
       // - undamaged turret
       g.drawImage(turret, tur_x, tur_y, {scale:2});
@@ -363,12 +426,13 @@ function onFrame() {
     g.setFont("4x6", 2);  // set font and size x 2
     g.setColor(0,0,0);    // set color (black)
     g.drawString("SCORE:" + score ,5,5);
-    g.drawString("LIVES:" + lives ,117,5);    
+    g.drawString("LIVES:" + lives ,117,5);
 
 
     g.flip();
   }
-}
+
+} // end main loop ---------------------------------------------------------
 
 
 gameStart();
