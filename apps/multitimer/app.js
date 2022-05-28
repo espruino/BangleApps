@@ -258,7 +258,7 @@ function editTimer(idx, a) {
       a.last = 0;
       a.data.ot = a.timer;
       a.appid = "multitimer";
-      a.js = "load('multitimer.alarm.js')";
+      a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
       if (idx < 0) alarms.push(a);
       else alarms[timerIdx[idx]] = a;
       require("sched").setAlarms(alarms);
@@ -585,7 +585,7 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
-      if (a.data.hm == true) a.js = "load('multitimer.alarm.js')";
+      if (a.data.hm == true) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
       if (a.data.hm == false && a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);

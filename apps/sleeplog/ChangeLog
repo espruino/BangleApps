@@ -2,3 +2,5 @@
 0.02: Fix crash on start #1423
 0.03: Added power saving mode, move all read/write log actions into lib/module
 0.04: Fix #1445, display loading info, add icons to display service states
+0.05: Fix LOW_MEMORY,MEMORY error on to big log size
+0.06: Reduced log size further to 750 entries

@@ -78,6 +78,10 @@ Waypoints are used in Distance and VMG modes. Create a file waypoints.json and w
 
 The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
 
+By default the waypoints file is called waypoints.json
+
+**Note** : The waypoints.json file is used by a number of different gps apps. The setting 'Wpt File Suffix' allows one of waypoints1.json, waypoints2.json or waypoints3.json to be used instead. This allows the other apps to be used with a different set of waypoints without losing the speedalt2 waypoint set. 
+ 
 Sample waypoints.json (My sailing waypoints)
 
 <pre>

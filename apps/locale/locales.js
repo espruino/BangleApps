@@ -11,6 +11,8 @@ const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
+  "kmt": 1,
+  "km/tim": 1,
   "mph": 1.60934,
   "kts": 1.852
 };

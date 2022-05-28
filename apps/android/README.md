@@ -21,7 +21,6 @@ of Gadgetbridge - making your phone make noise so you can find it.
 * `Keep Msgs` - default is `Off`. When Gadgetbridge disconnects, should Bangle.js
 keep any messages it has received, or should it delete them?
 * `Messages` - launches the messages app, showing a list of messages
-* `Alarms` - opens a submenu where you can set default settings for alarms such as vibration pattern, repeat, and auto snooze 
 
 ## How it works
 
