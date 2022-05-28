@@ -18,5 +18,6 @@ Apart from that
 
 * The upper left section displays total number of steps per day
 * The upper right section displays total number of steps from last boot ("stepuptime")
+* The face updates every 5 minutes or on demant by pressing the hardware button
 
 This clockwathface is aware of theme choice, so it will adapt to Light/Dark themes.
