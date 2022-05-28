@@ -3,7 +3,12 @@
 // My Invader Demo, for Bangle.js 2, written JavaScript - using Espruino Web IDE
 
 
-// resolution 176x176
+// note: resolution is 176x176
+
+
+// to do:
+//   make invader clock
+//   upload to official app page
 
 
 // - variables -----------------------------------------
@@ -34,7 +39,7 @@ var shot_fired          = false; // turret fired state
 var sx                  = -20;   // turret shot starting x - off screen
 var sy                  = -20;   // turret shot starting y - off screen
 var turret_been_hit     = false;
-var turret_blast_delay  = 21;    // keep blast active on screen for 60 frames
+var turret_blast_delay  = 25;    // keep blast active on screen for 60 frames
 var turret_exp_frame    = 1;     // turret explode start animation frame
 var turret_anim_delay   = 3;     // turret explode animation delay
 var explosion_play      = false;
@@ -50,7 +55,7 @@ var fire_been_pressed   = false; // stops auto fire
 // input(screen controller) variables
 var BTNL, BTNR, BTNF, BTNS; // button - left, right, fire, start
 var tap = {};
-// use tapping on screen for left and right
+// use tapping on screen for left, right, fire, start
 Bangle.on('drag',e=>tap=e);
 BTNL = { read : _=>tap.b && tap.x < 88 && tap.y > 88};
 BTNR = { read : _=>tap.b && tap.x > 88 && tap.y > 88};
@@ -133,7 +138,7 @@ function invader_fire() {
 function turret_hit() {
   if (turret_been_hit) {
     if (!(explosion_play)) {
-      Bangle.buzz();
+      //Bangle.buzz();
       //Bangle.beep();
     }
 
@@ -144,6 +149,7 @@ function turret_hit() {
     if (turret_anim_delay < 0) {
       turret_exp_frame += 1;
       if (turret_exp_frame > 2) {
+        Bangle.buzz();
         turret_exp_frame = 1;
       }
       turret_anim_delay = 3;
@@ -181,9 +187,8 @@ function invader_hit() {
       been_hit = false;
       bx = -32;                         // move boom off screen (following invader)
       by = -32;
-      // to gerate a random rounded number between 10 and 142;
-      inv_x = Math.floor(Math.random() * 142) + 10;      
-      //inv_x = 77;                      // move invader back up after being hit
+      // generate a random rounded number between 10 and 142;
+      inv_x = Math.floor(Math.random() * 142) + 10;
       inv_y = 20;                       // move invader back up after being hit
       i_dir = 1;                        // reset invader direction
     }
@@ -200,7 +205,7 @@ function gameStart() {
 // - main loop -------------------------------------------------------------
 function onFrame() {
 
-  // game not started state (title screen)
+  // game not started state (title screen) ***************************
   if(game_state == 0) {
     g.clear();
 
@@ -230,6 +235,7 @@ function onFrame() {
 
 
     // draw sprites during game over state
+    // next 2 line for a rotating invader on the title screen
     //ang += 0.1;
     //g.drawImage(invader_a, 88, 98, {scale:4, rotate:ang});
     if(inv_frame == 1) {
@@ -251,13 +257,15 @@ function onFrame() {
       score            = 0;        // reset score
       explosion_play   = false;
       game_state       = 1;
+      turret_blast_delay  = 25;
   }
 
 
     g.flip();
   }
 
-  // game over state
+
+  // game over state *************************************************
   if(game_state == 3) {
     g.clear();
 
@@ -278,17 +286,18 @@ function onFrame() {
 
     // reset stuff
     if(BTNS.read()) {
-      turret_been_hit  = false;
-      tur_x            = 77;       // reset turret to center of screen
-      tur_y            = 148;      // reset turret y
-      inv_x            = 77;       // reset invader to center of screen
-      inv_y            = 20;       // reset invader back to top
-      i_dir            = 1;        // reset invader direction
-      lives            = 3;        // reset lives
-      score            = 0;        // reset score
-      explosion_play   = false;
+      //turret_been_hit  = false;
+      //tur_x            = 77;       // reset turret to center of screen
+      //tur_y            = 148;      // reset turret y
+      //inv_x            = 77;       // reset invader to center of screen
+      //inv_y            = 20;       // reset invader back to top
+      //i_dir            = 1;        // reset invader direction
+      //lives            = 3;        // reset lives
+      //score            = 0;        // reset score
+      //explosion_play   = false;
       game_state       = 0;
       start_been_pressed  = true;
+      //turret_blast_delay  = 25;
     }
 
 
@@ -296,7 +305,7 @@ function onFrame() {
   }
 
 
-  // not game over state (game running)
+  // not game over state (game running) ******************************
   if(game_state == 1) {
     g.clear();
 
@@ -364,7 +373,8 @@ function onFrame() {
         lives -= 1;
 
         if (lives == 0) {
-            game_state = 3;
+          game_state = 3;
+          Bangle.buzz();
         }
       turret_been_hit = true;
       }
