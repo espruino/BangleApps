@@ -20,4 +20,4 @@ bkumanchik on Espruino Forums
 
 ## Creator
 
-Brian Kumanchik
+Brian Kumanchik 2022
