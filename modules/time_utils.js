@@ -55,7 +55,7 @@ exports.decodeTime = (millis) => {
  */
 exports.formatTime = (value) => {
   var time = safeTime(typeof value === "object" ? value : exports.decodeTime(value));
-  if (time.d != 0) throw "(d)ays not supported here";
+  if (time.d != 0) throw "days not supported here";
   if (time.h < 0 || time.h > 23) throw "Invalid value: must be 0 <= h <= 23";
   if (time.m < 0 || time.m > 59) throw "Invalid value: must be 0 <= m <= 59";
   return time.h + ":" + ("0" + time.m).substr(-2);
