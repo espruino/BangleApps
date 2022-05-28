@@ -4,7 +4,7 @@
   "version":"0.03",
   "description": "A Space Invader game-like demo - work in progress",
   "icon": "app.png",
-  "screenshots" : [ { "url":"screenshot.png" } ],
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_2.png" } ],
   "tags": "game",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
