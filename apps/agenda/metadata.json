@@ -1,7 +1,7 @@
 {
   "id": "agenda",
   "name": "Agenda",
-  "version": "1.01",
+  "version": "3.01",
   "description": "Simple agenda",
   "icon": "agenda.png",
   "screenshots": [{"url":"screenshot_agenda.png"}],

@@ -11,7 +11,12 @@
   the file on storage has the same content but is an object indexed by id
 */
 
-var FILE = "android.calendar.json"
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
+var FILE = "android.calendar.json";
+
+var Locale = require("locale");
 
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
@@ -23,30 +28,53 @@ var cal;
 try { cal = require("Storage").readJSON("android.calendar.json"); } catch (e) {}
 if (!cal) //cal = {}; // first event
     cal = { //FIXME test
-        1: {id: 1, title:"foo", timestamp: 1653577989371, durationInSeconds: 3000, location: "somewhere"},
+        1: {id: 1, title:"foo", timestamp: 1653577989371, durationInSeconds: 3000, location: "somewhere", description: "something very very long"},
         2: {id: 2, title:"last", timestamp: 1653579989371, durationInSeconds: 3000, location: "somewhere"},
         3: {id: 3, title:"bar", timestamp: 1653578989371, durationInSeconds: 3000, location: "somewhere"}
     };
 
-function formatDateLong(timestamp) {
-    return new Date(timestamp*1000).toString();
+function getDate(timestamp) {
+    return new Date(timestamp*1000);
 }
-function formatDateShort(timestamp) {
-    return new Date(timestamp*1000).toISOString();
+function formatDateLong(date, includeDay) {
+    if(includeDay)
+        return Locale.date(date)+" "+Locale.time(date,1);
+    return Locale.time(date,1);
+}
+function formatDateShort(date) {
+    return Locale.date(date).replace(/\d\d\d\d/,"")+Locale.time(date,1);
 }
 
+var lines = [];
 function showEvent(ev) {
   var bodyFont = fontBig;
   g.setFont(bodyFont);
-  var lines = [];
+  //var lines = [];
   if (ev.title) lines = g.wrapString(ev.title, g.getWidth()-10)
   var titleCnt = lines.length;
+  var start = getDate(ev.timestamp);
+  var end = getDate((+ev.timestamp) + (+ev.durationInSeconds));
+  var includeDay = true;
   if (titleCnt) lines.push(""); // add blank line after title
-  lines = lines.concat(
-      g.wrapString(formatDateLong(ev.timestamp)+"\n", g.getWidth()-10),
-      g.wrapString(formatDateLong((+ev.timestamp) + (+ev.durationInSeconds))+"\n", g.getWidth()-10),
-      g.wrapString(ev.location, g.getWidth()-10),
-      ["",/*LANG*/"< Back"]);
+  if(start.getDay() == end.getDay() && start.getMonth() == end.getMonth())
+    includeDay = false;
+  if(includeDay) {
+    lines = lines.concat(
+      /*LANG*/"Start:",
+      g.wrapString(formatDateLong(start, includeDay), g.getWidth()-10),
+      /*LANG*/"End:",
+      g.wrapString(formatDateLong(end, includeDay), g.getWidth()-10));
+  } else {
+    lines = lines.concat(
+      g.wrapString(Locale.date(start), g.getWidth()-10),
+      g.wrapString(/*LANG*/"Start"+": "+formatDateLong(start, includeDay), g.getWidth()-10),
+      g.wrapString(/*LANG*/"End"+": "+formatDateLong(end, includeDay), g.getWidth()-10));
+  }
+  if(ev.location)
+    lines = lines.concat(/*LANG*/"Location"+": ", g.wrapString(ev.location, g.getWidth()-10));
+  if(ev.description)
+    lines = lines.concat("",g.wrapString(ev.description, g.getWidth()-10));
+  lines = lines.concat(["",/*LANG*/"< Back"]);
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
     c : lines.length, // number of menu items
@@ -59,7 +87,7 @@ function showEvent(ev) {
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
-        showEvent(ev);
+        showList();
     },
     back : () => showList()
   });
@@ -71,19 +99,19 @@ CALENDAR=Object.keys(cal)
 
 function showList() {
     E.showScroller({
-        h : 48,
+        h : 52,
         c : Math.max(CALENDAR.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
         draw : function(idx, r) {"ram"
             var ev = CALENDAR[idx];
             g.setColor(g.theme.fg);
             g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
             if (!ev) return;
-            var x = r.x+2, title = ev.title, body = formatDateShort(ev.timestamp)+
-                "\n"+ev.location;
+            var x = r.x+2, title = ev.title;
+            var body = formatDateShort(getDate(ev.timestamp))+"\n"+ev.location;
             var m = ev.title+"\n"+ev.location, longBody=false;
             if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
             if (body) {
-                g.setFontAlign(-1,-1).setFont("6x8");
+                g.setFontAlign(-1,-1).setFont(fontMedium);
                 var l = g.wrapString(body, r.w-(x+14));
                 if (l.length>3) {
                     l = l.slice(0,3);
