@@ -1,7 +1,7 @@
 { "id": "invader",
   "name": "Invader",
   "shortName":"Invader",
-  "version":"0.02",
+  "version":"0.03",
   "description": "A Space Invader game-like demo - work in progress",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
