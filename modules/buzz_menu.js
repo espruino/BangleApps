@@ -5,7 +5,7 @@
  * @param {*} callback A function called with the user selected pattern
  */
 exports.pattern = function (value, callback) {
-  var patterns = ["", ".", ":", "..", "::", "-", "=", "--", "==", "=.=", "---"];
+  var patterns = ["", ".", ":", "..", "::", ",", ";", ",,", ";;", "-", "=", "--", "==", "...", ":::", "---", ";;;", "==="];
   return {
     value: Math.max(0, patterns.indexOf(value)),
     min: 0,
