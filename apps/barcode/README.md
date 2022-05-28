@@ -1,10 +1,10 @@
-# Barcode clock(watch)face
+# Barcode clockwatchface
 
-A scannable EAN-8 compatible face for your Bangle 2
+A scannable EAN-8 compatible clockwatchface for your Bangle 2
 
 The format of the bars are
 
-`[HHmm] [MMwc]`
+`||HHmm||MMwc||`
 
 * Left section: HHmm
   * H: Hours
@@ -14,4 +14,9 @@ The format of the bars are
   * w: Day of week
   * c: Calculated EAN-8 digit checksum
 
-This face is aware of theme choice, so it will adapt to Light/Dark themes.
+Apart from that
+
+* The upper left section displays total number of steps per day
+* The upper right section displays total number of steps from last boot ("stepuptime")
+
+This clockwathface is aware of theme choice, so it will adapt to Light/Dark themes.
