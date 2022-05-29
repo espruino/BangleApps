@@ -7,8 +7,9 @@
 
 
 // to do:
-//   make invader clock
 //   upload to official app page
+//   make invader clock
+
 
 
 // - variables -----------------------------------------
@@ -225,7 +226,7 @@ function onFrame() {
     // invader anim code
     i_anim_delay -= 1;
     if(i_anim_delay < 0) {
-      i_anim_delay = 25;
+      i_anim_delay = 15;
 
       inv_frame += 1;
       if (inv_frame > 2) {
