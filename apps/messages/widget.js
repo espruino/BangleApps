@@ -1,12 +1,12 @@
 (() => {
 
-function getBaseMessages() {
+function getMessages() {
   if ("undefined"!=typeof MESSAGES) return MESSAGES;
   return require("Storage").readJSON("messages.json",1)||[];
 }
 
-function getMessages() {
-  return getBaseMessages().filter(msg => msg.new && msg.id != "music")
+function filterMessages(msgs) {
+  return msgs.filter(msg => msg.new && msg.id != "music")
     .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
 }
 
@@ -23,17 +23,16 @@ draw:function(recall) {
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   if (settings.flash===undefined) settings.flash = true;
   if (recall !== true || settings.flash) {
-    var msgs = getMessages();
-    var msgsShown = E.clip(msgs.length, 0, 3);
+    var msgsShown = E.clip(this.msgs.length, 0, settings.maxMessages);
     g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
     for(let i = 0;i < msgsShown;i++) {
-      const msg = msgs[i];
+      const msg = this.msgs[i];
       const colors = [g.theme.bg, g.setColor(require("messages").getMessageImageCol(msg)).getColor()];
       if (settings.flash && (c&1)) {
         colors[1] = g.theme.fg;
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
-      g.drawImage(i == 2 ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
+      g.drawImage(i == (settings.maxMessages - 1) && msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
     }
   }
   if (settings.repeat===undefined) settings.repeat = 4;
@@ -43,8 +42,9 @@ draw:function(recall) {
   }
   WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
-},update:function(quiet) {
-  const msgs = getMessages();
+},update:function(rawMsgs, quiet) {
+  const settings = require('Storage').readJSON("messages.settings.json", true) || {};
+  msgs = filterMessages(rawMsgs);
   if (msgs.length === 0) {
     delete WIDGETS["messages"].t;
     delete WIDGETS["messages"].l;
@@ -53,7 +53,8 @@ draw:function(recall) {
     WIDGETS["messages"].l=Date.now()-10000; // last buzz
     if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
   }
-  WIDGETS["messages"].width=this.iconwidth * E.clip(msgs.length, 0, 3);
+  WIDGETS["messages"].width=this.iconwidth * E.clip(msgs.length, 0, settings.maxMessages);
+  WIDGETS["messages"].msgs = msgs;
   Bangle.drawWidgets();
   if (msgs.length !== 0) Bangle.setLCDPower(1);// turns screen on
 },buzz:function() {
@@ -68,6 +69,7 @@ draw:function(recall) {
 /* We might have returned here if we were in the Messages app for a
 message but then the watch was never viewed. In that case we don't
 want to buzz but should still show that there are unread messages. */
-WIDGETS["messages"].update(true);
+if (global.MESSAGES===undefined)
+  WIDGETS["messages"].update(getMessages(), true);
 
 })();
