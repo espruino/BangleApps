@@ -19,22 +19,23 @@
 			let pattern='';
 			if (strikeHour === 0 && currentMinute == 0) {
 				pattern = '.. .. .. ..';
-			} else if (strikeHour === 0 && currentMinute == 30) {
+			} else if (strikeHour === 0 && currentMinute === 30) {
 				pattern = '.';
-			} else if (strikeHour === 1 && currentMinute == 0) {
+			} else if (strikeHour === 1 && currentMinute === 0) {
 				pattern = '..';
-			} else if (strikeHour === 1 && currentMinute == 30) {
+			} else if (strikeHour === 1 && currentMinute === 30) {
 				pattern = '.. .';
-			} else if (strikeHour === 2 && currentMinute == 0) {
+			} else if (strikeHour === 2 && currentMinute === 0) {
 				pattern = '.. ..';
-			} else if (strikeHour === 2 && currentMinute == 30) {
+			} else if (strikeHour === 2 && currentMinute === 30) {
 				pattern = '.. .. .';
-			} else if (strikeHour === 3 && currentMinute == 0) {
+			} else if (strikeHour === 3 && currentMinute === 0) {
 				pattern = '.. .. ..';
-			} else if (strikeHour === 3 && currentMinute == 30) {
+			} else if (strikeHour === 3 && currentMinute === 30) {
 				pattern = '.. .. .. .';
 			}
-			pattern = replaceAll(pattern, ' ', '  '); // longer pause
+			pattern = replaceAll(pattern, ' ', '    '); // 4x pause
+			pattern = replaceAll(pattern, '.', '. '); // pause between bells
 			if (strength === 2) { // strong selected
 				pattern = replaceAll(pattern, '.', ':');
 			}
