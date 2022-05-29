@@ -2,7 +2,7 @@
   var FILE = "widshipbell.json";
   // Load settings
   var settings = Object.assign({
-    enabled: true,
+    strength: 1,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -13,11 +13,12 @@
   E.showMenu({
     "" : { "title" : "Ship's bell" },
     "< Back" : () => back(),
-    'Enable?': {
-      value: !!settings.enabled,  // !! converts undefined to false
-      format: v => v?"Yes":"No",
+    'Strength': {
+      value: settings.strength,
+      min: 0, max: 2,
+      format: v => ["Off", "Weak", "Strong"][v],
       onchange: v => {
-        settings.enabled = v;
+        settings.strength = v;
         writeSettings();
       }
     },

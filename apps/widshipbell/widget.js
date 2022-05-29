@@ -1,7 +1,11 @@
 (() => {
-	var settings = Object.assign({
-		enabled: true,
-	}, require('Storage').readJSON("widshipbell.json", true) || {});
+	const strength = Object.assign({
+		strength: 1,
+	}, require('Storage').readJSON("widshipbell.json", true) || {}).strength;
+
+	function replaceAll(target, search, replacement) {
+		return target.split(search).join(replacement);
+	}
 
 	function check() {
 		const now = new Date();
@@ -14,21 +18,25 @@
 			// buzz now
 			let pattern='';
 			if (strikeHour === 0 && currentMinute == 0) {
-				pattern = '..  ..  ..  ..';
+				pattern = '.. .. .. ..';
 			} else if (strikeHour === 0 && currentMinute == 30) {
 				pattern = '.';
 			} else if (strikeHour === 1 && currentMinute == 0) {
 				pattern = '..';
 			} else if (strikeHour === 1 && currentMinute == 30) {
-				pattern = '..  .';
+				pattern = '.. .';
 			} else if (strikeHour === 2 && currentMinute == 0) {
-				pattern = '..  ..';
+				pattern = '.. ..';
 			} else if (strikeHour === 2 && currentMinute == 30) {
-				pattern = '..  ..  .';
+				pattern = '.. .. .';
 			} else if (strikeHour === 3 && currentMinute == 0) {
-				pattern = '..  ..  ..';
+				pattern = '.. .. ..';
 			} else if (strikeHour === 3 && currentMinute == 30) {
-				pattern = '..  ..  ..  .';
+				pattern = '.. .. .. .';
+			}
+			pattern = replaceAll(pattern, ' ', '  '); // longer pause
+			if (strength === 2) { // strong selected
+				pattern = replaceAll(pattern, '.', ':');
 			}
 			require("buzz").pattern(pattern);
 		}
@@ -37,7 +45,7 @@
 		setTimeout(check, etaSecond*1000);
 	}
 
-	if (settings.enabled === true) {
+	if (strength !== 0) {
 		check();
 	}
 })();
