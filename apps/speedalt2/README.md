@@ -37,7 +37,7 @@ When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. W
 
 ## Power Saving
 
-The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the colck/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
+The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the clock/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
 
 This app will work quite happily on its own but will use the [GPS Setup App](https://banglejs.com/apps/#gps%20setup) if it is installed. You may choose to use the GPS Setup App to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Setup App Readme to understand what this does.
 
