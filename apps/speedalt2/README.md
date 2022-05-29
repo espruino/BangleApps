@@ -65,7 +65,7 @@ The Droidscript script file is called : **GPS Adv Sports II.js**
 
 Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep. 
 
-When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
+When running a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
 
 An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
 
