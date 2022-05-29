@@ -4,6 +4,7 @@
   "version":"0.01",
   "description": "A clock with R2D2's shiny metal face on it. :)",
   "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],  

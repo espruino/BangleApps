@@ -8,6 +8,8 @@
     showHRM: true,
     showActivity: true,
     showStepCount: true,
+    powerSaving: true,
+    PowerOnInterval: 15,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -64,6 +66,25 @@
       onchange: v => {
         settings.showStepCount = v;
         writeSettings();
+      }
+    },
+    'Power saving': {
+      value: settings.powerSaving,
+      format: v => v?"On":"Off",
+      onchange: v => {
+        settings.powerSaving = v;
+        writeSettings();
+      }
+    },
+    'Power on interval': {
+      value: settings.PowerOnInterval,
+      min: 3, max: 60,
+      onchange: v => {
+        settings.PowerOnInterval = v;
+        writeSettings();
+      },
+      format: x => {
+          return x + " min";
       }
     }
   }
