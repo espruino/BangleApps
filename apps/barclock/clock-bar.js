@@ -78,11 +78,12 @@ const ClockFace = require("ClockFace"),
       }
       this.layout.bar.height = thickness+1;
       if (this.font===1) { // vector
+        const B2 = process.env.HWVERSION>1;
         if (this.is12Hour && locale.hasMeridian) {
-          this.layout.time.font = "Vector:60";
-          this.layout.ampm.font = "Vector:40";
+          this.layout.time.font = "Vector:"+(B2 ? 50 : 60);
+          this.layout.ampm.font = "Vector:"+(B2 ? 20 : 40);
         } else {
-          this.layout.time.font = "Vector:80";
+          this.layout.time.font = "Vector:"+(B2 ? 60 : 80);
         }
       } else {
         this.layout.time.font = "6x8:"+thickness;
