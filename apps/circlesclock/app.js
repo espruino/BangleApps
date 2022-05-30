@@ -848,8 +848,8 @@ Bangle.loadWidgets();
 
 // schedule a draw for the next minute
 setTimeout(function() {
-  // draw every 60 seconds
-  setInterval(draw,60000);
+  // draw in interval
+  setInterval(draw, settings.updateInterval * 1000);
 }, 60000 - (Date.now() % 60000));
 
 draw();

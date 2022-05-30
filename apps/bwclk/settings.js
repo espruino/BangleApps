@@ -6,6 +6,7 @@
     let settings = {
       fullscreen: false,
       showLock: true,
+      hideColon: false,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -33,6 +34,14 @@
         format: () => (settings.showLock ? 'Yes' : 'No'),
         onchange: () => {
           settings.showLock = !settings.showLock;
+          save();
+        },
+      },
+      'Hide Colon': {
+        value: settings.hideColon,
+        format: () => (settings.hideColon ? 'Yes' : 'No'),
+        onchange: () => {
+          settings.hideColon = !settings.hideColon;
           save();
         },
       }

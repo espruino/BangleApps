@@ -9,7 +9,7 @@
     {"url":"screenshot_b1_dark.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_light.png"},
     {"url":"screenshot_b2_dark.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_light.png"}
   ],
-  "type": "boot",
+  "type": "bootloader",
   "tags": "system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [

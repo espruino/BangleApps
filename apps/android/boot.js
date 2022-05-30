@@ -3,6 +3,7 @@
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
+  var lastMsg;
 
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
@@ -18,7 +19,17 @@
     /* TODO: Call handling, fitness */
     var HANDLERS = {
       // {t:"notify",id:int, src,title,subject,body,sender,tel:string} add
-      "notify" : function() { Object.assign(event,{t:"add",positive:true, negative:true});require("messages").pushMessage(event); },
+      "notify" : function() {
+        Object.assign(event,{t:"add",positive:true, negative:true});
+        // Detect a weird GadgetBridge bug and fix it
+        // For some reason SMS messages send two GB notifications, with different sets of info
+        if (lastMsg && event.body == lastMsg.body && lastMsg.src == undefined && event.src == "Messages") {
+          // Mutate the other message
+          event.id = lastMsg.id;
+        }
+        lastMsg = event;
+        require("messages").pushMessage(event);
+      },
       // {t:"notify~",id:int, title:string} // modified
       "notify~" : function() { event.t="modify";require("messages").pushMessage(event); },
       // {t:"notify-",id:int} // remove
@@ -67,17 +78,13 @@
           var dow = event.d[j].rep;
           if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
           var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
-          var a = {
-            id : "gb"+j,
-            appid : "gbalarms",
-            on : true,
-            t : event.d[j].h * 3600000 + event.d[j].m * 60000,
-            dow : ((dow&63)<<1) | (dow>>6), // Gadgetbridge sends DOW in a different format
-            last : last,
-            rp : settings.rp,
-            as : settings.as,
-            vibrate : settings.vibrate
-          };
+          var a = require("sched").newDefaultAlarm();
+          a.id = "gb"+j;
+          a.appid = "gbalarms";
+          a.on = true;
+          a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
+          a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
+          a.last = last;
           alarms.push(a);
         }
         sched.setAlarms(alarms);

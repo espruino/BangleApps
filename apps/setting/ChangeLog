@@ -46,3 +46,7 @@
 0.41: Stop users disabling all wake-up methods and locking themselves out (fix #1272)
 0.42: Fix theme customizer on new Bangle 2 firmware
 0.43: Add some Bangle 1 colours to theme customizer
+0.44: Add "Start Week On X" option (#1780)
+      UI improvements to Locale and Date & Time menu
+0.45: Add calibrate battery option
+0.46: Fix regression after making 'calibrate battery' only for Bangle.js 2

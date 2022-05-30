@@ -11,6 +11,8 @@ const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
+  "kmt": 1,
+  "km/tim": 1,
   "mph": 1.60934,
   "kts": 1.852
 };
@@ -564,7 +566,7 @@ var locales = {
     month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
     abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
-    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
+    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "confirmar", on: "ativado", off: "desativado" }
   },
   "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use CODEPAGE_CONVERSIONS
     lang: "cs_CZ",

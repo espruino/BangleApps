@@ -1,0 +1,2 @@
+0.01: New keyboard
+0.02: Introduce setting "Show help button?". Make setting firstLaunch invisible by removing corresponding code from settings.js. Add marker that shows when character selection timeout has run out. Display opened text on launch when editing existing text string. Perfect horizontal alignment of buttons. Tweak help message letter casing.

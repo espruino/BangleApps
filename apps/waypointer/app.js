@@ -74,11 +74,14 @@ function newHeading(m,h){
     return hd;
 }
 
-var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
+var CALIBDATA = require("Storage").readJSON("magnav.json",1) || {};
 
 function tiltfixread(O,S){
-  var start = Date.now();
   var m = Bangle.getCompass();
+  if (O === undefined || S === undefined) {
+    // no valid calibration from magnav, use built in
+    return 360-m.heading;
+  }
   var g = Bangle.getAccel();
   m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
   var d = Math.atan2(-m.dx,m.dy)*180/Math.PI;
@@ -97,6 +100,7 @@ function tiltfixread(O,S){
 // Note actual mag is 360-m, error in firmware
 function read_compass() {
   var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
+  if (isNaN(d)) return; // built in compass heading can return NaN when uncalibrated
   heading = newHeading(d,heading);
   direction = wp_bearing - heading;
   if (direction < 0) direction += 360;

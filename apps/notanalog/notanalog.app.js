@@ -88,20 +88,22 @@ Graphics.prototype.setNormalFont = function(scale) {
 };
 
 
-
 function getSteps() {
+    var steps = 0;
     try{
         if (WIDGETS.wpedom !== undefined) {
-            return WIDGETS.wpedom.getSteps();
+            steps = WIDGETS.wpedom.getSteps();
         } else if (WIDGETS.activepedom !== undefined) {
-            return WIDGETS.activepedom.getSteps();
+            steps = WIDGETS.activepedom.getSteps();
+        } else {
+          steps = Bangle.getHealthStatus("day").steps;
         }
     } catch(ex) {
         // In case we failed, we can only show 0 steps.
     }
 
-    return 0;
-  }
+    return steps;
+}
 
 
 function drawBackground() {
@@ -289,6 +291,9 @@ function drawSleep(){
 
 
 function draw(fastUpdate){
+    // Queue draw in one minute
+    queueDraw();
+
     // Execute handlers
     handleState(fastUpdate);
 
@@ -320,9 +325,6 @@ function draw(fastUpdate){
     drawState();
     drawTime();
     drawData();
-
-    // Queue draw in one minute
-    queueDraw();
 }
 
 

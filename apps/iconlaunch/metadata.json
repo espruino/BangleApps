@@ -1,0 +1,18 @@
+{
+	"id": "iconlaunch",
+	"name": "Icon Launcher",
+	"shortName" : "Icon launcher",
+	"version": "0.02",
+	"icon": "app.png",
+	"description": "A launcher inspired by smartphones, with an icon-only scrollable menu.",
+	"tags": "tool,system,launcher",
+	"type": "launch",
+	"supports": ["BANGLEJS2"],
+	"storage": [
+		{ "name": "iconlaunch.app.js", "url": "app.js" },
+		{ "name": "iconlaunch.settings.js", "url": "settings.js" }
+	],
+	"screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }],
+	"readme": "README.md",
+	"sortorder": -10
+}

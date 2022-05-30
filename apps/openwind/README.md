@@ -14,7 +14,9 @@ additionally displayed in red.  In this mode, the speed over ground in knots is 
 
 ## Controls
 
-There are no controls in the main app, but there are two settings in the settings app that can be changed:
+In the main app, when true wind mode is enabled (see below), swiping left on the screen will temporarily disable GPS (to preserve battery); a small
+red satellite symbol will appear on the bottom right. Swiping right will turn GPS back on.
+The settings app provides the following two settings:
 
  * True wind: enables or disables true wind calculations; enabling this will turn on GPS inside the app
  * Mounting angle: mounting relative to the boat of the wind instrument (in degrees)

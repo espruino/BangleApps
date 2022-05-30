@@ -37,18 +37,19 @@ function internalToG(u) {
 
 function resetSettings() {
   settings = {
-    ble: true,             // Bluetooth enabled by default
-    blerepl: true,         // Is REPL on Bluetooth - can Espruino IDE be used?
-    log: false,            // Do log messages appear on screen?
-    quiet: 0,              // quiet mode:  0: off, 1: priority only, 2: total silence
-    timeout: 10,           // Default LCD timeout in seconds
-    vibrate: true,         // Vibration enabled by default. App must support
-    beep: BANGLEJS2?true:"vib",            // Beep enabled by default. App must support
-    timezone: 0,           // Set the timezone for the device
-    HID: false,           // BLE HID mode, off by default
-    clock: null,           // a string for the default clock's name
-    "12hour" : false,      // 12 or 24 hour clock?
-    brightness: 1,       // LCD brightness from 0 to 1
+    ble: true,                      // Bluetooth enabled by default
+    blerepl: true,                  // Is REPL on Bluetooth - can Espruino IDE be used?
+    log: false,                     // Do log messages appear on screen?
+    quiet: 0,                       // quiet mode:  0: off, 1: priority only, 2: total silence
+    timeout: 10,                    // Default LCD timeout in seconds
+    vibrate: true,                  // Vibration enabled by default. App must support
+    beep: BANGLEJS2 ? true : "vib", // Beep enabled by default. App must support
+    timezone: 0,                    // Set the timezone for the device
+    HID: false,                     // BLE HID mode, off by default
+    clock: null,                    // a string for the default clock's name
+    "12hour" : false,               // 12 or 24 hour clock?
+    firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
+    brightness: 1,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
       wakeOnBTN1: true,
@@ -94,7 +95,7 @@ function showSystemMenu() {
     /*LANG*/'LCD': ()=>showLCDMenu(),
     /*LANG*/'Locale': ()=>showLocaleMenu(),
     /*LANG*/'Select Clock': ()=>showClockMenu(),
-    /*LANG*/'Set Time': ()=>showSetTimeMenu()
+    /*LANG*/'Date & Time': ()=>showSetTimeMenu()
   };
 
   return E.showMenu(mainmenu);
@@ -478,6 +479,7 @@ function showLocaleMenu() {
     '< Back': ()=>showSystemMenu(),
     /*LANG*/'Time Zone': {
       value: settings.timezone,
+      format: v => (v > 0 ? "+" : "") + v,
       min: -11,
       max: 13,
       step: 0.5,
@@ -486,13 +488,23 @@ function showLocaleMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Clock Style': {
+    /*LANG*/'Time Format': {
       value: !!settings["12hour"],
-      format: v => v ? "12hr" : "24hr",
+      format: v => v ? "12h" : "24h",
       onchange: v => {
         settings["12hour"] = v;
         updateSettings();
       }
+    },
+    /*LANG*/'Start Week On': {
+      value: settings["firstDayOfWeek"] || 0,
+      min: 0, // Sunday
+      max: 1, // Monday
+      format: v => require("date_utils").dow(v, 1),
+      onchange: v => {
+        settings["firstDayOfWeek"] = v;
+        updateSettings();
+      },
     }
   };
   return E.showMenu(localemenu);
@@ -533,8 +545,22 @@ function showUtilMenu() {
       setInterval(function() {
         var i=1000;while (i--);
       }, 1);
-    },
-    /*LANG*/'Reset Settings': () => {
+    }
+  };
+  if (BANGLEJS2)
+    menu[/*LANG*/'Calibrate Battery'] = () => {
+      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
+        if (ok) {
+          var s=require("Storage").readJSON("setting.json");
+          s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
+          require("Storage").writeJSON("setting.json",s);
+          E.showAlert(/*LANG*/"Calibrated!").then(() => load("settings.app.js"));
+        } else {
+          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
+        }
+      });
+    };
+  menu[/*LANG*/'Reset Settings'] = () => {
       E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
         if (v) {
           E.showMessage('Resetting');
@@ -542,9 +568,9 @@ function showUtilMenu() {
           setTimeout(showMainMenu, 50);
         } else showUtilMenu();
       });
-    },
-    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
-  };
+    };
+  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() };
+
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
       E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset"}).then((v) => {
@@ -606,10 +632,33 @@ function showClockMenu() {
 function showSetTimeMenu() {
   d = new Date();
   const timemenu = {
-    '': { 'title': /*LANG*/'Set Time' },
+    '': { 'title': /*LANG*/'Date & Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
       showSystemMenu();
+    },
+    /*LANG*/'Day': {
+      value: d.getDate(),
+      onchange: function (v) {
+        this.value = ((v+30)%31)+1;
+        d.setDate(this.value);
+      }
+    },
+    /*LANG*/'Month': {
+      value: d.getMonth() + 1,
+      format: v => require("date_utils").month(v),
+      onchange: function (v) {
+        this.value = ((v+11)%12)+1;
+        d.setMonth(this.value - 1);
+      }
+    },
+    /*LANG*/'Year': {
+      value: d.getFullYear(),
+      min: 2019,
+      max: 2100,
+      onchange: function (v) {
+        d.setFullYear(v);
+      }
     },
     /*LANG*/'Hour': {
       value: d.getHours(),
@@ -630,28 +679,6 @@ function showSetTimeMenu() {
       onchange: function (v) {
         this.value = (v+60)%60;
         d.setSeconds(this.value);
-      }
-    },
-    /*LANG*/'Date': {
-      value: d.getDate(),
-      onchange: function (v) {
-        this.value = ((v+30)%31)+1;
-        d.setDate(this.value);
-      }
-    },
-    /*LANG*/'Month': {
-      value: d.getMonth() + 1,
-      onchange: function (v) {
-        this.value = ((v+11)%12)+1;
-        d.setMonth(this.value - 1);
-      }
-    },
-    /*LANG*/'Year': {
-      value: d.getFullYear(),
-      min: 2019,
-      max: 2100,
-      onchange: function (v) {
-        d.setFullYear(v);
       }
     }
   };

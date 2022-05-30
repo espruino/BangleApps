@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="notes" class="container">
+      <div class="columns">
+        <div class="column col-9">
+          <textarea class="form-input" id="note-new" placeholder="New note" rows="3"></textarea>
+        </div>
+        <div class="column col-3">
+          <button class="btn btn-default" id="btnAdd">Add</button>
+        </div>
+      </div>
+    </div>
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var notesElement = document.getElementById("notes");
+var notes = {};
+
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  Util.readStorage(`noteify.json`,data=>{
+    notes = JSON.parse(data || "[]");
+
+    // remove window
+    Util.hideModal();
+
+    notes.forEach((note, i) => {
+      const divColumn = document.createElement("div");
+      divColumn.classList.add('columns');
+
+      const divColumn1 = document.createElement("div");
+      divColumn1.classList.add('column');
+      divColumn1.classList.add('col-9');
+
+      const textarea = document.createElement("textarea");
+      textarea.id = "note" + i;
+      textarea.classList.add('form-input');
+      textarea.rows = 3;
+      textarea.value = note.note;
+      divColumn1.appendChild(textarea);
+      divColumn.appendChild(divColumn1);
+
+      const divColumn2 = document.createElement("div");
+      divColumn2.classList.add('column');
+      divColumn2.classList.add('col-3');
+
+      const buttonSave = document.createElement("button");
+      buttonSave.textContent = "Save";
+      buttonSave.classList.add('btn');
+      buttonSave.classList.add('btn-default');
+      buttonSave.onclick = function() {
+        notes[i].note = textarea.value;
+        Util.writeStorage("noteify.json", JSON.stringify(notes));
+        location.reload();
+      }
+      divColumn2.appendChild(buttonSave);
+
+      const buttonDelete = document.createElement("button");
+      buttonDelete.classList.add('btn');
+      buttonDelete.textContent = "Delete";
+      buttonDelete.onclick = function() {
+        notes[i].note = textarea.value;
+        notes.splice(i, 1);
+        Util.writeStorage("noteify.json", JSON.stringify(notes));
+        location.reload(); // reload so we see current data
+      }
+      divColumn2.appendChild(buttonDelete);
+      divColumn.appendChild(divColumn2);
+
+      notesElement.prepend(document.createElement("hr"));
+      notesElement.prepend(divColumn);
+    });
+
+    document.getElementById("btnAdd").addEventListener("click", function() {
+      const note = document.getElementById("note-new").value;
+      notes.push({"note": note});
+      Util.writeStorage("noteify.json", JSON.stringify(notes));
+      location.reload(); // reload so we see current data
+    });
+  });
+}
+
+// Called when app starts
+function onInit() {
+  getData();
+}
+
+    </script>
+  </body>
+</html>

@@ -25,7 +25,7 @@ DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
 // Set up source code URL
 (function() {
   let username = "espruino";
-  let githubMatch = window.location.href.match(/\/(\w+)\.github\.io/);
+  let githubMatch = window.location.href.match(/\/([\w-]+)\.github\.io/);
   if (githubMatch) username = githubMatch[1];
   Const.APP_SOURCECODE_URL = `https://github.com/${username}/BangleApps/tree/master/apps`;
 })();
@@ -192,6 +192,17 @@ window.addEventListener('load', (event) => {
       Progress.hide({sticky:true});
       showToast("App Install failed, "+err,"error");
     });
+  });
+
+  // BLE Compatibility
+  var selectLang = document.getElementById("settings-ble-compat");
+  if (SETTINGS.bleCompat!==undefined)
+    Puck.increaseMTU = !SETTINGS.bleCompat;
+  selectLang.addEventListener("change",event=>{
+    console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
+    SETTINGS.bleCompat = event.target.checked;
+    Puck.increaseMTU = !SETTINGS.bleCompat;
+    saveSettings();
   });
 
   // Load language list

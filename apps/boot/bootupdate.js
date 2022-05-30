@@ -197,8 +197,18 @@ bootFiles.forEach(bootFile=>{
   require('Storage').write('.boot0',"//"+bootFile+"\n",fileOffset);
   fileOffset+=2+bootFile.length+1;
   var bf = require('Storage').read(bootFile);
-  require('Storage').write('.boot0',bf,fileOffset);
-  fileOffset+=bf.length;
+  // we can't just write 'bf' in one go because at least in 2v13 and earlier
+  // Espruino wants to read the whole file into RAM first, and on Bangle.js 1
+  // it can be too big (especially BTHRM).
+  var bflen = bf.length;
+  var bfoffset = 0;
+  while (bflen) {
+    var bfchunk = Math.min(bflen, 2048);
+    require('Storage').write('.boot0',bf.substr(bfoffset, bfchunk),fileOffset);
+    fileOffset+=bfchunk;
+    bfoffset+=bfchunk;
+    bflen-=bfchunk;
+  }
   require('Storage').write('.boot0',";\n",fileOffset);
   fileOffset+=2;
 });
