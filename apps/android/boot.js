@@ -92,12 +92,15 @@
       },
       //TODO perhaps move those in a library (like messages), used also for viewing events?
       "calendar" : function() {
-        var cal = require("Storage").readJSON("android.calendar.json",true)||[];
+        var cal = require("Storage").readJSON("android.calendar.json",true);
+        if (!cal || !Array.isArray(cal)) cal = [];
         cal.push(event);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       "calendar-" : function() {
-        var cal = require("Storage").readJSON("android.calendar.json",true)||return;
+        var cal = require("Storage").readJSON("android.calendar.json",true);
+        //if any of those happen we are out of sync!
+        if (!cal || !Array.isArray(cal)) return;
         cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       }

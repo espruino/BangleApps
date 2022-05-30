@@ -1,10 +1,10 @@
 {
   "id": "agenda",
   "name": "Agenda",
-  "version": "2.01",
+  "version": "0.01",
   "description": "Simple agenda",
   "icon": "agenda.png",
-  "screenshots": [{"url":"screenshot_agenda.png"}],
+  "screenshots": [{"url":"screenshot_agenda_overview.png"}, {"url":"screenshot_agenda_event1.png"}, {"url":"screenshot_agenda_event2.png"}],
   "tags": "agenda",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
