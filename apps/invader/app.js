@@ -207,7 +207,7 @@ function gameStart() {
 function onFrame() {
 
   // game not started state (title screen) ***************************
-  if(game_state == 0) {
+  if(game_state == 0) {    
     g.clear();
 
 
@@ -308,6 +308,7 @@ function onFrame() {
 
   // not game over state (game running) ******************************
   if(game_state == 1) {
+    Bangle.setLCDPower(1); // optional - this keeps the watch LCD lit up
     g.clear();
 
 
