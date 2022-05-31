@@ -1,7 +1,7 @@
 (function(back) {
     function settings() {
       var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-      if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
+      if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
       if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
       return settings;
     }
@@ -21,10 +21,10 @@
         format: v => v,
         onchange: v => updateSetting("charTimeout", v),
       },
-      /*LANG*/'Show help on first launch': {
-        value: !!settings().firstLaunch,
+      /*LANG*/'Show help button?': {
+        value: !!settings().showHelpBtn,
         format: v => v?"Yes":"No",
-        onchange: v =>  updateSetting("firstLaunch", v)
+        onchange: v =>  updateSetting("showHelpBtn", v)
       }
     };
     E.showMenu(mainmenu);

@@ -11,16 +11,19 @@ exports.getAlarm = function(id) {
   return exports.getAlarms().find(a=>a.id==id);
 };
 // Given a list of alarms from getAlarms, return a list of active alarms for the given time (or current time if time not specified)
-exports.getActiveAlarms = function(alarms, time) {
+exports.getActiveAlarms = function (alarms, time) {
   if (!time) time = new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000)
-                    +10000;// get current time - 10s in future to ensure we alarm if we've started the app a tad early
-  return alarms.filter(a=>a.on
-          &&(a.t<currentTime)
-          &&(a.last!=time.getDate())
-          && (!a.date || a.date==time.toISOString().substr(0,10))
-          && a.dow >> (time).getDay() & 1)
-        .sort((a,b)=>a.t-b.t);
+  // get current time 10s in future to ensure we alarm if we've started the app a tad early
+  var currentTime = (time.getHours() * 3600000) + (time.getMinutes() * 60000) + (time.getSeconds() * 1000) + 10000;
+  return alarms
+    .filter(a =>
+      a.on // enabled
+      && (a.last != time.getDate()) // not already fired today
+      && (a.t < currentTime)
+      && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
+      && (!a.date || a.date == time.toISOString().substr(0, 10)) // is allowed on this date
+    )
+    .sort((a, b) => a.t - b.t);
 }
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
 exports.setAlarm = function(id, alarm) {
@@ -61,7 +64,7 @@ exports.reload = function() {
 exports.newDefaultAlarm = function () {
   const settings = exports.getSettings();
 
-  let alarm = {
+  var alarm = {
     t: 12 * 3600000, // Default to 12:00
     on: true,
     rp: settings.defaultRepeat,
@@ -79,7 +82,7 @@ exports.newDefaultAlarm = function () {
 exports.newDefaultTimer = function () {
   const settings = exports.getSettings();
 
-  let timer = {
+  var timer = {
     timer: 5 * 60 * 1000, // 5 minutes
     on: true,
     rp: false,
@@ -113,20 +116,3 @@ exports.getSettings = function () {
 exports.setSettings = function(settings) {
   require("Storage").writeJSON("sched.settings.json", settings);
 };
-
-// time in ms -> { hrs, mins }
-exports.decodeTime = function(t) {
-  t = Math.ceil(t / 60000); // sanitise to full minutes
-  let hrs = 0 | (t / 60);
-  return { hrs: hrs, mins: t - hrs * 60 };
-}
-
-// time in { hrs, mins } -> ms
-exports.encodeTime = function(o) {
-  return o.hrs * 3600000 + o.mins * 60000;
-}
-
-exports.formatTime = function(t) {
-  let o = exports.decodeTime(t);
-  return o.hrs + ":" + ("0" + o.mins).substr(-2);
-}

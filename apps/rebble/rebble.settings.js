@@ -2,37 +2,76 @@
   const SETTINGS_FILE = "rebble.json";
 
   // initialize with default settings...
-  let s = {'bg': '#0f0', 'color': 'Green'}
+  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'sideTap':0};
+  //sideTap 0 = on| 1= sideBar1 | 2 = ...
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage')
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || s;
+  let settings = storage.readJSON(SETTINGS_FILE, 1) || localSettings;
+
   const saved = settings || {}
   for (const key in saved) {
-    s[key] = saved[key]
+    localSettings[key] = saved[key]
   }
 
   function save() {
-    settings = s
+    settings = localSettings
     storage.write(SETTINGS_FILE, settings)
   }
 
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   
-  E.showMenu({
-    '': { 'title': 'Rebble Clock' },
-    '< Back': back,
-    'Colour': {
-      value: 0 | color_options.indexOf(s.color),
-      min: 0, max: 5,
-      format: v => color_options[v],
-      onchange: v => {
-        s.color = color_options[v];
-        s.bg = bg_code[v];
-        save();
+  function showMenu()
+  {
+    const menu={
+      '': { 'title': 'Rebble Clock' },
+      '< Back': back,
+      'Colour': {
+        value: 0 | color_options.indexOf(localSettings.color),
+        min: 0, max: 5,
+        format: v => color_options[v],
+        onchange: v => {
+          localSettings.color = color_options[v];
+          localSettings.bg = bg_code[v];
+          save();
+        },
       },
+      'Auto Cycle': {
+        value: localSettings.autoCycle,
+        onchange: (v) => {
+          localSettings.autoCycle = v;
+          save();
+          showMenu();
+        }
+      }
+    };
+
+    if( !localSettings.autoCycle)
+    {
+      menu['Tap to Cycle']= {
+        value: localSettings.sideTap,
+        min: 0,
+        max: 3,
+        step: 1,
+        format: v => NumberToSideTap(v),
+        onchange: v => {
+          localSettings.sideTap=v
+          save();
+          setTimeout(showMenu, 10);
+        }
+      };
     }
-  });
+    E.showMenu(menu);
+  }
+
+  function NumberToSideTap(Number)
+  {
+    if(Number==0)
+      return 'on';
+    return Number+"";
+  }
+  
+  showMenu();
 })

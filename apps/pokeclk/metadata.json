@@ -1,0 +1,17 @@
+{
+    "id": "pokeclk",
+    "name": "Poketch Clock",
+    "shortName":"Poketch Clock",
+    "version": "0.02",
+    "description": "A clock based on the Poketch electronic device found in Sinnoh",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme":"README.md",
+    "storage": [
+      {"name":"pokeclk.app.js","url":"app.js"},
+      {"name":"pokeclk.img","url":"app-icon.js","evaluate":true}
+    ]
+}

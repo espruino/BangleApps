@@ -2,6 +2,8 @@
 
    *Sets and stores GPS lat and lon of your preferred city*
 
+To access, go to `Settings -> Apps -> My Location`
+
 * Select one of the preset Cities or setup through the GPS
 * Other Apps can read this information to do calculations based on location
 * When the City shows ??? it means the location has been set through the GPS

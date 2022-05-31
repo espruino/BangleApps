@@ -545,8 +545,22 @@ function showUtilMenu() {
       setInterval(function() {
         var i=1000;while (i--);
       }, 1);
-    },
-    /*LANG*/'Reset Settings': () => {
+    }
+  };
+  if (BANGLEJS2)
+    menu[/*LANG*/'Calibrate Battery'] = () => {
+      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
+        if (ok) {
+          var s=require("Storage").readJSON("setting.json");
+          s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
+          require("Storage").writeJSON("setting.json",s);
+          E.showAlert(/*LANG*/"Calibrated!").then(() => load("settings.app.js"));
+        } else {
+          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
+        }
+      });
+    };
+  menu[/*LANG*/'Reset Settings'] = () => {
       E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
         if (v) {
           E.showMessage('Resetting');
@@ -554,9 +568,9 @@ function showUtilMenu() {
           setTimeout(showMainMenu, 50);
         } else showUtilMenu();
       });
-    },
-    /*LANG*/'Turn Off': ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() }
-  };
+    };
+  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() };
+
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
       E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset"}).then((v) => {

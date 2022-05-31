@@ -1,0 +1,16 @@
+{ "id": "r2d2clk",
+  "name": "R2D2 Clock",
+  "shortName":"R2D2 Clock",
+  "version":"0.01",
+  "description": "A clock with R2D2's shiny metal face on it. :)",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"r2d2clk.app.js","url":"app.js"},
+    {"name":"r2d2clk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

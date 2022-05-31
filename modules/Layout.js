@@ -1,83 +1,16 @@
 /* Copyright (c) 2022 Bangle.js contributors. See the file LICENSE for copying permission. */
-/*
-Take a look at README.md for hints on developing with this library.
-Usage:
-```
-var Layout = require("Layout");
-var layout = new Layout( layoutObject, options )
-layout.render(optionalObject);
-```
-For example:
-```
-var Layout = require("Layout");
-var layout = new Layout( {
-  type:"v", c: [
-    {type:"txt", font:"20%", label:"12:00" },
-    {type:"txt", font:"6x8", label:"The Date" }
-  ]
-});
-g.clear();
-layout.render();
-```
-layoutObject has:
-* A `type` field of:
-  * `undefined` - blank, can be used for padding
-  * `"txt"` - a text label, with value `label`. 'font' is required
-  * `"btn"` - a button, with value `label` and callback `cb`
-       optional `src` specifies an image (like img) in which case label is ignored
-       Default font is `6x8`, scale 2. This can be overridden with the `font` or `scale` fields.
-  * `"img"` - an image where `src` is an image, or a function which is called to return an image to draw.
-  * `"custom"` - a custom block where `render(layoutObj)` is called to render
-  * `"h"` - Horizontal layout, `c` is an array of more `layoutObject`
-  * `"v"` - Vertical layout, `c` is an array of more `layoutObject`
-* A `id` field. If specified the object is added with this name to the
-  returned `layout` object, so can be referenced as `layout.foo`
-* A `font` field, eg `6x8` or `30%` to use a percentage of screen height. Set scale with :, e.g. `6x8:2`.
-* A `scale` field, eg `2` to set scale of an image
-* A `r` field to set rotation of text or images (0: 0°, 1: 90°, 2: 180°, 3: 270°).
-* A `wrap` field to enable line wrapping. Requires some combination of `width`/`height`
-  and `fillx`/`filly` to be set. Not compatible with text rotation.
-* A `col` field, eg `#f00` for red
-* A `bgCol` field for background color (will automatically fill on render)
-* A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
-* A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
-* A `pad` integer field to set pixels padding
-* A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
-* A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
-* `width` and `height` fields to optionally specify minimum size
-options is an object containing:
-* `lazy` - a boolean specifying whether to enable automatic lazy rendering
-* `btns` - array of objects containing:
-  * `label` - the text on the button
-  * `cb` - a callback function
-  * `cbl` - a callback function for long presses
-* `back` - a callback function, passed as `back` into Bangle.setUI (which usually adds an icon in the top left)
 
-If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically
-determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
-Once `layout.update()` is called, the following fields are added
-to each object:
-* `x` and `y` for the top left position
-* `w` and `h` for the width and height
-* `_w` and `_h` for the **minimum** width and height
-Other functions:
-* `layout.update()` - update positions of everything if contents have changed
-* `layout.debug(obj)` - draw outlines for objects on screen
-* `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
-* `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
-*/
-
+// See Layout.md for documentation
 
 function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
 
-  options = options || {};
-  this.lazy = options.lazy || false;
+  this.options = options || {};
+  this.lazy = this.options.lazy || false;
 
-  var btnList, uiSet;
-  Bangle.setUI(); // remove all existing input handlers
+  var btnList;
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
@@ -91,48 +24,19 @@ function Layout(layout, options) {
       this.physBtns = 0;
       this.buttons = btnList;
       this.selectedButton = -1;
-      Bangle.setUI({mode:"updown", back:options.back}, dir=>{
-        var s = this.selectedButton, l=this.buttons.length;
-        if (dir===undefined && this.buttons[s])
-          return this.buttons[s].cb();
-        if (this.buttons[s]) {
-          delete this.buttons[s].selected;
-          this.render(this.buttons[s]);
-        }
-        s = (s+l+dir) % l;
-        if (this.buttons[s]) {
-          this.buttons[s].selected = 1;
-          this.render(this.buttons[s]);
-        }
-        this.selectedButton = s;
-      });
-      uiSet = true;
     }
   }
-  if (options.back && !uiSet) Bangle.setUI({mode: "custom", back: options.back});
 
-  if (options.btns) {
-    var buttons = options.btns;
+  if (this.options.btns) {
+    var buttons = this.options.btns;
     this.b = buttons;
     if (this.physBtns >= buttons.length) {
-      // Handler for button watch events
-      function pressHandler(btn,e) {
-        if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
-          this.b[btn].cbl(e);
-        else
-          if (this.b[btn].cb) this.b[btn].cb(e);
-      }
       // enough physical buttons
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
-      if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
-      Bangle.btnWatches = [];
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle
       while (this.physBtns > buttons.length)
         buttons.push({label:""});
-      if (buttons[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
-      if (buttons[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
-      if (buttons[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
       this._l.width = g.getWidth()-8; // text width
       this._l = {type:"h", filly:1, c: [
         this._l,
@@ -149,19 +53,8 @@ function Layout(layout, options) {
       if (btnList) btnList.push.apply(btnList, this._l.c[1].c);
     }
   }
-  if (process.env.HWVERSION==2) {
-
-    // Handler for touch events
-    function touchHandler(l,e) {
-      if (l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
-        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
-      }
-      if (l.c) l.c.forEach(n => touchHandler(n,e));
-    }
-    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
-    Bangle.on('touch',Bangle.touchHandler);
-  }
-
+  // Link in all buttons/touchscreen/etc
+  this.setUI();
   // recurse over layout doing some fixing up if needed
   var ll = this;
   function recurser(l) {
@@ -175,16 +68,57 @@ function Layout(layout, options) {
   this.updateNeeded = true;
 }
 
-Layout.prototype.remove = function (l) {
-  if (Bangle.btnWatches) {
-    Bangle.btnWatches.forEach(clearWatch);
-    delete Bangle.btnWatches;
+Layout.prototype.setUI = function() {
+  Bangle.setUI(); // remove all existing input handlers
+
+  var uiSet;
+  if (this.buttons) {
+    // multiple buttons so we'll jus use back/next/select
+    Bangle.setUI({mode:"updown", back:this.options.back}, dir=>{
+      var s = this.selectedButton, l=this.buttons.length;
+      if (dir===undefined && this.buttons[s])
+        return this.buttons[s].cb();
+      if (this.buttons[s]) {
+        delete this.buttons[s].selected;
+        this.render(this.buttons[s]);
+      }
+      s = (s+l+dir) % l;
+      if (this.buttons[s]) {
+        this.buttons[s].selected = 1;
+        this.render(this.buttons[s]);
+      }
+      this.selectedButton = s;
+    });
+    uiSet = true;
   }
-  if (Bangle.touchHandler) {
-    Bangle.removeListener("touch",Bangle.touchHandler);
-    delete Bangle.touchHandler;
+  if (this.options.back && !uiSet) Bangle.setUI({mode: "custom", back: this.options.back});
+  // physical buttons -> actual applications
+  if (this.b) {
+    // Handler for button watch events
+    function pressHandler(btn,e) {
+      if (e.time-e.lastTime > 0.75 && this.b[btn].cbl)
+        this.b[btn].cbl(e);
+      else
+        if (this.b[btn].cb) this.b[btn].cb(e);
+    }
+    if (Bangle.btnWatches) Bangle.btnWatches.forEach(clearWatch);
+    Bangle.btnWatches = [];
+    if (this.b[0]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,0), BTN1, {repeat:true,edge:-1}));
+    if (this.b[1]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,1), BTN2, {repeat:true,edge:-1}));
+    if (this.b[2]) Bangle.btnWatches.push(setWatch(pressHandler.bind(this,2), BTN3, {repeat:true,edge:-1}));
   }
-};
+  // Handle touch events on new Bangle.js
+  if (process.env.HWVERSION==2) {
+    function touchHandler(l,e) {
+      if (l.cb && e.x>=l.x && e.y>=l.y && e.x<=l.x+l.w && e.y<=l.y+l.h) {
+        if (e.type==2 && l.cbl) l.cbl(e); else if (l.cb) l.cb(e);
+      }
+      if (l.c) l.c.forEach(n => touchHandler(n,e));
+    }
+    Bangle.touchHandler = (_,e)=>touchHandler(this._l,e);
+    Bangle.on('touch',Bangle.touchHandler);
+  }
+}
 
 function prepareLazyRender(l, rectsToClear, drawList, rects, parentBg) {
   var bgCol = l.bgCol == null ? parentBg : g.toColor(l.bgCol);

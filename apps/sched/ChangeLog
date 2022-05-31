@@ -6,4 +6,7 @@
 0.06: Refactor some methods to library
 0.07: Update settings
       Correct `decodeTime(t)` to return a more likely expected time
-0.08: add day of week check to getActiveAlarms()
+0.08: Add day of week check to getActiveAlarms()
+0.09: Move some functions to new time_utils module
+0.10: Default to sched.js if custom js not found
+0.11: Fix default dow
