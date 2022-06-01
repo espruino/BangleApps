@@ -94,7 +94,11 @@
       "calendar" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
         if (!cal || !Array.isArray(cal)) cal = [];
-        cal.push(event);
+        var i = cal.findIndex(e=>e.id==event.id);
+        if(i<0)
+          cal.push(event);
+        else
+          cal[i] = event;
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       "calendar-" : function() {
