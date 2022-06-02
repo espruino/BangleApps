@@ -3,10 +3,10 @@ Bangle.setGPSPower(true, "tinyVario");
 
 require("Font8x16").add(Graphics);
 
-var intTime=10;
+var intTime=10,pressureInterval=100;
 var altH = [];
 var fAlt=0;
-var roc,rocAvg;
+var roc=0,rocAvg=0;
 var gs;
 var lastPressure = Date.now();
 var flying=false;
@@ -28,11 +28,11 @@ Bangle.on('GPS', function(fix) {
 
 setInterval(function () { 
   altH.push(fAlt);
-  if (altH.length>=intTime) altH.shift();
-}, 1000);
+  while (altH.length>intTime*1000/pressureInterval) altH.shift();
+}, pressureInterval);
 
 setInterval(function() {
-  //var y=0;
+  var y=0;
   //gs=100;
   //fAlt=7777;
   if ((!flying) && ((rocAvg>1) || (rocAvg<-1) || (gs>10))) { //take-off detected
@@ -45,8 +45,11 @@ setInterval(function() {
     ftString=(flyingTime / 3600000).toFixed(0)+":"+(flyingTime / 60000 % 60).toFixed(0).padStart(2,'0');
   }
   
-  rocAvg=(altH[altH.length-1]-altH[0])/intTime;
-  roc=(altH[altH.length-1]-altH[altH.length-2]);
+  if (altH.length==intTime*1000/pressureInterval) {
+    rocAvg=(altH[altH.length-1]-altH[0])/intTime;
+    roc=(altH[altH.length-1]-altH[altH.length-(1000/pressureInterval)]);
+  }
+
   var timeStr = require("locale").time(Date(),1);
   
   g.reset();
