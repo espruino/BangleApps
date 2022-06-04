@@ -221,7 +221,8 @@ function showThemeMenu() {
     Bangle.drawWidgets();
     m.draw();
   }
-  var m = E.showMenu({
+
+  var themesMenu = {
     '':{title:/*LANG*/'Theme'},
     '< Back': ()=>showSystemMenu(),
     /*LANG*/'Dark BW': ()=>{
@@ -239,9 +240,26 @@ function showThemeMenu() {
         fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
-    },
-    /*LANG*/'Customize': ()=>showCustomThemeMenu(),
-  });
+    }
+  };
+
+  require("Storage").list(/^.*\.theme$/).forEach(
+    n => {
+      let newTheme = require("Storage").readJSON(n);
+      themesMenu[newTheme.name ? newTheme.name : n] = () => {
+        upd({
+        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
+        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
+        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+        dark:newTheme.dark
+      });
+      };
+    }
+  );
+
+  themesMenu[/*LANG*/'Customize'] = () => showCustomThemeMenu();
+
+  var m = E.showMenu(themesMenu);
 
   function showCustomThemeMenu() {
     function setT(t, v) {
