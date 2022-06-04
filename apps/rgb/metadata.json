@@ -14,11 +14,11 @@
   "readme": "README.md",
   "storage": [
     {
-      "name": "tabanglotchi.app.js",
+      "name": "rgb.app.js",
       "url": "app.js"
     },
     {
-      "name": "tabanglotchi.img",
+      "name": "rgb.img",
       "url": "app-icon.js",
       "evaluate": true
     }
