@@ -6,3 +6,4 @@
 0.5: Update Date and Time to use Native date Funcions
 0.6: Add Settings Page
 0.7: Update Rocket Sequences Scope to not use memory all time
+0.8: Update Some Variable Scopes to not use memory until need
