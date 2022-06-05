@@ -1,10 +1,11 @@
 # cassioWatch
 
-![Screenshot](screens/main.png)
+![Screenshot](screens/screen_day.png)
+![Screenshot](screens/screen_night.png)
 
 Clock with Space Cassio Watch Style.
 
 It displays current temperature,day,steps,battery.heartbeat and weather.
 
 **To-do**:
-Integrate heartbeat and Weather,Dinamic Day and Month Text by Clock Language or by an Options Page, and Align and change size of some elements.
+Integrate heartbeat and Weather, Align and change size of some elements.
