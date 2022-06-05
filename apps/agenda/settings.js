@@ -17,6 +17,7 @@
                 case 1:
                     require("Storage").writeJSON("android.calendar.json",[]);
                     CALENDAR = [];
+                    /* falls through */
                 case 2:
                     gbSend({t:"force_calendar_sync", ids: CALENDAR.map(e=>e.id)});
                     E.showAlert(/*LANG*/"Request sent to the phone").then(()=>E.showMenu(mainmenu));

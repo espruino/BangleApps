@@ -125,6 +125,17 @@
   if (!settings.keep)
     NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
   setInterval(sendBattery, 10*60*1000);
+  // Fix calendar every 2 days (can be done manually too)
+  function forceCalendarSync() {
+    if(NRF.getSecurityStatus().connected) {
+      var cal = require("Storage").readJSON("android.calendar.json",true);
+      if (!cal || !Array.isArray(cal)) cal = [];
+      gbSend({t:"force_calendar_sync", ids: cal.map(e=>e.id)});
+      setTimeout(forceCalendarSync, 2*24*60*60*1000);
+    } else
+      NRF.once("connect", () => setTimeout(forceCalendarSync, 4000));
+  }
+  setTimeout(forceCalendarSync, 2*24*60*60*1000); //schedule the first
   // Health tracking
   Bangle.on('health', health=>{
     gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
