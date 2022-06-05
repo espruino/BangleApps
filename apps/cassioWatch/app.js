@@ -30,6 +30,37 @@ let background = require("heatshrink").decompress(
   )
 );
 
+let rocket_sequence = 1;
+
+let settings = require('Storage').readJSON("cassioWatch.settings.json", true) || {};
+let rocketSpeed = settings.rocketSpeed || 700;
+delete settings;
+
+g.clear();
+
+function DrawClock() {
+  g.setFont("7x11Numeric7Seg", 3);
+  g.clearRect(80, 57, 170, 96);
+  g.setColor(0, 255, 255);
+  g.drawRect(80, 57, 170, 96);
+  g.fillRect(80, 57, 170, 96);
+  g.setColor(0, 0, 0);
+  g.drawString(require("locale").time(new Date(), 1), 70, 60);
+  g.setFont("8x12", 2);
+  g.drawString(require("locale").dow(new Date(), 2).toUpperCase(), 18, 130);
+  g.setFont("8x12");
+  g.drawString(require("locale").month(new Date(), 2).toUpperCase(), 80, 126);
+  g.setFont("8x12", 2);
+  const time = new Date().getDate();
+  g.drawString(time < 10 ? "0" + time : time, 78, 137);
+}
+
+function DrawBattery() {
+  bigThenSmall(E.getBattery(), "%", 135, 21);
+}
+
+function DrawRocket() {
+  
 let Rocket = {
   1: require("heatshrink").decompress(
     atob(
@@ -71,37 +102,8 @@ let Rocket = {
       "qFGwkCkQA/ABBSEJ8MgE4kBEsBPFE7xMCOIJ3hOYgFEE7rCGE70gE4pQBiAndYQwjBUohOZD4ZQFE7YkBE5AICYbZ2GE7sggJRCAA8iYzZOITroALE7EhExh4CAC0QExpPXOponZExx2XJ24nWdh52XdhzF/Yu5O/J35O0E55OXOx5O/J2omXE5x1XO54mYgQnMJrR4LOrciiAmiJgR4KEzIjDPBAlYiAiEeI51YkEBE4J5CD4KceTQQcBJgRQFdTZDCJIjDcNIqhGdTQmCkByFTTInDKgoAEE7ZEEJwhPdE1R1FE0InEE0R3DEwTGcDwomEE7hKFPYqafE8ROCE5DJbE5B/IEqh2ED4gnCJrMCJwgnEiB2bE4qeFEzUggQmIBQLEaEQImHLIImaE4YfcOw4lEFMLECS7onJO8wmkE4QljAAIA=="
     )
   ),
-};
-let rocket_sequence = 1;
+  };
 
-let settings = require('Storage').readJSON("cassioWatch.settings.json", true) || {};
-let rocketSpeed = settings.rocketSpeed || 700;
-delete settings;
-
-g.clear();
-
-function DrawClock() {
-  g.setFont("7x11Numeric7Seg", 3);
-  g.clearRect(80, 57, 170, 96);
-  g.setColor(0, 255, 255);
-  g.drawRect(80, 57, 170, 96);
-  g.fillRect(80, 57, 170, 96);
-  g.setColor(0, 0, 0);
-  g.drawString(require("locale").time(new Date(), 1), 70, 60);
-  g.setFont("8x12", 2);
-  g.drawString(require("locale").dow(new Date(), 2).toUpperCase(), 18, 130);
-  g.setFont("8x12");
-  g.drawString(require("locale").month(new Date(), 2).toUpperCase(), 80, 126);
-  g.setFont("8x12", 2);
-  const time = new Date().getDate();
-  g.drawString(time < 10 ? "0" + time : time, 78, 137);
-}
-
-function DrawBattery() {
-  bigThenSmall(E.getBattery(), "%", 135, 21);
-}
-
-function DrawRocket() {
   g.clearRect(5, 62, 63, 115);
   g.setColor(0, 255, 255);
   g.drawRect(5, 62, 63, 115);
