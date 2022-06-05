@@ -55,8 +55,8 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
       lastCalculated = millis;
     }
 
-	  if (phase < 0) { // waning - phase goes from -1 to 0
-	    leftFactor = 1;
+    if (phase < 0) { // waning - phase goes from -1 to 0
+      leftFactor = 1;
       rightFactor = -1 - 2*phase;
     } else { // waxing - phase goes from 0 to 1
       rightFactor = 1;
