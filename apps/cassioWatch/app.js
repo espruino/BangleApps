@@ -104,6 +104,12 @@ function DrawClock() {
     m = d.getMinutes();
   let time = h + ":" + ("0" + m).substr(-2);
   g.setFont("7x11Numeric7Seg", 3);
+  
+  g.clearRect(80, 57,170,96);
+  g.setColor(0, 255, 255);
+  g.drawRect(80, 57,170,96);
+  g.fillRect(80, 57,170,96);
+  g.setColor(0, 0, 0);
   g.drawString(time, 70, 60);
   g.setFont("8x12", 2);
   g.drawString(DayMap[d.getDay()], 18, 130);
