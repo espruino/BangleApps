@@ -1,7 +1,6 @@
 # cassioWatch
 
-![Screenshot](screens/screen_day.png)
-![Screenshot](screens/screen_night.png)
+![Screenshot](screens/screen_night.png) ![Screenshot](screens/screen_day.png)
 
 Clock with Space Cassio Watch Style.
 
