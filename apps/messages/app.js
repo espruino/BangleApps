@@ -317,7 +317,7 @@ function showMessage(msgid) {
         {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
-      { type:"btn", src:require("messages").getMessageImage(msg), col:require("messages").getMessageImageCol(msg), pad: 3, cb:()=>{
+      { type:"btn", src:require("messages").getMessageImage(msg), col:require("messages").getMessageImageCol(msg, g.theme.fg2), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
