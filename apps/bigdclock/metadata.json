@@ -8,6 +8,7 @@
   "tags": "clock",
   "allow_emulator":true,
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "screenshots": [ { "url":"screenshot.png" } ],
   "storage": [
     {"name":"bigdclock.app.js","url":"bigdclock.app.js"},
