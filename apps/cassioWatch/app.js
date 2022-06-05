@@ -74,6 +74,10 @@ let Rocket = {
 };
 let rocket_sequence = 1;
 
+let settings = require('Storage').readJSON("cassioWatch.settings.json", true) || {};
+let rocketSpeed = settings.rocketSpeed || 700;
+delete settings;
+
 g.clear();
 
 function DrawClock() {
@@ -128,7 +132,7 @@ function DrawScene() {
   g.drawString(Bangle.getStepCount(), 143, 104);
   ClockInterval = setInterval(DrawClock, 30000);
   DrawClock();
-  RocketInterval = setInterval(DrawRocket, 700);
+  RocketInterval = setInterval(DrawRocket, rocketSpeed);
   DrawRocket();
   BatteryInterval = setInterval(DrawBattery, 5 * 60000);
   DrawBattery();
@@ -158,3 +162,5 @@ DrawScene();
 if (Bangle.isLocked()) {
   ClearIntervals(true);
 }
+
+//eval(require("Storage").read("cassioWatch.settings.js"))(()=>load());
