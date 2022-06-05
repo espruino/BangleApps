@@ -14,14 +14,14 @@ function bigThenSmall(big, small, x, y) {
   g.drawString(small, x, y);
 }
 
-function ClearIntervals(inoreclock){
-    if (RocketInterval) clearInterval(RocketInterval);
-    if (BatteryInterval) clearInterval(BatteryInterval);
-    RocketInterval = undefined;
-    BatteryInterval = undefined;
-    if (inoreclock) return;
-    if (ClockInterval) clearInterval(ClockInterval);
-    ClockInterval = undefined;
+function ClearIntervals(inoreclock) {
+  if (RocketInterval) clearInterval(RocketInterval);
+  if (BatteryInterval) clearInterval(BatteryInterval);
+  RocketInterval = undefined;
+  BatteryInterval = undefined;
+  if (inoreclock) return;
+  if (ClockInterval) clearInterval(ClockInterval);
+  ClockInterval = undefined;
 }
 
 let background = require("heatshrink").decompress(
@@ -76,47 +76,21 @@ let rocket_sequence = 1;
 
 g.clear();
 
-let DayMap = ["DOM","SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
-let MonthMap = [
-  "JAN",
-  "FEV",
-  "MAR",
-  "ABR",
-  "MAI",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SET",
-  "OUT",
-  "NOV",
-  "DEZ",
-];
-let GetCurrentDay = (current_day) => {
-  if (current_day < 10) {
-    current_day = "0" + current_day;
-  }
-  return current_day;
-};
-
 function DrawClock() {
-  let d = new Date();
-  let h = d.getHours(),
-    m = d.getMinutes();
-  let time = h + ":" + ("0" + m).substr(-2);
   g.setFont("7x11Numeric7Seg", 3);
-  
-  g.clearRect(80, 57,170,96);
+  g.clearRect(80, 57, 170, 96);
   g.setColor(0, 255, 255);
-  g.drawRect(80, 57,170,96);
-  g.fillRect(80, 57,170,96);
+  g.drawRect(80, 57, 170, 96);
+  g.fillRect(80, 57, 170, 96);
   g.setColor(0, 0, 0);
-  g.drawString(time, 70, 60);
+  g.drawString(require("locale").time(new Date(), 1), 70, 60);
   g.setFont("8x12", 2);
-  g.drawString(DayMap[d.getDay()], 18, 130);
+  g.drawString(require("locale").dow(new Date(), 2).toUpperCase(), 18, 130);
   g.setFont("8x12");
-  g.drawString(MonthMap[d.getMonth() - 1], 80, 126);
+  g.drawString(require("locale").month(new Date(), 2).toUpperCase(), 80, 126);
   g.setFont("8x12", 2);
-  g.drawString(GetCurrentDay(d.getDate()), 78, 137);
+  const time = new Date().getDate();
+  g.drawString(time < 10 ? "0" + time : time, 78, 137);
 }
 
 function DrawBattery() {
@@ -124,10 +98,10 @@ function DrawBattery() {
 }
 
 function DrawRocket() {
-  g.clearRect(5, 62,63,115);
+  g.clearRect(5, 62, 63, 115);
   g.setColor(0, 255, 255);
-  g.drawRect(5, 62,63,115);
-  g.fillRect(5, 62,63,115);
+  g.drawRect(5, 62, 63, 115);
+  g.fillRect(5, 62, 63, 115);
   g.drawImage(Rocket[rocket_sequence], 5, 65, { scale: 0.7 });
   g.setColor(0, 0, 0);
   rocket_sequence = rocket_sequence + 1;
@@ -167,14 +141,13 @@ Bangle.on("lcdPower", (on) => {
   }
 });
 
-
 Bangle.on("lock", (locked) => {
-    if (locked) {
-        ClearIntervals(true);
-    } else {
-        ClearIntervals();
-        DrawScene();
-    }
+  if (locked) {
+    ClearIntervals(true);
+  } else {
+    ClearIntervals();
+    DrawScene();
+  }
 });
 
 g.reset();
