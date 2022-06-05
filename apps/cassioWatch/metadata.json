@@ -4,7 +4,7 @@
   "description": "Clock with Space Cassio Watch Style",
   "screenshots": [{ "url": "screens/main.png" }],
   "icon": "app.png",
-  "version": "1.0.2",
+  "version": "0.2",
   "type": "clock",
   "tags": "clock, weather, cassio, retro",
   "supports": ["BANGLEJS2"],
