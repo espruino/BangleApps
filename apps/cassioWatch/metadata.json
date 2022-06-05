@@ -2,7 +2,7 @@
   "id": "cassioWatch",
   "name": "Cassio Watch",
   "description": "Animated Clock with Space Cassio Watch Style",
-  "screenshots": [{ "url": "screens/screen_day.png" },{ "url": "screens/screen_night.png" }],
+  "screenshots": [{ "url": "screens/screen_night.png" },{ "url": "screens/screen_day.png" }],
   "icon": "app.png",
   "version": "0.5",
   "type": "clock",
