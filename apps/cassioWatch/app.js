@@ -106,7 +106,7 @@ function DrawClock() {
   g.setFont("7x11Numeric7Seg", 3);
   g.drawString(time, 70, 60);
   g.setFont("8x12", 2);
-  g.drawString(DayMap[d.getDay()], 20, 130);
+  g.drawString(DayMap[d.getDay()], 18, 130);
   g.setFont("8x12");
   g.drawString(MonthMap[d.getMonth() - 1], 80, 126);
   g.setFont("8x12", 2);
@@ -174,8 +174,6 @@ Bangle.on("lock", (locked) => {
 g.reset();
 g.clear();
 Bangle.setUI("clock");
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 DrawScene();
 
 if (Bangle.isLocked()) {
