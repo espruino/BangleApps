@@ -1,8 +1,0 @@
-{
-  "id":"widday",
-  "name":"Day Widget",
-  "type":"widget",
-  "version":"0.01",
-  "tags":"widget,date,day",
-  "files":"widday.info,widday.wid.js"
-}
