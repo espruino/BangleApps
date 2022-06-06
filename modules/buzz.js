@@ -1,6 +1,3 @@
-const BUZZ_WEAK = 0.25, BUZZ_STRONG = 1;
-const SHORT_MS = 100, MEDIUM_MS = 200, LONG_MS = 500;
-
 /**
  * Buzz the passed `pattern` out on the internal vibration motor.
  *
@@ -22,6 +19,8 @@ exports.pattern = pattern => new Promise(resolve => {
     if (pattern == "") resolve();
     var c = pattern[0];
     pattern = pattern.substr(1);
+    const BUZZ_WEAK = 0.25, BUZZ_STRONG = 1;
+    const SHORT_MS = 100, MEDIUM_MS = 200, LONG_MS = 500;    
     if (c == ".") Bangle.buzz(SHORT_MS, BUZZ_WEAK).then(() => setTimeout(doBuzz, 100));
     else if (c == ",") Bangle.buzz(MEDIUM_MS, BUZZ_WEAK).then(() => setTimeout(doBuzz, 100));
     else if (c == "-") Bangle.buzz(LONG_MS, BUZZ_WEAK).then(() => setTimeout(doBuzz, 100));
