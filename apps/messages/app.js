@@ -411,19 +411,17 @@ function cancelReloadTimeout() {
   unreadTimeout = undefined;
 }
 
-
 g.clear();
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
 setTimeout(() => {
-  var unreadTimeoutSecs = settings.unreadTimeout;
-  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
-  if (unreadTimeoutSecs)
-    unreadTimeout = setTimeout(function() {
-      print("Message not seen - reloading");
-      load();
-    }, unreadTimeoutSecs*1000);
+  var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
+  if (unreadTimeoutMillis) {
+    unreadTimeout = setTimeout(load, unreadTimeoutMillis);
+  }
   // only openMusic on launch if music is new
-  var newMusic = MESSAGES.some(m=>m.id==="music"&&m.new);
-  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1,openMusic:newMusic&&settings.openMusic});
-},10); // if checkMessages wants to 'load', do that
+  var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
+  checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
+}, 10); // if checkMessages wants to 'load', do that

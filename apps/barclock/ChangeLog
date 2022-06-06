@@ -9,3 +9,5 @@
 0.09: Fix time/date disappearing after fullscreen notification
 0.10: Use ClockFace library
 0.11: Use ClockFace.is12Hour
+0.12: Add settings to hide date,widgets
+0.13: Add font setting

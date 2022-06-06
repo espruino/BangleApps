@@ -575,7 +575,25 @@ function showUtilMenu() {
         } else showUtilMenu();
       });
     };
-  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() };
+  menu[/*LANG*/"Turn Off"] = () => {
+    E.showPrompt(/*LANG*/"Are you sure? Alarms and timers won't fire", {
+      title:/*LANG*/"Turn Off"
+    }).then((confirmed) => {
+      if (confirmed) {
+        E.showMessage(/*LANG*/"See you\nlater!", /*LANG*/"Goodbye");
+        setTimeout(() => {
+          // clear the screen so when the user will turn on the watch they'll see
+          // an empty screen instead of the latest displayed screen
+          E.showMessage();
+          g.clear(true);
+
+          Bangle.softOff ? Bangle.softOff() : Bangle.off();
+        }, 2500);
+      } else {
+        showUtilMenu();
+      }
+    });
+  };
 
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
