@@ -90,7 +90,7 @@
     drawMoonPhase(CenterX,CenterY, Radius, leftFactor,rightFactor);
   }
 
-  WIDGETS["widmoon"] = {
+  WIDGETS["widmp"] = {
     area: "tr",
     width: 24,
     draw: draw

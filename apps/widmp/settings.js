@@ -9,6 +9,7 @@
 
   function writeSettings() {
     require('Storage').writeJSON("widmp.json", settings);
+	if (WIDGETS["widmp"]) WIDGETS["widmp"].draw();
   }
   
   function writeSettingsCustom() {
