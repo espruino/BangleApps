@@ -50,3 +50,6 @@
       UI improvements to Locale and Date & Time menu
 0.45: Add calibrate battery option
 0.46: Fix regression after making 'calibrate battery' only for Bangle.js 2
+0.47: Allow colors to be translated
+      Improve "Turn Off" user experience
+0.48: Allow reading custom themes from files

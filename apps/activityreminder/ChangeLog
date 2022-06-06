@@ -3,3 +3,4 @@
 0.03: Do not alarm while charging
 0.04: Obey system quiet mode
 0.05: Battery optimisation, add the pause option, bug fixes
+0.06: Add a temperature threshold to detect (and not alert) if the BJS isn't worn. Better support for the peoples using the app at night

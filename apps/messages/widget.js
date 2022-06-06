@@ -27,7 +27,6 @@ draw:function(recall) {
   if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
   WIDGETS["messages"].width=this.iconwidth;
   Bangle.drawWidgets();
-  Bangle.setLCDPower(1);// turns screen on
 },hide:function() {
   delete WIDGETS["messages"].t;
   delete WIDGETS["messages"].l;

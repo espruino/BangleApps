@@ -55,7 +55,7 @@ exports.decodeTime = (millis) => {
  */
 exports.formatTime = (value) => {
   var time = safeTime(typeof value === "object" ? value : exports.decodeTime(value));
-  if (time.d != 0) throw "(d)ays not supported here";
+  if (time.d != 0) throw "days not supported here";
   if (time.h < 0 || time.h > 23) throw "Invalid value: must be 0 <= h <= 23";
   if (time.m < 0 || time.m > 59) throw "Invalid value: must be 0 <= m <= 59";
   return time.h + ":" + ("0" + time.m).substr(-2);
@@ -63,16 +63,19 @@ exports.formatTime = (value) => {
 
 /**
  * @param {object|int} value {d, h, m, s} object or milliseconds
- * @returns an human-readable duration string like "3d 1h 10m 45s"
+ * @param {boolean} compact `true` to remove all whitespaces between the values
+ * @returns an human-readable duration string like "3d 1h 10m 45s" (or "3d1h10m45s" if `compact` is `true`)
  */
-exports.formatDuration = (value) => {
+exports.formatDuration = (value, compact) => {
+  compact = compact || false;
   var duration = "";
   var time = safeTime(typeof value === "object" ? value : exports.decodeTime(value));
   if (time.d > 0) duration += time.d + "d ";
   if (time.h > 0) duration += time.h + "h ";
   if (time.m > 0) duration += time.m + "m ";
   if (time.s > 0) duration += time.s + "s"
-  return duration.trim();
+  duration = duration.trim()
+  return compact ? duration.replace(" ", "") : duration;
 }
 
 exports.getCurrentTimeMillis = () => {
