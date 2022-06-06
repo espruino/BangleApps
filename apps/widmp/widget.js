@@ -1,19 +1,24 @@
 WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
   const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
   var southernHemisphere = false; // when in southern hemisphere, use the "My Location" App
+  var lastCalculated = 0; // When we last calculated the phase
+  var phase = 0; // The last phase we calculated
 
   const simulate = false; // simulate one month in one minute
   const updateR = 1000; // update every x ms in simulation
 
-  function moonPhase() {
-    const d = Date();
-    var month = d.getMonth(), year = d.getFullYear(), day = d.getDate();
-    if (simulate) day = d.getSeconds() / 2 +1;
-    if (month < 3) {year--; month += 12;}
-    mproz = ((365.25 * year + 30.6 * ++month + day - 694039.09) /  29.5305882);
-    mproz = mproz - (mproz | 0);  // strip integral digits, result is between 0 and <1
-    if (simulate) console.log(mproz + "  " + day);
-    return (mproz);
+  // https://deirdreobyrne.github.io/calculating_moon_phases/
+  function moonPhase(millis) {
+    k = (millis - 946728000000) / 3155760000000;
+    mp = (8328.69142475915 * k) + 2.35555563685;
+    m =  (628.30195516723 * k) + 6.24006012726;
+    d =  (7771.37714483372 * k) + 5.19846652984;
+    t = d + (0.109764 * Math.sin (mp)) - (0.036652 * Math.sin(m)) + (0.022235 * Math.sin(d+d-mp)) + (0.011484 * Math.sin(d+d)) + (0.003735 * Math.sin(mp+mp)) + (0.00192 * Math.sin(d));
+    k = (1 - Math.cos(t))/2;
+    if (Math.sin(t) < 0) {
+      k = -k;
+    }
+    return (k); // Goes 0 -> 1 for waxing, and from -1 -> 0 for waning
   }
 
   function loadLocation() {
@@ -44,11 +49,19 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
     g.fillRect(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
     g.setColor(0x41f);
 
-    mproz = moonPhase(); // mproz = 0..<1
+    millis = (new Date()).getTime();
+    if ((millis - lastCalculated) >= 7200000) {
+      phase = moonPhase(millis);
+      lastCalculated = millis;
+    }
 
-    leftFactor = mproz * 4 - 1;
-    rightFactor = (1 - mproz) * 4 - 1;
-    if (mproz >= 0.5) leftFactor = 1; else rightFactor = 1;
+    if (phase < 0) { // waning - phase goes from -1 to 0
+      leftFactor = 1;
+      rightFactor = -1 - 2*phase;
+    } else { // waxing - phase goes from 0 to 1
+      rightFactor = 1;
+      leftFactor = -1 + 2*phase;
+    }
     if (true == southernHemisphere) {
       var tmp=leftFactor; leftFactor=rightFactor; rightFactor=tmp;
     }
