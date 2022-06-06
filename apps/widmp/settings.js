@@ -13,6 +13,7 @@
   
   function writeSettingsCustom() {
 	  settings.default_colour = false;
+      mainmenu["Default"].value = false;
 	  writeSettings();
   }
   
@@ -40,7 +41,7 @@
 	  "red": {
 		  value: 0|settings.red,
 		  min: 0,
-		  max: 7,
+		  max: 4,
 		  onchange: v => {
 			  settings.red = v;
 			  writeSettingsCustom();
@@ -49,7 +50,7 @@
 	  "green": {
 		  value: 0|settings.green,
 		  min: 0,
-		  max: 7,
+		  max: 4,
 		  onchange: v => {
 			  settings.green = v;
 			  writeSettingsCustom();
@@ -58,7 +59,7 @@
 	  "blue": {
 		  value: 0|settings.blue,
 		  min: 0,
-		  max: 7,
+		  max: 4,
 		  onchange: v => {
 			  settings.blue = v;
 			  writeSettingsCustom();

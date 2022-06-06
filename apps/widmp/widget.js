@@ -41,14 +41,14 @@
     }
   }
   
-  function setMoonColour() {
+  function setMoonColour(g) {
     var settings = Object.assign({
       default_colour: true,
-	  red: 0,
-	  green: 0,
-	  blue: 0,
+      red: 0,
+      green: 0,
+      blue: 0,
     }, require('Storage').readJSON("widmp.json", true) || {});
-	if (settings.default_colour) {
+    if (settings.default_colour) {
       if (g.theme.dark) {
         g.setColor(0xffff); // white
       } else {
@@ -56,19 +56,9 @@
         // 0000010000011111
         g.setColor(0x41f); // blue-ish
       }
-	} else {
-		// 1111110000000000
-		// 5432109876543210
-		// rrrrrggggggbbbbb
-        // RxxRxGxxGxxBxxBx
-		let r = settings.red;
-		let g = settings.green;
-		let b = settings.blue;
-		r = (r << 13) | ((r & 3) << 11);
-		g = (g << 8) | (g << 5);
-		b = (b << 2) | (b & 3);
-		g.setColor(r | g | b);
-	}
+    } else {
+      g.setColor(settings.red/4, settings.green/4, settings.blue/4);
+    }
   }
 
 
@@ -96,7 +86,7 @@
       var tmp=leftFactor; leftFactor=rightFactor; rightFactor=tmp;
     }
 
-    setMoonColour();
+    setMoonColour(g);
     drawMoonPhase(CenterX,CenterY, Radius, leftFactor,rightFactor);
   }
 
