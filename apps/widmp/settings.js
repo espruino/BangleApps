@@ -2,9 +2,9 @@
 
   var settings = Object.assign({
     default_colour: true,
-	red: 0,
-	green: 0,
-	blue: 0,
+    red: 0,
+    green: 0,
+    blue: 0,
   }, require('Storage').readJSON("widmp.json", true) || {});
 
   function writeSettings() {
@@ -12,59 +12,59 @@
   }
   
   function writeSettingsCustom() {
-	  settings.default_colour = false;
-      mainmenu["Default"].value = false;
-	  writeSettings();
+    settings.default_colour = false;
+    mainmenu["Default"].value = false;
+    writeSettings();
   }
   
   var mainmenu = {
-	  "": {
-		  "title": "Moon colour"
-	  },
-	  "< Back": () => back(),
-	  "Default": {
-		  value: (settings.default_colour !== undefined ? settings.default_colour : true),
-		  format: v => v ? "Yes" : "No",
-		  onchange: v => {
-			  settings.default_colour = v;
-			  writeSettings();
-		  }
-	  },
-	  "Custom...": () => E.showMenu(custommenu)
+    "": {
+      "title": "Moon colour"
+    },
+    "< Back": () => back(),
+    "Default": {
+      value: (settings.default_colour !== undefined ? settings.default_colour : true),
+      format: v => v ? "Yes" : "No",
+      onchange: v => {
+        settings.default_colour = v;
+        writeSettings();
+      }
+    },
+    "Custom...": () => E.showMenu(custommenu)
   };
   
   var custommenu = {
-	  "": {
-		  "title": "Custom colour..."
-	  },
-	  "< Back": () => E.showMenu(mainmenu),
-	  "red": {
-		  value: 0|settings.red,
-		  min: 0,
-		  max: 4,
-		  onchange: v => {
-			  settings.red = v;
-			  writeSettingsCustom();
-		  }
-	  },
-	  "green": {
-		  value: 0|settings.green,
-		  min: 0,
-		  max: 4,
-		  onchange: v => {
-			  settings.green = v;
-			  writeSettingsCustom();
-		  }
-	  },
-	  "blue": {
-		  value: 0|settings.blue,
-		  min: 0,
-		  max: 4,
-		  onchange: v => {
-			  settings.blue = v;
-			  writeSettingsCustom();
-		  }
-	  }
+    "": {
+      "title": "Custom colour..."
+    },
+    "< Back": () => E.showMenu(mainmenu),
+    "red": {
+      value: 0|settings.red,
+      min: 0,
+      max: 4,
+      onchange: v => {
+        settings.red = v;
+        writeSettingsCustom();
+      }
+    },
+    "green": {
+      value: 0|settings.green,
+      min: 0,
+      max: 4,
+      onchange: v => {
+        settings.green = v;
+        writeSettingsCustom();
+      }
+    },
+    "blue": {
+      value: 0|settings.blue,
+      min: 0,
+      max: 4,
+      onchange: v => {
+        settings.blue = v;
+        writeSettingsCustom();
+      }
+    }
   };
 
   E.showMenu(mainmenu);
