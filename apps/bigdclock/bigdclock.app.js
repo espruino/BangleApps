@@ -38,12 +38,12 @@ function draw() {
     g.setFontOpenSans();
     g.setFontAlign(0, -1);
     if (settings["12hour"]) {
-	  if (h > 12) h -= 12;
-	  if (h == 0) h = 12;
+      if (h > 12) h -= 12;
+      if (h == 0) h = 12;
       g.drawString(h + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
-	} else {
-	  g.drawString(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
-	}
+    } else {
+      g.drawString(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
+    }
     g.setFontAlign(1, -1);
     g.drawString(d, g.getWidth() -6, 98);
     g.setFont('Vector', 52);
