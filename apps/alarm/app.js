@@ -86,7 +86,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   const menu = {
     "": { "title": isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm" },
     "< Back": () => {
-      saveAlarm(alarm, alarmIndex, time);
+      prepareAlarmForSave(alarm, alarmIndex, time);
+      saveAndReload();
       showMainMenu();
     },
     /*LANG*/"Hour": {
@@ -144,7 +145,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   E.showMenu(menu);
 }
 
-function saveAlarm(alarm, alarmIndex, time) {
+function prepareAlarmForSave(alarm, alarmIndex, time) {
   alarm.t = require("time_utils").encodeTime(time);
   alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
 
@@ -153,8 +154,6 @@ function saveAlarm(alarm, alarmIndex, time) {
   } else {
     alarms[alarmIndex] = alarm;
   }
-
-  saveAndReload();
 }
 
 function saveAndReload() {
@@ -251,7 +250,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   const menu = {
     "": { "title": isNew ? /*LANG*/"New Timer" : /*LANG*/"Edit Timer" },
     "< Back": () => {
-      saveTimer(timer, timerIndex, time);
+      prepareTimerForSave(timer, timerIndex, time);
+      saveAndReload();
       showMainMenu();
     },
     /*LANG*/"Hours": {
@@ -293,7 +293,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   E.showMenu(menu);
 }
 
-function saveTimer(timer, timerIndex, time) {
+function prepareTimerForSave(timer, timerIndex, time) {
   timer.timer = require("time_utils").encodeTime(time);
   timer.t = require("time_utils").getCurrentTimeMillis() + timer.timer;
   timer.last = 0;
@@ -303,8 +303,6 @@ function saveTimer(timer, timerIndex, time) {
   } else {
     alarms[timerIndex] = timer;
   }
-
-  saveAndReload();
 }
 
 function showAdvancedMenu() {
@@ -327,7 +325,16 @@ function enableAll(on) {
   } else {
     E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
       if (confirm) {
-        alarms.forEach(alarm => alarm.on = on);
+        alarms.forEach((alarm, i) => {
+          alarm.on = on;
+          if (on) {
+            if (alarm.timer) {
+              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer))
+            } else {
+              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t))
+            }
+          }
+        });
         saveAndReload();
         showMainMenu();
       } else {
