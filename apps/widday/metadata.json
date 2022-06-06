@@ -4,7 +4,7 @@
   "icon": "widday.png",
   "version":"0.01",
   "description": "Just the day of the current date as widget",
-  "readme": "README.md"
+  "readme": "README.md",
   "tags": "widget,say,date",
   "allow_emulator":true, 
   "supports": ["BANGLEJS", "BANGLEJS2"],
