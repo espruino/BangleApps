@@ -48,7 +48,7 @@ function setLineWidth(x1, y1, x2, y2, lw) {
 
 function drawMixedClock(force) {
   var date = new Date();
-  if ((force || Bangle.isLCDOn()) && buf.buffer && date.getSeconds() === lastDate.getSeconds()) {
+  if ((force || Bangle.isLCDOn()) && buf.buffer && date.getSeconds() !== lastDate.getSeconds()) {
     lastDate = date;
     var dateArray = date.toString().split(" ");
     var isEn = locale.name.startsWith("en");
