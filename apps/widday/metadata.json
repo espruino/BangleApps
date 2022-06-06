@@ -10,6 +10,6 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "screenshots" : [ { "url":"screenshot.png" } ],
   "storage": [
-    {"name":"widday.wid.js","url":"app.js"}
+    {"name":"widday.wid.js","url":"widget.js"}
   ]
 }
