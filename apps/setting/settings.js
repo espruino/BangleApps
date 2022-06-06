@@ -252,22 +252,28 @@ function showThemeMenu() {
       }
       upd(th);
     }
-    let rgb = {
-      black: "#000", white: "#fff",
-      red: "#f00", green: "#0f0", blue: "#00f",
-      cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
-    };
-    if (!BANGLEJS2) Object.assign(rgb, {
+    let rgb = {};
+    rgb[/*LANG*/'black'] = "#000";
+    rgb[/*LANG*/'white'] = "#fff";
+    rgb[/*LANG*/'red'] = "#f00";
+    rgb[/*LANG*/'green'] = "#0f0";
+    rgb[/*LANG*/'blue'] = "#00f";
+    rgb[/*LANG*/'cyan'] = "#0ff";
+    rgb[/*LANG*/'magenta'] = "#f0f";
+    rgb[/*LANG*/'yellow'] = "#ff0";
+    if (!BANGLEJS2) {
       // these would cause dithering, which is not great for e.g. text
-      orange: "#ff7f00", purple: "#7f00ff", grey: "#7f7f7f",
-    });
+      rgb[/*LANG*/'orange'] = "#ff7f00";
+      rgb[/*LANG*/'purple'] = "#7f00ff";
+      rgb[/*LANG*/'grey'] = "#7f7f7f";
+    }
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
       colors.push(cl(rgb[c]));
     }
     let menu = {
-      '':{title:'Custom Theme'},
+      '':{title:/*LANG*/'Custom Theme'},
       "< Back": () => showThemeMenu()
     };
     const labels = {
