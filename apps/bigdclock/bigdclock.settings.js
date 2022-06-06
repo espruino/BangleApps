@@ -14,7 +14,7 @@
       "title": "BigDClock"
     },
     "< Back": () => back(),
-    "Time format": {
+    "Clock type": {
       value: (settings["12hour"] !== undefined ? settings["12hour"] : false),
       format: v => v ? "12 hr" : "24 hr",
       onchange: v=> { set12hour(v) }
