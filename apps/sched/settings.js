@@ -29,7 +29,7 @@
       min: 5,
       max: 30,
       step: 5,
-      format: v => v + /*LANG*/" min",
+      format: v => v + /*LANG*/"m",
       onchange: v => {
         settings.defaultSnoozeMillis = v * 60000;
         require("sched").setSettings(settings);
