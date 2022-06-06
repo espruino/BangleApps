@@ -30,8 +30,6 @@ function draw() {
     const width = level + (level/2);
 
     g.reset();
-    g.setBgColor(0, 0, 0);
-    g.setColor(1, 1, 1);
     g.clear();
 
     g.setFontOpenSans();
@@ -43,10 +41,6 @@ function draw() {
     g.setFontAlign(-1, -1);
     g.drawString("SUMOTUWETHFRSA".slice(2*w,2*w+2), 6, 103);
 
-    g.setColor(0, 1, 0);
-    g.fillRect(0, 90, g.getWidth(), 94);
-
-    g.setColor(1,1,1);
     g.fillRect(9,159,166,171);
     g.fillRect(167,163,170,167);
     if (Bangle.isCharging()) {
@@ -58,9 +52,13 @@ function draw() {
     }
     g.fillRect(12,162,12+width,168);
     if (level < 100) {
-      g.setColor(0,0,0);
+      g.setColor(g.theme.bg);
       g.fillRect(12+width+1,162,162,168);
     }
+
+    g.setColor(0, 1, 0);
+    g.fillRect(0, 90, g.getWidth(), 94);
+
     // widget redraw
     Bangle.drawWidgets();
     queueDraw();
