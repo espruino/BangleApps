@@ -1,11 +1,8 @@
-WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
-  const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
-  var southernHemisphere = false; // when in southern hemisphere, use the "My Location" App
+(() => {
+
   var lastCalculated = 0; // When we last calculated the phase
   var phase = 0; // The last phase we calculated
-
-  const simulate = false; // simulate one month in one minute
-  const updateR = 1000; // update every x ms in simulation
+  var southernHemisphere = false; // when in southern hemisphere -- use the "My Location" App
 
   // https://deirdreobyrne.github.io/calculating_moon_phases/
   function moonPhase(millis) {
@@ -24,7 +21,7 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
   function loadLocation() {
     // "mylocation.json" is created by the "My Location" app
     location = require("Storage").readJSON("mylocation.json",1)||{"lat":50.1236,"lon":8.6553,"location":"Frankfurt"};
-    if (location.lat < 0) southernHemisphere = true;
+	southernHemisphere = (location.lat < 0);
   }
 
   // code source: github.com/rozek/banglejs-2-activities/blob/main/README.md#drawmoonphase
@@ -44,13 +41,20 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
     }
   }
 
-  function updateWidget() {
+  function draw() {
+    const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
+
+    loadLocation();
     g.reset().setColor(g.theme.bg);
     g.fillRect(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
-    g.setColor(0x41f);
+	if (g.theme.dark) {
+	  g.setColor(0xffff); // white
+	} else {
+      g.setColor(0x41f); // blue-ish
+	}
 
     millis = (new Date()).getTime();
-    if ((millis - lastCalculated) >= 7200000) {
+    if ((millis - lastCalculated) >= 7000000) { // if it's more than 7,000 sec since last calculation, re-calculate!
       phase = moonPhase(millis);
       lastCalculated = millis;
     }
@@ -67,10 +71,14 @@ WIDGETS["widmoon"] = { area: "tr", width: 24, draw: function() {
     }
 
     drawMoonPhase(CenterX,CenterY, Radius, leftFactor,rightFactor);
-
-    if (simulate) setTimeout(updateWidget, updateR);
   }
 
-  loadLocation();
-  updateWidget();
-} };
+  WIDGETS["widmoon"] = {
+	area: "tr",
+	width: 24,
+	draw: draw
+  };
+  
+  setInterval(function() {WIDGETS["widmoon"].draw(WIDGETS["widmoon"])}, 7010000); // Re-draw at an interval of 10 sec more than our re-calculate period
+
+})();
