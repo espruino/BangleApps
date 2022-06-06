@@ -79,6 +79,4 @@
     draw: draw
   };
 
-  setInterval(function() {WIDGETS["widmoon"].draw(WIDGETS["widmoon"])}, 7010000); // Re-draw at an interval of 10 sec more than our re-calculate period
-
 })();
