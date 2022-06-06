@@ -8,6 +8,7 @@
   "tags": "widget,tools",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"widmp.wid.js","url":"widget.js"}
+    {"name":"widmp.wid.js","url":"widget.js"},
+    {"name":"widmp.settings.js","url":"settings.js"}
   ]
 }
