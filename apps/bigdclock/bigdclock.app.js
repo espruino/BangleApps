@@ -30,7 +30,7 @@ function draw() {
     const width = level + (level/2);
     var settings = Object.assign({
       "12hour": false,
-    }, require('Storage').readJSON("bigdclock.json", true) || {});
+    }, require('Storage').readJSON("setting.json", true) || {});
 
     g.reset();
     g.clear();
