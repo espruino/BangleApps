@@ -40,6 +40,37 @@
       g.drawLine(CenterX-leftFactor*y,CenterY+x, CenterX+rightFactor*y,CenterY+x);
     }
   }
+  
+  function setMoonColour() {
+    var settings = Object.assign({
+      default_colour: true,
+	  red: 0,
+	  green: 0,
+	  blue: 0,
+    }, require('Storage').readJSON("widmp.json", true) || {});
+	if (settings.default_colour) {
+      if (g.theme.dark) {
+        g.setColor(0xffff); // white
+      } else {
+        // rrrrrggggggbbbbb
+        // 0000010000011111
+        g.setColor(0x41f); // blue-ish
+      }
+	} else {
+		// 1111110000000000
+		// 5432109876543210
+		// rrrrrggggggbbbbb
+        // RxxRxGxxGxxBxxBx
+		let r = settings.red;
+		let g = settings.green;
+		let b = settings.blue;
+		r = (r << 13) | ((r & 3) << 11);
+		g = (g << 8) | (g << 5);
+		b = (b << 2) | (b & 3);
+		g.setColor(r | g | b);
+	}
+  }
+
 
   function draw() {
     const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
@@ -47,13 +78,6 @@
     loadLocation();
     g.reset().setColor(g.theme.bg);
     g.fillRect(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
-    if (g.theme.dark) {
-      g.setColor(0xffff); // white
-    } else {
-      // rrrrrggggggbbbbb
-      // 0000010000011111
-      g.setColor(0x41f); // blue-ish
-    }
 
     millis = (new Date()).getTime();
     if ((millis - lastCalculated) >= 7000000) { // if it's more than 7,000 sec since last calculation, re-calculate!
@@ -72,6 +96,7 @@
       var tmp=leftFactor; leftFactor=rightFactor; rightFactor=tmp;
     }
 
+    setMoonColour();
     drawMoonPhase(CenterX,CenterY, Radius, leftFactor,rightFactor);
   }
 
