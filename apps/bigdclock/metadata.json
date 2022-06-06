@@ -12,7 +12,7 @@
   "screenshots": [ { "url":"screenshot.png" } ],
   "storage": [
     {"name":"bigdclock.app.js","url":"bigdclock.app.js"},
-	{"name":"bigdclock.settings.js","url":"bigdclock.settings.js"},
+    {"name":"bigdclock.settings.js","url":"bigdclock.settings.js"},
     {"name":"bigdclock.img","url":"bigdclock.icon.js","evaluate":true}
   ],
   "data": [{"name":"bigdclock.json"}]
