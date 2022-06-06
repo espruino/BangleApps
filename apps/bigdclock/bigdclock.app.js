@@ -42,9 +42,9 @@ function draw() {
     g.setFont('Vector', 52);
     g.setFontAlign(-1, -1);
     g.drawString("SUMOTUWETHFRSA".slice(2*w,2*w+2), 6, 103);
+
     g.setColor(0, 1, 0);
     g.fillRect(0, 90, g.getWidth(), 94);
-    g.reset();
 
     g.setColor(1,1,1);
     g.fillRect(9,159,166,171);
