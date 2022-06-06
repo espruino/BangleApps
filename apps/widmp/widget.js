@@ -21,7 +21,7 @@
   function loadLocation() {
     // "mylocation.json" is created by the "My Location" app
     location = require("Storage").readJSON("mylocation.json",1)||{"lat":50.1236,"lon":8.6553,"location":"Frankfurt"};
-	southernHemisphere = (location.lat < 0);
+    southernHemisphere = (location.lat < 0);
   }
 
   // code source: github.com/rozek/banglejs-2-activities/blob/main/README.md#drawmoonphase
@@ -47,11 +47,11 @@
     loadLocation();
     g.reset().setColor(g.theme.bg);
     g.fillRect(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
-	if (g.theme.dark) {
-	  g.setColor(0xffff); // white
-	} else {
+    if (g.theme.dark) {
+      g.setColor(0xffff); // white
+    } else {
       g.setColor(0x41f); // blue-ish
-	}
+    }
 
     millis = (new Date()).getTime();
     if ((millis - lastCalculated) >= 7000000) { // if it's more than 7,000 sec since last calculation, re-calculate!
@@ -74,11 +74,11 @@
   }
 
   WIDGETS["widmoon"] = {
-	area: "tr",
-	width: 24,
-	draw: draw
+    area: "tr",
+    width: 24,
+    draw: draw
   };
-  
+
   setInterval(function() {WIDGETS["widmoon"].draw(WIDGETS["widmoon"])}, 7010000); // Re-draw at an interval of 10 sec more than our re-calculate period
 
 })();
