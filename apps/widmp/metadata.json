@@ -1,6 +1,6 @@
 {
   "id": "widmp",
-  "name": "Moon Phase Widget",
+  "name": "Moon Phase",
   "version": "0.06",
   "description": "Display the current moon phase in blueish (in light mode) or white (in dark mode) for both hemispheres. In the southern hemisphere the 'My Location' app is needed.",
   "icon": "widget.png",
@@ -10,5 +10,6 @@
   "storage": [
     {"name":"widmp.wid.js","url":"widget.js"},
     {"name":"widmp.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data": [{"name":"widmp.json"}]
 }
