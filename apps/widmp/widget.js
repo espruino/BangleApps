@@ -50,6 +50,8 @@
     if (g.theme.dark) {
       g.setColor(0xffff); // white
     } else {
+      // rrrrrggggggbbbbb
+      // 0000010000011111
       g.setColor(0x41f); // blue-ish
     }
 
