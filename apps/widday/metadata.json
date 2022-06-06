@@ -1,7 +1,7 @@
 { "id": "widday",
   "name": "Day Widget",
   "shortName":"My Timer",
-  "icon": "widday.png",
+  "icon": "widget.png",
   "version":"0.01",
   "description": "Just the day of the current date as widget",
   "readme": "README.md",
