@@ -7,7 +7,7 @@
     g.setFontAlign(0,1); // center fonts    
     //g.drawRect(this.x, this.y, this.x+width-1, this.y+23);  // check the bounds!    
 
-    var text = "date.getDate();
+    var text = date.getDate();
     g.setFont("Vector", 24);
     g.drawString(text, this.x+width/2+1, this.y + 28);
     //g.setColor(0, 0, 1);
