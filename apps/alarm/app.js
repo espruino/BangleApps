@@ -280,7 +280,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       value: timer.on,
       onchange: v => timer.on = v
     },
-    /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v)
+    /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
+    /*LANG*/"Cancel": () => showMainMenu()
   };
 
   if (!isNew) {
