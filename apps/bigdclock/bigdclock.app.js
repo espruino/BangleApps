@@ -10,40 +10,17 @@ Graphics.prototype.setFontOpenSans = function(scale) {
   );
 };
 
-// the following 2 sections are used from waveclk to schedule minutely updates
-// timeout used to update every minute
 var drawTimeout;
 
 // schedule a draw for the next minute
 function queueDraw() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function () {
-        drawTimeout = undefined;
         draw();
-    }, 60300 - (Date.now() % 60000));
-}
-
-function drawBackground() {
-    g.setBgColor(0, 0, 0);
-    g.setColor(1, 1, 1);
-    g.clear();
-}
-
-function digit(num) {
-    return String.fromCharCode(num + 48);
-}
-
-function timeString(h, m) {
-    return digit(h / 10) + digit(h % 10) + ":" + digit(m / 10) + digit(m % 10);
-}
-
-function dayString(w) {
-    return digit(w / 10) + digit(w % 10);
+    }, 60300 - (Date.now() % 60000)); // We aim for 300ms into the next minute to ensure we make it!
 }
 
 function draw() {
-    g.reset();
-    drawBackground();
     var date = new Date();
     var h = date.getHours(),
         m = date.getMinutes();
@@ -51,22 +28,26 @@ function draw() {
         w = date.getDay(); // d=1..31; w=0..6
     const level = E.getBattery();
     const width = level + (level/2);
+    var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 
-    g.setBgColor(0, 0, 0);
-    g.setColor(1, 1, 1);
+    g.reset();
+    g.clear();
 
     g.setFontOpenSans();
     g.setFontAlign(0, -1);
-    g.drawString(timeString(h, m), g.getWidth() / 2, 30);
-    g.drawString(dayString(d), g.getWidth() * 3 / 4, 98);
+    if (is12Hour) {
+      if (h > 12) h -= 12;
+      if (h == 0) h = 12;
+      g.drawString(h + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
+    } else {
+      g.drawString(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
+    }
+    g.setFontAlign(1, -1);
+    g.drawString(d, g.getWidth() -6, 98);
     g.setFont('Vector', 52);
     g.setFontAlign(-1, -1);
     g.drawString("SUMOTUWETHFRSA".slice(2*w,2*w+2), 6, 103);
-    g.setColor(0, 1, 0);
-    g.fillRect(0, 90, g.getWidth(), 94);
-    g.reset();
 
-    g.setColor(1,1,1);
     g.fillRect(9,159,166,171);
     g.fillRect(167,163,170,167);
     if (Bangle.isCharging()) {
@@ -78,16 +59,17 @@ function draw() {
     }
     g.fillRect(12,162,12+width,168);
     if (level < 100) {
-      g.setColor(0,0,0);
+      g.setColor(g.theme.bg);
       g.fillRect(12+width+1,162,162,168);
     }
+
+    g.setColor(0, 1, 0);
+    g.fillRect(0, 90, g.getWidth(), 94);
+
     // widget redraw
     Bangle.drawWidgets();
     queueDraw();
 }
-
-Bangle.loadWidgets();
-draw();
 
 //the following section is also from waveclk
 Bangle.on('lcdPower', on => {
@@ -99,6 +81,7 @@ Bangle.on('lcdPower', on => {
     }
 });
 
-Bangle.setUI("clock");
+Bangle.loadWidgets();
+draw();
 
-Bangle.drawWidgets();
+Bangle.setUI("clock");
