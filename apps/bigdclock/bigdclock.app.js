@@ -82,7 +82,7 @@ Bangle.on('lcdPower', on => {
 
 Bangle.on('charging', (charging) => {
     draw();
-}
+});
 
 Bangle.loadWidgets();
 draw();
