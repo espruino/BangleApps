@@ -28,16 +28,14 @@ function draw() {
         w = date.getDay(); // d=1..31; w=0..6
     const level = E.getBattery();
     const width = level + (level/2);
-    var settings = Object.assign({
-      "12hour": false,
-    }, require('Storage').readJSON("setting.json", true) || {});
+    var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
 
     g.reset();
     g.clear();
 
     g.setFontOpenSans();
     g.setFontAlign(0, -1);
-    if (settings["12hour"]) {
+    if (is12Hour) {
       if (h > 12) h -= 12;
       if (h == 0) h = 12;
       g.drawString(h + ":" + ("0"+m).substr(-2), g.getWidth() / 2, 30);
