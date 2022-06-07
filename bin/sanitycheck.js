@@ -65,7 +65,7 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -140,7 +140,7 @@ apps.forEach((app,appIdx) => {
           ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`);
         if (app.dependencies[dependency]=="type" && !METADATA_TYPES.includes(dependency))
           ERROR(`App ${app.id} 'type' dependency must be one of `+METADATA_TYPES);
-          
+
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`);

@@ -1,0 +1,3 @@
+0.01: Initial version
+0.02: setTimeout bug fix; no leading zero on date; lightmode; 12 hour format; cleanup
+0.03: Internationalisation; bug fix - battery icon responds promptly to charging state

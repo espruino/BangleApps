@@ -16,6 +16,12 @@ const white = "#ffffff";
 const red = "#d41706";
 const blue = "#0000ff";
 const yellow = "#ffff00";
+let bgColor = color4;
+let bgColorMonth = color1;
+let bgColorDow = color2;
+let bgColorWeekend = color3;
+let fgOtherMonth = gray1;
+let fgSameMonth = white;
 
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
@@ -27,19 +33,12 @@ if (settings.ndColors === undefined)
   }
 
 if (settings.ndColors === true) {
-  let bgColor = white;
-  let bgColorMonth = blue;
-  let bgColorDow = black;
-  let bgColorWeekend = yellow;
-  let fgOtherMonth = blue;
-  let fgSameMonth = black;
-} else {
-  let bgColor = color4;
-  let bgColorMonth = color1;
-  let bgColorDow = color2;
-  let bgColorWeekend = color3;
-  let fgOtherMonth = gray1;
-  let fgSameMonth = white;
+  bgColor = white;
+  bgColorMonth = blue;
+  bgColorDow = black;
+  bgColorWeekend = yellow;
+  fgOtherMonth = blue;
+  fgSameMonth = black;
 }
 
 function getDowLbls(locale) {

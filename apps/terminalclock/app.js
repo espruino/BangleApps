@@ -3,15 +3,14 @@ var fontColor = g.theme.dark ? "#0f0" : "#000";
 var heartRate = 0;
 var altitude = -9001;
 
-// handling the differents versions of the Banglejs smartwatch
+// handling the differents versions of the Banglejs smartwatch screen sizes
 if (process.env.HWVERSION == 1){
   var paddingY = 3;
   var font6x8At4Size = 48;
   var font6x8At2Size = 27;
   var font6x8FirstTextSize = 6;
   var font6x8DefaultTextSize = 3;
-}
-else{
+} else{
   var paddingY = 2;
   var font6x8At4Size = 32;
   var font6x8At2Size = 18;
@@ -66,7 +65,7 @@ function drawDate(now, pos){
   drawLine(locale_date, pos);
 }
 
-function drawInput(now, pos){
+function drawInput(pos){
   clearField(pos);
   drawLine(">", pos);
 }
@@ -129,16 +128,52 @@ function draw(){
     drawStepCount(curPos);
     curPos++;
   }
-  drawInput(now, curPos);
+  drawInput(curPos);
 }
+
+function turnOnServices(){
+  if(settings.showHRM){
+    Bangle.setHRMPower(true, "terminalclock");
+  }
+  if(settings.showAltitude && process.env.HWVERSION != 1){
+    Bangle.setBarometerPower(true, "terminalclock");
+  }
+  if(settings.powerSaving){
+    setTimeout(function () {
+      turnOffServices();
+    }, 45000);
+  }
+}
+
+function turnOffServices(){
+  if(settings.showHRM){
+    Bangle.setHRMPower(false, "terminalclock");
+  }
+  if(settings.showAltitude && process.env.HWVERSION != 1){
+    Bangle.setBarometerPower(false, "terminalclock");
+  }
+}
+
+var unlockDrawIntervalID = -1;
+Bangle.on('lock', function(on){
+  if(!on){ // unclock
+    if(settings.powerSaving){
+      turnOnServices();
+    }
+    unlockDrawIntervalID = setInterval(draw, 1000); // every second
+  }
+  if(on && unlockDrawIntervalID != -1){ // lock
+    clearInterval(unlockDrawIntervalID);
+  }
+});
 
 Bangle.on('HRM',function(hrmInfo) {
   if(hrmInfo.confidence >= settings.HRMinConfidence)
     heartRate = hrmInfo.bpm;
 });
 
-var MEDIANLENGTH = 20;
-var avr = [], median;
+var MEDIANLENGTH = 20; // technical
+var avr = [], median; // technical
 Bangle.on('pressure', function(e) {
   while (avr.length>MEDIANLENGTH) avr.pop();
   avr.unshift(e.altitude);
@@ -161,18 +196,20 @@ var settings = Object.assign({
   showActivity: true,
   showStepCount: true,
   showAltitude: process.env.HWVERSION != 1 ? true : false,
+  powerSaving: true,
+  PowerOnInterval: 15,
 }, require('Storage').readJSON("terminalclock.json", true) || {});
 
-if(settings.showAltitude && process.env.HWVERSION != 1){
-  Bangle.setBarometerPower(true, "app");
+// turn the services before drawing anything
+turnOnServices();
+if(settings.powerSaving){
+  setInterval(turnOnServices, settings.PowerOnInterval*60000); // every PowerOnInterval min
 }
-
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
-// Load widgets
+// Load and draw widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 // draw immediately at first
 draw();
-
-var secondInterval = setInterval(draw, 10000);
+setInterval(draw, 10000); // every 10 seconds
