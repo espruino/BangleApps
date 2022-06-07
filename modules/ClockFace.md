@@ -200,3 +200,16 @@ require("ClockFace_menu").addItems(menu, save, {
 E.showMenu(menu);
 
 ```
+
+Or even simpler, if you just want to use a basic settings file:
+```js
+let menu = {
+  "": {"title": /*LANG*/"<clock name> Settings"},
+  /*LANG*/"< Back": back,  
+};
+require("ClockFace_menu").addSettingsFile(menu, "<appid>.settings.json", [ 
+  "showDate", "loadWidgets"
+]);
+E.showMenu(menu);
+
+```
