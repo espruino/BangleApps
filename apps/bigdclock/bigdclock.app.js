@@ -29,7 +29,6 @@ function draw() {
     const level = E.getBattery();
     const width = level + (level/2);
     var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-    var dows = require("date_utils").dows(0,1);
 
     g.reset();
     g.clear();
@@ -47,7 +46,7 @@ function draw() {
     g.drawString(d, g.getWidth() -6, 98);
     g.setFont('Vector', 52);
     g.setFontAlign(-1, -1);
-    g.drawString(dows[w].slice(0,2).toUpperCase(), 6, 103);
+    g.drawString("SUMOTUWETHFRSA".slice(2*w,2*w+2), 6, 103);
 
     g.fillRect(9,159,166,171);
     g.fillRect(167,163,170,167);
@@ -72,6 +71,7 @@ function draw() {
     queueDraw();
 }
 
+//the following section is also from waveclk
 Bangle.on('lcdPower', on => {
     if (on) {
         draw(); // draw immediately, queue redraw
@@ -79,10 +79,6 @@ Bangle.on('lcdPower', on => {
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
     }
-});
-
-Bangle.on('charging', (charging) => {
-    draw();
 });
 
 Bangle.loadWidgets();
