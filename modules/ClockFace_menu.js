@@ -24,14 +24,3 @@ exports.addItems = function(menu, callback, items) {
     }
   });
 };
-
-// legacy boolean options
-exports.showDate =
-exports.loadWidgets =
-  function(value, callback) {
-    if (value === undefined) value = true;
-    return {
-      value: !!value,
-      onchange: v=>callback(v),
-    };
-  };
