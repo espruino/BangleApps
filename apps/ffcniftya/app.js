@@ -1,22 +1,3 @@
-const locale = require("locale");
-const is12Hour = Object.assign({ "12hour": false }, require("Storage").readJSON("setting.json", true))["12hour"];
-const showWeekNum = Object.assign({ showWeekNum: true }, require('Storage').readJSON("ffcniftya.json", true))["showWeekNum"];
-
-/* Clock *********************************************/
-const scale = g.getWidth() / 176;
-
-const widget = 24;
-
-const viewport = {
-  width: g.getWidth(),
-  height: g.getHeight(),
-}
-
-const center = {
-  x: viewport.width / 2,
-  y: Math.round(((viewport.height - widget) / 2) + widget),
-}
-
 // copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
 function ISO8601_week_no(date) {
   var tdt = new Date(date.valueOf());
@@ -30,77 +11,50 @@ function ISO8601_week_no(date) {
   return 1 + Math.ceil((firstThursday - tdt) / 604800000);
 }
 
-function d02(value) {
-  return ('0' + value).substr(-2);
+function format(value) {
+  return ("0" + value).substr(-2);
 }
 
-function draw() {
-  g.reset();
-  g.clearRect(0, widget, viewport.width, viewport.height);
-  const now = new Date();
+const ClockFace = require("ClockFace");
+const clock = new ClockFace({
+  init: function () {
+    const appRect = Bangle.appRect;
 
-  const hour = d02(now.getHours() - (is12Hour && now.getHours() > 12 ? 12 : 0));
-  const minutes = d02(now.getMinutes());
-  const day = d02(now.getDate());
-  const month = d02(now.getMonth() + 1);
-  const year = now.getFullYear(now);
-  const weekNum = d02(ISO8601_week_no(now));
-  const monthName = locale.month(now, 3);
-  const dayName = locale.dow(now, 3);
+    this.viewport = {
+      width: appRect.w,
+      height: appRect.h
+    };
 
-  const centerTimeScaleX = center.x + 32 * scale;
-  g.setFontAlign(1, 0).setFont("Vector", 90 * scale);
-  g.drawString(hour, centerTimeScaleX, center.y - 31 * scale);
-  g.drawString(minutes, centerTimeScaleX, center.y + 46 * scale);
+    this.center = {
+      x: this.viewport.width / 2,
+      y: Math.round((this.viewport.height / 2) + appRect.y)
+    };
 
-  g.fillRect(center.x + 30 * scale, center.y - 72 * scale, center.x + 32 * scale, center.y + 74 * scale);
+    this.scale = g.getWidth() / this.viewport.width;
+    this.centerTimeScaleX = this.center.x + 32 * this.scale;
+    this.centerDatesScaleX = this.center.x + 40 * this.scale;
 
-  const centerDatesScaleX = center.x + 40 * scale;
-  g.setFontAlign(-1, 0).setFont("Vector", 16 * scale);
-  g.drawString(year, centerDatesScaleX, center.y - 62 * scale);
-  g.drawString(month, centerDatesScaleX, center.y - 44 * scale);
-  g.drawString(day, centerDatesScaleX, center.y - 26 * scale);
-  if (showWeekNum) g.drawString(weekNum, centerDatesScaleX, center.y + 15 * scale);
-  g.drawString(monthName, centerDatesScaleX, center.y + 48 * scale);
-  g.drawString(dayName, centerDatesScaleX, center.y + 66 * scale);
-}
+    this.showWeekNum = Object.assign({ showWeekNum: true }, require("Storage").readJSON("ffcniftya.json", true))["showWeekNum"];
+  },
+  draw: function (date) {
+    const hour = date.getHours() - (this.is12Hour && date.getHours() > 12 ? 12 : 0);
+    const month = date.getMonth() + 1;
+    const monthName = require("date_utils").month(month, 1);
+    const dayName = require("date_utils").dow(date.getDay(), 1);
 
+    g.setFontAlign(1, 0).setFont("Vector", 90 * this.scale);
+    g.drawString(format(hour), this.centerTimeScaleX, this.center.y - 31 * this.scale);
+    g.drawString(format(date.getMinutes()), this.centerTimeScaleX, this.center.y + 46 * this.scale);
 
-/* Minute Ticker *************************************/
+    g.fillRect(this.center.x + 30 * this.scale, this.center.y - 72 * this.scale, this.center.x + 32 * this.scale, this.center.y + 74 * this.scale);
 
-let tickTimer;
-
-function clearTickTimer() {
-  if (tickTimer) {
-    clearTimeout(tickTimer);
-    tickTimer = undefined;
-  }
-}
-
-function queueNextTick() {
-  clearTickTimer();
-  tickTimer = setTimeout(tick, 60000 - (Date.now() % 60000));
-}
-
-function tick() {
-  draw();
-  queueNextTick();
-}
-
-/* Init **********************************************/
-
-// Clear the screen once, at startup
-g.clear();
-tick();
-
-Bangle.on('lcdPower', (on) => {
-  if (on) {
-    tick();
-  } else {
-    clearTickTimer();
+    g.setFontAlign(-1, 0).setFont("Vector", 16 * this.scale);
+    g.drawString(date.getFullYear(date), this.centerDatesScaleX, this.center.y - 62 * this.scale);
+    g.drawString(format(month), this.centerDatesScaleX, this.center.y - 44 * this.scale);
+    g.drawString(format(date.getDate()), this.centerDatesScaleX, this.center.y - 26 * this.scale);
+    if (this.showWeekNum) g.drawString(format(ISO8601_week_no(date)), this.centerDatesScaleX, this.center.y + 15 * this.scale);
+    g.drawString(monthName, this.centerDatesScaleX, this.center.y + 48 * this.scale);
+    g.drawString(dayName, this.centerDatesScaleX, this.center.y + 66 * this.scale);
   }
 });
-
-Bangle.setUI("clock");
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+clock.start();
