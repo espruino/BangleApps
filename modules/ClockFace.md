@@ -175,3 +175,28 @@ Bangle.on('step', function(steps) {
 });
 
 ```
+
+
+ClockFace_menu
+==============
+If your clock comes with a settings menu, you can use this library to easily add
+some common options:
+
+```js
+
+let settings = require("Storage").readJSON("<appid>.settings.json", true)||{};
+function save(key, value) {
+  settings[key] = value;
+  require("Storage").writeJSON("<appid>.settings.json", settings);
+}
+
+let menu = {
+  "": {"title": /*LANG*/"<clock name> Settings"},
+};
+require("ClockFace_menu").addItems(menu, save, { 
+  showDate: settings.showDate, 
+  loadWidgets: settings.loadWidgets,
+});
+E.showMenu(menu);
+
+```
