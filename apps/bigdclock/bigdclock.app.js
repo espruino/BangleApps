@@ -71,7 +71,6 @@ function draw() {
     queueDraw();
 }
 
-//the following section is also from waveclk
 Bangle.on('lcdPower', on => {
     if (on) {
         draw(); // draw immediately, queue redraw
@@ -80,6 +79,10 @@ Bangle.on('lcdPower', on => {
         drawTimeout = undefined;
     }
 });
+
+Bangle.on('charging', (charging) => {
+    draw();
+}
 
 Bangle.loadWidgets();
 draw();
