@@ -136,6 +136,14 @@
 			"Title": "Daylight Savings"
 		},
 		"< Back": () => back(),
+		"Enabled": {
+			value: settings.has_dst,
+			format: v => v ? 'Yes' : 'No',
+			onchange: v => {
+				settings.has_dst = v;
+				writeSettings();
+			}
+		},
 		"Base TZ": {
 			value: settings.tz,
 			format: v => (v >= 0 ? '+' + hoursToString(v) : '-' + hoursToString(-v)),
@@ -147,15 +155,7 @@
 			max: 13,
 			step: 0.25
 		},
-		"Enabled": {
-			value: settings.has_dst,
-			format: v => v ? 'Yes' : 'No',
-			onchange: v => {
-				settings.has_dst = v;
-				writeSettings();
-			}
-		},
-		"Amount": {
+		"Change": {
 			value: settings.dst_size,
 			format: v => (v >= 0 ? '+' + hoursToString(v): '-' + hoursToString(-v)),
 			min: -1,
