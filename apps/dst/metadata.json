@@ -2,7 +2,9 @@
   "name": "Daylight Savings",
   "version":"0.01",
   "description": "App to enable automatic daylight savings adjustment.",
-  "tags": "tool",
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget,tool",
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"dst.settings.js","url":"dst.settings.js"}

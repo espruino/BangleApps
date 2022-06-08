@@ -1,5 +1,8 @@
 (() => {
 
+    var next_dst_change = undefined;
+	var check_timeout = undefined;
+
 	function dayNumber(y, m, d) {
 		var ans;
 		if (m < 2) {
@@ -12,7 +15,7 @@
 	};
 	
 	// y is the year
-	// other_offset is the timezone offset of the other change (e.g. the offset in force before this change)
+	// other_offset is the timezone offset (in hours) of the other change (e.g. the offset in force before this change)
 	// data is the dst_start or dst_end from the dst settings
 	function dstChangeTime(y, other_offset, data) {
 		var m = data.month;
@@ -33,15 +36,120 @@
 			ans -= 7 - ((7 + data.day_offset - data.dow) % 7);
 		}
 		// Now - the GMT of the time of day the change happens
+		ans = (ans * 86400) + (data.at - other_offset) * 3600;
+		// NB we set the time of the change to 999ms *before* the time it's technically due to happen
+console.log("DST change second : " + ans);
+		return (ans * 1000) - 999;
+	}
+	
+	function updateNextDstChange(settings) {
+		var now = new Date();
+		var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
+		var end = dstChangeTime(now.getFullYear(), settings.tz + settings.dst_size, settings.dst_end);
+		// Since the time of the change is 999ms before the technical time, we add 1000ms to the "current" time. Helps with race conditions...
+		if (start < now.getTime() + 1000) {
+			if (end < now.getTime() + 1000) {
+				// Both changes have happened for this year
+				if (start < end) {
+					// The start of DST is earlier than the end, so next change is a start of DST
+					next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
+				} else {
+					// The end of DST is earlier than the start, so the next change is an end of DST
+					next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
+				}
+			} else {
+				next_dst_change = { millis: end, offset: settings.tz, is_start: false };
+			}
+		} else {
+			next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
+		}
+		next_dst_change.show_icon = settings.show_icon;
+console.log("Next DST change : " + next_dst_change);
 	}
 
+	// Update the cached information we keep
+	function update() {
+		var settings = require("Storage").readJSON("dst.json");
+		if (settings) {
+			var now = new Date();
+			updateNextDstChange(settings);
+		} else {
+			next_dst_change = undefined;
+		}
+		rescheduleCheckForDSTChange();
+		draw();
+	}
+	
+	function clear() {
+		if (this.width) {
+			this.width = 0;
+			Bangle.drawWidgets();
+		}
+	}
+	
+	function draw() {
+console.log("draw()");
+		if (next_dst_change) {
+			if ((next_dst_change.is_start) || (!next_dst_change.show_icon)) {
+				clear();
+			} else {
+				if (this.width) {
+					g.drawImage(
+						{
+							width : 24, height : 24, bpp : 1, palette: new Uint16Array([g.theme.bg, g.theme.fg]),
+							buffer : atob("AAAAAAAAPAAAIgAAIQAAIQAAIQAAIQAAIngAPIQAAIAAAPAAAAwAAAQAAIX8AHggAAAgAAAgAAAgAAAgAAAgAAAgAAAAAAAA")
+						}, this.x, this.y
+					);
+				} else {
+					this.width = 24;
+					Bangle.drawWidgets();
+				}
+			}
+		} else {
+			clear();
+		}
+	}
 
+    function checkForDSTChange() {
+console.log("Checking for DST change");
+		if (next_dst_change) {
+			if (getTime() > next_dst_change.millis) {
+				var dstSettings = require("Storage").readJSON("dst.json");
+				if (dstSettings) {
+					var settings = require("Storage").readJSON("settings.json");
+					if (settings) {
+						settings.timezone = next_dst_change.offset;
+						require("Storage").writeJSON("settings.json");
+					}
+					updateNextDstChange(dstSettings);
+				} else {
+					next_dst_change = undefined;
+				}
+				draw();
+			}
+			rescheduleCheckForDSTChange();
+		}
+	}
+	
+	function rescheduleCheckForDSTChange() {
+		if (check_timeout) clearTimeout(check_timeout);
+		check_timeout = undefined;
+		if (next_dst_change) {
+			check_timeout = setTimeout( function() {
+				check_timeout = undefined;
+				checkForDSTChange();
+			}, (next_dst_change.millis - getTime()) % 14400000 + 500); // Check every 4 hours.
+		}
+	}
 
-
-	WIDGETS["DST"] = {
-		area: "tr",
-		width: 24,
-		draw: draw
-	};
+    if (!WIDGETS["DST"]) {
+console.log("Registering DST widget");
+		WIDGETS["DST"] = {
+			area: "tl",
+			width: 24,
+			draw: draw
+		};		
+		check_timeout = setTimeout(update, 500); // Give 500ms for things to settle
+	}
 
 })();
