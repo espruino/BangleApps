@@ -10,7 +10,7 @@
 			m+=12;
 		}
 		ans = (y/100)|0;
-		ans = 365*y + (y>>2) - ans + (ans>>2) + 30*m + (((3*m+3)/5)|0) + d - 719530;
+		ans = 365*y + (y>>2) - ans + (ans>>2) + 30*m + (((3*m+6)/5)|0) + d - 719531;
 		return ans;
 	};
 	
@@ -68,7 +68,7 @@ console.log("Next DST change : " + JSON.stringify(next_dst_change));
 	}
 
 	// Update the cached information we keep
-	function update() {
+	function doUpdate() {
 		var settings = require("Storage").readJSON("dst.json");
 		if (settings) {
 			var now = new Date();
@@ -77,6 +77,10 @@ console.log("Next DST change : " + JSON.stringify(next_dst_change));
 			next_dst_change = undefined;
 		}
 		rescheduleCheckForDSTChange();
+	}
+	
+	function update() {
+		doUpdate();
 		draw();
 	}
 	
@@ -150,6 +154,6 @@ console.log("Registering DST widget");
 		draw: draw
 	};		
 
-	check_timeout = setTimeout(update, 0);
+	doUpdate();
 
 })();
