@@ -64,7 +64,7 @@ console.log("DST change second : " + ans);
 			next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
 		}
 		next_dst_change.show_icon = settings.show_icon;
-console.log("Next DST change : " + next_dst_change);
+console.log("Next DST change : " + JSON.stringify(next_dst_change));
 	}
 
 	// Update the cached information we keep
@@ -142,14 +142,14 @@ console.log("Checking for DST change");
 		}
 	}
 
-    if (!WIDGETS["DST"]) {
 console.log("Registering DST widget");
-		WIDGETS["DST"] = {
-			area: "tl",
-			width: 24,
-			draw: draw
-		};		
-		check_timeout = setTimeout(update, 500); // Give 500ms for things to settle
-	}
+
+	WIDGETS["DST"] = {
+		area: "tl",
+		width: 24,
+		draw: draw
+	};		
+
+	check_timeout = setTimeout(update, 0);
 
 })();
