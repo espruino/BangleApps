@@ -5,8 +5,9 @@
 	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 	var settings = Object.assign({
-		tz: 0,
 		has_dst: true,
+		show_icon: true,
+		tz: 0,
 		dst_size: 1,
 		dst_start: {
 			day_offset: 0,	// "on", "Fri before"
@@ -141,6 +142,14 @@
 			format: v => v ? 'Yes' : 'No',
 			onchange: v => {
 				settings.has_dst = v;
+				writeSettings();
+			}
+		},
+		"Icon?": {
+			value: settings.show_icon,
+			format: v => v ? 'Yes' : 'No',
+			onchange: v => {
+				settings.show_icon = v;
 				writeSettings();
 			}
 		},
