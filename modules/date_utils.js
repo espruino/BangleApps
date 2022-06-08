@@ -63,3 +63,20 @@ exports.months = (abbreviated) => {
   }
   return abbreviated == 2 ? months.map(month => month.toUpperCase()) : months;
 };
+
+/**
+ * @param {int} y the full year
+ * @param {int} m the month 0..11
+ * @param {int} d the day of month 0..31
+ * @returns the number of days since 1970/01/01
+ */
+exports.dayNumber = (y, m, d) => {
+  var ans;
+  if (m < 2) {
+    y--;
+    m+=12;
+  }
+  ans = (y/100)|0;
+  ans = 365*y + (y>>2) - ans + (ans>>2) + 30*m + (((3*m+3)/5)|0) + d - 719530;
+  return ans;
+};
