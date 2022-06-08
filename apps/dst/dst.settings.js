@@ -5,6 +5,7 @@
 	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 	var settings = Object.assign({
+		tz: 0,
 		has_dst: true,
 		dst_size: 1,
 		dst_start: {
@@ -54,7 +55,7 @@
 	}
 	
 	function hoursToString(h) {
-		return (h|0) + ':' + (6*h)%6 + (60*h)%10;
+		return (h|0) + ':' + (((6*h)%6)|0) + (60*h)%10;
 	}
 	
 	function getDSTStartEndMenu(start) {
@@ -93,7 +94,7 @@
 				min: 0,
 				max: 4,
 				onchange: v => {
-					dst_start_end.dow_number = v
+					dst_start_end.dow_number = v;
 					writeSubMenuSettings();
 				}
 			},
@@ -103,7 +104,7 @@
 				min:0,
 				max:6,
 				onchange: v => {
-					dst_start_end.dow = v
+					dst_start_end.dow = v;
 					writeSubMenuSettings();
 				}
 			},
@@ -113,7 +114,7 @@
 				min: 0,
 				max: 11,
 				onchange: v => {
-					dst_start_end.month = v
+					dst_start_end.month = v;
 					writeSubMenuSettings();
 				}
 			},
@@ -123,7 +124,7 @@
 				min: 0,
 				max: 23,
 				onchange: v => {
-					dst_start_end.at = v
+					dst_start_end.at = v;
 					writeSubMenuSettings();
 				}
 			}
@@ -135,6 +136,17 @@
 			"Title": "Daylight Savings"
 		},
 		"< Back": () => back(),
+		"Base TZ": {
+			value: settings.tz,
+			format: v => (v >= 0 ? '+' + hoursToString(v) : '-' + hoursToString(-v)),
+			onchange: v => {
+				settings.tz = v;
+				writeSettings();
+			},
+			min: -13,
+			max: 13,
+			step: 0.25
+		},
 		"Enabled": {
 			value: settings.has_dst,
 			format: v => v ? 'Yes' : 'No',
