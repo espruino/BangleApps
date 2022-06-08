@@ -1,4 +1,5 @@
 const rgb = [0, 0, 0];
+const hex = '0123456789ABCDEF';
 const w = g.getWidth();
 const h = g.getHeight();
 function drawToggle (value, x, y, options) {
