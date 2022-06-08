@@ -147,8 +147,7 @@ var iconCharging =   {
   buffer : require("heatshrink").decompress(atob("23btugAwUBtoICARG0h048eODQYCJ6P/AAUCCJfbo4SDxYRLtEcuPHjlwgoRJ7RnIloUHoYjDAQfAExEAwUIkACEkSAIEYwCBhZKH6EIJI0CJRFHEY0BJRWBSgf//0AJRYSE4BKLj4SE8BKLv4RD/hK/JS2AXY0gXwRKG4cMmACCJQMAg8csEFJQsBAwfasEAm379u0gFbcBfHzgFBz1xMQZKBjY/D0E2+BOChu26yVEEYdww+cgAFCg+cgIfB6RKF4HbgEIkGChEAthfCJQ0eEAIjBBAMxk6GCJQtgtyVBwRKBAQMbHAJKGXIIFCgACBhl54qVG2E+EAJKBJoWAm0WJQ6SCXgdxFgMLJQvYjeAEAUwFIUitEtJQ14NwUHgEwKYZKGwOwNYX7XgWCg3CJQ5rB4MevPnAoPDJRJrCgEG/ECAoNsJRUwoEesIIBiJKI3CVDti/CJRKVDiJHBSo0YsOGjED8AjBcAcIgdhcAXAPIUAcAYIBcA4dBAQUG8BrBgBuCgOwcBEeXIK2BBAIFBgRqBGoYAChq8CcYUE4FbUYOACQsHzgjDgwFBCIImBAQsDtwYD7cAloRI22B86YBw5QBgoRJ7dAgYEDCJaeBJoMcsARMAQNoJIIRE6A"))
 };
 
-var iconNoBattery = {
-  text: "NO BAT",
+var iconWarning = {
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("kmSpIC/AWMyoQIFsmECJFJhMmA4QXByVICIwODAQ4RRFIQGD5JVLkIGDzJqMyAGDph8MiRKGyApEAoZKFyYIDQwMkSQNkQZABBhIIOOJRuEL5gRIAUKACVQMhmUSNYNDQYJTBBwYFByGTkOE5FJWYNMknCAQKYCiaSCpmGochDoSYBhMwTAZrChILBhmEzKPBF4ImBTAREBDoMmEwJVDoYjBycJFgWEJQRuLJQ1kmQCCjJlCBYbjCagaDBwyDBmBuBF4TjJAUQKINBChCDQxZBcZIIQF4NIgEAgKSDiQmEVQKMBoARBAAMCSQLLBVoxqKL4gaCChVCNwoRKOIo4CJIgABBoSMHpIRFgDdJOIJUBCAUJRgJuEAQb+DIIgRIAX4C/ASOQA"))
@@ -321,19 +320,21 @@ function drawState(){
 
   if(!isAlarmEnabled()){
     var bat = E.getBattery();
+    var flash = storage.getFree() / process.env.STORAGE;
     var current = new Date();
     var hours = current.getHours();
-    var iconImg =
-        Bangle.isCharging() ? iconCharging :
-        bat < 30 ? iconNoBattery :
-        Bangle.isGPSOn() ? iconSatellite :
-        hours % 4 == 0 ? iconSaturn :
-        hours % 4 == 1 ? iconMars :
-        hours % 4 == 2 ? iconMoon :
-        iconEarth;
-    g.drawImage(iconImg, 23, 118);
+    var iconMsg =
+        Bangle.isCharging() ? { icon: iconCharging, text: "STATUS" } :
+        bat < 30 ? { icon: iconWarning, text: "BAT" } :
+        flash < 0.1 ? { icon: iconWarning, text: "DISK" } :
+        Bangle.isGPSOn() ? { icon: iconSatellite, text: "STATUS" } :
+        hours % 4 == 0 ? { icon: iconSaturn, text: "STATUS" } :
+        hours % 4 == 1 ? { icon: iconMars, text: "STATUS" } :
+        hours % 4 == 2 ? { icon: iconMoon, text: "STATUS" } :
+        { icon: iconEarth, text: "STATUS" };
+    g.drawImage(iconMsg.icon, 23, 118);
     g.setColor(cWhite);
-    g.drawString("STATUS", 23+26, 108);
+    g.drawString(iconMsg.text, 23+26, 108);
   } else {
     // Alarm within symbol
     g.setColor(color2);

@@ -9,7 +9,7 @@ function showAlarm(alarm) {
   const settings = require("sched").getSettings();
 
   let msg = "";
-  msg += require("time_utils").formatTime(alarm.timer ? alarm.timer : alarm.t);
+  msg += alarm.timer ? require("time_utils").formatDuration(alarm.timer) : require("time_utils").formatTime(alarm.t);
   if (alarm.msg) {
     msg += "\n"+alarm.msg;
   } else {
@@ -50,7 +50,8 @@ function showAlarm(alarm) {
       Bangle.setLocked(false);
     }
 
-    require("buzz").pattern(alarm.vibrate === undefined ? ".." : alarm.vibrate).then(() => {
+    const pattern = alarm.vibrate || (alarm.timer ? settings.defaultTimerPattern : settings.defaultAlarmPattern);
+    require("buzz").pattern(pattern).then(() => {
       if (buzzCount--) {
         setTimeout(buzz, settings.buzzIntervalMillis);
       } else if (alarm.as) { // auto-snooze

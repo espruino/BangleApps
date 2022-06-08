@@ -8,7 +8,8 @@ exports.loadSettings = function () {
         maxInnactivityMin: 30,
         dismissDelayMin: 15,
         pauseDelayMin: 120,
-        minSteps: 50
+        minSteps: 50,
+        tempThreshold: 27
     }, storage.readJSON("activityreminder.s.json", true) || {});
 };
 

@@ -221,7 +221,8 @@ function showThemeMenu() {
     Bangle.drawWidgets();
     m.draw();
   }
-  var m = E.showMenu({
+
+  var themesMenu = {
     '':{title:/*LANG*/'Theme'},
     '< Back': ()=>showSystemMenu(),
     /*LANG*/'Dark BW': ()=>{
@@ -239,9 +240,26 @@ function showThemeMenu() {
         fgH:cl("#000"), bgH:cl("#0ff"),
         dark:false
       });
-    },
-    /*LANG*/'Customize': ()=>showCustomThemeMenu(),
-  });
+    }
+  };
+
+  require("Storage").list(/^.*\.theme$/).forEach(
+    n => {
+      let newTheme = require("Storage").readJSON(n);
+      themesMenu[newTheme.name ? newTheme.name : n] = () => {
+        upd({
+        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
+        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
+        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+        dark:newTheme.dark
+      });
+      };
+    }
+  );
+
+  themesMenu[/*LANG*/'Customize'] = () => showCustomThemeMenu();
+
+  var m = E.showMenu(themesMenu);
 
   function showCustomThemeMenu() {
     function setT(t, v) {
@@ -252,22 +270,28 @@ function showThemeMenu() {
       }
       upd(th);
     }
-    let rgb = {
-      black: "#000", white: "#fff",
-      red: "#f00", green: "#0f0", blue: "#00f",
-      cyan: "#0ff", magenta: "#f0f", yellow: "#ff0",
-    };
-    if (!BANGLEJS2) Object.assign(rgb, {
+    let rgb = {};
+    rgb[/*LANG*/'black'] = "#000";
+    rgb[/*LANG*/'white'] = "#fff";
+    rgb[/*LANG*/'red'] = "#f00";
+    rgb[/*LANG*/'green'] = "#0f0";
+    rgb[/*LANG*/'blue'] = "#00f";
+    rgb[/*LANG*/'cyan'] = "#0ff";
+    rgb[/*LANG*/'magenta'] = "#f0f";
+    rgb[/*LANG*/'yellow'] = "#ff0";
+    if (!BANGLEJS2) {
       // these would cause dithering, which is not great for e.g. text
-      orange: "#ff7f00", purple: "#7f00ff", grey: "#7f7f7f",
-    });
+      rgb[/*LANG*/'orange'] = "#ff7f00";
+      rgb[/*LANG*/'purple'] = "#7f00ff";
+      rgb[/*LANG*/'grey'] = "#7f7f7f";
+    }
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
       colors.push(cl(rgb[c]));
     }
     let menu = {
-      '':{title:'Custom Theme'},
+      '':{title:/*LANG*/'Custom Theme'},
       "< Back": () => showThemeMenu()
     };
     const labels = {
@@ -569,7 +593,25 @@ function showUtilMenu() {
         } else showUtilMenu();
       });
     };
-  menu[/*LANG*/'Turn Off'] = ()=>{ if (Bangle.softOff) Bangle.softOff(); else Bangle.off() };
+  menu[/*LANG*/"Turn Off"] = () => {
+    E.showPrompt(/*LANG*/"Are you sure? Alarms and timers won't fire", {
+      title:/*LANG*/"Turn Off"
+    }).then((confirmed) => {
+      if (confirmed) {
+        E.showMessage(/*LANG*/"See you\nlater!", /*LANG*/"Goodbye");
+        setTimeout(() => {
+          // clear the screen so when the user will turn on the watch they'll see
+          // an empty screen instead of the latest displayed screen
+          E.showMessage();
+          g.clear(true);
+
+          Bangle.softOff ? Bangle.softOff() : Bangle.off();
+        }, 2500);
+      } else {
+        showUtilMenu();
+      }
+    });
+  };
 
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{

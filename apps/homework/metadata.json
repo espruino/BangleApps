@@ -9,6 +9,10 @@
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "custom": "subjects.html",
+ "data": [
+   {"name":"homework.txt" },
+   {"name":"homework.subjects.txt" }
+ ],
   "storage": [
     {"name":"homework.app.js","url":"app.js"},
     {"name":"homework.img","url":"app-icon.js","evaluate":true}

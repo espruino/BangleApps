@@ -158,6 +158,8 @@ const itemsN = Math.ceil(apps.length / appsN);
 Bangle.setUI({
   mode: "custom",
   drag: (e) => {
+    g.setColor(g.theme.fg);
+    g.setBgColor(g.theme.bg);
     let dy = e.dy;
     if (scroll + R.h - dy > itemsN * itemSize) {
       dy = scroll + R.h - itemsN * itemSize;

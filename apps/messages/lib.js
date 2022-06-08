@@ -106,7 +106,7 @@ exports.clearAll = function(event) {
 }
 
 function getNotificationImage() {
-  return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
+  return atob("GBIBP//8H//4n//5z//z5//n8//H+P+f/H4//n5//Dw/+Jkf8YGP48PH5//nz//zn//5H//4P//8");
 }
 function getFBIcon() {
   return atob("GBiBAAAAAAAAAAAYAAD/AAP/wAf/4A/48A/g8B/g+B/j+B/n+D/n/D8A/B8A+B+B+B/n+A/n8A/n8Afn4APnwADnAAAAAAAAAAAAAA==");

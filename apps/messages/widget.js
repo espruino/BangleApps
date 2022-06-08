@@ -29,7 +29,11 @@ draw:function(recall) {
       const msg = this.msgs[i];
       const colors = [g.theme.bg, g.setColor(require("messages").getMessageImageCol(msg)).getColor()];
       if (settings.flash && (c&1)) {
-        colors[1] = g.theme.fg;
+        if (colors[1] == g.theme.fg) {
+          colors.reverse();
+        } else {
+          colors[1] = g.theme.fg;
+        }
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
       g.drawImage(i == (settings.maxMessages - 1) && msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);

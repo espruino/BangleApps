@@ -34,7 +34,7 @@ var oldHeading = 0;
 Bangle.on('mag', function(m) {
   if (!Bangle.isLCDOn()) return;
   g.reset();
-  if (isNaN(m.heading)) {
+  if (isNaN(m.heading)) {    
     if (!wasUncalibrated) {
       g.clearRect(0,24,W,48);
       g.setFontAlign(0,-1).setFont("6x8");
@@ -49,7 +49,7 @@ Bangle.on('mag', function(m) {
     g.setFontAlign(0,0).setFont("6x8",3);
     var y = 36;
     g.clearRect(M-40,24,M+40,48);
-    g.drawString(Math.round(m.heading),M,y,true);
+    g.drawString(Math.round(360-m.heading),M,y,true);
   }
 
 
