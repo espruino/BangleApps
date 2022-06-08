@@ -16,6 +16,7 @@ var drawTimeout;
 function queueDraw() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function () {
+        drawTimeout = undefined;
         draw();
     }, 60300 - (Date.now() % 60000)); // We aim for 300ms into the next minute to ensure we make it!
 }
