@@ -5,7 +5,7 @@
 	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 	var settings = Object.assign({
-		has_dst: true,
+		has_dst: false,
 		show_icon: true,
 		tz: 0,
 		dst_size: 1,

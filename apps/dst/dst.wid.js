@@ -38,33 +38,37 @@
 		// Now - the GMT of the time of day the change happens
 		ans = (ans * 86400) + (data.at - other_offset) * 3600;
 		// NB we set the time of the change to 999ms *before* the time it's technically due to happen
-console.log("DST change second : " + ans);
+// console.log("DST change second : " + ans);
 		return (ans * 1000) - 999;
 	}
 	
 	function updateNextDstChange(settings) {
-		var now = new Date();
-		var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
-		var end = dstChangeTime(now.getFullYear(), settings.tz + settings.dst_size, settings.dst_end);
-		// Since the time of the change is 999ms before the technical time, we add 1000ms to the "current" time. Helps with race conditions...
-		if (start < now.getTime() + 1000) {
-			if (end < now.getTime() + 1000) {
-				// Both changes have happened for this year
-				if (start < end) {
-					// The start of DST is earlier than the end, so next change is a start of DST
-					next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
+		if (settings.has_dst) {
+			var now = new Date();
+			var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
+			var end = dstChangeTime(now.getFullYear(), settings.tz + settings.dst_size, settings.dst_end);
+			// Since the time of the change is 999ms before the technical time, we add 1000ms to the "current" time. Helps with race conditions...
+			if (start < now.getTime() + 1000) {
+				if (end < now.getTime() + 1000) {
+					// Both changes have happened for this year
+					if (start < end) {
+						// The start of DST is earlier than the end, so next change is a start of DST
+						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
+					} else {
+						// The end of DST is earlier than the start, so the next change is an end of DST
+						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
+					}
 				} else {
-					// The end of DST is earlier than the start, so the next change is an end of DST
-					next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
+					next_dst_change = { millis: end, offset: settings.tz, is_start: false };
 				}
 			} else {
-				next_dst_change = { millis: end, offset: settings.tz, is_start: false };
+				next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
 			}
+			next_dst_change.show_icon = settings.show_icon;
+// console.log("Next DST change : " + JSON.stringify(next_dst_change));
 		} else {
-			next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
+			next_dst_change = undefined;
 		}
-		next_dst_change.show_icon = settings.show_icon;
-console.log("Next DST change : " + JSON.stringify(next_dst_change));
 	}
 
 	// Update the cached information we keep
@@ -92,7 +96,7 @@ console.log("Next DST change : " + JSON.stringify(next_dst_change));
 	}
 	
 	function draw() {
-console.log("draw()");
+// console.log("draw()");
 		if (next_dst_change) {
 			if ((next_dst_change.is_start) || (!next_dst_change.show_icon)) {
 				clear();
@@ -115,7 +119,7 @@ console.log("draw()");
 	}
 
     function checkForDSTChange() {
-console.log("Checking for DST change");
+// console.log("Checking for DST change");
 		if (next_dst_change) {
 			if (getTime() > next_dst_change.millis) {
 				var dstSettings = require("Storage").readJSON("dst.json");
@@ -146,7 +150,7 @@ console.log("Checking for DST change");
 		}
 	}
 
-console.log("Registering DST widget");
+// console.log("Registering DST widget");
 
 	WIDGETS["dst"] = {
 		area: "tl",
