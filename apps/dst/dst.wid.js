@@ -144,9 +144,9 @@ console.log("Checking for DST change");
 
 console.log("Registering DST widget");
 
-	WIDGETS["DST"] = {
+	WIDGETS["dst"] = {
 		area: "tl",
-		width: 24,
+		width: 0,
 		draw: draw
 	};		
 
