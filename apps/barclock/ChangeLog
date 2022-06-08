@@ -11,3 +11,4 @@
 0.11: Use ClockFace.is12Hour
 0.12: Add settings to hide date,widgets
 0.13: Add font setting
+0.14: Use ClockFace_menu.addItems
