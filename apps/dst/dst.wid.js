@@ -39,6 +39,20 @@
 		return ans * 1000;
 	}
 	
+	function setCurrentEffectiveTimezone(tz) {
+		var settings = require("Storage").readJSON("settings.json");
+		if (settings) {
+			if (settings.timezone != tz) {
+				//
+				// NB  I MAY NEED TO CALL reset() IN ORDER THAT THE NEW "TIMEZONE" TAKE EFFECT
+				// ===========================================================================
+				//
+				settings.timezone = tz;
+				require("Storage").writeJSON("settings.json");
+			}
+		}
+	}
+	
 	function updateNextDstChange(settings) {
 		if (settings.has_dst) {
 			var now = new Date();
@@ -50,15 +64,19 @@
 					if (start < end) {
 						// The start of DST is earlier than the end, so next change is a start of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
+						setEffectiveTimezone(settings.tz);
 					} else {
 						// The end of DST is earlier than the start, so the next change is an end of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
+						setEffectiveTimezone(settings.tz + settings.dst_size);
 					}
 				} else {
 					next_dst_change = { millis: end, offset: settings.tz, is_start: false };
+					setEffectiveTimezone(settings.tz + settings.dst_size);
 				}
 			} else {
 				next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
+				setEffectiveTimezone(settings.tz);
 			}
 			next_dst_change.show_icon = settings.show_icon;
 // console.log("Next DST change : " + JSON.stringify(next_dst_change));
@@ -117,21 +135,17 @@
     function checkForDSTChange() {
 // console.log("Checking for DST change");
 		if (next_dst_change) {
+			rescheduleCheckForDSTChange();
 			if (getTime() > next_dst_change.millis) {
 				var dstSettings = require("Storage").readJSON("dst.json");
 				if (dstSettings) {
-					var settings = require("Storage").readJSON("settings.json");
-					if (settings) {
-						settings.timezone = next_dst_change.offset;
-						require("Storage").writeJSON("settings.json");
-					}
 					updateNextDstChange(dstSettings);
+					setEffectiveTimezone(next_dst_change.offset);
 				} else {
 					next_dst_change = undefined;
 				}
 				draw();
 			}
-			rescheduleCheckForDSTChange();
 		}
 	}
 	
