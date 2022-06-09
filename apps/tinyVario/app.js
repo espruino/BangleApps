@@ -5,7 +5,7 @@ require("Font8x16").add(Graphics);
 
 var intTime=10,pressureInterval=100;
 var altH = [];
-var fAlt=0;
+var fAlt=0, fAlt2=0;
 var roc=0,rocAvg=0;
 var gs;
 var lastPressure = Date.now();
@@ -16,6 +16,7 @@ var takeoffTime, flyingTime;
 Bangle.on('pressure', function(e) {
   if ((fAlt)==0) fAlt=e.altitude;
   fAlt=fAlt+(e.altitude-fAlt)*0.1;
+  fAlt2=fAlt2+(e.altitude-fAlt2)*0.09093;
 });
 
 Bangle.on('GPS', function(fix) {
@@ -47,7 +48,8 @@ setInterval(function() {
   
   if (altH.length==intTime*1000/pressureInterval) {
     rocAvg=(altH[altH.length-1]-altH[0])/intTime;
-    roc=(altH[altH.length-1]-altH[altH.length-(1000/pressureInterval)]);
+    //roc=(altH[altH.length-1]-altH[altH.length-(1000/pressureInterval)]);
+    roc=(fAlt-fAlt2)*(1000/pressureInterval);
   }
 
   var timeStr = require("locale").time(Date(),1);
@@ -60,8 +62,8 @@ setInterval(function() {
   y+=16*3;
   g.drawLine(24,y-2,g.getWidth(),y-2);
   //draw rate of climb
-  if (roc>0.1) g.setColor(0,1,0);
-  if (roc<-1) g.setColor(1,0,0);
+  if (rocAvg>0.1) g.setColor(0,1,0);
+  if (rocAvg<-1) g.setColor(1,0,0);
   g.setFont("8x16",3).setFontAlign(1,-1).drawString(rocAvg.toFixed(1), g.getWidth()-20, y);
   g.setColor(1,1,1);
   g.setFont("8x16",2).setFontAlign(-1,-1).drawString("m", g.getWidth()-20, y);
