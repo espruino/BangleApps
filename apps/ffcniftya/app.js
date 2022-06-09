@@ -33,8 +33,6 @@ const clock = new ClockFace({
     this.scale = g.getWidth() / this.viewport.width;
     this.centerTimeScaleX = this.center.x + 32 * this.scale;
     this.centerDatesScaleX = this.center.x + 40 * this.scale;
-
-    this.showWeekNum = Object.assign({ showWeekNum: true }, require("Storage").readJSON("ffcniftya.json", true))["showWeekNum"];
   },
   draw: function (date) {
     const hour = date.getHours() - (this.is12Hour && date.getHours() > 12 ? 12 : 0);
@@ -55,6 +53,7 @@ const clock = new ClockFace({
     if (this.showWeekNum) g.drawString(format(ISO8601_week_no(date)), this.centerDatesScaleX, this.center.y + 15 * this.scale);
     g.drawString(monthName, this.centerDatesScaleX, this.center.y + 48 * this.scale);
     g.drawString(dayName, this.centerDatesScaleX, this.center.y + 66 * this.scale);
-  }
+  },
+  settingsFile: "ffcniftya.json"
 });
 clock.start();
