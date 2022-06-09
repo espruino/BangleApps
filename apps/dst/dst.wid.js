@@ -40,7 +40,7 @@
 	}
 	
 	function setCurrentEffectiveTimezone(tz) {
-		var settings = require("Storage").readJSON("settings.json");
+		var settings = require("Storage").readJSON("setting.json");
 		if (settings) {
 			if (settings.timezone != tz) {
 				//
@@ -48,7 +48,7 @@
 				// ===========================================================================
 				//
 				settings.timezone = tz;
-				require("Storage").writeJSON("settings.json");
+				require("Storage").writeJSON("setting.json", settings);
 			}
 		}
 	}
