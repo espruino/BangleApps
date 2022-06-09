@@ -10,18 +10,18 @@
 		tz: 0,
 		dst_size: 1,
 		dst_start: {
-			day_offset: 0,
 			dow_number: 4,	// "1st", "2nd", "3rd", "4th", "last"
 			dow: 0,			// "Sun", "Mon", ...
 			month: 2,
-			at: 2
+			day_offset: 0,
+			at: 1
 		},
 		dst_end: {
-			day_offset: 0,
 			dow_number: 4,
 			dow: 0,
 			month: 9,
-			at: 3
+			day_offset: 0,
+			at: 2
 		}
 	}, require("Storage").readJSON("dst.json", true) || {});
 	
