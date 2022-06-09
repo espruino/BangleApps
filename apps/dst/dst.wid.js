@@ -32,14 +32,11 @@
 		} else {
 			ans += 7 * data.dow_number + (14 + data.dow - ((ans + 4) % 7)) % 7;
 		}
-		if (data.day_offset) {
-			ans -= 7 - ((7 + data.day_offset - data.dow) % 7);
-		}
+		ans -= data.day_offset;
 		// Now - the GMT of the time of day the change happens
 		ans = (ans * 86400) + (data.at - other_offset) * 3600;
-		// NB we set the time of the change to 999ms *before* the time it's technically due to happen
 // console.log("DST change second : " + ans);
-		return (ans * 1000) - 999;
+		return ans * 1000;
 	}
 	
 	function updateNextDstChange(settings) {
@@ -47,9 +44,8 @@
 			var now = new Date();
 			var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
 			var end = dstChangeTime(now.getFullYear(), settings.tz + settings.dst_size, settings.dst_end);
-			// Since the time of the change is 999ms before the technical time, we add 1000ms to the "current" time. Helps with race conditions...
-			if (start < now.getTime() + 1000) {
-				if (end < now.getTime() + 1000) {
+			if (start <= now.getTime()) {
+				if (end <= now.getTime()) {
 					// Both changes have happened for this year
 					if (start < end) {
 						// The start of DST is earlier than the end, so next change is a start of DST

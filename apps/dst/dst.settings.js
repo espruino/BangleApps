@@ -10,7 +10,7 @@
 		tz: 0,
 		dst_size: 1,
 		dst_start: {
-			day_offset: 0,	// "on", "Fri before"
+			day_offset: 0,
 			dow_number: 4,	// "1st", "2nd", "3rd", "4th", "last"
 			dow: 0,			// "Sun", "Mon", ...
 			month: 2,
@@ -79,17 +79,7 @@
 				"Title": start ? "DST Start" : "DST End"
 			},
 			"< Back": () => E.showMenu(dstMenu),
-			"Change" : {
-				value: dst_start_end.day_offset,
-				format: v => (v == 0) ? "on" : dows[v-1] + " before",
-				min: 0,
-				max: 7,
-				onchange: v => {
-					dst_start_end.day_offset = v;
-					writeSubMenuSettings();
-				}
-			},
-			"the" : {
+			"The" : {
 				value: dst_start_end.dow_number,
 				format: v => ["1st","2nd","3rd","4th","last"][v],
 				min: 0,
@@ -116,6 +106,16 @@
 				max: 11,
 				onchange: v => {
 					dst_start_end.month = v;
+					writeSubMenuSettings();
+				}
+			},
+			"minus" : {
+				value: dst_start_end.day_offset,
+				format: v => v + ((v == 1) ? " day" : " days"),
+				min: 0,
+				max: 7,
+				onchange: v => {
+					dst_start_end.day_offset = v;
 					writeSubMenuSettings();
 				}
 			},
