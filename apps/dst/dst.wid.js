@@ -1,8 +1,16 @@
 (() => {
 
+	// We cache information in next_dst_change.
+	// next_dst_change = {millis: (the GMT millis since 1970 that the DST state next changes),
+	//                    offset: (the timezone we will be in when that state changes, in hours),
+	//                    is_start: (true if the change will be the start of DST, false if it will be the end),
+	//                    show_icon: (true if we should show our little "dst" icon in the widget area when DST is in effect)
+	//                   }
     var next_dst_change = undefined;
 	var check_timeout = undefined;
+	var dst_update_timeout = undefined;
 
+	// Calculates the number of days since 1970 of the given date
 	function dayNumber(y, m, d) {
 		var ans;
 		if (m < 2) {
@@ -33,12 +41,11 @@
 			ans += 7 * data.dow_number + (14 + data.dow - ((ans + 4) % 7)) % 7;
 		}
 		ans -= data.day_offset;
-		// Now - the GMT of the time of day the change happens
 		ans = (ans * 86400) + (data.at - other_offset) * 3600;
-// console.log("DST change second : " + ans);
 		return ans * 1000;
 	}
-	
+
+	// Set the effective timezone - may generate a mini reboot!
 	function setCurrentEffectiveTimezone(tz) {
 		var storage = require("Storage");
 		var settings = storage.readJSON("setting.json");
@@ -51,10 +58,12 @@
 			}
 		}
 	}
-	
-	function updateNextDstChange(settings) {
+
+	// Update the values held in next_dst_change.
+	// now is the current time
+	// settings is the contents of the dst.json
+	function updateNextDstChange(now, settings) {
 		if (settings.has_dst) {
-			var now = new Date();
 			var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
 			var end = dstChangeTime(now.getFullYear(), settings.tz + settings.dst_size, settings.dst_end);
 			if (start <= now.getTime()) {
@@ -78,38 +87,39 @@
 				setEffectiveTimezone(settings.tz);
 			}
 			next_dst_change.show_icon = settings.show_icon;
-// console.log("Next DST change : " + JSON.stringify(next_dst_change));
 		} else {
 			next_dst_change = undefined;
 		}
 	}
 
-	// Update the cached information we keep
+	// Update the cached information we keep in next_dst_change
 	function doUpdate() {
 		var settings = require("Storage").readJSON("dst.json");
+		var now = new Date();
 		if (settings) {
-			var now = new Date();
-			updateNextDstChange(settings);
+			updateNextDstChange(now, settings);
+			rescheduleCheckForDSTChange(now);
 		} else {
 			next_dst_change = undefined;
 		}
-		rescheduleCheckForDSTChange();
 	}
-	
+
+	// Update everything!
 	function update() {
 		doUpdate();
 		draw();
 	}
-	
+
+	// Called by draw() when we are not in DST
 	function clear() {
 		if (this.width) {
 			this.width = 0;
 			Bangle.drawWidgets();
 		}
 	}
-	
+
+	// draw, or erase, our little "dst" icon in the widgets area
 	function draw() {
-// console.log("draw()");
 		if (next_dst_change) {
 			if ((next_dst_change.is_start) || (!next_dst_change.show_icon)) {
 				clear();
@@ -131,42 +141,57 @@
 		}
 	}
 
+	// Called periodically to check to see if we have entered / exited DST
     function checkForDSTChange() {
-// console.log("Checking for DST change");
+		var now = new Date();
 		if (next_dst_change) {
-			rescheduleCheckForDSTChange();
-			if (getTime() > next_dst_change.millis) {
+			if (now.getTime() >= next_dst_change.millis) {
 				var dstSettings = require("Storage").readJSON("dst.json");
 				if (dstSettings) {
-					updateNextDstChange(dstSettings);
+					updateNextDstChange(now, dstSettings);
+					rescheduleCheckForDSTChange(now);
 					setEffectiveTimezone(next_dst_change.offset);
 				} else {
 					next_dst_change = undefined;
 				}
 				draw();
+			} else {
+				rescheduleCheckForDSTChange(now);
 			}
 		}
 	}
-	
-	function rescheduleCheckForDSTChange() {
+
+	// Reschedule our check for entering / exiting DST
+	function rescheduleCheckForDSTChange(now) {
 		if (check_timeout) clearTimeout(check_timeout);
 		check_timeout = undefined;
 		if (next_dst_change) {
 			check_timeout = setTimeout( function() {
 				check_timeout = undefined;
 				checkForDSTChange();
-			}, (next_dst_change.millis - getTime()) % 14400000 + 500); // Check every 4 hours.
+			}, (next_dst_change.millis - now.getTime()) % 14400000); // Check every 4 hours.
 		}
 	}
 
-// console.log("Registering DST widget");
+	// Called by our settings.js -- when the DST settings change, we want to ensure that the
+	// information we cache is kept up-to-date, and that our effective timezone is correct
+	function scheduleUpdate() {
+		if (dst_update_timeout) clearTimeout(dst_update_timeout);
+		dst_update_timeout = setTimeout( function() {
+			dst_update_timeout = undefined;
+			update();
+		}, 60000);
+	}
 
+	// Register ourselves
 	WIDGETS["dst"] = {
 		area: "tl",
 		width: 0,
-		draw: draw
-	};		
+		draw: draw,
+		dstRulesUpdating: scheduleUpdate
+	};
 
+	// Update everything but the widget icon in the widget area
 	doUpdate();
 
 })();
