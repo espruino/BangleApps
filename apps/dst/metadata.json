@@ -7,8 +7,8 @@
   "tags": "widget,tool",
   "supports" : ["BANGLEJS2"],
   "storage": [
-    {"name":"dst.wid.js","url":"dst.wid.js"}
-    {"name":"dst.settings.js","url":"dst.settings.js"},
+    {"name":"dst.wid.js","url":"dst.wid.js"},
+    {"name":"dst.settings.js","url":"dst.settings.js"}
   ],
   "data": [{"name":"dst.json"}]
 }
