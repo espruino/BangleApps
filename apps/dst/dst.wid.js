@@ -40,15 +40,14 @@
 	}
 	
 	function setCurrentEffectiveTimezone(tz) {
-		var settings = require("Storage").readJSON("setting.json");
+		var storage = require("Storage");
+		var settings = storage.readJSON("setting.json");
 		if (settings) {
 			if (settings.timezone != tz) {
-				//
-				// NB  I MAY NEED TO CALL reset() IN ORDER THAT THE NEW "TIMEZONE" TAKE EFFECT
-				// ===========================================================================
-				//
 				settings.timezone = tz;
-				require("Storage").writeJSON("setting.json", settings);
+				storage.writeJSON("setting.json", settings);
+				eval(storage.read("bootupdate.js")); // re-calculate the hash of the config files
+				load(".bootcde"); // re-boot into the clock
 			}
 		}
 	}
