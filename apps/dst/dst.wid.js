@@ -20,7 +20,7 @@
 		ans = (y/100)|0;
 		ans = 365*y + (y>>2) - ans + (ans>>2) + 30*m + (((3*m+6)/5)|0) + d - 719531;
 		return ans;
-	};
+	}
 	
 	// y is the year
 	// other_offset is the timezone offset (in hours) of the other change (e.g. the offset in force before this change)
