@@ -8,7 +8,7 @@
   "allow_emulator":true, 
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme":"README.md",
-  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_red.png" }} ],
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_red.png" } ],
   "storage": [
     {"name":"wristlight.app.js","url":"app.js"},
     {"name":"wristlight.img","url":"wristlight-icon.js","evaluate":true}
