@@ -4,6 +4,7 @@
   "icon": "pongclock.png",
   "version":"0.01",
   "description": "A Pong playing clock",
+  "type": "clock",
   "tags": "",
   "allow_emulator":true, 
   "supports": ["BANGLEJS", "BANGLEJS2"],
