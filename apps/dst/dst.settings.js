@@ -129,6 +129,7 @@
 				format: v => hoursToString(v),
 				min: 0,
 				max: 23,
+				// step: 0.05, // every 3 minutes - FOR DEVELOPMENT PURPOSES
 				onchange: v => {
 					dst_start_end.at = v;
 					writeSubMenuSettings();

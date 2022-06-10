@@ -72,19 +72,19 @@
 					if (start < end) {
 						// The start of DST is earlier than the end, so next change is a start of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
-						setEffectiveTimezone(settings.tz);
+						setCurrentEffectiveTimezone(settings.tz);
 					} else {
 						// The end of DST is earlier than the start, so the next change is an end of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
-						setEffectiveTimezone(settings.tz + settings.dst_size);
+						setCurrentEffectiveTimezone(settings.tz + settings.dst_size);
 					}
 				} else {
 					next_dst_change = { millis: end, offset: settings.tz, is_start: false };
-					setEffectiveTimezone(settings.tz + settings.dst_size);
+					setCurrentEffectiveTimezone(settings.tz + settings.dst_size);
 				}
 			} else {
 				next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
-				setEffectiveTimezone(settings.tz);
+				setCurrentEffectiveTimezone(settings.tz);
 			}
 			next_dst_change.show_icon = settings.show_icon;
 		} else {
@@ -150,7 +150,7 @@
 				if (dstSettings) {
 					updateNextDstChange(now, dstSettings);
 					rescheduleCheckForDSTChange(now);
-					setEffectiveTimezone(next_dst_change.offset);
+					setCurrentEffectiveTimezone(next_dst_change.offset);
 				} else {
 					next_dst_change = undefined;
 				}
