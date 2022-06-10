@@ -12,13 +12,12 @@ Graphics.prototype.setFontOpenSans = function(scale) {
 
 var drawTimeout;
 
-// schedule a draw for the next minute
-function queueDraw() {
+function queueDraw(millis_now) {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function () {
         drawTimeout = undefined;
         draw();
-    }, 60300 - (Date.now() % 60000)); // We aim for 300ms into the next minute to ensure we make it!
+    }, 60000 - (millis_now % 60000));
 }
 
 function draw() {
@@ -70,7 +69,7 @@ function draw() {
 
     // widget redraw
     Bangle.drawWidgets();
-    queueDraw();
+    queueDraw(date.getTime());
 }
 
 Bangle.on('lcdPower', on => {
