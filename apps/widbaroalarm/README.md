@@ -19,7 +19,7 @@ Get a notification when the pressure reaches defined thresholds.
 * Pause delay: Same as Dismiss delay but longer (usefull for meetings and such). From 30 to 240 min
 
 ## Widget
-The widget shows two rows: pressure value of last measurement and pressure average of the the last three hours.
+The widget shows the last median pressure value
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))

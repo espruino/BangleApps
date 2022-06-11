@@ -37,8 +37,12 @@
 
     E.showPrompt(body, {
       title: "Pressure alarm",
-      buttons: { "Ok": 1, "Dismiss": 2, "Pause": 3 }
-    }).then(function (v) {
+      buttons: {
+        "Ok": 1,
+        "Dismiss": 2,
+        "Pause": 3
+      }
+    }).then(function(v) {
       const tsNow = Math.round(Date.now() / 1000); // seconds
 
       if (v == 1) {
@@ -176,45 +180,38 @@
   }
 
 
-
-  function baroHandler(data) {
-    if (data) {
-      const pressure = Math.round(data.pressure);
-      if (pressure == undefined || pressure <= 0) return;
-      currentPressures.push(pressure);
-    }
-  }
-
   /*
    turn on barometer power
-   take `numberOfMeasurements` measurements with a delay of 1000ms each
+   take multiple measurements
    sort the results
    take the middle one (median)
    turn off barometer power
   */
   function check() {
+    const MEDIANLENGTH = 20;
     Bangle.setBarometerPower(true, "widbaroalarm");
-    setTimeout(function() {
-      currentPressures = [];
+    Bangle.on('pressure', function(e) {
+      while (currentPressures.length > MEDIANLENGTH) currentPressures.pop();
+      currentPressures.unshift(e.pressure);
+      median = currentPressures.slice().sort();
 
-      const numberOfMeasurements = 7;
-
-      for (let i = 0; i < numberOfMeasurements; i++) {
-        setTimeout(function() {
-          Bangle.getPressure().then(baroHandler);
-        }, i * 1000);
+      if (median.length > 10) {
+        var mid = median.length >> 1;
+        medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
+        if (medianPressure > 0) {
+            turnOff();
+            checkForAlarms(medianPressure);
+        }
       }
+    });
 
-      setTimeout(function() {
-        Bangle.setBarometerPower(false, "widbaroalarm");
+    setTimeout(function() {
+      turnOff();
+    }, 10000);
+  }
 
-        currentPressures.sort();
-
-        // take median value
-        medianPressure = currentPressures[Math.round(numberOfMeasurements / 2) + 1];
-        checkForAlarms(medianPressure);
-      }, numberOfMeasurements * 1000 + 500);
-    }, 500);
+  function turnOff() {
+    Bangle.setBarometerPower(false, "widbaroalarm");
   }
 
   function reload() {
@@ -222,8 +219,8 @@
   }
 
   function draw() {
-    if (global.WIDGETS != undefined && typeof WIDGETS === "object") {
-      WIDGETS["baroalarm"] = {
+    if (global.WIDGETS != undefined && typeof global.WIDGETS === "object") {
+      global.WIDGETS["baroalarm"] = {
         width: setting("show") ? 24 : 0,
         reload: reload,
         area: "tr",
@@ -235,18 +232,13 @@
     if (setting("show") && medianPressure != undefined) {
       g.setFont("6x8", 1).setFontAlign(1, 0);
       g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
-      if (threeHourAvrPressure != undefined && threeHourAvrPressure > 0) {
-        g.drawString(Math.round(threeHourAvrPressure), this.x + 24, this.y + 6 + 10);
-      }
     }
   }
 
-  // Let's delay the first check a bit
-  setTimeout(function() {
-    check();
-    if (interval > 0) {
-      setInterval(check, interval * 60000);
-    }
-  }, 1000);
+  check();
+  if (interval > 0) {
+    setInterval(check, interval * 60000);
+  }
+  draw();
 
 })();
