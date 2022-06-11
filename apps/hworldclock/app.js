@@ -129,6 +129,7 @@ function drawSeconds() {
 	g.setColor("#22ff05");
 	//g.setFont(font, primaryTimeFontSize-3);
 	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
+	queueDraw();
 }
 
 function draw() {
@@ -238,7 +239,7 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 updatePos();
-setInterval(drawSeconds, 1E3);
+setInterval(drawSeconds, 1E3/2);
 
 
 
