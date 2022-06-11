@@ -6,6 +6,7 @@ if (Bangle.SCHED) {
 }
 
 function showAlarm(alarm) {
+  const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
 
   let message = "";
@@ -36,19 +37,25 @@ function showAlarm(alarm) {
       }
       alarm.t += settings.defaultSnoozeMillis;
     } else {
-      if (!alarm.timer) {
-        alarm.last = new Date().getDate();
-      }
-      if (alarm.ot !== undefined) {
-        alarm.t = alarm.ot;
-        delete alarm.ot;
-      }
-      if (!alarm.rp) {
-        alarm.on = false;
+      let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
+      if (del) {
+        alarms.splice(alarmIndex, 1);
+      } else {
+        if (!alarm.timer) {
+          alarm.last = new Date().getDate();
+        }
+        if (alarm.ot !== undefined) {
+          alarm.t = alarm.ot;
+          delete alarm.ot;
+        }
+        if (!alarm.rp) {
+          alarm.on = false;
+        }
       }
     }
 
-    // alarm is still a member of 'alarms', so writing to array writes changes back directly
+    // The updated alarm is still a member of 'alarms'
+    // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
     load();
   });
@@ -75,7 +82,6 @@ function showAlarm(alarm) {
   buzz();
 }
 
-// Check for alarms
 let alarms = require("sched").getAlarms();
 let active = require("sched").getActiveAlarms(alarms);
 if (active.length) {
