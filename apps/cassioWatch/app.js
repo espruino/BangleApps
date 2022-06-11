@@ -1,6 +1,10 @@
+const storage = require('Storage');
+const locale = require('locale');
+
 require("Font6x12").add(Graphics);
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
+
 
 let ClockInterval;
 let RocketInterval;
@@ -43,7 +47,7 @@ function getRocketSequences() {
 
 let rocket_sequence = 1;
 
-let settings = require('Storage').readJSON("cassioWatch.settings.json", true) || {};
+let settings = storage.readJSON("cassioWatch.settings.json", true) || {};
 let rocketSpeed = settings.rocketSpeed || 700;
 delete settings;
 
@@ -82,6 +86,43 @@ function DrawRocket() {
   if (rocket_sequence > 8) rocket_sequence = 1;
 }
 
+function getTemperature(){
+  try {
+    var weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
+    return Math.round(weather.temp-273.15);
+
+  } catch(ex) {
+    print(ex)
+    return "?"
+  }
+}
+
+function getSteps() {
+  var steps = 0;
+  try{
+      if (WIDGETS.wpedom !== undefined) {
+          steps = WIDGETS.wpedom.getSteps();
+      } else if (WIDGETS.activepedom !== undefined) {
+          steps = WIDGETS.activepedom.getSteps();
+      } else {
+        steps = Bangle.getHealthStatus("day").steps;
+      }
+  } catch(ex) {
+      // In case we failed, we can only show 0 steps.
+      return "? k";
+  }
+
+  // Show always 2 digits. E.g. 1.5k if < 10000 otherwise 12k
+  if(steps > 10000){
+    steps = Math.round(steps/1000);
+  } else {
+    steps = Math.round(steps/100) / 10;
+  }
+  return steps + "k";
+}
+
+
 function DrawScene() {
   g.reset();
   g.clear();
@@ -94,17 +135,22 @@ function DrawScene() {
   g.drawString("Launching Process", 30, 20);
   g.setFont("8x12");
   g.drawString("ACTIVATE", 40, 35);
+
+  g.setFontAlign(0,-1);
   g.setFont("8x12", 2);
-  g.drawString("30", 142, 132);
-  g.drawString("55", 95, 98);
-  g.setFont("8x12", 1);
-  g.drawString(Bangle.getStepCount(), 143, 104);
+  g.drawString(getTemperature(), 155, 132);
+  g.drawString(Math.round(Bangle.getHealthStatus("last").bpm), 109, 98);
+  g.drawString(getSteps(), 158, 98);
+
+  g.setFontAlign(-1,-1);
   ClockInterval = setInterval(DrawClock, 30000);
   DrawClock();
   RocketInterval = setInterval(DrawRocket, rocketSpeed);
   DrawRocket();
   BatteryInterval = setInterval(DrawBattery, 5 * 60000);
   DrawBattery();
+
+  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
 Bangle.on("lcdPower", (on) => {
@@ -122,6 +168,11 @@ Bangle.on("lock", (locked) => {
     DrawScene();
   }
 });
+
+
+// Load widgets, but don't show them
+Bangle.loadWidgets();
+
 
 g.reset();
 g.clear();
