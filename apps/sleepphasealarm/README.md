@@ -12,7 +12,7 @@ The display shows:
 ## Settings
 
 * **Keep alarm enabled**
-  - Yes: (default) Alert will stay enabled, e.g. for an alarm at 7:00 the clock will buzz at 6:45 (the calculated time from the ESS algorithm) and again at 7:00.
+  - Yes: (default) Alert will stay enabled, e.g. for an alarm at 7:00 the clock will buzz at the calculated time from the ESS algorithm (for example 6:45) and again at 7:00.
   - No: No action at configured alarm time from scheduler.
 * **Run before alarm**
   - disabled: (default) The ESS algorithm starts immediately when the application starts.

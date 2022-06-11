@@ -9,3 +9,5 @@
 0.08: Update to new time_utils module
 0.09: Vibrate with configured pattern
       Add setting to defer start of algorithm
+      Add setting to disable scheduler alarm
+
