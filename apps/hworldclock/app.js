@@ -163,7 +163,7 @@ function draw() {
 	//g.setFont(font, primaryTimeFontSize);
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
 	g.setColor("#22ff05");
-	g.drawString(`${doublenum(hours)}:${minutes}`, xyCenter-10, yposTime, true);
+	g.drawString(`${hours}:${minutes}`, xyCenter-10, yposTime, true);
 	
 	// am / PM ?
 	if (_12hour){
