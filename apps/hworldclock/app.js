@@ -246,7 +246,6 @@ setInterval(drawSeconds, 1E3);
 Bangle.on('lcdPower',on=>{
 	if (on) {
 		draw(); // draw immediately, queue redraw
-		drawSeconds(); // draw immediately, queue redraw
 		setInterval(updatePos, 60*5E3);	// refesh every 5 mins
 		setInterval(drawSeconds, 1E3);
 		updatePos();
@@ -262,5 +261,4 @@ Bangle.on('lcdPower',on=>{
 });
 
 // draw now
-drawSeconds();
 draw();
