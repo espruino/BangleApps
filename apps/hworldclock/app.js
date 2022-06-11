@@ -129,6 +129,7 @@ function drawSeconds() {
 	g.setColor("#22ff05");
 	//g.setFont(font, primaryTimeFontSize-3);
 	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
+	queueDraw();
 }
 
 function draw() {
@@ -238,7 +239,7 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 updatePos();
-setInterval(drawSeconds, 1E3);
+setInterval(drawSeconds, 1E3/2);
 
 
 
@@ -246,7 +247,6 @@ setInterval(drawSeconds, 1E3);
 Bangle.on('lcdPower',on=>{
 	if (on) {
 		draw(); // draw immediately, queue redraw
-		drawSeconds(); // draw immediately, queue redraw
 		setInterval(updatePos, 60*5E3);	// refesh every 5 mins
 		setInterval(drawSeconds, 1E3);
 		updatePos();
@@ -262,5 +262,4 @@ Bangle.on('lcdPower',on=>{
 });
 
 // draw now
-drawSeconds();
 draw();
