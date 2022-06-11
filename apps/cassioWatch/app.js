@@ -1,14 +1,8 @@
 const storage = require('Storage');
-const locale = require('locale');
 
 require("Font6x12").add(Graphics);
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
-
-
-let ClockInterval;
-let RocketInterval;
-let BatteryInterval;
 
 function bigThenSmall(big, small, x, y) {
   g.setFont("7x11Numeric7Seg", 2);
@@ -16,16 +10,6 @@ function bigThenSmall(big, small, x, y) {
   x += g.stringWidth(big);
   g.setFont("8x12");
   g.drawString(small, x, y);
-}
-
-function ClearIntervals(inoreclock) {
-  if (RocketInterval) clearInterval(RocketInterval);
-  if (BatteryInterval) clearInterval(BatteryInterval);
-  RocketInterval = undefined;
-  BatteryInterval = undefined;
-  if (inoreclock) return;
-  if (ClockInterval) clearInterval(ClockInterval);
-  ClockInterval = undefined;
 }
 
 function getBackgroundImage() {
@@ -45,15 +29,31 @@ function getRocketSequences() {
   };
 }
 
-let rocket_sequence = 1;
-
+let rocketSequence = 1;
 let settings = storage.readJSON("cassioWatch.settings.json", true) || {};
 let rocketSpeed = settings.rocketSpeed || 700;
 delete settings;
 
-g.clear();
+// schedule a draw for the next minute
+let rocketInterval;
+var drawTimeout;
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
 
-function DrawClock() {
+
+function clearIntervals() {
+  if (rocketInterval) clearInterval(rocketInterval);
+  rocketInterval = undefined;
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+}
+
+function drawClock() {
   g.setFont("7x11Numeric7Seg", 3);
   g.clearRect(80, 57, 170, 96);
   g.setColor(0, 255, 255);
@@ -70,20 +70,20 @@ function DrawClock() {
   g.drawString(time < 10 ? "0" + time : time, 78, 137);
 }
 
-function DrawBattery() {
+function drawBattery() {
   bigThenSmall(E.getBattery(), "%", 135, 21);
 }
 
-function DrawRocket() {
+function drawRocket() {
   let Rocket = getRocketSequences();
   g.clearRect(5, 62, 63, 115);
   g.setColor(0, 255, 255);
   g.drawRect(5, 62, 63, 115);
   g.fillRect(5, 62, 63, 115);
-  g.drawImage(Rocket[rocket_sequence], 5, 65, { scale: 0.7 });
+  g.drawImage(Rocket[rocketSequence], 5, 65, { scale: 0.7 });
   g.setColor(0, 0, 0);
-  rocket_sequence = rocket_sequence + 1;
-  if (rocket_sequence > 8) rocket_sequence = 1;
+  rocketSequence = rocketSequence + 1;
+  if(rocketSequence > 8) rocketSequence = 1;
 }
 
 function getTemperature(){
@@ -123,7 +123,9 @@ function getSteps() {
 }
 
 
-function DrawScene() {
+function draw() {
+  queueDraw();
+
   g.reset();
   g.clear();
   g.setColor(0, 255, 255);
@@ -143,42 +145,36 @@ function DrawScene() {
   g.drawString(getSteps(), 158, 98);
 
   g.setFontAlign(-1,-1);
-  ClockInterval = setInterval(DrawClock, 30000);
-  DrawClock();
-  RocketInterval = setInterval(DrawRocket, rocketSpeed);
-  DrawRocket();
-  BatteryInterval = setInterval(DrawBattery, 5 * 60000);
-  DrawBattery();
+  drawClock();
+  drawRocket();
+  rocketSequence -= 1;   // This avoids a "jump" in the animation
+  drawBattery();
 
   for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
 Bangle.on("lcdPower", (on) => {
-  if (!on) {
-    g.clear();
-    ClearIntervals(true);
+  if (on) {
+    draw();
+  } else {
+    clearIntervals();
   }
 });
 
+
 Bangle.on("lock", (locked) => {
-  if (locked) {
-    ClearIntervals(true);
-  } else {
-    ClearIntervals();
-    DrawScene();
+  clearIntervals();
+  draw();
+  if (!locked) {
+    rocketInterval = setInterval(drawRocket, rocketSpeed);
   }
 });
 
 
 // Load widgets, but don't show them
 Bangle.loadWidgets();
-
+Bangle.setUI("clock");
 
 g.reset();
 g.clear();
-Bangle.setUI("clock");
-DrawScene();
-
-if (Bangle.isLocked()) {
-  ClearIntervals(true);
-}
+draw();
