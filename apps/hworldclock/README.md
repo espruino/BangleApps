@@ -2,6 +2,7 @@
 
 In addition to the main clock and date in your current location, you can add up to three other locations. Great for travel or remote working.
 Additionally we show the sunset/sunrise and seconds for the current location and the day name is shown in your locale.
+If watch is locked, seconds get refreshed every 10 seconds.
 
 ![](hworldclock.png)
 

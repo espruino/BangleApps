@@ -1,3 +1,4 @@
 0.15: Initial release - be patient as this is the first try :)
 0.16: Fix timing
 0.17: Fix hours
+0.18: Code cleanup and major changes with seconds timing. New feature: if watch is locked, seconds get refreshed every 10 seconds.
