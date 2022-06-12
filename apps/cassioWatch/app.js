@@ -113,12 +113,7 @@ function getSteps() {
       return "? k";
   }
 
-  // Show always 2 digits. E.g. 1.5k if < 10000 otherwise 12k
-  if(steps > 10000){
-    steps = Math.round(steps/1000);
-  } else {
-    steps = Math.round(steps/100) / 10;
-  }
+  steps = Math.round(steps/1000);
   return steps + "k";
 }
 
