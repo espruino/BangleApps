@@ -2,13 +2,11 @@
     // load variable before defining functions cause it can trigger a ReferenceError
     const activityreminder = require("activityreminder");
     const activityreminder_settings = activityreminder.loadSettings();
-    let activityreminder_data = null;
-    if (activityreminder_settings.enabled) {
-        activityreminder_data = activityreminder.loadData();
-        if (activityreminder_data.firstLoad) {
-            activityreminder_data.firstLoad = false;
-            activityreminder.saveData(activityreminder_data);
-        }
+    let activityreminder_data = activityreminder.loadData();
+    
+    if (activityreminder_data.firstLoad) {
+        activityreminder_data.firstLoad = false;
+        activityreminder.saveData(activityreminder_data);
     }
 
     function run() {
@@ -42,9 +40,9 @@
 
     function isDuringAlertHours(h) {
         if (activityreminder_settings.startHour < activityreminder_settings.endHour) { // not passing through midnight
-            return (h >= activityreminder_settings.startHour && h < activityreminder_settings.endHour)
+            return (h >= activityreminder_settings.startHour && h < activityreminder_settings.endHour);
         } else { // passing through midnight
-            return (h >= activityreminder_settings.startHour || h < activityreminder_settings.endHour)
+            return (h >= activityreminder_settings.startHour || h < activityreminder_settings.endHour);
         }
     }
 
