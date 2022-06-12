@@ -277,11 +277,11 @@ if (!Bangle.isLocked())  { // Initial state
 		updatePos();
   }else{
 		secondsTimeout = 10 * 1000;	  
-	  	if (drawTimeout) clearTimeout(drawTimeout);
+		if (drawTimeout) clearTimeout(drawTimeout);
 		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
 		drawTimeoutSeconds = undefined;
-	  
+
 		if (PosInterval != 0) clearInterval(PosInterval);
 		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 		draw(); // draw immediately, queue redraw
@@ -333,13 +333,12 @@ Bangle.on('lock',on=>{
 		draw(); // draw immediately, queue redraw
 		updatePos();
   }else{  // locked
-	  
+
 		secondsTimeout = 10 * 1000;
-	  	if (drawTimeout) clearTimeout(drawTimeout);
+		if (drawTimeout) clearTimeout(drawTimeout);
 		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
 		drawTimeoutSeconds = undefined;
-	  
 
 		if (PosInterval != 0) clearInterval(PosInterval);
 		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
