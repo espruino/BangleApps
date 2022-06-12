@@ -49,9 +49,11 @@
         saveSetting(key, tsNow);
       }
       if (v == 2) {
+        // save timestamp of the future so that we do not warn again for the same event until then
         saveSetting(key, tsNow + 60 * setting('dismissDelayMin'));
       }
       if (v == 3) {
+        // save timestamp of the future so that we do not warn again for the same event until then
         saveSetting(key, tsNow + 60 * setting('pauseDelayMin'));
       }
       load();
@@ -196,8 +198,8 @@
         var mid = median.length >> 1;
         medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
         if (medianPressure > 0) {
-            turnOff();
-            checkForAlarms(medianPressure);
+          turnOff();
+          checkForAlarms(medianPressure);
         }
       }
     });
@@ -208,7 +210,8 @@
   }
 
   function turnOff() {
-    Bangle.setBarometerPower(false, "widbaroalarm");
+    if (Bangle.isBarometerOn())
+      Bangle.setBarometerPower(false, "widbaroalarm");
   }
 
   function reload() {
@@ -228,15 +231,16 @@
     if (setting("show")) {
       g.setFont("6x8", 1).setFontAlign(1, 0);
       if (medianPressure == undefined) {
-         check();
-         const x = this.x, y = this.y;
-         g.drawString("...", x + 24, y + 6);
-         setTimeout(function() {
-           g.setFont("6x8", 1).setFontAlign(1, 0);
-           g.drawString(Math.round(medianPressure), x + 24, y + 6);
-         }, 10000);
+        check();
+        const x = this.x,
+          y = this.y;
+        g.drawString("...", x + 24, y + 6);
+        setTimeout(function() {
+          g.setFont("6x8", 1).setFontAlign(1, 0);
+          g.drawString(Math.round(medianPressure), x + 24, y + 6);
+        }, 10000);
       } else {
-         g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
+        g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
       }
 
       if (threeHourAvrPressure != undefined && threeHourAvrPressure > 0) {
@@ -245,7 +249,6 @@
     }
   }
 
-  check();
   if (interval > 0) {
     setInterval(check, interval * 60000);
   }
