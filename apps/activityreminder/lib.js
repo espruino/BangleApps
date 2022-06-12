@@ -1,5 +1,3 @@
-const storage = require("Storage");
-
 exports.loadSettings = function () {
     return Object.assign({
         enabled: true,
@@ -10,15 +8,15 @@ exports.loadSettings = function () {
         pauseDelayMin: 120,
         minSteps: 50,
         tempThreshold: 27
-    }, storage.readJSON("activityreminder.s.json", true) || {});
+    }, require("Storage").readJSON("activityreminder.s.json", true) || {});
 };
 
 exports.writeSettings = function (settings) {
-    storage.writeJSON("activityreminder.s.json", settings);
+    require("Storage").writeJSON("activityreminder.s.json", settings);
 };
 
 exports.saveData = function (data) {
-    storage.writeJSON("activityreminder.data.json", data);
+    require("Storage").writeJSON("activityreminder.data.json", data);
 };
 
 exports.loadData = function () {
@@ -31,7 +29,7 @@ exports.loadData = function () {
         dismissDate: new Date(1970),
         pauseDate: new Date(1970),
     },
-    storage.readJSON("activityreminder.data.json") || {});
+    require("Storage").readJSON("activityreminder.data.json") || {});
 
     if(typeof(data.stepsDate) == "string")
         data.stepsDate = new Date(data.stepsDate);
