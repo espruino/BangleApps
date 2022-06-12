@@ -97,10 +97,13 @@ function drawApp() {
       layout.eta.label = "ETA: -"+ diffHour + ":" + diffMinutes.padStart(2, '0');
       layout.render();
     }
+
+    setTimeout(()=>{
+      drawTime();
+    }, 1000 - (Date.now() % 1000));
   }
 
   drawTime();
-  setInterval(drawTime, 500); // 2Hz
 }
 
 function buzz() {
