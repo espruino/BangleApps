@@ -1,9 +1,9 @@
 (function () {
-
+    // load variable before defining functions cause it can trigger a ReferenceError
     const activityreminder = require("activityreminder");
     const storage = require("Storage");
     const activityreminder_settings = activityreminder.loadSettings();
-    const activityreminder_data = activityreminder.loadData();
+    let activityreminder_data = activityreminder.loadData();
 
     function drawAlert() {
         E.showPrompt("Inactivity detected", {

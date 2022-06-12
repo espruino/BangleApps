@@ -1,7 +1,7 @@
 (function (back) {
     // Load settings
     const activityreminder = require("activityreminder");
-    const settings = activityreminder.loadSettings();
+    let settings = activityreminder.loadSettings();
 
     // Show the menu
     E.showMenu({

@@ -21,7 +21,7 @@ exports.saveData = function (data) {
 
 exports.loadData = function () {
     let health = Bangle.getHealthStatus("day");
-    const data = Object.assign({
+    let data = Object.assign({
         firstLoad: true,
         stepsDate: new Date(),
         stepsOnDate: health.steps,
