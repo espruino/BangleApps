@@ -227,11 +227,24 @@
         draw: draw
       };
     }
-
     g.reset();
-    if (setting("show") && medianPressure != undefined) {
+    if (setting("show")) {
       g.setFont("6x8", 1).setFontAlign(1, 0);
-      g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
+      if (medianPressure == undefined) {
+         check();
+         const x = this.x, y = this.y;
+         g.drawString("...", x + 24, y + 6);
+         setTimeout(function() {
+           g.setFont("6x8", 1).setFontAlign(1, 0);
+           g.drawString(Math.round(medianPressure), x + 24, y + 6);
+         }, 10000);
+      } else {
+         g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
+      }
+
+      if (threeHourAvrPressure != undefined && threeHourAvrPressure > 0) {
+        g.drawString(Math.round(threeHourAvrPressure), this.x + 24, this.y + 6 + 10);
+      }
     }
   }
 

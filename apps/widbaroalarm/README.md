@@ -16,10 +16,10 @@ Get a notification when the pressure reaches defined thresholds.
 * Show widget: Enable/disable widget visibility
 * Buzz on alarm: Enable/disable buzzer on alarm
 * Dismiss delay: Delay added before the next alert if the alert is dismissed. From 5 to 60 min
-* Pause delay: Same as Dismiss delay but longer (usefull for meetings and such). From 30 to 240 min
+* Pause delay: Same as Dismiss delay but longer (useful for meetings and such). From 30 to 240 min
 
 ## Widget
-The widget shows the last median pressure value
+The widget shows two rows: pressure value of last measurement and pressure average of the the last three hours.
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
