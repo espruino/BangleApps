@@ -2,6 +2,7 @@
   let medianPressure;
   let threeHourAvrPressure;
   let currentPressures = [];
+  let stop = false; // semaphore
 
   const LOG_FILE = "widbaroalarm.log.json";
   const SETTINGS_FILE = "widbaroalarm.json";
@@ -34,6 +35,7 @@
 
   function showAlarm(body, key) {
     if (body == undefined) return;
+    stop = true;
 
     E.showPrompt(body, {
       title: "Pressure alarm",
@@ -56,6 +58,7 @@
         // save timestamp of the future so that we do not warn again for the same event until then
         saveSetting(key, tsNow + 60 * setting('pauseDelayMin'));
       }
+      stop = false;
       load();
     });
 
@@ -64,7 +67,10 @@
       Bangle.buzz();
     }
 
-    setTimeout(load, 20000);
+    setTimeout(function() {
+      stop = false;
+      load();
+    }, 20000);
   }
 
 
@@ -191,6 +197,7 @@
    turn off barometer power
   */
   function check() {
+    if (stop) return;
     const MEDIANLENGTH = 20;
     Bangle.setBarometerPower(true, "widbaroalarm");
     Bangle.on('pressure', function(e) {
