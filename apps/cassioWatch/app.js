@@ -147,9 +147,9 @@ function draw() {
   g.setFontAlign(-1,-1);
   drawClock();
   drawRocket();
-  rocketSequence -= 1;   // This avoids a "jump" in the animation
   drawBattery();
 
+  // Hide widgets
   for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
