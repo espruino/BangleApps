@@ -171,11 +171,15 @@
     storage.writeJSON(LOG_FILE, history3);
 
     // calculate 3h average for widget
-    let sum = 0;
-    for (let i = 0; i < history3.length; i++) {
-      sum += history3[i]["p"];
+    if (history3.length > 0) {
+      let sum = 0;
+      for (let i = 0; i < history3.length; i++) {
+        sum += history3[i]["p"];
+      }
+      threeHourAvrPressure = sum / history3.length;
+    } else {
+      threeHourAvrPressure = undefined;
     }
-    threeHourAvrPressure = sum / history3.length;
   }
 
 
