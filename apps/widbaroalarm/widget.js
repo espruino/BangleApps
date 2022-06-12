@@ -103,8 +103,6 @@
       } else {
         saveSetting("lastLowWarningTs", 0);
       }
-    } else {
-      saveSetting("lastLowWarningTs", 0);
     }
 
     if (setting("highalarm")) {
@@ -117,8 +115,6 @@
       } else {
         saveSetting("lastHighWarningTs", 0);
       }
-    } else {
-      saveSetting("lastHighWarningTs", 0);
     }
 
     if (history3.length > 0 && !alreadyWarned) {
@@ -127,21 +123,22 @@
       const raise3halarm = setting("raise3halarm");
       if (drop3halarm > 0 || raise3halarm > 0) {
         // we need at least 30min of data for reliable detection
-        if (history3[0]["ts"] > ts - (30 * 60)) {
+        const diffDateAge = Math.abs(history3[0]["ts"] - ts);
+        if (diffDateAge < 10 * 60) { // todo change to 1800
           return;
         }
 
         // Get oldest entry:
         const oldestPressure = history3[0]["p"];
         if (oldestPressure != undefined && oldestPressure > 0) {
-          const diff = oldestPressure - pressure;
+          const diffPressure = Math.abs(oldestPressure - pressure);
 
           // drop alarm
           if (drop3halarm > 0 && oldestPressure > pressure) {
-            if (Math.abs(diff) > drop3halarm) {
+            if (diffPressure > drop3halarm) {
               if (doWeNeedToWarn("lastDropWarningTs")) {
-                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure drop", "lastDropWarningTs");
+                showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "lastDropWarningTs");
               }
             } else {
               saveSetting("lastDropWarningTs", 0);
@@ -152,10 +149,10 @@
 
           // raise alarm
           if (raise3halarm > 0 && oldestPressure < pressure) {
-            if (Math.abs(diff) > raise3halarm) {
+            if (diffPressure > raise3halarm) {
               if (doWeNeedToWarn("lastRaiseWarningTs")) {
-                showAlarm((Math.round(Math.abs(diff) * 10) / 10) + " hPa/3h from " +
-                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "Pressure raise", "lastRaiseWarningTs");
+                showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
+                  Math.round(oldestPressure) + " to " + Math.round(pressure) + " hPa", "lastRaiseWarningTs");
               }
             } else {
               saveSetting("lastRaiseWarningTs", 0);
