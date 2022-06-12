@@ -1,4 +1,10 @@
 (function () {
+
+    const activityreminder = require("activityreminder");
+    const storage = require("Storage");
+    const activityreminder_settings = activityreminder.loadSettings();
+    const activityreminder_data = activityreminder.loadData();
+
     function drawAlert() {
         E.showPrompt("Inactivity detected", {
             title: "Activity reminder",
@@ -31,13 +37,10 @@
             eval(storage.read("activityreminder.settings.js"))(() => load());
         }
     }
-    
-    const activityreminder = require("activityreminder");
-    const storage = require("Storage");
+
     g.clear();
     Bangle.loadWidgets();
     Bangle.drawWidgets();
-    const activityreminder_settings = activityreminder.loadSettings();
-    const activityreminder_data = activityreminder.loadData();
     run();
+    
 })();

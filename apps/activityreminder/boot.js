@@ -1,4 +1,15 @@
 (function () {
+
+    const activityreminder = require("activityreminder");
+    const activityreminder_settings = activityreminder.loadSettings();
+    if (activityreminder_settings.enabled) {
+        const activityreminder_data = activityreminder.loadData();
+        if (activityreminder_data.firstLoad) {
+            activityreminder_data.firstLoad = false;
+            activityreminder.saveData(activityreminder_data);
+        }
+    }
+
     function run() {
         if (isNotWorn()) return;
         let now = new Date();
@@ -49,15 +60,8 @@
         }
     });
 
-    
-    const activityreminder = require("activityreminder");
-    const activityreminder_settings = activityreminder.loadSettings();
+
     if (activityreminder_settings.enabled) {
-        const activityreminder_data = activityreminder.loadData();
-        if (activityreminder_data.firstLoad) {
-            activityreminder_data.firstLoad = false;
-            activityreminder.saveData(activityreminder_data);
-        }
         setInterval(run, 60000);
         /* todo in a futur release 
         increase setInterval time to something that is still sensible (5 mins ?)
