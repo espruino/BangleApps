@@ -82,7 +82,7 @@ var drawTimeout;
 var drawTimeoutSeconds;
 var secondsTimeout;
 
-g.setBgColor(0, 0, 0);
+g.setBgColor(g.theme.bg);
 
 // schedule a draw for the next minute
 function queueDraw() {
@@ -128,7 +128,7 @@ function drawSeconds() {
 
 	// default draw styles
 	g.reset();
-	g.setBgColor(0, 0, 0);
+	g.setBgColor(g.theme.bg);
 
 	// drawSting centered
 	g.setFontAlign(0, 0);
@@ -138,7 +138,11 @@ function drawSeconds() {
 	var seconds = time[2];
 
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize - 3);
-	g.setColor("#22ff05");
+	if (g.theme.dark) {
+		g.setColor("#22ff05");
+	} else {
+		g.setColor(g.theme.fg);
+	}
 	//console.log("---");
 	//console.log(seconds);
 	if (Bangle.isLocked()) seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
@@ -155,7 +159,7 @@ function draw() {
 
 	// default draw styles
 	g.reset();
-	g.setBgColor(0, 0, 0);
+	g.setBgColor(g.theme.bg);
 
 	// drawSting centered
 	g.setFontAlign(0, 0);
@@ -179,7 +183,11 @@ function draw() {
 
 	//g.setFont(font, primaryTimeFontSize);
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
-	g.setColor("#22ff05");
+	if (g.theme.dark) {
+		g.setColor("#22ff05");
+	} else {
+		g.setColor(g.theme.fg);
+	}
 	g.drawString(`${hours}:${minutes}`, xyCenter-10, yposTime, true);
 	
 	// am / PM ?
@@ -187,7 +195,6 @@ function draw() {
 	//do 12 hour stuff
 		//var ampm = require("locale").medidian(new Date()); Not working
 		g.setFont("Vector", 17);
-		g.setColor("#22ff05");
 		g.drawString(ampm, xyCenterSeconds, yAmPm, true);
 	}	
 
@@ -287,33 +294,7 @@ if (!Bangle.isLocked())  { // Initial state
   }
  
 
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
-	if (on) {
-		if (PosInterval != 0) clearInterval(PosInterval);
-		
-		PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
-		secondsTimeout = 1000;		
-		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
-		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
-		draw(); // draw immediately, queue redraw		
-		updatePos();
-	} else { // stop draw timer
 
-		secondsTimeout = 1000 * 60;
-		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
-		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
-
-		if (PosInterval != 0) clearInterval(PosInterval);
-		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
-		draw(); // draw immediately, queue redraw
-		updatePos();
-	}
-});
 
 
 Bangle.on('lock',on=>{
