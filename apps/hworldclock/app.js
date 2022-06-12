@@ -19,7 +19,6 @@ const font = "6x8";
 /* TODO: we could totally use 'Layout' here and
 avoid a whole bunch of hard-coded offsets */
 
-
 const xyCenter = g.getWidth() / 2;
 const xyCenterSeconds = xyCenter + (big ? 85 : 68);
 const yAmPm = xyCenter - (big ? 70 : 48);
@@ -171,7 +170,8 @@ function draw() {
 		//do 12 hour stuff
 		if (hours > 12) {
 			ampm = "PM";
-			hours = hours - 12;		
+			hours = hours - 12;	
+			if (hours < 10) hours = doublenum(hours);	
 		} else {
 			ampm = "AM";	 
 		}	 
@@ -199,8 +199,6 @@ function draw() {
 	localDate = localDate.substring(0, localDate.length - 5);
 	g.setFont("Vector", 17);
 	g.drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
-
-
 
 	g.setFont(font, primaryDateFontSize);
 	// set gmt to UTC+0
@@ -346,11 +344,3 @@ Bangle.on('lock',on=>{
 		updatePos();
   }
  });
- 
-
-
-
-
-
-
-
