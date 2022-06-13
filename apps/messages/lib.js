@@ -72,7 +72,6 @@ exports.pushMessage = function(event) {
     Bangle.setLocked(false);
     Bangle.setLCDPower(1); // turn screen on
   }
-  }
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
