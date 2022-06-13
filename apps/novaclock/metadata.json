@@ -5,6 +5,7 @@
   "version":"0.1",
   "description": "A clock inspired by the Kirby series",
   "tags": "clock",
+   "readme":"README.md",
   "storage": [
     {"name":"timer.app.js","url":"app.js"},
     {"name":"timer.img","url":"app-icon.js","evaluate":true}
