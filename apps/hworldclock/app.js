@@ -19,7 +19,6 @@ const font = "6x8";
 /* TODO: we could totally use 'Layout' here and
 avoid a whole bunch of hard-coded offsets */
 
-
 const xyCenter = g.getWidth() / 2;
 const xyCenterSeconds = xyCenter + (big ? 85 : 68);
 const yAmPm = xyCenter - (big ? 70 : 48);
@@ -30,6 +29,8 @@ const yposWorld = big ? 170 : 120;
 
 const OFFSET_TIME_ZONE = 0;
 const OFFSET_HOURS = 1;
+
+var PosInterval = 0; 
 
 var offsets = require("Storage").readJSON("hworldclock.settings.json") || [];
 
@@ -79,8 +80,9 @@ var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||fal
 // timeout used to update every minute
 var drawTimeout;
 var drawTimeoutSeconds;
+var secondsTimeout;
 
-g.setBgColor(0, 0, 0);
+g.setBgColor(g.theme.bg);
 
 // schedule a draw for the next minute
 function queueDraw() {
@@ -89,6 +91,16 @@ function queueDraw() {
 		drawTimeout = undefined;
 		draw();
 	}, 60000 - (Date.now() % 60000));
+}
+
+// schedule a draw for the next second
+function queueDrawSeconds() {
+	if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+		drawTimeoutSeconds = setTimeout(function() {
+		drawTimeoutSeconds = undefined;
+		drawSeconds();
+		//console.log("TO: " + secondsTimeout);
+	}, secondsTimeout - (Date.now() % secondsTimeout));
 }
 
 function doublenum(x) {
@@ -116,7 +128,7 @@ function drawSeconds() {
 
 	// default draw styles
 	g.reset();
-	g.setBgColor(0, 0, 0);
+	g.setBgColor(g.theme.bg);
 
 	// drawSting centered
 	g.setFontAlign(0, 0);
@@ -126,9 +138,18 @@ function drawSeconds() {
 	var seconds = time[2];
 
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize - 3);
-	g.setColor("#22ff05");
-	//g.setFont(font, primaryTimeFontSize-3);
+	if (g.theme.dark) {
+		g.setColor("#22ff05");
+	} else {
+		g.setColor(g.theme.fg);
+	}
+	//console.log("---");
+	//console.log(seconds);
+	if (Bangle.isLocked()) seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
+	//console.log(seconds);
 	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
+	queueDrawSeconds();
+
 }
 
 function draw() {
@@ -138,7 +159,7 @@ function draw() {
 
 	// default draw styles
 	g.reset();
-	g.setBgColor(0, 0, 0);
+	g.setBgColor(g.theme.bg);
 
 	// drawSting centered
 	g.setFontAlign(0, 0);
@@ -153,7 +174,8 @@ function draw() {
 		//do 12 hour stuff
 		if (hours > 12) {
 			ampm = "PM";
-			hours = hours - 12;		
+			hours = hours - 12;	
+			if (hours < 10) hours = doublenum(hours);	
 		} else {
 			ampm = "AM";	 
 		}	 
@@ -161,15 +183,18 @@ function draw() {
 
 	//g.setFont(font, primaryTimeFontSize);
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
-	g.setColor("#22ff05");
-	g.drawString(`${doublenum(hours)}:${minutes}`, xyCenter-10, yposTime, true);
+	if (g.theme.dark) {
+		g.setColor("#22ff05");
+	} else {
+		g.setColor(g.theme.fg);
+	}
+	g.drawString(`${hours}:${minutes}`, xyCenter-10, yposTime, true);
 	
 	// am / PM ?
 	if (_12hour){
 	//do 12 hour stuff
 		//var ampm = require("locale").medidian(new Date()); Not working
 		g.setFont("Vector", 17);
-		g.setColor("#22ff05");
 		g.drawString(ampm, xyCenterSeconds, yAmPm, true);
 	}	
 
@@ -178,11 +203,9 @@ function draw() {
 	// draw Day, name of month, Date	
 	//DATE
 	var localDate = require("locale").date(new Date(), 1);
-	localDate = localDate.substring(0, localDate.length - 5)
+	localDate = localDate.substring(0, localDate.length - 5);
 	g.setFont("Vector", 17);
 	g.drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
-
-
 
 	g.setFont(font, primaryDateFontSize);
 	// set gmt to UTC+0
@@ -229,38 +252,76 @@ function draw() {
 	g.drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
 
 	queueDraw();
+	queueDrawSeconds();
 }
 
 // clean app screen
 g.clear();
+
 // Show launcher when button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-updatePos();
-setInterval(drawSeconds, 1E3);
 
 
+// draw immediately at first, queue update
+draw();
 
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
-	if (on) {
-		draw(); // draw immediately, queue redraw
-		drawSeconds(); // draw immediately, queue redraw
-		setInterval(updatePos, 60*5E3);	// refesh every 5 mins
-		setInterval(drawSeconds, 1E3);
-		updatePos();
-	} else { // stop draw timer
+
+if (!Bangle.isLocked())  { // Initial state
+		if (PosInterval != 0) clearInterval(PosInterval);
+		PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+
+		secondsTimeout =  1000;		
 		if (drawTimeout) clearTimeout(drawTimeout);
 		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
 		drawTimeoutSeconds = undefined;
-		setInterval(updatePos, 60*50E3);	// refesh every 50 mins
-		setInterval(drawSeconds, 10E3);
+		
+		draw(); // draw immediately, queue redraw
 		updatePos();
-	}
-});
+  }else{
+		secondsTimeout = 10 * 1000;	  
+		if (drawTimeout) clearTimeout(drawTimeout);
+		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+		drawTimeout = undefined;
+		drawTimeoutSeconds = undefined;
 
-// draw now
-drawSeconds();
-draw();
+		if (PosInterval != 0) clearInterval(PosInterval);
+		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		draw(); // draw immediately, queue redraw
+		updatePos();
+  }
+ 
+
+
+
+
+Bangle.on('lock',on=>{
+  if (!on) { // UNlocked
+
+		if (PosInterval != 0) clearInterval(PosInterval);
+		PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+
+		secondsTimeout =  1000;
+		if (drawTimeout) clearTimeout(drawTimeout);
+		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+		drawTimeout = undefined;
+		drawTimeoutSeconds = undefined;
+
+		draw(); // draw immediately, queue redraw
+		updatePos();
+  }else{  // locked
+
+		secondsTimeout = 10 * 1000;
+		if (drawTimeout) clearTimeout(drawTimeout);
+		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+		drawTimeout = undefined;
+		drawTimeoutSeconds = undefined;
+
+		if (PosInterval != 0) clearInterval(PosInterval);
+		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		draw(); // draw immediately, queue redraw		
+		updatePos();
+  }
+ });
