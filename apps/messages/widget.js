@@ -15,7 +15,7 @@ draw:function(recall) {
     g.drawImage(settings.flash && (c&1) ? atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==") : atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+D///D///A//8CP/xDj/HD48DD+B8D/D+D/3vD/vvj/vvj/vvj/vvh/v/gfnvAAD+AAB8AAAAA=="), this.x, this.y-1);
   }
   if (settings.repeat===undefined) settings.repeat = 4;
-  if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
+  if (c<120 && settings.repeat>0 && (Date.now()-this.l)>settings.repeat*1000) {
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
@@ -33,8 +33,8 @@ draw:function(recall) {
   WIDGETS["messages"].width=0;
   Bangle.drawWidgets();
 },buzz:function() {
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
-  require("buzz").pattern((require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ".");
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return new Promise((success) => { success(); }); // never buzz during Quiet Mode
+  return require("buzz").pattern((require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ".");
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;
