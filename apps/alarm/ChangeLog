@@ -30,3 +30,4 @@
 0.28: Fix bug with alarms not firing when configured to fire only once
 0.29: Fix wrong 'dow' handling in new timer if first day of week is Monday
 0.30: Fix "Enable All"
+0.31: Add seconds to timers

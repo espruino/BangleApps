@@ -34,7 +34,7 @@ draw:function(recall) {
   Bangle.drawWidgets();
 },buzz:function() {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return new Promise((success) => { success(); }); // never buzz during Quiet Mode
-  return require("buzz").pattern((require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ".");
+  return require("buzz").pattern((require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ":");
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;

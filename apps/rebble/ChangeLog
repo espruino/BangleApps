@@ -6,3 +6,4 @@
 0.06: Add 12h support and autocycle control
 0.07: added localization, removed deprecated code
 0.08: removed unused font, fix autocycle,  imported suncalc and trimmed, removed pedometer dependency, "tap to cycle" setting
+0.09: fix battery icon size
