@@ -141,7 +141,8 @@ if (nextAlarmDate !== undefined) {
   run = () => {
     layout.state.label = "Start";
     layout.render();
-    Bangle.on('accel', (accelData) => { // 12.5Hz
+    Bangle.setPollInterval(80); // 12.5Hz, do not dynamically change accelerometer poll interval
+    Bangle.on('accel', (accelData) => {
       const now = new Date();
       const acc = accelData.mag;
       const swest = calc_ess(acc);
