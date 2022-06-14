@@ -268,11 +268,20 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       wrap: true,
       onchange: v => time.m = v
     },
+    /*LANG*/"Seconds": {
+      value: time.s,
+      min: 0,
+      max: 59,
+      step: 1,
+      wrap: true,
+      onchange: v => time.s = v
+    },
     /*LANG*/"Enabled": {
       value: timer.on,
       onchange: v => timer.on = v
     },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
+    /*LANG*/"Cancel": () => showMainMenu()
   };
 
   if (!isNew) {

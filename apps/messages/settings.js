@@ -1,7 +1,7 @@
 (function(back) {
   function settings() {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-    if (settings.vibrate===undefined) settings.vibrate=".";
+    if (settings.vibrate===undefined) settings.vibrate=":";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
     settings.unlockWatch=!!settings.unlockWatch;

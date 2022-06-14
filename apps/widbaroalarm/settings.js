@@ -87,6 +87,26 @@
         },
         onchange: x => save('buzz', x)
       },
+      'Dismiss delay': {
+      value: settings.dismissDelayMin,
+      min: 5, max: 60,
+      onchange: v => {
+        save('dismissDelayMin', v)
+      },
+      format: x => {
+        return x + " min";
+      }
+    },
+    'Pause delay': {
+      value: settings.pauseDelayMin,
+      min: 30, max: 240,
+      onchange: v => {
+        save('pauseDelayMin', v)
+      },
+      format: x => {
+        return x + " min";
+      }
+    },
     };
     E.showMenu(menu);
   }

@@ -4,3 +4,4 @@
 0.04: Obey system quiet mode
 0.05: Battery optimisation, add the pause option, bug fixes
 0.06: Add a temperature threshold to detect (and not alert) if the BJS isn't worn. Better support for the peoples using the app at night
+0.07: Fix bug on the cutting edge firmware
