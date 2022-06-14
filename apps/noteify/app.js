@@ -5,7 +5,7 @@ var notes = require("Storage").readJSON("noteify.json", true) || [];
 var alarms = require("sched").getAlarms();
 msg = "";
 
-function startNote(idx) { 
+function startNote(idx) {
   idx == undefined ? note = "" : note = notes[idx].note;
   require("textinput").input({text:note}).then(result => {
   if (result != "") {
@@ -23,20 +23,20 @@ function viewNote(idx) {
     textY += e.dy;
     g.setClipRect(0, 30, g.getWidth(), g.getHeight());
     if (textY > 30) textY = 30;
-    if (textY < textBound) textY = textBound; 
+    if (textY < textBound) textY = textBound;
     g.clearRect(0, 30, g.getWidth(), g.getHeight()).setColor(g.theme.fg).setFont("6x8:2").setFontAlign(-1, -1).drawString(g.wrapString(notes[idx].note, g.getWidth()).join("\n"), 0, textY);
   },back:()=>{
       Bangle.setUI();
       showEditMenu(idx);
   }});
-  
+
 }
 
 function showMainMenu() {
   var mainMenu = {
     "" : { "title" : "Noteify" },
     "< Back" : function() { load(); },
-    "New note" : function() { 
+    "New note" : function() {
       E.showMenu();
       startNote();
     },
@@ -187,7 +187,7 @@ function editAlarm(alarmIndex, alarm) {
     as : false,
     dow : 0b1111111,
     last : 0,
-    vibrate : ".."
+    vibrate : "::"
   };
   if (msg != "") a["msg"] = msg;
   if (!newAlarm) Object.assign(a, alarms[alarmIndex]);
@@ -195,7 +195,7 @@ function editAlarm(alarmIndex, alarm) {
   var t = decodeTime(a.t);
 
   var alarmTitle = (a.msg == undefined) ? 'Alarm' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg.replace(/\n/g, " ").substring(0, 12)+"...";
-  
+
   const menu = {
     '': { 'title': alarmTitle },
     '< Back' : () => showAlarmMenu(),
@@ -264,7 +264,7 @@ function editTimer(alarmIndex, alarm) {
   var t = decodeTime(a.timer);
 
   var timerTitle = (a.msg == undefined) ? 'Timer' : (a.msg.length > 12) ? a.msg.replace(/\n/g, " ").substring(0, 12)+"..." : msg.replace(/\n/g, " ").substring(0, 12)+"...";
-  
+
   const menu = {
     '': { 'title': timerTitle },
     '< Back' : () => showMainMenu(),

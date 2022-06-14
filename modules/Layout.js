@@ -2,6 +2,14 @@
 
 // See Layout.md for documentation
 
+/* Minify to 'Layout.min.js' by:
+
+   * checking out: https://github.com/espruino/EspruinoDocs
+   * run: ../EspruinoDocs/bin/minify.js modules/Layout.js modules/Layout.min.js
+
+*/
+
+
 function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
@@ -71,7 +79,7 @@ function Layout(layout, options) {
 Layout.prototype.setUI = function() {
   Bangle.setUI(); // remove all existing input handlers
 
-  var uiSet;
+  let uiSet;
   if (this.buttons) {
     // multiple buttons so we'll jus use back/next/select
     Bangle.setUI({mode:"updown", back:this.options.back}, dir=>{
