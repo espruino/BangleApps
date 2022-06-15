@@ -1,4 +1,19 @@
+// globals. TODO: move into an object
 const digit = [];
+let part = 0;
+let endInc = 0;
+var endGame = false;
+let goalFrame = 0;
+var stopped = true;
+let score0 = 0;
+let score1 = 0;
+let inc = 0;
+let msinc = 0;
+let seq0 = 0;
+let seq1 = 0;
+let goaler = -1;
+const w = g.getWidth();
+let owner = -1;
 
 const dash = {
   width: 75,
@@ -6,6 +21,7 @@ const dash = {
   bpp: 1,
   buffer: require('heatshrink').decompress(atob('AH4A/AH4A/AH4A/AH4A/AB0D/4AB+AJEBAX/BAk/CQ8PCQ4kDCQoIDCQgkDCQgkECQgIE4ASHFxH8JRgSEEgYSEPJAkEAH4A/AH4A/AH4A/AH4A/ACg='))
 };
+
 function loadDigits () {
   digit[0] = {
     width: 80,
@@ -58,8 +74,8 @@ function loadDigits () {
   digit[7] = {
     width: 80,
     height: 128,
-    bpp: 1,
-    buffer: require('heatshrink').decompress(atob('AGUH/4AE/wJBgYJF/gJBgIJF+AeCBJN/BIngsAJBn4JE4HgBIMfBImBBIUPBIkDBIRQE/0HBIRQE/kPBIRQE/EfBIRQE+E/BIZQD8AJEKAfABYIJCKAYsBBIYADIAIJHKgIJHNAIJ/BP4J/BP4Jzg//4AJGgf/wAJGgP/BAwAB/wJIvgJInAJIiAJIAH5PPMZJ3JRZCfJWZLHJfM4J/BP4J/BP4JNg4JIgYJIgIJIgAJJv4JIn4JIj4JIh4JIeg4JIgYJIgIJIgAJJsAJIkAJIAH4AQA='))
+    bpp: 4,
+  buffer : require("heatshrink").decompress(atob("AH4A/AEtVADdQE5Nf/4AayAnJgoma/J4LKDR2KKDZODUMadChKhiJwefE5RQXJwbxLKCxOEE5hQVJwgnNKCZOFE5pQTJwonOKCJOGE5xQRD4Q8EE5xQPJw4nPgFZzIAMqCdFE6IARJwgnhJwonhJwonhe5In/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4nlr4mE/NQE78FE4n1Ez5QGE0JQEJ0RQETsBQFJ0gABrJOkAH4A/AH4A/ADNZqAmkgv/yAnkr///JQjJwIABypOkAAP5J0oABUMJODKAShgEwhQiE/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/E/4n/AA+fE80JE8xQGE8JQFE8JQFE8RQEE8RQEE8ZQDE8ZQDE8hQCE8hQCE8pQBE8pQBE80JE80AE84A/AH4A/AH4A/AAQA=="))
   };
 
   digit[8] = {
@@ -170,9 +186,6 @@ const gol11 = {
 
 loadDigits();
 
-let goalFrame = 0;
-let score0 = 0;
-let score1 = 0;
 
 function printNumber (n, x, y, options) {
   if (n > 9 || n < -1) {
@@ -197,13 +210,7 @@ function printNumber (n, x, y, options) {
     g.drawImage(img, x, y, options);
   }
 }
-let inc = 0;
-let msinc = 0;
-let seq0 = 0;
-let seq1 = 0;
-let goaler = -1;
-const w = g.getWidth();
-let owner = -1;
+
 g.setBgColor(0, 0, 0);
 g.clear();
 g.setColor(1, 1, 1);
@@ -247,43 +254,63 @@ function onStop () {
   refresh();
   refresh_ms();
 }
-var stopped = true;
-Bangle.on('tap', function (pos) {
-  console.log('touch', pos);
+
+function onButtonPress() {
+    console.log('on.tap');
+  setWatch(() => {
+    onButtonPress();
+}, BTN1);
+  Bangle.beep();
   if (endGame) {
-    Bangle.beep();
     score0 = 0;
     score1 = 0;
     seq0 = 0;
     seq1 = 0;
+    part = 0;
     inc = 0;
     msinc = 0;
     stopped = true;
     endGame = false;
   } else {
     if (inc == 0) {
-      autogame();
+      // autogame();
+      stopped = false;
     } else {
       onStop();
     }
   }
+}
+
+setWatch(() => {
+    onButtonPress();
+}, BTN1);
+/*Bangle.on('tap', function () {
+  onButtonPress();
 });
+*/
 g.setFont12x20(3);
-let part = 0;
-let endInc = 0;
-var endGame = false;
+
 function refresh () {
   g.clear();
   if (inc > 59) {
     inc = 0;
     part++;
   }
+  if (part >= 2 && inc > 30) {
+        part = 2;
+          Bangle.buzz();
+          endGame = true;
+          endInc = inc;
+          inc = 0;
+  }
   if (inc > 44) {
+    inc = 0;
     if (part < 2) {
       part++;
     }
     if (part >= 2) {
       if (score0 != score1) {
+        Bangle.buzz();
         endGame = true;
         endInc = inc;
         inc = 0;
@@ -342,6 +369,12 @@ function refresh_pixels () {
   let bx = (owner == 0) ? w / 3 : w / 2;
   bx += 2;
   g.drawImage(frame4 ? ball0 : ball1, bx, 10, { scale: 5 });
+  const liney = 60;
+  if (owner) {
+    g.drawLine(w-8, liney, 2*(w/3), liney);
+  } else {
+    g.drawLine(8, liney, w/3, liney);
+  }
 }
 let dots = 0;
 function refresh_dots () {
@@ -437,4 +470,5 @@ function autogame () {
 }
 
 Bangle.setOptions({ lockTimeout: 0, backlightTimeout: 0 });
-autogame();
+// autogame();
+
