@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+  </head>
+  <body>
+    <button id="btnReload" class="btn btn-primary">Reload from watch</button>
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+
+    <pre id="meta" contenteditable></pre>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      const fileName = "appmeta";
+
+      function loadMeta() {
+        Util.showModal("Loading...");
+        Util.readStorage(fileName, (data) => {
+            document.getElementById("meta").innerHTML = data;
+            Util.hideModal();
+        });
+      }
+
+      function uploadMeta() {
+        Util.showModal("Uploading...");
+        const data = document.getElementById("meta").innerHTML;
+        Util.writeStorage(fileName, data, Util.hideModal);
+      }
+
+      document.getElementById("btnUpload").addEventListener("click", uploadMeta);
+
+      document.getElementById("btnReload").addEventListener("click", loadMeta);
+
+      function onInit() {
+        loadMeta();
+      }
+    </script>
+  </body>
+</html>
