@@ -1,0 +1,13 @@
+{
+  "id": "appmeta",
+  "name": "App Meta",
+  "version": "0.01",
+  "description": "Library to provide meta information about phone apps for display of notifications",
+  "icon": "app.png",
+  "tags": "tool,system,messages,notifications",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"appmeta","url":"lib.js"}
+  ]
+}
