@@ -1,7 +1,7 @@
 { "id": "agpsdata",
   "name": "A-GPS Data",
   "shortName":"AGPS Data",
-  "icon": "agps.png",
+  "icon": "agps1.png",
   "version":"0.01",
   "description": "Download assisted GPS data directly to watch",
   "tags": "assisted,gps,agps,http",
