@@ -317,7 +317,7 @@ function showMessage(msgid) {
         {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
-      { type:"btn", src:require("messages").getMessageImage(msg), col:require("messages").getMessageImageCol(msg, g.theme.fg2), pad: 3, cb:()=>{
+      { type:"btn", src:require("appmeta").getAppIcon(msg), col:require("appmeta").getAppColor(msg, g.theme.fg2), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
@@ -373,14 +373,14 @@ function checkMessages(options) {
       g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
-      var img = require("messages").getMessageImage(msg);
+      var img = require("appmeta").getAppIcon(msg);
       if (msg.id=="music") {
         title = msg.artist || /*LANG*/"Music";
         body = msg.track;
       }
       if (img) {
         var fg = g.getColor();
-        g.setColor(require("messages").getMessageImageCol(msg,fg)).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
+        g.setColor(require("appmeta").getAppColor(msg,fg)).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
          .setColor(fg); // only color the icon
         x += 50;
       }

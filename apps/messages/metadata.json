@@ -6,6 +6,7 @@
   "icon": "app.png",
   "type": "app",
   "tags": "tool,system",
+  "dependencies": {"appmeta":"app"},
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
