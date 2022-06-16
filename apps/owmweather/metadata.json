@@ -1,0 +1,14 @@
+{ "id": "owmweather",
+  "name": "openweathermap weather provider",
+  "shortName":"OWM Weather",
+  "version":"0.01",
+  "description": "A detailed description of my great app",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "boot,tool,weather",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"owmweather.boot.js","url":"boot.js"}
+  ]
+}
