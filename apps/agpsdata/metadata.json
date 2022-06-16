@@ -1,7 +1,7 @@
 { "id": "agpsdata",
   "name": "A-GPS Data",
   "shortName":"AGPS Data",
-  "icon": "agps.png",
+  "icon": "agpsdata.png",
   "version":"0.01",
   "description": "Download assisted GPS data directly to watch",
   "tags": "assisted,gps,agps,http",
@@ -11,6 +11,6 @@
   "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" }, { "url":"screenshot3.png" }, { "url":"screenshot4.png" }, { "url":"screenshot5.png" } ],
   "storage": [
     {"name":"agpsdata.app.js","url":"app.js"},
-    {"name":"agps.img","url":"agps-icon.js","evaluate":true}
+    {"name":"agps.img","url":"agpsdata-icon.js","evaluate":true}
   ]
 }
