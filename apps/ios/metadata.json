@@ -5,7 +5,7 @@
   "description": "Display notifications/music/etc from iOS devices",
   "icon": "app.png",
   "tags": "tool,system,ios,apple,messages,notifications",
-  "dependencies": {"messages":"app"},
+  "dependencies": {"messages":"app","appmeta":"app"},
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
