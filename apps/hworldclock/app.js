@@ -1,3 +1,10 @@
+// ------- Settings file
+const SETTINGSFILE = "hworldclock.json";
+var secondsMode;
+var showSunInfo;
+var colorWhenDark;
+// ------- Settings file
+
 const big = g.getWidth()>200;
 // Font for primary time and date
 const primaryTimeFontSize = big?6:5;
@@ -66,6 +73,11 @@ const mockOffsets = {
 	],
 };*/
 
+
+// Example hworldclock.settings.json
+// [["London","0"],["NY","-5"],["Denver","-6"]]
+
+
 // Uncomment one at a time to test various offsets array scenarios
 //offsets = mockOffsets.zeroOffsets; // should render nothing below primary time
 //offsets = mockOffsets.oneOffset; // should render larger in two rows
@@ -73,6 +85,19 @@ const mockOffsets = {
 //offsets = mockOffsets.fourOffsets; // should render in columns
 
 // END TESTING CODE
+ 
+
+// Load settings
+function loadMySettings() {
+	// Helper function default setting
+	function def (value, def) {return value !== undefined ? value : def;}
+
+	var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
+	secondsMode = def(settings.secondsMode, "when unlocked");
+	showSunInfo = def(settings.showSunInfo, true);
+	colorWhenDark = def(settings.colorWhenDark, "green");
+}
+
 
 // Check settings for what type our clock should be
 var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
@@ -139,13 +164,17 @@ function drawSeconds() {
 
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize - 3);
 	if (g.theme.dark) {
-		g.setColor("#22ff05");
+		if (colorWhenDark == "green") {
+			g.setColor("#22ff05");
+		} else {
+			g.setColor(g.theme.fg);
+		}
 	} else {
 		g.setColor(g.theme.fg);
 	}
 	//console.log("---");
 	//console.log(seconds);
-	if (Bangle.isLocked()) seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
+	if (Bangle.isLocked() && secondsMode != "always") seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
 	//console.log(seconds);
 	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
 	queueDrawSeconds();
@@ -184,7 +213,11 @@ function draw() {
 	//g.setFont(font, primaryTimeFontSize);
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
 	if (g.theme.dark) {
-		g.setColor("#22ff05");
+		if (colorWhenDark == "green") {
+			g.setColor("#22ff05");
+		} else {
+			g.setColor(g.theme.fg);
+		}
 	} else {
 		g.setColor(g.theme.fg);
 	}
@@ -198,7 +231,7 @@ function draw() {
 		g.drawString(ampm, xyCenterSeconds, yAmPm, true);
 	}	
 
-	drawSeconds(); // To make sure...
+	if (secondsMode != "none") drawSeconds(); // To make sure...
 	
 	// draw Day, name of month, Date	
 	//DATE
@@ -245,18 +278,30 @@ function draw() {
 	}
 	});
 
-	g.setFontAlign(-1, 0);
-	g.setFont("Vector",12);
-	g.drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
-	g.setFontAlign(1, 0);
-	g.drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+	if (showSunInfo) {
+		g.setFontAlign(-1, 0);
+		g.setFont("Vector",12);
+		g.drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
+		g.setFontAlign(1, 0);
+		g.drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+	}
+	//debug settings
+	//g.setFontAlign(1, 0);
+	//g.drawString(secondsMode, xcol2, 3 + yposWorld + 3 * 15, true);
+	//g.drawString(showSunInfo, xcol2, 3 + yposWorld + 3 * 15, true);
+	//g.drawString(colorWhenDark, xcol2, 3 + yposWorld + 3 * 15, true);
+
 
 	queueDraw();
-	queueDrawSeconds();
+	
+	if (secondsMode != "none") queueDrawSeconds();
 }
 
 // clean app screen
 g.clear();
+
+// Init the settings of the app
+loadMySettings();
 
 // Show launcher when button pressed
 Bangle.setUI("clock");
@@ -269,28 +314,38 @@ draw();
 
 
 if (!Bangle.isLocked())  { // Initial state
-		if (PosInterval != 0) clearInterval(PosInterval);
-		PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+		if (showSunInfo) {
+			if (PosInterval != 0) clearInterval(PosInterval);
+			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+		}
 
-		secondsTimeout =  1000;		
+		secondsTimeout =  1000;
+		if (secondsMode != "none") {
+			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+			drawTimeoutSeconds = undefined;
+		}	
 		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
 		
 		draw(); // draw immediately, queue redraw
-		updatePos();
+		if (showSunInfo) updatePos();
   }else{
-		secondsTimeout = 10 * 1000;	  
+		if (secondsMode == "always") secondsTimeout = 1000;
+		if (secondsMode == "when unlocked") secondsTimeout = 10 * 1000;
+		
+		if (secondsMode != "none") {
+			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+			drawTimeoutSeconds = undefined;
+		}
 		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
 
-		if (PosInterval != 0) clearInterval(PosInterval);
-		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		if (showSunInfo) {
+			if (PosInterval != 0) clearInterval(PosInterval);
+			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		}
 		draw(); // draw immediately, queue redraw
-		updatePos();
+		if (showSunInfo) updatePos();
   }
  
 
@@ -299,29 +354,36 @@ if (!Bangle.isLocked())  { // Initial state
 
 Bangle.on('lock',on=>{
   if (!on) { // UNlocked
-
-		if (PosInterval != 0) clearInterval(PosInterval);
-		PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+		if (showSunInfo) {
+			if (PosInterval != 0) clearInterval(PosInterval);
+			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+		}
 
 		secondsTimeout =  1000;
+		if (secondsMode != "none") {
+			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+			drawTimeoutSeconds = undefined;
+		}	
 		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
 
 		draw(); // draw immediately, queue redraw
-		updatePos();
+		if (showSunInfo) updatePos();
   }else{  // locked
 
-		secondsTimeout = 10 * 1000;
+		if (secondsMode == "always") secondsTimeout = 1000;
+		if (secondsMode == "when unlocked") secondsTimeout = 10 * 1000;
+		
+		if (secondsMode != "none") {
+			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+			drawTimeoutSeconds = undefined;
+		}
 		if (drawTimeout) clearTimeout(drawTimeout);
-		if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeout = undefined;
-		drawTimeoutSeconds = undefined;
 
 		if (PosInterval != 0) clearInterval(PosInterval);
 		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 		draw(); // draw immediately, queue redraw		
-		updatePos();
+		if (showSunInfo) updatePos();
   }
  });
