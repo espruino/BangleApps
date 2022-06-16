@@ -10,6 +10,9 @@ Currently proof of concept on Bangle2 only. Will eventually add a widget for aut
 
 ![](screenshot.png)
 ![](screenshot2.png)
+![](screenshot3.png)
+![](screenshot4.png)
+![](screenshot5.png)
 
 ## Creator
 [@pidajo](https://github.com/pidajo)
