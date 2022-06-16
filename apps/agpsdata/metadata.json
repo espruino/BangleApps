@@ -11,6 +11,6 @@
   "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" }, { "url":"screenshot3.png" }, { "url":"screenshot4.png" }, { "url":"screenshot5.png" } ],
   "storage": [
     {"name":"agpsdata.app.js","url":"app.js"},
-    {"name":"agps.img","url":"agpsdata-icon.js","evaluate":true}
+    {"name":"agpsdata.img","url":"agpsdata-icon.js","evaluate":true}
   ]
 }
