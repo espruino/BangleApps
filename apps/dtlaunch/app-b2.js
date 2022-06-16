@@ -89,7 +89,7 @@ function drawPage(p){
 Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
     selected = 0;
     oldselected=-1;
-    if(settings.swipeExit && dirLeftRight==1) showClock();
+    if(settings.swipeExit && dirLeftRight==1) load();
     if (dirUpDown==-1||dirLeftRight==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
@@ -98,12 +98,6 @@ Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
         drawPage(page);
     }
 });
-
-function showClock(){
-  var app = require("Storage").readJSON('setting.json', 1).clock;
-  if (app) load(app);
-  else E.showMessage("clock\nnot found");
-}
 
 function isTouched(p,n){
     if (n<0 || n>3) return false;
