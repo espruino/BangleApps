@@ -4,3 +4,4 @@
 0.18: Code cleanup and major changes with seconds timing. New feature: if watch is locked, seconds get refreshed every 10 seconds.
 0.19: Fix PM Hours
 0.20: Add theme support
+0.21: Add Settings

@@ -27,7 +27,7 @@ Bangle 2:
 
 ## Controls- Bangle 2
 
-**Touch** - icon to select, scond touch launches app
+**Touch** - icon to select, second touch launches app
 
 **Swipe Left/Up** -  move to next page of app icons
 
