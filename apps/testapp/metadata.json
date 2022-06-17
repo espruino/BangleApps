@@ -5,6 +5,6 @@
     "description": "some description",
     "tags": "foo",
     "storage": [
-      {"name":"timer.app.js","url":"app.js"}      
+      {"name":"timer.app.js","url":"app.js"}
     ]
-  }
+}
