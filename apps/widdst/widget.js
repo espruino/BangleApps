@@ -166,14 +166,11 @@
 		}
 	}
 
-	// Update everything but the widget icon in the widget area
-	doUpdate();
-
 	// Register ourselves
 	WIDGETS["widdst"] = {
 		area: "tl",
 		width: 0,
-		draw: draw
+		draw: update
 	};
 
 })();
