@@ -1,4 +1,4 @@
-{ "id": "dst",
+{ "id": "widdst",
   "name": "Daylight Savings",
   "version":"0.01",
   "description": "Widget to enable automatic daylight savings adjustment.",
