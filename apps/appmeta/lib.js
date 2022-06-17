@@ -79,7 +79,7 @@ exports.getAppColor = function(msg,def) {
     }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
 };
 
-exports.getIosAppTitle = function(msg) {
+exports.getIosAppTitle = function(appId) {
     return {
         "com.apple.facetime": "FaceTime",
         "com.apple.mobilecal": "Calendar",
@@ -129,5 +129,5 @@ exports.getIosAppTitle = function(msg) {
         "org.whispersystems.signal": "Signal",
         "ph.telegra.Telegraph": "Telegram",
         "tv.twitch": "Twitch",
-    }[msg.appId]||msg.appId;
+    }[appId]||appId;
 };
