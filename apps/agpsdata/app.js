@@ -62,12 +62,16 @@ function CASIC_CHECKSUM(cmd) {
 function display(text1, text2, next) {
   g.reset();
   g.clear();
+  var img = require("Storage").read("agpsdata.img");
+  if (img) {
+    g.drawImage(img, g.getWidth() - 48, g.getHeight()-48-24);
+  }
   g.setFont("Vector", 30);
   g.setFontAlign(0, 1);
-  g.drawString(text1, g.getWidth() / 2, g.getHeight() / 2);
+  g.drawString(text1, g.getWidth() / 2, g.getHeight() / 3 + 24);
   g.setFont("Vector", 15);
   g.setFontAlign(-1, -1);
-  g.drawString(text2, 0, g.getHeight() / 2 + 5);
+  g.drawString(text2, 0, g.getHeight() / 3 + 29);
   Bangle.drawWidgets();
   nextStep = null;
   if (next) {
@@ -79,11 +83,17 @@ function httpTest() {
   counter++;  
   display("AGPS Data", "Touch for start", () => {
     display("Request...", "Touch for restart", httpTest);
-    Bluetooth.println(JSON.stringify({t:"info", msg:"HTTP Request"}));
-    Bluetooth.println(JSON.stringify({t:"http", url:"https://www.espruino.com/agps/casic.base64"}));
-    setTimeout(() => {
-      //GB({t:"http", resp:testData});
-    }, 1);
+    if (Bluetooth.println) {
+      console.log("On device");
+      Bluetooth.println(JSON.stringify({t:"info", msg:"HTTP Request"}));
+      Bluetooth.println(JSON.stringify({t:"http", url:"https://www.espruino.com/agps/casic.base64"}));
+    }
+    else {
+      console.log("Testing on Emulator");
+      setTimeout(() => {
+        GB({t:"http", resp:testData});
+      }, 1);
+    }
   });
 }
 
