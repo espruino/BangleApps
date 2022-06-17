@@ -1,4 +1,4 @@
-{ "id": "dst",
+{ "id": "widdst",
   "name": "Daylight Savings",
   "version":"0.01",
   "description": "Widget to enable automatic daylight savings adjustment.",
@@ -7,8 +7,8 @@
   "tags": "widget,tool",
   "supports" : ["BANGLEJS2"],
   "storage": [
-    {"name":"dst.wid.js","url":"widget.js"},
-    {"name":"dst.settings.js","url":"settings.js"}
+    {"name":"widdst.wid.js","url":"widget.js"},
+    {"name":"widdst.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"dst.json"}]
 }
