@@ -45,17 +45,10 @@
 		return ans * 1000;
 	}
 
-	// Set the effective timezone - may generate a mini reboot!
-	function setCurrentEffectiveTimezone(tz) {
-		var storage = require("Storage");
-		var settings = storage.readJSON("setting.json");
-		if (settings) {
-			if (settings.timezone != tz) {
-				settings.timezone = tz;
-				storage.writeJSON("setting.json", settings);
-				eval(storage.read("bootupdate.js")); // re-calculate the hash of the config files
-				load(".bootcde"); // re-boot into the clock
-			}
+	// Set the effective timezone
+	function setCurrentEffectiveTimezone(now, tz) {
+		if (now.getTimezoneOffset() != -tz*60.0) {
+			E.setTimeZone(tz);
 		}
 	}
 
@@ -72,19 +65,19 @@
 					if (start < end) {
 						// The start of DST is earlier than the end, so next change is a start of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
-						setCurrentEffectiveTimezone(settings.tz);
+						setCurrentEffectiveTimezone(now, settings.tz);
 					} else {
 						// The end of DST is earlier than the start, so the next change is an end of DST
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
-						setCurrentEffectiveTimezone(settings.tz + settings.dst_size);
+						setCurrentEffectiveTimezone(now, settings.tz + settings.dst_size);
 					}
 				} else {
 					next_dst_change = { millis: end, offset: settings.tz, is_start: false };
-					setCurrentEffectiveTimezone(settings.tz + settings.dst_size);
+					setCurrentEffectiveTimezone(now, settings.tz + settings.dst_size);
 				}
 			} else {
 				next_dst_change = { millis: start, offset: settings.tz + settings.dst_size, is_start: true };
-				setCurrentEffectiveTimezone(settings.tz);
+				setCurrentEffectiveTimezone(now, settings.tz);
 			}
 			next_dst_change.show_icon = settings.show_icon;
 		} else {
@@ -150,7 +143,7 @@
 				if (dstSettings) {
 					updateNextDstChange(now, dstSettings);
 					rescheduleCheckForDSTChange(now);
-					setCurrentEffectiveTimezone(next_dst_change.offset);
+					setCurrentEffectiveTimezone(now, next_dst_change.offset);
 				} else {
 					next_dst_change = undefined;
 				}
@@ -171,16 +164,6 @@
 				checkForDSTChange();
 			}, (next_dst_change.millis - now.getTime()) % 14400000); // Check every 4 hours.
 		}
-	}
-
-	// Called by our settings.js -- when the DST settings change, we want to ensure that the
-	// information we cache is kept up-to-date, and that our effective timezone is correct
-	function scheduleUpdate() {
-		if (dst_update_timeout) clearTimeout(dst_update_timeout);
-		dst_update_timeout = setTimeout( function() {
-			dst_update_timeout = undefined;
-			update();
-		}, 60000);
 	}
 
 	// Register ourselves

@@ -36,11 +36,6 @@
 	
 	function writeSettings() {
 		require('Storage').writeJSON("dst.json", settings);
-		if (WIDGETS["dst"]) {
-			if (WIDGETS["dst"].dstRulesUpdating) {
-				WIDGETS["dst"].dstRulesUpdating();
-			}
-		}
 	}
 	
 	function writeSubMenuSettings() {
