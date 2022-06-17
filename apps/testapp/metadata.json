@@ -1,10 +1,13 @@
-{ "id": "testapp",
-    "name": "Test App",
-    "shortName":"Test App",
-    "version":"0.01",
-    "description": "some description",
-    "tags": "foo",
-    "storage": [
-      {"name":"timer.app.js","url":"app.js"}
-    ]
+{ 
+  "id": "testapp",
+  "name": "Test App",
+  "shortName":"Test App",
+  "version":"0.01",
+  "description": "some description",
+  "icon": "teatimer.png",
+  "tags": "foo",
+  "storage": [
+    {"name":"timer.app.js","url":"app.js"},
+    {"name":"timer.img","url":"app-icon.js","evaluate":true}
+  ]
 }
