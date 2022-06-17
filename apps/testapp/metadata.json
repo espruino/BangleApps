@@ -1,0 +1,10 @@
+{ "id": "testapp",
+    "name": "Test App",
+    "shortName":"Test App",
+    "version":"0.01",
+    "description": "some description",
+    "tags": "foo",
+    "storage": [
+      {"name":"timer.app.js","url":"app.js"}      
+    ]
+  }
