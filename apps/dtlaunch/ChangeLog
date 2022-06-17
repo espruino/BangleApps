@@ -11,4 +11,5 @@
 0.11: Fix bangle.js 1 white icons not displaying
 0.12: On Bangle 2 change to swiping up/down to move between pages as to match page indicator. Swiping from left to right now loads the clock.
 0.13: Added swipeExit setting so that left-right to exit is an option
-0.14: Don't move pages when doing exit swipe.
+0.14: Don't move pages when doing exit swipe - Bangle 2.
+0.15: 'Swipe to exit'-code is slightly altered to be more reliable - Bangle 2.

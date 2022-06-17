@@ -1,7 +1,7 @@
 Bangle.js App Loader (and Apps)
 ================================
 
-[![Build Status](https://app.travis-ci.com/espruino/BangleApps.svg?branch=master)](https://app.travis-ci.com/github/espruino/BangleApps)
+[![Build Status](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml/badge.svg)](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml)
 
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [espruino.github.io](https://espruino.github.io/BangleApps/)
@@ -191,7 +191,7 @@ widget bar at the top of the screen they can add themselves to the global
 
 ```
 WIDGETS["mywidget"]={
-  area:"tl", // tl (top left), tr (top right)
+  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
   sortorder:0, // (Optional) determines order of widgets in the same corner
   width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
   draw:draw // called to draw the widget
