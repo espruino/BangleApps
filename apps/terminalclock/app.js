@@ -27,18 +27,20 @@ const clock = new ClockFace({
     this.showAltitude = false;
     if (this.HRMinConfidence === undefined) this.HRMinConfidence = 50;
     if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
-    if (this.powerSaving===undefined) this[k] = true;
+    if (this.powerSaving===undefined) this.powerSaving = true;
     ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(k => {
       if (this[k]===undefined) this[k] = "Empty";
       else if (this[k]==="HR") this.showHRM = true;
       else if (this[k]==="Alt") this.showAltitude = true && process.env.HWVERSION == 2;
     });
 
+    // set the lock and unlock actions
     Bangle.on("lock", on => {
       if (on) lock();
       else unlock();
     });
 
+    // set the services (HRM, pressure sensor, etc....)
     turnOnServices();
     if(this.powerSaving){
       setInterval(turnOnServices, this.PowerOnInterval*60000); // every PowerOnInterval min
