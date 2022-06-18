@@ -89,7 +89,7 @@
           settings.PowerOnInterval = v;
           writeSettings();
         },
-        format: x => x + " min"
+        format: x => x + "m"
       };
     }
 
