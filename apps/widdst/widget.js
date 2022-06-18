@@ -1,4 +1,8 @@
 (() => {
+	
+	// This widget attempts to make the clock show the new time the instant the timezone changes.
+	// It does this by reacting to what the DST status will be 500ms in the future, and by triggering
+	// a check of the DST status 350ms before it is due to happen.
 
 	// We cache information in next_dst_change.
 	// next_dst_change = {millis: (the GMT millis since 1970 that the DST state next changes),
@@ -7,8 +11,8 @@
 	//                    show_icon: (true if we should show our little "dst" icon in the widget area when DST is in effect)
 	//                   }
     var next_dst_change = undefined;
+	// our setTimeout() return value for the function that periodically check the status of DST
 	var check_timeout = undefined;
-	var dst_update_timeout = undefined;
 
 	// Calculates the number of days since 1970 of the given date
 	function dayNumber(y, m, d) {
@@ -25,6 +29,7 @@
 	// y is the year
 	// other_offset is the timezone offset (in hours) of the other change (e.g. the offset in force before this change)
 	// data is the dst_start or dst_end from the dst settings
+	// returns the number of milliseconds since 1970 that the next dst start/end is due to happen
 	function dstChangeTime(y, other_offset, data) {
 		var m = data.month;
 		var ans;
@@ -52,8 +57,8 @@
 		}
 	}
 
-	// Update the values held in next_dst_change.
-	// now is the current time
+	// Update the values held in next_dst_change, and make sure the current effective timezone is correct
+	// now is the current time (actually ~500ms in the future)
 	// settings is the contents of the dst.json
 	function updateNextDstChange(now, settings) {
 		if (settings.has_dst) {
@@ -63,11 +68,11 @@
 				if (end <= now.getTime()) {
 					// Both changes have happened for this year
 					if (start < end) {
-						// The start of DST is earlier than the end, so next change is a start of DST
+						// The start of DST is earlier than the end, so next change is the start of DST next year
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz, settings.dst_start), offset: settings.tz + settings.dst_size, is_start: true };
 						setCurrentEffectiveTimezone(now, settings.tz);
 					} else {
-						// The end of DST is earlier than the start, so the next change is an end of DST
+						// The end of DST is earlier than the start, so the next change is the end of DST next year
 						next_dst_change = { millis: dstChangeTime(now.getFullYear()+1, settings.tz + settings.dst_size, settings.dst_end), offset: settings.tz, is_start: false };
 						setCurrentEffectiveTimezone(now, settings.tz + settings.dst_size);
 					}
@@ -88,19 +93,13 @@
 	// Update the cached information we keep in next_dst_change
 	function doUpdate() {
 		var settings = require("Storage").readJSON("dst.json");
-		var now = new Date();
 		if (settings) {
+			var now = new Date(1000*getTime()+500);
 			updateNextDstChange(now, settings);
 			rescheduleCheckForDSTChange(now);
 		} else {
 			next_dst_change = undefined;
 		}
-	}
-
-	// Update everything!
-	function update() {
-		doUpdate();
-		draw();
 	}
 
 	// Called by draw() when we are not in DST
@@ -113,6 +112,7 @@
 
 	// draw, or erase, our little "dst" icon in the widgets area
 	function draw() {
+		doUpdate();
 		if (next_dst_change) {
 			if ((next_dst_change.is_start) || (!next_dst_change.show_icon)) {
 				clear();
@@ -136,8 +136,8 @@
 
 	// Called periodically to check to see if we have entered / exited DST
     function checkForDSTChange() {
-		var now = new Date();
 		if (next_dst_change) {
+			var now = new Date(1000*getTime()+500);
 			if (now.getTime() >= next_dst_change.millis) {
 				var dstSettings = require("Storage").readJSON("dst.json");
 				if (dstSettings) {
@@ -162,7 +162,7 @@
 			check_timeout = setTimeout( function() {
 				check_timeout = undefined;
 				checkForDSTChange();
-			}, (next_dst_change.millis - now.getTime()) % 14400000); // Check every 4 hours.
+			}, (next_dst_change.millis - now.getTime() - 350) % 14400000); // Check every 4 hours.
 		}
 	}
 
@@ -170,7 +170,7 @@
 	WIDGETS["widdst"] = {
 		area: "tl",
 		width: 0,
-		draw: update
+		draw: draw
 	};
 
 })()

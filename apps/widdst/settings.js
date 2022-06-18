@@ -1,8 +1,7 @@
 (function(back) {
 
-	// USE LOCALE IN PRODUCTION (I want to test on the IDE, so I'll do it this way for now)
-	var dows = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+	var dows = require("date_utils").dows(0,1);
+	var months = require("date_utils").months(1);
 
 	var settings = Object.assign({
 		has_dst: false,
@@ -76,12 +75,12 @@
 		}
 		return {
 			"": {
-				"Title": start ? "DST Start" : "DST End"
+				"Title": start ? /*LANG*/"DST Start" : /*LANG*/"DST End"
 			},
 			"< Back": () => E.showMenu(dstMenu),
-			"The" : {
+			/*LANG*/"The" : {
 				value: dst_start_end.dow_number,
-				format: v => ["1st","2nd","3rd","4th","last"][v],
+				format: v => [/*LANG*/"1st",/*LANG*/"2nd",/*LANG*/"3rd",/*LANG*/"4th",/*LANG*/"last"][v],
 				min: 0,
 				max: 4,
 				onchange: v => {
@@ -99,7 +98,7 @@
 					writeSubMenuSettings();
 				}
 			},
-			"of": {
+			/*LANG*/"of": {
 				value: dst_start_end.month,
 				format: v => months[v],
 				min: 0,
@@ -109,9 +108,9 @@
 					writeSubMenuSettings();
 				}
 			},
-			"minus" : {
+			/*LANG*/"minus" : {
 				value: dst_start_end.day_offset,
-				format: v => v + ((v == 1) ? " day" : " days"),
+				format: v => v + ((v == 1) ? /*LANG*/" day" : /*LANG*/" days"),
 				min: 0,
 				max: 7,
 				onchange: v => {
@@ -119,7 +118,7 @@
 					writeSubMenuSettings();
 				}
 			},
-			"at": {
+			/*LANG*/"at": {
 				value: dst_start_end.at,
 				format: v => hoursToString(v),
 				min: 0,
@@ -135,26 +134,26 @@
 			
 	var dstMenu = {
 		"": {
-			"Title": "Daylight Savings"
+			"Title": /*LANG*/"Daylight Savings"
 		},
 		"< Back": () => back(),
-		"Enabled": {
+		/*LANG*/"Enabled": {
 			value: settings.has_dst,
-			format: v => v ? 'Yes' : 'No',
+			format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
 			onchange: v => {
 				settings.has_dst = v;
 				writeSettings();
 			}
 		},
-		"Icon?": {
+		/*LANG*/"Icon": {
 			value: settings.show_icon,
-			format: v => v ? 'Yes' : 'No',
+			format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
 			onchange: v => {
 				settings.show_icon = v;
 				writeSettings();
 			}
 		},
-		"Base TZ": {
+		/*LANG*/"Base TZ": {
 			value: settings.tz,
 			format: v => (v >= 0 ? '+' + hoursToString(v) : '-' + hoursToString(-v)),
 			onchange: v => {
@@ -165,7 +164,7 @@
 			max: 13,
 			step: 0.25
 		},
-		"Change": {
+		/*LANG*/"Change": {
 			value: settings.dst_size,
 			format: v => (v >= 0 ? '+' + hoursToString(v): '-' + hoursToString(-v)),
 			min: -1,
@@ -176,8 +175,8 @@
 				writeSettings();
 			}
 		},
-		"DST Start": () => E.showMenu(getDSTStartEndMenu(true)),
-		"DST End": () => E.showMenu(getDSTStartEndMenu(false))
+		/*LANG*/"DST Start": () => E.showMenu(getDSTStartEndMenu(true)),
+		/*LANG*/"DST End": () => E.showMenu(getDSTStartEndMenu(false))
 	};
 	
 	E.showMenu(dstMenu);
