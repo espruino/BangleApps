@@ -34,8 +34,6 @@ const clock = new ClockFace({
       if (this[k]===undefined) this[k] = true;
     });
     
-    this.
-
     Bangle.on("lock", on => {
       if (on) lock();
       else unlock();
