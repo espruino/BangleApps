@@ -48,8 +48,6 @@ const clock = new ClockFace({
 
   draw: function (date) {
     var curPos = 1;
-    g.reset();
-    g.clearRect(g.appRect);
     g.setFontAlign(-1, -1);
     g.setColor(fontColor);
     drawTime(date, curPos);
