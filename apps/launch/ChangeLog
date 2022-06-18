@@ -13,3 +13,4 @@
 0.12: Add an option to hide clocks from the app list (fix #1015)
       Add /*LANG*/ tags for internationalisation
 0.13: Add fullscreen mode
+0.14: Use default Bangle formatter for booleans

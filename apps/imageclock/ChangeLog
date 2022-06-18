@@ -7,3 +7,4 @@
 0.06: Watchfaces can be refreshed partly
 0.07: Allow wrapping drawing in timeouts to get faster reactions
       Show/Hide widgets with swipe up or down
+0.08: Use default Bangle formatter for booleans

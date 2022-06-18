@@ -17,7 +17,6 @@
     "< Back": () => back(),
     'B2 Colors': {
       value: settings.ndColors,
-      format: v => v ? "Yes" : "No",
       onchange: v => {
         settings.ndColors = v;
         writeSettings();

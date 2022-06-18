@@ -85,14 +85,12 @@
     '< Back': function() { E.showMenu(buildMainMenu()); },
     'Alert on disconnect': {
       value: !!settings.warnDisconnect,
-      format: v => settings.warnDisconnect ? "On" : "Off",
       onchange: v => {
         writeSettings("warnDisconnect",v);
       }
     },
     'Debug log': {
       value: !!settings.debuglog,
-      format: v => settings.debuglog ? "On" : "Off",
       onchange: v => {
         writeSettings("debuglog",v);
       }

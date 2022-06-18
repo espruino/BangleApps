@@ -171,7 +171,6 @@ function editDOW(dow, onchange) {
     var dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
-      format: v => v ? "Yes" : "No",
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
     };
   })(i);
@@ -213,18 +212,15 @@ function editAlarm(alarmIndex, alarm) {
     },
     'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
       onchange: v=>a.on=v
     },
     'Repeat': {
       value: a.rp,
-      format: v=>v?"Yes":"No",
       onchange: v=>a.rp=v
     },
     'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),
     'Auto snooze': {
       value: a.as,
-      format: v=>v?"Yes":"No",
       onchange: v=>a.as=v
     }
   };
@@ -278,7 +274,6 @@ function editTimer(alarmIndex, alarm) {
     },
     'Enabled': {
       value: a.on,
-      format: v=>v?"On":"Off",
       onchange: v=>a.on=v
     },
     'Vibrate': require("buzz_menu").pattern(a.vibrate, v => a.vibrate=v ),

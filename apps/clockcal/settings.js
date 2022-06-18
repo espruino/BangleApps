@@ -26,7 +26,6 @@
         "< Back": () => back(),
         'Buzz(dis)conn.?': {
             value: settings.BUZZ_ON_BT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.BUZZ_ON_BT = v;
                 writeSettings();
@@ -59,7 +58,6 @@
         },
         'Red Saturday?': {
             value: settings.REDSAT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSAT = v;
                 writeSettings();
@@ -67,7 +65,6 @@
         },
         'Red Sunday?': {
             value: settings.REDSUN,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSUN = v;
                 writeSettings();

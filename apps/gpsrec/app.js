@@ -22,7 +22,6 @@ function showMainMenu() {
     '': { 'title': 'GPS Record' },
     'RECORD': {
       value: !!settings.recording,
-      format: v=>v?"On":"Off",
       onchange: v => {
         settings.recording = v;
         updateSettings();

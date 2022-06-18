@@ -1,7 +1,7 @@
 {
   "id": "noteify",
   "name": "Noteify",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Write notes using an onscreen keyboard and use them as custom messages for alarms or timers.",
   "icon": "app.png",
   "tags": "tool,alarm",
