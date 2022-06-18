@@ -23,17 +23,17 @@ const ClockFace = require("ClockFace");
 const clock = new ClockFace({
   init: function () {
     // check settings and set default if needed
+    this.showHRM = false;
+    this.showAltitude = false;
     if (this.HRMinConfidence === undefined) this.HRMinConfidence = 50;
     if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
-    if (this.showAltitude === undefined){
-      this.showAltitude = true && process.env.HWVERSION == 2;
-    }else {
-      this.showAltitude = this.showAltitude && process.env.HWVERSION == 2;
-    }
-    ["showHRM", "showActivity", "showStepCount", "powerSaving"].forEach(k => {
-      if (this[k]===undefined) this[k] = true;
+    if (this.powerSaving===undefined) this[k] = true;
+    ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(k => {
+      if (this[k]===undefined) this[k] = "Empty";
+      else if (this[k]==="HR") this.showHRM = true;
+      else if (this[k]==="Alt") this.showAltitude = true && process.env.HWVERSION == 2;
     });
-    
+
     Bangle.on("lock", on => {
       if (on) lock();
       else unlock();
@@ -52,27 +52,16 @@ const clock = new ClockFace({
     g.setColor(fontColor);
     drawTime(date, curPos);
     curPos++;
-    if(this.showDate){
-      drawDate(date, curPos);
+
+    ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(line => {
+      if (this[line]==='Date') drawDate(date, curPos);
+      else if (this[line]==='HR') drawHRM(curPos);
+      else if (this[line]==='Motion') drawMotion(curPos);
+      else if (this[line]==='Alt') drawAltitude(curPos);
+      else if (this[line]==='Steps') drawStepCount(curPos);
+      else if (this[line]==='>') drawInput(curPos);
       curPos++;
-    }
-    if(this.showAltitude){
-      drawAltitude(curPos);
-      curPos++;
-    }
-    if(this.showHRM){
-      drawHRM(curPos);
-      curPos++;
-    }
-    if(this.showActivity){
-      drawActivity(curPos);
-      curPos++;
-    }
-    if(this.showStepCount){
-      drawStepCount(curPos);
-      curPos++;
-    }
-    drawInput(curPos);
+    });
   },
 
   settingsFile: "terminalclock.json"
@@ -134,12 +123,11 @@ function drawAltitude(pos){
     drawLine(">Alt: unknown", pos);
 }
  
-function drawActivity(pos){
+function drawMotion(pos){
   var health = Bangle.getHealthStatus('last');
   var steps_formated = ">Motion: " + parseInt(health.movement);
   drawLine(steps_formated, pos);
 }
-
 
 /* -----------------------------------------------
 Services functions (HRM, pressure, etc...)
