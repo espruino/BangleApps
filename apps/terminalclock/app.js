@@ -29,7 +29,16 @@ const clock = new ClockFace({
     if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
     if (this.powerSaving===undefined) this.powerSaving = true;
     ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(k => {
-      if (this[k]===undefined) this[k] = "Empty";
+      if (this[k]===undefined){
+        if(k == "L2") this[k] = "Date";
+        else if(k == "L3") {
+          this[k] = "HR";
+          this.showHRM = true;
+        }else if(k == "L4") this[k] = "Motion";
+        else if(k == "L5") this[k] = "Steps";
+        else if(k == "L6") this[k] = ">";
+        else this[k] = "Empty"; 
+      } 
       else if (this[k]==="HR") this.showHRM = true;
       else if (this[k]==="Alt") this.showAltitude = true && process.env.HWVERSION == 2;
     });

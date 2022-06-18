@@ -8,11 +8,11 @@
     HRMinConfidence: 50,
     powerSaving: true,
     PowerOnInterval: 15,
-    L2: 'Empty',
-    L3: 'Empty',
-    L4: 'Empty',
-    L5: 'Empty',
-    L6: 'Empty',
+    L2: 'Date',
+    L3: 'HR',
+    L4: 'Motion',
+    L5: 'Steps',
+    L6: '>',
     L7: 'Empty',
     L8: 'Empty',
     L9: 'Empty',
@@ -102,4 +102,4 @@
   }
 
   E.showMenu(getMainMenu());
-})();
+})
