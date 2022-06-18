@@ -65,7 +65,6 @@
      },
      'Show widgets': {
         value: settings.loadWidgets,
-        format: v => v?"Yes":"No",
         onchange: v => {
           settings.loadWidgets = v;
           writeSettings();
@@ -73,7 +72,6 @@
       },
       'Power saving': {
         value: settings.powerSaving,
-        format: v => v?"On":"Off",
         onchange: v => {
           settings.powerSaving = v;
           writeSettings();
@@ -91,9 +89,7 @@
           settings.PowerOnInterval = v;
           writeSettings();
         },
-        format: x => {
-            return x + " min";
-        },
+        format: x => x + " min"
       };
     }
 
