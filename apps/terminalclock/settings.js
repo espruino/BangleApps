@@ -2,9 +2,12 @@
   var FILE = "terminalclock.json";
   // Load settings
   var settings = Object.assign({
-    HRMinConfidence: 50,
+    // ClockFace lib
     showDate: true,
-    showAltitude: process.env.HWVERSION != 1 ? true : false,
+    loadWidgets: true,
+    // TerminalClock specific
+    HRMinConfidence: 50,
+    showAltitude: process.env.HWVERSION == 2 ? true : false,
     showHRM: true,
     showActivity: true,
     showStepCount: true,
@@ -28,6 +31,14 @@
         writeSettings();
       }
    },
+   'Show widgets': {
+      value: settings.loadWidgets,
+      format: v => v?"Yes":"No",
+      onchange: v => {
+        settings.loadWidgets = v;
+        writeSettings();
+      }
+    },
    'Show date': {
       value: settings.showDate,
       format: v => v?"Yes":"No",
