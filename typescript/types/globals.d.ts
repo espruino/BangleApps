@@ -33,7 +33,7 @@ done    "heatshrink": "readonly",
         "Math": "readonly",
         "Modules": "readonly",
         "NRF": "readonly",
-        "Number": "readonly", 
+        "Number": "readonly",
         "Object": "readonly",
         "OneWire": "readonly",
         "Pin": "readonly",
@@ -176,8 +176,9 @@ declare type GraphicsApi = {
 declare const Graphics: GraphicsApi;
 declare const g: GraphicsApi;
 
+type WidgetArea = 'tl' | 'tr' | 'bl' | 'br';
 declare type Widget = {
-  area: 'tr' | 'tl';
+  area: WidgetArea;
   width: number;
   draw: (this: { x: number; y: number }) => void;
 };
