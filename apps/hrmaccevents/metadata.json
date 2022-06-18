@@ -9,6 +9,6 @@
   "tags": "debug",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
-  "customConnect": true,
+  "customConnect": false,
   "storage": [ ]
 }
