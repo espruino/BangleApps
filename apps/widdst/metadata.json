@@ -6,6 +6,7 @@
   "type": "widget",
   "tags": "widget,tool",
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"widdst.wid.js","url":"widget.js"},
     {"name":"widdst.settings.js","url":"settings.js"}
