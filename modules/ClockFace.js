@@ -108,7 +108,7 @@ ClockFace.prototype.resume = function() {
   delete this._last;
   this.paused = false;
   if (this._resume) this._resume.apply(this);
-  this.tick(true);
+  this.tick();
 };
 
 /**
