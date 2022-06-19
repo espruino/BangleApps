@@ -10,5 +10,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
   "customConnect": false,
+  "readme": "README.md",
   "storage": [ ]
 }
