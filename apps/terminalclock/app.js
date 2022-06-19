@@ -21,10 +21,15 @@ if (process.env.HWVERSION == 1){
 // initialising the clockface
 const ClockFace = require("ClockFace");
 const clock = new ClockFace({
+  precision: 60,
+  settingsFile: "terminalclock.json",
+
   init: function () {
     // check settings and set default if needed
     this.showHRM = false;
     this.showAltitude = false;
+    this.lock_precision = this.precision;
+    this.unlock_precision = 1;
     if (this.HRMinConfidence === undefined) this.HRMinConfidence = 50;
     if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
     if (this.powerSaving===undefined) this.powerSaving = true;
@@ -50,11 +55,13 @@ const clock = new ClockFace({
     });
 
     // set the services (HRM, pressure sensor, etc....)
-    turnOnServices();
-    if(this.powerSaving){
+    if(!this.powerSaving){
+      turnOnServices();
+    } else{
       setInterval(turnOnServices, this.PowerOnInterval*60000); // every PowerOnInterval min
     }
-
+    // start the clock unlocked
+    unlock();
   },
 
   draw: function (date) {
@@ -74,8 +81,6 @@ const clock = new ClockFace({
       curPos++;
     });
   },
-
-  settingsFile: "terminalclock.json"
 });
 
 
@@ -192,13 +197,12 @@ function unlock(){
   if(clock.powerSaving){
     turnOnServices();
   }
-  clock.old_precision = clock.precision;
-  clock.precision = 1;
+  clock.precision = clock.unlock_precision;
   clock.tick();
 }
 
 function lock(){
-  clock.precision = clock.old_precision;
+  clock.precision = clock.lock_precision;
   clock.tick();
 }
 
