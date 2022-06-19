@@ -19,7 +19,7 @@ function ClockFace(options) {
     options.update.apply(this, [t, {d: true, h: true, m: true, s: true}]);
   });
   this.update = options.update || (t => {
-    g.clear();
+    g.clearRect(Bangle.appRect);
     options.draw.apply(this, [t, {d: true, h: true, m: true, s: true}]);
   });
   if (options.precision===1000||options.precision===60000) throw "ClockFace precision is in seconds, not ms";
