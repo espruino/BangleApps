@@ -59,7 +59,7 @@
 
 	// Update the values held in next_dst_change, and make sure the current effective timezone is correct
 	// now is the current time (actually ~500ms in the future)
-	// settings is the contents of the dst.json
+	// settings is the contents of the widdst.json
 	function updateNextDstChange(now, settings) {
 		if (settings.has_dst) {
 			var start = dstChangeTime(now.getFullYear(), settings.tz, settings.dst_start);
@@ -92,7 +92,7 @@
 
 	// Update the cached information we keep in next_dst_change
 	function doUpdate() {
-		var settings = require("Storage").readJSON("dst.json");
+		var settings = require("Storage").readJSON("widdst.json");
 		if (settings) {
 			var now = new Date(1000*getTime()+500);
 			updateNextDstChange(now, settings);
@@ -139,7 +139,7 @@
 		if (next_dst_change) {
 			var now = new Date(1000*getTime()+500);
 			if (now.getTime() >= next_dst_change.millis) {
-				var dstSettings = require("Storage").readJSON("dst.json");
+				var dstSettings = require("Storage").readJSON("widdst.json");
 				if (dstSettings) {
 					updateNextDstChange(now, dstSettings);
 					rescheduleCheckForDSTChange(now);

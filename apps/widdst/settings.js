@@ -22,7 +22,7 @@
 			day_offset: 0,
 			at: 2
 		}
-	}, require("Storage").readJSON("dst.json", true) || {});
+	}, require("Storage").readJSON("widdst.json", true) || {});
 	
 	var dst_start_end = {
 		is_start: true,
@@ -34,7 +34,7 @@
 	};
 	
 	function writeSettings() {
-		require('Storage').writeJSON("dst.json", settings);
+		require('Storage').writeJSON("widdst.json", settings);
 	}
 	
 	function writeSubMenuSettings() {

@@ -1,7 +1,7 @@
 { "id": "widdst",
   "name": "Daylight Savings",
   "version":"0.01",
-  "description": "Widget to enable automatic daylight savings adjustment.",
+  "description": "Widget to enable automatic daylight savings adjustment. See the instructions below for more information.",
   "icon": "icon.png",
   "type": "widget",
   "tags": "widget,tool",
@@ -11,5 +11,5 @@
     {"name":"widdst.wid.js","url":"widget.js"},
     {"name":"widdst.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"dst.json"}]
+  "data": [{"name":"widdst.json"}]
 }
