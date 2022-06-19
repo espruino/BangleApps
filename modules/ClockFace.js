@@ -58,6 +58,7 @@ ClockFace.prototype.tick = function() {
   };
   if (!this._last) {
     g.clear(true);
+    if (global.WIDGETS) Bangle.drawWidgets();
     g.reset();
     this.draw.apply(this, [time, {d: true, h: true, m: true, s: true}]);
   } else {
@@ -69,7 +70,6 @@ ClockFace.prototype.tick = function() {
     g.reset();
     this.update.apply(this, [time, c]);
   }
-  if (global.WIDGETS) Bangle.drawWidgets();
   this._last = now;
   if (this.paused) return; // called redraw() while still paused
   // figure out timeout: if e.g. precision=60s, update at the start of a new minute
@@ -103,13 +103,12 @@ ClockFace.prototype.pause = function() {
   this.paused = true; // apps might want to check this
   if (this._pause) this._pause.apply(this);
 };
-
 ClockFace.prototype.resume = function() {
   if (this._timeout) return; // not paused
   delete this._last;
   this.paused = false;
   if (this._resume) this._resume.apply(this);
-  this.tick();
+  this.tick(true);
 };
 
 /**
