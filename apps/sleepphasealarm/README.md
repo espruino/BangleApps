@@ -4,10 +4,19 @@ The alarm must be in the next 24h.
 
 The display shows:
 
-- the current time
-- time of the next alarm or timer
-- time difference between current time and alarm time (ETA)
-- current state of the ESS algorithm, "Sleep" or "Awake", useful for debugging
+- The current time.
+- Time of the next alarm or timer.
+- Time difference between current time and alarm time (ETA).
+- Current state of the ESS algorithm, "Sleep" or "Awake", useful for debugging. State can also be "Deferred", see the "Run before alarm"-option.
+
+## Settings
+
+* **Keep alarm enabled**
+  - Yes: (default) Alert will stay enabled, e.g. for an alarm at 7:00 the clock will buzz at the calculated time from the ESS algorithm (for example 6:45) and again at 7:00.
+  - No: No action at configured alarm time from scheduler.
+* **Run before alarm**
+  - disabled: (default) The ESS algorithm starts immediately when the application starts.
+  - 1..23: The ESS algorithm starts the configured time before the alarm. E.g. when set to 1h for an alarm at 7:00 the ESS algorithm will start at 6:00. This improves battery life.
 
 ## Logging
 
