@@ -35,8 +35,7 @@ function onHRM(h) {
   g.clearRect(0,24,g.getWidth(),80);
   g.setFont("6x8").drawString("Confidence "+hrmInfo.confidence+"%", px, 70);
 
-  g.setFontAlign(-1,-1);
-  g.setFont("6x8").drawString(rawMax, 2, 70);
+  updateScale();
 
   g.setFontAlign(0,0);
   var str = hrmInfo.bpm;
@@ -47,8 +46,14 @@ function onHRM(h) {
 }
 Bangle.on('HRM', onHRM);
 
+function updateScale(){
+    g.setFontAlign(-1,-1);
+    g.clearRect(2,70,40,78);
+    g.setFont("6x8").drawString(scale, 2, 70);
+}
 
 var rawMax = 0;
+var scale = 2000;
 var MID = (g.getHeight()+80)/2;
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
@@ -56,8 +61,13 @@ Bangle.on('HRM-raw', function(v) {
   h=v;
   hrmOffset++;
   if (hrmOffset>g.getWidth()) {
-    hrmOffset=0;
+    let thousands = Math.round(rawMax / 1000) * 1000;
+    if (thousands > scale) scale = thousands;
+
     g.clearRect(0,80,g.getWidth(),g.getHeight());
+    updateScale();
+
+    hrmOffset=0;
     lastHrmPt = [-100,0];
   }
   if (rawMax < v.raw) {
@@ -65,7 +75,7 @@ Bangle.on('HRM-raw', function(v) {
   }
   y = E.clip(btm-(8+v.filt/3000),btm-24,btm);
   g.setColor(1,0,0).fillRect(hrmOffset,btm, hrmOffset, y);
-  y = E.clip(btm - (v.raw/rawMax*84),84,btm);
+  y = E.clip(btm - (v.raw/scale*84),84,btm);
   g.setColor(g.theme.fg).drawLine(lastHrmPt[0],lastHrmPt[1],hrmOffset, y);
   lastHrmPt = [hrmOffset, y];
   if (counter !==undefined) {
@@ -80,6 +90,8 @@ function countDown() {
   if (counter) {
     g.drawString(counter--,g.getWidth()/2,g.getHeight()/2, true);
     setTimeout(countDown, 1000);
+  } else {
+    g.clearRect(0,24,g.getWidth(),g.getHeight());
   }
 }
 g.clear();
