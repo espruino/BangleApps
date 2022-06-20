@@ -1,9 +1,9 @@
 {
-  "id": "homeassistant",
+  "id": "ha",
   "name": "HomeAssistant",
   "version": "0.01",
   "description": "An application that displays information such as battery level, steps etc.",
-  "icon": "homeassistant.png",
+  "icon": "ha.png",
   "type": "app",
   "tags": "tool",
   "readme": "README.md",
@@ -13,7 +13,7 @@
     {"url":"screenshot_2.png"},
     {"url":"screenshot_3.png"}],
   "storage": [
-    {"name":"homeassistant.app.js","url":"homeassistant.app.js"},
-    {"name":"homeassistant.img","url":"homeassistant.icon.js","evaluate":true}
+    {"name":"ha.app.js","url":"ha.app.js"},
+    {"name":"ha.img","url":"ha.icon.js","evaluate":true}
   ]
 }
