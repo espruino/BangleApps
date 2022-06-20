@@ -4,7 +4,7 @@ if (process.env.HWVERSION == 1) {
 }
 
 Bangle.setHRMPower(1);
-var hrmInfo, hrmOffset = 0;
+var hrmInfo = {}, hrmOffset = 0;
 var hrmInterval;
 var btm = g.getHeight()-1;
 var lastHrmPt = []; // last xy coords we draw a line to
@@ -29,22 +29,25 @@ function onHRM(h) {
       hrmInterval = setInterval(readHRM,41);
     }, 40);
   }
+  updateHrm();
+}
+Bangle.on('HRM', onHRM);
 
+function updateHrm(){
   var px = g.getWidth()/2;
   g.setFontAlign(0,-1);
   g.clearRect(0,24,g.getWidth(),80);
-  g.setFont("6x8").drawString("Confidence "+hrmInfo.confidence+"%", px, 70);
+  g.setFont("6x8").drawString("Confidence "+(hrmInfo.confidence || "--")+"%", px, 70);
 
   updateScale();
 
   g.setFontAlign(0,0);
-  var str = hrmInfo.bpm;
+  var str = hrmInfo.bpm || "--";
   g.setFontVector(40).setColor(hrmInfo.confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
   px += g.stringWidth(str)/2;
   g.setFont("6x8").setColor(g.theme.fg);
   g.drawString("BPM",px+15,45);
 }
-Bangle.on('HRM', onHRM);
 
 function updateScale(){
     g.setFontAlign(-1,-1);
@@ -81,6 +84,7 @@ Bangle.on('HRM-raw', function(v) {
   if (counter !==undefined) {
     counter = undefined;
     g.clearRect(0,24,g.getWidth(),g.getHeight());
+    updateHrm();
   }
 });
 
@@ -90,8 +94,6 @@ function countDown() {
   if (counter) {
     g.drawString(counter--,g.getWidth()/2,g.getHeight()/2, true);
     setTimeout(countDown, 1000);
-  } else {
-    g.clearRect(0,24,g.getWidth(),g.getHeight());
   }
 }
 g.clear();
