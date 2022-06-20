@@ -4,8 +4,11 @@ require("Font6x12").add(Graphics);
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
 
+
+const TIMER_IDX = "cassioWatch";
+
+
 function bigThenSmall(big, small, x, y) {
-  g.setFont("7x11Numeric7Seg", 2);
   g.drawString(big, x, y);
   x += g.stringWidth(big);
   g.setFont("8x12");
@@ -71,6 +74,7 @@ function drawClock() {
 }
 
 function drawBattery() {
+  g.setFont("7x11Numeric7Seg", 2);
   bigThenSmall(E.getBattery(), "%", 135, 21);
 }
 
@@ -117,6 +121,59 @@ function getSteps() {
   return steps + "k";
 }
 
+function isAlarmEnabled(){
+  try{
+    var alarm = require('sched');
+    var alarmObj = alarm.getAlarm(TIMER_IDX);
+    if(alarmObj===undefined || !alarmObj.on){
+      return false;
+    }
+
+    return true;
+
+  } catch(ex){ }
+  return false;
+}
+
+function getAlarmMinutes(){
+  if(!isAlarmEnabled()){
+    return -1;
+  }
+
+  var alarm = require('sched');
+  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
+}
+
+function increaseAlarm(){
+  try{
+    var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+    var alarm = require('sched')
+    alarm.setAlarm(TIMER_IDX, {
+      timer : (minutes+5)*60*1000,
+    });
+    alarm.reload();
+  } catch(ex){ }
+}
+
+function decreaseAlarm(){
+  try{
+    var minutes = getAlarmMinutes();
+    minutes -= 5;
+
+    var alarm = require('sched')
+    alarm.setAlarm(TIMER_IDX, undefined);
+
+    if(minutes > 0){
+      alarm.setAlarm(TIMER_IDX, {
+        timer : minutes*60*1000,
+      });
+    }
+
+    alarm.reload();
+  } catch(ex){ }
+}
+
 
 function draw() {
   queueDraw();
@@ -128,10 +185,17 @@ function draw() {
   let background = getBackgroundImage();
   g.drawImage(background, 0, 0, { scale: 1 });
   g.setColor(0, 0, 0);
-  g.setFont("6x12");
-  g.drawString("Launching Process", 30, 20);
-  g.setFont("8x12");
-  g.drawString("ACTIVATE", 40, 35);
+
+  if(!isAlarmEnabled()){
+    g.setFont("6x12");
+    g.drawString("Launching Process", 30, 20);
+    g.setFont("8x12");
+    g.drawString("ACTIVATE", 40, 35);
+  } else {
+    g.setFont("8x12", 2);
+    // g.drawString("T-" + getAlarmMinutes()+ "min", 30, 23);
+    bigThenSmall("T-" + getAlarmMinutes(), " min.", 30, 23);
+  }
 
   g.setFontAlign(0,-1);
   g.setFont("8x12", 2);
@@ -164,6 +228,32 @@ Bangle.on("lock", (locked) => {
     rocketInterval = setInterval(drawRocket, rocketSpeed);
   }
 });
+
+
+Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.2);
+  var right = g.getWidth() - left;
+  var upper = parseInt(g.getHeight() * 0.2);
+  var lower = g.getHeight() - upper;
+
+  var is_left = e.x < left;
+  var is_right = e.x > right;
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
+
+  if(is_upper){
+    Bangle.buzz(40, 0.6);
+    increaseAlarm();
+    draw();
+  }
+
+  if(is_lower){
+    Bangle.buzz(40, 0.6);
+    decreaseAlarm();
+    draw();
+  }
+});
+
 
 
 // Load widgets, but don't show them
