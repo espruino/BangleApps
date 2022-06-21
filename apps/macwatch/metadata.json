@@ -1,0 +1,13 @@
+{ "id": "macwatch",
+  "name": "MacWatch",
+  "shortName":"MacWatch",
+  "version":"0.01",
+  "description": "A simple watch using the classic Mac Chicago font",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"macwatch.app.js","url":"app.js"},
+    {"name":"macwatch.img","url":"app-icon.js","evaluate":true}
+  ]
