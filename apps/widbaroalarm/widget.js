@@ -129,55 +129,54 @@ function checkForAlarms(pressure) {
     if (drop3halarm > 0 || raise3halarm > 0) {
       // we need at least 30 minutes of data for reliable detection
       const diffDateAge = Math.abs(history3[0]["ts"] - ts);
-      if (diffDateAge < 30 * 60) {
-        return;
-      }
+      if (diffDateAge > 30 * 60) {
+        // Get oldest entry:
+        const oldestPressure = history3[0]["p"];
+        if (oldestPressure != undefined && oldestPressure > 0) {
+          const diffPressure = Math.abs(oldestPressure - pressure);
 
-      // Get oldest entry:
-      const oldestPressure = history3[0]["p"];
-      if (oldestPressure != undefined && oldestPressure > 0) {
-        const diffPressure = Math.abs(oldestPressure - pressure);
-
-        // drop alarm
-        if (drop3halarm > 0 && oldestPressure > pressure) {
-          if (diffPressure >= drop3halarm) {
-            if (doWeNeedToWarn("dropWarnTs")) {
-              showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
-                            Math.round(oldestPressure) + " to " +
-                            Math.round(pressure) + " hPa",
-                        "dropWarnTs");
+          // drop alarm
+          if (drop3halarm > 0 && oldestPressure > pressure) {
+            if (diffPressure >= drop3halarm) {
+              if (doWeNeedToWarn("dropWarnTs")) {
+                showAlarm((Math.round(diffPressure * 10) / 10) +
+                              " hPa/3h from " + Math.round(oldestPressure) +
+                              " to " + Math.round(pressure) + " hPa",
+                          "dropWarnTs");
+              }
+            } else {
+              if (ts > setting("dropWarnTs"))
+                saveSetting("dropWarnTs", 0);
             }
           } else {
             if (ts > setting("dropWarnTs"))
               saveSetting("dropWarnTs", 0);
           }
-        } else {
-          if (ts > setting("dropWarnTs"))
-            saveSetting("dropWarnTs", 0);
-        }
 
-        // raise alarm
-        if (raise3halarm > 0 && oldestPressure < pressure) {
-          if (diffPressure >= raise3halarm) {
-            if (doWeNeedToWarn("raiseWarnTs")) {
-              showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
-                            Math.round(oldestPressure) + " to " +
-                            Math.round(pressure) + " hPa",
-                        "raiseWarnTs");
+          // raise alarm
+          if (raise3halarm > 0 && oldestPressure < pressure) {
+            if (diffPressure >= raise3halarm) {
+              if (doWeNeedToWarn("raiseWarnTs")) {
+                showAlarm((Math.round(diffPressure * 10) / 10) +
+                              " hPa/3h from " + Math.round(oldestPressure) +
+                              " to " + Math.round(pressure) + " hPa",
+                          "raiseWarnTs");
+              }
+            } else {
+              if (ts > setting("raiseWarnTs"))
+                saveSetting("raiseWarnTs", 0);
             }
           } else {
             if (ts > setting("raiseWarnTs"))
               saveSetting("raiseWarnTs", 0);
           }
-        } else {
-          if (ts > setting("raiseWarnTs"))
-            saveSetting("raiseWarnTs", 0);
         }
       }
     }
   }
 
   history3.push(d);
+
   // write data to storage
   storage.writeJSON(LOG_FILE, history3);
 
@@ -219,6 +218,7 @@ function check() {
       medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
       if (medianPressure > 0) {
         turnOff();
+        draw();
         checkForAlarms(medianPressure);
       }
     }
@@ -248,17 +248,16 @@ function draw() {
     g.setFont("6x8", 1).setFontAlign(1, 0);
     const x = this.x, y = this.y;
     if (medianPressure == undefined) {
-
       // trigger a new check
       check();
 
       // lets load last value from log (if available)
       if (history3.length > 0) {
         medianPressure = history3[history3.length - 1]["p"];
+        g.drawString(Math.round(medianPressure), x + 24, y + 6);
+      } else {
+        g.drawString("...", x + 24, y + 6);
       }
-
-      g.drawString("...", x + 24, y + 6);
-      g.drawString(Math.round(medianPressure), x + 24, y + 6);
     } else {
       g.drawString(Math.round(medianPressure), x + 24, y + 6);
     }
@@ -269,7 +268,7 @@ function draw() {
     if (threeHourAvrPressure != undefined) {
       if (medianPressure != undefined) {
         const diff = Math.round(medianPressure - threeHourAvrPressure);
-        g.drawString((diff > 0 ? "+" : "") + diff, x + 24, y + 6 + 10);
+        g.drawString((diff > 0 ? "+" : "" + diff), x + 24, y + 6 + 10);
       }
     }
   }
