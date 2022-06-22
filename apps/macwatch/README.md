@@ -17,3 +17,6 @@ Time updates every 15 seconds.
 
 ![](screenshot-light-time.png)
 ![](screenshot-light-date.png)
+
+## The watch in use
+![](photo-watch-in-use.jpg)
