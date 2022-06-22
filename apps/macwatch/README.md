@@ -20,3 +20,7 @@ Time updates every 15 seconds.
 
 ## The watch in use
 ![](photo-watch-in-use.jpg)
+
+## Creator
+
+Written by Giles Booth | [twitter](https://twitter.com/blogmywiki) | [blog](http://www.suppertime.co.uk/blogmywiki/)
