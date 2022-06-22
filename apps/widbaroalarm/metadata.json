@@ -9,7 +9,7 @@
   "tags": "tool,barometer",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
-  "screenshots": [{"url":"screenshot-dark.png"}],
+  "screenshots": [{"url":"screenshot.png"}],
   "storage": [
     {"name":"widbaroalarm.wid.js","url":"widget.js"},
     {"name":"widbaroalarm.settings.js","url":"settings.js"},
