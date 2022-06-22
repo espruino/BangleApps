@@ -251,7 +251,6 @@ function draw() {
       }
 
       g.drawString("...", x + 24, y + 6);
-      g.setFont("6x8", 1).setFontAlign(1, 0);
       g.drawString(Math.round(medianPressure), x + 24, y + 6);
     } else {
       g.drawString(Math.round(medianPressure), x + 24, y + 6);
@@ -259,25 +258,11 @@ function draw() {
 
     if (threeHourAvrPressure == undefined) {
       calculcate3hAveragePressure();
-    } 
+    }
     if (threeHourAvrPressure != undefined) {
       if (medianPressure != undefined) {
-        let icon;
-
-        const diff = threeHourAvrPressure - medianPressure;
-
-        if (diff == 0) {
-          icon = atob("DAyBAAAAAAAAIAEAGD+AEAIAAAAAAA=="); // allow right
-        } else {
-          if (diff < 0) {
-            icon = atob("DAyBAAAAAAAAfAHALATAgBAAAAAAAA=="); // arrow up
-          } else {
-            icon = atob("DAyBAAAAAAABAAgATALAHAHAeAAAAA=="); // arrow down
-          }
-        }
-
-        g.drawImage(icon, x, y + 6 + 4);
-        g.drawString((diff < 0 ? "+" : "-" ) + Math.round(diff), x + 24, y + 6 + 10);
+        const diff = Math.round(medianPressure - threeHourAvrPressure);
+        g.drawString((diff > 0 ? "+" : "-") + diff, x + 24, y + 6 + 10);
       }
     }
   }

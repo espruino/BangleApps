@@ -21,7 +21,7 @@ Get a notification when the pressure reaches defined thresholds.
 ## Widget
 The widget shows two rows: 
 1. pressure value of last measurement
-2. difference of last measurement to pressure average of the the last three hours and an arrow indicating the trend
+2. difference of last measurement to pressure average of the the last three hours
 
 ## Creator
 Marco ([myxor](https://github.com/myxor))
