@@ -7,7 +7,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
-  "screenshots": [{"url":"sscreenshot-dark-date.png"}],
+  "screenshots": [{"url":"screenshot-dark-date.png"}],
   "readme": "README.md",
   "allow_emulator": true,
   "storage": [
