@@ -68,9 +68,12 @@ function showAlarm(body, key) {
   }, 20000);
 }
 
+/*
+ * returns true if an alarm should be triggered
+ */
 function doWeNeedToWarn(key) {
   const tsNow = Math.round(Date.now() / 1000); // seconds
-  return setting(key) == 0 || setting(key) < tsNow;
+  return setting(key) == undefined || setting(key) == 0 || setting(key) < tsNow;
 }
 
 function checkForAlarms(pressure) {
@@ -96,26 +99,26 @@ function checkForAlarms(pressure) {
   if (setting("lowalarm")) {
     // Is below the alarm threshold?
     if (pressure <= setting("min")) {
-      if (!doWeNeedToWarn("lastLowWarningTs")) {
+      if (!doWeNeedToWarn("lowWarnTs")) {
         showAlarm("Pressure low: " + Math.round(pressure) + " hPa",
-                  "lastLowWarningTs");
+                  "lowWarnTs");
         alreadyWarned = true;
       }
     } else {
-      saveSetting("lastLowWarningTs", 0);
+      saveSetting("lowWarnTs", 0);
     }
   }
 
   if (setting("highalarm")) {
     // Is above the alarm threshold?
     if (pressure >= setting("max")) {
-      if (doWeNeedToWarn("lastHighWarningTs")) {
+      if (doWeNeedToWarn("highWarnTs")) {
         showAlarm("Pressure high: " + Math.round(pressure) + " hPa",
-                  "lastHighWarningTs");
+                  "highWarnTs");
         alreadyWarned = true;
       }
     } else {
-      saveSetting("lastHighWarningTs", 0);
+      saveSetting("highWarnTs", 0);
     }
   }
 
@@ -124,9 +127,9 @@ function checkForAlarms(pressure) {
     const drop3halarm = setting("drop3halarm");
     const raise3halarm = setting("raise3halarm");
     if (drop3halarm > 0 || raise3halarm > 0) {
-      // we need at least 30min of data for reliable detection
+      // we need at least 30 minutes of data for reliable detection
       const diffDateAge = Math.abs(history3[0]["ts"] - ts);
-      if (diffDateAge < 10 * 60) { // todo change to 1800
+      if (diffDateAge < 30 * 60) {
         return;
       }
 
@@ -137,34 +140,38 @@ function checkForAlarms(pressure) {
 
         // drop alarm
         if (drop3halarm > 0 && oldestPressure > pressure) {
-          if (diffPressure > drop3halarm) {
-            if (doWeNeedToWarn("lastDropWarningTs")) {
+          if (diffPressure >= drop3halarm) {
+            if (doWeNeedToWarn("dropWarnTs")) {
               showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
                             Math.round(oldestPressure) + " to " +
                             Math.round(pressure) + " hPa",
-                        "lastDropWarningTs");
+                        "dropWarnTs");
             }
           } else {
-            saveSetting("lastDropWarningTs", 0);
+            if (ts > setting("dropWarnTs"))
+              saveSetting("dropWarnTs", 0);
           }
         } else {
-          saveSetting("lastDropWarningTs", 0);
+          if (ts > setting("dropWarnTs"))
+            saveSetting("dropWarnTs", 0);
         }
 
         // raise alarm
         if (raise3halarm > 0 && oldestPressure < pressure) {
-          if (diffPressure > raise3halarm) {
-            if (doWeNeedToWarn("lastRaiseWarningTs")) {
+          if (diffPressure >= raise3halarm) {
+            if (doWeNeedToWarn("raiseWarnTs")) {
               showAlarm((Math.round(diffPressure * 10) / 10) + " hPa/3h from " +
                             Math.round(oldestPressure) + " to " +
                             Math.round(pressure) + " hPa",
-                        "lastRaiseWarningTs");
+                        "raiseWarnTs");
             }
           } else {
-            saveSetting("lastRaiseWarningTs", 0);
+            if (ts > setting("raiseWarnTs"))
+              saveSetting("raiseWarnTs", 0);
           }
         } else {
-          saveSetting("lastRaiseWarningTs", 0);
+          if (ts > setting("raiseWarnTs"))
+            saveSetting("raiseWarnTs", 0);
         }
       }
     }
