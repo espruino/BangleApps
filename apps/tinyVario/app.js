@@ -41,9 +41,9 @@ const unitsAlt=[
 
 var intTime=10,pressureInterval=100;
 var altH = [];
-var altFast=-10000, altSlow=0;
+var altRaw=-9999, altFast=0, altSlow=0;
 var fastGain=0.2, slowGain=0.168;
-var roc=2,rocAvg=0;
+var roc=0,rocAvg=0;
 var gs;
 var lastPressure = Date.now();
 var flying=false;
@@ -139,12 +139,12 @@ var pfd = new Layout(
 pfd.update();
 
 Bangle.on('pressure', function(e) {
-  if ((altFast)==-10000) {
+  if (altRaw==-9999) {
     altFast=e.altitude;
     altSlow=e.altitude;
+    altRaw=e.altitude;
   }
-  altFast=altFast+(e.altitude-altFast)*fastGain;
-  altSlow=altSlow+(e.altitude-altSlow)*0.09093;
+  altRaw=e.altitude;
 });
 
 Bangle.on('GPS', function(fix) {
@@ -156,6 +156,8 @@ Bangle.on('GPS', function(fix) {
 }, BTN1);*/
 
 setInterval(function () { 
+  altFast=altFast+(e.altitude-altFast)*fastGain;
+  altSlow=altSlow+(e.altitude-altSlow)*0.09093;
   altH.push(altSlow);
   if (altH.length>intTime*1000/pressureInterval) {
     altH.shift();
@@ -170,7 +172,6 @@ setInterval(function() {
   pfd.clear(pfd.alt);
   pfd.clear(pfd.avg);
   pfd.clear(pfd.time);
-  rocAvg=1*rocUnit.factor;
   if ((!flying) && ((rocAvg>1) || (rocAvg<-1) || (gs>10))) { //take-off detected
     takeoffTime=Date().getTime();
     flying=true;
