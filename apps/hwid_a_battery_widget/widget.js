@@ -36,7 +36,7 @@
 		g.fillRect(x,y,xl+4,y+16+3); //Clear
 		g.setFontAlign(0,0);
 		g.setFont('Vector',16);
-		// g.drawString(old_l, old_x + 14, old_y + 10); //debug
+		g.drawString(old_l, old_x + 14, old_y + 10);
 		g.fillRect(x+4,y+14+3,xl_old,y+16+3); // charging bar
 	}
 
@@ -48,7 +48,7 @@
 	g.setFontAlign(0,0);
 	g.setFont('Vector',16);
 	g.drawString(l, x + 14, y + 10);
-	g.drawString(x, 110, 5);
+	//g.drawString(x, 110, 5); //debug
 
 	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
 		else					 changeInterval(id, intervalLow);
