@@ -9,7 +9,7 @@ var actions = [
 ];
 
 try{
-  actions = storage.read("ha.actions.txt").split(",");
+  actions = storage.read("ha.trigger.txt").split(",");
 } catch(e) {
   // In case there are no user actions yet, we show the default...
 }
@@ -18,7 +18,7 @@ try{
 function draw() {
   g.reset().clearRect(Bangle.appRect);
 
-  var h = 26;
+  var h = 22;
   g.setFont("Vector", h).setFontAlign(0,0);
   var action = actions[position];
   var w = g.stringWidth(action);
