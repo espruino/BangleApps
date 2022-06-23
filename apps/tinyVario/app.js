@@ -144,7 +144,7 @@ Bangle.on('pressure', function(e) {
     altSlow=e.altitude;
     altRaw=e.altitude;
   }
-  altRaw=e.altitude;
+  altRaw=altRaw+(e.altitude-altRaw)*0.2;
 });
 
 Bangle.on('GPS', function(fix) {
@@ -156,8 +156,8 @@ Bangle.on('GPS', function(fix) {
 }, BTN1);*/
 
 setInterval(function () { 
-  altFast=altFast+(e.altitude-altFast)*fastGain;
-  altSlow=altSlow+(e.altitude-altSlow)*0.09093;
+  altFast=altFast+(altRaw-altFast)*fastGain;
+  altSlow=altSlow+(altRaw-altSlow)*0.09093;
   altH.push(altSlow);
   if (altH.length>intTime*1000/pressureInterval) {
     altH.shift();
