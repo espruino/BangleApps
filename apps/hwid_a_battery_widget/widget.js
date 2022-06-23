@@ -3,6 +3,10 @@
 	const intervalHigh = 2000; // update time when charging
 	var old_l;
 
+	old_x = this.x;
+	old_y = this.y;
+
+
 	let COLORS = {
 		'white': g.theme.dark ? "#000" : "#fff",
 		'black': g.theme.dark ? "#fff" : "#000",
@@ -19,7 +23,9 @@
 
 	function draw() {
 	var s = 29;
-	var x = this.x, y = this.y;
+	var x = this.x;
+	var	y = this.y;
+
 	const l = E.getBattery();
 	let xl = x+4+l*(s-12)/100;
 	if (l != old_l){ // Delete the old value from screen
@@ -30,7 +36,7 @@
 		g.fillRect(x,y,xl+4,y+16+3); //Clear
 		g.setFontAlign(0,0);
 		g.setFont('Vector',16);
-		g.drawString(old_l, x + 14, y + 10);
+		g.drawString(old_l, old_x + 14, old_y + 10);
 		g.fillRect(x+4,y+14+3,xl_old,y+16+3); // charging bar
 	}
 
@@ -42,10 +48,14 @@
 	g.setFontAlign(0,0);
 	g.setFont('Vector',16);
 	g.drawString(l, x + 14, y + 10);
+	//g.drawString(x, 110, 5); //debug
 
 	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
 		else					 changeInterval(id, intervalLow);
 	}
+
+	old_x = this.x;
+	old_y = this.y;
 
 	Bangle.on('charging',function(charging) { draw(); });
 	var id = setInterval(()=>WIDGETS["wid_a_battery_widget"].draw(), intervalLow);
