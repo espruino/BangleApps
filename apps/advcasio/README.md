@@ -44,6 +44,9 @@ Web interface to update weather & scratchpad <br/>
 - swipe right : start timer
 - swipe left : stop timer
 
+## Issues, suggestions and bugtracker
+<a href="https://github.com/dotgreg/advCasioBangleClock/issues">https://github.com/dotgreg/advCasioBangleClock/issues</a>
+
 ## Code repository (bangle app and web app)
 <a href="https://github.com/dotgreg/advCasioBangleClock">https://github.com/dotgreg/advCasioBangleClock</a>
 
