@@ -14,7 +14,7 @@ var nhwmn = { // New homework Menu
 
 function newHomeworkMenu() {
   E.showMessage("Getting subjects...");
-  var rawsubjects = require("Storage").read("subjects.txt"); // This code reads out the subjects list and removes the newline character at the end
+  var rawsubjects = require("Storage").read("homework.subjects.txt"); // This code reads out the subjects list and removes the newline character at the end
   var splitsubjects = rawsubjects.split(",");
   var lastItem = splitsubjects[splitsubjects.length - 1];
   var thiscurrentsubject;
