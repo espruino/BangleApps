@@ -23,7 +23,7 @@ Clock:
 
 <img src="https://user-images.githubusercontent.com/2981891/175355586-1dfc0d66-6555-4385-b124-1605fdb71a11.jpg" width="250" />
 
-Web interface to update weather & scratchpad 
+Web interface to update weather & scratchpad <br/>
 <a href="https://adv-casio-bangle-updater.herokuapp.com/">https://adv-casio-bangle-updater.herokuapp.com/</a> 
 
 <img src="https://user-images.githubusercontent.com/2981891/175355578-444315e3-03d8-4d60-a1a9-e8ed7519d52b.jpg" width="250" />
