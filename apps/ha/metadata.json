@@ -2,7 +2,7 @@
   "id": "ha",
   "name": "HomeAssistant",
   "version": "0.01",
-  "description": "An application that displays information such as battery level, steps etc.",
+  "description": "Integrates your BangleJS into HomeAssistant.",
   "icon": "ha.png",
   "type": "app",
   "tags": "tool",
