@@ -86,11 +86,6 @@ function initTouchTimer () {
 						timer_time = timer_time - 5;
 				}
 				draw();
-				
-				
-				
-
-				draw();    
 		});
 }
 setTimeout(() => {
@@ -157,10 +152,8 @@ var dataJson = getDataJson();
 // WEATHER!
 //
 function drawWeather(arr) {
-		//g.setFont("8x12", 1);
 		g.setFont("6x8", 1);
 		var p = {l: 8, tText: 40, tIcon:20, decal:25};
-    //var length = Math.min(arr.length, 4);
     var today = new Date().getTime();
     var yesterday = today - (1000 * 60 * 60 * 24);
     var testday = today + (1000 * 60 * 60 * 24 * 2);
@@ -187,11 +180,7 @@ function drawTasks(str) {
 		g.drawString(str, l+5, t+0);
 }
 
-
-
-
 function drawSteps() {
-		//g.setFont("8x12", 1);
 		g.setFont("8x12", 2);
 		var t = 132;
 		var l = 150;
@@ -279,24 +268,15 @@ function draw() {
 		drawSteps();
 		g.setFontAlign(-1,-1);
 		drawClock();
-		//drawAlarm();
-		//drawRocket();
 		drawBattery();
-		
-    
     drawTimer();
-
 		// Hide widgets
-		
 		for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
-
-
-// save batt power
+// save batt power, does not seem to work although...
 var canTouch = true;
 Bangle.on("lcdPower", (on) => {
-    console.log(22, on, canTouch);
 		if (on) {
 				draw();
 		} else {
@@ -307,17 +287,12 @@ Bangle.on("lcdPower", (on) => {
 
 
 Bangle.on("lock", (locked) => {
-		
 		clearIntervals();
 		draw();
 		if (!locked) {
-				
 				canTouch = true;
-				console.log(33, locked, canTouch);
-				//rocketInterval = setInterval(drawRocket, rocketSpeed);
 		} else {
 				canTouch = false;
-				console.log(33, locked, canTouch);
     }
 });
 
