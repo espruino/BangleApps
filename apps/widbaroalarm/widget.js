@@ -275,7 +275,7 @@ function draw() {
     if (threeHourAvrPressure != undefined) {
       if (medianPressure != undefined) {
         const diff = Math.round(medianPressure - threeHourAvrPressure);
-        g.drawString((diff > 0 ? "+" : "" + diff), x + 24, y + 6 + 10);
+        g.drawString((diff > 0 ? "+" : "") + diff, x + 24, y + 6 + 10);
       }
     }
   }
