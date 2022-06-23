@@ -1,6 +1,22 @@
+var _GB = global.GB;
+
+
 var W = g.getWidth(), H = g.getHeight();
 var position=0;
 var response="...";
+
+
+function GB(msg) {
+  if (msg.t == "http" || msg.t == "intent") {
+    response = JSON.stringify(msg);
+    draw();
+  }
+
+  if (_GB) {
+    _GB(msg);
+  }
+}
+
 
 function draw() {
   g.reset().clearRect(Bangle.appRect);
@@ -32,13 +48,11 @@ Bangle.on('touch', function(btn, e){
   if(isRight){
     position += 1;
     position = position > 1 ? 0 : position;
-    draw();
   }
 
   if(isLeft){
     position -= 1;
     position = position < 0 ? 1 : position;
-    draw();
   }
 
   if(!isRight && !isLeft){
@@ -46,10 +60,7 @@ Bangle.on('touch', function(btn, e){
 
     // Trigger HA bridge
     response = "sending...";
-    draw();
-
-    var url = "https://www.google.com/";
-    response = Bluetooth.println(JSON.stringify({t:"http", url:url}));
+    Bluetooth.println(JSON.stringify({t:"int­ent",action:"com.espruino.gadgetbridge.banglejs.TOGGLE_LIGHT",extra:{}}));
   }
 
   draw();
