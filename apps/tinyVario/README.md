@@ -1,9 +1,9 @@
-This is a work in progress. Working features so far:
--Altimeter
--Variometer
--Average rate of climb
--Ground speed
--Flying time with automatic take-off detection
+#This is a work in progress. Working features so far:
+  *Altimeter
+  *Variometer
+*Average rate of climb
+*Ground speed
+*Flying time with automatic take-off detection
 
 Planned features:
 -Settings page to adjust QNH, change units 
