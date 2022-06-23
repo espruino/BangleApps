@@ -12,6 +12,7 @@ Forked from the awesome Cassio Watch.<br/>
 - Improving quality of the background images, right now it is quite blurry.
 - Improving screenshots quality.
 - Improving web app look.
+- Improving bangle app performances (using functions for images and specialized array).
 
 ## Functionalities
 
