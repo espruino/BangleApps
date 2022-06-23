@@ -2,11 +2,15 @@
 
 <img src="https://user-images.githubusercontent.com/2981891/175355586-1dfc0d66-6555-4385-b124-1605fdb71a11.jpg" width="250" />
 
-
 An over-engineered clock inspired by Casio watches.<br/>
 It has a dedicated timer, a scratchpad and can display the weather condition 4 days ahead.<br/>
 It uses a custom webapp to update its content.<br/>
-Forked from the awesome Cassio Watch<br/>
+Forked from the awesome Cassio Watch.<br/>
+
+## Todo
+
+- Improving quality of the background images, right now it is quite blurry.
+- Improving screenshots quality.
 
 ## Functionalities
 
