@@ -4,9 +4,14 @@
   "version":"0.01",
   "description": "An over-engineered clock inspired by Casio watches.",
   "icon": "app.png",
-  "tags": "",
+  "tags": "clock",
+	"screenshots": [
+    { "url": "screenshot-clock.jpg" },
+    { "url": "screenshot-webapp.jpg" },
+  ],
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
+	"allow_emulator":true,
   "storage": [
 			{"name":"advCasio.app.js","url":"app.js"},
 			{"name":"advCasio.img","url":"app-icon.js","evaluate":true}
