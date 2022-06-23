@@ -52,8 +52,13 @@ Bangle.on('touch', function(btn, e){
 
   if(!isRight && !isLeft){
     Bangle.buzz(80, 0.6).then(()=>{
-      action = "com.espruino.gadgetbridge.banglejs.ha." + actions[position];
-      Bluetooth.println(JSON.stringify({t:"intent", action:action, extra:{}}));
+      Bluetooth.println(JSON.stringify({
+        t:"intent",
+        action:"com.espruino.gadgetbridge.banglejs.HA",
+        extra:{
+          trigger: actions[position]
+        }})
+      );
       setTimeout(()=>{
         Bangle.buzz(80, 0.6);
       }, 250);

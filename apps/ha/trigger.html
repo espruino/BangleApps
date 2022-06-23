@@ -4,7 +4,7 @@
   </head>
   <body>
 
-    <p>Actions: <input type="text" id="subjects" class="form-input" value="Seperate home assistant actions by comma, eg. LIGHT,DOOR,..."></p>
+    <p>Actions: <input type="text" id="subjects" class="form-input" value="Triggers eg. LIGHT,DOOR,..."></p>
     <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -20,10 +20,10 @@
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {name:"ha.actions.txt", url:"ha.actions.txt", content:app},
+            {name:"ha.trigger.txt", url:"ha.trigger.txt", content:app},
           ]
         });
-        console.log("Sent actions.txt!");
+        console.log("Sent ha.trigger.txt!");
       });
 
     </script>

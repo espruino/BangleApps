@@ -8,11 +8,11 @@
   "tags": "tool",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
-  "custom": "actions.html",
+  "custom": "trigger.html",
   "screenshots": [
     {"url":"screenshot.png"}],
   "data": [
-      {"name":"ha.actions.txt" }
+      {"name":"ha.trigger.txt" }
   ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},
