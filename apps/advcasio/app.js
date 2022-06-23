@@ -137,7 +137,7 @@ function drawTimer() {
 function getDataJson(){
 		var res = {"tasks":"", "weather":[]};
 		try {
-				res = storage.readJSON('advCasioData.json');
+				res = storage.readJSON('advcasio.data.json');
 		} catch(ex) {
 				return res;
 		}
@@ -145,7 +145,7 @@ function getDataJson(){
 }
 function setDataJson(resJson){
 		try {
-				res = storage.writeJSON('advCasioData.json', resJson);
+				res = storage.writeJSON('advcasio.data.json', resJson);
 		} catch(ex) {
 				return res;
 		}
@@ -181,13 +181,10 @@ function drawWeather(arr) {
 // DRAWING FUNCS
 //
 function drawTasks(str) {
-		//g.setFont("8x12", 1);
 		g.setFont("6x8", 1);
 		var t = 60;
 		var l = 0;
 		g.drawString(str, l+5, t+0);
-		//g.drawString(".meeting", l+5, t+10);
-		//g.drawString("15h gisele", l+5, t+20);
 }
 
 
@@ -272,18 +269,12 @@ function draw() {
 		
 		g.setColor(0, 0, 0);
 		g.setFont("6x12");
-		//g.drawString("woop Process", 30, 20);
-		//g.setFont("8x12");
-		//g.drawString("ACTIVATE", 40, 35);
 		if(dataJson && dataJson.weather) drawWeather(dataJson.weather);
 		if(dataJson && dataJson.tasks) drawTasks(dataJson.tasks);
 		
 
 		g.setFontAlign(0,-1);
 		g.setFont("8x12", 2);
-		//g.drawString(getTemperature(), 155, 132);
-		//g.drawString(Math.round(Bangle.getHealthStatus("last").bpm || 0), 109, 98);
-		
 
 		drawSteps();
 		g.setFontAlign(-1,-1);

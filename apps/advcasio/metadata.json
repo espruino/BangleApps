@@ -16,5 +16,8 @@
   "storage": [
 			{"name":"advcasio.app.js","url":"app.js"},
 			{"name":"advcasio.img","url":"app-icon.js","evaluate":true}
+  ],
+	"data": [
+    { "name": "advcasio.data.json", "url": "data.json", "storageFile": true }
   ]
 }
