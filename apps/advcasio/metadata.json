@@ -1,0 +1,14 @@
+{ "id": "advCasio",
+  "name": "Advanced Casio Clock",
+  "shortName":"advCasio",
+  "version":"0.01",
+  "description": "An over-engineered clock inspired by Casio watches.",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"advCasio.app.js","url":"app.js"},
+    {"name":"advCasio.img","url":"app-icon.js","evaluate":true}
+  ]
+}
