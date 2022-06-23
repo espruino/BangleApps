@@ -1,21 +1,21 @@
 # Home Assistant
 This app integrates your BangleJs into the HomeAssistant.
 
-# Setup
+# First Setup
 1.) First of all, make sure that HomeAssistant is working and
 the HomeAssistant, as well as BangleJS Android App, is running on your device
 
 2.) Enable intent access in your BangleJS Android App.
 
-3.) Upload this app to your BangleJS and set the actions that you want to trigger from your
-BangleJs within the app store.
+3.) Set the "com.espruino.gadgetbridge.banglejs.HA" intent in your HomeAssistant android app
 
-4.) Set all the actions on your HomeAssistant Android app with preceding "com.espruino.gadgetbridge.banglejs.ha."
-
-5.) The HomeAssistant Android app must be restarted in order to listen for those actions
+4.) The HomeAssistant Android app must be restarted in order to listen for those actions
  -- a "Force Stop" is necessary!
 
-6.) Set the corresponding actions in HomeAssistant Web UI
+# Setup Trigger
+
+1.) Upload the app and all corresponding trigger
+1.) Set the corresponding actions in HomeAssistant Web UI using the trigger data and intent.
 
 Thats it!
 
