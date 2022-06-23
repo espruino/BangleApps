@@ -9,9 +9,10 @@
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "screenshots": [
-    {"url":"screenshot_1.png"},
-    {"url":"screenshot_2.png"},
-    {"url":"screenshot_3.png"}],
+    {"url":"screenshot.png"}],
+  "data": [
+      {"name":"ha.actions.txt" }
+  ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},
     {"name":"ha.img","url":"ha.icon.js","evaluate":true}

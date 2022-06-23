@@ -1,38 +1,31 @@
-var _GB = global.GB;
-
-
+var storage = require("Storage");
 var W = g.getWidth(), H = g.getHeight();
 var position=0;
-var response="...";
 
 
-function GB(msg) {
-  if (msg.t == "http" || msg.t == "intent") {
-    response = JSON.stringify(msg);
-    draw();
-  }
+// Try to read custom actions, otherwise use default
+var actions = [
+  "No Actions",
+];
 
-  if (_GB) {
-    _GB(msg);
-  }
+try{
+  actions = storage.read("ha.actions.txt").split(",");
+} catch(e) {
+  // In case there are no user actions yet, we show the default...
 }
 
 
 function draw() {
   g.reset().clearRect(Bangle.appRect);
 
-  // Header
-  g.setFont("Vector", 32).setFontAlign(0,0);
-  var text = "";
-  if(position == 0){
-    text = "Door";
-  } else if(position == 1){
-    text = "Light";
-  }
+  var h = 26;
+  g.setFont("Vector", h).setFontAlign(0,0);
+  var action = actions[position];
+  var w = g.stringWidth(action);
 
-  g.drawString(text, W/2, H/3);
-  g.setFont("Vector", 24);
-  g.drawString(response, W/2, H/3+34);
+
+  g.fillRect(W/2-w/2-8, H/2-h/2-8, W/2+w/2+2, H/2+h/2+2);
+  g.setColor(g.theme.bg).drawString(action, W/2, H/2);
 }
 
 
@@ -46,21 +39,25 @@ Bangle.on('touch', function(btn, e){
   var isRight = e.x > right;
 
   if(isRight){
+    Bangle.buzz(40, 0.6);
     position += 1;
-    position = position > 1 ? 0 : position;
+    position = position >= actions.length ? 0 : position;
   }
 
   if(isLeft){
+    Bangle.buzz(40, 0.6);
     position -= 1;
-    position = position < 0 ? 1 : position;
+    position = position < 0 ? actions.length-1 : position;
   }
 
   if(!isRight && !isLeft){
-    Bangle.buzz(40, 0.6);
-
-    // Trigger HA bridge
-    response = "sending...";
-    Bluetooth.println(JSON.stringify({t:"int­ent",action:"com.espruino.gadgetbridge.banglejs.TOGGLE_LIGHT",extra:{}}));
+    Bangle.buzz(80, 0.6).then(()=>{
+      action = "com.espruino.gadgetbridge.banglejs.ha." + actions[position];
+      Bluetooth.println(JSON.stringify({t:"intent", action:action, extra:{}}));
+      setTimeout(()=>{
+        Bangle.buzz(80, 0.6);
+      }, 250);
+    });
   }
 
   draw();
