@@ -1,14 +1,19 @@
 # Adv Casio Clock
 
-An over-engineered clock inspired by Casio watches.
-Forked from the awesome Cassio Watch
+<img src="https://user-images.githubusercontent.com/2981891/175355586-1dfc0d66-6555-4385-b124-1605fdb71a11.jpg" width="250" />
+
+
+An over-engineered clock inspired by Casio watches.<br/>
+It has a dedicated timer, a scratchpad and can display the weather condition 4 days ahead.<br/>
+It uses a custom webapp to update its content.<br/>
+Forked from the awesome Cassio Watch<br/>
 
 ## Functionalities
+
 - Current time
 - Current day and month
 - Footsteps
 - Battery
-
 - Simple Timer embedded  
 - Weather forecast (7 days)
 - Scratchpad 
@@ -16,12 +21,12 @@ Forked from the awesome Cassio Watch
 ## Screenshots
 Clock:
 
-<img src="2.jpg" width="250" />
+<img src="https://user-images.githubusercontent.com/2981891/175355586-1dfc0d66-6555-4385-b124-1605fdb71a11.jpg" width="250" />
 
 Web interface to update weather & scratchpad 
 <a href="https://adv-casio-bangle-updater.herokuapp.com/">https://adv-casio-bangle-updater.herokuapp.com/</a> 
 
-<img src="1.jpg" width="250" />
+<img src="https://user-images.githubusercontent.com/2981891/175355578-444315e3-03d8-4d60-a1a9-e8ed7519d52b.jpg" width="250" />
 
 ## Usage
 ### How to update the tasks list / weather
