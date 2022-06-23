@@ -12,5 +12,4 @@ Planned features:
 -flight log (possibly IGC file export)
 
 Contact me for feedback and suggestions!
-D@nieldumke.de
-
+tinyVario@dumke.org
