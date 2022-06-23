@@ -71,19 +71,33 @@ function showAlarm(body, key) {
 /*
  * returns true if an alarm should be triggered
  */
-function doWeNeedToWarn(key) {
+function doWeNeedToAlarm(key) {
   const tsNow = Math.round(Date.now() / 1000); // seconds
   return setting(key) == undefined || setting(key) == 0 || setting(key) < tsNow;
 }
 
-function checkForAlarms(pressure) {
+function handlePressureValue(pressure) {
   if (pressure == undefined || pressure <= 0)
     return;
 
-  let alreadyWarned = false;
-
   const ts = Math.round(Date.now() / 1000); // seconds
   const d = {"ts" : ts, "p" : pressure};
+
+  history3.push(d);
+
+  // write data to storage
+  storage.writeJSON(LOG_FILE, history3);
+
+  calculcate3hAveragePressure();
+
+  if (setting("lowalarm") || setting("highalarm") || setting("drop3halarm") ||
+      setting("raise3halarm")) {
+    checkForAlarms(pressure, ts);
+  }
+}
+
+function checkForAlarms(pressure, ts) {
+  let alreadyWarned = false;
 
   // delete entries older than 3h
   for (let i = 0; i < history3.length; i++) {
@@ -99,7 +113,7 @@ function checkForAlarms(pressure) {
   if (setting("lowalarm")) {
     // Is below the alarm threshold?
     if (pressure <= setting("min")) {
-      if (!doWeNeedToWarn("lowWarnTs")) {
+      if (!doWeNeedToAlarm("lowWarnTs")) {
         showAlarm("Pressure low: " + Math.round(pressure) + " hPa",
                   "lowWarnTs");
         alreadyWarned = true;
@@ -112,7 +126,7 @@ function checkForAlarms(pressure) {
   if (setting("highalarm")) {
     // Is above the alarm threshold?
     if (pressure >= setting("max")) {
-      if (doWeNeedToWarn("highWarnTs")) {
+      if (doWeNeedToAlarm("highWarnTs")) {
         showAlarm("Pressure high: " + Math.round(pressure) + " hPa",
                   "highWarnTs");
         alreadyWarned = true;
@@ -138,7 +152,7 @@ function checkForAlarms(pressure) {
           // drop alarm
           if (drop3halarm > 0 && oldestPressure > pressure) {
             if (diffPressure >= drop3halarm) {
-              if (doWeNeedToWarn("dropWarnTs")) {
+              if (doWeNeedToAlarm("dropWarnTs")) {
                 showAlarm((Math.round(diffPressure * 10) / 10) +
                               " hPa/3h from " + Math.round(oldestPressure) +
                               " to " + Math.round(pressure) + " hPa",
@@ -156,7 +170,7 @@ function checkForAlarms(pressure) {
           // raise alarm
           if (raise3halarm > 0 && oldestPressure < pressure) {
             if (diffPressure >= raise3halarm) {
-              if (doWeNeedToWarn("raiseWarnTs")) {
+              if (doWeNeedToAlarm("raiseWarnTs")) {
                 showAlarm((Math.round(diffPressure * 10) / 10) +
                               " hPa/3h from " + Math.round(oldestPressure) +
                               " to " + Math.round(pressure) + " hPa",
@@ -174,13 +188,6 @@ function checkForAlarms(pressure) {
       }
     }
   }
-
-  history3.push(d);
-
-  // write data to storage
-  storage.writeJSON(LOG_FILE, history3);
-
-  calculcate3hAveragePressure();
 }
 
 function calculcate3hAveragePressure() {
@@ -202,7 +209,7 @@ function calculcate3hAveragePressure() {
  take the middle one (median)
  turn off barometer power
 */
-function check() {
+function getPressureValue() {
   if (stop)
     return;
   const MEDIANLENGTH = 20;
@@ -219,7 +226,7 @@ function check() {
       if (medianPressure > 0) {
         turnOff();
         draw();
-        checkForAlarms(medianPressure);
+        handlePressureValue(medianPressure);
       }
     }
   });
@@ -232,7 +239,7 @@ function turnOff() {
     Bangle.setBarometerPower(false, "widbaroalarm");
 }
 
-function reload() { check(); }
+function reload() { getPressureValue(); }
 
 function draw() {
   if (global.WIDGETS != undefined && typeof global.WIDGETS === "object") {
@@ -249,7 +256,7 @@ function draw() {
     const x = this.x, y = this.y;
     if (medianPressure == undefined) {
       // trigger a new check
-      check();
+      getPressureValue();
 
       // lets load last value from log (if available)
       if (history3.length > 0) {
@@ -275,7 +282,7 @@ function draw() {
 }
 
 if (interval > 0) {
-  setInterval(check, interval * 60000);
+  setInterval(getPressureValue, interval * 60000);
 }
 draw();
 })();
