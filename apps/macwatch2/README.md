@@ -4,7 +4,7 @@ A clock inspired by Susan Kare's original 1984 Macintosh desktop design.
 
 ![](screenshot.png)
 
-![](screenshot-dark-time.png)
+![](IMG_3782%20crop.JPG)
 
 ## Creator
 
