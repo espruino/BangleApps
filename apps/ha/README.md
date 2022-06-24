@@ -5,6 +5,8 @@ This app integrates your BangleJs into the HomeAssistant.
 Click on the left and right side of the screen to select the triggers that you
 configured. Click in the middle of the screen to send the trigger to HomeAssistant.
 
+![](screenshot.png)
+
 # First Setup
 1.) First of all, make sure that HomeAssistant and the HomeAssistant Android App works.
 
