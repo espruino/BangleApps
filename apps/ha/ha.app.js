@@ -10,14 +10,15 @@ var icon = {
 };
 
 // Try to read custom actions, otherwise use default
-var actions = [
-  "No Actions",
+var triggers = [
+  {display: "Not found.", trigger: "NOP", icon: null},
 ];
 
 try{
-  actions = storage.read("ha.trigger.txt").split(",");
+  triggers = storage.read("ha.trigger.json");
+  triggers = JSON.parse(triggers);
 } catch(e) {
-  // In case there are no user actions yet, we show the default...
+  // In case there are no user triggers yet, we show the default...
 }
 
 
@@ -26,8 +27,8 @@ function draw() {
 
   var h = 22;
   g.setFont("Vector", h);
-  var action = actions[position];
-  var w = g.stringWidth(action);
+  var trigger = triggers[position];
+  var w = g.stringWidth(trigger.display);
 
   g.setFontAlign(-1,-1);
   g.setColor(g.theme.fg).drawImage(icon, 12, H/5-2);
@@ -38,7 +39,7 @@ function draw() {
   var ypos = H/5*3+20;
   g.drawRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+5, ypos+h/2+5);
   g.fillRect(W/2-w/2-6, ypos-h/2-6, W/2+w/2+3, ypos+h/2+3);
-  g.setColor(g.theme.bg).drawString(action, W/2, ypos);
+  g.setColor(g.theme.bg).drawString(trigger.display, W/2, ypos);
 }
 
 
@@ -51,13 +52,13 @@ Bangle.on('touch', function(btn, e){
   if(isRight){
     Bangle.buzz(40, 0.6);
     position += 1;
-    position = position >= actions.length ? 0 : position;
+    position = position >= triggers.length ? 0 : position;
   }
 
   if(isLeft){
     Bangle.buzz(40, 0.6);
     position -= 1;
-    position = position < 0 ? actions.length-1 : position;
+    position = position < 0 ? triggers.length-1 : position;
   }
 
   if(!isRight && !isLeft){
@@ -66,7 +67,7 @@ Bangle.on('touch', function(btn, e){
         t:"intent",
         action:"com.espruino.gadgetbridge.banglejs.HA",
         extra:{
-          trigger: actions[position]
+          trigger: triggers[position].trigger
         }})
       );
       setTimeout(()=>{

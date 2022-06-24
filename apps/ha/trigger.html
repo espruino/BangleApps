@@ -3,8 +3,9 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-
-    <p>Trigger - seperate list with ',': <input type="text" id="subjects" class="form-input" value=""></p>
+    triggers
+    <p>Json file [{display: "Text", trigger: "TRIGGER_1", icon: null}, ...]</p>
+    <p><textarea id="triggers"></textarea></p>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -13,17 +14,17 @@
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
         // get the text to add
-        var text = document.getElementById("subjects").value;
+        var text = document.getElementById("triggers").value;
         console.log(text);
         // build the app's text using a templated String
         var app = text;
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {name:"ha.trigger.txt", url:"ha.trigger.txt", content:app},
+            {name:"ha.trigger.json", url:"ha.trigger.json", content:app},
           ]
         });
-        console.log("Sent ha.trigger.txt!");
+        console.log("Sent ha.trigger.json!");
       });
 
     </script>
