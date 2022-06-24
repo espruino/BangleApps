@@ -3,6 +3,12 @@ var W = g.getWidth(), H = g.getHeight();
 var position=0;
 
 
+var icon = {
+  width : 48, height : 48, bpp : 1,
+  transparent : 0,
+  buffer : require("heatshrink").decompress(atob("AD8BwAFDg/gAocP+AFDj4FEn/8Aod//wFD/1+FAf4j+8AoMD+EPDAUH+OPAoUP+fPAoUfBYk/C4l/EYIwC//8n//FwIFEgYFD4EH+E8nkP8BdBAonjjk44/wj/nzk58/4gAFDF4PgCIMHAoPwhkwh4FB/EEkEfIIWAHwIFC4A+BAoXgg4FDL4IFDL4IFDLIYFkAEQA=="))
+};
+
 // Try to read custom actions, otherwise use default
 var actions = [
   "No Actions",
@@ -19,18 +25,21 @@ function draw() {
   g.reset().clearRect(Bangle.appRect);
 
   var h = 22;
-  g.setFont("Vector", h).setFontAlign(0,0);
+  g.setFont("Vector", h);
   var action = actions[position];
   var w = g.stringWidth(action);
 
+  g.setFontAlign(-1,-1);
+  g.setColor(g.theme.fg).drawImage(icon, 12, H/5-2);
+  g.drawString("Home", icon.width + 20, H/5);
+  g.drawString("Assistant", icon.width + 18, H/5+24);
 
-  g.fillRect(W/2-w/2-8, H/2-h/2-8, W/2+w/2+2, H/2+h/2+2);
-  g.setColor(g.theme.bg).drawString(action, W/2, H/2);
+  g.setFontAlign(0,0);
+  var ypos = H/5*3+20;
+  g.fillRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+2, ypos+h/2+2);
+  g.setColor(g.theme.bg).drawString(action, W/2, ypos);
 }
 
-
-draw();
-setWatch(_=>load(), BTN1);
 
 Bangle.on('touch', function(btn, e){
   var left = parseInt(g.getWidth() * 0.3);
@@ -68,5 +77,19 @@ Bangle.on('touch', function(btn, e){
   draw();
 });
 
+// Send a startup trigger such that we could also execute
+// an action when the app is started :)
+Bluetooth.println(JSON.stringify({
+  t:"intent",
+  action:"com.espruino.gadgetbridge.banglejs.HA",
+  extra:{
+    trigger: "APP_STARTED"
+  }})
+);
+
+// Next load the widgets and draw the app
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
+draw();
+setWatch(_=>load(), BTN1);
