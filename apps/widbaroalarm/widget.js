@@ -254,6 +254,8 @@ function draw() {
   if (setting("show")) {
     g.setFont("6x8", 1).setFontAlign(1, 0);
     const x = this.x, y = this.y;
+    if (this.x == undefined)
+      return; // widget not yet there
     if (medianPressure == undefined) {
       // trigger a new check
       getPressureValue();
