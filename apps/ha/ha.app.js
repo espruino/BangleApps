@@ -46,6 +46,29 @@ try{
 }
 
 
+function sendIntent(trigger){
+  var retries=3;
+
+  while(retries > 0){
+    try{
+      // Send a startup trigger such that we could also execute
+      // an action when the app is started :)
+      Bluetooth.println(JSON.stringify({
+        t:"intent",
+        action:"com.espruino.gadgetbridge.banglejs.HA",
+        extra:{
+          trigger: trigger
+        }})
+      );
+      retries = -1;
+
+    } catch(e){
+      retries--;
+    }
+  }
+}
+
+
 function draw() {
   g.reset().clearRect(Bangle.appRect);
 
@@ -88,13 +111,7 @@ Bangle.on('touch', function(btn, e){
 
   if(!isRight && !isLeft){
     Bangle.buzz(80, 0.6).then(()=>{
-      Bluetooth.println(JSON.stringify({
-        t:"intent",
-        action:"com.espruino.gadgetbridge.banglejs.HA",
-        extra:{
-          trigger: triggers[position].trigger
-        }})
-      );
+      sendIntent(triggers[position].trigger);
       setTimeout(()=>{
         Bangle.buzz(80, 0.6);
       }, 250);
@@ -104,15 +121,8 @@ Bangle.on('touch', function(btn, e){
   draw();
 });
 
-// Send a startup trigger such that we could also execute
-// an action when the app is started :)
-Bluetooth.println(JSON.stringify({
-  t:"intent",
-  action:"com.espruino.gadgetbridge.banglejs.HA",
-  extra:{
-    trigger: "APP_STARTED"
-  }})
-);
+// Send intent that the we started the app.
+sendIntent("APP_STARTED");
 
 // Next load the widgets and draw the app
 Bangle.loadWidgets();
