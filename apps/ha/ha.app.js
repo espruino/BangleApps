@@ -36,7 +36,8 @@ function draw() {
 
   g.setFontAlign(0,0);
   var ypos = H/5*3+20;
-  g.fillRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+2, ypos+h/2+2);
+  g.drawRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+5, ypos+h/2+5);
+  g.fillRect(W/2-w/2-6, ypos-h/2-6, W/2+w/2+3, ypos+h/2+3);
   g.setColor(g.theme.bg).drawString(action, W/2, ypos);
 }
 
