@@ -37,66 +37,138 @@ digitPositions = [ // relative to the box
   {x:74, y:6}, {x:93, y:6},
 ];
 
-var drawTimeout;
 const animation_duration = 1; // seconds
-const animation_steps = 20; 
+const animation_steps = 20;
 const jump_height = 45; // top coordinate of the jump
 const seconds_per_minute = 60;
 
-function draw() {
-  const now = new Date();
-  g.drawImage(background, 0, 0);
-  var boxTL_x = 27; var boxTL_y = 29;
-  var sprite_TL_x = 72; var sprite_TL_y = 161 - sprite.height;
-  const seconds = now.getSeconds()%seconds_per_minute + now.getMilliseconds()/1000;
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  
-  var time_advance = seconds / animation_duration;
-  
-  if (time_advance < 0.5) {
-    sprite_TL_y += (jump_height - sprite_TL_y) * time_advance * 2;
-  } else if (time_advance < 1) {  
-    sprite_TL_y = jump_height + (sprite_TL_y-jump_height) * (time_advance-0.5) * 2;
-  }
-  const box_penetration = boxTL_y + boxes.height - sprite_TL_y;
-  if (box_penetration > 0) {
-    boxTL_y -= box_penetration;
-  }
-  g.drawImage(boxes, boxTL_x, boxTL_y);
-  g.drawImage(numbers[(hours / 10) >> 0], boxTL_x+digitPositions[0].x, boxTL_y+digitPositions[0].y);
-  g.drawImage(numbers[(hours % 10) >> 0], boxTL_x+digitPositions[1].x, boxTL_y+digitPositions[1].y);
-  g.drawImage(numbers[(minutes / 10) >> 0], boxTL_x+digitPositions[2].x, boxTL_y+digitPositions[2].y);
-  g.drawImage(numbers[(minutes % 10) >> 0], boxTL_x+digitPositions[3].x, boxTL_y+digitPositions[3].y);
-  g.drawImage(sprite, sprite_TL_x, sprite_TL_y);
-  Bangle.drawWidgets();
-  
-  const timeout = time_advance <= 1?
-    animation_duration / animation_steps
-    : (seconds_per_minute - seconds);
-  setTimeout( _=>{
-    drawTimeout = undefined;
-    draw();
-  }, timeout * 1000);
-}
+const ClockFace = require("ClockFace");
+const clock = new ClockFace({
+	precision: 60, // just once a minute
 
-// Clear the screen once, at startup
-g.setTheme({bg:"#00f",fg:"#fff",dark:true}).clear();
+	init: function() {
+		// Clear the screen once, at startup
+		g.setTheme({ bg: "#00f", fg: "#fff", dark: true }).clear();
 
-Bangle.on('lcdPower',on=>{
-  if (on) {
-    draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
-    if (drawTimeout) {
-      clearTimeout(drawTimeout);
-    }
-    drawTimeout = undefined;
-  }
+		this.drawing = true;
+
+		this.simpleDraw = function(now) {
+			var boxTL_x = 27;
+			var boxTL_y = 29;
+			var sprite_TL_x = 72;
+			var sprite_TL_y = 161 - sprite.height;
+			const seconds =
+				(now.getSeconds() % seconds_per_minute) + now.getMilliseconds() / 1000;
+			const hours =
+				this.is12Hour && now.getHours() > 12
+					? now.getHours() - 12
+					: now.getHours();
+
+			const minutes = now.getMinutes();
+
+			g.drawImage(boxes, boxTL_x, boxTL_y);
+			g.drawImage(
+				numbers[(hours / 10) >> 0],
+				boxTL_x + digitPositions[0].x,
+				boxTL_y + digitPositions[0].y
+			);
+			g.drawImage(
+				numbers[hours % 10 >> 0],
+				boxTL_x + digitPositions[1].x,
+				boxTL_y + digitPositions[1].y
+			);
+			g.drawImage(
+				numbers[(minutes / 10) >> 0],
+				boxTL_x + digitPositions[2].x,
+				boxTL_y + digitPositions[2].y
+			);
+			g.drawImage(
+				numbers[minutes % 10 >> 0],
+				boxTL_x + digitPositions[3].x,
+				boxTL_y + digitPositions[3].y
+			);
+		};
+	},
+
+	pause: function() {
+		this.drawing = false;
+	},
+
+	resume: function() {
+		this.drawing = true;
+	},
+
+	draw: function(now) {
+		if (!this.drawing) {
+			this.simpleDraw(now);
+			return;
+		}
+		g.drawImage(background, 0, 0);
+		var boxTL_x = 27;
+		var boxTL_y = 29;
+		var sprite_TL_x = 72;
+		var sprite_TL_y = 161 - sprite.height;
+		const seconds =
+			(now.getSeconds() % seconds_per_minute) + now.getMilliseconds() / 1000;
+		const hours =
+			this.is12Hour && now.getHours() > 12
+				? now.getHours() - 12
+				: now.getHours();
+
+		const minutes = now.getMinutes();
+
+		var time_advance = seconds / animation_duration;
+
+		if (time_advance < 0.5) {
+			sprite_TL_y += (jump_height - sprite_TL_y) * time_advance * 2;
+		} else if (time_advance < 1) {
+			sprite_TL_y =
+				jump_height + (sprite_TL_y - jump_height) * (time_advance - 0.5) * 2;
+		}
+		const box_penetration = boxTL_y + boxes.height - sprite_TL_y;
+		if (box_penetration > 0) {
+			boxTL_y -= box_penetration;
+		}
+		g.drawImage(boxes, boxTL_x, boxTL_y);
+		g.drawImage(
+			numbers[(hours / 10) >> 0],
+			boxTL_x + digitPositions[0].x,
+			boxTL_y + digitPositions[0].y
+		);
+		g.drawImage(
+			numbers[hours % 10 >> 0],
+			boxTL_x + digitPositions[1].x,
+			boxTL_y + digitPositions[1].y
+		);
+		g.drawImage(
+			numbers[(minutes / 10) >> 0],
+			boxTL_x + digitPositions[2].x,
+			boxTL_y + digitPositions[2].y
+		);
+		g.drawImage(
+			numbers[minutes % 10 >> 0],
+			boxTL_x + digitPositions[3].x,
+			boxTL_y + digitPositions[3].y
+		);
+		g.drawImage(sprite, sprite_TL_x, sprite_TL_y);
+		// Bangle.drawWidgets();
+
+		if (this.drawing) {
+			const timeout =
+				time_advance <= 1 ? animation_duration / animation_steps : -999;
+			if (timeout > 0) {
+				setTimeout((_) => {
+					this.draw(new Date());
+				}, timeout * 1000);
+			}
+		}
+	},
+
+	update: function(date, changed) {
+		if (this.drawing && changed.m) {
+			this.draw(date);
+		}
+	},
 });
 
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
-// Load widgets
-Bangle.loadWidgets();
-
-draw();
+clock.start();
