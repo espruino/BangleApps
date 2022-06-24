@@ -11,8 +11,10 @@
   "custom": "trigger.html",
   "screenshots": [
     {"url":"screenshot.png"}],
+    {"url":"screenshot_2.png"}],
+    {"url":"screenshot_3.png"}],
   "data": [
-      {"name":"ha.trigger.txt" }
+      {"name":"ha.trigger.json" }
   ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},

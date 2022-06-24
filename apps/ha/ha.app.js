@@ -3,15 +3,39 @@ var W = g.getWidth(), H = g.getHeight();
 var position=0;
 
 
-var icon = {
-  width : 48, height : 48, bpp : 1,
-  transparent : 0,
-  buffer : require("heatshrink").decompress(atob("AD8BwAFDg/gAocP+AFDj4FEn/8Aod//wFD/1+FAf4j+8AoMD+EPDAUH+OPAoUP+fPAoUfBYk/C4l/EYIwC//8n//FwIFEgYFD4EH+E8nkP8BdBAonjjk44/wj/nzk58/4gAFDF4PgCIMHAoPwhkwh4FB/EEkEfIIWAHwIFC4A+BAoXgg4FDL4IFDL4IFDLIYFkAEQA=="))
+// Note: All icons should have 48x48 pixels
+function getIcon(icon){
+  if(icon == "light"){
+    return {
+      width : 48, height : 48, bpp : 1,
+      transparent : 0,
+      buffer : require("heatshrink").decompress(atob("AAMBwAFE4AFDgYFJjgFBnAFBjwXBvAFBh4jBuAFCAQPwAQMHAQPgEQQCBEgcf/AvDn/8Aof//5GDAoJOBh+BAoOB+EP8YFB4fwgfnAoPnGANHAoPjHYQFBHYQFd44pDg47C4/gh/DIIZNFLIplGgF//wFIgZ9BRIUHRII7Ch4FBUIUOAoKzCjwFEhgCBmDpIVooFFh4oCAA4LFC5b7BAob1BAYI="))
+    };
+  } else if(icon == "door"){
+    return {
+      width : 48, height : 48, bpp : 1,
+      transparent : 0,
+      buffer : require("heatshrink").decompress(atob("AAM4Aok/4AED///Aov4Aon8DgQGBAv4FpnIFKJv4FweAQFFAgQFB8AFDnADC"))
+    };
+  } else if (icon == "fire"){
+    return {
+      width : 48, height : 48, bpp : 1,
+      transparent : 0,
+      buffer : require("heatshrink").decompress(atob("ABsDAokBwAFE4AFE8AFE+AFE/AFJgf8Aon+AocHAokP/8QAokYAoUfAok//88ApF//4kDAo//AgMQAgIFCjgFEjwFCOYIFFHQIFDn/+AoJ/BAoIqBAoN//xCBAoI5BDIPAgP//gFB8AFChYFBgf//EJAogOBAoSgBAoMHAQIFEFgXAAoJEBv4FCNoQFGVYd/wAFEYYIFIvwCBDoV8UwQCBcgUPwDwDfQMBaIYADA"))
+    };
+  }
+
+  // Default is always the HA icon
+  return {
+    width : 48, height : 48, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("AD8BwAFDg/gAocP+AFDj4FEn/8Aod//wFD/1+FAf4j+8AoMD+EPDAUH+OPAoUP+fPAoUfBYk/C4l/EYIwC//8n//FwIFEgYFD4EH+E8nkP8BdBAonjjk44/wj/nzk58/4gAFDF4PgCIMHAoPwhkwh4FB/EEkEfIIWAHwIFC4A+BAoXgg4FDL4IFDL4IFDLIYFkAEQA=="))
+  };
 };
 
 // Try to read custom actions, otherwise use default
 var triggers = [
-  {display: "Not found.", trigger: "NOP", icon: null},
+  {display: "Not found.", trigger: "NOP", icon: "ha"},
 ];
 
 try{
@@ -31,6 +55,7 @@ function draw() {
   var w = g.stringWidth(trigger.display);
 
   g.setFontAlign(-1,-1);
+  var icon = getIcon(trigger.icon);
   g.setColor(g.theme.fg).drawImage(icon, 12, H/5-2);
   g.drawString("Home", icon.width + 20, H/5);
   g.drawString("Assistant", icon.width + 18, H/5+24);
