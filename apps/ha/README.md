@@ -31,8 +31,12 @@ control some devices or entities in your HomeAssistant :)
 
 3.) Don't forget to select the action that should be executed at the bottom of each automation.
 
-# Error Handling
+*Note: There is also an automatic trigger send when the app is started (APP_STARTED) -- so you could
+add an action also for that.*
 
+# FAQ
+
+## Sometimes the trigger is not executed
 While playing and testing a bit I found that it is very important that you allow the android HomeAssistant app, as well as BangleJs Gadgetbridge app to (1) run in background and (2), disable energy optimizations for both apps.
 Otherwise, Android could stop one of both apps and the trigger will never be sent to HomeAssistant...
 
