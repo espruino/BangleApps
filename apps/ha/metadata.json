@@ -10,9 +10,10 @@
   "supports": ["BANGLEJS2"],
   "custom": "trigger.html",
   "screenshots": [
-    {"url":"screenshot.png"}],
-    {"url":"screenshot_2.png"}],
-    {"url":"screenshot_3.png"}],
+    {"url":"screenshot.png"},
+    {"url":"screenshot_2.png"},
+    {"url":"screenshot_3.png"}
+  ],
   "data": [
       {"name":"ha.trigger.json" }
   ],
