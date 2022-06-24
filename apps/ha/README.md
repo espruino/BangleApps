@@ -47,6 +47,12 @@ add an action also for that.*
 While playing and testing a bit I found that it is very important that you allow the android HomeAssistant app, as well as BangleJs Gadgetbridge app to (1) run in background and (2), disable energy optimizations for both apps.
 Otherwise, Android could stop one of both apps and the trigger will never be sent to HomeAssistant...
 
+If you still have problems, you can try another trick:
+Install "MacroDroid" from the Android AppStore and start the HomeAssistant App
+each time the "com.espruino.gadgetbridge.banglejs.HA" intent is send together
+with the extra trigger: APP_STARTED. Then whenever you open the app on your BangleJs
+it is ensured that HomeAssistant is running...
+
 ## Thanks to
 <a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
 
