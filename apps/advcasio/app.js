@@ -61,6 +61,7 @@ function initTouchTimer () {
 		Bangle.on('swipe', function(dirX,dirY) {
 				if (canTouch === false) return;
 				var njson = getDataJson();
+        if (!njson) return;
 				
 				if (dirX === -1) {
 						timer_time = 0;
@@ -68,8 +69,6 @@ function initTouchTimer () {
 						setDataJson(njson);
 				}
 				else if (dirX === 1) { 
-
-						var njson = getDataJson();
 						var now = new Date().getTime();
 						njson.timer = now + (timer_time * 1000 * 60);
 						Bangle.setLocked(true);
@@ -99,6 +98,7 @@ function getTimerTime() {
 		} else {
 				// else, show diff between njsontime and now
 				var njson = getDataJson();
+        if (!njson) return false;
 				var now = new Date().getTime();
 				var diff = Math.round((njson.timer - now) / (1000 * 60));
 				//console.log(123, njson, diff, now, njson.timer - now);
@@ -175,7 +175,7 @@ function drawWeather(arr) {
 //
 function drawTasks(str) {
 		g.setFont("6x8", 1);
-		var t = 60;
+		var t = 57;
 		var l = 0;
 		g.drawString(str, l+5, t+0);
 }
