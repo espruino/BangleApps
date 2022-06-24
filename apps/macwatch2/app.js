@@ -22,7 +22,7 @@ function draw() {
   g.drawString(mi, 132, 65, true);
   g.drawString(':', 93,65);
   g.setFontCustom(font, 48, 8, 521);
-  g.drawString(dd + ':' + mo + ':' + yy, 88, 120, true);
+  g.drawString(dd + ':' + mo + ':' + yy, 90, 120, true);
 }
 
 // handle switch display on by pressing BTN1
