@@ -38,8 +38,11 @@ The following icons are currently supported:
 
 3.) Don't forget to select the action that should be executed at the bottom of each automation.
 
-*Note: There is also an automatic trigger send when the app is started (APP_STARTED) -- so you could
-add an action also for that.*
+# Default Trigger
+This app also implements two default trigger that can always be used:
+- APP_STARTED -- Will be sent whenever the app is started. So you could do some actions already when the app is sarted without the need of any user interaction.
+- TRIGGER -- Will be sent whenever some trigger is executed. So you could generically listen to that.
+
 
 # FAQ
 

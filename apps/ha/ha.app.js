@@ -101,15 +101,22 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.6);
     position += 1;
     position = position >= triggers.length ? 0 : position;
+    draw();
   }
 
   if(isLeft){
     Bangle.buzz(40, 0.6);
     position -= 1;
     position = position < 0 ? triggers.length-1 : position;
+    draw();
   }
 
   if(!isRight && !isLeft){
+
+    // Send a default intent that we triggered something.
+    sendIntent("TRIGGER");
+
+    // Now send the selected trigger
     Bangle.buzz(80, 0.6).then(()=>{
       sendIntent(triggers[position].trigger);
       setTimeout(()=>{
@@ -117,8 +124,6 @@ Bangle.on('touch', function(btn, e){
       }, 250);
     });
   }
-
-  draw();
 });
 
 // Send intent that the we started the app.
