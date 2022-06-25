@@ -9,8 +9,8 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"hass.app.js","url":"app.js"},
-    {"name":"hass.img","url":"app-icon.js","evaluate":true},
-    {"name":"hass.json","url":"hass.json"}
+    {"name":"homeassistant.app.js","url":"app.js"},
+    {"name":"homeassistant.img","url":"app-icon.js","evaluate":true},
+    {"name":"homeassistant.json","url":"homeassistant.json"}
   ]
 }

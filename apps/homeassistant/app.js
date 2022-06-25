@@ -2,7 +2,7 @@ const STORAGE = require('Storage');
 const HEIGHT = g.getHeight();
 const WIDTH = g.getWidth();
 
-var settings = STORAGE.readJSON('hass.json', 1);
+var settings = STORAGE.readJSON('homeassistant.json', 1);
 var page = 0;
 var entity = 0;
 var isEntityPage = false;
