@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "Call Home Assistant Services with android intents",
   "icon": "app-icon.png",
-  "tags": "home assistant,hass",
+  "tags": "tools",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
