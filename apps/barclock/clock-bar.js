@@ -14,12 +14,10 @@ let locale = require("locale");
 }
 
 function renderBar(l) {
-  if (!this.fraction) {
-    // zero-size fillRect stills draws one line of pixels, we don't want that
-    return;
-  }
-  const width = this.fraction*l.w;
-  g.fillRect(l.x, l.y, l.x+width-1, l.y+l.height-1);
+  "ram";
+  if (!this.fraction) return; // zero-size fillRect stills draws one line of pixels, we don't want that
+  if (this.powerSave && Bangle.isLocked()) return;
+  g.fillRect(l.x, l.y, l.x+this.fraction*l.w-1, l.y+l.height-1);
 }
 
 
@@ -91,6 +89,7 @@ const ClockFace = require("ClockFace"),
       this.layout.update();
     },
     update: function(date, c) {
+      "ram";
       if (c.m) this.layout.time.label = timeText(date);
       if (c.h) this.layout.ampm.label = ampmText(date);
       if (c.d && this.showDate) this.layout.date.label = dateText(date);
@@ -102,4 +101,18 @@ const ClockFace = require("ClockFace"),
       this.layout.forgetLazyState();
     },
   });
+if (clock.powerSave) {
+  Bangle.on("lock", l => {
+    if (l) {
+      clock.precision = 60;
+      clock.tick();
+      const l = clock.layout.bar;
+      setTimeout(() => g.clearRect(l.x, l.y, l.x+l.w-1, l.y+l.height-1), 100);
+    } else {
+      clock.precision = 1;
+      clock.tick();
+    }
+  });
+}
+
 clock.start();
