@@ -1,0 +1,25 @@
+{
+    "intent": "com.homeassistant.service",
+    "domains": [
+        {
+            "name": "light",
+            "icon": "mEwxH+AH4A/AH4AT5gAGFtoxlFpYxhFp4xeFyYwaFyowZF9wuXGC4vuFzIwVF9wdK53U5oEB5oFEGDIaI5vUAAXNAooviKwPU5wsE5wJC6gvkMYhbCBQiPgQxA0FX8YmEFxYvbFA4uLF6QwKW4jwCFzgvKFYQDFF/4wXF54uUF+AwJF5wuWF+AwIF5ouYGBAvMFzQwHF5YucGAwvKFzwwFF5IugAAOCAA9erFYF0QvBrwoCAAwvjFY9eMQQvjLwKRIF8i/xXxAvkYAyWDF0jBCXtQAFlYACFtIwEF1gA/AH4ApA=",
+            "service": "light.toggle",
+            "entity": [
+                "livingroom_lamps"
+            ]
+        },
+        {
+            "name": "switch",
+            "icon": "mEwxH+AH4A/AH4A/AH4A/AH4A/AH4AFsIAhrYutAAQuuGBIZR2XXAB+ySJQvRFyAABL7gv/F/4v/F/4v/F/4v/F/4v/F/4v/AB+yFyGyCgNbF49bGCIAUF45gSFzgwlFxQA/AH4A/AH4A/AH4A/AH4A6",
+            "service": "switch.toggle",
+            "entity": [
+                "light_main_dining",
+                "light_main_kitchen",
+                "light_island_kitchen",
+                "light_main_livingroom",
+                "light_main_masterbedroom"
+            ]
+        }
+    ]
+}

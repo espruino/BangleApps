@@ -1,0 +1,16 @@
+{
+  "id": "homeassistant",
+  "name": "Home Assistant",
+  "shortName": "Home Assistant",
+  "version": "0.01",
+  "description": "Call Home Assistant Services with android intents",
+  "icon": "app-icon.png",
+  "tags": "home assistant,hass",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"hass.app.js","url":"app.js"},
+    {"name":"hass.img","url":"app-icon.js","evaluate":true},
+    {"name":"hass.json","url":"hass.json"}
+  ]
+}
