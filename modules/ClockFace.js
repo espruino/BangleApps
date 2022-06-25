@@ -49,6 +49,7 @@ function ClockFace(options) {
 }
 
 ClockFace.prototype.tick = function() {
+  "ram"
   const time = new Date();
   const now = {
     d: `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`,
