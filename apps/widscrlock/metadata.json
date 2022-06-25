@@ -9,6 +9,6 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name:"widscrlock.wid.js","url":"widget.js"}
+    {"name":"widscrlock.wid.js","url":"widget.js"}
   ]
 }
