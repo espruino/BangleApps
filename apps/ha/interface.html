@@ -32,7 +32,7 @@
 
       function writeData(){
         var data = document.getElementById("triggers").innerHTML;
-        Puck.eval(`require("Storage").writeJSON("ha.trigger.json",${JSON.stringify(data)})`, ()=>{});
+        Puck.eval(`require("Storage").writeJSON("ha.trigger.json",${data})`, ()=>{});
       }
 
       document.getElementById("upload").addEventListener("click", function() {
