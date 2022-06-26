@@ -13,7 +13,7 @@ let locale = require("locale");
   locale.hasMeridian = (locale.meridian(date)!=="");
 }
 
-let barW = 0,prevX = 0;
+let barW = 0, prevX = 0;
 function renderBar(l) {
   "ram";
   if (l) prevX = 0; // called from Layout: drawing area was cleared
@@ -23,10 +23,9 @@ function renderBar(l) {
   if (x2===prevX) return; // nothing to do
   if (x2===0) x2--; // don't leave 1px line
   if (x2<Math.max(0, prevX)) g.setBgColor(l.bgCol || g.theme.bg).clearRect(x2+1, l.y, prevX, l.y2);
-  else g.setColor(l.col||g.theme.fg).fillRect(prevX+1, l.y, x2, l.y2);
+  else g.setColor(l.col || g.theme.fg).fillRect(prevX+1, l.y, x2, l.y2);
   prevX = x2;
 }
-
 
 function timeText(date) {
   if (!clock.is12Hour) {
@@ -54,16 +53,16 @@ function dateText(date) {
 
 const ClockFace = require("ClockFace"),
   clock = new ClockFace({
-    precision:1,
-    settingsFile:'barclock.settings.json',
+    precision: 1,
+    settingsFile: "barclock.settings.json",
     init: function() {
       const Layout = require("Layout");
       this.layout = new Layout({
         type: "v", c: [
           {
             type: "h", c: [
-              {id: "time", label: "88:88", type: "txt", font: "6x8:5", col:g.theme.fg, bgCol: g.theme.bg}, // updated below
-              {id: "ampm", label: "  ", type: "txt", font: "6x8:2", col:g.theme.fg, bgCol: g.theme.bg},
+              {id: "time", label: "88:88", type: "txt", font: "6x8:5", col: g.theme.fg, bgCol: g.theme.bg}, // updated below
+              {id: "ampm", label: "  ", type: "txt", font: "6x8:2", col: g.theme.fg, bgCol: g.theme.bg},
             ],
           },
           {id: "bar", type: "custom", fillx: 1, height: 6, col: g.theme.fg2, render: renderBar},
