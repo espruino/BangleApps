@@ -8,7 +8,7 @@
   "tags": "tool",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
-  "custom": "trigger.html",
+  "interface": "interface.html",
   "screenshots": [
     {"url":"screenshot.png"},
     {"url":"screenshot_2.png"},
