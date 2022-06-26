@@ -14,14 +14,20 @@
     </textarea></p>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
-    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/interface.js"></script>
     <script src="../../core/lib/espruinotools.js"></script>
 
     <script>
       function loadData(){
-        Puck.eval(`require("Storage").read(${JSON.stringify("ha.trigger.json")})`,data=>{
-          document.getElementById("triggers").innerHTML = data;
-        });
+        Util.showModal("Download trigger from your BangleJs...")
+
+        try{
+          Puck.eval(`require("Storage").read(${JSON.stringify("ha.trigger.json")})`,data=>{
+            document.getElementById("triggers").innerHTML = data;
+            Util.hideModal();
+          });
+        } catch(ex){}
+        Util.hideModal();
       }
 
       function writeData(){
@@ -33,20 +39,6 @@
         writeData();
       });
 
-      /*
-       * Upload trigger to BangleJs
-       */
-      // document.getElementById("upload").addEventListener("click", function() {
-      //   // get the text to add
-      //   var triggers = document.getElementById("triggers").value;
-      //   // send finished app (in addition to contents of app.json)
-      //   sendCustomizedApp({
-      //     storage:[
-      //       {name:"ha.trigger.json", url:"ha.trigger.json", content:triggers},
-      //     ]
-      //   });
-      //   console.log("Sent ha.trigger.json!");
-      // });
 
       function onInit(){
         loadData();
