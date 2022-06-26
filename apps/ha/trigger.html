@@ -17,17 +17,18 @@
     <script src="../../core/lib/customize.js"></script>
 
     <script>
+      var stored = localStorage.getItem('ha.trigger.json')
+      console.log(stored);
+
+
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
         // get the text to add
-        var text = document.getElementById("triggers").value;
-        console.log(text);
-        // build the app's text using a templated String
-        var app = text;
+        var triggers = document.getElementById("triggers").value;
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {name:"ha.trigger.json", url:"ha.trigger.json", content:app},
+            {name:"ha.trigger.json", url:"ha.trigger.json", content:triggers},
           ]
         });
         console.log("Sent ha.trigger.json!");
