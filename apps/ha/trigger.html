@@ -21,7 +21,7 @@
       function onInit(){
         try{
           Util.showModal("Downloading trigger from BangleJs...");
-          Util.readStorage("ha.trigger.json", data=>{
+          Util.readStorageFile("ha.trigger.json", data=>{
             document.getElementById("triggers").innerHTML = data;
             Util.hideModal();
           });
