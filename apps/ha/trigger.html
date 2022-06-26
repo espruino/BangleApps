@@ -22,11 +22,12 @@
       try{
         Util.showModal("Downloading trigger from BangleJs...");
         Util.readStorageFile("ha.trigger.json", data=>{
-          textAreaTrigger.value = data;
+          textAreaTrigger.innerHTML = data;
         });
         console.log("Loaded from BangleJs:\n" + data);
       } catch(ex){
         console.log("(Warning) Failed loading ha.trigger.json from BangleJs. Using default.");
+        console.log(ex);
       }
       Util.hideModal();
 
