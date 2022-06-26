@@ -14,26 +14,34 @@
          * Load trigger from BangleJs
          */
         console.log("Loading trigger from BangleJs...");
-        var loadedData = false;
+
+        function setDefaultEntries(){
+            console.log("Set default trigger entries.");
+            document.getElementById("triggers").innerHTML = `
+[
+{"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
+{"display": "Office", "trigger": "TOGGLE_LIGHT", "icon":"light"},
+{"display": "Living Room", "trigger": "OVEN", "icon":"fire"}
+]`
+        }
+
         try {
             Puck.eval(`require("Storage").read(${JSON.stringify("ha.trigger.json")})`,data=>{
                 document.getElementById("triggers").innerHTML = data;
-                console.log("Successfully loaded trigger from BangleJs.");
-                console.log(data);
-                loadedData = true;
+                if(data != ""){
+                    console.log("Successfully loaded trigger from BangleJs.");
+                    console.log(data);
+                    loadedData = true;
+                } else {
+                    setDefaultEntries();
+                }
             });
-        } finally {
-            if(!loadedData){
-                console.log("(Warning) Could not load trigger from BangleJs.");
-                console.log(ex);
-                document.getElementById("triggers").innerHTML = `
-[
-  {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
-  {"display": "Office", "trigger": "TOGGLE_LIGHT", "icon":"light"},
-  {"display": "Living Room", "trigger": "OVEN", "icon":"fire"}
-]`
-            }
+        } catch(ex) {
+            console.log("(Warning) Could not load trigger from BangleJs.");
+            console.log(ex);
+            setDefaultEntries();
         }
+
 
         /*
          * Upload trigger to BangleJs
