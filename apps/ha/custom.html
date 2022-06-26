@@ -3,8 +3,8 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <h3>Upload Tiggers</h3>
-    <p>You must upload a list of json objects -- an example is given below</p>
+    <h3>Upload Tigger</h3>
+    <p>Status: </p><p id="status"></p></p>
     <p><textarea id="triggers" style="width:500px; height:300px">
 [
   {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
@@ -17,12 +17,22 @@
     <script src="../../core/lib/customize.js"></script>
 
     <script>
-        Puck.eval(`require("Storage").read(${JSON.stringify("ha.trigger.json")})`,data=>{
-            console.log(data);
-        });
+        /*
+         * Load trigger from BangleJs
+         */
+        document.getElementById("status").innerHTML = "Loading trigger from BangleJs...";
+        try {
+            Puck.eval(`require("Storage").read(${JSON.stringify("ha.trigger.json")})`,data=>{
+                document.getElementById("triggers").innerHTML = data;
+                document.getElementById("status").innerHTML = "Loaded trigger from BangleJs.";
+            });
+        } catch(ex) {
+            document.getElementById("status").innerHTML = "Could not load trigger from BangleJs.";
+        }
 
-
-        // When the 'upload' button is clicked...
+        /*
+         * Upload trigger to BangleJs
+         */
         document.getElementById("upload").addEventListener("click", function() {
             // get the text to add
             var text = document.getElementById("triggers").value;
