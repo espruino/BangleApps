@@ -17,10 +17,12 @@
     <script src="../../core/lib/interface.js"></script>
 
     <script>
-      var filename = "ha.trigger.json";
-      Puck.eval(`require("Storage").read(${JSON.stringify(filename)})`,data=>{
-        console.log(data);
-      });
+      function loadData(){
+        var filename = "ha.trigger.json";
+        Puck.eval(`require("Storage").read(${JSON.stringify(filename)})`,data=>{
+          console.log(data);
+        });
+      }
 
         // try{
         //   Util.readStorage("ha.trigger.json", data=>{
@@ -48,6 +50,9 @@
       //   console.log("Sent ha.trigger.json!");
       // });
 
+      function onInit(){
+        loadData();
+      }
     </script>
   </body>
 </html>
