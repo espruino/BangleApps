@@ -22,21 +22,21 @@
         });
 
 
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
-        // get the text to add
-        var text = document.getElementById("triggers").value;
-        console.log(text);
-        // build the app's text using a templated String
-        var app = text;
-        // send finished app (in addition to contents of app.json)
-        sendCustomizedApp({
-          storage:[
-            {name:"ha.trigger.json", url:"ha.trigger.json", content:app},
-          ]
+        // When the 'upload' button is clicked...
+        document.getElementById("upload").addEventListener("click", function() {
+            // get the text to add
+            var text = document.getElementById("triggers").value;
+            console.log(text);
+            // build the app's text using a templated String
+            var app = text;
+            // send finished app (in addition to contents of app.json)
+            sendCustomizedApp({
+            storage:[
+                {name:"ha.trigger.json", url:"ha.trigger.json", content:app},
+            ]
+            });
+            console.log("Sent ha.trigger.json!");
         });
-        console.log("Sent ha.trigger.json!");
-      });
 
     </script>
   </body>
