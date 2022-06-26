@@ -4,7 +4,12 @@
   </head>
   <body>
     <h3>Upload Tigger</h3>
-    <p><textarea id="triggers" style="width:500px; height:300px">Load data...</textarea></p>
+    <p><textarea id="triggers" style="width:500px; height:300px">
+[
+    {"display": "Text 1", "trigger": "TRIGGER_KEY_1", "icon":"door"},
+    {"display": "Text 2", "trigger": "TRIGGER_KEY_2", "icon":"light"}
+]
+    </textarea></p>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -22,17 +27,9 @@
                 console.log(data);
                 loadedData = true;
             });
-        } finally {
-            if(!loadedData){
-                console.log("(Warning) Could not load trigger from BangleJs.");
-                console.log(ex);
-                document.getElementById("triggers").innerHTML = `
-[
-  {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
-  {"display": "Office", "trigger": "TOGGLE_LIGHT", "icon":"light"},
-  {"display": "Living Room", "trigger": "OVEN", "icon":"fire"}
-]`
-            }
+        } catch {
+            console.log("(Warning) Could not load trigger from BangleJs.");
+            console.log(ex);
         }
 
         /*
