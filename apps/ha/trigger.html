@@ -18,25 +18,27 @@
     <script src="../../core/lib/interface.js"></script>
 
     <script>
-      var textAreaTrigger = document.getElementById("triggers");
-      try{
-        Util.showModal("Downloading trigger from BangleJs...");
-        Util.readStorageFile("ha.trigger.json", data=>{
-          textAreaTrigger.innerHTML = data;
-        });
-        console.log("Loaded from BangleJs:\n" + data);
-      } catch(ex){
-        console.log("(Warning) Failed loading ha.trigger.json from BangleJs. Using default.");
-        console.log(ex);
+      function onInit(){
+        try{
+          Util.showModal("Downloading trigger from BangleJs...");
+          Util.readStorage("ha.trigger.json", data=>{
+            document.getElementById("triggers").innerHTML = data;
+            Util.hideModal();
+          });
+          console.log("Loaded from BangleJs:\n" + data);
+        } catch(ex){
+          console.log("(Warning) Failed loading ha.trigger.json from BangleJs. Using default.");
+          console.log(ex);
+          Util.hideModal();
+        }
       }
-      Util.hideModal();
 
       /*
        * Upload trigger to BangleJs
        */
       document.getElementById("upload").addEventListener("click", function() {
         // get the text to add
-        var triggers = textAreaTrigger.value;
+        var triggers = document.getElementById("triggers").value;
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
