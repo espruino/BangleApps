@@ -9,26 +9,36 @@
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/interface.js"></script>
 
     <script>
+      var textAreaTrigger = document.getElementById("triggers");
+
       var triggerJson = [
         {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
         {"display": "Office", "trigger": "TOGGLE_LIGHT", "icon":"light"},
         {"display": "Living Room", "trigger": "OVEN", "icon":"fire"}
       ];
       try{
-        triggerJson = localStorage.getItem('ha.trigger.json')
+        Util.showModal("Downloading trigger from BangleJs...");
+        Util.readStorageFile("ha.trigger.json", data=>{
+          Util.hideModal();
+          triggerJson = JSON.parse(data);
+        });
       } catch(ex){
-        console.log("(Warning) Failed loading ha.trigger.json from BangleJs.");
+        console.log("(Warning) Failed loading ha.trigger.json from BangleJs. Using default.");
       }
-      console.log("TEST");
+
+      triggerJson = JSON.stringify(triggerJson);
+      textAreaTrigger.value = triggerJson;
       console.log(triggerJson);
 
-
-      // When the 'upload' button is clicked...
+      /*
+       * Upload trigger to BangleJs
+       */
       document.getElementById("upload").addEventListener("click", function() {
         // get the text to add
-        var triggers = document.getElementById("triggers").value;
+        var triggers = textAreaTrigger.value;
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
