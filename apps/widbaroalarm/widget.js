@@ -30,13 +30,13 @@ const interval = setting("interval");
 let history3 =
     storage.readJSON(LOG_FILE, true) || []; // history of recent 3 hours
 
-function showAlarm(body, key) {
+function showAlarm(body, key, type) {
   if (body == undefined)
     return;
   stop = true;
 
   E.showPrompt(body, {
-     title : "Pressure alarm",
+     title : "Pressure " + (type != undefined ? type : "alarm"),
      buttons : {"Ok" : 1, "Dismiss" : 2, "Pause" : 3}
    }).then(function(v) {
     const tsNow = Math.round(Date.now() / 1000); // seconds
@@ -91,15 +91,18 @@ function handlePressureValue(pressure) {
 
   history3.push(d);
 
+  // delete oldest entries until we have max 50
+  while (history3.length > 50) {
+    history3.shift();
+  }
+
   // delete entries older than 3h
   for (let i = 0; i < history3.length; i++) {
     if (history3[i]["ts"] < ts - (3 * 60 * 60)) {
       history3.shift();
+    } else {
+      break;
     }
-  }
-  // delete oldest entries until we have max 50
-  while (history3.length > 50) {
-    history3.shift();
   }
 
   // write data to storage
@@ -120,8 +123,8 @@ function checkForAlarms(pressure, ts) {
     // Is below the alarm threshold?
     if (pressure <= setting("min")) {
       if (!doWeNeedToAlarm("lowWarnTs")) {
-        showAlarm("Pressure low: " + Math.round(pressure) + " hPa",
-                  "lowWarnTs");
+        showAlarm("Pressure low: " + Math.round(pressure) + " hPa", "lowWarnTs",
+                  "low");
         alreadyWarned = true;
       }
     } else {
@@ -134,7 +137,7 @@ function checkForAlarms(pressure, ts) {
     if (pressure >= setting("max")) {
       if (doWeNeedToAlarm("highWarnTs")) {
         showAlarm("Pressure high: " + Math.round(pressure) + " hPa",
-                  "highWarnTs");
+                  "highWarnTs", "high");
         alreadyWarned = true;
       }
     } else {
@@ -162,7 +165,7 @@ function checkForAlarms(pressure, ts) {
                 showAlarm((Math.round(diffPressure * 10) / 10) +
                               " hPa/3h from " + Math.round(oldestPressure) +
                               " to " + Math.round(pressure) + " hPa",
-                          "dropWarnTs");
+                          "dropWarnTs", "drop");
               }
             } else {
               if (ts > setting("dropWarnTs"))
@@ -180,7 +183,7 @@ function checkForAlarms(pressure, ts) {
                 showAlarm((Math.round(diffPressure * 10) / 10) +
                               " hPa/3h from " + Math.round(oldestPressure) +
                               " to " + Math.round(pressure) + " hPa",
-                          "raiseWarnTs");
+                          "raiseWarnTs", "raise");
               }
             } else {
               if (ts > setting("raiseWarnTs"))
@@ -249,23 +252,23 @@ function turnOff() {
     Bangle.setBarometerPower(false, "widbaroalarm");
 }
 
-function reload() { getPressureValue(); }
-
 function draw() {
   if (global.WIDGETS != undefined && typeof global.WIDGETS === "object") {
     global.WIDGETS["baroalarm"] = {
       width : setting("show") ? 24 : 0,
-      reload : reload,
       area : "tr",
       draw : draw
     };
   }
   g.reset();
+
+  if (this.x == undefined)
+    return; // widget not yet there
+
+  g.clearRect(this.x, this.y, this.x + this.width - 1, this.y + 23);
+
   if (setting("show")) {
     g.setFont("6x8", 1).setFontAlign(1, 0);
-    const x = this.x, y = this.y;
-    if (this.x == undefined)
-      return; // widget not yet there
     if (medianPressure == undefined) {
       // trigger a new check
       getPressureValue();
@@ -273,12 +276,12 @@ function draw() {
       // lets load last value from log (if available)
       if (history3.length > 0) {
         medianPressure = history3[history3.length - 1]["p"];
-        g.drawString(Math.round(medianPressure), x + 24, y + 6);
+        g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
       } else {
-        g.drawString("...", x + 24, y + 6);
+        g.drawString("...", this.x + 24, this.y + 6);
       }
     } else {
-      g.drawString(Math.round(medianPressure), x + 24, y + 6);
+      g.drawString(Math.round(medianPressure), this.x + 24, this.y + 6);
     }
 
     if (threeHourAvrPressure == undefined) {
@@ -287,7 +290,8 @@ function draw() {
     if (threeHourAvrPressure != undefined) {
       if (medianPressure != undefined) {
         const diff = Math.round(medianPressure - threeHourAvrPressure);
-        g.drawString((diff > 0 ? "+" : "") + diff, x + 24, y + 6 + 10);
+        g.drawString((diff > 0 ? "+" : "") + diff, this.x + 24,
+                     this.y + 6 + 10);
       }
     }
   }
@@ -296,5 +300,5 @@ function draw() {
 if (interval > 0) {
   setInterval(getPressureValue, interval * 60000);
 }
-draw();
+getPressureValue();
 })();
