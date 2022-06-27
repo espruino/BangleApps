@@ -16,7 +16,7 @@ function draw() {
   var w = g.stringWidth(trigger.display);
 
   g.setFontAlign(-1,-1);
-  var icon = ha.getIcon(trigger.getIcon());
+  var icon = trigger.getIcon();
   g.setColor(g.theme.fg).drawImage(icon, 12, H/5-2);
   g.drawString("Home", icon.width + 20, H/5);
   g.drawString("Assistant", icon.width + 18, H/5+24);
@@ -50,6 +50,8 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(!isRight && !isLeft){
+    ha.sendTrigger("TRIGGER");
+
     // Now send the selected trigger
     Bangle.buzz(80, 0.6).then(()=>{
       ha.sendTrigger(triggers[position].trigger);
