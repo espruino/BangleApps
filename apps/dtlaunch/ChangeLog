@@ -13,3 +13,4 @@
 0.13: Added swipeExit setting so that left-right to exit is an option
 0.14: Don't move pages when doing exit swipe - Bangle 2.
 0.15: 'Swipe to exit'-code is slightly altered to be more reliable - Bangle 2.
+0.16: Use default Bangle formatter for booleans

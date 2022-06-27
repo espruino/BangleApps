@@ -26,14 +26,12 @@
     '< Back': back,
     'Monotonic percentage': {
       value: !!settings.forceMonoPercentage,
-      format: v => settings.forceMonoPercentage ? "On" : "Off",
       onchange: v => {
         writeSettings("forceMonoPercentage", v);
       }
     },
     'Monotonic voltage': {
       value: !!settings.forceMonoVoltage,
-      format: v => settings.forceMonoVoltage ? "On" : "Off",
       onchange: v => {
         writeSettings("forceMonoVoltage", v);
       }

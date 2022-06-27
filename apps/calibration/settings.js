@@ -13,7 +13,6 @@
     "< Back" : () => back(),
     'Active': {
       value: !!settings.active,
-      format: v => v? "On":"Off",
       onchange: v => {
         settings.active = v;
         writeSettings();

@@ -39,7 +39,6 @@
     },
     'Show Grid': {
       value: !!s.grid,
-      format: v => v ? /*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         s.grid = v;
         save();
@@ -47,7 +46,6 @@
     },
     'Show Weather': {
       value: !!s.weather,
-      format: v => v ? /*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         s.weather = v;
         save();
@@ -55,7 +53,6 @@
     },
     'Idle Warning': {
       value: !!s.idle_check,
-      format: v => v ? /*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         s.idle_check = v;
         save();

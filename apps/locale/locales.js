@@ -141,7 +141,7 @@ var locales = {
     currency_symbol: "$", currency_first: true,
     int_curr_symbol: "USD",
     speed: "mph",
-    distance: { 0: "yd", 1: "mi" },
+    distance: { 0: "m", 1: "mi" },
     temperature: "°F",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
