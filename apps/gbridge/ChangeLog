@@ -27,3 +27,4 @@
 0.25: workaround call notification
 	  Fix inflated step number
 0.26: Include charging status in battery updates to phone
+0.27: Use default Bangle formatter for booleans

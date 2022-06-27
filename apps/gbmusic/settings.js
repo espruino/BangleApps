@@ -25,19 +25,16 @@
     }
   }
 
-  const yesNo = (v) => translate(v ? "Yes" : "No");
   let menu = {
     "": {"title": "Music Control"},
   };
   menu[translate("< Back")] = back;
   menu[translate("Auto start")] = {
     value: !!s.autoStart,
-    format: yesNo,
     onchange: save("autoStart"),
   };
   menu[translate("Simple button")] = {
     value: !!s.simpleButton,
-    format: yesNo,
     onchange: save("simpleButton"),
   };
 
