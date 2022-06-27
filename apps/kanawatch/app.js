@@ -196,9 +196,9 @@ function drawMonthDay() {
   g.setFont('Vector', 20);
   g.setColor(1,1,1);
   g.setFontAlign(-1, -1, 0);
-  g.drawString(month, 4, y-20);
+  g.drawString(month, 4, 112);
   g.setFontAlign(1, -1, 0);
-  g.drawString(day, w, y-20);
+  g.drawString(day, w, 112);
 }
 
 function getPhoneme(k) {
@@ -206,6 +206,7 @@ function getPhoneme(k) {
     case "TU": return "TSU";
     case "TI": return "CHI";
     case "SI": return "SHI";
+    case "HU": return "FU";
   }
   return k;
 }
