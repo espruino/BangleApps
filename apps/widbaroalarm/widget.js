@@ -76,6 +76,12 @@ function doWeNeedToAlarm(key) {
   return setting(key) == undefined || setting(key) == 0 || setting(key) < tsNow;
 }
 
+function isValidPressureValue(pressure) {
+  if (pressure == undefined || pressure <= 0)
+    return false;
+  return pressure > 800 && pressure < 1200; // very rough values
+}
+
 function handlePressureValue(pressure) {
   if (pressure == undefined || pressure <= 0)
     return;
@@ -84,6 +90,17 @@ function handlePressureValue(pressure) {
   const d = {"ts" : ts, "p" : pressure};
 
   history3.push(d);
+
+  // delete entries older than 3h
+  for (let i = 0; i < history3.length; i++) {
+    if (history3[i]["ts"] < ts - (3 * 60 * 60)) {
+      history3.shift();
+    }
+  }
+  // delete oldest entries until we have max 50
+  while (history3.length > 50) {
+    history3.shift();
+  }
 
   // write data to storage
   storage.writeJSON(LOG_FILE, history3);
@@ -98,17 +115,6 @@ function handlePressureValue(pressure) {
 
 function checkForAlarms(pressure, ts) {
   let alreadyWarned = false;
-
-  // delete entries older than 3h
-  for (let i = 0; i < history3.length; i++) {
-    if (history3[i]["ts"] < ts - (3 * 60 * 60)) {
-      history3.shift();
-    }
-  }
-  // delete oldest entries until we have max 50
-  while (history3.length > 50) {
-    history3.shift();
-  }
 
   if (setting("lowalarm")) {
     // Is below the alarm threshold?
@@ -217,8 +223,12 @@ function getPressureValue() {
   Bangle.on('pressure', function(e) {
     while (currentPressures.length > MEDIANLENGTH)
       currentPressures.pop();
-    currentPressures.unshift(e.pressure);
-    median = currentPressures.slice().sort();
+
+    const pressure = e.pressure;
+    if (isValidPressureValue(pressure)) {
+      currentPressures.unshift(pressure);
+      median = currentPressures.slice().sort();
+    }
 
     if (median.length > 10) {
       var mid = median.length >> 1;
@@ -231,7 +241,7 @@ function getPressureValue() {
     }
   });
 
-  setTimeout(function() { turnOff(); }, 10000);
+  setTimeout(function() { turnOff(); }, 30000);
 }
 
 function turnOff() {
