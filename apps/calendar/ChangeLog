@@ -8,3 +8,4 @@
 0.08: Do not register as watch, manually start clock on button
       read start of week from system settings
 0.09: Fix scope of let variables
+0.10: Use default Bangle formatter for booleans

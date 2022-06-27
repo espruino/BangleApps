@@ -40,22 +40,18 @@
     },
     /*LANG*/'Auto-Open Music': {
       value: !!settings().openMusic,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("openMusic", v)
     },
     /*LANG*/'Unlock Watch': {
       value: !!settings().unlockWatch,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("unlockWatch", v)
     },
     /*LANG*/'Flash Icon': {
       value: !!settings().flash,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("flash", v)
     },
     /*LANG*/'Quiet mode disables auto-open': {
       value: !!settings().quietNoAutOpn,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
   };
