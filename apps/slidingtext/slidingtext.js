@@ -6,10 +6,16 @@
 
 const color_schemes = [
   {
+    name: "white",
+    background : [1.0,1.0,1.0],
+    main_bar: [0.0,0.0,0.0],
+    other_bars: [0.25,0.25,0.25],
+  },
+  {
     name: "black",
     background : [0.0,0.0,0.0],
     main_bar: [1.0,1.0,1.0],
-    other_bars: [0.85,0.85,0.85],
+    other_bars: [1.0,1.0,1.0],
   },
   {
     name: "red",
@@ -81,7 +87,7 @@ function reset_commands(){
 
 function has_commands(){
   return  command_stack_high_priority.length > 0 ||
-      command_stack_low_priority.lenth > 0;
+      command_stack_low_priority.length > 0;
 }
 
 class ShiftText {
@@ -244,7 +250,12 @@ function setRowDisplays(y, heights) {
     y += heights[i];
   }
 }
-if (g.getHeight()>200)
+
+function bangleVersion(){
+  return (g.getHeight()>200)? 1 : 2;
+}
+
+if (bangleVersion()>1)
   setRowDisplays(50, [40,30,30,30,40]);
 else
   setRowDisplays(34, [35,25,25,25,35]);
@@ -411,8 +422,7 @@ function draw_clock(){
   reset_commands();
   date = display_time(date);
   console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString());
-  // for debugging only
-  //date.setMinutes(37);
+
   var rows = date_formatter.formatDate(date);
   var display;
   for (var i = 0; i < rows.length; i++) {
@@ -503,6 +513,7 @@ function set_dateformat(dateformat_name){
   }
 }
 
+var enable_live_controls = false;
 const PREFERENCE_FILE = "slidingtext.settings.json";
 /**
  * Called on startup to set the watch to the last preference settings
@@ -510,7 +521,7 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
 function load_settings(){
   var setScheme = false;
   try{
-    settings = require("Storage").readJSON(PREFERENCE_FILE);
+    var settings = require("Storage").readJSON(PREFERENCE_FILE);
     if(settings != null){
       console.log("loaded:" + JSON.stringify(settings));
       if(settings.color_scheme != null){
@@ -520,6 +531,10 @@ function load_settings(){
       if(settings.date_format != null){
         set_dateformat(settings.date_format);
       }
+      if(settings.enable_live_controls == null){
+        settings.enable_live_controls = (bangleVersion() <= 1);
+      }
+      enable_live_controls = settings.enable_live_controls;
     } else {
       console.log("no settings to load");
     }
@@ -538,22 +553,28 @@ function save_settings(){
   var settings = {
     date_format : date_formatter.name(),
     color_scheme : color_schemes[color_scheme_index].name,
+    enable_live_controls: enable_live_controls
   };
   console.log("saving:" + JSON.stringify(settings));
   require("Storage").writeJSON(PREFERENCE_FILE,settings);
 }
 
 function button1pressed() {
-  changeFormatter();
-  save_settings();
+  console.log("button1pressed");
+  if (enable_live_controls) {
+    changeFormatter();
+    save_settings();
+  }
 }
 
 function button3pressed() {
   console.log("button3pressed");
-  nextColorTheme();
-  reset_clock(true);
-  draw_clock();
-  save_settings();
+  if (enable_live_controls) {
+    nextColorTheme();
+    reset_clock(true);
+    draw_clock();
+    save_settings();
+  }
 }
 
 // The interval reference for updating the clock
