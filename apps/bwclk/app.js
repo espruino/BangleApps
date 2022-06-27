@@ -71,59 +71,77 @@ Graphics.prototype.setSmallFont = function(scale) {
   return this;
 };
 
-var imgLock = {
-  width : 16, height : 16, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
-};
+function imgLock(){
+  return {
+    width : 16, height : 16, bpp : 1,
+    transparent : 0,
+    buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
+  }
+}
 
-var imgSteps = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/H///wv4CBn4CD8ACCj4IBj8f+Eeh/wjgCBngCCg/4nEH//4h/+jEP/gRBAQX+jkf/wgB//8GwP4FoICDHgICCBwIA=="))
-};
+function imgSteps(){
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/H///wv4CBn4CD8ACCj4IBj8f+Eeh/wjgCBngCCg/4nEH//4h/+jEP/gRBAQX+jkf/wgB//8GwP4FoICDHgICCBwIA=="))
+  }
+}
 
-var imgBattery = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/4AN4EAg4TBgd///9oEAAQv8ARQRDDQQgCEwQ4OA"))
-};
+function imgBattery(){
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/4AN4EAg4TBgd///9oEAAQv8ARQRDDQQgCEwQ4OA"))
+  }
+}
 
-var imgBpm = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/4AOn4CD/wCCjgCCv/8jF/wGYgOA5MB//BC4PDAQnjAQPnAQgANA"))
-};
+function imgBpm() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/4AOn4CD/wCCjgCCv/8jF/wGYgOA5MB//BC4PDAQnjAQPnAQgANA"))
+  }
+}
 
-var imgTemperature = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("//D///wICBjACBngCNkgCP/0kv/+s1//nDn/8wICEBAIOC/08v//IYJECA=="))
-};
+function imgTemperature() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("//D///wICBjACBngCNkgCP/0kv/+s1//nDn/8wICEBAIOC/08v//IYJECA=="))
+  }
+}
 
-var imgWind = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/0f//8h///Pn//zAQXzwf/88B//mvGAh18gEevn/DIICB/PwgEBAQMHBAIADFwM/wEAGAP/54CD84CE+eP//wIQU/A=="))
-};
+function imgWind () {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/0f//8h///Pn//zAQXzwf/88B//mvGAh18gEevn/DIICB/PwgEBAQMHBAIADFwM/wEAGAP/54CD84CE+eP//wIQU/A=="))
+  }
+}
 
-var imgTimer = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/+B/4CD84CEBAPygFP+F+h/x/+P+fz5/n+HnAQNn5/wuYCBmYCC5kAAQfOgFz80As/ngHn+fD54mC/F+j/+gF/HAQA=="))
-};
+function imgTimer() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/+B/4CD84CEBAPygFP+F+h/x/+P+fz5/n+HnAQNn5/wuYCBmYCC5kAAQfOgFz80As/ngHn+fD54mC/F+j/+gF/HAQA=="))
+  }
+}
 
-var imgCharging = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
-};
+function imgCharging() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
+  }
+}
 
-var imgWatch = {
-  width : 24, height : 24, bpp : 1,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"))
-};
+function imgWatch() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"))
+  }
+}
 
 
 /*
@@ -132,12 +150,12 @@ var imgWatch = {
  */
 var infoArray = [
   function(){ return [ null, null, "left", null ] },
-  function(){ return [ "Bangle", imgWatch, "right", null ] },
-  function(){ return [ E.getBattery() + "%", imgBattery, "left", null ] },
-  function(){ return [ getSteps(), imgSteps, "left", null ] },
-  function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm, "left", null] },
-  function(){ return [ getWeather().temp, imgTemperature, "left", null ] },
-  function(){ return [ getWeather().wind, imgWind, "left", null ] },
+  function(){ return [ "Bangle", imgWatch(), "right", null ] },
+  function(){ return [ E.getBattery() + "%", imgBattery(), "left", null ] },
+  function(){ return [ getSteps(), imgSteps(), "left", null ] },
+  function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm(), "left", null] },
+  function(){ return [ getWeather().temp, imgTemperature(), "left", null ] },
+  function(){ return [ getWeather().wind, imgWind(), "left", null ] },
 ];
 
 /*
@@ -158,9 +176,9 @@ const NUM_INFO=infoArray.length;
 
 function getInfoEntry(){
   if(isAlarmEnabled()){
-    return [getAlarmMinutes() + " min.", imgTimer, "left", null]
+    return [getAlarmMinutes() + " min.", imgTimer(), "left", null]
   } else if(Bangle.isCharging()){
-    return [E.getBattery() + "%", imgCharging, "left", null]
+    return [E.getBattery() + "%", imgCharging(), "left", null]
   } else{
     // In case the user removes HomeAssistant entries, showInfo
     // could be larger than infoArray.length...
@@ -391,7 +409,7 @@ function drawTime(){
 function drawLock(){
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
-    g.drawImage(imgLock, W-16, 2);
+    g.drawImage(imgLock(), W-16, 2);
   }
 }
 
