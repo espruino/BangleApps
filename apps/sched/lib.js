@@ -66,8 +66,9 @@ exports.newDefaultAlarm = function () {
 
   var alarm = {
     t: 12 * 3600000, // Default to 12:00
+    del: false, // Never delete an alarm when it expires
     on: true,
-    rp: settings.defaultRepeat,
+    rp: false,
     as: settings.defaultAutoSnooze,
     dow: 0b1111111,
     last: 0,
@@ -84,6 +85,7 @@ exports.newDefaultTimer = function () {
 
   var timer = {
     timer: 5 * 60 * 1000, // 5 minutes
+    del: settings.defaultDeleteExpiredTimers,
     on: true,
     rp: false,
     as: false,
@@ -103,7 +105,7 @@ exports.getSettings = function () {
       unlockAtBuzz: false,
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
-      defaultRepeat: false,
+      defaultDeleteExpiredTimers: true, // Always
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "::",
