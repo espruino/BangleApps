@@ -3,7 +3,7 @@
   "name": "Activity Reminder",
   "shortName":"Activity Reminder",
   "description": "A reminder to take short walks for the ones with a sedentary lifestyle",
-  "version":"0.07",
+  "version":"0.08",
   "icon": "app.png",
   "type": "app",
   "tags": "tool,activity",

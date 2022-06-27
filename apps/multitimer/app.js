@@ -267,7 +267,6 @@ function editTimer(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      format: v => v ? "On" : "Off",
       onchange: v => a.on = v
     },
     "Hours": {
@@ -293,7 +292,6 @@ function editTimer(idx, a) {
     },
     "Hard Mode": {
       value: a.data.hm,
-      format: v => v ? "On" : "Off",
       onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
@@ -535,7 +533,6 @@ function editDOW(dow, onchange) {
     var dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
-      format: v => v ? "Yes" : "No",
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
     };
   })(i);
@@ -595,7 +592,6 @@ function editAlarm(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      format: v => v ? "On" : "Off",
       onchange: v => a.on = v
     },
     "Hours": {
@@ -614,7 +610,6 @@ function editAlarm(idx, a) {
     },
     "Repeat": {
       value: a.rp,
-      format: v => v ? "Yes" : "No",
       onchange: v => a.rp = v
     },
     "Days": {
@@ -623,13 +618,11 @@ function editAlarm(idx, a) {
     },
     "Hard Mode": {
       value: a.data.hm,
-      format: v => v ? "On" : "Off",
       onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Auto Snooze": {
       value: a.as,
-      format: v => v ? "Yes" : "No",
       onchange: v => a.as = v
     },
     "Msg": {

@@ -16,24 +16,22 @@
   E.showMenu({
     "" : { "title" : "Pong Clock" },
     "< Back" : () => back(),
-    'Widgets?': {
-      value: !!settings.withWidgets,  // !! converts undefined to false
-      format: v => v?"Show":"Hide",
+    'Show Widgets': {
+      value: !!settings.withWidgets,
       onchange: v => {
         settings.withWidgets = v;
         writeSettings();
       }
     },
     'Inverted?': {
-      value: !!settings.isInvers,  // !! converts undefined to false
-      format: v => v?"Yes":"No",
+      value: !!settings.isInvers,
       onchange: v => {
         settings.isInvers = v;
         writeSettings();
       }
     },
     'On Lock?': {
-      value: !!settings.playLocked,  // !! converts undefined to false
+      value: !!settings.playLocked,
       format: v => v?"Play":"Pause",
       onchange: v => {
         settings.playLocked = v;

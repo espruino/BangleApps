@@ -40,11 +40,9 @@ function getTrackNumber(filename) {
 }
 
 function showMainMenu() {
-  function boolFormat(v) { return v?"Yes":"No"; }
   function menuRecord(id) {
     return {
       value: settings.record.includes(id),
-      format: boolFormat,
       onchange: v => {
         settings.recording = false; // stop recording if we change anything
         settings.record = settings.record.filter(r=>r!=id);

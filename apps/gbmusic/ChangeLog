@@ -9,3 +9,4 @@
 0.09: Move event listener from widget to boot code, stops music from showing up in messages
 0.10: Simplify touch events
       Remove date+time
+0.11: Use default Bangle formatter for booleans

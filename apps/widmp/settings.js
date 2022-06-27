@@ -25,7 +25,6 @@
     "< Back": () => back(),
     "Default": {
       value: (settings.default_colour !== undefined ? settings.default_colour : true),
-      format: v => v ? "Yes" : "No",
       onchange: v => {
         settings.default_colour = v;
         writeSettings();
