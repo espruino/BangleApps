@@ -503,7 +503,11 @@ Bangle.on('touch', function(btn, e){
 
 
 E.on("kill", function(){
-  storage.write(SETTINGS_FILE, settings);
+  try{
+    storage.write(SETTINGS_FILE, settings);
+  } catch(ex){
+    // If this fails, we still kill the app...
+  }
 });
 
 
