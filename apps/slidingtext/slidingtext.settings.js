@@ -3,6 +3,10 @@
     var settings = Object.assign({
         secondsOnUnlock: false,
     }, require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+    // the screen controls are defaulted on for a bangle 1 and off for a bange 2
+    if(settings.enable_live_controls == null){
+        settings.enable_live_controls = (g.getHeight()> 200);
+    }
     console.log("loaded:" + JSON.stringify(settings));
 
     const LANGUAGES_FILE = "slidingtext.languages.json";
@@ -19,6 +23,7 @@
     }
 
     function writeSettings() {
+        console.log("saving:" + JSON.stringify(settings));
         require('Storage').writeJSON(PREFERENCE_FILE, settings);
     }
 
@@ -53,7 +58,7 @@
             value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
             format: v => v ? "On" : "Off",
             onchange: v => {
-                settings.enable_live_controls = (v == "On");
+                settings.enable_live_controls = v;
                 writeSettings();
             }
         },
