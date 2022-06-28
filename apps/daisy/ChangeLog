@@ -4,3 +4,4 @@
 0.04: added heart rate which is switched on when cycled to it through up/down touch on rhs
 0.05: changed text to uppercase, just looks better, removed colons on text
 0.06: better contrast for light theme, use fg color instead of dithered for ring
+0.07: Use default Bangle formatter for booleans

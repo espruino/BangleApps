@@ -22,3 +22,4 @@
       Restructure the settings menu
 0.08: Allow scanning for devices in settings
 0.09: Misc Fixes and improvements (https://github.com/espruino/BangleApps/pull/1655)
+0.10: Use default Bangle formatter for booleans

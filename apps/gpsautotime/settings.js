@@ -13,9 +13,8 @@
   E.showMenu({
     "" : { "title" : "GPS auto time" },
     "< Back" : () => back(),
-    'Show widget?': {
-      value: !!settings.show,  // !! converts undefined to false
-      format: v => v?"Show":"Hide",
+    'Show Widgets': {
+      value: !!settings.show,
       onchange: v => {
         settings.show = v;
         writeSettings();

@@ -25,7 +25,6 @@
     },
     'Performance log': {
       value: !!settings.perflog,
-      format: v => settings.perflog ? "On" : "Off",
       onchange: v => {
         settings.perflog = v;
         writeSettings();

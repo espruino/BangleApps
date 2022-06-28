@@ -28,7 +28,6 @@ function showMainMenu() {
     '': { 'title': 'Heart Recorder' },
     'RECORD': {
       value: !!settings.isRecording,
-      format: v=>v?"On":"Off",
       onchange: v => {
         settings.isRecording = v;
         updateSettings();

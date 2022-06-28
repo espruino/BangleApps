@@ -23,7 +23,7 @@ echo "[" > "$outfile"
 first=1
 for app in apps/*/; do 
   echo "Processing $app..."; 
-  if [[ "$app" =~ ^apps/_example.* ]]; then
+  if [[ "$app" =~ ^apps/_example.* ]] || [ ! -e "$app/"metadata.json ]; then
     echo "Ignoring $app"
   else
     if [ $first -eq 1 ]; then

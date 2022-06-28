@@ -1,8 +1,5 @@
-// Settings menu for the enhanced Anton clock
-
 (function(back) {
   var FILE = "hworldclock.json";
-  // Load settings
   var settings = Object.assign({
     secondsOnUnlock: false,
   }, require('Storage').readJSON(FILE, true) || {});
@@ -41,7 +38,6 @@
 	"Color w. dark": stringInSettings("colorWhenDark", ["green", "default"]),
     "Show SunInfo": {
       value: (settings.showSunInfo !== undefined ? settings.showSunInfo : true),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.showSunInfo = v;
         writeSettings();
@@ -49,11 +45,6 @@
     }
   };
 
-
-
-  // Actually display the menu
   E.showMenu(mainmenu);
 
 });
-
-// end of file

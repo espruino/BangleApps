@@ -18,7 +18,6 @@
       }),
     /*LANG*/"Keep Msgs" : {
       value : !!settings.keep,
-      format : v=>v?/*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         settings.keep = v;
         updateSettings();
