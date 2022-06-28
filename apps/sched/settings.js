@@ -14,6 +14,14 @@
       }
     },
 
+    /*LANG*/"Delete Expired Timers": {
+      value: settings.defaultDeleteExpiredTimers,
+      onchange: v => {
+        settings.defaultDeleteExpiredTimers = v;
+        require("sched").setSettings(settings);
+      }
+    },
+
     /*LANG*/"Default Auto Snooze": {
       value: settings.defaultAutoSnooze,
       onchange: v => {
@@ -30,14 +38,6 @@
       format: v => v + /*LANG*/"m",
       onchange: v => {
         settings.defaultSnoozeMillis = v * 60000;
-        require("sched").setSettings(settings);
-      }
-    },
-
-    /*LANG*/"Default Repeat": {
-      value: settings.defaultRepeat,
-      onchange: v => {
-        settings.defaultRepeat = v;
         require("sched").setSettings(settings);
       }
     },

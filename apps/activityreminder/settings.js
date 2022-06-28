@@ -9,7 +9,6 @@
         "< Back": () => back(),
         'Enable': {
             value: settings.enabled,
-            format: v => v ? "Yes" : "No",
             onchange: v => {
                 settings.enabled = v;
                 activityreminder.writeSettings(settings);
@@ -38,9 +37,7 @@
                 settings.maxInnactivityMin = v;
                 activityreminder.writeSettings(settings);
             },
-            format: x => {
-                return x + " min";
-            }
+            format: x =>   x + "m"
         },
         'Dismiss delay': {
             value: settings.dismissDelayMin,
@@ -49,9 +46,7 @@
                 settings.dismissDelayMin = v;
                 activityreminder.writeSettings(settings);
             },
-            format: x => {
-                return x + " min";
-            }
+            format: x => x + "m"
         },
         'Pause delay': {
             value: settings.pauseDelayMin,
@@ -61,7 +56,7 @@
                 activityreminder.writeSettings(settings);
             },
             format: x => {
-                return x + " min";
+                return x + "m";
             }
         },
         'Min steps': {

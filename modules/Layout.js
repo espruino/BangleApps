@@ -37,9 +37,9 @@ function Layout(layout, options) {
 
   if (this.options.btns) {
     var buttons = this.options.btns;
-    this.b = buttons;
     if (this.physBtns >= buttons.length) {
       // enough physical buttons
+      this.b = buttons;
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle

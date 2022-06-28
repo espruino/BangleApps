@@ -2,7 +2,6 @@
 
 (function(back) {
   var FILE = "antonclk.json";
-  // Load settings
   var settings = Object.assign({
     secondsOnUnlock: false,
   }, require('Storage').readJSON(FILE, true) || {});
@@ -41,7 +40,6 @@
     "Date": stringInSettings("dateOnMain", ["Long", "Short", "ISO8601"]),
     "Show Weekday": {
       value: (settings.weekDay !== undefined ? settings.weekDay : true),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.weekDay = v;
         writeSettings();
@@ -49,7 +47,6 @@
     },
     "Show CalWeek": {
       value: (settings.calWeek !== undefined ? settings.calWeek : false),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.calWeek = v;
         writeSettings();
@@ -57,7 +54,6 @@
     },
     "Uppercase": {
       value: (settings.upperCase !== undefined ? settings.upperCase : true),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.upperCase = v;
         writeSettings();
@@ -65,7 +61,6 @@
     },
     "Vector font": {
       value: (settings.vectorFont !== undefined ? settings.vectorFont : false),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.vectorFont = v;
         writeSettings();
@@ -82,7 +77,6 @@
     "Show": stringInSettings("secondsMode", ["Never", "Unlocked", "Always"]),
     "With \":\"": {
       value: (settings.secondsWithColon !== undefined ? settings.secondsWithColon : true),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.secondsWithColon = v;
         writeSettings();
@@ -90,7 +84,6 @@
     },
     "Color": {
       value: (settings.secondsColoured !== undefined ? settings.secondsColoured : true),
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.secondsColoured = v;
         writeSettings();
@@ -99,9 +92,6 @@
     "Date": stringInSettings("dateOnSecs", ["Year", "Weekday", "No"])
   };
 
-  // Actually display the menu
   E.showMenu(mainmenu);
 
 });
-
-// end of file

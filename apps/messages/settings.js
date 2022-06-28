@@ -4,6 +4,7 @@
     if (settings.vibrate===undefined) settings.vibrate=":";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    if (settings.maxMessages===undefined) settings.maxMessages=3;
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -40,24 +41,25 @@
     },
     /*LANG*/'Auto-Open Music': {
       value: !!settings().openMusic,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("openMusic", v)
     },
     /*LANG*/'Unlock Watch': {
       value: !!settings().unlockWatch,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("unlockWatch", v)
     },
     /*LANG*/'Flash Icon': {
       value: !!settings().flash,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("flash", v)
     },
     /*LANG*/'Quiet mode disables auto-open': {
       value: !!settings().quietNoAutOpn,
-      format: v => v?/*LANG*/'Yes':/*LANG*/'No',
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
+    /*LANG*/'Widget messages': {
+      value:0|settings().maxMessages,
+      min: 1, max: 5,
+      onchange: v => updateSetting("maxMessages", v)
+    }
   };
   E.showMenu(mainmenu);
 })

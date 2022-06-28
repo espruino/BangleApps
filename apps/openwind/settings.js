@@ -2,7 +2,6 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 (function(back) {
   const SETTINGS_FILE = 'openwindsettings.json'
   // initialize with default settings...
@@ -29,7 +28,6 @@ const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
     '< Back': back,
     'True wind': {
       value: settings.truewind,
-      format: boolFormat,
       onchange: save('truewind'),
     },
     'Mounting angle': {

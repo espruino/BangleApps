@@ -85,7 +85,7 @@ exports.pushMessage = function(event) {
       return load("messages.app.js");
     }
     if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz to let someone know
-    WIDGETS.messages.show();
+    if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
   }, 500);
 }
 /// Remove all messages
@@ -102,7 +102,7 @@ exports.clearAll = function(event) {
   if (inApp) return onMessagesModified();
   // if we have a widget, update it
   if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.hide();
+    WIDGETS.messages.update(messages);
 }
 
 exports.getMessageImage = function(msg) {

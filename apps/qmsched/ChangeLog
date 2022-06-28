@@ -7,3 +7,4 @@
 0.07: Option to switch theme
       Changed time selection to 5-minute intervals
 0.08: Support new Bangle.js 2 menu
+0.09: Use default Bangle formatter for booleans
