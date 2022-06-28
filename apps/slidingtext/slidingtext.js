@@ -9,13 +9,13 @@ const color_schemes = [
     name: "white",
     background : [1.0,1.0,1.0],
     main_bar: [0.0,0.0,0.0],
-    other_bars: [0.25,0.25,0.25],
+    other_bars: [0.1,0.1,0.1],
   },
   {
     name: "black",
     background : [0.0,0.0,0.0],
     main_bar: [1.0,1.0,1.0],
-    other_bars: [1.0,1.0,1.0],
+    other_bars: [0.9,0.9,0.9],
   },
   {
     name: "red",
@@ -255,7 +255,7 @@ function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
 
-if (bangleVersion()>1)
+if (bangleVersion()<2)
   setRowDisplays(50, [40,30,30,30,40]);
 else
   setRowDisplays(34, [35,25,25,25,35]);
@@ -505,7 +505,7 @@ function set_colorscheme(colorscheme_name){
 function set_dateformat(dateformat_name){
   console.log("setting date format:" + dateformat_name);
   for (var i=0; i < date_formatters.length; i++) {
-    if(date_formatters[i].name() == dateformat_name){
+    if(date_formatters[i].shortName() == dateformat_name){
       date_formatter_idx = i;
       date_formatter = date_formatters[date_formatter_idx];
       console.log("match");
@@ -551,7 +551,7 @@ function load_settings(){
  */
 function save_settings(){
   var settings = {
-    date_format : date_formatter.name(),
+    date_format : date_formatter.shortName(),
     color_scheme : color_schemes[color_scheme_index].name,
     enable_live_controls: enable_live_controls
   };

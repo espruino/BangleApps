@@ -53,7 +53,7 @@
             value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
             format: v => v ? "On" : "Off",
             onchange: v => {
-                settings.enable_live_controls = v;
+                settings.enable_live_controls = (v == "On");
                 writeSettings();
             }
         },
