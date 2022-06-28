@@ -1,7 +1,7 @@
 {
   "id": "info",
   "name": "Info",
-  "version": "0.01",
+  "version": "0.02",
   "description": "An application that displays information such as battery level, steps etc.",
   "icon": "info.png",
   "type": "app",
