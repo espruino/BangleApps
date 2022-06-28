@@ -12,6 +12,7 @@ You can change settings by going to the global `Settings` app, then `App Setting
 and `Messages`:
 
 * `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
+* `Vibrate for calls` - This is the pattern of buzzes that should be made when an incoming call is received
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
 * `Unread Timer` - When a new message is received we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
