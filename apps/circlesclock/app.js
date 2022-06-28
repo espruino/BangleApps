@@ -591,7 +591,6 @@ function getWeatherIconByCode(code) {
         default:
           return weatherRainy;
       }
-      break;
       case 6:
         return weatherSnowy;
       case 7:
@@ -607,9 +606,8 @@ function getWeatherIconByCode(code) {
           default:
             return weatherCloudy;
         }
-        break;
-        default:
-          return undefined;
+      default:
+        return undefined;
   }
 }
 
