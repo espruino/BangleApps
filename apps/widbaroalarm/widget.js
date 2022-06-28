@@ -73,7 +73,7 @@ function showAlarm(body, key, type) {
  */
 function doWeNeedToAlarm(key) {
   const tsNow = Math.round(Date.now() / 1000); // seconds
-  return setting(key) == undefined || setting(key) == 0 || setting(key) < tsNow;
+  return setting(key) == undefined || setting(key) == 0 || tsNow > setting(key);
 }
 
 function isValidPressureValue(pressure) {
@@ -262,7 +262,7 @@ function draw() {
   }
   g.reset();
 
-  if (this.x == undefined)
+  if (this.x == undefined || this.y != 0)
     return; // widget not yet there
 
   g.clearRect(this.x, this.y, this.x + this.width - 1, this.y + 23);
