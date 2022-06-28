@@ -1,13 +1,15 @@
 # Home Assistant
 This app integrates your BangleJs into the HomeAssistant.
 
+
 # How to use
 Click on the left and right side of the screen to select the triggers that you
 configured. Click in the middle of the screen to send the trigger to HomeAssistant.
 
 ![](screenshot.png)
 
-# First Setup
+
+# Initial Setup
 1.) First of all, make sure that HomeAssistant and the HomeAssistant Android App works.
 
 2.) Open your BangleJs Gadgetbridge App, click on the Settings icon of your BangleJs and enable "Allow Intent Access"
@@ -21,6 +23,7 @@ configured. Click in the middle of the screen to send the trigger to HomeAssista
 
 This setup must be done only once -- now you are ready to configure your BangleJS to
 control some devices or entities in your HomeAssistant :)
+
 
 # Setup Trigger
 1.) Upload the app and all corresponding triggers through the AppStore UI. You must specify
@@ -38,10 +41,34 @@ The following icons are currently supported:
 
 3.) Don't forget to select the action that should be executed at the bottom of each automation.
 
+
 # Default Trigger
 This app also implements two default trigger that can always be used:
 - APP_STARTED -- Will be sent whenever the app is started. So you could do some actions already when the app is sarted without the need of any user interaction.
 - TRIGGER -- Will be sent whenever some trigger is executed. So you could generically listen to that.
+
+
+# How to use the library (ha.lib.js) in my own app/clk
+This app inlcludes a library that can be used by other apps or clocks
+to read all configured intents or to send a trigger. Example code:
+
+```js
+// First of all impport the library
+var ha = require("ha.lib.js");
+
+// You can read all triggers that a user configured simply via
+var triggers = ha.getTriggers();
+
+// Get display name and icon of trigger
+var display = triggers[0].display;
+var icon = triggers[0].getIcon();
+
+// Trigger the first configured trigger
+ha.sendTrigger(triggers[0].trigger);
+
+// Send a custom trigger that is not configured by a user
+ha.sendTrigger("MY_CUSTOM_TRIGGER");
+```
 
 
 # FAQ
