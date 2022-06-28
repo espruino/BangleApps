@@ -20,3 +20,4 @@
 0.14: Remove unneeded variable assignment
 0.15: Show distance more accurately in conjunction with new locale app (fix #1523)
 0.16: Ability to append to existing track (fix #1712)
+0.17: Use default Bangle formatter for booleans

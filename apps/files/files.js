@@ -1,7 +1,5 @@
 const store = require('Storage');
 
-const boolFormat = (v) => v ? "On" : "Off";
-
 function showMainMenu() {
   const mainmenu = {
     '': {

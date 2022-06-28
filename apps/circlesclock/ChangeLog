@@ -24,3 +24,5 @@
       Improve performance, reduce memory usage
       Small optical adjustments
 0.12: Allow configuration of update interval
+0.13: Load step goal from Bangle health app as fallback
+      Memory optimizations

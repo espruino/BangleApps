@@ -52,4 +52,4 @@
 0.37: Now use the setUI 'back' icon in the top left rather than specific buttons/menu items
 0.38: Add telegram foss handling
 0.39: Set default color for message icons according to theme
-      Don't turn on the screen after unread timeout expires (#1873)
+0.40: Use default Bangle formatter for booleans

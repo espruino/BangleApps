@@ -13,3 +13,4 @@
 0.12: Update default buzz patterns to new values
       Improve timer message using formatDuration
       Fix wrong fallback for buzz pattern
+0.13: Ask to delete a timer after stopping it
