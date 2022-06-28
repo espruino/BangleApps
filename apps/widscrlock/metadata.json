@@ -1,7 +1,7 @@
 { "id": "widscrlock",
   "name": "Screenlock Widget",
   "shortName":"Screenlock",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Lock a Bangle 2 screen by tapping a widget.",
   "icon": "widget.png",  
   "type": "widget",
