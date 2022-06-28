@@ -32,13 +32,22 @@ var screens = [
     name: "Software",
     items: [
       {name: "Firmw.", fun: () => ENV.VERSION},
+      {name: "Git", fun: () => ENV.GIT_COMMIT},
       {name: "Boot.", fun: () => getVersion("boot.info")},
       {name: "Settings.", fun: () => getVersion("setting.info")},
-      {name: "Storage.", fun: () => ""},
-      {name: "  Total", fun: () => ENV.STORAGE>>10},
-      {name: "  Free", fun: () => require("Storage").getFree()>>10},
     ]
-  }
+  },
+  {
+    name: "Storage [kB]",
+    items: [
+      {name: "Total", fun: () => storage.getStats().totalBytes>>10},
+      {name: "Free", fun: () => storage.getStats().freeBytes>>10},
+      {name: "Trash", fun: () => storage.getStats().trashBytes>>10},
+      {name: "", fun: () => ""},
+      {name: "#File", fun: () => storage.getStats().fileCount},
+      {name: "#Trash", fun: () => storage.getStats().trashCount},
+    ]
+  },
 ];
 
 
