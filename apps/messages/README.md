@@ -22,12 +22,13 @@ it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
 * `Flash Icon` - Toggle flashing of the widget icon.
+* `Widget messages` - The maximum amount of message icons to show on the widget.
 
 ## New Messages
 
 When a new message is received:
 
-* If you're in an app, the Bangle will buzz and a 'new message' icon appears in the Widget bar. You can tap this bar to view the message.
+* If you're in an app, the Bangle will buzz and a message icon appears in the Widget bar. You can tap this icon to view the message.
 * If you're in a clock, the Messages app will automatically start and show the message
 
 When a message is shown, you'll see a screen showing the message title and text.
