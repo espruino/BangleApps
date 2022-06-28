@@ -6,3 +6,4 @@
 0.05: Fix warning calculation
       Show difference of last measurement to pressure average of the the last three hours in the widget
       Only use valid pressure values
+0.06: Fix exception
