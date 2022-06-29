@@ -516,6 +516,10 @@ Bangle.on('lock', function(isLocked) {
 Bangle.on('charging',function(charging) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+
+  // Jump to battery
+  settings.menuPosX = 1;
+  settings.menuPosY = 1;
   draw();
 });
 
