@@ -1,9 +1,18 @@
 # BW Clock
+A very minimalistic clock with date and time in focus.
 
 ![](screenshot.png)
 
 ## Features
-A very minimalistic clock keeping date and time in focus. Nevertheless, a
+Altough date and time is the most important thing, the BW clock provides many features
+as well as 3rd party integtations. The following things are integrated:
+- Bangle: Steps, Heart rate, Battery (including charging state)
+- Timer: +/- 5 min. Note: The Scheduler library must be installed, otherwise it's hidden
+- Weather: Temperature, Wind. Note:  The Weather app must be installed, otherwise it's hidden.
+- HomeAssistant - All triggers are shown. Note: The HomeAssistant app must be installed, otherwise it's hidden.
+
+
+## Menu
 2D menu allows you to display lots of different data including data from 3rd party apps and it's also possible to control things e.g. to set a timer or send a HomeAssistant trigger.
 
 Simply click left / right to go through the menu entries such as Bangle, Timer etc.
@@ -20,17 +29,11 @@ to e.g. send a trigger via HomeAssistant once you selected it.
   Bangle   -- Timer[Optional] -- Weather[Optional] -- HomeAssistant [Optional]
 ```
 
-The following list shows which apps must be installed in order to get the optional menu entries:
-- Timer - The Scheduler library must be installed
-- Weather - The Weather app must be installed
-- HomeAssistant - The HomeAssistant app must be installed
-
-
-## Other settings
-- Fullscreen on/off
-- Enable/disable lock icon in the settings
-- The colon (e.g. 7:35 = 735) can be hidden in the settings for an even larger time font
-- The design of your bangle sys settings is used (e.g. you can also set a blue background)
+## Settings
+- Fullscreen on/off (widgets are still loaded).
+- Enable/disable lock icon in the settings. Useful if fullscreen is on.
+- The colon (e.g. 7:35 = 735) can be hidden in the settings for an even larger time font to improve readability further.
+- There are no design settings, as your bangle sys settings are used.
 
 
 ## Thanks to
