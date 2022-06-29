@@ -21,9 +21,9 @@ to e.g. send a trigger via HomeAssistant once you selected it.
 ```
 
 The following list shows which apps must be installed in order to get the optional menu entries:
-- Timer - Sched lib
-- Weather - Weather app
-- HomeAssistant - HomeAssistant app
+- Timer - The Scheduler library must be installed
+- Weather - The Weather app must be installed
+- HomeAssistant - The HomeAssistant app must be installed
 
 
 ## Other settings
