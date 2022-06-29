@@ -99,6 +99,14 @@ function imgBattery(){
   }
 }
 
+function imgCharging() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
+  }
+}
+
 function imgBpm() {
   return {
     width : 24, height : 24, bpp : 1,
@@ -176,7 +184,7 @@ var menu = [
   ],
   [
     function(){ return [ "Bangle", imgWatch() ] },
-    function(){ return [ E.getBattery() + (Bangle.isCharging() ? "% ++" : "%"), imgBattery() ] },
+    function(){ return [ E.getBattery(), Bangle.isCharging() ? imgCharging() : imgBattery() ] },
     function(){ return [ getSteps(), imgSteps() ] },
     function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm()] },
   ]
