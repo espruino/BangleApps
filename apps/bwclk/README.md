@@ -4,13 +4,13 @@ A very minimalistic clock with date and time in focus.
 ![](screenshot.png)
 
 ## Features
-Altough date and time is the most important thing, the BW clock provides many features
-as well as 3rd party integtations. The following things are integrated:
-- Bangle: Steps, Heart rate, Battery (including charging state)
-- Timer: +/- 5 min. Note: The Scheduler library must be installed, otherwise it's hidden
-- Weather: Temperature, Wind. Note:  The Weather app must be installed, otherwise it's hidden.
-- HomeAssistant - All triggers are shown. Note: The HomeAssistant app must be installed, otherwise it's hidden.
+The BW clock provides many features as well as 3rd party integrations:
+- Bangle data such as steps, heart rate, battery or charging state.
+- A timer can be set directly. *Requirement: Scheduler library*
+- Weather temperature as well as the wind speed can be shown. *Requirement: Weather app*
+- HomeAssistant triggers can be executed directly. *Requirement: HomeAssistant app*
 
+Note: If some apps are not installed (e.gt. weather app), then this menu item is hidden.
 
 ## Menu
 2D menu allows you to display lots of different data including data from 3rd party apps and it's also possible to control things e.g. to set a timer or send a HomeAssistant trigger.
