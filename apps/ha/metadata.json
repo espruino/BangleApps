@@ -1,7 +1,7 @@
 {
   "id": "ha",
   "name": "HomeAssistant",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Integrates your BangleJS into HomeAssistant.",
   "icon": "ha.png",
   "type": "app",
@@ -19,6 +19,7 @@
   ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},
+    {"name":"ha.lib.js","url":"ha.lib.js"},
     {"name":"ha.img","url":"ha.icon.js","evaluate":true}
   ]
 }
