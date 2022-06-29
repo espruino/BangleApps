@@ -184,7 +184,7 @@ var menu = [
   ],
   [
     function(){ return [ "Bangle", imgWatch() ] },
-    function(){ return [ E.getBattery(), Bangle.isCharging() ? imgCharging() : imgBattery() ] },
+    function(){ return [ E.getBattery() + "%", Bangle.isCharging() ? imgCharging() : imgBattery() ] },
     function(){ return [ getSteps(), imgSteps() ] },
     function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm()] },
   ]
