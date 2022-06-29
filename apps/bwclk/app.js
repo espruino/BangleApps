@@ -265,17 +265,37 @@ function getSteps() {
 
 
 function getWeather(){
-  var weatherJson = storage.readJSON('weather.json');
-  var weather = weatherJson.weather;
+  var weatherJson;
 
-  weather.temp = locale.temp(weather.temp-273.15);
+  try {
+    weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
 
-  weather.hum = weather.hum + "%";
+    // Temperature
+    weather.temp = locale.temp(weather.temp-273.15);
 
-  var wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  weather.wind = Math.round(wind[1]) + " km/h";
+    // Humidity
+    weather.hum = weather.hum + "%";
 
-  return weather
+    // Wind
+    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+    var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+    weather.wind = Math.round(wind[1] * speedFactor);
+
+    return weather
+
+  } catch(ex) {
+    // Return default
+  }
+
+  return {
+    temp: " ? ",
+    hum: " ? ",
+    txt: " ? ",
+    wind: " ? ",
+    wdir: " ? ",
+    wrose: " ? "
+  };
 }
 
 
