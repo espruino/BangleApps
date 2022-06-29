@@ -5,6 +5,7 @@
     if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    if (settings.maxMessages===undefined) settings.maxMessages=3;
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -56,6 +57,11 @@
       value: !!settings().quietNoAutOpn,
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
+    /*LANG*/'Widget messages': {
+      value:0|settings().maxMessages,
+      min: 1, max: 5,
+      onchange: v => updateSetting("maxMessages", v)
+    }
   };
   E.showMenu(mainmenu);
 });
