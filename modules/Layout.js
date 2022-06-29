@@ -10,15 +10,14 @@
 */
 
 
-function Layout(layout, options) {
+function Layout(layout, options) {  
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
 
   this.options = options || {};
   this.lazy = this.options.lazy || false;
-
-  var btnList;
+  let btnList;
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
