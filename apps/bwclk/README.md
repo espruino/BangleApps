@@ -41,4 +41,4 @@ to e.g. send a trigger via HomeAssistant once you selected it.
 
 
 ## Creator
-- [David Peer](https://github.com/peerdavid)
+[David Peer](https://github.com/peerdavid)
