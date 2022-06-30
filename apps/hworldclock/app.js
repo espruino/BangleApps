@@ -48,8 +48,8 @@ SunCalc = require("hsuncalc.js");
 const LOCATION_FILE = "mylocation.json";
 var rise = "07:00";
 var set	= "20:00";
-var pos	 = {altitude: 20, azimuth: 135};
-var noonpos = {altitude: 37, azimuth: 180};
+//var pos	 = {altitude: 20, azimuth: 135};
+//var noonpos = {altitude: 37, azimuth: 180};
 //=======Sun
 
 var ampm = "AM";
@@ -113,19 +113,19 @@ g.setBgColor(g.theme.bg);
 function queueDraw() {
 	if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = setTimeout(function() {
-		drawTimeout = undefined;
-		draw();
-	}, 60000 - (Date.now() % 60000));
+			drawTimeout = undefined;
+			draw();
+		}, 60000 - (Date.now() % 60000));
 }
 
 // schedule a draw for the next second
 function queueDrawSeconds() {
 	if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeoutSeconds = setTimeout(function() {
-		drawTimeoutSeconds = undefined;
-		drawSeconds();
-		//console.log("TO: " + secondsTimeout);
-	}, secondsTimeout - (Date.now() % secondsTimeout));
+			drawTimeoutSeconds = undefined;
+			drawSeconds();
+			//console.log("TO: " + secondsTimeout);
+		}, secondsTimeout - (Date.now() % secondsTimeout));
 }
 
 function doublenum(x) {
@@ -138,11 +138,11 @@ function getCurrentTimeFromOffset(dt, offset) {
 
 function updatePos() {
 	coord = require("Storage").readJSON(LOCATION_FILE,1)|| {"lat":53.3,"lon":10.1,"location":"Pattensen"};
-	pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);	
+	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);	
 	times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
 	rise = times.sunrise.toString().split(" ")[4].substr(0,5);
 	set	= times.sunset.toString().split(" ")[4].substr(0,5);
-	noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
+	//noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
 }
 
 
@@ -152,11 +152,7 @@ function drawSeconds() {
 	var da = d.toString().split(" ");
 
 	// default draw styles
-	g.reset();
-	g.setBgColor(g.theme.bg);
-
-	// drawSting centered
-	g.setFontAlign(0, 0);
+	g.reset().setBgColor(g.theme.bg).setFontAlign(0, 0);
 
 	// draw time
 	var time = da[4].split(":");
@@ -187,11 +183,7 @@ function draw() {
 	var da = d.toString().split(" ");
 
 	// default draw styles
-	g.reset();
-	g.setBgColor(g.theme.bg);
-
-	// drawSting centered
-	g.setFontAlign(0, 0);
+	g.reset().setBgColor(g.theme.bg).setFontAlign(0, 0);
 
 	// draw time
 	var time = da[4].split(":");
@@ -237,8 +229,7 @@ function draw() {
 	//DATE
 	var localDate = require("locale").date(new Date(), 1);
 	localDate = localDate.substring(0, localDate.length - 5);
-	g.setFont("Vector", 17);
-	g.drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
+	g.setFont("Vector", 17).drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
 
 	g.setFont(font, primaryDateFontSize);
 	// set gmt to UTC+0
@@ -255,14 +246,11 @@ function draw() {
 		var date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
 		// For a single secondary timezone, draw it bigger and drop time zone to second line
 		const xOffset = 30;
-		g.setFont(font, secondaryTimeFontSize);
-		g.drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
-		g.setFont(font, secondaryTimeZoneFontSize);
-		g.drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime2 + 30, true);
+		g.setFont(font, secondaryTimeFontSize).drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
+		g.setFont(font, secondaryTimeZoneFontSize).drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime2 + 30, true);
 
 		// draw Day, name of month, Date
-		g.setFont(font, secondaryTimeZoneFontSize);
-		g.drawString(date, xyCenter, yposDate, true);
+		g.setFont(font, secondaryTimeZoneFontSize).drawString(date, xyCenter, yposDate, true);
 	} else if (index < 3) {
 		// For > 1 extra timezones, render as columns / rows
 		g.setFont(font, secondaryRowColFontSize);
@@ -280,10 +268,8 @@ function draw() {
 
 	if (showSunInfo) {
 		g.setFontAlign(-1, 0);
-		g.setFont("Vector",12);
-		g.drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
-		g.setFontAlign(1, 0);
-		g.drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+		g.setFont("Vector",12).drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
+		g.setFontAlign(1, 0).drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
 	}
 	//debug settings
 	//g.setFontAlign(1, 0);
@@ -358,7 +344,6 @@ Bangle.on('lock',on=>{
 			if (PosInterval != 0) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
 		}
-
 		secondsTimeout =  1000;
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
@@ -381,8 +366,10 @@ Bangle.on('lock',on=>{
 		if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = undefined;
 
-		if (PosInterval != 0) clearInterval(PosInterval);
-		PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		if (showSunInfo) {
+			if (PosInterval != 0) clearInterval(PosInterval);
+			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+		}
 		draw(); // draw immediately, queue redraw		
 		if (showSunInfo) updatePos();
   }
