@@ -9,3 +9,4 @@
 0.09: Larger font size if colon is hidden to improve readability further.
 0.10: HomeAssistant integration if HomeAssistant is installed.
 0.11: Performance improvements.
+0.12: Implements a 2D menu.
