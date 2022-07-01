@@ -46,8 +46,8 @@ setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
 SunCalc = require("hsuncalc.js");
 const LOCATION_FILE = "mylocation.json";
-var rise = "07:00";
-var set	= "20:00";
+var rise = null;
+var set	= null;
 //var pos	 = {altitude: 20, azimuth: 135};
 //var noonpos = {altitude: 37, azimuth: 180};
 //=======Sun
@@ -137,12 +137,17 @@ function getCurrentTimeFromOffset(dt, offset) {
 }
 
 function updatePos() {
-	coord = require("Storage").readJSON(LOCATION_FILE,1)|| {"lat":53.3,"lon":10.1,"location":"Pattensen"};
+	coord = require("Storage").readJSON(LOCATION_FILE,1)||  {"lat":0,"lon":0,"location":"-"}; //{"lat":53.3,"lon":10.1,"location":"Pattensen"};
+	if (coord.lat != 0 && coord.lon != 0) {
 	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);	
 	times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
-	rise = times.sunrise.toString().split(" ")[4].substr(0,5);
-	set	= times.sunset.toString().split(" ")[4].substr(0,5);
+	rise = "^" + times.sunrise.toString().split(" ")[4].substr(0,5);
+	set	= "v" + times.sunset.toString().split(" ")[4].substr(0,5);
 	//noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
+	} else {
+		rise = null;
+		set  = null;
+	}
 }
 
 
@@ -266,8 +271,12 @@ function draw() {
 	});
 
 	if (showSunInfo) {
-		g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
-		g.setFontAlign(1, 0).drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+		if (rise != null){
+			g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
+			g.setFontAlign(1, 0).drawString(`${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+		} else {
+			g.setFontAlign(-1, 0).setFont("Vector",11).drawString("set city in \'my location\' app!", 10, 3 + yposWorld + 3 * 15, true); 
+		}		
 	}
 	//debug settings
 	//g.setFontAlign(1, 0);
