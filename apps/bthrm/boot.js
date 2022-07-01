@@ -534,7 +534,7 @@
     var fallbackInterval;
 
     var switchInternalHrm = function() {
-      if (settings.allowFallback && !fallbackInterval){
+      if (Bangle.isBTHRMOn() && settings.allowFallback && !fallbackInterval){
         log("Fallback to HRM enabled");
         origSetHRMPower(1, "bthrm_fallback");
         fallbackInterval = setInterval(()=>{
