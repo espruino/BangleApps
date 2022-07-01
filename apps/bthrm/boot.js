@@ -262,7 +262,6 @@
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      retryTime = initialRetryTime;
       clearRetryTimeout();
       switchInternalHrm();
       blockInit = false;
@@ -561,11 +560,13 @@
     }
 
     var fallbackInterval;
+    var fallbackActive = false;
 
     var switchInternalHrm = function() {
       log("Try falling back to HRM");
-      if (Bangle.isBTHRMOn() && settings.allowFallback && !fallbackInterval){
+      if (!fallbackActive && Bangle.isBTHRMOn() && settings.allowFallback && !fallbackInterval){
         log("Fallback to HRM enabled");
+        fallbackActive = true;
         origSetHRMPower(1, "bthrm_fallback");
         fallbackInterval = setInterval(()=>{
           log("Still in HRM fallback");
@@ -573,6 +574,7 @@
             origSetHRMPower(0, "bthrm_fallback");
             clearInterval(fallbackInterval);
             fallbackInterval = undefined;
+            fallbackActive = false;
             log("Fallback to HRM disabled");
           }
         }, settings.fallbackTimeout * 1000);
