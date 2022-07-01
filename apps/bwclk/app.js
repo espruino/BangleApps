@@ -535,10 +535,6 @@ Bangle.on('touch', function(btn, e){
   var is_center = !is_upper && !is_lower && !is_left && !is_right;
 
   if(is_lower){
-    if(e.y < widget_size){
-      return;
-    }
-
     Bangle.buzz(40, 0.6);
     settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].length;
 
@@ -552,6 +548,10 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_upper){
+    if(e.y < widget_size){
+      return;
+    }
+
     Bangle.buzz(40, 0.6);
     settings.menuPosY  = settings.menuPosY-1;
     settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].length-1 : settings.menuPosY;
