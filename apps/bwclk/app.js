@@ -531,18 +531,23 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('touch', function(btn, e){
-  var left = parseInt(g.getWidth() * 0.3);
+  var widget_size = settings.fullscreen ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
+  var left = parseInt(g.getWidth() * 0.22);
   var right = g.getWidth() - left;
-  var upper = parseInt(g.getHeight() * 0.3);
+  var upper = parseInt(g.getHeight() * 0.22) + widget_size;
   var lower = g.getHeight() - upper;
 
-  var is_left = e.x < left;
-  var is_right = e.x > right;
   var is_upper = e.y < upper;
   var is_lower = e.y > lower;
+  var is_left = e.x < left && !is_upper && !is_lower;
+  var is_right = e.x > right && !is_upper && !is_lower;
   var is_center = !is_upper && !is_lower && !is_left && !is_right;
 
   if(is_upper){
+    if(e.y < widget_size){
+      return;
+    }
+
     Bangle.buzz(40, 0.6);
     settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].length;
 
