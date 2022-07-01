@@ -142,7 +142,6 @@
     '< Back': function() { E.showMenu(buildMainMenu()); },
     'Replace HRM': {
       value: !!settings.custom_replace,
-      format: v => settings.custom_replace ? "On" : "Off",
       onchange: v => {
         writeSettings("custom_replace",v);
         if (settings.mode == 3) applyCustomSettings();
@@ -150,7 +149,6 @@
     },
     'Start w. HRM': {
       value: !!settings.custom_startWithHrm,
-      format: v => settings.custom_startWithHrm ? "On" : "Off",
       onchange: v => {
         writeSettings("custom_startWithHrm",v);
         if (settings.mode == 3) applyCustomSettings();
@@ -158,7 +156,6 @@
     },
     'HRM Fallback': {
       value: !!settings.custom_allowFallback,
-      format: v => settings.custom_allowFallback ? "On" : "Off",
       onchange: v => {
         writeSettings("custom_allowFallback",v);
         if (settings.mode == 3) applyCustomSettings();
