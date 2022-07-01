@@ -1,9 +1,8 @@
 (function(back) {
     const PREFERENCE_FILE = "slidingtext.settings.json";
-    var settings = Object.assign({
-        secondsOnUnlock: false,
-    }, require('Storage').readJSON(PREFERENCE_FILE, true) || {});
-    // the screen controls are defaulted on for a bangle 1 and off for a bange 2
+    var settings = Object.assign({},
+        require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+    // the screen controls are defaulted on for a bangle 1 and off for a bangle 2
     if(settings.enable_live_controls == null){
         settings.enable_live_controls = (g.getHeight()> 200);
     }
