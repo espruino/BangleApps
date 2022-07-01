@@ -496,6 +496,7 @@
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        switchInternalHrm();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
@@ -534,17 +535,19 @@
     var fallbackInterval;
 
     var switchInternalHrm = function() {
+      log("Try falling back to HRM");
       if (Bangle.isBTHRMOn() && settings.allowFallback && !fallbackInterval){
         log("Fallback to HRM enabled");
         origSetHRMPower(1, "bthrm_fallback");
         fallbackInterval = setInterval(()=>{
-          if (Bangle.isBTHRMConnected()){
+          log("Still in HRM fallback");
+          if (Bangle.isBTHRMConnected() || !Bangle.isBTHRMOn()){
             origSetHRMPower(0, "bthrm_fallback");
             clearInterval(fallbackInterval);
             fallbackInterval = undefined;
             log("Fallback to HRM disabled");
           }
-        }, settings.fallbackTimeout);
+        }, settings.fallbackTimeout * 1000);
       }
     };
 
@@ -559,7 +562,6 @@
           if (Bangle._PWR.HRM===undefined) break;
         }
       }
-      switchInternalHrm();
     }
 
     E.on("kill", ()=>{
