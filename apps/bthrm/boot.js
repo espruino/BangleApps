@@ -479,7 +479,7 @@
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
         characteristicsToCache(characteristics);
-        clearRetryTimeout();
+        clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
         log("Error:", e);
