@@ -224,11 +224,12 @@
       };
     }
 
-    var clearRetryTimeout = function() {
+    var clearRetryTimeout = function(resetTime) {
       if (currentRetryTimeout){
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
         currentRetryTimeout = undefined;
+        if (resetTime) retryTime = initialRetryTime;
       }
     };
 
@@ -500,6 +501,7 @@
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
+        clearRetryTimeout(true);
         if (gatt) {
           if (gatt.connected){
             log("Disconnect with gatt", gatt);
