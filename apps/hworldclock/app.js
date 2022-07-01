@@ -229,7 +229,8 @@ function draw() {
 	//DATE
 	var localDate = require("locale").date(new Date(), 1);
 	localDate = localDate.substring(0, localDate.length - 5);
-	g.setFont("Vector", 17).drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
+	g.setFont("Vector", 17);
+	g.drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
 
 	g.setFont(font, primaryDateFontSize);
 	// set gmt to UTC+0
@@ -253,22 +254,19 @@ function draw() {
 		g.setFont(font, secondaryTimeZoneFontSize).drawString(date, xyCenter, yposDate, true);
 	} else if (index < 3) {
 		// For > 1 extra timezones, render as columns / rows
-		g.setFont(font, secondaryRowColFontSize);
-		g.setFontAlign(-1, 0);
+		g.setFont(font, secondaryRowColFontSize).setFontAlign(-1, 0);
 		g.drawString(
 			offset[OFFSET_TIME_ZONE],
 			xcol1,
 			yposWorld + index * 15,
 			true
 		);
-		g.setFontAlign(1, 0);
-		g.drawString(`${hours}:${minutes}`, xcol2, yposWorld + index * 15, true);
+		g.setFontAlign(1, 0).drawString(`${hours}:${minutes}`, xcol2, yposWorld + index * 15, true);
 	}
 	});
 
 	if (showSunInfo) {
-		g.setFontAlign(-1, 0);
-		g.setFont("Vector",12).drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
+		g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`^${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
 		g.setFontAlign(1, 0).drawString(`v${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
 	}
 	//debug settings
@@ -276,7 +274,6 @@ function draw() {
 	//g.drawString(secondsMode, xcol2, 3 + yposWorld + 3 * 15, true);
 	//g.drawString(showSunInfo, xcol2, 3 + yposWorld + 3 * 15, true);
 	//g.drawString(colorWhenDark, xcol2, 3 + yposWorld + 3 * 15, true);
-
 
 	queueDraw();
 	
@@ -303,6 +300,7 @@ if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
 			if (PosInterval != 0) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+			updatePos();
 		}
 
 		secondsTimeout =  1000;
@@ -312,9 +310,8 @@ if (!Bangle.isLocked())  { // Initial state
 		}	
 		if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = undefined;
-		
 		draw(); // draw immediately, queue redraw
-		if (showSunInfo) updatePos();
+		
   }else{
 		if (secondsMode == "always") secondsTimeout = 1000;
 		if (secondsMode == "when unlocked") secondsTimeout = 10 * 1000;
@@ -329,21 +326,21 @@ if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
 			if (PosInterval != 0) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+			updatePos();
 		}
 		draw(); // draw immediately, queue redraw
-		if (showSunInfo) updatePos();
+		
   }
  
-
-
-
 
 Bangle.on('lock',on=>{
   if (!on) { // UNlocked
 		if (showSunInfo) {
 			if (PosInterval != 0) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
+			updatePos();
 		}
+
 		secondsTimeout =  1000;
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
@@ -353,7 +350,6 @@ Bangle.on('lock',on=>{
 		drawTimeout = undefined;
 
 		draw(); // draw immediately, queue redraw
-		if (showSunInfo) updatePos();
   }else{  // locked
 
 		if (secondsMode == "always") secondsTimeout = 1000;
@@ -369,8 +365,8 @@ Bangle.on('lock',on=>{
 		if (showSunInfo) {
 			if (PosInterval != 0) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
+			updatePos();
 		}
 		draw(); // draw immediately, queue redraw		
-		if (showSunInfo) updatePos();
   }
  });
