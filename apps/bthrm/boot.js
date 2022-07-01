@@ -5,11 +5,11 @@
   );
 
   var log = function(text, param){
+    if (global.showStatusInfo)
+      showStatusInfo(text)
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
-      if (param){
-        logline += " " + JSON.stringify(param);
-      }
+      if (param) logline += ": " + JSON.stringify(param);
       print(logline);
     }
   };
@@ -30,7 +30,7 @@
     };
 
     var addNotificationHandler = function(characteristic) {
-      log("Setting notification handler: " + supportedCharacteristics[characteristic.uuid].handler);
+      log("Setting notification handler"/*supportedCharacteristics[characteristic.uuid].handler*/);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     };
 
@@ -61,7 +61,8 @@
       writeCache(cache);
     };
 
-    var characteristicsFromCache = function() {
+    var characteristicsFromCache = function(device) {
+      var service = { device : device }; // fake a BluetoothRemoteGATTService
       log("Read cached characteristics");
       var cache = getCache();
       if (!cache.characteristics) return [];
@@ -75,6 +76,7 @@
         r.properties = {};
         r.properties.notify = cached.notify;
         r.properties.read = cached.read;
+        r.service = service;
         addNotificationHandler(r);
         log("Restored characteristic: ", r);
         restored.push(r);
@@ -141,7 +143,7 @@
               src: "bthrm"
             };
 
-            log("Emitting HRM: ", repEvent);
+            log("Emitting HRM", repEvent);
             Bangle.emit("HRM", repEvent);
           }
 
@@ -155,7 +157,7 @@
           if (battery) newEvent.battery = battery;
           if (sensorContact) newEvent.contact = sensorContact;
 
-          log("Emitting BTHRM: ", newEvent);
+          log("Emitting BTHRM", newEvent);
           Bangle.emit("BTHRM", newEvent);
         }
       },
@@ -236,8 +238,8 @@
       if (!currentRetryTimeout){
 
         var clampedTime = retryTime < 100 ? 100 : retryTime;
-        
-        log("Set timeout for retry as " + clampedTime);      
+
+        log("Set timeout for retry as " + clampedTime);
         clearRetryTimeout();
         currentRetryTimeout = setTimeout(() => {
           log("Retrying");
@@ -257,8 +259,8 @@
     var buzzing = false;
     var onDisconnect = function(reason) {
       log("Disconnect: " + reason);
-      log("GATT: ", gatt);
-      log("Characteristics: ", characteristics);
+      log("GATT", gatt);
+      log("Characteristics", characteristics);
       retryTime = initialRetryTime;
       clearRetryTimeout();
       switchInternalHrm();
@@ -273,13 +275,13 @@
     };
 
     var createCharacteristicPromise = function(newCharacteristic) {
-      log("Create characteristic promise: ", newCharacteristic);
+      log("Create characteristic promise", newCharacteristic);
       var result = Promise.resolve();
       // For values that can be read, go ahead and read them, even if we might be notified in the future
       // Allows for getting initial state of infrequently updating characteristics, like battery
       if (newCharacteristic.readValue){
         result = result.then(()=>{
-          log("Reading data for " + JSON.stringify(newCharacteristic));
+          log("Reading data", newCharacteristic);
           return newCharacteristic.readValue().then((data)=>{
             if (supportedCharacteristics[newCharacteristic.uuid] && supportedCharacteristics[newCharacteristic.uuid].handler) {
               supportedCharacteristics[newCharacteristic.uuid].handler(data);
@@ -289,8 +291,8 @@
       }
       if (newCharacteristic.properties.notify){
         result = result.then(()=>{
-          log("Starting notifications for: ", newCharacteristic);
-          var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started for ", newCharacteristic));
+          log("Starting notifications", newCharacteristic);
+          var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
           if (settings.gracePeriodNotification > 0){
             log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
             startPromise = startPromise.then(()=>{
@@ -301,7 +303,7 @@
           return startPromise;
         });
       }
-      return result.then(()=>log("Handled characteristic: ", newCharacteristic));
+      return result.then(()=>log("Handled characteristic", newCharacteristic));
     };
 
     var attachCharacteristicPromise = function(promise, characteristic) {
@@ -312,11 +314,11 @@
     };
 
     var createCharacteristicsPromise = function(newCharacteristics) {
-      log("Create characteristics promise: ", newCharacteristics);
+      log("Create characteristics promis ", newCharacteristics);
       var result = Promise.resolve();
       for (var c of newCharacteristics){
         if (!supportedCharacteristics[c.uuid]) continue;
-        log("Supporting characteristic: ", c);
+        log("Supporting characteristic", c);
         characteristics.push(c);
         if (c.properties.notify){
           addNotificationHandler(c);
@@ -328,10 +330,10 @@
     };
 
     var createServicePromise = function(service) {
-      log("Create service promise: ", service);
+      log("Create service promise", service);
       var result = Promise.resolve();
       result = result.then(()=>{
-        log("Handling service: " + service.uuid);
+        log("Handling service" + service.uuid);
         return service.getCharacteristics().then((c)=>createCharacteristicsPromise(c));
       });
       return result.then(()=>log("Handled service" + service.uuid));
@@ -368,7 +370,7 @@
         }
 
         promise = promise.then((d)=>{
-          log("Got device: ", d);
+          log("Got device", d);
           d.on('gattserverdisconnected', onDisconnect);
           device = d;
         });
@@ -379,14 +381,14 @@
         });
       } else {
         promise = Promise.resolve();
-        log("Reuse device: ", device);
+        log("Reuse device", device);
       }
 
       promise = promise.then(()=>{
         if (gatt){
-          log("Reuse GATT: ", gatt);
+          log("Reuse GATT", gatt);
         } else {
-          log("GATT is new: ", gatt);
+          log("GATT is new", gatt);
           characteristics = [];
           var cachedId = getCache().id;
           if (device.id !== cachedId){
@@ -404,7 +406,10 @@
 
       promise = promise.then((gatt)=>{
         if (!gatt.connected){
-          var connectPromise = gatt.connect(connectSettings);
+          log("Connecting...");
+          var connectPromise = gatt.connect(connectSettings).then(function() {
+            log("Connected.");
+          });
           if (settings.gracePeriodConnect > 0){
             log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
             connectPromise = connectPromise.then(()=>{
@@ -432,7 +437,7 @@
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
-          characteristics = characteristicsFromCache();
+          characteristics = characteristicsFromCache(device);
         }
       });
 
@@ -445,11 +450,11 @@
           });
 
           characteristicsPromise = characteristicsPromise.then((services)=>{
-            log("Got services:", services);
+            log("Got services", services);
             var result = Promise.resolve();
             for (var service of services){
               if (!(supportedServices.includes(service.uuid))) continue;
-              log("Supporting service: ", service.uuid);
+              log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
             if (settings.gracePeriodService > 0) {
@@ -496,7 +501,7 @@
         log("Power off for " + app);
         if (gatt) {
           if (gatt.connected){
-            log("Disconnect with gatt: ", gatt);
+            log("Disconnect with gatt", gatt);
             try{
               gatt.disconnect().then(()=>{
                 log("Successful disconnect");
