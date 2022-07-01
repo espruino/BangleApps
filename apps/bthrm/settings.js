@@ -20,7 +20,6 @@
   function applyCustomSettings(){
     writeSettings("enabled",true);
     writeSettings("replace",settings.custom_replace);
-    writeSettings("debuglog",settings.custom_debuglog);
     writeSettings("startWithHrm",settings.custom_startWithHrm);
     writeSettings("allowFallback",settings.custom_allowFallback);
     writeSettings("fallbackTimeout",settings.custom_fallbackTimeout);
@@ -44,7 +43,6 @@
             case 1:
               writeSettings("enabled",true);
               writeSettings("replace",true);
-              writeSettings("debuglog",false);
               writeSettings("startWithHrm",true);
               writeSettings("allowFallback",true);
               writeSettings("fallbackTimeout",10);
@@ -52,7 +50,6 @@
             case 2:
               writeSettings("enabled",true);
               writeSettings("replace",false);
-              writeSettings("debuglog",false);
               writeSettings("startWithHrm",false);
               writeSettings("allowFallback",false);
               break;
