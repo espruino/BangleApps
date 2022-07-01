@@ -536,7 +536,9 @@ function load_settings(){
       enable_live_controls = settings.enable_live_controls;
     } else {
       console.log("no settings to load");
+      enable_live_controls = (bangleVersion() <= 1);
     }
+    console.log("enable_live_controls=" + enable_live_controls);
   } catch(e){
     console.log("failed to load settings:" + e);
   }
