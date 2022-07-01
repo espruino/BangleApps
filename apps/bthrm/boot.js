@@ -144,7 +144,7 @@
             };
 
             log("Emitting HRM", repEvent);
-            Bangle.emit("HRM", repEvent);
+            Bangle.emit("HRM_int", repEvent);
           }
 
           var newEvent = {
@@ -517,6 +517,32 @@
       }
     };
 
+    if (settings.replace){
+      Bangle.on("HRM", (e) => {
+        e.modified = true;
+        Bangle.emit("HRM_int", e);
+      });
+
+      Bangle.origOn = Bangle.on;
+      Bangle.on = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origOn("HRM_int", callback);
+        } else {
+          Bangle.origOn(name, callback);
+        }
+      };
+
+      Bangle.origRemoveListener = Bangle.removeListener;
+      Bangle.removeListener = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origRemoveListener("HRM_int", callback);
+        } else {
+          Bangle.origRemoveListener(name, callback);
+        }
+      };
+
+    }
+  
     var origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
