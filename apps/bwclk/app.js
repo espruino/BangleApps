@@ -166,17 +166,8 @@ function imgHomeAssistant() {
 
 /************
  * 2D MENU with entries of:
- * [name, icon, opt[customUpFun], opt[customDownFun], opt[customCenterFun]]
+ * [name, icon, opt[customDownFun], opt[customUpFun], opt[customCenterFun]]
  *
- * An example is shown below:
- *
- *  Bpm        ...
- *   |          |
- * Steps      10 min.         ...                     ...
- *   |          |              |                       |
- * Battery     5-min         Temp.                 Trigger1
- *   |          |              |                       |
- * BangleJs -- Timer -- Weather[Optional] -- HomeAssistant [Optional]
  */
 var menu = [
   [
@@ -198,7 +189,7 @@ try{
   menu.push([
     function(){
       var text = isAlarmEnabled() ? getAlarmMinutes() + " min." : "Timer";
-      return [text, imgTimer(), () => increaseAlarm(), () => decreaseAlarm(), null ]
+      return [text, imgTimer(), () => decreaseAlarm(), () => increaseAlarm(), null ]
     },
   ]);
 } catch(ex) {
@@ -543,7 +534,7 @@ Bangle.on('touch', function(btn, e){
   var is_right = e.x > right && !is_upper && !is_lower;
   var is_center = !is_upper && !is_lower && !is_left && !is_right;
 
-  if(is_upper){
+  if(is_lower){
     if(e.y < widget_size){
       return;
     }
@@ -560,7 +551,7 @@ Bangle.on('touch', function(btn, e){
     drawTime();
   }
 
-  if(is_lower){
+  if(is_upper){
     Bangle.buzz(40, 0.6);
     settings.menuPosY  = settings.menuPosY-1;
     settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].length-1 : settings.menuPosY;

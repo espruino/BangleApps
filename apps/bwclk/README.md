@@ -20,13 +20,15 @@ and click up/down to move into this sub-menu. You can then click in the middle o
 to e.g. send a trigger via HomeAssistant once you selected it.
 
 ```
-   Bpm               ...
-    |                 |
-  Steps            10 min.          ...                     ...
-    |                 |              |                       |
-  Battery           5 min          Temp.                 Trigger1
-    |                 |              |                       |
+                    +5min
+                      |
   Bangle   -- Timer[Optional] -- Weather[Optional] -- HomeAssistant [Optional]
+    |                 |              |                       |
+   Bpm              -5min         Temperature             Trigger1
+    |                                |                       |
+  Steps                             ...                     ...
+    |
+  Battery
 ```
 
 ## Settings
