@@ -261,9 +261,8 @@ else
   setRowDisplays(34, [35,25,25,25,35]);
 
 function nextColorTheme(){
-  //console.log("next color theme");
   color_scheme_index += 1;
-  if(color_scheme_index >= row_displays.length){
+  if(color_scheme_index > row_displays.length){
     color_scheme_index = 0;
   }
   setColorScheme(color_schemes[color_scheme_index]);
