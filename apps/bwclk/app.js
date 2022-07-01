@@ -1,10 +1,10 @@
-/*
+/************
  * Includes
  */
 const locale = require('locale');
 const storage = require('Storage');
 
-/*
+/************
  * Statics
  */
 const SETTINGS_FILE = "bwclk.setting.json";
@@ -12,14 +12,15 @@ const TIMER_IDX = "bwclk";
 const W = g.getWidth();
 const H = g.getHeight();
 
-/*
+/************
  * Settings
  */
 let settings = {
   fullscreen: false,
   showLock: true,
   hideColon: false,
-  showInfo: 0,
+  menuPosX: 0,
+  menuPosY: 0,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -28,22 +29,10 @@ for (const key in saved_settings) {
 }
 
 
-/*
+/************
  * Assets
  */
-
 // Manrope font
-Graphics.prototype.setLargeFont = function(scale) {
-  // Actual height 48 (49 - 2)
-  this.setFontCustom(
-    E.toString(require('heatshrink').decompress(atob('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'))),
-    46,
-    atob("EhooGyUkJiUnISYnFQ=="),
-    63+(scale<<8)+(1<<16)
-  );
-  return this;
-};
-
 Graphics.prototype.setXLargeFont = function(scale) {
   // Actual height 53 (55 - 3)
   this.setFontCustom(
@@ -54,11 +43,25 @@ Graphics.prototype.setXLargeFont = function(scale) {
   );
 };
 
+
+Graphics.prototype.setLargeFont = function(scale) {
+  // Actual height 47 (48 - 2)
+  this.setFontCustom(
+    atob('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAAAAAAD/AAAAAAAAA/wAAAAAAAAP8AAAAAAAAD/AAAAAAAAA/wAAAAAAAAP8AAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAD/AAAAAAAAP/wAAAAAAAf/8AAAAAAB///AAAAAAH///wAAAAAf///8AAAAB/////AAAAH////8AAAAP////wAAAA/////AAAAB////+AAAAA////4AAAAAP///gAAAAAD//+AAAAAAA//4AAAAAAAP/gAAAAAAAD/AAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///+AAAAAB////8AAAAB/////wAAAA/////+AAAA//////wAAAf/////+AAAH//////wAAD//////+AAB/+AAAf/gAAf+AAAA/8AAH/AAAAH/AAD/gAAAA/4AA/wAAAAH+AAP8AAAAB/gAD+AAAAAf4AA/gAAAAH+AAP4AAAAA/gAD+AAAAAf4AA/wAAAAH+AAP8AAAAB/gAD/AAAAA/4AA/4AAAAP+AAH/AAAAH/AAB/4AAAH/wAAP/wAAP/4AAD//////+AAAf//////AAAD//////gAAAf/////wAAAD/////4AAAAf////4AAAAB////4AAAAAB///gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAAAAAAH/AAAAAAAAD/gAAAAAAAA/4AAAAAAAAf8AAAAAAAAH+AAAAAAAAD/gAAAAAAAB/wAAAAAAAAf8AAAAAAAAP///////AAD///////wAA///////8AAP///////AAD///////wAA///////8AAP///////AAD///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+AAAB/AAAA/gAAA/wAAA/4AAAf8AAAf+AAAP/AAAP/gAAH/wAAH/4AAD/8AAD/+AAB//AAA//gAA//wAAf/AAAP/8AAH/AAAH//AAD/gAAD//wAA/wAAB//8AAP8AAA///AAD/AAAf+fwAA/gAAP/n8AAP4AAH/x/AAD+AAD/4fwAA/gAB/8H8AAP8AAf+B/AAD/AAP/AfwAA/4AH/gH8AAH/AH/wB/AAB/8H/4AfwAAP///8AH8AAD////AB/AAAf///gAfwAAD///wAH8AAAf//4AB/AAAD//4AAfwAAAP/8AAH8AAAAf4AAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAADgAAAfwAAAB+AAAH8AAAAfwAAB/AAAAH+AAAfwAAAB/wAAH8AAAA/+AAB/AAAAP/gAAfwA4AA/8AAH8AfgAH/AAB/AP8AA/4AAfwD/gAH+AAH8B/4AB/gAB/A/8AAf4AAfwf/AAD+AAH8P/wAA/gAB/H/8AAf4AAfz//gAH+AAH8//4AB/gAB/f//AA/4AAf/+/4Af8AAH//P/AP/AAB//j////gAAf/wf///4AAH/4H///8AAB/8A///+AAAf+AH///AAAH/AA///gAAB/gAD//wAAAfwAAP/wAAAAAAAAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAAH/wAAAAAAAH/8AAAAAAAH//AAAAAAAH//wAAAAAAH//8AAAAAAH///AAAAAAH///wAAAAAH///8AAAAAP//9/AAAAAP//8fwAAAAP//4H8AAAAP//4B/AAAAP//4AfwAAAP//4AH8AAAD//4AB/AAAA//4AAfwAAAP/4AAH8AAAD/wAAB/AAAA/wAAAfwAAAPwAH////AADwAB////wAAwAAf///8AAAAAH////AAAAAB////wAAAAAf///8AAAAAH////AAAAAA////wAAAAAAAfwAAAAAAAAH8AAAAAAAAB/AAAAAAAAAfwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAAAAAGAHwAAAB///gB+AAAH///8AfwAAB////AP+AAAf///wD/wAAH///+A/+AAB////gP/gAAf///4A/8AAH/8P8AH/AAB/AD+AA/4AAfwA/gAH+AAH8AfwAB/gAB/AH8AAf4AAfwB/AAH+AAH8AfwAB/gAB/AH8AAf4AAfwB/gAH+AAH8Af4AB/gAB/AH/AA/wAAfwB/4Af8AAH8AP/AP/AAB/AD////gAAfwAf///wAAH8AD///8AAB/AA///+AAAfwAH///AAAAAAA///gAAAAAAD//gAAAAAAAP/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///4AAAAAH////wAAAAH/////AAAAD/////4AAAB//////AAAA//////4AAAf//////AAAP//////4AAD/8D/w/+AAB/4B/wD/wAAf8A/wAf8AAP+AP4AD/gAD/AD+AAf4AA/wB/AAH+AAP4AfwAB/gAD+AH8AAf4AA/gB/AAH+AAP4AfwAB/gAD+AH+AAf4AA/wB/gAH+AAP8Af8AD/gAD/gH/gB/wAAf8A/8A/8AAH/AP///+AAB/gB////gAAPwAP///wAAB4AD///4AAAMAAf//8AAAAAAD//+AAAAAAAP/+AAAAAAAA/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfwAAAAAAAAH8AAAAAAAAB/AAAAAAAAAfwAAAAAAAAH8AAAAAAAAB/AAAAABwAAfwAAAAB8AAH8AAAAD/AAB/AAAAD/wAAfwAAAH/8AAH8AAAH//AAB/AAAP//wAAfwAAP//8AAH8AAf//+AAB/AAf//8AAAfwA///8AAAH8A///4AAAB/A///4AAAAfx///wAAAAH9///wAAAAB////gAAAAAf///gAAAAAH///AAAAAAB///AAAAAAAf/+AAAAAAAH/+AAAAAAAB/8AAAAAAAAf8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAf/AAAAAP+Af/8AAAAP/4P//wAAAP//P//+AAAH//////wAAB//////8AAA///////gAAf//////8AAH////gP/AAD/wf/wA/wAA/4D/4AP+AAP8Af8AB/gAD/AH/AAf4AA/gA/wAH+AAP4AP4AA/gAD+AD/AAP4AA/gA/wAH+AAP8Af8AB/gAD/AH/AAf4AA/4D/4AP+AAP/B//AH/AAB////4D/wAAf//////8AAD//////+AAAf//////AAAH//////wAAA//8///4AAAD/+D//8AAAAP+Af/8AAAAAAAB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/gAAAAAAAB//AAAAAAAB//8AAAAAAB///gAAgAAA///8AAcAAAf///gAPAAAH///8AH4AAD////AD/AAB/+H/4B/wAAf+Af+Af8AAP+AB/wD/gAD/gAf8Af4AA/wAD/AH+AAP8AA/wB/gAD+AAH8AP4AA/gAB/AD+AAP4AAfwB/gAD+AAH8Af4AA/wAD/AH+AAP8AA/gD/gAD/gAf4A/wAAf8AP8A/8AAH/gH/Af/AAA///////gAAP//////wAAB//////8AAAP/////+AAAB//////AAAAP/////AAAAA/////gAAAAD////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wA/wAAAAAP8AP8AAAAAD/AD/AAAAAA/wA/wAAAAAP8AP8AAAAAD/AD/AAAAAA/wA/wAAAAAP8AP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='),
+    46,
+    atob("ExspGyUkJiQnISYnFQ=="),
+    62+(scale<<8)+(1<<16)
+  );
+  return this;
+};
+
+
 Graphics.prototype.setMediumFont = function(scale) {
   // Actual height 41 (42 - 2)
   this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAB/AAAAAAAP/AAAAAAD//AAAAAA///AAAAAP///AAAAB///8AAAAf///AAAAH///wAAAB///+AAAAH///gAAAAH//4AAAAAH/+AAAAAAH/wAAAAAAH8AAAAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///8AAAAH////AAAAP////wAAAf////4AAA/////8AAB/////+AAD/gAAH+AAD+AAAD/AAH8AAAB/AAH4AAAA/gAH4AAAAfgAH4AAAAfgAPwAAAAfgAPwAAAAfgAPwAAAAfgAHwAAAAfgAH4AAAAfgAH4AAAA/gAH8AAAA/AAD+AAAD/AAD/gAAH/AAB/////+AAB/////8AAA/////4AAAf////wAAAH////gAAAB///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAfwAAAAAAA/gAAAAAAA/AAAAAAAB/AAAAAAAD+AAAAAAAD8AAAAAAAH8AAAAAAAH//////AAH//////AAH//////AAH//////AAH//////AAH//////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAA/AAAP4AAB/AAAf4AAD/AAA/4AAD/AAB/4AAH/AAD/4AAP/AAH/AAAf/AAH8AAA//AAH4AAB//AAP4AAD//AAPwAAH+/AAPwAAP8/AAPwAAf4/AAPwAA/4/AAPwAA/w/AAPwAB/g/AAPwAD/A/AAP4AH+A/AAH8AP8A/AAH/A/4A/AAD///wA/AAD///gA/AAB///AA/AAA//+AA/AAAP/8AA/AAAD/wAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAH4AAAHwAAH4AAAH4AAH4AAAH8AAH4AAAP+AAH4AAAH+AAH4A4AB/AAH4A+AA/AAH4B/AA/gAH4D/AAfgAH4H+AAfgAH4P+AAfgAH4f+AAfgAH4/+AAfgAH5/+AAfgAH5//AAfgAH7+/AA/gAH/8/gB/AAH/4f4H/AAH/wf//+AAH/gP//8AAH/AH//8AAH+AD//wAAH8AB//gAAD4AAf+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+AAAAAAAD/AAAAAAAP/AAAAAAB//AAAAAAH//AAAAAAf//AAAAAB///AAAAAH///AAAAAf/8/AAAAB//w/AAAAH/+A/AAAA//4A/AAAD//gA/AAAH/+AA/AAAH/4AA/AAAH/gAA/AAAH+AAA/AAAHwAAA/AAAHAAf///AAEAAf///AAAAAf///AAAAAf///AAAAAf///AAAAAf///AAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAP/AHgAAH///AP4AAH///gP8AAH///gP8AAH///gP+AAH///gD/AAH/A/AB/AAH4A/AA/gAH4A+AAfgAH4B+AAfgAH4B+AAfgAH4B8AAfgAH4B8AAfgAH4B+AAfgAH4B+AAfgAH4B+AA/gAH4B/AA/AAH4A/gD/AAH4A/4H+AAH4Af//+AAH4AP//8AAH4AP//4AAHwAD//wAAAAAB//AAAAAAAf8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///8AAAAD////AAAAP////wAAAf////4AAA/////8AAB/////+AAD/gP4H+AAD/AfgD/AAH8A/AB/AAH8A/AA/gAH4B+AAfgAH4B+AAfgAPwB8AAfgAPwB8AAfgAPwB+AAfgAPwB+AAfgAH4B+AAfgAH4B/AA/gAH8B/AB/AAH+A/wD/AAD+A/8P+AAB8Af//+AAB4AP//8AAAwAH//4AAAAAD//gAAAAAA//AAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAHAAPwAAAA/AAPwAAAD/AAPwAAAf/AAPwAAB//AAPwAAP//AAPwAA//8AAPwAH//wAAPwAf/+AAAPwB//4AAAPwP//AAAAPw//8AAAAP3//gAAAAP//+AAAAAP//wAAAAAP//AAAAAAP/4AAAAAAP/gAAAAAAP+AAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+AAAAH+A//gAAAf/h//4AAA//z//8AAB/////+AAD/////+AAD///+H/AAH+H/4B/AAH8B/wA/gAH4A/gAfgAH4A/gAfgAPwA/AAfgAPwA/AAfgAPwA/AAfgAPwA/AAfgAH4A/gAfgAH4A/gAfgAH8B/wA/gAH/H/4B/AAD///+H/AAD/////+AAB/////+AAA//z//8AAAf/h//4AAAH+A//gAAAAAAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gAAAAAAD/8AAAAAAP/+AAAAAAf//AAcAAA///gA8AAB///wB+AAD/x/4B/AAD+AP4B/AAH8AH8A/gAH4AH8A/gAH4AD8AfgAP4AD8AfgAPwAB8AfgAPwAB8AfgAPwAB8AfgAPwAB8AfgAH4AD8AfgAH4AD4A/gAH8AH4B/AAD+APwD/AAD/g/wP+AAB/////+AAA/////8AAAf////4AAAP////wAAAH////AAAAA///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DxcjFyAfISAiHCAiEg=="), 54+(scale<<8)+(1<<16));
   return this;
 };
+
 
 Graphics.prototype.setSmallFont = function(scale) {
   // Actual height 28 (27 - 0)
@@ -70,6 +73,7 @@ Graphics.prototype.setSmallFont = function(scale) {
   );
   return this;
 };
+
 
 function imgLock(){
   return {
@@ -95,6 +99,14 @@ function imgBattery(){
   }
 }
 
+function imgCharging() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
+  }
+}
+
 function imgBpm() {
   return {
     width : 24, height : 24, bpp : 1,
@@ -108,6 +120,14 @@ function imgTemperature() {
     width : 24, height : 24, bpp : 1,
     transparent : 1,
     buffer : require("heatshrink").decompress(atob("//D///wICBjACBngCNkgCP/0kv/+s1//nDn/8wICEBAIOC/08v//IYJECA=="))
+  }
+}
+
+function imgWeather(){
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("AAcYAQ0MgEwAQUAngLB/8AgP/wACCgf/4Fz//OAQQICCIoaCEAQpGHA4ACA="))
   }
 }
 
@@ -127,14 +147,6 @@ function imgTimer() {
   }
 }
 
-function imgCharging() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
-  }
-}
-
 function imgWatch() {
   return {
     width : 24, height : 24, bpp : 1,
@@ -143,56 +155,102 @@ function imgWatch() {
   }
 }
 
+function imgHomeAssistant() {
+  return {
+    width : 48, height : 48, bpp : 1,
+    transparent : 0,
+    buffer : require("heatshrink").decompress(atob("AD8BwAFDg/gAocP+AFDj4FEn/8Aod//wFD/1+FAf4j+8AoMD+EPDAUH+OPAoUP+fPAoUfBYk/C4l/EYIwC//8n//FwIFEgYFD4EH+E8nkP8BdBAonjjk44/wj/nzk58/4gAFDF4PgCIMHAoPwhkwh4FB/EEkEfIIWAHwIFC4A+BAoXgg4FDL4IFDL4IFDLIYFkAEQA=="))
+  }
+}
 
-/*
- * INFO ENTRIES
- * List of [Data, Icon, left/right, Function to execute]
+
+/************
+ * 2D MENU with entries of:
+ * [name, icon, opt[customUpFun], opt[customDownFun], opt[customCenterFun]]
+ *
+ * An example is shown below:
+ *
+ *  Bpm        ...
+ *   |          |
+ * Steps      10 min.         ...                     ...
+ *   |          |              |                       |
+ * Battery     5-min         Temp.                 Trigger1
+ *   |          |              |                       |
+ * BangleJs -- Timer -- Weather[Optional] -- HomeAssistant [Optional]
  */
-var infoArray = [
-  function(){ return [ null, null, "left", null ] },
-  function(){ return [ "Bangle", imgWatch(), "right", null ] },
-  function(){ return [ E.getBattery() + "%", imgBattery(), "left", null ] },
-  function(){ return [ getSteps(), imgSteps(), "left", null ] },
-  function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm(), "left", null] },
-  function(){ return [ getWeather().temp, imgTemperature(), "left", null ] },
-  function(){ return [ getWeather().wind, imgWind(), "left", null ] },
-];
+var menu = [
+  [
+    function(){ return [ null, null ] },
+  ],
+  [
+    function(){ return [ "Bangle", imgWatch() ] },
+    function(){ return [ E.getBattery() + "%", Bangle.isCharging() ? imgCharging() : imgBattery() ] },
+    function(){ return [ getSteps(), imgSteps() ] },
+    function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm()] },
+  ]
+]
 
 /*
- * We append the HomeAssistant integrations if HomeAssistant is available
+ * Timer Menu
+ */
+try{
+  require('sched');
+  menu.push([
+    function(){
+      var text = isAlarmEnabled() ? getAlarmMinutes() + " min." : "Timer";
+      return [text, imgTimer(), () => increaseAlarm(), () => decreaseAlarm(), null ]
+    },
+  ]);
+} catch(ex) {
+  // If sched is not installed, we hide this menu item
+}
+
+/*
+ * WEATHER MENU
+ */
+if(storage.readJSON('weather.json') !== undefined){
+  menu.push([
+    function(){ return [ "Weather", imgWeather() ] },
+    function(){ return [ getWeather().temp, imgTemperature() ] },
+    function(){ return [ getWeather().wind, imgWind() ] },
+  ]);
+}
+
+
+/*
+ * HOME ASSISTANT MENU
  */
 try{
   var triggers = require("ha.lib.js").getTriggers();
+  var haMenu = [
+    function(){ return [ "Home", imgHomeAssistant() ] },
+  ];
+
   triggers.forEach(trigger => {
-    infoArray.push(function(){
-      return [trigger.display, trigger.getIcon(), "left", function(){
+    haMenu.push(function(){
+      return [trigger.display, trigger.getIcon(), () => {}, () => {}, function(){
         var ha = require("ha.lib.js");
         ha.sendTrigger("TRIGGER_BW");
         ha.sendTrigger(trigger.trigger);
       }]
     });
   })
+  menu.push(haMenu);
 } catch(ex){
-  // Nothing to do if HomeAssistant is not available...
-}
-const NUM_INFO=infoArray.length;
-
-
-function getInfoEntry(){
-  if(isAlarmEnabled()){
-    return [getAlarmMinutes() + " min.", imgTimer(), "left", null]
-  } else if(Bangle.isCharging()){
-    return [E.getBattery() + "%", imgCharging(), "left", null]
-  } else{
-    // In case the user removes HomeAssistant entries, showInfo
-    // could be larger than infoArray.length...
-    settings.showInfo = settings.showInfo % infoArray.length;
-    return infoArray[settings.showInfo]();
-  }
+  // If HomeAssistant is not installed, we hide this item
 }
 
 
-/*
+function getMenuEntry(){
+  // In case the user removes HomeAssistant entries, showInfo
+  // could be larger than infoArray.length...
+  settings.menuPosX = settings.menuPosX % menu.length;
+  settings.menuPosY = settings.menuPosY % menu[settings.menuPosX].length;
+  return menu[settings.menuPosX][settings.menuPosY]();
+}
+
+
+/************
  * Helper
  */
 function getSteps() {
@@ -229,7 +287,7 @@ function getWeather(){
 
     // Wind
     const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-    weather.wind = Math.round(wind[1]) + " km/h";
+    weather.wind = Math.round(wind[1]) + "kph";
 
     return weather
 
@@ -238,14 +296,15 @@ function getWeather(){
   }
 
   return {
-    temp: "? °C",
-    hum: "-",
-    txt: "-",
-    wind: "? km/h",
-    wdir: "-",
-    wrose: "-"
+    temp: " ? ",
+    hum: " ? ",
+    txt: " ? ",
+    wind: " ? ",
+    wdir: " ? ",
+    wrose: " ? "
   };
 }
+
 
 function isAlarmEnabled(){
   try{
@@ -261,6 +320,7 @@ function isAlarmEnabled(){
   return false;
 }
 
+
 function getAlarmMinutes(){
   if(!isAlarmEnabled()){
     return -1;
@@ -270,6 +330,7 @@ function getAlarmMinutes(){
   var alarmObj =  alarm.getAlarm(TIMER_IDX);
   return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
+
 
 function increaseAlarm(){
   try{
@@ -281,6 +342,7 @@ function increaseAlarm(){
     alarm.reload();
   } catch(ex){ }
 }
+
 
 function decreaseAlarm(){
   try{
@@ -301,10 +363,9 @@ function decreaseAlarm(){
 }
 
 
-/*
- * DRAW functions
+/************
+ * DRAW
  */
-
 function draw() {
   // Queue draw again
   queueDraw();
@@ -323,8 +384,8 @@ function drawDate(){
     g.reset().clearRect(0,0,W,W);
 
     // Draw date
-    y = parseInt(y/2);
-    y += settings.fullscreen ? 2 : 15;
+    y = parseInt(y/2)+4;
+    y += settings.fullscreen ? 0 : 13;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
@@ -338,13 +399,12 @@ function drawDate(){
     var fullDateW = dateW + 10 + dayW;
 
     g.setFontAlign(-1,0);
+    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-12);
+    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+11);
+
     g.setMediumFont();
     g.setColor(g.theme.fg);
     g.drawString(dateStr, W/2 - fullDateW / 2, y+1);
-
-    g.setSmallFont();
-    g.drawString(dayStr, W/2 - fullDateW/2 + 10 + dateW, y-12);
-    g.drawString(monthStr, W/2 - fullDateW/2 + 10 + dateW, y+11);
 }
 
 
@@ -368,13 +428,13 @@ function drawTime(){
   // Set y coordinates correctly
   y += parseInt((H - y)/2) + 5;
 
-  var infoEntry = getInfoEntry();
-  var infoStr = infoEntry[0];
-  var infoImg = infoEntry[1];
-  var printImgLeft = infoEntry[2] == "left";
+  var menuEntry = getMenuEntry();
+  var menuName = menuEntry[0];
+  var menuImg = menuEntry[1];
+  var printImgLeft = settings.menuPosY != 0;
 
   // Show large or small time depending on info entry
-  if(infoStr == null){
+  if(menuName == null){
     if(settings.hideColon){
       g.setXLargeFont();
     } else {
@@ -386,8 +446,8 @@ function drawTime(){
   }
   g.drawString(timeStr, W/2, y);
 
-  // Draw info if set
-  if(infoStr == null){
+  // Draw menu if set
+  if(menuName == null){
     return;
   }
 
@@ -395,18 +455,18 @@ function drawTime(){
   g.setFontAlign(0,0);
   g.setSmallFont();
   var imgWidth = 0;
-  if(infoImg !== undefined){
-    imgWidth = 26.0;
-    var strWidth = g.stringWidth(infoStr);
-    var scale = imgWidth / infoImg.width;
+  if(menuImg !== undefined){
+    imgWidth = 24.0;
+    var strWidth = g.stringWidth(menuName);
+    var scale = imgWidth / menuImg.width;
     g.drawImage(
-      infoImg,
+      menuImg,
       W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - parseInt(imgWidth/2),
       y - parseInt(imgWidth/2),
       { scale: scale }
     );
   }
-  g.drawString(infoStr, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
+  g.drawString(menuName, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
 }
 
 
@@ -463,6 +523,10 @@ Bangle.on('lock', function(isLocked) {
 Bangle.on('charging',function(charging) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+
+  // Jump to battery
+  settings.menuPosX = 1;
+  settings.menuPosY = 1;
   draw();
 });
 
@@ -480,36 +544,52 @@ Bangle.on('touch', function(btn, e){
 
   if(is_upper){
     Bangle.buzz(40, 0.6);
-    increaseAlarm();
+    settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].length;
+
+    // Handle custom menu entry function
+    var menuEntry = getMenuEntry();
+    if(menuEntry.length > 2){
+      menuEntry[2]();
+    }
+
     drawTime();
   }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
-    decreaseAlarm();
+    settings.menuPosY  = settings.menuPosY-1;
+    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].length-1 : settings.menuPosY;
+
+    // Handle custom menu entry function
+    var menuEntry = getMenuEntry();
+    if(menuEntry.length > 3){
+      menuEntry[3]();
+    }
+
     drawTime();
   }
 
   if(is_right){
     Bangle.buzz(40, 0.6);
-    settings.showInfo = (settings.showInfo+1) % NUM_INFO;
+    settings.menuPosX = (settings.menuPosX+1) % menu.length;
+    settings.menuPosY = 0;
     drawTime();
   }
 
   if(is_left){
     Bangle.buzz(40, 0.6);
-    settings.showInfo = settings.showInfo-1;
-    settings.showInfo = settings.showInfo < 0 ? NUM_INFO-1 : settings.showInfo;
+    settings.menuPosY = 0;
+    settings.menuPosX  = settings.menuPosX-1;
+    settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
     drawTime();
   }
 
   if(is_center){
-    var infoEntry = getInfoEntry();
-    var fun = infoEntry[3];
-    if(fun != null){
+    var menuEntry = getMenuEntry();
+    if(menuEntry.length > 4){
       Bangle.buzz(80, 0.6).then(()=>{
         try{
-          fun();
+          menuEntry[4]();
           setTimeout(()=>{
             Bangle.buzz(80, 0.6);
           }, 250);

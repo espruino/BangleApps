@@ -10,15 +10,14 @@
 */
 
 
-function Layout(layout, options) {
+function Layout(layout, options) {  
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
 
   this.options = options || {};
   this.lazy = this.options.lazy || false;
-
-  var btnList;
+  let btnList;
   if (process.env.HWVERSION!=2) {
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
@@ -37,9 +36,9 @@ function Layout(layout, options) {
 
   if (this.options.btns) {
     var buttons = this.options.btns;
-    this.b = buttons;
     if (this.physBtns >= buttons.length) {
       // enough physical buttons
+      this.b = buttons;
       let btnHeight = Math.floor(Bangle.appRect.h / this.physBtns);
       if (this.physBtns > 2 && buttons.length==1)
         buttons.unshift({label:""}); // pad so if we have a button in the middle

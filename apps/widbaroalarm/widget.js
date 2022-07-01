@@ -231,15 +231,15 @@ function getPressureValue() {
     if (isValidPressureValue(pressure)) {
       currentPressures.unshift(pressure);
       median = currentPressures.slice().sort();
-    }
 
-    if (median.length > 10) {
-      var mid = median.length >> 1;
-      medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
-      if (medianPressure > 0) {
-        turnOff();
-        draw();
-        handlePressureValue(medianPressure);
+      if (median.length > 10) {
+        var mid = median.length >> 1;
+        medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
+        if (medianPressure > 0) {
+          turnOff();
+          draw();
+          handlePressureValue(medianPressure);
+        }
       }
     }
   });
