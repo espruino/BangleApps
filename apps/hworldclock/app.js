@@ -46,8 +46,8 @@ setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
 SunCalc = require("hsuncalc.js");
 const LOCATION_FILE = "mylocation.json";
-var rise = null;
-var set	= null;
+var rise = "read";
+var set	= "...";
 //var pos	 = {altitude: 20, azimuth: 135};
 //var noonpos = {altitude: 37, azimuth: 180};
 //=======Sun
@@ -272,11 +272,11 @@ function draw() {
 
 	if (showSunInfo) {
 		if (rise != null){
-			g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw riseset
-			g.setFontAlign(1, 0).drawString(`${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw riseset
+			g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw rise
+			g.setFontAlign(1, 0).drawString(`${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw set
 		} else {
 			g.setFontAlign(-1, 0).setFont("Vector",11).drawString("set city in \'my location\' app!", 10, 3 + yposWorld + 3 * 15, true); 
-		}		
+		}
 	}
 	//debug settings
 	//g.setFontAlign(1, 0);
