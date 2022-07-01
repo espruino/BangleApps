@@ -6,7 +6,7 @@
 
   var log = function(text, param){
     if (global.showStatusInfo)
-      showStatusInfo(text)
+      showStatusInfo(text);
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);
