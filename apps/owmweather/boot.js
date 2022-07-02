@@ -1,20 +1,38 @@
 (function() {
-  let waitingForResponse = false;
-  let settings = require("Storage").readJSON("owmweather.json",1)||{enabled:false};
+  let responsePromise;
+  let settings = require("Storage").readJSON("owmweather.json", 1) || {
+    enabled: false
+  };
   console.log("Settings", settings);
-  if (settings.enabled && settings.apikey){
-    let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.50,"lon":0.12,"location":"London"};
+  if (settings.enabled && settings.apikey) {
+    let location = require("Storage").readJSON("mylocation.json", 1) || {
+      "lat": 51.50,
+      "lon": 0.12,
+      "location": "London"
+    };
 
-    function pullWeather() {
-      if (waitingForResponse) return;
-      waitingForResponse = true;
-      Bangle.http("https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey).then(event=>{
-        parseWeather(event.resp);
-        waitingForResponse = false;
-      });
-    }
+    var pullWeather = function() {
+      if (responsePromise){
+        print("Waiting for response");
+        return;
+      }
+      let uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey;
+      print("Calling uri " + uri);
+      if (Bangle.http){
+        responsePromise = Bangle.http(uri, {id:"debug"}).then(event => {
+          print("Got event ", event);
+          parseWeather(event.resp);
+          responsePromise = false;
+        }).catch((e)=>{
+          print("Rejected call", e);
+          responsePromise = false;
+        });
+      } else {
+        print("No http method found");
+      }
+    };
 
-    function parseWeather(response) {
+    var parseWeather = function(response) {
       let owmData = JSON.parse(response);
       console.log("OWM Data", owmData);
 
@@ -42,15 +60,15 @@
         }
 
         json.weather = weather;
+        print("Parsed data", json);
         require("Storage").writeJSON('weather.json', json);
         require("weather").emit("update", json.weather);
       }
-    }
-    
+    };
+
     console.log("Setting interval");
-    setInterval(()=>{
+    setInterval(() => {
       pullWeather();
     }, settings.refresh * 1000 * 60);
-    pullWeather();
   }
 })();
