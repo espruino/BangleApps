@@ -227,15 +227,15 @@
     }
 
     if (settings.replace){
-      var origIsHRMOn = Bangle.isHRMOn;
+      Bangle.origIsHRMOn = Bangle.isHRMOn;
 
       Bangle.isHRMOn = function() {
         if (settings.enabled && !settings.replace){
-            return origIsHRMOn();
+            return Bangle.origIsHRMOn();
         } else if (settings.enabled && settings.replace){
             return Bangle.isBTHRMOn();
         }
-        return origIsHRMOn() || Bangle.isBTHRMOn();
+        return Bangle.origIsHRMOn() || Bangle.isBTHRMOn();
       };
     }
 
@@ -563,7 +563,7 @@
 
     }
 
-    var origSetHRMPower = Bangle.setHRMPower;
+    Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
 
@@ -573,7 +573,7 @@
           Bangle.setBTHRMPower(isOn, app);
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
-          origSetHRMPower(isOn, app);
+          Bangle.origSetHRMPower(isOn, app);
         }
       };
     }
@@ -583,7 +583,7 @@
 
     var stopFallback = function(){
       if (fallbackActive){
-        origSetHRMPower(0, "bthrm_fallback");
+        Bangle.origSetHRMPower(0, "bthrm_fallback");
         fallbackActive = false;
         log("Fallback to HRM disabled");
       }
@@ -592,7 +592,7 @@
     var startFallback = function(){
       if (!fallbackActive && settings.allowFallback) {
         fallbackActive = true;
-        origSetHRMPower(1, "bthrm_fallback");
+        Bangle.origSetHRMPower(1, "bthrm_fallback");
         log("Fallback to HRM enabled");
       }
     };
@@ -616,7 +616,7 @@
         for (var i = 0; i < Bangle._PWR.HRM.length; i++){
           var app = Bangle._PWR.HRM[i];
           log("Moving app " + app);
-          origSetHRMPower(0, app);
+          Bangle.origSetHRMPower(0, app);
           Bangle.setBTHRMPower(1, app);
           if (Bangle._PWR.HRM===undefined) break;
         }
