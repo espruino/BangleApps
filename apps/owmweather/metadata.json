@@ -7,7 +7,8 @@
   "type": "bootloader",
   "tags": "boot,tool,weather",
   "dependencies": {"weather":"app"},
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
+  "interface": "interface.html",
   "readme": "README.md",
   "storage": [
     {"name":"owmweather.default.json","url":"default.json"},
