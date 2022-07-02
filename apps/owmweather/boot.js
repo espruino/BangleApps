@@ -11,8 +11,8 @@
       "location": "London"
     };
 
-    var pullWeather = function() {
-      if (responsePromise){
+    Bangle.pullOwmWeather = function(force) {
+      if (!force && responsePromise){
         print("Waiting for response");
         return;
       }
@@ -65,10 +65,14 @@
         require("weather").emit("update", json.weather);
       }
     };
-
+    
+    let weather = require("Storage").readJSON('weather.json') || {};
+    if (weather.time + settings.refresh * 1000 * 60 < Date.now()){
+      Bangle.pullOwmWeather();
+    }
     console.log("Setting interval");
     setInterval(() => {
-      pullWeather();
+      Bangle.pullOwmWeather();
     }, settings.refresh * 1000 * 60);
   }
 })();
