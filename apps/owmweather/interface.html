@@ -32,7 +32,10 @@
         document.getElementById("upload").addEventListener("click", function() {
             try {
               settings.apikey = document.getElementById("apikey").value;
-              Util.writeStorage("owmweather.json", JSON.stringify(settings));
+              Util.showModal("Saving...");
+              Util.writeStorage("owmweather.json", JSON.stringify(settings), ()=>{
+                Util.hideModal();
+              });
               console.log("Sent settings!");
             } catch(ex) {
                 console.log("(Warning) Could not write settings to BangleJs.");
