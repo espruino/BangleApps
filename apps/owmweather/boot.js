@@ -1,12 +1,16 @@
 (function() {
+  let waitingForResponse = false;
   let settings = require("Storage").readJSON("owmweather.json",1)||{enabled:false};
   console.log("Settings", settings);
   if (settings.enabled && settings.apikey){
     let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.50,"lon":0.12,"location":"London"};
 
     function pullWeather() {
+      if (waitingForResponse) return;
+      waitingForResponse = true;
       Bangle.http("https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey).then(event=>{
         parseWeather(event.resp);
+        waitingForResponse = false;
       });
     }
 
