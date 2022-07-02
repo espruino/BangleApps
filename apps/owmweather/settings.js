@@ -37,7 +37,20 @@
           writeSettings("refresh",Math.round(v * 60));
         }
       },
-      "Force refresh": Bangle.pullOwmWeather
+      "Force refresh": ()=>{
+        E.showMessage("Reloading weather");
+        Bangle.pullOwmWeather(true, (e)=>{
+          if (e) {
+            E.showAlert(e,"Error").then(()=>{
+              E.showMenu(buildMainMenu());
+            });
+          } else {
+            E.showAlert("Success").then(()=>{
+              E.showMenu(buildMainMenu());
+            });
+          }
+        });
+      }
     };
 
     mainmenu["API key"] = function (){

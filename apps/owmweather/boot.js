@@ -11,7 +11,7 @@
       "location": "London"
     };
 
-    Bangle.pullOwmWeather = function(force) {
+    Bangle.pullOwmWeather = function(force, completionCallback) {
       if (!force && responsePromise){
         print("Waiting for response");
         return;
@@ -22,11 +22,13 @@
       if (Bangle.http){
         responsePromise = Bangle.http(uri, {id:"debug"}).then(event => {
           print("Got event ", event);
-          parseWeather(event.resp);
+          let result = parseWeather(event.resp);
           responsePromise = false;
+          if (completionCallback) completionCallback(result);
         }).catch((e)=>{
           print("Rejected call", e);
           responsePromise = false;
+          if (completionCallback) completionCallback(e);
         });
       } else {
         print("No http method found");
@@ -64,6 +66,9 @@
         print("Parsed data", json);
         require("Storage").writeJSON('weather.json', json);
         require("weather").emit("update", json.weather);
+        return undefined;
+      } else {
+        return "Not OWM data";
       }
     };
     
