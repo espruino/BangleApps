@@ -3,7 +3,6 @@
   let settings = require("Storage").readJSON("owmweather.json", 1) || {
     enabled: false
   };
-  console.log("Settings", settings);
   if (settings.enabled) {
     let location = require("Storage").readJSON("mylocation.json", 1) || {
       "lat": 51.50,
@@ -13,36 +12,30 @@
 
     Bangle.pullOwmWeather = function(force, completionCallback) {
       if (!force && responsePromise){
-        print("Waiting for response");
         return;
       }
       let settings = require("Storage").readJSON("owmweather.json", 1);
       let uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey;
-      print("Calling uri " + uri);
       if (Bangle.http){
         responsePromise = Bangle.http(uri, {id:"debug"}).then(event => {
-          print("Got event ", event);
           let result = parseWeather(event.resp);
           responsePromise = false;
           if (completionCallback) completionCallback(result);
         }).catch((e)=>{
-          print("Rejected call", e);
           responsePromise = false;
           if (completionCallback) completionCallback(e);
         });
       } else {
-        print("No http method found");
+        if (completionCallback) completionCallback(/*LANG*/"No http method found");
       }
     };
 
     var parseWeather = function(response) {
       let owmData = JSON.parse(response);
-      console.log("OWM Data", owmData);
 
       let isOwmData = owmData.coord && owmData.weather && owmData.main;
 
       if (isOwmData) {
-        console.log("Converting data");
         let json = require("Storage").readJSON('weather.json') || {};
         let weather = {};
         weather.time = Date.now();
@@ -63,12 +56,11 @@
         }
 
         json.weather = weather;
-        print("Parsed data", json);
         require("Storage").writeJSON('weather.json', json);
         require("weather").emit("update", json.weather);
         return undefined;
       } else {
-        return "Not OWM data";
+        return /*LANG*/"Not OWM data";
       }
     };
     
@@ -76,7 +68,6 @@
     if (weather.time + settings.refresh * 1000 * 60 < Date.now()){
       Bangle.pullOwmWeather();
     }
-    console.log("Setting interval");
     setInterval(() => {
       Bangle.pullOwmWeather();
     }, settings.refresh * 1000 * 60);
