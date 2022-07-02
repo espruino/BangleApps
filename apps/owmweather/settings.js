@@ -38,18 +38,24 @@
         }
       },
       "Force refresh": ()=>{
-        E.showMessage("Reloading weather");
-        Bangle.pullOwmWeather(true, (e)=>{
-          if (e) {
-            E.showAlert(e,"Error").then(()=>{
-              E.showMenu(buildMainMenu());
-            });
-          } else {
-            E.showAlert("Success").then(()=>{
-              E.showMenu(buildMainMenu());
-            });
-          }
-        });
+        if (!Bangle.pullOwmWeather){
+          E.showAlert("Reload watch after enabling","Hint").then(()=>{
+            E.showMenu(buildMainMenu());
+          });
+        } else {
+          E.showMessage("Reloading weather");
+          Bangle.pullOwmWeather(true, (e)=>{
+            if (e) {
+              E.showAlert(e,"Error").then(()=>{
+                E.showMenu(buildMainMenu());
+              });
+            } else {
+              E.showAlert("Success").then(()=>{
+                E.showMenu(buildMainMenu());
+              });
+            }
+          });
+        }
       }
     };
 
