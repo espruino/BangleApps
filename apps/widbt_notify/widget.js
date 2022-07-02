@@ -63,7 +63,7 @@ WIDGETS.bluetooth_notify = {
                 setTimeout(()=>{WIDGETS.bluetooth_notify.redrawCurrentApp();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
                 
                 WIDGETS.bluetooth_notify.warningEnabled = 0;
-                setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 300); // don't buzz for the next 30 seconds.
+                setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // don't buzz for the next 30 seconds.
                 
                 var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
                 if(!quiet && WIDGETS.bluetooth_notify.readBuzzOnConnect()){
@@ -80,7 +80,7 @@ WIDGETS.bluetooth_notify = {
                 setTimeout(()=>{WIDGETS.bluetooth_notify.redrawCurrentApp();}, 3000); // clear message - this will reload the widget, resetting 'warningEnabled'.
                 
                 WIDGETS.bluetooth_notify.warningEnabled = 0;
-                setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 300); // don't buzz for the next 30 seconds.
+                setTimeout('WIDGETS.bluetooth_notify.warningEnabled = 1;', 30000); // don't buzz for the next 30 seconds.
                 
                 var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
                 if(!quiet && WIDGETS.bluetooth_notify.readBuzzOnLoss()){
