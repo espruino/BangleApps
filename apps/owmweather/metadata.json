@@ -9,6 +9,7 @@
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
-    {"name":"owmweather.boot.js","url":"boot.js"}
+    {"name":"owmweather.boot.js","url":"boot.js"},
+    {"name":"owmweather.settings.js","url":"settings.js"}
   ]
 }
