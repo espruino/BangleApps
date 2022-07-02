@@ -5,15 +5,13 @@
     let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.50,"lon":0.12,"location":"London"};
 
     function pullWeather() {
-      console.log("pull weather");
-      Bluetooth.println(JSON.stringify({
-        t: "http",
-        url: "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey
-      }));
+      Bangle.http("https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey).then(event=>{
+        parseWeather(event.resp);
+      });
     }
 
-    function parseWeather(event) {
-      let owmData = JSON.parse(event.resp);
+    function parseWeather(response) {
+      let owmData = JSON.parse(response);
       console.log("OWM Data", owmData);
 
       let isOwmData = owmData.coord && owmData.weather && owmData.main;
@@ -44,12 +42,6 @@
         require("weather").emit("update", json.weather);
       }
     }
-
-    const _GB = global.GB;
-    global.GB = (event) => {
-      if (event.t==="http") parseWeather(event);
-      if (_GB) setTimeout(_GB, 0, event);
-    };
     
     console.log("Setting interval");
     setInterval(()=>{
