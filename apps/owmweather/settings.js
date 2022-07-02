@@ -40,17 +40,23 @@
       "Force refresh": Bangle.pullOwmWeather
     };
 
-    if (require("textinput")){
-      mainmenu["API key"] = function (){
+    mainmenu["API key"] = function (){
+      if (require("textinput")){
         require("textinput").input({text:settings.apikey}).then(result => {
           if (result != "") {
+            print("Result is", result);
             settings.apikey = result;
             writeSettings("apikey",result);
           }
           E.showMenu(buildMainMenu());
         });
-      };
-    }
+      } else {
+        E.showPrompt("Install a text input lib"),then(()=>{
+          E.showMenu(buildMainMenu());
+        });
+      }
+    };
+
 
     return mainmenu;
   }
