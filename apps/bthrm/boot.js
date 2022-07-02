@@ -94,13 +94,24 @@
       "0x180f", // Battery
     ];
 
+    var bpmTimeout;
+
     var supportedCharacteristics = {
       "0x2a37": {
         //Heart rate measurement
+        active: false,
         handler: function (dv){
           var flags = dv.getUint8(0);
 
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
+          supportedCharacteristics["0x2a37"].active = bpm > 0;
+          log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
+          if (supportedCharacteristics["0x2a37"].active) stopFallback();
+          if (bpmTimeout) clearTimeout(bpmTimeout);
+          bpmTimeout = setTimeout(()=>{
+            supportedCharacteristics["0x2a37"].active = false;
+            startFallback();
+          }, 3000);
 
           var sensorContact;
 
@@ -202,6 +213,10 @@
     };
 
     if (settings.enabled){
+      Bangle.isBTHRMActive = function (){
+        return supportedCharacteristics["0x2a37"].active;
+      };
+
       Bangle.isBTHRMOn = function(){
         return (Bangle._PWR && Bangle._PWR.BTHRM && Bangle._PWR.BTHRM.length > 0);
       };
@@ -263,7 +278,8 @@
       log("GATT", gatt);
       log("Characteristics", characteristics);
       clearRetryTimeout();
-      switchInternalHrm();
+      supportedCharacteristics["0x2a37"].active = false;
+      startFallback();
       blockInit = false;
       if (settings.warnDisconnect && !buzzing){
         buzzing = true;
@@ -496,7 +512,7 @@
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
-        switchInternalHrm();
+        switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
@@ -543,7 +559,7 @@
       };
 
     }
-  
+
     var origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
@@ -559,26 +575,36 @@
       };
     }
 
-    var fallbackInterval;
     var fallbackActive = false;
+    var inSwitch = false;
 
-    var switchInternalHrm = function() {
-      log("Try falling back to HRM");
-      if (!fallbackActive && Bangle.isBTHRMOn() && settings.allowFallback && !fallbackInterval){
-        log("Fallback to HRM enabled");
+    var stopFallback = function(){
+      if (fallbackActive){
+        origSetHRMPower(0, "bthrm_fallback");
+        fallbackActive = false;
+        log("Fallback to HRM disabled");
+      }
+    };
+
+    var startFallback = function(){
+      if (!fallbackActive && settings.allowFallback) {
         fallbackActive = true;
         origSetHRMPower(1, "bthrm_fallback");
-        fallbackInterval = setInterval(()=>{
-          log("Still in HRM fallback");
-          if (Bangle.isBTHRMConnected() || !Bangle.isBTHRMOn()){
-            origSetHRMPower(0, "bthrm_fallback");
-            clearInterval(fallbackInterval);
-            fallbackInterval = undefined;
-            fallbackActive = false;
-            log("Fallback to HRM disabled");
-          }
-        }, settings.fallbackTimeout * 1000);
+        log("Fallback to HRM enabled");
       }
+    };
+
+    var switchFallback = function() {
+      log("Check falling back to HRM");
+      if (!inSwitch){
+        inSwitch = true;
+        if (Bangle.isBTHRMActive()){
+          stopFallback();
+        } else {
+          startFallback();
+        }
+      }
+      inSwitch = false;
     };
 
     if (settings.replace){
