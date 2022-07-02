@@ -38,13 +38,13 @@
         }
       },
       "Force refresh": ()=>{
-        if (!Bangle.pullOwmWeather){
-          E.showAlert("Reload watch after enabling","Hint").then(()=>{
+        if (!settings.apikey){
+          E.showAlert("API key is needed","Hint").then(()=>{
             E.showMenu(buildMainMenu());
           });
         } else {
           E.showMessage("Reloading weather");
-          Bangle.pullOwmWeather(true, (e)=>{
+          require("owmweather").pull((e)=>{
             if (e) {
               E.showAlert(e,"Error").then(()=>{
                 E.showMenu(buildMainMenu());
