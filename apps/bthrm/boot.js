@@ -244,7 +244,10 @@
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
         currentRetryTimeout = undefined;
-        if (resetTime) retryTime = initialRetryTime;
+      }
+      if (resetTime) {
+        log("Resetting retry time");
+        retryTime = initialRetryTime;
       }
     };
 
@@ -277,7 +280,7 @@
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      clearRetryTimeout();
+      clearRetryTimeout(reason != "Connection Timeout");
       supportedCharacteristics["0x2a37"].active = false;
       startFallback();
       blockInit = false;
