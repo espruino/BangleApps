@@ -1,25 +1,11 @@
-# App Name
+# Open Weather Map weather provider
 
-Describe the app...
-
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
+This updates [Weather](https://banglejs.com/apps/#weather) with data from the Open Weather Map API
 
 ## Usage
 
-Describe how to use it
-
-## Features
-
-Name the function
-
-## Controls
-
-Name the buttons and what they are used for
-
-## Requests
-
-Name who should be contacted for support/update requests
+Just install and configure the app. This needs an internet-enabled Gadgetbridge version.
 
 ## Creator
 
-Your name
+[halemmerich](https://github.com/halemmerich)
