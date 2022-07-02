@@ -6,6 +6,7 @@
   "icon": "app.png",
   "type": "bootloader",
   "tags": "boot,tool,weather",
+  "dependencies": {"weather":"app"},
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
