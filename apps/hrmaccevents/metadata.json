@@ -9,7 +9,7 @@
   "tags": "debug",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
-  "customConnect": false,
+  "customConnect": true,
   "readme": "README.md",
   "storage": [ ]
 }
