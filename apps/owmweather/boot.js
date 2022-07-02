@@ -4,7 +4,7 @@
     enabled: false
   };
   console.log("Settings", settings);
-  if (settings.enabled && settings.apikey) {
+  if (settings.enabled) {
     let location = require("Storage").readJSON("mylocation.json", 1) || {
       "lat": 51.50,
       "lon": 0.12,
@@ -16,6 +16,7 @@
         print("Waiting for response");
         return;
       }
+      let settings = require("Storage").readJSON("owmweather.json", 1);
       let uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey;
       print("Calling uri " + uri);
       if (Bangle.http){
@@ -74,5 +75,6 @@
     setInterval(() => {
       Bangle.pullOwmWeather();
     }, settings.refresh * 1000 * 60);
+    delete settings;
   }
 })();
