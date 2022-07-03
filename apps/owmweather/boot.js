@@ -17,7 +17,7 @@
       }
     }
     setInterval(() => {
-      if (!waiting){
+      if (!waiting && NRF.getSecurityStatus().connected){
         waiting = true;
         require("owmweather").pull(completion);
       }
