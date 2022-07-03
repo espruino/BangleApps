@@ -10,7 +10,9 @@
   
   if (settings.enabled) {    
     let weather = require("Storage").readJSON('weather.json') || {};
-    if (weather.time + settings.refresh * 1000 * 60 < Date.now()){
+    let lastUpdate;
+    if (weather && weather.weather && weather.weather.time) lastUpdate = weather.weather.time;
+    if (!lastUpdate || lastUpdate + settings.refresh * 1000 * 60 < Date.now()){
       if (!waiting){
         waiting = true;
         require("owmweather").pull(completion);
@@ -22,6 +24,5 @@
         require("owmweather").pull(completion);
       }
     }, settings.refresh * 1000 * 60);
-    delete settings;
   }
 })();
