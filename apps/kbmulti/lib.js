@@ -116,7 +116,7 @@ exports.input = function(options) {
     displayText(charTimeout);
   }
 
-  let moveMode = false;
+  var moveMode = false;
 
   function onSwipe(dirLeftRight, dirUpDown) {
     if (dirUpDown == -1) {
