@@ -73,9 +73,11 @@ exports.input = function(options) {
 
   function backspace() {
     deactivateTimeout(charTimeout);
-    text = text.slice(0, -1);
-    if (textIndex > -1) textIndex --;
-    newCharacter();
+    if (textIndex > -1){
+      text = text.slice(0, textIndex) + text.slice(textIndex + 1);
+      if (textIndex > -1) textIndex --;
+      newCharacter();
+    }
   }
 
   function setCaps() {
@@ -126,7 +128,7 @@ exports.input = function(options) {
       displayText(false);
     } else if (dirLeftRight == 1) {
       if (!moveMode){
-        text += ' ';
+        text = text.slice(0, textIndex + 1) + " " + text.slice(++textIndex);
         newCharacter();
       } else {
         if (textIndex < text.length) textIndex++;
