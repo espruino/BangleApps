@@ -23,7 +23,7 @@ exports.input = function(options) {
   var charCurrent; // current character (index in letters)
   var charIndex; // index in letters[charCurrent]
   var textIndex = text.length;
-  var textWidth = settings.showHelpBtn ? 10 : 12;
+  var textWidth = settings.showHelpBtn ? 10 : 14;
   var caps = true;
   var layout;
   var btnWidth = g.getWidth()/3;
