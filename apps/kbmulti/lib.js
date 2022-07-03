@@ -22,7 +22,7 @@ exports.input = function(options) {
   var charTimeout; // timeout after a key is pressed
   var charCurrent; // current character (index in letters)
   var charIndex; // index in letters[charCurrent]
-  var textIndex = 0;
+  var textIndex = text.length;
   var textWidth = settings.showHelpBtn ? 10 : 12;
   var caps = true;
   var layout;
