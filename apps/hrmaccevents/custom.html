@@ -56,7 +56,12 @@ function createCode(){
     return gotBTHRM && gotHRM && gotHRMraw && gotAcc;
   }
 
+  let bthrmSettings = (require("Storage").readJSON("bthrm.json",1) || {});
+
   Bangle.setHRMPower(1);
+  
+  if (bthrmSettings.replace) Bangle.origSetHRMPower(1);
+  
   if (Bangle.setBTHRMPower){
     Bangle.setBTHRMPower(1);
   } else {
@@ -123,7 +128,11 @@ function createCode(){
     Bangle.on("accel", writeAccDirect);
   }
   Bangle.on("HRM-raw", writeHRMraw);
-  Bangle.on("HRM", writeHRM);
+  if (bthrmSettings.replace){
+    Bangle.origOn("HRM", writeHRM);
+  } else {
+    Bangle.on("HRM", writeHRM);
+  }
   Bangle.on("BTHRM", writeBTHRM);
 
   g.clear();
@@ -280,7 +289,7 @@ document.getElementById("btnConnect").addEventListener("click", function() {
       l.forEach(onLine);
     });
     connection.write("reset();\n", function() {
-      setTimeout(function() {
+      setTimeout(function() {    
         connection.write("\x03\x10if(1){"+createCode()+"}\n",
           function() { console.log("Ready..."); });
       }, 1500);
