@@ -10,7 +10,8 @@
   "interface": "interface.html",
   "readme": "README.md",
   "data": [
-    {"name":"owmweather.json"}
+    {"name":"owmweather.json"},
+    {"name":"weather.json"}
   ],
   "storage": [
     {"name":"owmweather.default.json","url":"default.json"},
