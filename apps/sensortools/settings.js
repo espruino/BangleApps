@@ -20,7 +20,13 @@
   function buildMainMenu(){
     var mainmenu = {
       '': { 'title': 'Sensor tools' },
-      '< Back': back
+      '< Back': back,
+      'Enabled': {
+        value: !!settings.enabled,
+        onchange: v => {
+          writeSettings("enabled",v);
+        }
+      },
     };
     return mainmenu;
   }
