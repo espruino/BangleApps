@@ -107,7 +107,7 @@
             "fix": 1,
             "hdop": 1
           });
-        } else if (settings.hrm.name == "nofix") {
+        } else if (settings.gps.name == "nofix") {
           modGps({
             "lat": NaN,
             "lon": NaN,
@@ -134,8 +134,8 @@
         orig.bangleSetCompassPower = Bangle.setCompassPower;
         Bangle.setCompassPower = createPowerFunction(settings.mag.power, orig.bangleSetCompassPower);
       }
-      if (settings.gps.mode == "emulate") {
-        if (settings.gps.name == "static") {
+      if (settings.mag.mode == "emulate") {
+        if (settings.mag.name == "static") {
           modMag({
             x: 1,
             y: 1,
