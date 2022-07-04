@@ -19,7 +19,7 @@
 
   function buildMainMenu(){
     var mainmenu = {
-      '': { 'title': 'Bluetooth HRM' },
+      '': { 'title': 'Sensor tools' },
       '< Back': back
     };
     return mainmenu;
