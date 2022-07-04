@@ -4,15 +4,14 @@
   var phase = 0; // The last phase we calculated
   var southernHemisphere = false; // when in southern hemisphere -- use the "My Location" App
 
-  // https://deirdreobyrne.github.io/calculating_moon_phases/
-  function moonPhase(millis) {
-    k = (millis - 946728000000) / 3155760000000;
-    mp = (8328.69142475915 * k) + 2.35555563685;
-    m =  (628.30195516723 * k) + 6.24006012726;
-    d =  (7771.37714483372 * k) + 5.19846652984;
-    t = d + (0.109764 * Math.sin (mp)) - (0.036652 * Math.sin(m)) + (0.022235 * Math.sin(d+d-mp)) + (0.011484 * Math.sin(d+d)) + (0.003735 * Math.sin(mp+mp)) + (0.00192 * Math.sin(d));
-    k = (1 - Math.cos(t))/2;
-    if (Math.sin(t) < 0) {
+  // https://github.com/deirdreobyrne/LunarPhase
+  function moonPhase(sec) {
+    d = (4.847408287988257 + sec/406074.7465115577) % (2.0*Math.PI);
+    m = (6.245333801867877 + sec/5022682.784840698) % (2.0*Math.PI);
+    l = (4.456038755040014 + sec/378902.2499653011) % (2.0*Math.PI);
+    t = d+1.089809730923715e-01 * Math.sin(l)-3.614132757006379e-02 * Math.sin(m)+2.228248661252023e-02 * Math.sin(d+d-l)+1.353592753655652e-02 * Math.sin(d+d)+4.238560208195022e-03 * Math.sin(l+l)+1.961408105275610e-03 * Math.sin(d);
+    k = (1.0 - Math.cos(t))/2.0;
+    if ((t >= Math.PI) && (t < 2.0*Math.PI)) {
       k = -k;
     }
     return (k); // Goes 0 -> 1 for waxing, and from -1 -> 0 for waning
@@ -71,7 +70,7 @@
 
     millis = (new Date()).getTime();
     if ((millis - lastCalculated) >= 7000000) { // if it's more than 7,000 sec since last calculation, re-calculate!
-      phase = moonPhase(millis);
+      phase = moonPhase(millis/1000);
       lastCalculated = millis;
     }
 
