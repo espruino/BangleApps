@@ -6,7 +6,7 @@
 
   var log = function(text, param){
     if (global.showStatusInfo)
-      showStatusInfo(text)
+      showStatusInfo(text);
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);
@@ -94,13 +94,24 @@
       "0x180f", // Battery
     ];
 
+    var bpmTimeout;
+
     var supportedCharacteristics = {
       "0x2a37": {
         //Heart rate measurement
+        active: false,
         handler: function (dv){
           var flags = dv.getUint8(0);
 
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
+          supportedCharacteristics["0x2a37"].active = bpm > 0;
+          log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
+          if (supportedCharacteristics["0x2a37"].active) stopFallback();
+          if (bpmTimeout) clearTimeout(bpmTimeout);
+          bpmTimeout = setTimeout(()=>{
+            supportedCharacteristics["0x2a37"].active = false;
+            startFallback();
+          }, 3000);
 
           var sensorContact;
 
@@ -144,7 +155,7 @@
             };
 
             log("Emitting HRM", repEvent);
-            Bangle.emit("HRM", repEvent);
+            Bangle.emit("HRM_int", repEvent);
           }
 
           var newEvent = {
@@ -202,6 +213,10 @@
     };
 
     if (settings.enabled){
+      Bangle.isBTHRMActive = function (){
+        return supportedCharacteristics["0x2a37"].active;
+      };
+
       Bangle.isBTHRMOn = function(){
         return (Bangle._PWR && Bangle._PWR.BTHRM && Bangle._PWR.BTHRM.length > 0);
       };
@@ -212,23 +227,27 @@
     }
 
     if (settings.replace){
-      var origIsHRMOn = Bangle.isHRMOn;
+      Bangle.origIsHRMOn = Bangle.isHRMOn;
 
       Bangle.isHRMOn = function() {
         if (settings.enabled && !settings.replace){
-            return origIsHRMOn();
+            return Bangle.origIsHRMOn();
         } else if (settings.enabled && settings.replace){
             return Bangle.isBTHRMOn();
         }
-        return origIsHRMOn() || Bangle.isBTHRMOn();
+        return Bangle.origIsHRMOn() || Bangle.isBTHRMOn();
       };
     }
 
-    var clearRetryTimeout = function() {
+    var clearRetryTimeout = function(resetTime) {
       if (currentRetryTimeout){
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
         currentRetryTimeout = undefined;
+      }
+      if (resetTime) {
+        log("Resetting retry time");
+        retryTime = initialRetryTime;
       }
     };
 
@@ -261,9 +280,9 @@
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      retryTime = initialRetryTime;
-      clearRetryTimeout();
-      switchInternalHrm();
+      clearRetryTimeout(reason != "Connection Timeout");
+      supportedCharacteristics["0x2a37"].active = false;
+      startFallback();
       blockInit = false;
       if (settings.warnDisconnect && !buzzing){
         buzzing = true;
@@ -478,7 +497,7 @@
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
         characteristicsToCache(characteristics);
-        clearRetryTimeout();
+        clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
         log("Error:", e);
@@ -496,9 +515,11 @@
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
+        clearRetryTimeout(true);
         if (gatt) {
           if (gatt.connected){
             log("Disconnect with gatt", gatt);
@@ -516,7 +537,33 @@
       }
     };
 
-    var origSetHRMPower = Bangle.setHRMPower;
+    if (settings.replace){
+      Bangle.on("HRM", (e) => {
+        e.modified = true;
+        Bangle.emit("HRM_int", e);
+      });
+
+      Bangle.origOn = Bangle.on;
+      Bangle.on = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origOn("HRM_int", callback);
+        } else {
+          Bangle.origOn(name, callback);
+        }
+      };
+
+      Bangle.origRemoveListener = Bangle.removeListener;
+      Bangle.removeListener = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origRemoveListener("HRM_int", callback);
+        } else {
+          Bangle.origRemoveListener(name, callback);
+        }
+      };
+
+    }
+
+    Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
 
@@ -526,26 +573,41 @@
           Bangle.setBTHRMPower(isOn, app);
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
-          origSetHRMPower(isOn, app);
+          Bangle.origSetHRMPower(isOn, app);
         }
       };
     }
 
-    var fallbackInterval;
+    var fallbackActive = false;
+    var inSwitch = false;
 
-    var switchInternalHrm = function() {
-      if (settings.allowFallback && !fallbackInterval){
-        log("Fallback to HRM enabled");
-        origSetHRMPower(1, "bthrm_fallback");
-        fallbackInterval = setInterval(()=>{
-          if (Bangle.isBTHRMConnected()){
-            origSetHRMPower(0, "bthrm_fallback");
-            clearInterval(fallbackInterval);
-            fallbackInterval = undefined;
-            log("Fallback to HRM disabled");
-          }
-        }, settings.fallbackTimeout);
+    var stopFallback = function(){
+      if (fallbackActive){
+        Bangle.origSetHRMPower(0, "bthrm_fallback");
+        fallbackActive = false;
+        log("Fallback to HRM disabled");
       }
+    };
+
+    var startFallback = function(){
+      if (!fallbackActive && settings.allowFallback) {
+        fallbackActive = true;
+        Bangle.origSetHRMPower(1, "bthrm_fallback");
+        log("Fallback to HRM enabled");
+      }
+    };
+
+    var switchFallback = function() {
+      log("Check falling back to HRM");
+      if (!inSwitch){
+        inSwitch = true;
+        if (Bangle.isBTHRMActive()){
+          stopFallback();
+        } else {
+          startFallback();
+        }
+      }
+      inSwitch = false;
     };
 
     if (settings.replace){
@@ -554,12 +616,11 @@
         for (var i = 0; i < Bangle._PWR.HRM.length; i++){
           var app = Bangle._PWR.HRM[i];
           log("Moving app " + app);
-          origSetHRMPower(0, app);
+          Bangle.origSetHRMPower(0, app);
           Bangle.setBTHRMPower(1, app);
           if (Bangle._PWR.HRM===undefined) break;
         }
       }
-      switchInternalHrm();
     }
 
     E.on("kill", ()=>{
