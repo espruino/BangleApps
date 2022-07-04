@@ -1,0 +1,18 @@
+{
+  "enabled": false,
+  "mag": {
+    "mode": "emulate"
+    "name": "rotation"
+  },
+  "hrm": {
+    "mode": "modify"
+    "name": "tripplebpm"
+  },
+  "gps": {
+    "mode": "emulate"
+    "name": "fixed"
+  },
+  "baro": {
+    "power": "nop",
+  }
+}
