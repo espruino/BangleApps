@@ -10,3 +10,4 @@
 0.10: HomeAssistant integration if HomeAssistant is installed.
 0.11: Performance improvements.
 0.12: Implements a 2D menu.
+0.13: Clicks < 24px are for widgets, if fullscreen mode is disabled.
