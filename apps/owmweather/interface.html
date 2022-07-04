@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <h3>Set OWM API key</h3>
+    <p><input id="apikey" style="width:90%;"></input></p>
+    <p><button id="upload" class="btn btn-primary">Set</button></p>
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+        var settings = {};
+        function onInit(){
+          console.log("Loading settings from BangleJs...");
+          try {
+            Util.readStorage("owmweather.json", data=>{
+              if(data.length > 0){
+                settings = JSON.parse(data);
+                console.log("Got settings", settings);
+                document.getElementById("apikey").value = settings.apikey;
+                console.log("Loaded apikey from BangleJs.");
+              }
+            });
+          } catch(ex) {
+              console.log("(Warning) Could not load apikey from BangleJs.");
+              console.log(ex);
+          }
+        
+        }
+        
+        document.getElementById("upload").addEventListener("click", function() {
+            try {
+              settings.apikey = document.getElementById("apikey").value;
+              Util.showModal("Saving...");
+              Util.writeStorage("owmweather.json", JSON.stringify(settings), ()=>{
+                Util.hideModal();
+              });
+              console.log("Sent settings!");
+            } catch(ex) {
+                console.log("(Warning) Could not write settings to BangleJs.");
+                console.log(ex);
+            }
+        });
+
+    </script>
+  </body>
+</html>
