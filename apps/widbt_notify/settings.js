@@ -54,7 +54,14 @@
         settings.buzzOnLoss = v;
         writeSettings();
       }
-    }	
+    },
+    "Hide connected": {
+      value: (settings.hideConnected !== undefined ? settings.hideConnected : false),
+      onchange: v => {
+        settings.hideConnected = v;
+        writeSettings();
+      }
+    }		
   };
 
   E.showMenu(mainmenu);

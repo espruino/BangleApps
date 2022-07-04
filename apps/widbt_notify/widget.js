@@ -30,18 +30,32 @@ WIDGETS.bluetooth_notify = {
         buzzOnLoss = def(settings.buzzOnLoss, true);
         return buzzOnLoss;
     },            
+	
+     readHideConnected: function() {
+        var hideConnected;
+        const SETTINGSFILE = "widbt_notify.json";
+        function def (value, def) {return value !== undefined ? value : def;}
+        var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
+        hideConnected = def(settings.hideConnected, true);
+        return hideConnected;
+    },  	
+	
+	
      // ------------ Settings --------
 
     draw: function() {
         if (WIDGETS.bluetooth_notify.readshowWidget()){
             g.reset();
             if (NRF.getSecurityStatus().connected) {
-                g.setColor((g.getBPP() > 8) ? "#07f" : (g.theme.dark ? "#0ff" : "#00f"));
+				if (!WIDGETS.bluetooth_notify.readHideConnected()) {
+                   g.setColor((g.getBPP() > 8) ? "#07f" : (g.theme.dark ? "#0ff" : "#00f"));
+                   g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
+                }
             } else {
                 // g.setColor(g.theme.dark ? "#666" : "#999"); 
                 g.setColor("#f00"); // red is easier to distinguish from blue
+                g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
             }
-            g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), 2 + this.x, 2 + this.y);
         }
     },
     
