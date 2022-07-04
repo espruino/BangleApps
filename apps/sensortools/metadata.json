@@ -4,6 +4,7 @@
   "shortName": "Sensor tools",
   "version": "0.01",
   "description": "Tools for testing and debugging apps that use sensor input",
+  "icon": "icon.png",
   "type": "bootloader",
   "tags": "tool,boot,debug",
   "supports": ["BANGLEJS","BANGLEJS2"],
