@@ -23,7 +23,7 @@ if (settings.HID=="kbmedia") {
 } else {
 	
   E.showPrompt("Enable HID?",{title:"HID disabled"}).then(function(enable) {
-	  
+
     if (enable) {
       settings.HID = "kbmedia";
       require("Storage").write('setting.json', settings);
@@ -57,7 +57,7 @@ function drawApp() {
                    setTimeout(drawApp, 1000);
                    camShot(() => {});
                  }, BTN2, { edge:"falling",repeat:true,debounce:50});
-		       } else { // Bangle.js 2
+               } else { // Bangle.js 2
                  setWatch(function(e) {
                    E.showMessage('camShot !');
                    setTimeout(drawApp, 1000);
