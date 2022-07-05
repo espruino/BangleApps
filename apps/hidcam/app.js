@@ -35,10 +35,15 @@ function drawApp() {
   g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
-  g.fillCircle(122,127,60);
-  g.drawImage(storage.read("hidcam.img"),100,105);
-  const d = g.getWidth() - 18;
-
+  if (!isB2) { // Bangle.js 1
+   g.fillCircle(122,127,60);
+   g.drawImage(storage.read("hidcam.img"),100,105);
+   const d = g.getWidth() - 18;
+  } else {
+   g.fillCircle(90,95,60);
+   g.drawImage(storage.read("hidcam.img"),65,70);
+   const d = g.getWidth() - 18;
+  }
   function c(a) {
     return {
       width: 8,
@@ -54,15 +59,23 @@ function drawApp() {
 	if (!isB2) { // Bangle.js 1
                  setWatch(function(e) {
                    E.showMessage('camShot !');
+                   Bangle.buzz(300, 1);
                    setTimeout(drawApp, 1000);
                    camShot(() => {});
                  }, BTN2, { edge:"falling",repeat:true,debounce:50});
                } else { // Bangle.js 2
                  setWatch(function(e) {
                    E.showMessage('camShot !');
+                   Bangle.buzz(300, 1);
                    setTimeout(drawApp, 1000);
                    camShot(() => {});
                  }, BTN, { edge:"falling",repeat:true,debounce:50});
+				 Bangle.on('touch', function (wat, tap) {
+                      E.showMessage('camShot !');
+                   Bangle.buzz(300, 1);
+                   setTimeout(drawApp, 1000);
+                   camShot(() => {});
+                 });
                }
   drawApp();
  }
