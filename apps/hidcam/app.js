@@ -70,7 +70,7 @@ function drawApp() {
                    setTimeout(drawApp, 1000);
                    camShot(() => {});
                  }, BTN, { edge:"falling",repeat:true,debounce:50});
-				 Bangle.on('touch', function (wat, tap) {
+                 Bangle.on('touch', function (wat, tap) {
                       E.showMessage('camShot !');
                    Bangle.buzz(300, 1);
                    setTimeout(drawApp, 1000);
