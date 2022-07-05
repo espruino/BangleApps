@@ -98,6 +98,7 @@ function countDown() {
 
 // 
 function outOfTime() {
+  E.showMessage("", "");
   E.showMessage("Time is up!",appTitle());
   setState(states.countUp);
   resetTimer();
@@ -146,6 +147,7 @@ function resetTimer() {
 // timer is stopped by user => state: stop
 function stopTimer() {
   resetTimer();
+  E.showMessage("", "");
   E.showMessage("Timer stopped!", appTitle());
   setState(states.stop);
 }
@@ -216,6 +218,7 @@ function initDragEvents() {
 function showHelp() {
   if (state == states.start) {
     state = states.help;
+    E.showMessage("", "");
     E.showMessage("Swipe up/down\n+/- one minute\n\nSwipe left/right\n+/- 15 seconds\n\nPress Btn1 to start","Tea timer help");
   }
   // return to start
