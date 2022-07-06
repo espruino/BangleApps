@@ -6,9 +6,9 @@ Making the music controls accessible this way lets one start a music stream on t
 
 It is suggested to use Messages Music along side the app Quick Launch.
 
-Messages Music v0.01 has been verified to work with Messages v0.31 on Bangle.js 2 fw2v13.
+Messages Music v0.02 has been verified to work with Messages v0.41 on Bangle.js 2 fw2v14.
 
-Music Messages should work with forks of the original Messages app. At least as long as functions pushMessage() in the library and showMusicMessage() in app.js hasn't been changed too much.
+Messages Music should work with forks of the original Messages app. At least as long as functions pushMessage() in the library and showMusicMessage() in app.js hasn't been changed too much.
 
 Messages app is created by Gordon Williams with contributions from [Jeroen Peters](https://github.com/jeroenpeters1986).
 

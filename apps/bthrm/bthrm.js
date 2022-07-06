@@ -42,11 +42,19 @@ function draw(y, type, event) {
     if (event.energy) str += " kJoule: " + event.energy.toFixed(0);
     g.setFontVector(12).drawString(str,px,y+60);
   }
-  
 }
 
 var firstEventBt = true;
 var firstEventInt = true;
+
+
+// This can get called for the boot code to show what's happening
+function showStatusInfo(txt) {
+  var R = Bangle.appRect;
+  g.reset().clearRect(R.x,R.y2-8,R.x2,R.y2).setFont("6x8");
+  txt = g.wrapString(txt, R.w)[0];
+  g.setFontAlign(0,1).drawString(txt, (R.x+R.x2)/2, R.y2);
+}
 
 function onBtHrm(e) {
   if (firstEventBt){

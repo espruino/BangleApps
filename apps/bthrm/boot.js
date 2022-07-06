@@ -5,11 +5,11 @@
   );
 
   var log = function(text, param){
+    if (global.showStatusInfo)
+      showStatusInfo(text);
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
-      if (param){
-        logline += " " + JSON.stringify(param);
-      }
+      if (param) logline += ": " + JSON.stringify(param);
       print(logline);
     }
   };
@@ -30,7 +30,7 @@
     };
 
     var addNotificationHandler = function(characteristic) {
-      log("Setting notification handler: " + supportedCharacteristics[characteristic.uuid].handler);
+      log("Setting notification handler"/*supportedCharacteristics[characteristic.uuid].handler*/);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     };
 
@@ -61,7 +61,8 @@
       writeCache(cache);
     };
 
-    var characteristicsFromCache = function() {
+    var characteristicsFromCache = function(device) {
+      var service = { device : device }; // fake a BluetoothRemoteGATTService
       log("Read cached characteristics");
       var cache = getCache();
       if (!cache.characteristics) return [];
@@ -75,6 +76,7 @@
         r.properties = {};
         r.properties.notify = cached.notify;
         r.properties.read = cached.read;
+        r.service = service;
         addNotificationHandler(r);
         log("Restored characteristic: ", r);
         restored.push(r);
@@ -92,13 +94,24 @@
       "0x180f", // Battery
     ];
 
+    var bpmTimeout;
+
     var supportedCharacteristics = {
       "0x2a37": {
         //Heart rate measurement
+        active: false,
         handler: function (dv){
           var flags = dv.getUint8(0);
 
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
+          supportedCharacteristics["0x2a37"].active = bpm > 0;
+          log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
+          if (supportedCharacteristics["0x2a37"].active) stopFallback();
+          if (bpmTimeout) clearTimeout(bpmTimeout);
+          bpmTimeout = setTimeout(()=>{
+            supportedCharacteristics["0x2a37"].active = false;
+            startFallback();
+          }, 3000);
 
           var sensorContact;
 
@@ -141,8 +154,8 @@
               src: "bthrm"
             };
 
-            log("Emitting HRM: ", repEvent);
-            Bangle.emit("HRM", repEvent);
+            log("Emitting HRM", repEvent);
+            Bangle.emit("HRM_int", repEvent);
           }
 
           var newEvent = {
@@ -155,7 +168,7 @@
           if (battery) newEvent.battery = battery;
           if (sensorContact) newEvent.contact = sensorContact;
 
-          log("Emitting BTHRM: ", newEvent);
+          log("Emitting BTHRM", newEvent);
           Bangle.emit("BTHRM", newEvent);
         }
       },
@@ -200,6 +213,10 @@
     };
 
     if (settings.enabled){
+      Bangle.isBTHRMActive = function (){
+        return supportedCharacteristics["0x2a37"].active;
+      };
+
       Bangle.isBTHRMOn = function(){
         return (Bangle._PWR && Bangle._PWR.BTHRM && Bangle._PWR.BTHRM.length > 0);
       };
@@ -210,23 +227,27 @@
     }
 
     if (settings.replace){
-      var origIsHRMOn = Bangle.isHRMOn;
+      Bangle.origIsHRMOn = Bangle.isHRMOn;
 
       Bangle.isHRMOn = function() {
         if (settings.enabled && !settings.replace){
-            return origIsHRMOn();
+            return Bangle.origIsHRMOn();
         } else if (settings.enabled && settings.replace){
             return Bangle.isBTHRMOn();
         }
-        return origIsHRMOn() || Bangle.isBTHRMOn();
+        return Bangle.origIsHRMOn() || Bangle.isBTHRMOn();
       };
     }
 
-    var clearRetryTimeout = function() {
+    var clearRetryTimeout = function(resetTime) {
       if (currentRetryTimeout){
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
         currentRetryTimeout = undefined;
+      }
+      if (resetTime) {
+        log("Resetting retry time");
+        retryTime = initialRetryTime;
       }
     };
 
@@ -236,8 +257,8 @@
       if (!currentRetryTimeout){
 
         var clampedTime = retryTime < 100 ? 100 : retryTime;
-        
-        log("Set timeout for retry as " + clampedTime);      
+
+        log("Set timeout for retry as " + clampedTime);
         clearRetryTimeout();
         currentRetryTimeout = setTimeout(() => {
           log("Retrying");
@@ -257,11 +278,11 @@
     var buzzing = false;
     var onDisconnect = function(reason) {
       log("Disconnect: " + reason);
-      log("GATT: ", gatt);
-      log("Characteristics: ", characteristics);
-      retryTime = initialRetryTime;
-      clearRetryTimeout();
-      switchInternalHrm();
+      log("GATT", gatt);
+      log("Characteristics", characteristics);
+      clearRetryTimeout(reason != "Connection Timeout");
+      supportedCharacteristics["0x2a37"].active = false;
+      startFallback();
       blockInit = false;
       if (settings.warnDisconnect && !buzzing){
         buzzing = true;
@@ -273,13 +294,13 @@
     };
 
     var createCharacteristicPromise = function(newCharacteristic) {
-      log("Create characteristic promise: ", newCharacteristic);
+      log("Create characteristic promise", newCharacteristic);
       var result = Promise.resolve();
       // For values that can be read, go ahead and read them, even if we might be notified in the future
       // Allows for getting initial state of infrequently updating characteristics, like battery
       if (newCharacteristic.readValue){
         result = result.then(()=>{
-          log("Reading data for " + JSON.stringify(newCharacteristic));
+          log("Reading data", newCharacteristic);
           return newCharacteristic.readValue().then((data)=>{
             if (supportedCharacteristics[newCharacteristic.uuid] && supportedCharacteristics[newCharacteristic.uuid].handler) {
               supportedCharacteristics[newCharacteristic.uuid].handler(data);
@@ -289,8 +310,8 @@
       }
       if (newCharacteristic.properties.notify){
         result = result.then(()=>{
-          log("Starting notifications for: ", newCharacteristic);
-          var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started for ", newCharacteristic));
+          log("Starting notifications", newCharacteristic);
+          var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
           if (settings.gracePeriodNotification > 0){
             log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
             startPromise = startPromise.then(()=>{
@@ -301,7 +322,7 @@
           return startPromise;
         });
       }
-      return result.then(()=>log("Handled characteristic: ", newCharacteristic));
+      return result.then(()=>log("Handled characteristic", newCharacteristic));
     };
 
     var attachCharacteristicPromise = function(promise, characteristic) {
@@ -312,11 +333,11 @@
     };
 
     var createCharacteristicsPromise = function(newCharacteristics) {
-      log("Create characteristics promise: ", newCharacteristics);
+      log("Create characteristics promis ", newCharacteristics);
       var result = Promise.resolve();
       for (var c of newCharacteristics){
         if (!supportedCharacteristics[c.uuid]) continue;
-        log("Supporting characteristic: ", c);
+        log("Supporting characteristic", c);
         characteristics.push(c);
         if (c.properties.notify){
           addNotificationHandler(c);
@@ -328,10 +349,10 @@
     };
 
     var createServicePromise = function(service) {
-      log("Create service promise: ", service);
+      log("Create service promise", service);
       var result = Promise.resolve();
       result = result.then(()=>{
-        log("Handling service: " + service.uuid);
+        log("Handling service" + service.uuid);
         return service.getCharacteristics().then((c)=>createCharacteristicsPromise(c));
       });
       return result.then(()=>log("Handled service" + service.uuid));
@@ -368,7 +389,7 @@
         }
 
         promise = promise.then((d)=>{
-          log("Got device: ", d);
+          log("Got device", d);
           d.on('gattserverdisconnected', onDisconnect);
           device = d;
         });
@@ -379,14 +400,14 @@
         });
       } else {
         promise = Promise.resolve();
-        log("Reuse device: ", device);
+        log("Reuse device", device);
       }
 
       promise = promise.then(()=>{
         if (gatt){
-          log("Reuse GATT: ", gatt);
+          log("Reuse GATT", gatt);
         } else {
-          log("GATT is new: ", gatt);
+          log("GATT is new", gatt);
           characteristics = [];
           var cachedId = getCache().id;
           if (device.id !== cachedId){
@@ -404,7 +425,10 @@
 
       promise = promise.then((gatt)=>{
         if (!gatt.connected){
-          var connectPromise = gatt.connect(connectSettings);
+          log("Connecting...");
+          var connectPromise = gatt.connect(connectSettings).then(function() {
+            log("Connected.");
+          });
           if (settings.gracePeriodConnect > 0){
             log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
             connectPromise = connectPromise.then(()=>{
@@ -432,7 +456,7 @@
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
-          characteristics = characteristicsFromCache();
+          characteristics = characteristicsFromCache(device);
         }
       });
 
@@ -445,11 +469,11 @@
           });
 
           characteristicsPromise = characteristicsPromise.then((services)=>{
-            log("Got services:", services);
+            log("Got services", services);
             var result = Promise.resolve();
             for (var service of services){
               if (!(supportedServices.includes(service.uuid))) continue;
-              log("Supporting service: ", service.uuid);
+              log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
             if (settings.gracePeriodService > 0) {
@@ -473,7 +497,7 @@
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
         characteristicsToCache(characteristics);
-        clearRetryTimeout();
+        clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
         log("Error:", e);
@@ -491,12 +515,14 @@
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
+        clearRetryTimeout(true);
         if (gatt) {
           if (gatt.connected){
-            log("Disconnect with gatt: ", gatt);
+            log("Disconnect with gatt", gatt);
             try{
               gatt.disconnect().then(()=>{
                 log("Successful disconnect");
@@ -511,7 +537,33 @@
       }
     };
 
-    var origSetHRMPower = Bangle.setHRMPower;
+    if (settings.replace){
+      Bangle.on("HRM", (e) => {
+        e.modified = true;
+        Bangle.emit("HRM_int", e);
+      });
+
+      Bangle.origOn = Bangle.on;
+      Bangle.on = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origOn("HRM_int", callback);
+        } else {
+          Bangle.origOn(name, callback);
+        }
+      };
+
+      Bangle.origRemoveListener = Bangle.removeListener;
+      Bangle.removeListener = function(name, callback) {
+        if (name == "HRM") {
+          Bangle.origRemoveListener("HRM_int", callback);
+        } else {
+          Bangle.origRemoveListener(name, callback);
+        }
+      };
+
+    }
+
+    Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
 
@@ -521,26 +573,41 @@
           Bangle.setBTHRMPower(isOn, app);
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
-          origSetHRMPower(isOn, app);
+          Bangle.origSetHRMPower(isOn, app);
         }
       };
     }
 
-    var fallbackInterval;
+    var fallbackActive = false;
+    var inSwitch = false;
 
-    var switchInternalHrm = function() {
-      if (settings.allowFallback && !fallbackInterval){
-        log("Fallback to HRM enabled");
-        origSetHRMPower(1, "bthrm_fallback");
-        fallbackInterval = setInterval(()=>{
-          if (Bangle.isBTHRMConnected()){
-            origSetHRMPower(0, "bthrm_fallback");
-            clearInterval(fallbackInterval);
-            fallbackInterval = undefined;
-            log("Fallback to HRM disabled");
-          }
-        }, settings.fallbackTimeout);
+    var stopFallback = function(){
+      if (fallbackActive){
+        Bangle.origSetHRMPower(0, "bthrm_fallback");
+        fallbackActive = false;
+        log("Fallback to HRM disabled");
       }
+    };
+
+    var startFallback = function(){
+      if (!fallbackActive && settings.allowFallback) {
+        fallbackActive = true;
+        Bangle.origSetHRMPower(1, "bthrm_fallback");
+        log("Fallback to HRM enabled");
+      }
+    };
+
+    var switchFallback = function() {
+      log("Check falling back to HRM");
+      if (!inSwitch){
+        inSwitch = true;
+        if (Bangle.isBTHRMActive()){
+          stopFallback();
+        } else {
+          startFallback();
+        }
+      }
+      inSwitch = false;
     };
 
     if (settings.replace){
@@ -549,12 +616,11 @@
         for (var i = 0; i < Bangle._PWR.HRM.length; i++){
           var app = Bangle._PWR.HRM[i];
           log("Moving app " + app);
-          origSetHRMPower(0, app);
+          Bangle.origSetHRMPower(0, app);
           Bangle.setBTHRMPower(1, app);
           if (Bangle._PWR.HRM===undefined) break;
         }
       }
-      switchInternalHrm();
     }
 
     E.on("kill", ()=>{

@@ -7,6 +7,7 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
         super();
     }
     name(){return "English (Traditional)";}
+    shortName(){return "en2"}
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();
