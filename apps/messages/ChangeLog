@@ -55,3 +55,4 @@
 0.40: Use default Bangle formatter for booleans
 0.41: Add notification icons in the widget
 0.42: Fix messages ignoring "Vibrate: Off" setting
+0.43: Add new Icons (Airbnb, warnwetter)
