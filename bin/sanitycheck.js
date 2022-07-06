@@ -123,7 +123,10 @@ apps.forEach((app,appIdx) => {
   if (!app.version) ERROR(`App ${app.id} has no version`, {file:metadataFile});
   else {
     if (!fs.existsSync(appDir+"ChangeLog")) {
-      if (app.version != "0.01")
+      var invalidChangeLog = fs.readdirSync(appDir).find(f => f.toLowerCase().startsWith("changelog") && f!="ChangeLog");
+      if (invalidChangeLog)
+        ERROR(`App ${app.id} has wrongly named ChangeLog (${invalidChangeLog})`, {file:appDirRelative+invalidChangeLog});
+      else if (app.version != "0.01")
         WARN(`App ${app.id} has no ChangeLog`, {file:metadataFile});
     } else {
       var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();

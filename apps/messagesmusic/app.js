@@ -1,7 +1,6 @@
 let showMusic = () => {
   Bangle.CLOCK = 1; // To pass condition in messages library
   require('messages').pushMessage({"t":"add","artist":" ","album":" ","track":" ","dur":0,"c":-1,"n":-1,"id":"music","title":"Music","state":"play","new":true});
-  Bangle.CLOCK = undefined;
 };
 
 var settings = require('Storage').readJSON('messages.settings.json', true) || {}; //read settings if they exist else set to empty dict
