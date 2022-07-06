@@ -30,7 +30,7 @@
       "Refresh every": {
         value: settings.refresh / 60,
         min: 1,
-        max: 48,
+        max: 168,
         step: 1,
         format: v=>v+"h",
         onchange: v => {
