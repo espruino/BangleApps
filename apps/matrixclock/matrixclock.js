@@ -10,7 +10,7 @@
 const Locale = require('locale');
 
 const PREFERENCE_FILE = "matrixclock.settings.json";
-const settings = Object.assign({'color': 'theme'},
+const settings = Object.assign({color: "theme"},
     require('Storage').readJSON(PREFERENCE_FILE, true) || {});
 
 const colors = {

@@ -1,6 +1,6 @@
 (function(back) {
     const PREFERENCE_FILE = "matrixclock.settings.json";
-    var settings = Object.assign({color_scheme : "theme"},
+    var settings = Object.assign({color : "theme"},
         require('Storage').readJSON(PREFERENCE_FILE, true) || {});
 
     console.log("loaded:" + JSON.stringify(settings));
