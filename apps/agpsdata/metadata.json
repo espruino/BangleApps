@@ -8,7 +8,7 @@
   "allow_emulator":true, 
   "supports": ["BANGLEJS2"],
   "readme":"README.md",
-  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" }, { "url":"screenshot3.png" }, { "url":"screenshot4.png" }, { "url":"screenshot5.png" } ],
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" } ],
   "storage": [
     {"name":"agpsdata.app.js","url":"app.js"},
     {"name":"agpsdata.img","url":"agpsdata-icon.js","evaluate":true},
