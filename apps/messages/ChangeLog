@@ -55,3 +55,4 @@
 0.40: Use default Bangle formatter for booleans
 0.41: Add notification icons in the widget
 0.42: Separate buzz pattern for incoming calls
+      Fix messages ignoring "Vibrate: Off" setting
