@@ -35,6 +35,6 @@
     E.showMenu({
         "" : { "title" : "Matrix Clock" },
         "< Back" : () => back(),
-        "Colour": stringInSettings("color_scheme", ["theme", "black", "purple", "red", "white"])
+        "Colour": stringInSettings("color", ["theme", "black", "purple", "red", "white"])
     });
 })
