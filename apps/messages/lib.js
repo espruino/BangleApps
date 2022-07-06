@@ -112,6 +112,7 @@ exports.getMessageImage = function(msg) {
   */
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
+  if (s=="airbnb") return atob("GBgBAAAAAAAAAAAAADwAAH4AAGYAAMMAAIEAAYGAAYGAAzzAA2bABmZgBmZgDGYwDDwwCDwQCBgQDDwwB+fgA8PAAAAAAAAAAAAA");
   if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
@@ -149,6 +150,7 @@ exports.getMessageImage = function(msg) {
 exports.getMessageImageCol = function(msg,def) {
   return {
     // generic colors, using B2-safe colors
+    "airbnb": "#f00",
     "alarm": "#fff",
     "mail": "#ff0",
     "music": "#f0f",
