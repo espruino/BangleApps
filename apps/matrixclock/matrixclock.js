@@ -3,24 +3,82 @@
  *
  * Matrix Clock
  *
- * A simple clock inspired by the movie. 
- * Text shards move down the screen as a background to the 
+ * A simple clock inspired by the movie.
+ * Text shards move down the screen as a background to the
  * time and date
  **/
 const Locale = require('locale');
 
-const SHARD_COLOR =[0,1.0,0];
+const PREFERENCE_FILE = "matrixclock.settings.json";
+const settings = Object.assign({'color': 'theme'},
+    require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+
+const colors = {
+  'green': [0,1.0,0],
+  'red' : [1.0,0.0,0.0],
+  'blue' : [0.0,0.0,1.0],
+  'black': [0.0,0.0,0.0],
+  'white': [1.0,1.0,1.0],
+  'yellow': [1.0,1.0,0.0],
+  'purple': [1.0,0.0,1.0]
+};
+
+const bg2fg_color = {
+  'green' : 'white',
+  'red' : 'white',
+  'blue': 'white',
+  'black' : 'green',
+  'white': 'black',
+  'yellow': 'black',
+  'purple': 'yellow'
+};
+
+function int2Color(color_int){
+  var blue_int = color_int & 31;
+  var blue =  (blue_int)/31.0;
+
+  var green_int = (color_int >> 5) & 31;
+  var green = (green_int)/31.0;
+
+  var red_int =   (color_int >> 11) & 31;
+  var red =   red_int/ 31.0;
+  return [red,green,blue];
+}
+
+var fg_color = colors.black;
+var bg_color = colors.white;
+
+// now lets deal with the settings
+if(settings.color == "theme"){
+  bg_color = int2Color(g.theme.bg);
+  if(g.theme.bg == 0) {
+    fg_color = colors.green;
+  } else {
+    fg_color = int2Color(g.theme.fg);
+  }
+} else {
+  bg_color = colors[settings.color];
+  fg_color = colors[bg2fg_color[settings.color]];
+  g.setBgColor(bg_color[0],bg_color[1],bg_color[2]);
+}
+if(fg_color == undefined)
+  fg_color = colors.black;
+
+if(bg_color == undefined)
+  bg_color = colors.white;
+
 const SHARD_FONT_SIZE = 12;
 const SHARD_Y_START = 30;
+
 const w = g.getWidth();
 
 /**
-* The text shard object is responsible for creating the 
-* shards of text that move down the screen. As the 
-* shard moves down the screen the latest character added
-* is brightest with characters being coloured darker and darker
-* going back to the eldest
-*/
+ * The text shard object is responsible for creating the
+ * shards of text that move down the screen. As the
+ * shard moves down the screen the latest character added
+ * is brightest with characters being coloured darker and darker
+ * going back to the eldest
+ */
 class TextShard {
 
   constructor(x,y,length){
@@ -34,44 +92,46 @@ class TextShard {
     this.txt = [];
   }
   /**
-  * The add method call adds another random character to 
-  * the chain
-  */
+   * The add method call adds another random character to
+   * the chain
+   */
   add(){
     this.txt.push(randomChar());
   }
   /**
-  * The show method displays the latest shard image to the 
-  * screen with the following rules:
-  * - latest addition is brightest, oldest is darker
-  * - display up to defined length of characters only 
-  * of the shard to save cpu
-  */
+   * The show method displays the latest shard image to the
+   * screen with the following rules:
+   * - latest addition is brightest, oldest is darker
+   * - display up to defined length of characters only
+   * of the shard to save cpu
+   */
   show(){
     g.setFontAlign(-1,-1,0);
     for(var i=0; i<Math.min(this.txt.length, this.length + 1) ; i++){
-      idx = this.txt.length - i - 1;
+      var idx = this.txt.length - i - 1;
       var color_strength=1 - i/this.length;
       if(i > this.length - 2){
         color_strength = 0;
-      } 
-      g.setColor(color_strength*SHARD_COLOR[0],
-                 color_strength*SHARD_COLOR[1],
-                 color_strength*SHARD_COLOR[2]);
+      }
+      var bg_color_strength = 1 - color_strength;
+      g.setColor(Math.abs(color_strength*fg_color[0] - bg_color_strength*bg_color[0]),
+          Math.abs(color_strength*fg_color[1] - bg_color_strength*bg_color[1]),
+          Math.abs(color_strength*fg_color[2] - bg_color_strength*bg_color[2])
+      );
       g.setFont("Vector",SHARD_FONT_SIZE);
-      g.drawString(this.txt[idx], this.x, this.y + idx*SHARD_FONT_SIZE); 
+      g.drawString(this.txt[idx], this.x, this.y + idx*SHARD_FONT_SIZE);
     }
   }
   /**
-  * Method tests to see if any part of the shard chain is still 
-  * visible on the screen
-  */
+   * Method tests to see if any part of the shard chain is still
+   * visible on the screen
+   */
   isVisible(){
-     return (this.y + (this.txt.length - this.length - 2)*SHARD_FONT_SIZE < g.getHeight());
+    return (this.y + (this.txt.length - this.length - 2)*SHARD_FONT_SIZE < g.getHeight());
   }
   /**
-  * resets the shard back to the top of the screen
-  */
+   * resets the shard back to the top of the screen
+   */
   reset(){
     this.y = SHARD_Y_START;
     this.txt = [];
@@ -79,8 +139,8 @@ class TextShard {
 }
 
 /**
-* random character chooser to be called by the shard when adding characters
-*/
+ * random character chooser to be called by the shard when adding characters
+ */
 const CHAR_CODE_START = 33;
 const CHAR_CODE_LAST = 126;
 const CHAR_CODE_LENGTH = CHAR_CODE_LAST - CHAR_CODE_START;
@@ -90,7 +150,7 @@ function randomChar(){
 
 // Now set up the shards
 // we are going to have a limited no of shards (to save cpu)
-// but randomize the x value and length every reset to make it look as if there 
+// but randomize the x value and length every reset to make it look as if there
 // are more
 var shards = [];
 const NO_SHARDS = 3;
@@ -112,14 +172,13 @@ var timeStr = "";
 var dateStr = "";
 var last_draw_time = null;
 
-const TIME_X_COORD = 20;
 const TIME_Y_COORD = g.getHeight() / 2;
 const DATE_X_COORD = 170;
 const DATE_Y_COORD = 30;
 const RESET_PROBABILITY = 0.5;
 /**
-* main loop to draw the clock face
-*/
+ * main loop to draw the clock face
+ */
 function draw_clock(){
   // first move all the shards down the screen
   for(var i=0; i<this.shards.length; i++){
@@ -147,22 +206,22 @@ function draw_clock(){
   g.setFont("Vector", g.getWidth() / 5);
   g.setFontAlign(0,-1);
   if(last_draw_time == null || now.getMinutes() != last_draw_time.getMinutes()){
-    g.setColor(g.theme.bg);
+    g.setColor(bg_color[0],bg_color[1],bg_color[2]);
     g.drawString(timeStr, w/2, TIME_Y_COORD);
     timeStr = format_time(now);
   }
-  g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
-  g.drawString(timeStr, w/2, TIME_Y_COORD); 
+  g.setColor(fg_color[0], fg_color[1], fg_color[2]);
+  g.drawString(timeStr, w/2, TIME_Y_COORD);
   //
   // draw date when it changes
   g.setFont("Vector",15);
   g.setFontAlign(0,-1,0);
   if(last_draw_time == null || now.getDate() != last_draw_time.getDate()){
-    g.setColor(g.theme.bg);
+    g.setColor(bg_color[0],bg_color[1],bg_color[2]);
     g.drawString(dateStr, w/2, DATE_Y_COORD);
     dateStr = format_date(now);
   }
-  g.setColor(SHARD_COLOR[0], SHARD_COLOR[1], SHARD_COLOR[2]);
+  g.setColor(fg_color[0], fg_color[1], fg_color[2]);
   g.drawString(dateStr, w/2, DATE_Y_COORD);
   last_draw_time = now;
 }
@@ -180,7 +239,7 @@ function format_time(now){
   }
   var am_pm;
   if(time.getHours() < 12){
-    am_pm = "AM"; 
+    am_pm = "AM";
   } else {
     am_pm = "PM";
   }
@@ -188,13 +247,13 @@ function format_time(now){
 }
 
 function format00(num){
-    var value = (num | 0);
-    if(value > 99 || value < 0)
-        throw "must be between in range 0-99";
-    if(value < 10)
-        return "0" + value.toString();
-    else
-        return value.toString();
+  var value = (num | 0);
+  if(value > 99 || value < 0)
+    throw "must be between in range 0-99";
+  if(value < 10)
+    return "0" + value.toString();
+  else
+    return value.toString();
 }
 
 // The interval reference for updating the clock
@@ -215,12 +274,12 @@ function startTimers(){
   clearTimers();
   if (Bangle.isLCDOn()) {
     intervalRef = setInterval(() => {
-        if (!shouldRedraw()) {
-          //console.log("draw clock callback - skipped redraw");
-        } else {
-          draw_clock();
-        }
-      }, 100
+          if (!shouldRedraw()) {
+            //console.log("draw clock callback - skipped redraw");
+          } else {
+            draw_clock();
+          }
+        }, 100
     );
     draw_clock();
   } else {
