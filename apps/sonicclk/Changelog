@@ -1,6 +1,0 @@
-0.01: [MAJOR] Added sonic clock app
-0.02: [PATCH] Fixed text alignment issue; Increased acceleration required to activate twist;
-0.03: [MINOR] Added settings menu to control twist threshold and LCD Activity
-0.04: [PATCH] Call `Bangle.setUI` when exiting settings menu, settings tap moved to top
-0.05: [PATCH] Firmware 2v11 - use `wakeOnTwist` rather than manual `setLCDPower`; Reset sonic on `fullReset`
-0.06: Use default Bangle formatter for booleans
