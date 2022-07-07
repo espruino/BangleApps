@@ -1,14 +1,14 @@
 # A-GPS Data
 
-Load assisted GPS (AGPS) data directly to the watch using the new http requests on Android GadgetBridge.
+Load assisted GPS (A-GPS) data directly to your Bangle.js using the new http requests on Android GadgetBridge.
 
-Will download AGPS data in background (if enabled in settings).
+Will download A-GPS data in background (if enabled in settings).
 
 Make sure:
 * your GadgetBridge version supports http requests
 * turn on internet access in GadgetBridge settings
 
-Currently proof of concept on Bangle2 only.
+Currently proof of concept on Bangle.js 2 only.
 
 ## Creator
 [@pidajo](https://github.com/pidajo)
