@@ -1,3 +1,6 @@
+g.reset().clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
 setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
@@ -11,6 +14,7 @@ var icoShot = require("heatshrink").decompress(atob("lEoxH+AH4A/AH4A/AH4AqwIAgE+
 var drawTimeout;
 var activeDrink = 0;
 var drinks = [0,0,0];
+const maxDrinks = 2; // 3 drinks
 
 function updateTime(){
 	var d = new Date();
@@ -30,7 +34,7 @@ function updateTime(){
 	} else {
 		ampm = ""
 	}	 
-	g.setBgColor(g.theme.bg).setColor(g.theme.bg).fillRect(0,24,176,44); //Clear
+	g.setBgColor(g.theme.bg).clearRect(0,24,176,44); //Clear
 	g.setFontAlign(0,0); // center font
 	g.setBgColor(g.theme.bg).setColor(g.theme.fg);
 	g.setFont("Vector",14).drawString("Time: " + hours + ":" + minutes + " " + ampm,100,34);
@@ -46,10 +50,18 @@ function queueDrawTime() {
 }
 
 function updateDrinks(){
+	
 	g.setBgColor(g.theme.bg).clearRect(0,145,176,176); //Clear
-	g.setFont("Vector",20).setColor(g.theme.fg).drawString(drinks[activeDrink], (40 * (activeDrink + 1)) - 20, 155);
-	console.log(drinks[activeDrink] + " drinks of drink #" + activeDrink);
-
+	for (let i = 0; i <= maxDrinks; i++) {
+		if (i == activeDrink) {
+			g.setColor(g.theme.fg).fillRect((40 * (i + 1)) - 40 ,145,(40 * (i + 1)) - 40  + 40,176);
+			g.setColor(g.theme.bg);
+		} else {
+			g.setColor(g.theme.fg);
+		}
+		g.setFont("Vector",20).drawString(drinks[i], (40 * (i + 1)) - 20, 160);
+		console.log(drinks[activeDrink] + " drinks of drink #" + i + " - Active: " + activeDrink);
+	} 
 }
 
 function addDrink(){
@@ -62,6 +74,15 @@ function removeDrink(){
 	updateDrinks();
 }
 
+function previousDrink(){
+	if (activeDrink > 0) activeDrink = activeDrink - 1;
+	updateDrinks();
+}
+
+function nextDrink(){
+	if (activeDrink < maxDrinks) activeDrink = activeDrink + 1;
+	updateDrinks();
+}
 
 
 function initDragEvents() {
@@ -75,8 +96,10 @@ function initDragEvents() {
         // horizontal
 		if (dx < dy) {
 			console.log("left " + dx + " " + dy);
+			previousDrink();
 		} else {
 			console.log("right " + dx + " " + dy);
+			nextDrink();
 		}
       } else if (Math.abs(dy)>Math.abs(dx)+10) {
         // vertical
@@ -100,12 +123,6 @@ function initDragEvents() {
 
 
 
-g.reset();
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
-
 
 g.setBgColor(g.theme.bg);
 g.drawImage(icoBeer,0,100);
@@ -121,6 +138,6 @@ drawTimeout = undefined;
 updateTime();
 queueDrawTime();
 initDragEvents();
-//updateDrinks();
+updateDrinks();
  
- 
+
