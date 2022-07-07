@@ -10,27 +10,30 @@
 const Locale = require('locale');
 
 const PREFERENCE_FILE = "matrixclock.settings.json";
-const settings = Object.assign({color: "theme"},
+const settings = Object.assign({color: "theme", intensity: 'light'},
     require('Storage').readJSON(PREFERENCE_FILE, true) || {});
 
 const colors = {
+  'gray' :[0.5,0.5,0.5],
   'green': [0,1.0,0],
   'red' : [1.0,0.0,0.0],
   'blue' : [0.0,0.0,1.0],
   'black': [0.0,0.0,0.0],
+  'purple': [1.0,0.0,1.0],
   'white': [1.0,1.0,1.0],
-  'yellow': [1.0,1.0,0.0],
-  'purple': [1.0,0.0,1.0]
+  'yellow': [1.0,1.0,0.0]
 };
 
-const bg2fg_color = {
-  'green' : 'white',
-  'red' : 'white',
-  'blue': 'white',
-  'black' : 'green',
-  'white': 'black',
-  'yellow': 'black',
-  'purple': 'yellow'
+const color_schemes = {
+  'black on white': ['white','black'],
+  'green on white' : ['white','green'],
+  'green on black' : ['black','green'],
+  'red on black' : ['black', 'red'],
+  'red on white' : ['white', 'red'],
+  'white on gray' : ['gray', 'white'],
+  'white on red' : ['red', 'white'],
+  'white on blue': ['blue','white'],
+  'white on purple': ['purple', 'white']
 };
 
 function int2Color(color_int){
@@ -49,23 +52,38 @@ var fg_color = colors.black;
 var bg_color = colors.white;
 
 // now lets deal with the settings
-if(settings.color == "theme"){
+if(settings.color === "theme"){
   bg_color = int2Color(g.theme.bg);
-  if(g.theme.bg == 0) {
+  if(g.theme.bg === 0) {
     fg_color = colors.green;
   } else {
     fg_color = int2Color(g.theme.fg);
   }
 } else {
-  bg_color = colors[settings.color];
-  fg_color = colors[bg2fg_color[settings.color]];
+  var color_scheme = color_schemes[settings.color];
+  bg_color = colors[color_scheme[0]];
+  fg_color = colors[color_scheme[1]];
   g.setBgColor(bg_color[0],bg_color[1],bg_color[2]);
 }
-if(fg_color == undefined)
+if(fg_color === undefined)
   fg_color = colors.black;
 
-if(bg_color == undefined)
+if(bg_color === undefined)
   bg_color = colors.white;
+
+const intensity_schemes = {
+  'light': 3,
+  'medium': 4,
+  'high': 5
+};
+
+var noShards = intensity_schemes.light;
+if(settings.intensity !== undefined){
+  noShards = intensity_schemes[settings.intensity];
+}
+if(noShards === undefined){
+  noShards = intensity_schemes.light;
+}
 
 const SHARD_FONT_SIZE = 12;
 const SHARD_Y_START = 30;
@@ -153,8 +171,7 @@ function randomChar(){
 // but randomize the x value and length every reset to make it look as if there
 // are more
 var shards = [];
-const NO_SHARDS = 3;
-const channel_width = g.getWidth()/NO_SHARDS;
+const channel_width = g.getWidth()/noShards;
 
 function shard_x(i){
   return i*channel_width + Math.random() * channel_width;
@@ -164,7 +181,7 @@ function shard_length(){
   return Math.floor(Math.random()*5) + 3;
 }
 
-for(var i=0; i<NO_SHARDS; i++){
+for(var i=0; i<noShards; i++){
   shards.push(new TextShard(shard_x(i),50 + Math.random()*100,shard_length()) );
 }
 
