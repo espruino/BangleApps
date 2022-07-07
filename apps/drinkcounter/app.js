@@ -15,6 +15,61 @@ var drawTimeout;
 var activeDrink = 0;
 var drinks = [0,0,0];
 const maxDrinks = 2; // 3 drinks
+var firstDrinkTime = null;
+
+
+
+//static float get_ebac()
+//{
+//  float sum_drinks = getSumDrinks(drinks);
+//
+//  int day1 = current_time.tm_yday;
+//  int hour1 = current_time.tm_hour;
+//  int min1 = current_time.tm_min;
+//  long int combine1 = min1+hour1*60+day1*24*60;
+//
+//  int day2 = settings.first_drink_time.tm_yday;
+//  int hour2 = settings.first_drink_time.tm_hour;
+//  int min2 = settings.first_drink_time.tm_min;
+//  long int combine2 = min2+hour2*60+day2*24*60;
+//
+//  unsigned int time_diff = abs(combine1 - combine2);
+//
+//  if(settings.beer_size==1)
+//  sum_drinks+=*(drinks[0].num_drinks)/0.33*0.25-*(drinks[0].num_drinks);
+//  if(settings.beer_size==2)
+//    sum_drinks+=*(drinks[0].num_drinks)/0.33*0.5-*(drinks[0].num_drinks);
+//  if(settings.beer_size==3)
+//    sum_drinks+=*(drinks[0].num_drinks)*3.0-*(drinks[0].num_drinks);
+//
+//  float bw = settings.sex==0 ? 0.58f:0.49f;
+//  float scale_factor = settings.unit==0? 1.0f:0.453592f; // 0 = kg, 1 = pounds
+//  float multiplication = settings.output==0? 10.f:1.f; //0 = %o, 1 = %
+//  return( ((0.806f * sum_drinks * 1.2f)/(bw*(float)settings.weight*scale_factor) - (0.017f * (time_diff/60.f)))*multiplication);
+//}
+
+function drawEbac(){
+	if (firstDrinkTime) {
+		var sum_drinks = drinks[0] + drinks[1] + drinks[2];
+		
+		// TODO: Settings
+		var bw = 0.58; //bw = settings.sex==0 ? 0.58f:0.49f;
+		var weight = 80 * 0.453592; //* scale factor: 1.0f:0.453592f; // 0 = kg, 1 = pounds
+		var multiplication = 10; //10.f:1.f; //0 = %o, 1 = % 
+		
+		var currentTime = new Date();
+		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000); 
+	
+		console.log("timediff: " + time_diff);
+	
+		ebac = Math.round(((0.806 * sum_drinks * 1.2)/(bw*weight) - (0.017 * (time_diff/60)))*multiplication * 100) / 100
+		console.log("BAC: " + ebac);
+		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
+		g.setFontAlign(0,0).setFont("Vector",15).setColor(g.theme.fg).drawString("BAC: " + ebac, 90, 74);
+	}
+}
+
+
 
 function updateTime(){
 	var d = new Date();
@@ -37,7 +92,7 @@ function updateTime(){
 	g.setBgColor(g.theme.bg).clearRect(0,24,176,44); //Clear
 	g.setFontAlign(0,0); // center font
 	g.setBgColor(g.theme.bg).setColor(g.theme.fg);
-	g.setFont("Vector",14).drawString("Time: " + hours + ":" + minutes + " " + ampm,100,34);
+	g.setFont("Vector",14).drawString("Time: " + hours + ":" + minutes + " " + ampm,90,34);
 	queueDrawTime();
 }
 
@@ -50,21 +105,30 @@ function queueDrawTime() {
 }
 
 function updateDrinks(){
-	
 	g.setBgColor(g.theme.bg).clearRect(0,145,176,176); //Clear
 	for (let i = 0; i <= maxDrinks; i++) {
 		if (i == activeDrink) {
-			g.setColor(g.theme.fg).fillRect((40 * (i + 1)) - 40 ,145,(40 * (i + 1)) - 40  + 40,176);
+			g.setColor(g.theme.fg).fillRect((40 * (i + 1)) - 40 ,145,(40 * (i + 1)),176);
 			g.setColor(g.theme.bg);
 		} else {
 			g.setColor(g.theme.fg);
 		}
 		g.setFont("Vector",20).drawString(drinks[i], (40 * (i + 1)) - 20, 160);
-		console.log(drinks[activeDrink] + " drinks of drink #" + i + " - Active: " + activeDrink);
+		console.log(drinks[i] + " drinks of drink #" + i + " - Active: " + activeDrink);
 	} 
+	drawEbac();
 }
 
 function addDrink(){
+	if (!firstDrinkTime){
+		firstDrinkTime = new Date();
+		var dafirstDrinkTime = firstDrinkTime.toString().split(" ");
+		var firstDrinkTimeTime = dafirstDrinkTime[4].split(":");
+		var firstDrinkTimeHours = firstDrinkTimeTime[0];
+		var firstDrinkTimeMinutes = firstDrinkTimeTime[1];
+		console.log("FIRST drink @ " + firstDrinkTime + " = " + firstDrinkTime.toString());
+		g.setFontAlign(0,0).setFont("Vector",15).drawString("1st drink @ " + firstDrinkTimeHours + ":" +  firstDrinkTimeMinutes, 90, 34 + 20 );
+	}
 	drinks[activeDrink] = drinks[activeDrink] + 1;
 	updateDrinks();
 }
@@ -116,20 +180,10 @@ function initDragEvents() {
 }
 
 
-
-// Todo
-// Add first drink time
-
-
-
-
-
 g.setBgColor(g.theme.bg);
 g.drawImage(icoBeer,0,100);
 g.drawImage(icoCocktail,40,100);
 g.drawImage(icoShot,80,100);
-	
-	
 
 
 
