@@ -39,12 +39,10 @@
             'black on white',
             'green on white',
             'green on black',
-            'red on black',
             'red on white',
             'white on gray',
             'white on red',
-            'white on blue',
-            'white on purple'
+            'white on blue'
         ]),
         "Intensity": stringInSettings("intensity", ['light',
             'medium',
