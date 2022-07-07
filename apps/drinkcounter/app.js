@@ -9,30 +9,29 @@ var icoCocktail = require("heatshrink").decompress(atob("lEoxH+AH4AJtgABEkgmiEiX
 var icoShot = require("heatshrink").decompress(atob("lEoxH+AH4A/AH4A/AH4AqwIAgE+HXADRPME8ZQM5AnSZBQkGAAYngEYonfJA5QQE8zGJFAYfKFBwmKE4iYIE7rpIeYgAJE5woEEpQKHTxhQIIpJaHJxgn/E8zGQZBAnQYxxQRFQYnlFgon5FCYmDE6LjHZRQmPE5AAOE/4njFCTGQKCwmRKAgATE54oWEyAqTDZY"));
 
 function setColor(delta){
-  c+=delta;
-  c = Math.max(c,0);
-  c = Math.min(c,2);
-  if (c<1){
-    g.setColor(c,0,0);
-    Bangle.setLCDBrightness(c >= 0.1 ? c : 0.1);
-  }else{
-    g.setColor(1,c-1,c-1);
-    Bangle.setLCDBrightness(1);
-  }
-  g.fillRect(0,0,g.getWidth(),g.getHeight());
+	c+=delta;
+	c = Math.max(c,0);
+	c = Math.min(c,2);
+	if (c<1){
+		g.setColor(c,0,0);
+		Bangle.setLCDBrightness(c >= 0.1 ? c : 0.1);
+	}else{
+		g.setColor(1,c-1,c-1);
+		Bangle.setLCDBrightness(1);
+		}
+	g.fillRect(0,0,g.getWidth(),g.getHeight());
 }
 
 function updownHandler(direction){
-  if (direction == undefined){
-    c=1;
-    setColor(0);
-  } else {
-    setColor(-direction * 0.1);
-  }
+if (direction == undefined){
+	c=1;
+	setColor(0);
+	} else {
+	setColor(-direction * 0.1);
+	}
 }
 
 setColor(0);
-
 	g.drawImage(icoBeer,0,100);
 	g.drawImage(icoCocktail,40,100);
 	g.drawImage(icoShot,80,100);
