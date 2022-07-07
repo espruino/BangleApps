@@ -3,7 +3,7 @@ function display(text1, text2) {
   g.clear();
   var img = require("Storage").read("agpsdata.img");
   if (img) {
-    g.drawImage(img, g.getWidth() - 48, g.getHeight()-48-24);
+    g.drawImage(img, g.getWidth() - 48, g.getHeight() - 48 - 24);
   }
   g.setFont("Vector", 20);
   g.setFontAlign(0, 1);
@@ -21,9 +21,16 @@ function display(text1, text2) {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-display("Updating data...");
-require("agpsdata").pull(function() {
-    display("Success", "AGPS data updated.");
-},function(error) {
-    display("Error:", error);
-});
+function start() {
+  display("Updating data...");
+  require("agpsdata")
+      .pull(function() { display("Success", "AGPS data updated."); },
+            function(error) {
+              display("Error:" + error, "touch to retry");
+              Bangle.on("touch", () => {
+                start();
+              });
+            });
+}
+
+start();
