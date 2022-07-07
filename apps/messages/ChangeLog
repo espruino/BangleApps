@@ -56,3 +56,4 @@
 0.41: Add notification icons in the widget
 0.42: Fix messages ignoring "Vibrate: Off" setting
 0.43: Add new Icons (Airbnb, warnwetter)
+0.44: Separate buzz pattern for incoming calls

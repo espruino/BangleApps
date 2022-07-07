@@ -70,7 +70,7 @@ exports.pushMessage = function(event) {
   }
   // first, buzz
   if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
-      WIDGETS.messages.buzz();
+      WIDGETS.messages.buzz(event.src);
       if(unlockWatch != false){
         Bangle.setLocked(false);
         Bangle.setLCDPower(1); // turn screen on

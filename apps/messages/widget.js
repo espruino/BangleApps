@@ -60,9 +60,15 @@ draw:function(recall) {
   WIDGETS["messages"].width=this.iconwidth * E.clip(msgs.length, 0, settings.maxMessages);
   WIDGETS["messages"].msgs = msgs;
   Bangle.drawWidgets();
-},buzz:function() {
+},buzz:function(msgSrc) { 
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
-  var pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+  var pattern;
+  if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
+    // special vibration pattern for incoming calls
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateCalls;
+  } else {
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+  }
   if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
   require("buzz").pattern(pattern);
 },touch:function(b,c) {

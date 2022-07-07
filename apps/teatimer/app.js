@@ -216,6 +216,8 @@ function initDragEvents() {
 function showHelp() {
   if (state == states.start) {
     state = states.help;
+	g.setBgColor(g.theme.bg);
+	g.setColor(g.theme.fg);
     E.showMessage("Swipe up/down\n+/- one minute\n\nSwipe left/right\n+/- 15 seconds\n\nPress Btn1 to start","Tea timer help");
   }
   // return to start
