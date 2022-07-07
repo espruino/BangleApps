@@ -112,6 +112,7 @@ exports.getMessageImage = function(msg) {
   */
   if (msg.img) return atob(msg.img);
   var s = (msg.src||"").toLowerCase();
+  if (s=="airbnb") return atob("GBgBAAAAAAAAAAAAADwAAH4AAGYAAMMAAIEAAYGAAYGAAzzAA2bABmZgBmZgDGYwDDwwCDwQCBgQDDwwB+fgA8PAAAAAAAAAAAAA");
   if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
   if (s=="calendar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
@@ -138,6 +139,7 @@ exports.getMessageImage = function(msg) {
   if (s=="to do") return atob("GBgBAAAAAAAAAAAwAAB4AAD8AAH+AAP/DAf/Hg//Px/+f7/8///4///wf//gP//AH/+AD/8AB/4AA/wAAfgAAPAAAGAAAAAAAAAA");
   if (s=="twitch") return atob("GBgBH//+P//+P//+eAAGeAAGeAAGeDGGeDOGeDOGeDOGeDOGeDOGeDOGeAAOeAAOeAAcf4/4f5/wf7/gf//Af/+AA/AAA+AAAcAA");
   if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
+  if (s=="warnapp") return atob("GBgBAAAAAAAAAAAAAH4AAP8AA//AA//AD//gP//gf//4f//+/+P+/8H//8n//4n/fxh/fzg+Pj88Dn44AA4AAAwAAAwAAAgAAAAA");
   if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
   if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
   if (s=="youtube") return atob("GBgBAAAAAAAAAAAAAAAAAf8AH//4P//4P//8P//8P5/8P4/8f4P8f4P8P4/8P5/8P//8P//8P//4H//4Af8AAAAAAAAAAAAAAAAA");
@@ -149,6 +151,7 @@ exports.getMessageImage = function(msg) {
 exports.getMessageImageCol = function(msg,def) {
   return {
     // generic colors, using B2-safe colors
+    "airbnb": "#f00",
     "alarm": "#fff",
     "mail": "#ff0",
     "music": "#f0f",
