@@ -1,6 +1,4 @@
 
-c = 1;
-
 setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
 var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
@@ -32,11 +30,10 @@ function updateTime(){
 	} else {
 		ampm = ""
 	}	 
-	g.setBgColor(g.theme.bg).setColor(g.theme.bg).fillRect(0,0,176,20); //Clear
+	g.setBgColor(g.theme.bg).setColor(g.theme.bg).fillRect(0,24,176,44); //Clear
 	g.setFontAlign(0,0); // center font
 	g.setBgColor(g.theme.bg).setColor(g.theme.fg);
-	g.setFont("Vector",14); 
-	g.drawString("Time: " + hours + ":" + minutes + " " + ampm,100,10);
+	g.setFont("Vector",14).drawString("Time: " + hours + ":" + minutes + " " + ampm,100,34);
 	queueDrawTime();
 }
 
@@ -49,9 +46,8 @@ function queueDrawTime() {
 }
 
 function updateDrinks(){
-	g.setBgColor(g.theme.bg).setColor(g.theme.bg).fillRect(0,145,176,176); //Clear
-	g.setFont("Vector",20).setColor(g.theme.fg);
-	g.drawString(drinks[activeDrink], (40 * (activeDrink + 1)) -20, 165);
+	g.setBgColor(g.theme.bg).clearRect(0,145,176,176); //Clear
+	g.setFont("Vector",20).setColor(g.theme.fg).drawString(drinks[activeDrink], (40 * (activeDrink + 1)) - 20, 155);
 	console.log(drinks[activeDrink] + " drinks of drink #" + activeDrink);
 
 }
@@ -70,7 +66,6 @@ function removeDrink(){
 
 function initDragEvents() {
   Bangle.on("drag", e => {
-
     if (!drag) { // start dragging
       drag = {x: e.x, y: e.y};
     } else if (!e.b) { // released
@@ -92,7 +87,6 @@ function initDragEvents() {
 			console.log("up " + dx + " " + dy);
 			addDrink();
 		}
-
     }
   }
 });
@@ -114,17 +108,11 @@ Bangle.drawWidgets();
 
 
 g.setBgColor(g.theme.bg);
-	g.drawImage(icoBeer,0,100);
-	g.drawImage(icoCocktail,40,100);
-	g.drawImage(icoShot,80,100);
+g.drawImage(icoBeer,0,100);
+g.drawImage(icoCocktail,40,100);
+g.drawImage(icoShot,80,100);
 	
 	
-
-
-	
-	
-
-//Bangle.setUI("updown", updownHandler);
 
 
 
@@ -133,6 +121,6 @@ drawTimeout = undefined;
 updateTime();
 queueDrawTime();
 initDragEvents();
-updateDrinks();
+//updateDrinks();
  
  
