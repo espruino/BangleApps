@@ -36,9 +36,10 @@ function CASIC_CHECKSUM(cmd) {
 }
 
 function updateLastUpdate() {
-  let settings = require("Storage").readJSON("agpsdata.json", 1) || {};
-  settings.lastUpdate = Math.round(Date.now());   
-  require("Storage").writeJSON("agpsdata.json", settings)
+  const file = "agpsdata.json";
+  let data = require("Storage").readJSON(file, 1) || {};
+  data.lastUpdate = Math.round(Date.now());
+  require("Storage").writeJSON(file, data);
 }
 
 exports.pull = function(successCallback, failureCallback) {

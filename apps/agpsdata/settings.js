@@ -1,6 +1,9 @@
 (function(back) {
   function writeSettings(key, value) {
-    var s = require('Storage').readJSON(FILE, true) || {};
+    var s = Object.assign(
+      require('Storage').readJSON("agpsdata.default.json", true) || {},
+      require('Storage').readJSON(FILE, true) || {}
+    );
     s[key] = value;
     require('Storage').writeJSON(FILE, s);
     readSettings();
@@ -13,7 +16,7 @@
     );
   }
 
-  var FILE="agpsdata.json";
+  var FILE="agpsdata.settings.json";
   var settings;
   readSettings();
 

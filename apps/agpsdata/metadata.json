@@ -18,6 +18,7 @@
     {"name":"agpsdata.settings.js","url":"settings.js"}
   ],
   "data": [
-    {"name": "agpsdata.json"}
+    {"name": "agpsdata.json"},
+    {"name": "agpsdata.settings.json"}
   ]
 }

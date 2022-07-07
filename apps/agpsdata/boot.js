@@ -1,6 +1,6 @@
 (function() {
   let waiting = false;
-  let settings = require("Storage").readJSON("agpsdata.json", 1) || {
+  let settings = require("Storage").readJSON("agpsdata.settings.json", 1) || {
     enabled: true,
     refresh: 1440
   };
