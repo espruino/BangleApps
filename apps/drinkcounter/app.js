@@ -48,21 +48,54 @@ var firstDrinkTime = null;
 //  return( ((0.806f * sum_drinks * 1.2f)/(bw*(float)settings.weight*scale_factor) - (0.017f * (time_diff/60.f)))*multiplication);
 //}
 
-function drawEbac(){
+//function drawEbac(){
+//	if (firstDrinkTime) {
+//		var sum_drinks = drinks[0] + drinks[1] + drinks[2];
+//		
+//		// TODO: Settings
+//		var bw = 0.58; //bw = settings.sex==0 ? 0.58f:0.49f;
+//		var weight = 80 * 0.453592; //* scale factor: 1.0f:0.453592f; // 0 = kg, 1 = pounds
+//		var multiplication = 10; //10.f:1.f; //0 = %o, 1 = % 
+//		
+//		var currentTime = new Date();
+//		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000); 
+//	
+//		console.log("timediff: " + time_diff);
+//	
+//		ebac = Math.round(((0.806 * sum_drinks * 1.2)/(bw*weight) - (0.017 * (time_diff/60)))*multiplication * 100) / 100
+//		console.log("BAC: " + ebac);
+//		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
+//		g.setFontAlign(0,0).setFont("Vector",15).setColor(g.theme.fg).drawString("BAC: " + ebac, 90, 74);
+//	}
+//}
+
+
+// Beer:		0.3L 12g 	- 0.5L 20g
+// Radler:		0.3L  6g 	- 0.5L 10g
+// Wine:		0.2L 16g
+// Jäger Shot:	0.02L 5.6g 
+// sex:			Women 60 - Men 70 (Percent)
+
+
+// Formula:		Alcohol in g /(Body weight in kg x sex) – (0,15 x Hours) = bac per mille
+// Example: 	5 	Beer (0.3L=12g), 80KG, 			Male (70%), 	5 hours
+// 				(5		*		12) / (80 / 100 * 	70) - (0.15 * 	5)
+
+function drawBac(){
 	if (firstDrinkTime) {
 		var sum_drinks = drinks[0] + drinks[1] + drinks[2];
 		
 		// TODO: Settings
-		var bw = 0.58; //bw = settings.sex==0 ? 0.58f:0.49f;
-		var weight = 80 * 0.453592; //* scale factor: 1.0f:0.453592f; // 0 = kg, 1 = pounds
-		var multiplication = 10; //10.f:1.f; //0 = %o, 1 = % 
+		var sex = 70; // TODO
+		var weight = 80;  // kg, TODO: pounds
+		var alcoholInG = 12; // TODO
 		
 		var currentTime = new Date();
 		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000); 
 	
 		console.log("timediff: " + time_diff);
-	
-		ebac = Math.round(((0.806 * sum_drinks * 1.2)/(bw*weight) - (0.017 * (time_diff/60)))*multiplication * 100) / 100
+		ebac = Math.round( ((sum_drinks * alcoholInG) / (weight / 100 * sex) - (0.15 * time_diff)   )   * 100) / 100
+
 		console.log("BAC: " + ebac);
 		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
 		g.setFontAlign(0,0).setFont("Vector",15).setColor(g.theme.fg).drawString("BAC: " + ebac, 90, 74);
@@ -87,7 +120,7 @@ function updateTime(){
 			ampm = "AM";	 
 		} 		
 	} else {
-		ampm = ""
+		ampm = "";
 	}	 
 	g.setBgColor(g.theme.bg).clearRect(0,24,176,44); //Clear
 	g.setFontAlign(0,0); // center font
@@ -116,7 +149,7 @@ function updateDrinks(){
 		g.setFont("Vector",20).drawString(drinks[i], (40 * (i + 1)) - 20, 160);
 		console.log(drinks[i] + " drinks of drink #" + i + " - Active: " + activeDrink);
 	} 
-	drawEbac();
+	drawBac();
 }
 
 function addDrink(){
