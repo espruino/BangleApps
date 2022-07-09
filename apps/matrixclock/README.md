@@ -2,6 +2,23 @@
 
 ![](app.png)
 
+## Settings
+Please use the setting->App->Matrix Clock Menu to change the settings
+
+| Setting   | Description                                                                                                        |
+|-----------|--------------------------------------------------------------------------------------------------------------------|
+| Color     | by default set to **'theme'** to follow the theme colors. Selector also offers a selection of other colour schemes |
+| Intensity | Changes the number of matrix streams that are falling                                                              |
+
+## Colour Themes
+
+Some of the colours schemes that are available from the settings screen
+| ![](color_green_on_black.jpg) | ![](color_black_on_white.jpg) |  ![](color_white_on_gray.jpg)    |
+|-------------------------------|-------------------------------|-----|
+| green on black                | white on black                |   white on gray  |
+
+
+
 ## Requests
 
 Please reach out to adrian@adriankirk.com if you have feature requests or notice bugs.
