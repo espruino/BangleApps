@@ -75,7 +75,6 @@ function drawBac(){
 		if (confWeightUnit == "US Pounds") {
 			weight = weight * 0.45359237;
 		}
-		 
 		var currentTime = new Date();
 		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000);  // in hours!
 		console.log("currentTime:    " + currentTime)
