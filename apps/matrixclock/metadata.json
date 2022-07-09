@@ -4,7 +4,7 @@
   "version": "0.05",
   "description": "inspired by The Matrix, a clock of the same style",
   "icon": "matrixclock.png",
-  "screenshots": [{"url":"color_green_on_black.jpg"}],
+  "screenshots": [{"url":"matrix_green_on_black.jpg"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
