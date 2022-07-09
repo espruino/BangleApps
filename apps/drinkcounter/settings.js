@@ -41,7 +41,7 @@
 	"Sex": stringInSettings("sex", ["male", "female"]),
 	
     'Weight': {
-      value: 0|settings.weight,
+      value: 80|settings.weight,
       min: 40, max: 500,
       onchange: v => {
         settings.weight = v;
