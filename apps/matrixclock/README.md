@@ -13,7 +13,8 @@ Please use the setting->App->Matrix Clock Menu to change the settings
 ## Colour Themes
 
 Some of the colours schemes that are available from the settings screen
-| ![](color_green_on_black.jpg) | ![](color_black_on_white.jpg) |  ![](color_white_on_gray.jpg)    |
+
+| ![](matrix_green_on_black.jpg) | ![](matrix_black_on_white.jpg) |  ![](matrix_white_on_gray.jpg)    |
 |-------------------------------|-------------------------------|-----|
 | green on black                | white on black                |   white on gray  |
 
