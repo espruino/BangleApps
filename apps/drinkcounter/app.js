@@ -10,19 +10,38 @@ var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||fal
 var ampm = "AM";
 let drag;
 
-var icoBeer = require("heatshrink").decompress(atob("lEoxH+AG2BAAoecEpAoWC4fXAAIGGAAowTDxAmJE4YGGE5QeJE5QHHE7owJE0pQKE7pQJE86fnE5QJSE5YUHBAIJQYxIpFAAvGBBAJIExYoGDgIACBBApFExonCDYoAOFSAnbFJYnE6vVDYYFHAwakQE4YaFAoQGJEIYoME7QoEE7ogFE/4neTBgntY84n/E+7HUE64mDE8IAFEw4nDTBifIE9gmId7gALE5IGCAooGDE6gASE8yaME7gmOFIgAREqIAhA=="));
-var icoCocktail = require("heatshrink").decompress(atob("lEoxH+AH4AJtgABEkgmiEiXGAAIllAAiXeEAPXAQQDCFBYmTEgYqDFBZNWAIZRME6IfBEAYuEE5J2UwIAaJ5QncFBB3DB4YGCACQnKTQgoXE5bIEE6qfKPAZRFA4MUABgmNPAonBCgQnPExgpFPIgoNEyBSF4wGBFBgmSABCjJTZwoXEzwoHE0AoFE0QnCFAQmhKAonjFAInCE0Qn/E/4n/E/4n/wInDFEAhBEwQoDFLYdCEwooEFTAjHAAwoYIYgAMPDglT"));
-var icoShot = require("heatshrink").decompress(atob("lEoxH+AH4A/AH4A/AH4AqwIAgE+HXADRPME8ZQM5AnSZBQkGAAYngEYonfJA5QQE8zGJFAYfKFBwmKE4iYIE7rpIeYgAJE5woEEpQKHTxhQIIpJaHJxgn/E8zGQZBAnQYxxQRFQYnlFgon5FCYmDE6LjHZRQmPE5AAOE/4njFCTGQKCwmRKAgATE54oWEyAqTDZY"));
+var icoBeer		 = require("heatshrink").decompress(atob("lEoxH+AG2BAAoecEpAoWC4fXAAIGGAAowTDxAmJE4YGGE5QeJE5QHHE7owJE0pQKE7pQJE86fnE5QJSE5YUHBAIJQYxIpFAAvGBBAJIExYoGDgIACBBApFExonCDYoAOFSAnbFJYnE6vVDYYFHAwakQE4YaFAoQGJEIYoME7QoEE7ogFE/4neTBgntY84n/E+7HUE64mDE8IAFEw4nDTBifIE9gmId7gALE5IGCAooGDE6gASE8yaME7gmOFIgAREqIAhA=="));
+var icoCocktail	 = require("heatshrink").decompress(atob("lEoxH+AH4AJtgABEkgmiEiXGAAIllAAiXeEAPXAQQDCFBYmTEgYqDFBZNWAIZRME6IfBEAYuEE5J2UwIAaJ5QncFBB3DB4YGCACQnKTQgoXE5bIEE6qfKPAZRFA4MUABgmNPAonBCgQnPExgpFPIgoNEyBSF4wGBFBgmSABCjJTZwoXEzwoHE0AoFE0QnCFAQmhKAonjFAInCE0Qn/E/4n/E/4n/wInDFEAhBEwQoDFLYdCEwooEFTAjHAAwoYIYgAMPDglT"));
+var icoShot		 = require("heatshrink").decompress(atob("lEoxH+AH4A/AH4A/AH4AqwIAgE+HXADRPME8ZQM5AnSZBQkGAAYngEYonfJA5QQE8zGJFAYfKFBwmKE4iYIE7rpIeYgAJE5woEEpQKHTxhQIIpJaHJxgn/E8zGQZBAnQYxxQRFQYnlFgon5FCYmDE6LjHZRQmPE5AAOE/4njFCTGQKCwmRKAgATE54oWEyAqTDZY"));
+var icoResetB	 = require("heatshrink").decompress(atob("j0exH+AH4AGq0rgErqwbWwIbBAAcrwI3TRxQfQG4oAHlYcSOYOBAAJ7CDx5WEJ4+BBgacKB4cr1gOI1g+DPZINDDhIeCHoY6LUxoRLOoSkOJoZ5HBRRaHGAZrFWAZYMlYACcAkrCwQdQaQj1HDqD+FWwwdRcQgUHSqP+DgYTGHgYdOPQQwHQoY8PGIJmMPJzCPDxIoPYQhcHBgJmPYQtWwIABFAg9UABA8PNgI+FAAcrUKZUBEAcrLwK8XqwaB1jZYAGAA=="))
+var icoResetW	 = require("heatshrink").decompress(atob("j0exH+AH4AGwOs6+swIbWqwbBAAesqw3TDQgAFD6A3FAA+sDiRzBqwABPYQePCIhPHqwMDThQPD1krBxErFgZ7JBoYcJDwQ9DHRamNCJbMCUhxNDPI6ENPI6IGHQRYN1gACU4YABCwQdQaQj1HDqAREWw4dRcQgUHUBQAHDgYTGHgYdOPQQwHQoY8PGIJmMPJzCPDxIoPYQhcHBgJmPYQuBwNWAQJHNHpQAIHh5sBHwoAD1ihTKoIgD1hdBXi54ClbZYAGA="))
 var drawTimeout;
 var activeDrink = 0;
 var drinks = [0,0,0];
 const maxDrinks = 2; // 3 drinks
 var firstDrinkTime = null;
+var firstDrinkTimeTime = null;
 
 var confBeerSize;
 var confSex;
 var confWeight;
 var confWeightUnit;
+
+
+var drinkStatus = require("Storage").open("drinkcounter.status.json", "r");
+
+var test = drinkStatus.read(drinkStatus.getLength());
+
+if(test!== undefined) {
+	drinkStatus = JSON.parse(test); 
+	console.log("read status: " + test);
+} else {
+    drinkStatus = {
+        drinks: [0,0,0]
+    };
+	console.log("no status file - applying default");
+}
+
 
 var drinksAlcohol = [12,16,5.6]; // in gramm
 // Beer:		0.3L 12g 	- 0.5L 20g
@@ -54,7 +73,7 @@ function drawBac(){
 		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000);  // in hours!
 	
 		//console.log("timediff: " + time_diff);
-		ebac = Math.round( ((sum_drinks) / (weight / 100 * sex) - (0.15 * time_diff)   )   * 100) / 100
+		ebac = Math.round( ((sum_drinks) / (weight / 100 * sex) - (0.15 * time_diff)   )   * 100) / 100;
 
 		//console.log("BAC: " + ebac + " weight: " + confWeight + " weightInKilo: " + weight + " Unit: " + confWeightUnit);
 		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
@@ -111,6 +130,7 @@ function queueDrawTime() {
 		}, 20000 - (Date.now() % 20000));
 }
 
+
 function updateDrinks(){
 	g.setBgColor(g.theme.bg).clearRect(0,145,176,176); //Clear
 	for (let i = 0; i <= maxDrinks; i++) {
@@ -121,21 +141,36 @@ function updateDrinks(){
 			g.setColor(g.theme.fg);
 		}
 		g.setFont("Vector",20).drawString(drinks[i], (40 * (i + 1)) - 20, 160);
-		//console.log(drinks[i] + " drinks of drink #" + i + " - Active: " + activeDrink);
+		g.setColor(g.theme.fg);
+		drinkStatus.drinks[i] = drinks[i];
 	} 
+
+	if (g.theme.dark) {
+		g.drawImage(icoResetW,145,145);
+	} else {
+		g.drawImage(icoResetB,145,145);
+	}
+	
+	settings_file = require("Storage").open("drinkcounter.status.json", "w");
+	settings_file.write(JSON.stringify(drinkStatus)); 
+	
 	drawBac();
 }
+
+function updateFirstDrinkTime(){
+	if (firstDrinkTime){
+		g.setFont("8x16");
+		g.setFontAlign(0,0).drawString("1st drink @ " + firstDrinkTimeTime, 90, 34 + 20 );
+	}	
+}	
 
 function addDrink(){
 	if (!firstDrinkTime){
 		firstDrinkTime = new Date();
-		var firstDrinkTimeTime = require("locale").time(new Date(), 1);
-		//console.log("FIRST drink @ " + firstDrinkTime + " = " + firstDrinkTime.toString());
-
-		g.setFont("8x16");
-		g.setFontAlign(0,0).drawString("1st drink @ " + firstDrinkTimeTime, 90, 34 + 20 );
-	}
+		firstDrinkTimeTime = require("locale").time(new Date(), 1);
+	}	
 	drinks[activeDrink] = drinks[activeDrink] + 1;
+	updateFirstDrinkTime();
 	updateDrinks();
 }
 
@@ -154,6 +189,12 @@ function nextDrink(){
 	updateDrinks();
 }
 
+function showDrinks() {
+	g.setBgColor(g.theme.bg);
+	g.drawImage(icoBeer,0,100);
+	g.drawImage(icoCocktail,40,100);
+	g.drawImage(icoShot,80,100);
+}
 
 function initDragEvents() {
   Bangle.on("drag", e => {
@@ -180,17 +221,37 @@ function initDragEvents() {
 			//console.log("up " + dx + " " + dy);
 			addDrink();
 		}
-    }
+    } else {
+		//console.log("tap " + e.x + " " + e.y);
+		if (e.x > 145 && e.y > 145) {
+			g.clearRect(0,34,176,176); //Clear
+			resetDrinks = E.showPrompt("Reset drinks?", {
+				title: "Confirm",
+				buttons: { Yes: true, No: false },
+			});
+			resetDrinks.then((confirm) => {
+				if (confirm) {
+					for (let i = 0; i <= maxDrinks; i++) {
+						drinks[i] = 0;
+					}
+					console.log("reset to default");
+				}
+				console.log("reset " + confirm);  
+				firstDrinkTime = null;
+				showDrinks();
+				updateDrinks();
+				updateTime();
+				updateFirstDrinkTime();
+			});
+		}
+	}
   }
 });
 }
 
 loadMySettings();
-g.setBgColor(g.theme.bg);
-g.drawImage(icoBeer,0,100);
-g.drawImage(icoCocktail,40,100);
-g.drawImage(icoShot,80,100);
 
+showDrinks();
 
 
 if (drawTimeout) clearTimeout(drawTimeout);
@@ -200,4 +261,3 @@ queueDrawTime();
 initDragEvents();
 updateDrinks();
  
-
