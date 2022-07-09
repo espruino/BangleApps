@@ -28,19 +28,26 @@ var confWeight;
 var confWeightUnit;
 
 
+// Load Status ===============
 var drinkStatus = require("Storage").open("drinkcounter.status.json", "r");
-
 var test = drinkStatus.read(drinkStatus.getLength());
-
 if(test!== undefined) {
 	drinkStatus = JSON.parse(test); 
 	console.log("read status: " + test);
-} else {
+	for (let i = 0; i <= maxDrinks; i++) {
+		drinks[i] = drinkStatus.drinks[i];
+	}	
+	firstDrinkTime = Date.parse(drinkStatus.firstDrinkTime);
+	console.log("read firstDrinkTime: " + firstDrinkTime);
+	if (firstDrinkTime) firstDrinkTimeTime = require("locale").time(new Date(firstDrinkTime), 1);
+	console.log("read firstDrinkTimeTime: " + firstDrinkTimeTime);
+} else { 
     drinkStatus = {
         drinks: [0,0,0]
     };
 	console.log("no status file - applying default");
 }
+// Load Status ===============
 
 
 var drinksAlcohol = [12,16,5.6]; // in gramm
@@ -68,14 +75,17 @@ function drawBac(){
 		if (confWeightUnit == "US Pounds") {
 			weight = weight * 0.45359237;
 		}
-		
+		 
 		var currentTime = new Date();
 		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000);  // in hours!
-	
-		//console.log("timediff: " + time_diff);
+		console.log("currentTime:    " + currentTime)
+		console.log("firstDrinkTime: " + firstDrinkTime)
+
+		console.log("timediff: " + time_diff);
 		ebac = Math.round( ((sum_drinks) / (weight / 100 * sex) - (0.15 * time_diff)   )   * 100) / 100;
 
-		//console.log("BAC: " + ebac + " weight: " + confWeight + " weightInKilo: " + weight + " Unit: " + confWeightUnit);
+		console.log("BAC: " + ebac + " weight: " + confWeight + " weightInKilo: " + weight + " Unit: " + confWeightUnit);
+		console.log("sum_drinks: " + sum_drinks);
 		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
 		g.setFontAlign(0,0).setFont("8x16").setColor(g.theme.fg).drawString("BAC: " + ebac, 90, 74);
 	}
@@ -151,6 +161,7 @@ function updateDrinks(){
 		g.drawImage(icoResetB,145,145);
 	}
 	
+	drinkStatus.firstDrinkTime = firstDrinkTime; 
 	settings_file = require("Storage").open("drinkcounter.status.json", "w");
 	settings_file.write(JSON.stringify(drinkStatus)); 
 	
@@ -166,8 +177,9 @@ function updateFirstDrinkTime(){
 
 function addDrink(){
 	if (!firstDrinkTime){
-		firstDrinkTime = new Date();
+		firstDrinkTime = new Date(); 
 		firstDrinkTimeTime = require("locale").time(new Date(), 1);
+		console.log("init drinking! " + firstDrinkTime);
 	}	
 	drinks[activeDrink] = drinks[activeDrink] + 1;
 	updateFirstDrinkTime();
@@ -260,4 +272,5 @@ updateTime();
 queueDrawTime();
 initDragEvents();
 updateDrinks();
+updateFirstDrinkTime();
  
