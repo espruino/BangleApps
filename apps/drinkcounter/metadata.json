@@ -2,16 +2,21 @@
   "id": "drinkcounter",
   "name": "Drink Counter",
   "shortName": "Drink Counter",
-  "version": "0.10",
+  "version": "0.15",
   "description": "Counts drinks you had for science.",
   "allow_emulator":true,
-  "icon": "app.png",
+  "icon": "drinkcounter.png",
   "type": "app",
   "tags": "health",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"drinkcounter.app.js","url":"app.js"},
-    {"name":"drinkcounter.img","url":"drinkcounter-icon.js","evaluate":true}
+    {"name":"drinkcounter.img","url":"drinkcounter-icon.js","evaluate":true},
+    {"name":"drinkcounter.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"drinkcounter.settings.json"},
+    {"name":"drinkcounter.json"}
   ]
 }
