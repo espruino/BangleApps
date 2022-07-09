@@ -17,6 +17,7 @@
   ],
   "data": [
     {"name":"drinkcounter.settings.json"},
-    {"name":"drinkcounter.json"}
+    {"name":"drinkcounter.json"},
+    {"name":"drinkcounter.status.json"}	
   ]
 }
