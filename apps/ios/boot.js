@@ -63,6 +63,7 @@ E.on('notify',msg=>{
   "name" : string,
 */
   var appNames = {
+    "ch.publisheria.bring": "Bring",
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
@@ -102,23 +103,22 @@ E.on('notify',msg=>{
     "com.toyopagroup.picaboo": "Snapchat",
     "com.ubercab.UberClient": "Uber",
     "com.ubercab.UberEats": "UberEats",
+    "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
+    "com.valvesoftware.Steam": "Steam",
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
+    "com.yourcompany.PPClient": "PayPal",
     "com.zhiliaoapp.musically": "TikTok",
+    "de.no26.Number26": "N26",
     "io.robbie.HomeAssistant": "Home Assistant",
+    "net.superblock.Pushover": "Pushover",
     "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
-    "net.superblock.Pushover": "Pushover",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
     "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
     "tv.twitch": "Twitch",
-    "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
-    "ch.publisheria.bring": "Bring",
-    "de.no26.Number26": "N26",
-    "com.yourcompany.PPClient": "PayPal",
-    "com.valvesoftware.Steam": "Steam",
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
