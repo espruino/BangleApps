@@ -73,6 +73,9 @@ E.on('notify',msg=>{
     "com.apple.podcasts": "Podcasts",
     "com.apple.reminders": "Reminders",
     "com.apple.shortcuts": "Shortcuts",
+    "com.apple.TestFlight": "TestFlight",
+    "com.apple.ScreenTimeNotifications": "ScreenTime",
+    "com.apple.wifid.usernotification": "WiFi",
     "com.atebits.Tweetie2": "Twitter",
     "com.burbn.instagram" : "Instagram",
     "com.facebook.Facebook": "Facebook",
@@ -111,7 +114,11 @@ E.on('notify',msg=>{
     "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
     "tv.twitch": "Twitch",
-
+    "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
+    "ch.publisheria.bring": "Bring",
+    "de.no26.Number26": "N26",
+    "com.yourcompany.PPClient": "PayPal",
+    "com.valvesoftware.Steam": "Steam",
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {

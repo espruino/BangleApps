@@ -7,3 +7,4 @@
 0.07: Added more details from music (instead of Undefined), added more app identifiers
 0.08: Added more app identifiers, added 'cannot display' in case a message goes empty because of replacements
 0.09: Enable 'ams' on new firmwares (ams/ancs can now be enabled individually) (fix #1365)
+0.10: Added more bundleIds
