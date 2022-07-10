@@ -13,8 +13,7 @@ let drag;
 var icoBeer		 = require("heatshrink").decompress(atob("lEoxH+AG2BAAoecEpAoWC4fXAAIGGAAowTDxAmJE4YGGE5QeJE5QHHE7owJE0pQKE7pQJE86fnE5QJSE5YUHBAIJQYxIpFAAvGBBAJIExYoGDgIACBBApFExonCDYoAOFSAnbFJYnE6vVDYYFHAwakQE4YaFAoQGJEIYoME7QoEE7ogFE/4neTBgntY84n/E+7HUE64mDE8IAFEw4nDTBifIE9gmId7gALE5IGCAooGDE6gASE8yaME7gmOFIgAREqIAhA=="));
 var icoCocktail	 = require("heatshrink").decompress(atob("lEoxH+AH4AJtgABEkgmiEiXGAAIllAAiXeEAPXAQQDCFBYmTEgYqDFBZNWAIZRME6IfBEAYuEE5J2UwIAaJ5QncFBB3DB4YGCACQnKTQgoXE5bIEE6qfKPAZRFA4MUABgmNPAonBCgQnPExgpFPIgoNEyBSF4wGBFBgmSABCjJTZwoXEzwoHE0AoFE0QnCFAQmhKAonjFAInCE0Qn/E/4n/E/4n/wInDFEAhBEwQoDFLYdCEwooEFTAjHAAwoYIYgAMPDglT"));
 var icoShot		 = require("heatshrink").decompress(atob("lEoxH+AH4A/AH4A/AH4AqwIAgE+HXADRPME8ZQM5AnSZBQkGAAYngEYonfJA5QQE8zGJFAYfKFBwmKE4iYIE7rpIeYgAJE5woEEpQKHTxhQIIpJaHJxgn/E8zGQZBAnQYxxQRFQYnlFgon5FCYmDE6LjHZRQmPE5AAOE/4njFCTGQKCwmRKAgATE54oWEyAqTDZY"));
-var icoResetB	 = require("heatshrink").decompress(atob("j0exH+AH4AGq0rgErqwbWwIbBAAcrwI3TRxQfQG4oAHlYcSOYOBAAJ7CDx5WEJ4+BBgacKB4cr1gOI1g+DPZINDDhIeCHoY6LUxoRLOoSkOJoZ5HBRRaHGAZrFWAZYMlYACcAkrCwQdQaQj1HDqD+FWwwdRcQgUHSqP+DgYTGHgYdOPQQwHQoY8PGIJmMPJzCPDxIoPYQhcHBgJmPYQtWwIABFAg9UABA8PNgI+FAAcrUKZUBEAcrLwK8XqwaB1jZYAGAA=="))
-var icoResetW	 = require("heatshrink").decompress(atob("j0exH+AH4AGwOs6+swIbWqwbBAAesqw3TDQgAFD6A3FAA+sDiRzBqwABPYQePCIhPHqwMDThQPD1krBxErFgZ7JBoYcJDwQ9DHRamNCJbMCUhxNDPI6ENPI6IGHQRYN1gACU4YABCwQdQaQj1HDqAREWw4dRcQgUHUBQAHDgYTGHgYdOPQQwHQoY8PGIJmMPJzCPDxIoPYQhcHBgJmPYQuBwNWAQJHNHpQAIHh5sBHwoAD1ihTKoIgD1hdBXi54ClbZYAGA="))
+var icoReset	 = require("heatshrink").decompress(atob("j0egILI8ACBh4DC/4DBh4DCv8f4ED8EPwEPEQMAvEAnkB4EA+AKBCAM8DYOA8EB//HwED/wXBg/wnAOC+EAjkDDoMgg+AJoRFCEIIAB/kHgEB/l8FwP/DYIDBC4MD/ASBgYeCAAw"));
 var drawTimeout;
 var activeDrink = 0;
 var drinks = [0,0,0];
@@ -33,19 +32,19 @@ var drinkStatus = require("Storage").open("drinkcounter.status.json", "r");
 var test = drinkStatus.read(drinkStatus.getLength());
 if(test!== undefined) {
 	drinkStatus = JSON.parse(test); 
-	console.log("read status: " + test);
+	//console.log("read status: " + test);
 	for (let i = 0; i <= maxDrinks; i++) {
 		drinks[i] = drinkStatus.drinks[i];
 	}	
 	firstDrinkTime = Date.parse(drinkStatus.firstDrinkTime);
-	console.log("read firstDrinkTime: " + firstDrinkTime);
+	//console.log("read firstDrinkTime: " + firstDrinkTime);
 	if (firstDrinkTime) firstDrinkTimeTime = require("locale").time(new Date(firstDrinkTime), 1);
-	console.log("read firstDrinkTimeTime: " + firstDrinkTimeTime);
+	//console.log("read firstDrinkTimeTime: " + firstDrinkTimeTime);
 } else { 
     drinkStatus = {
         drinks: [0,0,0]
     };
-	console.log("no status file - applying default");
+	//console.log("no status file - applying default");
 }
 // Load Status ===============
 
@@ -77,14 +76,14 @@ function drawBac(){
 		}
 		var currentTime = new Date();
 		var time_diff = Math.floor(((currentTime - firstDrinkTime) % 86400000) / 3600000);  // in hours!
-		console.log("currentTime:    " + currentTime)
-		console.log("firstDrinkTime: " + firstDrinkTime)
+		//console.log("currentTime:    " + currentTime)
+		//console.log("firstDrinkTime: " + firstDrinkTime)
 
-		console.log("timediff: " + time_diff);
+		//console.log("timediff: " + time_diff);
 		ebac = Math.round( ((sum_drinks) / (weight / 100 * sex) - (0.15 * time_diff)   )   * 100) / 100;
 
-		console.log("BAC: " + ebac + " weight: " + confWeight + " weightInKilo: " + weight + " Unit: " + confWeightUnit);
-		console.log("sum_drinks: " + sum_drinks);
+		//console.log("BAC: " + ebac + " weight: " + confWeight + " weightInKilo: " + weight + " Unit: " + confWeightUnit);
+		//console.log("sum_drinks: " + sum_drinks);
 		g.clearRect(0,34 + 20 + 8,176,34 + 20 + 20 + 8); //Clear
 		g.setFontAlign(0,0).setFont("8x16").setColor(g.theme.fg).drawString("BAC: " + ebac, 90, 74);
 	}
@@ -154,11 +153,8 @@ function updateDrinks(){
 		drinkStatus.drinks[i] = drinks[i];
 	} 
 
-	if (g.theme.dark) {
-		g.drawImage(icoResetW,145,145);
-	} else {
-		g.drawImage(icoResetB,145,145);
-	}
+	g.setBgColor(g.theme.bg).setColor(g.theme.fg);
+	g.drawImage(icoReset,145,145);
 	
 	drinkStatus.firstDrinkTime = firstDrinkTime; 
 	settings_file = require("Storage").open("drinkcounter.status.json", "w");
@@ -178,7 +174,7 @@ function addDrink(){
 	if (!firstDrinkTime){
 		firstDrinkTime = new Date(); 
 		firstDrinkTimeTime = require("locale").time(new Date(), 1);
-		console.log("init drinking! " + firstDrinkTime);
+		//console.log("init drinking! " + firstDrinkTime);
 	}	
 	drinks[activeDrink] = drinks[activeDrink] + 1;
 	updateFirstDrinkTime();
@@ -245,9 +241,9 @@ function initDragEvents() {
 					for (let i = 0; i <= maxDrinks; i++) {
 						drinks[i] = 0;
 					}
-					console.log("reset to default");
+					//console.log("reset to default");
 				}
-				console.log("reset " + confirm);  
+				//console.log("reset " + confirm);  
 				firstDrinkTime = null;
 				showDrinks();
 				updateDrinks();
