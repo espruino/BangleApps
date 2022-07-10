@@ -1,0 +1,15 @@
+{ "id": "widdst",
+  "name": "Daylight Saving",
+  "version":"0.01",
+  "description": "Widget to set daylight saving rules. See the instructions below for more information.",
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget,tool",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widdst.wid.js","url":"widget.js"},
+    {"name":"widdst.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widdst.json"}]
+}
