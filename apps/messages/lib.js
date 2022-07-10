@@ -186,5 +186,10 @@ exports.getMessageImageCol = function(msg,def) {
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
     "youtube": "#f00",
+    "gmx": "#1c449b",
+    "bring": "#455a64",
+    "n26": "#36a18b",
+    "paypal": "#003087",
+    "steam": "#171a21",
   }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
 };
