@@ -167,7 +167,7 @@ exports.getMessageImageCol = function(msg,def) {
     "hangouts": "#1ba261",
     "home assistant": "#fff", // ha-blue is #41bdf5, but that's the background
     "instagram": "#dd2a7b",
-    "liferando": "#ee5c00",
+    "lieferando": "#ee5c00",
     "messenger": "#0078ff",
     "nina": "#e57004",
     "outlook mail": "#0072c6",
