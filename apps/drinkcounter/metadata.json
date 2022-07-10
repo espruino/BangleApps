@@ -8,6 +8,7 @@
   "icon": "drinkcounter.png",
   "type": "app",
   "tags": "health",
+  "screenshots": [{"url":"screenshot_drnkcnt.png"}],
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
