@@ -8,15 +8,13 @@
   "icon": "gipy.img",
   "type": "app",
   "tags": "tool,outdoors,gps",
-  "screenshots": [{"url":"screenshot_gipy.png"}],
+  "screenshots": [],
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"gipy.app.js","url":"app.js"},
-    {"name":"gipy.img","url":"gipy-icon.js","evaluate":true},
-    {"name":"gipy.settings.js","url":"settings.js"}
+    {"name":"gipy.img", "url":"gipy.img"}
   ],
   "data": [
-    {"name":"gipy.gpc"}
   ]
 }
