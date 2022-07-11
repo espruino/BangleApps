@@ -33,4 +33,5 @@
 0.31: Add seconds to timers
 0.32: Fix wrong hidden filter
       Add option for auto-delete a timer after it expires
+0.33: Allow hiding timers&alarms
 

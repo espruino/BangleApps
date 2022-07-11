@@ -124,6 +124,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       value: alarm.as,
       onchange: v => alarm.as = v
     },
+    /*LANG*/"Hidden": {
+      value: alarm.hidden || false,
+      onchange: v => alarm.hidden = v
+    },
     /*LANG*/"Cancel": () => showMainMenu()
   };
 
@@ -283,6 +287,10 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     /*LANG*/"Delete After Expiration": {
       value: timer.del,
       onchange: v => timer.del = v
+    },
+    /*LANG*/"Hidden": {
+      value: timer.hidden || false,
+      onchange: v => timer.hidden = v
     },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
     /*LANG*/"Cancel": () => showMainMenu()
