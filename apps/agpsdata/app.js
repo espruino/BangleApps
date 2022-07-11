@@ -21,15 +21,34 @@ function display(text1, text2) {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+let waiting = false;
+
 function start() {
-  display("Updating A-GPS...");
-  require("agpsdata").pull(function() {
-    display("A-GPS updated.", "touch to close");
-    Bangle.on("touch", () => { load(); });
-  },
-  function(error) {
-    display("Error:" + error, "touch to retry");
-    Bangle.on("touch", () => { start(); });
-  });
+  g.reset();
+  g.clear();
+  waiting = false;
+  display("Retry?", "touch to retry");
+  Bangle.on("touch", () => { updateAgps(); });
 }
-start();
+
+function updateAgps() {
+  g.reset();
+  g.clear();
+  if (!waiting) {
+    waiting = true;
+    display("Updating A-GPS...");
+    require("agpsdata").pull(function() {
+      waiting = false;
+      display("A-GPS updated.", "touch to close");
+      Bangle.on("touch", () => { load(); });
+    },
+    function(error) {
+      waiting = false;
+      E.showAlert(error, "Error")
+                    .then(() => { start(); });
+    });
+  } else {
+    display("Waiting...");
+  }
+}
+updateAgps();

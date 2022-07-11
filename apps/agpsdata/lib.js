@@ -1,3 +1,13 @@
+function readSettings() {
+  settings = Object.assign(
+      require('Storage').readJSON("agpsdata.default.json", true) || {},
+      require('Storage').readJSON(FILE, true) || {});
+}
+
+var FILE = "agpsdata.settings.json";
+var settings;
+readSettings();
+
 function setAGPS(data) {
   var js = jsFromBase64(data);
   try {
@@ -14,8 +24,8 @@ function jsFromBase64(b64) {
   var bin = atob(b64);
   var chunkSize = 128;
   var js = "Bangle.setGPSPower(1);\n"; // turn GPS on
-  var gnss_select="1";
-  js += `Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`; // set GNSS mode
+  var gnsstype = settings.gnsstype || 1; // default GPS
+  js += `Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnsstype)}")\n`; // set GNSS mode
   // What about:
   // NAV-TIMEUTC (0x01 0x10)
   // NAV-PV (0x01 0x03)
@@ -60,6 +70,6 @@ exports.pull = function(successCallback, failureCallback) {
     });
   } else {
     console.log("error: No http method found");
-    if (failureCallback) failureCallback(/*LANG*/"No http method found");
+    if (failureCallback) failureCallback(/*LANG*/"No http method");
   }
 };
