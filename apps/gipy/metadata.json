@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "Follow gpx files",
   "allow_emulator":false,
-  "icon": "gipy.img",
+  "icon": "gipy.png",
   "type": "app",
   "tags": "tool,outdoors,gps",
   "screenshots": [],
@@ -13,7 +13,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"gipy.app.js","url":"app.js"},
-    {"name":"gipy.img", "url":"gipy.img"}
+    {"name":"gipy.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [
   ]
