@@ -158,7 +158,8 @@ fn save_json<P: AsRef<Path>>(path: P, points: &[(f64, f64)]) -> std::io::Result<
 }
 
 fn main() {
-    let input_file = std::env::args().nth(2).unwrap_or("m.gpx".to_string());
+    let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
+    eprintln!("input is {}", input_file);
     let p = points(&input_file).collect::<Vec<_>>();
     let rp = rdp(&p, 0.001);
     // let rp = rdp(&p, 0.0001);

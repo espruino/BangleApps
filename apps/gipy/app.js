@@ -137,10 +137,8 @@ function display(path) {
   Bangle.drawWidgets();
 }
 
-Bangle.loadWidgets()
+Bangle.loadWidgets();
 let path = new Path("test.gpc");
-lat = path.min_lat;
-lon = path.min_lon;
 var current_segment = path.nearest_segment(new Point(lon, lat), 0, Number.MAX_VALUE);
 
 
