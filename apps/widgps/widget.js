@@ -43,50 +43,25 @@ WIDGETS.gps = {
               "GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="),
           this.x, 2 + this.y);
     } else { // marker icons
-      const darkTheme = g.theme.dark;
       if (Bangle.isGPSOn()) {  
         const gpsObject = Bangle.getGPSFix();
         if (gpsObject && gpsObject.fix > 0) {
           // on and has fix
-          if (!darkTheme) {
-            g.drawImage(
-                atob(
-                    "GBjBAP//AAAAAAAAAAAAfgAA/wABw4ADAMAHAMAGPGAGPGAGPGAGPGADAMADAMADgcABgYABw4AAwwAAZgAAfgAAPAAAGAAAAAAAAAAAAAA="),
+           g.drawImage(
+                atob("GBiBAAAAAAAAAAB+AAD/AAHDgAMAwAcAwAY8YAY8YAY8YAY8YAMAwAMAwAOBwAGBgAHDgADDAABmAAB+AAA8AAAYAAAAAAAAAAAAAA=="),
                 this.x, 2 + this.y);
-          } else {
-            g.drawImage(
-                atob(
-                    "GBjBAP////8AAAAAAAAAfgAA/wABw4ADAMAHAMAGPGAGPGAGPGAGPGADAMADAMADgcABgYABw4AAwwAAZgAAfgAAPAAAGAAAAAAAAAAAAAA="),
-                this.x, 2 + this.y);
-          }
 
         } else {
           // GNSS on but no fix
-          if (!darkTheme) {
-            g.drawImage(
-                atob(
-                    "GBjBAP//AAAAAAAAAAAIfgAN/4APgeAPAHAPgDAAPBgAfhgA5wwAwwwAwwwwwwAwZgAwfgAYPAAYGAAMAfAOAPAHgfAB/7AAfhAAAAAAAAA="),
+           g.drawImage(
+                atob("GBiBAAAAAAAAAAh+AA3/gA+B4A8AcA+AMAA8GAB+GADnDADDDADDDDDDADBmADB+ABg8ABgYAAwB8A4A8AeB8AH/sAB+EAAAAAAAAA=="),
                 this.x, 2 + this.y);
-          } else {
-            g.drawImage(
-                atob(
-                    "GBjBAP////8AAAAAAAAIfgAN/4APgeAPAHAPgDAAPBgAfhgA5wwAwwwAwwwwwwAwZgAwfgAYPAAYGAAMAfAOAPAHgfAB/7AAfhAAAAAAAAA="),
-                this.x, 2 + this.y);
-          }
         }
       } else {
         // GNSS off
-        if (!darkTheme) {
-          g.drawImage(
-              atob(
-                  "GBjBAP//AAAAAAAAAAAAfgAY/wAcQ4AOAMAHAMAHjGAHxGAG4GAGcGADOMADHEADjgABhwABw4AAw8AAZuAAfnAAPDgAGBgAAAAAAAAAAAA="),
+        g.drawImage(
+              atob("GBiBAAAAAAAAAAB+ABj/ABxDgA4AwAcAwAeMYAfEYAbgYAZwYAM4wAMcQAOOAAGHAAHDgADDwABm4AB+cAA8OAAYGAAAAAAAAAAAAA=="),
               this.x, 2 + this.y);
-        } else {
-          g.drawImage(
-              atob(
-                  "GBjBAP////8AAAAAAAAAfgAY/wAcQ4AOAMAHAMAHjGAHxGAG4GAGcGADOMADHEADjgABhwABw4AAw8AAZuAAfnAAPDgAGBgAAAAAAAAAAAA="),
-              this.x, 2 + this.y);
-        }
       }
     }
   }
