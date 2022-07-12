@@ -97,7 +97,7 @@ function getThumbnail(appId, imageFn) {
         var firstPixel = rgba32[0];
         var blankImage = rgba32.every(col=>col==firstPixel)
 
-        if (appLog.indexOf("Uncaught")>=0)
+        if (appLog.replace("Uncaught Storage Updated!", "").indexOf("Uncaught")>=0)
           erroredApps.push( { id : app.id, log : appLog } );
 
         if (!blankImage) {
