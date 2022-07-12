@@ -37,7 +37,8 @@ var SETTINGS = {
 var Const = {
 };
 module = undefined;
-eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
+var Espruino = require(__dirname + "/../core/lib/espruinotools.js");
+//eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/utils.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/appinfo.js").toString());
 var apps = JSON.parse(require("fs").readFileSync(__dirname+"/../apps.json"));
@@ -96,7 +97,7 @@ function getThumbnail(appId, imageFn) {
         var firstPixel = rgba32[0];
         var blankImage = rgba32.every(col=>col==firstPixel)
 
-        if (appLog.indexOf("Uncaught")>=0)
+        if (appLog.replace("Uncaught Storage Updated!", "").indexOf("Uncaught")>=0)
           erroredApps.push( { id : app.id, log : appLog } );
 
         if (!blankImage) {
