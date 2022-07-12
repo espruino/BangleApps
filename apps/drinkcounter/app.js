@@ -257,7 +257,7 @@ function bjsGetButtonState() {
 }
 
 function initDragEvents() {
-		 Bangle.on("drag", e => {
+		Bangle.on("drag", e => {
 			if (!drag) { // start dragging
 				drag = {x: e.x, y: e.y};
 			} else if (!e.b) { // released
