@@ -9,6 +9,9 @@ it is useful to know if it has been switched on or not.
 
 There are two icons which can be used to visualize the GPS/GNSS status:
 1. A cross colored depending on the GPS/GNSS status
+    - Shows in grey when the GPS is off
+    - Shows in amber when the GPS is on but has no fix
+    - Shows in green when the GPS is on and has a fix
 2. Different place markers depending on GPS/GNSS status
 
     
