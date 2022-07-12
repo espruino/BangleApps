@@ -37,7 +37,8 @@ var SETTINGS = {
 var Const = {
 };
 module = undefined;
-eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
+var Espruino = require(__dirname + "/../core/lib/espruinotools.js");
+//eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/utils.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/appinfo.js").toString());
 var apps = JSON.parse(require("fs").readFileSync(__dirname+"/../apps.json"));
