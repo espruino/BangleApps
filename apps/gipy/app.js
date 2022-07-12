@@ -53,10 +53,10 @@ class Point {
     this.lat = lat;
   }
   screen_x() {
-    return 172/2 + Math.round((this.lon - lon) * 100000.0);
+    return 172/2 + Math.round((this.lon - lon) * 20000.0);
   }
   screen_y() {
-    return 172/2 + Math.round((this.lat - lat) * 100000.0);
+    return 172/2 + Math.round((this.lat - lat) * 20000.0);
   }
   minus(other_point) {
     let xdiff = this.lon - other_point.lon;
