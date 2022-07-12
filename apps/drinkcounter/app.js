@@ -257,37 +257,37 @@ function bjsGetButtonState() {
 }
 
 function initDragEvents() {
-		  Bangle.on("drag", e => {
+		 Bangle.on("drag", e => {
 			if (!drag) { // start dragging
-			  drag = {x: e.x, y: e.y};
+				drag = {x: e.x, y: e.y};
 			} else if (!e.b) { // released
-			  const dx = e.x-drag.x, dy = e.y-drag.y;
-			  drag = null;
-			  if (Math.abs(dx)>Math.abs(dy)+10) {
-				// horizontal
-				if (dx < dy) {
-					//console.log("left " + dx + " " + dy);
-					previousDrink();
+				const dx = e.x-drag.x, dy = e.y-drag.y;
+				drag = null;
+				if (Math.abs(dx)>Math.abs(dy)+10) {
+					// horizontal
+					if (dx < dy) {
+						//console.log("left " + dx + " " + dy);
+						previousDrink();
+					} else {
+						//console.log("right " + dx + " " + dy);
+						nextDrink();
+					}
+				} else if (Math.abs(dy)>Math.abs(dx)+10) {
+					// vertical
+					if (dx < dy) {
+						//console.log("down " + dx + " " + dy);
+						removeDrink();
+					} else {
+						//console.log("up " + dx + " " + dy);
+						addDrink();
+					}
 				} else {
-					//console.log("right " + dx + " " + dy);
-					nextDrink();
-				}
-			  } else if (Math.abs(dy)>Math.abs(dx)+10) {
-				// vertical
-				if (dx < dy) {
-					//console.log("down " + dx + " " + dy);
-					removeDrink();
-				} else {
-					//console.log("up " + dx + " " + dy);
-					addDrink();
-				}
-			} else {
-				//console.log("tap " + e.x + " " + e.y);
-				if (e.x > 145 && e.y > 145) {
-					resetDrinksFn();
+					//console.log("tap " + e.x + " " + e.y);
+					if (e.x > 145 && e.y > 145) {
+						resetDrinksFn();
+					}
 				}
 			}
-		  }
 		}
 );
 }
