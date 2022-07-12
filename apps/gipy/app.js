@@ -10,6 +10,7 @@
 
 var lat = null;
 var lon = null;
+var refresh_needed = false;
 
 class Path {
   constructor(filename) {
@@ -96,27 +97,17 @@ class Point {
 }
 
 function display(path) {
+  if (!refresh_needed) {
+    return;
+  }
+  refresh_needed = false;
   g.clear();
   g.setColor(g.theme.fg);
-  let next_segment = path.nearest_segment(new Point(lon, lat), current_segment-2, current_segment+3);
-  if (next_segment < current_segment) {
-    console.log("error going from", current_segment, "back to", next_segment, "at", lon, lat);
-    console.log("we are at", fake_gps_point);
-    let previous_point = null;
-    for (let i = 0 ; i < current_segment+2 ; i++) {
-      let point = path.point(i);
-      if (previous_point !== null) {
-        let distance = new Point(lon, lat).distance_to_segment(previous_point, point);
-        console.log(i, distance);
-      }
-      previous_point = point;
-    }
-  }
-  current_segment = next_segment;
-  //current_segment = path.nearest_segment(new Point(lon, lat), 0, path.len);
+  // let next_segment = path.nearest_segment(new Point(lon, lat), current_segment-2, current_segment+3);
+  current_segment = path.nearest_segment(new Point(lon, lat), 0, path.len);
   let previous_point = null;
-  let start = Math.max(current_segment - 4, 0);
-  let end = Math.min(current_segment + 5, path.len);
+  let start = Math.max(current_segment - 5, 0);
+  let end = Math.min(current_segment + 7, path.len);
   for (let i=start ; i < end ; i++) {
     let point = path.point(i);
 
@@ -143,43 +134,51 @@ function display(path) {
   }
   g.setColor(g.theme.fgH);
   g.fillCircle(172/2, 172/2, 5);
+  Bangle.drawWidgets();
 }
 
+Bangle.loadWidgets()
 let path = new Path("test.gpc");
 lat = path.min_lat;
 lon = path.min_lon;
-console.log("len is", path.len);
 var current_segment = path.nearest_segment(new Point(lon, lat), 0, Number.MAX_VALUE);
 
-// function set_coordinates(data) {
-//   if (!isNaN(data.lat)) {
-//     lat = data.lat;
+
+// let fake_gps_point = 0.0;
+// function simulate_gps(path) {
+//   let point_index = Math.floor(fake_gps_point);
+//   if (point_index >= path.len) {
+//     return;
 //   }
-//   if (!isNaN(data.lon)) {
-//     lon = data.lon;
-//   }
+//   let p1 = path.point(point_index);
+//   let p2 = path.point(point_index+1);
+//   let alpha = fake_gps_point - point_index;
+
+//   lon = (1-alpha)*p1.lon + alpha*p2.lon;
+//   lat = (1-alpha)*p1.lat + alpha*p2.lat;
+//   fake_gps_point += 0.2;
+//   display(path);
 // }
-// Bangle.setGPSPower(true, "gipy");
-// Bangle.on('GPS', set_coordinates);
+
+// setInterval(simulate_gps, 500, path);
 
 
-
-let fake_gps_point = 0.0;
-function simulate_gps(path) {
-  let point_index = Math.floor(fake_gps_point);
-  if (point_index >= path.len) {
-    return;
+function set_coordinates(data) {
+  let old_lat = lat;
+  if (!isNaN(data.lat)) {
+    lat = data.lat;
   }
-  let p1 = path.point(point_index);
-  let p2 = path.point(point_index+1);
-  let alpha = fake_gps_point - point_index;
-
-  lon = (1-alpha)*p1.lon + alpha*p2.lon;
-  lat = (1-alpha)*p1.lat + alpha*p2.lat;
-  fake_gps_point += 0.2;
-  display(path);
+  let old_lon = lon;
+  if (!isNaN(data.lon)) {
+    lon = data.lon;
+  }
+  if ((old_lat != lat)||(old_lon != lon)) {
+    refresh_needed = true;
+  }
 }
+Bangle.setGPSPower(true, "gipy");
+Bangle.on('GPS', set_coordinates);
 
-setInterval(simulate_gps, 500, path);
-//// setInterval(display, 1000, path);
+
+setInterval(display, 1000, path);
 

@@ -1,5 +1,3 @@
-- plugins
-- do not redraw if no coordinates changed
 - display distance to target
 
 - detect reached waypoints
