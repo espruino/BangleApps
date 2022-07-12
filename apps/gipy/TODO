@@ -1,0 +1,20 @@
+- plugins
+- do not redraw if no coordinates changed
+- display distance to target
+
+- detect reached waypoints
+- beep when reaching waypoint
+- display distance to next waypoint
+- display average speed
+- turn off gps when moving to next waypoint
+- beep when moving away from path
+- dynamic map rescale
+- display scale (100m)
+
+- store several tracks
+
+- map rotation to match direction
+- water points
+
+- compress path
+- avoid display of all segments
