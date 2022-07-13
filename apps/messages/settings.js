@@ -1,24 +1,31 @@
 (function(back) {
+  const iconColorModes = ['hex', '3bit'];
+
   function settings() {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-    if (settings.vibrate===undefined) settings.vibrate=":";
-    if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
-    if (settings.repeat===undefined) settings.repeat=4;
-    if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
-    if (settings.maxMessages===undefined) settings.maxMessages=3;
-    settings.unlockWatch=!!settings.unlockWatch;
-    settings.openMusic=!!settings.openMusic;
-    settings.maxUnreadTimeout=240;
-    if (settings.flash===undefined) settings.flash=true;
+
+    if (settings.vibrate === undefined) settings.vibrate = ":";
+    if (settings.vibrateCalls === undefined) settings.vibrateCalls = ":";
+    if (settings.repeat === undefined) settings.repeat = 4;
+    if (settings.unreadTimeout === undefined) settings.unreadTimeout = 60;
+    if (settings.maxMessages === undefined) settings.maxMessages = 3;
+    if (settings.flash === undefined) settings.flash = true;
+    if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
+
+    settings.unlockWatch = !!settings.unlockWatch;
+    settings.openMusic = !!settings.openMusic;
+    settings.maxUnreadTimeout = 240;
+
     return settings;
   }
+
   function updateSetting(setting, value) {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
     settings[setting] = value;
     require('Storage').writeJSON("messages.settings.json", settings);
   }
 
-  var mainmenu = {
+  const mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
     /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v)),
@@ -26,19 +33,19 @@
     /*LANG*/'Repeat': {
       value: settings().repeat,
       min: 0, max: 10,
-      format: v => v?v+"s":/*LANG*/"Off",
+      format: v => v ? v + "s" : /*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
     },
     /*LANG*/'Unread timer': {
       value: settings().unreadTimeout,
       min: 0, max: settings().maxUnreadTimeout, step : 10,
-      format: v => v?v+"s":/*LANG*/"Off",
+      format: v => v ? v + "s" : /*LANG*/"Off",
       onchange: v => updateSetting("unreadTimeout", v)
     },
     /*LANG*/'Min Font': {
-      value: 0|settings().fontSize,
+      value: 0 | settings().fontSize,
       min: 0, max: 1,
-      format: v => [/*LANG*/"Small",/*LANG*/"Medium"][v],
+      format: v => [/*LANG*/"Small", /*LANG*/"Medium"][v],
       onchange: v => updateSetting("fontSize", v)
     },
     /*LANG*/'Auto-Open Music': {
@@ -58,9 +65,15 @@
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
     /*LANG*/'Widget messages': {
-      value:0|settings().maxMessages,
+      value: 0 | settings().maxMessages,
       min: 1, max: 5,
       onchange: v => updateSetting("maxMessages", v)
+    },
+    /*LANG*/'Icon color mode': {
+      value: iconColorModes.indexOf(settings().iconColorMode),
+      min: 0, max: iconColorModes.length - 1,
+      format: v => iconColorModes[v],
+      onchange: v => updateSetting("iconColorMode", iconColorModes[v])
     }
   };
   E.showMenu(mainmenu);
