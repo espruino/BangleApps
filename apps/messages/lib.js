@@ -1,10 +1,13 @@
-function openMusic() {
-  // only read settings file for first music message
-  if ("undefined"==typeof exports._openMusic) {
-    exports._openMusic = !!((require('Storage').readJSON("messages.settings.json", true) || {}).openMusic);
+let _settings;
+
+function getSettings() {
+  if (typeof _settings == "undefined") {
+    _settings = require('Storage').readJSON("messages.settings.json", 1) || {};
   }
-  return exports._openMusic;
+
+  return _settings;
 }
+
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
@@ -12,13 +15,13 @@ function openMusic() {
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
+  let messages, inApp = "undefined"!=typeof MESSAGES;
   if (inApp)
     messages = MESSAGES; // we're in an app that has already loaded messages
   else   // no app - load messages
     messages = require("Storage").readJSON("messages.json",1)||[];
   // now modify/delete as appropriate
-  var mIdx = messages.findIndex(m=>m.id==event.id);
+  let mIdx = messages.findIndex(m=>m.id==event.id);
   if (event.t=="remove") {
     if (mIdx>=0) messages.splice(mIdx, 1); // remove item
     mIdx=-1;
@@ -48,7 +51,7 @@ exports.pushMessage = function(event) {
       clearTimeout(exports.messageTimeout);
   }
   // ok, saved now
-  if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
+  if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && !!getSettings().openMusic) {
     // just load the app to display music: no buzzing
     load("messages.app.js");
   } else if (event.t!="add") {
@@ -58,12 +61,11 @@ exports.pushMessage = function(event) {
     return;
   }
   // otherwise load messages/show widget
-  var loadMessages = Bangle.CLOCK || event.important;
-  var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
-  var appSettings = require('Storage').readJSON('messages.settings.json',1)||{};
-  var unlockWatch = appSettings.unlockWatch;
-  var quietNoAutOpn = appSettings.quietNoAutOpn;
-  delete appSettings;
+  let loadMessages = Bangle.CLOCK || event.important;
+  const quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
+  const appSettings = getSettings();
+  const unlockWatch = appSettings.unlockWatch;
+  const quietNoAutOpn = appSettings.quietNoAutOpn;
   // don't auto-open messages in quiet mode if quietNoAutOpn is true
   if(quiet && quietNoAutOpn) {
       loadMessages = false;
@@ -89,8 +91,8 @@ exports.pushMessage = function(event) {
   }, 500);
 }
 /// Remove all messages
-exports.clearAll = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
+exports.clearAll = function() {
+  let messages, inApp = "undefined"!=typeof MESSAGES;
   if (inApp) {
     MESSAGES = [];
     messages = MESSAGES; // we're in an app that has already loaded messages
@@ -111,7 +113,7 @@ exports.getMessageImage = function(msg) {
   * http://www.espruino.com/Image+Converter
   */
   if (msg.img) return atob(msg.img);
-  var s = (msg.src||"").toLowerCase();
+  const s = (msg.src||"").toLowerCase();
   if (s=="airbnb") return atob("GBgBAAAAAAAAAAAAADwAAH4AAGYAAMMAAIEAAYGAAYGAAzzAA2bABmZgBmZgDGYwDDwwCDwQCBgQDDwwB+fgA8PAAAAAAAAAAAAA");
   if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
@@ -153,8 +155,28 @@ exports.getMessageImage = function(msg) {
   return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
 };
 
-exports.getMessageImageCol = function(msg,def) {
-  return {
+function hexTo3Bit(color) {
+    const invalidHex = color.indexOf("#") != 0 || (color.length != 4 && color.length != 7);
+    if (invalidHex) {
+        return color;
+    }
+
+    function convert(value) {
+        const center = value.length == 1 ? 8 : 128;
+
+        return parseInt(value, 16) < center ? "0" : "f";
+    }
+
+    const isShortHand = color.length == 4;
+    if (isShortHand) {
+        return "#" + convert(color[1]) + convert(color[2]) + convert(color[3]);
+    }
+
+    return "#" + convert(color[1] + color[2]) + convert(color[3] + color[4]) + convert(color[5] + color[6]);
+}
+
+exports.getMessageImageCol = function(msg, def) {
+  const hexColors = {
     // generic colors, using B2-safe colors
     "airbnb": "#f00",
     "alarm": "#fff",
@@ -196,5 +218,13 @@ exports.getMessageImageCol = function(msg,def) {
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
     "youtube": "#f00",
-  }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
+  };
+
+  let color = hexColors[(msg.src || "").toLowerCase()] || (def !== undefined ? def : g.theme.fg);
+
+  if (getSettings().iconColorMode == '3bit') {
+    color = hexTo3Bit(color);
+  }
+
+  return color;
 };
