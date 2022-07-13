@@ -1,12 +1,4 @@
 
-// screen size is 172x172
-// we want to show 100 meters ahead
-// 86 pixels is 100 meters
-// 10 meters is 8.6 pixels
-// 1 integer unit is 1.1 meter
-// 8.6 pixels is 10 / 1.1 integers
-// int = 8.6 pix * 1.1 / 10
-// int = 0.946 pixels
 
 var lat = null;
 var lon = null;
@@ -15,11 +7,18 @@ class Path {
   constructor(filename) {
     let buffer = require("Storage").readArrayBuffer(filename);
     this.points = Float64Array(buffer);
-    let total_distance = 0.0;
-    this.on_segments(function (p1, p2, i) {
-      total_distance += p1.distance(p2);
-    }, 0, this.len-1);
-    this.total_distance = total_distance;
+    this.total_distance = this.segments_length(0, this.len-1);
+  }
+
+  // return cumulated length of wanted segments (in km).
+  // start is index of first wanted segment
+  // end is 1 after index of last wanted segment
+  segments_length(start, end) {
+      let total = 0.0;
+      this.on_segments(function(p1, p2, i) {
+          total += p1.distance(p2);
+      }, start, end);
+      return total;
   }
 
   // start is index of first wanted segment
@@ -126,8 +125,17 @@ class Point {
 function display(path) {
   g.clear();
   g.setColor(g.theme.fg);
-  // let next_segment = path.nearest_segment(new Point(lon, lat), current_segment-2, current_segment+3);
-  current_segment = path.nearest_segment(new Point(lon, lat), 0, path.len-1);
+  let next_segment = path.nearest_segment(new Point(lon, lat), 0, path.len-1);
+  let diff;
+  if (next_segment != current_segment) {
+      if (next_segment > current_segment) {
+          diff = path.segments_length(current_segment+1, next_segment+1);
+      } else {
+          diff = -path.segments_length(next_segment+1, current_segment+1);
+      }
+      remaining_distance -= diff;
+      current_segment = next_segment;
+  }
   let start = Math.max(current_segment - 5, 0);
   let end = Math.min(current_segment + 7, path.len-1);
   path.on_segments(function(p1, p2, i) {
@@ -152,48 +160,50 @@ function display(path) {
 
   g.setColor(g.theme.fgH);
   g.fillCircle(172/2, 172/2, 5);
-  g.setFont("6x8:2").drawString(("distance "+(Math.round(path.total_distance/100)/10))+" km",0,30);
+  let real_remaining_distance = remaining_distance + path.point(current_segment+1).distance(new Point(lon, lat));
+  let rounded_distance = Math.round(real_remaining_distance/100)/10;
+  let total = Math.round(path.total_distance/100)/10;
+  g.setFont("6x8:2").drawString("d. "+rounded_distance + "/" + total, 0, 30);
+  g.drawString("seg." + (current_segment+1) + "/" + path.len, 0, 48);
   Bangle.drawWidgets();
 }
 
 Bangle.loadWidgets();
 let path = new Path("test.gpc");
 var current_segment = path.nearest_segment(new Point(lon, lat), 0, path.len-1);
+var remaining_distance = path.total_distance - path.segments_length(0, 1);
 
-
-let fake_gps_point = 0.0;
-function simulate_gps(path) {
-  let point_index = Math.floor(fake_gps_point);
-  if (point_index >= path.len) {
-    return;
-  }
-  let p1 = path.point(point_index);
-  let p2 = path.point(point_index+1);
-  let alpha = fake_gps_point - point_index;
-
-  lon = (1-alpha)*p1.lon + alpha*p2.lon;
-  lat = (1-alpha)*p1.lat + alpha*p2.lat;
-  fake_gps_point += 0.2;
-  display(path);
-}
-
-setInterval(simulate_gps, 500, path);
-
-
-// function set_coordinates(data) {
-//   let old_lat = lat;
-//   if (!isNaN(data.lat)) {
-//     lat = data.lat;
+// let fake_gps_point = 0.0;
+// function simulate_gps(path) {
+//   let point_index = Math.floor(fake_gps_point);
+//   if (point_index >= path.len) {
+//     return;
 //   }
-//   let old_lon = lon;
-//   if (!isNaN(data.lon)) {
-//     lon = data.lon;
-//   }
-//   if ((old_lat != lat)||(old_lon != lon)) {
-//     display(path);
-//   }
+//   let p1 = path.point(point_index);
+//   let p2 = path.point(point_index+1);
+//   let alpha = fake_gps_point - point_index;
+// 
+//   lon = (1-alpha)*p1.lon + alpha*p2.lon;
+//   lat = (1-alpha)*p1.lat + alpha*p2.lat;
+//   fake_gps_point += 0.2;
+//   display(path);
 // }
-// Bangle.setGPSPower(true, "gipy");
-// Bangle.on('GPS', set_coordinates);
+// 
+// setInterval(simulate_gps, 500, path);
 
 
+function set_coordinates(data) {
+  let old_lat = lat;
+  if (!isNaN(data.lat)) {
+    lat = data.lat;
+  }
+  let old_lon = lon;
+  if (!isNaN(data.lon)) {
+    lon = data.lon;
+  }
+  if ((old_lat != lat)||(old_lon != lon)) {
+    display(path);
+  }
+}
+Bangle.setGPSPower(true, "gipy");
+Bangle.on('GPS', set_coordinates);
