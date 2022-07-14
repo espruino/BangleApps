@@ -79,7 +79,7 @@ function getThumbnail(appId, imageFn) {
       settings : SETTINGS,
       device : { id : DEVICEID }
       }).then(files => {
-        console.log("AppInfo returned");//, files);
+        console.log(`AppInfo returned for ${appId}`);//, files);
         flashMemory.set(factoryFlashMemory);
         jsTransmitString("reset()\n");
         console.log("Uploading...");
@@ -89,6 +89,7 @@ function getThumbnail(appId, imageFn) {
         appLog = "";
         jsTransmitString(command);
         console.log("Done.");
+        jsTransmitString("Bangle.setLCDMode();clearInterval();clearTimeout();\n");
         jsStopIdle();
 
         var rgba = new Uint8Array(GFX_WIDTH*GFX_HEIGHT*4);
