@@ -17,18 +17,50 @@ exports.input = function(options) {
     "4":"GHI4","5":"JKL5","6":"MNO6",
     "7":"PQRS7","8":"TUV80","9":"WXYZ9",
   };
-  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp/Down: Caps lock\n';
+  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp: Caps lock\nDown:Move mode';
 
   var charTimeout; // timeout after a key is pressed
   var charCurrent; // current character (index in letters)
   var charIndex; // index in letters[charCurrent]
+  var textIndex = text.length;
+  var textWidth = settings.showHelpBtn ? 10 : 14;
   var caps = true;
   var layout;
-  var btnWidth = g.getWidth()/3
+  var btnWidth = g.getWidth()/3;
+  
+  function getMoveChar(){
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00@\x1F\xE1\x00\x10\x00\x10\x01\x0F\xF0\x04\x01\x00";
+  }
+  
+  function getMoreChar(){
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xDB\x1B`\x00\x00\x00";
+  }
+
+  
+  function getCursorChar(){
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";  }
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
-    layout.text.label = text.slice(settings.showHelpBtn ? -11 : -13) + (hideMarker ? " " : "_");
+
+    let charsBeforeCursor = textIndex;
+    let charsAfterCursor = Math.min(text.length - textIndex, (textWidth)/2);
+    
+
+    let start = textIndex - Math.ceil(textWidth - charsAfterCursor);
+    let startMore = false;
+    if (start > 0) {start++; startMore = true}
+    if (start < 0) start = 0;
+    let cursor = textIndex + 1;
+
+    let end = cursor + Math.floor(start + textWidth - cursor);
+    if (end <= text.length) {end--; if (startMore) end--;}
+    if (end > text.length) end = text.length;
+
+    let pre = (start > 0 ? getMoreChar() : "") + text.slice(start, cursor);
+    let post = text.slice(cursor, end) + (end < text.length - 1 ? getMoreChar() : "");
+
+    layout.text.label = pre + (hideMarker ? " " : (moveMode? getMoveChar():getCursorChar())) + post;
     layout.render(layout.text);
   }
 
@@ -41,8 +73,11 @@ exports.input = function(options) {
 
   function backspace() {
     deactivateTimeout(charTimeout);
-    text = text.slice(0, -1);
-    newCharacter();
+    if (textIndex > -1){
+      text = text.slice(0, textIndex) + text.slice(textIndex + 1);
+      if (textIndex > -1) textIndex --;
+      newCharacter();
+    }
   }
 
   function setCaps() {
@@ -55,6 +90,7 @@ exports.input = function(options) {
 
   function newCharacter(ch) {
     displayText();
+    if (ch && textIndex < text.length) textIndex ++;
     charCurrent = ch;
     charIndex = 0;
   }
@@ -69,7 +105,11 @@ exports.input = function(options) {
       newCharacter(key);
     }
     var newLetter = letters[charCurrent][charIndex];
-    text += (caps ? newLetter.toUpperCase() : newLetter.toLowerCase());
+    let pre = text.slice(0, textIndex);
+    let post = text.slice(textIndex, text.length);
+    
+    text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
+    
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
@@ -78,14 +118,29 @@ exports.input = function(options) {
     displayText(charTimeout);
   }
 
+  var moveMode = false;
+
   function onSwipe(dirLeftRight, dirUpDown) {
-    if (dirUpDown) {
+    if (dirUpDown == -1) {
       setCaps();
+    } else if (dirUpDown == 1) {
+      moveMode = !moveMode;
+      displayText(false);
     } else if (dirLeftRight == 1) {
-      text += ' ';
-      newCharacter();
+      if (!moveMode){
+        text = text.slice(0, textIndex + 1) + " " + text.slice(++textIndex);
+        newCharacter();
+      } else {
+        if (textIndex < text.length) textIndex++;
+        displayText(false);
+      }
     } else if (dirLeftRight == -1) {
-      backspace();
+      if (!moveMode){
+        backspace();
+      } else {
+        if (textIndex > -1) textIndex--;
+        displayText(false);
+      }
     }
   }
 

@@ -54,7 +54,7 @@ var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
+    if (WIDGETS["messages"]) WIDGETS["messages"].buzz(msg.src);
     else Bangle.buzz();
   }
   if (msg && msg.id=="music") {

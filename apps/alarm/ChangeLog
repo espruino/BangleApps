@@ -31,3 +31,7 @@
 0.29: Fix wrong 'dow' handling in new timer if first day of week is Monday
 0.30: Fix "Enable All"
 0.31: Add seconds to timers
+0.32: Fix wrong hidden filter
+      Add option for auto-delete a timer after it expires
+0.33: Allow hiding timers&alarms
+

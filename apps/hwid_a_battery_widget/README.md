@@ -1,4 +1,4 @@
-# A Battery Widget (with percentage)
+# A Battery Widget (with percentage) - Mod by Hank
 
 Show the current battery level and charging status in the top right of the clock, with charge percentage
 

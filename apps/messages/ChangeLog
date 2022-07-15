@@ -52,4 +52,11 @@
 0.37: Now use the setUI 'back' icon in the top left rather than specific buttons/menu items
 0.38: Add telegram foss handling
 0.39: Set default color for message icons according to theme
-      Don't turn on the screen after unread timeout expires (#1873)
+0.40: Use default Bangle formatter for booleans
+0.41: Add notification icons in the widget
+0.42: Fix messages ignoring "Vibrate: Off" setting
+0.43: Add new Icons (Airbnb, warnwetter)
+0.44: Separate buzz pattern for incoming calls
+0.45: Added new app colors and icons
+0.46: Add 'Vibrate Timer' option to set how long to vibrate for, and fix Repeat:off
+      Fix message removal from widget bar (previously caused exception as .hide has been removed)

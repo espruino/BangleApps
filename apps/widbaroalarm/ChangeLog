@@ -3,3 +3,7 @@
 0.03: Fix crash
 0.04: Use Prompt with dismiss and pause
       Improve barometer value median calculation
+0.05: Fix warning calculation
+      Show difference of last measurement to pressure average of the the last three hours in the widget
+      Only use valid pressure values
+0.06: Fix exception

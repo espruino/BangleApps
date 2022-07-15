@@ -32,6 +32,25 @@ Responses are sent back to Gadgetbridge simply as one line of JSON.
 
 More info on message formats on http://www.espruino.com/Gadgetbridge
 
+## Functions provided
+
+The boot code also provides some useful functions:
+
+* `Bangle.messageResponse = function(msg,response)` - send a yes/no response to a message. `msg` is a message object, and `response` is a boolean.
+* `Bangle.musicControl = function(cmd)` - control music, cmd = `play/pause/next/previous/volumeup/volumedown`
+* `Bangle.http = function(url,options)` - make an HTTPS request to a URL and return a promise with the data. Requires the [internet enabled `Bangle.js Gadgetbridge` app](http://www.espruino.com/Gadgetbridge#http-requests). `options` can contain:
+  * `id` - a custom (string) ID
+  * `timeout` - a timeout for the request in milliseconds (default 30000ms)
+  * `xpath` an xPath query to run on the request (but right now the URL requested must be XML - HTML is rarely XML compliant)
+
+eg:
+
+```
+Bangle.http("https://pur3.co.uk/hello.txt").then(data=>{
+  console.log("Got ",data);
+});
+```
+
 ## Testing
 
 Bangle.js can only hold one connection open at a time, so it's hard to see

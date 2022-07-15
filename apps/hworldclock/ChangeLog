@@ -5,3 +5,5 @@
 0.19: Fix PM Hours
 0.20: Add theme support
 0.21: Add Settings
+0.22: Use default Bangle formatter for booleans
+0.23: Added note to configure position in "my location" if not done yet. Small fixes.

@@ -125,7 +125,6 @@ function showMainMenu() {
   menu[/*LANG*/"Add Schedule"] = () => showEditMenu(-1);
   menu[/*LANG*/"Switch Theme"] = {
     value: !!get("switchTheme"),
-    format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
     onchange: v => v ? set("switchTheme", v) : unset("switchTheme"),
   };
   menu[/*LANG*/"LCD Settings"] = () => showOptionsMenu();

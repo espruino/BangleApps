@@ -208,7 +208,7 @@ let menu = {
   /*LANG*/"< Back": back,  
 };
 require("ClockFace_menu").addSettingsFile(menu, "<appid>.settings.json", [ 
-  "showDate", "loadWidgets"
+  "showDate", "loadWidgets", "powerSave",
 ]);
 E.showMenu(menu);
 
