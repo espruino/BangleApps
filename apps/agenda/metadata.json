@@ -1,0 +1,17 @@
+{
+  "id": "agenda",
+  "name": "Agenda",
+  "version": "0.02",
+  "description": "Simple agenda",
+  "icon": "agenda.png",
+  "screenshots": [{"url":"screenshot_agenda_overview.png"}, {"url":"screenshot_agenda_event1.png"}, {"url":"screenshot_agenda_event2.png"}],
+  "tags": "agenda",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"agenda.app.js","url":"agenda.js"},
+    {"name":"agenda.settings.js","url":"settings.js"},
+    {"name":"agenda.img","url":"agenda-icon.js","evaluate":true}
+  ]
+}

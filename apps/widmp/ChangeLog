@@ -2,3 +2,5 @@
 0.02: Fix position and overdraw bugs
 0.03: Better memory usage, theme support
 0.04: Replace the 8 phases by a more exact drawing, see forum.espruino.com/conversations/371985
+0.05: Fixed the algorithm for calculating the moon's phase
+0.06: Darkmode, custom colours, and fix a bug with acting on mylocation changes

@@ -3,6 +3,7 @@
   "shortName" : "tinyVario",
   "version":"0.01",
   "icon": "app.png",
+  "readme": "README.md",
   "description": "A very simple app for gliding / paragliding / hang gliding etc.",
   "tags": "outdoors",
   "supports" : ["BANGLEJS2"],

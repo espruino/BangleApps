@@ -451,3 +451,4 @@ Bangle.on('pressure', function(e) {
 });
 
 initPFD();
+

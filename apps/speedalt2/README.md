@@ -37,7 +37,7 @@ When the GPS obtains a fix the number of satellites is displayed as 'Sats:nn'. W
 
 ## Power Saving
 
-The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the colck/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
+The The GPS Adv Sport app obeys the watch screen off timeouts as a power saving measure. Restore the screen as per any of the clock/watch apps. Use BTN2 to lock the screen on but doing this will use more battery.
 
 This app will work quite happily on its own but will use the [GPS Setup App](https://banglejs.com/apps/#gps%20setup) if it is installed. You may choose to use the GPS Setup App to gain significantly longer battery life while the GPS is on. Please read the Low Power GPS Setup App Readme to understand what this does.
 
@@ -65,7 +65,7 @@ The Droidscript script file is called : **GPS Adv Sports II.js**
 
 Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep. 
 
-When runnig a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
+When running a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
 
 An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
 

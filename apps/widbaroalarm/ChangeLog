@@ -1,3 +1,5 @@
 0.01: Initial version
-0.02: Do not warn multiple times for the same exceedance
+0.02: Do not warn multiple times for the same exceed
 0.03: Fix crash
+0.04: Use Prompt with dismiss and pause
+      Improve barometer value median calculation

@@ -10,3 +10,6 @@
 0.09: Move some functions to new time_utils module
 0.10: Default to sched.js if custom js not found
 0.11: Fix default dow
+0.12: Update default buzz patterns to new values
+      Improve timer message using formatDuration
+      Fix wrong fallback for buzz pattern
