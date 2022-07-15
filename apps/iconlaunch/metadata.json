@@ -13,6 +13,5 @@
 		{ "name": "iconlaunch.settings.js", "url": "settings.js" }
 	],
 	"screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }],
-	"readme": "README.md",
-	"sortorder": -10
+	"readme": "README.md"
 }
