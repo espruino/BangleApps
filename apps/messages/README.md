@@ -14,7 +14,9 @@ and `Messages`:
 * `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
 * `Vibrate for calls` - This is the pattern of buzzes that should be made when an incoming call is received
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
-* `Unread Timer` - When a new message is received we go into the Messages app.
+* `Vibrate Timer` - When a new message is received when in a non-clock app, we display the message icon and
+buzz every `Repeat` seconds. This is how long we continue to do that.
+* `Unread Timer` - When a new message is received when showing the clock we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
 * `Min Font` - The minimum font size used when displaying messages on the screen. A bigger font

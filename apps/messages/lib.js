@@ -40,12 +40,12 @@ exports.pushMessage = function(event) {
   require("Storage").writeJSON("messages.json",messages);
   // if in app, process immediately
   if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
-  // if we've removed the last new message, hide the widget
-  if (event.t=="remove" && !messages.some(m=>m.new)) {
-    if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.hide();
+  // update the widget icons shown
+  if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
     // if no new messages now, make sure we don't load the messages app
-    if (exports.messageTimeout && !messages.some(m=>m.new))
-      clearTimeout(exports.messageTimeout);
+  if (event.t=="remove" && exports.messageTimeout && !messages.some(m=>m.new)) {
+    clearTimeout(exports.messageTimeout);
+    delete exports.messageTimeout;
   }
   // ok, saved now
   if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {

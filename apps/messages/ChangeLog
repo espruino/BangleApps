@@ -58,3 +58,5 @@
 0.43: Add new Icons (Airbnb, warnwetter)
 0.44: Separate buzz pattern for incoming calls
 0.45: Added new app colors and icons
+0.46: Add 'Vibrate Timer' option to set how long to vibrate for, and fix Repeat:off
+      Fix message removal from widget bar (previously caused exception as .hide has been removed)

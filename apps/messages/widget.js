@@ -20,8 +20,7 @@ draw:function(recall) {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-  if (settings.flash===undefined) settings.flash = true;
+  let settings = Object.assign({flash:true, maxMessages:3, repeat:4, vibrateTimeout:60},require('Storage').readJSON("messages.settings.json", true) || {});
   if (recall !== true || settings.flash) {
     var msgsShown = E.clip(this.msgs.length, 0, settings.maxMessages);
     g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
@@ -39,28 +38,28 @@ draw:function(recall) {
       g.drawImage(i == (settings.maxMessages - 1) && msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
     }
   }
-  if (settings.repeat===undefined) settings.repeat = 4;
-  if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
+  if (c<settings.vibrateTimeout && // not going on too long...
+      (settings.repeat || c<1) && // repeated, or no repeat and first attempt
+      (Date.now()-this.l)>settings.repeat*1000) { // the period between vibrations
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
   WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },update:function(rawMsgs, quiet) {
-  const settings = require('Storage').readJSON("messages.settings.json", true) || {};
-  msgs = filterMessages(rawMsgs);
-  if (msgs.length === 0) {
-    delete WIDGETS["messages"].t;
-    delete WIDGETS["messages"].l;
+  const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
+  this.msgs = filterMessages(rawMsgs);
+  if (this.msgs.length === 0) {
+    delete this.t;
+    delete this.l;
   } else {
-    WIDGETS["messages"].t=Date.now(); // first time
-    WIDGETS["messages"].l=Date.now()-10000; // last buzz
-    if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
+    this.t=Date.now(); // first time
+    this.l=Date.now()-10000; // last buzz
+    if (quiet) this.t -= 500000; // if quiet, set last time in the past so there is no buzzing
   }
-  WIDGETS["messages"].width=this.iconwidth * E.clip(msgs.length, 0, settings.maxMessages);
-  WIDGETS["messages"].msgs = msgs;
+  this.width=this.iconwidth * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
-},buzz:function(msgSrc) { 
+},buzz:function(msgSrc) {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
   var pattern;
   if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
