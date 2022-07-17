@@ -3,3 +3,4 @@
 0.03: Keep the date from being overwritten, use correct colour from theme for clearing
 0.04: Removed "wake LCD on face-up"-feature: A watch-face should not set things like "wake LCD on face-up".
 0.05: Added support to other color themes (other then black)
+0.06: Added support for 24 hour clock enabled from settings

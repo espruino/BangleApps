@@ -1,7 +1,7 @@
 {
   "id": "matrixclock",
   "name": "Matrix Clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "inspired by The Matrix, a clock of the same style",
   "icon": "matrixclock.png",
   "screenshots": [{"url":"matrix_green_on_black.jpg"}],
