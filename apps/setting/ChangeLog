@@ -53,3 +53,4 @@
 0.47: Allow colors to be translated
       Improve "Turn Off" user experience
 0.48: Allow reading custom themes from files
+0.49: Now reloads settings properly after 'Calibrate Battery'
