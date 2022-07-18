@@ -1,7 +1,7 @@
 # Gipy
 
 Development still in progress. Follow compressed gpx traces.
-Warns you before reaching intersections and tries to turn off gps.
+Will warn you before reaching intersections and try to turn off gps.
 
 ## Usage
 

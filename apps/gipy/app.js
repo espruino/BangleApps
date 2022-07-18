@@ -1,5 +1,5 @@
 
-let simulated = true;
+let simulated = false;
 
 class Status {
     constructor(path) {
