@@ -1,4 +1,3 @@
-- display distance to target
 
 - detect reached waypoints
 - beep when reaching waypoint
@@ -11,8 +10,8 @@
 
 - store several tracks
 
-- map rotation to match direction
 - water points
 
 - compress path
-- avoid display of all segments
+
+- add a version number to gpc files

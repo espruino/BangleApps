@@ -1,28 +1,113 @@
-var lat = null;
-var lon = null;
-var cos_direction;
-var sin_direction;
 
-let simulated = false;
+let simulated = true;
+
+class Status {
+    constructor(path) {
+        this.path = path;
+        this.position = null; // where we are
+        this.cos_direction = null; // cos of where we look at
+        this.sin_direction = null; // sin of where we look at
+        this.current_segment = null; // which segment is closest
+
+        let r = [0];
+        // let's do a reversed prefix computations on all distances:
+        // loop on all segments in reversed order
+        let previous_point = null;
+        for (let i = this.path.len - 1; i >= 0; i--) {
+            let point = this.path.point(i);
+            if (previous_point !== null) {
+                r.unshift(r[0] + point.distance(previous_point));
+            }
+            previous_point = point;
+        }
+        this.remaining_distances = r; // how much distance remains at start of each segment
+    }
+    update_position(new_position, direction) {
+        if (Bangle.isLocked() && this.position !== null && new_position.lon == this.position.lon && new_position.lat == this.position.lat) {
+            return;
+        }
+        this.cos_direction = Math.cos(-direction - Math.PI / 2.0);
+        this.sin_direction = Math.sin(-direction - Math.PI / 2.0);
+        this.position = new_position;
+        if (this.is_lost()) {
+            this.current_segment = this.path.nearest_segment(this.position, 0, path.len - 1);
+        } else {
+            this.current_segment = this.path.nearest_segment(this.position, Math.max(0, current_segment-1), Math.min(current_segment+2, path.len - 1));
+        }
+        this.display();
+    }
+    remaining_distance() {
+        return this.remaining_distances[this.current_segment+1] + this.position.distance(this.path.point(this.current_segment+1));
+    }
+    is_lost() {
+        let distance_to_nearest = this.position.fake_distance_to_segment(this.path.point(this.current_segment), this.path.point(this.current_segment+1));
+        // TODO: if more than something then we are lost
+        return true;
+    }
+    display() {
+        g.clear();
+        this.display_map();
+        this.display_stats();
+        Bangle.drawWidgets();
+    }
+    display_stats() {
+        let rounded_distance = Math.round(this.remaining_distance() / 100) / 10;
+        let total = Math.round(this.remaining_distances[0] / 100) / 10;
+        let now = new Date();
+        let minutes = now.getMinutes().toString();
+        if (minutes.length < 2) {
+            minutes = '0' + minutes;
+        }
+        let hours = now.getHours().toString();
+        g.setFont("6x8:2").drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
+        g.drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
+        g.drawString("seg." + (this.current_segment + 1) + "/" + path.len, 0, g.getHeight() - 15);
+    }
+    display_map() {
+        // don't display all segments, only those neighbouring current segment
+        // this is most likely to be the correct display
+        // while lowering the cost a lot
+        let start = Math.max(this.current_segment - 5, 0);
+        let end = Math.min(this.current_segment + 6, this.path.len - 1);
+        let pos = this.position;
+        let cos = this.cos_direction;
+        let sin = this.sin_direction;
+
+        // segments
+        this.path.on_segments(function(p1, p2, i) {
+            if (i == this.current_segment + 1) {
+                g.setColor(0.0, 1.0, 0.0);
+            } else {
+                g.setColor(1.0, 0.0, 0.0);
+            }
+            let c1 = p1.coordinates(pos, cos, sin);
+            let c2 = p2.coordinates(pos, cos, sin);
+            g.drawLine(c1[0], c1[1], c2[0], c2[1]);
+        }, start, end);
+
+        // waypoints
+        for (let i = start ; i < end + 1 ; i++) {
+            let p = this.path.point(i);
+            let c = p.coordinates(pos, cos, sin);
+            g.setColor(g.theme.fg);
+            g.fillCircle(c[0], c[1], 4);
+            g.setColor(g.theme.bg);
+            g.fillCircle(c[0], c[1], 3);
+        }
+
+        // now display ourselves
+        g.setColor(g.theme.fgH);
+        g.fillCircle(g.getWidth() / 2, g.getHeight() / 2, 5);
+    }
+}
 
 class Path {
     constructor(filename) {
         let buffer = require("Storage").readArrayBuffer(filename);
         this.points = Float64Array(buffer);
-        this.total_distance = this.segments_length(0, this.len - 1);
     }
 
-    // return cumulated length of wanted segments (in km).
-    // start is index of first wanted segment
-    // end is 1 after index of last wanted segment
-    segments_length(start, end) {
-        let total = 0.0;
-        this.on_segments(function(p1, p2, i) {
-            total += p1.distance(p2);
-        }, start, end);
-        return total;
-    }
-
+    // execute op on all segments.
     // start is index of first wanted segment
     // end is 1 after index of last wanted segment
     on_segments(op, start, end) {
@@ -36,6 +121,7 @@ class Path {
         }
     }
 
+    // return point at given index
     point(index) {
         let lon = this.points[2 * index];
         let lat = this.points[2 * index + 1];
@@ -65,12 +151,12 @@ class Point {
         this.lon = lon;
         this.lat = lat;
     }
-    coordinates() {
-        let x = (this.lon - lon) * 20000.0;
-        let y = (this.lat - lat) * 20000.0;
-        let rotated_x = x * cos_direction - y * sin_direction;
-        let rotated_y = x * sin_direction + y * cos_direction;
-        return [g.getWidth() / 2 - Math.round(rotated_x), // x is inverted
+    coordinates(current_position, cos_direction, sin_direction) {
+        let translated = this.minus(current_position).times(20000.0);
+        let rotated_x = translated.lon * cos_direction - translated.lat * sin_direction;
+        let rotated_y = translated.lon * sin_direction + translated.lat * cos_direction;
+        return [
+            g.getWidth() / 2 - Math.round(rotated_x), // x is inverted
             g.getHeight() / 2 + Math.round(rotated_y)
         ];
     }
@@ -128,97 +214,45 @@ class Point {
     }
 }
 
-function display(path) {
-    g.clear();
-    g.setColor(g.theme.fg);
-    let next_segment =
-        path.nearest_segment(new Point(lon, lat), 0, path.len - 1);
-    let diff;
-    if (next_segment != current_segment) {
-        if (next_segment > current_segment) {
-            diff = path.segments_length(current_segment + 1, next_segment + 1);
-        } else {
-            diff = -path.segments_length(next_segment + 1, current_segment + 1);
-        }
-        remaining_distance -= diff;
-        current_segment = next_segment;
-    }
-    let start = Math.max(current_segment - 5, 0);
-    let end = Math.min(current_segment + 7, path.len - 1);
-    path.on_segments(function(p1, p2, i) {
-        let c2 = p2.coordinates();
-        if (i == current_segment + 1) {
-            g.setColor(0.0, 1.0, 0.0);
-        } else {
-            g.setColor(1.0, 0.0, 0.0);
-        }
-        let c1 = p1.coordinates();
-        g.drawLine(c1[0], c1[1], c2[0], c2[1]);
-        g.setColor(g.theme.fg);
-        g.fillCircle(c2[0], c2[1], 4);
-        g.setColor(g.theme.bg);
-        g.fillCircle(c2[0], c2[1], 3);
-    }, 0, path.len - 1);
-
-    g.setColor(g.theme.fgH);
-    g.fillCircle(172 / 2, 172 / 2, 5);
-    let real_remaining_distance =
-        remaining_distance + path.point(current_segment + 1).distance(new Point(lon, lat));
-    let rounded_distance = Math.round(real_remaining_distance / 100) / 10;
-    let total = Math.round(path.total_distance / 100) / 10;
-    g.setFont("6x8:2").drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
-    g.drawString("seg." + (current_segment + 1) + "/" + path.len, 0, g.getHeight() - 15);
-    Bangle.drawWidgets();
-}
 
 Bangle.loadWidgets();
 let path = new Path("test.gpc");
-var current_segment = path.nearest_segment(new Point(lon, lat), 0, path.len - 1);
-var remaining_distance = path.total_distance - path.segments_length(0, 1);
+let status = new Status(path);
 
 function set_coordinates(data) {
-    let old_lat = lat;
-    if (!isNaN(data.lat)) {
-        lat = data.lat;
-    }
-    let old_lon = lon;
-    if (!isNaN(data.lon)) {
-        lon = data.lon;
-    }
-    if ((old_lat != lat) || (old_lon != lon)) {
+    let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
+    if (valid_coordinates) {
         let direction = data.course * Math.PI / 180.0;
-        cos_direction = Math.cos(-direction - Math.PI / 2.0);
-        sin_direction = Math.sin(-direction - Math.PI / 2.0);
-        display(path);
+        let position = new Point(data.lon, data.lat);
+        status.update_position(position, direction);
     }
 }
 
 let fake_gps_point = 0.0;
-function simulate_gps(path) {
+function simulate_gps(status) {
     let point_index = Math.floor(fake_gps_point);
     if (point_index >= path.len) {
         return;
     }
     let p1 = path.point(point_index);
     let p2 = path.point(point_index + 1);
-    let alpha = fake_gps_point - point_index;
 
-    let old_lon = lon;
-    let old_lat = lat;
-    lon = (1 - alpha) * p1.lon + alpha * p2.lon;
-    lat = (1 - alpha) * p1.lat + alpha * p2.lat;
-    fake_gps_point += 0.05;
-    let direction = Math.atan2(lat - old_lat, lon - old_lon);
-    cos_direction = Math.cos(-direction - Math.PI / 2.0);
-    sin_direction = Math.sin(-direction - Math.PI / 2.0);
-    display(path);
+    let alpha = fake_gps_point - point_index;
+    let pos = p1.times(1-alpha).plus(p2.times(alpha));
+    let old_pos = status.position;
+
+    fake_gps_point += 0.05; // advance simulation
+    let direction = Math.atan2(pos.lat - old_pos.lat, pos.lon - old_pos.lon);
+    status.update_position(pos, direction);
 }
 
 
 if (simulated) {
-    setInterval(simulate_gps, 500, path);
-
+  status.position = new Point(status.path.point(0));
+  setInterval(simulate_gps, 500, status);
 } else {
-    Bangle.setGPSPower(true, "gipy");
-    Bangle.on('GPS', set_coordinates);
+  Bangle.setGPSPower(true, "gipy");
+  Bangle.on('GPS', set_coordinates);
 }
+
+
