@@ -1,17 +1,13 @@
+- nearest_segment : use highest_completed_segment to disambiguate
+- gps direction is weak when speed is low
+- add a version number to gpc files
+- water points
 
-- detect reached waypoints
-- beep when reaching waypoint
-- display distance to next waypoint
-- display average speed
+- store several tracks
 - turn off gps when moving to next waypoint
-- beep when moving away from path
+
+- display average speed
 - dynamic map rescale
 - display scale (100m)
 
-- store several tracks
-
-- water points
-
 - compress path
-
-- add a version number to gpc files

@@ -4,10 +4,14 @@ let simulated = false;
 class Status {
     constructor(path) {
         this.path = path;
+        this.on_path = false; // are we on the path or lost ?
         this.position = null; // where we are
         this.cos_direction = null; // cos of where we look at
         this.sin_direction = null; // sin of where we look at
         this.current_segment = null; // which segment is closest
+        this.highest_completed_segment = -1; // remember what we already acomplished to disambiguate nearest path when some segments are takend in both directions
+        this.reaching = null; // which waypoint are we reaching ?
+        this.distance_to_next_point = null; // how far are we from next point ?
 
         let r = [0];
         // let's do a reversed prefix computations on all distances:
@@ -23,26 +27,61 @@ class Status {
         this.remaining_distances = r; // how much distance remains at start of each segment
     }
     update_position(new_position, direction) {
+
         if (Bangle.isLocked() && this.position !== null && new_position.lon == this.position.lon && new_position.lat == this.position.lat) {
             return;
         }
+
         this.cos_direction = Math.cos(-direction - Math.PI / 2.0);
         this.sin_direction = Math.sin(-direction - Math.PI / 2.0);
         this.position = new_position;
-        if (this.is_lost()) {
-            this.current_segment = this.path.nearest_segment(this.position, 0, path.len - 1);
-        } else {
-            this.current_segment = this.path.nearest_segment(this.position, Math.max(0, current_segment-1), Math.min(current_segment+2, path.len - 1));
+
+        // detect segment we are on now
+        let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, path.len - 1));
+            
+        if (this.is_lost(next_segment)) {
+            // it did not work, try anywhere
+            next_segment = this.path.nearest_segment(this.position, 0, path.len - 1);
         }
-        this.display();
+        // now check if we strayed away from path or back to it
+        let lost = this.is_lost(next_segment);
+        if (this.on_path == lost) {
+            if (lost) {
+                Bangle.buzz(); // we lost path
+                setTimeout(()=>Bangle.buzz(), 300);
+            } else {
+                Bangle.buzz(); // we found path back
+            }
+            this.on_path = !lost;
+        }
+
+        if (this.current_segment != next_segment) {
+            if (this.current_segment == next_segment - 1) {
+                this.highest_completed_segment = this.current_segment;
+            }
+        }
+        this.current_segment = next_segment;
+
+        // check if we are nearing the next point on our path and alert the user
+        let next_point = this.current_segment + 1;
+        this.distance_to_next_point = Math.ceil(this.position.distance(this.path.point(next_point)));
+        if (this.reaching != next_point && this.distance_to_next_point <= 20) {
+            this.reaching = next_point;
+            Bangle.buzz();
+        }
+
+        // re-display unless locked
+        if (!Bangle.isLocked()) {
+            this.display();
+        }
     }
     remaining_distance() {
         return this.remaining_distances[this.current_segment+1] + this.position.distance(this.path.point(this.current_segment+1));
     }
-    is_lost() {
-        let distance_to_nearest = this.position.fake_distance_to_segment(this.path.point(this.current_segment), this.path.point(this.current_segment+1));
-        // TODO: if more than something then we are lost
-        return true;
+    is_lost(segment) {
+        let distance_to_nearest = this.position.fake_distance_to_segment(this.path.point(segment), this.path.point(segment+1));
+        let meters = 6371e3 * distance_to_nearest;
+        return (meters > 20);
     }
     display() {
         g.clear();
@@ -61,7 +100,7 @@ class Status {
         let hours = now.getHours().toString();
         g.setFont("6x8:2").drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
         g.drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
-        g.drawString("seg." + (this.current_segment + 1) + "/" + path.len, 0, g.getHeight() - 15);
+        g.drawString("seg." + (this.current_segment + 1) + "/" + path.len + "  " + this.distance_to_next_point + "m", 0, g.getHeight() - 15);
     }
     display_map() {
         // don't display all segments, only those neighbouring current segment
@@ -207,8 +246,8 @@ class Point {
         // We find projection of point p onto the line.
         // It falls where t = [(p-v) . (w-v)] / |w-v|^2
         // We clamp t from [0,1] to handle points outside the segment vw.
-        let t =
-            Math.max(0, Math.min(1, (this.minus(v)).dot(w.minus(v)) / l2));
+        let t = Math.max(0, Math.min(1, (this.minus(v)).dot(w.minus(v)) / l2));
+            
         let projection = v.plus((w.minus(v)).times(t)); // Projection falls on the segment
         return this.fake_distance(projection);
     }
@@ -254,5 +293,3 @@ if (simulated) {
   Bangle.setGPSPower(true, "gipy");
   Bangle.on('GPS', set_coordinates);
 }
-
-
