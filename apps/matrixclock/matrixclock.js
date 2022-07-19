@@ -10,8 +10,15 @@
 const Locale = require('locale');
 
 const PREFERENCE_FILE = "matrixclock.settings.json";
-const settings = Object.assign({color: "theme", intensity: 'light'},
+const settings = Object.assign({color: "theme", time_format: '12 hour', intensity: 'light'},
     require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+
+var format_time;
+if(settings.time_format == '24 hour'){
+  format_time = (t) => format_time_24_hour(t);
+} else {
+  format_time = (t) => format_time_12_hour(t);
+}
 
 const colors = {
   'gray' :[0.5,0.5,0.5],
@@ -247,8 +254,14 @@ function format_date(now){
   return Locale.dow(now,1) + " " + format00(now.getDate());
 }
 
+function format_time_24_hour(now){
+  var time = new Date(now.getTime());
+  var hours = time.getHours() ;
 
-function format_time(now){
+  return format00(hours) + ":" + format00(time.getMinutes());
+}
+
+function format_time_12_hour(now){
   var time = new Date(now.getTime());
   var hours = time.getHours() % 12;
   if(hours < 1){
