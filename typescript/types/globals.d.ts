@@ -1,185 +1,216 @@
-// TODO all of these globals (copied from eslintrc) need to be typed at some point
-/* The typing status is listed on the left of the attribute, e.g.:
-status  "Attribute"
-
-        // Methods and Fields at https://banglejs.com/reference
-        "Array": "readonly",
-        "ArrayBuffer": "readonly",
-        "ArrayBufferView": "readonly",
-started "Bangle": "readonly",
-        "BluetoothDevice": "readonly",
-        "BluetoothRemoteGATTCharacteristic": "readonly",
-        "BluetoothRemoteGATTServer": "readonly",
-        "BluetoothRemoteGATTService": "readonly",
-        "Boolean": "readonly",
-        "console": "readonly",
-        "DataView": "readonly",
-        "Date": "readonly",
-        "E": "readonly",
-        "Error": "readonly",
-        "Flash": "readonly",
-        "Float32Array": "readonly",
-        "Float64Array": "readonly",
-        "fs": "readonly",
-        "Function": "readonly",
-started "Graphics": "readonly",
-done    "heatshrink": "readonly",
-        "I2C": "readonly",
-        "Int16Array": "readonly",
-        "Int32Array": "readonly",
-        "Int8Array": "readonly",
-        "InternalError": "readonly",
-        "JSON": "readonly",
-        "Math": "readonly",
-        "Modules": "readonly",
-        "NRF": "readonly",
-        "Number": "readonly",
-        "Object": "readonly",
-        "OneWire": "readonly",
-        "Pin": "readonly",
-        "process": "readonly",
-        "Promise": "readonly",
-        "ReferenceError": "readonly",
-        "RegExp": "readonly",
-        "Serial": "readonly",
-        "SPI": "readonly",
-        "Storage": "readonly",
-        "StorageFile": "readonly",
-        "String": "readonly",
-        "SyntaxError": "readonly",
-        "tensorflow": "readonly",
-        "TFMicroInterpreter": "readonly",
-        "TypeError": "readonly",
-        "Uint16Array": "readonly",
-        "Uint24Array": "readonly",
-        "Uint32Array": "readonly",
-        "Uint8Array": "readonly",
-        "Uint8ClampedArray": "readonly",
-        "Waveform": "readonly",
-        // Methods and Fields at https://banglejs.com/reference
-        "analogRead": "readonly",
-        "analogWrite": "readonly",
-        "arguments": "readonly",
-        "atob": "readonly",
-        "Bluetooth": "readonly",
-        "BTN": "readonly",
-        "BTN1": "readonly",
-        "BTN2": "readonly",
-        "BTN3": "readonly",
-        "BTN4": "readonly",
-        "BTN5": "readonly",
-        "btoa": "readonly",
-        "changeInterval": "readonly",
-        "clearInterval": "readonly",
-        "clearTimeout": "readonly",
-        "clearWatch": "readonly",
-        "decodeURIComponent": "readonly",
-        "digitalPulse": "readonly",
-        "digitalRead": "readonly",
-        "digitalWrite": "readonly",
-        "dump": "readonly",
-        "echo": "readonly",
-        "edit": "readonly",
-        "encodeURIComponent": "readonly",
-        "eval": "readonly",
-        "getPinMode": "readonly",
-        "getSerial": "readonly",
-        "getTime": "readonly",
-        "global": "readonly",
-        "HIGH": "readonly",
-        "I2C1": "readonly",
-        "Infinity": "readonly",
-        "isFinite": "readonly",
-        "isNaN": "readonly",
-        "LED": "readonly",
-        "LED1": "readonly",
-        "LED2": "readonly",
-        "load": "readonly",
-        "LoopbackA": "readonly",
-        "LoopbackB": "readonly",
-        "LOW": "readonly",
-        "NaN": "readonly",
-        "parseFloat": "readonly",
-        "parseInt": "readonly",
-        "peek16": "readonly",
-        "peek32": "readonly",
-        "peek8": "readonly",
-        "pinMode": "readonly",
-        "poke16": "readonly",
-        "poke32": "readonly",
-        "poke8": "readonly",
-        "print": "readonly",
-started "require": "readonly",
-        "reset": "readonly",
-        "save": "readonly",
-        "Serial1": "readonly",
-        "setBusyIndicator": "readonly",
-        "setInterval": "readonly",
-        "setSleepIndicator": "readonly",
-        "setTime": "readonly",
-        "setTimeout": "readonly",
-        "setWatch": "readonly",
-        "shiftOut": "readonly",
-        "SPI1": "readonly",
-        "Terminal": "readonly",
-        "trace": "readonly",
-        "VIBRATE": "readonly",
-        // Aliases and not defined at https://banglejs.com/reference
-done    "g": "readonly",
-done    "WIDGETS": "readonly"
+/*~ This file declares the Espruino globals.
+ *~ Reference: https://banglejs.com/reference#_global
  */
 
-// ambient JS definitions
+/* Note: The following don't have to be declared as they are
+ * already part of regular JavaScript:
+ * btoa
+ * clearInterval
+ * clearTimeout
+ * decodeURIComponent
+ * encodeURIComponent
+ * eval
+ * Infinity
+ * isFinite
+ * isNaN
+ * NaN
+ * parseFloat
+ * parseInt
+ * setInterval
+ * setTimeout
+ */
 
-declare const require: ((module: 'heatshrink') => {
+// Pins
+declare type Pin = number;
+declare type PinMode =
+  | "analog"
+  | "input"
+  | "intupt_pullup"
+  | "intupt_pulldown"
+  | "output"
+  | "opendrain"
+  | "af_output"
+  | "af_opendrain";
+
+declare const BTN: 24;
+declare const BTN1: 24;
+declare const BTN2: 22;
+declare const BTN3: 23;
+declare const BTN4: 11;
+declare const BTN5: 16;
+declare const VIBRATE: 13;
+
+declare function getPinMode(pin: Pin): PinMode;
+declare function pinMode(
+  pin: Pin,
+  mode?: PinMode | "auto",
+  automatic?: boolean
+): void;
+
+// Analog pins
+
+/**
+ * Get the analog value of the given pin.
+ * This is different to Arduino which only returns an integer between 0 and 1023.
+ * However only pins connected to an ADC will work (see the datasheet).
+ * **Note**: if you didn't call `pinMode` beforehand then this function will also reset pin's state to "analog".
+ * @param {number} pin - The pin to use.
+ * @returns {number} The analog Value of the Pin between 0 and 1.
+ * @url https://banglejs.com/reference#l__global_analogRead
+ */
+declare function analogRead(pin: Pin): number;
+
+/**
+ * Set the analog Value of a pin. It will be output using PWM.
+ * **Note**: if you didn't call pinMode beforehand then this function will also reset pin's state to "output".
+ * @param {number} pin - The pin to use.
+ * @param {number} value - A value between 0 and 1.
+ * @param {object} [options] - Additonal options.
+ * @param {number} [options.freq] - Pulse frequency in Hz, e.g. 10 - specifying a frequency will force PWM output, even if the pin has a DAC.
+ * @param {boolean} [options.soft] - If true software PWM is used if hardware is not available.
+ * @param {boolean} [options.forceSoft] - If true software PWM is used even if hardware PWM or a DAC is available.
+ */
+declare function analogWrite(
+  pin: Pin,
+  value: number,
+  options?: { freq?: number; soft?: boolean; forceSoft?: boolean }
+): void;
+
+// Digital pins
+declare const HIGH: 1;
+
+declare const LOW: 0;
+
+declare function digitalPulse(pin: Pin, value: boolean, time: number): void;
+
+declare function digitalRead(pin: Pin | Pin[]): number;
+
+declare function digitalWrite(pin: Pin, value: boolean): void;
+declare function digitalWrite(pin: Pin[], value: number): void;
+declare function digitalWrite(
+  pin: {
+    write: (value: boolean) => void;
+  },
+  value: boolean
+): void;
+
+// Other globals
+declare function atob(base64Data: string): string;
+
+declare function btoa(binaryData: string): string;
+
+declare function changeInterval(id: number, time: number): void;
+
+declare function dump(): void;
+
+declare function echo(echoOn: boolean): void;
+
+declare function edit(funcName: string | Function): void;
+
+declare function getSerial(): number;
+
+declare function getTime(): number;
+
+declare const global: any; //TODO define better
+
+declare const I2C1: I2C;
+
+declare function load(file?: string): void;
+
+declare function peek8(address: number, count?: 1): number;
+declare function peek8(address: number, count: number): Uint8Array;
+
+declare function peek16(address: number, count?: 1): number;
+declare function peek16(address: number, count: number): Uint16Array;
+
+declare function peek32(address: number, count?: 1): number;
+declare function peek32(address: number, count: number): Uint32Array;
+
+declare function poke8(address: number, value: number): void;
+
+declare function poke16(address: number, value: number): void;
+
+declare function poke32(address: number, value: number): void;
+
+declare function print(...args: any[]): void;
+
+declare const Serial1: Serial;
+
+declare const Bluetooth: Serial;
+
+declare const LoopbackA: Serial;
+
+declare const LoopbackB: Serial;
+
+declare function require(module: "heatshrink"): {
   decompress: (compressedString: string) => string;
-}) & // TODO add more
-  ((module: 'otherString') => {});
-
-// ambient bangle.js definitions
-
-declare const Bangle: {
-  // functions
-  buzz: (duration?: number, intensity?: number) => Promise<void>;
-  drawWidgets: () => void;
-  isCharging: () => boolean;
-  // events
-  on(event: 'charging', listener: (charging: boolean) => void): void;
-  // TODO add more
 };
+declare function require(module: "Storage"): Storage;
+declare type Module = "heatshrink" | "Storage";
 
-declare type Image = {
-  width: number;
-  height: number;
-  bpp?: number;
-  buffer: ArrayBuffer | string;
-  transparent?: number;
-  palette?: Uint16Array;
-};
+declare function reset(clearFlash?: true): void;
 
-declare type GraphicsApi = {
-  reset: () => GraphicsApi;
-  flip: () => void;
-  setColor: (color: string) => GraphicsApi; // TODO we can most likely type color more usefully than this
-  drawImage: (
-    image: string | Image | ArrayBuffer,
-    xOffset: number,
-    yOffset: number,
+declare function setInterval(id: any): void;
+
+declare function setBusyIndicator(pin?: Pin): void;
+
+declare function setSleepIndicator(pin?: Pin): void;
+
+declare function setTime(time: number): void;
+
+type Data =
+  | number
+  | string
+  | Array<Data>
+  | ArrayBuffer
+  | { data: Data; count: number }
+  | { callback: () => Data };
+
+declare function shiftOut(
+  pins: Pin | Pin[],
+  options: { clk: Pin; repeat?: number },
+  data: Data
+): void;
+
+declare const SPI1: SPIInstance;
+
+declare const Terminal: Serial;
+
+declare function trace(root?: number): void;
+
+// Watches
+declare function clearWatch(id?: number): void;
+declare const setWatch: ((
+  callback:
+    | ((obj: { state: boolean; time: number; lastTime: number }) => void)
+    | string,
+  pin: number,
+  options?:
+    | boolean
+    | number
+    | {
+        repeat?: boolean;
+        edge?: "rising" | "falling" | "both";
+        debounce?: number;
+        irq?: boolean;
+      }
+) => number) &
+  // If a data option is specified, the callback will also have one.
+  ((
+    callback:
+      | ((obj: {
+          state: boolean;
+          time: number;
+          lastTime: number;
+          data: any; // TODO: Specify data type
+        }) => void)
+      | string,
+    pin: number,
     options?: {
-      rotate?: number;
-      scale?: number;
+      data: number;
+      repeat?: boolean;
+      edge?: "rising" | "falling" | "both";
+      debounce?: number;
+      irq?: boolean;
     }
-  ) => GraphicsApi;
-  // TODO add more
-};
-
-declare const Graphics: GraphicsApi;
-declare const g: GraphicsApi;
-
-type WidgetArea = 'tl' | 'tr' | 'bl' | 'br';
-declare type Widget = {
-  area: WidgetArea;
-  width: number;
-  draw: (this: { x: number; y: number }) => void;
-};
-declare const WIDGETS: { [key: string]: Widget };
+  ) => number);
