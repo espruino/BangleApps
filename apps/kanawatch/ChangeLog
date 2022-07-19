@@ -1,3 +1,4 @@
 0.01: First release
 0.02: Improve battery life, sprite resolution, fix launcher issue and unaligned text bug
 0.03: Reduce code size, refresh once a minute and faster refresh
+0.04: Show a random kana every minute to improve learning
