@@ -51,8 +51,9 @@ function get(key, obj, isGlobal, f) {
         .filter((line) => line)
         .map((line) =>
           line
+            .replace("^<p>(.*)</p>$", "$1")
             .replace("<p>", "")
-            .replace("</p>", "")
+            .replace("</p>", "\n")
             .replace(/&#39;/g, "'")
             .replace(/&quot;/g, '"')
             .replace(/&gt;/g, ">")
@@ -62,19 +63,29 @@ function get(key, obj, isGlobal, f) {
             .replace(/<\/?strong>/g, "**")
             .replace(/<\/?em>/g, "*")
             .replace(/<\/?code>/g, "`")
-            .replace(/<\/?ul>/g, "")
+            .replace(/<\/?ul>/g, "\n")
             .replace(/<li>/g, "- ")
             .replace(/<\/li>/g, "")
+            .replace(/<pre>`/g, "\n```\n")
+            .replace(/<h3 id="[^"\n]+">([^\n]+)<\/h3>/g, "\n\n# $1\n\n")
+            .replace(/`<\/pre>/g, "```\n")
+            .replace(/<span class="[^"]+">/g, "")
+            .replace(/<\/span>/g, "")
             .replace(
-              /<a href="([^\n]*)">([^\n]*)<\/a>/g,
+              /<a href="([^\n"]*)">([^\n<>]*)<\/a>/g,
               (_, address, name) => {
                 if (address.startsWith("/"))
                   address = "https://espruino.com/" + address;
                 return `[${name}](${address})`;
               }
             )
+            .split("\n")
         )
+        .flat()
         .concat([`@url ${obj["!url"]}`])
+        .join("\n")
+        .replace(/\n\n+/g, "\n\n")
+        .split("\n")
         .map((line) => " * " + line)
         .join("\n") +
       "\n */",
