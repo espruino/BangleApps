@@ -8,6 +8,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:types": "tsc ./types/globals.d.ts"
+    "build:types": "tsc ./types/main.d.ts"
   }
 }

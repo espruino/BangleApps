@@ -127,6 +127,18 @@ function next () {
   updateWatch(ohhmm);
 }
 
+function randKana() {
+  try {
+    const keys = Object.keys(katakana);
+    const total = keys.length;
+    let index = 0 | (Math.random() * total);
+    curkana = keys[index];
+    kana = hiramode ? hiragana[curkana] : katakana[curkana];
+  } catch (e) {
+    randKana();
+  }
+}
+
 function prev () {
   let oldk = '';
   let count = 0;
@@ -233,6 +245,7 @@ function tickWatch () {
   }
   const hhmm = zpad(now.getHours()) + ':' + zpad(now.getMinutes());
   if (hhmm !== ohhmm) {
+    randKana();
     updateWatch(hhmm);
     ohhmm = hhmm;
   }
@@ -257,3 +270,4 @@ setInterval(tickWatch, 1000 * 60);
 
 // show launcher when button pressed
 Bangle.setUI('clock');
+

@@ -6,7 +6,7 @@ The goal is to have types for everything, but that will take some time. Feel fre
 
 ## Using the types
 
-All currently typed modules can be found in `/typescript/types.globals.d.ts`.
+All currently typed modules can be found in `/typescript/types`.
 The typing is an ongoing process. If anything is still missing, you can add it! It will automatically be available in your TS files.
 
 ## Compilation
