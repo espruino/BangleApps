@@ -3353,7 +3353,7 @@ declare const ESP8266: {
    *
    * @url http://www.espruino.com/Reference#l_ESP8266_getResetInfo
    */
-  getResetInfo: () => RstInfo;
+  getResetInfo: () => any;
 
   /**
    * Enable or disable the logging of debug information.  A value of `true` enables debug logging while a value of `false` disables debug logging.  Debug output is sent to UART1 (gpio2).
