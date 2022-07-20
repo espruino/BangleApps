@@ -62,7 +62,14 @@ function get(key, obj, isGlobal) {
             .replace(/<\/?ul>/g, "")
             .replace(/<li>/g, "- ")
             .replace(/<\/li>/g, "")
-            .replace(/<a href="([^\n]*)">([^\n]*)<\/a>/g, "[$2]($1)")
+            .replace(
+              /<a href="([^\n]*)">([^\n]*)<\/a>/g,
+              (_, address, name) => {
+                if (address.startsWith("/"))
+                  address = "https://espruino.com/" + address;
+                return `[${name}](${address})`;
+              }
+            )
         )
         .concat([`@url ${obj["!url"]}`])
         .map((line) => " * " + line)

@@ -10,7 +10,7 @@ declare function neopixel(): void;
 
 /**
  * This library provides TV out capability on the Espruino and Espruino Pico.
- * See the [Television](/Television) page for more information.
+ * See the [Television](https://espruino.com//Television) page for more information.
  * @url http://www.espruino.com/Reference#l_tv_undefined
  */
 declare function tv(): void;
@@ -1319,7 +1319,7 @@ declare namespace Microbit {
   function accel(): any;
 
   /**
-   * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
+   * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
    * Write the given value to the accelerometer
    * @url http://www.espruino.com/Reference#l_Microbit_accelWr
    */
@@ -2039,7 +2039,7 @@ declare namespace ESP8266 {
 
 /**
  * This library allows you to create http servers and make http requests
- * In order to use this, you will need an extra module to get network connectivity such as the [WIZnet W5500](/CC3000">TI CC3000</a> or <a href="/WIZnet).
+ * In order to use this, you will need an extra module to get network connectivity such as the [WIZnet W5500](https://espruino.com//CC3000">TI CC3000</a> or <a href="/WIZnet).
  * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/http.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
  * @url http://www.espruino.com/Reference#l_http_undefined
  */
@@ -2954,16 +2954,16 @@ declare const Telnet: any;
 /**
  * This is the built-in JavaScript class that is the prototype for:
  *
- * - [Uint8Array](/Reference#Uint8Array)
- * - [UintClamped8Array](/Reference#UintClamped8Array)
- * - [Int8Array](/Reference#Int8Array)
- * - [Uint16Array](/Reference#Uint16Array)
- * - [Int16Array](/Reference#Int16Array)
- * - [Uint24Array](/Reference#Uint24Array) (Espruino-specific - not standard JS)
- * - [Uint32Array](/Reference#Uint32Array)
- * - [Int32Array](/Reference#Int32Array)
- * - [Float32Array](/Reference#Float32Array)
- * - [Float64Array](/Reference#Float64Array)
+ * - [Uint8Array](https://espruino.com//Reference#Uint8Array)
+ * - [UintClamped8Array](https://espruino.com//Reference#UintClamped8Array)
+ * - [Int8Array](https://espruino.com//Reference#Int8Array)
+ * - [Uint16Array](https://espruino.com//Reference#Uint16Array)
+ * - [Int16Array](https://espruino.com//Reference#Int16Array)
+ * - [Uint24Array](https://espruino.com//Reference#Uint24Array) (Espruino-specific - not standard JS)
+ * - [Uint32Array](https://espruino.com//Reference#Uint32Array)
+ * - [Int32Array](https://espruino.com//Reference#Int32Array)
+ * - [Float32Array](https://espruino.com//Reference#Float32Array)
+ * - [Float64Array](https://espruino.com//Reference#Float64Array)
  *
  * If you want to access arrays of differing types of data
  * you may also find `DataView` useful.
@@ -4157,7 +4157,7 @@ declare const LED1: any;
 declare const LED2: any;
 
 /**
- * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
+ * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
  * Get the current acceleration of the micro:bit from the on-board accelerometer
  * **This is deprecated.** Please use `Microbit.accel` instead.
  * @url http://www.espruino.com/Reference#l__global_acceleration
@@ -4165,7 +4165,7 @@ declare const LED2: any;
 declare function acceleration(): any;
 
 /**
- * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
+ * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
  * Get the current compass position for the micro:bit from the on-board magnetometer
  * **This is deprecated.** Please use `Microbit.mag` instead.
  * @url http://www.espruino.com/Reference#l__global_compass
