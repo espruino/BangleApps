@@ -97,23 +97,23 @@ function get(key, obj, isGlobal) {
           return pair.join(": ");
         })
         .join(", ");
-    if (topLevel) {
+
+    if (hasProperties) {
+      add(`${indent ? "" : "declare "}const ${key}: {`);
+      indent += 2;
+      topLevel = false;
+      for (const key in obj) {
+        get(key, obj[key], true);
+      }
+      topLevel = true;
+      indent -= 2;
+      add("};");
+    } else if (topLevel) {
       add(
         `${indent ? "" : "declare "}function ${key}(${args}): ${returnType};`
       );
     } else {
       add(`${key}: (${args}) => ${returnType};`);
-    }
-
-    if (hasProperties) {
-      add("");
-      add(`declare namespace ${key} {`);
-      indent += 2;
-      for (const key in obj) {
-        get(key, obj[key], true);
-      }
-      indent -= 2;
-      add("}");
     }
   } else {
     if (hasProperties) {
