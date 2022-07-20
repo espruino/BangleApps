@@ -7,95 +7,55 @@ use std::path::Path;
 use gpx::read;
 use gpx::Gpx;
 
-use lazy_static::lazy_static;
-use openstreetmap_api::{
-    types::{BoundingBox, Credentials},
-    Openstreetmap,
-};
+mod osm;
+use osm::InterestPoint;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-enum Interest {
-    Bakery,
-    DrinkingWater,
-    Toilets,
-    BikeShop,
-    ChargingStation,
-    Bank,
-    Supermarket,
-    Table,
-    //    TourismOffice,
-    Artwork,
-    Pharmacy,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Point {
+    x: f64,
+    y: f64,
 }
 
-#[derive(Debug, PartialEq)]
-struct InterestPoint {
-    lat: f64,
-    lon: f64,
-    interest: Interest,
-}
-
-impl Eq for InterestPoint {}
-impl std::hash::Hash for InterestPoint {
+impl Eq for Point {}
+impl std::hash::Hash for Point {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        unsafe { std::mem::transmute::<f64, u64>(self.lat) }.hash(state);
-        unsafe { std::mem::transmute::<f64, u64>(self.lon) }.hash(state);
-        self.interest.hash(state);
+        unsafe { std::mem::transmute::<f64, u64>(self.x) }.hash(state);
+        unsafe { std::mem::transmute::<f64, u64>(self.y) }.hash(state);
     }
 }
 
-lazy_static! {
-    static ref INTERESTS: HashMap<(&'static str, &'static str), Interest> = {
-        [
-            (("shop", "bakery"), Interest::Bakery),
-            (("amenity", "drinking_water"), Interest::DrinkingWater),
-            (("amenity", "toilets"), Interest::Toilets),
-            (("shop", "bicycle"), Interest::BikeShop),
-            (("amenity", "charging_station"), Interest::ChargingStation),
-            (("amenity", "bank"), Interest::Bank),
-            (("shop", "supermarket"), Interest::Supermarket),
-            (("leisure", "picnic_table"), Interest::Table),
-            // (("tourism", "information"), Interest::TourismOffice),
-            (("tourism", "artwork"), Interest::Artwork),
-            (("amenity", "pharmacy"), Interest::Pharmacy),
-        ]
-        .into_iter()
-        .collect()
-    };
-}
-
-impl Interest {
-    fn new(key: &str, value: &str) -> Option<Self> {
-        INTERESTS.get(&(key, value)).cloned()
+impl Point {
+    fn squared_distance_between(&self, other: &Point) -> f64 {
+        let dx = other.x - self.x;
+        let dy = other.y - self.y;
+        dx * dx + dy * dy
     }
-}
-
-impl InterestPoint {
-    fn color(&self) -> &'static str {
-        match self.interest {
-            Interest::Bakery => "red",
-            Interest::DrinkingWater => "blue",
-            Interest::Toilets => "brown",
-            Interest::BikeShop => "purple",
-            Interest::ChargingStation => "green",
-            Interest::Bank => "black",
-            Interest::Supermarket => "red",
-            Interest::Table => "pink",
-            Interest::Artwork => "orange",
-            Interest::Pharmacy => "chartreuse",
+    fn distance_to_segment(&self, v: &Point, w: &Point) -> f64 {
+        let l2 = v.squared_distance_between(w);
+        if l2 == 0.0 {
+            return self.squared_distance_between(v).sqrt();
         }
+        // Consider the line extending the segment, parameterized as v + t (w - v).
+        // We find projection of point p onto the line.
+        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+        // We clamp t from [0,1] to handle points outside the segment vw.
+        let x0 = self.x - v.x;
+        let y0 = self.y - v.y;
+        let x1 = w.x - v.x;
+        let y1 = w.y - v.y;
+        let dot = x0 * x1 + y0 * y1;
+        let t = (dot / l2).min(1.0).max(0.0);
+
+        let proj = Point {
+            x: v.x + x1 * t,
+            y: v.y + y1 * t,
+        };
+
+        proj.squared_distance_between(self).sqrt()
     }
 }
 
-fn squared_distance_between(p1: &(f64, f64), p2: &(f64, f64)) -> f64 {
-    let (x1, y1) = *p1;
-    let (x2, y2) = *p2;
-    let dx = x2 - x1;
-    let dy = y2 - y1;
-    dx * dx + dy * dy
-}
-
-fn points(filename: &str) -> impl Iterator<Item = (f64, f64)> {
+fn points(filename: &str) -> impl Iterator<Item = Point> {
     // This XML file actually exists — try it for yourself!
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
@@ -112,28 +72,7 @@ fn points(filename: &str) -> impl Iterator<Item = (f64, f64)> {
         .flat_map(|segment| segment.linestring().points().collect::<Vec<_>>())
         .map(|point| (point.x(), point.y()))
         .dedup()
-}
-
-fn distance_to_segment(p: &(f64, f64), v: &(f64, f64), w: &(f64, f64)) -> f64 {
-    let l2 = squared_distance_between(v, w);
-    if l2 == 0.0 {
-        return squared_distance_between(p, v).sqrt();
-    }
-    // Consider the line extending the segment, parameterized as v + t (w - v).
-    // We find projection of point p onto the line.
-    // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-    // We clamp t from [0,1] to handle points outside the segment vw.
-    let x0 = p.0 - v.0;
-    let y0 = p.1 - v.1;
-    let x1 = w.0 - v.0;
-    let y1 = w.1 - v.1;
-    let dot = x0 * x1 + y0 * y1;
-    let t = (dot / l2).min(1.0).max(0.0);
-
-    let proj_x = v.0 + x1 * t;
-    let proj_y = v.1 + y1 * t;
-
-    squared_distance_between(&(proj_x, proj_y), p).sqrt()
+        .map(|(x, y)| Point { x, y })
 }
 
 // // NOTE: this angles idea could maybe be use to get dp from n^3 to n^2
@@ -199,11 +138,11 @@ fn distance_to_segment(p: &(f64, f64), v: &(f64, f64), w: &(f64, f64)) -> f64 {
 // }
 
 fn extract_prog_dyn_solution(
-    points: &[(f64, f64)],
+    points: &[Point],
     start: usize,
     end: usize,
     cache: &HashMap<(usize, usize), (Option<usize>, usize)>,
-) -> Vec<(f64, f64)> {
+) -> Vec<Point> {
     if let Some(choice) = cache.get(&(start, end)).unwrap().0 {
         let mut v1 = extract_prog_dyn_solution(points, start, choice + 1, cache);
         let mut v2 = extract_prog_dyn_solution(points, choice, end, cache);
@@ -216,7 +155,7 @@ fn extract_prog_dyn_solution(
 }
 
 fn simplify_prog_dyn(
-    points: &[(f64, f64)],
+    points: &[Point],
     start: usize,
     end: usize,
     epsilon: f64,
@@ -234,7 +173,7 @@ fn simplify_prog_dyn(
 
             if points[(start + 1)..end]
                 .iter()
-                .map(|p| distance_to_segment(p, first_point, last_point))
+                .map(|p| p.distance_to_segment(first_point, last_point))
                 .all(|d| d <= epsilon)
             {
                 (None, 2)
@@ -255,7 +194,7 @@ fn simplify_prog_dyn(
     }
 }
 
-fn rdp(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
+fn rdp(points: &[Point], epsilon: f64) -> Vec<Point> {
     if points.len() <= 2 {
         points.iter().copied().collect()
     } else {
@@ -266,8 +205,9 @@ fn rdp(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
                 .enumerate()
                 .skip(1)
                 .max_by(|(_, p1), (_, p2)| {
-                    squared_distance_between(first, p1)
-                        .partial_cmp(&squared_distance_between(first, p2))
+                    first
+                        .squared_distance_between(p1)
+                        .partial_cmp(&first.squared_distance_between(p2))
                         .unwrap()
                 })
                 .map(|(i, _)| i)
@@ -282,7 +222,7 @@ fn rdp(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
         } else {
             let (index_farthest, farthest_distance) = points
                 .iter()
-                .map(|p| distance_to_segment(p, points.first().unwrap(), points.last().unwrap()))
+                .map(|p| p.distance_to_segment(points.first().unwrap(), points.last().unwrap()))
                 .enumerate()
                 .max_by(|(_, d1), (_, d2)| {
                     if d1.is_nan() {
@@ -313,7 +253,7 @@ fn rdp(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
     }
 }
 
-fn simplify_path(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
+fn simplify_path(points: &[Point], epsilon: f64) -> Vec<Point> {
     if points.len() <= 600 {
         optimal_simplification(points, epsilon)
     } else {
@@ -384,13 +324,7 @@ fn compress_coordinates(points: &[(i32, i32)]) -> Vec<(i16, i16)> {
     xdiffs.zip(ydiffs).collect()
 }
 
-fn save_coordinates<P: AsRef<Path>>(
-    path: P,
-    //xmin: f64,
-    //ymin: f64,
-    // points: &[(i32, i32)],
-    points: &[(f64, f64)],
-) -> std::io::Result<()> {
+fn save_coordinates<P: AsRef<Path>>(path: P, points: &[Point]) -> std::io::Result<()> {
     let mut writer = BufWriter::new(File::create(path)?);
 
     eprintln!("saving {} points", points.len());
@@ -398,19 +332,19 @@ fn save_coordinates<P: AsRef<Path>>(
     // writer.write_all(&ymin.to_be_bytes())?;
     points
         .iter()
-        .flat_map(|(x, y)| [x, y])
+        .flat_map(|p| [p.x, p.y])
         .try_for_each(|c| writer.write_all(&c.to_le_bytes()))?;
 
     Ok(())
 }
 
-fn optimal_simplification(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
+fn optimal_simplification(points: &[Point], epsilon: f64) -> Vec<Point> {
     let mut cache = HashMap::new();
     simplify_prog_dyn(&points, 0, points.len(), epsilon, &mut cache);
     extract_prog_dyn_solution(&points, 0, points.len(), &cache)
 }
 
-fn hybrid_simplification(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)> {
+fn hybrid_simplification(points: &[Point], epsilon: f64) -> Vec<Point> {
     if points.len() <= 300 {
         optimal_simplification(points, epsilon)
     } else {
@@ -421,8 +355,9 @@ fn hybrid_simplification(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)>
                 .enumerate()
                 .skip(1)
                 .max_by(|(_, p1), (_, p2)| {
-                    squared_distance_between(first, p1)
-                        .partial_cmp(&squared_distance_between(first, p2))
+                    first
+                        .squared_distance_between(p1)
+                        .partial_cmp(&first.squared_distance_between(p2))
                         .unwrap()
                 })
                 .map(|(i, _)| i)
@@ -437,7 +372,7 @@ fn hybrid_simplification(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)>
         } else {
             let (index_farthest, farthest_distance) = points
                 .iter()
-                .map(|p| distance_to_segment(p, points.first().unwrap(), points.last().unwrap()))
+                .map(|p| p.distance_to_segment(points.first().unwrap(), points.last().unwrap()))
                 .enumerate()
                 .max_by(|(_, d1), (_, d2)| {
                     if d1.is_nan() {
@@ -468,73 +403,36 @@ fn hybrid_simplification(points: &[(f64, f64)], epsilon: f64) -> Vec<(f64, f64)>
     }
 }
 
-async fn get_openstreetmap_data(points: &[(f64, f64)]) -> HashSet<InterestPoint> {
-    let osm = Openstreetmap::new("https://openstreetmap.org", Credentials::None);
-    let mut interest_points = HashSet::new();
-    let border = 0.0001;
-    for (&(x1, y1), &(x2, y2)) in points.iter().tuple_windows() {
-        let left = x1.min(x2) - border;
-        let right = x1.max(x2) + border;
-        let bottom = y1.min(y2) - border;
-        let top = y1.max(y2) + border;
-        if let Ok(map) = osm
-            .map(&BoundingBox {
-                bottom,
-                left,
-                top,
-                right,
-            })
-            .await
-        {
-            let points = map.nodes.iter().flat_map(|n| {
-                n.tags.iter().filter_map(|t| {
-                    let latlon = n.lat.and_then(|lat| n.lon.map(|lon| (lat, lon)));
-                    latlon.and_then(|(lat, lon)| {
-                        Interest::new(&t.k, &t.v).map(|i| InterestPoint {
-                            lat,
-                            lon,
-                            interest: i,
-                        })
-                    })
-                })
-            });
-            interest_points.extend(points)
-        } else {
-            eprintln!("failed retrieving osm data")
-        }
-    }
-    interest_points
-}
-
-fn save_path<W: Write>(writer: &mut W, p: &[(f64, f64)], stroke: &str) -> std::io::Result<()> {
+fn save_path<W: Write>(writer: &mut W, p: &[Point], stroke: &str) -> std::io::Result<()> {
     write!(
         writer,
         "<polyline fill='none' stroke='{}' stroke-width='0.5%' points='",
         stroke
     )?;
     p.iter()
-        .try_for_each(|(x, y)| write!(writer, "{},{} ", x, y))?;
+        .try_for_each(|p| write!(writer, "{},{} ", p.x, p.y))?;
     writeln!(writer, "'/>")?;
     Ok(())
 }
 
 fn save_svg<P: AsRef<Path>>(
     filename: P,
-    p: &[(f64, f64)],
-    rp: &[(f64, f64)],
+    p: &[Point],
+    rp: &[Point],
     interest_points: &HashSet<InterestPoint>,
+    waypoints: &HashSet<Point>,
 ) -> std::io::Result<()> {
     let mut writer = BufWriter::new(std::fs::File::create(filename)?);
     let (xmin, xmax) = p
         .iter()
-        .map(|&(x, _)| x)
+        .map(|p| p.x)
         .minmax_by(|a, b| a.partial_cmp(b).unwrap())
         .into_option()
         .unwrap();
 
     let (ymin, ymax) = p
         .iter()
-        .map(|&(_, y)| y)
+        .map(|p| p.y)
         .minmax_by(|a, b| a.partial_cmp(b).unwrap())
         .into_option()
         .unwrap();
@@ -563,13 +461,52 @@ fn save_svg<P: AsRef<Path>>(
         writeln!(
             &mut writer,
             "<circle cx='{}' cy='{}' fill='{}' r='1%'/>",
-            point.lon,
-            point.lat,
+            point.point.x,
+            point.point.y,
             point.color(),
         )?;
     }
+
+    let rpoints = rp.iter().cloned().collect::<HashSet<_>>();
+    waypoints.difference(&rpoints).try_for_each(|p| {
+        writeln!(
+            &mut writer,
+            "<circle cx='{}' cy='{}' fill='red' r='1%'/>",
+            p.x, p.y,
+        )
+    })?;
+    waypoints.intersection(&rpoints).try_for_each(|p| {
+        writeln!(
+            &mut writer,
+            "<circle cx='{}' cy='{}' fill='green' r='1%'/>",
+            p.x, p.y,
+        )
+    })?;
+
     writeln!(&mut writer, "</svg>")?;
     Ok(())
+}
+
+fn detect_waypoints(points: &[Point]) -> HashSet<Point> {
+    points
+        .first()
+        .into_iter()
+        .chain(points.iter().tuple_windows().filter_map(|(p1, p2, p3)| {
+            let x1 = p2.x - p1.x;
+            let y1 = p2.y - p1.y;
+            let a1 = y1.atan2(x1);
+            let x2 = p3.x - p2.x;
+            let y2 = p3.y - p2.y;
+            let a2 = y2.atan2(x2);
+            if (a2 - a1).abs() <= std::f64::consts::PI / 3.0 {
+                None
+            } else {
+                Some(p2)
+            }
+        }))
+        .chain(points.last().into_iter())
+        .copied()
+        .collect::<HashSet<_>>()
 }
 
 #[tokio::main]
@@ -580,6 +517,7 @@ async fn main() {
     eprintln!("initialy we have {} points", p.len());
     let start = std::time::Instant::now();
     let rp = simplify_path(&p, 0.00015);
+    let waypoints = detect_waypoints(&rp);
     eprintln!("we took {:?}", start.elapsed());
     eprintln!("we now have {} points", rp.len());
     let start = std::time::Instant::now();
@@ -589,5 +527,5 @@ async fn main() {
     save_coordinates("test.gpc", &rp).unwrap();
     // let i = get_openstreetmap_data(&rp).await;
     let i = HashSet::new();
-    save_svg("test.svg", &p, &rp, &i).unwrap();
+    save_svg("test.svg", &p, &rp, &i, &waypoints).unwrap();
 }

@@ -2,6 +2,9 @@
 - gps direction is weak when speed is low
 - add a version number to gpc files
 - water points
+        ---> we group them following path by groups of cst_size and record segments ids marking limits
+
+- gps wait screen
 
 - store several tracks
 - turn off gps when moving to next waypoint

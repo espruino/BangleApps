@@ -38,7 +38,7 @@ class Status {
 
         // detect segment we are on now
         let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, path.len - 1));
-            
+
         if (this.is_lost(next_segment)) {
             // it did not work, try anywhere
             next_segment = this.path.nearest_segment(this.position, 0, path.len - 1);
@@ -67,7 +67,12 @@ class Status {
         this.distance_to_next_point = Math.ceil(this.position.distance(this.path.point(next_point)));
         if (this.reaching != next_point && this.distance_to_next_point <= 20) {
             this.reaching = next_point;
-            Bangle.buzz();
+            if (Bangle.isLocked()) {
+                if (this.path.is_waypoint(next_point)) {
+                    Bangle.buzz();
+                    Bangle.setLocked(false);
+                }
+            }
         }
 
         // re-display unless locked
@@ -128,6 +133,12 @@ class Status {
         for (let i = start ; i < end + 1 ; i++) {
             let p = this.path.point(i);
             let c = p.coordinates(pos, cos, sin);
+            if (this.path.is_waypoint(i)) {
+                g.setColor(g.theme.fg);
+                g.fillCircle(c[0], c[1], 6);
+                g.setColor(g.theme.bg);
+                g.fillCircle(c[0], c[1], 5);
+            }
             g.setColor(g.theme.fg);
             g.fillCircle(c[0], c[1], 4);
             g.setColor(g.theme.bg);
@@ -144,6 +155,24 @@ class Path {
     constructor(filename) {
         let buffer = require("Storage").readArrayBuffer(filename);
         this.points = Float64Array(buffer);
+    }
+
+    // if start, end or steep direction change
+    // we are buzzing and displayed specially
+    is_waypoint(point_index) {
+        if ((point_index == 0)||(point_index == this.len -1)) {
+            return true;
+        } else {
+            let p1 = this.point(point_index-1);
+            let p2 = this.point(point_index);
+            let p3 = this.point(point_index+1);
+            let d1 = p2.minus(p1);
+            let d2 = p3.minus(p2);
+            let a1 = Math.atan2(d1.lat, d1.lon);
+            let a2 = Math.atan2(d2.lat, d2.lon);
+            let direction_change = Math.abs(a2-a1);
+            return (direction_change > Math.PI / 3.0);
+        }
     }
 
     // execute op on all segments.
@@ -293,3 +322,4 @@ if (simulated) {
   Bangle.setGPSPower(true, "gipy");
   Bangle.on('GPS', set_coordinates);
 }
+
