@@ -31,7 +31,7 @@ let file = [];
 function add(text) {
   if (text)
     file = file.concat(
-      text.split("\n").map((line) => " ".repeat(indent) + line)
+      text.split("\n").map((line) => " ".repeat(indent) + line.trimEnd())
     );
   else file.push("");
 }
@@ -46,7 +46,24 @@ function get(key, obj, isGlobal) {
       (obj["!doc"] || "")
         .split("\n")
         .filter((line) => line)
-        .map((line) => line.replace(/^<p>(.*)<\/p>$/, "$1"))
+        .map((line) =>
+          line
+            .replace("<p>", "")
+            .replace("</p>", "")
+            .replace(/&#39;/g, "'")
+            .replace(/&quot;/g, '"')
+            .replace(/&gt;/g, ">")
+            .replace(/&lt;/g, "<")
+            .replace(/&amp;/g, "&")
+            .replace(/&deg;/g, "°")
+            .replace(/<\/?strong>/g, "**")
+            .replace(/<\/?em>/g, "*")
+            .replace(/<\/?code>/g, "`")
+            .replace(/<\/?ul>/g, "")
+            .replace(/<li>/g, "- ")
+            .replace(/<\/li>/g, "")
+            .replace(/<a href="([^\n]*)">([^\n]*)<\/a>/g, "[$2]($1)")
+        )
         .concat([`@url ${obj["!url"]}`])
         .map((line) => " * " + line)
         .join("\n") +
