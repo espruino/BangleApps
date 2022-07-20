@@ -1,6 +1,6 @@
 
 let simulated = false;
-let code_version = 7;
+let file_version = 1;
 let code_key = 47490;
 
 class Status {
@@ -46,12 +46,10 @@ class Status {
         }
         // now check if we strayed away from path or back to it
         let lost = this.is_lost(next_segment);
-        if (this.on_path == lost) {
+        if (this.on_path == lost) { // if status changes
             if (lost) {
                 Bangle.buzz(); // we lost path
-                setTimeout(()=>Bangle.buzz(), 300);
-            } else {
-                Bangle.buzz(); // we found path back
+                setTimeout(()=>Bangle.buzz(), 500);
             }
             this.on_path = !lost;
         }
@@ -63,9 +61,10 @@ class Status {
         this.distance_to_next_point = Math.ceil(this.position.distance(this.path.point(next_point)));
         if (this.reaching != next_point && this.distance_to_next_point <= 20) {
             this.reaching = next_point;
-            if (Bangle.isLocked()) {
-                if (this.path.is_waypoint(next_point)) {
-                    Bangle.buzz();
+            let reaching_waypoint = this.path.is_waypoint(next_point);
+            if (reaching_waypoint) {
+                Bangle.buzz();
+                if (Bangle.isLocked()) {
                     Bangle.setLocked(false);
                 }
             }
@@ -113,8 +112,9 @@ class Status {
         let sin = this.sin_direction;
 
         // segments
+        let current_segment = this.current_segment;
         this.path.on_segments(function(p1, p2, i) {
-            if (i == this.current_segment + 1) {
+            if (i == current_segment + 1) {
                 g.setColor(0.0, 1.0, 0.0);
             } else {
                 g.setColor(1.0, 0.0, 0.0);
@@ -153,7 +153,7 @@ class Path {
         let key = header[0];
         let version = header[1];
         let points_number = header[2];
-        if ((key != code_key)||(version>code_version)) {
+        if ((key != code_key)||(version>file_version)) {
             E.showMessage("Invalid gpc file");
             return;
         }
@@ -305,13 +305,40 @@ let path = new Path("test.gpc");
 let status = new Status(path);
 
 let frame = 0;
+let old_points = []; // remember the at most 3 previous points
 function set_coordinates(data) {
     frame += 1;
     let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
     if (valid_coordinates) {
+        // we try to figure out direction by looking at previous points
+        // instead of the gps course which is not very nice.
         let direction = data.course * Math.PI / 180.0;
         let position = new Point(data.lon, data.lat);
-        status.update_position(position, direction);
+        if (old_points.length == 0) {
+            old_points.push(position);
+        } else {
+            let last_point = old_points[old_points.length-1];
+            if (last_point.x != position.x || last_point.y != position.y) {
+                if (old_points.length == 4) {
+                    old_points.shift();
+                }
+                old_points.push(position);
+            }
+        }
+        if (old_points.length == 4) {
+            // let's just take average angle of 3 previous segments
+            let angles_sum = 0;
+            for(let i = 0 ; i < 3 ; i++) {
+                let p1 = old_points[i];
+                let p2 = old_points[i+1];
+                let diff = p2.minus(p1);
+                let angle = Math.atan2(diff.lat, diff.lon);
+                angles_sum += angle;
+            }
+            status.update_position(position, angles_sum / 3.0);
+        } else {
+            status.update_position(position, direction);
+        }
     }
     let gps_status_color;
     if ((frame % 2 == 0)||valid_coordinates) {

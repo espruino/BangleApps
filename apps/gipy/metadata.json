@@ -2,7 +2,7 @@
   "id": "gipy",
   "name": "Gipy",
   "shortName": "Gipy",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Follow gpx files",
   "allow_emulator":false,
   "icon": "gipy.png",

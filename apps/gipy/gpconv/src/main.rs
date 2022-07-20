@@ -11,7 +11,7 @@ mod osm;
 use osm::InterestPoint;
 
 const KEY: u16 = 47490;
-const VERSION: u16 = 7;
+const FILE_VERSION: u16 = 1;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Point {
@@ -332,7 +332,7 @@ fn save_coordinates<P: AsRef<Path>>(path: P, points: &[Point]) -> std::io::Resul
 
     eprintln!("saving {} points", points.len());
     writer.write_all(&KEY.to_le_bytes())?;
-    writer.write_all(&VERSION.to_le_bytes())?;
+    writer.write_all(&FILE_VERSION.to_le_bytes())?;
     writer.write_all(&(points.len() as u16).to_le_bytes())?;
     points
         .iter()
