@@ -24,6 +24,7 @@ var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 
 //FIXME maybe write the end from GB already? Not durationInSeconds here (or do while receiving?)
 var CALENDAR = require("Storage").readJSON("android.calendar.json",true)||[];
+var settings = require("Storage").readJSON("agenda.settings.json",true)||{};
 
 CALENDAR=CALENDAR.sort((a,b)=>a.timestamp - b.timestamp)
 
@@ -89,6 +90,12 @@ function showEvent(ev) {
 }
 
 function showList() {
+  //it might take time for GB to delete old events, decide whether to show them grayed out or hide entirely
+  if(!settings.pastEvents) {
+    let now = new Date();
+    //TODO add threshold here?
+    CALENDAR = CALENDAR.filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000);
+  }
   if(CALENDAR.length == 0) {
     E.showMessage("No events");
     return;
@@ -101,10 +108,10 @@ function showList() {
       g.setColor(g.theme.fg);
       g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (!ev) return;
-      var isPast = ev.timestamp + ev.durationInSeconds < (new Date())/1000;
+      var isPast = false;
       var x = r.x+2, title = ev.title;
-      var body = formatDateShort(getDate(ev.timestamp))+"\n"+ev.location;
-      var m = ev.title+"\n"+ev.location, longBody=false;
+      var body = formatDateShort(getDate(ev.timestamp))+"\n"+(ev.location?ev.location:/*LANG*/"No location");
+      if(settings.pastEvents) isPast = ev.timestamp + ev.durationInSeconds < (new Date())/1000;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig)
         .setColor(isPast ? "#888" : g.theme.fg).drawString(title, x,r.y+2);
       if (body) {
@@ -114,10 +121,8 @@ function showList() {
           l = l.slice(0,3);
           l[l.length-1]+="...";
         }
-        longBody = l.length>2;
         g.drawString(l.join("\n"), x+10,r.y+20);
       }
-      //if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
     select : idx => showEvent(CALENDAR[idx]),
