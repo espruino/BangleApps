@@ -1,4 +1,12 @@
 0.01: Initial code
-0.05: We now buzz before reaching a waypoint. Display is only updated when not
-locked. We detect leaving path and finding path again. We display remaining distance to
-next point.
+
+0.05:
+	* We now buzz before reaching a waypoint.
+	* Display is only updated when not locked.
+	* We detect leaving path and finding path again.
+	* We display remaining distance to next point.
+
+0.06:
+	* Special display for points with steep turns
+	* Buzz on points with steep turns and unlock
+	* Losing gps is now displayed

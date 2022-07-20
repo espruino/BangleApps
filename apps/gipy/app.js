@@ -9,7 +9,6 @@ class Status {
         this.cos_direction = null; // cos of where we look at
         this.sin_direction = null; // sin of where we look at
         this.current_segment = null; // which segment is closest
-        this.highest_completed_segment = -1; // remember what we already acomplished to disambiguate nearest path when some segments are takend in both directions
         this.reaching = null; // which waypoint are we reaching ?
         this.distance_to_next_point = null; // how far are we from next point ?
 
@@ -55,11 +54,6 @@ class Status {
             this.on_path = !lost;
         }
 
-        if (this.current_segment != next_segment) {
-            if (this.current_segment == next_segment - 1) {
-                this.highest_completed_segment = this.current_segment;
-            }
-        }
         this.current_segment = next_segment;
 
         // check if we are nearing the next point on our path and alert the user
@@ -74,7 +68,6 @@ class Status {
                 }
             }
         }
-
         // re-display unless locked
         if (!Bangle.isLocked()) {
             this.display();
@@ -171,7 +164,7 @@ class Path {
             let a1 = Math.atan2(d1.lat, d1.lon);
             let a2 = Math.atan2(d2.lat, d2.lon);
             let direction_change = Math.abs(a2-a1);
-            return (direction_change > Math.PI / 3.0);
+            return ((direction_change > Math.PI / 3.0)&&(direction_change < Math.PI * 5.0/3.0));
         }
     }
 
@@ -276,7 +269,7 @@ class Point {
         // It falls where t = [(p-v) . (w-v)] / |w-v|^2
         // We clamp t from [0,1] to handle points outside the segment vw.
         let t = Math.max(0, Math.min(1, (this.minus(v)).dot(w.minus(v)) / l2));
-            
+
         let projection = v.plus((w.minus(v)).times(t)); // Projection falls on the segment
         return this.fake_distance(projection);
     }
@@ -287,13 +280,22 @@ Bangle.loadWidgets();
 let path = new Path("test.gpc");
 let status = new Status(path);
 
+let frame = 0;
 function set_coordinates(data) {
+    frame += 1;
     let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
     if (valid_coordinates) {
         let direction = data.course * Math.PI / 180.0;
         let position = new Point(data.lon, data.lat);
         status.update_position(position, direction);
     }
+    let gps_status_color;
+    if ((frame % 2 == 0)||valid_coordinates) {
+        gps_status_color = g.theme.bg;
+    } else {
+        gps_status_color = g.theme.fg;
+    }
+    g.setColor(gps_status_color).setFont("6x8:2").drawString("gps", g.getWidth() - 40, 30);
 }
 
 let fake_gps_point = 0.0;
@@ -319,6 +321,14 @@ if (simulated) {
   status.position = new Point(status.path.point(0));
   setInterval(simulate_gps, 500, status);
 } else {
+  // let's display start while waiting for gps signal
+  let p1 = status.path.point(0);
+  let p2 = status.path.point(1);
+  let diff = p2.minus(p1);
+  let direction = Math.atan2(diff.lat, diff.lon);
+  Bangle.setLocked(false);
+  status.update_position(p1, direction);
+
   Bangle.setGPSPower(true, "gipy");
   Bangle.on('GPS', set_coordinates);
 }

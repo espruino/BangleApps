@@ -498,9 +498,11 @@ fn detect_waypoints(points: &[Point]) -> HashSet<Point> {
             let x2 = p3.x - p2.x;
             let y2 = p3.y - p2.y;
             let a2 = y2.atan2(x2);
-            if (a2 - a1).abs() <= std::f64::consts::PI / 3.0 {
+            let a = (a2 - a1).abs();
+            if a <= std::f64::consts::PI / 3.0 || a >= std::f64::consts::PI * 5.0 / 3.0 {
                 None
             } else {
+                eprintln!("we have {}", (a2 - a1).abs());
                 Some(p2)
             }
         }))
