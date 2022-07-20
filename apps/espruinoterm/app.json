@@ -1,0 +1,5 @@
+[
+  {"title":"Version", "cmd":"process.env.VERSION"},
+  {"title":"Battery", "cmd":"E.getBattery()"},
+  {"title":"Flash LED", "cmd":"LED.set();setTimeout(()=>LED.reset(),1000);"}
+]
