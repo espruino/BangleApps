@@ -1,12 +1,11 @@
-- nearest_segment : use direction to disambiguate
 - gps direction is weak when speed is low
-- add a version number to gpc files
+
 - water points
         ---> we group them following path by groups of cst_size and record segments ids marking limits
 
-- store several tracks
 - turn off gps when moving to next waypoint
 
+- store several tracks
 - display average speed
 - dynamic map rescale
 - display scale (100m)

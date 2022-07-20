@@ -1,5 +1,7 @@
 
-let simulated = false;
+let simulated = true;
+let code_version = 7;
+let code_key = 47490;
 
 class Status {
     constructor(path) {
@@ -36,11 +38,11 @@ class Status {
         this.position = new_position;
 
         // detect segment we are on now
-        let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, path.len - 1));
+        let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, path.len - 1), this.cos_direction, this.sin_direction);
 
         if (this.is_lost(next_segment)) {
             // it did not work, try anywhere
-            next_segment = this.path.nearest_segment(this.position, 0, path.len - 1);
+            next_segment = this.path.nearest_segment(this.position, 0, path.len - 1, this.cos_direction, this.sin_direction);
         }
         // now check if we strayed away from path or back to it
         let lost = this.is_lost(next_segment);
@@ -147,7 +149,15 @@ class Status {
 class Path {
     constructor(filename) {
         let buffer = require("Storage").readArrayBuffer(filename);
-        this.points = Float64Array(buffer);
+        let header = Uint16Array(buffer, 0, 3);
+        let key = header[0];
+        let version = header[1];
+        let points_number = header[2];
+        if ((key != code_key)||(version>code_version)) {
+            E.showMessage("Invalid gpc file");
+            return;
+        }
+        this.points = Float64Array(buffer, 3*2, points_number*2);
     }
 
     // if start, end or steep direction change
@@ -189,18 +199,32 @@ class Path {
         return new Point(lon, lat);
     }
 
-    // return index of segment which is nearest from point
-    nearest_segment(point, start, end) {
-        let min_index = 0;
-        let min_distance = Number.MAX_VALUE;
+    // return index of segment which is nearest from point.
+    // we need a direction because we need there is an ambiguity
+    // for overlapping segments which are taken once to go and once to come back.
+    // (in the other direction).
+    nearest_segment(point, start, end, cos_direction, sin_direction) {
+        // we are going to compute two min distances, one for each direction.
+        let indices = [0, 0];
+        let mins = [Number.MAX_VALUE, Number.MAX_VALUE];
         this.on_segments(function(p1, p2, i) {
+            // we use the dot product to figure out if oriented correctly
             let distance = point.fake_distance_to_segment(p1, p2);
-            if (distance <= min_distance) {
-                min_distance = distance;
-                min_index = i - 1;
+            let diff = p2.minus(p1);
+            let dot = cos_direction * diff.lon + sin_direction * diff.lat;
+            let orientation = + (dot < 0); // index 0 is good orientation
+            if (distance <= mins[orientation]) {
+                mins[orientation] = distance;
+                indices[orientation] = i - 1;
             }
         }, start, end);
-        return min_index;
+        // by default correct orientation (0) wins
+        // but if other one is really closer, return other one
+        if (mins[1] < mins[0] / 10.0) {
+            return indices[1];
+        } else {
+            return indices[0];
+        }
     }
     get len() {
         return this.points.length / 2;

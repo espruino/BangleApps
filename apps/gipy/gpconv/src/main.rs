@@ -10,6 +10,9 @@ use gpx::Gpx;
 mod osm;
 use osm::InterestPoint;
 
+const KEY: u16 = 47490;
+const VERSION: u16 = 7;
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Point {
     x: f64,
@@ -328,8 +331,9 @@ fn save_coordinates<P: AsRef<Path>>(path: P, points: &[Point]) -> std::io::Resul
     let mut writer = BufWriter::new(File::create(path)?);
 
     eprintln!("saving {} points", points.len());
-    // writer.write_all(&xmin.to_be_bytes())?;
-    // writer.write_all(&ymin.to_be_bytes())?;
+    writer.write_all(&KEY.to_le_bytes())?;
+    writer.write_all(&VERSION.to_le_bytes())?;
+    writer.write_all(&(points.len() as u16).to_le_bytes())?;
     points
         .iter()
         .flat_map(|p| [p.x, p.y])
@@ -502,7 +506,6 @@ fn detect_waypoints(points: &[Point]) -> HashSet<Point> {
             if a <= std::f64::consts::PI / 3.0 || a >= std::f64::consts::PI * 5.0 / 3.0 {
                 None
             } else {
-                eprintln!("we have {}", (a2 - a1).abs());
                 Some(p2)
             }
         }))
