@@ -2,11 +2,11 @@ const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const fs = require("fs");
 
-const TAKEN_IDENTIFIERS = ["ArrayBufferView", "crypto", "File", "Storage"];
+const TAKEN_IDENTIFIERS = ["ArrayBufferView", "File"];
 
 function getType(type) {
   if (type.startsWith("+")) type = type.substring(1);
-  if (TAKEN_IDENTIFIERS.includes(type)) return "Espruino" + type;
+  if (TAKEN_IDENTIFIERS.includes(type)) type = "Espruino" + type;
   switch (type) {
     case undefined:
     case "?":
@@ -26,17 +26,20 @@ function getType(type) {
 
 let indent = 0;
 let topLevel = true;
-let file = [];
+let file = { lines: [], indent: 0 };
+let libraries = { lines: [], indent: 2 };
 
-function add(text) {
+function add(text, f) {
+  if (!f) f = file;
   if (text)
-    file = file.concat(
-      text.split("\n").map((line) => " ".repeat(indent) + line.trimEnd())
+    f.lines.push(
+      ...text.split("\n").map((line) => " ".repeat(f.indent) + line.trimEnd())
     );
-  else file.push("");
+  else f.lines.push("");
 }
 
-function get(key, obj, isGlobal) {
+function get(key, obj, isGlobal, f) {
+  if (!f) f = file;
   if (key.startsWith("!")) return;
   if (key === "prototype") return;
   if (key in global && isGlobal) return;
@@ -74,7 +77,8 @@ function get(key, obj, isGlobal) {
         .concat([`@url ${obj["!url"]}`])
         .map((line) => " * " + line)
         .join("\n") +
-      "\n */"
+      "\n */",
+    f
   );
 
   const type = obj["!type"] || "?";
@@ -98,63 +102,87 @@ function get(key, obj, isGlobal) {
         })
         .join(", ");
 
-    if (hasProperties) {
-      add(`${indent ? "" : "declare "}const ${key}: {`);
-      indent += 2;
+    if (obj["!library"]) {
+      add(`${key}: {`, libraries);
+      libraries.indent += 2;
+      topLevel = false;
+      for (const key in obj) {
+        get(key, obj[key], true, libraries);
+      }
+      topLevel = true;
+      libraries.indent -= 2;
+      add("};", libraries);
+    } else if (hasProperties) {
+      add(`${indent ? "" : "declare "}const ${key}: {`, f);
+      file.indent += 2;
       topLevel = false;
       for (const key in obj) {
         get(key, obj[key], true);
       }
       topLevel = true;
-      indent -= 2;
-      add("};");
+      file.indent -= 2;
+      add("};", f);
     } else if (topLevel) {
-      add(
-        `${indent ? "" : "declare "}function ${key}(${args}): ${returnType};`
-      );
+      if (key === "require") {
+        add(
+          `declare function require<T extends keyof Modules>(moduleName: T): Modules[T];`,
+          f
+        );
+        add(
+          `declare function require<T extends Exclude<string, keyof Modules>>(moduleName: T): any;`,
+          f
+        );
+      } else {
+        add(
+          `${indent ? "" : "declare "}function ${key}(${args}): ${returnType};`,
+          f
+        );
+      }
     } else {
-      add(`${key}: (${args}) => ${returnType};`);
+      add(`${key}: (${args}) => ${returnType};`, f);
     }
+  } else if (hasProperties) {
+    add(`${indent ? "" : "declare "}const ${key}: ${getType(type)} & {`, f);
+    file.indent += 2;
+    topLevel = false;
+    for (const key in obj) {
+      get(key, obj[key], true);
+    }
+    topLevel = true;
+    file.indent -= 2;
+    add("};", f);
+  } else if (topLevel) {
+    add(`${indent ? "" : "declare "}const ${key}: ${getType(type)};`, f);
   } else {
-    if (hasProperties) {
-      add(`${indent ? "" : "declare "}const ${key}: ${getType(type)} & {`);
-      indent += 2;
-      topLevel = false;
-      for (const key in obj) {
-        get(key, obj[key], true);
-      }
-      topLevel = true;
-      indent -= 2;
-      add("};");
-    } else if (topLevel) {
-      add(`${indent ? "" : "declare "}const ${key}: ${getType(type)};`);
-    } else {
-      add(`${key}: ${getType(type)}`);
-    }
+    add(`${key}: ${getType(type)}`, f);
   }
 
   if (obj.prototype) {
-    add("");
-    add(`type ${key} = {`);
-    indent += 2;
+    add("", f);
+    add(`type ${key} = {`, f);
+    file.indent += 2;
     topLevel = false;
     for (const key in obj.prototype) {
       get(key, obj.prototype[key], true);
     }
     topLevel = true;
-    indent -= 2;
-    add("}");
+    file.indent -= 2;
+    add("}", f);
   }
 
-  add("");
+  add("", f);
 }
 
-fetch("https://espruino.com/json/espruino.json")
-  .then((response) => response.json())
-  .then((json) => {
-    add("/* Note: This file was automatically generated. */\n");
-    for (const key in json) {
-      get(key, json[key], true);
-    }
-    fs.writeFileSync("types/main.d.ts", file.join("\n"));
-  });
+// fetch("https://espruino.com/json/espruino.json")
+// .then((response) => response.json())
+// .then((json) => {
+const json = JSON.parse(fs.readFileSync("./espruino.json"));
+add("/* Note: This file was automatically generated. */\n");
+for (const key in json) {
+  get(key, json[key], true);
+}
+add("type Modules = {");
+add(libraries.lines.join("\n"));
+add("}");
+fs.writeFileSync("types/main.d.ts", file.lines.join("\n"));
+// });

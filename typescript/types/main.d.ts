@@ -1,1054 +1,406 @@
 /* Note: This file was automatically generated. */
 
 /**
- * This library allows you to write to Neopixel/WS281x/APA10x/SK6812 LED strips
- * These use a high speed single-wire protocol which needs platform-specific
- * implementation on some devices - hence this library to simplify things.
- * @url http://www.espruino.com/Reference#l_neopixel_undefined
+ * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility functions.
+ * @url http://www.espruino.com/Reference#Microbit
  */
-declare const neopixel: {
+declare const Microbit: {
   /**
-   * Write to a strip of NeoPixel/WS281x/APA104/APA106/SK6812-style LEDs
-   * attached to the given pin.
-   * <pre>`<span class="hljs-comment">// set just one pixel, red, green, blue</span>
-   * <span class="hljs-built_in">require</span>("neopixel")<span class="hljs-selector-class">.write</span>(B15, [<span class="hljs-number">255</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]);
-   * `</pre>
-   * <pre>`<span class="hljs-comment">// Produce an animated rainbow over 25 LEDs</span>
-   * <span class="hljs-keyword">var</span> rgb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Uint8ClampedArray</span>(<span class="hljs-number">25</span>*<span class="hljs-number">3</span>);
-   * <span class="hljs-keyword">var</span> pos = <span class="hljs-number">0</span>;
-   * <span class="hljs-keyword">function</span> <span class="hljs-title function_">getPattern</span>(<span class="hljs-params"></span>) {
-   *   pos++;
-   *   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i<rgb.<span class="hljs-property">length</span>;) {
-   *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1324</span>)) * <span class="hljs-number">127</span>;
-   *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1654</span>)) * <span class="hljs-number">127</span>;
-   *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1</span>)) * <span class="hljs-number">127</span>;
-   *   }
-   *   <span class="hljs-keyword">return</span> rgb;
-   * }
-   * <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">require</span>(<span class="hljs-string">"neopixel"</span>).<span class="hljs-title function_">write</span>(<span class="hljs-variable constant_">B15</span>, <span class="hljs-title function_">getPattern</span>());
-   * }, <span class="hljs-number">100</span>);
-   * `</pre>
-   * **Note:**
-   *
-   * - Different types of LED have the data in different orders - so don't
-   * be surprised by RGB or BGR orderings!
-   *
-   * - Some LED strips (SK6812) actually take 4 bytes per LED (red, green, blue and white).
-   * These are still supported but the array of data supplied must still be a multiple of 3
-   * bytes long. Just round the size up - it won't cause any problems.
-   *
-   * - On some platforms like STM32, pins capable of hardware SPI MOSI
-   * are required.
-   *
-   * - Espruino devices tend to have 3.3v IO, while WS2812/etc run
-   * off of 5v. Many WS2812 will only register a logic '1' at 70%
-   * of their input voltage - so if powering them off 5v you will not
-   * be able to send them data reliably. You can work around this by
-   * powering the LEDs off a lower voltage (for example 3.7v from a LiPo
-   * battery), can put the output into the `af_opendrain` state and use
-   * a pullup resistor to 5v on STM32 based boards (nRF52 are not 5v tolerant
-   * so you can't do this), or can use a level shifter to shift the voltage up
-   * into the 5v range.
-   *
-   *
-   * @url http://www.espruino.com/Reference#l_neopixel_write
+   * The micro:bit's speaker pin
+   * @url http://www.espruino.com/Reference#l_Microbit_SPEAKER
    */
-  write: (pin: Pin, data: any) => void;
+  SPEAKER: Pin
+
+  /**
+   * The micro:bit's microphone pin
+   * `MIC_ENABLE` should be set to 1 before using this
+   * @url http://www.espruino.com/Reference#l_Microbit_MIC
+   */
+  MIC: Pin
+
+  /**
+   * The micro:bit's microphone enable pin
+   * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
+   */
+  MIC_ENABLE: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Microbit_mag
+   */
+  mag: () => any;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Microbit_accel
+   */
+  accel: () => any;
+
+  /**
+   * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
+   * Write the given value to the accelerometer
+   * @url http://www.espruino.com/Reference#l_Microbit_accelWr
+   */
+  accelWr: (addr: number, data: number) => void;
+
+  /**
+   * Turn on the accelerometer, and create `Microbit.accel` and `Microbit.gesture` events.
+   * **Note:** The accelerometer is currently always enabled - this code
+   * just responds to interrupts and reads
+   * @url http://www.espruino.com/Reference#l_Microbit_accelOn
+   */
+  accelOn: () => void;
+
+  /**
+   * Turn off events from  the accelerometer (started with `Microbit.accelOn`)
+   * @url http://www.espruino.com/Reference#l_Microbit_accelOff
+   */
+  accelOff: () => void;
+
+  /**
+   * Play a waveform on the Micro:bit's speaker
+   * @url http://www.espruino.com/Reference#l_Microbit_play
+   */
+  play: (waveform: any, samplesPerSecond: any, callback: any) => void;
+
+  /**
+   * Records sound from the micro:bit's onboard microphone and returns the result
+   * @url http://www.espruino.com/Reference#l_Microbit_record
+   */
+  record: (samplesPerSecond: any, callback: any, samples: any) => void;
 
 };
 
 /**
- * This library provides TV out capability on the Espruino and Espruino Pico.
- * See the [Television](https://espruino.com//Television) page for more information.
- * @url http://www.espruino.com/Reference#l_tv_undefined
+ * @url http://www.espruino.com/Reference#l_tensorflow_undefined
  */
-declare const tv: {
+
+/**
+ * Class containing an instance of TFMicroInterpreter
+ * @url http://www.espruino.com/Reference#TFMicroInterpreter
+ */
+declare function TFMicroInterpreter(): void;
+
+type TFMicroInterpreter = {
   /**
-   * This initialises the TV output. Options for PAL are as follows:
-   * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"pal"</span>,
-   *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
-   *   sync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
-   *   width : <span class="hljs-number">384</span>,
-   *   height : <span class="hljs-number">270</span>, <span class="hljs-comment">// max 270</span>
-   * });
-   * `</pre>
-   * and for VGA:
-   * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"vga"</span>,
-   *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
-   *   hsync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
-   *   vsync : A5, <span class="hljs-comment">// Pin - pin to use for video sync</span>
-   *   width : <span class="hljs-number">220</span>,
-   *   height : <span class="hljs-number">240</span>,
-   *   repeat : <span class="hljs-number">2</span>, <span class="hljs-comment">// amount of times to repeat each line</span>
-   * });
-   * `</pre>
-   * or
-   * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"vga"</span>,
-   *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
-   *   hsync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
-   *   vsync : A5, <span class="hljs-comment">// Pin - pin to use for video sync</span>
-   *   width : <span class="hljs-number">220</span>,
-   *   height : <span class="hljs-number">480</span>,
-   *   repeat : <span class="hljs-number">1</span>, <span class="hljs-comment">// amount of times to repeat each line</span>
-   * });
-   * `</pre>
-   * See the [Television](https://espruino.com//Television) page for more information.
-   * @url http://www.espruino.com/Reference#l_tv_setup
+   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getInput
    */
-  setup: (options: any, width: number) => any;
+  getInput: () => EspruinoArrayBufferView;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getOutput
+   */
+  getOutput: () => EspruinoArrayBufferView;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_invoke
+   */
+  invoke: () => void;
+
+}
+
+/**
+ * Class containing utility functions for accessing IO on the hexagonal badge
+ * @url http://www.espruino.com/Reference#Badge
+ */
+declare const Badge: {
+  /**
+   * Capacitive sense - the higher the capacitance, the higher the number returned.
+   * Supply a corner number between 1 and 6, and an integer value will be returned that is proportional to the capacitance
+   * @url http://www.espruino.com/Reference#l_Badge_capSense
+   */
+  capSense: (corner: number) => number;
+
+  /**
+   * Return an approximate battery percentage remaining based on
+   * a normal CR2032 battery (2.8 - 2.2v)
+   * @url http://www.espruino.com/Reference#l_Badge_getBatteryPercentage
+   */
+  getBatteryPercentage: () => number;
+
+  /**
+   * Set the LCD's contrast
+   * @url http://www.espruino.com/Reference#l_Badge_setContrast
+   */
+  setContrast: (c: number) => void;
 
 };
 
 /**
- * This class provides functionality to recognise gestures drawn
- * on a touchscreen. It is only built into Bangle.js 2.
- * Usage:
- * <pre>`var strokes = {
- *   stroke1 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>),
- *   stroke2 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>),
- *   stroke3 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>)
- * };
- * var r = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span>recognise(strokes,<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>)
- * print(r); <span class="hljs-comment">// stroke1/stroke2/stroke3</span>
- * `</pre>
- * @url http://www.espruino.com/Reference#Unistroke
+ * Class containing [Puck.js's](http://www.puck-js.com) utility functions.
+ * @url http://www.espruino.com/Reference#Puck
  */
-declare const Unistroke: {
+declare const Puck: {
   /**
-   * Create a new Unistroke based on XY coordinates
-   * @url http://www.espruino.com/Reference#l_Unistroke_new
+   * Turn on the magnetometer, take a single reading, and then turn it off again.
+   * An object of the form `{x,y,z}` is returned containing magnetometer readings.
+   * Due to residual magnetism in the Puck and magnetometer itself, with
+   * no magnetic field the Puck will not return `{x:0,y:0,z:0}`.
+   * Instead, it's up to you to figure out what the 'zero value' is for your
+   * Puck in your location and to then subtract that from the value returned. If
+   * you're not trying to measure the Earth's magnetic field then it's a good idea
+   * to just take a reading at startup and use that.
+   * With the aerial at the top of the board, the `y` reading is vertical, `x` is
+   * horizontal, and `z` is through the board.
+   * Readings are in increments of 0.1 micro Tesla (uT). The Earth's magnetic field
+   * varies from around 25-60 uT, so the reading will vary by 250 to 600 depending
+   * on location.
+   * @url http://www.espruino.com/Reference#l_Puck_mag
    */
-  new: (xy: any) => any;
+  mag: () => any;
 
   /**
-   * Recognise based on an object of named strokes, and a list of XY coordinates
-   * @url http://www.espruino.com/Reference#l_Unistroke_recognise
+   * Turn on the magnetometer, take a single temperature reading from the MAG3110 chip, and then turn it off again.
+   * (If the magnetometer is already on, this just returns the last reading obtained)
+   * `E.getTemperature()` uses the microcontroller's temperature sensor, but this uses the magnetometer's.
+   * The reading obtained is an integer (so no decimal places), but the sensitivity is factory trimmed. to 1°C, however the temperature
+   * offset isn't - so absolute readings may still need calibrating.
+   * @url http://www.espruino.com/Reference#l_Puck_magTemp
    */
-  recognise: (strokes: any, xy: any) => any;
+  magTemp: () => number;
+
+  /**
+   * Turn the magnetometer on and start periodic sampling. Samples will then cause
+   * a 'mag' event on 'Puck':
+   * <pre>`Puck.magOn();
+   * Puck.on(<span class="hljs-string">&#x27;mag&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">xyz</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(xyz);
+   *   <span class="hljs-comment">// {x:..., y:..., z:...}</span>
+   * });
+   * <span class="hljs-comment">// Turn events off with Puck.magOff();</span>
+   * `</pre>
+   * This call will be ignored if the sampling is already on.
+   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz).
+   * The sample rate must be one of the following (resulting in the given power consumption):
+   *
+   * - 80 Hz - 900uA
+   * - 40 Hz - 550uA
+   * - 20 Hz - 275uA
+   * - 10 Hz - 137uA
+   * - 5 Hz - 69uA
+   * - 2.5 Hz - 34uA
+   * - 1.25 Hz - 17uA
+   * - 0.63 Hz - 8uA
+   * - 0.31 Hz - 8uA
+   * - 0.16 Hz - 8uA
+   * - 0.08 Hz - 8uA
+   *
+   * When the battery level drops too low while sampling is turned on,
+   * the magnetometer may stop sampling without warning, even while other
+   * Puck functions continue uninterrupted.
+   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information.
+   * @url http://www.espruino.com/Reference#l_Puck_magOn
+   */
+  magOn: (samplerate: number) => void;
+
+  /**
+   * Turn the magnetometer off
+   * @url http://www.espruino.com/Reference#l_Puck_magOff
+   */
+  magOff: () => void;
+
+  /**
+   * Writes a register on the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
+   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information and links to modules that use this function.
+   * @url http://www.espruino.com/Reference#l_Puck_magWr
+   */
+  magWr: (reg: number, data: number) => void;
+
+  /**
+   * Reads a register from the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
+   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information and links to modules that use this function.
+   * @url http://www.espruino.com/Reference#l_Puck_magRd
+   */
+  magRd: (reg: number) => number;
+
+  /**
+   * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on Puck.js the less accurate on-chip Temperature sensor is used.
+   * @url http://www.espruino.com/Reference#l_Puck_getTemperature
+   */
+  getTemperature: () => number;
+
+  /**
+   * Accepted values are:
+   *
+   * - 1.6 Hz (no Gyro) - 40uA (2v05 and later firmware)
+   * - 12.5 Hz (with Gyro)- 350uA
+   * - 26 Hz (with Gyro) - 450 uA
+   * - 52 Hz (with Gyro) - 600 uA
+   * - 104 Hz (with Gyro) - 900 uA
+   * - 208 Hz (with Gyro) - 1500 uA
+   * - 416 Hz (with Gyro) (not recommended)
+   * - 833 Hz (with Gyro) (not recommended)
+   * - 1660 Hz (with Gyro) (not recommended)
+   *
+   * Once `Puck.accelOn()` is called, the `Puck.accel` event will be called each time data is received. `Puck.accelOff()` can be called to turn the accelerometer off.
+   * For instance to light the red LED whenever Puck.js is face up:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Puck</span>.</span></span>on(&#x27;accel&#x27;, <span class="hljs-keyword">function</span>(a) {
+   *  digital<span class="hljs-constructor">Write(LED1, <span class="hljs-params">a</span>.<span class="hljs-params">acc</span>.<span class="hljs-params">z</span> > 0)</span>;
+   * });
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Puck</span>.</span></span>accel<span class="hljs-constructor">On()</span>;
+   * `</pre>
+   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information.
+   * @url http://www.espruino.com/Reference#l_Puck_accelOn
+   */
+  accelOn: (samplerate: number) => void;
+
+  /**
+   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`.
+   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information.
+   * @url http://www.espruino.com/Reference#l_Puck_accelOff
+   */
+  accelOff: () => void;
+
+  /**
+   * Turn on the accelerometer, take a single reading, and then turn it off again.
+   * The values reported are the raw values from the chip. In normal configuration:
+   *
+   * - accelerometer: full-scale (32768) is 4g, so you need to divide by 8192 to get correctly scaled values
+   * - gyro: full-scale (32768) is 245 dps, so you need to divide by 134 to get correctly scaled values
+   *
+   * If taking more than one reading, we'd suggest you use `Puck.accelOn()` and the `Puck.accel` event.
+   * @url http://www.espruino.com/Reference#l_Puck_accel
+   */
+  accel: () => any;
+
+  /**
+   * Writes a register on the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
+   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information and links to modules that use this function.
+   * @url http://www.espruino.com/Reference#l_Puck_accelWr
+   */
+  accelWr: (reg: number, data: number) => void;
+
+  /**
+   * Reads a register from the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
+   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information and links to modules that use this function.
+   * @url http://www.espruino.com/Reference#l_Puck_accelRd
+   */
+  accelRd: (reg: number) => number;
+
+  /**
+   * Transmit the given set of IR pulses - data should be an array of pulse times
+   * in milliseconds (as `[on, off, on, off, on, etc]`).
+   * For example `Puck.IR(pulseTimes)` - see [http://www.espruino.com/Puck.js+Infrared](http://www.espruino.com/Puck.js+Infrared)
+   * for a full example.
+   * You can also attach an external LED to Puck.js, in which case
+   * you can just execute `Puck.IR(pulseTimes, led_cathode, led_anode)`
+   * It is also possible to just supply a single pin for IR transmission
+   * with `Puck.IR(pulseTimes, led_anode)` (on 2v05 and above).
+   * @url http://www.espruino.com/Reference#l_Puck_IR
+   */
+  IR: (data: any, cathode: Pin, anode: Pin) => void;
+
+  /**
+   * Capacitive sense - the higher the capacitance, the higher the number returned.
+   * If called without arguments, a value depending on the capacitance of what is
+   * attached to pin D11 will be returned. If you attach a length of wire to D11,
+   * you'll be able to see a higher value returned when your hand is near the wire
+   * than when it is away.
+   * You can also supply pins to use yourself, however if you do this then
+   * the TX pin must be connected to RX pin and sense plate via a roughly 1MOhm
+   * resistor.
+   * When not supplying pins, Puck.js uses an internal resistor between D12(tx)
+   * and D11(rx).
+   * @url http://www.espruino.com/Reference#l_Puck_capSense
+   */
+  capSense: (tx: Pin, rx: Pin) => number;
+
+  /**
+   * Return a light value based on the light the red LED is seeing.
+   * **Note:** If called more than 5 times per second, the received light value
+   * may not be accurate.
+   * @url http://www.espruino.com/Reference#l_Puck_light
+   */
+  light: () => number;
+
+  /**
+   * DEPRECATED - Please use `E.getBattery()` instead.
+   * Return an approximate battery percentage remaining based on
+   * a normal CR2032 battery (2.8 - 2.2v).
+   * @url http://www.espruino.com/Reference#l_Puck_getBatteryPercentage
+   */
+  getBatteryPercentage: () => number;
+
+  /**
+   * Run a self-test, and return true for a pass. This checks for shorts
+   * between pins, so your Puck shouldn't have anything connected to it.
+   * **Note:** This self-test auto starts if you hold the button on your Puck
+   * down while inserting the battery, leave it pressed for 3 seconds (while
+   * the green LED is lit) and release it soon after all LEDs turn on. 5
+   * red blinks is a fail, 5 green is a pass.
+   * If the self test fails, it'll set the Puck.js Bluetooth advertising name
+   * to `Puck.js !ERR` where ERR is a 3 letter error code.
+   * @url http://www.espruino.com/Reference#l_Puck_selfTest
+   */
+  selfTest: () => boolean;
 
 };
 
 /**
- * The NRF class is for controlling functionality of the Nordic nRF51/nRF52 chips.
- * Most functionality is related to Bluetooth Low Energy, however there are also some functions related to NFC that apply to NRF52-based devices.
- * @url http://www.espruino.com/Reference#NRF
+ * This library handles interfacing with a FAT32 filesystem on an SD card. The API is designed to be similar to node.js's - However Espruino does not currently support asynchronous file IO, so the functions behave like node.js's xxxxSync functions. Versions of the functions with 'Sync' after them are also provided for compatibility.
+ * To use this, you must type `var fs = require('fs')` to get access to the library
+ * See [the page on File IO](http://www.espruino.com/File+IO) for more information, and for examples on wiring up an SD card if your device doesn't come with one.
+ * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
+ * @url http://www.espruino.com/Reference#l_fs_undefined
  */
-declare const NRF: {
-  /**
-   * Return an object with information about the security
-   * state of the current peripheral connection:
-   * <pre>`{
-   *   connected       // The <span class="hljs-keyword">connection</span> <span class="hljs-keyword">is</span> active (<span class="hljs-keyword">not</span> disconnected).
-   *   <span class="hljs-keyword">encrypted</span>       // Communication <span class="hljs-keyword">on</span> this link <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span>.
-   *   mitm_protected  // The <span class="hljs-keyword">encrypted</span> communication <span class="hljs-keyword">is</span> <span class="hljs-keyword">also</span> protected against man-<span class="hljs-keyword">in</span>-the-middle attacks.
-   *   bonded          // The peer <span class="hljs-keyword">is</span> bonded <span class="hljs-keyword">with</span> us
-   *   connected_addr  // <span class="hljs-keyword">If</span> connected=<span class="hljs-keyword">true</span>, the MAC address <span class="hljs-keyword">of</span> the currently connected device
-   * }
-   * `</pre>
-   * If there is no active connection, `{connected:false}` will be returned.
-   * See `NRF.setSecurity` for information about negotiating a secure connection.
-   * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
-   */
-  getSecurityStatus: () => any;
-
-  /**
-   * Get this device's default Bluetooth MAC address.
-   * For Puck.js, the last 5 characters of this (eg. `ee:ff`)
-   * are used in the device's advertised Bluetooth name.
-   * @url http://www.espruino.com/Reference#l_NRF_getAddress
-   */
-  getAddress: () => any;
-
-  /**
-   * Change the services and characteristics Espruino advertises.
-   * If you want to **change** the value of a characteristic, you need
-   * to use `NRF.updateServices()` instead
-   * To expose some information on Characteristic `ABCD` on service `BCDE` you could do:
-   * <pre>`<span class="hljs-string">NRF.setServices({</span>
-   *   <span class="hljs-attr">0xBCDE :</span> {
-   *     <span class="hljs-attr">0xABCD :</span> {
-   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"Hello"</span>,
-   *       <span class="hljs-attr">readable :</span> <span class="hljs-literal">true</span>
-   *     }
-   *   }
-   * <span class="hljs-string">});</span>
-   * `</pre>
-   * Or to allow the 3 LEDs to be controlled by writing numbers 0 to 7 to a
-   * characteristic, you can do the following. `evt.data` is an ArrayBuffer.
-   * <pre>`NRF<span class="hljs-selector-class">.setServices</span>({
-   *   <span class="hljs-number">0</span>xBCDE : {
-   *     <span class="hljs-number">0</span>xABCD : {
-   *       writable : true,
-   *       onWrite : <span class="hljs-built_in">function</span>(evt) {
-   *         digitalWrite(<span class="hljs-selector-attr">[LED3,LED2,LED1]</span>, evt<span class="hljs-selector-class">.data</span><span class="hljs-selector-attr">[0]</span>);
-   *       }
-   *     }
-   *   }
-   * });
-   * `</pre>
-   * You can supply many different options:
-   * <pre>`NRF.setServices({
-   *   <span class="hljs-number">0</span>xBCDE : {
-   *     <span class="hljs-number">0</span>xABCD : {
-   *       value : <span class="hljs-string">"Hello"</span>, <span class="hljs-regexp">//</span> optional
-   *       maxLen : <span class="hljs-number">5</span>, <span class="hljs-regexp">//</span> optional (otherwise is length of initial value)
-   *       broadcast : false, <span class="hljs-regexp">//</span> optional, default is false
-   *       readable : true,   <span class="hljs-regexp">//</span> optional, default is false
-   *       writable : true,   <span class="hljs-regexp">//</span> optional, default is false
-   *       notify : true,   <span class="hljs-regexp">//</span> optional, default is false
-   *       indicate : true,   <span class="hljs-regexp">//</span> optional, default is false
-   *       description: <span class="hljs-string">"My Characteristic"</span>,  <span class="hljs-regexp">//</span> optional, default is null,
-   *       security: { <span class="hljs-regexp">//</span> optional - see NRF.setSecurity
-   *         read: { <span class="hljs-regexp">//</span> optional
-   *           encrypted: false, <span class="hljs-regexp">//</span> optional, default is false
-   *           mitm: false, <span class="hljs-regexp">//</span> optional, default is false
-   *           lesc: false, <span class="hljs-regexp">//</span> optional, default is false
-   *           signed: false <span class="hljs-regexp">//</span> optional, default is false
-   *         },
-   *         write: { <span class="hljs-regexp">//</span> optional
-   *           encrypted: true, <span class="hljs-regexp">//</span> optional, default is false
-   *           mitm: false, <span class="hljs-regexp">//</span> optional, default is false
-   *           lesc: false, <span class="hljs-regexp">//</span> optional, default is false
-   *           signed: false <span class="hljs-regexp">//</span> optional, default is false
-   *         }
-   *       },
-   *       onWrite : <span class="hljs-keyword">function</span>(evt) { <span class="hljs-regexp">//</span> optional
-   *         console.log(<span class="hljs-string">"Got "</span>, evt.data); <span class="hljs-regexp">//</span> an ArrayBuffer
-   *       },
-   *       onWriteDesc : <span class="hljs-keyword">function</span>(evt) { <span class="hljs-regexp">//</span> optional - called when the <span class="hljs-string">&#x27;cccd&#x27;</span> descriptor is written
-   *         <span class="hljs-regexp">//</span> <span class="hljs-keyword">for</span> example this is called when notifications are requested by the client:
-   *         console.log(<span class="hljs-string">"Notifications enabled = "</span>, evt.data[<span class="hljs-number">0</span>]&<span class="hljs-number">1</span>);
-   *       }
-   *     }
-   *     <span class="hljs-regexp">//</span> more characteristics allowed
-   *   }
-   *   <span class="hljs-regexp">//</span> more services allowed
-   * });
-   * `</pre>
-   * **Note:** UUIDs can be integers between `0` and `0xFFFF`, strings of
-   * the form `"ABCD"`, or strings of the form `"ABCDABCD-ABCD-ABCD-ABCD-ABCDABCDABCD"`
-   * `options` can be of the form:
-   * <pre>`NRF.setServices(<span class="hljs-literal">undefined</span>, {
-   *   <span class="hljs-attr">hid</span> : <span class="hljs-keyword">new</span> Uint8Array(...), <span class="hljs-comment">// optional, default is undefined. Enable BLE HID support</span>
-   *   uart : <span class="hljs-literal">true</span>, <span class="hljs-comment">// optional, default is true. Enable BLE UART support</span>
-   *   advertise: [ <span class="hljs-string">&#x27;180D&#x27;</span> ] <span class="hljs-comment">// optional, list of service UUIDs to advertise</span>
-   *   ancs : <span class="hljs-literal">true</span>, <span class="hljs-comment">// optional, Bangle.js-only, enable Apple ANCS support for notifications</span>
-   *   ams : <span class="hljs-literal">true</span> <span class="hljs-comment">// optional, Bangle.js-only, enable Apple AMS support for media control</span>
-   * });
-   * `</pre>
-   * To enable BLE HID, you must set `hid` to an array which is the BLE report
-   * descriptor. The easiest way to do this is to use the `ble_hid_controls`
-   * or `ble_hid_keyboard` modules.
-   * **Note:** Just creating a service doesn't mean that the service will
-   * be advertised. It will only be available after a device connects. To
-   * advertise, specify the UUIDs you wish to advertise in the `advertise`
-   * field of the second `options` argument. For example this will create
-   * and advertise a heart rate service:
-   * <pre>`<span class="hljs-string">NRF.setServices({</span>
-   *   <span class="hljs-attr">0x180D:</span> { <span class="hljs-string">//</span> <span class="hljs-string">heart_rate</span>
-   *     <span class="hljs-attr">0x2A37:</span> { <span class="hljs-string">//</span> <span class="hljs-string">heart_rate_measurement</span>
-   *       <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>,
-   *       <span class="hljs-attr">value :</span> [<span class="hljs-number">0x06</span>, <span class="hljs-string">heartrate</span>],
-   *     }
-   *   }
-   * <span class="hljs-string">},</span> { <span class="hljs-attr">advertise:</span> [ <span class="hljs-string">&#x27;180D&#x27;</span> ] }<span class="hljs-string">);</span>
-   * `</pre>
-   * You may specify 128 bit UUIDs to advertise, however you may get a `DATA_SIZE`
-   * exception because there is insufficient space in the Bluetooth LE advertising
-   * packet for the 128 bit UART UUID as well as the UUID you specified. In this
-   * case you can add `uart:false` after the `advertise` element to disable the
-   * UART, however you then be unable to connect to Puck.js's console via Bluetooth.
-   * If you absolutely require two or more 128 bit UUIDs then you will have to
-   * specify your own raw advertising data packets with `NRF.setAdvertising`
-   * **Note:** The services on Espruino can only be modified when there is
-   * no device connected to it as it requires a restart of the Bluetooth stack.
-   * **iOS devices will 'cache' the list of services** so apps like
-   * NRF Connect may incorrectly display the old services even after you
-   * have modified them. To fix this, disable and re-enable Bluetooth on your
-   * iOS device, or use an Android device to run NRF Connect.
-   * **Note:** Not all combinations of security configuration values are valid, the valid combinations are: encrypted,
-   * encrypted + mitm, lesc, signed, signed + mitm. See `NRF.setSecurity` for more information.
-   * @url http://www.espruino.com/Reference#l_NRF_setServices
-   */
-  setServices: (data: any, options: any) => void;
-
-  /**
-   * Change the data that Espruino advertises.
-   * Data can be of the form `{ UUID : data_as_byte_array }`. The UUID should be
-   * a [Bluetooth Service ID](https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx).
-   * For example to return battery level at 95%, do:
-   * <pre>`NRF.setAdvertising({
-   *   <span class="hljs-number">0</span>x180F : [<span class="hljs-number">95</span>] <span class="hljs-regexp">//</span> Service data <span class="hljs-number">0</span>x180F = <span class="hljs-number">95</span>
-   * });
-   * `</pre>
-   * Or you could report the current temperature:
-   * <pre>`setInterval(<span class="hljs-name">function</span>() {
-   *   NRF.setAdvertising({
-   *     <span class="hljs-number">0</span>x1809 : [Math.round(<span class="hljs-name">E</span>.getTemperature())]
-   *   })<span class="hljs-comment">;</span>
-   * }, <span class="hljs-number">30000</span>)<span class="hljs-comment">;</span>
-   * `</pre>
-   * If you specify a value for the object key, Service Data is advertised. However
-   * if you specify `undefined`, the Service UUID is advertised:
-   * <pre>`NRF.setAdvertising({
-   *   <span class="hljs-number">0x180D</span> : <span class="hljs-literal">undefined</span> <span class="hljs-comment">// Advertise service UUID 0x180D (HRM)</span>
-   * });
-   * `</pre>
-   * Service UUIDs can also be supplied in the second argument of
-   * `NRF.setServices`, but those go in the scan response packet.
-   * You can also supply the raw advertising data in an array. For example
-   * to advertise as an Eddystone beacon:
-   * <pre>`NRF.setAdvertising([<span class="hljs-number">0</span>x03,  <span class="hljs-regexp">//</span> Length of Service List
-   *   <span class="hljs-number">0</span>x03,  <span class="hljs-regexp">//</span> Param: Service List
-   *   <span class="hljs-number">0</span>xAA, <span class="hljs-number">0</span>xFE,  <span class="hljs-regexp">//</span> Eddystone ID
-   *   <span class="hljs-number">0</span>x13,  <span class="hljs-regexp">//</span> Length of Service Data
-   *   <span class="hljs-number">0</span>x16,  <span class="hljs-regexp">//</span> Service Data
-   *   <span class="hljs-number">0</span>xAA, <span class="hljs-number">0</span>xFE, <span class="hljs-regexp">//</span> Eddystone ID
-   *   <span class="hljs-number">0</span>x10,  <span class="hljs-regexp">//</span> Frame type: URL
-   *   <span class="hljs-number">0</span>xF8, <span class="hljs-regexp">//</span> Power
-   *   <span class="hljs-number">0</span>x03, <span class="hljs-regexp">//</span> https:<span class="hljs-regexp">//</span>
-   *   <span class="hljs-string">&#x27;g&#x27;</span>,<span class="hljs-string">&#x27;o&#x27;</span>,<span class="hljs-string">&#x27;o&#x27;</span>,<span class="hljs-string">&#x27;.&#x27;</span>,<span class="hljs-string">&#x27;g&#x27;</span>,<span class="hljs-string">&#x27;l&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>,<span class="hljs-string">&#x27;B&#x27;</span>,<span class="hljs-string">&#x27;3&#x27;</span>,<span class="hljs-string">&#x27;J&#x27;</span>,<span class="hljs-string">&#x27;0&#x27;</span>,<span class="hljs-string">&#x27;O&#x27;</span>,<span class="hljs-string">&#x27;c&#x27;</span>],
-   *     {interval:<span class="hljs-number">100</span>});
-   * `</pre>
-   * (However for Eddystone we'd advise that you use the [Espruino Eddystone library](https://espruino.com//Puck.js+Eddystone))
-   * **Note:** When specifying data as an array, certain advertising options such as
-   * `discoverable` and `showName` won't have any effect.
-   * **Note:** The size of Bluetooth LE advertising packets is limited to 31 bytes. If
-   * you want to advertise more data, consider using an array for `data` (See below), or
-   * `NRF.setScanResponse`.
-   * You can even specify an array of arrays or objects, in which case each advertising packet
-   * will be used in turn - for instance to make your device advertise battery level and its name
-   * as well as both Eddystone and iBeacon :
-   * <pre>`NRF<span class="hljs-selector-class">.setAdvertising</span>([
-   *   {<span class="hljs-number">0</span>x180F : [Puck.getBatteryPercentage()]}, <span class="hljs-comment">// normal advertising, with battery %</span>
-   *   <span class="hljs-built_in">require</span>("ble_ibeacon")<span class="hljs-selector-class">.get</span>(...), <span class="hljs-comment">// iBeacon</span>
-   *   <span class="hljs-built_in">require</span>("ble_eddystone")<span class="hljs-selector-class">.get</span>(...), <span class="hljs-comment">// eddystone</span>
-   * ], {interval:<span class="hljs-number">300</span>});
-   * `</pre>
-   * `options` is an object, which can contain:
-   * <pre>`{
-   *   <span class="hljs-built_in">name</span>: <span class="hljs-string">"Hello"</span> <span class="hljs-comment">// The name of the device</span>
-   *   showName: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// include full name, or nothing</span>
-   *   discoverable: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// general discoverable, or limited - default is limited</span>
-   *   connectable: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// whether device is connectable - default is true</span>
-   *   scannable : <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// whether device can be scanned for scan response packets - default is true</span>
-   *   interval: <span class="hljs-number">600</span> <span class="hljs-comment">// Advertising interval in msec, between 20 and 10000 (default is 375ms)</span>
-   *   manufacturer: <span class="hljs-number">0</span>x0590 <span class="hljs-comment">// IF sending manufacturer data, this is the manufacturer ID</span>
-   *   manufacturerData: [...] <span class="hljs-comment">// IF sending manufacturer data, this is an array of data</span>
-   * }
-   * `</pre>
-   * Setting `connectable` and `scannable` to false gives the lowest power consumption
-   * as the BLE radio doesn't have to listen after sending advertising.
-   * **NOTE:** Non-`connectable` advertising can't have an advertising interval less than 100ms
-   * according to the BLE spec.
-   * So for instance to set the name of Puck.js without advertising any
-   * other data you can just use the command:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Advertising({},{<span class="hljs-params">name</span>:<span class="hljs-string">"Hello"</span>})</span>;
-   * `</pre>
-   * You can also specify 'manufacturer data', which is another form of advertising data.
-   * We've registered the Manufacturer ID 0x0590 (as Pur3 Ltd) for use with *Official
-   * Espruino devices* - use it to advertise whatever data you'd like, but we'd recommend
-   * using JSON.
-   * For example by not advertising a device name you can send up to 24 bytes of JSON on
-   * Espruino's manufacturer ID:
-   * <pre>`<span class="hljs-title">var</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = {<span class="hljs-title">a</span>:1,<span class="hljs-title">b</span>:2};</span>
-   * <span class="hljs-type">NRF</span>.setAdvertising({},{
-   *   showName:false,
-   *   manufacturer:<span class="hljs-number">0x0590</span>,
-   *   manufacturerData:<span class="hljs-type">JSON</span>.stringify(<span class="hljs-class"><span class="hljs-keyword">data</span>)</span>
-   * });
-   * `</pre>
-   * If you're using [EspruinoHub](https://github.com/espruino/EspruinoHub) then it will
-   * automatically decode this into the folling MQTT topics:
-   *
-   * - `/ble/advertise/ma:c_:_a:dd:re:ss/espruino` -> `{"a":10,"b":15}`
-   * - `/ble/advertise/ma:c_:_a:dd:re:ss/a` -> `1`
-   * - `/ble/advertise/ma:c_:_a:dd:re:ss/b` -> `2`
-   *
-   * Note that **you only have 24 characters available for JSON**, so try to use
-   * the shortest field names possible and avoid floating point values that can
-   * be very long when converted to a String.
-   * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
-   */
-  setAdvertising: (data: any, options: any) => void;
-
-  /**
-   * If a device is connected to Espruino, disconnect from it.
-   * @url http://www.espruino.com/Reference#l_NRF_disconnect
-   */
-  disconnect: () => void;
-
-  /**
-   * Disable Bluetooth advertising and disconnect from any device that
-   * connected to Puck.js as a peripheral (this won't affect any devices
-   * that Puck.js initiated connections to).
-   * This makes Puck.js undiscoverable, so it can't be connected to.
-   * Use `NRF.wake()` to wake up and make Puck.js connectable again.
-   * @url http://www.espruino.com/Reference#l_NRF_sleep
-   */
-  sleep: () => void;
-
-  /**
-   * Enable Bluetooth advertising (this is enabled by default), which
-   * allows other devices to discover and connect to Puck.js.
-   * Use `NRF.sleep()` to disable advertising.
-   * @url http://www.espruino.com/Reference#l_NRF_wake
-   */
-  wake: () => void;
-
-  /**
-   * Restart the Bluetooth softdevice (if there is currently a BLE connection,
-   * it will queue a restart to be done when the connection closes).
-   * You shouldn't need to call this function in normal usage. However, Nordic's
-   * BLE softdevice has some settings that cannot be reset. For example there
-   * are only a certain number of unique UUIDs. Once these are all used the
-   * only option is to restart the softdevice to clear them all out.
-   * @url http://www.espruino.com/Reference#l_NRF_restart
-   */
-  restart: (callback: any) => void;
-
-  /**
-   * Set this device's default Bluetooth MAC address:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Address(<span class="hljs-string">"ff:ee:dd:cc:bb:aa random"</span>)</span>;
-   * `</pre>
-   * Addresses take the form:
-   *
-   * - `"ff:ee:dd:cc:bb:aa"` or `"ff:ee:dd:cc:bb:aa public"` for a public address
-   * - `"ff:ee:dd:cc:bb:aa random"` for a random static address (the default for Espruino)
-   *
-   * This may throw a `INVALID_BLE_ADDR` error if the upper two bits
-   * of the address don't match the address type.
-   * To change the address, Espruino must restart the softdevice. It will only do
-   * so when it is disconnected from other devices.
-   * @url http://www.espruino.com/Reference#l_NRF_setAddress
-   */
-  setAddress: (addr: any) => void;
-
-  /**
-   * Get the battery level in volts (the voltage that the NRF chip is running off of).
-   * This is the battery level of the device itself - it has nothing to with any
-   * device that might be connected.
-   * @url http://www.espruino.com/Reference#l_NRF_getBattery
-   */
-  getBattery: () => number;
-
-  /**
-   * This is just like `NRF.setAdvertising`, except instead of advertising
-   * the data, it returns the packet that would be advertised as an array.
-   * @url http://www.espruino.com/Reference#l_NRF_getAdvertisingData
-   */
-  getAdvertisingData: (data: any, options: any) => any;
-
-  /**
-   * The raw scan response data should be supplied as an array. For example to return "Sample" for the device name:
-   * <pre>`NRF.setScanResponse([<span class="hljs-number">0</span>x07,  <span class="hljs-regexp">//</span> Length of Data
-   *   <span class="hljs-number">0</span>x09,  <span class="hljs-regexp">//</span> Param: Complete Local Name
-   *   <span class="hljs-string">&#x27;S&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;m&#x27;</span>, <span class="hljs-string">&#x27;p&#x27;</span>, <span class="hljs-string">&#x27;l&#x27;</span>, <span class="hljs-string">&#x27;e&#x27;</span>]);
-   * `</pre>
-   * **Note:** `NRF.setServices(..., {advertise:[ ... ]})` writes advertised
-   * services into the scan response - so you can't use both `advertise`
-   * and `NRF.setServices` or one will overwrite the other.
-   * @url http://www.espruino.com/Reference#l_NRF_setScanResponse
-   */
-  setScanResponse: (data: any) => void;
-
-  /**
-   * Update values for the services and characteristics Espruino advertises.
-   * Only services and characteristics previously declared using `NRF.setServices` are affected.
-   * To update the '0xABCD' characteristic in the '0xBCDE' service:
-   * <pre>`NRF<span class="hljs-selector-class">.updateServices</span>({
-   *   <span class="hljs-number">0</span>xBCDE : {
-   *     <span class="hljs-number">0</span>xABCD : {
-   *       value : <span class="hljs-string">"World"</span>
-   *     }
-   *   }
-   * });
-   * `</pre>
-   * You can also use 128 bit UUIDs, for example `"b7920001-3c1b-4b40-869f-3c0db9be80c6"`.
-   * To define a service and characteristic and then notify connected clients of a
-   * change to it when a button is pressed:
-   * <pre>`<span class="hljs-string">NRF.setServices({</span>
-   *   <span class="hljs-attr">0xBCDE :</span> {
-   *     <span class="hljs-attr">0xABCD :</span> {
-   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"Hello"</span>,
-   *       <span class="hljs-attr">maxLen :</span> <span class="hljs-number">20</span>,
-   *       <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>
-   *     }
-   *   }
-   * <span class="hljs-string">});</span>
-   * <span class="hljs-string">setWatch(function()</span> {
-   *   <span class="hljs-string">NRF.updateServices(</span>{
-   *     <span class="hljs-attr">0xBCDE :</span> {
-   *       <span class="hljs-attr">0xABCD :</span> {
-   *         <span class="hljs-attr">value :</span> <span class="hljs-string">"World!"</span>,
-   *         <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>
-   *       }
-   *     }
-   *   }<span class="hljs-string">);</span>
-   * }<span class="hljs-string">,</span> <span class="hljs-string">BTN,</span> { <span class="hljs-string">repeat:true</span>, <span class="hljs-string">edge:"rising"</span>, <span class="hljs-attr">debounce:</span> <span class="hljs-number">50</span> }<span class="hljs-string">);</span>
-   * `</pre>
-   * This only works if the characteristic was created with `notify: true` using `NRF.setServices`,
-   * otherwise the characteristic will be updated but no notification will be sent.
-   * Also note that `maxLen` was specified. If it wasn't then the maximum length of
-   * the characteristic would have been 5 - the length of `"Hello"`.
-   * To indicate (i.e. notify with ACK) connected clients of a change to the '0xABCD' characteristic in the '0xBCDE' service:
-   * <pre>`<span class="hljs-string">NRF.updateServices({</span>
-   *   <span class="hljs-attr">0xBCDE :</span> {
-   *     <span class="hljs-attr">0xABCD :</span> {
-   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"World"</span>,
-   *       <span class="hljs-attr">indicate:</span> <span class="hljs-literal">true</span>
-   *     }
-   *   }
-   * <span class="hljs-string">});</span>
-   * `</pre>
-   * This only works if the characteristic was created with `indicate: true` using `NRF.setServices`,
-   * otherwise the characteristic will be updated but no notification will be sent.
-   * **Note:** See `NRF.setServices` for more information
-   * @url http://www.espruino.com/Reference#l_NRF_updateServices
-   */
-  updateServices: (data: any) => void;
-
-  /**
-   * Start/stop listening for BLE advertising packets within range. Returns a
-   * `BluetoothDevice` for each advertsing packet. **By default this is not an active scan, so
-   * Scan Response advertising data is not included (see below)**
-   * <pre>`<span class="hljs-comment">// Start scanning</span>
-   * packets=<span class="hljs-number">10</span>;
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Scan(<span class="hljs-params">function</span>(<span class="hljs-params">d</span>)</span> {
-   *   packets--;
-   *   <span class="hljs-keyword">if</span> (packets<=<span class="hljs-number">0</span>)
-   *     <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Scan()</span>; <span class="hljs-comment">// stop scanning</span>
-   *   <span class="hljs-keyword">else</span>
-   *     console.log(d); <span class="hljs-comment">// print packet info</span>
-   * });
-   * `</pre>
-   * Each `BluetoothDevice` will look a bit like:
-   * <pre>`BluetoothDevice {
-   *   <span class="hljs-string">"id"</span>: <span class="hljs-string">"aa:bb:cc:dd:ee:ff"</span>, <span class="hljs-comment">// address</span>
-   *   <span class="hljs-string">"rssi"</span>: -<span class="hljs-number">89</span>,               <span class="hljs-comment">// signal strength</span>
-   *   <span class="hljs-string">"services"</span>: <span class="hljs-selector-attr">[ <span class="hljs-string">"128bit-uuid"</span>, ... ]</span>,     <span class="hljs-comment">// zero or more service UUIDs</span>
-   *   <span class="hljs-string">"data"</span>: new <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-selector-attr">[ ... ]</span>)<span class="hljs-selector-class">.buffer</span>, <span class="hljs-comment">// ArrayBuffer of returned data</span>
-   *   <span class="hljs-string">"serviceData"</span> : { <span class="hljs-string">"0123"</span> : <span class="hljs-selector-attr">[ 1 ]</span> }, <span class="hljs-comment">// if service data is in &#x27;data&#x27;, it&#x27;s extracted here</span>
-   *   <span class="hljs-string">"manufacturer"</span> : <span class="hljs-number">0</span>x1234, <span class="hljs-comment">// if manufacturer data is in &#x27;data&#x27;, the 16 bit manufacturer ID is extracted here</span>
-   *   <span class="hljs-string">"manufacturerData"</span> : <span class="hljs-selector-attr">[...]</span>, <span class="hljs-comment">// if manufacturer data is in &#x27;data&#x27;, the data is extracted here</span>
-   *   <span class="hljs-string">"name"</span>: <span class="hljs-string">"DeviceName"</span>       <span class="hljs-comment">// the advertised device name</span>
-   *  }
-   * `</pre>
-   * You can also supply a set of filters (as described in `NRF.requestDevice`) as a second argument, which will
-   * allow you to filter the devices you get a callback for. This helps
-   * to cut down on the time spent processing JavaScript code in areas with
-   * a lot of Bluetooth advertisements. For example to find only devices
-   * with the manufacturer data `0x0590` (Espruino's ID) you could do:
-   * <pre>`NRF.setScan(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(d.manufacturerData);
-   * }, { <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">manufacturerData</span>:{<span class="hljs-number">0x0590</span>:{}} }] });
-   * `</pre>
-   * You can also specify `active:true` in the second argument to perform
-   * active scanning (this requests scan response packets) from any
-   * devices it finds.
-   * **Note:** Using a filter in `setScan` filters each advertising packet individually. As
-   * a result, if you filter based on a service UUID and a device advertises with multiple packets
-   * (or a scan response when `active:true`) only the packets matching the filter are returned. To
-   * aggregate multiple packets you can use `NRF.findDevices`.
-   * **Note:** BLE advertising packets can arrive quickly - faster than you'll
-   * be able to print them to the console. It's best only to print a few, or
-   * to use a function like `NRF.findDevices(..)` which will collate a list
-   * of available devices.
-   * **Note:** Using setScan turns the radio's receive mode on constantly. This
-   * can draw a *lot* of power (12mA or so), so you should use it sparingly or
-   * you can run your battery down quickly.
-   * @url http://www.espruino.com/Reference#l_NRF_setScan
-   */
-  setScan: (callback: any, options: any) => void;
-
-  /**
-   * This function can be used to quickly filter through Bluetooth devices.
-   * For instance if you wish to scan for multiple different types of device at the same time
-   * then you could use `NRF.findDevices` with all the filters you're interested in. When scanning
-   * is finished you can then use `NRF.filterDevices` to pick out just the devices of interest.
-   * <pre>`<span class="hljs-comment">// the two types of device we&#x27;re interested in</span>
-   * var filter1 = <span class="hljs-literal">[{<span class="hljs-identifier">serviceData</span>:{"<span class="hljs-identifier">fe95</span>":{}}}]</span>;
-   * var filter2 = <span class="hljs-literal">[{<span class="hljs-identifier">namePrefix</span>:"P<span class="hljs-identifier">ixl</span>.<span class="hljs-identifier">js</span>"}]</span>;
-   * <span class="hljs-comment">// the following filter will return both types of device</span>
-   * var allFilters = filter1.concat(filter2);
-   * <span class="hljs-comment">// now scan for both types of device, and filter them out afterwards</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>find<span class="hljs-constructor">Devices(<span class="hljs-params">function</span>(<span class="hljs-params">devices</span>)</span> {
-   *   var devices1 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>filter<span class="hljs-constructor">Devices(<span class="hljs-params">devices</span>, <span class="hljs-params">filter1</span>)</span>;
-   *   var devices2 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>filter<span class="hljs-constructor">Devices(<span class="hljs-params">devices</span>, <span class="hljs-params">filter2</span>)</span>;
-   *   <span class="hljs-comment">// ...</span>
-   * }, {filters : allFilters});
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_filterDevices
-   */
-  filterDevices: (devices: any, filters: any) => any;
-
-  /**
-   * Utility function to return a list of BLE devices detected in range. Behind the scenes,
-   * this uses `NRF.setScan(...)` and collates the results.
-   * <pre>`NRF.findDevices(<span class="hljs-keyword">function</span>(<span class="hljs-params">devices</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(devices);
-   * }, <span class="hljs-number">1000</span>);
-   * `</pre>
-   * prints something like:
-   * <pre>`[
-   *   BluetoothDevice {
-   *     <span class="hljs-string">"id"</span>: <span class="hljs-string">"e7:e0:57:ad:36:a2 random"</span>,
-   *     <span class="hljs-string">"rssi"</span>: <span class="hljs-number">-45</span>,
-   *     <span class="hljs-string">"services"</span>: [ <span class="hljs-string">"4567"</span> ],
-   *     <span class="hljs-string">"serviceData"</span> : { <span class="hljs-string">"0123"</span> : [ <span class="hljs-number">1</span> ] },
-   *     <span class="hljs-string">"manufacturerData"</span> : [<span class="hljs-name"><span class="hljs-built_in">...</span></span>],
-   *     <span class="hljs-string">"data"</span>: new ArrayBuffer([ ... ]),
-   *     <span class="hljs-string">"name"</span>: <span class="hljs-string">"Puck.js 36a2"</span>
-   *    },
-   *   BluetoothDevice {
-   *     <span class="hljs-string">"id"</span>: <span class="hljs-string">"c0:52:3f:50:42:c9 random"</span>,
-   *     <span class="hljs-string">"rssi"</span>: <span class="hljs-number">-65</span>,
-   *     <span class="hljs-string">"data"</span>: new ArrayBuffer([ ... ]),
-   *     <span class="hljs-string">"name"</span>: <span class="hljs-string">"Puck.js 8f57"</span>
-   *    }
-   *  ]
-   * `</pre>
-   * For more information on the structure returned, see `NRF.setScan`.
-   * If you want to scan only for specific devices you can replace the timeout with an object
-   * of the form `{filters: ..., timeout : ..., active: bool}` using the filters
-   * described in `NRF.requestDevice`. For example to search for devices with Espruino's `manufacturerData`:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>find<span class="hljs-constructor">Devices(<span class="hljs-params">function</span>(<span class="hljs-params">devices</span>)</span> {<span class="hljs-operator">
-   *   ...
-   * </span>}, {timeout : <span class="hljs-number">2000</span>, filters : <span class="hljs-literal">[{ <span class="hljs-identifier">manufacturerData</span>:{<span class="hljs-number">0x0590</span>:{}} }]</span> });
-   * `</pre>
-   * You could then use [`BluetoothDevice.gatt.connect(...)`](https://espruino.com//Reference#l_BluetoothRemoteGATTServer_connect) on
-   * the device returned to make a connection.
-   * You can also use [`NRF.connect(...)`](https://espruino.com//Reference#l_NRF_connect) on just the `id` string returned, which
-   * may be useful if you always want to connect to a specific device.
-   * **Note:** Using findDevices turns the radio's receive mode on for 2000ms (or however long you specify). This
-   * can draw a *lot* of power (12mA or so), so you should use it sparingly or you can run your battery down quickly.
-   * **Note:** The 'data' field contains the data of *the last packet received*. There may have been more
-   * packets. To get data for each packet individually use `NRF.setScan` instead.
-   * @url http://www.espruino.com/Reference#l_NRF_findDevices
-   */
-  findDevices: (callback: any, options: any) => void;
-
-  /**
-   * Start/stop listening for RSSI values on the currently active connection
-   * (where This device is a peripheral and is being connected to by a 'central' device)
-   * <pre>`<span class="hljs-comment">// Start scanning</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">RSSIHandler(<span class="hljs-params">function</span>(<span class="hljs-params">rssi</span>)</span> {
-   *   console.log(rssi); <span class="hljs-comment">// prints -85 (or similar)</span>
-   * });
-   * <span class="hljs-comment">// Stop Scanning</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">RSSIHandler()</span>;
-   * `</pre>
-   * RSSI is the 'Received Signal Strength Indication' in dBm
-   * @url http://www.espruino.com/Reference#l_NRF_setRSSIHandler
-   */
-  setRSSIHandler: (callback: any) => void;
-
-  /**
-   * Set the BLE radio transmit power. The default TX power is 0 dBm, and
-   * @url http://www.espruino.com/Reference#l_NRF_setTxPower
-   */
-  setTxPower: (power: number) => void;
-
-  /**
-   * **THIS IS DEPRECATED** - please use `NRF.setConnectionInterval` for
-   * peripheral and `NRF.connect(addr, options)`/`BluetoothRemoteGATTServer.connect(options)`
-   * for central connections.
-   * This sets the connection parameters - these affect the transfer speed and
-   * power usage when the device is connected.
-   *
-   * - When not low power, the connection interval is between 7.5 and 20ms
-   * - When low power, the connection interval is between 500 and 1000ms
-   *
-   * When low power connection is enabled, transfers of data over Bluetooth
-   * will be very slow, however power usage while connected will be drastically
-   * decreased.
-   * This will only take effect after the connection is disconnected and
-   * re-established.
-   * @url http://www.espruino.com/Reference#l_NRF_setLowPowerConnection
-   */
-  setLowPowerConnection: (lowPower: boolean) => void;
-
-  /**
-   * Enables NFC and starts advertising the given URL. For example:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">URL(<span class="hljs-string">"http://espruino.com"</span>)</span>;
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcURL
-   */
-  nfcURL: (url: any) => void;
-
-  /**
-   * Enables NFC and with an out of band 16 byte pairing key.
-   * For example the following will enable out of band pairing on BLE
-   * such that the device will pair when you tap the phone against it:
-   * <pre>`var bleKey = <span class="hljs-literal">[<span class="hljs-number">0xAA</span>, <span class="hljs-number">0xBB</span>, <span class="hljs-number">0xCC</span>, <span class="hljs-number">0xDD</span>, <span class="hljs-number">0xEE</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x99</span>, <span class="hljs-number">0x88</span>, <span class="hljs-number">0x77</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x55</span>, <span class="hljs-number">0x44</span>, <span class="hljs-number">0x33</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x00</span>]</span>;
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>on(&#x27;security&#x27;,s=>print(<span class="hljs-string">"security"</span>,<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">JSON</span>.</span></span>stringify(s)));
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Pair(<span class="hljs-params">bleKey</span>)</span>;
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Security({<span class="hljs-params">oob</span>:<span class="hljs-params">bleKey</span>, <span class="hljs-params">mitm</span>:<span class="hljs-params">true</span>})</span>;
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcPair
-   */
-  nfcPair: (key: any) => void;
-
-  /**
-   * Enables NFC with a record that will launch the given android app.
-   * For example:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">AndroidApp(<span class="hljs-string">"no.nordicsemi.android.nrftoolbox"</span>)</span>
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcAndroidApp
-   */
-  nfcAndroidApp: (app: any) => void;
-
-  /**
-   * Enables NFC and starts advertising with Raw data. For example:
-   * <pre>`NRF.nfcRaw(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">193</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">13</span>, <span class="hljs-number">85</span>, <span class="hljs-number">3</span>, <span class="hljs-number">101</span>, <span class="hljs-number">115</span>, <span class="hljs-number">112</span>, <span class="hljs-number">114</span>, <span class="hljs-number">117</span>, <span class="hljs-number">105</span>, <span class="hljs-number">110</span>, <span class="hljs-number">111</span>, <span class="hljs-number">46</span>, <span class="hljs-number">99</span>, <span class="hljs-number">111</span>, <span class="hljs-number">109</span>]));
-   * <span class="hljs-regexp">//</span> same <span class="hljs-keyword">as</span> NRF.nfcURL(<span class="hljs-string">"http://espruino.com"</span>);
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcRaw
-   */
-  nfcRaw: (payload: any) => void;
-
-  /**
-   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
-   * Enables NFC and starts advertising. `NFCrx` events will be
-   * fired when data is received.
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Start()</span>;
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcStart
-   */
-  nfcStart: (payload: any) => any;
-
-  /**
-   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
-   * Disables NFC.
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Stop()</span>;
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcStop
-   */
-  nfcStop: () => void;
-
-  /**
-   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
-   * Acknowledges the last frame and optionally transmits a response.
-   * If payload is an array, then a array.length byte nfc frame is sent.
-   * If payload is a int, then a 4bit ACK/NACK is sent.
-   * **Note:** `nfcSend` should always be called after an `NFCrx` event.
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send(<span class="hljs-params">new</span> Uint8Array([0x01, 0x02, <span class="hljs-operator">...</span>])</span>);
-   * <span class="hljs-comment">// or</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send(0x0A)</span>;
-   * <span class="hljs-comment">// or</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send()</span>;
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_nfcSend
-   */
-  nfcSend: (payload: any) => void;
-
-  /**
-   * Send a USB HID report. HID must first be enabled with `NRF.setServices({}, {hid: hid_report})`
-   * @url http://www.espruino.com/Reference#l_NRF_sendHIDReport
-   */
-  sendHIDReport: (data: any, callback: any) => void;
-
-  /**
-   * Check if Apple Notification Center Service (ANCS) is currently active on the BLE connection
-   * @url http://www.espruino.com/Reference#l_NRF_ancsIsActive
-   */
-  ancsIsActive: () => boolean;
-
-  /**
-   * Send an ANCS action for a specific Notification UID. Corresponds to posaction/negaction in the 'ANCS' event that was received
-   * @url http://www.espruino.com/Reference#l_NRF_ancsAction
-   */
-  ancsAction: (uid: number, positive: boolean) => void;
-
-  /**
-   * Get ANCS info for a notification, eg:
-   * @url http://www.espruino.com/Reference#l_NRF_ancsGetNotificationInfo
-   */
-  ancsGetNotificationInfo: (uid: number) => Promise<any>;
-
-  /**
-   * Get ANCS info for an app (add id is available via `ancsGetNotificationInfo`)
-   * Promise returns:
-   * <pre>`{
-   *   <span class="hljs-string">"uid"</span> : <span class="hljs-type">int</span>,
-   *   <span class="hljs-string">"appId"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"title"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"subtitle"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"message"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"messageSize"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"date"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"posAction"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"negAction"</span> : <span class="hljs-type">string</span>,
-   *   <span class="hljs-string">"name"</span> : <span class="hljs-type">string</span>,
-   * }
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_NRF_ancsGetAppInfo
-   */
-  ancsGetAppInfo: (id: any) => Promise<any>;
-
-  /**
-   * Check if Apple Media Service (AMS) is currently active on the BLE connection
-   * @url http://www.espruino.com/Reference#l_NRF_amsIsActive
-   */
-  amsIsActive: () => boolean;
-
-  /**
-   * Get Apple Media Service (AMS) info for the current media player.
-   * "playbackinfo" returns a concatenation of three comma-separated values:
-   *
-   * - PlaybackState: a string that represents the integer value of the playback state:
-   * - PlaybackStatePaused = 0
-   * - PlaybackStatePlaying = 1
-   * - PlaybackStateRewinding = 2
-   * - PlaybackStateFastForwarding = 3
-   *
-   *
-   * - PlaybackRate: a string that represents the floating point value of the playback rate.
-   * - ElapsedTime: a string that represents the floating point value of the elapsed time of the current track, in seconds
-   *
-   * @url http://www.espruino.com/Reference#l_NRF_amsGetPlayerInfo
-   */
-  amsGetPlayerInfo: (id: any) => Promise<any>;
-
-  /**
-   * Get Apple Media Service (AMS) info for the currently-playing track
-   * @url http://www.espruino.com/Reference#l_NRF_amsGetTrackInfo
-   */
-  amsGetTrackInfo: (id: any) => Promise<any>;
-
-  /**
-   * Send an AMS command to an Apple Media Service device to control music playback
-   * Command is one of play, pause, playpause, next, prev, volup, voldown, repeat, shuffle, skipforward, skipback, like, dislike, bookmark
-   * @url http://www.espruino.com/Reference#l_NRF_amsCommand
-   */
-  amsCommand: (id: any) => void;
-
-  /**
-   * Search for available devices matching the given filters. Since we have no UI here,
-   * Espruino will pick the FIRST device it finds, or it'll call `catch`.
-   * `options` can have the following fields:
-   *
-   * - `filters` - a list of filters that a device must match before it is returned (see below)
-   * - `timeout` - the maximum time to scan for in milliseconds (scanning stops when a match
-   * is found. eg. `NRF.requestDevice({ timeout:2000, filters: [ ... ] })`
-   * - `active` - whether to perform active scanning (requesting 'scan response' packets from any
-   * devices that are found). eg. `NRF.requestDevice({ active:true, filters: [ ... ] })`
-   *
-   * **NOTE:** `timeout` and `active` are not part of the Web Bluetooth standard.
-   * The following filter types are implemented:
-   *
-   * - `services` - list of services as strings (all of which must match). 128 bit services must be in the form '01230123-0123-0123-0123-012301230123'
-   * - `name` - exact device name
-   * - `namePrefix` - starting characters of device name
-   * - `id` - exact device address (`id:"e9:53:86:09:89:99 random"`) (this is Espruino-specific, and is not part of the Web Bluetooth spec)
-   * - `serviceData` - an object containing service characteristics which must all match (`serviceData:{"1809":{}}`). Matching of actual service data is not supported yet.
-   * - `manufacturerData` - an object containing manufacturer UUIDs which must all match (`manufacturerData:{0x0590:{}}`). Matching of actual manufacturer data is not supported yet.
-   *
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">namePrefix</span>: &#x27;Puck.<span class="hljs-params">js</span>&#x27; }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
-   * <span class="hljs-comment">// or</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">services</span>: [&#x27;1823&#x27;] }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
-   * <span class="hljs-comment">// or</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">manufacturerData</span>:{0x0590:{}} }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
-   * `</pre>
-   * As a full example, to send data to another Puck.js to turn an LED on:
-   * <pre>`<span class="hljs-keyword">var</span> gatt;
-   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">namePrefix</span>: <span class="hljs-string">&#x27;Puck.js&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
-   *   <span class="hljs-keyword">return</span> device.gatt.connect();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
-   *   gatt = g;
-   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
-   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
-   *   <span class="hljs-keyword">return</span> characteristic.writeValue(<span class="hljs-string">"LED1.set()\n"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   gatt.disconnect();
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
-   * });
-   * `</pre>
-   * Or slightly more concisely, using ES6 arrow functions:
-   * <pre>`<span class="hljs-keyword">var</span> gatt;
-   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">namePrefix</span>: <span class="hljs-string">&#x27;Puck.js&#x27;</span> }]}).then(
-   *   <span class="hljs-function"><span class="hljs-params">device</span> =></span> device.gatt.connect()).then(
-   *   <span class="hljs-function"><span class="hljs-params">g</span> =></span> (gatt=g).getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>)).then(
-   *   <span class="hljs-function"><span class="hljs-params">service</span> =></span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>)).then(
-   *   <span class="hljs-function"><span class="hljs-params">characteristic</span> =></span> characteristic.writeValue(<span class="hljs-string">"LED1.reset()\n"</span>)).then(
-   *   <span class="hljs-function"><span class="hljs-params">()</span> =></span> { gatt.disconnect(); <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>); } );
-   * `</pre>
-   * Note that you have to keep track of the `gatt` variable so that you can
-   * disconnect the Bluetooth connection when you're done.
-   * **Note:** Using a filter in `NRF.requestDevice` filters each advertising packet individually. As
-   * soon as a matching advertisement is received,  `NRF.requestDevice` resolves the promise and stops
-   * scanning. This means that if you filter based on a service UUID and a device advertises with multiple packets
-   * (or a scan response when `active:true`) only the packet matching the filter is returned - you may not
-   * get the device's name is that was in a separate packet. To aggregate multiple packets you can use `NRF.findDevices`.
-   * @url http://www.espruino.com/Reference#l_NRF_requestDevice
-   */
-  requestDevice: (options: any) => Promise<any>;
-
-  /**
-   * Connect to a BLE device by MAC address. Returns a promise,
-   * the argument of which is the `BluetoothRemoteGATTServer` connection.
-   * <pre>`<span class="hljs-variable">NRF</span>.<span class="hljs-property">connect</span>(<span class="hljs-string">"aa:bb:cc:dd:ee"</span>).<span class="hljs-property">then</span>(<span class="hljs-title function_">function</span>(<span class="hljs-params">server</span>) {
-   *   <span class="hljs-comment">// ...</span>
-   * });
-   * `</pre>
-   * This has the same effect as calling `BluetoothDevice.gatt.connect` on a `BluetoothDevice` requested
-   * using `NRF.requestDevice`. It just allows you to specify the address directly (without having to scan).
-   * You can use it as follows - this would connect to another Puck device and turn its LED on:
-   * <pre>`<span class="hljs-keyword">var</span> gatt;
-   * NRF.connect(<span class="hljs-string">"aa:bb:cc:dd:ee random"</span>).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
-   *   gatt = g;
-   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
-   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
-   *   <span class="hljs-keyword">return</span> characteristic.writeValue(<span class="hljs-string">"LED1.set()\n"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   gatt.disconnect();
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
-   * });
-   * `</pre>
-   * **Note:** Espruino Bluetooth devices use a type of BLE address known as 'random static',
-   * which is different to a 'public' address. To connect to an Espruino device you'll need
-   * to use an address string of the form `"aa:bb:cc:dd:ee random"` rather than just
-   * `"aa:bb:cc:dd:ee"`. If you scan for devices with `NRF.findDevices`/`NRF.setScan` then
-   * addresses are already reported in the correct format.
-   * @url http://www.espruino.com/Reference#l_NRF_connect
-   */
-  connect: (mac: any, options: any) => Promise<any>;
-
-  /**
-   * If set to true, whenever a device bonds it will be added to the
-   * whitelist.
-   * When set to false, the whitelist is cleared and newly bonded
-   * devices will not be added to the whitelist.
-   * **Note:** This is remembered between `reset()`s but isn't
-   * remembered after power-on (you'll have to add it to `onInit()`.
-   * @url http://www.espruino.com/Reference#l_NRF_setWhitelist
-   */
-  setWhitelist: (whitelisting: boolean) => void;
-
-  /**
-   * When connected, Bluetooth LE devices communicate at a set interval.
-   * Lowering the interval (eg. more packets/second) means a lower delay when
-   * sending data, higher bandwidth, but also more power consumption.
-   * By default, when connected as a peripheral Espruino automatically adjusts the
-   * connection interval. When connected it's as fast as possible (7.5ms) but when idle
-   * for over a minute it drops to 200ms. On continued activity (>1 BLE operation) the
-   * interval is raised to 7.5ms again.
-   * The options for `interval` are:
-   *
-   * - `undefined` / `"auto"` : (default) automatically adjust connection interval
-   * - `100` : set min and max connection interval to the same number (between 7.5ms and 4000ms)
-   * - `{minInterval:20, maxInterval:100}` : set min and max connection interval as a range
-   *
-   * This configuration is not remembered during a `save()` - you will have to
-   * re-set it via `onInit`.
-   * **Note:** If connecting to another device (as Central), you can use
-   * an extra argument to `NRF.connect` or `BluetoothRemoteGATTServer.connect`
-   * to specify a connection interval.
-   * **Note:** This overwrites any changes imposed by the deprecated `NRF.setLowPowerConnection`
-   * @url http://www.espruino.com/Reference#l_NRF_setConnectionInterval
-   */
-  setConnectionInterval: (interval: any) => void;
-
-  /**
-   * Sets the security options used when connecting/pairing. This applies to both central
-   * *and* peripheral mode.
-   * <pre>`NRF.setSecurity({
-   *   display : <span class="hljs-type">bool</span>  // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, can this device display a passkey
-   *                   // - sent via the `BluetoothDevice.passkey` event
-   *   keyboard : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, can this device enter a passkey
-   *                   // - request sent via the `BluetoothDevice.passkeyRequest` event
-   *   bond : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">true</span>, <span class="hljs-keyword">Perform</span> bonding
-   *   mitm : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, Man <span class="hljs-keyword">In</span> The Middle protection
-   *   lesc : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, LE Secure Connections
-   *   passkey : // <span class="hljs-keyword">default</span> "", <span class="hljs-keyword">or</span> a <span class="hljs-number">6</span> digit passkey <span class="hljs-keyword">to</span> use
-   *   oob : [<span class="hljs-number">0.</span><span class="hljs-number">.15</span>] // <span class="hljs-keyword">if</span> specified, <span class="hljs-keyword">Out</span> <span class="hljs-keyword">Of</span> Band pairing <span class="hljs-keyword">is</span> enabled <span class="hljs-keyword">and</span>
-   *                 // the <span class="hljs-number">16</span> byte pairing code supplied here <span class="hljs-keyword">is</span> used
-   *   encryptUart : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span> (unless oob <span class="hljs-keyword">or</span> passkey specified)
-   *                      // This sets the BLE UART service such that it
-   *                      // <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span> <span class="hljs-keyword">and</span> can <span class="hljs-keyword">only</span> be used <span class="hljs-keyword">from</span> a bonded <span class="hljs-keyword">connection</span>
-   * });
-   * `</pre>
-   * **NOTE:** Some combinations of arguments will cause an error. For example
-   * supplying a passkey without `display:1` is not allowed. If `display:1` is set
-   * you do not require a physical display, the user just needs to know
-   * the passkey you supplied.
-   * For instance, to require pairing and to specify a passkey, use:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Security({<span class="hljs-params">passkey</span>:<span class="hljs-string">"123456"</span>, <span class="hljs-params">mitm</span>:1, <span class="hljs-params">display</span>:1})</span>;
-   * `</pre>
-   * However, while most devices will request a passkey for pairing at
-   * this point it is still possible for a device to connect without
-   * requiring one (eg. using the 'NRF Connect' app).
-   * To force a passkey you need to protect each characteristic
-   * you define with `NRF.setSecurity`. For instance the following
-   * code will *require* that the passkey `123456` is entered
-   * before the characteristic `9d020002-bf5f-1d1a-b52a-fe52091d5b12`
-   * can be read.
-   * <pre>`NRF.setSecurity({passkey:"123456", mitm:<span class="hljs-number">1</span>, display:<span class="hljs-number">1</span>});
-   * NRF.setServices({
-   *   "9d020001-bf5f-1d1a-b52a-fe52091d5b12" : {
-   *     "9d020002-bf5f-1d1a-b52a-fe52091d5b12" : {
-   *       // readable <span class="hljs-keyword">always</span>
-   *       <span class="hljs-keyword">value</span> : "Not Secret"
-   *     },
-   *     "9d020003-bf5f-1d1a-b52a-fe52091d5b12" : {
-   *       // readable <span class="hljs-keyword">only</span> once bonded
-   *       <span class="hljs-keyword">value</span> : "Secret",
-   *       readable : <span class="hljs-keyword">true</span>,
-   *       <span class="hljs-keyword">security</span>: {
-   *         <span class="hljs-keyword">read</span>: {
-   *           mitm: <span class="hljs-keyword">true</span>,
-   *           <span class="hljs-keyword">encrypted</span>: <span class="hljs-keyword">true</span>
-   *         }
-   *       }
-   *     },
-   *     "9d020004-bf5f-1d1a-b52a-fe52091d5b12" : {
-   *       // readable <span class="hljs-keyword">always</span>
-   *       // writable <span class="hljs-keyword">only</span> once bonded
-   *       <span class="hljs-keyword">value</span> : "Readable",
-   *       readable : <span class="hljs-keyword">true</span>,
-   *       writable : <span class="hljs-keyword">true</span>,
-   *       onWrite : <span class="hljs-keyword">function</span>(evt) {
-   *         console.log("Wrote ", evt.data);
-   *       },
-   *       <span class="hljs-keyword">security</span>: {
-   *         <span class="hljs-keyword">write</span>: {
-   *           mitm: <span class="hljs-keyword">true</span>,
-   *           <span class="hljs-keyword">encrypted</span>: <span class="hljs-keyword">true</span>
-   *         }
-   *       }
-   *     }
-   *   }
-   * });
-   * `</pre>
-   * **Note:** If `passkey` or `oob` is specified, the Nordic UART service (if enabled)
-   * will automatically be set to require encryption, but otherwise it is open.
-   * @url http://www.espruino.com/Reference#l_NRF_setSecurity
-   */
-  setSecurity: (options: any) => void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NRF_startBonding
-   */
-  startBonding: (forceRepair: boolean) => any;
-
-};
 
 /**
- * The Bluetooth Serial port - used when data is sent or received over Bluetooth Smart on nRF51/nRF52 chips.
- * @url http://www.espruino.com/Reference#l__global_Bluetooth
+ * This is the File object - it allows you to stream data to and from files (As opposed to the `require('fs').readFile(..)` style functions that read an entire file).
+ * To create a File object, you must type `var fd = E.openFile('filepath','mode')` - see [E.openFile](#l_E_openFile) for more information.
+ * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
+ * @url http://www.espruino.com/Reference#File
  */
-declare const Bluetooth: Serial & {
-  /**
-   * @url http://www.espruino.com/Reference#l_Bluetooth_setConsole
-   */
-  setConsole: () => void;
+declare function EspruinoFile(): void;
 
-};
+type EspruinoFile = {
+  /**
+   * Close an open file.
+   * @url http://www.espruino.com/Reference#l_File_close
+   */
+  close: () => void;
+
+  /**
+   * Write data to a file.
+   * **Note:** By default this function flushes all changes to the
+   * SD card, which makes it slow (but also safe!). You can use
+   * `E.setFlags({unsyncFiles:1})` to disable this behaviour and
+   * really speed up writes - but then you must be sure to close
+   * all files you are writing before power is lost or you will
+   * cause damage to your SD card's filesystem.
+   * @url http://www.espruino.com/Reference#l_File_write
+   */
+  write: (buffer: any) => number;
+
+  /**
+   * Read data in a file in byte size chunks
+   * @url http://www.espruino.com/Reference#l_File_read
+   */
+  read: (length: number) => any;
+
+  /**
+   * Skip the specified number of bytes forward in the file
+   * @url http://www.espruino.com/Reference#l_File_skip
+   */
+  skip: (nBytes: number) => void;
+
+  /**
+   * Seek to a certain position in the file
+   * @url http://www.espruino.com/Reference#l_File_seek
+   */
+  seek: (nBytes: number) => void;
+
+  /**
+   * Pipe this file to a stream (an object with a 'write' method)
+   * @url http://www.espruino.com/Reference#l_File_pipe
+   */
+  pipe: (destination: any, options: any) => void;
+
+}
 
 /**
  * Class containing utility functions for the Seeed WIO LTE board
@@ -1103,6 +455,130 @@ declare const WioLTE: {
    * @url http://www.espruino.com/Reference#l_WioLTE_A4
    */
   A4: any
+
+};
+
+/**
+ * Class containing utility functions for [Pixl.js](http://www.espruino.com/Pixl.js)
+ * @url http://www.espruino.com/Reference#Pixl
+ */
+declare const Pixl: {
+  /**
+   * DEPRECATED - Please use `E.getBattery()` instead.
+   * Return an approximate battery percentage remaining based on
+   * a normal CR2032 battery (2.8 - 2.2v)
+   * @url http://www.espruino.com/Reference#l_Pixl_getBatteryPercentage
+   */
+  getBatteryPercentage: () => number;
+
+  /**
+   * Set the LCD's contrast
+   * @url http://www.espruino.com/Reference#l_Pixl_setContrast
+   */
+  setContrast: (c: number) => void;
+
+  /**
+   * This function can be used to turn Pixl.js's LCD off or on.
+   *
+   * - With the LCD off, Pixl.js draws around 0.1mA
+   * - With the LCD on, Pixl.js draws around 0.25mA
+   *
+   * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
+   */
+  setLCDPower: (isOn: boolean) => void;
+
+  /**
+   * Writes a command directly to the ST7567 LCD controller
+   * @url http://www.espruino.com/Reference#l_Pixl_lcdw
+   */
+  lcdw: (c: number) => void;
+
+  /**
+   * Display a menu on Pixl.js's screen, and set up the buttons to navigate through it.
+   * DEPRECATED: Use `E.showMenu`
+   * @url http://www.espruino.com/Reference#l_Pixl_menu
+   */
+  menu: (menu: any) => any;
+
+};
+
+/**
+ * This class exists in order to interface Espruino with fast-moving trigger wheels. Trigger wheels are physical discs with evenly spaced teeth cut into them, and often with one or two teeth next to each other missing. A sensor sends a signal whenever a tooth passed by, and this allows a device to measure not only RPM, but absolute position.
+ * This class is currently in testing - it is NOT AVAILABLE on normal boards.
+ * @url http://www.espruino.com/Reference#Trig
+ */
+declare const Trig: {
+  /**
+   * Get the position of the trigger wheel at the given time (from getTime)
+   * @url http://www.espruino.com/Reference#l_Trig_getPosAtTime
+   */
+  getPosAtTime: (time: number) => number;
+
+  /**
+   * Initialise the trigger class
+   * @url http://www.espruino.com/Reference#l_Trig_setup
+   */
+  setup: (pin: Pin, options: any) => void;
+
+  /**
+   * Set a trigger for a certain point in the cycle
+   * @url http://www.espruino.com/Reference#l_Trig_setTrigger
+   */
+  setTrigger: (num: number, pos: number, pins: any, pulseLength: number) => void;
+
+  /**
+   * Disable a trigger
+   * @url http://www.espruino.com/Reference#l_Trig_killTrigger
+   */
+  killTrigger: (num: number) => void;
+
+  /**
+   * Get the current state of a trigger
+   * @url http://www.espruino.com/Reference#l_Trig_getTrigger
+   */
+  getTrigger: (num: number) => any;
+
+  /**
+   * Get the RPM of the trigger wheel
+   * @url http://www.espruino.com/Reference#l_Trig_getRPM
+   */
+  getRPM: () => number;
+
+  /**
+   * Get the current error flags from the trigger wheel - and zero them
+   * @url http://www.espruino.com/Reference#l_Trig_getErrors
+   */
+  getErrors: () => number;
+
+  /**
+   * Get the current error flags from the trigger wheel - and zero them
+   * @url http://www.espruino.com/Reference#l_Trig_getErrorArray
+   */
+  getErrorArray: () => any;
+
+};
+
+/**
+ * Cryptographic functions
+ * **Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
+ * @url http://www.espruino.com/Reference#l_crypto_undefined
+ */
+
+/**
+ * Class containing AES encryption/decryption
+ * **Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
+ * @url http://www.espruino.com/Reference#AES
+ */
+declare const AES: {
+  /**
+   * @url http://www.espruino.com/Reference#l_AES_encrypt
+   */
+  encrypt: (passphrase: any, key: any, options: any) => ArrayBuffer;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_AES_decrypt
+   */
+  decrypt: (passphrase: any, key: any, options: any) => ArrayBuffer;
 
 };
 
@@ -1167,6 +643,12 @@ type Graphics = {
    * @url http://www.espruino.com/Reference#l_Graphics_setFont6x15
    */
   setFont6x15: (scale: number) => Graphics;
+
+  /**
+   * Set the current font
+   * @url http://www.espruino.com/Reference#l_Graphics_setFont12x20
+   */
+  setFont12x20: (scale: number) => Graphics;
 
   /**
    * On instances of graphics that drive a display with
@@ -1791,12 +1273,6 @@ type Graphics = {
    */
   setTheme: (theme: any) => Graphics;
 
-  /**
-   * Set the current font
-   * @url http://www.espruino.com/Reference#l_Graphics_setFont12x20
-   */
-  setFont12x20: (scale: number) => Graphics;
-
 }
 
 /**
@@ -1809,137 +1285,1871 @@ type Graphics = {
 declare const Terminal: Serial;
 
 /**
- * Class containing utility functions for accessing IO on the hexagonal badge
- * @url http://www.espruino.com/Reference#Badge
+ * Library that initialises a network device that calls into JavaScript
+ * @url http://www.espruino.com/Reference#l_NetworkJS_undefined
  */
-declare const Badge: {
-  /**
-   * Capacitive sense - the higher the capacitance, the higher the number returned.
-   * Supply a corner number between 1 and 6, and an integer value will be returned that is proportional to the capacitance
-   * @url http://www.espruino.com/Reference#l_Badge_capSense
-   */
-  capSense: (corner: number) => number;
 
-  /**
-   * Return an approximate battery percentage remaining based on
-   * a normal CR2032 battery (2.8 - 2.2v)
-   * @url http://www.espruino.com/Reference#l_Badge_getBatteryPercentage
-   */
-  getBatteryPercentage: () => number;
+/**
+ * This library implements a telnet console for the Espruino interpreter. It requires a network
+ * connection, e.g. Wifi, and **currently only functions on the ESP8266 and on Linux **. It uses
+ * port 23 on the ESP8266 and port 2323 on Linux.
+ * **Note:** To enable on Linux, run `./espruino --telnet`
+ * @url http://www.espruino.com/Reference#l_TelnetServer_undefined
+ */
 
+/**
+ * This class helps to convert URLs into Objects of information ready for http.request/get
+ * @url http://www.espruino.com/Reference#url
+ */
+declare const url: {
   /**
-   * Set the LCD's contrast
-   * @url http://www.espruino.com/Reference#l_Badge_setContrast
+   * A utility function to split a URL into parts
+   * This is useful in web servers for instance when handling a request.
+   * For instance `url.parse("/a?b=c&d=e",true)` returns `{"method":"GET","host":"","path":"/a?b=c&d=e","pathname":"/a","search":"?b=c&d=e","port":80,"query":{"b":"c","d":"e"}}`
+   * @url http://www.espruino.com/Reference#l_url_parse
    */
-  setContrast: (c: number) => void;
+  parse: (urlStr: any, parseQuery: boolean) => any;
 
 };
 
 /**
- * @url http://www.espruino.com/Reference#l_tensorflow_undefined
+ * This library allows you to create TCPIP servers and clients
+ * In order to use this, you will need an extra module to get network connectivity.
+ * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/net.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
+ * @url http://www.espruino.com/Reference#l_net_undefined
  */
-declare const tensorflow: {
-  /**
-   * @url http://www.espruino.com/Reference#l_tensorflow_create
-   */
-  create: (arenaSize: number, model: any) => TFMicroInterpreter;
-
-};
 
 /**
- * Class containing an instance of TFMicroInterpreter
- * @url http://www.espruino.com/Reference#TFMicroInterpreter
+ * The socket server created by `require('net').createServer`
+ * @url http://www.espruino.com/Reference#Server
  */
-declare function TFMicroInterpreter(): void;
+declare function Server(): void;
 
-type TFMicroInterpreter = {
+type Server = {
   /**
-   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getInput
+   * Start listening for new connections on the given port
+   * @url http://www.espruino.com/Reference#l_Server_listen
    */
-  getInput: () => EspruinoArrayBufferView;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getOutput
-   */
-  getOutput: () => EspruinoArrayBufferView;
+  listen: (port: number) => any;
 
   /**
-   * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_invoke
+   * Stop listening for new connections
+   * @url http://www.espruino.com/Reference#l_Server_close
    */
-  invoke: () => void;
+  close: () => void;
 
 }
 
 /**
- * Cryptographic functions
- * **Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
- * @url http://www.espruino.com/Reference#l_crypto_undefined
+ * An actual socket connection - allowing transmit/receive of TCP data
+ * @url http://www.espruino.com/Reference#Socket
  */
-declare const Espruinocrypto: {
+declare function Socket(): void;
+
+type Socket = {
   /**
-   * Class containing AES encryption/decryption
-   * @url http://www.espruino.com/Reference#l_crypto_AES
+   * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
+   * @url http://www.espruino.com/Reference#l_Socket_available
    */
-  AES: any
+  available: () => number;
 
   /**
-   * Performs a SHA1 hash and returns the result as a 20 byte ArrayBuffer.
-   * **Note:** On some boards (currently only Espruino Original) there
-   * isn't space for a fully unrolled SHA1 implementation so a slower
-   * all-JS implementation is used instead.
-   * @url http://www.espruino.com/Reference#l_crypto_SHA1
+   * Return a string containing characters that have been received
+   * @url http://www.espruino.com/Reference#l_Socket_read
    */
-  SHA1: (message: any) => ArrayBuffer;
+  read: (chars: number) => any;
 
   /**
-   * Performs a SHA224 hash and returns the result as a 28 byte ArrayBuffer
-   * @url http://www.espruino.com/Reference#l_crypto_SHA224
+   * Pipe this to a stream (an object with a 'write' method)
+   * @url http://www.espruino.com/Reference#l_Socket_pipe
    */
-  SHA224: (message: any) => ArrayBuffer;
+  pipe: (destination: any, options: any) => void;
 
   /**
-   * Performs a SHA256 hash and returns the result as a 32 byte ArrayBuffer
-   * @url http://www.espruino.com/Reference#l_crypto_SHA256
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method.
+   * If you wish to send binary data then you need to convert that data directly to a
+   * String. This can be done with `String.fromCharCode`, however it's often easier
+   * and faster to use the Espruino-specific `E.toString`, which will read its arguments
+   * as an array of bytes and convert that to a String:
+   * <pre>`<span class="hljs-attribute">socket</span>.write(E.toString([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>]));
+   * `</pre>
+   * If you need to send something other than bytes, you can use 'Typed Arrays', or
+   * even `DataView`:
+   * <pre>`var d = <span class="hljs-keyword">new</span> <span class="hljs-constructor">DataView(<span class="hljs-params">new</span> ArrayBuffer(8)</span>); <span class="hljs-comment">// 8 byte array buffer</span>
+   * d.set<span class="hljs-constructor">Float32(0, 765.3532564)</span>; <span class="hljs-comment">// write float at bytes 0-3</span>
+   * d.set<span class="hljs-constructor">Int8(4, 42)</span>; <span class="hljs-comment">// write int8 at byte 4</span>
+   * socket.write(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span><span class="hljs-keyword">to</span><span class="hljs-constructor">String(<span class="hljs-params">d</span>.<span class="hljs-params">buffer</span>)</span>)
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_Socket_write
    */
-  SHA256: (message: any) => ArrayBuffer;
+  write: (data: any) => boolean;
 
   /**
-   * Performs a SHA384 hash and returns the result as a 48 byte ArrayBuffer
-   * @url http://www.espruino.com/Reference#l_crypto_SHA384
+   * Close this socket - optional data to append as an argument.
+   * See `Socket.write` for more information about the data argument
+   * @url http://www.espruino.com/Reference#l_Socket_end
    */
-  SHA384: (message: any) => ArrayBuffer;
+  end: (data: any) => void;
+
+}
+
+/**
+ * This library allows you to create UDP/DATAGRAM servers and clients
+ * In order to use this, you will need an extra module to get network connectivity.
+ * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/dgram.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
+ * @url http://www.espruino.com/Reference#l_dgram_undefined
+ */
+
+/**
+ * An actual socket connection - allowing transmit/receive of TCP data
+ * @url http://www.espruino.com/Reference#dgramSocket
+ */
+declare function dgramSocket(): void;
+
+type dgramSocket = {
+  /**
+   * @url http://www.espruino.com/Reference#l_dgramSocket_send
+   */
+  send: (buffer: any, offset: any, length: any, args: any) => void;
 
   /**
-   * Performs a SHA512 hash and returns the result as a 64 byte ArrayBuffer
-   * @url http://www.espruino.com/Reference#l_crypto_SHA512
+   * @url http://www.espruino.com/Reference#l_dgramSocket_bind
    */
-  SHA512: (message: any) => ArrayBuffer;
+  bind: (port: number, callback: any) => any;
 
   /**
-   * Password-Based Key Derivation Function 2 algorithm, using SHA512
-   * @url http://www.espruino.com/Reference#l_crypto_PBKDF2
+   * Close the socket
+   * @url http://www.espruino.com/Reference#l_dgramSocket_close
    */
-  PBKDF2: (passphrase: any, salt: any, options: any) => ArrayBuffer;
+  close: () => void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_dgramSocket_addMembership
+   */
+  addMembership: (group: any, ip: any) => void;
+
+}
+
+/**
+ * This library allows you to create TCPIP servers and clients using TLS encryption
+ * In order to use this, you will need an extra module to get network connectivity.
+ * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/tls.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
+ * @url http://www.espruino.com/Reference#l_tls_undefined
+ */
+
+/**
+ * @url http://www.espruino.com/Reference#l_CC3000_undefined
+ */
+
+/**
+ * An instantiation of a WiFi network adaptor
+ * @url http://www.espruino.com/Reference#WLAN
+ */
+declare function WLAN(): void;
+
+type WLAN = {
+  /**
+   * Connect to a wireless network
+   * @url http://www.espruino.com/Reference#l_WLAN_connect
+   */
+  connect: (ap: any, key: any, callback: any) => boolean;
+
+  /**
+   * Completely uninitialise and power down the CC3000. After this you'll have to use `require("CC3000").connect()` again.
+   * @url http://www.espruino.com/Reference#l_WLAN_disconnect
+   */
+  disconnect: () => void;
+
+  /**
+   * Completely uninitialise and power down the CC3000, then reconnect to the old access point.
+   * @url http://www.espruino.com/Reference#l_WLAN_reconnect
+   */
+  reconnect: () => void;
+
+  /**
+   * Get the current IP address
+   * @url http://www.espruino.com/Reference#l_WLAN_getIP
+   */
+  getIP: () => any;
+
+  /**
+   * Set the current IP address for get an IP from DHCP (if no options object is specified).
+   * **Note:** Changes are written to non-volatile memory, but will only take effect after calling `wlan.reconnect()`
+   * @url http://www.espruino.com/Reference#l_WLAN_setIP
+   */
+  setIP: (options: any) => boolean;
+
+}
+
+/**
+ * Class containing utility functions for the [ESP8266](http://www.espruino.com/EspruinoESP8266)
+ * @url http://www.espruino.com/Reference#ESP8266
+ */
+declare const ESP8266: {
+  /**
+   * **DEPRECATED** - please use `Wifi.ping` instead.
+   * Perform a network ping request. The parameter can be either a String or a numeric IP address.
+   * @url http://www.espruino.com/Reference#l_ESP8266_ping
+   */
+  ping: (ipAddr: any, pingCallback: any) => void;
+
+  /**
+   * Perform a hardware reset/reboot of the esp8266.
+   * @url http://www.espruino.com/Reference#l_ESP8266_reboot
+   */
+  reboot: () => void;
+
+  /**
+   * At boot time the esp8266's firmware captures the cause of the reset/reboot.  This function returns this information in an object with the following fields:
+   *
+   * - `reason`: "power on", "wdt reset", "exception", "soft wdt", "restart", "deep sleep", or "reset pin"
+   * - `exccause`: exception cause
+   * - `epc1`, `epc2`, `epc3`: instruction pointers
+   * - `excvaddr`: address being accessed
+   * - `depc`: (?)
+   *
+   * @url http://www.espruino.com/Reference#l_ESP8266_getResetInfo
+   */
+  getResetInfo: () => any;
+
+  /**
+   * Enable or disable the logging of debug information.  A value of `true` enables debug logging while a value of `false` disables debug logging.  Debug output is sent to UART1 (gpio2).
+   * @url http://www.espruino.com/Reference#l_ESP8266_logDebug
+   */
+  logDebug: (enable: boolean) => void;
+
+  /**
+   * Set the debug logging mode. It can be disabled (which frees ~1.2KB of heap), enabled in-memory only, or in-memory and output to a UART.
+   * @url http://www.espruino.com/Reference#l_ESP8266_setLog
+   */
+  setLog: (mode: number) => void;
+
+  /**
+   * Prints the contents of the debug log to the console.
+   * @url http://www.espruino.com/Reference#l_ESP8266_printLog
+   */
+  printLog: () => void;
+
+  /**
+   * Returns one line from the log or up to 128 characters.
+   * @url http://www.espruino.com/Reference#l_ESP8266_readLog
+   */
+  readLog: () => void;
+
+  /**
+   * Dumps info about all sockets to the log. This is for troubleshooting the socket implementation.
+   * @url http://www.espruino.com/Reference#l_ESP8266_dumpSocketInfo
+   */
+  dumpSocketInfo: () => void;
+
+  /**
+   * **Note:** This is deprecated. Use `E.setClock(80/160)`
+   * **Note:**
+   * Set the operating frequency of the ESP8266 processor. The default is 160Mhz.
+   * **Warning**: changing the cpu frequency affects the timing of some I/O operations, notably of software SPI and I2C, so things may be a bit slower at 80Mhz.
+   * @url http://www.espruino.com/Reference#l_ESP8266_setCPUFreq
+   */
+  setCPUFreq: (freq: any) => void;
+
+  /**
+   * Returns an object that contains details about the state of the ESP8266 with the following fields:
+   *
+   * - `sdkVersion`   - Version of the SDK.
+   * - `cpuFrequency` - CPU operating frequency in Mhz.
+   * - `freeHeap`     - Amount of free heap in bytes.
+   * - `maxCon`       - Maximum number of concurrent connections.
+   * - `flashMap`     - Configured flash size&map: '512KB:256/256' .. '4MB:512/512'
+   * - `flashKB`      - Configured flash size in KB as integer
+   * - `flashChip`    - Type of flash chip as string with manufacturer & chip, ex: '0xEF 0x4016`
+   *
+   * @url http://www.espruino.com/Reference#l_ESP8266_getState
+   */
+  getState: () => any;
+
+  /**
+   * **Note:** This is deprecated. Use `require("Flash").getFree()`
+   * @url http://www.espruino.com/Reference#l_ESP8266_getFreeFlash
+   */
+  getFreeFlash: () => any;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_ESP8266_crc32
+   */
+  crc32: (arrayOfData: any) => any;
+
+  /**
+   * **This function is deprecated.** Please use `require("neopixel").write(pin, data)` instead
+   * @url http://www.espruino.com/Reference#l_ESP8266_neopixelWrite
+   */
+  neopixelWrite: (pin: Pin, arrayOfData: any) => void;
+
+  /**
+   * Put the ESP8266 into 'deep sleep' for the given number of microseconds,
+   * reducing power consumption drastically.
+   * meaning of option values:
+   * 0 - the 108th Byte of init parameter decides whether RF calibration will be performed or not.
+   * 1 - run RF calibration after waking up. Power consumption is high.
+   * 2 - no RF calibration after waking up. Power consumption is low.
+   * 4 - no RF after waking up. Power consumption is the lowest.
+   * **Note:** unlike normal Espruino boards' 'deep sleep' mode, ESP8266 deep sleep actually turns off the processor. After the given number of microseconds have elapsed, the ESP8266 will restart as if power had been turned off and then back on. *All contents of RAM will be lost*.
+   * Connect GPIO 16 to RST to enable wakeup.
+   * **Special:** 0 microseconds cause sleep forever until external wakeup RST pull down occurs.
+   * @url http://www.espruino.com/Reference#l_ESP8266_deepSleep
+   */
+  deepSleep: (micros: any, option: any) => void;
 
 };
 
 /**
- * Class containing AES encryption/decryption
- * **Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
- * @url http://www.espruino.com/Reference#AES
+ * Library for communication with the WIZnet Ethernet module
+ * @url http://www.espruino.com/Reference#l_WIZnet_undefined
  */
-declare const AES: {
+
+/**
+ * An instantiation of an Ethernet network adaptor
+ * @url http://www.espruino.com/Reference#Ethernet
+ */
+declare function Ethernet(): void;
+
+type Ethernet = {
   /**
-   * @url http://www.espruino.com/Reference#l_AES_encrypt
+   * Get the current IP address, subnet, gateway and mac address.
+   * @url http://www.espruino.com/Reference#l_Ethernet_getIP
    */
-  encrypt: (passphrase: any, key: any, options: any) => ArrayBuffer;
+  getIP: (options: any) => any;
 
   /**
-   * @url http://www.espruino.com/Reference#l_AES_decrypt
+   * Set the current IP address or get an IP from DHCP (if no options object is specified)
+   * If 'mac' is specified as an option, it must be a string of the form `"00:01:02:03:04:05"`
+   * The default mac is 00:08:DC:01:02:03.
+   * @url http://www.espruino.com/Reference#l_Ethernet_setIP
    */
-  decrypt: (passphrase: any, key: any, options: any) => ArrayBuffer;
+  setIP: (options: any, callback: any) => boolean;
+
+  /**
+   * Set hostname allow to set the hosname used during the dhcp request.
+   * min 8 and max 12 char, best set before calling `eth.setIP()`
+   * Default is WIZnet010203, 010203 is the default nic as part of the mac.
+   * Best to set the hosname before calling setIP().
+   * @url http://www.espruino.com/Reference#l_Ethernet_setHostname
+   */
+  setHostname: (hostname: any, callback: any) => boolean;
+
+  /**
+   * Returns the hostname
+   * @url http://www.espruino.com/Reference#l_Ethernet_getHostname
+   */
+  getHostname: (callback: any) => any;
+
+  /**
+   * Get the current status of the ethernet device
+   * @url http://www.espruino.com/Reference#l_Ethernet_getStatus
+   */
+  getStatus: (options: any) => any;
+
+}
+
+/**
+ * The Wifi library is designed to control the Wifi interface. It supports functionality
+ * such as connecting to wifi networks, getting network information, starting an access
+ * point, etc.
+ * It is available on these devices:
+ *
+ * - [Espruino WiFi](http://www.espruino.com/WiFi#using-wifi)
+ * - [ESP8266](http://www.espruino.com/EspruinoESP8266)
+ * - [ESP32](http://www.espruino.com/ESP32)
+ *
+ * **Certain features may or may not be implemented on your device** however
+ * we have documented what is available and what isn't.
+ * If you're not using one of the devices above, a separate WiFi library is
+ * provided. For instance:
+ *
+ * - An [ESP8266 connected to an Espruino board](http://www.espruino.com/ESP8266#software)
+ * - An [CC3000 WiFi Module](http://www.espruino.com/CC3000)
+ *
+ * [Other ways of connecting to the net](http://www.espruino.com/Internet#related-pages) such
+ * as GSM, Ethernet and LTE have their own libraries.
+ * You can use the WiFi library as follows:
+ * <pre>`<span class="hljs-keyword">var</span> wifi = require(<span class="hljs-string">"Wifi"</span>);
+ * wifi.connect(<span class="hljs-string">"my-ssid"</span>, {<span class="hljs-attr">password</span>:<span class="hljs-string">"my-pwd"</span>}, <span class="hljs-keyword">function</span>(<span class="hljs-params">ap</span>){ <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected:"</span>, ap); });
+ * `</pre>
+ * On ESP32/ESP8266 if you want the connection to happen automatically at boot, add `wifi.save();`.
+ * On other platforms, place `wifi.connect` in a function called `onInit`.
+ * @url http://www.espruino.com/Reference#l_Wifi_undefined
+ */
+
+/**
+ * This library allows you to create http servers and make http requests
+ * In order to use this, you will need an extra module to get network connectivity such as the [WIZnet W5500](https://espruino.com//CC3000">TI CC3000</a> or <a href="/WIZnet).
+ * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/http.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
+ * @url http://www.espruino.com/Reference#l_http_undefined
+ */
+
+/**
+ * The HTTP server created by `require('http').createServer`
+ * @url http://www.espruino.com/Reference#httpSrv
+ */
+declare function httpSrv(): void;
+
+type httpSrv = {
+  /**
+   * Start listening for new HTTP connections on the given port
+   * @url http://www.espruino.com/Reference#l_httpSrv_listen
+   */
+  listen: (port: number) => any;
+
+  /**
+   * Stop listening for new HTTP connections
+   * @url http://www.espruino.com/Reference#l_httpSrv_close
+   */
+  close: () => void;
+
+}
+
+/**
+ * The HTTP server request
+ * @url http://www.espruino.com/Reference#httpSRq
+ */
+declare function httpSRq(): void;
+
+type httpSRq = {
+  /**
+   * The headers to sent to the server with this HTTP request.
+   * @url http://www.espruino.com/Reference#l_httpSRq_headers
+   */
+  headers: any
+
+  /**
+   * The HTTP method used with this request. Often `"GET"`.
+   * @url http://www.espruino.com/Reference#l_httpSRq_method
+   */
+  method: any
+
+  /**
+   * The URL requested in this HTTP request, for instance:
+   *
+   * - `"/"` - the main page
+   * - `"/favicon.ico"` - the web page's icon
+   *
+   * @url http://www.espruino.com/Reference#l_httpSRq_url
+   */
+  url: any
+
+  /**
+   * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
+   * @url http://www.espruino.com/Reference#l_httpSRq_available
+   */
+  available: () => number;
+
+  /**
+   * Return a string containing characters that have been received
+   * @url http://www.espruino.com/Reference#l_httpSRq_read
+   */
+  read: (chars: number) => any;
+
+  /**
+   * Pipe this to a stream (an object with a 'write' method)
+   * @url http://www.espruino.com/Reference#l_httpSRq_pipe
+   */
+  pipe: (destination: any, options: any) => void;
+
+}
+
+/**
+ * The HTTP server response
+ * @url http://www.espruino.com/Reference#httpSRs
+ */
+declare function httpSRs(): void;
+
+type httpSRs = {
+  /**
+   * The headers to send back along with the HTTP response.
+   * The default contents are:
+   * <pre>`<span class="hljs-punctuation">{</span>
+   *   <span class="hljs-attr">"Connection"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"close"</span>
+   *  <span class="hljs-punctuation">}</span>
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_httpSRs_headers
+   */
+  headers: any
+
+  /**
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method. For more information about sending binary data see `Socket.write`
+   * @url http://www.espruino.com/Reference#l_httpSRs_write
+   */
+  write: (data: any) => boolean;
+
+  /**
+   * See `Socket.write` for more information about the data argument
+   * @url http://www.espruino.com/Reference#l_httpSRs_end
+   */
+  end: (data: any) => void;
+
+  /**
+   * Send the given status code and headers. If not explicitly called
+   * this will be done automatically the first time data is written
+   * to the response.
+   * This cannot be called twice, or after data has already been sent
+   * in the response.
+   * @url http://www.espruino.com/Reference#l_httpSRs_writeHead
+   */
+  writeHead: (statusCode: number, headers: any) => void;
+
+  /**
+   * Set a value to send in the header of this HTTP response. This updates the `httpSRs.headers` property.
+   * Any headers supplied to `writeHead` will overwrite any headers with the same name.
+   * @url http://www.espruino.com/Reference#l_httpSRs_setHeader
+   */
+  setHeader: (name: any, value: any) => void;
+
+}
+
+/**
+ * The HTTP client request, returned by `http.request()` and `http.get()`.
+ * @url http://www.espruino.com/Reference#httpCRq
+ */
+declare function httpCRq(): void;
+
+type httpCRq = {
+  /**
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method. For more information about sending binary data see `Socket.write`
+   * @url http://www.espruino.com/Reference#l_httpCRq_write
+   */
+  write: (data: any) => boolean;
+
+  /**
+   * Finish this HTTP request - optional data to append as an argument
+   * See `Socket.write` for more information about the data argument
+   * @url http://www.espruino.com/Reference#l_httpCRq_end
+   */
+  end: (data: any) => void;
+
+}
+
+/**
+ * The HTTP client response, passed to the callback of `http.request()` an `http.get()`.
+ * @url http://www.espruino.com/Reference#httpCRs
+ */
+declare function httpCRs(): void;
+
+type httpCRs = {
+  /**
+   * The headers received along with the HTTP response
+   * @url http://www.espruino.com/Reference#l_httpCRs_headers
+   */
+  headers: any
+
+  /**
+   * The HTTP response's status code - usually `"200"` if all went well
+   * @url http://www.espruino.com/Reference#l_httpCRs_statusCode
+   */
+  statusCode: any
+
+  /**
+   * The HTTP response's status message - Usually `"OK"` if all went well
+   * @url http://www.espruino.com/Reference#l_httpCRs_statusMessage
+   */
+  statusMessage: any
+
+  /**
+   * The HTTP version reported back by the server - usually `"1.1"`
+   * @url http://www.espruino.com/Reference#l_httpCRs_httpVersion
+   */
+  httpVersion: any
+
+  /**
+   * Return how many bytes are available to read. If there is a 'data' event handler, this will always return 0.
+   * @url http://www.espruino.com/Reference#l_httpCRs_available
+   */
+  available: () => number;
+
+  /**
+   * Return a string containing characters that have been received
+   * @url http://www.espruino.com/Reference#l_httpCRs_read
+   */
+  read: (chars: number) => any;
+
+  /**
+   * Pipe this to a stream (an object with a 'write' method)
+   * @url http://www.espruino.com/Reference#l_httpCRs_pipe
+   */
+  pipe: (destination: any, options: any) => void;
+
+}
+
+/**
+ * This library provides TV out capability on the Espruino and Espruino Pico.
+ * See the [Television](https://espruino.com//Television) page for more information.
+ * @url http://www.espruino.com/Reference#l_tv_undefined
+ */
+
+/**
+ * Simple library for compression/decompression using [LZSS](https://github.com/atomicobject/heatshrink">heatshrink</a>, an <a href="https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) compression tool.
+ * Espruino uses heatshrink internally to compress RAM down to fit in Flash memory when `save()` is used. This just exposes that functionality.
+ * Functions here take and return buffers of data. There is no support for streaming, so both the compressed and decompressed data must be able to fit in memory at the same time.
+ * @url http://www.espruino.com/Reference#l_heatshrink_undefined
+ */
+
+/**
+ * This class provides functionality to recognise gestures drawn
+ * on a touchscreen. It is only built into Bangle.js 2.
+ * Usage:
+ * <pre>`var strokes = {
+ *   stroke1 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>),
+ *   stroke2 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>),
+ *   stroke3 : <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span><span class="hljs-keyword">new</span>(<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>)
+ * };
+ * var r = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Unistroke</span>.</span></span>recognise(strokes,<span class="hljs-keyword">new</span> <span class="hljs-constructor">Uint8Array([<span class="hljs-params">x1</span>, <span class="hljs-params">y1</span>, <span class="hljs-params">x2</span>, <span class="hljs-params">y2</span>, <span class="hljs-params">x3</span>, <span class="hljs-params">y3</span>, <span class="hljs-operator">...</span>])</span>)
+ * print(r); <span class="hljs-comment">// stroke1/stroke2/stroke3</span>
+ * `</pre>
+ * @url http://www.espruino.com/Reference#Unistroke
+ */
+declare const Unistroke: {
+  /**
+   * Create a new Unistroke based on XY coordinates
+   * @url http://www.espruino.com/Reference#l_Unistroke_new
+   */
+  new: (xy: any) => any;
+
+  /**
+   * Recognise based on an object of named strokes, and a list of XY coordinates
+   * @url http://www.espruino.com/Reference#l_Unistroke_recognise
+   */
+  recognise: (strokes: any, xy: any) => any;
 
 };
+
+/**
+ * The NRF class is for controlling functionality of the Nordic nRF51/nRF52 chips.
+ * Most functionality is related to Bluetooth Low Energy, however there are also some functions related to NFC that apply to NRF52-based devices.
+ * @url http://www.espruino.com/Reference#NRF
+ */
+declare const NRF: {
+  /**
+   * Return an object with information about the security
+   * state of the current peripheral connection:
+   * <pre>`{
+   *   connected       // The <span class="hljs-keyword">connection</span> <span class="hljs-keyword">is</span> active (<span class="hljs-keyword">not</span> disconnected).
+   *   <span class="hljs-keyword">encrypted</span>       // Communication <span class="hljs-keyword">on</span> this link <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span>.
+   *   mitm_protected  // The <span class="hljs-keyword">encrypted</span> communication <span class="hljs-keyword">is</span> <span class="hljs-keyword">also</span> protected against man-<span class="hljs-keyword">in</span>-the-middle attacks.
+   *   bonded          // The peer <span class="hljs-keyword">is</span> bonded <span class="hljs-keyword">with</span> us
+   *   connected_addr  // <span class="hljs-keyword">If</span> connected=<span class="hljs-keyword">true</span>, the MAC address <span class="hljs-keyword">of</span> the currently connected device
+   * }
+   * `</pre>
+   * If there is no active connection, `{connected:false}` will be returned.
+   * See `NRF.setSecurity` for information about negotiating a secure connection.
+   * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
+   */
+  getSecurityStatus: () => any;
+
+  /**
+   * Get this device's default Bluetooth MAC address.
+   * For Puck.js, the last 5 characters of this (eg. `ee:ff`)
+   * are used in the device's advertised Bluetooth name.
+   * @url http://www.espruino.com/Reference#l_NRF_getAddress
+   */
+  getAddress: () => any;
+
+  /**
+   * Change the services and characteristics Espruino advertises.
+   * If you want to **change** the value of a characteristic, you need
+   * to use `NRF.updateServices()` instead
+   * To expose some information on Characteristic `ABCD` on service `BCDE` you could do:
+   * <pre>`<span class="hljs-string">NRF.setServices({</span>
+   *   <span class="hljs-attr">0xBCDE :</span> {
+   *     <span class="hljs-attr">0xABCD :</span> {
+   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"Hello"</span>,
+   *       <span class="hljs-attr">readable :</span> <span class="hljs-literal">true</span>
+   *     }
+   *   }
+   * <span class="hljs-string">});</span>
+   * `</pre>
+   * Or to allow the 3 LEDs to be controlled by writing numbers 0 to 7 to a
+   * characteristic, you can do the following. `evt.data` is an ArrayBuffer.
+   * <pre>`NRF<span class="hljs-selector-class">.setServices</span>({
+   *   <span class="hljs-number">0</span>xBCDE : {
+   *     <span class="hljs-number">0</span>xABCD : {
+   *       writable : true,
+   *       onWrite : <span class="hljs-built_in">function</span>(evt) {
+   *         digitalWrite(<span class="hljs-selector-attr">[LED3,LED2,LED1]</span>, evt<span class="hljs-selector-class">.data</span><span class="hljs-selector-attr">[0]</span>);
+   *       }
+   *     }
+   *   }
+   * });
+   * `</pre>
+   * You can supply many different options:
+   * <pre>`NRF.setServices({
+   *   <span class="hljs-number">0</span>xBCDE : {
+   *     <span class="hljs-number">0</span>xABCD : {
+   *       value : <span class="hljs-string">"Hello"</span>, <span class="hljs-regexp">//</span> optional
+   *       maxLen : <span class="hljs-number">5</span>, <span class="hljs-regexp">//</span> optional (otherwise is length of initial value)
+   *       broadcast : false, <span class="hljs-regexp">//</span> optional, default is false
+   *       readable : true,   <span class="hljs-regexp">//</span> optional, default is false
+   *       writable : true,   <span class="hljs-regexp">//</span> optional, default is false
+   *       notify : true,   <span class="hljs-regexp">//</span> optional, default is false
+   *       indicate : true,   <span class="hljs-regexp">//</span> optional, default is false
+   *       description: <span class="hljs-string">"My Characteristic"</span>,  <span class="hljs-regexp">//</span> optional, default is null,
+   *       security: { <span class="hljs-regexp">//</span> optional - see NRF.setSecurity
+   *         read: { <span class="hljs-regexp">//</span> optional
+   *           encrypted: false, <span class="hljs-regexp">//</span> optional, default is false
+   *           mitm: false, <span class="hljs-regexp">//</span> optional, default is false
+   *           lesc: false, <span class="hljs-regexp">//</span> optional, default is false
+   *           signed: false <span class="hljs-regexp">//</span> optional, default is false
+   *         },
+   *         write: { <span class="hljs-regexp">//</span> optional
+   *           encrypted: true, <span class="hljs-regexp">//</span> optional, default is false
+   *           mitm: false, <span class="hljs-regexp">//</span> optional, default is false
+   *           lesc: false, <span class="hljs-regexp">//</span> optional, default is false
+   *           signed: false <span class="hljs-regexp">//</span> optional, default is false
+   *         }
+   *       },
+   *       onWrite : <span class="hljs-keyword">function</span>(evt) { <span class="hljs-regexp">//</span> optional
+   *         console.log(<span class="hljs-string">"Got "</span>, evt.data); <span class="hljs-regexp">//</span> an ArrayBuffer
+   *       },
+   *       onWriteDesc : <span class="hljs-keyword">function</span>(evt) { <span class="hljs-regexp">//</span> optional - called when the <span class="hljs-string">&#x27;cccd&#x27;</span> descriptor is written
+   *         <span class="hljs-regexp">//</span> <span class="hljs-keyword">for</span> example this is called when notifications are requested by the client:
+   *         console.log(<span class="hljs-string">"Notifications enabled = "</span>, evt.data[<span class="hljs-number">0</span>]&<span class="hljs-number">1</span>);
+   *       }
+   *     }
+   *     <span class="hljs-regexp">//</span> more characteristics allowed
+   *   }
+   *   <span class="hljs-regexp">//</span> more services allowed
+   * });
+   * `</pre>
+   * **Note:** UUIDs can be integers between `0` and `0xFFFF`, strings of
+   * the form `"ABCD"`, or strings of the form `"ABCDABCD-ABCD-ABCD-ABCD-ABCDABCDABCD"`
+   * `options` can be of the form:
+   * <pre>`NRF.setServices(<span class="hljs-literal">undefined</span>, {
+   *   <span class="hljs-attr">hid</span> : <span class="hljs-keyword">new</span> Uint8Array(...), <span class="hljs-comment">// optional, default is undefined. Enable BLE HID support</span>
+   *   uart : <span class="hljs-literal">true</span>, <span class="hljs-comment">// optional, default is true. Enable BLE UART support</span>
+   *   advertise: [ <span class="hljs-string">&#x27;180D&#x27;</span> ] <span class="hljs-comment">// optional, list of service UUIDs to advertise</span>
+   *   ancs : <span class="hljs-literal">true</span>, <span class="hljs-comment">// optional, Bangle.js-only, enable Apple ANCS support for notifications</span>
+   *   ams : <span class="hljs-literal">true</span> <span class="hljs-comment">// optional, Bangle.js-only, enable Apple AMS support for media control</span>
+   * });
+   * `</pre>
+   * To enable BLE HID, you must set `hid` to an array which is the BLE report
+   * descriptor. The easiest way to do this is to use the `ble_hid_controls`
+   * or `ble_hid_keyboard` modules.
+   * **Note:** Just creating a service doesn't mean that the service will
+   * be advertised. It will only be available after a device connects. To
+   * advertise, specify the UUIDs you wish to advertise in the `advertise`
+   * field of the second `options` argument. For example this will create
+   * and advertise a heart rate service:
+   * <pre>`<span class="hljs-string">NRF.setServices({</span>
+   *   <span class="hljs-attr">0x180D:</span> { <span class="hljs-string">//</span> <span class="hljs-string">heart_rate</span>
+   *     <span class="hljs-attr">0x2A37:</span> { <span class="hljs-string">//</span> <span class="hljs-string">heart_rate_measurement</span>
+   *       <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>,
+   *       <span class="hljs-attr">value :</span> [<span class="hljs-number">0x06</span>, <span class="hljs-string">heartrate</span>],
+   *     }
+   *   }
+   * <span class="hljs-string">},</span> { <span class="hljs-attr">advertise:</span> [ <span class="hljs-string">&#x27;180D&#x27;</span> ] }<span class="hljs-string">);</span>
+   * `</pre>
+   * You may specify 128 bit UUIDs to advertise, however you may get a `DATA_SIZE`
+   * exception because there is insufficient space in the Bluetooth LE advertising
+   * packet for the 128 bit UART UUID as well as the UUID you specified. In this
+   * case you can add `uart:false` after the `advertise` element to disable the
+   * UART, however you then be unable to connect to Puck.js's console via Bluetooth.
+   * If you absolutely require two or more 128 bit UUIDs then you will have to
+   * specify your own raw advertising data packets with `NRF.setAdvertising`
+   * **Note:** The services on Espruino can only be modified when there is
+   * no device connected to it as it requires a restart of the Bluetooth stack.
+   * **iOS devices will 'cache' the list of services** so apps like
+   * NRF Connect may incorrectly display the old services even after you
+   * have modified them. To fix this, disable and re-enable Bluetooth on your
+   * iOS device, or use an Android device to run NRF Connect.
+   * **Note:** Not all combinations of security configuration values are valid, the valid combinations are: encrypted,
+   * encrypted + mitm, lesc, signed, signed + mitm. See `NRF.setSecurity` for more information.
+   * @url http://www.espruino.com/Reference#l_NRF_setServices
+   */
+  setServices: (data: any, options: any) => void;
+
+  /**
+   * Change the data that Espruino advertises.
+   * Data can be of the form `{ UUID : data_as_byte_array }`. The UUID should be
+   * a [Bluetooth Service ID](https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx).
+   * For example to return battery level at 95%, do:
+   * <pre>`NRF.setAdvertising({
+   *   <span class="hljs-number">0</span>x180F : [<span class="hljs-number">95</span>] <span class="hljs-regexp">//</span> Service data <span class="hljs-number">0</span>x180F = <span class="hljs-number">95</span>
+   * });
+   * `</pre>
+   * Or you could report the current temperature:
+   * <pre>`setInterval(<span class="hljs-name">function</span>() {
+   *   NRF.setAdvertising({
+   *     <span class="hljs-number">0</span>x1809 : [Math.round(<span class="hljs-name">E</span>.getTemperature())]
+   *   })<span class="hljs-comment">;</span>
+   * }, <span class="hljs-number">30000</span>)<span class="hljs-comment">;</span>
+   * `</pre>
+   * If you specify a value for the object key, Service Data is advertised. However
+   * if you specify `undefined`, the Service UUID is advertised:
+   * <pre>`NRF.setAdvertising({
+   *   <span class="hljs-number">0x180D</span> : <span class="hljs-literal">undefined</span> <span class="hljs-comment">// Advertise service UUID 0x180D (HRM)</span>
+   * });
+   * `</pre>
+   * Service UUIDs can also be supplied in the second argument of
+   * `NRF.setServices`, but those go in the scan response packet.
+   * You can also supply the raw advertising data in an array. For example
+   * to advertise as an Eddystone beacon:
+   * <pre>`NRF.setAdvertising([<span class="hljs-number">0</span>x03,  <span class="hljs-regexp">//</span> Length of Service List
+   *   <span class="hljs-number">0</span>x03,  <span class="hljs-regexp">//</span> Param: Service List
+   *   <span class="hljs-number">0</span>xAA, <span class="hljs-number">0</span>xFE,  <span class="hljs-regexp">//</span> Eddystone ID
+   *   <span class="hljs-number">0</span>x13,  <span class="hljs-regexp">//</span> Length of Service Data
+   *   <span class="hljs-number">0</span>x16,  <span class="hljs-regexp">//</span> Service Data
+   *   <span class="hljs-number">0</span>xAA, <span class="hljs-number">0</span>xFE, <span class="hljs-regexp">//</span> Eddystone ID
+   *   <span class="hljs-number">0</span>x10,  <span class="hljs-regexp">//</span> Frame type: URL
+   *   <span class="hljs-number">0</span>xF8, <span class="hljs-regexp">//</span> Power
+   *   <span class="hljs-number">0</span>x03, <span class="hljs-regexp">//</span> https:<span class="hljs-regexp">//</span>
+   *   <span class="hljs-string">&#x27;g&#x27;</span>,<span class="hljs-string">&#x27;o&#x27;</span>,<span class="hljs-string">&#x27;o&#x27;</span>,<span class="hljs-string">&#x27;.&#x27;</span>,<span class="hljs-string">&#x27;g&#x27;</span>,<span class="hljs-string">&#x27;l&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>,<span class="hljs-string">&#x27;B&#x27;</span>,<span class="hljs-string">&#x27;3&#x27;</span>,<span class="hljs-string">&#x27;J&#x27;</span>,<span class="hljs-string">&#x27;0&#x27;</span>,<span class="hljs-string">&#x27;O&#x27;</span>,<span class="hljs-string">&#x27;c&#x27;</span>],
+   *     {interval:<span class="hljs-number">100</span>});
+   * `</pre>
+   * (However for Eddystone we'd advise that you use the [Espruino Eddystone library](https://espruino.com//Puck.js+Eddystone))
+   * **Note:** When specifying data as an array, certain advertising options such as
+   * `discoverable` and `showName` won't have any effect.
+   * **Note:** The size of Bluetooth LE advertising packets is limited to 31 bytes. If
+   * you want to advertise more data, consider using an array for `data` (See below), or
+   * `NRF.setScanResponse`.
+   * You can even specify an array of arrays or objects, in which case each advertising packet
+   * will be used in turn - for instance to make your device advertise battery level and its name
+   * as well as both Eddystone and iBeacon :
+   * <pre>`NRF<span class="hljs-selector-class">.setAdvertising</span>([
+   *   {<span class="hljs-number">0</span>x180F : [Puck.getBatteryPercentage()]}, <span class="hljs-comment">// normal advertising, with battery %</span>
+   *   <span class="hljs-built_in">require</span>("ble_ibeacon")<span class="hljs-selector-class">.get</span>(...), <span class="hljs-comment">// iBeacon</span>
+   *   <span class="hljs-built_in">require</span>("ble_eddystone")<span class="hljs-selector-class">.get</span>(...), <span class="hljs-comment">// eddystone</span>
+   * ], {interval:<span class="hljs-number">300</span>});
+   * `</pre>
+   * `options` is an object, which can contain:
+   * <pre>`{
+   *   <span class="hljs-built_in">name</span>: <span class="hljs-string">"Hello"</span> <span class="hljs-comment">// The name of the device</span>
+   *   showName: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// include full name, or nothing</span>
+   *   discoverable: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// general discoverable, or limited - default is limited</span>
+   *   connectable: <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// whether device is connectable - default is true</span>
+   *   scannable : <span class="hljs-literal">true</span>/<span class="hljs-literal">false</span> <span class="hljs-comment">// whether device can be scanned for scan response packets - default is true</span>
+   *   interval: <span class="hljs-number">600</span> <span class="hljs-comment">// Advertising interval in msec, between 20 and 10000 (default is 375ms)</span>
+   *   manufacturer: <span class="hljs-number">0</span>x0590 <span class="hljs-comment">// IF sending manufacturer data, this is the manufacturer ID</span>
+   *   manufacturerData: [...] <span class="hljs-comment">// IF sending manufacturer data, this is an array of data</span>
+   *   phy: <span class="hljs-string">"1mbps/2mbps/coded"</span> <span class="hljs-comment">// (NRF52840 only) use the long-range coded phy for transmission (1mbps default)</span>
+   * }
+   * `</pre>
+   * Setting `connectable` and `scannable` to false gives the lowest power consumption
+   * as the BLE radio doesn't have to listen after sending advertising.
+   * **NOTE:** Non-`connectable` advertising can't have an advertising interval less than 100ms
+   * according to the BLE spec.
+   * So for instance to set the name of Puck.js without advertising any
+   * other data you can just use the command:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Advertising({},{<span class="hljs-params">name</span>:<span class="hljs-string">"Hello"</span>})</span>;
+   * `</pre>
+   * You can also specify 'manufacturer data', which is another form of advertising data.
+   * We've registered the Manufacturer ID 0x0590 (as Pur3 Ltd) for use with *Official
+   * Espruino devices* - use it to advertise whatever data you'd like, but we'd recommend
+   * using JSON.
+   * For example by not advertising a device name you can send up to 24 bytes of JSON on
+   * Espruino's manufacturer ID:
+   * <pre>`<span class="hljs-title">var</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = {<span class="hljs-title">a</span>:1,<span class="hljs-title">b</span>:2};</span>
+   * <span class="hljs-type">NRF</span>.setAdvertising({},{
+   *   showName:false,
+   *   manufacturer:<span class="hljs-number">0x0590</span>,
+   *   manufacturerData:<span class="hljs-type">JSON</span>.stringify(<span class="hljs-class"><span class="hljs-keyword">data</span>)</span>
+   * });
+   * `</pre>
+   * If you're using [EspruinoHub](https://github.com/espruino/EspruinoHub) then it will
+   * automatically decode this into the folling MQTT topics:
+   *
+   * - `/ble/advertise/ma:c_:_a:dd:re:ss/espruino` -> `{"a":10,"b":15}`
+   * - `/ble/advertise/ma:c_:_a:dd:re:ss/a` -> `1`
+   * - `/ble/advertise/ma:c_:_a:dd:re:ss/b` -> `2`
+   *
+   * Note that **you only have 24 characters available for JSON**, so try to use
+   * the shortest field names possible and avoid floating point values that can
+   * be very long when converted to a String.
+   * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
+   */
+  setAdvertising: (data: any, options: any) => void;
+
+  /**
+   * If a device is connected to Espruino, disconnect from it.
+   * @url http://www.espruino.com/Reference#l_NRF_disconnect
+   */
+  disconnect: () => void;
+
+  /**
+   * Disable Bluetooth advertising and disconnect from any device that
+   * connected to Puck.js as a peripheral (this won't affect any devices
+   * that Puck.js initiated connections to).
+   * This makes Puck.js undiscoverable, so it can't be connected to.
+   * Use `NRF.wake()` to wake up and make Puck.js connectable again.
+   * @url http://www.espruino.com/Reference#l_NRF_sleep
+   */
+  sleep: () => void;
+
+  /**
+   * Enable Bluetooth advertising (this is enabled by default), which
+   * allows other devices to discover and connect to Puck.js.
+   * Use `NRF.sleep()` to disable advertising.
+   * @url http://www.espruino.com/Reference#l_NRF_wake
+   */
+  wake: () => void;
+
+  /**
+   * Restart the Bluetooth softdevice (if there is currently a BLE connection,
+   * it will queue a restart to be done when the connection closes).
+   * You shouldn't need to call this function in normal usage. However, Nordic's
+   * BLE softdevice has some settings that cannot be reset. For example there
+   * are only a certain number of unique UUIDs. Once these are all used the
+   * only option is to restart the softdevice to clear them all out.
+   * @url http://www.espruino.com/Reference#l_NRF_restart
+   */
+  restart: (callback: any) => void;
+
+  /**
+   * Set this device's default Bluetooth MAC address:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Address(<span class="hljs-string">"ff:ee:dd:cc:bb:aa random"</span>)</span>;
+   * `</pre>
+   * Addresses take the form:
+   *
+   * - `"ff:ee:dd:cc:bb:aa"` or `"ff:ee:dd:cc:bb:aa public"` for a public address
+   * - `"ff:ee:dd:cc:bb:aa random"` for a random static address (the default for Espruino)
+   *
+   * This may throw a `INVALID_BLE_ADDR` error if the upper two bits
+   * of the address don't match the address type.
+   * To change the address, Espruino must restart the softdevice. It will only do
+   * so when it is disconnected from other devices.
+   * @url http://www.espruino.com/Reference#l_NRF_setAddress
+   */
+  setAddress: (addr: any) => void;
+
+  /**
+   * Get the battery level in volts (the voltage that the NRF chip is running off of).
+   * This is the battery level of the device itself - it has nothing to with any
+   * device that might be connected.
+   * @url http://www.espruino.com/Reference#l_NRF_getBattery
+   */
+  getBattery: () => number;
+
+  /**
+   * This is just like `NRF.setAdvertising`, except instead of advertising
+   * the data, it returns the packet that would be advertised as an array.
+   * @url http://www.espruino.com/Reference#l_NRF_getAdvertisingData
+   */
+  getAdvertisingData: (data: any, options: any) => any;
+
+  /**
+   * The raw scan response data should be supplied as an array. For example to return "Sample" for the device name:
+   * <pre>`NRF.setScanResponse([<span class="hljs-number">0</span>x07,  <span class="hljs-regexp">//</span> Length of Data
+   *   <span class="hljs-number">0</span>x09,  <span class="hljs-regexp">//</span> Param: Complete Local Name
+   *   <span class="hljs-string">&#x27;S&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;m&#x27;</span>, <span class="hljs-string">&#x27;p&#x27;</span>, <span class="hljs-string">&#x27;l&#x27;</span>, <span class="hljs-string">&#x27;e&#x27;</span>]);
+   * `</pre>
+   * **Note:** `NRF.setServices(..., {advertise:[ ... ]})` writes advertised
+   * services into the scan response - so you can't use both `advertise`
+   * and `NRF.setServices` or one will overwrite the other.
+   * @url http://www.espruino.com/Reference#l_NRF_setScanResponse
+   */
+  setScanResponse: (data: any) => void;
+
+  /**
+   * Update values for the services and characteristics Espruino advertises.
+   * Only services and characteristics previously declared using `NRF.setServices` are affected.
+   * To update the '0xABCD' characteristic in the '0xBCDE' service:
+   * <pre>`NRF<span class="hljs-selector-class">.updateServices</span>({
+   *   <span class="hljs-number">0</span>xBCDE : {
+   *     <span class="hljs-number">0</span>xABCD : {
+   *       value : <span class="hljs-string">"World"</span>
+   *     }
+   *   }
+   * });
+   * `</pre>
+   * You can also use 128 bit UUIDs, for example `"b7920001-3c1b-4b40-869f-3c0db9be80c6"`.
+   * To define a service and characteristic and then notify connected clients of a
+   * change to it when a button is pressed:
+   * <pre>`<span class="hljs-string">NRF.setServices({</span>
+   *   <span class="hljs-attr">0xBCDE :</span> {
+   *     <span class="hljs-attr">0xABCD :</span> {
+   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"Hello"</span>,
+   *       <span class="hljs-attr">maxLen :</span> <span class="hljs-number">20</span>,
+   *       <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>
+   *     }
+   *   }
+   * <span class="hljs-string">});</span>
+   * <span class="hljs-string">setWatch(function()</span> {
+   *   <span class="hljs-string">NRF.updateServices(</span>{
+   *     <span class="hljs-attr">0xBCDE :</span> {
+   *       <span class="hljs-attr">0xABCD :</span> {
+   *         <span class="hljs-attr">value :</span> <span class="hljs-string">"World!"</span>,
+   *         <span class="hljs-attr">notify:</span> <span class="hljs-literal">true</span>
+   *       }
+   *     }
+   *   }<span class="hljs-string">);</span>
+   * }<span class="hljs-string">,</span> <span class="hljs-string">BTN,</span> { <span class="hljs-string">repeat:true</span>, <span class="hljs-string">edge:"rising"</span>, <span class="hljs-attr">debounce:</span> <span class="hljs-number">50</span> }<span class="hljs-string">);</span>
+   * `</pre>
+   * This only works if the characteristic was created with `notify: true` using `NRF.setServices`,
+   * otherwise the characteristic will be updated but no notification will be sent.
+   * Also note that `maxLen` was specified. If it wasn't then the maximum length of
+   * the characteristic would have been 5 - the length of `"Hello"`.
+   * To indicate (i.e. notify with ACK) connected clients of a change to the '0xABCD' characteristic in the '0xBCDE' service:
+   * <pre>`<span class="hljs-string">NRF.updateServices({</span>
+   *   <span class="hljs-attr">0xBCDE :</span> {
+   *     <span class="hljs-attr">0xABCD :</span> {
+   *       <span class="hljs-attr">value :</span> <span class="hljs-string">"World"</span>,
+   *       <span class="hljs-attr">indicate:</span> <span class="hljs-literal">true</span>
+   *     }
+   *   }
+   * <span class="hljs-string">});</span>
+   * `</pre>
+   * This only works if the characteristic was created with `indicate: true` using `NRF.setServices`,
+   * otherwise the characteristic will be updated but no notification will be sent.
+   * **Note:** See `NRF.setServices` for more information
+   * @url http://www.espruino.com/Reference#l_NRF_updateServices
+   */
+  updateServices: (data: any) => void;
+
+  /**
+   * Start/stop listening for BLE advertising packets within range. Returns a
+   * `BluetoothDevice` for each advertsing packet. **By default this is not an active scan, so
+   * Scan Response advertising data is not included (see below)**
+   * <pre>`<span class="hljs-comment">// Start scanning</span>
+   * packets=<span class="hljs-number">10</span>;
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Scan(<span class="hljs-params">function</span>(<span class="hljs-params">d</span>)</span> {
+   *   packets--;
+   *   <span class="hljs-keyword">if</span> (packets<=<span class="hljs-number">0</span>)
+   *     <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Scan()</span>; <span class="hljs-comment">// stop scanning</span>
+   *   <span class="hljs-keyword">else</span>
+   *     console.log(d); <span class="hljs-comment">// print packet info</span>
+   * });
+   * `</pre>
+   * Each `BluetoothDevice` will look a bit like:
+   * <pre>`BluetoothDevice {
+   *   <span class="hljs-string">"id"</span>: <span class="hljs-string">"aa:bb:cc:dd:ee:ff"</span>, <span class="hljs-comment">// address</span>
+   *   <span class="hljs-string">"rssi"</span>: -<span class="hljs-number">89</span>,               <span class="hljs-comment">// signal strength</span>
+   *   <span class="hljs-string">"services"</span>: <span class="hljs-selector-attr">[ <span class="hljs-string">"128bit-uuid"</span>, ... ]</span>,     <span class="hljs-comment">// zero or more service UUIDs</span>
+   *   <span class="hljs-string">"data"</span>: new <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-selector-attr">[ ... ]</span>)<span class="hljs-selector-class">.buffer</span>, <span class="hljs-comment">// ArrayBuffer of returned data</span>
+   *   <span class="hljs-string">"serviceData"</span> : { <span class="hljs-string">"0123"</span> : <span class="hljs-selector-attr">[ 1 ]</span> }, <span class="hljs-comment">// if service data is in &#x27;data&#x27;, it&#x27;s extracted here</span>
+   *   <span class="hljs-string">"manufacturer"</span> : <span class="hljs-number">0</span>x1234, <span class="hljs-comment">// if manufacturer data is in &#x27;data&#x27;, the 16 bit manufacturer ID is extracted here</span>
+   *   <span class="hljs-string">"manufacturerData"</span> : <span class="hljs-selector-attr">[...]</span>, <span class="hljs-comment">// if manufacturer data is in &#x27;data&#x27;, the data is extracted here</span>
+   *   <span class="hljs-string">"name"</span>: <span class="hljs-string">"DeviceName"</span>       <span class="hljs-comment">// the advertised device name</span>
+   *  }
+   * `</pre>
+   * You can also supply a set of filters (as described in `NRF.requestDevice`) as a second argument, which will
+   * allow you to filter the devices you get a callback for. This helps
+   * to cut down on the time spent processing JavaScript code in areas with
+   * a lot of Bluetooth advertisements. For example to find only devices
+   * with the manufacturer data `0x0590` (Espruino's ID) you could do:
+   * <pre>`NRF.setScan(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(d.manufacturerData);
+   * }, { <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">manufacturerData</span>:{<span class="hljs-number">0x0590</span>:{}} }] });
+   * `</pre>
+   * You can also specify `active:true` in the second argument to perform
+   * active scanning (this requests scan response packets) from any
+   * devices it finds.
+   * **Note:** Using a filter in `setScan` filters each advertising packet individually. As
+   * a result, if you filter based on a service UUID and a device advertises with multiple packets
+   * (or a scan response when `active:true`) only the packets matching the filter are returned. To
+   * aggregate multiple packets you can use `NRF.findDevices`.
+   * **Note:** BLE advertising packets can arrive quickly - faster than you'll
+   * be able to print them to the console. It's best only to print a few, or
+   * to use a function like `NRF.findDevices(..)` which will collate a list
+   * of available devices.
+   * **Note:** Using setScan turns the radio's receive mode on constantly. This
+   * can draw a *lot* of power (12mA or so), so you should use it sparingly or
+   * you can run your battery down quickly.
+   * @url http://www.espruino.com/Reference#l_NRF_setScan
+   */
+  setScan: (callback: any, options: any) => void;
+
+  /**
+   * This function can be used to quickly filter through Bluetooth devices.
+   * For instance if you wish to scan for multiple different types of device at the same time
+   * then you could use `NRF.findDevices` with all the filters you're interested in. When scanning
+   * is finished you can then use `NRF.filterDevices` to pick out just the devices of interest.
+   * <pre>`<span class="hljs-comment">// the two types of device we&#x27;re interested in</span>
+   * var filter1 = <span class="hljs-literal">[{<span class="hljs-identifier">serviceData</span>:{"<span class="hljs-identifier">fe95</span>":{}}}]</span>;
+   * var filter2 = <span class="hljs-literal">[{<span class="hljs-identifier">namePrefix</span>:"P<span class="hljs-identifier">ixl</span>.<span class="hljs-identifier">js</span>"}]</span>;
+   * <span class="hljs-comment">// the following filter will return both types of device</span>
+   * var allFilters = filter1.concat(filter2);
+   * <span class="hljs-comment">// now scan for both types of device, and filter them out afterwards</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>find<span class="hljs-constructor">Devices(<span class="hljs-params">function</span>(<span class="hljs-params">devices</span>)</span> {
+   *   var devices1 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>filter<span class="hljs-constructor">Devices(<span class="hljs-params">devices</span>, <span class="hljs-params">filter1</span>)</span>;
+   *   var devices2 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>filter<span class="hljs-constructor">Devices(<span class="hljs-params">devices</span>, <span class="hljs-params">filter2</span>)</span>;
+   *   <span class="hljs-comment">// ...</span>
+   * }, {filters : allFilters});
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_filterDevices
+   */
+  filterDevices: (devices: any, filters: any) => any;
+
+  /**
+   * Utility function to return a list of BLE devices detected in range. Behind the scenes,
+   * this uses `NRF.setScan(...)` and collates the results.
+   * <pre>`NRF.findDevices(<span class="hljs-keyword">function</span>(<span class="hljs-params">devices</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(devices);
+   * }, <span class="hljs-number">1000</span>);
+   * `</pre>
+   * prints something like:
+   * <pre>`[
+   *   BluetoothDevice {
+   *     <span class="hljs-string">"id"</span>: <span class="hljs-string">"e7:e0:57:ad:36:a2 random"</span>,
+   *     <span class="hljs-string">"rssi"</span>: <span class="hljs-number">-45</span>,
+   *     <span class="hljs-string">"services"</span>: [ <span class="hljs-string">"4567"</span> ],
+   *     <span class="hljs-string">"serviceData"</span> : { <span class="hljs-string">"0123"</span> : [ <span class="hljs-number">1</span> ] },
+   *     <span class="hljs-string">"manufacturerData"</span> : [<span class="hljs-name"><span class="hljs-built_in">...</span></span>],
+   *     <span class="hljs-string">"data"</span>: new ArrayBuffer([ ... ]),
+   *     <span class="hljs-string">"name"</span>: <span class="hljs-string">"Puck.js 36a2"</span>
+   *    },
+   *   BluetoothDevice {
+   *     <span class="hljs-string">"id"</span>: <span class="hljs-string">"c0:52:3f:50:42:c9 random"</span>,
+   *     <span class="hljs-string">"rssi"</span>: <span class="hljs-number">-65</span>,
+   *     <span class="hljs-string">"data"</span>: new ArrayBuffer([ ... ]),
+   *     <span class="hljs-string">"name"</span>: <span class="hljs-string">"Puck.js 8f57"</span>
+   *    }
+   *  ]
+   * `</pre>
+   * For more information on the structure returned, see `NRF.setScan`.
+   * If you want to scan only for specific devices you can replace the timeout with an object
+   * of the form `{filters: ..., timeout : ..., active: bool}` using the filters
+   * described in `NRF.requestDevice`. For example to search for devices with Espruino's `manufacturerData`:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>find<span class="hljs-constructor">Devices(<span class="hljs-params">function</span>(<span class="hljs-params">devices</span>)</span> {<span class="hljs-operator">
+   *   ...
+   * </span>}, {timeout : <span class="hljs-number">2000</span>, filters : <span class="hljs-literal">[{ <span class="hljs-identifier">manufacturerData</span>:{<span class="hljs-number">0x0590</span>:{}} }]</span> });
+   * `</pre>
+   * You could then use [`BluetoothDevice.gatt.connect(...)`](https://espruino.com//Reference#l_BluetoothRemoteGATTServer_connect) on
+   * the device returned to make a connection.
+   * You can also use [`NRF.connect(...)`](https://espruino.com//Reference#l_NRF_connect) on just the `id` string returned, which
+   * may be useful if you always want to connect to a specific device.
+   * **Note:** Using findDevices turns the radio's receive mode on for 2000ms (or however long you specify). This
+   * can draw a *lot* of power (12mA or so), so you should use it sparingly or you can run your battery down quickly.
+   * **Note:** The 'data' field contains the data of *the last packet received*. There may have been more
+   * packets. To get data for each packet individually use `NRF.setScan` instead.
+   * @url http://www.espruino.com/Reference#l_NRF_findDevices
+   */
+  findDevices: (callback: any, options: any) => void;
+
+  /**
+   * Start/stop listening for RSSI values on the currently active connection
+   * (where This device is a peripheral and is being connected to by a 'central' device)
+   * <pre>`<span class="hljs-comment">// Start scanning</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">RSSIHandler(<span class="hljs-params">function</span>(<span class="hljs-params">rssi</span>)</span> {
+   *   console.log(rssi); <span class="hljs-comment">// prints -85 (or similar)</span>
+   * });
+   * <span class="hljs-comment">// Stop Scanning</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">RSSIHandler()</span>;
+   * `</pre>
+   * RSSI is the 'Received Signal Strength Indication' in dBm
+   * @url http://www.espruino.com/Reference#l_NRF_setRSSIHandler
+   */
+  setRSSIHandler: (callback: any) => void;
+
+  /**
+   * Set the BLE radio transmit power. The default TX power is 0 dBm, and
+   * @url http://www.espruino.com/Reference#l_NRF_setTxPower
+   */
+  setTxPower: (power: number) => void;
+
+  /**
+   * **THIS IS DEPRECATED** - please use `NRF.setConnectionInterval` for
+   * peripheral and `NRF.connect(addr, options)`/`BluetoothRemoteGATTServer.connect(options)`
+   * for central connections.
+   * This sets the connection parameters - these affect the transfer speed and
+   * power usage when the device is connected.
+   *
+   * - When not low power, the connection interval is between 7.5 and 20ms
+   * - When low power, the connection interval is between 500 and 1000ms
+   *
+   * When low power connection is enabled, transfers of data over Bluetooth
+   * will be very slow, however power usage while connected will be drastically
+   * decreased.
+   * This will only take effect after the connection is disconnected and
+   * re-established.
+   * @url http://www.espruino.com/Reference#l_NRF_setLowPowerConnection
+   */
+  setLowPowerConnection: (lowPower: boolean) => void;
+
+  /**
+   * Enables NFC and starts advertising the given URL. For example:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">URL(<span class="hljs-string">"http://espruino.com"</span>)</span>;
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcURL
+   */
+  nfcURL: (url: any) => void;
+
+  /**
+   * Enables NFC and with an out of band 16 byte pairing key.
+   * For example the following will enable out of band pairing on BLE
+   * such that the device will pair when you tap the phone against it:
+   * <pre>`var bleKey = <span class="hljs-literal">[<span class="hljs-number">0xAA</span>, <span class="hljs-number">0xBB</span>, <span class="hljs-number">0xCC</span>, <span class="hljs-number">0xDD</span>, <span class="hljs-number">0xEE</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x99</span>, <span class="hljs-number">0x88</span>, <span class="hljs-number">0x77</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x55</span>, <span class="hljs-number">0x44</span>, <span class="hljs-number">0x33</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x00</span>]</span>;
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>on(&#x27;security&#x27;,s=>print(<span class="hljs-string">"security"</span>,<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">JSON</span>.</span></span>stringify(s)));
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Pair(<span class="hljs-params">bleKey</span>)</span>;
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Security({<span class="hljs-params">oob</span>:<span class="hljs-params">bleKey</span>, <span class="hljs-params">mitm</span>:<span class="hljs-params">true</span>})</span>;
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcPair
+   */
+  nfcPair: (key: any) => void;
+
+  /**
+   * Enables NFC with a record that will launch the given android app.
+   * For example:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">AndroidApp(<span class="hljs-string">"no.nordicsemi.android.nrftoolbox"</span>)</span>
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcAndroidApp
+   */
+  nfcAndroidApp: (app: any) => void;
+
+  /**
+   * Enables NFC and starts advertising with Raw data. For example:
+   * <pre>`NRF.nfcRaw(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">193</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">13</span>, <span class="hljs-number">85</span>, <span class="hljs-number">3</span>, <span class="hljs-number">101</span>, <span class="hljs-number">115</span>, <span class="hljs-number">112</span>, <span class="hljs-number">114</span>, <span class="hljs-number">117</span>, <span class="hljs-number">105</span>, <span class="hljs-number">110</span>, <span class="hljs-number">111</span>, <span class="hljs-number">46</span>, <span class="hljs-number">99</span>, <span class="hljs-number">111</span>, <span class="hljs-number">109</span>]));
+   * <span class="hljs-regexp">//</span> same <span class="hljs-keyword">as</span> NRF.nfcURL(<span class="hljs-string">"http://espruino.com"</span>);
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcRaw
+   */
+  nfcRaw: (payload: any) => void;
+
+  /**
+   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
+   * Enables NFC and starts advertising. `NFCrx` events will be
+   * fired when data is received.
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Start()</span>;
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcStart
+   */
+  nfcStart: (payload: any) => any;
+
+  /**
+   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
+   * Disables NFC.
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Stop()</span>;
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcStop
+   */
+  nfcStop: () => void;
+
+  /**
+   * **Advanced NFC Functionality.** If you just want to advertise a URL, use `NRF.nfcURL` instead.
+   * Acknowledges the last frame and optionally transmits a response.
+   * If payload is an array, then a array.length byte nfc frame is sent.
+   * If payload is a int, then a 4bit ACK/NACK is sent.
+   * **Note:** `nfcSend` should always be called after an `NFCrx` event.
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send(<span class="hljs-params">new</span> Uint8Array([0x01, 0x02, <span class="hljs-operator">...</span>])</span>);
+   * <span class="hljs-comment">// or</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send(0x0A)</span>;
+   * <span class="hljs-comment">// or</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>nfc<span class="hljs-constructor">Send()</span>;
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_nfcSend
+   */
+  nfcSend: (payload: any) => void;
+
+  /**
+   * Send a USB HID report. HID must first be enabled with `NRF.setServices({}, {hid: hid_report})`
+   * @url http://www.espruino.com/Reference#l_NRF_sendHIDReport
+   */
+  sendHIDReport: (data: any, callback: any) => void;
+
+  /**
+   * Check if Apple Notification Center Service (ANCS) is currently active on the BLE connection
+   * @url http://www.espruino.com/Reference#l_NRF_ancsIsActive
+   */
+  ancsIsActive: () => boolean;
+
+  /**
+   * Send an ANCS action for a specific Notification UID. Corresponds to posaction/negaction in the 'ANCS' event that was received
+   * @url http://www.espruino.com/Reference#l_NRF_ancsAction
+   */
+  ancsAction: (uid: number, positive: boolean) => void;
+
+  /**
+   * Get ANCS info for a notification, eg:
+   * @url http://www.espruino.com/Reference#l_NRF_ancsGetNotificationInfo
+   */
+  ancsGetNotificationInfo: (uid: number) => Promise<any>;
+
+  /**
+   * Get ANCS info for an app (add id is available via `ancsGetNotificationInfo`)
+   * Promise returns:
+   * <pre>`{
+   *   <span class="hljs-string">"uid"</span> : <span class="hljs-type">int</span>,
+   *   <span class="hljs-string">"appId"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"title"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"subtitle"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"message"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"messageSize"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"date"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"posAction"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"negAction"</span> : <span class="hljs-type">string</span>,
+   *   <span class="hljs-string">"name"</span> : <span class="hljs-type">string</span>,
+   * }
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_NRF_ancsGetAppInfo
+   */
+  ancsGetAppInfo: (id: any) => Promise<any>;
+
+  /**
+   * Check if Apple Media Service (AMS) is currently active on the BLE connection
+   * @url http://www.espruino.com/Reference#l_NRF_amsIsActive
+   */
+  amsIsActive: () => boolean;
+
+  /**
+   * Get Apple Media Service (AMS) info for the current media player.
+   * "playbackinfo" returns a concatenation of three comma-separated values:
+   *
+   * - PlaybackState: a string that represents the integer value of the playback state:
+   * - PlaybackStatePaused = 0
+   * - PlaybackStatePlaying = 1
+   * - PlaybackStateRewinding = 2
+   * - PlaybackStateFastForwarding = 3
+   *
+   *
+   * - PlaybackRate: a string that represents the floating point value of the playback rate.
+   * - ElapsedTime: a string that represents the floating point value of the elapsed time of the current track, in seconds
+   *
+   * @url http://www.espruino.com/Reference#l_NRF_amsGetPlayerInfo
+   */
+  amsGetPlayerInfo: (id: any) => Promise<any>;
+
+  /**
+   * Get Apple Media Service (AMS) info for the currently-playing track
+   * @url http://www.espruino.com/Reference#l_NRF_amsGetTrackInfo
+   */
+  amsGetTrackInfo: (id: any) => Promise<any>;
+
+  /**
+   * Send an AMS command to an Apple Media Service device to control music playback
+   * Command is one of play, pause, playpause, next, prev, volup, voldown, repeat, shuffle, skipforward, skipback, like, dislike, bookmark
+   * @url http://www.espruino.com/Reference#l_NRF_amsCommand
+   */
+  amsCommand: (id: any) => void;
+
+  /**
+   * Search for available devices matching the given filters. Since we have no UI here,
+   * Espruino will pick the FIRST device it finds, or it'll call `catch`.
+   * `options` can have the following fields:
+   *
+   * - `filters` - a list of filters that a device must match before it is returned (see below)
+   * - `timeout` - the maximum time to scan for in milliseconds (scanning stops when a match
+   * is found. eg. `NRF.requestDevice({ timeout:2000, filters: [ ... ] })`
+   * - `active` - whether to perform active scanning (requesting 'scan response' packets from any
+   * devices that are found). eg. `NRF.requestDevice({ active:true, filters: [ ... ] })`
+   * - `phy` - (NRF52840 only) use the long-range coded phy (`"1mbps"` default, can be `"1mbps/2mbps/both/coded"`)
+   * - `extended` - (NRF52840 only) support receiving extended-length advertising packets (default=true if phy isn't `"1mbps"`)
+   *
+   * **NOTE:** `timeout` and `active` are not part of the Web Bluetooth standard.
+   * The following filter types are implemented:
+   *
+   * - `services` - list of services as strings (all of which must match). 128 bit services must be in the form '01230123-0123-0123-0123-012301230123'
+   * - `name` - exact device name
+   * - `namePrefix` - starting characters of device name
+   * - `id` - exact device address (`id:"e9:53:86:09:89:99 random"`) (this is Espruino-specific, and is not part of the Web Bluetooth spec)
+   * - `serviceData` - an object containing service characteristics which must all match (`serviceData:{"1809":{}}`). Matching of actual service data is not supported yet.
+   * - `manufacturerData` - an object containing manufacturer UUIDs which must all match (`manufacturerData:{0x0590:{}}`). Matching of actual manufacturer data is not supported yet.
+   *
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">namePrefix</span>: &#x27;Puck.<span class="hljs-params">js</span>&#x27; }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
+   * <span class="hljs-comment">// or</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">services</span>: [&#x27;1823&#x27;] }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
+   * <span class="hljs-comment">// or</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">manufacturerData</span>:{0x0590:{}} }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {<span class="hljs-operator"> ... </span>});
+   * `</pre>
+   * As a full example, to send data to another Puck.js to turn an LED on:
+   * <pre>`<span class="hljs-keyword">var</span> gatt;
+   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">namePrefix</span>: <span class="hljs-string">&#x27;Puck.js&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
+   *   <span class="hljs-keyword">return</span> device.gatt.connect();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
+   *   gatt = g;
+   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
+   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
+   *   <span class="hljs-keyword">return</span> characteristic.writeValue(<span class="hljs-string">"LED1.set()\n"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   gatt.disconnect();
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
+   * });
+   * `</pre>
+   * Or slightly more concisely, using ES6 arrow functions:
+   * <pre>`<span class="hljs-keyword">var</span> gatt;
+   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">namePrefix</span>: <span class="hljs-string">&#x27;Puck.js&#x27;</span> }]}).then(
+   *   <span class="hljs-function"><span class="hljs-params">device</span> =></span> device.gatt.connect()).then(
+   *   <span class="hljs-function"><span class="hljs-params">g</span> =></span> (gatt=g).getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>)).then(
+   *   <span class="hljs-function"><span class="hljs-params">service</span> =></span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>)).then(
+   *   <span class="hljs-function"><span class="hljs-params">characteristic</span> =></span> characteristic.writeValue(<span class="hljs-string">"LED1.reset()\n"</span>)).then(
+   *   <span class="hljs-function"><span class="hljs-params">()</span> =></span> { gatt.disconnect(); <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>); } );
+   * `</pre>
+   * Note that you have to keep track of the `gatt` variable so that you can
+   * disconnect the Bluetooth connection when you're done.
+   * **Note:** Using a filter in `NRF.requestDevice` filters each advertising packet individually. As
+   * soon as a matching advertisement is received,  `NRF.requestDevice` resolves the promise and stops
+   * scanning. This means that if you filter based on a service UUID and a device advertises with multiple packets
+   * (or a scan response when `active:true`) only the packet matching the filter is returned - you may not
+   * get the device's name is that was in a separate packet. To aggregate multiple packets you can use `NRF.findDevices`.
+   * @url http://www.espruino.com/Reference#l_NRF_requestDevice
+   */
+  requestDevice: (options: any) => Promise<any>;
+
+  /**
+   * Connect to a BLE device by MAC address. Returns a promise,
+   * the argument of which is the `BluetoothRemoteGATTServer` connection.
+   * <pre>`<span class="hljs-variable">NRF</span>.<span class="hljs-property">connect</span>(<span class="hljs-string">"aa:bb:cc:dd:ee"</span>).<span class="hljs-property">then</span>(<span class="hljs-title function_">function</span>(<span class="hljs-params">server</span>) {
+   *   <span class="hljs-comment">// ...</span>
+   * });
+   * `</pre>
+   * This has the same effect as calling `BluetoothDevice.gatt.connect` on a `BluetoothDevice` requested
+   * using `NRF.requestDevice`. It just allows you to specify the address directly (without having to scan).
+   * You can use it as follows - this would connect to another Puck device and turn its LED on:
+   * <pre>`<span class="hljs-keyword">var</span> gatt;
+   * NRF.connect(<span class="hljs-string">"aa:bb:cc:dd:ee random"</span>).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
+   *   gatt = g;
+   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
+   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400002-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
+   *   <span class="hljs-keyword">return</span> characteristic.writeValue(<span class="hljs-string">"LED1.set()\n"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   gatt.disconnect();
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
+   * });
+   * `</pre>
+   * **Note:** Espruino Bluetooth devices use a type of BLE address known as 'random static',
+   * which is different to a 'public' address. To connect to an Espruino device you'll need
+   * to use an address string of the form `"aa:bb:cc:dd:ee random"` rather than just
+   * `"aa:bb:cc:dd:ee"`. If you scan for devices with `NRF.findDevices`/`NRF.setScan` then
+   * addresses are already reported in the correct format.
+   * @url http://www.espruino.com/Reference#l_NRF_connect
+   */
+  connect: (mac: any, options: any) => Promise<any>;
+
+  /**
+   * If set to true, whenever a device bonds it will be added to the
+   * whitelist.
+   * When set to false, the whitelist is cleared and newly bonded
+   * devices will not be added to the whitelist.
+   * **Note:** This is remembered between `reset()`s but isn't
+   * remembered after power-on (you'll have to add it to `onInit()`.
+   * @url http://www.espruino.com/Reference#l_NRF_setWhitelist
+   */
+  setWhitelist: (whitelisting: boolean) => void;
+
+  /**
+   * When connected, Bluetooth LE devices communicate at a set interval.
+   * Lowering the interval (eg. more packets/second) means a lower delay when
+   * sending data, higher bandwidth, but also more power consumption.
+   * By default, when connected as a peripheral Espruino automatically adjusts the
+   * connection interval. When connected it's as fast as possible (7.5ms) but when idle
+   * for over a minute it drops to 200ms. On continued activity (>1 BLE operation) the
+   * interval is raised to 7.5ms again.
+   * The options for `interval` are:
+   *
+   * - `undefined` / `"auto"` : (default) automatically adjust connection interval
+   * - `100` : set min and max connection interval to the same number (between 7.5ms and 4000ms)
+   * - `{minInterval:20, maxInterval:100}` : set min and max connection interval as a range
+   *
+   * This configuration is not remembered during a `save()` - you will have to
+   * re-set it via `onInit`.
+   * **Note:** If connecting to another device (as Central), you can use
+   * an extra argument to `NRF.connect` or `BluetoothRemoteGATTServer.connect`
+   * to specify a connection interval.
+   * **Note:** This overwrites any changes imposed by the deprecated `NRF.setLowPowerConnection`
+   * @url http://www.espruino.com/Reference#l_NRF_setConnectionInterval
+   */
+  setConnectionInterval: (interval: any) => void;
+
+  /**
+   * Sets the security options used when connecting/pairing. This applies to both central
+   * *and* peripheral mode.
+   * <pre>`NRF.setSecurity({
+   *   display : <span class="hljs-type">bool</span>  // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, can this device display a passkey
+   *                   // - sent via the `BluetoothDevice.passkey` event
+   *   keyboard : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, can this device enter a passkey
+   *                   // - request sent via the `BluetoothDevice.passkeyRequest` event
+   *   bond : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">true</span>, <span class="hljs-keyword">Perform</span> bonding
+   *   mitm : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, Man <span class="hljs-keyword">In</span> The Middle protection
+   *   lesc : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span>, LE Secure Connections
+   *   passkey : // <span class="hljs-keyword">default</span> "", <span class="hljs-keyword">or</span> a <span class="hljs-number">6</span> digit passkey <span class="hljs-keyword">to</span> use
+   *   oob : [<span class="hljs-number">0.</span><span class="hljs-number">.15</span>] // <span class="hljs-keyword">if</span> specified, <span class="hljs-keyword">Out</span> <span class="hljs-keyword">Of</span> Band pairing <span class="hljs-keyword">is</span> enabled <span class="hljs-keyword">and</span>
+   *                 // the <span class="hljs-number">16</span> byte pairing code supplied here <span class="hljs-keyword">is</span> used
+   *   encryptUart : <span class="hljs-type">bool</span> // <span class="hljs-keyword">default</span> <span class="hljs-keyword">false</span> (unless oob <span class="hljs-keyword">or</span> passkey specified)
+   *                      // This sets the BLE UART service such that it
+   *                      // <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span> <span class="hljs-keyword">and</span> can <span class="hljs-keyword">only</span> be used <span class="hljs-keyword">from</span> a bonded <span class="hljs-keyword">connection</span>
+   * });
+   * `</pre>
+   * **NOTE:** Some combinations of arguments will cause an error. For example
+   * supplying a passkey without `display:1` is not allowed. If `display:1` is set
+   * you do not require a physical display, the user just needs to know
+   * the passkey you supplied.
+   * For instance, to require pairing and to specify a passkey, use:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>set<span class="hljs-constructor">Security({<span class="hljs-params">passkey</span>:<span class="hljs-string">"123456"</span>, <span class="hljs-params">mitm</span>:1, <span class="hljs-params">display</span>:1})</span>;
+   * `</pre>
+   * However, while most devices will request a passkey for pairing at
+   * this point it is still possible for a device to connect without
+   * requiring one (eg. using the 'NRF Connect' app).
+   * To force a passkey you need to protect each characteristic
+   * you define with `NRF.setSecurity`. For instance the following
+   * code will *require* that the passkey `123456` is entered
+   * before the characteristic `9d020002-bf5f-1d1a-b52a-fe52091d5b12`
+   * can be read.
+   * <pre>`NRF.setSecurity({passkey:"123456", mitm:<span class="hljs-number">1</span>, display:<span class="hljs-number">1</span>});
+   * NRF.setServices({
+   *   "9d020001-bf5f-1d1a-b52a-fe52091d5b12" : {
+   *     "9d020002-bf5f-1d1a-b52a-fe52091d5b12" : {
+   *       // readable <span class="hljs-keyword">always</span>
+   *       <span class="hljs-keyword">value</span> : "Not Secret"
+   *     },
+   *     "9d020003-bf5f-1d1a-b52a-fe52091d5b12" : {
+   *       // readable <span class="hljs-keyword">only</span> once bonded
+   *       <span class="hljs-keyword">value</span> : "Secret",
+   *       readable : <span class="hljs-keyword">true</span>,
+   *       <span class="hljs-keyword">security</span>: {
+   *         <span class="hljs-keyword">read</span>: {
+   *           mitm: <span class="hljs-keyword">true</span>,
+   *           <span class="hljs-keyword">encrypted</span>: <span class="hljs-keyword">true</span>
+   *         }
+   *       }
+   *     },
+   *     "9d020004-bf5f-1d1a-b52a-fe52091d5b12" : {
+   *       // readable <span class="hljs-keyword">always</span>
+   *       // writable <span class="hljs-keyword">only</span> once bonded
+   *       <span class="hljs-keyword">value</span> : "Readable",
+   *       readable : <span class="hljs-keyword">true</span>,
+   *       writable : <span class="hljs-keyword">true</span>,
+   *       onWrite : <span class="hljs-keyword">function</span>(evt) {
+   *         console.log("Wrote ", evt.data);
+   *       },
+   *       <span class="hljs-keyword">security</span>: {
+   *         <span class="hljs-keyword">write</span>: {
+   *           mitm: <span class="hljs-keyword">true</span>,
+   *           <span class="hljs-keyword">encrypted</span>: <span class="hljs-keyword">true</span>
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * `</pre>
+   * **Note:** If `passkey` or `oob` is specified, the Nordic UART service (if enabled)
+   * will automatically be set to require encryption, but otherwise it is open.
+   * @url http://www.espruino.com/Reference#l_NRF_setSecurity
+   */
+  setSecurity: (options: any) => void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NRF_startBonding
+   */
+  startBonding: (forceRepair: boolean) => any;
+
+};
+
+/**
+ * The Bluetooth Serial port - used when data is sent or received over Bluetooth Smart on nRF51/nRF52 chips.
+ * @url http://www.espruino.com/Reference#l__global_Bluetooth
+ */
+declare const Bluetooth: Serial & {
+  /**
+   * @url http://www.espruino.com/Reference#l_Bluetooth_setConsole
+   */
+  setConsole: () => void;
+
+};
+
+/**
+ * A Web Bluetooth-style device - you can request one using `NRF.requestDevice(address)`
+ * For example:
+ * <pre>`<span class="hljs-keyword">var</span> gatt;
+ * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Puck.js abcd&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
+ *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"found device"</span>);
+ *   <span class="hljs-keyword">return</span> device.gatt.connect();
+ * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
+ *   gatt = g;
+ *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected"</span>);
+ *   <span class="hljs-keyword">return</span> gatt.startBonding();
+ * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+ *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"bonded"</span>, gatt.getSecurityStatus());
+ *   gatt.disconnect();
+ * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
+ *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"ERROR"</span>,e);
+ * });
+ * `</pre>
+ * @url http://www.espruino.com/Reference#BluetoothDevice
+ */
+declare function BluetoothDevice(): void;
+
+type BluetoothDevice = {
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_gatt
+   */
+  gatt: any
+
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_rssi
+   */
+  rssi: boolean
+
+  /**
+   * To be used as a response when the event `BluetoothDevice.sendPasskey` has been received.
+   * **This is not part of the Web Bluetooth Specification.** It has been added
+   * specifically for Espruino.
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_sendPasskey
+   */
+  sendPasskey: (passkey: any) => void;
+
+}
+
+/**
+ * Web Bluetooth-style GATT server - get this using `NRF.connect(address)`
+ * or `NRF.requestDevice(options)` and `response.gatt.connect`
+ * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattserver](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattserver)
+ * @url http://www.espruino.com/Reference#BluetoothRemoteGATTServer
+ */
+declare function BluetoothRemoteGATTServer(): void;
+
+type BluetoothRemoteGATTServer = {
+  /**
+   * Connect to a BLE device - returns a promise,
+   * the argument of which is the `BluetoothRemoteGATTServer` connection.
+   * See [`NRF.requestDevice`](https://espruino.com//Reference#l_NRF_requestDevice) for usage examples.
+   * `options` is an optional object containing:
+   * <pre>`{
+   *    minInterval // min connection interval <span class="hljs-keyword">in</span> milliseconds, <span class="hljs-number">7.5</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">to</span> <span class="hljs-number">4</span> s
+   *    maxInterval // max connection interval <span class="hljs-keyword">in</span> milliseconds, <span class="hljs-number">7.5</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">to</span> <span class="hljs-number">4</span> s
+   * }
+   * `</pre>
+   * By default the interval is 20-200ms (or 500-1000ms if `NRF.setLowPowerConnection(true)` was called.
+   * During connection Espruino negotiates with the other device to find a common interval that can be
+   * used.
+   * For instance calling:
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">namePrefix</span>: &#x27;Pixl.<span class="hljs-params">js</span>&#x27; }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {
+   *   return device.gatt.connect({minInterval:<span class="hljs-number">7.5</span>, maxInterval:<span class="hljs-number">7.5</span>});
+   * }).<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(g) {
+   * `</pre>
+   * will force the connection to use the fastest connection interval possible (as long as the device
+   * at the other end supports it).
+   * **Note:** The Web Bluetooth spec states that if a device hasn't advertised its name, when connected
+   * to a device the central (in this case Espruino) should automatically retrieve the name from the
+   * corresponding characteristic (`0x2a00` on service `0x1800`). Espruino does not automatically do this.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connect
+   */
+  connect: (options: any) => Promise<any>;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connected
+   */
+  connected: boolean
+
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_handle
+   */
+  handle: number
+
+  /**
+   * Disconnect from a previously connected BLE device connected with
+   * `BluetoothRemoteGATTServer.connect` - this does not disconnect from something that has
+   * connected to the Espruino.
+   * **Note:** While `.disconnect` is standard Web Bluetooth, in the spec it
+   * returns undefined not a `Promise` for implementation reasons. In Espruino
+   * we return a `Promise` to make it easier to detect when Espruino is free
+   * to connect to something else.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_disconnect
+   */
+  disconnect: () => Promise<any>;
+
+  /**
+   * Start negotiating bonding (secure communications) with the connected device,
+   * and return a Promise that is completed on success or failure.
+   * <pre>`<span class="hljs-keyword">var</span> gatt;
+   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Puck.js abcd&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"found device"</span>);
+   *   <span class="hljs-keyword">return</span> device.gatt.connect();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
+   *   gatt = g;
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected"</span>);
+   *   <span class="hljs-keyword">return</span> gatt.startBonding();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"bonded"</span>, gatt.getSecurityStatus());
+   *   gatt.disconnect();
+   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"ERROR"</span>,e);
+   * });
+   * `</pre>
+   * **This is not part of the Web Bluetooth Specification.** It has been added
+   * specifically for Espruino.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_startBonding
+   */
+  startBonding: (forceRePair: boolean) => Promise<any>;
+
+  /**
+   * Return an object with information about the security
+   * state of the current connection:
+   * <pre>`{
+   *   connected       // The <span class="hljs-keyword">connection</span> <span class="hljs-keyword">is</span> active (<span class="hljs-keyword">not</span> disconnected).
+   *   <span class="hljs-keyword">encrypted</span>       // Communication <span class="hljs-keyword">on</span> this link <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span>.
+   *   mitm_protected  // The <span class="hljs-keyword">encrypted</span> communication <span class="hljs-keyword">is</span> <span class="hljs-keyword">also</span> protected against man-<span class="hljs-keyword">in</span>-the-middle attacks.
+   *   bonded          // The peer <span class="hljs-keyword">is</span> bonded <span class="hljs-keyword">with</span> us
+   * }
+   * `</pre>
+   * See `BluetoothRemoteGATTServer.startBonding` for information about
+   * negotiating a secure connection.
+   * **This is not part of the Web Bluetooth Specification.** It has been added
+   * specifically for Puck.js.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getSecurityStatus
+   */
+  getSecurityStatus: () => any;
+
+  /**
+   * See `NRF.connect` for usage examples.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryService
+   */
+  getPrimaryService: (service: any) => Promise<any>;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryServices
+   */
+  getPrimaryServices: () => Promise<any>;
+
+  /**
+   * Start/stop listening for RSSI values on the active GATT connection
+   * <pre>`<span class="hljs-comment">// Start listening for RSSI value updates</span>
+   * gattServer.setRSSIHandler(<span class="hljs-keyword">function</span>(<span class="hljs-params">rssi</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(rssi); <span class="hljs-comment">// prints -85 (or similar)</span>
+   * });
+   * <span class="hljs-comment">// Stop listening</span>
+   * gattServer.setRSSIHandler();
+   * `</pre>
+   * RSSI is the 'Received Signal Strength Indication' in dBm
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_setRSSIHandler
+   */
+  setRSSIHandler: (callback: any) => void;
+
+}
+
+/**
+ * Web Bluetooth-style GATT service - get this using `BluetoothRemoteGATTServer.getPrimaryService(s)`
+ * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattservice](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattservice)
+ * @url http://www.espruino.com/Reference#BluetoothRemoteGATTService
+ */
+declare function BluetoothRemoteGATTService(): void;
+
+type BluetoothRemoteGATTService = {
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_device
+   */
+  device: any
+
+  /**
+   * See `NRF.connect` for usage examples.
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristic
+   */
+  getCharacteristic: (characteristic: any) => Promise<any>;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristics
+   */
+  getCharacteristics: () => Promise<any>;
+
+}
+
+/**
+ * Web Bluetooth-style GATT characteristic - get this using `BluetoothRemoteGATTService.getCharacteristic(s)`
+ * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattcharacteristic](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattcharacteristic)
+ * @url http://www.espruino.com/Reference#BluetoothRemoteGATTCharacteristic
+ */
+declare function BluetoothRemoteGATTCharacteristic(): void;
+
+type BluetoothRemoteGATTCharacteristic = {
+  /**
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_service
+   */
+  service: any
+
+  /**
+   * Write a characteristic's value
+   * <pre>`<span class="hljs-keyword">var</span> device;
+   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   device = d;
+   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
+   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
+   *   <span class="hljs-keyword">return</span> c.writeValue(<span class="hljs-string">"Hello"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   device.disconnect();
+   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
+   * });
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_writeValue
+   */
+  writeValue: (data: any) => Promise<any>;
+
+  /**
+   * Read a characteristic's value, return a promise containing a `DataView`
+   * <pre>`<span class="hljs-keyword">var</span> device;
+   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   device = d;
+   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
+   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
+   *   <span class="hljs-keyword">return</span> c.readValue();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Got:"</span>, JSON.stringify(d.<span class="hljs-built_in">buffer</span>));
+   *   device.disconnect();
+   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
+   * });
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_readValue
+   */
+  readValue: () => Promise<any>;
+
+  /**
+   * Starts notifications - whenever this characteristic's value changes, a `characteristicvaluechanged` event is fired
+   * and `characteristic.value` will then contain the new value as a `DataView`.
+   * <pre>`<span class="hljs-keyword">var</span> device;
+   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   device = d;
+   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
+   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
+   *   c.on(<span class="hljs-string">&#x27;characteristicvaluechanged&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) {
+   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"-> "</span>,event.target.value); <span class="hljs-comment">// this is a DataView</span>
+   *   });
+   *   <span class="hljs-keyword">return</span> c.startNotifications();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Waiting for notifications"</span>);
+   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
+   * });
+   * `</pre>
+   * For example, to listen to the output of another Puck.js's Nordic
+   * Serial port service, you can use:
+   * <pre>`<span class="hljs-keyword">var</span> gatt;
+   * NRF.connect(<span class="hljs-string">"pu:ck:js:ad:dr:es random"</span>).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
+   *   gatt = g;
+   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
+   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400003-b5a3-f393-e0a9-e50e24dcca9e"</span>);
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
+   *   characteristic.on(<span class="hljs-string">&#x27;characteristicvaluechanged&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) {
+   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"RX: "</span>+JSON.stringify(event.target.value.<span class="hljs-built_in">buffer</span>));
+   *   });
+   *   <span class="hljs-keyword">return</span> characteristic.startNotifications();
+   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
+   * });
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_startNotifications
+   */
+  startNotifications: () => Promise<any>;
+
+  /**
+   * Stop notifications (that were requested with `BluetoothRemoteGATTCharacteristic.startNotifications`)
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_stopNotifications
+   */
+  stopNotifications: () => Promise<any>;
+
+}
 
 /**
  * Class containing utility functions for the [Bangle.js Smart Watch](http://www.espruino.com/Bangle.js)
@@ -2413,2201 +3623,450 @@ declare const Bangle: {
 };
 
 /**
- * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility functions.
- * @url http://www.espruino.com/Reference#Microbit
+ * This library allows you to write to Neopixel/WS281x/APA10x/SK6812 LED strips
+ * These use a high speed single-wire protocol which needs platform-specific
+ * implementation on some devices - hence this library to simplify things.
+ * @url http://www.espruino.com/Reference#l_neopixel_undefined
  */
-declare const Microbit: {
-  /**
-   * The micro:bit's speaker pin
-   * @url http://www.espruino.com/Reference#l_Microbit_SPEAKER
-   */
-  SPEAKER: Pin
-
-  /**
-   * The micro:bit's microphone pin
-   * `MIC_ENABLE` should be set to 1 before using this
-   * @url http://www.espruino.com/Reference#l_Microbit_MIC
-   */
-  MIC: Pin
-
-  /**
-   * The micro:bit's microphone enable pin
-   * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
-   */
-  MIC_ENABLE: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Microbit_mag
-   */
-  mag: () => any;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Microbit_accel
-   */
-  accel: () => any;
-
-  /**
-   * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
-   * Write the given value to the accelerometer
-   * @url http://www.espruino.com/Reference#l_Microbit_accelWr
-   */
-  accelWr: (addr: number, data: number) => void;
-
-  /**
-   * Turn on the accelerometer, and create `Microbit.accel` and `Microbit.gesture` events.
-   * **Note:** The accelerometer is currently always enabled - this code
-   * just responds to interrupts and reads
-   * @url http://www.espruino.com/Reference#l_Microbit_accelOn
-   */
-  accelOn: () => void;
-
-  /**
-   * Turn off events from  the accelerometer (started with `Microbit.accelOn`)
-   * @url http://www.espruino.com/Reference#l_Microbit_accelOff
-   */
-  accelOff: () => void;
-
-  /**
-   * Play a waveform on the Micro:bit's speaker
-   * @url http://www.espruino.com/Reference#l_Microbit_play
-   */
-  play: (waveform: any, samplesPerSecond: any, callback: any) => void;
-
-  /**
-   * Records sound from the micro:bit's onboard microphone and returns the result
-   * @url http://www.espruino.com/Reference#l_Microbit_record
-   */
-  record: (samplesPerSecond: any, callback: any, samples: any) => void;
-
-};
 
 /**
- * This is the File object - it allows you to stream data to and from files (As opposed to the `require('fs').readFile(..)` style functions that read an entire file).
- * To create a File object, you must type `var fd = E.openFile('filepath','mode')` - see [E.openFile](#l_E_openFile) for more information.
- * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
- * @url http://www.espruino.com/Reference#File
+ * Create a software OneWire implementation on the given pin
+ * @url http://www.espruino.com/Reference#l_OneWire_OneWire
  */
-declare function EspruinoFile(): void;
+declare function OneWire(pin: Pin): any;
 
-type EspruinoFile = {
+type OneWire = {
   /**
-   * Close an open file.
-   * @url http://www.espruino.com/Reference#l_File_close
+   * Perform a reset cycle
+   * @url http://www.espruino.com/Reference#l_OneWire_reset
    */
-  close: () => void;
-
-  /**
-   * Write data to a file.
-   * **Note:** By default this function flushes all changes to the
-   * SD card, which makes it slow (but also safe!). You can use
-   * `E.setFlags({unsyncFiles:1})` to disable this behaviour and
-   * really speed up writes - but then you must be sure to close
-   * all files you are writing before power is lost or you will
-   * cause damage to your SD card's filesystem.
-   * @url http://www.espruino.com/Reference#l_File_write
-   */
-  write: (buffer: any) => number;
+  reset: () => boolean;
 
   /**
-   * Read data in a file in byte size chunks
-   * @url http://www.espruino.com/Reference#l_File_read
+   * Select a ROM - always performs a reset first
+   * @url http://www.espruino.com/Reference#l_OneWire_select
    */
-  read: (length: number) => any;
+  select: (rom: any) => void;
 
   /**
-   * Skip the specified number of bytes forward in the file
-   * @url http://www.espruino.com/Reference#l_File_skip
+   * Skip a ROM
+   * @url http://www.espruino.com/Reference#l_OneWire_skip
    */
-  skip: (nBytes: number) => void;
+  skip: () => void;
 
   /**
-   * Seek to a certain position in the file
-   * @url http://www.espruino.com/Reference#l_File_seek
+   * Write one or more bytes
+   * @url http://www.espruino.com/Reference#l_OneWire_write
    */
-  seek: (nBytes: number) => void;
+  write: (data: any, power: boolean) => void;
 
   /**
-   * Pipe this file to a stream (an object with a 'write' method)
-   * @url http://www.espruino.com/Reference#l_File_pipe
+   * Read a byte
+   * @url http://www.espruino.com/Reference#l_OneWire_read
    */
-  pipe: (destination: any, options: any) => void;
+  read: (count: any) => any;
+
+  /**
+   * Search for devices
+   * @url http://www.espruino.com/Reference#l_OneWire_search
+   */
+  search: (command: number) => any;
 
 }
 
 /**
- * This library handles interfacing with a FAT32 filesystem on an SD card. The API is designed to be similar to node.js's - However Espruino does not currently support asynchronous file IO, so the functions behave like node.js's xxxxSync functions. Versions of the functions with 'Sync' after them are also provided for compatibility.
- * To use this, you must type `var fs = require('fs')` to get access to the library
- * See [the page on File IO](http://www.espruino.com/File+IO) for more information, and for examples on wiring up an SD card if your device doesn't come with one.
- * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
- * @url http://www.espruino.com/Reference#l_fs_undefined
+ * This is the built-in JavaScript class that is the prototype for:
+ *
+ * - [Uint8Array](https://espruino.com//Reference#Uint8Array)
+ * - [UintClamped8Array](https://espruino.com//Reference#UintClamped8Array)
+ * - [Int8Array](https://espruino.com//Reference#Int8Array)
+ * - [Uint16Array](https://espruino.com//Reference#Uint16Array)
+ * - [Int16Array](https://espruino.com//Reference#Int16Array)
+ * - [Uint24Array](https://espruino.com//Reference#Uint24Array) (Espruino-specific - not standard JS)
+ * - [Uint32Array](https://espruino.com//Reference#Uint32Array)
+ * - [Int32Array](https://espruino.com//Reference#Int32Array)
+ * - [Float32Array](https://espruino.com//Reference#Float32Array)
+ * - [Float64Array](https://espruino.com//Reference#Float64Array)
+ *
+ * If you want to access arrays of differing types of data
+ * you may also find `DataView` useful.
+ * @url http://www.espruino.com/Reference#ArrayBufferView
  */
-declare const fs: {
-  /**
-   * List all files in the supplied directory, returning them as an array of strings.
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_readdir
-   */
-  readdir: (path: any) => any;
+declare function EspruinoArrayBufferView(): void;
 
+type EspruinoArrayBufferView = {
   /**
-   * List all files in the supplied directory, returning them as an array of strings.
-   * @url http://www.espruino.com/Reference#l_fs_readdirSync
+   * The buffer this view references
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_buffer
    */
-  readdirSync: (path: any) => any;
+  buffer: any
 
   /**
-   * Write the data to the given file
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_writeFile
+   * The length, in bytes, of the `ArrayBufferView`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteLength
    */
-  writeFile: (path: any, data: any) => boolean;
+  byteLength: number
 
   /**
-   * Write the data to the given file
-   * @url http://www.espruino.com/Reference#l_fs_writeFileSync
+   * The offset, in bytes, to the first byte of the view within the backing `ArrayBuffer`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteOffset
    */
-  writeFileSync: (path: any, data: any) => boolean;
+  byteOffset: number
 
   /**
-   * Append the data to the given file, created a new file if it doesn't exist
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_appendFile
+   * Copy the contents of `array` into this one, mapping `this[x+offset]=array[x];`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_set
    */
-  appendFile: (path: any, data: any) => boolean;
+  set: (arr: any, offset: number) => void;
 
   /**
-   * Append the data to the given file, created a new file if it doesn't exist
-   * @url http://www.espruino.com/Reference#l_fs_appendFileSync
+   * Return an array which is made from the following: `A.map(function) = [function(A[0]), function(A[1]), ...]`
+   *  **Note:** This returns an `ArrayBuffer` of the same type it was called on. To get an `Array`, use `Array.map`, eg. `[].map.call(myArray, x=>x+1)`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_map
    */
-  appendFileSync: (path: any, data: any) => boolean;
+  map: (fn: any, thisArg: any) => EspruinoArrayBufferView;
 
   /**
-   * Read all data from a file and return as a string
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_readFile
+   * Returns a smaller part of this array which references the same data (it doesn't copy it).
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_subarray
    */
-  readFile: (path: any) => any;
+  subarray: (begin: number, end: any) => EspruinoArrayBufferView;
 
   /**
-   * Read all data from a file and return as a string.
-   * **Note:** The size of files you can load using this method is limited by the amount of available RAM. To read files a bit at a time, see the `File` class.
-   * @url http://www.espruino.com/Reference#l_fs_readFileSync
+   * Return the index of the value in the array, or `-1`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_indexOf
    */
-  readFileSync: (path: any) => any;
+  indexOf: (value: any, startIndex: number) => any;
 
   /**
-   * Delete the given file
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_unlink
+   * Return `true` if the array includes the value, `false` otherwise
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_includes
    */
-  unlink: (path: any) => boolean;
+  includes: (value: any, startIndex: number) => boolean;
 
   /**
-   * Delete the given file
-   * @url http://www.espruino.com/Reference#l_fs_unlinkSync
+   * Join all elements of this array together into one string, using 'separator' between them. eg. `[1,2,3].join(' ')=='1 2 3'`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_join
    */
-  unlinkSync: (path: any) => boolean;
+  join: (separator: any) => any;
 
   /**
-   * Return information on the given file. This returns an object with the following
-   * fields:
-   * size: size in bytes
-   * dir: a boolean specifying if the file is a directory or not
-   * mtime: A Date structure specifying the time the file was last modified
-   * @url http://www.espruino.com/Reference#l_fs_statSync
+   * Do an in-place quicksort of the array
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_sort
    */
-  statSync: (path: any) => any;
+  sort: (variable: any) => EspruinoArrayBufferView;
 
   /**
-   * Create the directory
-   * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
-   * @url http://www.espruino.com/Reference#l_fs_mkdir
+   * Executes a provided function once per array element.
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_forEach
    */
-  mkdir: (path: any) => boolean;
+  forEach: (fn: any, thisArg: any) => void;
 
   /**
-   * Create the directory
-   * @url http://www.espruino.com/Reference#l_fs_mkdirSync
+   * Execute `previousValue=initialValue` and then `previousValue = callback(previousValue, currentValue, index, array)` for each element in the array, and finally return previousValue.
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_reduce
    */
-  mkdirSync: (path: any) => boolean;
+  reduce: (callback: any, initialValue: any) => any;
 
   /**
-   * @url http://www.espruino.com/Reference#l_fs_pipe
+   * Fill this array with the given value, for every index `>= start` and `< end`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_fill
    */
-  pipe: (source: any, destination: any, options: any) => void;
-
-};
-
-/**
- * Class containing utility functions for [Pixl.js](http://www.espruino.com/Pixl.js)
- * @url http://www.espruino.com/Reference#Pixl
- */
-declare const Pixl: {
-  /**
-   * DEPRECATED - Please use `E.getBattery()` instead.
-   * Return an approximate battery percentage remaining based on
-   * a normal CR2032 battery (2.8 - 2.2v)
-   * @url http://www.espruino.com/Reference#l_Pixl_getBatteryPercentage
-   */
-  getBatteryPercentage: () => number;
+  fill: (value: any, start: number, end: any) => EspruinoArrayBufferView;
 
   /**
-   * Set the LCD's contrast
-   * @url http://www.espruino.com/Reference#l_Pixl_setContrast
+   * Return an array which contains only those elements for which the callback function returns 'true'
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_filter
    */
-  setContrast: (c: number) => void;
+  filter: (fn: any, thisArg: any) => any;
 
   /**
-   * This function can be used to turn Pixl.js's LCD off or on.
-   *
-   * - With the LCD off, Pixl.js draws around 0.1mA
-   * - With the LCD on, Pixl.js draws around 0.25mA
-   *
-   * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
+   * Return the array element where `function` returns `true`, or `undefined` if it doesn't returns `true` for any element.
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_find
    */
-  setLCDPower: (isOn: boolean) => void;
+  find: (fn: any) => any;
 
   /**
-   * Writes a command directly to the ST7567 LCD controller
-   * @url http://www.espruino.com/Reference#l_Pixl_lcdw
+   * Return the array element's index where `function` returns `true`, or `-1` if it doesn't returns `true` for any element.
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_findIndex
    */
-  lcdw: (c: number) => void;
+  findIndex: (fn: any) => any;
 
   /**
-   * Display a menu on Pixl.js's screen, and set up the buttons to navigate through it.
-   * DEPRECATED: Use `E.showMenu`
-   * @url http://www.espruino.com/Reference#l_Pixl_menu
+   * Reverse the contents of this `ArrayBufferView` in-place
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_reverse
    */
-  menu: (menu: any) => any;
-
-};
-
-/**
- * A Web Bluetooth-style device - you can request one using `NRF.requestDevice(address)`
- * For example:
- * <pre>`<span class="hljs-keyword">var</span> gatt;
- * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Puck.js abcd&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
- *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"found device"</span>);
- *   <span class="hljs-keyword">return</span> device.gatt.connect();
- * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
- *   gatt = g;
- *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected"</span>);
- *   <span class="hljs-keyword">return</span> gatt.startBonding();
- * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
- *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"bonded"</span>, gatt.getSecurityStatus());
- *   gatt.disconnect();
- * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
- *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"ERROR"</span>,e);
- * });
- * `</pre>
- * @url http://www.espruino.com/Reference#BluetoothDevice
- */
-declare function BluetoothDevice(): void;
-
-type BluetoothDevice = {
-  /**
-   * @url http://www.espruino.com/Reference#l_BluetoothDevice_gatt
-   */
-  gatt: any
+  reverse: () => EspruinoArrayBufferView;
 
   /**
-   * @url http://www.espruino.com/Reference#l_BluetoothDevice_rssi
+   * Return a copy of a portion of this array (in a new array).
+   *  **Note:** This currently returns a normal `Array`, not an `ArrayBuffer`
+   * @url http://www.espruino.com/Reference#l_ArrayBufferView_slice
    */
-  rssi: boolean
-
-  /**
-   * To be used as a response when the event `BluetoothDevice.sendPasskey` has been received.
-   * **This is not part of the Web Bluetooth Specification.** It has been added
-   * specifically for Espruino.
-   * @url http://www.espruino.com/Reference#l_BluetoothDevice_sendPasskey
-   */
-  sendPasskey: (passkey: any) => void;
+  slice: (start: number, end: any) => any[];
 
 }
 
 /**
- * Web Bluetooth-style GATT server - get this using `NRF.connect(address)`
- * or `NRF.requestDevice(options)` and `response.gatt.connect`
- * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattserver](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattserver)
- * @url http://www.espruino.com/Reference#BluetoothRemoteGATTServer
+ * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+ * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
  */
-declare function BluetoothRemoteGATTServer(): void;
+declare function Uint24Array(arr: any, byteOffset: number, length: number): EspruinoArrayBufferView;
 
-type BluetoothRemoteGATTServer = {
+type Uint24Array = {
+}
+
+/**
+ * Create a software SPI port. This has limited functionality (no baud rate), but it can work on any pins.
+ * Use `SPI.setup` to configure this port.
+ * @url http://www.espruino.com/Reference#l_SPI_SPI
+ */
+declare const SPI: {
   /**
-   * Connect to a BLE device - returns a promise,
-   * the argument of which is the `BluetoothRemoteGATTServer` connection.
-   * See [`NRF.requestDevice`](https://espruino.com//Reference#l_NRF_requestDevice) for usage examples.
-   * `options` is an optional object containing:
+   * Try and find an SPI hardware device that will work on this pin (eg. `SPI1`)
+   * May return undefined if no device can be found.
+   * @url http://www.espruino.com/Reference#l_SPI_find
+   */
+  find: (pin: Pin) => any;
+
+};
+
+type SPI = {
+  /**
+   * Set up this SPI port as an SPI Master.
+   * Options can contain the following (defaults are shown where relevant):
    * <pre>`{
-   *    minInterval // min connection interval <span class="hljs-keyword">in</span> milliseconds, <span class="hljs-number">7.5</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">to</span> <span class="hljs-number">4</span> s
-   *    maxInterval // max connection interval <span class="hljs-keyword">in</span> milliseconds, <span class="hljs-number">7.5</span> <span class="hljs-keyword">ms</span> <span class="hljs-title">to</span> <span class="hljs-number">4</span> s
+   *   sck:pin,
+   *   miso:pin,
+   *   mosi:pin,
+   *   baud:integer=<span class="hljs-number">100000</span>, <span class="hljs-regexp">//</span> ignored on software SPI
+   *   mode:integer=<span class="hljs-number">0</span>, <span class="hljs-regexp">//</span> between <span class="hljs-number">0</span> and <span class="hljs-number">3</span>
+   *   order:string=<span class="hljs-string">&#x27;msb&#x27;</span> <span class="hljs-regexp">//</span> can be <span class="hljs-string">&#x27;msb&#x27;</span> or <span class="hljs-string">&#x27;lsb&#x27;</span>
+   *   bits:<span class="hljs-number">8</span> <span class="hljs-regexp">//</span> only available <span class="hljs-keyword">for</span> software SPI
    * }
    * `</pre>
-   * By default the interval is 20-200ms (or 500-1000ms if `NRF.setLowPowerConnection(true)` was called.
-   * During connection Espruino negotiates with the other device to find a common interval that can be
-   * used.
-   * For instance calling:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">NRF</span>.</span></span>request<span class="hljs-constructor">Device({ <span class="hljs-params">filters</span>: [{ <span class="hljs-params">namePrefix</span>: &#x27;Pixl.<span class="hljs-params">js</span>&#x27; }] })</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(device) {
-   *   return device.gatt.connect({minInterval:<span class="hljs-number">7.5</span>, maxInterval:<span class="hljs-number">7.5</span>});
-   * }).<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span>(g) {
-   * `</pre>
-   * will force the connection to use the fastest connection interval possible (as long as the device
-   * at the other end supports it).
-   * **Note:** The Web Bluetooth spec states that if a device hasn't advertised its name, when connected
-   * to a device the central (in this case Espruino) should automatically retrieve the name from the
-   * corresponding characteristic (`0x2a00` on service `0x1800`). Espruino does not automatically do this.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connect
+   * If `sck`,`miso` and `mosi` are left out, they will automatically be chosen. However if one or more is specified then the unspecified pins will not be set up.
+   * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `SPI` marker. Some boards such as those based on `nRF52` chips can have SPI on any pins, so don't have specific markings.
+   * The SPI `mode` is between 0 and 3 - see [http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase](http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase)
+   * On STM32F1-based parts, you cannot mix AF and non-AF pins (SPI pins are usually grouped on the chip - and you can't mix pins from two groups). Espruino will not warn you about this.
+   * @url http://www.espruino.com/Reference#l_SPI_setup
    */
-  connect: (options: any) => Promise<any>;
+  setup: (options: any) => void;
 
   /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connected
+   * Send data down SPI, and return the result. Sending an integer will return an integer, a String will return a String, and anything else will return a Uint8Array.
+   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
+   * For maximum speeds, please pass either Strings or Typed Arrays as arguments. Note that you can even pass arrays of arrays, like `[1,[2,3,4],5]`
+   * @url http://www.espruino.com/Reference#l_SPI_send
    */
-  connected: boolean
+  send: (data: any, nss_pin: Pin) => any;
 
   /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_handle
+   * Write a character or array of characters to SPI - without reading the result back.
+   * For maximum speeds, please pass either Strings or Typed Arrays as arguments.
+   * @url http://www.espruino.com/Reference#l_SPI_write
    */
-  handle: number
+  write: (data: any) => void;
 
   /**
-   * Disconnect from a previously connected BLE device connected with
-   * `BluetoothRemoteGATTServer.connect` - this does not disconnect from something that has
-   * connected to the Espruino.
-   * **Note:** While `.disconnect` is standard Web Bluetooth, in the spec it
-   * returns undefined not a `Promise` for implementation reasons. In Espruino
-   * we return a `Promise` to make it easier to detect when Espruino is free
-   * to connect to something else.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_disconnect
+   * Send data down SPI, using 4 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
+   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
+   * @url http://www.espruino.com/Reference#l_SPI_send4bit
    */
-  disconnect: () => Promise<any>;
+  send4bit: (data: any, bit0: number, bit1: number, nss_pin: Pin) => void;
 
   /**
-   * Start negotiating bonding (secure communications) with the connected device,
-   * and return a Promise that is completed on success or failure.
-   * <pre>`<span class="hljs-keyword">var</span> gatt;
-   * NRF.requestDevice({ <span class="hljs-attr">filters</span>: [{ <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Puck.js abcd&#x27;</span> }] }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">device</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"found device"</span>);
-   *   <span class="hljs-keyword">return</span> device.gatt.connect();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
-   *   gatt = g;
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected"</span>);
-   *   <span class="hljs-keyword">return</span> gatt.startBonding();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"bonded"</span>, gatt.getSecurityStatus());
-   *   gatt.disconnect();
-   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"ERROR"</span>,e);
-   * });
-   * `</pre>
-   * **This is not part of the Web Bluetooth Specification.** It has been added
-   * specifically for Espruino.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_startBonding
+   * Send data down SPI, using 8 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
+   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
+   * @url http://www.espruino.com/Reference#l_SPI_send8bit
    */
-  startBonding: (forceRePair: boolean) => Promise<any>;
+  send8bit: (data: any, bit0: number, bit1: number, nss_pin: Pin) => void;
+
+}
+
+/**
+ * The first SPI port
+ * @url http://www.espruino.com/Reference#l__global_SPI1
+ */
+declare const SPI1: SPI;
+
+/**
+ * The second SPI port
+ * @url http://www.espruino.com/Reference#l__global_SPI2
+ */
+declare const SPI2: SPI;
+
+/**
+ * The third SPI port
+ * @url http://www.espruino.com/Reference#l__global_SPI3
+ */
+declare const SPI3: SPI;
+
+/**
+ * Create a software I2C port. This has limited functionality (no baud rate), but it can work on any pins.
+ * Use `I2C.setup` to configure this port.
+ * @url http://www.espruino.com/Reference#l_I2C_I2C
+ */
+declare const I2C: {
+  /**
+   * Try and find an I2C hardware device that will work on this pin (eg. `I2C1`)
+   * May return undefined if no device can be found.
+   * @url http://www.espruino.com/Reference#l_I2C_find
+   */
+  find: (pin: Pin) => any;
+
+};
+
+type I2C = {
+  /**
+   * Set up this I2C port
+   * If not specified in options, the default pins are used (usually the lowest numbered pins on the lowest port that supports this peripheral)
+   * @url http://www.espruino.com/Reference#l_I2C_setup
+   */
+  setup: (options: any) => void;
 
   /**
-   * Return an object with information about the security
-   * state of the current connection:
+   * Transmit to the slave device with the given address. This is like Arduino's beginTransmission, write, and endTransmission rolled up into one.
+   * @url http://www.espruino.com/Reference#l_I2C_writeTo
+   */
+  writeTo: (address: any, data: any) => void;
+
+  /**
+   * Request bytes from the given slave device, and return them as a Uint8Array (packed array of bytes). This is like using Arduino Wire's requestFrom, available and read functions.  Sends a STOP
+   * @url http://www.espruino.com/Reference#l_I2C_readFrom
+   */
+  readFrom: (address: any, quantity: number) => Uint8Array;
+
+}
+
+/**
+ * The first I2C port
+ * @url http://www.espruino.com/Reference#l__global_I2C1
+ */
+declare const I2C1: I2C;
+
+/**
+ * The second I2C port
+ * @url http://www.espruino.com/Reference#l__global_I2C2
+ */
+declare const I2C2: I2C;
+
+/**
+ * The third I2C port
+ * @url http://www.espruino.com/Reference#l__global_I2C3
+ */
+declare const I2C3: I2C;
+
+/**
+ * Create a waveform class. This allows high speed input and output of waveforms. It has an internal variable called `buffer` (as well as `buffer2` when double-buffered - see `options` below) which contains the data to input/output.
+ * When double-buffered, a 'buffer' event will be emitted each time a buffer is finished with (the argument is that buffer). When the recording stops, a 'finish' event will be emitted (with the first argument as the buffer).
+ * @url http://www.espruino.com/Reference#l_Waveform_Waveform
+ */
+declare function Waveform(samples: number, options: any): any;
+
+type Waveform = {
+  /**
+   * Will start outputting the waveform on the given pin - the pin must have previously been initialised with analogWrite. If not repeating, it'll emit a `finish` event when it is done.
+   * @url http://www.espruino.com/Reference#l_Waveform_startOutput
+   */
+  startOutput: (output: Pin, freq: number, options: any) => void;
+
+  /**
+   * Will start inputting the waveform on the given pin that supports analog. If not repeating, it'll emit a `finish` event when it is done.
+   * @url http://www.espruino.com/Reference#l_Waveform_startInput
+   */
+  startInput: (output: Pin, freq: number, options: any) => void;
+
+  /**
+   * Stop a waveform that is currently outputting
+   * @url http://www.espruino.com/Reference#l_Waveform_stop
+   */
+  stop: () => void;
+
+}
+
+/**
+ * Creates a pin from the given argument (or returns undefined if no argument)
+ * @url http://www.espruino.com/Reference#l_Pin_Pin
+ */
+declare function Pin(value: any): any;
+
+type Pin = {
+  /**
+   * Returns the input state of the pin as a boolean.
+   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"input"`
+   * @url http://www.espruino.com/Reference#l_Pin_read
+   */
+  read: () => boolean;
+
+  /**
+   * Sets the output state of the pin to a 1
+   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   * @url http://www.espruino.com/Reference#l_Pin_set
+   */
+  set: () => void;
+
+  /**
+   * Sets the output state of the pin to a 0
+   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   * @url http://www.espruino.com/Reference#l_Pin_reset
+   */
+  reset: () => void;
+
+  /**
+   * Sets the output state of the pin to the parameter given
+   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   * @url http://www.espruino.com/Reference#l_Pin_write
+   */
+  write: (value: boolean) => void;
+
+  /**
+   * Sets the output state of the pin to the parameter given at the specified time.
+   *  **Note:** this **doesn't** change the mode of the pin to an output. To do that, you need to use `pin.write(0)` or `pinMode(pin, 'output')` first.
+   * @url http://www.espruino.com/Reference#l_Pin_writeAtTime
+   */
+  writeAtTime: (value: boolean, time: number) => void;
+
+  /**
+   * Return the current mode of the given pin. See `pinMode` for more information.
+   * @url http://www.espruino.com/Reference#l_Pin_getMode
+   */
+  getMode: () => any;
+
+  /**
+   * Set the mode of the given pin. See [`pinMode`](#l__global_pinMode) for more information on pin modes.
+   * @url http://www.espruino.com/Reference#l_Pin_mode
+   */
+  mode: (mode: any) => void;
+
+  /**
+   * Toggles the state of the pin from off to on, or from on to off.
+   * **Note:** This method doesn't currently work on the ESP8266 port of Espruino.
+   * **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   * @url http://www.espruino.com/Reference#l_Pin_toggle
+   */
+  toggle: () => boolean;
+
+  /**
+   * Get information about this pin and its capabilities. Of the form:
    * <pre>`{
-   *   connected       // The <span class="hljs-keyword">connection</span> <span class="hljs-keyword">is</span> active (<span class="hljs-keyword">not</span> disconnected).
-   *   <span class="hljs-keyword">encrypted</span>       // Communication <span class="hljs-keyword">on</span> this link <span class="hljs-keyword">is</span> <span class="hljs-keyword">encrypted</span>.
-   *   mitm_protected  // The <span class="hljs-keyword">encrypted</span> communication <span class="hljs-keyword">is</span> <span class="hljs-keyword">also</span> protected against man-<span class="hljs-keyword">in</span>-the-middle attacks.
-   *   bonded          // The peer <span class="hljs-keyword">is</span> bonded <span class="hljs-keyword">with</span> us
-   * }
-   * `</pre>
-   * See `BluetoothRemoteGATTServer.startBonding` for information about
-   * negotiating a secure connection.
-   * **This is not part of the Web Bluetooth Specification.** It has been added
-   * specifically for Puck.js.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getSecurityStatus
-   */
-  getSecurityStatus: () => any;
-
-  /**
-   * See `NRF.connect` for usage examples.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryService
-   */
-  getPrimaryService: (service: any) => Promise<any>;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryServices
-   */
-  getPrimaryServices: () => Promise<any>;
-
-  /**
-   * Start/stop listening for RSSI values on the active GATT connection
-   * <pre>`<span class="hljs-comment">// Start listening for RSSI value updates</span>
-   * gattServer.setRSSIHandler(<span class="hljs-keyword">function</span>(<span class="hljs-params">rssi</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(rssi); <span class="hljs-comment">// prints -85 (or similar)</span>
-   * });
-   * <span class="hljs-comment">// Stop listening</span>
-   * gattServer.setRSSIHandler();
-   * `</pre>
-   * RSSI is the 'Received Signal Strength Indication' in dBm
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_setRSSIHandler
-   */
-  setRSSIHandler: (callback: any) => void;
-
-}
-
-/**
- * Web Bluetooth-style GATT service - get this using `BluetoothRemoteGATTServer.getPrimaryService(s)`
- * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattservice](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattservice)
- * @url http://www.espruino.com/Reference#BluetoothRemoteGATTService
- */
-declare function BluetoothRemoteGATTService(): void;
-
-type BluetoothRemoteGATTService = {
-  /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_device
-   */
-  device: any
-
-  /**
-   * See `NRF.connect` for usage examples.
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristic
-   */
-  getCharacteristic: (characteristic: any) => Promise<any>;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristics
-   */
-  getCharacteristics: () => Promise<any>;
-
-}
-
-/**
- * Web Bluetooth-style GATT characteristic - get this using `BluetoothRemoteGATTService.getCharacteristic(s)`
- * [https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattcharacteristic](https://webbluetoothcg.github.io/web-bluetooth/#bluetoothremotegattcharacteristic)
- * @url http://www.espruino.com/Reference#BluetoothRemoteGATTCharacteristic
- */
-declare function BluetoothRemoteGATTCharacteristic(): void;
-
-type BluetoothRemoteGATTCharacteristic = {
-  /**
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_service
-   */
-  service: any
-
-  /**
-   * Write a characteristic's value
-   * <pre>`<span class="hljs-keyword">var</span> device;
-   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   device = d;
-   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
-   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
-   *   <span class="hljs-keyword">return</span> c.writeValue(<span class="hljs-string">"Hello"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   device.disconnect();
-   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
-   * });
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_writeValue
-   */
-  writeValue: (data: any) => Promise<any>;
-
-  /**
-   * Read a characteristic's value, return a promise containing a `DataView`
-   * <pre>`<span class="hljs-keyword">var</span> device;
-   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   device = d;
-   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
-   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
-   *   <span class="hljs-keyword">return</span> c.readValue();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Got:"</span>, JSON.stringify(d.<span class="hljs-built_in">buffer</span>));
-   *   device.disconnect();
-   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
-   * });
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_readValue
-   */
-  readValue: () => Promise<any>;
-
-  /**
-   * Starts notifications - whenever this characteristic's value changes, a `characteristicvaluechanged` event is fired
-   * and `characteristic.value` will then contain the new value as a `DataView`.
-   * <pre>`<span class="hljs-keyword">var</span> device;
-   * NRF.connect(device_address).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   device = d;
-   *   <span class="hljs-keyword">return</span> d.getPrimaryService(<span class="hljs-string">"service_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Service "</span>,s);
-   *   <span class="hljs-keyword">return</span> s.getCharacteristic(<span class="hljs-string">"characteristic_uuid"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>) {
-   *   c.on(<span class="hljs-string">&#x27;characteristicvaluechanged&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"-> "</span>,event.target.value); <span class="hljs-comment">// this is a DataView</span>
-   *   });
-   *   <span class="hljs-keyword">return</span> c.startNotifications();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Waiting for notifications"</span>);
-   * }).catch(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Something&#x27;s broken."</span>);
-   * });
-   * `</pre>
-   * For example, to listen to the output of another Puck.js's Nordic
-   * Serial port service, you can use:
-   * <pre>`<span class="hljs-keyword">var</span> gatt;
-   * NRF.connect(<span class="hljs-string">"pu:ck:js:ad:dr:es random"</span>).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) {
-   *   gatt = g;
-   *   <span class="hljs-keyword">return</span> gatt.getPrimaryService(<span class="hljs-string">"6e400001-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) {
-   *   <span class="hljs-keyword">return</span> service.getCharacteristic(<span class="hljs-string">"6e400003-b5a3-f393-e0a9-e50e24dcca9e"</span>);
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params">characteristic</span>) {
-   *   characteristic.on(<span class="hljs-string">&#x27;characteristicvaluechanged&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"RX: "</span>+JSON.stringify(event.target.value.<span class="hljs-built_in">buffer</span>));
-   *   });
-   *   <span class="hljs-keyword">return</span> characteristic.startNotifications();
-   * }).then(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Done!"</span>);
-   * });
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_startNotifications
-   */
-  startNotifications: () => Promise<any>;
-
-  /**
-   * Stop notifications (that were requested with `BluetoothRemoteGATTCharacteristic.startNotifications`)
-   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_stopNotifications
-   */
-  stopNotifications: () => Promise<any>;
-
-}
-
-/**
- * This class exists in order to interface Espruino with fast-moving trigger wheels. Trigger wheels are physical discs with evenly spaced teeth cut into them, and often with one or two teeth next to each other missing. A sensor sends a signal whenever a tooth passed by, and this allows a device to measure not only RPM, but absolute position.
- * This class is currently in testing - it is NOT AVAILABLE on normal boards.
- * @url http://www.espruino.com/Reference#Trig
- */
-declare const Trig: {
-  /**
-   * Get the position of the trigger wheel at the given time (from getTime)
-   * @url http://www.espruino.com/Reference#l_Trig_getPosAtTime
-   */
-  getPosAtTime: (time: number) => number;
-
-  /**
-   * Initialise the trigger class
-   * @url http://www.espruino.com/Reference#l_Trig_setup
-   */
-  setup: (pin: Pin, options: any) => void;
-
-  /**
-   * Set a trigger for a certain point in the cycle
-   * @url http://www.espruino.com/Reference#l_Trig_setTrigger
-   */
-  setTrigger: (num: number, pos: number, pins: any, pulseLength: number) => void;
-
-  /**
-   * Disable a trigger
-   * @url http://www.espruino.com/Reference#l_Trig_killTrigger
-   */
-  killTrigger: (num: number) => void;
-
-  /**
-   * Get the current state of a trigger
-   * @url http://www.espruino.com/Reference#l_Trig_getTrigger
-   */
-  getTrigger: (num: number) => any;
-
-  /**
-   * Get the RPM of the trigger wheel
-   * @url http://www.espruino.com/Reference#l_Trig_getRPM
-   */
-  getRPM: () => number;
-
-  /**
-   * Get the current error flags from the trigger wheel - and zero them
-   * @url http://www.espruino.com/Reference#l_Trig_getErrors
-   */
-  getErrors: () => number;
-
-  /**
-   * Get the current error flags from the trigger wheel - and zero them
-   * @url http://www.espruino.com/Reference#l_Trig_getErrorArray
-   */
-  getErrorArray: () => any;
-
-};
-
-/**
- * Class containing [Puck.js's](http://www.puck-js.com) utility functions.
- * @url http://www.espruino.com/Reference#Puck
- */
-declare const Puck: {
-  /**
-   * Turn on the magnetometer, take a single reading, and then turn it off again.
-   * An object of the form `{x,y,z}` is returned containing magnetometer readings.
-   * Due to residual magnetism in the Puck and magnetometer itself, with
-   * no magnetic field the Puck will not return `{x:0,y:0,z:0}`.
-   * Instead, it's up to you to figure out what the 'zero value' is for your
-   * Puck in your location and to then subtract that from the value returned. If
-   * you're not trying to measure the Earth's magnetic field then it's a good idea
-   * to just take a reading at startup and use that.
-   * With the aerial at the top of the board, the `y` reading is vertical, `x` is
-   * horizontal, and `z` is through the board.
-   * Readings are in increments of 0.1 micro Tesla (uT). The Earth's magnetic field
-   * varies from around 25-60 uT, so the reading will vary by 250 to 600 depending
-   * on location.
-   * @url http://www.espruino.com/Reference#l_Puck_mag
-   */
-  mag: () => any;
-
-  /**
-   * Turn on the magnetometer, take a single temperature reading from the MAG3110 chip, and then turn it off again.
-   * (If the magnetometer is already on, this just returns the last reading obtained)
-   * `E.getTemperature()` uses the microcontroller's temperature sensor, but this uses the magnetometer's.
-   * The reading obtained is an integer (so no decimal places), but the sensitivity is factory trimmed. to 1°C, however the temperature
-   * offset isn't - so absolute readings may still need calibrating.
-   * @url http://www.espruino.com/Reference#l_Puck_magTemp
-   */
-  magTemp: () => number;
-
-  /**
-   * Turn the magnetometer on and start periodic sampling. Samples will then cause
-   * a 'mag' event on 'Puck':
-   * <pre>`Puck.magOn();
-   * Puck.on(<span class="hljs-string">&#x27;mag&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">xyz</span>) {
-   *   <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(xyz);
-   *   <span class="hljs-comment">// {x:..., y:..., z:...}</span>
-   * });
-   * <span class="hljs-comment">// Turn events off with Puck.magOff();</span>
-   * `</pre>
-   * This call will be ignored if the sampling is already on.
-   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz).
-   * The sample rate must be one of the following (resulting in the given power consumption):
-   *
-   * - 80 Hz - 900uA
-   * - 40 Hz - 550uA
-   * - 20 Hz - 275uA
-   * - 10 Hz - 137uA
-   * - 5 Hz - 69uA
-   * - 2.5 Hz - 34uA
-   * - 1.25 Hz - 17uA
-   * - 0.63 Hz - 8uA
-   * - 0.31 Hz - 8uA
-   * - 0.16 Hz - 8uA
-   * - 0.08 Hz - 8uA
-   *
-   * When the battery level drops too low while sampling is turned on,
-   * the magnetometer may stop sampling without warning, even while other
-   * Puck functions continue uninterrupted.
-   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information.
-   * @url http://www.espruino.com/Reference#l_Puck_magOn
-   */
-  magOn: (samplerate: number) => void;
-
-  /**
-   * Turn the magnetometer off
-   * @url http://www.espruino.com/Reference#l_Puck_magOff
-   */
-  magOff: () => void;
-
-  /**
-   * Writes a register on the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
-   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information and links to modules that use this function.
-   * @url http://www.espruino.com/Reference#l_Puck_magWr
-   */
-  magWr: (reg: number, data: number) => void;
-
-  /**
-   * Reads a register from the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
-   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information and links to modules that use this function.
-   * @url http://www.espruino.com/Reference#l_Puck_magRd
-   */
-  magRd: (reg: number) => number;
-
-  /**
-   * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on Puck.js the less accurate on-chip Temperature sensor is used.
-   * @url http://www.espruino.com/Reference#l_Puck_getTemperature
-   */
-  getTemperature: () => number;
-
-  /**
-   * Accepted values are:
-   *
-   * - 1.6 Hz (no Gyro) - 40uA (2v05 and later firmware)
-   * - 12.5 Hz (with Gyro)- 350uA
-   * - 26 Hz (with Gyro) - 450 uA
-   * - 52 Hz (with Gyro) - 600 uA
-   * - 104 Hz (with Gyro) - 900 uA
-   * - 208 Hz (with Gyro) - 1500 uA
-   * - 416 Hz (with Gyro) (not recommended)
-   * - 833 Hz (with Gyro) (not recommended)
-   * - 1660 Hz (with Gyro) (not recommended)
-   *
-   * Once `Puck.accelOn()` is called, the `Puck.accel` event will be called each time data is received. `Puck.accelOff()` can be called to turn the accelerometer off.
-   * For instance to light the red LED whenever Puck.js is face up:
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Puck</span>.</span></span>on(&#x27;accel&#x27;, <span class="hljs-keyword">function</span>(a) {
-   *  digital<span class="hljs-constructor">Write(LED1, <span class="hljs-params">a</span>.<span class="hljs-params">acc</span>.<span class="hljs-params">z</span> > 0)</span>;
-   * });
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Puck</span>.</span></span>accel<span class="hljs-constructor">On()</span>;
-   * `</pre>
-   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information.
-   * @url http://www.espruino.com/Reference#l_Puck_accelOn
-   */
-  accelOn: (samplerate: number) => void;
-
-  /**
-   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`.
-   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information.
-   * @url http://www.espruino.com/Reference#l_Puck_accelOff
-   */
-  accelOff: () => void;
-
-  /**
-   * Turn on the accelerometer, take a single reading, and then turn it off again.
-   * The values reported are the raw values from the chip. In normal configuration:
-   *
-   * - accelerometer: full-scale (32768) is 4g, so you need to divide by 8192 to get correctly scaled values
-   * - gyro: full-scale (32768) is 245 dps, so you need to divide by 134 to get correctly scaled values
-   *
-   * If taking more than one reading, we'd suggest you use `Puck.accelOn()` and the `Puck.accel` event.
-   * @url http://www.espruino.com/Reference#l_Puck_accel
-   */
-  accel: () => any;
-
-  /**
-   * Writes a register on the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
-   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information and links to modules that use this function.
-   * @url http://www.espruino.com/Reference#l_Puck_accelWr
-   */
-  accelWr: (reg: number, data: number) => void;
-
-  /**
-   * Reads a register from the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
-   * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
-   * for more information and links to modules that use this function.
-   * @url http://www.espruino.com/Reference#l_Puck_accelRd
-   */
-  accelRd: (reg: number) => number;
-
-  /**
-   * Transmit the given set of IR pulses - data should be an array of pulse times
-   * in milliseconds (as `[on, off, on, off, on, etc]`).
-   * For example `Puck.IR(pulseTimes)` - see [http://www.espruino.com/Puck.js+Infrared](http://www.espruino.com/Puck.js+Infrared)
-   * for a full example.
-   * You can also attach an external LED to Puck.js, in which case
-   * you can just execute `Puck.IR(pulseTimes, led_cathode, led_anode)`
-   * It is also possible to just supply a single pin for IR transmission
-   * with `Puck.IR(pulseTimes, led_anode)` (on 2v05 and above).
-   * @url http://www.espruino.com/Reference#l_Puck_IR
-   */
-  IR: (data: any, cathode: Pin, anode: Pin) => void;
-
-  /**
-   * Capacitive sense - the higher the capacitance, the higher the number returned.
-   * If called without arguments, a value depending on the capacitance of what is
-   * attached to pin D11 will be returned. If you attach a length of wire to D11,
-   * you'll be able to see a higher value returned when your hand is near the wire
-   * than when it is away.
-   * You can also supply pins to use yourself, however if you do this then
-   * the TX pin must be connected to RX pin and sense plate via a roughly 1MOhm
-   * resistor.
-   * When not supplying pins, Puck.js uses an internal resistor between D12(tx)
-   * and D11(rx).
-   * @url http://www.espruino.com/Reference#l_Puck_capSense
-   */
-  capSense: (tx: Pin, rx: Pin) => number;
-
-  /**
-   * Return a light value based on the light the red LED is seeing.
-   * **Note:** If called more than 5 times per second, the received light value
-   * may not be accurate.
-   * @url http://www.espruino.com/Reference#l_Puck_light
-   */
-  light: () => number;
-
-  /**
-   * DEPRECATED - Please use `E.getBattery()` instead.
-   * Return an approximate battery percentage remaining based on
-   * a normal CR2032 battery (2.8 - 2.2v).
-   * @url http://www.espruino.com/Reference#l_Puck_getBatteryPercentage
-   */
-  getBatteryPercentage: () => number;
-
-  /**
-   * Run a self-test, and return true for a pass. This checks for shorts
-   * between pins, so your Puck shouldn't have anything connected to it.
-   * **Note:** This self-test auto starts if you hold the button on your Puck
-   * down while inserting the battery, leave it pressed for 3 seconds (while
-   * the green LED is lit) and release it soon after all LEDs turn on. 5
-   * red blinks is a fail, 5 green is a pass.
-   * If the self test fails, it'll set the Puck.js Bluetooth advertising name
-   * to `Puck.js !ERR` where ERR is a 3 letter error code.
-   * @url http://www.espruino.com/Reference#l_Puck_selfTest
-   */
-  selfTest: () => boolean;
-
-};
-
-/**
- * @url http://www.espruino.com/Reference#l_CC3000_undefined
- */
-declare const CC3000: {
-  /**
-   * Initialise the CC3000 and return a WLAN object
-   * @url http://www.espruino.com/Reference#l_CC3000_connect
-   */
-  connect: (spi: any, cs: Pin, en: Pin, irq: Pin) => WLAN;
-
-};
-
-/**
- * An instantiation of a WiFi network adaptor
- * @url http://www.espruino.com/Reference#WLAN
- */
-declare function WLAN(): void;
-
-type WLAN = {
-  /**
-   * Connect to a wireless network
-   * @url http://www.espruino.com/Reference#l_WLAN_connect
-   */
-  connect: (ap: any, key: any, callback: any) => boolean;
-
-  /**
-   * Completely uninitialise and power down the CC3000. After this you'll have to use `require("CC3000").connect()` again.
-   * @url http://www.espruino.com/Reference#l_WLAN_disconnect
-   */
-  disconnect: () => void;
-
-  /**
-   * Completely uninitialise and power down the CC3000, then reconnect to the old access point.
-   * @url http://www.espruino.com/Reference#l_WLAN_reconnect
-   */
-  reconnect: () => void;
-
-  /**
-   * Get the current IP address
-   * @url http://www.espruino.com/Reference#l_WLAN_getIP
-   */
-  getIP: () => any;
-
-  /**
-   * Set the current IP address for get an IP from DHCP (if no options object is specified).
-   * **Note:** Changes are written to non-volatile memory, but will only take effect after calling `wlan.reconnect()`
-   * @url http://www.espruino.com/Reference#l_WLAN_setIP
-   */
-  setIP: (options: any) => boolean;
-
-}
-
-/**
- * This library implements a telnet console for the Espruino interpreter. It requires a network
- * connection, e.g. Wifi, and **currently only functions on the ESP8266 and on Linux **. It uses
- * port 23 on the ESP8266 and port 2323 on Linux.
- * **Note:** To enable on Linux, run `./espruino --telnet`
- * @url http://www.espruino.com/Reference#l_TelnetServer_undefined
- */
-declare const TelnetServer: {
-  /**
-   * @url http://www.espruino.com/Reference#l_TelnetServer_setOptions
-   */
-  setOptions: (options: any) => void;
-
-};
-
-/**
- * Class containing utility functions for the [ESP8266](http://www.espruino.com/EspruinoESP8266)
- * @url http://www.espruino.com/Reference#ESP8266
- */
-declare const ESP8266: {
-  /**
-   * **DEPRECATED** - please use `Wifi.ping` instead.
-   * Perform a network ping request. The parameter can be either a String or a numeric IP address.
-   * @url http://www.espruino.com/Reference#l_ESP8266_ping
-   */
-  ping: (ipAddr: any, pingCallback: any) => void;
-
-  /**
-   * Perform a hardware reset/reboot of the esp8266.
-   * @url http://www.espruino.com/Reference#l_ESP8266_reboot
-   */
-  reboot: () => void;
-
-  /**
-   * At boot time the esp8266's firmware captures the cause of the reset/reboot.  This function returns this information in an object with the following fields:
-   *
-   * - `reason`: "power on", "wdt reset", "exception", "soft wdt", "restart", "deep sleep", or "reset pin"
-   * - `exccause`: exception cause
-   * - `epc1`, `epc2`, `epc3`: instruction pointers
-   * - `excvaddr`: address being accessed
-   * - `depc`: (?)
-   *
-   * @url http://www.espruino.com/Reference#l_ESP8266_getResetInfo
-   */
-  getResetInfo: () => any;
-
-  /**
-   * Enable or disable the logging of debug information.  A value of `true` enables debug logging while a value of `false` disables debug logging.  Debug output is sent to UART1 (gpio2).
-   * @url http://www.espruino.com/Reference#l_ESP8266_logDebug
-   */
-  logDebug: (enable: boolean) => void;
-
-  /**
-   * Set the debug logging mode. It can be disabled (which frees ~1.2KB of heap), enabled in-memory only, or in-memory and output to a UART.
-   * @url http://www.espruino.com/Reference#l_ESP8266_setLog
-   */
-  setLog: (mode: number) => void;
-
-  /**
-   * Prints the contents of the debug log to the console.
-   * @url http://www.espruino.com/Reference#l_ESP8266_printLog
-   */
-  printLog: () => void;
-
-  /**
-   * Returns one line from the log or up to 128 characters.
-   * @url http://www.espruino.com/Reference#l_ESP8266_readLog
-   */
-  readLog: () => void;
-
-  /**
-   * Dumps info about all sockets to the log. This is for troubleshooting the socket implementation.
-   * @url http://www.espruino.com/Reference#l_ESP8266_dumpSocketInfo
-   */
-  dumpSocketInfo: () => void;
-
-  /**
-   * **Note:** This is deprecated. Use `E.setClock(80/160)`
-   * **Note:**
-   * Set the operating frequency of the ESP8266 processor. The default is 160Mhz.
-   * **Warning**: changing the cpu frequency affects the timing of some I/O operations, notably of software SPI and I2C, so things may be a bit slower at 80Mhz.
-   * @url http://www.espruino.com/Reference#l_ESP8266_setCPUFreq
-   */
-  setCPUFreq: (freq: any) => void;
-
-  /**
-   * Returns an object that contains details about the state of the ESP8266 with the following fields:
-   *
-   * - `sdkVersion`   - Version of the SDK.
-   * - `cpuFrequency` - CPU operating frequency in Mhz.
-   * - `freeHeap`     - Amount of free heap in bytes.
-   * - `maxCon`       - Maximum number of concurrent connections.
-   * - `flashMap`     - Configured flash size&map: '512KB:256/256' .. '4MB:512/512'
-   * - `flashKB`      - Configured flash size in KB as integer
-   * - `flashChip`    - Type of flash chip as string with manufacturer & chip, ex: '0xEF 0x4016`
-   *
-   * @url http://www.espruino.com/Reference#l_ESP8266_getState
-   */
-  getState: () => any;
-
-  /**
-   * **Note:** This is deprecated. Use `require("Flash").getFree()`
-   * @url http://www.espruino.com/Reference#l_ESP8266_getFreeFlash
-   */
-  getFreeFlash: () => any;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_ESP8266_crc32
-   */
-  crc32: (arrayOfData: any) => any;
-
-  /**
-   * **This function is deprecated.** Please use `require("neopixel").write(pin, data)` instead
-   * @url http://www.espruino.com/Reference#l_ESP8266_neopixelWrite
-   */
-  neopixelWrite: (pin: Pin, arrayOfData: any) => void;
-
-  /**
-   * Put the ESP8266 into 'deep sleep' for the given number of microseconds,
-   * reducing power consumption drastically.
-   * meaning of option values:
-   * 0 - the 108th Byte of init parameter decides whether RF calibration will be performed or not.
-   * 1 - run RF calibration after waking up. Power consumption is high.
-   * 2 - no RF calibration after waking up. Power consumption is low.
-   * 4 - no RF after waking up. Power consumption is the lowest.
-   * **Note:** unlike normal Espruino boards' 'deep sleep' mode, ESP8266 deep sleep actually turns off the processor. After the given number of microseconds have elapsed, the ESP8266 will restart as if power had been turned off and then back on. *All contents of RAM will be lost*.
-   * Connect GPIO 16 to RST to enable wakeup.
-   * **Special:** 0 microseconds cause sleep forever until external wakeup RST pull down occurs.
-   * @url http://www.espruino.com/Reference#l_ESP8266_deepSleep
-   */
-  deepSleep: (micros: any, option: any) => void;
-
-};
-
-/**
- * This library allows you to create http servers and make http requests
- * In order to use this, you will need an extra module to get network connectivity such as the [WIZnet W5500](https://espruino.com//CC3000">TI CC3000</a> or <a href="/WIZnet).
- * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/http.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
- * @url http://www.espruino.com/Reference#l_http_undefined
- */
-declare const http: {
-  /**
-   * Create an HTTP Server
-   * When a request to the server is made, the callback is called. In the callback you can use the methods on the response (`httpSRs`) to send data. You can also add `request.on('data',function() { ... })` to listen for POSTed data
-   * @url http://www.espruino.com/Reference#l_http_createServer
-   */
-  createServer: (callback: any) => httpSrv;
-
-  /**
-   * Create an HTTP Request - `end()` must be called on it to complete the operation. `options` is of the form:
-   * <pre>`<span class="hljs-keyword">var</span> options = {
-   *     <span class="hljs-attr">host</span>: <span class="hljs-string">&#x27;example.com&#x27;</span>, <span class="hljs-comment">// host name</span>
-   *     port: <span class="hljs-number">80</span>,            <span class="hljs-comment">// (optional) port, defaults to 80</span>
-   *     path: <span class="hljs-string">&#x27;/&#x27;</span>,           <span class="hljs-comment">// path sent to server</span>
-   *     method: <span class="hljs-string">&#x27;GET&#x27;</span>,       <span class="hljs-comment">// HTTP command sent to server (must be uppercase &#x27;GET&#x27;, &#x27;POST&#x27;, etc)</span>
-   *     protocol: <span class="hljs-string">&#x27;http:&#x27;</span>,   <span class="hljs-comment">// optional protocol - https: or http:</span>
-   *     headers: { <span class="hljs-attr">key</span> : value, <span class="hljs-attr">key</span> : value } <span class="hljs-comment">// (optional) HTTP headers</span>
-   *   };
-   * <span class="hljs-keyword">var</span> req = require(<span class="hljs-string">"http"</span>).request(options, <span class="hljs-keyword">function</span>(<span class="hljs-params">res</span>) {
-   *   res.on(<span class="hljs-string">&#x27;data&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"HTTP> "</span>+data);
-   *   });
-   *   res.on(<span class="hljs-string">&#x27;close&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Connection closed"</span>);
-   *   });
-   * });
-   * <span class="hljs-comment">// You can req.write(...) here if your request requires data to be sent.</span>
-   * req.end(); <span class="hljs-comment">// called to finish the HTTP request and get the response</span>
-   * `</pre>
-   * You can easily pre-populate `options` from a URL using `var options = url.parse("http://www.example.com/foo.html")`
-   * There's an example of using [`http.request` for HTTP POST here](https://espruino.com//Internet#http-post)
-   * **Note:** if TLS/HTTPS is enabled, options can have `ca`, `key` and `cert` fields. See `tls.connect` for
-   * more information about these and how to use them.
-   * @url http://www.espruino.com/Reference#l_http_request
-   */
-  request: (options: any, callback: any) => httpCRq;
-
-  /**
-   * Request a webpage over HTTP - a convenience function for `http.request()` that makes sure the HTTP command is 'GET', and that calls `end` automatically.
-   * <pre>`require(<span class="hljs-string">"http"</span>).get(<span class="hljs-string">"http://pur3.co.uk/hello.txt"</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">res</span>) {
-   *   res.on(<span class="hljs-string">&#x27;data&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"HTTP> "</span>+data);
-   *   });
-   *   res.on(<span class="hljs-string">&#x27;close&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
-   *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Connection closed"</span>);
-   *   });
-   * });
-   * `</pre>
-   * See `http.request()` and [the Internet page](https://espruino.com//Internet) and ` for more usage examples.
-   * @url http://www.espruino.com/Reference#l_http_get
-   */
-  get: (options: any, callback: any) => httpCRq;
-
-};
-
-/**
- * The HTTP server created by `require('http').createServer`
- * @url http://www.espruino.com/Reference#httpSrv
- */
-declare function httpSrv(): void;
-
-type httpSrv = {
-  /**
-   * Start listening for new HTTP connections on the given port
-   * @url http://www.espruino.com/Reference#l_httpSrv_listen
-   */
-  listen: (port: number) => any;
-
-  /**
-   * Stop listening for new HTTP connections
-   * @url http://www.espruino.com/Reference#l_httpSrv_close
-   */
-  close: () => void;
-
-}
-
-/**
- * The HTTP server request
- * @url http://www.espruino.com/Reference#httpSRq
- */
-declare function httpSRq(): void;
-
-type httpSRq = {
-  /**
-   * The headers to sent to the server with this HTTP request.
-   * @url http://www.espruino.com/Reference#l_httpSRq_headers
-   */
-  headers: any
-
-  /**
-   * The HTTP method used with this request. Often `"GET"`.
-   * @url http://www.espruino.com/Reference#l_httpSRq_method
-   */
-  method: any
-
-  /**
-   * The URL requested in this HTTP request, for instance:
-   *
-   * - `"/"` - the main page
-   * - `"/favicon.ico"` - the web page's icon
-   *
-   * @url http://www.espruino.com/Reference#l_httpSRq_url
-   */
-  url: any
-
-  /**
-   * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
-   * @url http://www.espruino.com/Reference#l_httpSRq_available
-   */
-  available: () => number;
-
-  /**
-   * Return a string containing characters that have been received
-   * @url http://www.espruino.com/Reference#l_httpSRq_read
-   */
-  read: (chars: number) => any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   * @url http://www.espruino.com/Reference#l_httpSRq_pipe
-   */
-  pipe: (destination: any, options: any) => void;
-
-}
-
-/**
- * The HTTP server response
- * @url http://www.espruino.com/Reference#httpSRs
- */
-declare function httpSRs(): void;
-
-type httpSRs = {
-  /**
-   * The headers to send back along with the HTTP response.
-   * The default contents are:
-   * <pre>`<span class="hljs-punctuation">{</span>
-   *   <span class="hljs-attr">"Connection"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"close"</span>
-   *  <span class="hljs-punctuation">}</span>
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_httpSRs_headers
-   */
-  headers: any
-
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method. For more information about sending binary data see `Socket.write`
-   * @url http://www.espruino.com/Reference#l_httpSRs_write
-   */
-  write: (data: any) => boolean;
-
-  /**
-   * See `Socket.write` for more information about the data argument
-   * @url http://www.espruino.com/Reference#l_httpSRs_end
-   */
-  end: (data: any) => void;
-
-  /**
-   * Send the given status code and headers. If not explicitly called
-   * this will be done automatically the first time data is written
-   * to the response.
-   * This cannot be called twice, or after data has already been sent
-   * in the response.
-   * @url http://www.espruino.com/Reference#l_httpSRs_writeHead
-   */
-  writeHead: (statusCode: number, headers: any) => void;
-
-  /**
-   * Set a value to send in the header of this HTTP response. This updates the `httpSRs.headers` property.
-   * Any headers supplied to `writeHead` will overwrite any headers with the same name.
-   * @url http://www.espruino.com/Reference#l_httpSRs_setHeader
-   */
-  setHeader: (name: any, value: any) => void;
-
-}
-
-/**
- * The HTTP client request, returned by `http.request()` and `http.get()`.
- * @url http://www.espruino.com/Reference#httpCRq
- */
-declare function httpCRq(): void;
-
-type httpCRq = {
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method. For more information about sending binary data see `Socket.write`
-   * @url http://www.espruino.com/Reference#l_httpCRq_write
-   */
-  write: (data: any) => boolean;
-
-  /**
-   * Finish this HTTP request - optional data to append as an argument
-   * See `Socket.write` for more information about the data argument
-   * @url http://www.espruino.com/Reference#l_httpCRq_end
-   */
-  end: (data: any) => void;
-
-}
-
-/**
- * The HTTP client response, passed to the callback of `http.request()` an `http.get()`.
- * @url http://www.espruino.com/Reference#httpCRs
- */
-declare function httpCRs(): void;
-
-type httpCRs = {
-  /**
-   * The headers received along with the HTTP response
-   * @url http://www.espruino.com/Reference#l_httpCRs_headers
-   */
-  headers: any
-
-  /**
-   * The HTTP response's status code - usually `"200"` if all went well
-   * @url http://www.espruino.com/Reference#l_httpCRs_statusCode
-   */
-  statusCode: any
-
-  /**
-   * The HTTP response's status message - Usually `"OK"` if all went well
-   * @url http://www.espruino.com/Reference#l_httpCRs_statusMessage
-   */
-  statusMessage: any
-
-  /**
-   * The HTTP version reported back by the server - usually `"1.1"`
-   * @url http://www.espruino.com/Reference#l_httpCRs_httpVersion
-   */
-  httpVersion: any
-
-  /**
-   * Return how many bytes are available to read. If there is a 'data' event handler, this will always return 0.
-   * @url http://www.espruino.com/Reference#l_httpCRs_available
-   */
-  available: () => number;
-
-  /**
-   * Return a string containing characters that have been received
-   * @url http://www.espruino.com/Reference#l_httpCRs_read
-   */
-  read: (chars: number) => any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   * @url http://www.espruino.com/Reference#l_httpCRs_pipe
-   */
-  pipe: (destination: any, options: any) => void;
-
-}
-
-/**
- * The Wifi library is designed to control the Wifi interface. It supports functionality
- * such as connecting to wifi networks, getting network information, starting an access
- * point, etc.
- * It is available on these devices:
- *
- * - [Espruino WiFi](http://www.espruino.com/WiFi#using-wifi)
- * - [ESP8266](http://www.espruino.com/EspruinoESP8266)
- * - [ESP32](http://www.espruino.com/ESP32)
- *
- * **Certain features may or may not be implemented on your device** however
- * we have documented what is available and what isn't.
- * If you're not using one of the devices above, a separate WiFi library is
- * provided. For instance:
- *
- * - An [ESP8266 connected to an Espruino board](http://www.espruino.com/ESP8266#software)
- * - An [CC3000 WiFi Module](http://www.espruino.com/CC3000)
- *
- * [Other ways of connecting to the net](http://www.espruino.com/Internet#related-pages) such
- * as GSM, Ethernet and LTE have their own libraries.
- * You can use the WiFi library as follows:
- * <pre>`<span class="hljs-keyword">var</span> wifi = require(<span class="hljs-string">"Wifi"</span>);
- * wifi.connect(<span class="hljs-string">"my-ssid"</span>, {<span class="hljs-attr">password</span>:<span class="hljs-string">"my-pwd"</span>}, <span class="hljs-keyword">function</span>(<span class="hljs-params">ap</span>){ <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"connected:"</span>, ap); });
- * `</pre>
- * On ESP32/ESP8266 if you want the connection to happen automatically at boot, add `wifi.save();`.
- * On other platforms, place `wifi.connect` in a function called `onInit`.
- * @url http://www.espruino.com/Reference#l_Wifi_undefined
- */
-declare const Wifi: {
-  /**
-   * Disconnect the wifi station from an access point and disable the station mode. It is OK to call `disconnect` to turn off station mode even if no connection exists (for example, connection attempts may be failing). Station mode can be re-enabled by calling `connect` or `scan`.
-   * @url http://www.espruino.com/Reference#l_Wifi_disconnect
-   */
-  disconnect: (callback: any) => void;
-
-  /**
-   * Stop being an access point and disable the AP operation mode. AP mode can be re-enabled by calling `startAP`.
-   * @url http://www.espruino.com/Reference#l_Wifi_stopAP
-   */
-  stopAP: (callback: any) => void;
-
-  /**
-   * Connect to an access point as a station. If there is an existing connection to an AP it is first disconnected if the SSID or password are different from those passed as parameters. Put differently, if the passed SSID and password are identical to the currently connected AP then nothing is changed.
-   * When the connection attempt completes the callback function is invoked with one `err` parameter, which is NULL if there is no error and a string message if there is an error. If DHCP is enabled the callback occurs once an IP addres has been obtained, if a static IP is set the callback occurs once the AP's network has been joined.  The callback is also invoked if a connection already exists and does not need to be changed.
-   * The options properties may contain:
-   *
-   * - `password` - Password string to be used to access the network.
-   * - `dnsServers` (array of String) - An array of up to two DNS servers in dotted decimal format string.
-   * - `channel`  - Wifi channel of the access point  (integer, typ 0..14, 0 means any channel), only on ESP8266.
-   * - `bssid`   -  Mac address of the access point (string, type "00:00:00:00:00:00"), only on ESP8266.
-   *
-   * Notes:
-   *
-   * - the options should include the ability to set a static IP and associated netmask and gateway, this is a future enhancement.
-   * - the only error reported in the callback is "Bad password", all other errors (such as access point not found or DHCP timeout) just cause connection retries. If the reporting of such temporary errors is desired, the caller must use its own timeout and the `getDetails().status` field.
-   * - the `connect` call automatically enabled station mode, it can be disabled again by calling `disconnect`.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_connect
-   */
-  connect: (ssid: any, options: any, callback: any) => void;
-
-  /**
-   * Perform a scan for access points. This will enable the station mode if it is not currently enabled. Once the scan is complete the callback function is called with an array of APs found, each AP is an object with:
-   *
-   * - `ssid`: SSID string.
-   * - `mac`: access point MAC address in 00:00:00:00:00:00 format.
-   * - `authMode`: `open`, `wep`, `wpa`, `wpa2`, or `wpa_wpa2`.
-   * - `channel`: wifi channel 1..13.
-   * - `hidden`: true if the SSID is hidden (ESP32/ESP8266 only)
-   * - `rssi`: signal strength in dB in the range -110..0.
-   *
-   * Notes:
-   *
-   * - in order to perform the scan the station mode is turned on and remains on, use Wifi.disconnect() to turn it off again, if desired.
-   * - only one scan can be in progress at a time.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_scan
-   */
-  scan: (callback: any) => void;
-
-  /**
-   * Create a WiFi access point allowing stations to connect. If the password is NULL or an empty string the access point is open, otherwise it is encrypted.
-   * The callback function is invoked once the access point is set-up and receives one `err` argument, which is NULL on success and contains an error message string otherwise.
-   * The `options` object can contain the following properties.
-   *
-   * - `authMode` - The authentication mode to use.  Can be one of "open", "wpa2", "wpa", "wpa_wpa2". The default is open (but open access points are not recommended).
-   * - `password` - The password for connecting stations if authMode is not open.
-   * - `channel` - The channel to be used for the access point in the range 1..13. If the device is also connected to an access point as a station then that access point determines the channel.
-   * - `hidden` - The flag if visible or not (0:visible, 1:hidden), default is visible.
-   *
-   * Notes:
-   *
-   * - the options should include the ability to set the AP IP and associated netmask, this is a future enhancement.
-   * - the `startAP` call automatically enables AP mode. It can be disabled again by calling `stopAP`.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_startAP
-   */
-  startAP: (ssid: any, options: any, callback: any) => void;
-
-  /**
-   * Retrieve the current overall WiFi configuration. This call provides general information that pertains to both station and access point modes. The getDetails and getAPDetails calls provide more in-depth information about the station and access point configurations, respectively. The status object has the following properties:
-   *
-   * - `station` - Status of the wifi station: `off`, `connecting`, ...
-   * - `ap` - Status of the wifi access point: `disabled`, `enabled`.
-   * - `mode` - The current operation mode: `off`, `sta`, `ap`, `sta+ap`.
-   * - `phy` - Modulation standard configured: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n). This setting limits the modulations that the radio will use, it does not indicate the current modulation used with a specific access point.
-   * - `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
-   * - `savedMode` - The saved operation mode which will be applied at boot time: `off`, `sta`, `ap`, `sta+ap`.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_getStatus
-   */
-  getStatus: (callback: any) => any;
-
-  /**
-   * Sets a number of global wifi configuration settings. All parameters are optional and which are passed determines which settings are updated.
-   * The settings available are:
-   *
-   * - `phy` - Modulation standard to allow: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n).
-   * - `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
-   *
-   * Note: esp8266 SDK programmers may be missing an "opmode" option to set the sta/ap/sta+ap operation mode. Please use connect/scan/disconnect/startAP/stopAP, which all set the esp8266 opmode indirectly.
-   * @url http://www.espruino.com/Reference#l_Wifi_setConfig
-   */
-  setConfig: (settings: any) => void;
-
-  /**
-   * Retrieve the wifi station configuration and status details. The details object has the following properties:
-   *
-   * - `status` - Details about the wifi station connection, one of `off`, `connecting`, `wrong_password`, `no_ap_found`, `connect_fail`, or `connected`. The off, bad_password and connected states are stable, the other states are transient. The connecting state will either result in connected or one of the error states (bad_password, no_ap_found, connect_fail) and the no_ap_found and connect_fail states will result in a reconnection attempt after some interval.
-   * - `rssi` - signal strength of the connected access point in dB, typically in the range -110 to 0, with anything greater than -30 being an excessively strong signal.
-   * - `ssid` - SSID of the access point.
-   * - `password` - the password used to connect to the access point.
-   * - `authMode` - the authentication used: `open`, `wpa`, `wpa2`, `wpa_wpa2` (not currently supported).
-   * - `savedSsid` - the SSID to connect to automatically at boot time, null if none.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_getDetails
-   */
-  getDetails: (callback: any) => any;
-
-  /**
-   * Retrieve the current access point configuration and status.  The details object has the following properties:
-   *
-   * - `status` - Current access point status: `enabled` or `disabled`
-   * - `stations` - an array of the stations connected to the access point.  This array may be empty.  Each entry in the array is an object describing the station which, at a minimum contains `ip` being the IP address of the station.
-   * - `ssid` - SSID to broadcast.
-   * - `password` - Password for authentication.
-   * - `authMode` - the authentication required of stations: `open`, `wpa`, `wpa2`, `wpa_wpa2`.
-   * - `hidden` - True if the SSID is hidden, false otherwise.
-   * - `maxConn` - Max number of station connections supported.
-   * - `savedSsid` - the SSID to broadcast automatically at boot time, null if the access point is to be disabled at boot.
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_getAPDetails
-   */
-  getAPDetails: (callback: any) => any;
-
-  /**
-   * On boards where this is not available, just issue the `connect` commands you need to run at startup from an `onInit` function.
-   * Save the current wifi configuration (station and access point) to flash and automatically apply this configuration at boot time, unless `what=="clear"`, in which case the saved configuration is cleared such that wifi remains disabled at boot. The saved configuration includes:
-   *
-   * - mode (off/sta/ap/sta+ap)
-   * - SSIDs & passwords
-   * - phy (11b/g/n)
-   * - powersave setting
-   * - DHCP hostname
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_save
-   */
-  save: (what: any) => void;
-
-  /**
-   * Restores the saved Wifi configuration from flash. See `Wifi.save()`.
-   * @url http://www.espruino.com/Reference#l_Wifi_restore
-   */
-  restore: () => void;
-
-  /**
-   * Return the station IP information in an object as follows:
-   *
-   * - ip - IP address as string (e.g. "192.168.1.5")
-   * - netmask - The interface netmask as string (ESP8266/ESP32 only)
-   * - gw - The network gateway as string (ESP8266/ESP32 only)
-   * - mac - The MAC address as string of the form 00:00:00:00:00:00
-   *
-   * Note that the `ip`, `netmask`, and `gw` fields are omitted if no connection is established:
-   * @url http://www.espruino.com/Reference#l_Wifi_getIP
-   */
-  getIP: (callback: any) => any;
-
-  /**
-   * Return the access point IP information in an object which contains:
-   *
-   * - ip - IP address as string (typ "192.168.4.1")
-   * - netmask - The interface netmask as string
-   * - gw - The network gateway as string
-   * - mac - The MAC address as string of the form 00:00:00:00:00:00
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_getAPIP
-   */
-  getAPIP: (callback: any) => any;
-
-  /**
-   * Lookup the hostname and invoke a callback with the IP address as integer argument. If the lookup fails, the callback is invoked with a null argument.
-   * **Note:** only a single hostname lookup can be made at a time, concurrent lookups are not supported.
-   * @url http://www.espruino.com/Reference#l_Wifi_getHostByName
-   */
-  getHostByName: (hostname: any, callback: any) => void;
-
-  /**
-   * Returns the hostname announced to the DHCP server and broadcast via mDNS when connecting to an access point.
-   * @url http://www.espruino.com/Reference#l_Wifi_getHostname
-   */
-  getHostname: (callback: any) => any;
-
-  /**
-   * Set the hostname. Depending on implemenation, the hostname is sent with every DHCP request and is broadcast via mDNS. The DHCP hostname may be visible in the access point and may be forwarded into DNS as hostname.local.
-   * If a DHCP lease currently exists changing the hostname will cause a disconnect and reconnect in order to transmit the change to the DHCP server.
-   * The mDNS announcement also includes an announcement for the "espruino" service.
-   * @url http://www.espruino.com/Reference#l_Wifi_setHostname
-   */
-  setHostname: (hostname: any, callback: any) => void;
-
-  /**
-   * Starts the SNTP (Simple Network Time Protocol) service to keep the clock synchronized with the specified server. Note that the time zone is really just an offset to UTC and doesn't handle daylight savings time.
-   * The interval determines how often the time server is queried and Espruino's time is synchronized. The initial synchronization occurs asynchronously after setSNTP returns.
-   * @url http://www.espruino.com/Reference#l_Wifi_setSNTP
-   */
-  setSNTP: (server: any, tz_offset: any) => void;
-
-  /**
-   * The `settings` object must contain the following properties.
-   *
-   * - `ip` IP address as string (e.g. "192.168.5.100")
-   * - `gw`  The network gateway as string (e.g. "192.168.5.1")
-   * - `netmask` The interface netmask as string (e.g. "255.255.255.0")
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_setIP
-   */
-  setIP: (settings: any, callback: any) => void;
-
-  /**
-   * The `settings` object must contain the following properties.
-   *
-   * - `ip` IP address as string (e.g. "192.168.5.100")
-   * - `gw`  The network gateway as string (e.g. "192.168.5.1")
-   * - `netmask` The interface netmask as string (e.g. "255.255.255.0")
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_setAPIP
-   */
-  setAPIP: (settings: any, callback: any) => void;
-
-  /**
-   * Issues a ping to the given host, and calls a callback with the time when the ping is received.
-   * @url http://www.espruino.com/Reference#l_Wifi_ping
-   */
-  ping: (hostname: any, callback: any) => void;
-
-  /**
-   * Switch to using a higher communication speed with the WiFi module.
-   *
-   * - `true` = 921600 baud
-   * - `false` = 115200
-   * - `1843200` (or any number) = use a specific baud rate.
-   * - eg. `wifi.turbo(true,callback)` or `wifi.turbo(1843200,callback)`
-   *
-   * @url http://www.espruino.com/Reference#l_Wifi_turbo
-   */
-  turbo: (enable: any, callback: any) => void;
-
-};
-
-/**
- * Library that initialises a network device that calls into JavaScript
- * @url http://www.espruino.com/Reference#l_NetworkJS_undefined
- */
-declare const NetworkJS: {
-  /**
-   * Initialise the network using the callbacks given and return the first argument. For instance:
-   * <pre>`<span class="hljs-title function_">require</span>(<span class="hljs-string">"NetworkJS"</span>).<span class="hljs-property">create</span>({
-   *   <span class="hljs-variable">create</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">host</span>, <span class="hljs-params">port</span>, <span class="hljs-params">socketType</span>, <span class="hljs-params">options</span>) {
-   *     <span class="hljs-comment">// Create a socket and return its index, host is a string, port is an integer.</span>
-   *     <span class="hljs-comment">// If host isn&#x27;t defined, create a server socket</span>
-   *     <span class="hljs-variable">console</span>.<span class="hljs-property">log</span>(<span class="hljs-string">"Create"</span>,<span class="hljs-variable">host</span>,<span class="hljs-variable">port</span>);
-   *     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-   *   },
-   *   <span class="hljs-variable">close</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>) {
-   *     <span class="hljs-comment">// Close the socket. returns nothing</span>
-   *   },
-   *   <span class="hljs-variable">accept</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>) {
-   *     <span class="hljs-comment">// Accept the connection on the server socket. Returns socket number or -1 if no connection</span>
-   *     <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
-   *   },
-   *   <span class="hljs-variable">recv</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>, <span class="hljs-params">maxLen</span>, <span class="hljs-params">socketType</span>) {
-   *     <span class="hljs-comment">// Receive data. Returns a string (even if empty).</span>
-   *     <span class="hljs-comment">// If non-string returned, socket is then closed</span>
-   *     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<span class="hljs-comment">//or "";</span>
-   *   },
-   *   <span class="hljs-variable">send</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>, <span class="hljs-params">data</span>, <span class="hljs-params">socketType</span>) {
-   *     <span class="hljs-comment">// Send data (as string). Returns the number of bytes sent - 0 is ok.</span>
-   *     <span class="hljs-comment">// Less than 0</span>
-   *     <span class="hljs-keyword">return</span> <span class="hljs-variable">data</span>.<span class="hljs-property">length</span>;
+   *   <span class="hljs-string">"port"</span>      : <span class="hljs-string">"A"</span>, <span class="hljs-comment">// the Pin&#x27;s port on the chip</span>
+   *   <span class="hljs-string">"num"</span>       : 12, <span class="hljs-comment">// the Pin&#x27;s number</span>
+   *   <span class="hljs-string">"in_addr"</span>   : 0x..., <span class="hljs-comment">// (if available) the address of the pin&#x27;s input address in bit-banded memory (can be used with peek)</span>
+   *   <span class="hljs-string">"out_addr"</span>  : 0x..., <span class="hljs-comment">// (if available) the address of the pin&#x27;s output address in bit-banded memory (can be used with poke)</span>
+   *   <span class="hljs-string">"analog"</span>    : { ADCs : [1], channel : 12 }, <span class="hljs-comment">// If analog input is available</span>
+   *   <span class="hljs-string">"functions"</span> : {
+   *     <span class="hljs-string">"TIM1"</span>:{<span class="hljs-keyword">type</span>:"CH1, af:0},
+   *     <span class="hljs-string">"I2C3"</span>:{<span class="hljs-keyword">type</span>:<span class="hljs-string">"SCL"</span>, af:1}
    *   }
-   * });
+   * }
    * `</pre>
-   * `socketType` is an integer - 2 for UDP, or see SocketType in [https://github.com/espruino/Espruino/blob/master/libs/network/network.h](https://github.com/espruino/Espruino/blob/master/libs/network/network.h)
-   * for more information.
-   * @url http://www.espruino.com/Reference#l_NetworkJS_create
+   * Will return undefined if pin is not valid.
+   * @url http://www.espruino.com/Reference#l_Pin_getInfo
    */
-  create: (obj: any) => any;
-
-};
-
-/**
- * Library for communication with the WIZnet Ethernet module
- * @url http://www.espruino.com/Reference#l_WIZnet_undefined
- */
-declare const WIZnet: {
-  /**
-   * Initialise the WIZnet module and return an Ethernet object
-   * @url http://www.espruino.com/Reference#l_WIZnet_connect
-   */
-  connect: (spi: any, cs: Pin) => Ethernet;
-
-};
-
-/**
- * An instantiation of an Ethernet network adaptor
- * @url http://www.espruino.com/Reference#Ethernet
- */
-declare function Ethernet(): void;
-
-type Ethernet = {
-  /**
-   * Get the current IP address, subnet, gateway and mac address.
-   * @url http://www.espruino.com/Reference#l_Ethernet_getIP
-   */
-  getIP: (options: any) => any;
-
-  /**
-   * Set the current IP address or get an IP from DHCP (if no options object is specified)
-   * If 'mac' is specified as an option, it must be a string of the form `"00:01:02:03:04:05"`
-   * The default mac is 00:08:DC:01:02:03.
-   * @url http://www.espruino.com/Reference#l_Ethernet_setIP
-   */
-  setIP: (options: any, callback: any) => boolean;
-
-  /**
-   * Set hostname allow to set the hosname used during the dhcp request.
-   * min 8 and max 12 char, best set before calling `eth.setIP()`
-   * Default is WIZnet010203, 010203 is the default nic as part of the mac.
-   * Best to set the hosname before calling setIP().
-   * @url http://www.espruino.com/Reference#l_Ethernet_setHostname
-   */
-  setHostname: (hostname: any, callback: any) => boolean;
-
-  /**
-   * Returns the hostname
-   * @url http://www.espruino.com/Reference#l_Ethernet_getHostname
-   */
-  getHostname: (callback: any) => any;
-
-  /**
-   * Get the current status of the ethernet device
-   * @url http://www.espruino.com/Reference#l_Ethernet_getStatus
-   */
-  getStatus: (options: any) => any;
+  getInfo: () => any;
 
 }
-
-/**
- * This class helps to convert URLs into Objects of information ready for http.request/get
- * @url http://www.espruino.com/Reference#url
- */
-declare const url: {
-  /**
-   * A utility function to split a URL into parts
-   * This is useful in web servers for instance when handling a request.
-   * For instance `url.parse("/a?b=c&d=e",true)` returns `{"method":"GET","host":"","path":"/a?b=c&d=e","pathname":"/a","search":"?b=c&d=e","port":80,"query":{"b":"c","d":"e"}}`
-   * @url http://www.espruino.com/Reference#l_url_parse
-   */
-  parse: (urlStr: any, parseQuery: boolean) => any;
-
-};
-
-/**
- * This library allows you to create TCPIP servers and clients
- * In order to use this, you will need an extra module to get network connectivity.
- * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/net.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
- * @url http://www.espruino.com/Reference#l_net_undefined
- */
-declare const net: {
-  /**
-   * Create a Server
-   * When a request to the server is made, the callback is called. In the callback you can use the methods on the connection to send data. You can also add `connection.on('data',function() { ... })` to listen for received data
-   * @url http://www.espruino.com/Reference#l_net_createServer
-   */
-  createServer: (callback: any) => Server;
-
-  /**
-   * Create a TCP socket connection
-   * @url http://www.espruino.com/Reference#l_net_connect
-   */
-  connect: (options: any, callback: any) => Socket;
-
-};
-
-/**
- * The socket server created by `require('net').createServer`
- * @url http://www.espruino.com/Reference#Server
- */
-declare function Server(): void;
-
-type Server = {
-  /**
-   * Start listening for new connections on the given port
-   * @url http://www.espruino.com/Reference#l_Server_listen
-   */
-  listen: (port: number) => any;
-
-  /**
-   * Stop listening for new connections
-   * @url http://www.espruino.com/Reference#l_Server_close
-   */
-  close: () => void;
-
-}
-
-/**
- * An actual socket connection - allowing transmit/receive of TCP data
- * @url http://www.espruino.com/Reference#Socket
- */
-declare function Socket(): void;
-
-type Socket = {
-  /**
-   * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
-   * @url http://www.espruino.com/Reference#l_Socket_available
-   */
-  available: () => number;
-
-  /**
-   * Return a string containing characters that have been received
-   * @url http://www.espruino.com/Reference#l_Socket_read
-   */
-  read: (chars: number) => any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   * @url http://www.espruino.com/Reference#l_Socket_pipe
-   */
-  pipe: (destination: any, options: any) => void;
-
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method.
-   * If you wish to send binary data then you need to convert that data directly to a
-   * String. This can be done with `String.fromCharCode`, however it's often easier
-   * and faster to use the Espruino-specific `E.toString`, which will read its arguments
-   * as an array of bytes and convert that to a String:
-   * <pre>`<span class="hljs-attribute">socket</span>.write(E.toString([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>]));
-   * `</pre>
-   * If you need to send something other than bytes, you can use 'Typed Arrays', or
-   * even `DataView`:
-   * <pre>`var d = <span class="hljs-keyword">new</span> <span class="hljs-constructor">DataView(<span class="hljs-params">new</span> ArrayBuffer(8)</span>); <span class="hljs-comment">// 8 byte array buffer</span>
-   * d.set<span class="hljs-constructor">Float32(0, 765.3532564)</span>; <span class="hljs-comment">// write float at bytes 0-3</span>
-   * d.set<span class="hljs-constructor">Int8(4, 42)</span>; <span class="hljs-comment">// write int8 at byte 4</span>
-   * socket.write(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span><span class="hljs-keyword">to</span><span class="hljs-constructor">String(<span class="hljs-params">d</span>.<span class="hljs-params">buffer</span>)</span>)
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_Socket_write
-   */
-  write: (data: any) => boolean;
-
-  /**
-   * Close this socket - optional data to append as an argument.
-   * See `Socket.write` for more information about the data argument
-   * @url http://www.espruino.com/Reference#l_Socket_end
-   */
-  end: (data: any) => void;
-
-}
-
-/**
- * This library allows you to create UDP/DATAGRAM servers and clients
- * In order to use this, you will need an extra module to get network connectivity.
- * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/dgram.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
- * @url http://www.espruino.com/Reference#l_dgram_undefined
- */
-declare const dgram: {
-  /**
-   * Create a UDP socket
-   * @url http://www.espruino.com/Reference#l_dgram_createSocket
-   */
-  createSocket: (type: any, callback: any) => dgramSocket;
-
-};
-
-/**
- * An actual socket connection - allowing transmit/receive of TCP data
- * @url http://www.espruino.com/Reference#dgramSocket
- */
-declare function dgramSocket(): void;
-
-type dgramSocket = {
-  /**
-   * @url http://www.espruino.com/Reference#l_dgramSocket_send
-   */
-  send: (buffer: any, offset: any, length: any, args: any) => void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_dgramSocket_bind
-   */
-  bind: (port: number, callback: any) => any;
-
-  /**
-   * Close the socket
-   * @url http://www.espruino.com/Reference#l_dgramSocket_close
-   */
-  close: () => void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_dgramSocket_addMembership
-   */
-  addMembership: (group: any, ip: any) => void;
-
-}
-
-/**
- * This library allows you to create TCPIP servers and clients using TLS encryption
- * In order to use this, you will need an extra module to get network connectivity.
- * This is designed to be a cut-down version of the [Internet](http://nodejs.org/api/tls.html">node.js library</a>. Please see the <a href="/Internet) page for more information on how to use it.
- * @url http://www.espruino.com/Reference#l_tls_undefined
- */
-declare const tls: {
-  /**
-   * Create a socket connection using TLS
-   * Options can have `ca`, `key` and `cert` fields, which should be the decoded content of the certificate.
-   * <pre>`var <span class="hljs-keyword">options</span> = url.parse(<span class="hljs-string">"localhost:1234"</span>);
-   * <span class="hljs-keyword">options</span>.<span class="hljs-keyword">key</span> = atob(<span class="hljs-string">"MIIJKQ ... OZs08C"</span>);
-   * <span class="hljs-keyword">options</span>.cert = atob(<span class="hljs-string">"MIIFi ... Uf93rN+"</span>);
-   * <span class="hljs-keyword">options</span>.ca = atob(<span class="hljs-string">"MIIFgDCC ... GosQML4sc="</span>);
-   * require(<span class="hljs-string">"tls"</span>).connect(<span class="hljs-keyword">options</span>, ... );
-   * `</pre>
-   * If you have the certificates as `.pem` files, you need to load these files, take the information between the lines beginning with `----`, remove the newlines from it so you have raw base64, and then feed it into `atob` as above.
-   * You can also:
-   *
-   * - Just specify the filename (<=100 characters) and it will be loaded and parsed if you have an SD card connected. For instance `options.key = "key.pem";`
-   * - Specify a function, which will be called to retrieve the data.  For instance `options.key = function() { eeprom.load_my_info(); };
-   *
-   * For more information about generating and using certificates, see:
-   * [https://engineering.circle.com/https-authorized-certs-with-node-js/](https://engineering.circle.com/https-authorized-certs-with-node-js/)
-   * (You'll need to use 2048 bit certificates as opposed to 4096 bit shown above)
-   * @url http://www.espruino.com/Reference#l_tls_connect
-   */
-  connect: (options: any, callback: any) => Socket;
-
-};
-
-/**
- * Simple library for compression/decompression using [LZSS](https://github.com/atomicobject/heatshrink">heatshrink</a>, an <a href="https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) compression tool.
- * Espruino uses heatshrink internally to compress RAM down to fit in Flash memory when `save()` is used. This just exposes that functionality.
- * Functions here take and return buffers of data. There is no support for streaming, so both the compressed and decompressed data must be able to fit in memory at the same time.
- * @url http://www.espruino.com/Reference#l_heatshrink_undefined
- */
-declare const heatshrink: {
-  /**
-   * @url http://www.espruino.com/Reference#l_heatshrink_compress
-   */
-  compress: (data: any) => ArrayBuffer;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_heatshrink_decompress
-   */
-  decompress: (data: any) => ArrayBuffer;
-
-};
-
-/**
- * Creates a Queue Object
- * @url http://www.espruino.com/Reference#l_Queue_Queue
- */
-declare function Queue(queueName: any): any;
-
-type Queue = {
-  /**
-   * reads one character from queue, if available
-   * @url http://www.espruino.com/Reference#l_Queue_read
-   */
-  read: () => void;
-
-  /**
-   * Writes one character to queue
-   * @url http://www.espruino.com/Reference#l_Queue_writeChar
-   */
-  writeChar: (char: any) => void;
-
-  /**
-   * logs list of queues
-   * @url http://www.espruino.com/Reference#l_Queue_log
-   */
-  log: () => void;
-
-}
-
-/**
- * Creates a Task Object
- * @url http://www.espruino.com/Reference#l_Task_Task
- */
-declare function Task(taskName: any): any;
-
-type Task = {
-  /**
-   * Suspend task, be careful not to suspend Espruino task itself
-   * @url http://www.espruino.com/Reference#l_Task_suspend
-   */
-  suspend: () => void;
-
-  /**
-   * Resumes a suspended task
-   * @url http://www.espruino.com/Reference#l_Task_resume
-   */
-  resume: () => void;
-
-  /**
-   * returns name of actual task
-   * @url http://www.espruino.com/Reference#l_Task_getCurrent
-   */
-  getCurrent: () => any;
-
-  /**
-   * Sends a binary notify to task
-   * @url http://www.espruino.com/Reference#l_Task_notify
-   */
-  notify: () => void;
-
-  /**
-   * logs list of tasks
-   * @url http://www.espruino.com/Reference#l_Task_log
-   */
-  log: () => void;
-
-}
-
-/**
- * Creates a Timer Object
- * @url http://www.espruino.com/Reference#l_Timer_Timer
- */
-declare function Timer(timerName: any, group: number, index: number, isrIndex: number): any;
-
-type Timer = {
-  /**
-   * Starts a timer
-   * @url http://www.espruino.com/Reference#l_Timer_start
-   */
-  start: (duration: number) => void;
-
-  /**
-   * Reschedules a timer, needs to be started at least once
-   * @url http://www.espruino.com/Reference#l_Timer_reschedule
-   */
-  reschedule: (duration: number) => void;
-
-  /**
-   * logs list of timers
-   * @url http://www.espruino.com/Reference#l_Timer_log
-   */
-  log: () => void;
-
-}
-
-/**
- * Class containing utility functions for the [ESP32](http://www.espruino.com/ESP32)
- * @url http://www.espruino.com/Reference#ESP32
- */
-declare const ESP32: {
-  /**
-   * @url http://www.espruino.com/Reference#l_ESP32_setAtten
-   */
-  setAtten: (pin: Pin, atten: number) => void;
-
-  /**
-   * Perform a hardware reset/reboot of the ESP32.
-   * @url http://www.espruino.com/Reference#l_ESP32_reboot
-   */
-  reboot: () => void;
-
-  /**
-   * Put device in deepsleep state for "us" microseconds.
-   * @url http://www.espruino.com/Reference#l_ESP32_deepSleep
-   */
-  deepSleep: (us: number) => void;
-
-  /**
-   * Returns an object that contains details about the state of the ESP32 with the following fields:
-   *
-   * - `sdkVersion`   - Version of the SDK.
-   * - `freeHeap`     - Amount of free heap in bytes.
-   * - `BLE`			 - Status of BLE, enabled if true.
-   * - `Wifi`		 - Status of Wifi, enabled if true.
-   * - `minHeap`      - Minimum heap, calculated by heap_caps_get_minimum_free_size
-   *
-   * @url http://www.espruino.com/Reference#l_ESP32_getState
-   */
-  getState: () => any;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_ESP32_setBLE_Debug
-   */
-  setBLE_Debug: (level: number) => void;
-
-  /**
-   * Switches Bluetooth off/on, removes saved code from Flash, resets the board,
-   * and on restart creates jsVars depending on available heap (actual additional 1800)
-   * @url http://www.espruino.com/Reference#l_ESP32_enableBLE
-   */
-  enableBLE: (enable: boolean) => void;
-
-  /**
-   * Switches Wifi off/on, removes saved code from Flash, resets the board,
-   * and on restart creates jsVars depending on available heap (actual additional 3900)
-   * @url http://www.espruino.com/Reference#l_ESP32_enableWifi
-   */
-  enableWifi: (enable: boolean) => void;
-
-};
-
-/**
- * This is the built-in class for the Arduino-style pin namings on ST Nucleo boards
- * @url http://www.espruino.com/Reference#Nucleo
- */
-declare const Nucleo: {
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A0
-   */
-  A0: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A1
-   */
-  A1: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A2
-   */
-  A2: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A3
-   */
-  A3: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A4
-   */
-  A4: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_A5
-   */
-  A5: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D0
-   */
-  D0: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D1
-   */
-  D1: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D2
-   */
-  D2: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D3
-   */
-  D3: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D4
-   */
-  D4: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D5
-   */
-  D5: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D6
-   */
-  D6: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D7
-   */
-  D7: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D8
-   */
-  D8: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D9
-   */
-  D9: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D10
-   */
-  D10: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D11
-   */
-  D11: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D12
-   */
-  D12: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D13
-   */
-  D13: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D14
-   */
-  D14: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Nucleo_D15
-   */
-  D15: Pin
-
-};
-
-/**
- * This is a built-in class to allow you to use the ESP8266 NodeMCU boards's pin namings to access pins. It is only available on ESP8266-based boards.
- * @url http://www.espruino.com/Reference#NodeMCU
- */
-declare const NodeMCU: {
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_A0
-   */
-  A0: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D0
-   */
-  D0: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D1
-   */
-  D1: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D2
-   */
-  D2: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D3
-   */
-  D3: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D4
-   */
-  D4: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D5
-   */
-  D5: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D6
-   */
-  D6: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D7
-   */
-  D7: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D8
-   */
-  D8: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D9
-   */
-  D9: Pin
-
-  /**
-   * @url http://www.espruino.com/Reference#l_NodeMCU_D10
-   */
-  D10: Pin
-
-};
 
 /**
  * Create a software Serial port. This has limited functionality (only low baud rates), but it can work on any pins.
@@ -4805,176 +4264,6 @@ declare const LoopbackB: Serial;
 declare const Telnet: any;
 
 /**
- * This is the built-in JavaScript class that is the prototype for:
- *
- * - [Uint8Array](https://espruino.com//Reference#Uint8Array)
- * - [UintClamped8Array](https://espruino.com//Reference#UintClamped8Array)
- * - [Int8Array](https://espruino.com//Reference#Int8Array)
- * - [Uint16Array](https://espruino.com//Reference#Uint16Array)
- * - [Int16Array](https://espruino.com//Reference#Int16Array)
- * - [Uint24Array](https://espruino.com//Reference#Uint24Array) (Espruino-specific - not standard JS)
- * - [Uint32Array](https://espruino.com//Reference#Uint32Array)
- * - [Int32Array](https://espruino.com//Reference#Int32Array)
- * - [Float32Array](https://espruino.com//Reference#Float32Array)
- * - [Float64Array](https://espruino.com//Reference#Float64Array)
- *
- * If you want to access arrays of differing types of data
- * you may also find `DataView` useful.
- * @url http://www.espruino.com/Reference#ArrayBufferView
- */
-declare function EspruinoArrayBufferView(): void;
-
-type EspruinoArrayBufferView = {
-  /**
-   * The buffer this view references
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_buffer
-   */
-  buffer: any
-
-  /**
-   * The length, in bytes, of the `ArrayBufferView`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteLength
-   */
-  byteLength: number
-
-  /**
-   * The offset, in bytes, to the first byte of the view within the backing `ArrayBuffer`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteOffset
-   */
-  byteOffset: number
-
-  /**
-   * Copy the contents of `array` into this one, mapping `this[x+offset]=array[x];`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_set
-   */
-  set: (arr: any, offset: number) => void;
-
-  /**
-   * Return an array which is made from the following: `A.map(function) = [function(A[0]), function(A[1]), ...]`
-   *  **Note:** This returns an `ArrayBuffer` of the same type it was called on. To get an `Array`, use `Array.map`, eg. `[].map.call(myArray, x=>x+1)`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_map
-   */
-  map: (fn: any, thisArg: any) => EspruinoArrayBufferView;
-
-  /**
-   * Returns a smaller part of this array which references the same data (it doesn't copy it).
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_subarray
-   */
-  subarray: (begin: number, end: any) => EspruinoArrayBufferView;
-
-  /**
-   * Return the index of the value in the array, or `-1`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_indexOf
-   */
-  indexOf: (value: any, startIndex: number) => any;
-
-  /**
-   * Return `true` if the array includes the value, `false` otherwise
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_includes
-   */
-  includes: (value: any, startIndex: number) => boolean;
-
-  /**
-   * Join all elements of this array together into one string, using 'separator' between them. eg. `[1,2,3].join(' ')=='1 2 3'`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_join
-   */
-  join: (separator: any) => any;
-
-  /**
-   * Do an in-place quicksort of the array
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_sort
-   */
-  sort: (variable: any) => EspruinoArrayBufferView;
-
-  /**
-   * Executes a provided function once per array element.
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_forEach
-   */
-  forEach: (fn: any, thisArg: any) => void;
-
-  /**
-   * Execute `previousValue=initialValue` and then `previousValue = callback(previousValue, currentValue, index, array)` for each element in the array, and finally return previousValue.
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_reduce
-   */
-  reduce: (callback: any, initialValue: any) => any;
-
-  /**
-   * Fill this array with the given value, for every index `>= start` and `< end`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_fill
-   */
-  fill: (value: any, start: number, end: any) => EspruinoArrayBufferView;
-
-  /**
-   * Return an array which contains only those elements for which the callback function returns 'true'
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_filter
-   */
-  filter: (fn: any, thisArg: any) => any;
-
-  /**
-   * Return the array element where `function` returns `true`, or `undefined` if it doesn't returns `true` for any element.
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_find
-   */
-  find: (fn: any) => any;
-
-  /**
-   * Return the array element's index where `function` returns `true`, or `-1` if it doesn't returns `true` for any element.
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_findIndex
-   */
-  findIndex: (fn: any) => any;
-
-  /**
-   * Reverse the contents of this `ArrayBufferView` in-place
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_reverse
-   */
-  reverse: () => EspruinoArrayBufferView;
-
-  /**
-   * Return a copy of a portion of this array (in a new array).
-   *  **Note:** This currently returns a normal `Array`, not an `ArrayBuffer`
-   * @url http://www.espruino.com/Reference#l_ArrayBufferView_slice
-   */
-  slice: (start: number, end: any) => any[];
-
-}
-
-/**
- * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
- * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
- */
-declare function Uint24Array(arr: any, byteOffset: number, length: number): EspruinoArrayBufferView;
-
-type Uint24Array = {
-}
-
-/**
- * Create a waveform class. This allows high speed input and output of waveforms. It has an internal variable called `buffer` (as well as `buffer2` when double-buffered - see `options` below) which contains the data to input/output.
- * When double-buffered, a 'buffer' event will be emitted each time a buffer is finished with (the argument is that buffer). When the recording stops, a 'finish' event will be emitted (with the first argument as the buffer).
- * @url http://www.espruino.com/Reference#l_Waveform_Waveform
- */
-declare function Waveform(samples: number, options: any): any;
-
-type Waveform = {
-  /**
-   * Will start outputting the waveform on the given pin - the pin must have previously been initialised with analogWrite. If not repeating, it'll emit a `finish` event when it is done.
-   * @url http://www.espruino.com/Reference#l_Waveform_startOutput
-   */
-  startOutput: (output: Pin, freq: number, options: any) => void;
-
-  /**
-   * Will start inputting the waveform on the given pin that supports analog. If not repeating, it'll emit a `finish` event when it is done.
-   * @url http://www.espruino.com/Reference#l_Waveform_startInput
-   */
-  startInput: (output: Pin, freq: number, options: any) => void;
-
-  /**
-   * Stop a waveform that is currently outputting
-   * @url http://www.espruino.com/Reference#l_Waveform_stop
-   */
-  stop: () => void;
-
-}
-
-/**
  * This module allows you to read and write part of the nonvolatile flash
  * memory of your device using a filesystem-like API.
  * Also see the `Flash` library, which provides a low level, more dangerous way
@@ -4993,217 +4282,6 @@ type Waveform = {
  * is 28 characters. However in 2v04 and earlier the max length is 8.
  * @url http://www.espruino.com/Reference#l_Storage_undefined
  */
-declare const EspruinoStorage: {
-  /**
-   * Erase the flash storage area. This will remove all files
-   * created with `require("Storage").write(...)` as well
-   * as any code saved with `save()` or `E.setBootCode()`.
-   * @url http://www.espruino.com/Reference#l_Storage_eraseAll
-   */
-  eraseAll: () => void;
-
-  /**
-   * Erase a single file from the flash storage area.
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_erase
-   */
-  erase: (name: any) => void;
-
-  /**
-   * Read a file from the flash storage area that has
-   * been written with `require("Storage").write(...)`.
-   * This function returns a memory-mapped String that points to the actual
-   * memory area in read-only memory, so it won't use up RAM.
-   * As such you can check if a file exists efficiently using `require("Storage").read(filename)!==undefined`.
-   * If you evaluate this string with `eval`, any functions
-   * contained in the String will keep their code stored
-   * in flash memory.
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_read
-   */
-  read: (name: any, offset: number, length: number) => any;
-
-  /**
-   * Read a file from the flash storage area that has
-   * been written with `require("Storage").write(...)`,
-   * and parse JSON in it into a JavaScript object.
-   * This is identical to `JSON.parse(require("Storage").read(...))`.
-   * It will throw an exception if the data in the file is not
-   * valid JSON.
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_readJSON
-   */
-  readJSON: (name: any, noExceptions: boolean) => any;
-
-  /**
-   * Read a file from the flash storage area that has
-   * been written with `require("Storage").write(...)`,
-   * and return the raw binary data as an ArrayBuffer.
-   * This can be used:
-   *
-   * - In a `DataView` with `new DataView(require("Storage").readArrayBuffer("x"))`
-   * - In a `Uint8Array/Float32Array/etc` with `new Uint8Array(require("Storage").readArrayBuffer("x"))`
-   *
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_readArrayBuffer
-   */
-  readArrayBuffer: (name: any) => any;
-
-  /**
-   * Write/create a file in the flash storage area. This is
-   * nonvolatile and will not disappear when the device resets
-   * or power is lost.
-   * Simply write `require("Storage").write("MyFile", "Some data")` to write
-   * a new file, and `require("Storage").read("MyFile")` to read it.
-   * If you supply:
-   *
-   * - A String, it will be written as-is
-   * - An array, will be written as a byte array (but read back as a String)
-   * - An object, it will automatically be converted to
-   * a JSON string before being written.
-   *
-   * **Note:** If an array is supplied it will not be converted to JSON.
-   * To be explicit about the conversion you can use `Storage.writeJSON`
-   * You may also create a file and then populate data later **as long as you
-   * don't try and overwrite data that already exists**. For instance:
-   * <pre>`var f = require(<span class="hljs-string">"Storage"</span>);
-   * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">"Hello"</span>,<span class="hljs-number">0</span>,<span class="hljs-number">14</span>);
-   * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">" "</span>,<span class="hljs-number">5</span>);
-   * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">"World!!!"</span>,<span class="hljs-number">6</span>);
-   * <span class="hljs-keyword">print</span>(f.<span class="hljs-keyword">read</span>(<span class="hljs-string">"a"</span>)); <span class="hljs-comment">// "Hello World!!!"</span>
-   * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">" "</span>,<span class="hljs-number">0</span>); <span class="hljs-comment">// Writing to location 0 again will cause the file to be re-written</span>
-   * <span class="hljs-keyword">print</span>(f.<span class="hljs-keyword">read</span>(<span class="hljs-string">"a"</span>)); <span class="hljs-comment">// " "</span>
-   * `</pre>
-   * This can be useful if you've got more data to write than you
-   * have RAM available - for instance the Web IDE uses this method
-   * to write large files into onboard storage.
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_write
-   */
-  write: (name: any, data: any, offset: number, size: number) => boolean;
-
-  /**
-   * Write/create a file in the flash storage area. This is
-   * nonvolatile and will not disappear when the device resets
-   * or power is lost.
-   * Simply write `require("Storage").writeJSON("MyFile", [1,2,3])` to write
-   * a new file, and `require("Storage").readJSON("MyFile")` to read it.
-   * This is equivalent to: `require("Storage").write(name, JSON.stringify(data))`
-   * **Note:** This function should be used with normal files, and not
-   * `StorageFile`s created with `require("Storage").open(filename, ...)`
-   * @url http://www.espruino.com/Reference#l_Storage_writeJSON
-   */
-  writeJSON: (name: any, data: any) => boolean;
-
-  /**
-   * List all files in the flash storage area. An array of Strings is returned.
-   * By default this lists files created by `StorageFile` (`require("Storage").open`)
-   * which have a file number (`"\1"`/`"\2"`/etc) appended to them.
-   * <pre>`<span class="hljs-comment">// All files</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>()
-   * <span class="hljs-comment">// Files ending in &#x27;.js&#x27;</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(/\.js$/)
-   * <span class="hljs-comment">// All Storage Files</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(undefined, {sf:true})
-   * <span class="hljs-comment">// All normal files (eg created with Storage.write)</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(undefined, {sf:false})
-   * `</pre>
-   * **Note:** This will output system files (eg. saved code) as well as
-   * files that you may have written.
-   * @url http://www.espruino.com/Reference#l_Storage_list
-   */
-  list: (regex: any, filter: any) => any;
-
-  /**
-   * List all files in the flash storage area matching the specfied regex (ignores StorageFiles),
-   * and then hash their filenames *and* file locations.
-   * Identical files may have different hashes (eg. if Storage is compacted and the file moves) but
-   * the changes of different files having the same hash are extremely small.
-   * <pre>`<span class="hljs-comment">// Hash files</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.hash</span>()
-   * <span class="hljs-comment">// Files ending in &#x27;.boot.js&#x27;</span>
-   * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.hash</span>(/\.boot\.js$/)
-   * `</pre>
-   * **Note:** This function is used by Bangle.js as a way to cache files.
-   * For instance the bootloader will add all `.boot.js` files together into
-   * a single `.boot0` file, but it needs to know quickly whether anything has
-   * changed.
-   * @url http://www.espruino.com/Reference#l_Storage_hash
-   */
-  hash: (regex: any) => number;
-
-  /**
-   * The Flash Storage system is journaling. To make the most of the limited
-   * write cycles of Flash memory, Espruino marks deleted/replaced files as
-   * garbage and moves on to a fresh part of flash memory. Espruino only
-   * fully erases those files when it is running low on flash, or when
-   * `compact` is called.
-   * `compact` may fail if there isn't enough RAM free on the stack to
-   * use as swap space, however in this case it will not lose data.
-   * **Note:** `compact` rearranges the contents of memory. If code is
-   * referencing that memory (eg. functions that have their code stored in flash)
-   * then they may become garbled when compaction happens. To avoid this,
-   * call `eraseFiles` before uploading data that you intend to reference to
-   * ensure that uploaded files are right at the start of flash and cannot be
-   * compacted further.
-   * @url http://www.espruino.com/Reference#l_Storage_compact
-   */
-  compact: () => void;
-
-  /**
-   * This writes information about all blocks in flash
-   * memory to the console - and is only useful for debugging
-   * flash storage.
-   * @url http://www.espruino.com/Reference#l_Storage_debug
-   */
-  debug: () => void;
-
-  /**
-   * Return the amount of free bytes available in
-   * Storage. Due to fragmentation there may be more
-   * bytes available, but this represents the maximum
-   * size of file that can be written.
-   * @url http://www.espruino.com/Reference#l_Storage_getFree
-   */
-  getFree: () => number;
-
-  /**
-   * Returns:
-   * <pre>`{
-   *   totalBytes <span class="hljs-regexp">//</span> Amount of bytes <span class="hljs-keyword">in</span> filesystem
-   *   freeBytes <span class="hljs-regexp">//</span> How many bytes are left at the end of storage?
-   *   fileBytes <span class="hljs-regexp">//</span> How many bytes of allocated files <span class="hljs-keyword">do</span> we have?
-   *   fileCount <span class="hljs-regexp">//</span> How many allocated files <span class="hljs-keyword">do</span> we have?
-   *   trashBytes <span class="hljs-regexp">//</span> How many bytes of trash files <span class="hljs-keyword">do</span> we have?
-   *   trashCount <span class="hljs-regexp">//</span> How many trash files <span class="hljs-keyword">do</span> we have?
-   * }
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_Storage_getStats
-   */
-  getStats: () => any;
-
-  /**
-   * Writes a lookup table for files into Bangle.js's storage. This allows any file stored
-   * up to that point to be accessed quickly.
-   * @url http://www.espruino.com/Reference#l_Storage_optimise
-   */
-  optimise: () => void;
-
-  /**
-   * Open a file in the Storage area. This can be used for appending data
-   * (normal read/write operations only write the entire file).
-   * Please see `StorageFile` for more information (and examples).
-   * **Note:** These files write through immediately - they do not need closing.
-   * @url http://www.espruino.com/Reference#l_Storage_open
-   */
-  open: (name: any, mode: any) => StorageFile;
-
-};
 
 /**
  * These objects are created from `require("Storage").open`
@@ -5287,110 +4365,57 @@ type StorageFile = {
 }
 
 /**
+ * Built-in class that caches the modules used by the `require` command
+ * @url http://www.espruino.com/Reference#Modules
+ */
+declare const Modules: {
+  /**
+   * Return an array of module names that have been cached
+   * @url http://www.espruino.com/Reference#l_Modules_getCached
+   */
+  getCached: () => any;
+
+  /**
+   * Remove the given module from the list of cached modules
+   * @url http://www.espruino.com/Reference#l_Modules_removeCached
+   */
+  removeCached: (id: any) => void;
+
+  /**
+   * Remove all cached modules
+   * @url http://www.espruino.com/Reference#l_Modules_removeAllCached
+   */
+  removeAllCached: () => void;
+
+  /**
+   * Add the given module to the cache
+   * @url http://www.espruino.com/Reference#l_Modules_addCached
+   */
+  addCached: (id: any, sourcecode: any) => void;
+
+};
+
+/**
+ * This module allows you to read and write the nonvolatile flash memory of your device.
+ * Also see the `Storage` library, which provides a safer file-like
+ * interface to nonvolatile storage.
+ * It should be used with extreme caution, as it is easy to overwrite parts of Flash
+ * memory belonging to Espruino or even its bootloader. If you damage the bootloader
+ * then you may need external hardware such as a USB-TTL converter to restore it. For
+ * more information on restoring the bootloader see `Advanced Reflashing` in your
+ * board's reference pages.
+ * To see which areas of memory you can and can't overwrite, look at the values
+ * reported by `process.memory()`.
+ * **Note:** On Nordic platforms there are checks in place to help you avoid
+ * 'bricking' your device be damaging the bootloader. You can disable these with `E.setFlags({unsafeFlash:1})`
+ * @url http://www.espruino.com/Reference#l_Flash_undefined
+ */
+
+/**
  * This is the built-in JavaScript class for Espruino utility functions.
  * @url http://www.espruino.com/Reference#E
  */
 declare const E: {
-  /**
-   * Display a menu on the screen, and set up the buttons to navigate through it.
-   * Supply an object containing menu items. When an item is selected, the
-   * function it references will be executed. For example:
-   * <pre>`<span class="hljs-keyword">var</span> <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;
-   * <span class="hljs-keyword">var</span> <span class="hljs-built_in">number</span> = <span class="hljs-number">50</span>;
-   * <span class="hljs-comment">// First menu</span>
-   * <span class="hljs-keyword">var</span> mainmenu = {
-   *   <span class="hljs-string">""</span> : { <span class="hljs-string">"title"</span> : <span class="hljs-string">"-- Main Menu --"</span> },
-   *   <span class="hljs-string">"Backlight On"</span> : <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { LED1.set(); },
-   *   <span class="hljs-string">"Backlight Off"</span> : <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { LED1.reset(); },
-   *   <span class="hljs-string">"Submenu"</span> : <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { E.showMenu(submenu); },
-   *   <span class="hljs-string">"A Boolean"</span> : {
-   *     <span class="hljs-attr">value</span> : <span class="hljs-built_in">boolean</span>,
-   *     <span class="hljs-attr">format</span> : <span class="hljs-function"><span class="hljs-params">v</span> =></span> v?<span class="hljs-string">"On"</span>:<span class="hljs-string">"Off"</span>,
-   *     <span class="hljs-attr">onchange</span> : <span class="hljs-function"><span class="hljs-params">v</span> =></span> { <span class="hljs-built_in">boolean</span>=v; }
-   *   },
-   *   <span class="hljs-string">"A Number"</span> : {
-   *     <span class="hljs-attr">value</span> : <span class="hljs-built_in">number</span>,
-   *     <span class="hljs-attr">min</span>:<span class="hljs-number">0</span>,<span class="hljs-attr">max</span>:<span class="hljs-number">100</span>,<span class="hljs-attr">step</span>:<span class="hljs-number">10</span>,
-   *     <span class="hljs-attr">onchange</span> : <span class="hljs-function"><span class="hljs-params">v</span> =></span> { <span class="hljs-built_in">number</span>=v; }
-   *   },
-   *   <span class="hljs-string">"Exit"</span> : <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { E.showMenu(); }, <span class="hljs-comment">// remove the menu</span>
-   * };
-   * <span class="hljs-comment">// Submenu</span>
-   * <span class="hljs-keyword">var</span> submenu = {
-   *   <span class="hljs-string">""</span> : { <span class="hljs-attr">title</span> : <span class="hljs-string">"-- SubMenu --"</span>,
-   *          <span class="hljs-attr">back</span> : <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { E.showMenu(mainmenu); } },
-   *   <span class="hljs-string">"One"</span> : <span class="hljs-literal">undefined</span>, <span class="hljs-comment">// do nothing</span>
-   *   <span class="hljs-string">"Two"</span> : <span class="hljs-literal">undefined</span> <span class="hljs-comment">// do nothing</span>
-   * };
-   * <span class="hljs-comment">// Actually display the menu</span>
-   * E.showMenu(mainmenu);
-   * `</pre>
-   * The menu will stay onscreen and active until explicitly removed,
-   * which you can do by calling `E.showMenu()` without arguments.
-   * See [http://www.espruino.com/graphical_menu](http://www.espruino.com/graphical_menu) for more detailed information.
-   * @url http://www.espruino.com/Reference#l_E_showMenu
-   */
-  showMenu: (menu: any) => any;
-
-  /**
-   * A utility function for displaying a full screen message on the screen.
-   * Draws to the screen and returns immediately.
-   * <pre>`E.showMessage(<span class="hljs-string">"These are<span class="hljs-subst">\n</span>Lots of<span class="hljs-subst">\n</span>Lines"</span>,<span class="hljs-string">"My Title"</span>)
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_E_showMessage
-   */
-  showMessage: (message: any, title: any) => void;
-
-  /**
-   * Displays a full screen prompt on the screen, with the buttons
-   * requested (or `Yes` and `No` for defaults).
-   * When the button is pressed the promise is resolved with the
-   * requested values (for the `Yes` and `No` defaults, `true` and `false`
-   * are returned).
-   * <pre>`E.showPrompt(<span class="hljs-string">"Do you like fish?"</span>).the<span class="hljs-meta">n</span>(functio<span class="hljs-meta">n</span>(v) {
-   *   <span class="hljs-keyword">if</span> (v) pr<span class="hljs-meta">int</span>(<span class="hljs-string">"&#x27;Yes&#x27; chosen"</span>);
-   *   <span class="hljs-keyword">else</span> pr<span class="hljs-meta">int</span>(<span class="hljs-string">"&#x27;No&#x27; chosen"</span>);
-   * });
-   * // <span class="hljs-keyword">Or</span>
-   * E.showPrompt(<span class="hljs-string">"How many fish\ndo you like?"</span>,{
-   *   <span class="hljs-keyword">title</span>:<span class="hljs-string">"Fish"</span>,
-   *   buttons : {<span class="hljs-string">"One"</span>:1,<span class="hljs-string">"Two"</span>:2,<span class="hljs-string">"Three"</span>:3}
-   * }).the<span class="hljs-meta">n</span>(functio<span class="hljs-meta">n</span>(v) {
-   *   pr<span class="hljs-meta">int</span>(<span class="hljs-string">"You like "</span>+v+<span class="hljs-string">" fish"</span>);
-   * });
-   * `</pre>
-   * To remove the prompt, call `E.showPrompt()` with no arguments.
-   * The second `options` argument can contain:
-   * <pre>`{
-   *   <span class="hljs-built_in">title</span>: <span class="hljs-string">"Hello"</span>,                      <span class="hljs-comment">// optional Title</span>
-   *   buttons : {<span class="hljs-string">"Ok"</span>:<span class="hljs-literal">true</span>,<span class="hljs-string">"Cancel"</span>:<span class="hljs-literal">false</span>} <span class="hljs-comment">// list of button text & return value</span>
-   * }
-   * `</pre>
-   * @url http://www.espruino.com/Reference#l_E_showPrompt
-   */
-  showPrompt: (message: any, options: any) => any;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_E_showScroller
-   */
-  showScroller: () => void;
-
-  /**
-   * Displays a full screen prompt on the screen, with a single 'Ok' button.
-   * When the button is pressed the promise is resolved.
-   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span>show<span class="hljs-constructor">Alert(<span class="hljs-string">"Hello"</span>)</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {
-   *   print(<span class="hljs-string">"Ok pressed"</span>);
-   * });
-   * <span class="hljs-comment">// or</span>
-   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span>show<span class="hljs-constructor">Alert(<span class="hljs-string">"These are\nLots of\nLines"</span>,<span class="hljs-string">"My Title"</span>)</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {
-   *   print(<span class="hljs-string">"Ok pressed"</span>);
-   * });
-   * `</pre>
-   * To remove the window, call `E.showAlert()` with no arguments.
-   * @url http://www.espruino.com/Reference#l_E_showAlert
-   */
-  showAlert: (message: any, options: any) => any;
-
   /**
    * Setup the filesystem so that subsequent calls to `E.openFile` and `require('fs').*` will use an SD card on the supplied SPI device and pin.
    * It can even work using software SPI - for instance:
@@ -5444,6 +4469,52 @@ declare const E: {
    * @url http://www.espruino.com/Reference#l_E_flashFatFS
    */
   flashFatFS: (options: any) => boolean;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_E_showMenu
+   */
+  showMenu: () => void;
+
+  /**
+   * A utility function for displaying a full screen message on the screen.
+   * Draws to the screen and returns immediately.
+   * <pre>`E.showMessage(<span class="hljs-string">"These are<span class="hljs-subst">\n</span>Lots of<span class="hljs-subst">\n</span>Lines"</span>,<span class="hljs-string">"My Title"</span>)
+   * `</pre>
+   * or to display an image as well as text:
+   * <pre>`E<span class="hljs-selector-class">.showMessage</span>(<span class="hljs-string">"Lots of text will wrap automatically"</span>,{
+   *   title:<span class="hljs-string">"Warning"</span>,
+   *   <span class="hljs-selector-tag">img</span>:<span class="hljs-built_in">atob</span>(<span class="hljs-string">"FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A="</span>)
+   * })
+   * `</pre>
+   * @url http://www.espruino.com/Reference#l_E_showMessage
+   */
+  showMessage: (message: any, options: any) => void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_E_showPrompt
+   */
+  showPrompt: () => void;
+
+  /**
+   * Displays a full screen prompt on the screen, with a single 'Ok' button.
+   * When the button is pressed the promise is resolved.
+   * <pre>`<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span>show<span class="hljs-constructor">Alert(<span class="hljs-string">"Hello"</span>)</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {
+   *   print(<span class="hljs-string">"Ok pressed"</span>);
+   * });
+   * <span class="hljs-comment">// or</span>
+   * <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">E</span>.</span></span>show<span class="hljs-constructor">Alert(<span class="hljs-string">"These are\nLots of\nLines"</span>,<span class="hljs-string">"My Title"</span>)</span>.<span class="hljs-keyword">then</span>(<span class="hljs-keyword">function</span><span class="hljs-literal">()</span> {
+   *   print(<span class="hljs-string">"Ok pressed"</span>);
+   * });
+   * `</pre>
+   * To remove the window, call `E.showAlert()` with no arguments.
+   * @url http://www.espruino.com/Reference#l_E_showAlert
+   */
+  showAlert: (message: any, options: any) => any;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_E_showScroller
+   */
+  showScroller: () => void;
 
   /**
    * Use the microcontroller's internal thermistor to work out the temperature.
@@ -6084,378 +5155,379 @@ type InternalError = {
 }
 
 /**
- * Creates a pin from the given argument (or returns undefined if no argument)
- * @url http://www.espruino.com/Reference#l_Pin_Pin
+ * This is the built-in class for the Arduino-style pin namings on ST Nucleo boards
+ * @url http://www.espruino.com/Reference#Nucleo
  */
-declare function Pin(value: any): any;
-
-type Pin = {
+declare const Nucleo: {
   /**
-   * Returns the input state of the pin as a boolean.
-   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"input"`
-   * @url http://www.espruino.com/Reference#l_Pin_read
+   * @url http://www.espruino.com/Reference#l_Nucleo_A0
    */
-  read: () => boolean;
+  A0: Pin
 
   /**
-   * Sets the output state of the pin to a 1
-   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
-   * @url http://www.espruino.com/Reference#l_Pin_set
+   * @url http://www.espruino.com/Reference#l_Nucleo_A1
    */
-  set: () => void;
+  A1: Pin
 
   /**
-   * Sets the output state of the pin to a 0
-   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
-   * @url http://www.espruino.com/Reference#l_Pin_reset
+   * @url http://www.espruino.com/Reference#l_Nucleo_A2
    */
-  reset: () => void;
+  A2: Pin
 
   /**
-   * Sets the output state of the pin to the parameter given
-   *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
-   * @url http://www.espruino.com/Reference#l_Pin_write
+   * @url http://www.espruino.com/Reference#l_Nucleo_A3
    */
-  write: (value: boolean) => void;
+  A3: Pin
 
   /**
-   * Sets the output state of the pin to the parameter given at the specified time.
-   *  **Note:** this **doesn't** change the mode of the pin to an output. To do that, you need to use `pin.write(0)` or `pinMode(pin, 'output')` first.
-   * @url http://www.espruino.com/Reference#l_Pin_writeAtTime
+   * @url http://www.espruino.com/Reference#l_Nucleo_A4
    */
-  writeAtTime: (value: boolean, time: number) => void;
+  A4: Pin
 
   /**
-   * Return the current mode of the given pin. See `pinMode` for more information.
-   * @url http://www.espruino.com/Reference#l_Pin_getMode
+   * @url http://www.espruino.com/Reference#l_Nucleo_A5
    */
-  getMode: () => any;
+  A5: Pin
 
   /**
-   * Set the mode of the given pin. See [`pinMode`](#l__global_pinMode) for more information on pin modes.
-   * @url http://www.espruino.com/Reference#l_Pin_mode
+   * @url http://www.espruino.com/Reference#l_Nucleo_D0
    */
-  mode: (mode: any) => void;
+  D0: Pin
 
   /**
-   * Toggles the state of the pin from off to on, or from on to off.
-   * **Note:** This method doesn't currently work on the ESP8266 port of Espruino.
-   * **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
-   * @url http://www.espruino.com/Reference#l_Pin_toggle
+   * @url http://www.espruino.com/Reference#l_Nucleo_D1
    */
-  toggle: () => boolean;
+  D1: Pin
 
   /**
-   * Get information about this pin and its capabilities. Of the form:
-   * <pre>`{
-   *   <span class="hljs-string">"port"</span>      : <span class="hljs-string">"A"</span>, <span class="hljs-comment">// the Pin&#x27;s port on the chip</span>
-   *   <span class="hljs-string">"num"</span>       : 12, <span class="hljs-comment">// the Pin&#x27;s number</span>
-   *   <span class="hljs-string">"in_addr"</span>   : 0x..., <span class="hljs-comment">// (if available) the address of the pin&#x27;s input address in bit-banded memory (can be used with peek)</span>
-   *   <span class="hljs-string">"out_addr"</span>  : 0x..., <span class="hljs-comment">// (if available) the address of the pin&#x27;s output address in bit-banded memory (can be used with poke)</span>
-   *   <span class="hljs-string">"analog"</span>    : { ADCs : [1], channel : 12 }, <span class="hljs-comment">// If analog input is available</span>
-   *   <span class="hljs-string">"functions"</span> : {
-   *     <span class="hljs-string">"TIM1"</span>:{<span class="hljs-keyword">type</span>:"CH1, af:0},
-   *     <span class="hljs-string">"I2C3"</span>:{<span class="hljs-keyword">type</span>:<span class="hljs-string">"SCL"</span>, af:1}
-   *   }
-   * }
-   * `</pre>
-   * Will return undefined if pin is not valid.
-   * @url http://www.espruino.com/Reference#l_Pin_getInfo
+   * @url http://www.espruino.com/Reference#l_Nucleo_D2
    */
-  getInfo: () => any;
-
-}
-
-/**
- * Create a software OneWire implementation on the given pin
- * @url http://www.espruino.com/Reference#l_OneWire_OneWire
- */
-declare function OneWire(pin: Pin): any;
-
-type OneWire = {
-  /**
-   * Perform a reset cycle
-   * @url http://www.espruino.com/Reference#l_OneWire_reset
-   */
-  reset: () => boolean;
+  D2: Pin
 
   /**
-   * Select a ROM - always performs a reset first
-   * @url http://www.espruino.com/Reference#l_OneWire_select
+   * @url http://www.espruino.com/Reference#l_Nucleo_D3
    */
-  select: (rom: any) => void;
+  D3: Pin
 
   /**
-   * Skip a ROM
-   * @url http://www.espruino.com/Reference#l_OneWire_skip
+   * @url http://www.espruino.com/Reference#l_Nucleo_D4
    */
-  skip: () => void;
+  D4: Pin
 
   /**
-   * Write one or more bytes
-   * @url http://www.espruino.com/Reference#l_OneWire_write
+   * @url http://www.espruino.com/Reference#l_Nucleo_D5
    */
-  write: (data: any, power: boolean) => void;
+  D5: Pin
 
   /**
-   * Read a byte
-   * @url http://www.espruino.com/Reference#l_OneWire_read
+   * @url http://www.espruino.com/Reference#l_Nucleo_D6
    */
-  read: (count: any) => any;
+  D6: Pin
 
   /**
-   * Search for devices
-   * @url http://www.espruino.com/Reference#l_OneWire_search
+   * @url http://www.espruino.com/Reference#l_Nucleo_D7
    */
-  search: (command: number) => any;
-
-}
-
-/**
- * This module allows you to read and write the nonvolatile flash memory of your device.
- * Also see the `Storage` library, which provides a safer file-like
- * interface to nonvolatile storage.
- * It should be used with extreme caution, as it is easy to overwrite parts of Flash
- * memory belonging to Espruino or even its bootloader. If you damage the bootloader
- * then you may need external hardware such as a USB-TTL converter to restore it. For
- * more information on restoring the bootloader see `Advanced Reflashing` in your
- * board's reference pages.
- * To see which areas of memory you can and can't overwrite, look at the values
- * reported by `process.memory()`.
- * **Note:** On Nordic platforms there are checks in place to help you avoid
- * 'bricking' your device be damaging the bootloader. You can disable these with `E.setFlags({unsafeFlash:1})`
- * @url http://www.espruino.com/Reference#l_Flash_undefined
- */
-declare const Flash: {
-  /**
-   * Returns the start and length of the flash page containing the given address.
-   * @url http://www.espruino.com/Reference#l_Flash_getPage
-   */
-  getPage: (addr: number) => any;
+  D7: Pin
 
   /**
-   * This method returns an array of objects of the form `{addr : #, length : #}`, representing
-   * contiguous areas of flash memory in the chip that are not used for anything.
-   * The memory areas returned are on page boundaries. This means that you can
-   * safely erase the page containing any address here, and you won't risk
-   * deleting part of the Espruino firmware.
-   * @url http://www.espruino.com/Reference#l_Flash_getFree
+   * @url http://www.espruino.com/Reference#l_Nucleo_D8
    */
-  getFree: () => any;
+  D8: Pin
 
   /**
-   * Erase a page of flash memory
-   * @url http://www.espruino.com/Reference#l_Flash_erasePage
+   * @url http://www.espruino.com/Reference#l_Nucleo_D9
    */
-  erasePage: (addr: any) => void;
+  D9: Pin
 
   /**
-   * Write data into memory at the given address
-   * In flash memory you may only turn bits that are 1 into bits that are 0. If
-   * you're writing data into an area that you have already written (so `read`
-   * doesn't return all `0xFF`) you'll need to call `erasePage` to clear the
-   * entire page.
-   * @url http://www.espruino.com/Reference#l_Flash_write
+   * @url http://www.espruino.com/Reference#l_Nucleo_D10
    */
-  write: (data: any, addr: number) => void;
+  D10: Pin
 
   /**
-   * Read flash memory from the given address
-   * @url http://www.espruino.com/Reference#l_Flash_read
+   * @url http://www.espruino.com/Reference#l_Nucleo_D11
    */
-  read: (length: number, addr: number) => any;
+  D11: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Nucleo_D12
+   */
+  D12: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Nucleo_D13
+   */
+  D13: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Nucleo_D14
+   */
+  D14: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Nucleo_D15
+   */
+  D15: Pin
 
 };
 
 /**
- * Built-in class that caches the modules used by the `require` command
- * @url http://www.espruino.com/Reference#Modules
+ * This is a built-in class to allow you to use the ESP8266 NodeMCU boards's pin namings to access pins. It is only available on ESP8266-based boards.
+ * @url http://www.espruino.com/Reference#NodeMCU
  */
-declare const Modules: {
+declare const NodeMCU: {
   /**
-   * Return an array of module names that have been cached
-   * @url http://www.espruino.com/Reference#l_Modules_getCached
+   * @url http://www.espruino.com/Reference#l_NodeMCU_A0
    */
-  getCached: () => any;
+  A0: Pin
 
   /**
-   * Remove the given module from the list of cached modules
-   * @url http://www.espruino.com/Reference#l_Modules_removeCached
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D0
    */
-  removeCached: (id: any) => void;
+  D0: Pin
 
   /**
-   * Remove all cached modules
-   * @url http://www.espruino.com/Reference#l_Modules_removeAllCached
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D1
    */
-  removeAllCached: () => void;
+  D1: Pin
 
   /**
-   * Add the given module to the cache
-   * @url http://www.espruino.com/Reference#l_Modules_addCached
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D2
    */
-  addCached: (id: any, sourcecode: any) => void;
+  D2: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D3
+   */
+  D3: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D4
+   */
+  D4: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D5
+   */
+  D5: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D6
+   */
+  D6: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D7
+   */
+  D7: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D8
+   */
+  D8: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D9
+   */
+  D9: Pin
+
+  /**
+   * @url http://www.espruino.com/Reference#l_NodeMCU_D10
+   */
+  D10: Pin
 
 };
 
 /**
- * Create a software SPI port. This has limited functionality (no baud rate), but it can work on any pins.
- * Use `SPI.setup` to configure this port.
- * @url http://www.espruino.com/Reference#l_SPI_SPI
+ * Class containing utility functions for the [ESP32](http://www.espruino.com/ESP32)
+ * @url http://www.espruino.com/Reference#ESP32
  */
-declare const SPI: {
+declare const ESP32: {
   /**
-   * Try and find an SPI hardware device that will work on this pin (eg. `SPI1`)
-   * May return undefined if no device can be found.
-   * @url http://www.espruino.com/Reference#l_SPI_find
+   * @url http://www.espruino.com/Reference#l_ESP32_setAtten
    */
-  find: (pin: Pin) => any;
+  setAtten: (pin: Pin, atten: number) => void;
+
+  /**
+   * Perform a hardware reset/reboot of the ESP32.
+   * @url http://www.espruino.com/Reference#l_ESP32_reboot
+   */
+  reboot: () => void;
+
+  /**
+   * Put device in deepsleep state for "us" microseconds.
+   * @url http://www.espruino.com/Reference#l_ESP32_deepSleep
+   */
+  deepSleep: (us: number) => void;
+
+  /**
+   * Returns an object that contains details about the state of the ESP32 with the following fields:
+   *
+   * - `sdkVersion`   - Version of the SDK.
+   * - `freeHeap`     - Amount of free heap in bytes.
+   * - `BLE`			 - Status of BLE, enabled if true.
+   * - `Wifi`		 - Status of Wifi, enabled if true.
+   * - `minHeap`      - Minimum heap, calculated by heap_caps_get_minimum_free_size
+   *
+   * @url http://www.espruino.com/Reference#l_ESP32_getState
+   */
+  getState: () => any;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_ESP32_setBLE_Debug
+   */
+  setBLE_Debug: (level: number) => void;
+
+  /**
+   * Switches Bluetooth off/on, removes saved code from Flash, resets the board,
+   * and on restart creates jsVars depending on available heap (actual additional 1800)
+   * @url http://www.espruino.com/Reference#l_ESP32_enableBLE
+   */
+  enableBLE: (enable: boolean) => void;
+
+  /**
+   * Switches Wifi off/on, removes saved code from Flash, resets the board,
+   * and on restart creates jsVars depending on available heap (actual additional 3900)
+   * @url http://www.espruino.com/Reference#l_ESP32_enableWifi
+   */
+  enableWifi: (enable: boolean) => void;
 
 };
 
-type SPI = {
+/**
+ * Creates a Queue Object
+ * @url http://www.espruino.com/Reference#l_Queue_Queue
+ */
+declare function Queue(queueName: any): any;
+
+type Queue = {
   /**
-   * Set up this SPI port as an SPI Master.
-   * Options can contain the following (defaults are shown where relevant):
-   * <pre>`{
-   *   sck:pin,
-   *   miso:pin,
-   *   mosi:pin,
-   *   baud:integer=<span class="hljs-number">100000</span>, <span class="hljs-regexp">//</span> ignored on software SPI
-   *   mode:integer=<span class="hljs-number">0</span>, <span class="hljs-regexp">//</span> between <span class="hljs-number">0</span> and <span class="hljs-number">3</span>
-   *   order:string=<span class="hljs-string">&#x27;msb&#x27;</span> <span class="hljs-regexp">//</span> can be <span class="hljs-string">&#x27;msb&#x27;</span> or <span class="hljs-string">&#x27;lsb&#x27;</span>
-   *   bits:<span class="hljs-number">8</span> <span class="hljs-regexp">//</span> only available <span class="hljs-keyword">for</span> software SPI
-   * }
-   * `</pre>
-   * If `sck`,`miso` and `mosi` are left out, they will automatically be chosen. However if one or more is specified then the unspecified pins will not be set up.
-   * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `SPI` marker. Some boards such as those based on `nRF52` chips can have SPI on any pins, so don't have specific markings.
-   * The SPI `mode` is between 0 and 3 - see [http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase](http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase)
-   * On STM32F1-based parts, you cannot mix AF and non-AF pins (SPI pins are usually grouped on the chip - and you can't mix pins from two groups). Espruino will not warn you about this.
-   * @url http://www.espruino.com/Reference#l_SPI_setup
+   * reads one character from queue, if available
+   * @url http://www.espruino.com/Reference#l_Queue_read
    */
-  setup: (options: any) => void;
+  read: () => void;
 
   /**
-   * Send data down SPI, and return the result. Sending an integer will return an integer, a String will return a String, and anything else will return a Uint8Array.
-   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
-   * For maximum speeds, please pass either Strings or Typed Arrays as arguments. Note that you can even pass arrays of arrays, like `[1,[2,3,4],5]`
-   * @url http://www.espruino.com/Reference#l_SPI_send
+   * Writes one character to queue
+   * @url http://www.espruino.com/Reference#l_Queue_writeChar
    */
-  send: (data: any, nss_pin: Pin) => any;
+  writeChar: (char: any) => void;
 
   /**
-   * Write a character or array of characters to SPI - without reading the result back.
-   * For maximum speeds, please pass either Strings or Typed Arrays as arguments.
-   * @url http://www.espruino.com/Reference#l_SPI_write
+   * logs list of queues
+   * @url http://www.espruino.com/Reference#l_Queue_log
    */
-  write: (data: any) => void;
-
-  /**
-   * Send data down SPI, using 4 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
-   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
-   * @url http://www.espruino.com/Reference#l_SPI_send4bit
-   */
-  send4bit: (data: any, bit0: number, bit1: number, nss_pin: Pin) => void;
-
-  /**
-   * Send data down SPI, using 8 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
-   * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
-   * @url http://www.espruino.com/Reference#l_SPI_send8bit
-   */
-  send8bit: (data: any, bit0: number, bit1: number, nss_pin: Pin) => void;
+  log: () => void;
 
 }
 
 /**
- * The first SPI port
- * @url http://www.espruino.com/Reference#l__global_SPI1
+ * Creates a Task Object
+ * @url http://www.espruino.com/Reference#l_Task_Task
  */
-declare const SPI1: SPI;
+declare function Task(taskName: any): any;
 
-/**
- * The second SPI port
- * @url http://www.espruino.com/Reference#l__global_SPI2
- */
-declare const SPI2: SPI;
-
-/**
- * The third SPI port
- * @url http://www.espruino.com/Reference#l__global_SPI3
- */
-declare const SPI3: SPI;
-
-/**
- * Create a software I2C port. This has limited functionality (no baud rate), but it can work on any pins.
- * Use `I2C.setup` to configure this port.
- * @url http://www.espruino.com/Reference#l_I2C_I2C
- */
-declare const I2C: {
+type Task = {
   /**
-   * Try and find an I2C hardware device that will work on this pin (eg. `I2C1`)
-   * May return undefined if no device can be found.
-   * @url http://www.espruino.com/Reference#l_I2C_find
+   * Suspend task, be careful not to suspend Espruino task itself
+   * @url http://www.espruino.com/Reference#l_Task_suspend
    */
-  find: (pin: Pin) => any;
-
-};
-
-type I2C = {
-  /**
-   * Set up this I2C port
-   * If not specified in options, the default pins are used (usually the lowest numbered pins on the lowest port that supports this peripheral)
-   * @url http://www.espruino.com/Reference#l_I2C_setup
-   */
-  setup: (options: any) => void;
+  suspend: () => void;
 
   /**
-   * Transmit to the slave device with the given address. This is like Arduino's beginTransmission, write, and endTransmission rolled up into one.
-   * @url http://www.espruino.com/Reference#l_I2C_writeTo
+   * Resumes a suspended task
+   * @url http://www.espruino.com/Reference#l_Task_resume
    */
-  writeTo: (address: any, data: any) => void;
+  resume: () => void;
 
   /**
-   * Request bytes from the given slave device, and return them as a Uint8Array (packed array of bytes). This is like using Arduino Wire's requestFrom, available and read functions.  Sends a STOP
-   * @url http://www.espruino.com/Reference#l_I2C_readFrom
+   * returns name of actual task
+   * @url http://www.espruino.com/Reference#l_Task_getCurrent
    */
-  readFrom: (address: any, quantity: number) => Uint8Array;
+  getCurrent: () => any;
+
+  /**
+   * Sends a binary notify to task
+   * @url http://www.espruino.com/Reference#l_Task_notify
+   */
+  notify: () => void;
+
+  /**
+   * logs list of tasks
+   * @url http://www.espruino.com/Reference#l_Task_log
+   */
+  log: () => void;
 
 }
 
 /**
- * The first I2C port
- * @url http://www.espruino.com/Reference#l__global_I2C1
+ * Creates a Timer Object
+ * @url http://www.espruino.com/Reference#l_Timer_Timer
  */
-declare const I2C1: I2C;
+declare function Timer(timerName: any, group: number, index: number, isrIndex: number): any;
+
+type Timer = {
+  /**
+   * Starts a timer
+   * @url http://www.espruino.com/Reference#l_Timer_start
+   */
+  start: (duration: number) => void;
+
+  /**
+   * Reschedules a timer, needs to be started at least once
+   * @url http://www.espruino.com/Reference#l_Timer_reschedule
+   */
+  reschedule: (duration: number) => void;
+
+  /**
+   * logs list of timers
+   * @url http://www.espruino.com/Reference#l_Timer_log
+   */
+  log: () => void;
+
+}
 
 /**
- * The second I2C port
- * @url http://www.espruino.com/Reference#l__global_I2C2
+ * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
+ * Show an image on the in-built 5x5 LED screen.
+ * Image can be:
+ *
+ * - A number where each bit represents a pixel (so 25 bits). eg. `5` or `0x1FFFFFF`
+ * - A string, eg: `show("10001")`. Newlines are ignored, and anything that is not
+ * a space or `0` is treated as a 1.
+ * - An array of 4 bytes (more will be ignored), eg `show([1,2,3,0])`
+ *
+ * For instance the following works for images:
+ * <pre>`<span class="hljs-function"><span class="hljs-title">show</span>(<span class="hljs-string">"#   #"</span>+
+ *      <span class="hljs-string">"  #  "</span>+
+ *      <span class="hljs-string">"  #  "</span>+
+ *      <span class="hljs-string">"#   #"</span>+
+ *      <span class="hljs-string">" ### "</span>)</span>
+ * `</pre>
+ * This means you can also use Espruino's graphics library:
+ * <pre>`<span class="hljs-selector-tag">var</span> g = Graphics<span class="hljs-selector-class">.createArrayBuffer</span>(<span class="hljs-number">5</span>,<span class="hljs-number">5</span>,<span class="hljs-number">1</span>)
+ * g<span class="hljs-selector-class">.drawString</span>(<span class="hljs-string">"E"</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>)
+ * <span class="hljs-function"><span class="hljs-title">show</span><span class="hljs-params">(g.buffer)</span></span>
+ * `</pre>
+ * @url http://www.espruino.com/Reference#l__global_show
  */
-declare const I2C2: I2C;
+declare function show(image: any): void;
 
 /**
- * The third I2C port
- * @url http://www.espruino.com/Reference#l__global_I2C3
+ * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
+ * Get the current acceleration of the micro:bit from the on-board accelerometer
+ * **This is deprecated.** Please use `Microbit.accel` instead.
+ * @url http://www.espruino.com/Reference#l__global_acceleration
  */
-declare const I2C3: I2C;
+declare function acceleration(): any;
 
 /**
- * Set the current font
- * @url http://www.espruino.com/Reference#l__global_setFont9x18
+ * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
+ * Get the current compass position for the micro:bit from the on-board magnetometer
+ * **This is deprecated.** Please use `Microbit.mag` instead.
+ * @url http://www.espruino.com/Reference#l__global_compass
  */
-declare function setFont9x18(scale: number): Graphics;
-
-/**
- * Set the current font
- * @url http://www.espruino.com/Reference#l__global_setFont12x26
- */
-declare function setFont12x26(scale: number): Graphics;
-
-/**
- * Set the current font
- * @url http://www.espruino.com/Reference#l__global_setFont11x20
- */
-declare function setFont11x20(scale: number): Graphics;
+declare function compass(): any;
 
 /**
  * The pin connected to the 'A' button. Reads as `1` when pressed, `0` when not
@@ -6530,6 +5602,24 @@ declare const CORNER5: Pin;
 declare const CORNER6: Pin;
 
 /**
+ * On Puck.js V2 (not v1.0) this is the pin that controls the FET, for high-powered outputs.
+ * @url http://www.espruino.com/Reference#l__global_FET
+ */
+declare const FET: Pin;
+
+/**
+ * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A4.
+ * @url http://www.espruino.com/Reference#l__global_SDA
+ */
+declare const SDA: Pin;
+
+/**
+ * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A5.
+ * @url http://www.espruino.com/Reference#l__global_SCL
+ */
+declare const SCL: Pin;
+
+/**
  * The Bangle.js's vibration motor.
  * @url http://www.espruino.com/Reference#l__global_VIBRATE
  */
@@ -6561,60 +5651,6 @@ declare const LED1: any;
  * @url http://www.espruino.com/Reference#l__global_LED2
  */
 declare const LED2: any;
-
-/**
- * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
- * Show an image on the in-built 5x5 LED screen.
- * Image can be:
- *
- * - A number where each bit represents a pixel (so 25 bits). eg. `5` or `0x1FFFFFF`
- * - A string, eg: `show("10001")`. Newlines are ignored, and anything that is not
- * a space or `0` is treated as a 1.
- * - An array of 4 bytes (more will be ignored), eg `show([1,2,3,0])`
- *
- * For instance the following works for images:
- * <pre>`<span class="hljs-function"><span class="hljs-title">show</span>(<span class="hljs-string">"#   #"</span>+
- *      <span class="hljs-string">"  #  "</span>+
- *      <span class="hljs-string">"  #  "</span>+
- *      <span class="hljs-string">"#   #"</span>+
- *      <span class="hljs-string">" ### "</span>)</span>
- * `</pre>
- * This means you can also use Espruino's graphics library:
- * <pre>`<span class="hljs-selector-tag">var</span> g = Graphics<span class="hljs-selector-class">.createArrayBuffer</span>(<span class="hljs-number">5</span>,<span class="hljs-number">5</span>,<span class="hljs-number">1</span>)
- * g<span class="hljs-selector-class">.drawString</span>(<span class="hljs-string">"E"</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>)
- * <span class="hljs-function"><span class="hljs-title">show</span><span class="hljs-params">(g.buffer)</span></span>
- * `</pre>
- * @url http://www.espruino.com/Reference#l__global_show
- */
-declare function show(image: any): void;
-
-/**
- * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
- * Get the current acceleration of the micro:bit from the on-board accelerometer
- * **This is deprecated.** Please use `Microbit.accel` instead.
- * @url http://www.espruino.com/Reference#l__global_acceleration
- */
-declare function acceleration(): any;
-
-/**
- * **Note:** This function is only available on the [BBC micro:bit](https://espruino.com//MicroBit) board
- * Get the current compass position for the micro:bit from the on-board magnetometer
- * **This is deprecated.** Please use `Microbit.mag` instead.
- * @url http://www.espruino.com/Reference#l__global_compass
- */
-declare function compass(): any;
-
-/**
- * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A4.
- * @url http://www.espruino.com/Reference#l__global_SDA
- */
-declare const SDA: Pin;
-
-/**
- * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A5.
- * @url http://www.espruino.com/Reference#l__global_SCL
- */
-declare const SCL: Pin;
 
 /**
  * @url http://www.espruino.com/Reference#l__global_MOS1
@@ -6657,12 +5693,6 @@ declare const IOEXT2: Pin;
 declare const IOEXT3: Pin;
 
 /**
- * On Puck.js V2 (not v1.0) this is the pin that controls the FET, for high-powered outputs.
- * @url http://www.espruino.com/Reference#l__global_FET
- */
-declare const FET: Pin;
-
-/**
  * @url http://www.espruino.com/Reference#l__global_HIGH
  */
 declare const HIGH: number;
@@ -6671,6 +5701,39 @@ declare const HIGH: number;
  * @url http://www.espruino.com/Reference#l__global_LOW
  */
 declare const LOW: number;
+
+/**
+ * A variable containing the arguments given to the function:
+ * <pre>`function <span class="hljs-built_in">hello</span>() {
+ *   console<span class="hljs-selector-class">.log</span>(arguments.length, JSON.stringify(arguments));
+ * }
+ * <span class="hljs-built_in">hello</span>()        <span class="hljs-comment">// 0 []</span>
+ * <span class="hljs-built_in">hello</span>("Test")  <span class="hljs-comment">// 1 ["Test"]</span>
+ * <span class="hljs-built_in">hello</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)   <span class="hljs-comment">// 3 [1,2,3]</span>
+ * `</pre>
+ * **Note:** Due to the way Espruino works this is doesn't behave exactly
+ * the same as in normal JavaScript. The length of the arguments array
+ * will never be less than the number of arguments specified in the
+ * function declaration: `(function(a){ return arguments.length; })() == 1`.
+ * Normal JavaScript interpreters would return `0` in the above case.
+ * @url http://www.espruino.com/Reference#l__global_arguments
+ */
+declare const arguments: any;
+
+/**
+ * Load the given module, and return the exported functions and variables.
+ * For example:
+ * <pre>`var s = <span class="hljs-built_in">require</span>(<span class="hljs-string">"Storage"</span>);
+ * s.<span class="hljs-built_in">write</span>(<span class="hljs-string">"test"</span>, <span class="hljs-string">"hello world"</span>);
+ * <span class="hljs-built_in">print</span>(s.<span class="hljs-built_in">read</span>(<span class="hljs-string">"test"</span>));
+ * // prints <span class="hljs-string">"hello world"</span>
+ * `</pre>
+ * Check out [the page on Modules](https://espruino.com//Modules) for an explanation
+ * of what modules are and how you can use them.
+ * @url http://www.espruino.com/Reference#l__global_require
+ */
+declare function require<T extends keyof Modules>(moduleName: T): Modules[T];
+declare function require<T extends Exclude<string, keyof Modules>>(moduleName: T): any;
 
 /**
  * Read 8 bits of memory at the given location - DANGEROUS!
@@ -6877,24 +5940,6 @@ declare function setWatch(fn: any, pin: Pin, options: any): any;
 declare function clearWatch(id: any): void;
 
 /**
- * A variable containing the arguments given to the function:
- * <pre>`function <span class="hljs-built_in">hello</span>() {
- *   console<span class="hljs-selector-class">.log</span>(arguments.length, JSON.stringify(arguments));
- * }
- * <span class="hljs-built_in">hello</span>()        <span class="hljs-comment">// 0 []</span>
- * <span class="hljs-built_in">hello</span>("Test")  <span class="hljs-comment">// 1 ["Test"]</span>
- * <span class="hljs-built_in">hello</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)   <span class="hljs-comment">// 3 [1,2,3]</span>
- * `</pre>
- * **Note:** Due to the way Espruino works this is doesn't behave exactly
- * the same as in normal JavaScript. The length of the arguments array
- * will never be less than the number of arguments specified in the
- * function declaration: `(function(a){ return arguments.length; })() == 1`.
- * Normal JavaScript interpreters would return `0` in the above case.
- * @url http://www.espruino.com/Reference#l__global_arguments
- */
-declare const arguments: any;
-
-/**
  * When Espruino is busy, set the pin specified here high. Set this to undefined to disable the feature.
  * @url http://www.espruino.com/Reference#l__global_setBusyIndicator
  */
@@ -7039,16 +6084,906 @@ declare function getSerial(): any;
  */
 declare function changeInterval(id: any, time: number): void;
 
-/**
- * Load the given module, and return the exported functions and variables.
- * For example:
- * <pre>`var s = <span class="hljs-built_in">require</span>(<span class="hljs-string">"Storage"</span>);
- * s.<span class="hljs-built_in">write</span>(<span class="hljs-string">"test"</span>, <span class="hljs-string">"hello world"</span>);
- * <span class="hljs-built_in">print</span>(s.<span class="hljs-built_in">read</span>(<span class="hljs-string">"test"</span>));
- * // prints <span class="hljs-string">"hello world"</span>
- * `</pre>
- * Check out [the page on Modules](https://espruino.com//Modules) for an explanation
- * of what modules are and how you can use them.
- * @url http://www.espruino.com/Reference#l__global_require
- */
-declare function require(moduleName: any): any;
+type Modules = {
+  tensorflow: {
+    /**
+     * @url http://www.espruino.com/Reference#l_tensorflow_create
+     */
+    create: (arenaSize: number, model: any) => TFMicroInterpreter;
+
+  };
+  fs: {
+    /**
+     * List all files in the supplied directory, returning them as an array of strings.
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_readdir
+     */
+    readdir: (path: any) => any;
+
+    /**
+     * List all files in the supplied directory, returning them as an array of strings.
+     * @url http://www.espruino.com/Reference#l_fs_readdirSync
+     */
+    readdirSync: (path: any) => any;
+
+    /**
+     * Write the data to the given file
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_writeFile
+     */
+    writeFile: (path: any, data: any) => boolean;
+
+    /**
+     * Write the data to the given file
+     * @url http://www.espruino.com/Reference#l_fs_writeFileSync
+     */
+    writeFileSync: (path: any, data: any) => boolean;
+
+    /**
+     * Append the data to the given file, created a new file if it doesn't exist
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_appendFile
+     */
+    appendFile: (path: any, data: any) => boolean;
+
+    /**
+     * Append the data to the given file, created a new file if it doesn't exist
+     * @url http://www.espruino.com/Reference#l_fs_appendFileSync
+     */
+    appendFileSync: (path: any, data: any) => boolean;
+
+    /**
+     * Read all data from a file and return as a string
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_readFile
+     */
+    readFile: (path: any) => any;
+
+    /**
+     * Read all data from a file and return as a string.
+     * **Note:** The size of files you can load using this method is limited by the amount of available RAM. To read files a bit at a time, see the `File` class.
+     * @url http://www.espruino.com/Reference#l_fs_readFileSync
+     */
+    readFileSync: (path: any) => any;
+
+    /**
+     * Delete the given file
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_unlink
+     */
+    unlink: (path: any) => boolean;
+
+    /**
+     * Delete the given file
+     * @url http://www.espruino.com/Reference#l_fs_unlinkSync
+     */
+    unlinkSync: (path: any) => boolean;
+
+    /**
+     * Return information on the given file. This returns an object with the following
+     * fields:
+     * size: size in bytes
+     * dir: a boolean specifying if the file is a directory or not
+     * mtime: A Date structure specifying the time the file was last modified
+     * @url http://www.espruino.com/Reference#l_fs_statSync
+     */
+    statSync: (path: any) => any;
+
+    /**
+     * Create the directory
+     * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     * @url http://www.espruino.com/Reference#l_fs_mkdir
+     */
+    mkdir: (path: any) => boolean;
+
+    /**
+     * Create the directory
+     * @url http://www.espruino.com/Reference#l_fs_mkdirSync
+     */
+    mkdirSync: (path: any) => boolean;
+
+    /**
+     * @url http://www.espruino.com/Reference#l_fs_pipe
+     */
+    pipe: (source: any, destination: any, options: any) => void;
+
+  };
+  crypto: {
+    /**
+     * Class containing AES encryption/decryption
+     * @url http://www.espruino.com/Reference#l_crypto_AES
+     */
+    AES: any
+
+    /**
+     * Performs a SHA1 hash and returns the result as a 20 byte ArrayBuffer.
+     * **Note:** On some boards (currently only Espruino Original) there
+     * isn't space for a fully unrolled SHA1 implementation so a slower
+     * all-JS implementation is used instead.
+     * @url http://www.espruino.com/Reference#l_crypto_SHA1
+     */
+    SHA1: (message: any) => ArrayBuffer;
+
+    /**
+     * Performs a SHA224 hash and returns the result as a 28 byte ArrayBuffer
+     * @url http://www.espruino.com/Reference#l_crypto_SHA224
+     */
+    SHA224: (message: any) => ArrayBuffer;
+
+    /**
+     * Performs a SHA256 hash and returns the result as a 32 byte ArrayBuffer
+     * @url http://www.espruino.com/Reference#l_crypto_SHA256
+     */
+    SHA256: (message: any) => ArrayBuffer;
+
+    /**
+     * Performs a SHA384 hash and returns the result as a 48 byte ArrayBuffer
+     * @url http://www.espruino.com/Reference#l_crypto_SHA384
+     */
+    SHA384: (message: any) => ArrayBuffer;
+
+    /**
+     * Performs a SHA512 hash and returns the result as a 64 byte ArrayBuffer
+     * @url http://www.espruino.com/Reference#l_crypto_SHA512
+     */
+    SHA512: (message: any) => ArrayBuffer;
+
+    /**
+     * Password-Based Key Derivation Function 2 algorithm, using SHA512
+     * @url http://www.espruino.com/Reference#l_crypto_PBKDF2
+     */
+    PBKDF2: (passphrase: any, salt: any, options: any) => ArrayBuffer;
+
+  };
+  NetworkJS: {
+    /**
+     * Initialise the network using the callbacks given and return the first argument. For instance:
+     * <pre>`<span class="hljs-title function_">require</span>(<span class="hljs-string">"NetworkJS"</span>).<span class="hljs-property">create</span>({
+     *   <span class="hljs-variable">create</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">host</span>, <span class="hljs-params">port</span>, <span class="hljs-params">socketType</span>, <span class="hljs-params">options</span>) {
+     *     <span class="hljs-comment">// Create a socket and return its index, host is a string, port is an integer.</span>
+     *     <span class="hljs-comment">// If host isn&#x27;t defined, create a server socket</span>
+     *     <span class="hljs-variable">console</span>.<span class="hljs-property">log</span>(<span class="hljs-string">"Create"</span>,<span class="hljs-variable">host</span>,<span class="hljs-variable">port</span>);
+     *     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+     *   },
+     *   <span class="hljs-variable">close</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>) {
+     *     <span class="hljs-comment">// Close the socket. returns nothing</span>
+     *   },
+     *   <span class="hljs-variable">accept</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>) {
+     *     <span class="hljs-comment">// Accept the connection on the server socket. Returns socket number or -1 if no connection</span>
+     *     <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+     *   },
+     *   <span class="hljs-variable">recv</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>, <span class="hljs-params">maxLen</span>, <span class="hljs-params">socketType</span>) {
+     *     <span class="hljs-comment">// Receive data. Returns a string (even if empty).</span>
+     *     <span class="hljs-comment">// If non-string returned, socket is then closed</span>
+     *     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<span class="hljs-comment">//or "";</span>
+     *   },
+     *   <span class="hljs-variable">send</span> : <span class="hljs-title function_">function</span>(<span class="hljs-params">sckt</span>, <span class="hljs-params">data</span>, <span class="hljs-params">socketType</span>) {
+     *     <span class="hljs-comment">// Send data (as string). Returns the number of bytes sent - 0 is ok.</span>
+     *     <span class="hljs-comment">// Less than 0</span>
+     *     <span class="hljs-keyword">return</span> <span class="hljs-variable">data</span>.<span class="hljs-property">length</span>;
+     *   }
+     * });
+     * `</pre>
+     * `socketType` is an integer - 2 for UDP, or see SocketType in [https://github.com/espruino/Espruino/blob/master/libs/network/network.h](https://github.com/espruino/Espruino/blob/master/libs/network/network.h)
+     * for more information.
+     * @url http://www.espruino.com/Reference#l_NetworkJS_create
+     */
+    create: (obj: any) => any;
+
+  };
+  TelnetServer: {
+    /**
+     * @url http://www.espruino.com/Reference#l_TelnetServer_setOptions
+     */
+    setOptions: (options: any) => void;
+
+  };
+  net: {
+    /**
+     * Create a Server
+     * When a request to the server is made, the callback is called. In the callback you can use the methods on the connection to send data. You can also add `connection.on('data',function() { ... })` to listen for received data
+     * @url http://www.espruino.com/Reference#l_net_createServer
+     */
+    createServer: (callback: any) => Server;
+
+    /**
+     * Create a TCP socket connection
+     * @url http://www.espruino.com/Reference#l_net_connect
+     */
+    connect: (options: any, callback: any) => Socket;
+
+  };
+  dgram: {
+    /**
+     * Create a UDP socket
+     * @url http://www.espruino.com/Reference#l_dgram_createSocket
+     */
+    createSocket: (type: any, callback: any) => dgramSocket;
+
+  };
+  tls: {
+    /**
+     * Create a socket connection using TLS
+     * Options can have `ca`, `key` and `cert` fields, which should be the decoded content of the certificate.
+     * <pre>`var <span class="hljs-keyword">options</span> = url.parse(<span class="hljs-string">"localhost:1234"</span>);
+     * <span class="hljs-keyword">options</span>.<span class="hljs-keyword">key</span> = atob(<span class="hljs-string">"MIIJKQ ... OZs08C"</span>);
+     * <span class="hljs-keyword">options</span>.cert = atob(<span class="hljs-string">"MIIFi ... Uf93rN+"</span>);
+     * <span class="hljs-keyword">options</span>.ca = atob(<span class="hljs-string">"MIIFgDCC ... GosQML4sc="</span>);
+     * require(<span class="hljs-string">"tls"</span>).connect(<span class="hljs-keyword">options</span>, ... );
+     * `</pre>
+     * If you have the certificates as `.pem` files, you need to load these files, take the information between the lines beginning with `----`, remove the newlines from it so you have raw base64, and then feed it into `atob` as above.
+     * You can also:
+     *
+     * - Just specify the filename (<=100 characters) and it will be loaded and parsed if you have an SD card connected. For instance `options.key = "key.pem";`
+     * - Specify a function, which will be called to retrieve the data.  For instance `options.key = function() { eeprom.load_my_info(); };
+     *
+     * For more information about generating and using certificates, see:
+     * [https://engineering.circle.com/https-authorized-certs-with-node-js/](https://engineering.circle.com/https-authorized-certs-with-node-js/)
+     * (You'll need to use 2048 bit certificates as opposed to 4096 bit shown above)
+     * @url http://www.espruino.com/Reference#l_tls_connect
+     */
+    connect: (options: any, callback: any) => Socket;
+
+  };
+  CC3000: {
+    /**
+     * Initialise the CC3000 and return a WLAN object
+     * @url http://www.espruino.com/Reference#l_CC3000_connect
+     */
+    connect: (spi: any, cs: Pin, en: Pin, irq: Pin) => WLAN;
+
+  };
+  WIZnet: {
+    /**
+     * Initialise the WIZnet module and return an Ethernet object
+     * @url http://www.espruino.com/Reference#l_WIZnet_connect
+     */
+    connect: (spi: any, cs: Pin) => Ethernet;
+
+  };
+  Wifi: {
+    /**
+     * Disconnect the wifi station from an access point and disable the station mode. It is OK to call `disconnect` to turn off station mode even if no connection exists (for example, connection attempts may be failing). Station mode can be re-enabled by calling `connect` or `scan`.
+     * @url http://www.espruino.com/Reference#l_Wifi_disconnect
+     */
+    disconnect: (callback: any) => void;
+
+    /**
+     * Stop being an access point and disable the AP operation mode. AP mode can be re-enabled by calling `startAP`.
+     * @url http://www.espruino.com/Reference#l_Wifi_stopAP
+     */
+    stopAP: (callback: any) => void;
+
+    /**
+     * Connect to an access point as a station. If there is an existing connection to an AP it is first disconnected if the SSID or password are different from those passed as parameters. Put differently, if the passed SSID and password are identical to the currently connected AP then nothing is changed.
+     * When the connection attempt completes the callback function is invoked with one `err` parameter, which is NULL if there is no error and a string message if there is an error. If DHCP is enabled the callback occurs once an IP addres has been obtained, if a static IP is set the callback occurs once the AP's network has been joined.  The callback is also invoked if a connection already exists and does not need to be changed.
+     * The options properties may contain:
+     *
+     * - `password` - Password string to be used to access the network.
+     * - `dnsServers` (array of String) - An array of up to two DNS servers in dotted decimal format string.
+     * - `channel`  - Wifi channel of the access point  (integer, typ 0..14, 0 means any channel), only on ESP8266.
+     * - `bssid`   -  Mac address of the access point (string, type "00:00:00:00:00:00"), only on ESP8266.
+     *
+     * Notes:
+     *
+     * - the options should include the ability to set a static IP and associated netmask and gateway, this is a future enhancement.
+     * - the only error reported in the callback is "Bad password", all other errors (such as access point not found or DHCP timeout) just cause connection retries. If the reporting of such temporary errors is desired, the caller must use its own timeout and the `getDetails().status` field.
+     * - the `connect` call automatically enabled station mode, it can be disabled again by calling `disconnect`.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_connect
+     */
+    connect: (ssid: any, options: any, callback: any) => void;
+
+    /**
+     * Perform a scan for access points. This will enable the station mode if it is not currently enabled. Once the scan is complete the callback function is called with an array of APs found, each AP is an object with:
+     *
+     * - `ssid`: SSID string.
+     * - `mac`: access point MAC address in 00:00:00:00:00:00 format.
+     * - `authMode`: `open`, `wep`, `wpa`, `wpa2`, or `wpa_wpa2`.
+     * - `channel`: wifi channel 1..13.
+     * - `hidden`: true if the SSID is hidden (ESP32/ESP8266 only)
+     * - `rssi`: signal strength in dB in the range -110..0.
+     *
+     * Notes:
+     *
+     * - in order to perform the scan the station mode is turned on and remains on, use Wifi.disconnect() to turn it off again, if desired.
+     * - only one scan can be in progress at a time.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_scan
+     */
+    scan: (callback: any) => void;
+
+    /**
+     * Create a WiFi access point allowing stations to connect. If the password is NULL or an empty string the access point is open, otherwise it is encrypted.
+     * The callback function is invoked once the access point is set-up and receives one `err` argument, which is NULL on success and contains an error message string otherwise.
+     * The `options` object can contain the following properties.
+     *
+     * - `authMode` - The authentication mode to use.  Can be one of "open", "wpa2", "wpa", "wpa_wpa2". The default is open (but open access points are not recommended).
+     * - `password` - The password for connecting stations if authMode is not open.
+     * - `channel` - The channel to be used for the access point in the range 1..13. If the device is also connected to an access point as a station then that access point determines the channel.
+     * - `hidden` - The flag if visible or not (0:visible, 1:hidden), default is visible.
+     *
+     * Notes:
+     *
+     * - the options should include the ability to set the AP IP and associated netmask, this is a future enhancement.
+     * - the `startAP` call automatically enables AP mode. It can be disabled again by calling `stopAP`.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_startAP
+     */
+    startAP: (ssid: any, options: any, callback: any) => void;
+
+    /**
+     * Retrieve the current overall WiFi configuration. This call provides general information that pertains to both station and access point modes. The getDetails and getAPDetails calls provide more in-depth information about the station and access point configurations, respectively. The status object has the following properties:
+     *
+     * - `station` - Status of the wifi station: `off`, `connecting`, ...
+     * - `ap` - Status of the wifi access point: `disabled`, `enabled`.
+     * - `mode` - The current operation mode: `off`, `sta`, `ap`, `sta+ap`.
+     * - `phy` - Modulation standard configured: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n). This setting limits the modulations that the radio will use, it does not indicate the current modulation used with a specific access point.
+     * - `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
+     * - `savedMode` - The saved operation mode which will be applied at boot time: `off`, `sta`, `ap`, `sta+ap`.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_getStatus
+     */
+    getStatus: (callback: any) => any;
+
+    /**
+     * Sets a number of global wifi configuration settings. All parameters are optional and which are passed determines which settings are updated.
+     * The settings available are:
+     *
+     * - `phy` - Modulation standard to allow: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n).
+     * - `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
+     *
+     * Note: esp8266 SDK programmers may be missing an "opmode" option to set the sta/ap/sta+ap operation mode. Please use connect/scan/disconnect/startAP/stopAP, which all set the esp8266 opmode indirectly.
+     * @url http://www.espruino.com/Reference#l_Wifi_setConfig
+     */
+    setConfig: (settings: any) => void;
+
+    /**
+     * Retrieve the wifi station configuration and status details. The details object has the following properties:
+     *
+     * - `status` - Details about the wifi station connection, one of `off`, `connecting`, `wrong_password`, `no_ap_found`, `connect_fail`, or `connected`. The off, bad_password and connected states are stable, the other states are transient. The connecting state will either result in connected or one of the error states (bad_password, no_ap_found, connect_fail) and the no_ap_found and connect_fail states will result in a reconnection attempt after some interval.
+     * - `rssi` - signal strength of the connected access point in dB, typically in the range -110 to 0, with anything greater than -30 being an excessively strong signal.
+     * - `ssid` - SSID of the access point.
+     * - `password` - the password used to connect to the access point.
+     * - `authMode` - the authentication used: `open`, `wpa`, `wpa2`, `wpa_wpa2` (not currently supported).
+     * - `savedSsid` - the SSID to connect to automatically at boot time, null if none.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_getDetails
+     */
+    getDetails: (callback: any) => any;
+
+    /**
+     * Retrieve the current access point configuration and status.  The details object has the following properties:
+     *
+     * - `status` - Current access point status: `enabled` or `disabled`
+     * - `stations` - an array of the stations connected to the access point.  This array may be empty.  Each entry in the array is an object describing the station which, at a minimum contains `ip` being the IP address of the station.
+     * - `ssid` - SSID to broadcast.
+     * - `password` - Password for authentication.
+     * - `authMode` - the authentication required of stations: `open`, `wpa`, `wpa2`, `wpa_wpa2`.
+     * - `hidden` - True if the SSID is hidden, false otherwise.
+     * - `maxConn` - Max number of station connections supported.
+     * - `savedSsid` - the SSID to broadcast automatically at boot time, null if the access point is to be disabled at boot.
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_getAPDetails
+     */
+    getAPDetails: (callback: any) => any;
+
+    /**
+     * On boards where this is not available, just issue the `connect` commands you need to run at startup from an `onInit` function.
+     * Save the current wifi configuration (station and access point) to flash and automatically apply this configuration at boot time, unless `what=="clear"`, in which case the saved configuration is cleared such that wifi remains disabled at boot. The saved configuration includes:
+     *
+     * - mode (off/sta/ap/sta+ap)
+     * - SSIDs & passwords
+     * - phy (11b/g/n)
+     * - powersave setting
+     * - DHCP hostname
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_save
+     */
+    save: (what: any) => void;
+
+    /**
+     * Restores the saved Wifi configuration from flash. See `Wifi.save()`.
+     * @url http://www.espruino.com/Reference#l_Wifi_restore
+     */
+    restore: () => void;
+
+    /**
+     * Return the station IP information in an object as follows:
+     *
+     * - ip - IP address as string (e.g. "192.168.1.5")
+     * - netmask - The interface netmask as string (ESP8266/ESP32 only)
+     * - gw - The network gateway as string (ESP8266/ESP32 only)
+     * - mac - The MAC address as string of the form 00:00:00:00:00:00
+     *
+     * Note that the `ip`, `netmask`, and `gw` fields are omitted if no connection is established:
+     * @url http://www.espruino.com/Reference#l_Wifi_getIP
+     */
+    getIP: (callback: any) => any;
+
+    /**
+     * Return the access point IP information in an object which contains:
+     *
+     * - ip - IP address as string (typ "192.168.4.1")
+     * - netmask - The interface netmask as string
+     * - gw - The network gateway as string
+     * - mac - The MAC address as string of the form 00:00:00:00:00:00
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_getAPIP
+     */
+    getAPIP: (callback: any) => any;
+
+    /**
+     * Lookup the hostname and invoke a callback with the IP address as integer argument. If the lookup fails, the callback is invoked with a null argument.
+     * **Note:** only a single hostname lookup can be made at a time, concurrent lookups are not supported.
+     * @url http://www.espruino.com/Reference#l_Wifi_getHostByName
+     */
+    getHostByName: (hostname: any, callback: any) => void;
+
+    /**
+     * Returns the hostname announced to the DHCP server and broadcast via mDNS when connecting to an access point.
+     * @url http://www.espruino.com/Reference#l_Wifi_getHostname
+     */
+    getHostname: (callback: any) => any;
+
+    /**
+     * Set the hostname. Depending on implemenation, the hostname is sent with every DHCP request and is broadcast via mDNS. The DHCP hostname may be visible in the access point and may be forwarded into DNS as hostname.local.
+     * If a DHCP lease currently exists changing the hostname will cause a disconnect and reconnect in order to transmit the change to the DHCP server.
+     * The mDNS announcement also includes an announcement for the "espruino" service.
+     * @url http://www.espruino.com/Reference#l_Wifi_setHostname
+     */
+    setHostname: (hostname: any, callback: any) => void;
+
+    /**
+     * Starts the SNTP (Simple Network Time Protocol) service to keep the clock synchronized with the specified server. Note that the time zone is really just an offset to UTC and doesn't handle daylight savings time.
+     * The interval determines how often the time server is queried and Espruino's time is synchronized. The initial synchronization occurs asynchronously after setSNTP returns.
+     * @url http://www.espruino.com/Reference#l_Wifi_setSNTP
+     */
+    setSNTP: (server: any, tz_offset: any) => void;
+
+    /**
+     * The `settings` object must contain the following properties.
+     *
+     * - `ip` IP address as string (e.g. "192.168.5.100")
+     * - `gw`  The network gateway as string (e.g. "192.168.5.1")
+     * - `netmask` The interface netmask as string (e.g. "255.255.255.0")
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_setIP
+     */
+    setIP: (settings: any, callback: any) => void;
+
+    /**
+     * The `settings` object must contain the following properties.
+     *
+     * - `ip` IP address as string (e.g. "192.168.5.100")
+     * - `gw`  The network gateway as string (e.g. "192.168.5.1")
+     * - `netmask` The interface netmask as string (e.g. "255.255.255.0")
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_setAPIP
+     */
+    setAPIP: (settings: any, callback: any) => void;
+
+    /**
+     * Issues a ping to the given host, and calls a callback with the time when the ping is received.
+     * @url http://www.espruino.com/Reference#l_Wifi_ping
+     */
+    ping: (hostname: any, callback: any) => void;
+
+    /**
+     * Switch to using a higher communication speed with the WiFi module.
+     *
+     * - `true` = 921600 baud
+     * - `false` = 115200
+     * - `1843200` (or any number) = use a specific baud rate.
+     * - eg. `wifi.turbo(true,callback)` or `wifi.turbo(1843200,callback)`
+     *
+     * @url http://www.espruino.com/Reference#l_Wifi_turbo
+     */
+    turbo: (enable: any, callback: any) => void;
+
+  };
+  http: {
+    /**
+     * Create an HTTP Server
+     * When a request to the server is made, the callback is called. In the callback you can use the methods on the response (`httpSRs`) to send data. You can also add `request.on('data',function() { ... })` to listen for POSTed data
+     * @url http://www.espruino.com/Reference#l_http_createServer
+     */
+    createServer: (callback: any) => httpSrv;
+
+    /**
+     * Create an HTTP Request - `end()` must be called on it to complete the operation. `options` is of the form:
+     * <pre>`<span class="hljs-keyword">var</span> options = {
+     *     <span class="hljs-attr">host</span>: <span class="hljs-string">&#x27;example.com&#x27;</span>, <span class="hljs-comment">// host name</span>
+     *     port: <span class="hljs-number">80</span>,            <span class="hljs-comment">// (optional) port, defaults to 80</span>
+     *     path: <span class="hljs-string">&#x27;/&#x27;</span>,           <span class="hljs-comment">// path sent to server</span>
+     *     method: <span class="hljs-string">&#x27;GET&#x27;</span>,       <span class="hljs-comment">// HTTP command sent to server (must be uppercase &#x27;GET&#x27;, &#x27;POST&#x27;, etc)</span>
+     *     protocol: <span class="hljs-string">&#x27;http:&#x27;</span>,   <span class="hljs-comment">// optional protocol - https: or http:</span>
+     *     headers: { <span class="hljs-attr">key</span> : value, <span class="hljs-attr">key</span> : value } <span class="hljs-comment">// (optional) HTTP headers</span>
+     *   };
+     * <span class="hljs-keyword">var</span> req = require(<span class="hljs-string">"http"</span>).request(options, <span class="hljs-keyword">function</span>(<span class="hljs-params">res</span>) {
+     *   res.on(<span class="hljs-string">&#x27;data&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+     *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"HTTP> "</span>+data);
+     *   });
+     *   res.on(<span class="hljs-string">&#x27;close&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+     *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Connection closed"</span>);
+     *   });
+     * });
+     * <span class="hljs-comment">// You can req.write(...) here if your request requires data to be sent.</span>
+     * req.end(); <span class="hljs-comment">// called to finish the HTTP request and get the response</span>
+     * `</pre>
+     * You can easily pre-populate `options` from a URL using `var options = url.parse("http://www.example.com/foo.html")`
+     * There's an example of using [`http.request` for HTTP POST here](https://espruino.com//Internet#http-post)
+     * **Note:** if TLS/HTTPS is enabled, options can have `ca`, `key` and `cert` fields. See `tls.connect` for
+     * more information about these and how to use them.
+     * @url http://www.espruino.com/Reference#l_http_request
+     */
+    request: (options: any, callback: any) => httpCRq;
+
+    /**
+     * Request a webpage over HTTP - a convenience function for `http.request()` that makes sure the HTTP command is 'GET', and that calls `end` automatically.
+     * <pre>`require(<span class="hljs-string">"http"</span>).get(<span class="hljs-string">"http://pur3.co.uk/hello.txt"</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">res</span>) {
+     *   res.on(<span class="hljs-string">&#x27;data&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+     *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"HTTP> "</span>+data);
+     *   });
+     *   res.on(<span class="hljs-string">&#x27;close&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+     *     <span class="hljs-built_in">console</span>.<span class="hljs-built_in">log</span>(<span class="hljs-string">"Connection closed"</span>);
+     *   });
+     * });
+     * `</pre>
+     * See `http.request()` and [the Internet page](https://espruino.com//Internet) and ` for more usage examples.
+     * @url http://www.espruino.com/Reference#l_http_get
+     */
+    get: (options: any, callback: any) => httpCRq;
+
+  };
+  tv: {
+    /**
+     * This initialises the TV output. Options for PAL are as follows:
+     * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"pal"</span>,
+     *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
+     *   sync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
+     *   width : <span class="hljs-number">384</span>,
+     *   height : <span class="hljs-number">270</span>, <span class="hljs-comment">// max 270</span>
+     * });
+     * `</pre>
+     * and for VGA:
+     * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"vga"</span>,
+     *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
+     *   hsync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
+     *   vsync : A5, <span class="hljs-comment">// Pin - pin to use for video sync</span>
+     *   width : <span class="hljs-number">220</span>,
+     *   height : <span class="hljs-number">240</span>,
+     *   repeat : <span class="hljs-number">2</span>, <span class="hljs-comment">// amount of times to repeat each line</span>
+     * });
+     * `</pre>
+     * or
+     * <pre>`<span class="hljs-built_in">var</span> g = <span class="hljs-keyword">require</span>(<span class="hljs-string">&#x27;tv&#x27;</span>).setup({ <span class="hljs-keyword">type</span> : <span class="hljs-string">"vga"</span>,
+     *   video : A7, <span class="hljs-comment">// Pin - SPI MOSI Pin for Video output (MUST BE SPI1)</span>
+     *   hsync : A6, <span class="hljs-comment">// Pin - Timer pin to use for video sync</span>
+     *   vsync : A5, <span class="hljs-comment">// Pin - pin to use for video sync</span>
+     *   width : <span class="hljs-number">220</span>,
+     *   height : <span class="hljs-number">480</span>,
+     *   repeat : <span class="hljs-number">1</span>, <span class="hljs-comment">// amount of times to repeat each line</span>
+     * });
+     * `</pre>
+     * See the [Television](https://espruino.com//Television) page for more information.
+     * @url http://www.espruino.com/Reference#l_tv_setup
+     */
+    setup: (options: any, width: number) => any;
+
+  };
+  heatshrink: {
+    /**
+     * @url http://www.espruino.com/Reference#l_heatshrink_compress
+     */
+    compress: (data: any) => ArrayBuffer;
+
+    /**
+     * @url http://www.espruino.com/Reference#l_heatshrink_decompress
+     */
+    decompress: (data: any) => ArrayBuffer;
+
+  };
+  neopixel: {
+    /**
+     * Write to a strip of NeoPixel/WS281x/APA104/APA106/SK6812-style LEDs
+     * attached to the given pin.
+     * <pre>`<span class="hljs-comment">// set just one pixel, red, green, blue</span>
+     * <span class="hljs-built_in">require</span>("neopixel")<span class="hljs-selector-class">.write</span>(B15, [<span class="hljs-number">255</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]);
+     * `</pre>
+     * <pre>`<span class="hljs-comment">// Produce an animated rainbow over 25 LEDs</span>
+     * <span class="hljs-keyword">var</span> rgb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Uint8ClampedArray</span>(<span class="hljs-number">25</span>*<span class="hljs-number">3</span>);
+     * <span class="hljs-keyword">var</span> pos = <span class="hljs-number">0</span>;
+     * <span class="hljs-keyword">function</span> <span class="hljs-title function_">getPattern</span>(<span class="hljs-params"></span>) {
+     *   pos++;
+     *   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>;i<rgb.<span class="hljs-property">length</span>;) {
+     *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1324</span>)) * <span class="hljs-number">127</span>;
+     *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1654</span>)) * <span class="hljs-number">127</span>;
+     *     rgb[i++] = (<span class="hljs-number">1</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">sin</span>((i+pos)*<span class="hljs-number">0.1</span>)) * <span class="hljs-number">127</span>;
+     *   }
+     *   <span class="hljs-keyword">return</span> rgb;
+     * }
+     * <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+     *   <span class="hljs-built_in">require</span>(<span class="hljs-string">"neopixel"</span>).<span class="hljs-title function_">write</span>(<span class="hljs-variable constant_">B15</span>, <span class="hljs-title function_">getPattern</span>());
+     * }, <span class="hljs-number">100</span>);
+     * `</pre>
+     * **Note:**
+     *
+     * - Different types of LED have the data in different orders - so don't
+     * be surprised by RGB or BGR orderings!
+     *
+     * - Some LED strips (SK6812) actually take 4 bytes per LED (red, green, blue and white).
+     * These are still supported but the array of data supplied must still be a multiple of 3
+     * bytes long. Just round the size up - it won't cause any problems.
+     *
+     * - On some platforms like STM32, pins capable of hardware SPI MOSI
+     * are required.
+     *
+     * - Espruino devices tend to have 3.3v IO, while WS2812/etc run
+     * off of 5v. Many WS2812 will only register a logic '1' at 70%
+     * of their input voltage - so if powering them off 5v you will not
+     * be able to send them data reliably. You can work around this by
+     * powering the LEDs off a lower voltage (for example 3.7v from a LiPo
+     * battery), can put the output into the `af_opendrain` state and use
+     * a pullup resistor to 5v on STM32 based boards (nRF52 are not 5v tolerant
+     * so you can't do this), or can use a level shifter to shift the voltage up
+     * into the 5v range.
+     *
+     *
+     * @url http://www.espruino.com/Reference#l_neopixel_write
+     */
+    write: (pin: Pin, data: any) => void;
+
+  };
+  Storage: {
+    /**
+     * Erase the flash storage area. This will remove all files
+     * created with `require("Storage").write(...)` as well
+     * as any code saved with `save()` or `E.setBootCode()`.
+     * @url http://www.espruino.com/Reference#l_Storage_eraseAll
+     */
+    eraseAll: () => void;
+
+    /**
+     * Erase a single file from the flash storage area.
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_erase
+     */
+    erase: (name: any) => void;
+
+    /**
+     * Read a file from the flash storage area that has
+     * been written with `require("Storage").write(...)`.
+     * This function returns a memory-mapped String that points to the actual
+     * memory area in read-only memory, so it won't use up RAM.
+     * As such you can check if a file exists efficiently using `require("Storage").read(filename)!==undefined`.
+     * If you evaluate this string with `eval`, any functions
+     * contained in the String will keep their code stored
+     * in flash memory.
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_read
+     */
+    read: (name: any, offset: number, length: number) => any;
+
+    /**
+     * Read a file from the flash storage area that has
+     * been written with `require("Storage").write(...)`,
+     * and parse JSON in it into a JavaScript object.
+     * This is identical to `JSON.parse(require("Storage").read(...))`.
+     * It will throw an exception if the data in the file is not
+     * valid JSON.
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_readJSON
+     */
+    readJSON: (name: any, noExceptions: boolean) => any;
+
+    /**
+     * Read a file from the flash storage area that has
+     * been written with `require("Storage").write(...)`,
+     * and return the raw binary data as an ArrayBuffer.
+     * This can be used:
+     *
+     * - In a `DataView` with `new DataView(require("Storage").readArrayBuffer("x"))`
+     * - In a `Uint8Array/Float32Array/etc` with `new Uint8Array(require("Storage").readArrayBuffer("x"))`
+     *
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_readArrayBuffer
+     */
+    readArrayBuffer: (name: any) => any;
+
+    /**
+     * Write/create a file in the flash storage area. This is
+     * nonvolatile and will not disappear when the device resets
+     * or power is lost.
+     * Simply write `require("Storage").write("MyFile", "Some data")` to write
+     * a new file, and `require("Storage").read("MyFile")` to read it.
+     * If you supply:
+     *
+     * - A String, it will be written as-is
+     * - An array, will be written as a byte array (but read back as a String)
+     * - An object, it will automatically be converted to
+     * a JSON string before being written.
+     *
+     * **Note:** If an array is supplied it will not be converted to JSON.
+     * To be explicit about the conversion you can use `Storage.writeJSON`
+     * You may also create a file and then populate data later **as long as you
+     * don't try and overwrite data that already exists**. For instance:
+     * <pre>`var f = require(<span class="hljs-string">"Storage"</span>);
+     * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">"Hello"</span>,<span class="hljs-number">0</span>,<span class="hljs-number">14</span>);
+     * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">" "</span>,<span class="hljs-number">5</span>);
+     * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">"World!!!"</span>,<span class="hljs-number">6</span>);
+     * <span class="hljs-keyword">print</span>(f.<span class="hljs-keyword">read</span>(<span class="hljs-string">"a"</span>)); <span class="hljs-comment">// "Hello World!!!"</span>
+     * f.<span class="hljs-keyword">write</span>(<span class="hljs-string">"a"</span>,<span class="hljs-string">" "</span>,<span class="hljs-number">0</span>); <span class="hljs-comment">// Writing to location 0 again will cause the file to be re-written</span>
+     * <span class="hljs-keyword">print</span>(f.<span class="hljs-keyword">read</span>(<span class="hljs-string">"a"</span>)); <span class="hljs-comment">// " "</span>
+     * `</pre>
+     * This can be useful if you've got more data to write than you
+     * have RAM available - for instance the Web IDE uses this method
+     * to write large files into onboard storage.
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_write
+     */
+    write: (name: any, data: any, offset: number, size: number) => boolean;
+
+    /**
+     * Write/create a file in the flash storage area. This is
+     * nonvolatile and will not disappear when the device resets
+     * or power is lost.
+     * Simply write `require("Storage").writeJSON("MyFile", [1,2,3])` to write
+     * a new file, and `require("Storage").readJSON("MyFile")` to read it.
+     * This is equivalent to: `require("Storage").write(name, JSON.stringify(data))`
+     * **Note:** This function should be used with normal files, and not
+     * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     * @url http://www.espruino.com/Reference#l_Storage_writeJSON
+     */
+    writeJSON: (name: any, data: any) => boolean;
+
+    /**
+     * List all files in the flash storage area. An array of Strings is returned.
+     * By default this lists files created by `StorageFile` (`require("Storage").open`)
+     * which have a file number (`"\1"`/`"\2"`/etc) appended to them.
+     * <pre>`<span class="hljs-comment">// All files</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>()
+     * <span class="hljs-comment">// Files ending in &#x27;.js&#x27;</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(/\.js$/)
+     * <span class="hljs-comment">// All Storage Files</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(undefined, {sf:true})
+     * <span class="hljs-comment">// All normal files (eg created with Storage.write)</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.list</span>(undefined, {sf:false})
+     * `</pre>
+     * **Note:** This will output system files (eg. saved code) as well as
+     * files that you may have written.
+     * @url http://www.espruino.com/Reference#l_Storage_list
+     */
+    list: (regex: any, filter: any) => any;
+
+    /**
+     * List all files in the flash storage area matching the specfied regex (ignores StorageFiles),
+     * and then hash their filenames *and* file locations.
+     * Identical files may have different hashes (eg. if Storage is compacted and the file moves) but
+     * the changes of different files having the same hash are extremely small.
+     * <pre>`<span class="hljs-comment">// Hash files</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.hash</span>()
+     * <span class="hljs-comment">// Files ending in &#x27;.boot.js&#x27;</span>
+     * <span class="hljs-function"><span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">"Storage"</span>)</span></span><span class="hljs-selector-class">.hash</span>(/\.boot\.js$/)
+     * `</pre>
+     * **Note:** This function is used by Bangle.js as a way to cache files.
+     * For instance the bootloader will add all `.boot.js` files together into
+     * a single `.boot0` file, but it needs to know quickly whether anything has
+     * changed.
+     * @url http://www.espruino.com/Reference#l_Storage_hash
+     */
+    hash: (regex: any) => number;
+
+    /**
+     * The Flash Storage system is journaling. To make the most of the limited
+     * write cycles of Flash memory, Espruino marks deleted/replaced files as
+     * garbage and moves on to a fresh part of flash memory. Espruino only
+     * fully erases those files when it is running low on flash, or when
+     * `compact` is called.
+     * `compact` may fail if there isn't enough RAM free on the stack to
+     * use as swap space, however in this case it will not lose data.
+     * **Note:** `compact` rearranges the contents of memory. If code is
+     * referencing that memory (eg. functions that have their code stored in flash)
+     * then they may become garbled when compaction happens. To avoid this,
+     * call `eraseFiles` before uploading data that you intend to reference to
+     * ensure that uploaded files are right at the start of flash and cannot be
+     * compacted further.
+     * @url http://www.espruino.com/Reference#l_Storage_compact
+     */
+    compact: () => void;
+
+    /**
+     * This writes information about all blocks in flash
+     * memory to the console - and is only useful for debugging
+     * flash storage.
+     * @url http://www.espruino.com/Reference#l_Storage_debug
+     */
+    debug: () => void;
+
+    /**
+     * Return the amount of free bytes available in
+     * Storage. Due to fragmentation there may be more
+     * bytes available, but this represents the maximum
+     * size of file that can be written.
+     * @url http://www.espruino.com/Reference#l_Storage_getFree
+     */
+    getFree: () => number;
+
+    /**
+     * Returns:
+     * <pre>`{
+     *   totalBytes <span class="hljs-regexp">//</span> Amount of bytes <span class="hljs-keyword">in</span> filesystem
+     *   freeBytes <span class="hljs-regexp">//</span> How many bytes are left at the end of storage?
+     *   fileBytes <span class="hljs-regexp">//</span> How many bytes of allocated files <span class="hljs-keyword">do</span> we have?
+     *   fileCount <span class="hljs-regexp">//</span> How many allocated files <span class="hljs-keyword">do</span> we have?
+     *   trashBytes <span class="hljs-regexp">//</span> How many bytes of trash files <span class="hljs-keyword">do</span> we have?
+     *   trashCount <span class="hljs-regexp">//</span> How many trash files <span class="hljs-keyword">do</span> we have?
+     * }
+     * `</pre>
+     * @url http://www.espruino.com/Reference#l_Storage_getStats
+     */
+    getStats: () => any;
+
+    /**
+     * Writes a lookup table for files into Bangle.js's storage. This allows any file stored
+     * up to that point to be accessed quickly.
+     * @url http://www.espruino.com/Reference#l_Storage_optimise
+     */
+    optimise: () => void;
+
+    /**
+     * Open a file in the Storage area. This can be used for appending data
+     * (normal read/write operations only write the entire file).
+     * Please see `StorageFile` for more information (and examples).
+     * **Note:** These files write through immediately - they do not need closing.
+     * @url http://www.espruino.com/Reference#l_Storage_open
+     */
+    open: (name: any, mode: any) => StorageFile;
+
+  };
+  Flash: {
+    /**
+     * Returns the start and length of the flash page containing the given address.
+     * @url http://www.espruino.com/Reference#l_Flash_getPage
+     */
+    getPage: (addr: number) => any;
+
+    /**
+     * This method returns an array of objects of the form `{addr : #, length : #}`, representing
+     * contiguous areas of flash memory in the chip that are not used for anything.
+     * The memory areas returned are on page boundaries. This means that you can
+     * safely erase the page containing any address here, and you won't risk
+     * deleting part of the Espruino firmware.
+     * @url http://www.espruino.com/Reference#l_Flash_getFree
+     */
+    getFree: () => any;
+
+    /**
+     * Erase a page of flash memory
+     * @url http://www.espruino.com/Reference#l_Flash_erasePage
+     */
+    erasePage: (addr: any) => void;
+
+    /**
+     * Write data into memory at the given address
+     * In flash memory you may only turn bits that are 1 into bits that are 0. If
+     * you're writing data into an area that you have already written (so `read`
+     * doesn't return all `0xFF`) you'll need to call `erasePage` to clear the
+     * entire page.
+     * @url http://www.espruino.com/Reference#l_Flash_write
+     */
+    write: (data: any, addr: number) => void;
+
+    /**
+     * Read flash memory from the given address
+     * @url http://www.espruino.com/Reference#l_Flash_read
+     */
+    read: (length: number, addr: number) => any;
+
+  };
+}
