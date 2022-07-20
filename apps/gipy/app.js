@@ -1,5 +1,5 @@
 
-let simulated = true;
+let simulated = false;
 let code_version = 7;
 let code_key = 47490;
 
