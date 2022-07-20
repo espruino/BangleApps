@@ -169,7 +169,7 @@ function initPFD() {
         else if (Date().getTime()-landingTime>60000) state=landed;
         break;
     }
-    if ((state==flying) || (state==maybeLanded)) {
+		if ((state==flying) || (state==maybeLanded)) {
       flyingTime=Date().getTime()-takeoffTime;
       pfd.flyingtime.label=(flyingTime / 3600000).toFixed(0)+":"+(flyingTime / 60000 % 60).toFixed(0).padStart(2,'0');
       pfd.flyingtime.col=fg;
