@@ -4,7 +4,7 @@
   "icon": "widget.png",
   "type": "widget",
   "version":"0.01",
-  "description": "Load AGPS data in the background",
+  "description": "Load AGPS data in the background **using Gadgetbridge**",
   "readme": "README.md",
   "tags": "widget,agps,http",
   "supports": ["BANGLEJS2"],

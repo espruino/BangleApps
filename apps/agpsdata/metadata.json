@@ -3,7 +3,7 @@
   "shortName":"A-GPS Data",
   "icon": "agpsdata.png",
   "version":"0.02",
-  "description": "Download assisted GPS (A-GPS) data directly to your Bangle.js",
+  "description": "Download assisted GPS (A-GPS) data directly to your Bangle.js **using Gadgetbridge**",
   "tags": "boot,tool,assisted,gps,agps,http",
   "allow_emulator":true, 
   "supports": ["BANGLEJS2"],
