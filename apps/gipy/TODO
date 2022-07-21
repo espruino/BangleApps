@@ -1,5 +1,3 @@
-- water points
-        ---> we group them following path by groups of cst_size and record segments ids marking limits
 
 - split on points with comments
 
