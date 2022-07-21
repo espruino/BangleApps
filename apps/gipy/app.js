@@ -1,5 +1,5 @@
 
-let simulated = true;
+let simulated = false;
 let file_version = 2;
 let code_key = 47490;
 
@@ -64,11 +64,11 @@ class Status {
         this.position = new_position;
 
         // detect segment we are on now
-        let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, path.len - 1), this.cos_direction, this.sin_direction);
+        let next_segment = this.path.nearest_segment(this.position, Math.max(0, this.current_segment-1), Math.min(this.current_segment+2, this.path.len - 1), this.cos_direction, this.sin_direction);
 
         if (this.is_lost(next_segment)) {
             // it did not work, try anywhere
-            next_segment = this.path.nearest_segment(this.position, 0, path.len - 1, this.cos_direction, this.sin_direction);
+            next_segment = this.path.nearest_segment(this.position, 0, this.path.len - 1, this.cos_direction, this.sin_direction);
         }
         // now check if we strayed away from path or back to it
         let lost = this.is_lost(next_segment);
@@ -123,7 +123,8 @@ class Status {
         let starting_bucket = binary_search(this.path.interests_starts, starting_group);
         let ending_bucket = binary_search(this.path.interests_starts, ending_group+0.5);
         // we have 5 points per bucket
-        for (let i = starting_bucket*5 ; i <= ending_bucket*5 ; i++) {
+        let end_index = Math.min(this.path.interests_types.length - 1, ending_bucket*5);
+        for (let i = starting_bucket*5 ; i <= end_index ; i++) {
             let index = this.path.interests_on_path[i];
             let interest_point = this.path.interest_point(index);
             let color = this.path.interest_color(i);
@@ -142,7 +143,7 @@ class Status {
         let hours = now.getHours().toString();
         g.setFont("6x8:2").setColor(g.theme.fg).drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
         g.drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
-        g.drawString("seg." + (this.current_segment + 1) + "/" + path.len + "  " + this.distance_to_next_point + "m", 0, g.getHeight() - 15);
+        g.drawString("seg." + (this.current_segment + 1) + "/" + this.path.len + "  " + this.distance_to_next_point + "m", 0, g.getHeight() - 15);
     }
     display_map() {
         // don't display all segments, only those neighbouring current segment
@@ -376,53 +377,7 @@ class Point {
 
 
 Bangle.loadWidgets();
-let path = new Path("test.gpc");
-let status = new Status(path);
 
-let frame = 0;
-let old_points = []; // remember the at most 3 previous points
-function set_coordinates(data) {
-    frame += 1;
-    let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
-    if (valid_coordinates) {
-        // we try to figure out direction by looking at previous points
-        // instead of the gps course which is not very nice.
-        let direction = data.course * Math.PI / 180.0;
-        let position = new Point(data.lon, data.lat);
-        if (old_points.length == 0) {
-            old_points.push(position);
-        } else {
-            let last_point = old_points[old_points.length-1];
-            if (last_point.x != position.x || last_point.y != position.y) {
-                if (old_points.length == 4) {
-                    old_points.shift();
-                }
-                old_points.push(position);
-            }
-        }
-        if (old_points.length == 4) {
-            // let's just take average angle of 3 previous segments
-            let angles_sum = 0;
-            for(let i = 0 ; i < 3 ; i++) {
-                let p1 = old_points[i];
-                let p2 = old_points[i+1];
-                let diff = p2.minus(p1);
-                let angle = Math.atan2(diff.lat, diff.lon);
-                angles_sum += angle;
-            }
-            status.update_position(position, angles_sum / 3.0);
-        } else {
-            status.update_position(position, direction);
-        }
-    }
-    let gps_status_color;
-    if ((frame % 2 == 0)||valid_coordinates) {
-        gps_status_color = g.theme.bg;
-    } else {
-        gps_status_color = g.theme.fg;
-    }
-    g.setColor(gps_status_color).setFont("6x8:2").drawString("gps", g.getWidth() - 40, 30);
-}
 
 let fake_gps_point = 0.0;
 function simulate_gps(status) {
@@ -430,11 +385,11 @@ function simulate_gps(status) {
         return;
     }
     let point_index = Math.floor(fake_gps_point);
-    if (point_index >= path.len) {
+    if (point_index >= status.path.len) {
         return;
     }
-    let p1 = path.point(point_index);
-    let p2 = path.point(point_index + 1);
+    let p1 = status.path.point(point_index);
+    let p2 = status.path.point(point_index + 1);
 
     let alpha = fake_gps_point - point_index;
     let pos = p1.times(1-alpha).plus(p2.times(alpha));
@@ -445,22 +400,96 @@ function simulate_gps(status) {
     status.update_position(pos, direction);
 }
 
-
-if (simulated) {
-  status.position = new Point(status.path.point(0));
-  setInterval(simulate_gps, 500, status);
-} else {
-  // let's display start while waiting for gps signal
-  let p1 = status.path.point(0);
-  let p2 = status.path.point(1);
-  let diff = p2.minus(p1);
-  let direction = Math.atan2(diff.lat, diff.lon);
-  Bangle.setLocked(false);
-  status.update_position(p1, direction);
-
-  Bangle.setGPSPower(true, "gipy");
-  Bangle.on('GPS', set_coordinates);
+function drawMenu() {
+  const menu = {
+    '': { 'title': 'choose trace' }
+  };
+  var files = require("Storage").list(".gpc");
+  for (var i=0; i<files.length; ++i) {
+    menu[files[i]] = start.bind(null, files[i]);
+  }
+  menu['Exit'] = function() { load(); };
+  E.showMenu(menu);
 }
 
 
+
+function start(fn) {
+    console.log("loading", fn);
+
+    let path = new Path(fn);
+    let status = new Status(path);
+
+    if (simulated) {
+      status.position = new Point(status.path.point(0));
+      setInterval(simulate_gps, 500, status);
+    } else {
+      // let's display start while waiting for gps signal
+      let p1 = status.path.point(0);
+      let p2 = status.path.point(1);
+      let diff = p2.minus(p1);
+      let direction = Math.atan2(diff.lat, diff.lon);
+      Bangle.setLocked(false);
+      status.update_position(p1, direction);
+
+      let frame = 0;
+      let old_points = []; // remember the at most 3 previous points
+      let set_coordinates = function(data) {
+          frame += 1;
+          let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
+          if (valid_coordinates) {
+              // we try to figure out direction by looking at previous points
+              // instead of the gps course which is not very nice.
+              let direction = data.course * Math.PI / 180.0;
+              let position = new Point(data.lon, data.lat);
+              if (old_points.length == 0) {
+                  old_points.push(position);
+              } else {
+                  let last_point = old_points[old_points.length-1];
+                  if (last_point.x != position.x || last_point.y != position.y) {
+                      if (old_points.length == 4) {
+                          old_points.shift();
+                      }
+                      old_points.push(position);
+                  }
+              }
+              if (old_points.length == 4) {
+                  // let's just take average angle of 3 previous segments
+                  let angles_sum = 0;
+                  for(let i = 0 ; i < 3 ; i++) {
+                      let p1 = old_points[i];
+                      let p2 = old_points[i+1];
+                      let diff = p2.minus(p1);
+                      let angle = Math.atan2(diff.lat, diff.lon);
+                      angles_sum += angle;
+                  }
+                  status.update_position(position, angles_sum / 3.0);
+              } else {
+                  status.update_position(position, direction);
+              }
+          }
+          let gps_status_color;
+          if ((frame % 2 == 0)||valid_coordinates) {
+              gps_status_color = g.theme.bg;
+          } else {
+              gps_status_color = g.theme.fg;
+          }
+          g.setColor(gps_status_color).setFont("6x8:2").drawString("gps", g.getWidth() - 40, 30);
+      }
+
+      Bangle.setGPSPower(true, "gipy");
+      Bangle.on('GPS', set_coordinates);
+    }
+}
+
+let files = require("Storage").list(".gpc");
+if (files.length <= 1) {
+    if (files.length == 0) {
+        load();
+    } else {
+        start(files[0]);
+    }
+} else {
+    drawMenu();
+}
 

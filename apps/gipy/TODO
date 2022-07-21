@@ -1,4 +1,5 @@
 
+- it is becoming messy
 - split on points with comments
 
 - turn off gps when moving to next waypoint
@@ -8,7 +9,6 @@
 - buzzing does not work nicely
     -> is_lost  seems fishy
 
-- store several tracks
 - display average speed
 - dynamic map rescale
 - display scale (100m)
