@@ -1,3 +1,5 @@
+/// <reference path="other.d.ts" />
+
 /**
  * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility functions.
  * @url http://www.espruino.com/Reference#Microbit
