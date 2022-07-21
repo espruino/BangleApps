@@ -11,3 +11,4 @@ itertools="*"
 openstreetmap-api="*"
 tokio={version="1", features=["full"]}
 lazy_static="*"
+osmio="*"

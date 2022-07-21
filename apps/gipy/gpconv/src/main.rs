@@ -8,10 +8,10 @@ use gpx::read;
 use gpx::Gpx;
 
 mod osm;
-use osm::InterestPoint;
+use osm::{parse_osm_data, InterestPoint};
 
 const KEY: u16 = 47490;
-const FILE_VERSION: u16 = 1;
+const FILE_VERSION: u16 = 2;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Point {
@@ -327,17 +327,56 @@ fn compress_coordinates(points: &[(i32, i32)]) -> Vec<(i16, i16)> {
     xdiffs.zip(ydiffs).collect()
 }
 
-fn save_coordinates<P: AsRef<Path>>(path: P, points: &[Point]) -> std::io::Result<()> {
+fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> std::io::Result<()> {
     let mut writer = BufWriter::new(File::create(path)?);
 
     eprintln!("saving {} points", points.len());
+
+    let mut unique_interest_points = Vec::new();
+    let mut correspondance = HashMap::new();
+    let interests_on_path = buckets
+        .iter()
+        .flat_map(|b| &b.points)
+        .map(|p| match correspondance.entry(*p) {
+            std::collections::hash_map::Entry::Occupied(o) => *o.get(),
+            std::collections::hash_map::Entry::Vacant(v) => {
+                let index = unique_interest_points.len();
+                unique_interest_points.push(*p);
+                v.insert(index);
+                index
+            }
+        })
+        .collect::<Vec<_>>();
+
     writer.write_all(&KEY.to_le_bytes())?;
     writer.write_all(&FILE_VERSION.to_le_bytes())?;
     writer.write_all(&(points.len() as u16).to_le_bytes())?;
+    writer.write_all(&(unique_interest_points.len() as u16).to_le_bytes())?;
+    writer.write_all(&(interests_on_path.len() as u16).to_le_bytes())?;
     points
         .iter()
         .flat_map(|p| [p.x, p.y])
         .try_for_each(|c| writer.write_all(&c.to_le_bytes()))?;
+
+    unique_interest_points
+        .iter()
+        .flat_map(|p| [p.point.x, p.point.y])
+        .try_for_each(|c| writer.write_all(&c.to_le_bytes()))?;
+
+    unique_interest_points
+        .iter()
+        .map(|p| p.interest.into())
+        .try_for_each(|i: u8| writer.write_all(&i.to_le_bytes()))?;
+
+    interests_on_path
+        .iter()
+        .map(|i| *i as u16)
+        .try_for_each(|i| writer.write_all(&i.to_le_bytes()))?;
+
+    buckets
+        .iter()
+        .map(|b| b.start as u16)
+        .try_for_each(|i| writer.write_all(&i.to_le_bytes()))?;
 
     Ok(())
 }
@@ -419,11 +458,11 @@ fn save_path<W: Write>(writer: &mut W, p: &[Point], stroke: &str) -> std::io::Re
     Ok(())
 }
 
-fn save_svg<P: AsRef<Path>>(
+fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
     filename: P,
     p: &[Point],
     rp: &[Point],
-    interest_points: &HashSet<InterestPoint>,
+    interest_points: I,
     waypoints: &HashSet<Point>,
 ) -> std::io::Result<()> {
     let mut writer = BufWriter::new(std::fs::File::create(filename)?);
@@ -514,6 +553,58 @@ fn detect_waypoints(points: &[Point]) -> HashSet<Point> {
         .collect::<HashSet<_>>()
 }
 
+pub struct Bucket {
+    points: Vec<InterestPoint>,
+    start: usize,
+}
+
+fn position_interests_along_path(
+    interests: &mut [InterestPoint],
+    path: &[Point],
+    d: f64,
+    buckets_size: usize, // final points are indexed in buckets
+    groups_size: usize,  // how many segments are compacted together
+) -> Vec<Bucket> {
+    interests.sort_unstable_by(|p1, p2| p1.point.x.partial_cmp(&p2.point.x).unwrap());
+    // first compute for each segment a vec containing its nearby points
+    let mut positions = Vec::new();
+    for segment in path.windows(2) {
+        let mut local_interests = Vec::new();
+        let x0 = segment[0].x;
+        let x1 = segment[1].x;
+        let (xmin, xmax) = if x0 <= x1 { (x0, x1) } else { (x1, x0) };
+        let i = interests.partition_point(|p| p.point.x < xmin - d);
+        let interests = &interests[i..];
+        let i = interests.partition_point(|p| p.point.x <= xmax + d);
+        let interests = &interests[..i];
+        for interest in interests {
+            if interest.point.distance_to_segment(&segment[0], &segment[1]) <= d {
+                local_interests.push(*interest);
+            }
+        }
+        positions.push(local_interests);
+    }
+    // fuse points on chunks of consecutive segments together
+    let grouped_positions = positions
+        .chunks(groups_size)
+        .map(|c| c.iter().flatten().unique().copied().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    // now, group the points in buckets
+    let chunks = grouped_positions
+        .iter()
+        .enumerate()
+        .flat_map(|(i, points)| points.iter().map(move |p| (i, p)))
+        .chunks(buckets_size);
+    let mut buckets = Vec::new();
+    for bucket_points in &chunks {
+        let mut bucket_points = bucket_points.peekable();
+        let start = bucket_points.peek().unwrap().0;
+        let points = bucket_points.map(|(_, p)| *p).collect();
+        buckets.push(Bucket { points, start });
+    }
+    buckets
+}
+
 #[tokio::main]
 async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
@@ -529,8 +620,18 @@ async fn main() {
     eprintln!("rdp would have had {}", rdp(&p, 0.00015).len());
     eprintln!("rdp took {:?}", start.elapsed());
 
-    save_coordinates("test.gpc", &rp).unwrap();
+    let mut interests = parse_osm_data("isere.osm.pbf");
+    let buckets = position_interests_along_path(&mut interests, &rp, 0.0005, 5, 3);
     // let i = get_openstreetmap_data(&rp).await;
-    let i = HashSet::new();
-    save_svg("test.svg", &p, &rp, &i, &waypoints).unwrap();
+    // let i = HashSet::new();
+    save_svg(
+        "test.svg",
+        &p,
+        &rp,
+        buckets.iter().flat_map(|b| &b.points),
+        &waypoints,
+    )
+    .unwrap();
+
+    save_gpc("test.gpc", &rp, &buckets).unwrap();
 }

@@ -1,12 +1,14 @@
 - water points
         ---> we group them following path by groups of cst_size and record segments ids marking limits
 
+- split on points with comments
+
 - turn off gps when moving to next waypoint
 
 - meters seem to be a bit too long
 
 - buzzing does not work nicely
-    -> is_list seems fishy
+    -> is_lost  seems fishy
 
 - store several tracks
 - display average speed
