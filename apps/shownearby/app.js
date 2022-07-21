@@ -84,3 +84,5 @@ NRF.setScan(function(d) {
   var latLon = new Float32Array(d.manufacturerData);
   drawMarker({lat:latLon[0], lon:latLon[1]},"#0f0");
 },{phy:"coded",filters: [{ manufacturerData:{0x0590:{}} }]});
+// Set transmit power to max
+NRF.setTxPower(8);
