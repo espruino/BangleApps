@@ -1,16 +1,21 @@
 
-- it is becoming messy
+- direction is still shitty on gps
 - split on points with comments
+    and encode them as waypoints
+
+- code is becoming messy
 
 - turn off gps when moving to next waypoint
+- display distance to next water/toilet
 
 - meters seem to be a bit too long
 
 - buzzing does not work nicely
     -> is_lost  seems fishy
+    -> we need a display on top of buzz
 
 - display average speed
 - dynamic map rescale
 - display scale (100m)
 
-- compress path
+- compress path ?

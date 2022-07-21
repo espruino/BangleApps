@@ -15,14 +15,14 @@ pub enum Interest {
     Bakery,
     DrinkingWater,
     Toilets,
-    BikeShop,
-    ChargingStation,
-    Bank,
-    Supermarket,
-    Table,
-    //    TourismOffice,
+    // BikeShop,
+    // ChargingStation,
+    // Bank,
+    // Supermarket,
+    // Table,
+    // TourismOffice,
     Artwork,
-    Pharmacy,
+    // Pharmacy,
 }
 
 impl Into<u8> for Interest {
@@ -31,13 +31,13 @@ impl Into<u8> for Interest {
             Interest::Bakery => 0,
             Interest::DrinkingWater => 1,
             Interest::Toilets => 2,
-            Interest::BikeShop => 3,
-            Interest::ChargingStation => 4,
-            Interest::Bank => 5,
-            Interest::Supermarket => 6,
-            Interest::Table => 7,
+            // Interest::BikeShop => 3,
+            // Interest::ChargingStation => 4,
+            // Interest::Bank => 5,
+            // Interest::Supermarket => 6,
+            // Interest::Table => 7,
             Interest::Artwork => 8,
-            Interest::Pharmacy => 9,
+            // Interest::Pharmacy => 9,
         }
     }
 }
@@ -54,14 +54,14 @@ lazy_static! {
             (("shop", "bakery"), Interest::Bakery),
             (("amenity", "drinking_water"), Interest::DrinkingWater),
             (("amenity", "toilets"), Interest::Toilets),
-            (("shop", "bicycle"), Interest::BikeShop),
-            (("amenity", "charging_station"), Interest::ChargingStation),
-            (("amenity", "bank"), Interest::Bank),
-            (("shop", "supermarket"), Interest::Supermarket),
-            (("leisure", "picnic_table"), Interest::Table),
+            // (("shop", "bicycle"), Interest::BikeShop),
+            // (("amenity", "charging_station"), Interest::ChargingStation),
+            // (("amenity", "bank"), Interest::Bank),
+            // (("shop", "supermarket"), Interest::Supermarket),
+            // (("leisure", "picnic_table"), Interest::Table),
             // (("tourism", "information"), Interest::TourismOffice),
             (("tourism", "artwork"), Interest::Artwork),
-            (("amenity", "pharmacy"), Interest::Pharmacy),
+            // (("amenity", "pharmacy"), Interest::Pharmacy),
         ]
         .into_iter()
         .collect()
@@ -80,13 +80,13 @@ impl InterestPoint {
             Interest::Bakery => "red",
             Interest::DrinkingWater => "blue",
             Interest::Toilets => "brown",
-            Interest::BikeShop => "purple",
-            Interest::ChargingStation => "green",
-            Interest::Bank => "black",
-            Interest::Supermarket => "red",
-            Interest::Table => "pink",
+            // Interest::BikeShop => "purple",
+            // Interest::ChargingStation => "green",
+            // Interest::Bank => "black",
+            // Interest::Supermarket => "red",
+            // Interest::Table => "pink",
             Interest::Artwork => "orange",
-            Interest::Pharmacy => "chartreuse",
+            // Interest::Pharmacy => "chartreuse",
         }
     }
 }

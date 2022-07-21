@@ -58,8 +58,7 @@ impl Point {
     }
 }
 
-fn points(filename: &str) -> impl Iterator<Item = Point> {
-    // This XML file actually exists — try it for yourself!
+fn points(filename: &str) -> Vec<Vec<Point>> {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
@@ -67,15 +66,38 @@ fn points(filename: &str) -> impl Iterator<Item = Point> {
     let mut gpx: Gpx = read(reader).unwrap();
     eprintln!("we have {} tracks", gpx.tracks.len());
 
-    gpx.tracks
+    let mut points = Vec::new();
+
+    let mut iter = gpx
+        .tracks
         .pop()
         .unwrap()
         .segments
         .into_iter()
-        .flat_map(|segment| segment.linestring().points().collect::<Vec<_>>())
-        .map(|point| (point.x(), point.y()))
-        .dedup()
-        .map(|(x, y)| Point { x, y })
+        .flat_map(|segment| segment.points.into_iter())
+        .map(|p| {
+            let geop = p.point();
+            (
+                Point {
+                    x: geop.x(),
+                    y: geop.y(),
+                },
+                p.comment.is_some(),
+            )
+        })
+        .dedup();
+    let mut current_segment = iter.next().map(|(p, _)| p).into_iter().collect::<Vec<_>>();
+    for (p, is_waypoint) in iter {
+        if is_waypoint {
+            points.push(current_segment);
+            current_segment = Vec::new();
+        }
+        current_segment.push(p);
+    }
+    let last_point = current_segment.pop();
+    points.push(current_segment);
+    points.extend(last_point.map(|p| vec![p]));
+    points
 }
 
 // // NOTE: this angles idea could maybe be use to get dp from n^3 to n^2
@@ -363,6 +385,17 @@ fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> st
         .flat_map(|p| [p.point.x, p.point.y])
         .try_for_each(|c| writer.write_all(&c.to_le_bytes()))?;
 
+    let counts: HashMap<_, usize> =
+        unique_interest_points
+            .iter()
+            .fold(HashMap::new(), |mut h, p| {
+                *h.entry(p.interest).or_default() += 1;
+                h
+            });
+    counts.into_iter().for_each(|(interest, count)| {
+        eprintln!("{:?} appears {} times", interest, count);
+    });
+
     unique_interest_points
         .iter()
         .map(|p| p.interest.into())
@@ -377,8 +410,6 @@ fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> st
         .iter()
         .map(|b| b.start as u16)
         .try_for_each(|i| writer.write_all(&i.to_le_bytes()))?;
-
-    let starts: Vec<_> = buckets.iter().map(|b| b.start).collect();
 
     Ok(())
 }
@@ -512,18 +543,10 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
         )?;
     }
 
-    let rpoints = rp.iter().cloned().collect::<HashSet<_>>();
-    waypoints.difference(&rpoints).try_for_each(|p| {
+    waypoints.iter().try_for_each(|p| {
         writeln!(
             &mut writer,
-            "<circle cx='{}' cy='{}' fill='red' r='1%'/>",
-            p.x, p.y,
-        )
-    })?;
-    waypoints.intersection(&rpoints).try_for_each(|p| {
-        writeln!(
-            &mut writer,
-            "<circle cx='{}' cy='{}' fill='green' r='1%'/>",
+            "<circle cx='{}' cy='{}' fill='black' r='1%'/>",
             p.x, p.y,
         )
     })?;
@@ -611,19 +634,33 @@ fn position_interests_along_path(
 async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
     eprintln!("input is {}", input_file);
-    let p = points(&input_file).collect::<Vec<_>>();
-    eprintln!("initialy we have {} points", p.len());
-    let start = std::time::Instant::now();
-    let rp = simplify_path(&p, 0.00015);
-    let waypoints = detect_waypoints(&rp);
-    eprintln!("we took {:?}", start.elapsed());
-    eprintln!("we now have {} points", rp.len());
-    let start = std::time::Instant::now();
-    eprintln!("rdp would have had {}", rdp(&p, 0.00015).len());
-    eprintln!("rdp took {:?}", start.elapsed());
+    let mut segmented_points = points(&input_file);
+    let p = segmented_points
+        .iter()
+        .flatten()
+        .copied()
+        .collect::<Vec<_>>();
 
-    let mut interests = parse_osm_data("isere.osm.pbf");
-    let buckets = position_interests_along_path(&mut interests, &rp, 0.0005, 5, 3);
+    eprintln!("initialy we have {} points", p.len());
+
+    eprintln!("we have {} waypoints", segmented_points.len());
+
+    let mut waypoints = HashSet::new();
+    let mut rp = Vec::new();
+    for (i1, i2) in (0..segmented_points.len()).tuple_windows() {
+        if let [s1, s2] = &mut segmented_points[i1..=i2] {
+            s1.extend(s2.first().copied());
+            waypoints.insert(s1.first().copied().unwrap());
+            let mut simplified = simplify_path(&s1, 0.00015);
+            rp.append(&mut simplified);
+            rp.pop();
+        }
+    }
+    rp.extend(segmented_points.last().and_then(|l| l.last()).copied());
+
+    let mut interests = parse_osm_data("ardeche.osm.pbf");
+    // let mut interests = parse_osm_data("isere.osm.pbf");
+    let buckets = position_interests_along_path(&mut interests, &rp, 0.001, 5, 3);
     // let i = get_openstreetmap_data(&rp).await;
     // let i = HashSet::new();
     save_svg(
