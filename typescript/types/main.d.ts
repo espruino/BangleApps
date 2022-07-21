@@ -1,5 +1,3 @@
-/// <reference path="other.d.ts" />
-
 /**
  * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility functions.
  * @url http://www.espruino.com/Reference#Microbit
@@ -23,6 +21,12 @@ declare class Microbit {
    * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
    */
   static MIC_ENABLE: Pin;
+
+  /**
+   * Called when the Micro:bit is moved in a deliberate fashion, and includes data on the detected gesture.
+   * @url http://www.espruino.com/Reference#l_Microbit_gesture
+   */
+  static on(event: "gesture", callback: (gesture: any) => void): void;
 
   /**
    * @url http://www.espruino.com/Reference#l_Microbit_mag
@@ -147,6 +151,29 @@ declare class Puck {
    * @url http://www.espruino.com/Reference#l_Puck_magTemp
    */
   static magTemp(): number;
+
+  /**
+   * Called after `Puck.magOn()` every time magnetometer data
+   * is sampled. There is one argument which is an object
+   * of the form `{x,y,z}` containing magnetometer readings
+   * as integers (for more information see `Puck.mag()`).
+   * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
+   * for more information.
+   * @url http://www.espruino.com/Reference#l_Puck_mag
+   */
+  static on(event: "mag", callback: () => void): void;
+
+  /**
+   * Only on Puck.js v2.0
+   * Called after `Puck.accelOn()` every time accelerometer data
+   * is sampled. There is one argument which is an object
+   * of the form `{acc:{x,y,z}, gyro:{x,y,z}}` containing the data.
+   * The data is as it comes off the accelerometer and is not
+   * scaled to 1g. For more information see `Puck.accel()` or
+   * [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals).
+   * @url http://www.espruino.com/Reference#l_Puck_accel
+   */
+  static on(event: "accel", callback: () => void): void;
 
   /**
    * Turn the magnetometer on and start periodic sampling. Samples will then cause
@@ -630,7 +657,7 @@ declare class Graphics {
    * a full update of the screen.
    * @url http://www.espruino.com/Reference#l_Graphics_flip
    */
-  flip(all: boolean): any;
+  flip(all?: boolean): any;
 
   /**
    * On Graphics instances with an offscreen buffer, this
@@ -794,7 +821,7 @@ declare class Graphics {
    * be a floating point value, and `g` and `b` are ignored.
    * @url http://www.espruino.com/Reference#l_Graphics_setColor
    */
-  setColor(r: any, g: any, b: any): Graphics;
+  setColor(r: any, g?: any, b?: any): Graphics;
 
   /**
    * Set the background color to use for subsequent drawing operations.
@@ -1271,6 +1298,43 @@ declare class Server {
  */
 declare class Socket {
   /**
+   * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @url http://www.espruino.com/Reference#l_Socket_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @url http://www.espruino.com/Reference#l_Socket_close
+   */
+  static on(event: "close", callback: (had_error: any) => void): void;
+
+  /**
+   * There was an error on this socket and it is closing (or wasn't opened in the first place). If a "connected" event was issued on this socket then the error event is always followed by a close event.
+   * The error codes are:
+   * * -1: socket closed (this is not really an error and will not cause an error callback)
+   * * -2: out of memory (typically while allocating a buffer to hold data)
+   * * -3: timeout
+   * * -4: no route
+   * * -5: busy
+   * * -6: not found (DNS resolution)
+   * * -7: max sockets (... exceeded)
+   * * -8: unsent data (some data could not be sent)
+   * * -9: connection reset (or refused)
+   * * -10: unknown error
+   * * -11: no connection
+   * * -12: bad argument
+   * * -13: SSL handshake failed
+   * * -14: invalid SSL data
+   * @url http://www.espruino.com/Reference#l_Socket_error
+   */
+  static on(event: "error", callback: (details: any) => void): void;
+
+  /**
+   * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @url http://www.espruino.com/Reference#l_Socket_drain
+   */
+  static on(event: "drain", callback: () => void): void;/**
    * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
    * @url http://www.espruino.com/Reference#l_Socket_available
    */
@@ -1325,6 +1389,16 @@ declare class Socket {
  */
 declare class dgramSocket {
   /**
+   * The 'message' event is called when a datagram message is received. If a handler is defined with `X.on('message', function(msg) { ... })` then it will be called`
+   * @url http://www.espruino.com/Reference#l_dgramSocket_message
+   */
+  static on(event: "message", callback: (msg: any, rinfo: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @url http://www.espruino.com/Reference#l_dgramSocket_close
+   */
+  static on(event: "close", callback: (had_error: any) => void): void;/**
    * @url http://www.espruino.com/Reference#l_dgramSocket_send
    */
   send(buffer: any, offset: any, length: any, ...args: any[]): any;
@@ -1562,6 +1636,16 @@ declare class httpSrv {
  */
 declare class httpSRq {
   /**
+   * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @url http://www.espruino.com/Reference#l_httpSRq_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @url http://www.espruino.com/Reference#l_httpSRq_close
+   */
+  static on(event: "close", callback: () => void): void;/**
    * The headers to sent to the server with this HTTP request.
    * @url http://www.espruino.com/Reference#l_httpSRq_headers
    */
@@ -1606,6 +1690,16 @@ declare class httpSRq {
  */
 declare class httpSRs {
   /**
+   * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @url http://www.espruino.com/Reference#l_httpSRs_drain
+   */
+  static on(event: "drain", callback: () => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @url http://www.espruino.com/Reference#l_httpSRs_close
+   */
+  static on(event: "close", callback: () => void): void;/**
    * The headers to send back along with the HTTP response.
    * The default contents are:
    * ```
@@ -1655,6 +1749,16 @@ declare class httpSRs {
  */
 declare class httpCRq {
   /**
+   * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @url http://www.espruino.com/Reference#l_httpCRq_drain
+   */
+  static on(event: "drain", callback: () => void): void;
+
+  /**
+   * An event that is fired if there is an error making the request and the response callback has not been invoked. In this case the error event concludes the request attempt. The error event function receives an error object as parameter with a `code` field and a `message` field.
+   * @url http://www.espruino.com/Reference#l_httpCRq_error
+   */
+  static on(event: "error", callback: () => void): void;/**
    * This function writes the `data` argument as a string. Data that is passed in
    * (including arrays) will be converted to a string with the normal JavaScript 
    * `toString` method. For more information about sending binary data see `Socket.write`
@@ -1676,6 +1780,22 @@ declare class httpCRq {
  */
 declare class httpCRs {
   /**
+   * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @url http://www.espruino.com/Reference#l_httpCRs_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes with one `hadError` boolean parameter, which indicates whether an error occurred.
+   * @url http://www.espruino.com/Reference#l_httpCRs_close
+   */
+  static on(event: "close", callback: () => void): void;
+
+  /**
+   * An event that is fired if there is an error receiving the response. The error event function receives an error object as parameter with a `code` field and a `message` field. After the error event the close even will also be triggered to conclude the HTTP request/response.
+   * @url http://www.espruino.com/Reference#l_httpCRs_error
+   */
+  static on(event: "error", callback: () => void): void;/**
    * The headers received along with the HTTP response
    * @url http://www.espruino.com/Reference#l_httpCRs_headers
    */
@@ -1772,6 +1892,69 @@ declare class NRF {
    * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
    */
   static setAdvertising(data: any, options: any): any;
+
+  /**
+   * Called when a host device connects to Espruino. The first argument contains the address.
+   * @url http://www.espruino.com/Reference#l_NRF_connect
+   */
+  static on(event: "connect", callback: (addr: any) => void): void;
+
+  /**
+   * Called when a host device disconnects from Espruino.
+   * The most common reason is:
+   * * 19 - `REMOTE_USER_TERMINATED_CONNECTION`
+   * * 22 - `LOCAL_HOST_TERMINATED_CONNECTION`
+   * @url http://www.espruino.com/Reference#l_NRF_disconnect
+   */
+  static on(event: "disconnect", callback: (reason: number) => void): void;
+
+  /**
+   * Contains updates on the security of the current Bluetooth link.
+   * See Nordic's `ble_gap_evt_auth_status_t` structure for more information.
+   * @url http://www.espruino.com/Reference#l_NRF_security
+   */
+  static on(event: "security", callback: (status: any) => void): void;
+
+  /**
+   * Called with a single byte value when Espruino is set up as
+   * a HID device and the computer it is connected to sends a
+   * HID report back to Espruino. This is usually used for handling
+   * indications such as the Caps Lock LED.
+   * @url http://www.espruino.com/Reference#l_NRF_HID
+   */
+  static on(event: "HID", callback: () => void): void;
+
+  /**
+   * Called with discovered services when discovery is finished
+   * @url http://www.espruino.com/Reference#l_NRF_servicesDiscover
+   */
+  static on(event: "servicesDiscover", callback: () => void): void;
+
+  /**
+   * Called with discovered characteristics when discovery is finished
+   * @url http://www.espruino.com/Reference#l_NRF_characteristicsDiscover
+   */
+  static on(event: "characteristicsDiscover", callback: () => void): void;
+
+  /**
+   * Called when an NFC field is detected
+   * @url http://www.espruino.com/Reference#l_NRF_NFCon
+   */
+  static on(event: "NFCon", callback: () => void): void;
+
+  /**
+   * Called when an NFC field is no longer detected
+   * @url http://www.espruino.com/Reference#l_NRF_NFCoff
+   */
+  static on(event: "NFCoff", callback: () => void): void;
+
+  /**
+   * When NFC is started with `NRF.nfcStart`, this is fired
+   * when NFC data is received. It doesn't get called if
+   * NFC is started with `NRF.nfcURL` or `NRF.nfcRaw`
+   * @url http://www.espruino.com/Reference#l_NRF_NFCrx
+   */
+  static on(event: "NFCrx", callback: (arr: any) => void): void;
 
   /**
    * If a device is connected to Espruino, disconnect from it.
@@ -2738,6 +2921,48 @@ declare class Bluetooth {
  */
 declare class BluetoothDevice {
   /**
+   * Called when the device gets disconnected.
+   * To connect and then print `Disconnected` when the device is
+   * disconnected, just do the following:
+   * ```
+   * var gatt;
+   * NRF.connect("aa:bb:cc:dd:ee:ff").then(function(gatt) {
+   *   gatt.device.on('gattserverdisconnected', function(reason) {
+   *     console.log("Disconnected ",reason);
+   *   });
+   * });
+   * ```
+   * Or:
+   * ```
+   * var gatt;
+   * NRF.requestDevice(...).then(function(device) {
+   *   device.on('gattserverdisconnected', function(reason) {
+   *     console.log("Disconnected ",reason);
+   *   });
+   * });
+   * ```
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_gattserverdisconnected
+   */
+  static on(event: "gattserverdisconnected", callback: (reason: number) => void): void;
+
+  /**
+   * Called when the device pairs and sends a passkey that Espruino should display.
+   * For this to be used, you'll have to specify that there's a display using `NRF.setSecurity`
+   * **This is not part of the Web Bluetooth Specification.** It has been added
+   * specifically for Espruino.
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_passkey
+   */
+  static on(event: "passkey", callback: (passkey: any) => void): void;
+
+  /**
+   * Called when the device pairs, displays a passkey, and wants Espruino to tell it what the passkey was.
+   * Respond with `BluetoothDevice.sendPasskey()` with a 6 character string containing only `0..9`.
+   * For this to be used, you'll have to specify that there's a keyboard using `NRF.setSecurity`
+   * **This is not part of the Web Bluetooth Specification.** It has been added
+   * specifically for Espruino.
+   * @url http://www.espruino.com/Reference#l_BluetoothDevice_passkeyRequest
+   */
+  static on(event: "passkeyRequest", callback: () => void): void;/**
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_gatt
    */
   gatt: any;
@@ -2915,6 +3140,22 @@ declare class BluetoothRemoteGATTService {
  */
 declare class BluetoothRemoteGATTCharacteristic {
   /**
+   * Called when a characteristic's value changes, *after* `BluetoothRemoteGATTCharacteristic.startNotifications` has been called.
+   * ```
+   *   ...
+   *   return service.getCharacteristic("characteristic_uuid");
+   * }).then(function(c) {
+   *   c.on('characteristicvaluechanged', function(event) {
+   *     console.log("-> "+event.target.value);
+   *   });
+   *   return c.startNotifications();
+   * }).then(...
+   * ```
+   * The first argument is of the form `{target : BluetoothRemoteGATTCharacteristic}`, and `BluetoothRemoteGATTCharacteristic.value`
+   * will then contain the new value (as a DataView).
+   * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_characteristicvaluechanged
+   */
+  static on(event: "characteristicvaluechanged", callback: () => void): void;/**
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_service
    */
   service: any;
@@ -3020,6 +3261,227 @@ declare class BluetoothRemoteGATTCharacteristic {
  * @url http://www.espruino.com/Reference#Bangle
  */
 declare class Bangle {
+  /**
+   * Accelerometer data available with `{x,y,z,diff,mag}` object as a parameter.
+   * * `x` is X axis (left-right) in `g`
+   * * `y` is Y axis (up-down) in `g`
+   * * `z` is Z axis (in-out) in `g`
+   * * `diff` is difference between this and the last reading in `g`
+   * * `mag` is the magnitude of the acceleration in `g`
+   * You can also retrieve the most recent reading with `Bangle.getAccel()`.
+   * @url http://www.espruino.com/Reference#l_Bangle_accel
+   */
+  static on(event: "accel", callback: (xyz: any) => void): void;
+
+  /**
+   * Called whenever a step is detected by Bangle.js's pedometer.
+   * @url http://www.espruino.com/Reference#l_Bangle_step
+   */
+  static on(event: "step", callback: (up: number) => void): void;
+
+  /**
+   * See `Bangle.getHealthStatus()` for more information. This is used for health tracking to
+   * allow Bangle.js to record historical exercise data.
+   * @url http://www.espruino.com/Reference#l_Bangle_health
+   */
+  static on(event: "health", callback: (info: any) => void): void;
+
+  /**
+   * Has the watch been moved so that it is face-up, or not face up?
+   * @url http://www.espruino.com/Reference#l_Bangle_faceUp
+   */
+  static on(event: "faceUp", callback: (up: boolean) => void): void;
+
+  /**
+   * This event happens when the watch has been twisted around it's axis - for instance as if it was rotated so someone could look at the time.
+   * To tweak when this happens, see the `twist*` options in `Bangle.setOptions()`
+   * @url http://www.espruino.com/Reference#l_Bangle_twist
+   */
+  static on(event: "twist", callback: () => void): void;
+
+  /**
+   * Is the battery charging or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_charging
+   */
+  static on(event: "charging", callback: (charging: boolean) => void): void;
+
+  /**
+   * Magnetometer/Compass data available with `{x,y,z,dx,dy,dz,heading}` object as a parameter
+   * * `x/y/z` raw x,y,z magnetometer readings
+   * * `dx/dy/dz` readings based on calibration since magnetometer turned on
+   * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer hasn't been rotated around 360 degrees)
+   * To get this event you must turn the compass on
+   * with `Bangle.setCompassPower(1)`.
+   * You can also retrieve the most recent reading with `Bangle.getCompass()`.
+   * @url http://www.espruino.com/Reference#l_Bangle_mag
+   */
+  static on(event: "mag", callback: (xyz: any) => void): void;
+
+  /**
+   * Raw NMEA GPS / u-blox data messages received as a string
+   * To get this event you must turn the GPS on
+   * with `Bangle.setGPSPower(1)`.
+   * @url http://www.espruino.com/Reference#l_Bangle_GPS-raw
+   */
+  static on(event: "GPS-raw", callback: (nmea: any, dataLoss: boolean) => void): void;
+
+  /**
+   * GPS data, as an object. Contains:
+   * ```
+   * { "lat": number,      // Latitude in degrees
+   *   "lon": number,      // Longitude in degrees
+   *   "alt": number,      // altitude in M
+   *   "speed": number,    // Speed in kph
+   *   "course": number,   // Course in degrees
+   *   "time": Date,       // Current Time (or undefined if not known)
+   *   "satellites": 7,    // Number of satellites
+   *   "fix": 1            // NMEA Fix state - 0 is no fix
+   *   "hdop": number,     // Horizontal Dilution of Precision
+   * }
+   * ```
+   * If a value such as `lat` is not known because there is no fix, it'll be `NaN`.
+   * `hdop` is a value from the GPS receiver that gives a rough idea of accuracy
+   * of lat/lon based on the geometry of the satellites in range. Multiply by 5 to
+   * get a value in meters. This is just a ballpark estimation and should
+   * not be considered remotely accurate.
+   * To get this event you must turn the GPS on
+   * with `Bangle.setGPSPower(1)`.
+   * @url http://www.espruino.com/Reference#l_Bangle_GPS
+   */
+  static on(event: "GPS", callback: (fix: any) => void): void;
+
+  /**
+   * Heat rate data, as an object. Contains:
+   * ```
+   * { "bpm": number,             // Beats per minute
+   *   "confidence": number,      // 0-100 percentage confidence in the heart rate
+   *   "raw": Uint8Array,         // raw samples from heart rate monitor
+   * }
+   * ```
+   * To get this event you must turn the heart rate monitor on
+   * with `Bangle.setHRMPower(1)`.
+   * @url http://www.espruino.com/Reference#l_Bangle_HRM
+   */
+  static on(event: "HRM", callback: (hrm: any) => void): void;
+
+  /**
+   * Called when heart rate sensor data is available - see `Bangle.setHRMPower(1)`.
+   * `hrm` is of the form:
+   * ```
+   * { "raw": -1,       // raw value from sensor
+   *   "filt": -1,      // bandpass-filtered raw value from sensor
+   *   "bpm": 88.9,     // last BPM value measured
+   *   "confidence": 0  // confidence in the BPM value
+   * }
+   * ```
+   * @url http://www.espruino.com/Reference#l_Bangle_HRM-raw
+   */
+  static on(event: "HRM-raw", callback: (hrm: any) => void): void;
+
+  /**
+   * When `Bangle.setBarometerPower(true)` is called, this event is fired containing barometer readings.
+   * Same format as `Bangle.getPressure()`
+   * @url http://www.espruino.com/Reference#l_Bangle_pressure
+   */
+  static on(event: "pressure", callback: (e: any) => void): void;
+
+  /**
+   * Has the screen been turned on or off? Can be used to stop tasks that are no longer useful if nothing is displayed.  Also see `Bangle.isLCDOn()`
+   * @url http://www.espruino.com/Reference#l_Bangle_lcdPower
+   */
+  static on(event: "lcdPower", callback: (on: boolean) => void): void;
+
+  /**
+   * Has the screen been locked? Also see `Bangle.isLocked()`
+   * @url http://www.espruino.com/Reference#l_Bangle_lock
+   */
+  static on(event: "lock", callback: (on: boolean) => void): void;
+
+  /**
+   * If the watch is tapped, this event contains information on the way it was tapped.
+   * `dir` reports the side of the watch that was tapped (not the direction it was tapped in).
+   * ```
+   * {
+   *   dir : "left/right/top/bottom/front/back",
+   *   double : true/false // was this a double-tap?
+   *   x : -2 .. 2, // the axis of the tap
+   *   y : -2 .. 2, // the axis of the tap
+   *   z : -2 .. 2 // the axis of the tap
+   * ```
+   * @url http://www.espruino.com/Reference#l_Bangle_tap
+   */
+  static on(event: "tap", callback: (data: any) => void): void;
+
+  /**
+   * Emitted when a 'gesture' (fast movement) is detected
+   * @url http://www.espruino.com/Reference#l_Bangle_gesture
+   */
+  static on(event: "gesture", callback: (xyz: any) => void): void;
+
+  /**
+   * Emitted when a 'gesture' (fast movement) is detected, and a Tensorflow model is in
+   * storage in the `".tfmodel"` file.
+   * If a `".tfnames"` file is specified as a comma-separated list of names, it will be used
+   * to decode `gesture` from a number into a string.
+   * @url http://www.espruino.com/Reference#l_Bangle_aiGesture
+   */
+  static on(event: "aiGesture", callback: (gesture: any, weights: any) => void): void;
+
+  /**
+   * Emitted when a swipe on the touchscreen is detected (a movement from left->right, right->left, down->up or up->down) 
+   * Bangle.js 1 is only capable of detecting left/right swipes as it only contains a 2 zone touchscreen.
+   * @url http://www.espruino.com/Reference#l_Bangle_swipe
+   */
+  static on(event: "swipe", callback: (directionLR: number, directionUD: number) => void): void;
+
+  /**
+   * Emitted when the touchscreen is pressed
+   * @url http://www.espruino.com/Reference#l_Bangle_touch
+   */
+  static on(event: "touch", callback: (button: number, xy: any) => void): void;
+
+  /**
+   * Emitted when the touchscreen is dragged or released
+   * The touchscreen extends past the edge of the screen and while
+   * `x` and `y` coordinates are arranged such that they align with
+   * the LCD's pixels, if your finger goes towards the edge of the
+   * screen, `x` and `y` could end up larger than 175 (the screen's maximum pixel coordinates)
+   * or smaller than 0. Coordinates from the `touch` event are clipped.
+   * @url http://www.espruino.com/Reference#l_Bangle_drag
+   */
+  static on(event: "drag", callback: (event: any) => void): void;
+
+  /**
+   * Emitted when the touchscreen is dragged for a large enough distance to count as a gesture.
+   * If Bangle.strokes is defined and populated with data from `Unistroke.new`, the `event` argument will also
+   * contain a `stroke` field containing the most closely matching stroke name.
+   * For example:
+   * ```
+   * Bangle.strokes = {
+   *   up : Unistroke.new(new Uint8Array([57, 151, ... 158, 137])),
+   *   alpha : Unistroke.new(new Uint8Array([161, 55, ... 159, 161])),
+   * };
+   * Bangle.on('stroke',o=>{
+   *   print(o.stroke);
+   *   g.clear(1).drawPoly(o.xy);
+   * });
+   * // Might print something like
+   * {
+   *   "xy": new Uint8Array([149, 50, ... 107, 136]),
+   *   "stroke": "alpha"
+   * }
+   * ```
+   * @url http://www.espruino.com/Reference#l_Bangle_stroke
+   */
+  static on(event: "stroke", callback: (event: any) => void): void;
+
+  /**
+   * Emitted at midnight (at the point the `day` health info is reset to 0).
+   * Can be used for housekeeping tasks that don't want to be run during the day.
+   * @url http://www.espruino.com/Reference#l_Bangle_midnight
+   */
+  static on(event: "midnight", callback: () => void): void;
+
   /**
    * This function can be used to turn Bangle.js's LCD off or on.
    * This function resets the Bangle's 'activity timer' (like
@@ -3408,7 +3870,7 @@ declare class Bangle {
    * Use the vibration motor to buzz for a certain time period
    * @url http://www.espruino.com/Reference#l_Bangle_buzz
    */
-  static buzz(time: number, strength: number): Promise<any>;
+  static buzz(time?: number, strength?: number): Promise<any>;
 
   /**
    * Turn Bangle.js off. It can only be woken by pressing BTN1.
@@ -3918,6 +4380,36 @@ declare class Pin {
  */
 declare class Serial {
   /**
+   * The `data` event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @url http://www.espruino.com/Reference#l_Serial_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * The `framing` event is called when there was activity on the input to the UART
+   * but the `STOP` bit wasn't in the correct place. This is either because there
+   * was noise on the line, or the line has been pulled to 0 for a long period
+   * of time.
+   * To enable this, you must initialise Serial with `SerialX.setup(..., { ..., errors:true });`
+   * **Note:** Even though there was an error, the byte will still be received and
+   * passed to the `data` handler.
+   * **Note:** This only works on STM32 and NRF52 based devices (eg. all official Espruino boards)
+   * @url http://www.espruino.com/Reference#l_Serial_framing
+   */
+  static on(event: "framing", callback: () => void): void;
+
+  /**
+   * The `parity` event is called when the UART was configured with a parity bit,
+   * and this doesn't match the bits that have actually been received.
+   * To enable this, you must initialise Serial with `SerialX.setup(..., { ..., errors:true });`
+   * **Note:** Even though there was an error, the byte will still be received and
+   * passed to the `data` handler.
+   * **Note:** This only works on STM32 and NRF52 based devices (eg. all official Espruino boards)
+   * @url http://www.espruino.com/Reference#l_Serial_parity
+   */
+  static on(event: "parity", callback: () => void): void;
+
+  /**
    * Try and find a USART (Serial) hardware device that will work on this pin (eg. `Serial1`)
    * May return undefined if no device can be found.
    * @url http://www.espruino.com/Reference#l_Serial_find
@@ -4315,6 +4807,42 @@ declare class E {
   static showAlert(message: any, options: any): any;
 
   /**
+   * Called when a notification arrives on an Apple iOS device Bangle.js is connected to
+   * ```
+   * {
+   * event:"add",
+   * uid:42,
+   * category:4,
+   * categoryCnt:42,
+   * silent:true,
+   * important:false,
+   * preExisting:true,
+   * positive:false,
+   * negative:true
+   * }
+   * ```
+   * You can then get more information with something like:
+   * ```
+   * NRF.ancsGetNotificationInfo( event.uid ).then(a=>print("Notify",E.toJS(a)));
+   * ```
+   * @url http://www.espruino.com/Reference#l_E_ANCS
+   */
+  static on(event: "ANCS", callback: (info: any) => void): void;
+
+  /**
+   * Called when a media event arrives on an Apple iOS device Bangle.js is connected to
+   * ```
+   * {
+   * id : "artist"/"album"/"title"/"duration",
+   * value : "Some text",
+   * truncated : bool // the 'value' was too big to be sent completely
+   * }
+   * ```
+   * @url http://www.espruino.com/Reference#l_E_AMS
+   */
+  static on(event: "AMS", callback: (info: any) => void): void;
+
+  /**
    * Display a menu on the screen, and set up the buttons to navigate through it.
    * Supply an object containing menu items. When an item is selected, the
    * function it references will be executed. For example:
@@ -4500,6 +5028,69 @@ declare class E {
    * @url http://www.espruino.com/Reference#l_E_showAlert
    */
   static showAlert(message: any, options: any): any;
+
+  /**
+   * This event is called right after the board starts up, and has a similar effect
+   * to creating a function called `onInit`.
+   * For example to write `"Hello World"` every time Espruino starts, use:
+   * ```
+   * E.on('init', function() {
+   *   console.log("Hello World!");
+   * });
+   * ```
+   * **Note:** that subsequent calls to `E.on('init', ` will **add** a new handler,
+   * rather than replacing the last one. This allows you to write modular code -
+   * something that was not possible with `onInit`.
+   * @url http://www.espruino.com/Reference#l_E_init
+   */
+  static on(event: "init", callback: () => void): void;
+
+  /**
+   * This event is called just before the device shuts down for commands such as
+   * `reset()`, `load()`, `save()`, `E.reboot()` or `Bangle.off()`
+   * For example to write `"Bye!"` just before shutting down use:
+   * ```
+   * E.on('kill', function() {
+   *   console.log("Bye!");
+   * });
+   * ```
+   * **NOTE:** This event is not called when the device is 'hard reset' - for
+   * example by removing power, hitting an actual reset button, or via
+   * a Watchdog timer reset.
+   * @url http://www.espruino.com/Reference#l_E_kill
+   */
+  static on(event: "kill", callback: () => void): void;
+
+  /**
+   * This event is called when an error is created by Espruino itself (rather
+   * than JS code) which changes the state of the error flags reported by
+   * `E.getErrorFlags()`
+   * This could be low memory, full buffers, UART overflow, etc. `E.getErrorFlags()`
+   * has a full description of each type of error.
+   * This event will only be emitted when error flag is set. If the error
+   * flag was already set nothing will be emitted. To clear error flags
+   * so that you do get a callback each time a flag is set, call `E.getErrorFlags()`.
+   * @url http://www.espruino.com/Reference#l_E_errorFlag
+   */
+  static on(event: "errorFlag", callback: (errorFlags: any) => void): void;
+
+  /**
+   * This event is called when a full touchscreen device on an Espruino
+   * is interacted with.
+   * **Note:** This event is not implemented on Bangle.js because
+   * it only has a two area touchscreen.
+   * To use the touchscreen to draw lines, you could do:
+   * ```
+   * var last;
+   * E.on('touch',t=>{
+   *   if (last) g.lineTo(t.x, t.y);
+   *   else g.moveTo(t.x, t.y);
+   *   last = t.b;
+   * });
+   * ```
+   * @url http://www.espruino.com/Reference#l_E_touch
+   */
+  static on(event: "touch", callback: (x: number, y: number, b: number) => void): void;
 
   /**
    * Use the microcontroller's internal thermistor to work out the temperature.
@@ -6405,6 +6996,76 @@ type Libraries = {
    * @url http://www.espruino.com/Reference#l_Wifi_undefined
    */
   Wifi: {
+    /**
+     * The 'associated' event is called when an association with an access point has succeeded, i.e., a connection to the AP's network has been established.
+     * On ESP32/ESP8266 there is a `details` parameter which includes:
+     * * ssid - The SSID of the access point to which the association was established
+     * * mac - The BSSID/mac address of the access point
+     * * channel - The wifi channel used (an integer, typ 1..14)
+     * @url http://www.espruino.com/Reference#l_Wifi_associated
+     */
+    on(event: "associated", callback: (details: any) => void): void;
+
+    /**
+     * The 'disconnected' event is called when an association with an access point has been lost.
+     * On ESP32/ESP8266 there is a `details` parameter which includes:
+     * * ssid - The SSID of the access point from which the association was lost
+     * * mac - The BSSID/mac address of the access point
+     * * reason - The reason for the disconnection (string)
+     * @url http://www.espruino.com/Reference#l_Wifi_disconnected
+     */
+    on(event: "disconnected", callback: (details: any) => void): void;
+
+    /**
+     * The 'auth_change' event is called when the authentication mode with the associated access point changes.
+     * The details include:
+     * * oldMode - The old auth mode (string: open, wep, wpa, wpa2, wpa_wpa2)
+     * * newMode - The new auth mode (string: open, wep, wpa, wpa2, wpa_wpa2)
+     * @url http://www.espruino.com/Reference#l_Wifi_auth_change
+     */
+    on(event: "auth_change", callback: (details: any) => void): void;
+
+    /**
+     * The 'dhcp_timeout' event is called when a DHCP request to the connected access point fails and thus no IP address could be acquired (or renewed).
+     * @url http://www.espruino.com/Reference#l_Wifi_dhcp_timeout
+     */
+    on(event: "dhcp_timeout", callback: () => void): void;
+
+    /**
+     * The 'connected' event is called when the connection with an access point is ready for traffic. In the case of a dynamic IP address configuration this is when an IP address is obtained, in the case of static IP address allocation this happens when an association is formed (in that case the 'associated' and 'connected' events are fired in rapid succession).
+     * On ESP32/ESP8266 there is a `details` parameter which includes:
+     * * ip - The IP address obtained as string
+     * * netmask - The network's IP range mask as string
+     * * gw - The network's default gateway as string
+     * @url http://www.espruino.com/Reference#l_Wifi_connected
+     */
+    on(event: "connected", callback: (details: any) => void): void;
+
+    /**
+     * The 'sta_joined' event is called when a station establishes an association (i.e. connects) with the esp8266's access point.
+     * The details include:
+     * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
+     * @url http://www.espruino.com/Reference#l_Wifi_sta_joined
+     */
+    on(event: "sta_joined", callback: (details: any) => void): void;
+
+    /**
+     * The 'sta_left' event is called when a station disconnects from the esp8266's access point (or its association times out?).
+     * The details include:
+     * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
+     * @url http://www.espruino.com/Reference#l_Wifi_sta_left
+     */
+    on(event: "sta_left", callback: (details: any) => void): void;
+
+    /**
+     * The 'probe_recv' event is called when a probe request is received from some station by the esp8266's access point.
+     * The details include:
+     * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
+     * * rssi - The signal strength in dB of the probe request
+     * @url http://www.espruino.com/Reference#l_Wifi_probe_recv
+     */
+    on(event: "probe_recv", callback: (details: any) => void): void;
+
     /**
      * Disconnect the wifi station from an access point and disable the station mode. It is OK to call `disconnect` to turn off station mode even if no connection exists (for example, connection attempts may be failing). Station mode can be re-enabled by calling `connect` or `scan`.
      * @url http://www.espruino.com/Reference#l_Wifi_disconnect

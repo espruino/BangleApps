@@ -8,8 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:types": "tsc ./types/main.d.ts",
-    "gen": "node ./generate.js"
+    "build:types": "tsc ./types/main.d.ts"
   },
   "dependencies": {
     "node-fetch": "^3.2.9"

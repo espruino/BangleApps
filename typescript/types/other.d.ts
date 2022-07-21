@@ -1,4 +1,4 @@
-declare const g: typeof Graphics;
+declare const g: Graphics;
 
 type WidgetArea = "tl" | "tr" | "bl" | "br";
 type Widget = {
