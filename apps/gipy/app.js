@@ -1,5 +1,5 @@
 
-let simulated = false;
+let simulated = true;
 let file_version = 2;
 let code_key = 47490;
 
@@ -15,6 +15,19 @@ let interests_colors = [
     0xFD20, // Artwork, orange
     0x07E0, // Pharmacy, green
 ];
+
+function binary_search(array, x) {
+    let start = 0, end = array.length - 1;
+
+    while (start <= end){
+        let mid = Math.floor((start + end) / 2);
+        if (array[mid] < x)
+             start = mid + 1;
+        else
+             end = mid - 1;
+    }
+    return start;
+}
 
 class Status {
     constructor(path) {
@@ -103,10 +116,18 @@ class Status {
         Bangle.drawWidgets();
     }
     display_interest_points() {
-        for (let i = 0 ; i < this.path.interests_coordinates.length ; i++) {
-            let p = this.path.interest_point(i);
+        // this is the algorithm in case we have a lot of interest points
+        // let's draw all points for 5 segments centered on current one
+        let starting_group = Math.floor(Math.max(this.current_segment-2, 0) / 3);
+        let ending_group = Math.floor(Math.min(this.current_segment+2, this.path.len-2) / 3);
+        let starting_bucket = binary_search(this.path.interests_starts, starting_group);
+        let ending_bucket = binary_search(this.path.interests_starts, ending_group+0.5);
+        // we have 5 points per bucket
+        for (let i = starting_bucket*5 ; i <= ending_bucket*5 ; i++) {
+            let index = this.path.interests_on_path[i];
+            let interest_point = this.path.interest_point(index);
             let color = this.path.interest_color(i);
-            let c = p.coordinates(this.position, this.cos_direction, this.sin_direction);
+            let c = interest_point.coordinates(this.position, this.cos_direction, this.sin_direction);
             g.setColor(color).fillCircle(c[0], c[1], 5);
         }
     }
@@ -119,7 +140,7 @@ class Status {
             minutes = '0' + minutes;
         }
         let hours = now.getHours().toString();
-        g.setFont("6x8:2").drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
+        g.setFont("6x8:2").setColor(g.theme.fg).drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
         g.drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
         g.drawString("seg." + (this.current_segment + 1) + "/" + path.len + "  " + this.distance_to_next_point + "m", 0, g.getHeight() - 15);
     }
@@ -440,4 +461,6 @@ if (simulated) {
   Bangle.setGPSPower(true, "gipy");
   Bangle.on('GPS', set_coordinates);
 }
+
+
 

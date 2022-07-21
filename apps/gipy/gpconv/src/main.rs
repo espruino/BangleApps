@@ -378,6 +378,9 @@ fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> st
         .map(|b| b.start as u16)
         .try_for_each(|i| writer.write_all(&i.to_le_bytes()))?;
 
+    let starts: Vec<_> = buckets.iter().map(|b| b.start).collect();
+    eprintln!("starts {:?} of length {}", starts, starts.len());
+
     Ok(())
 }
 
@@ -589,6 +592,13 @@ fn position_interests_along_path(
         .chunks(groups_size)
         .map(|c| c.iter().flatten().unique().copied().collect::<Vec<_>>())
         .collect::<Vec<_>>();
+    eprintln!(
+        "group sizes are {:?}",
+        grouped_positions
+            .iter()
+            .map(|g| g.len())
+            .collect::<Vec<_>>()
+    );
     // now, group the points in buckets
     let chunks = grouped_positions
         .iter()
