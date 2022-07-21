@@ -149,44 +149,65 @@ class Status {
         // don't display all segments, only those neighbouring current segment
         // this is most likely to be the correct display
         // while lowering the cost a lot
-        let start = Math.max(this.current_segment - 5, 0);
-        let end = Math.min(this.current_segment + 6, this.path.len - 1);
+        //
+        // note that all code is inlined here to speed things up from 400ms to 200ms
+        let start = Math.max(this.current_segment - 3, 0);
+        let end = Math.min(this.current_segment + 5, this.path.len - 1);
         let pos = this.position;
         let cos = this.cos_direction;
         let sin = this.sin_direction;
-
-        // segments
-        let current_segment = this.current_segment;
-        this.path.on_segments(function(p1, p2, i) {
-            if (i == current_segment + 1) {
-                g.setColor(0.0, 1.0, 0.0);
-            } else {
-                g.setColor(1.0, 0.0, 0.0);
+        let points = this.path.points;
+        let cx = pos.lon;
+        let cy = pos.lat;
+        let half_width = g.getWidth() / 2;
+        let half_height = g.getHeight() / 2;
+        let previous_x = null;
+        let previous_y = null;
+        for (let i = start ; i < end ; i++) {
+            let tx = (points[2*i] - cx) * 40000.0;
+            let ty = (points[2*i+1] - cy) * 40000.0;
+            let rotated_x = tx * cos - ty * sin;
+            let rotated_y = tx * sin + ty * cos;
+            let x = half_width - Math.round(rotated_x); // x is inverted
+            let y = half_height + Math.round(rotated_y);
+            if (previous_x !== null) {
+                if (i == this.current_segment + 1) {
+                    g.setColor(0.0, 1.0, 0.0);
+                } else {
+                    g.setColor(1.0, 0.0, 0.0);
+                }
+                g.drawLine(previous_x, previous_y, x, y);
             }
-            let c1 = p1.coordinates(pos, cos, sin);
-            let c2 = p2.coordinates(pos, cos, sin);
-            g.drawLine(c1[0], c1[1], c2[0], c2[1]);
-        }, start, end);
 
-        // waypoints
-        for (let i = start ; i < end + 1 ; i++) {
-            let p = this.path.point(i);
-            let c = p.coordinates(pos, cos, sin);
-            if (this.path.is_waypoint(i)) {
+            if (this.path.is_waypoint(i-1)) {
                 g.setColor(g.theme.fg);
-                g.fillCircle(c[0], c[1], 6);
+                g.fillCircle(previous_x, previous_y, 6);
                 g.setColor(g.theme.bg);
-                g.fillCircle(c[0], c[1], 5);
+                g.fillCircle(previous_x, previous_y, 5);
             }
             g.setColor(g.theme.fg);
-            g.fillCircle(c[0], c[1], 4);
+            g.fillCircle(previous_x, previous_y, 4);
             g.setColor(g.theme.bg);
-            g.fillCircle(c[0], c[1], 3);
+            g.fillCircle(previous_x, previous_y, 3);
+
+            previous_x = x;
+            previous_y = y;
         }
+
+        if (this.path.is_waypoint(end-1)) {
+            g.setColor(g.theme.fg);
+            g.fillCircle(previous_x, previous_y, 6);
+            g.setColor(g.theme.bg);
+            g.fillCircle(previous_x, previous_y, 5);
+        }
+        g.setColor(g.theme.fg);
+        g.fillCircle(previous_x, previous_y, 4);
+        g.setColor(g.theme.bg);
+        g.fillCircle(previous_x, previous_y, 3);
 
         // now display ourselves
         g.setColor(g.theme.fgH);
-        g.fillCircle(g.getWidth() / 2, g.getHeight() / 2, 5);
+        g.fillCircle(half_width, half_height, 5);
     }
 }
 
@@ -492,4 +513,3 @@ if (files.length <= 1) {
 } else {
     drawMenu();
 }
-

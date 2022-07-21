@@ -24,3 +24,6 @@
 0.09:
 	* We now display interest points.
 	* Menu to choose which file to load.
+
+0.10:
+	* Display performances enhancement.
