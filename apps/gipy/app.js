@@ -1,7 +1,20 @@
 
 let simulated = false;
-let file_version = 1;
+let file_version = 2;
 let code_key = 47490;
+
+let interests_colors = [
+    0x780F, // Bakery, purple
+    0x001F, // DrinkingWater, blue
+    0x07FF, // Toilets, cyan
+    0x7BEF, // BikeShop, dark grey
+    0xAFE5, // ChargingStation, green yellow
+    0x7800, // Bank, maroon
+    0xF800, // Supermarket, red
+    0xF81F, // Table, pink
+    0xFD20, // Artwork, orange
+    0x07E0, // Pharmacy, green
+];
 
 class Status {
     constructor(path) {
@@ -70,7 +83,7 @@ class Status {
             }
         }
         // re-display unless locked
-        if (!Bangle.isLocked()) {
+        if (!Bangle.isLocked() || simulated) {
             this.display();
         }
     }
@@ -85,8 +98,17 @@ class Status {
     display() {
         g.clear();
         this.display_map();
+        this.display_interest_points();
         this.display_stats();
         Bangle.drawWidgets();
+    }
+    display_interest_points() {
+        for (let i = 0 ; i < this.path.interests_coordinates.length ; i++) {
+            let p = this.path.interest_point(i);
+            let color = this.path.interest_color(i);
+            let c = p.coordinates(this.position, this.cos_direction, this.sin_direction);
+            g.setColor(color).fillCircle(c[0], c[1], 5);
+        }
     }
     display_stats() {
         let rounded_distance = Math.round(this.remaining_distance() / 100) / 10;
@@ -149,7 +171,11 @@ class Status {
 class Path {
     constructor(filename) {
         let buffer = require("Storage").readArrayBuffer(filename);
-        let header = Uint16Array(buffer, 0, 3);
+        let offset = 0;
+
+        // header
+        let header = Uint16Array(buffer, offset, 5);
+        offset += 5 * 2;
         let key = header[0];
         let version = header[1];
         let points_number = header[2];
@@ -157,7 +183,25 @@ class Path {
             E.showMessage("Invalid gpc file");
             return;
         }
-        this.points = Float64Array(buffer, 3*2, points_number*2);
+
+        // path points
+        this.points = Float64Array(buffer, offset, points_number*2);
+
+        // interest points
+        offset += 8 * points_number * 2;
+        let interests_number = header[3];
+        this.interests_coordinates = Float64Array(buffer, offset, interests_number * 2);
+        offset += 8 * interests_number * 2;
+        this.interests_types = Uint8Array(buffer, offset, interests_number);
+        offset += interests_number;
+
+        // interests on path
+        let interests_on_path_number = header[4];
+        this.interests_on_path = Uint16Array(buffer, offset, interests_on_path_number);
+        offset += 2 * interests_on_path_number;
+        let starts_length = Math.ceil(interests_on_path_number / 5.0);
+        this.interests_starts = Uint16Array(buffer, offset, starts_length);
+        offset += 2 * starts_length;
     }
 
     // if start, end or steep direction change
@@ -199,6 +243,16 @@ class Path {
         return new Point(lon, lat);
     }
 
+    interest_point(index) {
+        let lon = this.interests_coordinates[2 * index];
+        let lat = this.interests_coordinates[2 * index + 1];
+        return new Point(lon, lat);
+    }
+
+    interest_color(index) {
+        return interests_colors[this.interests_types[index]];
+    }
+
     // return index of segment which is nearest from point.
     // we need a direction because we need there is an ambiguity
     // for overlapping segments which are taken once to go and once to come back.
@@ -237,7 +291,7 @@ class Point {
         this.lat = lat;
     }
     coordinates(current_position, cos_direction, sin_direction) {
-        let translated = this.minus(current_position).times(20000.0);
+        let translated = this.minus(current_position).times(40000.0);
         let rotated_x = translated.lon * cos_direction - translated.lat * sin_direction;
         let rotated_y = translated.lon * sin_direction + translated.lat * cos_direction;
         return [
@@ -351,6 +405,9 @@ function set_coordinates(data) {
 
 let fake_gps_point = 0.0;
 function simulate_gps(status) {
+    if (fake_gps_point > status.path.len -1) {
+        return;
+    }
     let point_index = Math.floor(fake_gps_point);
     if (point_index >= path.len) {
         return;
@@ -362,7 +419,7 @@ function simulate_gps(status) {
     let pos = p1.times(1-alpha).plus(p2.times(alpha));
     let old_pos = status.position;
 
-    fake_gps_point += 0.05; // advance simulation
+    fake_gps_point += 0.2; // advance simulation
     let direction = Math.atan2(pos.lat - old_pos.lat, pos.lon - old_pos.lon);
     status.update_position(pos, direction);
 }

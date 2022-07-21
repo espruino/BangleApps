@@ -20,3 +20,6 @@
 	* Don't use gps course anymore but figure it from previous positions.
 	* Bugfix: path colors are back.
 	* Always buzz when reaching waypoint even if unlocked.
+
+0.09:
+	* We now display interest points.
