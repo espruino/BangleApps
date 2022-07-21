@@ -64,9 +64,10 @@ TODO:
       var OSMTILECOUNT = 3; // how many tiles do we download in each direction (Math.floor(MAPSIZE / OSMTILESIZE)+1)
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
-      var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
-      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      //var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast, TOO SLOW
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
+      var TILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
       // Create map and try and set the location to where the browser thinks we are
       var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
@@ -128,7 +129,7 @@ TODO:
              var min = Math.min(rgba[i+0],rgba[i+1],rgba[i+2]);
              var max = Math.max(rgba[i+0],rgba[i+1],rgba[i+2]);
              var d = max-min;
-             if (max<120) { // black
+             if (max<120 || (d<8 && max<215)) { // black, or a darker grey
                rgba[i+0]=0;
                rgba[i+1]=0;
                rgba[i+2]=0;
