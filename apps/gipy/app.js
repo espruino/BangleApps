@@ -122,7 +122,7 @@ class Status {
       this.path.point(segment),
       this.path.point(segment + 1)
     );
-    return distance_to_nearest > 20;
+    return distance_to_nearest > 30;
   }
   display() {
     g.clear();
@@ -181,7 +181,7 @@ class Status {
         (this.current_segment + 1) +
         "/" +
         (this.path.len - 1) +
-        "  " +
+        " " +
         this.distance_to_next_point +
         "m",
       0,
@@ -189,9 +189,11 @@ class Status {
     );
 
     if (this.distance_to_next_point <= 20) {
-      g.setColor(0.0, 1.0, 0.0)
-        .setFont("6x8:2")
-        .drawString("turn", g.getWidth() - 55, 35);
+      if (this.path.is_waypoint(this.reaching)) {
+        g.setColor(0.0, 1.0, 0.0)
+          .setFont("6x8:2")
+          .drawString("turn", g.getWidth() - 55, 35);
+      }
     }
     if (!this.on_path) {
       g.setColor(1.0, 0.0, 0.0)
@@ -315,7 +317,10 @@ class Path {
   }
 
   is_waypoint(point_index) {
-    return this.waypoints[Math.floor(point_index / 8)] & point_index % 8;
+    let i = Math.floor(point_index / 8);
+    let subindex = point_index % 8;
+    let r = this.waypoints[i] & (1 << subindex);
+    return r != 0;
   }
 
   // execute op on all segments.
