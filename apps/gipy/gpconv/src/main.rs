@@ -650,6 +650,7 @@ fn position_interests_along_path(
 #[tokio::main]
 async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
+    let osm_file = std::env::args().nth(2);
     eprintln!("input is {}", input_file);
     let mut segmented_points = points(&input_file);
     let p = segmented_points
@@ -675,7 +676,11 @@ async fn main() {
     }
     rp.extend(segmented_points.last().and_then(|l| l.last()).copied());
 
-    let mut interests = parse_osm_data("ardeche.osm.pbf");
+    let mut interests = if let Some(osm) = osm_file {
+        parse_osm_data(osm)
+    } else {
+        Vec::new()
+    };
     // let mut interests = parse_osm_data("isere.osm.pbf");
     let buckets = position_interests_along_path(&mut interests, &rp, 0.001, 5, 3);
     // let i = get_openstreetmap_data(&rp).await;
