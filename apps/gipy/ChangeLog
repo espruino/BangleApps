@@ -29,3 +29,4 @@
 	* Display performances enhancement.
 	* Waypoints information is embedded in file and extracted from comments on
 	points.
+	* Bugfix in map display (last segment was missing + wrong colors).

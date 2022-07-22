@@ -3,10 +3,10 @@ let file_version = 3;
 let code_key = 47490;
 
 let interests_colors = [
-  0x780f, // Bakery, purple
+  0xf800, // Bakery, red
   0x001f, // DrinkingWater, blue
   0x07ff, // Toilets, cyan
-  0xfd20, // Artwork, orange
+  0x07e0, // Artwork, green
 ];
 
 function binary_search(array, x) {
@@ -118,12 +118,11 @@ class Status {
     );
   }
   is_lost(segment) {
-    let distance_to_nearest = this.position.fake_distance_to_segment(
+    let distance_to_nearest = this.position.distance_to_segment(
       this.path.point(segment),
       this.path.point(segment + 1)
     );
-    let meters = 6371e3 * distance_to_nearest;
-    return meters > 20;
+    return distance_to_nearest > 20;
   }
   display() {
     g.clear();
@@ -181,7 +180,7 @@ class Status {
       "seg." +
         (this.current_segment + 1) +
         "/" +
-        this.path.len +
+        (this.path.len - 1) +
         "  " +
         this.distance_to_next_point +
         "m",
@@ -192,12 +191,12 @@ class Status {
     if (this.distance_to_next_point <= 20) {
       g.setColor(0.0, 1.0, 0.0)
         .setFont("6x8:2")
-        .drawString("turn", g.getWidth() - 40, 35);
+        .drawString("turn", g.getWidth() - 55, 35);
     }
     if (!this.on_path) {
       g.setColor(1.0, 0.0, 0.0)
         .setFont("6x8:2")
-        .drawString("lost", g.getWidth() - 40, 60);
+        .drawString("lost", g.getWidth() - 55, 35);
     }
   }
   display_map() {
@@ -207,7 +206,7 @@ class Status {
     //
     // note that all code is inlined here to speed things up from 400ms to 200ms
     let start = Math.max(this.current_segment - 3, 0);
-    let end = Math.min(this.current_segment + 5, this.path.len - 1);
+    let end = Math.min(this.current_segment + 5, this.path.len);
     let pos = this.position;
     let cos = this.cos_direction;
     let sin = this.sin_direction;
@@ -436,12 +435,12 @@ class Point {
         Math.sin(deltalambda / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // in metres
+    return R * c; // in meters
   }
   fake_distance(other_point) {
     return Math.sqrt(this.length_squared(other_point));
   }
-  fake_distance_to_segment(v, w) {
+  closest_segment_point(v, w) {
     // from : https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
     // Return minimum distance between line segment vw and point p
     let l2 = v.length_squared(w); // i.e. |w-v|^2 -  avoid a sqrt
@@ -453,8 +452,14 @@ class Point {
     // It falls where t = [(p-v) . (w-v)] / |w-v|^2
     // We clamp t from [0,1] to handle points outside the segment vw.
     let t = Math.max(0, Math.min(1, this.minus(v).dot(w.minus(v)) / l2));
-
-    let projection = v.plus(w.minus(v).times(t)); // Projection falls on the segment
+    return v.plus(w.minus(v).times(t)); // Projection falls on the segment
+  }
+  distance_to_segment(v, w) {
+    let projection = this.closest_segment_point(v, w);
+    return this.distance(projection);
+  }
+  fake_distance_to_segment(v, w) {
+    let projection = this.closest_segment_point(v, w);
     return this.fake_distance(projection);
   }
 }

@@ -31,12 +31,12 @@ impl Into<u8> for Interest {
             Interest::Bakery => 0,
             Interest::DrinkingWater => 1,
             Interest::Toilets => 2,
-            // Interest::BikeShop => 3,
+            // Interest::BikeShop => 8,
             // Interest::ChargingStation => 4,
             // Interest::Bank => 5,
             // Interest::Supermarket => 6,
             // Interest::Table => 7,
-            Interest::Artwork => 8,
+            Interest::Artwork => 3,
             // Interest::Pharmacy => 9,
         }
     }

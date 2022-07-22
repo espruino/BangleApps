@@ -1,20 +1,24 @@
 
-- direction is still shitty on gps
+* bugs
 
-- code is becoming messy
+- waypoints seem wrong
+- direction is still shitty on gps
+- we are always lost
+- meters seem to be a bit too long
+
+* additional features
 
 - turn off gps when moving to next waypoint
 - display distance to next water/toilet
 - display distance to next waypoint
-
-- meters seem to be a bit too long
-
-- buzzing does not work nicely
-    -> is_lost  seems fishy
-    -> we need a display on top of buzz
-
 - display average speed
 - dynamic map rescale
 - display scale (100m)
 
 - compress path ?
+
+* misc
+
+- code is becoming messy
+
+
