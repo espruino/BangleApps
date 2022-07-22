@@ -150,9 +150,9 @@ async fn get_openstreetmap_data(points: &[(f64, f64)]) -> HashSet<InterestPoint>
     interest_points
 }
 
-pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashSet<Point>) {
+pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashMap<Point, Vec<ObjId>>) {
     let reader = osmio::read_pbf(path).ok();
-    let mut crossroads: HashMap<ObjId, usize> = HashMap::new();
+    let mut crossroads: HashMap<ObjId, Vec<ObjId>> = HashMap::new();
     let mut coordinates: HashMap<ObjId, Point> = HashMap::new();
     let interests = reader
         .map(|mut reader| {
@@ -175,7 +175,7 @@ pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashSet<P
                     osmio::obj_types::ArcOSMObj::Way(w) => {
                         if !w.is_area() {
                             for node in w.nodes() {
-                                *crossroads.entry(*node).or_default() += 1;
+                                crossroads.entry(*node).or_default().push(w.id());
                             }
                         }
                     }
@@ -188,9 +188,9 @@ pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashSet<P
     (
         interests,
         crossroads
-            .iter()
-            .filter(|&(_, c)| *c >= 3)
-            .filter_map(|(id, _)| coordinates.get(&id).copied())
+            .into_iter()
+            .filter(|(_, r)| r.len() >= 2)
+            .filter_map(|(id, l)| coordinates.get(&id).copied().map(|c| (c, l)))
             .collect(),
     )
 }

@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use osmio::ObjId;
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Write};
@@ -549,7 +550,7 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
     waypoints.iter().try_for_each(|p| {
         writeln!(
             &mut writer,
-            "<circle cx='{}' cy='{}' fill='black' r='0.8%'/>",
+            "<circle cx='{}' cy='{}' fill='black' r='0.5%'/>",
             p.x, p.y,
         )
     })?;
@@ -558,27 +559,40 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
     Ok(())
 }
 
-fn detect_waypoints(points: &[Point], osm_waypoints: &HashSet<Point>) -> HashSet<Point> {
+fn detect_waypoints(
+    points: &[Point],
+    osm_waypoints: &HashMap<Point, Vec<ObjId>>,
+) -> HashSet<Point> {
     points
         .first()
         .into_iter()
-        .chain(points.iter().tuple_windows().filter_map(|(p1, p2, p3)| {
-            if !osm_waypoints.contains(&p2) {
-                return None;
-            }
-            let x1 = p2.x - p1.x;
-            let y1 = p2.y - p1.y;
-            let a1 = y1.atan2(x1);
-            let x2 = p3.x - p2.x;
-            let y2 = p3.y - p2.y;
-            let a2 = y2.atan2(x2);
-            let a = (a2 - a1).abs();
-            if a <= std::f64::consts::PI / 3.0 || a >= std::f64::consts::PI * 5.0 / 3.0 {
-                None
-            } else {
-                Some(p2)
-            }
-        }))
+        .chain(
+            points
+                .iter()
+                .filter_map(|p: &Point| -> Option<(&Point, &Vec<ObjId>)> {
+                    osm_waypoints.get(p).map(|l| (p, l))
+                })
+                .tuple_windows()
+                .filter_map(|((p1, l1), (p2, _), (p3, l2))| {
+                    if l1.iter().all(|e| !l2.contains(e)) {
+                        let x1 = p2.x - p1.x;
+                        let y1 = p2.y - p1.y;
+                        let a1 = y1.atan2(x1);
+                        let x2 = p3.x - p2.x;
+                        let y2 = p3.y - p2.y;
+                        let a2 = y2.atan2(x2);
+                        let a = (a2 - a1).abs();
+                        if a <= std::f64::consts::PI / 4.0 || a >= std::f64::consts::PI * 7.0 / 4.0
+                        {
+                            None
+                        } else {
+                            Some(p2)
+                        }
+                    } else {
+                        None
+                    }
+                }),
+        )
         .chain(points.last().into_iter())
         .copied()
         .collect::<HashSet<_>>()
@@ -640,18 +654,19 @@ fn position_interests_along_path(
 async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
     let osm_file = std::env::args().nth(2);
-    eprintln!("input is {}", input_file);
-    let p = points(&input_file);
-
-    eprintln!("initialy we have {} points", p.len());
-    let rp = simplify_path(&p, 0.00015);
-    eprintln!("we now have {} points", rp.len());
 
     let (mut interests, osm_waypoints) = if let Some(osm) = osm_file {
         parse_osm_data(osm)
     } else {
-        (Vec::new(), HashSet::new())
+        (Vec::new(), HashMap::new())
     };
+
+    eprintln!("input is {}", input_file);
+    let p = points(&input_file);
+    eprintln!("initialy we have {} points", p.len());
+
+    let rp = simplify_path(&p, 0.00015);
+    eprintln!("we now have {} points", rp.len());
 
     let waypoints = detect_waypoints(&rp, &osm_waypoints);
     eprintln!("we found {} waypoints", waypoints.len());
