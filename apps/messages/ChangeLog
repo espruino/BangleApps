@@ -61,3 +61,4 @@
 0.46: Add 'Vibrate Timer' option to set how long to vibrate for, and fix Repeat:off
       Fix message removal from widget bar (previously caused exception as .hide has been removed)
 0.47: Add new Icons (Nextbike, Mattermost, etc.)
+0.48: When getting new message from the clock, only buzz once the messages app is loaded

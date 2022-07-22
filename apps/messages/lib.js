@@ -68,23 +68,20 @@ exports.pushMessage = function(event) {
   if(quiet && quietNoAutOpn) {
       loadMessages = false;
   }
-  // first, buzz
-  if (!quiet && loadMessages && global.WIDGETS && WIDGETS.messages){
-      WIDGETS.messages.buzz(event.src);
-      if(unlockWatch != false){
-        Bangle.setLocked(false);
-        Bangle.setLCDPower(1); // turn screen on
-      }
-  }
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
     exports.messageTimeout = undefined;
     // if we're in a clock or it's important, go straight to messages app
     if (loadMessages){
-      return load("messages.app.js");
+      if(!quiet && unlockWatch){
+        Bangle.setLocked(false);
+        Bangle.setLCDPower(1); // turn screen on
+      }
+      // we will buzz when we enter the messages app
+      return load("messages.new.js");
     }
-    if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz to let someone know
+    if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz once to let someone know
     if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
   }, 500);
 }

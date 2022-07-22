@@ -353,8 +353,18 @@ function checkMessages(options) {
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
   // If we have a new message, show it
-  if (options.showMsgIfUnread && newMessages.length)
-    return showMessage(newMessages[0].id);
+  if (options.showMsgIfUnread && newMessages.length) {
+    showMessage(newMessages[0].id);
+    // buzz after showMessage, so beingbusy during layout doesn't affect the buzz pattern
+    if (global.BUZZ_ON_NEW_MESSAGE) {
+      // this is set if we entered the messages app by loading `messages.new.js`
+      // ... but only buzz the first time we view a new message
+      global.BUZZ_ON_NEW_MESSAGE = false;
+      // messages.buzz respects quiet mode - no need to check here
+      WIDGETS.messages.buzz(newMessages[0].src);
+    }
+    return;
+  }
   // no new messages: show playing music? (only if we have playing music to show)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && m.track && m.state=="play"))
     return showMessage('music');
