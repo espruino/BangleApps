@@ -541,16 +541,11 @@ function start(fn) {
           }
         }
         if (old_points.length == 4) {
-          // let's just take average angle of 3 previous segments
-          let angles_sum = 0;
-          for (let i = 0; i < 3; i++) {
-            let p1 = old_points[i];
-            let p2 = old_points[i + 1];
-            let diff = p2.minus(p1);
-            let angle = Math.atan2(diff.lat, diff.lon);
-            angles_sum += angle;
-          }
-          status.update_position(position, angles_sum / 3.0);
+          // let's just take angle of segment between oldest and newest point
+          let oldest = old_points[0];
+          let diff = position.minus(oldest);
+          let angle = Math.atan2(diff.lat, diff.lon);
+          status.update_position(position, angle);
         } else {
           status.update_position(position, direction);
         }

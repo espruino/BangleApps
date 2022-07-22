@@ -5,8 +5,8 @@ use openstreetmap_api::{
     types::{BoundingBox, Credentials},
     Openstreetmap,
 };
-use osmio::prelude::*;
 use osmio::OSMObjBase;
+use osmio::{prelude::*, ObjId};
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
@@ -150,9 +150,11 @@ async fn get_openstreetmap_data(points: &[(f64, f64)]) -> HashSet<InterestPoint>
     interest_points
 }
 
-pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> Vec<InterestPoint> {
+pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashSet<Point>) {
     let reader = osmio::read_pbf(path).ok();
-    reader
+    let mut crossroads: HashMap<ObjId, usize> = HashMap::new();
+    let mut coordinates: HashMap<ObjId, Point> = HashMap::new();
+    let interests = reader
         .map(|mut reader| {
             let mut interests = Vec::new();
             for obj in reader.objects() {
@@ -167,13 +169,28 @@ pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> Vec<InterestPoint> {
                             }) {
                                 interests.push(p);
                             }
+                            coordinates.insert(n.id(), Point { x: lon, y: lat });
                         });
                     }
-                    osmio::obj_types::ArcOSMObj::Way(_) => {}
+                    osmio::obj_types::ArcOSMObj::Way(w) => {
+                        if !w.is_area() {
+                            for node in w.nodes() {
+                                *crossroads.entry(*node).or_default() += 1;
+                            }
+                        }
+                    }
                     osmio::obj_types::ArcOSMObj::Relation(_) => {}
                 }
             }
             interests
         })
-        .unwrap_or_default()
+        .unwrap_or_default();
+    (
+        interests,
+        crossroads
+            .iter()
+            .filter(|&(_, c)| *c >= 3)
+            .filter_map(|(id, _)| coordinates.get(&id).copied())
+            .collect(),
+    )
 }
