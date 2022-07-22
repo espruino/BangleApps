@@ -11,6 +11,7 @@
 declare class Microbit {
   /**
    * The micro:bit's speaker pin
+   * @returns {Pin}
    * @url http://www.espruino.com/Reference#l_Microbit_SPEAKER
    */
   static SPEAKER: Pin;
@@ -18,28 +19,35 @@ declare class Microbit {
   /**
    * The micro:bit's microphone pin
    * `MIC_ENABLE` should be set to 1 before using this
+   * @returns {Pin}
    * @url http://www.espruino.com/Reference#l_Microbit_MIC
    */
   static MIC: Pin;
 
   /**
    * The micro:bit's microphone enable pin
+   * @returns {Pin}
    * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
    */
   static MIC_ENABLE: Pin;
 
   /**
    * Called when the Micro:bit is moved in a deliberate fashion, and includes data on the detected gesture.
+   * @param {string} event - The event to listen to.
+   * @param {(gesture: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `gesture` An Int8Array containing the accelerations (X,Y,Z) from the last gesture detected by the accelerometer
    * @url http://www.espruino.com/Reference#l_Microbit_gesture
    */
   static on(event: "gesture", callback: (gesture: any) => void): void;
 
   /**
+   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
    * @url http://www.espruino.com/Reference#l_Microbit_mag
    */
   static mag(): any;
 
   /**
+   * @returns {any} An Object `{x,y,z}` of acceleration readings in G
    * @url http://www.espruino.com/Reference#l_Microbit_accel
    */
   static accel(): any;
@@ -47,6 +55,9 @@ declare class Microbit {
   /**
    * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
    * Write the given value to the accelerometer
+   *
+   * @param {number} addr - Accelerometer address
+   * @param {number} data - Data to write
    * @url http://www.espruino.com/Reference#l_Microbit_accelWr
    */
   static accelWr(addr: number, data: number): any;
@@ -67,144 +78,209 @@ declare class Microbit {
 
   /**
    * Play a waveform on the Micro:bit's speaker
+   *
+   * @param {any} waveform - An array of data to play (unsigned 8 bit)
+   * @param {any} samplesPerSecond - The number of samples per second for playback default is 4000
+   * @param {any} callback - A function to call when playback is finished
    * @url http://www.espruino.com/Reference#l_Microbit_play
    */
   static play(waveform: any, samplesPerSecond: any, callback: any): any;
 
   /**
    * Records sound from the micro:bit's onboard microphone and returns the result
+   *
+   * @param {any} samplesPerSecond - The number of samples per second for recording - 4000 is recommended
+   * @param {any} callback - A function to call with the result of recording (unsigned 8 bit ArrayBuffer)
+   * @param {any} [samples] - [optional] How many samples to record (6000 default)
    * @url http://www.espruino.com/Reference#l_Microbit_record
    */
   static record(samplesPerSecond: any, callback: any, samples?: any): any;
 }
 
-/**
- * This is a standard JavaScript class that contains useful Maths routines
- * @url http://www.espruino.com/Reference#Math
- */
 interface MathConstructor {
   /**
+   * @returns {number} The value of E - 2.718281828459045
    * @url http://www.espruino.com/Reference#l_Math_E
    */
   E: number;
 
   /**
+   * @returns {number} The value of PI - 3.141592653589793
    * @url http://www.espruino.com/Reference#l_Math_PI
    */
   PI: number;
 
   /**
+   * @returns {number} The natural logarithm of 2 - 0.6931471805599453
    * @url http://www.espruino.com/Reference#l_Math_LN2
    */
   LN2: number;
 
   /**
+   * @returns {number} The natural logarithm of 10 - 2.302585092994046
    * @url http://www.espruino.com/Reference#l_Math_LN10
    */
   LN10: number;
 
   /**
+   * @returns {number} The base 2 logarithm of e - 1.4426950408889634
    * @url http://www.espruino.com/Reference#l_Math_LOG2E
    */
   LOG2E: number;
 
   /**
+   * @returns {number} The base 10 logarithm of e - 0.4342944819032518
    * @url http://www.espruino.com/Reference#l_Math_LOG10E
    */
   LOG10E: number;
 
   /**
+   * @returns {number} The square root of 2 - 1.4142135623730951
    * @url http://www.espruino.com/Reference#l_Math_SQRT2
    */
   SQRT2: number;
 
   /**
+   * @returns {number} The square root of 1/2 - 0.7071067811865476
    * @url http://www.espruino.com/Reference#l_Math_SQRT1_2
    */
   SQRT1_2: number;
 
   /**
+   *
+   * @param {number} x - A floating point value
+   * @returns {number} The absolute value of x (eg, ```Math.abs(2)==2```, but also ```Math.abs(-2)==2```)
    * @url http://www.espruino.com/Reference#l_Math_abs
    */
   abs(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to get the arc cosine of
+   * @returns {number} The arc cosine of x, between 0 and PI
    * @url http://www.espruino.com/Reference#l_Math_acos
    */
   acos(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to get the arc sine of
+   * @returns {number} The arc sine of x, between -PI/2 and PI/2
    * @url http://www.espruino.com/Reference#l_Math_asin
    */
   asin(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to get the arc tangent  of
+   * @returns {number} The arc tangent of x, between -PI/2 and PI/2
    * @url http://www.espruino.com/Reference#l_Math_atan
    */
   atan(x: number): number;
 
   /**
+   *
+   * @param {number} y - The Y-part of the angle to get the arc tangent of
+   * @param {number} x - The X-part of the angle to get the arc tangent of
+   * @returns {number} The arctangent of Y/X, between -PI and PI
    * @url http://www.espruino.com/Reference#l_Math_atan2
    */
   atan2(y: number, x: number): number;
 
   /**
+   *
+   * @param {number} theta - The angle to get the cosine of
+   * @returns {number} The cosine of theta
    * @url http://www.espruino.com/Reference#l_Math_cos
    */
   cos(theta: number): number;
 
   /**
+   *
+   * @param {number} x - The value to raise to the power
+   * @param {number} y - The power x should be raised to
+   * @returns {number} x raised to the power y (x^y)
    * @url http://www.espruino.com/Reference#l_Math_pow
    */
   pow(x: number, y: number): number;
 
   /**
+   * @returns {number} A random number between 0 and 1
    * @url http://www.espruino.com/Reference#l_Math_random
    */
   random(): number;
 
   /**
+   *
+   * @param {number} x - The value to round
+   * @returns {any} x, rounded to the nearest integer
    * @url http://www.espruino.com/Reference#l_Math_round
    */
   round(x: number): any;
 
   /**
+   *
+   * @param {number} theta - The angle to get the sine of
+   * @returns {number} The sine of theta
    * @url http://www.espruino.com/Reference#l_Math_sin
    */
   sin(theta: number): number;
 
   /**
+   *
+   * @param {number} theta - The angle to get the tangent of
+   * @returns {number} The tangent of theta
    * @url http://www.espruino.com/Reference#l_Math_tan
    */
   tan(theta: number): number;
 
   /**
+   *
+   * @param {number} x - The value to take the square root of
+   * @returns {number} The square root of x
    * @url http://www.espruino.com/Reference#l_Math_sqrt
    */
   sqrt(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to round up
+   * @returns {number} x, rounded upwards to the nearest integer
    * @url http://www.espruino.com/Reference#l_Math_ceil
    */
   ceil(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to round down
+   * @returns {number} x, rounded downwards to the nearest integer
    * @url http://www.espruino.com/Reference#l_Math_floor
    */
   floor(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value raise E to the power of
+   * @returns {number} E^x
    * @url http://www.espruino.com/Reference#l_Math_exp
    */
   exp(x: number): number;
 
   /**
+   *
+   * @param {number} x - The value to take the logarithm (base E) root of
+   * @returns {number} The log (base E) of x
    * @url http://www.espruino.com/Reference#l_Math_log
    */
   log(x: number): number;
 
   /**
    * DEPRECATED - Please use `E.clip()` instead. Clip a number to be between min and max (inclusive)
+   *
+   * @param {number} x - A floating point value to clip
+   * @param {number} min - The smallest the value should be
+   * @param {number} max - The largest the value should be
+   * @returns {number} The value of x, clipped so as not to be below min or above max.
    * @url http://www.espruino.com/Reference#l_Math_clip
    */
   clip(x: number, min: number, max: number): number;
@@ -212,18 +288,28 @@ interface MathConstructor {
   /**
    * DEPRECATED - This is not part of standard JavaScript libraries
    * Wrap a number around if it is less than 0 or greater than or equal to max. For instance you might do: ```Math.wrap(angleInDegrees, 360)```
+   *
+   * @param {number} x - A floating point value to wrap
+   * @param {number} max - The largest the value should be
+   * @returns {number} The value of x, wrapped so as not to be below min or above max.
    * @url http://www.espruino.com/Reference#l_Math_wrap
    */
   wrap(x: number, max: number): number;
 
   /**
    * Find the minimum of a series of numbers
+   *
+   * @param {any} args - Floating point values to clip
+   * @returns {number} The minimum of the supplied values
    * @url http://www.espruino.com/Reference#l_Math_min
    */
   min(...args: any[]): number;
 
   /**
    * Find the maximum of a series of numbers
+   *
+   * @param {any} args - Floating point values to clip
+   * @returns {number} The maximum of the supplied values
    * @url http://www.espruino.com/Reference#l_Math_max
    */
   max(...args: any[]): number;
@@ -233,6 +319,10 @@ interface Math {
 
 }
 
+/**
+ * This is a standard JavaScript class that contains useful Maths routines
+ * @url http://www.espruino.com/Reference#Math
+ */
 declare const Math: MathConstructor
 
 /**
@@ -241,11 +331,13 @@ declare const Math: MathConstructor
  */
 declare class TFMicroInterpreter {
   /**
+   * @returns {any} An arraybuffer referencing the input data
    * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getInput
    */
   getInput(): ArrayBufferView;
 
   /**
+   * @returns {any} An arraybuffer referencing the output data
    * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getOutput
    */
   getOutput(): ArrayBufferView;
@@ -264,6 +356,9 @@ declare class Badge {
   /**
    * Capacitive sense - the higher the capacitance, the higher the number returned.
    * Supply a corner number between 1 and 6, and an integer value will be returned that is proportional to the capacitance
+   *
+   * @param {number} corner - The corner to use
+   * @returns {number} Capacitive sense counter
    * @url http://www.espruino.com/Reference#l_Badge_capSense
    */
   static capSense(corner: number): number;
@@ -271,12 +366,15 @@ declare class Badge {
   /**
    * Return an approximate battery percentage remaining based on
    * a normal CR2032 battery (2.8 - 2.2v)
+   * @returns {number} A percentage between 0 and 100
    * @url http://www.espruino.com/Reference#l_Badge_getBatteryPercentage
    */
   static getBatteryPercentage(): number;
 
   /**
    * Set the LCD's contrast
+   *
+   * @param {number} c - Contrast between 0 and 1
    * @url http://www.espruino.com/Reference#l_Badge_setContrast
    */
   static setContrast(c: number): any;
@@ -301,6 +399,7 @@ declare class Puck {
    * Readings are in increments of 0.1 micro Tesla (uT). The Earth's magnetic field
    * varies from around 25-60 uT, so the reading will vary by 250 to 600 depending
    * on location.
+   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
    * @url http://www.espruino.com/Reference#l_Puck_mag
    */
   static mag(): any;
@@ -311,6 +410,7 @@ declare class Puck {
    * `E.getTemperature()` uses the microcontroller's temperature sensor, but this uses the magnetometer's.
    * The reading obtained is an integer (so no decimal places), but the sensitivity is factory trimmed. to 1&deg;C, however the temperature
    * offset isn't - so absolute readings may still need calibrating.
+   * @returns {number} Temperature in degrees C
    * @url http://www.espruino.com/Reference#l_Puck_magTemp
    */
   static magTemp(): number;
@@ -322,6 +422,8 @@ declare class Puck {
    * as integers (for more information see `Puck.mag()`).
    * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Puck_mag
    */
   static on(event: "mag", callback: () => void): void;
@@ -334,6 +436,8 @@ declare class Puck {
    * The data is as it comes off the accelerometer and is not
    * scaled to 1g. For more information see `Puck.accel()` or
    * [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals).
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Puck_accel
    */
   static on(event: "accel", callback: () => void): void;
@@ -350,7 +454,7 @@ declare class Puck {
    * // Turn events off with Puck.magOff();
    * ```
    * This call will be ignored if the sampling is already on.
-   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz). 
+   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz).
    * The sample rate must be one of the following (resulting in the given power consumption):
    * * 80 Hz - 900uA
    * * 40 Hz - 550uA
@@ -368,6 +472,8 @@ declare class Puck {
    * Puck functions continue uninterrupted.
    * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information.
+   *
+   * @param {number} samplerate - The sample rate in Hz, or undefined
    * @url http://www.espruino.com/Reference#l_Puck_magOn
    */
   static magOn(samplerate: number): any;
@@ -382,6 +488,9 @@ declare class Puck {
    * Writes a register on the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
    * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Puck_magWr
    */
   static magWr(reg: number, data: number): any;
@@ -390,12 +499,16 @@ declare class Puck {
    * Reads a register from the LIS3MDL / MAX3110 Magnetometer. Can be used for configuring advanced functions.
    * Check out [the Puck.js page on the magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @returns {number}
    * @url http://www.espruino.com/Reference#l_Puck_magRd
    */
   static magRd(reg: number): number;
 
   /**
    * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on Puck.js the less accurate on-chip Temperature sensor is used.
+   * @returns {number} Temperature in degrees C
    * @url http://www.espruino.com/Reference#l_Puck_getTemperature
    */
   static getTemperature(): number;
@@ -421,12 +534,14 @@ declare class Puck {
    * ```
    * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information.
+   *
+   * @param {number} samplerate - The sample rate in Hz, or undefined
    * @url http://www.espruino.com/Reference#l_Puck_accelOn
    */
   static accelOn(samplerate: number): any;
 
   /**
-   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`. 
+   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`.
    * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information.
    * @url http://www.espruino.com/Reference#l_Puck_accelOff
@@ -439,6 +554,7 @@ declare class Puck {
    * * accelerometer: full-scale (32768) is 4g, so you need to divide by 8192 to get correctly scaled values
    * * gyro: full-scale (32768) is 245 dps, so you need to divide by 134 to get correctly scaled values
    * If taking more than one reading, we'd suggest you use `Puck.accelOn()` and the `Puck.accel` event.
+   * @returns {any} An Object `{acc:{x,y,z}, gyro:{x,y,z}}` of accelerometer/gyro readings
    * @url http://www.espruino.com/Reference#l_Puck_accel
    */
   static accel(): any;
@@ -447,6 +563,9 @@ declare class Puck {
    * Writes a register on the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
    * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Puck_accelWr
    */
   static accelWr(reg: number, data: number): any;
@@ -455,6 +574,9 @@ declare class Puck {
    * Reads a register from the LSM6DS3TR-C Accelerometer. Can be used for configuring advanced functions.
    * Check out [the Puck.js page on the accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals)
    * for more information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @returns {number}
    * @url http://www.espruino.com/Reference#l_Puck_accelRd
    */
   static accelRd(reg: number): number;
@@ -468,21 +590,29 @@ declare class Puck {
    * you can just execute `Puck.IR(pulseTimes, led_cathode, led_anode)`
    * It is also possible to just supply a single pin for IR transmission
    * with `Puck.IR(pulseTimes, led_anode)` (on 2v05 and above).
+   *
+   * @param {any} data - An array of pulse lengths, in milliseconds
+   * @param {Pin} cathode - (optional) pin to use for IR LED cathode - if not defined, the built-in IR LED is used
+   * @param {Pin} anode - (optional) pin to use for IR LED anode - if not defined, the built-in IR LED is used
    * @url http://www.espruino.com/Reference#l_Puck_IR
    */
   static IR(data: any, cathode: Pin, anode: Pin): any;
 
   /**
    * Capacitive sense - the higher the capacitance, the higher the number returned.
-   * If called without arguments, a value depending on the capacitance of what is 
+   * If called without arguments, a value depending on the capacitance of what is
    * attached to pin D11 will be returned. If you attach a length of wire to D11,
    * you'll be able to see a higher value returned when your hand is near the wire
    * than when it is away.
    * You can also supply pins to use yourself, however if you do this then
-   * the TX pin must be connected to RX pin and sense plate via a roughly 1MOhm 
+   * the TX pin must be connected to RX pin and sense plate via a roughly 1MOhm
    * resistor.
    * When not supplying pins, Puck.js uses an internal resistor between D12(tx)
    * and D11(rx).
+   *
+   * @param {Pin} tx
+   * @param {Pin} rx
+   * @returns {number} Capacitive sense counter
    * @url http://www.espruino.com/Reference#l_Puck_capSense
    */
   static capSense(tx: Pin, rx: Pin): number;
@@ -491,6 +621,7 @@ declare class Puck {
    * Return a light value based on the light the red LED is seeing.
    * **Note:** If called more than 5 times per second, the received light value
    * may not be accurate.
+   * @returns {number} A light value from 0 to 1
    * @url http://www.espruino.com/Reference#l_Puck_light
    */
   static light(): number;
@@ -499,6 +630,7 @@ declare class Puck {
    * DEPRECATED - Please use `E.getBattery()` instead.
    * Return an approximate battery percentage remaining based on
    * a normal CR2032 battery (2.8 - 2.2v).
+   * @returns {number} A percentage between 0 and 100
    * @url http://www.espruino.com/Reference#l_Puck_getBatteryPercentage
    */
   static getBatteryPercentage(): number;
@@ -512,6 +644,7 @@ declare class Puck {
    * red blinks is a fail, 5 green is a pass.
    * If the self test fails, it'll set the Puck.js Bluetooth advertising name
    * to `Puck.js !ERR` where ERR is a 3 letter error code.
+   * @returns {boolean} True if the self-test passed
    * @url http://www.espruino.com/Reference#l_Puck_selfTest
    */
   static selfTest(): boolean;
@@ -538,30 +671,47 @@ declare class File {
    * really speed up writes - but then you must be sure to close
    * all files you are writing before power is lost or you will
    * cause damage to your SD card's filesystem.
+   *
+   * @param {any} buffer - A string containing the bytes to write
+   * @returns {number} the number of bytes written
    * @url http://www.espruino.com/Reference#l_File_write
    */
   write(buffer: any): number;
 
   /**
    * Read data in a file in byte size chunks
+   *
+   * @param {number} length - is an integer specifying the number of bytes to read.
+   * @returns {any} A string containing the characters that were read
    * @url http://www.espruino.com/Reference#l_File_read
    */
   read(length: number): any;
 
   /**
    * Skip the specified number of bytes forward in the file
+   *
+   * @param {number} nBytes - is a positive integer specifying the number of bytes to skip forwards.
    * @url http://www.espruino.com/Reference#l_File_skip
    */
   skip(nBytes: number): any;
 
   /**
    * Seek to a certain position in the file
+   *
+   * @param {number} nBytes - is an integer specifying the number of bytes to skip forwards.
    * @url http://www.espruino.com/Reference#l_File_seek
    */
   seek(nBytes: number): any;
 
   /**
    * Pipe this file to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_File_pipe
    */
   pipe(destination: any, options: any): any;
@@ -574,12 +724,18 @@ declare class File {
 declare class WioLTE {
   /**
    * Set the WIO's LED
+   *
+   * @param {number} red - 0-255, red LED intensity
+   * @param {number} green - 0-255, green LED intensity
+   * @param {number} blue - 0-255, blue LED intensity
    * @url http://www.espruino.com/Reference#l_WioLTE_LED
    */
   static LED(red: number, green: number, blue: number): any;
 
   /**
    * Set the power of Grove connectors, except for `D38` and `D39` which are always on.
+   *
+   * @param {boolean} onoff - Whether to turn the Grove connectors power on or off (D38/D39 are always powered)
    * @url http://www.espruino.com/Reference#l_WioLTE_setGrovePower
    */
   static setGrovePower(onoff: boolean): any;
@@ -587,36 +743,44 @@ declare class WioLTE {
   /**
    * Turn power to the WIO's LED on or off.
    * Turning the LED on won't immediately display a color - that must be done with `WioLTE.LED(r,g,b)`
+   *
+   * @param {boolean} onoff - true = on, false = off
    * @url http://www.espruino.com/Reference#l_WioLTE_setLEDPower
    */
   static setLEDPower(onoff: boolean): any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_D38
    */
   static D38: any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_D20
    */
   static D20: any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_A6
    */
   static A6: any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_I2C
    */
   static I2C: any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_UART
    */
   static UART: any;
 
   /**
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WioLTE_A4
    */
   static A4: any;
@@ -631,12 +795,15 @@ declare class Pixl {
    * DEPRECATED - Please use `E.getBattery()` instead.
    * Return an approximate battery percentage remaining based on
    * a normal CR2032 battery (2.8 - 2.2v)
+   * @returns {number} A percentage between 0 and 100
    * @url http://www.espruino.com/Reference#l_Pixl_getBatteryPercentage
    */
   static getBatteryPercentage(): number;
 
   /**
    * Set the LCD's contrast
+   *
+   * @param {number} c - Contrast between 0 and 1
    * @url http://www.espruino.com/Reference#l_Pixl_setContrast
    */
   static setContrast(c: number): any;
@@ -645,12 +812,16 @@ declare class Pixl {
    * This function can be used to turn Pixl.js's LCD off or on.
    * * With the LCD off, Pixl.js draws around 0.1mA
    * * With the LCD on, Pixl.js draws around 0.25mA
+   *
+   * @param {boolean} isOn - True if the LCD should be on, false if not
    * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
    */
   static setLCDPower(isOn: boolean): any;
 
   /**
    * Writes a command directly to the ST7567 LCD controller
+   *
+   * @param {number} c
    * @url http://www.espruino.com/Reference#l_Pixl_lcdw
    */
   static lcdw(c: number): any;
@@ -658,6 +829,9 @@ declare class Pixl {
   /**
    * Display a menu on Pixl.js's screen, and set up the buttons to navigate through it.
    * DEPRECATED: Use `E.showMenu`
+   *
+   * @param {any} menu - An object containing name->function mappings to to be used in a menu
+   * @returns {any} A menu object with `draw`, `move` and `select` functions
    * @url http://www.espruino.com/Reference#l_Pixl_menu
    */
   static menu(menu: any): any;
@@ -671,48 +845,67 @@ declare class Pixl {
 declare class Trig {
   /**
    * Get the position of the trigger wheel at the given time (from getTime)
+   *
+   * @param {number} time - The time at which to find the position
+   * @returns {number} The position of the trigger wheel in degrees - as a floating point number
    * @url http://www.espruino.com/Reference#l_Trig_getPosAtTime
    */
   static getPosAtTime(time: number): number;
 
   /**
    * Initialise the trigger class
+   *
+   * @param {Pin} pin - The pin to use for triggering
+   * @param {any} options - Additional options as an object. defaults are: ```{teethTotal:60,teethMissing:2,minRPM:30,keyPosition:0}```
    * @url http://www.espruino.com/Reference#l_Trig_setup
    */
   static setup(pin: Pin, options: any): any;
 
   /**
    * Set a trigger for a certain point in the cycle
+   *
+   * @param {number} num - The trigger number (0..7)
+   * @param {number} pos - The position (in degrees) to fire the trigger at
+   * @param {any} pins - An array of pins to pulse (max 4)
+   * @param {number} pulseLength - The time (in msec) to pulse for
    * @url http://www.espruino.com/Reference#l_Trig_setTrigger
    */
   static setTrigger(num: number, pos: number, pins: any, pulseLength: number): any;
 
   /**
    * Disable a trigger
+   *
+   * @param {number} num - The trigger number (0..7)
    * @url http://www.espruino.com/Reference#l_Trig_killTrigger
    */
   static killTrigger(num: number): any;
 
   /**
    * Get the current state of a trigger
+   *
+   * @param {number} num - The trigger number (0..7)
+   * @returns {any} A structure containing all information about the trigger
    * @url http://www.espruino.com/Reference#l_Trig_getTrigger
    */
   static getTrigger(num: number): any;
 
   /**
    * Get the RPM of the trigger wheel
+   * @returns {number} The current RPM of the trigger wheel
    * @url http://www.espruino.com/Reference#l_Trig_getRPM
    */
   static getRPM(): number;
 
   /**
    * Get the current error flags from the trigger wheel - and zero them
+   * @returns {number} The error flags
    * @url http://www.espruino.com/Reference#l_Trig_getErrors
    */
   static getErrors(): number;
 
   /**
    * Get the current error flags from the trigger wheel - and zero them
+   * @returns {any} An array of error strings
    * @url http://www.espruino.com/Reference#l_Trig_getErrorArray
    */
   static getErrorArray(): any;
@@ -725,11 +918,21 @@ declare class Trig {
  */
 declare class AES {
   /**
+   *
+   * @param {any} passphrase - Message to encrypt
+   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} options - An optional object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
+   * @returns {any} Returns an ArrayBuffer
    * @url http://www.espruino.com/Reference#l_AES_encrypt
    */
   static encrypt(passphrase: any, key: any, options: any): ArrayBuffer;
 
   /**
+   *
+   * @param {any} passphrase - Message to decrypt
+   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} options - An optional object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
+   * @returns {any} Returns an ArrayBuffer
    * @url http://www.espruino.com/Reference#l_AES_decrypt
    */
   static decrypt(passphrase: any, key: any, options: any): ArrayBuffer;
@@ -747,24 +950,48 @@ declare class Graphics {
    * this will return an instance of the graphics class that can be used to
    * access that display.
    * Internally, this is stored as a member called `gfx` inside the 'hiddenRoot'.
+   * @returns {any} An instance of `Graphics` or undefined
    * @url http://www.espruino.com/Reference#l_Graphics_getInstance
    */
   static getInstance(): any;
 
   /**
    * Create a Graphics object that renders to an Array Buffer. This will have a field called 'buffer' that can get used to get at the buffer itself
+   *
+   * @param {number} width - Pixels wide
+   * @param {number} height - Pixels high
+   * @param {number} bpp - Number of bits per pixel
+   * @param {any} options
+   * An object of other options. `{ zigzag : true/false(default), vertical_byte : true/false(default), msb : true/false(default), color_order: 'rgb'(default),'bgr',etc }`
+   * `zigzag` = whether to alternate the direction of scanlines for rows
+   * `vertical_byte` = whether to align bits in a byte vertically or not
+   * `msb` = when bits<8, store pixels most significant bit first, when bits>8, store most significant byte first
+   * `interleavex` = Pixels 0,2,4,etc are from the top half of the image, 1,3,5,etc from the bottom half. Used for P3 LED panels.
+   * `color_order` = re-orders the colour values that are supplied via setColor
+   * @returns {any} The new Graphics object
    * @url http://www.espruino.com/Reference#l_Graphics_createArrayBuffer
    */
   static createArrayBuffer(width: number, height: number, bpp: number, options: any): Graphics;
 
   /**
    * Create a Graphics object that renders by calling a JavaScript callback function to draw pixels
+   *
+   * @param {number} width - Pixels wide
+   * @param {number} height - Pixels high
+   * @param {number} bpp - Number of bits per pixel
+   * @param {any} callback - A function of the form ```function(x,y,col)``` that is called whenever a pixel needs to be drawn, or an object with: ```{setPixel:function(x,y,col),fillRect:function(x1,y1,x2,y2,col)}```. All arguments are already bounds checked.
+   * @returns {any} The new Graphics object
    * @url http://www.espruino.com/Reference#l_Graphics_createCallback
    */
   static createCallback(width: number, height: number, bpp: number, callback: any): Graphics;
 
   /**
    * Create a Graphics object that renders to SDL window (Linux-based devices only)
+   *
+   * @param {number} width - Pixels wide
+   * @param {number} height - Pixels high
+   * @param {number} bpp - Bits per pixel (8,16,24 or 32 supported)
+   * @returns {any} The new Graphics object
    * @url http://www.espruino.com/Reference#l_Graphics_createSDL
    */
   static createSDL(width: number, height: number, bpp: number): Graphics;
@@ -785,16 +1012,25 @@ declare class Graphics {
    * ```
    * If the characters at the beginning and end of the string are newlines, they
    * will be ignored. Spaces are treated as `0`, and any other character is a `1`
+   *
+   * @param {any} str - A String containing a newline-separated image - space is 0, anything else is 1
+   * @returns {any} An Image object that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_createImage
    */
   static createImage(str: any): any;/**
    * Set the current font
+   *
+   * @param {number} scale - (optional) If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFont6x15
    */
   setFont6x15(scale: number): Graphics;
 
   /**
    * Set the current font
+   *
+   * @param {number} scale - (optional) If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFont12x20
    */
   setFont12x20(scale: number): Graphics;
@@ -818,6 +1054,8 @@ declare class Graphics {
    * accessed the `Graphics.buffer` directly then you
    * may need to use `Graphics.flip(true)` to force
    * a full update of the screen.
+   *
+   * @param {boolean} [all] - [optional] (only on some devices) If `true` then copy all pixels, not just those that have changed.
    * @url http://www.espruino.com/Reference#l_Graphics_flip
    */
   flip(all?: boolean): any;
@@ -840,18 +1078,21 @@ declare class Graphics {
    * 0, 0, 0, 0, 0, 0, 255, 0,
    * 0, 0, 0, 0, 0, 0, 0, 255])
    * ```
+   * @returns {any} An ArrayBuffer (or not defined on Graphics instances not created with `Graphics.createArrayBuffer`)
    * @url http://www.espruino.com/Reference#l_Graphics_buffer
    */
   buffer: any;
 
   /**
    * The width of this Graphics instance
+   * @returns {number} The width of this Graphics instance
    * @url http://www.espruino.com/Reference#l_Graphics_getWidth
    */
   getWidth(): number;
 
   /**
    * The height of this Graphics instance
+   * @returns {number} The height of this Graphics instance
    * @url http://www.espruino.com/Reference#l_Graphics_getHeight
    */
   getHeight(): number;
@@ -862,6 +1103,7 @@ declare class Graphics {
    * is 3 bit, so `getBPP` returns 3 and `asBMP`/`asImage`/etc return 3 bit images.
    * However in order to allow dithering, the colors returned by `Graphics.getColor` and `Graphics.theme`
    * are actually 16 bits.
+   * @returns {number} The bits per pixel of this Graphics instance
    * @url http://www.espruino.com/Reference#l_Graphics_getBPP
    */
   getBPP(): number;
@@ -869,12 +1111,16 @@ declare class Graphics {
   /**
    * Reset the state of Graphics to the defaults (eg. Color, Font, etc)
    * that would have been used when Graphics was initialised.
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_reset
    */
   reset(): Graphics;
 
   /**
    * Clear the LCD with the Background Color
+   *
+   * @param {boolean} reset - If `true`, resets the state of Graphics to the default (eg. Color, Font, etc) as if calling `Graphics.reset`
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_clear
    */
   clear(reset: boolean): Graphics;
@@ -883,6 +1129,12 @@ declare class Graphics {
    * Fill a rectangular area in the Foreground Color
    * On devices with enough memory, you can specify `{x,y,x2,y2,r}` as the first
    * argument, which allows you to draw a rounded rectangle.
+   *
+   * @param {any} x1 - The left X coordinate OR an object containing `{x,y,x2,y2}` or `{x,y,w,h}`
+   * @param {number} y1 - The top Y coordinate
+   * @param {number} x2 - The right X coordinate
+   * @param {number} y2 - The bottom Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_fillRect
    */
   fillRect(x1: any, y1: number, x2: number, y2: number): Graphics;
@@ -891,54 +1143,102 @@ declare class Graphics {
    * Fill a rectangular area in the Background Color
    * On devices with enough memory, you can specify `{x,y,x2,y2,r}` as the first
    * argument, which allows you to draw a rounded rectangle.
+   *
+   * @param {any} x1 - The left X coordinate OR an object containing `{x,y,x2,y2}` or `{x,y,w,h}`
+   * @param {number} y1 - The top Y coordinate
+   * @param {number} x2 - The right X coordinate
+   * @param {number} y2 - The bottom Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_clearRect
    */
   clearRect(x1: any, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Draw an unfilled rectangle 1px wide in the Foreground Color
+   *
+   * @param {any} x1 - The left X coordinate OR an object containing `{x,y,x2,y2}` or `{x,y,w,h}`
+   * @param {number} y1 - The top Y coordinate
+   * @param {number} x2 - The right X coordinate
+   * @param {number} y2 - The bottom Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawRect
    */
   drawRect(x1: any, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Draw a filled circle in the Foreground Color
+   *
+   * @param {number} x - The X axis
+   * @param {number} y - The Y axis
+   * @param {number} rad - The circle radius
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_fillCircle
    */
   fillCircle(x: number, y: number, rad: number): Graphics;
 
   /**
    * Draw an unfilled circle 1px wide in the Foreground Color
+   *
+   * @param {number} x - The X axis
+   * @param {number} y - The Y axis
+   * @param {number} rad - The circle radius
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawCircle
    */
   drawCircle(x: number, y: number, rad: number): Graphics;
 
   /**
    * Draw a circle, centred at (x,y) with radius r in the current foreground color
+   *
+   * @param {number} x - Centre x-coordinate
+   * @param {number} y - Centre y-coordinate
+   * @param {number} r - Radius
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawCircleAA
    */
   drawCircleAA(x: number, y: number, r: number): Graphics;
 
   /**
    * Draw a filled ellipse in the Foreground Color
+   *
+   * @param {number} x1 - The left X coordinate
+   * @param {number} y1 - The top Y coordinate
+   * @param {number} x2 - The right X coordinate
+   * @param {number} y2 - The bottom Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_fillEllipse
    */
   fillEllipse(x1: number, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Draw an ellipse in the Foreground Color
+   *
+   * @param {number} x1 - The left X coordinate
+   * @param {number} y1 - The top Y coordinate
+   * @param {number} x2 - The right X coordinate
+   * @param {number} y2 - The bottom Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawEllipse
    */
   drawEllipse(x1: number, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Get a pixel's color
+   *
+   * @param {number} x - The left
+   * @param {number} y - The top
+   * @returns {number} The color
    * @url http://www.espruino.com/Reference#l_Graphics_getPixel
    */
   getPixel(x: number, y: number): number;
 
   /**
    * Set a pixel's color
+   *
+   * @param {number} x - The left
+   * @param {number} y - The top
+   * @param {any} col - The color (if `undefined`, the foreground color is useD)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setPixel
    */
   setPixel(x: number, y: number, col: any): Graphics;
@@ -952,6 +1252,11 @@ declare class Graphics {
    * // 16 bit
    * g.toColor(1,0,0) => 0xF800
    * ```
+   *
+   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#rrggbb' or `'#rgb'`
+   * @param {any} g - Green (between 0 and 1)
+   * @param {any} b - Blue (between 0 and 1)
+   * @returns {number} The color index represented by the arguments
    * @url http://www.espruino.com/Reference#l_Graphics_toColor
    */
   toColor(r: any, g: any, b: any): number;
@@ -966,6 +1271,11 @@ declare class Graphics {
    * // then...
    * g.setColor(col).fillRect(10,10,100,100);
    * ```
+   *
+   * @param {any} col_a - Color to blend from (either a single integer color value, or a string)
+   * @param {any} col_b - Color to blend to (either a single integer color value, or a string)
+   * @param {any} amt - The amount to blend. 0=col_a, 1=col_b, 0.5=halfway between (and so on)
+   * @returns {number} The color index represented by the blended colors
    * @url http://www.espruino.com/Reference#l_Graphics_blendColor
    */
   blendColor(col_a: any, col_b: any, amt: any): number;
@@ -982,6 +1292,11 @@ declare class Graphics {
    * If you specified `color_order` when creating the `Graphics` instance, `r`,`g` and `b` will be swapped as you specified.
    * **Note:** On devices with low flash memory, `r` **must** be an integer representing the color in the current bit depth. It cannot
    * be a floating point value, and `g` and `b` are ignored.
+   *
+   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#012345'`
+   * @param {any} [g] - [optional] Green (between 0 and 1)
+   * @param {any} [b] - [optional] Blue (between 0 and 1)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setColor
    */
   setColor(r: any, g?: any, b?: any): Graphics;
@@ -991,18 +1306,25 @@ declare class Graphics {
    * See `Graphics.setColor` for more information on the mapping of `r`, `g`, and `b` to pixel values.
    * **Note:** On devices with low flash memory, `r` **must** be an integer representing the color in the current bit depth. It cannot
    * be a floating point value, and `g` and `b` are ignored.
+   *
+   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#012345'`
+   * @param {any} g - Green (between 0 and 1)
+   * @param {any} b - Blue (between 0 and 1)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setBgColor
    */
   setBgColor(r: any, g: any, b: any): Graphics;
 
   /**
    * Get the color to use for subsequent drawing operations
+   * @returns {number} The integer value of the colour
    * @url http://www.espruino.com/Reference#l_Graphics_getColor
    */
   getColor(): number;
 
   /**
    * Get the background color to use for subsequent drawing operations
+   * @returns {number} The integer value of the colour
    * @url http://www.espruino.com/Reference#l_Graphics_getBgColor
    */
   getBgColor(): number;
@@ -1017,6 +1339,12 @@ declare class Graphics {
    * **Note:** The x/y values here are rotated, so that if `Graphics.setRotation` is used
    * they correspond to the coordinates given to the draw functions, *not to the
    * physical device pixels*.
+   *
+   * @param {number} x1 - Top left X coordinate
+   * @param {number} y1 - Top left Y coordinate
+   * @param {number} x2 - Bottom right X coordinate
+   * @param {number} y2 - Bottom right Y coordinate
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setClipRect
    */
   setClipRect(x1: number, y1: number, x2: number, y2: number): Graphics;
@@ -1024,6 +1352,7 @@ declare class Graphics {
   /**
    * Make subsequent calls to `drawString` use the built-in 4x6 pixel bitmapped Font
    * It is recommended that you use `Graphics.setFont("4x6")` for more flexibility.
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFontBitmap
    */
   setFontBitmap(): Graphics;
@@ -1031,6 +1360,9 @@ declare class Graphics {
   /**
    * Make subsequent calls to `drawString` use a Vector Font of the given height.
    * It is recommended that you use `Graphics.setFont("Vector", size)` for more flexibility.
+   *
+   * @param {number} size - The height of the font, as an integer
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFontVector
    */
   setFontVector(size: number): Graphics;
@@ -1041,12 +1373,23 @@ declare class Graphics {
    * For examples of use, see the [font modules](https://www.espruino.com/Fonts#font-modules).
    * **Note:** while you can specify the character code of the first character with `firstChar`,
    * the newline character 13 will always be treated as a newline and not rendered.
+   *
+   * @param {any} bitmap - A column-first, MSB-first, 1bpp bitmap containing the font bitmap
+   * @param {number} firstChar - The first character in the font - usually 32 (space)
+   * @param {any} width - The width of each character in the font. Either an integer, or a string where each character represents the width
+   * @param {number} height - The height as an integer (max 255). Bits 8-15 represent the scale factor (eg. `2<<8` is twice the size). Bits 16-23 represent the BPP (0,1=1 bpp, 2=2 bpp, 4=4 bpp)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFontCustom
    */
   setFontCustom(bitmap: any, firstChar: number, width: any, height: number): Graphics;
 
   /**
    * Set the alignment for subsequent calls to `drawString`
+   *
+   * @param {number} x - X alignment. -1=left (default), 0=center, 1=right
+   * @param {number} y - Y alignment. -1=top (default), 0=center, 1=bottom
+   * @param {number} rotation - Rotation of the text. 0=normal, 1=90 degrees clockwise, 2=180, 3=270
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFontAlign
    */
   setFontAlign(x: number, y: number, rotation: number): Graphics;
@@ -1062,6 +1405,10 @@ declare class Graphics {
    * * `g.setFont("4x6",2)` - 4x6 bitmap font, doubled in size
    * `g.getFont()` will return the current font as a String.
    * For a list of available font names, you can use `g.getFonts()`.
+   *
+   * @param {any} name - The name of the font to use (if undefined, the standard 4x6 font will be used)
+   * @param {number} size - The size of the font (or undefined)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFont
    */
   setFont(name: any, size: number): Graphics;
@@ -1072,6 +1419,7 @@ declare class Graphics {
    * factor is specified, a colon and then the size is reported, like "4x6:2"
    * **Note:** For custom fonts, `Custom` is currently
    * reported instead of the font name.
+   * @returns {any} Get the name of the current font
    * @url http://www.espruino.com/Reference#l_Graphics_getFont
    */
   getFont(): String;
@@ -1080,24 +1428,32 @@ declare class Graphics {
    * Return an array of all fonts currently in the Graphics library.
    * **Note:** Vector fonts are specified as `Vector#` where `#` is the font height. As there
    * are effectively infinite fonts, just `Vector` is included in the list.
+   * @returns {any} And array of font names
    * @url http://www.espruino.com/Reference#l_Graphics_getFonts
    */
   getFonts(): any[];
 
   /**
    * Return the height in pixels of the current font
+   * @returns {number} The height in pixels of the current font
    * @url http://www.espruino.com/Reference#l_Graphics_getFontHeight
    */
   getFontHeight(): number;
 
   /**
    * Return the size in pixels of a string of text in the current font
+   *
+   * @param {any} str - The string
+   * @returns {number} The length of the string in pixels
    * @url http://www.espruino.com/Reference#l_Graphics_stringWidth
    */
   stringWidth(str: any): number;
 
   /**
    * Return the width and height in pixels of a string of text in the current font
+   *
+   * @param {any} str - The string
+   * @returns {any} An object containing `{width,height}` of the string
    * @url http://www.espruino.com/Reference#l_Graphics_stringMetrics
    */
   stringMetrics(str: any): any;
@@ -1109,6 +1465,10 @@ declare class Graphics {
    * ```
    * g.drawString(g.wrapString(text, g.getWidth()).join("\n")),
    * ```
+   *
+   * @param {any} str - The string
+   * @param {number} maxWidth - The width in pixels
+   * @returns {any} An array of lines that are all less than `maxWidth`
    * @url http://www.espruino.com/Reference#l_Graphics_wrapString
    */
   wrapString(str: any, maxWidth: number): any;
@@ -1130,30 +1490,56 @@ declare class Graphics {
    * // # #  #      #     #
    * // # # ###      #####
    * ```
+   *
+   * @param {any} str - The string
+   * @param {number} x - The X position of the leftmost pixel
+   * @param {number} y - The Y position of the topmost pixel
+   * @param {boolean} solid - For bitmap fonts, should empty pixels be filled with the background color?
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawString
    */
   drawString(str: any, x: number, y: number, solid: boolean): Graphics;
 
   /**
    * Draw a line between x1,y1 and x2,y2 in the current foreground color
+   *
+   * @param {number} x1 - The left
+   * @param {number} y1 - The top
+   * @param {number} x2 - The right
+   * @param {number} y2 - The bottom
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawLine
    */
   drawLine(x1: number, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Draw a line between x1,y1 and x2,y2 in the current foreground color
+   *
+   * @param {number} x1 - The left
+   * @param {number} y1 - The top
+   * @param {number} x2 - The right
+   * @param {number} y2 - The bottom
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawLineAA
    */
   drawLineAA(x1: number, y1: number, x2: number, y2: number): Graphics;
 
   /**
    * Draw a line from the last position of lineTo or moveTo to this position
+   *
+   * @param {number} x - X value
+   * @param {number} y - Y value
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_lineTo
    */
   lineTo(x: number, y: number): Graphics;
 
   /**
    * Move the cursor to a position - see lineTo
+   *
+   * @param {number} x - X value
+   * @param {number} y - Y value
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_moveTo
    */
   moveTo(x: number, y: number): Graphics;
@@ -1161,6 +1547,10 @@ declare class Graphics {
   /**
    * Draw a polyline (lines between each of the points in `poly`) in the current foreground color
    * **Note:** there is a limit of 64 points (128 XY elements) for polygons
+   *
+   * @param {any} poly - An array of vertices, of the form ```[x1,y1,x2,y2,x3,y3,etc]```
+   * @param {boolean} closed - Draw another line between the last element of the array and the first
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawPoly
    */
   drawPoly(poly: any, closed: boolean): Graphics;
@@ -1168,6 +1558,10 @@ declare class Graphics {
   /**
    * Draw an **antialiased** polyline (lines between each of the points in `poly`) in the current foreground color
    * **Note:** there is a limit of 64 points (128 XY elements) for polygons
+   *
+   * @param {any} poly - An array of vertices, of the form ```[x1,y1,x2,y2,x3,y3,etc]```
+   * @param {boolean} closed - Draw another line between the last element of the array and the first
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawPolyAA
    */
   drawPolyAA(poly: any, closed: boolean): Graphics;
@@ -1188,6 +1582,9 @@ declare class Graphics {
    * will align perfectly without overdraw - but this will not fill the
    * same pixels as `drawPoly` (drawing a line around the edge of the polygon).
    * **Note:** there is a limit of 64 points (128 XY elements) for polygons
+   *
+   * @param {any} poly - An array of vertices, of the form ```[x1,y1,x2,y2,x3,y3,etc]```
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_fillPoly
    */
   fillPoly(poly: any): Graphics;
@@ -1208,12 +1605,19 @@ declare class Graphics {
    * will align perfectly without overdraw - but this will not fill the
    * same pixels as `drawPoly` (drawing a line around the edge of the polygon).
    * **Note:** there is a limit of 64 points (128 XY elements) for polygons
+   *
+   * @param {any} poly - An array of vertices, of the form ```[x1,y1,x2,y2,x3,y3,etc]```
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_fillPolyAA
    */
   fillPolyAA(poly: any): Graphics;
 
   /**
    * Set the current rotation of the graphics device.
+   *
+   * @param {number} rotation - The clockwise rotation. 0 for no rotation, 1 for 90 degrees, 2 for 180, 3 for 270
+   * @param {boolean} reflect - Whether to reflect the image
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setRotation
    */
   setRotation(rotation: number, reflect: boolean): Graphics;
@@ -1223,6 +1627,9 @@ declare class Graphics {
    * `undefined` if image couldn't be decoded.
    * `frames` is also included is the image contains more information than you'd expect for a single bitmap. In
    * this case the bitmap might be an animation with multiple frames
+   *
+   * @param {any} str - The string
+   * @returns {any} An object containing `{width,height,bpp,transparent}` for the image
    * @url http://www.espruino.com/Reference#l_Graphics_imageMetrics
    */
   imageMetrics(str: any): any;
@@ -1259,6 +1666,12 @@ declare class Graphics {
    * g.drawImage(img, g.getWidth()/2, g.getHeight()/2,
    *             {scale:2, rotate:Math.PI/4});
    * ```
+   *
+   * @param {any} image - An image to draw, either a String or an Object (see below)
+   * @param {number} x - The X offset to draw the image
+   * @param {number} y - The Y offset to draw the image
+   * @param {any} options - options for scaling,rotation,etc (see below)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawImage
    */
   drawImage(image: any, x: number, y: number, options: any): Graphics;
@@ -1283,6 +1696,10 @@ declare class Graphics {
    *  width,height
    * }
    * ```
+   *
+   * @param {any} layers - An array of objects {x,y,image,scale,rotate,center} (up to 3)
+   * @param {any} options - options for rendering - see below
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_drawImages
    */
   drawImages(layers: any, options: any): Graphics;
@@ -1299,6 +1716,9 @@ declare class Graphics {
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and
    * may be quite slow.
+   *
+   * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
+   * @returns {any} An Image that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_asImage
    */
   asImage(type: any): any;
@@ -1307,6 +1727,9 @@ declare class Graphics {
    * Return the area of the Graphics canvas that has been modified, and optionally clear
    * the modified area to 0.
    * For instance if `g.setPixel(10,20)` was called, this would return `{x1:10, y1:20, x2:10, y2:20}`
+   *
+   * @param {boolean} reset - Whether to reset the modified area or not
+   * @returns {any} An object {x1,y1,x2,y2} containing the modified area, or undefined if not modified
    * @url http://www.espruino.com/Reference#l_Graphics_getModified
    */
   getModified(reset: boolean): any;
@@ -1316,6 +1739,10 @@ declare class Graphics {
    * is filled with the background color.
    * Note: This uses repeated pixel reads and writes, so will not work on platforms that
    * don't support pixel reads.
+   *
+   * @param {number} x - X direction. >0 = to right
+   * @param {number} y - Y direction. >0 = down
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_scroll
    */
   scroll(x: number, y: number): Graphics;
@@ -1332,12 +1759,16 @@ declare class Graphics {
    * ```
    * Note: This uses repeated pixel reads and writes, so will not work on platforms that
    * don't support pixel reads.
+   *
+   * @param {any} options - options - see below
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_blit
    */
   blit(options: any): Graphics;
 
   /**
    * Create a Windows BMP file from this Graphics instance, and return it as a String.
+   * @returns {any} A String representing the Graphics as a Windows BMP file (or 'undefined' if not possible)
    * @url http://www.espruino.com/Reference#l_Graphics_asBMP
    */
   asBMP(): any;
@@ -1345,6 +1776,7 @@ declare class Graphics {
   /**
    * Create a URL of the form `data:image/bmp;base64,...` that can be pasted into the browser.
    * The Espruino Web IDE can detect this data on the console and render the image inline automatically.
+   * @returns {any} A String representing the Graphics as a URL (or 'undefined' if not possible)
    * @url http://www.espruino.com/Reference#l_Graphics_asURL
    */
   asURL(): any;
@@ -1364,6 +1796,10 @@ declare class Graphics {
    *  x1,y1: control point
    *  y2,y2: end point
    *  Max 10 points without start point.
+   *
+   * @param {any} arr - An array of three vertices, six enties in form of ```[x0,y0,x1,y1,x2,y2]```
+   * @param {any} options - number of points to calulate
+   * @returns {any} Array with calculated points
    * @url http://www.espruino.com/Reference#l_Graphics_quadraticBezier
    */
   quadraticBezier(arr: any, options: any): any;
@@ -1386,6 +1822,10 @@ declare class Graphics {
    * 0 0 1
    * ```
    *  Apply a transformation to an array of vertices.
+   *
+   * @param {any} verts - An array of vertices, of the form ```[x1,y1,x2,y2,x3,y3,etc]```
+   * @param {any} transformation - The transformation to apply, either an Object or an Array (see below)
+   * @returns {any} Array of transformed vertices
    * @url http://www.espruino.com/Reference#l_Graphics_transformVertices
    */
   transformVertices(verts: any, transformation: any): any;
@@ -1407,6 +1847,7 @@ declare class Graphics {
    * instance is reset, the background color is automatically set to `g.theme.bg` and foreground is set to `g.theme.fg`.
    * On Bangle.js these values can be changed by writing updated values to `theme` in `settings.js` and reloading the app - or they can
    * be changed temporarily by calling `Graphics.setTheme`
+   * @returns {any} An object containing the current 'theme' (see below)
    * @url http://www.espruino.com/Reference#l_Graphics_theme
    */
   theme: any;
@@ -1418,6 +1859,9 @@ declare class Graphics {
    * ```
    * g.setTheme({bg:"#f00"});
    * ```
+   *
+   * @param {any} theme - An object of the form returned by `Graphics.theme`
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setTheme
    */
   setTheme(theme: any): Graphics;
@@ -1432,6 +1876,10 @@ declare class url {
    * A utility function to split a URL into parts
    * This is useful in web servers for instance when handling a request.
    * For instance `url.parse("/a?b=c&d=e",true)` returns `{"method":"GET","host":"","path":"/a?b=c&d=e","pathname":"/a","search":"?b=c&d=e","port":80,"query":{"b":"c","d":"e"}}`
+   *
+   * @param {any} urlStr - A URL to be parsed
+   * @param {boolean} parseQuery - Whether to parse the query string into an object not (default = false)
+   * @returns {any} An object containing options for ```http.request``` or ```http.get```. Contains `method`, `host`, `path`, `pathname`, `search`, `port` and `query`
    * @url http://www.espruino.com/Reference#l_url_parse
    */
   static parse(urlStr: any, parseQuery: boolean): any;
@@ -1444,6 +1892,9 @@ declare class url {
 declare class Server {
   /**
    * Start listening for new connections on the given port
+   *
+   * @param {number} port - The port to listen on
+   * @returns {any} The HTTP server instance that 'listen' was called on
    * @url http://www.espruino.com/Reference#l_Server_listen
    */
   listen(port: number): any;
@@ -1462,12 +1913,18 @@ declare class Server {
 declare class Socket {
   /**
    * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
    * @url http://www.espruino.com/Reference#l_Socket_data
    */
   static on(event: "data", callback: (data: any) => void): void;
 
   /**
    * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
    * @url http://www.espruino.com/Reference#l_Socket_close
    */
   static on(event: "close", callback: (had_error: any) => void): void;
@@ -1489,37 +1946,53 @@ declare class Socket {
    * * -12: bad argument
    * * -13: SSL handshake failed
    * * -14: invalid SSL data
+   * @param {string} event - The event to listen to.
+   * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `details` An error object with an error code (a negative integer) and a message.
    * @url http://www.espruino.com/Reference#l_Socket_error
    */
   static on(event: "error", callback: (details: any) => void): void;
 
   /**
    * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Socket_drain
    */
   static on(event: "drain", callback: () => void): void;/**
    * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
+   * @returns {number} How many bytes are available
    * @url http://www.espruino.com/Reference#l_Socket_available
    */
   available(): number;
 
   /**
    * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
    * @url http://www.espruino.com/Reference#l_Socket_read
    */
   read(chars: number): any;
 
   /**
    * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_Socket_pipe
    */
   pipe(destination: any, options: any): any;
 
   /**
    * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript 
+   * (including arrays) will be converted to a string with the normal JavaScript
    * `toString` method.
-   * If you wish to send binary data then you need to convert that data directly to a 
+   * If you wish to send binary data then you need to convert that data directly to a
    * String. This can be done with `String.fromCharCode`, however it's often easier
    * and faster to use the Espruino-specific `E.toString`, which will read its arguments
    * as an array of bytes and convert that to a String:
@@ -1534,6 +2007,9 @@ declare class Socket {
    * d.setInt8(4, 42); // write int8 at byte 4
    * socket.write(E.toString(d.buffer))
    * ```
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
    * @url http://www.espruino.com/Reference#l_Socket_write
    */
   write(data: any): boolean;
@@ -1541,6 +2017,8 @@ declare class Socket {
   /**
    * Close this socket - optional data to append as an argument.
    * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
    * @url http://www.espruino.com/Reference#l_Socket_end
    */
   end(data: any): any;
@@ -1553,20 +2031,36 @@ declare class Socket {
 declare class dgramSocket {
   /**
    * The 'message' event is called when a datagram message is received. If a handler is defined with `X.on('message', function(msg) { ... })` then it will be called`
+   * @param {string} event - The event to listen to.
+   * @param {(msg: any, rinfo: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `msg` A string containing the received message
+   * * `rinfo` Sender address,port containing information
    * @url http://www.espruino.com/Reference#l_dgramSocket_message
    */
   static on(event: "message", callback: (msg: any, rinfo: any) => void): void;
 
   /**
    * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
    * @url http://www.espruino.com/Reference#l_dgramSocket_close
    */
   static on(event: "close", callback: (had_error: any) => void): void;/**
+   *
+   * @param {any} buffer - A string containing message to send
+   * @param {any} offset - Offset in the passed string where the message starts [optional]
+   * @param {any} length - Number of bytes in the message [optional]
+   * @param {any} args - Destination port number, Destination IP address string
    * @url http://www.espruino.com/Reference#l_dgramSocket_send
    */
   send(buffer: any, offset: any, length: any, ...args: any[]): any;
 
   /**
+   *
+   * @param {number} port - The port to bind at
+   * @param {any} callback - A function(res) that will be called when the socket is bound. You can then call `res.on('message', function(message, info) { ... })` and `res.on('close', function() { ... })` to deal with the response.
+   * @returns {any} The dgramSocket instance that 'bind' was called on
    * @url http://www.espruino.com/Reference#l_dgramSocket_bind
    */
   bind(port: number, callback: any): any;
@@ -1578,6 +2072,9 @@ declare class dgramSocket {
   close(): any;
 
   /**
+   *
+   * @param {any} group - A string containing the group ip to join
+   * @param {any} ip - A string containing the ip to join with
    * @url http://www.espruino.com/Reference#l_dgramSocket_addMembership
    */
   addMembership(group: any, ip: any): any;
@@ -1590,6 +2087,11 @@ declare class dgramSocket {
 declare class WLAN {
   /**
    * Connect to a wireless network
+   *
+   * @param {any} ap - Access point name
+   * @param {any} key - WPA2 key (or undefined for unsecured connection)
+   * @param {any} callback - Function to call back with connection status. It has one argument which is one of 'connect'/'disconnect'/'dhcp'
+   * @returns {boolean} True if connection succeeded, false if it didn't.
    * @url http://www.espruino.com/Reference#l_WLAN_connect
    */
   connect(ap: any, key: any, callback: any): boolean;
@@ -1608,6 +2110,7 @@ declare class WLAN {
 
   /**
    * Get the current IP address
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_WLAN_getIP
    */
   getIP(): any;
@@ -1615,6 +2118,9 @@ declare class WLAN {
   /**
    * Set the current IP address for get an IP from DHCP (if no options object is specified).
    * **Note:** Changes are written to non-volatile memory, but will only take effect after calling `wlan.reconnect()`
+   *
+   * @param {any} options - Object containing IP address options `{ ip : '1,2,3,4', subnet, gateway, dns  }`, or do not supply an object in otder to force DHCP.
+   * @returns {boolean} True on success
    * @url http://www.espruino.com/Reference#l_WLAN_setIP
    */
   setIP(options: any): boolean;
@@ -1628,6 +2134,9 @@ declare class ESP8266 {
   /**
    * **DEPRECATED** - please use `Wifi.ping` instead.
    * Perform a network ping request. The parameter can be either a String or a numeric IP address.
+   *
+   * @param {any} ipAddr - A string representation of an IP address.
+   * @param {any} pingCallback - Optional callback function.
    * @url http://www.espruino.com/Reference#l_ESP8266_ping
    */
   static ping(ipAddr: any, pingCallback: any): any;
@@ -1645,18 +2154,23 @@ declare class ESP8266 {
    * * `epc1`, `epc2`, `epc3`: instruction pointers
    * * `excvaddr`: address being accessed
    * * `depc`: (?)
+   * @returns {any} An object with the reset cause information
    * @url http://www.espruino.com/Reference#l_ESP8266_getResetInfo
    */
   static getResetInfo(): any;
 
   /**
    * Enable or disable the logging of debug information.  A value of `true` enables debug logging while a value of `false` disables debug logging.  Debug output is sent to UART1 (gpio2).
+   *
+   * @param {boolean} enable - Enable or disable the debug logging.
    * @url http://www.espruino.com/Reference#l_ESP8266_logDebug
    */
   static logDebug(enable: boolean): any;
 
   /**
    * Set the debug logging mode. It can be disabled (which frees ~1.2KB of heap), enabled in-memory only, or in-memory and output to a UART.
+   *
+   * @param {number} mode - Debug log mode: 0=off, 1=in-memory only, 2=in-mem and uart0, 3=in-mem and uart1.
    * @url http://www.espruino.com/Reference#l_ESP8266_setLog
    */
   static setLog(mode: number): any;
@@ -1684,6 +2198,8 @@ declare class ESP8266 {
    * **Note:**
    * Set the operating frequency of the ESP8266 processor. The default is 160Mhz.
    * **Warning**: changing the cpu frequency affects the timing of some I/O operations, notably of software SPI and I2C, so things may be a bit slower at 80Mhz.
+   *
+   * @param {any} freq - Desired frequency - either 80 or 160.
    * @url http://www.espruino.com/Reference#l_ESP8266_setCPUFreq
    */
   static setCPUFreq(freq: any): any;
@@ -1697,38 +2213,49 @@ declare class ESP8266 {
    * * `flashMap`     - Configured flash size&map: '512KB:256/256' .. '4MB:512/512'
    * * `flashKB`      - Configured flash size in KB as integer
    * * `flashChip`    - Type of flash chip as string with manufacturer & chip, ex: '0xEF 0x4016`
+   * @returns {any} The state of the ESP8266
    * @url http://www.espruino.com/Reference#l_ESP8266_getState
    */
   static getState(): any;
 
   /**
    * **Note:** This is deprecated. Use `require("Flash").getFree()`
+   * @returns {any} Array of objects with `addr` and `length` properties describing the free flash areas available
    * @url http://www.espruino.com/Reference#l_ESP8266_getFreeFlash
    */
   static getFreeFlash(): any;
 
   /**
+   *
+   * @param {any} arrayOfData - Array of data to CRC
+   * @returns {any} 32-bit CRC
    * @url http://www.espruino.com/Reference#l_ESP8266_crc32
    */
   static crc32(arrayOfData: any): any;
 
   /**
    * **This function is deprecated.** Please use `require("neopixel").write(pin, data)` instead
+   *
+   * @param {Pin} pin - Pin for output signal.
+   * @param {any} arrayOfData - Array of LED data.
    * @url http://www.espruino.com/Reference#l_ESP8266_neopixelWrite
    */
   static neopixelWrite(pin: Pin, arrayOfData: any): any;
 
   /**
-   * Put the ESP8266 into 'deep sleep' for the given number of microseconds, 
-   * reducing power consumption drastically. 
+   * Put the ESP8266 into 'deep sleep' for the given number of microseconds,
+   * reducing power consumption drastically.
    * meaning of option values:
    * 0 - the 108th Byte of init parameter decides whether RF calibration will be performed or not.
    * 1 - run RF calibration after waking up. Power consumption is high.
    * 2 - no RF calibration after waking up. Power consumption is low.
    * 4 - no RF after waking up. Power consumption is the lowest.
-   * **Note:** unlike normal Espruino boards' 'deep sleep' mode, ESP8266 deep sleep actually turns off the processor. After the given number of microseconds have elapsed, the ESP8266 will restart as if power had been turned off and then back on. *All contents of RAM will be lost*. 
+   * **Note:** unlike normal Espruino boards' 'deep sleep' mode, ESP8266 deep sleep actually turns off the processor. After the given number of microseconds have elapsed, the ESP8266 will restart as if power had been turned off and then back on. *All contents of RAM will be lost*.
    * Connect GPIO 16 to RST to enable wakeup.
    * **Special:** 0 microseconds cause sleep forever until external wakeup RST pull down occurs.
+   *
+   * @param {any} micros - Number of microseconds to sleep.
+   * @param {any} option - posible values are 0, 1, 2 or 4
    * @url http://www.espruino.com/Reference#l_ESP8266_deepSleep
    */
   static deepSleep(micros: any, option: any): any;
@@ -1741,6 +2268,9 @@ declare class ESP8266 {
 declare class Ethernet {
   /**
    * Get the current IP address, subnet, gateway and mac address.
+   *
+   * @param {any} options - An optional `callback(err, ipinfo)` function to be called back with the IP information.
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Ethernet_getIP
    */
   getIP(options: any): any;
@@ -1749,6 +2279,10 @@ declare class Ethernet {
    * Set the current IP address or get an IP from DHCP (if no options object is specified)
    * If 'mac' is specified as an option, it must be a string of the form `"00:01:02:03:04:05"`
    * The default mac is 00:08:DC:01:02:03.
+   *
+   * @param {any} options - Object containing IP address options `{ ip : '1.2.3.4', subnet : '...', gateway: '...', dns:'...', mac:':::::'  }`, or do not supply an object in order to force DHCP.
+   * @param {any} callback - An optional `callback(err)` function to invoke when ip is set. `err==null` on success, or a string on failure.
+   * @returns {boolean} True on success
    * @url http://www.espruino.com/Reference#l_Ethernet_setIP
    */
   setIP(options: any, callback: any): boolean;
@@ -1758,18 +2292,28 @@ declare class Ethernet {
    * min 8 and max 12 char, best set before calling `eth.setIP()`
    * Default is WIZnet010203, 010203 is the default nic as part of the mac.
    * Best to set the hosname before calling setIP().
+   *
+   * @param {any} hostname - hostname as string
+   * @param {any} callback - An optional `callback(err)` function to be called back with null or error text.
+   * @returns {boolean} True on success
    * @url http://www.espruino.com/Reference#l_Ethernet_setHostname
    */
   setHostname(hostname: any, callback: any): boolean;
 
   /**
    * Returns the hostname
+   *
+   * @param {any} callback - An optional `callback(err,hostname)` function to be called back with the status information.
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Ethernet_getHostname
    */
   getHostname(callback: any): any;
 
   /**
    * Get the current status of the ethernet device
+   *
+   * @param {any} options - An optional `callback(err, status)` function to be called back with the status information.
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Ethernet_getStatus
    */
   getStatus(options: any): any;
@@ -1782,6 +2326,9 @@ declare class Ethernet {
 declare class httpSrv {
   /**
    * Start listening for new HTTP connections on the given port
+   *
+   * @param {number} port - The port to listen on
+   * @returns {any} The HTTP server instance that 'listen' was called on
    * @url http://www.espruino.com/Reference#l_httpSrv_listen
    */
   listen(port: number): any;
@@ -1800,22 +2347,29 @@ declare class httpSrv {
 declare class httpSRq {
   /**
    * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
    * @url http://www.espruino.com/Reference#l_httpSRq_data
    */
   static on(event: "data", callback: (data: any) => void): void;
 
   /**
    * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpSRq_close
    */
   static on(event: "close", callback: () => void): void;/**
    * The headers to sent to the server with this HTTP request.
+   * @returns {any} An object mapping header name to value
    * @url http://www.espruino.com/Reference#l_httpSRq_headers
    */
   headers: any;
 
   /**
    * The HTTP method used with this request. Often `"GET"`.
+   * @returns {any} A string
    * @url http://www.espruino.com/Reference#l_httpSRq_method
    */
   method: any;
@@ -1824,24 +2378,36 @@ declare class httpSRq {
    * The URL requested in this HTTP request, for instance:
    * * `"/"` - the main page
    * * `"/favicon.ico"` - the web page's icon
+   * @returns {any} A string representing the URL
    * @url http://www.espruino.com/Reference#l_httpSRq_url
    */
   url: any;
 
   /**
    * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
+   * @returns {number} How many bytes are available
    * @url http://www.espruino.com/Reference#l_httpSRq_available
    */
   available(): number;
 
   /**
    * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
    * @url http://www.espruino.com/Reference#l_httpSRq_read
    */
   read(chars: number): any;
 
   /**
    * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_httpSRq_pipe
    */
   pipe(destination: any, options: any): any;
@@ -1854,12 +2420,16 @@ declare class httpSRq {
 declare class httpSRs {
   /**
    * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpSRs_drain
    */
   static on(event: "drain", callback: () => void): void;
 
   /**
    * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpSRs_close
    */
   static on(event: "close", callback: () => void): void;/**
@@ -1870,20 +2440,26 @@ declare class httpSRs {
    *   "Connection": "close"
    *  }
    * ```
+   * @returns {any} An object mapping header name to value
    * @url http://www.espruino.com/Reference#l_httpSRs_headers
    */
   headers: any;
 
   /**
    * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript 
+   * (including arrays) will be converted to a string with the normal JavaScript
    * `toString` method. For more information about sending binary data see `Socket.write`
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
    * @url http://www.espruino.com/Reference#l_httpSRs_write
    */
   write(data: any): boolean;
 
   /**
    * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
    * @url http://www.espruino.com/Reference#l_httpSRs_end
    */
   end(data: any): any;
@@ -1894,6 +2470,9 @@ declare class httpSRs {
    * to the response.
    * This cannot be called twice, or after data has already been sent
    * in the response.
+   *
+   * @param {number} statusCode - The HTTP status code
+   * @param {any} headers - An object containing the headers
    * @url http://www.espruino.com/Reference#l_httpSRs_writeHead
    */
   writeHead(statusCode: number, headers: any): any;
@@ -1901,6 +2480,9 @@ declare class httpSRs {
   /**
    * Set a value to send in the header of this HTTP response. This updates the `httpSRs.headers` property.
    * Any headers supplied to `writeHead` will overwrite any headers with the same name.
+   *
+   * @param {any} name - The name of the header as a String
+   * @param {any} value - The value of the header as a String
    * @url http://www.espruino.com/Reference#l_httpSRs_setHeader
    */
   setHeader(name: any, value: any): any;
@@ -1913,18 +2495,25 @@ declare class httpSRs {
 declare class httpCRq {
   /**
    * An event that is fired when the buffer is empty and it can accept more data to send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRq_drain
    */
   static on(event: "drain", callback: () => void): void;
 
   /**
    * An event that is fired if there is an error making the request and the response callback has not been invoked. In this case the error event concludes the request attempt. The error event function receives an error object as parameter with a `code` field and a `message` field.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRq_error
    */
   static on(event: "error", callback: () => void): void;/**
    * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript 
+   * (including arrays) will be converted to a string with the normal JavaScript
    * `toString` method. For more information about sending binary data see `Socket.write`
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
    * @url http://www.espruino.com/Reference#l_httpCRq_write
    */
   write(data: any): boolean;
@@ -1932,6 +2521,8 @@ declare class httpCRq {
   /**
    * Finish this HTTP request - optional data to append as an argument
    * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
    * @url http://www.espruino.com/Reference#l_httpCRq_end
    */
   end(data: any): any;
@@ -1944,58 +2535,80 @@ declare class httpCRq {
 declare class httpCRs {
   /**
    * The 'data' event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
    * @url http://www.espruino.com/Reference#l_httpCRs_data
    */
   static on(event: "data", callback: (data: any) => void): void;
 
   /**
    * Called when the connection closes with one `hadError` boolean parameter, which indicates whether an error occurred.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRs_close
    */
   static on(event: "close", callback: () => void): void;
 
   /**
    * An event that is fired if there is an error receiving the response. The error event function receives an error object as parameter with a `code` field and a `message` field. After the error event the close even will also be triggered to conclude the HTTP request/response.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRs_error
    */
   static on(event: "error", callback: () => void): void;/**
    * The headers received along with the HTTP response
+   * @returns {any} An object mapping header name to value
    * @url http://www.espruino.com/Reference#l_httpCRs_headers
    */
   headers: any;
 
   /**
    * The HTTP response's status code - usually `"200"` if all went well
+   * @returns {any} The status code as a String
    * @url http://www.espruino.com/Reference#l_httpCRs_statusCode
    */
   statusCode: any;
 
   /**
    * The HTTP response's status message - Usually `"OK"` if all went well
+   * @returns {any} An String Status Message
    * @url http://www.espruino.com/Reference#l_httpCRs_statusMessage
    */
   statusMessage: any;
 
   /**
    * The HTTP version reported back by the server - usually `"1.1"`
+   * @returns {any} Th
    * @url http://www.espruino.com/Reference#l_httpCRs_httpVersion
    */
   httpVersion: any;
 
   /**
    * Return how many bytes are available to read. If there is a 'data' event handler, this will always return 0.
+   * @returns {number} How many bytes are available
    * @url http://www.espruino.com/Reference#l_httpCRs_available
    */
   available(): number;
 
   /**
    * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
    * @url http://www.espruino.com/Reference#l_httpCRs_read
    */
   read(chars: number): any;
 
   /**
    * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_httpCRs_pipe
    */
   pipe(destination: any, options: any): any;
@@ -2019,12 +2632,19 @@ declare class httpCRs {
 declare class Unistroke {
   /**
    * Create a new Unistroke based on XY coordinates
+   *
+   * @param {any} xy - An array of interleaved XY coordinates
+   * @returns {any} A string of data representing this unistroke
    * @url http://www.espruino.com/Reference#l_Unistroke_new
    */
   static new(xy: any): any;
 
   /**
    * Recognise based on an object of named strokes, and a list of XY coordinates
+   *
+   * @param {any} strokes - An object of named strokes : `{arrow:..., circle:...}`
+   * @param {any} xy - An array of interleaved XY coordinates
+   * @returns {any} The key name of the matched stroke
    * @url http://www.espruino.com/Reference#l_Unistroke_recognise
    */
   static recognise(strokes: any, xy: any): any;
@@ -2037,27 +2657,38 @@ declare class Unistroke {
  */
 declare class NRF {
   /**
+   * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
    */
   static getSecurityStatus(): any;
 
   /**
+   * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_NRF_getAddress
    */
   static getAddress(): any;
 
   /**
+   *
+   * @param {any} data - The service (and characteristics) to advertise
+   * @param {any} options - Optional object containing options
    * @url http://www.espruino.com/Reference#l_NRF_setServices
    */
   static setServices(data: any, options: any): any;
 
   /**
+   *
+   * @param {any} data - The data to advertise as an object - see below for more info
+   * @param {any} options - An optional object of options
    * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
    */
   static setAdvertising(data: any, options: any): any;
 
   /**
    * Called when a host device connects to Espruino. The first argument contains the address.
+   * @param {string} event - The event to listen to.
+   * @param {(addr: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `addr` The address of the device that has connected
    * @url http://www.espruino.com/Reference#l_NRF_connect
    */
   static on(event: "connect", callback: (addr: any) => void): void;
@@ -2067,6 +2698,9 @@ declare class NRF {
    * The most common reason is:
    * * 19 - `REMOTE_USER_TERMINATED_CONNECTION`
    * * 22 - `LOCAL_HOST_TERMINATED_CONNECTION`
+   * @param {string} event - The event to listen to.
+   * @param {(reason: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `reason` The reason code reported back by the BLE stack - see Nordic's [`ble_hci.h` file](https://github.com/espruino/Espruino/blob/master/targetlibs/nrf5x_12/components/softdevice/s132/headers/ble_hci.h#L71) for more information
    * @url http://www.espruino.com/Reference#l_NRF_disconnect
    */
   static on(event: "disconnect", callback: (reason: number) => void): void;
@@ -2074,6 +2708,9 @@ declare class NRF {
   /**
    * Contains updates on the security of the current Bluetooth link.
    * See Nordic's `ble_gap_evt_auth_status_t` structure for more information.
+   * @param {string} event - The event to listen to.
+   * @param {(status: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `status` An object containing `{auth_status,bonded,lv4,kdist_own,kdist_peer}
    * @url http://www.espruino.com/Reference#l_NRF_security
    */
   static on(event: "security", callback: (status: any) => void): void;
@@ -2083,30 +2720,40 @@ declare class NRF {
    * a HID device and the computer it is connected to sends a
    * HID report back to Espruino. This is usually used for handling
    * indications such as the Caps Lock LED.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_NRF_HID
    */
   static on(event: "HID", callback: () => void): void;
 
   /**
    * Called with discovered services when discovery is finished
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_NRF_servicesDiscover
    */
   static on(event: "servicesDiscover", callback: () => void): void;
 
   /**
    * Called with discovered characteristics when discovery is finished
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_NRF_characteristicsDiscover
    */
   static on(event: "characteristicsDiscover", callback: () => void): void;
 
   /**
    * Called when an NFC field is detected
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_NRF_NFCon
    */
   static on(event: "NFCon", callback: () => void): void;
 
   /**
    * Called when an NFC field is no longer detected
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_NRF_NFCoff
    */
   static on(event: "NFCoff", callback: () => void): void;
@@ -2115,6 +2762,9 @@ declare class NRF {
    * When NFC is started with `NRF.nfcStart`, this is fired
    * when NFC data is received. It doesn't get called if
    * NFC is started with `NRF.nfcURL` or `NRF.nfcRaw`
+   * @param {string} event - The event to listen to.
+   * @param {(arr: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `arr` An ArrayBuffer containign the received data
    * @url http://www.espruino.com/Reference#l_NRF_NFCrx
    */
   static on(event: "NFCrx", callback: (arr: any) => void): void;
@@ -2150,6 +2800,8 @@ declare class NRF {
    * BLE softdevice has some settings that cannot be reset. For example there
    * are only a certain number of unique UUIDs. Once these are all used the
    * only option is to restart the softdevice to clear them all out.
+   *
+   * @param {any} callback - An optional function to be called while the softdevice is uninitialised. Use with caution - accessing console/bluetooth will almost certainly result in a crash.
    * @url http://www.espruino.com/Reference#l_NRF_restart
    */
   static restart(callback: any): any;
@@ -2158,6 +2810,7 @@ declare class NRF {
    * Get this device's default Bluetooth MAC address.
    * For Puck.js, the last 5 characters of this (eg. `ee:ff`)
    * are used in the device's advertised Bluetooth name.
+   * @returns {any} MAC address - a string of the form 'aa:bb:cc:dd:ee:ff'
    * @url http://www.espruino.com/Reference#l_NRF_getAddress
    */
   static getAddress(): any;
@@ -2174,6 +2827,8 @@ declare class NRF {
    * of the address don't match the address type.
    * To change the address, Espruino must restart the softdevice. It will only do
    * so when it is disconnected from other devices.
+   *
+   * @param {any} addr - The address to use (as a string)
    * @url http://www.espruino.com/Reference#l_NRF_setAddress
    */
   static setAddress(addr: any): any;
@@ -2182,6 +2837,7 @@ declare class NRF {
    * Get the battery level in volts (the voltage that the NRF chip is running off of).
    * This is the battery level of the device itself - it has nothing to with any
    * device that might be connected.
+   * @returns {number} Battery level in volts
    * @url http://www.espruino.com/Reference#l_NRF_getBattery
    */
   static getBattery(): number;
@@ -2270,7 +2926,7 @@ declare class NRF {
    * You can also specify 'manufacturer data', which is another form of advertising data.
    * We've registered the Manufacturer ID 0x0590 (as Pur3 Ltd) for use with *Official
    * Espruino devices* - use it to advertise whatever data you'd like, but we'd recommend
-   * using JSON. 
+   * using JSON.
    * For example by not advertising a device name you can send up to 24 bytes of JSON on
    * Espruino's manufacturer ID:
    * ```
@@ -2289,6 +2945,9 @@ declare class NRF {
    * Note that **you only have 24 characters available for JSON**, so try to use
    * the shortest field names possible and avoid floating point values that can
    * be very long when converted to a String.
+   *
+   * @param {any} data - The service data to advertise as an object - see below for more info
+   * @param {any} options - An optional object of options
    * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
    */
   static setAdvertising(data: any, options: any): any;
@@ -2296,6 +2955,10 @@ declare class NRF {
   /**
    * This is just like `NRF.setAdvertising`, except instead of advertising
    * the data, it returns the packet that would be advertised as an array.
+   *
+   * @param {any} data - The data to advertise as an object
+   * @param {any} options - An optional object of options
+   * @returns {any} An array containing the advertising data
    * @url http://www.espruino.com/Reference#l_NRF_getAdvertisingData
    */
   static getAdvertisingData(data: any, options: any): any;
@@ -2310,6 +2973,8 @@ declare class NRF {
    * **Note:** `NRF.setServices(..., {advertise:[ ... ]})` writes advertised
    * services into the scan response - so you can't use both `advertise`
    * and `NRF.setServices` or one will overwrite the other.
+   *
+   * @param {any} data - The data to for the scan response
    * @url http://www.espruino.com/Reference#l_NRF_setScanResponse
    */
   static setScanResponse(data: any): any;
@@ -2423,11 +3088,14 @@ declare class NRF {
    * **Note:** The services on Espruino can only be modified when there is
    * no device connected to it as it requires a restart of the Bluetooth stack.
    * **iOS devices will 'cache' the list of services** so apps like
-   * NRF Connect may incorrectly display the old services even after you 
+   * NRF Connect may incorrectly display the old services even after you
    * have modified them. To fix this, disable and re-enable Bluetooth on your
    * iOS device, or use an Android device to run NRF Connect.
    * **Note:** Not all combinations of security configuration values are valid, the valid combinations are: encrypted,
    * encrypted + mitm, lesc, signed, signed + mitm. See `NRF.setSecurity` for more information.
+   *
+   * @param {any} data - The service (and characteristics) to advertise
+   * @param {any} options - Optional object containing options
    * @url http://www.espruino.com/Reference#l_NRF_setServices
    */
   static setServices(data: any, options: any): any;
@@ -2487,6 +3155,8 @@ declare class NRF {
    * This only works if the characteristic was created with `indicate: true` using `NRF.setServices`,
    * otherwise the characteristic will be updated but no notification will be sent.
    * **Note:** See `NRF.setServices` for more information
+   *
+   * @param {any} data - The service (and characteristics) to update
    * @url http://www.espruino.com/Reference#l_NRF_updateServices
    */
   static updateServices(data: any): any;
@@ -2543,6 +3213,9 @@ declare class NRF {
    * **Note:** Using setScan turns the radio's receive mode on constantly. This
    * can draw a *lot* of power (12mA or so), so you should use it sparingly or
    * you can run your battery down quickly.
+   *
+   * @param {any} callback - The callback to call with received advertising packets, or undefined to stop
+   * @param {any} options - An optional object `{filters: ...}` (as would be passed to `NRF.requestDevice`) to filter devices by
    * @url http://www.espruino.com/Reference#l_NRF_setScan
    */
   static setScan(callback: any, options: any): any;
@@ -2565,6 +3238,10 @@ declare class NRF {
    *   // ...
    * }, {filters : allFilters});
    * ```
+   *
+   * @param {any} devices - An array of `BluetoothDevice` objects, from `NRF.findDevices` or similar
+   * @param {any} filters - A list of filters (as would be passed to `NRF.requestDevice`) to filter devices by
+   * @returns {any} An array of `BluetoothDevice` objects that match the given filters
    * @url http://www.espruino.com/Reference#l_NRF_filterDevices
    */
   static filterDevices(devices: any, filters: any): any;
@@ -2614,6 +3291,9 @@ declare class NRF {
    * can draw a *lot* of power (12mA or so), so you should use it sparingly or you can run your battery down quickly.
    * **Note:** The 'data' field contains the data of *the last packet received*. There may have been more
    * packets. To get data for each packet individually use `NRF.setScan` instead.
+   *
+   * @param {any} callback - The callback to call with received advertising packets (as `BluetoothDevice`), or undefined to stop
+   * @param {any} options - A time in milliseconds to scan for (defaults to 2000), Or an optional object `{filters: ..., timeout : ..., active: bool}` (as would be passed to `NRF.requestDevice`) to filter devices by
    * @url http://www.espruino.com/Reference#l_NRF_findDevices
    */
   static findDevices(callback: any, options: any): any;
@@ -2630,12 +3310,16 @@ declare class NRF {
    * NRF.setRSSIHandler();
    * ```
    * RSSI is the 'Received Signal Strength Indication' in dBm
+   *
+   * @param {any} callback - The callback to call with the RSSI value, or undefined to stop
    * @url http://www.espruino.com/Reference#l_NRF_setRSSIHandler
    */
   static setRSSIHandler(callback: any): any;
 
   /**
    * Set the BLE radio transmit power. The default TX power is 0 dBm, and
+   *
+   * @param {number} power - Transmit power. Accepted values are -40(nRF52 only), -30(nRF51 only), -20, -16, -12, -8, -4, 0, and 4 dBm. On nRF52840 (eg Bangle.js 2) 5/6/7/8 dBm are available too. Others will give an error code.
    * @url http://www.espruino.com/Reference#l_NRF_setTxPower
    */
   static setTxPower(power: number): any;
@@ -2653,6 +3337,8 @@ declare class NRF {
    * decreased.
    * This will only take effect after the connection is disconnected and
    * re-established.
+   *
+   * @param {boolean} lowPower - Whether the connection is low power or not
    * @url http://www.espruino.com/Reference#l_NRF_setLowPowerConnection
    */
   static setLowPowerConnection(lowPower: boolean): any;
@@ -2662,6 +3348,8 @@ declare class NRF {
    * ```
    * NRF.nfcURL("http://espruino.com");
    * ```
+   *
+   * @param {any} url - The URL string to expose on NFC, or `undefined` to disable NFC
    * @url http://www.espruino.com/Reference#l_NRF_nfcURL
    */
   static nfcURL(url: any): any;
@@ -2676,6 +3364,8 @@ declare class NRF {
    * NRF.nfcPair(bleKey);
    * NRF.setSecurity({oob:bleKey, mitm:true});
    * ```
+   *
+   * @param {any} key - 16 byte out of band key
    * @url http://www.espruino.com/Reference#l_NRF_nfcPair
    */
   static nfcPair(key: any): any;
@@ -2686,6 +3376,8 @@ declare class NRF {
    * ```
    * NRF.nfcAndroidApp("no.nordicsemi.android.nrftoolbox")
    * ```
+   *
+   * @param {any} app - The unique identifier of the given Android App
    * @url http://www.espruino.com/Reference#l_NRF_nfcAndroidApp
    */
   static nfcAndroidApp(app: any): any;
@@ -2696,6 +3388,8 @@ declare class NRF {
    * NRF.nfcRaw(new Uint8Array([193, 1, 0, 0, 0, 13, 85, 3, 101, 115, 112, 114, 117, 105, 110, 111, 46, 99, 111, 109]));
    * // same as NRF.nfcURL("http://espruino.com");
    * ```
+   *
+   * @param {any} payload - The NFC NDEF message to deliver to the reader
    * @url http://www.espruino.com/Reference#l_NRF_nfcRaw
    */
   static nfcRaw(payload: any): any;
@@ -2707,6 +3401,9 @@ declare class NRF {
    * ```
    * NRF.nfcStart();
    * ```
+   *
+   * @param {any} payload - Optional 7 byte UID
+   * @returns {any} Internal tag memory (first 10 bytes of tag data)
    * @url http://www.espruino.com/Reference#l_NRF_nfcStart
    */
   static nfcStart(payload: any): any;
@@ -2717,6 +3414,7 @@ declare class NRF {
    * ```
    * NRF.nfcStop();
    * ```
+   *
    * @url http://www.espruino.com/Reference#l_NRF_nfcStop
    */
   static nfcStop(): any;
@@ -2734,30 +3432,43 @@ declare class NRF {
    * // or
    * NRF.nfcSend();
    * ```
+   *
+   * @param {any} payload - Optional tx data
    * @url http://www.espruino.com/Reference#l_NRF_nfcSend
    */
   static nfcSend(payload: any): any;
 
   /**
    * Send a USB HID report. HID must first be enabled with `NRF.setServices({}, {hid: hid_report})`
+   *
+   * @param {any} data - Input report data as an array
+   * @param {any} callback - A callback function to be called when the data is sent
    * @url http://www.espruino.com/Reference#l_NRF_sendHIDReport
    */
   static sendHIDReport(data: any, callback: any): any;
 
   /**
    * Check if Apple Notification Center Service (ANCS) is currently active on the BLE connection
+   *
+   * @returns {boolean} True if Apple Notification Center Service (ANCS) has been initialised and is active
    * @url http://www.espruino.com/Reference#l_NRF_ancsIsActive
    */
   static ancsIsActive(): boolean;
 
   /**
    * Send an ANCS action for a specific Notification UID. Corresponds to posaction/negaction in the 'ANCS' event that was received
+   *
+   * @param {number} uid - The UID of the notification to respond to
+   * @param {boolean} positive - `true` for positive action, `false` for negative
    * @url http://www.espruino.com/Reference#l_NRF_ancsAction
    */
   static ancsAction(uid: number, positive: boolean): any;
 
   /**
    * Get ANCS info for a notification, eg:
+   *
+   * @param {number} uid - The UID of the notification to get information for
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_ancsGetNotificationInfo
    */
   static ancsGetNotificationInfo(uid: number): Promise;
@@ -2779,12 +3490,17 @@ declare class NRF {
    *   "name" : string,
    * }
    * ```
+   *
+   * @param {any} id - The app ID to get information for
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_ancsGetAppInfo
    */
   static ancsGetAppInfo(id: any): Promise;
 
   /**
    * Check if Apple Media Service (AMS) is currently active on the BLE connection
+   *
+   * @returns {boolean} True if Apple Media Service (AMS) has been initialised and is active
    * @url http://www.espruino.com/Reference#l_NRF_amsIsActive
    */
   static amsIsActive(): boolean;
@@ -2799,12 +3515,18 @@ declare class NRF {
    *     - PlaybackStateFastForwarding = 3
    * - PlaybackRate: a string that represents the floating point value of the playback rate.
    * - ElapsedTime: a string that represents the floating point value of the elapsed time of the current track, in seconds
+   *
+   * @param {any} id - Either 'name', 'playbackinfo' or 'volume'
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_amsGetPlayerInfo
    */
   static amsGetPlayerInfo(id: any): Promise;
 
   /**
    * Get Apple Media Service (AMS) info for the currently-playing track
+   *
+   * @param {any} id - Either 'artist', 'album', 'title' or 'duration'
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_amsGetTrackInfo
    */
   static amsGetTrackInfo(id: any): Promise;
@@ -2812,6 +3534,8 @@ declare class NRF {
   /**
    * Send an AMS command to an Apple Media Service device to control music playback
    * Command is one of play, pause, playpause, next, prev, volup, voldown, repeat, shuffle, skipforward, skipback, like, dislike, bookmark
+   *
+   * @param {any} id - For example, 'play', 'pause', 'volup' or 'voldown'
    * @url http://www.espruino.com/Reference#l_NRF_amsCommand
    */
   static amsCommand(id: any): any;
@@ -2876,6 +3600,9 @@ declare class NRF {
    * scanning. This means that if you filter based on a service UUID and a device advertises with multiple packets
    * (or a scan response when `active:true`) only the packet matching the filter is returned - you may not
    * get the device's name is that was in a separate packet. To aggregate multiple packets you can use `NRF.findDevices`.
+   *
+   * @param {any} options - Options used to filter the device to use
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_requestDevice
    */
   static requestDevice(options: any): Promise;
@@ -2906,10 +3633,14 @@ declare class NRF {
    * });
    * ```
    * **Note:** Espruino Bluetooth devices use a type of BLE address known as 'random static',
-   * which is different to a 'public' address. To connect to an Espruino device you'll need 
-   * to use an address string of the form `"aa:bb:cc:dd:ee random"` rather than just 
+   * which is different to a 'public' address. To connect to an Espruino device you'll need
+   * to use an address string of the form `"aa:bb:cc:dd:ee random"` rather than just
    * `"aa:bb:cc:dd:ee"`. If you scan for devices with `NRF.findDevices`/`NRF.setScan` then
    * addresses are already reported in the correct format.
+   *
+   * @param {any} mac - The MAC address to connect to
+   * @param {any} options - (Espruino-specific) An object of connection options (see `BluetoothRemoteGATTServer.connect` for full details)
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_connect
    */
   static connect(mac: any, options: any): Promise;
@@ -2921,6 +3652,8 @@ declare class NRF {
    * devices will not be added to the whitelist.
    * **Note:** This is remembered between `reset()`s but isn't
    * remembered after power-on (you'll have to add it to `onInit()`.
+   *
+   * @param {boolean} whitelisting - Are we using a whitelist? (default false)
    * @url http://www.espruino.com/Reference#l_NRF_setWhitelist
    */
   static setWhitelist(whitelisting: boolean): any;
@@ -2943,6 +3676,8 @@ declare class NRF {
    * an extra argument to `NRF.connect` or `BluetoothRemoteGATTServer.connect`
    * to specify a connection interval.
    * **Note:** This overwrites any changes imposed by the deprecated `NRF.setLowPowerConnection`
+   *
+   * @param {any} interval - The connection interval to use (see below)
    * @url http://www.espruino.com/Reference#l_NRF_setConnectionInterval
    */
   static setConnectionInterval(interval: any): any;
@@ -3023,6 +3758,8 @@ declare class NRF {
    * ```
    * **Note:** If `passkey` or `oob` is specified, the Nordic UART service (if enabled)
    * will automatically be set to require encryption, but otherwise it is open.
+   *
+   * @param {any} options - An object containing security-related options (see below)
    * @url http://www.espruino.com/Reference#l_NRF_setSecurity
    */
   static setSecurity(options: any): any;
@@ -3041,11 +3778,15 @@ declare class NRF {
    * ```
    * If there is no active connection, `{connected:false}` will be returned.
    * See `NRF.setSecurity` for information about negotiating a secure connection.
+   * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
    */
   static getSecurityStatus(): any;
 
   /**
+   *
+   * @param {boolean} forceRepair - True if we should force repairing even if there is already valid pairing info
+   * @returns {any} A promise
    * @url http://www.espruino.com/Reference#l_NRF_startBonding
    */
   static startBonding(forceRepair: boolean): any;
@@ -3104,6 +3845,9 @@ declare class BluetoothDevice {
    *   });
    * });
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(reason: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `reason` The reason code reported back by the BLE stack - see Nordic's `ble_hci.h` file for more information
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_gattserverdisconnected
    */
   static on(event: "gattserverdisconnected", callback: (reason: number) => void): void;
@@ -3113,6 +3857,9 @@ declare class BluetoothDevice {
    * For this to be used, you'll have to specify that there's a display using `NRF.setSecurity`
    * **This is not part of the Web Bluetooth Specification.** It has been added
    * specifically for Espruino.
+   * @param {string} event - The event to listen to.
+   * @param {(passkey: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `passkey` A 6 character numeric String to be displayed
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_passkey
    */
   static on(event: "passkey", callback: (passkey: any) => void): void;
@@ -3123,14 +3870,18 @@ declare class BluetoothDevice {
    * For this to be used, you'll have to specify that there's a keyboard using `NRF.setSecurity`
    * **This is not part of the Web Bluetooth Specification.** It has been added
    * specifically for Espruino.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_passkeyRequest
    */
   static on(event: "passkeyRequest", callback: () => void): void;/**
+   * @returns {any} A `BluetoothRemoteGATTServer` for this device
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_gatt
    */
   gatt: any;
 
   /**
+   * @returns {boolean} The last received RSSI (signal strength) for this device
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_rssi
    */
   rssi: boolean;
@@ -3139,6 +3890,8 @@ declare class BluetoothDevice {
    * To be used as a response when the event `BluetoothDevice.sendPasskey` has been received.
    * **This is not part of the Web Bluetooth Specification.** It has been added
    * specifically for Espruino.
+   *
+   * @param {any} passkey - A 6 character numeric String to be returned to the device
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_sendPasskey
    */
   sendPasskey(passkey: any): any;
@@ -3176,16 +3929,21 @@ declare class BluetoothRemoteGATTServer {
    * **Note:** The Web Bluetooth spec states that if a device hasn't advertised its name, when connected
    * to a device the central (in this case Espruino) should automatically retrieve the name from the
    * corresponding characteristic (`0x2a00` on service `0x1800`). Espruino does not automatically do this.
+   *
+   * @param {any} options - (Espruino-specific) An object of connection options (see below)
+   * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connect
    */
   connect(options: any): Promise;
 
   /**
+   * @returns {boolean} Whether the device is connected or not
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connected
    */
   connected: boolean;
 
   /**
+   * @returns {number} The handle to this device (if it is currently connected) - the handle is an internal value used by the Bluetooth Stack
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_handle
    */
   handle: number;
@@ -3198,6 +3956,7 @@ declare class BluetoothRemoteGATTServer {
    * returns undefined not a `Promise` for implementation reasons. In Espruino
    * we return a `Promise` to make it easier to detect when Espruino is free
    * to connect to something else.
+   * @returns {any} A `Promise` that is resolved (or rejected) when the disconnection is complete (non-standard)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_disconnect
    */
   disconnect(): Promise;
@@ -3223,6 +3982,9 @@ declare class BluetoothRemoteGATTServer {
    * ```
    * **This is not part of the Web Bluetooth Specification.** It has been added
    * specifically for Espruino.
+   *
+   * @param {boolean} forceRePair - If the device is already bonded, re-pair it
+   * @returns {any} A `Promise` that is resolved (or rejected) when the bonding is complete
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_startBonding
    */
   startBonding(forceRePair: boolean): Promise;
@@ -3242,17 +4004,22 @@ declare class BluetoothRemoteGATTServer {
    * negotiating a secure connection.
    * **This is not part of the Web Bluetooth Specification.** It has been added
    * specifically for Puck.js.
+   * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getSecurityStatus
    */
   getSecurityStatus(): any;
 
   /**
    * See `NRF.connect` for usage examples.
+   *
+   * @param {any} service - The service UUID
+   * @returns {any} A `Promise` that is resolved (or rejected) when the primary service is found (the argument contains a `BluetoothRemoteGATTService`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryService
    */
   getPrimaryService(service: any): Promise;
 
   /**
+   * @returns {any} A `Promise` that is resolved (or rejected) when the primary services are found (the argument contains an array of `BluetoothRemoteGATTService`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryServices
    */
   getPrimaryServices(): Promise;
@@ -3268,6 +4035,8 @@ declare class BluetoothRemoteGATTServer {
    * gattServer.setRSSIHandler();
    * ```
    * RSSI is the 'Received Signal Strength Indication' in dBm
+   *
+   * @param {any} callback - The callback to call with the RSSI value, or undefined to stop
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_setRSSIHandler
    */
   setRSSIHandler(callback: any): any;
@@ -3280,17 +4049,22 @@ declare class BluetoothRemoteGATTServer {
  */
 declare class BluetoothRemoteGATTService {
   /**
+   * @returns {any} The `BluetoothDevice` this Service came from
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_device
    */
   device: any;
 
   /**
    * See `NRF.connect` for usage examples.
+   *
+   * @param {any} characteristic - The characteristic UUID
+   * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is found (the argument contains a `BluetoothRemoteGATTCharacteristic`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristic
    */
   getCharacteristic(characteristic: any): Promise;
 
   /**
+   * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is found (the argument contains an array of `BluetoothRemoteGATTCharacteristic`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristics
    */
   getCharacteristics(): Promise;
@@ -3316,9 +4090,12 @@ declare class BluetoothRemoteGATTCharacteristic {
    * ```
    * The first argument is of the form `{target : BluetoothRemoteGATTCharacteristic}`, and `BluetoothRemoteGATTCharacteristic.value`
    * will then contain the new value (as a DataView).
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_characteristicvaluechanged
    */
   static on(event: "characteristicvaluechanged", callback: () => void): void;/**
+   * @returns {any} The `BluetoothRemoteGATTService` this Service came from
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_service
    */
   service: any;
@@ -3341,6 +4118,9 @@ declare class BluetoothRemoteGATTCharacteristic {
    *   console.log("Something's broken.");
    * });
    * ```
+   *
+   * @param {any} data - The data to write
+   * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is written
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_writeValue
    */
   writeValue(data: any): Promise;
@@ -3364,6 +4144,7 @@ declare class BluetoothRemoteGATTCharacteristic {
    *   console.log("Something's broken.");
    * });
    * ```
+   * @returns {any} A `Promise` that is resolved (or rejected) with a `DataView` when the characteristic is read
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_readValue
    */
   readValue(): Promise;
@@ -3408,12 +4189,14 @@ declare class BluetoothRemoteGATTCharacteristic {
    *   console.log("Done!");
    * });
    * ```
+   * @returns {any} A `Promise` that is resolved (or rejected) with data when notifications have been added
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_startNotifications
    */
   startNotifications(): Promise;
 
   /**
    * Stop notifications (that were requested with `BluetoothRemoteGATTCharacteristic.startNotifications`)
+   * @returns {any} A `Promise` that is resolved (or rejected) with data when notifications have been removed
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_stopNotifications
    */
   stopNotifications(): Promise;
@@ -3432,12 +4215,18 @@ declare class Bangle {
    * * `diff` is difference between this and the last reading in `g`
    * * `mag` is the magnitude of the acceleration in `g`
    * You can also retrieve the most recent reading with `Bangle.getAccel()`.
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz`
    * @url http://www.espruino.com/Reference#l_Bangle_accel
    */
   static on(event: "accel", callback: (xyz: any) => void): void;
 
   /**
    * Called whenever a step is detected by Bangle.js's pedometer.
+   * @param {string} event - The event to listen to.
+   * @param {(up: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `up` The number of steps since Bangle.js was last reset
    * @url http://www.espruino.com/Reference#l_Bangle_step
    */
   static on(event: "step", callback: (up: number) => void): void;
@@ -3445,12 +4234,18 @@ declare class Bangle {
   /**
    * See `Bangle.getHealthStatus()` for more information. This is used for health tracking to
    * allow Bangle.js to record historical exercise data.
+   * @param {string} event - The event to listen to.
+   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `info` An object containing the last 10 minutes health data
    * @url http://www.espruino.com/Reference#l_Bangle_health
    */
   static on(event: "health", callback: (info: any) => void): void;
 
   /**
    * Has the watch been moved so that it is face-up, or not face up?
+   * @param {string} event - The event to listen to.
+   * @param {(up: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `up` `true` if face-up
    * @url http://www.espruino.com/Reference#l_Bangle_faceUp
    */
   static on(event: "faceUp", callback: (up: boolean) => void): void;
@@ -3458,12 +4253,17 @@ declare class Bangle {
   /**
    * This event happens when the watch has been twisted around it's axis - for instance as if it was rotated so someone could look at the time.
    * To tweak when this happens, see the `twist*` options in `Bangle.setOptions()`
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Bangle_twist
    */
   static on(event: "twist", callback: () => void): void;
 
   /**
    * Is the battery charging or not?
+   * @param {string} event - The event to listen to.
+   * @param {(charging: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `charging` `true` if charging
    * @url http://www.espruino.com/Reference#l_Bangle_charging
    */
   static on(event: "charging", callback: (charging: boolean) => void): void;
@@ -3476,6 +4276,9 @@ declare class Bangle {
    * To get this event you must turn the compass on
    * with `Bangle.setCompassPower(1)`.
    * You can also retrieve the most recent reading with `Bangle.getCompass()`.
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz`
    * @url http://www.espruino.com/Reference#l_Bangle_mag
    */
   static on(event: "mag", callback: (xyz: any) => void): void;
@@ -3484,6 +4287,10 @@ declare class Bangle {
    * Raw NMEA GPS / u-blox data messages received as a string
    * To get this event you must turn the GPS on
    * with `Bangle.setGPSPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(nmea: any, dataLoss: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `nmea` A string containing the raw NMEA data from the GPS
+   * * `dataLoss` This is set to true if some lines of GPS data have previously been lost (eg because system was too busy to queue up a GPS-raw event)
    * @url http://www.espruino.com/Reference#l_Bangle_GPS-raw
    */
   static on(event: "GPS-raw", callback: (nmea: any, dataLoss: boolean) => void): void;
@@ -3509,6 +4316,9 @@ declare class Bangle {
    * not be considered remotely accurate.
    * To get this event you must turn the GPS on
    * with `Bangle.setGPSPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(fix: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `fix` An object with fix info (see below)
    * @url http://www.espruino.com/Reference#l_Bangle_GPS
    */
   static on(event: "GPS", callback: (fix: any) => void): void;
@@ -3523,6 +4333,9 @@ declare class Bangle {
    * ```
    * To get this event you must turn the heart rate monitor on
    * with `Bangle.setHRMPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `hrm` An object with heart rate info (see below)
    * @url http://www.espruino.com/Reference#l_Bangle_HRM
    */
   static on(event: "HRM", callback: (hrm: any) => void): void;
@@ -3537,6 +4350,9 @@ declare class Bangle {
    *   "confidence": 0  // confidence in the BPM value
    * }
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `hrm` A object containing instant readings from the heart rate sensor
    * @url http://www.espruino.com/Reference#l_Bangle_HRM-raw
    */
   static on(event: "HRM-raw", callback: (hrm: any) => void): void;
@@ -3544,18 +4360,27 @@ declare class Bangle {
   /**
    * When `Bangle.setBarometerPower(true)` is called, this event is fired containing barometer readings.
    * Same format as `Bangle.getPressure()`
+   * @param {string} event - The event to listen to.
+   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `e` An object containing `{temperature,pressure,altitude}`
    * @url http://www.espruino.com/Reference#l_Bangle_pressure
    */
   static on(event: "pressure", callback: (e: any) => void): void;
 
   /**
    * Has the screen been turned on or off? Can be used to stop tasks that are no longer useful if nothing is displayed.  Also see `Bangle.isLCDOn()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if screen is on
    * @url http://www.espruino.com/Reference#l_Bangle_lcdPower
    */
   static on(event: "lcdPower", callback: (on: boolean) => void): void;
 
   /**
    * Has the screen been locked? Also see `Bangle.isLocked()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if screen is locked, `false` if it is unlocked and touchscreen/buttons will work
    * @url http://www.espruino.com/Reference#l_Bangle_lock
    */
   static on(event: "lock", callback: (on: boolean) => void): void;
@@ -3571,12 +4396,18 @@ declare class Bangle {
    *   y : -2 .. 2, // the axis of the tap
    *   z : -2 .. 2 // the axis of the tap
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` `{dir, double, x, y, z}`
    * @url http://www.espruino.com/Reference#l_Bangle_tap
    */
   static on(event: "tap", callback: (data: any) => void): void;
 
   /**
    * Emitted when a 'gesture' (fast movement) is detected
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz` An Int8Array of XYZXYZXYZ data
    * @url http://www.espruino.com/Reference#l_Bangle_gesture
    */
   static on(event: "gesture", callback: (xyz: any) => void): void;
@@ -3586,19 +4417,31 @@ declare class Bangle {
    * storage in the `".tfmodel"` file.
    * If a `".tfnames"` file is specified as a comma-separated list of names, it will be used
    * to decode `gesture` from a number into a string.
+   * @param {string} event - The event to listen to.
+   * @param {(gesture: any, weights: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `gesture` The name of the gesture (if '.tfnames' exists, or the index. 'undefined' if not matching
+   * * `weights` An array of floating point values output by the model
    * @url http://www.espruino.com/Reference#l_Bangle_aiGesture
    */
   static on(event: "aiGesture", callback: (gesture: any, weights: any) => void): void;
 
   /**
-   * Emitted when a swipe on the touchscreen is detected (a movement from left->right, right->left, down->up or up->down) 
+   * Emitted when a swipe on the touchscreen is detected (a movement from left->right, right->left, down->up or up->down)
    * Bangle.js 1 is only capable of detecting left/right swipes as it only contains a 2 zone touchscreen.
+   * @param {string} event - The event to listen to.
+   * @param {(directionLR: number, directionUD: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `directionLR` `-1` for left, `1` for right, `0` for up/down
+   * * `directionUD` `-1` for up, `1` for down, `0` for left/right (Bangle.js 2 only)
    * @url http://www.espruino.com/Reference#l_Bangle_swipe
    */
   static on(event: "swipe", callback: (directionLR: number, directionUD: number) => void): void;
 
   /**
    * Emitted when the touchscreen is pressed
+   * @param {string} event - The event to listen to.
+   * @param {(button: number, xy: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `button` `1` for left, `2` for right
+   * * `xy` Object of form `{x,y}` containing touch coordinates (if the device supports full touch). Clipped to 0..175 (LCD pixel coordinates) on firmware 2v13 and later.
    * @url http://www.espruino.com/Reference#l_Bangle_touch
    */
   static on(event: "touch", callback: (button: number, xy: any) => void): void;
@@ -3610,6 +4453,9 @@ declare class Bangle {
    * the LCD's pixels, if your finger goes towards the edge of the
    * screen, `x` and `y` could end up larger than 175 (the screen's maximum pixel coordinates)
    * or smaller than 0. Coordinates from the `touch` event are clipped.
+   * @param {string} event - The event to listen to.
+   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `event` Object of form `{x,y,dx,dy,b}` containing touch coordinates, difference in touch coordinates, and an integer `b` containing number of touch points (currently 1 or 0)
    * @url http://www.espruino.com/Reference#l_Bangle_drag
    */
   static on(event: "drag", callback: (event: any) => void): void;
@@ -3634,6 +4480,9 @@ declare class Bangle {
    *   "stroke": "alpha"
    * }
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `event` Object of form `{xy:Uint8Array([x1,y1,x2,y2...])}` containing touch coordinates
    * @url http://www.espruino.com/Reference#l_Bangle_stroke
    */
   static on(event: "stroke", callback: (event: any) => void): void;
@@ -3641,6 +4490,8 @@ declare class Bangle {
   /**
    * Emitted at midnight (at the point the `day` health info is reset to 0).
    * Can be used for housekeeping tasks that don't want to be run during the day.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Bangle_midnight
    */
   static on(event: "midnight", callback: () => void): void;
@@ -3659,6 +4510,8 @@ declare class Bangle {
    * ```
    * **When on full, the LCD draws roughly 40mA.** You can adjust
    * When brightness using `Bange.setLCDBrightness`.
+   *
+   * @param {boolean} isOn - True if the LCD should be on, false if not
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDPower
    */
   static setLCDPower(isOn: boolean): any;
@@ -3676,6 +4529,8 @@ declare class Bangle {
    * * 0.5 = 28mA
    * * 0.9 = 40mA (switching overhead)
    * * 1 = 40mA
+   *
+   * @param {number} brightness - The brightness of Bangle.js's display - from 0(off) to 1(on full)
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDBrightness
    */
   static setLCDBrightness(brightness: number): any;
@@ -3688,6 +4543,8 @@ declare class Bangle {
    * * `Bangle.setLCDMode("120x120")` - The drawable area is 120x120 8 bit, `g.getPixel`, terminal, and full scrolling work. Uses an offscreen buffer stored on Bangle.js, `g.flip()` must be called for draw operations to take effect.
    * * `Bangle.setLCDMode("80x80")` - The drawable area is 80x80 8 bit, `g.getPixel`, terminal, and full scrolling work. Uses an offscreen buffer stored on Bangle.js, `g.flip()` must be called for draw operations to take effect.
    * You can also call `Bangle.setLCDMode()` to return to normal, unbuffered `"direct"` mode.
+   *
+   * @param {any} mode - The LCD mode (See below)
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDMode
    */
   static setLCDMode(mode: any): any;
@@ -3695,6 +4552,7 @@ declare class Bangle {
   /**
    * The current LCD mode.
    * See `Bangle.setLCDMode` for examples.
+   * @returns {any} The LCD mode as a String
    * @url http://www.espruino.com/Reference#l_Bangle_getLCDMode
    */
   static getLCDMode(): any;
@@ -3703,6 +4561,8 @@ declare class Bangle {
    * This can be used to move the displayed memory area up or down temporarily. It's
    * used for displaying notifications while keeping the main display contents
    * intact.
+   *
+   * @param {number} y - The amount of pixels to shift the LCD up or down
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDOffset
    */
   static setLCDOffset(y: number): any;
@@ -3712,6 +4572,8 @@ declare class Bangle {
    * With power saving off, the display will remain in the state you set it with `Bangle.setLCDPower`.
    * With power saving on, the display will turn on if a button is pressed, the watch is turned face up, or the screen is updated (see `Bangle.setOptions` for configuration). It'll turn off automatically after the given timeout.
    * **Note:** This function also sets the Backlight and Lock timeout (the time at which the touchscreen/buttons start being ignored). To set both separately, use `Bangle.setOptions`
+   *
+   * @param {number} isOn - The timeout of the display in seconds, or `0`/`undefined` to turn power saving off. Default is 10 seconds.
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDTimeout
    */
   static setLCDTimeout(isOn: number): any;
@@ -3721,6 +4583,8 @@ declare class Bangle {
    * recommended that you make this interval much larger than 1000ms, but values up to 4000ms are allowed.
    * Calling this will set `Bangle.setOptions({powerSave: false})` - disabling the dynamic adjustment of
    * poll interval to save battery power when Bangle.js is stationary.
+   *
+   * @param {number} interval - Polling interval in milliseconds (Default is 80ms - 12.5Hz to match accelerometer)
    * @url http://www.espruino.com/Reference#l_Bangle_setPollInterval
    */
   static setPollInterval(interval: number): any;
@@ -3751,18 +4615,22 @@ declare class Bangle {
    * * `hrmPollInterval` set the requested poll interval (in milliseconds) for the heart rate monitor. On Bangle.js 2 only 10,20,40,80,160,200 ms are supported, and polling rate may not be exact. The algorithm's filtering is tuned for 20-40ms poll intervals, so higher/lower intervals may effect the reliability of the BPM reading.
    * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for calculating altitude with the pressure sensor
    * Where accelerations are used they are in internal units, where `8192 = 1g`
+   *
+   * @param {any} options
    * @url http://www.espruino.com/Reference#l_Bangle_setOptions
    */
   static setOptions(options: any): any;
 
   /**
    * Return the current state of options as set by `Bangle.setOptions`
+   * @returns {any} The current state of all options
    * @url http://www.espruino.com/Reference#l_Bangle_getOptions
    */
   static getOptions(): any;
 
   /**
    * Also see the `Bangle.lcdPower` event
+   * @returns {boolean} Is the display on or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
    */
   static isLCDOn(): boolean;
@@ -3770,23 +4638,30 @@ declare class Bangle {
   /**
    * This function can be used to lock or unlock Bangle.js
    * (eg whether buttons and touchscreen work or not)
+   *
+   * @param {boolean} isLocked - `true` if the Bangle is locked (no user input allowed)
    * @url http://www.espruino.com/Reference#l_Bangle_setLocked
    */
   static setLocked(isLocked: boolean): any;
 
   /**
    * Also see the `Bangle.lock` event
+   * @returns {boolean} Is the screen locked or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isLocked
    */
   static isLocked(): boolean;
 
   /**
+   * @returns {boolean} Is the battery charging or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isCharging
    */
   static isCharging(): boolean;
 
   /**
    * Writes a command directly to the ST7735 LCD controller
+   *
+   * @param {number} cmd
+   * @param {any} data
    * @url http://www.espruino.com/Reference#l_Bangle_lcdWr
    */
   static lcdWr(cmd: number, data: any): any;
@@ -3799,6 +4674,10 @@ declare class Bangle {
    * Bangle.on('HRM',print);
    * ```
    * *When on, the Heart rate monitor draws roughly 5mA*
+   *
+   * @param {boolean} isOn - True if the heart rate monitor should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is HRM on?
    * @url http://www.espruino.com/Reference#l_Bangle_setHRMPower
    */
   static setHRMPower(isOn: boolean, appID: any): boolean;
@@ -3806,6 +4685,7 @@ declare class Bangle {
   /**
    * Is the Heart rate monitor powered?
    * Set power with `Bangle.setHRMPower(...);`
+   * @returns {boolean} Is HRM on?
    * @url http://www.espruino.com/Reference#l_Bangle_isHRMOn
    */
   static isHRMOn(): boolean;
@@ -3818,6 +4698,10 @@ declare class Bangle {
    * Bangle.on('GPS',print);
    * ```
    * *When on, the GPS draws roughly 20mA*
+   *
+   * @param {boolean} isOn - True if the GPS should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the GPS on?
    * @url http://www.espruino.com/Reference#l_Bangle_setGPSPower
    */
   static setGPSPower(isOn: boolean, appID: any): boolean;
@@ -3825,6 +4709,7 @@ declare class Bangle {
   /**
    * Is the GPS powered?
    * Set power with `Bangle.setGPSPower(...);`
+   * @returns {boolean} Is the GPS on?
    * @url http://www.espruino.com/Reference#l_Bangle_isGPSOn
    */
   static isGPSOn(): boolean;
@@ -3832,6 +4717,7 @@ declare class Bangle {
   /**
    * Get the last available GPS fix info (or `undefined` if GPS is off).
    * The fix info received is the same as you'd get from the `Bangle.GPS` event.
+   * @returns {any} A GPS fix object with `{lat,lon,...}`
    * @url http://www.espruino.com/Reference#l_Bangle_getGPSFix
    */
   static getGPSFix(): any;
@@ -3844,6 +4730,10 @@ declare class Bangle {
    * Bangle.on('mag',print);
    * ```
    * *When on, the compass draws roughly 2mA*
+   *
+   * @param {boolean} isOn - True if the Compass should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the Compass on?
    * @url http://www.espruino.com/Reference#l_Bangle_setCompassPower
    */
   static setCompassPower(isOn: boolean, appID: any): boolean;
@@ -3851,6 +4741,7 @@ declare class Bangle {
   /**
    * Is the compass powered?
    * Set power with `Bangle.setCompassPower(...);`
+   * @returns {boolean} Is the Compass on?
    * @url http://www.espruino.com/Reference#l_Bangle_isCompassOn
    */
   static isCompassOn(): boolean;
@@ -3858,6 +4749,7 @@ declare class Bangle {
   /**
    * Resets the compass minimum/maximum values. Can be used if the compass isn't
    * providing a reliable heading any more.
+   *
    * @url http://www.espruino.com/Reference#l_Bangle_resetCompass
    */
   static resetCompass(): any;
@@ -3866,6 +4758,10 @@ declare class Bangle {
    * Set the power to the barometer IC. Once enbled, `Bangle.pressure` events
    * are fired each time a new barometer reading is available.
    * When on, the barometer draws roughly 50uA
+   *
+   * @param {boolean} isOn - True if the barometer IC should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the Barometer on?
    * @url http://www.espruino.com/Reference#l_Bangle_setBarometerPower
    */
   static setBarometerPower(isOn: boolean, appID: any): boolean;
@@ -3873,18 +4769,22 @@ declare class Bangle {
   /**
    * Is the Barometer powered?
    * Set power with `Bangle.setBarometerPower(...);`
+   * @returns {boolean} Is the Barometer on?
    * @url http://www.espruino.com/Reference#l_Bangle_isBarometerOn
    */
   static isBarometerOn(): boolean;
 
   /**
    * Returns the current amount of steps recorded by the step counter
+   * @returns {number} The number of steps recorded by the step counter
    * @url http://www.espruino.com/Reference#l_Bangle_getStepCount
    */
   static getStepCount(): number;
 
   /**
    * Sets the current value of the step counter
+   *
+   * @param {number} count - The value with which to reload the step counter
    * @url http://www.espruino.com/Reference#l_Bangle_setStepCount
    */
   static setStepCount(count: number): any;
@@ -3897,6 +4797,7 @@ declare class Bangle {
    * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer hasn't been rotated around 360 degrees)
    * To get this event you must turn the compass on
    * with `Bangle.setCompassPower(1)`.
+   * @returns {any} An object containing magnetometer readings (as below)
    * @url http://www.espruino.com/Reference#l_Bangle_getCompass
    */
   static getCompass(): any;
@@ -3909,6 +4810,7 @@ declare class Bangle {
    * * `diff` is difference between this and the last reading in `g` (calculated by comparing vectors, not magnitudes)
    * * `td` is the elapsed
    * * `mag` is the magnitude of the acceleration in `g`
+   * @returns {any} An object containing accelerometer readings (as below)
    * @url http://www.espruino.com/Reference#l_Bangle_getAccel
    */
   static getAccel(): any;
@@ -3923,6 +4825,9 @@ declare class Bangle {
    * * `steps` is the number of steps during this period
    * * `bpm` the best BPM reading from HRM sensor during this period
    * * `bpmConfidence` best BPM confidence (0-100%) during this period
+   *
+   * @param {any} range - What time period to return data for, see below:
+   * @returns {any} Returns an object containing various health info
    * @url http://www.espruino.com/Reference#l_Bangle_getHealthStatus
    */
   static getHealthStatus(range: any): any;
@@ -3931,18 +4836,23 @@ declare class Bangle {
    * Feature flag - If true, this Bangle.js firmware reads `setting.json` and
    * modifies beep & buzz behaviour accordingly (the bootloader
    * doesn't need to do it).
+   * @returns {boolean}
    * @url http://www.espruino.com/Reference#l_Bangle_F_BEEPSET
    */
   static F_BEEPSET: boolean;
 
   /**
    * Reads debug info
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_dbg
    */
   static dbg(): any;
 
   /**
    * Writes a register on the accelerometer
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Bangle_accelWr
    */
   static accelWr(reg: number, data: number): any;
@@ -3950,48 +4860,76 @@ declare class Bangle {
   /**
    * Reads a register from the accelerometer
    * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt` is ignored).
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_accelRd
    */
   static accelRd(reg: number, cnt: number): any;
 
   /**
    * Writes a register on the barometer IC
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Bangle_barometerWr
    */
   static barometerWr(reg: number, data: number): any;
 
   /**
    * Reads a register from the barometer IC
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_barometerRd
    */
   static barometerRd(reg: number, cnt: number): any;
 
   /**
    * Writes a register on the Magnetometer/Compass
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Bangle_compassWr
    */
   static compassWr(reg: number, data: number): any;
 
   /**
    * Read a register on the Magnetometer/Compass
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_compassRd
    */
   static compassRd(reg: number, cnt: number): any;
 
   /**
    * Writes a register on the Heart rate monitor
+   *
+   * @param {number} reg
+   * @param {number} data
    * @url http://www.espruino.com/Reference#l_Bangle_hrmWr
    */
   static hrmWr(reg: number, data: number): any;
 
   /**
    * Read a register on the Heart rate monitor
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_hrmRd
    */
   static hrmRd(reg: number, cnt: number): any;
 
   /**
    * Changes a pin state on the IO expander
+   *
+   * @param {number} mask
+   * @param {number} isOn
    * @url http://www.espruino.com/Reference#l_Bangle_ioWr
    */
   static ioWr(mask: number, isOn: number): any;
@@ -4009,6 +4947,7 @@ declare class Bangle {
    *   // {temperature, pressure, altitude}
    * });
    * ```
+   * @returns {any} A promise that will be resolved with `{temperature, pressure, altitude}`
    * @url http://www.espruino.com/Reference#l_Bangle_getPressure
    */
   static getPressure(): any;
@@ -4019,18 +4958,29 @@ declare class Bangle {
    * equivalent to meters from `{lat:0,lon:0}`.
    * This is the formula used for most online mapping and is a good way
    * to compare GPS coordinates to work out the distance between them.
+   *
+   * @param {any} latlong - `{lat:..., lon:...}`
+   * @returns {any} {x:..., y:...}
    * @url http://www.espruino.com/Reference#l_Bangle_project
    */
   static project(latlong: any): any;
 
   /**
    * Use the piezo speaker to Beep for a certain time period and frequency
+   *
+   * @param {number} time - Time in ms (default 200)
+   * @param {number} freq - Frequency in hz (default 4000)
+   * @returns {any} A promise, completed when beep is finished
    * @url http://www.espruino.com/Reference#l_Bangle_beep
    */
   static beep(time: number, freq: number): Promise;
 
   /**
    * Use the vibration motor to buzz for a certain time period
+   *
+   * @param {number} [time] - [optional] Time in ms (default 200)
+   * @param {number} [strength] - [optional] Power of vibration from 0 to 1 (Default 1)
+   * @returns {any} A promise, completed when vibration is finished
    * @url http://www.espruino.com/Reference#l_Bangle_buzz
    */
   static buzz(time?: number, strength?: number): Promise;
@@ -4051,6 +5001,7 @@ declare class Bangle {
   /**
    * * On platforms with an LCD of >=8bpp this is 222 x 104 x 2 bits
    * * Otherwise it's 119 x 56 x 1 bits
+   * @returns {any} An image to be used with `g.drawImage` (as a String)
    * @url http://www.espruino.com/Reference#l_Bangle_getLogo
    */
   static getLogo(): any;
@@ -4130,6 +5081,9 @@ declare class Bangle {
    *   clock : 0 // optional - if set the behavior of 'clock' mode is added (does not override btn if defined)
    * });
    * ```
+   *
+   * @param {any} type - The type of UI input: 'updown', 'leftright', 'clock', 'clockupdown' or undefined to cancel. Can also be an object (see below)
+   * @param {any} callback - A function with one argument which is the direction
    * @url http://www.espruino.com/Reference#l_Bangle_setUI
    */
   static setUI(type: any, callback: any): any;
@@ -4152,9 +5106,241 @@ declare class Bangle {
   /**
    * Returns the rectangle on the screen that is currently
    * reserved for the app.
+   * @returns {any} An object of the form `{x,y,w,h,x2,y2}`
    * @url http://www.espruino.com/Reference#l_Bangle_appRect
    */
   static appRect: any;
+}
+
+interface DateConstructor {
+  /**
+   * Get the number of milliseconds elapsed since 1970 (or on embedded platforms, since startup)
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_now
+   */
+  now(): number;
+
+  /**
+   * Parse a date string and return milliseconds since 1970. Data can be either '2011-10-20T14:48:00', '2011-10-20' or 'Mon, 25 Dec 1995 13:30:00 +0430'
+   *
+   * @param {any} str - A String
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_parse
+   */
+  parse(str: any): number;
+
+  /**
+   * Creates a date object
+   * @constructor
+   *
+   * @param {any} args - Either nothing (current time), one numeric argument (milliseconds since 1970), a date string (see `Date.parse`), or [year, month, day, hour, minute, second, millisecond]
+   * @returns {any} A Date object
+   * @url http://www.espruino.com/Reference#l_Date_Date
+   */
+  new(...args: any[]): Date;
+}
+
+interface Date {
+  /**
+   * This returns the time-zone offset from UTC, in minutes.
+   * @returns {number} The difference, in minutes, between UTC and local time
+   * @url http://www.espruino.com/Reference#l_Date_getTimezoneOffset
+   */
+  getTimezoneOffset(): number;
+
+  /**
+   * This returns a boolean indicating whether daylight savings time is in effect.
+   * @returns {number} true if daylight savings time is in effect
+   * @url http://www.espruino.com/Reference#l_Date_getIsDST
+   */
+  getIsDST(): number;
+
+  /**
+   * Return the number of milliseconds since 1970
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getTime
+   */
+  getTime(): number;
+
+  /**
+   * Return the number of milliseconds since 1970
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_valueOf
+   */
+  valueOf(): number;
+
+  /**
+   * Set the time/date of this Date class
+   *
+   * @param {number} timeValue - the number of milliseconds since 1970
+   * @returns {number} the number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setTime
+   */
+  setTime(timeValue: number): number;
+
+  /**
+   * 0..23
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getHours
+   */
+  getHours(): number;
+
+  /**
+   * 0..59
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getMinutes
+   */
+  getMinutes(): number;
+
+  /**
+   * 0..59
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getSeconds
+   */
+  getSeconds(): number;
+
+  /**
+   * 0..999
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getMilliseconds
+   */
+  getMilliseconds(): number;
+
+  /**
+   * Day of the week (0=sunday, 1=monday, etc)
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getDay
+   */
+  getDay(): number;
+
+  /**
+   * Day of the month 1..31
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getDate
+   */
+  getDate(): number;
+
+  /**
+   * Month of the year 0..11
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getMonth
+   */
+  getMonth(): number;
+
+  /**
+   * The year, eg. 2014
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Date_getFullYear
+   */
+  getFullYear(): number;
+
+  /**
+   * 0..23
+   *
+   * @param {number} hoursValue - number of hours, 0..23
+   * @param {any} minutesValue - number of minutes, 0..59
+   * @param {any} secondsValue - optional - number of seconds, 0..59
+   * @param {any} millisecondsValue - optional - number of milliseconds, 0..999
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setHours
+   */
+  setHours(hoursValue: number, minutesValue: any, secondsValue: any, millisecondsValue: any): number;
+
+  /**
+   * 0..59
+   *
+   * @param {number} minutesValue - number of minutes, 0..59
+   * @param {any} secondsValue - optional - number of seconds, 0..59
+   * @param {any} millisecondsValue - optional - number of milliseconds, 0..999
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setMinutes
+   */
+  setMinutes(minutesValue: number, secondsValue: any, millisecondsValue: any): number;
+
+  /**
+   * 0..59
+   *
+   * @param {number} secondsValue - number of seconds, 0..59
+   * @param {any} millisecondsValue - optional - number of milliseconds, 0..999
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setSeconds
+   */
+  setSeconds(secondsValue: number, millisecondsValue: any): number;
+
+  /**
+   *
+   * @param {number} millisecondsValue - number of milliseconds, 0..999
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setMilliseconds
+   */
+  setMilliseconds(millisecondsValue: number): number;
+
+  /**
+   * Day of the month 1..31
+   *
+   * @param {number} dayValue - the day of the month, between 0 and 31
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setDate
+   */
+  setDate(dayValue: number): number;
+
+  /**
+   * Month of the year 0..11
+   *
+   * @param {number} yearValue - The month, between 0 and 11
+   * @param {any} dayValue - optional - the day, between 0 and 31
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setMonth
+   */
+  setMonth(yearValue: number, dayValue: any): number;
+
+  /**
+   *
+   * @param {number} yearValue - The full year - eg. 1989
+   * @param {any} monthValue - optional - the month, between 0 and 11
+   * @param {any} dayValue - optional - the day, between 0 and 31
+   * @returns {number} The number of milliseconds since 1970
+   * @url http://www.espruino.com/Reference#l_Date_setFullYear
+   */
+  setFullYear(yearValue: number, monthValue: any, dayValue: any): number;
+
+  /**
+   * Converts to a String, eg: `Fri Jun 20 2014 14:52:20 GMT+0000`
+   *  **Note:** This uses whatever timezone was set with `E.setTimeZone()` or `E.setDST()`
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_Date_toString
+   */
+  toString(): any;
+
+  /**
+   * Converts to a String, eg: `Fri, 20 Jun 2014 14:52:20 GMT`
+   *  **Note:** This always assumes a timezone of GMT
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_Date_toUTCString
+   */
+  toUTCString(): any;
+
+  /**
+   * Converts to a ISO 8601 String, eg: `2014-06-20T14:52:20.123Z`
+   *  **Note:** This always assumes a timezone of GMT
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_Date_toISOString
+   */
+  toISOString(): any;
+
+  /**
+   * Calls `Date.toISOString` to output this date to JSON
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_Date_toJSON
+   */
+  toJSON(): any;
+
+  /**
+   * Converts to a ISO 8601 String (with timezone information), eg: `2014-06-20T14:52:20.123-0500`
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_Date_toLocalISOString
+   */
+  toLocalISOString(): any;
 }
 
 /**
@@ -4166,179 +5352,6 @@ declare class Bangle {
  * by `E.setTimeZone(...)` will be _ignored_.
  * @url http://www.espruino.com/Reference#Date
  */
-interface DateConstructor {
-  /**
-   * Get the number of milliseconds elapsed since 1970 (or on embedded platforms, since startup)
-   * @url http://www.espruino.com/Reference#l_Date_now
-   */
-  now(): number;
-
-  /**
-   * Parse a date string and return milliseconds since 1970. Data can be either '2011-10-20T14:48:00', '2011-10-20' or 'Mon, 25 Dec 1995 13:30:00 +0430'
-   * @url http://www.espruino.com/Reference#l_Date_parse
-   */
-  parse(str: any): number;
-
-  /**
-   * Creates a date object
-   * @url http://www.espruino.com/Reference#l_Date_Date
-   */
-  new(...args: any[]): Date;
-}
-
-interface Date {
-  /**
-   * This returns the time-zone offset from UTC, in minutes.
-   * @url http://www.espruino.com/Reference#l_Date_getTimezoneOffset
-   */
-  getTimezoneOffset(): number;
-
-  /**
-   * This returns a boolean indicating whether daylight savings time is in effect.
-   * @url http://www.espruino.com/Reference#l_Date_getIsDST
-   */
-  getIsDST(): number;
-
-  /**
-   * Return the number of milliseconds since 1970
-   * @url http://www.espruino.com/Reference#l_Date_getTime
-   */
-  getTime(): number;
-
-  /**
-   * Return the number of milliseconds since 1970
-   * @url http://www.espruino.com/Reference#l_Date_valueOf
-   */
-  valueOf(): number;
-
-  /**
-   * Set the time/date of this Date class
-   * @url http://www.espruino.com/Reference#l_Date_setTime
-   */
-  setTime(timeValue: number): number;
-
-  /**
-   * 0..23
-   * @url http://www.espruino.com/Reference#l_Date_getHours
-   */
-  getHours(): number;
-
-  /**
-   * 0..59
-   * @url http://www.espruino.com/Reference#l_Date_getMinutes
-   */
-  getMinutes(): number;
-
-  /**
-   * 0..59
-   * @url http://www.espruino.com/Reference#l_Date_getSeconds
-   */
-  getSeconds(): number;
-
-  /**
-   * 0..999
-   * @url http://www.espruino.com/Reference#l_Date_getMilliseconds
-   */
-  getMilliseconds(): number;
-
-  /**
-   * Day of the week (0=sunday, 1=monday, etc)
-   * @url http://www.espruino.com/Reference#l_Date_getDay
-   */
-  getDay(): number;
-
-  /**
-   * Day of the month 1..31
-   * @url http://www.espruino.com/Reference#l_Date_getDate
-   */
-  getDate(): number;
-
-  /**
-   * Month of the year 0..11
-   * @url http://www.espruino.com/Reference#l_Date_getMonth
-   */
-  getMonth(): number;
-
-  /**
-   * The year, eg. 2014
-   * @url http://www.espruino.com/Reference#l_Date_getFullYear
-   */
-  getFullYear(): number;
-
-  /**
-   * 0..23
-   * @url http://www.espruino.com/Reference#l_Date_setHours
-   */
-  setHours(hoursValue: number, minutesValue: any, secondsValue: any, millisecondsValue: any): number;
-
-  /**
-   * 0..59
-   * @url http://www.espruino.com/Reference#l_Date_setMinutes
-   */
-  setMinutes(minutesValue: number, secondsValue: any, millisecondsValue: any): number;
-
-  /**
-   * 0..59
-   * @url http://www.espruino.com/Reference#l_Date_setSeconds
-   */
-  setSeconds(secondsValue: number, millisecondsValue: any): number;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Date_setMilliseconds
-   */
-  setMilliseconds(millisecondsValue: number): number;
-
-  /**
-   * Day of the month 1..31
-   * @url http://www.espruino.com/Reference#l_Date_setDate
-   */
-  setDate(dayValue: number): number;
-
-  /**
-   * Month of the year 0..11
-   * @url http://www.espruino.com/Reference#l_Date_setMonth
-   */
-  setMonth(yearValue: number, dayValue: any): number;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Date_setFullYear
-   */
-  setFullYear(yearValue: number, monthValue: any, dayValue: any): number;
-
-  /**
-   * Converts to a String, eg: `Fri Jun 20 2014 14:52:20 GMT+0000`
-   *  **Note:** This uses whatever timezone was set with `E.setTimeZone()` or `E.setDST()`
-   * @url http://www.espruino.com/Reference#l_Date_toString
-   */
-  toString(): any;
-
-  /**
-   * Converts to a String, eg: `Fri, 20 Jun 2014 14:52:20 GMT`
-   *  **Note:** This always assumes a timezone of GMT
-   * @url http://www.espruino.com/Reference#l_Date_toUTCString
-   */
-  toUTCString(): any;
-
-  /**
-   * Converts to a ISO 8601 String, eg: `2014-06-20T14:52:20.123Z`
-   *  **Note:** This always assumes a timezone of GMT
-   * @url http://www.espruino.com/Reference#l_Date_toISOString
-   */
-  toISOString(): any;
-
-  /**
-   * Calls `Date.toISOString` to output this date to JSON
-   * @url http://www.espruino.com/Reference#l_Date_toJSON
-   */
-  toJSON(): any;
-
-  /**
-   * Converts to a ISO 8601 String (with timezone information), eg: `2014-06-20T14:52:20.123-0500`
-   * @url http://www.espruino.com/Reference#l_Date_toLocalISOString
-   */
-  toLocalISOString(): any;
-}
-
 declare const Date: DateConstructor
 
 /**
@@ -4348,16 +5361,23 @@ declare const Date: DateConstructor
 declare class OneWire {
   /**
    * Create a software OneWire implementation on the given pin
+   * @constructor
+   *
+   * @param {Pin} pin - The pin to implement OneWire on
+   * @returns {any} A OneWire object
    * @url http://www.espruino.com/Reference#l_OneWire_OneWire
    */
   static new(pin: Pin): any;/**
    * Perform a reset cycle
+   * @returns {boolean} True is a device was present (it held the bus low)
    * @url http://www.espruino.com/Reference#l_OneWire_reset
    */
   reset(): boolean;
 
   /**
    * Select a ROM - always performs a reset first
+   *
+   * @param {any} rom - The device to select (get this using `OneWire.search()`)
    * @url http://www.espruino.com/Reference#l_OneWire_select
    */
   select(rom: any): any;
@@ -4370,55 +5390,69 @@ declare class OneWire {
 
   /**
    * Write one or more bytes
+   *
+   * @param {any} data - A byte (or array of bytes) to write
+   * @param {boolean} power - Whether to leave power on after write (default is false)
    * @url http://www.espruino.com/Reference#l_OneWire_write
    */
   write(data: any, power: boolean): any;
 
   /**
    * Read a byte
+   *
+   * @param {any} count - (optional) The amount of bytes to read
+   * @returns {any} The byte that was read, or a Uint8Array if count was specified and >=0
    * @url http://www.espruino.com/Reference#l_OneWire_read
    */
   read(count: any): any;
 
   /**
    * Search for devices
+   *
+   * @param {number} command - (Optional) command byte. If not specified (or zero), this defaults to 0xF0. This can could be set to 0xEC to perform a DS18B20 'Alarm Search Command'
+   * @returns {any} An array of devices that were found
    * @url http://www.espruino.com/Reference#l_OneWire_search
    */
   search(command: number): any;
 }
 
-/**
- * This is the built-in JavaScript class for numbers.
- * @url http://www.espruino.com/Reference#Number
- */
 interface NumberConstructor {
   /**
+   * @returns {number} Not a  Number
    * @url http://www.espruino.com/Reference#l_Number_NaN
    */
   NaN: number;
 
   /**
+   * @returns {number} Maximum representable value
    * @url http://www.espruino.com/Reference#l_Number_MAX_VALUE
    */
   MAX_VALUE: number;
 
   /**
+   * @returns {number} Smallest representable value
    * @url http://www.espruino.com/Reference#l_Number_MIN_VALUE
    */
   MIN_VALUE: number;
 
   /**
+   * @returns {number} Negative Infinity (-1/0)
    * @url http://www.espruino.com/Reference#l_Number_NEGATIVE_INFINITY
    */
   NEGATIVE_INFINITY: number;
 
   /**
+   * @returns {number} Positive Infinity (1/0)
    * @url http://www.espruino.com/Reference#l_Number_POSITIVE_INFINITY
    */
   POSITIVE_INFINITY: number;
 
   /**
    * Creates a number
+   * @constructor
+   *
+   * @param {any} value - A single value to be converted to a number
+   * @returns {any} A Number object
    * @url http://www.espruino.com/Reference#l_Number_Number
    */
   new(...value: any[]): any;
@@ -4427,22 +5461,27 @@ interface NumberConstructor {
 interface Number {
   /**
    * Format the number as a fixed point number
+   *
+   * @param {number} decimalPlaces - A number between 0 and 20 specifying the number of decimal digits after the decimal point
+   * @returns {any} A string
    * @url http://www.espruino.com/Reference#l_Number_toFixed
    */
   toFixed(decimalPlaces: number): any;
 }
 
+/**
+ * This is the built-in JavaScript class for numbers.
+ * @url http://www.espruino.com/Reference#Number
+ */
 declare const Number: NumberConstructor
 
-/**
- * This is the built-in JavaScript class for array buffers.
- * If you want to access arrays of differing types of data
- * you may also find `DataView` useful.
- * @url http://www.espruino.com/Reference#ArrayBuffer
- */
 interface ArrayBufferConstructor {
   /**
    * Create an Array Buffer object
+   * @constructor
+   *
+   * @param {number} byteLength - The length in Bytes
+   * @returns {any} An ArrayBuffer object
    * @url http://www.espruino.com/Reference#l_ArrayBuffer_ArrayBuffer
    */
   new(byteLength: number): any;
@@ -4451,11 +5490,18 @@ interface ArrayBufferConstructor {
 interface ArrayBuffer {
   /**
    * The length, in bytes, of the `ArrayBuffer`
+   * @returns {number} The Length in bytes
    * @url http://www.espruino.com/Reference#l_ArrayBuffer_byteLength
    */
   byteLength: number;
 }
 
+/**
+ * This is the built-in JavaScript class for array buffers.
+ * If you want to access arrays of differing types of data
+ * you may also find `DataView` useful.
+ * @url http://www.espruino.com/Reference#ArrayBuffer
+ */
 declare const ArrayBuffer: ArrayBufferConstructor
 
 /**
@@ -4477,24 +5523,30 @@ declare const ArrayBuffer: ArrayBufferConstructor
 declare class ArrayBufferView {
   /**
    * The buffer this view references
+   * @returns {any} An ArrayBuffer object
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_buffer
    */
   buffer: ArrayBuffer;
 
   /**
    * The length, in bytes, of the `ArrayBufferView`
+   * @returns {number} The Length
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteLength
    */
   byteLength: number;
 
   /**
    * The offset, in bytes, to the first byte of the view within the backing `ArrayBuffer`
+   * @returns {number} The byte Offset
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_byteOffset
    */
   byteOffset: number;
 
   /**
    * Copy the contents of `array` into this one, mapping `this[x+offset]=array[x];`
+   *
+   * @param {any} arr - Floating point index to access
+   * @param {number} offset - The offset in this array at which to write the values (optional)
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_set
    */
   set(arr: any, offset: number): any;
@@ -4502,78 +5554,123 @@ declare class ArrayBufferView {
   /**
    * Return an array which is made from the following: ```A.map(function) = [function(A[0]), function(A[1]), ...]```
    *  **Note:** This returns an `ArrayBuffer` of the same type it was called on. To get an `Array`, use `Array.map`, eg. `[].map.call(myArray, x=>x+1)`
+   *
+   * @param {any} function - Function used to map one item to another
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} An array containing the results
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_map
    */
   map(func: any, thisArg: any): ArrayBufferView;
 
   /**
    * Returns a smaller part of this array which references the same data (it doesn't copy it).
+   *
+   * @param {number} begin - Element to begin at, inclusive. If negative, this is from the end of the array. The entire array is included if this isn't specified
+   * @param {any} end - Element to end at, exclusive. If negative, it is relative to the end of the array. If not specified the whole array is included
+   * @returns {any} An `ArrayBufferView` of the same type as this one, referencing the same data
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_subarray
    */
   subarray(begin: number, end: any): ArrayBufferView;
 
   /**
    * Return the index of the value in the array, or `-1`
+   *
+   * @param {any} value - The value to check for
+   * @param {number} startIndex - (optional) the index to search from, or 0 if not specified
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_indexOf
    */
   indexOf(value: any, startIndex: number): any;
 
   /**
    * Return `true` if the array includes the value, `false` otherwise
+   *
+   * @param {any} value - The value to check for
+   * @param {number} startIndex - (optional) the index to search from, or 0 if not specified
+   * @returns {boolean} `true` if the array includes the value, `false` otherwise
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_includes
    */
   includes(value: any, startIndex: number): boolean;
 
   /**
    * Join all elements of this array together into one string, using 'separator' between them. eg. ```[1,2,3].join(' ')=='1 2 3'```
+   *
+   * @param {any} separator - The separator
+   * @returns {any} A String representing the Joined array
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_join
    */
   join(separator: any): any;
 
   /**
    * Do an in-place quicksort of the array
+   *
+   * @param {any} var - A function to use to compare array elements (or undefined)
+   * @returns {any} This array object
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_sort
    */
   sort(variable: any): ArrayBufferView;
 
   /**
    * Executes a provided function once per array element.
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_forEach
    */
   forEach(func: any, thisArg: any): any;
 
   /**
    * Execute `previousValue=initialValue` and then `previousValue = callback(previousValue, currentValue, index, array)` for each element in the array, and finally return previousValue.
+   *
+   * @param {any} callback - Function used to reduce the array
+   * @param {any} initialValue - if specified, the initial value to pass to the function
+   * @returns {any} The value returned by the last function called
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_reduce
    */
   reduce(callback: any, initialValue: any): any;
 
   /**
    * Fill this array with the given value, for every index `>= start` and `< end`
+   *
+   * @param {any} value - The value to fill the array with
+   * @param {number} start - Optional. The index to start from (or 0). If start is negative, it is treated as length+start where length is the length of the array
+   * @param {any} end - Optional. The index to end at (or the array length). If end is negative, it is treated as length+end.
+   * @returns {any} This array
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_fill
    */
   fill(value: any, start: number, end: any): ArrayBufferView;
 
   /**
    * Return an array which contains only those elements for which the callback function returns 'true'
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} An array containing the results
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_filter
    */
   filter(func: any, thisArg: any): any;
 
   /**
    * Return the array element where `function` returns `true`, or `undefined` if it doesn't returns `true` for any element.
+   *
+   * @param {any} function - Function to be executed
+   * @returns {any} The array element where `function` returns `true`, or `undefined`
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_find
    */
   find(func: any): any;
 
   /**
    * Return the array element's index where `function` returns `true`, or `-1` if it doesn't returns `true` for any element.
+   *
+   * @param {any} function - Function to be executed
+   * @returns {any} The array element's index where `function` returns `true`, or `-1`
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_findIndex
    */
   findIndex(func: any): any;
 
   /**
    * Reverse the contents of this `ArrayBufferView` in-place
+   * @returns {any} This array
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_reverse
    */
   reverse(): ArrayBufferView;
@@ -4581,20 +5678,24 @@ declare class ArrayBufferView {
   /**
    * Return a copy of a portion of this array (in a new array).
    *  **Note:** This currently returns a normal `Array`, not an `ArrayBuffer`
+   *
+   * @param {number} start - Start index
+   * @param {any} end - End index (optional)
+   * @returns {any} A new array
    * @url http://www.espruino.com/Reference#l_ArrayBufferView_slice
    */
   slice(start: number, end: any): any[];
 }
 
-/**
- * This is the built-in JavaScript class for a typed array of 8 bit unsigned integers.
- * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
- * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Uint8Array
- */
 interface Uint8ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8Array_Uint8Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4604,18 +5705,24 @@ interface Uint8Array {
 
 }
 
-declare const Uint8Array: Uint8ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 8 bit unsigned integers that are automatically clamped to the range 0 to 255.
+ * This is the built-in JavaScript class for a typed array of 8 bit unsigned integers.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Uint8ClampedArray
+ * @url http://www.espruino.com/Reference#Uint8Array
  */
+declare const Uint8Array: Uint8ArrayConstructor
+
 interface Uint8ClampedArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
    * Clamped arrays clamp their values to the allowed range, rather than 'wrapping'. e.g. after `a[0]=12345;`, `a[0]==255`.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8ClampedArray_Uint8ClampedArray
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4625,17 +5732,23 @@ interface Uint8ClampedArray {
 
 }
 
-declare const Uint8ClampedArray: Uint8ClampedArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 8 bit signed integers.
+ * This is the built-in JavaScript class for a typed array of 8 bit unsigned integers that are automatically clamped to the range 0 to 255.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Int8Array
+ * @url http://www.espruino.com/Reference#Uint8ClampedArray
  */
+declare const Uint8ClampedArray: Uint8ClampedArrayConstructor
+
 interface Int8ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int8Array_Int8Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4645,17 +5758,23 @@ interface Int8Array {
 
 }
 
-declare const Int8Array: Int8ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 16 bit unsigned integers.
+ * This is the built-in JavaScript class for a typed array of 8 bit signed integers.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Uint16Array
+ * @url http://www.espruino.com/Reference#Int8Array
  */
+declare const Int8Array: Int8ArrayConstructor
+
 interface Uint16ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint16Array_Uint16Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4665,17 +5784,23 @@ interface Uint16Array {
 
 }
 
-declare const Uint16Array: Uint16ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 16 bit signed integers.
+ * This is the built-in JavaScript class for a typed array of 16 bit unsigned integers.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Int16Array
+ * @url http://www.espruino.com/Reference#Uint16Array
  */
+declare const Uint16Array: Uint16ArrayConstructor
+
 interface Int16ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int16Array_Int16Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4685,6 +5810,12 @@ interface Int16Array {
 
 }
 
+/**
+ * This is the built-in JavaScript class for a typed array of 16 bit signed integers.
+ * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
+ * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
+ * @url http://www.espruino.com/Reference#Int16Array
+ */
 declare const Int16Array: Int16ArrayConstructor
 
 /**
@@ -4696,20 +5827,26 @@ declare const Int16Array: Int16ArrayConstructor
 declare class Uint24Array {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
    */
   static new(arr: any, byteOffset: number, length: number): ArrayBufferView;
 }
 
-/**
- * This is the built-in JavaScript class for a typed array of 32 bit unsigned integers.
- * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
- * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Uint32Array
- */
 interface Uint32ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint32Array_Uint32Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4719,17 +5856,23 @@ interface Uint32Array {
 
 }
 
-declare const Uint32Array: Uint32ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 32 bit signed integers.
+ * This is the built-in JavaScript class for a typed array of 32 bit unsigned integers.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Int32Array
+ * @url http://www.espruino.com/Reference#Uint32Array
  */
+declare const Uint32Array: Uint32ArrayConstructor
+
 interface Int32ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int32Array_Int32Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4739,17 +5882,23 @@ interface Int32Array {
 
 }
 
-declare const Int32Array: Int32ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 32 bit floating point values.
+ * This is the built-in JavaScript class for a typed array of 32 bit signed integers.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Float32Array
+ * @url http://www.espruino.com/Reference#Int32Array
  */
+declare const Int32Array: Int32ArrayConstructor
+
 interface Float32ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float32Array_Float32Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4759,17 +5908,23 @@ interface Float32Array {
 
 }
 
-declare const Float32Array: Float32ArrayConstructor
-
 /**
- * This is the built-in JavaScript class for a typed array of 64 bit floating point values.
+ * This is the built-in JavaScript class for a typed array of 32 bit floating point values.
  * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
  * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
- * @url http://www.espruino.com/Reference#Float64Array
+ * @url http://www.espruino.com/Reference#Float32Array
  */
+declare const Float32Array: Float32ArrayConstructor
+
 interface Float64ArrayConstructor {
   /**
    * Create a typed array based on the given input. Either an existing Array Buffer, an Integer as a Length, or a simple array. If an `ArrayBufferView` (eg. `Uint8Array` rather than `ArrayBuffer`) is given, it will be completely copied rather than referenced.
+   * @constructor
+   *
+   * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float64Array_Float64Array
    */
   new(arr: any, byteOffset: number, length: number): ArrayBufferView;
@@ -4779,16 +5934,21 @@ interface Float64Array {
 
 }
 
+/**
+ * This is the built-in JavaScript class for a typed array of 64 bit floating point values.
+ * Instantiate this in order to efficiently store arrays of data (Espruino's normal arrays store data in a map, which is inefficient for non-sparse arrays).
+ * Arrays of this type include all the methods from [ArrayBufferView](/Reference#ArrayBufferView)
+ * @url http://www.espruino.com/Reference#Float64Array
+ */
 declare const Float64Array: Float64ArrayConstructor
 
-/**
- * This is the built-in class for ES6 Promises
- * @url http://www.espruino.com/Reference#Promise
- */
 interface PromiseConstructor {
   /**
    * Return a new promise that is resolved when all promises in the supplied
    * array are resolved.
+   *
+   * @param {any} promises - An array of promises
+   * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_all
    */
   all(promises: any): any;
@@ -4796,6 +5956,9 @@ interface PromiseConstructor {
   /**
    * Return a new promise that is already resolved (at idle it'll
    * call `.then`)
+   *
+   * @param {any} promises - Data to pass to the `.then` handler
+   * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_resolve
    */
   resolve(promises: any): any;
@@ -4803,6 +5966,9 @@ interface PromiseConstructor {
   /**
    * Return a new promise that is already rejected (at idle it'll
    * call `.catch`)
+   *
+   * @param {any} promises - Data to pass to the `.catch` handler
+   * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_reject
    */
   reject(promises: any): any;
@@ -4810,6 +5976,10 @@ interface PromiseConstructor {
   /**
    * Create a new Promise. The executor function is executed immediately (before the constructor even returns)
    * and
+   * @constructor
+   *
+   * @param {any} executor - A function of the form `function (resolve, reject)`
+   * @returns {any} A Promise
    * @url http://www.espruino.com/Reference#l_Promise_Promise
    */
   new(executor: any): any;
@@ -4817,16 +5987,27 @@ interface PromiseConstructor {
 
 interface Promise {
   /**
+   *
+   * @param {any} onFulfilled - A callback that is called when this promise is resolved
+   * @param {any} onRejected - A callback that is called when this promise is rejected (or nothing)
+   * @returns {any} The original Promise
    * @url http://www.espruino.com/Reference#l_Promise_then
    */
   then(onFulfilled: any, onRejected: any): any;
 
   /**
+   *
+   * @param {any} onRejected - A callback that is called when this promise is rejected
+   * @returns {any} The original Promise
    * @url http://www.espruino.com/Reference#l_Promise_catch
    */
   catch(onRejected: any): any;
 }
 
+/**
+ * This is the built-in class for ES6 Promises
+ * @url http://www.espruino.com/Reference#Promise
+ */
 declare const Promise: PromiseConstructor
 
 /**
@@ -4837,6 +6018,9 @@ declare class SPI {
   /**
    * Try and find an SPI hardware device that will work on this pin (eg. `SPI1`)
    * May return undefined if no device can be found.
+   *
+   * @param {Pin} pin - A pin to search with
+   * @returns {any} An object of type `SPI`, or `undefined` if one couldn't be found.
    * @url http://www.espruino.com/Reference#l_SPI_find
    */
   static find(pin: Pin): any;
@@ -4844,6 +6028,8 @@ declare class SPI {
   /**
    * Create a software SPI port. This has limited functionality (no baud rate), but it can work on any pins.
    * Use `SPI.setup` to configure this port.
+   * @constructor
+   * @returns {any} A SPI object
    * @url http://www.espruino.com/Reference#l_SPI_SPI
    */
   static new(): any;/**
@@ -4851,12 +6037,12 @@ declare class SPI {
    * Options can contain the following (defaults are shown where relevant):
    * ```
    * {
-   *   sck:pin, 
-   *   miso:pin, 
-   *   mosi:pin, 
+   *   sck:pin,
+   *   miso:pin,
+   *   mosi:pin,
    *   baud:integer=100000, // ignored on software SPI
    *   mode:integer=0, // between 0 and 3
-   *   order:string='msb' // can be 'msb' or 'lsb' 
+   *   order:string='msb' // can be 'msb' or 'lsb'
    *   bits:8 // only available for software SPI
    * }
    * ```
@@ -4864,6 +6050,8 @@ declare class SPI {
    * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `SPI` marker. Some boards such as those based on `nRF52` chips can have SPI on any pins, so don't have specific markings.
    * The SPI `mode` is between 0 and 3 - see http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase
    * On STM32F1-based parts, you cannot mix AF and non-AF pins (SPI pins are usually grouped on the chip - and you can't mix pins from two groups). Espruino will not warn you about this.
+   *
+   * @param {any} options - An Object containing extra information on initialising the SPI port
    * @url http://www.espruino.com/Reference#l_SPI_setup
    */
   setup(options: any): any;
@@ -4872,6 +6060,10 @@ declare class SPI {
    * Send data down SPI, and return the result. Sending an integer will return an integer, a String will return a String, and anything else will return a Uint8Array.
    * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
    * For maximum speeds, please pass either Strings or Typed Arrays as arguments. Note that you can even pass arrays of arrays, like `[1,[2,3,4],5]`
+   *
+   * @param {any} data - The data to send - either an Integer, Array, String, or Object of the form `{data: ..., count:#}`
+   * @param {Pin} nss_pin - An nSS pin - this will be lowered before SPI output and raised afterwards (optional). There will be a small delay between when this is lowered and when sending starts, and also between sending finishing and it being raised.
+   * @returns {any} The data that was returned
    * @url http://www.espruino.com/Reference#l_SPI_send
    */
   send(data: any, nss_pin: Pin): any;
@@ -4879,6 +6071,10 @@ declare class SPI {
   /**
    * Write a character or array of characters to SPI - without reading the result back.
    * For maximum speeds, please pass either Strings or Typed Arrays as arguments.
+   *
+   * @param {any} data
+   * One or more items to write. May be ints, strings, arrays, or special objects (see `E.toUint8Array` for more info).
+   * If the last argument is a pin, it is taken to be the NSS pin
    * @url http://www.espruino.com/Reference#l_SPI_write
    */
   write(...data: any[]): any;
@@ -4886,6 +6082,11 @@ declare class SPI {
   /**
    * Send data down SPI, using 4 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
    * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
+   *
+   * @param {any} data - The data to send - either an integer, array, or string
+   * @param {number} bit0 - The 4 bits to send for a 0 (MSB first)
+   * @param {number} bit1 - The 4 bits to send for a 1 (MSB first)
+   * @param {Pin} nss_pin - An nSS pin - this will be lowered before SPI output and raised afterwards (optional). There will be a small delay between when this is lowered and when sending starts, and also between sending finishing and it being raised.
    * @url http://www.espruino.com/Reference#l_SPI_send4bit
    */
   send4bit(data: any, bit0: number, bit1: number, nss_pin: Pin): any;
@@ -4893,6 +6094,11 @@ declare class SPI {
   /**
    * Send data down SPI, using 8 bits for each 'real' bit (MSB first). This can be useful for faking one-wire style protocols
    * Sending multiple bytes in one call to send is preferable as they can then be transmitted end to end. Using multiple calls to send() will result in significantly slower transmission speeds.
+   *
+   * @param {any} data - The data to send - either an integer, array, or string
+   * @param {number} bit0 - The 8 bits to send for a 0 (MSB first)
+   * @param {number} bit1 - The 8 bits to send for a 1 (MSB first)
+   * @param {Pin} nss_pin - An nSS pin - this will be lowered before SPI output and raised afterwards (optional). There will be a small delay between when this is lowered and when sending starts, and also between sending finishing and it being raised
    * @url http://www.espruino.com/Reference#l_SPI_send8bit
    */
   send8bit(data: any, bit0: number, bit1: number, nss_pin: Pin): any;
@@ -4907,6 +6113,9 @@ declare class I2C {
   /**
    * Try and find an I2C hardware device that will work on this pin (eg. `I2C1`)
    * May return undefined if no device can be found.
+   *
+   * @param {Pin} pin - A pin to search with
+   * @returns {any} An object of type `I2C`, or `undefined` if one couldn't be found.
    * @url http://www.espruino.com/Reference#l_I2C_find
    */
   static find(pin: Pin): any;
@@ -4914,23 +6123,37 @@ declare class I2C {
   /**
    * Create a software I2C port. This has limited functionality (no baud rate), but it can work on any pins.
    * Use `I2C.setup` to configure this port.
+   * @constructor
+   * @returns {any} An I2C object
    * @url http://www.espruino.com/Reference#l_I2C_I2C
    */
   static new(): any;/**
    * Set up this I2C port
    * If not specified in options, the default pins are used (usually the lowest numbered pins on the lowest port that supports this peripheral)
+   *
+   * @param {any} options
+   * An optional structure containing extra information on initialising the I2C port
+   * ```{scl:pin, sda:pin, bitrate:100000}```
+   * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `I2C` marker. Note that 400kHz is the maximum bitrate for most parts.
    * @url http://www.espruino.com/Reference#l_I2C_setup
    */
   setup(options: any): any;
 
   /**
    * Transmit to the slave device with the given address. This is like Arduino's beginTransmission, write, and endTransmission rolled up into one.
+   *
+   * @param {any} address - The 7 bit address of the device to transmit to, or an object of the form `{address:12, stop:false}` to send this data without a STOP signal.
+   * @param {any} data - One or more items to write. May be ints, strings, arrays, or special objects (see `E.toUint8Array` for more info).
    * @url http://www.espruino.com/Reference#l_I2C_writeTo
    */
   writeTo(address: any, ...data: any[]): any;
 
   /**
    * Request bytes from the given slave device, and return them as a Uint8Array (packed array of bytes). This is like using Arduino Wire's requestFrom, available and read functions.  Sends a STOP
+   *
+   * @param {any} address - The 7 bit address of the device to request bytes from, or an object of the form `{address:12, stop:false}` to send this data without a STOP signal.
+   * @param {number} quantity - The number of bytes to request
+   * @returns {any} The data that was returned - as a Uint8Array
    * @url http://www.espruino.com/Reference#l_I2C_readFrom
    */
   readFrom(address: any, quantity: number): Uint8Array;
@@ -4944,16 +6167,29 @@ declare class Waveform {
   /**
    * Create a waveform class. This allows high speed input and output of waveforms. It has an internal variable called `buffer` (as well as `buffer2` when double-buffered - see `options` below) which contains the data to input/output.
    * When double-buffered, a 'buffer' event will be emitted each time a buffer is finished with (the argument is that buffer). When the recording stops, a 'finish' event will be emitted (with the first argument as the buffer).
+   * @constructor
+   *
+   * @param {number} samples - The number of samples
+   * @param {any} options - Optional options struct `{doubleBuffer:bool, bits : 8/16}` where: `doubleBuffer` is whether to allocate two buffers or not (default false), and bits is the amount of bits to use (default 8).
+   * @returns {any} An Waveform object
    * @url http://www.espruino.com/Reference#l_Waveform_Waveform
    */
   static new(samples: number, options: any): any;/**
    * Will start outputting the waveform on the given pin - the pin must have previously been initialised with analogWrite. If not repeating, it'll emit a `finish` event when it is done.
+   *
+   * @param {Pin} output - The pin to output on
+   * @param {number} freq - The frequency to output each sample at
+   * @param {any} options - Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample
    * @url http://www.espruino.com/Reference#l_Waveform_startOutput
    */
   startOutput(output: Pin, freq: number, options: any): any;
 
   /**
    * Will start inputting the waveform on the given pin that supports analog. If not repeating, it'll emit a `finish` event when it is done.
+   *
+   * @param {Pin} output - The pin to output on
+   * @param {number} freq - The frequency to output each sample at
+   * @param {any} options - Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample
    * @url http://www.espruino.com/Reference#l_Waveform_startInput
    */
   startInput(output: Pin, freq: number, options: any): any;
@@ -4973,11 +6209,16 @@ declare class Waveform {
 declare class Pin {
   /**
    * Creates a pin from the given argument (or returns undefined if no argument)
+   * @constructor
+   *
+   * @param {any} value - A value to be converted to a pin. Can be a number, pin, or String.
+   * @returns {any} A Pin object
    * @url http://www.espruino.com/Reference#l_Pin_Pin
    */
   static new(value: any): any;/**
    * Returns the input state of the pin as a boolean.
    *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"input"`
+   * @returns {boolean} Whether pin is a logical 1 or 0
    * @url http://www.espruino.com/Reference#l_Pin_read
    */
   read(): boolean;
@@ -4999,6 +6240,8 @@ declare class Pin {
   /**
    * Sets the output state of the pin to the parameter given
    *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   *
+   * @param {boolean} value - Whether to set output high (true/1) or low (false/0)
    * @url http://www.espruino.com/Reference#l_Pin_write
    */
   write(value: boolean): any;
@@ -5006,18 +6249,24 @@ declare class Pin {
   /**
    * Sets the output state of the pin to the parameter given at the specified time.
    *  **Note:** this **doesn't** change the mode of the pin to an output. To do that, you need to use `pin.write(0)` or `pinMode(pin, 'output')` first.
+   *
+   * @param {boolean} value - Whether to set output high (true/1) or low (false/0)
+   * @param {number} time - Time at which to write
    * @url http://www.espruino.com/Reference#l_Pin_writeAtTime
    */
   writeAtTime(value: boolean, time: number): any;
 
   /**
    * Return the current mode of the given pin. See `pinMode` for more information.
+   * @returns {any} The pin mode, as a string
    * @url http://www.espruino.com/Reference#l_Pin_getMode
    */
   getMode(): any;
 
   /**
    * Set the mode of the given pin. See [`pinMode`](#l__global_pinMode) for more information on pin modes.
+   *
+   * @param {any} mode - The mode - a string that is either 'analog', 'input', 'input_pullup', 'input_pulldown', 'output', 'opendrain', 'af_output' or 'af_opendrain'. Do not include this argument if you want to revert to automatic pin mode setting.
    * @url http://www.espruino.com/Reference#l_Pin_mode
    */
   mode(mode: any): any;
@@ -5026,6 +6275,7 @@ declare class Pin {
    * Toggles the state of the pin from off to on, or from on to off.
    * **Note:** This method doesn't currently work on the ESP8266 port of Espruino.
    * **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"output"`
+   * @returns {boolean} True if the pin is high after calling the function
    * @url http://www.espruino.com/Reference#l_Pin_toggle
    */
   toggle(): boolean;
@@ -5046,15 +6296,12 @@ declare class Pin {
    * }
    * ```
    * Will return undefined if pin is not valid.
+   * @returns {any} An object containing information about this pins
    * @url http://www.espruino.com/Reference#l_Pin_getInfo
    */
   getInfo(): any;
 }
 
-/**
- * This class helps
- * @url http://www.espruino.com/Reference#DataView
- */
 interface DataViewConstructor {
   /**
    * Create a `DataView` object that can be used to access the data in an `ArrayBuffer`.
@@ -5066,6 +6313,12 @@ interface DataViewConstructor {
    * console.log("0x"+v.getUint32(0).toString(16))
    * // prints 0x12340056
    * ```
+   * @constructor
+   *
+   * @param {any} buffer - The `ArrayBuffer` to base this on
+   * @param {number} byteOffset - (optional) The offset of this view in bytes
+   * @param {number} byteLength - (optional) The length in bytes
+   * @returns {any} A `DataView` object
    * @url http://www.espruino.com/Reference#l_DataView_DataView
    */
   new(buffer: any, byteOffset: number, byteLength: number): DataView;
@@ -5073,86 +6326,154 @@ interface DataViewConstructor {
 
 interface DataView {
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getFloat32
    */
   getFloat32(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getFloat64
    */
   getFloat64(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getInt8
    */
   getInt8(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getInt16
    */
   getInt16(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getInt32
    */
   getInt32(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getUint8
    */
   getUint8(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getUint16
    */
   getUint16(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_DataView_getUint32
    */
   getUint32(byteOffset: number, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setFloat32
    */
   setFloat32(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setFloat64
    */
   setFloat64(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setInt8
    */
   setInt8(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setInt16
    */
   setInt16(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setInt32
    */
   setInt32(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setUint8
    */
   setUint8(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setUint16
    */
   setUint16(byteOffset: number, value: any, littleEndian: boolean): any;
 
   /**
+   *
+   * @param {number} byteOffset - The offset in bytes to read from
+   * @param {any} value - The value to write
+   * @param {boolean} littleEndian - (optional) Whether to read in little endian - if false or undefined data is read as big endian
    * @url http://www.espruino.com/Reference#l_DataView_setUint32
    */
   setUint32(byteOffset: number, value: any, littleEndian: boolean): any;
 }
 
+/**
+ * This class helps
+ * @url http://www.espruino.com/Reference#DataView
+ */
 declare const DataView: DataViewConstructor
 
 /**
@@ -5163,6 +6484,9 @@ declare const DataView: DataViewConstructor
 declare class Serial {
   /**
    * The `data` event is called when data is received. If a handler is defined with `X.on('data', function(data) { ... })` then it will be called, otherwise data will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
    * @url http://www.espruino.com/Reference#l_Serial_data
    */
   static on(event: "data", callback: (data: any) => void): void;
@@ -5176,6 +6500,8 @@ declare class Serial {
    * **Note:** Even though there was an error, the byte will still be received and
    * passed to the `data` handler.
    * **Note:** This only works on STM32 and NRF52 based devices (eg. all official Espruino boards)
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Serial_framing
    */
   static on(event: "framing", callback: () => void): void;
@@ -5187,6 +6513,8 @@ declare class Serial {
    * **Note:** Even though there was an error, the byte will still be received and
    * passed to the `data` handler.
    * **Note:** This only works on STM32 and NRF52 based devices (eg. all official Espruino boards)
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Serial_parity
    */
   static on(event: "parity", callback: () => void): void;
@@ -5194,6 +6522,9 @@ declare class Serial {
   /**
    * Try and find a USART (Serial) hardware device that will work on this pin (eg. `Serial1`)
    * May return undefined if no device can be found.
+   *
+   * @param {Pin} pin - A pin to search with
+   * @returns {any} An object of type `Serial`, or `undefined` if one couldn't be found.
    * @url http://www.espruino.com/Reference#l_Serial_find
    */
   static find(pin: Pin): any;
@@ -5201,6 +6532,8 @@ declare class Serial {
   /**
    * Create a software Serial port. This has limited functionality (only low baud rates), but it can work on any pins.
    * Use `Serial.setup` to configure this port.
+   * @constructor
+   * @returns {any} A Serial object
    * @url http://www.espruino.com/Reference#l_Serial_Serial
    */
   static new(): any;/**
@@ -5208,6 +6541,8 @@ declare class Serial {
    * Unless `force` is set to true, changes in the connection state of the board
    * (for instance plugging in USB) will cause the console to change.
    * See `E.setConsole` for a more flexible version of this function.
+   *
+   * @param {boolean} force - Whether to force the console to this port
    * @url http://www.espruino.com/Reference#l_Serial_setConsole
    */
   setConsole(force: boolean): any;
@@ -5226,7 +6561,7 @@ declare class Serial {
    *   ck:pin,                           // (default none) Clock Pin
    *   cts:pin,                          // (default none) Clear to Send Pin
    *   bytesize:8,                       // (default 8)How many data bits - 7 or 8
-   *   parity:null/'none'/'o'/'odd'/'e'/'even', 
+   *   parity:null/'none'/'o'/'odd'/'e'/'even',
    *                                     // (default none) Parity bit
    *   stopbits:1,                       // (default 1) Number of stop bits to use
    *   flow:null/undefined/'none'/'xon', // (default none) software flow control
@@ -5234,12 +6569,12 @@ declare class Serial {
    *   errors:false                      // (default false) whether to forward framing/parity errors
    * }
    * ```
-   * You can find out which pins to use by looking at [your board's reference page](#boards) 
+   * You can find out which pins to use by looking at [your board's reference page](#boards)
    * and searching for pins with the `UART`/`USART` markers.
    * If not specified in options, the default pins are used for rx and tx
-   * (usually the lowest numbered pins on the lowest port that supports 
+   * (usually the lowest numbered pins on the lowest port that supports
    * this peripheral). `ck` and `cts` are not used unless specified.
-   * Note that even after changing the RX and TX pins, if you have called setup 
+   * Note that even after changing the RX and TX pins, if you have called setup
    * before then the previous RX and TX pins will still be connected to the Serial
    * port as well - until you set them to something else using `digitalWrite` or
    * `pinMode`.
@@ -5250,7 +6585,7 @@ declare class Serial {
    * on the `Serial` object because storing these errors uses up additional
    * storage in the queue. If you're intending to receive a lot of malformed
    * data then the queue might overflow `E.getErrorFlags()` would return `FIFO_FULL`.
-   * However if you need to respond to `framing` or `parity` errors then 
+   * However if you need to respond to `framing` or `parity` errors then
    * you'll need to use `errors:true` when initialising serial.
    * On Linux builds there is no default Serial device, so you must specify
    * a path to a device - for instance: `Serial1.setup(9600,{path:"/dev/ttyACM0"})`
@@ -5260,6 +6595,9 @@ declare class Serial {
    * s.setup(9600,{rx:a_pin, tx:a_pin});
    * ```
    * However software serial doesn't use `ck`, `cts`, `parity`, `flow` or `errors` parts of the initialisation object.
+   *
+   * @param {any} baudrate - The baud rate - the default is 9600
+   * @param {any} options - An optional structure containing extra information on initialising the serial port - see below.
    * @url http://www.espruino.com/Reference#l_Serial_setup
    */
   setup(baudrate: any, options: any): any;
@@ -5274,6 +6612,8 @@ declare class Serial {
   /**
    * Print a string to the serial port - without a line feed
    *  **Note:** This function replaces any occurances of `\n` in the string with `\r\n`. To avoid this, use `Serial.write`.
+   *
+   * @param {any} string - A String to print
    * @url http://www.espruino.com/Reference#l_Serial_print
    */
   print(string: any): any;
@@ -5281,6 +6621,8 @@ declare class Serial {
   /**
    * Print a line to the serial port with a newline (`\r\n`) at the end of it.
    *  **Note:** This function converts data to a string first, eg `Serial.print([1,2,3])` is equivalent to `Serial.print("1,2,3"). If you'd like to write raw bytes, use `Serial.write`.
+   *
+   * @param {any} string - A String to print
    * @url http://www.espruino.com/Reference#l_Serial_println
    */
   println(string: any): any;
@@ -5288,6 +6630,8 @@ declare class Serial {
   /**
    * Write a character or array of data to the serial port
    * This method writes unmodified data, eg `Serial.write([1,2,3])` is equivalent to `Serial.write("\1\2\3")`. If you'd like data converted to a string first, use `Serial.print`.
+   *
+   * @param {any} data - One or more items to write. May be ints, strings, arrays, or special objects (see `E.toUint8Array` for more info).
    * @url http://www.espruino.com/Reference#l_Serial_write
    */
   write(...data: any[]): any;
@@ -5302,24 +6646,37 @@ declare class Serial {
    * ```
    * This is most useful if you wish to send characters to Espruino's
    * REPL (console) while it is on another device.
+   *
+   * @param {any} data - One or more items to write. May be ints, strings, arrays, or special objects (see `E.toUint8Array` for more info).
    * @url http://www.espruino.com/Reference#l_Serial_inject
    */
   inject(...data: any[]): any;
 
   /**
    * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
+   * @returns {number} How many bytes are available
    * @url http://www.espruino.com/Reference#l_Serial_available
    */
   available(): number;
 
   /**
    * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
    * @url http://www.espruino.com/Reference#l_Serial_read
    */
   read(chars: number): any;
 
   /**
    * Pipe this USART to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_Serial_pipe
    */
   pipe(destination: any, options: any): any;
@@ -5373,12 +6730,16 @@ declare class StorageFile {
    * Read 'len' bytes of data from the file, and return a String containing those bytes.
    * If the end of the file is reached, the String may be smaller than the amount of bytes
    * requested, or if the file is already at the end, `undefined` is returned.
+   *
+   * @param {number} len - How many bytes to read
+   * @returns {any} A String, or undefined
    * @url http://www.espruino.com/Reference#l_StorageFile_read
    */
   read(len: number): String;
 
   /**
    * Read a line of data from the file (up to and including `"\n"`)
+   * @returns {any} A line of data
    * @url http://www.espruino.com/Reference#l_StorageFile_readLine
    */
   readLine(): String;
@@ -5387,12 +6748,15 @@ declare class StorageFile {
    * Return the length of the current file.
    * This requires Espruino to read the file from scratch,
    * which is not a fast operation.
+   * @returns {number} The current length in bytes of the file
    * @url http://www.espruino.com/Reference#l_StorageFile_getLength
    */
   getLength(): number;
 
   /**
    * Append the given data to a file. You should not attempt to append  `"\xFF"` (character code 255).
+   *
+   * @param {any} data - The data to write. This should not include `'\xFF'` (character code 255)
    * @url http://www.espruino.com/Reference#l_StorageFile_write
    */
   write(data: any): any;
@@ -5404,10 +6768,6 @@ declare class StorageFile {
   erase(): any;
 }
 
-/**
- * This class contains information about Espruino itself
- * @url http://www.espruino.com/Reference#process
- */
 interface processConstructor {
   /**
    * This event is called when an exception gets thrown and isn't caught (eg. it gets all the way back to the event loop).
@@ -5426,12 +6786,16 @@ interface processConstructor {
    * ```
    * **Note:** When this is used, exceptions will cease to be reported on the console - which
    * may make debugging difficult!
+   * @param {string} event - The event to listen to.
+   * @param {(exception: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `exception` The uncaught exception
    * @url http://www.espruino.com/Reference#l_process_uncaughtException
    */
   on(event: "uncaughtException", callback: (exception: any) => void): void;
 
   /**
    * Returns the version of Espruino as a String
+   * @returns {any} The version of Espruino
    * @url http://www.espruino.com/Reference#l_process_version
    */
   version: any;
@@ -5452,6 +6816,7 @@ interface processConstructor {
    * * `EXPTR` - The address of the `exportPtrs` structure in flash (this includes links to built-in functions that compiled JS code needs)
    * * `APP_RAM_BASE` - On nRF5x boards, this is the RAM required by the Softdevice *if it doesn't exactly match what was allocated*. You can use this to update `LD_APP_RAM_BASE` in the `BOARD.py` file
    * For example, to get a list of built-in modules, you can use `process.env.MODULES.split(',')`
+   * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_process_env
    */
   env: any;
@@ -5472,6 +6837,9 @@ interface processConstructor {
    * * `flash_length` : (on ARM) the amount of flash memory this firmware was built for (in bytes). **Note:** Some STM32 chips actually have more memory than is advertised.
    * Memory units are specified in 'blocks', which are around 16 bytes each (depending on your device). The actual size is available in `blocksize`. See http://www.espruino.com/Performance for more information.
    * **Note:** To find free areas of flash memory, see `require('Flash').getFree()`
+   *
+   * @param {any} gc - An optional boolean. If `undefined` or `true` Garbage collection is performed, if `false` it is not
+   * @returns {any} Information about memory usage
    * @url http://www.espruino.com/Reference#l_process_memory
    */
   memory(gc: any): any;
@@ -5481,6 +6849,10 @@ interface process {
 
 }
 
+/**
+ * This class contains information about Espruino itself
+ * @url http://www.espruino.com/Reference#process
+ */
 declare const process: processConstructor
 
 /**
@@ -5490,12 +6862,15 @@ declare const process: processConstructor
 declare class Modules {
   /**
    * Return an array of module names that have been cached
+   * @returns {any} An array of module names
    * @url http://www.espruino.com/Reference#l_Modules_getCached
    */
   static getCached(): any;
 
   /**
    * Remove the given module from the list of cached modules
+   *
+   * @param {any} id - The module name to remove
    * @url http://www.espruino.com/Reference#l_Modules_removeCached
    */
   static removeCached(id: any): any;
@@ -5508,25 +6883,30 @@ declare class Modules {
 
   /**
    * Add the given module to the cache
+   *
+   * @param {any} id - The module name to add
+   * @param {any} sourcecode - The module's sourcecode
    * @url http://www.espruino.com/Reference#l_Modules_addCached
    */
   static addCached(id: any, sourcecode: any): any;
 }
 
-/**
- * This is the built-in class for Text Strings.
- * Text Strings in Espruino are not zero-terminated, so you can store zeros in them.
- * @url http://www.espruino.com/Reference#String
- */
 interface StringConstructor {
   /**
    * Return the character(s) represented by the given character code(s).
+   *
+   * @param {any} code - One or more character codes to create a string from (range 0-255).
+   * @returns {any} The character
    * @url http://www.espruino.com/Reference#l_String_fromCharCode
    */
   fromCharCode(...code: any[]): any;
 
   /**
    * Create a new String
+   * @constructor
+   *
+   * @param {any} str - A value to turn into a string. If undefined or not supplied, an empty String is created.
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_String_String
    */
   new(...str: any[]): any;
@@ -5535,12 +6915,16 @@ interface StringConstructor {
 interface String {
   /**
    * Find the length of the string
+   * @returns {any} The value of the string
    * @url http://www.espruino.com/Reference#l_String_length
    */
   length: any;
 
   /**
    * Return a single character at the given position in the String.
+   *
+   * @param {number} pos - The character number in the string. Negative values return characters from end of string (-1 = last char)
+   * @returns {any} The character in the string
    * @url http://www.espruino.com/Reference#l_String_charAt
    */
   charAt(pos: number): any;
@@ -5548,18 +6932,29 @@ interface String {
   /**
    * Return the integer value of a single character at the given position in the String.
    * Note that this returns 0 not 'NaN' for out of bounds characters
+   *
+   * @param {number} pos - The character number in the string. Negative values return characters from end of string (-1 = last char)
+   * @returns {number} The integer value of a character in the string
    * @url http://www.espruino.com/Reference#l_String_charCodeAt
    */
   charCodeAt(pos: number): number;
 
   /**
    * Return the index of substring in this string, or -1 if not found
+   *
+   * @param {any} substring - The string to search for
+   * @param {any} fromIndex - Index to search from
+   * @returns {number} The index of the string, or -1 if not found
    * @url http://www.espruino.com/Reference#l_String_indexOf
    */
   indexOf(substring: any, fromIndex: any): number;
 
   /**
    * Return the last index of substring in this string, or -1 if not found
+   *
+   * @param {any} substring - The string to search for
+   * @param {any} fromIndex - Index to search from
+   * @returns {number} The index of the string, or -1 if not found
    * @url http://www.espruino.com/Reference#l_String_lastIndexOf
    */
   lastIndexOf(substring: any, fromIndex: any): number;
@@ -5585,27 +6980,46 @@ interface String {
    *   "bcd"
    *  ]
    * ```
+   *
+   * @param {any} substr - Substring or RegExp to match
+   * @returns {any} A match array or `null` (see below):
    * @url http://www.espruino.com/Reference#l_String_match
    */
   match(substr: any): any;
 
   /**
    * Search and replace ONE occurrance of `subStr` with `newSubStr` and return the result. This doesn't alter the original string. Regular expressions not supported.
+   *
+   * @param {any} subStr - The string to search for
+   * @param {any} newSubStr - The string to replace it with
+   * @returns {any} This string with `subStr` replaced
    * @url http://www.espruino.com/Reference#l_String_replace
    */
   replace(subStr: any, newSubStr: any): any;
 
   /**
+   *
+   * @param {number} start - The start character index (inclusive)
+   * @param {any} end - The end character index (exclusive)
+   * @returns {any} The part of this string between start and end
    * @url http://www.espruino.com/Reference#l_String_substring
    */
   substring(start: number, end: any): any;
 
   /**
+   *
+   * @param {number} start - The start character index
+   * @param {any} len - The number of characters
+   * @returns {any} Part of this string from start for len characters
    * @url http://www.espruino.com/Reference#l_String_substr
    */
   substr(start: number, len: any): any;
 
   /**
+   *
+   * @param {number} start - The start character index, if negative it is from the end of the string
+   * @param {any} end - The end character index, if negative it is from the end of the string, and if omitted it is the end of the string
+   * @returns {any} Part of this string from start for len characters
    * @url http://www.espruino.com/Reference#l_String_slice
    */
   slice(start: number, end: any): any;
@@ -5613,16 +7027,23 @@ interface String {
   /**
    * Return an array made by splitting this string up by the separator. eg. ```'1,2,3'.split(',')==['1', '2', '3']```
    * Regular Expressions can also be used to split strings, eg. `'1a2b3 4'.split(/[^0-9]/)==['1', '2', '3', '4']`.
+   *
+   * @param {any} separator - The separator `String` or `RegExp` to use
+   * @returns {any} Part of this string from start for len characters
    * @url http://www.espruino.com/Reference#l_String_split
    */
   split(separator: any): any;
 
   /**
+   *
+   * @returns {any} The lowercase version of this string
    * @url http://www.espruino.com/Reference#l_String_toLowerCase
    */
   toLowerCase(): any;
 
   /**
+   *
+   * @returns {any} The uppercase version of this string
    * @url http://www.espruino.com/Reference#l_String_toUpperCase
    */
   toUpperCase(): any;
@@ -5630,33 +7051,52 @@ interface String {
   /**
    * Return a new string with any whitespace (tabs, space, form feed, newline,
    * carriage return, etc) removed from the beginning and end.
+   * @returns {any} A String with Whitespace removed from the beginning and end
    * @url http://www.espruino.com/Reference#l_String_trim
    */
   trim(): String;
 
   /**
    * Append all arguments to this `String` and return the result. Does not modify the original `String`.
+   *
+   * @param {any} args - Strings to append
+   * @returns {any} The result of appending all arguments to this string
    * @url http://www.espruino.com/Reference#l_String_concat
    */
   concat(...args: any[]): any;
 
   /**
+   *
+   * @param {any} searchString - The string to search for
+   * @param {number} position - The start character index (or 0 if not defined)
+   * @returns {boolean} `true` if the given characters are found at the beginning of the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_startsWith
    */
   startsWith(searchString: any, position: number): boolean;
 
   /**
+   *
+   * @param {any} searchString - The string to search for
+   * @param {any} length - The 'end' of the string - if left off the actual length of the string is used
+   * @returns {boolean} `true` if the given characters are found at the end of the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_endsWith
    */
   endsWith(searchString: any, length: any): boolean;
 
   /**
+   *
+   * @param {any} substring - The string to search for
+   * @param {any} fromIndex - The start character index (or 0 if not defined)
+   * @returns {boolean} `true` if the given characters are in the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_includes
    */
   includes(substring: any, fromIndex: any): boolean;
 
   /**
    * Repeat this string the given number of times.
+   *
+   * @param {number} count - An integer with the amount of times to repeat this String
+   * @returns {any} A string containing repetitions of this string
    * @url http://www.espruino.com/Reference#l_String_repeat
    */
   repeat(count: number): String;
@@ -5667,6 +7107,10 @@ interface String {
    * "Hello".padStart(10) == "     Hello"
    * "123".padStart(10,".-") == ".-.-.-.123"
    * ```
+   *
+   * @param {number} targetLength - The length to pad this string to
+   * @param {any} [padString] - [optional] The string to pad with, default is `' '`
+   * @returns {any} A string containing this string padded to the correct length
    * @url http://www.espruino.com/Reference#l_String_padStart
    */
   padStart(targetLength: number, padString?: any): String;
@@ -5677,27 +7121,38 @@ interface String {
    * "Hello".padEnd(10) == "Hello     "
    * "123".padEnd(10,".-") == "123.-.-.-."
    * ```
+   *
+   * @param {number} targetLength - The length to pad this string to
+   * @param {any} [padString] - [optional] The string to pad with, default is `' '`
+   * @returns {any} A string containing this string padded to the correct length
    * @url http://www.espruino.com/Reference#l_String_padEnd
    */
   padEnd(targetLength: number, padString?: any): String;
 }
 
+/**
+ * This is the built-in class for Text Strings.
+ * Text Strings in Espruino are not zero-terminated, so you can store zeros in them.
+ * @url http://www.espruino.com/Reference#String
+ */
 declare const String: StringConstructor
 
-/**
- * This is the built-in JavaScript class for arrays.
- * Arrays can be defined with ```[]```, ```new Array()```, or ```new Array(length)```
- * @url http://www.espruino.com/Reference#Array
- */
 interface ArrayConstructor {
   /**
    * Returns true if the provided object is an array
+   *
+   * @param {any} var - The variable to be tested
+   * @returns {boolean} True if var is an array, false if not.
    * @url http://www.espruino.com/Reference#l_Array_isArray
    */
   isArray(variable: any): boolean;
 
   /**
    * Create an Array. Either give it one integer argument (>=0) which is the length of the array, or any number of arguments
+   * @constructor
+   *
+   * @param {any} args - The length of the array OR any number of items to add to the array
+   * @returns {any} An Array
    * @url http://www.espruino.com/Reference#l_Array_Array
    */
   new(...args: any[]): any;
@@ -5706,30 +7161,45 @@ interface ArrayConstructor {
 interface Array<T> {
   /**
    * Convert the Array to a string
+   *
+   * @param {any} radix - unused
+   * @returns {any} A String representing the array
    * @url http://www.espruino.com/Reference#l_Array_toString
    */
   toString(radix: any): any;
 
   /**
    * Find the length of the array
+   * @returns {any} The value of the array
    * @url http://www.espruino.com/Reference#l_Array_length
    */
   length: any;
 
   /**
    * Return the index of the value in the array, or -1
+   *
+   * @param {any} value - The value to check for
+   * @param {number} startIndex - (optional) the index to search from, or 0 if not specified
+   * @returns {any} the index of the value in the array, or -1
    * @url http://www.espruino.com/Reference#l_Array_indexOf
    */
   indexOf(value: any, startIndex: number): any;
 
   /**
    * Return `true` if the array includes the value, `false` otherwise
+   *
+   * @param {any} value - The value to check for
+   * @param {number} startIndex - (optional) the index to search from, or 0 if not specified
+   * @returns {boolean} `true` if the array includes the value, `false` otherwise
    * @url http://www.espruino.com/Reference#l_Array_includes
    */
   includes(value: any, startIndex: number): boolean;
 
   /**
    * Join all elements of this array together into one string, using 'separator' between them. eg. ```[1,2,3].join(' ')=='1 2 3'```
+   *
+   * @param {any} separator - The separator
+   * @returns {any} A String representing the Joined array
    * @url http://www.espruino.com/Reference#l_Array_join
    */
   join(separator: any): any;
@@ -5737,6 +7207,9 @@ interface Array<T> {
   /**
    * Push a new value onto the end of this array'
    * This is the opposite of `[1,2,3].unshift(0)`, which adds one or more elements to the beginning of the array.
+   *
+   * @param {any} arguments - One or more arguments to add
+   * @returns {number} The new size of the array
    * @url http://www.espruino.com/Reference#l_Array_push
    */
   push(...arguments: any[]): number;
@@ -5744,24 +7217,36 @@ interface Array<T> {
   /**
    * Remove and return the value on the end of this array.
    * This is the opposite of `[1,2,3].shift()`, which removes an element from the beginning of the array.
+   * @returns {any} The value that is popped off
    * @url http://www.espruino.com/Reference#l_Array_pop
    */
   pop(): any;
 
   /**
    * Return an array which is made from the following: ```A.map(function) = [function(A[0]), function(A[1]), ...]```
+   *
+   * @param {any} function - Function used to map one item to another
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} An array containing the results
    * @url http://www.espruino.com/Reference#l_Array_map
    */
   map(func: any, thisArg: any): any;
 
   /**
    * Executes a provided function once per array element.
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
    * @url http://www.espruino.com/Reference#l_Array_forEach
    */
   forEach(func: any, thisArg: any): any;
 
   /**
    * Return an array which contains only those elements for which the callback function returns 'true'
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} An array containing the results
    * @url http://www.espruino.com/Reference#l_Array_filter
    */
   filter(func: any, thisArg: any): any;
@@ -5772,6 +7257,9 @@ interface Array<T> {
    * ["Hello","There","World"].find(a=>a[0]=="T")
    * // returns "There"
    * ```
+   *
+   * @param {any} function - Function to be executed
+   * @returns {any} The array element where `function` returns `true`, or `undefined`
    * @url http://www.espruino.com/Reference#l_Array_find
    */
   find(func: any): any;
@@ -5782,30 +7270,50 @@ interface Array<T> {
    * ["Hello","There","World"].findIndex(a=>a[0]=="T")
    * // returns 1
    * ```
+   *
+   * @param {any} function - Function to be executed
+   * @returns {any} The array element's index where `function` returns `true`, or `-1`
    * @url http://www.espruino.com/Reference#l_Array_findIndex
    */
   findIndex(func: any): any;
 
   /**
    * Return 'true' if the callback returns 'true' for any of the elements in the array
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} A boolean containing the result
    * @url http://www.espruino.com/Reference#l_Array_some
    */
   some(func: any, thisArg: any): any;
 
   /**
    * Return 'true' if the callback returns 'true' for every element in the array
+   *
+   * @param {any} function - Function to be executed
+   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @returns {any} A boolean containing the result
    * @url http://www.espruino.com/Reference#l_Array_every
    */
   every(func: any, thisArg: any): any;
 
   /**
    * Execute `previousValue=initialValue` and then `previousValue = callback(previousValue, currentValue, index, array)` for each element in the array, and finally return previousValue.
+   *
+   * @param {any} callback - Function used to reduce the array
+   * @param {any} initialValue - if specified, the initial value to pass to the function
+   * @returns {any} The value returned by the last function called
    * @url http://www.espruino.com/Reference#l_Array_reduce
    */
   reduce(callback: any, initialValue: any): any;
 
   /**
    * Both remove and add items to an array
+   *
+   * @param {number} index - Index at which to start changing the array. If negative, will begin that many elements from the end
+   * @param {any} howMany - An integer indicating the number of old array elements to remove. If howMany is 0, no elements are removed.
+   * @param {any} elements - One or more items to add to the array
+   * @returns {any} An array containing the removed elements. If only one element is removed, an array of one element is returned.
    * @url http://www.espruino.com/Reference#l_Array_splice
    */
   splice(index: number, howMany: any, ...elements: any[]): any;
@@ -5813,6 +7321,8 @@ interface Array<T> {
   /**
    * Remove and return the first element of the array.
    * This is the opposite of `[1,2,3].pop()`, which takes an element off the end.
+   *
+   * @returns {any} The element that was removed
    * @url http://www.espruino.com/Reference#l_Array_shift
    */
   shift(): any;
@@ -5820,80 +7330,120 @@ interface Array<T> {
   /**
    * Add one or more items to the start of the array, and return its new length.
    * This is the opposite of `[1,2,3].push(4)`, which puts one or more elements on the end.
+   *
+   * @param {any} elements - One or more items to add to the beginning of the array
+   * @returns {number} The new array length
    * @url http://www.espruino.com/Reference#l_Array_unshift
    */
   unshift(...elements: any[]): number;
 
   /**
    * Return a copy of a portion of this array (in a new array)
+   *
+   * @param {number} start - Start index
+   * @param {any} end - End index (optional)
+   * @returns {any} A new array
    * @url http://www.espruino.com/Reference#l_Array_slice
    */
   slice(start: number, end: any): any;
 
   /**
    * Do an in-place quicksort of the array
+   *
+   * @param {any} var - A function to use to compare array elements (or undefined)
+   * @returns {any} This array object
    * @url http://www.espruino.com/Reference#l_Array_sort
    */
   sort(variable: any): any;
 
   /**
    * Create a new array, containing the elements from this one and any arguments, if any argument is an array then those elements will be added.
+   *
+   * @param {any} args - Any items to add to the array
+   * @returns {any} An Array
    * @url http://www.espruino.com/Reference#l_Array_concat
    */
   concat(...args: any[]): any;
 
   /**
    * Fill this array with the given value, for every index `>= start` and `< end`
+   *
+   * @param {any} value - The value to fill the array with
+   * @param {number} start - Optional. The index to start from (or 0). If start is negative, it is treated as length+start where length is the length of the array
+   * @param {any} end - Optional. The index to end at (or the array length). If end is negative, it is treated as length+end.
+   * @returns {any} This array
    * @url http://www.espruino.com/Reference#l_Array_fill
    */
   fill(value: any, start: number, end: any): any;
 
   /**
    * Reverse all elements in this array (in place)
+   * @returns {any} The array, but reversed.
    * @url http://www.espruino.com/Reference#l_Array_reverse
    */
   reverse(): any;
 }
 
+/**
+ * This is the built-in JavaScript class for arrays.
+ * Arrays can be defined with ```[]```, ```new Array()```, or ```new Array(length)```
+ * @url http://www.espruino.com/Reference#Array
+ */
 declare const Array: ArrayConstructor
 
-/**
- * This is the built-in class for Objects
- * @url http://www.espruino.com/Reference#Object
- */
 interface ObjectConstructor {
   /**
    * Return all enumerable keys of the given object
+   *
+   * @param {any} object - The object to return keys for
+   * @returns {any} An array of strings - one for each key on the given object
    * @url http://www.espruino.com/Reference#l_Object_keys
    */
   keys(object: any): any;
 
   /**
    * Returns an array of all properties (enumerable or not) found directly on a given object.
+   *
+   * @param {any} object - The Object to return a list of property names for
+   * @returns {any} An array of the Object's own properties
    * @url http://www.espruino.com/Reference#l_Object_getOwnPropertyNames
    */
   getOwnPropertyNames(object: any): any;
 
   /**
    * Return all enumerable values of the given object
+   *
+   * @param {any} object - The object to return values for
+   * @returns {any} An array of values - one for each key on the given object
    * @url http://www.espruino.com/Reference#l_Object_values
    */
   values(object: any): any;
 
   /**
    * Return all enumerable keys and values of the given object
+   *
+   * @param {any} object - The object to return values for
+   * @returns {any} An array of `[key,value]` pairs - one for each key on the given object
    * @url http://www.espruino.com/Reference#l_Object_entries
    */
   entries(object: any): any;
 
   /**
    * Creates a new object with the specified prototype object and properties. properties are currently unsupported.
+   *
+   * @param {any} proto - A prototype object
+   * @param {any} propertiesObject - An object containing properties. NOT IMPLEMENTED
+   * @returns {any} A new object
    * @url http://www.espruino.com/Reference#l_Object_create
    */
   create(proto: any, propertiesObject: any): any;
 
   /**
    * Get information on the given property in the object, or undefined
+   *
+   * @param {any} obj - The object
+   * @param {any} name - The name of the property
+   * @returns {any} An object with a description of the property. The values of writable/enumerable/configurable may not be entirely correct due to Espruino's implementation.
    * @url http://www.espruino.com/Reference#l_Object_getOwnPropertyDescriptor
    */
   getOwnPropertyDescriptor(obj: any, name: any): any;
@@ -5907,12 +7457,21 @@ interface ObjectConstructor {
    * * `get` (function) - the getter function, or undefined if no getter (only supported on some platforms)
    * * `set` (function) - the setter function, or undefined if no setter (only supported on some platforms)
    * **Note:** `configurable`, `enumerable` and `writable` are not implemented and will be ignored.
+   *
+   * @param {any} obj - An object
+   * @param {any} name - The name of the property
+   * @param {any} desc - The property descriptor
+   * @returns {any} The object, obj.
    * @url http://www.espruino.com/Reference#l_Object_defineProperty
    */
   defineProperty(obj: any, name: any, desc: any): any;
 
   /**
    * Adds new properties to the Object. See `Object.defineProperty` for more information
+   *
+   * @param {any} obj - An object
+   * @param {any} props - An object whose fields represent property names, and whose values are property descriptors.
+   * @returns {any} The object, obj.
    * @url http://www.espruino.com/Reference#l_Object_defineProperties
    */
   defineProperties(obj: any, props: any): any;
@@ -5920,6 +7479,9 @@ interface ObjectConstructor {
   /**
    * Get the prototype of the given object - this is like writing `object.__proto__`
    * but is the 'proper' ES6 way of doing it
+   *
+   * @param {any} object - An object
+   * @returns {any} The prototype
    * @url http://www.espruino.com/Reference#l_Object_getPrototypeOf
    */
   getPrototypeOf(object: any): any;
@@ -5927,6 +7489,10 @@ interface ObjectConstructor {
   /**
    * Set the prototype of the given object - this is like writing
    * `object.__proto__ = prototype` but is the 'proper' ES6 way of doing it
+   *
+   * @param {any} object - An object
+   * @param {any} prototype - The prototype to set on the object
+   * @returns {any} The object passed in
    * @url http://www.espruino.com/Reference#l_Object_setPrototypeOf
    */
   setPrototypeOf(object: any, prototype: any): any;
@@ -5935,12 +7501,19 @@ interface ObjectConstructor {
    * Appends all keys and values in any subsequent objects to the first object
    * **Note:** Unlike the standard ES6 `Object.assign`, this will throw an exception
    * if given raw strings, bools or numbers rather than objects.
+   *
+   * @param {any} args - The target object, then any items objects to use as sources of keys
+   * @returns {any} The target object
    * @url http://www.espruino.com/Reference#l_Object_assign
    */
   assign(...args: any[]): any;
 
   /**
    * Creates an Object from the supplied argument
+   * @constructor
+   *
+   * @param {any} value - A single value to be converted to an object
+   * @returns {any} An Object
    * @url http://www.espruino.com/Reference#l_Object_Object
    */
   new(value: any): any;
@@ -5949,24 +7522,30 @@ interface ObjectConstructor {
 interface Object {
   /**
    * Find the length of the object
+   * @returns {any} The length of the object
    * @url http://www.espruino.com/Reference#l_Object_length
    */
   length: any;
 
   /**
    * Returns the primitive value of this object.
+   * @returns {any} The primitive value of this object
    * @url http://www.espruino.com/Reference#l_Object_valueOf
    */
   valueOf(): any;
 
   /**
    * Convert the Object to a string
+   *
+   * @param {any} radix - If the object is an integer, the radix (between 2 and 36) to use. NOTE: Setting a radix does not work on floating point numbers.
+   * @returns {any} A String representing the object
    * @url http://www.espruino.com/Reference#l_Object_toString
    */
   toString(radix: any): any;
 
   /**
    * Copy this object completely
+   * @returns {any} A copy of this Object
    * @url http://www.espruino.com/Reference#l_Object_clone
    */
   clone(): any;
@@ -5974,6 +7553,9 @@ interface Object {
   /**
    * Return true if the object (not its prototype) has the given property.
    * NOTE: This currently returns false-positives for built-in functions in prototypes
+   *
+   * @param {any} name - The name of the property to search for
+   * @returns {boolean} True if it exists, false if it doesn't
    * @url http://www.espruino.com/Reference#l_Object_hasOwnProperty
    */
   hasOwnProperty(name: any): boolean;
@@ -6010,6 +7592,9 @@ interface Object {
    * o.emit('answer', 44);
    * // nothing printed
    * ```
+   *
+   * @param {any} event - The name of the event, for instance 'data'
+   * @param {any} listener - The listener to call when this event is received
    * @url http://www.espruino.com/Reference#l_Object_on
    */
   on(event: any, listener: any): any;
@@ -6017,6 +7602,9 @@ interface Object {
   /**
    * Call any event listeners that were added to this object with `Object.on`, for instance `obj.emit('data', 'Foo')`.
    * For more information see `Object.on`
+   *
+   * @param {any} event - The name of the event, for instance 'data'
+   * @param {any} args - Optional arguments
    * @url http://www.espruino.com/Reference#l_Object_emit
    */
   emit(event: any, ...args: any[]): any;
@@ -6031,6 +7619,9 @@ interface Object {
    * Serial1.removeListener("data", foo);
    * ```
    * For more information see `Object.on`
+   *
+   * @param {any} event - The name of the event, for instance 'data'
+   * @param {any} listener - The listener to remove
    * @url http://www.espruino.com/Reference#l_Object_removeListener
    */
   removeListener(event: any, listener: any): any;
@@ -6044,20 +7635,26 @@ interface Object {
    * Serial1.removeAllListeners(); // removes all listeners for all event types
    * ```
    * For more information see `Object.on`
+   *
+   * @param {any} event - The name of the event, for instance `'data'`. If not specified *all* listeners are removed.
    * @url http://www.espruino.com/Reference#l_Object_removeAllListeners
    */
   removeAllListeners(event: any): any;
 }
 
+/**
+ * This is the built-in class for Objects
+ * @url http://www.espruino.com/Reference#Object
+ */
 declare const Object: ObjectConstructor
 
-/**
- * This is the built-in class for Functions
- * @url http://www.espruino.com/Reference#Function
- */
 interface FunctionConstructor {
   /**
    * Creates a function
+   * @constructor
+   *
+   * @param {any} args - Zero or more arguments (as strings), followed by a string representing the code to run
+   * @returns {any} A Number object
    * @url http://www.espruino.com/Reference#l_Function_Function
    */
   new(...args: any[]): any;
@@ -6067,29 +7664,47 @@ interface Function {
   /**
    * This replaces the function with the one in the argument - while keeping the old function's scope.
    * This allows inner functions to be edited, and is used when edit() is called on an inner function.
+   *
+   * @param {any} newFunc - The new function to replace this function with
    * @url http://www.espruino.com/Reference#l_Function_replaceWith
    */
   replaceWith(newFunc: any): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
+   *
+   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} params - Optional Parameters
+   * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_call
    */
   call(this: any, ...params: any[]): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
+   *
+   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} args - Optional Array of Arguments
+   * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_apply
    */
   apply(this: any, args: any): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
+   *
+   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} params - Optional Default parameters that are prepended to the call
+   * @returns {any} The 'bound' function
    * @url http://www.espruino.com/Reference#l_Function_bind
    */
   bind(this: any, ...params: any[]): any;
 }
 
+/**
+ * This is the built-in class for Functions
+ * @url http://www.espruino.com/Reference#Function
+ */
 declare const Function: FunctionConstructor
 
 /**
@@ -6115,6 +7730,9 @@ declare class E {
    * good practise to avoid accidental writes before Espruino is initialised, and some cards
    * will not work reliably without one.
    * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
+   *
+   * @param {any} spi - The SPI object to use for communication
+   * @param {Pin} csPin - The pin to use for Chip Select
    * @url http://www.espruino.com/Reference#l_E_connectSDCard
    */
   static connectSDCard(spi: any, csPin: Pin): any;
@@ -6127,6 +7745,10 @@ declare class E {
 
   /**
    * Open a file
+   *
+   * @param {any} path - the path to the file to open.
+   * @param {any} mode - The mode to use when opening the file. Valid values for mode are 'r' for read, 'w' for write new, 'w+' for write existing, and 'a' for append. If not specified, the default is 'r'.
+   * @returns {any} A File object
    * @url http://www.espruino.com/Reference#l_E_openFile
    */
   static openFile(path: any, mode: any): File;
@@ -6149,6 +7771,13 @@ declare class E {
    * This will create a drive of 100 * 4096 bytes at 0x300000. Be careful with the selection of flash addresses as you can overwrite firmware!
    * You only need to format once, as each will erase the content.
    * `E.flashFatFS({ addr:0x300000,sectors:100,format:true });`
+   *
+   * @param {any} options
+   * An optional object `{ addr : int=0x300000, sectors : int=256, format : bool=false }`
+   * addr : start address in flash
+   * sectors: number of sectors to use
+   * format:  Format the media
+   * @returns {boolean} True on success, or false on failure
    * @url http://www.espruino.com/Reference#l_E_flashFatFS
    */
   static flashFatFS(options: any): boolean;
@@ -6191,6 +7820,9 @@ declare class E {
    * The menu will stay onscreen and active until explicitly removed,
    * which you can do by calling `E.showMenu()` without arguments.
    * See http://www.espruino.com/graphical_menu for more detailed information.
+   *
+   * @param {any} menu - An object containing name->function mappings to to be used in a menu
+   * @returns {any} A menu object with `draw`, `move` and `select` functions
    * @url http://www.espruino.com/Reference#l_E_showMenu
    */
   static showMenu(menu: any): any;
@@ -6201,6 +7833,9 @@ declare class E {
    * ```
    * E.showMessage("These are\nLots of\nLines","My Title")
    * ```
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} title - (optional) a title for the message
    * @url http://www.espruino.com/Reference#l_E_showMessage
    */
   static showMessage(message: any, title: any): any;
@@ -6232,6 +7867,10 @@ declare class E {
    *   buttons : {"Ok":true,"Cancel":false} // list of button text & return value
    * }
    * ```
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} options - (optional) an object of options (see below)
+   * @returns {any} A promise that is resolved when 'Ok' is pressed
    * @url http://www.espruino.com/Reference#l_E_showPrompt
    */
   static showPrompt(message: any, options: any): any;
@@ -6249,6 +7888,10 @@ declare class E {
    * });
    * ```
    * To remove the window, call `E.showAlert()` with no arguments.
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} options - (optional) a title for the message
+   * @returns {any} A promise that is resolved when 'Ok' is pressed
    * @url http://www.espruino.com/Reference#l_E_showAlert
    */
   static showAlert(message: any, options: any): any;
@@ -6272,6 +7915,9 @@ declare class E {
    * ```
    * NRF.ancsGetNotificationInfo( event.uid ).then(a=>print("Notify",E.toJS(a)));
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `info` An object (see below)
    * @url http://www.espruino.com/Reference#l_E_ANCS
    */
   static on(event: "ANCS", callback: (info: any) => void): void;
@@ -6285,6 +7931,9 @@ declare class E {
    * truncated : bool // the 'value' was too big to be sent completely
    * }
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `info` An object (see below)
    * @url http://www.espruino.com/Reference#l_E_AMS
    */
   static on(event: "AMS", callback: (info: any) => void): void;
@@ -6347,6 +7996,9 @@ declare class E {
    * menu[""] = { title:"Hello" };
    * E.showMenu(menu);
    * ```
+   *
+   * @param {any} menu - An object containing name->function mappings to to be used in a menu
+   * @returns {any} A menu object with `draw`, `move` and `select` functions
    * @url http://www.espruino.com/Reference#l_E_showMenu
    */
   static showMenu(menu: any): any;
@@ -6364,6 +8016,9 @@ declare class E {
    *   img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")
    * })
    * ```
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} options - (optional) a title for the message, or an object of options `{title:string, img:image_string}`
    * @url http://www.espruino.com/Reference#l_E_showMessage
    */
   static showMessage(message: any, options: any): any;
@@ -6403,6 +8058,10 @@ declare class E {
    *   img: "image_string"                   // optional image string to draw
    * }
    * ```
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} options - (optional) an object of options (see below)
+   * @returns {any} A promise that is resolved when 'Ok' is pressed
    * @url http://www.espruino.com/Reference#l_E_showPrompt
    */
   static showPrompt(message: any, options: any): any;
@@ -6435,6 +8094,9 @@ declare class E {
    * });
    * ```
    * To remove the scroller, just call `E.showScroller()`
+   *
+   * @param {any} options - An object containing `{ h, c, draw, select }` (see below)
+   * @returns {any} A menu object with `draw()` and `drawItem(itemNo)` functions
    * @url http://www.espruino.com/Reference#l_E_showScroller
    */
   static showScroller(options: any): any;
@@ -6472,6 +8134,10 @@ declare class E {
    * });
    * ```
    * To remove the window, call `E.showAlert()` with no arguments.
+   *
+   * @param {any} message - A message to display. Can include newlines
+   * @param {any} options - (optional) a title for the message
+   * @returns {any} A promise that is resolved when 'Ok' is pressed
    * @url http://www.espruino.com/Reference#l_E_showAlert
    */
   static showAlert(message: any, options: any): any;
@@ -6488,6 +8154,8 @@ declare class E {
    * **Note:** that subsequent calls to `E.on('init', ` will **add** a new handler,
    * rather than replacing the last one. This allows you to write modular code -
    * something that was not possible with `onInit`.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_E_init
    */
   static on(event: "init", callback: () => void): void;
@@ -6504,6 +8172,8 @@ declare class E {
    * **NOTE:** This event is not called when the device is 'hard reset' - for
    * example by removing power, hitting an actual reset button, or via
    * a Watchdog timer reset.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_E_kill
    */
   static on(event: "kill", callback: () => void): void;
@@ -6517,6 +8187,9 @@ declare class E {
    * This event will only be emitted when error flag is set. If the error
    * flag was already set nothing will be emitted. To clear error flags
    * so that you do get a callback each time a flag is set, call `E.getErrorFlags()`.
+   * @param {string} event - The event to listen to.
+   * @param {(errorFlags: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `errorFlags` An array of new error flags, as would be returned by `E.getErrorFlags()`. Error flags that were present before won't be reported.
    * @url http://www.espruino.com/Reference#l_E_errorFlag
    */
   static on(event: "errorFlag", callback: (errorFlags: any) => void): void;
@@ -6535,6 +8208,11 @@ declare class E {
    *   last = t.b;
    * });
    * ```
+   * @param {string} event - The event to listen to.
+   * @param {(x: number, y: number, b: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `x` X coordinate in display coordinates
+   * * `y` Y coordinate in display coordinates
+   * * `b` Touch count - 0 for released, 1 for pressed
    * @url http://www.espruino.com/Reference#l_E_touch
    */
   static on(event: "touch", callback: (x: number, y: number, b: number) => void): void;
@@ -6544,6 +8222,7 @@ declare class E {
    * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on other devices it may not be desperately well calibrated.
    * While this is implemented on Espruino boards, it may not be implemented on other devices. If so it'll return NaN.
    *  **Note:** This is not entirely accurate and varies by a few degrees from chip to chip. It measures the **die temperature**, so when connected to USB it could be reading 10 over degrees C above ambient temperature. When running from battery with `setDeepSleep(true)` it is much more accurate though.
+   * @returns {number} The temperature in degrees C
    * @url http://www.espruino.com/Reference#l_E_getTemperature
    */
   static getTemperature(): number;
@@ -6554,6 +8233,7 @@ declare class E {
    * It will be slightly noisy, so if you need this for accurate measurements we'd recommend that you call
    * this function several times and average the results.
    * While this is implemented on Espruino boards, it may not be implemented on other devices. If so it'll return NaN.
+   * @returns {number} The voltage (in Volts) that a reading of 1 from `analogRead` actually represents - usually around 3.3v
    * @url http://www.espruino.com/Reference#l_E_getAnalogVRef
    */
   static getAnalogVRef(): number;
@@ -6564,30 +8244,52 @@ declare class E {
    * If you're executing a thumb function, you'll almost certainly need to set the bottom bit of the address to 1.
    * Note it's not guaranteed that the call signature you provide can be used - there are limits on the number of arguments allowed.
    * When supplying `data`, if it is a 'flat string' then it will be used directly, otherwise it'll be converted to a flat string and used.
+   *
+   * @param {number} addr - The address in memory of the function (or offset in `data` if it was supplied
+   * @param {any} sig - The signature of the call, `returnType (arg1,arg2,...)`. Allowed types are `void`,`bool`,`int`,`double`,`Pin`,`JsVar`
+   * @param {any} data - (Optional) A string containing the function itself. If not supplied then 'addr' is used as an absolute address.
+   * @returns {any} The native function
    * @url http://www.espruino.com/Reference#l_E_nativeCall
    */
   static nativeCall(addr: number, sig: any, data: any): any;
 
   /**
    * Clip a number to be between min and max (inclusive)
+   *
+   * @param {number} x - A floating point value to clip
+   * @param {number} min - The smallest the value should be
+   * @param {number} max - The largest the value should be
+   * @returns {number} The value of x, clipped so as not to be below min or above max.
    * @url http://www.espruino.com/Reference#l_E_clip
    */
   static clip(x: number, min: number, max: number): number;
 
   /**
    * Sum the contents of the given Array, String or ArrayBuffer and return the result
+   *
+   * @param {any} arr - The array to sum
+   * @returns {number} The sum of the given buffer
    * @url http://www.espruino.com/Reference#l_E_sum
    */
   static sum(arr: any): number;
 
   /**
    * Work out the variance of the contents of the given Array, String or ArrayBuffer and return the result. This is equivalent to `v=0;for (i in arr) v+=Math.pow(mean-arr[i],2)`
+   *
+   * @param {any} arr - The array to work out the variance for
+   * @param {number} mean - The mean value of the array
+   * @returns {number} The variance of the given buffer
    * @url http://www.espruino.com/Reference#l_E_variance
    */
   static variance(arr: any, mean: number): number;
 
   /**
    * Convolve arr1 with arr2. This is equivalent to `v=0;for (i in arr1) v+=arr1[i] * arr2[(i+offset) % arr2.length]`
+   *
+   * @param {any} arr1 - An array to convolve
+   * @param {any} arr2 - An array to convolve
+   * @param {number} offset - The mean value of the array
+   * @returns {number} The variance of the given buffer
    * @url http://www.espruino.com/Reference#l_E_convolve
    */
   static convolve(arr1: any, arr2: any, offset: number): number;
@@ -6601,6 +8303,10 @@ declare class E {
    * most platforms.
    * **Note:** on the Original Espruino board, FFTs are performed in 64bit arithmetic as there isn't
    * space to include the 32 bit maths routines (2x more RAM is required).
+   *
+   * @param {any} arrReal - An array of real values
+   * @param {any} arrImage - An array of imaginary values (or if undefined, all values will be taken to be 0)
+   * @param {boolean} inverse - Set this to true if you want an inverse FFT - otherwise leave as 0
    * @url http://www.espruino.com/Reference#l_E_FFT
    */
   static FFT(arrReal: any, arrImage: any, inverse: boolean): any;
@@ -6609,22 +8315,25 @@ declare class E {
    * Enable the watchdog timer. This will reset Espruino if it isn't able to return to the idle loop within the timeout.
    * If `isAuto` is false, you must call `E.kickWatchdog()` yourself every so often or the chip will reset.
    * ```
-   * E.enableWatchdog(0.5); // automatic mode                                                        
+   * E.enableWatchdog(0.5); // automatic mode
    * while(1); // Espruino will reboot because it has not been idle for 0.5 sec
    * ```
    * ```
-   * E.enableWatchdog(1, false);                                                         
+   * E.enableWatchdog(1, false);
    * setInterval(function() {
    *   if (everything_ok)
    *     E.kickWatchdog();
    * }, 500);
    * // Espruino will now reset if everything_ok is false,
-   * // or if the interval fails to be called 
+   * // or if the interval fails to be called
    * ```
    * **NOTE:** This is only implemented on STM32 and nRF5x devices (all official Espruino boards).
    * **NOTE:** On STM32 (Pico, WiFi, Original) with `setDeepSleep(1)` you need to
    * explicitly wake Espruino up with an interval of less than the watchdog timeout or the watchdog will fire and
    * the board will reboot. You can do this with `setInterval("", time_in_milliseconds)`.
+   *
+   * @param {number} timeout - The timeout in seconds before a watchdog reset
+   * @param {any} isAuto - If undefined or true, the watchdog is kicked automatically. If not, you must call `E.kickWatchdog()` yourself
    * @url http://www.espruino.com/Reference#l_E_enableWatchdog
    */
   static enableWatchdog(timeout: number, isAuto: any): any;
@@ -6645,6 +8354,7 @@ declare class E {
    * `'LOW_MEMORY'`: Memory is running low - Espruino had to run a garbage collection pass or remove some of the command history
    * `'MEMORY'`: Espruino ran out of memory and was unable to allocate some data that it needed.
    * `'UART_OVERFLOW'` : A UART received data but it was not read in time and was lost
+   * @returns {any} An array of error flags
    * @url http://www.espruino.com/Reference#l_E_getErrorFlags
    */
   static getErrorFlags(): any;
@@ -6655,6 +8365,7 @@ declare class E {
    * * `pretokenise` - When adding functions, pre-minify them and tokenise reserved words
    * * `unsafeFlash` - Some platforms stop writes/erases to interpreter memory to stop you bricking the device accidentally - this removes that protection
    * * `unsyncFiles` - When writing files, *don't* flush all data to the SD card after each command (the default is *to* flush). This is much faster, but can cause filesystem damage if power is lost without the filesystem unmounted.
+   * @returns {any} An object containing flag names and their values
    * @url http://www.espruino.com/Reference#l_E_getFlags
    */
   static getFlags(): any;
@@ -6662,11 +8373,21 @@ declare class E {
   /**
    * Set the Espruino interpreter flags that control the way it handles your JavaScript code.
    * Run `E.getFlags()` and check its description for a list of available flags and their values.
+   *
+   * @param {any} flags - An object containing flag names and boolean values. You need only specify the flags that you want to change.
    * @url http://www.espruino.com/Reference#l_E_setFlags
    */
   static setFlags(flags: any): any;
 
   /**
+   *
+   * @param {any} source - The source file/stream that will send content.
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} options
+   * An optional object `{ chunkSize : int=64, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_E_pipe
    */
   static pipe(source: any, destination: any, options: any): any;
@@ -6674,6 +8395,9 @@ declare class E {
   /**
    * Create an ArrayBuffer from the given string. This is done via a reference, not a copy - so it is very fast and memory efficient.
    * Note that this is an ArrayBuffer, not a Uint8Array. To get one of those, do: `new Uint8Array(E.toArrayBuffer('....'))`.
+   *
+   * @param {any} str - The string to convert to an ArrayBuffer
+   * @returns {any} An ArrayBuffer that uses the given string
    * @url http://www.espruino.com/Reference#l_E_toArrayBuffer
    */
   static toArrayBuffer(str: any): ArrayBufferView;
@@ -6688,6 +8412,9 @@ declare class E {
    * flat string of the same length, the backing string will be returned without doing
    * a copy or other allocation. The same applies if there's a single argument which
    * is itself a flat string.
+   *
+   * @param {any} args - The arguments to convert to a String
+   * @returns {any} A String (or `undefined` if a Flat String cannot be created)
    * @url http://www.espruino.com/Reference#l_E_toString
    */
   static toString(...args: any[]): String;
@@ -6712,6 +8439,9 @@ declare class E {
    * E.toUint8Array(["hi",{callback:function() { return [1,2,3] }}])
    * =new Uint8Array([104, 105, 1, 2, 3])
    * ```
+   *
+   * @param {any} args - The arguments to convert to a Uint8Array
+   * @returns {any} A Uint8Array
    * @url http://www.espruino.com/Reference#l_E_toUint8Array
    */
   static toUint8Array(...args: any[]): Uint8Array;
@@ -6731,6 +8461,9 @@ declare class E {
    * implications if you don't trust the source of the string).
    * On the desktop [JSON5 parsers](https://github.com/json5/json5)
    * will parse the strings produced by `E.toJS` without trouble.
+   *
+   * @param {any} arg - The JS variable to convert to a string
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_E_toJS
    */
   static toJS(arg: any): String;
@@ -6742,6 +8475,10 @@ declare class E {
    * from flash memory with `eval(E.memoryArea( ... ))`)
    * **Note:** This is only tested on STM32-based platforms (Espruino Original
    * and Espruino Pico) at the moment.
+   *
+   * @param {number} addr - The address of the memory area
+   * @param {number} len - The length (in bytes) of the memory area
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_E_memoryArea
    */
   static memoryArea(addr: number, len: number): String;
@@ -6757,6 +8494,9 @@ declare class E {
    * setting up a display or keyboard).
    * To remove boot code that has been saved previously, use `E.setBootCode("")`
    * **Note:** this removes any code that was previously saved with `save()`
+   *
+   * @param {any} code - The code to execute (as a string)
+   * @param {boolean} alwaysExec - Whether to always execute the code (even after a reset)
    * @url http://www.espruino.com/Reference#l_E_setBootCode
    */
   static setBootCode(code: any, alwaysExec: boolean): any;
@@ -6784,6 +8524,9 @@ declare class E {
    * clock falls much below 48Mhz.
    * ### ESP8266
    * Just specify an integer value, either 80 or 160 (for 80 or 160Mhz)
+   *
+   * @param {any} options - Platform-specific options for setting clock speed
+   * @returns {number} The actual frequency the clock has been set to
    * @url http://www.espruino.com/Reference#l_E_setClock
    */
   static setClock(options: any): number;
@@ -6807,12 +8550,16 @@ declare class E {
    *                //   the console automatically.
    * }
    * ```
+   *
+   * @param {any} device
+   * @param {any} options - (optional) object of options, see below
    * @url http://www.espruino.com/Reference#l_E_setConsole
    */
   static setConsole(device: any, options: any): any;
 
   /**
    * Returns the current console device - see `E.setConsole` for more information.
+   * @returns {any} The current console device as a string, or just `null` if the console is null
    * @url http://www.espruino.com/Reference#l_E_getConsole
    */
   static getConsole(): any;
@@ -6821,6 +8568,9 @@ declare class E {
    * Reverse the 8 bits in a byte, swapping MSB and LSB.
    * For example, `E.reverseByte(0b10010000) == 0b00001001`.
    * Note that you can reverse all the bytes in an array with: `arr = arr.map(E.reverseByte)`
+   *
+   * @param {number} x - A byte value to reverse the bits of
+   * @returns {number} The byte with reversed bits
    * @url http://www.espruino.com/Reference#l_E_reverseByte
    */
   static reverseByte(x: number): number;
@@ -6893,6 +8643,10 @@ declare class E {
    * In this case setting depth to `2` will make no difference as there are
    * no more children to traverse.
    * See http://www.espruino.com/Internals for more information
+   *
+   * @param {any} v - A variable to get the size of
+   * @param {number} depth - The depth that detail should be provided for. If depth<=0 or undefined, a single integer will be returned
+   * @returns {any} Information about the variable size - see below
    * @url http://www.espruino.com/Reference#l_E_getSizeOf
    */
   static getSizeOf(v: any, depth: number): any;
@@ -6905,12 +8659,16 @@ declare class E {
    * peripherals such as DMA so that they write directly to
    * JS variables.
    * See http://www.espruino.com/Internals for more information
+   *
+   * @param {any} v - A variable to get the address of
+   * @param {boolean} flatAddress - (boolean) If `true` and a Flat String or Flat ArrayBuffer is supplied, return the address of the data inside it - otherwise 0. If `false` (the default) return the address of the JsVar itself.
+   * @returns {number} The address of the given variable
    * @url http://www.espruino.com/Reference#l_E_getAddressOf
    */
   static getAddressOf(v: any, flatAddress: boolean): number;
 
   /**
-   * Take each element of the `from` array, look it up in `map` (or call `map(value,index)` 
+   * Take each element of the `from` array, look it up in `map` (or call `map(value,index)`
    * if it is a function), and write it into the corresponding
    * element in the `to` array.
    * You can use an array to map:
@@ -6940,24 +8698,37 @@ declare class E {
    * E.mapInPlace(a, b, undefined, -12); // 12 bits from 8 bit input, lsb-first
    * // b = [0x412, 0x563, 0x078, 0]
    * ```
+   *
+   * @param {any} from - An ArrayBuffer to read elements from
+   * @param {any} to - An ArrayBuffer to write elements too
+   * @param {any} map - An array or `function(value,index)` to use to map one element to another, or `undefined` to provide no mapping
+   * @param {number} bits - If specified, the number of bits per element (MSB first) - otherwise use a 1:1 mapping. If negative, use LSB first.
    * @url http://www.espruino.com/Reference#l_E_mapInPlace
    */
   static mapInPlace(from: any, to: any, map: any, bits: number): any;
 
   /**
    * Search in an Object, Array, or Function
+   *
+   * @param {any} haystack - The Array/Object/Function to search
+   * @param {any} needle - The key to search for
+   * @param {boolean} returnKey - If true, return the key, else return the value itself
+   * @returns {any} The value in the Object matching 'needle', or if `returnKey==true` the key's name - or undefined
    * @url http://www.espruino.com/Reference#l_E_lookupNoCase
    */
   static lookupNoCase(haystack: any, needle: any, returnKey: boolean): any;
 
   /**
    * Get the current interpreter state in a text form such that it can be copied to a new device
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_E_dumpStr
    */
   static dumpStr(): String;
 
   /**
    * Set the seed for the random number generator used by `Math.random()`.
+   *
+   * @param {number} v - The 32 bit integer seed to use for the random number generator
    * @url http://www.espruino.com/Reference#l_E_srand
    */
   static srand(v: number): any;
@@ -6967,6 +8738,7 @@ declare class E {
    * method reads from the internal voltage reference several times, xoring and
    * rotating to try and make a relatively random value from the noise in the
    * signal.
+   * @returns {number} A random number
    * @url http://www.espruino.com/Reference#l_E_hwRand
    */
   static hwRand(): number;
@@ -6974,6 +8746,9 @@ declare class E {
   /**
    * Perform a standard 32 bit CRC (Cyclic redundancy check) on the supplied data (one byte at a time)
    * and return the result as an unsigned integer.
+   *
+   * @param {any} data - Iterable data to perform CRC32 on (each element treated as a byte)
+   * @returns {any} The CRC of the supplied data
    * @url http://www.espruino.com/Reference#l_E_CRC32
    */
   static CRC32(data: any): any;
@@ -6984,6 +8759,12 @@ declare class E {
    * be used as: `Graphics.setColor(E.HSBtoRGB(h, s, b))`
    * You can quickly set RGB items in an Array or Typed Array using `array.set(E.HSBtoRGB(h, s, b,true), offset)`,
    * which can be useful with arrays used with `require("neopixel").write`.
+   *
+   * @param {number} hue - The hue, as a value between 0 and 1
+   * @param {number} sat - The saturation, as a value between 0 and 1
+   * @param {number} bri - The brightness, as a value between 0 and 1
+   * @param {boolean} asArray - If true, return an array of [R,G,B] values betwen 0 and 255
+   * @returns {any} A 24 bit number containing bytes representing red, green, and blue `0xBBGGRR`. Or if `asArray` is true, an array `[R,G,B]`
    * @url http://www.espruino.com/Reference#l_E_HSBtoRGB
    */
   static HSBtoRGB(hue: number, sat: number, bri: number, asArray: boolean): any;
@@ -6999,6 +8780,8 @@ declare class E {
    * to execute arbitrary JavaScript code on the device (eg, you use `eval` on input
    * from unknown sources) or read the device's firmware then they may be able to
    * obtain it.
+   *
+   * @param {any} password - The password - max 20 chars
    * @url http://www.espruino.com/Reference#l_E_setPassword
    */
   static setPassword(password: any): any;
@@ -7016,6 +8799,8 @@ declare class E {
    * Note that `E.setTimeZone()` will have no effect when daylight savings time rules have been set with `E.setDST()`. The
    * timezone value will be stored, but never used so long as DST settings are in effect.
    * Time can be set with `setTime`.
+   *
+   * @param {number} zone - The time zone in hours
    * @url http://www.espruino.com/Reference#l_E_setTimeZone
    */
   static setTimeZone(zone: number): any;
@@ -7043,6 +8828,8 @@ declare class E {
    * Using Ukraine as an example, we have a time which is 2 hours ahead of GMT in winter (EET) and 3 hours in summer (EEST). DST starts at 03:00 EET on the last Sunday in March,
    * and ends at 04:00 EEST on the last Sunday in October. So someone in Ukraine might call `E.setDST(60,120,4,0,2,0,180,4,0,9,0,240);`
    * Note that when DST parameters are set (i.e. when `dstOffset` is not zero), `E.setTimeZone()` has no effect.
+   *
+   * @param {any} params - An array containing the settings for DST
    * @url http://www.espruino.com/Reference#l_E_setDST
    */
   static setDST(...params: any[]): any;
@@ -7056,6 +8843,10 @@ declare class E {
    * GPIO.DIRSET = 1; // set GPIO0 to output
    * GPIO.OUT ^= 1; // toggle the output state of GPIO0
    * ```
+   *
+   * @param {any} baseAddress - The base address (added to every address in `registers`)
+   * @param {any} registers - An object containing `{name:address}`
+   * @returns {any} An object where each field is memory-mapped to a register.
    * @url http://www.espruino.com/Reference#l_E_memoryMap
    */
   static memoryMap(baseAddress: any, registers: any): any;
@@ -7066,6 +8857,9 @@ declare class E {
    * by the Espruino IDE (or command-line tools) at upload time and is
    * replaced with machine code and an `E.nativeCall` call.
    * See [the documentation on the Assembler](http://www.espruino.com/Assembler) for more information.
+   *
+   * @param {any} callspec - The arguments this assembly takes - eg `void(int)`
+   * @param {any} assemblycode - One of more strings of assembler code
    * @url http://www.espruino.com/Reference#l_E_asm
    */
   static asm(callspec: any, ...assemblycode: any[]): any;
@@ -7077,6 +8871,8 @@ declare class E {
    * to our web service to be compiled, and is replaced with machine code
    * and an `E.nativeCall` call.
    * See [the documentation on Inline C](http://www.espruino.com/InlineC) for more information and examples.
+   *
+   * @param {any} code - A Templated string of C code
    * @url http://www.espruino.com/Reference#l_E_compiledC
    */
   static compiledC(code: any): any;
@@ -7095,11 +8891,16 @@ declare class E {
    * USB HID will only take effect next time you unplug and re-plug your Espruino. If you're
    * disconnecting it from power you'll have to make sure you have `save()`d after calling
    * this function.
+   *
+   * @param {any} opts - An object containing at least reportDescriptor, an array representing the report descriptor. Pass undefined to disable HID.
    * @url http://www.espruino.com/Reference#l_E_setUSBHID
    */
   static setUSBHID(opts: any): any;
 
   /**
+   *
+   * @param {any} data - An array of bytes to send as a USB HID packet
+   * @returns {boolean} 1 on success, 0 on failure
    * @url http://www.espruino.com/Reference#l_E_sendUSBHID
    */
   static sendUSBHID(data: any): boolean;
@@ -7111,6 +8912,7 @@ declare class E {
    * The temperature of the battery (as well as the load being drawn
    * from it at the time `E.getBattery` is called) will affect the
    * readings.
+   * @returns {number} A percentage between 0 and 100
    * @url http://www.espruino.com/Reference#l_E_getBattery
    */
   static getBattery(): number;
@@ -7140,6 +8942,8 @@ declare class E {
    * ```
    * **Note:** This is only used on official Espruino boards containing an STM32 microcontroller. Other boards
    * (even those using an STM32) don't use the RTC and so this has no effect.
+   *
+   * @param {number} prescaler - The amount of counts for one second of the RTC - this is a 15 bit integer value (0..32767)
    * @url http://www.espruino.com/Reference#l_E_setRTCPrescaler
    */
   static setRTCPrescaler(prescaler: number): any;
@@ -7149,6 +8953,9 @@ declare class E {
    * If `calibrate` is true, the low speed oscillator's speed is calibrated against the high speed
    * oscillator (usually +/- 20 ppm) and a suggested value to be fed into `E.setRTCPrescaler(...)` is returned.
    * See `E.setRTCPrescaler` for more information.
+   *
+   * @param {boolean} calibrate - If `false`, the current value. If `true`, the calculated 'correct' value
+   * @returns {number} The RTC prescaler's current value
    * @url http://www.espruino.com/Reference#l_E_getRTCPrescaler
    */
   static getRTCPrescaler(calibrate: boolean): number;
@@ -7169,19 +8976,22 @@ declare class E {
    * };
    * E.decodeUTF8("UTF-8 Euro: \u00e2\u0082\u00ac", unicodeRemap, '[?]') == "UTF-8 Euro: \u0080"
    * ```
+   *
+   * @param {any} str - A string of UTF8-encoded data
+   * @param {any} lookup - An array containing a mapping of character code -> replacement string
+   * @param {any} replaceFn - If not in lookup, `replaceFn(charCode)` is called and the result used if it's a function, *or* if it's a string, the string value is used
+   * @returns {any} A string containing all UTF8 sequences flattened to 8 bits
    * @url http://www.espruino.com/Reference#l_E_decodeUTF8
    */
   static decodeUTF8(str: any, lookup: any, replaceFn: any): any;
 }
 
-/**
- * An Object that contains functions for writing to the interactive console
- * @url http://www.espruino.com/Reference#console
- */
 interface consoleConstructor {
   /**
    * Print the supplied string(s) to the console
    *  **Note:** If you're connected to a computer (not a wall adaptor) via USB but **you are not running a terminal app** then when you print data Espruino may pause execution and wait until the computer requests the data it is trying to print.
+   *
+   * @param {any} text - One or more arguments to print
    * @url http://www.espruino.com/Reference#l_console_log
    */
   log(...text: any[]): any;
@@ -7191,15 +9001,19 @@ interface console {
 
 }
 
+/**
+ * An Object that contains functions for writing to the interactive console
+ * @url http://www.espruino.com/Reference#console
+ */
 declare const console: consoleConstructor
 
-/**
- * The base class for runtime errors
- * @url http://www.espruino.com/Reference#Error
- */
 interface ErrorConstructor {
   /**
    * Creates an Error object
+   * @constructor
+   *
+   * @param {any} message - An optional message string
+   * @returns {any} An Error object
    * @url http://www.espruino.com/Reference#l_Error_Error
    */
   new(message: any): any;
@@ -7207,20 +9021,25 @@ interface ErrorConstructor {
 
 interface Error {
   /**
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_Error_toString
    */
   toString(): any;
 }
 
+/**
+ * The base class for runtime errors
+ * @url http://www.espruino.com/Reference#Error
+ */
 declare const Error: ErrorConstructor
 
-/**
- * The base class for syntax errors
- * @url http://www.espruino.com/Reference#SyntaxError
- */
 interface SyntaxErrorConstructor {
   /**
    * Creates a SyntaxError object
+   * @constructor
+   *
+   * @param {any} message - An optional message string
+   * @returns {any} A SyntaxError object
    * @url http://www.espruino.com/Reference#l_SyntaxError_SyntaxError
    */
   new(message: any): any;
@@ -7228,20 +9047,25 @@ interface SyntaxErrorConstructor {
 
 interface SyntaxError {
   /**
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_SyntaxError_toString
    */
   toString(): any;
 }
 
+/**
+ * The base class for syntax errors
+ * @url http://www.espruino.com/Reference#SyntaxError
+ */
 declare const SyntaxError: SyntaxErrorConstructor
 
-/**
- * The base class for type errors
- * @url http://www.espruino.com/Reference#TypeError
- */
 interface TypeErrorConstructor {
   /**
    * Creates a TypeError object
+   * @constructor
+   *
+   * @param {any} message - An optional message string
+   * @returns {any} A TypeError object
    * @url http://www.espruino.com/Reference#l_TypeError_TypeError
    */
   new(message: any): any;
@@ -7249,11 +9073,16 @@ interface TypeErrorConstructor {
 
 interface TypeError {
   /**
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_TypeError_toString
    */
   toString(): any;
 }
 
+/**
+ * The base class for type errors
+ * @url http://www.espruino.com/Reference#TypeError
+ */
 declare const TypeError: TypeErrorConstructor
 
 /**
@@ -7263,10 +9092,35 @@ declare const TypeError: TypeErrorConstructor
 declare class InternalError {
   /**
    * Creates an InternalError object
+   * @constructor
+   *
+   * @param {any} message - An optional message string
+   * @returns {any} An InternalError object
    * @url http://www.espruino.com/Reference#l_InternalError_InternalError
    */
   static new(message: any): any;/**
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_InternalError_toString
+   */
+  toString(): any;
+}
+
+interface ReferenceErrorConstructor {
+  /**
+   * Creates a ReferenceError object
+   * @constructor
+   *
+   * @param {any} message - An optional message string
+   * @returns {any} A ReferenceError object
+   * @url http://www.espruino.com/Reference#l_ReferenceError_ReferenceError
+   */
+  new(message: any): any;
+}
+
+interface ReferenceError {
+  /**
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_ReferenceError_toString
    */
   toString(): any;
 }
@@ -7276,33 +9130,19 @@ declare class InternalError {
  * which doesn't exist has been accessed.
  * @url http://www.espruino.com/Reference#ReferenceError
  */
-interface ReferenceErrorConstructor {
-  /**
-   * Creates a ReferenceError object
-   * @url http://www.espruino.com/Reference#l_ReferenceError_ReferenceError
-   */
-  new(message: any): any;
-}
-
-interface ReferenceError {
-  /**
-   * @url http://www.espruino.com/Reference#l_ReferenceError_toString
-   */
-  toString(): any;
-}
-
 declare const ReferenceError: ReferenceErrorConstructor
 
-/**
- * An Object that handles conversion to and from the JSON data interchange format
- * @url http://www.espruino.com/Reference#JSON
- */
 interface JSONConstructor {
   /**
    * Convert the given object into a JSON string which can subsequently be parsed with JSON.parse or eval.
    * **Note:** This differs from JavaScript's standard `JSON.stringify` in that:
    * * The `replacer` argument is ignored
    * * Typed arrays like `new Uint8Array(5)` will be dumped as if they were arrays, not as if they were objects (since it is more compact)
+   *
+   * @param {any} data - The data to be converted to a JSON string
+   * @param {any} replacer - This value is ignored
+   * @param {any} space - The number of spaces to use for padding, a string, or null/undefined for no whitespace
+   * @returns {any} A JSON string
    * @url http://www.espruino.com/Reference#l_JSON_stringify
    */
   stringify(data: any, replacer: any, space: any): any;
@@ -7310,6 +9150,9 @@ interface JSONConstructor {
   /**
    * Parse the given JSON string into a JavaScript object
    * NOTE: This implementation uses eval() internally, and as such it is unsafe as it can allow arbitrary JS commands to be executed.
+   *
+   * @param {any} string - A JSON string
+   * @returns {any} The JavaScript object created by parsing the data string
    * @url http://www.espruino.com/Reference#l_JSON_parse
    */
   parse(string: any): any;
@@ -7319,17 +9162,20 @@ interface JSON {
 
 }
 
+/**
+ * An Object that handles conversion to and from the JSON data interchange format
+ * @url http://www.espruino.com/Reference#JSON
+ */
 declare const JSON: JSONConstructor
 
-/**
- * The built-in class for handling Regular Expressions
- * **Note:** Espruino's regular expression parser does not contain all the features
- * present in a full ES6 JS engine. However it does contain support for the all the basics.
- * @url http://www.espruino.com/Reference#RegExp
- */
 interface RegExpConstructor {
   /**
    * Creates a RegExp object, for handling Regular Expressions
+   * @constructor
+   *
+   * @param {any} regex - A regular expression as a string
+   * @param {any} flags - Flags for the regular expression as a string
+   * @returns {any} A RegExp object
    * @url http://www.espruino.com/Reference#l_RegExp_RegExp
    */
   new(regex: any, flags: any): RegExp;
@@ -7354,17 +9200,29 @@ interface RegExp {
    *  "input": "Hello World"
    * ]
    * ```
+   *
+   * @param {any} str - A string to match on
+   * @returns {any} A result array, or null
    * @url http://www.espruino.com/Reference#l_RegExp_exec
    */
   exec(str: any): any;
 
   /**
    * Test this regex on a string - returns `true` on a successful match, or `false` otherwise
+   *
+   * @param {any} str - A string to match on
+   * @returns {boolean} true for a match, or false
    * @url http://www.espruino.com/Reference#l_RegExp_test
    */
   test(str: any): boolean;
 }
 
+/**
+ * The built-in class for handling Regular Expressions
+ * **Note:** Espruino's regular expression parser does not contain all the features
+ * present in a full ES6 JS engine. However it does contain support for the all the basics.
+ * @url http://www.espruino.com/Reference#RegExp
+ */
 declare const RegExp: RegExpConstructor
 
 /**
@@ -7373,111 +9231,133 @@ declare const RegExp: RegExpConstructor
  */
 declare class Nucleo {
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A0
    */
   static A0: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A1
    */
   static A1: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A2
    */
   static A2: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A3
    */
   static A3: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A4
    */
   static A4: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_A5
    */
   static A5: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D0
    */
   static D0: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D1
    */
   static D1: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D2
    */
   static D2: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D3
    */
   static D3: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D4
    */
   static D4: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D5
    */
   static D5: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D6
    */
   static D6: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D7
    */
   static D7: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D8
    */
   static D8: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D9
    */
   static D9: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D10
    */
   static D10: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D11
    */
   static D11: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D12
    */
   static D12: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D13
    */
   static D13: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D14
    */
   static D14: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_Nucleo_D15
    */
   static D15: Pin;
@@ -7489,61 +9369,73 @@ declare class Nucleo {
  */
 declare class NodeMCU {
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_A0
    */
   static A0: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D0
    */
   static D0: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D1
    */
   static D1: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D2
    */
   static D2: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D3
    */
   static D3: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D4
    */
   static D4: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D5
    */
   static D5: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D6
    */
   static D6: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D7
    */
   static D7: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D8
    */
   static D8: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D9
    */
   static D9: Pin;
 
   /**
+   * @returns {Pin} A Pin
    * @url http://www.espruino.com/Reference#l_NodeMCU_D10
    */
   static D10: Pin;
@@ -7555,6 +9447,9 @@ declare class NodeMCU {
  */
 declare class ESP32 {
   /**
+   *
+   * @param {Pin} pin - Pin for Analog read
+   * @param {number} atten - Attenuate factor
    * @url http://www.espruino.com/Reference#l_ESP32_setAtten
    */
   static setAtten(pin: Pin, atten: number): any;
@@ -7567,6 +9462,8 @@ declare class ESP32 {
 
   /**
    * Put device in deepsleep state for "us" microseconds.
+   *
+   * @param {number} us - Sleeptime in us
    * @url http://www.espruino.com/Reference#l_ESP32_deepSleep
    */
   static deepSleep(us: number): any;
@@ -7578,25 +9475,32 @@ declare class ESP32 {
    * * `BLE`			 - Status of BLE, enabled if true.
    * * `Wifi`		 - Status of Wifi, enabled if true.
    * * `minHeap`      - Minimum heap, calculated by heap_caps_get_minimum_free_size
+   * @returns {any} The state of the ESP32
    * @url http://www.espruino.com/Reference#l_ESP32_getState
    */
   static getState(): any;
 
   /**
+   *
+   * @param {number} level - which events should be shown (GATTS, GATTC, GAP)
    * @url http://www.espruino.com/Reference#l_ESP32_setBLE_Debug
    */
   static setBLE_Debug(level: number): any;
 
   /**
-   * Switches Bluetooth off/on, removes saved code from Flash, resets the board, 
+   * Switches Bluetooth off/on, removes saved code from Flash, resets the board,
    * and on restart creates jsVars depending on available heap (actual additional 1800)
+   *
+   * @param {boolean} enable - switches Bluetooth on or off
    * @url http://www.espruino.com/Reference#l_ESP32_enableBLE
    */
   static enableBLE(enable: boolean): any;
 
   /**
-   * Switches Wifi off/on, removes saved code from Flash, resets the board, 
+   * Switches Wifi off/on, removes saved code from Flash, resets the board,
    * and on restart creates jsVars depending on available heap (actual additional 3900)
+   *
+   * @param {boolean} enable - switches Wifi on or off
    * @url http://www.espruino.com/Reference#l_ESP32_enableWifi
    */
   static enableWifi(enable: boolean): any;
@@ -7609,6 +9513,10 @@ declare class ESP32 {
 declare class Queue {
   /**
    * Creates a Queue Object
+   * @constructor
+   *
+   * @param {any} queueName - Name of the queue
+   * @returns {any} A Queue object
    * @url http://www.espruino.com/Reference#l_Queue_Queue
    */
   static new(queueName: any): any;/**
@@ -7619,6 +9527,8 @@ declare class Queue {
 
   /**
    * Writes one character to queue
+   *
+   * @param {any} char - char to be send
    * @url http://www.espruino.com/Reference#l_Queue_writeChar
    */
   writeChar(char: any): any;
@@ -7637,6 +9547,10 @@ declare class Queue {
 declare class Task {
   /**
    * Creates a Task Object
+   * @constructor
+   *
+   * @param {any} taskName - Name of the task
+   * @returns {any} A Task object
    * @url http://www.espruino.com/Reference#l_Task_Task
    */
   static new(taskName: any): any;/**
@@ -7653,6 +9567,7 @@ declare class Task {
 
   /**
    * returns name of actual task
+   * @returns {any} Name of current task
    * @url http://www.espruino.com/Reference#l_Task_getCurrent
    */
   getCurrent(): any;
@@ -7677,16 +9592,27 @@ declare class Task {
 declare class Timer {
   /**
    * Creates a Timer Object
+   * @constructor
+   *
+   * @param {any} timerName - Timer Name
+   * @param {number} group - Timer group
+   * @param {number} index - Timer index
+   * @param {number} isrIndex - isr (0 = Espruino, 1 = test)
+   * @returns {any} A Timer Object
    * @url http://www.espruino.com/Reference#l_Timer_Timer
    */
   static new(timerName: any, group: number, index: number, isrIndex: number): any;/**
    * Starts a timer
+   *
+   * @param {number} duration - duration of timmer in micro secs
    * @url http://www.espruino.com/Reference#l_Timer_start
    */
   start(duration: number): any;
 
   /**
    * Reschedules a timer, needs to be started at least once
+   *
+   * @param {number} duration - duration of timmer in micro secs
    * @url http://www.espruino.com/Reference#l_Timer_reschedule
    */
   reschedule(duration: number): any;
@@ -7698,10 +9624,13 @@ declare class Timer {
   log(): any;
 }
 
-
 interface BooleanConstructor {
   /**
    * Creates a boolean
+   * @constructor
+   *
+   * @param {any} value - A single value to be converted to a number
+   * @returns {boolean} A Boolean object
    * @url http://www.espruino.com/Reference#l_Boolean_Boolean
    */
   new(value: any): boolean;
@@ -7710,6 +9639,7 @@ interface BooleanConstructor {
 interface Boolean {
 
 }
+
 
 declare const Boolean: BooleanConstructor
 
@@ -7737,6 +9667,8 @@ declare const Boolean: BooleanConstructor
  * g.drawString("E",0,0)
  * show(g.buffer)
  * ```
+ *
+ * @param {any} image - The image to show
  * @url http://www.espruino.com/Reference#l__global_show
  */
 declare function show(image: any): any;
@@ -7745,6 +9677,7 @@ declare function show(image: any): any;
  * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
  * Get the current acceleration of the micro:bit from the on-board accelerometer
  * **This is deprecated.** Please use `Microbit.accel` instead.
+ * @returns {any} An object with x, y, and z fields in it
  * @url http://www.espruino.com/Reference#l__global_acceleration
  */
 declare function acceleration(): any;
@@ -7753,102 +9686,119 @@ declare function acceleration(): any;
  * **Note:** This function is only available on the [BBC micro:bit](/MicroBit) board
  * Get the current compass position for the micro:bit from the on-board magnetometer
  * **This is deprecated.** Please use `Microbit.mag` instead.
+ * @returns {any} An object with x, y, and z fields in it
  * @url http://www.espruino.com/Reference#l__global_compass
  */
 declare function compass(): any;
 
 /**
  * The pin connected to the 'A' button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTNA
  */
 declare const BTNA: Pin;
 
 /**
  * The pin connected to the 'B' button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTNB
  */
 declare const BTNB: Pin;
 
 /**
  * The pin connected to the up button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTNU
  */
 declare const BTNU: Pin;
 
 /**
  * The pin connected to the down button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTND
  */
 declare const BTND: Pin;
 
 /**
  * The pin connected to the left button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTNL
  */
 declare const BTNL: Pin;
 
 /**
  * The pin connected to the right button. Reads as `1` when pressed, `0` when not
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_BTNR
  */
 declare const BTNR: Pin;
 
 /**
  * The pin connected to Corner #1
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER1
  */
 declare const CORNER1: Pin;
 
 /**
  * The pin connected to Corner #2
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER2
  */
 declare const CORNER2: Pin;
 
 /**
  * The pin connected to Corner #3
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER3
  */
 declare const CORNER3: Pin;
 
 /**
  * The pin connected to Corner #4
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER4
  */
 declare const CORNER4: Pin;
 
 /**
  * The pin connected to Corner #5
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER5
  */
 declare const CORNER5: Pin;
 
 /**
  * The pin connected to Corner #6
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_CORNER6
  */
 declare const CORNER6: Pin;
 
 /**
  * On Puck.js V2 (not v1.0) this is the pin that controls the FET, for high-powered outputs.
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_FET
  */
 declare const FET: Pin;
 
 /**
  * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A4.
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_SDA
  */
 declare const SDA: Pin;
 
 /**
  * The pin marked SDA on the Arduino pin footprint. This is connected directly to pin A5.
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_SCL
  */
 declare const SCL: Pin;
 
 /**
  * The Bangle.js's vibration motor.
+ * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_VIBRATE
  */
 declare const VIBRATE: Pin;
@@ -7858,6 +9808,7 @@ declare const VIBRATE: Pin;
  * On Bangle.js there are no LEDs, so to remain compatible with example code that might
  * expect an LED, this is an object that behaves like a pin, but which just displays
  * a circle on the display
+ * @returns {any} A `Pin` object for a fake LED which appears on
  * @url http://www.espruino.com/Reference#l__global_LED
  */
 declare const LED: any;
@@ -7867,6 +9818,7 @@ declare const LED: any;
  * On Bangle.js there are no LEDs, so to remain compatible with example code that might
  * expect an LED, this is an object that behaves like a pin, but which just displays
  * a circle on the display
+ * @returns {any} A `Pin` object for a fake LED which appears on
  * @url http://www.espruino.com/Reference#l__global_LED1
  */
 declare const LED1: any;
@@ -7876,66 +9828,79 @@ declare const LED1: any;
  * On Bangle.js there are no LEDs, so to remain compatible with example code that might
  * expect an LED, this is an object that behaves like a pin, but which just displays
  * a circle on the display
+ * @returns {any} A `Pin` object for a fake LED which appears on
  * @url http://www.espruino.com/Reference#l__global_LED2
  */
 declare const LED2: any;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_MOS1
  */
 declare const MOS1: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_MOS2
  */
 declare const MOS2: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_MOS3
  */
 declare const MOS3: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_MOS4
  */
 declare const MOS4: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_IOEXT0
  */
 declare const IOEXT0: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_IOEXT1
  */
 declare const IOEXT1: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_IOEXT2
  */
 declare const IOEXT2: Pin;
 
 /**
+ * @returns {Pin} A Pin
  * @url http://www.espruino.com/Reference#l__global_IOEXT3
  */
 declare const IOEXT3: Pin;
 
 /**
+ * @returns {number} Not a  Number
  * @url http://www.espruino.com/Reference#l__global_NaN
  */
 declare const NaN: number;
 
 /**
+ * @returns {number} Positive Infinity (1/0)
  * @url http://www.espruino.com/Reference#l__global_Infinity
  */
 declare const Infinity: number;
 
 /**
+ * @returns {number} Logic 1 for Arduino compatibility - this is the same as just typing `1`
  * @url http://www.espruino.com/Reference#l__global_HIGH
  */
 declare const HIGH: number;
 
 /**
+ * @returns {number} Logic 0 for Arduino compatibility - this is the same as just typing `0`
  * @url http://www.espruino.com/Reference#l__global_LOW
  */
 declare const LOW: number;
@@ -7952,63 +9917,92 @@ declare const LOW: number;
  * ```
  * **Note:** Due to the way Espruino works this is doesn't behave exactly
  * the same as in normal JavaScript. The length of the arguments array
- * will never be less than the number of arguments specified in the 
+ * will never be less than the number of arguments specified in the
  * function declaration: `(function(a){ return arguments.length; })() == 1`.
  * Normal JavaScript interpreters would return `0` in the above case.
+ * @returns {any} An array containing all the arguments given to the function
  * @url http://www.espruino.com/Reference#l__global_arguments
  */
 declare const arguments: any;
 
 /**
  * Evaluate a string containing JavaScript code
+ *
+ * @param {any} code
+ * @returns {any} The result of evaluating the string
  * @url http://www.espruino.com/Reference#l__global_eval
  */
 declare function eval(code: any): any;
 
 /**
  * Convert a string representing a number into an integer
+ *
+ * @param {any} string
+ * @param {any} radix - The Radix of the string (optional)
+ * @returns {any} The integer value of the string (or NaN)
  * @url http://www.espruino.com/Reference#l__global_parseInt
  */
 declare function parseInt(string: any, radix: any): any;
 
 /**
  * Convert a string representing a number into an float
+ *
+ * @param {any} string
+ * @returns {number} The value of the string
  * @url http://www.espruino.com/Reference#l__global_parseFloat
  */
 declare function parseFloat(string: any): number;
 
 /**
  * Is the parameter a finite num,ber or not? If needed, the parameter is first converted to a number.
+ *
+ * @param {any} x
+ * @returns {boolean} True is the value is a Finite number, false if not.
  * @url http://www.espruino.com/Reference#l__global_isFinite
  */
 declare function isFinite(x: any): boolean;
 
 /**
  * Whether the x is NaN (Not a Number) or not
+ *
+ * @param {any} x
+ * @returns {boolean} True is the value is NaN, false if not.
  * @url http://www.espruino.com/Reference#l__global_isNaN
  */
 declare function isNaN(x: any): boolean;
 
 /**
  * Encode the supplied string (or array) into a base64 string
+ *
+ * @param {any} binaryData - A string of data to encode
+ * @returns {any} A base64 encoded string
  * @url http://www.espruino.com/Reference#l__global_btoa
  */
 declare function btoa(binaryData: any): any;
 
 /**
  * Decode the supplied base64 string into a normal string
+ *
+ * @param {any} base64Data - A string of base64 data to decode
+ * @returns {any} A string containing the decoded data
  * @url http://www.espruino.com/Reference#l__global_atob
  */
 declare function atob(base64Data: any): any;
 
 /**
  * Convert a string with any character not alphanumeric or `- _ . ! ~ * ' ( )` converted to the form `%XY` where `XY` is its hexadecimal representation
+ *
+ * @param {any} str - A string to encode as a URI
+ * @returns {any} A string containing the encoded data
  * @url http://www.espruino.com/Reference#l__global_encodeURIComponent
  */
 declare function encodeURIComponent(str: any): any;
 
 /**
  * Convert any groups of characters of the form '%ZZ', into characters with hex code '0xZZ'
+ *
+ * @param {any} str - A string to decode from a URI
+ * @returns {any} A string containing the decoded data
  * @url http://www.espruino.com/Reference#l__global_decodeURIComponent
  */
 declare function decodeURIComponent(str: any): any;
@@ -8024,6 +10018,9 @@ declare function decodeURIComponent(str: any): any;
  * ```
  * Check out [the page on Modules](/Modules) for an explanation
  * of what modules are and how you can use them.
+ *
+ * @param {any} moduleName - A String containing the name of the given module
+ * @returns {any} The result of evaluating the string
  * @url http://www.espruino.com/Reference#l__global_require
  */
 declare function require<T extends keyof Modules>(moduleName: T): Modules[T]
@@ -8033,36 +10030,57 @@ declare function require<
 
 /**
  * Read 8 bits of memory at the given location - DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to read
+ * @param {number} count - (optional) the number of items to read. If >1 a Uint8Array will be returned.
+ * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek8
  */
 declare function peek8(addr: number, count: number): any;
 
 /**
  * Write 8 bits of memory at the given location - VERY DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to write
+ * @param {any} value - The value to write, or an array of values
  * @url http://www.espruino.com/Reference#l__global_poke8
  */
 declare function poke8(addr: number, value: any): any;
 
 /**
  * Read 16 bits of memory at the given location - DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to read
+ * @param {number} count - (optional) the number of items to read. If >1 a Uint16Array will be returned.
+ * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek16
  */
 declare function peek16(addr: number, count: number): any;
 
 /**
  * Write 16 bits of memory at the given location - VERY DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to write
+ * @param {any} value - The value to write, or an array of values
  * @url http://www.espruino.com/Reference#l__global_poke16
  */
 declare function poke16(addr: number, value: any): any;
 
 /**
  * Read 32 bits of memory at the given location - DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to read
+ * @param {number} count - (optional) the number of items to read. If >1 a Uint32Array will be returned.
+ * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek32
  */
 declare function peek32(addr: number, count: number): any;
 
 /**
  * Write 32 bits of memory at the given location - VERY DANGEROUS!
+ *
+ * @param {number} addr - The address in memory to write
+ * @param {any} value - The value to write, or an array of values
  * @url http://www.espruino.com/Reference#l__global_poke32
  */
 declare function poke32(addr: number, value: any): any;
@@ -8072,6 +10090,11 @@ declare function poke32(addr: number, value: any): any;
  * This is different to Arduino which only returns an integer between 0 and 1023
  * However only pins connected to an ADC will work (see the datasheet)
  *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset pin's state to `"analog"`
+ *
+ * @param {Pin} pin
+ * The pin to use
+ * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `ADC` markers.
+ * @returns {number} The analog Value of the Pin between 0 and 1
  * @url http://www.espruino.com/Reference#l__global_analogRead
  */
 declare function analogRead(pin: Pin): number;
@@ -8083,6 +10106,13 @@ declare function analogRead(pin: Pin): number;
  * * `soft` - boolean, If true software PWM is used if hardware is not available.
  * * `forceSoft` - boolean, If true software PWM is used even if hardware PWM or a DAC is available
  *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset pin's state to `"output"`
+ *
+ * @param {Pin} pin
+ * The pin to use
+ * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `PWM` or `DAC` markers.
+ * @param {number} value - A value between 0 and 1
+ * @param {any} options
+ * An object containing options for analog output - see below
  * @url http://www.espruino.com/Reference#l__global_analogWrite
  */
 declare function analogWrite(pin: Pin, value: number, options: any): any;
@@ -8092,6 +10122,10 @@ declare function analogWrite(pin: Pin, value: number, options: any): any;
  * eg. `digitalPulse(A0,1,5);` pulses A0 high for 5ms. `digitalPulse(A0,1,[5,2,4]);` pulses A0 high for 5ms, low for 2ms, and high for 4ms
  *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset pin's state to `"output"`
  * digitalPulse is for SHORT pulses that need to be very accurate. If you're doing anything over a few milliseconds, use setTimeout instead.
+ *
+ * @param {Pin} pin - The pin to use
+ * @param {boolean} value - Whether to pulse high (true) or low (false)
+ * @param {any} time - A time in milliseconds, or an array of times (in which case a square wave will be output starting with a pulse of 'value')
  * @url http://www.espruino.com/Reference#l__global_digitalPulse
  */
 declare function digitalPulse(pin: Pin, value: boolean, time: any): any;
@@ -8106,6 +10140,9 @@ declare function digitalPulse(pin: Pin, value: boolean, time: any): any;
  * example `digitalWrite([A1,A1,A0,A0],0b0101)` would pulse A0 followed by A1.
  * If the pin argument is an object with a `write` method, the `write` method will
  * be called with the value passed through.
+ *
+ * @param {any} pin - The pin to use
+ * @param {number} value - Whether to pulse high (true) or low (false)
  * @url http://www.espruino.com/Reference#l__global_digitalWrite
  */
 declare function digitalWrite(pin: any, value: number): any;
@@ -8117,6 +10154,9 @@ declare function digitalWrite(pin: any, value: number): any;
  * the last array element is the least significant bit, for example if `A0=A1=1` and `A2=0`, `digitalRead([A2,A1,A0]) == 0b011`
  * If the pin argument is an object with a `read` method, the `read` method will be called and the integer value it returns
  * passed back.
+ *
+ * @param {any} pin - The pin to use
+ * @returns {number} The digital Value of the Pin
  * @url http://www.espruino.com/Reference#l__global_digitalRead
  */
 declare function digitalRead(pin: any): number;
@@ -8137,12 +10177,19 @@ declare function digitalRead(pin: any): number;
  * If you want `digitalRead`/etc to set the pin mode automatically after you have called `pinMode`, simply call it again
  * with no mode argument (`pinMode(pin)`), `auto` as the argument (`pinMode(pin, "auto")`), or with the 3rd 'automatic'
  * argument set to true (`pinMode(pin, "output", true)`).
+ *
+ * @param {Pin} pin - The pin to set pin mode for
+ * @param {any} mode - The mode - a string that is either 'analog', 'input', 'input_pullup', 'input_pulldown', 'output', 'opendrain', 'af_output' or 'af_opendrain'. Do not include this argument or use 'auto' if you want to revert to automatic pin mode setting.
+ * @param {boolean} automatic - Optional, default is false. If true, subsequent commands will automatically change the state (see notes below)
  * @url http://www.espruino.com/Reference#l__global_pinMode
  */
 declare function pinMode(pin: Pin, mode: any, automatic: boolean): any;
 
 /**
  * Return the current mode of the given pin. See `pinMode` for more information on returned values.
+ *
+ * @param {Pin} pin - The pin to check
+ * @returns {any} The pin mode, as a string
  * @url http://www.espruino.com/Reference#l__global_getPinMode
  */
 declare function getPinMode(pin: Pin): any;
@@ -8176,6 +10223,10 @@ declare function getPinMode(pin: Pin): any;
  * `repeat` is the amount of times shift data out for each array item. For instance
  * we may want to shift 8 bits out through 2 pins - in which case we need to set
  * repeat to 4.
+ *
+ * @param {any} pins - A pin, or an array of pins to use
+ * @param {any} options - Options, for instance the clock (see below)
+ * @param {any} data - The data to shift out (see `E.toUint8Array` for info on the forms this can take)
  * @url http://www.espruino.com/Reference#l__global_shiftOut
  */
 declare function shiftOut(pins: any, options: any, data: any): any;
@@ -8223,6 +10274,11 @@ declare function shiftOut(pins: any, options: any, data: any): any;
  * **Note:** On nRF52 chips (used in Puck.js, Pixl.js, MDBT42Q) `setWatch` disables the GPIO
  * output on that pin. In order to be able to write to the pin again you need to disable
  * the watch with `clearWatch`.
+ *
+ * @param {any} function - A Function or String to be executed
+ * @param {Pin} pin - The pin to watch
+ * @param {any} options - If a boolean or integer, it determines whether to call this once (false = default) or every time a change occurs (true). Can be an object of the form `{ repeat: true/false(default), edge:'rising'/'falling'/'both'(default), debounce:10}` - see below for more information.
+ * @returns {any} An ID that can be passed to clearWatch
  * @url http://www.espruino.com/Reference#l__global_setWatch
  */
 declare function setWatch(func: any, pin: Pin, options: any): any;
@@ -8230,18 +10286,23 @@ declare function setWatch(func: any, pin: Pin, options: any): any;
 /**
  * Clear the Watch that was created with setWatch. If no parameter is supplied, all watches will be removed.
  * To avoid accidentally deleting all Watches, if a parameter is supplied but is `undefined` then an Exception will be thrown.
+ *
+ * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearWatch
  */
 declare function clearWatch(...id: any[]): any;
 
 /**
  * A reference to the global scope, where everything is defined.
+ * @returns {any} The global scope
  * @url http://www.espruino.com/Reference#l__global_global
  */
 declare const global: any;
 
 /**
  * When Espruino is busy, set the pin specified here high. Set this to undefined to disable the feature.
+ *
+ * @param {any} pin
  * @url http://www.espruino.com/Reference#l__global_setBusyIndicator
  */
 declare function setBusyIndicator(pin: any): any;
@@ -8249,6 +10310,8 @@ declare function setBusyIndicator(pin: any): any;
 /**
  * When Espruino is asleep, set the pin specified here low (when it's awake, set it high). Set this to undefined to disable the feature.
  * Please see http://www.espruino.com/Power+Consumption for more details on this.
+ *
+ * @param {any} pin
  * @url http://www.espruino.com/Reference#l__global_setSleepIndicator
  */
 declare function setSleepIndicator(pin: any): any;
@@ -8256,6 +10319,8 @@ declare function setSleepIndicator(pin: any): any;
 /**
  * Set whether we can enter deep sleep mode, which reduces power consumption to around 100uA. This only works on STM32 Espruino Boards (nRF52 boards sleep automatically).
  * Please see http://www.espruino.com/Power+Consumption for more details on this.
+ *
+ * @param {boolean} sleep
  * @url http://www.espruino.com/Reference#l__global_setDeepSleep
  */
 declare function setDeepSleep(sleep: boolean): any;
@@ -8263,6 +10328,8 @@ declare function setDeepSleep(sleep: boolean): any;
 /**
  * Output debugging information
  * Note: This is not included on boards with low amounts of flash memory, or the Espruino board.
+ *
+ * @param {any} root - The symbol to output (optional). If nothing is specified, everything will be output
  * @url http://www.espruino.com/Reference#l__global_trace
  */
 declare function trace(root: any): any;
@@ -8289,6 +10356,8 @@ declare function dump(): any;
  * executed by Espruino every time it starts.
  * **If you specify a filename in the argument then that file will be loaded
  * from Storage after reset** in much the same way as calling `reset()` then `eval(require("Storage").read(filename))`
+ *
+ * @param {any} filename - optional: The name of a text JS file to load from Storage after reset
  * @url http://www.espruino.com/Reference#l__global_load
  */
 declare function load(filename: any): any;
@@ -8324,6 +10393,8 @@ declare function save(): any;
  * `load()` is called) the board will load the previously saved code.
  * Calling `reset(true)` will cause *all saved code in flash memory to
  * be cleared as well*.
+ *
+ * @param {boolean} clearFlash - Remove saved code from flash as well
  * @url http://www.espruino.com/Reference#l__global_reset
  */
 declare function reset(clearFlash: boolean): any;
@@ -8331,6 +10402,8 @@ declare function reset(clearFlash: boolean): any;
 /**
  * Print the supplied string(s) to the console
  *  **Note:** If you're connected to a computer (not a wall adaptor) via USB but **you are not running a terminal app** then when you print data Espruino may pause execution and wait until the computer requests the data it is trying to print.
+ *
+ * @param {any} text
  * @url http://www.espruino.com/Reference#l__global_print
  */
 declare function print(...text: any[]): any;
@@ -8338,18 +10411,23 @@ declare function print(...text: any[]): any;
 /**
  * Fill the console with the contents of the given function, so you can edit it.
  * NOTE: This is a convenience function - it will not edit 'inner functions'. For that, you must edit the 'outer function' and re-execute it.
+ *
+ * @param {any} funcName - The name of the function to edit (either a string or just the unquoted name)
  * @url http://www.espruino.com/Reference#l__global_edit
  */
 declare function edit(funcName: any): any;
 
 /**
  * Should Espruino echo what you type back to you? true = yes (Default), false = no. When echo is off, the result of executing a command is not returned. Instead, you must use 'print' to send output.
+ *
+ * @param {boolean} echoOn
  * @url http://www.espruino.com/Reference#l__global_echo
  */
 declare function echo(echoOn: boolean): any;
 
 /**
  * Return the current system time in Seconds (as a floating point number)
+ * @returns {number}
  * @url http://www.espruino.com/Reference#l__global_getTime
  */
 declare function getTime(): number;
@@ -8365,12 +10443,15 @@ declare function getTime(): number;
  * setTime((new Date("Tue, 19 Feb 2019 10:57")).getTime()/1000)
  * ```
  * To set the timezone for all new Dates, use `E.setTimeZone(hours)`.
+ *
+ * @param {number} time
  * @url http://www.espruino.com/Reference#l__global_setTime
  */
 declare function setTime(time: number): any;
 
 /**
  * Get the serial number of this board
+ * @returns {any} The board's serial number
  * @url http://www.espruino.com/Reference#l__global_getSerial
  */
 declare function getSerial(): any;
@@ -8396,6 +10477,11 @@ declare function getSerial(): any;
  * If you want to stop your function from being called, pass the number that
  * was returned by `setInterval` into the `clearInterval` function.
  *  **Note:** If `setDeepSleep(true)` has been called and the interval is greater than 5 seconds, Espruino may execute the interval up to 1 second late. This is because Espruino can only wake from deep sleep every second - and waking early would cause Espruino to waste power while it waited for the correct time.
+ *
+ * @param {any} function - A Function or String to be executed
+ * @param {number} timeout - The time between calls to the function (max 3153600000000 = 100 years
+ * @param {any} args - Optional arguments to pass to the function when executed
+ * @returns {any} An ID that can be passed to clearInterval
  * @url http://www.espruino.com/Reference#l__global_setInterval
  */
 declare function setInterval(func: any, timeout: number, ...args: any[]): any;
@@ -8421,6 +10507,11 @@ declare function setInterval(func: any, timeout: number, ...args: any[]): any;
  * If you want to stop the function from being called, pass the number that
  * was returned by `setTimeout` into the `clearTimeout` function.
  *  **Note:** If `setDeepSleep(true)` has been called and the interval is greater than 5 seconds, Espruino may execute the interval up to 1 second late. This is because Espruino can only wake from deep sleep every second - and waking early would cause Espruino to waste power while it waited for the correct time.
+ *
+ * @param {any} function - A Function or String to be executed
+ * @param {number} timeout - The time until the function will be executed (max 3153600000000 = 100 years
+ * @param {any} args - Optional arguments to pass to the function when executed
+ * @returns {any} An ID that can be passed to clearTimeout
  * @url http://www.espruino.com/Reference#l__global_setTimeout
  */
 declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
@@ -8431,6 +10522,8 @@ declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
  * ```clearInterval(id);```
  * If no argument is supplied, all timeouts and intervals are stopped.
  * To avoid accidentally deleting all Intervals, if a parameter is supplied but is `undefined` then an Exception will be thrown.
+ *
+ * @param {any} id - The id returned by a previous call to setInterval. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearInterval
  */
 declare function clearInterval(...id: any[]): any;
@@ -8441,6 +10534,8 @@ declare function clearInterval(...id: any[]): any;
  * ```clearTimeout(id);```
  * If no argument is supplied, all timeouts and intervals are stopped.
  * To avoid accidentally deleting all Timeouts, if a parameter is supplied but is `undefined` then an Exception will be thrown.
+ *
+ * @param {any} id - The id returned by a previous call to setTimeout. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearTimeout
  */
 declare function clearTimeout(...id: any[]): any;
@@ -8452,6 +10547,9 @@ declare function clearTimeout(...id: any[]): any;
  * This takes effect immediately and resets the timeout, so in the example above,
  * regardless of when you call `changeInterval`, the next interval will occur 1500ms
  * after it.
+ *
+ * @param {any} id - The id returned by a previous call to setInterval
+ * @param {number} time - The new time period in ms
  * @url http://www.espruino.com/Reference#l__global_changeInterval
  */
 declare function changeInterval(id: any, time: number): any;
@@ -8464,6 +10562,10 @@ type Libraries = {
    */
   tensorflow: {
     /**
+     *
+     * @param {number} arenaSize - The TensorFlow Arena size
+     * @param {any} model - The model to use - this should be a flat array/string
+     * @returns {any} A tensorflow instance
      * @url http://www.espruino.com/Reference#l_tensorflow_create
      */
     create(arenaSize: number, model: any): TFMicroInterpreter;
@@ -8480,12 +10582,18 @@ type Libraries = {
     /**
      * List all files in the supplied directory, returning them as an array of strings.
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The path of the directory to list. If it is not supplied, '' is assumed, which will list the root directory
+     * @returns {any} An array of filename strings (or undefined if the directory couldn't be listed)
      * @url http://www.espruino.com/Reference#l_fs_readdir
      */
     readdir(path: any): any;
 
     /**
      * List all files in the supplied directory, returning them as an array of strings.
+     *
+     * @param {any} path - The path of the directory to list. If it is not supplied, '' is assumed, which will list the root directory
+     * @returns {any} An array of filename strings (or undefined if the directory couldn't be listed)
      * @url http://www.espruino.com/Reference#l_fs_readdirSync
      */
     readdirSync(path: any): any;
@@ -8493,12 +10601,20 @@ type Libraries = {
     /**
      * Write the data to the given file
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The path of the file to write
+     * @param {any} data - The data to write to the file
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_fs_writeFile
      */
     writeFile(path: any, data: any): boolean;
 
     /**
      * Write the data to the given file
+     *
+     * @param {any} path - The path of the file to write
+     * @param {any} data - The data to write to the file
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_fs_writeFileSync
      */
     writeFileSync(path: any, data: any): boolean;
@@ -8506,12 +10622,20 @@ type Libraries = {
     /**
      * Append the data to the given file, created a new file if it doesn't exist
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The path of the file to write
+     * @param {any} data - The data to write to the file
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_fs_appendFile
      */
     appendFile(path: any, data: any): boolean;
 
     /**
      * Append the data to the given file, created a new file if it doesn't exist
+     *
+     * @param {any} path - The path of the file to write
+     * @param {any} data - The data to write to the file
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_fs_appendFileSync
      */
     appendFileSync(path: any, data: any): boolean;
@@ -8519,6 +10643,9 @@ type Libraries = {
     /**
      * Read all data from a file and return as a string
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The path of the file to read
+     * @returns {any} A string containing the contents of the file (or undefined if the file doesn't exist)
      * @url http://www.espruino.com/Reference#l_fs_readFile
      */
     readFile(path: any): any;
@@ -8526,6 +10653,9 @@ type Libraries = {
     /**
      * Read all data from a file and return as a string.
      * **Note:** The size of files you can load using this method is limited by the amount of available RAM. To read files a bit at a time, see the `File` class.
+     *
+     * @param {any} path - The path of the file to read
+     * @returns {any} A string containing the contents of the file (or undefined if the file doesn't exist)
      * @url http://www.espruino.com/Reference#l_fs_readFileSync
      */
     readFileSync(path: any): any;
@@ -8533,12 +10663,18 @@ type Libraries = {
     /**
      * Delete the given file
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The path of the file to delete
+     * @returns {boolean} True on success, or false on failure
      * @url http://www.espruino.com/Reference#l_fs_unlink
      */
     unlink(path: any): boolean;
 
     /**
      * Delete the given file
+     *
+     * @param {any} path - The path of the file to delete
+     * @returns {boolean} True on success, or false on failure
      * @url http://www.espruino.com/Reference#l_fs_unlinkSync
      */
     unlinkSync(path: any): boolean;
@@ -8549,6 +10685,9 @@ type Libraries = {
      * size: size in bytes
      * dir: a boolean specifying if the file is a directory or not
      * mtime: A Date structure specifying the time the file was last modified
+     *
+     * @param {any} path - The path of the file to get information on
+     * @returns {any} An object describing the file, or undefined on failure
      * @url http://www.espruino.com/Reference#l_fs_statSync
      */
     statSync(path: any): any;
@@ -8556,17 +10695,31 @@ type Libraries = {
     /**
      * Create the directory
      * NOTE: Espruino does not yet support Async file IO, so this function behaves like the 'Sync' version.
+     *
+     * @param {any} path - The name of the directory to create
+     * @returns {boolean} True on success, or false on failure
      * @url http://www.espruino.com/Reference#l_fs_mkdir
      */
     mkdir(path: any): boolean;
 
     /**
      * Create the directory
+     *
+     * @param {any} path - The name of the directory to create
+     * @returns {boolean} True on success, or false on failure
      * @url http://www.espruino.com/Reference#l_fs_mkdirSync
      */
     mkdirSync(path: any): boolean;
 
     /**
+     *
+     * @param {any} source - The source file/stream that will send content.
+     * @param {any} destination - The destination file/stream that will receive content from the source.
+     * @param {any} options
+     * An optional object `{ chunkSize : int=64, end : bool=true, complete : function }`
+     * chunkSize : The amount of data to pipe from source to destination at a time
+     * complete : a function to call when the pipe activity is complete
+     * end : call the 'end' function on the destination when the source is finished
      * @url http://www.espruino.com/Reference#l_fs_pipe
      */
     pipe(source: any, destination: any, options: any): any;
@@ -8580,6 +10733,7 @@ type Libraries = {
   crypto: {
     /**
      * Class containing AES encryption/decryption
+     * @returns {any}
      * @url http://www.espruino.com/Reference#l_crypto_AES
      */
     AES: AES;
@@ -8589,36 +10743,56 @@ type Libraries = {
      * **Note:** On some boards (currently only Espruino Original) there
      * isn't space for a fully unrolled SHA1 implementation so a slower
      * all-JS implementation is used instead.
+     *
+     * @param {any} message - The message to apply the hash to
+     * @returns {any} Returns a 20 byte ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_SHA1
      */
     SHA1(message: any): ArrayBuffer;
 
     /**
      * Performs a SHA224 hash and returns the result as a 28 byte ArrayBuffer
+     *
+     * @param {any} message - The message to apply the hash to
+     * @returns {any} Returns a 20 byte ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_SHA224
      */
     SHA224(message: any): ArrayBuffer;
 
     /**
      * Performs a SHA256 hash and returns the result as a 32 byte ArrayBuffer
+     *
+     * @param {any} message - The message to apply the hash to
+     * @returns {any} Returns a 20 byte ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_SHA256
      */
     SHA256(message: any): ArrayBuffer;
 
     /**
      * Performs a SHA384 hash and returns the result as a 48 byte ArrayBuffer
+     *
+     * @param {any} message - The message to apply the hash to
+     * @returns {any} Returns a 20 byte ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_SHA384
      */
     SHA384(message: any): ArrayBuffer;
 
     /**
      * Performs a SHA512 hash and returns the result as a 64 byte ArrayBuffer
+     *
+     * @param {any} message - The message to apply the hash to
+     * @returns {any} Returns a 32 byte ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_SHA512
      */
     SHA512(message: any): ArrayBuffer;
 
     /**
      * Password-Based Key Derivation Function 2 algorithm, using SHA512
+     *
+     * @param {any} passphrase - Passphrase
+     * @param {any} salt - Salt for turning passphrase into a key
+     * @param {any} options - Object of Options, `{ keySize: 8 (in 32 bit words), iterations: 10, hasher: 'SHA1'/'SHA224'/'SHA256'/'SHA384'/'SHA512' }`
+     * @returns {any} Returns an ArrayBuffer
      * @url http://www.espruino.com/Reference#l_crypto_PBKDF2
      */
     PBKDF2(passphrase: any, salt: any, options: any): ArrayBuffer;
@@ -8660,6 +10834,9 @@ type Libraries = {
      * ```
      * `socketType` is an integer - 2 for UDP, or see SocketType in https://github.com/espruino/Espruino/blob/master/libs/network/network.h
      * for more information.
+     *
+     * @param {any} obj - An object containing functions to access the network device
+     * @returns {any} The object passed in
      * @url http://www.espruino.com/Reference#l_NetworkJS_create
      */
     create(obj: any): any;
@@ -8674,6 +10851,8 @@ type Libraries = {
    */
   TelnetServer: {
     /**
+     *
+     * @param {any} options - Options controlling the telnet console server `{ mode : 'on|off'}`
      * @url http://www.espruino.com/Reference#l_TelnetServer_setOptions
      */
     setOptions(options: any): any;
@@ -8689,12 +10868,19 @@ type Libraries = {
     /**
      * Create a Server
      * When a request to the server is made, the callback is called. In the callback you can use the methods on the connection to send data. You can also add `connection.on('data',function() { ... })` to listen for received data
+     *
+     * @param {any} callback - A `function(connection)` that will be called when a connection is made
+     * @returns {any} Returns a new Server Object
      * @url http://www.espruino.com/Reference#l_net_createServer
      */
     createServer(callback: any): Server;
 
     /**
      * Create a TCP socket connection
+     *
+     * @param {any} options - An object containing host,port fields
+     * @param {any} callback - A `function(sckt)` that will be called  with the socket when a connection is made. You can then call `sckt.write(...)` to send data, and `sckt.on('data', function(data) { ... })` and `sckt.on('close', function() { ... })` to deal with the response.
+     * @returns {any} Returns a new net.Socket object
      * @url http://www.espruino.com/Reference#l_net_connect
      */
     connect(options: any, callback: any): Socket;
@@ -8709,6 +10895,10 @@ type Libraries = {
   dgram: {
     /**
      * Create a UDP socket
+     *
+     * @param {any} type - Socket type to create e.g. 'udp4'. Or options object { type: 'udp4', reuseAddr: true, recvBufferSize: 1024 }
+     * @param {any} callback - A `function(sckt)` that will be called  with the socket when a connection is made. You can then call `sckt.send(...)` to send data, and `sckt.on('message', function(data) { ... })` and `sckt.on('close', function() { ... })` to deal with the response.
+     * @returns {any} Returns a new dgram.Socket object
      * @url http://www.espruino.com/Reference#l_dgram_createSocket
      */
     createSocket(type: any, callback: any): dgramSocket;
@@ -8738,6 +10928,10 @@ type Libraries = {
      * For more information about generating and using certificates, see:
      * https://engineering.circle.com/https-authorized-certs-with-node-js/
      * (You'll need to use 2048 bit certificates as opposed to 4096 bit shown above)
+     *
+     * @param {any} options - An object containing host,port fields
+     * @param {any} callback - A function(res) that will be called when a connection is made. You can then call `res.on('data', function(data) { ... })` and `res.on('close', function() { ... })` to deal with the response.
+     * @returns {any} Returns a new net.Socket object
      * @url http://www.espruino.com/Reference#l_tls_connect
      */
     connect(options: any, callback: any): Socket;
@@ -8749,6 +10943,12 @@ type Libraries = {
   CC3000: {
     /**
      * Initialise the CC3000 and return a WLAN object
+     *
+     * @param {any} spi - Device to use for SPI (or undefined to use the default). SPI should be 1,000,000 baud, and set to 'mode 1'
+     * @param {Pin} cs - The pin to use for Chip Select
+     * @param {Pin} en - The pin to use for Enable
+     * @param {Pin} irq - The pin to use for Interrupts
+     * @returns {any} A WLAN Object
      * @url http://www.espruino.com/Reference#l_CC3000_connect
      */
     connect(spi: any, cs: Pin, en: Pin, irq: Pin): WLAN;
@@ -8761,6 +10961,10 @@ type Libraries = {
   WIZnet: {
     /**
      * Initialise the WIZnet module and return an Ethernet object
+     *
+     * @param {any} spi - Device to use for SPI (or undefined to use the default)
+     * @param {Pin} cs - The pin to use for Chip Select
+     * @returns {any} An Ethernet Object
      * @url http://www.espruino.com/Reference#l_WIZnet_connect
      */
     connect(spi: any, cs: Pin): Ethernet;
@@ -8798,6 +11002,9 @@ type Libraries = {
      * * ssid - The SSID of the access point to which the association was established
      * * mac - The BSSID/mac address of the access point
      * * channel - The wifi channel used (an integer, typ 1..14)
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_associated
      */
     on(event: "associated", callback: (details: any) => void): void;
@@ -8808,6 +11015,9 @@ type Libraries = {
      * * ssid - The SSID of the access point from which the association was lost
      * * mac - The BSSID/mac address of the access point
      * * reason - The reason for the disconnection (string)
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_disconnected
      */
     on(event: "disconnected", callback: (details: any) => void): void;
@@ -8817,12 +11027,17 @@ type Libraries = {
      * The details include:
      * * oldMode - The old auth mode (string: open, wep, wpa, wpa2, wpa_wpa2)
      * * newMode - The new auth mode (string: open, wep, wpa, wpa2, wpa_wpa2)
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_auth_change
      */
     on(event: "auth_change", callback: (details: any) => void): void;
 
     /**
      * The 'dhcp_timeout' event is called when a DHCP request to the connected access point fails and thus no IP address could be acquired (or renewed).
+     * @param {string} event - The event to listen to.
+     * @param {() => void} callback - A function that is executed when the event occurs.
      * @url http://www.espruino.com/Reference#l_Wifi_dhcp_timeout
      */
     on(event: "dhcp_timeout", callback: () => void): void;
@@ -8833,6 +11048,9 @@ type Libraries = {
      * * ip - The IP address obtained as string
      * * netmask - The network's IP range mask as string
      * * gw - The network's default gateway as string
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_connected
      */
     on(event: "connected", callback: (details: any) => void): void;
@@ -8841,6 +11059,9 @@ type Libraries = {
      * The 'sta_joined' event is called when a station establishes an association (i.e. connects) with the esp8266's access point.
      * The details include:
      * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_sta_joined
      */
     on(event: "sta_joined", callback: (details: any) => void): void;
@@ -8849,6 +11070,9 @@ type Libraries = {
      * The 'sta_left' event is called when a station disconnects from the esp8266's access point (or its association times out?).
      * The details include:
      * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_sta_left
      */
     on(event: "sta_left", callback: (details: any) => void): void;
@@ -8858,18 +11082,25 @@ type Libraries = {
      * The details include:
      * * mac - The MAC address of the station in string format (00:00:00:00:00:00)
      * * rssi - The signal strength in dB of the probe request
+     * @param {string} event - The event to listen to.
+     * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+     * * `details` An object with event details
      * @url http://www.espruino.com/Reference#l_Wifi_probe_recv
      */
     on(event: "probe_recv", callback: (details: any) => void): void;
 
     /**
      * Disconnect the wifi station from an access point and disable the station mode. It is OK to call `disconnect` to turn off station mode even if no connection exists (for example, connection attempts may be failing). Station mode can be re-enabled by calling `connect` or `scan`.
+     *
+     * @param {any} callback - An optional `callback()` function to be called back on disconnection. The callback function receives no argument.
      * @url http://www.espruino.com/Reference#l_Wifi_disconnect
      */
     disconnect(callback: any): any;
 
     /**
      * Stop being an access point and disable the AP operation mode. AP mode can be re-enabled by calling `startAP`.
+     *
+     * @param {any} callback - An optional `callback()` function to be called back on successful stop. The callback function receives no argument.
      * @url http://www.espruino.com/Reference#l_Wifi_stopAP
      */
     stopAP(callback: any): any;
@@ -8880,12 +11111,16 @@ type Libraries = {
      * The options properties may contain:
      * * `password` - Password string to be used to access the network.
      * * `dnsServers` (array of String) - An array of up to two DNS servers in dotted decimal format string.
-     * * `channel`  - Wifi channel of the access point  (integer, typ 0..14, 0 means any channel), only on ESP8266. 
+     * * `channel`  - Wifi channel of the access point  (integer, typ 0..14, 0 means any channel), only on ESP8266.
      * * `bssid`   -  Mac address of the access point (string, type "00:00:00:00:00:00"), only on ESP8266.
      * Notes:
      * * the options should include the ability to set a static IP and associated netmask and gateway, this is a future enhancement.
      * * the only error reported in the callback is "Bad password", all other errors (such as access point not found or DHCP timeout) just cause connection retries. If the reporting of such temporary errors is desired, the caller must use its own timeout and the `getDetails().status` field.
      * * the `connect` call automatically enabled station mode, it can be disabled again by calling `disconnect`.
+     *
+     * @param {any} ssid - The access point network id.
+     * @param {any} options - Connection options (optional).
+     * @param {any} callback - A `callback(err)`  function to be called back on completion. `err` is null on success, or contains an error string on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_connect
      */
     connect(ssid: any, options: any, callback: any): any;
@@ -8901,6 +11136,8 @@ type Libraries = {
      * Notes:
      * * in order to perform the scan the station mode is turned on and remains on, use Wifi.disconnect() to turn it off again, if desired.
      * * only one scan can be in progress at a time.
+     *
+     * @param {any} callback - A `callback(err, ap_list)` function to be called back on completion. `err==null` and `ap_list` is an array on success, or `err` is an error string and `ap_list` is undefined on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_scan
      */
     scan(callback: any): any;
@@ -8916,6 +11153,10 @@ type Libraries = {
      * Notes:
      * * the options should include the ability to set the AP IP and associated netmask, this is a future enhancement.
      * * the `startAP` call automatically enables AP mode. It can be disabled again by calling `stopAP`.
+     *
+     * @param {any} ssid - The network id.
+     * @param {any} options - Configuration options (optional).
+     * @param {any} callback - Optional `callback(err)` function to be called when the AP is successfully started. `err==null` on success, or an error string on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_startAP
      */
     startAP(ssid: any, options: any, callback: any): any;
@@ -8928,6 +11169,9 @@ type Libraries = {
      * * `phy` - Modulation standard configured: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n). This setting limits the modulations that the radio will use, it does not indicate the current modulation used with a specific access point.
      * * `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
      * * `savedMode` - The saved operation mode which will be applied at boot time: `off`, `sta`, `ap`, `sta+ap`.
+     *
+     * @param {any} callback - Optional `callback(status)` function to be called back with the current Wifi status, i.e. the same object as returned directly.
+     * @returns {any} An object representing the current WiFi status, if available immediately.
      * @url http://www.espruino.com/Reference#l_Wifi_getStatus
      */
     getStatus(callback: any): any;
@@ -8938,6 +11182,8 @@ type Libraries = {
      * * `phy` - Modulation standard to allow: `11b`, `11g`, `11n` (the esp8266 docs are not very clear, but it is assumed that 11n means b/g/n).
      * * `powersave` - Power saving mode: `none` (radio is on all the time), `ps-poll` (radio is off between beacons as determined by the access point's DTIM setting). Note that in 'ap' and 'sta+ap' modes the radio is always on, i.e., no power saving is possible.
      * Note: esp8266 SDK programmers may be missing an "opmode" option to set the sta/ap/sta+ap operation mode. Please use connect/scan/disconnect/startAP/stopAP, which all set the esp8266 opmode indirectly.
+     *
+     * @param {any} settings - An object with the configuration settings to change.
      * @url http://www.espruino.com/Reference#l_Wifi_setConfig
      */
     setConfig(settings: any): any;
@@ -8950,6 +11196,9 @@ type Libraries = {
      * * `password` - the password used to connect to the access point.
      * * `authMode` - the authentication used: `open`, `wpa`, `wpa2`, `wpa_wpa2` (not currently supported).
      * * `savedSsid` - the SSID to connect to automatically at boot time, null if none.
+     *
+     * @param {any} callback - An optional `callback(details)` function to be called back with the wifi details, i.e. the same object as returned directly.
+     * @returns {any} An object representing the wifi station details, if available immediately.
      * @url http://www.espruino.com/Reference#l_Wifi_getDetails
      */
     getDetails(callback: any): any;
@@ -8964,6 +11213,9 @@ type Libraries = {
      * * `hidden` - True if the SSID is hidden, false otherwise.
      * * `maxConn` - Max number of station connections supported.
      * * `savedSsid` - the SSID to broadcast automatically at boot time, null if the access point is to be disabled at boot.
+     *
+     * @param {any} callback - An optional `callback(details)` function to be called back with the current access point details, i.e. the same object as returned directly.
+     * @returns {any} An object representing the current access point details, if available immediately.
      * @url http://www.espruino.com/Reference#l_Wifi_getAPDetails
      */
     getAPDetails(callback: any): any;
@@ -8976,6 +11228,8 @@ type Libraries = {
      * * phy (11b/g/n)
      * * powersave setting
      * * DHCP hostname
+     *
+     * @param {any} what - An optional parameter to specify what to save, on the esp8266 the two supported values are `clear` and `sta+ap`. The default is `sta+ap`
      * @url http://www.espruino.com/Reference#l_Wifi_save
      */
     save(what: any): any;
@@ -8993,6 +11247,9 @@ type Libraries = {
      * * gw - The network gateway as string (ESP8266/ESP32 only)
      * * mac - The MAC address as string of the form 00:00:00:00:00:00
      * Note that the `ip`, `netmask`, and `gw` fields are omitted if no connection is established:
+     *
+     * @param {any} callback - An optional `callback(err, ipinfo)` function to be called back with the IP information.
+     * @returns {any} An object representing the station IP information, if available immediately (**ONLY** on ESP8266/ESP32).
      * @url http://www.espruino.com/Reference#l_Wifi_getIP
      */
     getIP(callback: any): any;
@@ -9003,6 +11260,9 @@ type Libraries = {
      * * netmask - The interface netmask as string
      * * gw - The network gateway as string
      * * mac - The MAC address as string of the form 00:00:00:00:00:00
+     *
+     * @param {any} callback - An optional `callback(err, ipinfo)` function to be called back with the the IP information.
+     * @returns {any} An object representing the esp8266's Access Point IP information, if available immediately (**ONLY** on ESP8266/ESP32).
      * @url http://www.espruino.com/Reference#l_Wifi_getAPIP
      */
     getAPIP(callback: any): any;
@@ -9010,12 +11270,18 @@ type Libraries = {
     /**
      * Lookup the hostname and invoke a callback with the IP address as integer argument. If the lookup fails, the callback is invoked with a null argument.
      * **Note:** only a single hostname lookup can be made at a time, concurrent lookups are not supported.
+     *
+     * @param {any} hostname - The hostname to lookup.
+     * @param {any} callback - The `callback(ip)` to invoke when the IP is returned. `ip==null` on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_getHostByName
      */
     getHostByName(hostname: any, callback: any): any;
 
     /**
      * Returns the hostname announced to the DHCP server and broadcast via mDNS when connecting to an access point.
+     *
+     * @param {any} callback - An optional `callback(hostname)` function to be called back with the hostname.
+     * @returns {any} The currently configured hostname, if available immediately.
      * @url http://www.espruino.com/Reference#l_Wifi_getHostname
      */
     getHostname(callback: any): any;
@@ -9024,6 +11290,9 @@ type Libraries = {
      * Set the hostname. Depending on implemenation, the hostname is sent with every DHCP request and is broadcast via mDNS. The DHCP hostname may be visible in the access point and may be forwarded into DNS as hostname.local.
      * If a DHCP lease currently exists changing the hostname will cause a disconnect and reconnect in order to transmit the change to the DHCP server.
      * The mDNS announcement also includes an announcement for the "espruino" service.
+     *
+     * @param {any} hostname - The new hostname.
+     * @param {any} callback - An optional `callback()` function to be called back when the hostname is set
      * @url http://www.espruino.com/Reference#l_Wifi_setHostname
      */
     setHostname(hostname: any, callback: any): any;
@@ -9031,6 +11300,9 @@ type Libraries = {
     /**
      * Starts the SNTP (Simple Network Time Protocol) service to keep the clock synchronized with the specified server. Note that the time zone is really just an offset to UTC and doesn't handle daylight savings time.
      * The interval determines how often the time server is queried and Espruino's time is synchronized. The initial synchronization occurs asynchronously after setSNTP returns.
+     *
+     * @param {any} server - The NTP server to query, for example, `us.pool.ntp.org`
+     * @param {any} tz_offset - Local time zone offset in the range -11..13.
      * @url http://www.espruino.com/Reference#l_Wifi_setSNTP
      */
     setSNTP(server: any, tz_offset: any): any;
@@ -9040,6 +11312,9 @@ type Libraries = {
      * * `ip` IP address as string (e.g. "192.168.5.100")
      * * `gw`  The network gateway as string (e.g. "192.168.5.1")
      * * `netmask` The interface netmask as string (e.g. "255.255.255.0")
+     *
+     * @param {any} settings - Configuration settings
+     * @param {any} callback - A `callback(err)` function to invoke when ip is set. `err==null` on success, or a string on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_setIP
      */
     setIP(settings: any, callback: any): any;
@@ -9049,12 +11324,18 @@ type Libraries = {
      * * `ip` IP address as string (e.g. "192.168.5.100")
      * * `gw`  The network gateway as string (e.g. "192.168.5.1")
      * * `netmask` The interface netmask as string (e.g. "255.255.255.0")
+     *
+     * @param {any} settings - Configuration settings
+     * @param {any} callback - A `callback(err)` function to invoke when ip is set. `err==null` on success, or a string on failure.
      * @url http://www.espruino.com/Reference#l_Wifi_setAPIP
      */
     setAPIP(settings: any, callback: any): any;
 
     /**
      * Issues a ping to the given host, and calls a callback with the time when the ping is received.
+     *
+     * @param {any} hostname - The host to ping
+     * @param {any} callback - A `callback(time)` function to invoke when a ping is received
      * @url http://www.espruino.com/Reference#l_Wifi_ping
      */
     ping(hostname: any, callback: any): any;
@@ -9066,6 +11347,9 @@ type Libraries = {
      * * `1843200` (or any number) = use a specific baud rate.
      * *
      * eg. `wifi.turbo(true,callback)` or `wifi.turbo(1843200,callback)`
+     *
+     * @param {any} enable - true (or a baud rate as a number) to enable, false to disable
+     * @param {any} callback - A `callback()` function to invoke when turbo mode has been set
      * @url http://www.espruino.com/Reference#l_Wifi_turbo
      */
     turbo(enable: any, callback: any): any;
@@ -9081,6 +11365,9 @@ type Libraries = {
     /**
      * Create an HTTP Server
      * When a request to the server is made, the callback is called. In the callback you can use the methods on the response (`httpSRs`) to send data. You can also add `request.on('data',function() { ... })` to listen for POSTed data
+     *
+     * @param {any} callback - A function(request,response) that will be called when a connection is made
+     * @returns {any} Returns a new httpSrv object
      * @url http://www.espruino.com/Reference#l_http_createServer
      */
     createServer(callback: any): httpSrv;
@@ -9111,6 +11398,10 @@ type Libraries = {
      * There's an example of using [`http.request` for HTTP POST here](/Internet#http-post)
      * **Note:** if TLS/HTTPS is enabled, options can have `ca`, `key` and `cert` fields. See `tls.connect` for
      * more information about these and how to use them.
+     *
+     * @param {any} options - An object containing host,port,path,method,headers fields (and also ca,key,cert if HTTPS is enabled)
+     * @param {any} callback - A function(res) that will be called when a connection is made. You can then call `res.on('data', function(data) { ... })` and `res.on('close', function() { ... })` to deal with the response.
+     * @returns {any} Returns a new httpCRq object
      * @url http://www.espruino.com/Reference#l_http_request
      */
     request(options: any, callback: any): httpCRq;
@@ -9128,6 +11419,10 @@ type Libraries = {
      * });
      * ```
      * See `http.request()` and [the Internet page](/Internet) and ` for more usage examples.
+     *
+     * @param {any} options - A simple URL, or an object containing host,port,path,method fields
+     * @param {any} callback - A function(res) that will be called when a connection is made. You can then call `res.on('data', function(data) { ... })` and `res.on('close', function() { ... })` to deal with the response.
+     * @returns {any} Returns a new httpCRq object
      * @url http://www.espruino.com/Reference#l_http_get
      */
     get(options: any, callback: any): httpCRq;
@@ -9172,6 +11467,10 @@ type Libraries = {
      * });
      * ```
      * See the [Television](/Television) page for more information.
+     *
+     * @param {any} options - Various options for the TV output
+     * @param {number} width
+     * @returns {any} A graphics object
      * @url http://www.espruino.com/Reference#l_tv_setup
      */
     setup(options: any, width: number): any;
@@ -9185,11 +11484,17 @@ type Libraries = {
    */
   heatshrink: {
     /**
+     *
+     * @param {any} data - The data to compress
+     * @returns {any} Returns the result as an ArrayBuffer
      * @url http://www.espruino.com/Reference#l_heatshrink_compress
      */
     compress(data: any): ArrayBuffer;
 
     /**
+     *
+     * @param {any} data - The data to decompress
+     * @returns {any} Returns the result as an ArrayBuffer
      * @url http://www.espruino.com/Reference#l_heatshrink_decompress
      */
     decompress(data: any): ArrayBuffer;
@@ -9243,6 +11548,9 @@ type Libraries = {
      * a pullup resistor to 5v on STM32 based boards (nRF52 are not 5v tolerant
      * so you can't do this), or can use a level shifter to shift the voltage up
      * into the 5v range.
+     *
+     * @param {Pin} pin - The Pin the LEDs are connected to
+     * @param {any} data - The data to write to the LED strip (must be a multiple of 3 bytes long)
      * @url http://www.espruino.com/Reference#l_neopixel_write
      */
     write(pin: Pin, data: any): any;
@@ -9278,6 +11586,8 @@ type Libraries = {
      * Erase a single file from the flash storage area.
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
      * @url http://www.espruino.com/Reference#l_Storage_erase
      */
     erase(name: any): any;
@@ -9293,6 +11603,11 @@ type Libraries = {
      * in flash memory.
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
+     * @param {number} offset - (optional) The offset in bytes to start from
+     * @param {number} length - (optional) The length to read in bytes (if <=0, the entire file is read)
+     * @returns {any} A string of data, or `undefined` if the file is not found
      * @url http://www.espruino.com/Reference#l_Storage_read
      */
     read(name: any, offset: number, length: number): any;
@@ -9306,6 +11621,10 @@ type Libraries = {
      * valid JSON.
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
+     * @param {boolean} noExceptions - If true and the JSON is not valid, just return `undefined` - otherwise an `Exception` is thrown
+     * @returns {any} An object containing parsed JSON from the file, or undefined
      * @url http://www.espruino.com/Reference#l_Storage_readJSON
      */
     readJSON(name: any, noExceptions: boolean): any;
@@ -9319,6 +11638,9 @@ type Libraries = {
      * * In a `Uint8Array/Float32Array/etc` with `new Uint8Array(require("Storage").readArrayBuffer("x"))`
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
+     * @returns {any} An ArrayBuffer containing data from the file, or undefined
      * @url http://www.espruino.com/Reference#l_Storage_readArrayBuffer
      */
     readArrayBuffer(name: any): any;
@@ -9352,6 +11674,12 @@ type Libraries = {
      * to write large files into onboard storage.
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
+     * @param {any} data - The data to write
+     * @param {number} [offset] - [optional] The offset within the file to write
+     * @param {number} [size] - [optional] The size of the file (if a file is to be created that is bigger than the data)
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_Storage_write
      */
     write(name: any, data: any, offset?: number, size?: number): boolean;
@@ -9365,6 +11693,10 @@ type Libraries = {
      * This is equivalent to: `require("Storage").write(name, JSON.stringify(data))`
      * **Note:** This function should be used with normal files, and not
      * `StorageFile`s created with `require("Storage").open(filename, ...)`
+     *
+     * @param {any} name - The filename - max 28 characters (case sensitive)
+     * @param {any} data - The JSON data to write
+     * @returns {boolean} True on success, false on failure
      * @url http://www.espruino.com/Reference#l_Storage_writeJSON
      */
     writeJSON(name: any, data: any): boolean;
@@ -9385,6 +11717,10 @@ type Libraries = {
      * ```
      * **Note:** This will output system files (eg. saved code) as well as
      * files that you may have written.
+     *
+     * @param {any} regex - (optional) If supplied, filenames are checked against this regular expression (with `String.match(regexp)`) to see if they match before being returned
+     * @param {any} filter - (optional) If supplied, File Types are filtered based on this: `{sf:true}` or `{sf:false}` for whether to show StorageFile
+     * @returns {any} An array of filenames
      * @url http://www.espruino.com/Reference#l_Storage_list
      */
     list(regex: any, filter: any): any;
@@ -9404,6 +11740,9 @@ type Libraries = {
      * For instance the bootloader will add all `.boot.js` files together into
      * a single `.boot0` file, but it needs to know quickly whether anything has
      * changed.
+     *
+     * @param {any} regex - (optional) If supplied, filenames are checked against this regular expression (with `String.match(regexp)`) to see if they match before being hashed
+     * @returns {number} A hash of the files matching
      * @url http://www.espruino.com/Reference#l_Storage_hash
      */
     hash(regex: any): number;
@@ -9439,6 +11778,7 @@ type Libraries = {
      * Storage. Due to fragmentation there may be more
      * bytes available, but this represents the maximum
      * size of file that can be written.
+     * @returns {number} The amount of free bytes
      * @url http://www.espruino.com/Reference#l_Storage_getFree
      */
     getFree(): number;
@@ -9455,6 +11795,7 @@ type Libraries = {
      *   trashCount // How many trash files do we have?
      * }
      * ```
+     * @returns {any} An object containing info about the current Storage system
      * @url http://www.espruino.com/Reference#l_Storage_getStats
      */
     getStats(): any;
@@ -9471,6 +11812,10 @@ type Libraries = {
      * (normal read/write operations only write the entire file).
      * Please see `StorageFile` for more information (and examples).
      * **Note:** These files write through immediately - they do not need closing.
+     *
+     * @param {any} name - The filename - max **27** characters (case sensitive)
+     * @param {any} mode - The open mode - must be either `'r'` for read,`'w'` for write , or `'a'` for append
+     * @returns {any} An object containing {read,write,erase}
      * @url http://www.espruino.com/Reference#l_Storage_open
      */
     open(name: any, mode: any): StorageFile;
@@ -9494,6 +11839,9 @@ type Libraries = {
   Flash: {
     /**
      * Returns the start and length of the flash page containing the given address.
+     *
+     * @param {number} addr - An address in memory
+     * @returns {any} An object of the form `{ addr : #, length : #}`, where `addr` is the start address of the page, and `length` is the length of it (in bytes). Returns undefined if no page at address
      * @url http://www.espruino.com/Reference#l_Flash_getPage
      */
     getPage(addr: number): any;
@@ -9504,12 +11852,15 @@ type Libraries = {
      * The memory areas returned are on page boundaries. This means that you can
      * safely erase the page containing any address here, and you won't risk
      * deleting part of the Espruino firmware.
+     * @returns {any} Array of objects with `addr` and `length` properties
      * @url http://www.espruino.com/Reference#l_Flash_getFree
      */
     getFree(): any;
 
     /**
      * Erase a page of flash memory
+     *
+     * @param {any} addr - An address in the page that is to be erased
      * @url http://www.espruino.com/Reference#l_Flash_erasePage
      */
     erasePage(addr: any): any;
@@ -9520,12 +11871,19 @@ type Libraries = {
      * you're writing data into an area that you have already written (so `read`
      * doesn't return all `0xFF`) you'll need to call `erasePage` to clear the
      * entire page.
+     *
+     * @param {any} data - The data to write
+     * @param {number} addr - The address to start writing from
      * @url http://www.espruino.com/Reference#l_Flash_write
      */
     write(data: any, addr: number): any;
 
     /**
      * Read flash memory from the given address
+     *
+     * @param {number} length - The amount of data to read (in bytes)
+     * @param {number} addr - The address to start reading from
+     * @returns {any} A Uint8Array of data
      * @url http://www.espruino.com/Reference#l_Flash_read
      */
     read(length: number, addr: number): any;
