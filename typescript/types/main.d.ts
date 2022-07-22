@@ -8460,7 +8460,7 @@ declare function changeInterval(id: any, time: number): any;
 
 type Libraries = {
   /**
-   * @url http://www.espruino.com/Reference#l_tensorflow_undefined
+   * @url http://www.espruino.com/Reference#tensorflow
    */
   tensorflow: {
     /**
@@ -8474,7 +8474,7 @@ type Libraries = {
    * To use this, you must type ```var fs = require('fs')``` to get access to the library
    * See [the page on File IO](http://www.espruino.com/File+IO) for more information, and for examples on wiring up an SD card if your device doesn't come with one.
    * **Note:** If you want to remove an SD card after you have started using it, you *must* call `E.unmountSD()` or you may cause damage to the card.
-   * @url http://www.espruino.com/Reference#l_fs_undefined
+   * @url http://www.espruino.com/Reference#fs
    */
   fs: {
     /**
@@ -8575,7 +8575,7 @@ type Libraries = {
   /**
    * Cryptographic functions
    * **Note:** This library is currently only included in builds for boards where there is space. For other boards there is `crypto.js` which implements SHA1 in JS.
-   * @url http://www.espruino.com/Reference#l_crypto_undefined
+   * @url http://www.espruino.com/Reference#crypto
    */
   crypto: {
     /**
@@ -8626,7 +8626,7 @@ type Libraries = {
 
   /**
    * Library that initialises a network device that calls into JavaScript
-   * @url http://www.espruino.com/Reference#l_NetworkJS_undefined
+   * @url http://www.espruino.com/Reference#NetworkJS
    */
   NetworkJS: {
     /**
@@ -8670,7 +8670,7 @@ type Libraries = {
    * connection, e.g. Wifi, and **currently only functions on the ESP8266 and on Linux **. It uses
    * port 23 on the ESP8266 and port 2323 on Linux.
    * **Note:** To enable on Linux, run `./espruino --telnet`
-   * @url http://www.espruino.com/Reference#l_TelnetServer_undefined
+   * @url http://www.espruino.com/Reference#TelnetServer
    */
   TelnetServer: {
     /**
@@ -8683,7 +8683,7 @@ type Libraries = {
    * This library allows you to create TCPIP servers and clients
    * In order to use this, you will need an extra module to get network connectivity.
    * This is designed to be a cut-down version of the [node.js library](http://nodejs.org/api/net.html). Please see the [Internet](/Internet) page for more information on how to use it.
-   * @url http://www.espruino.com/Reference#l_net_undefined
+   * @url http://www.espruino.com/Reference#net
    */
   net: {
     /**
@@ -8704,7 +8704,7 @@ type Libraries = {
    * This library allows you to create UDP/DATAGRAM servers and clients
    * In order to use this, you will need an extra module to get network connectivity.
    * This is designed to be a cut-down version of the [node.js library](http://nodejs.org/api/dgram.html). Please see the [Internet](/Internet) page for more information on how to use it.
-   * @url http://www.espruino.com/Reference#l_dgram_undefined
+   * @url http://www.espruino.com/Reference#dgram
    */
   dgram: {
     /**
@@ -8718,7 +8718,7 @@ type Libraries = {
    * This library allows you to create TCPIP servers and clients using TLS encryption
    * In order to use this, you will need an extra module to get network connectivity.
    * This is designed to be a cut-down version of the [node.js library](http://nodejs.org/api/tls.html). Please see the [Internet](/Internet) page for more information on how to use it.
-   * @url http://www.espruino.com/Reference#l_tls_undefined
+   * @url http://www.espruino.com/Reference#tls
    */
   tls: {
     /**
@@ -8744,7 +8744,7 @@ type Libraries = {
   }
 
   /**
-   * @url http://www.espruino.com/Reference#l_CC3000_undefined
+   * @url http://www.espruino.com/Reference#CC3000
    */
   CC3000: {
     /**
@@ -8756,7 +8756,7 @@ type Libraries = {
 
   /**
    * Library for communication with the WIZnet Ethernet module
-   * @url http://www.espruino.com/Reference#l_WIZnet_undefined
+   * @url http://www.espruino.com/Reference#WIZnet
    */
   WIZnet: {
     /**
@@ -8789,7 +8789,7 @@ type Libraries = {
    * ```
    * On ESP32/ESP8266 if you want the connection to happen automatically at boot, add `wifi.save();`.
    * On other platforms, place `wifi.connect` in a function called `onInit`.
-   * @url http://www.espruino.com/Reference#l_Wifi_undefined
+   * @url http://www.espruino.com/Reference#Wifi
    */
   Wifi: {
     /**
@@ -9075,7 +9075,7 @@ type Libraries = {
    * This library allows you to create http servers and make http requests
    * In order to use this, you will need an extra module to get network connectivity such as the [TI CC3000](/CC3000) or [WIZnet W5500](/WIZnet).
    * This is designed to be a cut-down version of the [node.js library](http://nodejs.org/api/http.html). Please see the [Internet](/Internet) page for more information on how to use it.
-   * @url http://www.espruino.com/Reference#l_http_undefined
+   * @url http://www.espruino.com/Reference#http
    */
   http: {
     /**
@@ -9136,7 +9136,7 @@ type Libraries = {
   /**
    * This library provides TV out capability on the Espruino and Espruino Pico.
    * See the [Television](/Television) page for more information.
-   * @url http://www.espruino.com/Reference#l_tv_undefined
+   * @url http://www.espruino.com/Reference#tv
    */
   tv: {
     /**
@@ -9181,7 +9181,7 @@ type Libraries = {
    * Simple library for compression/decompression using [heatshrink](https://github.com/atomicobject/heatshrink), an [LZSS](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) compression tool.
    * Espruino uses heatshrink internally to compress RAM down to fit in Flash memory when `save()` is used. This just exposes that functionality.
    * Functions here take and return buffers of data. There is no support for streaming, so both the compressed and decompressed data must be able to fit in memory at the same time.
-   * @url http://www.espruino.com/Reference#l_heatshrink_undefined
+   * @url http://www.espruino.com/Reference#heatshrink
    */
   heatshrink: {
     /**
@@ -9199,7 +9199,7 @@ type Libraries = {
    * This library allows you to write to Neopixel/WS281x/APA10x/SK6812 LED strips
    * These use a high speed single-wire protocol which needs platform-specific
    * implementation on some devices - hence this library to simplify things.
-   * @url http://www.espruino.com/Reference#l_neopixel_undefined
+   * @url http://www.espruino.com/Reference#neopixel
    */
   neopixel: {
     /**
@@ -9263,7 +9263,7 @@ type Libraries = {
    * file with `require("Storage").open(...)` and then read it with `require("Storage").read(...)`.
    * **Note:** In firmware 2v05 and later, the maximum length for filenames
    * is 28 characters. However in 2v04 and earlier the max length is 8.
-   * @url http://www.espruino.com/Reference#l_Storage_undefined
+   * @url http://www.espruino.com/Reference#Storage
    */
   Storage: {
     /**
@@ -9489,7 +9489,7 @@ type Libraries = {
    * reported by `process.memory()`.
    * **Note:** On Nordic platforms there are checks in place to help you avoid
    * 'bricking' your device be damaging the bootloader. You can disable these with `E.setFlags({unsafeFlash:1})`
-   * @url http://www.espruino.com/Reference#l_Flash_undefined
+   * @url http://www.espruino.com/Reference#Flash
    */
   Flash: {
     /**
