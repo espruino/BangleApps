@@ -1,4 +1,4 @@
-let simulated = true;
+let simulated = false;
 let file_version = 3;
 let code_key = 47490;
 
@@ -188,6 +188,17 @@ class Status {
       0,
       g.getHeight() - 15
     );
+
+    if (this.distance_to_next_point <= 20) {
+      g.setColor(0.0, 1.0, 0.0)
+        .setFont("6x8:2")
+        .drawString("turn", g.getWidth() - 40, 35);
+    }
+    if (!this.on_path) {
+      g.setColor(1.0, 0.0, 0.0)
+        .setFont("6x8:2")
+        .drawString("lost", g.getWidth() - 40, 60);
+    }
   }
   display_map() {
     // don't display all segments, only those neighbouring current segment
