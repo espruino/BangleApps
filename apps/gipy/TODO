@@ -1,12 +1,11 @@
 
 - direction is still shitty on gps
-- split on points with comments
-    and encode them as waypoints
 
 - code is becoming messy
 
 - turn off gps when moving to next waypoint
 - display distance to next water/toilet
+- display distance to next waypoint
 
 - meters seem to be a bit too long
 

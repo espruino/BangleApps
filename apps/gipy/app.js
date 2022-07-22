@@ -1,6 +1,6 @@
 
-let simulated = false;
-let file_version = 2;
+let simulated = true;
+let file_version = 3;
 let code_key = 47490;
 
 let interests_colors = [
@@ -177,18 +177,19 @@ class Status {
                     g.setColor(1.0, 0.0, 0.0);
                 }
                 g.drawLine(previous_x, previous_y, x, y);
-            }
 
-            if (this.path.is_waypoint(i-1)) {
+                if (this.path.is_waypoint(i-1)) {
+                  g.setColor(g.theme.fg);
+                  g.fillCircle(previous_x, previous_y, 6);
+                  g.setColor(g.theme.bg);
+                  g.fillCircle(previous_x, previous_y, 5);
+                }
                 g.setColor(g.theme.fg);
-                g.fillCircle(previous_x, previous_y, 6);
+                g.fillCircle(previous_x, previous_y, 4);
                 g.setColor(g.theme.bg);
-                g.fillCircle(previous_x, previous_y, 5);
+                g.fillCircle(previous_x, previous_y, 3);
+
             }
-            g.setColor(g.theme.fg);
-            g.fillCircle(previous_x, previous_y, 4);
-            g.setColor(g.theme.bg);
-            g.fillCircle(previous_x, previous_y, 3);
 
             previous_x = x;
             previous_y = y;
@@ -224,14 +225,19 @@ class Path {
         let points_number = header[2];
         if ((key != code_key)||(version>file_version)) {
             E.showMessage("Invalid gpc file");
-            return;
+            load();
         }
 
         // path points
         this.points = Float64Array(buffer, offset, points_number*2);
+        offset += 8 * points_number * 2;
+
+        // path waypoints
+        let waypoints_len = Math.ceil(points_number / 8.0);
+        this.waypoints = Uint8Array(buffer, offset, waypoints_len);
+        offset += waypoints_len;
 
         // interest points
-        offset += 8 * points_number * 2;
         let interests_number = header[3];
         this.interests_coordinates = Float64Array(buffer, offset, interests_number * 2);
         offset += 8 * interests_number * 2;
@@ -247,22 +253,8 @@ class Path {
         offset += 2 * starts_length;
     }
 
-    // if start, end or steep direction change
-    // we are buzzing and displayed specially
     is_waypoint(point_index) {
-        if ((point_index == 0)||(point_index == this.len -1)) {
-            return true;
-        } else {
-            let p1 = this.point(point_index-1);
-            let p2 = this.point(point_index);
-            let p3 = this.point(point_index+1);
-            let d1 = p2.minus(p1);
-            let d2 = p3.minus(p2);
-            let a1 = Math.atan2(d1.lat, d1.lon);
-            let a2 = Math.atan2(d2.lat, d2.lon);
-            let direction_change = Math.abs(a2-a1);
-            return ((direction_change > Math.PI / 3.0)&&(direction_change < Math.PI * 5.0/3.0));
-        }
+        return (this.waypoints[Math.floor(point_index / 8)] & (point_index % 8));
     }
 
     // execute op on all segments.
@@ -513,3 +505,4 @@ if (files.length <= 1) {
 } else {
     drawMenu();
 }
+

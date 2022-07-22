@@ -11,7 +11,7 @@ mod osm;
 use osm::{parse_osm_data, InterestPoint};
 
 const KEY: u16 = 47490;
-const FILE_VERSION: u16 = 2;
+const FILE_VERSION: u16 = 3;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Point {
@@ -349,7 +349,12 @@ fn compress_coordinates(points: &[(i32, i32)]) -> Vec<(i16, i16)> {
     xdiffs.zip(ydiffs).collect()
 }
 
-fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> std::io::Result<()> {
+fn save_gpc<P: AsRef<Path>>(
+    path: P,
+    points: &[Point],
+    waypoints: &HashSet<Point>,
+    buckets: &[Bucket],
+) -> std::io::Result<()> {
     let mut writer = BufWriter::new(File::create(path)?);
 
     eprintln!("saving {} points", points.len());
@@ -379,6 +384,18 @@ fn save_gpc<P: AsRef<Path>>(path: P, points: &[Point], buckets: &[Bucket]) -> st
         .iter()
         .flat_map(|p| [p.x, p.y])
         .try_for_each(|c| writer.write_all(&c.to_le_bytes()))?;
+
+    let mut waypoints_bits = std::iter::repeat(0u8)
+        .take(points.len() / 8 + if points.len() % 8 != 0 { 1 } else { 0 })
+        .collect::<Vec<u8>>();
+    points.iter().enumerate().for_each(|(i, p)| {
+        if waypoints.contains(p) {
+            waypoints_bits[i / 8] |= 1 << (i % 8)
+        }
+    });
+    waypoints_bits
+        .iter()
+        .try_for_each(|byte| writer.write_all(&byte.to_le_bytes()))?;
 
     unique_interest_points
         .iter()
@@ -672,5 +689,5 @@ async fn main() {
     )
     .unwrap();
 
-    save_gpc("test.gpc", &rp, &buckets).unwrap();
+    save_gpc("test.gpc", &rp, &waypoints, &buckets).unwrap();
 }
