@@ -32,3 +32,6 @@
 	* Bugfix in map display (last segment was missing + wrong colors).
 	* Waypoint detections using OSM + sharp angles
 	* New algorith for direction detection
+
+0.11:
+	* Better fonts (more free space, still readable).

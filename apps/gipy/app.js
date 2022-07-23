@@ -174,8 +174,12 @@ class Status {
     let hours = now.getHours().toString();
     g.setFont("6x8:2")
       .setColor(g.theme.fg)
-      .drawString(hours + ":" + minutes, 0, g.getHeight() - 49);
-    g.drawString("d. " + rounded_distance + "/" + total, 0, g.getHeight() - 32);
+      .drawString(hours + ":" + minutes, g.getWidth() - 50, g.getHeight() - 15);
+    g.setFont("6x15").drawString(
+      "d. " + rounded_distance + "/" + total,
+      0,
+      g.getHeight() - 32
+    );
     g.drawString(
       "seg." +
         (this.current_segment + 1) +
@@ -191,13 +195,13 @@ class Status {
     if (this.distance_to_next_point <= 20) {
       if (this.path.is_waypoint(this.reaching)) {
         g.setColor(0.0, 1.0, 0.0)
-          .setFont("6x8:2")
+          .setFont("6x15")
           .drawString("turn", g.getWidth() - 55, 35);
       }
     }
     if (!this.on_path) {
       g.setColor(1.0, 0.0, 0.0)
-        .setFont("6x8:2")
+        .setFont("6x15")
         .drawString("lost", g.getWidth() - 55, 35);
     }
   }
