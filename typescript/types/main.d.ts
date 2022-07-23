@@ -2,6 +2,91 @@
 
 /// <reference path="other.d.ts" />
 
+// TYPES
+
+/**
+ * Menu item that holds a boolean value.
+ */
+type MenuBooleanItem = {
+  value: boolean;
+  format?: (value: boolean) => string;
+  onchange?: (value: boolean) => void;
+};
+
+/**
+ * Menu item that holds a numerical value.
+ */
+type MenuNumberItem = {
+  value: number;
+  format?: (value: number) => string;
+  onchange?: (value: number) => void;
+  step?: number;
+  min?: number;
+  max?: number;
+  wrap?: boolean;
+};
+
+/**
+ * Options passed to a menu.
+ */
+type MenuOptions = {
+  title?: string;
+  back?: () => void;
+  selected?: number;
+  fontHeight?: number;
+  x?: number;
+  y?: number;
+  x2?: number;
+  y2?: number;
+  cB?: number;
+  cF?: number;
+  cHB?: number;
+  cHF?: number;
+  predraw?: (g: Graphics) => void;
+  preflip?: (g: Graphics, less: boolean, more: boolean) => void;
+};
+
+/**
+ * Object containing data about a menu to pass to `E.showMenu`.
+ */
+type Menu = {
+  [key: string]:
+    | MenuOptions
+    | (() => void)
+    | MenuBooleanItem
+    | MenuNumberItem
+    | undefined;
+};
+
+/**
+ * Menu instance.
+ */
+type MenuInstance = {
+  draw: () => void;
+  move: (n: number) => void;
+  select: () => void;
+};
+
+type NRFFilters = {
+  services?: string[];
+  name?: string;
+  namePrefix?: string;
+  id?: string;
+  serviceData?: object;
+  manufacturerData?: object;
+};
+
+declare const g: Graphics;
+
+type WidgetArea = "tl" | "tr" | "bl" | "br";
+type Widget = {
+  area: WidgetArea;
+  width: number;
+  draw: (this: { x: number; y: number }) => void;
+};
+declare const WIDGETS: { [key: string]: Widget };
+
+
 // CLASSES
 
 /**
@@ -71,7 +156,7 @@ declare class Microbit {
   static accelOn(): any;
 
   /**
-   * Turn off events from  the accelerometer (started with `Microbit.accelOn`)
+   * Turn off events from the accelerometer (started with `Microbit.accelOn`)
    * @url http://www.espruino.com/Reference#l_Microbit_accelOff
    */
   static accelOff(): any;
@@ -95,6 +180,8 @@ declare class Microbit {
    * @url http://www.espruino.com/Reference#l_Microbit_record
    */
   static record(samplesPerSecond: any, callback: any, samples?: any): any;
+
+
 }
 
 interface MathConstructor {
@@ -172,7 +259,7 @@ interface MathConstructor {
 
   /**
    *
-   * @param {number} x - The value to get the arc tangent  of
+   * @param {number} x - The value to get the arc tangent of
    * @returns {number} The arc tangent of x, between -PI/2 and PI/2
    * @url http://www.espruino.com/Reference#l_Math_atan
    */
@@ -330,6 +417,8 @@ declare const Math: MathConstructor
  * @url http://www.espruino.com/Reference#TFMicroInterpreter
  */
 declare class TFMicroInterpreter {
+
+
   /**
    * @returns {any} An arraybuffer referencing the input data
    * @url http://www.espruino.com/Reference#l_TFMicroInterpreter_getInput
@@ -378,6 +467,8 @@ declare class Badge {
    * @url http://www.espruino.com/Reference#l_Badge_setContrast
    */
   static setContrast(c: number): any;
+
+
 }
 
 /**
@@ -648,6 +739,8 @@ declare class Puck {
    * @url http://www.espruino.com/Reference#l_Puck_selfTest
    */
   static selfTest(): boolean;
+
+
 }
 
 /**
@@ -657,6 +750,8 @@ declare class Puck {
  * @url http://www.espruino.com/Reference#File
  */
 declare class File {
+
+
   /**
    * Close an open file.
    * @url http://www.espruino.com/Reference#l_File_close
@@ -784,6 +879,8 @@ declare class WioLTE {
    * @url http://www.espruino.com/Reference#l_WioLTE_A4
    */
   static A4: any;
+
+
 }
 
 /**
@@ -835,6 +932,8 @@ declare class Pixl {
    * @url http://www.espruino.com/Reference#l_Pixl_menu
    */
   static menu(menu: any): any;
+
+
 }
 
 /**
@@ -909,6 +1008,8 @@ declare class Trig {
    * @url http://www.espruino.com/Reference#l_Trig_getErrorArray
    */
   static getErrorArray(): any;
+
+
 }
 
 /**
@@ -936,6 +1037,8 @@ declare class AES {
    * @url http://www.espruino.com/Reference#l_AES_decrypt
    */
   static decrypt(passphrase: any, key: any, options: any): ArrayBuffer;
+
+
 }
 
 /**
@@ -1017,7 +1120,9 @@ declare class Graphics {
    * @returns {any} An Image object that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_createImage
    */
-  static createImage(str: any): any;/**
+  static createImage(str: any): any;
+
+  /**
    * Set the current font
    *
    * @param {number} scale - (optional) If >1 the font will be scaled up by that amount
@@ -1883,6 +1988,8 @@ declare class url {
    * @url http://www.espruino.com/Reference#l_url_parse
    */
   static parse(urlStr: any, parseQuery: boolean): any;
+
+
 }
 
 /**
@@ -1890,6 +1997,8 @@ declare class url {
  * @url http://www.espruino.com/Reference#Server
  */
 declare class Server {
+
+
   /**
    * Start listening for new connections on the given port
    *
@@ -1959,7 +2068,9 @@ declare class Socket {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_Socket_drain
    */
-  static on(event: "drain", callback: () => void): void;/**
+  static on(event: "drain", callback: () => void): void;
+
+  /**
    * Return how many bytes are available to read. If there is already a listener for data, this will always return 0.
    * @returns {number} How many bytes are available
    * @url http://www.espruino.com/Reference#l_Socket_available
@@ -2046,7 +2157,9 @@ declare class dgramSocket {
    * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
    * @url http://www.espruino.com/Reference#l_dgramSocket_close
    */
-  static on(event: "close", callback: (had_error: any) => void): void;/**
+  static on(event: "close", callback: (had_error: any) => void): void;
+
+  /**
    *
    * @param {any} buffer - A string containing message to send
    * @param {any} offset - Offset in the passed string where the message starts [optional]
@@ -2085,6 +2198,8 @@ declare class dgramSocket {
  * @url http://www.espruino.com/Reference#WLAN
  */
 declare class WLAN {
+
+
   /**
    * Connect to a wireless network
    *
@@ -2119,7 +2234,7 @@ declare class WLAN {
    * Set the current IP address for get an IP from DHCP (if no options object is specified).
    * **Note:** Changes are written to non-volatile memory, but will only take effect after calling `wlan.reconnect()`
    *
-   * @param {any} options - Object containing IP address options `{ ip : '1,2,3,4', subnet, gateway, dns  }`, or do not supply an object in otder to force DHCP.
+   * @param {any} options - Object containing IP address options `{ ip : '1,2,3,4', subnet, gateway, dns }`, or do not supply an object in otder to force DHCP.
    * @returns {boolean} True on success
    * @url http://www.espruino.com/Reference#l_WLAN_setIP
    */
@@ -2148,7 +2263,7 @@ declare class ESP8266 {
   static reboot(): any;
 
   /**
-   * At boot time the esp8266's firmware captures the cause of the reset/reboot.  This function returns this information in an object with the following fields:
+   * At boot time the esp8266's firmware captures the cause of the reset/reboot. This function returns this information in an object with the following fields:
    * * `reason`: "power on", "wdt reset", "exception", "soft wdt", "restart", "deep sleep", or "reset pin"
    * * `exccause`: exception cause
    * * `epc1`, `epc2`, `epc3`: instruction pointers
@@ -2160,7 +2275,7 @@ declare class ESP8266 {
   static getResetInfo(): any;
 
   /**
-   * Enable or disable the logging of debug information.  A value of `true` enables debug logging while a value of `false` disables debug logging.  Debug output is sent to UART1 (gpio2).
+   * Enable or disable the logging of debug information. A value of `true` enables debug logging while a value of `false` disables debug logging. Debug output is sent to UART1 (gpio2).
    *
    * @param {boolean} enable - Enable or disable the debug logging.
    * @url http://www.espruino.com/Reference#l_ESP8266_logDebug
@@ -2259,6 +2374,8 @@ declare class ESP8266 {
    * @url http://www.espruino.com/Reference#l_ESP8266_deepSleep
    */
   static deepSleep(micros: any, option: any): any;
+
+
 }
 
 /**
@@ -2266,6 +2383,8 @@ declare class ESP8266 {
  * @url http://www.espruino.com/Reference#Ethernet
  */
 declare class Ethernet {
+
+
   /**
    * Get the current IP address, subnet, gateway and mac address.
    *
@@ -2324,6 +2443,8 @@ declare class Ethernet {
  * @url http://www.espruino.com/Reference#httpSrv
  */
 declare class httpSrv {
+
+
   /**
    * Start listening for new HTTP connections on the given port
    *
@@ -2360,7 +2481,9 @@ declare class httpSRq {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpSRq_close
    */
-  static on(event: "close", callback: () => void): void;/**
+  static on(event: "close", callback: () => void): void;
+
+  /**
    * The headers to sent to the server with this HTTP request.
    * @returns {any} An object mapping header name to value
    * @url http://www.espruino.com/Reference#l_httpSRq_headers
@@ -2432,7 +2555,9 @@ declare class httpSRs {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpSRs_close
    */
-  static on(event: "close", callback: () => void): void;/**
+  static on(event: "close", callback: () => void): void;
+
+  /**
    * The headers to send back along with the HTTP response.
    * The default contents are:
    * ```
@@ -2507,7 +2632,9 @@ declare class httpCRq {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRq_error
    */
-  static on(event: "error", callback: () => void): void;/**
+  static on(event: "error", callback: () => void): void;
+
+  /**
    * This function writes the `data` argument as a string. Data that is passed in
    * (including arrays) will be converted to a string with the normal JavaScript
    * `toString` method. For more information about sending binary data see `Socket.write`
@@ -2556,7 +2683,9 @@ declare class httpCRs {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_httpCRs_error
    */
-  static on(event: "error", callback: () => void): void;/**
+  static on(event: "error", callback: () => void): void;
+
+  /**
    * The headers received along with the HTTP response
    * @returns {any} An object mapping header name to value
    * @url http://www.espruino.com/Reference#l_httpCRs_headers
@@ -2648,6 +2777,8 @@ declare class Unistroke {
    * @url http://www.espruino.com/Reference#l_Unistroke_recognise
    */
   static recognise(strokes: any, xy: any): any;
+
+
 }
 
 /**
@@ -3185,7 +3316,7 @@ declare class NRF {
    *   "data": new Uint8Array([ ... ]).buffer, // ArrayBuffer of returned data
    *   "serviceData" : { "0123" : [ 1 ] }, // if service data is in 'data', it's extracted here
    *   "manufacturer" : 0x1234, // if manufacturer data is in 'data', the 16 bit manufacturer ID is extracted here
-   *   "manufacturerData" : [...], // if manufacturer data is in 'data', the data is extracted here
+   *   "manufacturerData" : new Uint8Array([...]).buffer, // if manufacturer data is in 'data', the data is extracted here as an ArrayBuffer
    *   "name": "DeviceName"       // the advertised device name
    *  }
    * ```
@@ -3258,12 +3389,13 @@ declare class NRF {
    * ```
    * [
    *   BluetoothDevice {
-   *     "id": "e7:e0:57:ad:36:a2 random",
+   *     "id" : "e7:e0:57:ad:36:a2 random",
    *     "rssi": -45,
    *     "services": [ "4567" ],
    *     "serviceData" : { "0123" : [ 1 ] },
-   *     "manufacturerData" : [...],
-   *     "data": new ArrayBuffer([ ... ]),
+   *     "manufacturer" : 1424,
+   *     "manufacturerData" : new Uint8Array([ ... ]).buffer,
+   *     "data": new ArrayBuffer([ ... ]).buffer,
    *     "name": "Puck.js 36a2"
    *    },
    *   BluetoothDevice {
@@ -3293,10 +3425,10 @@ declare class NRF {
    * packets. To get data for each packet individually use `NRF.setScan` instead.
    *
    * @param {any} callback - The callback to call with received advertising packets (as `BluetoothDevice`), or undefined to stop
-   * @param {any} options - A time in milliseconds to scan for (defaults to 2000), Or an optional object `{filters: ..., timeout : ..., active: bool}` (as would be passed to `NRF.requestDevice`) to filter devices by
+   * @param {any} [options] - [optional] A time in milliseconds to scan for (defaults to 2000), Or an optional object `{filters: ..., timeout : ..., active: bool}` (as would be passed to `NRF.requestDevice`) to filter devices by
    * @url http://www.espruino.com/Reference#l_NRF_findDevices
    */
-  static findDevices(callback: any, options: any): any;
+  static findDevices(callback: (devices: BluetoothDevice[]) => void, options?: number | { filters?: NRFFilters, timeout?: number, active?: boolean }): void;
 
   /**
    * Start/stop listening for RSSI values on the currently active connection
@@ -3471,7 +3603,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_ancsGetNotificationInfo
    */
-  static ancsGetNotificationInfo(uid: number): Promise;
+  static ancsGetNotificationInfo(uid: number): Promise<any>;
 
   /**
    * Get ANCS info for an app (add id is available via `ancsGetNotificationInfo`)
@@ -3495,7 +3627,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_ancsGetAppInfo
    */
-  static ancsGetAppInfo(id: any): Promise;
+  static ancsGetAppInfo(id: any): Promise<any>;
 
   /**
    * Check if Apple Media Service (AMS) is currently active on the BLE connection
@@ -3520,7 +3652,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_amsGetPlayerInfo
    */
-  static amsGetPlayerInfo(id: any): Promise;
+  static amsGetPlayerInfo(id: any): Promise<any>;
 
   /**
    * Get Apple Media Service (AMS) info for the currently-playing track
@@ -3529,7 +3661,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_amsGetTrackInfo
    */
-  static amsGetTrackInfo(id: any): Promise;
+  static amsGetTrackInfo(id: any): Promise<any>;
 
   /**
    * Send an AMS command to an Apple Media Service device to control music playback
@@ -3605,7 +3737,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_requestDevice
    */
-  static requestDevice(options: any): Promise;
+  static requestDevice(options?: { filters?: NRFFilters, timeout?: number, active?: boolean, phy?: string, extended?: boolean }): Promise<any>;
 
   /**
    * Connect to a BLE device by MAC address. Returns a promise,
@@ -3643,7 +3775,7 @@ declare class NRF {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_NRF_connect
    */
-  static connect(mac: any, options: any): Promise;
+  static connect(mac: any, options: any): Promise<any>;
 
   /**
    * If set to true, whenever a device bonds it will be added to the
@@ -3790,6 +3922,8 @@ declare class NRF {
    * @url http://www.espruino.com/Reference#l_NRF_startBonding
    */
   static startBonding(forceRepair: boolean): any;
+
+
 }
 
 /**
@@ -3800,6 +3934,8 @@ declare class Bluetooth {
    * @url http://www.espruino.com/Reference#l_Bluetooth_setConsole
    */
   static setConsole(): any;
+
+
 }
 
 /**
@@ -3874,7 +4010,9 @@ declare class BluetoothDevice {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_passkeyRequest
    */
-  static on(event: "passkeyRequest", callback: () => void): void;/**
+  static on(event: "passkeyRequest", callback: () => void): void;
+
+  /**
    * @returns {any} A `BluetoothRemoteGATTServer` for this device
    * @url http://www.espruino.com/Reference#l_BluetoothDevice_gatt
    */
@@ -3904,6 +4042,8 @@ declare class BluetoothDevice {
  * @url http://www.espruino.com/Reference#BluetoothRemoteGATTServer
  */
 declare class BluetoothRemoteGATTServer {
+
+
   /**
    * Connect to a BLE device - returns a promise,
    * the argument of which is the `BluetoothRemoteGATTServer` connection.
@@ -3934,7 +4074,7 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} A `Promise` that is resolved (or rejected) when the connection is complete
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_connect
    */
-  connect(options: any): Promise;
+  connect(options: any): Promise<any>;
 
   /**
    * @returns {boolean} Whether the device is connected or not
@@ -3959,7 +4099,7 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} A `Promise` that is resolved (or rejected) when the disconnection is complete (non-standard)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_disconnect
    */
-  disconnect(): Promise;
+  disconnect(): Promise<any>;
 
   /**
    * Start negotiating bonding (secure communications) with the connected device,
@@ -3987,7 +4127,7 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} A `Promise` that is resolved (or rejected) when the bonding is complete
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_startBonding
    */
-  startBonding(forceRePair: boolean): Promise;
+  startBonding(forceRePair: boolean): Promise<any>;
 
   /**
    * Return an object with information about the security
@@ -4016,13 +4156,13 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} A `Promise` that is resolved (or rejected) when the primary service is found (the argument contains a `BluetoothRemoteGATTService`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryService
    */
-  getPrimaryService(service: any): Promise;
+  getPrimaryService(service: any): Promise<any>;
 
   /**
    * @returns {any} A `Promise` that is resolved (or rejected) when the primary services are found (the argument contains an array of `BluetoothRemoteGATTService`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getPrimaryServices
    */
-  getPrimaryServices(): Promise;
+  getPrimaryServices(): Promise<any>;
 
   /**
    * Start/stop listening for RSSI values on the active GATT connection
@@ -4048,6 +4188,8 @@ declare class BluetoothRemoteGATTServer {
  * @url http://www.espruino.com/Reference#BluetoothRemoteGATTService
  */
 declare class BluetoothRemoteGATTService {
+
+
   /**
    * @returns {any} The `BluetoothDevice` this Service came from
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_device
@@ -4061,13 +4203,13 @@ declare class BluetoothRemoteGATTService {
    * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is found (the argument contains a `BluetoothRemoteGATTCharacteristic`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristic
    */
-  getCharacteristic(characteristic: any): Promise;
+  getCharacteristic(characteristic: any): Promise<any>;
 
   /**
    * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is found (the argument contains an array of `BluetoothRemoteGATTCharacteristic`)
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTService_getCharacteristics
    */
-  getCharacteristics(): Promise;
+  getCharacteristics(): Promise<any>;
 }
 
 /**
@@ -4094,7 +4236,9 @@ declare class BluetoothRemoteGATTCharacteristic {
    * @param {() => void} callback - A function that is executed when the event occurs.
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_characteristicvaluechanged
    */
-  static on(event: "characteristicvaluechanged", callback: () => void): void;/**
+  static on(event: "characteristicvaluechanged", callback: () => void): void;
+
+  /**
    * @returns {any} The `BluetoothRemoteGATTService` this Service came from
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_service
    */
@@ -4123,7 +4267,7 @@ declare class BluetoothRemoteGATTCharacteristic {
    * @returns {any} A `Promise` that is resolved (or rejected) when the characteristic is written
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_writeValue
    */
-  writeValue(data: any): Promise;
+  writeValue(data: any): Promise<any>;
 
   /**
    * Read a characteristic's value, return a promise containing a `DataView`
@@ -4147,7 +4291,7 @@ declare class BluetoothRemoteGATTCharacteristic {
    * @returns {any} A `Promise` that is resolved (or rejected) with a `DataView` when the characteristic is read
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_readValue
    */
-  readValue(): Promise;
+  readValue(): Promise<any>;
 
   /**
    * Starts notifications - whenever this characteristic's value changes, a `characteristicvaluechanged` event is fired
@@ -4192,14 +4336,14 @@ declare class BluetoothRemoteGATTCharacteristic {
    * @returns {any} A `Promise` that is resolved (or rejected) with data when notifications have been added
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_startNotifications
    */
-  startNotifications(): Promise;
+  startNotifications(): Promise<any>;
 
   /**
    * Stop notifications (that were requested with `BluetoothRemoteGATTCharacteristic.startNotifications`)
    * @returns {any} A `Promise` that is resolved (or rejected) with data when notifications have been removed
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTCharacteristic_stopNotifications
    */
-  stopNotifications(): Promise;
+  stopNotifications(): Promise<any>;
 }
 
 /**
@@ -4973,7 +5117,7 @@ declare class Bangle {
    * @returns {any} A promise, completed when beep is finished
    * @url http://www.espruino.com/Reference#l_Bangle_beep
    */
-  static beep(time: number, freq: number): Promise;
+  static beep(time: number, freq: number): Promise<any>;
 
   /**
    * Use the vibration motor to buzz for a certain time period
@@ -4983,7 +5127,7 @@ declare class Bangle {
    * @returns {any} A promise, completed when vibration is finished
    * @url http://www.espruino.com/Reference#l_Bangle_buzz
    */
-  static buzz(time?: number, strength?: number): Promise;
+  static buzz(time?: number, strength?: number): Promise<any>;
 
   /**
    * Turn Bangle.js off. It can only be woken by pressing BTN1.
@@ -5110,6 +5254,8 @@ declare class Bangle {
    * @url http://www.espruino.com/Reference#l_Bangle_appRect
    */
   static appRect: any;
+
+
 }
 
 interface DateConstructor {
@@ -5367,7 +5513,9 @@ declare class OneWire {
    * @returns {any} A OneWire object
    * @url http://www.espruino.com/Reference#l_OneWire_OneWire
    */
-  static new(pin: Pin): any;/**
+  static new(pin: Pin): any;
+
+  /**
    * Perform a reset cycle
    * @returns {boolean} True is a device was present (it held the bus low)
    * @url http://www.espruino.com/Reference#l_OneWire_reset
@@ -5521,6 +5669,8 @@ declare const ArrayBuffer: ArrayBufferConstructor
  * @url http://www.espruino.com/Reference#ArrayBufferView
  */
 declare class ArrayBufferView {
+
+
   /**
    * The buffer this view references
    * @returns {any} An ArrayBuffer object
@@ -5836,6 +5986,8 @@ declare class Uint24Array {
    * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
    */
   static new(arr: any, byteOffset: number, length: number): ArrayBufferView;
+
+
 }
 
 interface Uint32ArrayConstructor {
@@ -5951,7 +6103,7 @@ interface PromiseConstructor {
    * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_all
    */
-  all(promises: any): any;
+  all(promises: Promise<any>[]): Promise<void>;
 
   /**
    * Return a new promise that is already resolved (at idle it'll
@@ -5961,7 +6113,7 @@ interface PromiseConstructor {
    * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_resolve
    */
-  resolve(promises: any): any;
+  resolve<T extends any>(promises: T): Promise<T>;
 
   /**
    * Return a new promise that is already rejected (at idle it'll
@@ -5982,18 +6134,18 @@ interface PromiseConstructor {
    * @returns {any} A Promise
    * @url http://www.espruino.com/Reference#l_Promise_Promise
    */
-  new(executor: any): any;
+  new<T>(executor: (resolve: (value: T) => void, reject: (reason?: any) => void) => void): Promise<T>;
 }
 
-interface Promise {
+interface Promise<T> {
   /**
    *
    * @param {any} onFulfilled - A callback that is called when this promise is resolved
-   * @param {any} onRejected - A callback that is called when this promise is rejected (or nothing)
+   * @param {any} [onRejected] - [optional] A callback that is called when this promise is rejected (or nothing)
    * @returns {any} The original Promise
    * @url http://www.espruino.com/Reference#l_Promise_then
    */
-  then(onFulfilled: any, onRejected: any): any;
+  then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
 
   /**
    *
@@ -6032,7 +6184,9 @@ declare class SPI {
    * @returns {any} A SPI object
    * @url http://www.espruino.com/Reference#l_SPI_SPI
    */
-  static new(): any;/**
+  static new(): any;
+
+  /**
    * Set up this SPI port as an SPI Master.
    * Options can contain the following (defaults are shown where relevant):
    * ```
@@ -6127,7 +6281,9 @@ declare class I2C {
    * @returns {any} An I2C object
    * @url http://www.espruino.com/Reference#l_I2C_I2C
    */
-  static new(): any;/**
+  static new(): any;
+
+  /**
    * Set up this I2C port
    * If not specified in options, the default pins are used (usually the lowest numbered pins on the lowest port that supports this peripheral)
    *
@@ -6174,7 +6330,9 @@ declare class Waveform {
    * @returns {any} An Waveform object
    * @url http://www.espruino.com/Reference#l_Waveform_Waveform
    */
-  static new(samples: number, options: any): any;/**
+  static new(samples: number, options: any): any;
+
+  /**
    * Will start outputting the waveform on the given pin - the pin must have previously been initialised with analogWrite. If not repeating, it'll emit a `finish` event when it is done.
    *
    * @param {Pin} output - The pin to output on
@@ -6215,7 +6373,9 @@ declare class Pin {
    * @returns {any} A Pin object
    * @url http://www.espruino.com/Reference#l_Pin_Pin
    */
-  static new(value: any): any;/**
+  static new(value: any): any;
+
+  /**
    * Returns the input state of the pin as a boolean.
    *  **Note:** if you didn't call `pinMode` beforehand then this function will also reset the pin's state to `"input"`
    * @returns {boolean} Whether pin is a logical 1 or 0
@@ -6536,7 +6696,9 @@ declare class Serial {
    * @returns {any} A Serial object
    * @url http://www.espruino.com/Reference#l_Serial_Serial
    */
-  static new(): any;/**
+  static new(): any;
+
+  /**
    * Set this Serial port as the port for the JavaScript console (REPL).
    * Unless `force` is set to true, changes in the connection state of the board
    * (for instance plugging in USB) will cause the console to change.
@@ -6726,6 +6888,8 @@ declare class Serial {
  * @url http://www.espruino.com/Reference#StorageFile
  */
 declare class StorageFile {
+
+
   /**
    * Read 'len' bytes of data from the file, and return a String containing those bytes.
    * If the end of the file is reached, the String may be smaller than the amount of bytes
@@ -6889,6 +7053,8 @@ declare class Modules {
    * @url http://www.espruino.com/Reference#l_Modules_addCached
    */
   static addCached(id: any, sourcecode: any): any;
+
+
 }
 
 interface StringConstructor {
@@ -7236,10 +7402,10 @@ interface Array<T> {
    * Executes a provided function once per array element.
    *
    * @param {any} function - Function to be executed
-   * @param {any} thisArg - if specified, the function is called with 'this' set to thisArg (optional)
+   * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg (optional)
    * @url http://www.espruino.com/Reference#l_Array_forEach
    */
-  forEach(func: any, thisArg: any): any;
+  forEach(callback: (item: T, index: number, array: T[]) => void, thisArg?: any): void;
 
   /**
    * Return an array which contains only those elements for which the callback function returns 'true'
@@ -7754,7 +7920,7 @@ declare class E {
   static openFile(path: any, mode: any): File;
 
   /**
-   * Change the paramters used for the flash filesystem.
+   * Change the parameters used for the flash filesystem.
    * The default address is the last 1Mb of 4Mb Flash, 0x300000, with total size of 1Mb.
    * Before first use the media needs to be formatted.
    * ```
@@ -7825,7 +7991,7 @@ declare class E {
    * @returns {any} A menu object with `draw`, `move` and `select` functions
    * @url http://www.espruino.com/Reference#l_E_showMenu
    */
-  static showMenu(menu: any): any;
+  static showMenu(menu: Menu): MenuInstance;
 
   /**
    * A utility function for displaying a full screen message on the screen.
@@ -8001,7 +8167,7 @@ declare class E {
    * @returns {any} A menu object with `draw`, `move` and `select` functions
    * @url http://www.espruino.com/Reference#l_E_showMenu
    */
-  static showMenu(menu: any): any;
+  static showMenu(menu: Menu): MenuInstance;
 
   /**
    * A utility function for displaying a full screen message on the screen.
@@ -8984,6 +9150,8 @@ declare class E {
    * @url http://www.espruino.com/Reference#l_E_decodeUTF8
    */
   static decodeUTF8(str: any, lookup: any, replaceFn: any): any;
+
+
 }
 
 interface consoleConstructor {
@@ -9098,7 +9266,9 @@ declare class InternalError {
    * @returns {any} An InternalError object
    * @url http://www.espruino.com/Reference#l_InternalError_InternalError
    */
-  static new(message: any): any;/**
+  static new(message: any): any;
+
+  /**
    * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_InternalError_toString
    */
@@ -9361,6 +9531,8 @@ declare class Nucleo {
    * @url http://www.espruino.com/Reference#l_Nucleo_D15
    */
   static D15: Pin;
+
+
 }
 
 /**
@@ -9439,6 +9611,8 @@ declare class NodeMCU {
    * @url http://www.espruino.com/Reference#l_NodeMCU_D10
    */
   static D10: Pin;
+
+
 }
 
 /**
@@ -9504,6 +9678,8 @@ declare class ESP32 {
    * @url http://www.espruino.com/Reference#l_ESP32_enableWifi
    */
   static enableWifi(enable: boolean): any;
+
+
 }
 
 /**
@@ -9519,7 +9695,9 @@ declare class Queue {
    * @returns {any} A Queue object
    * @url http://www.espruino.com/Reference#l_Queue_Queue
    */
-  static new(queueName: any): any;/**
+  static new(queueName: any): any;
+
+  /**
    * reads one character from queue, if available
    * @url http://www.espruino.com/Reference#l_Queue_read
    */
@@ -9553,7 +9731,9 @@ declare class Task {
    * @returns {any} A Task object
    * @url http://www.espruino.com/Reference#l_Task_Task
    */
-  static new(taskName: any): any;/**
+  static new(taskName: any): any;
+
+  /**
    * Suspend task, be careful not to suspend Espruino task itself
    * @url http://www.espruino.com/Reference#l_Task_suspend
    */
@@ -9601,7 +9781,9 @@ declare class Timer {
    * @returns {any} A Timer Object
    * @url http://www.espruino.com/Reference#l_Timer_Timer
    */
-  static new(timerName: any, group: number, index: number, isrIndex: number): any;/**
+  static new(timerName: any, group: number, index: number, isrIndex: number): any;
+
+  /**
    * Starts a timer
    *
    * @param {number} duration - duration of timmer in micro secs
@@ -10023,10 +10205,8 @@ declare function decodeURIComponent(str: any): any;
  * @returns {any} The result of evaluating the string
  * @url http://www.espruino.com/Reference#l__global_require
  */
-declare function require<T extends keyof Modules>(moduleName: T): Modules[T]
-declare function require<
-  T extends Exclude<string, keyof Modules>
->(moduleName: T): any
+declare function require<T extends keyof Libraries>(moduleName: T): Libraries[T];
+declare function require<T extends Exclude<string, keyof Libraries>>(moduleName: T): any;
 
 /**
  * Read 8 bits of memory at the given location - DANGEROUS!
@@ -10292,12 +10472,90 @@ declare function setWatch(func: any, pin: Pin, options: any): any;
  */
 declare function clearWatch(...id: any[]): any;
 
-/**
- * A reference to the global scope, where everything is defined.
- * @returns {any} The global scope
- * @url http://www.espruino.com/Reference#l__global_global
- */
-declare const global: any;
+declare const global: {
+  show: typeof show;
+  acceleration: typeof acceleration;
+  compass: typeof compass;
+  BTNA: typeof BTNA;
+  BTNB: typeof BTNB;
+  BTNU: typeof BTNU;
+  BTND: typeof BTND;
+  BTNL: typeof BTNL;
+  BTNR: typeof BTNR;
+  CORNER1: typeof CORNER1;
+  CORNER2: typeof CORNER2;
+  CORNER3: typeof CORNER3;
+  CORNER4: typeof CORNER4;
+  CORNER5: typeof CORNER5;
+  CORNER6: typeof CORNER6;
+  FET: typeof FET;
+  SDA: typeof SDA;
+  SCL: typeof SCL;
+  VIBRATE: typeof VIBRATE;
+  LED: typeof LED;
+  LED1: typeof LED1;
+  LED2: typeof LED2;
+  MOS1: typeof MOS1;
+  MOS2: typeof MOS2;
+  MOS3: typeof MOS3;
+  MOS4: typeof MOS4;
+  IOEXT0: typeof IOEXT0;
+  IOEXT1: typeof IOEXT1;
+  IOEXT2: typeof IOEXT2;
+  IOEXT3: typeof IOEXT3;
+  NaN: typeof NaN;
+  Infinity: typeof Infinity;
+  HIGH: typeof HIGH;
+  LOW: typeof LOW;
+  arguments: typeof arguments;
+  eval: typeof eval;
+  parseInt: typeof parseInt;
+  parseFloat: typeof parseFloat;
+  isFinite: typeof isFinite;
+  isNaN: typeof isNaN;
+  btoa: typeof btoa;
+  atob: typeof atob;
+  encodeURIComponent: typeof encodeURIComponent;
+  decodeURIComponent: typeof decodeURIComponent;
+  require: typeof require;
+  peek8: typeof peek8;
+  poke8: typeof poke8;
+  peek16: typeof peek16;
+  poke16: typeof poke16;
+  peek32: typeof peek32;
+  poke32: typeof poke32;
+  analogRead: typeof analogRead;
+  analogWrite: typeof analogWrite;
+  digitalPulse: typeof digitalPulse;
+  digitalWrite: typeof digitalWrite;
+  digitalRead: typeof digitalRead;
+  pinMode: typeof pinMode;
+  getPinMode: typeof getPinMode;
+  shiftOut: typeof shiftOut;
+  setWatch: typeof setWatch;
+  clearWatch: typeof clearWatch;
+  global: typeof global;
+  setBusyIndicator: typeof setBusyIndicator;
+  setSleepIndicator: typeof setSleepIndicator;
+  setDeepSleep: typeof setDeepSleep;
+  trace: typeof trace;
+  dump: typeof dump;
+  load: typeof load;
+  save: typeof save;
+  reset: typeof reset;
+  print: typeof print;
+  edit: typeof edit;
+  echo: typeof echo;
+  getTime: typeof getTime;
+  setTime: typeof setTime;
+  getSerial: typeof getSerial;
+  setInterval: typeof setInterval;
+  setTimeout: typeof setTimeout;
+  clearInterval: typeof clearInterval;
+  clearTimeout: typeof clearTimeout;
+  changeInterval: typeof changeInterval;
+  [key: string]: any;
+}
 
 /**
  * When Espruino is busy, set the pin specified here high. Set this to undefined to disable the feature.
