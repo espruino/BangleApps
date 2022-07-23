@@ -211,8 +211,8 @@ class Status {
     // while lowering the cost a lot
     //
     // note that all code is inlined here to speed things up from 400ms to 200ms
-    let start = Math.max(this.current_segment - 3, 0);
-    let end = Math.min(this.current_segment + 5, this.path.len);
+    let start = Math.max(this.current_segment - 4, 0);
+    let end = Math.min(this.current_segment + 6, this.path.len);
     let pos = this.position;
     let cos = this.cos_direction;
     let sin = this.sin_direction;
@@ -268,6 +268,16 @@ class Status {
     // now display ourselves
     g.setColor(g.theme.fgH);
     g.fillCircle(half_width, half_height, 5);
+
+    // display direction to next point if lost
+    if (!this.on_path) {
+      let next_point = this.path.point(this.current_segment + 1);
+      let diff = next_point.minus(this.position);
+      let angle = Math.atan2(diff.lat, diff.lon);
+      let x = Math.cos(angle) * 30.0 + half_width;
+      let y = Math.sin(angle) * 30.0 + half_height;
+      g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
+    }
   }
 }
 
@@ -511,6 +521,7 @@ function drawMenu() {
 }
 
 function start(fn) {
+  E.showMenu();
   console.log("loading", fn);
 
   let path = new Path(fn);
