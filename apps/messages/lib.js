@@ -108,7 +108,7 @@ exports.getMessageImage = function(msg) {
   * http://www.espruino.com/Image+Converter
   */
   if (msg.img) return atob(msg.img);
-  var s = (msg.src||"").toLowerCase();
+  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (s=="airbnb") return atob("GBgBAAAAAAAAAAAAADwAAH4AAGYAAMMAAIEAAYGAAYGAAzzAA2bABmZgBmZgDGYwDDwwCDwQCBgQDDwwB+fgA8PAAAAAAAAAAAAA");
   if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
   if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
@@ -154,6 +154,7 @@ exports.getMessageImage = function(msg) {
 };
 
 exports.getMessageImageCol = function(msg,def) {
+  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
     // generic colors, using B2-safe colors
     "airbnb": "#f00",
@@ -202,5 +203,5 @@ exports.getMessageImageCol = function(msg,def) {
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
     "youtube": "#f00",
-  }[(msg.src||"").toLowerCase()]||(def !== undefined?def:g.theme.fg);
+  }[s]||(def !== undefined?def:g.theme.fg);
 };

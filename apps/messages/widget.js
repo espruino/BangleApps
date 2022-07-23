@@ -7,6 +7,7 @@ function getMessages() {
 
 function filterMessages(msgs) {
   return msgs.filter(msg => msg.new && msg.id != "music")
+    .map(m => m.src) // we only need this for icon/color
     .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
 }
 
@@ -35,7 +36,7 @@ draw:function(recall) {
         }
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
-      g.drawImage(i == (settings.maxMessages - 1) && msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
+      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
     }
   }
   if (c<settings.vibrateTimeout && // not going on too long...
