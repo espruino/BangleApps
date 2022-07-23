@@ -1,4 +1,4 @@
-let simulated = false;
+let simulated = true;
 let file_version = 3;
 let code_key = 47490;
 
@@ -44,6 +44,7 @@ class Status {
       previous_point = point;
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
+    this.starting_time = getTime();
   }
   update_position(new_position, direction) {
     if (
@@ -173,8 +174,20 @@ class Status {
     }
     let hours = now.getHours().toString();
     g.setFont("6x8:2")
+      .setFontAlign(1, -1, 0)
       .setColor(g.theme.fg)
-      .drawString(hours + ":" + minutes, g.getWidth() - 50, g.getHeight() - 15);
+      .drawString(hours + ":" + minutes, g.getWidth(), g.getHeight() - 15);
+
+    let done_distance =
+      this.remaining_distances[0] -
+      this.remaining_distances[this.current_segment + 1] -
+      this.distance_to_next_point;
+    let done_in = getTime() - this.starting_time;
+    let approximate_speed = Math.round(done_distance / done_in);
+    g.setFont("6x15")
+      .setFontAlign(-1, -1, 0)
+      .drawString("s." + approximate_speed + "km/h", 0, g.getHeight() - 49);
+
     g.setFont("6x15").drawString(
       "d. " + rounded_distance + "/" + total,
       0,

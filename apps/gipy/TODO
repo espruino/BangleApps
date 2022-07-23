@@ -8,8 +8,7 @@
 
 - turn off gps when moving to next waypoint
 - display distance to next water/toilet
-- display distance to next waypoint
-- display average speed
+
 - dynamic map rescale
 - display scale (100m)
 - get waypoints from osm

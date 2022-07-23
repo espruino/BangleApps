@@ -36,3 +36,4 @@
 0.11:
 	* Better fonts (more free space, still readable).
 	* Display direction to nearest point when lost.
+	* Display average speed.
