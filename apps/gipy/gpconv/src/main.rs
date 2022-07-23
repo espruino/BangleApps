@@ -68,7 +68,7 @@ impl Point {
     }
 }
 
-fn points(filename: &str) -> Vec<Point> {
+fn points(filename: &str) -> Vec<Vec<Point>> {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
@@ -76,15 +76,33 @@ fn points(filename: &str) -> Vec<Point> {
     let mut gpx: Gpx = read(reader).unwrap();
     eprintln!("we have {} tracks", gpx.tracks.len());
 
-    gpx.tracks
+    let mut segments = Vec::new();
+    let mut current_segment = Vec::new();
+    for (p, stop) in gpx
+        .tracks
         .pop()
         .unwrap()
         .segments
         .into_iter()
-        .flat_map(|segment| segment.linestring())
-        .map(|c| c.x_y())
-        .map(|(x, y)| Point { x, y })
-        .collect()
+        .flat_map(|segment| segment.points.into_iter())
+        .map(|p| {
+            let is_commented = p.comment.is_some();
+            let (x, y) = p.point().x_y();
+            (Point { x, y }, is_commented)
+        })
+    {
+        current_segment.push(p);
+        if stop {
+            if current_segment.len() > 1 {
+                segments.push(current_segment);
+                current_segment = vec![p];
+            }
+        }
+    }
+    if current_segment.len() > 1 {
+        segments.push(current_segment);
+    }
+    segments
 }
 
 // // NOTE: this angles idea could maybe be use to get dp from n^3 to n^2
@@ -661,20 +679,60 @@ async fn main() {
         (Vec::new(), HashMap::new())
     };
 
-    eprintln!("input is {}", input_file);
+    println!("input is {}", input_file);
     let p = points(&input_file);
-    eprintln!("initialy we have {} points", p.len());
 
-    let rp = simplify_path(&p, 0.00015);
-    eprintln!("we now have {} points", rp.len());
+    let mut waypoints;
+    let mut rp;
+    if p.len() == 1 {
+        // we don't have any waypoint information
+        println!("no waypoint information");
+        println!("initially we had {} points", p[0].len());
+        waypoints = detect_waypoints(&p[0], &osm_waypoints);
 
-    let waypoints = detect_waypoints(&rp, &osm_waypoints);
-    eprintln!("we found {} waypoints", waypoints.len());
+        rp = Vec::new();
+        let mut current_segment = Vec::new();
+        let mut last = None;
+        for p in &p[0] {
+            current_segment.push(*p);
+            if waypoints.contains(p) {
+                if current_segment.len() > 1 {
+                    let mut s = simplify_path(&current_segment, 0.00015);
+                    rp.append(&mut s);
+                    last = rp.pop();
+                    current_segment = vec![*p];
+                }
+            }
+        }
+        rp.extend(last);
+        println!("we now have {} points", rp.len());
+
+        eprintln!("we found {} waypoints", waypoints.len());
+    } else {
+        println!("we have {} waypoints", p.len() + 1);
+        println!(
+            "initially we had {} points",
+            p.iter().map(|s| s.len()).sum::<usize>() - (p.len() - 1)
+        );
+        waypoints = HashSet::new();
+        rp = Vec::new();
+        let mut last = None;
+        for segment in &p {
+            waypoints.insert(segment.first().copied().unwrap());
+            waypoints.insert(segment.last().copied().unwrap());
+            let mut s = simplify_path(segment, 0.00015);
+            rp.append(&mut s);
+            last = rp.pop();
+        }
+        rp.extend(last);
+        println!("we now have {} points", rp.len());
+    }
 
     // let mut interests = parse_osm_data("isere.osm.pbf");
     let buckets = position_interests_along_path(&mut interests, &rp, 0.001, 5, 3);
     // let i = get_openstreetmap_data(&rp).await;
     // let i = HashSet::new();
+    let p = p.into_iter().flatten().collect::<Vec<_>>();
     save_svg(
         "test.svg",
         &p,
