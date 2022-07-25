@@ -152,7 +152,7 @@ function draw() {
   day = ("0"+day).substr(-2);
   mon = ("0"+(mon+1)).substr(-2);
   dow = ((dow+6)%7).toString();
-  date = day+"."+mon;
+  date = day+"."+mon+".";
 
   var weatherJson = getWeather();
   var wIcon;
