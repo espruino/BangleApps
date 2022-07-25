@@ -14,7 +14,7 @@ const locale = require("locale");
 // add font for days of the week
 (function(graphics) {
   graphics.prototype.setFontDoW = function() {
-    this.setFontCustom(atob("///////ADgB//////+AHAD//////gAAAH//////4D8B+A///////4AcAOAH//////4AcAOAAAAAB//////wA4AcAP//////wAAAAAAAA//////4AcAP//////wA4Af//////gAAAH//////5z85+c/OfnOAA4AcAOAH//////4AcAOAAAAAB//////wcAOAHB//////wAAAAAAAA///////ODnBzg5wc4AAAAD//////84OcH//8/+fAAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////84OcH//////AAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////gBwA///////AAAAAAAAAAAAA"),48,24,13);
+    this.setFontCustom(atob("///////ADgB//////+AHAD//////gAAAH//////4D8B+A//////////////AfgPwH//v/j/gAAABgDwB///////AHgDAAAAAAAAAAAAA///////ADgB//////+AHAD//////gAAAGAPAH//////8AeAMAAAA///////AfgPwH//v/j/gAAAB//////+AfAPgH//////wAAAAAAAA///////ODnBzg5wc4AAAAD//////84OcH//8/+fAAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////84OcH//////AAAAAAAAAAAAA/z/5/8/OfnPz/5/8/wAAAD//////8B+A///////AAAAAAAAAAAAA"),48,24,13);
   };
 })(Graphics);
 
