@@ -104,7 +104,7 @@ function initPFD() {
           if (settings.bargraph==false) {
             g.clearRect(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
             g.fillRect(p.x,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
-          } else {
+          } else {
             g.setClipRect(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
             g.scroll(-1,0);
             g.drawLine(p.x+p.w-1,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
@@ -190,7 +190,7 @@ function initPFD() {
         else if (Date().getTime()-landingTime>60000) state=landed;
         break;
     }
-    if ((state==flying) || (state==maybeLanded)) {
+    if ((state==flying) || (state==maybeLanded)) {
       flyingTime=Date().getTime()-takeoffTime;
       pfd.flyingtime.label=(flyingTime / 3600000).toFixed(0)+":"+(flyingTime / 60000 % 60).toFixed(0).padStart(2,'0');
       pfd.flyingtime.col=fg;
