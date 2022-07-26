@@ -14,26 +14,38 @@ use osm::{parse_osm_data, InterestPoint};
 const KEY: u16 = 47490;
 const FILE_VERSION: u16 = 3;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Point {
     x: f64,
     y: f64,
 }
 
-impl PartialEq for Point {
-    fn eq(&self, other: &Self) -> bool {
-        (self.x - other.x).abs() < 0.0005 && (self.y - other.y).abs() < 0.0005
-    }
-}
 impl Eq for Point {}
 impl std::hash::Hash for Point {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let x = format!("{:.4}", self.x);
-        let y = format!("{:.4}", self.y);
+        unsafe { std::mem::transmute::<f64, u64>(self.x) }.hash(state);
+        unsafe { std::mem::transmute::<f64, u64>(self.y) }.hash(state);
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct APoint {
+    x: f64,
+    y: f64,
+}
+
+impl PartialEq for APoint {
+    fn eq(&self, other: &Self) -> bool {
+        (self.x - other.x).abs() < 0.00005 && (self.y - other.y).abs() < 0.00005
+    }
+}
+impl Eq for APoint {}
+impl std::hash::Hash for APoint {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        let x = format!("{:.5}", self.x);
+        let y = format!("{:.5}", self.y);
         x.hash(state);
         y.hash(state);
-        // unsafe { std::mem::transmute::<f64, u64>(self.x) }.hash(state);
-        // unsafe { std::mem::transmute::<f64, u64>(self.y) }.hash(state);
     }
 }
 
@@ -579,7 +591,7 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
 
 fn detect_waypoints(
     points: &[Point],
-    osm_waypoints: &HashMap<Point, Vec<ObjId>>,
+    osm_waypoints: &HashMap<APoint, Vec<ObjId>>,
 ) -> HashSet<Point> {
     points
         .first()
@@ -588,24 +600,26 @@ fn detect_waypoints(
             points
                 .iter()
                 .filter_map(|p: &Point| -> Option<(&Point, &Vec<ObjId>)> {
-                    osm_waypoints.get(p).map(|l| (p, l))
+                    osm_waypoints
+                        .get(&APoint { x: p.x, y: p.y })
+                        .map(|l| (p, l))
                 })
                 .tuple_windows()
                 .filter_map(|((p1, l1), (p2, _), (p3, l2))| {
                     if l1.iter().all(|e| !l2.contains(e)) {
-                        let x1 = p2.x - p1.x;
-                        let y1 = p2.y - p1.y;
-                        let a1 = y1.atan2(x1);
-                        let x2 = p3.x - p2.x;
-                        let y2 = p3.y - p2.y;
-                        let a2 = y2.atan2(x2);
-                        let a = (a2 - a1).abs();
-                        if a <= std::f64::consts::PI / 4.0 || a >= std::f64::consts::PI * 7.0 / 4.0
-                        {
-                            None
-                        } else {
-                            Some(p2)
-                        }
+                        // let x1 = p2.x - p1.x;
+                        // let y1 = p2.y - p1.y;
+                        // let a1 = y1.atan2(x1);
+                        // let x2 = p3.x - p2.x;
+                        // let y2 = p3.y - p2.y;
+                        // let a2 = y2.atan2(x2);
+                        // let a = (a2 - a1).abs();
+                        // if a <= std::f64::consts::PI / 4.0 || a >= std::f64::consts::PI * 7.0 / 4.0
+                        // {
+                        //     None
+                        // } else {
+                        Some(p2)
+                        // }
                     } else {
                         None
                     }

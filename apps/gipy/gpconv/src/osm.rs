@@ -1,4 +1,4 @@
-use super::Point;
+use super::{APoint, Point};
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use openstreetmap_api::{
@@ -150,10 +150,12 @@ async fn get_openstreetmap_data(points: &[(f64, f64)]) -> HashSet<InterestPoint>
     interest_points
 }
 
-pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashMap<Point, Vec<ObjId>>) {
+pub fn parse_osm_data<P: AsRef<Path>>(
+    path: P,
+) -> (Vec<InterestPoint>, HashMap<APoint, Vec<ObjId>>) {
     let reader = osmio::read_pbf(path).ok();
     let mut crossroads: HashMap<ObjId, Vec<ObjId>> = HashMap::new();
-    let mut coordinates: HashMap<ObjId, Point> = HashMap::new();
+    let mut coordinates: HashMap<ObjId, APoint> = HashMap::new();
     let interests = reader
         .map(|mut reader| {
             let mut interests = Vec::new();
@@ -169,7 +171,7 @@ pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashMap<P
                             }) {
                                 interests.push(p);
                             }
-                            coordinates.insert(n.id(), Point { x: lon, y: lat });
+                            coordinates.insert(n.id(), APoint { x: lon, y: lat });
                         });
                     }
                     osmio::obj_types::ArcOSMObj::Way(w) => {
@@ -185,12 +187,12 @@ pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> (Vec<InterestPoint>, HashMap<P
             interests
         })
         .unwrap_or_default();
-    (
-        interests,
-        crossroads
-            .into_iter()
-            .filter(|(_, r)| r.len() >= 2)
-            .filter_map(|(id, l)| coordinates.get(&id).copied().map(|c| (c, l)))
-            .collect(),
-    )
+
+    let mut osm_waypoints: HashMap<APoint, Vec<ObjId>> = HashMap::new();
+    for (node_id, ways) in crossroads.into_iter().filter(|(_, r)| r.len() >= 2) {
+        if let Some(c) = coordinates.get(&node_id).copied() {
+            osm_waypoints.entry(c).or_default().extend(ways)
+        }
+    }
+    (interests, osm_waypoints)
 }
