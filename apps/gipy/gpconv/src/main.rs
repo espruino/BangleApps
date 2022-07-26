@@ -28,27 +28,6 @@ impl std::hash::Hash for Point {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct APoint {
-    x: f64,
-    y: f64,
-}
-
-impl PartialEq for APoint {
-    fn eq(&self, other: &Self) -> bool {
-        (self.x - other.x).abs() < 0.00005 && (self.y - other.y).abs() < 0.00005
-    }
-}
-impl Eq for APoint {}
-impl std::hash::Hash for APoint {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let x = format!("{:.5}", self.x);
-        let y = format!("{:.5}", self.y);
-        x.hash(state);
-        y.hash(state);
-    }
-}
-
 impl Point {
     fn squared_distance_between(&self, other: &Point) -> f64 {
         let dx = other.x - self.x;
@@ -589,47 +568,6 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
     Ok(())
 }
 
-fn detect_waypoints(
-    points: &[Point],
-    osm_waypoints: &HashMap<APoint, Vec<ObjId>>,
-) -> HashSet<Point> {
-    points
-        .first()
-        .into_iter()
-        .chain(
-            points
-                .iter()
-                .filter_map(|p: &Point| -> Option<(&Point, &Vec<ObjId>)> {
-                    osm_waypoints
-                        .get(&APoint { x: p.x, y: p.y })
-                        .map(|l| (p, l))
-                })
-                .tuple_windows()
-                .filter_map(|((p1, l1), (p2, _), (p3, l2))| {
-                    if l1.iter().all(|e| !l2.contains(e)) {
-                        // let x1 = p2.x - p1.x;
-                        // let y1 = p2.y - p1.y;
-                        // let a1 = y1.atan2(x1);
-                        // let x2 = p3.x - p2.x;
-                        // let y2 = p3.y - p2.y;
-                        // let a2 = y2.atan2(x2);
-                        // let a = (a2 - a1).abs();
-                        // if a <= std::f64::consts::PI / 4.0 || a >= std::f64::consts::PI * 7.0 / 4.0
-                        // {
-                        //     None
-                        // } else {
-                        Some(p2)
-                        // }
-                    } else {
-                        None
-                    }
-                }),
-        )
-        .chain(points.last().into_iter())
-        .copied()
-        .collect::<HashSet<_>>()
-}
-
 pub struct Bucket {
     points: Vec<InterestPoint>,
     start: usize,
@@ -687,10 +625,10 @@ async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
     let osm_file = std::env::args().nth(2);
 
-    let (mut interests, osm_waypoints) = if let Some(osm) = osm_file {
+    let mut interests = if let Some(osm) = osm_file {
         parse_osm_data(osm)
     } else {
-        (Vec::new(), HashMap::new())
+        Vec::new()
     };
 
     println!("input is {}", input_file);
@@ -702,25 +640,12 @@ async fn main() {
         // we don't have any waypoint information
         println!("no waypoint information");
         println!("initially we had {} points", p[0].len());
-        waypoints = detect_waypoints(&p[0], &osm_waypoints);
-
-        rp = Vec::new();
-        let mut current_segment = Vec::new();
-        let mut last = None;
-        for p in &p[0] {
-            current_segment.push(*p);
-            if waypoints.contains(p) {
-                if current_segment.len() > 1 {
-                    let mut s = simplify_path(&current_segment, 0.00015);
-                    rp.append(&mut s);
-                    last = rp.pop();
-                    current_segment = vec![*p];
-                }
-            }
-        }
-        rp.extend(last);
+        rp = simplify_path(&p[0], 0.00015);
         println!("we now have {} points", rp.len());
 
+        waypoints = HashSet::new();
+        waypoints.insert(rp.first().copied().unwrap());
+        waypoints.insert(rp.last().copied().unwrap());
         eprintln!("we found {} waypoints", waypoints.len());
     } else {
         println!("we have {} waypoints", p.len() + 1);

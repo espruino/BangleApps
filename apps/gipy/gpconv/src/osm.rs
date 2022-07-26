@@ -1,4 +1,4 @@
-use super::{APoint, Point};
+use super::Point;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use openstreetmap_api::{
@@ -150,13 +150,9 @@ async fn get_openstreetmap_data(points: &[(f64, f64)]) -> HashSet<InterestPoint>
     interest_points
 }
 
-pub fn parse_osm_data<P: AsRef<Path>>(
-    path: P,
-) -> (Vec<InterestPoint>, HashMap<APoint, Vec<ObjId>>) {
+pub fn parse_osm_data<P: AsRef<Path>>(path: P) -> Vec<InterestPoint> {
     let reader = osmio::read_pbf(path).ok();
-    let mut crossroads: HashMap<ObjId, Vec<ObjId>> = HashMap::new();
-    let mut coordinates: HashMap<ObjId, APoint> = HashMap::new();
-    let interests = reader
+    reader
         .map(|mut reader| {
             let mut interests = Vec::new();
             for obj in reader.objects() {
@@ -171,28 +167,13 @@ pub fn parse_osm_data<P: AsRef<Path>>(
                             }) {
                                 interests.push(p);
                             }
-                            coordinates.insert(n.id(), APoint { x: lon, y: lat });
                         });
                     }
-                    osmio::obj_types::ArcOSMObj::Way(w) => {
-                        if !w.is_area() {
-                            for node in w.nodes() {
-                                crossroads.entry(*node).or_default().push(w.id());
-                            }
-                        }
-                    }
+                    osmio::obj_types::ArcOSMObj::Way(w) => {}
                     osmio::obj_types::ArcOSMObj::Relation(_) => {}
                 }
             }
             interests
         })
-        .unwrap_or_default();
-
-    let mut osm_waypoints: HashMap<APoint, Vec<ObjId>> = HashMap::new();
-    for (node_id, ways) in crossroads.into_iter().filter(|(_, r)| r.len() >= 2) {
-        if let Some(c) = coordinates.get(&node_id).copied() {
-            osm_waypoints.entry(c).or_default().extend(ways)
-        }
-    }
-    (interests, osm_waypoints)
+        .unwrap_or_default()
 }
