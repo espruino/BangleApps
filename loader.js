@@ -195,10 +195,10 @@ window.addEventListener('load', (event) => {
   });
 
   // BLE Compatibility
-  var selectLang = document.getElementById("settings-ble-compat");
-  if (SETTINGS.bleCompat!==undefined)
-    Puck.increaseMTU = !SETTINGS.bleCompat;
-  selectLang.addEventListener("change",event=>{
+  var selectBLECompat = document.getElementById("settings-ble-compat");
+  Puck.increaseMTU = !SETTINGS.bleCompat;
+  selectBLECompat.checked = !!SETTINGS.bleCompat;
+  selectBLECompat.addEventListener("change",event=>{
     console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
     SETTINGS.bleCompat = event.target.checked;
     Puck.increaseMTU = !SETTINGS.bleCompat;
