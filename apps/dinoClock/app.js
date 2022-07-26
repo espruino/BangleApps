@@ -137,57 +137,15 @@ function drawBg() {
   g.drawImage(bgImg,0,101);
 }
 
-function square(x,y,w,e) {
-  g.setColor("#000").fillRect(x,y,x+w,y+w);
-  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
-}
-
-function draw() {
-  var d = new Date();
-  var h = d.getHours(), m = d.getMinutes();
-  h = ("0"+h).substr(-2);
-  m = ("0"+m).substr(-2);
-
-  var day = d.getDate(), mon = d.getMonth(), dow = d.getDay();
-  day = ("0"+day).substr(-2);
-  mon = ("0"+(mon+1)).substr(-2);
-  dow = ((dow+6)%7).toString();
-  date = day+"."+mon+".";
-
-  var weatherJson = getWeather();
-  var wIcon;
-  var temp;
-  if(weatherJson && weatherJson.weather){
-      var currentWeather = weatherJson.weather;
-      temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
-      const code = currentWeather.code||-1;
-      if (code > 0) {
-        wIcon = chooseIconByCode(code);
-      } else {
-        wIcon = chooseIcon(currentWeather.txt);
-      }
-  }else{
-      temp = "";
-      wIcon = weatherIcon(ERR);
+function handlePressure(p) {
+  if (p===undefined) {// workaround for https://github.com/espruino/BangleApps/issues/1429
+    setTimeout(() => Bangle.getPressure().then(handlePressure), 500);
+    return;
   }
-  g.reset();
-  g.clearRect(22,35,153,75);
-  g.setFont("4x5NumPretty",8);
-  g.fillRect(84,42,92,49);
-  g.fillRect(84,60,92,67);
-  g.drawString(h,22,35);
-  g.drawString(m,98,35);
+  print(p.pressure , p.temperature);
 
-  g.clearRect(22,95,22+4*2*4+2*4,95+2*5);
-  g.setFont("4x5NumPretty",2);
-  g.drawString(date,22,95);
-
-  g.clearRect(22,79,22+24,79+13);
-  g.setFont("DoW");
-  g.drawString(dow,22,79);
-
-  g.drawImage(wIcon,126,81);
-
+  var temp = locale.temp(p.temperature).match(/^(\D*\d*)(.*)$/);
+  var press = Math.round(p.pressure);
   g.clearRect(108,114,176,114+4*5);
   if (temp != "") {
     var tempWidth;
@@ -205,6 +163,56 @@ function draw() {
     g.drawString(temp[1],x,114);
     square(x+tempWidth,114,6,2);
   }
+  g.clearRect(108,140,176,140+4*5);
+  g.setFont("4x5NumPretty",4);
+  g.drawString(press,108,140);
+
+}
+
+function square(x,y,w,e) {
+  g.setColor("#000").fillRect(x,y,x+w,y+w);
+  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
+  g.setColor("#000"); // set back to black for future operations
+}
+
+function draw() {
+  var d = new Date();
+  var h = d.getHours(), m = d.getMinutes();
+  h = ("0"+h).substr(-2);
+  m = ("0"+m).substr(-2);
+
+  var day = d.getDate(), mon = d.getMonth(), dow = d.getDay();
+  day = ("0"+day).substr(-2);
+  mon = ("0"+(mon+1)).substr(-2);
+  dow = ((dow+6)%7).toString();
+  date = day+"."+mon+".";
+
+  try {
+  Bangle.getPressure().then(handlePressure);
+  } catch(e) {
+    print(e.message);
+    print("barometer not supported, showing demo values");
+    handlePressure({'pressure':1234, 'temperature': 25});
+  }
+  g.reset();
+  g.clearRect(22,35,153,75);
+  g.setFont("4x5NumPretty",8);
+  g.fillRect(84,42,92,49);
+  g.fillRect(84,60,92,67);
+  g.drawString(h,22,35);
+  g.drawString(m,98,35);
+
+  g.clearRect(22,95,22+4*2*4+2*4,95+2*5);
+  g.setFont("4x5NumPretty",2);
+  g.drawString(date,22,95);
+
+  g.clearRect(22,79,22+24,79+13);
+  g.setFont("DoW");
+  g.drawString(dow,22,79);
+
+  var wIcon = weatherIcon(SUN);;
+  g.drawImage(wIcon,126,81);
+
 
   // queue draw in one minute
   queueDraw();
@@ -216,4 +224,3 @@ Bangle.setUI("clock");  // Show launcher when middle button pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
-
