@@ -37,3 +37,4 @@
 	* Better fonts (more free space, still readable).
 	* Display direction to nearest point when lost.
 	* Display average speed.
+	* Turn off gps when locked and between points

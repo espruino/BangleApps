@@ -124,6 +124,16 @@ class Status {
     this.distance_to_next_point = Math.ceil(
       this.position.distance(this.path.point(next_point))
     );
+    // disable gps when far from next point and locked
+    if (Bangle.isLocked()) {
+      let time_to_next_point = this.distance_to_next_point / 9.7; // 30km/h is 8.3 m/s
+      if (time_to_next_point > 30) {
+        Bangle.setGPSPower(false, "gipy");
+        setTimeout(function () {
+          Bangle.setGPSPower(true, "gipy");
+        }, time_to_next_point);
+      }
+    }
     if (this.reaching != next_point && this.distance_to_next_point <= 20) {
       this.reaching = next_point;
       let reaching_waypoint = this.path.is_waypoint(next_point);
@@ -134,10 +144,8 @@ class Status {
         }
       }
     }
-    // re-display unless locked
-    if (!Bangle.isLocked() || simulated) {
-      this.display();
-    }
+    // re-display
+    this.display();
   }
   remaining_distance() {
     return (
@@ -610,6 +618,11 @@ function start(fn) {
 
     Bangle.setGPSPower(true, "gipy");
     Bangle.on("GPS", set_coordinates);
+    Bangle.on("lock", function (on) {
+      if (!on) {
+        Bangle.setGPSPower(true, "gipy"); // activate gps when unlocking
+      }
+    });
   }
 }
 
