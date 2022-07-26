@@ -45,15 +45,42 @@ class Status {
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
     this.starting_time = getTime();
+    this.old_points = [];
   }
-  update_position(new_position, direction) {
-    if (
-      Bangle.isLocked() &&
-      this.position !== null &&
-      new_position.lon == this.position.lon &&
-      new_position.lat == this.position.lat
-    ) {
-      return;
+  new_position_reached(position) {
+    // we try to figure out direction by looking at previous points
+    // instead of the gps course which is not very nice.
+    if (this.old_points.length == 0) {
+      this.old_points.push(position);
+    } else {
+      let last_point = this.old_points[this.old_points.length - 1];
+      if (last_point.lon != position.lon || last_point.lat != position.lat) {
+        if (this.old_points.length == 4) {
+          this.old_points.shift();
+        }
+        this.old_points.push(position);
+      } else {
+        return null;
+      }
+    }
+    if (this.old_points.length == 1) {
+      return null;
+    } else {
+      // let's just take angle of segment between oldest and newest point
+      let oldest = this.old_points[0];
+      let diff = position.minus(oldest);
+      let angle = Math.atan2(diff.lat, diff.lon);
+      return angle;
+    }
+  }
+  update_position(new_position, maybe_direction) {
+    let direction = this.new_position_reached(new_position);
+    if (direction === null) {
+      if (maybe_direction === null) {
+        return;
+      } else {
+        direction = maybe_direction;
+      }
     }
 
     this.cos_direction = Math.cos(-direction - Math.PI / 2.0);
@@ -63,8 +90,8 @@ class Status {
     // detect segment we are on now
     let next_segment = this.path.nearest_segment(
       this.position,
-      Math.max(0, this.current_segment - 1),
-      Math.min(this.current_segment + 2, this.path.len - 1),
+      Math.max(0, this.current_segment - 2),
+      Math.min(this.current_segment + 3, this.path.len - 1),
       this.cos_direction,
       this.sin_direction
     );
@@ -123,7 +150,7 @@ class Status {
       this.path.point(segment),
       this.path.point(segment + 1)
     );
-    return distance_to_nearest > 30;
+    return distance_to_nearest > 50;
   }
   display() {
     g.clear();
@@ -281,6 +308,18 @@ class Status {
     // now display ourselves
     g.setColor(g.theme.fgH);
     g.fillCircle(half_width, half_height, 5);
+
+    // display old points for direction debug
+    for (let i = 0; i < this.old_points.length; i++) {
+      let tx = (this.old_points[i].lon - cx) * 40000.0;
+      let ty = (this.old_points[i].lat - cy) * 40000.0;
+      let rotated_x = tx * cos - ty * sin;
+      let rotated_y = tx * sin + ty * cos;
+      let x = half_width - Math.round(rotated_x); // x is inverted
+      let y = half_height + Math.round(rotated_y);
+      g.setColor((i + 1) / 4.0, 0.0, 0.0);
+      g.fillCircle(x, y, 3);
+    }
 
     // display direction to next point if lost
     if (!this.on_path) {
@@ -515,8 +554,7 @@ function simulate_gps(status) {
   let old_pos = status.position;
 
   fake_gps_point += 0.2; // advance simulation
-  let direction = Math.atan2(pos.lat - old_pos.lat, pos.lon - old_pos.lon);
-  status.update_position(pos, direction);
+  status.update_position(pos, null);
 }
 
 function drawMenu() {
@@ -553,35 +591,11 @@ function start(fn) {
     status.update_position(p1, direction);
 
     let frame = 0;
-    let old_points = []; // remember the at most 3 previous points
     let set_coordinates = function (data) {
       frame += 1;
       let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
       if (valid_coordinates) {
-        // we try to figure out direction by looking at previous points
-        // instead of the gps course which is not very nice.
-        let direction = (data.course * Math.PI) / 180.0;
-        let position = new Point(data.lon, data.lat);
-        if (old_points.length == 0) {
-          old_points.push(position);
-        } else {
-          let last_point = old_points[old_points.length - 1];
-          if (last_point.x != position.x || last_point.y != position.y) {
-            if (old_points.length == 4) {
-              old_points.shift();
-            }
-            old_points.push(position);
-          }
-        }
-        if (old_points.length == 4) {
-          // let's just take angle of segment between oldest and newest point
-          let oldest = old_points[0];
-          let diff = position.minus(oldest);
-          let angle = Math.atan2(diff.lat, diff.lon);
-          status.update_position(position, angle);
-        } else {
-          status.update_position(position, direction);
-        }
+        status.update_position(new Point(data.lon, data.lat), null);
       }
       let gps_status_color;
       if (frame % 2 == 0 || valid_coordinates) {
