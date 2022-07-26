@@ -144,7 +144,7 @@ function draw() {
   g.setFont("DoW");
   g.drawString(dow,22,79);
 
-  var wIcon = weatherIcon(SUN);;
+  var wIcon = weatherIcon(SUN);
   g.drawImage(wIcon,126,81);
 
 
