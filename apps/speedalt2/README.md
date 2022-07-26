@@ -25,7 +25,7 @@ Touch functions as BTN1 short press.
 
 ## App Settings
 
-Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ). 
+Select the desired display units. Speed can be as per the default locale, kph, knots, mph or m/s. Distance can be km, miles or nautical miles. Altitude can be feet or metres. Select one of three colour schemes. Default (three colours), high contrast (all white on black) or night ( all red on black ).
 
 ## Kalman Filter
 
@@ -43,7 +43,7 @@ This app will work quite happily on its own but will use the [GPS Setup App](htt
 
 When using the GPS Setup App this app switches the GPS to SuperE (default) mode while the display is lit and showing fix information. This ensures that that fixes are updated every second or so. 10 seconds after the display is blanked by the watch this app will switch the GPS to PSMOO mode and will only attempt to get a fix every two minutes. This improves power saving while the display is off and the delay gives an opportunity to restore the display before the GPS power mode is switched.
 
-The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode. 
+The MAX values continue to be collected with the display off so may appear a little odd after the intermittent fixes of the low power mode.
 
 ## Velocity Made Good - VMG
 
@@ -63,9 +63,9 @@ The Droidscript script file is called : **GPS Adv Sports II.js**
 
 **Important Gotcha :** For the BLE comms to find and connect to the Bangle.js it must be paired with the Android device but **NOT** connected. The Bangle.js must have been set in the Bluetooth settings as connectable.
 
-Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep. 
+Start/Stop buttons tell the Bangle.js to start or stop sending BLE data packets to the Android device. While stopped the Bangle.js reverts to full power saving mode when the screen is asleep.
 
-When running a blue 'led' will flash each time a data packet is recieved to refresh the android display. 
+When running a blue 'led' will flash each time a data packet is recieved to refresh the android display.
 
 An orange 'led' will flash for each reconnection attempt if no data is received for 30 seconds. It will keep trying to reconnect so you can restart the Bangle, run another Bangle app or temprarily turn off bluetooth. The android mirror display will automatically reconnect when the GPS Adv Sports II app is running on the Bangle again. ( Designed to leave the Android device running as the display mirror in a sealed case all day while retaining the ability to do other functions on the Bangle.js and returning to the GPS Speed Alt II app. )
 
@@ -74,14 +74,12 @@ Android Screen Mirroring:<br>
 
 ## Waypoints
 
-Waypoints are used in Distance and VMG modes. Create a file waypoints.json and write to storage on the Bangle.js using the IDE. The first 6 characters of the name are displayed in Speed+[D]istance mode.
-
-The [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app in the App Loader has a really nice waypoints file editor. (Must be connected to your Bangle.JS and then click on the Download icon.)
+Waypoints are used in Distance and VMG modes. See the `Waypoints` app for information on how to create/edit waypoints. The first 6 characters of the name are displayed in Speed+[D]istance mode.
 
 By default the waypoints file is called waypoints.json
 
-**Note** : The waypoints.json file is used by a number of different gps apps. The setting 'Wpt File Suffix' allows one of waypoints1.json, waypoints2.json or waypoints3.json to be used instead. This allows the other apps to be used with a different set of waypoints without losing the speedalt2 waypoint set. 
- 
+**Note** : The waypoints.json file is used by a number of different gps apps. The setting 'Wpt File Suffix' allows one of waypoints.1.json, waypoints.2.json or waypoints.3.json to be used instead. This allows the other apps to be used with a different set of waypoints without losing the speedalt2 waypoint set.
+
 Sample waypoints.json (My sailing waypoints)
 
 <pre>
@@ -156,4 +154,3 @@ Developed for my use in sailing, cycling and motorcycling. If you find this soft
 Many thanks to Gordon Williams. Awesome job.
 
 Special thanks also to @jeffmer, for the [GPS Navigation](https://banglejs.com/apps/#gps%20navigation) app and @hughbarney for the Low power GPS code development and Wouter Bulten for the Kalman filter code.
-

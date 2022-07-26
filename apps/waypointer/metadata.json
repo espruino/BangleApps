@@ -1,16 +1,15 @@
 {
   "id": "waypointer",
   "name": "Way Pointer",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Navigate to a waypoint using the GPS for bearing and compass to point way, uses the same waypoint interface as GPS Navigation",
   "icon": "waypointer.png",
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS", "BANGLEJS2"],
+  "dependencies" : { "waypoints":"type" },
   "readme": "README.md",
-  "interface": "waypoints.html",
   "storage": [
     {"name":"waypointer.app.js","url":"app.js"},
     {"name":"waypointer.img","url":"icon.js","evaluate":true}
-  ],
-  "data": [{"name":"waypoints.json","url":"waypoints.json"}]
+  ]
 }

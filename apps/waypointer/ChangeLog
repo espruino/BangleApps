@@ -1,3 +1,4 @@
 0.01: New app!
 0.02: Make Bangle.js 2 compatible
 0.03: Silently use built in heading when no magnav calibration file is present
+0.04: Move waypoints.json (and editor) to 'waypoints' app
