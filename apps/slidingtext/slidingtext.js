@@ -239,7 +239,9 @@ class ShiftText {
 
 const CLOCK_TEXT_SPEED_X = 10;
 // a list of display rows
-let row_displays;
+var row_displays;
+
+// y - the height to start displaying from
 function setRowDisplays(y, heights) {
   var cols = [
     main_color(), other_color(), other_color(), other_color(), main_color()
@@ -251,14 +253,17 @@ function setRowDisplays(y, heights) {
   }
 }
 
+function init_display(){
+  if (bangleVersion()<2)
+    setRowDisplays(50, [40,30,30,30,40]);
+  else
+    setRowDisplays(34, [35,25,25,25,35]);
+}
+
 function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
 
-if (bangleVersion()<2)
-  setRowDisplays(50, [40,30,30,30,40]);
-else
-  setRowDisplays(34, [35,25,25,25,35]);
 
 function nextColorTheme(){
   color_scheme_index += 1;
@@ -287,71 +292,6 @@ function setColor(main_color,other_color,bg_color){
   row_displays[row_displays.length - 1].setBgColor(bg_color);
   g.setColor(bg_color[0],bg_color[1],bg_color[2]);
   g.fillRect(0,24, g.getWidth(), g.getHeight());
-}
-
-// load the date formats and laguages required
-LANGUAGES_FILE = "slidingtext.languages.json";
-var LANGUAGES_DEFAULT = ["en","en2"];
-var locales = null;
-try{
-  locales = require("Storage").readJSON(LANGUAGES_FILE);
-  if(locales != null){
-    console.log("loaded languages:" + JSON.stringify(locales));
-  } else {
-    console.log("no languages loaded");
-    locales = LANGUAGES_DEFAULT;
-  }
-} catch(e){
-  console.log("failed to load languages:" + e);
-}
-if(locales == null || locales.length == 0){
-  locales = LANGUAGES_DEFAULT;
-  console.log("defaulting languages to locale:" + locales);
-}
-
-let date_formatters = [];
-for(var i=0; i< locales.length; i++){
-  console.log("loading locale:" + locales[i]);
-  var Formatter = require("slidingtext.locale." + locales[i] + ".js");
-  date_formatters.push(new Formatter());
-}
-
-// current index of the date formatter to display
-let date_formatter_idx = 0;
-let date_formatter = date_formatters[date_formatter_idx];
-
-function changeFormatter(){
-  date_formatter_idx += 1;
-  if(date_formatter_idx >= date_formatters.length){
-    date_formatter_idx = 0;
-  }
-  console.log("changing to formatter " + date_formatter_idx);
-  date_formatter = date_formatters[date_formatter_idx];
-  reset_clock(true);
-  draw_clock();
-  command_stack_high_priority.unshift(
-      function() {
-        //console.log("move in new:" + txt);
-        // first select the top or bottom to display the formatter name
-        // We choose the first spare row without text
-        var format_name_display = row_displays[row_displays.length - 1];
-        if (format_name_display.txt != '') {
-          format_name_display = row_displays[0];
-        }
-        if (format_name_display.txt != ''){
-          return;
-        }
-        format_name_display.speed_x = 3;
-        format_name_display.onFinished(function(){
-          format_name_display.speed_x = CLOCK_TEXT_SPEED_X;
-          console.log("return speed to:" + format_name_display.speed_x)
-          next_command();
-        });
-        format_name_display.setTextXPosition(date_formatter.name(),220);
-        format_name_display.moveToX(-date_formatter.name().length * format_name_display.font_size);
-      }
-  );
-
 }
 
 var DISPLAY_TEXT_X = 20;
@@ -431,7 +371,7 @@ function draw_clock(){
     display_row(display,txt);
   }
   // If the dateformatter has not returned enough
-  // rows then treat the reamining rows as empty
+  // rows then treat the remaining rows as empty
   for (var j = i; j < row_displays.length; j++) {
     display = row_displays[j];
     //console.log(i + "->''(empty)");
@@ -447,8 +387,8 @@ function display_row(display,txt){
     return;
   }
 
-  if(display.txt == null || display.txt == ''){
-    if(txt != '') {
+  if(display.txt == null || display.txt === ''){
+    if(txt !== '') {
       command_stack_high_priority.unshift(
           function () {
             //console.log("move in new:" + txt);
@@ -458,7 +398,7 @@ function display_row(display,txt){
           }
       );
     }
-  } else if(txt != display.txt && display.txt != null){
+  } else if(txt !== display.txt && display.txt != null){
     command_stack_high_priority.push(
         function(){
           //console.log("move out:" + txt);
@@ -492,7 +432,7 @@ function display_row(display,txt){
 function set_colorscheme(colorscheme_name){
   console.log("setting color scheme:" + colorscheme_name);
   for (var i=0; i < color_schemes.length; i++) {
-    if(color_schemes[i].name == colorscheme_name){
+    if(color_schemes[i].name === colorscheme_name){
       color_scheme_index = i;
       console.log("match");
       setColorScheme(color_schemes[color_scheme_index]);
@@ -501,14 +441,39 @@ function set_colorscheme(colorscheme_name){
   }
 }
 
-function set_dateformat(dateformat_name){
-  console.log("setting date format:" + dateformat_name);
-  for (var i=0; i < date_formatters.length; i++) {
-    if(date_formatters[i].shortName() == dateformat_name){
-      date_formatter_idx = i;
-      date_formatter = date_formatters[date_formatter_idx];
-      console.log("match");
+const Locale = require('locale');
+class DigitDateTimeFormatter {
+  name(){return "Digital";}
+  shortName(){return "digit";}
+
+  format00(num){
+    var value = (num | 0);
+    if(value > 99 || value < 0)
+      throw "must be between in range 0-99";
+    if(value < 10)
+      return "0" + value.toString();
+    else
+      return value.toString();
+  }
+
+  formatDate(now){
+    var hours = now.getHours() ;
+
+    var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
+    var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
+    return [time_txt,date_txt];
+  }
+}
+
+var date_formatter = new DigitDateTimeFormatter();
+function set_dateformat(shortname){
+  console.log("setting date format:" + shortname);
+  try {
+    if (date_formatter == null || date_formatter.shortName() !== shortname) {
+      date_formatter = require("slidingtext.locale." + shortname + ".js");
     }
+  } catch(e){
+    console.log("Failed to load " + shortname);
   }
 }
 
@@ -517,20 +482,21 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
 /**
  * Called on startup to set the watch to the last preference settings
  */
-function load_settings(){
+function load_settings() {
   var setScheme = false;
-  try{
+  try {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
-    if(settings != null){
+    if (settings != null) {
       console.log("loaded:" + JSON.stringify(settings));
-      if(settings.color_scheme != null){
+      if (settings.date_format != null) {
+        set_dateformat(settings.date_format);
+        init_display();
+      }
+      if (settings.color_scheme != null) {
         set_colorscheme(settings.color_scheme);
         setScheme = true;
       }
-      if(settings.date_format != null){
-        set_dateformat(settings.date_format);
-      }
-      if(settings.enable_live_controls == null){
+      if (settings.enable_live_controls == null) {
         settings.enable_live_controls = (bangleVersion() <= 1);
       }
       enable_live_controls = settings.enable_live_controls;
@@ -539,12 +505,17 @@ function load_settings(){
       enable_live_controls = (bangleVersion() <= 1);
     }
     console.log("enable_live_controls=" + enable_live_controls);
-  } catch(e){
+  } catch (e) {
     console.log("failed to load settings:" + e);
   }
+  if(row_displays == null){
+    init_display();
+  }
   // just set up as default
-  if (!setScheme)
+  if (!setScheme) {
+    init_display();
     setColorScheme(color_schemes[color_scheme_index]);
+  }
 }
 
 /**
@@ -558,14 +529,6 @@ function save_settings(){
   };
   console.log("saving:" + JSON.stringify(settings));
   require("Storage").writeJSON(PREFERENCE_FILE,settings);
-}
-
-function button1pressed() {
-  console.log("button1pressed");
-  if (enable_live_controls) {
-    changeFormatter();
-    save_settings();
-  }
 }
 
 function button3pressed() {
@@ -653,6 +616,5 @@ Bangle.drawWidgets();
 startTimers();
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", d=>{
-  if (d<0) button1pressed();
   if (d>0) button3pressed();
 });
