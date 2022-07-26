@@ -177,7 +177,7 @@ function initPFD() {
         break;
       case maybeFlying:
         if (!(gs>=5) && (roc<1) && (roc>-1)) state=ground;
-        else if (Date().getTime()-takeoffTime>6000) state=flying;
+        else if (Date().getTime()-takeoffTime>60000) state=flying;
         break;
       case flying:
         if (!(gs>=5) && (roc<1) && (roc>-1)) {
@@ -187,7 +187,7 @@ function initPFD() {
         break;
       case maybeLanded:
         if ((gs>=5) || (roc>=1) || (roc<=-1)) state=flying;
-        else if (Date().getTime()-landingTime>6000) state=landed;
+        else if (Date().getTime()-landingTime>60000) state=landed;
         break;
     }
     if ((state==flying) || (state==maybeLanded)) {
