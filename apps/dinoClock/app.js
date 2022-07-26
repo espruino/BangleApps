@@ -4,7 +4,7 @@ const locale = require("locale");
 
 
 
-// add modifiied 4x5 numeric font
+// add modified 4x5 numeric font
 (function(graphics) {
   graphics.prototype.setFont4x5NumPretty = function() {
     this.setFontCustom(atob("IQAQDJgH4/An4QXr0Fa/BwnwdrcH63BCHwfr8Ha/"),45,atob("AwIEBAQEBAQEBAQEBA=="),5);
@@ -50,72 +50,6 @@ function weatherIcon(weather) {
     default:
       return atob("Hh4BAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAf+AAA//AAB//gAf//gB///wB/z/wD/z/wD/z/wP/z/8f/z/+f/z/+//z//////////////z//f/z/+f///+P///8D///wAAAAAAAAAAAAAAAAAAAAAAAAAA=");
     }
-}
-
-
-/**
-Choose weather icon to display based on condition.
-Based on function from the Bangle weather app so it should handle all of the conditions
-sent from gadget bridge.
-*/
-function chooseIcon(condition) {
-  condition = condition.toLowerCase();
-  if (condition.includes("thunderstorm")) return weatherIcon(STORM);
-  if (condition.includes("freezing")||condition.includes("snow")||
-    condition.includes("sleet")) {
-    return weatherIcon(SNOW);
-  }
-  if (condition.includes("drizzle")||
-    condition.includes("shower")) {
-    return weatherIcon(RAIN);
-  }
-  if (condition.includes("rain")) return weatherIcon(RAIN);
-  if (condition.includes("clear")) return weatherIcon(SUN);
-  if (condition.includes("few clouds")) return weatherIcon(PART_SUN);
-  if (condition.includes("scattered clouds")) return weatherIcon(CLOUD);
-  if (condition.includes("clouds")) return weatherIcon(CLOUD);
-  if (condition.includes("mist") ||
-    condition.includes("smoke") ||
-    condition.includes("haze") ||
-    condition.includes("sand") ||
-    condition.includes("dust") ||
-    condition.includes("fog") ||
-    condition.includes("ash") ||
-    condition.includes("squalls") ||
-    condition.includes("tornado")) {
-    return weatherIcon(CLOUD);
-  }
-  return weatherIcon(CLOUD);
-}
-
-/*
-* Choose weather icon to display based on weather conditition code
-* https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
-*/
-function chooseIconByCode(code) {
-  const codeGroup = Math.round(code / 100);
-  switch (codeGroup) {
-    case 2: return weatherIcon(STORM);
-    case 3: return weatherIcon(RAIN);
-    case 5: return weatherIcon(RAIN);
-    case 6: return weatherIcon(SNOW);
-    case 7: return weatherIcon(CLOUD);
-    case 8:
-      switch (code) {
-        case 800: return weatherIcon(SUN);
-        case 801: return weatherIcon(PART_SUN);
-        default: return weatherIcon(CLOUD);
-      }
-    default: return weatherIcon(CLOUD);
-  }
-}
-
-/**
-Get weather stored in json file by weather app.
-*/
-function getWeather() {
-  let jsonWeather = storage.readJSON('weather.json');
-  return jsonWeather;
 }
 
 // timeout used to update every minute
