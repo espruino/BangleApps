@@ -109,7 +109,8 @@ function initPFD() {
             g.scroll(-1,0);
             g.drawLine(p.x+p.w-1,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
           }
-        }, id:"vario",filly:1 },
+          g.reset();
+        }, id:"vario",filly:1, cb:()=>initVarioMenu()},
         {type:"", filly:1, width:1, bgCol:fg},
         {type:"v",fillx:1, c: [
           {type:"h", halign:1, c:[
@@ -367,6 +368,30 @@ function initTimeMenu() {
   timeMenu.render();
 }
 
+function initVarioMenu() {
+  oldSettings=Object.assign({},settings);
+  clearInterval(pfdHandle);
+  var varioMenu = new Layout ({
+    type:"v", c: [
+      {type:"btn", font:"20%", id:"format", pad:1, fillx:1, filly:1, label:"Display:\n"+((settings.bargraph==true) ? ("graph") : ("simple")), cb:()=>{
+        settings.bargraph=!settings.bargraph;
+        varioMenu.format.label="Display:\n"+((settings.bargraph==true) ? ("graph") : ("simple"));
+        varioMenu.render();
+      }},
+      {type:"h", c: [
+        {type:"btn", font:"16%", pad:1, fillx:1, label:"BACK", cb: ()=>{
+          settings=Object.assign({},oldSettings);
+          initPFD();
+        }},
+        {type:"btn", font:"16%", pad:1, fillx:1, label:"SAVE", cb: ()=>{
+          require('Storage').writeJSON("tinyVario.json", settings);
+          initPFD();
+        }}
+      ]}
+    ], lazy:true});
+  g.clear();
+  varioMenu.render();
+}
 function initFlyingTimeMenu() {
   oldSettings=Object.assign({},settings);
   clearInterval(pfdHandle);
