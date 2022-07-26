@@ -200,7 +200,8 @@ class Status {
     }
   }
   display_stats() {
-    let rounded_distance = Math.round(this.remaining_distance() / 100) / 10;
+    let remaining_distance = this.remaining_distance();
+    let rounded_distance = Math.round(remaining_distance / 100) / 10;
     let total = Math.round(this.remaining_distances[0] / 100) / 10;
     let now = new Date();
     let minutes = now.getMinutes().toString();
@@ -213,12 +214,9 @@ class Status {
       .setColor(g.theme.fg)
       .drawString(hours + ":" + minutes, g.getWidth(), g.getHeight() - 15);
 
-    let done_distance =
-      this.remaining_distances[0] -
-      this.remaining_distances[this.current_segment + 1] -
-      this.distance_to_next_point;
+    let done_distance = this.remaining_distances[0] - remaining_distance;
     let done_in = getTime() - this.starting_time;
-    let approximate_speed = Math.round(done_distance / done_in);
+    let approximate_speed = Math.round((done_distance * 3.6) / done_in);
     g.setFont("6x15")
       .setFontAlign(-1, -1, 0)
       .drawString("s." + approximate_speed + "km/h", 0, g.getHeight() - 49);
