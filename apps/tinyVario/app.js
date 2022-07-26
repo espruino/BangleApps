@@ -55,6 +55,7 @@ var settings = Object.assign({
   intTime:10,
   localTime:true,
   autoDetect:true,
+  bargraph:false
 }, require('Storage').readJSON("tinyVario.json", true) || {});
 
 var qnh=Math.floor(Bangle.getOptions().seaLevelPressure) || 1013;
@@ -71,7 +72,11 @@ var takeoffTime=0, landingTime=0, flyingTime;
 var Layout = require("Layout");
 var oldSettings;
 
+//var delta=0;//TESTING
+
+
 function updateText(t) {
+  g.reset();
   g.clearRect(t.x,t.y,t.x+t.w-1,t.y+t.h-1);
   if (t.col) g.setColor(t.col);
   else g.setColor(fg);
@@ -87,16 +92,25 @@ function initPFD() {
   Bangle.setUI();
   var pfd = new Layout(
     {type:"v",c: [
+      /*{type:"h",c: [
+        {type:"", fillx:1, height:"1"}
+        ]},*/
       {type:"h",filly:1, c: [
         {type:"custom", width:"25", render:()=>{
           var p = pfd.vario;
-          g.reset();
-          g.clearRect(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
           if (roc>0.1) g.setColor(0,1,0);
           if (roc<-1) g.setColor(1,0,0);
           var y=p.y+p.h/2-roc*(p.h/2)/5;
-          g.fillRect(p.x,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
-        }, id:"vario",filly:1 },
+          if (settings.bargraph==false) {
+            g.clearRect(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+            g.fillRect(p.x,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
+          } else {
+            g.setClipRect(p.x,p.y,p.x+p.w-1,p.y+p.h-1);
+            g.scroll(-1,0);
+            g.drawLine(p.x+p.w-1,p.y+(p.h/2),p.x+p.w-1,Math.clip(y,p.y,p.y+p.h-1));
+          }
+          g.reset();
+        }, id:"vario",filly:1, cb:()=>initVarioMenu()},
         {type:"", filly:1, width:1, bgCol:fg},
         {type:"v",fillx:1, c: [
           {type:"h", halign:1, c:[
@@ -125,7 +139,12 @@ function initPFD() {
   );
   g.clear();
   pfd.render();
+  //-------testing------
+  //rawP=1000;
+  //samples=1;
+  //--------------------
   pfdHandle = setInterval(function() {
+    t1=Date().getTime();
     //process pressure readings
     if (samples) {
       pressure=rawP/samples;
@@ -138,6 +157,7 @@ function initPFD() {
         for (let i = 0; i < settings.intTime*4+1; i++) altH.push(altRaw);
       }
     }
+    //altRaw=altRaw+delta;getAltitude(pressure,qnh);//TESTING
     altRaw=getAltitude(pressure,qnh);
     altFast=altFast+(altRaw-altFast)*fastGain;
     altSlow=altSlow+(altRaw-altSlow)*slowGain;
@@ -146,6 +166,7 @@ function initPFD() {
       rocAvg=(altH[altH.length-1]-altH[0])/settings.intTime;
       altH.shift();
     }
+    roc=(altFast-altSlow)/((0.25/slowGain)-(0.25/fastGain));
 
     if (settings.autoDetect==true) switch (state) {
       case ground:
@@ -155,7 +176,7 @@ function initPFD() {
         }
         break;
       case maybeFlying:
-        if (!(gs>=5)&& (roc<1) && (roc>-1)) state=ground;
+        if (!(gs>=5) && (roc<1) && (roc>-1)) state=ground;
         else if (Date().getTime()-takeoffTime>60000) state=flying;
         break;
       case flying:
@@ -169,19 +190,16 @@ function initPFD() {
         else if (Date().getTime()-landingTime>60000) state=landed;
         break;
     }
-		if ((state==flying) || (state==maybeLanded)) {
+    if ((state==flying) || (state==maybeLanded)) {
       flyingTime=Date().getTime()-takeoffTime;
       pfd.flyingtime.label=(flyingTime / 3600000).toFixed(0)+":"+(flyingTime / 60000 % 60).toFixed(0).padStart(2,'0');
       pfd.flyingtime.col=fg;
-      updateText(pfd.flyingtime);
     } else if (state==landed) {
       flyingTime=landingTime-takeoffTime;
       pfd.flyingtime.label=(flyingTime / 3600000).toFixed(0)+":"+(flyingTime / 60000 % 60).toFixed(0).padStart(2,'0');
       pfd.flyingtime.col=green;
-      updateText(pfd.flyingtime);
     }
 
-    roc=(altFast-altSlow)/((0.25/slowGain)-(0.25/fastGain));
     pfd.alt.label=(altRaw*unitsAlt[settings.altU].factor).toFixed(unitsAlt[settings.altU].precision);
     pfd.avg.col=(rocAvg<-1) ? (red):((rocAvg>0.1) ? (green):(fg));
     pfd.avg.label=(rocAvg*unitsRoc[settings.rocU].factor).toFixed(unitsRoc[settings.rocU].precision);
@@ -191,13 +209,16 @@ function initPFD() {
       pfd.gs.label=(gps.speed*unitsGs[settings.gsU].factor).toFixed(unitsGs[settings.gsU].precision);
       updateText(pfd.gs);
       gs=gps.speed;
-    } 
+    } //else gs=0;
     
     pfd.time.label=getTimeString();
     updateText(pfd.alt);
     updateText(pfd.avg);
     updateText(pfd.time);
+    updateText(pfd.flyingtime);
+
     pfd.vario.render();
+    //print(Date().getTime()-t1);
   }, 250);
 
 }
@@ -347,6 +368,30 @@ function initTimeMenu() {
   timeMenu.render();
 }
 
+function initVarioMenu() {
+  oldSettings=Object.assign({},settings);
+  clearInterval(pfdHandle);
+  var varioMenu = new Layout ({
+    type:"v", c: [
+      {type:"btn", font:"20%", id:"format", pad:1, fillx:1, filly:1, label:"Display:\n"+((settings.bargraph==true) ? ("graph") : ("simple")), cb:()=>{
+        settings.bargraph=!settings.bargraph;
+        varioMenu.format.label="Display:\n"+((settings.bargraph==true) ? ("graph") : ("simple"));
+        varioMenu.render();
+      }},
+      {type:"h", c: [
+        {type:"btn", font:"16%", pad:1, fillx:1, label:"BACK", cb: ()=>{
+          settings=Object.assign({},oldSettings);
+          initPFD();
+        }},
+        {type:"btn", font:"16%", pad:1, fillx:1, label:"SAVE", cb: ()=>{
+          require('Storage').writeJSON("tinyVario.json", settings);
+          initPFD();
+        }}
+      ]}
+    ], lazy:true});
+  g.clear();
+  varioMenu.render();
+}
 function initFlyingTimeMenu() {
   oldSettings=Object.assign({},settings);
   clearInterval(pfdHandle);
