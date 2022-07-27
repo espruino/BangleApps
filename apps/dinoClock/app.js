@@ -4,7 +4,7 @@ const locale = require("locale");
 
 
 
-// add modified 4x5 numeric font
+ // add modified 4x5 numeric font
 (function(graphics) {
   graphics.prototype.setFont4x5NumPretty = function() {
     this.setFontCustom(atob("IQAQDJgH4/An4QXr0Fa/BwnwdrcH63BCHwfr8Ha/"),45,atob("AwIEBAQEBAQEBAQEBA=="),5);
@@ -52,6 +52,72 @@ function weatherIcon(weather) {
     }
 }
 
+
+/**
+Choose weather icon to display based on condition.
+Based on function from the Bangle weather app so it should handle all of the conditions
+sent from gadget bridge.
+*/
+function chooseIcon(condition) {
+  condition = condition.toLowerCase();
+  if (condition.includes("thunderstorm")) return weatherIcon(STORM);
+  if (condition.includes("freezing")||condition.includes("snow")||
+    condition.includes("sleet")) {
+    return weatherIcon(SNOW);
+  }
+  if (condition.includes("drizzle")||
+    condition.includes("shower")) {
+    return weatherIcon(RAIN);
+  }
+  if (condition.includes("rain")) return weatherIcon(RAIN);
+  if (condition.includes("clear")) return weatherIcon(SUN);
+  if (condition.includes("few clouds")) return weatherIcon(PART_SUN);
+  if (condition.includes("scattered clouds")) return weatherIcon(CLOUD);
+  if (condition.includes("clouds")) return weatherIcon(CLOUD);
+  if (condition.includes("mist") ||
+    condition.includes("smoke") ||
+    condition.includes("haze") ||
+    condition.includes("sand") ||
+    condition.includes("dust") ||
+    condition.includes("fog") ||
+    condition.includes("ash") ||
+    condition.includes("squalls") ||
+    condition.includes("tornado")) {
+    return weatherIcon(CLOUD);
+  }
+  return weatherIcon(CLOUD);
+}
+
+/*
+* Choose weather icon to display based on weather conditition code
+* https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+*/
+function chooseIconByCode(code) {
+  const codeGroup = Math.round(code / 100);
+  switch (codeGroup) {
+    case 2: return weatherIcon(STORM);
+    case 3: return weatherIcon(RAIN);
+    case 5: return weatherIcon(RAIN);
+    case 6: return weatherIcon(SNOW);
+    case 7: return weatherIcon(CLOUD);
+    case 8:
+      switch (code) {
+        case 800: return weatherIcon(SUN);
+        case 801: return weatherIcon(PART_SUN);
+        default: return weatherIcon(CLOUD);
+      }
+    default: return weatherIcon(CLOUD);
+  }
+}
+
+/**
+Get weather stored in json file by weather app.
+*/
+function getWeather() {
+  let jsonWeather = storage.readJSON('weather.json');
+  return jsonWeather;
+}
+
 // timeout used to update every minute
 var drawTimeout;
 
@@ -79,26 +145,27 @@ function handlePressure(p) {
 
   var temp = locale.temp(p.temperature).match(/^(\D*\d*)(.*)$/);
   var press = Math.round(p.pressure);
-  g.clearRect(108,114,176,114+4*5);
-  if (temp != "") {
-    var tempWidth;
-    const mid=126+15;
-    if (temp[1][0]=="-") {
-      // do not account for - when aligning
-      const minusWidth=3*4;
-      tempWidth = minusWidth+(temp[1].length-1)*4*4;
-      x = mid-Math.round((tempWidth-minusWidth)/2)-minusWidth;
-    } else {
-      tempWidth = temp[1].length*4*4;
-      x = mid-Math.round(tempWidth/2);
-    }
-    g.setFont("4x5NumPretty",4);
-    g.drawString(temp[1],x,114);
-    square(x+tempWidth,114,6,2);
+
+  var tempWidth;
+  const mid=139;
+  const y = 120;
+  if (temp[1][0]=="-") {
+    // do not account for - when aligning
+    const minusWidth=3*4;
+    tempWidth = minusWidth+(temp[1].length-1)*4*3;
+  } else {
+    tempWidth = temp[1].length*4*3;
   }
-  g.clearRect(108,140,176,140+4*5);
-  g.setFont("4x5NumPretty",4);
-  g.drawString(press,108,140);
+  x = mid-tempWidth - 10;
+  g.clearRect(108,y,176,114+4*5);
+  g.setFont("4x5NumPretty",3);
+  g.drawString(temp[1],x,y);
+  square(x+tempWidth,y,6,2);
+  vertLine(mid, y,15);
+
+  g.clearRect(mid-25,145,176,176);
+  g.setFont("4x5NumPretty",3);
+  g.drawString(press,mid-22,145);
 
 }
 
@@ -107,6 +174,15 @@ function square(x,y,w,e) {
   g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
   g.setColor("#000"); // set back to black for future operations
 }
+
+function vertLine(x, y, len) {
+  g.setColor("#000").fillRect(x,y,x+1,y+len);
+}
+
+function horiLine(x, y, len) {
+  g.setColor("#000").fillRect(x,y,x+len,y+1);
+}
+
 
 function draw() {
   var d = new Date();
@@ -127,6 +203,25 @@ function draw() {
     print("barometer not supported, showing demo values");
     handlePressure({'pressure':1234, 'temperature': 25});
   }
+
+  var weatherJson = getWeather();
+  var wIcon = weatherIcon(SUN);
+  var temp;
+  if(weatherJson && weatherJson.weather){
+      var currentWeather = weatherJson.weather;
+      temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
+      const code = currentWeather.code||-1;
+      if (code > 0) {
+        wIcon = chooseIconByCode(code);
+      } else {
+        wIcon = chooseIcon(currentWeather.txt);
+      }
+  }
+  else{
+      temp = "";
+      wIcon = weatherIcon(ERR);
+  }
+
   g.reset();
   g.clearRect(22,35,153,75);
   g.setFont("4x5NumPretty",8);
@@ -143,9 +238,29 @@ function draw() {
   g.setFont("DoW");
   g.drawString(dow,22,79);
 
-  var wIcon = weatherIcon(SUN);
   g.drawImage(wIcon,126,81);
 
+  //temp = "20".match(/^(\D*\d*)(.*)$/);
+  const mid=139;
+  const x = mid + 6;
+  const y = 120;
+  if (temp != "") {
+    var tempWidth;
+    if (temp[1][0]=="-") {
+      // do not account for - when aligning
+      const minusWidth=3*4;
+      tempWidth = minusWidth+(temp[1].length-1)*4*3;
+    } else {
+      tempWidth = temp[1].length*4*3;
+    }
+    g.clearRect(x,114,x+tempWidth+10, y+15);
+    g.setFont("4x5NumPretty",3);
+    g.drawString(temp[1],x,y);
+    square(x+tempWidth,y,6,2);
+  } else {
+    g.clearRect(x,114,176, y+15);
+    horiLine(x+5, y+6, 10);
+  }
 
   // queue draw in one minute
   queueDraw();
