@@ -42,3 +42,4 @@
 0.12:
 	* Bugfix in speed computation.
 	* Bugfix in current segment detection.
+	* Bugfix : lost direction.

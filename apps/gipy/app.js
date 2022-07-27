@@ -82,7 +82,6 @@ class Status {
         direction = maybe_direction;
       }
     }
-    g.clear();
 
     this.adjusted_cos_direction = Math.cos(-direction - Math.PI / 2.0);
     this.adjusted_sin_direction = Math.sin(-direction - Math.PI / 2.0);
@@ -164,7 +163,7 @@ class Status {
     return distance_to_nearest > 50;
   }
   display() {
-    //g.clear();
+    g.clear();
     this.display_map();
     this.display_interest_points();
     this.display_stats();
@@ -335,8 +334,8 @@ class Status {
       let next_point = this.path.point(this.current_segment + 1);
       let diff = next_point.minus(this.position);
       let angle = Math.atan2(diff.lat, diff.lon);
-      let x = Math.cos(angle) * 30.0 + half_width;
-      let y = Math.sin(angle) * 30.0 + half_height;
+      let x = Math.cos(-angle - Math.PI / 2) * 50.0 + half_width;
+      let y = Math.sin(-angle - Math.PI / 2) * 50.0 + half_height;
       g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
     }
   }
