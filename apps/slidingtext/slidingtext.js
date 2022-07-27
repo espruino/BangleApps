@@ -237,27 +237,46 @@ class ShiftText {
   }
 }
 
+
 const CLOCK_TEXT_SPEED_X = 10;
 // a list of display rows
 var row_displays;
 
 // y - the height to start displaying from
-function setRowDisplays(y, heights) {
-  var cols = [
-    main_color(), other_color(), other_color(), other_color(), main_color()
-  ];
+// heights function (row_no, no_rows)
+// colour function (row_no, no_rows)
+function setRowDisplays(y, heights, fg_color) {
   row_displays = [];
-  for (var i=0;i<heights.length;i++) {
-    row_displays.push(new ShiftText(g.getWidth(),y,'',"Vector",heights[i],CLOCK_TEXT_SPEED_X,1,10,cols[i],bg_color()));
-    y += heights[i];
+  var date_rows = date_formatter.formatDate(new Date())
+  for (var i=0;i<date_rows.length;i++) {
+    var row_height = heights(i,date_rows.length);
+    row_displays.push(
+        new ShiftText(g.getWidth(),
+            y,
+            '',
+            "Vector",
+            row_height,
+            CLOCK_TEXT_SPEED_X,
+            1,
+            10,
+            fg_color(i,date_rows),
+            bg_color()
+        )
+    );
+    y += row_height;
   }
 }
 
 function init_display(){
-  if (bangleVersion()<2)
-    setRowDisplays(50, [40,30,30,30,40]);
-  else
-    setRowDisplays(34, [35,25,25,25,35]);
+  var color_func = (row,no_rows)=>row === 0 || row >= no_rows -1? main_color(): other_color();
+  var major_row_size = (bangleVersion()<2)? 40 : 30;
+  var minor_row_size = (bangleVersion()<2)? 35 : 25;
+  var y_init = (bangleVersion()<2)? 34 : 50;
+
+  setRowDisplays(y_init,
+        (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)? major_row_size: minor_row_size,
+        color_func
+        );
 }
 
 function bangleVersion(){
@@ -497,7 +516,7 @@ function load_settings() {
         setScheme = true;
       }
       if (settings.enable_live_controls == null) {
-        settings.enable_live_controls = (bangleVersion() <= 1);
+        settings.enable_live_controls = (bangleVersion() <= 2);
       }
       enable_live_controls = settings.enable_live_controls;
     } else {
