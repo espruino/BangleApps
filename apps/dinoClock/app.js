@@ -156,7 +156,7 @@ function handlePressure(p) {
   } else {
     tempWidth = temp[1].length*4*3;
   }
-  x = mid-tempWidth - 10;
+  const x = mid + 6;
   g.clearRect(108,y,176,114+4*5);
   g.setFont("4x5NumPretty",3);
   g.drawString(temp[1],x,y);
@@ -176,7 +176,7 @@ function square(x,y,w,e) {
 }
 
 function vertLine(x, y, len) {
-  g.setColor("#000").fillRect(x,y,x+1,y+len);
+  g.setColor("#000").fillRect(x,y,x+2,y+len);
 }
 
 function horiLine(x, y, len) {
@@ -242,7 +242,6 @@ function draw() {
 
   //temp = "20".match(/^(\D*\d*)(.*)$/);
   const mid=139;
-  const x = mid + 6;
   const y = 120;
   if (temp != "") {
     var tempWidth;
@@ -253,12 +252,14 @@ function draw() {
     } else {
       tempWidth = temp[1].length*4*3;
     }
-    g.clearRect(x,114,x+tempWidth+10, y+15);
+    const x = mid-tempWidth - 8;
+    g.clearRect(x,114,mid, y+15);
     g.setFont("4x5NumPretty",3);
     g.drawString(temp[1],x,y);
     square(x+tempWidth,y,6,2);
   } else {
-    g.clearRect(x,114,176, y+15);
+    const x = mid-20;
+    g.clearRect(x,114,mid, y+15);
     horiLine(x+5, y+6, 10);
   }
 
