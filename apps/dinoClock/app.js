@@ -72,8 +72,7 @@ function drawBg() {
 }
 
 function handlePressure(p) {
-  if (p===undefined) {// workaround for https://github.com/espruino/BangleApps/issues/1429
-    setTimeout(() => Bangle.getPressure().then(handlePressure), 500);
+  if (p===undefined) {
     return;
   }
   print(p.pressure , p.temperature);
