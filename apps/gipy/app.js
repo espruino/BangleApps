@@ -26,8 +26,8 @@ class Status {
     this.path = path;
     this.on_path = false; // are we on the path or lost ?
     this.position = null; // where we are
-    this.cos_direction = null; // cos of where we look at
-    this.sin_direction = null; // sin of where we look at
+    this.adjusted_cos_direction = null; // cos of where we look at
+    this.adjusted_sin_direction = null; // sin of where we look at
     this.current_segment = null; // which segment is closest
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
@@ -82,18 +82,21 @@ class Status {
         direction = maybe_direction;
       }
     }
+    g.clear();
 
-    this.cos_direction = Math.cos(-direction - Math.PI / 2.0);
-    this.sin_direction = Math.sin(-direction - Math.PI / 2.0);
+    this.adjusted_cos_direction = Math.cos(-direction - Math.PI / 2.0);
+    this.adjusted_sin_direction = Math.sin(-direction - Math.PI / 2.0);
+    cos_direction = Math.cos(direction);
+    sin_direction = Math.sin(direction);
     this.position = new_position;
 
     // detect segment we are on now
     let next_segment = this.path.nearest_segment(
       this.position,
-      Math.max(0, this.current_segment - 2),
-      Math.min(this.current_segment + 3, this.path.len - 1),
-      this.cos_direction,
-      this.sin_direction
+      Math.max(0, this.current_segment - 1),
+      Math.min(this.current_segment + 2, this.path.len - 1),
+      cos_direction,
+      sin_direction
     );
 
     if (this.is_lost(next_segment)) {
@@ -102,8 +105,8 @@ class Status {
         this.position,
         0,
         this.path.len - 1,
-        this.cos_direction,
-        this.sin_direction
+        cos_direction,
+        sin_direction
       );
     }
     // now check if we strayed away from path or back to it
@@ -161,7 +164,7 @@ class Status {
     return distance_to_nearest > 50;
   }
   display() {
-    g.clear();
+    //g.clear();
     this.display_map();
     this.display_interest_points();
     this.display_stats();
@@ -193,8 +196,8 @@ class Status {
       let color = this.path.interest_color(i);
       let c = interest_point.coordinates(
         this.position,
-        this.cos_direction,
-        this.sin_direction
+        this.adjusted_cos_direction,
+        this.adjusted_sin_direction
       );
       g.setColor(color).fillCircle(c[0], c[1], 5);
     }
@@ -260,8 +263,8 @@ class Status {
     let start = Math.max(this.current_segment - 4, 0);
     let end = Math.min(this.current_segment + 6, this.path.len);
     let pos = this.position;
-    let cos = this.cos_direction;
-    let sin = this.sin_direction;
+    let cos = this.adjusted_cos_direction;
+    let sin = this.adjusted_sin_direction;
     let points = this.path.points;
     let cx = pos.lon;
     let cy = pos.lat;
@@ -316,16 +319,16 @@ class Status {
     g.fillCircle(half_width, half_height, 5);
 
     // display old points for direction debug
-    for (let i = 0; i < this.old_points.length; i++) {
-      let tx = (this.old_points[i].lon - cx) * 40000.0;
-      let ty = (this.old_points[i].lat - cy) * 40000.0;
-      let rotated_x = tx * cos - ty * sin;
-      let rotated_y = tx * sin + ty * cos;
-      let x = half_width - Math.round(rotated_x); // x is inverted
-      let y = half_height + Math.round(rotated_y);
-      g.setColor((i + 1) / 4.0, 0.0, 0.0);
-      g.fillCircle(x, y, 3);
-    }
+    //  for (let i = 0; i < this.old_points.length; i++) {
+    //    let tx = (this.old_points[i].lon - cx) * 40000.0;
+    //    let ty = (this.old_points[i].lat - cy) * 40000.0;
+    //    let rotated_x = tx * cos - ty * sin;
+    //    let rotated_y = tx * sin + ty * cos;
+    //    let x = half_width - Math.round(rotated_x); // x is inverted
+    //    let y = half_height + Math.round(rotated_y);
+    //    g.setColor((i + 1) / 4.0, 0.0, 0.0);
+    //    g.fillCircle(x, y, 3);
+    //  }
 
     // display direction to next point if lost
     if (!this.on_path) {
@@ -437,10 +440,25 @@ class Path {
     this.on_segments(
       function (p1, p2, i) {
         // we use the dot product to figure out if oriented correctly
-        let distance = point.fake_distance_to_segment(p1, p2);
+        // let distance = point.fake_distance_to_segment(p1, p2);
+
+        let projection = point.closest_segment_point(p1, p2);
+        let distance = point.fake_distance(projection);
+
+        //        let d = projection.minus(point).times(40000.0);
+        //        let rotated_x = d.lon * acos - d.lat * asin;
+        //        let rotated_y = d.lon * asin + d.lat * acos;
+        //        let x = g.getWidth() / 2 - Math.round(rotated_x); // x is inverted
+        //        let y = g.getHeight() / 2 + Math.round(rotated_y);
+        //
         let diff = p2.minus(p1);
         let dot = cos_direction * diff.lon + sin_direction * diff.lat;
         let orientation = +(dot < 0); // index 0 is good orientation
+        //        g.setColor(0.0, 0.0 + orientation, 1.0 - orientation).fillCircle(
+        //          x,
+        //          y,
+        //          10
+        //        );
         if (distance <= mins[orientation]) {
           mins[orientation] = distance;
           indices[orientation] = i - 1;
@@ -522,7 +540,7 @@ class Point {
     // Return minimum distance between line segment vw and point p
     let l2 = v.length_squared(w); // i.e. |w-v|^2 -  avoid a sqrt
     if (l2 == 0.0) {
-      return this.distance(v); // v == w case
+      return v; // v == w case
     }
     // Consider the line extending the segment, parameterized as v + t (w - v).
     // We find projection of point p onto the line.
@@ -559,7 +577,7 @@ function simulate_gps(status) {
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
   let old_pos = status.position;
 
-  fake_gps_point += 0.2; // advance simulation
+  fake_gps_point += 0.05; // advance simulation
   status.update_position(pos, null);
 }
 

@@ -1,11 +1,7 @@
 
 * bugs
 
-- segment detection could be better ?
------> we need to display debug info like which nearest point on which segment
-    very often you jump to next segment while still on current one
 - it does not buzz very often on turns
-
 
 * additional features
 
