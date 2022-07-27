@@ -157,10 +157,10 @@ function handlePressure(p) {
     tempWidth = temp[1].length*4*3;
   }
   const x = mid + 6;
-  g.clearRect(108,y,176,114+4*5);
+  g.clearRect(x,y,176,114+4*5);
   g.setFont("4x5NumPretty",3);
   g.drawString(temp[1],x,y);
-  square(x+tempWidth,y,6,2);
+  square(x+tempWidth-1,y,6,2);
   vertLine(mid, y,15);
 
   g.clearRect(mid-25,145,176,176);
@@ -256,7 +256,7 @@ function draw() {
     g.clearRect(x,114,mid, y+15);
     g.setFont("4x5NumPretty",3);
     g.drawString(temp[1],x,y);
-    square(x+tempWidth,y,6,2);
+    square(x+tempWidth-1,y,6,2);
   } else {
     const x = mid-20;
     g.clearRect(x,114,mid, y+15);
