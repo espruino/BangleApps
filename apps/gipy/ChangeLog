@@ -43,3 +43,5 @@
 	* Bugfix in speed computation.
 	* Bugfix in current segment detection.
 	* Bugfix : lost direction.
+	* Larger fonts.
+	* Detecting next point correctly when going back.

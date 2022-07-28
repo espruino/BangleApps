@@ -1,4 +1,4 @@
-let simulated = false;
+let simulated = true;
 let file_version = 3;
 let code_key = 47490;
 
@@ -90,23 +90,27 @@ class Status {
     this.position = new_position;
 
     // detect segment we are on now
-    let next_segment = this.path.nearest_segment(
+    let res = this.path.nearest_segment(
       this.position,
       Math.max(0, this.current_segment - 1),
       Math.min(this.current_segment + 2, this.path.len - 1),
       cos_direction,
       sin_direction
     );
+    let orientation = res[0];
+    let next_segment = res[1];
 
     if (this.is_lost(next_segment)) {
       // it did not work, try anywhere
-      next_segment = this.path.nearest_segment(
+      res = this.path.nearest_segment(
         this.position,
         0,
         this.path.len - 1,
         cos_direction,
         sin_direction
       );
+      orientation = res[0];
+      next_segment = res[1];
     }
     // now check if we strayed away from path or back to it
     let lost = this.is_lost(next_segment);
@@ -122,13 +126,13 @@ class Status {
     this.current_segment = next_segment;
 
     // check if we are nearing the next point on our path and alert the user
-    let next_point = this.current_segment + 1;
+    let next_point = this.current_segment + (1 - orientation);
     this.distance_to_next_point = Math.ceil(
       this.position.distance(this.path.point(next_point))
     );
     // disable gps when far from next point and locked
     if (Bangle.isLocked()) {
-      let time_to_next_point = this.distance_to_next_point / 9.7; // 30km/h is 8.3 m/s
+      let time_to_next_point = this.distance_to_next_point / 9.7; // 35km/h is 9.7 m/s
       if (time_to_next_point > 30) {
         Bangle.setGPSPower(false, "gipy");
         setTimeout(function () {
@@ -136,7 +140,7 @@ class Status {
         }, time_to_next_point);
       }
     }
-    if (this.reaching != next_point && this.distance_to_next_point <= 20) {
+    if (this.reaching != next_point && this.distance_to_next_point <= 50) {
       this.reaching = next_point;
       let reaching_waypoint = this.path.is_waypoint(next_point);
       if (reaching_waypoint) {
@@ -212,39 +216,32 @@ class Status {
     }
     let hours = now.getHours().toString();
     g.setFont("6x8:2")
-      .setFontAlign(1, -1, 0)
+      .setFontAlign(-1, -1, 0)
       .setColor(g.theme.fg)
-      .drawString(hours + ":" + minutes, g.getWidth(), g.getHeight() - 15);
+      .drawString(hours + ":" + minutes, 0, 30);
 
     let done_distance = this.remaining_distances[0] - remaining_distance;
-    let done_in = getTime() - this.starting_time;
+    let done_in = now.getTime() / 1000 - this.starting_time;
     let approximate_speed = Math.round((done_distance * 3.6) / done_in);
-    g.setFont("6x15")
-      .setFontAlign(-1, -1, 0)
-      .drawString("s." + approximate_speed + "km/h", 0, g.getHeight() - 49);
-
-    g.setFont("6x15").drawString(
-      "d. " + rounded_distance + "/" + total,
+    g.setFont("6x8:2").drawString(
+      "" + this.distance_to_next_point + "m",
       0,
-      g.getHeight() - 32
+      g.getHeight() - 49
     );
-    g.drawString(
-      "seg." +
-        (this.current_segment + 1) +
-        "/" +
-        (this.path.len - 1) +
-        " " +
-        this.distance_to_next_point +
-        "m",
+    g.setFont("6x8:2")
+      .setFontAlign(-1, -1, 0)
+      .drawString("" + approximate_speed + "km/h", 0, g.getHeight() - 32);
+    g.setFont("6x8:2").drawString(
+      "" + rounded_distance + "/" + total,
       0,
       g.getHeight() - 15
     );
 
-    if (this.distance_to_next_point <= 20) {
+    if (this.distance_to_next_point <= 50) {
       if (this.path.is_waypoint(this.reaching)) {
         g.setColor(0.0, 1.0, 0.0)
           .setFont("6x15")
-          .drawString("turn", g.getWidth() - 55, 35);
+          .drawString("turn", g.getWidth() - 50, 30);
       }
     }
     if (!this.on_path) {
@@ -469,9 +466,9 @@ class Path {
     // by default correct orientation (0) wins
     // but if other one is really closer, return other one
     if (mins[1] < mins[0] / 10.0) {
-      return indices[1];
+      return [1, indices[1]];
     } else {
-      return indices[0];
+      return [0, indices[0]];
     }
   }
   get len() {
