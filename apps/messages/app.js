@@ -286,6 +286,7 @@ function showMessage(msgid) {
     }
   }
   function goBack() {
+    layout = undefined;
     msg.new = false; saveMessages(); // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
