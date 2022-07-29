@@ -137,52 +137,11 @@ function drawBg() {
   g.drawImage(bgImg,0,101);
 }
 
-function handlePressure(p) {
-  if (p===undefined) {
-    return;
-  }
-  print(p.pressure , p.temperature);
-
-  var temp = locale.temp(p.temperature).match(/^(\D*\d*)(.*)$/);
-  var press = Math.round(p.pressure);
-
-  var tempWidth;
-  const mid=139;
-  const y = 120;
-  if (temp[1][0]=="-") {
-    // do not account for - when aligning
-    const minusWidth=3*4;
-    tempWidth = minusWidth+(temp[1].length-1)*4*3;
-  } else {
-    tempWidth = temp[1].length*4*3;
-  }
-  const x = mid + 6;
-  g.clearRect(x,y,176,114+4*5);
-  g.setFont("4x5NumPretty",3);
-  g.drawString(temp[1],x,y);
-  square(x+tempWidth-1,y,6,2);
-  vertLine(mid, y,15);
-
-  g.clearRect(mid-25,145,176,176);
-  g.setFont("4x5NumPretty",3);
-  g.drawString(press,mid-22,145);
-
-}
-
 function square(x,y,w,e) {
   g.setColor("#000").fillRect(x,y,x+w,y+w);
   g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
   g.setColor("#000"); // set back to black for future operations
 }
-
-function vertLine(x, y, len) {
-  g.setColor("#000").fillRect(x,y,x+2,y+len);
-}
-
-function horiLine(x, y, len) {
-  g.setColor("#000").fillRect(x,y,x+len,y+1);
-}
-
 
 function draw() {
   var d = new Date();
@@ -196,16 +155,8 @@ function draw() {
   dow = ((dow+6)%7).toString();
   date = day+"."+mon+".";
 
-  try {
-  Bangle.getPressure().then(handlePressure);
-  } catch(e) {
-    print(e.message);
-    print("barometer not supported, showing demo values");
-    handlePressure({'pressure':1234, 'temperature': 25});
-  }
-
   var weatherJson = getWeather();
-  var wIcon = weatherIcon(SUN);
+  var wIcon;
   var temp;
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
@@ -240,27 +191,22 @@ function draw() {
 
   g.drawImage(wIcon,126,81);
 
-  //temp = "20".match(/^(\D*\d*)(.*)$/);
-  const mid=139;
-  const y = 120;
+  g.clearRect(108,114,176,114+4*5);
   if (temp != "") {
     var tempWidth;
+    const mid=126+15;
     if (temp[1][0]=="-") {
       // do not account for - when aligning
       const minusWidth=3*4;
-      tempWidth = minusWidth+(temp[1].length-1)*4*3;
+      tempWidth = minusWidth+(temp[1].length-1)*4*4;
+      x = mid-Math.round((tempWidth-minusWidth)/2)-minusWidth;
     } else {
-      tempWidth = temp[1].length*4*3;
+      tempWidth = temp[1].length*4*4;
+      x = mid-Math.round(tempWidth/2);
     }
-    const x = mid-tempWidth - 8;
-    g.clearRect(x,114,mid, y+15);
-    g.setFont("4x5NumPretty",3);
-    g.drawString(temp[1],x,y);
-    square(x+tempWidth-1,y,6,2);
-  } else {
-    const x = mid-20;
-    g.clearRect(x,114,mid, y+15);
-    horiLine(x+5, y+6, 10);
+    g.setFont("4x5NumPretty",4);
+    g.drawString(temp[1],x,114);
+    square(x+tempWidth,114,6,2);
   }
 
   // queue draw in one minute
