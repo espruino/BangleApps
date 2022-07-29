@@ -188,6 +188,20 @@ class ShiftText {
     this.tgt_y = new_y;
     this._doMove();
   }
+  scrollInFromLeft(txt,to_x){
+    this.setTextXPosition(txt, -txt.length * this.font_size - 2*this.speed_x);
+    this.moveToX(to_x);
+  }
+  scrollInFromRight(txt,to_x){
+    this.setTextXPosition(txt, g.getWidth() + 2*this.speed_x);
+    this.moveToX(to_x);
+  }
+  scrollOffToLeft(){
+    this.moveToX(-this.txt.length * this.font_size);
+  }
+  scrollOffToRight(){
+    this.moveToX(g.getWidth() + 2*this.speed_x);
+  }
   onFinished(finished_callback){
     this.finished_callback = finished_callback;
   }
@@ -237,29 +251,42 @@ class ShiftText {
   }
 }
 
+function bangleVersion(){
+  return (g.getHeight()>200)? 1 : 2;
+}
 
-const CLOCK_TEXT_SPEED_X = 10;
+var style = {
+  fg_color: (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)? main_color(): other_color(),
+  clock_text_speed_x: 10,
+  y_init: (bangleVersion()<2)? 34 : 50,
+  row_height: (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)?
+      (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
+  scrollIn: (d,txt,to_x)=>d.scrollInFromRight(txt,to_x),
+  //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
+  scrollOff: (d)=>d.scrollOffToLeft()
+  //scrollOff: (d)=>d.scrollOffToRight()
+};
+
+
 // a list of display rows
 var row_displays;
 
-// y - the height to start displaying from
-// heights function (row_no, no_rows)
-// colour function (row_no, no_rows)
-function setRowDisplays(y, heights, fg_color) {
+function init_display() {
   row_displays = [];
-  var date_rows = date_formatter.formatDate(new Date())
+  y = style.y_init;
+  var date_rows = date_formatter.formatDate(new Date());
   for (var i=0;i<date_rows.length;i++) {
-    var row_height = heights(i,date_rows.length);
+    var row_height = style.row_height(i,date_rows.length);
     row_displays.push(
         new ShiftText(g.getWidth(),
             y,
             '',
             "Vector",
             row_height,
-            CLOCK_TEXT_SPEED_X,
+            style.clock_text_speed_x,
             1,
             10,
-            fg_color(i,date_rows),
+            style.fg_color(i,date_rows),
             bg_color()
         )
     );
@@ -267,57 +294,33 @@ function setRowDisplays(y, heights, fg_color) {
   }
 }
 
-function init_display(){
-  var color_func = (row,no_rows)=>row === 0 || row >= no_rows -1? main_color(): other_color();
-  var major_row_size = (bangleVersion()<2)? 40 : 30;
-  var minor_row_size = (bangleVersion()<2)? 35 : 25;
-  var y_init = (bangleVersion()<2)? 34 : 50;
-
-  setRowDisplays(y_init,
-        (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)? major_row_size: minor_row_size,
-        color_func
-        );
-}
-
-function bangleVersion(){
-  return (g.getHeight()>200)? 1 : 2;
-}
-
 
 function nextColorTheme(){
   color_scheme_index += 1;
-  if(color_scheme_index > row_displays.length){
+  if(color_scheme_index >= color_schemes.length){
     color_scheme_index = 0;
   }
-  setColorScheme(color_schemes[color_scheme_index]);
+  //console.log("changing color scheme to " + color_schemes[color_scheme_index].name)
+  updateColorScheme();
   reset_clock(true);
   draw_clock();
 }
 
-function setColorScheme(color_scheme){
-  setColor(color_scheme.main_bar,
-      color_scheme.other_bars,
-      color_scheme.background);
-}
-
-function setColor(main_color,other_color,bg_color){
-  row_displays[0].setColor(main_color);
-  row_displays[0].setBgColor(bg_color);
-  for(var i=1; i<row_displays.length - 1; i++){
-    row_displays[i].setColor(other_color);
-    row_displays[i].setBgColor(bg_color);
+function updateColorScheme(){
+  var bgcolor = bg_color();
+  for(var i=0; i<row_displays.length; i++){
+    row_displays[i].setColor(style.fg_color(i,row_displays.length));
+    row_displays[i].setBgColor(bgcolor);
   }
-  row_displays[row_displays.length - 1].setColor(main_color);
-  row_displays[row_displays.length - 1].setBgColor(bg_color);
-  g.setColor(bg_color[0],bg_color[1],bg_color[2]);
-  g.fillRect(0,24, g.getWidth(), g.getHeight());
+  g.setColor(bgcolor[0],bgcolor[1],bgcolor[2]);
+  g.fillRect(0, 24, g.getWidth(), g.getHeight());
 }
 
 var DISPLAY_TEXT_X = 20;
 function reset_clock(hard_reset){
   console.log("reset_clock hard_reset:" + hard_reset);
 
-  setColorScheme(color_schemes[color_scheme_index]);
+  updateColorScheme();
   if(!hard_reset && last_draw_time != null){
     // If its not a hard reset then we want to reset the
     // rows set to the last time. If the last time is too long
@@ -332,7 +335,7 @@ function reset_clock(hard_reset){
     var rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
       row_displays[i].hide();
-      row_displays[i].speed_x = CLOCK_TEXT_SPEED_X;
+      row_displays[i].speed_x = style.clock_text_speed_x;
       row_displays[i].x = DISPLAY_TEXT_X;
       row_displays[i].y = row_displays[i].init_y;
       if(row_displays[i].timeoutId != null){
@@ -344,11 +347,10 @@ function reset_clock(hard_reset){
   } else {
     // do a hard reset and clear everything out
     for (var i = 0; i < row_displays.length; i++) {
-      row_displays[i].speed_x = CLOCK_TEXT_SPEED_X;
+      row_displays[i].speed_x = style.clock_text_speed_x;
       row_displays[i].reset(hard_reset);
     }
   }
-
   reset_commands();
 }
 
@@ -402,7 +404,7 @@ function draw_clock(){
 
 function display_row(display,txt){
   if(display == null) {
-    console.log("no display for text:" + txt)
+    console.log("no display for text:" + txt);
     return;
   }
 
@@ -412,8 +414,8 @@ function display_row(display,txt){
           function () {
             //console.log("move in new:" + txt);
             display.onFinished(next_command);
-            display.setTextXPosition(txt, 240);
-            display.moveToX(DISPLAY_TEXT_X);
+            //display.scrollInFromRight(txt, DISPLAY_TEXT_X);
+            style.scrollIn(display,txt,DISPLAY_TEXT_X)
           }
       );
     }
@@ -422,15 +424,16 @@ function display_row(display,txt){
         function(){
           //console.log("move out:" + txt);
           display.onFinished(next_command);
-          display.moveToX(-display.txt.length * display.font_size);
+          //display.moveToX(-display.txt.length * display.font_size);
+          //display.scrollOffToLeft();
+          style.scrollOff(display);
         }
     );
     command_stack_low_priority.push(
         function(){
           //console.log("move in:" + txt);
           display.onFinished(next_command);
-          display.setTextXPosition(txt,240);
-          display.moveToX(DISPLAY_TEXT_X);
+          style.scrollIn(display,txt,DISPLAY_TEXT_X);
         }
     );
   } else {
@@ -454,7 +457,7 @@ function set_colorscheme(colorscheme_name){
     if(color_schemes[i].name === colorscheme_name){
       color_scheme_index = i;
       console.log("match");
-      setColorScheme(color_schemes[color_scheme_index]);
+      updateColorScheme();
       break;
     }
   }
@@ -516,7 +519,7 @@ function load_settings() {
         setScheme = true;
       }
       if (settings.enable_live_controls == null) {
-        settings.enable_live_controls = (bangleVersion() <= 2);
+        settings.enable_live_controls = (bangleVersion() <= 1);
       }
       enable_live_controls = settings.enable_live_controls;
     } else {
@@ -533,8 +536,9 @@ function load_settings() {
   // just set up as default
   if (!setScheme) {
     init_display();
-    setColorScheme(color_schemes[color_scheme_index]);
+    updateColorScheme();
   }
+  enable_live_controls = true
 }
 
 /**
@@ -551,7 +555,7 @@ function save_settings(){
 }
 
 function button3pressed() {
-  console.log("button3pressed");
+  console.log("button3pressed enable_live_controls=" + enable_live_controls);
   if (enable_live_controls) {
     nextColorTheme();
     reset_clock(true);
@@ -595,13 +599,13 @@ function scheduleDrawClock(){
   if (Bangle.isLCDOn()) {
     console.log("schedule draw of clock");
     intervalRef = setInterval(() => {
-        if (!shouldRedraw()) {
-          console.log("draw clock callback - skipped redraw");
-        } else {
-          console.log("draw clock callback");
-          draw_clock()
-        }
-      }, 60 * 1000
+      if (!shouldRedraw()) {
+        console.log("draw clock callback - skipped redraw");
+      } else {
+        console.log("draw clock callback");
+        draw_clock();
+      }
+    }, 60 * 1000
     );
 
     if (shouldRedraw()) {
