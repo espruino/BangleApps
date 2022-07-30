@@ -259,17 +259,17 @@ function bangleVersion(){
 }
 
 var style = {
-  fg_color: (row_props)=>(row_props.major_minor == 'major')? main_color(): other_color(),
+  fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
   clock_text_speed_x: 10,
   y_init: (bangleVersion()<2)? 34 : 50,
-  row_height: (row_props)=>(row_props.major_minor == 'major')?
-      (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
+  //row_height: (row_props)=>(row_props.major_minor == 'major')? (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
+  row_height: (row_props)=>(row_props.major_minor === 'major')? (bangleVersion()<2)? 40 : 50: (bangleVersion()<2)? 35 : 15,
+  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? g.getHeight() - 2*row_height  : last_y,
   scrollIn: (d,txt,to_x)=>d.scrollInFromRight(txt,to_x),
   //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
   scrollOff: (d)=>d.scrollOffToLeft()
   //scrollOff: (d)=>d.scrollOffToRight()
 };
-
 
 // a list of display rows
 var row_displays;
@@ -282,6 +282,7 @@ function init_display() {
     var row_props = date_formatter.rowProperties(i);
     console.log("row info[" + i + "]=" + row_props.major_minor)
     var row_height = style.row_height(row_props);
+    y = style.row_y(row_props,y,row_height);
     var color = style.fg_color(row_props);
     row_displays.push(
         new ShiftText(g.getWidth(),
@@ -474,8 +475,8 @@ const Locale = require('locale');
 class DigitDateTimeFormatter {
   constructor() {
     this.row_props =[
-      {major_minor: 'major', info: 'time'},
-      {major_minor: 'minor', info: 'date'},
+      {major_minor: 'major', info_type: 'time'},
+      {major_minor: 'minor', info_type: 'date'},
     ]
   }
   name(){return "Digital";}
