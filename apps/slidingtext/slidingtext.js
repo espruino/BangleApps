@@ -102,7 +102,8 @@ class ShiftText {
   constructor(x,y,txt,font_name,
               font_size,speed_x,speed_y,freq_millis,
               color,
-              bg_color){
+              bg_color,
+              row_context){
     this.x = x;
     this.tgt_x = x;
     this.init_x = x;
@@ -118,9 +119,11 @@ class ShiftText {
     this.freq_millis = freq_millis;
     this.color = color;
     this.bg_color = bg_color;
+    this.row_context = row_context;
     this.finished_callback=null;
     this.timeoutId = null;
   }
+  getRowContext(){ return this.row_context;}
   setColor(color){
     this.color = color;
   }
@@ -256,10 +259,10 @@ function bangleVersion(){
 }
 
 var style = {
-  fg_color: (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)? main_color(): other_color(),
+  fg_color: (row_props)=>(row_props.major_minor == 'major')? main_color(): other_color(),
   clock_text_speed_x: 10,
   y_init: (bangleVersion()<2)? 34 : 50,
-  row_height: (row,no_rows)=>row === 0 || row >= Math.max(no_rows -1,2)?
+  row_height: (row_props)=>(row_props.major_minor == 'major')?
       (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
   scrollIn: (d,txt,to_x)=>d.scrollInFromRight(txt,to_x),
   //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
@@ -276,7 +279,10 @@ function init_display() {
   y = style.y_init;
   var date_rows = date_formatter.formatDate(new Date());
   for (var i=0;i<date_rows.length;i++) {
-    var row_height = style.row_height(i,date_rows.length);
+    var row_props = date_formatter.rowProperties(i);
+    console.log("row info[" + i + "]=" + row_props.major_minor)
+    var row_height = style.row_height(row_props);
+    var color = style.fg_color(row_props);
     row_displays.push(
         new ShiftText(g.getWidth(),
             y,
@@ -286,8 +292,9 @@ function init_display() {
             style.clock_text_speed_x,
             1,
             10,
-            style.fg_color(i,date_rows),
-            bg_color()
+            color,
+            bg_color(),
+            row_props
         )
     );
     y += row_height;
@@ -309,7 +316,7 @@ function nextColorTheme(){
 function updateColorScheme(){
   var bgcolor = bg_color();
   for(var i=0; i<row_displays.length; i++){
-    row_displays[i].setColor(style.fg_color(i,row_displays.length));
+    row_displays[i].setColor(style.fg_color(row_displays[i].getRowContext()) );
     row_displays[i].setBgColor(bgcolor);
   }
   g.setColor(bgcolor[0],bgcolor[1],bgcolor[2]);
@@ -465,6 +472,12 @@ function set_colorscheme(colorscheme_name){
 
 const Locale = require('locale');
 class DigitDateTimeFormatter {
+  constructor() {
+    this.row_props =[
+      {major_minor: 'major', info: 'time'},
+      {major_minor: 'minor', info: 'date'},
+    ]
+  }
   name(){return "Digital";}
   shortName(){return "digit";}
 
@@ -484,6 +497,10 @@ class DigitDateTimeFormatter {
     var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
     var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
     return [time_txt,date_txt];
+  }
+
+  rowProperties(row_no) {
+    return this.row_props[row_no];
   }
 }
 
