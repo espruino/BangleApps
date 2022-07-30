@@ -103,7 +103,8 @@ class ShiftText {
               font_size,speed_x,speed_y,freq_millis,
               color,
               bg_color,
-              row_context){
+              row_context,
+              rotation){
     this.x = x;
     this.tgt_x = x;
     this.init_x = x;
@@ -120,6 +121,7 @@ class ShiftText {
     this.color = color;
     this.bg_color = bg_color;
     this.row_context = row_context;
+    this.rotation = rotation;
     this.finished_callback=null;
     this.timeoutId = null;
   }
@@ -144,13 +146,13 @@ class ShiftText {
     }
   }
   show() {
-    g.setFontAlign(-1,-1,0);
+    g.setFontAlign(-1,-1,this.rotation);
     g.setFont(this.font_name,this.font_size);
     g.setColor(this.color[0],this.color[1],this.color[2]);
     g.drawString(this.txt, this.x, this.y);
   }
   hide(){
-    g.setFontAlign(-1,-1,0);
+    g.setFontAlign(-1,-1,this.rotation);
     g.setFont(this.font_name,this.font_size);
     //console.log("bgcolor:" + this.bg_color);
     g.setColor(this.bg_color[0],this.bg_color[1],this.bg_color[2]);
@@ -198,8 +200,8 @@ class ShiftText {
     if(to_y == null)
       to_y = this.init_y;
 
-    //console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
-    this.setTextPosition(txt, this.init_x, g.getHeight() - 2*this.speed_x);
+    this.setTextPosition(txt, this.init_x, g.getHeight() + 2*this.font_size);
+    console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
     this.moveTo(this.init_x,to_y);
   }
   scrollInFromLeft(txt,to_x){
@@ -286,22 +288,20 @@ var DISPLAY_TEXT_X = 20;
 
 var style = {
   fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
-  clock_text_speed: 5,
   y_init: (bangleVersion()<2)? 34 : 50,
   //row_height: (row_props)=>(row_props.major_minor == 'major')? (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
   row_height: (row_props)=>(row_props.major_minor === 'major')? (bangleVersion()<2)? 40 : 50: (bangleVersion()<2)? 35 : 15,
   //row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? g.getHeight() - 2*row_height  : last_y,
-  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? 34  : last_y + 20,
-  row_x: (row_props, last_x) => row_props.info_type === 'date'? 60  : last_x,
+  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? 160  : last_y + 20,
+  row_x: (row_props, last_x) => row_props.info_type === 'date'? 160  : last_x,
+  row_speed: (row_props) => row_props.info_type === 'date'? 1 : 5,
+  row_rotation: (row_props) => row_props.info_type === 'date'? 3  : 0,
   // random
   scrollIn: (d,txt)=> {
-    var random = Math.random();
     if (d.getRowContext().info_type === 'date') {
-      if (random > 0.5)
-        d.scrollInFromRight(txt);
-      else
-        d.scrollInFromLeft(txt);
+        d.scrollInFromBottom(txt);
     } else {
+      var random = Math.random();
       if (random < 0.33) {
         d.scrollInFromRight(txt);
       } else if (random < 0.66) {
@@ -316,13 +316,10 @@ var style = {
   //scrollIn: (d,txt)=>d.scrollInFromRight(txt),
   //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
   scrollOff: (d)=>{
-    var random = Math.random();
     if (d.getRowContext().info_type === 'date') {
-      if (random > 0.5)
-        d.scrollOffToRight();
-      else
-        d.scrollOffToLeft();
+      d.scrollOffToBottom();
     } else {
+      var random = Math.random();
       if (random < 0.33) {
         d.scrollOffToRight();
       } else  if (random < 0.66) {
@@ -348,21 +345,20 @@ function init_display() {
     var row_props = date_formatter.rowProperties(i);
     console.log("row info[" + i + "]=" + row_props.major_minor)
     var row_height = style.row_height(row_props);
-    y = style.row_y(row_props,y,row_height);
-    var x = style.row_x(row_props,DISPLAY_TEXT_X);
-    var color = style.fg_color(row_props);
+    var row_speed = style.row_speed(row_props);
     row_displays.push(
-        new ShiftText(x,
-            y,
+        new ShiftText(style.row_x(row_props,DISPLAY_TEXT_X),
+            style.row_y(row_props,y,row_height),
             '',
             "Vector",
             row_height,
-            style.clock_text_speed,
-            style.clock_text_speed,
+            row_speed,
+            row_speed,
             10,
-            color,
+            style.fg_color(row_props),
             bg_color(),
-            row_props
+            row_props,
+            style.row_rotation(row_props)
         )
     );
     y += row_height;
