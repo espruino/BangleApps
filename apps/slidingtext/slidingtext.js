@@ -201,7 +201,7 @@ class ShiftText {
       to_y = this.init_y;
 
     this.setTextPosition(txt, this.init_x, g.getHeight() + 2*this.font_size);
-    console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
+    //console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
     this.moveTo(this.init_x,to_y);
   }
   scrollInFromLeft(txt,to_x){
@@ -392,8 +392,7 @@ function init_style() {
       }
     }
   }
-
-};
+}
 
 // a list of display rows
 var row_displays;
