@@ -405,7 +405,6 @@ function reset_clock(hard_reset){
     var rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
       row_displays[i].hide();
-      row_displays[i].speed_x = style.clock_text_speed;
       row_displays[i].x = row_displays[i].init_x;
       row_displays[i].y = row_displays[i].init_y;
       if(row_displays[i].timeoutId != null){
@@ -417,7 +416,6 @@ function reset_clock(hard_reset){
   } else {
     // do a hard reset and clear everything out
     for (var i = 0; i < row_displays.length; i++) {
-      row_displays[i].speed_x = style.clock_text_speed;
       row_displays[i].reset(hard_reset);
     }
   }
