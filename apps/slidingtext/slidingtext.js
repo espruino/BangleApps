@@ -286,21 +286,62 @@ function bangleVersion(){
 }
 var DISPLAY_TEXT_X = 20;
 
-var style = {
-  fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
-  y_init: (bangleVersion()<2)? 34 : 50,
-  //row_height: (row_props)=>(row_props.major_minor == 'major')? (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
-  row_height: (row_props)=>(row_props.major_minor === 'major')? (bangleVersion()<2)? 40 : 50: (bangleVersion()<2)? 35 : 15,
-  //row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? g.getHeight() - 2*row_height  : last_y,
-  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? 160  : last_y + 20,
-  row_x: (row_props, last_x) => row_props.info_type === 'date'? 160  : last_x,
-  row_speed: (row_props) => row_props.info_type === 'date'? 1 : 5,
-  row_rotation: (row_props) => row_props.info_type === 'date'? 3  : 0,
-  // random
-  scrollIn: (d,txt)=> {
-    if (d.getRowContext().info_type === 'date') {
-        d.scrollInFromBottom(txt);
-    } else {
+var style;
+
+/**
+ * style strings
+ * timespeed.slow -
+ * date.right.up -
+ * time.slide.random -
+ * minor.small -
+ * major.large -
+ * y_init.middle -
+ */
+var style_name;
+function init_style() {
+  if(style_name == null){
+      style_name = date_formatter.formatProperties().default_style;
+  }
+  if(style_name == null){
+    style_name = '';
+  }
+  var time_speed = 10;
+  if(style_name.includes('timespeed.slow')) {
+    time_speed = 5;
+  } else if(style_name.includes('timespeed.superslow')){
+    time_speed = 1;
+  }
+  var date_speed = 10;
+  if(style_name.includes('datespeed.slow')){
+    date_speed = 5;
+  } else if(style_name.includes('datespeed.superslow')){
+    date_speed = 1;
+  }
+
+  var row_y_calc = (row_props, last_y, row_height) => last_y;
+  var row_x_calc = (row_props, last_x) => last_x;
+
+  var date_coords;
+  var date_rotation = 0;
+  var date_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
+  var date_scroll_out = (d)=> d.scrollOffToLeft();
+  if(style_name.includes('date.right.up')) {
+    date_coords = [160, 160];
+    date_rotation = 3;
+    date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
+    date_scroll_out = (d) => d.scrollOffToBottom();
+
+  }
+
+  if(date_coords != null){
+    row_y_calc = (row_props, last_y, row_height) => (row_props.info_type === 'date')? date_coords[1] : last_y
+    row_x_calc = (row_props, last_x) => row_props.info_type === 'date'? date_coords[0]  : last_x;
+  }
+
+  var time_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
+  var time_scroll_out = (d)=> d.scrollOffToLeft();
+  if(style_name.includes('time.slide.random')) {
+    time_scroll_in = (d,txt)=> {
       var random = Math.random();
       if (random < 0.33) {
         d.scrollInFromRight(txt);
@@ -310,34 +351,55 @@ var style = {
         d.scrollInFromBottom(txt);
       }
     }
-  },
-  //scrollIn: (d,txt)=>(d.getRowContext().info_type === 'date')? d.scrollInFromRight(txt) :  d.scrollInFromBottom(txt),
+  }
 
-  //scrollIn: (d,txt)=>d.scrollInFromRight(txt),
-  //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
-  scrollOff: (d)=>{
-    if (d.getRowContext().info_type === 'date') {
-      d.scrollOffToBottom();
-    } else {
-      var random = Math.random();
-      if (random < 0.33) {
-        d.scrollOffToRight();
-      } else  if (random < 0.66) {
-        d.scrollOffToLeft();
+  var major_height=[40,30];
+  var minor_height=[35,25];
+  if(style_name.includes('minor.small')) {
+    minor_height = [25,14];
+  }
+  if(style_name.includes('major.large')) {
+    major_height = [60,50];
+  }
+  var row_heights = {major: major_height, minor: minor_height};
+
+  var y_start = [34,24];
+  if(style_name.includes('y_init.middle')){
+    y_start = [80,70]
+  }
+
+  var version = bangleVersion() - 1;
+  style = {
+    fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
+    y_init: y_start[version],
+    row_height: (row_props)=> row_heights[row_props.major_minor][version],
+    row_y: (row_props, last_y, row_height) => row_y_calc(row_props,last_y,row_height),
+    row_x: (row_props, last_x) => row_x_calc(row_props, last_x),
+    row_speed: (row_props) => row_props.info_type === 'date'? 1 : time_speed,
+    row_rotation: (row_props) => row_props.info_type === 'date'? date_rotation  : 0,
+    scrollIn: (d,txt)=> {
+      if (d.getRowContext().info_type === 'date') {
+        date_scroll_in(d,txt);
       } else {
-        d.scrollOffToBottom();
+        time_scroll_in(d,txt);
+      }
+    },
+    scrollOff: (d)=> {
+      if (d.getRowContext().info_type === 'date') {
+        date_scroll_out(d)
+      } else {
+        time_scroll_out(d)
       }
     }
   }
-  //scrollOff: (d)=>(d.getRowContext().info_type === 'date')? d.scrollOffToLeft() : d.scrollOffToBottom()
-  //scrollOff: (d)=>d.scrollOffToLeft()
-  //scrollOff: (d)=>d.scrollOffToRight()
+
 };
 
 // a list of display rows
 var row_displays;
 
 function init_display() {
+  init_style();
   row_displays = [];
   var y = style.y_init;
   var date_rows = date_formatter.formatDate(new Date());
@@ -537,7 +599,11 @@ class DigitDateTimeFormatter {
     this.row_props =[
       {major_minor: 'major', info_type: 'time'},
       {major_minor: 'minor', info_type: 'date'},
-    ]
+    ];
+    this.format_props = {
+      default_style: 'timespeed.slow,datespeed.superslow,date.right.up,time.slide.random,minor.small,major.large,y_init.middle'
+      //default_style: ''
+    };
   }
   name(){return "Digital";}
   shortName(){return "digit";}
@@ -557,7 +623,11 @@ class DigitDateTimeFormatter {
 
     var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
     var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
-    return [time_txt,date_txt];
+    return [time_txt, date_txt];
+  }
+
+  formatProperties(){
+    return this.format_props;
   }
 
   rowProperties(row_no) {
@@ -588,8 +658,13 @@ function load_settings() {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
     if (settings != null) {
       console.log("loaded:" + JSON.stringify(settings));
+
+
       if (settings.date_format != null) {
         set_dateformat(settings.date_format);
+        if (settings.style_name != null) {
+          style_name = settings.style_name;
+        }
         init_display();
       }
       if (settings.color_scheme != null) {

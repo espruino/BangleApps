@@ -11,7 +11,8 @@ class DateFormatter {
     formatDate(date){
         return ["no","date","defined"];
     }
-    rowProperties(row_no){ return {} }
+    rowProperties(row_no){ return {} };
+    formatProperties(){ return {}; }
 }
 
 module.exports = DateFormatter;
