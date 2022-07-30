@@ -164,12 +164,14 @@ class ShiftText {
     this.x = x;
     this.y = y;
     this.txt = txt;
+    //console.log("setTextPosition: (" + x + "," + y + ") " + txt);
     this.show();
   }
   setTextXPosition(txt,x){
     this.hide();
     this.x = x;
     this.txt = txt;
+    //console.log("setTextXPosition: (" + x + ") " + txt);
     this.show();
   }
   setTextYPosition(txt,y){
@@ -181,6 +183,7 @@ class ShiftText {
   moveTo(new_x,new_y){
     this.tgt_x = new_x;
     this.tgt_y = new_y;
+    //console.log("moveTo: (" + this.tgt_x + "," + this.tgt_y + ") ");
     this._doMove();
   }
   moveToX(new_x){
@@ -191,19 +194,41 @@ class ShiftText {
     this.tgt_y = new_y;
     this._doMove();
   }
+  scrollInFromBottom(txt,to_y){
+    if(to_y == null)
+      to_y = this.init_y;
+
+    //console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
+    this.setTextPosition(txt, this.init_x, g.getHeight() - 2*this.speed_x);
+    this.moveTo(this.init_x,to_y);
+  }
   scrollInFromLeft(txt,to_x){
-    this.setTextXPosition(txt, -txt.length * this.font_size - 2*this.speed_x);
-    this.moveToX(to_x);
+    if(to_x == null)
+      to_x = this.init_x;
+
+    //console.log("scrollInFromLeft x:" + this.x + "->"  + to_x + " -> " + txt)
+    this.setTextPosition(txt, -txt.length * this.font_size - this.font_size, this.init_y);
+    this.moveTo(to_x,this.init_y);
   }
   scrollInFromRight(txt,to_x){
-    this.setTextXPosition(txt, g.getWidth() + 2*this.speed_x);
-    this.moveToX(to_x);
+    if(to_x == null)
+      to_x = this.init_x;
+
+    //console.log("scrollInFromRight x:" + this.x + "->"  + to_x + " -> " + txt)
+    this.setTextPosition(txt, g.getWidth() + this.font_size, this.init_y);
+    this.moveTo(to_x,this.init_y);
   }
   scrollOffToLeft(){
-    this.moveToX(-this.txt.length * this.font_size);
+    //console.log("scrollOffToLeft");
+    this.moveTo(-this.txt.length * this.font_size, this.init_y);
   }
   scrollOffToRight(){
-    this.moveToX(g.getWidth() + 2*this.speed_x);
+    //console.log("scrollOffToRight");
+    this.moveTo(g.getWidth() + this.font_size, this.init_y);
+  }
+  scrollOffToBottom(){
+    //console.log("scrollOffToBottom");
+    this.moveTo(this.init_x,g.getHeight() + this.font_size);
   }
   onFinished(finished_callback){
     this.finished_callback = finished_callback;
@@ -257,17 +282,58 @@ class ShiftText {
 function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
+var DISPLAY_TEXT_X = 20;
 
 var style = {
   fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
-  clock_text_speed_x: 10,
+  clock_text_speed: 5,
   y_init: (bangleVersion()<2)? 34 : 50,
   //row_height: (row_props)=>(row_props.major_minor == 'major')? (bangleVersion()<2)? 40 : 30: (bangleVersion()<2)? 35 : 25,
   row_height: (row_props)=>(row_props.major_minor === 'major')? (bangleVersion()<2)? 40 : 50: (bangleVersion()<2)? 35 : 15,
-  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? g.getHeight() - 2*row_height  : last_y,
-  scrollIn: (d,txt,to_x)=>d.scrollInFromRight(txt,to_x),
+  //row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? g.getHeight() - 2*row_height  : last_y,
+  row_y: (row_props, last_y, row_height) => row_props.info_type === 'date'? 34  : last_y + 20,
+  row_x: (row_props, last_x) => row_props.info_type === 'date'? 60  : last_x,
+  // random
+  scrollIn: (d,txt)=> {
+    var random = Math.random();
+    if (d.getRowContext().info_type === 'date') {
+      if (random > 0.5)
+        d.scrollInFromRight(txt);
+      else
+        d.scrollInFromLeft(txt);
+    } else {
+      if (random < 0.33) {
+        d.scrollInFromRight(txt);
+      } else if (random < 0.66) {
+        d.scrollInFromLeft(txt);
+      } else {
+        d.scrollInFromBottom(txt);
+      }
+    }
+  },
+  //scrollIn: (d,txt)=>(d.getRowContext().info_type === 'date')? d.scrollInFromRight(txt) :  d.scrollInFromBottom(txt),
+
+  //scrollIn: (d,txt)=>d.scrollInFromRight(txt),
   //scrollIn: (d,txt,to_x)=>d.scrollInFromLeft(txt,to_x),
-  scrollOff: (d)=>d.scrollOffToLeft()
+  scrollOff: (d)=>{
+    var random = Math.random();
+    if (d.getRowContext().info_type === 'date') {
+      if (random > 0.5)
+        d.scrollOffToRight();
+      else
+        d.scrollOffToLeft();
+    } else {
+      if (random < 0.33) {
+        d.scrollOffToRight();
+      } else  if (random < 0.66) {
+        d.scrollOffToLeft();
+      } else {
+        d.scrollOffToBottom();
+      }
+    }
+  }
+  //scrollOff: (d)=>(d.getRowContext().info_type === 'date')? d.scrollOffToLeft() : d.scrollOffToBottom()
+  //scrollOff: (d)=>d.scrollOffToLeft()
   //scrollOff: (d)=>d.scrollOffToRight()
 };
 
@@ -276,22 +342,23 @@ var row_displays;
 
 function init_display() {
   row_displays = [];
-  y = style.y_init;
+  var y = style.y_init;
   var date_rows = date_formatter.formatDate(new Date());
   for (var i=0;i<date_rows.length;i++) {
     var row_props = date_formatter.rowProperties(i);
     console.log("row info[" + i + "]=" + row_props.major_minor)
     var row_height = style.row_height(row_props);
     y = style.row_y(row_props,y,row_height);
+    var x = style.row_x(row_props,DISPLAY_TEXT_X);
     var color = style.fg_color(row_props);
     row_displays.push(
-        new ShiftText(g.getWidth(),
+        new ShiftText(x,
             y,
             '',
             "Vector",
             row_height,
-            style.clock_text_speed_x,
-            1,
+            style.clock_text_speed,
+            style.clock_text_speed,
             10,
             color,
             bg_color(),
@@ -324,7 +391,6 @@ function updateColorScheme(){
   g.fillRect(0, 24, g.getWidth(), g.getHeight());
 }
 
-var DISPLAY_TEXT_X = 20;
 function reset_clock(hard_reset){
   console.log("reset_clock hard_reset:" + hard_reset);
 
@@ -343,8 +409,8 @@ function reset_clock(hard_reset){
     var rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
       row_displays[i].hide();
-      row_displays[i].speed_x = style.clock_text_speed_x;
-      row_displays[i].x = DISPLAY_TEXT_X;
+      row_displays[i].speed_x = style.clock_text_speed;
+      row_displays[i].x = row_displays[i].init_x;
       row_displays[i].y = row_displays[i].init_y;
       if(row_displays[i].timeoutId != null){
         clearTimeout(row_displays[i].timeoutId);
@@ -355,7 +421,7 @@ function reset_clock(hard_reset){
   } else {
     // do a hard reset and clear everything out
     for (var i = 0; i < row_displays.length; i++) {
-      row_displays[i].speed_x = style.clock_text_speed_x;
+      row_displays[i].speed_x = style.clock_text_speed;
       row_displays[i].reset(hard_reset);
     }
   }
@@ -423,7 +489,7 @@ function display_row(display,txt){
             //console.log("move in new:" + txt);
             display.onFinished(next_command);
             //display.scrollInFromRight(txt, DISPLAY_TEXT_X);
-            style.scrollIn(display,txt,DISPLAY_TEXT_X)
+            style.scrollIn(display,txt)
           }
       );
     }
@@ -441,14 +507,14 @@ function display_row(display,txt){
         function(){
           //console.log("move in:" + txt);
           display.onFinished(next_command);
-          style.scrollIn(display,txt,DISPLAY_TEXT_X);
+          style.scrollIn(display,txt);
         }
     );
   } else {
     command_stack_high_priority.push(
         function(){
           //console.log("move in2:" + txt);
-          display.setTextXPosition(txt,DISPLAY_TEXT_X);
+          display.setTextPosition(txt,display.init_x, display.init_y);
           next_command();
         }
     );
