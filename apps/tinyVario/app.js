@@ -266,6 +266,9 @@ function initAltMenu() {
         }},
         {type:"btn", font:"16%", pad:1, fillx:1, label:"SAVE", cb: ()=>{
           require('Storage').writeJSON("tinyVario.json", settings);
+          var o=Bangle.getOptions();
+          o.seaLevelPressure=qnh;
+          Bangle.setOptions(o);
           initPFD();
         }}
       ]}
