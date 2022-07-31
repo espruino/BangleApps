@@ -289,32 +289,34 @@ var DISPLAY_TEXT_X = 20;
 var style;
 
 /**
- * style strings
- * timespeed.slow -
- * date.right.up -
- * time.slide.random -
- * minor.small -
- * major.large -
- * y_init.middle -
+ * time_speed: 'slow'
+ * date_speed: 'superslow',
+ * date_placing: 'right.up',
+ * time_slide: 'random',
+ * minor_text_size: 'small',
+ * major_text_size: 'large',
+ * y_init: 'middle'
  */
-var style_name;
+var style_settings;
 function init_style() {
-  if(style_name == null){
-      style_name = date_formatter.formatProperties().default_style;
+  if(style_settings == null){
+      style_settings = date_formatter.formatProperties().default_style;
   }
-  if(style_name == null){
-    style_name = '';
+  if(style_settings == null){
+    style_settings = {};
   }
   var time_speed = 10;
-  if(style_name.includes('timespeed.slow')) {
+  var time_speed_setting = style_settings.time_speed;
+  if(time_speed_setting  === 'slow') {
     time_speed = 5;
-  } else if(style_name.includes('timespeed.superslow')){
+  } else if(time_speed_setting === 'superslow'){
     time_speed = 1;
   }
   var date_speed = 10;
-  if(style_name.includes('datespeed.slow')){
+  var date_speed_setting = style_settings.date_speed;
+  if(date_speed_setting === 'slow'){
     date_speed = 5;
-  } else if(style_name.includes('datespeed.superslow')){
+  } else if(date_speed_setting === 'superslow'){
     date_speed = 1;
   }
 
@@ -325,12 +327,12 @@ function init_style() {
   var date_rotation = 0;
   var date_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
   var date_scroll_out = (d)=> d.scrollOffToLeft();
-  if(style_name.includes('date.right.up')) {
+  var date_placing_setting = style_settings.date_placing;
+  if(date_placing_setting === 'right.up') {
     date_coords = [160, 160];
     date_rotation = 3;
     date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
     date_scroll_out = (d) => d.scrollOffToBottom();
-
   }
 
   if(date_coords != null){
@@ -340,7 +342,8 @@ function init_style() {
 
   var time_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
   var time_scroll_out = (d)=> d.scrollOffToLeft();
-  if(style_name.includes('time.slide.random')) {
+  var time_slide_setting = style_settings.time_slide;
+  if(time_slide_setting === 'random') {
     time_scroll_in = (d,txt)=> {
       var random = Math.random();
       if (random < 0.33) {
@@ -351,20 +354,33 @@ function init_style() {
         d.scrollInFromBottom(txt);
       }
     }
+    time_scroll_out = (d)=> {
+      var random = Math.random();
+      if (random < 0.33) {
+        d.scrollOffToRight();
+      } else if (random < 0.66) {
+        d.scrollOffToLeft();
+      } else {
+        d.scrollOffToBottom();
+      }
+    }
   }
 
   var major_height=[40,30];
   var minor_height=[35,25];
-  if(style_name.includes('minor.small')) {
+  var minor_size_setting = style_settings.minor_text_size;
+  if(minor_size_setting === 'small') {
     minor_height = [25,14];
   }
-  if(style_name.includes('major.large')) {
+  var major_size_setting = style_settings.major_text_size;
+  if(major_size_setting === 'large') {
     major_height = [60,50];
   }
   var row_heights = {major: major_height, minor: minor_height};
 
   var y_start = [34,24];
-  if(style_name.includes('y_init.middle')){
+  var y_init_setting = style_settings.y_init;
+  if(y_init_setting === 'middle'){
     y_start = [80,70]
   }
 
@@ -375,7 +391,7 @@ function init_style() {
     row_height: (row_props)=> row_heights[row_props.major_minor][version],
     row_y: (row_props, last_y, row_height) => row_y_calc(row_props,last_y,row_height),
     row_x: (row_props, last_x) => row_x_calc(row_props, last_x),
-    row_speed: (row_props) => row_props.info_type === 'date'? 1 : time_speed,
+    row_speed: (row_props) => row_props.info_type === 'date'? date_speed : time_speed,
     row_rotation: (row_props) => row_props.info_type === 'date'? date_rotation  : 0,
     scrollIn: (d,txt)=> {
       if (d.getRowContext().info_type === 'date') {
@@ -600,7 +616,15 @@ class DigitDateTimeFormatter {
       {major_minor: 'minor', info_type: 'date'},
     ];
     this.format_props = {
-      default_style: 'timespeed.slow,datespeed.superslow,date.right.up,time.slide.random,minor.small,major.large,y_init.middle'
+      default_style: {
+        time_speed: 'slow',
+        date_speed: 'superslow',
+        date_placing: 'right.up',
+        time_slide: 'random',
+        minor_text_size: 'small',
+        major_text_size: 'large',
+        y_init: 'middle'
+      }
       //default_style: ''
     };
   }
@@ -661,8 +685,8 @@ function load_settings() {
 
       if (settings.date_format != null) {
         set_dateformat(settings.date_format);
-        if (settings.style_name != null) {
-          style_name = settings.style_name;
+        if (settings.style_settings != null) {
+          style_settings = settings.style_settings;
         }
         init_display();
       }

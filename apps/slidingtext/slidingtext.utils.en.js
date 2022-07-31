@@ -3,9 +3,15 @@ const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
     "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
     "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN",
     "NINETEEN", "TWENTY"];
-const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY",
-    "FIFTY"];
+const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY", "FIFTY"];
+const monthStr = [
+    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JULY",
+    "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+]
 
+const monthToText = (month)=>{
+    return monthStr[month - 1];
+}
 const hoursToText = (hours)=>{
     hours = hours % 12;
     if(hours == 0){
@@ -30,5 +36,6 @@ const numberToText = (value)=> {
     return [word1,word2];
 }
 
+exports.monthToText = monthToText;
 exports.hoursToText = hoursToText;
 exports.numberToText = numberToText;
