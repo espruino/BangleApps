@@ -8,7 +8,6 @@
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
-  "custom": "custom.html",
   "allow_emulator": false,
   "storage": [
     {"name":"slidingtext.app.js","url":"slidingtext.js"},

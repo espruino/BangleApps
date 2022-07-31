@@ -7,19 +7,16 @@
         settings.enable_live_controls = (g.getHeight()> 200);
     }
     console.log("loaded:" + JSON.stringify(settings));
-
-    const LANGUAGES_FILE = "slidingtext.languages.json";
-    const LANGUAGES_DEFAULT = ["en","en2"];
-    var locales = null;
-    try {
-        locales = require("Storage").readJSON(LANGUAGES_FILE);
-    } catch(e) {
-        console.log("failed to load languages:" + e);
+    var locale_mappings = {
+        'English Time':'en',
+        'English Date + Time': 'en3',
+        'English Time (Trad)': 'en2',
+        'French': 'fr',
+        'German': 'de',
+        'Spanish': 'es',
+        'Japanese': 'jp',
     }
-    if(locales == null || locales.length == 0){
-        locales = LANGUAGES_DEFAULT;
-        console.log("defaulting languages to locale:" + locales);
-    }
+    var locales = Object.keys(locale_mappings);
 
     function writeSettings() {
         console.log("saving:" + JSON.stringify(settings));
@@ -27,7 +24,7 @@
     }
 
     // Helper method which uses int-based menu item for set of string values
-    function stringItems(startvalue, writer, values) {
+    function stringItems(startvalue, writer, values, value_mapping) {
         return {
             value: (startvalue === undefined ? 0 : values.indexOf(startvalue)),
             format: v => values[v],
@@ -36,7 +33,8 @@
             wrap: true,
             step: 1,
             onchange: v => {
-                writer(values[v]);
+                var write_value = (value_mapping == null)? values[v] : value_mapping(values[v]);
+                writer(write_value);
                 writeSettings();
             }
         };
@@ -52,7 +50,7 @@
         "" : { "title" : "Sliding Text" },
         "< Back" : () => back(),
         "Colour": stringInSettings("color_scheme", ["white", "black", "red","grey","purple","blue"]),
-        "Languages": stringInSettings("date_format", locales),
+        "Languages": stringInSettings("date_format", locales, (l)=>locale_mappings[l] ),
         "Live Control": {
             value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
             format: v => v ? "On" : "Off",

@@ -14,7 +14,11 @@ class DateFormatter {
             {major_minor: 'major', info_type: 'time'} :
             {major_minor: 'minor', info_type: 'time'};
     }
-    formatProperties(){ return {}; }
+    formatProperties(){
+        return {
+            default_style: {}
+        };
+    }
 }
 
 module.exports = DateFormatter;

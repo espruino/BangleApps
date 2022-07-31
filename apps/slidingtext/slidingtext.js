@@ -300,7 +300,10 @@ var style;
 var style_settings;
 function init_style() {
   if(style_settings == null){
-      style_settings = date_formatter.formatProperties().default_style;
+      var formatProps = date_formatter.formatProperties();
+      if(formatProps != null){
+        style_settings = formatProps.default_style;
+      }
   }
   if(style_settings == null){
     style_settings = {};
@@ -658,15 +661,19 @@ class DigitDateTimeFormatter {
   }
 }
 
-var date_formatter = new DigitDateTimeFormatter();
+var date_formatter;
 function set_dateformat(shortname){
   console.log("setting date format:" + shortname);
   try {
     if (date_formatter == null || date_formatter.shortName() !== shortname) {
-      date_formatter = require("slidingtext.locale." + shortname + ".js");
+      var date_formatter_class = require("slidingtext.locale." + shortname + ".js");
+      date_formatter = new date_formatter_class();
     }
   } catch(e){
     console.log("Failed to load " + shortname);
+  }
+  if(date_formatter == null){
+    date_formatter = new DigitDateTimeFormatter();
   }
 }
 
@@ -681,7 +688,6 @@ function load_settings() {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
     if (settings != null) {
       console.log("loaded:" + JSON.stringify(settings));
-
 
       if (settings.date_format != null) {
         set_dateformat(settings.date_format);
