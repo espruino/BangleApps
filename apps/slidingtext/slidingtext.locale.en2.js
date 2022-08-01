@@ -5,6 +5,17 @@ const numberToText = require("slidingtext.utils.en.js").numberToText;
 class EnglishTraditionalDateFormatter extends DateFormatter {
     constructor() {
         super();
+        this.row_props = [
+            {major_minor: 'major', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'major', info_type: 'time'}
+        ];
+        this.format_props = {
+            default_style: {
+            }
+        }
     }
     name(){return "English (Traditional)";}
     shortName(){return "en2"}
@@ -16,13 +27,13 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
         }
         var hours = hoursToText(hourOfDay);
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             return [hours,"", "O'","CLOCK"];
-        } else if(mins == 30){
+        } else if(mins === 30){
             return ["","HALF", "PAST", "", hours];
-        } else if(mins == 15){
+        } else if(mins === 15){
             return ["","QUARTER", "PAST", "", hours];
-        } else if(mins == 45) {
+        } else if(mins === 45) {
             return ["", "QUARTER", "TO", "", hours];
         }
         var mins_txt;
@@ -48,6 +59,12 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
                 return ['', mins_txt[0], 'MINUTES', from_to, hours];
             }
         }
+    }
+    rowProperties(row_no) {
+        return this.row_props[row_no];
+    }
+    formatProperties(){
+        return this.format_props;
     }
 }
 

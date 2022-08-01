@@ -5,8 +5,8 @@ const numberStr = ["ZERO","ONE", "TWO", "THREE", "FOUR", "FIVE",
     "NINETEEN", "TWENTY"];
 const tensStr = ["ZERO", "TEN", "TWENTY", "THIRTY", "FOURTY", "FIFTY"];
 const monthStr = [
-    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JULY",
-    "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+    "JAN", "FEB", "MAR", "APR", "MAY", "JULY",
+    "AUG", "SEPT", "OCT", "NOV", "DEC"
 ]
 
 const monthToText = (month)=>{
@@ -14,7 +14,7 @@ const monthToText = (month)=>{
 }
 const hoursToText = (hours)=>{
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return numberStr[hours];

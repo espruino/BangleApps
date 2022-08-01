@@ -295,6 +295,7 @@ var style;
  * time_slide: 'random',
  * minor_text_size: 'small',
  * major_text_size: 'large',
+ * date_text_size: 'vsmall'
  * y_init: 'middle'
  */
 var style_settings;
@@ -336,6 +337,11 @@ function init_style() {
     date_rotation = 3;
     date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
     date_scroll_out = (d) => d.scrollOffToBottom();
+  } else if(date_placing_setting === 'left.up'){
+    date_coords = [5, 160];
+    date_rotation = 3;
+    date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
+    date_scroll_out = (d) => d.scrollOffToBottom();
   }
 
   if(date_coords != null){
@@ -346,7 +352,11 @@ function init_style() {
   var time_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
   var time_scroll_out = (d)=> d.scrollOffToLeft();
   var time_slide_setting = style_settings.time_slide;
-  if(time_slide_setting === 'random') {
+  if(time_slide_setting === `in_left_out_left`) {
+    time_scroll_in = (d, txt) => d.scrollInFromLeft(txt);
+  } else if(time_slide_setting === `in_right_out_right`){
+    time_scroll_out = (d)=> d.scrollOffToRight();
+  } else if(time_slide_setting === 'random') {
     time_scroll_in = (d,txt)=> {
       var random = Math.random();
       if (random < 0.33) {
@@ -379,7 +389,22 @@ function init_style() {
   if(major_size_setting === 'large') {
     major_height = [60,50];
   }
-  var row_heights = {major: major_height, minor: minor_height};
+  var date_size_setting = style_settings.date_text_size;
+  var date_height_major = major_height;
+  var date_height_minor = minor_height;
+
+  if(date_size_setting === 'small'){
+    date_height_major = [25,14];
+    date_height_minor = [25,14]
+  } else if(date_size_setting === 'vsmall'){
+    date_height_major = [20,10];
+    date_height_minor = [20,10];
+  }
+
+  var row_heights ={
+    time: {major: major_height, minor: minor_height},
+    date: {major: date_height_major, minor: date_height_minor}
+  };
 
   var y_start = [34,24];
   var y_init_setting = style_settings.y_init;
@@ -391,7 +416,9 @@ function init_style() {
   style = {
     fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
     y_init: y_start[version],
-    row_height: (row_props)=> row_heights[row_props.major_minor][version],
+    row_height: (row_props)=>
+      row_heights[row_props.info_type][row_props.major_minor][version]
+    ,
     row_y: (row_props, last_y, row_height) => row_y_calc(row_props,last_y,row_height),
     row_x: (row_props, last_x) => row_x_calc(row_props, last_x),
     row_speed: (row_props) => row_props.info_type === 'date'? date_speed : time_speed,
@@ -624,7 +651,7 @@ class DigitDateTimeFormatter {
         date_speed: 'superslow',
         date_placing: 'right.up',
         time_slide: 'random',
-        minor_text_size: 'small',
+        date_text_size: 'vsmall',
         major_text_size: 'large',
         y_init: 'middle'
       }

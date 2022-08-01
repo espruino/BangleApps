@@ -34,7 +34,7 @@ const spanishNumberStr = [ ["ZERO"], // 0
 
 function spanishHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return spanishNumberStr[hours][0];
@@ -45,7 +45,19 @@ function spanishMinsToText(mins){
 }
 
 class SpanishDateFormatter extends DateFormatter {
-    constructor() { super();}
+    constructor() {
+        super();
+        this.row_props = [
+            {major_minor: 'major', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'date'},
+        ];
+        this.format_props = {
+            default_style: {
+            }
+        }
+    }
     name(){return "Spanish";}
     shortName(){return "es"}
     formatDate(date){
@@ -57,13 +69,13 @@ class SpanishDateFormatter extends DateFormatter {
         var hours = spanishHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             return [hours,"", "","",""];
-        } else if(mins == 30){
+        } else if(mins === 30){
             return [hours, "Y", "MEDIA",""];
-        } else if(mins == 15){
+        } else if(mins === 15){
             return [hours, "Y", "CUARTO",""];
-        } else if(mins == 45) {
+        } else if(mins === 45) {
             return [hours, "MENOS", "CUARTO",""];
         } else if(mins > 30){
             var mins_txt = spanishMinsToText(60-mins);
@@ -72,6 +84,12 @@ class SpanishDateFormatter extends DateFormatter {
             var mins_txt = spanishMinsToText(mins);
             return [hours, "Y", mins_txt[0],mins_txt[1]];
         }
+    }
+    rowProperties(row_no) {
+        return this.row_props[row_no];
+    }
+    formatProperties(){
+        return this.format_props;
     }
 }
 
