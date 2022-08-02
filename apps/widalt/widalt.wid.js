@@ -14,12 +14,13 @@
         WIDGETS["widalt"].width = 1 + (alt.length)*12+6;
         if (w!=WIDGETS["widalt"].width) Bangle.drawWidgets();
         WIDGETS["widalt"].draw();
+        setTimeout(readAltitude,60000);
       }
     });}
     catch(err) {
       print("ERROR");
+      setTimeout(readAltitude,1000);
     } 
-    setTimeout(readAltitude,60000);
   }
   
   readAltitude();
