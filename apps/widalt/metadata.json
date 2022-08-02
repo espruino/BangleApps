@@ -8,7 +8,7 @@
     "icon": "widalt.png",
     "type": "widget",
     "tags": "widget",
-    "supports": {"BANGLEJS2"},
+    "supports": ["BANGLEJS2"],
     "allow_emulator":false,
     "storage": [
       {"name":"widalt.wid.js","url":"widalt.wid.js"},
