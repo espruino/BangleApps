@@ -5,9 +5,9 @@
   
   function readAltitude() {
     try {Bangle.getPressure().then((p)=>{
-      print("pressure read, altitude "+p.altitude.toFixed(0));
+      //print("pressure read, altitude "+p.altitude.toFixed(0));
       if (Math.floor(p.altitude)!=lastAlt) {
-        print("altitude changed!");
+        //print("altitude changed!");
         lastAlt=Math.floor(p.altitude);
         alt=p.altitude.toFixed(0); 
         var w = WIDGETS["widalt"].width;
@@ -18,7 +18,7 @@
       }
     });}
     catch(err) {
-      print("ERROR");
+      //print("ERROR");
       setTimeout(readAltitude,1000);
     } 
   }
@@ -29,7 +29,7 @@
     //if (Date().getTime()-lastDraw<6000) return;//!!!!!
     if (!Bangle.isLCDOn()) return; 
     //lastDraw=Date().getTime();
-    print("drawing");
+    //print("drawing");
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(this.x, this.y, this.x + this.width, this.y + 23); 
