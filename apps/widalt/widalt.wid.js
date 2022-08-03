@@ -1,6 +1,9 @@
 (()=>{
   var alt="";
   var lastAlt=0;
+  var settings = Object.assign({
+    interval: 5000,
+  }, require('Storage').readJSON("widalt.json", true) || {});
   Bangle.setBarometerPower(true,"widalt");
   Bangle.on("pressure", (p)=>{
     if (Math.floor(p.altitude)!=lastAlt) {
@@ -12,7 +15,7 @@
       else WIDGETS["widalt"].draw();
     }
     Bangle.setBarometerPower(false,"widalt")
-    setTimeout(()=>{Bangle.setBarometerPower(true,"widalt");},5000);
+    setTimeout(()=>{Bangle.setBarometerPower(true,"widalt");},settings.interval);
   });
   
   function draw() {
