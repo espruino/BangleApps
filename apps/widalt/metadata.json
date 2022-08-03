@@ -13,6 +13,6 @@
     "storage": [
       {"name":"widalt.wid.js","url":"widalt.wid.js"},
       {"name":"widalt.settings.js","url":"widalt.settings.js"}
-    ]
+    ],
     "data": [{"name":"widalt.json"}]
   }
