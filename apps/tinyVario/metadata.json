@@ -10,5 +10,6 @@
   "storage": [
     {"name":"tinyVario.app.js","url":"app.js"},
     {"name":"tinyVario.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+  "data": [{"name":"tinyVario.json"}]
 }
