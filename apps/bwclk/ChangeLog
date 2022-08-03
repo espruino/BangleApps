@@ -11,3 +11,4 @@
 0.11: Performance improvements.
 0.12: Implements a 2D menu.
 0.13: Clicks < 24px are for widgets, if fullscreen mode is disabled.
+0.14: Adds humidity to weather data.
