@@ -1,5 +1,4 @@
 (function(back) {
-  o=Bangle.getOptions();
   Bangle.getPressure().then((p)=>{
     E.showMenu({
       "" : { "title" : "Altimeter Widget" },
