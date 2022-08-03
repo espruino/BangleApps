@@ -2,7 +2,7 @@
 
 A library that provides the ability to input text in a style familiar to anyone who had a mobile phone before they went all touchscreen.
 
-Swipe right for Space, left for Backspace, and up/down for Caps lock. Tap the '?' button in the app if you need a reminder!
+Swipe right for Space, left for Backspace, down for cursor moving mode, and up for Caps lock. Swipe left and right to move the cursor in moving mode. Tap the '?' button in the app if you need a reminder!
 
 At time of writing, only the [Noteify app](http://microco.sm/out/Ffe9i) uses a keyboard.
 

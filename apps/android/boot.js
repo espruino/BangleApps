@@ -122,14 +122,14 @@
       "http":function() {
         //get the promise and call the promise resolve
         if (Bangle.httpRequest === undefined) return;
-        var objID=Bangle.httpRequest[event.id];
-        if (objID === undefined) return; //already timedout or wrong id
+        var request=Bangle.httpRequest[event.id];
+        if (request === undefined) return; //already timedout or wrong id
         delete Bangle.httpRequest[event.id];
-        clearInterval(objID.t); //t = timeout variable
+        clearTimeout(request.t); //t = timeout variable
         if(event.err!==undefined) //if is error
-          objID.j(event.err); //r = reJect function
+          request.j(event.err); //r = reJect function
         else
-          objID.r(event); //r = resolve function
+          request.r(event); //r = resolve function
       }
     };
     var h = HANDLERS[event.t];
@@ -150,6 +150,9 @@
     //send the request
     var req = {t: "http", url:url, id:options.id};
     if (options.xpath) req.xpath = options.xpath;
+    if (options.method) req.method = options.method;
+    if (options.body) req.body = options.body;
+    if (options.headers) req.headers = options.headers;
     gbSend(req);
     //create the promise
     var promise = new Promise(function(resolve,reject) {

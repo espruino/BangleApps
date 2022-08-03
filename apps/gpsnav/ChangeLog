@@ -3,4 +3,4 @@
 0.03: Add Waypoint Editor
 0.04: Fix great circle formula
 0.05: Use locale for speed and distance + fix Vector font sizes
-
+0.06: Move waypoints.json (and editor) to 'waypoints' app

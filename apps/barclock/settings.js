@@ -17,10 +17,14 @@
       onchange: v => save("font", v),
     },
   };
-  require("ClockFace_menu").addItems(menu, save, {
+  let items = {
     showDate: s.showDate,
     loadWidgets: s.loadWidgets,
-  });
-
+  };
+  // Power saving for Bangle.js 1 doesn't make sense (no updates while screen is off anyway)
+  if (process.env.HWVERSION>1) {
+    items.powerSave = s.powerSave;
+  }
+  require("ClockFace_menu").addItems(menu, save, items);
   E.showMenu(menu);
 });

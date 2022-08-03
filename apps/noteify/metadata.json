@@ -5,7 +5,7 @@
   "description": "Write notes using an onscreen keyboard and use them as custom messages for alarms or timers.",
   "icon": "app.png",
   "tags": "tool,alarm",
-  "supports": ["BANGLEJS2"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"noteify.app.js","url":"app.js"},

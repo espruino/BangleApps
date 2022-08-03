@@ -9,3 +9,6 @@
 0.10: Bug fix
 0.11: Avoid too many notifications. Change disconnected colour to red.
 0.12: Prevent repeated execution of `draw()` from the current app.
+0.13: Added "connection restored" notification. Fixed restoring of the watchface.
+0.14: Added configuration option
+0.15: Added option to hide widget when connected

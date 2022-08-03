@@ -82,6 +82,36 @@ exports.input = function(options) {
   }
 
   return new Promise((resolve, reject) => {
+    const Layout = require("Layout");
+    let layout = new Layout({
+      type: "h", c: [
+        {
+          type: "v", width: Bangle.appRect.w-8, bgCol: g.theme.bg, c: [
+            {id: "dots", type: "txt", font: "6x8:2", label: "", fillx: 1, bgCol: g.theme.bg},
+            {filly: 1, bgCol: g.theme.bg},
+            {
+              type: "h", fillx: 1, c: [
+                {id: "del", type: "txt", font: "6x8", label: "<X"},
+                {width: 5, bgCol: g.theme.bg},
+                {id: "text", type: "txt", font: "6x8:2", col: g.theme.fg2, bgCol: g.theme.bg2},
+                {fillx: 1, bgCol: g.theme.bg},
+                {id: "code", type: "txt", font: "6x8", label: "", bgCol: g.theme.bg},
+                {width: 5, bgCol: g.theme.bg},
+                {id: "pick", type: "txt", font: "6x8:3", label: "", col: g.theme.fgH, bgCol: g.theme.bgH},
+              ],
+            },
+            {filly: 1, bgCol: g.theme.bg},
+            {id: "dashes", type: "txt", font: "6x8:2", label: "", fillx: 1, bgCol: g.theme.bg},
+          ]
+        },
+        // button labels (rotated 90 degrees)
+        {
+          type: "v", pad: 1, filly: 1, c: ["<.", "^", "|"].map(l =>
+            ({type: "txt", font: "6x8", height: Math.floor(Bangle.appRect.h/3), r: 1, label: l})
+          )
+        }
+      ]
+    });
 
     function update() {
       let dots = [], dashes = [];
@@ -157,36 +187,6 @@ exports.input = function(options) {
       }
     }
 
-    const Layout = require("Layout");
-    let layout = new Layout({
-      type: "h", c: [
-        {
-          type: "v", width: Bangle.appRect.w-8, bgCol: g.theme.bg, c: [
-            {id: "dots", type: "txt", font: "6x8:2", label: "", fillx: 1, bgCol: g.theme.bg},
-            {filly: 1, bgCol: g.theme.bg},
-            {
-              type: "h", fillx: 1, c: [
-                {id: "del", type: "txt", font: "6x8", label: "<X"},
-                {width: 5, bgCol: g.theme.bg},
-                {id: "text", type: "txt", font: "6x8:2", col: g.theme.fg2, bgCol: g.theme.bg2},
-                {fillx: 1, bgCol: g.theme.bg},
-                {id: "code", type: "txt", font: "6x8", label: "", bgCol: g.theme.bg},
-                {width: 5, bgCol: g.theme.bg},
-                {id: "pick", type: "txt", font: "6x8:3", label: "", col: g.theme.fgH, bgCol: g.theme.bgH},
-              ],
-            },
-            {filly: 1, bgCol: g.theme.bg},
-            {id: "dashes", type: "txt", font: "6x8:2", label: "", fillx: 1, bgCol: g.theme.bg},
-          ]
-        },
-        // button labels (rotated 90 degrees)
-        {
-          type: "v", pad: 1, filly: 1, c: ["<.", "^", "|"].map(l =>
-            ({type: "txt", font: "6x8", height: Math.floor(Bangle.appRect.h/3), r: 1, label: l})
-          )
-        }
-      ]
-    });
     g.reset().clear();
     update();
 

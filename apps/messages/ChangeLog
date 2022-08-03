@@ -54,3 +54,12 @@
 0.39: Set default color for message icons according to theme
 0.40: Use default Bangle formatter for booleans
 0.41: Add notification icons in the widget
+0.42: Fix messages ignoring "Vibrate: Off" setting
+0.43: Add new Icons (Airbnb, warnwetter)
+0.44: Separate buzz pattern for incoming calls
+0.45: Added new app colors and icons
+0.46: Add 'Vibrate Timer' option to set how long to vibrate for, and fix Repeat:off
+      Fix message removal from widget bar (previously caused exception as .hide has been removed)
+0.47: Add new Icons (Nextbike, Mattermost, etc.)
+0.48: When getting new message from the clock, only buzz once the messages app is loaded
+0.49: Change messages icon (to fit within 24px) and ensure widget renders icons centrally

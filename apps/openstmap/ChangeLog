@@ -10,3 +10,5 @@
 0.10: Improve scale factor calculation to fix scaling issues (#984)
 0.11: Add slight offset to OSM data to align it properly (fix #984)
       Fix alignment of satellite info text
+0.12: switch to using normal OpenStreetMap tiles (opentopomap was too slow)
+0.13: Use a single image file with 'frames' of data (drastically reduces file count, possibility of >1 map on device)

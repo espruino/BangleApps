@@ -7,11 +7,11 @@ function getMessages() {
 
 function filterMessages(msgs) {
   return msgs.filter(msg => msg.new && msg.id != "music")
+    .map(m => m.src) // we only need this for icon/color
     .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
 }
 
-WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
-draw:function(recall) {
+WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   // If we had a setTimeout queued from the last time we were called, remove it
   if (WIDGETS["messages"].i) {
     clearTimeout(WIDGETS["messages"].i);
@@ -20,8 +20,7 @@ draw:function(recall) {
   Bangle.removeListener('touch', this.touch);
   if (!this.width) return;
   var c = (Date.now()-this.t)/1000;
-  let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-  if (settings.flash===undefined) settings.flash = true;
+  let settings = Object.assign({flash:true, maxMessages:3, repeat:4, vibrateTimeout:60},require('Storage').readJSON("messages.settings.json", true) || {});
   if (recall !== true || settings.flash) {
     var msgsShown = E.clip(this.msgs.length, 0, settings.maxMessages);
     g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
@@ -36,36 +35,46 @@ draw:function(recall) {
         }
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
-      g.drawImage(i == (settings.maxMessages - 1) && msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
+      // draw the icon, or '...' if too many messages
+      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("EASBAGGG88/zz2GG") : require("messages").getMessageImage(msg),
+                  this.x + 12 + i * 24, this.y + 12, {rotate:0/*force centering*/});
     }
   }
-  if (settings.repeat===undefined) settings.repeat = 4;
-  if (c<120 && (Date.now()-this.l)>settings.repeat*1000) {
+  if (c<settings.vibrateTimeout && // not going on too long...
+      (settings.repeat || c<1) && // repeated, or no repeat and first attempt
+      (Date.now()-this.l)>settings.repeat*1000) { // the period between vibrations
     this.l = Date.now();
     WIDGETS["messages"].buzz(); // buzz every 4 seconds
   }
   WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },update:function(rawMsgs, quiet) {
-  const settings = require('Storage').readJSON("messages.settings.json", true) || {};
-  msgs = filterMessages(rawMsgs);
-  if (msgs.length === 0) {
-    delete WIDGETS["messages"].t;
-    delete WIDGETS["messages"].l;
+  const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
+  this.msgs = filterMessages(rawMsgs);
+  if (this.msgs.length === 0) {
+    delete this.t;
+    delete this.l;
   } else {
-    WIDGETS["messages"].t=Date.now(); // first time
-    WIDGETS["messages"].l=Date.now()-10000; // last buzz
-    if (quiet) WIDGETS["messages"].t -= 500000; // if quiet, set last time in the past so there is no buzzing
+    this.t=Date.now(); // first time
+    this.l=Date.now()-10000; // last buzz
+    if (quiet) this.t -= 500000; // if quiet, set last time in the past so there is no buzzing
   }
-  WIDGETS["messages"].width=this.iconwidth * E.clip(msgs.length, 0, settings.maxMessages);
-  WIDGETS["messages"].msgs = msgs;
+  this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
-},buzz:function() {
+},buzz:function(msgSrc) {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
-  require("buzz").pattern((require('Storage').readJSON("messages.settings.json", true) || {}).vibrate || ":");
+  var pattern;
+  if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
+    // special vibration pattern for incoming calls
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateCalls;
+  } else {
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+  }
+  if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  require("buzz").pattern(pattern);
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
-  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;
+  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+24) return;
   load("messages.app.js");
 }};
 
