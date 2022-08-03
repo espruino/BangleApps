@@ -1,12 +1,9 @@
 (()=>{
   var alt="";
-  var lastDraw=0;
   var lastAlt=0;
-  var timer;
   Bangle.setBarometerPower(true,"widalt");
   Bangle.on("pressure", (p)=>{
     if (Math.floor(p.altitude)!=lastAlt) {
-      print("altitude changed!");
       lastAlt=Math.floor(p.altitude);
       alt=p.altitude.toFixed(0); 
       var w = WIDGETS["widalt"].width;
@@ -15,13 +12,11 @@
       else WIDGETS["widalt"].draw();
     }
     Bangle.setBarometerPower(false,"widalt")
-    print("powering down");
-    setTimeout(()=>{print("powering up");Bangle.setBarometerPower(true,"widalt");},5000);
+    setTimeout(()=>{Bangle.setBarometerPower(true,"widalt");},5000);
   });
   
   function draw() {
     if (!Bangle.isLCDOn()) return; 
-    print("drawing");
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(this.x, this.y, this.x + this.width, this.y + 23); 
