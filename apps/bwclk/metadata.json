@@ -1,8 +1,8 @@
 {
   "id": "bwclk",
   "name": "BW Clock",
-  "version": "0.13",
-  "description": "A very minimalistic clock with date and time in focus.",
+  "version": "0.14",
+  "description": "A very minimalistic clock to mainly show date and time.",
   "readme": "README.md",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot_2.png"}, {"url":"screenshot_3.png"}, {"url":"screenshot_4.png"}],

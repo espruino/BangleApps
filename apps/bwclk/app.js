@@ -139,6 +139,14 @@ function imgWind () {
   }
 }
 
+function imgHumidity () {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("//7///+YCB+ICB8ACE4F/AQX9AQP54H//AOB+F/34CBj/gn8f4E+h/Aj0H4Ecg+AjED4ACE8E4gfwvEDEgICB/kHGwMP"))
+  }
+}
+
 function imgTimer() {
   return {
     width : 24, height : 24, bpp : 1,
@@ -203,6 +211,7 @@ if(storage.readJSON('weather.json') !== undefined){
   menu.push([
     function(){ return [ "Weather", imgWeather() ] },
     function(){ return [ getWeather().temp, imgTemperature() ] },
+    function(){ return [ getWeather().hum, imgHumidity() ] },
     function(){ return [ getWeather().wind, imgWind() ] },
   ]);
 }
@@ -395,7 +404,7 @@ function drawDate(){
 
     g.setMediumFont();
     g.setColor(g.theme.fg);
-    g.drawString(dateStr, W/2 - fullDateW / 2, y+1);
+    g.drawString(dateStr, W/2 - fullDateW / 2, y+2);
 }
 
 
