@@ -51,7 +51,7 @@ class SpanishDateFormatter extends DateFormatter {
             {major_minor: 'major', info_type: 'time'},
             {major_minor: 'minor', info_type: 'time'},
             {major_minor: 'minor', info_type: 'time'},
-            {major_minor: 'minor', info_type: 'date'},
+            {major_minor: 'minor', info_type: 'time'},
         ];
         this.format_props = {
             default_style: {

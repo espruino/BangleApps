@@ -29,7 +29,21 @@ function frenchHeures(hours){
 }
 
 class FrenchDateFormatter extends DateFormatter {
-    constructor() { super(); }
+    constructor() {
+        super();
+        this.row_props = [
+            {major_minor: 'major', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+            {major_minor: 'minor', info_type: 'time'},
+        ];
+        this.format_props = {
+            default_style: {
+                y_init: 'q1',
+                minor_text_size: 'small'
+            }
+        }
+    }
     name(){return "French";}
     shortName(){return "fr"}
     formatDate(date){
@@ -65,6 +79,12 @@ class FrenchDateFormatter extends DateFormatter {
             mins_txt = frenchNumberStr[mins];
             return [ hours, heures , mins_txt ];
         }
+    }
+    rowProperties(row_no) {
+        return this.row_props[row_no];
+    }
+    formatProperties(){
+        return this.format_props;
     }
 }
 

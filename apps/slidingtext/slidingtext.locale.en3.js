@@ -14,6 +14,7 @@ class EnglishDateFormatter extends DateFormatter {
         ];
         this.format_props = {
             default_style: {
+                y_init: 'q1',
                 time_slide: 'in_right_out_right',
                 time_speed: 'slow',
                 date_speed: 'superslow',

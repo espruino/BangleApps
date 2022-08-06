@@ -383,7 +383,9 @@ function init_style() {
   var minor_height=[35,25];
   var minor_size_setting = style_settings.minor_text_size;
   if(minor_size_setting === 'small') {
-    minor_height = [25,14];
+    minor_height = [25,20];
+  } else if(minor_size_setting === 'vsmall'){
+    minor_height = [20,15];
   }
   var major_size_setting = style_settings.major_text_size;
   if(major_size_setting === 'large') {
@@ -408,8 +410,10 @@ function init_style() {
 
   var y_start = [34,24];
   var y_init_setting = style_settings.y_init;
-  if(y_init_setting === 'middle'){
-    y_start = [80,70]
+  if(y_init_setting === 'q1'){
+    y_start = [60,50];
+  } else if(y_init_setting === 'middle'){
+    y_start = [80,70];
   }
 
   var version = bangleVersion() - 1;
