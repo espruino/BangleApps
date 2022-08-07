@@ -48,7 +48,11 @@ function germanHoursToText(hours){
     if(hours === 0){
         hours = 12;
     }
-    return germanNumberStr[hours][0];
+    if(hours === 1){
+        return "EIN"
+    } else {
+        return germanNumberStr[hours][0];
+    }
 }
 
 function germanMinsToText(mins) {
@@ -86,7 +90,7 @@ class GermanDateFormatter extends DateFormatter {
         var hours = germanHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             var hours = germanHoursToText(hourOfDay);
             return [hours,"UHR", "","",""];
         } /*else if(mins == 30){
