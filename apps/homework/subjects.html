@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p>Subjects: <input type="text" id="subjects" class="form-input" value="Seperate subjects by comma, eg. German,Maths,Geography,..."></p>
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+        // get the text to add
+        var text = document.getElementById("subjects").value;
+        console.log(text);
+        // build the app's text using a templated String
+        var app = text;
+        // send finished app (in addition to contents of app.json)
+        sendCustomizedApp({
+          storage:[
+            {name:"homework.subjects.txt", url:"subjects.txt", content:app},
+          ]
+        });
+        console.log("Sent homework.subjects.txt!");
+      });
+
+    </script>
+  </body>
+</html>

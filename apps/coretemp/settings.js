@@ -35,7 +35,6 @@ const menu = {
   '< Back' : back,
   'Enabled' : {
     value : !!s.enabled,
-    format : v => v ? "Yes" : "No",
     onchange : v => {
       s.enabled = v;
       updateSettings();

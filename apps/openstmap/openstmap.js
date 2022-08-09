@@ -22,7 +22,7 @@ function center() {
 
 */
 
-var map = require("Storage").readJSON("openstmap.json");
+var map = require("Storage").readJSON("openstmap.0.json");
 map.center = Bangle.project({lat:map.lat,lon:map.lon});
 exports.map = map;
 exports.lat = map.lat; // actual position of middle of screen
@@ -30,7 +30,7 @@ exports.lon = map.lon;  // actual position of middle of screen
 var m = exports;
 
 exports.draw = function() {
-  var s = require("Storage");
+  var img = require("Storage").read(map.fn);
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   var p = Bangle.project({lat:m.lat,lon:m.lon});
@@ -41,13 +41,11 @@ exports.draw = function() {
   var ty = 0|(iy/map.tilesize);
   var ox = (tx*map.tilesize)-ix;
   var oy = (ty*map.tilesize)-iy;
-  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++) {
+  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++)
     for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
-      var img = s.read("openstmap-"+ttx+"-"+tty+".img");
-      if (img) g.drawImage(img,x,y);
+      if (ttx>=0 && ttx<map.w && tty>=0 && tty<map.h) g.drawImage(img,x,y,{frame:ttx+(tty*map.w)});
       else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y+map.tilesize-1,x+map.tilesize-1,y);
     }
-  }
 };
 
 /// Convert lat/lon to pixels on the screen

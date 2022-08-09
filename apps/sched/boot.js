@@ -8,12 +8,12 @@
   var time = new Date();
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
   var d = time.getDate();
-  var active = alarms.filter(
-    a=>a.on &&  // enabled
-    a.last!=d && // not already fired today
-    a.t+60000>currentTime && // is not in the past by >1 minute
-    (a.dow>>time.getDay())&1 && // is allowed on this day of the week
-    (!a.date || a.date==time.toISOString().substr(0,10)) // is allowed on this date
+  var active = alarms.filter(a =>
+    a.on // enabled
+    && (a.last != d) // not already fired today
+    && (a.t + 60000 > currentTime) // is not in the past by >1 minute
+    && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
+    && (!a.date || a.date == time.toISOString().substr(0, 10)) // is allowed on this date
   );
   if (active.length) {
     active = active.sort((a,b)=>a.t-b.t); // sort by time

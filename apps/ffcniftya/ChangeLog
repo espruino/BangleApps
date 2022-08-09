@@ -1,2 +1,6 @@
 0.01: New Clock Nifty A
-0.02: Shows the current week number (ISO8601), can be disabled via settings ""
+0.02: Shows the current week number (ISO8601), can be disabled via settings
+0.03: Call setUI before loading widgets
+      Improve settings page
+0.04: Use ClockFace library
+

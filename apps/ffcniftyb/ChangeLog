@@ -1,2 +1,6 @@
 0.01: New Clock Nifty B
 0.02: Added configuration
+0.03: Call setUI before loading widgets
+      Fix bug with black being unselectable
+      Improve settings page
+0.04: Use ClockFace library

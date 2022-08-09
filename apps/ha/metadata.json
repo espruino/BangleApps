@@ -1,0 +1,25 @@
+{
+  "id": "ha",
+  "name": "HomeAssistant",
+  "version": "0.02",
+  "description": "Integrates your BangleJS into HomeAssistant.",
+  "icon": "ha.png",
+  "type": "app",
+  "tags": "tool",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "custom": "custom.html",
+  "screenshots": [
+    {"url":"screenshot.png"},
+    {"url":"screenshot_2.png"},
+    {"url":"screenshot_3.png"}
+  ],
+  "data": [
+      {"name":"ha.trigger.json" }
+  ],
+  "storage": [
+    {"name":"ha.app.js","url":"ha.app.js"},
+    {"name":"ha.lib.js","url":"ha.lib.js"},
+    {"name":"ha.img","url":"ha.icon.js","evaluate":true}
+  ]
+}

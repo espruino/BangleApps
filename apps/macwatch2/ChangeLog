@@ -1,0 +1,3 @@
+0.01: Created first version of the app with numeric date, only works in light mode
+0.02: New icon, shimmied date right a bit
+0.03: Incorporated improvements from Peer David for accuracy, fix dark mode, widgets run in background

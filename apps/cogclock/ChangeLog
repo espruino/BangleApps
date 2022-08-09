@@ -1,0 +1,3 @@
+0.01: New clock
+0.02: Use ClockFace library, add settings
+0.03: Use ClockFace_menu.addSettingsFile

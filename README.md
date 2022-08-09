@@ -1,7 +1,7 @@
 Bangle.js App Loader (and Apps)
 ================================
 
-[![Build Status](https://app.travis-ci.com/espruino/BangleApps.svg?branch=master)](https://app.travis-ci.com/github/espruino/BangleApps)
+[![Build Status](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml/badge.svg)](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml)
 
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [espruino.github.io](https://espruino.github.io/BangleApps/)
@@ -191,7 +191,7 @@ widget bar at the top of the screen they can add themselves to the global
 
 ```
 WIDGETS["mywidget"]={
-  area:"tl", // tl (top left), tr (top right)
+  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
   sortorder:0, // (Optional) determines order of widgets in the same corner
   width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
   draw:draw // called to draw the widget
@@ -256,6 +256,7 @@ and which gives information about the app for the Launcher.
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
                               //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
+                              //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
                               //   'RAM' - code that runs and doesn't upload anything to storage
                               //   'launch' - replacement 'Launcher'
                               //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
@@ -323,7 +324,7 @@ and which gives information about the app for the Launcher.
 ```
 
 * name, icon and description present the app in the app loader.
-* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
+* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher`, `bluetooth` or empty.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
 
