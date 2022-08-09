@@ -104,7 +104,7 @@ exports.clearAll = function(event) {
 
 exports.getMessageImage = function(msg) {
   /*
-  * icons should be 24x24px with 1bpp colors and 'Transparency to Color'
+  * icons should be 24x24px or less with 1bpp colors and 'Transparency to Color'
   * http://www.espruino.com/Image+Converter
   */
   if (msg.img) return atob(msg.img);
@@ -150,7 +150,7 @@ exports.getMessageImage = function(msg) {
   if (s=="youtube" || s=="newpipe") return atob("GBgBAAAAAAAAAAAAAAAAAf8AH//4P//4P//8P//8P5/8P4/8f4P8f4P8P4/8P5/8P//8P//8P//4H//4Af8AAAAAAAAAAAAAAAAA");
   if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
   // if (s=="sms message" || s=="mail" || s=="gmail") // .. default icon (below)
-  return atob("HBKBAD///8H///iP//8cf//j4//8f5//j/x/8//j/H//H4//4PB//EYj/44HH/Hw+P4//8fH//44///xH///g////A==");
+  return atob("FhKBAH//+P//yf/+c//z5/+fz/z/n+f/Pz/+ef/8D///////////////////////f//4///A");
 };
 
 exports.getMessageImageCol = function(msg,def) {

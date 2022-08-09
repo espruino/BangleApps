@@ -77,10 +77,15 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings","waypoints"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
+const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
+  'textinput' : ['textinput'],
+  'waypoints' : ['waypoints'],
+  // notify?
+};
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -163,6 +168,7 @@ apps.forEach((app,appIdx) => {
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
+  
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
@@ -179,7 +185,12 @@ apps.forEach((app,appIdx) => {
           ERROR(`App ${app.id} file ${file.name} has unknown device in 'supports' field - ${dev}`, {file:metadataFile});
       });
     fileNames.push(file.name);
-    allFiles.push({app: app.id, file: file.name});
+    var fileInternal = false;
+    if (app.type && INTERNAL_FILES_IN_APP_TYPE[app.type]) {
+      if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
+        fileInternal = true;
+    }
+    allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`, {file:metadataFile});
     var fileContents = "";
@@ -294,6 +305,12 @@ apps.forEach((app,appIdx) => {
   for (const key in app) {
     if (!APP_KEYS.includes(key)) ERROR(`App ${app.id} has unknown key ${key}`, {file:metadataFile});
   }
+  if (app.type && INTERNAL_FILES_IN_APP_TYPE[app.type]) {
+    INTERNAL_FILES_IN_APP_TYPE[app.type].forEach(fileName => {
+      if (!fileNames.includes(fileName))
+        ERROR(`App ${app.id} should include file named ${fileName} but it doesn't`, {file:metadataFile});
+    });
+  }
 });
 
 
@@ -313,7 +330,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
-      else if (fileA.app != fileB.app)
+      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
         WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`);
     }
   })

@@ -2,7 +2,7 @@
   "id": "espruinoprog",
   "name": "Espruino Programmer",
   "shortName": "Programmer",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Finds Bluetooth devices with a specific name (eg 'Puck.js'), connects and uploads code. Great for programming many devices at once!",
   "icon": "app.png",
   "tags": "tool,bluetooth",

@@ -1,5 +1,5 @@
 # BW Clock
-A very minimalistic clock with date and time in focus.
+A very minimalistic clock to mainly show date and time.
 
 ![](screenshot.png)
 

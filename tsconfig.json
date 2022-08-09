@@ -13,7 +13,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
-    "typeRoots": ["./types"]
+    "typeRoots": ["./typescript/types"]
   },
-  "include": ["../apps/**/*", "./**/*"]
+  "include": ["./**/*"]
 }

@@ -11,8 +11,7 @@ function filterMessages(msgs) {
     .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
 }
 
-WIDGETS["messages"]={area:"tl", width:0, iconwidth:24,
-draw:function(recall) {
+WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   // If we had a setTimeout queued from the last time we were called, remove it
   if (WIDGETS["messages"].i) {
     clearTimeout(WIDGETS["messages"].i);
@@ -36,7 +35,9 @@ draw:function(recall) {
         }
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
-      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4H4H4H4H4H4H4H4H4H4H4H4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") : require("messages").getMessageImage(msg), this.x + i * this.iconwidth, this.y - 1);
+      // draw the icon, or '...' if too many messages
+      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("EASBAGGG88/zz2GG") : require("messages").getMessageImage(msg),
+                  this.x + 12 + i * 24, this.y + 12, {rotate:0/*force centering*/});
     }
   }
   if (c<settings.vibrateTimeout && // not going on too long...
@@ -58,7 +59,7 @@ draw:function(recall) {
     this.l=Date.now()-10000; // last buzz
     if (quiet) this.t -= 500000; // if quiet, set last time in the past so there is no buzzing
   }
-  this.width=this.iconwidth * E.clip(this.msgs.length, 0, settings.maxMessages);
+  this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
 },buzz:function(msgSrc) {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
@@ -73,7 +74,7 @@ draw:function(recall) {
   require("buzz").pattern(pattern);
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
-  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+w.iconwidth) return;
+  if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+24) return;
   load("messages.app.js");
 }};
 

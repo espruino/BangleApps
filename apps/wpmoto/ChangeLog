@@ -1,2 +1,3 @@
 ...
 0.02: First update with ChangeLog Added
+0.03: Move waypoints.json (and editor) to 'waypoints' app
