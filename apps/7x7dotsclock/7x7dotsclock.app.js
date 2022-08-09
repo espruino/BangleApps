@@ -269,7 +269,7 @@ function actions(v){
 }
 
 // Get Messages status
-var messages = require("Storage").readJSON("messages.json",1)||[];
+var messages_installed = require("Storage").list(/^messages$/).length > 0;
 
 //var BTconnected = NRF.getSecurityStatus().connected;
 //NRF.on('connect',BTconnected = NRF.getSecurityStatus().connected);
@@ -318,7 +318,7 @@ function drawWidgeds() {
   var x2M = x1M + 25;
   var y2M = y2B;
 
-  if (messages.some(m=>m.new)) {
+  if (messages_installed && require("messages").status() == "new") {
     g.setColor(g.theme.fg);
     g.fillRect(x1M,y1M,x2M,y2M);
     g.setColor(g.theme.bg);
