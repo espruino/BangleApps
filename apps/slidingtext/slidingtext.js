@@ -743,13 +743,14 @@ function load_settings() {
   } catch (e) {
     console.log("failed to load settings:" + e);
   }
-  if(row_displays == null){
-    init_display();
-  }
   // just set up as default
   if (!setScheme) {
+    set_dateformat("default")
     init_display();
     updateColorScheme();
+  }
+  if(row_displays == null){
+    init_display();
   }
   enable_live_controls = true
 }
