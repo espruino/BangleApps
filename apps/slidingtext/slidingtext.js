@@ -324,8 +324,8 @@ function init_style() {
     date_speed = 1;
   }
 
-  var row_y_calc = (row_props, last_y, row_height) => last_y;
-  var row_x_calc = (row_props, last_x) => last_x;
+  var row_y_calc = (row_props, last_y, row_height, row_rotation, row_counts) => (row_counts.row_count > 0)? last_y + row_height : last_y;
+  var row_x_calc = (row_props, last_x, row_height, row_rotation, row_counts) => last_x;
 
   var date_coords;
   var date_rotation = 0;
@@ -333,7 +333,7 @@ function init_style() {
   var date_scroll_out = (d)=> d.scrollOffToLeft();
   var date_placing_setting = style_settings.date_placing;
   if(date_placing_setting === 'right.up') {
-    date_coords = [160, 160];
+    date_coords = [155, 160];
     date_rotation = 3;
     date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
     date_scroll_out = (d) => d.scrollOffToBottom();
@@ -342,11 +342,6 @@ function init_style() {
     date_rotation = 3;
     date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
     date_scroll_out = (d) => d.scrollOffToBottom();
-  }
-
-  if(date_coords != null){
-    row_y_calc = (row_props, last_y, row_height) => (row_props.info_type === 'date')? date_coords[1] : last_y
-    row_x_calc = (row_props, last_x) => row_props.info_type === 'date'? date_coords[0]  : last_x;
   }
 
   var time_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
@@ -403,6 +398,31 @@ function init_style() {
     date_height_minor = [20,10];
   }
 
+  if(date_coords != null){
+    row_y_calc = (row_props, last_y, row_height,row_rotation, row_counts) =>{
+        if (row_props.info_type === 'date'){
+          if(row_rotation === 0) {
+            return date_coords[1] + row_height*(row_counts.date - 1)
+          } else {
+            return date_coords[1];
+          }
+        } else {
+          return (row_counts.row_count > 0)? last_y + row_height : last_y;
+        }
+    }
+    row_x_calc = (row_props, last_x, row_height,row_rotation, row_counts) => {
+      if(row_props.info_type === 'date'){
+        if(row_rotation === 3){
+          return date_coords[0] + row_height*(row_counts.date - 1)
+        } else {
+          return date_coords[0];
+        }
+      } else {
+        return last_x;
+      }
+    }
+  }
+
   var row_heights ={
     time: {major: major_height, minor: minor_height},
     date: {major: date_height_major, minor: date_height_minor}
@@ -421,12 +441,11 @@ function init_style() {
     fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
     y_init: y_start[version],
     row_height: (row_props)=>
-      row_heights[row_props.info_type][row_props.major_minor][version]
-    ,
-    row_y: (row_props, last_y, row_height) => row_y_calc(row_props,last_y,row_height),
-    row_x: (row_props, last_x) => row_x_calc(row_props, last_x),
+      row_heights[row_props.info_type][row_props.major_minor][version],
     row_speed: (row_props) => row_props.info_type === 'date'? date_speed : time_speed,
     row_rotation: (row_props) => row_props.info_type === 'date'? date_rotation  : 0,
+    row_y: (row_props, last_y, row_height, row_rotation, row_counts) => row_y_calc(row_props,last_y,row_height, row_rotation, row_counts),
+    row_x: (row_props, last_x, row_height, row_rotation, row_counts) => row_x_calc(row_props, last_x, row_height,row_rotation, row_counts),
     scrollIn: (d,txt)=> {
       if (d.getRowContext().info_type === 'date') {
         date_scroll_in(d,txt);
@@ -451,15 +470,38 @@ function init_display() {
   init_style();
   row_displays = [];
   var y = style.y_init;
+  var x = DISPLAY_TEXT_X;
   var date_rows = date_formatter.formatDate(new Date());
+  var major_count = 0;
+  var minor_count = 0;
+  var date_count = 0;
+  var prev_height = 0;
   for (var i=0;i<date_rows.length;i++) {
     var row_props = date_formatter.rowProperties(i);
-    console.log("row info[" + i + "]=" + row_props.major_minor)
+    if(row_props.major_minor === 'major'){
+       major_count += 1;
+    } else if(row_props.major_minor === 'minor'){
+      minor_count += 1;
+    }
+    if(row_props.info_type === 'date'){
+      date_count += 1;
+    }
+    var row_counts = {
+      row_count: i,
+      major: major_count,
+      minor: minor_count,
+      date: date_count
+    }
+
     var row_height = style.row_height(row_props);
     var row_speed = style.row_speed(row_props);
+    var row_rotation = style.row_rotation(row_props);
+    x = style.row_x(row_props,x, prev_height,row_rotation, row_counts);
+    y = style.row_y(row_props,y,prev_height,row_rotation, row_counts);
+    console.log("row info[" + i + "]=" + row_props.major_minor + " x= " + x + " y=" + y + " height=" + row_height);
     row_displays.push(
-        new ShiftText(style.row_x(row_props,DISPLAY_TEXT_X),
-            style.row_y(row_props,y,row_height),
+        new ShiftText(x,
+            y,
             '',
             "Vector",
             row_height,
@@ -469,10 +511,10 @@ function init_display() {
             style.fg_color(row_props),
             bg_color(),
             row_props,
-            style.row_rotation(row_props)
+            row_rotation
         )
     );
-    y += row_height;
+    prev_height = row_height;
   }
 }
 
@@ -648,6 +690,7 @@ class DigitDateTimeFormatter {
     this.row_props =[
       {major_minor: 'major', info_type: 'time'},
       {major_minor: 'minor', info_type: 'date'},
+      {major_minor: 'minor', info_type: 'date'},
     ];
     this.format_props = {
       default_style: {
@@ -677,10 +720,10 @@ class DigitDateTimeFormatter {
 
   formatDate(now){
     var hours = now.getHours() ;
-
     var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
     var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
-    return [time_txt, date_txt];
+    var month_txt = Locale.month(now)
+    return [time_txt, date_txt, month_txt];
   }
 
   formatProperties(){
