@@ -1,6 +1,9 @@
 (function() {
-let settings =
-    require("Storage").readJSON("widgps.json", 1) || {crossIcon: true, hideWhenGpsOff: false};
+
+let settings = Object.assign(
+      require('Storage').readJSON("widgps.default.json", true) || {},
+      require('Storage').readJSON("widgps.json", true) || {}
+);
 
 var interval;
 
