@@ -22,6 +22,6 @@ Forum](http://forum.espruino.com/microcosms/1424/)
 
 Extended by Marco ([myxor](https://github.com/myxor))
 
-Extended by khromov ([myxor](https://github.com/khromov))
+Extended by khromov ([khromov](https://github.com/khromov))
 
 Place marker icons from [icons8.com](https://icons8.com/icon/set/maps/material-outlined).
