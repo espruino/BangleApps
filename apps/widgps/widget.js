@@ -1,6 +1,6 @@
 (function() {
 let settings =
-    require("Storage").readJSON("widgps.json", 1) || {crossIcon : true};
+    require("Storage").readJSON("widgps.json", 1) || {crossIcon: true, hideWhenGpsOff: false};
 
 var interval;
 
@@ -59,9 +59,11 @@ WIDGETS.gps = {
         }
       } else {
         // GNSS off
-        g.drawImage(
-              atob("GBiBAAAAAAAAAAB+ABj/ABxDgA4AwAcAwAeMYAfEYAbgYAZwYAM4wAMcQAOOAAGHAAHDgADDwABm4AB+cAA8OAAYGAAAAAAAAAAAAA=="),
-              this.x, 2 + this.y);
+        if(!settings.hideWhenGpsOff) {
+          g.drawImage(
+                atob("GBiBAAAAAAAAAAB+ABj/ABxDgA4AwAcAwAeMYAfEYAbgYAZwYAM4wAMcQAOOAAGHAAHDgADDwABm4AB+cAA8OAAYGAAAAAAAAAAAAA=="),
+                this.x, 2 + this.y);
+        }
       }
     }
   }

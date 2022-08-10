@@ -23,6 +23,10 @@ var mainmenu = {
     value : !!settings.crossIcon ,
       onchange : v => { writeSettings("crossIcon", v); }
     },
+  "Hide icon when GPS off" : {
+      value : !!settings.hideWhenGpsOff ,
+        onchange : v => { writeSettings("hideWhenGpsOff", v); }
+      },
 };
 E.showMenu(mainmenu);
 });
