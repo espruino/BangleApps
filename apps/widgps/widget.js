@@ -35,13 +35,23 @@ WIDGETS.gps = {
         } else {
           g.setColor("#FD0"); // on but no fix = amber
         }
-      } else {
-        g.setColor("#888"); // off = grey
-      }
-      g.drawImage(
+
+        g.drawImage(
           atob(
               "GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="),
           this.x, 2 + this.y);
+
+      } else {
+        if(!settings.hideWhenGpsOff) {
+          g.setColor("#888"); // off = grey
+
+          g.drawImage(
+            atob(
+                "GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="),
+            this.x, 2 + this.y);
+        }
+      }
+
     } else { // marker icons
       if (Bangle.isGPSOn()) {  
         const gpsObject = Bangle.getGPSFix();
