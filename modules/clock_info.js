@@ -48,6 +48,15 @@ example.clkinfo.js :
 
 */
 
+let storage = require("Storage");
+let stepGoal = undefined;
+// Load step goal from health app and pedometer widget
+let d = storage.readJSON("health.json", true) || {};
+stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+if (stepGoal == undefined) {
+  d = storage.readJSON("wpedom.json", true) || {};
+  stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+}
 
 exports.load = function() {
   // info used for drawing...
@@ -81,7 +90,7 @@ exports.load = function() {
     { name : "Steps",
       hasRange : true,
       get : () => { let v = Bangle.getHealthStatus("day").steps; return {
-          text : v, v : v, min : 0, max : 10000, // TODO: do we have a target step amount anywhere?
+          text : v, v : v, min : 0, max : stepGoal,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       }},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
