@@ -255,12 +255,10 @@ function getMenuEntry(){
  */
 function isFullscreen(){
   var s = settings.screen.toLowerCase();
-  if(s == "normal"){
-    return false;
-  } else if(s == "full"){
-    return true;
-  } else {
+  if(s == "dynamic"){
     return Bangle.isLocked()
+  } else {
+    return s == "full"
   }
 }
 
@@ -278,8 +276,7 @@ function getSteps() {
       // In case we failed, we can only show 0 steps.
   }
 
-  steps = Math.round(steps/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
-  return steps + "k";
+  return steps;
 }
 
 
@@ -529,7 +526,9 @@ Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
 
-  if(settings.screen == "Dynamic"){
+  if(settings.screen.toLowerCase() == "dynamic"){
+    // Not sure why we have to reload widgets, but without
+    // reloading the wdigets are not drawn at all...
     Bangle.loadWidgets();
   }
   draw();
