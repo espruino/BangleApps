@@ -328,19 +328,19 @@ class Status {
     //  }
 
     // display current-segment's projection for debug
-    // let projection = pos.closest_segment_point(
-    //   this.path.point(this.current_segment),
-    //   this.path.point(this.current_segment + 1)
-    // );
+    let projection = pos.closest_segment_point(
+      this.path.point(this.current_segment),
+      this.path.point(this.current_segment + 1)
+    );
 
-    // let tx = (projection.lon - cx) * 40000.0;
-    // let ty = (projection.lat - cy) * 40000.0;
-    // let rotated_x = tx * cos - ty * sin;
-    // let rotated_y = tx * sin + ty * cos;
-    // let x = half_width - Math.round(rotated_x); // x is inverted
-    // let y = half_height + Math.round(rotated_y);
-    // g.setColor(g.theme.fg);
-    // g.fillCircle(x, y, 4);
+    let tx = (projection.lon - cx) * 40000.0;
+    let ty = (projection.lat - cy) * 40000.0;
+    let rotated_x = tx * cos - ty * sin;
+    let rotated_y = tx * sin + ty * cos;
+    let x = half_width - Math.round(rotated_x); // x is inverted
+    let y = half_height + Math.round(rotated_y);
+    g.setColor(g.theme.fg);
+    g.fillCircle(x, y, 4);
 
     // display direction to next point if lost
     if (!this.on_path) {

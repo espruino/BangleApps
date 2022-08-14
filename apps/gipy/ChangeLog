@@ -45,3 +45,6 @@
 	* Bugfix : lost direction.
 	* Larger fonts.
 	* Detecting next point correctly when going back.
+
+0.13:
+	* Bugfix in lost direction.
