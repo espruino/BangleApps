@@ -106,22 +106,20 @@ function draw() {
   g.setFont(font, dateFontSize);
 
   g.drawString(date, xyCenter, yposDate, true);
-  
-  g.drawImage(sunImg, xyCenter-15, xyCenter+12);
 
-    // recalc sunrise / sunset every hour - needs putting in correct place
+// recalc sunrise / sunset every hour - needs putting in correct place
 //  if (drawCount % 60 == 0)
   updateSunRiseSunSet(new Date(), location.lat, location.lon);
 //  drawCount++;
-  
-  
- 
 
   // draw sunrise
   g.setFont(font, sunFontSize);
   g.drawString(sunRise+"   "+sunSet , xyCenter, yposSunrise, true);
 //  g.drawString("Sunset "+sunSet, xyCenter, yposSunset, true);
-  
+
+  // draw sun icon
+  g.drawImage(sunImg, xyCenter-15, xyCenter+17);
+
  // draw location
   g.setFont(font, locationFontSize);
   var latitude = location.lat;
