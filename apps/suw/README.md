@@ -6,7 +6,7 @@ Very much a work in progress. Requires location to have already been set in mylo
 
 ## Many faults
 
-- [ ] app icon invisible 
+- [x] app icon invisible 
 - [ ] no need to check sunrise and sunset times so often
 - [ ] default location data doesn't show up in the simulator for some reason
 - [ ] I don't understand how to use the IDE with multiple files
