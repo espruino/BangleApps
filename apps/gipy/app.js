@@ -169,6 +169,7 @@ class Status {
   display() {
     g.clear();
     this.display_map();
+
     this.display_interest_points();
     this.display_stats();
     Bangle.drawWidgets();
@@ -326,65 +327,98 @@ class Status {
     //    g.fillCircle(x, y, 3);
     //  }
 
+    // display current-segment's projection for debug
+    // let projection = pos.closest_segment_point(
+    //   this.path.point(this.current_segment),
+    //   this.path.point(this.current_segment + 1)
+    // );
+
+    // let tx = (projection.lon - cx) * 40000.0;
+    // let ty = (projection.lat - cy) * 40000.0;
+    // let rotated_x = tx * cos - ty * sin;
+    // let rotated_y = tx * sin + ty * cos;
+    // let x = half_width - Math.round(rotated_x); // x is inverted
+    // let y = half_height + Math.round(rotated_y);
+    // g.setColor(g.theme.fg);
+    // g.fillCircle(x, y, 4);
+
     // display direction to next point if lost
     if (!this.on_path) {
       let next_point = this.path.point(this.current_segment + 1);
       let diff = next_point.minus(this.position);
       let angle = Math.atan2(diff.lat, diff.lon);
-      let x = Math.cos(-angle - Math.PI / 2) * 50.0 + half_width;
-      let y = Math.sin(-angle - Math.PI / 2) * 50.0 + half_height;
+      let tx = Math.cos(angle) * 50.0;
+      let ty = Math.sin(angle) * 50.0;
+      let rotated_x = tx * cos - ty * sin;
+      let rotated_y = tx * sin + ty * cos;
+      let x = half_width - Math.round(rotated_x); // x is inverted
+      let y = half_height + Math.round(rotated_y);
       g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
     }
   }
 }
 
+function load_gpc(filename) {
+  let buffer = require("Storage").readArrayBuffer(filename);
+  let offset = 0;
+
+  // header
+  let header = Uint16Array(buffer, offset, 5);
+  offset += 5 * 2;
+  let key = header[0];
+  let version = header[1];
+  let points_number = header[2];
+  if (key != code_key || version > file_version) {
+    E.showMessage("Invalid gpc file");
+    load();
+  }
+
+  // path points
+  let points = Float64Array(buffer, offset, points_number * 2);
+  offset += 8 * points_number * 2;
+
+  // path waypoints
+  let waypoints_len = Math.ceil(points_number / 8.0);
+  let waypoints = Uint8Array(buffer, offset, waypoints_len);
+  offset += waypoints_len;
+
+  // interest points
+  let interests_number = header[3];
+  let interests_coordinates = Float64Array(
+    buffer,
+    offset,
+    interests_number * 2
+  );
+  offset += 8 * interests_number * 2;
+  let interests_types = Uint8Array(buffer, offset, interests_number);
+  offset += interests_number;
+
+  // interests on path
+  let interests_on_path_number = header[4];
+  let interests_on_path = Uint16Array(buffer, offset, interests_on_path_number);
+  offset += 2 * interests_on_path_number;
+  let starts_length = Math.ceil(interests_on_path_number / 5.0);
+  let interests_starts = Uint16Array(buffer, offset, starts_length);
+  offset += 2 * starts_length;
+
+  return [
+    points,
+    waypoints,
+    interests_coordinates,
+    interests_types,
+    interests_on_path,
+    interests_starts,
+  ];
+}
+
 class Path {
-  constructor(filename) {
-    let buffer = require("Storage").readArrayBuffer(filename);
-    let offset = 0;
-
-    // header
-    let header = Uint16Array(buffer, offset, 5);
-    offset += 5 * 2;
-    let key = header[0];
-    let version = header[1];
-    let points_number = header[2];
-    if (key != code_key || version > file_version) {
-      E.showMessage("Invalid gpc file");
-      load();
-    }
-
-    // path points
-    this.points = Float64Array(buffer, offset, points_number * 2);
-    offset += 8 * points_number * 2;
-
-    // path waypoints
-    let waypoints_len = Math.ceil(points_number / 8.0);
-    this.waypoints = Uint8Array(buffer, offset, waypoints_len);
-    offset += waypoints_len;
-
-    // interest points
-    let interests_number = header[3];
-    this.interests_coordinates = Float64Array(
-      buffer,
-      offset,
-      interests_number * 2
-    );
-    offset += 8 * interests_number * 2;
-    this.interests_types = Uint8Array(buffer, offset, interests_number);
-    offset += interests_number;
-
-    // interests on path
-    let interests_on_path_number = header[4];
-    this.interests_on_path = Uint16Array(
-      buffer,
-      offset,
-      interests_on_path_number
-    );
-    offset += 2 * interests_on_path_number;
-    let starts_length = Math.ceil(interests_on_path_number / 5.0);
-    this.interests_starts = Uint16Array(buffer, offset, starts_length);
-    offset += 2 * starts_length;
+  constructor(arrays) {
+    this.points = arrays[0];
+    this.waypoints = arrays[1];
+    this.interests_coordinates = arrays[2];
+    this.interests_types = arrays[3];
+    this.interests_on_path = arrays[4];
+    this.interests_starts = arrays[5];
   }
 
   is_waypoint(point_index) {
@@ -566,14 +600,17 @@ function simulate_gps(status) {
   if (point_index >= status.path.len) {
     return;
   }
-  let p1 = status.path.point(point_index);
-  let p2 = status.path.point(point_index + 1);
+  let p1 = status.path.point(0);
+  let n = status.path.len;
+  let p2 = status.path.point(n - 1);
+  //let p1 = status.path.point(point_index);
+  //let p2 = status.path.point(point_index + 1);
 
   let alpha = fake_gps_point - point_index;
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
   let old_pos = status.position;
 
-  fake_gps_point += 0.05; // advance simulation
+  fake_gps_point += 0.005; // advance simulation
   status.update_position(pos, null);
 }
 
@@ -595,7 +632,8 @@ function start(fn) {
   E.showMenu();
   console.log("loading", fn);
 
-  let path = new Path(fn);
+  // let path = new Path(load_gpx("test.gpx"));
+  let path = new Path(load_gpc(fn));
   let status = new Status(path);
 
   if (simulated) {
