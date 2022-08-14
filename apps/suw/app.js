@@ -11,16 +11,16 @@ const tideFontSize = 1;
 const font = "6x8";
 
 const xyCenter = g.getWidth() / 2;
-const yposTime = xyCenter*0.6;
-const yposDate = xyCenter*0.9; // was 1.1
-const yposSunrise = xyCenter*1.3;
+const yposTime = xyCenter*0.7;
+const yposDate = xyCenter*1.1;
+const yposSunrise = xyCenter*1.5;
 //const yposSunset = xyCenter*1.4;
 const yposLat = xyCenter*1.7;
 const yposLon = xyCenter*1.9;
-const yposTide1 = xyCenter*1.6;
-const yposTide2 = xyCenter*1.7;
-const yposTide3 = xyCenter*1.8;
-const yposTide4 = xyCenter*1.9;
+//const yposTide1 = xyCenter*1.6;
+//const yposTide2 = xyCenter*1.7;
+//const yposTide3 = xyCenter*1.8;
+//const yposTide4 = xyCenter*1.9;
 
 
 
@@ -94,10 +94,11 @@ function draw() {
     hours = (" "+hours).substr(-2);
   }
 
-  g.setFont(font, timeFontSize);
+//  g.setFont(font, timeFontSize);
+  g.setFont("Vector",66); // vector font, 80px  
   g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
-  g.setFont(font, tideFontSize);
-  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
+//  g.setFont(font, tideFontSize);
+//  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
 
   // draw Day, name of month, Date
   var date = [da[0], da[2], da[1], da[3].substr(-2)].join(" ");
