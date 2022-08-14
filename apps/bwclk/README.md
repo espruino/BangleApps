@@ -4,7 +4,8 @@ A very minimalistic clock to mainly show date and time.
 ![](screenshot.png)
 
 ## Features
-The BW clock provides many features as well as 3rd party integrations:
+The BW clock provides many features and also 3rd party integrations:
+- Fullscreen, normal or dynamic (fullscreen only if locked) screen mode.
 - Bangle data such as steps, heart rate, battery or charging state.
 - A timer can be set directly. *Requirement: Scheduler library*
 - Weather temperature as well as the wind speed can be shown. *Requirement: Weather app*

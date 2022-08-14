@@ -16,7 +16,7 @@ const H = g.getHeight();
  * Settings
  */
 let settings = {
-  fullscreen: false,
+  screen: "Normal",
   showLock: true,
   hideColon: false,
   menuPosX: 0,
@@ -253,6 +253,17 @@ function getMenuEntry(){
 /************
  * Helper
  */
+function isFullscreen(){
+  var s = settings.screen.toLowerCase();
+  if(s == "normal"){
+    return false;
+  } else if(s == "full"){
+    return true;
+  } else {
+    return Bangle.isLocked()
+  }
+}
+
 function getSteps() {
   var steps = 0;
   try{
@@ -385,7 +396,7 @@ function drawDate(){
 
     // Draw date
     y = parseInt(y/2)+4;
-    y += settings.fullscreen ? 0 : 13;
+    y += isFullscreen() ? 0 : 13;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
@@ -410,7 +421,7 @@ function drawDate(){
 
 function drawTime(){
   // Draw background
-  var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+  var y = H/5*2 + (isFullscreen() ? 0 : 8);
   g.setColor(g.theme.fg);
   g.fillRect(0,y,W,H);
   var date = new Date();
@@ -479,7 +490,7 @@ function drawLock(){
 
 
 function drawWidgets(){
-  if(settings.fullscreen){
+  if(isFullscreen()){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
   } else {
     Bangle.drawWidgets();
@@ -517,6 +528,10 @@ Bangle.on('lcdPower',on=>{
 Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+
+  if(settings.screen == "Dynamic"){
+    Bangle.loadWidgets();
+  }
   draw();
 });
 
@@ -531,7 +546,7 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('touch', function(btn, e){
-  var widget_size = settings.fullscreen ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
+  var widget_size = isFullscreen() ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
   var left = parseInt(g.getWidth() * 0.22);
   var right = g.getWidth() - left;
   var upper = parseInt(g.getHeight() * 0.22) + widget_size;
