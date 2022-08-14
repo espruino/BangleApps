@@ -22,6 +22,7 @@ const yposLon = xyCenter*1.9;
 //const yposTide3 = xyCenter*1.8;
 //const yposTide4 = xyCenter*1.9;
 
+var sunImg = require("heatshrink").decompress(atob("j0ewIIFhgDCmADC4ACBgYCBjEMg0AuEAnEA8EB4EBx/GB4N/wAVB/4GBj/+AYP//gKC+EH5//5+fn//nwOGgEH/4hBh4KBEIPggEGn8YHIVwHII9Bg0DgIWBLJoADA=="));
 
 
 // Check settings for what type our clock should be
@@ -105,6 +106,8 @@ function draw() {
   g.setFont(font, dateFontSize);
 
   g.drawString(date, xyCenter, yposDate, true);
+  
+  g.drawImage(sunImg, xyCenter-15, xyCenter+12);
 
     // recalc sunrise / sunset every hour - needs putting in correct place
 //  if (drawCount % 60 == 0)
