@@ -1,7 +1,8 @@
 
 * bugs
 
-- it does not buzz very often on turns
+- when exactly on turn, distance to next point is still often 50m
+    -----> it does not buzz very often on turns
 
 * additional features
 

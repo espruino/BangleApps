@@ -133,18 +133,18 @@ class Status {
     // disable gps when far from next point and locked
     if (Bangle.isLocked()) {
       let time_to_next_point = this.distance_to_next_point / 9.7; // 35km/h is 9.7 m/s
-      if (time_to_next_point > 30) {
+      if (time_to_next_point > 60) {
         Bangle.setGPSPower(false, "gipy");
         setTimeout(function () {
           Bangle.setGPSPower(true, "gipy");
         }, time_to_next_point);
       }
     }
-    if (this.reaching != next_point && this.distance_to_next_point <= 50) {
+    if (this.reaching != next_point && this.distance_to_next_point <= 100) {
       this.reaching = next_point;
       let reaching_waypoint = this.path.is_waypoint(next_point);
+      Bangle.buzz();
       if (reaching_waypoint) {
-        Bangle.buzz();
         if (Bangle.isLocked()) {
           Bangle.setLocked(false);
         }
@@ -238,7 +238,7 @@ class Status {
       g.getHeight() - 15
     );
 
-    if (this.distance_to_next_point <= 50) {
+    if (this.distance_to_next_point <= 100) {
       if (this.path.is_waypoint(this.reaching)) {
         g.setColor(0.0, 1.0, 0.0)
           .setFont("6x15")
