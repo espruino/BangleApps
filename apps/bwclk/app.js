@@ -645,9 +645,7 @@ Bangle.loadWidgets();
 
 // Cache draw function for dynamic screen to hide / show widgets
 // Bangle.loadWidgets() could also be called later on but its much slower!
-if(settings.screen.toLowerCase() == "dynamic"){
-  for (let wd of WIDGETS) {wd._draw=wd.draw;wd._area=wd.area;}
-}
+for (let wd of WIDGETS) {wd._draw=wd.draw; wd._area=wd.area;}
 
 // Draw first time
 draw();
