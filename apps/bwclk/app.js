@@ -526,11 +526,12 @@ Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
 
-  if(settings.screen.toLowerCase() == "dynamic"){
-    // Not sure why we have to reload widgets, but without
-    // reloading the wdigets are not drawn at all...
-    Bangle.loadWidgets();
+  if(!isLocked && settings.screen.toLowerCase() == "dynamic"){
+    // If we have to show the widgets again, we load it from our
+    // cache and not through Bangle.loadWidgets as its much faster!
+    for (let wd of WIDGETS) {wd.draw=wd._draw;wd.area=wd._area;}
   }
+
   draw();
 });
 
@@ -641,6 +642,14 @@ g.setTheme({bg:g.theme.fg,fg:g.theme.bg, dark:!g.theme.dark}).clear();
 
 // Load widgets and draw clock the first time
 Bangle.loadWidgets();
+
+// Cache draw function for dynamic screen to hide / show widgets
+// Bangle.loadWidgets() could also be called later on but its much slower!
+if(settings.screen.toLowerCase() == "dynamic"){
+  for (let wd of WIDGETS) {wd._draw=wd.draw;wd._area=wd.area;}
+}
+
+// Draw first time
 draw();
 
 // Show launcher when middle button pressed
