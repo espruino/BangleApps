@@ -16,7 +16,7 @@ const H = g.getHeight();
  * Settings
  */
 let settings = {
-  fullscreen: false,
+  screen: "Normal",
   showLock: true,
   hideColon: false,
   menuPosX: 0,
@@ -253,6 +253,15 @@ function getMenuEntry(){
 /************
  * Helper
  */
+function isFullscreen(){
+  var s = settings.screen.toLowerCase();
+  if(s == "dynamic"){
+    return Bangle.isLocked()
+  } else {
+    return s == "full"
+  }
+}
+
 function getSteps() {
   var steps = 0;
   try{
@@ -267,8 +276,7 @@ function getSteps() {
       // In case we failed, we can only show 0 steps.
   }
 
-  steps = Math.round(steps/100) / 10; // This ensures that we do not show e.g. 15.0k and 15k instead
-  return steps + "k";
+  return steps;
 }
 
 
@@ -385,7 +393,7 @@ function drawDate(){
 
     // Draw date
     y = parseInt(y/2)+4;
-    y += settings.fullscreen ? 0 : 13;
+    y += isFullscreen() ? 0 : 13;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
@@ -410,7 +418,7 @@ function drawDate(){
 
 function drawTime(){
   // Draw background
-  var y = H/5*2 + (settings.fullscreen ? 0 : 8);
+  var y = H/5*2 + (isFullscreen() ? 0 : 8);
   g.setColor(g.theme.fg);
   g.fillRect(0,y,W,H);
   var date = new Date();
@@ -479,7 +487,7 @@ function drawLock(){
 
 
 function drawWidgets(){
-  if(settings.fullscreen){
+  if(isFullscreen()){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
   } else {
     Bangle.drawWidgets();
@@ -517,6 +525,13 @@ Bangle.on('lcdPower',on=>{
 Bangle.on('lock', function(isLocked) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+
+  if(!isLocked && settings.screen.toLowerCase() == "dynamic"){
+    // If we have to show the widgets again, we load it from our
+    // cache and not through Bangle.loadWidgets as its much faster!
+    for (let wd of WIDGETS) {wd.draw=wd._draw;wd.area=wd._area;}
+  }
+
   draw();
 });
 
@@ -531,7 +546,7 @@ Bangle.on('charging',function(charging) {
 });
 
 Bangle.on('touch', function(btn, e){
-  var widget_size = settings.fullscreen ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
+  var widget_size = isFullscreen() ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
   var left = parseInt(g.getWidth() * 0.22);
   var right = g.getWidth() - left;
   var upper = parseInt(g.getHeight() * 0.22) + widget_size;
@@ -627,6 +642,12 @@ g.setTheme({bg:g.theme.fg,fg:g.theme.bg, dark:!g.theme.dark}).clear();
 
 // Load widgets and draw clock the first time
 Bangle.loadWidgets();
+
+// Cache draw function for dynamic screen to hide / show widgets
+// Bangle.loadWidgets() could also be called later on but its much slower!
+for (let wd of WIDGETS) {wd._draw=wd.draw; wd._area=wd.area;}
+
+// Draw first time
 draw();
 
 // Show launcher when middle button pressed
