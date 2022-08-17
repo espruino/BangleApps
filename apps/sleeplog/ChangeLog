@@ -8,4 +8,5 @@
  - beta01: Add interface.html to view your saved log data
  - beta02: Add "View log" function for debugging log + send data for gadgetbridge
  - beta03: Change caching for global getStats
+ - beta04: Prevent module not found error
  
