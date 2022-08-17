@@ -290,8 +290,8 @@ if (sleeplog.conf.enabled) {
           // update stats cache if available
           if (this.statsCache) this.statsCache = require("sleeplog").getStats();
         }
-        // remove module from cache if not on debugging
-        if (!this.debug) Modules.removeCached("sleeplog");
+        // remove module from cache if cached
+        if (Modules.getCached().includes("sleeplog")) Modules.removeCached("sleeplog");
       }
     },
 
@@ -314,7 +314,8 @@ if (sleeplog.conf.enabled) {
       if (this.statsCache === undefined || this.statsCache.calculatedAt + 432E5 < Date.now()) {
         // read stats of the last night into cache and remove module from cache
         this.statsCache = require("sleeplog").getStats();
-        Modules.removeCached("sleeplog");
+        // remove module from cache if cached
+        if (Modules.getCached().includes("sleeplog")) Modules.removeCached("sleeplog");
       }
       // return stats cache
       return this.statsCache;
