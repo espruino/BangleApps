@@ -22,3 +22,10 @@
       Restructure the settings menu
 0.08: Allow scanning for devices in settings
 0.09: Misc Fixes and improvements (https://github.com/espruino/BangleApps/pull/1655)
+0.10: Use default Bangle formatter for booleans
+0.11: App now shows status info while connecting
+      Fixes to allow cached BluetoothRemoteGATTCharacteristic to work with 2v14.14 onwards (>1 central)
+0.12: Fix HRM fallback handling
+      Use default boolean formatter in custom menu and directly apply config if useful
+      Allow recording unmodified internal HR
+      Better connection retry handling

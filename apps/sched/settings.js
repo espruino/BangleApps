@@ -4,20 +4,26 @@
   E.showMenu({
     "": { "title": /*LANG*/"Scheduler" },
 
-    /*LANG*/"< Back": () => back(),
+    "< Back": () => back(),
 
     /*LANG*/"Unlock at Buzz": {
       value: settings.unlockAtBuzz,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => {
         settings.unlockAtBuzz = v;
         require("sched").setSettings(settings);
       }
     },
 
+    /*LANG*/"Delete Expired Timers": {
+      value: settings.defaultDeleteExpiredTimers,
+      onchange: v => {
+        settings.defaultDeleteExpiredTimers = v;
+        require("sched").setSettings(settings);
+      }
+    },
+
     /*LANG*/"Default Auto Snooze": {
       value: settings.defaultAutoSnooze,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: v => {
         settings.defaultAutoSnooze = v;
         require("sched").setSettings(settings);
@@ -32,15 +38,6 @@
       format: v => v + /*LANG*/"m",
       onchange: v => {
         settings.defaultSnoozeMillis = v * 60000;
-        require("sched").setSettings(settings);
-      }
-    },
-
-    /*LANG*/"Default Repeat": {
-      value: settings.defaultRepeat,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
-      onchange: v => {
-        settings.defaultRepeat = v;
         require("sched").setSettings(settings);
       }
     },

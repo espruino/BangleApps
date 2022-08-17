@@ -8,3 +8,4 @@
 0.08: Bug fix at end of the game with victorious splash and glorious orchestra
 0.09: Added settings menu, removed symbol selection button (*), added highscore reset
 0.10: fixed clockmode in settings
+0.11: Use default Bangle formatter for booleans

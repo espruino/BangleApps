@@ -1,0 +1,14 @@
+{
+  "id": "shownearby",
+  "name": "Show Nearby",
+  "version": "0.02",
+  "description": "Uses BLE long range advertising, advertises current location and shows the position of other watches running the app (Needs firmware 2v14.63 or later and Open Street Map installed). Make sure you disconnect from your phone first!",
+  "icon": "app.png",
+  "tags": "outdoors,gps",
+  "supports": ["BANGLEJS2"],
+  "dependencies" : { "openstmap":"app" },
+  "storage": [
+    {"name":"shownearby.app.js","url":"app.js"},
+    {"name":"shownearby.img","url":"app-icon.js","evaluate":true}
+  ]
+}

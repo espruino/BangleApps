@@ -24,7 +24,7 @@ function onTemperature(p) {
 // Gets the temperature in the most accurate way (pressure sensor or inbuilt thermistor)
 function drawTemperature() {
   if (Bangle.getPressure) {
-    Bangle.getPressure().then(onTemperature);
+    Bangle.getPressure().then(p =>{if (p) onTemperature(p)});
   } else {
     onTemperature({
       temperature : E.getTemperature()
@@ -34,8 +34,8 @@ function drawTemperature() {
 
 setInterval(function() {
   drawTemperature();
-}, 10000);
-E.showMessage("Reading temperature...");
-drawTemperature();
+}, 5000);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+E.showMessage("Reading temperature...");
+drawTemperature();

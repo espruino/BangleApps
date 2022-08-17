@@ -120,7 +120,7 @@ function showAlarm(alarm) {
       Bangle.setLocked(false);
     }
 
-    require("buzz").pattern(alarm.vibrate === undefined ? ".." : alarm.vibrate).then(() => {
+    require("buzz").pattern(alarm.vibrate === undefined ? "::" : alarm.vibrate).then(() => {
       if (buzzCount--) {
         setTimeout(buzz, settings.buzzIntervalMillis);
       } else if (alarm.as) { // auto-snooze

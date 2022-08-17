@@ -50,7 +50,7 @@ function drawCompass(course) {
   if(!candraw) return;
   if (Math.abs(previous.course - course) < 9) return; // reduce number of draws due to compass jitter
   previous.course = course;
-  
+
   buf1.setColor(1);
   buf1.fillCircle(buf1.getWidth()/2,buf1.getHeight()/2,79*scale);
   buf1.setColor(0);
@@ -63,10 +63,10 @@ function drawCompass(course) {
 /***** COMPASS CODE ***********/
 
 var heading = 0;
-function newHeading(m,h){ 
+function newHeading(m,h){
     var s = Math.abs(m - h);
     var delta = (m>h)?1:-1;
-    if (s>=180){s=360-s; delta = -delta;} 
+    if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
     var hd = h + delta*(1 + Math.round(s/5));
     if (hd<0) hd+=360;
@@ -147,9 +147,9 @@ function drawN(){
   var bs = wp_bearing.toString();
   bs = wp_bearing<10?"00"+bs : wp_bearing<100 ?"0"+bs : bs;
   var dst = loc.distance(dist);
-  
+
   // -1=left (default), 0=center, 1=right
-  
+
   // show distance on the left
   if (previous.dst !== dst) {
     previous.dst = dst;
@@ -159,7 +159,7 @@ function drawN(){
     buf2.drawString(dst,0,0);
     flip2_bw(0, g.getHeight()-40*scale);
   }
-  
+
   // bearing, place in middle at bottom of compass
   if (previous.bs !== bs) {
     previous.bs = bs;
@@ -192,7 +192,7 @@ function onGPS(fix) {
   if (fix!==undefined){
     satellites = fix.satellites;
   }
-  
+
   if (candraw) {
     if (fix!==undefined && fix.fix==1){
       dist = distance(fix,wp);
@@ -240,7 +240,7 @@ function setButtons(){
     else { doselect(); }
   });
 }
- 
+
 Bangle.on('lcdPower',function(on) {
   if (on) {
     clear_previous();
@@ -250,7 +250,7 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
-var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+var waypoints = require("waypoints").load();
 wp=waypoints[0];
 
 function nextwp(inc){
@@ -266,7 +266,7 @@ function doselect(){
   if (selected && wpindex!=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
      waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
-     require("Storage").writeJSON("waypoints.json", waypoints);
+     require("waypoints").save(waypoints);
   }
   selected=!selected;
   drawN();

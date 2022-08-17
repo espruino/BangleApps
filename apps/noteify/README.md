@@ -1,6 +1,6 @@
 # WARNING
 
-This app uses the [Scheduler library](https://banglejs.com/apps/?id=sched) and requires a keyboard such as [Swipe keyboard](https://banglejs.com/apps/?id=kbswipe).
+This app uses the [Scheduler library](https://banglejs.com/apps/?id=sched) and requires a [keyboard library](https://banglejs.com/apps/?c=textinput#).
 
 ## Usage
 

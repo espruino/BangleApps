@@ -25,15 +25,7 @@ function updateOptions() {
   Bangle.setOptions(o)
 }
 
-function gToInternal(g) {
-  // converts g to Espruino internal unit
-  return g * 8192;
-}
 
-function internalToG(u) {
-  // converts Espruino internal unit to g
-  return u / 8192
-}
 
 function resetSettings() {
   settings = {
@@ -386,6 +378,11 @@ function showWhitelistMenu() {
 }
 
 function showLCDMenu() {
+  // converts g to Espruino internal unit
+  function gToInternal(g) { return g * 8192; }
+  // converts Espruino internal unit to g
+  function internalToG(u) { return u / 8192; }
+
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
@@ -578,7 +575,7 @@ function showUtilMenu() {
           var s=require("Storage").readJSON("setting.json");
           s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
           require("Storage").writeJSON("setting.json",s);
-          E.showAlert(/*LANG*/"Calibrated!").then(() => load("settings.app.js"));
+          E.showAlert(/*LANG*/"Calibrated!").then(() => load("setting.app.js"));
         } else {
           E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
         }
