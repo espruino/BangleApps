@@ -64,6 +64,10 @@
       value: !!settings().quietNoAutOpn,
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
+    /*LANG*/'Disable auto-open': {
+      value: !!settings().noAutOpn,
+      onchange: v => updateSetting("noAutOpn", v)
+    },
     /*LANG*/'Widget messages': {
       value:0|settings().maxMessages,
       min: 1, max: 5,

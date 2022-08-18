@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 /* Checks for any obvious problems in apps.json
 */
 
