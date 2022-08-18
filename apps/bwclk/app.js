@@ -223,11 +223,6 @@ if(agenda !== undefined){
     agendaIdx -= 1;
   }
 
-  function firstAgendaEntry(){
-    agendaIdx = 0;
-  }
-
-
   menu.push([
     function(){
       var now = new Date();
@@ -241,7 +236,7 @@ if(agenda !== undefined){
       var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
       dateStr += entry.durationInSeconds < 86400 ? "  |  " + locale.time(date,1) : "";
 
-      return [title + "\n" + dateStr, undefined, () => nextAgendaEntry(), () => previousAgendaEntry(), () => firstAgendaEntry()]
+      return [title + "\n" + dateStr, undefined, () => nextAgendaEntry(), () => previousAgendaEntry(), null]
     },
   ]);
 }
@@ -657,7 +652,7 @@ Bangle.on('touch', function(btn, e){
 
   if(is_center){
     var menuEntry = getMenuEntry();
-    if(menuEntry.length > 4){
+    if(menuEntry.length > 4 && menuEntry[4] != null){
       Bangle.buzz(80, 0.6).then(()=>{
         try{
           menuEntry[4]();
