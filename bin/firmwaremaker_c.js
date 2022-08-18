@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 /*
 Mashes together a bunch of different apps into a big binary blob.
 We then store this *inside* the Bangle.js firmware and can use it

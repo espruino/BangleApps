@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Requires Linux x64 (for ./espruino)
 # Also imagemagick for display
 
