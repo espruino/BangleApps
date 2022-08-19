@@ -5,9 +5,9 @@ let location;
 // load tide times from settings file
 var settings = Object.assign({
   // default values
-  nextTideHour: 11,
-  nextTideMin: 01,
-  nextTideType: "low ",
+  nextTideHour: 0,
+  nextTideMin: 0,
+  nextTideType: "high",
 }, require('Storage').readJSON("suw.json", true) || {});
 
 // assume next tide is 6h 12m later
