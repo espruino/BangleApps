@@ -13,6 +13,7 @@ When working, you will set the next tide time (high or low) in application setti
 This may become very unreliable over time and will need periodic realignment.
 
 ![sun rise/set](screenshot.png)
+![sun rise/set](screenshot2.png)
 
 ## Many faults
 
