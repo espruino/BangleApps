@@ -12,6 +12,8 @@
   "allow_emulator": false,
   "storage": [
     {"name":"suw.app.js","url":"app.js"},
+    {"name":"suw.settings.js","url":"settings.js"},
     {"name":"suw.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"suw.json"}]
 }
