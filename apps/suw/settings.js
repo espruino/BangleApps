@@ -15,7 +15,7 @@
   E.showMenu({
     "" : { "title" : "Seaside Watch" },
     "< Back" : () => back(),
-    'High or low?': {
+    'Tide type': {
       value: "high"|settings.nextTideType,  // !! converts undefined to false
       format: v => v?"high":"low ",
       onchange: v => {
@@ -23,15 +23,15 @@
         writeSettings();
       }
     },
-    'Hour?': {
+    'Hour': {
       value: 0|settings.nextTideHour,  // 0| converts undefined to 0
       min: 0, max: 23,
       onchange: v => {
         settings.nextTideHour = v;
         writeSettings();
       }
-      },
-    'Minutes?': {
+    },
+    'Minutes': {
       value: 0|settings.nextTideMin,  // 0| converts undefined to 0
       min: 0, max: 59,
       onchange: v => {
