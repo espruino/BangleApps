@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env nodejs
 /* Simple Command-line app loader for Node.js
 ===============================================
 
