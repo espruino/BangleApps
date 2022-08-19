@@ -2,10 +2,43 @@ var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/
 const LOCATION_FILE = "mylocation.json";
 let location;
 
+// load tide times from settings file
+var settings = Object.assign({
+  // default values
+  nextTideHour: 11,
+  nextTideMin: 01,
+  nextTideType: "low ",
+}, require('Storage').readJSON("suw.json", true) || {});
+
+// assume next tide is 6h 12m later
+var tide1h = settings.nextTideHour;
+var tide1m = settings.nextTideMin;
+var tide1type = settings.nextTideType;
+var tide2m = tide1m +12;
+if (tide2m > 59) {
+  tide2m = tide2m - 60;
+  var tide2h = tide1h + 7;
+    }
+else {
+var tide2h = tide1h + 6;
+}
+if (tide2h > 23) {
+  tide2h = tide2h - 24;
+}
+if (tide1type === "low ") {
+  var tide2type = "high";
+}
+else {
+  var tide2type = "low ";
+}
+
+// print(settings.nextTideHour,settings.nextTideMin,settings.nextTideType);
+// print(tide2h);
+
 const big = g.getWidth()>200;
 const timeFontSize = big?6:5;
 const dateFontSize = big?3:2;
-const locationFontSize = 2;
+//const locationFontSize = 2;
 const sunFontSize = 2;
 const tideFontSize = 1;
 const font = "6x8";
@@ -14,19 +47,27 @@ const xyCenter = g.getWidth() / 2;
 const yposTime = xyCenter*0.7;
 const yposDate = xyCenter*1.1;
 const yposSunrise = xyCenter*1.5;
-//const yposSunset = xyCenter*1.4;
 const yposLat = xyCenter*1.7;
 const yposLon = xyCenter*1.9;
-//const yposTide1 = xyCenter*1.6;
-//const yposTide2 = xyCenter*1.7;
-//const yposTide3 = xyCenter*1.8;
-//const yposTide4 = xyCenter*1.9;
+
+let showSun = true;
 
 var sunImg = require("heatshrink").decompress(atob("j0ewIIFhgDCmADC4ACBgYCBjEMg0AuEAnEA8EB4EBx/GB4N/wAVB/4GBj/+AYP//gKC+EH5//5+fn//nwOGgEH/4hBh4KBEIPggEGn8YHIVwHII9Bg0DgIWBLJoADA=="));
 
+var seaImg = 
+require("heatshrink").decompress(atob("kEgwRC/ABH8gE/4EDAgX/4f//gEDh//+H/AgcA/8Ah4EDE/4nXAH4A=="));
 
 // Check settings for what type our clock should be
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+
+
+function numToString(num) {
+  returnString = String(num);
+  if (returnString.length === 1) {
+    returnString = "0"+returnString;
+  }
+  return returnString;
+}
 
 // requires the myLocation app
 function loadLocation() {
@@ -36,10 +77,11 @@ function loadLocation() {
   location.location = location.location||"London";
 }
 
-// this is from Pastel - perhaps not needed
+
+// this is from Pastel - perhaps can be replaced with other function
 function extractTime(d){
   var h = d.getHours(), m = d.getMinutes();
-  return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
+ return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
 }
 
 
@@ -94,17 +136,16 @@ function draw() {
     }
     hours = (" "+hours).substr(-2);
   }
+  
+  
 
-//  g.setFont(font, timeFontSize);
-  g.setFont("Vector",66); // vector font, 80px  
+
+  g.setFont("Vector",64); // vector font, 64px  
   g.drawString(`${hours}:${minutes}`, xyCenter, yposTime, true);
-//  g.setFont(font, tideFontSize);
-//  g.drawString(meridian, xyCenter + 102, yposTime + 10, true);
 
   // draw Day, name of month, Date
   var date = [da[0], da[2], da[1], da[3].substr(-2)].join(" ");
   g.setFont(font, dateFontSize);
-
   g.drawString(date, xyCenter, yposDate, true);
 
 // recalc sunrise / sunset every hour - needs putting in correct place
@@ -112,41 +153,73 @@ function draw() {
   updateSunRiseSunSet(new Date(), location.lat, location.lon);
 //  drawCount++;
 
-  // draw sunrise
+
+  
+  // draw sunrise or tide times
   g.setFont(font, sunFontSize);
-  g.drawString(sunRise+"   "+sunSet , xyCenter, yposSunrise, true);
-//  g.drawString("Sunset "+sunSet, xyCenter, yposSunset, true);
+  if (showSun) {
+    g.clearRect(0, xyCenter+17, 175, 175);
+    g.drawString(sunRise+"   "+sunSet , xyCenter, yposSunrise, true);
+    g.drawImage(sunImg, xyCenter-15, xyCenter+17);
+    var latitude = location.lat;
+    latitude = Math.round(latitude * 100) / 100;
+    var longitude = location.lon;
+    longitude = Math.round(longitude * 100) / 100;
+    g.drawString("Lat "+latitude, xyCenter, yposLat, true);
+    g.drawString("Lon "+longitude, xyCenter, yposLon, true);
+  }
+  else {
+    var textTime = hours + minutes; // use this for making time comparisons
+    print(textTime);
+    var textNextTide = numToString(tide1h)+numToString(tide1m);
+    print(textNextTide);
+    if (Number(textTime) > Number(textNextTide)) {
+      print("time swap needed");
+      tide1h = tide2h;
+      tide1m = tide2m;
+      tide1type = tide2type;
+      tide2m = tide2m +12;
+      if (tide2m > 59) {
+        tide2m = tide2m - 60;
+        tide2h = tide2h + 7;
+      }
+      else {
+        tide2h = tide2h + 6;
+      }
+      if (tide2h > 23) {
+        tide2h = tide2h - 24;
+      }
+      if (tide2type === "low ") {
+        tide2type = "high";
+//        tide1type = "low ";
+      }
+      else {
+        tide2type = "low ";
+//        tide1type = "high";
+}
+      
+      
+      
+    }
+    g.clearRect(0, xyCenter+17, 175, 175);
+    g.drawString(numToString(tide1h)+numToString(tide1m)+"  "+numToString(tide2h)+numToString(tide2m) , xyCenter, 138, true);
+    g.drawString(tide1type+"  "+tide2type , xyCenter, 156, true);
+    g.drawImage(seaImg, xyCenter-16, xyCenter+17);
+  }
 
-  // draw sun icon
-  g.drawImage(sunImg, xyCenter-15, xyCenter+17);
-
- // draw location
-  g.setFont(font, locationFontSize);
-  var latitude = location.lat;
-  latitude = Math.round(latitude * 100) / 100;
-  var longitude = location.lon;
-  longitude = Math.round(longitude * 100) / 100;
-  g.drawString("Lat "+latitude, xyCenter, yposLat, true);
-  g.drawString("Lon "+longitude, xyCenter, yposLon, true);
-
-  
-  // draw tides
-//  g.setFont(font, tideFontSize);
-//  g.drawString("High tide 0017 5.58m", xyCenter, yposTide1, true);
-
-//  g.setFont(font, tideFontSize);
-//  g.drawString("Low tide 0651 2.25m", xyCenter, yposTide2, true);
-  
-//  g.setFont(font, tideFontSize);
-//  g.drawString("High tide 1302 5.44m", xyCenter, yposTide3, true);
-  
-//  g.setFont(font, tideFontSize);
-//  g.drawString("Low tide 1931 2.26m", xyCenter, yposTide4, true);
-
-  
 
   queueDraw();
 }
+
+function toggleDisplay() {
+  showSun = ! showSun;
+  draw();
+}
+
+// adding this as it's not getting called at start
+loadLocation();
+
+Bangle.on('touch', () => toggleDisplay());
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
