@@ -2,9 +2,9 @@
   var FILE = "suw.json";
   // Load settings
   var settings = Object.assign({
-    nextTideHour: 11,
-    nextTideMin: 01,
-    nextTideType: "low ",
+    nextTideHour: 0,
+    nextTideMin: 0,
+    nextTideType: "high",
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -16,7 +16,7 @@
     "" : { "title" : "Seaside Watch" },
     "< Back" : () => back(),
     'High or low?': {
-      value: !!settings.nextTideType,  // !! converts undefined to false
+      value: "high"|settings.nextTideType,  // !! converts undefined to false
       format: v => v?"high":"low ",
       onchange: v => {
         settings.nextTideType = v;
