@@ -29,6 +29,7 @@
       onchange: v => {
         settings.nextTideHour = v;
         writeSettings();
+      }
       },
     'Minutes?': {
       value: 0|settings.nextTideMin,  // 0| converts undefined to 0
@@ -38,5 +39,5 @@
         writeSettings();
       }
     },
-  }});
+  });
 });
