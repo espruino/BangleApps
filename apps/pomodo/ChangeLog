@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Ported to Banglejs2.
+0.03: Widgets and back button added. Now uses g.clearRect() and Bangle.appRect instead of g.clear() and g.getWidth/Heigth()

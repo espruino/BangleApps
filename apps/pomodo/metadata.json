@@ -1,7 +1,7 @@
 {
   "id": "pomodo",
   "name": "Pomodoro",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A simple pomodoro timer.",
   "icon": "pomodoro.png",
   "type": "app",

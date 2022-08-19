@@ -25,12 +25,12 @@ class State {
 
   clear () {
     clearWatch();
-    g.clear();
+    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
     g.setFontAlign(0, 0);
   }
 
   draw () {
-    g.clear();
+    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
   }
 
   init () { }
@@ -102,10 +102,17 @@ class InitState extends State {
       this.setNext(startedState);
       this.next.go();
     });
+
+    Bangle.loadWidgets();
+
+    Bangle.setUI({
+      mode: "custom",
+      back: function() {load();}
+    });
   }
 
   draw () {
-    g.clear();
+    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
     g.setFontAlign(0, 0); // center font
     g.setFont("Vector", 50); // vector font, 80px
     drawCounter(this.timeCounter);
@@ -120,7 +127,7 @@ class StartedState extends State {
   }
 
   draw () {
-    drawCounter(this.timeCounter, g.getWidth() / 2, g.getHeight() / 2);
+    drawCounter(this.timeCounter, (Bangle.appRect.x+Bangle.appRect.w/2), (Bangle.appRect.y+Bangle.appRect.h/2));
   }
 
   init () {
@@ -178,7 +185,7 @@ class DoneState extends State {
   }
 
   draw () {
-    g.clear();
+    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
     E.showPrompt("You are a hero!", {
       buttons : {"AGAIN":1,"BREAK":2}
     }).then((v) => {
@@ -202,7 +209,7 @@ class DoneState extends State {
         .then(() => new Promise(resolve => setTimeout(resolve, 300)))
         .then(() => {
           Bangle.beep(200, 3000);
-          Bangle.buzz()
+          Bangle.buzz();
         });
     }
 
@@ -237,7 +244,7 @@ class Bangle1 {
 class Bangle2 {
   setBTN1(callback) {
       Bangle.on('touch', function(zone, e) {
-          if (e.y < g.getHeight() / 2) {
+          if ((e.y > Bangle.appRect.y) && (e.y < (Bangle.appRect.y+Bangle.appRect.h/2))) {
               callback();
           }
       });
@@ -249,7 +256,7 @@ class Bangle2 {
 
   setBTN3(callback) {
       Bangle.on('touch', function(zone, e) {
-          if (e.y > g.getHeight() / 2) {
+          if (e.y > (Bangle.appRect.y+Bangle.appRect.h/2)) {
               callback();
           }
       });
@@ -265,8 +272,8 @@ function drawCounter (currentValue, x, y) {
     return;
   }
 
-  x = x || g.getWidth() / 2;
-  y = y || g.getHeight() / 2;
+  x = x || Bangle.appRect.x + Bangle.appRect.w/2;
+  y = y || Bangle.appRect.y + Bangle.appRect.h/2;
 
   let minutes = 0;
   let seconds = 0;
@@ -289,7 +296,7 @@ function drawCounter (currentValue, x, y) {
     secondsString = '0' + seconds;
   }
 
-  g.clear();
+  g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
   g.drawString(minutesString + ':' + secondsString, x, y);
 }
 
