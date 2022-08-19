@@ -17,9 +17,8 @@ This may become very unreliable over time and will need periodic realignment.
 
 ## Many faults
 
-- [ ] app not appearing in Settings > Apps
-- [ ] possible confusion between low and high tide? lol
-- [ ] no need to check sunrise and sunset times so often
+- [ ] minutes not appearing in settings
+- [ ] tide set to 'false' instead of high/low
 - [x] default location data doesn't show up in the simulator for some reason
 - [x] app icon invisible 
 
@@ -28,6 +27,7 @@ This may become very unreliable over time and will need periodic realignment.
 - [ ] handle tide time not being set and remove default time which is just for testing
 - [ ] write tide data back to json file when flipped to keep it up to date when app reloaded
 - [ ] tidy up code in general
+- [ ] no need to check sunrise and sunset times so often
 - [x] add sun image to main screen
 - [x] show alternative data on tap 
 - [x] show tide times 
