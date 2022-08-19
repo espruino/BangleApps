@@ -1,6 +1,6 @@
 # Seaside utility watch
 
-A watch that does just what I want when I am at the seaside.
+A watch that does just what I want when I am at the seaside, showing day, date, month, year, sunrise, sunset, location and approximate high and low tide times.
 
 Touch to toggle between sunrise / sunset and tide times.
 
@@ -17,10 +17,9 @@ This may become very unreliable over time and will need periodic realignment.
 
 ## Many faults
 
-- [ ] minutes not appearing in settings
 - [ ] tide set to 'false' instead of high/low
-- [x] default location data doesn't show up in the simulator for some reason
-- [x] app icon invisible 
+- [x] minutes not appearing in settings
+
 
 ## Many of the to-dos
 
@@ -28,6 +27,3 @@ This may become very unreliable over time and will need periodic realignment.
 - [ ] write tide data back to json file when flipped to keep it up to date when app reloaded
 - [ ] tidy up code in general
 - [ ] no need to check sunrise and sunset times so often
-- [x] add sun image to main screen
-- [x] show alternative data on tap 
-- [x] show tide times 
