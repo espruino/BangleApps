@@ -17,6 +17,7 @@ This may become very unreliable over time and will need periodic realignment.
 
 ## Many faults
 
+- [ ] high and low getting muddled on rollover?
 - [ ] tide set to 'false' instead of high/low
 - [x] minutes not appearing in settings
 
