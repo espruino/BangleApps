@@ -27,8 +27,8 @@
         */
       }
 
-      if (activityreminder.mustAlert(activityreminder_data, activityreminder_settings)) {
-        load('activityreminder.app.js');
+      if (mustAlert(now)) {
+        load('activityreminder.alert.js');
       }
     }
 
@@ -44,6 +44,17 @@
     } else { // passing through midnight
       return (h >= activityreminder_settings.startHour || h < activityreminder_settings.endHour);
     }
+  }
+
+  function mustAlert(now) {
+    if ((now - activityreminder_data.stepsDate) / 60000 > activityreminder_settings.maxInnactivityMin) { // inactivity detected
+      if ((now - activityreminder_data.okDate) / 60000 > 3 && // last alert anwsered with ok was more than 3 min ago
+        (now - activityreminder_data.dismissDate) / 60000 > activityreminder_settings.dismissDelayMin && // last alert was more than dismissDelayMin ago
+        (now - activityreminder_data.pauseDate) / 60000 > activityreminder_settings.pauseDelayMin) { // last alert was more than pauseDelayMin ago
+        return true;
+      }
+    }
+    return false;
   }
 
   Bangle.on('midnight', function () {
