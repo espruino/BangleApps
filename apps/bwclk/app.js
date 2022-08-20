@@ -216,12 +216,10 @@ try{
 
 /*
  * AGENDA MENU
+ * Note that we handle the agenda differently in order to hide old entries...
  */
 var agendaIdx = 0;
-var agenda = storage.readJSON("android.calendar.json");
-if(agenda !== undefined){
-  agenda = agenda.sort((a,b)=>a.timestamp - b.timestamp);
-
+if(storage.readJSON("android.calendar.json") !== undefined){
   function nextAgendaEntry(){
     agendaIdx += 1;
   }
@@ -233,15 +231,22 @@ if(agenda !== undefined){
   menu.push([
     function(){
       var now = new Date();
-      agenda = agenda.filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000);
+      var agenda = storage.readJSON("android.calendar.json")
+        .filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000)
+        .sort((a,b)=>a.timestamp - b.timestamp);
+
+      if(agenda.length <= 0){
+        return ["All done", imgAgenda()]
+      }
 
       agendaIdx = agendaIdx < 0 ? 0 : agendaIdx;
       agendaIdx = agendaIdx >= agenda.length ? agendaIdx -1 : agendaIdx;
+
       var entry = agenda[agendaIdx];
       var title = entry.title.slice(0,14);
       var date = new Date(entry.timestamp*1000);
       var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
-      dateStr += entry.durationInSeconds < 86400 ? " - " + locale.time(date,1) : "";
+      dateStr += entry.durationInSeconds < 86400 ? " / " + locale.time(date,1) : "";
 
       return [title + "\n" + dateStr, imgAgenda(), () => nextAgendaEntry(), () => previousAgendaEntry(), null]
     },
