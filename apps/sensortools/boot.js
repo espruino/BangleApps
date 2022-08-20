@@ -27,7 +27,7 @@
           Bangle.emit(name + "_mod", onEvents[name](e));
         });
       } else {
-        Bangle.origOn(name, callback);
+        orig.bangleOn(name, callback);
       }
     };
 
