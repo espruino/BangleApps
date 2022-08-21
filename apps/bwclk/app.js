@@ -33,17 +33,6 @@ for (const key in saved_settings) {
  * Assets
  */
 // Manrope font
-Graphics.prototype.setXLargeFont = function(scale) {
-  // Actual height 53 (55 - 3)
-  this.setFontCustom(
-    E.toString(require('heatshrink').decompress(atob('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'))),
-    46,
-    atob("FR4uHyopKyksJSssGA=="),
-    70+(scale<<8)+(1<<16)
-  );
-};
-
-
 Graphics.prototype.setLargeFont = function(scale) {
   // Actual height 47 (48 - 2)
   this.setFontCustom(
@@ -73,6 +62,19 @@ Graphics.prototype.setSmallFont = function(scale) {
   );
   return this;
 };
+
+
+Graphics.prototype.setMiniFont = function(scale) {
+  // Actual height 18 (17 - 0)
+  this.setFontCustom(
+    atob('AAAAAAAAAAAAAAAAAAf+wf+QAAAAAAAAAcAAcAAAAAcAAAAAAAAAAAAEACEADEADHwD/gP8AfEATHwDfwH+AfEAbEADEADAACAAAAAAAADhwHwwMYY8Yc8YeMIYMMYHHwDHgAAAAAAPAAfgwYhwYjgZnAPuAGcAA5AB3gDswHMwOMwcMwIHgAAAAAACPgP/gZwwY4wYYwYMwYGwMDgAfgAAwAAAAAAcAAcAAAAAAAAAAAAPAD/8PgPcADQAAAAAAAAYABOAHHw+B/4AAAAAAAAAEAAEgAHgAfAAXgAFgAEAAAAAAAAAQAAQAAQAD/AD/AAQAAQAAQAAQAAAAAA0AA4AAAAAAAAAAIAAIAAIAAIAAIAAIAAAAAAAAAwAAwAAAAAAAAAABwAPwD+AfgAYAAAAAAAAH/AP/gYAwYAwYAwYAwYAwP/gH/AAAAAAAMAAYAAf/wf/wAAAAAAAAAGAwOBwYDwYHwYOwYMwc4wPwwDAQAAAQBgYBwZgwbgwfgwewwc/gYPAAAAAAAAOAA+ADyAPCAcCAQCAA/wAfwACAAAAAAAfjAfxgZgwZgwZgwZgwZxgQ/gAOAAAAH/AP/gZhwZgwZAwZgwZgwI/gAfAAAAQAAYAAYAwYDwYfAZ4AfgAcAAAAAAAAGPAP/gZwwYwwYwwZwwf5wPfgAGAAAAHgAPxgYYwYIwYIwYIwYYwP/gH/AAAAAAAAAAAxgAxgAAAAAAAAADA0DA4AAAAAAAAAAAAAcAA+ABnADDgABAAAAAAAAAAAAAAAABIABIABIABIABIABIABIABIABIABIAAAAAAAAAAAAAAAAAAADDgBnAA+AAcAAIAAAAAAAAAAOAAcAAYAAYOwYcAYwAPgAHAAAAAAPAA/wDg4DAYGOMGfEEREEREGfEGfMGBADBAB/AA+AAAAAAQADwAfAD+AfiAcCAfCAHyAA/AAHwAAwAAAf/wf/wQQwQQwQQwYQwY4wf4wHvgAHAA4AH/AODgcBwYAwYAwYAwYAwYAwcBwODgHHAAAAAAAf/wf/wYAwYAwYAwYAwYAwcBwPHgH/AAQAAAAf/wf/wYQwYQwYQwYQwYQwYQwQAQAAAf/wf/wYQAYQAYQAYQAYQAQAAA4AH/AODgcBwYAwYAwYAwYQwYQwMRgOfgAeAAAAAAAf/wf/wAQAAQAAQAAQAAQAAQAA4Af/wAAAAAAf/wf/wAAAABgABwAAwAAwAAwf/wf/gAAAAAAf/wf/wA4AB8ADOAGHAMDgYBwQAwAAAAAAf/wf/wAAwAAwAAwAAwAAwAAQAAAf/wf/wHgAB4AAeAAHgABwAHgAeAB4AHgAf/wf/wAAAAAAf/wf/wOAAHgABwAA8AAOAAHgf/wf/wAAAA4AH/AODgcBwYAwYAwYAwYAwYAwcBwODgH/AA4AAAAf/wf/wYIAYIAYIAYIAYYAc4APwADAAA4AH/AODgcBwYAwYAwYAwYAwYCwcDwODgH/wA4AAAAf/wf/wYIAYIAYIAYMAYeAc/gPxwDAQAAAHDgPhgYgwYwwYwwYQwYYwMZwOPgAHAQAAYAAYAAYAAf/wf/wYAAYAAYAAYAAQAAAAAf+Af/gABwAAwAAwAAwAAwAAwADgf/Af8AAAAYAAfAAH4AA/AAHwABwAHwA+AHwAeAAQAAYAAfAAH8AAfgADwAPwD+AfgAeAAPwAB+AAHwADwA/AP4AeAAQAAQAQYAwODgHHAB8AA4AD8AHHAcDgYAwQAQQAAcAAPAADwAA/wA/wDwAPAAcAAQAAAAAYAwYBwYHwYOwY4wbwwfAwcAwYAwAAAAAAAAAf//f//QAAQAAAAAAAAcAAfgAD+AAPwAAwAAAAAAQAAQAAf//f//AAAAAAAAAAAADAAGAAMAAYAAYAAMAAGAADAAAAAAAAAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABngDuwDMQDMQDIwDIwD/wB/wAAAAAAf/wf/wDAwDAwDAwDAwDAwB/gA/AAAAAAAA/ABzgDAwDAwDAwDAwDhwBhgAAAAAAA/ABzgDAwDAwDAwDAwBhgf/wf/wAAAAAAA/AB/gDIwDIwDIwDIwDIwB5gA5AAAACAACAAP/wf/wSAASAAAAAA/CBzmDAzDAzDAzDAzBhnD/+D/4AAAAAAf/wf/wDAADAADAADAADgAB/wAfwAAAAAAb/wb/wAAAAADAADb//AAAAAAAAAf/wf/wAMAA+ABzADhgDAwCAQAAAf/wf/wAAAAAAD/wD/wDAADAADAADAAB/wB/wDAACAADAADgAB/wAAAAAAD/wD/wDAADAADAADAADgAB/wAfwAAAAAAA/ABzgDAwDAwDAwDAwDAwB/gA/AAAAAAAD//D//DAwDAwDAwDAwDAwB/gA/AAAAAAAA/ABzgDAwDAwDAwDAwBhgD//D//AAAAAAD/wD/wDAADAADAAAAABxgD5wDIwCMwDMwDMwBnwAjgCAACAAf/gf/wCAwCAQCAQAAAD/AD/gAAwAAwAAwAAwABgD/wD/wAAACAADwAA+AAPwABwAHwA+ADwACAACAAD4AA/AAHwAHwA+ADwAD4AAfAADwAHwB+ADwACAACAQDAwBhgA/AAeAAeABzgDhwCAQCAADwAB8AAPHAD+AD4AfAD4ADgAAAQCAwCDwCHQCMQC4QDwQDAQCAQAAAAAAAAAACAP//f//YAAQAAAAAAAAf/wf/wAAAAAAAAAQAAf4ff//ADAAAAAAAAAAAAAAAAAcAAcAAYAAYAAMAAMAAcAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'),
+    32,
+    atob("BAYHEQsQDAQICAgKBQgFBwsHCgoLCgsJCgsFBQsOCwkQCwsNDAoJDQwECAsJDwwNCw0LCwsNCxELCgsHBwcMDAkKCwoLCwYLCwQFCQQPCwsLCwYJBwsJDgkJCggFCAwS"),
+    18+(scale<<8)+(1<<16)
+  );
+  return this;
+};
+
 
 
 function imgLock(){
@@ -203,6 +205,42 @@ try{
 } catch(ex) {
   // If sched is not installed, we hide this menu item
 }
+
+
+/*
+ * AGENDA MENU
+ */
+var agendaIdx = 0;
+var agenda = storage.readJSON("android.calendar.json");
+if(agenda !== undefined){
+  agenda = agenda.sort((a,b)=>a.timestamp - b.timestamp);
+
+  function nextAgendaEntry(){
+    agendaIdx += 1;
+  }
+
+  function previousAgendaEntry(){
+    agendaIdx -= 1;
+  }
+
+  menu.push([
+    function(){
+      var now = new Date();
+      agenda = agenda.filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000);
+
+      agendaIdx = agendaIdx < 0 ? 0 : agendaIdx;
+      agendaIdx = agendaIdx >= agenda.length ? agendaIdx -1 : agendaIdx;
+      var entry = agenda[agendaIdx];
+      var title = entry.title.slice(0,15);
+      var date = new Date(entry.timestamp*1000);
+      var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
+      dateStr += entry.durationInSeconds < 86400 ? "  |  " + locale.time(date,1) : "";
+
+      return [title + "\n" + dateStr, undefined, () => nextAgendaEntry(), () => previousAgendaEntry(), null]
+    },
+  ]);
+}
+
 
 /*
  * WEATHER MENU
@@ -443,11 +481,7 @@ function drawTime(){
 
   // Show large or small time depending on info entry
   if(menuName == null){
-    if(settings.hideColon){
-      g.setXLargeFont();
-    } else {
-      g.setLargeFont();
-    }
+    g.setLargeFont();
   } else {
     y -= 15;
     g.setMediumFont();
@@ -461,7 +495,13 @@ function drawTime(){
 
   y += 35;
   g.setFontAlign(0,0);
-  g.setSmallFont();
+
+  if(menuName.split('\n').length > 1){
+    g.setMiniFont();
+  } else {
+    g.setSmallFont();
+  }
+
   var imgWidth = 0;
   if(menuImg !== undefined){
     imgWidth = 24.0;
@@ -590,6 +630,9 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_right){
+    // A bit hacky but we ensure that always the first agenda entry is shown...
+    agendaIdx = 0;
+
     Bangle.buzz(40, 0.6);
     settings.menuPosX = (settings.menuPosX+1) % menu.length;
     settings.menuPosY = 0;
@@ -597,6 +640,9 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_left){
+    // A bit hacky but we ensure that always the first agenda entry is shown...
+    agendaIdx = 0;
+
     Bangle.buzz(40, 0.6);
     settings.menuPosY = 0;
     settings.menuPosX  = settings.menuPosX-1;
@@ -606,7 +652,7 @@ Bangle.on('touch', function(btn, e){
 
   if(is_center){
     var menuEntry = getMenuEntry();
-    if(menuEntry.length > 4){
+    if(menuEntry.length > 4 && menuEntry[4] != null){
       Bangle.buzz(80, 0.6).then(()=>{
         try{
           menuEntry[4]();
