@@ -8,8 +8,8 @@
   "tags": "widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"widchime.wid.js","url":"widget.js"},
-    {"name":"widchime.settings.js","url":"settings.js"}
+    {"name":"chimer.wid.js","url":"widget.js"},
+    {"name":"chimer.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widchime.json"}]
+  "data": [{"name":"chimer.json"}]
 }

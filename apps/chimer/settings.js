@@ -19,8 +19,8 @@
     "Chime Type": {
       value: settings.type,
       min: 0, max: 2,step: 1, // both is just silly
-      format: (value) => chimes[value],
-      onchange: (value) => {
+      format: value => chimes[value],
+      onchange: value => {
         settings.type = value;
         writeSettings(settings);
       },
@@ -28,8 +28,8 @@
     "Frequency": {
       value: settings.freq,
       min: 0, max: 2, step: 1,
-      format: (value) => frequency[value],
-      onchange : (value) => {
+      format: value => frequency[value],
+      onchange : value => {
         settings.freq = value;
         writeSettings(settings);
       }
