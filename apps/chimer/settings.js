@@ -12,23 +12,8 @@
   const frequency = ["60", "30", "15"];
 
 
-
-
-
-  var readSettings = () => {
-    var settings = require("Storage").readJSON(FILE, 1) || {
-      type: 1,
-      freq: 0,
-    };
-    return settings;
-  };
-
-  var writeSettings = (settings) => {
-    require("Storage").writeJSON(FILE, settings);
-  };
-
-  settings = readSettings();
-  const menu = {
+var showMainMenu = () => {
+  E.showMenu({
     "": {"title": "Chimer"},
     "< Back": () => back(),
     "Chime Type": {
@@ -49,8 +34,23 @@
         writeSettings(settings);
       }
     }
-  }
+  })
+}
 
-  E.showMenu(menu);
+
+  var readSettings = () => {
+    var settings = require("Storage").readJSON(FILE, 1) || {
+      type: 1,
+      freq: 0,
+    };
+    return settings;
+  };
+
+  var writeSettings = (settings) => {
+    require("Storage").writeJSON(FILE, settings);
+  };
+
+  settings = readSettings();
+  showMainMenu();
 })
 
