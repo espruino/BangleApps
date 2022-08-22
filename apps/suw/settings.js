@@ -16,7 +16,7 @@
     "" : { "title" : "Seaside Watch" },
     "< Back" : () => back(),
     'Tide type': {
-      value: "high"|settings.nextTideType,  // !! converts undefined to false
+//      value: "high"|settings.nextTideType,  // !! converts undefined to false
       format: v => v?"high":"low ",
       onchange: v => {
         settings.nextTideType = v;
