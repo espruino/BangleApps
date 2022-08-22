@@ -22,24 +22,28 @@
       h = now.getHours(), m = now.getMinutes(),
       s = now.getSeconds(), ms = now.getMilliseconds();
     if (settings.freq == 1){
-    if (h!==lastHour && m===30) chime();
+    if (h!==lastHour && m===0 || m===30) chime();
     lastHour = h;
     // check again in 30 minutes
-    const mLeft = 30-m, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
+    const mLeft = 30, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
     setTimeout(check, msLeft);
+
   }else if (settings.freq == 2){
-    if (h!==lastHour && m===15) chime();
+    if (h!==lastHour && m===0 || m===15 || m===30 || m===45) chime();
     lastHour = h;
     // check again in 15 minutes
-    const mLeft = 15-m, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
+    const mLeft = 15, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
     setTimeout(check, msLeft);
+
   }else{
     if (h!==lastHour && m===0) chime();
     lastHour = h;
     // check again in 60 minutes
     const mLeft = 60-m, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
     setTimeout(check, msLeft);
+
   }
+
 
 
   }
