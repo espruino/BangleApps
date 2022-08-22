@@ -17,9 +17,7 @@ This may become very unreliable over time and will need periodic realignment.
 
 ## Many faults
 
-- [ ] high and low getting muddled on rollover?
-- [ ] tide set to 'false' instead of high/low
-- [x] minutes not appearing in settings
+- [ ] setting a tide time that has passed late in the day works initially but then as it then sets the next tide time to be early the following day, it keeps flipping the times until it reaches a time that has not passed. Eg if the last tide of the day was at 2130, once 2130 is passed it keeps advancing the next tide until 2130 is reached.
 
 
 ## Many of the to-dos
