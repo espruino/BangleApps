@@ -2,9 +2,9 @@
   var FILE = "suw.json";
   // Load settings
   var settings = Object.assign({
+    nextTideType: "high",
     nextTideHour: 0,
     nextTideMin: 0,
-    nextTideType: "high",
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -20,6 +20,7 @@
       format: v => v?"high":"low ",
       onchange: v => {
         settings.nextTideType = v;
+        print(v);
         writeSettings();
       }
     },
@@ -28,6 +29,7 @@
       min: 0, max: 23,
       onchange: v => {
         settings.nextTideHour = v;
+        print(v);
         writeSettings();
       }
     },
@@ -36,6 +38,7 @@
       min: 0, max: 59,
       onchange: v => {
         settings.nextTideMin = v;
+        print(v);
         writeSettings();
       }
     },
