@@ -9,7 +9,7 @@
   var FILE = "chimer.json";
   var settings = {};
   const chimes = ["Off", "Buzz", "Beep", "Both"];
-  const frequency = ["60 min", "30 min", "15 min"];
+  const frequency = ["60", "30", "15"];
 
 
 
