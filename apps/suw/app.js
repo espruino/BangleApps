@@ -170,7 +170,7 @@ function draw() {
   }
   else {
     var textTime = hours + minutes; // use this for making time comparisons
-    print(textTime);
+//    print(textTime);
     var textNextTide = numToString(tide1h)+numToString(tide1m);
     print(textNextTide);
     if (Number(textTime) > Number(textNextTide)) {
@@ -207,7 +207,7 @@ function draw() {
     g.drawImage(seaImg, xyCenter-16, xyCenter+17);
   }
 
-
+  print(textTime,tide1h,tide1m,tide1type,tide2h,tide2m,tide2type)
   queueDraw();
 }
 
