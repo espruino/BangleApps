@@ -26,3 +26,4 @@ This may become very unreliable over time and will need periodic realignment.
 - [ ] write tide data back to json file when flipped to keep it up to date when app reloaded
 - [ ] tidy up code in general
 - [ ] no need to check sunrise and sunset times so often
+- [ ] consider a web app for setting next tide time or entering real data
