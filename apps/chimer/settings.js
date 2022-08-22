@@ -13,6 +13,21 @@
 
 
 
+
+
+  var readSettings = () => {
+    var settings = require("Storage").readJSON(FILE, 1) || {
+      type: 1,
+      freq: 0,
+    };
+    return settings;
+  };
+
+  var writeSettings = (settings) => {
+    require("Storage").writeJSON(FILE, settings);
+  };
+
+  settings = readSettings();
   const menu = {
     "": {"title": "Chimer"},
     "< Back": () => back(),
@@ -36,19 +51,6 @@
     }
   }
 
-
-  var readSettings = () => {
-    var settings = require("Storage").readJSON(FILE, 1) || {
-      type: 1,
-      freq: 0,
-    };
-    return settings;
-  };
-
-  var writeSettings = (settings) => {
-    require("Storage").writeJSON(FILE, settings);
-  };
-  settings = readSettings();
   E.showMenu(menu);
 })
 
