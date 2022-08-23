@@ -59,7 +59,7 @@ impl Point {
     }
 }
 
-fn points(filename: &str) -> Vec<Vec<Point>> {
+fn points(filename: &str) -> (HashSet<Point>, Vec<Point>) {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
@@ -67,9 +67,9 @@ fn points(filename: &str) -> Vec<Vec<Point>> {
     let mut gpx: Gpx = read(reader).unwrap();
     eprintln!("we have {} tracks", gpx.tracks.len());
 
-    let mut segments = Vec::new();
-    let mut current_segment = Vec::new();
-    for (p, stop) in gpx
+    let mut waypoints = HashSet::new();
+
+    let points = gpx
         .tracks
         .pop()
         .unwrap()
@@ -79,21 +79,14 @@ fn points(filename: &str) -> Vec<Vec<Point>> {
         .map(|p| {
             let is_commented = p.comment.is_some();
             let (x, y) = p.point().x_y();
-            (Point { x, y }, is_commented)
-        })
-    {
-        current_segment.push(p);
-        if stop {
-            if current_segment.len() > 1 {
-                segments.push(current_segment);
-                current_segment = vec![p];
+            let p = Point { x, y };
+            if is_commented {
+                waypoints.insert(p);
             }
-        }
-    }
-    if current_segment.len() > 1 {
-        segments.push(current_segment);
-    }
-    segments
+            p
+        })
+        .collect::<Vec<_>>();
+    (waypoints, points)
 }
 
 // // NOTE: this angles idea could maybe be use to get dp from n^3 to n^2
@@ -495,7 +488,7 @@ fn hybrid_simplification(points: &[Point], epsilon: f64) -> Vec<Point> {
 fn save_path<W: Write>(writer: &mut W, p: &[Point], stroke: &str) -> std::io::Result<()> {
     write!(
         writer,
-        "<polyline fill='none' stroke='{}' stroke-width='0.5%' points='",
+        "<polyline fill='none' stroke='{}' stroke-width='0.2%' points='",
         stroke
     )?;
     p.iter()
@@ -559,7 +552,7 @@ fn save_svg<'a, P: AsRef<Path>, I: IntoIterator<Item = &'a InterestPoint>>(
     waypoints.iter().try_for_each(|p| {
         writeln!(
             &mut writer,
-            "<circle cx='{}' cy='{}' fill='black' r='0.5%'/>",
+            "<circle cx='{}' cy='{}' fill='black' r='0.3%'/>",
             p.x, p.y,
         )
     })?;
@@ -620,6 +613,38 @@ fn position_interests_along_path(
     buckets
 }
 
+fn detect_sharp_turns(path: &[Point], waypoints: &mut HashSet<Point>) {
+    path.iter()
+        .tuple_windows()
+        .map(|(a, b, c)| {
+            let xd1 = b.x - a.x;
+            let yd1 = b.y - a.y;
+            let angle1 = yd1.atan2(xd1);
+
+            let xd2 = c.x - b.x;
+            let yd2 = c.y - b.y;
+            let angle2 = yd2.atan2(xd2);
+            let adiff = angle2 - angle1;
+            let adiff = if adiff < 0.0 {
+                adiff + std::f64::consts::PI * 2.0
+            } else {
+                adiff
+            };
+            (adiff % std::f64::consts::PI, b)
+        })
+        .filter_map(|(adiff, b)| {
+            let allowed = 4.0f64;
+            if adiff > (90.0 - allowed).to_radians() && adiff < (90.0 + allowed).to_radians() {
+                Some(b)
+            } else {
+                None
+            }
+        })
+        .for_each(|b| {
+            waypoints.insert(*b);
+        });
+}
+
 #[tokio::main]
 async fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
@@ -632,46 +657,34 @@ async fn main() {
     };
 
     println!("input is {}", input_file);
-    let p = points(&input_file);
+    let (mut waypoints, p) = points(&input_file);
 
-    let mut waypoints;
-    let mut rp;
-    if p.len() == 1 {
-        // we don't have any waypoint information
-        println!("no waypoint information");
-        println!("initially we had {} points", p[0].len());
-        rp = simplify_path(&p[0], 0.00015);
-        println!("we now have {} points", rp.len());
+    detect_sharp_turns(&p, &mut waypoints);
+    waypoints.insert(p.first().copied().unwrap());
+    waypoints.insert(p.last().copied().unwrap());
+    println!("we have {} waypoints", waypoints.len());
 
-        waypoints = HashSet::new();
-        waypoints.insert(rp.first().copied().unwrap());
-        waypoints.insert(rp.last().copied().unwrap());
-        eprintln!("we found {} waypoints", waypoints.len());
-    } else {
-        println!("we have {} waypoints", p.len() + 1);
-        println!(
-            "initially we had {} points",
-            p.iter().map(|s| s.len()).sum::<usize>() - (p.len() - 1)
-        );
-        waypoints = HashSet::new();
-        rp = Vec::new();
-        let mut last = None;
-        for segment in &p {
-            waypoints.insert(segment.first().copied().unwrap());
-            waypoints.insert(segment.last().copied().unwrap());
-            let mut s = simplify_path(segment, 0.00015);
-            rp.append(&mut s);
-            last = rp.pop();
+    println!("initially we had {} points", p.len());
+
+    let mut rp = Vec::new();
+    let mut segment = Vec::new();
+    for point in &p {
+        segment.push(*point);
+        if waypoints.contains(point) {
+            if segment.len() >= 2 {
+                let mut s = simplify_path(&segment, 0.00015);
+                rp.append(&mut s);
+                segment = rp.pop().into_iter().collect();
+            }
         }
-        rp.extend(last);
-        println!("we now have {} points", rp.len());
     }
+    rp.append(&mut segment);
+    println!("we now have {} points", rp.len());
 
     // let mut interests = parse_osm_data("isere.osm.pbf");
     let buckets = position_interests_along_path(&mut interests, &rp, 0.001, 5, 3);
     // let i = get_openstreetmap_data(&rp).await;
     // let i = HashSet::new();
-    let p = p.into_iter().flatten().collect::<Vec<_>>();
     save_svg(
         "test.svg",
         &p,
