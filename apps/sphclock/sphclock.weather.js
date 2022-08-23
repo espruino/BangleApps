@@ -34,16 +34,17 @@ exports.drawWeather = function () {
     g.setFontAlign(0, -1);
     sphweather = require("sphweather.icons.js");
     for (let i = 0; i < 3; i++) {
+      let temp = "??"
       if (i < weather.length) {
         let icon = sphweather.getIcon(sphweather.getDayWeather(weather[i]));
         g.drawImage(icon, 67 + i * 30, 8);
-        let temp = weather[i].avgtempC;
+        temp = weather[i].avgtempC;
       } else {
         // let icon = icon_unknown();
         g.setFontLECO1976Regular20();
         g.setColor("#888");
         g.drawString("?", 67 + i * 30 + 12, 13);
-        let temp = "-";
+        temp = "-";
         g.setFontLECO1976Regular12();
       }
 
