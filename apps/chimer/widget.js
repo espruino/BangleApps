@@ -11,9 +11,15 @@
   var settings = readSettings()
 
   function chime() {
-    if (settings.type == 0) return;
-    if (settings.type&1) Bangle.buzz(100);
-    if (settings.type&2) Bangle.beep();
+    for(let i = 0; i < settings.repeat; i++){
+    if (settings.type == 1){
+      Bangle.buzz(100);
+    } else if(settings.type == 2){
+      Bangle.beep();
+    } else {
+      return;
+    }
+  }
   }
 
   //let lastHour = (new Date()).getHours(); // don't chime when (re)loaded at a whole hour h!==lastHour

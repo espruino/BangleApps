@@ -33,6 +33,15 @@ var showMainMenu = () => {
         settings.freq = v;
         writeSettings(settings);
       }
+    },
+    "Repetition": {
+      value: settings.repeat,
+      min: 1, max: 3,
+      format: v => frequency[v],
+      onchange: v => {
+        settings.repeat = v;
+        writeSettings(settings);
+      }
     }
   })
 }
