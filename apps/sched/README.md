@@ -50,6 +50,7 @@ Alarms are stored in an array in `sched.json`, and take the form:
   hidden : false,      // OPTIONAL if false, the widget should not show an icon for this alarm
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
+  del : false,         // OPTIONAL - if true, delete the timer after expiration
   js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'sched.js')
                           // when this code is run, you're responsible for setting alarm.on=false (or removing the alarm)
   data : { ... }       // OPTIONAL - your app can store custom data in here if needed (don't store a lot of data here)

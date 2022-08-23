@@ -1,0 +1,31 @@
+{
+  "id": "football",
+  "name": "football",
+  "shortName": "football",
+  "version": "1.01",
+  "type": "app",
+  "description": "Classic football game of the CASIO chronometer",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "games",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "football.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "football.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
   "icon": "rndmclk.png",
   "type": "widget",
   "tags": "widget,clock",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"rndmclk.wid.js","url":"widget.js"}

@@ -12,8 +12,11 @@ You can change settings by going to the global `Settings` app, then `App Setting
 and `Messages`:
 
 * `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
+* `Vibrate for calls` - This is the pattern of buzzes that should be made when an incoming call is received
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
-* `Unread Timer` - When a new message is received we go into the Messages app.
+* `Vibrate Timer` - When a new message is received when in a non-clock app, we display the message icon and
+buzz every `Repeat` seconds. This is how long we continue to do that.
+* `Unread Timer` - When a new message is received when showing the clock we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
 * `Min Font` - The minimum font size used when displaying messages on the screen. A bigger font
@@ -22,12 +25,13 @@ it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
 * `Flash Icon` - Toggle flashing of the widget icon.
+* `Widget messages` - The maximum amount of message icons to show on the widget.
 
 ## New Messages
 
 When a new message is received:
 
-* If you're in an app, the Bangle will buzz and a 'new message' icon appears in the Widget bar. You can tap this bar to view the message.
+* If you're in an app, the Bangle will buzz and a message icon appears in the Widget bar. You can tap this icon to view the message.
 * If you're in a clock, the Messages app will automatically start and show the message
 
 When a message is shown, you'll see a screen showing the message title and text.

@@ -1,6 +1,5 @@
 (function(back) {
   const FILE = "timerclk.json";
-  const BOOL_FORMAT = v=>v?/*LANG*/"On":/*LANG*/"Off";
   // Load settings
   var settings = require('Storage').readJSON(FILE, true) || {}
   settings.clock = Object.assign({
@@ -130,7 +129,6 @@
     },
     "short date": {
       value: !!settings.clock.shortDate,
-      format: BOOL_FORMAT,
       onchange: v => {
         settings.clock.shortDate = v;
         writeSettings();
@@ -138,7 +136,6 @@
     },
     "stopwatches": {
       value: !!settings.clock.showStopwatches,
-      format: v=>v?/*LANG*/"Show":/*LANG*/"Hide",
       onchange: v => {
         settings.clock.showStopwatches = v;
         writeSettings();
@@ -146,7 +143,6 @@
     },
     "timers": {
       value: !!settings.clock.showTimers,
-      format: v=>v?/*LANG*/"Show":/*LANG*/"Hide",
       onchange: v => {
         settings.clock.showTimers = v;
         writeSettings();
@@ -154,7 +150,6 @@
     },
     "sun times": {
       value: !!settings.clock.showSrss,
-      format: v=>v?/*LANG*/"Show":/*LANG*/"Hide",
       onchange: v => {
         settings.clock.showSrss = v;
         writeSettings();

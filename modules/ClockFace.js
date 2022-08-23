@@ -10,7 +10,8 @@ function ClockFace(options) {
       "precision",
       "init", "draw", "update",
       "pause", "resume",
-      "up", "down", "upDown"
+      "up", "down", "upDown",
+      "settingsFile",
     ].includes(k)) throw `Invalid ClockFace option: ${k}`;
   });
   if (!options.draw && !options.update) throw "ClockFace needs at least one of draw() or update() functions";
@@ -18,7 +19,7 @@ function ClockFace(options) {
     options.update.apply(this, [t, {d: true, h: true, m: true, s: true}]);
   });
   this.update = options.update || (t => {
-    g.clear();
+    g.clearRect(Bangle.appRect);
     options.draw.apply(this, [t, {d: true, h: true, m: true, s: true}]);
   });
   if (options.precision===1000||options.precision===60000) throw "ClockFace precision is in seconds, not ms";
@@ -33,10 +34,22 @@ function ClockFace(options) {
   };
   if (options.upDown) this._upDown = options.upDown;
 
-  this.is12Hour = !!(require("Storage").readJSON("setting.json", 1) || {})["12hour"];
+  if (options.settingsFile) {
+    const settings = (require("Storage").readJSON(options.settingsFile, true) || {});
+    Object.keys(settings).forEach(k => {
+      this[k] = settings[k];
+    });
+  }
+  // these default to true
+  ["showDate", "loadWidgets"].forEach(k => {
+    if (this[k]===undefined) this[k] = true;
+  });
+  // use global 24/12-hour setting if not set by clock-settings
+  if (!('is12Hour' in this)) this.is12Hour = !!(require("Storage").readJSON("setting.json", true) || {})["12hour"];
 }
 
 ClockFace.prototype.tick = function() {
+  "ram"
   const time = new Date();
   const now = {
     d: `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`,
@@ -46,7 +59,7 @@ ClockFace.prototype.tick = function() {
   };
   if (!this._last) {
     g.clear(true);
-    Bangle.drawWidgets();
+    if (global.WIDGETS) Bangle.drawWidgets();
     g.reset();
     this.draw.apply(this, [time, {d: true, h: true, m: true, s: true}]);
   } else {
@@ -70,7 +83,7 @@ ClockFace.prototype.start = function() {
   .CLOCK is set by Bangle.setUI('clock') but we want to load widgets so we can check appRect and *then*
   call setUI. see #1864 */
   Bangle.CLOCK = 1; 
-  Bangle.loadWidgets();
+  if (this.loadWidgets) Bangle.loadWidgets();
   if (this.init) this.init.apply(this);
   if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
   else Bangle.setUI("clock");
@@ -96,7 +109,7 @@ ClockFace.prototype.resume = function() {
   delete this._last;
   this.paused = false;
   if (this._resume) this._resume.apply(this);
-  this.tick(true);
+  this.tick();
 };
 
 /**

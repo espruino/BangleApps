@@ -37,8 +37,8 @@ function handleFirstDayOfWeek(dow) {
   return dow;
 }
 
-// Check the first day of week and update the dow field accordingly.
-alarms.forEach(alarm => alarm.dow = handleFirstDayOfWeek(alarm.dow));
+// Check the first day of week and update the dow field accordingly (alarms only!)
+alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
 function showMainMenu() {
   const menu = {
@@ -86,7 +86,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   const menu = {
     "": { "title": isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm" },
     "< Back": () => {
-      saveAlarm(alarm, alarmIndex, time);
+      prepareAlarmForSave(alarm, alarmIndex, time);
+      saveAndReload();
       showMainMenu();
     },
     /*LANG*/"Hour": {
@@ -123,6 +124,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       value: alarm.as,
       onchange: v => alarm.as = v
     },
+    /*LANG*/"Hidden": {
+      value: alarm.hidden || false,
+      onchange: v => alarm.hidden = v
+    },
     /*LANG*/"Cancel": () => showMainMenu()
   };
 
@@ -144,7 +149,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   E.showMenu(menu);
 }
 
-function saveAlarm(alarm, alarmIndex, time) {
+function prepareAlarmForSave(alarm, alarmIndex, time) {
   alarm.t = require("time_utils").encodeTime(time);
   alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
 
@@ -153,19 +158,17 @@ function saveAlarm(alarm, alarmIndex, time) {
   } else {
     alarms[alarmIndex] = alarm;
   }
-
-  saveAndReload();
 }
 
 function saveAndReload() {
-  // Before saving revert the dow to the standard format
-  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+  // Before saving revert the dow to the standard format (alarms only!)
+  alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
   require("sched").setAlarms(alarms);
   require("sched").reload();
 
   // Fix after save
-  alarms.forEach(a => a.dow = handleFirstDayOfWeek(a.dow, firstDayOfWeek));
+  alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 }
 
 function decodeDOW(alarm) {
@@ -251,7 +254,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   const menu = {
     "": { "title": isNew ? /*LANG*/"New Timer" : /*LANG*/"Edit Timer" },
     "< Back": () => {
-      saveTimer(timer, timerIndex, time);
+      prepareTimerForSave(timer, timerIndex, time);
+      saveAndReload();
       showMainMenu();
     },
     /*LANG*/"Hours": {
@@ -268,11 +272,28 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       wrap: true,
       onchange: v => time.m = v
     },
+    /*LANG*/"Seconds": {
+      value: time.s,
+      min: 0,
+      max: 59,
+      step: 1,
+      wrap: true,
+      onchange: v => time.s = v
+    },
     /*LANG*/"Enabled": {
       value: timer.on,
       onchange: v => timer.on = v
     },
+    /*LANG*/"Delete After Expiration": {
+      value: timer.del,
+      onchange: v => timer.del = v
+    },
+    /*LANG*/"Hidden": {
+      value: timer.hidden || false,
+      onchange: v => timer.hidden = v
+    },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
+    /*LANG*/"Cancel": () => showMainMenu()
   };
 
   if (!isNew) {
@@ -293,7 +314,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   E.showMenu(menu);
 }
 
-function saveTimer(timer, timerIndex, time) {
+function prepareTimerForSave(timer, timerIndex, time) {
   timer.timer = require("time_utils").encodeTime(time);
   timer.t = require("time_utils").getCurrentTimeMillis() + timer.timer;
   timer.last = 0;
@@ -303,8 +324,6 @@ function saveTimer(timer, timerIndex, time) {
   } else {
     alarms[timerIndex] = timer;
   }
-
-  saveAndReload();
 }
 
 function showAdvancedMenu() {
@@ -327,7 +346,16 @@ function enableAll(on) {
   } else {
     E.showPrompt(/*LANG*/"Are you sure?", { title: on ? /*LANG*/"Enable All" : /*LANG*/"Disable All" }).then((confirm) => {
       if (confirm) {
-        alarms.forEach(alarm => alarm.on = on);
+        alarms.forEach((alarm, i) => {
+          alarm.on = on;
+          if (on) {
+            if (alarm.timer) {
+              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer))
+            } else {
+              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t))
+            }
+          }
+        });
         saveAndReload();
         showMainMenu();
       } else {

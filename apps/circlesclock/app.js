@@ -1,10 +1,5 @@
 const locale = require("locale");
 const storage = require("Storage");
-const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
-
-const shoesIcon = atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA");
-const temperatureIcon = atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA");
-
 Graphics.prototype.setFontRobotoRegular50NumericOnly = function(scale) {
   // Actual height 39 (40 - 2)
   this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAB8AAAAAAAfAAAAAAAPwAAAAAAB8AAAAAAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA4AAAAAAB+AAAAAAD/gAAAAAD/4AAAAAH/4AAAAAP/wAAAAAP/gAAAAAf/gAAAAAf/AAAAAA/+AAAAAB/+AAAAAB/8AAAAAD/4AAAAAH/4AAAAAD/wAAAAAA/wAAAAAAPgAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///wAAAB////gAAA////8AAA/////gAAP////8AAH8AAA/gAB8AAAD4AA+AAAAfAAPAAAADwADwAAAA8AA8AAAAPAAPAAAADwADwAAAA8AA8AAAAPAAPgAAAHwAB8AAAD4AAfwAAD+AAD/////AAA/////wAAH////4AAAf///4AAAB///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAPgAAAAAADwAAAAAAB8AAAAAAAfAAAAAAAHgAAAAAAD4AAAAAAA+AAAAAAAPAAAAAAAH/////wAB/////8AA//////AAP/////wAD/////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAAAAAAAfgAADwAAP4AAB8AAH+AAA/AAD/gAAfwAB/AAAf8AAfAAAP/AAPgAAH7wAD4AAD88AA8AAB+PAAPAAA/DwADwAAfg8AA8AAPwPAAPAAH4DwADwAH8A8AA+AD+APAAPwB/ADwAB/D/gA8AAf//gAPAAD//wADwAAf/wAA8AAD/4AAPAAAHwAADwAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAADgAAAHwAA+AAAD8AAP4AAB/AAD/AAA/wAA/wAAf4AAD+AAHwAAAPgAD4APAB8AA+ADwAPAAPAA8ADwADwAPAA8AA8ADwAPAAPAA8ADwADwAfAA8AA8AH4APAAPgD+AHwAB8B/wD4AAf7/+B+AAD//v//AAA//x//wAAD/4P/4AAAf8B/4AAAAYAH4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAHwAAAAAAH8AAAAAAD/AAAAAAD/wAAAAAD/8AAAAAB/vAAAAAB/jwAAAAA/g8AAAAA/wPAAAAAfwDwAAAAf4A8AAAAf4APAAAAP8ADwAAAP8AA8AAAH8AAPAAAD/////8AA//////AAP/////wAD/////8AA//////AAAAAAPAAAAAAADwAAAAAAA8AAAAAAAPAAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAB/APwAAH//wD+AAD//8A/wAA///AH+AAP//wAPgAD/B4AB8AA8A+AAfAAPAPAADwADwDwAA8AA8A8AAPAAPAPAADwADwD4AA8AA8A+AAPAAPAPwAHwADwD8AD4AA8AfwD+AAPAH///AADwA///wAA8AH//4AAPAAf/4AAAAAB/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAAAAD//+AAAAD///4AAAD////AAAB////4AAA/78D/AAAfw8AH4AAPweAA+AAD4PgAHwAB8DwAA8AAfA8AAPAAHgPAADwAD4DwAA8AA+A8AAPAAPAPgAHwADwD4AB8AA8AfgA+AAPAH+B/gAAAA///wAAAAH//4AAAAA//8AAAAAH/8AAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAA8AAAAAAAPAAAAAAADwAAAAAAA8AAAABAAPAAAABwADwAAAB8AA8AAAB/AAPAAAB/wADwAAD/8AA8AAD/8AAPAAD/4AADwAD/4AAA8AD/4AAAPAH/wAAADwH/wAAAA8H/wAAAAPH/wAAAAD3/gAAAAA//gAAAAAP/gAAAAAD/gAAAAAA/AAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwA/4AAAH/Af/AAAH/8P/4AAD//n//AAA//7//4AAfx/+A+AAHwD+AHwAD4AfgB8AA8AHwAPAAPAA8ADwADwAPAA8AA8ADwAPAAPAA8ADwADwAfAA8AA+AH4AfAAHwD+AHwAB/D/4D4AAP/+/n+AAD//n//AAAf/w//gAAB/wH/wAAAHwA/4AAAAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB+AAAAAAD/8AAAAAD//wAAAAB//+AAAAA///wAAAAf4H+APAAH4AfgDwAD8AB8A8AA+AAfAPAAPAADwDwADwAA8B8AA8AAPAfAAPAADwHgADwAA8D4AA+AAeB+AAHwAHg/AAB+ADwfgAAP8D4/4AAD////8AAAf///8AAAB///+AAAAP//+AAAAAP/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAOAAAB8AAHwAAAfgAD8AAAH4AA/AAAB8AAHwAAAOAAA4AAAAAAAAAAAAAAAAAAAAAAAAAA"), 46, atob("DRUcHBwcHBwcHBwcDA=="), 50+(scale<<8)+(1<<16));
@@ -22,10 +17,16 @@ let settings = Object.assign(
   storage.readJSON("circlesclock.default.json", true) || {},
   storage.readJSON(SETTINGS_FILE, true) || {}
 );
-// Load step goal from pedometer widget as fallback
+
+// Load step goal from health app and pedometer widget as fallback
 if (settings.stepGoal == undefined) {
-  const d = storage.readJSON("wpedom.json", true) || {};
-  settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+  let d = storage.readJSON("health.json", true) || {};
+  settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+  
+  if (settings.stepGoal == undefined) {  
+    d = storage.readJSON("wpedom.json", true) || {};
+    settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+  }
 }
 
 /*
@@ -125,20 +126,11 @@ function draw() {
   g.setFontAlign(0, 0);
   g.drawString(locale.date(new Date()), w / 2, h2);
   g.drawString(locale.dow(new Date()), w / 2, h2 + dowOffset);
-
-  // draw the circles a little bit delayed so we decrease the blocking time
-  setTimeout(function() {
-    drawCircle(1);
-  }, 1);
-  setTimeout(function() {
-    drawCircle(2);
-  }, 1);
-  setTimeout(function() {
-    drawCircle(3);
-  }, 1);
-  setTimeout(function() {
-    if (circleCount >= 4) drawCircle(4);
-  }, 1);
+  
+  drawCircle(1);
+  drawCircle(2);
+  drawCircle(3);
+  if (circleCount >= 4) drawCircle(4);
 }
 
 function drawCircle(index) {
@@ -294,7 +286,7 @@ function drawSteps(w) {
 
   writeCircleText(w, shortValue(steps));
 
-  g.drawImage(getImage(shoesIcon, getCircleIconColor("steps", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA"), getCircleIconColor("steps", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawStepsDistance(w) {
@@ -319,7 +311,7 @@ function drawStepsDistance(w) {
 
   writeCircleText(w, shortValue(stepsDistance));
 
-  g.drawImage(getImage(shoesIcon, getCircleIconColor("stepsDistance", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  g.drawImage(getImage(atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA"), getCircleIconColor("stepsDistance", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
 
 function drawHeartRate(w) {
@@ -490,8 +482,8 @@ function drawTemperature(w) {
 
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
-
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    
+    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   });
 }
@@ -517,7 +509,7 @@ function drawPressure(w) {
     if (pressure)
       writeCircleText(w, Math.round(pressure));
 
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   });
 }
@@ -543,7 +535,7 @@ function drawAltitude(w) {
     if (altitude)
       writeCircleText(w, locale.distance(Math.round(altitude)));
 
-    g.drawImage(getImage(temperatureIcon, getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   });
 }
@@ -614,8 +606,8 @@ function getWeatherIconByCode(code) {
           default:
             return weatherCloudy;
         }
-        default:
-          return undefined;
+      default:
+        return undefined;
   }
 }
 
@@ -641,6 +633,7 @@ function formatSeconds(s) {
 
 function getSunData() {
   if (location != undefined && location.lat != undefined) {
+    const SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
     // get today's sunlight times for lat/lon
     return SunCalc ? SunCalc.getTimes(new Date(), location.lat, location.lon) : undefined;
   }
