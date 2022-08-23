@@ -82,6 +82,7 @@ exports.drawCalendar = function (date) {
 
     xTime = 38;
     xDesc = 45;
+
     for (var i = 0; i < schedules.length; i++) {
       v = schedules[i];
       var textTime = v.data.getHours() + "h";
@@ -90,7 +91,7 @@ exports.drawCalendar = function (date) {
 
       g.setFontAlign(-1, 0);
       g.setColor("#000");
-      var y = startY + i * spaceEach;
+      y = startY + i * spaceEach;
       var yText = Math.round(y + spaceEach / 2);
       g.drawString(v.descricao, xDesc, yText);
 

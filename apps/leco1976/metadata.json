@@ -2,7 +2,7 @@
   "id": "leco1976",
   "name": "Font LECO 1976 Regular",
   "shortName": "Font LECO 1976 Regular",
-  "type": "widget",
+  "type": "locale",
   "supports": ["BANGLEJS2"],
   "version": "0.1",
   "description": "Font LECO 1976 Regular with minor adjustments",
