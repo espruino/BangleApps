@@ -83,8 +83,9 @@ function sleep(milliseconds) {
     }
     setTimeout(check, msLeft);
     }else if (settings.freq === 3){
-    chime();
+    if (m !== lastMinute) chime();
     lastHour = h;
+    lastMinute = m;
     // check again in 1 minute
 
     var mLeft = 1, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
