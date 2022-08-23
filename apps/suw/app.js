@@ -10,6 +10,9 @@ var settings = Object.assign({
   nextTideMin: 0,
 }, require('Storage').readJSON("suw.json", true) || {});
 
+// flag to see if next tide time has crossed midnight and need to halt tide time swapping
+var tideNextDay = false;
+
 // assume next tide is 6h 12m later
 var tide1h = settings.nextTideHour;
 var tide1m = settings.nextTideMin;
@@ -169,11 +172,10 @@ function draw() {
     g.drawString("Lon "+longitude, xyCenter, yposLon, true);
   }
   else {
-    var textTime = hours + minutes; // use this for making time comparisons
-//    print(textTime);
+    var textTime = hours + minutes; // use this for making simple time comparisons
     var textNextTide = numToString(tide1h)+numToString(tide1m);
     print(textNextTide);
-    if (Number(textTime) > Number(textNextTide)) {
+    if (Number(textTime) > Number(textNextTide) && (!tideNextDay)) {
       print("time swap needed");
       tide1h = tide2h;
       tide1m = tide2m;
@@ -191,15 +193,17 @@ function draw() {
       }
       if (tide2type === "low ") {
         tide2type = "high";
-//        tide1type = "low ";
       }
       else {
         tide2type = "low ";
-//        tide1type = "high";
-}
-      
-      
-      
+      }
+      if (Number(textNextTide) < Number(textTime)) {
+        tideNextDay = true;
+      }
+      else {
+        tideNextDay = false;
+      }
+
     }
     g.clearRect(0, xyCenter+17, 175, 175);
     g.drawString(numToString(tide1h)+numToString(tide1m)+"  "+numToString(tide2h)+numToString(tide2m) , xyCenter, 138, true);
@@ -207,7 +211,7 @@ function draw() {
     g.drawImage(seaImg, xyCenter-16, xyCenter+17);
   }
 
-//  print(tide1h,tide1m,tide1type,tide2h,tide2m,tide2type)
+//  print(tide1h,tide1m,tide1type,tide2h,tide2m,tide2type);
   queueDraw();
 }
 
