@@ -44,7 +44,7 @@ var showMainMenu = () => {
       }
     },
     "Start Hour": {
-      value: settings.repeat,
+      value: settings.start,
       min: 1, max: 24,
       format: v => v,
       onchange: v => {
@@ -53,7 +53,7 @@ var showMainMenu = () => {
       }
     },
     "End Hour": {
-      value: settings.repeat,
+      value: settings.end,
       min: 1, max: 24,
       format: v => v,
       onchange: v => {
