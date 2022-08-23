@@ -11,7 +11,7 @@ use gpx::Gpx;
 mod osm;
 use osm::{parse_osm_data, InterestPoint};
 
-const LOWER_SHARP_TURN: f64 = 45.0 * std::f64::consts::PI / 180.0;
+const LOWER_SHARP_TURN: f64 = 80.0 * std::f64::consts::PI / 180.0;
 const UPPER_SHARP_TURN: f64 = std::f64::consts::PI * 2.0 - LOWER_SHARP_TURN;
 
 const KEY: u16 = 47490;
@@ -633,7 +633,7 @@ fn detect_sharp_turns(path: &[Point], waypoints: &mut HashSet<Point>) {
             } else {
                 adiff
             };
-            (adiff % std::f64::consts::PI, b)
+            (adiff, b)
         })
         .filter_map(|(adiff, b)| {
             if adiff > LOWER_SHARP_TURN && adiff < UPPER_SHARP_TURN {
@@ -647,8 +647,7 @@ fn detect_sharp_turns(path: &[Point], waypoints: &mut HashSet<Point>) {
         });
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
     let input_file = std::env::args().nth(1).unwrap_or("m.gpx".to_string());
     let osm_file = std::env::args().nth(2);
 
