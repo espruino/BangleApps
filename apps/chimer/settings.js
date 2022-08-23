@@ -9,7 +9,7 @@
   var FILE = "chimer.json";
   var settings = {};
   const chimes = ["Off", "Buzz", "Beep", "Both"];
-  const frequency = ["60", "30", "15"];
+  const frequency = ["60", "30", "15", "1"];
 
 
 var showMainMenu = () => {
@@ -27,7 +27,7 @@ var showMainMenu = () => {
     },
     "Frequency": {
       value: settings.freq,
-      min: 0, max: 2,
+      min: 0, max: 3,
       format: v => frequency[v],
       onchange: v => {
         settings.freq = v;
