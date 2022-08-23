@@ -4,7 +4,15 @@
 - when exactly on turn, distance to next point is still often 50m
     -----> it does not buzz very often on turns
 
+- when going backwards we have a tendencing to get a wrong current_segment
+
 * additional features
+
+- average speed becomes invalid if you stop and restart
+    - pause when not moving
+    - figure starting point
+
+- we need to buzz 200m before sharp turns (or even better, 30seconds)
 
 - display distance to next water/toilet ?
 - dynamic map rescale
