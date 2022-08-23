@@ -11,12 +11,22 @@
 
   var settings = readSettings()
 
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
+
   function chime() {
     for(let i = 0; i < settings.repeat; i++){
     if (settings.type == 1){
       Bangle.buzz(100);
+      sleep(100);
     } else if(settings.type == 2){
       Bangle.beep();
+      sleep(100);
     } else {
       return;
     }
