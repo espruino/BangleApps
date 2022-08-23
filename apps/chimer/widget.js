@@ -4,6 +4,7 @@
     var settings = require("Storage").readJSON(FILE, 1) || {
       type: 1,
       freq: 0,
+      repeat: 1,
     };
     return settings;
   };
