@@ -207,7 +207,7 @@ function draw() {
     g.drawImage(seaImg, xyCenter-16, xyCenter+17);
   }
 
-  print(tide1h,tide1m,tide1type,tide2h,tide2m,tide2type)
+//  print(tide1h,tide1m,tide1type,tide2h,tide2m,tide2type)
   queueDraw();
 }
 
