@@ -30,6 +30,7 @@ function sleep(milliseconds) {
     } else {
       return;
     }
+    sleep(100);
   }
   };
 
