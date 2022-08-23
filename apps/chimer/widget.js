@@ -20,7 +20,8 @@ function sleep(milliseconds) {
   }
 
   function chime() {
-    for(let i = 0; i < settings.repeat; i++){
+    Bangle.buzz(100);
+    for(var i = 0; i < settings.repeat; i++){
     if (settings.type === 1){
       Bangle.buzz(100);
     } else if(settings.type === 2){
