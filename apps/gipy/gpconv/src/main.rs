@@ -11,6 +11,9 @@ use gpx::Gpx;
 mod osm;
 use osm::{parse_osm_data, InterestPoint};
 
+const LOWER_SHARP_TURN: f64 = 45.0 * std::f64::consts::PI / 180.0;
+const UPPER_SHARP_TURN: f64 = std::f64::consts::PI * 2.0 - LOWER_SHARP_TURN;
+
 const KEY: u16 = 47490;
 const FILE_VERSION: u16 = 3;
 
@@ -633,8 +636,7 @@ fn detect_sharp_turns(path: &[Point], waypoints: &mut HashSet<Point>) {
             (adiff % std::f64::consts::PI, b)
         })
         .filter_map(|(adiff, b)| {
-            let allowed = 4.0f64;
-            if adiff > (90.0 - allowed).to_radians() && adiff < (90.0 + allowed).to_radians() {
+            if adiff > LOWER_SHARP_TURN && adiff < UPPER_SHARP_TURN {
                 Some(b)
             } else {
                 None
@@ -694,5 +696,11 @@ async fn main() {
     )
     .unwrap();
 
-    save_gpc("test.gpc", &rp, &waypoints, &buckets).unwrap();
+    save_gpc(
+        Path::new(&input_file).with_extension("gpc"),
+        &rp,
+        &waypoints,
+        &buckets,
+    )
+    .unwrap();
 }

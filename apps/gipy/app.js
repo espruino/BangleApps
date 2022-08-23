@@ -119,6 +119,8 @@ class Status {
       if (lost) {
         Bangle.buzz(); // we lost path
         setTimeout(() => Bangle.buzz(), 500);
+        setTimeout(() => Bangle.buzz(), 1000);
+        setTimeout(() => Bangle.buzz(), 1500);
       }
       this.on_path = !lost;
     }
@@ -143,8 +145,11 @@ class Status {
     if (this.reaching != next_point && this.distance_to_next_point <= 100) {
       this.reaching = next_point;
       let reaching_waypoint = this.path.is_waypoint(next_point);
-      Bangle.buzz();
       if (reaching_waypoint) {
+        Bangle.buzz();
+        setTimeout(() => Bangle.buzz(), 500);
+        setTimeout(() => Bangle.buzz(), 1000);
+        setTimeout(() => Bangle.buzz(), 1500);
         if (Bangle.isLocked()) {
           Bangle.setLocked(false);
         }

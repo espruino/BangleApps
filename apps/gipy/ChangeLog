@@ -48,5 +48,5 @@
 
 0.13:
 	* Bugfix in lost direction.
-	* Trying buzzing on all turns (when locked only).
 	* Buzzing 100m ahead instead of 50m.
+	* Detect sharp turns.
