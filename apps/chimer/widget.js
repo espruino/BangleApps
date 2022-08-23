@@ -7,6 +7,8 @@
       type: 1,
       freq: 2,
       repeat: 1,
+      start: 6,
+      end: 22,
     };
     return settings;
   };
@@ -39,6 +41,11 @@ function sleep(milliseconds) {
     const now = new Date(),
       h = now.getHours(), m = now.getMinutes(),
       s = now.getSeconds(), ms = now.getMilliseconds();
+      if (h > settings.end || h < settings.start){
+        var mLeft = 60-m, sLeft = (mLeft*60)-s, msLeft = (sLeft*1000)-ms;
+        setTimeout(check, msLeft);
+        return;
+      }
     if (settings.freq === 1){
     if (m===0 || m===30) chime();
     lastHour = h;

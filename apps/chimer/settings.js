@@ -42,6 +42,24 @@ var showMainMenu = () => {
         settings.repeat = v;
         writeSettings(settings);
       }
+    },
+    "Start Hour": {
+      value: settings.repeat,
+      min: 1, max: 24,
+      format: v => v,
+      onchange: v => {
+        settings.start = v;
+        writeSettings(settings);
+      }
+    },
+    "End Hour": {
+      value: settings.repeat,
+      min: 1, max: 24,
+      format: v => v,
+      onchange: v => {
+        settings.end = v;
+        writeSettings(settings);
+      }
     }
   });
 };
@@ -52,6 +70,8 @@ var showMainMenu = () => {
       type: 1,
       freq: 0,
       repeat: 1,
+      start: 6,
+      end: 22,
     };
     return settings;
   };
