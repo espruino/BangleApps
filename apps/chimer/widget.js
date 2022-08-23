@@ -22,16 +22,15 @@ function sleep(milliseconds) {
   }
 
   function chime() {
-    Bangle.buzz(100);
-//    for(var i = 0; i < settings.repeat; i++){
-//    if (settings.type === 1){
-//      Bangle.buzz(100);
-//    } else if(settings.type === 2){
-//      Bangle.beep();
-//    } else {
-//      return;
-//    }
-//  }
+    for(var i = 0; i < settings.repeat; i++){
+    if (settings.type === 1){
+      Bangle.buzz(100);
+    } else if(settings.type === 2){
+      Bangle.beep();
+    } else {
+      return;
+    }
+  }
   };
 
   //let lastHour = (new Date()).getHours(); // don't chime when (re)loaded at a whole hour h!==lastHour
