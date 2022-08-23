@@ -9,7 +9,7 @@
     return settings;
   };
 
-  var settings = readSettings()
+  var settings = {};
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -23,18 +23,17 @@ function sleep(milliseconds) {
     for(let i = 0; i < settings.repeat; i++){
     if (settings.type == 1){
       Bangle.buzz(100);
-      sleep(100);
     } else if(settings.type == 2){
       Bangle.beep();
-      sleep(100);
     } else {
       return;
     }
   }
-  }
+  };
 
   //let lastHour = (new Date()).getHours(); // don't chime when (re)loaded at a whole hour h!==lastHour
   function check() {
+    settings = readSettings();
     const now = new Date(),
       h = now.getHours(), m = now.getMinutes(),
       s = now.getSeconds(), ms = now.getMilliseconds();
@@ -63,7 +62,7 @@ function sleep(milliseconds) {
 
 
 
-  }
+  };
 
   check();
 })

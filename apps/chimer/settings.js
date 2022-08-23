@@ -43,8 +43,8 @@ var showMainMenu = () => {
         writeSettings(settings);
       }
     }
-  })
-}
+  });
+};
 
 
   var readSettings = () => {
