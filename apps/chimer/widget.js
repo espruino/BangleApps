@@ -1,5 +1,7 @@
 (function() {
   // 0: off, 1: buzz, 2: beep, 3: both
+  var FILE = "chimer.json";
+
   var readSettings = () => {
     var settings = require("Storage").readJSON(FILE, 1) || {
       type: 1,
