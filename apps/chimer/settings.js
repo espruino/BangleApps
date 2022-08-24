@@ -27,7 +27,7 @@ var showMainMenu = () => {
     },
     "Frequency": {
       value: settings.freq,
-      min: 0, max: 3,
+      min: 0, max: 2,
       format: v => frequency[v],
       onchange: v => {
         settings.freq = v;
