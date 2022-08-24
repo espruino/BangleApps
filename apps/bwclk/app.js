@@ -8,7 +8,8 @@ const storage = require('Storage');
  * Statics
  */
 const SETTINGS_FILE = "bwclk.setting.json";
-const TIMER_IDX = "bwclk";
+const TIMER_IDX = "bwclk_timer";
+const TIMER_AGENDA_IDX = "bwclk_agenda";
 const W = g.getWidth();
 const H = g.getHeight();
 
@@ -205,8 +206,8 @@ try{
   require('sched');
   menu.push([
     function(){
-      var text = isAlarmEnabled() ? getAlarmMinutes() + " min." : "Timer";
-      return [text, imgTimer(), () => decreaseAlarm(), () => increaseAlarm(), null ]
+      var text = isAlarmEnabled(TIMER_IDX) ? getAlarmMinutes(TIMER_IDX) + " min." : "Timer";
+      return [text, imgTimer(), () => decreaseAlarm(TIMER_IDX), () => increaseAlarm(TIMER_IDX), null ]
     },
   ]);
 } catch(ex) {
@@ -219,6 +220,7 @@ try{
  * Note that we handle the agenda differently in order to hide old entries...
  */
 var agendaIdx = 0;
+var agendaTimerIdx = 0;
 if(storage.readJSON("android.calendar.json") !== undefined){
   function nextAgendaEntry(){
     agendaIdx += 1;
@@ -248,7 +250,41 @@ if(storage.readJSON("android.calendar.json") !== undefined){
       var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
       dateStr += entry.durationInSeconds < 86400 ? " / " + locale.time(date,1) : "";
 
-      return [title + "\n" + dateStr, imgAgenda(), () => nextAgendaEntry(), () => previousAgendaEntry(), null]
+      function dynImgAgenda(){
+        if(isAlarmEnabled(TIMER_AGENDA_IDX) && agendaTimerIdx == agendaIdx){
+          return imgTimer();
+        } else {
+          return imgAgenda();
+        }
+      }
+
+      return [title + "\n" + dateStr, dynImgAgenda(), () => nextAgendaEntry(), () => previousAgendaEntry(), function(){
+        try{
+          var alarm = require('sched')
+
+          // If other time, we disable the old one and enable this one.
+          if(agendaIdx != agendaTimerIdx){
+            agendaTimerIdx = -1;
+            alarm.setAlarm(TIMER_AGENDA_IDX, undefined);
+          }
+
+          // Disable alarm if enabled
+          if(isAlarmEnabled(TIMER_AGENDA_IDX)){
+            agendaTimerIdx = -1;
+            alarm.setAlarm(TIMER_AGENDA_IDX, undefined);
+            alarm.reload();
+            return
+          }
+
+          // Otherwise, set alarm for given event
+          agendaTimerIdx = agendaIdx;
+          alarm.setAlarm(TIMER_AGENDA_IDX, {
+            msg: title,
+            timer : parseInt((date - now)),
+          });
+          alarm.reload();
+        } catch(ex){ }
+      }]
     },
   ]);
 }
@@ -364,10 +400,10 @@ function getWeather(){
 }
 
 
-function isAlarmEnabled(){
+function isAlarmEnabled(idx){
   try{
     var alarm = require('sched');
-    var alarmObj = alarm.getAlarm(TIMER_IDX);
+    var alarmObj = alarm.getAlarm(idx);
     if(alarmObj===undefined || !alarmObj.on){
       return false;
     }
@@ -379,22 +415,22 @@ function isAlarmEnabled(){
 }
 
 
-function getAlarmMinutes(){
-  if(!isAlarmEnabled()){
+function getAlarmMinutes(idx){
+  if(!isAlarmEnabled(idx)){
     return -1;
   }
 
   var alarm = require('sched');
-  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  var alarmObj =  alarm.getAlarm(idx);
   return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
 
 
-function increaseAlarm(){
+function increaseAlarm(idx){
   try{
-    var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-    var alarm = require('sched')
-    alarm.setAlarm(TIMER_IDX, {
+    var minutes = isAlarmEnabled(idx) ? getAlarmMinutes(idx) : 0;
+    var alarm = require('sched');
+    alarm.setAlarm(idx, {
       timer : (minutes+5)*60*1000,
     });
     alarm.reload();
@@ -402,16 +438,16 @@ function increaseAlarm(){
 }
 
 
-function decreaseAlarm(){
+function decreaseAlarm(idx){
   try{
-    var minutes = getAlarmMinutes();
+    var minutes = getAlarmMinutes(idx);
     minutes -= 5;
 
     var alarm = require('sched')
-    alarm.setAlarm(TIMER_IDX, undefined);
+    alarm.setAlarm(idx, undefined);
 
     if(minutes > 0){
-      alarm.setAlarm(TIMER_IDX, {
+      alarm.setAlarm(idx, {
         timer : minutes*60*1000,
       });
     }
@@ -670,6 +706,7 @@ Bangle.on('touch', function(btn, e){
           menuEntry[4]();
           setTimeout(()=>{
             Bangle.buzz(80, 0.6);
+            drawTime();
           }, 250);
         } catch(ex){
           // In case it fails, we simply ignore it.
