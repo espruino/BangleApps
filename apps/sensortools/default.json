@@ -1,18 +1,18 @@
 {
   "enabled": false,
   "mag": {
-    "mode": "emulate"
+    "mode": "emulate",
     "name": "static"
   },
   "hrm": {
-    "mode": "modify"
+    "mode": "modify",
     "name": "bpmtrippled"
   },
   "gps": {
-    "mode": "emulate"
-    "name": "staticfix"
+    "mode": "emulate",
+    "name": "changingfix"
   },
   "baro": {
-    "power": "nop",
+    "power": "nop"
   }
 }

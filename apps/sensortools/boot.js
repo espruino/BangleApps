@@ -88,10 +88,10 @@
 
     if (settings.gps) {
       log("GPS", settings.gps);
-      let modGps = function(data) {
+      let modGps = function(dataProvider) {
         setInterval(() => {
-          Bangle.getGPSFix = () => data;
-          orig.bangleEmit("GPS", data);
+          Bangle.getGPSFix = dataProvider;
+          orig.bangleEmit("GPS", dataProvider());
         }, 1000);
       };
       if (settings.gps.power) {
@@ -100,19 +100,19 @@
       }
       if (settings.gps.mode == "emulate") {
         if (settings.gps.name == "staticfix") {
-          modGps({
+          modGps(() => { return {
             "lat": 52,
             "lon": 8,
             "alt": 100,
-            "speed": 0,
-            "course": 0,
+            "speed": 10,
+            "course": 12,
             "time": Date.now(),
             "satellites": 7,
             "fix": 1,
             "hdop": 1
-          });
+          };});
         } else if (settings.gps.name == "nofix") {
-          modGps({
+          modGps(() => { return {
             "lat": NaN,
             "lon": NaN,
             "alt": NaN,
@@ -122,7 +122,38 @@
             "satellites": 2,
             "fix": 0,
             "hdop": NaN
-          });
+          };});
+        } else if (settings.gps.name == "changingfix") {
+          let currentSpeed=1;
+          let currentLat=20;
+          let currentLon=10;
+          let currentCourse=10;
+          let currentAlt=-100;
+          let currentSats=5;
+          modGps(() => {
+            currentLat += 0.1;
+            if (currentLat > 50) currentLat = 20;
+            currentLon += 0.1;
+            if (currentLon > 20) currentLon = 10;
+            currentSpeed *= 10;
+            if (currentSpeed > 1000) currentSpeed = 1;
+            currentCourse += 12;
+            if (currentCourse > 360) currentCourse -= 360;
+            currentSats += 1;
+            if (currentSats > 10) currentSats = 5;
+            currentAlt *= 10;
+            if (currentAlt > 1000) currentAlt = -100;
+            return {
+            "lat": currentLat,
+            "lon": currentLon,
+            "alt": currentAlt,
+            "speed": currentSpeed,
+            "course": currentCourse,
+            "time": Date.now(),
+            "satellites": currentSats,
+            "fix": 1,
+            "hdop": 1
+          };});
         }
       }
     }
