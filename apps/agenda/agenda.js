@@ -26,18 +26,21 @@ var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 var CALENDAR = require("Storage").readJSON("android.calendar.json",true)||[];
 var settings = require("Storage").readJSON("agenda.settings.json",true)||{};
 
-CALENDAR=CALENDAR.sort((a,b)=>a.timestamp - b.timestamp)
+CALENDAR=CALENDAR.sort((a,b)=>a.timestamp - b.timestamp);
 
 function getDate(timestamp) {
   return new Date(timestamp*1000);
 }
-function formatDateLong(date, includeDay) {
-  if(includeDay)
-    return Locale.date(date)+" "+Locale.time(date,1);
-  return Locale.time(date,1);
+function formatDateLong(date, includeDay, allDay) {
+  let shortTime = Locale.time(date,1)+Locale.meridian(date);
+  if(allDay) shortTime = "";
+  if(includeDay || allDay)
+    return Locale.date(date)+" "+shortTime;
+  return shortTime;
 }
-function formatDateShort(date) {
-  return Locale.date(date).replace(/\d\d\d\d/,"")+Locale.time(date,1);
+function formatDateShort(date, allDay) {
+  return Locale.date(date).replace(/\d\d\d\d/,"")+(allDay?
+    "" : Locale.time(date,1)+Locale.meridian(date));
 }
 
 var lines = [];
@@ -46,7 +49,7 @@ function showEvent(ev) {
   if(!ev) return;
   g.setFont(bodyFont);
   //var lines = [];
-  if (ev.title) lines = g.wrapString(ev.title, g.getWidth()-10)
+  if (ev.title) lines = g.wrapString(ev.title, g.getWidth()-10);
   var titleCnt = lines.length;
   var start = getDate(ev.timestamp);
   var end = getDate((+ev.timestamp) + (+ev.durationInSeconds));
@@ -54,17 +57,17 @@ function showEvent(ev) {
   if (titleCnt) lines.push(""); // add blank line after title
   if(start.getDay() == end.getDay() && start.getMonth() == end.getMonth())
     includeDay = false;
-  if(includeDay) {
+  if(includeDay || ev.allDay) {
     lines = lines.concat(
       /*LANG*/"Start:",
-      g.wrapString(formatDateLong(start, includeDay), g.getWidth()-10),
+      g.wrapString(formatDateLong(start, includeDay, ev.allDay), g.getWidth()-10),
       /*LANG*/"End:",
-      g.wrapString(formatDateLong(end, includeDay), g.getWidth()-10));
+      g.wrapString(formatDateLong(end, includeDay, ev.allDay), g.getWidth()-10));
   } else {
     lines = lines.concat(
       g.wrapString(Locale.date(start), g.getWidth()-10),
-      g.wrapString(/*LANG*/"Start"+": "+formatDateLong(start, includeDay), g.getWidth()-10),
-      g.wrapString(/*LANG*/"End"+": "+formatDateLong(end, includeDay), g.getWidth()-10));
+      g.wrapString(/*LANG*/"Start"+": "+formatDateLong(start, includeDay, ev.allDay), g.getWidth()-10),
+      g.wrapString(/*LANG*/"End"+": "+formatDateLong(end, includeDay, ev.allDay), g.getWidth()-10));
   }
   if(ev.location)
     lines = lines.concat(/*LANG*/"Location"+": ", g.wrapString(ev.location, g.getWidth()-10));
@@ -110,7 +113,7 @@ function showList() {
       if (!ev) return;
       var isPast = false;
       var x = r.x+2, title = ev.title;
-      var body = formatDateShort(getDate(ev.timestamp))+"\n"+(ev.location?ev.location:/*LANG*/"No location");
+      var body = formatDateShort(getDate(ev.timestamp),ev.allDay)+"\n"+(ev.location?ev.location:/*LANG*/"No location");
       if(settings.pastEvents) isPast = ev.timestamp + ev.durationInSeconds < (new Date())/1000;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig)
         .setColor(isPast ? "#888" : g.theme.fg).drawString(title, x,r.y+2);
