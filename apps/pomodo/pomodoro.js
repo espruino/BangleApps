@@ -266,12 +266,10 @@ class Bangle2 {
 }
 
 function drawCounter (currentValue, x, y) {
-  g.setFontAlign(0, 0); // center font
-  g.setFont("Vector", 50); // vector font, 80px
   if (currentValue < 0) {
     return;
   }
-
+  
   x = x || Bangle.appRect.x + Bangle.appRect.w/2;
   y = y || Bangle.appRect.y + Bangle.appRect.h/2;
 
@@ -297,6 +295,8 @@ function drawCounter (currentValue, x, y) {
   }
 
   g.clearRect(Bangle.appRect);
+  g.setFontAlign(0, 0); // center font
+  g.setFont("Vector", 50); // vector font, 80px
   g.drawString(minutesString + ':' + secondsString, x, y);
 }
 
