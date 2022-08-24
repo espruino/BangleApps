@@ -5,12 +5,13 @@
   );
 
   var log = function(text, param) {
-    var logline = new Date().toISOString() + " - " + text;
+    var logline = new Date().toISOString() + " - " + "Sensortools - " + text;
     if (param) logline += ": " + JSON.stringify(param);
     print(logline);
   };
 
   if (settings.enabled) {
+    log("Enabled");
     const POWER_DELAY = 10000;
     var orig = {};
 
@@ -62,7 +63,9 @@
     };
 
     if (settings.hrm) {
+      log("HRM", settings.hrm);
       if (settings.hrm.power) {
+        log("HRM power");
         orig.bangleSetHRMPower = Bangle.setHRMPower;
         Bangle.setHRMPower = createPowerFunction(settings.hrm.power, orig.bangleSetHRMPower);
       }
@@ -84,6 +87,7 @@
     }
 
     if (settings.gps) {
+      log("GPS", settings.gps);
       let modGps = function(data) {
         setInterval(() => {
           Bangle.getGPSFix = () => data;
@@ -124,6 +128,7 @@
     }
 
     if (settings.mag) {
+      log("MAG", settings.mag);
       let modMag = function(data) {
         setInterval(() => {
           Bangle.getCompass = () => data;
