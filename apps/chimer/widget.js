@@ -32,7 +32,7 @@
       } else {
         return;
       }
-      sleep(100);
+      sleep(150);
     }
   }
 
@@ -44,7 +44,11 @@
       m = now.getMinutes(),
       s = now.getSeconds(),
       ms = now.getMilliseconds();
-    if (h > settings.end || h < settings.start) {
+    if (
+      h > settings.end ||
+      (h >= settings.end && m !== 0) ||
+      h < settings.start
+    ) {
       var mLeft = 60 - m,
         sLeft = mLeft * 60 - s,
         msLeft = sLeft * 1000 - ms;
@@ -52,7 +56,8 @@
       return;
     }
     if (settings.freq === 1) {
-      if ((m !== lastMinute && m === 0) || m === 30) chime();
+      if ((m !== lastMinute && m === 0) || (m !== lastMinute && m === 30))
+        chime();
       lastHour = h;
       lastMinute = m;
       // check again in 30 minutes
@@ -70,7 +75,12 @@
       }
       setTimeout(check, msLeft);
     } else if (settings.freq === 2) {
-      if ((m !== lastMinute && m === 0) || m === 15 || m === 30 || m === 45)
+      if (
+        (m !== lastMinute && m === 0) ||
+        (m !== lastMinute && m === 15) ||
+        (m !== lastMinute && m === 30) ||
+        (m !== lastMinute && m === 45)
+      )
         chime();
       lastHour = h;
       lastMinute = m;

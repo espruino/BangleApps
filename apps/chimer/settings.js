@@ -36,7 +36,7 @@
       Repetition: {
         value: settings.repeat,
         min: 1,
-        max: 3,
+        max: 5,
         format: (v) => v,
         onchange: (v) => {
           settings.repeat = v;
