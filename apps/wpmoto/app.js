@@ -1,6 +1,6 @@
 var loc = require("locale");
 
-var waypoints = require("Storage").readJSON("waypoints.json") || [];
+var waypoints = require("waypoints").load();
 var wp = waypoints[0];
 if (wp == undefined) wp = {name:"NONE"};
 var wp_bearing = 0;
@@ -196,7 +196,7 @@ function addCurrentWaypoint() {
 }
 
 function saveWaypoints() {
-  require("Storage").writeJSON("waypoints.json", waypoints);
+  require("waypoints").save(waypoints);
 }
 
 function deleteWaypoint(w) {

@@ -2,12 +2,13 @@
   "id": "speedalt2",
   "name": "GPS Adventure Sports II",
   "shortName":"GPS Adv Sport II",
-  "version":"0.17",
+  "version":"0.18",
   "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "icon": "app.png",
   "type": "app",
   "tags": "tool,outdoors",
   "supports": ["BANGLEJS"],
+  "dependencies" : { "waypoints":"type" },
   "readme": "README.md",
   "allow_emulator": true,
   "storage": [
@@ -16,10 +17,6 @@
     {"name":"speedalt2.settings.js","url":"settings.js"}
   ],
   "data": [
-    {"name":"speedalt2.json"},
-    {"name":"waypoints.json"},
-    {"name":"waypoints1.json"},
-    {"name":"waypoints2.json"},
-    {"name":"waypoints3.json"}
+    {"name":"speedalt2.json"}
   ]
 }
