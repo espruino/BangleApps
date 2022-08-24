@@ -248,7 +248,7 @@ if(storage.readJSON("android.calendar.json") !== undefined){
       var title = entry.title.slice(0,14);
       var date = new Date(entry.timestamp*1000);
       var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
-      dateStr += entry.durationInSeconds < 86400 ? " / " + locale.time(date,1) : "";
+      dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
 
       function dynImgAgenda(){
         if(isAlarmEnabled(TIMER_AGENDA_IDX) && agendaTimerIdx == agendaIdx){
