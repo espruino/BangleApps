@@ -17,7 +17,8 @@ This may become very unreliable over time and will need periodic realignment.
 
 ## Many faults
 
-- [ ] setting a tide time that has passed late in the day works initially but then as it then sets the next tide time to be early the following day, it keeps flipping the times until it reaches a time that has not passed. Eg if the last tide of the day was at 2130, once 2130 is passed it keeps advancing the next tide until 2130 is reached.
+- [ ] bug fix to prevent cascading tide time flipping causes it to halt completely - tide time never updates
+- [ ] when watch closed and reloaded it reloads tide times from setting file which may be out of date - need to write new times to settings file when swapping occurs
 
 
 ## Many of the to-dos
