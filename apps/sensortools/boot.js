@@ -13,38 +13,44 @@
   if (settings.enabled) {
     log("Enabled");
     const POWER_DELAY = 10000;
-    var orig = {};
 
     var onEvents = [];
 
-    orig.bangleOn = Bangle.on;
-    orig.bangleEmit = Bangle.emit;
-    orig.bangleRemoveListener = Bangle.removeListener;
+    Bangle.sensortoolsOrigOn = Bangle.on;
+    Bangle.sensortoolsOrigEmit = Bangle.emit;
+    Bangle.sensortoolsOrigRemoveListener = Bangle.removeListener;
 
     Bangle.on = function(name, callback) {
       if (onEvents[name]) {
-        orig.bangleOn(name + "_mod", callback);
-        orig.bangleOn(name, (e) => {
-          Bangle.emit(name + "_mod", onEvents[name](e));
+        log("Redirecting listener for", name, "to", name + "_mod");
+        Bangle.sensortoolsOrigOn(name + "_mod", callback);
+        Bangle.sensortoolsOrigOn(name, (e) => {
+          log("Redirected event for", name, "to", name + "_mod");
+          Bangle.sensortoolsOrigEmit(name + "_mod", onEvents[name](e));
         });
       } else {
-        orig.bangleOn(name, callback);
+        log("Pass through on call for", name, callback);
+        Bangle.sensortoolsOrigOn(name, callback);
       }
     };
 
     Bangle.removeListener = function(name, callback) {
       if (onEvents[name]) {
-        orig.bangleRemoveListener(name + "_mod", callback);
+        log("Removing augmented listener for", name, onEvents[name]);
+        Bangle.sensortoolsOrigRemoveListener(name + "_mod", callback);
       } else {
-        orig.bangleRemoveListener(name, callback);
+        log("Pass through remove listener for", name);
+        Bangle.sensortoolsOrigRemoveListener(name, callback);
       }
     };
 
     Bangle.emit = function(name, event) {
       if (onEvents[name]) {
-        orig.bangleEmit(name + "_mod", event);
+        log("Augmenting emit call for", name, onEvents[name]);
+        Bangle.sensortoolsOrigEmit(name + "_mod", event);
       } else {
-        orig.bangleEmit(name, event);
+        log("Pass through emit call for", name);
+        Bangle.sensortoolsOrigEmit(name, event);
       }
     };
 
@@ -62,12 +68,12 @@
       };
     };
 
-    if (settings.hrm) {
+    if (settings.hrm && settings.hrm.enabled) {
       log("HRM", settings.hrm);
       if (settings.hrm.power) {
         log("HRM power");
-        orig.bangleSetHRMPower = Bangle.setHRMPower;
-        Bangle.setHRMPower = createPowerFunction(settings.hrm.power, orig.bangleSetHRMPower);
+        Bangle.sensortoolsOrigSetHRMPower = Bangle.setHRMPower;
+        Bangle.setHRMPower = createPowerFunction(settings.hrm.power, Bangle.sensortoolsOrigSetHRMPower);
       }
       if (settings.hrm.mode == "modify") {
         if (settings.hrm.name == "bpmtrippled") {
@@ -80,23 +86,23 @@
       } else if (settings.hrm.mode == "emulate") {
         if (settings.hrm.name == "sin") {
           setInterval(() => {
-            orig.bangleEmit(60 + 3 * Math.sin(Date.now() / 10000));
+            Bangle.sensortoolsOrigEmit(60 + 3 * Math.sin(Date.now() / 10000));
           }, 1000);
         }
       }
     }
 
-    if (settings.gps) {
+    if (settings.gps && settings.gps.enabled) {
       log("GPS", settings.gps);
       let modGps = function(dataProvider) {
+        Bangle.getGPSFix = dataProvider;
         setInterval(() => {
-          Bangle.getGPSFix = dataProvider;
-          orig.bangleEmit("GPS", dataProvider());
+          Bangle.sensortoolsOrigEmit("GPS", dataProvider());
         }, 1000);
       };
       if (settings.gps.power) {
-        orig.bangleSetGPSPower = Bangle.setGPSPower;
-        Bangle.setGPSPower = createPowerFunction(settings.gps.power, orig.bangleSetGPSPower);
+        Bangle.sensortoolsOrigSetGPSPower = Bangle.setGPSPower;
+        Bangle.setGPSPower = createPowerFunction(settings.gps.power, Bangle.sensortoolsOrigSetGPSPower);
       }
       if (settings.gps.mode == "emulate") {
         if (settings.gps.name == "staticfix") {
@@ -158,17 +164,17 @@
       }
     }
 
-    if (settings.mag) {
+    if (settings.mag && settings.mag.enabled) {
       log("MAG", settings.mag);
       let modMag = function(data) {
         setInterval(() => {
           Bangle.getCompass = () => data;
-          orig.bangleEmit("mag", data);
+          Bangle.sensortoolsOrigEmit("mag", data);
         }, 100);
       };
       if (settings.mag.power) {
-        orig.bangleSetCompassPower = Bangle.setCompassPower;
-        Bangle.setCompassPower = createPowerFunction(settings.mag.power, orig.bangleSetCompassPower);
+        Bangle.sensortoolsOrigSetCompassPower = Bangle.setCompassPower;
+        Bangle.setCompassPower = createPowerFunction(settings.mag.power, Bangle.sensortoolsOrigSetCompassPower);
       }
       if (settings.mag.mode == "emulate") {
         if (settings.mag.name == "static") {
