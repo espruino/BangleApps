@@ -112,7 +112,7 @@ class InitState extends State {
   }
 
   draw () {
-    g.setFont("Vector", 50); // vector font, 80px
+    g.clearRect(Bangle.appRect);
     drawCounter(this.timeCounter);
   }
 }
@@ -266,8 +266,8 @@ class Bangle2 {
 }
 
 function drawCounter (currentValue, x, y) {
-  g.clearRect(Bangle.appRect);
   g.setFontAlign(0, 0); // center font
+  g.setFont("Vector", 50); // vector font, 80px
   if (currentValue < 0) {
     return;
   }
