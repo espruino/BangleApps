@@ -45,8 +45,8 @@
       },
       "Start Hour": {
         value: settings.start,
-        min: 1,
-        max: 24,
+        min: 0,
+        max: 23,
         format: (v) => v,
         onchange: (v) => {
           settings.start = v;
