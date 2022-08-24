@@ -2,68 +2,69 @@
  * @param {function} back Use back() to return to settings menu
  */
 
-
-
-(function(back) {
+(function (back) {
   // default to buzzing
   var FILE = "chimer.json";
   var settings = {};
   const chimes = ["Off", "Buzz", "Beep", "Both"];
   const frequency = ["60 min", "30 min", "15 min", "1 min"];
 
-
-var showMainMenu = () => {
-  E.showMenu({
-    "": {"title": "Chimer"},
-    "< Back": () => back(),
-    "Chime Type": {
-      value: settings.type,
-      min: 0, max: 2, // both is just silly
-      format: v => chimes[v],
-      onchange: v => {
-        settings.type = v;
-        writeSettings(settings);
+  var showMainMenu = () => {
+    E.showMenu({
+      "": { title: "Chimer" },
+      "< Back": () => back(),
+      "Chime Type": {
+        value: settings.type,
+        min: 0,
+        max: 2, // both is just silly
+        format: (v) => chimes[v],
+        onchange: (v) => {
+          settings.type = v;
+          writeSettings(settings);
+        },
       },
-    },
-    "Frequency": {
-      value: settings.freq,
-      min: 0, max: 2,
-      format: v => frequency[v],
-      onchange: v => {
-        settings.freq = v;
-        writeSettings(settings);
-      }
-    },
-    "Repetition": {
-      value: settings.repeat,
-      min: 1, max: 3,
-      format: v => v,
-      onchange: v => {
-        settings.repeat = v;
-        writeSettings(settings);
-      }
-    },
-    "Start Hour": {
-      value: settings.start,
-      min: 1, max: 24,
-      format: v => v,
-      onchange: v => {
-        settings.start = v;
-        writeSettings(settings);
-      }
-    },
-    "End Hour": {
-      value: settings.end,
-      min: 1, max: 24,
-      format: v => v,
-      onchange: v => {
-        settings.end = v;
-        writeSettings(settings);
-      }
-    }
-  });
-};
-
+      Frequency: {
+        value: settings.freq,
+        min: 0,
+        max: 2,
+        format: (v) => frequency[v],
+        onchange: (v) => {
+          settings.freq = v;
+          writeSettings(settings);
+        },
+      },
+      Repetition: {
+        value: settings.repeat,
+        min: 1,
+        max: 3,
+        format: (v) => v,
+        onchange: (v) => {
+          settings.repeat = v;
+          writeSettings(settings);
+        },
+      },
+      "Start Hour": {
+        value: settings.start,
+        min: 1,
+        max: 24,
+        format: (v) => v,
+        onchange: (v) => {
+          settings.start = v;
+          writeSettings(settings);
+        },
+      },
+      "End Hour": {
+        value: settings.end,
+        min: 1,
+        max: 24,
+        format: (v) => v,
+        onchange: (v) => {
+          settings.end = v;
+          writeSettings(settings);
+        },
+      },
+    });
+  };
 
   var readSettings = () => {
     var settings = require("Storage").readJSON(FILE, 1) || {
@@ -82,5 +83,4 @@ var showMainMenu = () => {
 
   settings = readSettings();
   showMainMenu();
-})
-
+});

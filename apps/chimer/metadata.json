@@ -6,10 +6,10 @@
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
-    {"name":"chimer.wid.js","url":"widget.js"},
-    {"name":"chimer.settings.js","url":"settings.js"}
+    { "name": "chimer.wid.js", "url": "widget.js" },
+    { "name": "chimer.settings.js", "url": "settings.js" }
   ],
-  "data": [{"name":"chimer.json"}]
+  "data": [{ "name": "chimer.json" }]
 }
