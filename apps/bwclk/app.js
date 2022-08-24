@@ -65,12 +65,12 @@ Graphics.prototype.setSmallFont = function(scale) {
 
 
 Graphics.prototype.setMiniFont = function(scale) {
-  // Actual height 18 (17 - 0)
+  // Actual height 16 (15 - 0)
   this.setFontCustom(
-    atob('AAAAAAAAAAAAAAAAAAf+wf+QAAAAAAAAAcAAcAAAAAcAAAAAAAAAAAAEACEADEADHwD/gP8AfEATHwDfwH+AfEAbEADEADAACAAAAAAAADhwHwwMYY8Yc8YeMIYMMYHHwDHgAAAAAAPAAfgwYhwYjgZnAPuAGcAA5AB3gDswHMwOMwcMwIHgAAAAAACPgP/gZwwY4wYYwYMwYGwMDgAfgAAwAAAAAAcAAcAAAAAAAAAAAAPAD/8PgPcADQAAAAAAAAYABOAHHw+B/4AAAAAAAAAEAAEgAHgAfAAXgAFgAEAAAAAAAAAQAAQAAQAD/AD/AAQAAQAAQAAQAAAAAA0AA4AAAAAAAAAAIAAIAAIAAIAAIAAIAAAAAAAAAwAAwAAAAAAAAAABwAPwD+AfgAYAAAAAAAAH/AP/gYAwYAwYAwYAwYAwP/gH/AAAAAAAMAAYAAf/wf/wAAAAAAAAAGAwOBwYDwYHwYOwYMwc4wPwwDAQAAAQBgYBwZgwbgwfgwewwc/gYPAAAAAAAAOAA+ADyAPCAcCAQCAA/wAfwACAAAAAAAfjAfxgZgwZgwZgwZgwZxgQ/gAOAAAAH/AP/gZhwZgwZAwZgwZgwI/gAfAAAAQAAYAAYAwYDwYfAZ4AfgAcAAAAAAAAGPAP/gZwwYwwYwwZwwf5wPfgAGAAAAHgAPxgYYwYIwYIwYIwYYwP/gH/AAAAAAAAAAAxgAxgAAAAAAAAADA0DA4AAAAAAAAAAAAAcAA+ABnADDgABAAAAAAAAAAAAAAAABIABIABIABIABIABIABIABIABIABIAAAAAAAAAAAAAAAAAAADDgBnAA+AAcAAIAAAAAAAAAAOAAcAAYAAYOwYcAYwAPgAHAAAAAAPAA/wDg4DAYGOMGfEEREEREGfEGfMGBADBAB/AA+AAAAAAQADwAfAD+AfiAcCAfCAHyAA/AAHwAAwAAAf/wf/wQQwQQwQQwYQwY4wf4wHvgAHAA4AH/AODgcBwYAwYAwYAwYAwYAwcBwODgHHAAAAAAAf/wf/wYAwYAwYAwYAwYAwcBwPHgH/AAQAAAAf/wf/wYQwYQwYQwYQwYQwYQwQAQAAAf/wf/wYQAYQAYQAYQAYQAQAAA4AH/AODgcBwYAwYAwYAwYQwYQwMRgOfgAeAAAAAAAf/wf/wAQAAQAAQAAQAAQAAQAA4Af/wAAAAAAf/wf/wAAAABgABwAAwAAwAAwf/wf/gAAAAAAf/wf/wA4AB8ADOAGHAMDgYBwQAwAAAAAAf/wf/wAAwAAwAAwAAwAAwAAQAAAf/wf/wHgAB4AAeAAHgABwAHgAeAB4AHgAf/wf/wAAAAAAf/wf/wOAAHgABwAA8AAOAAHgf/wf/wAAAA4AH/AODgcBwYAwYAwYAwYAwYAwcBwODgH/AA4AAAAf/wf/wYIAYIAYIAYIAYYAc4APwADAAA4AH/AODgcBwYAwYAwYAwYAwYCwcDwODgH/wA4AAAAf/wf/wYIAYIAYIAYMAYeAc/gPxwDAQAAAHDgPhgYgwYwwYwwYQwYYwMZwOPgAHAQAAYAAYAAYAAf/wf/wYAAYAAYAAYAAQAAAAAf+Af/gABwAAwAAwAAwAAwAAwADgf/Af8AAAAYAAfAAH4AA/AAHwABwAHwA+AHwAeAAQAAYAAfAAH8AAfgADwAPwD+AfgAeAAPwAB+AAHwADwA/AP4AeAAQAAQAQYAwODgHHAB8AA4AD8AHHAcDgYAwQAQQAAcAAPAADwAA/wA/wDwAPAAcAAQAAAAAYAwYBwYHwYOwY4wbwwfAwcAwYAwAAAAAAAAAf//f//QAAQAAAAAAAAcAAfgAD+AAPwAAwAAAAAAQAAQAAf//f//AAAAAAAAAAAADAAGAAMAAYAAYAAMAAGAADAAAAAAAAAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABngDuwDMQDMQDIwDIwD/wB/wAAAAAAf/wf/wDAwDAwDAwDAwDAwB/gA/AAAAAAAA/ABzgDAwDAwDAwDAwDhwBhgAAAAAAA/ABzgDAwDAwDAwDAwBhgf/wf/wAAAAAAA/AB/gDIwDIwDIwDIwDIwB5gA5AAAACAACAAP/wf/wSAASAAAAAA/CBzmDAzDAzDAzDAzBhnD/+D/4AAAAAAf/wf/wDAADAADAADAADgAB/wAfwAAAAAAb/wb/wAAAAADAADb//AAAAAAAAAf/wf/wAMAA+ABzADhgDAwCAQAAAf/wf/wAAAAAAD/wD/wDAADAADAADAAB/wB/wDAACAADAADgAB/wAAAAAAD/wD/wDAADAADAADAADgAB/wAfwAAAAAAA/ABzgDAwDAwDAwDAwDAwB/gA/AAAAAAAD//D//DAwDAwDAwDAwDAwB/gA/AAAAAAAA/ABzgDAwDAwDAwDAwBhgD//D//AAAAAAD/wD/wDAADAADAAAAABxgD5wDIwCMwDMwDMwBnwAjgCAACAAf/gf/wCAwCAQCAQAAAD/AD/gAAwAAwAAwAAwABgD/wD/wAAACAADwAA+AAPwABwAHwA+ADwACAACAAD4AA/AAHwAHwA+ADwAD4AAfAADwAHwB+ADwACAACAQDAwBhgA/AAeAAeABzgDhwCAQCAADwAB8AAPHAD+AD4AfAD4ADgAAAQCAwCDwCHQCMQC4QDwQDAQCAQAAAAAAAAAACAP//f//YAAQAAAAAAAAf/wf/wAAAAAAAAAQAAf4ff//ADAAAAAAAAAAAAAAAAAcAAcAAYAAYAAMAAMAAcAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'),
+    atob('AAAAAAAAAAAAAP+w/5AAAAAA4ADgAOAA4AAAAAAAAAABgBmAGbAb8D+A+YDZ8B/wf4D5gJmAGQAQAAAAAAAeOD8cMwzxj/GPMYwc/Az4AAAAAHAA+DDIYMjA+YBzAAYADeA7MHMw4zDD4ADAAAAz4H/wzjDHMMMwwbBj4APgADAAAAAA4ADgAAAAAAAAAAfwH/54B+ABAAAAAOABeAcf/gfwAAAAACAAaAD4APgAOABgAAAAAAACAAIAAgA/wAMAAgACAAAAAAAAPAA4AAAAAAIAAgACAAIAAgAAAAAAADAAMAAAAAAAcAfwf4D4AIAAAAA/wH/gwDDAMMAwwDB/4D/AAAAAAGAAwAD/8P/wAAAAAHAw8HDA8MHww7DnMH4wGBAAAMBgyHDcMPww/DDv4MfAAAAAAAHgD+A+YPhgwGAH8AfwAEAAAAAA/GD8cMwwzDDMMM5wx+ABgAAAP8B/4MwwzDDMMMwwx+ADwAAAgADAAMBwwfDPgP4A8ADAAAAAe+D/8M4wxjDGMP5wf+ABwAAAfAB+cMYwwjDCMMYwf+A/wAAAAAAAAAxgBCAAAAAAAAAYPBA4AAAAAAAAAgAHAA+AHMAYYAAAAAAAAAAAAAAJAAkACQAJAAkACQAJAAkAAAAAAAAAAAAAABhgHMAPgAcAAgAAAAAAAABgAOAAwbDDsMYA/AA4AAAAAAAD4A/wGBgxzDPsMyQjJDPkM+wYIBxgD+AAAAAAABAA8A/gf8DwwODA/sAfwAHwADAAAP/w//DGMMYwxjDOMP9we+ABwA8AP8Bw4MAwwDDAMMAwwDDgcHDgMMAAAAAA//D/8MAwwDDAMMAw4HB/4D/AAAAAAP/w//DGMMYwxjDGMMQwgBAAAP/w//DDAMMAwwDDAMAADwA/wHDgwDDAMMAwwDDCMOJwc+ADwAAA//D/8AMAAwADAAMAAwD/8P/wAAAAAP/w//AAAABgAHAAMAAwAHD/4P+AAAAAAP/w//AOAB+AOcBw4MBwgDAAEAAA//D/8AAwADAAMAAwADAAAP/w//A8AA8AA+AA8AHwB8AeAHgA//D/8AAAAAD/8P/wcAAcAA8AA4AB4P/w//AAAA8AP8Bw4MAwwDDAMMAwwDDgcH/gP8AAAAAA//D/8MMAwwDDAMYA7gB8ABgADwA/wHDgwDDAMMAwwDDA8ODwf/A/8AAAAAD/8P/wwwDDAMMAx4Dv4HxwEBAAAHjg/HDMMMYwxjDGMONwc+ABwMAAwADAAMAA//D/8MAAwADAAIAAAAD/wP/gAHAAMAAwADAAMAHg/8AAAMAA+AA/AAfgAPAA8AfgPwD4AMAAwAD4AD+AA/AA8A/g/gDwAP4AH8AB8APwH8D8AMAAgBDAMPDgO8APAB8AOcDw8MAwgBCAAOAAeAAeAAfwH/B4AOAAwAAAAMAwwPDB8Mew3jD4MPAwwDAAAAAAAAB//3//QABAAAAAAADgAP4AH+AB8AAQAABAAEAAf/9//wAAAAAAAAAAGAAwAGAAwABgADAAGAAAAAAAAAQABAAEAAQABAAEAAQABAAEAAQABAAAAAAAAAAAAAAAAAAAAAAAQA3wHbAZMBswGzAf4A/wAAAAAP/w//AYMBgwGDAYMA/gB8AAAAEAD+Ae8BgwGDAYMBgwDGAAAAMAD+Ae8BgwGDAYMBhw//D/8AAAAYAP4B/wGTAZMBkwGTAP4AcAEAAYAP/w//CQAJAAAwAP4hz3GDMQMxAzGHcf/h/8AAAAAP/w//AYABgAGAAYAA/wB/AAAAAA3/Df8AAAAAOf/9//AAAAAP/w//ADgAfADGAYMBAQAAD/8P/wAAAAAB/wH/AYABgAGAAf8A/wGAAYABgAH/AP8AAAAAAf8B/wGAAYABgAGAAP8AfwAAADAA/gHvAYMBgwGDAYMA/gB8AAAAAAH/8f/xgwGDAYMBgwD+AHwAAAAwAP4B7wGDAYMBgwGHAf/x//AAAAAB/wH/AYABgAEAAAAA5gHzAbMBkwGbAd8AzgEAAYAP/wf/AQMBAwAAAAAB/gH/AAMAAwADAAcB/wH/AAABAAHgAPwAHwAPAH4B8AGAAQAB8AB+AA8APwHwAeAA/AAPAD8B+AHAAQEBgwHOAHwAOAD+AccBAwAAAQAB4AD4EB/wB8A/APgBwAAAAAEBgwGPAZ8B8wHjAcMBAQAAAAAABgf/9/n2AAAAAAAP/w//AAAEAAYAB/nz//AGAAAAAAAAAAAAcABgAGAAcAAwAHAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'),
     32,
-    atob("BAYHEQsQDAQICAgKBQgFBwsHCgoLCgsJCgsFBQsOCwkQCwsNDAoJDQwECAsJDwwNCw0LCwsNCxELCgsHBwcMDAkKCwoLCwYLCwQFCQQPCwsLCwYJBwsJDgkJCggFCAwS"),
-    18+(scale<<8)+(1<<16)
+    atob("AwUHDwoOCwQHBwcJBAcEBgoGCQkKCQoICQoFBQoMCgkPCgoMCwkICwsECAoIDgsMCgwKCgoLCg8KCQoHBgcLCwgJCgkKCQYKCgQECAQOCgoKCgYIBwoIDAkJCAcEBwsQ"),
+    16+(scale<<8)+(1<<16)
   );
   return this;
 };
@@ -167,12 +167,19 @@ function imgWatch() {
 
 function imgHomeAssistant() {
   return {
-    width : 48, height : 48, bpp : 1,
-    transparent : 0,
-    buffer : require("heatshrink").decompress(atob("AD8BwAFDg/gAocP+AFDj4FEn/8Aod//wFD/1+FAf4j+8AoMD+EPDAUH+OPAoUP+fPAoUfBYk/C4l/EYIwC//8n//FwIFEgYFD4EH+E8nkP8BdBAonjjk44/wj/nzk58/4gAFDF4PgCIMHAoPwhkwh4FB/EEkEfIIWAHwIFC4A+BAoXgg4FDL4IFDL4IFDLIYFkAEQA=="))
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/4AF84CB4YCBwICBCAP+jFH/k8g/4kkH+AFB8ACB4cY4eHzPhgmZkHnzPn8fb4/gvwUD8EYARhAC"))
   }
 }
 
+function imgAgenda() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : require("heatshrink").decompress(atob("/4AFnPP+ALBAQX4CIgLFAQvggEBAQvAgEDAQMCwEAgwTBhgiB/AlCGQ8BGQQ"))
+  }
+}
 
 /************
  * 2D MENU with entries of:
@@ -209,12 +216,10 @@ try{
 
 /*
  * AGENDA MENU
+ * Note that we handle the agenda differently in order to hide old entries...
  */
 var agendaIdx = 0;
-var agenda = storage.readJSON("android.calendar.json");
-if(agenda !== undefined){
-  agenda = agenda.sort((a,b)=>a.timestamp - b.timestamp);
-
+if(storage.readJSON("android.calendar.json") !== undefined){
   function nextAgendaEntry(){
     agendaIdx += 1;
   }
@@ -226,17 +231,24 @@ if(agenda !== undefined){
   menu.push([
     function(){
       var now = new Date();
-      agenda = agenda.filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000);
+      var agenda = storage.readJSON("android.calendar.json")
+        .filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000)
+        .sort((a,b)=>a.timestamp - b.timestamp);
+
+      if(agenda.length <= 0){
+        return ["All done", imgAgenda()]
+      }
 
       agendaIdx = agendaIdx < 0 ? 0 : agendaIdx;
       agendaIdx = agendaIdx >= agenda.length ? agendaIdx -1 : agendaIdx;
+
       var entry = agenda[agendaIdx];
-      var title = entry.title.slice(0,15);
+      var title = entry.title.slice(0,14);
       var date = new Date(entry.timestamp*1000);
       var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
-      dateStr += entry.durationInSeconds < 86400 ? "  |  " + locale.time(date,1) : "";
+      dateStr += entry.durationInSeconds < 86400 ? " / " + locale.time(date,1) : "";
 
-      return [title + "\n" + dateStr, undefined, () => nextAgendaEntry(), () => previousAgendaEntry(), null]
+      return [title + "\n" + dateStr, imgAgenda(), () => nextAgendaEntry(), () => previousAgendaEntry(), null]
     },
   ]);
 }
@@ -475,7 +487,7 @@ function drawTime(){
   y += parseInt((H - y)/2) + 5;
 
   var menuEntry = getMenuEntry();
-  var menuName = menuEntry[0];
+  var menuName = String(menuEntry[0]);
   var menuImg = menuEntry[1];
   var printImgLeft = settings.menuPosY != 0;
 
@@ -509,7 +521,7 @@ function drawTime(){
     var scale = imgWidth / menuImg.width;
     g.drawImage(
       menuImg,
-      W/2 + (printImgLeft ? -strWidth/2-2 : strWidth/2+2) - parseInt(imgWidth/2),
+      W/2 + (printImgLeft ? -strWidth/2-4 : strWidth/2+4) - parseInt(imgWidth/2),
       y - parseInt(imgWidth/2),
       { scale: scale }
     );
