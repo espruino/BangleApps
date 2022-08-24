@@ -55,8 +55,8 @@
       },
       "End Hour": {
         value: settings.end,
-        min: 1,
-        max: 24,
+        min: 0,
+        max: 23,
         format: (v) => v,
         onchange: (v) => {
           settings.end = v;
