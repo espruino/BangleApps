@@ -25,12 +25,12 @@ class State {
 
   clear () {
     clearWatch();
-    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+    g.clearRect(Bangle.appRect);
     g.setFontAlign(0, 0);
   }
 
   draw () {
-    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+    g.clearRect(Bangle.appRect);
   }
 
   init () { }
@@ -112,8 +112,6 @@ class InitState extends State {
   }
 
   draw () {
-    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
-    g.setFontAlign(0, 0); // center font
     g.setFont("Vector", 50); // vector font, 80px
     drawCounter(this.timeCounter);
   }
@@ -185,7 +183,7 @@ class DoneState extends State {
   }
 
   draw () {
-    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+    g.clearRect(Bangle.appRect);
     E.showPrompt("You are a hero!", {
       buttons : {"AGAIN":1,"BREAK":2}
     }).then((v) => {
@@ -268,6 +266,8 @@ class Bangle2 {
 }
 
 function drawCounter (currentValue, x, y) {
+  g.clearRect(Bangle.appRect);
+  g.setFontAlign(0, 0); // center font
   if (currentValue < 0) {
     return;
   }
@@ -296,7 +296,7 @@ function drawCounter (currentValue, x, y) {
     secondsString = '0' + seconds;
   }
 
-  g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+  g.clearRect(Bangle.appRect);
   g.drawString(minutesString + ':' + secondsString, x, y);
 }
 
