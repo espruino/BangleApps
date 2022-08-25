@@ -44,7 +44,7 @@
         },
       },
       "Sleep Mode": {
-        value: settings.sleep,
+        value: !!settings.sleep,
         onchange: (v) => {
           settings.sleep = v;
           writeSettings(settings);
