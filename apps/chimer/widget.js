@@ -7,6 +7,7 @@
       type: 1,
       freq: 0,
       repeat: 1,
+      sleep: true,
       start: 6,
       end: 22,
     };
@@ -45,9 +46,9 @@
       s = now.getSeconds(),
       ms = now.getMilliseconds();
     if (
-      h > settings.end ||
-      (h >= settings.end && m !== 0) ||
-      h < settings.start
+      (settings.sleep && h > settings.end) ||
+      (settings.sleep && h >= settings.end && m !== 0) ||
+      (settings.sleep && h < settings.start)
     ) {
       var mLeft = 60 - m,
         sLeft = mLeft * 60 - s,
