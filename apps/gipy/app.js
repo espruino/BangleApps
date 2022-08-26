@@ -46,19 +46,24 @@ class Status {
     this.remaining_distances = r; // how much distance remains at start of each segment
     this.starting_time = getTime();
     this.old_points = [];
+    this.old_times = [];
   }
   new_position_reached(position) {
+    let now = getTime();
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
     if (this.old_points.length == 0) {
       this.old_points.push(position);
+      this.old_times.push(now);
     } else {
       let last_point = this.old_points[this.old_points.length - 1];
       if (last_point.lon != position.lon || last_point.lat != position.lat) {
         if (this.old_points.length == 4) {
           this.old_points.shift();
+          this.old_times.shift();
         }
         this.old_points.push(position);
+        this.old_times.push(now);
       } else {
         return null;
       }
@@ -226,21 +231,33 @@ class Status {
       .setColor(g.theme.fg)
       .drawString(hours + ":" + minutes, 0, 30);
 
+    let point_time = this.old_times[this.old_times.length - 1];
     let done_distance = this.remaining_distances[0] - remaining_distance;
-    let done_in = now.getTime() / 1000 - this.starting_time;
+    let done_in = point_time - this.starting_time;
     let approximate_speed = Math.round((done_distance * 3.6) / done_in);
     g.setFont("6x8:2").drawString(
       "" + this.distance_to_next_point + "m",
       0,
       g.getHeight() - 49
     );
+
+    let instant_speed =
+      this.old_points[0].distance(this.old_points[this.old_points.length - 1]) /
+      (point_time - this.old_times[0]);
+    let approximate_instant_speed = Math.round(instant_speed * 3.6);
+
     g.setFont("6x8:2")
       .setFontAlign(-1, -1, 0)
-      .drawString("" + approximate_speed + "km/h", 0, g.getHeight() - 32);
+      .drawString(
+        "" + approximate_speed + "km/h (in." + approximate_instant_speed + ")",
+        0,
+        g.getHeight() - 15
+      );
+
     g.setFont("6x8:2").drawString(
       "" + rounded_distance + "/" + total,
       0,
-      g.getHeight() - 15
+      g.getHeight() - 32
     );
 
     if (this.distance_to_next_point <= 100) {
@@ -605,17 +622,17 @@ function simulate_gps(status) {
   if (point_index >= status.path.len) {
     return;
   }
-  let p1 = status.path.point(0);
-  let n = status.path.len;
-  let p2 = status.path.point(n - 1);
-  //let p1 = status.path.point(point_index);
-  //let p2 = status.path.point(point_index + 1);
+  //let p1 = status.path.point(0);
+  //let n = status.path.len;
+  //let p2 = status.path.point(n - 1);
+  let p1 = status.path.point(point_index);
+  let p2 = status.path.point(point_index + 1);
 
   let alpha = fake_gps_point - point_index;
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
   let old_pos = status.position;
 
-  fake_gps_point += 0.005; // advance simulation
+  fake_gps_point += 0.05; // advance simulation
   status.update_position(pos, null);
 }
 
