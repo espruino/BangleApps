@@ -45,38 +45,38 @@ class Status {
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
     this.starting_time = getTime();
+    this.stopped_at = this.starting_time; // we need to now how long we stop in order to compute real avg speed
     this.old_points = [];
     this.old_times = [];
   }
   new_position_reached(position) {
-    let now = getTime();
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
-    if (this.old_points.length == 0) {
-      this.old_points.push(position);
-      this.old_times.push(now);
-    } else {
-      let last_point = this.old_points[this.old_points.length - 1];
-      if (last_point.lon != position.lon || last_point.lat != position.lat) {
-        if (this.old_points.length == 4) {
-          this.old_points.shift();
-          this.old_times.shift();
-        }
-        this.old_points.push(position);
-        this.old_times.push(now);
-      } else {
-        return null;
-      }
-    }
+    let now = getTime();
+    this.old_points.push(position);
+    this.old_times.push(now);
+
     if (this.old_points.length == 1) {
       return null;
-    } else {
-      // let's just take angle of segment between oldest and newest point
-      let oldest = this.old_points[0];
-      let diff = position.minus(oldest);
-      let angle = Math.atan2(diff.lat, diff.lon);
-      return angle;
     }
+
+    let last_point = this.old_points[this.old_points.length - 1];
+    let oldest = this.old_points[0];
+    this.instant_speed =
+      oldest_point.distance(last_point) / (now - this.old_times[0]);
+
+    if (this.old_points.length == 8) {
+      this.old_points.shift();
+      this.old_times.shift();
+    }
+    // let's just take angle of segment between newest point and a point a bit before
+    let previous_index = this.old_points.length - 3;
+    if (previous_index < 0) {
+      previous_index = 0;
+    }
+    let diff = position.minus(this.old_points[previous_index]);
+    let angle = Math.atan2(diff.lat, diff.lon);
+    return angle;
   }
   update_position(new_position, maybe_direction) {
     let direction = this.new_position_reached(new_position);
@@ -241,10 +241,7 @@ class Status {
       g.getHeight() - 49
     );
 
-    let instant_speed =
-      this.old_points[0].distance(this.old_points[this.old_points.length - 1]) /
-      (point_time - this.old_times[0]);
-    let approximate_instant_speed = Math.round(instant_speed * 3.6);
+    let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
 
     g.setFont("6x8:2")
       .setFontAlign(-1, -1, 0)
