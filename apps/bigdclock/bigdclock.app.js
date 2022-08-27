@@ -29,7 +29,8 @@ function draw() {
     const level = E.getBattery();
     const width = level + (level/2);
     var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-    var dows = require("date_utils").dows(0,1);
+//    var dows = require("date_utils").dows(0,1);
+    var dows = ["SU","MO","TU","WE","TH","FR","SA"];
 
     g.reset();
     g.clear();
@@ -53,12 +54,15 @@ function draw() {
     g.fillRect(167,163,170,167);
     if (Bangle.isCharging()) {
       g.setColor(1,1,0);
-    } else if (level > 40) {
-      g.setColor(0,1,0);
+      g.fillRect(12,162,12+width,168);
     } else {
       g.setColor(1,0,0);
+      g.fillRect(12,162,57,168);
+      g.setColor(1,1,0);
+      g.fillRect(58,162,72,168);
+      g.setColor(0,1,0);
+      g.fillRect(73,162,162,168);
     }
-    g.fillRect(12,162,12+width,168);
     if (level < 100) {
       g.setColor(g.theme.bg);
       g.fillRect(12+width+1,162,162,168);
