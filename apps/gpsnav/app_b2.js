@@ -1,9 +1,23 @@
-const Ypos = 24 - 6; // 6 offset because of the smaller labels font
 var candraw = true;
 var brg = 0;
 var wpindex = 0;
+var locindex = 0;
 const labels = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-var loc = require("locale");
+var loc = {
+  speed: [
+    require("locale").speed,
+    (kph) => {
+      return (kph / 1.852).toFixed(1) + "kn ";
+    }
+  ],
+  distance: [
+    require("locale").distance,
+    (m) => {
+      return (m / 1.852).toFixed(3) + "nm ";
+    }
+  ]
+};
+
 
 function drawCompass(course) {
   if (!candraw) return;
@@ -11,7 +25,7 @@ function drawCompass(course) {
   g.setFont("Vector", 18);
   var start = course - 90;
   if (start < 0) start += 360;
-  g.fillRect(14, Ypos + 45, 162, Ypos + 49);
+  g.fillRect(14, 67, 162, 71);
   var xpos = 16;
   var frag = 15 - start % 15;
   if (frag < 15) xpos += Math.floor((frag * 4) / 5);
@@ -19,13 +33,13 @@ function drawCompass(course) {
   for (var i = frag; i <= 180 - frag; i += 15) {
     var res = start + i;
     if (res % 90 == 0) {
-      g.drawString(labels[Math.floor(res / 45) % 8], xpos - 6, Ypos + 6);
-      g.fillRect(xpos - 2, Ypos + 25, xpos + 2, Ypos + 45);
+      g.drawString(labels[Math.floor(res / 45) % 8], xpos - 6, 28);
+      g.fillRect(xpos - 2, 47, xpos + 2, 67);
     } else if (res % 45 == 0) {
-      g.drawString(labels[Math.floor(res / 45) % 8], xpos - 9, Ypos + 6);
-      g.fillRect(xpos - 2, Ypos + 30, xpos + 2, Ypos + 45);
+      g.drawString(labels[Math.floor(res / 45) % 8], xpos - 9, 28);
+      g.fillRect(xpos - 2, 52, xpos + 2, 67);
     } else if (res % 15 == 0) {
-      g.fillRect(xpos, Ypos + 36, xpos + 1, Ypos + 45);
+      g.fillRect(xpos, 58, xpos + 1, 67);
     }
     xpos += 12;
   }
@@ -37,7 +51,7 @@ function drawCompass(course) {
     if (bpos < 16) bpos = 7;
     if (bpos > 160) bpos = 169;
     g.setColor(g.theme.bgH);
-    g.fillCircle(bpos, Ypos + 43, 6);
+    g.fillCircle(bpos, 63, 8);
   }
 }
 
@@ -92,29 +106,30 @@ function distance(a, b) {
 var selected = false;
 
 function drawN() {
-  var txt = loc.speed(speed);
+  g.clearRect(0, 89, 175, 175);
+  var txt = loc.speed[locindex](speed);
   g.setColor(g.theme.fg);
   g.setFont("6x8", 2);
-  g.drawString("o", 68, Ypos + 68);
+  g.drawString("o", 68, 87);
   g.setFont("6x8", 1);
-  g.drawString(txt.substring(txt.length - 3), 156, Ypos + 70 + 30);
+  g.drawString(txt.substring(txt.length - 3), 156, 119);
   g.setFont("Vector", 36);
   var cs = course.toString().padStart(3, "0");
-  g.drawString(cs, 2, Ypos + 70);
-  g.drawString(txt.substring(0, txt.length - 3), 92, Ypos + 70);
+  g.drawString(cs, 2, 89);
+  g.drawString(txt.substring(0, txt.length - 3), 92, 89);
   g.setColor(g.theme.fg);
   g.setFont("Vector", 18);
   var bs = brg.toString().padStart(3, "0");
-  g.setColor(g.theme.fg2);
-  g.drawString("Brg:", 1, Ypos + 110);
-  g.drawString("Dist:", 1, Ypos + 130);
-  g.setColor(selected ? g.theme.bgH : g.theme.bg);
-  g.fillRect(90, Ypos + 109, 175, Ypos + 125);
-  g.setColor(selected ? g.theme.fgH : g.theme.fg);
-  g.drawString(wp.name, 92, Ypos + 110);
   g.setColor(g.theme.fg);
-  g.drawString(bs, 42, Ypos + 110);
-  g.drawString(loc.distance(dist), 42, Ypos + 130);
+  g.drawString("Brg:", 1, 128);
+  g.drawString("Dist:", 1, 148);
+  g.setColor(selected ? g.theme.bgH : g.theme.bg);
+  g.fillRect(90, 127, 175, 143);
+  g.setColor(selected ? g.theme.fgH : g.theme.fg);
+  g.drawString(wp.name, 92, 128);
+  g.setColor(g.theme.fg);
+  g.drawString(bs, 42, 128);
+  g.drawString(loc.distance[locindex](dist), 42, 148);
   g.setFont("6x8", 1);
   g.setColor(satellites ? g.theme.bg : g.theme.bgH);
   g.fillRect(0, 167, 75, 175);
@@ -161,8 +176,8 @@ function startTimers() {
 }
 
 function drawAll() {
-  g.setColor(1, 0, 0); //red
-  g.fillPoly([88, Ypos + 48, 78, Ypos + 70, 98, Ypos + 70]);
+  g.setColor(1, 0, 0);
+  g.fillPoly([88, 71, 78, 88, 98, 88]);
   drawN();
   drawCompass(heading);
 }
@@ -176,10 +191,10 @@ function startdraw() {
 
 function setButtons() {
   Bangle.setUI("leftright", btn => {
-    if (btn == 0) {
+    if (!btn) {
       doselect();
     } else {
-      nextwp.bind(null, btn);
+      nextwp(btn);
     }
   });
 }
@@ -211,12 +226,16 @@ var waypoints = require("waypoints").load();
 wp = waypoints[0];
 
 function nextwp(inc) {
-  if (!selected) return;
-  wpindex += inc;
-  if (wpindex >= waypoints.length) wpindex = 0;
-  if (wpindex < 0) wpindex = waypoints.length - 1;
-  wp = waypoints[wpindex];
-  drawN();
+  if (selected) {
+    wpindex += inc;
+    if (wpindex >= waypoints.length) wpindex = 0;
+    if (wpindex < 0) wpindex = waypoints.length - 1;
+    wp = waypoints[wpindex];
+    drawN();
+  } else {
+    locindex = inc > 0 ? 1 : 0;
+    drawN();
+  }
 }
 
 function doselect() {
@@ -230,6 +249,7 @@ function doselect() {
     require("waypoints").save(waypoints);
   }
   selected = !selected;
+  print("selected = " + selected);
   drawN();
 }
 
