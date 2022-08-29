@@ -61,7 +61,7 @@ class Status {
     }
 
     let last_point = this.old_points[this.old_points.length - 1];
-    let oldest = this.old_points[0];
+    let oldest_point = this.old_points[0];
     this.instant_speed =
       oldest_point.distance(last_point) / (now - this.old_times[0]);
 
