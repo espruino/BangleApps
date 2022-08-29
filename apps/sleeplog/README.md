@@ -29,7 +29,7 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
     (by default: consecutive & true sleeping)
   - __touch the wrench__ (upper right corner)  
     to enter the settings
-  - __back button widget__ (on the upper left corner)  
+  - __use back button widget__ (upper left corner)  
     exit the app
 
 #### Inside the settings:
@@ -51,7 +51,17 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
   - __Enabled__ | completely en-/disables the background service  
     __on__ / _off_
   - __Debugging__ submenu  
-    - __View log__ | display log is not implemented yet
+    - __View log__ | display logfile data  
+      Select the logfile by its starting time.  
+      Thresholds are shown as line with its value.  
+      - __swipe left & right__  
+        to change displayed duration
+      - __swipe up & down__  
+        to change displayed value range
+      - __touch the graph__  
+        to change between light & dark colors
+      - __use back button widget__ (upper left corner)  
+        to go back to the logfile selection
     - __Enabled__ | en-/disables debugging  
       _on_ / __off__
     - __write File__ | toggles if a logfile is written  
@@ -144,10 +154,9 @@ Available through the App Loader when your watch is connected.
 ### Worth Mentioning
 ---
 #### To do list
-* Update screenshots.
-* Add more functionallities to interface.html.
-* Check translations.
-* Enable recieving data on the Gadgetbridge side + testing.  
+- Check translations.
+- Add more functionallities to interface.html.
+- Enable recieving data on the Gadgetbridge side + testing.  
   __Help appreciated!__
 
 #### Requests, Bugs and Feedback
