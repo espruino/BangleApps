@@ -21,8 +21,13 @@
     {"name": "sleeplog.json"}
   ],
   "screenshots": [
-    {"url": "screenshot1.png"},
-    {"url": "screenshot2.png"},
-    {"url": "screenshot3.png"}
+    {"url": "screenshot-1_app_light.png"},
+    {"url": "screenshot-2_day_light.png"},
+    {"url": "screenshot-3_graph_light.png"},
+    {"url": "screenshot-4_graph2_light.png"},
+    {"url": "screenshot-5_app_dark.png"},
+    {"url": "screenshot-6_day_dark.png"},
+    {"url": "screenshot-7_graph_dark.png"},
+    {"url": "screenshot-8_graph2_dark.png"}
   ]
 }
