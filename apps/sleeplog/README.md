@@ -6,53 +6,90 @@ This app logs and displays the following states:
 
 It is using the built in movement calculation to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
 
-````diff
--+-                       -+-
--+-     BETA Version      -+-
--+-                       -+-
-````
+Logfiles are not removed on un-/reinstall to prevent data loss.
+
+| Filename (* _example_)       | Content         | Removeable in     |
+|------------------------------|-----------------|-------------------|
+| `sleeplog.log (StorageFile)` | recent logfile  | App Web Interface |
+| `sleeplog_1234.log`*         | old logfiles    | App Web Interface |
+| `sleeplog_123456.csv`*       | debugging files | Web IDE           |
 
 
 ---
-### Introduction
+### App Usage
 ---
-I am proud to present the new sleeplog app: version 0.10 🎉 ✨ 🎊
 
-Sorry that it took so long but hopefully most of the early bugs are sorted out and the app should be ready to be use and get tested!
+#### On the main app screen:
+  - __swipe left & right__  
+    to change the displayed day
+  - __touch the "title"__ (e.g. `Night to Fri 20/05/2022`)  
+    to enter day selection prompt
+  - __touch the info area__  
+    to change the displayed information  
+    (by default: consecutive & true sleeping)
+  - __touch the wrench__ (upper right corner)  
+    to enter the settings
+  - __back button widget__ (on the upper left corner)  
+    exit the app
 
-I would love to hear about your impressions and like to know your choice of thresholds, to set the default values as optimized as possible.
+#### Inside the settings:
+  - __Thresholds__ submenu  
+    Changes take effect from now on, not retrospective!
+    - __Max Awake__ | maximal awake duration  
+      _10min_ / _20min_ / ... / __60min__ / ... / _120min_
+    - __Min Consecutive__ | minimal consecutive sleep duration  
+      _10min_ / _20min_ / ... / __30min__ / ... / _120min_
+    - __Deep Sleep__ | deep sleep threshold  
+      _30_ / _31_ / ... / __100__ / ... / _200_
+    - __Light Sleep__ | light sleep threshold  
+      _100_ / _110_ / ... / __200__ / ... / _400_  
+    - __Reset to Default__ | reset to bold values above
+  - __BreakToD__ | time of day to break view  
+    _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
+  - __App Timeout__ | app specific lock timeout  
+    __0s__ / _10s_ / ... / _120s_
+  - __Enabled__ | completely en-/disables the background service  
+    __on__ / _off_
+  - __Debugging__ submenu  
+    - __View log__ | display log is not implemented yet
+    - __Enabled__ | en-/disables debugging  
+      _on_ / __off__
+    - __write File__ | toggles if a logfile is written  
+      _on_ / __off__
+    - __Duration__ | duration for writing into logfile  
+      _1h_ / _2h_ / ... / __12h__ / _96_  
+    - The following data is logged to a csv-file:    
+      _timestamp_ (in days since 1900-01-01 00:00 UTC used by office software) _, movement, status, consecutive, asleepSince, awakeSince, bpm, bpmConfidence_
 
-The last piece of work is to rewrite the README.md to show how to use it and show the restrictions and possibilities.
-But here are some explanations how to use the app and settings:
 
-- __On the app screen:__
-  - swipe left & right to change the displayed day
-  - touch on the "title" (e.g. `Night to Fri 20/05/2022`) to enter a day selection prompt
-  - touch on the info area (by default displaying consecutive and true sleeping) to change the displayed information
-  - touch on the wrench (upper right corner) to enter the settings
-  - exit the app with the UI back button widget on the upper left corner
+---
+### Web Interface Usage
+---
 
-- __Inside the settings:__
-  - the threshold values are accessible through a submenu
-  - app timeout lets you specify a separate `lockTimeout` and `backlightTimeout` only for the sleeplog app
-  - debug settings are available in a submenu down at the end:
-    - display log is not implemented yet
-    - options `Enable` and `write File` should be self explaining
-    - the `Duration` specifies how long data should be written into the .csv file
-    - the .csv file loggs the following data (timestamps are in days since 1900-01-01 00:00 UTC as used by office software):  
-      _timestamp, movement, status, consecutive, asleepSince, awakeSince, bpm, bpmConfidence_
+Available through the App Loader when your watch is connected.
 
-- __Timestamps and files:__
-  1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:  
-    seconds since 1970-01-01 00:00 UTC
-  2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
-    10 minutes since 1970-01-01 00:00 UTC (`Bangle / (10 * 60 * 1000)`)
-  3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
-    hours since 1970-01-01 00:00 UTC (`Bangle / (60 * 60 * 1000)`)
-  4. logged timestamps inside the debug .csv file are formatted for office calculation software:
-    days since 1900-01-01 00:00 UTC (`Bangle / (24 * 60 * 60 * 1000) + 25569`)
-  5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
-    fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(Bangle)` and `require("sleeplog").fnToMs(fortnight)`)
+- __view data__  
+  Display the data to each timestamp in a table.
+- __save csv-file__  
+  Download a csv-file with the data to each timestamp.  
+  The time format is chooseable beneath the file list. 
+- __delete file__  
+  Deletes the logfile from the watch. __Please backup your data first!__
+
+---
+### Timestamps and files
+---
+
+1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:  
+  seconds since 1970-01-01 00:00 UTC
+2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
+  10 minutes since 1970-01-01 00:00 UTC (`Bangle / (10 * 60 * 1000)`)
+3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
+  hours since 1970-01-01 00:00 UTC (`Bangle / (60 * 60 * 1000)`)
+4. logged timestamps inside the debug .csv file are formatted for office calculation software:  
+  days since 1900-01-01 00:00 UTC (`Bangle / (24 * 60 * 60 * 1000) + 25569`)
+5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
+  fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(Bangle)` and `require("sleeplog").fnToMs(fortnight)`)
 
 - __Logfiles from before 0.10:__  
   timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
@@ -63,7 +100,7 @@ But here are some explanations how to use the app and settings:
 
 
 ---
-### Access statistics
+### Access statistics (developer information)
 ---
 * Last Asleep Time [Date]:  
   `Date(sleeplog.awakeSince)`
@@ -107,10 +144,11 @@ But here are some explanations how to use the app and settings:
 ### Worth Mentioning
 ---
 #### To do list
-* Edit/complete README.md.
 * Update screenshots.
 * Add more functionallities to interface.html.
-* Enable recieving data on the Gadgetbridge side + testing.
+* Check translations.
+* Enable recieving data on the Gadgetbridge side + testing.  
+  __Help appreciated!__
 
 #### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) (or send me a [mail](mailto:banglejs@storm64.de)).
@@ -126,15 +164,3 @@ The app icon is downloaded from [https://icons8.com](https://icons8.com).
 
 #### License
 [MIT License](LICENSE)
-
----
-
-
-Temporarily removed logfiles from metadata.json to prevent removal on un-/reinstall:
-```
-"data": [
-  {"name": "sleeplog.log", "storageFile": true},
-  {"wildcard": "sleeplog_????.log"},
-  {"wildcard": "sleeplog_??????.csv"}
-],
-````

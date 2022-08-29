@@ -358,7 +358,7 @@
     // display info/warning prompt or menu
     if (thresholdsPrompt) {
       thresholdsPrompt = false;
-      E.showPrompt("Changes take affect from now on, not retrospective", {
+      E.showPrompt("Changes take effect from now on, not retrospective", {
         title: /*LANG*/"Thresholds",
         buttons: {
           /*LANG*/"Ok": 0
