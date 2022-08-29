@@ -102,11 +102,11 @@ Available through the App Loader when your watch is connected.
 ---
 ### Access statistics (developer information)
 ---
-* Last Asleep Time [Date]:  
+- Last Asleep Time [Date]:  
   `Date(sleeplog.awakeSince)`
-* Last Awake Duration [ms]:  
+- Last Awake Duration [ms]:  
   `Date() - sleeplog.awakeSince`
-* Last Statistics [object]:
+- Last Statistics [object]:  
   ```
   // get stats of the last night (period as displayed inside the app)
   //  as this might be the mostly used function the data is cached inside the global object 
@@ -133,7 +133,7 @@ Available through the App Loader when your watch is connected.
   // or any other day
   require("sleeplog").getStats(require("sleeplog").getLastBreak(Date(2022,4,10)), 24*60*60*1000);
   ```
-* Total Statistics [object]:
+- Total Statistics [object]:  
   ```
   // use with caution, may take a long time !
   require("sleeplog").getStats(0, 0, require("sleeplog").readLog());
