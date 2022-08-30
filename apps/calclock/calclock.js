@@ -19,7 +19,7 @@ function zp(str) {
   return ("0"+str).substr(-2);
 }
 
-function drawEvent(event, y) {
+function drawEventHeader(event, y) {
   g.setFont("Vector", 24);
 
   var time = isActive(event) ? new Date() : new Date(event.timestamp * 1000);
@@ -27,24 +27,41 @@ function drawEvent(event, y) {
   g.drawString(timeStr, 5, y);
   y += 24;
 
-  g.setFont("6x15", 1);
+  g.setFont("12x20", 1);
   if (isActive(event)) {
-    g.drawString(require("locale").date(time,1),15*timeStr.length,y-15);
+    g.drawString(zp(time.getDate())+". " + require("locale").month(time,1),15*timeStr.length,y-21);
   } else {
     var offset = 0-time.getTimezoneOffset()/1440;
     var days = Math.floor((time.getTime()/1000)/86400+offset)-Math.floor(getTime()/86400+offset);
     if(days > 0) {
       var daysStr = days===1?/*LANG*/"tomorrow":/*LANG*/"in "+days+/*LANG*/" days";
-      g.drawString(daysStr,15*timeStr.length,y-15);
+      g.drawString(daysStr,15*timeStr.length,y-21);
     }
   }
+  return y;
+}
 
+function drawEventBody(event, y) {
   g.setFont("12x20", 1);
   var lines = g.wrapString(event.title, g.getWidth()-10);
+  if (lines.length > 2) {
+    lines = lines.slice(0,2);
+    lines[1] = lines[1].slice(0,-3)+"...";
+  }
   g.drawString(lines.join('\n'), 5, y);
-  y += 20 * lines.length;
-  y += 5;
+  y+=20 * lines.length;
+  if(event.location) {
+    g.drawImage(atob("DBSBAA8D/H/nDuB+B+B+B3Dn/j/B+A8A8AYAYAYAAAAAAA=="),5,y);
+    g.drawString(event.location, 20, y);
+    y+=20;
+  }
+  y+=5;
+  return y;
+}
 
+function drawEvent(event, y) {
+  y = drawEventHeader(event, y);
+  y = drawEventBody(event, y);
   return y;
 }
 
@@ -58,8 +75,9 @@ function drawCurrentEvents(y) {
   if(current.length === 0) {
     y = drawEvent({timestamp: getTime(), durationInSeconds: 100}, y);
   } else {
+    y = drawEventHeader(current[0], y);
     for (var e of current) {
-      y = drawEvent(e, y);
+      y = drawEventBody(e, y);
     }
   }
   curEventHeight = y - curEventHeight;
@@ -67,7 +85,7 @@ function drawCurrentEvents(y) {
 }
 
 function drawFutureEvents(y) {
-  g.setColor("#fff");
+  g.setColor(g.theme.fg);
   for (var e of next) {
     y = drawEvent(e, y);
     if(y>g.getHeight())break;
@@ -92,12 +110,7 @@ function redraw() {
   }
 }
 
-// ------------------ DEBUG -----------------
-// calendar[2].timestamp = getTime();
-
-// Clear the screen once, at startup
 g.clear();
-// draw immediately at first
 fullRedraw();
 var minuteInterval = setInterval(redraw, 60 * 1000);
 
