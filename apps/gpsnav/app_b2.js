@@ -130,6 +130,8 @@ function drawN() {
   g.setColor(g.theme.fg);
   g.drawString(bs, 42, 128);
   g.drawString(loc.distance[locindex](dist), 42, 148);
+  g.setFont("6x8", 0.5);
+  g.drawString("o", 75, 127);
   g.setFont("6x8", 1);
   g.setColor(satellites ? g.theme.bg : g.theme.bgH);
   g.fillRect(0, 167, 75, 175);
