@@ -354,11 +354,17 @@ Layout.prototype.update = function() {
 Layout.prototype.clear = function(l) {
   if (!l) l = this._l;
   g.reset();
-  if (l.type === "txt" && l.pxClear) {
-    var tmpCol = l.col;
-    // set l.col to l.bgCol || g.theme.bg
-    // draw l.label
-    // reset l.col to tmpCol
+  if (l.pxClear) {
+    if ("hv".includes(l.type)) {
+      l.c.forEach(c => {
+        Layout.prototype.clear(c);
+      });
+    } else {
+      var tmpCol = l.col;
+      l.col = l.bgCol || g.getBgColor();
+      Layout.prototype.render(l);
+      l.col = tmpCol;
+    }
   } else {
     if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
     g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
