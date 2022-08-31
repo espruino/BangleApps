@@ -10,7 +10,7 @@
 */
 
 
-function Layout(layout, options) {  
+function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
   this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
@@ -173,8 +173,8 @@ Layout.prototype.render = function (l) {
         g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){
-      var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
-          w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
+      var x = l.x+(0|l.pad)+(0|l.padx), y = l.y+(0|l.pad)+(0|l.pady),
+          w = l.w-(l.pad<<1)-(l.padx<<1), h = l.h-(l.pad<<1)-(l.pady<<1);
       var poly = [
         x,y+4,
         x+4,y,
@@ -234,37 +234,37 @@ Layout.prototype.layout = function (l) {
   // exw,exh = extra width/height available
   switch (l.type) {
     case "h": {
-      var acc_w = l.x + (0|l.pad);
+      var acc_w = l.x + (0|l.pad) + (0|l.padx);
       var accfillx = 0;
       var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
       if (!fillx) { acc_w += (l.w-l._w)>>1; fillx=1; }
       var x = acc_w;
       l.c.forEach(c => {
-        c.x = 0|x;
+        c.x = (0|x) + (0|c.offsetx);
         acc_w += c._w;
         accfillx += 0|c.fillx;
         x = acc_w + Math.floor(accfillx*(l.w-l._w)/fillx);
         c.w = 0|(x - c.x);
-        c.h = 0|(c.filly ? l.h - (l.pad<<1) : c._h);
-        c.y = 0|(l.y + (0|l.pad) + ((1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)>>1));
+        c.h = 0|(c.filly ? l.h - (l.pad<<1) - (l.pady<<1) : c._h);
+        c.y = 0|(l.y + (0|c.offsety) + (0|l.pad) + (0|l.pady) + ((1+(0|c.valign))*(l.h-(l.pad<<1)-(l.pady<<1)-c.h)>>1));
         if (c.c) this.layout(c);
       });
       break;
     }
     case "v": {
-      var acc_h = l.y + (0|l.pad);
+      var acc_h = l.y + (0|l.pad) + (0|l.pady);
       var accfilly = 0;
       var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
       if (!filly) { acc_h += (l.h-l._h)>>1; filly=1; }
       var y = acc_h;
       l.c.forEach(c => {
-        c.y = 0|y;
+        c.y = (0|y) + (0|c.offsety);
         acc_h += c._h;
         accfilly += 0|c.filly;
         y = acc_h + Math.floor(accfilly*(l.h-l._h)/filly);
         c.h = 0|(y - c.y);
-        c.w = 0|(c.fillx ? l.w - (l.pad<<1) : c._w);
-        c.x = 0|(l.x + (0|l.pad) + ((1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)>>1));
+        c.w = 0|(c.fillx ? l.w - (l.pad<<1) - (l.padx<<1) : c._w);
+        c.x = 0|(l.x + (0|c.offsetx) + (0|l.pad) + (0|l.padx) + ((1+(0|c.halign))*(l.w-(l.pad<<1)-(l.padx<<1)-c.w)>>1));
         if (c.c) this.layout(c);
       });
       break;
@@ -275,8 +275,8 @@ Layout.prototype.debug = function(l,c) {
   if (!l) l = this._l;
   c=c||1;
   g.setColor(c&1,c&2,c&4).drawRect(l.x+c-1, l.y+c-1, l.x+l.w-c, l.y+l.h-c);
-  if (l.pad)
-    g.drawRect(l.x+l.pad-1, l.y+l.pad-1, l.x+l.w-l.pad, l.y+l.h-l.pad);
+  if (l.pad || l.padx || l.pady)
+    g.drawRect(l.x+(0|l.pad)+(0|l.padx)-1, l.y+(0|l.pad)+(0|l.pady)-1, l.x+l.w-(0|l.pad)-(0|l.padx), l.y+l.h-(0|l.pad)-(0|l.pady));
   c++;
   if (l.c) l.c.forEach(n => this.debug(n,c));
 };
@@ -288,8 +288,8 @@ Layout.prototype.update = function() {
     if (l.r&1) { // rotation
       var t = l._w;l._w=l._h;l._h=t;
     }
-    l._w = 0|Math.max(l._w + (l.pad<<1), 0|l.width);
-    l._h = 0|Math.max(l._h + (l.pad<<1), 0|l.height);
+    l._w = 0|Math.max(l._w + (l.pad<<1) + (l.padx<<1), 0|l.width);
+    l._h = 0|Math.max(l._h + (l.pad<<1) + (l.pady<<1), 0|l.height);
   }
   var cb = {
     "txt" : function(l) {
@@ -354,8 +354,15 @@ Layout.prototype.update = function() {
 Layout.prototype.clear = function(l) {
   if (!l) l = this._l;
   g.reset();
-  if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
-  g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
+  if (l.type === "txt" && l.pxClear) {
+    var tmpCol = l.col;
+    // set l.col to l.bgCol || g.theme.bg
+    // draw l.label
+    // reset l.col to tmpCol
+  } else {
+    if (l.bgCol!==undefined) g.setBgColor(l.bgCol);
+    g.clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
+  }
 };
 
 exports = Layout;
