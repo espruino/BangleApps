@@ -11,7 +11,7 @@ const accfftbuf = new Int16Array(NUM_POINTS);
 let BPM_est_1 = 0;
 let BPM_est_2 = 0;
 
-Bangle.setOptions({hrmPollInterval: 40, powerSave: false}); // hrm=40Hz
+Bangle.setOptions({hrmPollInterval: 40, powerSave: false}); // hrm=25Hz
 Bangle.setPollInterval(80); // 12.5Hz
 Bangle.setHRMPower(1);
 
@@ -23,7 +23,7 @@ calcfft = (values, idx, normalize, fftbuf) => {
     const sum = values.reduce((a, b) => a + b, 0);
     avg = sum/values.length;
   }
-  // sort ringbuffers to fft buffer
+  // sort ringbuffer to fft buffer
   for(let i_in=idx; i_in<values.length; i_in++, i_out++) {
     fftbuf[i_out] = values[i_in]-avg;
   }
@@ -75,8 +75,8 @@ const minFreqIdx = getFftIdx(1.0, SAMPLE_RATE, NUM_POINTS); // 60 BPM
 const maxFreqIdx = getFftIdx(3.0, SAMPLE_RATE, NUM_POINTS); // 180 BPM
 let rangeIdx = [0, maxFreqIdx-minFreqIdx]; // range of search for the next estimates
 const freqStep=getFftFreq(1, SAMPLE_RATE, NUM_POINTS)*60;
-const maxBpmDiffIdxDown = Math.ceil(5/freqStep); // maximum up BPM
-const maxBpmDiffIdxUp = Math.ceil(10/freqStep); // maximum down BPM
+const maxBpmDiffIdxDown = Math.ceil(5/freqStep); // maximum down BPM
+const maxBpmDiffIdxUp = Math.ceil(10/freqStep); // maximum up BPM
 
 calculate = (idx) => {
   // fft
