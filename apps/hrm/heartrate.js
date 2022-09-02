@@ -8,6 +8,9 @@ var hrmInfo = {}, hrmOffset = 0;
 var hrmInterval;
 var btm = g.getHeight()-1;
 var lastHrmPt = []; // last xy coords we draw a line to
+const settings = Object.assign({
+    mAremoval: 0
+}, require("Storage").readJSON("hrm.json", true) || {});
 
 function onHRM(h) {
   if (counter!==undefined) {
@@ -29,24 +32,32 @@ function onHRM(h) {
       hrmInterval = setInterval(readHRM,41);
     }, 40);
   }
-  updateHrm();
+  updateHrm(hrmInfo.bpm, hrmInfo.confidence);
 }
-Bangle.on('HRM', onHRM);
 
-function updateHrm(){
+function updateHrm(bpm, confidence){
   var px = g.getWidth()/2;
   g.setFontAlign(0,-1);
   g.clearRect(0,24,g.getWidth(),80);
-  g.setFont("6x8").drawString("Confidence "+(hrmInfo.confidence || "--")+"%", px, 70);
+  g.setFont("6x8").drawString("Confidence "+(confidence || "--")+"%", px, 70);
 
   updateScale();
 
   g.setFontAlign(0,0);
-  var str = hrmInfo.bpm || "--";
-  g.setFontVector(40).setColor(hrmInfo.confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
+  var str = bpm || "--";
+  g.setFontVector(40).setColor(confidence === undefined || confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
   px += g.stringWidth(str)/2;
   g.setFont("6x8").setColor(g.theme.fg);
   g.drawString("BPM",px+15,45);
+}
+
+// select motion artifact removal algorithm
+switch(settings.mAremoval) {
+  case 1:
+    require("hrmfftelim").run(updateHrm);
+  break;
+  default:
+    Bangle.on('HRM', onHRM);
 }
 
 function updateScale(){
@@ -61,7 +72,6 @@ var MID = (g.getHeight()+80)/2;
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
 Bangle.on('HRM-raw', function(v) {
-  h=v;
   hrmOffset++;
   if (hrmOffset>g.getWidth()) {
     let thousands = Math.round(rawMax / 1000) * 1000;
@@ -84,7 +94,6 @@ Bangle.on('HRM-raw', function(v) {
   if (counter !==undefined) {
     counter = undefined;
     g.clearRect(0,24,g.getWidth(),g.getHeight());
-    updateHrm();
   }
 });
 

@@ -1,13 +1,17 @@
 {
   "id": "hrm",
   "name": "Heart Rate Monitor",
-  "version": "0.10",
+  "version": "0.11",
   "description": "Measure your heart rate and see live sensor data",
   "icon": "heartrate.png",
   "tags": "health",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"hrm.app.js","url":"heartrate.js"},
+    {"name":"hrmfftelim","url":"fftelim.js"},
+    {"name":"hrm.settings.js","url":"settings.js"},
     {"name":"hrm.img","url":"heartrate-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"hrm.json"}]
 }
