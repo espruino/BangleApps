@@ -15,7 +15,7 @@ they don't interfere with currently-running apps */
   // add widget
   WIDGETS.twenties = {
     buzz: buzz,
-    draw: null,
+    draw: _ => { return null; },
   };
 
   setInterval(WIDGETS.twenties.buzz, move); // buzz to stand / sit
