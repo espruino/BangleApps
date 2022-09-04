@@ -12,4 +12,4 @@ Vibrate to remind you to stand up and look away for healthy living.
 
 ## Creator
 
-@splch
+[@splch](https://github.com/splch/)
