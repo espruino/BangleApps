@@ -4,7 +4,7 @@ Follow the [20-20-20 rule](https://www.aoa.org/AOA/Images/Patients/Eye%20Conditi
 
 ## Usage
 
-Download this widget and as long as your watch-face supports widgets, it will automatically run in the background.
+Download this widget and, as long as your watch-face supports widgets, it will automatically run in the background.
 
 ## Features
 
