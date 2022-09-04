@@ -14,6 +14,11 @@ const W = g.getWidth();
 const H = g.getHeight();
 
 /************
+ * Global data
+ */
+var pressureData;
+
+/************
  * Settings
  */
 let settings = {
@@ -182,6 +187,14 @@ function imgAgenda() {
   }
 }
 
+function imgMountain() {
+  return {
+    width : 24, height : 24, bpp : 1,
+    transparent : 1,
+    buffer : atob("//////////////////////3///n///D//uZ//E8//A+/+Z+f8//P5//n7//3z//zn//5AAAAAAAA////////////////////")
+  }
+}
+
 /************
  * 2D MENU with entries of:
  * [name, icon, opt[customDownFun], opt[customUpFun], opt[customCenterFun]]
@@ -196,6 +209,7 @@ var menu = [
     function(){ return [ E.getBattery() + "%", Bangle.isCharging() ? imgCharging() : imgBattery() ] },
     function(){ return [ getSteps(), imgSteps() ] },
     function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm()] },
+    function(){ return [ getAltitude(), imgMountain() ]},
   ]
 ]
 
@@ -366,6 +380,14 @@ function getSteps() {
 }
 
 
+function getAltitude(){
+  if(pressureData && pressureData.altitude){
+    return Math.round(pressureData.altitude) + "m";
+  }
+  return "???";
+}
+
+
 function getWeather(){
   var weatherJson;
 
@@ -469,6 +491,11 @@ function draw() {
   drawTime();
   drawLock();
   drawWidgets();
+
+  // Now lets measure some data..
+  Bangle.getPressure().then(data=>{
+    pressureData = data
+  });
 }
 
 
