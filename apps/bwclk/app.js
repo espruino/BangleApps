@@ -479,6 +479,19 @@ function decreaseAlarm(idx){
 }
 
 
+function handleAsyncData(){
+  try{
+
+    if (settings.menuPosX == 1){
+      Bangle.getPressure().then(data=>{
+        pressureData = data
+      });
+    }
+
+  }catch(ex){ }
+}
+
+
 /************
  * DRAW
  */
@@ -486,16 +499,14 @@ function draw() {
   // Queue draw again
   queueDraw();
 
+  // Now lets measure some data..
+  handleAsyncData();
+
   // Draw clock
   drawDate();
   drawTime();
   drawLock();
   drawWidgets();
-
-  // Now lets measure some data..
-  Bangle.getPressure().then(data=>{
-    pressureData = data
-  });
 }
 
 
