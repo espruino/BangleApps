@@ -481,13 +481,9 @@ function decreaseAlarm(idx){
 
 function handleAsyncData(){
   try{
-
-    if (settings.menuPosX == 1){
-      Bangle.getPressure().then(data=>{
-        pressureData = data
-      });
-    }
-
+    Bangle.getPressure().then(data=>{
+      pressureData = data
+    });
   }catch(ex){ }
 }
 
