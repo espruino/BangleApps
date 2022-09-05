@@ -4,3 +4,6 @@
 0.04: Fix #1445, display loading info, add icons to display service states
 0.05: Fix LOW_MEMORY,MEMORY error on to big log size
 0.06: Reduced log size further to 750 entries
+0.10: Complete rework off this app!
+0.10beta: Add interface.html to view saved log data, add "View log" function for debugging log, send data for gadgetbridge, change caching for global getStats
+0.11: Prevent module not found error

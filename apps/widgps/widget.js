@@ -11,13 +11,14 @@ var interval;
 var oldSetGPSPower = Bangle.setGPSPower;
 Bangle.setGPSPower = function(on, id) {
   var isGPSon = oldSetGPSPower(on, id);
-  WIDGETS.gps.draw();
+  WIDGETS.gps.width = !isGPSon && settings.hideWhenGpsOff ? 0 : 24;
+  Bangle.drawWidgets();
   return isGPSon;
 };
 
 WIDGETS.gps = {
   area : "tr",
-  width : 24,
+  width : !Bangle.isGPSOn() && settings.hideWhenGpsOff ? 0 : 24,
   draw : function() {
     g.reset();
 

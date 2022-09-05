@@ -4,9 +4,12 @@ The app is aimed at small boat navigation although it can also be used to mark t
 
 The app displays direction of travel (course), speed, direction to waypoint (bearing) and distance to waypoint. The screen shot below is before the app has got a GPS fix.
 
+[Bangle.js 2] Button mappings in brackests. One additional feature:  
+On swiping on the main screen you can change the displayed metrics: Right changes to nautical metrics, left to the default locale metrics.
+
 ![](first_screen.jpg)
 
-The large digits are the course and speed. The top of the display is a linear compass which displays the direction of travel when a fix is received and you are moving. The blue text is the name of the current waypoint. NONE means that there is no waypoint set and so bearing and distance will remain at 0. To select a waypoint, press BTN2 (middle) and wait for the blue text to turn white. Then use BTN1 and BTN3 to select a waypoint. The waypoint choice is fixed by pressing BTN2 again. In the screen shot below a waypoint giving the location of Stone Henge has been selected.
+The large digits are the course and speed. The top of the display is a linear compass which displays the direction of travel when a fix is received and you are moving. The blue text is the name of the current waypoint. NONE means that there is no waypoint set and so bearing and distance will remain at 0. To select a waypoint, press BTN2 (middle) [touch / BTN] and wait for the blue text to turn white. Then use BTN1 and BTN3 [swipe left/right] to select a waypoint. The waypoint choice is fixed by pressing BTN2 [touch / BTN] again. In the screen shot below a waypoint giving the location of Stone Henge has been selected.
 
 ![](waypoint_screen.jpg)
 
@@ -18,7 +21,7 @@ The app lets you mark your current location as follows. There are vacant slots i
 
 ![](select_screen.jpg)
 
-Bearing and distance are both zero as WP1 has currently no GPS location associated with it. To mark the location, press BTN2.
+Bearing and distance are both zero as WP1 has currently no GPS location associated with it. To mark the location, press BTN2 [touch / BTN].
 
 ![](marked_screen.jpg)
 

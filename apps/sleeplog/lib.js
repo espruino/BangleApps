@@ -1,199 +1,465 @@
+// define accessable functions
 exports = {
   // define en-/disable function, restarts the service to make changes take effect
-  setEnabled: function(enable, logfile, powersaving) {
-    // check if sleeplog is available
-    if (typeof global.sleeplog !== "object") return;
-
-    // set default logfile
-    if ((typeof logfile !== "string" || !logfile.endsWith(".log")) &&
-      logfile !== false) logfile = "sleeplog.log";
-
+  setEnabled: function(enable) {
     // stop if enabled
-    if (global.sleeplog.enabled) global.sleeplog.stop();
+    if (global.sleeplog && sleeplog.enabled) sleeplog.stop();
 
-    // define storage and filename
-    var storage = require("Storage");
-    var filename = "sleeplog.json";
+    // define settings filename
+    var settings = "sleeplog.json";
 
     // change enabled value in settings
-    storage.writeJSON(filename, Object.assign(storage.readJSON(filename, true) || {}, {
-      enabled: enable,
-      logfile: logfile,
-      powersaving: powersaving || false
-    }));
+    require("Storage").writeJSON(settings, Object.assign(
+      require("Storage").readJSON(settings, true) || {}, {
+        enabled: enable
+      }
+    ));
 
     // force changes to take effect by executing the boot script
-    eval(storage.read("sleeplog.boot.js"));
+    eval(require("Storage").read("sleeplog.boot.js"));
 
-    // clear variables
-    storage = undefined;
-    filename = undefined;
     return true;
   },
 
-  // define read log function
-  // sorting: latest first, format:
-  // [[number, int, float, string], [...], ... ]
-  // - number // timestamp in ms
-  // - int    // status: 0 = unknown, 1 = not worn, 2 = awake, 3 = sleeping
-  // - float  // internal temperature
-  // - string // additional information
-  readLog: function(logfile, since, until) {
-    // check/set logfile
-    if (typeof logfile !== "string" || !logfile.endsWith(".log")) {
-      logfile = (global.sleeplog || {}).logfile || "sleeplog.log";
+  // define read log function, returns log array
+  // sorting: ascending (latest first), format:
+  // [[number, int, int], [...], ... ]
+  // - number // timestamp in 10min
+  // - int    // status: 0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
+  // - int    // consecutive: 0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep
+  readLog: function(since, until) {
+    // set now and check if now is before since
+    var now = Date.now();
+    if (now < since) return [];
+
+    // set defaults and convert since, until and now to 10min steps
+    since = Math.floor((since || 0) / 6E5);
+    until = Math.ceil((until || now) / 6E5);
+    now = Math.ceil(now / 6E5);
+
+    // define output log
+    var log = [];
+
+    // open StorageFile
+    var file = require("Storage").open("sleeplog.log", "r");
+    // cache StorageFile size
+    var storageFileSize = file.getLength();
+    // check if a Storage File needs to be read
+    if (storageFileSize) {
+      // define previous line cache
+      var prevLine;
+      // loop through StorageFile entries
+      while (true) {
+        // cache new line
+        var line = file.readLine();
+        // exit loop if all lines are read
+        if (!line) break;
+        // skip lines starting with ","
+        if (line.startsWith(",")) continue;
+        // parse line
+        line = line.trim().split(",").map(e => parseInt(e));
+        // exit loop if new line timestamp is not before until
+        if (line[0] >= until) break;
+        // check if new line timestamp is 24h before since or not after since
+        if (line[0] + 144 < since) {
+          // skip roughly the next 10 lines
+          file.read(118);
+          file.readLine();
+        } else if (line[0] <= since) {
+          // cache line for next cycle
+          prevLine = line;
+        } else {
+          // add previous line if it was cached
+          if (prevLine) log.push(prevLine);
+          // add new line at the end of log
+          log.push(line);
+          // clear previous line cache
+          prevLine = undefined;
+        }
+      }
+      // add previous line if it was cached
+      if (prevLine) log.push(prevLine);
+      // set unknown consecutive statuses
+      log = log.reverse().map((entry, index) => {
+        if (entry[2] === 0) entry[2] = (log[index - 1] || [])[2] || 0;
+        return entry;
+      }).reverse();
+      // remove duplicates
+      log = log.filter((entry, index) =>
+        !(index > 0 && entry[1] === log[index - 1][1] && entry[2] === log[index - 1][2])
+      );
     }
 
-    // check if since is in the future
-    if (since > Date()) return [];
+    // check if log empty or first entry is after since
+    if (!log[0] || log[0][0] > since) {
+      // look for all needed storage files
+      var files = require("Storage").list(/^sleeplog_\d\d\d\d\.log$/, {
+        sf: false
+      });
 
-    // read logfile
-    var log = require("Storage").read(logfile);
-    // return empty log
-    if (!log) return [];
-    // decode data if needed 
-    if (log[0] !== "[") log = atob(log);
-    // do a simple check before parsing
-    if (!log.startsWith("[[") || !log.endsWith("]]")) return [];
-    log = JSON.parse(log) || [];
+      // check if any file available
+      if (files.length) {
+        // generate start and end times in 10min steps
+        files = files.map(file => {
+          var start = this.fnToMs(parseInt(file.substr(9, 4))) / 6E5;
+          return {
+            name: file,
+            start: start,
+            end: start + 2016
+          };
+        }).sort((a, b) => b.start - a.start);
 
-    // check if filtering is needed
-    if (since || until) {
-      // search for latest entry befor since
-      if (since) since = (log.find(element => element[0] <= since) || [0])[0];
-      // filter selected time period
-      log = log.filter(element => (element[0] >= since) && (element[0] <= (until || 1E14)));
+        // read all neccessary files
+        var filesLog = [];
+        files.some(file => {
+          // exit loop if since after end
+          if (since >= file.end) return true;
+          // read file if until after start and since before end
+          if (until > file.start || since < file.end) {
+            var thisLog = require("Storage").readJSON(file.name, 1) || [];
+            if (thisLog.length) filesLog = thisLog.concat(filesLog);
+          }
+        });
+        // free ram
+        files = undefined;
+
+        // check if log from files is available 
+        if (filesLog.length) {
+          // remove unwanted entries
+          filesLog = filesLog.filter((entry, index, filesLog) => (
+            (filesLog[index + 1] || [now])[0] >= since && entry[0] <= until
+          ));
+          // add to log as previous entries
+          log = filesLog.concat(log);
+        }
+        // free ram
+        filesLog = undefined;
+      }
     }
 
-    // output log
+    // define last index
+    var lastIndex = log.length - 1;
+    // set timestamp of first entry to since if first entry before since
+    if (log[0] && log[0][0] < since) log[0][0] = since;
+    // add timestamp at now with unknown status if until after now
+    if (until > now) log.push([now, 0, 0]);
+
     return log;
   },
 
-  // define write log function, append or replace log depending on input
-  // append input if array length >1 and element[0] >9E11
-  // replace log with input if at least one entry like above is inside another array
-  writeLog: function(logfile, input) {
-    // check/set logfile
-    if (typeof logfile !== "string" || !logfile.endsWith(".log")) {
-      if (!global.sleeplog || sleeplog.logfile === false) return;
-      logfile = sleeplog.logfile || "sleeplog.log";
+  // define move log function, move StorageFile content into files seperated by fortnights
+  moveLog: function(force) {
+    /** convert old logfile (< v0.10) if present **/
+    if (require("Storage").list("sleeplog.log", {
+        sf: false
+      }).length) {
+      convertOldLog();
     }
+    /** may be removed in later versions **/
 
-    // check if input is an array
-    if (typeof input !== "object" || typeof input.length !== "number") return;
+    // first day of this fortnight period
+    var thisFirstDay = this.fnToMs(this.msToFn(Date.now()));
 
-    // check for entry plausibility
-    if (input.length > 1 && input[0] * 1 > 9E11) {
-      // read log
-      var log = this.readLog(logfile);
+    // read timestamp of the first StorageFile entry
+    var firstDay = (require("Storage").open("sleeplog.log", "r").read(47) || "").match(/\n\d*/);
+    // calculate the first day of the fortnight period
+    if (firstDay) firstDay = this.fnToMs(this.msToFn(parseInt(firstDay[0].trim()) * 6E5));
 
-      // remove last state if it was unknown and less then 5min ago
-      if (log.length > 0 && log[0][1] === 0 &&
-        Math.floor(Date.now()) - log[0][0] < 3E5) log.shift();
+    // check if moving is neccessary or forced
+    if (force || firstDay && firstDay < thisFirstDay) {
+      // read log for each fortnight period
+      while (firstDay) {
+        // calculate last day
+        var lastDay = firstDay + 12096E5;
+        // read log of the fortnight period
+        var log = require("sleeplog").readLog(firstDay, lastDay);
 
-      // add entry at the first position if it has changed
-      if (log.length === 0 || input.some((e, index) => index > 0 && input[index] !== log[0][index])) log.unshift(input);
+        // check if before this fortnight period
+        if (firstDay < thisFirstDay) {
+          // write log in seperate file
+          require("Storage").writeJSON("sleeplog_" + this.msToFn(firstDay) + ".log", log);
+          // set last day as first
+          firstDay = lastDay;
+        } else {
+          // rewrite StorageFile
+          require("Storage").open("sleeplog.log", "w").write(log.map(e => e.join(",")).join("\n"));
+          // clear first day to exit loop
+          firstDay = undefined;
+        }
 
-      // map log as input
-      input = log;
-    }
-
-    // check and if neccessary reduce logsize to prevent low mem
-    if (input.length > 750) input = input.slice(-750);
-
-    // simple check for log plausibility
-    if (input[0].length > 1 && input[0][0] * 1 > 9E11) {
-      // write log to storage
-      require("Storage").write(logfile, btoa(JSON.stringify(input)));
-      return true;
-    }
-  },
-
-  // define log to humanreadable string function
-  // sorting: latest last, format:
-  // "{substring of ISO date} - {status} for {duration}min\n..."
-  getReadableLog: function(printLog, since, until, logfile) {
-    // read log and check
-    var log = this.readLog(logfile, since, until);
-    if (!log.length) return;
-    // reverse array to set last timestamp to the end
-    log.reverse();
-
-    // define status description and log string
-    var statusText = ["unknown ", "not worn", "awake   ", "sleeping"];
-    var logString = [];
-
-    // rewrite each entry
-    log.forEach((element, index) => {
-      logString[index] = "" +
-        Date(element[0] - Date().getTimezoneOffset() * 6E4).toISOString().substr(0, 19).replace("T", " ") + " - " +
-        statusText[element[1]] +
-        (index === log.length - 1 ?
-          element.length < 3 ? "" : " ".repeat(12) :
-          " for " + ("" + Math.round((log[index + 1][0] - element[0]) / 60000)).padStart(4) + "min"
-        ) +
-        (element[2] ? " | Temp: " + ("" + element[2]).padEnd(5) + "°C" : "") +
-        (element[3] ? " | " + element[3] : "");
-    });
-    logString = logString.join("\n");
-
-    // if set print and return string
-    if (printLog) {
-      print(logString);
-      print("- first", Date(log[0][0]));
-      print("-  last", Date(log[log.length - 1][0]));
-      var period = log[log.length - 1][0] - log[0][0];
-      print("-     period= " + Math.floor(period / 864E5) + "d " + Math.floor(period % 864E5 / 36E5) + "h " + Math.floor(period % 36E5 / 6E4) + "min");
-    }
-    return logString;
-  },
-
-  // define function to eliminate some errors inside the log
-  restoreLog: function(logfile) {
-    // read log and check
-    var log = this.readLog(logfile);
-    if (!log.length) return;
-
-    // define output variable to show number of changes
-    var output = log.length;
-
-    // remove non decremental entries
-    log = log.filter((element, index) => log[index][0] >= (log[index + 1] || [0])[0]);
-
-    // write log
-    this.writeLog(logfile, log);
-
-    // return difference in length
-    return output - log.length;
-  },
-
-  // define function to reinterpret worn status based on given temperature threshold
-  reinterpretTemp: function(logfile, tempthresh) {
-    // read log and check
-    var log = this.readLog(logfile);
-    if (!log.length) return;
-
-    // set default tempthresh
-    tempthresh = tempthresh || (global.sleeplog ? sleeplog.tempthresh : 27);
-
-    // define output variable to show number of changes
-    var output = 0;
-
-    // remove non decremental entries
-    log = log.map(element => {
-      if (element[2]) {
-        var tmp = element[1];
-        element[1] = element[2] > tempthresh ? 3 : 1;
-        if (tmp !== element[1]) output++;
+        // free ram
+        log = undefined;
       }
-      return element;
+    }
+  },
+
+  // define function to return stats from the last date [ms] for a specific duration [ms] or for the complete log
+  getStats: function(until, duration, log) {
+    // define stats variable
+    var stats = {
+      calculatedAt: //   [date] timestamp of the calculation
+        Math.round(Date.now()),
+      deepSleep: 0, //   [min] deep sleep duration
+      lightSleep: 0, //  [min] light sleep duration
+      awakeSleep: 0, //  [min] awake duration inside consecutive sleep
+      consecSleep: 0, // [min] consecutive sleep duration
+      awakeTime: 0, //   [min] awake duration outside consecutive sleep
+      notWornTime: 0, // [min] duration of not worn status
+      unknownTime: 0, // [min] duration of unknown status
+      logDuration: 0, // [min] duration of all entries taken into account
+      firstDate: undefined, // [date] first entry taken into account
+      lastDate: undefined // [date] last entry taken into account
+    };
+
+    // set default inputs
+    until = until || stats.calculatedAt;
+    if (!duration) duration = 864E5;
+
+    // read log for the specified duration or complete log if not handed over
+    if (!log) log = this.readLog(duration ? until - duration : 0, until);
+
+    // check if log not empty or corrupted
+    if (log && log.length && log[0] && log[0].length === 3) {
+      // calculate and set first log date from 10min steps
+      stats.firstDate = log[0][0] * 6E5;
+      stats.lastDate = log[log.length - 1][0] * 6E5;
+
+      // cycle through log to calculate sums til end or duration is exceeded
+      log.forEach((entry, index, log) => {
+        // calculate duration of this entry from 10min steps to minutes
+        var duration = ((log[index + 1] || [until / 6E5 | 0])[0] - entry[0]) * 10;
+
+        // check if duration greater 0
+        if (duration) {
+          // calculate sums
+          if (entry[1] === 4) stats.deepSleep += duration;
+          else if (entry[1] === 3) stats.lightSleep += duration;
+          else if (entry[1] === 2) {
+            if (entry[2] === 2) stats.awakeSleep += duration;
+            else if (entry[2] === 1) stats.awakeTime += duration;
+          }
+          if (entry[2] === 2) stats.consecSleep += duration;
+          if (entry[1] === 1) stats.notWornTime += duration;
+          if (entry[1] === 0) stats.unknownTime += duration;
+          stats.logDuration += duration;
+        }
+      });
+    }
+
+    // free ram
+    log = undefined;
+
+    // return stats of the last day
+    return stats;
+  },
+
+  // define function to return last break time of day from date or now (default: 12 o'clock)
+  getLastBreak: function(date, ToD) {
+    // set default date or correct date type if needed
+    if (!date || !date.getDay) date = date ? new Date(date) : new Date();
+    // set default ToD as set in sleeplog.conf or settings if available
+    if (ToD === undefined) ToD = (global.sleeplog && sleeplog.conf ? sleeplog.conf.breakToD :
+      (require("Storage").readJSON("sleeplog.json", true) || {}).breakToD) || 12;
+    // calculate last break time and return
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), ToD);
+  },
+
+  // define functions to convert ms to the number of fortnights since the first Sunday at noon: 1970-01-04T12:00
+  fnToMs: function(no) {
+    return (no + 0.25) * 12096E5;
+  },
+  msToFn: function(ms) {
+    return (ms / 12096E5 - 0.25) | 0;
+  },
+
+  // define set debug function, options:
+  //  enable as boolean, start/stop debugging
+  //  duration in hours, generate csv log if set, max: 96h
+  setDebug: function(enable, duration) {
+    // check if global variable accessable
+    if (!global.sleeplog) return new Error("sleeplog: Can't set debugging, global object missing!");
+
+    // check if nothing has to be changed
+    if (!duration &&
+      (enable && sleeplog.debug === true) ||
+      (!enable && !sleeplog.debug)) return;
+
+    // check if en- or disable debugging
+    if (enable) {
+      // define debug object
+      sleeplog.debug = {};
+
+      // check if a file should be generated
+      if (typeof duration === "number") {
+        // check duration boundaries, 0 => 8
+        duration = duration > 96 ? 96 : duration || 12;
+        // calculate and set writeUntil in 10min steps
+        sleeplog.debug.writeUntil = ((Date.now() / 6E5 | 0) + duration * 6) * 6E5;
+        // set fileid to "{hours since 1970}"
+        sleeplog.debug.fileid = Date.now() / 36E5 | 0;
+        // write csv header on empty file
+        var file = require("Storage").open("sleeplog_" + sleeplog.debug.fileid + ".csv", "a");
+        if (!file.getLength()) file.write(
+          "timestamp,movement,status,consecutive,asleepSince,awakeSince,bpm,bpmConfidence\n"
+        );
+        // free ram
+        file = undefined;
+      } else {
+        // set debug as active
+        sleeplog.debug = true;
+      }
+    } else {
+      // disable debugging
+      delete sleeplog.debug;
+    }
+
+    // save status forced
+    sleeplog.saveStatus(true);
+  },
+
+  // define debugging function, called after logging if debug is set
+  debug: function(data) {
+    // check if global variable accessable and debug active
+    if (!global.sleeplog || !sleeplog.debug) return;
+
+    // set functions to convert timestamps
+    function localTime(timestamp) {
+      return timestamp ? Date(timestamp).toString().split(" ")[4].substr(0, 5) : "- - -";
+    }
+    function officeTime(timestamp) {
+      // days since 30.12.1899
+      return timestamp / 864E5 + 25569;
+    }
+
+    // generate console output
+    var console = "sleeplog: " +
+      localTime(data.timestamp) + " > " +
+      "movement: " + ("" + data.movement).padStart(4) + ", " +
+      "unknown    ,non consec.,consecutive".split(",")[sleeplog.consecutive] + " " +
+      "unknown,not worn,awake,light sleep,deep sleep".split(",")[data.status].padEnd(12) + ", " +
+      "asleep since: " + localTime(sleeplog.info.asleepSince) + ", " +
+      "awake since: " + localTime(sleeplog.info.awakeSince);
+    // add bpm if set
+    if (data.bpm) console += ", " +
+      "bpm: " + ("" + data.bpm).padStart(3) + ", " +
+      "confidence: " + data.bpmConfidence;
+    // output to console
+    print(console);
+
+    // check if debug is set as object with a file id and it is not past writeUntil
+    if (typeof sleeplog.debug === "object" && sleeplog.debug.fileid &&
+      Date.now() < sleeplog.debug.writeUntil) {
+      // generate next csv line
+      var csv = [
+        officeTime(data.timestamp),
+        data.movement,
+        data.status,
+        sleeplog.consecutive,
+        sleeplog.info.asleepSince ? officeTime(sleeplog.info.asleepSince) : "",
+        sleeplog.info.awakeSince ? officeTime(sleeplog.info.awakeSince) : "",
+        data.bpm || "",
+        data.bpmConfidence || ""
+      ].join(",");
+      // write next line to log if set
+      require("Storage").open("sleeplog_" + sleeplog.debug.fileid + ".csv", "a").write(csv + "\n");
+    } else {
+      // clear file setting in debug
+      sleeplog.debug = true;
+    }
+
+  },
+
+  // print log as humanreadable output similar to debug output
+  printLog: function(since, until) {
+    // set default until
+    until = until || Date.now();
+    // print each entry inside log
+    this.readLog(since, until).forEach((entry, index, log) => {
+      // calculate duration of this entry from 10min steps to minutes
+      var duration = ((log[index + 1] || [until / 6E5 | 0])[0] - entry[0]) * 10;
+      // print this entry
+      print((index + ")").padStart(4) + " " +
+        Date(entry[0] * 6E5).toString().substr(0, 21) + " > " +
+        "unknown    ,non consec.,consecutive".split(",")[entry[2]] + " " +
+        "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]].padEnd(12) +
+        "for" + (duration + "min").padStart(8));
     });
+  },
 
-    // write log
-    this.writeLog(logfile, log);
+  /** convert old (< v0.10) to new logfile data **/
+  convertOldLog: function() {
+    // read old logfile
+    var oldLog = require("Storage").read("sleeplog.log") || "";
+    // decode data if needed 
+    if (!oldLog.startsWith("[")) oldLog = atob(oldLog);
+    // delete old logfile and return if it is empty or corrupted
+    if (!oldLog.startsWith("[[") || !oldLog.endsWith("]]")) {
+      require("Storage").erase("sleeplog.log");
+      return;
+    }
 
-    // return output
-    return output;
+    // transform into StorageFile and clear oldLog to have more free ram accessable
+    require("Storage").open("sleeplog_old.log", "w").write(JSON.parse(oldLog).reverse().join("\n"));
+    oldLog = undefined;
+
+    // calculate fortnight from now
+    var fnOfNow = this.msToFn(Date.now());
+
+    // open StorageFile with old log data
+    var file = require("Storage").open("sleeplog_old.log", "r");
+    // define active fortnight and file cache
+    var activeFn = true;
+    var fileCache = [];
+    // loop through StorageFile entries
+    while (activeFn) {
+      // define fortnight for this entry
+      var thisFn = false;
+      // cache new line
+      var line = file.readLine();
+      // check if line is filled
+      if (line) {
+        // parse line
+        line = line.substr(0, 15).split(",").map(e => parseInt(e));
+        // calculate fortnight for this entry
+        thisFn = this.msToFn(line[0]);
+        // convert timestamp into 10min steps
+        line[0] = line[0] / 6E5 | 0;
+        // set consecutive to unknown
+        line.push(0);
+      }
+      // check if active fortnight and file cache is set, fortnight has changed and
+      //  active fortnight is not fortnight from now
+      if (activeFn && fileCache.length && activeFn !== thisFn && activeFn !== fnOfNow) {
+        // write file cache into new file according to fortnight
+        require("Storage").writeJSON("sleeplog_" + activeFn + ".log", fileCache);
+        // clear file cache
+        fileCache = [];
+      }
+      // add line to file cache if it is filled
+      if (line) fileCache.push(line);
+      // set active fortnight
+      activeFn = thisFn;
+    }
+    // check if entries are leftover
+    if (fileCache.length) {
+      // format fileCache entries into a string
+      fileCache = fileCache.map(e => e.join(",")).join("\n");
+      // read complete new log StorageFile as string
+      file = require("Storage").open("sleeplog.log", "r");
+      var newLogString = file.read(file.getLength());
+      // add entries at the beginning of the new log string
+      newLogString = fileCache + "\n" + newLogString;
+      // rewrite new log StorageFile
+      require("Storage").open("sleeplog.log", "w").write(newLogString);
+    }
+
+    // free ram
+    file = undefined;
+    fileCache = undefined;
+
+    // clean up old files
+    require("Storage").erase("sleeplog.log");
+    require("Storage").open("sleeplog_old.log", "w").erase();
   }
-
+  /** may be removed in later versions **/
 };
