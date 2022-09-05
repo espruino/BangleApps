@@ -225,6 +225,13 @@ apps.forEach((app,appIdx) => {
         console.log("=====================================================");
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`, {file:appDirRelative+file.url});
       }
+      // clock app checks
+      if (app.type=="clock") {
+        var a = fileContents.indexOf("Bangle.loadWidgets()");
+        var b = fileContents.indexOf("Bangle.setUI(");        
+        if (a>=0 && b>=0 && a<b)
+          WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url});
+      }
     }
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
