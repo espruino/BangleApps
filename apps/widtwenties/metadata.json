@@ -1,0 +1,13 @@
+{
+  "id": "widtwenties",
+  "name": "Twenties",
+  "shortName": "twenties",
+  "version": "0.02",
+  "description": "Buzzes every 20m to stand / sit and look 20ft away for 20s.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,tools",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [{ "name": "widtwenties.wid.js", "url": "widget.js" }]
+}
