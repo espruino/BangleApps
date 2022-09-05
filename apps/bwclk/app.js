@@ -773,6 +773,9 @@ E.on("kill", function(){
 // dark/light theme as well as the colors.
 g.setTheme({bg:g.theme.fg,fg:g.theme.bg, dark:!g.theme.dark}).clear();
 
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
+
 // Load widgets and draw clock the first time
 Bangle.loadWidgets();
 
@@ -782,6 +785,3 @@ for (let wd of WIDGETS) {wd._draw=wd.draw; wd._area=wd.area;}
 
 // Draw first time
 draw();
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
