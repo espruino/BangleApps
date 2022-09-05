@@ -36,14 +36,21 @@
       Repetition: {
         value: settings.repeat,
         min: 1,
-        max: 3,
+        max: 5,
         format: (v) => v,
         onchange: (v) => {
           settings.repeat = v;
           writeSettings(settings);
         },
       },
-      "Start Hour": {
+      "Sleep Mode": {
+        value: !!settings.sleep,
+        onchange: (v) => {
+          settings.sleep = v;
+          writeSettings(settings);
+        },
+      },
+      "Sleep Start": {
         value: settings.start,
         min: 0,
         max: 23,
@@ -53,7 +60,7 @@
           writeSettings(settings);
         },
       },
-      "End Hour": {
+      "Sleep End": {
         value: settings.end,
         min: 0,
         max: 23,
@@ -71,6 +78,7 @@
       type: 1,
       freq: 0,
       repeat: 1,
+      sleep: true,
       start: 6,
       end: 22,
     };
