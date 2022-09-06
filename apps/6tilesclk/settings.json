@@ -1,0 +1,21 @@
+{
+  "lineColor": 33808,
+  "leeding0": true,
+  "woy": "",
+  "modules": {
+    "sundown": ["sunrise", "sunset"],
+    "sched": ["alarm", "timer"]
+  },
+  "date": [
+    "date", "dow", "woy"
+  ],
+  "tile": [
+    "sunrise", "steps", "sunset",
+    "", "alarm", "timer"
+  ],
+  "sel": {
+    "alarm": { "def": 0, "opt": 2 },
+    "timer": { "def": 1, "opt": 2 }
+  },
+  "showTileIDs": false
+}
