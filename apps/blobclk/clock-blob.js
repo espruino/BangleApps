@@ -99,6 +99,10 @@ function startTimers() {
   Bangle.drawWidgets();
   intervalRef = setInterval(redraw,1000);
 }
+
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 startTimers();
 Bangle.on('lcdPower',function(on) {
@@ -108,5 +112,3 @@ Bangle.on('lcdPower',function(on) {
     clearTimers();
   }
 });
-// Show launcher when button pressed
-Bangle.setUI("clock");

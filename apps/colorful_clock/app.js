@@ -242,6 +242,6 @@
     }
   });
 
-  Bangle.loadWidgets();
-
   Bangle.setUI('clock');
+
+  Bangle.loadWidgets();
