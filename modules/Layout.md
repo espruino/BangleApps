@@ -50,9 +50,14 @@ layout.render();
 - A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
 - A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
 - A `pad` integer field to set pixels padding
+- A `padx` integer field to set pixels padding in x
+- A `pady` integer field to set pixels padding in y
+- A `offsetx` integer field to set pixels to offset in x
+- A `offsety` integer field to set pixels to offset in y
 - A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 - A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 - `width` and `height` fields to optionally specify minimum size options is an object containing:
+- `pxClear`- a boolean specifying whether to enable pixel perfect clearing, useful for negative padding values; if used `layout.clear(obj)` needs to be called before changing the `value` field
 - `lazy` - a boolean specifying whether to enable automatic lazy rendering
 - `btns` - array of objects containing:
   - `label` - the text on the button
