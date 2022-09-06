@@ -57,8 +57,8 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
+Bangle.setUI("clock");
 
 // Load widgets but hide them
 Bangle.loadWidgets();
 draw();
-Bangle.setUI("clock");
