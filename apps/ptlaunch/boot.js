@@ -79,7 +79,7 @@
     if (typeof mode === "object") mode = (mode.clock ? "clock" : "") + mode.mode;
     if (!mode || !mode.startsWith("clock")) {
       storedPatterns = {};
-      Bangle.removeListener("drag", dragHandler);s
+      Bangle.removeListener("drag", dragHandler);
       return;
     }
 
