@@ -8,14 +8,21 @@ const offset = 25;
 const width = g.getWidth();
 const height = g.getHeight();
 
-var queueDraw;
+var drawTimeout;
 var fgTime = 0xf800;
 var bgTime = 0x3333ff;
 var dayDate = 0x000;
 
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
 function time() {
   require("Font4x5").add(Graphics);
-
   var d = new Date();
   var day = d.getDate();
   var time = require("locale").time(d,1);
@@ -34,6 +41,7 @@ function time() {
 function draw() {
   g.setColor(bgTime).fillRect(0,40,width,height-offset);
   time();
+  queueDraw();
 }
 
 //program start
@@ -48,13 +56,7 @@ else {
 
 draw(); // draw immediately at first
 
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-}
+
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
