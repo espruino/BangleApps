@@ -57,7 +57,7 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
 },buzz:function(msgSrc) { // return a promise
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.,resolve(); // never buzz during Quiet Mode
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
   var pattern;
   if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
     // special vibration pattern for incoming calls
