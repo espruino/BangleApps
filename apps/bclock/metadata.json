@@ -1,7 +1,7 @@
 {
   "id": "bclock",
   "name": "Binary Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A simple binary clock watch face",
   "icon": "clock-binary.png",
   "type": "clock",

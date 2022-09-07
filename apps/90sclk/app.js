@@ -115,6 +115,9 @@ function draw() {
   }
 }
 
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup
@@ -140,5 +143,3 @@ Bangle.on('lock', function(isLocked) {
 });
 
 
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

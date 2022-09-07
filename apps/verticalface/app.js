@@ -97,6 +97,28 @@ function drawBattery() {
 // Clear the screen once, at startup
 g.clear();
 
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn!=0) return;
+  //HRM Controller.
+  if(!HRMstate){
+    //console.log("Toggled HRM");
+    //Turn on.
+    Bangle.buzz();
+    Bangle.setHRMPower(1);
+    currentHRM = "CALC";
+    HRMstate = true;
+  } else if(HRMstate){
+    //console.log("Toggled HRM");
+    //Turn off.
+    Bangle.buzz();
+    Bangle.setHRMPower(0);
+    HRMstate = false;
+    currentHRM = [];
+  }
+  drawBPM(HRMstate);
+});
+
 // Load and draw widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -126,28 +148,6 @@ Bangle.on('lcdPower',on=>{
     //Screen off
     clearInterval(secondInterval);
   }
-});
-
-// Show launcher when button pressed
-Bangle.setUI("clockupdown", btn=>{
-  if (btn!=0) return;
-  //HRM Controller.
-  if(!HRMstate){
-    //console.log("Toggled HRM");
-    //Turn on.
-    Bangle.buzz();
-    Bangle.setHRMPower(1);
-    currentHRM = "CALC";
-    HRMstate = true;
-  } else if(HRMstate){
-    //console.log("Toggled HRM");
-    //Turn off.
-    Bangle.buzz();
-    Bangle.setHRMPower(0);
-    HRMstate = false;
-    currentHRM = [];
-  }
-  drawBPM(HRMstate);
 });
 
 Bangle.on('touch', function(button) {
