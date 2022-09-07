@@ -228,27 +228,18 @@ function flipColors()
 //  MESSAGE HANDLING()
 //
 
-let messages_installed = require("Storage").read("messages.app.js") != undefined;
+let messages_installed = require("Storage").list(/^messages$/).length > 0;
 
 function handleMessages()
 {
-  if(messages_installed && hasMessages() > 0)
-  {
-    E.showMessage("Loading Messages...");
-    load("messages.app.js");
-  }
+  if(!hasMessages()) return;
+  E.showMessage("Loading Messages...");
+  load("messages.app.js");
 }
 
 function hasMessages()
 {
-  if(!messages_installed)
-    return false;
-
-  var messages = require("Storage").readJSON("messages.json",1)||[];
-  if (messages.some(m=>m.new))
-    return true;
-  else
-    return false;
+  return messages_installed && require("messages").status() === 'new';
 }
 
 let msg = atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==");
@@ -256,20 +247,21 @@ let had_messages = false;
 
 function drawMessages()
 {
-  if(!had_messages && hasMessages()) {
+  const has_messages = hasMessages();
+  if(has_messages === had_messages) return;
+  if(has_messages) {
       g.setColor(255,255,255);
       g.drawImage(msg, 184, 212);
       g.setFont("6x8", 2);
       g.setFontAlign(0, -1, 0);
       g.drawString(">", 224, 216);
-      had_messages = true;
   } 
-  else if (had_messages && !hasMessages())
+  else
   {
       g.setColor(0,0,0);
       g.fillRect(180, 210, 240, 240);
-      had_messages = false;
   }
+  had_messages = has_messages;
 }
 
 //////////////////////////////////////////

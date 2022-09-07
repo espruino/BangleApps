@@ -100,6 +100,32 @@ exports.clearAll = function(event) {
     WIDGETS.messages.update(messages);
 }
 
+/**
+ * @returns {array} All messages
+ */
+exports.getMessages = function() {
+  if ("undefined"!=typeof MESSAGES) return MESSAGES; // loaded/managed by app
+  return require("Storage").readJSON("messages.json",1)||[];
+}
+
+/**
+ * Check if there are any messages
+ * @returns {string} "new"/"old"/"none"
+ */
+ exports.status = function() {
+  try {
+    let status= "none";
+    for(const m of exports.getMessages()) {
+      if (["music", "map"].includes(m.id)) continue;
+      if (m.new) return "new";
+      status = "old";
+    }
+    return status;
+  } catch(e) {
+    return "none"; // don't bother e.g. the widget with errors
+  }
+};
+
 exports.getMessageImage = function(msg) {
   /*
   * icons should be 24x24px or less with 1bpp colors and 'Transparency to Color'

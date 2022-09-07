@@ -1,10 +1,5 @@
 (() => {
 
-function getMessages() {
-  if ("undefined"!=typeof MESSAGES) return MESSAGES;
-  return require("Storage").readJSON("messages.json",1)||[];
-}
-
 function filterMessages(msgs) {
   return msgs.filter(msg => msg.new && msg.id != "music")
     .map(m => m.src) // we only need this for icon/color
@@ -82,6 +77,5 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
 message but then the watch was never viewed. In that case we don't
 want to buzz but should still show that there are unread messages. */
 if (global.MESSAGES===undefined)
-  WIDGETS["messages"].update(getMessages(), true);
-
+  WIDGETS["messages"].update(require("messages").getMessages(), true);
 })();
