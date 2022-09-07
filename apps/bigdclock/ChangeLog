@@ -3,3 +3,4 @@
 0.03: Internationalisation; bug fix - battery icon responds promptly to charging state
 0.04: bug fix
 0.05: proper fix for the race condition in queueDraw()
+0.06: Tell clock widgets to hide.
