@@ -42,7 +42,7 @@ function time() {
   var day = d.getDate();
   var time = require("locale").time(d,1);
   var date = require("locale").date(d);
-  var mo = require("date_utils").month(d.getMonth()+1,0);
+  var mo = require("date_utils").month(d.getMonth()+1,1);
   
   require("Font4x5").add(Graphics); // time
   isDark();
@@ -50,7 +50,7 @@ function time() {
   g.setFont("4x5",7.5).drawString(time, width/2, height/2);  
 
   g.setFontAlign(1,1);
-  g.setFont("4x5",2).drawString(mo+" "+day, width-15, height-35);  
+  g.setFont("4x5",3).drawString(mo+" "+day, width-15, height-35);  
 }
 
 function draw() { //poketch background  
