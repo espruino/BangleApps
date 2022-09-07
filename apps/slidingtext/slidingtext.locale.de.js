@@ -66,6 +66,7 @@ function germanMinsToText(mins) {
 class GermanDateFormatter extends DateFormatter {
     constructor() { super();}
     name(){return "German";}
+    shortName(){return "de"}
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();

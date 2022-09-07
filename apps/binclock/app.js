@@ -164,9 +164,6 @@ Bangle.on('lcdPower',on=>{
     draw(); // draw immediately
   }
 });
-// Load widgets
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", btn=>{
   if (btn!=1) return;
@@ -176,3 +173,6 @@ Bangle.setUI("clockupdown", btn=>{
     displayTime = 0;
   }
 });
+// Load widgets
+Bangle.loadWidgets();
+Bangle.drawWidgets();

@@ -47,6 +47,7 @@ function spanishMinsToText(mins){
 class SpanishDateFormatter extends DateFormatter {
     constructor() { super();}
     name(){return "Spanish";}
+    shortName(){return "es"}
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();

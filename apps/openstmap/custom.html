@@ -64,9 +64,10 @@ TODO:
       var OSMTILECOUNT = 3; // how many tiles do we download in each direction (Math.floor(MAPSIZE / OSMTILESIZE)+1)
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
-      var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast
-      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      //var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast, TOO SLOW
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
+      var TILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var PREVIEWTILELAYER = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
       // Create map and try and set the location to where the browser thinks we are
       var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
@@ -128,7 +129,7 @@ TODO:
              var min = Math.min(rgba[i+0],rgba[i+1],rgba[i+2]);
              var max = Math.max(rgba[i+0],rgba[i+1],rgba[i+2]);
              var d = max-min;
-             if (max<120) { // black
+             if (max<120 || (d<8 && max<215)) { // black, or a darker grey
                rgba[i+0]=0;
                rgba[i+1]=0;
                rgba[i+2]=0;
@@ -147,7 +148,7 @@ TODO:
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);
-        var tiles = [];
+        var tiledImage;
         for (var y=0;y<h;y++) {
           for (var x=0;x<w;x++) {
             var imageData = ctx.getImageData(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
@@ -160,13 +161,14 @@ TODO:
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/
-            tiles.push({
-              name:"openstmap-"+x+"-"+y+".img",
-              content:imgstr
-            });
+            if (tiledImage) tiledImage += imgstr.substr(3); // skip header
+            else tiledImage = imgstr; // for first image, keep the header
           }
         }
-        return tiles;
+        return [{
+          name:"openstmap.0.img",
+          content:tiledImage
+        }];
       }
 
       document.getElementById("getmap").addEventListener("click", function() {
@@ -241,13 +243,16 @@ TODO:
         Promise.all(tileGetters).then(() => {
           document.getElementById("uploadbuttons").style.display="";
           mapFiles = tilesLoaded(ctx, canvas.width, canvas.height);
-          mapFiles.unshift({name:"openstmap.json",content:JSON.stringify({
+          mapFiles.unshift({name:"openstmap.0.json",content:JSON.stringify({
             imgx : canvas.width,
             imgy : canvas.height,
             tilesize : TILESIZE,
             scale : scale, // how much of Bangle.project(latlon) does one pixel equate to?
             lat : centerlatlon.lat,
-            lon : centerlatlon.lng
+            lon : centerlatlon.lng,
+            w : Math.round(canvas.width / TILESIZE), // width in tiles
+            h : Math.round(canvas.height / TILESIZE), // height in tiles
+            fn : "openstmap.0.img"
           })});
           console.log(mapFiles);
         });

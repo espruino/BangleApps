@@ -1,18 +1,18 @@
-{ 
+{
   "id": "bowserWF",
   "name": "Bowser Watchface",
-  "shortName":"Bowser Watchface",
-  "version":"0.02",
+  "shortName": "Bowser Watchface",
+  "version": "0.03",
   "description": "Let bowser show you the time",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "supports" : ["BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",
   "storage": [
-    {"name":"bowserWF.app.js","url":"app.js"},
-    {"name":"bowserWF.img","url":"app-icon.js","evaluate":true}
+    { "name": "bowserWF.app.js", "url": "app.js" },
+    { "name": "bowserWF.img", "url": "app-icon.js", "evaluate": true }
   ],
-  "data": [{"name":"bowserWF.json"}]
+  "data": [{ "name": "bowserWF.json" }]
 }

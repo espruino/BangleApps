@@ -8,6 +8,8 @@
     <label for="useTEXT">Text</label></br>
     <input type="radio" id="useWIFI" name="mode"/>
     <label for="useWIFI">Wifi Credentials</label></br>
+    <input type="radio" id="useMECARD" name="mode"/>
+    <label for="useMECARD">Contact Info (<a href="https://en.wikipedia.org/wiki/MeCard_(QR_code)" target="_blank">MeCard</a>)</label></br>
     <input type="radio" id="useFILE" name="mode"/>
     <label for="useFILE">QR image</label></br>
     <input type="radio" id="useCAM" name="mode"/>
@@ -62,6 +64,14 @@
           <input type="checkbox" id="hidden" name="hidden"/>
           <label for="hidden">Wifi is hidden</label>
         </div>
+    </div>
+
+    <div id="srcMeCard">
+        <p>First Name: <input type="text" id="meNameFirst" class="form-input" value=""></p>
+        <p>Last Name: <input type="text" id="meNameLast" class="form-input" value=""></p>
+        <p>Phone Number: <input type="text" id="mePhoneNumber" class="form-input" value=""></p>
+        <p>Email: <input type="text" id="meEmail" class="form-input" value=""></p>
+        <p>Website: <input type="text" id="meWebsite" class="form-input" value=""></p>
     </div>
 
     <hr>
@@ -156,7 +166,7 @@
 
         function toggleVis(id){
             console.info("Got id", id);
-            ["srcScanFile", "srcText", "srcWifi", "srcScanCam"].forEach(function (item){
+            ["srcScanFile", "srcText", "srcWifi", "srcScanCam", "srcMeCard"].forEach(function (item){
               document.getElementById(item).style.display = "none";
             });
             if (id != undefined && id != null) document.getElementById(id).style.display = "block";
@@ -188,6 +198,37 @@
             }
             return qrstring;
         }
+
+        function generateMeCardString(meNameFirst, meNameLast, mePhoneNumber, meEmail, meWebsite){
+	    var meCardStringOutput = 'MECARD:';
+
+	    //first & Last name part of string, can have one or both
+            if (meNameFirst.trim().length != 0 && meNameLast.trim().length != 0) {
+                meCardStringOutput += 'N:'+meNameLast.trim()+','+meNameFirst.trim()+';';
+	    }
+            else if (meNameLast.trim().length != 0) {
+                meCardStringOutput += 'N:'+meNameLast.trim()+';';
+	    }
+            else if (meNameFirst.trim().length != 0) {
+                meCardStringOutput += 'N:'+meNameFirst.trim()+';';
+	    }
+
+            if (mePhoneNumber.trim().length != 0) {
+                meCardStringOutput += 'TEL:'+mePhoneNumber.trim()+';';
+	    }
+
+            if (meEmail.trim().length != 0) {
+                meCardStringOutput += 'EMAIL:'+meEmail.trim()+';';
+	    }
+
+            if (meWebsite.trim().length != 0) {
+                meCardStringOutput += 'URL:'+meWebsite.trim()+';';
+	    }
+
+	    meCardStringOutput += ';';
+	    return meCardStringOutput;
+	}
+
         function refreshQRCode(){
             if (qrcode == null){
                 qrcode = new QRCode("qrcode", {
@@ -206,6 +247,14 @@
                 const hidden = document.getElementById("hidden").checked;
                 const wifiString = generateWifiString(ssid, password, hidden, encryption);
                 qrText= wifiString;
+            } else if (document.getElementById("useMECARD").checked) {
+                const meNameFirst = document.getElementById("meNameFirst").value;
+                const meNameLast = document.getElementById("meNameLast").value;
+                const mePhoneNumber = document.getElementById("mePhoneNumber").value;
+                const meEmail = document.getElementById("meEmail").value;
+                const meWebsite = document.getElementById("meWebsite").value;
+                const meCardString = generateMeCardString(meNameFirst, meNameLast, mePhoneNumber, meEmail, meWebsite);
+                qrText = meCardString;
             } else if (document.getElementById("useCAM").checked) {
                 qrText= document.getElementById("camQrResult").innerText;
             } else if (document.getElementById("useFILE").checked) {
@@ -258,6 +307,14 @@
         }
 
         document.getElementById("useTEXT").addEventListener("change",function(){toggleVis("srcText");});
+
+        document.getElementById("useMECARD").addEventListener("change",function(){toggleVis("srcMeCard");});
+        document.getElementById("meNameFirst").addEventListener("change",refreshQRCode);
+        document.getElementById("meNameLast").addEventListener("change",refreshQRCode);
+        document.getElementById("mePhoneNumber").addEventListener("change",refreshQRCode);
+        document.getElementById("meEmail").addEventListener("change",refreshQRCode);
+        document.getElementById("meWebsite").addEventListener("change",refreshQRCode);
+
         document.getElementById("useCAM").addEventListener("change",function(){
             initQrScanner();
             initQrCam();
@@ -313,7 +370,6 @@ g.setColor(1,1,1);
             });
 
         });
-
 
         document.getElementById('camList').addEventListener('change', event => {
             scanner.setCamera(event.target.value).then(updateFlashAvailability);

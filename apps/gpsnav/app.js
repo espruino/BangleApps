@@ -51,10 +51,10 @@ function drawCompass(course) {
 
 //displayed heading
 var heading = 0;
-function newHeading(m,h){ 
+function newHeading(m,h){
     var s = Math.abs(m - h);
     var delta = (m>h)?1:-1;
-    if (s>=180){s=360-s; delta = -delta;} 
+    if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
     var hd = h + delta*(1 + Math.round(s/5));
     if (hd<0) hd+=360;
@@ -125,7 +125,7 @@ function drawN(){
   g.setColor(0,0,0);
   g.fillRect(10,230,60,239);
   g.setColor(1,1,1);
-  g.drawString("Sats " + satellites.toString(),10,230);     
+  g.drawString("Sats " + satellites.toString(),10,230);
 }
 
 var savedfix;
@@ -193,11 +193,11 @@ var SCREENACCESS = {
       },
       release:function(){
         this.withApp=true;
-        startdraw(); 
+        startdraw();
         setButtons();
       }
-} 
- 
+}
+
 Bangle.on('lcdPower',function(on) {
   if (!SCREENACCESS.withApp) return;
   if (on) {
@@ -207,7 +207,7 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
-var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"NONE"}];
+var waypoints = require("waypoints").load();
 wp=waypoints[0];
 
 function nextwp(inc){
@@ -223,7 +223,7 @@ function doselect(){
   if (selected && wpindex!=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
      waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
-     require("Storage").writeJSON("waypoints.json", waypoints);
+     require("waypoints").save(waypoints);
   }
   selected=!selected;
   drawN();

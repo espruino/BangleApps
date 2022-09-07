@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd `dirname $0`/..
 nodejs bin/sanitycheck.js || exit 1

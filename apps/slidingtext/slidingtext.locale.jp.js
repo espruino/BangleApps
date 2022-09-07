@@ -61,6 +61,7 @@ function japaneseMinsToText(mins){
 class JapaneseDateFormatter extends DateFormatter {
     constructor() { super(); }
     name(){return "Japanese (Romanji)";}
+    shortName(){return "jp"}
     formatDate(date){
         var hours_txt = japaneseHoursToText(date.getHours());
         var mins_txt = japaneseMinsToText(date.getMinutes());

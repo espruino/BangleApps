@@ -33,6 +33,8 @@ function draw() {
 
 // Clear the screen once, at startup
 g.clear();
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -47,5 +49,4 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
+

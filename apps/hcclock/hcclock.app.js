@@ -3,7 +3,7 @@
 // Numbers Rect order (left, top, right, bottom)
 // Each number defines a set of rects to draw
 
-const numbers = 
+const numbers =
 [
   [// Zero
     [0, 0, 1, 0.2],
@@ -64,7 +64,7 @@ const numbers =
     [0, 0.8, 1, 1],
     [0, 0, 0.1, 0.6],
     [0.9, 0, 1, 1]
-  ] 
+  ]
 ];
 
 const months = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
@@ -103,7 +103,7 @@ function updateTime()
   let mo = now.getMonth();
   let y = now.getFullYear();
   let d = now.getDate();
-  
+
   if(h != hour)
   {
     hour = h;
@@ -127,7 +127,7 @@ function updateTime()
     day = d;
     g.setFont("6x8", 2);
     g.setFontAlign(0, -1, 0);
-    g.drawString(fmtDate(d,mo,y,hour), 120, 120); 
+    g.drawString(fmtDate(d,mo,y,hour), 120, 120);
   }
   drawMessages();
 }
@@ -136,7 +136,7 @@ function drawDigits(x, value)
 {
   if(!Bangle.isLCDOn()) // No need to draw when LCD Off
     return;
-  
+
   drawChar(Math.floor(value/10),  15, x, 115, x+50);
   if(value%10 == 1)
     drawChar(value%10, 55, x, 155, x+50);
@@ -228,27 +228,18 @@ function flipColors()
 //  MESSAGE HANDLING()
 //
 
-let messages_installed = require("Storage").read("messages.app.js") != undefined;
+let messages_installed = require("Storage").read("messages") !== undefined;
 
 function handleMessages()
 {
-  if(messages_installed && hasMessages() > 0)
-  {
-    E.showMessage("Loading Messages...");
-    load("messages.app.js");
-  }
+  if(!hasMessages()) return;
+  E.showMessage("Loading Messages...");
+  load("messages.app.js");
 }
 
 function hasMessages()
 {
-  if(!messages_installed)
-    return false;
-
-  var messages = require("Storage").readJSON("messages.json",1)||[];
-  if (messages.some(m=>m.new))
-    return true;
-  else
-    return false;
+  return messages_installed && require("messages").status() === 'new';
 }
 
 let msg = atob("GBiBAAAAAAAAAAAAAAAAAAAAAB//+DAADDAADDAADDwAPD8A/DOBzDDn/DA//DAHvDAPvjAPvjAPvjAPvh///gf/vAAD+AAB8AAAAA==");
@@ -256,20 +247,21 @@ let had_messages = false;
 
 function drawMessages()
 {
-  if(!had_messages && hasMessages()) {
+  const has_messages = hasMessages();
+  if(has_messages === had_messages) return;
+  if(has_messages) {
       g.setColor(255,255,255);
       g.drawImage(msg, 184, 212);
       g.setFont("6x8", 2);
       g.setFontAlign(0, -1, 0);
       g.drawString(">", 224, 216);
-      had_messages = true;
-  } 
-  else if (had_messages && !hasMessages())
+  }
+  else
   {
       g.setColor(0,0,0);
       g.fillRect(180, 210, 240, 240);
-      had_messages = false;
   }
+  had_messages = has_messages;
 }
 
 //////////////////////////////////////////

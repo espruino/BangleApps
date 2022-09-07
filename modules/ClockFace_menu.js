@@ -11,12 +11,16 @@ exports.addItems = function(menu, callback, items) {
     const label = {
       showDate:/*LANG*/"Show date",
       loadWidgets:/*LANG*/"Load widgets",
+      powerSave:/*LANG*/"Power saving",
     }[key];
     switch(key) {
+      // boolean options which default to true
       case "showDate":
       case "loadWidgets":
-        // boolean options, which default to true
         if (value===undefined) value = true;
+        // fall through
+      case "powerSave":
+        // same for all boolean options:
         menu[label] = {
           value: !!value,
           onchange: v => callback(key, v),

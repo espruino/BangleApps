@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
 /*
 var EMULATOR = "banglejs2";
@@ -37,7 +37,8 @@ var SETTINGS = {
 var Const = {
 };
 module = undefined;
-eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
+var Espruino = require(__dirname + "/../core/lib/espruinotools.js");
+//eval(require("fs").readFileSync(__dirname + "/../core/lib/espruinotools.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/utils.js").toString());
 eval(require("fs").readFileSync(__dirname + "/../core/js/appinfo.js").toString());
 var apps = JSON.parse(require("fs").readFileSync(__dirname+"/../apps.json"));
@@ -78,7 +79,7 @@ function getThumbnail(appId, imageFn) {
       settings : SETTINGS,
       device : { id : DEVICEID }
       }).then(files => {
-        console.log("AppInfo returned");//, files);
+        console.log(`AppInfo returned for ${appId}`);//, files);
         flashMemory.set(factoryFlashMemory);
         jsTransmitString("reset()\n");
         console.log("Uploading...");
@@ -88,6 +89,7 @@ function getThumbnail(appId, imageFn) {
         appLog = "";
         jsTransmitString(command);
         console.log("Done.");
+        jsTransmitString("Bangle.setLCDMode();clearInterval();clearTimeout();\n");
         jsStopIdle();
 
         var rgba = new Uint8Array(GFX_WIDTH*GFX_HEIGHT*4);
@@ -96,7 +98,7 @@ function getThumbnail(appId, imageFn) {
         var firstPixel = rgba32[0];
         var blankImage = rgba32.every(col=>col==firstPixel)
 
-        if (appLog.indexOf("Uncaught")>=0)
+        if (appLog.replace("Uncaught Storage Updated!", "").indexOf("Uncaught")>=0)
           erroredApps.push( { id : app.id, log : appLog } );
 
         if (!blankImage) {

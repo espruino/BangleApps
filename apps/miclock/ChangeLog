@@ -2,3 +2,4 @@
 0.03: Localization
 0.04: move jshint to the top
 0.05: Use Bangle.setUI for button/launcher handling
+0.06: Tell clock widgets to hide.

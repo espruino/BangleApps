@@ -9,3 +9,7 @@
 0.08: Handling of alarms
 0.09: Alarm vibration, repeat, and auto-snooze now handled by sched
 0.10: Fix SMS bug
+0.12: Use default Bangle formatter for booleans
+0.13: Added Bangle.http function (see Readme file for more info)
+0.14: Fix timeout of http function not being cleaned up
+0.15: Allow method/body/headers to be specified for `http` (needs Gadgetbridge 0.68.0b or later)

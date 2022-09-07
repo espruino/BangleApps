@@ -5,3 +5,5 @@
 0.05: Battery optimisation, add the pause option, bug fixes
 0.06: Add a temperature threshold to detect (and not alert) if the BJS isn't worn. Better support for the peoples using the app at night
 0.07: Fix bug on the cutting edge firmware
+0.08: Use default Bangle formatter for booleans
+0.09: New app screen (instead of showing settings or the alert) and some optimisations

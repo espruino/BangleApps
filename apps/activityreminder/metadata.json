@@ -3,7 +3,7 @@
   "name": "Activity Reminder",
   "shortName":"Activity Reminder",
   "description": "A reminder to take short walks for the ones with a sedentary lifestyle",
-  "version":"0.07",
+  "version":"0.09",
   "icon": "app.png",
   "type": "app",
   "tags": "tool,activity",
@@ -13,11 +13,12 @@
     {"name": "activityreminder.app.js", "url":"app.js"},
     {"name": "activityreminder.boot.js", "url": "boot.js"},
     {"name": "activityreminder.settings.js", "url": "settings.js"},
+    {"name": "activityreminder.alert.js", "url": "alert.js"},
     {"name": "activityreminder", "url": "lib.js"},
     {"name": "activityreminder.img", "url": "app-icon.js", "evaluate": true}
   ],
   "data": [
     {"name": "activityreminder.s.json"},
-    {"name": "activityreminder.data.json"}
+    {"name": "activityreminder.data.json", "storageFile": true}
   ]
 }

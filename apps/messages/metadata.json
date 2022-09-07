@@ -1,7 +1,7 @@
 {
   "id": "messages",
   "name": "Messages",
-  "version": "0.39",
+  "version": "0.50",
   "description": "App to display notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",
@@ -10,6 +10,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"messages.app.js","url":"app.js"},
+    {"name":"messages.new.js","url":"app-newmessage.js"},
     {"name":"messages.settings.js","url":"settings.js"},
     {"name":"messages.img","url":"app-icon.js","evaluate":true},
     {"name":"messages.wid.js","url":"widget.js"},

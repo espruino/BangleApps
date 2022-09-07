@@ -1,234 +1,354 @@
-// set storage and define settings
-var storage = require("Storage");
-var breaktod, maxawake, minconsec;
-
-// read required settings from storage
-function readSettings(settings) {
-  breaktod = settings.breaktod || (settings.breaktod === 0 ? 0 : 10); // time of day when to start/end graphs
-  maxawake = settings.maxawake || 36E5; // 60min in ms
-  minconsec = settings.minconsec || 18E5; // 30min in ms
-}
-
-// define draw log function
-function drawLog(topY, viewUntil) {
-  // set default view time
-  viewUntil = viewUntil || Date();
-
-  // define parameters
-  var statusValue = [0, 0.4, 0.6, 1]; // unknown, not worn, awake, sleeping, consecutive sleep
-  var statusColor = [0, 63488, 2016, 32799, 31]; // black, red, green, violet, blue
-  var period = 432E5; // 12h
-  var graphHeight = 18;
-  var labelHeight = 12;
-  var width = g.getWidth();
-  var timestamp0 = viewUntil.valueOf() - period;
-  var y = topY + graphHeight;
-
-  // read 12h wide log
-  var log = require("sleeplog").readLog(0, timestamp0, viewUntil.valueOf());
-
-  // format log array if not empty
-  if (log.length) {
-    // if the period goes into the future add unknown status at the beginning
-    if (viewUntil > Date()) log.unshift([Date().valueOf(), 0]);
-
-    // check if the period goes earlier than logged data
-    if (log[log.length - 1][0] < timestamp0) {
-      // set time of last entry according to period
-      log[log.length - 1][0] = timestamp0;
-    } else {
-      // add entry with unknown status at the end
-      log.push([timestamp0, 0]);
-    }
-
-    // remap each element to [status, relative beginning, relative end, duration]
-    log = log.map((element, index) => [
-      element[1],
-      element[0] - timestamp0,
-      (log[index - 1] || [viewUntil.valueOf()])[0] - timestamp0,
-      (log[index - 1] || [viewUntil.valueOf()])[0] - element[0]
-    ]);
-
-    // start with the oldest entry to build graph left to right
-    log.reverse();
-  }
-
-  // clear area
-  g.reset().clearRect(0, topY, width, y + labelHeight);
-  // draw x axis
-  g.drawLine(0, y + 1, width, y + 1);
-  // draw x label
-  var hours = period / 36E5;
-  var stepwidth = width / hours;
-  var startHour = 24 + viewUntil.getHours() - hours;
-  for (var x = 0; x < hours; x++) {
-    g.fillRect(x * stepwidth, y + 2, x * stepwidth, y + 4);
-    g.setFontAlign(-1, -1).setFont("6x8")
-      .drawString((startHour + x) % 24, x * stepwidth + 1, y + 6);
-  }
-
-  // define variables for sleep calculation
-  var consecutive = 0;
-  var output = [0, 0]; // [estimated, true]
-  var i, nosleepduration;
-
-  // draw graph
-  log.forEach((element, index) => {
-    // set bar color depending on type
-    g.setColor(statusColor[consecutive ? 4 : element[0]]);
-
-    // check for sleeping status
-    if (element[0] === 3) {
-      // count true sleeping hours
-      output[1] += element[3];
-      // count duration of subsequent non sleeping periods
-      i = index + 1;
-      nosleepduration = 0;
-      while (log[i] !== undefined && log[i][0] < 3 && nosleepduration < maxawake) {
-        nosleepduration += log[i++][3];
-      }
-      // check if counted duration lower than threshold to start/stop counting
-      if (log[i] !== undefined && nosleepduration < maxawake) {
-        // start counting consecutive sleeping hours
-        consecutive += element[3];
-        // correct color to match consecutive sleeping
-        g.setColor(statusColor[4]);
-      } else {
-        // check if counted consecutive sleeping greater then threshold
-        if (consecutive >= minconsec) {
-          // write verified consecutive sleeping hours to output
-          output[0] += consecutive + element[3];
+// touch listener for specific areas
+function touchListener(b, c) {
+  // check if inside any area
+  for (var i = 0; i < aaa.length; i++) {
+    if (!(c.x < aaa[i].x0 || c.x > aaa[i].x1 || c.y < aaa[i].y0 || c.y > aaa[i].y1)) {
+      // check if drawing ongoing
+      if (drawingID > 0) {
+        // check if interrupt is set
+        if (aaa[i].interrupt) {
+          // stop ongoing drawing
+          drawingID++;
+          if (ATID) ATID = clearTimeout(ATID);
         } else {
-          // correct color to display a canceled consecutive sleeping period
-          g.setColor(statusColor[3]);
+          // do nothing
+          return;
         }
-        // stop counting consecutive sleeping hours
-        consecutive = 0;
       }
-    } else {
-      // count durations of non sleeping periods for consecutive sleeping
-      if (consecutive) consecutive += element[3];
+      // give feedback
+      Bangle.buzz(25);
+      // execute action
+      aaa[i].funct();
     }
-
-    // calculate points
-    var x1 = Math.ceil(element[1] / period * width);
-    var x2 = Math.floor(element[2] / period * width);
-    var y2 = y - graphHeight * statusValue[element[0]];
-    // draw bar
-    g.clearRect(x1, topY, x2, y);
-    g.fillRect(x1, y, x2, y2).reset();
-    if (y !== y2) g.fillRect(x1, y2, x2, y2);
-  });
-
-  // clear variables
-  log = undefined;
-
-  // return convert output into minutes
-  return output.map(value => value /= 6E4);
-}
-
-// define function to draw the analysis
-function drawAnalysis(toDate) {
-  //var t0 = Date.now();
-
-  // get width
-  var width = g.getWidth();
-
-  // define variable for sleep calculation
-  var outputs = [0, 0]; // [estimated, true]
-
-  // clear analysis area
-  g.clearRect(0, 71, width, width);
-
-  // draw log graphs and read outputs
-  drawLog(110, toDate).forEach(
-    (value, index) => outputs[index] += value);
-  drawLog(144, Date(toDate.valueOf() - 432E5)).forEach(
-    (value, index) => outputs[index] += value);
-
-  // draw outputs
-  g.reset(); // area: 0, 70, width, 105
-  g.setFont("6x8").setFontAlign(-1, -1);
-  g.drawString("consecutive\nsleeping", 10, 70);
-  g.drawString("true\nsleeping", 10, 90);
-  g.setFont("12x20").setFontAlign(1, -1);
-  g.drawString(Math.floor(outputs[0] / 60) + "h " +
-    Math.floor(outputs[0] % 60) + "min", width - 10, 70);
-  g.drawString(Math.floor(outputs[1] / 60) + "h " +
-    Math.floor(outputs[1] % 60) + "min", width - 10, 90);
-
-  //print("analysis processing seconds:", Math.round(Date.now() - t0) / 1000);
-}
-
-// define draw night to function
-function drawNightTo(prevDays) {
-  // calculate 10am of this or a previous day
-  var toDate = Date();
-  toDate = Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate() - prevDays, breaktod);
-
-  // get width
-  var width = g.getWidth();
-  var center = width / 2;
-
-  // reduce date by 1s to ensure correct headline
-  toDate = Date(toDate.valueOf() - 1E3);
-
-  // clear heading area
-  g.clearRect(0, 24, width, 70);
-
-  // display service states: service, loggging and powersaving
-  if (!sleeplog.enabled) {
-    // draw disabled service icon
-    g.setColor(1, 0, 0)
-      .drawImage(atob("FBSBAAH4AH/gH/+D//w/n8f5/nud7znP85z/f+/3/v8/z/P895+efGPj4Hw//8H/+Af+AB+A"), 2, 36);
-  } else if (!sleeplog.logfile) {
-    // draw disabled log icon
-    g.reset().drawImage(atob("EA6BAM//z/8AAAAAz//P/wAAAADP/8//AAAAAM//z/8="), 4, 40)
-      .setColor(1, 0, 0).fillPoly([2, 38, 4, 36, 22, 54, 20, 56]);
   }
-  // draw power saving icon
-  if (sleeplog.powersaving) g.setColor(0, 1, 0)
-    .drawImage(atob("FBSBAAAAcAD/AH/wP/4P/+H//h//4//+fv/nj/7x/88//Of/jH/4j/8I/+Af+AH+AD8AA4AA"), width - 22, 36);
-
-  // draw headline
-  g.reset().setFont("12x20").setFontAlign(0, -1);
-  g.drawString("Night to " + require('locale').dow(toDate, 1) + "\n" +
-    require('locale').date(toDate, 1), center, 30);
-
-  // show loading info
-  var info = "calculating data ...\nplease be patient :)";
-  var y0 = center + 30;
-  var bounds = [center - 80, y0 - 20, center + 80, y0 + 20];
-  g.clearRect.apply(g, bounds).drawRect.apply(g, bounds);
-  g.setFont("6x8").setFontAlign(0, 0);
-  g.drawString(info, center, y0);
-
-  // calculate and draw analysis after timeout for faster feedback
-  if (ATID) ATID = clearTimeout(ATID);
-  ATID = setTimeout(drawAnalysis, 100, toDate);
 }
 
-// define function to draw and setup UI
-function startApp() {
-  readSettings(storage.readJSON("sleeplog.json", true) || {});
-  drawNightTo(prevDays);
-  Bangle.setUI("leftright", (cb) => {
-    if (!cb) {
-      eval(storage.read("sleeplog.settings.js"))(startApp);
-    } else if (prevDays + cb >= -1) {
-      drawNightTo((prevDays += cb));
+// swipe listener for switching the displayed day
+function swipeListener(h, v) {
+  // give feedback
+  Bangle.buzz(25);
+  // set previous or next day
+  prevDays += h;
+  if (prevDays < -1) prevDays = -1;
+  // redraw
+  draw();
+}
+
+// day selection
+function daySelection() {
+  var date = Date(startDate - prevDays * 864E5).toString().split(" ");
+  E.showPrompt(date.slice(0, 3).join(" ") + "\n" + date[3] + "\n" +
+    prevDays + /*LANG*/" days before today", {
+      title: /*LANG*/"Select Day",
+      buttons: {
+        "<<7": 7,
+        "<1": 1,
+        "Ok": 0,
+        "1>": -1,
+        "7>>": -7
+      }
+    }).then(function(v) {
+    if (v) {
+      prevDays += v;
+      if (prevDays < -1) prevDays = -1;
+      daySelection();
+    } else {
+      fromMenu();
     }
   });
 }
 
-// define day to display and analysis timeout id
-var prevDays = 0;
-var ATID;
+// open settings menu
+function openSettings() {
+  // disable back behaviour to prevent bouncing on return
+  backListener = () => {};
+  // open settings menu
+  eval(require("Storage").read("sleeplog.settings.js"))(fromMenu);
+}
 
-// setup app
-g.clear();
+// draw progress as bar, increment on undefined percentage
+function drawProgress(progress) {
+  g.fillRect(19, 147, 136 * progress + 19, 149);
+}
+
+// (re)draw info data
+function drawInfo() {
+  // set active info type
+  var info = infoData[infoType % infoData.length];
+  // draw info
+  g.clearRect(0, 69, 175, 105).reset()
+    .setFont("6x8").setFontAlign(-1, -1)
+    .drawString(info[0][0], 10, 70)
+    .drawString(info[1][0], 10, 90)
+    .setFont("12x20").setFontAlign(1, -1)
+    .drawString((info[0][1] / 60 | 0) + "h " + (info[0][1] % 60) + "min", 166, 70)
+    .drawString((info[1][1] / 60 | 0) + "h " + (info[1][1] % 60) + "min", 166, 90);
+  // free ram
+  info = undefined;
+}
+
+
+// draw graph for log segment
+function drawGraph(log, date, pos) {
+  // set y position
+  var y = pos ? 144 : 110;
+  // clear area
+  g.reset().clearRect(0, y, width, y + 33);
+  // draw x axis
+  g.drawLine(0, y + 19, width, y + 19);
+  // draw x label
+  var stepWidth = width / 12;
+  var startHour = date.getHours() + (pos ? 0 : 12);
+  for (var x = 0; x < 12; x++) {
+    g.fillRect(x * stepWidth, y + 20, x * stepWidth, y + 22);
+    g.setFontAlign(-1, -1).setFont("6x8")
+      .drawString((startHour + x) % 24, x * stepWidth + 1, y + 24);
+  }
+
+  // set height and color values:
+  // status: unknown, not worn, awake, light sleep, deep sleep, consecutive
+  // color:  black,   red,      green, cyan,        blue,       violet
+  var heights = [0, 0.4, 0.6, 0.8, 1];
+  var colors = [0, 63488, 2016, 2047, 31, 32799];
+
+  // cycle through log
+  log.forEach((entry, index, log) => {
+    // calculate positions
+    var x1 = Math.ceil((entry[0] - log[0][0]) / 72 * width);
+    var x2 = Math.floor(((log[index + 1] || [date / 6E5])[0] - log[0][0]) / 72 * width);
+    // calculate y2 position
+    var y2 = y + 18 * (1 - heights[entry[1]]);
+    // set color depending on status and consecutive sleep
+    g.setColor(colors[entry[2] === 2 ? 5 : entry[1]]);
+    // clear area, draw bar and top line
+    g.clearRect(x1, y, x2, y + 18);
+    g.fillRect(x1, y + 18, x2, y2).reset();
+    if (y + 18 !== y2) g.fillRect(x1, y2, x2, y2);
+  });
+}
+
+// draw information in an interruptable cycle
+function drawingCycle(calcDate, thisID, cycle, log) {
+  // reset analysis timeout ID
+  ATID = undefined;
+
+  // check drawing ID to continue
+  if (thisID !== drawingID) return;
+
+  // check cycle
+  if (!cycle) {
+    /* read log on first cycle */
+    // set initial cycle
+    cycle = 1;
+
+    // read log
+    log = slMod.readLog(calcDate - 864E5, calcDate);
+
+    // draw progress
+    drawProgress(0.6);
+  } else if (cycle === 2) {
+    /* draw stats on second cycle */
+
+    // read stats and process into info data
+    infoData = slMod.getStats(calcDate, 0, log);
+    infoData = [
+      [
+        [ /*LANG*/"consecutive\nsleeping", infoData.consecSleep],
+        [ /*LANG*/"true\nsleeping", infoData.deepSleep + infoData.lightSleep]
+      ],
+      [
+        [ /*LANG*/"deep\nsleep", infoData.deepSleep],
+        [ /*LANG*/"light\nsleep", infoData.lightSleep]
+      ],
+      [
+        [ /*LANG*/"awake", infoData.awakeTime],
+        [ /*LANG*/"not worn", infoData.notWornTime]
+      ]
+    ];
+    // draw info
+    drawInfo();
+
+    // draw progress
+    drawProgress(0.9);
+  } else if (cycle === 3) {
+    /* segment log on third cycle */
+    // calculate segmentation date in 10min steps and index of the segmentation
+    var segmDate = calcDate / 6E5 - 72;
+    var segmIndex = log.findIndex(entry => entry[0] >= segmDate);
+
+    // check if segmentation neccessary
+    if (segmIndex > 0) {
+      // split log
+      log = [log.slice(segmIndex), log.slice(0, segmIndex)];
+      // add entry at segmentation point
+      if (log[0][0] !== segmDate)
+        log[0].unshift([segmDate, log[1][segmIndex - 1][1], log[1][segmIndex - 1][2]]);
+    } else if (segmIndex < 0) {
+      // set log as second log entry
+      log = [
+        [], log
+      ];
+    } else {
+      // add entry at segmentation point
+      if (log[0] !== segmDate) log.unshift([segmDate, 0, 0]);
+      // set log as first log entry
+      log = [log, []];
+    }
+
+    // draw progress
+    drawProgress(1);
+  } else if (cycle === 4) {
+    /* draw upper graph on fourth cycle */
+    drawGraph(log[0], calcDate, 0);
+  } else if (cycle === 5) {
+    /* draw upper graph on fifth cycle */
+    drawGraph(log[1], calcDate, 1);
+  } else {
+    /* stop cycle and set drawing finished */
+    drawingID = 0;
+    // give feedback
+    Bangle.buzz(25);
+  }
+
+  // initiate next cycle if defined
+  if (thisID === drawingID) ATID = setTimeout(drawingCycle, 10, calcDate, drawingID, ++cycle, log);
+}
+
+// return from a menu
+function fromMenu() {
+  // reset UI to custom mode
+  Bangle.setUI(customUI);
+  // enable back behaviour delayed to prevent bouncing
+  setTimeout(() => backListener = load, 500);
+  // redraw app
+  draw();
+}
+
+// draw app
+function draw() {
+  // stop ongoing drawing
+  drawingID++;
+  if (ATID) ATID = clearTimeout(ATID);
+
+  // clear app area
+  g.reset().clearRect(0, 24, width, width);
+
+  // set date to calculate data for
+  var calcDate = new Date(startDate - prevDays * 864E5);
+
+  // draw title
+  g.setFont("12x20").setFontAlign(0, -1)
+    .drawString( /*LANG*/"Night to " + require('locale').dow(calcDate, 1) + "\n" +
+      require('locale').date(calcDate, 1), 87, 28);
+
+  // reset graphics and define image string
+  g.reset();
+  var imgStr = "";
+  // check which icon to set
+  if (!global.sleeplog || sleeplog.conf.enabled !== true) {
+    // set color and disabled service icon
+    g.setColor(1, 0, 0);
+    imgStr = "FBSBAOAAfwAP+AH3wD4+B8Hw+A+fAH/gA/wAH4AB+AA/wAf+APnwHw+D4Hx8A++AH/AA/gAH";
+  } else if (sleeplog.debug) {
+    // set debugging icon
+    imgStr = typeof sleeplog.debug === "object" ?
+      "FBSBAB/4AQDAF+4BfvAX74F+CBf+gX/oFJKBf+gUkoF/6BSSgX/oFJ6Bf+gX/oF/6BAAgf/4" : // file
+      "FBSBAP//+f/V///4AAGAABkAAZgAGcABjgAYcAGDgBhwAY4AGcABmH+ZB/mAABgAAYAAH///"; // console
+  }
+  // draw service and settings icon
+  if (imgStr) g.drawImage(atob(imgStr), 2, 36);
+  g.reset().drawImage(atob("FBSBAAAeAAPgAHwAB4AA8AAPAwDwcA+PAP/wH/4D/8B/8A/gAfwAP4AH8AD+AA/AAPgABwAA"), width - 22, 36);
+
+  // show loading info with progresss bar
+  g.reset().drawRect(7, 117, width - 8, 157)
+    .setFont("6x8").setFontAlign(0, 0)
+    .drawString( /*LANG*/ "calculating data ...\nplease be patient :)", 87, 133)
+    .drawRect(17, 145, 157, 151);
+
+  // draw first progress
+  drawProgress(0.1);
+
+  // initiate drawing cycle
+  ATID = setTimeout(drawingCycle, 10, calcDate, drawingID, 0);
+}
+
+// define sleeplog module
+var slMod = require("sleeplog");
+
+// read app timeout from settings
+var appTimeout = (require("Storage").readJSON("sleeplog.json", true) || {}).appTimeout;
+
+// set listener for back button
+var backListener = load;
+// define custom UI mode
+var customUI = {
+  mode: "custom",
+  back: backListener,
+  touch: touchListener,
+  swipe: swipeListener
+};
+
+// define start values
+var startDate = slMod.getLastBreak(); // date to start from
+var prevDays = 0; //  number of previous days to display
+var infoType = 0; //  type of info data to display
+var infoData; //      storage for info data
+var ATID; //          analysis timeout ID
+var drawingID = 0; // drawing ID for ongoing process
+// get screen width and center (zero based)
+var width = g.getWidth() - 1;
+var center = width / 2 - 1;
+
+// set areas and actions array
+var aaa = [
+  // day selection
+  {
+    x0: 26,
+    x1: width - 26,
+    y0: 24,
+    y1: 68,
+    interrupt: true,
+    funct: () => daySelection()
+  },
+  // open settings
+  {
+    x0: width - 26,
+    x1: width,
+    y0: 24,
+    y1: 68,
+    interrupt: true,
+    funct: () => openSettings()
+  },
+  // change info type
+  {
+    x0: 0,
+    x1: width,
+    y0: 69,
+    y1: 105,
+    funct: () => {
+      // change info type
+      infoType++;
+      // redraw info
+      drawInfo();
+    }
+  }
+];
+
+// clear and reset screen
+g.clear(true);
+
+// load and draw widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-// start app
-startApp();
+// set UI in custom mode
+Bangle.setUI(customUI);
+
+// set app timeout if defined
+if (appTimeout) Bangle.setOptions({
+  lockTimeout: appTimeout,
+  backlightTimeout: appTimeout
+});
+
+// draw app
+draw();

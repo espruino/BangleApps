@@ -32,7 +32,7 @@
         }
       },
       "Exit press:": {
-        value: !settings.clockMode,  // ! converts undefined to true
+        value: !settings.clockMode,
         format: v => v?"short":"long",
         onchange: v => {
           settings.clockMode = v;
@@ -40,8 +40,7 @@
         },
       },
       "Debug mode:": {
-        value: !!settings.debugMode,  // !! converts undefined to false
-        format: v => v?"On":"Off",
+        value: !!settings.debugMode,
         onchange: v => {
           settings.debugMode = v;
           writeSettings();

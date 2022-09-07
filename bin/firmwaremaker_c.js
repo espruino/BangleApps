@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 /*
 Mashes together a bunch of different apps into a big binary blob.
 We then store this *inside* the Bangle.js firmware and can use it
@@ -23,13 +23,13 @@ if (DEVICE=="BANGLEJS") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs1_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","mclock","setting",
-    "about","alarm","widbat","widbt","welcome"
+    "about","alarm","sched","widbat","widbt","welcome"
   ];
 } else if (DEVICE=="BANGLEJS2") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","antonclk","setting",
-    "about","alarm","health","widlock","widbat","widbt","widid","welcome"
+    "about","alarm","sched","health","widlock","widbat","widbt","widid","welcome"
   ];
 } else {
   console.log("USAGE:");

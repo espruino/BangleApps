@@ -1,0 +1,25 @@
+{ "id": "advcasio",
+  "name": "Advanced Casio Clock",
+  "shortName":"advcasio",
+  "version":"0.03",
+  "description": "An over-engineered clock inspired by Casio watches. It has a 4 days weather, a  timer using swipe and a scratchpad. Can be updated using a dedicated webapp.",
+  "icon": "app.png",
+  "tags": "clock",
+	"type": "clock",
+	"screenshots": [
+			{ "url": "screenshot-clock-1.jpg" },
+			{ "url": "screenshot-clock-2.jpg" },
+			{ "url": "screenshot-clock-3.jpg" },
+			{ "url": "screenshot-webapp.jpg" }
+  ],
+  "supports" : ["BANGLEJS", "BANGLEJS2"],  
+  "readme": "README.md",
+	"allow_emulator":true,
+  "storage": [
+			{"name":"advcasio.app.js","url":"app.js"},
+			{"name":"advcasio.img","url":"app-icon.js","evaluate":true}
+  ],
+	"data": [
+			{ "name": "advcasio.data.json", "url": "data.json", "storageFile": true }
+  ]
+}

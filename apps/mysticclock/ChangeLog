@@ -1,2 +1,3 @@
 1.00: First published version.
 1.01: Use Bangle.setUI for Launcher/buttons
+1.02: Tell clock widgets to hide.
