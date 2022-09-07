@@ -115,6 +115,7 @@ function getSteps() {
   return '0';
 }
 
+Bangle.setUI("clock");
 g.clear();
 Bangle.loadWidgets();
 /*
@@ -126,4 +127,3 @@ for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 setInterval(draw, 15000); // refresh every 15s
 draw();
-Bangle.setUI("clock");

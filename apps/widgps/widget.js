@@ -1,6 +1,9 @@
 (function() {
-let settings =
-    require("Storage").readJSON("widgps.json", 1) || {crossIcon : true};
+
+let settings = Object.assign(
+      require('Storage').readJSON("widgps.default.json", true) || {},
+      require('Storage').readJSON("widgps.json", true) || {}
+);
 
 var interval;
 
@@ -8,13 +11,14 @@ var interval;
 var oldSetGPSPower = Bangle.setGPSPower;
 Bangle.setGPSPower = function(on, id) {
   var isGPSon = oldSetGPSPower(on, id);
-  WIDGETS.gps.draw();
+  WIDGETS.gps.width = !isGPSon && settings.hideWhenGpsOff ? 0 : 24;
+  Bangle.drawWidgets();
   return isGPSon;
 };
 
 WIDGETS.gps = {
   area : "tr",
-  width : 24,
+  width : !Bangle.isGPSOn() && settings.hideWhenGpsOff ? 0 : 24,
   draw : function() {
     g.reset();
 
@@ -35,13 +39,23 @@ WIDGETS.gps = {
         } else {
           g.setColor("#FD0"); // on but no fix = amber
         }
-      } else {
-        g.setColor("#888"); // off = grey
-      }
-      g.drawImage(
+
+        g.drawImage(
           atob(
               "GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="),
           this.x, 2 + this.y);
+
+      } else {
+        if(!settings.hideWhenGpsOff) {
+          g.setColor("#888"); // off = grey
+
+          g.drawImage(
+            atob(
+                "GBiBAAAAAAAAAAAAAA//8B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+B//+BgYGBgYGBgYGBgYGBgYGBgYGB//+A//8AAAAAAAAAAAAA=="),
+            this.x, 2 + this.y);
+        }
+      }
+
     } else { // marker icons
       if (Bangle.isGPSOn()) {  
         const gpsObject = Bangle.getGPSFix();
@@ -59,9 +73,11 @@ WIDGETS.gps = {
         }
       } else {
         // GNSS off
-        g.drawImage(
-              atob("GBiBAAAAAAAAAAB+ABj/ABxDgA4AwAcAwAeMYAfEYAbgYAZwYAM4wAMcQAOOAAGHAAHDgADDwABm4AB+cAA8OAAYGAAAAAAAAAAAAA=="),
-              this.x, 2 + this.y);
+        if(!settings.hideWhenGpsOff) {
+          g.drawImage(
+                atob("GBiBAAAAAAAAAAB+ABj/ABxDgA4AwAcAwAeMYAfEYAbgYAZwYAM4wAMcQAOOAAGHAAHDgADDwABm4AB+cAA8OAAYGAAAAAAAAAAAAA=="),
+                this.x, 2 + this.y);
+        }
       }
     }
   }

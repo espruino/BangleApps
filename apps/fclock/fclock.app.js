@@ -173,6 +173,9 @@ const drawHR = function () {
   }
 };
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 // clean app screen
 g.clear();
 Bangle.loadWidgets();
@@ -198,6 +201,3 @@ Bangle.on('HRM', function (d) {
 
 // draw now
 drawClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");

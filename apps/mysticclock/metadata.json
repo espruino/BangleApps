@@ -1,7 +1,7 @@
 {
   "id": "mysticclock",
   "name": "Mystic Clock",
-  "version": "1.01",
+  "version": "1.02",
   "description": "A retro-inspired watchface featuring time, date, and an interactive data display line.",
   "icon": "mystic-clock.png",
   "type": "clock",

@@ -189,6 +189,13 @@ Bangle.on('touch', (button) => {
   if (button === 3 && Bangle.isLCDOn()) Bangle.setLCDPower(false);
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", btn=>{
+  if (btn<0) prevInfo();
+  if (btn>0) nextInfo();
+  drawAll();
+});
+
 // clean app screen
 g.clear();
 Bangle.loadWidgets();
@@ -200,9 +207,3 @@ if (Bangle.isLCDOn()) {
   drawAll(); // draw immediately
 }
 
-// Show launcher when button pressed
-Bangle.setUI("clockupdown", btn=>{
-  if (btn<0) prevInfo();
-  if (btn>0) nextInfo();
-  drawAll();
-});

@@ -62,12 +62,10 @@ exports.pushMessage = function(event) {
   var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
   var appSettings = require('Storage').readJSON('messages.settings.json',1)||{};
   var unlockWatch = appSettings.unlockWatch;
-  var quietNoAutOpn = appSettings.quietNoAutOpn;
-  delete appSettings;
   // don't auto-open messages in quiet mode if quietNoAutOpn is true
-  if(quiet && quietNoAutOpn) {
-      loadMessages = false;
-  }
+  if((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
+    loadMessages = false;
+  delete appSettings;
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
