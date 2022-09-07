@@ -1,10 +1,5 @@
 (() => {
 
-function getMessages() {
-  if ("undefined"!=typeof MESSAGES) return MESSAGES;
-  return require("Storage").readJSON("messages.json",1)||[];
-}
-
 function filterMessages(msgs) {
   return msgs.filter(msg => msg.new && msg.id != "music")
     .map(m => m.src) // we only need this for icon/color
@@ -61,8 +56,8 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   }
   this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
-},buzz:function(msgSrc) {
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
+},buzz:function(msgSrc) { // return a promise
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
   var pattern;
   if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
     // special vibration pattern for incoming calls
@@ -71,7 +66,7 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
     pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
   }
   if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
-  require("buzz").pattern(pattern);
+  return require("buzz").pattern(pattern);
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+24) return;
@@ -82,6 +77,5 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
 message but then the watch was never viewed. In that case we don't
 want to buzz but should still show that there are unread messages. */
 if (global.MESSAGES===undefined)
-  WIDGETS["messages"].update(getMessages(), true);
-
+  WIDGETS["messages"].update(require("messages").getMessages(), true);
 })();

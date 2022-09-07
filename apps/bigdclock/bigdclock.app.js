@@ -85,7 +85,8 @@ Bangle.on('charging', (charging) => {
     draw();
 });
 
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 draw();
 
-Bangle.setUI("clock");

@@ -100,6 +100,32 @@ exports.clearAll = function(event) {
     WIDGETS.messages.update(messages);
 }
 
+/**
+ * @returns {array} All messages
+ */
+exports.getMessages = function() {
+  if ("undefined"!=typeof MESSAGES) return MESSAGES; // loaded/managed by app
+  return require("Storage").readJSON("messages.json",1)||[];
+}
+
+/**
+ * Check if there are any messages
+ * @returns {string} "new"/"old"/"none"
+ */
+ exports.status = function() {
+  try {
+    let status= "none";
+    for(const m of exports.getMessages()) {
+      if (["music", "map"].includes(m.id)) continue;
+      if (m.new) return "new";
+      status = "old";
+    }
+    return status;
+  } catch(e) {
+    return "none"; // don't bother e.g. the widget with errors
+  }
+};
+
 exports.getMessageImage = function(msg) {
   /*
   * icons should be 24x24px or less with 1bpp colors and 'Transparency to Color'
@@ -118,7 +144,6 @@ exports.getMessageImage = function(msg) {
   if (s=="gmx") return atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEJmfmd8Zuc85v847/88Z9s8fttmHIHiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
   if (s=="google") return atob("GBiBAAAAAAD/AAP/wAf/4A/D4B8AwDwAADwAAHgAAHgAAHAAAHAH/nAH/nAH/ngH/ngAHjwAPDwAfB8A+A/D8Af/4AP/wAD/AAAAAA==");
   if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA=="); // 2 bit unpaletted
-  if (s=="hangouts") return atob("FBaBAAH4AH/gD/8B//g//8P//H5n58Y+fGPnxj5+d+fmfj//4//8H//B//gH/4A/8AA+AAHAABgAAAA=");
   if (s=="home assistant") return atob("FhaBAAAAAADAAAeAAD8AAf4AD/3AfP8D7fwft/D/P8ec572zbzbNsOEhw+AfD8D8P4fw/z/D/P8P8/w/z/AAAAA=");
   if (s=="instagram") return atob("GBiBAAAAAAAAAAAAAAAAAAP/wAYAYAwAMAgAkAh+EAjDEAiBEAiBEAiBEAiBEAjDEAh+EAgAEAwAMAYAYAP/wAAAAAAAAAAAAAAAAA==");
   if (s=="kalender") return atob("GBgBBgBgBQCgff++RQCiRgBiQAACf//+QAACQAACR//iRJkiRIEiR//iRNsiRIEiRJkiR//iRIEiRIEiR//iQAACQAACf//+AAAA");
@@ -152,11 +177,14 @@ exports.getMessageImage = function(msg) {
 };
 
 exports.getMessageImageCol = function(msg,def) {
+  let iconColorMode = (require('Storage').readJSON("messages.settings.json", 1) || {}).iconColorMode;
+  if (iconColorMode == 'mono')
+    return g.theme.fg;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
     // generic colors, using B2-safe colors
+    // DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used
     "airbnb": "#f00",
-    "alarm": "#fff",
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
@@ -172,8 +200,7 @@ exports.getMessageImageCol = function(msg,def) {
     "gmx": "#1c449b",
     "google": "#4285F4",
     "google home": "#fbbc05",
-    "hangouts": "#1ba261",
-    "home assistant": "#fff", // ha-blue is #41bdf5, but that's the background
+// "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#dd2a7b",
     "lieferando": "#ee5c00",
     "messenger": "#0078ff",
@@ -194,7 +221,6 @@ exports.getMessageImageCol = function(msg,def) {
     "teams": "#464eb8",
     "telegram": "#0088cc",
     "telegram foss": "#0088cc",
-    "threema": "#000",
     "to do": "#3999e5",
     "twitch": "#6441A4",
     "twitter": "#1da1f2",
