@@ -56,8 +56,8 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   }
   this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
-},buzz:function(msgSrc) {
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return; // never buzz during Quiet Mode
+},buzz:function(msgSrc) { // return a promise
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
   var pattern;
   if (msgSrc != undefined && msgSrc.toLowerCase() == "phone") {
     // special vibration pattern for incoming calls
@@ -66,7 +66,7 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
     pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
   }
   if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
-  require("buzz").pattern(pattern);
+  return require("buzz").pattern(pattern);
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+24) return;

@@ -66,3 +66,4 @@
 0.50: Add `getMessages` and `status` functions to library
       Option to disable auto-open of messages
       Option to make message icons monochrome (not colored)
+      messages widget buzz now returns a promise
