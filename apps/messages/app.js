@@ -48,9 +48,47 @@ we should start a timeout for settings.unreadTimeout to return
 to the clock. */
 var unreadTimeout;
 /// List of all our messages
-var MESSAGES = require("messages").getMessages();
-if (!Array.isArray(MESSAGES)) MESSAGES=[];
+var MESSAGES, modified = [];
+function saveMessages() {
+  // only write modified messages
+  require("messages").write(MESSAGES.filter(m => modified.includes(m.id)));
+}
+function set(msg, key, val) {
+  if (msg[key]!==val) {
+    msg[key] = val;
+    if (msg.id && !modified.includes(msg.id)) modified.push(msg.id);
+  }
+}
+function markRead(msg) {
+  if (msg.new) set(msg, "new", false);
+}
+function remove(msg) {
+  if (!MESSAGES.some(m => m.id===msg.id)) return; // already gone
+  MESSAGES = MESSAGES.filter(m => m.id!==msg.id);
+  modified = modified.filter(id => id!==msg.id);
+  require("messages").remove(msg);
+}
+try {
+  MESSAGES = require("messages").getMessages();
+  // Write them back to storage when we're done
+  E.on("kill", saveMessages);
+} catch (e) {
+  g.clear();
+  E.showPrompt(/*LANG*/"Message file corrupt, erase all messages?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
+    if (isYes) {    // OK: erase message file and reload this app
+      require("messages").clearAll();
+      load("messages.app.js");
+    } else {
+      load();// well, this app won't work... let's go back to the clock
+    }
+  });
+}
+// used by lib.js to inform app of updates
 var onMessagesModified = function(msg) {
+  if (msg.t==="remove") {
+    remove(msg);
+    msg = undefined;
+  }
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
@@ -60,16 +98,13 @@ var onMessagesModified = function(msg) {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
     if (active!="music") return; // don't open music over other screens
   }
+  if (msg && msg.id && !modified.includes(msg.id)) modified.push(msg.id);
   showMessage(msg&&msg.id);
 };
 Bangle.on("message", (type, msg) => {
   msg.handled = true;
   onMessagesModified(msg);
 });
-
-function saveMessages() {
-  require("Storage").writeJSON("messages.json",MESSAGES)
-}
 
 function showMapMessage(msg) {
   active = "map";
@@ -101,8 +136,7 @@ function showMapMessage(msg) {
   g.reset().clearRect(Bangle.appRect);
   layout.render();
   function back() { // mark as not new and return to menu
-    msg.new = false;
-    saveMessages();
+    markRead(msg);
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
   }
@@ -134,8 +168,7 @@ function showMusicMessage(msg) {
     updateLabelsInterval = undefined;
     openMusic = false;
     var wasNew = msg.new;
-    msg.new = false;
-    saveMessages();
+    markRead(msg);
     layout = undefined;
     if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:0,openMusic:0});
     else checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
@@ -217,26 +250,20 @@ function showMessageSettings(msg) {
       showMessageScroller(msg);
     },
     /*LANG*/"Delete" : () => {
-      MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
-      saveMessages();
+      remove(msg);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Mark Unread" : () => {
-      msg.new = true;
-      saveMessages();
+      set(msg, "new", true);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Mark all read" : () => {
-      MESSAGES.forEach(msg => msg.new = false);
-      saveMessages();
+      MESSAGES.forEach(markRead);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Delete all messages" : () => {
       E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
-        if (isYes) {
-          MESSAGES = [];
-          saveMessages();
-        }
+        if (isYes) require('messages').clearAll();
         checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
       });
     },
@@ -290,7 +317,7 @@ function showMessage(msgid) {
   }
   function goBack() {
     layout = undefined;
-    msg.new = false; saveMessages(); // read mail
+    markRead(msg); // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
   }
@@ -298,7 +325,7 @@ function showMessage(msgid) {
   ];
   if (msg.positive) {
     buttons.push({type:"btn", src:atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA=="), cb:()=>{
-      msg.new = false; saveMessages();
+      markRead(msg);
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
@@ -307,7 +334,7 @@ function showMessage(msgid) {
   if (msg.negative) {
     if (buttons.length) buttons.push({width:32}); // nasty hack...
     buttons.push({type:"btn", src:atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA="), cb:()=>{
-      msg.new = false; saveMessages();
+      markRead(msg);
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
@@ -425,17 +452,19 @@ function cancelReloadTimeout() {
   unreadTimeout = undefined;
 }
 
-g.clear();
+if (MESSAGES !== undefined) { // only if loading MESSAGES worked
+  g.clear();
 
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
 
-setTimeout(() => {
-  var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
-  if (unreadTimeoutMillis) {
-    unreadTimeout = setTimeout(load, unreadTimeoutMillis);
-  }
-  // only openMusic on launch if music is new
-  var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
-  checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
-}, 10); // if checkMessages wants to 'load', do that
+  setTimeout(() => {
+    var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
+    if (unreadTimeoutMillis) {
+      unreadTimeout = setTimeout(load, unreadTimeoutMillis);
+    }
+    // only openMusic on launch if music is new
+    var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
+    checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
+  }, 10); // if checkMessages wants to 'load', do that
+}
