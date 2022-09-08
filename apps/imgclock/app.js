@@ -72,6 +72,8 @@ g.drawImage(img, 0,OY,bgoptions);
 // draw clock itself and do it every second
 draw();
 var secondInterval = setInterval(draw,1000);
+// Show launcher when button pressed
+Bangle.setUI("clock");
 // load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -84,5 +86,4 @@ Bangle.on('lcdPower',on=>{
     draw();
   }
 });
-// Show launcher when button pressed
-Bangle.setUI("clock");
+

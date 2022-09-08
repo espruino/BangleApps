@@ -2,7 +2,7 @@
   "id": "pebble",
   "name": "Pebble Clock",
   "shortName": "Pebble",
-  "version": "0.09",
+  "version": "0.10",
   "description": "A pebble style clock to keep the rebellion going",
   "readme": "README.md",
   "icon": "pebble.png",

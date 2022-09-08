@@ -5,6 +5,7 @@
   let ScreenWidth  = g.getWidth(),  CenterX;
   let ScreenHeight = g.getHeight(), CenterY, outerRadius;
 
+  Bangle.setUI('clock');
   Bangle.loadWidgets();
 
 /**** updateClockFaceSize ****/
@@ -1377,4 +1378,3 @@
     }
   });
 
-  Bangle.setUI('clock');

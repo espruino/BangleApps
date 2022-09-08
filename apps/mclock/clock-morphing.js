@@ -209,6 +209,9 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -216,5 +219,3 @@ Bangle.drawWidgets();
 timeInterval = setInterval(showTime, 1000);
 showTime();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");

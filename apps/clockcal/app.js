@@ -1,3 +1,4 @@
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 
 var s = Object.assign({
@@ -307,4 +308,4 @@ NRF.on('disconnect', BTevent);
 
 dimSeconds = Bangle.isLocked();
 drawWatch();
-Bangle.setUI("clock");
+
