@@ -15,8 +15,6 @@ var SETTINGS = {
   pretokenise : true
 };
 var APPSDIR = __dirname+"/../apps/";
-//eval(require("fs").readFileSync(__dirname+"../core/js/utils.js"));
-var AppInfo = require("../core/js/appinfo.js");
 var noble;
 try {
   noble  = require('@abandonware/noble');
@@ -29,12 +27,15 @@ if (!noble) {
   console.log("  npm install @abandonware/noble")
   console.log("or:")
   console.log("  npm install noble")
+  process.exit(1);
 }
 function ERROR(msg) {
   console.error(msg);
   process.exit(1);
 }
 
+//eval(require("fs").readFileSync(__dirname+"../core/js/utils.js"));
+var AppInfo = require("../core/js/appinfo.js");
 global.Const = {
   /* Are we only putting a single app on a device? If so
   apps should all be saved as .bootcde and we write info
