@@ -1,4 +1,4 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 /* Simple Command-line app loader for Node.js
 ===============================================
 
@@ -8,13 +8,14 @@ as a normal dependency) because we want `sanitycheck.js`
 to be able to run *quickly* in travis for every commit,
 and we don't want NPM pulling in (and compiling native modules)
 for Noble.
+
 */
 
 var SETTINGS = {
   pretokenise : true
 };
 var APPSDIR = __dirname+"/../apps/";
-var Utils = require("../core/js/utils.js");
+//eval(require("fs").readFileSync(__dirname+"../core/js/utils.js"));
 var AppInfo = require("../core/js/appinfo.js");
 var noble;
 try {
@@ -29,14 +30,18 @@ if (!noble) {
   console.log("or:")
   console.log("  npm install noble")
 }
-
-var apps = [];
-
 function ERROR(msg) {
   console.error(msg);
   process.exit(1);
 }
 
+global.Const = {
+  /* Are we only putting a single app on a device? If so
+  apps should all be saved as .bootcde and we write info
+  about the current app into app.info */
+  SINGLE_APP_ONLY : false,
+};
+var deviceId = "BANGLEJS2";
 var apps = [];
 var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
 dirs.forEach(dir => {
@@ -69,6 +74,10 @@ apploader.js list
 apploader.js devices
   - list available device addresses
 apploader.js install appname [de:vi:ce:ad:dr:es]
+
+NOTE: Currently this App Loader expects the device it uploads to
+(deviceId) to be BANGLEJS2, so it won't work for Bangle.js 1 without
+modification.
 `);
 process.exit(0);
 }
@@ -104,7 +113,10 @@ function cmdInstallApp(appId, deviceAddress) {
     fileGetter:function(url) {
       console.log(__dirname+"/"+url);
       return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString("binary"));
-    }, settings : SETTINGS}).then(files => {
+    },
+    settings : SETTINGS,
+    device : { id : deviceId }
+  }).then(files => {
     //console.log(files);
     var command = files.map(f=>f.cmd).join("\n")+"\n";
     bangleSend(command, deviceAddress).then(() => process.exit(0));
