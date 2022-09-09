@@ -16,12 +16,15 @@ var SETTINGS = {
 };
 var APPSDIR = __dirname+"/../apps/";
 var noble;
-try {
-  noble  = require('@abandonware/noble');
-} catch (e) {}
-if (!noble) try {
-  noble  = require('noble');
-} catch (e) { }
+["@abandonware/noble", "noble"].forEach(module => {
+  if (!noble) try {
+    noble = require(module);
+  } catch(e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e;
+    }
+  }
+});
 if (!noble) {
   console.log("You need to:")
   console.log("  npm install @abandonware/noble")
