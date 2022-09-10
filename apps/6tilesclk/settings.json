@@ -14,8 +14,8 @@
     "", "alarm", "timer"
   ],
   "sel": {
-    "alarm": { "def": 0, "opt": 2 },
-    "timer": { "def": 1, "opt": 2 }
+    "alarm": [0, 2],
+    "timer": [1, 2]
   },
   "showTileIDs": false
 }

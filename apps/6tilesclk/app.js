@@ -9,28 +9,29 @@ var Storage = require("Storage");
 // define global variable
 var layout;
 var cache = {};
-var sel = {};
 
 // define function to get the tile id from its field name
 function getID(field, noCat) {
   var id;
   ["date", "tile"].some(cat => {
     id = (clock[cat] || []).findIndex(t => t === field) + 1;
-    if (id) return noCat ? true : (id = cat + id);
+    if (id) return noCat ? (id -= 1) : (id = cat + id);
   });
   return id || field;
 }
 // define function to get the field name from its id
-function getField(ID) {
-  return (clock[(ID.match(/^[^\d]*/) || [])[0]] || [])[(ID.match(/\d*$/) || [])[0] - 1];
+function getField(id) {
+  return (clock[(id.match(/^[^\d]*/) || [])[0]] || [])[(id.match(/\d*$/) || [])[0] - 1];
 }
 // define function to get the selected page
-function getPage(field) {
-  return 0 | (sel[field] / (clock.sel[field] || {opt: 1}).opt);
+function getPage(field, fromID) {
+  var sel = clock.sel[fromID ? getField(field) : field] || [];
+  return 0 | (sel[0] * 1 / sel[1]);
 }
 // define function to get the selection option
-function getOpt(field) {
-  return sel[field] & ((clock.sel[field] || {opt: 1}).opt - 1);
+function getOpt(field, fromID) {
+  var sel = clock.sel[fromID ? getField(field) : field] || [];
+  return sel[0] & (sel[1] - 1);
 }
 // define function to format ms as human-readable time
 function getHTime(ms) {
@@ -39,9 +40,10 @@ function getHTime(ms) {
 }
 // define function to recalculate "time to" of an alarm object
 function recalc(alarm, time) {
-  alarm.tTo += alarm.calcAt - time.valueOf();
-  alarm.tToHT = getHTime(alarm.tTo);
-  return alarm;
+  var tmp = alarm.clone();
+  tmp.tTo += tmp.calcAt - time.valueOf();
+  tmp.tToHT = getHTime(tmp.tTo);
+  return tmp;
 }
 
 // define function for seperator lines
@@ -199,7 +201,7 @@ function drawImg(l) {
     if (l.opt) {
       draw(l, {
         // "time to" icon
-        str: "EBCBAADgALgAjBgGTALWA5MBoYGggYABwANAAmAGMAwcOAfg",
+        str: "EBCBAAfgDDIBhgBsABgAMABhAMEBgQABAAN4AkAGUAxcOAfg",
         w: 16,
         offset: 12
       });
@@ -231,12 +233,12 @@ function renderTile(l) {
 
 // touch listener for each tile
 function touchListener(b, c) {
-  // define fields with enabled selection
-  var a = Object.keys(sel);
-  // map fields to its layout objects and filter for pages
+  // define array from fields with enabled selection
+  var a = Object.keys(clock.sel);
+  // map field to its layout objects and filter for pages
   a = a.map(field => Object.assign(layout[getID(field)], {
     funct: function() {
-      sel[this.field]++;
+      clock.sel[this.field][0]++;
       setValue(this.field, new Date(( 0 | Date.now() / 6E4 ) * 6E4));
     }
   })).filter(l => l.page);
@@ -339,7 +341,7 @@ function getValue(field, time) {
       // check if schedules of this field exist
       if (cache.sched[field].length) {
         // correct selection if necessary
-        if (page >= cache.sched[field].length) sel[field] = page = 0;
+        if (page >= cache.sched[field].length) clock.sel[field][0] = page = 0;
         // check if tTo and tToHT needs to be recalculated
         var tToOpt = getOpt(field);
         // set selected value, recalculated if needed
@@ -370,7 +372,7 @@ function setValue(field, time) {
     l.field = field;
     l.value = value;
     // set option and page if value and selection true
-    if (value && sel[field] !== undefined) {
+    if (value && clock.sel[field] !== undefined) {
       l.opt = getOpt(field);
       l.page = getPage(field) + 1;
     }
@@ -409,17 +411,12 @@ function initLayout() {
     if (!Storage.read(module, 0, 1)) {
       // remove tiles with unavailable modules
       clock.modules[module].forEach(tile => {
-        clock.tiles[getID(tile, true)] = "";
+        clock.tile[getID(tile, true)] = "";
       });
       return false;
     }
     // check if module is used or not
     return clock.modules[module].some(field => clock.tile.includes(field)) ? true : false;
-  });
-  // set selection enabeled tiles
-  Object.keys(clock.sel).forEach(field => {
-    // check if tile used
-    if (clock.tile.includes(field)) sel = Object.defineProperty(sel, field, {value: field.def || 0});
   });
 }
 

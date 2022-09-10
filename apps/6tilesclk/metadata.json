@@ -12,7 +12,8 @@
   "storage": [
     {"name": "6tilesclk.app.js", "url": "app.min.js"},
     {"name": "6tilesclk.img", "url": "app-icon.js", "evaluate": true},
-    {"name": "6tilesclk.settings.js", "url": "settings.js"}
+    {"name": "6tilesclk.settings.js", "url": "settings.js"},
+    {"name": "Layout.custom.js", "url": "Layout"}
   ],
   "data": [
     {"name": "6tilesclk.settings.json", "url": "settings.json"}
