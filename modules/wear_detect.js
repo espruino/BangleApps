@@ -11,7 +11,7 @@ exports.isWorn = function() {
   return new Promise(resolve => {
     if (Bangle.isCharging())
         return resolve(false);
-    if (Bangle.getHealthStatus().movement > 146)
+    if (Bangle.getHealthStatus().movement > 124)
         return resolve(true);
     return resolve(false);
   });
