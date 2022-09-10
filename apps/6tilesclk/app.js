@@ -33,14 +33,14 @@ function getOpt(field) {
   return sel[field] & ((clock.sel[field] || {opt: 1}).opt - 1);
 }
 // define function to format ms as human-readable time
-function getHR(ms) {
+function getHTime(ms) {
   ms = decodeTime(0 | ms);
   return ms.h + ":" + ("0" + ms.m).substr(-2);
 }
 // define function to recalculate "time to" of an alarm object
 function recalc(alarm, time) {
-  alarm.tTo -= time.valueOf() - alarm.calcAt;
-  alarm.tToHR = getHR(alarm.tTo);
+  alarm.tTo += alarm.calcAt - time.valueOf();
+  alarm.tToHT = getHTime(alarm.tTo);
   return alarm;
 }
 
@@ -282,7 +282,7 @@ function loadValues(module, time) {
           // add t, tTo, time of the calculation
           t: a.t, tTo: tTo, calcAt: time.valueOf(),
           // and calculated times in human-readable format
-          tHR: getHR(a.t), tToHR: getHR(tTo),
+          tHT: getHTime(a.t), tToHT: getHTime(tTo),
         });
       });
       // sort cached schedules
@@ -340,13 +340,13 @@ function getValue(field, time) {
       if (cache.sched[field].length) {
         // correct selection if necessary
         if (page >= cache.sched[field].length) sel[field] = page = 0;
-        // check if tTo and tToHR needs to be recalculated
+        // check if tTo and tToHT needs to be recalculated
         var tToOpt = getOpt(field);
         // set selected value, recalculated if needed
         value = (tToOpt ?
           recalc(cache.sched[field][page], time) :
           cache.sched[field][page]
-        )[tToOpt ? "tToHR" : "tHR"];
+        )[tToOpt ? "tToHT" : "tHT"];
       }
       return value;
     }
