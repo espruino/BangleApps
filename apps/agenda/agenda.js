@@ -6,6 +6,8 @@
     title,
     description,
     location,
+    color:int,
+    calName,
     allDay: bool,
   }
 */
@@ -73,6 +75,8 @@ function showEvent(ev) {
     lines = lines.concat(/*LANG*/"Location"+": ", g.wrapString(ev.location, g.getWidth()-10));
   if(ev.description)
     lines = lines.concat("",g.wrapString(ev.description, g.getWidth()-10));
+  if(ev.calName)
+    lines = lines.concat(/*LANG*/"Calendar"+": ", g.wrapString(ev.calName, g.getWidth()-10));
   lines = lines.concat(["",/*LANG*/"< Back"]);
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
@@ -116,17 +120,16 @@ function showList() {
       var body = formatDateShort(getDate(ev.timestamp),ev.allDay)+"\n"+(ev.location?ev.location:/*LANG*/"No location");
       if(settings.pastEvents) isPast = ev.timestamp + ev.durationInSeconds < (new Date())/1000;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig)
-        .setColor(isPast ? "#888" : g.theme.fg).drawString(title, x,r.y+2);
+        .setColor(isPast ? "#888" : g.theme.fg).drawString(title, x+4,r.y+2);
       if (body) {
         g.setFontAlign(-1,-1).setFont(fontMedium).setColor(isPast ? "#888" : g.theme.fg);
-        var l = g.wrapString(body, r.w-(x+14));
-        if (l.length>3) {
-          l = l.slice(0,3);
-          l[l.length-1]+="...";
-        }
-        g.drawString(l.join("\n"), x+10,r.y+20);
+        g.drawString(body, x+10,r.y+20);
       }
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
+      if(ev.color) {
+        g.setColor("#"+(0x1000000+Number(ev.color)).toString(16).padStart(6,"0"));
+        g.fillRect(r.x,r.y+4,r.x+3, r.y+r.h-4);
+      }
     },
     select : idx => showEvent(CALENDAR[idx]),
     back : () => load()
