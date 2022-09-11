@@ -474,6 +474,6 @@ var clock = new ClockFace({
   pause: function() {
     // ?
   },
-  settingsFile: 'infoclk.settings.json',
+  settingsFile: '6tilesclk.settings.json',
 });
 clock.start();
