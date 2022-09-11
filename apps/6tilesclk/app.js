@@ -1,6 +1,6 @@
 // include modules
 var ClockFace = require("ClockFace");
-var Layout = require("Layout");
+var Layout = require("6tilesclk.layout"); //require("Layout");
 var decodeTime = require("time_utils").decodeTime;
 
 // load local modules
