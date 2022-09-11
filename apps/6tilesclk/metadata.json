@@ -10,12 +10,10 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name": "6tilesclk.app.js", "url": "app.min.js"},
+    {"name": "6tilesclk.app.js", "url": "app.js"},
     {"name": "6tilesclk.img", "url": "app-icon.js", "evaluate": true},
     {"name": "6tilesclk.settings.js", "url": "settings.js"},
-    {"name": "6tilesclk.layout", "url": "custom.layout.js"}
-  ],
-  "data": [
-    {"name": "6tilesclk.settings.json", "url": "settings.json"}
+    {"name": "6tilesclk.layout", "url": "custom.layout.js"},
+    {"name": "6tilesclk.settings.json", "url": "settings.json", "noOverwrite": true}
   ]
 }
