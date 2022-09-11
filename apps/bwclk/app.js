@@ -3,13 +3,12 @@
  */
 const locale = require('locale');
 const storage = require('Storage');
+// const clock_info = require("clock_info");
 
 /************
  * Statics
  */
 const SETTINGS_FILE = "bwclk.setting.json";
-const TIMER_IDX = "bwclk_timer";
-const TIMER_AGENDA_IDX = "bwclk_agenda";
 const W = g.getWidth();
 const H = g.getHeight();
 
@@ -86,279 +85,81 @@ function imgLock(){
   }
 }
 
-function imgSteps(){
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/H///wv4CBn4CD8ACCj4IBj8f+Eeh/wjgCBngCCg/4nEH//4h/+jEP/gRBAQX+jkf/wgB//8GwP4FoICDHgICCBwIA=="))
-  }
-}
 
-function imgBattery(){
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/4AN4EAg4TBgd///9oEAAQv8ARQRDDQQgCEwQ4OA"))
-  }
-}
-
-function imgCharging() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("//+v///k///4AQPwBANgBoMxBoMb/P+h/w/kH8H4gfB+EBwfggHH4EAt4CBn4CBj4CBh4FCCIO/8EB//Agf/wEH/8Gh//x////fAQIA="))
-  }
-}
-
-function imgBpm() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/4AOn4CD/wCCjgCCv/8jF/wGYgOA5MB//BC4PDAQnjAQPnAQgANA"))
-  }
-}
-
-function imgTemperature() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("//D///wICBjACBngCNkgCP/0kv/+s1//nDn/8wICEBAIOC/08v//IYJECA=="))
-  }
-}
-
-function imgWeather(){
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 0,
-    buffer : require("heatshrink").decompress(atob("AAcYAQ0MgEwAQUAngLB/8AgP/wACCgf/4Fz//OAQQICCIoaCEAQpGHA4ACA="))
-  }
-}
-
-function imgWind () {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/0f//8h///Pn//zAQXzwf/88B//mvGAh18gEevn/DIICB/PwgEBAQMHBAIADFwM/wEAGAP/54CD84CE+eP//wIQU/A=="))
-  }
-}
-
-function imgHumidity () {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("//7///+YCB+ICB8ACE4F/AQX9AQP54H//AOB+F/34CBj/gn8f4E+h/Aj0H4Ecg+AjED4ACE8E4gfwvEDEgICB/kHGwMP"))
-  }
-}
-
-function imgTimer() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/+B/4CD84CEBAPygFP+F+h/x/+P+fz5/n+HnAQNn5/wuYCBmYCC5kAAQfOgFz80As/ngHn+fD54mC/F+j/+gF/HAQA=="))
-  }
-}
-
-function imgWatch() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"))
-  }
-}
-
-function imgHomeAssistant() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/4AF84CB4YCBwICBCAP+jFH/k8g/4kkH+AFB8ACB4cY4eHzPhgmZkHnzPn8fb4/gvwUD8EYARhAC"))
-  }
-}
-
-function imgAgenda() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : require("heatshrink").decompress(atob("/4AFnPP+ALBAQX4CIgLFAQvggEBAQvAgEDAQMCwEAgwTBhgiB/AlCGQ8BGQQ"))
-  }
-}
-
-function imgMountain() {
-  return {
-    width : 24, height : 24, bpp : 1,
-    transparent : 1,
-    buffer : atob("//////////////////////3///n///D//uZ//E8//A+/+Z+f8//P5//n7//3z//zn//5AAAAAAAA////////////////////")
-  }
-}
-
-/************
- * 2D MENU with entries of:
- * [name, icon, opt[customDownFun], opt[customUpFun], opt[customCenterFun]]
- *
- */
-var menu = [
-  [
-    function(){ return [ null, null ] },
-    function(){ return [ "Week " + weekOfYear(), null ] },
-  ],
-  [
-    function(){ return [ "Bangle", imgWatch() ] },
-    function(){ return [ E.getBattery() + "%", Bangle.isCharging() ? imgCharging() : imgBattery() ] },
-    function(){ return [ getSteps(), imgSteps() ] },
-    function(){ return [ Math.round(Bangle.getHealthStatus("last").bpm) + " bpm", imgBpm()] },
-    function(){ return [ measureAltitude, imgMountain() ]},
-  ]
-]
-
-/*
- * Timer Menu
- */
-try{
-  require('sched');
-  menu.push([
-    function(){
-      var text = isAlarmEnabled(TIMER_IDX) ? getAlarmMinutes(TIMER_IDX) + " min." : "Timer";
-      return [text, imgTimer(), () => decreaseAlarm(TIMER_IDX), () => increaseAlarm(TIMER_IDX), null ]
-    },
-  ]);
-} catch(ex) {
-  // If sched is not installed, we hide this menu item
-}
-
-
-/*
- * AGENDA MENU
- * Note that we handle the agenda differently in order to hide old entries...
- */
-var agendaIdx = 0;
-var agendaTimerIdx = 0;
-if(storage.readJSON("android.calendar.json") !== undefined){
-  function nextAgendaEntry(){
-    agendaIdx += 1;
-  }
-
-  function previousAgendaEntry(){
-    agendaIdx -= 1;
-  }
-
-  menu.push([
-    function(){
-      var now = new Date();
-      var agenda = storage.readJSON("android.calendar.json")
-        .filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000)
-        .sort((a,b)=>a.timestamp - b.timestamp);
-
-      if(agenda.length <= 0){
-        return ["All done", imgAgenda()]
-      }
-
-      agendaIdx = agendaIdx < 0 ? 0 : agendaIdx;
-      agendaIdx = agendaIdx >= agenda.length ? agendaIdx -1 : agendaIdx;
-
-      var entry = agenda[agendaIdx];
-      var title = entry.title.slice(0,14);
-      var date = new Date(entry.timestamp*1000);
-      var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
-      dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
-
-      function dynImgAgenda(){
-        if(isAlarmEnabled(TIMER_AGENDA_IDX) && agendaTimerIdx == agendaIdx){
-          return imgTimer();
-        } else {
-          return imgAgenda();
-        }
-      }
-
-      return [title + "\n" + dateStr, dynImgAgenda(), () => nextAgendaEntry(), () => previousAgendaEntry(), function(){
-        try{
-          var alarm = require('sched')
-
-          // If other time, we disable the old one and enable this one.
-          if(agendaIdx != agendaTimerIdx){
-            agendaTimerIdx = -1;
-            alarm.setAlarm(TIMER_AGENDA_IDX, undefined);
-          }
-
-          // Disable alarm if enabled
-          if(isAlarmEnabled(TIMER_AGENDA_IDX)){
-            agendaTimerIdx = -1;
-            alarm.setAlarm(TIMER_AGENDA_IDX, undefined);
-            alarm.reload();
-            return
-          }
-
-          // Otherwise, set alarm for given event
-          agendaTimerIdx = agendaIdx;
-          alarm.setAlarm(TIMER_AGENDA_IDX, {
-            msg: title,
-            timer : parseInt((date - now)),
-          });
-          alarm.reload();
-        } catch(ex){ }
-      }]
-    },
-  ]);
-}
-
-
-/*
- * WEATHER MENU
- */
-if(storage.readJSON('weather.json') !== undefined){
-  menu.push([
-    function(){ return [ "Weather", imgWeather() ] },
-    function(){ return [ getWeather().temp, imgTemperature() ] },
-    function(){ return [ getWeather().hum, imgHumidity() ] },
-    function(){ return [ getWeather().wind, imgWind() ] },
-  ]);
-}
-
-
-/*
- * HOME ASSISTANT MENU
- */
-try{
-  var triggers = require("ha.lib.js").getTriggers();
-  var haMenu = [
-    function(){ return [ "Home", imgHomeAssistant() ] },
-  ];
-
-  triggers.forEach(trigger => {
-    haMenu.push(function(){
-      return [trigger.display, trigger.getIcon(), () => {}, () => {}, function(){
-        var ha = require("ha.lib.js");
-        ha.sendTrigger("TRIGGER_BW");
-        ha.sendTrigger(trigger.trigger);
-      }]
+// clock_info ########################################################
+function load() {
+  // info used for drawing...
+  var hrm = "--";
+  var alt = "--";
+  // callbacks (needed for easy removal of listeners)
+  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
+  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
+  function altUpdateHandler() {
+    Bangle.getPressure().then(data=>{
+      if (!data) return;
+      alt = Math.round(data.altitude) + "m";
+      bangleItems[3].emit("redraw");
     });
-  })
-  menu.push(haMenu);
-} catch(ex){
-  // If HomeAssistant is not installed, we hide this item
-}
-
-
-function getMenuEntry(){
-  // In case the user removes HomeAssistant entries, showInfo
-  // could be larger than infoArray.length...
-  settings.menuPosX = settings.menuPosX % menu.length;
-  settings.menuPosY = settings.menuPosY % menu[settings.menuPosX].length;
-  var menuEntry = menu[settings.menuPosX][settings.menuPosY]();
-
-  if(menuEntry[0] == null){
-    return menuEntry;
   }
-
-  // For the first entry we always convert it into a callback function
-  // such that the menu is compatible with async functions such as
-  // measuring the pressure, altitude or sending http requests...
-  if(typeof menuEntry[0] !== 'function'){
-    var value = menuEntry[0];
-    menuEntry[0] = function(callbackFun){
-      callbackFun(String(value), settings.menuPosX, settings.menuPosY);
+  // actual items
+  var items = [
+  {
+    name: "Bangle",
+    img: atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"),
+    items: [
+    { name : "Battery",
+      get : () => ({
+        text : E.getBattery() + "%",
+        img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
+      show : function() {
+        this.interval = setInterval(()=>this.emit('redraw'), 60000);
+        Bangle.on("charging", batteryUpdateHandler);
+        batteryUpdateHandler();
+      },
+      hide : function() {
+        clearInterval(this.interval);
+        delete this.interval;
+        Bangle.removeListener("charging", batteryUpdateHandler);
+      },
+    },
+    { name : "Steps", get : () => ({
+        text : Bangle.getHealthStatus("day").steps,
+        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==") }),
+      show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
+      hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
+    },
+    { name : "HRM", get : () => ({
+        text : Math.round(Bangle.getHealthStatus("last").bpm) + " bpm",
+        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==") }),
+      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
+      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
     }
+  ],
+  }];
+  var bangleItems = items[0].items;
+
+  if (Bangle.getPressure){  // Altimeter may not exist
+    bangleItems.push({ name : "Altitude", get : () => ({
+        text : alt,
+        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
+      show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
+      hide : function() { clearInterval(this.interval); delete this.interval;  },
+    });
   }
-  return menuEntry;
-}
+
+  // now load extra data from a third party files
+  require("Storage").list(/clkinfo.js$/).forEach(fn => {
+    items = items.concat(eval(require("Storage").read(fn))());
+  });
+
+  // return it all!
+  return items;
+};
+// clock_info ########################################################
+
+
+var clock_items = load();
 
 
 /************
@@ -370,144 +171,6 @@ function isFullscreen(){
     return Bangle.isLocked()
   } else {
     return s == "full"
-  }
-}
-
-function getSteps() {
-  var steps = 0;
-  try{
-      if (WIDGETS.wpedom !== undefined) {
-          steps = WIDGETS.wpedom.getSteps();
-      } else if (WIDGETS.activepedom !== undefined) {
-          steps = WIDGETS.activepedom.getSteps();
-      } else {
-        steps = Bangle.getHealthStatus("day").steps;
-      }
-  } catch(ex) {
-      // In case we failed, we can only show 0 steps.
-  }
-
-  return steps;
-}
-
-
-function getWeather(){
-  var weatherJson;
-
-  try {
-    weatherJson = storage.readJSON('weather.json');
-    var weather = weatherJson.weather;
-
-    // Temperature
-    weather.temp = locale.temp(weather.temp-273.15);
-
-    // Humidity
-    weather.hum = weather.hum + "%";
-
-    // Wind
-    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-    weather.wind = Math.round(wind[1]) + "kph";
-
-    return weather
-
-  } catch(ex) {
-    // Return default
-  }
-
-  return {
-    temp: " ? ",
-    hum: " ? ",
-    txt: " ? ",
-    wind: " ? ",
-    wdir: " ? ",
-    wrose: " ? "
-  };
-}
-
-// From https://weeknumber.com/how-to/javascript
-function weekOfYear() {
-    var date = new Date();
-    date.setHours(0, 0, 0, 0);
-    // Thursday in current week decides the year.
-    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-    // January 4 is always in week 1.
-    var week1 = new Date(date.getFullYear(), 0, 4);
-    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                          - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-
-function isAlarmEnabled(idx){
-  try{
-    var alarm = require('sched');
-    var alarmObj = alarm.getAlarm(idx);
-    if(alarmObj===undefined || !alarmObj.on){
-      return false;
-    }
-
-    return true;
-
-  } catch(ex){ }
-  return false;
-}
-
-
-function getAlarmMinutes(idx){
-  if(!isAlarmEnabled(idx)){
-    return -1;
-  }
-
-  var alarm = require('sched');
-  var alarmObj =  alarm.getAlarm(idx);
-  return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
-}
-
-
-function increaseAlarm(idx){
-  try{
-    var minutes = isAlarmEnabled(idx) ? getAlarmMinutes(idx) : 0;
-    var alarm = require('sched');
-    alarm.setAlarm(idx, {
-      timer : (minutes+5)*60*1000,
-    });
-    alarm.reload();
-  } catch(ex){ }
-}
-
-
-function decreaseAlarm(idx){
-  try{
-    var minutes = getAlarmMinutes(idx);
-    minutes -= 5;
-
-    var alarm = require('sched')
-    alarm.setAlarm(idx, undefined);
-
-    if(minutes > 0){
-      alarm.setAlarm(idx, {
-        timer : minutes*60*1000,
-      });
-    }
-
-    alarm.reload();
-  } catch(ex){ }
-}
-
-
-function measureAltitude(callbackFun){
-  var oldX = settings.menuPosX;
-  var oldY = settings.menuPosY;
-  try{
-    Bangle.getPressure().then(data=>{
-      if(data && data.altitude && data.altitude > -100){
-        callbackFun(Math.round(data.altitude) + "m", oldX, oldY);
-      } else {
-        callbackFun("???", oldX, oldY);
-      }
-    });
-  }catch(ex){
-    callbackFun("err", oldX, oldY);
   }
 }
 
@@ -577,56 +240,34 @@ function drawTime(){
   // Set y coordinates correctly
   y += parseInt((H - y)/2) + 5;
 
-  var menuEntry = getMenuEntry();
-  var menuTextFun = menuEntry[0];
-  var menuImg = menuEntry[1];
-  var printImgLeft = settings.menuPosY != 0;
-
   // Show large or small time depending on info entry
-  if(menuTextFun == null){
-    g.setLargeFont();
-    g.drawString(timeStr, W/2, y);
-    return;
-  } else {
-    y -= 15;
-    g.setMediumFont();
-    g.drawString(timeStr, W/2, y);
+  y -= 15;
+  g.setMediumFont();
+  g.drawString(timeStr, W/2, y);
+
+  // Draw item if needed
+  var appItems = clock_items[0];
+  console.log(appItems.name);
+
+  var item = appItems.items[0];
+  console.log(item.name);
+  function drawItem() {
+    console.log("Draw item", item.name);
+
+    g.setFontAlign(0,0);
+    g.setSmallFont();
+
+    y += 35;
+    var info = item.get();
+    var imgWidth = 24;
+    var strWidth = g.stringWidth(info.text);
+    g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
+    g.setColor(g.theme.bg).drawString(info.text, W/2 + imgWidth/2 + 2, y+3);
+    g.drawImage(info.img, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
   }
 
-  // Async set the menu (could be that some data is async fetched)
-  menuTextFun((menuText, oldX, oldY) => {
-
-    // We display the text IFF the user did not change the menu
-    if(settings.menuPosX != oldX || settings.menuPosY != oldY){
-      return;
-    }
-
-    // As its a callback, we have to ensure that the color
-    // font etc. is still correct...
-    g.setColor(g.theme.bg);
-    g.setFontAlign(0,0);
-    y += 35;
-
-    if(menuText.split('\n').length > 1){
-      g.setMiniFont();
-    } else {
-      g.setSmallFont();
-    }
-
-    var imgWidth = 0;
-    if(menuImg){
-      imgWidth = 24.0;
-      var strWidth = g.stringWidth(menuText);
-      var scale = imgWidth / menuImg.width;
-      g.drawImage(
-        menuImg,
-        W/2 + (printImgLeft ? -strWidth/2-4 : strWidth/2+4) - parseInt(imgWidth/2),
-        y - parseInt(imgWidth/2),
-        { scale: scale }
-      );
-    }
-    g.drawString(menuText, printImgLeft ? W/2 + imgWidth/2 + 2 : W/2 - imgWidth/2 - 2, y+3);
-  });
+  item.on('redraw', drawItem);
+  item.show();
 }
 
 
@@ -715,10 +356,10 @@ Bangle.on('touch', function(btn, e){
     settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].length;
 
     // Handle custom menu entry function
-    var menuEntry = getMenuEntry();
-    if(menuEntry.length > 2){
-      menuEntry[2]();
-    }
+    // var menuEntry = getMenuEntry();
+    // if(menuEntry.length > 2){
+    //   menuEntry[2]();
+    // }
 
     drawTime();
   }
@@ -733,10 +374,10 @@ Bangle.on('touch', function(btn, e){
     settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].length-1 : settings.menuPosY;
 
     // Handle custom menu entry function
-    var menuEntry = getMenuEntry();
-    if(menuEntry.length > 3){
-      menuEntry[3]();
-    }
+    // var menuEntry = getMenuEntry();
+    // if(menuEntry.length > 3){
+    //   menuEntry[3]();
+    // }
 
     drawTime();
   }
@@ -763,21 +404,21 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_center){
-    var menuEntry = getMenuEntry();
-    if(menuEntry.length > 4 && menuEntry[4] != null){
-      Bangle.buzz(80, 0.6).then(()=>{
-        try{
-          menuEntry[4]();
-          setTimeout(()=>{
-            Bangle.buzz(80, 0.6);
-            drawTime();
-          }, 250);
-        } catch(ex){
-          // In case it fails, we simply ignore it.
-        }
-      }
-      );
-    }
+    // var menuEntry = getMenuEntry();
+    // if(menuEntry.length > 4 && menuEntry[4] != null){
+    //   Bangle.buzz(80, 0.6).then(()=>{
+    //     try{
+    //       menuEntry[4]();
+    //       setTimeout(()=>{
+    //         Bangle.buzz(80, 0.6);
+    //         drawTime();
+    //       }, 250);
+    //     } catch(ex){
+    //       // In case it fails, we simply ignore it.
+    //     }
+    //   }
+    //   );
+    // }
   }
 });
 
