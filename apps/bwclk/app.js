@@ -172,21 +172,14 @@ menu.forEach((menuItm, x) => {
 
       console.log("Draw item", item.name);
 
-      g.setFontAlign(0,0);
-      g.setSmallFont();
-
-      var y = 147;
       var info = item.get();
-      var imgWidth = 24;
-      var strWidth = g.stringWidth(info.text);
-      g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
-      g.setColor(g.theme.bg).drawString(info.text, W/2 + imgWidth/2 + 2, y+3);
-      g.drawImage(info.img, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
+      drawMenuItem(info.text, info.img);
     }
 
     item.on('redraw', drawItem);
   })
 });
+
 
 /************
  * Custom menu elements
@@ -283,9 +276,24 @@ function drawTime(){
 }
 
 
-function drawMenu(){
-    if(settings.menuPosX < 0){
+function drawMenuItem(text, image){
+  g.setFontAlign(0,0);
+  g.setSmallFont();
 
+  var y = 147;
+  var imgWidth = 24;
+  var strWidth = g.stringWidth(text);
+  g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
+  g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, y+3);
+  g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
+}
+
+
+function drawMenu(){
+    // Draw category if needed
+    if(settings.menuPosY < 0){
+      var menuEntry = menu[settings.menuPosX];
+      drawMenuItem(menuEntry.name, menuEntry.img);
       return;
     }
 
