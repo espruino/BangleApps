@@ -16,12 +16,15 @@ var SETTINGS = {
 };
 var APPSDIR = __dirname+"/../apps/";
 var noble;
-try {
-  noble  = require('@abandonware/noble');
-} catch (e) {}
-if (!noble) try {
-  noble  = require('noble');
-} catch (e) { }
+["@abandonware/noble", "noble"].forEach(module => {
+  if (!noble) try {
+    noble = require(module);
+  } catch(e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e;
+    }
+  }
+});
 if (!noble) {
   console.log("You need to:")
   console.log("  npm install @abandonware/noble")
@@ -60,6 +63,10 @@ dirs.forEach(dir => {
 
 var args = process.argv;
 
+var bangleParam = args.findIndex(arg => /-b\d/.test(arg));
+if (bangleParam!==-1) {
+  deviceId = "BANGLEJS"+args.splice(bangleParam, 1)[0][2];
+}
 if (args.length==3 && args[2]=="list") cmdListApps();
 else if (args.length==3 && args[2]=="devices") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
@@ -74,11 +81,10 @@ apploader.js list
   - list available apps
 apploader.js devices
   - list available device addresses
-apploader.js install appname [de:vi:ce:ad:dr:es]
+apploader.js install [-b1] appname [de:vi:ce:ad:dr:es]
 
-NOTE: Currently this App Loader expects the device it uploads to
-(deviceId) to be BANGLEJS2, so it won't work for Bangle.js 1 without
-modification.
+NOTE: By default this App Loader expects the device it uploads to
+(deviceId) to be BANGLEJS2, pass '-b1' for it to work with Bangle.js 1
 `);
 process.exit(0);
 }
