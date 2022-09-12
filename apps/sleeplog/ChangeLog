@@ -7,3 +7,4 @@
 0.10: Complete rework off this app!
 0.10beta: Add interface.html to view saved log data, add "View log" function for debugging log, send data for gadgetbridge, change caching for global getStats
 0.11: Prevent module not found error
+0.12: Execute functions in `sleeplog.onChange[fn({timestamp, status, consecutive})]` on a status change

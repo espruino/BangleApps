@@ -258,6 +258,18 @@ if (sleeplog.conf.enabled) {
 
       // check if the status has changed
       if (data.status !== this.status || data.consecutive !== this.consecutive) {
+        // check for onChange functions
+        if ((this.onChange || []).length) {
+          this.onChange.forEach(fn => {
+            // setup timeouts to start onChange functions if fn is a function
+            if (typeof fn === "function") setTimeout(fn, 100, {
+              timestamp: new Date(data.timestamp),
+              status: data.status === this.status ? undefined : data.status,
+              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive
+            });
+          });
+        }
+
         // append status
         this.appendStatus(data.timestamp, data.status, data.consecutive);
 
@@ -268,7 +280,7 @@ if (sleeplog.conf.enabled) {
         // reset saveUpToDate status
         delete this.info.saveUpToDate;
       }
-      
+
       // send status to gadgetbridge
       var gb_kinds = "unknown,not_worn,activity,light_sleep,deep_sleep";
       Bluetooth.println(JSON.stringify({
@@ -319,7 +331,14 @@ if (sleeplog.conf.enabled) {
       }
       // return stats cache
       return this.statsCache;
-    }
+    },
+
+    // define array for functions to execute after a status change (changes had hapened 10min earlier)
+    //  changed values will be passed as object with the following properties:
+    //    timestamp: as date object,
+    //    status: if changed 0-4 else undefined,
+    //    consecutive: if changed 0-2 else undefined
+    onChange: []
   }, sleeplog);
 
   // initial starting
