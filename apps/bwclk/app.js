@@ -44,13 +44,11 @@ Graphics.prototype.setLargeFont = function(scale) {
   return this;
 };
 
-
 Graphics.prototype.setMediumFont = function(scale) {
   // Actual height 41 (42 - 2)
   this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAB/AAAAAAAP/AAAAAAD//AAAAAA///AAAAAP///AAAAB///8AAAAf///AAAAH///wAAAB///+AAAAH///gAAAAH//4AAAAAH/+AAAAAAH/wAAAAAAH8AAAAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///8AAAAH////AAAAP////wAAAf////4AAA/////8AAB/////+AAD/gAAH+AAD+AAAD/AAH8AAAB/AAH4AAAA/gAH4AAAAfgAH4AAAAfgAPwAAAAfgAPwAAAAfgAPwAAAAfgAHwAAAAfgAH4AAAAfgAH4AAAA/gAH8AAAA/AAD+AAAD/AAD/gAAH/AAB/////+AAB/////8AAA/////4AAAf////wAAAH////gAAAB///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAfwAAAAAAA/gAAAAAAA/AAAAAAAB/AAAAAAAD+AAAAAAAD8AAAAAAAH8AAAAAAAH//////AAH//////AAH//////AAH//////AAH//////AAH//////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAA/AAAP4AAB/AAAf4AAD/AAA/4AAD/AAB/4AAH/AAD/4AAP/AAH/AAAf/AAH8AAA//AAH4AAB//AAP4AAD//AAPwAAH+/AAPwAAP8/AAPwAAf4/AAPwAA/4/AAPwAA/w/AAPwAB/g/AAPwAD/A/AAP4AH+A/AAH8AP8A/AAH/A/4A/AAD///wA/AAD///gA/AAB///AA/AAA//+AA/AAAP/8AA/AAAD/wAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAH4AAAHwAAH4AAAH4AAH4AAAH8AAH4AAAP+AAH4AAAH+AAH4A4AB/AAH4A+AA/AAH4B/AA/gAH4D/AAfgAH4H+AAfgAH4P+AAfgAH4f+AAfgAH4/+AAfgAH5/+AAfgAH5//AAfgAH7+/AA/gAH/8/gB/AAH/4f4H/AAH/wf//+AAH/gP//8AAH/AH//8AAH+AD//wAAH8AB//gAAD4AAf+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+AAAAAAAD/AAAAAAAP/AAAAAAB//AAAAAAH//AAAAAAf//AAAAAB///AAAAAH///AAAAAf/8/AAAAB//w/AAAAH/+A/AAAA//4A/AAAD//gA/AAAH/+AA/AAAH/4AA/AAAH/gAA/AAAH+AAA/AAAHwAAA/AAAHAAf///AAEAAf///AAAAAf///AAAAAf///AAAAAf///AAAAAf///AAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAP/AHgAAH///AP4AAH///gP8AAH///gP8AAH///gP+AAH///gD/AAH/A/AB/AAH4A/AA/gAH4A+AAfgAH4B+AAfgAH4B+AAfgAH4B8AAfgAH4B8AAfgAH4B+AAfgAH4B+AAfgAH4B+AA/gAH4B/AA/AAH4A/gD/AAH4A/4H+AAH4Af//+AAH4AP//8AAH4AP//4AAHwAD//wAAAAAB//AAAAAAAf8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///8AAAAD////AAAAP////wAAAf////4AAA/////8AAB/////+AAD/gP4H+AAD/AfgD/AAH8A/AB/AAH8A/AA/gAH4B+AAfgAH4B+AAfgAPwB8AAfgAPwB8AAfgAPwB+AAfgAPwB+AAfgAH4B+AAfgAH4B/AA/gAH8B/AB/AAH+A/wD/AAD+A/8P+AAB8Af//+AAB4AP//8AAAwAH//4AAAAAD//gAAAAAA//AAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAAAAPwAAAAHAAPwAAAA/AAPwAAAD/AAPwAAAf/AAPwAAB//AAPwAAP//AAPwAA//8AAPwAH//wAAPwAf/+AAAPwB//4AAAPwP//AAAAPw//8AAAAP3//gAAAAP//+AAAAAP//wAAAAAP//AAAAAAP/4AAAAAAP/gAAAAAAP+AAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+AAAAH+A//gAAAf/h//4AAA//z//8AAB/////+AAD/////+AAD///+H/AAH+H/4B/AAH8B/wA/gAH4A/gAfgAH4A/gAfgAPwA/AAfgAPwA/AAfgAPwA/AAfgAPwA/AAfgAH4A/gAfgAH4A/gAfgAH8B/wA/gAH/H/4B/AAD///+H/AAD/////+AAB/////+AAA//z//8AAAf/h//4AAAH+A//gAAAAAAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gAAAAAAD/8AAAAAAP/+AAAAAAf//AAcAAA///gA8AAB///wB+AAD/x/4B/AAD+AP4B/AAH8AH8A/gAH4AH8A/gAH4AD8AfgAP4AD8AfgAPwAB8AfgAPwAB8AfgAPwAB8AfgAPwAB8AfgAH4AD8AfgAH4AD4A/gAH8AH4B/AAD+APwD/AAD/g/wP+AAB/////+AAA/////8AAAf////4AAAP////wAAAH////AAAAA///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAD8APwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DxcjFyAfISAiHCAiEg=="), 54+(scale<<8)+(1<<16));
   return this;
 };
-
 
 Graphics.prototype.setSmallFont = function(scale) {
   // Actual height 28 (27 - 0)
@@ -63,7 +61,6 @@ Graphics.prototype.setSmallFont = function(scale) {
   return this;
 };
 
-
 Graphics.prototype.setMiniFont = function(scale) {
   // Actual height 16 (15 - 0)
   this.setFontCustom(
@@ -74,8 +71,6 @@ Graphics.prototype.setMiniFont = function(scale) {
   );
   return this;
 };
-
-
 
 function imgLock(){
   return {
@@ -91,6 +86,7 @@ function load() {
   // info used for drawing...
   var hrm = "--";
   var alt = "--";
+  var interval = null;
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
   function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
@@ -102,24 +98,29 @@ function load() {
       bangleItems[3].emit("redraw");
     });
   }
+  function deleteInterval(inter){
+    if(inter){
+      clearInterval(inter);
+    }
+    delete inter;
+  }
   // actual items
-  var items = [
-  {
+  var items = [{
     name: "Bangle",
-    img: atob("/8B//+ARANB/l4//5/1/+f/n/n5+fAQnf9/P44CC8/n7/n+YOB/+fDQQgCEwQsCHBBEC"),
+    img: atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA=="),
     items: [
     { name : "Battery",
       get : () => ({
         text : E.getBattery() + "%",
         img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
       show : function() {
-        this.interval = setInterval(()=>this.emit('redraw'), 60000);
+        deleteInterval(interval);
+        interval = setInterval(()=>this.emit('redraw'), 60000);
         Bangle.on("charging", batteryUpdateHandler);
         batteryUpdateHandler();
       },
       hide : function() {
-        clearInterval(this.interval);
-        delete this.interval;
+        deleteInterval(interval);
         Bangle.removeListener("charging", batteryUpdateHandler);
       },
     },
@@ -143,8 +144,8 @@ function load() {
     bangleItems.push({ name : "Altitude", get : () => ({
         text : alt,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
-      hide : function() { clearInterval(this.interval); delete this.interval;  },
+      show : function() { deleteInterval(); interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
+      hide : function() { deleteInterval(); },
     });
   }
 
@@ -159,7 +160,41 @@ function load() {
 // clock_info ########################################################
 
 
-var clock_items = load();
+// Load menu
+var menu = load();
+
+// Set draw functions for each item
+menu.forEach((menuItm, x) => {
+  menuItm.items.forEach((item, y) => {
+    function drawItem() {
+      // Once shown, we can disable it afterwards...
+      item.hide();
+
+      console.log("Draw item", item.name);
+
+      g.setFontAlign(0,0);
+      g.setSmallFont();
+
+      var y = 147;
+      var info = item.get();
+      var imgWidth = 24;
+      var strWidth = g.stringWidth(info.text);
+      g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
+      g.setColor(g.theme.bg).drawString(info.text, W/2 + imgWidth/2 + 2, y+3);
+      g.drawImage(info.img, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
+    }
+
+    item.on('redraw', drawItem);
+  })
+});
+
+/************
+ * Custom menu elements
+ *   Those are BW custom and should not be available
+ *   for other clocks...
+ */
+
+
 
 
 /************
@@ -185,6 +220,7 @@ function draw() {
   // Draw clock
   drawDate();
   drawTime();
+  drawMenu();
   drawLock();
   drawWidgets();
 }
@@ -244,30 +280,23 @@ function drawTime(){
   y -= 15;
   g.setMediumFont();
   g.drawString(timeStr, W/2, y);
+}
 
-  // Draw item if needed
-  var appItems = clock_items[0];
-  console.log(appItems.name);
 
-  var item = appItems.items[0];
-  console.log(item.name);
-  function drawItem() {
-    console.log("Draw item", item.name);
+function drawMenu(){
+    if(settings.menuPosX < 0){
 
-    g.setFontAlign(0,0);
-    g.setSmallFont();
+      return;
+    }
 
-    y += 35;
-    var info = item.get();
-    var imgWidth = 24;
-    var strWidth = g.stringWidth(info.text);
-    g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
-    g.setColor(g.theme.bg).drawString(info.text, W/2 + imgWidth/2 + 2, y+3);
-    g.drawImage(info.img, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
-  }
+    // Draw item if needed
+    var menuEntry = menu[settings.menuPosX];
+    console.log(menuEntry.name);
 
-  item.on('redraw', drawItem);
-  item.show();
+    var item = menuEntry.items[settings.menuPosY];
+    console.log(item.name);
+
+    item.show();
 }
 
 
@@ -333,8 +362,8 @@ Bangle.on('charging',function(charging) {
   drawTimeout = undefined;
 
   // Jump to battery
-  settings.menuPosX = 1;
-  settings.menuPosY = 1;
+  settings.menuPosX = 0;
+  settings.menuPosY = 0;
   draw();
 });
 
@@ -353,15 +382,9 @@ Bangle.on('touch', function(btn, e){
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
-    settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].length;
+    settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].items.length;
 
-    // Handle custom menu entry function
-    // var menuEntry = getMenuEntry();
-    // if(menuEntry.length > 2){
-    //   menuEntry[2]();
-    // }
-
-    drawTime();
+    drawMenu();
   }
 
   if(is_upper){
@@ -371,36 +394,24 @@ Bangle.on('touch', function(btn, e){
 
     Bangle.buzz(40, 0.6);
     settings.menuPosY  = settings.menuPosY-1;
-    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].length-1 : settings.menuPosY;
+    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length-1 : settings.menuPosY;
 
-    // Handle custom menu entry function
-    // var menuEntry = getMenuEntry();
-    // if(menuEntry.length > 3){
-    //   menuEntry[3]();
-    // }
-
-    drawTime();
+    drawMenu();
   }
 
   if(is_right){
-    // A bit hacky but we ensure that always the first agenda entry is shown...
-    agendaIdx = 0;
-
     Bangle.buzz(40, 0.6);
     settings.menuPosX = (settings.menuPosX+1) % menu.length;
-    settings.menuPosY = 0;
-    drawTime();
+    settings.menuPosY = -1;
+    drawMenu();
   }
 
   if(is_left){
-    // A bit hacky but we ensure that always the first agenda entry is shown...
-    agendaIdx = 0;
-
     Bangle.buzz(40, 0.6);
-    settings.menuPosY = 0;
+    settings.menuPosY = -1;
     settings.menuPosX  = settings.menuPosX-1;
     settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-    drawTime();
+    drawMenu();
   }
 
   if(is_center){
