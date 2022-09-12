@@ -1,0 +1,16 @@
+{
+  "id":"sleeplogalarm",
+  "name":"Sleep Log Alarm",
+  "shortName": "SleepLogAlarm",
+  "version": "0.01",
+  "description": "Enhance your morning and let your alarms wake you up when you are in light sleep.",
+  "icon": "app.png",
+  "type": "widget",
+  "tags": "tool,widget",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name": "sleeplogalarm.wid.js", "url": "widget.js"},
+    {"name": "sleeplogalarm.settings.js", "url": "settings.js"}
+  ]
+}
