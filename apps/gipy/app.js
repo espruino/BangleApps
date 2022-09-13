@@ -62,12 +62,16 @@ class Status {
 
     let last_point = this.old_points[this.old_points.length - 1];
     let oldest_point = this.old_points[0];
-    this.instant_speed =
-      oldest_point.distance(last_point) / (now - this.old_times[0]);
 
-    if (this.old_points.length == 8) {
+    if (this.old_points.length == 6) {
+      let p1 = this.old_points[0].plus(this.old_points[1]).plus(this.old_points[2]).times(1/3);
+      let p2 = this.old_points[3].plus(this.old_points[4]).plus(this.old_points[5]).times(1/3);
+      this.instant_speed = p1.distance(p2) / (this.old_times[4] - this.old_times[1]);
       this.old_points.shift();
       this.old_times.shift();
+    } else {
+      this.instant_speed =
+        oldest_point.distance(last_point) / (now - this.old_times[0]);
     }
     // let's just take angle of segment between newest point and a point a bit before
     let previous_index = this.old_points.length - 3;

@@ -51,3 +51,4 @@
 	* Buzzing 100m ahead instead of 50m.
 	* Detect sharp turns.
 	* Display instant speed.
+	* New instant speed algorithm.
