@@ -173,7 +173,7 @@ var clockItems = {
     show: function() { clockItems.items[0].emit("redraw"); },
     hide: function () {}
   },
-  { name: "Overview",
+  { name: "WeekOfYear",
     get: () => ({ text: "Week " + weekOfYear(), img: null}),
     show: function() { clockItems.items[1].emit("redraw"); },
     hide: function () {}
