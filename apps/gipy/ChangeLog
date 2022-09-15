@@ -52,3 +52,4 @@
 	* Detect sharp turns.
 	* Display instant speed.
 	* New instant speed algorithm.
+	* Bugfix for remaining distance when going back.

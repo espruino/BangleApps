@@ -45,7 +45,6 @@ class Status {
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
     this.starting_time = getTime();
-    this.stopped_at = this.starting_time; // we need to now how long we stop in order to compute real avg speed
     this.old_points = [];
     this.old_times = [];
   }
@@ -64,11 +63,19 @@ class Status {
     let oldest_point = this.old_points[0];
 
     if (this.old_points.length == 8) {
-      let p1 = this.old_points[0].plus(this.old_points[1]).plus(this.old_points[2]).plus(this.old_points[3]).times(1/4);
-      let p2 = this.old_points[4].plus(this.old_points[5]).plus(this.old_points[6]).plus(this.old_points[7]).times(1/4);
+      let p1 = this.old_points[0]
+        .plus(this.old_points[1])
+        .plus(this.old_points[2])
+        .plus(this.old_points[3])
+        .times(1 / 4);
+      let p2 = this.old_points[4]
+        .plus(this.old_points[5])
+        .plus(this.old_points[6])
+        .plus(this.old_points[7])
+        .times(1 / 4);
       let t1 = (this.old_times[1] + this.old_times[2]) / 2;
       let t2 = (this.old_times[5] + this.old_times[6]) / 2;
-      this.instant_speed = p1.distance(p2) / (t2-t1);
+      this.instant_speed = p1.distance(p2) / (t2 - t1);
       this.old_points.shift();
       this.old_times.shift();
     } else {
@@ -167,13 +174,18 @@ class Status {
       }
     }
     // re-display
-    this.display();
+    this.display(orientation);
   }
-  remaining_distance() {
-    return (
+  remaining_distance(orientation) {
+    let remaining_in_correct_orientation =
       this.remaining_distances[this.current_segment + 1] +
-      this.position.distance(this.path.point(this.current_segment + 1))
-    );
+      this.position.distance(this.path.point(this.current_segment + 1));
+
+    if (orientation == 0) {
+      return remaining_in_correct_orientation;
+    } else {
+      return this.remaining_distances[0] - remaining_in_correct_orientation;
+    }
   }
   is_lost(segment) {
     let distance_to_nearest = this.position.distance_to_segment(
@@ -182,12 +194,12 @@ class Status {
     );
     return distance_to_nearest > 50;
   }
-  display() {
+  display(orientation) {
     g.clear();
     this.display_map();
 
     this.display_interest_points();
-    this.display_stats();
+    this.display_stats(orientation);
     Bangle.drawWidgets();
   }
   display_interest_points() {
@@ -222,8 +234,8 @@ class Status {
       g.setColor(color).fillCircle(c[0], c[1], 5);
     }
   }
-  display_stats() {
-    let remaining_distance = this.remaining_distance();
+  display_stats(orientation) {
+    let remaining_distance = this.remaining_distance(orientation);
     let rounded_distance = Math.round(remaining_distance / 100) / 10;
     let total = Math.round(this.remaining_distances[0] / 100) / 10;
     let now = new Date();
