@@ -106,11 +106,10 @@ function load() {
   }
   // actual items
   var items = [{
-    name: "Bangle",
-    img: atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA=="),
+    id: "bangle",
     items: [
     { name: "Overview",
-      get: () => ({ text: "Bangle", img: null}),
+      get: () => ({ text: "Bangle", img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w==")}),
       show: function() { bangleItems[0].emit("redraw"); },
       hide: function () {}
     },
@@ -165,15 +164,39 @@ function load() {
 // clock_info ########################################################
 
 
+// Custom menus
+var clockItems = {
+  id: "bw_clock",
+  items: [
+  { name: "Overview",
+    get: () => ({ text: null, img: null}),
+    show: function() { clockItems.items[0].emit("redraw"); },
+    hide: function () {}
+  },
+  { name: "Overview",
+    get: () => ({ text: "Week " + weekOfYear(), img: null}),
+    show: function() { clockItems.items[1].emit("redraw"); },
+    hide: function () {}
+  },
+  ]
+};
+
+
 // Load menu
 var menu = load();
+menu = menu.concat(clockItems);
+
 
 // Set draw functions for each item
 menu.forEach((menuItm, x) => {
   menuItm.items.forEach((item, y) => {
     function drawItem() {
-      // Once shown, we can disable it afterwards...
+      // For the clock, we have a special case, as we don't wanna redraw
+      // immediately when something changes. Instead, we update data each minute
+      // to save some battery etc. Therefore, we hide (and disable the listener)
+      // immedeately after redraw...
       item.hide();
+
       var info = item.get();
       drawMenuItem(info.text, info.img);
     }
@@ -181,14 +204,6 @@ menu.forEach((menuItm, x) => {
     item.on('redraw', drawItem);
   })
 });
-
-
-/************
- * Custom menu elements
- *   Those are BW custom and should not be available
- *   for other clocks...
- */
-
 
 
 
@@ -202,6 +217,19 @@ function isFullscreen(){
   } else {
     return s == "full"
   }
+}
+
+
+function weekOfYear() {
+  var date = new Date();
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
 
