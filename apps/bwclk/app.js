@@ -88,14 +88,14 @@ function load() {
   var alt = "--";
   var interval = null;
   // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
-  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
-  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
+  function batteryUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function stepUpdateHandler() { bangleItems[2].emit("redraw"); }
+  function hrmUpdateHandler() { bangleItems[3].emit("redraw"); }
   function altUpdateHandler() {
     Bangle.getPressure().then(data=>{
       if (!data) return;
       alt = Math.round(data.altitude) + "m";
-      bangleItems[3].emit("redraw");
+      bangleItems[4].emit("redraw");
     });
   }
   function deleteInterval(inter){
@@ -109,6 +109,11 @@ function load() {
     name: "Bangle",
     img: atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA=="),
     items: [
+    { name: "Overview",
+      get: () => ({ text: "Bangle", img: null}),
+      show: function() { bangleItems[0].emit("redraw"); },
+      hide: function () {}
+    },
     { name : "Battery",
       get : () => ({
         text : E.getBattery() + "%",
@@ -169,9 +174,6 @@ menu.forEach((menuItm, x) => {
     function drawItem() {
       // Once shown, we can disable it afterwards...
       item.hide();
-
-      console.log("Draw item", item.name);
-
       var info = item.get();
       drawMenuItem(info.text, info.img);
     }
@@ -212,8 +214,7 @@ function draw() {
 
   // Draw clock
   drawDate();
-  drawTime();
-  drawMenu();
+  drawMenuAndTime();
   drawLock();
   drawWidgets();
 }
@@ -221,8 +222,8 @@ function draw() {
 
 function drawDate(){
     // Draw background
-    var y = H/5*2;
-    g.reset().clearRect(0,0,W,W);
+    var y = H/5*2 + (isFullscreen() ? 0 : 8);
+    g.reset().clearRect(0,0,W,y);
 
     // Draw date
     y = parseInt(y/2)+4;
@@ -249,11 +250,8 @@ function drawDate(){
 }
 
 
-function drawTime(){
+function drawTime(y, smallText){
   // Draw background
-  var y = H/5*2 + (isFullscreen() ? 0 : 8);
-  g.setColor(g.theme.fg);
-  g.fillRect(0,y,W,H);
   var date = new Date();
 
   // Draw time
@@ -270,40 +268,47 @@ function drawTime(){
   y += parseInt((H - y)/2) + 5;
 
   // Show large or small time depending on info entry
-  y -= 15;
-  g.setMediumFont();
+  if(smallText){
+    y -= 15;
+    g.setMediumFont();
+  } else {
+    g.setLargeFont();
+  }
   g.drawString(timeStr, W/2, y);
 }
 
-
 function drawMenuItem(text, image){
-  g.setFontAlign(0,0);
-  g.setSmallFont();
+  // First clear the time region
+  var y = H/5*2 + (isFullscreen() ? 0 : 8);
 
-  var y = 147;
-  var imgWidth = 24;
-  var strWidth = g.stringWidth(text);
-  g.setColor(g.theme.fg).fillRect(0, y-14, W, H);
-  g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, y+3);
-  g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), y - parseInt(imgWidth/2));
+  g.setColor(g.theme.fg);
+  g.fillRect(0,y,W,H);
+
+  // Draw menu text
+  var hasText = (text != null && text != "");
+  if(hasText){
+    g.setFontAlign(0,0);
+    g.setSmallFont();
+
+    var imgWidth = image == null ? 0 : 24;
+    var strWidth = g.stringWidth(text);
+    g.setColor(g.theme.fg).fillRect(0, 147-14, W, H);
+    g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, 147+3);
+
+    if(image != null){
+      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 147 - parseInt(imgWidth/2));
+    }
+  }
+
+  // Draw time
+  drawTime(y, hasText);
 }
 
 
-function drawMenu(){
-    // Draw category if needed
-    if(settings.menuPosY < 0){
-      var menuEntry = menu[settings.menuPosX];
-      drawMenuItem(menuEntry.name, menuEntry.img);
-      return;
-    }
-
+function drawMenuAndTime(){
     // Draw item if needed
     var menuEntry = menu[settings.menuPosX];
-    console.log(menuEntry.name);
-
     var item = menuEntry.items[settings.menuPosY];
-    console.log(item.name);
-
     item.show();
 }
 
@@ -392,7 +397,7 @@ Bangle.on('touch', function(btn, e){
     Bangle.buzz(40, 0.6);
     settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].items.length;
 
-    drawMenu();
+    drawMenuAndTime();
   }
 
   if(is_upper){
@@ -404,22 +409,22 @@ Bangle.on('touch', function(btn, e){
     settings.menuPosY  = settings.menuPosY-1;
     settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length-1 : settings.menuPosY;
 
-    drawMenu();
+    drawMenuAndTime();
   }
 
   if(is_right){
     Bangle.buzz(40, 0.6);
     settings.menuPosX = (settings.menuPosX+1) % menu.length;
-    settings.menuPosY = -1;
-    drawMenu();
+    settings.menuPosY = 0;
+    drawMenuAndTime();
   }
 
   if(is_left){
     Bangle.buzz(40, 0.6);
-    settings.menuPosY = -1;
+    settings.menuPosY = 0;
     settings.menuPosX  = settings.menuPosX-1;
     settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-    drawMenu();
+    drawMenuAndTime();
   }
 
   if(is_center){
