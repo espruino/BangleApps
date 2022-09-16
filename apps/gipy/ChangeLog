@@ -53,3 +53,6 @@
 	* Display instant speed.
 	* New instant speed algorithm.
 	* Bugfix for remaining distance when going back.
+
+0.14:
+	* Detect starting distance to compute a good average speed.

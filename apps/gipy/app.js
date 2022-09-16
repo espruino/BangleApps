@@ -44,7 +44,12 @@ class Status {
       previous_point = point;
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
-    this.starting_time = getTime();
+    // we sometimes don't start at the start of the path.
+    // in order to compute average speed we need to take this into account.
+    // we record one starting point for each direction (if we suddenly choose to go back).
+    // we store the distance from start for these points.
+    this.remaining_distances_at_start = [null, null];
+    this.starting_times = [null, null]; // time we start in each direction
     this.old_points = [];
     this.old_times = [];
   }
@@ -150,6 +155,25 @@ class Status {
     this.distance_to_next_point = Math.ceil(
       this.position.distance(this.path.point(next_point))
     );
+
+    // record start if needed
+    if (this.on_path) {
+      if (this.starting_times[orientation] === null) {
+        this.starting_times[orientation] =
+          this.old_times[this.old_times.length - 1];
+        if (orientation == 0) {
+          this.remaining_distances_at_start[orientation] =
+            this.remaining_distances[this.current_segment + 1] +
+            this.distance_to_next_point;
+        } else {
+          this.remaining_distances_at_start[orientation] =
+            this.remaining_distances[0] -
+            this.remaining_distances[this.current_segment] +
+            this.distance_to_next_point;
+        }
+      }
+    }
+
     // disable gps when far from next point and locked
     if (Bangle.isLocked()) {
       let time_to_next_point = this.distance_to_next_point / 9.7; // 35km/h is 9.7 m/s
@@ -249,16 +273,20 @@ class Status {
       .setColor(g.theme.fg)
       .drawString(hours + ":" + minutes, 0, 30);
 
-    let point_time = this.old_times[this.old_times.length - 1];
-    let done_distance = this.remaining_distances[0] - remaining_distance;
-    let done_in = point_time - this.starting_time;
-    let approximate_speed = Math.round((done_distance * 3.6) / done_in);
     g.setFont("6x8:2").drawString(
       "" + this.distance_to_next_point + "m",
       0,
       g.getHeight() - 49
     );
 
+    let approximate_speed = "??";
+    if (this.starting_times[orientation] !== null) {
+      let point_time = this.old_times[this.old_times.length - 1];
+      let done_distance =
+        this.remaining_distances_at_start[orientation] - remaining_distance;
+      let done_in = point_time - this.starting_times[orientation];
+      approximate_speed = Math.round((done_distance * 3.6) / done_in);
+    }
     let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
 
     g.setFont("6x8:2")
@@ -688,7 +716,11 @@ function start(fn) {
     let frame = 0;
     let set_coordinates = function (data) {
       frame += 1;
-      let valid_coordinates = !isNaN(data.lat) && !isNaN(data.lon);
+      // 0,0 coordinates are considered invalid since we sometimes receive them out of nowhere
+      let valid_coordinates =
+        !isNaN(data.lat) &&
+        !isNaN(data.lon) &&
+        (data.lat != 0.0 || data.lon != 0.0);
       if (valid_coordinates) {
         status.update_position(new Point(data.lon, data.lat), null);
       }

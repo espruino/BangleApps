@@ -13,7 +13,6 @@
     - disable gps off
 - average speed becomes invalid if you stop and restart
     - pause when not moving
-    - figure starting point
 
 - we need to buzz 200m before sharp turns (or even better, 30seconds)
 (and look at more than next point)
