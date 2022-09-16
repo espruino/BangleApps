@@ -39,6 +39,8 @@ class Status {
     this.current_segment = null; // which segment is closest
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
+    this.paused_time = 0.0; // how long did we stop (stops don't count in avg speed)
+    this.paused_since = getTime();
 
     let r = [0];
     // let's do a reversed prefix computations on all distances:
@@ -94,6 +96,18 @@ class Status {
     } else {
       this.instant_speed =
         oldest_point.distance(last_point) / (now - this.old_times[0]);
+
+      // update paused time if we are too slow
+      if (this.instant_speed < 2) {
+        if (this.paused_since === null) {
+          this.paused_since = now;
+        }
+      } else {
+        if (this.paused_since !== null) {
+          this.paused_time += now - this.paused_since;
+          this.paused_since = null;
+        }
+      }
     }
     // let's just take angle of segment between newest point and a point a bit before
     let previous_index = this.old_points.length - 3;
@@ -293,8 +307,9 @@ class Status {
       let point_time = this.old_times[this.old_times.length - 1];
       let done_distance =
         this.remaining_distances_at_start[orientation] - remaining_distance;
-      let done_in = point_time - this.starting_times[orientation];
-      if (done_in != 0) {
+      let done_in =
+        point_time - this.starting_times[orientation] - this.paused_time;
+      if (done_in > 0) {
         approximate_speed = Math.round((done_distance * 3.6) / done_in);
       }
     }

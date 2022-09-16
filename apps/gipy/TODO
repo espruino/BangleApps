@@ -10,8 +10,6 @@
 
 - config screen
     - are we on foot (and should use compass)
-- average speed becomes invalid if you stop and restart
-    - pause when not moving
 
 - we need to buzz 200m before sharp turns (or even better, 30seconds)
 (and look at more than next point)
