@@ -13,8 +13,10 @@
   "readme": "README.md",
   "storage": [
     {"name":"gipy.app.js","url":"app.js"},
+    {"name":"gipy.settings.js","url":"settings.js"},
     {"name":"gipy.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [
+    {"name":"gipy.json"}
   ]
 }

@@ -10,7 +10,6 @@
 
 - config screen
     - are we on foot (and should use compass)
-    - disable gps off
 - average speed becomes invalid if you stop and restart
     - pause when not moving
 
@@ -26,5 +25,3 @@
 * misc
 
 - code is becoming messy
-
-

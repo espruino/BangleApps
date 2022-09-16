@@ -2,6 +2,14 @@ let simulated = false;
 let file_version = 3;
 let code_key = 47490;
 
+var settings = Object.assign(
+  {
+    keep_gps_alive: false,
+    max_speed: 35,
+  },
+  require("Storage").readJSON("gipy.json", true) || {}
+);
+
 let interests_colors = [
   0xf800, // Bakery, red
   0x001f, // DrinkingWater, blue
@@ -175,8 +183,9 @@ class Status {
     }
 
     // disable gps when far from next point and locked
-    if (Bangle.isLocked()) {
-      let time_to_next_point = this.distance_to_next_point / 9.7; // 35km/h is 9.7 m/s
+    if (Bangle.isLocked() && !settings.keep_gps_alive) {
+      let time_to_next_point =
+        (this.distance_to_next_point * 3.6) / settings.max_speed;
       if (time_to_next_point > 60) {
         Bangle.setGPSPower(false, "gipy");
         setTimeout(function () {
