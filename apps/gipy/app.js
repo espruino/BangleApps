@@ -165,7 +165,7 @@ class Status {
     );
 
     // record start if needed
-    if (this.on_path) {
+    if (this.on_path && this.old_points.length > 1) {
       if (this.starting_times[orientation] === null) {
         this.starting_times[orientation] =
           this.old_times[this.old_times.length - 1];
@@ -294,7 +294,9 @@ class Status {
       let done_distance =
         this.remaining_distances_at_start[orientation] - remaining_distance;
       let done_in = point_time - this.starting_times[orientation];
-      approximate_speed = Math.round((done_distance * 3.6) / done_in);
+      if (done_in != 0) {
+        approximate_speed = Math.round((done_distance * 3.6) / done_in);
+      }
     }
     let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
 
