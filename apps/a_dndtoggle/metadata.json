@@ -1,9 +1,9 @@
 {
   "id": "a_dndtoggle",
-  "name": "Toggle Quiet Mode of the watch",
+  "name": "a_dndtoggle - Toggle Quiet Mode of the watch",
   "shortName": "A_DND Toggle",
   "version": "0.01",
-  "description": "Toggle Quiet Mode of the watch just bei starting this app.",
+  "description": "Toggle Quiet Mode of the watch just by starting this app.",
   "icon": "a_dndtoggle.png",
   "type": "app",
   "tags": "tool",
