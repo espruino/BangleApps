@@ -28,6 +28,7 @@ for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
 
+var lock_input = false;
 
 /************
  * Assets
@@ -189,6 +190,9 @@ menu.forEach((menuItm, x) => {
       // immedeately after redraw...
       item.hide();
 
+      // After drawing the item, we enable inputs again...
+      lock_input = false;
+
       var info = item.get();
       drawMenuItem(info.text, info.img);
     }
@@ -335,6 +339,7 @@ function drawMenuAndTime(){
   }
 
   // Draw item if needed
+  lock_input = true;
   var item = menuEntry.items[settings.menuPosY-1];
   item.show();
 }
@@ -419,6 +424,10 @@ Bangle.on('touch', function(btn, e){
   var is_left = e.x < left && !is_upper && !is_lower;
   var is_right = e.x > right && !is_upper && !is_lower;
   var is_center = !is_upper && !is_lower && !is_left && !is_right;
+
+  if(lock_input){
+    return;
+  }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
