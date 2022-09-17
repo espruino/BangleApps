@@ -82,7 +82,7 @@ function imgLock(){
 }
 
 
-// clock_info ########################################################
+// ----clock_info ------------------------------------------------------
 function load() {
   // info used for drawing...
   var hrm = "--";
@@ -158,7 +158,7 @@ function load() {
   // return it all!
   return items;
 };
-// clock_info ########################################################
+// ----clock_info ------------------------------------------------------
 
 
 // Custom menus
@@ -175,10 +175,44 @@ var clockItems = {
 };
 
 
+// ----agenda_clock_info ------------------------------------------------------
+var agendaItems = {
+  name: "Agenda",
+  img: atob("GBiBAf////////85z/AAAPAAAPgAAP////AAAPAAAPAAAPAAAOAAAeAAAeAAAcAAA8AAAoAABgAADP//+P//8PAAAPAAAPgAAf///w=="),
+  items: []
+};
+
+var now = new Date();
+var agenda = storage.readJSON("android.calendar.json")
+        .filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000)
+        .sort((a,b)=>a.timestamp - b.timestamp);
+
+agenda.forEach((entry, i) => {
+
+  var title = entry.title.slice(0,14);
+  var date = new Date(entry.timestamp*1000);
+  var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
+  dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
+
+  agendaItems.items.push({
+    name: "agendaEntry",
+    get: () => ({ text: title + "\n" + dateStr, img: null}),
+    show: function() { agendaItems.items[i].emit("redraw"); },
+    hide: function () {}
+  });
+});
+// ----agenda_clock_info ------------------------------------------------------
+
+
+var timerItems = {};
+var weatherItems = {};
+var homeAssistantItems = {};
+
+
 // Load menu
 var menu = load();
+menu = menu.concat(agendaItems);
 menu = menu.concat(clockItems);
-
 
 // Set draw functions for each item
 menu.forEach((menuItm, x) => {
@@ -312,15 +346,21 @@ function drawMenuItem(text, image){
   var hasText = (text != null && text != "");
   if(hasText){
     g.setFontAlign(0,0);
-    g.setSmallFont();
+
+    // For multiline text we show an even smaller font...
+    if(text.split('\n').length > 1){
+      g.setMiniFont();
+    } else {
+      g.setSmallFont();
+    }
 
     var imgWidth = image == null ? 0 : 24;
     var strWidth = g.stringWidth(text);
-    g.setColor(g.theme.fg).fillRect(0, 147-14, W, H);
-    g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, 147+3);
+    g.setColor(g.theme.fg).fillRect(0, 149-14, W, H);
+    g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, 149+3);
 
     if(image != null){
-      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 147 - parseInt(imgWidth/2));
+      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 149 - parseInt(imgWidth/2));
     }
   }
 
