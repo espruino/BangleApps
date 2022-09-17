@@ -88,14 +88,14 @@ function load() {
   var alt = "--";
   var interval = null;
   // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { bangleItems[1].emit("redraw"); }
-  function stepUpdateHandler() { bangleItems[2].emit("redraw"); }
-  function hrmUpdateHandler() { bangleItems[3].emit("redraw"); }
+  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
+  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
   function altUpdateHandler() {
     Bangle.getPressure().then(data=>{
       if (!data) return;
       alt = Math.round(data.altitude) + "m";
-      bangleItems[4].emit("redraw");
+      bangleItems[3].emit("redraw");
     });
   }
   function deleteInterval(inter){
@@ -106,13 +106,9 @@ function load() {
   }
   // actual items
   var items = [{
-    id: "bangle",
+    name: "Bangle",
+    img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
     items: [
-    { name: "Overview",
-      get: () => ({ text: "Bangle", img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w==")}),
-      show: function() { bangleItems[0].emit("redraw"); },
-      hide: function () {}
-    },
     { name : "Battery",
       get : () => ({
         text : E.getBattery() + "%",
@@ -166,16 +162,12 @@ function load() {
 
 // Custom menus
 var clockItems = {
-  id: "bw_clock",
+  name: null,
+  img: null,
   items: [
-  { name: "Overview",
-    get: () => ({ text: null, img: null}),
-    show: function() { clockItems.items[0].emit("redraw"); },
-    hide: function () {}
-  },
   { name: "WeekOfYear",
     get: () => ({ text: "Week " + weekOfYear(), img: null}),
-    show: function() { clockItems.items[1].emit("redraw"); },
+    show: function() { clockItems.items[0].emit("redraw"); },
     hide: function () {}
   },
   ]
@@ -334,10 +326,17 @@ function drawMenuItem(text, image){
 
 
 function drawMenuAndTime(){
-    // Draw item if needed
-    var menuEntry = menu[settings.menuPosX];
-    var item = menuEntry.items[settings.menuPosY];
-    item.show();
+  var menuEntry = menu[settings.menuPosX];
+
+  // The first entry is the overview...
+  if(settings.menuPosY == 0){
+    drawMenuItem(menuEntry.name, menuEntry.img);
+    return;
+  }
+
+  // Draw item if needed
+  var item = menuEntry.items[settings.menuPosY-1];
+  item.show();
 }
 
 
@@ -423,7 +422,7 @@ Bangle.on('touch', function(btn, e){
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
-    settings.menuPosY = (settings.menuPosY+1) % menu[settings.menuPosX].items.length;
+    settings.menuPosY = (settings.menuPosY+1) % (menu[settings.menuPosX].items.length+1);
 
     drawMenuAndTime();
   }
@@ -435,7 +434,7 @@ Bangle.on('touch', function(btn, e){
 
     Bangle.buzz(40, 0.6);
     settings.menuPosY  = settings.menuPosY-1;
-    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length-1 : settings.menuPosY;
+    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length : settings.menuPosY;
 
     drawMenuAndTime();
   }
