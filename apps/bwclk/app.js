@@ -195,7 +195,7 @@ agenda.forEach((entry, i) => {
   dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
 
   agendaItems.items.push({
-    name: "agendaEntry",
+    name: "agendaEntry-" + i,
     get: () => ({ text: title + "\n" + dateStr, img: null}),
     show: function() { agendaItems.items[i].emit("redraw"); },
     hide: function () {}
@@ -245,21 +245,46 @@ var weatherItems = {
     },
   ]
 };
-
-
-
 // ----weather_clock_info ------------------------------------------------------
+
+
+// ----ha_clock_info ------------------------------------------------------
+var triggers = require("ha.lib.js").getTriggers();
+
+var haItems = {
+  name: "Home",
+  img: atob("GBiBAf/////////n///D//+B//8A//48T/wkD/gkD/A8D+AYB8AYA4eZ4QyZMOyZN+fb5+D/B+B+B+A8B+AYB+AYB+AYB+AYB+A8Bw=="),
+  items: [
+    // {
+    //   name: "item1",
+    //   get: () => ({ text: "Item1", img: atob("GBiBAf/D//+B//8Y//88//88//88//88//88//8k//8k//8k//8k//8k//8k//4kf/5mf/zDP/yBP/yBP/zDP/5mf/48f/8A///D/w==")}),
+    //   show: function() { haItems.items[0].emit("redraw"); },
+    //   hide: function () {}
+    // },
+  ]
+};
+
+triggers.forEach((trigger, i) => {
+  haItems.items.push({
+    name: "haTrigger-" + i,
+    get: () => ({ text: trigger.display, img: trigger.getIcon()}),
+    show: function() { haItems.items[i].emit("redraw"); },
+    hide: function () {}
+  });
+});
+
+// ----ha_clock_info ------------------------------------------------------
 
 
 // Still missing
 var timerItems = {};
-var homeAssistantItems = {};
 
 
 // Load menu
 var menu = loadClockInfo();
 menu = menu.concat(agendaItems);
 menu = menu.concat(weatherItems);
+menu = menu.concat(haItems);
 menu = menu.concat(clockItems);
 
 // Set draw functions for each item
@@ -409,7 +434,8 @@ function drawMenuItem(text, image){
     g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, 149+3);
 
     if(image != null){
-      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 149 - parseInt(imgWidth/2));
+      var scale = imgWidth / image.width;
+      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 149 - parseInt(imgWidth/2), {scale: scale});
     }
   }
 
