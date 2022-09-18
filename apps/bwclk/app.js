@@ -249,7 +249,8 @@ var weatherItems = {
 
 
 // ----ha_clock_info ------------------------------------------------------
-var triggers = require("ha.lib.js").getTriggers();
+var ha = require("ha.lib.js");
+var triggers = ha.getTriggers();
 
 var haItems = {
   name: "Home",
@@ -269,7 +270,11 @@ triggers.forEach((trigger, i) => {
     name: "haTrigger-" + i,
     get: () => ({ text: trigger.display, img: trigger.getIcon()}),
     show: function() { haItems.items[i].emit("redraw"); },
-    hide: function () {}
+    hide: function () {},
+    run: function() {
+      ha.sendTrigger("TRIGGER_BW");
+      ha.sendTrigger(trigger.trigger);
+    }
   });
 });
 
@@ -460,6 +465,34 @@ function drawMenuAndTime(){
 }
 
 
+function canRunItem(){
+  if(settings.menuPosY == 0){
+    return false;
+  }
+
+  var menuEntry = menu[settings.menuPosX];
+  var item = menuEntry.items[settings.menuPosY-1];
+  return item.run !== undefined;
+}
+
+function runItem(){
+  if(settings.menuPosY == 0){
+    return;
+  }
+
+  var menuEntry = menu[settings.menuPosX];
+  var item = menuEntry.items[settings.menuPosY-1];
+
+  Bangle.buzz(160, 0.6).then(()=>{
+    try{
+      item.run();
+    } catch (ex) {
+      // Simply ignore it...
+    }
+  });
+}
+
+
 function drawLock(){
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
@@ -579,21 +612,9 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_center){
-    // var menuEntry = getMenuEntry();
-    // if(menuEntry.length > 4 && menuEntry[4] != null){
-    //   Bangle.buzz(80, 0.6).then(()=>{
-    //     try{
-    //       menuEntry[4]();
-    //       setTimeout(()=>{
-    //         Bangle.buzz(80, 0.6);
-    //         drawTime();
-    //       }, 250);
-    //     } catch(ex){
-    //       // In case it fails, we simply ignore it.
-    //     }
-    //   }
-    //   );
-    // }
+    if(canRunItem()){
+      runItem();
+    }
   }
 });
 
