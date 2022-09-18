@@ -157,7 +157,7 @@ function loadClockInfo() {
 
   // return it all!
   return items;
-};
+}
 // ----clock_info ------------------------------------------------------
 
 
