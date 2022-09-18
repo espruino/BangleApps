@@ -17,3 +17,4 @@
 0.15: fixed tendancy for mylocation to default to London
       added setting to enable/disable idle timer warning
 0.16: make check_idle boolean setting work properly with new B2 menu
+0.17: Use default Bangle formatter for booleans

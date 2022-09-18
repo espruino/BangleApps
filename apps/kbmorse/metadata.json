@@ -1,0 +1,15 @@
+{
+  "id": "kbmorse",
+  "name": "Morse keyboard",
+  "version": "0.02",
+  "description": "A library for text input as morse code",
+  "icon": "app.png",
+  "type": "textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"textinput","url":"lib.js"}
+  ]
+}

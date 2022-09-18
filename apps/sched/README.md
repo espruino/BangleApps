@@ -50,6 +50,7 @@ Alarms are stored in an array in `sched.json`, and take the form:
   hidden : false,      // OPTIONAL if false, the widget should not show an icon for this alarm
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
+  del : false,         // OPTIONAL - if true, delete the timer after expiration
   js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'sched.js')
                           // when this code is run, you're responsible for setting alarm.on=false (or removing the alarm)
   data : { ... }       // OPTIONAL - your app can store custom data in here if needed (don't store a lot of data here)
@@ -69,11 +70,21 @@ let alarm = require("sched").newDefaultAlarm();
 // Get a new timer with default values
 let timer = require("sched").newDefaultTimer();
 
-// Add/update an existing alarm
-require("sched").setAlarm("mytimer", {
+// Add/update an existing alarm (using fields from the object shown above)
+require("sched").setAlarm("mytimer", { // as a timer
   msg : "Wake up",
   timer : 10 * 60 * 1000 // 10 minutes
 });
+require("sched").setAlarm("myalarm", { // as an alarm
+  msg : "Wake up",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+require("sched").setAlarm("mydayalarm", { // as an alarm on a date
+  msg : "Wake up",
+  date : "2022-04-04",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+
 // Ensure the widget and alarm timer updates to schedule the new alarm properly
 require("sched").reload();
 

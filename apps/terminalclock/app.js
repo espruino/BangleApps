@@ -1,16 +1,16 @@
-var locale = require("locale");
-var fontColor = g.theme.dark ? "#0f0" : "#000";
+const locale = require("locale");
 var heartRate = 0;
+var altitude = -9001;
 
-// handling the differents versions of the Banglejs smartwatch
+const fontColor = g.theme.dark ? "#0f0" : "#000";
+// handling the differents versions of the Banglejs smartwatch screen sizes
 if (process.env.HWVERSION == 1){
   var paddingY = 3;
   var font6x8At4Size = 48;
   var font6x8At2Size = 27;
   var font6x8FirstTextSize = 6;
   var font6x8DefaultTextSize = 3;
-}
-else{
+} else{
   var paddingY = 2;
   var font6x8At4Size = 32;
   var font6x8At2Size = 18;
@@ -18,35 +18,85 @@ else{
   var font6x8DefaultTextSize = 2;
 }
 
-function setFontSize(pos){
+// initialising the clockface
+const ClockFace = require("ClockFace");
+const clock = new ClockFace({
+  precision: 60,
+  settingsFile: "terminalclock.json",
+
+  init: function () {
+    // check settings and set default if needed
+    this.showHRM = false;
+    this.showAltitude = false;
+    this.lock_precision = this.precision;
+    this.unlock_precision = 1;
+    if (this.HRMinConfidence === undefined) this.HRMinConfidence = 50;
+    if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
+    if (this.powerSaving===undefined) this.powerSaving = true;
+    ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(k => {
+      if (this[k]===undefined){
+        if(k == "L2") this[k] = "Date";
+        else if(k == "L3") {
+          this[k] = "HR";
+          this.showHRM = true;
+        }else if(k == "L4") this[k] = "Motion";
+        else if(k == "L5") this[k] = "Steps";
+        else if(k == "L6") this[k] = ">";
+        else this[k] = "Empty"; 
+      } 
+      else if (this[k]==="HR") this.showHRM = true;
+      else if (this[k]==="Alt") this.showAltitude = true && process.env.HWVERSION == 2;
+    });
+
+    // set the lock and unlock actions
+    Bangle.on("lock", on => {
+      if (on) lock();
+      else unlock();
+    });
+
+    // set the services (HRM, pressure sensor, etc....)
+    if(!this.powerSaving){
+      turnOnServices();
+    } else{
+      setInterval(turnOnServices, this.PowerOnInterval*60000); // every PowerOnInterval min
+    }
+    // start the clock unlocked
+    unlock();
+  },
+
+  draw: function (date) {
+    var curPos = 1;
+    g.setFontAlign(-1, -1);
+    g.setColor(fontColor);
+    drawTime(date, curPos);
+    curPos++;
+
+    ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(line => {
+      if (this[line]==='Date') drawDate(date, curPos);
+      else if (this[line]==='HR') drawHRM(curPos);
+      else if (this[line]==='Motion') drawMotion(curPos);
+      else if (this[line]==='Alt') drawAltitude(curPos);
+      else if (this[line]==='Steps') drawStepCount(curPos);
+      else if (this[line]==='>') drawInput(curPos);
+      curPos++;
+    });
+  },
+});
+
+
+/* ---------------------------- 
+Draw related of specific lines
+-------------------------------- */
+
+function drawLine(line, pos){
   if(pos == 1)
     g.setFont("6x8", font6x8FirstTextSize);
   else
     g.setFont("6x8", font6x8DefaultTextSize);
-}
 
-function clearField(pos){
-  var yStartPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos-1) + 
-      font6x8At2Size * Math.max(0, pos-2);
-    var yEndPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos) + 
-      font6x8At2Size * Math.max(0, pos-1);
-    g.clearRect(Bangle.appRect.x, yStartPos, Bangle.appRect.x2, yEndPos);
-}
-
-function clearWatchIfNeeded(now){
-  if(now.getMinutes() % 10 == 0)
-    g.clearRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
-}
-
-function drawLine(line, pos){
-  setFontSize(pos);
-  var yPos = Bangle.appRect.y + 
-      paddingY * (pos - 1) + 
-      font6x8At4Size * Math.min(1, pos-1) + 
+  var yPos = Bangle.appRect.y +
+      paddingY * (pos - 1) +
+      font6x8At4Size * Math.min(1, pos-1) +
       font6x8At2Size * Math.max(0, pos-2);
   g.drawString(line, 5, yPos, true);
 }
@@ -65,8 +115,7 @@ function drawDate(now, pos){
   drawLine(locale_date, pos);
 }
 
-function drawInput(now, pos){
-  clearField(pos);
+function drawInput(pos){
   drawLine(">", pos);
 }
 
@@ -77,71 +126,85 @@ function drawStepCount(pos){
 }
 
 function drawHRM(pos){
-  clearField(pos);
   if(heartRate != 0)
     drawLine(">HR: " + parseInt(heartRate), pos);
   else
     drawLine(">HR: unknown", pos);
 }
 
-function drawActivity(pos){
-  clearField(pos);
+function drawAltitude(pos){
+  if(altitude > 0)
+    drawLine(">Alt: " + altitude.toFixed(1) + "m", pos);
+  else
+    drawLine(">Alt: unknown", pos);
+}
+ 
+function drawMotion(pos){
   var health = Bangle.getHealthStatus('last');
   var steps_formated = ">Motion: " + parseInt(health.movement);
   drawLine(steps_formated, pos);
 }
 
-function draw(){
-  var curPos = 1;
-  g.reset();
-  g.setFontAlign(-1, -1);
-  g.setColor(fontColor);
-  var now = new Date();
-  clearWatchIfNeeded(now); // mostly to not have issues when changing days
-  drawTime(now, curPos);
-  curPos++;
-  if(settings.showDate){
-    drawDate(now, curPos);
-    curPos++;
+/* -----------------------------------------------
+Services functions (HRM, pressure, etc...)
+-------------------------------------------------- */
+
+function turnOnServices(){
+  if(clock.showHRM){
+    Bangle.setHRMPower(true, "terminalclock");
   }
-  if(settings.showHRM){
-    drawHRM(curPos);
-    curPos++;
+  if(clock.showAltitude){
+    Bangle.setBarometerPower(true, "terminalclock");
   }
-  if(settings.showActivity){
-    drawActivity(curPos);
-    curPos++;
+  if(clock.powerSaving){
+    setTimeout(function () {
+      turnOffServices();
+    }, 45000);
   }
-  if(settings.showStepCount){
-    drawStepCount(curPos);
-    curPos++;
+}
+
+function turnOffServices(){
+  if(clock.showHRM){
+    Bangle.setHRMPower(false, "terminalclock");
   }
-  drawInput(now, curPos);
+  if(clock.showAltitude){
+    Bangle.setBarometerPower(false, "terminalclock");
+  }
 }
 
 Bangle.on('HRM',function(hrmInfo) {
-  if(hrmInfo.confidence >= settings.HRMinConfidence)
+  if(hrmInfo.confidence >= clock.HRMinConfidence)
     heartRate = hrmInfo.bpm;
 });
 
+const MEDIANLENGTH = 20; // technical
+var avr = [], median; // technical
+Bangle.on('pressure', function(e) {
+  while (avr.length>MEDIANLENGTH) avr.pop();
+  avr.unshift(e.altitude);
+  median = avr.slice().sort();
+  if (median.length>10) {
+    var mid = median.length>>1;
+    altitude = E.sum(median.slice(mid-4,mid+5)) / 9;
+  }
+});
 
-// Clear the screen once, at startup
-g.clear();
-// load the settings
-var settings = Object.assign({
-  // default values
-  HRMinConfidence: 50,
-  showDate: true,
-  showHRM: true,
-  showActivity: true,
-  showStepCount: true,
-}, require('Storage').readJSON("terminalclock.json", true) || {});
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
-// Load widgets
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-// draw immediately at first
-draw();
+/* -------------------------------------------------
+Clock related functions but not in the ClockFace module
+---------------------------------------------------- */
 
-var secondInterval = setInterval(draw, 10000);
+function unlock(){
+  if(clock.powerSaving){
+    turnOnServices();
+  }
+  clock.precision = clock.unlock_precision;
+  clock.tick();
+}
+
+function lock(){
+  clock.precision = clock.lock_precision;
+  clock.tick();
+}
+
+// starting the clock
+clock.start();

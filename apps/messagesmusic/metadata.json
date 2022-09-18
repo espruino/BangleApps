@@ -1,7 +1,7 @@
 {
   "id": "messagesmusic",
   "name":"Messages Music",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Uses Messages library to push a music message which in turn displays Messages app music controls",
   "icon":"app.png",
   "type": "app",

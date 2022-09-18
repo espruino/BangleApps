@@ -128,10 +128,11 @@ function formatPace(speed, paceLength) {
 
 Bangle.on("GPS", function(fix) {
   if (!fix.fix) return; // only process actual fixes
-
-  if (!state.active) return;
   state.lastGPS = state.thisGPS;
   state.thisGPS = fix;
+  if (stats["altg"]) stats["altg"].emit("changed",stats["altg"]);
+  if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
+  if (!state.active) return;
   if (state.lastGPS.fix)
     state.distance += calcDistance(state.lastGPS, fix);
   if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
@@ -140,7 +141,6 @@ Bangle.on("GPS", function(fix) {
   if (!isNaN(fix.speed)) state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2/3.6; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
-  if (stats["speed"]) stats["speed"].emit("changed",stats["speed"]);
   if (state.notify.dist.increment > 0 && state.notify.dist.next <= state.distance) {
     stats["dist"].emit("notify",stats["dist"]);
     state.notify.dist.next = state.notify.dist.next + state.notify.dist.increment;
@@ -168,10 +168,21 @@ Bangle.on("HRM", function(h) {
     if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
   }
 });
+if (Bangle.setBarometerPower) Bangle.on("pressure", function(e) {
+  if (state.alt === undefined)
+    state.alt = e.altitude;
+  else
+    state.alt = state.alt*0.9 + e.altitude*0.1;
+  var i = Math.round(state.alt);
+  if (i!==state.alti) {
+    state.alti = i;
+    if (stats["altb"]) stats["altb"].emit("changed",stats["altb"]);
+  }
+});
 
 /** Get list of available statistic types */
 exports.getList = function() {
-  return [
+  var l = [
     {name: "Time", id:"time"},
     {name: "Distance", id:"dist"},
     {name: "Steps", id:"step"},
@@ -181,7 +192,10 @@ exports.getList = function() {
     {name: "Pace (curr)", id:"pacec"},
     {name: "Speed", id:"speed"},
     {name: "Cadence", id:"caden"},
+    {name: "Altitude (GPS)", id:"altg"}
   ];
+  if (Bangle.setBarometerPower) l.push({name: "Altitude (baro)", id:"altb"});
+  return l;
 };
 /** Instantiate the given list of statistic IDs (see comments at top)
  options = {
@@ -205,7 +219,7 @@ exports.getStats = function(statIDs, options) {
   options.notify.dist.increment = (options.notify && options.notify.dist && options.notify.dist.increment)||0;
   options.notify.step.increment = (options.notify && options.notify.step && options.notify.step.increment)||0;
   options.notify.time.increment = (options.notify && options.notify.time && options.notify.time.increment)||0;
-  var needGPS,needHRM;
+  var needGPS,needHRM,needBaro;
   // ======================
   if (statIDs.includes("time")) {
     stats["time"]={
@@ -276,10 +290,27 @@ exports.getStats = function(statIDs, options) {
       getString : function() { return state.stepsPerMin; },
     };
   }
+  if (statIDs.includes("altg")) {
+    needGPS = true;
+    stats["altg"]={
+      title : "Altitude",
+      getValue : function() { return state.thisGPS.alt; },
+      getString : function() { return (state.thisGPS.alt===undefined)?"-":Math.round(state.thisGPS.alt)+"m"; },
+    };
+  }
+  if (statIDs.includes("altb")) {
+    needBaro = true;
+    stats["altb"]={
+      title : "Altitude",
+      getValue : function() { return state.alt; },
+      getString : function() { return (state.alt===undefined)?"-":state.alti+"m"; },
+    };
+  }
   // ======================
   for (var i in stats) stats[i].id=i; // set up ID field
   if (needGPS) Bangle.setGPSPower(true,"exs");
   if (needHRM) Bangle.setHRMPower(true,"exs");
+  if (needBaro) Bangle.setBarometerPower(true,"exs");
   setInterval(function() { // run once a second....
     if (!state.active) return;
     // called once a second
@@ -315,6 +346,8 @@ exports.getStats = function(statIDs, options) {
     state.BPM = 0;
     state.BPMage = 0;
     state.maxBPM = 0;
+    state.alt = undefined; // barometer altitude (meters)
+    state.alti = 0; // integer ver of state.alt (to avoid repeated 'changed' notifications)
     state.notify = options.notify;
     if (options.notify.dist.increment > 0) {
       state.notify.dist.next = state.distance + options.notify.dist.increment;

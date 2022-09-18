@@ -6,6 +6,7 @@ const Radius = { "center": 7, "hour": 60, "min": 80, "dots": 88 };
 const Center = { "x": 120, "y": 96 };
 const Widths = { hour: 2, minute: 2 };
 var buf = Graphics.createArrayBuffer(240,192,1,{msb:true});
+var lastDate = new Date();
 
 function rotatePoint(x, y, d) {
     rad = -1 * d / 180 * Math.PI;
@@ -45,10 +46,10 @@ function setLineWidth(x1, y1, x2, y2, lw) {
     ];
 }
 
-
 function drawMixedClock(force) {
-  if ((force || Bangle.isLCDOn()) && buf.buffer) {
-    var date = new Date();
+  var date = new Date();
+  if ((force || Bangle.isLCDOn()) && buf.buffer && date.getSeconds() !== lastDate.getSeconds()) {
+    lastDate = date;
     var dateArray = date.toString().split(" ");
     var isEn = locale.name.startsWith("en");
     var point = [];

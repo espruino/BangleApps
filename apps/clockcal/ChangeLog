@@ -1,3 +1,6 @@
 0.01: Initial upload
 0.02: Added scrollable calendar and swipe gestures
 0.03: Configurable drag gestures
+0.04: Use default Bangle formatter for booleans
+0.05: Improved colors (connected vs disconnected)
+0.06: Tell clock widgets to hide.

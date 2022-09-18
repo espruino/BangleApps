@@ -50,7 +50,6 @@ let barMenu = {
   "": { "title" : "-  Barometer   -" },
   "State": {
     value: settings.isBarEnabled,
-    format: v => v ? "On" : "Off",
     onchange: v => { updateSetting('isBarEnabled', v); }
   },
   "Altitude": { value: null },
@@ -62,7 +61,6 @@ let gpsMenu = {
   "": { "title" : "-      GPS     -" },
   "State": {
     value: settings.isGpsEnabled,
-    format: v => v ? "On" : "Off",
     onchange: v => { updateSetting('isGpsEnabled', v); }
   },
   "Lat": { value: null },
@@ -76,7 +74,6 @@ let hrmMenu = {
   "": { "title" : "-  Heart Rate  -" },
   "State": {
     value: settings.isHrmEnabled,
-    format: v => v ? "On" : "Off",
     onchange: v => { updateSetting('isHrmEnabled', v); }
   },
   "BPM": { value: null },
@@ -87,7 +84,6 @@ let magMenu = {
   "": { "title" : "- Magnetometer -" },
   "State": {
     value: settings.isMagEnabled,
-    format: v => v ? "On" : "Off",
     onchange: v => { updateSetting('isMagEnabled', v); }
   },
   "x": { value: null },

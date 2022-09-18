@@ -63,6 +63,7 @@ E.on('notify',msg=>{
   "name" : string,
 */
   var appNames = {
+    "ch.publisheria.bring": "Bring",
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
@@ -73,6 +74,9 @@ E.on('notify',msg=>{
     "com.apple.podcasts": "Podcasts",
     "com.apple.reminders": "Reminders",
     "com.apple.shortcuts": "Shortcuts",
+    "com.apple.TestFlight": "TestFlight",
+    "com.apple.ScreenTimeNotifications": "ScreenTime",
+    "com.apple.wifid.usernotification": "WiFi",
     "com.atebits.Tweetie2": "Twitter",
     "com.burbn.instagram" : "Instagram",
     "com.facebook.Facebook": "Facebook",
@@ -99,23 +103,42 @@ E.on('notify',msg=>{
     "com.toyopagroup.picaboo": "Snapchat",
     "com.ubercab.UberClient": "Uber",
     "com.ubercab.UberEats": "UberEats",
+    "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
+    "com.valvesoftware.Steam": "Steam",
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
+    "com.yourcompany.PPClient": "PayPal",
     "com.zhiliaoapp.musically": "TikTok",
+    "de.no26.Number26": "N26",
     "io.robbie.HomeAssistant": "Home Assistant",
+    "net.superblock.Pushover": "Pushover",
     "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
-    "net.superblock.Pushover": "Pushover",
     "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
     "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
     "tv.twitch": "Twitch",
-
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
   var unicodeRemap = {
-    '2019':"'"
+    '2019':"'",
+    '260':"A",
+    '261':"a",
+    '262':"C",
+    '263':"c",
+    '280':"E",
+    '281':"e",
+    '321':"L",
+    '322':"l",
+    '323':"N",
+    '324':"n",
+    '346':"S",
+    '347':"s",
+    '377':"Z",
+    '378':"z",
+    '379':"Z",
+    '380':"z",
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a

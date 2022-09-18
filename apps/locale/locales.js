@@ -11,6 +11,8 @@ const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
+  "kmt": 1,
+  "km/tim": 1,
   "mph": 1.60934,
   "kts": 1.852
 };
@@ -95,6 +97,25 @@ var locales = {
     day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
     // No translation for english...
   },
+  "en_IE": {
+    lang: "en_IE",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    currency_first: true,
+    speed: 'kmh',
+    distance: { "0": "m", "1": "km" },
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%d %b %Y", 1: "%d/%m/%Y" }, // 28 Feb 2020" // "28/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
   "en_NAV": { // navigation units nautical miles and knots
     lang: "en_NAV",
     decimal_point: ".",
@@ -139,7 +160,7 @@ var locales = {
     currency_symbol: "$", currency_first: true,
     int_curr_symbol: "USD",
     speed: "mph",
-    distance: { 0: "yd", 1: "mi" },
+    distance: { 0: "m", 1: "mi" },
     temperature: "°F",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -564,7 +585,7 @@ var locales = {
     month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
     abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
-    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
+    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "confirmar", on: "ativado", off: "desativado" }
   },
   "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use CODEPAGE_CONVERSIONS
     lang: "cs_CZ",

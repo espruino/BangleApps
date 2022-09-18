@@ -133,6 +133,8 @@ Bangle.on('lock', function(on) {
   drawLock();
 });
 
+Bangle.setUI("clock");
+
 g.clear();
 Bangle.loadWidgets();
 
@@ -149,4 +151,3 @@ loadThemeColors();
 setInterval(draw, 15000); // refresh every 15s
 draw();
 
-Bangle.setUI("clock");

@@ -36,14 +36,8 @@ const digits = {
 
 
 const colors = {
-  x: [
-    ["#FF00FF", "#00FFFF"],
-    ["#00FF00", "#FFFF00"]
-  ],
-  io: [
-    ["#FF00FF", "#FFFF00"],
-    ["#00FF00", "#00FFFF"]
-  ]
+  x: ["#FF00FF", "#00FF00", "#00FFFF", "#FFFF00"],
+  io:["#FF00FF", "#00FF00", "#FFFF00", "#00FFFF"],
 };
 const is12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 const screenWidth = g.getWidth();
@@ -71,7 +65,7 @@ function drawLine(poly, thickness){
 }
 
 
-function drawClock(num){
+function drawClock(num, xc){
   let tx, ty;
 
   if(settings.fullscreen){
@@ -84,9 +78,8 @@ function drawClock(num){
     for (let y = 0; y <= 1; y++) {
       const current = ((y + 1) * 2 + x - 1);
       let newScale = scale;
-
-      let xc = settings.showLock && !Bangle.isLocked() ? Math.abs(x-1) : x;
-      let c = colors[settings.io ? 'io' : 'x'][y][xc];
+      let colorArr = colors[settings.io ? 'io' : 'x'];
+      let c = colorArr[xc];
       g.setColor(c);
 
       if (!settings.io) {
@@ -104,6 +97,8 @@ function drawClock(num){
       for (let i = 0; i < digits[num[y][x]].length; i++) {
         drawLine(g.transformVertices(digits[num[y][x]][i], { x: tx, y: ty, scale: newScale}), settings.thickness);
       }
+
+      xc = (xc+1) % colorArr.length;
     }
   }
 }
@@ -111,7 +106,31 @@ function drawClock(num){
 
 function draw(date){
   queueDraw();
+  _draw(date, 0);
+}
 
+
+function drawAnimated(){
+  queueDraw();
+
+  // Animate draw through different colors
+  speed = 25;
+  setTimeout(function() {
+    _draw(false, 1);
+    setTimeout(function() {
+      _draw(false, 3);
+      setTimeout(function() {
+        _draw(false, 2);
+        setTimeout(function(){
+            _draw(false, 0);
+        }, speed);
+      }, speed);
+    }, speed);
+  }, speed);
+}
+
+
+function _draw(date, xc){
   // Depending on the settings, we clear all widgets or draw those.
   if(settings.fullscreen){
     for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
@@ -140,7 +159,7 @@ function draw(date){
     l2 = ('0' + d.getMinutes()).substr(-2);
   }
 
-  drawClock([l1, l2]);
+  drawClock([l1, l2], xc);
 }
 
 
@@ -173,8 +192,14 @@ Bangle.on('lcdPower', function(on){
   }
 });
 
+
 Bangle.on('lock', function(isLocked) {
-  draw();
+  if(!settings.showLock){
+    return;
+  }
+
+  // Animate in case the use selected this setting.
+  drawAnimated();
 });
 
 

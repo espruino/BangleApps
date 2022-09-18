@@ -54,7 +54,9 @@ function distance(a, b) {
 
 
 // golfview.js
-let course = require("Storage").readJSON("golfcourse-Davis.json").holes;//TODO use the course ID
+let courselist = require("Storage").list(/^golf-\d+\.json$/);
+let course = require("Storage").readJSON(courselist[0]).holes; // TODO use the first course for now
+
 let current_hole = 1;
 let hole = course[current_hole.toString()];
 let user_position = {

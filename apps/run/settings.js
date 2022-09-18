@@ -63,7 +63,6 @@
   if (global.WIDGETS&&WIDGETS["recorder"])
     menu[/*LANG*/"Record Run"] = {
       value : !!settings.record,
-      format : v => v?/*LANG*/"Yes":/*LANG*/"No",
       onchange : v => {
         settings.record = v;
         saveSettings();

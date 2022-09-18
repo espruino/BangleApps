@@ -4,8 +4,9 @@
     // initialize with default settings...
     const storage = require('Storage')
     let settings = {
-      fullscreen: false,
+      screen: "Normal",
       showLock: true,
+      hideColon: false,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -16,15 +17,16 @@
       storage.write(SETTINGS_FILE, settings)
     }
 
-
+    var screenOptions = ["Normal", "Dynamic", "Full"];
     E.showMenu({
       '': { 'title': 'BW Clock' },
       '< Back': back,
-      'Fullscreen': {
-        value: settings.fullscreen,
-        format: () => (settings.fullscreen ? 'Yes' : 'No'),
-        onchange: () => {
-          settings.fullscreen = !settings.fullscreen;
+      'Screen': {
+        value: 0 | screenOptions.indexOf(settings.screen),
+        min: 0, max: 2,
+        format: v => screenOptions[v],
+        onchange: v => {
+          settings.screen = screenOptions[v];
           save();
         },
       },
@@ -33,6 +35,14 @@
         format: () => (settings.showLock ? 'Yes' : 'No'),
         onchange: () => {
           settings.showLock = !settings.showLock;
+          save();
+        },
+      },
+      'Hide Colon': {
+        value: settings.hideColon,
+        format: () => (settings.hideColon ? 'Yes' : 'No'),
+        onchange: () => {
+          settings.hideColon = !settings.hideColon;
           save();
         },
       }

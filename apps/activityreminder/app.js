@@ -1,37 +1,54 @@
-function drawAlert(){
-  E.showPrompt("Inactivity detected",{
-    title:"Activity reminder",
-    buttons : {"Ok": true,"Dismiss": false}
-    }).then(function(v) {
-      if(v == true){
-        stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin - 3);
-        require("activityreminder").saveStepsArray(stepsArray);
-      }
-      if(v == false){
-        stepsArray = stepsArray.slice(0, activityreminder.maxInnactivityMin - activityreminder.dismissDelayMin);
-        require("activityreminder").saveStepsArray(stepsArray);
-      }
-    load();
-  });
+(function () {
+  // load variable before defining functions cause it can trigger a ReferenceError
+  const activityreminder = require("activityreminder");
+  let activityreminder_data = activityreminder.loadData();
+  let W = g.getWidth();
+  // let H = g.getHeight();
+
+  function getHoursMins(date){
+    var h = date.getHours();
+    var m = date.getMinutes();
+    return (""+h).substr(-2) + ":" + ("0"+m).substr(-2);
+  }
+
+  function drawData(name, value, y){
+    g.drawString(name, 10, y);
+    g.drawString(value, 100, y);
+  }
   
-  Bangle.buzz(400);
-  setTimeout(load, 20000);
-}
+  function drawInfo() {
+    var h=18, y = h;
+    g.setColor(g.theme.fg);
+    g.setFont("Vector",h).setFontAlign(-1,-1);
 
-function run(){
-    if(stepsArray.length == activityreminder.maxInnactivityMin){
-        if (stepsArray[0] - stepsArray[stepsArray.length-1] < activityreminder.minSteps){
-            drawAlert();
-        }
-    }else{
-        eval(require("Storage").read("activityreminder.settings.js"))(()=>load());
-    }
-}
+    // Header
+    g.drawLine(0,25,W,25);
+    g.drawLine(0,26,W,26);
+  
+    g.drawString("Current Cycle", 10, y+=h);
+    drawData("Start", getHoursMins(activityreminder_data.stepsDate), y+=h);
+    drawData("Steps", getCurrentSteps(), y+=h);
 
+    /*
+    g.drawString("Button Press", 10, y+=h*2);
+    drawData("Ok", getHoursMins(activityreminder_data.okDate), y+=h);
+    drawData("Dismiss", getHoursMins(activityreminder_data.dismissDate), y+=h);
+    drawData("Pause", getHoursMins(activityreminder_data.pauseDate), y+=h);
+    */
+  }
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-activityreminder = require("activityreminder").loadSettings();
-stepsArray = require("activityreminder").loadStepsArray();
-run();
+  function getCurrentSteps(){
+    let health = Bangle.getHealthStatus("day");
+    return health.steps - activityreminder_data.stepsOnDate;
+  }
+
+  function run() {
+    g.clear();
+    Bangle.loadWidgets();
+    Bangle.drawWidgets();
+    drawInfo();
+  }
+
+  run();
+
+})();

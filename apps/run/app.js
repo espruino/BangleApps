@@ -55,6 +55,7 @@ function onStartStop() {
       prepPromises.push(
         WIDGETS["recorder"].setRecording(true).then(() => {
           isMenuDisplayed = false;
+          layout.setUI(); // grab our input handling again
           layout.forgetLazyState();
           layout.render();
         })

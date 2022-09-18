@@ -7,6 +7,7 @@ class DateFormatter {
      * to the lines of text on the screen
      */
     name(){return "no name";}
+    shortName(){return "no short name"}
     formatDate(date){
         return ["no","date","defined"];
     }

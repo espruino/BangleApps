@@ -154,6 +154,9 @@ Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -172,5 +175,4 @@ Bangle.on('touch',e=>{
   }
 });
 
-// Show launcher when button pressed
-Bangle.setUI("clock");
+
