@@ -292,6 +292,9 @@ function queueDraw() {
 
 
 log_debug("starting..");
+loadSettings();
+loadLocation();
+
 
 if(settings.autoCycle || settings.sideTap==0)
 {
@@ -314,8 +317,6 @@ Bangle.loadWidgets();
  * area to the top bar doesn't get cleared.
  */
 for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-loadSettings();
-loadLocation();
 
 
 
