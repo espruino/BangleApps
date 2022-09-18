@@ -83,7 +83,7 @@ function imgLock(){
 
 
 // ----clock_info ------------------------------------------------------
-function load() {
+function loadClockInfo() {
   // info used for drawing...
   var hrm = "--";
   var alt = "--";
@@ -257,7 +257,7 @@ var homeAssistantItems = {};
 
 
 // Load menu
-var menu = load();
+var menu = loadClockInfo();
 menu = menu.concat(agendaItems);
 menu = menu.concat(weatherItems);
 menu = menu.concat(clockItems);
