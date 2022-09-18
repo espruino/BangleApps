@@ -1,6 +1,6 @@
 # Deko Clock
 
-A simple clock with and Art Deko font
+A simple clock with an Art Deko font
 
 The font was obtained from https://dafonttop.com/building.font and is free for personal use
 
