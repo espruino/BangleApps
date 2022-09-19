@@ -3,7 +3,7 @@
  */
 const locale = require('locale');
 const storage = require('Storage');
-// const clock_info = require("clock_info");
+const clock_info = require("clock_info");
 
 /************
  * Statics
@@ -82,215 +82,42 @@ function imgLock(){
 }
 
 
-// ----clock_info ------------------------------------------------------
-function loadClockInfo() {
-  // info used for drawing...
-  var hrm = "--";
-  var alt = "--";
-  var interval = null;
-  // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
-  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
-  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
-  function altUpdateHandler() {
-    Bangle.getPressure().then(data=>{
-      if (!data) return;
-      alt = Math.round(data.altitude) + "m";
-      bangleItems[3].emit("redraw");
-    });
-  }
-  function deleteInterval(inter){
-    if(inter){
-      clearInterval(inter);
-    }
-    delete inter;
-  }
-  // actual items
-  var items = [{
-    name: "Bangle",
-    img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
-    items: [
-    { name : "Battery",
-      get : () => ({
-        text : E.getBattery() + "%",
-        img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() {
-        deleteInterval(interval);
-        interval = setInterval(()=>this.emit('redraw'), 60000);
-        Bangle.on("charging", batteryUpdateHandler);
-        batteryUpdateHandler();
-      },
-      hide : function() {
-        deleteInterval(interval);
-        Bangle.removeListener("charging", batteryUpdateHandler);
-      },
-    },
-    { name : "Steps", get : () => ({
-        text : Bangle.getHealthStatus("day").steps,
-        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==") }),
-      show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
-      hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
-    },
-    { name : "HRM", get : () => ({
-        text : Math.round(Bangle.getHealthStatus("last").bpm) + " bpm",
-        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
-      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
-    }
-  ],
-  }];
-  var bangleItems = items[0].items;
-
-  if (Bangle.getPressure){  // Altimeter may not exist
-    bangleItems.push({ name : "Altitude", get : () => ({
-        text : alt,
-        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { deleteInterval(); interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
-      hide : function() { deleteInterval(); },
-    });
-  }
-
-  // now load extra data from a third party files
-  require("Storage").list(/clkinfo.js$/).forEach(fn => {
-    items = items.concat(eval(require("Storage").read(fn))());
-  });
-
-  // return it all!
-  return items;
-}
-// ----clock_info ------------------------------------------------------
-
-
-// Custom menus
-var clockItems = {
+// Custom bwItems menu - therefore, its added here and not in a clkinfo.js file.
+var bwItems = {
   name: null,
   img: null,
   items: [
   { name: "WeekOfYear",
     get: () => ({ text: "Week " + weekOfYear(), img: null}),
-    show: function() { clockItems.items[0].emit("redraw"); },
+    show: function() { bwItems.items[0].emit("redraw"); },
     hide: function () {}
   },
   ]
 };
 
-
-// ----agenda_clock_info ------------------------------------------------------
-var agendaItems = {
-  name: "Agenda",
-  img: atob("GBiBAf////////85z/AAAPAAAPgAAP////AAAPAAAPAAAPAAAOAAAeAAAeAAAcAAA8AAAoAABgAADP//+P//8PAAAPAAAPgAAf///w=="),
-  items: []
-};
-
-var now = new Date();
-var agenda = storage.readJSON("android.calendar.json")
-        .filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000)
-        .sort((a,b)=>a.timestamp - b.timestamp);
-
-agenda.forEach((entry, i) => {
-
-  var title = entry.title.slice(0,14);
-  var date = new Date(entry.timestamp*1000);
-  var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
-  dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
-
-  agendaItems.items.push({
-    name: "agendaEntry-" + i,
-    get: () => ({ text: title + "\n" + dateStr, img: null}),
-    show: function() { agendaItems.items[i].emit("redraw"); },
-    hide: function () {}
-  });
-});
-// ----agenda_clock_info ------------------------------------------------------
-
-
-
-// ----weather_clock_info ------------------------------------------------------
-var weather = {
-  temp: "?",
-  hum: "?",
-  wind: "?",
-};
-
-var weatherJson = storage.readJSON('weather.json');
-if(weatherJson !== undefined && weatherJson.weather !== undefined){
-  weather = weatherJson.weather;
-  weather.temp = locale.temp(weather.temp-273.15);
-  weather.hum = weather.hum + "%";
-  weather.wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-  weather.wind = Math.round(weather.wind[1]) + "kph";
+function weekOfYear() {
+  var date = new Date();
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
 }
-
-var weatherItems = {
-  name: "Weather",
-  img: atob("GBiBAf+///u5//n7//8f/9wHP8gDf/gB//AB/7AH/5AcP/AQH/DwD/uAD84AD/4AA/wAAfAAAfAAAfAAAfgAA/////+bP/+zf/+zfw=="),
-  items: [
-    {
-      name: "temperature",
-      get: () => ({ text: weather.temp, img: atob("GBiBAf/D//+B//8Y//88//88//88//88//88//8k//8k//8k//8k//8k//8k//4kf/5mf/zDP/yBP/yBP/zDP/5mf/48f/8A///D/w==")}),
-      show: function() { weatherItems.items[0].emit("redraw"); },
-      hide: function () {}
-    },
-    {
-      name: "humidity",
-      get: () => ({ text: weather.hum, img: atob("GBiBAf/7///z///x///g///g///Af//Af/3Af/nA//jg//B/v/B/H+A/H8A+D8AeB8AcB4AYA8AYA8AYA+A4A/B4A//4A//8B///Dw==")}),
-      show: function() { weatherItems.items[1].emit("redraw"); },
-      hide: function () {}
-    },
-    {
-      name: "wind",
-      get: () => ({ text: weather.wind, img: atob("GBiBAf4f//wP//nn//Pn//Pzg//nAf/meIAOfAAefP///P//+fAAAfAAB////////wAAP4AAH///z///z//nz//nz//zj//wH//8Pw==")}),
-      show: function() { weatherItems.items[2].emit("redraw"); },
-      hide: function () {}
-    },
-  ]
-};
-// ----weather_clock_info ------------------------------------------------------
-
-
-// ----ha_clock_info ------------------------------------------------------
-var ha = require("ha.lib.js");
-var triggers = ha.getTriggers();
-
-var haItems = {
-  name: "Home",
-  img: atob("GBiBAf/////////n///D//+B//8A//48T/wkD/gkD/A8D+AYB8AYA4eZ4QyZMOyZN+fb5+D/B+B+B+A8B+AYB+AYB+AYB+AYB+A8Bw=="),
-  items: [
-    // {
-    //   name: "item1",
-    //   get: () => ({ text: "Item1", img: atob("GBiBAf/D//+B//8Y//88//88//88//88//88//8k//8k//8k//8k//8k//8k//4kf/5mf/zDP/yBP/yBP/zDP/5mf/48f/8A///D/w==")}),
-    //   show: function() { haItems.items[0].emit("redraw"); },
-    //   hide: function () {}
-    // },
-  ]
-};
-
-triggers.forEach((trigger, i) => {
-  haItems.items.push({
-    name: "haTrigger-" + i,
-    get: () => ({ text: trigger.display, img: trigger.getIcon()}),
-    show: function() { haItems.items[i].emit("redraw"); },
-    hide: function () {},
-    run: function() {
-      ha.sendTrigger("TRIGGER_BW");
-      ha.sendTrigger(trigger.trigger);
-    }
-  });
-});
-
-// ----ha_clock_info ------------------------------------------------------
-
-
-// Still missing
-var timerItems = {};
 
 
 // Load menu
-var menu = loadClockInfo();
-menu = menu.concat(agendaItems);
-menu = menu.concat(weatherItems);
-menu = menu.concat(haItems);
-menu = menu.concat(clockItems);
+var menu = clock_info.load();
+menu = menu.concat(bwItems);
+
+
+// Ensure that our settings are still in range (e.g. app uninstall). Otherwise reset the position it.
+if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPosX].items.length ){
+  settings.menuPosX = 0;
+  settings.menuPosY = 0;
+}
 
 // Set draw functions for each item
 menu.forEach((menuItm, x) => {
@@ -328,19 +155,6 @@ function isFullscreen(){
 }
 
 
-function weekOfYear() {
-  var date = new Date();
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  // January 4 is always in week 1.
-  var week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-
 /************
  * DRAW
  */
@@ -363,7 +177,7 @@ function drawDate(){
 
     // Draw date
     y = parseInt(y/2)+4;
-    y += isFullscreen() ? 0 : 13;
+    y += isFullscreen() ? 0 : 8;
     var date = new Date();
     var dateStr = date.getDate();
     dateStr = ("0" + dateStr).substr(-2);
