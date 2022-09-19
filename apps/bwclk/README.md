@@ -47,5 +47,3 @@ on the app that provide this sub-menu through the `clkinfo` module.
 
 ## Creator
 [David Peer](https://github.com/peerdavid)
-
-## Changes
