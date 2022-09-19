@@ -42,7 +42,7 @@ on the app that provide this sub-menu through the `clkinfo` module.
 
 
 ## Thanks to
-- Thanks to Gordon not only for the great BangleJs, but specifically also for the implementation of `clkinfo` which simplified the BWClock a lot and moved complexety to the apps where it should be located.
+- Thanks to Gordon Williams not only for the great BangleJs, but specifically also for the implementation of `clkinfo` which simplified the BWClock a lot and moved complexety to the apps where it should be located.
 - <a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
 
 ## Creator
