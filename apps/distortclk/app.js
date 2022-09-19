@@ -8,85 +8,43 @@ const offset = 25;
 const width = g.getWidth();
 const height = g.getHeight();
 
-const locale = require("locale");
-
+var drawTimeout;
 var fgTime = 0xf800;
 var bgTime = 0x3333ff;
 var dayDate = 0x000;
 
-function time() { //numbers
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function time() {
   require("Font4x5").add(Graphics);
-  
-  const d = new Date();
-  const h = d.getHours(),
-    m = d.getMinutes();
-  
-  const day = Date.now();
-  const mo = d.getMonth()+1;
-  
-  var middle= ":";
-  
-  const date = january(d.getMonth())+" "+d.getDate(); 
-  const time = h + " " + ("0" + m).substr(-2);   
-  
-  // time
-  //g.setColor(0, 0, 0);
+  var d = new Date();
+  var day = d.getDate();
+  var time = require("locale").time(d,1);
+  var date = require("locale").date(d);
+  var mo = require("date_utils").month(d.getMonth()+1,0);
+
   g.setFontAlign(0,0);
   g.setFontSixCaps(2).setColor(fgTime).drawString(time, width/2, height/2+10);
   
   g.setFont("4x5",2);
   g.setFontAlign(0,0);
-  g.setColor(dayDate).drawString(date,width-50, height-16);
-}
-
-function january(month){ //switch case for month names
-  switch (month){
-    case 0:
-      middle="January";
-      return middle;
-    case 1:
-      middle="February";
-      return middle;
-    case 2:
-      middle="March";
-      return middle;
-    case 3:
-      middle="April";
-      return middle;
-    case 4:
-      middle="May";
-      return middle;
-    case 5:
-      middle="June";
-      return middle;
-    case 6:
-      middle="July";
-      return middle;
-    case 7:
-      middle="August";
-      return middle;
-    case 8:
-      middle="September";
-      return middle;
-    case 9:
-      middle="October";
-      return middle;
-    case 10:
-      middle="November";
-      return middle;
-    case 11:
-      middle="December";
-      return middle;
-  }    
+  g.setColor(dayDate).drawString(mo,width-55, height-16);
+  g.drawString(day,width-10, height-16);
 }
 
 function draw() {
   g.setColor(bgTime).fillRect(0,40,width,height-offset);
   time();
+  queueDraw();
 }
 
 //program start
-
 g.clear(); // Clear the screen once, at startup
 
 if (g.theme.dark==true){
@@ -97,16 +55,8 @@ else {
 }
 
 draw(); // draw immediately at first
-var secondInterval = setInterval(draw, 1000); // Stop updates when LCD is off, restart when on
 
-Bangle.on('lcdPower',on=>{
-  if (secondInterval) clearInterval(secondInterval);
-  secondInterval = undefined;
-  if (on) {
-    secondInterval = setInterval(draw, 1000);
-    draw(); // draw immediately
-  }
-});
+
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
