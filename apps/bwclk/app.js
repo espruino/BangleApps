@@ -296,14 +296,12 @@ function runItem(){
 
   var menuEntry = menu[settings.menuPosX];
   var item = menuEntry.items[settings.menuPosY-1];
-
-  Bangle.buzz(160, 0.6).then(()=>{
-    try{
-      item.run();
-    } catch (ex) {
-      // Simply ignore it...
-    }
-  });
+  try{
+    item.run();
+    Bangle.buzz(300, 0.6).then(() => {});
+  } catch (ex) {
+    // Simply ignore it...
+  }
 }
 
 
