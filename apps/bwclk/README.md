@@ -4,9 +4,12 @@ A very minimalistic clock to mainly show date and time.
 ![](screenshot.png)
 
 ## Features
-The BW clock provides many features and also 3rd party integrations:
+The BW clock implements 3rd party integrations of other apps through the `clkinfo`  module.
+For example if you install the HomeAssistant app, this menu item will show up in BWClock
+and additionally allows to send your triggers directly from the clock. Here are some
+features that are supported:
+
 - Bangle data such as steps, heart rate, battery or charging state.
-- A timer can be set directly. *Requirement: Scheduler library*
 - Show agenda entries. A timer for an agenda entry can also be set by simply clicking in the middle of the screen. This can be used to not forget a meeting etc. Note that only one agenda-timer can be set at a time. *Requirement: Gadgetbridge calendar sync enabled*
 - Weather temperature as well as the wind speed can be shown. *Requirement: Weather app*
 - HomeAssistant triggers can be executed directly. *Requirement: HomeAssistant app*
@@ -20,27 +23,29 @@ Note: If some apps are not installed (e.gt. weather app), then this menu item is
 - Your bangle uses the sys color settings so you can change the color too.
 
 ## Menu structure
-2D menu allows you to display lots of different data including data from 3rd party apps and it's also possible to control things e.g. to set a timer or send a HomeAssistant trigger.
+2D menu allows you to display lots of different data including data from 3rd party apps and it's also possible to control things e.g. to trigger HomeAssistant.
 
-Simply click left / right to go through the menu entries such as Bangle, Timer etc.
+Simply click left / right to go through the menu entries such as Bangle, Weather etc.
 and click up/down to move into this sub-menu. You can then click in the middle of the screen
-to e.g. send a trigger via HomeAssistant once you selected it.
+to e.g. send a trigger via HomeAssistant once you selected it. The actions really depend
+on the app that provide this sub-menu through the `clkinfo` module.
 
 ```
-                    +5min
-                      |
-  Bangle   -- Timer[Optional] -- Agenda 1[Optional] -- Weather[Optional] -- HomeAssistant [Optional]
-    |                 |            |                          |                       |
-   Bpm              -5min        Agenda 2                Temperature             Trigger1
-    |                              |                          |                       |
-  Steps                           ...                        ...                     ...
+  Bangle  -- Agenda  --  Weather  --  HomeAssistant
+    |           |           |               |
+ Battery     Entry 1   Temperature      Trigger1
+    |           |           |               |
+  Steps        ...         ...             ...
     |
-  Battery
+   ...
 ```
 
 
 ## Thanks to
-<a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
+- Thanks to Gordon not only for the great BangleJs, but specifically also for the implementation of `clkinfo` which simplified the BWClock a lot and moved complexety to the apps where it should be located.
+- <a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
 
 ## Creator
 [David Peer](https://github.com/peerdavid)
+
+## Changes
