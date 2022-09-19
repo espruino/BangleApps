@@ -82,12 +82,8 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
     g.drawString(l.join("\n"),R.x+4,R.y+4);
   }
 
-  /**
-     This draws a big image to use in the README file
-     uncomment and each time the library is loaded it will dump to the IDE
-     you must be connected to the IDE.
-  */
   /*
+  // This draws a big image to use in the README
   (function() {
     E.defrag();
     var b = Graphics.createArrayBuffer(500,420,1,{msb:true});
@@ -106,7 +102,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
 
   function show() {
     g.reset();
-    g.clearRect(R).setColor(g.theme.fg);
+    g.clearRect(R).setColor("#f00");
     var n=0;
     exports.getStrokes((id,s) => {
       var x = n%6;
