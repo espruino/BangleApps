@@ -37,57 +37,74 @@ exports.load = function() {
   // info used for drawing...
   var hrm = "--";
   var alt = "--";
+  var interval = null;
   // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { items[0].emit("redraw"); }
-  function stepUpdateHandler() { items[1].emit("redraw"); }
-  function hrmUpdateHandler() { items[2].emit("redraw"); }
+  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
+  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
   function altUpdateHandler() {
     Bangle.getPressure().then(data=>{
       if (!data) return;
       alt = Math.round(data.altitude) + "m";
-      items[3].emit("redraw");
+      bangleItems[3].emit("redraw");
     });
   }
+  function deleteInterval(inter){
+    if(inter){
+      clearInterval(inter);
+    }
+    delete inter;
+  }
   // actual items
-  var items = [
+  var items = [{
+    name: "Bangle",
+    img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
+    items: [
     { name : "Battery",
       get : () => ({
         text : E.getBattery() + "%",
         img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
       show : function() {
-        this.interval = setInterval(()=>this.emit('redraw'), 60000);
+        deleteInterval(interval);
+        interval = setInterval(()=>this.emit('redraw'), 60000);
         Bangle.on("charging", batteryUpdateHandler);
+        batteryUpdateHandler();
       },
       hide : function() {
-        clearInterval(this.interval);
-        delete this.interval;
+        deleteInterval(interval);
         Bangle.removeListener("charging", batteryUpdateHandler);
       },
     },
     { name : "Steps", get : () => ({
         text : Bangle.getHealthStatus("day").steps,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==") }),
-      show : function() { Bangle.on("step", stepUpdateHandler);  },
+      show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
       hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
     },
     { name : "HRM", get : () => ({
         text : Math.round(Bangle.getHealthStatus("last").bpm) + " bpm",
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); },
+      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
       hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
     }
-  ];
-  if (Bangle.getPressure)  // Altimeter may not exist
-    items.push({ name : "Altitude", get : () => ({
+  ],
+  }];
+  var bangleItems = items[0].items;
+
+  if (Bangle.getPressure){  // Altimeter may not exist
+    bangleItems.push({ name : "Altitude", get : () => ({
         text : alt,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
-      hide : function() { clearInterval(this.interval); delete this.interval;  },
+      show : function() { deleteInterval(interval); interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
+      hide : function() { deleteInterval(interval); },
     });
+  }
+
   // now load extra data from a third party files
   require("Storage").list(/clkinfo.js$/).forEach(fn => {
     items = items.concat(eval(require("Storage").read(fn))());
   });
+
   // return it all!
   return items;
 };
