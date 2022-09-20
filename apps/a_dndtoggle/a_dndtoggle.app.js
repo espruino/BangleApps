@@ -37,7 +37,6 @@ function exitApp(){
 
 require("Storage").writeJSON("setting.json", bSettings);
 // reload clocks with new theme, otherwise just wait for user to switch apps
-if (Bangle.CLOCK) load(global.__FILE__);
 
 load()
  
