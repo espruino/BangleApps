@@ -1,13 +1,13 @@
 # BW Clock
-A very minimalistic clock to mainly show date and time.
+A very minimalistic clock.
 
 ![](screenshot.png)
 
 ## Features
-The BW clock implements 3rd party integrations of other apps through the `clkinfo`  module.
-For example if you install the HomeAssistant app, this menu item will show up in BWClock
-and additionally allows to send your triggers directly from the clock. Here are some
-features that are supported:
+The BW clock implements features that are exposed by other apps through the `clkinfo` module.
+For example, if you install the HomeAssistant app, this menu item will be shown if you click right
+and additionally allows you to send triggers directly from the clock (select triggers via up/down and
+send via click center). Here are examples of other apps that are integrated:
 
 - Bangle data such as steps, heart rate, battery or charging state.
 - Show agenda entries. A timer for an agenda entry can also be set by simply clicking in the middle of the screen. This can be used to not forget a meeting etc. Note that only one agenda-timer can be set at a time. *Requirement: Gadgetbridge calendar sync enabled*
