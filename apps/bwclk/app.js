@@ -1,18 +1,21 @@
-/************
+/************************************************
  * Includes
  */
 const locale = require('locale');
 const storage = require('Storage');
 const clock_info = require("clock_info");
 
-/************
- * Statics
+
+/************************************************
+ * Globals
  */
 const SETTINGS_FILE = "bwclk.setting.json";
 const W = g.getWidth();
 const H = g.getHeight();
+var lock_input = false;
 
-/************
+
+/************************************************
  * Settings
  */
 let settings = {
@@ -28,9 +31,7 @@ for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
 
-var lock_input = false;
-
-/************
+/************************************************
  * Assets
  */
 // Manrope font
@@ -82,6 +83,9 @@ function imgLock(){
 }
 
 
+/************************************************
+ * Menu
+ */
 // Custom bwItems menu - therefore, its added here and not in a clkinfo.js file.
 var bwItems = {
   name: null,
@@ -141,22 +145,35 @@ menu.forEach((menuItm, x) => {
 });
 
 
+function canRunMenuItem(){
+  if(settings.menuPosY == 0){
+    return false;
+  }
 
-/************
- * Helper
- */
-function isFullscreen(){
-  var s = settings.screen.toLowerCase();
-  if(s == "dynamic"){
-    return Bangle.isLocked()
-  } else {
-    return s == "full"
+  var menuEntry = menu[settings.menuPosX];
+  var item = menuEntry.items[settings.menuPosY-1];
+  return item.run !== undefined;
+}
+
+
+function runMenuItem(){
+  if(settings.menuPosY == 0){
+    return;
+  }
+
+  var menuEntry = menu[settings.menuPosX];
+  var item = menuEntry.items[settings.menuPosY-1];
+  try{
+    item.run();
+    Bangle.buzz(300, 0.6).then(() => {});
+  } catch (ex) {
+    // Simply ignore it...
   }
 }
 
 
-/************
- * DRAW
+/************************************************
+ * Draw
  */
 function draw() {
   // Queue draw again
@@ -279,32 +296,6 @@ function drawMenuAndTime(){
 }
 
 
-function canRunItem(){
-  if(settings.menuPosY == 0){
-    return false;
-  }
-
-  var menuEntry = menu[settings.menuPosX];
-  var item = menuEntry.items[settings.menuPosY-1];
-  return item.run !== undefined;
-}
-
-function runItem(){
-  if(settings.menuPosY == 0){
-    return;
-  }
-
-  var menuEntry = menu[settings.menuPosX];
-  var item = menuEntry.items[settings.menuPosY-1];
-  try{
-    item.run();
-    Bangle.buzz(300, 0.6).then(() => {});
-  } catch (ex) {
-    // Simply ignore it...
-  }
-}
-
-
 function drawLock(){
   if(settings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
@@ -322,9 +313,19 @@ function drawWidgets(){
 }
 
 
+function isFullscreen(){
+  var s = settings.screen.toLowerCase();
+  if(s == "dynamic"){
+    return Bangle.isLocked()
+  } else {
+    return s == "full"
+  }
+}
 
-/*
- * Draw timeout
+
+
+/************************************************
+ * Listener
  */
 // timeout used to update every minute
 var drawTimeout;
@@ -424,8 +425,8 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(is_center){
-    if(canRunItem()){
-      runItem();
+    if(canRunMenuItem()){
+      runMenuItem();
     }
   }
 });
@@ -440,9 +441,10 @@ E.on("kill", function(){
 });
 
 
-/*
- * Draw clock the first time
+/************************************************
+ * Startup Clock
  */
+
 // The upper part is inverse i.e. light if dark and dark if light theme
 // is enabled. In order to draw the widgets correctly, we invert the
 // dark/light theme as well as the colors.
