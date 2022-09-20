@@ -368,7 +368,7 @@ Bangle.on('charging',function(charging) {
 
   // Jump to battery
   settings.menuPosX = 0;
-  settings.menuPosY = 0;
+  settings.menuPosY = 1;
   draw();
 });
 
