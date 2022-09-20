@@ -12,7 +12,7 @@
 
       agenda.forEach((entry, i) => {
 
-        var title = entry.title.slice(0,14);
+        var title = entry.title.slice(0,18);
         var date = new Date(entry.timestamp*1000);
         var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
         dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
