@@ -2,3 +2,4 @@
 0.02: Change start sequence to BTN1/3/1/3 to avoid accidental turning on (fix #342)
 0.03: Add Color Changing Settings
 0.04: Add Support For Bangle.js 2
+0.05: Default full Brightness
