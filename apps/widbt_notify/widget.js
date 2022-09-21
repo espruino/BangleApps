@@ -9,8 +9,8 @@
     nextBuzz: 30000
   }, require("Storage").readJSON("widbt_notify.json", true) || {});
 
-  // setup widget with to hide if not connected and option set
-  var widWidth = settings.hideConnected && !NRF.getSecurityStatus().connected ? 0 : 15;
+  // setup widget with to hide if connected and option set
+  var widWidth = settings.hideConnected && NRF.getSecurityStatus().connected ? 0 : 15;
 
   // write widget with loaded settings
   WIDGETS.bluetooth_notify = Object.assign(settings, {
@@ -50,6 +50,15 @@
     },
 
     onNRF: function(connect) {
+      // setup widget with and reload widgets to show/hide if hideConnected is enabled
+      if (this.hideConnected) {
+        this.width = connect ? 0 : 15; // ensures correct redraw
+        Bangle.drawWidgets();
+      } else {
+        // redraw widget
+        this.draw();
+      }
+
       if (this.warningEnabled) {
         if (this.showMessage) {
           E.showMessage( /*LANG*/ 'Connection\n' + (connect ? /*LANG*/ 'restored.' : /*LANG*/ 'lost.'), 'Bluetooth');
@@ -65,12 +74,6 @@
         if (!quiet && (connect ? this.buzzOnConnect : this.buzzOnLoss)) {
           Bangle.buzz(700, 1); // buzz on connection resume or loss
         }
-      }
-      // if hideConnected is en- and showMessage disabled, redraw widgets to hide
-      if (this.hideConnected && !this.showMessage) {
-        Bangle.drawWidgets();
-      } else {
-        this.draw();
       }
     }
 
