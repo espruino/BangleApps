@@ -276,7 +276,7 @@ function loadValues(module, time) {
       // redefine temporary cache
       tmp = { alarm: [], timer: [] };
       // read active schedules
-      require("sched").getAlarms().filter(a => a.on).map(a => {
+      require("sched").getAlarms().filter(a => a.on && a.last != time.getDate()).map(a => {
         // calculat "time to" values
         var tTo = require("sched").getTimeToAlarm(a, time);
         // check for tTo and add properties to cache object
