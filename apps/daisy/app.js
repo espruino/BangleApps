@@ -83,7 +83,7 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.gy = settings.gy||'#020';
   settings.fg = settings.fg||'#0f0';
-  settings.idle_check = settings.idle_check||true;
+  settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   assignPalettes();
 }
 
