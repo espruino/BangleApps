@@ -34,7 +34,7 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.grid = settings.grid||false;
   settings.font = settings.font||"Lato";
-  settings.idle_check = settings.idle_check||true;
+  settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
 }
 
 // requires the myLocation app
