@@ -37,7 +37,6 @@ exports.load = function() {
   // info used for drawing...
   var hrm = "--";
   var alt = "--";
-  var interval = null;
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
   function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
@@ -49,12 +48,6 @@ exports.load = function() {
       bangleItems[3].emit("redraw");
     });
   }
-  function deleteInterval(inter){
-    if(inter){
-      clearInterval(inter);
-    }
-    delete inter;
-  }
   // actual items
   var items = [{
     name: "Bangle",
@@ -64,16 +57,8 @@ exports.load = function() {
       get : () => ({
         text : E.getBattery() + "%",
         img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() {
-        deleteInterval(interval);
-        interval = setInterval(()=>this.emit('redraw'), 60000);
-        Bangle.on("charging", batteryUpdateHandler);
-        batteryUpdateHandler();
-      },
-      hide : function() {
-        deleteInterval(interval);
-        Bangle.removeListener("charging", batteryUpdateHandler);
-      },
+      show : function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); Bangle.on("charging", batteryUpdateHandler); batteryUpdateHandler(); },
+      hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
     { name : "Steps", get : () => ({
         text : Bangle.getHealthStatus("day").steps,
@@ -95,8 +80,8 @@ exports.load = function() {
     bangleItems.push({ name : "Altitude", get : () => ({
         text : alt,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
-      show : function() { deleteInterval(interval); interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
-      hide : function() { deleteInterval(interval); },
+      show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
+      hide : function() { clearInterval(this.interval); delete this.interval; },
     });
   }
 
