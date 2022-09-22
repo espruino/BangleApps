@@ -2,9 +2,14 @@ var exports = {};
 /* Module that allows for loading of clock 'info' displays
 that can be scrolled through on the clock face.
 
-`load()` returns an array of menu items:
+`load()` returns an array of menu objects, where each object contains a list of menu items:
+* 'name' : text to display and identify menu object (e.g. weather)
+* 'img' : a 24x24px image
+* 'items' : menu items such as temperature, humidity, wind etc.
 
-* 'item.name' : friendly name
+Note that each item is an object with:
+
+* 'item.name' : friendly name to identify an item (e.g. temperature)
 * 'item.get' : function that resolves with:
   {
     'text' : the text to display for this item
@@ -20,14 +25,18 @@ See the bottom of this file for example usage...
 example.clkinfo.js :
 
 (function() {
-  return [
-    { name : "Example",
-      get : () => ({ text : "Bangle.js",
-                    img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
-      show : () => {},
-      hide : () => {}
-    }
-  ];
+  return {
+    name: "Bangle",
+    img: atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
+    items: [
+      { name : "Item1",
+        get : () => ({ text : "TextOfItem1",
+                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
+        show : () => {},
+        hide : () => {}
+      }
+    ]
+  };
 }) // must not have a semi-colon!
 
 */
@@ -48,8 +57,8 @@ exports.load = function() {
       bangleItems[3].emit("redraw");
     });
   }
-  // actual items
-  var items = [{
+  // actual menu
+  var menu = [{
     name: "Bangle",
     img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
     items: [
@@ -74,7 +83,7 @@ exports.load = function() {
     }
   ],
   }];
-  var bangleItems = items[0].items;
+  var bangleItems = menu[0].items;
 
   if (Bangle.getPressure){  // Altimeter may not exist
     bangleItems.push({ name : "Altitude", get : () => ({
@@ -85,20 +94,25 @@ exports.load = function() {
     });
   }
 
-  // now load extra data from a third party files
+  // In case there exists already a menu object b with the same name as the next
+  // object a, we append the items. Otherwise we add the new object a to the list.
   require("Storage").list(/clkinfo.js$/).forEach(fn => {
-    items = items.concat(eval(require("Storage").read(fn))());
+    var a = eval(require("Storage").read(fn))();
+    var b = menu.find(x => x.name === a.name)
+    if(b) b.items = b.items.concat(a.items);
+    else menu = menu.concat(a);
   });
 
   // return it all!
-  return items;
+  return menu;
 };
 
 
 // Code for testing
 /*
 g.clear();
-var items = exports.load(); // or require("clock_info").load()
+var menu = exports.load(); // or require("clock_info").load()
+var itemsFirstMenu = menu[0].items;
 items.forEach((itm,i) => {
   var y = i*24;
   console.log("Starting", itm.name);
