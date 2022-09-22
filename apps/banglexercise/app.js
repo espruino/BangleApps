@@ -382,4 +382,5 @@ Bangle.on('HRM', function(hrm) {
 });
 
 g.clear(1);
+Bangle.loadWidgets();
 showMainMenu();
