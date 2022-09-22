@@ -7,9 +7,13 @@ they don't interfere with currently-running apps */
   const look = 20 * 1000;      // 20 seconds
 
   buzz = _ => {
-    Bangle.buzz().then(_ => {
-      setTimeout(Bangle.buzz, look);
-    });
+    const d = new Date();
+    // run from 8 AM - 5 PM
+    if (d >= 8 && d <= 17) {
+      Bangle.buzz().then(_ => {
+        setTimeout(Bangle.buzz, look);
+      });
+    }
   };
 
   // add widget
