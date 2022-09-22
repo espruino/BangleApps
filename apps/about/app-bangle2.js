@@ -69,4 +69,8 @@ function drawImage() {
 
 // TODO: a nice little animation before
 setTimeout(drawInfo, 1000);
-setWatch(_=>load(), BTN1);
+Bangle.setUI({
+  mode : "custom",
+  back : load,
+  btn : load
+});
