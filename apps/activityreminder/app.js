@@ -47,6 +47,11 @@
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     drawInfo();
+    Bangle.setUI({
+      mode : "custom",
+      back : load,
+      btn : load
+    })
   }
 
   run();
