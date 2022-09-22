@@ -32,7 +32,7 @@ function draw() {
 //    var dows = require("date_utils").dows(0,1);
     var dows = ["SU","MO","TU","WE","TH","FR","SA"];
 
-    if (date.getTime() >= lastBattCheck + 15*60000) {
+    if ((date.getTime() >= lastBattCheck + 15*60000) || Bangle.isCharging()) {
       lastBattcheck = date.getTime();
       width = E.getBattery();
       width += width/2;
@@ -74,7 +74,15 @@ function draw() {
       g.fillRect(12+width+1,162,162,168);
     }
 
-    g.setColor(0, 1, 0);
+    if (Bangle.isCharging()) {
+      g.setColor(1,1,0);
+    } else if (width <= 45) {
+      g.setColor(1,0,0);
+    } else if (width <= 60) {
+      g.setColor(1,1,0);
+    } else {
+      g.setColor(0, 1, 0);
+    }
     g.fillRect(0, 90, g.getWidth(), 94);
 
     // widget redraw
