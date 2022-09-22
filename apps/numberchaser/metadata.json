@@ -3,7 +3,7 @@
   "shortName":"Number Chaser",
   "version":"0.01",
   "description": "A number guessing game, but the number goes up or down based on if you're guessing too high or too low.",
-  "icon": "app.png",
+  "icon": "numberchaser.png",
   "tags": "",
   "storage": [
     {"name":"numberchaser.app.js","url":"app.js"},
