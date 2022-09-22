@@ -8,8 +8,7 @@ they don't interfere with currently-running apps */
 
   buzz = _ => {
     const d = new Date();
-    // run from 8 AM - 5 PM
-    if (d >= 8 && d <= 17) {
+    if (d >= 8 && d <= 17) { // run from 8 AM - 5 PM
       Bangle.buzz().then(_ => {
         setTimeout(Bangle.buzz, look);
       });
