@@ -71,7 +71,8 @@ function showMainMenu() {
   let menu;
   menu = {
     "": {
-      title: "BanglExercise"
+      title: "BanglExercise",
+      back: load
     }
   };
 
