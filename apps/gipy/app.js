@@ -183,16 +183,7 @@ class Status {
       if (this.starting_times[orientation] === null) {
         this.starting_times[orientation] =
           this.old_times[this.old_times.length - 1];
-        if (orientation == 0) {
-          this.remaining_distances_at_start[orientation] =
-            this.remaining_distances[this.current_segment + 1] +
-            this.distance_to_next_point;
-        } else {
-          this.remaining_distances_at_start[orientation] =
-            this.remaining_distances[0] -
-            this.remaining_distances[this.current_segment] +
-            this.distance_to_next_point;
-        }
+        this.remaining_distances_at_start[orientation] = this.remaining_distance(orientation);
       }
     }
 
@@ -308,7 +299,7 @@ class Status {
       let done_distance =
         this.remaining_distances_at_start[orientation] - remaining_distance;
       let done_in =
-        point_time - this.starting_times[orientation] - this.paused_time;
+        point_time - this.starting_times[orientation]; // TODO: add pauses
       if (done_in > 0) {
         approximate_speed = Math.round((done_distance * 3.6) / done_in);
       }
