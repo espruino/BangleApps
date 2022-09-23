@@ -71,7 +71,8 @@ function showMainMenu() {
   let menu;
   menu = {
     "": {
-      title: "BanglExercise"
+      title: "BanglExercise",
+      back: load
     }
   };
 
@@ -381,4 +382,5 @@ Bangle.on('HRM', function(hrm) {
 });
 
 g.clear(1);
+Bangle.loadWidgets();
 showMainMenu();
