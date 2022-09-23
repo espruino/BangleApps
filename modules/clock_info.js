@@ -18,7 +18,7 @@ Note that each item is an object with:
 * 'item.show' : called when item should be shown. Enables updates. Call BEFORE 'get'
 * 'item.hide' : called when item should be hidden. Disables updates.
 * .on('redraw', ...) : event that is called when 'get' should be called again (only after 'item.show')
-* 'item.run' : (optional) called if the info screen is tapped - can perform some action
+* 'item.run' : (optional) called if the info screen is tapped - can perform some action. Return true if the caller should feedback the user.
 
 See the bottom of this file for example usage...
 
