@@ -71,6 +71,5 @@ function drawImage() {
 setTimeout(drawInfo, 1000);
 Bangle.setUI({
   mode : "custom",
-  back : load,
-  btn : load
+  back : load
 });

@@ -49,8 +49,7 @@
     drawInfo();
     Bangle.setUI({
       mode : "custom",
-      back : load,
-      btn : load
+      back : load
     })
   }
 
