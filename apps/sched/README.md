@@ -70,11 +70,21 @@ let alarm = require("sched").newDefaultAlarm();
 // Get a new timer with default values
 let timer = require("sched").newDefaultTimer();
 
-// Add/update an existing alarm
-require("sched").setAlarm("mytimer", {
+// Add/update an existing alarm (using fields from the object shown above)
+require("sched").setAlarm("mytimer", { // as a timer
   msg : "Wake up",
   timer : 10 * 60 * 1000 // 10 minutes
 });
+require("sched").setAlarm("myalarm", { // as an alarm
+  msg : "Wake up",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+require("sched").setAlarm("mydayalarm", { // as an alarm on a date
+  msg : "Wake up",
+  date : "2022-04-04",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+
 // Ensure the widget and alarm timer updates to schedule the new alarm properly
 require("sched").reload();
 

@@ -30,7 +30,11 @@ function ERROR(msg, opt) {
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
-  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  if (KNOWN_WARNINGS.includes(msg)) {
+    console.log(`Known warning : ${msg}`);
+  } else {
+    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  }
   warningCount++;
 }
 
@@ -86,6 +90,10 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
   'waypoints' : ['waypoints'],
   // notify?
 };
+/* These are warnings we know about but don't want in our output */
+var KNOWN_WARNINGS = [
+"App gpsrec data file wildcard .gpsrc? does not include app ID"
+];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -224,6 +232,13 @@ apps.forEach((app,appIdx) => {
         console.log(fileContents);
         console.log("=====================================================");
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`, {file:appDirRelative+file.url});
+      }
+      // clock app checks
+      if (app.type=="clock") {
+        var a = fileContents.indexOf("Bangle.loadWidgets()");
+        var b = fileContents.indexOf("Bangle.setUI(");        
+        if (a>=0 && b>=0 && a<b)
+          WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
     }
     for (const key in file) {

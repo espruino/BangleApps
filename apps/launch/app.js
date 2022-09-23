@@ -1,7 +1,8 @@
-var s = require("Storage");
-var scaleval = 1;
-var vectorval = 20;
-var font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
+{ // must be inside our own scope here so that when we are unloaded everything disappears
+let s = require("Storage");
+let scaleval = 1;
+let vectorval = 20;
+let font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = Object.assign({
   showClocks: true,
   fullscreen: false
@@ -20,7 +21,7 @@ if ("font" in settings){
         scaleval = (font.split("x")[1])/20;
     }
 }
-var apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type));
+let apps = s.list(/\.info$/).map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type));
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -69,18 +70,30 @@ E.showScroller({
   }
 });
 
+function returnToClock() {
+  // unload everything manually
+  // ... or we could just call `load();` but it will be slower
+  Bangle.setUI(); // remove scroller's handling
+  if (lockTimeout) clearTimeout(lockTimeout);
+  Bangle.removeListener("lock", lockHandler);
+  // now load the default clock - just call .bootcde as this has the code already
+  setTimeout(eval,0,s.read(".bootcde"));
+}
+
 // on bangle.js 2, the screen is used for navigating, so the single button goes back
 // on bangle.js 1, the buttons are used for navigating
 if (process.env.HWVERSION==2) {
-  setWatch(_=>load(), BTN1, {edge:"falling"});
+  setWatch(returnToClock, BTN1, {edge:"falling"});
 }
 
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
-var lockTimeout;
-Bangle.on("lock", locked => {
+let lockTimeout;
+function lockHandler(locked) {
   if (lockTimeout) clearTimeout(lockTimeout);
   lockTimeout = undefined;
   if (locked)
-    lockTimeout = setTimeout(_=>load(), 10000);
-});
+    lockTimeout = setTimeout(returnToClock, 10000);
+}
+Bangle.on("lock", lockHandler);
+}

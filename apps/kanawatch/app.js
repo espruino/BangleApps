@@ -264,10 +264,10 @@ Bangle.on('touch', function (tap, top) {
 });
 
 g.clear(true);
+// show launcher when button pressed
+Bangle.setUI('clock');
 Bangle.loadWidgets();
 tickWatch();
 setInterval(tickWatch, 1000 * 60);
 
-// show launcher when button pressed
-Bangle.setUI('clock');
 

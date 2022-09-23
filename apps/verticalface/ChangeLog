@@ -4,3 +4,4 @@
 0.07: Added leading zero to hours and minutes
 0.08: Show step count by calling wpedom.getSteps() or activepedom.getSteps()
 0.09: Fix time when minutes<10 and hours>9 (fix #767)
+0.10: Tell clock widgets to hide.

@@ -11,3 +11,6 @@ tests/Layout/testresult.bmp
 apps.local.json
 _site
 .jekyll-cache
+.owncloudsync.log
+Desktop.ini
+.sync_*.db*
