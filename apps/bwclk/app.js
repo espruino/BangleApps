@@ -164,8 +164,10 @@ function runMenuItem(){
   var menuEntry = menu[settings.menuPosX];
   var item = menuEntry.items[settings.menuPosY-1];
   try{
-    item.run();
-    Bangle.buzz(300, 0.6).then(() => {});
+    var ret = item.run();
+    if(ret){
+      Bangle.buzz(300, 0.6);
+    }
   } catch (ex) {
     // Simply ignore it...
   }
