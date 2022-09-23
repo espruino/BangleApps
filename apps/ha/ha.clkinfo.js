@@ -17,6 +17,7 @@
         run: function() {
           ha.sendTrigger("TRIGGER_BW");
           ha.sendTrigger(trigger.trigger);
+          return true;
         }
       });
     });
