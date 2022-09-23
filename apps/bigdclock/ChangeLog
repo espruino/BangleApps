@@ -3,4 +3,4 @@
 0.03: Internationalisation; bug fix - battery icon responds promptly to charging state
 0.04: bug fix
 0.05: proper fix for the race condition in queueDraw()
-0.06: Better battery graphic - now has green, yellow and red sections
+0.06: Better battery graphic - now has green, yellow and red sections; battery status reflected in the bar across the middle of the screen; better handling of locale
