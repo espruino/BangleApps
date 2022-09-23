@@ -4,7 +4,7 @@
   "version":"0.01",
   "description": "A number guessing game, but the number goes up or down based on if you're guessing too high or too low.",
   "icon": "numberchaser.png",
-  "tags": "games",
+  "tags": "game,fun"
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"numberchaser.app.js","url":"app.js"},
