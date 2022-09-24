@@ -70,3 +70,4 @@
 0.51: Emit "message events"
       Setting to hide widget
       Add custom event handlers to prevent default app form loading
+      Move WIDGETS.messages.buzz() to require("messages").buzz()

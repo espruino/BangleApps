@@ -83,8 +83,8 @@ exports.pushMessage = function(event) {
         // we will buzz when we enter the messages app
         return load("messages.new.js");
       }
-      if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz once to let someone know
       if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
+      exports.buzz(message.src);
     }, 500);
   };
   setTimeout(()=>{
@@ -132,6 +132,45 @@ exports.getMessages = function() {
   } catch(e) {
     return "none"; // don't bother e.g. the widget with errors
   }
+};
+
+/**
+ * Start buzzing for new message
+ * @param {string} msgSrc Message src to buzz for
+ * @return {Promise} Resolves when initial buzz finishes (there might be repeat buzzes later)
+ */
+exports.buzz = function(msgSrc) {
+  exports.stopBuzz(); // cancel any previous buzz timeouts
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
+
+  var pattern;
+  if (msgSrc && msgSrc.toLowerCase() === "phone") {
+    // special vibration pattern for incoming calls
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateCalls;
+  } else {
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+  }
+  if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  if (!pattern) return Promise.resolve();
+
+  var repeat = (require('Storage').readJSON("messages.settings.json", true) || {}).repeat;
+  if (repeat===undefined) repeat=4; // repeat may be zero
+  if (repeat) {
+    exports.buzzTimeout = setTimeout(()=>require("buzz").pattern(pattern), repeat*1000);
+    var vibrateTimeout = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateTimeout;
+    if (vibrateTimeout===undefined) vibrateTimeout=60;
+    if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopTimeout, vibrateTimeout*1000);
+  }
+  return require("buzz").pattern(pattern);
+};
+/**
+ * Stop buzzing
+ */
+exports.stopBuzz = function() {
+  if (exports.buzzTimeout) clearTimeout(exports.buzzTimeout);
+  delete exports.buzzTimeout;
+  if (exports.stopTimeout) clearTimeout(exports.stopTimeout);
+  delete exports.stopTimeout;
 };
 
 exports.getMessageImage = function(msg) {
