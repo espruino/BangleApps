@@ -68,3 +68,4 @@
       Option to make message icons monochrome (not colored)
       messages widget buzz now returns a promise
 0.51: Emit "message events"
+      Setting to hide widget

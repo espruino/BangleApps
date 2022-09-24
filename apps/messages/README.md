@@ -25,7 +25,7 @@ it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
 * `Flash Icon` - Toggle flashing of the widget icon.
-* `Widget messages` - The maximum amount of message icons to show on the widget.
+* `Widget messages` - The maximum amount of message icons to show on the widget, or `Hide` the widget completely.
 
 ## New Messages
 

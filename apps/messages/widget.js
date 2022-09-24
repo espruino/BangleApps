@@ -1,4 +1,5 @@
 (() => {
+if ((require('Storage').readJSON("messages.settings.json", true) || {}).maxMessages===0) return;
 
 function filterMessages(msgs) {
   return msgs.filter(msg => msg.new && msg.id != "music")
