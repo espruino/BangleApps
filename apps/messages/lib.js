@@ -12,11 +12,7 @@ function openMusic() {
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
-  if (inApp)
-    messages = MESSAGES; // we're in an app that has already loaded messages
-  else   // no app - load messages
-    messages = require("Storage").readJSON("messages.json",1)||[];
+  var messages = exports.getMessages();
   // now modify/delete as appropriate
   var mIdx = messages.findIndex(m=>m.id==event.id);
   if (event.t=="remove") {
@@ -39,7 +35,7 @@ exports.pushMessage = function(event) {
   }
   require("Storage").writeJSON("messages.json",messages);
   // if in app, process immediately
-  if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
+  if ("undefined"!= typeof MESSAGES) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
   // update the widget icons shown
   if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
     // if no new messages now, make sure we don't load the messages app
