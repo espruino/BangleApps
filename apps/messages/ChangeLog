@@ -69,3 +69,4 @@
       messages widget buzz now returns a promise
 0.51: Emit "message events"
       Setting to hide widget
+      Add custom event handlers to prevent default app form loading
