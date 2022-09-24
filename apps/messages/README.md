@@ -64,8 +64,10 @@ it like this:
 ```js
 myMessageListener = Bangle.on("message", (type, message)=>{
   if (message.handled) return; // another app already handled this message
-  // <type> is one of "text", "call", "alarm", "map", or "music"
-  // see `messages/lib.js` for possible <message> formats 
+  // <type> is one of "text", "call", "alarm", "map", "music", or "clearAll"
+  if (type === "clearAll") return; // not a message
+  // see `messages/lib.js` for possible <message> formats
+  // message.t could be "add", "modify" or "remove"
   E.showMessage(`${message.title}\n${message.body}`, `${message.t} ${type} message`);
   // You can prevent the default `message` app from loading by setting `message.handled = true`:
   message.handled = true;

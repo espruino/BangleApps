@@ -92,20 +92,20 @@ exports.pushMessage = function(event) {
   },0);
 }
 /// Remove all messages
-exports.clearAll = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
-  if (inApp) {
+exports.clearAll = function() {
+  if ("undefined"!= typeof MESSAGES) { // we're in a messages app, clear that as well
     MESSAGES = [];
-    messages = MESSAGES; // we're in an app that has already loaded messages
-  } else   // no app - empty messages
-    messages = [];
-  // Save all messages
-  require("Storage").writeJSON("messages.json",messages);
-  // update app if in app
-  if (inApp) return onMessagesModified();
+  }
+  // Clear all messages
+  require("Storage").writeJSON("messages.json", []);
   // if we have a widget, update it
   if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.update(messages);
+    WIDGETS.messages.update([]);
+  // let message listeners know
+  Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
+  // clearAll cannot be marked as "handled"
+  // update app if in app
+  if ("function"== typeof onMessagesModified) onMessagesModified();
 }
 
 /**
