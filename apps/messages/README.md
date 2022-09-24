@@ -56,6 +56,19 @@ _2. What the notify icon looks like (it's touchable on Bangle.js2!)_
 ![](screenshot-notify.gif)
 
 
+## Events (for app/widget developers)
+
+When a new message arrives, a `"message"` event is emitted, you can listen for
+it like this:
+
+```js
+myMessageListener = Bangle.on("message", (type, message)=>{
+  // <type> is one of "text", "call", "alarm", "map", or "music"
+  // see `messages/lib.js` for possible <message> formats 
+  E.showMessage(`${message.title}\n${message.body}`, `${message.t} ${type} message`);
+});
+```
+
 
 ## Requests
 

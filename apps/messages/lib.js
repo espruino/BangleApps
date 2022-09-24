@@ -8,7 +8,7 @@ function openMusic() {
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
-  {t:"remove-",id:int} // remove
+  {t:"remove",id:int} // remove
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
@@ -31,11 +31,18 @@ exports.pushMessage = function(event) {
     else Object.assign(messages[mIdx], event);
     if (event.id=="music" && messages[mIdx].state=="play") {
       messages[mIdx].new = true; // new track, or playback (re)started
+      type = 'music';
     }
   }
   require("Storage").writeJSON("messages.json",messages);
+  var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
   // if in app, process immediately
-  if ("undefined"!= typeof MESSAGES) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
+  if ("undefined"!=typeof MESSAGES) return onMessagesModified(message);
+  // emit message event
+  var type = 'text';
+  if (["call", "music", "map"].includes(message.id)) type = message.id;
+  if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
+  Bangle.emit("message", type, message);
   // update the widget icons shown
   if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
     // if no new messages now, make sure we don't load the messages app
