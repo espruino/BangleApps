@@ -19,3 +19,5 @@
 0.19: Fix - Compatibility with "Digital clock widget"
 0.20: Better handling of async data such as getPressure.
 0.21: On the default menu the week of year can be shown.
+0.22: Use the new clkinfo module for the menu.
+0.23: Feedback of apps after run is now optional and decided by the corresponding clkinfo.
