@@ -8,3 +8,4 @@
 0.08: Add theme options and optional lock symbol
 0.09: Add support for internationalization (LANG placeholders + "locale" module)
       Get steps from built-in step counter (widpedom no more needed, fix #1697)
+0.10: Tell clock widgets to hide.

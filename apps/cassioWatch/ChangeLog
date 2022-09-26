@@ -9,3 +9,4 @@
 0.8: Update Some Variable Scopes to not use memory until need
 0.9: Remove ESLint spaces
 0.10: Show daily steps, heartrate and the temperature if weather information is available.
+0.11: Tell clock widgets to hide.

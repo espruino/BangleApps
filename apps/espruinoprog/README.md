@@ -13,6 +13,9 @@ Click on the Customise button in the app loader to set up the programmer.
 * First you need to choose the kind of devices you want to upload to. This is
 the text that should match the Bluetooth advertising name. So `Puck.js` for Puck.js
 devices, or `Bangle.js` for Bangles.
+* In the next box, you have code to run before the upload of the main code. By default
+the code `require("Storage").list().forEach(f=>require("Storage").erase(f));reset();` will
+erase all files on the device and reset it.
 * Now paste in the code you want to write to the device. This is automatically
 written to flash (`.bootcde`). See https://www.espruino.com/Saving#save-on-send-to-flash-
 for more information.
@@ -35,8 +38,6 @@ To stop scanning, long-press the button to return to the clock.
 
 ## Notes
 
-* Right now the Espruino Tools used here are unaware of the device they're writing to,
-and as a result they don't use Storage and so the size of the files you can
-write to the device are quite limited. You should be find with up to 4k of code.
+* This assumes the device being written to is at least version 2v00 of Espruino
 * Currently, code is not minified before upload (so you need to supply pre-minified
   code if you want that)

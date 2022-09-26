@@ -1,2 +1,6 @@
 0.01: Basic agenda with events from GB
 0.02: Added settings page to force calendar sync
+0.03: Disable past events display from settings
+0.04: Added awareness of allDay field
+0.05: Displaying calendar colour and name
+0.06: Added clkinfo for clocks.

@@ -10,8 +10,8 @@ var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
 var IW = 174, IH = 45, OY = 24;
 var bgwidth = img.charCodeAt(0);
 var bgoptions;
-if (bgwidth<240)
-  bgoptions = { scale : 240/bgwidth };
+if (bgwidth<g.getWidth())
+  bgoptions = { scale : g.getWidth()/bgwidth };
 
 require("Font7x11Numeric7Seg").add(Graphics);
 var cg = Graphics.createArrayBuffer(IW,IH,IBPP,{msb:true});
@@ -26,7 +26,7 @@ function createBgImg() {
   require("Storage").write("imgclock.face.bg", cg.buffer);
   bgimg = require("Storage").read("imgclock.face.bg");
 }
-if (!bgimg || !bgimg.length) createBgImg();
+if (!bgimg || bgimg.length<10) createBgImg();
 
 function draw() {
   var t = new Date();
@@ -72,6 +72,8 @@ g.drawImage(img, 0,OY,bgoptions);
 // draw clock itself and do it every second
 draw();
 var secondInterval = setInterval(draw,1000);
+// Show launcher when button pressed
+Bangle.setUI("clock");
 // load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -84,5 +86,4 @@ Bangle.on('lcdPower',on=>{
     draw();
   }
 });
-// Show launcher when button pressed
-Bangle.setUI("clock");
+

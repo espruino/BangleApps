@@ -19,10 +19,10 @@ const margin = 0.5; //half a minute tolerance
 
 //dummy default values
 var slides = [
-  [0.3, 1],
-  [0.5, 2],
-  [0.7, 3],
-  [1,4]
+  [1.5, 1],
+  [2, 2],
+  [2.5, 3],
+  [3,4]
 ];
 
 function log_debug(o) {
@@ -267,6 +267,6 @@ g.fillRect(0,0,w,h);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+readSlides();
 draw();
 setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
-readSlides();

@@ -5,7 +5,7 @@
   "icon": "app.png",
   "tags": "tool,outdoors,gps",
   "type": "waypoints",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [

@@ -890,11 +890,12 @@ Bangle.on('lcdPower', (on) => {
 
 g.clear();
 load_settings();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
-startTimers();
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", d=>{
   if (d>0) button3pressed();
 });
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
+startTimers();
+

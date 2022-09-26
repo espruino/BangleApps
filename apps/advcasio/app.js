@@ -1,7 +1,5 @@
 const storage = require('Storage');
 
-require("Font6x12").add(Graphics);
-require("Font6x8").add(Graphics);
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
 
@@ -257,7 +255,6 @@ function draw() {
 		
 		
 		g.setColor(0, 0, 0);
-		g.setFont("6x12");
 		if(dataJson && dataJson.weather) drawWeather(dataJson.weather);
 		if(dataJson && dataJson.tasks) drawTasks(dataJson.tasks);
 		
@@ -297,9 +294,10 @@ Bangle.on("lock", (locked) => {
 });
 
 
+Bangle.setUI("clock");
+
 // Load widgets, but don't show them
 Bangle.loadWidgets();
-Bangle.setUI("clock");
 
 g.reset();
 g.clear();

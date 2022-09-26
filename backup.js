@@ -101,6 +101,7 @@ function bangleUpload() {
       return Comms.showMessage(`Restoring...`); })
     .then(() => Comms.write("\x10"+Comms.getProgressCmd()+"\n"))
     .then(() => Comms.uploadCommandList(cmds, 0, cmds.length))
+    .then(() => getInstalledApps(true))
     .then(() => Comms.showMessage(Const.MESSAGE_RELOAD))
     .then(() => {
       Progress.hide({sticky:true});
