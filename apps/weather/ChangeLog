@@ -13,3 +13,4 @@
 0.14: Use weather condition code for icon selection
 0.15: Fix widget icon
 0.16: Don't mark app as clock
+0.17: Added clkinfo for clocks.

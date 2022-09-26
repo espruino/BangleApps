@@ -73,7 +73,8 @@
     },
     /*LANG*/'Widget messages': {
       value:0|settings().maxMessages,
-      min: 1, max: 5,
+      min: 0, max: 5,
+      format: v => v ? v :/*LANG*/"Hide",
       onchange: v => updateSetting("maxMessages", v)
     },
     /*LANG*/'Icon color mode': {
