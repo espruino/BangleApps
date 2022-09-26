@@ -28,17 +28,8 @@ function draw() {
         m = date.getMinutes();
     var d = date.getDate();
     var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-    var dow;
-    
-    try {
-      dow = require("locale").dow(date,1);
-    } catch (e) {
-      try {
-        dow = require("date_utils").dows(0,1)[date.getDay()];
-      } catch (e) {
-        dow = ["SU","MO","TU","WE","TH","FR","SA"][date.getDay()];
-      }
-    }
+    var dow = require("date_utils").dows(0,1)[date.getDay()];
+
     if ((date.getTime() >= lastBattCheck + 15*60000) || Bangle.isCharging()) {
       lastBattcheck = date.getTime();
       width = E.getBattery();
