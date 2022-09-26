@@ -165,10 +165,10 @@ Bangle.on("lock", (locked) => {
   }
 });
 
+Bangle.setUI("clock");
 
 // Load widgets, but don't show them
 Bangle.loadWidgets();
-Bangle.setUI("clock");
 
 g.reset();
 g.clear();

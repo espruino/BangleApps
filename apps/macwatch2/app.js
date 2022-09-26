@@ -30,15 +30,15 @@ function draw() {
   g.setFontAlign(0, -1, 0);
   g.setColor(0,0,0);
   var d = new Date();
-  var da = d.toString().split(" ");
-  hh = da[4].substr(0,2);
-  mi = da[4].substr(3,2);
+  var dt = require("locale").time(d, 1);
+  var hh = dt.split(":")[0];
+  var mm = dt.split(":")[1];
+  g.drawString(hh, 52, 65, true);
+  g.drawString(mm, 132, 65, true);
+  g.drawString(':', 93,65);
   dd = ("0"+(new Date()).getDate()).substr(-2);
   mo = ("0"+((new Date()).getMonth()+1)).substr(-2);
   yy = ("0"+((new Date()).getFullYear())).substr(-2);
-  g.drawString(hh, 52, 65, true);
-  g.drawString(mi, 132, 65, true);
-  g.drawString(':', 93,65);
   g.setFontCustom(font, 48, 8, 521);
   g.drawString(dd + ':' + mo + ':' + yy, 88, 120, true);
   
@@ -57,8 +57,8 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
+Bangle.setUI("clock");
 
 // Load widgets but hide them
 Bangle.loadWidgets();
 draw();
-Bangle.setUI("clock");

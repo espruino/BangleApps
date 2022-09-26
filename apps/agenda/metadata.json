@@ -1,7 +1,7 @@
 {
   "id": "agenda",
   "name": "Agenda",
-  "version": "0.02",
+  "version": "0.06",
   "description": "Simple agenda",
   "icon": "agenda.png",
   "screenshots": [{"url":"screenshot_agenda_overview.png"}, {"url":"screenshot_agenda_event1.png"}, {"url":"screenshot_agenda_event2.png"}],
@@ -12,6 +12,8 @@
   "storage": [
     {"name":"agenda.app.js","url":"agenda.js"},
     {"name":"agenda.settings.js","url":"settings.js"},
+    {"name":"agenda.clkinfo.js","url":"agenda.clkinfo.js"},
     {"name":"agenda.img","url":"agenda-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"agenda.settings.json"}]
 }

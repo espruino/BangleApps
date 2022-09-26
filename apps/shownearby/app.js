@@ -86,3 +86,8 @@ NRF.setScan(function(d) {
 },{phy:"coded",filters: [{ manufacturerData:{0x0590:{}} }]});
 // Set transmit power to max
 NRF.setTxPower(8);
+
+// when leaving the app, reset the advertising to default so we can reconnect!
+Bangle.on('kill', function() {
+  NRF.setAdvertising({},{});
+});

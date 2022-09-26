@@ -48,14 +48,13 @@ we should start a timeout for settings.unreadTimeout to return
 to the clock. */
 var unreadTimeout;
 /// List of all our messages
-var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
+var MESSAGES = require("messages").getMessages();
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz(msg.src);
-    else Bangle.buzz();
+    require("messages").buzz(msg.src);
   }
   if (msg && msg.id=="music") {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
@@ -286,6 +285,7 @@ function showMessage(msgid) {
     }
   }
   function goBack() {
+    layout = undefined;
     msg.new = false; saveMessages(); // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
@@ -355,13 +355,13 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (options.showMsgIfUnread && newMessages.length) {
     showMessage(newMessages[0].id);
-    // buzz after showMessage, so beingbusy during layout doesn't affect the buzz pattern
+    // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messages.new.js`
       // ... but only buzz the first time we view a new message
       global.BUZZ_ON_NEW_MESSAGE = false;
       // messages.buzz respects quiet mode - no need to check here
-      WIDGETS.messages.buzz(newMessages[0].src);
+      require("messages").buzz(newMessages[0].src);
     }
     return;
   }

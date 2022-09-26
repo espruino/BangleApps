@@ -2,7 +2,7 @@
   "id": "smpltmr",
   "name": "Simple Timer",
   "shortName": "Simple Timer",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A very simple app to start a timer.",
   "icon": "app.png",
   "tags": "tool,alarm,timer",
@@ -12,6 +12,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"smpltmr.app.js","url":"app.js"},
+    {"name":"smpltmr.clkinfo.js","url":"clkinfo.js"},
     {"name":"smpltmr.img","url":"app-icon.js","evaluate":true}
   ]
 }

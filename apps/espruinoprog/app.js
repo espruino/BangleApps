@@ -58,21 +58,31 @@ function scanAndConnect() {
       term.print("Connected...\r\n");
       uart.removeAllListeners();
       uart.on('data', function(d) { term.print(d); });
-      uart.write(json.code+"\n").then(() => {
-        term.print("\r\nUpload Complete...\r\n");
-        // main upload completed - wait a bit
+      term.print("Upload initial...\r\n");
+      uart.write((json.pre||"")+"\n").then(() => {
+        term.print("\r\Done.\r\n");
         uploadTimeout = setTimeout(function() {
-          term.print("\r\nFinal Upload...\r\n");
-          // now upload the code to run after...
-          uart.write(json.post+"\n").then(() => {
-            term.print("\r\nDone.\r\n");
-            // now wait and disconnect (if not already done!)
+          uploadTimeout = undefined;
+          term.print("\r\nUpload Code...\r\n");
+          uart.write((json.code||"")+"\n").then(() => {
+            term.print("\r\Done.\r\n");
+            // main upload completed - wait a bit
             uploadTimeout = setTimeout(function() {
-              term.print("\r\nDisconnecting...\r\n");
-              if (uart) uart.disconnect();
-            }, 500);
+              uploadTimeout = undefined;
+              term.print("\r\Upload final...\r\n");
+              // now upload the code to run after...
+              uart.write((json.post||"")+"\n").then(() => {
+                term.print("\r\nDone.\r\n");
+                // now wait and disconnect (if not already done!)
+                uploadTimeout = setTimeout(function() {
+                  uploadTimeout = undefined;
+                  term.print("\r\nDisconnecting...\r\n");
+                  if (uart) uart.disconnect();
+                }, 500);
+              });
+            }, 2000);
           });
-        }, 1000);
+        }, 2000);
       });
     });
   }).catch(err => {
