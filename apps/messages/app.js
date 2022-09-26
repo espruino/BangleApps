@@ -54,8 +54,7 @@ var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz(msg.src);
-    else Bangle.buzz();
+    require("messages").buzz(msg.src);
   }
   if (msg && msg.id=="music") {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
@@ -356,13 +355,13 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (options.showMsgIfUnread && newMessages.length) {
     showMessage(newMessages[0].id);
-    // buzz after showMessage, so beingbusy during layout doesn't affect the buzz pattern
+    // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messages.new.js`
       // ... but only buzz the first time we view a new message
       global.BUZZ_ON_NEW_MESSAGE = false;
       // messages.buzz respects quiet mode - no need to check here
-      WIDGETS.messages.buzz(newMessages[0].src);
+      require("messages").buzz(newMessages[0].src);
     }
     return;
   }

@@ -8,15 +8,11 @@ function openMusic() {
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
-  {t:"remove-",id:int} // remove
+  {t:"remove",id:int} // remove
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
-  if (inApp)
-    messages = MESSAGES; // we're in an app that has already loaded messages
-  else   // no app - load messages
-    messages = require("Storage").readJSON("messages.json",1)||[];
+  var messages = exports.getMessages();
   // now modify/delete as appropriate
   var mIdx = messages.findIndex(m=>m.id==event.id);
   if (event.t=="remove") {
@@ -35,69 +31,81 @@ exports.pushMessage = function(event) {
     else Object.assign(messages[mIdx], event);
     if (event.id=="music" && messages[mIdx].state=="play") {
       messages[mIdx].new = true; // new track, or playback (re)started
+      type = 'music';
     }
   }
   require("Storage").writeJSON("messages.json",messages);
+  var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
   // if in app, process immediately
-  if (inApp) return onMessagesModified(mIdx<0 ? {id:event.id} : messages[mIdx]);
+  if ("undefined"!=typeof MESSAGES) return onMessagesModified(message);
+  // emit message event
+  var type = 'text';
+  if (["call", "music", "map"].includes(message.id)) type = message.id;
+  if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
+  Bangle.emit("message", type, message);
   // update the widget icons shown
   if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
+  var handleMessage = () => {
     // if no new messages now, make sure we don't load the messages app
-  if (event.t=="remove" && exports.messageTimeout && !messages.some(m=>m.new)) {
-    clearTimeout(exports.messageTimeout);
-    delete exports.messageTimeout;
-  }
-  // ok, saved now
-  if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
-    // just load the app to display music: no buzzing
-    load("messages.app.js");
-  } else if (event.t!="add") {
-    // we only care if it's new
-    return;
-  } else if(event.new == false) {
-    return;
-  }
-  // otherwise load messages/show widget
-  var loadMessages = Bangle.CLOCK || event.important;
-  var quiet       = (require('Storage').readJSON('setting.json',1)||{}).quiet;
-  var appSettings = require('Storage').readJSON('messages.settings.json',1)||{};
-  var unlockWatch = appSettings.unlockWatch;
-  // don't auto-open messages in quiet mode if quietNoAutOpn is true
-  if((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
-    loadMessages = false;
-  delete appSettings;
-  // after a delay load the app, to ensure we have all the messages
-  if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
-  exports.messageTimeout = setTimeout(function() {
-    exports.messageTimeout = undefined;
-    // if we're in a clock or it's important, go straight to messages app
-    if (loadMessages){
-      if(!quiet && unlockWatch){
-        Bangle.setLocked(false);
-        Bangle.setLCDPower(1); // turn screen on
-      }
-      // we will buzz when we enter the messages app
-      return load("messages.new.js");
+    if (event.t=="remove" && exports.messageTimeout && !messages.some(m => m.new)) {
+      clearTimeout(exports.messageTimeout);
+      delete exports.messageTimeout;
     }
-    if (!quiet && (!global.WIDGETS || !WIDGETS.messages)) return Bangle.buzz(); // no widgets - just buzz once to let someone know
-    if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
-  }, 500);
+    // ok, saved now
+    if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
+      // just load the app to display music: no buzzing
+      load("messages.app.js");
+    } else if (event.t!="add") {
+      // we only care if it's new
+      return;
+    } else if (event.new==false) {
+      return;
+    }
+    // otherwise load messages/show widget
+    var loadMessages = Bangle.CLOCK || event.important;
+    var quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
+    var appSettings = require('Storage').readJSON('messages.settings.json', 1) || {};
+    var unlockWatch = appSettings.unlockWatch;
+    // don't auto-open messages in quiet mode if quietNoAutOpn is true
+    if ((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
+      loadMessages = false;
+    delete appSettings;
+    // after a delay load the app, to ensure we have all the messages
+    if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
+    exports.messageTimeout = setTimeout(function() {
+      exports.messageTimeout = undefined;
+      // if we're in a clock or it's important, go straight to messages app
+      if (loadMessages) {
+        if (!quiet && unlockWatch) {
+          Bangle.setLocked(false);
+          Bangle.setLCDPower(1); // turn screen on
+        }
+        // we will buzz when we enter the messages app
+        return load("messages.new.js");
+      }
+      if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
+      exports.buzz(message.src);
+    }, 500);
+  };
+  setTimeout(()=>{
+    if (!message.handled) handleMessage();
+  },0);
 }
 /// Remove all messages
-exports.clearAll = function(event) {
-  var messages, inApp = "undefined"!=typeof MESSAGES;
-  if (inApp) {
+exports.clearAll = function() {
+  if ("undefined"!= typeof MESSAGES) { // we're in a messages app, clear that as well
     MESSAGES = [];
-    messages = MESSAGES; // we're in an app that has already loaded messages
-  } else   // no app - empty messages
-    messages = [];
-  // Save all messages
-  require("Storage").writeJSON("messages.json",messages);
-  // update app if in app
-  if (inApp) return onMessagesModified();
+  }
+  // Clear all messages
+  require("Storage").writeJSON("messages.json", []);
   // if we have a widget, update it
   if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.update(messages);
+    WIDGETS.messages.update([]);
+  // let message listeners know
+  Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
+  // clearAll cannot be marked as "handled"
+  // update app if in app
+  if ("function"== typeof onMessagesModified) onMessagesModified();
 }
 
 /**
@@ -124,6 +132,45 @@ exports.getMessages = function() {
   } catch(e) {
     return "none"; // don't bother e.g. the widget with errors
   }
+};
+
+/**
+ * Start buzzing for new message
+ * @param {string} msgSrc Message src to buzz for
+ * @return {Promise} Resolves when initial buzz finishes (there might be repeat buzzes later)
+ */
+exports.buzz = function(msgSrc) {
+  exports.stopBuzz(); // cancel any previous buzz timeouts
+  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
+
+  var pattern;
+  if (msgSrc && msgSrc.toLowerCase() === "phone") {
+    // special vibration pattern for incoming calls
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateCalls;
+  } else {
+    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+  }
+  if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  if (!pattern) return Promise.resolve();
+
+  var repeat = (require('Storage').readJSON("messages.settings.json", true) || {}).repeat;
+  if (repeat===undefined) repeat=4; // repeat may be zero
+  if (repeat) {
+    exports.buzzTimeout = setTimeout(()=>require("buzz").pattern(pattern), repeat*1000);
+    var vibrateTimeout = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateTimeout;
+    if (vibrateTimeout===undefined) vibrateTimeout=60;
+    if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopTimeout, vibrateTimeout*1000);
+  }
+  return require("buzz").pattern(pattern);
+};
+/**
+ * Stop buzzing
+ */
+exports.stopBuzz = function() {
+  if (exports.buzzTimeout) clearTimeout(exports.buzzTimeout);
+  delete exports.buzzTimeout;
+  if (exports.stopTimeout) clearTimeout(exports.stopTimeout);
+  delete exports.stopTimeout;
 };
 
 exports.getMessageImage = function(msg) {

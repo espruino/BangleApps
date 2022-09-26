@@ -25,7 +25,7 @@ it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
 * `Flash Icon` - Toggle flashing of the widget icon.
-* `Widget messages` - The maximum amount of message icons to show on the widget.
+* `Widget messages` - The maximum amount of message icons to show on the widget, or `Hide` the widget completely.
 
 ## New Messages
 
@@ -55,6 +55,24 @@ _2. What the notify icon looks like (it's touchable on Bangle.js2!)_
 
 ![](screenshot-notify.gif)
 
+
+## Events (for app/widget developers)
+
+When a new message arrives, a `"message"` event is emitted, you can listen for
+it like this:
+
+```js
+myMessageListener = Bangle.on("message", (type, message)=>{
+  if (message.handled) return; // another app already handled this message
+  // <type> is one of "text", "call", "alarm", "map", "music", or "clearAll"
+  if (type === "clearAll") return; // not a message
+  // see `messages/lib.js` for possible <message> formats
+  // message.t could be "add", "modify" or "remove"
+  E.showMessage(`${message.title}\n${message.body}`, `${message.t} ${type} message`);
+  // You can prevent the default `message` app from loading by setting `message.handled = true`:
+  message.handled = true;
+});
+```
 
 
 ## Requests
