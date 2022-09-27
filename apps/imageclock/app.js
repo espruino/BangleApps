@@ -1,16 +1,16 @@
-var watchface = require("Storage").readJSON("imageclock.face.json");
-var watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
-var precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
-var settings = require('Storage').readJSON("imageclock.json", true) || {};
+let watchface = require("Storage").readJSON("imageclock.face.json");
+let watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
+let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
+let settings = require('Storage').readJSON("imageclock.json", true) || {};
 
-var performanceLog = {};
+let performanceLog = {};
 
-var startPerfLog = () => {};
-var endPerfLog = () => {};
-var printPerfLog = () => print("Deactivated");
-var resetPerfLog = () => {performanceLog = {};};
+let startPerfLog = () => {};
+let endPerfLog = () => {};
+let printPerfLog = () => print("Deactivated");
+let resetPerfLog = () => {performanceLog = {};};
 
-var colormap={
+let colormap={
 "#000":0,
 "#00f":1,
 "#0f0":2,
@@ -21,7 +21,7 @@ var colormap={
 "#fff":7
 };
 
-var palette = new Uint16Array([
+let palette = new Uint16Array([
 0x0000, //black #000
 0x001f, //blue #00f
 0x07e0, //green #0f0
@@ -40,19 +40,19 @@ var palette = new Uint16Array([
 0xffff, //white
 ])
 
-var p0 = g;
-var p1;
+let p0 = g;
+let p1;
 
 if (settings.perflog){
   startPerfLog = function(name){
-    var time = getTime();
+    let time = getTime();
     if (!performanceLog.start) performanceLog.start={};
     performanceLog.start[name] = time;
   };
   endPerfLog = function (name){
-    var time = getTime();
+    let time = getTime();
     if (!performanceLog.last) performanceLog.last={};
-    var duration = time - performanceLog.start[name];
+    let duration = time - performanceLog.start[name];
     performanceLog.last[name] = duration;
     if (!performanceLog.cum) performanceLog.cum={};
     if (!performanceLog.cum[name]) performanceLog.cum[name] = 0;
@@ -63,13 +63,13 @@ if (settings.perflog){
   };
 
   printPerfLog = function(){
-    var result = "";
-    var keys = [];
-    for (var c in performanceLog.cum){
+    let result = "";
+    let keys = [];
+    for (let c in performanceLog.cum){
       keys.push(c);
     }
     keys.sort();
-    for (var k of keys){
+    for (let k of keys){
       print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "count:", performanceLog.count[k], "total:", (performanceLog.cum[k] * 1000).toFixed(0));
     }
   };
@@ -101,9 +101,9 @@ function prepareImg(resource){
 function getByPath(object, path, lastElem){
   startPerfLog("getByPath");
   //print("getByPath", path,lastElem);
-  var current = object;
+  let current = object;
   if (path.length) {
-    for (var c of path){
+    for (let c of path){
       if (!current[c]) return undefined;
       current = current[c];
     }
@@ -135,20 +135,20 @@ function isChangedMultistate(element){
 
 function drawNumber(graphics, resources, element){
   startPerfLog("drawNumber");
-  var number = getValue(element.Value);
-  var spacing = element.Spacing ? element.Spacing : 0;
-  var unit = element.Unit;
+  let number = getValue(element.Value);
+  let spacing = element.Spacing ? element.Spacing : 0;
+  let unit = element.Unit;
   
-  var imageIndexMinus = element.ImageIndexMinus;
-  var imageIndexUnit = element.ImageIndexUnit;
-  var numberOfDigits = element.Digits;
+  let imageIndexMinus = element.ImageIndexMinus;
+  let imageIndexUnit = element.ImageIndexUnit;
+  let numberOfDigits = element.Digits;
   
   
   //print("drawNumber: ", number, element);
   if (number) number = number.toFixed(0);
 
-  var isNegative;
-  var digits;
+  let isNegative;
+  let digits;
   if (number == undefined){
     isNegative = true;
     digits = [];
@@ -161,25 +161,25 @@ function drawNumber(graphics, resources, element){
 
   //print("digits: ", digits);
   if (!numberOfDigits) numberOfDigits = digits.length;
-  var firstDigitX = element.X;
-  var firstDigitY = element.Y;
-  var imageIndex = element.ImageIndex ? element.ImageIndex : 0;
+  let firstDigitX = element.X;
+  let firstDigitY = element.Y;
+  let imageIndex = element.ImageIndex ? element.ImageIndex : 0;
 
-  var firstImage;
+  let firstImage;
   if (imageIndex){
     firstImage = getByPath(resources, [], "" + (0 + imageIndex));
   } else {
     firstImage = getByPath(resources, element.ImagePath, 0);
   }
 
-  var minusImage;
+  let minusImage;
   if (imageIndexMinus){
     minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
   } else {
     minusImage = getByPath(resources, element.ImagePath, "minus");
   }
 
-  var unitImage;
+  let unitImage;
   //print("Get image for unit", imageIndexUnit);
   if (imageIndexUnit !== undefined){
     unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
@@ -188,7 +188,7 @@ function drawNumber(graphics, resources, element){
     unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
   }
 
-  var numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
+  let numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
   if (isNegative && minusImage){
     //print("Adding to width", minusImage);
     numberWidth += minusImage.width + spacing;
@@ -213,7 +213,7 @@ function drawNumber(graphics, resources, element){
     firstDigitY = element.Y - firstImage.height + 1;
   }
 
-  var currentX = firstDigitX;
+  let currentX = firstDigitX;
   if (isNegative && minusImage){
     //print("Draw minus at", currentX);
     if (imageIndexMinus){
@@ -223,9 +223,9 @@ function drawNumber(graphics, resources, element){
     }
     currentX += minusImage.width + spacing;
   }
-  for (var d = 0; d < numberOfDigits; d++){
-    var currentDigit;
-    var difference = numberOfDigits - digits.length;
+  for (let d = 0; d < numberOfDigits; d++){
+    let currentDigit;
+    let difference = numberOfDigits - digits.length;
     if (d >= difference){
       currentDigit = digits[d-difference];
     } else {
@@ -248,10 +248,10 @@ function drawNumber(graphics, resources, element){
 
 function drawElement(graphics, resources, pos, element, lastElem){
   startPerfLog("drawElement");
-  var cacheKey = "_"+(lastElem?lastElem:"nole");
+  let cacheKey = "_"+(lastElem?lastElem:"nole");
   if (!element.cachedImage) element.cachedImage={};
   if (!element.cachedImage[cacheKey]){
-    var resource = getByPath(resources, element.ImagePath, lastElem);
+    let resource = getByPath(resources, element.ImagePath, lastElem);
     if (resource){
       prepareImg(resource);
       //print("lastElem", typeof resource)
@@ -273,7 +273,7 @@ function drawElement(graphics, resources, pos, element, lastElem){
     //print("drawElement ",pos, path, lastElem);
     //print("resource ", resource,pos, path, lastElem);
     //print("drawImage from drawElement", image, pos);
-    var options={};
+    let options={};
     if (element.RotationValue){
       options.rotate = radians(element);
     }
@@ -312,16 +312,16 @@ function getMultistate(name, defaultValue){
 function drawScale(graphics, resources, scale){
   startPerfLog("drawScale");
   //print("drawScale", scale);
-  var segments = scale.Segments;
-  var imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
+  let segments = scale.Segments;
+  let imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
 
-  var value = scaledown(scale.Value, scale.MinValue, scale.MaxValue);
+  let value = scaledown(scale.Value, scale.MinValue, scale.MaxValue);
 
   //print("Value is ", value, "(", maxValue, ",", minValue, ")");
 
-  var segmentsToDraw = Math.ceil(value * segments.length);
+  let segmentsToDraw = Math.ceil(value * segments.length);
 
-  for (var i = 0; i < segmentsToDraw; i++){
+  for (let i = 0; i < segmentsToDraw; i++){
     drawElement(graphics, resources, segments[i], scale, imageIndex + i);
   }
   scale.lastDrawnValue = segmentsToDraw;
@@ -333,7 +333,7 @@ function drawImage(graphics, resources, image, name){
   startPerfLog("drawImage");
   //print("drawImage", image.X, image.Y, name);
   if (image.Value && image.Steps){
-    var steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
+    let steps = Math.floor(scaledown(image.Value, image.MinValue, image.MaxValue) * (image.Steps - 1));
     //print("Step", steps, "of", image.Steps);
     drawElement(graphics, resources, image, image, "" + steps);
   } else if (image.ImageIndex !== undefined) {
@@ -347,12 +347,12 @@ function drawImage(graphics, resources, image, name){
 
 function drawCodedImage(graphics, resources, image){
   startPerfLog("drawCodedImage");
-  var code = getValue(image.Value);
+  let code = getValue(image.Value);
   //print("drawCodedImage", image, code);
 
   if (image.ImagePath) {
-    var factor = 1;
-    var currentCode = code;
+    let factor = 1;
+    let currentCode = code;
     while (code / factor > 1){
       currentCode = Math.floor(currentCode/factor)*factor;
       //print("currentCode", currentCode);
@@ -375,8 +375,8 @@ function drawCodedImage(graphics, resources, image){
 }
 
 function getWeatherCode(){
-  var jsonWeather = require("Storage").readJSON('weather.json');
-  var weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
+  let jsonWeather = require("Storage").readJSON('weather.json');
+  let weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
 
   if (weather && weather.code){
     return weather.code;
@@ -385,15 +385,15 @@ function getWeatherCode(){
 }
 
 function getWeatherTemperature(){
-  var jsonWeather = require("Storage").readJSON('weather.json');
-  var weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
+  let jsonWeather = require("Storage").readJSON('weather.json');
+  let weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
 
-  var result = { unit: "unknown"};
+  let result = { unit: "unknown"};
   if (weather && weather.temp){
     //print("Weather is", weather);
-    var temp = require('locale').temp(weather.temp-273.15);
+    let temp = require('locale').temp(weather.temp-273.15);
     result.value = Number(temp.match(/[\d\-]*/)[0]);
-    var unit;
+    let unit;
     if (temp.includes("C")){
       result.unit = "celsius";
     } else if (temp.includes("F")){
@@ -405,14 +405,14 @@ function getWeatherTemperature(){
 
 function scaledown(value, min, max){
   //print("scaledown", value, min, max);
-  var scaled = E.clip(getValue(value),getValue(min,0),getValue(max,1));
+  let scaled = E.clip(getValue(value),getValue(min,0),getValue(max,1));
   scaled -= getValue(min,0);
   scaled /= getValue(max,1);
   return scaled;
 }
 
 function radians(rotation){
-  var value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
+  let value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
   value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
   value *= 360;
   value *= Math.PI / 180;
@@ -421,14 +421,14 @@ function radians(rotation){
 
 function drawPoly(graphics, resources, element){
     startPerfLog("drawPoly");
-    var vertices = [];
+    let vertices = [];
 
     startPerfLog("drawPoly_transform");
-    for (var c of element.Vertices){
+    for (let c of element.Vertices){
       vertices.push(c.X);
       vertices.push(c.Y);
     }
-    var transform = { x: element.X ? element.X : 0,
+    let transform = { x: element.X ? element.X : 0,
       y: element.Y ? element.Y : 0
     };
     if (element.RotationValue){
@@ -453,7 +453,7 @@ function drawPoly(graphics, resources, element){
 
 function drawRect(graphics, resources, element){
     startPerfLog("drawRect");
-    var vertices = [];
+    let vertices = [];
 
     if (element.Filled){
       startPerfLog("drawRect_g.fillRect");
@@ -482,24 +482,24 @@ function drawCircle(graphics, resources, element){
     endPerfLog("drawCircle");
 }
 
-var numbers = {};
+let numbers = {};
 numbers.Hour = () => { return new Date().getHours(); };
 numbers.HourTens = () => { return Math.floor(new Date().getHours()/10); };
 numbers.HourOnes = () => { return Math.floor(new Date().getHours()%10); };
 numbers.Hour12 = () => { return new Date().getHours()%12; };
-numbers.Hour12Analog = () => { var date = new Date(); return date.getHours()%12 + (date.getMinutes()/59); };
+numbers.Hour12Analog = () => { let date = new Date(); return date.getHours()%12 + (date.getMinutes()/59); };
 numbers.Hour12Tens = () => { return Math.floor((new Date().getHours()%12)/10); };
 numbers.Hour12Ones = () => { return Math.floor((new Date().getHours()%12)%10); };
 numbers.Minute = () => { return new Date().getMinutes(); };
-numbers.MinuteAnalog = () => { var date = new Date(); return date.getMinutes() + (date.getSeconds()/59); };
+numbers.MinuteAnalog = () => { let date = new Date(); return date.getMinutes() + (date.getSeconds()/59); };
 numbers.MinuteTens = () => { return Math.floor(new Date().getMinutes()/10); };
 numbers.MinuteOnes = () => { return Math.floor(new Date().getMinutes()%10); };
 numbers.Second = () => { return new Date().getSeconds(); };
-numbers.SecondAnalog = () => { var date = new Date(); return date.getSeconds() + (date.getMilliseconds()/999); };
+numbers.SecondAnalog = () => { let date = new Date(); return date.getSeconds() + (date.getMilliseconds()/999); };
 numbers.SecondTens = () => { return Math.floor(new Date().getSeconds()/10); };
 numbers.SecondOnes = () => { return Math.floor(new Date().getSeconds()%10); };
 numbers.WeekDay = () => { return new Date().getDay(); };
-numbers.WeekDayMondayFirst = () => {  var day = (new Date().getDay() - 1); if (day < 0) day = 7 + day; return day; };
+numbers.WeekDayMondayFirst = () => {  let day = (new Date().getDay() - 1); if (day < 0) day = 7 + day; return day; };
 numbers.Day = () => { return new Date().getDate(); };
 numbers.DayTens = () => { return Math.floor(new Date().getDate()/10); };
 numbers.DayOnes = () => { return Math.floor(new Date().getDate()%10); };
@@ -517,7 +517,7 @@ numbers.BatteryVoltage = NRF.getBattery;
 numbers.WeatherCode = getWeatherCode;
 numbers.WeatherTemperature = () => { return getWeatherTemperature().value; };
 
-var multistates = {};
+let multistates = {};
 multistates.Lock = () => { return Bangle.isLocked() ? "on" : "off"; };
 multistates.Charge = () => { return Bangle.isCharging() ? "on" : "off"; };
 multistates.Notifications = () => { return ((require("Storage").readJSON("setting.json", 1) || {}).quiet|0) ? "off" : "vibrate"; };
@@ -536,22 +536,22 @@ multistates.StepsGoal = () => { return (numbers.Steps() >= (settings.stepsgoal |
 function drawMultiState(graphics, resources, element){
   startPerfLog("drawMultiState");
   //print("drawMultiState", element);
-  var value = multistates[element.Value]();
+  let value = multistates[element.Value]();
   //print("drawImage from drawMultiState", element, value);
   drawImage(graphics, resources, element, value);
   element.lastDrawnValue = value;
   endPerfLog("drawMultiState");
 }
 
-var pulse,alt,temp,press;
+let pulse,alt,temp,press;
 
 
-var requestedDraws = 0;
-var isDrawing = false;
+let requestedDraws = 0;
+let isDrawing = false;
 
-var drawingTime;
+let drawingTime;
 
-var start;
+let start;
 
 function initialDraw(resources, face){
   //print("Free memory", process.memory(false).free);
@@ -566,10 +566,10 @@ function initialDraw(resources, face){
     //start = Date.now();
     drawingTime = 0;
     //print("Precompiled");
-    var promise = precompiledJs(watchfaceResources, watchface);
+    let promise = precompiledJs(watchfaceResources, watchface);
 
     promise.then(()=>{
-      var currentDrawingTime = Date.now();
+      let currentDrawingTime = Date.now();
       if (showWidgets){
         //print("Draw widgets");
         Bangle.drawWidgets();
@@ -626,7 +626,7 @@ function handleCharging(e){
 
 
 function getMatchedWaitingTime(time){
-  var result = time - (Date.now() % time);
+  let result = time - (Date.now() % time);
   //print("Matched timeout", time, result);
   return result;
 }
@@ -635,26 +635,26 @@ function getMatchedWaitingTime(time){
 
 function setMatchedInterval(callable, time, intervalHandler, delay){
   //print("Setting matched interval for", time);
-  var matchedTime = getMatchedWaitingTime(time + delay);
+  let matchedTime = getMatchedWaitingTime(time + delay);
   setTimeout(()=>{
-    var interval = setInterval(callable, time);
+    let interval = setInterval(callable, time);
     if (intervalHandler) intervalHandler(interval);
     callable();
   }, matchedTime);
 }
 
-var unlockedDrawInterval;
-var lockedDrawInterval;
+let unlockedDrawInterval;
+let lockedDrawInterval;
 
-var lastDrawTime = 0;
-var firstDraw = true;
+let lastDrawTime = 0;
+let firstDraw = true;
 
-var lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
-var unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
-var defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "Always";
-var redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
-var clearOnRedraw = getByPath(watchface, ["Properties","Redraw","Clear"]);
-var events = getByPath(watchface, ["Properties","Events"]);
+let lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
+let unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
+let defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "Always";
+let redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
+let clearOnRedraw = getByPath(watchface, ["Properties","Redraw","Clear"]);
+let events = getByPath(watchface, ["Properties","Events"]);
 
 //print("events", events);
 //print("redrawEvents", redrawEvents);
@@ -693,9 +693,9 @@ function handleLock(isLocked, forceRedraw){
 }
 
 
-var showWidgets = false;
-var showWidgetsChanged = false;
-var currentDragDistance = 0;
+let showWidgets = false;
+let showWidgetsChanged = false;
+let currentDragDistance = 0;
 
 Bangle.setUI("clock");
 Bangle.on('drag', (e)=>{
@@ -707,7 +707,7 @@ Bangle.on('drag', (e)=>{
       //print("Enable widgets");
       if (WIDGETS && typeof WIDGETS === "object") {
         for (let w in WIDGETS) {
-          var wd = WIDGETS[w];
+          let wd = WIDGETS[w];
           wd.draw = originalWidgetDraw[w];
           wd.area = originalWidgetArea[w];
         }
@@ -748,8 +748,8 @@ if (!events || events.includes("charging")) {
   Bangle.on('charging', handleCharging);
 }
 
-var originalWidgetDraw = {};
-var originalWidgetArea = {};
+let originalWidgetDraw = {};
+let originalWidgetArea = {};
 
 function clearWidgetsDraw(){
   //print("Clear widget draw calls");
@@ -757,7 +757,7 @@ function clearWidgetsDraw(){
     originalWidgetDraw = {};
     originalWidgetArea = {};
     for (let w in WIDGETS) {
-      var wd = WIDGETS[w];
+      let wd = WIDGETS[w];
       originalWidgetDraw[w] = wd.draw;
       originalWidgetArea[w] = wd.area;
       wd.draw = () => {};
