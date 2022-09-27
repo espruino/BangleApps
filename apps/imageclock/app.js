@@ -588,6 +588,7 @@ let lockedDrawInterval = [];
         let currentDrawingTime = Date.now();
         if (showWidgets && global.WIDGETS){
           //print("Draw widgets");
+          restoreWidgetDraw();
           Bangle.drawWidgets();
           g.setColor(g.theme.fg);
           g.drawLine(0,24,g.getWidth(),24);
@@ -798,7 +799,10 @@ let lockedDrawInterval = [];
   }
   
   if (!global.WIDGETS) Bangle.loadWidgets();
-  if (!showWidgets) clearWidgetsDraw();
+  clearWidgetsDraw();
+  if (showWidgets) {
+    restoreWidgetDraw();
+  }
 
   handleLock(Bangle.isLocked());
 
