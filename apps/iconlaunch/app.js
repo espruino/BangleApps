@@ -11,7 +11,7 @@
     setWatch(returnToClock, BTN1);
 
   if (!settings.fullscreen) {
-    Bangle.loadWidgets();
+    if (!global.WIDGETS) Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
 
