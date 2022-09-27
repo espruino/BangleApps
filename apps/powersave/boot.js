@@ -8,8 +8,13 @@ Bangle.on("lock", locked => {
   }
 });
 E.on("init", () => {
-  if("__FILE__" in global && __FILE__ !== "powersave.screen.js")
-  Storage.write("powersave.json", {
-    app: __FILE__
-  });
+  if("__FILE__" in global && __FILE__ !== "powersave.screen.js"){
+    Storage.write("powersave.json", {
+      app: __FILE__
+    });
+  }else{
+    Storage.write("powersave.json", {
+      app: null
+    });
+  }
 });
