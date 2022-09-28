@@ -11,8 +11,8 @@
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
-    {"name":"linuxclk.app.js","url":"app.js"},
-    {"name":"linuxclk.img","url":"app-icon.js","evaluate":true},
-    {"name":"linuxclk.settings.js","url":"settings.js"}
+    {"name":"linuxclock.app.js","url":"app.js"},
+    {"name":"linuxclock.img","url":"app-icon.js","evaluate":true},
+    {"name":"linuxclock.settings.js","url":"settings.js"}
   ]
 }
