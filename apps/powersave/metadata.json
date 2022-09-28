@@ -1,7 +1,7 @@
 {
   "id": "powersave",
   "name": "Power Save",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Halts foreground app execution while screen is off while still allowing background processes.",
   "readme": "README.md",
   "icon": "powersave.png",
@@ -11,5 +11,8 @@
   "storage": [
     {"name":"powersave.boot.js","url":"boot.js"},
     {"name":"powersave.screen.js","url":"boot.js"}
+  ],
+  "data": [
+    {"name": "powersave.json"}
   ]
 }
