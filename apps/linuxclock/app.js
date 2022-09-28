@@ -2,7 +2,7 @@
  * Includes
  */
 const locale = require('locale');
-const ts = 200;
+const ts = 150;
 
 /************************************************
  * Assets
@@ -137,6 +137,10 @@ Bangle.on('lcdPower',on=>{
 
 
 Bangle.on('lock', function(isLocked) {
+  if(isLocked){
+    return;
+  }
+
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
 
