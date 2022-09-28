@@ -2,7 +2,7 @@
  * Includes
  */
 const locale = require('locale');
-
+const ts = 200;
 
 /************************************************
  * Assets
@@ -28,37 +28,67 @@ function draw() {
 
   g.clear();
   Bangle.drawWidgets();
-  g.setFontUbuntuMono();
 
+  g.setFontUbuntuMono();
   drawMainScreen();
 }
 
 
-function drawCmdLine(str, line, isCmd){
-  var c = 0;
-  var x = 10;
+function drawText(str, line, timeout){
+  timeout = timeout ? timeout : 0;
+
+  setTimeout(()=>{
+    g.setFontUbuntuMono();
+    var x = 10;
+    var y = line * 27 + 28;
+    g.setColor(g.theme.fg);
+    g.drawString(str, x, y);
+  }, timeout);
+}
+
+
+function drawLetters(str, line, offset){
+  offset= offset ? offset : 0;
+  var x = 10 + offset;
   var y = line * 27 + 28;
-  if(isCmd){
-    g.setColor("#0f0");
-    g.drawString("bjs", x+c, y);
-    c += g.stringWidth("bjs");
 
-    g.setColor(g.theme.fg);
-    g.drawString(":", x+c, y);
-    c += g.stringWidth(":");
-
-    g.setColor("#0ff");
-    g.drawString("~", x+c, y);
-    c += g.stringWidth("~");
-
-    g.setColor(g.theme.fg);
-    g.drawString("$", x+c, y);
-    c += g.stringWidth("$~");
+  var pos = 0;
+  for(var i=0; i < str.length; i++){
+    var c = str.charAt(i);
+    pos += g.stringWidth(c);
+    setTimeout((c, pos)=>{
+      g.setFontUbuntuMono();
+      g.setColor(g.theme.fg);
+      g.drawString(c, x+pos, y);
+    }, ts*(1+i), c, pos);
   }
 
-  g.setColor(g.theme.fg);
-  g.drawString(str, x+c, y);
 }
+
+
+function drawCmd(){
+  var c = 0;
+  var x = 10;
+  var y = 28;
+
+  g.setColor("#0f0");
+  g.drawString("bjs", x+c, y);
+  c += g.stringWidth("bjs");
+
+  g.setColor(g.theme.fg);
+  g.drawString(":", x+c, y);
+  c += g.stringWidth(":");
+
+  g.setColor("#0ff");
+  g.drawString("~", x+c, y);
+  c += g.stringWidth("~");
+
+  g.setColor(g.theme.fg);
+  g.drawString("$", x+c, y);
+  c += g.stringWidth("$~");
+}
+
+
 
 function drawMainScreen(){
   var date = new Date();
@@ -67,11 +97,15 @@ function drawMainScreen(){
     g.setFontAlign(-1, -1);
     var timeStr = ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
     var dateStr = locale.month(date, 1) + ("0" + date.getDate()).slice(-2);
-    drawCmdLine("time", 0, true);
-    drawCmdLine(" [t] " + timeStr, 1);
-    drawCmdLine(" [d] " + dateStr, 2);
-    drawCmdLine(" [b] " + E.getBattery() + "%", 3);
-    drawCmdLine(" [s] " + Bangle.getHealthStatus("day").steps, 4);
+    drawCmd();
+
+    var cmd = "time";
+    var cmdT = ts * cmd.length + 50;
+    drawLetters("time", 0, 80);
+    drawText(" [t] " + timeStr, 1, cmdT);
+    drawText(" [d] " + dateStr, 2, cmdT);
+    drawText(" [" + (Bangle.isCharging() ? "c" : "b") + "] " + E.getBattery() + "%", 3, cmdT);
+    drawText(" [s] " + Bangle.getHealthStatus("day").steps, 4, cmdT);
 }
 
 
@@ -100,6 +134,23 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
+
+
+Bangle.on('lock', function(isLocked) {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+
+  draw();
+});
+
+
+Bangle.on('charging',function(charging) {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+
+  draw();
+});
+
 
 /************************************************
  * Startup Clock
