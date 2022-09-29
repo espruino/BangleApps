@@ -9,16 +9,16 @@ class DateFormatter {
     name(){ return "no name";}
     shortName(){ return "no short name" }
     formatDate(date){ return ["no","date","defined"]; }
-    rowProperties(row_no){
-        return (row_no === 0)?
-            {major_minor: 'major', info_type: 'time'} :
-            {major_minor: 'minor', info_type: 'time'};
-    }
-    formatProperties(){
-        return {
-            default_style: {}
-        };
-    }
+
+    /**
+     * returns a map of the different row types
+     */
+    defaultRowTypes(){}
+
+    /**
+     * returns a list of row definitions (1 definition can cover m
+     */
+    defaultRowDefs(){ return [];}
 }
 
 module.exports = DateFormatter;

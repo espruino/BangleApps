@@ -126,12 +126,8 @@ class ShiftText {
     this.timeoutId = null;
   }
   getRowContext(){ return this.row_context;}
-  setColor(color){
-    this.color = color;
-  }
-  setBgColor(bg_color){
-    this.bg_color = bg_color;
-  }
+  setColor(color){ this.color = color; }
+  setBgColor(bg_color){ this.bg_color = bg_color; }
   reset(hard_reset) {
     //console.log("reset");
     this.hide();
@@ -284,238 +280,189 @@ class ShiftText {
 function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
-var DISPLAY_TEXT_X = 20;
 
-var style;
+const row_types = {
+  large: {
+    color: 'major',
+    speed: 'medium',
+    angle_to_horizontal: 0,
+    scroll_off: ['left'],
+    scroll_in: ['right'],
+    size: 'large'
+  },
+  medium: {
+    color: 'minor',
+    speed: 'slow',
+    angle_to_horizontal: 0,
+    scroll_off: ['left'],
+    scroll_in: ['right'],
+    size: 'medium'
+  },
+  small: {
+    color: 'minor',
+    speed: 'superslow',
+    angle_to_horizontal: 0,
+    scroll_off: ['left'],
+    scroll_in: ['right'],
+    size: 'small'
+  }
+};
 
-/**
- * time_speed: 'slow'
- * date_speed: 'superslow',
- * date_placing: 'right.up',
- * time_slide: 'random',
- * minor_text_size: 'small',
- * major_text_size: 'large',
- * date_text_size: 'vsmall'
- * y_init: 'middle'
- */
-var style_settings;
-function init_style() {
-  if(style_settings == null){
-      var formatProps = date_formatter.formatProperties();
-      if(formatProps != null){
-        style_settings = formatProps.default_style;
-      }
+var row_defs;
+var row_displays;
+function init_display() {
+  row_type_overide = date_formatter.defaultRowTypes();
+  mergeMaps(row_types,row_type_overide);
+  console.log("row_types:"+ JSON.stringify(row_types) );
+  if(row_defs == null){
+    row_defs = date_formatter.defaultRowDefs();
   }
-  if(style_settings == null){
-    style_settings = {};
-  }
-  var time_speed = 10;
-  var time_speed_setting = style_settings.time_speed;
-  if(time_speed_setting  === 'slow') {
-    time_speed = 5;
-  } else if(time_speed_setting === 'superslow'){
-    time_speed = 1;
-  }
-  var date_speed = 10;
-  var date_speed_setting = style_settings.date_speed;
-  if(date_speed_setting === 'slow'){
-    date_speed = 5;
-  } else if(date_speed_setting === 'superslow'){
-    date_speed = 1;
-  }
-
-  var row_y_calc = (row_props, last_y, row_height, row_rotation, row_counts) => (row_counts.row_count > 0)? last_y + row_height : last_y;
-  var row_x_calc = (row_props, last_x, row_height, row_rotation, row_counts) => last_x;
-
-  var date_coords;
-  var date_rotation = 0;
-  var date_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
-  var date_scroll_out = (d)=> d.scrollOffToLeft();
-  var date_placing_setting = style_settings.date_placing;
-  if(date_placing_setting === 'right.up') {
-    date_coords = [155, 160];
-    date_rotation = 3;
-    date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
-    date_scroll_out = (d) => d.scrollOffToBottom();
-  } else if(date_placing_setting === 'left.up'){
-    date_coords = [5, 160];
-    date_rotation = 3;
-    date_scroll_in = (d,txt)=> d.scrollInFromBottom(txt);
-    date_scroll_out = (d) => d.scrollOffToBottom();
-  }
-
-  var time_scroll_in = (d,txt)=> d.scrollInFromRight(txt);
-  var time_scroll_out = (d)=> d.scrollOffToLeft();
-  var time_slide_setting = style_settings.time_slide;
-  if(time_slide_setting === `in_left_out_left`) {
-    time_scroll_in = (d, txt) => d.scrollInFromLeft(txt);
-  } else if(time_slide_setting === `in_right_out_right`){
-    time_scroll_out = (d)=> d.scrollOffToRight();
-  } else if(time_slide_setting === 'random') {
-    time_scroll_in = (d,txt)=> {
-      var random = Math.random();
-      if (random < 0.33) {
-        d.scrollInFromRight(txt);
-      } else if (random < 0.66) {
-        d.scrollInFromLeft(txt);
-      } else {
-        d.scrollInFromBottom(txt);
-      }
-    }
-    time_scroll_out = (d)=> {
-      var random = Math.random();
-      if (random < 0.33) {
-        d.scrollOffToRight();
-      } else if (random < 0.66) {
-        d.scrollOffToLeft();
-      } else {
-        d.scrollOffToBottom();
-      }
-    }
-  }
-
-  var major_height=[40,30];
-  var minor_height=[35,25];
-  var minor_size_setting = style_settings.minor_text_size;
-  if(minor_size_setting === 'small') {
-    minor_height = [25,20];
-  } else if(minor_size_setting === 'vsmall'){
-    minor_height = [20,15];
-  }
-  var major_size_setting = style_settings.major_text_size;
-  if(major_size_setting === 'large') {
-    major_height = [60,50];
-  }
-  var date_size_setting = style_settings.date_text_size;
-  var date_height_major = major_height;
-  var date_height_minor = minor_height;
-
-  if(date_size_setting === 'small'){
-    date_height_major = [25,14];
-    date_height_minor = [25,14]
-  } else if(date_size_setting === 'vsmall'){
-    date_height_major = [20,10];
-    date_height_minor = [20,10];
-  }
-
-  if(date_coords != null){
-    row_y_calc = (row_props, last_y, row_height,row_rotation, row_counts) =>{
-        if (row_props.info_type === 'date'){
-          if(row_rotation === 0) {
-            return date_coords[1] + row_height*(row_counts.date - 1)
-          } else {
-            return date_coords[1];
-          }
-        } else {
-          return (row_counts.row_count > 0)? last_y + row_height : last_y;
-        }
-    }
-    row_x_calc = (row_props, last_x, row_height,row_rotation, row_counts) => {
-      if(row_props.info_type === 'date'){
-        if(row_rotation === 3){
-          return date_coords[0] + row_height*(row_counts.date - 1)
-        } else {
-          return date_coords[0];
-        }
-      } else {
-        return last_x;
-      }
-    }
-  }
-
-  var row_heights ={
-    time: {major: major_height, minor: minor_height},
-    date: {major: date_height_major, minor: date_height_minor}
-  };
-
-  var y_start = [34,24];
-  var y_init_setting = style_settings.y_init;
-  if(y_init_setting === 'q1'){
-    y_start = [60,50];
-  } else if(y_init_setting === 'middle'){
-    y_start = [80,70];
-  }
-
-  var version = bangleVersion() - 1;
-  style = {
-    fg_color: (row_props)=>(row_props.major_minor === 'major')? main_color(): other_color(),
-    y_init: y_start[version],
-    row_height: (row_props)=>
-      row_heights[row_props.info_type][row_props.major_minor][version],
-    row_speed: (row_props) => row_props.info_type === 'date'? date_speed : time_speed,
-    row_rotation: (row_props) => row_props.info_type === 'date'? date_rotation  : 0,
-    row_y: (row_props, last_y, row_height, row_rotation, row_counts) => row_y_calc(row_props,last_y,row_height, row_rotation, row_counts),
-    row_x: (row_props, last_x, row_height, row_rotation, row_counts) => row_x_calc(row_props, last_x, row_height,row_rotation, row_counts),
-    scrollIn: (d,txt)=> {
-      if (d.getRowContext().info_type === 'date') {
-        date_scroll_in(d,txt);
-      } else {
-        time_scroll_in(d,txt);
-      }
-    },
-    scrollOff: (d)=> {
-      if (d.getRowContext().info_type === 'date') {
-        date_scroll_out(d)
-      } else {
-        time_scroll_out(d)
-      }
+  row_displays = [];
+  for(var i=0; i< row_defs.length; i++){
+    var row_def = row_defs[i];
+    console.log("row_def:"+ JSON.stringify(row_def) );
+    var row_type_val = row_types[row_def.type];
+    console.log("row_type_val:"+ JSON.stringify(row_type_val) );
+    var row_type = create_row_type(row_type_val,row_def);
+    // we now create the number of row specified of that type
+    for(var j=0; j<row_def.rows; j++){
+      row_displays.push(create_row(row_type,j));
     }
   }
 }
 
-// a list of display rows
-var row_displays;
+function mergeMaps(map1,map2){
+  var key;
+  Object.keys(map2).forEach(key => {
+    if(map1.hasOwnProperty(key)){
+      map1[key] = mergeObjects(map1[key], map2[key]);
+    } else {
+      map1[key] = map2[key];
+    }
+  });
+}
 
-function init_display() {
-  init_style();
-  row_displays = [];
-  var y = style.y_init;
-  var x = DISPLAY_TEXT_X;
-  var date_rows = date_formatter.formatDate(new Date());
-  var major_count = 0;
-  var minor_count = 0;
-  var date_count = 0;
-  var prev_height = 0;
-  for (var i=0;i<date_rows.length;i++) {
-    var row_props = date_formatter.rowProperties(i);
-    if(row_props.major_minor === 'major'){
-       major_count += 1;
-    } else if(row_props.major_minor === 'minor'){
-      minor_count += 1;
-    }
-    if(row_props.info_type === 'date'){
-      date_count += 1;
-    }
-    var row_counts = {
-      row_count: i,
-      major: major_count,
-      minor: minor_count,
-      date: date_count
-    }
+function mergeObjects(obj1, obj2){
+  const result = {};
+  Object.keys(obj1).forEach(key => result[key] = (obj2.hasOwnProperty(key))? obj2[key] : obj1[key]);
+  return result;
+}
 
-    var row_height = style.row_height(row_props);
-    var row_speed = style.row_speed(row_props);
-    var row_rotation = style.row_rotation(row_props);
-    x = style.row_x(row_props,x, prev_height,row_rotation, row_counts);
-    y = style.row_y(row_props,y,prev_height,row_rotation, row_counts);
-    console.log("row info[" + i + "]=" + row_props.major_minor + " x= " + x + " y=" + y + " height=" + row_height);
-    row_displays.push(
-        new ShiftText(x,
-            y,
-            '',
-            "Vector",
-            row_height,
-            row_speed,
-            row_speed,
-            10,
-            style.fg_color(row_props),
-            bg_color(),
-            row_props,
-            row_rotation
-        )
-    );
-    prev_height = row_height;
+
+
+const heights = {
+  vsmall: [15,10],
+  small: [25,20],
+  medium: [40,25],
+  large: [50,40],
+  vlarge: [60,50]
+};
+
+const rotations = {
+  0: 0,
+  90: 3,
+  180: 2,
+  270: 1,
+};
+
+const speeds = {
+  fast: 20,
+  medium: 10,
+  slow: 5,
+  vslow: 2,
+  superslow: 1
+};
+
+const Y_RESERVED = 20;
+/**
+ * takes a json definition for a row type and creates an instance
+ */
+function create_row_type(row_type, row_def){
+  console.log("create_row_def:"+ JSON.stringify(row_def) );
+  console.log("create_row_type:"+ JSON.stringify(row_type) );
+  var speed = speeds[row_type.speed];
+  console.log("speed:"+ speed );
+  var rotation = rotations[row_type.angle_to_horizontal];
+  console.log("rotation:"+ rotation);
+  var height = heights[row_type.size];
+  console.log("height:"+ height);
+  var scroll_ins = [];
+  if(row_type.scroll_in.includes('left')){
+    console.log("scroll in left");
+    scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
   }
+  if(row_type.scroll_in.includes('right')){
+    console.log("scroll in right");
+    scroll_ins.push((row_display,txt)=> row_display.scrollInFromRight(txt));
+  }
+  if(row_type.scroll_in.includes('up')){
+    console.log("scroll in up");
+    scroll_ins.push((row_display,txt)=> row_display.scrollInFromBottom(txt));
+  }
+  var scroll_in;
+  if(scroll_ins.length === 0){
+    scroll_in = (row_display,txt)=> row_display.scrollInFromLeft(txt);
+  } else if(scroll_ins.length === 1){
+    scroll_in = scroll_ins[0];
+  } else {
+    scroll_in = (row_display,txt) =>{
+      var idx = (Math.random() * scroll_ins.length) | 0;
+      return scroll_ins[idx](row_display,txt);
+    };
+  }
+
+  var scroll_offs = [];
+  if(row_type.scroll_off.includes('left')){
+    console.log("scroll off left");
+    scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
+  }
+  if(row_type.scroll_off.includes('right')){
+    console.log("scroll off right");
+    scroll_offs.push((row_display)=> row_display.scrollOffToRight());
+  }
+  if(row_type.scroll_off.includes('down')){
+    console.log("scroll off down");
+    scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
+  }
+  var scroll_off;
+  if(scroll_offs.size === 0){
+    scroll_off = (row_display)=> row_display.scrollOffToLeft();
+  } else if(scroll_offs.size === 1){
+    scroll_off = scroll_offs[0];
+  } else {
+    scroll_off = (row_display) =>{
+      var idx = (Math.random() * scroll_off.size) | 0;
+      return scroll_offs[idx](row_display);
+    };
+  }
+  var version = bangleVersion() - 1;
+  console.log("color:" + row_type.color);
+  return {
+    row_speed: speed,
+    row_height: height[version],
+    row_rotation: rotation,
+    x: (row_no) => row_def.init_coords[0] * g.getWidth() + row_def.row_direction[0] * height[version] * row_no,
+    y: (row_no) => Y_RESERVED + row_def.init_coords[1] * (g.getHeight() - Y_RESERVED) + row_def.row_direction[1] * height[version] * row_no,
+    scroll_in: scroll_in,
+    scroll_off: scroll_off,
+    fg_color: () => (row_type.color === 'major')? main_color(): other_color()
+  };
+}
+
+function create_row(row_type, row_no){
+  return new ShiftText(row_type.x(row_no),
+      row_type.y(row_no),
+      '',
+      "Vector",
+      row_type.row_height,
+      row_type.row_speed,
+      row_type.row_speed,
+      10,
+      row_type.fg_color(),
+      bg_color(),
+      row_type,
+      row_type.row_rotation
+  );
 }
 
 
@@ -533,7 +480,7 @@ function nextColorTheme(){
 function updateColorScheme(){
   var bgcolor = bg_color();
   for(var i=0; i<row_displays.length; i++){
-    row_displays[i].setColor(style.fg_color(row_displays[i].getRowContext()) );
+    row_displays[i].setColor(row_displays[i].getRowContext().fg_color());
     row_displays[i].setBgColor(bgcolor);
   }
   g.setColor(bgcolor[0],bgcolor[1],bgcolor[2]);
@@ -635,8 +582,7 @@ function display_row(display,txt){
           function () {
             //console.log("move in new:" + txt);
             display.onFinished(next_command);
-            //display.scrollInFromRight(txt, DISPLAY_TEXT_X);
-            style.scrollIn(display,txt)
+            display.getRowContext().scroll_in(display,txt);
           }
       );
     }
@@ -645,16 +591,14 @@ function display_row(display,txt){
         function(){
           //console.log("move out:" + txt);
           display.onFinished(next_command);
-          //display.moveToX(-display.txt.length * display.font_size);
-          //display.scrollOffToLeft();
-          style.scrollOff(display);
+          display.getRowContext().scroll_off(display);
         }
     );
     command_stack_low_priority.push(
         function(){
           //console.log("move in:" + txt);
           display.onFinished(next_command);
-          style.scrollIn(display,txt);
+          display.getRowContext().scroll_in(display,txt);
         }
     );
   } else {
@@ -687,23 +631,34 @@ function set_colorscheme(colorscheme_name){
 const Locale = require('locale');
 class DigitDateTimeFormatter {
   constructor() {
-    this.row_props =[
-      {major_minor: 'major', info_type: 'time'},
-      {major_minor: 'minor', info_type: 'date'},
-      {major_minor: 'minor', info_type: 'date'},
-    ];
-    this.format_props = {
-      default_style: {
-        time_speed: 'slow',
-        date_speed: 'superslow',
-        date_placing: 'right.up',
-        time_slide: 'random',
-        date_text_size: 'vsmall',
-        major_text_size: 'large',
-        y_init: 'middle'
+    this.row_types = {
+      large: {
+        scroll_off: ['left', 'right', 'down'],
+        scroll_in: ['left', 'right', 'up'],
+        size: 'vlarge'
+      },
+      small: {
+        angle_to_horizontal: 90,
+        scroll_off: ['down'],
+        scroll_in: ['up'],
+        size: 'vsmall'
       }
-      //default_style: ''
     };
+
+    this.row_defs = [
+      {
+        type: 'large',
+        row_direction: [0.0,1.0],
+        init_coords: [0.15,0.4],
+        rows: 1
+      },
+      {
+        type: 'small',
+        row_direction: [1.0,0],
+        init_coords: [0.9,0.95],
+        rows: 2
+      }
+    ];
   }
   name(){return "Digital";}
   shortName(){return "digit";}
@@ -722,17 +677,13 @@ class DigitDateTimeFormatter {
     var hours = now.getHours() ;
     var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
     var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
-    var month_txt = Locale.month(now)
+    var month_txt = Locale.month(now);
     return [time_txt, date_txt, month_txt];
   }
 
-  formatProperties(){
-    return this.format_props;
-  }
+  defaultRowTypes(){ return this.row_types; }
 
-  rowProperties(row_no) {
-    return this.row_props[row_no];
-  }
+  defaultRowDefs() { return this.row_defs; }
 }
 
 var date_formatter;
@@ -760,14 +711,15 @@ function load_settings() {
   var setScheme = false;
   try {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
+    settings = { date_format: 'en' };
     if (settings != null) {
       console.log("loaded:" + JSON.stringify(settings));
 
       if (settings.date_format != null) {
         set_dateformat(settings.date_format);
-        if (settings.style_settings != null) {
-          style_settings = settings.style_settings;
-        }
+        //if (settings.style_settings != null) {
+        //  style_settings = settings.style_settings;
+        //}
         init_display();
       }
       if (settings.color_scheme != null) {
@@ -788,14 +740,14 @@ function load_settings() {
   }
   // just set up as default
   if (!setScheme) {
-    set_dateformat("default")
+    set_dateformat("default");
     init_display();
     updateColorScheme();
   }
   if(row_displays == null){
     init_display();
   }
-  enable_live_controls = true
+  enable_live_controls = true;
 }
 
 /**

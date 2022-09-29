@@ -70,17 +70,21 @@ function germanMinsToText(mins) {
 class GermanDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_props = [
-            {major_minor: 'major', info_type: 'time'},
-            {major_minor: 'minor', info_type: 'time'},
-            {major_minor: 'minor', info_type: 'time'},
-            {major_minor: 'minor', info_type: 'time'},
-        ];
-        this.format_props = {
-            default_style: {
-                y_init: 'q1'
+        this.row_types = { };
+        this.row_defs = [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
             }
-        }
+        ];
     }
     name(){return "German";}
     shortName(){return "de"}
@@ -107,12 +111,9 @@ class GermanDateFormatter extends DateFormatter {
             return [hours, "UHR", mins_txt[0],mins_txt[1]];
         }
     }
-    rowProperties(row_no) {
-        return this.row_props[row_no];
-    }
-    formatProperties(){
-        return this.format_props;
-    }
+    defaultRowTypes(){ return this.row_types;}
+
+    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = GermanDateFormatter;
