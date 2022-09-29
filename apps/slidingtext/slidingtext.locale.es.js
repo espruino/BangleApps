@@ -63,8 +63,6 @@ class SpanishDateFormatter extends DateFormatter {
             }
         ];
     }
-    name(){return "Spanish";}
-    shortName(){return "es"}
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();

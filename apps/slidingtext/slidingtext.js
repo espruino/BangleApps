@@ -309,7 +309,7 @@ const row_types = {
 };
 
 let row_displays;
-function init_display(settings) {
+function initDisplay(settings) {
   if(row_displays != null){
     return;
   }
@@ -466,8 +466,8 @@ function nextColorTheme(){
   }
   //console.log("changing color scheme to " + color_schemes[color_scheme_index].name)
   updateColorScheme();
-  reset_clock(true);
-  draw_clock();
+  resetClock(true);
+  drawClock();
 }
 
 function updateColorScheme(){
@@ -480,7 +480,7 @@ function updateColorScheme(){
   g.fillRect(0, 24, g.getWidth(), g.getHeight());
 }
 
-function reset_clock(hard_reset){
+function resetClock(hard_reset){
   console.log("reset_clock hard_reset:" + hard_reset);
 
   updateColorScheme();
@@ -525,7 +525,7 @@ function display_time(date){
   }
 }
 
-function draw_clock(){
+function drawClock(){
   var date = new Date();
 
   // we don't want the time to be displayed
@@ -607,7 +607,7 @@ function display_row(display,txt){
  * called from load_settings on startup to
  * set the color scheme to named value
  */
-function set_colorscheme(colorscheme_name){
+function setColorScheme(colorscheme_name){
   console.log("setting color scheme:" + colorscheme_name);
   for (var i=0; i < color_schemes.length; i++) {
     if(color_schemes[i].name === colorscheme_name){
@@ -651,8 +651,6 @@ class DigitDateTimeFormatter {
       }
     ];
   }
-  name(){return "Digital";}
-  shortName(){return "digit";}
 
   format00(num){
     var value = (num | 0);
@@ -678,7 +676,7 @@ class DigitDateTimeFormatter {
 }
 
 var date_formatter;
-function set_dateformat(shortname){
+function setDateformat(shortname){
   console.log("setting date format:" + shortname);
   try {
     if (date_formatter == null || date_formatter.shortName() !== shortname) {
@@ -698,21 +696,22 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
 /**
  * Called on startup to set the watch to the last preference settings
  */
-function load_settings() {
-  var setScheme = false;
+function loadSettings() {
   try {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
-    settings = { date_format: 'dgt'};
     if (settings != null) {
       console.log("loaded settings:" + JSON.stringify(settings));
 
       if (settings.date_format != null) {
-        set_dateformat(settings.date_format);
-        init_display(settings);
+        var format = setting.date_format;
+        if(settings.date_formatter != null)
+            format = settings.date_format;
+
+        setDateformat(format);
+        initDisplay(settings);
       }
       if (settings.color_scheme != null) {
-        set_colorscheme(settings.color_scheme);
-        setScheme = true;
+        setColorScheme(settings.color_scheme);
       }
       if (settings.enable_live_controls == null) {
         settings.enable_live_controls = (bangleVersion() <= 1);
@@ -727,36 +726,21 @@ function load_settings() {
     console.log("failed to load settings:" + e);
   }
   // just set up as default
-  console.log("set_schema:" + setScheme);
-  if (!setScheme) {
-    set_dateformat("default");
-    init_display();
+  if (row_displays === undefined) {
+    setDateformat("default");
+    initDisplay();
     updateColorScheme();
   }
-  init_display();
   enable_live_controls = true;
 }
 
-/**
- * Called on button press to save down the last preference settings
- */
-function save_settings(){
-  var settings = {
-    date_format : date_formatter.shortName(),
-    color_scheme : color_schemes[color_scheme_index].name,
-    enable_live_controls: enable_live_controls
-  };
-  console.log("saving:" + JSON.stringify(settings));
-  require("Storage").writeJSON(PREFERENCE_FILE,settings);
-}
 
 function button3pressed() {
   console.log("button3pressed enable_live_controls=" + enable_live_controls);
   if (enable_live_controls) {
     nextColorTheme();
-    reset_clock(true);
-    draw_clock();
-    save_settings();
+    resetClock(true);
+    drawClock();
   }
 }
 
@@ -776,7 +760,7 @@ function startTimers(){
   var nextMinuteStart = 60 - secs;
   //console.log("scheduling clock draw in " + nextMinuteStart + " seconds");
   setTimeout(scheduleDrawClock,nextMinuteStart * 1000);
-  draw_clock();
+  drawClock();
 }
 
 /**
@@ -799,13 +783,13 @@ function scheduleDrawClock(){
         console.log("draw clock callback - skipped redraw");
       } else {
         console.log("draw clock callback");
-        draw_clock();
+        drawClock();
       }
     }, 60 * 1000
     );
 
     if (shouldRedraw()) {
-      draw_clock();
+      drawClock();
     } else {
       console.log("scheduleDrawClock - skipped redraw");
     }
@@ -818,17 +802,17 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     console.log("lcdPower: on");
     Bangle.drawWidgets();
-    reset_clock(false);
+    resetClock(false);
     startTimers();
   } else {
     console.log("lcdPower: off");
-    reset_clock(false);
+    resetClock(false);
     clearTimers();
   }
 });
 
 g.clear();
-load_settings();
+loadSettings();
 // Show launcher when button pressed
 Bangle.setUI("clockupdown", d=>{
   if (d>0) button3pressed();

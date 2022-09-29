@@ -99,8 +99,6 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
             },
         ];
     }
-    name(){return "English (Traditional)";}
-    shortName(){return "en2"}
     formatDate(date){
         var date_txt = Locale.dow(date,1).toUpperCase() + " " + numberToText(date.getDate());
         var mins = date.getMinutes();

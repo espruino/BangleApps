@@ -86,8 +86,6 @@ class GermanDateFormatter extends DateFormatter {
             }
         ];
     }
-    name(){return "German";}
-    shortName(){return "de"}
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();

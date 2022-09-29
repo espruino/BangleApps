@@ -28,16 +28,16 @@ const japaneseMinuteStr = [ ["", "PUN"],
 
 function japaneseHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return japaneseHourStr[hours];
 }
 
 function japaneseMinsToText(mins){
-    if(mins == 0){
+    if(mins === 0){
         return ["",""];
-    } else if(mins == 30)
+    } else if(mins === 30)
         return ["HAN",""];
     else {
         var units = mins % 10;
@@ -77,8 +77,6 @@ class JapaneseDateFormatter extends DateFormatter {
             }
         ];
     }
-    name(){return "Japanese (Romanji)";}
-    shortName(){return "jp"}
     formatDate(date){
         var hours_txt = japaneseHoursToText(date.getHours());
         var mins_txt = japaneseMinsToText(date.getMinutes());

@@ -60,8 +60,6 @@ class EnglishDateFormatter extends DateFormatter {
             }
         ];
     }
-    name(){return "English";}
-    shortName(){return "en"}
     formatDate(date){
         var hours_txt = hoursToText(date.getHours());
         var mins_txt = numberToText(date.getMinutes());

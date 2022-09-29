@@ -47,8 +47,6 @@ class FrenchDateFormatter extends DateFormatter {
             }
         ];
     }
-    name(){return "French";}
-    shortName(){return "fr"}
     formatDate(date){
         var hours = frenchHoursToText(date.getHours());
         var heures = frenchHeures(date.getHours());

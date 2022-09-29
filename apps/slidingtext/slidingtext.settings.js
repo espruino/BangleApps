@@ -8,13 +8,85 @@
     }
     console.log("loaded:" + JSON.stringify(settings));
     var locale_mappings = {
-        'English Time':'en',
-        'English Date + Time': 'en3',
-        'English Time (Trad)': 'en2',
-        'French': 'fr',
-        'German': 'de',
-        'Spanish': 'es',
-        'Japanese': 'jp',
+        'en' : { date_format: 'en' },
+        'en patchwork': {
+            date_format: 'en patchwork',
+            date_formatter: 'en',
+            row_types: {
+                large:{
+                    angle_to_horizontal: 90
+                }
+            },
+            row_defs: [
+                {
+                    type: 'large',
+                    init_coords: [0.05,0.95],
+                    row_direction: [1.0,0.0],
+                    rows: 1
+                },
+                {
+                    type: 'medium',
+                    init_coords: [0.3,0.1],
+                    row_direction: [0.0,1.0],
+                    rows: 2
+                },
+                {
+                    type: 'small',
+                    init_coords: [0.3,0.9],
+                    row_direction: [0.0,1.0],
+                    rows: 1
+                }
+            ]
+        },
+        'en2': { date_format: 'en2' },
+        'en2 patchwork': { date_format: 'en2 patchwork',
+            date_formatter: 'en2',
+            row_types: {
+                vsmall: {
+                    scroll_off: ['right'],
+                    scroll_in: ['right'],
+                    angle_to_horizontal: 0
+                },
+                large: {
+                    size: 'vlarge',
+                    angle_to_horizontal: 90,
+                    speed: 'slow',
+                    color: 'major',
+                    scroll_off: ['down'],
+                    scroll_in: ['up']
+                }
+            },
+            row_defs: [
+                {
+                    type: 'large',
+                    init_coords: [0.7,0.9],
+                    row_direction: [0.0,1.0],
+                    rows: 1
+                },
+                {
+                    type: 'small',
+                    init_coords: [0.05,0.35],
+                    row_direction: [0.0,1.0],
+                    rows: 3
+                },
+                {
+                    type: 'large',
+                    init_coords: [0.7,0.9],
+                    row_direction: [0.0,1.0],
+                    rows: 1
+                },
+                {
+                    type: 'vsmall',
+                    init_coords: [0.05,0.1],
+                    row_direction: [0.0,1.0],
+                    rows: 1
+                },
+            ]
+        },
+        'French': { date_format:'fr'},
+        'German': { date_format: 'de'},
+        'Spanish': { date_format: 'es'},
+        'Japanese': { date_format: 'jp'},
     }
     var locales = Object.keys(locale_mappings);
 
@@ -50,7 +122,7 @@
         "" : { "title" : "Sliding Text" },
         "< Back" : () => back(),
         "Colour": stringInSettings("color_scheme", ["white", "black", "red","grey","purple","blue"]),
-        "Languages": stringInSettings("date_format", locales, (l)=>locale_mappings[l] ),
+        "Style": stringInSettings("date_format", locales, (l)=>locale_mappings[l] ),
         "Live Control": {
             value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
             format: v => v ? "On" : "Off",
