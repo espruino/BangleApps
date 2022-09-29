@@ -10,7 +10,7 @@
 
     triggers.forEach((trigger, i) => {
       haItems.items.push({
-        name: "haTrigger-" + i,
+        name: null,
         get: () => ({ text: trigger.display, img: trigger.getIcon()}),
         show: function() { haItems.items[i].emit("redraw"); },
         hide: function () {},
