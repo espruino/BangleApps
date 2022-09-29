@@ -6,11 +6,16 @@
  const storage = require('Storage');
  const locale = require('locale');
 
+/*
+ * Some vars
+ */
+var W = g.getWidth();
+var H = g.getHeight();
 
  /************************************************
   * Settings
   */
- const SETTINGS_FILE = "bwclk.setting.json";
+ const SETTINGS_FILE = "linuxclock.setting.json";
  let settings = {
    menuPosX: 0,
    menuPosY: 0,
@@ -72,7 +77,6 @@
  menu = menu.concat(dateMenu);
 
  // Set draw functions for each item
- var line = 0;
  menu.forEach((menuItm, x) => {
    menuItm.items.forEach((item, y) => {
      function drawItem() {
@@ -113,18 +117,18 @@ function runMenuItem(){
   }
 }
 
- /************************************************
-  * Helper
-  */
- function getTime(){
-   var date = new Date();
-   return twoD(date.getHours())+ ":" + twoD(date.getMinutes());
- }
+/************************************************
+* Helper
+*/
+function getTime(){
+  var date = new Date();
+  return twoD(date.getHours())+ ":" + twoD(date.getMinutes());
+}
 
- function getDate(){
-   var date = new Date();
-   return twoD(date.getDate()) + "." + twoD(date.getMonth());
- }
+function getDate(){
+  var date = new Date();
+  return twoD(date.getDate()) + "." + twoD(date.getMonth());
+}
 
 
 
@@ -153,6 +157,9 @@ function runMenuItem(){
 
    // Draw menu items depending on our y value
    drawMenuItems(menuItem);
+
+   // And draw the cursor
+   drawCursor();
  }
 
 function drawMenuItems(menuItem) {
@@ -164,7 +171,10 @@ function drawMenuItems(menuItem) {
     lock_input++;
     menuItem.items[i].show();
   }
+}
 
+function drawCursor(){
+  g.clearRect(0, 27 + 28, 15, H);
   if(!Bangle.isLocked()){
     g.drawString(">", -2, ((settings.menuPosY % 4) + 1) * 27 + 28);
   }
@@ -279,6 +289,7 @@ function drawMenuItems(menuItem) {
    var is_right = e.x > right && !is_upper && !is_lower;
    var is_center = !is_upper && !is_lower && !is_left && !is_right;
 
+   var oldYScreen = parseInt(settings.menuPosY/4);
    if(is_lower){
      if(settings.menuPosY >= menu[settings.menuPosX].items.length-1){
       return;
@@ -286,6 +297,10 @@ function drawMenuItems(menuItem) {
 
      Bangle.buzz(40, 0.6);
      settings.menuPosY++;
+     if(parseInt(settings.menuPosY/4) == oldYScreen){
+      drawCursor();
+      return;
+     }
    }
 
    if(is_upper){
@@ -299,6 +314,11 @@ function drawMenuItems(menuItem) {
      Bangle.buzz(40, 0.6);
      settings.menuPosY--;
      settings.menuPosY = settings.menuPosY < 0 ? 0 : settings.menuPosY;
+
+     if(parseInt(settings.menuPosY/4) == oldYScreen){
+      drawCursor();
+      return;
+     }
    }
 
    if(is_right){
