@@ -29,9 +29,24 @@ function frenchHeures(hours){
 }
 
 class FrenchDateFormatter extends DateFormatter {
-    constructor() { super(); }
-    name(){return "French";}
-    shortName(){return "fr"}
+    constructor() {
+        super();
+        this.row_types = { };
+        this.row_defs = [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
     formatDate(date){
         var hours = frenchHoursToText(date.getHours());
         var heures = frenchHeures(date.getHours());
@@ -66,6 +81,9 @@ class FrenchDateFormatter extends DateFormatter {
             return [ hours, heures , mins_txt ];
         }
     }
+    defaultRowTypes(){ return this.row_types;}
+
+    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = FrenchDateFormatter;

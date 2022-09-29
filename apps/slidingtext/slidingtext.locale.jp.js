@@ -28,16 +28,16 @@ const japaneseMinuteStr = [ ["", "PUN"],
 
 function japaneseHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return japaneseHourStr[hours];
 }
 
 function japaneseMinsToText(mins){
-    if(mins == 0){
+    if(mins === 0){
         return ["",""];
-    } else if(mins == 30)
+    } else if(mins === 30)
         return ["HAN",""];
     else {
         var units = mins % 10;
@@ -59,14 +59,32 @@ function japaneseMinsToText(mins){
 }
 
 class JapaneseDateFormatter extends DateFormatter {
-    constructor() { super(); }
-    name(){return "Japanese (Romanji)";}
-    shortName(){return "jp"}
+    constructor() {
+        super();
+        this.row_types = { };
+        this.row_defs = [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
     formatDate(date){
         var hours_txt = japaneseHoursToText(date.getHours());
         var mins_txt = japaneseMinsToText(date.getMinutes());
         return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
     }
+    defaultRowTypes(){ return this.row_types;}
+
+    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = JapaneseDateFormatter;

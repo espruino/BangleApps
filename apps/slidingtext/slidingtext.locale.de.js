@@ -45,10 +45,14 @@ const germanUnit = ["",//0
 
 function germanHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
-    return germanNumberStr[hours][0];
+    if(hours === 1){
+        return "EIN"
+    } else {
+        return germanNumberStr[hours][0];
+    }
 }
 
 function germanMinsToText(mins) {
@@ -64,16 +68,31 @@ function germanMinsToText(mins) {
 }
 
 class GermanDateFormatter extends DateFormatter {
-    constructor() { super();}
-    name(){return "German";}
-    shortName(){return "de"}
+    constructor() {
+        super();
+        this.row_types = { };
+        this.row_defs = [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();
         var hours = germanHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             var hours = germanHoursToText(hourOfDay);
             return [hours,"UHR", "","",""];
         } /*else if(mins == 30){
@@ -90,6 +109,9 @@ class GermanDateFormatter extends DateFormatter {
             return [hours, "UHR", mins_txt[0],mins_txt[1]];
         }
     }
+    defaultRowTypes(){ return this.row_types;}
+
+    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = GermanDateFormatter;

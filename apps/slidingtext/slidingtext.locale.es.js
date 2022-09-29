@@ -34,7 +34,7 @@ const spanishNumberStr = [ ["ZERO"], // 0
 
 function spanishHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return spanishNumberStr[hours][0];
@@ -45,9 +45,24 @@ function spanishMinsToText(mins){
 }
 
 class SpanishDateFormatter extends DateFormatter {
-    constructor() { super();}
-    name(){return "Spanish";}
-    shortName(){return "es"}
+    constructor() {
+        super();
+        this.row_types = { };
+        this.row_defs = [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
     formatDate(date){
         var mins = date.getMinutes();
         var hourOfDay = date.getHours();
@@ -57,13 +72,13 @@ class SpanishDateFormatter extends DateFormatter {
         var hours = spanishHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             return [hours,"", "","",""];
-        } else if(mins == 30){
+        } else if(mins === 30){
             return [hours, "Y", "MEDIA",""];
-        } else if(mins == 15){
+        } else if(mins === 15){
             return [hours, "Y", "CUARTO",""];
-        } else if(mins == 45) {
+        } else if(mins === 45) {
             return [hours, "MENOS", "CUARTO",""];
         } else if(mins > 30){
             var mins_txt = spanishMinsToText(60-mins);
@@ -73,6 +88,9 @@ class SpanishDateFormatter extends DateFormatter {
             return [hours, "Y", mins_txt[0],mins_txt[1]];
         }
     }
+    defaultRowTypes(){ return this.row_types;}
+
+    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = SpanishDateFormatter;
