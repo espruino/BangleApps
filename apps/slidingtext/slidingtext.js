@@ -308,21 +308,23 @@ const row_types = {
   }
 };
 
-var row_defs;
-var row_displays;
-function init_display() {
+let row_displays;
+function init_display(settings) {
+  if(row_displays != null){
+    return;
+  }
+  if(settings == null){
+    settings = {};
+  }
   row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
-  console.log("row_types:"+ JSON.stringify(row_types) );
-  if(row_defs == null){
-    row_defs = date_formatter.defaultRowDefs();
-  }
+  mergeMaps(row_types,settings.row_types);
+  var row_defs = (settings.row_defs != null)? settings.row_defs : date_formatter.defaultRowDefs();
   row_displays = [];
+
   for(var i=0; i< row_defs.length; i++){
     var row_def = row_defs[i];
-    console.log("row_def:"+ JSON.stringify(row_def) );
     var row_type_val = row_types[row_def.type];
-    console.log("row_type_val:"+ JSON.stringify(row_type_val) );
     var row_type = create_row_type(row_type_val,row_def);
     // we now create the number of row specified of that type
     for(var j=0; j<row_def.rows; j++){
@@ -332,7 +334,10 @@ function init_display() {
 }
 
 function mergeMaps(map1,map2){
-  var key;
+  if(map2 == null){
+    console.log("no merge:" + map2);
+    return;
+  }
   Object.keys(map2).forEach(key => {
     if(map1.hasOwnProperty(key)){
       map1[key] = mergeObjects(map1[key], map2[key]);
@@ -378,25 +383,17 @@ const Y_RESERVED = 20;
  * takes a json definition for a row type and creates an instance
  */
 function create_row_type(row_type, row_def){
-  console.log("create_row_def:"+ JSON.stringify(row_def) );
-  console.log("create_row_type:"+ JSON.stringify(row_type) );
   var speed = speeds[row_type.speed];
-  console.log("speed:"+ speed );
   var rotation = rotations[row_type.angle_to_horizontal];
-  console.log("rotation:"+ rotation);
   var height = heights[row_type.size];
-  console.log("height:"+ height);
   var scroll_ins = [];
   if(row_type.scroll_in.includes('left')){
-    console.log("scroll in left");
     scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
   }
   if(row_type.scroll_in.includes('right')){
-    console.log("scroll in right");
     scroll_ins.push((row_display,txt)=> row_display.scrollInFromRight(txt));
   }
   if(row_type.scroll_in.includes('up')){
-    console.log("scroll in up");
     scroll_ins.push((row_display,txt)=> row_display.scrollInFromBottom(txt));
   }
   var scroll_in;
@@ -413,15 +410,12 @@ function create_row_type(row_type, row_def){
 
   var scroll_offs = [];
   if(row_type.scroll_off.includes('left')){
-    console.log("scroll off left");
     scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
   }
   if(row_type.scroll_off.includes('right')){
-    console.log("scroll off right");
     scroll_offs.push((row_display)=> row_display.scrollOffToRight());
   }
   if(row_type.scroll_off.includes('down')){
-    console.log("scroll off down");
     scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
   }
   var scroll_off;
@@ -436,7 +430,6 @@ function create_row_type(row_type, row_def){
     };
   }
   var version = bangleVersion() - 1;
-  console.log("color:" + row_type.color);
   return {
     row_speed: speed,
     row_height: height[version],
@@ -515,9 +508,7 @@ function reset_clock(hard_reset){
     }
   } else {
     // do a hard reset and clear everything out
-    for (var i = 0; i < row_displays.length; i++) {
-      row_displays[i].reset(hard_reset);
-    }
+    row_displays.forEach(row_display => row_display.reset(hard_reset));
   }
   reset_commands();
 }
@@ -711,16 +702,13 @@ function load_settings() {
   var setScheme = false;
   try {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
-    settings = { date_format: 'en' };
+    settings = { date_format: 'dgt'};
     if (settings != null) {
-      console.log("loaded:" + JSON.stringify(settings));
+      console.log("loaded settings:" + JSON.stringify(settings));
 
       if (settings.date_format != null) {
         set_dateformat(settings.date_format);
-        //if (settings.style_settings != null) {
-        //  style_settings = settings.style_settings;
-        //}
-        init_display();
+        init_display(settings);
       }
       if (settings.color_scheme != null) {
         set_colorscheme(settings.color_scheme);
@@ -739,14 +727,13 @@ function load_settings() {
     console.log("failed to load settings:" + e);
   }
   // just set up as default
+  console.log("set_schema:" + setScheme);
   if (!setScheme) {
     set_dateformat("default");
     init_display();
     updateColorScheme();
   }
-  if(row_displays == null){
-    init_display();
-  }
+  init_display();
   enable_live_controls = true;
 }
 
