@@ -8,9 +8,8 @@
     }
     console.log("loaded:" + JSON.stringify(settings));
     var locale_mappings = {
-        'en' : { date_format: 'en' },
+        'en' : { date_formatter: 'en' },
         'en patchwork': {
-            date_format: 'en patchwork',
             date_formatter: 'en',
             row_types: {
                 large:{
@@ -38,9 +37,8 @@
                 }
             ]
         },
-        'en2': { date_format: 'en2' },
-        'en2 patchwork': { date_format: 'en2 patchwork',
-            date_formatter: 'en2',
+        'en2': { date_formatter: 'en2' },
+        'en2 patchwork': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
                     scroll_off: ['right'],
@@ -83,15 +81,32 @@
                 },
             ]
         },
-        'French': { date_format:'fr'},
-        'German': { date_format: 'de'},
-        'Spanish': { date_format: 'es'},
-        'Japanese': { date_format: 'jp'},
+        'French': { date_formatter:'fr'},
+        'German': { date_formatter: 'de'},
+        'Spanish': { date_formatter: 'es'},
+        'Japanese': { date_formatter: 'jp'},
     }
     var locales = Object.keys(locale_mappings);
 
     function writeSettings() {
+        if(settings.date_format == null){
+            settings.date_format = 'en';
+        }
+        var styling = locale_mappings[settings.date_format];
+        settings.remove("date_formatter");
+        if(styling.date_formatter != null)
+            settings.date_formatter = styling.date_formatter;
+
+        settings.remove("row_types");
+        if(styling.row_types != null)
+            settings.row_types = styling.row_types;
+
+        settings.remove("row_defs");
+        if(styling.row_defs != null)
+            settings.row_defs = styling.row_defs;
+
         console.log("saving:" + JSON.stringify(settings));
+
         require('Storage').writeJSON(PREFERENCE_FILE, settings);
     }
 

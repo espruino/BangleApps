@@ -699,28 +699,19 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
 function loadSettings() {
   try {
     var settings = require("Storage").readJSON(PREFERENCE_FILE);
-    if (settings != null) {
-      console.log("loaded settings:" + JSON.stringify(settings));
-
-      if (settings.date_format != null) {
-        var format = setting.date_format;
-        if(settings.date_formatter != null)
-            format = settings.date_format;
-
-        setDateformat(format);
-        initDisplay(settings);
-      }
-      if (settings.color_scheme != null) {
-        setColorScheme(settings.color_scheme);
-      }
-      if (settings.enable_live_controls == null) {
-        settings.enable_live_controls = (bangleVersion() <= 1);
-      }
-      enable_live_controls = settings.enable_live_controls;
-    } else {
-      console.log("no settings to load");
-      enable_live_controls = (bangleVersion() <= 1);
+    if (settings == null || settings.date_formatter == null) {
+      settings.date_formatter = "en"
     }
+    console.log("loaded settings:" + JSON.stringify(settings));
+    setDateformat(settings.date_formatter);
+    initDisplay(settings);
+    if (settings.color_scheme != null) {
+        setColorScheme(settings.color_scheme);
+    }
+    if (settings.enable_live_controls == null) {
+        settings.enable_live_controls = (bangleVersion() <= 1);
+    }
+    enable_live_controls = settings.enable_live_controls;
     console.log("enable_live_controls=" + enable_live_controls);
   } catch (e) {
     console.log("failed to load settings:" + e);
