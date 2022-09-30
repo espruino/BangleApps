@@ -698,9 +698,15 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
  */
 function loadSettings() {
   try {
-    var settings = require("Storage").readJSON(PREFERENCE_FILE);
-    if (settings == null || settings.date_formatter == null) {
-      settings.date_formatter = "en"
+    var settings = Object.assign({},
+        require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+    if (settings.date_formatter == null) {
+      // for backward compatibility
+      if(settings.date_format != null){
+        settings.date_formatter = settings.date_format;
+      } else {
+        settings.date_formatter = "en";
+      }
     }
     console.log("loaded settings:" + JSON.stringify(settings));
     setDateformat(settings.date_formatter);

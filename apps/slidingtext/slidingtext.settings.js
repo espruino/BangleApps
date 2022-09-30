@@ -9,7 +9,7 @@
     console.log("loaded:" + JSON.stringify(settings));
     var locale_mappings = {
         'en' : { date_formatter: 'en' },
-        'en patchwork': {
+        'en p': {
             date_formatter: 'en',
             row_types: {
                 large:{
@@ -38,7 +38,7 @@
             ]
         },
         'en2': { date_formatter: 'en2' },
-        'en2 patchwork': { date_formatter: 'en2',
+        'en2 p': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
                     scroll_off: ['right'],
@@ -81,10 +81,10 @@
                 },
             ]
         },
-        'French': { date_formatter:'fr'},
-        'German': { date_formatter: 'de'},
-        'Spanish': { date_formatter: 'es'},
-        'Japanese': { date_formatter: 'jp'},
+        'fr': { date_formatter:'fr'},
+        'de': { date_formatter: 'de'},
+        'es': { date_formatter: 'es'},
+        'jp': { date_formatter: 'jp'},
     }
     var locales = Object.keys(locale_mappings);
 
