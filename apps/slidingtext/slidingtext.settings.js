@@ -103,7 +103,7 @@
         if(styling.row_types != null)
             settings.row_types = styling.row_types;
 
-        settings.delete("row_defs");
+        settings.row_defs = [];
         if(styling.row_defs != null)
             settings.row_defs = styling.row_defs;
 
