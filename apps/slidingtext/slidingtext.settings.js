@@ -13,7 +13,9 @@
             date_formatter: 'en',
             row_types: {
                 large:{
-                    angle_to_horizontal: 90
+                    angle_to_horizontal: 90,
+                    scroll_off: ['down'],
+                    scroll_in: ['up'],
                 },
                 medium: {
                     size: 'msmall'
@@ -49,7 +51,6 @@
                     angle_to_horizontal: 0
                 },
                 large: {
-                    size: 'vlarge',
                     angle_to_horizontal: 90,
                     speed: 'slow',
                     color: 'major',

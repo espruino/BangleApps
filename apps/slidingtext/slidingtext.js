@@ -319,8 +319,9 @@ function initDisplay(settings) {
   var row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
   mergeMaps(row_types,settings.row_types);
-  var row_defs = (settings.row_defs != null && !settings.row_defs.isEmpty())?
+  var row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
       settings.row_defs : date_formatter.defaultRowDefs();
+  console.log("row_defs " + JSON.stringify(row_defs));
 
   row_displays = [];
   for(var i=0; i< row_defs.length; i++){
@@ -357,7 +358,8 @@ function mergeObjects(obj1, obj2){
 
 
 const heights = {
-  vsmall: [20,15],
+  vvsmall: [20,15],
+  vsmall: [23,18],
   small: [25,20],
   msmall: [30,22],
   medium: [40,25],
@@ -421,13 +423,13 @@ function create_row_type(row_type, row_def){
     scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
   }
   var scroll_off;
-  if(scroll_offs.size === 0){
+  if(scroll_offs.length === 0){
     scroll_off = (row_display)=> row_display.scrollOffToLeft();
-  } else if(scroll_offs.size === 1){
+  } else if(scroll_offs.length === 1){
     scroll_off = scroll_offs[0];
   } else {
     scroll_off = (row_display) =>{
-      var idx = (Math.random() * scroll_off.size) | 0;
+      var idx = (Math.random() * scroll_off.length) | 0;
       return scroll_offs[idx](row_display);
     };
   }
@@ -714,10 +716,10 @@ function loadSettings() {
     setDateformat(settings.date_formatter);
     initDisplay(settings);
     if (settings.color_scheme != null) {
-        setColorScheme(settings.color_scheme);
+      setColorScheme(settings.color_scheme);
     }
     if (settings.enable_live_controls == null) {
-        settings.enable_live_controls = (bangleVersion() <= 1);
+      settings.enable_live_controls = (bangleVersion() <= 1);
     }
     enable_live_controls = settings.enable_live_controls;
     console.log("enable_live_controls=" + enable_live_controls);
