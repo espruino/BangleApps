@@ -67,3 +67,7 @@
       Option to disable auto-open of messages
       Option to make message icons monochrome (not colored)
       messages widget buzz now returns a promise
+0.51: Emit "message events"
+      Setting to hide widget
+      Add custom event handlers to prevent default app form loading
+      Move WIDGETS.messages.buzz() to require("messages").buzz()
