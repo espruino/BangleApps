@@ -1,6 +1,7 @@
 let unlockedDrawInterval = [];
 let lockedDrawInterval = [];
 let showWidgets = false;
+let firstDraw = true;
 
 {
   let watchface = require("Storage").readJSON("imageclock.face.json");
@@ -661,7 +662,6 @@ let showWidgets = false;
 
 
   let lastDrawTime = 0;
-  let firstDraw = true;
 
   let lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
   let unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
@@ -801,7 +801,7 @@ let showWidgets = false;
   if (!global.WIDGETS) Bangle.loadWidgets();
   clearWidgetsDraw();
 
-  handleLock(Bangle.isLocked());
+  handleLock(Bangle.isLocked(), true);
 
   Bangle.setUI({ 
     mode : "clock",
@@ -832,6 +832,7 @@ let showWidgets = false;
       }
       delete lockedDrawInterval;
       delete showWidgets;
+      delete firstDraw;
 
       cleanupDelays();
       restoreWidgetDraw();
