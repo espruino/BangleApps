@@ -93,15 +93,14 @@
             settings.date_format = 'en';
         }
         var styling = locale_mappings[settings.date_format];
-        settings.remove("date_formatter");
         if(styling.date_formatter != null)
             settings.date_formatter = styling.date_formatter;
 
-        settings.remove("row_types");
+        settings.row_types = {};
         if(styling.row_types != null)
             settings.row_types = styling.row_types;
 
-        settings.remove("row_defs");
+        settings.row_defs = {};
         if(styling.row_defs != null)
             settings.row_defs = styling.row_defs;
 
