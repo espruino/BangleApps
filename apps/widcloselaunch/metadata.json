@@ -10,6 +10,6 @@
   "supports": ["BANGLEJS2"],
   "screenshots": [{"url":"screenshot_light.png"},{"url":"screenshot_dark.png"}],
   "storage": [
-    {"name":"widclose.wid.js","url":"widget.js"}
+    {"name":"widcloselaunch.wid.js","url":"widget.js"}
   ]
 }
