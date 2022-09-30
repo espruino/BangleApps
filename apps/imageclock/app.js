@@ -619,7 +619,7 @@ let showWidgets = false;
     if (e.confidence > 70){
       pulse = e.bpm;
       if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
-        print("Redrawing on HRM");
+        //print("Redrawing on HRM");
         initialDraw(watchfaceResources, watchface);
       }
     }
