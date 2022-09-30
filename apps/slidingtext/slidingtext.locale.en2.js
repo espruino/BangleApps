@@ -109,13 +109,13 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
         var hours = hoursToText(hourOfDay);
         // Deal with the special times first
         if(mins === 0){
-            return [hours,"", "O'","CLOCK", date_txt];
+            return [hours,"", "O'","CLOCK","", date_txt];
         } else if(mins === 30){
-            return ["","HALF", "PAST", "", hours];
+            return ["","HALF", "PAST", "", hours, date_txt];
         } else if(mins === 15){
-            return ["","QUARTER", "PAST", "", hours];
+            return ["","QUARTER", "PAST", "", hours, date_txt];
         } else if(mins === 45) {
-            return ["", "QUARTER", "TO", "", hours];
+            return ["", "QUARTER", "TO", "", hours, date_txt];
         }
         var mins_txt;
         var from_to;
@@ -130,12 +130,12 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
             mins_txt = numberToText(mins_value);
         }
 
-        if(mins_txt[1] != '') {
+        if(mins_txt[1] !== '') {
             return ['', mins_txt[0], mins_txt[1], from_to, hours, date_txt];
         } else {
-            if(mins_value % 5 == 0) {
+            if(mins_value % 5 === 0) {
                 return ['', mins_txt[0], from_to, '', hours, date_txt];
-            } else if(mins_value == 1){
+            } else if(mins_value === 1){
                 return ['', mins_txt[0], 'MINUTE', from_to, hours, date_txt];
             } else {
                 return ['', mins_txt[0], 'MINUTES', from_to, hours, date_txt];

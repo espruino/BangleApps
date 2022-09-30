@@ -14,7 +14,7 @@ const color_schemes = [
   {
     name: "black",
     background : [0.0,0.0,0.0],
-    main_bar: [1.0,1.0,1.0],
+    main_bar: [1.0,0.0,0.0],
     other_bars: [0.9,0.9,0.9],
   },
   {
@@ -37,8 +37,8 @@ const color_schemes = [
   },
   {
     name: "blue",
-    background : [0.4,0.7,1.0],
-    main_bar: [1.0,1.0,1.0],
+    background : [0.1,0.2,1.0],
+    main_bar: [1.0,1.0,0.0],
     other_bars: [0.9,0.9,0.9]
   }
 ];
@@ -66,17 +66,12 @@ let command_stack_high_priority = [];
 let command_stack_low_priority = [];
 
 function next_command(){
-  command = command_stack_high_priority.pop();
+  var command = command_stack_high_priority.pop();
   if(command == null){
-    //console.log("Low priority command");
     command = command_stack_low_priority.pop();
-  } else {
-    //console.log("High priority command");
   }
   if(command != null){
     command.call();
-  } else {
-    //console.log("no command");
   }
 }
 
@@ -129,7 +124,6 @@ class ShiftText {
   setColor(color){ this.color = color; }
   setBgColor(bg_color){ this.bg_color = bg_color; }
   reset(hard_reset) {
-    //console.log("reset");
     this.hide();
     this.x = this.init_x;
     this.y = this.init_y;
@@ -162,14 +156,12 @@ class ShiftText {
     this.x = x;
     this.y = y;
     this.txt = txt;
-    //console.log("setTextPosition: (" + x + "," + y + ") " + txt);
     this.show();
   }
   setTextXPosition(txt,x){
     this.hide();
     this.x = x;
     this.txt = txt;
-    //console.log("setTextXPosition: (" + x + ") " + txt);
     this.show();
   }
   setTextYPosition(txt,y){
@@ -181,7 +173,6 @@ class ShiftText {
   moveTo(new_x,new_y){
     this.tgt_x = new_x;
     this.tgt_y = new_y;
-    //console.log("moveTo: (" + this.tgt_x + "," + this.tgt_y + ") ");
     this._doMove();
   }
   moveToX(new_x){
@@ -197,14 +188,12 @@ class ShiftText {
       to_y = this.init_y;
 
     this.setTextPosition(txt, this.init_x, g.getHeight() + 2*this.font_size);
-    //console.log("scrollInFromBottom y:" + this.y + "->"  + to_y + " -> " + txt)
     this.moveTo(this.init_x,to_y);
   }
   scrollInFromLeft(txt,to_x){
     if(to_x == null)
       to_x = this.init_x;
 
-    //console.log("scrollInFromLeft x:" + this.x + "->"  + to_x + " -> " + txt)
     this.setTextPosition(txt, -txt.length * this.font_size - this.font_size, this.init_y);
     this.moveTo(to_x,this.init_y);
   }
@@ -212,20 +201,16 @@ class ShiftText {
     if(to_x == null)
       to_x = this.init_x;
 
-    //console.log("scrollInFromRight x:" + this.x + "->"  + to_x + " -> " + txt)
     this.setTextPosition(txt, g.getWidth() + this.font_size, this.init_y);
     this.moveTo(to_x,this.init_y);
   }
   scrollOffToLeft(){
-    //console.log("scrollOffToLeft");
     this.moveTo(-this.txt.length * this.font_size, this.init_y);
   }
   scrollOffToRight(){
-    //console.log("scrollOffToRight");
     this.moveTo(g.getWidth() + this.font_size, this.init_y);
   }
   scrollOffToBottom(){
-    //console.log("scrollOffToBottom");
     this.moveTo(this.init_x,g.getHeight() + this.font_size);
   }
   onFinished(finished_callback){
@@ -270,7 +255,6 @@ class ShiftText {
     if(!finished){
       this.timeoutId = setTimeout(this._doMove.bind(this), this.freq_millis);
     } else if(this.finished_callback != null){
-      //console.log("finished - calling:" + this.finished_callback);
       this.finished_callback.call();
       this.finished_callback = null;
     }
@@ -321,18 +305,15 @@ function initDisplay(settings) {
   mergeMaps(row_types,settings.row_types);
   var row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
       settings.row_defs : date_formatter.defaultRowDefs();
-  console.log("row_defs " + JSON.stringify(row_defs));
 
   row_displays = [];
-  for(var i=0; i< row_defs.length; i++){
-    var row_def = row_defs[i];
-    var row_type_val = row_types[row_def.type];
-    var row_type = create_row_type(row_type_val,row_def);
-    // we now create the number of row specified of that type
+  row_defs.forEach(row_def =>{
+    var row_type = create_row_type(row_types[row_def.type],row_def);
+    // we now create the number of rows specified of that type
     for(var j=0; j<row_def.rows; j++){
       row_displays.push(create_row(row_type,j));
     }
-  }
+  });
 }
 
 function mergeMaps(map1,map2){
@@ -359,7 +340,7 @@ function mergeObjects(obj1, obj2){
 
 const heights = {
   vvsmall: [20,15],
-  vsmall: [23,18],
+  vsmall: [22,17],
   small: [25,20],
   msmall: [30,22],
   medium: [40,25],
@@ -468,7 +449,6 @@ function nextColorTheme(){
   if(color_scheme_index >= color_schemes.length){
     color_scheme_index = 0;
   }
-  //console.log("changing color scheme to " + color_schemes[color_scheme_index].name)
   updateColorScheme();
   resetClock(true);
   drawClock();
@@ -551,55 +531,43 @@ function drawClock(){
   for (var i = 0; i < rows.length; i++) {
     display = row_displays[i];
     var txt = rows[i];
-    //console.log(i + "->" + txt);
     display_row(display,txt);
   }
   // If the dateformatter has not returned enough
   // rows then treat the remaining rows as empty
   for (var j = i; j < row_displays.length; j++) {
     display = row_displays[j];
-    //console.log(i + "->''(empty)");
     display_row(display,'');
   }
   next_command();
-  //console.log(date);
 }
 
 function display_row(display,txt){
   if(display == null) {
-    console.log("no display for text:" + txt);
     return;
   }
 
   if(display.txt == null || display.txt === ''){
     if(txt !== '') {
-      command_stack_high_priority.unshift(
-          function () {
-            //console.log("move in new:" + txt);
+      command_stack_high_priority.unshift(()=>{
             display.onFinished(next_command);
             display.getRowContext().scroll_in(display,txt);
           }
       );
     }
   } else if(txt !== display.txt && display.txt != null){
-    command_stack_high_priority.push(
-        function(){
-          //console.log("move out:" + txt);
+    command_stack_high_priority.push(()=>{
           display.onFinished(next_command);
           display.getRowContext().scroll_off(display);
         }
     );
-    command_stack_low_priority.push(
-        function(){
-          //console.log("move in:" + txt);
+    command_stack_low_priority.push(() => {
           display.onFinished(next_command);
           display.getRowContext().scroll_in(display,txt);
         }
     );
   } else {
-    command_stack_high_priority.push(
-        function(){
-          //console.log("move in2:" + txt);
+    command_stack_high_priority.push(() => {
           display.setTextPosition(txt,display.init_x, display.init_y);
           next_command();
         }
@@ -735,9 +703,7 @@ function loadSettings() {
   enable_live_controls = true;
 }
 
-
 function button3pressed() {
-  console.log("button3pressed enable_live_controls=" + enable_live_controls);
   if (enable_live_controls) {
     nextColorTheme();
     resetClock(true);
@@ -759,7 +725,6 @@ function startTimers(){
   var date = new Date();
   var secs = date.getSeconds();
   var nextMinuteStart = 60 - secs;
-  //console.log("scheduling clock draw in " + nextMinuteStart + " seconds");
   setTimeout(scheduleDrawClock,nextMinuteStart * 1000);
   drawClock();
 }
