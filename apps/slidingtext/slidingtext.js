@@ -316,12 +316,13 @@ function initDisplay(settings) {
   if(settings == null){
     settings = {};
   }
-  row_type_overide = date_formatter.defaultRowTypes();
+  var row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
   mergeMaps(row_types,settings.row_types);
-  var row_defs = (settings.row_defs != null)? settings.row_defs : date_formatter.defaultRowDefs();
-  row_displays = [];
+  var row_defs = (settings.row_defs != null && !settings.row_defs.isEmpty())?
+      settings.row_defs : date_formatter.defaultRowDefs();
 
+  row_displays = [];
   for(var i=0; i< row_defs.length; i++){
     var row_def = row_defs[i];
     var row_type_val = row_types[row_def.type];
@@ -356,8 +357,9 @@ function mergeObjects(obj1, obj2){
 
 
 const heights = {
-  vsmall: [15,10],
+  vsmall: [20,15],
   small: [25,20],
+  msmall: [30,22],
   medium: [40,25],
   large: [50,40],
   vlarge: [60,50]

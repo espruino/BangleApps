@@ -14,6 +14,9 @@
             row_types: {
                 large:{
                     angle_to_horizontal: 90
+                },
+                medium: {
+                    size: 'msmall'
                 }
             },
             row_defs: [
@@ -100,7 +103,7 @@
         if(styling.row_types != null)
             settings.row_types = styling.row_types;
 
-        settings.row_defs = {};
+        settings.delete("row_defs");
         if(styling.row_defs != null)
             settings.row_defs = styling.row_defs;
 
