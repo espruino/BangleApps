@@ -149,23 +149,23 @@ function weekOfYear() {
 
 
 
- /************************************************
-  * Draw
-  */
- function draw() {
-   queueDraw();
+/************************************************
+* Draw
+*/
+function draw() {
+  queueDraw();
 
-   g.clearRect(0,24,W,H);
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
 
-   drawMainScreen();
- }
+  g.clearRect(0,24,W,H);
+
+  drawMainScreen();
+}
 
 
 
  function drawMainScreen(){
-   g.setFontUbuntuMono();
-   g.setFontAlign(-1, -1);
-
    // Get menu item based on x
    var menuItem = menu[settings.menuPosX];
    var cmd = menuItem.name.slice(0,5).toLowerCase();
@@ -190,6 +190,9 @@ function drawMenuItems(menuItem) {
 }
 
 function drawCursor(){
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
+
   g.clearRect(0, 27 + 28, 15, H);
   if(!Bangle.isLocked()){
     g.drawString(">", -2, ((settings.menuPosY % 4) + 1) * 27 + 28);
@@ -197,7 +200,6 @@ function drawCursor(){
 }
 
  function drawText(key, value, line){
-    g.setFontUbuntuMono();
     var x = 15;
     var y = line * 27 + 28;
     g.setColor(g.theme.fg);
@@ -271,17 +273,17 @@ function drawCursor(){
  });
 
 
- Bangle.on('lock', function(isLocked) {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = undefined;
-
-   draw();
- });
+Bangle.on('lock', function(isLocked) {
+  drawCursor();
+});
 
 
  Bangle.on('charging',function(charging) {
    if (drawTimeout) clearTimeout(drawTimeout);
    drawTimeout = undefined;
+
+   settings.menuPosX=0;
+   settings.menuPosY=0;
 
    draw();
  });
@@ -369,16 +371,15 @@ function drawCursor(){
  });
 
 
- /************************************************
-  * Startup Clock
-  */
+/************************************************
+* Startup Clock
+*/
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 
- // Show launcher when middle button pressed
- Bangle.setUI("clock");
+// Load and draw widgets
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
- // Load and draw widgets
- Bangle.loadWidgets();
- Bangle.drawWidgets();
-
- // Draw first time
- draw();
+// Draw first time
+draw();
