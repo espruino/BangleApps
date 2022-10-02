@@ -19,7 +19,9 @@
                     scroll_in: ['up'],
                 },
                 medium: {
-                    size: 'msmall'
+                    size: 'msmall',
+                    scroll_off: ['right'],
+                    scroll_in: ['right'],
                 }
             },
             row_defs: [
@@ -31,13 +33,13 @@
                 },
                 {
                     type: 'medium',
-                    init_coords: [0.3,0.1],
+                    init_coords: [0.29,0.1],
                     row_direction: [0.0,1.0],
                     rows: 2
                 },
                 {
                     type: 'small',
-                    init_coords: [0.3,0.9],
+                    init_coords: [0.29,0.9],
                     row_direction: [0.0,1.0],
                     rows: 1
                 }
@@ -74,7 +76,7 @@
                 },
                 {
                     type: 'large',
-                    init_coords: [0.7,0.9],
+                    init_coords: [0.7,0.99],
                     row_direction: [0.0,1.0],
                     rows: 1
                 },
