@@ -50,8 +50,8 @@
         'en2 p': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
-                    scroll_off: ['right'],
-                    scroll_in: ['right'],
+                    scroll_off: ['left'],
+                    scroll_in: ['left'],
                     angle_to_horizontal: 0
                 },
                 large: {
