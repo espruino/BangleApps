@@ -217,57 +217,57 @@ function drawCursor(){
  }
 
 
- function drawCmd(cmd){
-   var c = 0;
-   var x = 10;
-   var y = 28;
+function drawCmd(cmd){
+  var c = 0;
+  var x = 10;
+  var y = 28;
 
-   g.setColor("#0f0");
-   g.drawString("bjs", x+c, y);
-   c += g.stringWidth("bjs");
+  g.setColor("#0f0");
+  g.drawString("bjs", x+c, y);
+  c += g.stringWidth("bjs");
 
-   g.setColor(g.theme.fg);
-   g.drawString(":", x+c, y);
-   c += g.stringWidth(":");
+  g.setColor(g.theme.fg);
+  g.drawString(":", x+c, y);
+  c += g.stringWidth(":");
 
-   g.setColor("#0ff");
-   g.drawString("$ ", x+c, y);
-   c += g.stringWidth("$ ");
+  g.setColor("#0ff");
+  g.drawString("$ ", x+c, y);
+  c += g.stringWidth("$ ");
 
-   g.setColor(g.theme.fg);
-   g.drawString(cmd, x+c, y);
- }
+  g.setColor(g.theme.fg);
+  g.drawString(cmd, x+c, y);
+}
 
- function twoD(str){
-   return ("0" + str).slice(-2)
- }
-
-
- /************************************************
-  * Listener
-  */
- // timeout used to update every minute
- var drawTimeout;
-
- // schedule a draw for the next minute
- function queueDraw() {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = setTimeout(function() {
-     drawTimeout = undefined;
-     draw();
-   }, 60000 - (Date.now() % 60000));
- }
+function twoD(str){
+  return ("0" + str).slice(-2)
+}
 
 
- // Stop updates when LCD is off, restart when on
- Bangle.on('lcdPower',on=>{
-   if (on) {
-     draw(); // draw immediately, queue redraw
-   } else { // stop draw timer
-     if (drawTimeout) clearTimeout(drawTimeout);
-     drawTimeout = undefined;
-   }
- });
+/************************************************
+* Listener
+*/
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
+});
 
 
 Bangle.on('lock', function(isLocked) {
@@ -275,97 +275,97 @@ Bangle.on('lock', function(isLocked) {
 });
 
 
- Bangle.on('charging',function(charging) {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = undefined;
+Bangle.on('charging',function(charging) {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
 
-   settings.menuPosX=0;
-   settings.menuPosY=0;
+  settings.menuPosX=0;
+  settings.menuPosY=0;
 
-   draw();
- });
+  draw();
+});
 
- var lock_input = 0;
+var lock_input = 0;
 
- Bangle.on('touch', function(btn, e){
-   if(lock_input > 0){
-     return;
-   }
-   lock_input = 0;
+Bangle.on('touch', function(btn, e){
+  if(lock_input > 0){
+    return;
+  }
+  lock_input = 0;
 
-   var left = parseInt(g.getWidth() * 0.22);
-   var right = g.getWidth() - left;
-   var upper = parseInt(g.getHeight() * 0.22) + 20;
-   var lower = g.getHeight() - upper;
+  var left = parseInt(g.getWidth() * 0.22);
+  var right = g.getWidth() - left;
+  var upper = parseInt(g.getHeight() * 0.22) + 20;
+  var lower = g.getHeight() - upper;
 
-   var is_upper = e.y < upper;
-   var is_lower = e.y > lower;
-   var is_left = e.x < left && !is_upper && !is_lower;
-   var is_right = e.x > right && !is_upper && !is_lower;
-   var is_center = !is_upper && !is_lower && !is_left && !is_right;
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
+  var is_left = e.x < left && !is_upper && !is_lower;
+  var is_right = e.x > right && !is_upper && !is_lower;
+  var is_center = !is_upper && !is_lower && !is_left && !is_right;
 
-   var oldYScreen = parseInt(settings.menuPosY/4);
-   if(is_lower){
-     if(settings.menuPosY >= menu[settings.menuPosX].items.length-1){
-      return;
-     }
+  var oldYScreen = parseInt(settings.menuPosY/4);
+  if(is_lower){
+    if(settings.menuPosY >= menu[settings.menuPosX].items.length-1){
+    return;
+    }
 
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY++;
-     if(parseInt(settings.menuPosY/4) == oldYScreen){
-      drawCursor();
-      return;
-     }
-   }
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY++;
+    if(parseInt(settings.menuPosY/4) == oldYScreen){
+    drawCursor();
+    return;
+    }
+  }
 
-   if(is_upper){
-     if(e.y < 20){ // Reserved for widget clicks
-       return;
-     }
-
-     if(settings.menuPosY <= 0){
-      return;
-     }
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY--;
-     settings.menuPosY = settings.menuPosY < 0 ? 0 : settings.menuPosY;
-
-     if(parseInt(settings.menuPosY/4) == oldYScreen){
-      drawCursor();
-      return;
-     }
-   }
-
-   if(is_right){
-     Bangle.buzz(40, 0.6);
-     settings.menuPosX = (settings.menuPosX+1) % menu.length;
-     settings.menuPosY = 0;
-   }
-
-   if(is_left){
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY = 0;
-     settings.menuPosX  = settings.menuPosX-1;
-     settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-   }
-
-   if(is_center){
-    if(!canRunMenuItem()){
+  if(is_upper){
+    if(e.y < 20){ // Reserved for widget clicks
       return;
     }
-    runMenuItem();
-   }
 
-   draw();
- });
+    if(settings.menuPosY <= 0){
+    return;
+    }
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY--;
+    settings.menuPosY = settings.menuPosY < 0 ? 0 : settings.menuPosY;
 
- E.on("kill", function(){
-   try{
-     storage.write(SETTINGS_FILE, settings);
-   } catch(ex){
-     // If this fails, we still kill the app...
-   }
- });
+    if(parseInt(settings.menuPosY/4) == oldYScreen){
+    drawCursor();
+    return;
+    }
+  }
+
+  if(is_right){
+    Bangle.buzz(40, 0.6);
+    settings.menuPosX = (settings.menuPosX+1) % menu.length;
+    settings.menuPosY = 0;
+  }
+
+  if(is_left){
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY = 0;
+    settings.menuPosX  = settings.menuPosX-1;
+    settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
+  }
+
+  if(is_center){
+  if(!canRunMenuItem()){
+    return;
+  }
+  runMenuItem();
+  }
+
+  draw();
+});
+
+E.on("kill", function(){
+  try{
+    storage.write(SETTINGS_FILE, settings);
+  } catch(ex){
+    // If this fails, we still kill the app...
+  }
+});
 
 
 /************************************************
