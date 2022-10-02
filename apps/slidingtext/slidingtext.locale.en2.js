@@ -2,51 +2,6 @@ var DateFormatter = require("slidingtext.dtfmt.js");
 const hoursToText = require("slidingtext.utils.en.js").hoursToText;
 const numberToText = require("slidingtext.utils.en.js").numberToText;
 
-/**
- alternatives:
- row_types: {
-                 vsmall: {
-                    scroll_off: ['right'],
-                    scroll_in: ['right'],
-                    angle_to_horizontal: 0
-                  },
-                  large: {
-                    size: 'vlarge',
-                    angle_to_horizontal: 90,
-                    speed: 'slow',
-                    color: 'major',
-                    scroll_off: ['down'],
-                    scroll_in: ['up']
-                  }
-                },
- row_defs: [
- {
-                    type: 'large',
-                    init_coords: [0.7,0.9],
-                    row_direction: [0.0,1.0],
-                    rows: 1
-                  },
- {
-                    type: 'small',
-                    init_coords: [0.05,0.35],
-                    row_direction: [0.0,1.0],
-                    rows: 3
-                  },
- {
-                    type: 'large',
-                    init_coords: [0.7,0.9],
-                    row_direction: [0.0,1.0],
-                  rows: 1
-                  },
- {
-                    type: 'vsmall',
-                    init_coords: [0.05,0.1],
-                    row_direction: [0.0,1.0],
-                    rows: 1
-                  },
- ]
-
- */
 class EnglishTraditionalDateFormatter extends DateFormatter {
     constructor() {
         super();

@@ -29,17 +29,18 @@
                     type: 'large',
                     init_coords: [0.05,0.99],
                     row_direction: [1.0,0.0],
+                    alignment: 'centre-6',
                     rows: 1
                 },
                 {
                     type: 'medium',
-                    init_coords: [0.29,0.1],
+                    init_coords: [0.27,0.1],
                     row_direction: [0.0,1.0],
                     rows: 2
                 },
                 {
                     type: 'small',
-                    init_coords: [0.29,0.9],
+                    init_coords: [0.27,0.9],
                     row_direction: [0.0,1.0],
                     rows: 1
                 }
@@ -64,8 +65,9 @@
             row_defs: [
                 {
                     type: 'large',
-                    init_coords: [0.7,0.9],
+                    init_coords: [0.7,0.99],
                     row_direction: [0.0,1.0],
+                    alignment: 'centre-6',
                     rows: 1
                 },
                 {
@@ -78,6 +80,7 @@
                     type: 'large',
                     init_coords: [0.7,0.99],
                     row_direction: [0.0,1.0],
+                    alignment: 'centre-6',
                     rows: 1
                 },
                 {
@@ -93,6 +96,7 @@
         'es': { date_formatter: 'es'},
         'jp': { date_formatter: 'jp'},
         'dgt': { date_formatter: 'dgt'},
+        'dgt2': { date_formatter: 'default'},
     }
     var locales = Object.keys(locale_mappings);
 

@@ -7,7 +7,7 @@ class DigitDateTimeFormatter {
                 scroll_off: ['down'],
                 scroll_in: ['up'],
                 size: 'large',
-                speed: 'vslow'
+                speed: 'slow'
             },
             small: {
                 angle_to_horizontal: 0,
@@ -19,9 +19,15 @@ class DigitDateTimeFormatter {
         this.row_defs = [
             {
                 type: 'large',
-                row_direction: [0.8,0.0],
-                init_coords: [0.1,0.35],
-                rows: 5
+                row_direction: [0.7,0.0],
+                init_coords: [0.15,0.35],
+                rows: 3
+            },
+            {
+                type: 'large',
+                row_direction: [0.7,0.0],
+                init_coords: [0.55,0.35],
+                rows: 2
             },
             {
                 type: 'small',

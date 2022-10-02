@@ -365,6 +365,7 @@ const speeds = {
 };
 
 const Y_RESERVED = 20;
+const SPACES = '                                                ';
 /**
  * takes a json definition for a row type and creates an instance
  */
@@ -415,6 +416,21 @@ function create_row_type(row_type, row_def){
       return scroll_offs[idx](row_display);
     };
   }
+
+  var text_formatter = (txt)=>txt;
+  if(row_def.hasOwnProperty("alignment")){
+    var alignment = row_def.alignment;
+    if(alignment.startsWith("centre")){
+      const padding = parseInt(alignment.split("-")[1]);
+      if(padding > 0){
+        text_formatter = (txt) => {
+          const front_spaces = (padding - txt.length)/2 | 0;
+          return front_spaces > 0? SPACES.substring(0,front_spaces + 1) + txt : txt;
+        };
+      }
+    }
+  }
+
   var version = bangleVersion() - 1;
   return {
     row_speed: speed,
@@ -424,7 +440,8 @@ function create_row_type(row_type, row_def){
     y: (row_no) => Y_RESERVED + row_def.init_coords[1] * (g.getHeight() - Y_RESERVED) + row_def.row_direction[1] * height[version] * row_no,
     scroll_in: scroll_in,
     scroll_off: scroll_off,
-    fg_color: () => (row_type.color === 'major')? main_color(): other_color()
+    fg_color: () => (row_type.color === 'major')? main_color(): other_color(),
+    row_text_formatter : text_formatter
   };
 }
 
@@ -531,7 +548,7 @@ function drawClock(){
   var display;
   for (var i = 0; i < rows.length; i++) {
     display = row_displays[i];
-    var txt = rows[i];
+    var txt = display.getRowContext().row_text_formatter(rows[i]);
     display_row(display,txt);
   }
   // If the dateformatter has not returned enough
@@ -605,7 +622,7 @@ class DigitDateTimeFormatter {
         angle_to_horizontal: 90,
         scroll_off: ['down'],
         scroll_in: ['up'],
-        size: 'vsmall'
+        size: 'vvsmall'
       }
     };
 
@@ -613,13 +630,13 @@ class DigitDateTimeFormatter {
       {
         type: 'large',
         row_direction: [0.0,1.0],
-        init_coords: [0.15,0.4],
+        init_coords: [0.1,0.35],
         rows: 1
       },
       {
         type: 'small',
         row_direction: [1.0,0],
-        init_coords: [0.9,0.95],
+        init_coords: [0.85,0.99],
         rows: 2
       }
     ];
