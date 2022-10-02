@@ -192,6 +192,7 @@ function drawMenuItems(menuItem) {
 function drawCursor(){
   g.setFontUbuntuMono();
   g.setFontAlign(-1, -1);
+  g.setColor(g.theme.fg);
 
   g.clearRect(0, 27 + 28, 15, H);
   if(!Bangle.isLocked()){
