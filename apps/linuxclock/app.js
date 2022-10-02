@@ -231,8 +231,8 @@ function drawCursor(){
    c += g.stringWidth(":");
 
    g.setColor("#0ff");
-   g.drawString("~$ ", x+c, y);
-   c += g.stringWidth("~$ ");
+   g.drawString("$ ", x+c, y);
+   c += g.stringWidth("$ ");
 
    g.setColor(g.theme.fg);
    g.drawString(cmd, x+c, y);
