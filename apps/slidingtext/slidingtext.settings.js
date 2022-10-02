@@ -13,7 +13,7 @@
             date_formatter: 'en',
             row_types: {
                 large:{
-                    size: 'medium',
+                    size: 'mlarge',
                     angle_to_horizontal: 90,
                     scroll_off: ['down'],
                     scroll_in: ['up'],
@@ -25,7 +25,7 @@
             row_defs: [
                 {
                     type: 'large',
-                    init_coords: [0.05,0.95],
+                    init_coords: [0.05,0.99],
                     row_direction: [1.0,0.0],
                     rows: 1
                 },
@@ -90,6 +90,7 @@
         'de': { date_formatter: 'de'},
         'es': { date_formatter: 'es'},
         'jp': { date_formatter: 'jp'},
+        'dgt': { date_formatter: 'dgt'},
     }
     var locales = Object.keys(locale_mappings);
 

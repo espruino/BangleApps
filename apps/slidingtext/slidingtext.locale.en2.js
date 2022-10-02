@@ -56,7 +56,7 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
                 speed: 'superslow',
                 scroll_off: ['down'],
                 scroll_in: ['up'],
-                size: 'vsmall',
+                size: 'vvsmall',
                 angle_to_horizontal: 90
             },
             small: {
@@ -69,6 +69,7 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
                 color: 'major',
                 scroll_off: ['left'],
                 scroll_in: ['left'],
+                size: 'mlarge',
                 angle_to_horizontal: 0
             }
         };

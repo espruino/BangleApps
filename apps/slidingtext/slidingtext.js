@@ -339,11 +339,12 @@ function mergeObjects(obj1, obj2){
 
 
 const heights = {
-  vvsmall: [20,15],
-  vsmall: [22,17],
+  vvsmall: [15,13],
+  vsmall: [20,15],
   small: [25,20],
   msmall: [30,22],
   medium: [40,25],
+  mlarge: [45,35],
   large: [50,40],
   vlarge: [60,50]
 };
@@ -511,6 +512,7 @@ function display_time(date){
 
 function drawClock(){
   var date = new Date();
+  date.setHours(12);
 
   // we don't want the time to be displayed
   // and then immediately be trigger another time
@@ -652,8 +654,12 @@ function setDateformat(shortname){
   console.log("setting date format:" + shortname);
   try {
     if (date_formatter == null || date_formatter.shortName() !== shortname) {
-      var date_formatter_class = require("slidingtext.locale." + shortname + ".js");
-      date_formatter = new date_formatter_class();
+      if(shortname === "default"){
+        date_formatter = new DigitDateTimeFormatter();
+      } else {
+        var date_formatter_class = require("slidingtext.locale." + shortname + ".js");
+        date_formatter = new date_formatter_class();
+      }
     }
   } catch(e){
     console.log("Failed to load " + shortname);
