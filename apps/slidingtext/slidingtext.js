@@ -512,7 +512,6 @@ function display_time(date){
 
 function drawClock(){
   var date = new Date();
-  date.setHours(12);
 
   // we don't want the time to be displayed
   // and then immediately be trigger another time
