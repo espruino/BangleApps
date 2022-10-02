@@ -165,18 +165,18 @@ function draw() {
 
 
 
- function drawMainScreen(){
-   // Get menu item based on x
-   var menuItem = menu[settings.menuPosX];
-   var cmd = menuItem.name.slice(0,5).toLowerCase();
-   drawCmd(cmd);
+function drawMainScreen(){
+  // Get menu item based on x
+  var menuItem = menu[settings.menuPosX];
+  var cmd = menuItem.name.slice(0,5).toLowerCase();
+  drawCmd(cmd);
 
-   // Draw menu items depending on our y value
-   drawMenuItems(menuItem);
+  // Draw menu items depending on our y value
+  drawMenuItems(menuItem);
 
-   // And draw the cursor
-   drawCursor();
- }
+  // And draw the cursor
+  drawCursor();
+}
 
 function drawMenuItems(menuItem) {
   var start = parseInt(settings.menuPosY / 4) * 4;
@@ -200,22 +200,25 @@ function drawCursor(){
   }
 }
 
- function drawText(key, value, line){
-    var x = 15;
-    var y = line * 27 + 28;
-    g.setColor(g.theme.fg);
+function drawText(key, value, line){
+  var x = 15;
+  var y = line * 27 + 28;
 
-    if(key){
-      key = (key.toLowerCase() + "    ").slice(0, 4) + "|";
-    } else {
-      key = ""
-    }
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
+  g.setColor(g.theme.fg);
 
-    value = String(value).replace("\n", " ");
-    g.drawString(key + value, x, y);
+  if(key){
+    key = (key.toLowerCase() + "    ").slice(0, 4) + "|";
+  } else {
+    key = ""
+  }
 
-    lock_input -= 1;
- }
+  value = String(value).replace("\n", " ");
+  g.drawString(key + value, x, y);
+
+  lock_input -= 1;
+}
 
 
 function drawCmd(cmd){
