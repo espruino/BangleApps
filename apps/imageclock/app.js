@@ -62,12 +62,12 @@ let firstDraw = true;
   let p1;
 
   if (settings.perflog){
-    startPerfLog = function(name){
+    Bangle.startPerfLog = function(name){
       let time = getTime();
       if (!performanceLog.start) performanceLog.start={};
       performanceLog.start[name] = time;
     };
-    endPerfLog = function (name){
+    Bangle.endPerfLog = function (name){
       let time = getTime();
       if (!performanceLog.last) performanceLog.last={};
       let duration = time - performanceLog.start[name];
@@ -80,7 +80,7 @@ let firstDraw = true;
       performanceLog.count[name]++;
     };
 
-    printPerfLog = function(){
+    Bangle.printPerfLog = function(){
       let result = "";
       let keys = [];
       for (let c in performanceLog.cum){
