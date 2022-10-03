@@ -4,7 +4,6 @@ let showWidgets = false;
 let firstDraw = true;
 
 {
-
   let watchface = require("Storage").readJSON("imageclock.face.json");
   let watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
   let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
@@ -81,23 +80,23 @@ let firstDraw = true;
       }
     };
   }
-
+  
   let delayTimeouts = [];
 
-  function delay(t) {
+  let delay = function(t) {
       return new Promise(function (resolve) {
           delayTimeouts.push(setTimeout(resolve, t));
       });
-  }
+  };
 
-  function cleanupDelays(){
+  let cleanupDelays = function(){
     for (let t of delayTimeouts){
       clearTimeout(t);
     }
     delayTimeouts = [];
-  }
+  };
   
-  function prepareImg(resource){
+  let prepareImg = function(resource){
     startPerfLog("prepareImg");
     //print("prepareImg: ", resource);
 
@@ -112,9 +111,9 @@ let firstDraw = true;
     }
     endPerfLog("prepareImg");
     return resource;
-  }
+  };
 
-  function getByPath(object, path, lastElem){
+  let getByPath = function(object, path, lastElem){
     startPerfLog("getByPath");
     //print("getByPath", path,lastElem);
     let current = object;
@@ -135,21 +134,21 @@ let firstDraw = true;
       return undefined;
     }
     return current;
-  }
+  };
 
-  function splitNumberToDigits(num){
+  let splitNumberToDigits = function(num){
     return String(num).split('').map(item => Number(item));
-  }
+  };
 
-  function isChangedNumber(element){
+  let isChangedNumber = function(element){
     return element.lastDrawnValue != getValue(element.Value);
-  }
+  };
 
-  function isChangedMultistate(element){
+  let isChangedMultistate = function(element){
     return element.lastDrawnValue != getMultistate(element.Value);
-  }
+  };
 
-  function drawNumber(graphics, resources, element){
+  let drawNumber = function(graphics, resources, element){
     startPerfLog("drawNumber");
     let number = getValue(element.Value);
     let spacing = element.Spacing ? element.Spacing : 0;
@@ -260,9 +259,9 @@ let firstDraw = true;
     element.lastDrawnValue = number;
 
     endPerfLog("drawNumber");
-  }
+  };
 
-  function drawElement(graphics, resources, pos, element, lastElem){
+  let drawElement = function(graphics, resources, pos, element, lastElem){
     startPerfLog("drawElement");
     let cacheKey = "_"+(lastElem?lastElem:"nole");
     if (!element.cachedImage) element.cachedImage={};
@@ -306,26 +305,26 @@ let firstDraw = true;
       endPerfLog("drawElement_g.drawImage");
     }
     endPerfLog("drawElement");
-  }
+  };
 
-  function getValue(value, defaultValue){
+  let getValue = function(value, defaultValue){
     if (typeof value == "string"){
       return numbers[value]();
     }
     if (value == undefined) return defaultValue;
     return value;
-  }
+  };
 
-  function getMultistate(name, defaultValue){
+  let getMultistate = function(name, defaultValue){
     if (typeof name == "string"){
       return multistates[name]();
     } else {
       if (name == undefined) return defaultValue;
     }
     return undefined;
-  }
+  };
 
-  function drawScale(graphics, resources, scale){
+  let drawScale = function(graphics, resources, scale){
     startPerfLog("drawScale");
     //print("drawScale", scale);
     let segments = scale.Segments;
@@ -343,9 +342,9 @@ let firstDraw = true;
     scale.lastDrawnValue = segmentsToDraw;
 
     endPerfLog("drawScale");
-  }
+  };
 
-  function drawImage(graphics, resources, image, name){
+  let drawImage = function(graphics, resources, image, name){
     startPerfLog("drawImage");
     //print("drawImage", image.X, image.Y, name);
     if (image.Value && image.Steps){
@@ -359,9 +358,9 @@ let firstDraw = true;
     }
 
     endPerfLog("drawImage");
-  }
+  };
 
-  function drawCodedImage(graphics, resources, image){
+  let drawCodedImage = function(graphics, resources, image){
     startPerfLog("drawCodedImage");
     let code = getValue(image.Value);
     //print("drawCodedImage", image, code);
@@ -388,9 +387,9 @@ let firstDraw = true;
     image.lastDrawnValue = code;
 
     startPerfLog("drawCodedImage");
-  }
+  };
 
-  function getWeatherCode(){
+  let getWeatherCode = function(){
     let jsonWeather = require("Storage").readJSON('weather.json');
     let weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
 
@@ -398,9 +397,9 @@ let firstDraw = true;
       return weather.code;
     }
     return undefined;
-  }
+  };
 
-  function getWeatherTemperature(){
+  let getWeatherTemperature = function(){
     let jsonWeather = require("Storage").readJSON('weather.json');
     let weather = (jsonWeather && jsonWeather.weather) ? jsonWeather.weather : undefined;
 
@@ -417,25 +416,25 @@ let firstDraw = true;
       }
     }
     return result;
-  }
+  };
 
-  function scaledown(value, min, max){
+  let scaledown = function(value, min, max){
     //print("scaledown", value, min, max);
     let scaled = E.clip(getValue(value),getValue(min,0),getValue(max,1));
     scaled -= getValue(min,0);
     scaled /= getValue(max,1);
     return scaled;
-  }
+  };
 
-  function radians(rotation){
+  let radians = function(rotation){
     let value = scaledown(rotation.RotationValue, rotation.MinRotationValue, rotation.MaxRotationValue);
     value -= rotation.RotationOffset ? rotation.RotationOffset : 0;
     value *= 360;
     value *= Math.PI / 180;
     return value;
-  }
+  };
 
-  function drawPoly(graphics, resources, element){
+  let drawPoly = function(graphics, resources, element){
       startPerfLog("drawPoly");
       let vertices = [];
 
@@ -465,9 +464,9 @@ let firstDraw = true;
       }
 
       endPerfLog("drawPoly");
-  }
+  };
 
-  function drawRect(graphics, resources, element){
+  let drawRect = function(graphics, resources, element){
       startPerfLog("drawRect");
       let vertices = [];
 
@@ -481,9 +480,9 @@ let firstDraw = true;
         endPerfLog("drawRect_g.fillRect");
       }
       endPerfLog("drawRect");
-  }
+  };
 
-  function drawCircle(graphics, resources, element){
+  let drawCircle = function(graphics, resources, element){
       startPerfLog("drawCircle");
 
       if (element.Filled){
@@ -496,7 +495,7 @@ let firstDraw = true;
         endPerfLog("drawCircle_g.drawCircle");
       }
       endPerfLog("drawCircle");
-  }
+  };
 
   let numbers = {};
   numbers.Hour = () => { return new Date().getHours(); };
@@ -549,7 +548,7 @@ let firstDraw = true;
   multistates.WeatherTemperatureUnit = () => { return getWeatherTemperature().unit; };
   multistates.StepsGoal = () => { return (numbers.Steps() >= (settings.stepsgoal || 10000)) ? "on": "off"; };
 
-  function drawMultiState(graphics, resources, element){
+  let drawMultiState = function(graphics, resources, element){
     startPerfLog("drawMultiState");
     //print("drawMultiState", element);
     let value = multistates[element.Value]();
@@ -557,7 +556,7 @@ let firstDraw = true;
     drawImage(graphics, resources, element, value);
     element.lastDrawnValue = value;
     endPerfLog("drawMultiState");
-  }
+  };
 
   let pulse,alt,temp,press;
 
@@ -568,10 +567,10 @@ let firstDraw = true;
   let drawingTime;
 
   let start;
-
+  
   let deferredTimout;
 
-  function initialDraw(resources, face){
+  let initialDraw = function(resources, face){
     //print("Free memory", process.memory(false).free);
     requestedDraws++;
     if (!isDrawing){
@@ -615,9 +614,9 @@ let firstDraw = true;
     } //else {
       //print("queued draw");
     //}
-  }
+  };
 
-  function handleHrm(e){
+  let handleHrm = function(e){
     if (e.confidence > 70){
       pulse = e.bpm;
       if (!redrawEvents || redrawEvents.includes("HRM") && !Bangle.isLocked()){
@@ -625,9 +624,9 @@ let firstDraw = true;
         initialDraw(watchfaceResources, watchface);
       }
     }
-  }
+  };
 
-  function handlePressure(e){
+  let handlePressure = function(e){
     alt = e.altitude;
     temp = e.temperature;
     press = e.pressure;
@@ -635,23 +634,23 @@ let firstDraw = true;
       //print("Redrawing on pressure");
       initialDraw(watchfaceResources, watchface);
     }
-  }
+  };
 
-  function handleCharging(e){
+  let handleCharging = function(e){
     if (!redrawEvents || redrawEvents.includes("charging") && !Bangle.isLocked()){
       //print("Redrawing on charging");
       initialDraw(watchfaceResources, watchface);
     }
-  }
+  };
 
 
-  function getMatchedWaitingTime(time){
+  let getMatchedWaitingTime = function(time){
     let result = time - (Date.now() % time);
     //print("Matched timeout", time, result);
     return result;
-  }
+  };
 
-  function setMatchedInterval(callable, time, intervalHandler, delay){
+  let setMatchedInterval = function(callable, time, intervalHandler, delay){
     //print("Setting matched interval for", time, intervalHandler);
     let matchedTime = getMatchedWaitingTime(time + delay);
     return setTimeout(()=>{
@@ -659,7 +658,7 @@ let firstDraw = true;
       if (intervalHandler) intervalHandler(interval);
       callable();
     }, matchedTime);
-  }
+  };
 
 
   let lastDrawTime = 0;
@@ -676,8 +675,8 @@ let firstDraw = true;
 
   let initialDrawTimeoutUnlocked;
   let initialDrawTimeoutLocked;
-
-  function handleLock(isLocked, forceRedraw){
+  
+  let handleLock = function(isLocked, forceRedraw){
     //print("isLocked", Bangle.isLocked());
     for (let i of unlockedDrawInterval){
       //print("Clearing unlocked", i);
@@ -719,13 +718,13 @@ let firstDraw = true;
       Bangle.setHRMPower(0, "imageclock");
       Bangle.setBarometerPower(0, 'imageclock');
     }
-  }
+  };
 
 
   let showWidgetsChanged = false;
   let currentDragDistance = 0;
 
-  function restoreWidgetDraw(){
+  let restoreWidgetDraw = function(){
     if (global.WIDGETS) {
       for (let w in global.WIDGETS) {
         let wd = global.WIDGETS[w];
@@ -733,9 +732,9 @@ let firstDraw = true;
         wd.area = originalWidgetArea[w];
       }
     }
-  }
+  };
   
-  function handleDrag(e){
+  let handleDrag = function(e){
     //print("handleDrag");
     currentDragDistance += e.dy;
     if (Math.abs(currentDragDistance) < 10) return;
@@ -758,7 +757,7 @@ let firstDraw = true;
       showWidgets = dragDown;
       initialDraw();
     }
-  }
+  };
 
   Bangle.on('drag', handleDrag);
 
@@ -784,7 +783,7 @@ let firstDraw = true;
   let originalWidgetDraw = {};
   let originalWidgetArea = {};
 
-  function clearWidgetsDraw(){
+  let clearWidgetsDraw = function(){
     //print("Clear widget draw calls");
     if (global.WIDGETS) {
       originalWidgetDraw = {};
