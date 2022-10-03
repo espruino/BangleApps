@@ -55,18 +55,18 @@ var H = g.getHeight();
      show: function() { dateMenu.items[0].emit("redraw"); },
      hide: function () {}
    },
+   { name: "day",
+    get: () => ({ text: getDay(), img: null}),
+    show: function() { dateMenu.items[2].emit("redraw"); },
+    hide: function () {}
+   },
    { name: "date",
      get: () => ({ text: getDate(), img: null}),
      show: function() { dateMenu.items[1].emit("redraw"); },
      hide: function () {}
    },
-   { name: "steps",
-     get: () => ({ text: Bangle.getHealthStatus("day").steps, img: null}),
-     show: function() { dateMenu.items[2].emit("redraw"); },
-     hide: function () {}
-   },
-   { name: "battery",
-     get: () => ({ text: E.getBattery() + (Bangle.isCharging() ? "%++" : "%"), img: null}),
+   { name: "week",
+     get: () => ({ text: weekOfYear(), img: null}),
      show: function() { dateMenu.items[3].emit("redraw"); },
      hide: function () {}
    },
@@ -130,37 +130,53 @@ function getDate(){
   return twoD(date.getDate()) + "." + twoD(date.getMonth());
 }
 
+function getDay(){
+  var date = new Date();
+  return locale.dow(date, true);
+}
+
+function weekOfYear() {
+  var date = new Date();
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
 
 
- /************************************************
-  * Draw
-  */
- function draw() {
-   queueDraw();
 
-   g.clear();
-   Bangle.drawWidgets();
+/************************************************
+* Draw
+*/
+function draw() {
+  queueDraw();
 
-   drawMainScreen();
- }
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
+
+  g.clearRect(0,24,W,H);
+
+  drawMainScreen();
+}
 
 
 
- function drawMainScreen(){
-   g.setFontUbuntuMono();
-   g.setFontAlign(-1, -1);
+function drawMainScreen(){
+  // Get menu item based on x
+  var menuItem = menu[settings.menuPosX];
+  var cmd = menuItem.name.slice(0,5).toLowerCase();
+  drawCmd(cmd);
 
-   // Get menu item based on x
-   var menuItem = menu[settings.menuPosX];
-   var cmd = menuItem.name.slice(0,5).toLowerCase();
-   drawCmd(cmd);
+  // Draw menu items depending on our y value
+  drawMenuItems(menuItem);
 
-   // Draw menu items depending on our y value
-   drawMenuItems(menuItem);
-
-   // And draw the cursor
-   drawCursor();
- }
+  // And draw the cursor
+  drawCursor();
+}
 
 function drawMenuItems(menuItem) {
   var start = parseInt(settings.menuPosY / 4) * 4;
@@ -174,194 +190,197 @@ function drawMenuItems(menuItem) {
 }
 
 function drawCursor(){
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
+  g.setColor(g.theme.fg);
+
   g.clearRect(0, 27 + 28, 15, H);
   if(!Bangle.isLocked()){
     g.drawString(">", -2, ((settings.menuPosY % 4) + 1) * 27 + 28);
   }
 }
 
- function drawText(key, value, line){
-    g.setFontUbuntuMono();
-    var x = 15;
-    var y = line * 27 + 28;
-    g.setColor(g.theme.fg);
+function drawText(key, value, line){
+  var x = 15;
+  var y = line * 27 + 28;
 
-    if(key){
-      key = (key.toLowerCase() + "    ").slice(0, 4) + "|";
-    } else {
-      key = ""
+  g.setFontUbuntuMono();
+  g.setFontAlign(-1, -1);
+  g.setColor(g.theme.fg);
+
+  if(key){
+    key = (key.toLowerCase() + "    ").slice(0, 4) + "|";
+  } else {
+    key = ""
+  }
+
+  value = String(value).replace("\n", " ");
+  g.drawString(key + value, x, y);
+
+  lock_input -= 1;
+}
+
+
+function drawCmd(cmd){
+  var c = 0;
+  var x = 10;
+  var y = 28;
+
+  g.setColor("#0f0");
+  g.drawString("bjs", x+c, y);
+  c += g.stringWidth("bjs");
+
+  g.setColor(g.theme.fg);
+  g.drawString(":", x+c, y);
+  c += g.stringWidth(":");
+
+  g.setColor("#0ff");
+  g.drawString("$ ", x+c, y);
+  c += g.stringWidth("$ ");
+
+  g.setColor(g.theme.fg);
+  g.drawString(cmd, x+c, y);
+}
+
+function twoD(str){
+  return ("0" + str).slice(-2)
+}
+
+
+/************************************************
+* Listener
+*/
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    draw(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
+});
+
+
+Bangle.on('lock', function(isLocked) {
+  drawCursor();
+});
+
+
+Bangle.on('charging',function(charging) {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+
+  settings.menuPosX=0;
+  settings.menuPosY=0;
+
+  draw();
+});
+
+var lock_input = 0;
+
+Bangle.on('touch', function(btn, e){
+  if(lock_input > 0){
+    return;
+  }
+  lock_input = 0;
+
+  var left = parseInt(g.getWidth() * 0.22);
+  var right = g.getWidth() - left;
+  var upper = parseInt(g.getHeight() * 0.22) + 20;
+  var lower = g.getHeight() - upper;
+
+  var is_upper = e.y < upper;
+  var is_lower = e.y > lower;
+  var is_left = e.x < left && !is_upper && !is_lower;
+  var is_right = e.x > right && !is_upper && !is_lower;
+  var is_center = !is_upper && !is_lower && !is_left && !is_right;
+
+  var oldYScreen = parseInt(settings.menuPosY/4);
+  if(is_lower){
+    if(settings.menuPosY >= menu[settings.menuPosX].items.length-1){
+    return;
     }
 
-    value = String(value).replace("\n", " ");
-    g.drawString(key + value, x, y);
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY++;
+    if(parseInt(settings.menuPosY/4) == oldYScreen){
+    drawCursor();
+    return;
+    }
+  }
 
-    lock_input -= 1;
- }
-
-
- function drawCmd(cmd){
-   var c = 0;
-   var x = 10;
-   var y = 28;
-
-   g.setColor("#0f0");
-   g.drawString("bjs", x+c, y);
-   c += g.stringWidth("bjs");
-
-   g.setColor(g.theme.fg);
-   g.drawString(":", x+c, y);
-   c += g.stringWidth(":");
-
-   g.setColor("#0ff");
-   g.drawString("~", x+c, y);
-   c += g.stringWidth("~");
-
-   g.setColor(g.theme.fg);
-   g.drawString("$", x+c, y);
-   c += g.stringWidth("$ ");
-
-   g.drawString(cmd, x+c, y);
- }
-
- function twoD(str){
-   return ("0" + str).slice(-2)
- }
-
-
- /************************************************
-  * Listener
-  */
- // timeout used to update every minute
- var drawTimeout;
-
- // schedule a draw for the next minute
- function queueDraw() {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = setTimeout(function() {
-     drawTimeout = undefined;
-     draw();
-   }, 60000 - (Date.now() % 60000));
- }
-
-
- // Stop updates when LCD is off, restart when on
- Bangle.on('lcdPower',on=>{
-   if (on) {
-     draw(); // draw immediately, queue redraw
-   } else { // stop draw timer
-     if (drawTimeout) clearTimeout(drawTimeout);
-     drawTimeout = undefined;
-   }
- });
-
-
- Bangle.on('lock', function(isLocked) {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = undefined;
-
-   draw();
- });
-
-
- Bangle.on('charging',function(charging) {
-   if (drawTimeout) clearTimeout(drawTimeout);
-   drawTimeout = undefined;
-
-   draw();
- });
-
- var lock_input = 0;
-
- Bangle.on('touch', function(btn, e){
-   if(lock_input > 0){
-     return;
-   }
-   lock_input = 0;
-
-   var left = parseInt(g.getWidth() * 0.22);
-   var right = g.getWidth() - left;
-   var upper = parseInt(g.getHeight() * 0.22) + 20;
-   var lower = g.getHeight() - upper;
-
-   var is_upper = e.y < upper;
-   var is_lower = e.y > lower;
-   var is_left = e.x < left && !is_upper && !is_lower;
-   var is_right = e.x > right && !is_upper && !is_lower;
-   var is_center = !is_upper && !is_lower && !is_left && !is_right;
-
-   var oldYScreen = parseInt(settings.menuPosY/4);
-   if(is_lower){
-     if(settings.menuPosY >= menu[settings.menuPosX].items.length-1){
-      return;
-     }
-
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY++;
-     if(parseInt(settings.menuPosY/4) == oldYScreen){
-      drawCursor();
-      return;
-     }
-   }
-
-   if(is_upper){
-     if(e.y < 20){ // Reserved for widget clicks
-       return;
-     }
-
-     if(settings.menuPosY <= 0){
-      return;
-     }
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY--;
-     settings.menuPosY = settings.menuPosY < 0 ? 0 : settings.menuPosY;
-
-     if(parseInt(settings.menuPosY/4) == oldYScreen){
-      drawCursor();
-      return;
-     }
-   }
-
-   if(is_right){
-     Bangle.buzz(40, 0.6);
-     settings.menuPosX = (settings.menuPosX+1) % menu.length;
-     settings.menuPosY = 0;
-   }
-
-   if(is_left){
-     Bangle.buzz(40, 0.6);
-     settings.menuPosY = 0;
-     settings.menuPosX  = settings.menuPosX-1;
-     settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-   }
-
-   if(is_center){
-    if(!canRunMenuItem()){
+  if(is_upper){
+    if(e.y < 20){ // Reserved for widget clicks
       return;
     }
-    runMenuItem();
-   }
 
-   draw();
- });
+    if(settings.menuPosY <= 0){
+    return;
+    }
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY--;
+    settings.menuPosY = settings.menuPosY < 0 ? 0 : settings.menuPosY;
 
- E.on("kill", function(){
-   try{
-     storage.write(SETTINGS_FILE, settings);
-   } catch(ex){
-     // If this fails, we still kill the app...
-   }
- });
+    if(parseInt(settings.menuPosY/4) == oldYScreen){
+    drawCursor();
+    return;
+    }
+  }
+
+  if(is_right){
+    Bangle.buzz(40, 0.6);
+    settings.menuPosX = (settings.menuPosX+1) % menu.length;
+    settings.menuPosY = 0;
+  }
+
+  if(is_left){
+    Bangle.buzz(40, 0.6);
+    settings.menuPosY = 0;
+    settings.menuPosX  = settings.menuPosX-1;
+    settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
+  }
+
+  if(is_center){
+  if(!canRunMenuItem()){
+    return;
+  }
+  runMenuItem();
+  }
+
+  draw();
+});
+
+E.on("kill", function(){
+  try{
+    storage.write(SETTINGS_FILE, settings);
+  } catch(ex){
+    // If this fails, we still kill the app...
+  }
+});
 
 
- /************************************************
-  * Startup Clock
-  */
+/************************************************
+* Startup Clock
+*/
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 
- // Show launcher when middle button pressed
- Bangle.setUI("clock");
+// Load and draw widgets
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
- // Load and draw widgets
- Bangle.loadWidgets();
-
- // Draw first time
- draw();
+// Draw first time
+draw();

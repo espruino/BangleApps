@@ -1,3 +1,4 @@
 0.01: Release
 0.02: Rewrite with new interface
 0.03: Added clock infos to expose timer functionality to clocks.
+0.04: Improvements of clock infos.
