@@ -4,6 +4,18 @@ let showWidgets = false;
 let firstDraw = true;
 
 {
+  let x = g.getWidth()/2;
+  let y = g.getHeight()/2;
+  g.setColor(g.theme.bg);
+  g.fillRect(x-49, y-19, x+49, y+19);
+  g.setColor(g.theme.fg);
+  g.drawRect(x-50, y-20, x+50, y+20);
+  y -= 4;
+  x -= 4*6;
+  g.setFont("6x8");
+  g.setFontAlign(-1,-1);
+  g.drawString("Loading...", x, y);
+
   let watchface = require("Storage").readJSON("imageclock.face.json");
   let watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
   let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
