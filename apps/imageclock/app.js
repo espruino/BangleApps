@@ -4,6 +4,7 @@ let showWidgets = false;
 let firstDraw = true;
 
 {
+
   let watchface = require("Storage").readJSON("imageclock.face.json");
   let watchfaceResources = require("Storage").readJSON("imageclock.resources.json");
   let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
@@ -80,7 +81,7 @@ let firstDraw = true;
       }
     };
   }
-  
+
   let delayTimeouts = [];
 
   function delay(t) {
@@ -567,7 +568,7 @@ let firstDraw = true;
   let drawingTime;
 
   let start;
-  
+
   let deferredTimout;
 
   function initialDraw(resources, face){
@@ -675,7 +676,7 @@ let firstDraw = true;
 
   let initialDrawTimeoutUnlocked;
   let initialDrawTimeoutLocked;
-  
+
   function handleLock(isLocked, forceRedraw){
     //print("isLocked", Bangle.isLocked());
     for (let i of unlockedDrawInterval){
@@ -798,9 +799,6 @@ let firstDraw = true;
     }
   }
   
-  if (!global.WIDGETS) Bangle.loadWidgets();
-  clearWidgetsDraw();
-
   handleLock(Bangle.isLocked(), true);
 
   Bangle.setUI({ 
@@ -838,4 +836,7 @@ let firstDraw = true;
       restoreWidgetDraw();
     }
   });
+  
+  Bangle.loadWidgets();
+  clearWidgetsDraw();
 }
