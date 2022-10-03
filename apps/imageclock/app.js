@@ -706,6 +706,7 @@ let firstDraw = true;
         //print("Redrawing on unlock", isLocked);
         initialDraw(watchfaceResources, watchface);
       }
+      if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
       initialDrawTimeoutUnlocked = setMatchedInterval(()=>{
         //print("Redrawing on unlocked interval");
         initialDraw(watchfaceResources, watchface);
@@ -720,6 +721,7 @@ let firstDraw = true;
         //print("Redrawing on lock", isLocked);
         initialDraw(watchfaceResources, watchface);
       }
+      if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
       initialDrawTimeoutLocked = setMatchedInterval(()=>{
         //print("Redrawing on locked interval");
         initialDraw(watchfaceResources, watchface);
