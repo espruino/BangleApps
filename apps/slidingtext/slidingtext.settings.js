@@ -17,6 +17,7 @@
                     angle_to_horizontal: 90,
                     scroll_off: ['down'],
                     scroll_in: ['up'],
+                    speed: 'vslow'
                 },
                 medium: {
                     size: 'msmall',
@@ -56,7 +57,7 @@
                 },
                 large: {
                     angle_to_horizontal: 90,
-                    speed: 'slow',
+                    speed: 'vslow',
                     color: 'major',
                     scroll_off: ['down'],
                     scroll_in: ['up']
@@ -65,7 +66,7 @@
             row_defs: [
                 {
                     type: 'large',
-                    init_coords: [0.7,0.99],
+                    init_coords: [0.8,0.99],
                     row_direction: [0.0,1.0],
                     alignment: 'centre-6',
                     rows: 1
@@ -78,7 +79,7 @@
                 },
                 {
                     type: 'large',
-                    init_coords: [0.7,0.99],
+                    init_coords: [0.8,0.99],
                     row_direction: [0.0,1.0],
                     alignment: 'centre-6',
                     rows: 1

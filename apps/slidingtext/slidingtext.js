@@ -187,7 +187,7 @@ class ShiftText {
     if(to_y == null)
       to_y = this.init_y;
 
-    this.setTextPosition(txt, this.init_x, g.getHeight() + 2*this.font_size);
+    this.setTextPosition(txt, this.init_x, g.getHeight()*2);
     this.moveTo(this.init_x,to_y);
   }
   scrollInFromLeft(txt,to_x){
@@ -211,7 +211,7 @@ class ShiftText {
     this.moveTo(g.getWidth() + this.font_size, this.init_y);
   }
   scrollOffToBottom(){
-    this.moveTo(this.init_x,g.getHeight() + this.font_size);
+    this.moveTo(this.init_x,g.getHeight()*2);
   }
   onFinished(finished_callback){
     this.finished_callback = finished_callback;
