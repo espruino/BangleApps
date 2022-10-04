@@ -117,7 +117,7 @@ let firstDraw = true;
       delete resource.dataOffset;
       delete resource.dataLength;
       if (resource.paletteData){
-        result.palette = new Uint16Array(resource.paletteData);
+        resource.palette = new Uint16Array(resource.paletteData);
         delete resource.paletteData;
       }
     }
