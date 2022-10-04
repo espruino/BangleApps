@@ -21,7 +21,7 @@ var loc = {
 
 function drawCompass(course) {
   if (!candraw) return;
-  g.reset().clearRect(0, 24, 175, 70);
+  g.reset().clearRect(0, 24, 175, 71);
   g.setFont("Vector", 18);
   var start = course - 90;
   if (start < 0) start += 360;
