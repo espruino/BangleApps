@@ -13,7 +13,7 @@ var loc = {
   distance: [
     require("locale").distance,
     (m) => {
-      return (m / 1.852).toFixed(3) + "nm ";
+      return (m / 1852).toFixed(3) + "nm ";
     }
   ]
 };
