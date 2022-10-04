@@ -25,8 +25,8 @@ let firstDraw = true;
 
   let startPerfLog = () => {};
   let endPerfLog = () => {};
-  let printPerfLog = () => print("Deactivated");
-  let resetPerfLog = () => {performanceLog = {};};
+  Bangle.printPerfLog = () => {print("Deactivated");};
+  Bangle.resetPerfLog = () => {performanceLog = {};};
 
   let colormap={
   "#000":0,
@@ -62,12 +62,12 @@ let firstDraw = true;
   let p1;
 
   if (settings.perflog){
-    Bangle.startPerfLog = function(name){
+    startPerfLog = function(name){
       let time = getTime();
       if (!performanceLog.start) performanceLog.start={};
       performanceLog.start[name] = time;
     };
-    Bangle.endPerfLog = function (name){
+    endPerfLog = function (name){
       let time = getTime();
       if (!performanceLog.last) performanceLog.last={};
       let duration = time - performanceLog.start[name];
@@ -845,11 +845,17 @@ let firstDraw = true;
       delete showWidgets;
       delete firstDraw;
 
+      delete Bangle.printPerfLog;
+      if (settings.perflog){
+        delete Bangle.resetPerfLog;
+        delete performanceLog;
+      }
+
       cleanupDelays();
       restoreWidgetDraw();
     }
   });
-  
+
   Bangle.loadWidgets();
   clearWidgetsDraw();
 }
