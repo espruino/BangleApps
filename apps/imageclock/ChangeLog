@@ -8,3 +8,5 @@
 0.07: Allow wrapping drawing in timeouts to get faster reactions
       Show/Hide widgets with swipe up or down
 0.08: Use default Bangle formatter for booleans
+0.09: Support new fast app switching
+0.10: Fix clock not correctly refreshing when drawing in timeouts option is not on
