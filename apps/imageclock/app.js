@@ -92,12 +92,19 @@ let firstDraw = true;
       }
     };
   }
-  
-  let delayTimeouts = [];
+
+  let delayTimeouts = {};
+  let timeoutCount = 0;
 
   let delay = function(t) {
       return new Promise(function (resolve) {
-          delayTimeouts.push(setTimeout(resolve, t));
+        const i = timeoutCount++;
+        let timeout = setTimeout(()=>{
+          resolve();
+          delete delayTimeouts[i];
+        }, t);
+        delayTimeouts[i] = timeout;
+        //print("Add delay timeout", delayTimeouts);
       });
   };
 
@@ -106,7 +113,7 @@ let firstDraw = true;
     for (let t of delayTimeouts){
       clearTimeout(t);
     }
-    delayTimeouts = [];
+    delayTimeouts = {};
   };
   
   let prepareImg = function(resource){
