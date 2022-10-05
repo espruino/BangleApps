@@ -583,9 +583,6 @@
       
       function convertToCode(elements, properties, wrapInTimeouts, forceUseOrigPlane){        
         var code = "(function (wr, wf) {\n";
-        if (!wrapInTimeouts){
-          code += "var ct=Date.now();\n";
-        }
         code += "var lc;\n";
         code += "var p = Promise.resolve();\n";  
         
@@ -629,27 +626,20 @@
             } else {
               code += "p = p.then(()=>{\n";
             }
-            code += "var ct=Date.now();\n"
             if (addDebug()) code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
             code += 'startPerfLog("initialDraw_g.clear");'+"\n";
             code += "p" + plane + ".clear(true);\n";
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
-  
-            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
           var previousPlane = plane + 1;
           if (previousPlane < planeNumbers.length){
             code += "p = p.then(()=>{\n";
-            code += "var ct=Date.now();\n";
             
             if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
             //code += "g.drawImage(p" + i + ".asImage());";
             code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer, palette: palette});\n";
-            
-            
-            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
@@ -737,7 +727,6 @@
               code += "});\n";
               code += (condition.length > 0 ? "}\n" : "");
             }
-            code += "drawingTime += Date.now() - ct;\n";
           }
           console.log("Current plane is", plane);
           
