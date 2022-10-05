@@ -93,6 +93,8 @@ let firstDraw = true;
     };
   }
 
+  startPerfLog("loadFunctions");
+
   let delayTimeouts = {};
   let timeoutCount = 0;
 
@@ -326,19 +328,23 @@ let firstDraw = true;
   };
 
   let getValue = function(value, defaultValue){
+    startPerfLog("getValue");
     if (typeof value == "string"){
       return numbers[value]();
     }
     if (value == undefined) return defaultValue;
+    endPerfLog("getValue");
     return value;
   };
 
   let getMultistate = function(name, defaultValue){
+    startPerfLog("getMultistate");
     if (typeof name == "string"){
       return multistates[name]();
     } else {
       if (name == undefined) return defaultValue;
     }
+    endPerfLog("getMultistate");
     return undefined;
   };
 
@@ -590,7 +596,6 @@ let firstDraw = true;
       cleanupDelays();
       //print(new Date().toISOString(), "Can draw,", requestedDraws, "draws requested so far");
       isDrawing = true;
-      resetPerfLog();
       requestedDraws = 0;
       //print(new Date().toISOString(), "Drawing start");
       startPerfLog("initialDraw");
@@ -670,15 +675,18 @@ let firstDraw = true;
     }, matchedTime);
   };
 
+  endPerfLog("loadFunctions");
 
   let lastDrawTime = 0;
 
+  startPerfLog("loadProperties");
   let lockedRedraw = getByPath(watchface, ["Properties","Redraw","Locked"]) || 60000;
   let unlockedRedraw = getByPath(watchface, ["Properties","Redraw","Unlocked"]) || 1000;
   let defaultRedraw = getByPath(watchface, ["Properties","Redraw","Default"]) || "Always";
   let redrawEvents = getByPath(watchface, ["Properties","Redraw","Events"]);
   let clearOnRedraw = getByPath(watchface, ["Properties","Redraw","Clear"]);
   let events = getByPath(watchface, ["Properties","Events"]);
+  endPerfLog("loadProperties");
 
   //print("events", events);
   //print("redrawEvents", redrawEvents);
