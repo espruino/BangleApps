@@ -1,5 +1,6 @@
 var fileNumber = 0;
 var MAXLOGS = 9;
+var logRawData = false;
 
 function getFileName(n) {
   return "accellog."+n+".csv";
@@ -23,6 +24,11 @@ function showMenu() {
     },
     /*LANG*/"View Logs" : function() {
       viewLogs();
+    },
+    /*LANG*/"Log raw data" : {
+      value : logRawData,
+      format : v => v?/*LANG*/"Yes":/*LANG*/"No",
+      onchange : v => { logRawData=v; }
     },
   };
   E.showMenu(menu);
@@ -132,7 +138,6 @@ function startRecord(force) {
         layout.state.label = /*LANG*/"STOPPED";
         layout.state.bgCol = /*LANG*/"#0f0";
         stopped = true;
-        layout.btnStop.label = /*LANG*/"MENU";
         layout.render();
       }
     }}
@@ -151,13 +156,23 @@ function startRecord(force) {
 
   function accelHandler(accel) {
     var t = getTime()-start;
-    f.write([
-      t*1000,
-      accel.x,
-      accel.y,
-      accel.z,
-      accel.mag,
-    ].map(n => n.toFixed(2)).join(",")+"\n");
+    if (logRawData) {
+      f.write([
+        t*1000,
+        accel.x*8192,
+        accel.y*8192,
+        accel.z*8192,
+        accel.mag*8192,
+      ].map(n=>Math.round(n)).join(",")+"\n");
+    } else {
+      f.write([
+        Math.round(t*1000),
+        accel.x,
+        accel.y,
+        accel.z,
+        accel.mag,
+      ].join(",")+"\n");
+    }
     if (accel.mag > maxMag) {
       maxMag = accel.mag.toFixed(2);
     }
