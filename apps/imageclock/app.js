@@ -623,6 +623,8 @@ let firstDraw = true;
       if (requestedDraws > 0){
         //print(new Date().toISOString(), "Had deferred drawing left, drawing again");
         requestedDraws = 0;
+        //print("Clear deferred timeout", deferredTimout);
+        clearTimeout(deferredTimeout);
         deferredTimout = setTimeout(()=>{initialDraw(resources, face);}, 10);
       }
     } //else {
