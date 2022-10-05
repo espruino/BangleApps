@@ -43,7 +43,7 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
     }
     formatDate(date){
         const day_of_week = dayOfWeekShort(date);
-        const date_txt = numberToDayNumberText(date.getDate()-1).join(' ');
+        const date_txt = numberToDayNumberText(date.getDate()).join(' ');
         const mins = date.getMinutes();
         var hourOfDay = date.getHours();
         if(mins > 30){

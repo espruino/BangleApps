@@ -36,7 +36,7 @@ class EnglishDateFormatter extends DateFormatter {
         const hours_txt = hoursToText(date.getHours());
         const mins_txt = numberToText(date.getMinutes());
         const day_of_week = dayOfWeek(date);
-        const date_txt = numberToDayNumberText(date.getDate()-1).join(' ');
+        const date_txt = numberToDayNumberText(date.getDate()).join(' ');
         const month = monthToText(date);
         return [hours_txt,mins_txt[0],mins_txt[1],day_of_week,date_txt,month];
     }
