@@ -55,6 +55,11 @@
                     scroll_in: ['left'],
                     angle_to_horizontal: 0
                 },
+                small: {
+                    scroll_off: ['left'],
+                    scroll_in: ['left'],
+                    angle_to_horizontal: 0
+                },
                 large: {
                     angle_to_horizontal: 90,
                     speed: 'vslow',
