@@ -64,6 +64,7 @@
                     size: 'vsmall'
                 },
                 large: {
+                    size: 'mlarge',
                     angle_to_horizontal: 90,
                     speed: 'vslow',
                     color: 'major',
