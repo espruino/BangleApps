@@ -6,8 +6,8 @@ class DigitDateTimeFormatter {
             large: {
                 scroll_off: ['down'],
                 scroll_in: ['up'],
-                size: 'large',
-                speed: 'slow'
+                size: 'vlarge',
+                speed: 'medium'
             },
             small: {
                 angle_to_horizontal: 0,
@@ -20,13 +20,13 @@ class DigitDateTimeFormatter {
             {
                 type: 'large',
                 row_direction: [0.7,0.0],
-                init_coords: [0.15,0.35],
+                init_coords: [0.1,0.35],
                 rows: 3
             },
             {
                 type: 'large',
                 row_direction: [0.7,0.0],
-                init_coords: [0.55,0.35],
+                init_coords: [0.6,0.35],
                 rows: 2
             },
             {
