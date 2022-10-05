@@ -29,33 +29,33 @@ let firstDraw = true;
   Bangle.resetPerfLog = () => {performanceLog = {};};
 
   let colormap={
-  "#000":0,
-  "#00f":1,
-  "#0f0":2,
-  "#0ff":3,
-  "#f00":4,
-  "#f0f":5,
-  "#ff0":6,
-  "#fff":7
+    "#000":0,
+    "#00f":1,
+    "#0f0":2,
+    "#0ff":3,
+    "#f00":4,
+    "#f0f":5,
+    "#ff0":6,
+    "#fff":7
   };
 
   let palette = new Uint16Array([
-  0x0000, //black #000
-  0x001f, //blue #00f
-  0x07e0, //green #0f0
-  0x07ff, //cyan #0ff
-  0xf800, //red #f00
-  0xf81f, //magenta #f0f
-  0xffe0, //yellow #ff0
-  0xffff, //white #fff
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
-  0xffff, //white
+    0x0000, //black #000
+    0x001f, //blue #00f
+    0x07e0, //green #0f0
+    0x07ff, //cyan #0ff
+    0xf800, //red #f00
+    0xf81f, //magenta #f0f
+    0xffe0, //yellow #ff0
+    0xffff, //white #fff
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
+    0xffff, //white
   ]);
 
   let p0 = g;
@@ -102,6 +102,7 @@ let firstDraw = true;
   };
 
   let cleanupDelays = function(){
+    //print("Cleanup delays", delayTimeouts);
     for (let t of delayTimeouts){
       clearTimeout(t);
     }
@@ -163,6 +164,7 @@ let firstDraw = true;
   let drawNumber = function(graphics, resources, element){
     startPerfLog("drawNumber");
     let number = getValue(element.Value);
+    //print("drawNumber: ", number, element);
     let spacing = element.Spacing ? element.Spacing : 0;
     let unit = element.Unit;
 
@@ -171,7 +173,6 @@ let firstDraw = true;
     let numberOfDigits = element.Digits;
 
 
-    //print("drawNumber: ", number, element);
     if (number) number = number.toFixed(0);
 
     let isNegative;
@@ -258,7 +259,7 @@ let firstDraw = true;
       } else {
         currentDigit = 0;
       }
-      //print("Digit " + currentDigit + " " + currentX);
+      //print("Digit", currentDigit, currentX);
       drawElement(graphics, resources, {X:currentX,Y:firstDigitY}, element, currentDigit + imageIndex);
       currentX += firstImage.width + spacing;
     }
@@ -295,11 +296,9 @@ let firstDraw = true;
       }
     }
 
-    //print("cache ",typeof element.cachedImage[cacheKey], element.ImagePath, lastElem);
+    //print("cache ", typeof element.cachedImage[cacheKey], element.ImagePath, lastElem);
     if(element.cachedImage[cacheKey]){
-      //print("drawElement ",pos, path, lastElem);
-      //print("resource ", resource,pos, path, lastElem);
-      //print("drawImage from drawElement", image, pos);
+      //print("drawElement ", pos, element, lastElem);
       let options={};
       if (element.RotationValue){
         options.rotate = radians(element);
@@ -343,9 +342,6 @@ let firstDraw = true;
     let imageIndex = scale.ImageIndex !== undefined ? scale.ImageIndex : 0;
 
     let value = scaledown(scale.Value, scale.MinValue, scale.MaxValue);
-
-    //print("Value is ", value, "(", maxValue, ",", minValue, ")");
-
     let segmentsToDraw = Math.ceil(value * segments.length);
 
     for (let i = 0; i < segmentsToDraw; i++){
@@ -576,8 +572,6 @@ let firstDraw = true;
   let requestedDraws = 0;
   let isDrawing = false;
 
-  let drawingTime;
-
   let start;
   
   let deferredTimout;
@@ -593,8 +587,6 @@ let firstDraw = true;
       requestedDraws = 0;
       //print(new Date().toISOString(), "Drawing start");
       startPerfLog("initialDraw");
-      //start = Date.now();
-      drawingTime = 0;
       //print("Precompiled");
       let promise = precompiledJs(watchfaceResources, watchface);
 
@@ -608,8 +600,6 @@ let firstDraw = true;
           g.drawLine(0,24,g.getWidth(),24);
         }
         lastDrawTime = Date.now() - start;
-        drawingTime += Date.now() - currentDrawingTime;
-        //print(new Date().toISOString(), "Drawing done in", lastDrawTime.toFixed(0), "active:", drawingTime.toFixed(0));
         isDrawing=false;
         firstDraw=false;
         requestRefresh = false;
@@ -658,7 +648,7 @@ let firstDraw = true;
 
   let getMatchedWaitingTime = function(time){
     let result = time - (Date.now() % time);
-    //print("Matched timeout", time, result);
+    //print("Matched wating time", time, result);
     return result;
   };
 
@@ -667,6 +657,7 @@ let firstDraw = true;
     let matchedTime = getMatchedWaitingTime(time + delay);
     return setTimeout(()=>{
       let interval = setInterval(callable, time);
+      //print("setMatchedInterval", interval);
       if (intervalHandler) intervalHandler(interval);
       callable();
     }, matchedTime);
@@ -706,7 +697,10 @@ let firstDraw = true;
         //print("Redrawing on unlock", isLocked);
         initialDraw(watchfaceResources, watchface);
       }
-      if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
+      if (initialDrawTimeoutUnlocked){
+        //print("clear initialDrawTimeUnlocked timet", initialDrawTimeoutUnlocked);
+        clearTimeout(initialDrawTimeoutUnlocked);
+      }
       initialDrawTimeoutUnlocked = setMatchedInterval(()=>{
         //print("Redrawing on unlocked interval");
         initialDraw(watchfaceResources, watchface);
@@ -721,7 +715,10 @@ let firstDraw = true;
         //print("Redrawing on lock", isLocked);
         initialDraw(watchfaceResources, watchface);
       }
-      if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
+      if (initialDrawTimeoutLocked){
+        clearTimeout(initialDrawTimeoutLocked);
+        //print("clear initialDrawTimeLocked timet", initialDrawTimeoutLocked);
+      }
       initialDrawTimeoutLocked = setMatchedInterval(()=>{
         //print("Redrawing on locked interval");
         initialDraw(watchfaceResources, watchface);
@@ -780,7 +777,7 @@ let firstDraw = true;
     try{
       Bangle.setBarometerPower(1, 'imageclock');
     } catch (e){
-      print("Error during barometer power up", e);
+      //print("Error during barometer power up", e);
     }
   }
   if (!events || events.includes("HRM")) {
