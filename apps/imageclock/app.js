@@ -668,6 +668,7 @@ let firstDraw = true;
 
   let setMatchedInterval = function(callable, time, intervalHandler, delay){
     //print("Setting matched interval for", time, intervalHandler);
+    if (!delay) delay = 0;
     let matchedTime = getMatchedWaitingTime(time + delay);
     return setTimeout(()=>{
       let interval = setInterval(callable, time);
