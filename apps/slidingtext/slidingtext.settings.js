@@ -23,6 +23,11 @@
                     size: 'msmall',
                     scroll_off: ['right'],
                     scroll_in: ['right'],
+                },
+                small: {
+                    size: 'vvsmall',
+                    scroll_off: ['right'],
+                    scroll_in: ['right'],
                 }
             },
             row_defs: [
@@ -41,9 +46,9 @@
                 },
                 {
                     type: 'small',
-                    init_coords: [0.26,0.9],
+                    init_coords: [0.26,0.7],
                     row_direction: [0.0,1.0],
-                    rows: 1
+                    rows: 3
                 }
             ]
         },
@@ -51,9 +56,16 @@
         'en2 p': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
+                    color: 'minor',
+                    speed: 'superslow',
+                    angle_to_horizontal: 0,
                     scroll_off: ['left'],
                     scroll_in: ['left'],
-                    angle_to_horizontal: 0
+                    size: 'vsmall'
+                },
+                small: {
+                    scroll_off: ['left'],
+                    scroll_in: ['left']
                 },
                 small: {
                     scroll_off: ['left'],
@@ -61,6 +73,7 @@
                     angle_to_horizontal: 0
                 },
                 large: {
+                    size: 'mlarge',
                     angle_to_horizontal: 90,
                     speed: 'vslow',
                     color: 'major',
@@ -78,7 +91,7 @@
                 },
                 {
                     type: 'small',
-                    init_coords: [0.05,0.35],
+                    init_coords: [0.05,0.4],
                     row_direction: [0.0,1.0],
                     rows: 3
                 },
@@ -93,7 +106,7 @@
                     type: 'vsmall',
                     init_coords: [0.05,0.1],
                     row_direction: [0.0,1.0],
-                    rows: 1
+                    rows: 2
                 },
             ]
         },
