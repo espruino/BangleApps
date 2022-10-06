@@ -339,9 +339,10 @@ function mergeObjects(obj1, obj2){
 
 
 const heights = {
-  vvvsmall: [14,11],
+  tiny: [14,11],
   vvsmall: [15,13],
   vsmall: [20,15],
+  ssmall: [22,17],
   small: [25,20],
   msmall: [30,22],
   medium: [40,25],

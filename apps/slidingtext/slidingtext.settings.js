@@ -61,7 +61,7 @@
                     angle_to_horizontal: 0,
                     scroll_off: ['left'],
                     scroll_in: ['left'],
-                    size: 'vsmall'
+                    size: 'ssmall'
                 },
                 small: {
                     scroll_off: ['left'],
@@ -86,7 +86,7 @@
                 },
                 {
                     type: 'small',
-                    init_coords: [0.05,0.4],
+                    init_coords: [0.05,0.45],
                     row_direction: [0.0,1.0],
                     rows: 3
                 },
