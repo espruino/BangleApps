@@ -67,11 +67,6 @@
                     scroll_off: ['left'],
                     scroll_in: ['left']
                 },
-                small: {
-                    scroll_off: ['left'],
-                    scroll_in: ['left'],
-                    angle_to_horizontal: 0
-                },
                 large: {
                     size: 'mlarge',
                     angle_to_horizontal: 90,
