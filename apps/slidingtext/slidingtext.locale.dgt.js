@@ -39,7 +39,7 @@ class DigitDateTimeFormatter {
     }
 
     format00(num){
-        var value = (num | 0);
+        const value = (num | 0);
         if(value > 99 || value < 0)
             throw "must be between in range 0-99";
         if(value < 10)
@@ -49,9 +49,9 @@ class DigitDateTimeFormatter {
     }
 
     formatDate(now){
-        var hours = now.getHours() ;
-        var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
-        var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
+        const hours = now.getHours() ;
+        const time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
+        const date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
         return [time_txt[0], time_txt[1],time_txt[2], time_txt[3],time_txt[4],date_txt];
     }
 

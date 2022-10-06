@@ -300,15 +300,15 @@ function initDisplay(settings) {
   if(settings == null){
     settings = {};
   }
-  var row_type_overide = date_formatter.defaultRowTypes();
+  const row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
   mergeMaps(row_types,settings.row_types);
-  var row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
+  const row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
       settings.row_defs : date_formatter.defaultRowDefs();
 
   row_displays = [];
   row_defs.forEach(row_def =>{
-    var row_type = create_row_type(row_types[row_def.type],row_def);
+    const row_type = create_row_type(row_types[row_def.type],row_def);
     // we now create the number of rows specified of that type
     for(var j=0; j<row_def.rows; j++){
       row_displays.push(create_row(row_type,j));
@@ -372,10 +372,10 @@ const SPACES = '                                                ';
  * takes a json definition for a row type and creates an instance
  */
 function create_row_type(row_type, row_def){
-  var speed = speeds[row_type.speed];
-  var rotation = rotations[row_type.angle_to_horizontal];
-  var height = heights[row_type.size];
-  var scroll_ins = [];
+  const speed = speeds[row_type.speed];
+  const rotation = rotations[row_type.angle_to_horizontal];
+  const height = heights[row_type.size];
+  const scroll_ins = [];
   if(row_type.scroll_in.includes('left')){
     scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
   }
@@ -392,12 +392,12 @@ function create_row_type(row_type, row_def){
     scroll_in = scroll_ins[0];
   } else {
     scroll_in = (row_display,txt) =>{
-      var idx = (Math.random() * scroll_ins.length) | 0;
+      const idx = (Math.random() * scroll_ins.length) | 0;
       return scroll_ins[idx](row_display,txt);
     };
   }
 
-  var scroll_offs = [];
+  const scroll_offs = [];
   if(row_type.scroll_off.includes('left')){
     scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
   }
@@ -421,7 +421,7 @@ function create_row_type(row_type, row_def){
 
   var text_formatter = (txt)=>txt;
   if(row_def.hasOwnProperty("alignment")){
-    var alignment = row_def.alignment;
+    const alignment = row_def.alignment;
     if(alignment.startsWith("centre")){
       const padding = parseInt(alignment.split("-")[1]);
       if(padding > 0){
@@ -433,7 +433,7 @@ function create_row_type(row_type, row_def){
     }
   }
 
-  var version = bangleVersion() - 1;
+  const version = bangleVersion() - 1;
   return {
     row_speed: speed,
     row_height: height[version],
@@ -475,7 +475,7 @@ function nextColorTheme(){
 }
 
 function updateColorScheme(){
-  var bgcolor = bg_color();
+  const bgcolor = bg_color();
   for(var i=0; i<row_displays.length; i++){
     row_displays[i].setColor(row_displays[i].getRowContext().fg_color());
     row_displays[i].setBgColor(bgcolor);
@@ -495,11 +495,11 @@ function resetClock(hard_reset){
     // In this way the watch wakes by scrolling
     // off the last time and scroll on the new time
     var reset_time = last_draw_time;
-    var last_minute_millis = Date.now() - 60000;
+    const last_minute_millis = Date.now() - 60000;
     if(reset_time.getTime() < last_minute_millis){
       reset_time = display_time(new Date(last_minute_millis));
     }
-    var rows = date_formatter.formatDate(reset_time);
+    const rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
       row_displays[i].hide();
       row_displays[i].x = row_displays[i].init_x;
@@ -651,7 +651,7 @@ class DigitDateTimeFormatter {
   }
 
   format00(num){
-    var value = (num | 0);
+    const value = (num | 0);
     if(value > 99 || value < 0)
       throw "must be between in range 0-99";
     if(value < 10)
@@ -661,10 +661,10 @@ class DigitDateTimeFormatter {
   }
 
   formatDate(now){
-    var hours = now.getHours() ;
-    var time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
-    var date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
-    var month_txt = Locale.month(now);
+    const hours = now.getHours() ;
+    const time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
+    const date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
+    const month_txt = Locale.month(now);
     return [time_txt, date_txt, month_txt];
   }
 
@@ -681,7 +681,7 @@ function setDateformat(shortname){
       if(shortname === "default"){
         date_formatter = new DigitDateTimeFormatter();
       } else {
-        var date_formatter_class = require("slidingtext.locale." + shortname + ".js");
+        const date_formatter_class = require("slidingtext.locale." + shortname + ".js");
         date_formatter = new date_formatter_class();
       }
     }
@@ -700,7 +700,7 @@ const PREFERENCE_FILE = "slidingtext.settings.json";
  */
 function loadSettings() {
   try {
-    var settings = Object.assign({},
+    const settings = Object.assign({},
         require('Storage').readJSON(PREFERENCE_FILE, true) || {});
     if (settings.date_formatter == null) {
       // for backward compatibility
@@ -730,7 +730,6 @@ function loadSettings() {
     initDisplay();
     updateColorScheme();
   }
-  enable_live_controls = true;
 }
 
 function button3pressed() {
@@ -752,9 +751,9 @@ function clearTimers(){
 }
 
 function startTimers(){
-  var date = new Date();
-  var secs = date.getSeconds();
-  var nextMinuteStart = 60 - secs;
+  const date = new Date();
+  const secs = date.getSeconds();
+  const nextMinuteStart = 60 - secs;
   setTimeout(scheduleDrawClock,nextMinuteStart * 1000);
   drawClock();
 }

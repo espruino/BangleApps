@@ -1,4 +1,4 @@
-var DateFormatter = require("slidingtext.dtfmt.js");
+const DateFormatter = require("slidingtext.dtfmt.js");
 
 const germanNumberStr = [ ["NULL",""], // 0
     ["EINS",""], // 1
@@ -59,10 +59,10 @@ function germanMinsToText(mins) {
     if (mins < 20) {
         return germanNumberStr[mins];
     } else {
-        var tens = (mins / 10 | 0);
-        var word1 = germanTensStr[tens];
-        var remainder = mins - tens * 10;
-        var word2 = germanUnit[remainder];
+        const tens = (mins / 10 | 0);
+        const word1 = germanTensStr[tens];
+        const remainder = mins - tens * 10;
+        const word2 = germanUnit[remainder];
         return [word2, word1];
     }
 }
@@ -87,13 +87,12 @@ class GermanDateFormatter extends DateFormatter {
         ];
     }
     formatDate(date){
-        var mins = date.getMinutes();
-        var hourOfDay = date.getHours();
+        const mins = date.getMinutes();
+        const hourOfDay = date.getHours();
         var hours = germanHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
         if(mins === 0){
-            var hours = germanHoursToText(hourOfDay);
             return [hours,"UHR", "","",""];
         } /*else if(mins == 30){
             var hours = germanHoursToText(hourOfDay+1);
@@ -105,7 +104,7 @@ class GermanDateFormatter extends DateFormatter {
             var hours = germanHoursToText(hourOfDay+1);
             return ["", "", "VIERTEL", "VOR",hours];
         } */ else {
-            var mins_txt = germanMinsToText(mins);
+            const mins_txt = germanMinsToText(mins);
             return [hours, "UHR", mins_txt[0],mins_txt[1]];
         }
     }

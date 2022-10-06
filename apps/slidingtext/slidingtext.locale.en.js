@@ -1,4 +1,4 @@
-var DateFormatter = require("slidingtext.dtfmt.js");
+const DateFormatter = require("slidingtext.dtfmt.js");
 const hoursToText = require("slidingtext.utils.en.js").hoursToText;
 const numberToText = require("slidingtext.utils.en.js").numberToText;
 const dayOfWeek = require("slidingtext.utils.en.js").dayOfWeek;

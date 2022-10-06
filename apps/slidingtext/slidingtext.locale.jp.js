@@ -1,4 +1,4 @@
-var DateFormatter = require("slidingtext.dtfmt.js");
+const DateFormatter = require("slidingtext.dtfmt.js");
 
 /**
  * Japanese date formatting
@@ -40,9 +40,9 @@ function japaneseMinsToText(mins){
     } else if(mins === 30)
         return ["HAN",""];
     else {
-        var units = mins % 10;
-        var mins_txt = japaneseMinuteStr[units];
-        var tens = mins /10 | 0;
+        const units = mins % 10;
+        const mins_txt = japaneseMinuteStr[units];
+        const tens = mins /10 | 0;
         if(tens > 0){
             var tens_txt = tensPrefixStr[tens];
             var minutes_txt;
@@ -78,8 +78,8 @@ class JapaneseDateFormatter extends DateFormatter {
         ];
     }
     formatDate(date){
-        var hours_txt = japaneseHoursToText(date.getHours());
-        var mins_txt = japaneseMinsToText(date.getMinutes());
+        const hours_txt = japaneseHoursToText(date.getHours());
+        const mins_txt = japaneseMinsToText(date.getMinutes());
         return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
     }
     defaultRowTypes(){ return this.row_types;}
