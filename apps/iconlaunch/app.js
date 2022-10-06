@@ -2,14 +2,6 @@
   const s = require("Storage");
   const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,oneClickExit:false };
 
-  function returnToClock() {
-    Bangle.setUI();
-    setTimeout(eval,0,s.read(".bootcde"));
-  }
-
-  if( settings.oneClickExit)
-    setWatch(returnToClock, BTN1);
-
   if (!settings.fullscreen) {
     if (!global.WIDGETS) Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -58,7 +50,7 @@
 
   const itemSize = iconSize + whitespace;
 
-  function drawItem(itemI, r) {
+  let drawItem = function(itemI, r) {
     g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     let x = 0;
     for (let i = itemI * appsN; i < appsN * (itemI + 1); i++) {
@@ -80,9 +72,9 @@
       x += iconSize;
     }
     drawText(itemI);
-  }
+  };
 
-  function drawItemAuto(i) {
+  let drawItemAuto = function(i) {
     var y = idxToY(i);
     g.reset().setClipRect(R.x, y, R.x2, y + itemSize);
     drawItem(i, {
@@ -92,11 +84,11 @@
       h: itemSize
     });
     g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  }
+  };
 
   let lastIsDown = false;
 
-  function drawText(i) {
+  let drawText = function(i) {
     const selectedApp = apps[selectedItem];
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (!selectedApp || i != idy) return;
@@ -111,14 +103,14 @@
       appY + rect.height / 2
     );
     g.drawString(selectedApp.name, R.w / 2, appY);
-  }
+  };
 
-  function selectItem(id, e) {
+  let selectItem = function(id, e) {
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
     if( settings.direct && apps[appId])
     {
-      load(apps[appId].src);
+      loadApp(apps[appId].src);
       return;
     }
     if (appId == selectedItem && apps[appId]) {
@@ -131,17 +123,17 @@
     }
     selectedItem = appId;
     drawItems();
-  }
+  };
 
-  function idxToY(i) {
+  let idxToY = function(i) {
     return i * itemSize + R.y - (scroll & ~1);
-  }
+  };
 
-  function YtoIdx(y) {
+  let YtoIdx = function(y) {
     return Math.floor((y + (scroll & ~1) - R.y) / itemSize);
-  }
+  };
 
-  function drawItems() {
+  let drawItems = function() {
     g.reset().clearRect(R.x, R.y, R.x2, R.y2);
     g.setClipRect(R.x, R.y, R.x2, R.y2);
     var a = YtoIdx(R.y);
@@ -154,14 +146,14 @@
         h: itemSize,
       });
     g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  }
+  };
 
   drawItems();
   g.flip();
 
   const itemsN = Math.ceil(apps.length / appsN);
 
-  function onDrag(e){
+  let onDrag = function(e){
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
     let dy = e.dy;
@@ -206,7 +198,7 @@
       }
     }
     g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  }
+  };
 
   Bangle.setUI({
     mode: "custom",
@@ -217,4 +209,30 @@
       selectItem(i, e);
     },
   });
+
+  const returnToClock = function() {
+    loadApp(".bootcde");
+  };
+
+  let loadApp = function(name){
+    Bangle.setUI();
+    //minimize RAM use during load
+    apps = [];
+    delete drawItemAuto;
+    delete drawText;
+    delete selectItem;
+    delete onDrag;
+    delete drawItems;
+    delete drawItem;
+    delete returnToClock;
+    delete idxToY;
+    delete YtoIdx;
+    delete settings;
+    setTimeout(eval,0,s.read(name));
+    return;
+  };
+
+  if( settings.oneClickExit){
+    setWatch(returnToClock, BTN1);
+  }
 }
