@@ -63,6 +63,10 @@
                     scroll_in: ['left'],
                     size: 'vsmall'
                 },
+                small: {
+                    scroll_off: ['left'],
+                    scroll_in: ['left']
+                },
                 large: {
                     size: 'mlarge',
                     angle_to_horizontal: 90,
