@@ -40,7 +40,7 @@ class FrenchDateFormatter extends DateFormatter {
                 rows: 1
             },
             {
-                type: 'medium',
+                type: 'small',
                 init_coords: [0.05,0.4],
                 row_direction: [0.0,1.0],
                 rows: 3
