@@ -25,7 +25,7 @@
                     scroll_in: ['right'],
                 },
                 small: {
-                    size: 'vvsmall',
+                    size: 'vsmall',
                     scroll_off: ['right'],
                     scroll_in: ['right'],
                 }
