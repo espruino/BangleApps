@@ -9,7 +9,7 @@ class EnglishDateFormatter extends DateFormatter {
     constructor() {
         super();
         this.row_types = {
-            small: {size: 'vvsmall'}
+            small: {size: 'vsmall'}
         };
         this.row_defs = [
             {
