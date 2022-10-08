@@ -45,7 +45,7 @@
                 },
                 {
                     type: 'small',
-                    init_coords: [0.26,0.7],
+                    init_coords: [0.26,0.65],
                     row_direction: [0.0,1.0],
                     rows: 3
                 }
