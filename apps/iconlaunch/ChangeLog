@@ -1,3 +1,4 @@
 0.01: Initial release
 0.02: implemented "direct launch" and "one click exit" settings
 0.03: Use default Bangle formatter for booleans
+0.04: Support new fast app switching

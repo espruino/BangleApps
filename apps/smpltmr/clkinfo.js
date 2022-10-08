@@ -69,7 +69,7 @@
     img: img,
     items: [
       {
-        name: "Timer",
+        name: null,
         get: () => ({ text: getAlarmMinutesText() + (isAlarmEnabled() ? " min" : ""), img: null}),
         show: function() { smpltmrItems.items[0].emit("redraw"); },
         hide: function () {},
@@ -78,17 +78,18 @@
     ]
   };
 
-  var offsets = [+1,+5,-1,-5];
+  var offsets = [+5,-5];
   offsets.forEach((o, i) => {
     smpltmrItems.items = smpltmrItems.items.concat({
-      name: String(o),
-      get: () => ({ text: getAlarmMinutesText() + " (" + (o > 0 ? "+" : "") + o + ")", img: null}),
+      name: null,
+      get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: null}),
       show: function() { smpltmrItems.items[i+1].emit("redraw"); },
       hide: function () {},
       run: function() {
         if(o > 0) increaseAlarm(o);
         else decreaseAlarm(Math.abs(o));
         this.show();
+        return true;
       }
     });
   });

@@ -97,10 +97,14 @@ exports.load = function() {
   // In case there exists already a menu object b with the same name as the next
   // object a, we append the items. Otherwise we add the new object a to the list.
   require("Storage").list(/clkinfo.js$/).forEach(fn => {
-    var a = eval(require("Storage").read(fn))();
-    var b = menu.find(x => x.name === a.name)
-    if(b) b.items = b.items.concat(a.items);
-    else menu = menu.concat(a);
+    try{
+      var a = eval(require("Storage").read(fn))();
+      var b = menu.find(x => x.name === a.name)
+      if(b) b.items = b.items.concat(a.items);
+      else menu = menu.concat(a);
+    } catch(e){
+      console.log("Could not load clock info.")
+    }
   });
 
   // return it all!
