@@ -31,7 +31,7 @@ const color_schemes = [
   },
   {
     name: "purple",
-    background : [1.0,0.0,1.0],
+    background : [0.3,0.0,0.6],
     main_bar: [1.0,1.0,0.0],
     other_bars: [0.85,0.85,0.85]
   },
@@ -677,7 +677,7 @@ var date_formatter;
 function setDateformat(shortname){
   console.log("setting date format:" + shortname);
   try {
-    if (date_formatter == null || date_formatter.shortName() !== shortname) {
+    if (date_formatter == null) {
       if(shortname === "default"){
         date_formatter = new DigitDateTimeFormatter();
       } else {
