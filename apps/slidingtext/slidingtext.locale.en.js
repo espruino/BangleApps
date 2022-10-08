@@ -48,7 +48,7 @@ class EnglishDateFormatter extends DateFormatter {
                     rows: 2
                 }
             )
-        };
+        }
         return row_defs;
     }
 }
