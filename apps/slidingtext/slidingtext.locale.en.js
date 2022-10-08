@@ -8,10 +8,17 @@ const monthToText = require("slidingtext.utils.en.js").monthToText;
 class EnglishDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_types = {
-            small: {size: 'ssmall'}
-        };
-        this.row_defs = [
+    }
+    formatDate(date){
+        const hours_txt = hoursToText(date.getHours());
+        const mins_txt = numberToText(date.getMinutes());
+        const day_of_week = dayOfWeek(date);
+        const date_txt = numberToDayNumberText(date.getDate()).join(' ');
+        const month = monthToText(date);
+        return [hours_txt,mins_txt[0],mins_txt[1],day_of_week,date_txt,month];
+    }
+    defaultRowTypes(){
+        return [
             {
                 type: 'large',
                 init_coords: [0.05,0.07],
@@ -32,17 +39,12 @@ class EnglishDateFormatter extends DateFormatter {
             }
         ];
     }
-    formatDate(date){
-        const hours_txt = hoursToText(date.getHours());
-        const mins_txt = numberToText(date.getMinutes());
-        const day_of_week = dayOfWeek(date);
-        const date_txt = numberToDayNumberText(date.getDate()).join(' ');
-        const month = monthToText(date);
-        return [hours_txt,mins_txt[0],mins_txt[1],day_of_week,date_txt,month];
-    }
-    defaultRowTypes(){ return this.row_types;}
 
-    defaultRowDefs(){ return this.row_defs; }
+    defaultRowDefs(){
+        return {
+            small: {size: 'ssmall'}
+        };
+    }
 }
 
 module.exports = EnglishDateFormatter;

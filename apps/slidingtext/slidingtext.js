@@ -265,7 +265,7 @@ function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
 
-const row_types = {
+var row_types = {
   large: {
     color: 'major',
     speed: 'medium',
@@ -314,11 +314,11 @@ function initDisplay(settings) {
       row_displays.push(create_row(row_type,j));
     }
   });
+  initComplete();
 }
 
 function mergeMaps(map1,map2){
   if(map2 == null){
-    console.log("no merge:" + map2);
     return;
   }
   Object.keys(map2).forEach(key => {
@@ -336,10 +336,7 @@ function mergeObjects(obj1, obj2){
   return result;
 }
 
-
-
-const heights = {
-  tiny: [14,11],
+var heights = {
   vvsmall: [15,13],
   vsmall: [20,15],
   ssmall: [22,17],
@@ -351,14 +348,14 @@ const heights = {
   vlarge: [60,50]
 };
 
-const rotations = {
+var rotations = {
   0: 0,
   90: 3,
   180: 2,
   270: 1,
 };
 
-const speeds = {
+var speeds = {
   fast: 20,
   medium: 10,
   slow: 5,
@@ -445,6 +442,13 @@ function create_row_type(row_type, row_def){
     fg_color: () => (row_type.color === 'major')? main_color(): other_color(),
     row_text_formatter : text_formatter
   };
+}
+
+function initComplete(){
+  row_types = null;
+  speeds = null;
+  rotations = null;
+  heights = null;
 }
 
 function create_row(row_type, row_no){
@@ -605,7 +609,6 @@ function setColorScheme(colorscheme_name){
   for (var i=0; i < color_schemes.length; i++) {
     if(color_schemes[i].name === colorscheme_name){
       color_scheme_index = i;
-      console.log("match");
       updateColorScheme();
       break;
     }
