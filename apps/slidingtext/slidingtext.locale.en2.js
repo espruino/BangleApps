@@ -7,39 +7,6 @@ const numberToText = require("slidingtext.utils.en.js").numberToText;
 class EnglishTraditionalDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_types = {
-            small: {
-                speed: 'medium',
-                scroll_off: ['left','right'],
-                scroll_in: ['left','right'],
-            },
-            large: {
-                speed: 'medium',
-                color: 'major',
-                scroll_off: ['left','right'],
-                scroll_in: ['left','right']
-            }
-        };
-        this.row_defs = [
-            {
-                type: 'large',
-                init_coords: [0.05,0.1],
-                row_direction: [0.0,1.0],
-                rows: 1
-            },
-            {
-                type: 'small',
-                init_coords: [0.05,0.35],
-                row_direction: [0.0,1.0],
-                rows: 3
-            },
-            {
-                type: 'large',
-                init_coords: [0.05,0.75],
-                row_direction: [0.0,1.0],
-                rows: 1
-            }
-        ];
     }
     formatDate(date){
         const day_of_week = dayOfWeekShort(date);
@@ -85,9 +52,44 @@ class EnglishTraditionalDateFormatter extends DateFormatter {
             }
         }
     }
-    defaultRowTypes(){ return this.row_types;}
+    defaultRowTypes(){
+        return {
+            small: {
+                speed: 'medium',
+                scroll_off: ['left','right'],
+                scroll_in: ['left','right'],
+            },
+            large: {
+                speed: 'medium',
+                color: 'major',
+                scroll_off: ['left','right'],
+                scroll_in: ['left','right']
+            }
+        };
+    }
 
-    defaultRowDefs(){ return this.row_defs; }
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'small',
+                init_coords: [0.05,0.35],
+                row_direction: [0.0,1.0],
+                rows: 3
+            },
+            {
+                type: 'large',
+                init_coords: [0.05,0.75],
+                row_direction: [0.0,1.0],
+                rows: 1
+            }
+        ];
+    }
 }
 
 module.exports = EnglishTraditionalDateFormatter;

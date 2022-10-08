@@ -70,21 +70,6 @@ function germanMinsToText(mins) {
 class GermanDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_types = { };
-        this.row_defs = [
-            {
-                type: 'large',
-                init_coords: [0.05,0.1],
-                row_direction: [0.0,1.0],
-                rows: 1
-            },
-            {
-                type: 'medium',
-                init_coords: [0.05,0.4],
-                row_direction: [0.0,1.0],
-                rows: 3
-            }
-        ];
     }
     formatDate(date){
         const mins = date.getMinutes();
@@ -108,9 +93,24 @@ class GermanDateFormatter extends DateFormatter {
             return [hours, "UHR", mins_txt[0],mins_txt[1]];
         }
     }
-    defaultRowTypes(){ return this.row_types;}
+    defaultRowTypes(){ return {};}
 
-    defaultRowDefs(){ return this.row_defs; }
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
 }
 
 module.exports = GermanDateFormatter;

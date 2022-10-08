@@ -61,8 +61,16 @@ function japaneseMinsToText(mins){
 class JapaneseDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_types = { };
-        this.row_defs = [
+    }
+    formatDate(date){
+        const hours_txt = japaneseHoursToText(date.getHours());
+        const mins_txt = japaneseMinsToText(date.getMinutes());
+        return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
+    }
+    defaultRowTypes(){ return {}; }
+
+    defaultRowDefs(){
+        return [
             {
                 type: 'large',
                 init_coords: [0.05,0.1],
@@ -77,14 +85,6 @@ class JapaneseDateFormatter extends DateFormatter {
             }
         ];
     }
-    formatDate(date){
-        const hours_txt = japaneseHoursToText(date.getHours());
-        const mins_txt = japaneseMinsToText(date.getMinutes());
-        return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
-    }
-    defaultRowTypes(){ return this.row_types;}
-
-    defaultRowDefs(){ return this.row_defs; }
 }
 
 module.exports = JapaneseDateFormatter;

@@ -31,25 +31,6 @@ function frenchHeures(hours){
 class FrenchDateFormatter extends DateFormatter {
     constructor() {
         super();
-        this.row_types = {
-            small: {
-                speed: 'vslow'
-            }
-        };
-        this.row_defs = [
-            {
-                type: 'large',
-                init_coords: [0.05,0.1],
-                row_direction: [0.0,1.0],
-                rows: 1
-            },
-            {
-                type: 'small',
-                init_coords: [0.05,0.4],
-                row_direction: [0.0,1.0],
-                rows: 3
-            }
-        ];
     }
     formatDate(date){
         var hours = frenchHoursToText(date.getHours());
@@ -85,9 +66,30 @@ class FrenchDateFormatter extends DateFormatter {
             return [ hours, heures , mins_txt ];
         }
     }
-    defaultRowTypes(){ return this.row_types;}
+    defaultRowTypes(){
+        return {
+            small: {
+                speed: 'vslow'
+            }
+        };
+    }
 
-    defaultRowDefs(){ return this.row_defs; }
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'small',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
+    }
 }
 
 module.exports = FrenchDateFormatter;

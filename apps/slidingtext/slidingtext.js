@@ -448,6 +448,8 @@ function initComplete(){
   speeds = null;
   rotations = null;
   heights = null;
+  const mem = process.memory(true);
+  console.log("init complete memory:" + mem.usage / mem.total);
 }
 
 function create_row(row_type, row_no){
@@ -547,7 +549,9 @@ function drawClock(){
   }
   reset_commands();
   date = display_time(date);
-  console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString());
+  const mem = process.memory(false);
+  console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString() +
+      " memory:" + mem.usage / mem.total);
 
   const rows = date_formatter.formatDate(date);
   for (var i = 0; i < rows.length; i++) {
@@ -622,34 +626,6 @@ const Locale = require('locale');
  */
 class DigitDateTimeFormatter {
   constructor() {
-    this.row_types = {
-      large: {
-        scroll_off: ['left', 'right', 'down'],
-        scroll_in: ['left', 'right', 'up'],
-        size: 'vlarge'
-      },
-      small: {
-        angle_to_horizontal: 90,
-        scroll_off: ['down'],
-        scroll_in: ['up'],
-        size: 'vvsmall'
-      }
-    };
-
-    this.row_defs = [
-      {
-        type: 'large',
-        row_direction: [0.0,1.0],
-        init_coords: [0.1,0.35],
-        rows: 1
-      },
-      {
-        type: 'small',
-        row_direction: [1.0,0],
-        init_coords: [0.85,0.99],
-        rows: 2
-      }
-    ];
   }
 
   format00(num){
@@ -670,9 +646,38 @@ class DigitDateTimeFormatter {
     return [time_txt, date_txt, month_txt];
   }
 
-  defaultRowTypes(){ return this.row_types; }
+  defaultRowTypes(){
+    return {
+      large: {
+        scroll_off: ['left', 'right', 'down'],
+        scroll_in: ['left', 'right', 'up'],
+        size: 'vlarge'
+      },
+      small: {
+        angle_to_horizontal: 90,
+        scroll_off: ['down'],
+        scroll_in: ['up'],
+        size: 'vvsmall'
+      }
+    };
+  }
 
-  defaultRowDefs() { return this.row_defs; }
+  defaultRowDefs() {
+    return [
+      {
+        type: 'large',
+        row_direction: [0.0,1.0],
+        init_coords: [0.1,0.35],
+        rows: 1
+      },
+      {
+        type: 'small',
+        row_direction: [1.0,0],
+        init_coords: [0.85,0.99],
+        rows: 2
+      }
+    ];
+  }
 }
 
 var date_formatter;
