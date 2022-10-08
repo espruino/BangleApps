@@ -314,7 +314,6 @@ function initDisplay(settings) {
       row_displays.push(create_row(row_type,j));
     }
   });
-  initComplete();
 }
 
 function mergeMaps(map1,map2){
@@ -733,6 +732,7 @@ function loadSettings() {
     initDisplay();
     updateColorScheme();
   }
+  initComplete();
 }
 
 function button3pressed() {

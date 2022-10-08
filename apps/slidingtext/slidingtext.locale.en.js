@@ -17,7 +17,13 @@ class EnglishDateFormatter extends DateFormatter {
         const month = monthToText(date);
         return [hours_txt,mins_txt[0],mins_txt[1],day_of_week,date_txt,month];
     }
-    defaultRowTypes(){
+    defaultRowTypes() {
+        return {
+            small: {size: 'ssmall'}
+        };
+    }
+
+    defaultRowDefs(){
         return [
             {
                 type: 'large',
@@ -38,12 +44,6 @@ class EnglishDateFormatter extends DateFormatter {
                 rows: 2
             }
         ];
-    }
-
-    defaultRowDefs(){
-        return {
-            small: {size: 'ssmall'}
-        };
     }
 }
 
