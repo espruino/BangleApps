@@ -625,8 +625,7 @@ const Locale = require('locale');
  * clock working in the emulator
  */
 class DigitDateTimeFormatter {
-  constructor() {
-  }
+  constructor() {}
 
   format00(num){
     const value = (num | 0);

@@ -2,12 +2,13 @@
     const PREFERENCE_FILE = "slidingtext.settings.json";
     const settings = Object.assign({},
         require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+    const bangleVersion = (g.getHeight()>200)? 1 : 2;
     // the screen controls are defaulted on for a bangle 1 and off for a bangle 2
     if(settings.enable_live_controls == null){
-        settings.enable_live_controls = (g.getHeight()> 200);
+        settings.enable_live_controls = bangleVersion < 2;
     }
     console.log("loaded:" + JSON.stringify(settings));
-    const locale_mappings = {
+    const locale_mappings = (bangleVersion > 1)? {
         'en' : { date_formatter: 'en' },
         'en p': {
             date_formatter: 'en',
@@ -109,7 +110,16 @@
         'es': { date_formatter: 'es'},
         'jp': { date_formatter: 'jp'},
         'dgt': { date_formatter: 'dgt'},
+    } : {
+        'en' : { date_formatter: 'en' },
+        'en2' : { date_formatter: 'en2' },
+        'fr': { date_formatter:'fr'},
+        'de': { date_formatter: 'de'},
+        'es': { date_formatter: 'es'},
+        'jp': { date_formatter: 'jp'},
+        'dgt': { date_formatter: 'dgt'},
     }
+
     const locales = Object.keys(locale_mappings);
 
     function writeSettings() {

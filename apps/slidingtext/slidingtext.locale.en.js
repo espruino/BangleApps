@@ -24,7 +24,7 @@ class EnglishDateFormatter extends DateFormatter {
     }
 
     defaultRowDefs(){
-        return [
+        const row_defs = [
             {
                 type: 'large',
                 init_coords: [0.05,0.07],
@@ -36,14 +36,20 @@ class EnglishDateFormatter extends DateFormatter {
                 init_coords: [0.05,0.31],
                 row_direction: [0.0,1.0],
                 rows: 2
-            },
-            {
-                type: 'small',
-                init_coords: [0.05,0.75],
-                row_direction: [0.0,1.0],
-                rows: 2
             }
         ];
+        const bangleVersion = (g.getHeight()>200)? 1 : 2;
+        if(bangleVersion > 1){
+            row_defs.push(
+                {
+                    type: 'small',
+                    init_coords: [0.05,0.75],
+                    row_direction: [0.0,1.0],
+                    rows: 2
+                }
+            )
+        };
+        return row_defs;
     }
 }
 
