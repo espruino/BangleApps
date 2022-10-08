@@ -26,7 +26,7 @@ class EnglishDateFormatter extends DateFormatter {
             },
             {
                 type: 'small',
-                init_coords: [0.05,0.8],
+                init_coords: [0.05,0.75],
                 row_direction: [0.0,1.0],
                 rows: 2
             }
