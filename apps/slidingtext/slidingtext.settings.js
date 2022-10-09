@@ -112,7 +112,6 @@
         'dgt': { date_formatter: 'dgt'},
     } : {
         'en' : { date_formatter: 'en' },
-        'en2' : { date_formatter: 'en2' },
         'fr': { date_formatter:'fr'},
         'de': { date_formatter: 'de'},
         'es': { date_formatter: 'es'},
@@ -169,7 +168,7 @@
     E.showMenu({
         "" : { "title" : "Sliding Text" },
         "< Back" : () => back(),
-        "Colour": stringInSettings("color_scheme", ["white", "black", "red","grey","purple","blue"]),
+        "Colour": stringInSettings("color_scheme", ["black","white", "red","grey","purple","blue"]),
         "Style": stringInSettings("date_format", locales, (l)=>locale_mappings[l] ),
         "Live Control": {
             value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
