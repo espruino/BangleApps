@@ -701,6 +701,8 @@ function loadSettings() {
     initDisplay(settings);
     if (settings.color_scheme != null) {
       setColorScheme(settings.color_scheme);
+    } else {
+      setColorScheme("black");
     }
     if (settings.enable_live_controls == null) {
       settings.enable_live_controls = (bangleVersion() <= 1);
