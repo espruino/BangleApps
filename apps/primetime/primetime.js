@@ -48,7 +48,7 @@ function draw() {
   g.setColor(100,100,100);
   g.drawString(timeStr, w/2, h/2);
   g.setFont("6x8", w/60);
-  g.drawString(primStr, w/2, 3*h/4);
+  g.drawString(primeStr, w/2, 3*h/4);
   queueDraw();
 }
 
