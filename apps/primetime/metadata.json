@@ -1,0 +1,10 @@
+{ "id": "primetime",
+  "name": "Prime Time Clock",
+  "type": "clock",
+  "description": "A clock that tells you the primes of the time",
+  "tags": "clock",
+  "storage": [
+    {"name":"primetime.app.js","url":"primetime.js"},
+    {"name":"primetime.img","url":"primetime-icon.js","evaluate":true}
+  ],
+},
