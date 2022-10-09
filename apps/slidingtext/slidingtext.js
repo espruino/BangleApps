@@ -6,16 +6,16 @@
 
 const color_schemes = [
   {
-    name: "white",
-    background : [1.0,1.0,1.0],
-    main_bar: [0.0,0.0,0.0],
-    other_bars: [0.1,0.1,0.1],
-  },
-  {
     name: "black",
     background : [0.0,0.0,0.0],
     main_bar: [1.0,0.0,0.0],
     other_bars: [0.9,0.9,0.9],
+  },
+  {
+    name: "white",
+    background : [1.0,1.0,1.0],
+    main_bar: [0.0,0.0,0.0],
+    other_bars: [0.1,0.1,0.1],
   },
   {
     name: "red",
@@ -265,33 +265,6 @@ function bangleVersion(){
   return (g.getHeight()>200)? 1 : 2;
 }
 
-var row_types = {
-  large: {
-    color: 'major',
-    speed: 'medium',
-    angle_to_horizontal: 0,
-    scroll_off: ['left'],
-    scroll_in: ['right'],
-    size: 'large'
-  },
-  medium: {
-    color: 'minor',
-    speed: 'slow',
-    angle_to_horizontal: 0,
-    scroll_off: ['left'],
-    scroll_in: ['right'],
-    size: 'medium'
-  },
-  small: {
-    color: 'minor',
-    speed: 'superslow',
-    angle_to_horizontal: 0,
-    scroll_off: ['left'],
-    scroll_in: ['right'],
-    size: 'small'
-  }
-};
-
 let row_displays;
 function initDisplay(settings) {
   if(row_displays != null){
@@ -300,174 +273,189 @@ function initDisplay(settings) {
   if(settings == null){
     settings = {};
   }
+  var row_types = {
+    large: {
+      color: 'major',
+      speed: 'medium',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'large'
+    },
+    medium: {
+      color: 'minor',
+      speed: 'slow',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'medium'
+    },
+    small: {
+      color: 'minor',
+      speed: 'superslow',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'small'
+    }
+  };
+
+  function mergeMaps(map1,map2){
+    if(map2 == null){
+      return;
+    }
+    Object.keys(map2).forEach(key => {
+      if(map1.hasOwnProperty(key)){
+        map1[key] = mergeObjects(map1[key], map2[key]);
+      } else {
+        map1[key] = map2[key];
+      }
+    });
+  }
+
+  function mergeObjects(obj1, obj2){
+    const result = {};
+    Object.keys(obj1).forEach(key => result[key] = (obj2.hasOwnProperty(key))? obj2[key] : obj1[key]);
+    return result;
+  }
+
   const row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
   mergeMaps(row_types,settings.row_types);
   const row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
       settings.row_defs : date_formatter.defaultRowDefs();
 
+  var heights = {
+    vvsmall: [15,13],
+    vsmall: [20,15],
+    ssmall: [22,17],
+    small: [25,20],
+    msmall: [30,22],
+    medium: [40,25],
+    mlarge: [45,35],
+    large: [50,40],
+    vlarge: [60,50]
+  };
+
+  var rotations = {
+    0: 0,
+    90: 3,
+    180: 2,
+    270: 1,
+  };
+
+  var speeds = {
+    fast: 20,
+    medium: 10,
+    slow: 5,
+    vslow: 2,
+    superslow: 1
+  };
+
+  function create_row_type(row_type, row_def){
+    const speed = speeds[row_type.speed];
+    const rotation = rotations[row_type.angle_to_horizontal];
+    const height = heights[row_type.size];
+    const scroll_ins = [];
+    if(row_type.scroll_in.includes('left')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
+    }
+    if(row_type.scroll_in.includes('right')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromRight(txt));
+    }
+    if(row_type.scroll_in.includes('up')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromBottom(txt));
+    }
+    var scroll_in;
+    if(scroll_ins.length === 0){
+      scroll_in = (row_display,txt)=> row_display.scrollInFromLeft(txt);
+    } else if(scroll_ins.length === 1){
+      scroll_in = scroll_ins[0];
+    } else {
+      scroll_in = (row_display,txt) =>{
+        const idx = (Math.random() * scroll_ins.length) | 0;
+        return scroll_ins[idx](row_display,txt);
+      };
+    }
+
+    const scroll_offs = [];
+    if(row_type.scroll_off.includes('left')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
+    }
+    if(row_type.scroll_off.includes('right')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToRight());
+    }
+    if(row_type.scroll_off.includes('down')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
+    }
+    var scroll_off;
+    if(scroll_offs.length === 0){
+      scroll_off = (row_display)=> row_display.scrollOffToLeft();
+    } else if(scroll_offs.length === 1){
+      scroll_off = scroll_offs[0];
+    } else {
+      scroll_off = (row_display) =>{
+        var idx = (Math.random() * scroll_off.length) | 0;
+        return scroll_offs[idx](row_display);
+      };
+    }
+
+    var text_formatter = (txt)=>txt;
+    const SPACES = '                                                ';
+    if(row_def.hasOwnProperty("alignment")){
+      const alignment = row_def.alignment;
+      if(alignment.startsWith("centre")){
+        const padding = parseInt(alignment.split("-")[1]);
+        if(padding > 0){
+          text_formatter = (txt) => {
+            const front_spaces = (padding - txt.length)/2 | 0;
+            return front_spaces > 0? SPACES.substring(0,front_spaces + 1) + txt : txt;
+          };
+        }
+      }
+    }
+
+    const version = bangleVersion() - 1;
+    const Y_RESERVED = 20;
+    return {
+      row_speed: speed,
+      row_height: height[version],
+      row_rotation: rotation,
+      x: (row_no) => row_def.init_coords[0] * g.getWidth() + row_def.row_direction[0] * height[version] * row_no,
+      y: (row_no) => Y_RESERVED + row_def.init_coords[1] * (g.getHeight() - Y_RESERVED) + row_def.row_direction[1] * height[version] * row_no,
+      scroll_in: scroll_in,
+      scroll_off: scroll_off,
+      fg_color: () => (row_type.color === 'major')? main_color(): other_color(),
+      row_text_formatter : text_formatter
+    };
+  }
   row_displays = [];
   row_defs.forEach(row_def =>{
     const row_type = create_row_type(row_types[row_def.type],row_def);
     // we now create the number of rows specified of that type
-    for(var j=0; j<row_def.rows; j++){
-      row_displays.push(create_row(row_type,j));
+    for(var row_no=0; row_no<row_def.rows; row_no++){
+      row_displays.push(new ShiftText(row_type.x(row_no),
+          row_type.y(row_no),
+          '',
+          "Vector",
+          row_type.row_height,
+          row_type.row_speed,
+          row_type.row_speed,
+          10,
+          row_type.fg_color(),
+          bg_color(),
+          row_type,
+          row_type.row_rotation
+        )
+      );
     }
   });
-}
-
-function mergeMaps(map1,map2){
-  if(map2 == null){
-    return;
-  }
-  Object.keys(map2).forEach(key => {
-    if(map1.hasOwnProperty(key)){
-      map1[key] = mergeObjects(map1[key], map2[key]);
-    } else {
-      map1[key] = map2[key];
-    }
-  });
-}
-
-function mergeObjects(obj1, obj2){
-  const result = {};
-  Object.keys(obj1).forEach(key => result[key] = (obj2.hasOwnProperty(key))? obj2[key] : obj1[key]);
-  return result;
-}
-
-var heights = {
-  vvsmall: [15,13],
-  vsmall: [20,15],
-  ssmall: [22,17],
-  small: [25,20],
-  msmall: [30,22],
-  medium: [40,25],
-  mlarge: [45,35],
-  large: [50,40],
-  vlarge: [60,50]
-};
-
-var rotations = {
-  0: 0,
-  90: 3,
-  180: 2,
-  270: 1,
-};
-
-var speeds = {
-  fast: 20,
-  medium: 10,
-  slow: 5,
-  vslow: 2,
-  superslow: 1
-};
-
-const Y_RESERVED = 20;
-const SPACES = '                                                ';
-/**
- * takes a json definition for a row type and creates an instance
- */
-function create_row_type(row_type, row_def){
-  const speed = speeds[row_type.speed];
-  const rotation = rotations[row_type.angle_to_horizontal];
-  const height = heights[row_type.size];
-  const scroll_ins = [];
-  if(row_type.scroll_in.includes('left')){
-    scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
-  }
-  if(row_type.scroll_in.includes('right')){
-    scroll_ins.push((row_display,txt)=> row_display.scrollInFromRight(txt));
-  }
-  if(row_type.scroll_in.includes('up')){
-    scroll_ins.push((row_display,txt)=> row_display.scrollInFromBottom(txt));
-  }
-  var scroll_in;
-  if(scroll_ins.length === 0){
-    scroll_in = (row_display,txt)=> row_display.scrollInFromLeft(txt);
-  } else if(scroll_ins.length === 1){
-    scroll_in = scroll_ins[0];
-  } else {
-    scroll_in = (row_display,txt) =>{
-      const idx = (Math.random() * scroll_ins.length) | 0;
-      return scroll_ins[idx](row_display,txt);
-    };
-  }
-
-  const scroll_offs = [];
-  if(row_type.scroll_off.includes('left')){
-    scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
-  }
-  if(row_type.scroll_off.includes('right')){
-    scroll_offs.push((row_display)=> row_display.scrollOffToRight());
-  }
-  if(row_type.scroll_off.includes('down')){
-    scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
-  }
-  var scroll_off;
-  if(scroll_offs.length === 0){
-    scroll_off = (row_display)=> row_display.scrollOffToLeft();
-  } else if(scroll_offs.length === 1){
-    scroll_off = scroll_offs[0];
-  } else {
-    scroll_off = (row_display) =>{
-      var idx = (Math.random() * scroll_off.length) | 0;
-      return scroll_offs[idx](row_display);
-    };
-  }
-
-  var text_formatter = (txt)=>txt;
-  if(row_def.hasOwnProperty("alignment")){
-    const alignment = row_def.alignment;
-    if(alignment.startsWith("centre")){
-      const padding = parseInt(alignment.split("-")[1]);
-      if(padding > 0){
-        text_formatter = (txt) => {
-          const front_spaces = (padding - txt.length)/2 | 0;
-          return front_spaces > 0? SPACES.substring(0,front_spaces + 1) + txt : txt;
-        };
-      }
-    }
-  }
-
-  const version = bangleVersion() - 1;
-  return {
-    row_speed: speed,
-    row_height: height[version],
-    row_rotation: rotation,
-    x: (row_no) => row_def.init_coords[0] * g.getWidth() + row_def.row_direction[0] * height[version] * row_no,
-    y: (row_no) => Y_RESERVED + row_def.init_coords[1] * (g.getHeight() - Y_RESERVED) + row_def.row_direction[1] * height[version] * row_no,
-    scroll_in: scroll_in,
-    scroll_off: scroll_off,
-    fg_color: () => (row_type.color === 'major')? main_color(): other_color(),
-    row_text_formatter : text_formatter
-  };
-}
-
-function initComplete(){
+  // dereference the setup variables to release the memory
   row_types = null;
-  speeds = null;
-  rotations = null;
   heights = null;
-  const mem = process.memory(true);
-  console.log("init complete memory:" + mem.usage / mem.total);
+  rotations = null;
+  speeds = null;
 }
-
-function create_row(row_type, row_no){
-  return new ShiftText(row_type.x(row_no),
-      row_type.y(row_no),
-      '',
-      "Vector",
-      row_type.row_height,
-      row_type.row_speed,
-      row_type.row_speed,
-      10,
-      row_type.fg_color(),
-      bg_color(),
-      row_type,
-      row_type.row_rotation
-  );
-}
-
 
 function nextColorTheme(){
   color_scheme_index += 1;
@@ -618,69 +606,66 @@ function setColorScheme(colorscheme_name){
   }
 }
 
-const Locale = require('locale');
-
-/**
- * Demonstration Date formatter so that we can see the
- * clock working in the emulator
- */
-class DigitDateTimeFormatter {
-  constructor() {}
-
-  format00(num){
-    const value = (num | 0);
-    if(value > 99 || value < 0)
-      throw "must be between in range 0-99";
-    if(value < 10)
-      return "0" + value.toString();
-    else
-      return value.toString();
-  }
-
-  formatDate(now){
-    const hours = now.getHours() ;
-    const time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
-    const date_txt = Locale.dow(now,1) + " " + this.format00(now.getDate());
-    const month_txt = Locale.month(now);
-    return [time_txt, date_txt, month_txt];
-  }
-
-  defaultRowTypes(){
-    return {
-      large: {
-        scroll_off: ['left', 'right', 'down'],
-        scroll_in: ['left', 'right', 'up'],
-        size: 'vlarge'
-      },
-      small: {
-        angle_to_horizontal: 90,
-        scroll_off: ['down'],
-        scroll_in: ['up'],
-        size: 'vvsmall'
-      }
-    };
-  }
-
-  defaultRowDefs() {
-    return [
-      {
-        type: 'large',
-        row_direction: [0.0,1.0],
-        init_coords: [0.1,0.35],
-        rows: 1
-      },
-      {
-        type: 'small',
-        row_direction: [1.0,0],
-        init_coords: [0.85,0.99],
-        rows: 2
-      }
-    ];
-  }
-}
-
 var date_formatter;
 function setDateformat(shortname){
+  /**
+   * Demonstration Date formatter so that we can see the
+   * clock working in the emulator
+   */
+  class DigitDateTimeFormatter {
+    constructor() {}
+
+    format00(num){
+      const value = (num | 0);
+      if(value > 99 || value < 0)
+        throw "must be between in range 0-99";
+      if(value < 10)
+        return "0" + value.toString();
+      else
+        return value.toString();
+    }
+
+    formatDate(now){
+      const hours = now.getHours() ;
+      const time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
+      const date_txt = require('locale').dow(now,1) + " " + this.format00(now.getDate());
+      const month_txt = require('locale').month(now);
+      return [time_txt, date_txt, month_txt];
+    }
+
+    defaultRowTypes(){
+      return {
+        large: {
+          scroll_off: ['left', 'right', 'down'],
+          scroll_in: ['left', 'right', 'up'],
+          size: 'vlarge'
+        },
+        small: {
+          angle_to_horizontal: 90,
+          scroll_off: ['down'],
+          scroll_in: ['up'],
+          size: 'vvsmall'
+        }
+      };
+    }
+
+    defaultRowDefs() {
+      return [
+        {
+          type: 'large',
+          row_direction: [0.0,1.0],
+          init_coords: [0.1,0.35],
+          rows: 1
+        },
+        {
+          type: 'small',
+          row_direction: [1.0,0],
+          init_coords: [0.85,0.99],
+          rows: 2
+        }
+      ];
+    }
+  }
   console.log("setting date format:" + shortname);
   try {
     if (date_formatter == null) {
@@ -692,7 +677,7 @@ function setDateformat(shortname){
       }
     }
   } catch(e){
-    console.log("Failed to load " + shortname);
+    console.log("not loaded:" + shortname);
   }
   if(date_formatter == null){
     date_formatter = new DigitDateTimeFormatter();
@@ -736,7 +721,8 @@ function loadSettings() {
     initDisplay();
     updateColorScheme();
   }
-  initComplete();
+  const mem = process.memory(true);
+  console.log("init complete memory:" + mem.usage / mem.total);
 }
 
 function button3pressed() {
