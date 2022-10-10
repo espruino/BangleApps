@@ -191,35 +191,35 @@ function spotifyPlaylistDW() {
 }
 
 function spotifyPlaylistDM1() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E365VyzxE0mxF:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDM2() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E38LZHLFnrM61:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDM3() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36RU87qzgBFP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDM4() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E396gGyCXEBFh:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDM5() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E37a0Tt6CKJLP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDM6() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36UIQLQK79od:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistDD() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1EfWFiI7QfIAKq:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 function spotifyPlaylistRR() {
-  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
+  Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXbs0XkE2V8sMO:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
 }
 
 // Spotify Remote Menu
