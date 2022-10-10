@@ -36,7 +36,7 @@ function drawCompass(course) {
     }
     xpos+=15;
   }
-  if (wpindex!=0) {
+  if (wpindex>=0) {
     var bpos = brg - course;
     if (bpos>180) bpos -=360;
     if (bpos<-180) bpos +=360;
@@ -220,7 +220,7 @@ function nextwp(inc){
 }
 
 function doselect(){
-  if (selected && wpindex!=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
+  if (selected && wpindex>=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
      waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
      require("waypoints").save(waypoints);
