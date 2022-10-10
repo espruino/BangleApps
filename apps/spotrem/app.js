@@ -256,18 +256,13 @@ var searchMenu = {
   "Search term w tag \"track\"" : ()=>{trackSearchTerm();},
   "Search term w tag \"album\"" : ()=>{albumSearchTerm();},
   "Execute search and play with tags" : ()=>{searchPlayWTags();},
-  "Play \"Vreden\" by Sara Parkman via uri-link" : ()=>{playVreden();},
-  "Play \"Vreden\" by Sara Parkman via search&play" : ()=>{searchPlayVreden();},
-  "Open \"The Blue Room\" EP (no autoplay)" : ()=>{openAlbum();},
-  "Play \"The Blue Room\" EP via search&play" : ()=>{searchPlayAlbum();},
-  "Play playlist Discover Weekly" : ()=>{spotifyPlaylistDW();},
 };
 
 var savedMenu = {
   "" : { title : " ",
         back: () => {if (backToMenu) E.showMenu(spotifyMenu);
                      if (!backToMenu) backToGfx();} },
-  "Play playlist Discover Weekly" : ()=>{spotifyPlaylistDW();},
+  "Play Discover Weekly" : ()=>{spotifyPlaylistDW();},
   "Play Daily Mix 1" : ()=>{spotifyPlaylistDM1();},
   "Play Daily Mix 2" : ()=>{spotifyPlaylistDM2();},
   "Play Daily Mix 3" : ()=>{spotifyPlaylistDM3();},
