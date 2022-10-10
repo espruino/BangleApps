@@ -15,6 +15,7 @@ function gfx() {
   g.clearRect(R);
   g.reset();
   
+  g.setColor(0x07E0);
   g.setFont("4x6:2");
   g.setFontAlign(1, 0, 0);
   g.drawString("->", R.x2 - marigin, R.y + R.h/2);
