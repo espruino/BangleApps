@@ -5,6 +5,7 @@ Bluetooth.println(JSON.stringify({t:"intent", action:"", flags:["flag1", "flag2"
 var R;
 var backToMenu = false;
 var isPaused = true;
+var dark = g.theme.dark; // bool
 
 // The main layout of the app
 function gfx() {
@@ -15,7 +16,7 @@ function gfx() {
   g.clearRect(R);
   g.reset();
   
-  g.setColor(0x07E0);
+  if (dark) {g.setColor(0x07E0);} else {g.setColor(0x03E0);} // Green on dark theme, DarkGreen on light theme.
   g.setFont("4x6:2");
   g.setFontAlign(1, 0, 0);
   g.drawString("->", R.x2 - marigin, R.y + R.h/2);
