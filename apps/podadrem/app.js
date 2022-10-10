@@ -67,17 +67,19 @@ com.bambuna.podcastaddict.service.player.togglespeed – This will toggle the Pl
 
 var R;
 var backToMenu = false;
+var dark = g.theme.dark; // bool
 
 // The main layout of the app
 function gfx() {
+  //Bangle.drawWidgets();
   R = Bangle.appRect;
   marigin = 8;
   // g.drawString(str, x, y, solid)
   g.clearRect(R);
   g.reset();
-
+  
+  if (dark) {g.setColor(0xFD20);} else {g.setColor(0xF800);} // Orange on dark theme, RED on light theme.
   g.setFont("4x6:2");
-  g.setColor(0xFD20);
   g.setFontAlign(1, 0, 0);
   g.drawString("->", R.x2 - marigin, R.y + R.h/2);
 
