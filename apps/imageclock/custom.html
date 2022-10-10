@@ -23,6 +23,8 @@
       Options:</br>
       <input type="checkbox" id="timeoutwrap" name="mode"/>
       <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
+      <input type="checkbox" id="forceOrigPlane" name="mode" disabled="true"/>
+      <label for="forceOrigPlane">Force use of direct drawing (Even faster, but will produce visible artifacts on not optimized watch faces)</label></br>
       <input type="checkbox" id="debugprints" name="mode"/>
       <label for="debugprints">Add debug prints to generated code</label></br>
     </p>
@@ -579,11 +581,8 @@
         return result;
       }
       
-      function convertToCode(elements, properties, wrapInTimeouts){        
+      function convertToCode(elements, properties, wrapInTimeouts, forceUseOrigPlane){        
         var code = "(function (wr, wf) {\n";
-        if (!wrapInTimeouts){
-          code += "var ct=Date.now();\n";
-        }
         code += "var lc;\n";
         code += "var p = Promise.resolve();\n";  
         
@@ -595,7 +594,7 @@
           var c = elements[i].value;
           console.log("Check element", c);
           var name = c.Layer;
-          var plane = wrapInTimeouts ? 1 : 0;
+          var plane = (wrapInTimeouts && !forceUseOrigPlane) ? 1 : 0;
           if (typeof c.Plane == "number"){
             plane = c.Plane;
           }
@@ -610,8 +609,6 @@
         
         console.log("Found planes", planes, "with numbers", planeNumbers)
         
-        if (wrapInTimeouts && planes == 0) planes = 1;
-        
         code += "p0 = g;\n";
         
         for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
@@ -624,32 +621,25 @@
           if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),4,{msb:true});\n";
           
           if (properties.Redraw && properties.Redraw.Clear){
-            if (wrapInTimeouts && plane != 0){
+            if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
               code += "p = p.then(()=>delay(0)).then(()=>{\n";
             } else {
               code += "p = p.then(()=>{\n";
             }
-            code += "var ct=Date.now();\n"
             if (addDebug()) code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
             code += 'startPerfLog("initialDraw_g.clear");'+"\n";
             code += "p" + plane + ".clear(true);\n";
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
-  
-            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
           var previousPlane = plane + 1;
           if (previousPlane < planeNumbers.length){
             code += "p = p.then(()=>{\n";
-            code += "var ct=Date.now();\n";
             
             if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
             //code += "g.drawImage(p" + i + ".asImage());";
             code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer, palette: palette});\n";
-            
-            
-            code += "drawingTime += Date.now() - ct;\n";
             code += "});\n";
           }
           
@@ -660,12 +650,6 @@
             console.log("Layer elements", layername, layerElements);
             //code for whole layer
             
-            if (wrapInTimeouts && plane != 0){
-              code += "p = p.then(()=>delay(0)).then(()=>{\n";
-            } else {
-              code += "p = p.then(()=>{\n";
-            }
-            code += "var ct=Date.now();\n";
             if (addDebug()) code += 'print("Starting layer ' + layername + '");' + "\n";
             
             var checkForLayerChange = false;
@@ -732,14 +716,17 @@
               if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
               code += "" + colorsetting;
               code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
+                if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
+                  code += "p = p.then(()=>delay(0)).then(()=>{\n";
+                } else {
+                  code += "p = p.then(()=>{\n";
+                }            
               if (addDebug()) code += 'print("Drawing element ' + elementIndex + ' with type ' + c.type + ' on plane ' + planeName + '");' + "\n";
               code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value);\n";
 
+              code += "});\n";
               code += (condition.length > 0 ? "}\n" : "");
             }
-            
-            code += "drawingTime += Date.now() - ct;\n";
-            code += "});\n";
           }
           console.log("Current plane is", plane);
           
@@ -759,7 +746,7 @@
         var properties = faceJson.Properties;        
         faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
         console.log("After collapsing", faceJson);
-        precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('timeoutwrap').checked);
+        precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('timeoutwrap').checked, document.getElementById('forceOrigPlane').checked);
         console.log("After precompiling", precompiledJs);
       }
       
@@ -1010,6 +997,10 @@
           }
         }
       }
+     
+      document.getElementById("timeoutwrap").addEventListener("click", function() {
+        document.getElementById("forceOrigPlane").disabled = !document.getElementById("timeoutwrap").checked;
+      });
      
       document.getElementById("btnSave").addEventListener("click", function() {
         var h = document.createElement('a');

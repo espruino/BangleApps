@@ -68,7 +68,7 @@ function drawEvent(event, y) {
 var curEventHeight = 0;
 
 function drawCurrentEvents(y) {
-  g.setColor("#0ff");
+  g.setColor(g.theme.dark ? "#0ff" : "#0000ff");
   g.clearRect(5, y, g.getWidth() - 5, y + curEventHeight);
   curEventHeight = y;
 

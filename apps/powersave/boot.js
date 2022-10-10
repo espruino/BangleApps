@@ -12,7 +12,7 @@ E.on("init", () => {
     Storage.write("powersave.json", {
       app: __FILE__
     });
-  }else{
+  }else if(!("__FILE__" in global)){
     Storage.write("powersave.json", {
       app: null
     });
