@@ -21,6 +21,7 @@
     {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
     {"name":"slidingtext.locale.de.js","url":"slidingtext.locale.de.js"},
     {"name":"slidingtext.locale.dgt.js","url":"slidingtext.locale.dgt.js"},
+    {"name":"slidingtext.locale.hyb.js","url":"slidingtext.locale.hyb.js"},
     {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
   ],
   "data": [{"name": "slidingtext.settings.json"}]
