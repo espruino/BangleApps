@@ -335,7 +335,7 @@ function initDisplay(settings) {
     mlarge: [45,35],
     large: [50,40],
     vlarge: [60,50],
-    slarge: [100,90]
+    slarge: [110,90]
   };
 
   var rotations = {

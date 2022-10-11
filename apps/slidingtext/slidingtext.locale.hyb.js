@@ -46,7 +46,7 @@ class EnglishDateFormatter extends DateFormatter {
     }
 
     defaultRowDefs(){
-        return [
+        const row_defs = [
             {
                 type: 'large',
                 init_coords: [0.05,0.35],
@@ -55,18 +55,24 @@ class EnglishDateFormatter extends DateFormatter {
             },
             {
                 type: 'medium',
-                init_coords: [0.7,0.95],
+                init_coords: [0.68,0.95],
                 row_direction: [1.0,0.0],
                 angle_to_horizontal: 90,
                 rows: 2
-            },
-            {
-                type: 'small',
-                init_coords: [0.05, 0.1],
-                row_direction: [0.0, 1.0],
-                rows: 1
-            }
-        ];
+            }];
+
+        const bangleVersion = (g.getHeight()>200)? 1 : 2;
+        if(bangleVersion > 1){
+            row_defs.push(
+                {
+                    type: 'small',
+                    init_coords: [0.05, 0.1],
+                    row_direction: [0.0, 1.0],
+                    rows: 1
+                }
+            )
+        }
+        return row_defs;
     }
 }
 
