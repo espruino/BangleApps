@@ -1,6 +1,6 @@
 const DateFormatter = require("slidingtext.dtfmt.js");
 const numberToText = require("slidingtext.utils.en.js").numberToText;
-const dayOfWeek = require("slidingtext.utils.en.js").dayOfWeek;
+const dayOfWeek = require("slidingtext.utils.en.js").dayOfWeekShort;
 
 class EnglishDateFormatter extends DateFormatter {
     constructor() {
@@ -33,6 +33,7 @@ class EnglishDateFormatter extends DateFormatter {
                 scroll_in: ['up','left'],
             },
             medium: {
+                size: 'msmall',
                 scroll_off: ['down'],
                 scroll_in: ['up'],
                 angle_to_horizontal: 90
