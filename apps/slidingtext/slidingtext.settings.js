@@ -10,7 +10,7 @@
     console.log("loaded:" + JSON.stringify(settings));
     const locale_mappings = (bangleVersion > 1)? {
         'en' : { date_formatter: 'en' },
-        'en p': {
+        'en alt': {
             date_formatter: 'en',
             row_types: {
                 large:{
@@ -53,7 +53,7 @@
             ]
         },
         'en2': { date_formatter: 'en2' },
-        'en2 p': { date_formatter: 'en2',
+        'en2 alt': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
                     color: 'minor',
@@ -109,14 +109,16 @@
         'de': { date_formatter: 'de'},
         'es': { date_formatter: 'es'},
         'jp': { date_formatter: 'jp'},
-        'dgt': { date_formatter: 'dgt'},
+        'hybrid': { date_formatter: 'hyb'},
+        'digits': { date_formatter: 'dgt'},
     } : {
         'en' : { date_formatter: 'en' },
         'fr': { date_formatter:'fr'},
         'de': { date_formatter: 'de'},
         'es': { date_formatter: 'es'},
         'jp': { date_formatter: 'jp'},
-        'dgt': { date_formatter: 'dgt'},
+        'hybrid': { date_formatter: 'hyb'},
+        'digits': { date_formatter: 'dgt'},
     }
 
     const locales = Object.keys(locale_mappings);

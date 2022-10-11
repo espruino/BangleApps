@@ -322,7 +322,7 @@ function initDisplay(settings) {
   const row_type_overide = date_formatter.defaultRowTypes();
   mergeMaps(row_types,row_type_overide);
   mergeMaps(row_types,settings.row_types);
-  const row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
+  var row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
       settings.row_defs : date_formatter.defaultRowDefs();
 
   var heights = {
@@ -334,7 +334,8 @@ function initDisplay(settings) {
     medium: [40,25],
     mlarge: [45,35],
     large: [50,40],
-    vlarge: [60,50]
+    vlarge: [60,50],
+    slarge: [100,90]
   };
 
   var rotations = {
@@ -451,6 +452,7 @@ function initDisplay(settings) {
     }
   });
   // dereference the setup variables to release the memory
+  row_defs = null;
   row_types = null;
   heights = null;
   rotations = null;
