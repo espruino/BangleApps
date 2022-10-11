@@ -41,7 +41,7 @@ class EnglishDateFormatter extends DateFormatter {
             small: {
                 size: 'ssmall',
                 scroll_off: ['left','right'],
-                scroll_in: ['left','right'],
+                scroll_in: ['left'],
             }
         };
     }
