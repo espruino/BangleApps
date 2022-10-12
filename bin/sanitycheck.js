@@ -78,7 +78,7 @@ const APP_KEYS = [
   'supports', 'allow_emulator',
   'dependencies'
 ];
-const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
 const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings","waypoints"]; // values allowed for "type" field
