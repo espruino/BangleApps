@@ -107,7 +107,7 @@
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
-        load(app.src);
+        loadApp(app.src);
       }
     }
     selectedItem = appId;
@@ -194,23 +194,31 @@
     loadApp(".bootcde");
   };
   let watch;
-  let loadApp = function(name) {
-    Bangle.setUI();
-    if (watch) clearWatch(watch);
-    apps = [];
-    delete drawItemAuto;
-    delete drawText;
-    delete selectItem;
-    delete onDrag;
-    delete drawItems;
-    delete drawItem;
-    delete returnToClock;
-    delete idxToY;
-    delete YtoIdx;
-    delete settings;
-    setTimeout(eval, 0, s.read(name));
-    return;
-  };
+  let loadApp;
+  if (settings.fastload){
+    loadApp = function(name) {
+      Bangle.setUI();
+      if (watch) clearWatch(watch);
+      apps = [];
+      delete drawItemAuto;
+      delete drawText;
+      delete selectItem;
+      delete onDrag;
+      delete drawItems;
+      delete drawItem;
+      delete returnToClock;
+      delete idxToY;
+      delete YtoIdx;
+      delete settings;
+      setTimeout(eval, 0, s.read(name));
+      return;
+    };
+  } else {
+    loadApp = function(name) {
+      load(name);
+    }
+  }
+  
   if (settings.oneClickExit) {
     watch = setWatch(returnToClock, BTN1);
   }
