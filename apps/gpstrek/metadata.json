@@ -13,5 +13,6 @@
     {"name":"gpstrek.app.js","url":"app.js"},
     {"name":"gpstrek.wid.js","url":"widget.js"},
     {"name":"gpstrek.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"gpstrek.state.json"}]
 }
