@@ -72,7 +72,7 @@ function onPressure(e) {
   }
 }
 
-function start(){
+function start(bg){
   Bangle.on('GPS', onGPS);
   Bangle.on("HRM", onPulse);
   Bangle.on("mag", onMag);
@@ -83,13 +83,18 @@ function start(){
   Bangle.setHRMPower(1, "gpstrek");
   Bangle.setCompassPower(1, "gpstrek");
   Bangle.setBarometerPower(1, "gpstrek");
-  state.active = true;
+  if (bg){
+    state.active = true;
+    saveState();
+  }
   Bangle.drawWidgets();
 }
 
-function stop(){
-  state.active = false;
-  saveState();
+function stop(bg){
+  if (bg){
+    state.active = false;
+    saveState();
+  }
   Bangle.drawWidgets();
 }
   
