@@ -1,6 +1,7 @@
 (() => {
 const STORAGE=require('Storage');
 let state = STORAGE.readJSON("gpstrek.state.json")||{};
+let bgChanged = false;
 
 function saveState(){
   state.saved = Date.now();
@@ -8,7 +9,7 @@ function saveState(){
 }
 
 E.on("kill",()=>{
-  if (state.active){
+  if (bgChanged){
     saveState();
   }
 });
@@ -84,6 +85,7 @@ function start(bg){
   Bangle.setCompassPower(1, "gpstrek");
   Bangle.setBarometerPower(1, "gpstrek");
   if (bg){
+    if (!state.active) bgChanged = true;
     state.active = true;
     saveState();
   }
@@ -92,6 +94,7 @@ function start(bg){
 
 function stop(bg){
   if (bg){
+    if (state.active) bgChanged = true;
     state.active = false;
     saveState();
   }
@@ -112,7 +115,7 @@ if (state.saved && state.saved < Date.now() - 60000){
 }
 
 if (state.active){
-  start();
+  start(false);
 }
 
 WIDGETS["gpstrek"]={
