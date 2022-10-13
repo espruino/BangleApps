@@ -2,7 +2,7 @@
   const s = require("Storage");
   const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,oneClickExit:false };
   if (!settings.fullscreen) {
-    if (!global.WIDGETS) Bangle.loadWidgets();
+    Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
   var apps = s
