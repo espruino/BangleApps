@@ -1,48 +1,79 @@
+let screen = 1;
+let drawTimeout;
+let scheduledDrawTimeout;
+let lastDrawnScreen;
+let firstDraw = true;
+let sliceHeight;
+let slices = [];
+let maxScreens = 1;
+let state;
+
+{ //run in own scope for fast switch
 const STORAGE = require("Storage");
-const showWidgets = true;
-let numberOfSlices=4;
+let init = function(){
+  global.screen = 1;
+  global.drawTimeout = undefined;
+  global.scheduledDrawTimeout = undefined;
+  global.lastDrawnScreen = 0;
+  global.firstDraw = true;
+  global.slices = [];
+  global.maxScreens = 1;
+  global.scheduleDraw = false;
 
-if (showWidgets){
   Bangle.loadWidgets();
-}
+  if (!WIDGETS.gpstrek.getState().numberOfSlices) WIDGETS.gpstrek.getState().numberOfSlices = 3;
+};
 
-let state = WIDGETS.gpstrek.getState();
+let cleanup = function(){
+  if (global.drawTimeout) clearTimeout(global.drawTimeout);
+  if (global.scheduledDrawTimeout) clearTimeout(global.scheduledDrawTimeout);
+  delete global.screen;
+  delete global.drawTimeout;
+  delete global.scheduledDrawTimeout;
+  delete global.lastDrawnScreen;
+  delete global.firstDraw;
+  delete global.slices;
+  delete global.maxScreens;
+};
+
+init();
+scheduleDraw = true;
 WIDGETS.gpstrek.start(false);
 
-function parseNumber(toParse){
+let parseNumber = function(toParse){
   if (toParse.includes(".")) return parseFloat(toParse);
   return parseFloat("" + toParse + ".0");
-}
+};
 
-function parseWaypoint(filename, offset, result){
+let parseWaypoint = function(filename, offset, result){
   result.lat = parseNumber(STORAGE.read(filename, offset, 11));
   result.lon = parseNumber(STORAGE.read(filename, offset += 11, 12));
   return offset + 12;
-}
+};
 
-function parseWaypointWithElevation(filename, offset, result){
+let parseWaypointWithElevation = function (filename, offset, result){
   offset = parseWaypoint(filename, offset, result);
   result.alt = parseNumber(STORAGE.read(filename, offset, 6));
   return offset + 6;
-}
+};
 
-function parseWaypointWithName(filename, offset, result){
+let parseWaypointWithName = function(filename, offset, result){
   offset = parseWaypoint(filename, offset, result);
   return parseName(filename, offset, result);
-}
+};
 
-function parseName(filename, offset, result){
+let parseName = function(filename, offset, result){
   let nameLength = STORAGE.read(filename, offset, 2) - 0;
   result.name = STORAGE.read(filename, offset += 2, nameLength);
   return offset + nameLength;
-}
+};
 
-function parseWaypointWithElevationAndName(filename, offset, result){
+let parseWaypointWithElevationAndName = function(filename, offset, result){
   offset = parseWaypointWithElevation(filename, offset, result);
   return parseName(filename, offset, result);
-}
+};
 
-function getEntry(filename, offset, result){
+let getEntry = function(filename, offset, result){
   result.fileOffset = offset;
   let type = STORAGE.read(filename, offset++, 1);
   if (type == "") return -1;
@@ -68,12 +99,12 @@ function getEntry(filename, offset, result){
   result.fileLength = offset - result.fileOffset;
   //print(result);
   return offset;
-}
+};
 
 const labels = ["N","NE","E","SE","S","SW","W","NW"];
 const loc = require("locale");
 
-function matchFontSize(graphics, text, height, width){
+let matchFontSize = function(graphics, text, height, width){
   graphics.setFontVector(height);
   let metrics;
   let size = 1;
@@ -81,9 +112,9 @@ function matchFontSize(graphics, text, height, width){
     size -= 0.05;
     graphics.setFont("Vector",Math.floor(height*size));
   }
-}
+};
 
-function getDoubleLineSlice(title1,title2,provider1,provider2,refreshTime){
+let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime){
   let lastDrawn = Date.now() - Math.random()*refreshTime;
   return {
     refresh: function (){
@@ -110,9 +141,9 @@ function getDoubleLineSlice(title1,title2,provider1,provider2,refreshTime){
       graphics.drawString(value, x+width, y+(height*0.5));
     }
   };
-}
+};
 
-function getTargetSlice(targetDataSource){
+let getTargetSlice = function(targetDataSource){
   let nameIndex = 0;
   let lastDrawn = Date.now() - Math.random()*3000;
   return {
@@ -174,9 +205,9 @@ function getTargetSlice(targetDataSource){
       }
     }
   };
-}
+};
 
-function drawCompass(graphics, x, y, height, width, increment, start){
+let drawCompass = function(graphics, x, y, height, width, increment, start){
   graphics.setFont12x20();
   graphics.setFontAlign(0,-1);
   graphics.setColor(graphics.theme.fg);
@@ -184,7 +215,7 @@ function drawCompass(graphics, x, y, height, width, increment, start){
   if (frag>0) frag = 0;
   let xpos = 0 + frag*increment;
   for (let i=start;i<=720;i+=15){
-    var res = i + frag;
+    let res = i + frag;
     if (res%90==0) {
       graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
       graphics.fillRect(xpos-2,Math.floor(y+height*0.6),xpos+2,Math.floor(y+height));
@@ -197,9 +228,9 @@ function drawCompass(graphics, x, y, height, width, increment, start){
     xpos+=increment*15;
     if (xpos > width + 20) break;
   }
-}
+};
 
-function getCompassSlice(compassDataSource){
+let getCompassSlice = function(compassDataSource){
   let lastDrawn = Date.now() - Math.random()*2000;
   const buffers = 4;
   let buf = [];
@@ -212,12 +243,12 @@ function getCompassSlice(compassDataSource){
 
       graphics.clearRect(x,y,x+width,y+height);
 
-      var start = compassDataSource.getCourse() - 90;
+      let start = compassDataSource.getCourse() - 90;
       if (isNaN(compassDataSource.getCourse())) start = -90;
       if (start<0) start+=360;
       start = start % 360;
 
-      if (state.acc && compassDataSource.getCourseType() == "MAG"){
+      if (WIDGETS.gpstrek.getState().acc && compassDataSource.getCourseType() == "MAG"){
         drawCompass(graphics,0,y+width*0.05,height-width*0.05,width,increment,start);
       } else {
         drawCompass(graphics,0,y,height,width,increment,start);
@@ -226,7 +257,7 @@ function getCompassSlice(compassDataSource){
 
       if (compassDataSource.getPoints){
         for (let p of compassDataSource.getPoints()){
-          var bpos = p.bearing - compassDataSource.getCourse();
+          let bpos = p.bearing - compassDataSource.getCourse();
           if (bpos>180) bpos -=360;
           if (bpos<-180) bpos +=360;
           bpos+=120;
@@ -263,9 +294,9 @@ function getCompassSlice(compassDataSource){
       graphics.setColor(g.theme.fg);
       graphics.fillRect(x,y,Math.floor(width*0.05),y+height);
       graphics.fillRect(Math.ceil(width*0.95),y,width,y+height);
-      if (state.acc && compassDataSource.getCourseType() == "MAG") {
-        let xh = E.clip(width*0.5-height/2+(((state.acc.x+1)/2)*height),width*0.5 - height/2, width*0.5 + height/2);
-        let yh = E.clip(y+(((state.acc.y+1)/2)*height),y,y+height);
+      if (WIDGETS.gpstrek.getState().acc && compassDataSource.getCourseType() == "MAG") {
+        let xh = E.clip(width*0.5-height/2+(((WIDGETS.gpstrek.getState().acc.x+1)/2)*height),width*0.5 - height/2, width*0.5 + height/2);
+        let yh = E.clip(y+(((WIDGETS.gpstrek.getState().acc.y+1)/2)*height),y,y+height);
 
         graphics.fillRect(width*0.5 - height/2, y, width*0.5 + height/2, y + Math.floor(width*0.05));
 
@@ -287,44 +318,44 @@ function getCompassSlice(compassDataSource){
       graphics.drawRect(Math.floor(width*0.05),y,Math.ceil(width*0.95),y+height);
     }
   };
-}
+};
 
-function radians(a) {
+let radians = function(a) {
   return a*Math.PI/180;
-}
+};
 
-function degrees(a) {
-  var d = a*180/Math.PI;
+let degrees = function(a) {
+  let d = a*180/Math.PI;
   return (d+360)%360;
-}
+};
 
-function bearing(a,b){
+let bearing = function(a,b){
   if (!a || !b || !a.lon || !a.lat || !b.lon || !b.lat) return Infinity;
-  var delta = radians(b.lon-a.lon);
-  var alat = radians(a.lat);
-  var blat = radians(b.lat);
-  var y = Math.sin(delta) * Math.cos(blat);
-  var x = Math.cos(alat)*Math.sin(blat) -
+  let delta = radians(b.lon-a.lon);
+  let alat = radians(a.lat);
+  let blat = radians(b.lat);
+  let y = Math.sin(delta) * Math.cos(blat);
+  let x = Math.cos(alat)*Math.sin(blat) -
         Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
   return Math.round(degrees(Math.atan2(y, x)));
-}
+};
 
-function distance(a,b){
+let distance = function(a,b){
   if (!a || !b || !a.lon || !a.lat || !b.lon || !b.lat) return Infinity;
-  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
+  let x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
+  let y = radians(b.lat-a.lat);
   return Math.round(Math.sqrt(x*x + y*y) * 6371000);
-}
+};
 
-function triangle (x, y, width, height){
+let triangle = function(x, y, width, height){
   return  [
     Math.round(x),Math.round(y),
     Math.round(x+width * 0.5), Math.round(y+height),
     Math.round(x-width * 0.5), Math.round(y+height)
   ];
-}
+};
 
-function onSwipe(dir){
+let onSwipe = function(dir){
   if (dir < 0) {
     nextScreen();
   } else if (dir > 0) {
@@ -332,9 +363,9 @@ function onSwipe(dir){
   } else {
     nextScreen();
   }
-}
+};
 
-function setButtons(){
+let setButtons = function(){
   let options = {
     mode: "custom",
     swipe: onSwipe,
@@ -342,9 +373,9 @@ function setButtons(){
     touch: nextScreen
   };
   Bangle.setUI(options);
-}
+};
 
-function getApproxFileSize(name){
+let getApproxFileSize = function(name){
   let currentStart = STORAGE.getStats().totalBytes;
   let currentSize = 0;
   for (let i = currentStart; i > 500; i/=2){
@@ -358,9 +389,9 @@ function getApproxFileSize(name){
     currentSize += currentDiff;
   }
   return currentSize;
-}
+};
 
-function parseRouteData(filename, progressMonitor){
+let parseRouteData = function(filename, progressMonitor){
   let routeInfo = {};
 
   routeInfo.filename = filename;
@@ -406,40 +437,40 @@ function parseRouteData(filename, progressMonitor){
 
   set(routeInfo, 0);
   return routeInfo;
-}
+};
 
-function hasPrev(route){
+let hasPrev = function(route){
   if (route.mirror) return route.index < (route.count - 1);
   return route.index > 0;
-}
+};
 
-function hasNext(route){
+let hasNext = function(route){
   if (route.mirror) return route.index > 0;
   return route.index < (route.count - 1);
-}
+};
 
-function next(route){
+let next = function(route){
   if (!hasNext(route)) return;
   if (route.mirror) set(route, --route.index);
   if (!route.mirror) set(route, ++route.index);
-}
+};
 
-function set(route, index){
+let set = function(route, index){
   route.currentWaypoint = {};
   route.index = index;
   getEntry(route.filename, route.refs[index], route.currentWaypoint);
-}
+};
 
-function prev(route){
+let prev = function(route){
   if (!hasPrev(route)) return;
   if (route.mirror) set(route, ++route.index);
   if (!route.mirror) set(route, --route.index);
-}
+};
 
 let lastMirror;
 let cachedLast;
 
-function getLast(route){
+let getLast = function(route){
   let wp = {};
   if (lastMirror != route.mirror){
     if (route.mirror) getEntry(route.filename, route.refs[0], wp);
@@ -448,14 +479,15 @@ function getLast(route){
     cachedLast = wp;
   }
   return cachedLast;
-}
+};
 
-function removeMenu(){
+let removeMenu = function(){
   E.showMenu();
+  init();
   switchNav();
-}
+};
 
-function showProgress(progress, title, max){
+let showProgress = function(progress, title, max){
   //print("Progress",progress,max)
   let message = title? title: "Loading";
   if (max){
@@ -466,18 +498,18 @@ function showProgress(progress, title, max){
     for (let i = dots; i < 4; i++) message += " ";
   }
   E.showMessage(message);
-}
+};
 
-function handleLoading(c){
+let handleLoading = function(c){
   E.showMenu();
-  state.route = parseRouteData(c, showProgress);
-  state.waypoint = null;
+  WIDGETS.gpstrek.getState().route = parseRouteData(c, showProgress);
+  WIDGETS.gpstrek.getState().waypoint = null;
   removeMenu();
-  state.route.mirror = false;
-}
+  WIDGETS.gpstrek.getState().route.mirror = false;
+};
 
-function showRouteSelector (){
-  var menu = {
+let showRouteSelector  = function(){
+  let menu = {
     "" : {
       back : showRouteMenu,
     }
@@ -488,10 +520,10 @@ function showRouteSelector (){
   });
 
   E.showMenu(menu);
-}
+};
 
-function showRouteMenu(){
-  var menu = {
+let showRouteMenu = function(){
+  let menu = {
     "" : {
       "title" : "Route",
       back : showMenu,
@@ -499,50 +531,54 @@ function showRouteMenu(){
     "Select file" : showRouteSelector
   };
 
-  if (state.route){
+  if (WIDGETS.gpstrek.getState().route){
     menu.Mirror = {
-      value: state && state.route && !!state.route.mirror || false,
+      value: WIDGETS.gpstrek.getState() && WIDGETS.gpstrek.getState().route && !!WIDGETS.gpstrek.getState().route.mirror || false,
       onchange: v=>{
-        state.route.mirror = v;
+        init();
+        WIDGETS.gpstrek.getState().route.mirror = v;
       }
     };
     menu['Select closest waypoint'] = function () {
-      if (state.currentPos && state.currentPos.lat){
-        setClosestWaypoint(state.route, null, showProgress); removeMenu();
+      init();
+      if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat){
+        setClosestWaypoint(WIDGETS.gpstrek.getState().route, null, showProgress); removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
     };
     menu['Select closest waypoint (not visited)'] = function () {
-      if (state.currentPos && state.currentPos.lat){
-        setClosestWaypoint(state.route, state.route.index, showProgress); removeMenu();
+      init();
+      if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat){
+        setClosestWaypoint(WIDGETS.gpstrek.getState().route, WIDGETS.gpstrek.getState().route.index, showProgress); removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
     };
     menu['Select waypoint'] = {
-      value : state.route.index,
-      min:1,max:state.route.count,step:1,
-      onchange : v => { set(state.route, v-1); }
+      value : WIDGETS.gpstrek.getState().route.index,
+      min:1,max:WIDGETS.gpstrek.getState().route.count,step:1,
+      onchange : v => { init(); set(WIDGETS.gpstrek.getState().route, v-1); }
     };
     menu['Select waypoint as current position'] = function (){
-      state.currentPos.lat = state.route.currentWaypoint.lat;
-      state.currentPos.lon = state.route.currentWaypoint.lon;
-      state.currentPos.alt = state.route.currentWaypoint.alt;
+      init();
+      WIDGETS.gpstrek.getState().currentPos.lat = WIDGETS.gpstrek.getState().route.currentWaypoint.lat;
+      WIDGETS.gpstrek.getState().currentPos.lon = WIDGETS.gpstrek.getState().route.currentWaypoint.lon;
+      WIDGETS.gpstrek.getState().currentPos.alt = WIDGETS.gpstrek.getState().route.currentWaypoint.alt;
       removeMenu();
     };
   }
 
-  if (state.route && hasPrev(state.route))
-    menu['Previous waypoint'] = function() { prev(state.route); removeMenu(); };
-  if (state.route && hasNext(state.route))
-    menu['Next waypoint'] = function() { next(state.route); removeMenu(); };
+  if (WIDGETS.gpstrek.getState().route && hasPrev(WIDGETS.gpstrek.getState().route))
+    menu['Previous waypoint'] = function() { init(); prev(WIDGETS.gpstrek.getState().route); removeMenu(); };
+  if (WIDGETS.gpstrek.getState().route && hasNext(WIDGETS.gpstrek.getState().route))
+    menu['Next waypoint'] = function() { init(); next(WIDGETS.gpstrek.getState().route); removeMenu(); };
   E.showMenu(menu);
-}
+};
 
-function showWaypointSelector(){
+let showWaypointSelector = function(){
   let waypoints = require("waypoints").load();
-  var menu = {
+  let menu = {
     "" : {
       back : showWaypointMenu,
     }
@@ -558,33 +594,34 @@ function showWaypointSelector(){
   });
 
   E.showMenu(menu);
-}
+};
 
-function showCalibrationMenu(){
+let showCalibrationMenu = function(){
   let menu = {
     "" : {
       "title" : "Calibration",
       back : showMenu,
     },
     "Barometer (GPS)" : ()=>{
-      if (!state.currentPos || isNaN(state.currentPos.alt)){
+      init();
+      if (!WIDGETS.gpstrek.getState().currentPos || isNaN(WIDGETS.gpstrek.getState().currentPos.alt)){
         E.showAlert("No GPS altitude").then(()=>{E.showMenu(menu);});
       } else {
-        state.calibAltDiff = state.altitude - state.currentPos.alt;
-        E.showAlert("Calibrated Altitude Difference: " + state.calibAltDiff.toFixed(0)).then(()=>{removeMenu();});
+        WIDGETS.gpstrek.getState().calibAltDiff = WIDGETS.gpstrek.getState().altitude - WIDGETS.gpstrek.getState().currentPos.alt;
+        E.showAlert("Calibrated Altitude Difference: " + WIDGETS.gpstrek.getState().calibAltDiff.toFixed(0)).then(()=>{removeMenu();});
       }
     },
     "Barometer (Manual)" : {
-      value : Math.round(state.currentPos && (state.currentPos.alt != undefined && !isNaN(state.currentPos.alt)) ? state.currentPos.alt: state.altitude),
+      value : Math.round(WIDGETS.gpstrek.getState().currentPos && (WIDGETS.gpstrek.getState().currentPos.alt != undefined && !isNaN(WIDGETS.gpstrek.getState().currentPos.alt)) ? WIDGETS.gpstrek.getState().currentPos.alt: WIDGETS.gpstrek.getState().altitude),
       min:-2000,max: 10000,step:1,
-      onchange : v => { state.calibAltDiff = state.altitude - v; }
+      onchange : v => { init(); WIDGETS.gpstrek.getState().calibAltDiff = WIDGETS.gpstrek.getState().altitude - v; }
     },
     "Reset Compass" : ()=>{ Bangle.resetCompass(); removeMenu();},
   };
   E.showMenu(menu);
-}
+};
 
-function showWaypointMenu(){
+let showWaypointMenu = function(){
   let menu = {
     "" : {
       "title" : "Waypoint",
@@ -593,22 +630,22 @@ function showWaypointMenu(){
     "Select waypoint" : showWaypointSelector,
   };
   E.showMenu(menu);
-}
+};
 
-function showBackgroundMenu(){
+let showBackgroundMenu = function(){
   let menu = {
     "" : {
       "title" : "Background",
       back : showMenu,
     },
-    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
-    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
+    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
+    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
   };
   E.showMenu(menu);
-}
+};
 
-function showMenu(){
-  var mainmenu = {
+let showMenu = function(){
+  let mainmenu = {
     "" : {
       "title" : "Main",
       back : removeMenu,
@@ -617,50 +654,54 @@ function showMenu(){
     "Waypoint" : showWaypointMenu,
     "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
-    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}});},
+    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetWIDGETS.gpstrek.getState()(); removeMenu();} else {E.showMenu(mainmenu);}}).catch(()=>{E.showMenu(mainmenu);});},
     "Info rows" : {
-      value : numberOfSlices,
+      value : WIDGETS.gpstrek.getState().numberOfSlices,
       min:1,max:6,step:1,
-      onchange : v => { setNumberOfSlices(v); }
+      onchange : v => { init(); WIDGETS.gpstrek.getState().numberOfSlices = v; }
     },
   };
 
   E.showMenu(mainmenu);
-}
+};
 
-let scheduleDraw = true;
 
-function switchMenu(){
-    screen = 0;
-    scheduleDraw = false;
-    showMenu();
-}
+let switchMenu = function(){
+  init();
+  scheduleDraw = false;
+  showMenu();
+};
 
-function drawInTimeout(){
-  setTimeout(()=>{
+let drawInTimeout = function(){
+  if (global.drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(()=>{
+    drawTimeout = undefined;
     draw();
-    if (scheduleDraw)
-      setTimeout(drawInTimeout, 0);
+    if (scheduleDraw){
+      if (scheduledDrawTimeout)clearTimeout(scheduledDrawTimeout);
+      scheduledDrawTimeout = setTimeout(drawInTimeout, 0);
+    }
   },0);
-}
+};
 
-function switchNav(){
+let switchNav = function(){
   if (!screen) screen = 1;
   setButtons();
   scheduleDraw = true;
   drawInTimeout();
-}
+};
 
-function nextScreen(){
+let nextScreen = function(){
   screen++;
   if (screen > maxScreens){
     screen = 1;
   }
-}
+  drawInTimeout();
+};
 
-function setClosestWaypoint(route, startindex, progress){
-  if (startindex >= state.route.count) startindex = state.route.count - 1;
-  if (!state.currentPos.lat){
+let setClosestWaypoint = function(route, startindex, progress){
+  if (startindex >= WIDGETS.gpstrek.getState().route.count) startindex = WIDGETS.gpstrek.getState().route.count - 1;
+  if (!WIDGETS.gpstrek.getState().currentPos.lat){
     set(route, startindex);
     return;
   }
@@ -670,7 +711,7 @@ function setClosestWaypoint(route, startindex, progress){
     if (progress && (i % 5 == 0)) progress(i-(startindex?startindex:0), "Searching", route.count);
     let wp = {};
     getEntry(route.filename, route.refs[i], wp);
-    let curDist = distance(state.currentPos, wp);
+    let curDist = distance(WIDGETS.gpstrek.getState().currentPos, wp);
     if (curDist < minDist){
       minDist = curDist;
       minIndex = i;
@@ -679,30 +720,28 @@ function setClosestWaypoint(route, startindex, progress){
     }
   }
   set(route, minIndex);
-}
-
-let screen = 1;
+};
 
 const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
 
 const compassSliceData = {
   getCourseType: function(){
-    return (state.currentPos && state.currentPos.course) ? "GPS" : "MAG";
+    return (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) ? "GPS" : "MAG";
   },
   getCourse: function (){
-    if(compassSliceData.getCourseType() == "GPS") return state.currentPos.course;
-    return state.compassHeading?state.compassHeading:undefined;
+    if(compassSliceData.getCourseType() == "GPS") return WIDGETS.gpstrek.getState().currentPos.course;
+    return WIDGETS.gpstrek.getState().compassHeading?WIDGETS.gpstrek.getState().compassHeading:undefined;
   },
   getPoints: function (){
     let points = [];
-    if (state.currentPos && state.currentPos.lon && state.route && state.route.currentWaypoint){
-      points.push({bearing:bearing(state.currentPos, state.route.currentWaypoint), color:"#0f0"});
+    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint){
+      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().route.currentWaypoint), color:"#0f0"});
     }
-    if (state.currentPos && state.currentPos.lon && state.route){
-      points.push({bearing:bearing(state.currentPos, getLast(state.route)), icon: finishIcon});
+    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route){
+      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, getLast(WIDGETS.gpstrek.getState().route)), icon: finishIcon});
     }
-    if (state.currentPos && state.currentPos.lon && state.waypoint){
-      points.push({bearing:bearing(state.currentPos, state.waypoint), icon: finishIcon});
+    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().waypoint){
+      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().waypoint), icon: finishIcon});
     }
     return points;
   },
@@ -714,75 +753,70 @@ const compassSliceData = {
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
   getProgress: function() {
-    return (state.route.index + 1) + "/" + state.route.count;
+    return (WIDGETS.gpstrek.getState().route.index + 1) + "/" + WIDGETS.gpstrek.getState().route.count;
   },
   getTarget: function (){
-    if (distance(state.currentPos,state.route.currentWaypoint) < 30 && hasNext(state.route)){
-      next(state.route);
+    if (distance(WIDGETS.gpstrek.getState().currentPos,WIDGETS.gpstrek.getState().route.currentWaypoint) < 30 && hasNext(WIDGETS.gpstrek.getState().route)){
+      next(WIDGETS.gpstrek.getState().route);
       Bangle.buzz(1000);
     }
-    return state.route.currentWaypoint;
+    return WIDGETS.gpstrek.getState().route.currentWaypoint;
   },
   getStart: function (){
-    return state.currentPos;
+    return WIDGETS.gpstrek.getState().currentPos;
   }
 };
 
 const finishData = {
   icon: atob("EBABAAA/4DmgJmAmYDmgOaAmYD/gMAAwADAAMAAwAAAAAAA="),
   getTarget: function (){
-    if (state.route) return getLast(state.route);
-    if (state.waypoint) return state.waypoint;
+    if (WIDGETS.gpstrek.getState().route) return getLast(WIDGETS.gpstrek.getState().route);
+    if (WIDGETS.gpstrek.getState().waypoint) return WIDGETS.gpstrek.getState().waypoint;
   },
   getStart: function (){
-    return state.currentPos;
+    return WIDGETS.gpstrek.getState().currentPos;
   }
 };
 
-let sliceHeight;
-function setNumberOfSlices(number){
-  numberOfSlices = number;
-  sliceHeight = Math.floor((g.getHeight()-(showWidgets?24:0))/numberOfSlices);
-}
-
-let slices = [];
-let maxScreens = 1;
-setNumberOfSlices(3);
+let getSliceHeight = function(number){
+  return Math.floor(Bangle.appRect.h/WIDGETS.gpstrek.getState().numberOfSlices);
+};
 
 let compassSlice = getCompassSlice(compassSliceData);
 let waypointSlice = getTargetSlice(waypointData);
 let finishSlice = getTargetSlice(finishData);
 let eleSlice = getDoubleLineSlice("Up","Down",()=>{
-  return loc.distance(state.up,3) + "/" + (state.route ? loc.distance(state.route.up,3):"---");
+  return loc.distance(WIDGETS.gpstrek.getState().up,3) + "/" + (WIDGETS.gpstrek.getState().route ? loc.distance(WIDGETS.gpstrek.getState().route.up,3):"---");
 },()=>{
-  return loc.distance(state.down,3) + "/" + (state.route ? loc.distance(state.route.down,3): "---");
+  return loc.distance(WIDGETS.gpstrek.getState().down,3) + "/" + (WIDGETS.gpstrek.getState().route ? loc.distance(WIDGETS.gpstrek.getState().route.down,3): "---");
 });
 
 let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
   let speed = 0;
-  if (state.currentPos && state.currentPos.speed) speed = state.currentPos.speed;
+  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.speed) speed = WIDGETS.gpstrek.getState().currentPos.speed;
   return loc.speed(speed,2);
 },()=>{
   let alt = Infinity;
-  if (!isNaN(state.altitude)){
-    alt = isNaN(state.calibAltDiff) ? state.altitude : (state.altitude - state.calibAltDiff);
+  if (!isNaN(WIDGETS.gpstrek.getState().altitude)){
+    alt = isNaN(WIDGETS.gpstrek.getState().calibAltDiff) ? WIDGETS.gpstrek.getState().altitude : (WIDGETS.gpstrek.getState().altitude - WIDGETS.gpstrek.getState().calibAltDiff);
   }
-  if (state.currentPos && state.currentPos.alt) alt = state.currentPos.alt;
+  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.alt) alt = WIDGETS.gpstrek.getState().currentPos.alt;
+  if (isNaN(alt)) return "---";
   return loc.distance(alt,3);
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return (state.compassHeading?Math.round(state.compassHeading):"---") + "°";
+  return (WIDGETS.gpstrek.getState().compassHeading?Math.round(WIDGETS.gpstrek.getState().compassHeading):"---") + "°";
 },()=>{
   let course = "---°";
-  if (state.currentPos && state.currentPos.course) course = state.currentPos.course + "°";
+  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) course = WIDGETS.gpstrek.getState().currentPos.course + "°";
   return course;
 },200);
 
 let healthSlice = getDoubleLineSlice("Heart","Steps",()=>{
-  return state.bpm;
+  return WIDGETS.gpstrek.getState().bpm || "---";
 },()=>{
-  return state.steps;
+  return WIDGETS.gpstrek.getState().steps || "---";
 });
 
 let system2Slice = getDoubleLineSlice("Bat","",()=>{
@@ -798,17 +832,17 @@ let systemSlice = getDoubleLineSlice("RAM","Storage",()=>{
   return (STORAGE.getFree()/1024).toFixed(0)+"kB";
 });
 
-function updateSlices(){
+let updateSlices = function(){
   slices = [];
   slices.push(compassSlice);
 
-  if (state.currentPos && state.currentPos.lat && state.route && state.route.currentWaypoint && state.route.index < state.route.count - 1) {
+  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint && WIDGETS.gpstrek.getState().route.index < WIDGETS.gpstrek.getState().route.count - 1) {
     slices.push(waypointSlice);
   }
-  if (state.currentPos && state.currentPos.lat && (state.route || state.waypoint)) {
+  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat && (WIDGETS.gpstrek.getState().route || WIDGETS.gpstrek.getState().waypoint)) {
     slices.push(finishSlice);
   }
-  if ((state.route && state.route.down !== undefined) || state.down != undefined) {
+  if ((WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.down !== undefined) || WIDGETS.gpstrek.getState().down != undefined) {
     slices.push(eleSlice);
   }
   slices.push(statusSlice);
@@ -816,42 +850,40 @@ function updateSlices(){
   slices.push(healthSlice);
   slices.push(systemSlice);
   slices.push(system2Slice);
-  maxScreens = Math.ceil(slices.length/numberOfSlices);
-}
+  maxScreens = Math.ceil(slices.length/WIDGETS.gpstrek.getState().numberOfSlices);
+};
 
-function clear() {
-  g.clearRect(0,(showWidgets ? 24 : 0), g.getWidth(),g.getHeight());
-}
-let lastDrawnScreen;
-let firstDraw = true;
+let clear = function() {
+  g.clearRect(Bangle.appRect);
+};
 
-function draw(){
-  if (!screen) return;
-  let ypos = showWidgets ? 24 : 0;
+let draw = function(){
+  if (!global.screen) return;
+  let ypos = Bangle.appRect.y;
 
-  let firstSlice = (screen-1)*numberOfSlices;
+  let firstSlice = (screen-1)*WIDGETS.gpstrek.getState().numberOfSlices;
 
   updateSlices();
 
   let force = lastDrawnScreen != screen || firstDraw;
   if (force){
     clear();
-    if (showWidgets){
-      Bangle.drawWidgets();
     }
-  }
+  if (firstDraw) Bangle.drawWidgets();
   lastDrawnScreen = screen;
 
-  for (let slice of slices.slice(firstSlice,firstSlice + numberOfSlices)) {
+  let sliceHeight = getSliceHeight();
+  for (let slice of slices.slice(firstSlice,firstSlice + WIDGETS.gpstrek.getState().numberOfSlices)) {
     g.reset();
     if (!slice.refresh || slice.refresh() || force) slice.draw(g,0,ypos,sliceHeight,g.getWidth());
     ypos += sliceHeight+1;
     g.drawLine(0,ypos-1,g.getWidth(),ypos-1);
   }
   firstDraw = false;
-}
+};
 
 
 switchNav();
 
-g.clear();
+clear();
+}
