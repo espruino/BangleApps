@@ -28,6 +28,10 @@
     /*LANG*/"One click exit": {
       value: settings.oneClickExit == true,
       onchange: (m) => { save("oneClickExit", m) }
+    },
+    /*LANG*/"Fastload": {
+      value: settings.fastload == true,
+      onchange: (m) => { save("fastload", m) }
     }
   };
   E.showMenu(appMenu);
