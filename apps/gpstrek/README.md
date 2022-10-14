@@ -39,5 +39,9 @@ If the compass fallback starts to show unreliable values, you can reset the cali
 
 ## Widget
 
-The widget keeps the sensors alive and records some very basic statics when the app is not started.
-This uses a lot of power so ensure to stop the app if you are not actively using it.
+The widget keeps the sensors alive and records some very basic statistics when the app is not started. It shows as the app icon in the widget bar when the background task is active.
+This uses a lot of power so ensure to stop the app if you are not actively using it. 
+
+# Creator
+
+[halemmerich](https://github.com/halemmerich)
