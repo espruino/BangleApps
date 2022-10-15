@@ -330,7 +330,7 @@ function initDisplay(settings) {
     vsmall: [20,15],
     ssmall: [22,17],
     small: [25,20],
-    msmall: [28,22],
+    msmall: [29,22],
     medium: [40,25],
     mlarge: [45,35],
     large: [50,40],

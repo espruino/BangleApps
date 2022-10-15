@@ -9,8 +9,8 @@
     }
     console.log("loaded:" + JSON.stringify(settings));
     const locale_mappings = (bangleVersion > 1)? {
-        'en' : { date_formatter: 'en' },
-        'en alt': {
+        'english' : { date_formatter: 'en' },
+        'english alt': {
             date_formatter: 'en',
             row_types: {
                 large:{
@@ -52,8 +52,8 @@
                 }
             ]
         },
-        'en2': { date_formatter: 'en2' },
-        'en2 alt': { date_formatter: 'en2',
+        'english2': { date_formatter: 'en2' },
+        'english2 alt': { date_formatter: 'en2',
             row_types: {
                 vsmall: {
                     color: 'minor',
@@ -105,18 +105,19 @@
                 },
             ]
         },
-        'fr': { date_formatter:'fr'},
-        'de': { date_formatter: 'de'},
-        'es': { date_formatter: 'es'},
-        'jp': { date_formatter: 'jp'},
+        'french': { date_formatter:'fr'},
+        'german': { date_formatter: 'de'},
+        'german 24h': { date_formatter: 'de2'},
+        'spanish': { date_formatter: 'es'},
+        'japanese': { date_formatter: 'jp'},
         'hybrid': { date_formatter: 'hyb'},
         'digits': { date_formatter: 'dgt'},
     } : {
-        'en' : { date_formatter: 'en' },
-        'fr': { date_formatter:'fr'},
-        'de': { date_formatter: 'de'},
-        'es': { date_formatter: 'es'},
-        'jp': { date_formatter: 'jp'},
+        'english' : { date_formatter: 'en' },
+        'french': { date_formatter:'fr'},
+        'german': { date_formatter: 'de'},
+        'spanish': { date_formatter: 'es'},
+        'japanese': { date_formatter: 'jp'},
         'hybrid': { date_formatter: 'hyb'},
         'digits': { date_formatter: 'dgt'},
     }
