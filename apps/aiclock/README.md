@@ -1,7 +1,7 @@
 # AI Clock
 This clock was designed by stable diffusion ([paper](https://arxiv.org/abs/2112.10752)) using the following prompt:
 
-`A rectangle digital watchface`
+`A rectangle banglejs watchface`
 
 
 The original output of stable diffusion is shown here:
