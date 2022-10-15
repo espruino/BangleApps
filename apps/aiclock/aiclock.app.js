@@ -109,7 +109,7 @@ function drawSteps(){
     g.setFontAlign(0,0);
     g.setFont("7x11Numeric7Seg",3);
 
-    var text = "4234";
+    var text = Bangle.getHealthStatus("day").steps;
     var w = g.stringWidth(text);
     g.setColor(g.theme.bg);
     g.fillRect(cx-w/2-4, 120, cx+w/2+2, 140+20);
