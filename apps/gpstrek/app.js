@@ -6,8 +6,8 @@ if (showWidgets){
   Bangle.loadWidgets();
 }
 
-let state = WIDGETS["gpstrek"].getState();
-WIDGETS["gpstrek"].start();
+let state = WIDGETS.gpstrek.getState();
+WIDGETS.gpstrek.start(false);
 
 function parseNumber(toParse){
   if (toParse.includes(".")) return parseFloat(toParse);
@@ -582,6 +582,18 @@ function showWaypointMenu(){
   E.showMenu(menu);
 }
 
+function showBackgroundMenu(){
+  let menu = {
+    "" : {
+      "title" : "Background",
+      back : showMenu,
+    },
+    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {E.showMenu(mainmenu);}});},
+    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {E.showMenu(mainmenu);}});},
+  };
+  E.showMenu(menu);
+}
+
 function showMenu(){
   var mainmenu = {
     "" : {
@@ -590,10 +602,9 @@ function showMenu(){
     },
     "Route" : showRouteMenu,
     "Waypoint" : showWaypointMenu,
+    "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
-    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {state.active = true; removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS["gpstrek"].stop(); removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS["gpstrek"].resetState(); removeMenu();} else {E.showMenu(mainmenu);}});},
+    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}});},
     "Slices" : {
       value : numberOfSlices,
       min:1,max:6,step:1,
