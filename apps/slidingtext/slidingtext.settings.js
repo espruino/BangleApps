@@ -70,7 +70,6 @@
                 large: {
                     size: 'mlarge',
                     angle_to_horizontal: 90,
-                    speed: 'vslow',
                     color: 'major',
                     scroll_off: ['down'],
                     scroll_in: ['up']
