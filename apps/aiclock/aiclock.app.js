@@ -69,6 +69,7 @@ function drawTime(){
     var m = parseInt(date.getMinutes() * 360 / 60);
     var h = date.getHours();
     h = h > 12 ? h-12 : h;
+    h += date.getMinutes()/60.0;
     h = parseInt(h*360/12);
 
     // Draw minute and hour bg
@@ -105,11 +106,13 @@ function drawDate(){
 }
 
 
-function drawSteps(){
+function drawDigits(){
+    var date = new Date();
+
     g.setFontAlign(0,0);
     g.setFont("7x11Numeric7Seg",3);
 
-    var text = Bangle.getHealthStatus("day").steps;
+    var text = ("0"+date.getHours()).substr(-2) + ":" + ("0"+date.getMinutes()).substr(-2); //Bangle.getHealthStatus("day").steps;
     var w = g.stringWidth(text);
     g.setColor(g.theme.bg);
     g.fillRect(cx-w/2-4, 120, cx+w/2+2, 140+20);
@@ -137,7 +140,7 @@ function draw(){
     g.setColor(1,1,1);
     drawBackground();
     drawDate();
-    drawSteps();
+    drawDigits();
     drawTime();
     drawCircle(Bangle.isLocked());
 }
