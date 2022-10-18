@@ -137,7 +137,7 @@ function drawDigits(){
     g.drawLine(cx+w/2+7, 120, cx+w/2+7, 140+20);
 
     // And the 7set text
-    g.setColor("#999");
+    g.setColor("#BBB");
     g.drawString("88:88", cx, 140);
     g.drawString("88:88", cx+1, 140);
     g.drawString("88:88", cx, 141);
