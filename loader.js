@@ -48,8 +48,6 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
     showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
   }
-
-
   // check against features shown?
   filterAppsForDevice(deviceId);
   /* if we'd saved a device ID but this device is different, ensure
@@ -57,6 +55,43 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   var savedDeviceId = getSavedDeviceId();
   if (savedDeviceId!==undefined && savedDeviceId!=deviceId)
     setSavedDeviceId(undefined);
+}
+
+// Called when we refresh the list of installed apps
+function onRefreshMyApps() {
+  /* if we're allowed to, send usage stats. We'll only
+  actually send if the data has changed */
+  sendUsageStats();
+}
+
+var submittedUsageInfo = "";
+/* Send usage stats to servers if it has changed */
+function sendUsageStats() {
+  if (!SETTINGS.sendUsageStats) return; // not allowed!
+  if (device.uid === undefined) return; // no data yet!
+  /* Work out what we'll send:
+  * A suitably garbled UID so we can avoid too many duplicates
+  * firmware version
+  * apps installed
+  * apps favourited
+  */
+  var usageInfo = `uid=${encodeURIComponent(device.uid)}&fw=${encodeURIComponent(device.version)}&apps=${encodeURIComponent(device.appsInstalled.map(a=>a.id).join(","))}&favs=${encodeURIComponent(SETTINGS.favourites.join(","))}`;
+  // Do a quick check for unchanged data to reduce server load
+  if (usageInfo != submittedUsageInfo) {
+    console.log("sendUsageStats: Submitting usage stats...");
+    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+    xmlhttp.open("POST", "https://banglejs.com/submit_app_stats.php", true /*async*/);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onload = (e) => {
+      if (xmlhttp.readyState === 4)
+        console.log(`sendUsageStats (${xmlhttp.status}): ${xmlhttp.responseText}`);
+    };
+    xmlhttp.onerror = (e) => {
+      console.error("sendUsageStats ERROR: "+xmlhttp.statusText);
+    };
+    xmlhttp.send(usageInfo);
+    submittedUsageInfo = usageInfo;
+  }
 }
 
 var originalAppJSON = undefined;
@@ -202,6 +237,15 @@ window.addEventListener('load', (event) => {
     console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
     SETTINGS.bleCompat = event.target.checked;
     Puck.increaseMTU = !SETTINGS.bleCompat;
+    saveSettings();
+  });
+
+  // Sending usage stats
+  var selectUsageStats = document.getElementById("settings-usage-stats");
+  selectUsageStats.checked = !!SETTINGS.sendUsageStats;
+  selectUsageStats.addEventListener("change",event=>{
+    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+    SETTINGS.sendUsageStats = event.target.checked;
     saveSettings();
   });
 
