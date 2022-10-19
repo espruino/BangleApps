@@ -33,6 +33,7 @@ This is Bangle.js's settings menu
   * On Bangle.js 2 when locked the touchscreen is turned off to save power. Because of this,
     `Wake on Touch` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js.
 * **Twist X** these options adjust the sensitivity of `Wake on Twist` to ensure Bangle.js wakes up with just the right amount of wrist movement.
+* **Calibrate** on Bangle.js 2, pop up a screen allowing you to calibrate the touchscreen (calibration only works on 2v16 or 2v15 cutting edge builds)
 
 ## Locale
 
