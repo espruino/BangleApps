@@ -11,19 +11,19 @@ const watch = {
   color:"#000000", // change background color
   finland:true, // change if you want Finnish style date, or US style
   
-    // default theme "grayscale"
-    hour: { size:60, weight:20, color:"#999999", cursor:8 },
-    minute: { size:40, weight:20, color:"#dddddd", cursor:8 },
+    // default theme "colorful"
+    hour: { size:60, weight:8, color:"#00FFFF", cursor:10 },
+    minute: { size:40, weight:16, color:"#FFFF00", cursor:6 },
     second: { on: false, cursor:2 }, // if on, uses a lot more battery
-    date: { font:"6x8", size:1, y:15, color:"#ffffff" }
+    date: { font:"6x8", size:1, y:15, color:"#FFFF00" }
 };
 
 // more themes
-if (watch.theme == "colorful") {
-  watch.hour = { size:60, weight:8, color:"#00FFFF", cursor:10 };
-  watch.minute = { size:40, weight:16, color:"#FFFF00", cursor:6 };
+if (watch.theme == "grayscale") {
+  watch.hour = { size:60, weight:20, color:"#999999", cursor:8 };
+  watch.minute = { size:40, weight:20, color:"#dddddd", cursor:8 };
   watch.second = { on: false, cursor:2 }; // if on, uses a lot more battery
-  watch.date = { font:"6x8", size:1, y:15, color:"#FFFF00" };
+  watch.date = { font:"6x8", size:1, y:15, color:"#ffffff" };
 } else if (watch.theme == "maze") {
   watch.hour = { size:50, weight:7, color:"#ffffff", cursor:6 };
   watch.minute = { size:30, weight:7, color:"#ffffff", cursor:6 };
