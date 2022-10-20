@@ -3,3 +3,4 @@
 0.03: Use default Bangle formatter for booleans
 0.04: Support new fast app switching
 0.05: Allow to directly eval apps instead of loading
+0.06: Cache apps for faster start
