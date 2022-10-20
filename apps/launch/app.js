@@ -60,7 +60,6 @@ E.showScroller({
       E.showMessage(/*LANG*/"App Source\nNot found");
       setTimeout(drawMenu, 2000);
     } else {
-      E.showMessage(/*LANG*/"Loading...");
       load(app.src);
     }
   }
