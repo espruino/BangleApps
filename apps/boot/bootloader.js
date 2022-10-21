@@ -1,6 +1,6 @@
 // This runs after a 'fresh' boot
-var clockApp=(require("Storage").readJSON("setting.json",1)||{}).clock;
-if (clockApp) clockApp = require("Storage").read(clockApp);
+var s = require("Storage").readJSON("setting.json",1)||{};
+var clockApp = require("Storage").read(s.clock);
 if (!clockApp) {
   clockApp = require("Storage").list(/\.info$/)
     .map(file => {
@@ -11,9 +11,13 @@ if (!clockApp) {
     })
     .filter(x=>x)
     .sort((a, b) => a.sortorder - b.sortorder)[0];
-  if (clockApp)
+  if (clockApp){
     clockApp = require("Storage").read(clockApp.src);
+    s.clock = clockApp.src;
+    require("Storage").writeJSON("setting.json", s);
+  }
 }
 if (!clockApp) clockApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
 eval(clockApp);
+delete s;
 delete clockApp;
