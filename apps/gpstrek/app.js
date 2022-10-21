@@ -1,12 +1,3 @@
-let screen = 1;
-let drawTimeout;
-let scheduledDrawTimeout;
-let lastDrawnScreen;
-let firstDraw = true;
-let sliceHeight;
-let slices = [];
-let maxScreens = 1;
-let state;
 
 { //run in own scope for fast switch
 const STORAGE = require("Storage");
@@ -21,6 +12,7 @@ let init = function(){
   global.scheduleDraw = false;
 
   Bangle.loadWidgets();
+  WIDGETS.gpstrek.start(false);
   if (!WIDGETS.gpstrek.getState().numberOfSlices) WIDGETS.gpstrek.getState().numberOfSlices = 3;
 };
 
@@ -38,7 +30,6 @@ let cleanup = function(){
 
 init();
 scheduleDraw = true;
-WIDGETS.gpstrek.start(false);
 
 let parseNumber = function(toParse){
   if (toParse.includes(".")) return parseFloat(toParse);
@@ -215,7 +206,7 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
   if (frag>0) frag = 0;
   let xpos = 0 + frag*increment;
   for (let i=start;i<=720;i+=15){
-    let res = i + frag;
+    var res = i + frag;
     if (res%90==0) {
       graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
       graphics.fillRect(xpos-2,Math.floor(y+height*0.6),xpos+2,Math.floor(y+height));
@@ -483,7 +474,6 @@ let getLast = function(route){
 
 let removeMenu = function(){
   E.showMenu();
-  init();
   switchNav();
 };
 
@@ -504,12 +494,12 @@ let handleLoading = function(c){
   E.showMenu();
   WIDGETS.gpstrek.getState().route = parseRouteData(c, showProgress);
   WIDGETS.gpstrek.getState().waypoint = null;
-  removeMenu();
   WIDGETS.gpstrek.getState().route.mirror = false;
+  removeMenu();
 };
 
 let showRouteSelector  = function(){
-  let menu = {
+  var menu = {
     "" : {
       back : showRouteMenu,
     }
@@ -523,7 +513,7 @@ let showRouteSelector  = function(){
 };
 
 let showRouteMenu = function(){
-  let menu = {
+  var menu = {
     "" : {
       "title" : "Route",
       back : showMenu,
@@ -535,12 +525,10 @@ let showRouteMenu = function(){
     menu.Mirror = {
       value: WIDGETS.gpstrek.getState() && WIDGETS.gpstrek.getState().route && !!WIDGETS.gpstrek.getState().route.mirror || false,
       onchange: v=>{
-        init();
         WIDGETS.gpstrek.getState().route.mirror = v;
       }
     };
     menu['Select closest waypoint'] = function () {
-      init();
       if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat){
         setClosestWaypoint(WIDGETS.gpstrek.getState().route, null, showProgress); removeMenu();
       } else {
@@ -548,7 +536,6 @@ let showRouteMenu = function(){
       }
     };
     menu['Select closest waypoint (not visited)'] = function () {
-      init();
       if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat){
         setClosestWaypoint(WIDGETS.gpstrek.getState().route, WIDGETS.gpstrek.getState().route.index, showProgress); removeMenu();
       } else {
@@ -558,10 +545,9 @@ let showRouteMenu = function(){
     menu['Select waypoint'] = {
       value : WIDGETS.gpstrek.getState().route.index,
       min:1,max:WIDGETS.gpstrek.getState().route.count,step:1,
-      onchange : v => { init(); set(WIDGETS.gpstrek.getState().route, v-1); }
+      onchange : v => { set(WIDGETS.gpstrek.getState().route, v-1); }
     };
     menu['Select waypoint as current position'] = function (){
-      init();
       WIDGETS.gpstrek.getState().currentPos.lat = WIDGETS.gpstrek.getState().route.currentWaypoint.lat;
       WIDGETS.gpstrek.getState().currentPos.lon = WIDGETS.gpstrek.getState().route.currentWaypoint.lon;
       WIDGETS.gpstrek.getState().currentPos.alt = WIDGETS.gpstrek.getState().route.currentWaypoint.alt;
@@ -570,15 +556,15 @@ let showRouteMenu = function(){
   }
 
   if (WIDGETS.gpstrek.getState().route && hasPrev(WIDGETS.gpstrek.getState().route))
-    menu['Previous waypoint'] = function() { init(); prev(WIDGETS.gpstrek.getState().route); removeMenu(); };
+    menu['Previous waypoint'] = function() { prev(WIDGETS.gpstrek.getState().route); removeMenu(); };
   if (WIDGETS.gpstrek.getState().route && hasNext(WIDGETS.gpstrek.getState().route))
-    menu['Next waypoint'] = function() { init(); next(WIDGETS.gpstrek.getState().route); removeMenu(); };
+    menu['Next waypoint'] = function() { next(WIDGETS.gpstrek.getState().route); removeMenu(); };
   E.showMenu(menu);
 };
 
 let showWaypointSelector = function(){
   let waypoints = require("waypoints").load();
-  let menu = {
+  var menu = {
     "" : {
       back : showWaypointMenu,
     }
@@ -586,9 +572,9 @@ let showWaypointSelector = function(){
 
   waypoints.forEach((wp,c)=>{
     menu[waypoints[c].name] = function (){
-      state.waypoint = waypoints[c];
-      state.waypointIndex = c;
-      state.route = null;
+      WIDGETS.gpstrek.getState().waypoint = waypoints[c];
+      WIDGETS.gpstrek.getState().waypointIndex = c;
+      WIDGETS.gpstrek.getState().route = null;
       removeMenu();
     };
   });
@@ -603,7 +589,6 @@ let showCalibrationMenu = function(){
       back : showMenu,
     },
     "Barometer (GPS)" : ()=>{
-      init();
       if (!WIDGETS.gpstrek.getState().currentPos || isNaN(WIDGETS.gpstrek.getState().currentPos.alt)){
         E.showAlert("No GPS altitude").then(()=>{E.showMenu(menu);});
       } else {
@@ -614,7 +599,7 @@ let showCalibrationMenu = function(){
     "Barometer (Manual)" : {
       value : Math.round(WIDGETS.gpstrek.getState().currentPos && (WIDGETS.gpstrek.getState().currentPos.alt != undefined && !isNaN(WIDGETS.gpstrek.getState().currentPos.alt)) ? WIDGETS.gpstrek.getState().currentPos.alt: WIDGETS.gpstrek.getState().altitude),
       min:-2000,max: 10000,step:1,
-      onchange : v => { init(); WIDGETS.gpstrek.getState().calibAltDiff = WIDGETS.gpstrek.getState().altitude - v; }
+      onchange : v => { WIDGETS.gpstrek.getState().calibAltDiff = WIDGETS.gpstrek.getState().altitude - v; }
     },
     "Reset Compass" : ()=>{ Bangle.resetCompass(); removeMenu();},
   };
@@ -645,7 +630,7 @@ let showBackgroundMenu = function(){
 };
 
 let showMenu = function(){
-  let mainmenu = {
+  var mainmenu = {
     "" : {
       "title" : "Main",
       back : removeMenu,
@@ -654,11 +639,11 @@ let showMenu = function(){
     "Waypoint" : showWaypointMenu,
     "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
-    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetWIDGETS.gpstrek.getState()(); removeMenu();} else {E.showMenu(mainmenu);}}).catch(()=>{E.showMenu(mainmenu);});},
+    "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}}).catch(()=>{E.showMenu(mainmenu);});},
     "Info rows" : {
       value : WIDGETS.gpstrek.getState().numberOfSlices,
       min:1,max:6,step:1,
-      onchange : v => { init(); WIDGETS.gpstrek.getState().numberOfSlices = v; }
+      onchange : v => { WIDGETS.gpstrek.getState().numberOfSlices = v; }
     },
   };
 
@@ -667,9 +652,14 @@ let showMenu = function(){
 
 
 let switchMenu = function(){
-  init();
-  scheduleDraw = false;
+  stopDrawing();
   showMenu();
+};
+
+let stopDrawing = function(){
+  if (drawTimeout) clearTimeout(drawTimeout);
+  if (scheduledDrawTimeout) clearTimeout(scheduledDrawTimeout);
+  scheduleDraw = false;
 };
 
 let drawInTimeout = function(){
@@ -688,6 +678,7 @@ let switchNav = function(){
   if (!screen) screen = 1;
   setButtons();
   scheduleDraw = true;
+  firstDraw = true;
   drawInTimeout();
 };
 
@@ -816,7 +807,7 @@ let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
 let healthSlice = getDoubleLineSlice("Heart","Steps",()=>{
   return WIDGETS.gpstrek.getState().bpm || "---";
 },()=>{
-  return WIDGETS.gpstrek.getState().steps || "---";
+  return !isNaN(WIDGETS.gpstrek.getState().steps)? WIDGETS.gpstrek.getState().steps: "---";
 });
 
 let system2Slice = getDoubleLineSlice("Bat","",()=>{

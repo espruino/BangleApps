@@ -1,6 +1,23 @@
 (() => {
+function initState(){
+  //cleanup volatile state here
+  state = {};
+  state.currentPos={};
+  state.steps = 0;
+  state.calibAltDiff = 0;
+  state.numberOfSlices = 3;
+  state.steps = 0;
+  state.up = 0;
+  state.down = 0;
+  state.saved = 0;
+}
+
 const STORAGE=require('Storage');
-let state = STORAGE.readJSON("gpstrek.state.json")||{};
+let state = STORAGE.readJSON("gpstrek.state.json");
+if (!state) {
+  state = {};
+  initState();
+}
 let bgChanged = false;
 
 function saveState(){
@@ -8,11 +25,13 @@ function saveState(){
   STORAGE.writeJSON("gpstrek.state.json", state);
 }
 
-E.on("kill",()=>{
+function onKill(){
   if (bgChanged){
     saveState();
   }
-});
+}
+
+E.on("kill", onKill);
 
 
 function onPulse(e){
@@ -73,6 +92,16 @@ function onAcc (e){
   state.acc = e;
 }
 
+function update(){
+  if (state.active){
+    start(false);
+  }
+  if (state.active == !(WIDGETS.gpstrek.width)) {
+    if(WIDGETS.gpstrek) WIDGETS.gpstrek.width = state.active?24:0;
+    Bangle.drawWidgets();
+  }
+}
+
 function start(bg){
   Bangle.removeListener('GPS', onGPS);
   Bangle.removeListener("HRM", onPulse);
@@ -94,9 +123,9 @@ function start(bg){
   if (bg){
     if (!state.active) bgChanged = true;
     state.active = true;
+    update();
     saveState();
   }
-  Bangle.drawWidgets();
 }
 
 function stop(bg){
@@ -114,22 +143,10 @@ function stop(bg){
     Bangle.removeListener("step", onStep);
     Bangle.removeListener("pressure", onPressure);
     Bangle.removeListener('accel', onAcc);
+    E.removeListener("kill", onKill);
   }
+  update();
   saveState();
-  Bangle.drawWidgets();
-}
-
-function initState(){
-  //cleanup volatile state here
-  state.currentPos={};
-  state.steps = Bangle.getStepCount();
-  state.calibAltDiff = 0;
-  state.up = 0;
-  state.down = 0;
-}
-
-if (state.saved && state.saved < Date.now() - 60000){
-  initState();
 }
 
 if (state.active){
@@ -141,11 +158,15 @@ WIDGETS["gpstrek"]={
   width:state.active?24:0,
   resetState: initState,
   getState: function() {
+    if (state.saved && Date.now() - state.saved > 60000 || !state){
+      initState();
+    }
     return state;
   },
   start:start,
   stop:stop,
   draw:function() {
+    update();
     if (state.active){
       g.reset();
       g.drawImage(atob("GBiBAAAAAAAAAAAYAAAYAAAYAAA8AAA8AAB+AAB+AADbAADbAAGZgAGZgAMYwAMYwAcY4AYYYA5+cA3/sB/D+B4AeBAACAAAAAAAAA=="), this.x, this.y);
