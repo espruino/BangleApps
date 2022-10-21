@@ -331,7 +331,9 @@ function onSwipe(dir){
 function setButtons(){
   let options = {
     mode: "custom",
-    swipe: onSwipe
+    swipe: onSwipe,
+    btn: nextScreen,
+    touch: nextScreen
   };
   Bangle.setUI(options);
 }
