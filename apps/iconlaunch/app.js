@@ -1,6 +1,6 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,oneClickExit:false };
+  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false,fastload:false };
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -179,6 +179,7 @@
       var i = YtoIdx(e.y);
       selectItem(i, e);
     },
+    swipe: (h,_) => { if(settings.swipeExit && h==1) { returnToClock(); } },
   });
   const returnToClock = function() {
     loadApp(".bootcde");
