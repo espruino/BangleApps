@@ -383,6 +383,8 @@ function showLCDMenu() {
   // converts Espruino internal unit to g
   function internalToG(u) { return u / 8192; }
 
+  var rotNames = [/*LANG*/"No",/*LANG*/"Rotate CW",/*LANG*/"Left Handed",/*LANG*/"Rotate CCW",/*LANG*/"Mirror"];
+
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
@@ -406,6 +408,18 @@ function showLCDMenu() {
         settings.timeout = 0 | v;
         updateSettings();
         Bangle.setLCDTimeout(settings.timeout);
+      }
+    },
+    /*LANG*/'Rotate': {
+      value: 0|settings.rotate,
+      min: 0,
+      max: rotNames.length-1,
+      format: v=> rotNames[v],
+      onchange: v => {
+        settings.rotate = 0 | v;
+        updateSettings();
+        g.setRotation(settings.rotate&3,settings.rotate>>2).clear();
+        Bangle.drawWidgets();
       }
     },
     /*LANG*/'Wake on BTN1': {
