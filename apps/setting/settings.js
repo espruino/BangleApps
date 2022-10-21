@@ -87,6 +87,7 @@ function showSystemMenu() {
     /*LANG*/'LCD': ()=>showLCDMenu(),
     /*LANG*/'Locale': ()=>showLocaleMenu(),
     /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Select Launcher': ()=>showLauncherMenu(),
     /*LANG*/'Date & Time': ()=>showSetTimeMenu()
   };
 
@@ -684,6 +685,35 @@ function showClockMenu() {
     clockMenu[/*LANG*/"No Clocks Found"] = () => { };
   }
   return E.showMenu(clockMenu);
+}
+function showLauncherMenu() {
+  var launcherApps = require("Storage").list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "launch")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
+  const launcherMenu = {
+    '': {
+      'title': /*LANG*/'Select Launcher',
+    },
+    '< Back': ()=>showSystemMenu(),
+  };
+  launcherApps.forEach((app, index) => {
+    var label = app.name;
+    if ((!settings.launcher && index === 0) || (settings.launcher === app.src)) {
+      label = "* " + label;
+    }
+    launcherMenu[label] = () => {
+      if (settings.launcher !== app.src) {
+        settings.launcher = app.src;
+        updateSettings();
+        showMainMenu();
+      }
+    };
+  });
+  if (launcherApps.length === 0) {
+    launcherMenu[/*LANG*/"No Launchers Found"] = () => { };
+  }
+  return E.showMenu(launcherMenu);
 }
 
 function showSetTimeMenu() {
