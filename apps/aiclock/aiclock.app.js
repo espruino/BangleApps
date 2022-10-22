@@ -57,6 +57,17 @@ function drawCircle(isLocked){
     g.fillCircle(cx, cy, 6);
 }
 
+function toAngle(a){
+    if (a < 0){
+        return 360 + a;
+    }
+
+    if(a > 360) {
+        return 360 - a;
+    }
+
+    return a
+}
 
 function drawTime(){
     var drawHourHand = g.drawRotRect.bind(g,8,12,R-38);
@@ -74,10 +85,10 @@ function drawTime(){
 
     // Draw minute and hour bg
     g.setColor(g.theme.bg);
-    drawHourHand(Math.max(0, h - 2));
-    drawHourHand(Math.min(360, h + 2));
-    drawMinuteHand(Math.max(0, m - 2));
-    drawMinuteHand(Math.min(360, m + 2));
+    drawHourHand(toAngle(h-3));
+    drawHourHand(toAngle(h+3));
+    drawMinuteHand(toAngle(m-2));
+    drawMinuteHand(toAngle(m+3));
 
     // Draw minute and hour fg
     g.setColor(g.theme.fg);
@@ -95,13 +106,15 @@ function drawDate(){
     var text = ("0"+date.getDate()).substr(-2) + "/" + ("0"+date.getMonth()).substr(-2);
     var w = g.stringWidth(text);
     g.setColor(g.theme.bg);
-    g.fillRect(cx-w/2-4, 20, cx+w/2+2, 40+12);
+    g.fillRect(cx-w/2-4, 20, cx+w/2+4, 40+12);
 
     g.setColor(g.theme.fg);
-    g.drawLine(cx+w/2+1, 20, cx+w/2+1, 40+12);
-    g.drawLine(cx+w/2+2, 20, cx+w/2+2, 40+12);
-    g.drawLine(cx+w/2+3, 20, cx+w/2+3, 40+12);
-    g.drawLine(cx+w/2+4, 20, cx+w/2+4, 40+12);
+    // Draw right line as designed by stable diffusion
+    g.drawLine(cx+w/2+5, 20, cx+w/2+5, 40+12);
+    g.drawLine(cx+w/2+6, 20, cx+w/2+6, 40+12);
+    g.drawLine(cx+w/2+7, 20, cx+w/2+7, 40+12);
+
+    // And finally the text
     g.drawString(text, cx, 40);
 }
 
@@ -115,13 +128,21 @@ function drawDigits(){
     var text = ("0"+date.getHours()).substr(-2) + ":" + ("0"+date.getMinutes()).substr(-2); //Bangle.getHealthStatus("day").steps;
     var w = g.stringWidth(text);
     g.setColor(g.theme.bg);
-    g.fillRect(cx-w/2-4, 120, cx+w/2+2, 140+20);
+    g.fillRect(cx-w/2-4, 120, cx+w/2+4, 140+20);
+
+    // Draw right line as designed by stable diffusion
+    g.setColor(g.theme.fg);
+    g.drawLine(cx+w/2+5, 120, cx+w/2+5, 140+20);
+    g.drawLine(cx+w/2+6, 120, cx+w/2+6, 140+20);
+    g.drawLine(cx+w/2+7, 120, cx+w/2+7, 140+20);
+
+    // And the 7set text
+    g.setColor("#BBB");
+    g.drawString("88:88", cx, 140);
+    g.drawString("88:88", cx+1, 140);
+    g.drawString("88:88", cx, 141);
 
     g.setColor(g.theme.fg);
-    g.drawLine(cx+w/2+1, 120, cx+w/2+1, 140+20);
-    g.drawLine(cx+w/2+2, 120, cx+w/2+2, 140+20);
-    g.drawLine(cx+w/2+3, 120, cx+w/2+3, 140+20);
-    g.drawLine(cx+w/2+4, 120, cx+w/2+4, 140+20);
     g.drawString(text, cx, 140);
     g.drawString(text, cx+1, 140);
     g.drawString(text, cx, 141);
