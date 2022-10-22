@@ -6,6 +6,7 @@
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],
   "type": "outdoors",
+  "tags": "clock",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
