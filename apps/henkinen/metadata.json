@@ -5,7 +5,6 @@
   "description": "A tiny app helping you to breath and relax.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],
-  "type": "outdoors",
   "tags": "outdoors",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
   "readme": "README.md",
