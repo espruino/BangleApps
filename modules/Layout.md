@@ -59,6 +59,7 @@ layout.render();
   - `cb` - a callback function
   - `cbl` - a callback function for long presses
 - `back` - a callback function, passed as `back` into Bangle.setUI (which usually adds an icon in the top left)
+- `remove` - a cleanup function, passed as `remove` into Bangle.setUI (allows to cleanly remove the app from memory)
 
 If automatic lazy rendering is enabled, calls to `layout.render()` will attempt to automatically determine what objects have changed or moved, clear their previous locations, and re-render just those objects.
 
