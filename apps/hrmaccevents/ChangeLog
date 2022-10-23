@@ -1,1 +1,5 @@
 0.01: New App!
+0.02: Show status info on display
+      Allow recording to Bangle
+0.03: Allow downloading recorded files
+      Make it work with more BTHRM configs

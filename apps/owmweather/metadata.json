@@ -1,0 +1,22 @@
+{ "id": "owmweather",
+  "name": "OpenWeatherMap weather provider",
+  "shortName":"OWM Weather",
+  "version":"0.01",
+  "description": "Pulls weather from OpenWeatherMap (OWM) API",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "boot,tool,weather",
+  "supports" : ["BANGLEJS2"],
+  "interface": "interface.html",
+  "readme": "README.md",
+  "data": [
+    {"name":"owmweather.json"},
+    {"name":"weather.json"}
+  ],
+  "storage": [
+    {"name":"owmweather.default.json","url":"default.json"},
+    {"name":"owmweather.boot.js","url":"boot.js"},
+    {"name":"owmweather","url":"lib.js"},
+    {"name":"owmweather.settings.js","url":"settings.js"}
+  ]
+}

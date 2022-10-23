@@ -48,14 +48,13 @@ we should start a timeout for settings.unreadTimeout to return
 to the clock. */
 var unreadTimeout;
 /// List of all our messages
-var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
+var MESSAGES = require("messages").getMessages();
 if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
-    else Bangle.buzz();
+    require("messages").buzz(msg.src);
   }
   if (msg && msg.id=="music") {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
@@ -69,8 +68,7 @@ function saveMessages() {
 
 function showMapMessage(msg) {
   active = "map";
-  var m;
-  var distance, street, target, eta;
+  var m, distance, street, target, eta;
   m=msg.title.match(/(.*) - (.*)/);
   if (m) {
     distance = m[1];
@@ -286,6 +284,7 @@ function showMessage(msgid) {
     }
   }
   function goBack() {
+    layout = undefined;
     msg.new = false; saveMessages(); // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
@@ -317,7 +316,7 @@ function showMessage(msgid) {
         {type:"txt", font:fontSmall, label:msg.src||/*LANG*/"Message", bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2, halign:1 },
         title?{type:"txt", font:titleFont, label:title, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 }:{},
       ]},
-      { type:"btn", src:require("messages").getMessageImage(msg), col:require("messages").getMessageImageCol(msg), pad: 3, cb:()=>{
+      { type:"btn", src:require("messages").getMessageImage(msg), col:require("messages").getMessageImageCol(msg, g.theme.fg2), pad: 3, cb:()=>{
         cancelReloadTimeout(); // don't auto-reload to clock now
         showMessageSettings(msg);
       }},
@@ -353,8 +352,18 @@ function checkMessages(options) {
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
   // If we have a new message, show it
-  if (options.showMsgIfUnread && newMessages.length)
-    return showMessage(newMessages[0].id);
+  if (options.showMsgIfUnread && newMessages.length) {
+    showMessage(newMessages[0].id);
+    // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
+    if (global.BUZZ_ON_NEW_MESSAGE) {
+      // this is set if we entered the messages app by loading `messages.new.js`
+      // ... but only buzz the first time we view a new message
+      global.BUZZ_ON_NEW_MESSAGE = false;
+      // messages.buzz respects quiet mode - no need to check here
+      require("messages").buzz(newMessages[0].src);
+    }
+    return;
+  }
   // no new messages: show playing music? (only if we have playing music to show)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && m.track && m.state=="play"))
     return showMessage('music');
@@ -369,7 +378,7 @@ function checkMessages(options) {
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
-      else g.setColor(g.theme.fg);
+      else g.setBgColor(g.theme.bg).setColor(g.theme.fg);
       g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;
@@ -411,19 +420,17 @@ function cancelReloadTimeout() {
   unreadTimeout = undefined;
 }
 
-
 g.clear();
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
 setTimeout(() => {
-  var unreadTimeoutSecs = settings.unreadTimeout;
-  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
-  if (unreadTimeoutSecs)
-    unreadTimeout = setTimeout(function() {
-      print("Message not seen - reloading");
-      load();
-    }, unreadTimeoutSecs*1000);
+  var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
+  if (unreadTimeoutMillis) {
+    unreadTimeout = setTimeout(load, unreadTimeoutMillis);
+  }
   // only openMusic on launch if music is new
-  var newMusic = MESSAGES.some(m=>m.id==="music"&&m.new);
-  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1,openMusic:newMusic&&settings.openMusic});
-},10); // if checkMessages wants to 'load', do that
+  var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
+  checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
+}, 10); // if checkMessages wants to 'load', do that

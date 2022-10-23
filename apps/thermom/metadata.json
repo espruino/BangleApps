@@ -1,7 +1,7 @@
 {
   "id": "thermom",
   "name": "Thermometer",
-  "version": "0.05",
+  "version": "0.07",
   "description": "Displays the current temperature in degree Celsius/Fahrenheit (depending on locale), updates every 10 seconds with average of last 5 readings.",
   "icon": "app.png",
   "tags": "tool",

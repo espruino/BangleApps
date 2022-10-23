@@ -122,11 +122,11 @@ Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");

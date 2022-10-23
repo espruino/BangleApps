@@ -10,7 +10,7 @@ var img = atob("sIwDkm2S66DYwA2AAAAAHAHGSRxJEkAAgmGGBxDIADIdAFJIbAHF9HP00kBUC6Dt
 var imgHeight = g.imageMetrics(img).height;
 var imgScroll = Math.floor(Math.random()*imgHeight);
 
-g.reset().setFont("6x15").setFontAlign(0,0);
+g.clear(1).setFont("6x15").setFontAlign(0,0);
 g.drawString(ENV.VERSION + "  " + NRF.getAddress(), g.getWidth()/2, 171);
 g.drawImage(img,0,24);
 
@@ -69,4 +69,7 @@ function drawImage() {
 
 // TODO: a nice little animation before
 setTimeout(drawInfo, 1000);
-setWatch(_=>load(), BTN1);
+Bangle.setUI({
+  mode : "custom",
+  back : load
+});

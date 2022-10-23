@@ -236,7 +236,7 @@ function drawBattery(x,y,wi,hi) {
   g.clearRect(x+2,y+2+2,x+wi-4-2,y+2+hi-2); // centre
   g.setColor(g.theme.fg);
   g.fillRect(x+wi-3,y+2+(((hi - 1)/2)-1),x+wi-2,y+2+(((hi - 1)/2)-1)+4); // contact
-  g.fillRect(x+3, y+5, x +4 + E.getBattery()*(wi-12)/100, y+hi-1); // the level
+  g.fillRect(x+3, y+5, x +3 + E.getBattery()*(wi-10)/100, y+hi-1); // the level
 
   if( Bangle.isCharging() )
   {
@@ -292,17 +292,8 @@ function queueDraw() {
 
 
 log_debug("starting..");
-g.clear();
-Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 loadLocation();
-
 
 
 if(settings.autoCycle || settings.sideTap==0)
@@ -316,6 +307,17 @@ if(settings.autoCycle || settings.sideTap==0)
 else{
   Bangle.setUI("clock");
 }
+
+
+g.clear();
+Bangle.loadWidgets();
+/*
+ * we are not drawing the widgets as we are taking over the whole screen
+ * so we will blank out the draw() functions of each widget and change the
+ * area to the top bar doesn't get cleared.
+ */
+for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+
 
 
 

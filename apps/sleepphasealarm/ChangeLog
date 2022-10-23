@@ -7,3 +7,7 @@
       use Layout library and display ETA
 0.07: Add check for day of week
 0.08: Update to new time_utils module
+0.09: Vibrate with configured pattern
+      Add setting to defer start of algorithm
+      Add setting to disable scheduler alarm
+

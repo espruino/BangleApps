@@ -12,9 +12,22 @@
     <script>
 var domTracks = document.getElementById("tracks");
 
-function saveKML(track,title) {
+function filterGPSCoordinates(track) {
   // only include data points with GPS values
-  track=track.filter(pt=>pt.Latitude!="" && pt.Longitude!="");
+  var allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
+  if (!allowNoGPS)
+    return track.filter(pt=>pt.Latitude!="" && pt.Longitude!="");
+  return track.map(pt => {
+    if (!isFinite(parseFloat(pt.Latitude))) pt.Latitude=0;
+    if (!isFinite(parseFloat(pt.Longitude))) pt.Longitude=0;
+    if (!isFinite(parseFloat(pt.Altitude))) pt.Altitude=0;
+    return pt;
+  })
+}
+
+function saveKML(track,title) {
+  // filter out coords with no GPS (or allow, but force to 0)
+  track = filterGPSCoordinates(track);
   // Now output KML
   var kml = `<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -81,7 +94,9 @@ function saveGPX(track, title) {
     showToast("Error in trackfile.", "error");
     return;
   }
-
+  // filter out coords with no GPS (or allow, but force to 0)
+  track = filterGPSCoordinates(track);
+  // Output GPX
   var gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata>
@@ -91,7 +106,7 @@ function saveGPX(track, title) {
     <name>${title}</name>
     <trkseg>`;
   track.forEach(pt=>{
-    if (pt.Latitude!="" && pt.Longitude!="") gpx += `
+    gpx += `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
         <ele>${pt.Altitude}</ele>
         <time>${pt.Time.toISOString()}</time>
@@ -199,7 +214,9 @@ function getTrackList() {
     // ================================================
     // When 'promise' completes we now have all the info in trackList
     promise.then(() => {
-      var html = `<div class="container">
+      var html = `
+      <div class="container">
+      <h2>Tracks</h2>
       <div class="columns">\n`;
       trackList.forEach(track => {
         console.log("track", track);
@@ -221,10 +238,8 @@ ${trackData.Latitude ? `
              </iframe>
            </div><div class="card-body"></div>` : `<div class="card-body">No GPS info</div>`}
            <div class="card-footer">
-${trackData.Latitude ? `
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
-` : ``}
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
              <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
            </div>
@@ -242,9 +257,20 @@ ${trackData.Latitude ? `
          `;
         }
         html += `
+        </div><!-- columns -->
+        <h2>Settings</h2>
+        <div class="form-group">
+          <label class="form-switch">
+            <input type="checkbox" id="settings-allow-no-gps" ${(localStorage.getItem("recorder-allow-no-gps")=="true")?"checked":""}>
+            <i class="form-icon"></i> Include GPX/KML entries even when there's no GPS info
+          </label>
         </div>
         </div>`;
         domTracks.innerHTML = html;
+        document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
+          var allowNoGPS = event.target.checked;
+          localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
+        });
         Util.hideModal();
         var buttons = domTracks.querySelectorAll("button");
         for (var i=0;i<buttons.length;i++) {

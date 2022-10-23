@@ -92,6 +92,7 @@ if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
+if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
 // Pre-2v10 firmwares without a theme/setUI
 delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
 if (!g.theme) {
@@ -112,54 +113,6 @@ Bangle.setUI=function(mode, cb) {
   }
   Bangle._setUI(mode, cb);
 };\n`;
-}
-delete E.showScroller; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!E.showScroller) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `E.showScroller = (function(a){function n(){g.reset();b>=l+c&&(c=1+b-l);b<c&&(c=b);g.setColor(g.theme.fg);for(var d=0;d<l;d++){var m=d+c;if(0>m||m>=a.c)break;var f=24+d*a.h;a.draw(m,{x:0,y:f,w:h,h:a.h});d+c==b&&g.setColor(g.theme.fg).drawRect(0,f,h-1,f+a.h-1).drawRect(1,f+1,h-2,f+a.h-2)}g.setColor(c?g.theme.fg:g.theme.bg);g.fillPoly([e,6,e-14,20,e+14,20]);g.setColor(a.c>l+c?g.theme.fg:g.theme.bg);g.fillPoly([e,k-7,e-14,k-21,e+14,k-21])}if(!a)return Bangle.setUI();var b=0,c=0,h=g.getWidth(),
-k=g.getHeight(),e=h/2,l=Math.floor((k-48)/a.h);g.reset().clearRect(0,24,h-1,k-1);n();Bangle.setUI("updown",d=>{d?(b+=d,0>b&&(b=a.c-1),b>=a.c&&(b=0),n()):a.select(b)})});\n`;
-}
-delete g.imageMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.imageMetrics=function(src) {
-  if (src[0]) return {width:src[0],height:src[1]};
-  else if ('object'==typeof src) return {
-    width:("width" in src) ? src.width : src.getWidth(),
-    height:("height" in src) ? src.height : src.getHeight()};
-  var im = E.toString(src);
-  return {width:im.charCodeAt(0), height:im.charCodeAt(1)};
-};\n`;
-}
-delete g.stringMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.stringMetrics) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.stringMetrics=function(txt) {
-  txt = txt.toString().split("\\n");
-  return {width:Math.max.apply(null,txt.map(x=>g.stringWidth(x))), height:this.getFontHeight()*txt.length};
-};\n`;
-}
-delete g.wrapString; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.wrapString=function(str, maxWidth) {
-  var lines = [];
-  for (var unwrappedLine of str.split("\\n")) {
-    var words = unwrappedLine.split(" ");
-    var line = words.shift();
-    for (var word of words) {
-      if (g.stringWidth(line + " " + word) > maxWidth) {
-        lines.push(line);
-        line = word;
-      } else {
-        line += " " + word;
-      }
-    }
-    lines.push(line);
-  }
-  return lines;
-};\n`;
-}
-delete Bangle.appRect; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
-  boot += `Bangle.appRect = ((y,w,h)=>({x:0,y:0,w:w,h:h,x2:w-1,y2:h-1}))(g.getWidth(),g.getHeight());
-  (lw=>{ Bangle.loadWidgets = () => { lw(); Bangle.appRect = ((y,w,h)=>({x:0,y:y,w:w,h:h-y,x2:w-1,y2:h-(1+h)}))(global.WIDGETS?24:0,g.getWidth(),g.getHeight()); }; })(Bangle.loadWidgets);\n`;
 }
 
 // Append *.boot.js files

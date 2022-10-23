@@ -67,9 +67,9 @@ function startTimer() {
   - hint for help in state start
 */ 
 function showCounter(withHint) {
-  //g.clear();
+  g.reset(); // workaround for E.showMessage bg color in 2v14 and earlier
   E.showMessage("", appTitle());
-  g.setFontAlign(0,0); // center font
+  g.reset().setFontAlign(0,0); // center font
   // draw the current counter value
   g.setBgColor(-1).setColor(0,0,1); // blue
   g.setFont("Vector",20); // vector font, 20px  
@@ -123,9 +123,9 @@ function countUp() {
     outOfTime();
     return;
   }
-  g.clear();
+  g.reset(); // workaround for E.showMessage bg color in 2v14 and earlier
   E.showMessage("", appTitle());
-  g.setFontAlign(0,0); // center font
+  g.reset().setFontAlign(0,0); // center font
   g.setBgColor(-1).setColor(0,0,1); // blue
   g.setFont("Vector",20); // vector font, 20px
   g.drawString("Timer: " + timeFormated(counterStart),80,55);
@@ -216,6 +216,8 @@ function initDragEvents() {
 function showHelp() {
   if (state == states.start) {
     state = states.help;
+	g.setBgColor(g.theme.bg);
+	g.setColor(g.theme.fg);
     E.showMessage("Swipe up/down\n+/- one minute\n\nSwipe left/right\n+/- 15 seconds\n\nPress Btn1 to start","Tea timer help");
   }
   // return to start

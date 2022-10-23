@@ -14,14 +14,14 @@ const frenchNumberStr = [ "ZERO", "UNE", "DEUX", "TROIS", "QUATRE",
 
 function frenchHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return frenchNumberStr[hours];
 }
 
 function frenchHeures(hours){
-    if(hours % 12 == 1){
+    if(hours % 12 === 1){
         return 'HEURE';
     } else {
         return 'HEURES';
@@ -29,32 +29,33 @@ function frenchHeures(hours){
 }
 
 class FrenchDateFormatter extends DateFormatter {
-    constructor() { super(); }
-    name(){return "French";}
+    constructor() {
+        super();
+    }
     formatDate(date){
         var hours = frenchHoursToText(date.getHours());
         var heures = frenchHeures(date.getHours());
-        var mins = date.getMinutes();
-        if(mins == 0){
-            if(hours == 0){
+        const mins = date.getMinutes();
+        if(mins === 0){
+            if(hours === 0){
                 return ["MINUIT", "",""];
-            } else if(hours == 12){
+            } else if(hours === 12){
                 return ["MIDI", "",""];
             } else {
                 return [hours, heures,""];
             }
-        } else if(mins == 30){
+        } else if(mins === 30){
             return [hours, heures,'ET DEMIE'];
-        } else if(mins == 15){
+        } else if(mins === 15){
             return [hours, heures,'ET QUART'];
-        } else if(mins == 45){
+        } else if(mins === 45){
             var next_hour = date.getHours()  + 1;
             hours = frenchHoursToText(next_hour);
             heures = frenchHeures(next_hour);
             return [hours, heures,"MOINS",'LET QUART'];
         }
         if(mins > 30){
-            var to_mins = 60-mins;
+            const to_mins = 60-mins;
             var mins_txt = frenchNumberStr[to_mins];
             next_hour = date.getHours()  + 1;
             hours = frenchHoursToText(next_hour);
@@ -64,6 +65,30 @@ class FrenchDateFormatter extends DateFormatter {
             mins_txt = frenchNumberStr[mins];
             return [ hours, heures , mins_txt ];
         }
+    }
+    defaultRowTypes(){
+        return {
+            small: {
+                speed: 'vslow'
+            }
+        };
+    }
+
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'small',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
     }
 }
 
