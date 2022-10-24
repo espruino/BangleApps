@@ -88,7 +88,9 @@ function draw() {
     g.drawLine(watch.x - facew, y + watch.y, watch.x - facew + w, y + watch.y);
     
     // get hour y position
-    if (i == date.getHours() % 12) houry = y;
+    var hour = date.getHours() % 12;
+    if (hour == 0) hour = 12;
+    if (i == hour) houry = y;
   }
   
   // draw minute meter
