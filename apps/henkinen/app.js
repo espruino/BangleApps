@@ -10,13 +10,13 @@ const breath = {
   x:0, y:0, w:0, h:0, 
   size: 60,
   
-  bgcolor: {r: 1, g: 0.6, b: 0.3},
-  incolor: {r: 1, g: 0.8, b: 0.5},
-  keepcolor: {r: 1, g: 0.8, b: 0.5},
-  outcolor: {r: 1, g: 0.8, b: 0.5},
+  bgcolor: g.theme.bg,
+  incolor: g.theme.fg,
+  keepcolor: g.theme.fg,
+  outcolor: g.theme.fg,
   
   font: "Vector", fontsize: 14, 
-  textcolor: {r: 1, g: 1, b: 1},
+  textcolor: g.theme.fg,
   texty: 16,
   
   in: 4000,
