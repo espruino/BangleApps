@@ -74,9 +74,10 @@ function draw() {
   // draw hour meter
   g.drawLine(watch.x - facew, watch.y - faceh, watch.x - facew, watch.y + faceh);
   var lines = 13;
+  var lineh = faceh * 2 / (lines - 2);
   for (var i = 1; i < lines; i++) {
     var w = 2;
-    var y = -faceh * 2 / (lines-2) * (i-1) + faceh;
+    var y = faceh - lineh * (i - 1);
     
     if (i % 3 == 0) {
       // longer line and numbers every 3
@@ -94,9 +95,10 @@ function draw() {
   g.drawLine(watch.x + facew, watch.y - faceh, watch.x + facew, watch.y + faceh);
   g.setFontAlign(-1,-1);
   lines = 60;
+  lineh = faceh * 2 / (lines - 1);
   for (i = 0; i < lines; i++) {
     var mw = 2;
-    var my = -faceh * 2 / (lines-1) * (i) + faceh;
+    var my = faceh - lineh * i;
     
     if (i % 15 == 0 && i != 0) {
       // longer line and numbers every 3
@@ -104,6 +106,7 @@ function draw() {
       g.drawString(i, watch.x + facew + 4, my + watch.y);
     }
     
+    //if (i % 2 == 0 || i == 15 || i == 45) 
     g.drawLine(watch.x + facew, my + watch.y, watch.x + facew - mw, my + watch.y);
     
     // get minute y position
