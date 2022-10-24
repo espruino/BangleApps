@@ -4,6 +4,8 @@
 // by Jukio Kallio
 // www.jukiokallio.com
 
+require("FontHaxorNarrow7x17").add(Graphics);
+
 // settings
 const breath = { 
   theme: "default", 
@@ -15,9 +17,9 @@ const breath = {
   keepcolor: g.theme.fg,
   outcolor: g.theme.fg,
   
-  font: "Vector", fontsize: 14, 
+  font: "HaxorNarrow7x17", fontsize: 1, 
   textcolor: g.theme.fg,
-  texty: 16,
+  texty: 18,
   
   in: 4000,
   keep: 7000,
@@ -61,7 +63,7 @@ function draw() {
   g.reset();
   
   // Clear the area where we want to draw the time
-  g.setColor(breath.bgcolor.r, breath.bgcolor.g, breath.bgcolor.b);
+  g.setColor(breath.bgcolor);
   g.fillRect(0, 0, breath.w, breath.h);
   
   // calculate circle size
@@ -69,17 +71,17 @@ function draw() {
   if (time < breath.in) {
     // breath in
     circle = time / breath.in;
-    g.setColor(breath.incolor.r, breath.incolor.g, breath.incolor.b);
+    g.setColor(breath.incolor);
     
   } else if (time < breath.in + breath.keep) {
     // keep breath
     circle = 1;
-    g.setColor(breath.keepcolor.r, breath.keepcolor.g, breath.keepcolor.b);
+    g.setColor(breath.keepcolor);
     
   } else if (time < breath.in + breath.keep + breath.out) {
     // breath out
     circle = ((breath.in + breath.keep + breath.out) - time) / breath.out;
-    g.setColor(breath.outcolor.r, breath.outcolor.g, breath.outcolor.b);
+    g.setColor(breath.outcolor);
     
   }
   
@@ -87,11 +89,11 @@ function draw() {
   g.fillCircle(breath.x, breath.y, breath.size * circle);
   
   // breath area
-  g.setColor(breath.textcolor.r, breath.textcolor.g, breath.textcolor.b);
+  g.setColor(breath.textcolor);
   g.drawCircle(breath.x, breath.y, breath.size);
   
   // draw text
-  g.setFontAlign(0,0).setFont(breath.font, breath.fontsize).setColor(breath.textcolor.r, breath.textcolor.g, breath.textcolor.b);
+  g.setFontAlign(0,0).setFont(breath.font, breath.fontsize).setColor(breath.textcolor);
   
   if (time < breath.in) {
     // breath in
