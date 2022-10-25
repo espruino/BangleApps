@@ -28,6 +28,8 @@ The color of each circle can be configured. The following colors are available:
 ![Screenshot light theme](screenshot-light.png)
 ![Screenshot dark theme with four circles](screenshot-dark-4.png)
 ![Screenshot light theme with four circles](screenshot-light-4.png)
+![Screenshot light theme with big weather enabled](screenshot-light-with-big-weather.png)
+
 
 ## Ideas
 * Show compass heading
