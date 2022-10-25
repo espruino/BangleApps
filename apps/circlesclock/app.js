@@ -124,7 +124,7 @@ function draw() {
   }
   else {
     g.setFontAlign(-1, -1);
-    g.drawString(locale.time(new Date(), 1), 5, h1 + 6);
+    g.drawString(locale.time(new Date(), 1), 2, h1 + 6);
   }
   now = Math.round(new Date().getTime() / 1000);
 
@@ -136,8 +136,8 @@ function draw() {
     g.drawString(locale.dow(new Date()), w / 2, h2 + dowOffset);
   } else {
     g.setFontAlign(-1, 0);
-    g.drawString(locale.date(new Date()), 5, h2);
-    g.drawString(locale.dow(new Date()), 5, h2 + dowOffset, 1);
+    g.drawString(locale.date(new Date()), 2, h2);
+    g.drawString(locale.dow(new Date()), 2, h2 + dowOffset, 1);
   }
 
   // weather
