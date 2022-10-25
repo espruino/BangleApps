@@ -35,4 +35,5 @@ The color of each circle can be configured. The following colors are available:
 Marco ([myxor](https://github.com/myxor))
 
 ## Icons
-Icons taken from [materialdesignicons](https://materialdesignicons.com) under Apache License 2.0
+Most of the icons are taken from [materialdesignicons](https://materialdesignicons.com) under Apache License 2.0 except the big weather icons which are from 
+[icons8](https://icons8.com/icon/set/weather/small--static--black)
