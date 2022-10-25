@@ -148,7 +148,10 @@ function draw() {
     if (tempString) g.drawString(tempString, w, h2 + dowOffset);
 
     const code = weather ? weather.code : -1;
-    g.drawImage(getWeatherIconByCode(code, true), w - 64, h1);
+    if (code > -1) {
+      const icon = getWeatherIconByCode(code, true);
+      if (icon) g.drawImage(icon, w - 48, h1, {scale:0.75});
+    }
   }
 
   drawCircle(1);
