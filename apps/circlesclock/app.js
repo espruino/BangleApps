@@ -145,7 +145,7 @@ function draw() {
     const weather = getWeather();
     const tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
     g.setFontAlign(1, 0);
-    if (tempString) g.drawString(tempString, w, h2 + dowOffset);
+    if (tempString) g.drawString(tempString, w, h2);
 
     const code = weather ? weather.code : -1;
     if (code > -1) {
