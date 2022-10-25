@@ -9,10 +9,11 @@ It can show the following information (this can be configured):
   * Steps distance
   * Heart rate (automatically updates when screen is on and unlocked)
   * Battery (including charging status and battery low warning)
-  * Weather (requires [weather app](https://banglejs.com/apps/#weather))
+  * Weather (requires [OWM weather provider](https://banglejs.com/apps/?id=owmweather))
        * Humidity or wind speed as circle progress
        * Temperature inside circle
        * Condition as icon below circle
+       * Big weather icon next to clock
   * Time and progress until next sunrise or sunset (requires [my location app](https://banglejs.com/apps/#mylocation))
   * Temperature, air pressure or altitude from internal pressure sensor
 
