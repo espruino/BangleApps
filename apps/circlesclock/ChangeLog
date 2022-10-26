@@ -26,3 +26,4 @@
 0.12: Allow configuration of update interval
 0.13: Load step goal from Bangle health app as fallback
       Memory optimizations
+0.14: Support to show big weather info
