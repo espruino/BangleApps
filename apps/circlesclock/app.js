@@ -23,11 +23,14 @@ if (settings.stepGoal == undefined) {
   let d = storage.readJSON("health.json", true) || {};
   settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
 
-  if (settings.stepGoal == undefined) {  
+  if (settings.stepGoal == undefined) {
     d = storage.readJSON("wpedom.json", true) || {};
     settings.stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
   }
 }
+
+let timerHrm;
+let drawTimeout;
 
 /*
  * Read location from myLocation app
@@ -156,6 +159,8 @@ function draw() {
   drawCircle(2);
   drawCircle(3);
   if (circleCount >= 4) drawCircle(4);
+
+  queueDraw();
 }
 
 function drawCircle(index) {
@@ -506,7 +511,7 @@ function drawTemperature(w) {
 
     if (temperature)
       writeCircleText(w, locale.temp(temperature));
-    
+
     g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   });
@@ -822,7 +827,7 @@ function getPressureValue(type) {
   });
 }
 
-Bangle.on('lock', function(isLocked) {
+function onLock(isLocked) {
   if (!isLocked) {
     draw();
     if (isCircleEnabled("hr")) {
@@ -831,11 +836,10 @@ Bangle.on('lock', function(isLocked) {
   } else {
     Bangle.setHRMPower(0, "circleclock");
   }
-});
+}
+Bangle.on('lock', onLock);
 
-
-let timerHrm;
-Bangle.on('HRM', function(hrm) {
+function onHRM(hrm) {
   if (isCircleEnabled("hr")) {
     if (hrm.confidence >= (settings.confidence)) {
       hrtValue = hrm.bpm;
@@ -852,23 +856,48 @@ Bangle.on('HRM', function(hrm) {
       }, settings.hrmValidity * 1000);
     }
   }
-});
+}
+Bangle.on('HRM', onHRM);
 
-Bangle.on('charging', function(charging) {
+function onCharging(charging) {
   if (isCircleEnabled("battery")) drawBattery();
-});
+}
+Bangle.on('charging', onCharging);
+
 
 if (isCircleEnabled("hr")) {
   enableHRMSensor();
 }
 
-Bangle.setUI("clock");
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    // Called to unload all of the clock app
+    Bangle.removeListener('charging', onCharging);
+    Bangle.removeListener('lock', onLock);
+    Bangle.removeListener('HRM', onHRM);
+
+    Bangle.setHRMPower(0, "circleclock");
+
+    if (timerHrm) clearTimeout(timerHrm);
+    timerHrm = undefined;
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+
+    delete Graphics.prototype.setFontRobotoRegular50NumericOnly;
+    delete Graphics.prototype.setFontRobotoRegular21;
+  }});
+
 Bangle.loadWidgets();
 
-// schedule a draw for the next minute
-setTimeout(function() {
-  // draw in interval
-  setInterval(draw, settings.updateInterval * 1000);
-}, 60000 - (Date.now() % 60000));
+// schedule a draw for the next second or minute
+function queueDraw() {
+  let queueMillis = settings.updateInterval * 1000;
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, queueMillis - (Date.now() % queueMillis));
+}
 
 draw();

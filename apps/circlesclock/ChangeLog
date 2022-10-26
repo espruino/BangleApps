@@ -27,3 +27,4 @@
 0.13: Load step goal from Bangle health app as fallback
       Memory optimizations
 0.14: Support to show big weather info
+0.15: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on 2v16
