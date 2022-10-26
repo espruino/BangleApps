@@ -41,7 +41,6 @@
 
     <script>
       
-   var apikey = localStorage.getItem('apikey');
   
    var antwort_val="";
     function handleFileSelect(evt) {
@@ -69,7 +68,7 @@
 
         xhr.open("POST", "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/");
         xhr.setRequestHeader("x-rapidapi-host", "pen-to-print-handwriting-ocr.p.rapidapi.com");
-        xhr.setRequestHeader("x-rapidapi-key", apikey);
+        xhr.setRequestHeader("x-rapidapi-key", localStorage.getItem("apikey"));
 
 
           xhr.send(data);
