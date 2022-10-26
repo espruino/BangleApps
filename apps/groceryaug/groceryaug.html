@@ -7,7 +7,7 @@
     <br>
       
     <div id="apikeydiv" style="display:none;margin-bottom:30px;">
-      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);document.getElementById('upload2').value=null;return false;">save API key</button>
+      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);document.getElementById('upload2').value=null;document.getElementById('area').value='';return false;">save API key</button>
     <span id="apikeysuccess" style="display:none; color:#198754;"><br>API key saved!</span>
       <br><small>If you don't have an API key, <a href="https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr" target="_blank">you can create one here</a>. You get 100 API calls a month for free.</small>
     </div>
