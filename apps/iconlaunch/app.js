@@ -22,10 +22,6 @@
       }) };
     s.writeJSON("launch.cache.json", launchCache);
   }
-  let apps = launchCache.apps;
-  apps.forEach((app) => {
-    if (app.icon) app.icon = s.read(app.icon);
-  });
   let scroll = 0;
   let selectedItem = -1;
   const R = Bangle.appRect;
@@ -37,12 +33,13 @@
     g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     let x = 0;
     for (let i = itemI * appsN; i < appsN * (itemI + 1); i++) {
-      if (!apps[i]) break;
+      if (!launchCache.apps[i]) break;
       x += whitespace;
-      if (!apps[i].icon) {
+      if (!launchCache.apps[i].icon) {
         g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
       } else {
-        g.drawImage(apps[i].icon, x + r.x, r.y);
+        if (!launchCache.apps[i].icondata) launchCache.apps[i].icondata = s.read(launchCache.apps[i].icon);
+        g.drawImage(launchCache.apps[i].icondata, x + r.x, r.y);
       }
       if (selectedItem == i) {
         g.drawRect(
@@ -69,7 +66,7 @@
   };
   let lastIsDown = false;
   let drawText = function(i) {
-    const selectedApp = apps[selectedItem];
+    const selectedApp = launchCache.apps[selectedItem];
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (!selectedApp || i != idy) return;
     const appY = idxToY(idy) + iconSize / 2;
@@ -87,13 +84,13 @@
   let selectItem = function(id, e) {
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
-    if( settings.direct && apps[appId])
+    if( settings.direct && launchCache.apps[appId])
     {
-      loadApp(apps[appId].src);
+      loadApp(launchCache.apps[appId].src);
       return;
     }
-    if (appId == selectedItem && apps[appId]) {
-      const app = apps[appId];
+    if (appId == selectedItem && launchCache.apps[appId]) {
+      const app = launchCache.apps[appId];
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
@@ -125,7 +122,7 @@
   };
   drawItems();
   g.flip();
-  const itemsN = Math.ceil(apps.length / appsN);
+  const itemsN = Math.ceil(launchCache.apps.length / appsN);
   let onDrag = function(e) {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
@@ -189,7 +186,8 @@
     loadApp = function(name) {
       Bangle.setUI();
       if (watch) clearWatch(watch);
-      apps = [];
+      delete launchCache;
+      delete launchHash;
       delete drawItemAuto;
       delete drawText;
       delete selectItem;
