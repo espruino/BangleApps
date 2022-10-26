@@ -7,7 +7,7 @@
     <br>
       
     <div id="apikeydiv" style="display:none;margin-bottom:30px;">
-      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);return false;">save API key</button>
+      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);document.getElementById('upload2').value=null;return false;">save API key</button>
     <span id="apikeysuccess" style="display:none; color:#198754;"><br>API key saved!</span>
       <br><small>If you don't have an API key, <a href="https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr" target="_blank">you can create one here</a>. You get 100 API calls a month for free.</small>
     </div>
@@ -21,7 +21,7 @@
       <div class="columns">
         <textarea id="area" class="form-input" style="width: 80%;margin-left: 2%;margin-bottom: 5%;height: 150px;"></textarea>
         <div id="loadingstatus" style="display:none;margin-left:2%;">Processing image <div class="loading" id="loading"></div></div>
-        <input style="margin-left:2%;" id="upload2" type=file name="files[]" size=30 onclick="this.value=null;">
+        <input style="margin-left:2%;" id="upload2" type=file name="files[]" size=30>
       </div>
     </form>
     <br><br>
