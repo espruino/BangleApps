@@ -3,12 +3,11 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-
     <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small;" id="apikeylink">Enter/change API key</a>
     <br>
       
     <div id="apikeydiv" style="display:none;margin-bottom:30px;">
-      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(document.getElementById('apikeysuccess').style.display='none',5000);;return false;">save API key</button>
+      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);return false;">save API key</button>
     <span id="apikeysuccess" style="display:none; color:#198754;">API key saved!</span>
       <br><small>If you don't have an API key, <a href="https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr" target="_blank">you can create one here</a>. You get 100 API calls a month for free.</small>
     </div>
@@ -29,6 +28,11 @@
    <button id="upload" class="btn btn-primary">Upload</button>
     
     <script>
+      function removeSuccessMessage(){
+        document.getElementById('apikeysuccess').style.display = 'none';
+      }
+
+      
       if(localStorage.getItem('apikey')) {
         document.getElementById('apikey').value = localStorage.getItem('apikey');
       } else {
