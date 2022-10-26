@@ -8,11 +8,6 @@
     <form id="add_product_form">
     <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;">Enter/change API key</a>
     
-    <script>
-      if(localStorage.getItem('apikey')) {
-        document.getElementById('apikey').value = localStorage.getItem('apikey');
-      }
-      </script>
       
     <div id="apikeydiv" style="display:none;">
       <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);">save API key</button>
@@ -25,6 +20,12 @@
     </form>
     <br><br>
    <button id="upload" class="btn btn-primary">Upload</button>
+    
+    <script>
+      if(localStorage.getItem('apikey')) {
+        document.getElementById('apikey').value = localStorage.getItem('apikey');
+      }
+      </script>
 
     <script src="../../core/lib/customize.js"></script>
 
