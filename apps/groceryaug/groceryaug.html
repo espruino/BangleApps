@@ -4,12 +4,13 @@
   </head>
   <body>
 
-    <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small; padding-left:4px;">Enter/change API key</a>
+    <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small;" id="apikeylink">Enter/change API key</a>
     <br>
       
-    <div id="apikeydiv" style="display:none; padding-left:4px;margin-bottom:30px;">
+    <div id="apikeydiv" style="display:none;margin-bottom:30px;">
       <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';return false;">save API key</button>
     <span id="apikeysuccess" style="display:none; color:#198754;">API key saved!</span>
+      <br><small>If you don't have an API key, <a href="https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr" target="_blank">you can create one here</a>. You get 100 API calls a month for free.</small>
     </div>
     
     
@@ -30,6 +31,9 @@
     <script>
       if(localStorage.getItem('apikey')) {
         document.getElementById('apikey').value = localStorage.getItem('apikey');
+      } else {
+        document.getElementById('apikeylink').style.display = 'none';
+        document.getElementById('apikeydiv').style.display = 'block';        
       }
       </script>
 
