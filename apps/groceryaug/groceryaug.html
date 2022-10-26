@@ -4,8 +4,6 @@
   </head>
   <body>
 
-    <h4>Products</h4>
-    <form id="add_product_form">
     <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small; padding-left:4px;">Enter/change API key</a>
     <br>
       
@@ -13,6 +11,11 @@
       <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';return false;">save API key</button>
     <span id="apikeysuccess" style="display:none; color:#198754;">API key saved!</span>
     </div>
+    
+    
+    <h4>Products</h4>
+    <form id="add_product_form">
+    
     
       
       <div class="columns">
