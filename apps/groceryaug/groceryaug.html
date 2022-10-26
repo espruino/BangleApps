@@ -6,12 +6,15 @@
 
     <h4>Products</h4>
     <form id="add_product_form">
-    <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;">Enter/change API key</a>
+    <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small; padding-left:4px;">Enter/change API key</a>
     
       
-    <div id="apikeydiv" style="display:none;">
+    <div id="apikeydiv" style="display:none; padding-left:4px;margin-bottom:30px;">
       <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);">save API key</button>
+    <span id="apikeysuccess" style="display:none; color:#198754;">API key saved!</span>
     </div>
+    
+      
       <div class="columns">
         <textarea id="area" class="form-input" style="width: 80%;margin-left: 2%;margin-bottom: 5%;height: 150px;"></textarea>
         <div id="loadingstatus" style="display:none;margin-left:2%;">Processing image <div class="loading" id="loading"></div></div>
