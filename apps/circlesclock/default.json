@@ -22,5 +22,6 @@
   "circle3colorizeIcon": true,
   "circle4colorizeIcon": false,
   "hrmValidity": 60,
-  "updateInterval": 60
+  "updateInterval": 60,
+  "showBigWeather": false
 }

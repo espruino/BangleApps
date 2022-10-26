@@ -1,2 +1,4 @@
 0.01: New App!
 0.02: Make selection of background activity more explicit
+0.03: Fix listener for accel always active
+      Use custom UI with swipes instead of leftright
