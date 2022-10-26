@@ -66,6 +66,7 @@
             console.log(this.responseText);
             var antwort =JSON.parse(this.responseText);
             antwort_val = antwort["value"];
+            if(antwort_val == "undefined"){antwort_val = "Please enter an API key first!";}
             document.getElementById('area').value = antwort_val;
           }
         });
