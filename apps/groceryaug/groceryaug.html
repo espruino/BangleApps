@@ -67,7 +67,7 @@
             var antwort =JSON.parse(this.responseText);
             antwort_val = antwort["value"];
             console.log(antwort_val);
-            if(antwort_val == null){antwort_val = "Please enter an API key first!";}
+            if(antwort_val == null){antwort_val = "Please enter an API key first, check that your key is valid and that you haven't exceeded your API quota!";}
             document.getElementById('area').value = antwort_val;
           }
         });
