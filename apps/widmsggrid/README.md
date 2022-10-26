@@ -14,6 +14,11 @@ Example: one SMS, one Signal, and two WhatsApp messages:
 ## Installation
 This widget needs the [`messages`](/?id=messages) app to handle notifications.
 
+You probably want to disable the default widget, to do so:
+1. Open `Settings`
+2. Navigate to `Apps`>`Messages`
+3. Scroll down to the `Widget messages` entry, and change it to `Hide`
+
 ## Settings
 This widget uses the `Widget` settings from the `messages` app:
 
