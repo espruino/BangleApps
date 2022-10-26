@@ -23,10 +23,6 @@ function onGPS(fix) {
   if(fix.fix) state.currentPos = fix;
 }
 
-Bangle.on('accel', function(e) {
-  state.acc = e;
-});
-
 function onMag(e) {
   if (!state.compassHeading) state.compassHeading = e.heading;
   
@@ -73,12 +69,17 @@ function onPressure(e) {
   }
 }
 
+function onAcc (e){
+  state.acc = e;
+}
+
 function start(bg){
   Bangle.on('GPS', onGPS);
   Bangle.on("HRM", onPulse);
   Bangle.on("mag", onMag);
   Bangle.on("step", onStep);
   Bangle.on("pressure", onPressure);
+  Bangle.on('accel', onAcc);
 
   Bangle.setGPSPower(1, "gpstrek");
   Bangle.setHRMPower(1, "gpstrek");
@@ -96,8 +97,19 @@ function stop(bg){
   if (bg){
     if (state.active) bgChanged = true;
     state.active = false;
-    saveState();
+  } else if (!state.active) {
+    Bangle.setGPSPower(0, "gpstrek");
+    Bangle.setHRMPower(0, "gpstrek");
+    Bangle.setCompassPower(0, "gpstrek");
+    Bangle.setBarometerPower(0, "gpstrek");
+    Bangle.removeListener('GPS', onGPS);
+    Bangle.removeListener("HRM", onPulse);
+    Bangle.removeListener("mag", onMag);
+    Bangle.removeListener("step", onStep);
+    Bangle.removeListener("pressure", onPressure);
+    Bangle.removeListener('accel', onAcc);
   }
+  saveState();
   Bangle.drawWidgets();
 }
   

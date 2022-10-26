@@ -318,16 +318,24 @@ function triangle (x, y, width, height){
   ];
 }
 
+function onSwipe(dir){
+  if (dir < 0) {
+    nextScreen();
+  } else if (dir > 0) {
+    switchMenu();
+  } else {
+    nextScreen();
+  }
+}
+
 function setButtons(){
-  Bangle.setUI("leftright", (dir)=>{
-    if (dir < 0) {
-      nextScreen();
-    } else if (dir > 0) {
-      switchMenu();
-    } else {
-      nextScreen();
-    }
-  });
+  let options = {
+    mode: "custom",
+    swipe: onSwipe,
+    btn: nextScreen,
+    touch: nextScreen
+  };
+  Bangle.setUI(options);
 }
 
 function getApproxFileSize(name){
