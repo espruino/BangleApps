@@ -875,14 +875,14 @@ Bangle.setUI({
     // Called to unload all of the clock app
     Bangle.removeListener('charging', onCharging);
     Bangle.removeListener('lock', onLock);
-  	Bangle.removeListener('HRM', onHRM);
+    Bangle.removeListener('HRM', onHRM);
 
     Bangle.setHRMPower(0, "circleclock");
 
     if (timerHrm) clearTimeout(timerHrm);
     timerHrm = undefined;
-  	if (drawTimeout) clearTimeout(drawTimeout);
-  	drawTimeout = undefined;
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
 
     delete Graphics.prototype.setFontRobotoRegular50NumericOnly;
     delete Graphics.prototype.setFontRobotoRegular21;
