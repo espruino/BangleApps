@@ -3,4 +3,4 @@ Modified version of the Grocery App - lets you upload an image with the products
 Uses this API to do the OCR: https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr 
 With a free account you get 100 API calls a month.
 
-![Demonstration of groceryaug app](https://fapeg.github.io/BangleApps/apps/groceryaug/groceryaug_preview.gif)
+![Demonstration of groceryaug app](groceryaug_preview.gif)
