@@ -1,11 +1,11 @@
-(function() {
-  var settings = Object.assign(
+{
+  let settings = Object.assign(
     require('Storage').readJSON("sensortools.default.json", true) || {},
     require('Storage').readJSON("sensortools.json", true) || {}
   );
 
-  var log = function(text, param) {
-    var logline = new Date().toISOString() + " - " + "Sensortools - " + text;
+  let log = function(text, param) {
+    let logline = new Date().toISOString() + " - " + "Sensortools - " + text;
     if (param) logline += ": " + JSON.stringify(param);
     print(logline);
   };
@@ -15,7 +15,7 @@
     log("Enabled");
     const POWER_DELAY = 10000;
 
-    var onEvents = [];
+    let onEvents = [];
 
     Bangle.sensortoolsOrigOn = Bangle.on;
     Bangle.sensortoolsOrigEmit = Bangle.emit;
@@ -55,7 +55,7 @@
       }
     };
 
-    var createPowerFunction = function(type, name, origPower) {
+    let createPowerFunction = function(type, name, origPower) {
       return function(isOn, app) {
         if (type == "nop") {
           return true;
@@ -123,17 +123,17 @@
             }
 
             function degrees(a) {
-              var d = a*180/Math.PI;
+              let d = a*180/Math.PI;
               return (d+360)%360;
             }
 
             function bearing(a,b){
               if (!a || !b || !a.lon || !a.lat || !b.lon || !b.lat) return Infinity;
-              var delta = radians(b.lon-a.lon);
-              var alat = radians(a.lat);
-              var blat = radians(b.lat);
-              var y = Math.sin(delta) * Math.cos(blat);
-              var x = Math.cos(alat)*Math.sin(blat) -
+              let delta = radians(b.lon-a.lon);
+              let alat = radians(a.lat);
+              let blat = radians(b.lat);
+              let y = Math.sin(delta) * Math.cos(blat);
+              let x = Math.cos(alat)*Math.sin(blat) -
                     Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
               return Math.round(degrees(Math.atan2(y, x)));
             }
@@ -348,4 +348,4 @@
       }
     }
   }
-})();
+}
