@@ -36,15 +36,11 @@ exports.pushMessage = function(event) {
   }
   require("Storage").writeJSON("messages.json",messages);
   var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
-  // if in app, process immediately
-  if ("undefined"!=typeof MESSAGES) return onMessagesModified(message);
   // emit message event
   var type = 'text';
   if (["call", "music", "map"].includes(message.id)) type = message.id;
   if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
   Bangle.emit("message", type, message);
-  // update the widget icons shown
-  if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
   var handleMessage = () => {
     // if no new messages now, make sure we don't load the messages app
     if (event.t=="remove" && exports.messageTimeout && !messages.some(m => m.new)) {
@@ -83,7 +79,6 @@ exports.pushMessage = function(event) {
         // we will buzz when we enter the messages app
         return load("messages.new.js");
       }
-      if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
       exports.buzz(message.src);
     }, 500);
   };
@@ -98,14 +93,9 @@ exports.clearAll = function() {
   }
   // Clear all messages
   require("Storage").writeJSON("messages.json", []);
-  // if we have a widget, update it
-  if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.update([]);
   // let message listeners know
   Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
   // clearAll cannot be marked as "handled"
-  // update app if in app
-  if ("function"== typeof onMessagesModified) onMessagesModified();
 }
 
 /**

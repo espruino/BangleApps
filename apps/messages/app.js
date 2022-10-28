@@ -62,6 +62,11 @@ var onMessagesModified = function(msg) {
   }
   showMessage(msg&&msg.id);
 };
+Bangle.on("message", (type, msg) => {
+  msg.handled = true;
+  onMessagesModified(msg);
+});
+
 function saveMessages() {
   require("Storage").writeJSON("messages.json",MESSAGES)
 }
