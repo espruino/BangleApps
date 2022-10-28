@@ -10,8 +10,8 @@
       if (!settings[c]) settings[c] = {"name":"(none)"};
       if (!require("Storage").read(settings[c].src)) settings[c] = {"name":"(none)"};
     }
-    require("Storage").write("quicklaunch.json",settings);
     settings.hash = hash;
+    require("Storage").write("quicklaunch.json",settings);
   }
 
   Bangle.on("touch", () => {
