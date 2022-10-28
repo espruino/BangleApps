@@ -38,9 +38,11 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   }
   WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
-},update:function(rawMsgs) {
+},onMsg:function(type, msg) {
+  if (type==="music") return;
+  if (msg.t!=="remove" && this.msgs.includes(msg.src)) return; // icon for this src already shown
   const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
-  this.msgs = filterMessages(rawMsgs);
+  this.msgs = filterMessages(require("messages").getMessages());
   this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
   Bangle.drawWidgets();
 },touch:function(b,c) {
@@ -52,5 +54,6 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
 /* We might have returned here if we were in the Messages app for a
 message but then the watch was never viewed. */
 if (global.MESSAGES===undefined)
-  WIDGETS["messages"].update(require("messages").getMessages());
+  WIDGETS["messages"].onMsg('',{});
+  Bangle.on("message", WIDGETS["messages"].onMsg);
 })();
