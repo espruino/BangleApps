@@ -12,11 +12,15 @@ function openMusic() {
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages = exports.getMessages();
+  const inApp = ("undefined"!=typeof MESSAGES);
+  // Always set MESSAGES, even when not in the app, so calls to getMessages from
+  // listeners to "message" event don't all cause Storage.read()s
+  // If not in the app: We delete MESSAGES after the handleMessage timeout
+  MESSAGES = exports.getMessages();
   // now modify/delete as appropriate
-  var mIdx = messages.findIndex(m=>m.id==event.id);
+  var mIdx = MESSAGES.findIndex(m=>m.id==event.id);
   if (event.t=="remove") {
-    if (mIdx>=0) messages.splice(mIdx, 1); // remove item
+    if (mIdx>=0) MESSAGES.splice(mIdx, 1); // remove item
     mIdx=-1;
   } else { // add/modify
     if (event.t=="add"){
@@ -26,16 +30,15 @@ exports.pushMessage = function(event) {
     }
     if (mIdx<0) {
       mIdx=0;
-      messages.unshift(event); // add new messages to the beginning
+      MESSAGES.unshift(event); // add new messages to the beginning
     }
-    else Object.assign(messages[mIdx], event);
-    if (event.id=="music" && messages[mIdx].state=="play") {
-      messages[mIdx].new = true; // new track, or playback (re)started
-      type = 'music';
+    else Object.assign(MESSAGES[mIdx], event);
+    if (event.id=="music" && MESSAGES[mIdx].state=="play") {
+      MESSAGES[mIdx].new = true; // new track, or playback (re)started
     }
   }
-  require("Storage").writeJSON("messages.json",messages);
-  var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
+  require("Storage").writeJSON("messages.json",MESSAGES);
+  var message = mIdx<0 ? {id:event.id, t:'remove'} : MESSAGES[mIdx];
   // emit message event
   var type = 'text';
   if (["call", "music", "map"].includes(message.id)) type = message.id;
@@ -43,12 +46,12 @@ exports.pushMessage = function(event) {
   Bangle.emit("message", type, message);
   var handleMessage = () => {
     // if no new messages now, make sure we don't load the messages app
-    if (event.t=="remove" && exports.messageTimeout && !messages.some(m => m.new)) {
+    if (event.t=="remove" && exports.messageTimeout && !MESSAGES.some(m => m.new)) {
       clearTimeout(exports.messageTimeout);
       delete exports.messageTimeout;
     }
     // ok, saved now
-    if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
+    if (event.id=="music" && Bangle.CLOCK && MESSAGES[mIdx].new && openMusic()) {
       // just load the app to display music: no buzzing
       load("messages.app.js");
     } else if (event.t!="add") {
@@ -84,25 +87,26 @@ exports.pushMessage = function(event) {
   };
   setTimeout(()=>{
     if (!message.handled) handleMessage();
+    if (!inApp) delete MESSAGES; // don't keep this around
   },0);
 }
 /// Remove all messages
 exports.clearAll = function() {
-  if ("undefined"!= typeof MESSAGES) { // we're in a messages app, clear that as well
-    MESSAGES = [];
-  }
+  const inApp = ("undefined"!=typeof MESSAGES);
   // Clear all messages
+  MESSAGES = [];
   require("Storage").writeJSON("messages.json", []);
   // let message listeners know
   Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
   // clearAll cannot be marked as "handled"
+  if (!inApp) delete MESSAGES;
 }
 
 /**
  * @returns {array} All messages
  */
 exports.getMessages = function() {
-  if ("undefined"!=typeof MESSAGES) return MESSAGES; // loaded/managed by app
+  if ("undefined"!=typeof MESSAGES) return MESSAGES; // already loaded
   return require("Storage").readJSON("messages.json",1)||[];
 }
 
