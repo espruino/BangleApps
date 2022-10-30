@@ -292,14 +292,7 @@ let firstDraw = true;
       if (resource){
         prepareImg(resource);
         //print("lastElem", typeof resource)
-        if (resource) {
-          element.cachedImage[cacheKey] = resource;
-          //print("cache res ",typeof element.cachedImage[cacheKey]);
-        } else {
-          element.cachedImage[cacheKey] = null;
-          //print("cache null",typeof element.cachedImage[cacheKey]);
-          //print("Could not create image from", resource);
-        }
+        element.cachedImage[cacheKey] = resource;
       } else {
         //print("Could not get resource from", element, lastElem);
       }
