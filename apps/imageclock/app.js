@@ -202,27 +202,39 @@ let firstDraw = true;
     let firstDigitY = element.Y;
     let imageIndex = element.ImageIndex ? element.ImageIndex : 0;
 
-    let firstImage;
-    if (imageIndex){
-      firstImage = getByPath(resources, [], "" + (0 + imageIndex));
-    } else {
-      firstImage = getByPath(resources, element.ImagePath, 0);
+    let firstImage = element.cachedFirstImage;
+    if (!firstImage && !element.cachedFirstImageMissing){
+      if (imageIndex){
+        firstImage = getByPath(resources, [], "" + (0 + imageIndex));
+      } else {
+        firstImage = getByPath(resources, element.ImagePath, 0);
+      }
+      element.cachedFirstImage = firstImage;
+      if (!firstImage) element.cachedFirstImageMissing = true;
     }
 
-    let minusImage;
-    if (imageIndexMinus){
-      minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
-    } else {
-      minusImage = getByPath(resources, element.ImagePath, "minus");
+    let minusImage = element.cachedMinusImage;
+    if (!minusImage && !element.cachedMinusImageMissing){
+      if (imageIndexMinus){
+        minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
+      } else {
+        minusImage = getByPath(resources, element.ImagePath, "minus");
+      }
+      element.cachedMinusImage = minusImage;
+      if (!minusImage) element.cachedMinusImageMissing = true;
     }
 
-    let unitImage;
+    let unitImage = element.cachedUnitImage;
     //print("Get image for unit", imageIndexUnit);
-    if (imageIndexUnit !== undefined){
-      unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
-      //print("Unit image is", unitImage);
-    } else if (element.Unit){
-      unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+    if (!unitImage && !element.cachedUnitImageMissing){
+      if (imageIndexUnit !== undefined){
+        unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
+        //print("Unit image is", unitImage);
+      } else if (element.Unit){
+        unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+      }
+      unitImage = element.cachedUnitImage;
+      if (!unitImage) element.cachedUnitImageMissing = true;
     }
 
     let numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
