@@ -1,10 +1,10 @@
-(function() {
+{
   let waiting = false;
   let settings = require("Storage").readJSON("owmweather.json", 1) || {
     enabled: false
   };
   
-  function completion(){
+  let completion = function(){
     waiting = false;
   }
   
@@ -25,4 +25,4 @@
       }
     }, settings.refresh * 1000 * 60);
   }
-})();
+}
