@@ -18,7 +18,7 @@
 
     if (lr == -1 && settings.leftapp && settings.leftapp.src){ if (!storage.read(settings.leftapp.src)) reset("leftapp"); else load(settings.leftapp.src); }
     if (lr == 1 && settings.rightapp && settings.rightapp.src){ if (!storage.read(settings.rightapp.src)) reset("rightapp"); else load(settings.rightapp.src); }
-    if (ud == 1 && settings.upapp && settings.upapp.src){ if (!storage.read(settings.upapp.src)) reset("upapp"); else load(settings.upapp.src); }
-    if (ud == -1 && settings.downapp && settings.downapp.src){ if (!storage.read(settings.downapp.src)) reset("downapp"); else load(settings.downapp.src); }
+    if (ud == -1 && settings.upapp && settings.upapp.src){ if (!storage.read(settings.upapp.src)) reset("upapp"); else load(settings.upapp.src); }
+    if (ud == 1 && settings.downapp && settings.downapp.src){ if (!storage.read(settings.downapp.src)) reset("downapp"); else load(settings.downapp.src); }
   });
 }
