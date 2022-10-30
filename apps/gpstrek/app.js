@@ -613,7 +613,7 @@ function showMenu(){
     "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
     "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Slices" : {
+    "Info rows" : {
       value : numberOfSlices,
       min:1,max:6,step:1,
       onchange : v => { setNumberOfSlices(v); }
