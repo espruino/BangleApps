@@ -752,25 +752,19 @@ let firstDraw = true;
 
 
   let showWidgetsChanged = false;
-  let currentDragDistance = 0;
 
   let restoreWidgetDraw = function(){
     require("widget_utils").show();
     Bangle.drawWidgets();
   };
-  
-  let handleDrag = function(e){
-    //print("handleDrag");
-    currentDragDistance += e.dy;
-    if (Math.abs(currentDragDistance) < 10) return;
-    dragDown = currentDragDistance > 0;
-    currentDragDistance = 0;
-    if (!showWidgets && dragDown){
+
+  let handleSwipe = function(lr, ud){
+    if (!showWidgets && ud == 1){
       //print("Enable widgets");
       restoreWidgetDraw();
       showWidgetsChanged = true;
     }
-    if (showWidgets && !dragDown){
+    if (showWidgets && ud == -1){
       //print("Disable widgets");
       clearWidgetsDraw();
       firstDraw = true;
@@ -779,12 +773,12 @@ let firstDraw = true;
     if (showWidgetsChanged){
       showWidgetsChanged = false;
       //print("Draw after widget change");
-      showWidgets = dragDown;
+      showWidgets = ud == 1;
       initialDraw();
     }
   };
 
-  Bangle.on('drag', handleDrag);
+  Bangle.on('swipe', handleSwipe);
 
   if (!events || events.includes("pressure")){
     Bangle.on('pressure', handlePressure);
@@ -823,7 +817,7 @@ let firstDraw = true;
       Bangle.setHRMPower(0, "imageclock");
       Bangle.setBarometerPower(0, 'imageclock');
 
-      Bangle.removeListener('drag', handleDrag);
+      Bangle.removeListener('swipe', handleSwipe);
       Bangle.removeListener('lock', handleLock);
       Bangle.removeListener('charging', handleCharging);
       Bangle.removeListener('HRM', handleHrm);
