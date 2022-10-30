@@ -604,12 +604,8 @@ let firstDraw = true;
 
       promise.then(()=>{
         let currentDrawingTime = Date.now();
-        if (showWidgets && global.WIDGETS){
-          //print("Draw widgets");
+        if (showWidgets){
           restoreWidgetDraw();
-          Bangle.drawWidgets();
-          g.setColor(g.theme.fg);
-          g.drawLine(0,24,g.getWidth(),24);
         }
         lastDrawTime = Date.now() - start;
         isDrawing=false;
@@ -754,13 +750,8 @@ let firstDraw = true;
   let currentDragDistance = 0;
 
   let restoreWidgetDraw = function(){
-    if (global.WIDGETS) {
-      for (let w in global.WIDGETS) {
-        let wd = global.WIDGETS[w];
-        wd.draw = originalWidgetDraw[w];
-        wd.area = originalWidgetArea[w];
-      }
-    }
+    require("widget_utils").show();
+    Bangle.drawWidgets();
   };
   
   let handleDrag = function(e){
@@ -814,17 +805,7 @@ let firstDraw = true;
 
   let clearWidgetsDraw = function(){
     //print("Clear widget draw calls");
-    if (global.WIDGETS) {
-      originalWidgetDraw = {};
-      originalWidgetArea = {};
-      for (let w in global.WIDGETS) {
-        let wd = global.WIDGETS[w];
-        originalWidgetDraw[w] = wd.draw;
-        originalWidgetArea[w] = wd.area;
-        wd.draw = () => {};
-        wd.area = "";
-      }
-    }
+    require("widget_utils").hide();
   }
   
   handleLock(Bangle.isLocked(), true);
