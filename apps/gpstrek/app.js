@@ -684,7 +684,7 @@ const compassSliceData = {
   },
   getCourse: function (){
     if(compassSliceData.getCourseType() == "GPS") return state.currentPos.course;
-    return state.compassHeading?state.compassHeading:undefined;
+    return state.compassHeading?360-state.compassHeading:undefined;
   },
   getPoints: function (){
     let points = [];
