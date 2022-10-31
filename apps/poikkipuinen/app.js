@@ -5,6 +5,7 @@
 // www.jukiokallio.com
 
 require("Font5x9Numeric7Seg").add(Graphics);
+require("FontSinclair").add(Graphics);
 
 // settings
 const watch = {  
@@ -12,6 +13,7 @@ const watch = {
   bgcolor:g.theme.bg, 
   fgcolor:g.theme.fg, 
   font: "5x9Numeric7Seg", fontsize: 1,
+  font2: "Sinclair", font2size: 1, 
   finland:true, // change if you want Finnish style date, or US style
 };
 
@@ -20,9 +22,9 @@ const watch = {
 watch.w = g.getWidth(); // size of the background
 watch.h = g.getHeight();
 watch.x = watch.w * 0.5; // position of the circles
-watch.y = watch.h * 0.46;
+watch.y = watch.h * 0.43;
 
-const dateWeekday = { 0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4:"Thursday", 5:"Friday", 6:"Saturday" }; // weekdays
+const dateWeekday = { 0: "SUN", 1: "MON", 2: "TUE", 3: "WED", 4:"THU", 5:"FRI", 6:"SAT" }; // weekdays
 
 var wait = 60000; // wait time, normally a minute
 
@@ -49,8 +51,9 @@ function draw() {
   var dateDay = date.getDate();
   var dateMonth = date.getMonth() + 1;
   var dateYear = date.getFullYear();
-  var dateStr = dateWeekday[date.getDay()] + " " + dateMonth + "." + dateDay + "." + dateYear;
-  if (watch.finland) dateStr = dateWeekday[date.getDay()] + " " + dateDay + "." + dateMonth + "." + dateYear; // the true way of showing date
+  var dateStr = dateMonth + "." + dateDay + "." + dateYear;
+  if (watch.finland) dateStr = dateDay + "." + dateMonth + "." + dateYear; // the true way of showing date
+  var dateStr2 = dateWeekday[date.getDay()];
 
   // Reset the state of the graphics library
   g.reset();
@@ -65,7 +68,7 @@ function draw() {
   
   // watch face size
   var facew, faceh; // halves of the size for easier calculation
-  facew = 40;
+  facew = 50;
   faceh = 59;
   
   // save hour and minute y positions
@@ -88,9 +91,11 @@ function draw() {
     g.drawLine(watch.x - facew, y + watch.y, watch.x - facew + w, y + watch.y);
     
     // get hour y position
-    var hour = date.getHours() % 12;
-    if (hour == 0) hour = 12;
-    if (i == hour) houry = y;
+    var hour = date.getHours() % 12; // modulate away the 24h
+    if (hour == 0) hour = 12; // fix a problem with 0-23 hours
+    var hourMin = date.getMinutes() / 60; // move hour line by minutes
+    if (hour == 12) hourMin = 0; // don't do minute moving if 12 (line ends there)
+    if (i == hour) houry = y - (lineh * hourMin);
   }
   
   // draw minute meter
@@ -120,9 +125,11 @@ function draw() {
   g.drawLine(watch.x - facew + timexpad, watch.y + houry, watch.x + facew - timexpad, watch.y + minutey);
   
   // draw date
-  var datey = 12;
+  var datey = 15;
   g.setFontAlign(0,-1);
   g.drawString(dateStr, watch.x, watch.y + faceh + datey);
+  g.setFontAlign(0,-1).setFont(watch.font2, watch.font2size);
+  g.drawString(dateStr2, watch.x, watch.y + faceh + datey*2);
   
   // queue draw
   queueDraw();
