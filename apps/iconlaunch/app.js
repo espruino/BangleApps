@@ -1,6 +1,6 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,oneClickExit:false };
+  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false,fastload:false };
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -11,10 +11,10 @@
   launchCache = {
     hash : launchHash,
     apps : s.list(/\.info$/)
-      .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
+      .map(app=>{let a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
       .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
       .sort((a,b)=>{
-        var n=(0|a.sortorder)-(0|b.sortorder);
+        let n=(0|a.sortorder)-(0|b.sortorder);
         if (n) return n; // do sortorder first
         if (a.name<b.name) return -1;
         if (a.name>b.name) return 1;
@@ -22,10 +22,6 @@
       }) };
     s.writeJSON("launch.cache.json", launchCache);
   }
-  let apps = launchCache.apps;
-  apps.forEach((app) => {
-    if (app.icon) app.icon = s.read(app.icon);
-  });
   let scroll = 0;
   let selectedItem = -1;
   const R = Bangle.appRect;
@@ -37,12 +33,13 @@
     g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     let x = 0;
     for (let i = itemI * appsN; i < appsN * (itemI + 1); i++) {
-      if (!apps[i]) break;
+      if (!launchCache.apps[i]) break;
       x += whitespace;
-      if (!apps[i].icon) {
+      if (!launchCache.apps[i].icon) {
         g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
       } else {
-        g.drawImage(apps[i].icon, x + r.x, r.y);
+        if (!launchCache.apps[i].icondata) launchCache.apps[i].icondata = s.read(launchCache.apps[i].icon);
+        g.drawImage(launchCache.apps[i].icondata, x + r.x, r.y);
       }
       if (selectedItem == i) {
         g.drawRect(
@@ -57,7 +54,7 @@
     drawText(itemI);
   };
   let drawItemAuto = function(i) {
-    var y = idxToY(i);
+    let y = idxToY(i);
     g.reset().setClipRect(R.x, y, R.x2, y + itemSize);
     drawItem(i, {
       x: R.x,
@@ -69,7 +66,7 @@
   };
   let lastIsDown = false;
   let drawText = function(i) {
-    const selectedApp = apps[selectedItem];
+    const selectedApp = launchCache.apps[selectedItem];
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (!selectedApp || i != idy) return;
     const appY = idxToY(idy) + iconSize / 2;
@@ -87,17 +84,17 @@
   let selectItem = function(id, e) {
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
-    if( settings.direct && apps[appId])
+    if( settings.direct && launchCache.apps[appId])
     {
-      loadApp(apps[appId].src);
+      load(launchCache.apps[appId].src);
       return;
     }
-    if (appId == selectedItem && apps[appId]) {
-      const app = apps[appId];
+    if (appId == selectedItem && launchCache.apps[appId]) {
+      const app = launchCache.apps[appId];
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
-        loadApp(app.src);
+        load(app.src);
       }
     }
     selectedItem = appId;
@@ -112,9 +109,9 @@
   let drawItems = function() {
     g.reset().clearRect(R.x, R.y, R.x2, R.y2);
     g.setClipRect(R.x, R.y, R.x2, R.y2);
-    var a = YtoIdx(R.y);
-    var b = Math.min(YtoIdx(R.y2), 99);
-    for (var i = a; i <= b; i++)
+    let a = YtoIdx(R.y);
+    let b = Math.min(YtoIdx(R.y2), 99);
+    for (let i = a; i <= b; i++)
       drawItem(i, {
       x: R.x,
       y: idxToY(i),
@@ -125,7 +122,7 @@
   };
   drawItems();
   g.flip();
-  const itemsN = Math.ceil(apps.length / appsN);
+  const itemsN = Math.ceil(launchCache.apps.length / appsN);
   let onDrag = function(e) {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
@@ -171,25 +168,22 @@
     }
     g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
   };
-  Bangle.setUI({
+  let mode = {
     mode: "custom",
     drag: onDrag,
     touch: (_, e) => {
       if (e.y < R.y - 4) return;
-      var i = YtoIdx(e.y);
+      let i = YtoIdx(e.y);
       selectItem(i, e);
     },
-  });
-  const returnToClock = function() {
-    loadApp(".bootcde");
+    swipe: (h,_) => { if(settings.swipeExit && h==1) { returnToClock(); } },
   };
-  let watch;
-  let loadApp;
-  if (settings.fastload){
-    loadApp = function(name) {
+
+  const returnToClock = function() {
+    if (settings.fastload == true){
       Bangle.setUI();
-      if (watch) clearWatch(watch);
-      apps = [];
+      delete launchCache;
+      delete launchHash;
       delete drawItemAuto;
       delete drawText;
       delete selectItem;
@@ -200,16 +194,14 @@
       delete idxToY;
       delete YtoIdx;
       delete settings;
-      setTimeout(eval, 0, s.read(name));
-      return;
-    };
-  } else {
-    loadApp = function(name) {
-      load(name);
+      setTimeout(eval, 0, s.read(".bootcde"));
+    } else {
+      load();
     }
-  }
+  };
+
   
-  if (settings.oneClickExit) {
-    watch = setWatch(returnToClock, BTN1);
-  }
+  if (settings.oneClickExit) mode.btn = returnToClock;
+
+  Bangle.setUI(mode);
 }

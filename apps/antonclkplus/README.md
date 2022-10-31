@@ -1,6 +1,6 @@
-# Anton Clock - Large font digital watch with seconds and date
+# Anton Clock Plus - Large font digital watch with seconds and date
 
-Anton clock uses the "Anton" bold font to show the time in a clear, easily readable manner. On the Bangle.js 2, the time can be read easily even if the screen is locked and unlit.
+Anton Clock Plus uses the "Anton" bold font to show the time in a clear, easily readable manner. On the Bangle.js 2, the time can be read easily even if the screen is locked and unlit.
 
 ## Features
 
@@ -16,16 +16,16 @@ The basic time representation only shows hours and minutes of the current time. 
 
 ## Usage
 
-Install Anton clock through the Bangle.js app loader.
-Configure it through the default Bangle.js configuration mechanism
+* Install Anton Clock Plus through the Bangle.js app loader.
+* Configure it through the default Bangle.js configuration mechanism
 (Settings app, "Apps" menu, "Anton clock" submenu).
-If you like it, make it your default watch face
+* If you like it, make it your default watch face
 (Settings app, "System" menu, "Clock" submenu, select "Anton clock").
 
 ## Configuration
 
-Anton clock is configured by the standard settings mechanism of Bangle.js's operating system:
-Open the "Settings" app, then the "Apps" submenu and below it the "Anton clock" menu.
+Anton Clock is configured by the standard settings mechanism of Bangle.js's operating system:
+Open the `Settings` app, then the `Apps` submenu and below it the `Anton Clock+` menu.
 You configure Anton clock through several "on/off" switches in two menus.
 
 ### The main menu

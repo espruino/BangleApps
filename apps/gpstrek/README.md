@@ -13,6 +13,9 @@ Choose either a route or a waypoint as basis for the display.
 After this selection and availability of a GPS fix the compass will show a blue dot for your destination and a green one for possibly available waypoints on the way.
 Waypoints are shown with name if available and distance to waypoint.
 
+As long as no GPS signal is available the compass shows the heading from the build in magnetometer. When a GPS fix becomes available, the compass display shows the GPS course. This can be differentiated by the display of bubble levels on top and sides of the compass.
+If they are on display, the source is the magnetometer and you should keep the bangle level. There is currently no tilt compensation for the compass display.
+
 ### Route
 
 Routes can be created from .gpx files containing "trkpt" elements with this script: [createRoute.sh](createRoute.sh)

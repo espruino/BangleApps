@@ -13,4 +13,4 @@ The app uses `E.showScroller`'s code in the app but not the function itself beca
 
 ### Fastload option
 
-Fastload clears up the memory used by the launcher and directly evals the code of the app to load. This means if widgets are loaded (fullscreen option) it is possible that widgets stay loaded in apps not expecting that and the widgets may draw over the app.
+Fastload clears up the memory used by the launcher and directly evals the code of the clock to load.

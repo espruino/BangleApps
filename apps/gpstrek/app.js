@@ -318,16 +318,24 @@ function triangle (x, y, width, height){
   ];
 }
 
+function onSwipe(dir){
+  if (dir < 0) {
+    nextScreen();
+  } else if (dir > 0) {
+    switchMenu();
+  } else {
+    nextScreen();
+  }
+}
+
 function setButtons(){
-  Bangle.setUI("leftright", (dir)=>{
-    if (dir < 0) {
-      nextScreen();
-    } else if (dir > 0) {
-      switchMenu();
-    } else {
-      nextScreen();
-    }
-  });
+  let options = {
+    mode: "custom",
+    swipe: onSwipe,
+    btn: nextScreen,
+    touch: nextScreen
+  };
+  Bangle.setUI(options);
 }
 
 function getApproxFileSize(name){
@@ -605,7 +613,7 @@ function showMenu(){
     "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
     "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Slices" : {
+    "Info rows" : {
       value : numberOfSlices,
       min:1,max:6,step:1,
       onchange : v => { setNumberOfSlices(v); }
@@ -676,7 +684,7 @@ const compassSliceData = {
   },
   getCourse: function (){
     if(compassSliceData.getCourseType() == "GPS") return state.currentPos.course;
-    return state.compassHeading?state.compassHeading:undefined;
+    return state.compassHeading?360-state.compassHeading:undefined;
   },
   getPoints: function (){
     let points = [];
