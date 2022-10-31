@@ -1,3 +1,4 @@
 0.01: Initial version
 0.02: Moved settings from launcher to settings->apps menu
 0.03: Better performance by not scanning on every boot
+0.04: Better performace by not scanning on boot at all

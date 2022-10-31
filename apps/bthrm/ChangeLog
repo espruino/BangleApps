@@ -29,3 +29,4 @@
       Use default boolean formatter in custom menu and directly apply config if useful
       Allow recording unmodified internal HR
       Better connection retry handling
+0.13: Less time used during boot if disabled
