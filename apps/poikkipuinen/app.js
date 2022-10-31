@@ -79,7 +79,7 @@ function draw() {
   var lines = 13;
   var lineh = faceh * 2 / (lines - 2);
   for (var i = 1; i < lines; i++) {
-    var w = 2;
+    var w = 3;
     var y = faceh - lineh * (i - 1);
     
     if (i % 3 == 0) {
@@ -93,7 +93,8 @@ function draw() {
     // get hour y position
     var hour = date.getHours() % 12; // modulate away the 24h
     if (hour == 0) hour = 12; // fix a problem with 0-23 hours
-    var hourMin = date.getMinutes() / 60; // move hour line by minutes
+    //var hourMin = date.getMinutes() / 60; // move hour line by minutes
+    var hourMin = Math.floor(date.getMinutes() / 15) / 4; // move hour line by 15-minutes
     if (hour == 12) hourMin = 0; // don't do minute moving if 12 (line ends there)
     if (i == hour) houry = y - (lineh * hourMin);
   }
@@ -104,7 +105,7 @@ function draw() {
   lines = 60;
   lineh = faceh * 2 / (lines - 1);
   for (i = 0; i < lines; i++) {
-    var mw = 2;
+    var mw = 3;
     var my = faceh - lineh * i;
     
     if (i % 15 == 0 && i != 0) {
