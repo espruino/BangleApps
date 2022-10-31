@@ -1,4 +1,4 @@
-// Poikkipuinen
+// Laatikkoinen
 //
 // Bangle.js 2 watch face
 // by Jukio Kallio
@@ -22,7 +22,7 @@ const watch = {
 watch.w = g.getWidth(); // size of the background
 watch.h = g.getHeight();
 watch.x = watch.w * 0.5; // position of the circles
-watch.y = watch.h * 0.43;
+watch.y = watch.h * 0.41;
 
 const dateWeekday = { 0: "SUN", 1: "MON", 2: "TUE", 3: "WED", 4:"THU", 5:"FRI", 6:"SAT" }; // weekdays
 
@@ -125,7 +125,7 @@ function draw() {
   g.drawLine(watch.x - facew + timexpad, watch.y + houry, watch.x + facew - timexpad, watch.y + minutey);
   
   // draw date
-  var datey = 15;
+  var datey = 14;
   g.setFontAlign(0,-1);
   g.drawString(dateStr, watch.x, watch.y + faceh + datey);
   g.setFontAlign(0,-1).setFont(watch.font2, watch.font2size);
