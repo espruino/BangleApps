@@ -1,4 +1,4 @@
-// Laatikkoinen
+// Poikkipuinen
 //
 // Bangle.js 2 watch face
 // by Jukio Kallio
