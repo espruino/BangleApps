@@ -57,3 +57,4 @@
       Remove support for 2v11 and earlier firmware
 0.51: Remove patches for 2v10 firmware (BEEPSET and setUI)
       Add patch to ensure that compass heading is corrected
+      Ensure clock is only fast-loaded if it doesn't contain widgets

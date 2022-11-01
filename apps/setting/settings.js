@@ -39,6 +39,7 @@ function resetSettings() {
     timezone: 0,                    // Set the timezone for the device
     HID: false,                     // BLE HID mode, off by default
     clock: null,                    // a string for the default clock's name
+    // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
     brightness: 1,                  // LCD brightness from 0 to 1
@@ -674,11 +675,10 @@ function showClockMenu() {
       label = "* " + label;
     }
     clockMenu[label] = () => {
-      if (settings.clock !== app.src) {
-        settings.clock = app.src;
-        updateSettings();
-        showMainMenu();
-      }
+      settings.clock = app.src;
+      settings.clockHasWidgets = require("Storage").read(app.src).includes("Bangle.loadWidgets");
+      updateSettings();
+      showMainMenu();
     };
   });
   if (clockApps.length === 0) {
@@ -703,11 +703,9 @@ function showLauncherMenu() {
       label = "* " + label;
     }
     launcherMenu[label] = () => {
-      if (settings.launcher !== app.src) {
-        settings.launcher = app.src;
-        updateSettings();
-        showMainMenu();
-      }
+      settings.launcher = app.src;
+      updateSettings();
+      showMainMenu();
     };
   });
   if (launcherApps.length === 0) {

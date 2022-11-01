@@ -66,7 +66,7 @@ E.showScroller({
 });
 g.flip(); // force a render before widgets have finished drawing
 
-function returnToClock() {
+let returnToClock = function() {
   // unload everything manually
   // ... or we could just call `load();` but it will be slower
   Bangle.setUI(); // remove scroller's handling
@@ -85,7 +85,7 @@ if (process.env.HWVERSION==2) {
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
 let lockTimeout;
-function lockHandler(locked) {
+let lockHandler = function(locked) {
   if (lockTimeout) clearTimeout(lockTimeout);
   lockTimeout = undefined;
   if (locked)
