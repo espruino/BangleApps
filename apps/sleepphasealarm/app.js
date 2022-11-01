@@ -168,7 +168,7 @@ if (nextAlarmDate !== undefined) {
         // The alarm widget should handle this one
         addLog(now, "alarm");
         setTimeout(load, 1000);
-      } else if (measure && now >= minAlarm && swest_last === false) {
+      } else if (measure && now >= minAlarm && swest === false) {
         addLog(now, "alarm");
         buzz();
         measure = false;
