@@ -1,6 +1,8 @@
 
 { //run in own scope for fast switch
 const STORAGE = require("Storage");
+const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
+
 let init = function(){
   global.screen = 1;
   global.drawTimeout = undefined;
@@ -815,7 +817,7 @@ let healthSlice = getDoubleLineSlice("Heart","Steps",()=>{
 });
 
 let system2Slice = getDoubleLineSlice("Bat","",()=>{
-  return (Bangle.isCharging()?"+":"") + E.getBattery().toFixed(0)+"% " + NRF.getBattery().toFixed(2) + "V";
+  return (Bangle.isCharging()?"+":"") + E.getBattery().toFixed(0)+"% " + (analogRead(D3)*4.2/BAT_FULL).toFixed(2) + "V";
 },()=>{
   return "";
 });
