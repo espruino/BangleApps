@@ -127,6 +127,8 @@
 var img_nofix = require("heatshrink").decompress(atob("mUyxH+ACYhJDygtYGsqLVF8u02gziGBoyhQ5gwDGRozRGCQydGCgybGCwyZC5gAaGPQwnGRAwpGQ4xwGFYyFDKsrlYxYDCsBmUyg4yXLyUsFwMyq1WAgUsNCRjUmVXroAEq8yMbcllkskwCEkplDmQwDq0sC54xEHQ9RqQAGqIwCFgOBAASYBSgMBltRAA0sgJsOGJeBxAAGwMrgIXIloxOJYNSvl8CwIDCqMBlYxNC4wxQDIOCwVYDIIDBGJ9YwV8rADBwRJCSqAVCAYaVMC4oxCPYYxQSo4xMSpIxPY4T5HY54XIMbIxKgwXKfKjhEllWGJNWlgXJGLNXruCGI+CrtXGKP+GJB9HMZ6VO/wxJcI8lfJclfKAxKfJEAGJIXLGKSvBWYQZCMZbfEqTHBGJYyFfIo1DGJ4tDGJQwCGJB9IMZyVNGIYyEfJQxPfJgwEMgoZJgAxMltRAA0tGJQyEksslkmAQklGINXxDTBFwIDCq8rC4YACC4gwJMowAJldWAAwwBABowIGJ4AYGJIymGBQylGBgyjGBwyhGCAzeF6YycGCwzYF7IzVF7o1PDqYA=="));
 var img_fix = require("heatshrink").decompress(atob("mUyxH+ACYhJDygtYGsqLVF94zaDYkq6wAOlQyYJo2A63VAAIoC2m0GI16My5/H5/V64ABGQIwBGQ+rTKwWHkhiBGIYwDGQ3VZioVIqoiBGAJhEGRFPGSYTIYwQxCGA4yFqodJGKeqSgQwJGQmkGKQSJfAYwLGQfPDxQwRgHVfAi/EAA4xLGQwRLYwb5BABoxQCBcA43G5wABAgIAMEBgxQ0QxB54xB5gAG4xgBBYOiGJ4PMGInPGIhcCGIt4EJoxPvHM5oxBGAnO6xrCGoXMqgxdpwxD5qQFL4QADlQxdgAhBGILIDMYoADEBwwPgCHBfQzHDAAb4NACTIIAA74OACLIIMo7GOACQoBZAoHBHQPNA4QwggGiZBA5B54HBY0DIKMYtUGMMqFYLIGY4jGhZAr6FAAYwiZAgxIY0TIFfQgADvAfR/zISGJTGR/wxRkj6CGJBiSGKL6DGP4xOGSKVDGAwxRGAQxU5oxcGR75DGJEkGCYxPlXM5vPGA/MlQxUGR1OGIL4I5lOGCgyOqgxBShHMqgwVGJt4GJd4GKwyMvHG5vGABAxMGBQyM1mtABWsGC4yLGBYABGDAyKGKwwQGZKVUF6b/OABowWGbAvZGaovdGp4dTA"));
 
+var W = g.getWidth(), H = g.getHeight();
+
 // https://github.com/Leaflet/Leaflet/blob/master/src/geo/projection/Projection.SphericalMercator.js
 function project(latlong) {
   var d = Math.PI / 180,
@@ -170,32 +172,30 @@ Bangle.on('GPS', function(f) {
 
 Bangle.on('mag', function(m) {
   if (!Bangle.isLCDOn()) return;
-  var headingrad = m.heading*Math.PI/180; // in radians
+  var headingrad = (360-m.heading)*Math.PI/180; // in radians
   if (!isFinite(headingrad)) headingrad=0;
   if (nearest)
-    g.drawImage(img_fix,120,120,{
+    g.drawImage(img_fix,W/2,H/2,{
       rotate: (Math.PI/2)+headingrad-nearestangle,
       scale:3,
     });
   else
-    g.drawImage(img_nofix,120,120,{
+    g.drawImage(img_nofix,W/2,H/2,{
       rotate: headingrad,
       scale:2,
     });
-  g.clearRect(60,0,180,24);
-  g.setFontAlign(0,0);
-  g.setFont("6x8");
+  g.clearRect(0,0,W,24).setFontAlign(0,0).setFont("6x8");
   if (fix.fix) {
-    g.drawString(nearest ? nearest.name : "---",120,4);
+    g.drawString(nearest ? nearest.name : "---",W/2,4);
     g.setFont("6x8",2);
-    g.drawString(nearest ? Math.round(nearestdist)+"m" : "---",120,16);
+    g.drawString(nearest ? Math.round(nearestdist)+"m" : "---",W/2,16);
   } else {
-    g.drawString(fix.satellites+" satellites",120,4);
+    g.drawString(fix.satellites+" satellites",W/2,4);
   }
 });
 Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
-g.clear();`;
+g.setColor("#fff").setBgColor("#000").clear();`;
 
         sendCustomizedApp({
           storage:[

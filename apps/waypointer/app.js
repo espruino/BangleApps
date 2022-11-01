@@ -80,7 +80,7 @@ function tiltfixread(O,S){
   var m = Bangle.getCompass();
   if (O === undefined || S === undefined) {
     // no valid calibration from magnav, use built in
-    return 360-m.heading;
+    return m.heading;
   }
   var g = Bangle.getAccel();
   m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
