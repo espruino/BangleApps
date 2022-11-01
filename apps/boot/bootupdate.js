@@ -76,28 +76,12 @@ if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightne
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
-// Pre-2v10 firmwares without a theme/setUI
-delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.theme) {
-  boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
-}
-try {
-  Bangle.setUI({}); // In 2v12.xx we added the option for mode to be an object - for 2v12 and earlier, add a fix if it fails with an object supplied
-} catch(e) {
-  boot += `Bangle._setUI = Bangle.setUI;
-Bangle.setUI=function(mode, cb) {
-  if (Bangle.uiRemove) {
-    Bangle.uiRemove();
-    delete Bangle.uiRemove;
-  }
-  if ("object"==typeof mode) {
-    // TODO: handle mode.back?
-    mode = mode.mode;
-  }
-  Bangle._setUI(mode, cb);
-};\n`;
-}
+// ================================================== FIXING OLDER FIRMWARES
+// 2v15.68 and before had compass heading inverted.
+if (process.version.replace("v","")<215.68)
+  boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading)) e.heading=360-e.heading;});`;
 
+// ================================================== BOOT.JS
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
 var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
