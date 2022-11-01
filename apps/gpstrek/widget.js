@@ -1,7 +1,11 @@
 (() => {
+const SAMPLES=5;
 function initState(){
   //cleanup volatile state here
   state = {};
+  state.compassSamples = new Array(SAMPLES).fill(0);
+  state.lastSample = 0;
+  state.sampleIndex = 0;
   state.currentPos={};
   state.steps = 0;
   state.calibAltDiff = 0;
@@ -10,6 +14,7 @@ function initState(){
   state.up = 0;
   state.down = 0;
   state.saved = 0;
+  state.avgComp = 0;
 }
 
 const STORAGE=require('Storage');
@@ -33,7 +38,6 @@ function onKill(){
 
 E.on("kill", onKill);
 
-
 function onPulse(e){
   state.bpm = e.bpm;
 }
@@ -42,27 +46,46 @@ function onGPS(fix) {
   if(fix.fix) state.currentPos = fix;
 }
 
-function onMag(e) {
-  if (!state.compassHeading) state.compassHeading = e.heading;
+let radians = function(a) {
+  return a*Math.PI/180;
+};
 
-  //if (a+180)mod 360 == b then
-  //return (a+b)/2 mod 360 and ((a+b)/2 mod 360) + 180 (they are both the solution, so you may choose one depending if you prefer counterclockwise or clockwise direction)
-//else
-  //return arctan(  (sin(a)+sin(b)) / (cos(a)+cos(b) )
+let degrees = function(a) {
+  let d = a*180/Math.PI;
+  return (d+360)%360;
+};
 
-  /*
-  let average;
-  let a = radians(compassHeading);
-  let b = radians(e.heading);
-  if ((a+180) % 360 == b){
-    average = ((a+b)/2 % 360); //can add 180 depending on rotation
-  } else {
-    average = Math.atan( (Math.sin(a)+Math.sin(b))/(Math.cos(a)+Math.cos(b)) );
+function average(samples){
+  let s = 0;
+  let c = 0;
+  for (let h of samples){
+    s += Math.sin(radians(h));
+    c += Math.cos(radians(h));
   }
-  print("Angle",compassHeading,e.heading, average);
-  compassHeading = (compassHeading + degrees(average)) % 360;
-  */
-  state.compassHeading = Math.round(e.heading);
+  s /= samples.length;
+  c /= samples.length;
+  let result = degrees(Math.atan(s/c));
+
+  if (c < 0) result += 180;
+  if (s < 0 && c > 0) result += 360;
+
+  result%=360;
+  return result;
+  }
+function onMag(e) {
+  if (!isNaN(e.heading)){
+    if (Bangle.isLocked())
+      state.avgComp = e.heading;
+    else {
+      state.compassSamples[state.sampleIndex++] = e.heading;
+      state.lastSample = Date.now();
+      if (state.sampleIndex > SAMPLES - 1){
+        state.sampleIndex = 0;
+        let avg = average(state.compassSamples);
+        state.avgComp = average([state.avgComp,avg]);
+      }
+    }
+  }
 }
 
 function onStep(e) {

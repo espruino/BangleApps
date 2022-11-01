@@ -338,6 +338,10 @@ let distance = function(a,b){
   return Math.round(Math.sqrt(x*x + y*y) * 6371000);
 };
 
+let getAveragedCompass = function(){
+  return Math.round(WIDGETS.gpstrek.getState().avgComp);
+};
+
 let triangle = function(x, y, width, height){
   return  [
     Math.round(x),Math.round(y),
@@ -721,7 +725,7 @@ const compassSliceData = {
   },
   getCourse: function (){
     if(compassSliceData.getCourseType() == "GPS") return WIDGETS.gpstrek.getState().currentPos.course;
-    return WIDGETS.gpstrek.getState().compassHeading?WIDGETS.gpstrek.getState().compassHeading:undefined;
+    return getAveragedCompass();
   },
   getPoints: function (){
     let points = [];
@@ -797,7 +801,7 @@ let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return (WIDGETS.gpstrek.getState().compassHeading?Math.round(WIDGETS.gpstrek.getState().compassHeading):"---") + "°";
+  return getAveragedCompass() + "°";
 },()=>{
   let course = "---°";
   if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) course = WIDGETS.gpstrek.getState().currentPos.course + "°";
