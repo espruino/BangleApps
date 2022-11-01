@@ -5,7 +5,8 @@
   "description": "A minimal watch face consisting of blocks.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],
-  "tags": "outdoors",
+  "type": "clock",
+  "tags": "clock",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
