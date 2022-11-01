@@ -7,3 +7,4 @@
 0.07: Read app icons on demand
       Add swipe-to-exit
 0.08: Only use fast loading for switching to clock to prevent problems in full screen apps
+0.09: Remove fast load option since clocks containing Bangle.loadWidgets are now always normally loaded
