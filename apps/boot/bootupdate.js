@@ -62,23 +62,6 @@ if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();
 if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
 if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
 boot += `E.setTimeZone(${s.timezone});`;
-// Set vibrate, beep, etc IF on older firmwares
-if (!Bangle.F_BEEPSET) {
-  if (!s.vibrate) boot += `Bangle.buzz=Promise.resolve;\n`
-  if (s.beep===false) boot += `Bangle.beep=Promise.resolve;\n`
-  else if (s.beep=="vib" && !BANGLEJS2) boot += `Bangle.beep = function (time, freq) {
-    return new Promise(function(resolve) {
-      if ((0|freq)<=0) freq=4000;
-      if ((0|time)<=0) time=200;
-      if (time>5000) time=5000;
-      analogWrite(D13,0.1,{freq:freq});
-      setTimeout(function() {
-        digitalWrite(D13,0);
-        resolve();
-      }, time);
-    });
-  };\n`;
-}
 // Draw out of memory errors onto the screen
 boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
