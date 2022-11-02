@@ -4,3 +4,5 @@
       Use custom UI with swipes instead of leftright
 0.04: Fix compass heading
 0.05: Added adjustment for Bangle.js magnetometer heading fix
+0.06: Fix waypoint menu always selecting last waypoint
+      Fix widget adding listeners more than once
