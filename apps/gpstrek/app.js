@@ -543,14 +543,14 @@ function showWaypointSelector(){
     }
   };
 
-  for (let c in waypoints){
+  waypoints.forEach((wp,c)=>{
     menu[waypoints[c].name] = function (){
       state.waypoint = waypoints[c];
       state.waypointIndex = c;
       state.route = null;
       removeMenu();
     };
-  }
+  });
 
   E.showMenu(menu);
 }
