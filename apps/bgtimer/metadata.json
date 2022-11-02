@@ -1,0 +1,44 @@
+{
+  "id": "bgtimer",
+  "name": "Timer",
+  "version": "0.02",
+  "description": "A timer with a keypad that runs in the background",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "tools",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "bgtimer.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "bgtimer.img",
+      "url": "icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "bgtimer.boot.js",
+      "url": "boot.js"
+    },
+    {
+      "name": "bgtimer-com.js",
+      "url": "common.js"
+    },
+    {
+      "name": "bgtimer-ring.js",
+      "url": "ring.js"
+    },
+    {
+      "name": "bgtimer-keys.js",
+      "url": "keypad.js"
+    },
+    {
+      "name": "bgtimer-tview.js",
+      "url": "timerview.js"
+    }
+  ]
+}
