@@ -1,6 +1,6 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false,fastload:false };
+  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false};
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -180,24 +180,20 @@
   };
 
   const returnToClock = function() {
-    if (settings.fastload == true){
-      Bangle.setUI();
-      delete launchCache;
-      delete launchHash;
-      delete drawItemAuto;
-      delete drawText;
-      delete selectItem;
-      delete onDrag;
-      delete drawItems;
-      delete drawItem;
-      delete returnToClock;
-      delete idxToY;
-      delete YtoIdx;
-      delete settings;
-      setTimeout(eval, 0, s.read(".bootcde"));
-    } else {
-      load();
-    }
+    Bangle.setUI();
+    delete launchCache;
+    delete launchHash;
+    delete drawItemAuto;
+    delete drawText;
+    delete selectItem;
+    delete onDrag;
+    delete drawItems;
+    delete drawItem;
+    delete returnToClock;
+    delete idxToY;
+    delete YtoIdx;
+    delete settings;
+    setTimeout(eval, 0, s.read(".bootcde"));
   };
 
   
