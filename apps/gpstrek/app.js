@@ -477,10 +477,9 @@ function showRouteSelector (){
     }
   };
 
-  for (let c of STORAGE.list((/\.trf$/))){
-    let file = c;
-    menu[file] = ()=>{handleLoading(file);};
-  }
+  STORAGE.list(/\.trf$/).forEach((file)=>{
+     menu[file] = ()=>{handleLoading(file);};
+  });
 
   E.showMenu(menu);
 }
