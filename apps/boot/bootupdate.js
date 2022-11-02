@@ -79,7 +79,8 @@ if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen r
 // ================================================== FIXING OLDER FIRMWARES
 // 2v15.68 and before had compass heading inverted.
 if (process.version.replace("v","")<215.68)
-  boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading)) e.heading=360-e.heading;});`;
+  boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading))e.heading=360-e.heading;});
+Bangle.getCompass=(c=>(()=>{e=c();if(!isNaN(e.heading))e.heading=360-e.heading;return e;}))(Bangle.getCompass);`;
 
 // ================================================== BOOT.JS
 // Append *.boot.js files
