@@ -109,9 +109,15 @@ let matchFontSize = function(graphics, text, height, width){
 
 let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime){
   let lastDrawn = Date.now() - Math.random()*refreshTime;
+  let lastValue1 = 0;
+  let lastValue2 = 0;
   return {
     refresh: function (){
-      return Date.now() - lastDrawn > (Bangle.isLocked()?(refreshTime?refreshTime:5000):(refreshTime?refreshTime*2:10000));
+      let bigChange1 = (Math.abs(lastValue1 - provider1()) > 1);
+      let bigChange2 = (Math.abs(lastValue2 - provider2()) > 1);
+      let refresh = (Bangle.isLocked()?(refreshTime?refreshTime*5:10000):(refreshTime?refreshTime*2:1000));
+      let old = (Date.now() - lastDrawn) > refresh;
+      return (bigChange1 || bigChange2) && old;
     },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
@@ -119,19 +125,19 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime)
       if (typeof title2 == "function") title2 = title2();
       graphics.clearRect(x,y,x+width,y+height);
 
-      let value = provider1();
-      matchFontSize(graphics, title1 + value, Math.floor(height*0.5), width);
+      lastValue1 = provider1();
+      matchFontSize(graphics, title1 + lastValue1, Math.floor(height*0.5), width);
       graphics.setFontAlign(-1,-1);
       graphics.drawString(title1, x+2, y);
       graphics.setFontAlign(1,-1);
-      graphics.drawString(value, x+width, y);
+      graphics.drawString(lastValue1, x+width, y);
 
-      value = provider2();
-      matchFontSize(graphics, title2 + value, Math.floor(height*0.5), width);
+      lastValue2 = provider2();
+      matchFontSize(graphics, title2 + lastValue2, Math.floor(height*0.5), width);
       graphics.setFontAlign(-1,-1);
       graphics.drawString(title2, x+2, y+(height*0.5));
       graphics.setFontAlign(1,-1);
-      graphics.drawString(value, x+width, y+(height*0.5));
+      graphics.drawString(lastValue2, x+width, y+(height*0.5));
     }
   };
 };
@@ -141,7 +147,7 @@ let getTargetSlice = function(targetDataSource){
   let lastDrawn = Date.now() - Math.random()*3000;
   return {
     refresh: function (){
-      return Date.now() - lastDrawn > (Bangle.isLocked()?10000:3000);
+      return Date.now() - lastDrawn > (Bangle.isLocked()?3000:10000);
     },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
@@ -225,10 +231,15 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
 
 let getCompassSlice = function(compassDataSource){
   let lastDrawn = Date.now() - Math.random()*2000;
+  let lastDrawnValue = 0;
   const buffers = 4;
   let buf = [];
   return {
-    refresh : function (){return Bangle.isLocked()?(Date.now() - lastDrawn > 2000):true;},
+    refresh : function (){
+      let bigChange = (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > 2);
+      let old = (Bangle.isLocked()?(Date.now() - lastDrawn > 2000):true);
+      return bigChange && old;
+    },
     draw: function (graphics, x,y,height,width){
       lastDrawn = Date.now();
       const max = 180;
@@ -236,8 +247,10 @@ let getCompassSlice = function(compassDataSource){
 
       graphics.clearRect(x,y,x+width,y+height);
 
-      let start = compassDataSource.getCourse() - 90;
-      if (isNaN(compassDataSource.getCourse())) start = -90;
+      lastDrawnValue = compassDataSource.getCourse();
+
+      var start = lastDrawnValue - 90;
+      if (isNaN(lastDrawnValue)) start = -90;
       if (start<0) start+=360;
       start = start % 360;
 
@@ -250,7 +263,7 @@ let getCompassSlice = function(compassDataSource){
 
       if (compassDataSource.getPoints){
         for (let p of compassDataSource.getPoints()){
-          let bpos = p.bearing - compassDataSource.getCourse();
+          var bpos = p.bearing - lastDrawnValue;
           if (bpos>180) bpos -=360;
           if (bpos<-180) bpos +=360;
           bpos+=120;
