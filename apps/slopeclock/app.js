@@ -12,7 +12,7 @@ Graphics.prototype.setFontPaytoneOne = function(scale) {
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let drawTimeout;
-  
+
 let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
 let g2img = {
   width:g2.getWidth(), height:g2.getHeight(), bpp:1,
@@ -42,7 +42,7 @@ let draw = function() {
   // Draw hour
   g.reset().clearRect(R); // clear whole background (w/o widgets)
   g.setFontAlign(-1, 0).setFont("PaytoneOne");
-  g.drawString(hourStr, fontBorder, y-offsy);  
+  g.drawString(hourStr, fontBorder, y-offsy);
   // add slope in background color
   g.setColor(g.theme.bg).fillPoly([0,y+slope-slopeBorderUpper, R.w,y-slope-slopeBorderUpper,
                                    R.w,y-slope, 0,y+slope]);
@@ -84,17 +84,16 @@ let animate = function(isIn, callback) {
     if (isAnimIn && minuteX>=0) {
       minuteX=0;
       stop = true;
-    } else if (!isAnimIn && minuteX>=R.w) 
+    } else if (!isAnimIn && minuteX>=R.w)
       stop = true;
     drawMinute();
     if (stop) {
       clearInterval(animInterval);
       animInterval=undefined;
+      if (isAnimIn) // draw the date
+        g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
       if (callback) callback();
-      if (isAnimIn) {
-        // draw the date
-        g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);}
-      }
+    }
   }, 20);
 };
 
