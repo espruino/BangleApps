@@ -693,6 +693,9 @@ const compassSliceData = {
     if (state.currentPos && state.currentPos.lon && state.route){
       points.push({bearing:bearing(state.currentPos, getLast(state.route)), color:"#00f"});
     }
+    if (state.currentPos && state.currentPos.lon && state.waypoint){
+      points.push({bearing:bearing(state.currentPos, state.waypoint), color:"#00f"});
+    }
     return points;
   },
   getMarkers: function (){
