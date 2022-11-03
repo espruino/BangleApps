@@ -239,8 +239,14 @@ function getCompassSlice(compassDataSource){
           } else {
             bpos=Math.round(bpos*increment);
           }
-          graphics.setColor(p.color);
-          graphics.fillCircle(bpos,y+height-12,Math.floor(width*0.03));
+          if (p.color){
+            graphics.setColor(p.color);
+          }
+          if (p.icon){
+            graphics.drawImage(p.icon, bpos,y+height-12, {rotate:0,scale:2});
+          } else {
+            graphics.fillCircle(bpos,y+height-12,Math.floor(width*0.03));
+          }
         }
       }
       if (compassDataSource.getMarkers){
@@ -677,6 +683,8 @@ function setClosestWaypoint(route, startindex, progress){
 
 let screen = 1;
 
+const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
+
 const compassSliceData = {
   getCourseType: function(){
     return (state.currentPos && state.currentPos.course) ? "GPS" : "MAG";
@@ -691,10 +699,10 @@ const compassSliceData = {
       points.push({bearing:bearing(state.currentPos, state.route.currentWaypoint), color:"#0f0"});
     }
     if (state.currentPos && state.currentPos.lon && state.route){
-      points.push({bearing:bearing(state.currentPos, getLast(state.route)), color:"#00f"});
+      points.push({bearing:bearing(state.currentPos, getLast(state.route)), icon: finishIcon});
     }
     if (state.currentPos && state.currentPos.lon && state.waypoint){
-      points.push({bearing:bearing(state.currentPos, state.waypoint), color:"#00f"});
+      points.push({bearing:bearing(state.currentPos, state.waypoint), icon: finishIcon});
     }
     return points;
   },
