@@ -402,7 +402,7 @@ if (process.env.HWVERSION==1) {
   swipeEnabled = false;
   drawGlobal();
 } else { // touchscreen?
-  setWatch(load, BTN1, {edge:"falling"}); // Exit with a short press to physical button
+  setWatch(_ => {load();}, BTN1, {edge:"falling"}); // Exit with a short press to physical button
   selected = "NONE";
   swipeEnabled = true;
   prepareScreen(numbers, numbersGrid, COLORS.DEFAULT);
