@@ -74,6 +74,12 @@ function onAcc (e){
 }
 
 function start(bg){
+  Bangle.removeListener('GPS', onGPS);
+  Bangle.removeListener("HRM", onPulse);
+  Bangle.removeListener("mag", onMag);
+  Bangle.removeListener("step", onStep);
+  Bangle.removeListener("pressure", onPressure);
+  Bangle.removeListener('accel', onAcc);
   Bangle.on('GPS', onGPS);
   Bangle.on("HRM", onPulse);
   Bangle.on("mag", onMag);

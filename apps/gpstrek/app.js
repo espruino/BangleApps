@@ -477,10 +477,9 @@ function showRouteSelector (){
     }
   };
 
-  for (let c of STORAGE.list((/\.trf$/))){
-    let file = c;
-    menu[file] = ()=>{handleLoading(file);};
-  }
+  STORAGE.list(/\.trf$/).forEach((file)=>{
+     menu[file] = ()=>{handleLoading(file);};
+  });
 
   E.showMenu(menu);
 }
@@ -543,14 +542,14 @@ function showWaypointSelector(){
     }
   };
 
-  for (let c in waypoints){
+  waypoints.forEach((wp,c)=>{
     menu[waypoints[c].name] = function (){
       state.waypoint = waypoints[c];
       state.waypointIndex = c;
       state.route = null;
       removeMenu();
     };
-  }
+  });
 
   E.showMenu(menu);
 }
