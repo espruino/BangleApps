@@ -239,8 +239,14 @@ function getCompassSlice(compassDataSource){
           } else {
             bpos=Math.round(bpos*increment);
           }
-          graphics.setColor(p.color);
-          graphics.fillCircle(bpos,y+height-12,Math.floor(width*0.03));
+          if (p.color){
+            graphics.setColor(p.color);
+          }
+          if (p.icon){
+            graphics.drawImage(p.icon, bpos,y+height-12, {rotate:0,scale:2});
+          } else {
+            graphics.fillCircle(bpos,y+height-12,Math.floor(width*0.03));
+          }
         }
       }
       if (compassDataSource.getMarkers){
@@ -595,8 +601,8 @@ function showBackgroundMenu(){
       "title" : "Background",
       back : showMenu,
     },
-    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {E.showMenu(mainmenu);}});},
+    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
+    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
   };
   E.showMenu(menu);
 }
@@ -677,13 +683,15 @@ function setClosestWaypoint(route, startindex, progress){
 
 let screen = 1;
 
+const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
+
 const compassSliceData = {
   getCourseType: function(){
     return (state.currentPos && state.currentPos.course) ? "GPS" : "MAG";
   },
   getCourse: function (){
     if(compassSliceData.getCourseType() == "GPS") return state.currentPos.course;
-    return state.compassHeading?360-state.compassHeading:undefined;
+    return state.compassHeading?state.compassHeading:undefined;
   },
   getPoints: function (){
     let points = [];
@@ -691,7 +699,10 @@ const compassSliceData = {
       points.push({bearing:bearing(state.currentPos, state.route.currentWaypoint), color:"#0f0"});
     }
     if (state.currentPos && state.currentPos.lon && state.route){
-      points.push({bearing:bearing(state.currentPos, getLast(state.route)), color:"#00f"});
+      points.push({bearing:bearing(state.currentPos, getLast(state.route)), icon: finishIcon});
+    }
+    if (state.currentPos && state.currentPos.lon && state.waypoint){
+      points.push({bearing:bearing(state.currentPos, state.waypoint), icon: finishIcon});
     }
     return points;
   },
