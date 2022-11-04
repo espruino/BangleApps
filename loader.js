@@ -21,6 +21,9 @@ var RECOMMENDED_VERSION = "2v15";
 
 // We're only interested in Bangles
 DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
+// Where we get our usage data from
+Const.APP_USAGE_JSON = "https://banglejs.com/apps/appusage.json";
+Const.APP_DATES_CSV = "appdates.csv";
 
 // Set up source code URL
 (function() {
