@@ -601,8 +601,8 @@ function showBackgroundMenu(){
       "title" : "Background",
       back : showMenu,
     },
-    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {E.showMenu(mainmenu);}});},
-    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {E.showMenu(mainmenu);}});},
+    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
+    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {showMenu();}}).catch(()=>{E.showMenu(mainmenu);});},
   };
   E.showMenu(menu);
 }
