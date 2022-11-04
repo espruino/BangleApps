@@ -1,12 +1,21 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false};
+  const settings = Object.assign({
+    showClocks: true,
+    fullscreen: false,
+    direct: false,
+    oneClickExit: false,
+    swipeExit: false,
+    timeOut:"Off"
+  }, s.readJSON("iconlaunch.json", true) || {});
+
+  console.log(settings);
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
-  let launchCache = s.readJSON("launch.cache.json", true)||{};
-  let launchHash = require("Storage").hash(/\.info/);
+  let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
+  let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
   launchCache = {
     hash : launchHash,
@@ -20,7 +29,7 @@
         if (a.name>b.name) return 1;
         return 0;
       }) };
-    s.writeJSON("launch.cache.json", launchCache);
+    s.writeJSON("iconlaunch.cache.json", launchCache);
   }
   let scroll = 0;
   let selectedItem = -1;
@@ -198,6 +207,11 @@
 
   
   if (settings.oneClickExit) mode.btn = returnToClock;
+  if (settings.timeOut!="Off"){
+      let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+      setTimeout(returnToClock,time*1000);  
+  }
+  
 
   Bangle.setUI(mode);
 }
