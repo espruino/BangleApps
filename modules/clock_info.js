@@ -111,12 +111,71 @@ exports.load = function() {
   return menu;
 };
 
+/** Adds an interactive menu that could be used on a clock face by swiping.
+Simply supply the menu data (from .load) and a function to draw the clock info.
 
-// Code for testing
+For example:
+
+var clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), (itm, info) => {
+  var y = 0;
+  g.reset().setFont("6x8:2").setFontAlign(-1,0);
+  g.clearRect(0,y,g.getWidth(),y+23);
+  g.drawImage(info.img, 0,y);
+  g.drawString(info.text, 48,y+12);
+});
+
+Then if you need to unload the clock info so it no longer
+uses memory or responds to swipes, you can call clockInfoMenu.remove()
+and delete clockInfoMenu
+*/
+exports.addInteractive = function(menu, drawFn) {
+  if (!menu.length || !menu[0].items.length) return; // no info
+  var menuA = 0, menuB = 0;
+  function menuShowItem(itm) {
+    itm.on('redraw', ()=>drawFn(itm, itm.get()));
+    itm.show();
+    itm.emit("redraw");
+  }
+  // handling for swipe between menu items
+  function swipeHandler(lr,ud){
+    var oldMenuItem;
+    if (ud) {
+      if (menu[menuA].items.length==1) return; // 1 item - can't move
+      oldMenuItem = menu[menuA].items[menuB];
+      menuB += ud;
+      if (menuB<0) menuB = menu[menuA].items.length-1;
+      if (menuB>=menu[menuA].items.length) menuB = 0;
+    } else if (lr) {
+      if (menu.length==1) return; // 1 item - can't move
+      oldMenuItem = menu[menuA].items[menuB];
+      menuA += ud;
+      if (menuA<0) menuA = menu.length-1;
+      if (menuA>=menu.length) menuA = 0;
+      menuB = 0;
+    }
+    if (oldMenuItem) {
+      oldMenuItem.hide();
+      oldMenuItem.removeAllListeners("draw");
+      menuShowItem(menu[menuA].items[menuB]);
+    }
+  }
+  Bangle.on("swipe",swipeHandler);
+  // draw the first item
+  menuShowItem(menu[menuA].items[menuB]);
+  // return an object with info that can be used to remove the info
+  return {
+    remove : function() {
+      Bangle.removeListener("swipe",swipeHandler);
+      menu[menuA].items[menuB].hide();
+    }
+  };
+};
+
+// Code for testing (plots all elements from first list)
 /*
 g.clear();
 var menu = exports.load(); // or require("clock_info").load()
-var itemsFirstMenu = menu[0].items;
+var items = menu[0].items;
 items.forEach((itm,i) => {
   var y = i*24;
   console.log("Starting", itm.name);
