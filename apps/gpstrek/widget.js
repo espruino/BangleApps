@@ -71,10 +71,11 @@ function average(samples){
 
   result%=360;
   return result;
-  }
+}
+  
 function onMag(e) {
   if (!isNaN(e.heading)){
-    if (Bangle.isLocked())
+    if (Bangle.isLocked() || (Bangle.getGPSFix() && Bangle.getGPSFix().lon))
       state.avgComp = e.heading;
     else {
       state.compassSamples[state.sampleIndex++] = e.heading;
