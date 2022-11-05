@@ -1,0 +1,15 @@
+{ "id": "primetime",
+  "name": "Prime Time Lato Clock",
+  "version": "0.01",  
+  "type": "clock",
+  "description": "A clock that tells you the primes of the time in the Lato font",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],  
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"primetimelato.app.js","url":"app.js"},
+    {"name":"primetimelato.img","url":"icon.js","evaluate":true}
+  ]
+}
