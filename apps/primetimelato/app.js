@@ -1,6 +1,6 @@
 const h = g.getHeight();
 const w = g.getWidth();
-const SETTINGS_FILE = "pastel.json";
+const SETTINGS_FILE = "primetimelato.json";
 let settings;
 
 Graphics.prototype.setFontLato = function(scale) {

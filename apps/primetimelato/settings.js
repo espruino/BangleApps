@@ -3,7 +3,7 @@
 
   // initialize with default settings...
   let s = {
-    'buzz_on_prime': true,
+    'buzz_on_prime': true
   }
 
   // ...and overwrite them with any saved values
@@ -16,8 +16,8 @@
   }
 
   function save() {
-    settings = s
-    storage.write(SETTINGS_FILE, settings)
+      settings = s;
+      storage.write(SETTINGS_FILE, settings);
   }
 
   E.showMenu({
