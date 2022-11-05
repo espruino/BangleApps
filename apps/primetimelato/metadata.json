@@ -10,6 +10,9 @@
   "readme": "README.md",
   "storage": [
     {"name":"primetimelato.app.js","url":"app.js"},
-    {"name":"primetimelato.img","url":"icon.js","evaluate":true}
-  ]
+    {"name":"primetimelato.img","url":"icon.js","evaluate":true},
+    {"name":"primetimelato.settings.js","url":"settings.js"}
+
+  ],
+  "data": [{"name":"primetimelato.json"}]
 }

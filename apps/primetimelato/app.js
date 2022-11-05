@@ -1,5 +1,7 @@
 const h = g.getHeight();
 const w = g.getWidth();
+const SETTINGS_FILE = "pastel.json";
+let settings;
 
 Graphics.prototype.setFontLato = function(scale) {
   // Actual height 41 (43 - 3)
@@ -22,6 +24,11 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
   );
   return this;
 };
+
+function loadSettings() {
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.buzz_on_prime = (settings.buzz_on_prime === undefined ? false : settings.buzz_on_prime);
+}
 	
 // creates a list of prime factors of n and outputs them as a string, if n is prime outputs "Prime Time!"
 function primeFactors(n) {
@@ -55,24 +62,41 @@ function timeToInt(t) {
 function draw() {
   var date = new Date();
   var timeStr = require("locale").time(date,1);
-  var primeStr = primeFactors(timeToInt(timeStr));
+  var intTime = timeToInt(timeStr);
+  var primeStr = primeFactors(intTime);
 
   g.reset();
   g.setColor(0,0,0);
   g.fillRect(Bangle.appRect);
 
-  //g.setFont("6x8", w/30);
   g.setFontLato();
   g.setFontAlign(0, 0);
   g.setColor(100,100,100);
   g.drawString(timeStr, w/2, h/2);
 
-  //g.setFont("6x8", w/60);
   g.setFontLatoSmall();
   g.drawString(primeStr, w/2, 3*h/4);
+  // Buzz if Prime Time and between 8am and 8pm
+  if (settings.buzz_on_prime && primeStr == "Prime Time!" && intTime >= 800 && intTime <= 2000)
+      buzzer(2);
   queueDraw();
 }
 
+// timeout for multi-buzzer
+var buzzTimeout;
+
+// n buzzes
+function buzzer(n) {
+  if (n-- < 1) return;
+  Bangle.buzz(250);
+  
+  if (buzzTimeout) clearTimeout(buzzTimeout);
+  buzzTimeout = setTimeout(function() {
+    buzzTimeout = undefined;
+    buzzer(n);
+  }, 500);
+}
+	
 // timeout used to update every minute
 var drawTimeout;
 
@@ -96,6 +120,7 @@ Bangle.on('lcdPower',on=>{
 });
 
 
+loadSettings();
 g.clear();
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
