@@ -8,3 +8,8 @@
       Fix widget adding listeners more than once
 0.07: Show checkered flag for target markers
       Single waypoints are now shown in the compass view
+0.08: Better handle state in widget
+      Slightly faster drawing by doing some caching
+      Reconstruct battery voltage by using calibrated batFullVoltage
+      Averaging for smoothing compass headings
+      Save state if route or waypoint has been chosen
