@@ -263,6 +263,7 @@ let getCompassSlice = function(compassDataSource){
 
       if (compassDataSource.getPoints){
         for (let p of compassDataSource.getPoints()){
+          g.reset();
           var bpos = p.bearing - lastDrawnValue;
           if (bpos>180) bpos -=360;
           if (bpos<-180) bpos +=360;
@@ -288,6 +289,7 @@ let getCompassSlice = function(compassDataSource){
       }
       if (compassDataSource.getMarkers){
         for (let m of compassDataSource.getMarkers()){
+          g.reset();
           g.setColor(m.fillcolor);
           let mpos = m.xpos * width;
           if (m.xpos < 0.05) mpos = Math.floor(width*0.05);
