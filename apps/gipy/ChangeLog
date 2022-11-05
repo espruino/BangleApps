@@ -58,3 +58,7 @@
 	* Detect starting distance to compute a good average speed.
 	* Settings
 	* Account for breaks in average speed.
+
+0.15:
+	* Record traveled distance to get a good average speed.
+	* Breaks (low speed) will not count in average speed.

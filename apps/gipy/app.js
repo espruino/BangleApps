@@ -54,18 +54,16 @@ class Status {
       previous_point = point;
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
-    // we sometimes don't start at the start of the path.
-    // in order to compute average speed we need to take this into account.
-    // we record one starting point for each direction (if we suddenly choose to go back).
-    // we store the distance from start for these points.
-    this.remaining_distances_at_start = [null, null];
-    this.starting_times = [null, null]; // time we start in each direction
+    this.starting_time = this.paused_since; // time we start
+    this.advanced_distance = 0.0;
+    this.gps_coordinates_counter = 0; // how many coordinates did we receive
     this.old_points = [];
     this.old_times = [];
   }
   new_position_reached(position) {
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
+    this.gps_coordinates_counter += 1;
     let now = getTime();
     this.old_points.push(position);
     this.old_times.push(now);
@@ -76,6 +74,16 @@ class Status {
 
     let last_point = this.old_points[this.old_points.length - 1];
     let oldest_point = this.old_points[0];
+
+    // every 8 points we count the distance
+    if (this.gps_coordinates_counter % 8 == 0) {
+      let distance = last_point.distance(oldest_point);
+      console.log(distance);
+      if (distance < 150.0) {
+        // to avoid gps glitches
+        this.advanced_distance += distance;
+      }
+    }
 
     if (this.old_points.length == 8) {
       let p1 = this.old_points[0]
@@ -177,15 +185,6 @@ class Status {
     this.distance_to_next_point = Math.ceil(
       this.position.distance(this.path.point(next_point))
     );
-
-    // record start if needed
-    if (this.on_path && this.old_points.length > 1) {
-      if (this.starting_times[orientation] === null) {
-        this.starting_times[orientation] =
-          this.old_times[this.old_times.length - 1];
-        this.remaining_distances_at_start[orientation] = this.remaining_distance(orientation);
-      }
-    }
 
     // disable gps when far from next point and locked
     if (Bangle.isLocked() && !settings.keep_gps_alive) {
@@ -293,17 +292,11 @@ class Status {
       g.getHeight() - 49
     );
 
-    let approximate_speed = "??";
-    if (this.starting_times[orientation] !== null) {
-      let point_time = this.old_times[this.old_times.length - 1];
-      let done_distance =
-        this.remaining_distances_at_start[orientation] - remaining_distance;
-      let done_in =
-        point_time - this.starting_times[orientation]; // TODO: add pauses
-      if (done_in > 0) {
-        approximate_speed = Math.round((done_distance * 3.6) / done_in);
-      }
-    }
+    let point_time = this.old_times[this.old_times.length - 1];
+    let done_in = point_time - this.starting_time - this.paused_time;
+    let approximate_speed = Math.round(
+      (this.advanced_distance * 3.6) / done_in
+    );
     let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
 
     g.setFont("6x8:2")
