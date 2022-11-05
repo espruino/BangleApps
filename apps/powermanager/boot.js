@@ -5,7 +5,6 @@
   );
   
   if (settings.warnEnabled){
-    print("Charge warning enabled");
     var chargingInterval;
 
     function handleCharging(charging){
