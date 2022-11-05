@@ -76,6 +76,7 @@ function draw() {
 
   g.setFontLatoSmall();
   g.drawString(primeStr, w/2, 3*h/4);
+
   // Buzz if Prime Time and between 8am and 8pm
   if (settings.buzz_on_prime && primeStr == "Prime Time!" && intTime >= 800 && intTime <= 2000)
       buzzer(2);
