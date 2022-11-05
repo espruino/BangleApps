@@ -31,7 +31,7 @@ function saveState(){
 }
 
 function onKill(){
-  if (bgChanged){
+  if (bgChanged || state.route || state.waypoint){
     saveState();
   }
 }
