@@ -2,3 +2,4 @@
 0.02: Load AGPS data on app start and automatically in background
 0.03: Do not load AGPS data on boot
       Increase minimum interval to 6 hours
+0.04: Write AGPS data chunks with delay to improve reliability
