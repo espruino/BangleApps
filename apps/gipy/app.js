@@ -4,7 +4,7 @@ let code_key = 47490;
 
 var settings = Object.assign(
   {
-    keep_gps_alive: false,
+    keep_gps_alive: true,
     max_speed: 35,
   },
   require("Storage").readJSON("gipy.json", true) || {}
@@ -75,10 +75,9 @@ class Status {
     let last_point = this.old_points[this.old_points.length - 1];
     let oldest_point = this.old_points[0];
 
-    // every 8 points we count the distance
-    if (this.gps_coordinates_counter % 8 == 0) {
+    // every 7 points we count the distance
+    if (this.gps_coordinates_counter % 7 == 0) {
       let distance = last_point.distance(oldest_point);
-      console.log(distance);
       if (distance < 150.0) {
         // to avoid gps glitches
         this.advanced_distance += distance;
