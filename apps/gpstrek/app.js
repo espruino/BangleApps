@@ -6,7 +6,6 @@ const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0
 let init = function(){
   global.screen = 1;
   global.drawTimeout = undefined;
-  global.scheduledDrawTimeout = undefined;
   global.lastDrawnScreen = 0;
   global.firstDraw = true;
   global.slices = [];
@@ -20,10 +19,8 @@ let init = function(){
 
 let cleanup = function(){
   if (global.drawTimeout) clearTimeout(global.drawTimeout);
-  if (global.scheduledDrawTimeout) clearTimeout(global.scheduledDrawTimeout);
   delete global.screen;
   delete global.drawTimeout;
-  delete global.scheduledDrawTimeout;
   delete global.lastDrawnScreen;
   delete global.firstDraw;
   delete global.slices;
@@ -679,7 +676,6 @@ let switchMenu = function(){
 
 let stopDrawing = function(){
   if (drawTimeout) clearTimeout(drawTimeout);
-  if (scheduledDrawTimeout) clearTimeout(scheduledDrawTimeout);
   scheduleDraw = false;
 };
 
@@ -688,11 +684,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-    if (scheduleDraw){
-      if (scheduledDrawTimeout)clearTimeout(scheduledDrawTimeout);
-      scheduledDrawTimeout = setTimeout(drawInTimeout, 0);
-    }
-  },0);
+  },50);
 };
 
 let switchNav = function(){
@@ -880,7 +872,7 @@ let draw = function(){
   let force = lastDrawnScreen != screen || firstDraw;
   if (force){
     clear();
-    }
+  }
   if (firstDraw) Bangle.drawWidgets();
   lastDrawnScreen = screen;
 
@@ -890,6 +882,10 @@ let draw = function(){
     if (!slice.refresh || slice.refresh() || force) slice.draw(g,0,ypos,sliceHeight,g.getWidth());
     ypos += sliceHeight+1;
     g.drawLine(0,ypos-1,g.getWidth(),ypos-1);
+  }
+  
+  if (scheduleDraw){
+    drawInTimeout();
   }
   firstDraw = false;
 };
