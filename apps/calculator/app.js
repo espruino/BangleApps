@@ -402,6 +402,10 @@ if (process.env.HWVERSION==1) {
   swipeEnabled = false;
   drawGlobal();
 } else { // touchscreen?
+  Bangle.setUI({ // Pressing upper left corner turns off (where red back button would be)
+    mode : 'custom',
+    back : load
+  });
   setWatch(_ => {load();}, BTN1, {edge:'falling'}); // Exit with a short press to physical button
   selected = "NONE";
   swipeEnabled = true;
