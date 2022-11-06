@@ -24,7 +24,7 @@ let s = require("Storage");
     name:a.name, type:a.type, icon:a.icon, sortorder:a.sortorder, src:a.src
   };}).filter(
     app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type));
-  
+
 apps.sort((a,b)=>{
   let n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -88,7 +88,7 @@ let drawPage = function(p){
     }
     g.flip();
 };
-  
+
 Bangle.loadWidgets();
 //g.clear();
 Bangle.drawWidgets();
@@ -139,7 +139,7 @@ let touchListenerDt = function(_,p){
     }
 };
 Bangle.on("touch",touchListenerDt);
-  
+
 const returnToClock = function() {
   Bangle.setUI();
   clearWatch(buttonWatch);
@@ -182,9 +182,14 @@ const returnToClock = function() {
 };
 
 // taken from Icon Launcher with minor alterations
-if (settings.timeOut!="Off"){
-  let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
-  var timeoutToClock = setTimeout(returnToClock,time*1000);  
-}
+var timeoutToClock;
+const updateTimeoutToClock = function(){
+  if (settings.timeOut!="Off"){
+    let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+    if (timeoutToClock) clearTimeout(timeoutToClock);
+    timeoutToClock = setTimeout(returnToClock,time*1000);  
+  }
+};
+updateTimeoutToClock();
 
 } // end of app scope
