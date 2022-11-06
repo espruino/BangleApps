@@ -130,6 +130,13 @@
           request.j(event.err); //r = reJect function
         else
           request.r(event); //r = resolve function
+      },
+      "gps": function() {
+        delete event.t;
+        event.satellites = NaN;
+        event.course = NaN;
+        event.fix = 1;
+        Bangle.emit('gps', event);
       }
     };
     var h = HANDLERS[event.t];
