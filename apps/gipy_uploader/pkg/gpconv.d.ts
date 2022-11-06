@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
 * @param {string} input_str
-* @returns {string}
+* @returns {Uint8Array}
 */
-export function convert_gpx_strings(input_str: string): string;
+export function convert_gpx_strings(input_str: string): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
