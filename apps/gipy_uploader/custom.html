@@ -39,11 +39,12 @@
         init().then(() => {
 
           let gpc_file = convert_gpx_strings(reader.result);
+          let gpc_string = String.fromCharCode.apply(String, gpc_file);
 
           console.log("uploading");
           sendCustomizedApp({
              storage:[
-                 {name:gpc_filename, url:'test.gpc', content:gpc_file},
+                 {name:gpc_filename, url:'test.gpc', content:gpc_string},
              ]
           });
         });
