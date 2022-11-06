@@ -13,7 +13,7 @@ let settings = Object.assign({
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 if (settings.oneClickExit) {
-  let buttonWatch = setWatch(_=> returnToClock, BTN1);
+  var buttonWatch = setWatch(_=> returnToClock, BTN1);
 } 
 
 let s = require("Storage");
