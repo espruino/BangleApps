@@ -1,2 +1,1 @@
-//TODO replace app icon with my own
-require("heatshrink").decompress(atob("mEwgX/AH4A/AAf+14BBAoPq/Wq1QFB+EP+kLAoNA+CdB3//yEP6ALB/sABYf8gEMgALB6ALJqoLB+tVgH//kQhkQhUABYImCIwPwh3whcA94UCgJHD+AXB/4LCcQQLCKYQLB+EDBZQFCBY/Qh4LJ4ALLl4LFioLCgE/KZMAv4XFBYimBC4/+BYw7DRwQLIV4ILWTQQLDOIUA/ALDAC+t1uv/263/6/Pq/YLC3vv//vM4Oq33rBYP6/u//2/C4Pr1YXC12vBwO+BYO69XmJDQA/ACIA=="))
+require("heatshrink").decompress(atob("mEwgOAA4YFS/4AKEf5BlABcAjAgBjAfBAuhH/Apo"))

@@ -3,7 +3,7 @@
   "name": "Pomodoro Plus",
   "version": "0.05",
   "description": "A configurable pomodoro timer that runs in the background.",
-  "icon": "pomodoro.png",
+  "icon": "icon.png",
   "type": "app",
   "tags": "pomodoro,cooking,tools",
   "supports": [
