@@ -13,7 +13,7 @@ let settings = Object.assign({
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 if( settings.oneClickExit)
-  setWatch(_=> returnToClock, BTN1);
+  let buttonWatch = setWatch(_=> returnToClock, BTN1);
   
 let s = require("Storage");
   var apps = s.list(/\.info$/).map(app=>{
@@ -140,6 +140,7 @@ Bangle.on("touch",touchListenerDt);
   
 const returnToClock = function() {
   Bangle.setUI();
+  clearWatch(buttonWatch);
   delete s;
   delete a;
   delete n;
