@@ -35,16 +35,15 @@
       const reader = new FileReader();
       reader.onload = function fileReadCompleted() {
         console.log("reading file completed");
-        // when the reader is done, the content is in reader.result.
-        console.log(reader.result);
 
         init().then(() => {
 
           let gpc_file = convert_gpx_strings(reader.result);
 
+          console.log("uploading");
           sendCustomizedApp({
              storage:[
-                 {name:gpc_filename, content:gpc_file},
+                 {name:gpc_filename, url:'test.gpc', content:gpc_file},
              ]
           });
         });
