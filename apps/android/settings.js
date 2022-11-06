@@ -1,4 +1,13 @@
 (function(back) {
+
+  function onGpsOverwriteChange(newValue) {
+    if (newValue) {
+      Bangle.setGPSPower(false, 'android');
+    }
+    settings.overwriteGps = newValue;
+    updateSettings();
+  }
+
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
   }
@@ -22,6 +31,10 @@
         settings.keep = v;
         updateSettings();
       }
+    },
+    /*LANG*/"Overwrite GPS" : {
+      value : !!settings.overwriteGps,
+      onchange: onGpsOverwriteChange
     },
     /*LANG*/"Messages" : ()=>load("messages.app.js"),
   };

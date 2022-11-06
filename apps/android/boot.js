@@ -197,6 +197,34 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
+
+  // GPS overwrite logic
+  // Save current logic
+  const originalSetGpsPower = Bangle.setGPSPower;
+  const originalIsGpsOn = Bangle.isGPSOn;
+
+  // Replace set GPS power logic to suppress activation of gps, if the overwrite option is active
+  Bangle.setGPSPower = (isOn, appID) => {
+    const currentSettings = require("Storage").readJSON("android.settings.json",1)||{};
+    if (!currentSettings.overwriteGps) {
+      originalSetGpsPower(isOn, appID);
+    } else {
+      const logMessage = 'Ignore gps power change due to the gps overwrite from android integration app';
+      console.log(logMessage);
+      Bluetooth.println(logMessage);
+    }
+  }
+
+  // Replace check if the GPS is on, to show it as always active, if the overwrite option is set
+  Bangle.isGPSOn = () => {
+    const currentSettings = require("Storage").readJSON("android.settings.json",1)||{};
+    if (!currentSettings.overwriteGps) {
+      return originalIsGpsOn();
+    } else {
+      return true;
+    }
+  }
+
   // remove settings object so it's not taking up RAM
   delete settings;
 })();
