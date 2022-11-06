@@ -54,7 +54,7 @@
         writeSettings();
       }
     },
-    /*LANG*/'Time Out': {
+    /*LANG*/'Time Out': { // Adapted from Icon Launcher
       value: timeOutChoices.indexOf(settings.timeOut),
       min: 0,
       max: timeOutChoices.length-1,
