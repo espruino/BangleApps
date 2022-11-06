@@ -123,11 +123,11 @@
     }
 
     const menu = {
-      "": {"title": name(id)},
-      /*LANG*/"< Back": () => {
-        redrawWidgets();
-        mainMenu();
-      },
+      "": {"title": name(id),
+        back: () => {
+          redrawWidgets();
+          mainMenu();
+        } },
       /*LANG*/"Side": {
         value: (area === 'tl'),
         format: tl => tl ? /*LANG*/"Left" : /*LANG*/"Right",
@@ -157,11 +157,12 @@
 
   function mainMenu() {
     let menu = {
-      "": {"title": /*LANG*/"Widgets"},
-    };
-    menu[/*LANG*/"< Back"] = ()=>{
-      if (!Object.keys(_WIDGETS).length) delete _WIDGETS; // no defaults to remember
-      back();
+      "": {
+        "title": /*LANG*/"Widgets",
+        back: ()=>{
+          if (!Object.keys(global._WIDGETS).length) delete global._WIDGETS; // no defaults to remember
+          back();
+        }},
     };
     Object.keys(global.WIDGETS).forEach(id=>{
       // mark customized widgets with asterisk
