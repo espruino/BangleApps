@@ -312,13 +312,13 @@ exports.enable = () => {
         result = result.then(()=>{
           log("Starting notifications", newCharacteristic);
           var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
-          if (settings.gracePeriodNotification > 0){
-            log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
-            startPromise = startPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodNotification);
-            });
-          }
+          
+          log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
+          startPromise = startPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodNotification);
+          });
+          
           return startPromise;
         });
       }
@@ -429,13 +429,11 @@ exports.enable = () => {
           var connectPromise = gatt.connect(connectSettings).then(function() {
             log("Connected.");
           });
-          if (settings.gracePeriodConnect > 0){
-            log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
-            connectPromise = connectPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodConnect);
-            });
-          }
+          log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
+          connectPromise = connectPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodConnect);
+          });
           return connectPromise;
         } else {
           return Promise.resolve();
@@ -476,13 +474,11 @@ exports.enable = () => {
               log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
-            if (settings.gracePeriodService > 0) {
-              log("Add " + settings.gracePeriodService + "ms grace period after services");
-              result = result.then(()=>{
-                log("Wait after services");
-                return waitingPromise(settings.gracePeriodService);
-              });
-            }
+            log("Add " + settings.gracePeriodService + "ms grace period after services");
+            result = result.then(()=>{
+              log("Wait after services");
+              return waitingPromise(settings.gracePeriodService);
+            });
             return result;
           });
         } else {
