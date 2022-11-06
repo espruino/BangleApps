@@ -10,7 +10,6 @@ let settings = Object.assign({
   direct: false,
   oneClickExit:false,
   swipeExit: false,
-  fastload: false,
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 if( settings.oneClickExit)
@@ -45,7 +44,7 @@ let page = 0;
 const XOFF = 24;
 const YOFF = 30;
 
-function draw_icon(p,n,selected) {
+let drawIcon= function(p,n,selected) {
     let x = (n%2)*72+XOFF; 
     let y = n>1?72+YOFF:YOFF;
     (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+11,y+3,x+60,y+52);
@@ -56,9 +55,8 @@ function draw_icon(p,n,selected) {
     let txt =  apps[p*4+n].name.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
     let lineY = 0;
     let line = "";
-    while (txt.length > 0){      
+    while (txt.length > 0){
       let c = txt.shift();
-      
       if (c.length + 1 + line.length > 13){
         if (line.length > 0){
           g.drawString(line.trim(),x+36,y+54+lineY*8);
@@ -70,9 +68,9 @@ function draw_icon(p,n,selected) {
       }
     }
     g.drawString(line.trim(),x+36,y+54+lineY*8);
-}
+};
 
-function drawPage(p){
+let drawPage = function(p){
     g.reset();
     g.clearRect(0,24,175,175);
     let O = 88+YOFF/2-12*(Npages/2);
@@ -84,12 +82,17 @@ function drawPage(p){
     }
     for (let i=0;i<4;i++) {
         if (!apps[p*4+i]) return i;
-        draw_icon(p,i,selected==i && !settings.direct);
+        drawIcon(p,i,selected==i && !settings.direct);
     }
     g.flip();
-}
+};
+  
+Bangle.loadWidgets();
+//g.clear();
+Bangle.drawWidgets();
+drawPage(0);
 
-function swipeListenerDt(dirLeftRight, dirUpDown){
+let swipeListenerDt = function(dirLeftRight, dirUpDown){
     selected = 0;
     oldselected=-1;
     if(settings.swipeExit && dirLeftRight==1) returnToClock();
@@ -100,27 +103,27 @@ function swipeListenerDt(dirLeftRight, dirUpDown){
         --page; if (page<0) page=maxPage;
         drawPage(page);
     }
-}
+};
 Bangle.on("swipe",swipeListenerDt);
 
-function isTouched(p,n){
+let isTouched = function(p,n){
     if (n<0 || n>3) return false;
     let x1 = (n%2)*72+XOFF;  let y1 =  n>1?72+YOFF:YOFF;
     let x2 = x1+71; let y2 = y1+81;
     return (p.x>x1 && p.y>y1 && p.x<x2 && p.y<y2);
-}
+};
 
-function touchListenerDt(_,p){
+let touchListenerDt = function(_,p){
     let i;
     for (i=0;i<4;i++){
         if((page*4+i)<Napps){
             if (isTouched(p,i)) {
-                draw_icon(page,i,true && !settings.direct);
+                drawIcon(page,i,true && !settings.direct);
                 if (selected>=0 || settings.direct) {
                     if (selected!=i && !settings.direct){
-                        draw_icon(page,selected,false);
+                        drawIcon(page,selected,false);
                     } else {
-                        loadApp(apps[page*4+i].src);
+                        load(apps[page*4+i].src);
                     }
                 }
                 selected=i;
@@ -129,15 +132,14 @@ function touchListenerDt(_,p){
         }
     }
     if ((i==4 || (page*4+i)>Napps) && selected>=0) {
-        draw_icon(page,selected,false);
+        drawIcon(page,selected,false);
         selected=-1;
     }
-}
+};
 Bangle.on("touch",touchListenerDt);
   
-const returnToClock = function() { // Delete virtually everything, don't know if some deletes are unnecessary. 
+const returnToClock = function() {
   Bangle.setUI();
-  if (watch) clearWatch(watch);
   delete s;
   delete a;
   delete n;
@@ -159,26 +161,18 @@ const returnToClock = function() { // Delete virtually everything, don't know if
   delete x1;
   delete x2;
   delete i;
+  delete drawIcon;
+  delete drawPage;
+  delete isTouched;
   Bangle.removeListener("swipe", swipeListenerDt);
+  delete swipeListenerDt;
   Bangle.removeListener("touch", touchListenerDt);
+  delete touchListenerDt;
   var apps = [];
   delete apps;
   delete returnToClock;
   delete settings;
-  delete watch;
-  delete loadApp;
   setTimeout(eval, 0, s.read(".bootcde"));
-  };
-  
-  let watch;
-  let loadApp;
-  loadApp = function(name) {
-    load(name);
-  };
+};
 
-Bangle.loadWidgets();
-g.clear();
-Bangle.drawWidgets();
-drawPage(0);
-  
 } // end of app scope
