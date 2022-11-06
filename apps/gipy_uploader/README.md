@@ -1,10 +1,6 @@
 # Gipy Uploader
 
-Uploads and convert a gpx file to the watch for use with gipy.
-
-## Requests
-
-Reach out to frederic.wagner@imag.fr if you have feature requests or notice bugs.
+Uploads and convert a gpx file to the watch for use with [gipy](../gipy).
 
 ## Creator
 

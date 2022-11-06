@@ -96,7 +96,7 @@ Few settings for now (feel free to suggest me more) :
 
 It is good to use but you should know :
 
-- the gps might take a long time to start initially (see [assisted gps update](../assistedgps)).
+- the gps might take a long time to start initially (see the assisted gps update app).
 - gps signal is noisy : there is therefore a small delay for instant speed. sometimes you may jump somewhere else.
 - your gpx trace has been decimated and approximated : the **REAL PATH** might be **A FEW METERS AWAY**
 - sometimes the watch will tell you that you are lost but you are in fact on the path.
