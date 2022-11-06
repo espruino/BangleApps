@@ -50,7 +50,7 @@ Once you have your gpx file you need to convert it to *gpc* which is my custom f
 They are smaller than gpx and reduce the number of computations left to be done on the watch.
 
 Two possibilities here :
-- easy : use [gipy uploader](/BangleApps/?id=gipy_uploader)
+- easy : use [gipy uploader](../gipy_uploader)
 - hard : use [gpconv](https://github.com/wagnerf42/gpconv)
     * you need to compile *gpconv* yourself (it is some rust code)
     * you can download additional openstreetmap data to get interest points along the path
@@ -96,7 +96,7 @@ Few settings for now (feel free to suggest me more) :
 
 It is good to use but you should know :
 
-- the gps might take a long time to start initially (see [assisted gps update](/BangleApps/?id=assistedgps)).
+- the gps might take a long time to start initially (see [assisted gps update](../assistedgps)).
 - gps signal is noisy : there is therefore a small delay for instant speed. sometimes you may jump somewhere else.
 - your gpx trace has been decimated and approximated : the **REAL PATH** might be **A FEW METERS AWAY**
 - sometimes the watch will tell you that you are lost but you are in fact on the path.
