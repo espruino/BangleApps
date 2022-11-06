@@ -439,18 +439,20 @@ exports.enable = () => {
           return Promise.resolve();
         }
       });
-
-/*      promise = promise.then(() => {
-        log(JSON.stringify(gatt.getSecurityStatus()));
-        if (gatt.getSecurityStatus()['bonded']) {
-          log("Already bonded");
-          return Promise.resolve();
-        } else {
-          log("Start bonding");
-          return gatt.startBonding()
-            .then(() => console.log(gatt.getSecurityStatus()));
-        }
-      });*/
+      
+      if (settings.bonding){
+        promise = promise.then(() => {
+          log(JSON.stringify(gatt.getSecurityStatus()));
+          if (gatt.getSecurityStatus()['bonded']) {
+            log("Already bonded");
+            return Promise.resolve();
+          } else {
+            log("Start bonding");
+            return gatt.startBonding()
+              .then(() => console.log(gatt.getSecurityStatus()));
+          }
+        });
+      }
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
