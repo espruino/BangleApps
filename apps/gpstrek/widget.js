@@ -24,7 +24,7 @@ function onGPS(fix) {
 }
 
 function onMag(e) {
-  if (!state.compassHeading) state.compassHeading = 360-e.heading;
+  if (!state.compassHeading) state.compassHeading = e.heading;
 
   //if (a+180)mod 360 == b then
   //return (a+b)/2 mod 360 and ((a+b)/2 mod 360) + 180 (they are both the solution, so you may choose one depending if you prefer counterclockwise or clockwise direction)
