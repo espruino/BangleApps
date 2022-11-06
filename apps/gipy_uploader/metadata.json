@@ -1,0 +1,13 @@
+{
+  "id": "gipy_uploader",
+  "name": "Gipy uploader",
+  "version": "0.01",
+  "description": "uploads and convert gpx files for use with gipy",
+  "icon": "slidingtext.png",
+  "type": "app",
+  "tags": "tool.outdoors,gps",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "allow_emulator": false
+}
