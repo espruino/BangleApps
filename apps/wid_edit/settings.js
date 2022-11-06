@@ -122,17 +122,23 @@
       m.draw();
     }
 
+    const AREA_NAMES = [ "Top left", "Top right", "Bottom left", "Bottom right" ];
+    const AREAS = [ "tl", "tr", "bl", "br" ];
+
     const menu = {
       "": {"title": name(id),
         back: () => {
           redrawWidgets();
           mainMenu();
         } },
-      /*LANG*/"Side": {
-        value: (area === 'tl'),
-        format: tl => tl ? /*LANG*/"Left" : /*LANG*/"Right",
-        onchange: tl => {
-          area = tl ? "tl" : "tr";
+      /*LANG*/"Position": {
+        value: AREAS.indexOf(area),
+        format: v => AREA_NAMES[v],
+        min: 0,
+        max: AREAS.length - 1,
+        onchange: v => {
+          print("v", v);
+          area = AREAS[v];
           save();
         }
       },
