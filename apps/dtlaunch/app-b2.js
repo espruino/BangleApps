@@ -15,13 +15,8 @@ let settings = Object.assign({
 
 if (settings.oneClickExit) {
   var buttonWatch = setWatch(_=> returnToClock, BTN1);
-} 
-
-// taken from Icon Launcher with minor alterations
-if (settings.timeOut!="Off"){
-  let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
-  var timeoutToClock = setTimeout(returnToClock,time*1000);  
 }
+
 let s = require("Storage");
   var apps = s.list(/\.info$/).map(app=>{
   let a=s.readJSON(app,1);
@@ -185,5 +180,11 @@ const returnToClock = function() {
   delete settings;
   setTimeout(eval, 0, s.read(".bootcde"));
 };
+
+// taken from Icon Launcher with minor alterations
+if (settings.timeOut!="Off"){
+  let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+  var timeoutToClock = setTimeout(returnToClock,time*1000);  
+}
 
 } // end of app scope

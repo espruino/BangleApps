@@ -59,10 +59,10 @@
       min: 0,
       max: timeOutChoices.length-1,
       format: v => timeOutChoices[v],
-      onchange: m => {
-        settings.timeOut = m;
+      onchange: v => {
+        settings.timeOut = timeOutChoices[v];
         writeSettings();
       }
     },
   });
-})
+});
