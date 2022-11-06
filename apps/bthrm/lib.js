@@ -280,7 +280,11 @@ exports.enable = () => {
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      clearRetryTimeout(reason != "Connection Timeout");
+      
+      var retryTimeResetNeeded = true;
+      retryTimeResetNeeded &= reason != "Connection Timeout";
+      retryTimeResetNeeded &= reason != "No device found matching filters";
+      clearRetryTimeout(retryTimeResetNeeded);
       supportedCharacteristics["0x2a37"].active = false;
       startFallback();
       blockInit = false;
