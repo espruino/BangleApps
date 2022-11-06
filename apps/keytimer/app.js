@@ -1,9 +1,9 @@
-Bangle.BGTIMER_ACTIVE = true;
-const common = require("bgtimer-com.js");
+Bangle.keytimer_ACTIVE = true;
+const common = require("keytimer-com.js");
 const storage = require("Storage");
 
-const keypad = require("bgtimer-keys.js");
-const timerView = require("bgtimer-tview.js");
+const keypad = require("keytimer-keys.js");
+const timerView = require("keytimer-tview.js");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

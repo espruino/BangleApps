@@ -58,7 +58,7 @@ let StartButton = {
         common.state.wasRunning = true;
         common.state.running = true;
         feedback(true);
-        require('bgtimer-tview.js').show(common);
+        require('keytimer-tview.js').show(common);
     }
 };
 

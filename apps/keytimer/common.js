@@ -1,7 +1,7 @@
 const storage = require("Storage");
 const heatshrink = require("heatshrink");
 
-exports.STATE_PATH = "bgtimer.state.json";
+exports.STATE_PATH = "keytimer.state.json";
 
 exports.BUTTON_ICONS = {
     play: heatshrink.decompress(atob("jEYwMAkAGBnACBnwCBn+AAQPgAQPwAQP8AQP/AQXAAQPwAQP8AQP+AQgICBwQUCEAn4FggyBHAQ+CIgQ")),

@@ -40,7 +40,7 @@ let config = Object.assign({
     //    false = no shortcut
     //    '#LAUNCHER' = open the launcher
     //    any other string = name of app to open
-    'stlap', 'bgtimer', 'pomoplus', 'alarm',
+    'stlap', 'keytimer', 'pomoplus', 'alarm',
     'rpnsci', 'calendar', 'torch', 'weather'
   ],
 

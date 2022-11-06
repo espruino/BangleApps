@@ -39,7 +39,7 @@ function drawTimer() {
             else return `${parseInt(minutes)}:${pad(seconds)}`;
         })(), g.getWidth() / 2, g.getHeight() / 2)
 
-    if (timeLeft <= 0) load('bgtimer-ring.js');
+    if (timeLeft <= 0) load('keytimer-ring.js');
 }
 
 let timerInterval;
@@ -81,7 +81,7 @@ exports.touch = (button, xy) => {
         common.state.setTime = setTime;
         common.state.inputString = inputString;
         clearTimerInterval();
-        require('bgtimer-keys.js').show(common);
+        require('keytimer-keys.js').show(common);
     } else {
         if (common.state.running) {
             //Record the exact moment that we paused

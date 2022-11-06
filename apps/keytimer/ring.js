@@ -1,4 +1,4 @@
-const common = require('bgtimer-com.js');
+const common = require('keytimer-com.js');
 
 Bangle.loadWidgets()
 Bangle.drawWidgets()
