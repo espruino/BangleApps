@@ -154,8 +154,8 @@ exports.enable = () => {
               src: "bthrm"
             };
 
-            log("Emitting HRM", repEvent);
-            Bangle.emit("HRM_int", repEvent);
+            log("Emitting aggregated HRM", repEvent);
+            Bangle.emit("HRM_R", repEvent);
           }
 
           var newEvent = {
@@ -538,35 +538,33 @@ exports.enable = () => {
     };
 
     if (settings.replace){
+      // register a listener for original HRM events and emit as HRM_int
       Bangle.on("HRM", (e) => {
         e.modified = true;
         Bangle.emit("HRM_int", e);
+        if (fallbackActive){
+          // if fallback to internal HRM is active, emit as HRM_R to which everyone listens
+          Bangle.emit("HRM_R", e);
+        }
       });
 
-      Bangle.origOn = Bangle.on;
-      Bangle.on = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origOn("HRM_int", callback);
-        } else {
-          Bangle.origOn(name, callback);
-        }
-      };
+      // force all apps wanting to listen to HRM to actually get events for HRM_R
+      Bangle.on = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.on);
 
-      Bangle.origRemoveListener = Bangle.removeListener;
-      Bangle.removeListener = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origRemoveListener("HRM_int", callback);
-        } else {
-          Bangle.origRemoveListener(name, callback);
-        }
-      };
-
+      Bangle.removeListener = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.removeListener);
     }
 
     Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
-
       Bangle.setHRMPower = function(isOn, app) {
         log("setHRMPower for " + app + ": " + (isOn?"on":"off"));
         if (settings.enabled){
