@@ -9,7 +9,6 @@
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
 
-  console.log(settings);
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
