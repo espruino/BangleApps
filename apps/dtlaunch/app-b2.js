@@ -14,7 +14,7 @@ let settings = Object.assign({
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
 if (settings.oneClickExit) {
-  var buttonWatch = setWatch(_=> returnToClock, BTN1);
+  var buttonWatch = setWatch(_=> returnToClock(), BTN1, {edge: 'falling'});
 }
 
 let s = require("Storage");
@@ -142,42 +142,19 @@ Bangle.on("touch",touchListenerDt);
 
 const returnToClock = function() {
   Bangle.setUI();
-  clearWatch(buttonWatch);
-  delete buttonWatch;
-  clearTimeout(timeoutToClock);
-  delete timeoutToClock;
-  delete s;
-  delete a;
-  delete n;
-  delete Napps;
-  delete Npages;
-  delete maxPage;
-  delete selected;
-  delete oldselected;
-  delete page;
-  delete XOFF;
-  delete YOFF;
-  delete x;
-  delete y;
-  delete txt;
-  delete lineY;
-  delete line;
-  delete c;
-  delete O;
-  delete x1;
-  delete x2;
-  delete i;
-  delete drawIcon;
-  delete drawPage;
-  delete isTouched;
+  if (buttonWatch) {
+    clearWatch(buttonWatch);
+    delete buttonWatch;
+  }
+  if (timeoutToClock) {
+    clearTimeout(timeoutToClock);
+    delete timeoutToClock;
+  }
   Bangle.removeListener("swipe", swipeListenerDt);
-  delete swipeListenerDt;
   Bangle.removeListener("touch", touchListenerDt);
-  delete touchListenerDt;
   var apps = [];
   delete apps;
   delete returnToClock;
-  delete settings;
   setTimeout(eval, 0, s.read(".bootcde"));
 };
 
