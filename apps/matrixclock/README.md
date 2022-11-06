@@ -5,10 +5,11 @@
 ## Settings
 Please use the setting->App->Matrix Clock Menu to change the settings
 
-| Setting   | Description                                                                                                        |
-|-----------|--------------------------------------------------------------------------------------------------------------------|
-| Color     | by default set to **'theme'** to follow the theme colors. Selector also offers a selection of other colour schemes |
-| Intensity | Changes the number of matrix streams that are falling                                                              |
+| Setting     | Description                                                                                                        |
+|-------------|--------------------------------------------------------------------------------------------------------------------|
+| Color       | By default set to **'theme'** to follow the theme colors. Selector also offers a selection of other colour schemes |
+| Time Format | Choose between 12 hour and 24 hour time format                                                                     |
+| Intensity   | Changes the number of matrix streams that are falling                                                              |
 
 ## Colour Themes
 

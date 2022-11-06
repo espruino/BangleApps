@@ -11,3 +11,13 @@
 0.11: Performance improvements.
 0.12: Implements a 2D menu.
 0.13: Clicks < 24px are for widgets, if fullscreen mode is disabled.
+0.14: Adds humidity to weather data.
+0.15: Added option for a dynamic mode to show widgets only if unlocked.
+0.16: You can now show your agenda if your calendar is synced with Gadgetbridge.
+0.17: Fix - Step count was no more shown in the menu.
+0.18: Set timer for an agenda entry by simply clicking in the middle of the screen. Only one timer can be set.
+0.19: Fix - Compatibility with "Digital clock widget"
+0.20: Better handling of async data such as getPressure.
+0.21: On the default menu the week of year can be shown.
+0.22: Use the new clkinfo module for the menu.
+0.23: Feedback of apps after run is now optional and decided by the corresponding clkinfo.

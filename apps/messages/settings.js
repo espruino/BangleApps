@@ -1,11 +1,15 @@
 (function(back) {
+  const iconColorModes = ['color', 'mono'];
+
   function settings() {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
     if (settings.vibrate===undefined) settings.vibrate=":";
     if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
     if (settings.repeat===undefined) settings.repeat=4;
+    if (settings.vibrateTimeout===undefined) settings.vibrateTimeout=60;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
     if (settings.maxMessages===undefined) settings.maxMessages=3;
+    if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -28,6 +32,12 @@
       min: 0, max: 10,
       format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
+    },
+    /*LANG*/'Vibrate timer': {
+      value: settings().vibrateTimeout,
+      min: 0, max: settings().maxUnreadTimeout, step : 10,
+      format: v => v?v+"s":/*LANG*/"Off",
+      onchange: v => updateSetting("vibrateTimeout", v)
     },
     /*LANG*/'Unread timer': {
       value: settings().unreadTimeout,
@@ -57,10 +67,21 @@
       value: !!settings().quietNoAutOpn,
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
+    /*LANG*/'Disable auto-open': {
+      value: !!settings().noAutOpn,
+      onchange: v => updateSetting("noAutOpn", v)
+    },
     /*LANG*/'Widget messages': {
       value:0|settings().maxMessages,
-      min: 1, max: 5,
+      min: 0, max: 5,
+      format: v => v ? v :/*LANG*/"Hide",
       onchange: v => updateSetting("maxMessages", v)
+    },
+    /*LANG*/'Icon color mode': {
+      value: Math.max(0,iconColorModes.indexOf(settings().iconColorMode)),
+      min: 0, max: iconColorModes.length - 1,
+      format: v => iconColorModes[v],
+      onchange: v => updateSetting("iconColorMode", iconColorModes[v])
     }
   };
   E.showMenu(mainmenu);

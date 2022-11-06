@@ -767,6 +767,24 @@ function draw() {
 g.clear();
 current_moonphase = getMoonPhase();
 
+Bangle.setUI("clockupdown", btn => {
+  if (btn==0) {
+    if (!processing) {
+        if (!modeswitch) {
+            modeswitch = true;
+            if (mode == "planetary") mode = "extras";
+            else mode = "planetary";
+        }
+        else
+            modeswitch = false;
+    }
+  } else {
+    if (!processing)
+        ready_to_compute = true;
+  }
+});
+
+
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -799,23 +817,6 @@ Bangle.setGPSPower(1);
 // Show launcher when button pressed
 Bangle.setClockMode();
 
-Bangle.setUI("clockupdown", btn => {
-  if (btn==0) {
-    if (!processing) {
-        if (!modeswitch) {
-            modeswitch = true;
-            if (mode == "planetary") mode = "extras";
-            else mode = "planetary";
-        }
-        else
-            modeswitch = false;
-    }
-  } else {
-    if (!processing)
-        ready_to_compute = true;
-  }
-});
-
 setWatch(function () {
     if (!astral_settings.astral_default) {
         colours_switched = true;
@@ -833,7 +834,7 @@ Bangle.on('mag', function (m) {
     if (isNaN(m.heading))
         compass_heading = "---";
     else
-        compass_heading = 360 - Math.round(m.heading);
+        compass_heading = Math.round(m.heading);
   //  g.setColor("#000000");
    // g.fillRect(160, 10, 160, 20);
     g.setColor(display_colour);

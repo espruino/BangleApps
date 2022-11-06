@@ -324,7 +324,7 @@ and which gives information about the app for the Launcher.
 ```
 
 * name, icon and description present the app in the app loader.
-* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
+* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher`, `bluetooth` or empty.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
 

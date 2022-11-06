@@ -12,11 +12,10 @@ when the time for the last slide is approaching,
 the button becomes red, when it passed,
 the time will go on for another half a minute and stop automatically.
 
-The only way to upload personalized timings is
-by uploading a CSV to the bangle (i.e. from the IDE),
-in the future I'll possibly figure out a better way.
+You can set personalized timings from the web interface
+by uploading a CSV to the bangle (floppy disk button in the app loader).
 
-Each line in the file (which must be called `presentation_timer.csv`)
+Each line in the file (`presentation_timer.csv`)
 contains the time in minutes at which the slide
 is supposed to finish and the slide number,
 separated by a semicolon.
@@ -25,8 +24,7 @@ is lasting until 1 minutes 30 seconds (yes it's decimal),
 after another slide will start.
 The only requirement is that timings are increasing,
 so slides number don't have to be consecutive,
-some can be skipped and they can even be short texts
-(be careful with that, I didn't test it).
+some can be skipped and they can even be short texts.
 
 At the moment the app is just quick and dirty
 but it should do its job.

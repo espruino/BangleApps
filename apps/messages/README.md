@@ -14,7 +14,9 @@ and `Messages`:
 * `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
 * `Vibrate for calls` - This is the pattern of buzzes that should be made when an incoming call is received
 * `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
-* `Unread Timer` - When a new message is received we go into the Messages app.
+* `Vibrate Timer` - When a new message is received when in a non-clock app, we display the message icon and
+buzz every `Repeat` seconds. This is how long we continue to do that.
+* `Unread Timer` - When a new message is received when showing the clock we go into the Messages app.
 If there is no user input for this amount of time then the app will exit and return
 to the clock where a ringing bell will be shown in the Widget bar.
 * `Min Font` - The minimum font size used when displaying messages on the screen. A bigger font
@@ -23,7 +25,7 @@ it starts getting clipped.
 * `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
 * `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
 * `Flash Icon` - Toggle flashing of the widget icon.
-* `Widget messages` - The maximum amount of message icons to show on the widget.
+* `Widget messages` - The maximum amount of message icons to show on the widget, or `Hide` the widget completely.
 
 ## New Messages
 
@@ -53,6 +55,24 @@ _2. What the notify icon looks like (it's touchable on Bangle.js2!)_
 
 ![](screenshot-notify.gif)
 
+
+## Events (for app/widget developers)
+
+When a new message arrives, a `"message"` event is emitted, you can listen for
+it like this:
+
+```js
+myMessageListener = Bangle.on("message", (type, message)=>{
+  if (message.handled) return; // another app already handled this message
+  // <type> is one of "text", "call", "alarm", "map", "music", or "clearAll"
+  if (type === "clearAll") return; // not a message
+  // see `messages/lib.js` for possible <message> formats
+  // message.t could be "add", "modify" or "remove"
+  E.showMessage(`${message.title}\n${message.body}`, `${message.t} ${type} message`);
+  // You can prevent the default `message` app from loading by setting `message.handled = true`:
+  message.handled = true;
+});
+```
 
 
 ## Requests

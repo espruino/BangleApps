@@ -292,17 +292,8 @@ function queueDraw() {
 
 
 log_debug("starting..");
-g.clear();
-Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 loadSettings();
 loadLocation();
-
 
 
 if(settings.autoCycle || settings.sideTap==0)
@@ -317,6 +308,9 @@ else{
   Bangle.setUI("clock");
 }
 
+
+Bangle.loadWidgets();
+require("widget_utils").hide();
 
 
 

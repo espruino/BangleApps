@@ -1,3 +1,4 @@
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 
 var s = Object.assign({
@@ -123,7 +124,7 @@ function drawMinutes() {
     var d = new Date();
     var hours = s.MODE24 ? d.getHours().toString().padStart(2, ' ') : ((d.getHours() + 24) % 12 || 12).toString().padStart(2, ' ');
     var minutes = d.getMinutes().toString().padStart(2, '0');
-    var textColor = NRF.getSecurityStatus().connected ? '#fff' : '#f00';
+    var textColor = NRF.getSecurityStatus().connected ? '#99f' : '#fff';
     var size = 50;
     var clock_x = (w - 20) / 2;
     if (dimSeconds) {
@@ -307,4 +308,4 @@ NRF.on('disconnect', BTevent);
 
 dimSeconds = Bangle.isLocked();
 drawWatch();
-Bangle.setUI("clock");
+

@@ -139,6 +139,8 @@
   // options = {id,timeout,xpath}
   Bangle.http = (url,options)=>{
     options = options||{};
+    if (!NRF.getSecurityStatus().connected)
+      return Promise.reject("Not connected to Bluetooth");
     if (Bangle.httpRequest === undefined)
       Bangle.httpRequest={};
     if (options.id === undefined) {
@@ -150,6 +152,9 @@
     //send the request
     var req = {t: "http", url:url, id:options.id};
     if (options.xpath) req.xpath = options.xpath;
+    if (options.method) req.method = options.method;
+    if (options.body) req.body = options.body;
+    if (options.headers) req.headers = options.headers;
     gbSend(req);
     //create the promise
     var promise = new Promise(function(resolve,reject) {

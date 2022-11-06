@@ -402,6 +402,7 @@ if (process.env.HWVERSION==1) {
   swipeEnabled = false;
   drawGlobal();
 } else { // touchscreen?
+  setWatch(_ => {load();}, BTN1, {edge:'falling'}); // Exit with a short press to physical button
   selected = "NONE";
   swipeEnabled = true;
   prepareScreen(numbers, numbersGrid, COLORS.DEFAULT);
@@ -419,26 +420,20 @@ if (process.env.HWVERSION==1) {
       }
     }
   });
-  var lastX = 0, lastY = 0;
-  Bangle.on('drag', (e) => {
-    if (!e.b) {
-      if (lastX > 50) { // right
-        drawSpecials();
-      } else if (lastX < -50) { // left
-        drawOperators();
-      } else if (lastY > 50) { // down
-        drawNumbers();
-      } else if (lastY < -50) { // up
-        drawNumbers();
-      }
-      lastX = 0;
-      lastY = 0;
-    } else {
-      lastX = lastX + e.dx;
-      lastY = lastY + e.dy;
+  Bangle.on('swipe', (LR, UD) => {
+    if (LR == 1) { // right
+      drawSpecials();
+    }
+    if (LR == -1) { // left
+      drawOperators();
+    }
+    if (UD == 1) { // down
+      drawNumbers();
+    }
+    if (UD == -1) { // up
+      drawNumbers();
     }
   });
 }
-
 
 displayOutput(0);

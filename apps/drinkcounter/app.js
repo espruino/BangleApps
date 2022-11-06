@@ -3,6 +3,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 require("Font8x16").add(Graphics);
 
+const BANGLEJS2 = process.env.HWVERSION == 2;
 const SETTINGSFILE = "drinkcounter.json";
 setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
@@ -154,7 +155,9 @@ function updateDrinks(){
 	} 
 
 	g.setBgColor(g.theme.bg).setColor(g.theme.fg);
-	g.drawImage(icoReset,145,145);
+	if (BANGLEJS2) { 
+		g.drawImage(icoReset,145,145);
+	}	
 	
 	drinkStatus.firstDrinkTime = firstDrinkTime; 
 	settings_file = require("Storage").open("drinkcounter.status.json", "w");
@@ -184,6 +187,10 @@ function addDrink(){
 function removeDrink(){
 	if (drinks[activeDrink] > 0) drinks[activeDrink] = drinks[activeDrink] - 1;
 	updateDrinks();
+	
+	if ((!BANGLEJS2) && (drinks[0] == 0) && (drinks[1] == 0) && (drinks[2] == 0)) {
+		resetDrinksFn()
+	}
 }
 
 function previousDrink(){
@@ -203,61 +210,74 @@ function showDrinks() {
 	g.drawImage(icoShot,80,100);
 }
 
-function initDragEvents() {
-  Bangle.on("drag", e => {
-    if (!drag) { // start dragging
-      drag = {x: e.x, y: e.y};
-    } else if (!e.b) { // released
-      const dx = e.x-drag.x, dy = e.y-drag.y;
-      drag = null;
-      if (Math.abs(dx)>Math.abs(dy)+10) {
-        // horizontal
-		if (dx < dy) {
-			//console.log("left " + dx + " " + dy);
-			previousDrink();
-		} else {
-			//console.log("right " + dx + " " + dy);
-			nextDrink();
-		}
-      } else if (Math.abs(dy)>Math.abs(dx)+10) {
-        // vertical
-		if (dx < dy) {
-			//console.log("down " + dx + " " + dy);
-			removeDrink();
-		} else {
-			//console.log("up " + dx + " " + dy);
-			addDrink();
-		}
-    } else {
-		//console.log("tap " + e.x + " " + e.y);
-		if (e.x > 145 && e.y > 145) {
-			g.clearRect(0,34,176,176); //Clear
-			resetDrinks = E.showPrompt("Reset drinks?", {
-				title: "Confirm",
-				buttons: { Yes: true, No: false },
-			});
-			resetDrinks.then((confirm) => {
-				if (confirm) {
-					for (let i = 0; i <= maxDrinks; i++) {
-						drinks[i] = 0;
-					}
-					//console.log("reset to default");
-				}
-				//console.log("reset " + confirm);  
-				firstDrinkTime = null;
-				showDrinks();
-				updateDrinks();
-				updateTime();
-				updateFirstDrinkTime();
-			});
-		}
-	}
-  }
-});
+function resetDrinksFn() {
+					g.clearRect(0,34,176,176); //Clear
+					resetDrinks = E.showPrompt("Reset drinks?", {
+						title: "Confirm",
+						buttons: { Yes: true, No: false },
+					});
+					resetDrinks.then((confirm) => {
+						if (confirm) {
+							for (let i = 0; i <= maxDrinks; i++) {
+								drinks[i] = 0;
+							}
+							//console.log("reset to default");
+						}
+						//console.log("reset " + confirm);  
+						firstDrinkTime = null;
+						showDrinks();
+						updateDrinks();
+						updateTime();
+						updateFirstDrinkTime();
+					});
 }
 
-loadMySettings();
 
+function initDragEvents() {
+	
+if (BANGLEJS2) { 	
+	Bangle.on("drag", e => {
+		if (!drag) { // start dragging
+			drag = {x: e.x, y: e.y};
+		} else if (!e.b) { // released
+			const dx = e.x-drag.x, dy = e.y-drag.y;
+			drag = null;
+			if (Math.abs(dx)>Math.abs(dy)+10) {
+				// horizontal
+				if (dx < dy) {
+					//console.log("left " + dx + " " + dy);
+					previousDrink();
+				} else {
+					//console.log("right " + dx + " " + dy);
+					nextDrink();
+				}
+			} else if (Math.abs(dy)>Math.abs(dx)+10) {
+				// vertical
+				if (dx < dy) {
+					//console.log("down " + dx + " " + dy);
+					removeDrink();
+				} else {
+					//console.log("up " + dx + " " + dy);
+					addDrink();
+				}
+			} else {
+				//console.log("tap " + e.x + " " + e.y);
+				if (e.x > 145 && e.y > 145) {
+					resetDrinksFn();
+				}
+			}
+		}
+	});
+	} else {
+			setWatch(addDrink, BTN1, { repeat: true, debounce:50 });
+			setWatch(removeDrink, BTN3, { repeat: true, debounce:50 });
+			setWatch(previousDrink, BTN4, { repeat: true, debounce:50 });
+			setWatch(nextDrink, BTN5, { repeat: true, debounce:50 });
+		}
+}
+
+
+loadMySettings();
 showDrinks();
 
 

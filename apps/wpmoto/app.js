@@ -1,6 +1,6 @@
 var loc = require("locale");
 
-var waypoints = require("Storage").readJSON("waypoints.json") || [];
+var waypoints = require("waypoints").load();
 var wp = waypoints[0];
 if (wp == undefined) wp = {name:"NONE"};
 var wp_bearing = 0;
@@ -134,7 +134,7 @@ function read_heading() {
     Bangle.setCompassPower(1);
     var d = 0;
     var m = Bangle.getCompass();
-    if (!isNaN(m.heading)) d = -m.heading;
+    if (!isNaN(m.heading)) d = m.heading;
     heading = d;
   }
 
@@ -196,7 +196,7 @@ function addCurrentWaypoint() {
 }
 
 function saveWaypoints() {
-  require("Storage").writeJSON("waypoints.json", waypoints);
+  require("waypoints").save(waypoints);
 }
 
 function deleteWaypoint(w) {
