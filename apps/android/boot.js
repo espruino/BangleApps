@@ -132,6 +132,8 @@
           request.r(event); //r = resolve function
       },
       "gps": function() {
+        const settings = require("Storage").readJSON("android.settings.json",1)||{};
+        if (!settings.overwriteGps) return;
         delete event.t;
         event.satellites = NaN;
         event.course = NaN;
