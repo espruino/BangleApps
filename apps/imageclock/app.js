@@ -617,6 +617,7 @@ let firstDraw = true;
         firstDraw=false;
         requestRefresh = false;
         endPerfLog("initialDraw");
+        if (!Bangle.uiRemove) setUi();
       }).catch((e)=>{
         print("Error during drawing", e);
       });
@@ -809,47 +810,49 @@ let firstDraw = true;
   
   handleLock(Bangle.isLocked(), true);
 
-  Bangle.setUI({ 
-    mode : "clock",
-    remove : function() {
-      //print("remove calls");
-      // Called to unload all of the clock app
-      Bangle.setHRMPower(0, "imageclock");
-      Bangle.setBarometerPower(0, 'imageclock');
+  let setUi = function(){
+    Bangle.setUI({ 
+      mode : "clock",
+      remove : function() {
+        //print("remove calls");
+        // Called to unload all of the clock app
+        Bangle.setHRMPower(0, "imageclock");
+        Bangle.setBarometerPower(0, 'imageclock');
 
-      Bangle.removeListener('swipe', handleSwipe);
-      Bangle.removeListener('lock', handleLock);
-      Bangle.removeListener('charging', handleCharging);
-      Bangle.removeListener('HRM', handleHrm);
-      Bangle.removeListener('pressure', handlePressure);
+        Bangle.removeListener('swipe', handleSwipe);
+        Bangle.removeListener('lock', handleLock);
+        Bangle.removeListener('charging', handleCharging);
+        Bangle.removeListener('HRM', handleHrm);
+        Bangle.removeListener('pressure', handlePressure);
 
-      if (deferredTimout) clearTimeout(deferredTimout);
-      if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
-      if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
+        if (deferredTimout) clearTimeout(deferredTimout);
+        if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
+        if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
 
-      for (let i of unlockedDrawInterval){
-        //print("Clearing unlocked", i);
-        clearInterval(i);
+        for (let i of global.unlockedDrawInterval){
+          //print("Clearing unlocked", i);
+          clearInterval(i);
+        }
+        delete global.unlockedDrawInterval;
+        for (let i of global.lockedDrawInterval){
+          //print("Clearing locked", i);
+          clearInterval(i);
+        }
+        delete global.lockedDrawInterval;
+        delete global.showWidgets;
+        delete global.firstDraw;
+
+        delete Bangle.printPerfLog;
+        if (settings.perflog){
+          delete Bangle.resetPerfLog;
+          delete performanceLog;
+        }
+
+        cleanupDelays();
+        restoreWidgetDraw();
       }
-      delete unlockedDrawInterval;
-      for (let i of lockedDrawInterval){
-        //print("Clearing locked", i);
-        clearInterval(i);
-      }
-      delete lockedDrawInterval;
-      delete showWidgets;
-      delete firstDraw;
-
-      delete Bangle.printPerfLog;
-      if (settings.perflog){
-        delete Bangle.resetPerfLog;
-        delete performanceLog;
-      }
-
-      cleanupDelays();
-      restoreWidgetDraw();
-    }
-  });
+    });
+  }
 
   Bangle.loadWidgets();
   clearWidgetsDraw();
