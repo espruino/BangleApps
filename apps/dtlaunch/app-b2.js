@@ -12,8 +12,7 @@ let settings = Object.assign({
   swipeExit: false,
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
-if( settings.oneClickExit)
-  let buttonWatch = setWatch(_=> returnToClock, BTN1);
+if (settings.oneClickExit) let buttonWatch = setWatch(_=> returnToClock, BTN1);
   
 let s = require("Storage");
   var apps = s.list(/\.info$/).map(app=>{
