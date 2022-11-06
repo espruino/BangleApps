@@ -8,6 +8,7 @@
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "storage": [],
   "custom": "custom.html",
   "allow_emulator": false
 }
