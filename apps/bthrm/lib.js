@@ -109,6 +109,7 @@ exports.enable = () => {
           if (supportedCharacteristics["0x2a37"].active) stopFallback();
           if (bpmTimeout) clearTimeout(bpmTimeout);
           bpmTimeout = setTimeout(()=>{
+            bpmTimeout = undefined;
             supportedCharacteristics["0x2a37"].active = false;
             startFallback();
           }, 3000);
