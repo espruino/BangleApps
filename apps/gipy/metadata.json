@@ -11,6 +11,7 @@
   "screenshots": [],
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name":"gipy.app.js","url":"app.js"},
     {"name":"gipy.settings.js","url":"settings.js"},
