@@ -57,8 +57,6 @@ function draw() {
   queueDraw();
 }
 
-Bangle.loadWidgets();
-
 // Clear the screen once, at startup
 g.clear();
 // draw immediately at first
@@ -74,4 +72,5 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.setUI("clock");
+Bangle.loadWidgets();
 Bangle.drawWidgets();
