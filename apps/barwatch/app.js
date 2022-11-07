@@ -13,24 +13,22 @@ function queueDraw() {
 
 function draw() {
   g.reset();
-  g.setBgColor(0, 1, 1);
+
+  if(g.theme.dark){
+    g.setColor(1,1,1);
+  }else{
+    g.setColor(0,0,0);
+  }
 
   // work out how to display the current time
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
-  //h = 13;
-  //m = 59;
 
-  var battery = E.getBattery() / 100;
-  g.setColor(1-battery,0+battery,0);
-  //console.log(battery);
-  g.setColor(1,1,1);
-
+  // hour bars
   var bx_offset = 10, by_offset = 35;
   var b_width = 8, b_height = 60;
   var b_space = 5;
 
-  // hour bars
   for(var i=0; i<h; i++){
     if(i > 11){
       by_offset = 105;
@@ -75,6 +73,5 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-
-Bangle.drawWidgets();
 Bangle.setUI("clock");
+Bangle.drawWidgets();

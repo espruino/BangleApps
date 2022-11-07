@@ -5,7 +5,7 @@
   "version":"0.01",
   "description": "A watch that displays the time using bars. One bar for each hour.",
   "readme": "README.md",
-  "icon": "barwatch.png",
+  "icon": "screenshot.png",
   "tags": "clock",
   "type": "clock",
   "allow_emulator":true,
