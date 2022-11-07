@@ -160,6 +160,10 @@ window.addEventListener('load', (event) => {
     <div class="column col-12">
     <div class="form-group">
       <label class="form-switch">
+        <input type="checkbox" id="usage_stats" ${SETTINGS.sendUsageStats?"checked":""}>
+        <i class="form-icon"></i> Send app analytics to banglejs.com
+      </label>
+      <label class="form-switch">
         <input type="checkbox" id="remember_device">
         <i class="form-icon"></i> Don't ask again
       </label>
@@ -169,7 +173,8 @@ window.addEventListener('load', (event) => {
   showPrompt("Which Bangle.js?",html,{},false);
   htmlToArray(document.querySelectorAll(".devicechooser")).forEach(button => {
     button.addEventListener("click",event => {
-      let rememberDevice = document.getElementById("remember_device").checked;
+      let rememberDevice = !!document.getElementById("remember_device").checked;
+      SETTINGS.sendUsageStats = !!document.getElementById("usage_stats").checked;
 
       let button = event.currentTarget;
       let deviceId = button.getAttribute("deviceid");
