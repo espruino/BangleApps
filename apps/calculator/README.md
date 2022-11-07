@@ -21,7 +21,7 @@ Bangle.js 1
 
 Bangle.js 2
 - Swipes to change visible buttons
-- Click physical button exit
+- Click physical button to exit
 - Press upper left corner of screen to exit (where the red back button would be)
 ## Creator
 
