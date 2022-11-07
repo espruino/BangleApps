@@ -18,7 +18,7 @@
         dateStr += entry.durationInSeconds < 86400 ? "/ " + locale.time(date,1) : "";
 
         agendaItems.items.push({
-          name: "agendaEntry-" + i,
+          name: null,
           get: () => ({ text: title + "\n" + dateStr, img: null}),
           show: function() { agendaItems.items[i].emit("redraw"); },
           hide: function () {}

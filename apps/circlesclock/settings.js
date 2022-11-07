@@ -68,6 +68,11 @@
           return x + 's';
         },
         onchange: x => save('updateInterval', x),
+      },
+      /*LANG*/'show big weather': {
+        value: !!settings.showBigWeather,
+        format: () => (settings.showBigWeather ? 'Yes' : 'No'),
+        onchange: x => save('showBigWeather', x),
       }
     };
     E.showMenu(menu);

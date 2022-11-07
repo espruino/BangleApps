@@ -13,7 +13,7 @@ var loc = {
   distance: [
     require("locale").distance,
     (m) => {
-      return (m / 1.852).toFixed(3) + "nm ";
+      return (m / 1852).toFixed(3) + "nm ";
     }
   ]
 };
@@ -21,7 +21,7 @@ var loc = {
 
 function drawCompass(course) {
   if (!candraw) return;
-  g.setColor(g.theme.fg);
+  g.reset().clearRect(0, 24, 175, 71);
   g.setFont("Vector", 18);
   var start = course - 90;
   if (start < 0) start += 360;
@@ -43,7 +43,7 @@ function drawCompass(course) {
     }
     xpos += 12;
   }
-  if (wpindex != 0) {
+  if (wpindex >= 0) {
     var bpos = brg - course;
     if (bpos > 180) bpos -= 360;
     if (bpos < -180) bpos += 360;
@@ -106,9 +106,8 @@ function distance(a, b) {
 var selected = false;
 
 function drawN() {
-  g.clearRect(0, 89, 175, 175);
+  g.reset().clearRect(0, 89, 175, 175);
   var txt = loc.speed[locindex](speed);
-  g.setColor(g.theme.fg);
   g.setFont("6x8", 2);
   g.drawString("o", 68, 87);
   g.setFont("6x8", 1);
@@ -117,10 +116,8 @@ function drawN() {
   var cs = course.toString().padStart(3, "0");
   g.drawString(cs, 2, 89);
   g.drawString(txt.substring(0, txt.length - 3), 92, 89);
-  g.setColor(g.theme.fg);
   g.setFont("Vector", 18);
   var bs = brg.toString().padStart(3, "0");
-  g.setColor(g.theme.fg);
   g.drawString("Brg:", 1, 128);
   g.drawString("Dist:", 1, 148);
   g.setColor(selected ? g.theme.bgH : g.theme.bg);
@@ -241,7 +238,7 @@ function nextwp(inc) {
 }
 
 function doselect() {
-  if (selected && wpindex != 0 && waypoints[wpindex].lat === undefined && savedfix.fix) {
+  if (selected && wpindex >= 0 && waypoints[wpindex].lat === undefined && savedfix.fix) {
     waypoints[wpindex] = {
       name: "@" + wp.name,
       lat: savedfix.lat,

@@ -5,7 +5,6 @@
   );
   
   if (settings.warnEnabled){
-    print("Charge warning enabled");
     var chargingInterval;
 
     function handleCharging(charging){
@@ -47,5 +46,14 @@
       if (!Bangle.isCharging() && current < v) v = current;
       return v;
     };
+  }
+  
+  if (settings.autoCalibration){
+    let chargeStart;
+    Bangle.on("charging", (charging)=>{
+      if (charging) chargeStart = Date.now();
+      if (chargeStart && !charging && (Date.now() - chargeStart > 1000*60*60*3)) require("powermanager").setCalibration();
+      if (!charging) chargeStart = undefined;
+    });
   }
 })();

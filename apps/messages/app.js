@@ -68,8 +68,7 @@ function saveMessages() {
 
 function showMapMessage(msg) {
   active = "map";
-  var m;
-  var distance, street, target, eta;
+  var m, distance, street, target, eta;
   m=msg.title.match(/(.*) - (.*)/);
   if (m) {
     distance = m[1];
@@ -379,7 +378,7 @@ function checkMessages(options) {
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
-      else g.setColor(g.theme.fg);
+      else g.setBgColor(g.theme.bg).setColor(g.theme.fg);
       g.clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       if (!msg) return;
       var x = r.x+2, title = msg.title, body = msg.body;

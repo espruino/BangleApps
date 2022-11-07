@@ -71,3 +71,5 @@
       Setting to hide widget
       Add custom event handlers to prevent default app form loading
       Move WIDGETS.messages.buzz() to require("messages").buzz()
+0.52: Fix require("messages").buzz() regression
+      Fix background color in messages list after one unread message is shown

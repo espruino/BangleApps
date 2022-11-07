@@ -5404,15 +5404,6 @@ declare class Bangle {
   static getHealthStatus(range?: "current" | "last" | "day"): HealthStatus;
 
   /**
-   * Feature flag - If true, this Bangle.js firmware reads `setting.json` and
-   * modifies beep & buzz behaviour accordingly (the bootloader doesn't need to do
-   * it).
-   * @returns {boolean}
-   * @url http://www.espruino.com/Reference#l_Bangle_F_BEEPSET
-   */
-  static F_BEEPSET: boolean;
-
-  /**
    * Reads debug info
    * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_dbg

@@ -29,3 +29,8 @@
       Use default boolean formatter in custom menu and directly apply config if useful
       Allow recording unmodified internal HR
       Better connection retry handling
+0.13: Less time used during boot if disabled
+0.14: Allow bonding (Debug menu)
+      Prevent mixing of BT and internal HRM events if both are enabled
+      Always use a grace period (default 0 ms) to decouple some connection steps
+      Device not found errors now utilize increasing timeouts

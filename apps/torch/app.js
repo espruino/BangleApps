@@ -17,4 +17,8 @@ g.fillRect(0,0,g.getWidth(),g.getHeight());
 setWatch(()=>load(), BTN1);
 if (global.BTN2) setWatch(()=>load(), BTN2);
 if (global.BTN3) setWatch(()=>load(), BTN3);
-
+// Pressing upper left corner turns off (where red back button would be)
+Bangle.setUI({
+  mode : 'custom',
+  back : load
+});
