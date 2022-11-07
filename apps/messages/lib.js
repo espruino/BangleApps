@@ -159,7 +159,7 @@ exports.buzz = function(msgSrc) {
     exports.buzzTimeout = setTimeout(()=>require("buzz").pattern(pattern), repeat*1000);
     var vibrateTimeout = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateTimeout;
     if (vibrateTimeout===undefined) vibrateTimeout=60;
-    if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopTimeout, vibrateTimeout*1000);
+    if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopBuzz, vibrateTimeout*1000);
   }
   return require("buzz").pattern(pattern);
 };

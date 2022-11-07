@@ -1,0 +1,15 @@
+{ "id": "primetime",
+  "name": "Prime Time Clock",
+  "version": "0.01",  
+  "type": "clock",
+  "description": "A clock that tells you the primes of the time",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],  
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"primetime.app.js","url":"primetime.js"},
+    {"name":"primetime.img","url":"primetime-icon.js","evaluate":true}
+  ]
+}

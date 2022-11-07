@@ -139,6 +139,8 @@
   // options = {id,timeout,xpath}
   Bangle.http = (url,options)=>{
     options = options||{};
+    if (!NRF.getSecurityStatus().connected)
+      return Promise.reject("Not connected to Bluetooth");
     if (Bangle.httpRequest === undefined)
       Bangle.httpRequest={};
     if (options.id === undefined) {

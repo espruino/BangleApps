@@ -1,0 +1,26 @@
+{
+    "id": "gallery",
+    "name": "Gallery",
+    "version": "0.02",
+    "description": "A gallery that lets you view images uploaded with the IDE (see README)",
+    "readme": "README.md",
+    "icon": "icon.png",
+    "type": "app",
+    "tags": "tools",
+    "supports": [
+        "BANGLEJS2",
+        "BANGLEJS"
+    ],
+    "allow_emulator": true,
+    "storage": [
+        {
+            "name": "gallery.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "gallery.img",
+            "url": "icon.js",
+            "evaluate": true
+        }
+    ]
+}

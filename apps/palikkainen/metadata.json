@@ -1,0 +1,16 @@
+{ "id": "palikkainen",
+  "name": "Palikkainen - A blocky watch face",
+  "shortName":"Palikkainen",
+  "version":"0.01",
+  "description": "A minimal watch face consisting of blocks.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"palikkainen.app.js","url":"app.js"},
+    {"name":"palikkainen.img","url":"app-icon.js","evaluate":true}
+  ]
+}

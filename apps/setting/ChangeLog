@@ -54,3 +54,8 @@
       Improve "Turn Off" user experience
 0.48: Allow reading custom themes from files
 0.49: Now reloads settings properly after 'Calibrate Battery'
+0.50: Add Bangle.js 2 touchscreen calibration - for 2v16 or 2v15 cutting edge builds
+0.51: Add setting for configuring a launcher
+0.52: Add option for left-handed users
+0.53: Ensure that when clock is set, clockHasWidgets is set correctly too
+0.54: If setting.json is corrupt, ensure it gets re-written
