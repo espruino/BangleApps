@@ -50,8 +50,8 @@ Once you have your gpx file you need to convert it to *gpc* which is my custom f
 They are smaller than gpx and reduce the number of computations left to be done on the watch.
 
 Two possibilities here :
-- easy : use [gipy uploader](../gipy_uploader)
-- hard : use [gpconv](https://github.com/wagnerf42/gpconv)
+- easy : upload from here
+- hard : use an external tool : [gpconv](https://github.com/wagnerf42/gpconv)
     * you need to compile *gpconv* yourself (it is some rust code)
     * you can download additional openstreetmap data to get interest points along the path
     * you need to upload the obtained *gpc* file manually for example with the [ide](https://www.espruino.com/ide/)
