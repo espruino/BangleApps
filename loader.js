@@ -162,7 +162,7 @@ window.addEventListener('load', (event) => {
       <label class="form-switch">
         <input type="checkbox" id="usage_stats" ${SETTINGS.sendUsageStats?"checked":""}>
         <i class="form-icon"></i> Send favourite and installed apps to banglejs.com<br/>
-          <small>For 'Sort by Installed/Favourited' functionality</small>
+          <small>For 'Sort by Installed/Favourited' functionality (see <a href="http://www.espruino.com/Privacy">privacy policy</a>)</small>
       </label>
       <label class="form-switch">
         <input type="checkbox" id="remember_device">
