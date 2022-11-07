@@ -18,9 +18,9 @@ Bangle.setUI({
   back : load, // B2: Clicking the hardware button or pressing upper left corner turns off (where red back button would be)
   btn : (n)=>{ // B1: Any button turns off
     if (process.env.HWVERSION==1) {
-      setWatch(()=>load(), BTN1);
-      setWatch(()=>load(), BTN2);
-      setWatch(()=>load(), BTN3);
+      setWatch(()=>load(), BTN1, {edge: 'rising'});
+      setWatch(()=>load(), BTN2, {edge: 'rising'});
+      setWatch(()=>load(), BTN3, {edge: 'rising'});
     }
   },
 });
