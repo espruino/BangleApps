@@ -1,0 +1,20 @@
+{
+  "id": "aiclock",
+  "name": "AI Clock",
+  "shortName":"AI Clock",
+  "icon": "aiclock.png",
+  "version":"0.03",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "description": "A watch face that was designed by an AI (stable diffusion) and implemented by a human.",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [
+    {"url":"orig.png"},
+    {"url":"impl.png"}
+  ],
+  "storage": [
+    {"name":"aiclock.app.js","url":"aiclock.app.js"},
+    {"name":"aiclock.img","url":"aiclock.icon.js","evaluate":true}
+  ]
+}

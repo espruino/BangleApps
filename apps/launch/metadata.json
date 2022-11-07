@@ -2,7 +2,7 @@
   "id": "launch",
   "name": "Launcher",
   "shortName": "Launcher",
-  "version": "0.15",
+  "version": "0.19",
   "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
   "readme": "README.md",
   "icon": "app.png",
@@ -13,6 +13,6 @@
     {"name":"launch.app.js","url":"app.js"},
     {"name":"launch.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"launch.json"}],
+  "data": [{"name":"launch.json"},{"name":"launch.cache.json"}],
   "sortorder": -10
 }

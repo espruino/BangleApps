@@ -834,7 +834,7 @@ Bangle.on('mag', function (m) {
     if (isNaN(m.heading))
         compass_heading = "---";
     else
-        compass_heading = 360 - Math.round(m.heading);
+        compass_heading = Math.round(m.heading);
   //  g.setColor("#000000");
    // g.fillRect(160, 10, 160, 20);
     g.setColor(display_colour);

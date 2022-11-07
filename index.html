@@ -88,8 +88,10 @@
         <div class="sort-nav hidden">
           <span>Sort by:</span>
           <label class="chip active" sortid="">None</label>
-          <label class="chip" sortid="created">New</label>
-          <label class="chip" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="created">New</label>
+          <label class="chip hidden" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="installs">Installed</label>
+          <label class="chip hidden" sortid="favourites">Favourited</label>
         </div>
       </div>
 
@@ -150,6 +152,11 @@
           <label class="form-switch">
             <input type="checkbox" id="settings-ble-compat">
             <i class="form-icon"></i> Bluetooth Compatibility mode (limit to 20 byte writes)
+          </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-usage-stats">
+            <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
+              <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
           </label>
           <div class="form-group">
             <select class="form-select form-inline"  id="settings-lang" style="width: 10em">

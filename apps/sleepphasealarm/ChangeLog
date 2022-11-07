@@ -10,4 +10,4 @@
 0.09: Vibrate with configured pattern
       Add setting to defer start of algorithm
       Add setting to disable scheduler alarm
-
+0.10: Fix: Do not wake when falling asleep

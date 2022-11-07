@@ -17,7 +17,7 @@ exports.input = function(options) {
     "4":"GHI4","5":"JKL5","6":"MNO6",
     "7":"PQRS7","8":"TUV80","9":"WXYZ9",
   };
-  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp: Caps lock\nDown:Move mode';
+  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp: Move mode\nDown:Caps lock';
 
   var charTimeout; // timeout after a key is pressed
   var charCurrent; // current character (index in letters)
@@ -122,10 +122,10 @@ exports.input = function(options) {
 
   function onSwipe(dirLeftRight, dirUpDown) {
     if (dirUpDown == -1) {
-      setCaps();
-    } else if (dirUpDown == 1) {
       moveMode = !moveMode;
       displayText(false);
+    } else if (dirUpDown == 1) {
+      setCaps();
     } else if (dirLeftRight == 1) {
       if (!moveMode){
         text = text.slice(0, textIndex + 1) + " " + text.slice(++textIndex);

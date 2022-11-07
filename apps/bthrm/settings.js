@@ -96,6 +96,12 @@
         writeSettings("debuglog",v);
       }
     },
+    'Use bonding': {
+      value: !!settings.bonding,
+      onchange: v => {
+        writeSettings("bonding",v);
+      }
+    },
     'Grace periods': function() { E.showMenu(submenu_grace); }
   };
 

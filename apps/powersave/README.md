@@ -6,7 +6,6 @@ Save your watch's battery power by halting foreground app execution while the sc
 - Stops foreground app processes
 - Background processes still run
 - Clears screen
-- Decreases accelerometer polls
 - Foreground app is returned to when screen is turned back on (app state is not preserved)
 
 ## Controls
@@ -14,7 +13,6 @@ Save your watch's battery power by halting foreground app execution while the sc
 - Deactivates when screen is turned back on
 
 ## Warnings
-- Due to an Espruino bug, this does not take affect immediately when installed. Switch apps for these features to take affect.
 - This is not compatible with apps that need to run in the foreground even while the screen is off, such as most stopwatch apps and some health trackers.
 - If you check your watch super often (like multiple times per minute), this may end of costing you more power than it saves since the app you are using will have to restart everytime you check it.
 

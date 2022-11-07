@@ -2,3 +2,4 @@
 0.02: Fixed Whirlpool galaxy RA/DA, larger compass display, fixed moonphase overlapping battery widget
 0.03: Update to use Bangle.setUI instead of setWatch
 0.04: Tell clock widgets to hide.
+0.05: Added adjustment for Bangle.js magnetometer heading fix
