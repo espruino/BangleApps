@@ -5,3 +5,4 @@
 0.05: Fix bearing not clearing correctly (visible in single or double digit bearings)
 0.06: Add button for force compass calibration
 0.07: Use 360-heading to output the correct heading value (fix #1866)
+0.08: Added adjustment for Bangle.js magnetometer heading fix

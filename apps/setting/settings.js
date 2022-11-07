@@ -39,6 +39,7 @@ function resetSettings() {
     timezone: 0,                    // Set the timezone for the device
     HID: false,                     // BLE HID mode, off by default
     clock: null,                    // a string for the default clock's name
+    // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
     brightness: 1,                  // LCD brightness from 0 to 1
@@ -59,7 +60,9 @@ function resetSettings() {
 }
 
 settings = storage.readJSON('setting.json', 1);
-if (!settings) resetSettings();
+if (("object" != typeof settings) ||
+    ("object" != typeof settings.options))
+  resetSettings();
 
 const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
@@ -87,6 +90,7 @@ function showSystemMenu() {
     /*LANG*/'LCD': ()=>showLCDMenu(),
     /*LANG*/'Locale': ()=>showLocaleMenu(),
     /*LANG*/'Select Clock': ()=>showClockMenu(),
+    /*LANG*/'Select Launcher': ()=>showLauncherMenu(),
     /*LANG*/'Date & Time': ()=>showSetTimeMenu()
   };
 
@@ -235,9 +239,9 @@ function showThemeMenu() {
     }
   };
 
-  require("Storage").list(/^.*\.theme$/).forEach(
+  storage.list(/^.*\.theme$/).forEach(
     n => {
-      let newTheme = require("Storage").readJSON(n);
+      let newTheme = storage.readJSON(n);
       themesMenu[newTheme.name ? newTheme.name : n] = () => {
         upd({
         fg:cl(newTheme.fg), bg:cl(newTheme.bg),
@@ -383,6 +387,8 @@ function showLCDMenu() {
   // converts Espruino internal unit to g
   function internalToG(u) { return u / 8192; }
 
+  var rotNames = [/*LANG*/"No",/*LANG*/"Rotate CW",/*LANG*/"Left Handed",/*LANG*/"Rotate CCW",/*LANG*/"Mirror"];
+
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
@@ -406,6 +412,18 @@ function showLCDMenu() {
         settings.timeout = 0 | v;
         updateSettings();
         Bangle.setLCDTimeout(settings.timeout);
+      }
+    },
+    /*LANG*/'Rotate': {
+      value: 0|settings.rotate,
+      min: 0,
+      max: rotNames.length-1,
+      format: v=> rotNames[v],
+      onchange: v => {
+        settings.rotate = 0 | v;
+        updateSettings();
+        g.setRotation(settings.rotate&3,settings.rotate>>2).clear();
+        Bangle.drawWidgets();
       }
     },
     /*LANG*/'Wake on BTN1': {
@@ -491,6 +509,10 @@ function showLCDMenu() {
       }
     }
   });
+  if (BANGLEJS2)
+    Object.assign(lcdMenu, {
+    /*LANG*/'Calibrate': () => showTouchscreenCalibration()
+    });
   return E.showMenu(lcdMenu)
 }
 
@@ -547,11 +569,11 @@ function showUtilMenu() {
     },
     /*LANG*/'Compact Storage': () => {
       E.showMessage(/*LANG*/"Compacting...\nTakes approx\n1 minute",{title:/*LANG*/"Storage"});
-      require("Storage").compact();
+      storage.compact();
       showUtilMenu();
     },
     /*LANG*/'Rewrite Settings': () => {
-      require("Storage").write(".boot0","eval(require('Storage').read('bootupdate.js'));");
+      storage.write(".boot0","eval(require('Storage').read('bootupdate.js'));");
       load("setting.app.js");
     },
     /*LANG*/'Flatten Battery': () => {
@@ -572,9 +594,9 @@ function showUtilMenu() {
     menu[/*LANG*/'Calibrate Battery'] = () => {
       E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
         if (ok) {
-          var s=require("Storage").readJSON("setting.json");
+          var s=storage.readJSON("setting.json");
           s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
-          require("Storage").writeJSON("setting.json",s);
+          storage.writeJSON("setting.json",s);
           E.showAlert(/*LANG*/"Calibrated!").then(() => load("setting.app.js"));
         } else {
           E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
@@ -639,7 +661,7 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/)
+  var clockApps = storage.list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder);
@@ -655,17 +677,43 @@ function showClockMenu() {
       label = "* " + label;
     }
     clockMenu[label] = () => {
-      if (settings.clock !== app.src) {
-        settings.clock = app.src;
-        updateSettings();
-        showMainMenu();
-      }
+      settings.clock = app.src;
+      settings.clockHasWidgets = storage.read(app.src).includes("Bangle.loadWidgets");
+      updateSettings();
+      showMainMenu();
     };
   });
   if (clockApps.length === 0) {
     clockMenu[/*LANG*/"No Clocks Found"] = () => { };
   }
   return E.showMenu(clockMenu);
+}
+function showLauncherMenu() {
+  var launcherApps = storage.list(/\.info$/)
+    .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "launch")?a:undefined})
+    .filter(app => app) // filter out any undefined apps
+    .sort((a, b) => a.sortorder - b.sortorder);
+  const launcherMenu = {
+    '': {
+      'title': /*LANG*/'Select Launcher',
+    },
+    '< Back': ()=>showSystemMenu(),
+  };
+  launcherApps.forEach((app, index) => {
+    var label = app.name;
+    if ((!settings.launcher && index === 0) || (settings.launcher === app.src)) {
+      label = "* " + label;
+    }
+    launcherMenu[label] = () => {
+      settings.launcher = app.src;
+      updateSettings();
+      showMainMenu();
+    };
+  });
+  if (launcherApps.length === 0) {
+    launcherMenu[/*LANG*/"No Launchers Found"] = () => { };
+  }
+  return E.showMenu(launcherMenu);
 }
 
 function showSetTimeMenu() {
@@ -772,6 +820,87 @@ function showAppSettings(app) {
     console.log(`${app.name} settings error:`, e)
     return showError(/*LANG*/'Error in settings');
   }
+}
+
+function showTouchscreenCalibration() {
+  Bangle.setUI();
+  // disable touchscreen calibration (passed coords right through)
+  Bangle.setOptions({touchX1: 0, touchY1: 0, touchX2: g.getWidth(), touchY2: g.getHeight() });
+
+  var P = 32;
+  var corners = [
+    [P,P],
+    [g.getWidth()-P,P],
+    [g.getWidth()-P,g.getHeight()-P],
+    [P,g.getHeight()-P],
+  ];
+  var currentCorner = 0;
+  var currentTry = 0;
+  var pt = {
+    x1 : 0, y1 : 0, x2 : 0, y2 : 0
+  };
+
+  function showTapSpot() {
+    var spot = corners[currentCorner];
+    g.clear(1);
+    g.drawLine(spot[0]-32,spot[1],spot[0]+32,spot[1]);
+    g.drawLine(spot[0],spot[1]-32,spot[0],spot[1]+32);
+    g.drawCircle(spot[0],spot[1], 16);
+    var tapsLeft = (1-currentTry)*4+(4-currentCorner);
+    g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+" taps\nto go", g.getWidth()/2, g.getHeight()/2);
+  }
+
+  function calcCalibration() {
+    g.clear(1);
+    // we should now have 4 of each tap in 'pt'
+    pt.x1 /= 4;
+    pt.y1 /= 4;
+    pt.x2 /= 4;
+    pt.y2 /= 4;
+    // work out final values
+    var calib = {
+      x1 : Math.round(pt.x1 - (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
+      y1 : Math.round(pt.y1 - (pt.y2-pt.y1)*P/(g.getHeight()-P*2)),
+      x2 : Math.round(pt.x2 + (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
+      y2 : Math.round(pt.y2 + (pt.y2-pt.y1)*P/(g.getHeight()-P*2))
+    };
+    Bangle.setOptions({
+      touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
+    });
+    var s = storage.readJSON("setting.json",1)||{};
+    s.touch = calib;
+    storage.writeJSON("setting.json",s);
+    g.setFont("6x8:2").setFontAlign(0,0).drawString("Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    // now load the main menu again
+    setTimeout(showLCDMenu, 500);
+  }
+
+  function touchHandler(_,e) {
+    var spot = corners[currentCorner];
+    // store averages
+    if (spot[0]*2 < g.getWidth())
+      pt.x1 += e.x;
+    else
+      pt.x2 += e.x;
+    if (spot[1]*2 < g.getHeight())
+      pt.y1 += e.y;
+    else
+      pt.y2 += e.y;
+    // go to next corner
+    currentCorner++;
+    if (currentCorner>=corners.length) {
+      currentCorner = 0;
+      currentTry++;
+      if (currentTry==2) {
+        Bangle.removeListener('touch', touchHandler);
+        return calcCalibration();
+      }
+    }
+    showTapSpot();
+  }
+  Bangle.on('touch', touchHandler);
+
+  showTapSpot();
 }
 
 showMainMenu();

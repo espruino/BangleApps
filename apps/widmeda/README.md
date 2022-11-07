@@ -11,12 +11,12 @@ Implemented:
 - Basic medical alert logo and message
 - Only display bottom widget on clocks
 - High contrast colours depending on theme
+- Configure medical alert text (using Medical Information app)
+- Show details when touched (using Medical Information app)
 
 Future:
 
 - Configure when to show bottom widget (always/never/clocks)
-- Configure medical alert text
-- Show details when touched
 
 ## Creator
 

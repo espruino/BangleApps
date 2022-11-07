@@ -35,7 +35,7 @@ function buildMainMenu() {
     },
     "Refresh every" : {
       value : settings.refresh / 60,
-      min : 1,
+      min : 6,
       max : 168,
       step : 1,
       format : v => v + "h",
