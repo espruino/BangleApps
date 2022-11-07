@@ -20,5 +20,5 @@ Bangle.setUI({
     if (process.env.HWVERSION==1 && (n==1 || n==2 || n==3)) {
       load();
     }
-  },
+  }
 });
