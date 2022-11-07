@@ -8,14 +8,9 @@ let settings = Object.assign({
   showClocks: true,
   showLaunchers: true,
   direct: false,
-  oneClickExit: false,
   swipeExit: false,
   timeOut: "Off"
 }, require('Storage').readJSON("dtlaunch.json", true) || {});
-
-if (settings.oneClickExit) {
-  var buttonWatch = setWatch(_=> returnToClock(), BTN1, {edge: 'falling'});
-}
 
 let s = require("Storage");
   var apps = s.list(/\.info$/).map(app=>{
@@ -91,7 +86,7 @@ let drawPage = function(p){
 
 Bangle.loadWidgets();
 //g.clear();
-Bangle.drawWidgets();
+//Bangle.drawWidgets();
 drawPage(0);
 
 let swipeListenerDt = function(dirLeftRight, dirUpDown){
@@ -106,7 +101,6 @@ let swipeListenerDt = function(dirLeftRight, dirUpDown){
         drawPage(page);
     }
 };
-Bangle.on("swipe",swipeListenerDt);
 
 let isTouched = function(p,n){
     if (n<0 || n>3) return false;
@@ -138,25 +132,18 @@ let touchListenerDt = function(_,p){
         selected=-1;
     }
 };
-Bangle.on("touch",touchListenerDt);
 
 const returnToClock = function() {
   Bangle.setUI();
-  if (buttonWatch) {
-    clearWatch(buttonWatch);
-    delete buttonWatch;
-  }
-  if (timeoutToClock) {
-    clearTimeout(timeoutToClock);
-    delete timeoutToClock;
-  }
-  Bangle.removeListener("swipe", swipeListenerDt);
-  Bangle.removeListener("touch", touchListenerDt);
-  var apps = [];
-  delete apps;
-  delete returnToClock;
   setTimeout(eval, 0, s.read(".bootcde"));
 };
+  
+Bangle.setUI({
+  mode : 'custom',
+  back : returnToClock,
+  swipe : swipeListenerDt,
+  touch : touchListenerDt
+});
 
 // taken from Icon Launcher with minor alterations
 var timeoutToClock;
