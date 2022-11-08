@@ -10,12 +10,16 @@
     <input type="file" is="gpx_file" id="fileInput" accept=".gpx">
 
     <script src="../../core/lib/interface.js"></script>
+    <script>
+      function onInit() {
+      }
+    </script>
 
     <script type="module">
       function uploadFile(fileid, contents) {
         // TODO: use interface.js-provided stuff?
           Puck.write(`\x10(function() {
-              require("Storage").write("${JSON.stringify(fileid)}",'${JSON.stringify(contents)}');
+              require("Storage").write("${fileid}",'${contents}');
               Bluetooth.print("OK");
           })()\n`, ret => {
               console.log("uploadFile", ret);
@@ -23,10 +27,6 @@
                   clean();
           });
       }
-
-    function onInit() {
-    }
-
 
     import init, { convert_gpx_strings } from "./pkg/gpconv.js";
     console.log("imported wasm");
