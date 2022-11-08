@@ -17,34 +17,16 @@
 
     <script type="module">
 
-var CHUNKSIZE = 384;// or any multiple of 96 for atob/btoa
 
-// Get the JS needed to upload a file
-function getUploadFileCode(fileName, contents) {
-  var js = [];
-  if ("string" != typeof contents)
-    throw new Error("Expecting a string for contents");
-  if (fileName.length == 0 || fileName.length > 28)
-    throw new Error("Invalid filename length");
-  var fn = JSON.stringify(fileName);
-  for (var i = 0; i < contents.length; i += CHUNKSIZE) {
-    var part = contents.substr(i, CHUNKSIZE);
-    js.push(
-      `require("Storage").write(${fn},atob(${JSON.stringify(btoa(part))}),${i}${
-        i == 0 ? "," + contents.length : ""
-      })`
-    );
-  }
-  return js.join("\n");
-}
+      function uploadFile(fileid, contents) {
+          Puck.write(`\x10(function() {
+              require("Storage").write("${fileid}",'${contents}');
+              Bluetooth.print("OK");
+          })()\n`, ret => {
+              console.log("uploadFile", ret);
+          });
+      }
 
-// Upload a file
-function uploadFile(fileName, contents, callback) {
-  let js =
-    "\x10" + getUploadFileCode(fileName, contents).replace(/\n/g, "\n\x10");
-  let fun = "\x10(function() {" + js + ';\n\x10Bluetooth.print("OK");})()\n';
-  Puck.write(fun, callback);
-}
 
 import init, { convert_gpx_strings } from "./pkg/gpconv.js";
 console.log("imported wasm");
@@ -78,12 +60,11 @@ document
 
       init().then(() => {
         let gpc_file = convert_gpx_strings(reader.result);
-        let gpc_string = String.fromCharCode.apply(String, gpc_file);
+        let gpc_string = String.fromCharCode.apply(String, gpc_file).replace(/\n/g, "\n\x10");
+;
 
         console.log("uploading");
-        uploadFile(gpc_filename, gpc_string, (ret) => {
-          console.log("uploadFile", ret);
-        });
+        uploadFile(gpc_filename, gpc_string);
       });
     };
     reader.readAsText(this.files[0]);
