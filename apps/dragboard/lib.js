@@ -3,10 +3,14 @@
 //Bangle.setLCDPower(1);
 
 exports.input = function(options) {
+  "ram";
+  //Bangle.loadWidgets();
+  //Bangle.drawWidgets();
   options = options||{};
   var text = options.text;
   if ("string"!=typeof text) text="";
   
+  var R = Bangle.appRect;
   var BGCOLOR = g.theme.bg;
   var HLCOLOR = g.theme.fg;
   var ABCCOLOR = g.toColor(1,0,0);//'#FF0000';
@@ -17,11 +21,11 @@ exports.input = function(options) {
   var SMALLFONTWIDTH = parseInt(SMALLFONT.charAt(0)*parseInt(SMALLFONT.charAt(-1)));
 
   var ABC = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
-  var ABCPADDING = (g.getWidth()-6*ABC.length)/2;
+  var ABCPADDING = ((R.x+R.w)-6*ABC.length)/2;
 
   var NUM = ' 1234567890!?,.- ';
   var NUMHIDDEN = ' 1234567890!?,.- ';
-  var NUMPADDING = (g.getWidth()-6*NUM.length)/2;
+  var NUMPADDING = ((R.x+R.w)-6*NUM.length)/2;
 
   var rectHeight = 40;
 
@@ -32,20 +36,20 @@ exports.input = function(options) {
     g.clear();
     g.setFont(SMALLFONT);
     g.setColor(ABCCOLOR);
-    g.drawString(ABC, ABCPADDING, g.getHeight()/2);
-    g.fillRect(0, g.getHeight()-26, g.getWidth(), g.getHeight());
+    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
+    g.fillRect(0, (R.y+R.h)-26, (R.x+R.w), (R.y+R.h));
   }
 
   function drawNumRow() {
     g.setFont(SMALLFONT);
     g.setColor(NUMCOLOR);
-    g.drawString(NUM, NUMPADDING, g.getHeight()/4);
+    g.drawString(NUM, NUMPADDING, (R.y+R.h)/4);
 
-    g.fillRect(NUMPADDING, g.getHeight()-rectHeight*4/3, g.getWidth()-NUMPADDING, g.getHeight()-rectHeight*2/3);
+    g.fillRect(NUMPADDING, (R.y+R.h)-rectHeight*4/3, (R.x+R.w)-NUMPADDING, (R.y+R.h)-rectHeight*2/3);
   }
 
   function updateTopString() {
-    "ram"
+    
     g.setColor(BGCOLOR);
     g.fillRect(0,4+20,176,13+20);
     g.setColor(0.2,0,0);
@@ -57,10 +61,6 @@ exports.input = function(options) {
     g.drawString(text.length<=27? text.substr(-27, 27) : '<- '+text.substr(-24,24), 5, 5+20);
   }
 
-  drawAbcRow();
-  drawNumRow();
-  updateTopString();
-
   var abcHL;
   var abcHLPrev = -10;
   var numHL;
@@ -70,36 +70,40 @@ exports.input = function(options) {
   var largeCharOffset = 6;
   
   function resetChars(char, HLPrev, typePadding, heightDivisor, rowColor) {
-    "ram"
+    
     // Small character in list
     g.setColor(rowColor);
     g.setFont(SMALLFONT);
-    g.drawString(char, typePadding + HLPrev*6, g.getHeight()/heightDivisor);
+    g.drawString(char, typePadding + HLPrev*6, (R.y+R.h)/heightDivisor);
     // Large character
     g.setColor(BGCOLOR);
-    g.fillRect(0,g.getHeight()/3,176,g.getHeight()/3+24);
-    //g.drawString(charSet.charAt(HLPrev), typePadding + HLPrev*6 -largeCharOffset, g.getHeight()/3);; //Old implementation where I find the shape and place of letter to remove instead of just a rectangle.
+    g.fillRect(0,(R.y+R.h)/3,176,(R.y+R.h)/3+24);
+    //g.drawString(charSet.charAt(HLPrev), typePadding + HLPrev*6 -largeCharOffset, (R.y+R.h)/3);; //Old implementation where I find the shape and place of letter to remove instead of just a rectangle.
     // mark in the list
   }
   function showChars(char, HL, typePadding, heightDivisor) {
-    "ram"
+    
     // mark in the list
     g.setColor(HLCOLOR);
     g.setFont(SMALLFONT);
-    if (char != 'del' && char != 'space') g.drawString(char, typePadding + HL*6, g.getHeight()/heightDivisor);
+    if (char != 'del' && char != 'space') g.drawString(char, typePadding + HL*6, (R.y+R.h)/heightDivisor);
     // show new large character
     g.setFont(BIGFONT);
-    g.drawString(char, typePadding + HL*6 -largeCharOffset, g.getHeight()/3);
+    g.drawString(char, typePadding + HL*6 -largeCharOffset, (R.y+R.h)/3);
     g.setFont(SMALLFONT);
   }
-  
+
+  drawAbcRow();
+  drawNumRow();
+  updateTopString();
+
   function changeCase(abcHL) {
     g.setColor(BGCOLOR);
-    g.drawString(ABC, ABCPADDING, g.getHeight()/2);
+    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
     if (ABC.charAt(abcHL) == ABC.charAt(abcHL).toUpperCase()) ABC = ABC.toLowerCase();
     else ABC = ABC.toUpperCase();
     g.setColor(ABCCOLOR);
-    g.drawString(ABC, ABCPADDING, g.getHeight()/2);
+    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
   }
   return new Promise((resolve,reject) => {
   // Interpret touch input
@@ -114,7 +118,7 @@ exports.input = function(options) {
 
       // ABCDEFGHIJKLMNOPQRSTUVWXYZ
       // Choose character by draging along red rectangle at bottom of screen
-      if (event.y >= ( g.getHeight() - 12 )) {
+      if (event.y >= ( (R.y+R.h) - 12 )) {
         // Translate x-position to character
         if (event.x < ABCPADDING) { abcHL = 0; }
         else if (event.x >= 176-ABCPADDING) { abcHL = 25; }
@@ -154,7 +158,7 @@ exports.input = function(options) {
 
       // 12345678901234567890
       // Choose number or puctuation by draging on green rectangle
-      else if ((event.y < ( g.getHeight() - 12 )) && (event.y > ( g.getHeight() - 52 ))) {
+      else if ((event.y < ( (R.y+R.h) - 12 )) && (event.y > ( (R.y+R.h) - 52 ))) {
         // Translate x-position to character
         if (event.x < NUMPADDING) { numHL = 0; }
         else if (event.x > 176-NUMPADDING) { numHL = NUM.length-1; }
@@ -177,16 +181,16 @@ exports.input = function(options) {
           // Backspace if releasing before list of numbers/punctuation
           if (event.x < NUMPADDING) {
             // show delete sign
-            showChars('del', 0, g.getWidth()/2 +6 -27 , 4);
+            showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
             delSpaceLast = 1;
             text = text.slice(0, -1);
             updateTopString();
             //print(text);
           }
           // Append space if releasing after list of numbers/punctuation
-          else if (event.x > g.getWidth()-NUMPADDING) {
+          else if (event.x > (R.x+R.w)-NUMPADDING) {
             //show space sign
-            showChars('space', 0, g.getWidth()/2 +6 -6*3*5/2 , 4);
+            showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
             delSpaceLast = 1;
             text = text + ' ';
             updateTopString();
@@ -217,12 +221,12 @@ exports.input = function(options) {
       else if (event.y > 20+4) {
         if (event.b == 0) {
           g.setColor(HLCOLOR);
-          if (event.x < g.getWidth()/2) {
+          if (event.x < (R.x+R.w)/2) {
             resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
             resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
 
             // show delete sign
-            showChars('del', 0, g.getWidth()/2 +6 -27 , 4);
+            showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
             delSpaceLast = 1;
 
             // Backspace and draw string upper right corner
@@ -236,7 +240,7 @@ exports.input = function(options) {
             resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
 
             //show space sign
-            showChars('space', 0, g.getWidth()/2 +6 -6*3*5/2 , 4);
+            showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
             delSpaceLast = 1;
 
             // Append space and draw string upper right corner
