@@ -83,7 +83,6 @@ document
         console.log("uploading");
         uploadFile(gpc_filename, gpc_string, (ret) => {
           console.log("uploadFile", ret);
-          if (ret == "OK") clean();
         });
       });
     };
