@@ -17,68 +17,76 @@
 
     <script type="module">
 
-  // Get the JS needed to upload a file
-  function getUploadFileCode(fileName, contents) {
-    var js = [];
-    if ("string" != typeof contents)
-      throw new Error("Expecting a string for contents");
-    if (fileName.length==0 || fileName.length>28)
-      throw new Error("Invalid filename length");
-    var fn = JSON.stringify(fileName);
-    for (var i=0;i<contents.length;i+=CHUNKSIZE) {
-      var part = contents.substr(i,CHUNKSIZE);
-      js.push(`require("Storage").write(${fn},atob(${JSON.stringify(btoa(part))}),${i}${(i==0)?","+contents.length:""})`);
+// Get the JS needed to upload a file
+function getUploadFileCode(fileName, contents) {
+  var js = [];
+  if ("string" != typeof contents)
+    throw new Error("Expecting a string for contents");
+  if (fileName.length == 0 || fileName.length > 28)
+    throw new Error("Invalid filename length");
+  var fn = JSON.stringify(fileName);
+  for (var i = 0; i < contents.length; i += CHUNKSIZE) {
+    var part = contents.substr(i, CHUNKSIZE);
+    js.push(
+      `require("Storage").write(${fn},atob(${JSON.stringify(btoa(part))}),${i}${
+        i == 0 ? "," + contents.length : ""
+      })`
+    );
+  }
+  return js.join("\n");
+}
+
+// Upload a file
+function uploadFile(fileName, contents, callback) {
+  let js =
+    "\x10" + getUploadFileCode(fileName, contents).replace(/\n/g, "\n\x10");
+  let fun = "\x10(function() {" + js + ';\n\x10Bluetooth.print("OK");})()\n';
+  Puck.write(fun, callback);
+}
+
+import init, { convert_gpx_strings } from "./pkg/gpconv.js";
+console.log("imported wasm");
+document
+  .getElementById("fileInput")
+  .addEventListener("change", function selectedFileChanged() {
+    if (this.files.length === 0) {
+      console.log("No file selected.");
+      return;
     }
-    return js.join("\n");
-  }
 
-  // Upload a file
-  function uploadFile(fileName, contents, callback) {
-    let js = "\x10"+getUploadFileCode(fileName, contents).replace(/\n/g,"\n\x10");
-    let fun = "\x10(function() {" + js + ";\n\x10Bluetooth.print(\"OK\");})()\n";
-    Puck.write(fun, callback);
-  }
-
-
-    import init, { convert_gpx_strings } from "./pkg/gpconv.js";
-    console.log("imported wasm");
-    document.getElementById('fileInput').addEventListener('change', function selectedFileChanged() {
-      if (this.files.length === 0) {
-        console.log('No file selected.');
+    let gpx_filename = this.files[0].name;
+    let gpc_filename = gpx_filename.slice(0, gpx_filename.length - 4) + ".gpc";
+    while (gpc_filename.length > 28) {
+      let new_name = prompt(
+        "enter a shorter destination filename than '" +
+          gpc_filename +
+          "' (28 chars max)",
+        gpc_filename
+      );
+      if (new_name != null && new_name.slice(new_name.length - 4) == ".gpc") {
+        gpc_filename = new_name;
+      } else {
         return;
       }
+    }
 
-      let gpx_filename = this.files[0].name;
-      let gpc_filename = gpx_filename.slice(0, gpx_filename.length-4) + ".gpc";
-      while (gpc_filename.length > 28) {
-        let new_name = prompt("enter a shorter destination filename than '" + gpc_filename + "' (28 chars max)", gpc_filename);
-        if (new_name != null && new_name.slice(new_name.length-4) == ".gpc") {
-          gpc_filename = new_name;
-        } else {
-          return;
-        }
-      }
+    const reader = new FileReader();
+    reader.onload = function fileReadCompleted() {
+      console.log("reading file completed");
 
-      const reader = new FileReader();
-      reader.onload = function fileReadCompleted() {
-        console.log("reading file completed");
+      init().then(() => {
+        let gpc_file = convert_gpx_strings(reader.result);
+        let gpc_string = String.fromCharCode.apply(String, gpc_file);
 
-        init().then(() => {
-
-          let gpc_file = convert_gpx_strings(reader.result);
-          let gpc_string = String.fromCharCode.apply(String, gpc_file));
-
-          console.log("uploading");
-          uploadFile(gpc_filename, gpc_string, ret => {
-              console.log("uploadFile", ret);
-              if (ret == "OK")
-                  clean();
-          });
+        console.log("uploading");
+        uploadFile(gpc_filename, gpc_string, (ret) => {
+          console.log("uploadFile", ret);
+          if (ret == "OK") clean();
         });
-      }
-      reader.readAsText(this.files[0]);
-    });
-
+      });
+    };
+    reader.readAsText(this.files[0]);
+  });
 
     </script>
   </body>
