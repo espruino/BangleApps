@@ -15,7 +15,7 @@
       function uploadFile(fileid, contents) {
         // TODO: use interface.js-provided stuff?
           Puck.write(`\x10(function() {
-              require("Storage").write("${fileid}",'${contents}');
+              require("Storage").write("${JSON.stringify(fileid)}",'${JSON.stringify(contents)}');
               Bluetooth.print("OK");
           })()\n`, ret => {
               console.log("uploadFile", ret);
