@@ -17,6 +17,8 @@
 
     <script type="module">
 
+var CHUNKSIZE = 384;// or any multiple of 96 for atob/btoa
+
 // Get the JS needed to upload a file
 function getUploadFileCode(fileName, contents) {
   var js = [];
