@@ -54,7 +54,7 @@
         init().then(() => {
 
           let gpc_file = convert_gpx_strings(reader.result);
-          let gpc_string = String.fromCharCode.apply(String, gpc_file);
+          let gpc_string = String.fromCharCode.apply(String, gpc_file).replace(/'/g, "\\'");
 
           console.log("uploading");
           uploadFile(gpc_filename, gpc_string);
