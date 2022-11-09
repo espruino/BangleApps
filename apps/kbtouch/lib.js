@@ -3,6 +3,10 @@ exports.input = function(options) {
   var text = options.text;
   if ("string"!=typeof text) text="";
 
+  // Disregard touch screen calibration when using the keyboard. Otherwise it can be impossible to access some characters. Calibration is restored when done writing.
+  let touchCalibrationBackup = {touchX1: Bangle.getOptions().touchX1, touchY1: Bangle.getOptions().touchY1, touchX2: Bangle.getOptions().touchX2, touchY2: Bangle.getOptions().touchY2};
+  Bangle.setOptions({touchX1: 0, touchY1: 0, touchX2: 160, touchY2: 160});
+
   // Key Maps for Keyboard
 var KEYMAPLOWER = [
   "`1234567890-=\b",
@@ -115,6 +119,7 @@ function draw() {
   return new Promise((resolve,reject) => {
 
     Bangle.setUI({mode:"custom", drag:e=>{
+      "ram";
       if (settings.oneToOne) {
         kbx = Math.max(Math.min(Math.floor((e.x-16) / (6*2)) , 13) , 0);
         kby = Math.max(Math.min(Math.floor((e.y-120) / (8*2)) , 3) , 0);
@@ -162,6 +167,7 @@ function draw() {
       clearInterval(flashInterval);
       Bangle.setUI();
       g.clearRect(Bangle.appRect);
+      Bangle.setOptions(touchCalibrationBackup);
       resolve(text);
     }});
   });
