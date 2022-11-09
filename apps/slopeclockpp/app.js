@@ -110,14 +110,14 @@ let animate = function(isIn, callback) {
         // draw the date
         g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
 
-        if (settings.showSteps || true) {
+        if (settings.showSteps) {
         // draw steps to bottom left
         const steps = getSteps();
         if (steps > 0)
            g.setFontAlign(-1, 0).drawString(shortValue(steps), 3, R.y+R.h-30);
         }
 
-        if (settings.showWeather || true) {
+        if (settings.showWeather) {
           // draw weather to top right
           const weather = getWeather();
           const tempString = weather ? require("locale").temp(weather.temp - 273.15) : undefined;
