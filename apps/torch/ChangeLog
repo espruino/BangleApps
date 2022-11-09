@@ -5,4 +5,4 @@
 0.05: Default full Brightness
 0.06: Press upper left corner to exit on Bangle.js 2
 0.07: Code tweaks
-0.08: Force white background for widgetbar
+0.08: Force background of widget field to the torch colour
