@@ -13,12 +13,12 @@ Bangle.setLCDTimeout(0);
 g.reset();
 g.setColor(settings.bg);
 g.fillRect(0,0,g.getWidth(),g.getHeight());
-// Any button turns off
-setWatch(()=>load(), BTN1);
-if (global.BTN2) setWatch(()=>load(), BTN2);
-if (global.BTN3) setWatch(()=>load(), BTN3);
-// Pressing upper left corner turns off (where red back button would be)
 Bangle.setUI({
   mode : 'custom',
-  back : load
+  back : load, // B2: Clicking the hardware button or pressing upper left corner turns off (where red back button would be)
+  btn : (n)=>{ // B1: Any button turns off
+    if (process.env.HWVERSION==1 && (n==1 || n==2 || n==3)) {
+      load();
+    }
+  }
 });
