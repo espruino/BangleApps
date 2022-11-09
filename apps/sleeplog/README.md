@@ -87,7 +87,7 @@ Available through the App Loader when your watch is connected.
   Deletes the logfile from the watch. __Please backup your data first!__
 
 ---
-### Timestamps and files
+### Timestamps and Files
 ---
 
 1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:  
@@ -110,8 +110,10 @@ Available through the App Loader when your watch is connected.
 
 
 ---
-### Access statistics (developer information)
+### Developer Information
 ---
+
+#### Access statistics
 - Last Asleep Time [Date]:  
   `Date(sleeplog.awakeSince)`
 - Last Awake Duration [ms]:  
@@ -148,6 +150,25 @@ Available through the App Loader when your watch is connected.
   // use with caution, may take a long time !
   require("sleeplog").getStats(0, 0, require("sleeplog").readLog());
   ```
+
+#### Add functions triggered by status changes
+With the following code it is possible to add functions that will be called on status changes.
+```
+// first ensure that the sleeplog object is available
+if (typeof (global.sleeplog || {}).onChange === "object") {
+  // then add your function to the onChange-array
+  sleeplog.onChange.push( function(data) { print(data); } );
+}
+```
+The passed data object has the following properties:
+- timestamp: of the status change as date object,
+    (should be around 10min. before "now", the actual call of the function)
+- status: if changed the value of the new status (0-4) else undefined,
+    (0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep)
+- consecutive: if changed the value of the new status (0-2) else undefined,
+    (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
+- prevStatus: value of the previous status (0-4),
+- prevConsecutive: value of the previous status (0-2)
 
 
 ---

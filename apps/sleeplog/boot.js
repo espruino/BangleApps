@@ -265,7 +265,9 @@ if (sleeplog.conf.enabled) {
             if (typeof fn === "function") setTimeout(fn, 100, {
               timestamp: new Date(data.timestamp),
               status: data.status === this.status ? undefined : data.status,
-              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive
+              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
+              prevStatus: this.status,
+              prevConsecutive: this.consecutive
             });
           });
         }
@@ -337,7 +339,11 @@ if (sleeplog.conf.enabled) {
     //  changed values will be passed as object with the following properties:
     //    timestamp: as date object,
     //    status: if changed 0-4 else undefined,
-    //    consecutive: if changed 0-2 else undefined
+    //      (0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep)
+    //    consecutive: if changed 0-2 else undefined,
+    //      (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
+    //    prevStatus: value of the previous status 0-4,
+    //    prevConsecutive: value of the previous status 0-2
     onChange: []
   }, sleeplog);
 
