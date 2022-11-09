@@ -67,7 +67,7 @@ exports.input = function(options) {
   var largeCharOffset = 6;
 
   function resetChars(char, HLPrev, typePadding, heightDivisor, rowColor) {
-    "ram"
+    "ram";
     // Small character in list
     g.setColor(rowColor);
     g.setFont(SMALLFONT);
@@ -80,7 +80,7 @@ exports.input = function(options) {
     // mark in the list
   }
   function showChars(char, HL, typePadding, heightDivisor) {
-    "ram"
+    "ram";
     // mark in the list
     g.setColor(HLCOLOR);
     g.setFont(SMALLFONT);
@@ -120,7 +120,7 @@ exports.input = function(options) {
         resolve(text);
       },
       drag: function(event) {
-        "ram"
+        "ram";
         // ABCDEFGHIJKLMNOPQRSTUVWXYZ
         // Choose character by draging along red rectangle at bottom of screen
         if (event.y >= ( (R.y+R.h) - 12 )) {
