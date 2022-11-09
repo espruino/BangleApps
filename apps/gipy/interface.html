@@ -9,6 +9,9 @@
 
     <input type="file" is="gpx_file" id="fileInput" accept=".gpx">
 
+    <div id="status"></div>
+    <div id="map"></div>
+
     <script src="../../core/lib/interface.js"></script>
     <script>
       function onInit() {
@@ -18,17 +21,7 @@
     <script type="module">
 
 
-      function uploadFile(fileid, contents) {
-          Puck.write(`\x10(function() {
-              require("Storage").write("${fileid}",'${contents}');
-              Bluetooth.print("OK");
-          })()\n`, ret => {
-              console.log("uploadFile", ret);
-          });
-      }
-
-
-import init, { convert_gpx_strings } from "./pkg/gpconv.js";
+import init, { convert_gpx_strings, get_gpc, get_svg } from "./pkg/gpconv.js";
 console.log("imported wasm");
 document
   .getElementById("fileInput")
@@ -37,6 +30,8 @@ document
       console.log("No file selected.");
       return;
     }
+    let status = document.getElementById("status");
+    status.innerHTML = "reading file";
 
     let gpx_filename = this.files[0].name;
     let gpc_filename = gpx_filename.slice(0, gpx_filename.length - 4) + ".gpc";
@@ -59,12 +54,25 @@ document
       console.log("reading file completed");
 
       init().then(() => {
-        let gpc_file = convert_gpx_strings(reader.result);
-        let gpc_string = String.fromCharCode.apply(String, gpc_file);
-;
+        status.innerHTML = "converting file";
+        let gpc_svg = convert_gpx_strings(reader.result);
+        gpc_svg.then(gs => {
+          console.log(gs);
+          let gpc_file = get_gpc(gs);
+          let gpc_string = String.fromCharCode.apply(String, gpc_file);
+  ;
 
-        console.log("uploading");
-        Util.writeStorage(gpc_filename, gpc_string, () => {console.log("DONE")});
+          status.innerHTML = "uploading file";
+          console.log("uploading");
+          Util.writeStorage(gpc_filename, gpc_string, () => {
+            status.innerHTML = `${gpc_filename} uploaded`;
+            console.log("DONE");
+          });
+          let svg = get_svg(gs);
+          let svg_string = String.fromCharCode.apply(String, svg);
+          let img = document.getElementById("map");
+          img.innerHTML = svg_string;
+        });
       });
     };
     reader.readAsText(this.files[0]);

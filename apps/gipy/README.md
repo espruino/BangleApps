@@ -24,14 +24,13 @@ It provides the following features :
 (for example when you need to turn in https://mapstogpx.com/)
 - display instant / average speed
 - display distance to next node
-
-optionally it can also :
-
 - display additional data from openstreetmap :
     - water points
     - toilets
     - artwork
     - bakeries
+
+optionally it can also:
 
 - try to turn off gps between crossroads to save battery
 
@@ -49,12 +48,9 @@ You can turn on 'next turn info' and be warned by the watch when you need to tur
 Once you have your gpx file you need to convert it to *gpc* which is my custom file format.
 They are smaller than gpx and reduce the number of computations left to be done on the watch.
 
-Two possibilities here :
-- easy : upload from here
-- hard : use an external tool : [gpconv](https://github.com/wagnerf42/gpconv)
-    * you need to compile *gpconv* yourself (it is some rust code)
-    * you can download additional openstreetmap data to get interest points along the path
-    * you need to upload the obtained *gpc* file manually for example with the [ide](https://www.espruino.com/ide/)
+Just click the disk icon and select your gpx file.
+This will request additional information from openstreetmap.
+Your path will be displayed in svg.
 
 ### Starting Gipy
 
@@ -75,7 +71,7 @@ On your screen you can see :
     * left distance till end of current segment
     * distance from start of path / path length
     * average speed / instant speed
-- interest points from openstreetmap (using gpconv) as color dots :
+- interest points from openstreetmap as color dots :
     * red : bakery
     * deep blue : water point
     * cyan : toilets (often doubles as water point)
