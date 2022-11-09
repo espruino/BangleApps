@@ -1,8 +1,8 @@
 (function(back) {
-  const SETTINGS_FILE = "slopclockpp.json";
+  const SETTINGS_FILE = "slopeclockpp.json";
   const storage = require('Storage');
   let settings = Object.assign(
-    storage.readJSON("slopclockpp.default.json", true) || {},
+    storage.readJSON("slopeclockpp.default.json", true) || {},
     storage.readJSON(SETTINGS_FILE, true) || {}
   );
 
