@@ -11,7 +11,7 @@ Bangle.setLCDBrightness(1);
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
 g.reset();
-g.setTheme({bg:settings.bg,fg:"#000"})
+g.setTheme({bg:settings.bg,fg:"#000"});
 g.setColor(settings.bg);
 g.fillRect(0,0,g.getWidth(),g.getHeight());
 Bangle.setUI({
