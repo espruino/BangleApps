@@ -5,7 +5,6 @@ Bangle.on('stroke',print)
 on the left of the IDE, then do a stroke and copy out the Uint8Array line
 */
 exports.getStrokes = function(cb) {
-  "ram";
   cb("a", new Uint8Array([58, 159, 58, 155, 62, 144, 69, 127, 77, 106, 86, 90, 94, 77, 101, 68, 108, 62, 114, 59, 121, 59, 133, 61, 146, 70, 158, 88, 169, 107, 176, 124, 180, 135, 183, 144, 185, 152]));
   cb("b", new Uint8Array([51, 47, 51, 77, 56, 123, 60, 151, 65, 163, 68, 164, 68, 144, 67, 108, 67, 76, 72, 43, 104, 51, 121, 74, 110, 87, 109, 95, 131, 117, 131, 140, 109, 152, 88, 157]));
   cb("c", new Uint8Array([153, 62, 150, 62, 145, 62, 136, 62, 123, 62, 106, 65, 85, 70, 65, 75, 50, 82, 42, 93, 37, 106, 36, 119, 36, 130, 40, 140, 49, 147, 61, 153, 72, 156, 85, 157, 106, 158, 116, 158]));
@@ -140,6 +139,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
   return new Promise((resolve,reject) => {
     var l;//last event
     Bangle.setUI({mode:"custom", drag:e=>{
+      "ram";
       if (l) g.reset().setColor("#f00").drawLine(l.x,l.y,e.x,e.y);
       l = e.b ? e : 0;
     },touch:() => {
