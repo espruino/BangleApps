@@ -124,7 +124,7 @@ if (sleeplog.conf.enabled) {
       if (!sleeplog.info.saveUpToDate || force) {
         // save status, consecutive status and info timestamps to restore on reload
         var save = [sleeplog.info.lastCheck, sleeplog.info.awakeSince, sleeplog.info.asleepSince];
-        // add debuging status if active 
+        // add debuging status if active
         if (sleeplog.debug) save.push(sleeplog.debug.writeUntil, sleeplog.debug.fileid);
 
         // stringify entries
@@ -258,19 +258,20 @@ if (sleeplog.conf.enabled) {
 
       // check if the status has changed
       if (data.status !== this.status || data.consecutive !== this.consecutive) {
-        // check for onChange functions
-        if ((this.onChange || []).length) {
-          this.onChange.forEach(fn => {
-            // setup timeouts to start onChange functions if fn is a function
-            if (typeof fn === "function") setTimeout(fn, 100, {
-              timestamp: new Date(data.timestamp),
-              status: data.status === this.status ? undefined : data.status,
-              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
-              prevStatus: this.status,
-              prevConsecutive: this.consecutive
-            });
+        // read and check for onChange functions
+        var onChange = Object.keys(this.onChange) || [];
+        if (onChange.length) onChange.forEach(key => {
+          // read function to key
+          var fn = this.onChange[key];
+          // setup timeouts to start onChange functions if fn is a function
+          if (typeof fn === "function") setTimeout(fn, 100, {
+            timestamp: new Date(data.timestamp),
+            status: data.status === this.status ? undefined : data.status,
+            consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
+            prevStatus: this.status,
+            prevConsecutive: this.consecutive
           });
-        }
+        });
 
         // append status
         this.appendStatus(data.timestamp, data.status, data.consecutive);
@@ -335,7 +336,7 @@ if (sleeplog.conf.enabled) {
       return this.statsCache;
     },
 
-    // define array for functions to execute after a status change (changes had hapened 10min earlier)
+    // define object for functions to execute after a status change (changes had hapened 10min earlier)
     //  changed values will be passed as object with the following properties:
     //    timestamp: as date object,
     //    status: if changed 0-4 else undefined,
