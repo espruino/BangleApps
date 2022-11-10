@@ -161,11 +161,11 @@ if (typeof (global.sleeplog || {}).onChange === "object") {
 }
 ```
 The passed data object has the following properties:
-- timestamp: of the status change as date object,
+- timestamp: of the status change as date object,  
     (should be around 10min. before "now", the actual call of the function)
-- status: if changed the value of the new status (0-4) else undefined,
+- status: if changed the value of the new status (0-4) else undefined,  
     (0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep)
-- consecutive: if changed the value of the new status (0-2) else undefined,
+- consecutive: if changed the value of the new status (0-2) else undefined,  
     (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
 - prevStatus: value of the previous status (0-4),
 - prevConsecutive: value of the previous status (0-2)
