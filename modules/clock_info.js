@@ -10,10 +10,13 @@ that can be scrolled through on the clock face.
 Note that each item is an object with:
 
 * 'item.name' : friendly name to identify an item (e.g. temperature)
+* 'item.hasRange' : if `true`, `.get` returns `v/min/max` values (for progress bar/guage)
 * 'item.get' : function that resolves with:
   {
     'text' : the text to display for this item
     'img' : a 24x24px image to display for this item
+    'v' : (if hasRange==true) a numerical value
+    'min','max' : (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
   }
 * 'item.show' : called when item should be shown. Enables updates. Call BEFORE 'get'
 * 'item.hide' : called when item should be hidden. Disables updates.
@@ -30,7 +33,7 @@ example.clkinfo.js :
     img: atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
     items: [
       { name : "Item1",
-        get : () => ({ text : "TextOfItem1",
+        get : () => ({ text : "TextOfItem1", v : 10, min : 0, max : 100,
                       img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
         show : () => {},
         hide : () => {}
@@ -63,21 +66,29 @@ exports.load = function() {
     img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
     items: [
     { name : "Battery",
-      get : () => ({
-        text : E.getBattery() + "%",
-        img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==") }),
+      hasRange : true,
+      get : () => { let v = E.getBattery(); return {
+        text : v + "%", v : v, min:0, max:100,
+        img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==")
+      }},
       show : function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); Bangle.on("charging", batteryUpdateHandler); batteryUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
-    { name : "Steps", get : () => ({
-        text : Bangle.getHealthStatus("day").steps,
-        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==") }),
+    { name : "Steps",
+      hasRange : true,
+      get : () => { let v = Bangle.getHealthStatus("day").steps; return {
+          text : v, v : v, min : 0, max : 10000, // TODO: do we have a target step amount anywhere?
+        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
+      }},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
       hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
     },
-    { name : "HRM", get : () => ({
-        text : Math.round(Bangle.getHealthStatus("last").bpm) + " bpm",
-        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==") }),
+    { name : "HRM",
+      hasRange : true,
+      get : () => { let v =  Math.round(Bangle.getHealthStatus("last").bpm); return {
+        text : v + " bpm", v : v, min : 40, max : 200,
+        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==")
+      }},
       show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
       hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
     }
@@ -86,9 +97,11 @@ exports.load = function() {
   var bangleItems = menu[0].items;
 
   if (Bangle.getPressure){  // Altimeter may not exist
-    bangleItems.push({ name : "Altitude", get : () => ({
-        text : alt,
-        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==") }),
+    bangleItems.push({ name : "Altitude",
+      get : () => ({
+        text : alt, v : alt,
+        img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==")
+      }),
       show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
