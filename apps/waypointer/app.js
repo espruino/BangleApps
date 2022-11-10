@@ -8,6 +8,11 @@ var buf1 = Graphics.createArrayBuffer(160*scale,160*scale,1, {msb:true});
 var buf2 = Graphics.createArrayBuffer(g.getWidth()/3,40*scale,1, {msb:true});
 var arrow_img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
+var settings = Object.assign({
+  // default values
+  smoothDirection: true,
+}, require('Storage').readJSON("waypointer.json", true) || {});
+
 function flip1(x,y) {
   g.drawImage({width:160*scale,height:160*scale,bpp:1,buffer:buf1.buffer, palette:pal_by},x,y);
   buf1.clear();
@@ -68,7 +73,12 @@ function newHeading(m,h){
     var delta = (m>h)?1:-1;
     if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
-    var hd = h + delta*(1 + Math.round(s/5));
+    var hd;
+    if (settings.smoothDirection) {
+        hd = h + delta*(1 + Math.round(s/5));
+    } else {
+        hd = h + delta*s;
+    }
     if (hd<0) hd+=360;
     if (hd>360)hd-= 360;
     return hd;
@@ -80,7 +90,7 @@ function tiltfixread(O,S){
   var m = Bangle.getCompass();
   if (O === undefined || S === undefined) {
     // no valid calibration from magnav, use built in
-    return 360-m.heading;
+    return m.heading;
   }
   var g = Bangle.getAccel();
   m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;

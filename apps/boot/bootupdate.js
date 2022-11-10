@@ -62,23 +62,6 @@ if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();
 if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
 if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
 boot += `E.setTimeZone(${s.timezone});`;
-// Set vibrate, beep, etc IF on older firmwares
-if (!Bangle.F_BEEPSET) {
-  if (!s.vibrate) boot += `Bangle.buzz=Promise.resolve;\n`
-  if (s.beep===false) boot += `Bangle.beep=Promise.resolve;\n`
-  else if (s.beep=="vib" && !BANGLEJS2) boot += `Bangle.beep = function (time, freq) {
-    return new Promise(function(resolve) {
-      if ((0|freq)<=0) freq=4000;
-      if ((0|time)<=0) time=200;
-      if (time>5000) time=5000;
-      analogWrite(D13,0.1,{freq:freq});
-      setTimeout(function() {
-        digitalWrite(D13,0);
-        resolve();
-      }, time);
-    });
-  };\n`;
-}
 // Draw out of memory errors onto the screen
 boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
@@ -93,28 +76,13 @@ if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightne
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
-// Pre-2v10 firmwares without a theme/setUI
-delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.theme) {
-  boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
-}
-try {
-  Bangle.setUI({}); // In 2v12.xx we added the option for mode to be an object - for 2v12 and earlier, add a fix if it fails with an object supplied
-} catch(e) {
-  boot += `Bangle._setUI = Bangle.setUI;
-Bangle.setUI=function(mode, cb) {
-  if (Bangle.uiRemove) {
-    Bangle.uiRemove();
-    delete Bangle.uiRemove;
-  }
-  if ("object"==typeof mode) {
-    // TODO: handle mode.back?
-    mode = mode.mode;
-  }
-  Bangle._setUI(mode, cb);
-};\n`;
-}
+// ================================================== FIXING OLDER FIRMWARES
+// 2v15.68 and before had compass heading inverted.
+if (process.version.replace("v","")<215.68)
+  boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading))e.heading=360-e.heading;});
+Bangle.getCompass=(c=>(()=>{e=c();if(!isNaN(e.heading))e.heading=360-e.heading;return e;}))(Bangle.getCompass);`;
 
+// ================================================== BOOT.JS
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
 var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{

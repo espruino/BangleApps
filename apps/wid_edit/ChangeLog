@@ -1,1 +1,4 @@
 0.01: new Widget Editor!
+0.02: Wrap loadWidgets instead of replacing to keep original functionality intact
+      Change back entry to menu option
+      Allow changing widgets into all areas, including bottom widget bar

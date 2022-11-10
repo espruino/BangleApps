@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <a href="#" onclick="document.getElementById('apikeydiv').style.display='block';return false;" style="font-size:small;" id="apikeylink">Enter/change API key</a>
+    <br>
+      
+    <div id="apikeydiv" style="display:none;margin-bottom:30px;">
+      <input type="text" name="apikey" id="apikey"> <button onclick="localStorage.setItem('apikey', document.getElementById('apikey').value);document.getElementById('apikeysuccess').style.display='inline';setTimeout(removeSuccessMessage,5000);document.getElementById('upload2').value=null;document.getElementById('area').value='';return false;">save API key</button>
+    <span id="apikeysuccess" style="display:none; color:#198754;"><br>API key saved!</span>
+      <br><small>If you don't have an API key, <a href="https://rapidapi.com/serendi/api/pen-to-print-handwriting-ocr" target="_blank">you can create one here</a>. You get 100 API calls a month for free.</small>
+    </div>
+    
+    
+    <h4>Products</h4>
+    <form id="add_product_form">
+    
+    
+      
+      <div class="columns">
+        <textarea id="area" class="form-input" style="width: 80%;margin-left: 2%;margin-bottom: 5%;height: 150px;"></textarea>
+        <div id="loadingstatus" style="display:none;margin-left:2%;">Processing image <div class="loading" id="loading"></div></div>
+        <input style="margin-left:2%;" id="upload2" type=file name="files[]" size=30>
+      </div>
+    </form>
+    <br><br>
+   <button id="upload" class="btn btn-primary">Upload</button>
+    
+    <script>
+      function removeSuccessMessage(){
+        document.getElementById('apikeysuccess').style.display = 'none';
+      }
+
+      
+      if(localStorage.getItem('apikey')) {
+        document.getElementById('apikey').value = localStorage.getItem('apikey');
+      } else {
+        document.getElementById('apikeylink').style.display = 'none';
+        document.getElementById('apikeydiv').style.display = 'block';        
+      }
+      </script>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+      
+  
+   var antwort_val="";
+    function handleFileSelect(evt) {
+        
+        document.getElementById("loadingstatus").style.display = "block";
+
+        let files = evt.target.files;
+        let f = files[0];
+        const data = new FormData();
+        data.append("srcImg", f);
+        data.append("Session", "string");
+
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = false;
+
+        xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === this.DONE) {
+            document.getElementById("loadingstatus").style.display = "none";
+            console.log(this.responseText);
+            var antwort =JSON.parse(this.responseText);
+            antwort_val = antwort["value"];
+            console.log(antwort_val);
+            if(antwort_val == null){antwort_val = "Please enter an API key first, check that your key is valid and that you haven't exceeded your API quota!";}
+            document.getElementById('area').value = antwort_val;
+          }
+        });
+
+        xhr.open("POST", "https://pen-to-print-handwriting-ocr.p.rapidapi.com/recognize/");
+        xhr.setRequestHeader("x-rapidapi-host", "pen-to-print-handwriting-ocr.p.rapidapi.com");
+        xhr.setRequestHeader("x-rapidapi-key", localStorage.getItem("apikey"));
+
+
+          xhr.send(data);
+      }
+      
+      document.getElementById('upload2').addEventListener('change', handleFileSelect, false);
+
+      var products = []
+     try{
+        var stored = localStorage.getItem('grocery-product-list-aug')
+        if(stored){
+          products = JSON.parse(stored);
+          console.log(products);
+        }
+       
+      }catch(e){}
+      
+      var tstring = "";
+      for(e in products) {
+        tstring += products[e]["name"]+"\n";
+      }
+      document.getElementById("area").value = tstring;
+
+
+      var $form = document.getElementById('add_product_form')
+      var $list = document.getElementById('products')
+      var $area = document.getElementById("area");             
+      var $lines = [];
+      function getLines() {
+        $lines = area.value.replace(/\r\n/g,"\n").split("\n");
+        for (var i in $lines) {
+          $lines[i] = $lines[i].trim();
+        }
+      }
+      getLines();
+
+
+      function save(){
+        localStorage.removeItem('grocery-product-list-aug');
+        localStorage.setItem('grocery-product-list-aug',JSON.stringify(products));
+      }
+
+
+
+      document.getElementById("upload").addEventListener("click", function() {
+        
+        products = [];
+        getLines();
+        for(var i in $lines) {
+          var name = $lines[i];
+          products.push({
+            name,
+            ok: false
+          })
+        }
+          //alert("Products added");
+
+        save()
+        
+        sendCustomizedApp({
+          storage:[
+            { name:"grocery_list_aug.json", content: JSON.stringify({products: products}) }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

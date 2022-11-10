@@ -55,3 +55,7 @@
 0.49: Store first found clock as a setting to speed up further boots
 0.50: Allow setting of screen rotation
       Remove support for 2v11 and earlier firmware
+0.51: Remove patches for 2v10 firmware (BEEPSET and setUI)
+      Add patch to ensure that compass heading is corrected on pre-2v15.68 firmware
+      Ensure clock is only fast-loaded if it doesn't contain widgets
+0.52: Ensure heading patch for pre-2v15.68 firmware applies to getCompass

@@ -21,6 +21,9 @@ var RECOMMENDED_VERSION = "2v15";
 
 // We're only interested in Bangles
 DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
+// Where we get our usage data from
+Const.APP_USAGE_JSON = "https://banglejs.com/apps/appusage.json";
+Const.APP_DATES_CSV = "appdates.csv";
 
 // Set up source code URL
 (function() {
@@ -157,6 +160,11 @@ window.addEventListener('load', (event) => {
     <div class="column col-12">
     <div class="form-group">
       <label class="form-switch">
+        <input type="checkbox" id="usage_stats" ${SETTINGS.sendUsageStats?"checked":""}>
+        <i class="form-icon"></i> Send favourite and installed apps to banglejs.com<br/>
+          <small>For 'Sort by Installed/Favourited' functionality (see <a href="http://www.espruino.com/Privacy">privacy policy</a>)</small>
+      </label>
+      <label class="form-switch">
         <input type="checkbox" id="remember_device">
         <i class="form-icon"></i> Don't ask again
       </label>
@@ -164,10 +172,15 @@ window.addEventListener('load', (event) => {
     </div>
   </div>`;
   showPrompt("Which Bangle.js?",html,{},false);
+  var usageStats = document.getElementById("usage_stats");
+  usageStats.addEventListener("change",event=>{
+    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+    SETTINGS.sendUsageStats = event.target.checked;
+    saveSettings();
+  });
   htmlToArray(document.querySelectorAll(".devicechooser")).forEach(button => {
     button.addEventListener("click",event => {
-      let rememberDevice = document.getElementById("remember_device").checked;
-
+      let rememberDevice = !!document.getElementById("remember_device").checked;
       let button = event.currentTarget;
       let deviceId = button.getAttribute("deviceid");
       hidePrompt();

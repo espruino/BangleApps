@@ -13,7 +13,7 @@
   E.showMenu({
     "" : { "title" : "GPS auto time" },
     "< Back" : () => back(),
-    'Show Widgets': {
+    'Show Widget': {
       value: !!settings.show,
       onchange: v => {
         settings.show = v;
