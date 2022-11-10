@@ -23,26 +23,26 @@
     require("Storage").writeJSON(filename, settings);
   }
 
-  // define color values and names
-  var colName = ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"];
-  var colVal = [63488, 65504, 2016, 2047, 31, 63519, 0, 65535];
-
   // show widget menu
   function showWidMenu() {
+    // define color values and names
+    var colName = ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"];
+    var colVal = [63488, 65504, 2016, 2047, 31, 63519, 0, 65535];
+
     // set menu
     var widgetMenu = {
       "": {
         title: "Widget Settings"
       },
       /*LANG*/"< Back": () => showMain(7),
-      /*LANG*/"hide complete": {
+      /*LANG*/"hide": {
         value: settings.hide,
         onchange: v => {
           settings.hide = v;
           writeSetting();
         }
       },
-      /*LANG*/"draw time range": {
+      /*LANG*/"time range": {
         value: settings.drawRange,
         onchange: v => {
           settings.drawRange = v;
@@ -104,13 +104,13 @@
         max: 120,
         wrap: true,
         noList: true,
-        format: v => v + "min",
+        format: v => v + /*LANG*/"min",
         onchange: v => {
           settings.earlier = v;
           writeSetting();
         }
       },
-      /*LANG*/"disable on alarm": {
+      /*LANG*/"disable alarm": {
         value: settings.disableOnAlarm,
         onchange: v => {
           settings.disableOnAlarm = v;
@@ -134,22 +134,21 @@
           }
         }, 0, settings.msg, showMain),
       },
-      /*LANG*/"msg:": {
+      /*LANG*/"msg as prefix": {
         value: settings.msgAsPrefix,
-        format: v => v ? "add as prefix" : "replace msg",
         onchange: v => {
           settings.msgAsPrefix = v;
           writeSetting();
         }
       },
-      /*LANG*/"vibration pattern": require("buzz_menu").pattern(
+      /*LANG*/"vib pattern": require("buzz_menu").pattern(
         settings.vibrate,
         v => {
           settings.vibrate = v;
           writeSetting();
         }
       ),
-      /*LANG*/"Widget Settings": () => showWidMenu(),
+      /*LANG*/"Widget": () => showWidMenu(),
       /*LANG*/"Enabled": {
         value: settings.enabled,
         onchange: v => {
@@ -163,4 +162,4 @@
 
   // draw main menu
   showMain();
-})()
+})
