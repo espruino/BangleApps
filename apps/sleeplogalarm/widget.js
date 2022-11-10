@@ -65,4 +65,4 @@ if (settings.enabled) {
 
   // load widget
   WIDGETS.sleeplogalarm.reload();
-};
+}
