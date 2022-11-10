@@ -16,8 +16,6 @@ g.setColor(settings.bg);
 g.fillRect(0,0,g.getWidth(),g.getHeight());
 Bangle.setUI({
   mode : 'custom',
-  back : load, // B2: SW back button
-  btn : (n)=>{ // B1&2: Any HW button turns off
-    if (n==1 || n==2 || n==3) load(); // n==4, n==5 is triggered by left/right press of touch screen on B1 and should not exit clock
-  }
+  back : load, // B2: SW back button to exit
+  btn : ()=>{load();}, // B1&2: HW button to exit. // A simple 'load' as on the line above did not work for btn???
 });
