@@ -12,8 +12,8 @@
     to: 8, // 0800
     earlier: 30,
     disableOnAlarm: false, // !!! not available if alarm is at the next day
-    msgAsPrefix: true,
     msg: "...\n",
+    msgAsPrefix: true,
     vibrate: "..",
     as: true
   }, require("Storage").readJSON(filename, true) || {});
@@ -22,6 +22,10 @@
   function writeSetting() {
     require("Storage").writeJSON(filename, settings);
   }
+
+  // define color values and names
+  var colName = ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"];
+  var colVal = [63488, 65504, 2016, 2047, 31, 63519, 0, 65535];
 
   // show widget menu
   function showWidMenu() {
@@ -46,14 +50,13 @@
         }
       },
       /*LANG*/"color": {
-        colors: [63488, 65504, 2016, 2047, 31, 63519, 0, 65535],
-        value: this.colors.indexOf(settings.color),
+        value: colVal.indexOf(settings.color),
         min: 0,
-        max: this.colors.length -1,
+        max: colVal.length -1,
         wrap: true,
-        format: v => ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"][v],
+        format: v => colName[v],
         onchange: v => {
-          settings.color = this.colors[v];
+          settings.color = colVal[v];
           writeSetting();
         }
       }
@@ -70,7 +73,7 @@
         selected: selected
       },
       /*LANG*/"< Back": () => back(),
-      /*LANG*/"from": {
+      /*LANG*/"time from": {
         value: settings.from,
         min: 0,
         max: 23,
@@ -82,7 +85,7 @@
           writeSetting();
         }
       },
-      /*LANG*/"to": {
+      /*LANG*/"time to": {
         value: settings.to,
         min: 1,
         max: 24,
@@ -114,31 +117,32 @@
           writeSetting();
         }
       },
-      /*LANG*/"message as prefix": {
-        value: settings.msgAsPrefix,
-        onchange: v => {
-          settings.msgAsPrefix = v;
-          writeSetting();
-        }
-      },
       /*LANG*/"msg": {
         value: settings.msg,
         format: v => !v ? "" : v.length > 6 ? v.substring(0, 6)+"..." : v,
         // setTimeout required to load after menu refresh
-        onchange: () => setTimeout(msg => {
+        onchange: () => setTimeout((msg, cb) => {
           if (require("Storage").read("textinput")) {
             g.clear();
             require("textinput").input({text: msg}).then(result => {
               settings.msg = result;
               writeSetting();
-              showMenu(7);
+              cb(7);
             });
           } else {
-            E.showAlert(/*LANG*/"No keyboard app installed").then(() => showMenu(7));
+            E.showAlert(/*LANG*/"No keyboard app installed").then(() => cb(7));
           }
-        }),
+        }, 0, settings.msg, showMain),
       },
-      /*LANG*/"vibration pattern": require("buzz_menu.js").pattern(
+      /*LANG*/"msg:": {
+        value: settings.msgAsPrefix,
+        format: v => v ? "add as prefix" : "replace msg",
+        onchange: v => {
+          settings.msgAsPrefix = v;
+          writeSetting();
+        }
+      },
+      /*LANG*/"vibration pattern": require("buzz_menu").pattern(
         settings.vibrate,
         v => {
           settings.vibrate = v;
@@ -159,4 +163,4 @@
 
   // draw main menu
   showMain();
-})
+})()

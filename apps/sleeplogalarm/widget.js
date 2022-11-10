@@ -1,5 +1,5 @@
 // read settings to calculate alarm range
-var settings = Object.assign({
+settings = Object.assign({ // if using var here settings will always be undefined
   enabled: true,
   hide: false,
   drawRange: true,
@@ -26,14 +26,15 @@ if (settings.enabled) {
       g.reset().setColor(this.color).drawImage(atob("BwoBD8SSSP4EEEDg"), this.x + 1, this.y);
       // draw alarm range times if enabled
       if (this.drawRange) {
-        require("Font4x5Numeric").add(Graphics);
-        g.setFont("4x5Numeric").drawString(this.from, this.x + 1, this.y + 12);
+        // directly include Font4x5Numeric
+        g.setFontCustom(atob("CAZMA/H4PgvXoK1+DhPg7W4P1uCEPg/X4O1+AA=="), 46, atob("AgQEAgQEBAQEBAQE"), 5);
+        g.drawString(this.from, this.x + 1, this.y + 12);
         g.setFontAlign(1, 1).drawString(this.to, this.x + this.width + 1, this.y + 23);
       }
     },
     reload: function () {
       // abort if onChange is not available
-      if (typeof (global.sleeplog || {}).onChange === "object") return;
+      if (typeof (global.sleeplog || {}).onChange !== "object") return;
 
       // abort if no alarm exists inside range
       if (!(require("Storage").readJSON("sched.json", 1) || [])
@@ -49,13 +50,13 @@ if (settings.enabled) {
         if (data.prevStatus !== 4 || !(data.status === 3 || data.status === 2)) return;
 
         // get cahed data, now and calculate time of now
-        var data = WIDGET.sleeplogalarm;
+        var settings = WIDGET.sleeplogalarm;
         var now = new Date();
         var tNow = (((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000);
 
         // abort if now is outside the possible alarm range
-        if (tNow + data.earlier * 6E4 < data.from * 36E5 ||
-          tNow + data.earlier * 6E4 >= data.to * 36E5) return;
+        if (tNow + settings.earlier * 6E4 < settings.from * 36E5 ||
+          tNow + settings.earlier * 6E4 >= settings.to * 36E5) return;
 
         // execute trigger function
         require("sleeplogalarm.trigger.js")(now, tNow);
