@@ -345,7 +345,7 @@ if (sleeplog.conf.enabled) {
     //      (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
     //    prevStatus: value of the previous status 0-4,
     //    prevConsecutive: value of the previous status 0-2
-    onChange: []
+    onChange: {}
   }, sleeplog);
 
   // initial starting
