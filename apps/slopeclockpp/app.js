@@ -11,6 +11,12 @@ Graphics.prototype.setFontPaytoneOne = function(scale) {
 
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
+
+let settings = Object.assign(
+  require("Storage").readJSON("slopeclockpp.default.json", true) || {},
+  require("Storage").readJSON("slopeclockpp.json", true) || {}
+);
+
 let drawTimeout;
 
 let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
@@ -24,7 +30,16 @@ const fontBorder = 4; // offset from left/right
 const slopeBorder = 10, slopeBorderUpper = 4; // fudge-factor to move minutes down from slope
 let R,x,y; // middle of the clock face
 let dateStr = "";
-let bgColors = g.theme.dark ? ["#ff0","#0ff","#f0f"] : ["#f00","#0f0","#00f"];
+let bgColors = [];
+if (g.theme.dark) {
+   if (settings.colorYellow) bgColors.push("#ff0");
+   if (settings.colorCyan) bgColors.push("#0ff");
+   if (settings.colorMagenta) bgColors.push("#f0f");
+} else {
+   if (settings.colorRed) bgColors.push("#f00");
+   if (settings.colorGreen) bgColors.push("#0f0");
+   if (settings.colorBlue) bgColors.push("#00f");
+}
 let bgColor = bgColors[(Math.random()*bgColors.length)|0];
 
 
@@ -95,19 +110,23 @@ let animate = function(isIn, callback) {
         // draw the date
         g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
 
+        if (settings.showSteps) {
         // draw steps to bottom left
         const steps = getSteps();
         if (steps > 0)
            g.setFontAlign(-1, 0).drawString(shortValue(steps), 3, R.y+R.h-30);
+        }
 
-        // draw weather to top right
-        const weather = getWeather();
-        const tempString = weather ? require("locale").temp(weather.temp - 273.15) : undefined;
-        const code = weather ? weather.code : -1;
-        if (code > -1) {
-          g.setColor(g.theme.fg).setFontAlign(1, 0).drawString(tempString, R.w - 3, y-slope-slopeBorderUpper);
-          const icon = getWeatherIconByCode(code);
-          if (icon) g.drawImage(icon, R.w - 3 - 15, y-slope-slopeBorderUpper - 15 - 15);
+        if (settings.showWeather) {
+          // draw weather to top right
+          const weather = getWeather();
+          const tempString = weather ? require("locale").temp(weather.temp - 273.15) : undefined;
+          const code = weather ? weather.code : -1;
+          if (code > -1) {
+            g.setColor(g.theme.fg).setFontAlign(1, 0).drawString(tempString, R.w - 3, y-slope-slopeBorderUpper);
+            const icon = getWeatherIconByCode(code);
+            if (icon) g.drawImage(icon, R.w - 3 - 15, y-slope-slopeBorderUpper - 15 - 15);
+          }
         }
       }
       if (callback) callback();
