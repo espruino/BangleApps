@@ -7,22 +7,22 @@ This widget searches for active alarms and raises the alarm event up to the defi
 ---
 
 #### Inside the settings: !!! dummy entries !!!
-  - __Thresholds__ submenu  
+  - __Thresholds__ submenu
     Changes take effect from now on, not retrospective!
-    - __Max Awake__ | maximal awake duration  
+    - __Max Awake__ | maximal awake duration
       _10min_ / _20min_ / ... / __60min__ / ... / _120min_
-    - __Min Consecutive__ | minimal consecutive sleep duration  
+    - __Min Consecutive__ | minimal consecutive sleep duration
       _10min_ / _20min_ / ... / __30min__ / ... / _120min_
-    - __Deep Sleep__ | deep sleep threshold  
+    - __Deep Sleep__ | deep sleep threshold
       _30_ / _31_ / ... / __100__ / ... / _200_
-    - __Light Sleep__ | light sleep threshold  
-      _100_ / _110_ / ... / __200__ / ... / _400_  
+    - __Light Sleep__ | light sleep threshold
+      _100_ / _110_ / ... / __200__ / ... / _400_
     - __Reset to Default__ | reset to bold values above
-  - __BreakToD__ | time of day to break view  
+  - __BreakToD__ | time of day to break view
     _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
-  - __App Timeout__ | app specific lock timeout  
+  - __App Timeout__ | app specific lock timeout
     __0s__ / _10s_ / ... / _120s_
-  - __Enabled__ | completely en-/disables the background service  
+  - __Enabled__ | completely en-/disables the background service
     __on__ / _off_
 
 ---
@@ -30,8 +30,6 @@ This widget searches for active alarms and raises the alarm event up to the defi
 ---
 
 #### To do list
-- widget.js
-- settings.js
 - README.md
 
 #### Requests, Bugs and Feedback

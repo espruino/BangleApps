@@ -8,6 +8,7 @@
   "type": "widget",
   "tags": "tool,widget",
   "supports": ["BANGLEJS2"],
+  "dependencies": {"sleeplog": "app"},
   "readme": "README.md",
   "storage": [
     {"name": "sleeplogalarm.settings.js", "url": "settings.js"},
