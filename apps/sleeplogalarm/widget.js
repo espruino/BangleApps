@@ -50,16 +50,13 @@ if (settings.enabled) {
         if (data.prevStatus !== 4 || !(data.status === 3 || data.status === 2)) return;
 
         // get cahed data, now and calculate time of now
-        var settings = WIDGET.sleeplogalarm;
+        var settings = WIDGETS.sleeplogalarm;
         var now = new Date();
         var tNow = (((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000);
 
-        // abort if now is outside the possible alarm range
-        if (tNow + settings.earlier * 6E4 < settings.from * 36E5 ||
-          tNow + settings.earlier * 6E4 >= settings.to * 36E5) return;
-
-        // execute trigger function
-        require("sleeplogalarm.trigger.js")(now, tNow);
+        // execute trigger function if now is inside the alarm range
+        if (tNow + settings.earlier * 6E4 >= settings.from * 36E5 &&
+          tNow < settings.to * 36E5) require("sleeplogalarm.trigger.js")(now, tNow);
       };
     }
   };

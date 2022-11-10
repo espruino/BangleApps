@@ -23,7 +23,7 @@ exports = function(now, tNow) {
       // filter for active alarms, ...
       a => a.on && !a.timer &&
       // after now+10s and in alarm range
-      a.t > tNow && a.t >= settings.from * 36E5 && a.t <= settings.to * 36E5
+      a.t > tNow && a.t >= settings.from * 36E5 && a.t < settings.to * 36E5
     ), then) || []).sort((a, b) => a.t > b.t)[0];
   }
 
