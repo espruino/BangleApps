@@ -3,7 +3,7 @@ exports = function(now, tNow) {
   var settings = Object.assign({
     from: 4, // 0400
     to: 8, // 0800
-    earlier: 6E4 * 30,
+    earlier: 30,
     msgAsPrefix: true,
     disableOnAlarm: false, // !!! not available if alarm is at the next day
     msg: "...\n",
@@ -12,7 +12,7 @@ exports = function(now, tNow) {
   }, require("Storage").readJSON("sleeplogalarm.settings.json", true) || {});
 
   // calculate then date
-  var then = new Date(now + settings.earlier);
+  var then = new Date(now + settings.earlier * 6E4);
 
   // load library
   var sched = require("sched");
@@ -36,7 +36,7 @@ exports = function(now, tNow) {
   // return if no alarm is found
   if (!alarm) return;
 
-  // disable early triggered alarm if set and now and then on the same day 
+  // disable early triggered alarm if set and now and then on the same day
   if (settings.disableOnAlarm && now.getDate() === then.getDate()) {
     // add indexes to find alarm to temporary disable
     allAlarms = allAlarms.map((a, idx) => {

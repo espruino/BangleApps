@@ -10,7 +10,8 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name": "sleeplogalarm.wid.js", "url": "widget.js"},
-    {"name": "sleeplogalarm.settings.js", "url": "settings.js"}
+    {"name": "sleeplogalarm.settings.js", "url": "settings.js"},
+    {"name": "sleeplogalarm.trigger.js", "url": "trigger.js"},
+    {"name": "sleeplogalarm.wid.js", "url": "widget.js"}
   ]
 }
