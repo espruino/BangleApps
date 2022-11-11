@@ -11,8 +11,8 @@
   "dependencies": {"sleeplog": "app"},
   "readme": "README.md",
   "storage": [
+    {"name": "sleeplogalarm", "url": "lib.js"},
     {"name": "sleeplogalarm.settings.js", "url": "settings.js"},
-    {"name": "sleeplogalarm.trigger.js", "url": "trigger.js"},
     {"name": "sleeplogalarm.wid.js", "url": "widget.js"}
   ]
 }

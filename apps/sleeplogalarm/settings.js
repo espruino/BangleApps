@@ -148,6 +148,13 @@
           writeSetting();
         }
       ),
+      /*LANG*/"auto snooze": {
+        value: settings.as,
+        onchange: v => {
+          settings.as = v;
+          writeSetting();
+        }
+      },
       /*LANG*/"Widget": () => showWidMenu(),
       /*LANG*/"Enabled": {
         value: settings.enabled,
