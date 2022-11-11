@@ -1,0 +1,196 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  <style>
+svg { width:95% }
+  </style>
+  </head>
+  <body>
+
+      <p>Please select a gpx file to be converted to gpc and loaded.</p>
+
+
+    gpx file : <input type="file" is="gpx_file" id="fileInput" accept=".gpx">
+    <br>
+    gpc filename : <input type="text" id="gpc_file" name="gpc_file" maxlength="24">.gpc (max 24 characters)
+    <br>
+    <input type="checkbox" id="osm" name="osm" checked>
+      <label for="osm">fetch interests from openstreetmap</label>
+    <table>
+        <tr>
+            <th><bold>OpenstreetMap <a href="https://wiki.openstreetmap.org/wiki/Tags">NODE Tags</a></bold></th>
+        </tr>
+        <tr>
+            <th>color</th><th>key</th><th>value</th>
+        </tr>
+        <tr>
+            <th style="color:red">red</th><th><input type="text" id="key1" name="key1" value="shop"></th><th><input type="text" id="value1" name="value1" value="bakery"></th>
+        </tr>
+        <tr>
+            <th style="color:blue">blue</th><th><input type="text" id="key2" name="key2" value="amenity"></th><th><input type="text" id="value2" name="value2" value="drinking_water"></th>
+        </tr>
+        <tr>
+            <th style="color:cyan">cyan</th><th><input type="text" id="key3" name="key3" value="amenity"></th><th><input type="text" id="value3" name="value3" value="toilets"></th>
+        </tr>
+        <tr>
+            <th style="color:green">green</th><th><input type="text" id="key4" name="key4" value="tourism"></th><th><input type="text" id="value4" name="value4" value="artwork"></th>
+        </tr>
+    </table>
+
+    <p>nice tags could be :
+    shop/bicycle, amenity/bank, shop/supermarket, leisure/picnic_table, tourism/information, amenity/pharmacy
+    </p>
+
+    <input type="button" id="convert" name="convert" value="Convert" disabled>
+
+
+    <input type="button" id="upload" name="upload" value="Upload" disabled>
+    <div id="status"></div>
+    <div id="map"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      function onInit() {
+      }
+    </script>
+
+
+    <script type="module">
+
+function vec_to_string(vec) {
+  let final_string = '';
+  for (let i = 0 ; i < vec.length ; i++) {
+    final_string += String.fromCharCode(vec[i]);
+  }
+  return final_string;
+}
+
+import init, { convert_gpx_strings, convert_gpx_strings_no_osm, get_gpc, get_svg } from "./pkg/gpconv.js";
+console.log("imported wasm");
+
+let osm_checkbox = document.querySelector("input[name=osm]");
+let with_osm = true;
+
+osm_checkbox.addEventListener('change', function() {
+  if (this.checked) {
+    with_osm = true;
+	document.getElementById('key1').disabled = false;
+	document.getElementById('key2').disabled = false;
+	document.getElementById('key3').disabled = false;
+	document.getElementById('key4').disabled = false;
+	document.getElementById('value1').disabled = false;
+	document.getElementById('value2').disabled = false;
+	document.getElementById('value3').disabled = false;
+	document.getElementById('value4').disabled = false;
+  } else {
+    with_osm = false;
+	document.getElementById('key1').disabled = true;
+	document.getElementById('key2').disabled = true;
+	document.getElementById('key3').disabled = true;
+	document.getElementById('key4').disabled = true;
+	document.getElementById('value1').disabled = true;
+	document.getElementById('value2').disabled = true;
+	document.getElementById('value3').disabled = true;
+	document.getElementById('value4').disabled = true;
+  }
+});
+
+let status = document.getElementById("status");
+let gpx_content = null;
+let gpc_filename = null;
+let gpc_content = null;
+
+document
+  .getElementById("fileInput")
+  .addEventListener("change", function selectedFileChanged() {
+	document.getElementById('convert').disabled = true;
+	document.getElementById('upload').disabled = true;
+    if (this.files.length === 0) {
+      console.log("No file selected.");
+      return;
+    }
+    status.innerHTML = "reading file";
+
+    let gpx_filename = this.files[0].name;
+	if (gpc_filename === null || gpc_filename == "") {
+    	if (gpx_filename.length <= 28) {
+    		gpc_filename = gpx_filename.slice(0, gpx_filename.length - 4);
+			document.getElementById('gpc_file').value = gpc_filename;
+    	}
+	}
+
+    const reader = new FileReader();
+    reader.onload = function fileReadCompleted() {
+      console.log("reading file completed");
+      status.innerHTML = "file reading completed";
+	  gpx_content = reader.result;
+	  document.getElementById('convert').disabled = false;
+	};
+    reader.readAsText(this.files[0]);
+});
+
+document
+  .getElementById("convert")
+  .addEventListener('click', function() {
+    console.log("starting conversion");
+	document.getElementById('convert').disabled = true;
+    document.getElementById('upload').disabled = true;
+    status.innerHTML = "please wait, converting file";
+    init().then(() => {
+      let gpc_svg;
+      if (with_osm) {
+        let key1 = document.getElementById('key1').value;
+        let key2 = document.getElementById('key2').value;
+        let key3 = document.getElementById('key3').value;
+        let key4 = document.getElementById('key4').value;
+        let value1 = document.getElementById('value1').value;
+        let value2 = document.getElementById('value2').value;
+        let value3 = document.getElementById('value3').value;
+        let value4 = document.getElementById('value4').value;
+        gpc_svg = convert_gpx_strings(gpx_content, key1, value1, key2, value2, key3, value3, key4, value4);
+      } else {
+        gpc_svg = convert_gpx_strings_no_osm(gpx_content);
+      }
+      gpc_svg.then(gs => {
+        status.innerHTML = "file converted";
+        let svg = get_svg(gs);
+        let svg_string = vec_to_string(svg);
+        let img = document.getElementById("map");
+        img.innerHTML = svg_string;
+        gpc_content = get_gpc(gs);
+        if (gpc_filename !== null) {
+          document.getElementById('upload').disabled = false;
+        }
+      });
+    });
+});
+
+document
+  .getElementById("gpc_file")
+  .addEventListener('change', function() {
+  gpc_filename = document.getElementById("gpc_file").value;
+  if (gpc_filename == "") {
+    document.getElementById("upload").disabled = true;
+  } else {
+    if (gpc_content !== null) {
+      document.getElementById("upload").disabled = false;
+    }
+  }
+});
+
+
+document
+  .getElementById("upload")
+  .addEventListener('click', function() {
+    status.innerHTML = "uploading file";
+    console.log("uploading");
+    let gpc_string = vec_to_string(gpc_content);
+    Util.writeStorage(gpc_filename + ".gpc", gpc_string, () => {
+      status.innerHTML = `${gpc_filename}.gpc uploaded`;
+      console.log("DONE");
+    });
+});
+
+    </script>
+  </body>
+</html>

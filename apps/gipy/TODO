@@ -1,0 +1,25 @@
+
+* bugs
+
+- when exactly on turn, distance to next point is still often 50m
+    -----> it does not buzz very often on turns
+
+- when going backwards we have a tendencing to get a wrong current_segment
+
+* additional features
+
+- config screen
+    - are we on foot (and should use compass)
+
+- we need to buzz 200m before sharp turns (or even better, 30seconds)
+(and look at more than next point)
+
+- display distance to next water/toilet ?
+- dynamic map rescale
+- display scale (100m)
+
+- compress path ?
+
+* misc
+
+- code is becoming messy
