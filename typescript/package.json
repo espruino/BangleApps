@@ -10,6 +10,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "node-fetch": "^3.2.9"
+    "node-fetch": "^3.2.10"
   }
 }

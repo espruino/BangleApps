@@ -1,12 +1,20 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false};
+  const settings = Object.assign({
+    showClocks: true,
+    fullscreen: false,
+    direct: false,
+    oneClickExit: false,
+    swipeExit: false,
+    timeOut:"Off"
+  }, s.readJSON("iconlaunch.json", true) || {});
+
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
-  let launchCache = s.readJSON("launch.cache.json", true)||{};
-  let launchHash = require("Storage").hash(/\.info/);
+  let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
+  let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
   launchCache = {
     hash : launchHash,
@@ -20,7 +28,7 @@
         if (a.name>b.name) return 1;
         return 0;
       }) };
-    s.writeJSON("launch.cache.json", launchCache);
+    s.writeJSON("iconlaunch.cache.json", launchCache);
   }
   let scroll = 0;
   let selectedItem = -1;
@@ -124,6 +132,7 @@
   g.flip();
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
   let onDrag = function(e) {
+    updateTimeout();
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
     let dy = e.dy;
@@ -173,6 +182,7 @@
     drag: onDrag,
     touch: (_, e) => {
       if (e.y < R.y - 4) return;
+      updateTimeout();
       let i = YtoIdx(e.y);
       selectItem(i, e);
     },
@@ -193,11 +203,23 @@
     delete idxToY;
     delete YtoIdx;
     delete settings;
+    if (timeout) clearTimeout(timeout);
     setTimeout(eval, 0, s.read(".bootcde"));
   };
 
   
   if (settings.oneClickExit) mode.btn = returnToClock;
+
+  let timeout;
+  const updateTimeout = function(){
+  if (settings.timeOut!="Off"){
+      let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(returnToClock,time*1000);  
+    }
+  }
+  
+  updateTimeout();
 
   Bangle.setUI(mode);
 }

@@ -109,6 +109,7 @@ exports.enable = () => {
           if (supportedCharacteristics["0x2a37"].active) stopFallback();
           if (bpmTimeout) clearTimeout(bpmTimeout);
           bpmTimeout = setTimeout(()=>{
+            bpmTimeout = undefined;
             supportedCharacteristics["0x2a37"].active = false;
             startFallback();
           }, 3000);
@@ -154,8 +155,8 @@ exports.enable = () => {
               src: "bthrm"
             };
 
-            log("Emitting HRM", repEvent);
-            Bangle.emit("HRM_int", repEvent);
+            log("Emitting aggregated HRM", repEvent);
+            Bangle.emit("HRM_R", repEvent);
           }
 
           var newEvent = {
@@ -280,7 +281,11 @@ exports.enable = () => {
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      clearRetryTimeout(reason != "Connection Timeout");
+      
+      var retryTimeResetNeeded = true;
+      retryTimeResetNeeded &= reason != "Connection Timeout";
+      retryTimeResetNeeded &= reason != "No device found matching filters";
+      clearRetryTimeout(retryTimeResetNeeded);
       supportedCharacteristics["0x2a37"].active = false;
       startFallback();
       blockInit = false;
@@ -312,13 +317,13 @@ exports.enable = () => {
         result = result.then(()=>{
           log("Starting notifications", newCharacteristic);
           var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
-          if (settings.gracePeriodNotification > 0){
-            log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
-            startPromise = startPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodNotification);
-            });
-          }
+          
+          log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
+          startPromise = startPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodNotification);
+          });
+          
           return startPromise;
         });
       }
@@ -429,30 +434,30 @@ exports.enable = () => {
           var connectPromise = gatt.connect(connectSettings).then(function() {
             log("Connected.");
           });
-          if (settings.gracePeriodConnect > 0){
-            log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
-            connectPromise = connectPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodConnect);
-            });
-          }
+          log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
+          connectPromise = connectPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodConnect);
+          });
           return connectPromise;
         } else {
           return Promise.resolve();
         }
       });
-
-/*      promise = promise.then(() => {
-        log(JSON.stringify(gatt.getSecurityStatus()));
-        if (gatt.getSecurityStatus()['bonded']) {
-          log("Already bonded");
-          return Promise.resolve();
-        } else {
-          log("Start bonding");
-          return gatt.startBonding()
-            .then(() => console.log(gatt.getSecurityStatus()));
-        }
-      });*/
+      
+      if (settings.bonding){
+        promise = promise.then(() => {
+          log(JSON.stringify(gatt.getSecurityStatus()));
+          if (gatt.getSecurityStatus()['bonded']) {
+            log("Already bonded");
+            return Promise.resolve();
+          } else {
+            log("Start bonding");
+            return gatt.startBonding()
+              .then(() => console.log(gatt.getSecurityStatus()));
+          }
+        });
+      }
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
@@ -476,13 +481,11 @@ exports.enable = () => {
               log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
-            if (settings.gracePeriodService > 0) {
-              log("Add " + settings.gracePeriodService + "ms grace period after services");
-              result = result.then(()=>{
-                log("Wait after services");
-                return waitingPromise(settings.gracePeriodService);
-              });
-            }
+            log("Add " + settings.gracePeriodService + "ms grace period after services");
+            result = result.then(()=>{
+              log("Wait after services");
+              return waitingPromise(settings.gracePeriodService);
+            });
             return result;
           });
         } else {
@@ -538,35 +541,33 @@ exports.enable = () => {
     };
 
     if (settings.replace){
+      // register a listener for original HRM events and emit as HRM_int
       Bangle.on("HRM", (e) => {
         e.modified = true;
         Bangle.emit("HRM_int", e);
+        if (fallbackActive){
+          // if fallback to internal HRM is active, emit as HRM_R to which everyone listens
+          Bangle.emit("HRM_R", e);
+        }
       });
 
-      Bangle.origOn = Bangle.on;
-      Bangle.on = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origOn("HRM_int", callback);
-        } else {
-          Bangle.origOn(name, callback);
-        }
-      };
+      // force all apps wanting to listen to HRM to actually get events for HRM_R
+      Bangle.on = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.on);
 
-      Bangle.origRemoveListener = Bangle.removeListener;
-      Bangle.removeListener = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origRemoveListener("HRM_int", callback);
-        } else {
-          Bangle.origRemoveListener(name, callback);
-        }
-      };
-
+      Bangle.removeListener = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.removeListener);
     }
 
     Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
-
       Bangle.setHRMPower = function(isOn, app) {
         log("setHRMPower for " + app + ": " + (isOn?"on":"off"));
         if (settings.enabled){

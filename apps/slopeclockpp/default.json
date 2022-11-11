@@ -1,0 +1,10 @@
+{
+  "showSteps": true,
+  "showWeather": true,
+  "colorRed": true,
+  "colorGreen": true,
+  "colorBlue": true,
+  "colorYellow": true,
+  "colorMagenta": true,
+  "colorCyan": true
+}
