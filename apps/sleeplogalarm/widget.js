@@ -7,8 +7,6 @@ if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enable
   WIDGETS.sleeplogalarm = {
     area: "tl",
     width: 0,
-    drawTime: settings.drawTime,
-    color: settings.color,
     time: 0,
     earlier: settings.earlier,
     draw: function () {
