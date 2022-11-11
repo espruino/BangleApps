@@ -82,6 +82,14 @@ if (process.version.replace("v","")<215.68)
   boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading))e.heading=360-e.heading;});
 Bangle.getCompass=(c=>(()=>{e=c();if(!isNaN(e.heading))e.heading=360-e.heading;return e;}))(Bangle.getCompass);`;
 
+ // deleting stops us getting confused by our own decl. builtins can't be deleted
+if (process.version.replace("v","")<215.135) { // this is a polyfill without fastloading capability
+  delete Bangle.showClock;
+  if (!Bangle.showClock) boot += `Bangle.showClock = ()=>{load(".bootcde")};\n`;
+  delete Bangle.load;
+  if (!Bangle.load) boot += `Bangle.load = load;\n`;
+}
+
 // ================================================== BOOT.JS
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
