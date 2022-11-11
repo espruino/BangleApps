@@ -1,26 +1,10 @@
 (function(back) {
-  // define settings filename
-  var filename = "sleeplogalarm.settings.json";
-
-  // define settings
-  var settings = Object.assign({
-    enabled: true,
-    hide: false,
-    drawRange: true,
-    color: g.theme.dark ? 65504 : 31, // yellow or blue
-    from: 4, // 0400
-    to: 8, // 0800
-    earlier: 30,
-    disableOnAlarm: false, // !!! not available if alarm is at the next day
-    msg: "...\n",
-    msgAsPrefix: true,
-    vibrate: "..",
-    as: true
-  }, require("Storage").readJSON(filename, true) || {});
+  // read settings
+  var settings = require("sleeplogalarm").getSettings();
 
   // write change to storage
   function writeSetting() {
-    require("Storage").writeJSON(filename, settings);
+    require("Storage").writeJSON("sleeplogalarm.settings.json", settings);
   }
 
   // show widget menu

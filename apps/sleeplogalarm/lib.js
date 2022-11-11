@@ -19,11 +19,6 @@ function getNextAlarm(allAlarms, from, to, withId) {
     }).sort((a, b) => a.tTo - b.tTo)[0] || {};
 }
 
-// calculate a time from its date
-function dateToTime(date) {
-  return ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000;
-}
-
 exports = {
   // function to read settings with defaults
   getSettings: function() {
@@ -68,7 +63,7 @@ exports = {
       // get settings from widget, now and calculate time of now
       var settings = WIDGETS.sleeplogalarm;
       var now = new Date();
-      var tNow = dateToTime(now);
+      var tNow = ((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000;
 
       // execute trigger function if inside the alarm range
       if (tNow >= settings.time - settings.earlier * 6E4 &&
@@ -78,32 +73,25 @@ exports = {
 
   // trigger function
   trigger: function(now, tNow) {
-    // define settings
+    // read settings
     var settings = this.getSettings();
-
-    // calculate then date
-    var then = new Date(now + settings.earlier * 6E4);
 
     // read all alarms
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = firstActiveAlarm(allAlarms);
+    var alarm = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5, settings.disableOnAlarm);
 
     // return if no alarm is found
     if (!alarm) return;
 
-    // disable early triggered alarm if set and now and then on the same day
-    if (settings.disableOnAlarm && now.getDate() === then.getDate()) {
-      // add indexes to find alarm to temporary disable
-      allAlarms = allAlarms.map((a, idx) => {
-        a.idx = idx;
-        return a;
-      });
-      // get index of first active alarm
-      var idx = firstActiveAlarm(allAlarms).idx;
-      // set this alarms last to then
-      allAlarms[idx].last = then.getDate();
+    // get date of the alarm
+    var aDate = new Date(now + alarm.tTo).getDate();
+
+    // disable earlier triggered alarm if set and on the same day
+    if (settings.disableOnAlarm && now.getDate() === aDate) {
+      // set alarms last to today
+      allAlarms[alarm.idx].last = aDate;
       // remove added indexes
       allAlarms = allAlarms.map(a => {
         delete a.idx;
@@ -116,7 +104,7 @@ exports = {
       id: "sleeplog",
       appid: "sleeplog",
       on: true,
-      t: (((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000),
+      t: tNow,
       dow: 127,
       msg: settings.msg + (settings.msgAsPrefix ? alarm.msg || "" : ""),
       vibrate: settings.vibrate || alarm.vibrate,
