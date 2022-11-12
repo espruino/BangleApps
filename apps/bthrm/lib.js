@@ -543,7 +543,7 @@ exports.enable = () => {
     if (settings.replace){
       // register a listener for original HRM events and emit as HRM_int
       Bangle.on("HRM", (e) => {
-        e.modified = true;
+        e.src = "int";
         log("Emitting HRM_int", e);
         Bangle.emit("HRM_int", e);
         if (fallbackActive){
