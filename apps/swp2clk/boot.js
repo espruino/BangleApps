@@ -19,17 +19,19 @@
   var DEBUG = false;
   var FILE = "swp2clk.data.json";
 
+  var swipeHandler = (dir) => {
+    log("swipe");
+    log(dir);
+    if (dir === 1) {
+      if (!Bangle.showClock) load();
+      else Bangle.showClock();
+    }
+  };
+
   var main = () => {
     var settings = readSettings();
 
     if (settings.addSwipeHandler) {
-      var swipeHandler = (dir) => {
-        log("swipe");
-        log(dir);
-        if (dir === 1) {
-          load();
-        }
-      };
       Bangle.on("swipe", swipeHandler);
     }
 
@@ -39,7 +41,7 @@
       log(fileName);
       var settings = readSettings();
 
-      if (fileName) {
+      if (fileName && fileName != ".bootcde") {
         // "Off"
         if (settings.mode === 0) {
           settings.addSwipeHandler = false;
@@ -105,5 +107,21 @@
 
   // start main function
 
-  main();
+  if (!Bangle.load)
+    main();
+  else {
+    Bangle.load = (o => (fileName) => {
+      var settings = readSettings();
+      Bangle.removeListener("swipe", swipeHandler);
+      if (fileName && fileName != ".bootcde") {
+
+        if ((settings.mode === 1 && settings.whiteList.includes(fileName)) || // "White List"
+        (settings.mode === 2 && !settings.blackList.includes(fileName)) || // "Black List"
+        settings.mode === 3) { // "Always"
+          Bangle.on("swipe", swipeHandler);
+        }
+      }
+      o(fileName);
+    })(Bangle.load);
+  }
 })();
