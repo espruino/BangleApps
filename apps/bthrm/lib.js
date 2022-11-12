@@ -106,7 +106,7 @@ exports.enable = () => {
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
           supportedCharacteristics["0x2a37"].active = bpm > 0;
           log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
-          if (supportedCharacteristics["0x2a37"].active) stopFallback();
+          switchFallback();
           if (bpmTimeout) clearTimeout(bpmTimeout);
           bpmTimeout = setTimeout(()=>{
             bpmTimeout = undefined;
@@ -148,14 +148,14 @@ exports.enable = () => {
             battery = lastReceivedData["0x180f"]["0x2a19"];
           }
 
-          if (settings.replace){
+          if (settings.replace && bpm > 0){
             var repEvent = {
               bpm: bpm,
               confidence: (sensorContact || sensorContact === undefined)? 100 : 0,
               src: "bthrm"
             };
 
-            log("Emitting aggregated HRM", repEvent);
+            log("Emitting HRM_R(bt)", repEvent);
             Bangle.emit("HRM_R", repEvent);
           }
 
@@ -544,9 +544,11 @@ exports.enable = () => {
       // register a listener for original HRM events and emit as HRM_int
       Bangle.on("HRM", (e) => {
         e.modified = true;
+        log("Emitting HRM_int", e);
         Bangle.emit("HRM_int", e);
         if (fallbackActive){
           // if fallback to internal HRM is active, emit as HRM_R to which everyone listens
+          log("Emitting HRM_R(int)", e);
           Bangle.emit("HRM_R", e);
         }
       });
