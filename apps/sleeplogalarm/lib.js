@@ -7,16 +7,15 @@ function getNextAlarm(allAlarms, from, to, withId) {
     a.idx = idx;
     return a;
   });
-  // return next
-  return sched.getActiveAlarms(
-      // filter for active alarms in range
-      allAlarms.filter(a => a.on && !a.timer && a.t >= from && a.t < to)
-    ).map(a => {
-      // add time to alarm
+  // return next active alarms in range
+  return allAlarms.filter(
+      a => a.on && !a.timer && a.t >= from && a.t < to
+    ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
-      // sort to get next alarm first
-    }).sort((a, b) => a.tTo - b.tTo)[0] || {};
+    }).filter(a => a.tTo // filter non active alarms 
+    // sort to get next alarm first
+    ).sort((a, b) => a.tTo - b.tTo)[0] || {};
 }
 
 exports = {
@@ -44,7 +43,7 @@ exports = {
     if (typeof (global.sleeplog || {}).onChange !== "object") return;
 
     // read settings to calculate alarm range
-    var settings = this.getSettings();
+    var settings = exports.getSettings();
 
     // set the alarm time
     this.time = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5).t;
@@ -54,6 +53,9 @@ exports = {
 
     // set widget width if not hidden
     if (!this.hidden) this.width = 8;
+
+    // abort if already alarmed for this alarm
+    if (sleeplog.onChange.sleeplogalarm == this.time) return; 
 
     // insert sleeplogalarm function to onChange
     sleeplog.onChange.sleeplogalarm = function (data) {
@@ -74,13 +76,16 @@ exports = {
   // trigger function
   trigger: function(now, tNow) {
     // read settings
-    var settings = this.getSettings();
+    var settings = exports.getSettings();
 
     // read all alarms
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
     var alarm = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5, settings.disableOnAlarm);
+
+    // clear sleeplog.onChange function and set alarm time to prevent resetting for this alarm
+    sleeplog.onChange.sleeplogalarm = alarm.t;
 
     // return if no alarm is found
     if (!alarm) return;
