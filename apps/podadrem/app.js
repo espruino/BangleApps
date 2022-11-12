@@ -1,3 +1,4 @@
+{
 /*
 Bluetooth.println(JSON.stringify({t:"intent", action:"", flags:["flag1", "flag2",...], categories:["category1","category2",...], mimetype:"", data:"",  package:"", class:"", target:"", extra:{someKey:"someValueOrString"}}));
 
@@ -65,12 +66,12 @@ Since v2020.16
 com.bambuna.podcastaddict.service.player.togglespeed – This will toggle the Playback speed for the episode currently playing (alternate between selected speed and 1.0x).
 */
 
-var R;
-var backToMenu = false;
-var dark = g.theme.dark; // bool
+let R;
+let backToMenu = false;
+let dark = g.theme.dark; // bool
 
 // The main layout of the app
-function gfx() {
+let gfx = function() {
   //Bangle.drawWidgets();
   R = Bangle.appRect;
   marigin = 8;
@@ -106,10 +107,10 @@ function gfx() {
 
   g.setFontAlign(1, 1, 0);
   g.drawString("Speed", R.x + R.w - 2*marigin, R.y + R.h - 2*marigin);
-}
+};
 
 // Touch handler for main layout
-function touchHandler(_, xy) {
+let touchHandler = function(_, xy) {
   x = xy.x;
   y = xy.y;
   len = (R.w<R.h+1)?(R.w/3):(R.h/3);
@@ -145,43 +146,49 @@ function touchHandler(_, xy) {
     //play/pause
     btMsg("service", standardCls, "player.toggle");
   }
-}
+};
 
 // Swipe handler for main layout, used to jump backward and forward within a podcast episode.
-function swipeHandler(LR, _) {
+let swipeHandler = function(LR, _) {
   if (LR==-1) {
     btMsg("service", standardCls, "player.jumpforward");
   }
   if (LR==1) {
     btMsg("service", standardCls, "player.jumpbackward");
   }
-}
+};
 
 // Navigation input on the main layout
-function setUI() {
+let setUI = function() {
   // Bangle.setUI code from rigrig's smessages app for volume control: https://git.tubul.net/rigrig/BangleApps/src/branch/personal/apps/smessages/app.js
   Bangle.setUI(
-    {mode : "updown", back : load}, 
+    {mode : "updown",
+     back : Bangle.showClock,
+     remove : ()=>{
+       Bangle.removeListener("touch", touchHandler);
+       Bangle.removeListener("swipe", swipeHandler);
+     }
+    },
     ud => {
       if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
     }
   );
   Bangle.on("touch", touchHandler);
   Bangle.on("swipe", swipeHandler);
-}
+};
 
 /*
 The functions for interacting with Android and the Podcast Addict app
 */
 
-pkg = "com.bambuna.podcastaddict";
-standardCls = pkg + ".receiver.PodcastAddictPlayerReceiver";
-updateCls = pkg + ".receiver.PodcastAddictBroadcastReceiver";
-speed = 1.0;
+let pkg = "com.bambuna.podcastaddict";
+let standardCls = pkg + ".receiver.PodcastAddictPlayerReceiver";
+let updateCls = pkg + ".receiver.PodcastAddictBroadcastReceiver";
+let speed = 1.0;
 
-simpleSearch = "";
+let simpleSearch = "";
 
-function simpleSearchTerm() { // input a simple search term without tags, overrides search with tags (artist and track)
+let simpleSearchTerm = function() { // input a simple search term without tags, overrides search with tags (artist and track)
   require("textinput").input({
     text: simpleSearch
   }).then(result => {
@@ -189,9 +196,9 @@ function simpleSearchTerm() { // input a simple search term without tags, overri
   }).then(() => {
     E.showMenu(searchMenu);
   });
-}
+};
 
-function searchPlayWOTags() { //make a search and play using entered terms
+let searchPlayWOTags = function() { //make a search and play using entered terms
   searchString = simpleSearch;
   Bluetooth.println(JSON.stringify({
     t: "intent",
@@ -203,9 +210,9 @@ function searchPlayWOTags() { //make a search and play using entered terms
     },
     flags: ["FLAG_ACTIVITY_NEW_TASK"]
   }));
-}
+};
 
-function gadgetbridgeWake() {
+let gadgetbridgeWake = function() {
   Bluetooth.println(JSON.stringify({
     t: "intent",
     target: "activity",
@@ -213,15 +220,15 @@ function gadgetbridgeWake() {
     package: "gadgetbridge",
     class: "nodomain.freeyourgadget.gadgetbridge.activities.WakeActivity"
   }));
-}
+};
 
 // For stringing together the action for Podcast Addict to perform
-function actFn(actName, activOrServ) {
+let actFn = function(actName, activOrServ) {
   return "com.bambuna.podcastaddict." + (activOrServ == "service" ? "service." : "") + actName;
-}
+};
 
 // Send the intent message to Gadgetbridge
-function btMsg(activOrServ, cls, actName, xtra) {
+let btMsg = function(activOrServ, cls, actName, xtra) {
 
   Bluetooth.println(JSON.stringify({
     t: "intent",
@@ -231,10 +238,10 @@ function btMsg(activOrServ, cls, actName, xtra) {
     target: "broadcastreceiver",
     extra: xtra
   }));
-}
+};
 
 // Get back to the main layout
-function backToGfx() {
+let backToGfx = function() {
   E.showMenu();
   g.clear();
   g.reset();
@@ -243,10 +250,10 @@ function backToGfx() {
   setUI();
   gfx();
   backToMenu = false;
-}
+};
 
 // Podcast Addict Menu
-var paMenu = {
+let paMenu = {
   "": {
     title: " ",
     back: backToGfx
@@ -271,7 +278,7 @@ var paMenu = {
 };
 
 
-var controlMenu = {
+let controlMenu = {
   "": {
     title: " ",
     back: () => {if (backToMenu) E.showMenu(paMenu);
@@ -310,7 +317,7 @@ var controlMenu = {
   },
 };
 
-var speedMenu = {
+let speedMenu = {
   "": {
     title: " ",
     back: () => {if (backToMenu) E.showMenu(paMenu);
@@ -333,7 +340,7 @@ var speedMenu = {
   //"Slower" : ()=>{speed-=0.1; speed=((speed<0.1)?0.1:speed); btMsg("service",standardCls,"player.customspeed",{arg1:speed});},
 };
 
-var searchMenu = {
+let searchMenu = {
   "": {
     title: " ",
 
@@ -356,7 +363,7 @@ var searchMenu = {
   "Simpler search and play" : searchPlayWOTags,
 };
 
-var navigationMenu = {
+let navigationMenu = {
   "": {
     title: " ",
     back: () => {if (backToMenu) E.showMenu(paMenu);
@@ -373,3 +380,4 @@ var navigationMenu = {
 Bangle.loadWidgets();
 setUI();
 gfx();
+}
