@@ -85,14 +85,13 @@ let drawPage = function(p){
 };
 
 Bangle.loadWidgets();
-//g.clear();
-//Bangle.drawWidgets();
 drawPage(0);
 
 let swipeListenerDt = function(dirLeftRight, dirUpDown){
+    updateTimeoutToClock();
     selected = 0;
     oldselected=-1;
-    if(settings.swipeExit && dirLeftRight==1) returnToClock();
+    if(settings.swipeExit && dirLeftRight==1) Bangle.showClock();
     if (dirUpDown==-1||dirLeftRight==-1){
         ++page; if (page>maxPage) page=0;
         drawPage(page);
@@ -110,6 +109,7 @@ let isTouched = function(p,n){
 };
 
 let touchListenerDt = function(_,p){
+    updateTimeoutToClock();
     let i;
     for (i=0;i<4;i++){
         if((page*4+i)<Napps){
@@ -119,7 +119,7 @@ let touchListenerDt = function(_,p){
                     if (selected!=i && !settings.direct){
                         drawIcon(page,selected,false);
                     } else {
-                        load(apps[page*4+i].src);
+                        Bangle.load(apps[page*4+i].src);
                     }
                 }
                 selected=i;
@@ -133,25 +133,21 @@ let touchListenerDt = function(_,p){
     }
 };
 
-const returnToClock = function() {
-  Bangle.setUI();
-  setTimeout(eval, 0, s.read(".bootcde"));
-};
-  
 Bangle.setUI({
   mode : 'custom',
-  back : returnToClock,
+  back : Bangle.showClock,
   swipe : swipeListenerDt,
-  touch : touchListenerDt
+  touch : touchListenerDt,
+  remove : ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
 });
 
 // taken from Icon Launcher with minor alterations
-var timeoutToClock;
+let timeoutToClock;
 const updateTimeoutToClock = function(){
   if (settings.timeOut!="Off"){
     let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
     if (timeoutToClock) clearTimeout(timeoutToClock);
-    timeoutToClock = setTimeout(returnToClock,time*1000);  
+    timeoutToClock = setTimeout(Bangle.showClock,time*1000);  
   }
 };
 updateTimeoutToClock();
