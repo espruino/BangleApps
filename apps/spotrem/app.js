@@ -1,14 +1,15 @@
+{
 /*
 Bluetooth.println(JSON.stringify({t:"intent", action:"", flags:["flag1", "flag2",...], categories:["category1","category2",...], mimetype:"", data:"",  package:"", class:"", target:"", extra:{someKey:"someValueOrString"}}));
 */
 
-var R;
-var backToMenu = false;
-var isPaused = true;
-var dark = g.theme.dark; // bool
+let R;
+let backToMenu = false;
+let isPaused = true;
+let dark = g.theme.dark; // bool
 
 // The main layout of the app
-function gfx() {
+let gfx = function() {
   //Bangle.drawWidgets();
   R = Bangle.appRect;
   marigin = 8;
@@ -44,10 +45,10 @@ function gfx() {
 
   g.setFontAlign(1, 1, 0);
   g.drawString("Saved", R.x + R.w - 2*marigin, R.y + R.h - 2*marigin);
-}
+};
 
 // Touch handler for main layout
-function touchHandler(_, xy) {
+let touchHandler = function(_, xy) {
   x = xy.x;
   y = xy.y;
   len = (R.w<R.h+1)?(R.w/3):(R.h/3);
@@ -85,35 +86,41 @@ function touchHandler(_, xy) {
     Bangle.musicControl(playPause);
     isPaused = !isPaused;
   }
-}
+};
 
 // Swipe handler for main layout, used to jump backward and forward within a podcast episode.
-function swipeHandler(LR, _) {
+let swipeHandler = function(LR, _) {
   if (LR==-1) {
     spotifyWidget("NEXT");
   }
   if (LR==1) {
     spotifyWidget("PREVIOUS");
   }
-}
+};
 
 // Navigation input on the main layout
-function setUI() {
+let setUI = function() {
   // Bangle.setUI code from rigrig's smessages app for volume control: https://git.tubul.net/rigrig/BangleApps/src/branch/personal/apps/smessages/app.js
   Bangle.setUI(
-    {mode : "updown", back : load}, 
+    {mode : "updown",
+     back : Bangle.showClock,
+     remove : ()=>{
+       Bangle.removeListener("touch", touchHandler);
+       Bangle.removeListener("swipe", swipeHandler);
+     }
+    },
     ud => {
       if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
     }
   );
   Bangle.on("touch", touchHandler);
   Bangle.on("swipe", swipeHandler);
-}
+};
 
 
 
 // Get back to the main layout
-function backToGfx() {
+let backToGfx = function() {
   E.showMenu();
   g.clear();
   g.reset();
@@ -122,119 +129,119 @@ function backToGfx() {
   setUI();
   gfx();
   backToMenu = false;
-}
+};
 
 /*
 The functions for interacting with Android and the Spotify app
 */
 
 simpleSearch = "";
-function simpleSearchTerm() { // input a simple search term without tags, overrides search with tags (artist and track)
+let simpleSearchTerm = function() { // input a simple search term without tags, overrides search with tags (artist and track)
   require("textinput").input({text:simpleSearch}).then(result => {simpleSearch = result;}).then(() => {E.showMenu(searchMenu);});
-}
+};
 
 artist = "";
-function artistSearchTerm() { // input artist to search for
+let artistSearchTerm = function() { // input artist to search for
   require("textinput").input({text:artist}).then(result => {artist = result;}).then(() => {E.showMenu(searchMenu);});
-}
+};
 
 track = "";
-function trackSearchTerm() { // input track to search for
+let trackSearchTerm = function() { // input track to search for
   require("textinput").input({text:track}).then(result => {track = result;}).then(() => {E.showMenu(searchMenu);});
-}
+};
 
 album = "";
-function albumSearchTerm() { // input album to search for
+let albumSearchTerm = function() { // input album to search for
   require("textinput").input({text:album}).then(result => {album = result;}).then(() => {E.showMenu(searchMenu);});
-}
+};
 
-function searchPlayWOTags() {//make a spotify search and play using entered terms
+let searchPlayWOTags = function() {//make a spotify search and play using entered terms
   searchString = simpleSearch;
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:searchString}, flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function searchPlayWTags() {//make a spotify search and play using entered terms
+let searchPlayWTags = function() {//make a spotify search and play using entered terms
   searchString = (artist=="" ? "":("artist:\""+artist+"\"")) + ((artist!="" && track!="") ? " ":"") + (track=="" ? "":("track:\""+track+"\"")) + (((artist!="" && album!="") || (track!="" && album!="")) ? " ":"") + (album=="" ? "":(" album:\""+album+"\""));
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:searchString}, flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function playVreden() {//Play the track "Vreden" by Sara Parkman via spotify uri-link
+let playVreden = function() {//Play the track "Vreden" by Sara Parkman via spotify uri-link
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:track:5QEFFJ5tAeRlVquCUNpAJY:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function playVredenAlternate() {//Play the track "Vreden" by Sara Parkman via spotify uri-link
+let playVredenAlternate = function() {//Play the track "Vreden" by Sara Parkman via spotify uri-link
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:track:5QEFFJ5tAeRlVquCUNpAJY:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function searchPlayVreden() {//Play the track "Vreden" by Sara Parkman via search and play
+let searchPlayVreden = function() {//Play the track "Vreden" by Sara Parkman via search and play
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:'artist:"Sara Parkman" track:"Vreden"'}, flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function openAlbum() {//Play EP "The Blue Room" by Coldplay
+let openAlbum = function() {//Play EP "The Blue Room" by Coldplay
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:album:3MVb2CWB36x7VwYo5sZmf2", target:"activity", flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function searchPlayAlbum() {//Play EP "The Blue Room" by Coldplay via search and play
+let searchPlayAlbum = function() {//Play EP "The Blue Room" by Coldplay via search and play
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:'album:"The blue room" artist:"Coldplay"', "android.intent.extra.focus":"vnd.android.cursor.item/album"}, flags:["FLAG_ACTIVITY_NEW_TASK"]}));
-}
+};
 
-function spotifyWidget(action) {
+let spotifyWidget = function(action) {
   Bluetooth.println(JSON.stringify({t:"intent", action:("com.spotify.mobile.android.ui.widget."+action), package:"com.spotify.music", target:"broadcastreceiver"}));
-}
+};
 
-function gadgetbridgeWake() {
+let gadgetbridgeWake = function() {
   Bluetooth.println(JSON.stringify({t:"intent", target:"activity", flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_CLEAR_TASK", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS", "FLAG_ACTIVITY_NO_ANIMATION"], package:"gadgetbridge", class:"nodomain.freeyourgadget.gadgetbridge.activities.WakeActivity"}));
-}
+};
 
-function spotifyPlaylistDW() {
+let spotifyPlaylistDW = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM1() {
+let spotifyPlaylistDM1 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E365VyzxE0mxF:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM2() {
+let spotifyPlaylistDM2 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E38LZHLFnrM61:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM3() {
+let spotifyPlaylistDM3 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36RU87qzgBFP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM4() {
+let spotifyPlaylistDM4 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E396gGyCXEBFh:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM5() {
+let spotifyPlaylistDM5 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E37a0Tt6CKJLP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDM6() {
+let spotifyPlaylistDM6 = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36UIQLQK79od:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistDD() {
+let spotifyPlaylistDD = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1EfWFiI7QfIAKq:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
-function spotifyPlaylistRR() {
+let spotifyPlaylistRR = function() {
   Bluetooth.println(JSON.stringify({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXbs0XkE2V8sMO:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]}));
-}
+};
 
 // Spotify Remote Menu
-var spotifyMenu = {
+let spotifyMenu = {
   "" : { title : " ",
         back: backToGfx },
   "Controls" : ()=>{E.showMenu(controlMenu);},
   "Search and play" : ()=>{E.showMenu(searchMenu);},
   "Saved music" : ()=>{E.showMenu(savedMenu);},
   "Wake the android" : function() {gadgetbridgeWake();gadgetbridgeWake();},
-  "Exit Spotify Remote" : ()=>{load();}
+  "Exit Spotify Remote" : ()=>{Bangle.showClock();}
 };
 
 
-var controlMenu = {
+let controlMenu = {
   "" : { title : " ",
         back: () => {if (backToMenu) E.showMenu(spotifyMenu);
                      if (!backToMenu) backToGfx();} },
@@ -246,7 +253,7 @@ var controlMenu = {
   "Messages Music Controls" : ()=>{load("messagesmusic.app.js");},
 };
 
-var searchMenu = {
+let searchMenu = {
   "" : { title : " ",
         back: () => {if (backToMenu) E.showMenu(spotifyMenu);
                      if (!backToMenu) backToGfx();} },
@@ -258,7 +265,7 @@ var searchMenu = {
   "Execute search and play with tags" : ()=>{searchPlayWTags();},
 };
 
-var savedMenu = {
+let savedMenu = {
   "" : { title : " ",
         back: () => {if (backToMenu) E.showMenu(spotifyMenu);
                      if (!backToMenu) backToGfx();} },
@@ -279,3 +286,4 @@ var savedMenu = {
 Bangle.loadWidgets();
 setUI();
 gfx();
+}
