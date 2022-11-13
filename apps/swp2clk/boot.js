@@ -107,18 +107,23 @@
 
   // start main function
 
-  if (!Bangle.load)
+  if (!Bangle.load){
+    log("no Bangle.load available");
     main();
-  else {
+  } else {
+    log("Bangle.load available");
     Bangle.load = (o => (fileName) => {
+      log("load " + fileName);
       var settings = readSettings();
+      log("remove swipe handler");
       Bangle.removeListener("swipe", swipeHandler);
       if (fileName && fileName != ".bootcde") {
-
+        log("loading a not clock app " + fileName);
         if ((settings.mode === 1 && settings.whiteList.includes(fileName)) || // "White List"
         (settings.mode === 2 && !settings.blackList.includes(fileName)) || // "Black List"
         settings.mode === 3) { // "Always"
           Bangle.on("swipe", swipeHandler);
+          log("register swipe handler");
         }
       }
       o(fileName);
