@@ -122,8 +122,9 @@
         if ((settings.mode === 1 && settings.whiteList.includes(fileName)) || // "White List"
         (settings.mode === 2 && !settings.blackList.includes(fileName)) || // "Black List"
         settings.mode === 3) { // "Always"
-          Bangle.on("swipe", swipeHandler);
           log("register swipe handler");
+          // The handler must be added in the next idle time to prevent it executing directly iff Bangle.load was called in another swipe handler
+          setTimeout(()=>{Bangle.on("swipe", swipeHandler);},0);
         }
       }
       o(fileName);
