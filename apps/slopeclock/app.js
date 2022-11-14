@@ -107,6 +107,8 @@ Bangle.setUI({
     animInterval = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    // Remove the loaded font if app is changed during animation
+    g.reset();
     delete Graphics.prototype.setFontPaytoneOne;
   }});
 // Load widgets
