@@ -94,7 +94,7 @@
     const appId = id * appsN + iconN;
     if( settings.direct && launchCache.apps[appId])
     {
-      load(launchCache.apps[appId].src);
+      Bangle.load(launchCache.apps[appId].src);
       return;
     }
     if (appId == selectedItem && launchCache.apps[appId]) {
@@ -102,7 +102,7 @@
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
-        load(app.src);
+        Bangle.load(app.src);
       }
     }
     selectedItem = appId;
@@ -186,39 +186,22 @@
       let i = YtoIdx(e.y);
       selectItem(i, e);
     },
-    swipe: (h,_) => { if(settings.swipeExit && h==1) { returnToClock(); } },
+    swipe: (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } },
+    btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
+    remove: function() {
+      if (timeout) clearTimeout(timeout);
+    }
   };
-
-  const returnToClock = function() {
-    Bangle.setUI();
-    delete launchCache;
-    delete launchHash;
-    delete drawItemAuto;
-    delete drawText;
-    delete selectItem;
-    delete onDrag;
-    delete drawItems;
-    delete drawItem;
-    delete returnToClock;
-    delete idxToY;
-    delete YtoIdx;
-    delete settings;
-    if (timeout) clearTimeout(timeout);
-    setTimeout(eval, 0, s.read(".bootcde"));
-  };
-
-  
-  if (settings.oneClickExit) mode.btn = returnToClock;
 
   let timeout;
   const updateTimeout = function(){
   if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
       if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(returnToClock,time*1000);  
+      timeout = setTimeout(returnToClock,time*1000);
     }
-  }
-  
+  };
+
   updateTimeout();
 
   Bangle.setUI(mode);

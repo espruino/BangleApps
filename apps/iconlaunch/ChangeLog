@@ -14,3 +14,4 @@
       added timeOut to return to the clock
 0.11: Cleanup timeout when changing to clock
       Reset timeout on swipe and drag
+0.12: Use Bangle.load and Bangle.showClock
