@@ -73,3 +73,4 @@
       Move WIDGETS.messages.buzz() to require("messages").buzz()
 0.52: Fix require("messages").buzz() regression
       Fix background color in messages list after one unread message is shown
+0.53: Messages now uses Bangle.load() to load messages app faster (if possible)

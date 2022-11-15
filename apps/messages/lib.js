@@ -54,7 +54,7 @@ exports.pushMessage = function(event) {
     // ok, saved now
     if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
       // just load the app to display music: no buzzing
-      load("messages.app.js");
+      Bangle.load("messages.app.js");
     } else if (event.t!="add") {
       // we only care if it's new
       return;
@@ -81,7 +81,7 @@ exports.pushMessage = function(event) {
           Bangle.setLCDPower(1); // turn screen on
         }
         // we will buzz when we enter the messages app
-        return load("messages.new.js");
+        return Bangle.load("messages.new.js");
       }
       if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
       exports.buzz(message.src);
