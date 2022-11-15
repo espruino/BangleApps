@@ -295,8 +295,18 @@ g.clear();
 // Init the settings of the app
 loadMySettings();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");
+// Show launcher when middle button pressed
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    // Called to unload all of the clock app
+    if (PosInterval) clearInterval(PosInterval);
+    PosInterval = undefined;
+    if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+    drawTimeoutSeconds = undefined;
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;	
+  }});
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
