@@ -119,7 +119,7 @@ let touchListenerDt = function(_,p){
                     if (selected!=i && !settings.direct){
                         drawIcon(page,selected,false);
                     } else {
-                        Bangle.load(apps[page*4+i].src);
+                        load(apps[page*4+i].src);
                     }
                 }
                 selected=i;

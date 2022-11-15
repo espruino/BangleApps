@@ -21,3 +21,6 @@ back-functionality through setUI, adding the red back button as well. Hardware
 button to exit is no longer an option.
 0.19: Bangle 2: Utilize new Bangle.load(), Bangle.showClock() functions to
 facilitate 'fast switching' of apps where available.
+0.20: Bangle 2: Revert use of Bangle.load() to classic load() calls since
+widgets would still be loaded when they weren't supposed to.
+
