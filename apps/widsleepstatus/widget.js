@@ -28,6 +28,7 @@
         break;
       case 3: // light sleep
         g.drawImage(atob("GBjBAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAABgAABgAABgAABnH/xnv/xlsARnsAZnMAZ///5gAAZgAAZgAAYAAAAAAAAAAAA="), w.x, w.y);
+        break;
       case 4: // deep sleep
         g.drawImage(atob("GBjBAP//AAAAAAAAAAAAAeAD8OAD8cAA4fABwAADgABj8ABgAABgAABgAABnH/xnv/xlsARnsAZnMAZ///5gAAZgAAZgAAYAAAAAAAAAAAA="), w.x, w.y);
         break;
