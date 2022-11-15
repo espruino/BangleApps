@@ -7,15 +7,15 @@ function filterMessages(msgs) {
     .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
 }
 
-WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
+WIDGETS["messages"]={area:"tl", width:0, msgs:[], draw:function(recall) {
   // If we had a setTimeout queued from the last time we were called, remove it
   if (WIDGETS["messages"].i) {
     clearTimeout(WIDGETS["messages"].i);
     delete WIDGETS["messages"].i;
   }
   Bangle.removeListener('touch', this.touch);
-  if (!this.width) return;
-    let settings = Object.assign({flash:true, maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
+  if (!this.width || this.checkInApp()) return;
+  let settings = Object.assign({flash:true, maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
   if (recall !== true || settings.flash) {
     var msgsShown = E.clip(this.msgs.length, 0, settings.maxMessages);
     g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
@@ -39,21 +39,27 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
   WIDGETS["messages"].i=setTimeout(()=>WIDGETS["messages"].draw(true), 1000);
   if (process.env.HWVERSION>1) Bangle.on('touch', this.touch);
 },onMsg:function(type, msg) {
+  if (this.checkInApp()) return;
   if (type==="music") return;
   if (msg.t!=="remove" && this.msgs.includes(msg.src)) return; // icon for this src already shown
   const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
   this.msgs = filterMessages(require("messages").getMessages());
   this.width = 24 * E.clip(this.msgs.length, 0, settings.maxMessages);
-  Bangle.drawWidgets();
+  if (type!=="init") Bangle.drawWidgets(); // "init" is not a real message type: see below
 },touch:function(b,c) {
   var w=WIDGETS["messages"];
   if (!w||!w.width||c.x<w.x||c.x>w.x+w.width||c.y<w.y||c.y>w.y+24) return;
   load("messages.app.js");
+},checkInApp() {
+  if (global.__FILE__!=="messages.app.js") return false; // not in app
+  if (this.width) {
+    // hide widget
+    this.width = 0;
+    Bangle.drawWidgets();
+  }
+  return true; // app is active
 }};
 
-/* We might have returned here if we were in the Messages app for a
-message but then the watch was never viewed. */
-if (global.MESSAGES===undefined)
-  WIDGETS["messages"].onMsg('',{});
-  Bangle.on("message", WIDGETS["messages"].onMsg);
+Bangle.on("message", WIDGETS["messages"].onMsg);
+WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 })();
