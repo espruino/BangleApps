@@ -57,14 +57,14 @@ let draw = function() {
   // Draw hour
   g.reset().clearRect(R); // clear whole background (w/o widgets)
   g.setFontAlign(-1, 0).setFont("PaytoneOne");
-  g.drawString(hourStr, fontBorder, y-offsy);
+  g.drawString(hourStr, fontBorder, y-offsy).setFont("4x6"); // draw and unload custom font
   // add slope in background color
   g.setColor(g.theme.bg).fillPoly([0,y+slope-slopeBorderUpper, R.w,y-slope-slopeBorderUpper,
                                    R.w,y-slope, 0,y+slope]);
 
   // Draw minute to offscreen buffer
   g2.setColor(0).fillRect(0,0,g2.getWidth(),g2.getHeight()).setFontAlign(1, 0).setFont("PaytoneOne");
-  g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2);
+  g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2).setFont("4x6"); // draw and unload custom font
   g2.setColor(0).fillPoly([0,0, g2.getWidth(),0, 0,slope*2]);
   // start the animation *in*
   animate(true);
@@ -230,8 +230,6 @@ Bangle.setUI({
     animInterval = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-    // Remove the loaded font if app is changed during animation
-    g.reset();
     delete Graphics.prototype.setFontPaytoneOne;
   }});
 // Load widgets
