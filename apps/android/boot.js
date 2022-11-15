@@ -28,12 +28,18 @@
           event.id = lastMsg.id;
         }
         lastMsg = event;
-        require("messages").pushMessage(event);
+        Bangle.emit("message", "add", event);
       },
       // {t:"notify~",id:int, title:string} // modified
-      "notify~" : function() { event.t="modify";require("messages").pushMessage(event); },
+      "notify~" : function() { 
+        event.t="modify";
+        Bangle.emit("message", "modify", event);
+      },
       // {t:"notify-",id:int} // remove
-      "notify-" : function() { event.t="remove";require("messages").pushMessage(event); },
+      "notify-" : function() {
+         event.t="remove";
+         Bangle.emit("message", "remove", event);
+    },
       // {t:"find", n:bool} // find my phone
       "find" : function() {
         if (Bangle.findDeviceInterval) {
@@ -45,11 +51,11 @@
       },
       // {t:"musicstate", state:"play/pause",position,shuffle,repeat}
       "musicstate" : function() {
-        require("messages").pushMessage({t:"modify",id:"music",title:"Music",state:event.state});
+        Bangle.emit("message", "musicstate", event);
       },
       // {t:"musicinfo", artist,album,track,dur,c(track count),n(track num}
       "musicinfo" : function() {
-        require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
+        Bangle.emit("message", "musicinfo", event);
       },
       // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
       "call" : function() {
@@ -58,7 +64,8 @@
           id:"call", src:"Phone",
           positive:true, negative:true,
           title:event.name||"Call", body:"Incoming call\n"+event.number});
-        require("messages").pushMessage(event);
+
+        Bangle.emit("call",event.t, event);
       },
       "alarm" : function() {
         //wipe existing GB alarms

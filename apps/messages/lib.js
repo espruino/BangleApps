@@ -42,7 +42,6 @@ exports.pushMessage = function(event) {
   var type = 'text';
   if (["call", "music", "map"].includes(message.id)) type = message.id;
   if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
-  Bangle.emit("message", type, message);
   // update the widget icons shown
   if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
   var handleMessage = () => {
@@ -87,9 +86,7 @@ exports.pushMessage = function(event) {
       exports.buzz(message.src);
     }, 500);
   };
-  setTimeout(()=>{
-    if (!message.handled) handleMessage();
-  },0);
+  handleMessage();
 }
 /// Remove all messages
 exports.clearAll = function() {
