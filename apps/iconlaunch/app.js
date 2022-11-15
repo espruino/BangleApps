@@ -198,7 +198,7 @@
   if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
       if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(returnToClock,time*1000);
+      timeout = setTimeout(Bangle.showClock,time*1000);
     }
   };
 
