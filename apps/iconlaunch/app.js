@@ -94,7 +94,7 @@
     const appId = id * appsN + iconN;
     if( settings.direct && launchCache.apps[appId])
     {
-      Bangle.load(launchCache.apps[appId].src);
+      load(launchCache.apps[appId].src);
       return;
     }
     if (appId == selectedItem && launchCache.apps[appId]) {
@@ -102,7 +102,7 @@
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
-        Bangle.load(app.src);
+        load(app.src);
       }
     }
     selectedItem = appId;
