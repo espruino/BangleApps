@@ -39,8 +39,8 @@ exports = {
 
   // widget reload function
   widReload: function() {
-    // abort if onChange is not available
-    if (typeof (global.sleeplog || {}).onChange !== "object") return;
+    // abort if trigger object is not available
+    if (typeof (global.sleeplog || {}).trigger !== "object") return;
 
     // read settings to calculate alarm range
     var settings = exports.getSettings();
@@ -55,26 +55,22 @@ exports = {
     if (!this.hidden) this.width = 8;
 
     // abort if already alarmed for this alarm
-    if (sleeplog.onChange.sleeplogalarm == this.time) return; 
+    if ((sleeplog.trigger.sleeplogalarm || {}).last == this.time) return;
 
-    // insert sleeplogalarm function to onChange
-    sleeplog.onChange.sleeplogalarm = function (data) {
-      // abort if not changed from deep sleep to light sleep or awake
-      if (data.prevStatus !== 4 || !(data.status === 3 || data.status === 2)) return;
-
-      // get settings from widget, now and calculate time of now
-      var settings = WIDGETS.sleeplogalarm;
-      var now = new Date();
-      var tNow = ((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000;
-
-      // execute trigger function if inside the alarm range
-      if (tNow >= settings.time - settings.earlier * 6E4 &&
-        tNow < settings.time) require("sleeplogalarm").trigger(now, tNow);
+    // insert sleeplogalarm conditions and function
+    sleeplog.trigger.sleeplogalarm = {
+      from: settings.time - settings.earlier * 6E4,
+      to: settings.time - 1,
+      fn: function (data) {
+        // execute trigger function if on light sleep or awake
+        if (data.status === 3 || data.status === 2)
+          require("sleeplogalarm").trigger();
+      }
     };
   },
 
   // trigger function
-  trigger: function(now, tNow) {
+  trigger: function(tNow) {
     // read settings
     var settings = exports.getSettings();
 
@@ -84,11 +80,14 @@ exports = {
     // find first active alarm
     var alarm = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5, settings.disableOnAlarm);
 
-    // clear sleeplog.onChange function and set alarm time to prevent resetting for this alarm
-    sleeplog.onChange.sleeplogalarm = alarm.t;
+    // clear sleeplog.trigger object and set alarm time to prevent resetting for this alarm
+    sleeplog.trigger.sleeplogalarm = {last: alarm.t};
 
     // return if no alarm is found
     if (!alarm) return;
+
+    // get now
+    var now = new Date();
 
     // get date of the alarm
     var aDate = new Date(now + alarm.tTo).getDate();
@@ -109,7 +108,7 @@ exports = {
       id: "sleeplog",
       appid: "sleeplog",
       on: true,
-      t: tNow,
+      t: ((time.getHours() * 60 + time.getMinutes()) * 60 + time.getSeconds()) * 1000,
       dow: 127,
       msg: settings.msg + (settings.msgAsPrefix ? alarm.msg || "" : ""),
       vibrate: settings.vibrate || alarm.vibrate,
