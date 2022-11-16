@@ -253,26 +253,38 @@ if (sleeplog.conf.enabled) {
         }
       }
 
+      // check if the status has changed
+      var changed = data.status !== this.status || data.consecutive !== this.consecutive;
+
+      // read and check trigger entries
+      var triggers = Object.keys(this.trigger) || [];
+      if (triggers.length) {
+        // calculate time from timestamp in ms on full minutes
+        var time = data.timestamp;
+        time = ((time.getHours() * 60) + time.getMinutes() * 60) * 1000;
+        // go through all triggers
+        triggers.forEach(key => {
+          // read entry to key
+          var entry = this.trigger[key];
+          // check if the event matches the entries requirements
+          if (typeof entry.fn === "function" && (changed || !entry.onChange) &&
+            (entry.from || 0) <= time && (entry.to || 24 * 60 * 60 * 1000) >= time)
+            // and call afterwards with status data
+            setTimeout(fn, 100, {
+              timestamp: new Date(data.timestamp),
+              status: data.status === this.status ? undefined : data.status,
+              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
+              prevStatus: this.status,
+              prevConsecutive: this.consecutive
+            });
+        });
+      }
+
       // cache change into a known consecutive state
       var changeIntoConsec = data.consecutive;
 
-      // check if the status has changed
-      if (data.status !== this.status || data.consecutive !== this.consecutive) {
-        // read and check for onChange functions
-        var onChange = Object.keys(this.onChange) || [];
-        if (onChange.length) onChange.forEach(key => {
-          // read function to key
-          var fn = this.onChange[key];
-          // setup timeouts to start onChange functions if fn is a function
-          if (typeof fn === "function") setTimeout(fn, 100, {
-            timestamp: new Date(data.timestamp),
-            status: data.status === this.status ? undefined : data.status,
-            consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
-            prevStatus: this.status,
-            prevConsecutive: this.consecutive
-          });
-        });
-
+      // actions on a status change
+      if (changed) {
         // append status
         this.appendStatus(data.timestamp, data.status, data.consecutive);
 
@@ -336,16 +348,8 @@ if (sleeplog.conf.enabled) {
       return this.statsCache;
     },
 
-    // define object for functions to execute after a status change (changes had hapened 10min earlier)
-    //  changed values will be passed as object with the following properties:
-    //    timestamp: as date object,
-    //    status: if changed 0-4 else undefined,
-    //      (0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep)
-    //    consecutive: if changed 0-2 else undefined,
-    //      (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
-    //    prevStatus: value of the previous status 0-4,
-    //    prevConsecutive: value of the previous status 0-2
-    onChange: {}
+    // define trigger object
+    trigger: {}
   }, sleeplog);
 
   // initial starting

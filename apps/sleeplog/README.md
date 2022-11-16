@@ -151,13 +151,19 @@ Available through the App Loader when your watch is connected.
   require("sleeplog").getStats(0, 0, require("sleeplog").readLog());
   ```
 
-#### Add functions triggered by status changes
-With the following code it is possible to add functions that will be called on status changes.
+#### Add functions triggered by status changes or inside a specified time period
+With the following code it is possible to add functions that will be called every 10 minutes after new movement data when meeting the specified parameters on each :
 ```
-// first ensure that the sleeplog onChange object is available
-if (typeof (global.sleeplog || {}).onChange === "object") {
-  // then add your function to the onChange object
-  sleeplog.onChange["my app name"] = function(data) { print(data); };
+// first ensure that the sleeplog trigger object is available (sleeplog is enabled)
+if (typeof (global.sleeplog || {}).trigger === "object") {
+  // then add your parameters with the function to call as object into the trigger object
+  sleeplog.trigger["my app name"] = {
+    onChange: false,   // false as default, if true call fn only on a status change
+    from: 0,           // 0 as default, in ms, first time fn will be called
+    to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called
+      // reference time to from & to is rounded to full minutes
+    fn: function(data) { print(data); } // function to be executed
+  };
 }
 ```
 The passed data object has the following properties:
