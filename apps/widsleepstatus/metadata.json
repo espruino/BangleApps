@@ -1,7 +1,7 @@
 {
   "id": "widsleepstatus",
   "name": "Sleep Status Widget",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Shows current status of sleep from sleeplog app.",
   "icon": "widget.png",
   "type": "widget",

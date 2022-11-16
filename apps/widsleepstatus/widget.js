@@ -29,13 +29,13 @@
         case 1:
           break;
         case 2: // awake
-          if (settings && !settings["hidewhenawake"]) g.drawImage(atob("GBiBAf////////////j///h///p///h//////5///5h//5h//5J//5JgA5JAA5tP+5vP+ZjP+YAAAZ//+Z//+Z//+f///////////w=="), w.x, w.y);
+          if (settings && !settings["hidewhenawake"]) g.drawImage(atob("GBiBAAAAAAAAAAAMAAA+AAAjAAEjMAGyYAGeYAzAwB5/gB4/AB4jAB4jAB4jAB4jAB//+Bv/+Bg2GB+2+B+2eB42eAAAAAAAAAAAAA=="), w.x, w.y);
           break;
         case 3: // light sleep
-          g.drawImage(atob("GBiBAf///////////////////////////////5///5///5///5///5jgA5hAA5pP+5hP+ZjP+YAAAZ//+Z//+Z//+f///////////w=="), w.x, w.y);
+          g.drawImage(atob("GBiBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAGAAAGAAAGAAAGcf/Ge//GWwBGewBmcwBn///mAABmAABmAABgAAAAAAAAAAAA=="), w.x, w.y);
           break;
         case 4: // deep sleep
-          g.drawImage(atob("GBiBAf/////////+H/wPH/wOP/8eD/4///x//5wP/5///5///5///5jgA5hAA5pP+5hP+ZjP+YAAAZ//+Z//+Z//+f///////////w=="), w.x, w.y);
+          g.drawImage(atob("GBiBAAAAAAAAAAAB4APw4APxwADh8AHAAAOAAGPwAGAAAGAAAGAAAGcf/Ge//GWwBGewBmcwBn///mAABmAABmAABgAAAAAAAAAAAA=="), w.x, w.y);
           break;
       }
     }
@@ -44,6 +44,6 @@
   setInterval(()=>{
     WIDGETS.sleepstatus.draw(WIDGETS.sleepstatus);
   }, 60000);
-  
+
   Bangle.drawWidgets();
 })()
