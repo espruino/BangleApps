@@ -1,38 +1,49 @@
-(function(){
-  if (!sleeplog) return; // sleeplog not installed
-
+(function() {
+  if (!sleeplog) return;
   const SETTINGS_FILE = 'widsleepstatus.json';
   let settings;
+
   function loadSettings() {
     settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
     const DEFAULTS = {
       'hidewhenawake': true
     };
-    Object.keys(DEFAULTS).forEach(k=>{
-      if (settings[k]===undefined) settings[k]=DEFAULTS[k];
+    Object.keys(DEFAULTS).forEach(k => {
+      if (settings[k] === undefined) settings[k] = DEFAULTS[k];
     });
   }
+  loadSettings();
 
-  const status = sleeplog.status || 0;
-  WIDGETS["sleepstatus"]={area:"tr",width:status >= 2 ? 24 : 0,draw:function(w) {
-    g.reset();
-    // Icons from https://icons8.com/icon/set/household/small
-    switch (status) {
-      case 0: // unknown
-      case 1: // not worn
-        // No icon here. Width is set to 0
-        break;
-      case 2: // awake
-        loadSettings();
-        if (settings && !settings["hidewhenawake"]) g.drawImage(atob("GBjBAP//AAAAAAAAAAAADAAAPgAAIwABIzABsmABnmAMwMAef4AePwAeIwAeIwAeIwAeIwAf//gb//gYNhgftvgftngeNngAAAAAAAAAAAA="), w.x, w.y);
-        break;
-      case 3: // light sleep
-        g.drawImage(atob("GBjBAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAABgAABgAABgAABnH/xnv/xlsARnsAZnMAZ///5gAAZgAAZgAAYAAAAAAAAAAAA="), w.x, w.y);
-        break;
-      case 4: // deep sleep
-        g.drawImage(atob("GBjBAP//AAAAAAAAAAAAAeAD8OAD8cAA4fABwAADgABj8ABgAABgAABgAABnH/xnv/xlsARnsAZnMAZ///5gAAZgAAZgAAYAAAAAAAAAAAA="), w.x, w.y);
-        break;
+  WIDGETS.sleepstatus = {
+    area: "tr",
+    width: 0,
+    draw: function(w) {
+      let status = sleeplog.status || 0;
+      if (w.width != (status >= 2 ? 24 : 0)){
+        w.width = status >= 2 ? 24 : 0;
+        return Bangle.drawWidgets();
+      }
+      g.reset();
+      switch (status) {
+        case 0:
+        case 1:
+          break;
+        case 2: // awake
+          if (settings && !settings["hidewhenawake"]) g.drawImage(atob("GBiBAAAAAAAAAAAMAAA+AAAjAAEjMAGyYAGeYAzAwB5/gB4/AB4jAB4jAB4jAB4jAB//+Bv/+Bg2GB+2+B+2eB42eAAAAAAAAAAAAA=="), w.x, w.y);
+          break;
+        case 3: // light sleep
+          g.drawImage(atob("GBiBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAGAAAGAAAGAAAGcf/Ge//GWwBGewBmcwBn///mAABmAABmAABgAAAAAAAAAAAA=="), w.x, w.y);
+          break;
+        case 4: // deep sleep
+          g.drawImage(atob("GBiBAAAAAAAAAAAB4APw4APxwADh8AHAAAOAAGPwAGAAAGAAAGAAAGcf/Ge//GWwBGewBmcwBn///mAABmAABmAABgAAAAAAAAAAAA=="), w.x, w.y);
+          break;
+      }
     }
-  }};
+  };
+
+  setInterval(()=>{
+    WIDGETS.sleepstatus.draw(WIDGETS.sleepstatus);
+  }, 60000);
+
   Bangle.drawWidgets();
 })()
