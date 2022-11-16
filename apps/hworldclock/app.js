@@ -319,7 +319,7 @@ draw();
 
 if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
-			if (PosInterval != 0 && typeof PosInterval != undefined) clearInterval(PosInterval);
+			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
 			updatePos();
 		}
@@ -345,7 +345,7 @@ if (!Bangle.isLocked())  { // Initial state
 		drawTimeout = undefined;
 
 		if (showSunInfo) {
-			if (PosInterval != 0 && typeof PosInterval != undefined) clearInterval(PosInterval);
+			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 			updatePos();
 		}
