@@ -52,7 +52,6 @@
       bpm = lastBPM;
       isCurrent = false;
     }
-    console.log(bpm, settings);
     if (bpm===undefined || (settings && bpm<settings["confidence"]))
       bpm = "--";
     g.setColor(isCurrent ? g.theme.fg : "#808080");
