@@ -387,8 +387,14 @@ exports.enable = () => {
           return;
         }
         log("Requesting device with filters", filters);
-        promise = NRF.requestDevice({ filters: filters, active: true });
-
+        try {
+          promise = NRF.requestDevice({ filters: filters, active: settings.active });
+        } catch (e){
+          log("Error during initial request:", e);
+          onDisconnect(e);
+          return;
+        }
+        
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
         }

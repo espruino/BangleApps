@@ -17,5 +17,6 @@
   "gracePeriodConnect": 0,
   "gracePeriodService": 0,
   "gracePeriodRequest": 0,
-  "bonding": false
+  "bonding": false,
+  "active": true
 }
