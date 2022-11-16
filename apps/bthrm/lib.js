@@ -460,7 +460,7 @@ exports.enable = () => {
           } else {
             log("Start bonding");
             return gatt.startBonding()
-              .then(() => console.log(gatt.getSecurityStatus()));
+              .then(() => log("Security status" + gatt.getSecurityStatus()));
           }
         });
       }
@@ -644,7 +644,11 @@ exports.enable = () => {
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
-        gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
+        try {
+          gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect promise on kill", e));
+        } catch (e) {
+          log("Error during disconnnect on kill", e)
+        }
       }
     });
   }
