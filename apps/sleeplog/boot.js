@@ -261,7 +261,7 @@ if (sleeplog.conf.enabled) {
       if (triggers.length) {
         // calculate time from timestamp in ms on full minutes
         var time = data.timestamp;
-        time = ((time.getHours() * 60) + time.getMinutes() * 60) * 1000;
+        time = (time.getHours() * 60 + time.getMinutes()) * 60 * 1000;
         // go through all triggers
         triggers.forEach(key => {
           // read entry to key
