@@ -13,6 +13,8 @@ function openMusic() {
 */
 exports.pushMessage = function(event) {
   const inApp = ("undefined"!=typeof MESSAGES);
+  // keep a global count, so we don't delete MESSAGES for two events in a row (e.g. musicinfo+musicstate)
+  if (inApp) exports.appLevel = 1+(exports.appLevel|0);
   // Always set MESSAGES, even when not in the app, so calls to getMessages from
   // listeners to "message" event don't all cause Storage.read()s
   // If not in the app: We delete MESSAGES after the handleMessage timeout
@@ -37,7 +39,8 @@ exports.pushMessage = function(event) {
       MESSAGES[mIdx].new = true; // new track, or playback (re)started
     }
   }
-  require("Storage").writeJSON("messages.json",MESSAGES);
+  require("Storage").writeJSON("messages.json", MESSAGES);
+  // ok, saved now
   var message = mIdx<0 ? {id:event.id, t:'remove'} : MESSAGES[mIdx];
   // emit message event
   var type = 'text';
@@ -46,12 +49,11 @@ exports.pushMessage = function(event) {
   Bangle.emit("message", type, message);
   var handleMessage = () => {
     // if no new messages now, make sure we don't load the messages app
-    if (event.t=="remove" && exports.messageTimeout && !MESSAGES.some(m => m.new)) {
+    if (event.t=="remove" && exports.messageTimeout && !exports.getMessages().some(m => m.new)) {
       clearTimeout(exports.messageTimeout);
       delete exports.messageTimeout;
     }
-    // ok, saved now
-    if (event.id=="music" && Bangle.CLOCK && MESSAGES[mIdx].new && openMusic()) {
+    if (event.id=="music" && Bangle.CLOCK && event.new && openMusic()) {
       // just load the app to display music: no buzzing
       Bangle.load("messages.app.js");
     } else if (event.t!="add") {
@@ -87,7 +89,13 @@ exports.pushMessage = function(event) {
   };
   setTimeout(()=>{
     if (!message.handled) handleMessage();
-    if (!inApp) delete MESSAGES; // don't keep this around
+    if (!inApp) {
+      exports.appLevel = (exports.appLevel|0)-1;
+      if (exports.appLevel<=0) { // all done: clean up
+        delete exports.appLevel;
+        delete MESSAGES;
+      }
+    }
   },0);
 }
 /// Remove all messages
