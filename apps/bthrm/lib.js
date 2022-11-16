@@ -387,8 +387,14 @@ exports.enable = () => {
           return;
         }
         log("Requesting device with filters", filters);
-        promise = NRF.requestDevice({ filters: filters, active: true });
-
+        try {
+          promise = NRF.requestDevice({ filters: filters, active: settings.active });
+        } catch (e){
+          log("Error during initial request:", e);
+          onDisconnect(e);
+          return;
+        }
+        
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
         }
@@ -454,7 +460,7 @@ exports.enable = () => {
           } else {
             log("Start bonding");
             return gatt.startBonding()
-              .then(() => console.log(gatt.getSecurityStatus()));
+              .then(() => log("Security status" + gatt.getSecurityStatus()));
           }
         });
       }
@@ -520,6 +526,7 @@ exports.enable = () => {
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        powerdownRequested = false;
         switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
@@ -638,7 +645,11 @@ exports.enable = () => {
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
-        gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
+        try {
+          gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect promise on kill", e));
+        } catch (e) {
+          log("Error during disconnnect on kill", e)
+        }
       }
     });
   }
