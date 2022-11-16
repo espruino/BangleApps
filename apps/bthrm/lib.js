@@ -526,6 +526,7 @@ exports.enable = () => {
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        powerdownRequested = false;
         switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
