@@ -37,3 +37,6 @@
 0.15: Fix recording internal sensor
       Handle fallback to internal sensor consistently if BT bpm is 0
       Power internal sensor down if not needed for fallback
+0.16: Set powerdownRequested correctly on BTHRM power on
+      Additional logging on errors
+      Add debug option for disabling active scanning
