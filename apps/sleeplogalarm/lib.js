@@ -9,7 +9,8 @@ function getNextAlarm(allAlarms, from, to, msg, withId) {
   });
   // return next active alarms in range
   return allAlarms.filter(
-      a => a.on && !a.timer && a.t >= from && a.t < to && (!msg || a.msg.includes(msg))
+      a => a.on && !a.timer && a.id !== "sleeplog" &&
+      a.t >= from && a.t < to && (!msg || a.msg.includes(msg))
     ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
