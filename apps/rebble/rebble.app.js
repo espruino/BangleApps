@@ -327,9 +327,10 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
 
   Bangle.loadWidgets();
+  draw();
   require("widget_utils").hide();
 
-  draw();  // queues the next draw for a minutes time
+
 
 
   Bangle.on('charging', function(charging) { 
