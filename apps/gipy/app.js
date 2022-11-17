@@ -32,6 +32,7 @@ function binary_search(array, x) {
 class Status {
   constructor(path) {
     this.path = path;
+    this.scale_factor = 40000.0; // multiply geo coordinates by this to get pixels coordinates
     this.on_path = false; // are we on the path or lost ?
     this.position = null; // where we are
     this.adjusted_cos_direction = null; // cos of where we look at
@@ -230,8 +231,18 @@ class Status {
     );
     return distance_to_nearest > 50;
   }
+  compute_scale() {
+    if (this.on_path) {
+      this.scale = 40000.0;
+    } else {
+      let projection = this.closest_segment_point(this.path.point(segment), this.path.point(segment+1));
+      let distance_to_nearest = this.position.fake_distance(projection);
+      this.scale = Math.min(66.0 / distance_to_nearest, 40000.0);
+    }
+  }
   display(orientation) {
     g.clear();
+    this.compute_scale();
     this.display_map();
 
     this.display_interest_points();
@@ -265,7 +276,8 @@ class Status {
       let c = interest_point.coordinates(
         this.position,
         this.adjusted_cos_direction,
-        this.adjusted_sin_direction
+        this.adjusted_sin_direction,
+        this.scale_factor
       );
       g.setColor(color).fillCircle(c[0], c[1], 5);
     }
@@ -343,9 +355,10 @@ class Status {
     let half_height = g.getHeight() / 2;
     let previous_x = null;
     let previous_y = null;
+    let scale_factor = this.scale_factor;
     for (let i = start; i < end; i++) {
-      let tx = (points[2 * i] - cx) * 40000.0;
-      let ty = (points[2 * i + 1] - cy) * 40000.0;
+      let tx = (points[2 * i] - cx) * scale_factor;
+      let ty = (points[2 * i + 1] - cy) * scale_factor;
       let rotated_x = tx * cos - ty * sin;
       let rotated_y = tx * sin + ty * cos;
       let x = half_width - Math.round(rotated_x); // x is inverted
@@ -407,8 +420,8 @@ class Status {
       this.path.point(this.current_segment + 1)
     );
 
-    let tx = (projection.lon - cx) * 40000.0;
-    let ty = (projection.lat - cy) * 40000.0;
+    let tx = (projection.lon - cx) * scale_factor;
+    let ty = (projection.lat - cy) * scale_factor;
     let rotated_x = tx * cos - ty * sin;
     let rotated_y = tx * sin + ty * cos;
     let x = half_width - Math.round(rotated_x); // x is inverted
@@ -419,7 +432,14 @@ class Status {
     // display direction to next point if lost
     if (!this.on_path) {
       let next_point = this.path.point(this.current_segment + 1);
-      let diff = next_point.minus(this.position);
+      let previous_point = this.path.point(this.current_segment);
+      let nearest_point;
+      if (previous_point.fake_distance(this.position) < next_point.fake_distance(this.position) {
+        nearest_point = previous_point;
+      } else {
+        nearest_point = next_point;
+      }
+      let diff = nearest_point.minus(this.position);
       let angle = Math.atan2(diff.lat, diff.lon);
       let tx = Math.cos(angle) * 50.0;
       let ty = Math.sin(angle) * 50.0;
@@ -589,8 +609,8 @@ class Point {
     this.lon = lon;
     this.lat = lat;
   }
-  coordinates(current_position, cos_direction, sin_direction) {
-    let translated = this.minus(current_position).times(40000.0);
+  coordinates(current_position, cos_direction, sin_direction, scale_factor) {
+    let translated = this.minus(current_position).times(scale_factor);
     let rotated_x =
       translated.lon * cos_direction - translated.lat * sin_direction;
     let rotated_y =
