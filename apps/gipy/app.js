@@ -434,7 +434,7 @@ class Status {
       let next_point = this.path.point(this.current_segment + 1);
       let previous_point = this.path.point(this.current_segment);
       let nearest_point;
-      if (previous_point.fake_distance(this.position) < next_point.fake_distance(this.position) {
+      if (previous_point.fake_distance(this.position) < next_point.fake_distance(this.position)) {
         nearest_point = previous_point;
       } else {
         nearest_point = next_point;
