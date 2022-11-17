@@ -59,8 +59,8 @@ exports = {
 
     // insert sleeplogalarm conditions and function
     sleeplog.trigger.sleeplogalarm = {
-      from: settings.time - settings.earlier * 6E4,
-      to: settings.time - 1,
+      from: this.time - settings.earlier * 6E4,
+      to: this.time - 1,
       fn: function (data) {
         // execute trigger function if on light sleep or awake
         if (data.status === 3 || data.status === 2)
