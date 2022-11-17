@@ -91,7 +91,12 @@ function onHrm(e) {
 var settings = require('Storage').readJSON("bthrm.json", true) || {};
 
 Bangle.on('BTHRM', onBtHrm);
-Bangle.on('HRM', onHrm);
+
+if (settings.replace){
+  Bangle.on('HRM_int', onHrm);
+} else {
+  Bangle.on('HRM', onHrm);
+}
 
 Bangle.setHRMPower(1,'bthrm');
 if (!(settings.startWithHrm)){
