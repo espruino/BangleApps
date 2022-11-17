@@ -1,9 +1,16 @@
-let unlockedDrawInterval = [];
-let lockedDrawInterval = [];
-let showWidgets = false;
-let firstDraw = true;
+let s = {};
+// unlocked draw intervals
+s.udi = [];
+// locked draw intervals
+s.ldi = [];
+// show widget state
+s.sw = false;
+// full draw
+s.fd = true;
+// performance log
+s.pl = {};
 
-{
+{  
   let x = g.getWidth()/2;
   let y = g.getHeight()/2;
   g.setColor(g.theme.bg);
@@ -21,12 +28,10 @@ let firstDraw = true;
   let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
   let settings = require('Storage').readJSON("imageclock.json", true) || {};
 
-  let performanceLog = {};
-
   let startPerfLog = () => {};
   let endPerfLog = () => {};
   Bangle.printPerfLog = () => {print("Deactivated");};
-  Bangle.resetPerfLog = () => {performanceLog = {};};
+  Bangle.resetPerfLog = () => {s.pl = {};};
 
   let colormap={
     "#000":0,
@@ -64,35 +69,37 @@ let firstDraw = true;
   if (settings.perflog){
     startPerfLog = function(name){
       let time = getTime();
-      if (!performanceLog.start) performanceLog.start={};
-      performanceLog.start[name] = time;
+      if (!s.pl.start) s.pl.start={};
+      s.pl.start[name] = time;
     };
-    endPerfLog = function (name){
+    endPerfLog = function (name, once){
       let time = getTime();
-      if (!performanceLog.last) performanceLog.last={};
-      let duration = time - performanceLog.start[name];
-      performanceLog.last[name] = duration;
-      if (!performanceLog.cum) performanceLog.cum={};
-      if (!performanceLog.cum[name]) performanceLog.cum[name] = 0;
-      performanceLog.cum[name] += duration;
-      if (!performanceLog.count) performanceLog.count={};
-      if (!performanceLog.count[name]) performanceLog.count[name] = 0;
-      performanceLog.count[name]++;
+      if (!s.pl.start[name]) return;
+      if (!s.pl.last) s.pl.last={};
+      let duration = time - s.pl.start[name];
+      s.pl.last[name] = duration;
+      if (!s.pl.cum) s.pl.cum={};
+      if (!s.pl.cum[name]) s.pl.cum[name] = 0;
+      s.pl.cum[name] += duration;
+      if (!s.pl.count) s.pl.count={};
+      if (!s.pl.count[name]) s.pl.count[name] = 0;
+      s.pl.count[name]++;
+      if (once){s.pl.start[name] = undefined}
     };
 
     Bangle.printPerfLog = function(){
       let result = "";
       let keys = [];
-      for (let c in performanceLog.cum){
+      for (let c in s.pl.cum){
         keys.push(c);
       }
       keys.sort();
       for (let k of keys){
-        print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "count:", performanceLog.count[k], "total:", (performanceLog.cum[k] * 1000).toFixed(0));
+        print(k, "last:", (s.pl.last[k] * 1000).toFixed(0), "average:", (s.pl.cum[k]/s.pl.count[k]*1000).toFixed(0), "count:", s.pl.count[k], "total:", (s.pl.cum[k] * 1000).toFixed(0));
       }
     };
   }
-
+  startPerfLog("fullDraw");
   startPerfLog("loadFunctions");
 
   let delayTimeouts = {};
@@ -609,14 +616,15 @@ let firstDraw = true;
 
       promise.then(()=>{
         let currentDrawingTime = Date.now();
-        if (showWidgets){
+        if (s.sw){
           restoreWidgetDraw();
         }
         lastDrawTime = Date.now() - start;
         isDrawing=false;
-        firstDraw=false;
+        s.fd=false;
         requestRefresh = false;
         endPerfLog("initialDraw");
+        endPerfLog("fullDraw", true);
         if (!Bangle.uiRemove) setUi();
       }).catch((e)=>{
         print("Error during drawing", e);
@@ -701,16 +709,16 @@ let firstDraw = true;
   
   let handleLock = function(isLocked, forceRedraw){
     //print("isLocked", Bangle.isLocked());
-    for (let i of unlockedDrawInterval){
+    for (let i of s.udi){
       //print("Clearing unlocked", i);
       clearInterval(i);
     }
-    for (let i of lockedDrawInterval){
+    for (let i of s.ldi){
       //print("Clearing locked", i);
       clearInterval(i);
     }
-    unlockedDrawInterval = [];
-    lockedDrawInterval = [];
+    s.udi = [];
+    s.ldi = [];
 
     if (!isLocked){
       if (forceRedraw || !redrawEvents || (redrawEvents.includes("unlock"))){
@@ -726,7 +734,7 @@ let firstDraw = true;
         initialDraw(watchfaceResources, watchface);
       },unlockedRedraw, (v)=>{
         //print("New matched unlocked interval", v);
-        unlockedDrawInterval.push(v);
+        s.udi.push(v);
       }, lastDrawTime);
       if (!events || events.includes("HRM")) Bangle.setHRMPower(1, "imageclock");
       if (!events || events.includes("pressure")) Bangle.setBarometerPower(1, 'imageclock');
@@ -744,7 +752,7 @@ let firstDraw = true;
         initialDraw(watchfaceResources, watchface);
       },lockedRedraw, (v)=>{
         //print("New matched locked interval", v);
-        lockedDrawInterval.push(v);
+        s.ldi.push(v);
       }, lastDrawTime);
       Bangle.setHRMPower(0, "imageclock");
       Bangle.setBarometerPower(0, 'imageclock');
@@ -760,21 +768,21 @@ let firstDraw = true;
   };
 
   let handleSwipe = function(lr, ud){
-    if (!showWidgets && ud == 1){
+    if (!s.sw && ud == 1){
       //print("Enable widgets");
       restoreWidgetDraw();
       showWidgetsChanged = true;
     }
-    if (showWidgets && ud == -1){
+    if (s.sw && ud == -1){
       //print("Disable widgets");
       clearWidgetsDraw();
-      firstDraw = true;
+      s.fd = true;
       showWidgetsChanged = true;
     }
     if (showWidgetsChanged){
       showWidgetsChanged = false;
       //print("Draw after widget change");
-      showWidgets = ud == 1;
+      s.sw = ud == 1;
       initialDraw();
     }
   };
@@ -829,23 +837,18 @@ let firstDraw = true;
         if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
         if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
 
-        for (let i of global.unlockedDrawInterval){
+        for (let i of global.s.udi){
           //print("Clearing unlocked", i);
           clearInterval(i);
         }
-        delete global.unlockedDrawInterval;
-        for (let i of global.lockedDrawInterval){
+        for (let i of global.s.ldi){
           //print("Clearing locked", i);
           clearInterval(i);
         }
-        delete global.lockedDrawInterval;
-        delete global.showWidgets;
-        delete global.firstDraw;
 
         delete Bangle.printPerfLog;
         if (settings.perflog){
           delete Bangle.resetPerfLog;
-          delete performanceLog;
         }
 
         cleanupDelays();
