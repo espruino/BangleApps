@@ -25,6 +25,8 @@
       <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
       <input type="checkbox" id="forceOrigPlane" name="mode" disabled="true"/>
       <label for="forceOrigPlane">Force use of direct drawing (Even faster, but will produce visible artifacts on not optimized watch faces)</label></br>
+      <input type="checkbox" id="separateFiles" name="mode"/>
+      <label for="separateFiles">Do not create combined app flle (slower but more flexible for debugging, incompatible with minification)</label></br>
       <input type="checkbox" id="debugprints" name="mode"/>
       <label for="debugprints">Add debug prints to generated code</label></br>
     </p>
@@ -1011,22 +1013,45 @@
       });
       document.getElementById("btnUpload").addEventListener("click", function() {
 
+      console.log("Fetching app");
+      fetch('app.js').then((r) => {
+          console.log("Got response", r);
+          return r.text();
+        }
+      ).then((imageclockSrc) => {
+        console.log("Got src", imageclockSrc)
+
+        if (!document.getElementById('separateFiles').checked){
+          if (precompiledJs.length > 0){
+            const replacementString = 'eval(require("Storage").read("imageclock.draw.js"))';
+            console.log("Can replace:", imageclockSrc.includes(replacementString));
+            imageclockSrc = imageclockSrc.replace(replacementString, precompiledJs);
+          }
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.face.json")', JSON.stringify(faceJson));
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.resources.json")', JSON.stringify(resultJson));
+        }
         var appDef = {
           id : "imageclock",
           storage:[
-            {name:"imageclock.app.js", url:"app.js"},
-            {name:"imageclock.resources.json", content: JSON.stringify(resultJson)},
             {name:"imageclock.img", url:"app-icon.js", evaluate:true},
           ]
         };
+        if (document.getElementById('separateFiles').checked){
+          appDef.storage.push({name:"imageclock.app.js", url:"app.js"});
+          if (precompiledJs.length > 0){
+            appDef.storage.push({name:"imageclock.draw.js", content:precompiledJs});
+          }
+          appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
+          appDef.storage.push({name:"imageclock.resources.json", content: JSON.stringify(resultJson)});
+        } else {
+          appDef.storage.push({name:"imageclock.app.js", url:"pleaseminifycontent.js", content:imageclockSrc});
+        }
         if (resourceDataString.length > 0){
           appDef.storage.push({name:"imageclock.resources.data", content: resourceDataString});
         }
-        appDef.storage.push({name:"imageclock.draw.js", content: precompiledJs.length > 0 ? precompiledJs : "//empty"});
-        appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
-
         console.log("Uploading app:", appDef);        
         sendCustomizedApp(appDef);
+        });
       });
 
 
