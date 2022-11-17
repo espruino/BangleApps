@@ -25,8 +25,8 @@ exports = {
     return Object.assign({
       enabled: true,
       earlier: 30,
-      filter_from: 0,
-      filter_to: 24,
+      filter_from: 3,
+      filter_to: 12,
       filter_msg: "",
       vibrate: "..",
       msg: "...\n",
