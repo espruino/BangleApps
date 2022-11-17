@@ -47,7 +47,7 @@ exports = {
     var settings = exports.getSettings();
 
     // set the alarm time
-    this.time = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings,filter_msg).t;
+    this.time = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings.filter_msg).t;
 
     // abort if no alarm time could be found inside range
     if (!this.time) return;
@@ -79,7 +79,7 @@ exports = {
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings,filter_msg, settings.disableOnAlarm);
+    var alarm = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings.filter_msg, settings.disableOnAlarm);
 
     // clear sleeplog.trigger object and set alarm time to prevent resetting for this alarm
     sleeplog.trigger.sleeplogalarm = {last: alarm.t};
