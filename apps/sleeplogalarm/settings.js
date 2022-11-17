@@ -7,6 +7,66 @@
     require("Storage").writeJSON("sleeplogalarm.settings.json", settings);
   }
 
+  // read input from keyboard
+  function readInput(setting, retPos, cb) {
+    setTimeout((setting, retPos, cb) => {
+      if (require("Storage").read("textinput")) {
+        g.clear();
+        require("textinput").input({text: settings[setting]}).then(result => {
+          settings[setting] = result;
+          writeSetting();
+          cb(retPos);
+        });
+      } else {
+        E.showAlert(/*LANG*/"No keyboard app installed").then(() => cb(retPos));
+      }
+    }, 0, setting, retPos, cb);
+  }
+
+  // show widget menu
+  function showFilterMenu() {
+    // set menu
+    var filterMenu = {
+      "": {
+        title: "Filter Alarm"
+      },
+      /*LANG*/"< Back": () => showMain(2),
+      /*LANG*/"time from": {
+        value: settings.filter_from,
+        step: 0.25,
+        min: 0,
+        max: 23,
+        wrap: true,
+        noList: true,
+        format: v => 0|v + ":" + ("" + 0|(v%1 * 60)).padStart(2, "0"),
+        onchange: v => {
+          settings.filter_from = v;
+          writeSetting();
+        }
+      },
+      /*LANG*/"time to": {
+        value: settings.filter_to,
+        step: 0.25,
+        min: 1,
+        max: 24,
+        wrap: true,
+        noList: true,
+        format: v => 0|v + ":" + ("" + 0|(v%1 * 60)).padStart(2, "0"),
+        onchange: v => {
+          settings.filter_to = v;
+          writeSetting();
+        }
+      },
+      /*LANG*/"msg includes": {
+        value: settings.filter_msg,
+        format: v => !v ? "" : v.length > 6 ? v.substring(0, 6)+"..." : v,
+        // setTimeout required to load after menu refresh
+        onchange: () => readInput("filter_msg", 3, showFilterMenu)
+      }
+    };
+    var menu = E.showMenu(filterMenu);
+  }
+
   // show widget menu
   function showWidMenu() {
     // define color values and names
@@ -18,29 +78,29 @@
       "": {
         title: "Widget Settings"
       },
-      /*LANG*/"< Back": () => showMain(7),
+      /*LANG*/"< Back": () => showMain(8),
       /*LANG*/"hide": {
-        value: settings.hide,
+        value: settings.wid_hide,
         onchange: v => {
-          settings.hide = v;
+          settings.wid_hide = v;
           writeSetting();
         }
       },
-      /*LANG*/"time range": {
-        value: settings.drawRange,
+      /*LANG*/"show time": {
+        value: settings.wid_time,
         onchange: v => {
-          settings.drawRange = v;
+          settings.wid_time = v;
           writeSetting();
         }
       },
       /*LANG*/"color": {
-        value: colVal.indexOf(settings.color),
+        value: colVal.indexOf(settings.wid_color),
         min: 0,
         max: colVal.length -1,
         wrap: true,
         format: v => colName[v],
         onchange: v => {
-          settings.color = colVal[v];
+          settings.wid_color = colVal[v];
           writeSetting();
         }
       }
@@ -57,30 +117,6 @@
         selected: selected
       },
       /*LANG*/"< Back": () => back(),
-      /*LANG*/"time from": {
-        value: settings.from,
-        min: 0,
-        max: 23,
-        wrap: true,
-        noList: true,
-        format: v => v + ":00",
-        onchange: v => {
-          settings.from = v;
-          writeSetting();
-        }
-      },
-      /*LANG*/"time to": {
-        value: settings.to,
-        min: 1,
-        max: 24,
-        wrap: true,
-        noList: true,
-        format: v => v + ":00",
-        onchange: v => {
-          settings.to = v;
-          writeSetting();
-        }
-      },
       /*LANG*/"erlier": {
         value: settings.earlier,
         step: 10,
@@ -94,29 +130,19 @@
           writeSetting();
         }
       },
-      /*LANG*/"disable alarm": {
-        value: settings.disableOnAlarm,
-        onchange: v => {
-          settings.disableOnAlarm = v;
+      /*LANG*/"Filter Alarm": () => showFilterMenu(),
+      /*LANG*/"vib pattern": require("buzz_menu").pattern(
+        settings.vibrate,
+        v => {
+          settings.vibrate = v;
           writeSetting();
         }
-      },
+      ),
       /*LANG*/"msg": {
         value: settings.msg,
         format: v => !v ? "" : v.length > 6 ? v.substring(0, 6)+"..." : v,
         // setTimeout required to load after menu refresh
-        onchange: () => setTimeout((msg, cb) => {
-          if (require("Storage").read("textinput")) {
-            g.clear();
-            require("textinput").input({text: msg}).then(result => {
-              settings.msg = result;
-              writeSetting();
-              cb(7);
-            });
-          } else {
-            E.showAlert(/*LANG*/"No keyboard app installed").then(() => cb(7));
-          }
-        }, 0, settings.msg, showMain),
+        onchange: () => readInput("msg", 4, showMain)
       },
       /*LANG*/"msg as prefix": {
         value: settings.msgAsPrefix,
@@ -125,13 +151,13 @@
           writeSetting();
         }
       },
-      /*LANG*/"vib pattern": require("buzz_menu").pattern(
-        settings.vibrate,
-        v => {
-          settings.vibrate = v;
+      /*LANG*/"disable alarm": {
+        value: settings.disableOnAlarm,
+        onchange: v => {
+          settings.disableOnAlarm = v;
           writeSetting();
         }
-      ),
+      },
       /*LANG*/"auto snooze": {
         value: settings.as,
         onchange: v => {

@@ -2,14 +2,14 @@
 var sched = require("sched");
 
 // find next active alarm in range
-function getNextAlarm(allAlarms, from, to, withId) {
+function getNextAlarm(allAlarms, from, to, msg, withId) {
   if (withId) allAlarms = allAlarms.map((a, idx) => {
     a.idx = idx;
     return a;
   });
   // return next active alarms in range
   return allAlarms.filter(
-      a => a.on && !a.timer && a.t >= from && a.t < to
+      a => a.on && !a.timer && a.t >= from && a.t < to && (!msg || a.msg.includes(msg))
     ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
@@ -23,17 +23,18 @@ exports = {
   getSettings: function() {
     return Object.assign({
       enabled: true,
-      hide: false,
-      drawTime: true,
-      color: g.theme.dark ? 65504 : 31, // yellow or blue
-      from: 4, // 0400
-      to: 8, // 0800
       earlier: 30,
+      filter_from: 0,
+      filter_to: 24,
+      filter_msg: "",
+      vibrate: "..",
+      msg: "...\n",
       msgAsPrefix: true,
       disableOnAlarm: false, // !!! not available if alarm is at the next day
-      msg: "...\n",
-      vibrate: "..",
-      as: true
+      as: true,
+      wid_hide: false,
+      wid_time: true,
+      wid_color: g.theme.dark ? 65504 : 31, // yellow or blue
     }, require("Storage").readJSON("sleeplogalarm.settings.json", true) || {});
   },
 
@@ -46,7 +47,7 @@ exports = {
     var settings = exports.getSettings();
 
     // set the alarm time
-    this.time = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5).t;
+    this.time = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings,filter_msg).t;
 
     // abort if no alarm time could be found inside range
     if (!this.time) return;
@@ -78,7 +79,7 @@ exports = {
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = getNextAlarm(sched.getAlarms(), settings.from * 36E5, settings.to * 36E5, settings.disableOnAlarm);
+    var alarm = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings,filter_msg, settings.disableOnAlarm);
 
     // clear sleeplog.trigger object and set alarm time to prevent resetting for this alarm
     sleeplog.trigger.sleeplogalarm = {last: alarm.t};
