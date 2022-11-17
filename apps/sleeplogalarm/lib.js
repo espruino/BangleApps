@@ -70,7 +70,7 @@ exports = {
   },
 
   // trigger function
-  trigger: function(tNow) {
+  trigger: function() {
     // read settings
     var settings = exports.getSettings();
 
@@ -108,7 +108,7 @@ exports = {
       id: "sleeplog",
       appid: "sleeplog",
       on: true,
-      t: ((time.getHours() * 60 + time.getMinutes()) * 60 + time.getSeconds()) * 1000,
+      t: ((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000,
       dow: 127,
       msg: settings.msg + (settings.msgAsPrefix ? alarm.msg || "" : ""),
       vibrate: settings.vibrate || alarm.vibrate,
