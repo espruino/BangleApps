@@ -233,11 +233,14 @@ class Status {
   }
   compute_scale() {
     if (this.on_path) {
-      this.scale = 40000.0;
+      this.scale_factor = 40000.0;
     } else {
-      let projection = this.closest_segment_point(this.path.point(segment), this.path.point(segment+1));
-      let distance_to_nearest = this.position.fake_distance(projection);
-      this.scale = Math.min(66.0 / distance_to_nearest, 40000.0);
+      let segment = this.current_segment;
+      let distance_to_nearest = this.position.fake_distance_to_segment(
+        this.path.point(segment),
+        this.path.point(segment + 1)
+      );
+      this.scale_factor = Math.min(66.0 / distance_to_nearest, 40000.0);
     }
   }
   display(orientation) {
@@ -434,7 +437,10 @@ class Status {
       let next_point = this.path.point(this.current_segment + 1);
       let previous_point = this.path.point(this.current_segment);
       let nearest_point;
-      if (previous_point.fake_distance(this.position) < next_point.fake_distance(this.position)) {
+      if (
+        previous_point.fake_distance(this.position) <
+        next_point.fake_distance(this.position)
+      ) {
         nearest_point = previous_point;
       } else {
         nearest_point = next_point;
@@ -691,7 +697,7 @@ function simulate_gps(status) {
     return;
   }
   let point_index = Math.floor(fake_gps_point);
-  if (point_index >= status.path.len) {
+  if (point_index >= status.path.len - 1) {
     return;
   }
   //let p1 = status.path.point(0);
