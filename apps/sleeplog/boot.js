@@ -270,7 +270,7 @@ if (sleeplog.conf.enabled) {
           if (typeof entry.fn === "function" && (changed || !entry.onChange) &&
             (entry.from || 0) <= time && (entry.to || 24 * 60 * 60 * 1000) >= time)
             // and call afterwards with status data
-            setTimeout(fn, 100, {
+            setTimeout(entry.fn, 100, {
               timestamp: new Date(data.timestamp),
               status: data.status === this.status ? undefined : data.status,
               consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
