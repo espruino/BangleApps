@@ -272,10 +272,10 @@ if (sleeplog.conf.enabled) {
             // and call afterwards with status data
             setTimeout(entry.fn, 100, {
               timestamp: new Date(data.timestamp),
-              status: data.status === this.status ? undefined : data.status,
-              consecutive: data.consecutive === this.consecutive ? undefined : data.consecutive,
-              prevStatus: this.status,
-              prevConsecutive: this.consecutive
+              status: data.status,
+              consecutive: data.consecutive,
+              prevStatus: data.status === this.status ? undefined : this.status,
+              prevConsecutive: data.consecutive === this.consecutive ? undefined : this.consecutive
             });
         });
       }
