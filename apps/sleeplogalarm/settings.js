@@ -38,7 +38,7 @@
         max: 23,
         wrap: true,
         noList: true,
-        format: v => 0|v + ":" + ("" + 0|(v%1 * 60)).padStart(2, "0"),
+        format: v => (0|v) + ":" + ("" + (0|(v%1 * 60))).padStart(2, "0"),
         onchange: v => {
           settings.filter_from = v;
           writeSetting();
@@ -51,7 +51,7 @@
         max: 24,
         wrap: true,
         noList: true,
-        format: v => 0|v + ":" + ("" + 0|(v%1 * 60)).padStart(2, "0"),
+        format: v => (0|v) + ":" + ("" + (0|(v%1 * 60))).padStart(2, "0"),
         onchange: v => {
           settings.filter_to = v;
           writeSetting();
