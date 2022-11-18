@@ -39,16 +39,6 @@ let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
 
-let main = function(){
-  LOG("Main");
-  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( NewMessage.json )
-  let eventToShow = require('Storage').readJSON(settings.NewEventFileName, true);
-  //require("Storage").erase(settings.NewEventFileName)
-  if( eventToShow!==undefined)
-    manageEvent(eventToShow);
-  else
-    load();
-};
 
 
 //TODO: RICORDARSI DI FARE IL DELETE
@@ -224,9 +214,9 @@ let showCall = function(msg)
   //se è una chiamata ( o una nuova chiamata, diversa dalla precedente )
   //la visualizzo
   
-  var title=msg.title, titleFont = settings.fontLarge, lines;
+  let title=msg.title, titleFont = settings.fontLarge, lines;
   if (title) {
-    var w = g.getWidth()-48;
+    let w = g.getWidth()-48;
     if (g.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (g.setFont(titleFont).stringWidth(title) > w) {
@@ -310,47 +300,14 @@ let showMapMessage=function(msg) {
 
   g.clearRect(Bangle.appRect);
   PrintMessageStrings({body:"Not implemented!"});
-  /*var m;
-  var distance, street, target, eta;
-  m=msg.title.match(/(.*) - (.*)/);
-  if (m) {
-    distance = m[1];
-    street = m[2];
-  } else street=msg.title;
-  m=msg.body.match(/(.*) - (.*)/);
-  if (m) {
-    target = m[1];
-    eta = m[2];
-  } else target=msg.body;
-  layout = new Layout({ type:"v", c: [
-    {type:"txt", font:settings.fontMedium, label:target, bgCol:settings.colBg, fillx:1, pad:2 },
-    {type:"h", bgCol:settings.colBg, fillx:1, c: [
-      {type:"txt", font:"6x8", label:"Towards" },
-      {type:"txt", font:settings.fontLarge, label:street }
-    ]},
-    {type:"h",fillx:1, filly:1, c: [
-      msg.img?{type:"img",src:atob(msg.img), scale:2}:{},
-      {type:"v", fillx:1, c: [
-        {type:"txt", font:settings.fontLarge, label:distance||"" }
-      ]},
-    ]},
-    {type:"txt", font:"6x8:2", label:eta }
-  ]});
-  g.clearRect(Bangle.appRect);
-  layout.render();
-  Bangle.setUI("updown",function() {
-    // any input to mark as not new and return to menu
-    msg.new = false;
-    layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
-  });*/
+
 }
 
 
 
 
 
-var CallBuzzTimer=null;
+let CallBuzzTimer=null;
 let StopBuzzCall=function()
 {
   if (CallBuzzTimer){
@@ -415,8 +372,8 @@ let PrintMessageStrings=function(msg)
 
   if(typeof msg.FirstLine==="undefined")  msg.FirstLine=0;
 
-  var bodyFont = typeof msg.bodyFont==="undefined"? settings.fontMedium : msg.bodyFont;
-  var Padding=2;
+  let bodyFont = typeof msg.bodyFont==="undefined"? settings.fontMedium : msg.bodyFont;
+  let Padding=2;
   if(typeof msg.lines==="undefined")
   {
     g.setFont(bodyFont);
@@ -433,19 +390,19 @@ let PrintMessageStrings=function(msg)
   
 
   //prendo le linee da stampare
-  var NumLines=8;
-  var linesToPrint = (msg.lines.length>NumLines) ? msg.lines.slice(msg.FirstLine,msg.FirstLine+NumLines):msg.lines;
+  let NumLines=8;
+  let linesToPrint = (msg.lines.length>NumLines) ? msg.lines.slice(msg.FirstLine,msg.FirstLine+NumLines):msg.lines;
   
     
-  var yText=45;
+  let yText=45;
   
   //invalido l'area e disegno il testo
   g.setBgColor(settings.colBg);
   g.clearRect(0,yText,176,176);
-  var xText=Padding;
+  let xText=Padding;
   yText+=Padding;
   g.setFont(bodyFont);
-  var HText=g.getFontHeight();
+  let HText=g.getFontHeight();
 
   yText=((176-yText)/2)-(linesToPrint.length * HText / 2) + yText;
 
@@ -485,28 +442,15 @@ let PrintMessageStrings=function(msg)
 
 
 
-
-
-g.clear();
-
-Bangle.on('lock', function(on) { 
-  DrawLock();
-});
-
-//se c'è una chiamata in corso NON devo togliere niente dal next ( in q)
-setWatch(_=> next(), BTN1,{repeat: true});
-
-
-//il tap è il tocco con l'accellerometro!
-Bangle.on('tap', function(data) {
+let doubleTapUnlock=function(data) {
   if( data.double)  //solo se in double
   {
     Bangle.setLocked(false);
     Bangle.setLCDPower(1);
   }
-});
-Bangle.on('touch', function(button, xy) { 
-  var height=176; //g.getHeight(); -> 176 B2
+}
+let toushScroll=function(button, xy) { 
+  let height=176; //g.getHeight(); -> 176 B2
   height/=2;
   
   if(xy.y<height)
@@ -517,7 +461,34 @@ Bangle.on('touch', function(button, xy) {
   {
     ScrollDown();
   }
-});
+}
+
+
+let main = function(){
+  LOG("Main");
+
+  g.clear();
+
+  Bangle.on('lock', DrawLock);
+
+  //se c'è una chiamata in corso NON devo togliere niente dal next ( in q)
+  setWatch(_=> next(), BTN1,{repeat: true});
+
+  //il tap è il tocco con l'accellerometro!
+  Bangle.on('tap', doubleTapUnlock);
+  Bangle.on('touch', toushScroll);
+
+  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( NewMessage.json )
+  let eventToShow = require('Storage').readJSON(settings.NewEventFileName, true);
+  require("Storage").erase(settings.NewEventFileName)
+  if( eventToShow!==undefined)
+    manageEvent(eventToShow);
+  else
+  {
+    LOG("file not found!");
+    setTimeout(_ => load(), 0);
+  }
+};
 
 
 
