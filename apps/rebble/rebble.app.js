@@ -291,48 +291,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
   }
 
 
-  log_debug("starting..");
-  loadSettings();
-  loadLocation();
 
-
-  if(settings.autoCycle || settings.sideTap==0)
-  {
-    Bangle.setUI({
-      mode : "clockupdown",
-      remove : function() {
-        // Called to unload all of the clock app
-        if (drawTimeout) clearTimeout(drawTimeout);
-        drawTimeout = undefined;
-        delete Graphics.prototype.setFontKdamThmor;
-      }},
-      btn=> {
-        if (btn<0) prevSidebar();
-        if (btn>0) nextSidebar();
-        draw();
-      });
- 
-  }
-  else{
-    Bangle.setUI({
-      mode : "clock",
-      remove : function() {
-        // Called to unload all of the clock app
-        if (drawTimeout) clearTimeout(drawTimeout);
-        drawTimeout = undefined;
-        delete Graphics.prototype.setFontKdamThmor;
-      }});
-  }
-
-
-  Bangle.loadWidgets();
-  draw();
-  require("widget_utils").hide();
-
-
-
-
-  Bangle.on('charging', function(charging) { 
+  let chargingListener= function(charging) { 
     
     //redraw the sidebar ( with the battery )
     switch(sideBar) {
@@ -343,5 +303,55 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
         drawSideBar2();
         break;
     }
-  });
+  }
+  
+  let deleteAll=function()
+  {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    delete Graphics.prototype.setFontKdamThmor;
+    Bangle.removeListener('charging',chargingListener);
+  }
+
+  let main=function(){
+
+
+    log_debug("starting..");
+    loadSettings();
+    loadLocation();
+  
+    if(settings.autoCycle || settings.sideTap==0)
+    {
+      Bangle.setUI({
+        mode : "clockupdown",
+        remove : deleteAll
+      },
+        btn=> {
+          if (btn<0) prevSidebar();
+          if (btn>0) nextSidebar();
+          draw();
+        });
+  
+    }
+    else{
+      Bangle.setUI({
+        mode : "clock",
+        remove : deleteAll
+      });
+    }
+
+
+
+    Bangle.on('charging',chargingListener);
+
+
+    Bangle.loadWidgets();
+    draw();
+    require("widget_utils").hide();
+
+  }
+
+
+  main();
 }
