@@ -30,9 +30,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
   let sunRise = "00:00";
   let sunSet = "00:00";
 
-  function log_debug(o) {
+  let log_debug= function(o) {
     //console.log(o);
-    
   }
 
   // requires the myLocation app
