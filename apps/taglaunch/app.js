@@ -41,7 +41,10 @@ if (launchCache.hash!=launchHash) {
       if (a.name>b.name) return 1;
       return 0;
     }).forEach(app => {
-      let appTags = app.tags.split(",").map(tag => tag.trim()).filter(tag => Object.keys(tags).includes(tag));
+      let appTags = app.tags.split(",")
+		    .map(tag => tag.trim())
+		    .map(tag => tag === "tools" ? "tool" : tag) // tool = tools
+		    .filter(tag => Object.keys(tags).includes(tag));
       if (appTags.length === 0) {
         appTags.push("misc");
       }
