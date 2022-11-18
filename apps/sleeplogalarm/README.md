@@ -1,27 +1,40 @@
 # Sleep Log Alarm
 
-This widget searches for active alarms and raises the alarm event up to the defined time earlier, if in a light sleep phase.
+This widget searches for active alarms and raises an own alarm event up to the defined time earlier, if in light sleep or awake phase. Optional the earlier alarm will only be triggered if comming from or in consecutive sleep. The settings of the earlier alarm can be adjusted and it is possible to filter the targeting alarms by time and message. By default the time of the targeting alarm is displayed inside the widget which can be adjusted, too. 
 
 ---
-### App Usage
+### Settings
 ---
 
-#### Inside the settings: !!! dummy entries !!!
-  - __Thresholds__ submenu
-    Changes take effect from now on, not retrospective!
-    - __Max Awake__ | maximal awake duration
-      _10min_ / _20min_ / ... / __60min__ / ... / _120min_
-    - __Min Consecutive__ | minimal consecutive sleep duration
-      _10min_ / _20min_ / ... / __30min__ / ... / _120min_
-    - __Deep Sleep__ | deep sleep threshold
-      _30_ / _31_ / ... / __100__ / ... / _200_
-    - __Light Sleep__ | light sleep threshold
-      _100_ / _110_ / ... / __200__ / ... / _400_
-    - __Reset to Default__ | reset to bold values above
-  - __BreakToD__ | time of day to break view
-    _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
-  - __App Timeout__ | app specific lock timeout
-    __0s__ / _10s_ / ... / _120s_
+  - __earlier__ | duration to trigger alarm earlier  
+    _10min_ / _20min_ / __30min__ / ... / _120min_
+  - __from Consec.__ | only trigger if comming from consecutive sleep  
+    _on_ / __off__
+  - __vib pattern__ | vibration pattern for the earlier alarm  
+    __..__ / ...
+  - __msg__ | customized message for the earlier alarm  
+    __...__ / ...
+  - __msg as prefix__ | use the customized message as prefix to the original message or replace it comlpetely if disabled  
+    __on__ / _off_
+  - __disable alarm__ | if enabled the original alarm will be disabled  
+    _on_ / __off__  
+    This feature does not work for alarms on the next day!
+  - __auto snooze__ | auto snooze option for the earlier alarm  
+    __on__ / _off_
+  - __Filter Alarm__ submenu
+    - __time from__ | exclude alarms before this time  
+      _0:00_ / _0:15_ / ... / __3:00__ / ... / _24:00_
+    - __time to__ | exclude alarms after this time  
+      _0:00_ / _0:15_ / ... / __12:00__ / ... / _24:00_
+    - __msg includes__ | include only alarms including this string in msg  
+      __""__ / ...
+  - __Widget__ submenu
+    - __hide__ | completely hide the widget  
+      _on_ / __off__
+    - __show time__ | show the time of the targeting alarm  
+      __on__ / _off_
+    - __color__ | color of the widget
+      _red_ / __yellow__ / ... / _white_
   - __Enabled__ | completely en-/disables the background service
     __on__ / _off_
 

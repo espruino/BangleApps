@@ -29,14 +29,15 @@ exports = {
     return Object.assign({
       enabled: true,
       earlier: 30,
-      filter_from: 3,
-      filter_to: 12,
-      filter_msg: "",
+      fromConsec: false,
       vibrate: "..",
       msg: "...\n",
       msgAsPrefix: true,
       disableOnAlarm: false, // !!! not available if alarm is at the next day
       as: true,
+      filter_from: 3,
+      filter_to: 12,
+      filter_msg: "",
       wid_hide: false,
       wid_time: true,
       wid_color: g.theme.dark ? 65504 : 31, // yellow or blue
@@ -72,7 +73,9 @@ exports = {
       to: this.time - 1,
       fn: function (data) {
         // execute trigger function if on light sleep or awake
-        if (data.status === 3 || data.status === 2)
+        //  and if set if comming from consecutive
+        if ((data.status === 3 || data.status === 2) && !settings.fromConsec ||
+            data.consecutive === 3 || data.prevConsecutive === 3)
           require("sleeplogalarm").trigger();
       }
     };

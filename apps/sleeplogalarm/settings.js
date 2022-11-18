@@ -30,12 +30,12 @@
       "": {
         title: "Filter Alarm"
       },
-      /*LANG*/"< Back": () => showMain(2),
+      /*LANG*/"< Back": () => showMain(8),
       /*LANG*/"time from": {
         value: settings.filter_from,
         step: 0.25,
         min: 0,
-        max: 23,
+        max: 24,
         wrap: true,
         noList: true,
         format: v => (0|v) + ":" + ("" + (0|(v%1 * 60))).padStart(2, "0"),
@@ -47,7 +47,7 @@
       /*LANG*/"time to": {
         value: settings.filter_to,
         step: 0.25,
-        min: 1,
+        min: 0,
         max: 24,
         wrap: true,
         noList: true,
@@ -78,7 +78,7 @@
       "": {
         title: "Widget Settings"
       },
-      /*LANG*/"< Back": () => showMain(8),
+      /*LANG*/"< Back": () => showMain(9),
       /*LANG*/"hide": {
         value: settings.wid_hide,
         onchange: v => {
@@ -130,7 +130,13 @@
           writeSetting();
         }
       },
-      /*LANG*/"Filter Alarm": () => showFilterMenu(),
+      /*LANG*/"from Consec.": {
+        value: settings.fromConsec,
+        onchange: v => {
+          settings.fromConsec = v;
+          writeSetting();
+        }
+      },
       /*LANG*/"vib pattern": require("buzz_menu").pattern(
         settings.vibrate,
         v => {
@@ -165,6 +171,7 @@
           writeSetting();
         }
       },
+      /*LANG*/"Filter Alarm": () => showFilterMenu(),
       /*LANG*/"Widget": () => showWidMenu(),
       /*LANG*/"Enabled": {
         value: settings.enabled,
