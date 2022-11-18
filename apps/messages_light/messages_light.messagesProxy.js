@@ -2,7 +2,7 @@
 //gestisco il messaggio a modo mio
 exports.pushMessage = function(event) {
 
-    //TODO: musica non ancora gestita dall'app -> passo a message
+    //TODO: now i can't handle the music, so i call the real message app
     if( event.id=="music") return require_real("messages").pushMessage(event);
 
     //se l'app non è aperta
