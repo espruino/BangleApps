@@ -10,7 +10,7 @@ s.fd = true;
 // performance log
 s.pl = {};
 
-{  
+{
   let x = g.getWidth()/2;
   let y = g.getHeight()/2;
   g.setColor(g.theme.bg);
@@ -625,7 +625,15 @@ s.pl = {};
         requestRefresh = false;
         endPerfLog("initialDraw");
         endPerfLog("fullDraw", true);
-        if (!Bangle.uiRemove) setUi();
+        
+        if (!Bangle.uiRemove){
+          setUi();
+          let orig = Bangle.drawWidgets;
+          Bangle.drawWidgets = ()=>{};
+          Bangle.loadWidgets();
+          clearWidgetsDraw();
+          Bangle.drawWidgets = orig;
+        }
       }).catch((e)=>{
         print("Error during drawing", e);
       });
@@ -816,6 +824,7 @@ s.pl = {};
     require("widget_utils").hide();
   }
   
+  if (global.WIDGETS) clearWidgetsDraw();
   handleLock(Bangle.isLocked(), true);
 
   let setUi = function(){
@@ -856,7 +865,4 @@ s.pl = {};
       }
     });
   }
-
-  Bangle.loadWidgets();
-  clearWidgetsDraw();
 }
