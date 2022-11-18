@@ -1,0 +1,16 @@
+{ "id": "sevenmin",
+  "name": "Seven minute workout",
+  "shortName": "7 min wo",
+  "version": "0.01",
+  "description": "A basic implementation of the famous consice workout",
+  "icon": "icon.png",
+  "type":"app",
+  "tags": "Training, Workout",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator":true,
+  "storage": [
+    {"name":"sevenmin.app.js", "url":"app.js"},
+    {"name":"sevenmin.img", "url":"app-icon.js","evaluate":true}
+  ]
+}
