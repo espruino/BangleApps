@@ -42,9 +42,6 @@ This widget searches for active alarms and raises an own alarm event up to the d
 ### Worth Mentioning
 ---
 
-#### To do list
-- README.md
-
 #### Requests, Bugs and Feedback
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) (or send me a [mail](mailto:banglejs@storm64.de)).
 
