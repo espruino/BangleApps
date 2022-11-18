@@ -2,15 +2,19 @@
 var sched = require("sched");
 
 // find next active alarm in range
-function getNextAlarm(allAlarms, from, to, msg, withId) {
+function getNextAlarm(allAlarms, fo, withId) {
   if (withId) allAlarms = allAlarms.map((a, idx) => {
     a.idx = idx;
     return a;
   });
-  // return next active alarms in range
+  // return next active alarms in range, filter for
+  //  active, not timer, not own alarm,
+  //  after from, before to, includes msg
+  //  not lastTime, not lastDay 
   return allAlarms.filter(
       a => a.on && !a.timer && a.id !== "sleeplog" &&
-      a.t >= from && a.t < to && (!msg || a.msg.includes(msg))
+      a.t >= fo.from && a.t < fo.to && (!fo.msg || a.msg.includes(fo.msg)) &&
+      fo.lastTime !== a.t && fo.lastDay !== a.last
     ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
@@ -48,16 +52,19 @@ exports = {
     var settings = exports.getSettings();
 
     // set the alarm time
-    this.time = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings.filter_msg).t;
+    this.time = getNextAlarm(sched.getAlarms(), {
+      from: settings.filter_from * 36E5,
+      to: settings.filter_to * 36E5,
+      msg: settings.filter_msg,
+      lastTime: settings.lastTime,
+      lastDay: settings.lastDay
+    }).t;
 
     // abort if no alarm time could be found inside range
     if (!this.time) return;
 
     // set widget width if not hidden
     if (!this.hidden) this.width = 8;
-
-    // abort if already alarmed for this alarm
-    if ((sleeplog.trigger.sleeplogalarm || {}).last == this.time) return;
 
     // insert sleeplogalarm conditions and function
     sleeplog.trigger.sleeplogalarm = {
@@ -80,10 +87,13 @@ exports = {
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = getNextAlarm(sched.getAlarms(), settings.filter_from * 36E5, settings.filter_to * 36E5, settings.filter_msg, settings.disableOnAlarm);
-
-    // clear sleeplog.trigger object and set alarm time to prevent resetting for this alarm
-    sleeplog.trigger.sleeplogalarm = {last: alarm.t};
+    var alarm = getNextAlarm(sched.getAlarms(), {
+      from: settings.filter_from * 36E5,
+      to: settings.filter_to * 36E5,
+      msg: settings.filter_msg,
+      lastTime: settings.lastTime,
+      lastDay: settings.lastDay
+    }, settings.disableOnAlarm);
 
     // return if no alarm is found
     if (!alarm) return;
@@ -117,6 +127,11 @@ exports = {
       as: settings.as,
       del: true
     });
+
+    // save time of alarm and this day to prevent triggering for the same alarm again
+    settings.lastTime = alarm.t;
+    settings.lastDay = now.getDay();
+    require("Storage").writeJSON("sleeplogalarm.settings.json", settings);
 
     // write changes
     sched.setAlarms(allAlarms);
