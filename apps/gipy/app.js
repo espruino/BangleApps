@@ -1,4 +1,4 @@
-let simulated = false;
+let simulated = true;
 let file_version = 3;
 let code_key = 47490;
 
@@ -6,9 +6,22 @@ var settings = Object.assign(
   {
     keep_gps_alive: true,
     max_speed: 35,
+    display_points: true,
   },
   require("Storage").readJSON("gipy.json", true) || {}
 );
+
+let profile_start_times = [];
+
+function start_profiling() {
+  profile_start_times.push(getTime());
+}
+
+function end_profiling(label) {
+  let end_time = getTime();
+  let elapsed = end_time - profile_start_times.pop();
+  console.log("profile:", label, "took", elapsed);
+}
 
 let interests_colors = [
   0xf800, // Bakery, red
@@ -42,6 +55,7 @@ class Status {
     this.distance_to_next_point = null; // how far are we from next point ?
     this.paused_time = 0.0; // how long did we stop (stops don't count in avg speed)
     this.paused_since = getTime();
+    this.projected_point = null;
 
     let r = [0];
     // let's do a reversed prefix computations on all distances:
@@ -224,29 +238,29 @@ class Status {
       return this.remaining_distances[0] - remaining_in_correct_orientation;
     }
   }
+  // check if we are lost (too far from segment we think we are on)
+  // if we are adjust scale so that path will still be displayed.
+  // we do the scale adjustment here to avoid recomputations later on.
   is_lost(segment) {
-    let distance_to_nearest = this.position.distance_to_segment(
+    let projection = this.position.closest_segment_point(
       this.path.point(segment),
       this.path.point(segment + 1)
     );
-    return distance_to_nearest > 50;
-  }
-  compute_scale() {
-    if (this.on_path) {
-      this.scale_factor = 40000.0;
+    this.projected_point = projection; // save this info for display
+    let distance_to_projection = this.position.distance(projection);
+    if (distance_to_projection > 50) {
+      this.scale_factor = Math.min(66.0 / distance_to_projection, 40000.0);
+      return true;
     } else {
-      let segment = this.current_segment;
-      let distance_to_nearest = this.position.fake_distance_to_segment(
-        this.path.point(segment),
-        this.path.point(segment + 1)
-      );
-      this.scale_factor = Math.min(66.0 / distance_to_nearest, 40000.0);
+      this.scale_factor = 40000.0;
+      return false;
     }
   }
   display(orientation) {
     g.clear();
-    this.compute_scale();
+    // start_profiling();
     this.display_map();
+    // end_profiling("display_map");
 
     this.display_interest_points();
     this.display_stats(orientation);
@@ -380,10 +394,12 @@ class Status {
           g.setColor(g.theme.bg);
           g.fillCircle(previous_x, previous_y, 5);
         }
-        g.setColor(g.theme.fg);
-        g.fillCircle(previous_x, previous_y, 4);
-        g.setColor(g.theme.bg);
-        g.fillCircle(previous_x, previous_y, 3);
+        if (settings.display_points) {
+          g.setColor(g.theme.fg);
+          g.fillCircle(previous_x, previous_y, 4);
+          g.setColor(g.theme.bg);
+          g.fillCircle(previous_x, previous_y, 3);
+        }
       }
 
       previous_x = x;
@@ -405,26 +421,9 @@ class Status {
     g.setColor(g.theme.fgH);
     g.fillCircle(half_width, half_height, 5);
 
-    // display old points for direction debug
-    //  for (let i = 0; i < this.old_points.length; i++) {
-    //    let tx = (this.old_points[i].lon - cx) * 40000.0;
-    //    let ty = (this.old_points[i].lat - cy) * 40000.0;
-    //    let rotated_x = tx * cos - ty * sin;
-    //    let rotated_y = tx * sin + ty * cos;
-    //    let x = half_width - Math.round(rotated_x); // x is inverted
-    //    let y = half_height + Math.round(rotated_y);
-    //    g.setColor((i + 1) / 4.0, 0.0, 0.0);
-    //    g.fillCircle(x, y, 3);
-    //  }
-
-    // display current-segment's projection for debug
-    let projection = pos.closest_segment_point(
-      this.path.point(this.current_segment),
-      this.path.point(this.current_segment + 1)
-    );
-
-    let tx = (projection.lon - cx) * scale_factor;
-    let ty = (projection.lat - cy) * scale_factor;
+    // display current-segment's projection
+    let tx = (this.projected_point.lon - cx) * scale_factor;
+    let ty = (this.projected_point.lat - cy) * scale_factor;
     let rotated_x = tx * cos - ty * sin;
     let rotated_y = tx * sin + ty * cos;
     let x = half_width - Math.round(rotated_x); // x is inverted
@@ -679,14 +678,6 @@ class Point {
     let t = Math.max(0, Math.min(1, this.minus(v).dot(w.minus(v)) / l2));
     return v.plus(w.minus(v).times(t)); // Projection falls on the segment
   }
-  distance_to_segment(v, w) {
-    let projection = this.closest_segment_point(v, w);
-    return this.distance(projection);
-  }
-  fake_distance_to_segment(v, w) {
-    let projection = this.closest_segment_point(v, w);
-    return this.fake_distance(projection);
-  }
 }
 
 Bangle.loadWidgets();
@@ -697,14 +688,11 @@ function simulate_gps(status) {
     return;
   }
   let point_index = Math.floor(fake_gps_point);
-  if (point_index >= status.path.len - 1) {
+  if (point_index >= status.path.len / 2 - 1) {
     return;
   }
-  //let p1 = status.path.point(0);
-  //let n = status.path.len;
-  //let p2 = status.path.point(n - 1);
-  let p1 = status.path.point(point_index);
-  let p2 = status.path.point(point_index + 1);
+  let p1 = status.path.point(2 * point_index);
+  let p2 = status.path.point(2 * (point_index + 1));
 
   let alpha = fake_gps_point - point_index;
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
