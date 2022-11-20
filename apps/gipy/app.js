@@ -1,4 +1,4 @@
-let simulated = true;
+let simulated = false;
 let file_version = 3;
 let code_key = 47490;
 
@@ -168,6 +168,7 @@ class Status {
     let next_segment = res[1];
 
     if (this.is_lost(next_segment)) {
+      // start_profiling();
       // it did not work, try anywhere
       res = this.path.nearest_segment(
         this.position,
@@ -178,6 +179,7 @@ class Status {
       );
       orientation = res[0];
       next_segment = res[1];
+      // end_profiling("repositioning");
     }
     // now check if we strayed away from path or back to it
     let lost = this.is_lost(next_segment);
@@ -373,6 +375,30 @@ class Status {
     let previous_x = null;
     let previous_y = null;
     let scale_factor = this.scale_factor;
+
+    // display direction to next point if lost
+    if (!this.on_path) {
+      let next_point = this.path.point(this.current_segment + 1);
+      let previous_point = this.path.point(this.current_segment);
+      let nearest_point;
+      if (
+        previous_point.fake_distance(this.position) <
+        next_point.fake_distance(this.position)
+      ) {
+        nearest_point = previous_point;
+      } else {
+        nearest_point = next_point;
+      }
+      let tx = (nearest_point.lon - cx) * scale_factor;
+      let ty = (nearest_point.lat - cy) * scale_factor;
+      let rotated_x = tx * cos - ty * sin;
+      let rotated_y = tx * sin + ty * cos;
+      let x = half_width - Math.round(rotated_x); // x is inverted
+      let y = half_height + Math.round(rotated_y);
+      g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
+    }
+
+    // now display path
     for (let i = start; i < end; i++) {
       let tx = (points[2 * i] - cx) * scale_factor;
       let ty = (points[2 * i + 1] - cy) * scale_factor;
@@ -381,11 +407,7 @@ class Status {
       let x = half_width - Math.round(rotated_x); // x is inverted
       let y = half_height + Math.round(rotated_y);
       if (previous_x !== null) {
-        if (i == this.current_segment + 1) {
-          g.setColor(0.0, 1.0, 0.0);
-        } else {
-          g.setColor(1.0, 0.0, 0.0);
-        }
+        g.setColor(g.theme.fg);
         g.drawLine(previous_x, previous_y, x, y);
 
         if (this.path.is_waypoint(i - 1)) {
@@ -428,32 +450,8 @@ class Status {
     let rotated_y = tx * sin + ty * cos;
     let x = half_width - Math.round(rotated_x); // x is inverted
     let y = half_height + Math.round(rotated_y);
-    g.setColor(g.theme.fg);
+    g.setColor(g.theme.fgH);
     g.fillCircle(x, y, 4);
-
-    // display direction to next point if lost
-    if (!this.on_path) {
-      let next_point = this.path.point(this.current_segment + 1);
-      let previous_point = this.path.point(this.current_segment);
-      let nearest_point;
-      if (
-        previous_point.fake_distance(this.position) <
-        next_point.fake_distance(this.position)
-      ) {
-        nearest_point = previous_point;
-      } else {
-        nearest_point = next_point;
-      }
-      let diff = nearest_point.minus(this.position);
-      let angle = Math.atan2(diff.lat, diff.lon);
-      let tx = Math.cos(angle) * 50.0;
-      let ty = Math.sin(angle) * 50.0;
-      let rotated_x = tx * cos - ty * sin;
-      let rotated_y = tx * sin + ty * cos;
-      let x = half_width - Math.round(rotated_x); // x is inverted
-      let y = half_height + Math.round(rotated_y);
-      g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
-    }
   }
 }
 
@@ -569,25 +567,12 @@ class Path {
     this.on_segments(
       function (p1, p2, i) {
         // we use the dot product to figure out if oriented correctly
-        // let distance = point.fake_distance_to_segment(p1, p2);
+        let closest_point = point.closest_segment_point(p1, p2);
+        let distance = point.length_squared(closest_point);
 
-        let projection = point.closest_segment_point(p1, p2);
-        let distance = point.fake_distance(projection);
-
-        //        let d = projection.minus(point).times(40000.0);
-        //        let rotated_x = d.lon * acos - d.lat * asin;
-        //        let rotated_y = d.lon * asin + d.lat * acos;
-        //        let x = g.getWidth() / 2 - Math.round(rotated_x); // x is inverted
-        //        let y = g.getHeight() / 2 + Math.round(rotated_y);
-        //
-        let diff = p2.minus(p1);
-        let dot = cos_direction * diff.lon + sin_direction * diff.lat;
+        let dot =
+          cos_direction * (p2.lon - p1.lon) + sin_direction * (p2.lat - p1.lat);
         let orientation = +(dot < 0); // index 0 is good orientation
-        //        g.setColor(0.0, 0.0 + orientation, 1.0 - orientation).fillCircle(
-        //          x,
-        //          y,
-        //          10
-        //        );
         if (distance <= mins[orientation]) {
           mins[orientation] = distance;
           indices[orientation] = i - 1;
@@ -598,7 +583,7 @@ class Path {
     );
     // by default correct orientation (0) wins
     // but if other one is really closer, return other one
-    if (mins[1] < mins[0] / 10.0) {
+    if (mins[1] < mins[0] / 100.0) {
       return [1, indices[1]];
     } else {
       return [0, indices[0]];
@@ -634,8 +619,9 @@ class Point {
     return new Point(this.lon + other_point.lon, this.lat + other_point.lat);
   }
   length_squared(other_point) {
-    let d = this.minus(other_point);
-    return d.lon * d.lon + d.lat * d.lat;
+    let londiff = this.lon - other_point.lon;
+    let latdiff = this.lat - other_point.lat;
+    return londiff * londiff + latdiff * latdiff;
   }
   times(scalar) {
     return new Point(this.lon * scalar, this.lat * scalar);
@@ -664,10 +650,15 @@ class Point {
   fake_distance(other_point) {
     return Math.sqrt(this.length_squared(other_point));
   }
+  // return closest point from 'this' on [v,w] segment.
+  // since this function is critical we inline all code here.
   closest_segment_point(v, w) {
     // from : https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
     // Return minimum distance between line segment vw and point p
-    let l2 = v.length_squared(w); // i.e. |w-v|^2 -  avoid a sqrt
+    let segment_londiff = w.lon - v.lon;
+    let segment_latdiff = w.lat - v.lat;
+    let l2 =
+      segment_londiff * segment_londiff + segment_latdiff * segment_latdiff; // i.e. |w-v|^2 -  avoid a sqrt
     if (l2 == 0.0) {
       return v; // v == w case
     }
@@ -675,8 +666,22 @@ class Point {
     // We find projection of point p onto the line.
     // It falls where t = [(p-v) . (w-v)] / |w-v|^2
     // We clamp t from [0,1] to handle points outside the segment vw.
-    let t = Math.max(0, Math.min(1, this.minus(v).dot(w.minus(v)) / l2));
-    return v.plus(w.minus(v).times(t)); // Projection falls on the segment
+
+    // let t = Math.max(0, Math.min(1, this.minus(v).dot(w.minus(v)) / l2)); //inlined below
+    let start_londiff = this.lon - v.lon;
+    let start_latdiff = this.lat - v.lat;
+    let t =
+      (start_londiff * segment_londiff + start_latdiff * segment_latdiff) / l2;
+    if (t < 0) {
+      t = 0;
+    } else {
+      if (t > 1) {
+        t = 1;
+      }
+    }
+    let lon = v.lon + segment_londiff * t;
+    let lat = v.lat + segment_latdiff * t;
+    return new Point(lon, lat);
   }
 }
 
@@ -684,6 +689,9 @@ Bangle.loadWidgets();
 
 let fake_gps_point = 0.0;
 function simulate_gps(status) {
+  // let's keep the screen on in simulations
+  Bangle.setLCDTimeout(0);
+  Bangle.setLCDPower(1);
   if (fake_gps_point > status.path.len - 1) {
     return;
   }
@@ -699,6 +707,7 @@ function simulate_gps(status) {
   let old_pos = status.position;
 
   fake_gps_point += 0.05; // advance simulation
+  // status.update_position(new Point(1, 1), null); // uncomment to be always lost
   status.update_position(pos, null);
 }
 

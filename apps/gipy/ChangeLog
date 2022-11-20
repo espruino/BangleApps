@@ -68,4 +68,4 @@
 	* When lost indicates nearest point on path.
 	* Rescale display if lost and too far.
 	* New setting to hide points and increase display speed.
-	* Minor speed optimisations.
+	* Speed optimisations.
