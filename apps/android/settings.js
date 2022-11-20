@@ -23,7 +23,7 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>load("messages.app.js"),
+    /*LANG*/"Messages" : ()=>require("message").openGUI(),
   };
   E.showMenu(mainmenu);
 })
