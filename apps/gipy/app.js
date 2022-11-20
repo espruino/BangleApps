@@ -251,7 +251,8 @@ class Status {
     this.projected_point = projection; // save this info for display
     let distance_to_projection = this.position.distance(projection);
     if (distance_to_projection > 50) {
-      this.scale_factor = Math.min(66.0 / distance_to_projection, 40000.0);
+      this.scale_factor =
+        Math.min(66.0 / distance_to_projection, 1.0) * 40000.0;
       return true;
     } else {
       this.scale_factor = 40000.0;
@@ -525,20 +526,6 @@ class Path {
     return r != 0;
   }
 
-  // execute op on all segments.
-  // start is index of first wanted segment
-  // end is 1 after index of last wanted segment
-  on_segments(op, start, end) {
-    let previous_point = null;
-    for (let i = start; i < end + 1; i++) {
-      let point = new Point(this.points[2 * i], this.points[2 * i + 1]);
-      if (previous_point !== null) {
-        op(previous_point, point, i);
-      }
-      previous_point = point;
-    }
-  }
-
   // return point at given index
   point(index) {
     let lon = this.points[2 * index];
@@ -564,23 +551,25 @@ class Path {
     // we are going to compute two min distances, one for each direction.
     let indices = [0, 0];
     let mins = [Number.MAX_VALUE, Number.MAX_VALUE];
-    this.on_segments(
-      function (p1, p2, i) {
-        // we use the dot product to figure out if oriented correctly
-        let closest_point = point.closest_segment_point(p1, p2);
-        let distance = point.length_squared(closest_point);
 
-        let dot =
-          cos_direction * (p2.lon - p1.lon) + sin_direction * (p2.lat - p1.lat);
-        let orientation = +(dot < 0); // index 0 is good orientation
-        if (distance <= mins[orientation]) {
-          mins[orientation] = distance;
-          indices[orientation] = i - 1;
-        }
-      },
-      start,
-      end
-    );
+    let p1 = new Point(this.points[2 * start], this.points[2 * start + 1]);
+    for (let i = start + 1; i < end + 1; i++) {
+      let p2 = new Point(this.points[2 * i], this.points[2 * i + 1]);
+
+      let closest_point = point.closest_segment_point(p1, p2);
+      let distance = point.length_squared(closest_point);
+
+      let dot =
+        cos_direction * (p2.lon - p1.lon) + sin_direction * (p2.lat - p1.lat);
+      let orientation = +(dot < 0); // index 0 is good orientation
+      if (distance <= mins[orientation]) {
+        mins[orientation] = distance;
+        indices[orientation] = i - 1;
+      }
+
+      p1 = p2;
+    }
+
     // by default correct orientation (0) wins
     // but if other one is really closer, return other one
     if (mins[1] < mins[0] / 100.0) {
