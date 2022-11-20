@@ -3,8 +3,6 @@ let s = {};
 s.udi = [];
 // locked draw intervals
 s.ldi = [];
-// show widget state
-s.sw = false;
 // full draw
 s.fd = true;
 // performance log
@@ -616,9 +614,6 @@ s.pl = {};
 
       promise.then(()=>{
         let currentDrawingTime = Date.now();
-        if (s.sw){
-          restoreWidgetDraw();
-        }
         lastDrawTime = Date.now() - start;
         isDrawing=false;
         s.fd=false;
@@ -631,8 +626,9 @@ s.pl = {};
           let orig = Bangle.drawWidgets;
           Bangle.drawWidgets = ()=>{};
           Bangle.loadWidgets();
-          clearWidgetsDraw();
           Bangle.drawWidgets = orig;
+          require("widget_utils").swipeOn();
+          Bangle.drawWidgets();
         }
       }).catch((e)=>{
         print("Error during drawing", e);
@@ -767,36 +763,6 @@ s.pl = {};
     }
   };
 
-
-  let showWidgetsChanged = false;
-
-  let restoreWidgetDraw = function(){
-    require("widget_utils").show();
-    Bangle.drawWidgets();
-  };
-
-  let handleSwipe = function(lr, ud){
-    if (!s.sw && ud == 1){
-      //print("Enable widgets");
-      restoreWidgetDraw();
-      showWidgetsChanged = true;
-    }
-    if (s.sw && ud == -1){
-      //print("Disable widgets");
-      clearWidgetsDraw();
-      s.fd = true;
-      showWidgetsChanged = true;
-    }
-    if (showWidgetsChanged){
-      showWidgetsChanged = false;
-      //print("Draw after widget change");
-      s.sw = ud == 1;
-      initialDraw();
-    }
-  };
-
-  Bangle.on('swipe', handleSwipe);
-
   if (!events || events.includes("pressure")){
     Bangle.on('pressure', handlePressure);
     try{
@@ -815,16 +781,7 @@ s.pl = {};
   if (!events || events.includes("charging")) {
     Bangle.on('charging', handleCharging);
   }
-
-  let originalWidgetDraw = {};
-  let originalWidgetArea = {};
-
-  let clearWidgetsDraw = function(){
-    //print("Clear widget draw calls");
-    require("widget_utils").hide();
-  }
   
-  if (global.WIDGETS) clearWidgetsDraw();
   handleLock(Bangle.isLocked(), true);
 
   let setUi = function(){
@@ -836,7 +793,6 @@ s.pl = {};
         Bangle.setHRMPower(0, "imageclock");
         Bangle.setBarometerPower(0, 'imageclock');
 
-        Bangle.removeListener('swipe', handleSwipe);
         Bangle.removeListener('lock', handleLock);
         Bangle.removeListener('charging', handleCharging);
         Bangle.removeListener('HRM', handleHrm);
@@ -859,9 +815,8 @@ s.pl = {};
         if (settings.perflog){
           delete Bangle.resetPerfLog;
         }
-
         cleanupDelays();
-        restoreWidgetDraw();
+        require("widget_utils").show();
       }
     });
   }
