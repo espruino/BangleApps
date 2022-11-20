@@ -42,6 +42,10 @@ exports.cleanup = function() {
     clearTimeout(exports.hideTimeout);
     delete exports.hideTimeout;
   }
+  if (exports.origDraw) {
+    Bangle.drawWidgets = exports.origDraw;
+    delete exports.origDraw;
+  }
 }
 
 /** Put widgets offscreen, and allow them to be swiped
@@ -85,7 +89,13 @@ exports.swipeOn = function() {
     if (w.area.startsWith("b"))
       w.area = "t"+w.area.substr(1);
   }
-  Bangle.drawWidgets();
+  
+  exports.origDraw = Bangle.drawWidgets;
+  Bangle.drawWidgets = ()=>{
+    g=og;
+    exports.origDraw();
+    g=_g;
+  };
   
   function anim(dir, callback) {
     if (exports.animInterval) clearInterval(exports.interval);
