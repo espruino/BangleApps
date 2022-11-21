@@ -114,7 +114,7 @@ function evaluateFile(file) {
   var hsStart = 'require("heatshrink").decompress(atob("';
   var hsEnd = '"))';
   if (file.content.startsWith(hsStart) && file.content.endsWith(hsEnd)) {
-    var heatshrink = require(ROOTDIR+"/core/lib/heatshrink.js");
+    var heatshrink = require(ROOTDIR+"/webtools/heatshrink.js");
     var b64 = file.content.slice(hsStart.length, -hsEnd.length);
     var decompressed = heatshrink.decompress(atob(b64));
     file.content = "";

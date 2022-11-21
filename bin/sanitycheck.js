@@ -3,7 +3,7 @@
 */
 
 var fs = require("fs");
-var heatshrink = require("../core/lib/heatshrink");
+var heatshrink = require("../webtools/heatshrink");
 var acorn;
 try {
   acorn = require("acorn");
