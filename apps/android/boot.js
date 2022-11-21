@@ -139,6 +139,10 @@
         event.course = NaN;
         event.fix = 1;
         Bangle.emit('gps', event);
+      },
+      "is_gps_active": function() {
+        const gpsActive = originalIsGpsOn();
+        sendGPSPowerStatus(gpsActive);
       }
     };
     var h = HANDLERS[event.t];
@@ -205,12 +209,15 @@
   const originalSetGpsPower = Bangle.setGPSPower;
   const originalIsGpsOn = Bangle.isGPSOn;
 
+  function sendGPSPowerStatus(status) { gbSend({ t: "gps_power", status: status }); }
+
   // Replace set GPS power logic to suppress activation of gps, if the overwrite option is active
   Bangle.setGPSPower = (isOn, appID) => {
     const currentSettings = require("Storage").readJSON("android.settings.json",1)||{};
     if (!currentSettings.overwriteGps) {
       originalSetGpsPower(isOn, appID);
     } else {
+      sendGPSPowerStatus(Bangle.isGPSOn());
       const logMessage = 'Ignore gps power change due to the gps overwrite from android integration app';
       console.log(logMessage);
       Bluetooth.println(logMessage);
