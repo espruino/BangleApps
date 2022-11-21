@@ -8,8 +8,10 @@
     storage.write("quicklaunch.json", settings);
   };
 
-  Bangle.on("touch", () => {
+  Bangle.on("touch", (_,e) => {
     if (!Bangle.CLOCK) return;
+    let R = Bangle.appRect;
+    if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
     if (settings.tapapp.src){ if (!storage.read(settings.tapapp.src)) reset("tapapp"); else load(settings.tapapp.src); }
   });
 
