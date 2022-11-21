@@ -12,3 +12,4 @@
 0.12: implemented widget_utils 
 0.13: convert var/function into let
 0.14: cleanup code and fix fastload issue 
+0.15: fix draw before widget hide

@@ -347,8 +347,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
 
     Bangle.loadWidgets();
-    draw();
     require("widget_utils").hide();
+    draw();
 
   }
 
