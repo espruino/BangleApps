@@ -13,7 +13,8 @@ Development
 
 When apps that use these modules are uploaded via the
 app loader, the module is automatically included in the app's source. However
-when developing via the IDE the module won't get pulled in by default.
+when developing via the IDE the module won't get pulled in by default
+so you may see the error "Module <module_name> not found" in the IDE when sending code to the Bangle.
 
 To fix this you have three options:
 
