@@ -1,3 +1,4 @@
 0.01: Clone of original SlopeClock
 0.02: Added configuration
 0.03: Reset font to save some memory during remove
+0.04: Respect 12/24-hour clock locale setting

@@ -17,6 +17,8 @@ let settings = Object.assign(
   require("Storage").readJSON("slopeclockpp.json", true) || {}
 );
 
+const is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
+
 let drawTimeout;
 
 let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
@@ -50,6 +52,9 @@ let draw = function() {
   y = R.y + R.h / 2 - 12; // 12 = room for date
   var date = new Date();
   var hourStr = date.getHours();
+  if (is12Hour) {
+    hourStr = hourStr % 12 || 12;
+  }
   var minStr = date.getMinutes().toString().padStart(2,0);
   dateStr = require("locale").dow(date, 1).toUpperCase()+ " "+
             require("locale").date(date, 0).toUpperCase();
