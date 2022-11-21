@@ -1,4 +1,3 @@
-var exports = {};
 /* Module that allows for loading of clock 'info' displays
 that can be scrolled through on the clock face.
 
@@ -129,13 +128,15 @@ Simply supply the menu data (from .load) and a function to draw the clock info.
 
 For example:
 
-let clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), (itm, info) => {
-  var x = 20, y = 20, w=80, h=48;
-  g.reset().clearRect(x,y,x+w-1,y+h-1);
-  g.drawRect(x,y,x+w-1,y+h-1); // debug - just to show where we are
-  g.drawImage(info.img, x+w/2-12,y+4);
-  g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, x+w/2,y+36);
-});
+let clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), {
+  x : 20, y: 20, w: 80, h:80, // dimensions of area used for clock_info
+  draw : (itm, info, options) => {
+  g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
+  if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
+  var midx = options.x+options.w/2;
+  g.drawImage(info.img, midx-12,options.y+4);
+  g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, midx,options.y+36);
+}});
 // then when clock 'unloads':
 clockInfoMenu.remove();
 delete clockInfoMenu;
@@ -143,48 +144,96 @@ delete clockInfoMenu;
 Then if you need to unload the clock info so it no longer
 uses memory or responds to swipes, you can call clockInfoMenu.remove()
 and delete clockInfoMenu
+
+clockInfoMenu is the 'options' parameter, with the following added:
+
+* 'remove' - remove this clockInfo item
+* 'redraw' - force a redraw
+* 'focus' - bool to show if menu is focused or not
+
 */
-exports.addInteractive = function(menu, drawFn) {
+exports.addInteractive = function(menu, options) {
+  if ("function" == typeof options) options = {draw:options}; // backwards compatibility
+  exports.loadCount = (0|exports.loadCount)+1;
+  options.focus = exports.loadCount==1; // focus if we're the first one loaded
   if (!menu.length || !menu[0].items.length) return; // no info
-  var menuA = 0, menuB = 0;
+  if (options.menuA===undefined) options.menuA = 0;
+  if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[0].items.length)-1;
+  function drawItem(itm) {
+    options.draw(itm, itm.get(), options);
+  }
   function menuShowItem(itm) {
-    itm.on('redraw', ()=>drawFn(itm, itm.get()));
-    itm.show();
+    options.redrawHandler = ()=>drawItem(itm);
+    itm.on('redraw', options.redrawHandler);
+    itm.uses = (0|itm.uses)+1;
+    if (itm.uses==1) itm.show();
     itm.emit("redraw");
+  }
+  function menuHideItem(itm) {
+    itm.removeListener('redraw',options.redrawHandler);
+    delete options.redrawHandler;
+    itm.uses--;
+    if (!itm.uses)
+      itm.hide();
   }
   // handling for swipe between menu items
   function swipeHandler(lr,ud){
+    if (!options.focus) return; // ignore if we're not focussed
     var oldMenuItem;
     if (ud) {
-      if (menu[menuA].items.length==1) return; // 1 item - can't move
-      oldMenuItem = menu[menuA].items[menuB];
-      menuB += ud;
-      if (menuB<0) menuB = menu[menuA].items.length-1;
-      if (menuB>=menu[menuA].items.length) menuB = 0;
+      if (menu[options.menuA].items.length==1) return; // 1 item - can't move
+      oldMenuItem = menu[options.menuA].items[options.menuB];
+      options.menuB += ud;
+      if (options.menuB<0) options.menuB = menu[options.menuA].items.length-1;
+      if (options.menuB>=menu[options.menuA].items.length) options.menuB = 0;
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
-      oldMenuItem = menu[menuA].items[menuB];
-      menuA += ud;
-      if (menuA<0) menuA = menu.length-1;
-      if (menuA>=menu.length) menuA = 0;
-      menuB = 0;
+      oldMenuItem = menu[options.menuA].items[options.menuB];
+      options.menuA += ud;
+      if (options.menuA<0) options.menuA = menu.length-1;
+      if (options.menuA>=menu.length) options.menuA = 0;
+      options.menuB = 0;
     }
     if (oldMenuItem) {
-      oldMenuItem.hide();
+      menuHideItem(oldMenuItem);
       oldMenuItem.removeAllListeners("draw");
-      menuShowItem(menu[menuA].items[menuB]);
+      menuShowItem(menu[options.menuA].items[options.menuB]);
     }
   }
   Bangle.on("swipe",swipeHandler);
+  var touchHandler;
+  if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
+    touchHandler = function(_,e) {
+      if (e.x<options.x || e.y<options.y ||
+          e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
+        if (options.focus) {
+          options.focus=false;
+          options.redraw();
+        }
+        return; // outside area
+      }
+      if (!options.focus) {
+        options.focus=true; // if not focussed, set focus
+       options.redraw();
+      } else if (menu[options.menuA].items[options.menuB].run)
+        menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
+      else options.focus=true;
+    };
+    Bangle.on("touch",touchHandler);
+  }
   // draw the first item
-  menuShowItem(menu[menuA].items[menuB]);
+  menuShowItem(menu[options.menuA].items[options.menuB]);
   // return an object with info that can be used to remove the info
-  return {
-    remove : function() {
-      Bangle.removeListener("swipe",swipeHandler);
-      menu[menuA].items[menuB].hide();
-    }
+  options.remove = function() {
+    Bangle.removeListener("swipe",swipeHandler);
+    if (touchHandler) Bangle.removeListener("touch",touchHandler);
+    menuHideItem(menu[options.menuA].items[options.menuB]);
+    exports.loadCount--;
   };
+  options.redraw = function() {
+    drawItem(menu[options.menuA].items[options.menuB]);
+  };
+  return options;
 };
 
 // Code for testing (plots all elements from first list)
