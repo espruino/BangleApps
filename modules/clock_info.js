@@ -129,13 +129,16 @@ Simply supply the menu data (from .load) and a function to draw the clock info.
 
 For example:
 
-var clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), (itm, info) => {
-  var y = 0;
-  g.reset().setFont("6x8:2").setFontAlign(-1,0);
-  g.clearRect(0,y,g.getWidth(),y+23);
-  g.drawImage(info.img, 0,y);
-  g.drawString(info.text, 48,y+12);
+let clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), (itm, info) => {
+  var x = 20, y = 20, w=80, h=48;
+  g.reset().clearRect(x,y,x+w-1,y+h-1);
+  g.drawRect(x,y,x+w-1,y+h-1); // debug - just to show where we are
+  g.drawImage(info.img, x+w/2-12,y+4);
+  g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, x+w/2,y+36);
 });
+// then when clock 'unloads':
+clockInfoMenu.remove();
+delete clockInfoMenu;
 
 Then if you need to unload the clock info so it no longer
 uses memory or responds to swipes, you can call clockInfoMenu.remove()

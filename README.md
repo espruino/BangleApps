@@ -255,8 +255,11 @@ and which gives information about the app for the Launcher.
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
+                              //   'module' - this provides a module that can be used with 'require'.
+                              //              'provides_modules' should be used if type:module is specified
                               //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
                               //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
+                              //   'clkinfo' - Provides a 'myapp.clkinfo.js' file that can be used to display info in clocks - see modules/clock_info.js
                               //   'RAM' - code that runs and doesn't upload anything to storage
                               //   'launch' - replacement 'Launcher'
                               //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
@@ -265,9 +268,16 @@ and which gives information about the app for the Launcher.
                               //   'notify' - provides 'notify' library for showing notifications
                               //   'locale' - provides 'locale' library for language-specific date/distance/etc
                               //              (a version of 'locale' is included in the firmware)
-                              //   'module' - this provides a module that can be used with 'require'.
-                              //              'provides_modules' should be used if type:module is specified
   "tags": "",                 // comma separated tag list for searching
+                              // common types are:
+                              //   'clock' - it's a clock
+                              //   'widget' - it is (or provides) a widget
+                              //   'outdoors' - useful for outdoor activities
+                              //   'tool' - a useful utility (timer, calculator, etc)
+                              //   'game' - a game
+                              //   'bluetooth' - uses Bluetooth LE
+                              //   'system' - used by the system
+                              //   'clkinfo' - provides or uses clock_info module for data on your clock face (see modules/clock_info.js)
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
