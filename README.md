@@ -458,7 +458,10 @@ It should also add `myappid.json` to `data`, to make sure it is cleaned up when 
 ## Modules
 
 You can include any of [Espruino's modules](https://www.espruino.com/Modules) as
-normal with `require("modulename")`. If you want to develop your own module for your
+normal with `require("modulename")`. To include [Bangle's modules](modules) for use in the Web
+IDE, [upload the modules to internal storage](modules#upload-the-module-to-the-bangles-internal-storage)
+or [change the IDE's search path](modules#change-the-web-ide-search-path-to-include-banglejs-modules).
+If you want to develop your own module for your
 app(s) then you can do that too. Just add the module into the `modules` folder
 then you can use it from your app as normal.
 
