@@ -16,3 +16,5 @@
       Fix colorsetting in promises in generated code
       Some performance improvements by caching lookups
       Activate UI after first draw is complete to prevent drawing over launcher
+0.13: Use widget_utils swipeOn()
+      Allows minification by combining all but picture data into one file
