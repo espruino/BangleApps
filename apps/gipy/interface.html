@@ -182,12 +182,21 @@ document
 document
   .getElementById("upload")
   .addEventListener('click', function() {
+    document.getElementById('upload').disabled = true;
     status.innerHTML = "uploading file";
     console.log("uploading");
     let gpc_string = vec_to_string(gpc_content);
     Util.writeStorage(gpc_filename + ".gpc", gpc_string, () => {
-      status.innerHTML = `${gpc_filename}.gpc uploaded`;
-      console.log("DONE");
+      status.innerHTML = "Checking upload";
+      Util.readStorage(gpc_filename + ".gpc", uploaded_content => {
+        if (uploaded_content == gpc_string) {
+            status.innerHTML = `${gpc_filename}.gpc uploaded`;
+            console.log("DONE");
+        } else {
+            status.innerHTML = "Upload FAILED";
+            document.getElementById('upload').disabled = false;
+        }
+      });
     });
 });
 
