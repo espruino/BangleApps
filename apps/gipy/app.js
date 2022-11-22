@@ -500,21 +500,7 @@ function load_gpc(filename) {
   let interests_starts = Uint16Array(buffer, offset, starts_length);
   offset += 2 * starts_length;
 
-  console.log("checksuming file");
-  // checksum file size
-  let expected_size = 10 + 16 * (points_number + interests_number) + 2 * (Math.ceil(interests_on_path_number / 5)+1);
-  if (expected_size != file_size) {
-    console.log("invalid checksum", file_size, expected_size);
-    let msg = "invalid file\nsize is" + str(file_size) + "\ninstead of"+str(expected_size) + "\ncontinue ?";
-    E.showPrompt(msg).then(() => {
-      if (!v) {
-        load();
-      }
-    });
-  }
-  console.log("file loaded");
-
-  return [
+  let path_data = [
     points,
     waypoints,
     interests_coordinates,
@@ -522,6 +508,18 @@ function load_gpc(filename) {
     interests_on_path,
     interests_starts,
   ];
+
+  // checksum file size
+  if (offset != file_size) {
+    console.log("invalid file size", file_size, "expected", offset);
+    let msg = "invalid file\nsize " + file_size + "\ninstead of"+ offset;
+    E.showAlert(msg).then(function() {
+      E.showAlert();
+      start_gipy(path_data);
+    });
+  } else {
+    start_gipy(path_data);
+  }
 }
 
 class Path {
@@ -733,8 +731,12 @@ function start(fn) {
   E.showMenu();
   console.log("loading", fn);
 
-  // let path = new Path(load_gpx("test.gpx"));
-  let path = new Path(load_gpc(fn));
+  load_gpc(fn);
+}
+
+function start_gipy(path_data) {
+  console.log("starting");
+  let path = new Path(path_data);
   let status = new Status(path);
 
   if (simulated) {
