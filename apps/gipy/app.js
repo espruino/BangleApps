@@ -458,6 +458,7 @@ class Status {
 
 function load_gpc(filename) {
   let buffer = require("Storage").readArrayBuffer(filename);
+  let file_size = buffer.length;
   let offset = 0;
 
   // header
@@ -498,6 +499,20 @@ function load_gpc(filename) {
   let starts_length = Math.ceil(interests_on_path_number / 5.0);
   let interests_starts = Uint16Array(buffer, offset, starts_length);
   offset += 2 * starts_length;
+
+  console.log("checksuming file");
+  // checksum file size
+  let expected_size = 10 + 16 * (points_number + interests_number) + 2 * (Math.ceil(interests_on_path_number / 5)+1);
+  if (expected_size != file_size) {
+    console.log("invalid checksum", file_size, expected_size);
+    let msg = "invalid file\nsize is" + str(file_size) + "\ninstead of"+str(expected_size) + "\ncontinue ?";
+    E.showPrompt(msg).then(() => {
+      if (!v) {
+        load();
+      }
+    });
+  }
+  console.log("file loaded");
 
   return [
     points,
