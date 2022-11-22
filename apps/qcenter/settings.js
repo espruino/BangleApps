@@ -6,7 +6,13 @@
 		.map((app) => {
 			var a = require("Storage").readJSON(app, 1);
 			return (
-				a && { name: a.name, type: a.type, sortorder: a.sortorder, src: a.src, icon: a.icon }
+				a && {
+					name: a.name,
+					type: a.type,
+					sortorder: a.sortorder,
+					src: a.src,
+					icon: a.icon,
+				}
 			);
 		})
 		.filter(
@@ -30,85 +36,90 @@
 		require("Storage").write("qcenter.json", settings);
 	}
 
-  var pinnedApps = settings.pinnedApps || [];
-  var exitGesture = settings.exitGesture || "swipeup";
+	var pinnedApps = settings.pinnedApps || [];
+	var exitGesture = settings.exitGesture || "swipeup";
 
-  function showMainMenu() {
-    var mainmenu = {
-      "" : { "title" : "Quick Center" },
-      "< Back" : ()=>{load();}
-    };
+	function showMainMenu() {
+		var mainmenu = {
+			"": { title: "Quick Center" },
+			"< Back": () => {
+				load();
+			},
+		};
 
-    // Set exit gesture
-    mainmenu["Exit Gesture: " + exitGesture] = function() {
-      E.showMenu(exitGestureMenu);
-    };
-    
-    //List all pinned apps
-    for (let i = 0; i < pinnedApps.length; i++) {
-      mainmenu[pinnedApps[i].name] = function() {
-        E.showMenu({
-          "" : { "title" : pinnedApps[i].name },
-          "< Back" : showMainMenu,
-          "Unpin" : function() {
-            pinnedApps.splice(i, 1);
-            save("pinnedApps", pinnedApps);
-            showMainMenu();
-          }
-        });
-      };
-    }
+		// Set exit gesture
+		mainmenu["Exit Gesture: " + exitGesture] = function () {
+			E.showMenu(exitGestureMenu);
+		};
 
-    // Show pin app button only if there is less than 6 pinned apps, else show the button that shows alert that max apps has been pinned
-    if (pinnedApps.length < 6) {
-      mainmenu["Pin App"] = pinAppMenu;
-    }
-    else {
-      mainmenu["Pin App"] = function() {
-        E.showAlert("You can only pin 6 apps");
-      };
-    }
-    
-    return E.showMenu(mainmenu);
-  }
+		//List all pinned apps
+		for (let i = 0; i < pinnedApps.length; i++) {
+			mainmenu[pinnedApps[i].name] = function () {
+				E.showMenu({
+					"": { title: pinnedApps[i].name },
+					"< Back": showMainMenu,
+					Unpin: function () {
+						pinnedApps.splice(i, 1);
+						save("pinnedApps", pinnedApps);
+						showMainMenu();
+					},
+				});
+			};
+		}
 
-  // menu for adding apps to the quick launch menu, listing all apps
-  var pinAppMenu = {
-    "" : { "title" : "Add App" },
-    "< Back" : showMainMenu
-  };
-  apps.forEach((a)=>{
-    pinAppMenu[a.name] = function() {
-      // strip unncecessary properties
-      delete a.type;
-      delete a.sortorder;
-      delete a.name;
-      pinnedApps.push(a);
-      save("pinnedApps", pinnedApps);
-      showMainMenu();
-      };
-  });
+		// Show pin app menu, or show alert if max amount of apps are pinned
+		mainmenu["Pin App"] = function () {
+			if (pinnedApps.length < 6) {
+				E.showMenu(pinAppMenu);
+			} else {
+				E.showAlert("Max apps pinned").then(showMainMenu);
+			}
+		};
 
-  // menu for setting exit gesture
-  var exitGestureMenu = {
-    "" : { "title" : "Exit Gesture" },
-    "< Back" : showMainMenu
-  };
-  exitGestureMenu["Swipe Up"] = function() {
-    save("exitGesture", "swipeup");
-    showMainMenu();
-  }
-  exitGestureMenu["Swipe Down"] = function() {
-    save("exitGesture", "swipedown");
-    showMainMenu();
-  }
-  exitGestureMenu["Swipe Left"] = function() {
-    save("exitGesture", "swipeleft");
-    showMainMenu();
-  }
-  exitGestureMenu["Swipe Right"] = function() {
-    save("exitGesture", "swiperight");
-    showMainMenu();
-  }
+		return E.showMenu(mainmenu);
+	}
 
+	// menu for adding apps to the quick launch menu, listing all apps
+	var pinAppMenu = {
+		"": { title: "Add App" },
+		"< Back": showMainMenu,
+	};
+	apps.forEach((a) => {
+		pinAppMenu[a.name] = function () {
+			// strip unncecessary properties
+			delete a.type;
+			delete a.sortorder;
+			pinnedApps.push(a);
+			save("pinnedApps", pinnedApps);
+			showMainMenu();
+		};
+	});
+
+	// menu for setting exit gesture
+	var exitGestureMenu = {
+		"": { title: "Exit Gesture" },
+		"< Back": showMainMenu,
+	};
+	exitGestureMenu["Swipe Up"] = function () {
+		exitGesture = "swipeup";
+		save("exitGesture", "swipeup");
+		showMainMenu();
+	};
+	exitGestureMenu["Swipe Down"] = function () {
+		exitGesture = "swipedown";
+		save("exitGesture", "swipedown");
+		showMainMenu();
+	};
+	exitGestureMenu["Swipe Left"] = function () {
+		exitGesture = "swipeleft";
+		save("exitGesture", "swipeleft");
+		showMainMenu();
+	};
+	exitGestureMenu["Swipe Right"] = function () {
+		exitGesture = "swiperight";
+		save("exitGesture", "swiperight");
+		showMainMenu();
+	};
+
+	showMainMenu();
 });
