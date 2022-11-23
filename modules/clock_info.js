@@ -131,12 +131,13 @@ For example:
 let clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), {
   x : 20, y: 20, w: 80, h:80, // dimensions of area used for clock_info
   draw : (itm, info, options) => {
-  g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
-  if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
-  var midx = options.x+options.w/2;
-  g.drawImage(info.img, midx-12,options.y+4);
-  g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, midx,options.y+36);
-}});
+    g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
+    if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
+    var midx = options.x+options.w/2;
+    g.drawImage(info.img, midx-12,options.y+4);
+    g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, midx,options.y+36);
+  }
+});
 // then when clock 'unloads':
 clockInfoMenu.remove();
 delete clockInfoMenu;
@@ -147,18 +148,48 @@ and delete clockInfoMenu
 
 clockInfoMenu is the 'options' parameter, with the following added:
 
-* 'remove' - remove this clockInfo item
-* 'redraw' - force a redraw
-* 'focus' - bool to show if menu is focused or not
+* 'index' : int - which instance number are we? Starts at 0
+* 'menuA' : int - index in 'menu' of showing clockInfo item
+* 'menuB' : int - index in 'menu[menuA].items' of showing clockInfo item
+* 'remove' : function - remove this clockInfo item
+* 'redraw' : function - force a redraw
+* 'focus' : function - bool to show if menu is focused or not
+
+You can have more than one clock_info at once as well, sfor instance:
+
+let clockInfoDraw = (itm, info, options) => {
+  g.reset().setBgColor(options.bg).setColor(options.fg).clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
+  if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1)
+  var midx = options.x+options.w/2;
+  g.drawImage(info.img, midx-12,options.y);
+  g.setFont("6x15").setFontAlign(0,-1).drawString(info.text, midx,options.y+26);
+};
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg });
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { x:0, y:120, w:50, h:40, draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg});
 
 */
 exports.addInteractive = function(menu, options) {
+  if (!menu.length || !menu[0].items.length) return; // no infos - can't load a clock_info
   if ("function" == typeof options) options = {draw:options}; // backwards compatibility
-  exports.loadCount = (0|exports.loadCount)+1;
-  options.focus = exports.loadCount==1; // focus if we're the first one loaded
-  if (!menu.length || !menu[0].items.length) return; // no info
+  options.index = 0|exports.loadCount;
+  exports.loadCount = options.index+1;
+  options.focus = options.index==0; // focus if we're the first one loaded
+  const appName = "default:"+options.index;
+
+  { // load the currently showing clock_infos
+    let settings = require("Storage").readJSON("clock_info.json",1)||{};
+    if (settings[appName]) {
+      let a = settings[appName].a|0;
+      let b = settings[appName].b|0;
+      if (menu[a] && menu[a].items[b]) { // all ok
+        options.menuA = a;
+        options.menuB = b;
+      }
+    }
+  }
   if (options.menuA===undefined) options.menuA = 0;
-  if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[0].items.length)-1;
+  if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
   function drawItem(itm) {
     options.draw(itm, itm.get(), options);
   }
@@ -199,6 +230,10 @@ exports.addInteractive = function(menu, options) {
       oldMenuItem.removeAllListeners("draw");
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
+    // save the currently showing clock_info
+    let settings = require("Storage").readJSON("clock_info.json",1)||{};
+    settings[appName] = {a:options.menuA,b:options.menuB};
+    require("Storage").writeJSON("clock_info.json",settings);
   }
   Bangle.on("swipe",swipeHandler);
   var touchHandler;
