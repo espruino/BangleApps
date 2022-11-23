@@ -12,18 +12,22 @@
       settings[setting] = value;
       require('Storage').writeJSON(SETTINGS_FILE_NAME, settings);
     }
-  
+    const timeOutChoices = [/*LANG*/"Off", "10s", "15s", "20s", "30s"];
     var mainmenu = {
       "" : { "title" : /*LANG*/"Messages Light" },
       "< Back" : back,
       /*LANG*/'Auto-Open Music': {
         value: !!settings().openMusic,
         onchange: v => updateSetting("openMusic", v)
-      }
-      /*,/LANG/'Unlock Watch': {
-        value: !!settings().unlockWatch,
-        onchange: v => updateSetting("unlockWatch", v)
-      },*/
+      },
+      /*LANG*/'Time Out': {
+        value: timeOutChoices.indexOf(settings.timeOut),
+        min: 0, max: timeOutChoices.length-1,
+        format: v => timeOutChoices[v],
+        onchange: m => {
+          updateSetting("timeOut", timeOutChoices[m]);
+        }
+      },
     };
     E.showMenu(mainmenu);
   });

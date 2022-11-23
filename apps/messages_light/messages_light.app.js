@@ -20,8 +20,6 @@ let LOG=function(){
 }
 
 
-
-
 let settings= (()=>{
   let tmp={};
   tmp.NewEventFileName="messages_light.NewEvent.json";
@@ -36,10 +34,15 @@ let settings= (()=>{
   tmp.colBg = g.theme.dark ? "#000":"#fff";
   tmp.colLock = g.theme.dark ? "#ff0000":"#ff0000";
 
-  tmp.quiet=((require('Storage').readJSON('setting.json', 1) || {}).quiet)
+  tmp.quiet=!!((require('Storage').readJSON("setting.json", true) || {}).quiet);
+  tmp.timeOut=(require('Storage').readJSON("messages_light.settings.json", true) || {}).timeOut || "Off";
 
   return tmp;
 })();
+
+
+
+
 let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
@@ -53,7 +56,7 @@ var music=undefined;
   track:"",
 }*/
 
-let justOpen=true;
+let justOpened=true;
 
 
 
@@ -119,7 +122,7 @@ var manageEvent = function(event) {
 
       // ho unito le due condizioni di prima 
 
-      if( justOpen  || EventQueue.length==0)
+      if( justOpened  || EventQueue.length==0)
         showMusic();
     
       
@@ -187,6 +190,10 @@ var manageEvent = function(event) {
 let showMessage = function(msg){
   LOG("showMessage");
   LOG(msg);
+
+  updateTimeout();
+
+
   g.setBgColor(settings.colBg);
 
 
@@ -277,7 +284,7 @@ let showCall = function(msg)
   }
 
   callInProgress=true;
-
+  updateTimeout();
 
 
   //se è una chiamata ( o una nuova chiamata, diversa dalla precedente )
@@ -532,6 +539,7 @@ let PrintMessageStrings=function(msg)
 
 
 let doubleTapUnlock=function(data) {
+  updateTimeout();        
   if( data.double)  //solo se in double
   {
     Bangle.setLocked(false);
@@ -539,6 +547,8 @@ let doubleTapUnlock=function(data) {
   }
 }
 let toushScroll=function(button, xy) { 
+  updateTimeout();
+
   let height=176; //g.getHeight(); -> 176 B2
   height/=2;
   
@@ -551,6 +561,33 @@ let toushScroll=function(button, xy) {
     ScrollDown();
   }
 }
+
+
+
+let timeout;
+const updateTimeout = function(){
+if (settings.timeOut!="Off"){
+    removeTimeout();
+    if( callInProgress) return; //c'è una chiamata in corso -> no timeout
+    if( music!=undefined && EventQueue.length==0 ) return; //ho aperto l'interfaccia della musica e non ho messaggi davanti -> no timeout
+
+
+    let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+    timeout = setTimeout(next,time*1000); //next or Bangle.showClock/load()???
+  }
+};
+const removeTimeout=function(){
+  if (timeout) clearTimeout(timeout);
+}
+
+
+//not currently used -> for fast load?
+let unsetApp=function(){
+  delete(music);
+  delete(manageEvent);
+  removeTimeout();
+}
+
 
 
 let main = function(){
@@ -578,7 +615,8 @@ let main = function(){
     music={}; //imposto un oggetto nella variabile music, cosi non viene chiuso il programma dalla showMusic
     setTimeout(_ => showMusic(), 0);
   }
-  justOpen=false;
+  justOpened=false;
+
 };
 
 
