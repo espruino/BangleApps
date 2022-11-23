@@ -17,6 +17,5 @@
     {"name":"messages_light.boot.js","url":"messages_light.boot.js"}
   ],
   "data": [{"name":"messages_light.settings.json"},{"name":"messages_light.NewMessage.json"}],
-  "screenshots": [{"url":"screenshot-notify.png"} ,{"url":"screenshot-long-text1.png"},{"url":"screenshot-long-text2.png"}, {"url":"screenshot-call.png"} ],
-  "sortorder": -9
+  "screenshots": [{"url":"screenshot-notify.png"} ,{"url":"screenshot-long-text1.png"},{"url":"screenshot-long-text2.png"}, {"url":"screenshot-call.png"} ]
 }
