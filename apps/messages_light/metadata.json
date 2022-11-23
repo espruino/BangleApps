@@ -14,7 +14,8 @@
     {"name":"messages_light.settings.js","url":"messages_light.settings.js"},
     {"name":"messages_light.img","url":"app-icon.js","evaluate":true},
     {"name":"messagesProxy","url":"messages_light.messagesProxy.js"},
-    {"name":"messages_light.boot.js","url":"messages_light.boot.js"}
+    {"name":"messages_light.boot.js","url":"messages_light.boot.js"},
+    {"name":"messages_light.music.js","url":"messages_light.music.js"}
   ],
   "data": [{"name":"messages_light.settings.json"},{"name":"messages_light.NewMessage.json"}],
   "screenshots": [{"url":"screenshot-notify.png"} ,{"url":"screenshot-long-text1.png"},{"url":"screenshot-long-text2.png"}, {"url":"screenshot-call.png"} ]

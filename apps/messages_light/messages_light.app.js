@@ -53,6 +53,8 @@ var music=undefined;
   track:"",
 }*/
 
+let justOpen=true;
+
 
 
 //TODO: RICORDARSI DI FARE IL DELETE
@@ -63,32 +65,64 @@ var manageEvent = function(event) {
   LOG("manageEvent");
   LOG(event);
 
-
   if( event.id=="call"){
       showCall(event);
   }
   else if( event.id=="music"){
-     //TODO: 
-     //se c'è qualcosa nella queue, quindi app già aperta,
-     //se musicRunngin==true, vuol dire che c'è già della musica in ascolto prima
-     // quindi non mostro nulla
-
-     //se prima era musicRunngin == false
-     //NON DOVREBBE NEANCHE ARRIVA QUA ( da codice nel proxy )
 
 
+      /*
+      //DEBUG -> save the event into file
+      let musicLogFile="music_log";
+      let logMusic = require('Storage').readJSON(musicLogFile, true) || [];
+      logMusic.push(event);
+      require('Storage').writeJSON(musicLogFile, logMusic);
+      */
 
-     //LOGICA DA QUA->
-     //aggiorno i dati della musica 
-     //quindi se mi arriva la notifica vuol dire che:
-     //l'app l'ho appena aperta  ->  visualizzo la schermata di musica
-     //oppure 
-     //l'app era già stata aperta in modalità musica -> non faccio nulla ( avendo già aggiornato i dati della musica )
-     //POI
-     //se c'è roba nella queue -> NON visualizzo la schermata di musica ( quando finirà la queue, la next visualizzerà la musica )
-     //se non c'è roba nella queue -> aggiorno la visualizzazione
 
-     
+      //se c'è qualcosa nella queue, quindi app già aperta,
+      //se musicRunngin==true, vuol dire che c'è già della musica in ascolto prima
+      // quindi non mostro nulla
+
+      //se prima era musicRunngin == false
+      //NON DOVREBBE NEANCHE ARRIVA QUA ( da codice nel proxy )
+
+
+
+      //LOGICA DA QUA->
+      //aggiorno i dati della musica 
+
+
+
+      LOG("old music",music)
+      LOG("music event",event)
+      if( music==undefined) music={};
+      Object.assign(music,event);
+       //tolgo tutto quello che non mi serve salvare ( non lo faccio prima perchè non so se l'event verrà usato da altri)
+      delete music.t;
+      delete music.id;
+      delete music.title;
+      delete music.new;
+      LOG("joined",music)
+
+
+      
+      //quindi se mi arriva la notifica vuol dire che:
+      //l'app l'ho appena aperta  ->  visualizzo la schermata di musica
+      //oppure 
+      //l'app era già stata aperta in modalità musica -> non faccio nulla ( avendo già aggiornato i dati della musica )
+
+      //POI
+      //se c'è roba nella queue -> NON visualizzo la schermata di musica ( quando finirà la queue, la next visualizzerà la musica )
+      //se non c'è roba nella queue -> aggiorno la visualizzazione
+
+
+      // ho unito le due condizioni di prima 
+
+      if( justOpen  || EventQueue.length==0)
+        showMusic();
+    
+      
   }
   else{ 
 
@@ -293,7 +327,17 @@ let showCall = function(msg)
 
 
 
+let musicCode=undefined;
+//visualizza cioè che c'è nella variabile music ( se undefined, richiama la next)
+let showMusic=function(){
+  if( music===undefined) next();    //TOCHECK: controllo rimuovibile?
 
+  //carico dinamicamente il codice per la musica ( non mi serve sempre ) 
+  if(musicCode===undefined) musicCode = require("messages_light.music.js") //eval(require("Storage").read("messages_light.music.js"));
+  
+  musicCode.show();
+
+}
 
 
 
@@ -312,7 +356,16 @@ let next=function(){
   if( EventQueue.length == 0)
   {
     LOG("no element in queue - closing")
-    setTimeout(_ => load());
+    if( music!==undefined)
+    {
+      LOG("opened/received music -> show music");
+      showMusic();
+    }
+    else
+    {
+      LOG("no music -> close")
+      setTimeout(_ => load());
+    }
     return;
   }
 
@@ -339,11 +392,7 @@ let showMap=function(msg) {
 }
 
 
-let showMusic=function(msg){
 
-
-  //TODO: implementa tutte le funzionalità per visualizza la track in corso e gestire la musica
-}
 
 
 
@@ -525,9 +574,11 @@ let main = function(){
     manageEvent(eventToShow);
   else
   {
-    LOG("file not found!");
-    setTimeout(_ => load(), 0);
+    LOG("file event not found! -> Open in music mode");
+    music={}; //imposto un oggetto nella variabile music, cosi non viene chiuso il programma dalla showMusic
+    setTimeout(_ => showMusic(), 0);
   }
+  justOpen=false;
 };
 
 
