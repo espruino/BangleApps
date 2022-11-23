@@ -53,3 +53,6 @@ to the module.
 to `https://banglejs.com/apps/modules|https://www.espruino.com/modules`
 
 The next time you upload your app, the module will automatically be included.
+
+**Note:** You can optionally use `https://raw.githubusercontent.com/espruino/BangleApps/master/modules|https://www.espruino.com/modules`
+as the module URL to pull in modules direct from the development app loader (which could be slightly newer than the ones on https://banglejs.com/apps)
