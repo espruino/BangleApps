@@ -91,10 +91,6 @@
         sched.reload();
       },
       //TODO perhaps move those in a library (like messages), used also for viewing events?
-      //simple package with events all together
-      "calendarevents" : function() {
-        require("Storage").writeJSON("android.calendar.json", event.events);
-      },
       //add and remove events based on activity on phone (pebble-like)
       "calendar" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
