@@ -10,6 +10,11 @@
   }
 */
 
+
+
+//TODO: quando apro l'app dal menu principale ( quindi non c'è niente nella queue)
+//visualizzo l'interfaccia per la musica ( o un settings che mi sceglie di aprire la musica? )
+
 let LOG=function(){  
   //print.apply(null, arguments);
 }
@@ -38,6 +43,15 @@ let settings= (()=>{
 let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
+//TODO: implemento il resto ( nel template )
+var music=undefined;
+//se definita, vuol dire che è arrivata una richiesta di musica -> dopo aver fino la queue di messaggi, ri-visualizza la schermata di musica
+//se premo "back" in quella di musica -> esco dall'app
+//template qua sotto
+/*{
+  artist:"",
+  track:"",
+}*/
 
 
 
@@ -46,68 +60,89 @@ var manageEvent = function(event) {
 
   event.new=true;
 
-
   LOG("manageEvent");
-  if( event.id=="call")
-  {
-    showCall(event);
-    return;
+  LOG(event);
+
+
+  if( event.id=="call"){
+      showCall(event);
   }
-  switch(event.t)
-  {
-    case "add":
-      EventQueue.unshift(event);
+  else if( event.id=="music"){
+     //TODO: 
+     //se c'è qualcosa nella queue, quindi app già aperta,
+     //se musicRunngin==true, vuol dire che c'è già della musica in ascolto prima
+     // quindi non mostro nulla
 
-      if(!callInProgress)
-        showMessage(event);
-    break;
+     //se prima era musicRunngin == false
+     //NON DOVREBBE NEANCHE ARRIVA QUA ( da codice nel proxy )
 
-    case "modify":
-      //cerco l'evento nella lista, se lo trovo, lo modifico, altrimenti lo pusho
-      let find=false;
-      EventQueue.forEach(element => {
-        if(element.id == event.id)
-        {
-          find=true;
-          Object.assign(element,event);
-        }
-      });
-      if(!find)   //se non l'ho trovato, lo aggiungo in fondo
+
+
+     //LOGICA DA QUA->
+     //aggiorno i dati della musica 
+     //quindi se mi arriva la notifica vuol dire che:
+     //l'app l'ho appena aperta  ->  visualizzo la schermata di musica
+     //oppure 
+     //l'app era già stata aperta in modalità musica -> non faccio nulla ( avendo già aggiornato i dati della musica )
+     //POI
+     //se c'è roba nella queue -> NON visualizzo la schermata di musica ( quando finirà la queue, la next visualizzerà la musica )
+     //se non c'è roba nella queue -> aggiorno la visualizzazione
+
+     
+  }
+  else{ 
+
+    //-----------------
+    //notification
+    //-----------------
+    if(event.t=="add"){
         EventQueue.unshift(event);
-
-      if(!callInProgress)
-        showMessage(event);
-      break;
-
-    case "remove":
-      
-      //se non c'è niente nella queue e non c'è una chiamata in corso
-      if( EventQueue.length==0 && !callInProgress)
-        next();
-
-      //se l'id è uguale a quello attualmente visualizzato  ( e non siamo in chiamata ) 
-      if(!callInProgress &&  EventQueue[0] !== undefined && EventQueue[0].id == event.id)
-        next();   //passo al messaggio successivo ( per la rimozione ci penserà la next ) 
-
-      else{
-        //altrimenti rimuovo tutti gli elementi con quell'id( creando un nuovo array )
-        let newEventQueue=[];
+  
+        if(!callInProgress)
+          showMessage(event);
+    }
+    else if(event.t=="modify"){
+        //cerco l'evento nella lista, se lo trovo, lo modifico, altrimenti lo pusho
+        let find=false;
         EventQueue.forEach(element => {
-          if(element.id != event.id)
-            newEventQueue.push(element);
+          if(element.id == event.id)
+          {
+            find=true;
+            Object.assign(element,event);
+          }
         });
-        EventQueue=newEventQueue;
-      }
-      
-      
+        if(!find)   //se non l'ho trovato, lo aggiungo in fondo
+          EventQueue.unshift(event);
+  
+        if(!callInProgress)
+          showMessage(event);
+    }
+    else if(event.t=="remove"){       
+        //se non c'è niente nella queue e non c'è una chiamata in corso
+        if( EventQueue.length==0 && !callInProgress)
+          next();
+  
+        //se l'id è uguale a quello attualmente visualizzato  ( e non siamo in chiamata ) 
+        if(!callInProgress &&  EventQueue[0] !== undefined && EventQueue[0].id == event.id)
+          next();   //passo al messaggio successivo ( per la rimozione ci penserà la next ) 
+  
+        else{
+          //altrimenti rimuovo tutti gli elementi con quell'id( creando un nuovo array )
+          let newEventQueue=[];
+          EventQueue.forEach(element => {
+            if(element.id != event.id)
+              newEventQueue.push(element);
+          });
+          EventQueue=newEventQueue;
+        }
+    }
+    //-----------------
+    //notification
+    //-----------------
 
-      
-      break;
-    case "musicstate":
-    case "musicinfo":
-        
-        break;
+
   }
+  
 };
 
 
@@ -296,7 +331,7 @@ let next=function(){
 
 
 
-let showMapMessage=function(msg) {
+let showMap=function(msg) {
 
   g.clearRect(Bangle.appRect);
   PrintMessageStrings({body:"Not implemented!"});
@@ -304,6 +339,11 @@ let showMapMessage=function(msg) {
 }
 
 
+let showMusic=function(msg){
+
+
+  //TODO: implementa tutte le funzionalità per visualizza la track in corso e gestire la musica
+}
 
 
 

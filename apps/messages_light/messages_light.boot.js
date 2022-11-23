@@ -25,9 +25,7 @@ Bangle.on("call", messageBootManager);*/
 //override require to filter require("message")
 global.require_real=global.require;
 global.require = (_require => file => {
-    if (file==="messages") file = "messagesProxy";
-    //else if (file==="messages_REAL") file = "messages";    //backdoor to real message
-    
+    if (file==="messages") file = "messagesProxy";    
     return _require(file);
 })(require);
   
