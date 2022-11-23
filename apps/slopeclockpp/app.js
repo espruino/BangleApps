@@ -1,10 +1,10 @@
 Graphics.prototype.setFontPaytoneOne = function(scale) {
-  // Actual height 81 (91 - 11)
+  // Actual height 71 (81 - 11)
   this.setFontCustom(
-    E.toString(require('heatshrink').decompress(atob('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'))),
+    E.toString(require('heatshrink').decompress(atob('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'))),
     46,
-    atob("ITZOMzs7SDxHNUdGIQ=="),
-    113+(scale<<8)+(1<<16)
+    atob("HTBFLTQ0PzU/Lz8+HQ=="),
+    100+(scale<<8)+(1<<16)
   );
   return this;
 };
@@ -35,12 +35,14 @@ if (g.theme.dark) {
    if (settings.colorYellow) bgColors.push("#ff0");
    if (settings.colorCyan) bgColors.push("#0ff");
    if (settings.colorMagenta) bgColors.push("#f0f");
+   if (settings.colorWhite) bgColors.push("#fff");
 } else {
    if (settings.colorRed) bgColors.push("#f00");
    if (settings.colorGreen) bgColors.push("#0f0");
    if (settings.colorBlue) bgColors.push("#00f");
+   if (settings.colorBlack) bgColors.push("#000");
 }
-let bgColor = bgColors[(Math.random()*bgColors.length)|0];
+let bgColor = bgColors[(Math.random()*bgColors.length)|0]||"#000";
 
 
 // Draw the hour, and the minute into an offscreen buffer
@@ -61,7 +63,6 @@ let draw = function() {
   // add slope in background color
   g.setColor(g.theme.bg).fillPoly([0,y+slope-slopeBorderUpper, R.w,y-slope-slopeBorderUpper,
                                    R.w,y-slope, 0,y+slope]);
-
   // Draw minute to offscreen buffer
   g2.setColor(0).fillRect(0,0,g2.getWidth(),g2.getHeight()).setFontAlign(1, 0).setFont("PaytoneOne");
   g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2).setFont("4x6"); // draw and unload custom font
@@ -109,117 +110,34 @@ let animate = function(isIn, callback) {
       if (isAnimIn) {
         // draw the date
         g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
-
-        if (settings.showSteps) {
-        // draw steps to bottom left
-        const steps = getSteps();
-        if (steps > 0)
-           g.setFontAlign(-1, 0).drawString(shortValue(steps), 3, R.y+R.h-30);
-        }
-
-        if (settings.showWeather) {
-          // draw weather to top right
-          const weather = getWeather();
-          const tempString = weather ? require("locale").temp(weather.temp - 273.15) : undefined;
-          const code = weather ? weather.code : -1;
-          if (code > -1) {
-            g.setColor(g.theme.fg).setFontAlign(1, 0).drawString(tempString, R.w - 3, y-slope-slopeBorderUpper);
-            const icon = getWeatherIconByCode(code);
-            if (icon) g.drawImage(icon, R.w - 3 - 15, y-slope-slopeBorderUpper - 15 - 15);
-          }
-        }
+        // draw the menu items
+        clockInfoMenu.redraw();
+        clockInfoMenu2.redraw();
       }
       if (callback) callback();
     }
   }, 20);
 };
 
-let getSteps = function() {
-  if (Bangle.getHealthStatus) {
-    return Bangle.getHealthStatus("day").steps;
-  }
-  if (WIDGETS && WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return 0;
-};
+// clock info menus (scroll up/down for info)
+let clockInfoDraw = (itm, info, options) => {
+  let texty = options.y+26;
+  g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty, options.x+options.w-2, texty+15);
 
-let shortValue = function(v) {
-  if (isNaN(v)) return '-';
-  if (v <= 999) return v;
-  if (v >= 1000 && v < 10000) {
-    v = Math.floor(v / 100) * 100;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-  if (v >= 10000) {
-    v = Math.floor(v / 1000) * 1000;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  if (options.focus) g.setColor(options.hl);
+  if (options.x < g.getWidth()/2) { // left align
+    let x = options.x+2;
+    g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
+    g.setFontAlign(-1,-1).drawString(info.text, x,texty);
+  } else { // right align
+    let x = options.x+options.w-3;
+    g.clearRect(x-23, options.y, x, options.y+23).drawImage(info.img, x-23, options.y);
+    g.setFontAlign(1,-1).drawString(info.text, x,texty);
   }
 };
-
-let getWeather = function() {
-  let jsonWeather = require("Storage").readJSON('weather.json');
-  return jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
-};
-
-/*
- * Choose weather icon to display based on weather conditition code
- * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
- */
-let getWeatherIconByCode = function(code) {
-  let codeGroup = Math.round(code / 100);
-
-  // weather icons:
-  let weatherCloudy = atob("EBCBAAAAAAAAAAfgD/Af8H/4//7///////9//z/+AAAAAAAA");
-  let weatherSunny = atob("EBCBAAAAAYAQCBAIA8AH4A/wb/YP8A/gB+ARiBAIAYABgAAA");
-  let weatherMoon = atob("EBCBAAAAAYAP8B/4P/w//D/8f/5//j/8P/w//B/4D/ABgAAA");
-  let weatherPartlyCloudy = atob("EBCBAAAAAAAYQAMAD8AIQBhoW+AOYBwwOBBgHGAGP/wf+AAA");
-  let weatherRainy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQAJBgjPOEkgGYAZgA8ABgAAA");
-  let weatherPartlyRainy = atob("EBCBAAAAEEAQAAeADMAYaFvoTmAMMDgQIBxhhiGGG9wDwAGA");
-  let weatherSnowy = atob("EBCBAAAAAAADwAGAEYg73C50BCAEIC50O9wRiAGAA8AAAAAA");
-  let weatherFoggy = atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
-  let weatherStormy = atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
-  let unknown = undefined;
-
-  switch (codeGroup) {
-    case 2:
-      return weatherStormy;
-    case 3:
-      return weatherCloudy;
-    case 5:
-      switch (code) {
-        case 511:
-          return weatherSnowy;
-        case 520:
-          return weatherPartlyRainy;
-        case 521:
-          return weatherPartlyRainy;
-        case 522:
-          return weatherPartlyRainy;
-        case 531:
-          return weatherPartlyRainy;
-        default:
-          return weatherRainy;
-      }
-      case 6:
-        return weatherSnowy;
-      case 7:
-        return weatherFoggy;
-      case 8:
-        switch (code) {
-          case 800:
-            return weatherSunny;
-          case 801:
-            return weatherPartlyCloudy;
-          case 802:
-            return weatherPartlyCloudy;
-          default:
-            return weatherCloudy;
-        }
-      default:
-        return unknown;
-  }
-}
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/ });
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { x:0, y:115, w:50, h:40, draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg });
 
 // Show launcher when middle button pressed
 Bangle.setUI({
@@ -231,7 +149,13 @@ Bangle.setUI({
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     delete Graphics.prototype.setFontPaytoneOne;
-  }});
+    // remove info menu
+    clockInfoMenu.remove();
+    delete clockInfoMenu;
+    clockInfoMenu2.remove();
+    delete clockInfoMenu2;
+  }
+});
 // Load widgets
 Bangle.loadWidgets();
 draw();

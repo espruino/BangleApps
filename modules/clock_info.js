@@ -174,7 +174,7 @@ exports.addInteractive = function(menu, options) {
   if ("function" == typeof options) options = {draw:options}; // backwards compatibility
   options.index = 0|exports.loadCount;
   exports.loadCount = options.index+1;
-  options.focus = options.index==0; // focus if we're the first one loaded
+  options.focus = options.index==0 && options.x===undefined; // focus if we're the first one loaded and no position has been defined
   const appName = "default:"+options.index;
 
   { // load the currently showing clock_infos

@@ -15,45 +15,45 @@
     let menu ={
       '': { 'title': 'Slope Clock ++' },
       /*LANG*/'< Back': back,
-      /*LANG*/'show steps': {
-        value: !!settings.showSteps,
-        format: () => (settings.showSteps ? 'Yes' : 'No'),
-        onchange: x => save('showSteps', x),
-      },
-      /*LANG*/'show weather': {
-        value: !!settings.showWeather,
-        format: () => (settings.showWeather ? 'Yes' : 'No'),
-        onchange: x => save('showWeather', x),
-      },
-      /*LANG*/'red': {
+      /*LANG*/'Red': {
         value: !!settings.colorRed,
         format: () => (settings.colorRed ? 'Yes' : 'No'),
         onchange: x => save('colorRed', x),
       },
-      /*LANG*/'green': {
+      /*LANG*/'Green': {
         value: !!settings.colorGreen,
         format: () => (settings.colorGreen ? 'Yes' : 'No'),
         onchange: x => save('colorGreen', x),
       },
-      /*LANG*/'blue': {
+      /*LANG*/'Blue': {
         value: !!settings.colorBlue,
         format: () => (settings.colorBlue ? 'Yes' : 'No'),
         onchange: x => save('colorBlue', x),
       },
-      /*LANG*/'magenta': {
+      /*LANG*/'Magenta': {
         value: !!settings.colorMagenta,
         format: () => (settings.colorMagenta ? 'Yes' : 'No'),
         onchange: x => save('colorMagenta', x),
       },
-      /*LANG*/'cyan': {
+      /*LANG*/'Cyan': {
         value: !!settings.colorCyan,
         format: () => (settings.colorCyan ? 'Yes' : 'No'),
         onchange: x => save('colorCyan', x),
       },
-      /*LANG*/'yellow': {
+      /*LANG*/'Yellow': {
         value: !!settings.colorYellow,
         format: () => (settings.colorYellow ? 'Yes' : 'No'),
         onchange: x => save('colorYellow', x),
+      },
+      /*LANG*/'Black': {
+        value: !!settings.colorBlack,
+        format: () => (settings.colorBlack ? 'Yes' : 'No'),
+        onchange: x => save('colorBlack', x),
+      },
+      /*LANG*/'White': {
+        value: !!settings.colorWhite,
+        format: () => (settings.colorWhite ? 'Yes' : 'No'),
+        onchange: x => save('colorWhite', x),
       }
     };
     E.showMenu(menu);
