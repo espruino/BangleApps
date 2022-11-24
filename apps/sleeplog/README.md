@@ -24,10 +24,20 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 
 
 ---
-### App Usage
+### Main App Usage
 ---
 
-#### On the main app screen:
+#### View:
+| Status      | Color  |    Height |
+|-------------|:------:|----------:|
+| unknown     | black  |        0% |
+| not worn    | red    |       40% |
+| awake       | green  |       60% |
+| light sleep | cyan   |       80% |
+| deep sleep  | blue   |      100% |
+| consecutive | violet | as status |
+
+#### Controls:
   - __swipe left & right__
     to change the displayed day
   - __touch the "title"__ (e.g. `Night to Fri 20/05/2022`)
@@ -40,7 +50,11 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
   - __use back button widget__ (upper left corner)
     exit the app
 
-#### Inside the settings:
+
+---
+### Settings Usage
+---
+
   - __Thresholds__ submenu
     Changes take effect from now on, not retrospective!
     - __Max Awake__ | maximal awake duration
@@ -198,7 +212,7 @@ The passed data object has the following properties:
 Please leave requests and bug reports by raising an issue at [github.com/storm64/BangleApps](https://github.com/storm64/BangleApps) (or send me a [mail](mailto:banglejs@storm64.de)).
 
 #### Creator
-Storm64 ([Mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64))
+Storm64 ([mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64))
 
 #### Contributors
 myxor ([github](https://github.com/myxor))
