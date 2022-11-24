@@ -18,7 +18,7 @@ function getNextAlarm(allAlarms, fo, withId) {
     ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
-    }).filter(a => a.tTo // filter non active alarms 
+    }).filter(a => a.tTo // filter non active alarms
     // sort to get next alarm first
     ).sort((a, b) => a.tTo - b.tTo)[0] || {};
 }
@@ -133,7 +133,7 @@ exports = {
 
     // save time of alarm and this day to prevent triggering for the same alarm again
     settings.lastTime = alarm.t;
-    settings.lastDate = now.getDay();
+    settings.lastDate = now.getDate();
     require("Storage").writeJSON("sleeplogalarm.settings.json", settings);
 
     // write changes
