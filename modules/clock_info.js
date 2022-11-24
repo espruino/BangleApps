@@ -2,25 +2,28 @@
 that can be scrolled through on the clock face.
 
 `load()` returns an array of menu objects, where each object contains a list of menu items:
-* 'name' : text to display and identify menu object (e.g. weather)
-* 'img' : a 24x24px image
-* 'items' : menu items such as temperature, humidity, wind etc.
+
+* `name` : text to display and identify menu object (e.g. weather)
+* `img` : a 24x24px image
+* `items` : menu items such as temperature, humidity, wind etc.
 
 Note that each item is an object with:
 
-* 'item.name' : friendly name to identify an item (e.g. temperature)
-* 'item.hasRange' : if `true`, `.get` returns `v/min/max` values (for progress bar/guage)
-* 'item.get' : function that resolves with:
-  {
-    'text' : the text to display for this item
-    'img' : a 24x24px image to display for this item
-    'v' : (if hasRange==true) a numerical value
-    'min','max' : (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
-  }
-* 'item.show' : called when item should be shown. Enables updates. Call BEFORE 'get'
-* 'item.hide' : called when item should be hidden. Disables updates.
-* .on('redraw', ...) : event that is called when 'get' should be called again (only after 'item.show')
-* 'item.run' : (optional) called if the info screen is tapped - can perform some action. Return true if the caller should feedback the user.
+* `item.name` : friendly name to identify an item (e.g. temperature)
+* `item.hasRange` : if `true`, `.get` returns `v/min/max` values (for progress bar/guage)
+* `item.get` : function that returns an object:
+
+{
+  'text'  // the text to display for this item
+  'img'   // a 24x24px image to display for this item
+  'v'     // (if hasRange==true) a numerical value
+  'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
+}
+
+* `item.show` : called when item should be shown. Enables updates. Call BEFORE 'get'
+* `item.hide` : called when item should be hidden. Disables updates.
+* `.on('redraw', ...)` : event that is called when 'get' should be called again (only after 'item.show')
+* `item.run` : (optional) called if the info screen is tapped - can perform some action. Return true if the caller should feedback the user.
 
 See the bottom of this file for example usage...
 
@@ -36,6 +39,7 @@ example.clkinfo.js :
                       img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
         show : () => {},
         hide : () => {}
+        // run : () => {} optional (called when tapped)
       }
     ]
   };
@@ -115,7 +119,7 @@ exports.load = function() {
       if(b) b.items = b.items.concat(a.items);
       else menu = menu.concat(a);
     } catch(e){
-      console.log("Could not load clock info.")
+      console.log("Could not load clock info "+E.toJS(fn))
     }
   });
 
@@ -128,7 +132,8 @@ Simply supply the menu data (from .load) and a function to draw the clock info.
 
 For example:
 
-let clockInfoMenu = require("clock_info").addInteractive(require("clock_info").load(), {
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
   x : 20, y: 20, w: 80, h:80, // dimensions of area used for clock_info
   draw : (itm, info, options) => {
     g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
@@ -148,12 +153,12 @@ and delete clockInfoMenu
 
 clockInfoMenu is the 'options' parameter, with the following added:
 
-* 'index' : int - which instance number are we? Starts at 0
-* 'menuA' : int - index in 'menu' of showing clockInfo item
-* 'menuB' : int - index in 'menu[menuA].items' of showing clockInfo item
-* 'remove' : function - remove this clockInfo item
-* 'redraw' : function - force a redraw
-* 'focus' : function - bool to show if menu is focused or not
+* `index` : int - which instance number are we? Starts at 0
+* `menuA` : int - index in 'menu' of showing clockInfo item
+* `menuB` : int - index in 'menu[menuA].items' of showing clockInfo item
+* `remove` : function - remove this clockInfo item
+* `redraw` : function - force a redraw
+* `focus` : function - bool to show if menu is focused or not
 
 You can have more than one clock_info at once as well, sfor instance:
 
