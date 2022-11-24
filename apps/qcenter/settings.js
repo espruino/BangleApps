@@ -53,19 +53,13 @@
 		};
 
 		//List all pinned apps
-		for (let i = 0; i < pinnedApps.length; i++) {
-			mainmenu[pinnedApps[i].name] = function () {
-				E.showMenu({
-					"": { title: pinnedApps[i].name },
-					"< Back": showMainMenu,
-					Unpin: function () {
-						pinnedApps.splice(i, 1);
-						save("pinnedApps", pinnedApps);
-						showMainMenu();
-					},
-				});
+		pinnedApps.forEach((app, i) => {
+			mainmenu["Remove " + app.name] = function () {
+				pinnedApps.splice(i, 1);
+				save("pinnedApps", pinnedApps);
+				showMainMenu();
 			};
-		}
+		});
 
 		// Show pin app menu, or show alert if max amount of apps are pinned
 		mainmenu["Pin App"] = function () {

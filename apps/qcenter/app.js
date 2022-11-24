@@ -82,8 +82,8 @@ var layoutContent = [
 		type: "h",
 		pad: 5,
 		c: [
-			{ type: "txt", font: "8x12", label: E.getBattery() + "%" },
-			{ type: "txt", font: "8x12", label: " " + E.getTemperature() + "°C" },
+			{ type: "txt", font: "8x12", scale: 2, label: E.getBattery() + "%" },
+			{ type: "txt", font: "8x12", scale: 2, label: " " + E.getTemperature() + "°C" },
 		],
 	},
 ];
@@ -97,6 +97,10 @@ appButtons.forEach((appGroup) => {
 	});
 });
 
+// create layout with content
+
+Bangle.loadWidgets();
+
 var Layout = require("Layout");
 var layout = new Layout({
 	type: "v",
@@ -104,8 +108,9 @@ var layout = new Layout({
 });
 g.clear();
 layout.render();
+Bangle.drawWidgets();
 
-// add swipe event listener for exit gesture
+// swipe event listener for exit gesture
 Bangle.on("swipe", function (lr, ud) {
 	if(exitGesture == "swipeup" && ud == -1) Bangle.showClock();
 	if(exitGesture == "swipedown" && ud == 1) Bangle.showClock();
