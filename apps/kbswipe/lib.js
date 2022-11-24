@@ -139,6 +139,7 @@ exports.getStrokes( (id,s) => Bangle.strokes[id] = Unistroke.new(s) );
   return new Promise((resolve,reject) => {
     var l;//last event
     Bangle.setUI({mode:"custom", drag:e=>{
+      "ram";
       if (l) g.reset().setColor("#f00").drawLine(l.x,l.y,e.x,e.y);
       l = e.b ? e : 0;
     },touch:() => {

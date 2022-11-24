@@ -10,18 +10,20 @@
 */
 
 
-function Layout(layout, options) {  
+function Layout(layout, options) {
   this._l = this.l = layout;
   // Do we have >1 physical buttons?
-  this.physBtns = (process.env.HWVERSION==2) ? 1 : 3;
+
 
   this.options = options || {};
   this.lazy = this.options.lazy || false;
+  this.physBtns = 1;
   let btnList;
   if (process.env.HWVERSION!=2) {
+    this.physBtns = 3;
     // no touchscreen, find any buttons in 'layout'
     btnList = [];
-    function btnRecurser(l) {
+    function btnRecurser(l) {"ram";
       if (l.type=="btn") btnList.push(l);
       if (l.c) l.c.forEach(btnRecurser);
     }
@@ -64,7 +66,7 @@ function Layout(layout, options) {
   this.setUI();
   // recurse over layout doing some fixing up if needed
   var ll = this;
-  function recurser(l) {
+  function recurser(l) {"ram";
     // add IDs
     if (l.id) ll[l.id] = l;
     // fix type up
@@ -153,26 +155,25 @@ Layout.prototype.render = function (l) {
   if (!l) l = this._l;
   if (this.updateNeeded) this.update();
 
-  function render(l) {"ram"
-    g.reset();
-    if (l.col!==undefined) g.setColor(l.col);
-    if (l.bgCol!==undefined) g.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
+  var gfx=g; // define locally, because this is faster
+  function render(l) {"ram";
+    gfx.reset();
+    if (l.col!==undefined) gfx.setColor(l.col);
+    if (l.bgCol!==undefined) gfx.setBgColor(l.bgCol).clearRect(l.x,l.y,l.x+l.w-1,l.y+l.h-1);
     cb[l.type](l);
   }
 
   var cb = {
     "":function(){},
-    "txt":function(l){
+    "txt":function(l){"ram";
       if (l.wrap) {
-        g.setFont(l.font).setFontAlign(0,-1);
-        var lines = g.wrapString(l.label, l.w);
-        var y = l.y+((l.h-g.getFontHeight()*lines.length)>>1);
-        //  TODO: on 2v11 we can just render in a single drawString call
-        lines.forEach((line, i) => g.drawString(line, l.x+(l.w>>1), y+g.getFontHeight()*i));
+        var lines = gfx.setFont(l.font).setFontAlign(0,-1).wrapString(l.label, l.w);
+        var y = l.y+((l.h-gfx.getFontHeight()*lines.length)>>1);
+        gfx.drawString(lines.join("\n"), l.x+(l.w>>1), y);
       } else {
-        g.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
+        gfx.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
-    }, "btn":function(l){
+    }, "btn":function(l){"ram";
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
       var poly = [
@@ -185,27 +186,26 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ], bg = l.selected?g.theme.bgH:g.theme.bg2;
-      g.setColor(bg).fillPoly(poly).setColor(l.selected ? g.theme.fgH : g.theme.fg2).drawPoly(poly);
-    if (l.col!==undefined) g.setColor(l.col);
-    if (l.src) g.setBgColor(bg).drawImage(
+      ], bg = l.selected?gfx.theme.bgH:gfx.theme.bg2;
+      gfx.setColor(bg).fillPoly(poly).setColor(l.selected ? gfx.theme.fgH : gfx.theme.fg2).drawPoly(poly);
+    if (l.col!==undefined) gfx.setColor(l.col);
+    if (l.src) gfx.setBgColor(bg).drawImage(
       "function"==typeof l.src?l.src():l.src,
       l.x + l.w/2,
       l.y + l.h/2,
       {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
     );
-    else g.setFont(l.font||"6x8:2").setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
-  }, "img":function(l){
-    g.drawImage(
+    else gfx.setFont(l.font||"6x8:2").setFontAlign(0,0,l.r).drawString(l.label,l.x+l.w/2,l.y+l.h/2);
+  }, "img":function(l){"ram";
+    gfx.drawImage(
       "function"==typeof l.src?l.src():l.src,
       l.x + l.w/2,
       l.y + l.h/2,
       {scale: l.scale||undefined, rotate: Math.PI*0.5*(l.r||0)}
     );
-  }, "custom":function(l){
-    l.render(l);
-  },"h":function(l) { l.c.forEach(render); },
-    "v":function(l) { l.c.forEach(render); }
+  }, "custom":function(l){"ram"; l.render(l);
+  }, "h":function(l) { "ram"; l.c.forEach(render);
+  }, "v":function(l) { "ram"; l.c.forEach(render); }
   };
 
   if (this.lazy) {
@@ -218,7 +218,7 @@ Layout.prototype.render = function (l) {
     prepareLazyRender(l, rectsToClear, drawList, this.rects, null);
     for (var h in rectsToClear) delete this.rects[h];
     var clearList = Object.keys(rectsToClear).map(k=>rectsToClear[k]).reverse(); // Rects are cleared in reverse order so that the original bg color is restored
-    for (var r of clearList) g.setBgColor(r.bg).clearRect.apply(g, r);
+    for (var r of clearList) gfx.setBgColor(r.bg).clearRect.apply(g, r);
     drawList.forEach(render);
   } else { // non-lazy
     render(l);
@@ -231,9 +231,8 @@ Layout.prototype.forgetLazyState = function () {
 
 Layout.prototype.layout = function (l) {
   // l = current layout element
-  // exw,exh = extra width/height available
-  switch (l.type) {
-    case "h": {
+  var cb = {
+    "h" : function(l) {"ram";
       var acc_w = l.x + (0|l.pad);
       var accfillx = 0;
       var fillx = l.c && l.c.reduce((a,l)=>a+(0|l.fillx),0);
@@ -247,11 +246,10 @@ Layout.prototype.layout = function (l) {
         c.w = 0|(x - c.x);
         c.h = 0|(c.filly ? l.h - (l.pad<<1) : c._h);
         c.y = 0|(l.y + (0|l.pad) + ((1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)>>1));
-        if (c.c) this.layout(c);
+        if (c.c) cb[c.type](c);
       });
-      break;
-    }
-    case "v": {
+    },
+    "v" : function(l) {"ram";
       var acc_h = l.y + (0|l.pad);
       var accfilly = 0;
       var filly = l.c && l.c.reduce((a,l)=>a+(0|l.filly),0);
@@ -265,11 +263,11 @@ Layout.prototype.layout = function (l) {
         c.h = 0|(y - c.y);
         c.w = 0|(c.fillx ? l.w - (l.pad<<1) : c._w);
         c.x = 0|(l.x + (0|l.pad) + ((1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)>>1));
-        if (c.c) this.layout(c);
+        if (c.c) cb[c.type](c);
       });
-      break;
     }
-  }
+  };
+  cb[l.type](l);
 };
 Layout.prototype.debug = function(l,c) {
   if (!l) l = this._l;
@@ -282,50 +280,51 @@ Layout.prototype.debug = function(l,c) {
 };
 Layout.prototype.update = function() {
   delete this.updateNeeded;
+  var gfx=g; // define locally, because this is faster
   // update sizes
-  function updateMin(l) {"ram"
+  function updateMin(l) {"ram";
     cb[l.type](l);
     if (l.r&1) { // rotation
       var t = l._w;l._w=l._h;l._h=t;
     }
-    l._w = 0|Math.max(l._w + (l.pad<<1), 0|l.width);
-    l._h = 0|Math.max(l._h + (l.pad<<1), 0|l.height);
+    l._w = Math.max(l._w + (l.pad<<1), 0|l.width);
+    l._h = Math.max(l._h + (l.pad<<1), 0|l.height);
   }
   var cb = {
-    "txt" : function(l) {
+    "txt" : function(l) {"ram";
       if (l.font.endsWith("%"))
-        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
+        l.font = "Vector"+Math.round(gfx.getHeight()*l.font.slice(0,-1)/100);
       if (l.wrap) {
         l._h = l._w = 0;
       } else {
         var m = g.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
-    }, "btn": function(l) {
+    }, "btn": function(l) {"ram";
       if (l.font && l.font.endsWith("%"))
-        l.font = "Vector"+Math.round(g.getHeight()*l.font.slice(0,-1)/100);
-      var m = l.src?g.imageMetrics("function"==typeof l.src?l.src():l.src):g.setFont(l.font||"6x8:2").stringMetrics(l.label);
+        l.font = "Vector"+Math.round(gfx.getHeight()*l.font.slice(0,-1)/100);
+      var m = l.src?gfx.imageMetrics("function"==typeof l.src?l.src():l.src):gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
       l._h = 16 + m.height;
       l._w = 20 + m.width;
-    }, "img": function(l) {
-      var m = g.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
+    }, "img": function(l) {"ram";
+      var m = gfx.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
       l._w = m.width*s;
       l._h = m.height*s;
-    }, "": function(l) {
+    }, "": function(l) {"ram";
       // size should already be set up in width/height
       l._w = 0;
       l._h = 0;
-    }, "custom": function(l) {
+    }, "custom": function(l) {"ram";
       // size should already be set up in width/height
       l._w = 0;
       l._h = 0;
-    }, "h": function(l) {
+    }, "h": function(l) {"ram";
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>Math.max(a,b._h),0);
       l._w = l.c.reduce((a,b)=>a+b._w,0);
       if (l.fillx == null && l.c.some(c=>c.fillx)) l.fillx = 1;
       if (l.filly == null && l.c.some(c=>c.filly)) l.filly = 1;
-    }, "v": function(l) {
+    }, "v": function(l) {"ram";
       l.c.forEach(updateMin);
       l._h = l.c.reduce((a,b)=>a+b._h,0);
       l._w = l.c.reduce((a,b)=>Math.max(a,b._w),0);
@@ -336,6 +335,7 @@ Layout.prototype.update = function() {
 
   var l = this._l;
   updateMin(l);
+  delete cb;
   if (l.fillx || l.filly) { // fill all
     l.w = Bangle.appRect.w;
     l.h = Bangle.appRect.h;

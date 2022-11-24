@@ -9,7 +9,6 @@
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
 
-  console.log(settings);
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -133,6 +132,7 @@
   g.flip();
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
   let onDrag = function(e) {
+    updateTimeout();
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
     let dy = e.dy;
@@ -182,36 +182,27 @@
     drag: onDrag,
     touch: (_, e) => {
       if (e.y < R.y - 4) return;
+      updateTimeout();
       let i = YtoIdx(e.y);
       selectItem(i, e);
     },
-    swipe: (h,_) => { if(settings.swipeExit && h==1) { returnToClock(); } },
+    swipe: (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } },
+    btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
+    remove: function() {
+      if (timeout) clearTimeout(timeout);
+    }
   };
 
-  const returnToClock = function() {
-    Bangle.setUI();
-    delete launchCache;
-    delete launchHash;
-    delete drawItemAuto;
-    delete drawText;
-    delete selectItem;
-    delete onDrag;
-    delete drawItems;
-    delete drawItem;
-    delete returnToClock;
-    delete idxToY;
-    delete YtoIdx;
-    delete settings;
-    setTimeout(eval, 0, s.read(".bootcde"));
-  };
-
-  
-  if (settings.oneClickExit) mode.btn = returnToClock;
+  let timeout;
+  const updateTimeout = function(){
   if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
-      setTimeout(returnToClock,time*1000);  
-  }
-  
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(Bangle.showClock,time*1000);
+    }
+  };
+
+  updateTimeout();
 
   Bangle.setUI(mode);
 }
