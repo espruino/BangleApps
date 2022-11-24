@@ -4,7 +4,7 @@
 
 To access, go to `Settings -> Apps -> My Location`
 
-* Select one of the preset Cities or setup through the GPS
+* Select one of the preset Cities, setup through the GPS or use the webinterface from the AppLoader
 * Other Apps can read this information to do calculations based on location
 * When the City shows ??? it means the location has been set through the GPS
 

@@ -1,0 +1,23 @@
+{
+  "id": "gipy",
+  "name": "Gipy",
+  "shortName": "Gipy",
+  "version": "0.15",
+  "description": "Follow gpx files",
+  "allow_emulator":false,
+  "icon": "gipy.png",
+  "type": "app",
+  "tags": "tool,outdoors,gps",
+  "screenshots": [],
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"gipy.app.js","url":"app.js"},
+    {"name":"gipy.settings.js","url":"settings.js"},
+    {"name":"gipy.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gipy.json"}
+  ]
+}

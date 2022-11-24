@@ -5,7 +5,6 @@
     showClocks: true,
     showLaunchers: true,
     direct: false,
-    oneClickExit:false,
     swipeExit: false,
     timeOut: "Off"
   }, require('Storage').readJSON(FILE, true) || {});
@@ -47,13 +46,6 @@
         writeSettings();
       }
     },
-    /*LANG*/'One click exit': {
-      value: settings.oneClickExit,
-      onchange: v => {
-        settings.oneClickExit = v;
-        writeSettings();
-      }
-    },
     /*LANG*/'Time Out': { // Adapted from Icon Launcher
       value: timeOutChoices.indexOf(settings.timeOut),
       min: 0,
@@ -63,6 +55,6 @@
         settings.timeOut = timeOutChoices[v];
         writeSettings();
       }
-    },
+    }
   });
 });

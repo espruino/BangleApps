@@ -13,7 +13,8 @@ Development
 
 When apps that use these modules are uploaded via the
 app loader, the module is automatically included in the app's source. However
-when developing via the IDE the module won't get pulled in by default.
+when developing via the IDE the module won't get pulled in by default
+so you may see the error "Module <module_name> not found" in the IDE when sending code to the Bangle.
 
 To fix this you have three options:
 
@@ -52,3 +53,6 @@ to the module.
 to `https://banglejs.com/apps/modules|https://www.espruino.com/modules`
 
 The next time you upload your app, the module will automatically be included.
+
+**Note:** You can optionally use `https://raw.githubusercontent.com/espruino/BangleApps/master/modules|https://www.espruino.com/modules`
+as the module URL to pull in modules direct from the development app loader (which could be slightly newer than the ones on https://banglejs.com/apps)

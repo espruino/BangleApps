@@ -7,7 +7,7 @@
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot_2.png"}, {"url":"screenshot_3.png"}, {"url":"screenshot_4.png"}],
   "type": "clock",
-  "tags": "clock",
+  "tags": "clock,clkinfo",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
