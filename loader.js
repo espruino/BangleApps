@@ -160,6 +160,11 @@ window.addEventListener('load', (event) => {
     <div class="column col-12">
     <div class="form-group">
       <label class="form-switch">
+        <input type="checkbox" id="usage_stats" ${SETTINGS.sendUsageStats?"checked":""}>
+        <i class="form-icon"></i> Send favourite and installed apps to banglejs.com<br/>
+          <small>For 'Sort by Installed/Favourited' functionality (see <a href="http://www.espruino.com/Privacy">privacy policy</a>)</small>
+      </label>
+      <label class="form-switch">
         <input type="checkbox" id="remember_device">
         <i class="form-icon"></i> Don't ask again
       </label>
@@ -167,10 +172,15 @@ window.addEventListener('load', (event) => {
     </div>
   </div>`;
   showPrompt("Which Bangle.js?",html,{},false);
+  var usageStats = document.getElementById("usage_stats");
+  usageStats.addEventListener("change",event=>{
+    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+    SETTINGS.sendUsageStats = event.target.checked;
+    saveSettings();
+  });
   htmlToArray(document.querySelectorAll(".devicechooser")).forEach(button => {
     button.addEventListener("click",event => {
-      let rememberDevice = document.getElementById("remember_device").checked;
-
+      let rememberDevice = !!document.getElementById("remember_device").checked;
       let button = event.currentTarget;
       let deviceId = button.getAttribute("deviceid");
       hidePrompt();
@@ -196,7 +206,9 @@ window.addEventListener('load', (event) => {
   // Button to install all default apps in one go
   document.getElementById("reinstallall").addEventListener("click",event=>{
     var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
-      getInstalledApps().then(installedapps => {
+      Comms.reset().then(_ =>
+        getInstalledApps()
+      ).then(installedapps => {
         console.log(installedapps);
         var promise = Promise.resolve();
         installedapps.forEach(app => {
@@ -206,10 +218,12 @@ window.addEventListener('load', (event) => {
           app = appJSON.find(a => a.id==oldApp.id);
           if (!app)
             return console.log(`Ignoring ${oldApp.id} as not found`);
-          promise = promise.then(() => updateApp(app));
+          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true}));
         });
         return promise;
-      }).catch(err=>{
+      }).then( _ =>
+        Comms.showUploadFinished()
+      ).catch(err=>{
         Progress.hide({sticky:true});
         showToast("App re-install failed, "+err,"error");
       });

@@ -1,3 +1,5 @@
+{ // must be inside our own scope here so that when we are unloaded everything disappears
+
 // ------- Settings file
 const SETTINGSFILE = "hworldclock.json";
 var secondsMode;
@@ -153,15 +155,15 @@ function updatePos() {
 
 function drawSeconds() {
 	// get date
-	var d = new Date();
-	var da = d.toString().split(" ");
+	let d = new Date();
+	let da = d.toString().split(" ");
 
 	// default draw styles
 	g.reset().setBgColor(g.theme.bg).setFontAlign(0, 0);
 
 	// draw time
-	var time = da[4].split(":");
-	var seconds = time[2];
+	let time = da[4].split(":");
+	let seconds = time[2];
 
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize - 3);
 	if (g.theme.dark) {
@@ -184,15 +186,15 @@ function drawSeconds() {
 
 function draw() {
 	// get date
-	var d = new Date();
-	var da = d.toString().split(" ");
+	let d = new Date();
+	let da = d.toString().split(" ");
 
 	// default draw styles
 	g.reset().setBgColor(g.theme.bg).setFontAlign(0, 0);
 
 	// draw time
-	var time = da[4].split(":");
-	var hours = time[0],
+	let time = da[4].split(":");
+	let hours = time[0],
 	minutes = time[1];
 	
 	
@@ -223,7 +225,7 @@ function draw() {
 	// am / PM ?
 	if (_12hour){
 	//do 12 hour stuff
-		//var ampm = require("locale").medidian(new Date()); Not working
+		//let ampm = require("locale").medidian(new Date()); Not working
 		g.setFont("Vector", 17);
 		g.drawString(ampm, xyCenterSeconds, yAmPm, true);
 	}	
@@ -232,14 +234,14 @@ function draw() {
 	
 	// draw Day, name of month, Date	
 	//DATE
-	var localDate = require("locale").date(new Date(), 1);
+	let localDate = require("locale").date(new Date(), 1);
 	localDate = localDate.substring(0, localDate.length - 5);
 	g.setFont("Vector", 17);
 	g.drawString(require("locale").dow(new Date(), 1).toUpperCase() + ", " + localDate, xyCenter, yposDate, true);
 
 	g.setFont(font, primaryDateFontSize);
 	// set gmt to UTC+0
-	var gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
+	let gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
 
 	// Loop through offset(s) and render
 	offsets.forEach((offset, index) => {
@@ -249,7 +251,7 @@ function draw() {
 
 
 	if (offsets.length === 1) {
-		var date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
+		let date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
 		// For a single secondary timezone, draw it bigger and drop time zone to second line
 		const xOffset = 30;
 		g.setFont(font, secondaryTimeFontSize).drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
@@ -295,8 +297,18 @@ g.clear();
 // Init the settings of the app
 loadMySettings();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");
+// Show launcher when middle button pressed
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    // Called to unload all of the clock app
+    if (PosInterval) clearInterval(PosInterval);
+    PosInterval = undefined;
+    if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
+    drawTimeoutSeconds = undefined;
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;	
+  }});
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -307,7 +319,7 @@ draw();
 
 if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
-			if (PosInterval != 0) clearInterval(PosInterval);
+			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
 			updatePos();
 		}
@@ -333,7 +345,7 @@ if (!Bangle.isLocked())  { // Initial state
 		drawTimeout = undefined;
 
 		if (showSunInfo) {
-			if (PosInterval != 0) clearInterval(PosInterval);
+			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 			updatePos();
 		}
@@ -379,3 +391,4 @@ Bangle.on('lock',on=>{
 		draw(); // draw immediately, queue redraw		
   }
  });
+}

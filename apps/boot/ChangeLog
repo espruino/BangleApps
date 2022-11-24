@@ -59,3 +59,5 @@
       Add patch to ensure that compass heading is corrected on pre-2v15.68 firmware
       Ensure clock is only fast-loaded if it doesn't contain widgets
 0.52: Ensure heading patch for pre-2v15.68 firmware applies to getCompass
+0.53: Add polyfills for pre-2v15.135 firmware for Bangle.load and Bangle.showClock
+0.54: Fix for invalid version comparison in polyfill
