@@ -659,9 +659,8 @@ function reloadMenu() {
       let parts = settings['circle'+i].split("/");
       let infoName = parts[0], itemName = parts[1];
       let infoNum = menu.findIndex(e=>e.name==infoName);
-      let itemNum = 0;
-      //suppose unnamed are varying (like timers or events), pick the first
-      if(itemName)
+      let itemNum = 0; //get first if dynamic
+      if(!menu[infoNum].dynamic)
         itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
       circleInfoNum[i-1] = infoNum;
       circleItemNum[i-1] = itemNum;
@@ -698,7 +697,7 @@ function drawClkInfo(index, w) {
   var txt = data.text;
   if(!img) img = info.img;
   if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
-  if(item.short) txt = item.short;
+  if(data.short) txt = data.short;
   drawGauge(w, h3, percent, color);
   drawInnerCircleAndTriangle(w);
   writeCircleText(w, txt);
