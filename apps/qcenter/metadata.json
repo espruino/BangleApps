@@ -1,15 +1,17 @@
-{ "id": "qcenter",
-  "name": "Quick Center",
-  "shortName":"QCenter",
-  "version":"0.01",
-  "description": "Shortcut for running your favorite apps & more",
-  "icon": "app.png",
-  "tags": "",
-  "supports" : ["BANGLEJS2"],  
-  "readme": "README.md",
-  "storage": [
-    {"name":"qcenter.app.js","url":"app.js"},
-    {"name":"qcenter.settings.js","url":"settings.js"},
-    {"name":"qcenter.img","url":"app-icon.js","evaluate":true}
-  ]
+{
+	"id": "qcenter",
+	"name": "Quick Center",
+	"shortName": "QCenter",
+	"version": "0.01",
+	"description": "Shortcut app for quickly running your favorite apps",
+	"icon": "app.png",
+	"tags": "",
+	"supports": ["BANGLEJS2"],
+	"readme": "README.md",
+	"screenshots": [{ "url": "screenshot.png" }],
+	"storage": [
+		{ "name": "qcenter.app.js", "url": "app.js" },
+		{ "name": "qcenter.settings.js", "url": "settings.js" },
+		{ "name": "qcenter.img", "url": "app-icon.js", "evaluate": true }
+	]
 }

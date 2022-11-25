@@ -76,14 +76,14 @@ var appButtons = groupBy3(pinnedApps).map((appGroup, i) => {
 	});
 });
 
-// create basic layout content with status info on top
+// create basic layout content with status info and sensor status on top
 var layoutContent = [
 	{
 		type: "h",
 		pad: 5,
 		c: [
 			{ type: "txt", font: "8x12", scale: 2, label: E.getBattery() + "%" },
-			{ type: "txt", font: "8x12", scale: 2, label: " " + E.getTemperature() + "°C" },
+			{ type: "txt", font: "8x12", scale: 2, label: "GPS: " + (Bangle.isGPSOn() ? "ON" : "OFF") },
 		],
 	},
 ];

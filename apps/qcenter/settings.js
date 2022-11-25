@@ -52,12 +52,34 @@
 			E.showMenu(exitGestureMenu);
 		};
 
-		//List all pinned apps
+		//List all pinned apps, redirecting to menu with options to unpin and reorder
 		pinnedApps.forEach((app, i) => {
-			mainmenu["Remove " + app.name] = function () {
-				pinnedApps.splice(i, 1);
-				save("pinnedApps", pinnedApps);
-				showMainMenu();
+			mainmenu[app.name] = function () {
+				E.showMenu({
+					"": { title: app.name },
+					"< Back": () => {
+						showMainMenu();
+					},
+					"Unpin": () => {
+						pinnedApps.splice(i, 1);
+						save("pinnedApps", pinnedApps);
+						showMainMenu();
+					},
+					"Move Up": () => {
+						if (i > 0) {
+							pinnedApps.splice(i - 1, 0, pinnedApps.splice(i, 1)[0]);
+							save("pinnedApps", pinnedApps);
+							showMainMenu();
+						}
+					},
+					"Move Down": () => {
+						if (i < pinnedApps.length - 1) {
+							pinnedApps.splice(i + 1, 0, pinnedApps.splice(i, 1)[0]);
+							save("pinnedApps", pinnedApps);
+							showMainMenu();
+						}
+					},
+				});
 			};
 		});
 
