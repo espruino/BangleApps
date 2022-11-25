@@ -51,8 +51,9 @@ let draw = function() {
   x = R.w / 2;
   y = R.y + R.h / 2 - 12; // 12 = room for date
   var date = new Date();
-  var hourStr = date.getHours();
-  var minStr = date.getMinutes().toString().padStart(2,0);
+  var local_time = require("locale").time(date, 1);
+  var hourStr = local_time.split(":")[0].trim().padStart(2,'0');
+  var minStr = local_time.split(":")[1].trim().padStart(2, '0');
   dateStr = require("locale").dow(date, 1).toUpperCase()+ " "+
             require("locale").date(date, 0).toUpperCase();
 
