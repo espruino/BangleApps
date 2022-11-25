@@ -266,6 +266,7 @@
     WIDGETS["recorder"].reload();
     return Promise.resolve(settings.recording);
   }/*,plotTrack:function(m) { // m=instance of openstmap module
+    // FIXME - add track plotting
     // if we're here, settings was already loaded
     var f = require("Storage").open(settings.file,"r");
     var l = f.readLine(f);
