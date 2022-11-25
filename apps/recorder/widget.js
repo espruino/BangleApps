@@ -267,7 +267,7 @@
     return Promise.resolve(settings.recording);
   },plotTrack:function(m) { // m=instance of openstmap module
     // Plots the current track in the currently set color
-    if (!activeRecorders) return; // not recording & not recording GPS
+    if (!activeRecorders.length) return; // not recording
     var settings = loadSettings();
     // keep function to draw track in RAM
     function plot(g) { "ram";
@@ -276,6 +276,7 @@
       if (l===undefined) return; // empty file?
       var mp, c = l.split(",");
       var la=c.indexOf("Latitude"),lo=c.indexOf("Longitude");
+      if (la<0 || lb<0) return; // no GPS!
       l = f.readLine();
       while (l && !c[la]) {
         c = l.split(",");
