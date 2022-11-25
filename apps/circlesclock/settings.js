@@ -17,7 +17,6 @@
   var valuesCircleTypes = ["empty","weather", "sunprogress"];
   var namesCircleTypes = ["empty","weather", "sun"];
   clock_info.load().forEach(e=>{
-    //TODO filter for hasRange and other
     if(!e.items.length || !e.items[0].name) {
       //suppose unnamed are varying (like timers or events), pick the first
       item = e.items[0];

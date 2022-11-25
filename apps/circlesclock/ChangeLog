@@ -31,3 +31,4 @@
 0.16: Fix const error
       Use widget_utils if available
 0.17: Load circles from clkinfo
+0.18: Improved clkinfo handling

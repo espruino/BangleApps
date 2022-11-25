@@ -690,17 +690,18 @@ function drawClkInfo(index, w) {
     return;
   }
   var item = info.items[circleItemNum[index-1]];
-  //TODO do hide()+get() here
   item.show();
   item.hide();
-  item=item.get();
-  var img = item.img;
+  var data=item.get();
+  var img = data.img;
+  var percent = 1; //fill up if no range
+  var txt = data.text;
   if(!img) img = info.img;
-  let percent = (item.v-item.min) / item.max;
-  if(isNaN(percent)) percent = 1; //fill it up
+  if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
+  if(item.short) txt = item.short;
   drawGauge(w, h3, percent, color);
   drawInnerCircleAndTriangle(w);
-  writeCircleText(w, item.text);
+  writeCircleText(w, txt);
   g.setColor(getCircleIconColor(type, color, percent))
     .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
