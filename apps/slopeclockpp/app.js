@@ -122,7 +122,7 @@ let animate = function(isIn, callback) {
 // clock info menus (scroll up/down for info)
 let clockInfoDraw = (itm, info, options) => {
   let texty = options.y+41;
-  g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty, options.x+options.w-2, texty+15);
+  g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty-15, options.x+options.w-2, texty);
 
   if (options.focus) g.setColor(options.hl);
   if (options.x < g.getWidth()/2) { // left align
