@@ -14,3 +14,4 @@
 0.13: Use a single image file with 'frames' of data (drastically reduces file count, possibility of >1 map on device)
 0.14: Added ability to upload multiple sets of map tiles
       Support for zooming in on map
+      Satellite count moved to widget bar to leave more room for the map

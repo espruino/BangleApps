@@ -11,11 +11,11 @@ function redraw() {
   m.draw();
   drawMarker();
   if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
-    g.flip().setColor("#f00"); // force immediate draw on double-buffered screens - track will update later
+    g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
     WIDGETS["gpsrec"].plotTrack(m);
   }
   if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
-    g.flip().setColor("#f00"); // force immediate draw on double-buffered screens - track will update later
+    g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
     WIDGETS["recorder"].plotTrack(m);
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
