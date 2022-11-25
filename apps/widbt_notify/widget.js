@@ -40,7 +40,7 @@
 
     redrawCurrentApp: function() {
       if (typeof(draw) == 'function') {
-        g.clear();
+        g.reset().clear();
         draw();
         Bangle.loadWidgets();
         Bangle.drawWidgets();

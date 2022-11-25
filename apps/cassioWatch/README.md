@@ -8,4 +8,5 @@ It displays current temperature,day,steps,battery.heartbeat and weather.
 
 
 **To-do**:
-Align and change size of some elements.
+
+* Align and change size of some elements

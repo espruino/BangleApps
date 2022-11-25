@@ -18,3 +18,4 @@
 0.16: Use a cache of app.info files to speed up loading the launcher
 0.17: Don't display 'Loading...' now the watch has its own loading screen
 0.18: Add 'back' icon in top-left to go back to clock
+0.19: Fix regression after back button added (returnToClock was called twice!)

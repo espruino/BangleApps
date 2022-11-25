@@ -5,7 +5,7 @@
   "version": "0.04",
   "description": "A very simple app to start a timer.",
   "icon": "app.png",
-  "tags": "tool,alarm,timer",
+  "tags": "tool,alarm,timer,clkinfo",
   "dependencies": {"scheduler":"type"},
   "supports": ["BANGLEJS2"],
   "screenshots": [{"url":"screenshot_1.png"}, {"url": "screenshot_2.png"}, {"url": "screenshot_3.png"}, {"url": "screenshot_4.png"}],

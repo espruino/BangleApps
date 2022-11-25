@@ -278,12 +278,13 @@ exports.enable = () => {
         let currentLat=20;
         let currentLon=10;
         let currentCourse=10;
-        let currentAlt=-100;
+        let currentDir=1000;
+        let currentAlt=500;
         let currentSats=5;
         modGps(() => {
-          currentLat += 0.1;
+          currentLat += 0.01;
           if (currentLat > 50) currentLat = 20;
-          currentLon += 0.1;
+          currentLon += 0.01;
           if (currentLon > 20) currentLon = 10;
           currentSpeed *= 10;
           if (currentSpeed > 1000) currentSpeed = 1;
@@ -291,8 +292,9 @@ exports.enable = () => {
           if (currentCourse > 360) currentCourse -= 360;
           currentSats += 1;
           if (currentSats > 10) currentSats = 5;
-          currentAlt *= 10;
-          if (currentAlt > 1000) currentAlt = -100;
+          currentAlt += currentDir;
+          if (currentAlt > 20000) currentDir = -2000;
+          if (currentAlt < -2000) currentDir = 2000;
           return {
           "lat": currentLat,
           "lon": currentLon,

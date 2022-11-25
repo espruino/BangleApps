@@ -255,8 +255,11 @@ and which gives information about the app for the Launcher.
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
+                              //   'module' - this provides a module that can be used with 'require'.
+                              //              'provides_modules' should be used if type:module is specified
                               //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
                               //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
+                              //   'clkinfo' - Provides a 'myapp.clkinfo.js' file that can be used to display info in clocks - see modules/clock_info.js
                               //   'RAM' - code that runs and doesn't upload anything to storage
                               //   'launch' - replacement 'Launcher'
                               //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
@@ -266,10 +269,21 @@ and which gives information about the app for the Launcher.
                               //   'locale' - provides 'locale' library for language-specific date/distance/etc
                               //              (a version of 'locale' is included in the firmware)
   "tags": "",                 // comma separated tag list for searching
+                              // common types are:
+                              //   'clock' - it's a clock
+                              //   'widget' - it is (or provides) a widget
+                              //   'outdoors' - useful for outdoor activities
+                              //   'tool' - a useful utility (timer, calculator, etc)
+                              //   'game' - a game
+                              //   'bluetooth' - uses Bluetooth LE
+                              //   'system' - used by the system
+                              //   'clkinfo' - provides or uses clock_info module for data on your clock face (see modules/clock_info.js)
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
+  "dependencies" : { "messageicons":"module" } // optional, depend on a specific library to be used with 'require'
+  "provides_modules" : ["messageicons"] // optional, this app provides a module that can be used with 'require'
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
                               // A 'Read more...' link will be added under the app
@@ -454,7 +468,10 @@ It should also add `myappid.json` to `data`, to make sure it is cleaned up when 
 ## Modules
 
 You can include any of [Espruino's modules](https://www.espruino.com/Modules) as
-normal with `require("modulename")`. If you want to develop your own module for your
+normal with `require("modulename")`. To include [Bangle's modules](modules) for use in the Web
+IDE, [upload the modules to internal storage](modules#upload-the-module-to-the-bangles-internal-storage)
+or [change the IDE's search path](modules#change-the-web-ide-search-path-to-include-banglejs-modules).
+If you want to develop your own module for your
 app(s) then you can do that too. Just add the module into the `modules` folder
 then you can use it from your app as normal.
 

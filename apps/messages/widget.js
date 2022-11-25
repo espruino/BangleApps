@@ -21,7 +21,8 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
     g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
     for(let i = 0;i < msgsShown;i++) {
       const msg = this.msgs[i];
-      const colors = [g.theme.bg, g.setColor(require("messages").getMessageImageCol(msg)).getColor()];
+      const colors = [g.theme.bg,
+                      require("messageicons").getColor(msg, {settings:settings})];
       if (settings.flash && ((Date.now()/1000)&1)) {
         if (colors[1] == g.theme.fg) {
           colors.reverse();
@@ -31,7 +32,7 @@ WIDGETS["messages"]={area:"tl", width:0, draw:function(recall) {
       }
       g.setColor(colors[1]).setBgColor(colors[0]);
       // draw the icon, or '...' if too many messages
-      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("EASBAGGG88/zz2GG") : require("messages").getMessageImage(msg),
+      g.drawImage(i == (settings.maxMessages - 1) && this.msgs.length > settings.maxMessages ? atob("EASBAGGG88/zz2GG") : require("messageicons").getImage(msg),
                   this.x + 12 + i * 24, this.y + 12, {rotate:0/*force centering*/});
     }
   }

@@ -23,7 +23,6 @@
     '': {
       'title': 'Power Manager'
     },
-    '< Back': back,
     'Monotonic percentage': {
       value: !!settings.forceMonoPercentage,
       onchange: v => {
@@ -44,29 +43,29 @@
     }
   };
 
-
   function roundToDigits(number, stepsize) {
     return Math.round(number / stepsize) * stepsize;
   }
 
-  function getCurrentVoltageDirect() {
-    return (analogRead(D3) + analogRead(D3) + analogRead(D3) + analogRead(D3)) / 4;
-  }
-
   var stepsize = 0.0002;
-  var full = 0.32;
+  var full = 0.3144;
 
   function getInitialCalibrationOffset() {
     return roundToDigits(systemsettings.batFullVoltage - full, stepsize) || 0;
   }
 
-
   var submenu_calibrate = {
     '': {
-      title: "Calibrate"
+      title: "Calibrate",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
     },
-    '< Back': function() {
-      E.showMenu(mainmenu);
+    'Autodetect': {
+      value: !!settings.autoCalibration,
+      onchange: v => {
+        writeSettings("autoCalibration", v);
+      }
     },
     'Offset': {
       min: -0.05,
@@ -75,24 +74,8 @@
       value: getInitialCalibrationOffset(),
       format: v => roundToDigits(v, stepsize).toFixed((""+stepsize).length - 2),
       onchange: v => {
-        print(typeof v);
-        systemsettings.batFullVoltage = v + full;
-        require("Storage").writeJSON("setting.json", systemsettings);
+        require("powermanager").setCalibration(v + full);
       }
-    },
-    'Auto': function() {
-      var newVoltage = getCurrentVoltageDirect();
-      E.showAlert("Please charge fully before auto setting").then(() => {
-        E.showPrompt("Set current charge as full").then((r) => {
-          if (r) {
-            systemsettings.batFullVoltage = newVoltage;
-            require("Storage").writeJSON("setting.json", systemsettings);
-            //reset value shown in menu to the newly set one
-            submenu_calibrate.Offset.value = getInitialCalibrationOffset();
-            E.showMenu(mainmenu);
-          }
-        });
-      });
     },
     'Clear': function() {
       E.showPrompt("Clear charging offset?").then((r) => {
@@ -109,10 +92,10 @@
 
   var submenu_chargewarn = {
     '': {
-      title: "Charge warning"
-    },
-    '< Back': function() {
-      E.showMenu(mainmenu);
+      title: "Charge warning",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
     },
     'Enabled': {
       value: !!settings.warnEnabled,

@@ -4,6 +4,7 @@ of the time. */
 E.showMessage(/*LANG*/"Updating boot0...");
 var s = require('Storage').readJSON('setting.json',1)||{};
 var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
+var FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
 var boot = "", bootPost = "";
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
   var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
@@ -77,10 +78,16 @@ if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passke
 if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
 // ================================================== FIXING OLDER FIRMWARES
-// 2v15.68 and before had compass heading inverted.
-if (process.version.replace("v","")<215.68)
+if (FWVERSION<215.068) // 2v15.68 and before had compass heading inverted.
   boot += `Bangle.on('mag',e=>{if(!isNaN(e.heading))e.heading=360-e.heading;});
 Bangle.getCompass=(c=>(()=>{e=c();if(!isNaN(e.heading))e.heading=360-e.heading;return e;}))(Bangle.getCompass);`;
+
+// deleting stops us getting confused by our own decl. builtins can't be deleted
+// this is a polyfill without fastloading capability
+delete Bangle.showClock;
+if (!Bangle.showClock) boot += `Bangle.showClock = ()=>{load(".bootcde")};\n`;
+delete Bangle.load;
+if (!Bangle.load) boot += `Bangle.load = load;\n`;
 
 // ================================================== BOOT.JS
 // Append *.boot.js files

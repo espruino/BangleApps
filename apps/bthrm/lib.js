@@ -106,9 +106,10 @@ exports.enable = () => {
           var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
           supportedCharacteristics["0x2a37"].active = bpm > 0;
           log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
-          if (supportedCharacteristics["0x2a37"].active) stopFallback();
+          switchFallback();
           if (bpmTimeout) clearTimeout(bpmTimeout);
           bpmTimeout = setTimeout(()=>{
+            bpmTimeout = undefined;
             supportedCharacteristics["0x2a37"].active = false;
             startFallback();
           }, 3000);
@@ -147,15 +148,15 @@ exports.enable = () => {
             battery = lastReceivedData["0x180f"]["0x2a19"];
           }
 
-          if (settings.replace){
+          if (settings.replace && bpm > 0){
             var repEvent = {
               bpm: bpm,
               confidence: (sensorContact || sensorContact === undefined)? 100 : 0,
               src: "bthrm"
             };
 
-            log("Emitting HRM", repEvent);
-            Bangle.emit("HRM_int", repEvent);
+            log("Emitting HRM_R(bt)", repEvent);
+            Bangle.emit("HRM_R", repEvent);
           }
 
           var newEvent = {
@@ -254,7 +255,7 @@ exports.enable = () => {
     var retry = function() {
       log("Retry");
 
-      if (!currentRetryTimeout){
+      if (!currentRetryTimeout && !powerdownRequested){
 
         var clampedTime = retryTime < 100 ? 100 : retryTime;
 
@@ -280,9 +281,13 @@ exports.enable = () => {
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
-      clearRetryTimeout(reason != "Connection Timeout");
+
+      var retryTimeResetNeeded = true;
+      retryTimeResetNeeded &= reason != "Connection Timeout";
+      retryTimeResetNeeded &= reason != "No device found matching filters";
+      clearRetryTimeout(retryTimeResetNeeded);
       supportedCharacteristics["0x2a37"].active = false;
-      startFallback();
+      if (!powerdownRequested) startFallback();
       blockInit = false;
       if (settings.warnDisconnect && !buzzing){
         buzzing = true;
@@ -312,13 +317,13 @@ exports.enable = () => {
         result = result.then(()=>{
           log("Starting notifications", newCharacteristic);
           var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
-          if (settings.gracePeriodNotification > 0){
-            log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
-            startPromise = startPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodNotification);
-            });
-          }
+          
+          log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
+          startPromise = startPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodNotification);
+          });
+          
           return startPromise;
         });
       }
@@ -364,7 +369,7 @@ exports.enable = () => {
 
     var initBt = function () {
       log("initBt with blockInit: " + blockInit);
-      if (blockInit){
+      if (blockInit && !powerdownRequested){
         retry();
         return;
       }
@@ -382,8 +387,14 @@ exports.enable = () => {
           return;
         }
         log("Requesting device with filters", filters);
-        promise = NRF.requestDevice({ filters: filters, active: true });
-
+        try {
+          promise = NRF.requestDevice({ filters: filters, active: settings.active });
+        } catch (e){
+          log("Error during initial request:", e);
+          onDisconnect(e);
+          return;
+        }
+        
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
         }
@@ -429,30 +440,30 @@ exports.enable = () => {
           var connectPromise = gatt.connect(connectSettings).then(function() {
             log("Connected.");
           });
-          if (settings.gracePeriodConnect > 0){
-            log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
-            connectPromise = connectPromise.then(()=>{
-              log("Wait after connect");
-              return waitingPromise(settings.gracePeriodConnect);
-            });
-          }
+          log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
+          connectPromise = connectPromise.then(()=>{
+            log("Wait after connect");
+            return waitingPromise(settings.gracePeriodConnect);
+          });
           return connectPromise;
         } else {
           return Promise.resolve();
         }
       });
-
-/*      promise = promise.then(() => {
-        log(JSON.stringify(gatt.getSecurityStatus()));
-        if (gatt.getSecurityStatus()['bonded']) {
-          log("Already bonded");
-          return Promise.resolve();
-        } else {
-          log("Start bonding");
-          return gatt.startBonding()
-            .then(() => console.log(gatt.getSecurityStatus()));
-        }
-      });*/
+      
+      if (settings.bonding){
+        promise = promise.then(() => {
+          log(JSON.stringify(gatt.getSecurityStatus()));
+          if (gatt.getSecurityStatus()['bonded']) {
+            log("Already bonded");
+            return Promise.resolve();
+          } else {
+            log("Start bonding");
+            return gatt.startBonding()
+              .then(() => log("Security status" + gatt.getSecurityStatus()));
+          }
+        });
+      }
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length === 0){
@@ -476,13 +487,11 @@ exports.enable = () => {
               log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
-            if (settings.gracePeriodService > 0) {
-              log("Add " + settings.gracePeriodService + "ms grace period after services");
-              result = result.then(()=>{
-                log("Wait after services");
-                return waitingPromise(settings.gracePeriodService);
-              });
-            }
+            log("Add " + settings.gracePeriodService + "ms grace period after services");
+            result = result.then(()=>{
+              log("Wait after services");
+              return waitingPromise(settings.gracePeriodService);
+            });
             return result;
           });
         } else {
@@ -505,6 +514,8 @@ exports.enable = () => {
       });
     };
 
+    var powerdownRequested = false;
+
     Bangle.setBTHRMPower = function(isOn, app) {
       // Do app power handling
       if (!app) app="?";
@@ -515,11 +526,14 @@ exports.enable = () => {
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        powerdownRequested = false;
         switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
       } else { // not on
         log("Power off for " + app);
+        powerdownRequested = true;
         clearRetryTimeout(true);
+        stopFallback();
         if (gatt) {
           if (gatt.connected){
             log("Disconnect with gatt", gatt);
@@ -538,39 +552,44 @@ exports.enable = () => {
     };
 
     if (settings.replace){
+      // register a listener for original HRM events and emit as HRM_int
       Bangle.on("HRM", (e) => {
         e.modified = true;
+        log("Emitting HRM_int", e);
         Bangle.emit("HRM_int", e);
+        if (fallbackActive){
+          // if fallback to internal HRM is active, emit as HRM_R to which everyone listens
+          log("Emitting HRM_R(int)", e);
+          Bangle.emit("HRM_R", e);
+        }
       });
 
-      Bangle.origOn = Bangle.on;
-      Bangle.on = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origOn("HRM_int", callback);
-        } else {
-          Bangle.origOn(name, callback);
-        }
-      };
+      // force all apps wanting to listen to HRM to actually get events for HRM_R
+      Bangle.on = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.on);
 
-      Bangle.origRemoveListener = Bangle.removeListener;
-      Bangle.removeListener = function(name, callback) {
-        if (name == "HRM") {
-          Bangle.origRemoveListener("HRM_int", callback);
-        } else {
-          Bangle.origRemoveListener(name, callback);
-        }
-      };
-
+      Bangle.removeListener = ( o => (name, cb) => {
+        o = o.bind(Bangle);
+        if (name == "HRM") o("HRM_R", cb);
+        else o(name, cb);
+      })(Bangle.removeListener);
     }
 
     Bangle.origSetHRMPower = Bangle.setHRMPower;
 
     if (settings.startWithHrm){
-
       Bangle.setHRMPower = function(isOn, app) {
         log("setHRMPower for " + app + ": " + (isOn?"on":"off"));
         if (settings.enabled){
           Bangle.setBTHRMPower(isOn, app);
+          if (Bangle._PWR && Bangle._PWR.HRM && Object.keys(Bangle._PWR.HRM).length == 0) {
+            Bangle._PWR.BTHRM = [];
+            Bangle.setBTHRMPower(0);
+            if (!isOn) stopFallback();
+          }
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
           Bangle.origSetHRMPower(isOn, app);
@@ -626,7 +645,11 @@ exports.enable = () => {
     E.on("kill", ()=>{
       if (gatt && gatt.connected){
         log("Got killed, trying to disconnect");
-        gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect on kill", e));
+        try {
+          gatt.disconnect().then(()=>log("Disconnected on kill")).catch((e)=>log("Error during disconnnect promise on kill", e));
+        } catch (e) {
+          log("Error during disconnnect on kill", e)
+        }
       }
     });
   }

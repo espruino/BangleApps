@@ -2,7 +2,7 @@
   "id": "sensortools",
   "name": "Sensor tools",
   "shortName": "Sensor tools",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Tools for testing and debugging apps that use sensor input",
   "icon": "icon.png",
   "type": "bootloader",
