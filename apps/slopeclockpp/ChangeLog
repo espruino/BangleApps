@@ -4,3 +4,4 @@
 0.04: Changed to use clock_info for displayed data
       Made fonts smaller to avoid overlap when (eg) 22:00
       Allowed black/white background (as that can look nice too)
+0.05: Images in clkinfo are optional now

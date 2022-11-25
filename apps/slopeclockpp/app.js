@@ -121,18 +121,18 @@ let animate = function(isIn, callback) {
 
 // clock info menus (scroll up/down for info)
 let clockInfoDraw = (itm, info, options) => {
-  let texty = options.y+26;
+  let texty = options.y+41;
   g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty, options.x+options.w-2, texty+15);
 
   if (options.focus) g.setColor(options.hl);
   if (options.x < g.getWidth()/2) { // left align
     let x = options.x+2;
-    g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
-    g.setFontAlign(-1,-1).drawString(info.text, x,texty);
+    if (info.img) g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
+    g.setFontAlign(-1,1).drawString(info.text, x,texty);
   } else { // right align
     let x = options.x+options.w-3;
-    g.clearRect(x-23, options.y, x, options.y+23).drawImage(info.img, x-23, options.y);
-    g.setFontAlign(1,-1).drawString(info.text, x,texty);
+    if (info.img) g.clearRect(x-23, options.y, x, options.y+23).drawImage(info.img, x-23, options.y);
+    g.setFontAlign(1,1).drawString(info.text, x,texty);
   }
 };
 let clockInfoItems = require("clock_info").load();

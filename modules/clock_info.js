@@ -15,7 +15,7 @@ Note that each item is an object with:
 
 {
   'text'  // the text to display for this item
-  'img'   // a 24x24px image to display for this item
+  'img'   // optional: a 24x24px image to display for this item
   'v'     // (if hasRange==true) a numerical value
   'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
 }
@@ -36,7 +36,8 @@ example.clkinfo.js :
     items: [
       { name : "Item1",
         get : () => ({ text : "TextOfItem1", v : 10, min : 0, max : 100,
-                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
+                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==")
+                    }),
         show : () => {},
         hide : () => {}
         // run : () => {} optional (called when tapped)
@@ -139,8 +140,8 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
     g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
     if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
     var midx = options.x+options.w/2;
-    g.drawImage(info.img, midx-12,options.y+4);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, midx,options.y+36);
+    if (info.img) g.drawImage(info.img, midx-12,options.y+4);
+    g.setFont("6x8:2").setFontAlign(0,1).drawString(info.text, midx,options.y+44);
   }
 });
 // then when clock 'unloads':
@@ -166,8 +167,8 @@ let clockInfoDraw = (itm, info, options) => {
   g.reset().setBgColor(options.bg).setColor(options.fg).clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
   if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1)
   var midx = options.x+options.w/2;
-  g.drawImage(info.img, midx-12,options.y);
-  g.setFont("6x15").setFontAlign(0,-1).drawString(info.text, midx,options.y+26);
+  if (info.img) g.drawImage(info.img, midx-12,options.y);
+  g.setFont("6x15").setFontAlign(0,1).drawString(info.text, midx,options.y+41);
 };
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg });
@@ -225,7 +226,7 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
-      options.menuA += ud;
+      options.menuA += lr;
       if (options.menuA<0) options.menuA = menu.length-1;
       if (options.menuA>=menu.length) options.menuA = 0;
       options.menuB = 0;
