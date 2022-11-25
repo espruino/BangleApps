@@ -3,7 +3,7 @@
 	"name": "Quick Center",
 	"shortName": "QCenter",
 	"version": "0.01",
-	"description": "Shortcut app for quickly running your favorite apps",
+	"description": "An app for quickly launching your favourite apps, inspired by the control centres of other watches.",
 	"icon": "app.png",
 	"tags": "",
 	"supports": ["BANGLEJS2"],
