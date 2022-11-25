@@ -69,3 +69,5 @@
 	* Rescale display if lost and too far.
 	* New setting to hide points and increase display speed.
 	* Speed optimisations.
+	* Display small arrow symbol if going backwards.
+	* Estimated time of Arrival.

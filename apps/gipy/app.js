@@ -11,6 +11,20 @@ var settings = Object.assign(
   require("Storage").readJSON("gipy.json", true) || {}
 );
 
+let back_arrow = `
+          *****
+    *     *****
+   *      *****
+  **      *****
+ **************
+***************
+ *************
+  **
+   *
+    *
+`;
+let back_arrow_img = Graphics.createImage(back_arrow);
+
 let profile_start_times = [];
 
 function start_profiling() {
@@ -40,6 +54,25 @@ function binary_search(array, x) {
     else end = mid - 1;
   }
   return start;
+}
+
+// return a string containing estimated time of arrival.
+// speed is in km/h
+// remaining distance in km
+// hour, minutes is current time
+function compute_eta(hour, minutes, approximate_speed, remaining_distance) {
+  if (isNaN(approximate_speed) || approximate_speed < 0.1) {
+    return "";
+  }
+  let time_needed = (remaining_distance * 60) / approximate_speed; // in minutes
+  let eta_in_minutes = hour * 60 + minutes + time_needed;
+  let eta_minutes = Math.round(eta_in_minutes % 60);
+  let eta_hour = Math.round((eta_in_minutes - eta_minutes) / 60) % 24;
+  if (eta_minutes < 10) {
+    return eta_hour.toString() + ":0" + eta_minutes;
+  } else {
+    return eta_hour.toString() + ":" + eta_minutes;
+  }
 }
 
 class Status {
@@ -328,8 +361,22 @@ class Status {
     let approximate_speed = Math.round(
       (this.advanced_distance * 3.6) / done_in
     );
-    let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
 
+    let eta = compute_eta(
+      now.getHours(),
+      now.getMinutes(),
+      approximate_speed,
+      remaining_distance / 1000
+    );
+    g.setFont("6x8:2")
+      .setFontAlign(-1, -1, 0)
+      .setColor(g.theme.fg)
+      .drawString(eta, 0, 48);
+    if (this.orientation == 1) {
+      g.drawImage(back_arrow_img, 62, 32);
+    }
+
+    let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
     g.setFont("6x8:2")
       .setFontAlign(-1, -1, 0)
       .drawString(
@@ -512,8 +559,8 @@ function load_gpc(filename) {
   // checksum file size
   if (offset != file_size) {
     console.log("invalid file size", file_size, "expected", offset);
-    let msg = "invalid file\nsize " + file_size + "\ninstead of"+ offset;
-    E.showAlert(msg).then(function() {
+    let msg = "invalid file\nsize " + file_size + "\ninstead of" + offset;
+    E.showAlert(msg).then(function () {
       E.showAlert();
       start_gipy(path_data);
     });
