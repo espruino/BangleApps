@@ -81,9 +81,10 @@ var layoutContent = [
 	{
 		type: "h",
 		pad: 5,
+		fillx: 1,
 		c: [
-			{ type: "txt", font: "8x12", scale: 2, label: E.getBattery() + "%" },
-			{ type: "txt", font: "8x12", scale: 2, label: "GPS: " + (Bangle.isGPSOn() ? "ON" : "OFF") },
+			{ type: "txt", font: "8x12", pad: 3, scale: 2, label: E.getBattery() + "%" },
+			{ type: "txt", font: "8x12", pad: 3, scale: 2, label: "GPS: " + (Bangle.isGPSOn() ? "ON" : "OFF") },
 		],
 	},
 ];
