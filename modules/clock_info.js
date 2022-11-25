@@ -2,9 +2,9 @@
 that can be scrolled through on the clock face.
 
 `load()` returns an array of menu objects, where each object contains a list of menu items:
-
 * `name` : text to display and identify menu object (e.g. weather)
 * `img` : a 24x24px image
+* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date)
 * `items` : menu items such as temperature, humidity, wind etc.
 
 Note that each item is an object with:
@@ -15,6 +15,7 @@ Note that each item is an object with:
 
 {
   'text'  // the text to display for this item
+  'short' : (optional) a shorter text to display for this item (at most 6 characters)
   'img'   // optional: a 24x24px image to display for this item
   'v'     // (if hasRange==true) a numerical value
   'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)

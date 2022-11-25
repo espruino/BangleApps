@@ -21,22 +21,25 @@
         items: [
             {
                 name: "temperature",
+                hasRange : true,
                 get: () => ({ text: weather.temp, img: atob("GBiBAAA8AAB+AADnAADDAADDAADDAADDAADDAADbAADbAADbAADbAADbAADbAAHbgAGZgAM8wAN+wAN+wAM8wAGZgAHDgAD/AAA8AA=="),
-                  hasRange: true, v: parseInt(weather.temp), min: -30, max: 55}),
+                  v: parseInt(weather.temp), min: -30, max: 55}),
                 show: function() { weatherItems.items[0].emit("redraw"); },
                 hide: function () {}
             },
             {
                 name: "humidity",
+                hasRange : true,
                 get: () => ({ text: weather.hum, img: atob("GBiBAAAEAAAMAAAOAAAfAAAfAAA/gAA/gAI/gAY/AAcfAA+AQA+A4B/A4D/B8D/h+D/j+H/n/D/n/D/n/B/H/A+H/AAH/AAD+AAA8A=="),
-                  hasRange: true, v: parseInt(weather.hum), min: 0, max: 100}),
+                  v: parseInt(weather.hum), min: 0, max: 100}),
                 show: function() { weatherItems.items[1].emit("redraw"); },
                 hide: function () {}
             },
             {
                 name: "wind",
+                hasRange : true,
                 get: () => ({ text: weather.wind, img: atob("GBiBAAHgAAPwAAYYAAwYAAwMfAAY/gAZh3/xg//hgwAAAwAABg///g//+AAAAAAAAP//wH//4AAAMAAAMAAYMAAYMAAMcAAP4AADwA=="),
-                  hasRange: true, v: parseInt(weather.wind), min: 0, max: 118}),
+                  v: parseInt(weather.wind), min: 0, max: 118}),
                 show: function() { weatherItems.items[2].emit("redraw"); },
                 hide: function () {}
             },

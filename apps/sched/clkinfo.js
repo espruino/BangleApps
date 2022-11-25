@@ -54,13 +54,15 @@
   var alarmItems = {
     name: "Alarms",
     img: img,
+    dynamic: true,
     items: alarm.getAlarms().filter(a=>!a.appid)
     //.sort((a,b)=>alarm.getTimeToAlarm(a)-alarm.getTimeToAlarm(b))
     .sort((a,b)=>getAlarmOrder(a)-getAlarmOrder(b))
       .map((a, i)=>({
         name: null,
+        hasRange: true,
         get: () => ({ text: getAlarmText(a), img: getAlarmIcon(a),
-          hasRange: true, v: getAlarmValue(a), min:0, max:getAlarmMax(a)}),
+          v: getAlarmValue(a), min:0, max:getAlarmMax(a)}),
         show: function() { alarmItems.items[i].emit("redraw"); },
         hide: function () {},
         run: function() { }
