@@ -3,3 +3,4 @@
 0.03: Incorporated improvements from Peer David for accuracy, fix dark mode, widgets run in background
 0.04: Changed clock to use 12/24 hour format based on locale
 0.05: Tell clock widgets to hide.
+0.06: Widgets can now be made visible by swiping down (#2196)

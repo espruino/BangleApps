@@ -38,35 +38,32 @@
   recorders.hrmint = function() {
     var active = false;
     var bpmTimeout;
-    var bpm = "", bpmConfidence = "", src="";
+    var bpm = "", bpmConfidence = "";
     function onHRM(h) {
       bpmConfidence = h.confidence;
       bpm = h.bpm;
-      srv = h.src;
       if (h.bpm > 0){
         active = true;
-        print("active" + h.bpm);
         if (bpmTimeout) clearTimeout(bpmTimeout);
         bpmTimeout = setTimeout(()=>{
-          print("inactive");
           active = false;
         },3000);
       }
     }
     return {
       name : "HR int",
-      fields : ["Heartrate", "Confidence"],
+      fields : ["Int Heartrate", "Int Confidence"],
       getValues : () => {
-        var r = [bpm,bpmConfidence,src];
-        bpm = ""; bpmConfidence = ""; src="";
+        var r = [bpm,bpmConfidence];
+        bpm = ""; bpmConfidence = "";
         return r;
       },
       start : () => {
-        Bangle.origOn('HRM', onHRM);
+        Bangle.on('HRM_int', onHRM);
         if (Bangle.origSetHRMPower) Bangle.origSetHRMPower(1,"recorder");
       },
       stop : () => {
-        Bangle.removeListener('HRM', onHRM);
+        Bangle.removeListener('HRM_int', onHRM);
         if (Bangle.origSetHRMPower) Bangle.origSetHRMPower(0,"recorder");
       },
       draw : (x,y) => g.setColor(( Bangle.origIsHRMOn && Bangle.origIsHRMOn() && active)?"#0f0":"#8f8").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)

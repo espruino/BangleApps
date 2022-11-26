@@ -3,7 +3,7 @@
 */
 
 var fs = require("fs");
-var heatshrink = require("../core/lib/heatshrink");
+var heatshrink = require("../webtools/heatshrink");
 var acorn;
 try {
   acorn = require("acorn");
@@ -76,12 +76,12 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies'
+  'dependencies', 'provides_modules'
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings","waypoints"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -167,16 +167,15 @@ apps.forEach((app,appIdx) => {
   if (app.dependencies) {
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
-        if (!["type","app"].includes(app.dependencies[dependency]))
-          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`, {file:metadataFile});
+        if (!["type","app","module"].includes(app.dependencies[dependency]))
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type/app/module' right now`, {file:metadataFile});
         if (app.dependencies[dependency]=="type" && !METADATA_TYPES.includes(dependency))
           ERROR(`App ${app.id} 'type' dependency must be one of `+METADATA_TYPES, {file:metadataFile});
-
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
-  
+
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
@@ -236,7 +235,7 @@ apps.forEach((app,appIdx) => {
       // clock app checks
       if (app.type=="clock") {
         var a = fileContents.indexOf("Bangle.loadWidgets()");
-        var b = fileContents.indexOf("Bangle.setUI(");        
+        var b = fileContents.indexOf("Bangle.setUI(");
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
@@ -324,6 +323,15 @@ apps.forEach((app,appIdx) => {
     INTERNAL_FILES_IN_APP_TYPE[app.type].forEach(fileName => {
       if (!fileNames.includes(fileName))
         ERROR(`App ${app.id} should include file named ${fileName} but it doesn't`, {file:metadataFile});
+    });
+  }
+  if (app.type=="module" && !app.provides_modules) {
+    ERROR(`App ${app.id} has type:module but it doesn't have a provides_modules field`, {file:metadataFile});
+  }
+  if (app.provides_modules) {
+    app.provides_modules.forEach(modulename => {
+      if (!app.storage.find(s=>s.name==modulename))
+        ERROR(`App ${app.id} has provides_modules ${modulename} but it doesn't provide that filename`, {file:metadataFile});
     });
   }
 });

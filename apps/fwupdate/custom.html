@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p>This tool allows you to update the bootloader on <a href="https://www.espruino.com/Bangle.js2">Bangle.js 2</a> devices
+    <p>This tool allows you to update the firmware on <a href="https://www.espruino.com/Bangle.js2">Bangle.js 2</a> devices
       from within the App Loader.</p>
 
     <div id="fw-unknown">
@@ -12,27 +12,41 @@
     <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">see the Bangle.js 1 instructions</a></b></p>
   </div>
     <ul>
-    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and bootloader is <span id="boot-version" style="font-weight:bold">unknown</span></p>
+    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span></p>
   </ul>
     <div id="fw-ok" style="display:none">
-      <p>If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x bootloader, the Firmware Update
-        will fail with a message about the bootloader version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to bootloader 2v12</a> and then click the 'Upload' button that appears.</p>
+      <p>If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
+        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to DFU 2v12</a> and then click the 'Upload' button that appears.</p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
         <ul id="latest-firmware-list">
         </ul>
         <p>To update, click a link above and then click the 'Upload' button that appears.</p>
       </div>
-      <a href="#" id="advanced-btn">Advanced ▼</a>
+
+      <p><a href="#" id="info-btn">What is DFU? ▼</a></p>
+      <div id="info-div" style="display:none">
+        <p><b>What is DFU?</b></p>
+        <p><b>DFU</b> stands for <b>Device Firmware Update</b>. This is the first
+        bit of code that runs when Bangle.js starts, and it is able to update the
+        Bangle.js firmware. Normally you would update firmware via this Firmware
+        Updater app, but if for some reason Bangle.js will not boot, you can
+        <a href="https://www.espruino.com/Bangle.js2#firmware-updates">always use DFU to to the update manually</a>.</p>
+        <p>DFU is itself a bootloader, but here we're calling it DFU to avoid confusion
+        with the Bootloader app in the app loader (which prepares Bangle.js for running apps).</p>
+      </div>
+
+      <p><a href="#" id="advanced-btn">Advanced ▼</a></p>
       <div id="advanced-div" style="display:none">
+        <p><b>Advanced</b></p>
         <p>Firmware updates via this tool work differently to the NRF Connect method mentioned on
           <a href="https://www.espruino.com/Bangle.js2#firmware-updates">the Bangle.js 2 page</a>. Firmware
-          is uploaded to a file on the Bangle. Once complete the Bangle reboots and the bootloader copies
+          is uploaded to a file on the Bangle. Once complete the Bangle reboots and DFU copies
           the new firmware into internal Storage.</p>
         <p>In addition to the links above, you can upload a hex or zip file directly below. This file should be an <code>.app_hex</code>
-        file, *not* the normal <code>.hex</code> (as that contains the bootloader as well).</p>
+        file, *not* the normal <code>.hex</code> (as that contains the DFU as well).</p>
         <p><b>DANGER!</b> No verification is performed on uploaded ZIP or HEX files - you could
-        potentially overwrite your bootloader with the wrong binary and brick your Bangle.</p>
+        potentially overwrite your DFU with the wrong binary and brick your Bangle.</p>
         <input class="form-input" type="file" id="fileLoader" accept=".hex,.app_hex,.zip"/><br>
       </div>
       <p><button id="upload" class="btn btn-primary" style="display:none">Upload</button></p>
@@ -73,7 +87,7 @@ function onInit(device) {
     document.getElementById("fw-ok").style = "";
   }
   Puck.eval("E.CRC32(E.memoryArea(0xF7000,0x7000))", crc => {
-    console.log("Bootloader CRC = "+crc);
+    console.log("DFU CRC = "+crc);
     var version = `unknown (CRC ${crc})`;
     var ok = true;
     if (crc==1339551013) { version = "2v10.219"; ok = false; }
@@ -299,8 +313,8 @@ function createJS_app(binary, startAddress, endAddress) {
   bin32[3] = VERSION; // VERSION! Use this to test ourselves
   console.log("CRC 0x"+bin32[2].toString(16));
   hexJS = "";//`\x10if (E.CRC32(E.memoryArea(${startAddress},${endAddress-startAddress}))==${bin32[2]}) { print("FIRMWARE UP TO DATE!"); load();}\n`;
-  hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1339551013) { print("BOOTLOADER 2v10.219 needs update"); load();}\n`;
-  hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1207580954) { print("BOOTLOADER 2v10.236 needs update"); load();}\n`;
+  hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1339551013) { print("DFU 2v10.219 needs update"); load();}\n`;
+  hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1207580954) { print("DFU 2v10.236 needs update"); load();}\n`;
   hexJS += '\x10var s = require("Storage");\n';
   hexJS += '\x10s.erase(".firmware");\n';
   var CHUNKSIZE = 2048;
@@ -320,7 +334,7 @@ function createJS_app(binary, startAddress, endAddress) {
 function createJS_bootloader(binary, startAddress, endAddress) {
   var crc = CRC32(binary);
   console.log("CRC 0x"+crc.toString(16));
-  hexJS = `\x10if (E.CRC32(E.memoryArea(${startAddress},${endAddress-startAddress}))==${crc}) { print("BOOTLOADER UP TO DATE!"); load();}\n`;
+  hexJS = `\x10if (E.CRC32(E.memoryArea(${startAddress},${endAddress-startAddress}))==${crc}) { print("DFU UP TO DATE!"); load();}\n`;
   hexJS += `\x10var _fw = new Uint8Array(${binary.length})\n`;
   var CHUNKSIZE = 1024;
   for (var i=0;i<binary.length;i+=CHUNKSIZE) {
@@ -330,14 +344,14 @@ function createJS_bootloader(binary, startAddress, endAddress) {
     hexJS += '\x10_fw.set(atob("'+chunk+'"), 0x'+(i).toString(16)+');\n';
   }
   hexJS += `\x10(function() { if (E.CRC32(_fw)!=${crc}) throw "Invalid CRC: 0x"+E.CRC32(_fw).toString(16);\n`;
-  hexJS += 'E.showMessage("Flashing Bootloader...")\n';
+  hexJS += 'E.showMessage("Flashing DFU...")\n';
   hexJS += 'E.setFlags({unsafeFlash:1})\n';
   hexJS += 'var f = require("Flash");\n';
   for (var i=startAddress;i<endAddress;i+=4096)
     hexJS += 'f.erasePage(0x'+i.toString(16)+');\n';
   hexJS += `f.write(_fw,${startAddress});\n`;
   hexJS += `})()\n`;
-  log("Bootloader ready for upload");
+  log("DFU ready for upload");
 }
 
 function hexFileLoaded(hexString) {
@@ -383,7 +397,7 @@ function hexFileLoaded(hexString) {
   });
 
   if (startAddress == 0xf7000) {
-    console.log("Bootloader - Writing to internal flash");
+    console.log("DFU - Writing to internal flash");
     createJS_bootloader(new Uint8Array(binary.buffer, HEADER_LEN), startAddress, endAddress);
   } else {
     console.log("App - Writing to external flash");
@@ -406,6 +420,10 @@ function handleUpload() {
 
 document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
 document.getElementById("upload").addEventListener("click", handleUpload);
+document.getElementById("info-btn").addEventListener("click", function() {
+  document.getElementById("info-btn").style = "display:none";
+  document.getElementById("info-div").style = "";
+});
 document.getElementById("advanced-btn").addEventListener("click", function() {
   document.getElementById("advanced-btn").style = "display:none";
   document.getElementById("advanced-div").style = "";
