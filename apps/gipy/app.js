@@ -372,7 +372,7 @@ class Status {
       .setFontAlign(-1, -1, 0)
       .setColor(g.theme.fg)
       .drawString(eta, 0, 48);
-    if (this.orientation == 1) {
+    if (orientation == 1) {
       g.drawImage(back_arrow_img, 62, 32);
     }
 
