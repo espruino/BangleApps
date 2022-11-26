@@ -3,4 +3,5 @@ apps/banglerun/rollup.config.js
 apps/schoolCalendar/fullcalendar/main.js
 apps/authentiwatch/qr_packed.js
 apps/qrcode/qr-scanner.umd.min.js
+apps/gipy/pkg/gpconv.js
 *.test.js

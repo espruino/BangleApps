@@ -1,3 +1,4 @@
+let clock_info = require("clock_info");
 let locale = require("locale");
 let storage = require("Storage");
 Graphics.prototype.setFontRobotoRegular50NumericOnly = function(scale) {
@@ -18,6 +19,7 @@ let settings = Object.assign(
   storage.readJSON(SETTINGS_FILE, true) || {}
 );
 
+ //TODO deprecate this (and perhaps use in the clkinfo module)
 // Load step goal from health app and pedometer widget as fallback
 if (settings.stepGoal == undefined) {
   let d = storage.readJSON("health.json", true) || {};
@@ -29,7 +31,7 @@ if (settings.stepGoal == undefined) {
   }
 }
 
-let timerHrm;
+let timerHrm; //TODO deprecate this
 let drawTimeout;
 
 /*
@@ -44,9 +46,8 @@ let showWidgets = settings.showWidgets || false;
 let circleCount = settings.circleCount || 3;
 let showBigWeather = settings.showBigWeather || false;
 
-let hrtValue;
+let hrtValue; //TODO deprecate this
 let now = Math.round(new Date().getTime() / 1000);
-
 
 // layout values:
 let colorFg = g.theme.dark ? '#fff' : '#000';
@@ -91,8 +92,20 @@ let circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
 let circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
 let circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 let iconOffset = circleCount == 3 ? 6 : 8;
-let defaultCircleTypes = ["steps", "hr", "battery", "weather"];
+let defaultCircleTypes = ["Bangle/Steps", "Bangle/HRM", "Bangle/Battery", "weather"];
 
+let circleInfoNum = [
+  0, // circle1
+  0, // circle2
+  0, // circle3
+  0, // circle4
+];
+let circleItemNum = [
+  0, // circle1
+  1, // circle2
+  2, // circle3
+  3, // circle4
+];
 
 function hideWidgets() {
   /*
@@ -111,7 +124,7 @@ function hideWidgets() {
 function draw() {
   g.clear(true);
   let widgetUtils;
-  
+
   try {
     widgetUtils = require("widget_utils");
   } catch (e) {
@@ -177,6 +190,15 @@ function drawCircle(index) {
   let w = getCircleXPosition(type);
 
   switch (type) {
+    case "weather":
+      drawWeather(w);
+      break;
+    case "sunprogress":
+    case "sunProgress":
+      drawSunProgress(w);
+      break;
+    //TODO those are going to be deprecated, keep for backwards compatibility for now
+    //ideally all data should come from some clkinfo
     case "steps":
       drawSteps(w);
       break;
@@ -189,13 +211,6 @@ function drawCircle(index) {
     case "battery":
       drawBattery(w);
       break;
-    case "weather":
-      drawWeather(w);
-      break;
-    case "sunprogress":
-    case "sunProgress":
-      drawSunProgress(w);
-      break;
     case "temperature":
       drawTemperature(w);
       break;
@@ -205,9 +220,12 @@ function drawCircle(index) {
     case "altitude":
       drawAltitude(w);
       break;
+    //end deprecated
     case "empty":
       // we draw nothing here
       return;
+    default:
+      drawClkInfo(index, w);
   }
 }
 
@@ -303,6 +321,102 @@ function getImage(graphic, color) {
     };
   }
 }
+
+function drawWeather(w) {
+  if (!w) w = getCircleXPosition("weather");
+  let weather = getWeather();
+  let tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
+  let code = weather ? weather.code : -1;
+
+  drawCircleBackground(w);
+
+  let color = getCircleColor("weather");
+  let percent;
+  let data = settings.weatherCircleData;
+  switch (data) {
+    case "humidity":
+      let humidity = weather ? weather.hum : undefined;
+      if (humidity >= 0) {
+        percent = humidity / 100;
+        drawGauge(w, h3, percent, color);
+      }
+      break;
+    case "wind":
+      if (weather) {
+        let wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+        if (wind[1] >= 0) {
+          if (wind[2] == "kmh") {
+            wind[1] = windAsBeaufort(wind[1]);
+          }
+          // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
+          percent = wind[1] / 12;
+          drawGauge(w, h3, percent, color);
+        }
+      }
+      break;
+    case "empty":
+      break;
+  }
+
+  drawInnerCircleAndTriangle(w);
+
+  writeCircleText(w, tempString ? tempString : "?");
+
+  if (code > 0) {
+    let icon = getWeatherIconByCode(code);
+    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+  } else {
+    g.drawString("?", w, h3 + radiusOuter);
+  }
+}
+
+function drawSunProgress(w) {
+  if (!w) w = getCircleXPosition("sunprogress");
+  let percent = getSunProgress();
+
+  // sunset icons:
+  let sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
+  let sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
+
+  drawCircleBackground(w);
+
+  let color = getCircleColor("sunprogress");
+
+  drawGauge(w, h3, percent, color);
+
+  drawInnerCircleAndTriangle(w);
+
+  let icon = sunSetDown;
+  let text = "?";
+  let times = getSunData();
+  if (times != undefined) {
+    let sunRise = Math.round(times.sunrise.getTime() / 1000);
+    let sunSet = Math.round(times.sunset.getTime() / 1000);
+    if (!isDay()) {
+      // night
+      if (now > sunRise) {
+        // after sunRise
+        let upcomingSunRise = sunRise + 60 * 60 * 24;
+        text = formatSeconds(upcomingSunRise - now);
+      } else {
+        text = formatSeconds(sunRise - now);
+      }
+      icon = sunSetUp;
+    } else {
+      // day, approx sunrise tomorrow:
+      text = formatSeconds(sunSet - now);
+      icon = sunSetDown;
+    }
+  }
+
+  writeCircleText(w, text);
+
+  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
+}
+
+/*
+ * Deprecated but nice as references for clkinfo
+ */
 
 function drawSteps(w) {
   if (!w) w = getCircleXPosition("steps");
@@ -406,99 +520,6 @@ function drawBattery(w) {
 
   g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 }
-
-function drawWeather(w) {
-  if (!w) w = getCircleXPosition("weather");
-  let weather = getWeather();
-  let tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
-  let code = weather ? weather.code : -1;
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("weather");
-  let percent;
-  let data = settings.weatherCircleData;
-  switch (data) {
-    case "humidity":
-      let humidity = weather ? weather.hum : undefined;
-      if (humidity >= 0) {
-        percent = humidity / 100;
-        drawGauge(w, h3, percent, color);
-      }
-      break;
-    case "wind":
-      if (weather) {
-        let wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-        if (wind[1] >= 0) {
-          if (wind[2] == "kmh") {
-            wind[1] = windAsBeaufort(wind[1]);
-          }
-          // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-          percent = wind[1] / 12;
-          drawGauge(w, h3, percent, color);
-        }
-      }
-      break;
-    case "empty":
-      break;
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, tempString ? tempString : "?");
-
-  if (code > 0) {
-    let icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-  } else {
-    g.drawString("?", w, h3 + radiusOuter);
-  }
-}
-
-function drawSunProgress(w) {
-  if (!w) w = getCircleXPosition("sunprogress");
-  let percent = getSunProgress();
-
-  // sunset icons:
-  let sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
-  let sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("sunprogress");
-
-  drawGauge(w, h3, percent, color);
-
-  drawInnerCircleAndTriangle(w);
-
-  let icon = sunSetDown;
-  let text = "?";
-  let times = getSunData();
-  if (times != undefined) {
-    let sunRise = Math.round(times.sunrise.getTime() / 1000);
-    let sunSet = Math.round(times.sunset.getTime() / 1000);
-    if (!isDay()) {
-      // night
-      if (now > sunRise) {
-        // after sunRise
-        let upcomingSunRise = sunRise + 60 * 60 * 24;
-        text = formatSeconds(upcomingSunRise - now);
-      } else {
-        text = formatSeconds(sunRise - now);
-      }
-      icon = sunSetUp;
-    } else {
-      // day, approx sunrise tomorrow:
-      text = formatSeconds(sunSet - now);
-      icon = sunSetDown;
-    }
-  }
-
-  writeCircleText(w, text);
-
-  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-
 function drawTemperature(w) {
   if (!w) w = getCircleXPosition("temperature");
 
@@ -575,6 +596,113 @@ function drawAltitude(w) {
     g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
 
   });
+}
+
+function shortValue(v) {
+  if (isNaN(v)) return '-';
+  if (v <= 999) return v;
+  if (v >= 1000 && v < 10000) {
+    v = Math.floor(v / 100) * 100;
+    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  if (v >= 10000) {
+    v = Math.floor(v / 1000) * 1000;
+    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+}
+
+function getSteps() {
+  if (Bangle.getHealthStatus) {
+    return Bangle.getHealthStatus("day").steps;
+  }
+  if (WIDGETS && WIDGETS.wpedom !== undefined) {
+    return WIDGETS.wpedom.getSteps();
+  }
+  return 0;
+}
+
+function getPressureValue(type) {
+  return new Promise((resolve) => {
+    if (Bangle.getPressure) {
+      if (!pressureLocked) {
+        pressureLocked = true;
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
+        }
+        Bangle.getPressure().then(function(d) {
+          pressureLocked = false;
+          if (d) {
+            pressureCache = d;
+            if (d[type]) {
+              resolve(d[type]);
+            }
+          }
+        }).catch(() => {});
+      } else {
+        if (pressureCache && pressureCache[type]) {
+          resolve(pressureCache[type]);
+        }
+      }
+    }
+  });
+}
+
+/*
+ * end deprecated
+ */
+
+var menu = null;
+function reloadMenu() {
+  menu = clock_info.load();
+  for(var i=1; i<5; i++)
+    if(settings['circle'+i].includes("/")) {
+      let parts = settings['circle'+i].split("/");
+      let infoName = parts[0], itemName = parts[1];
+      let infoNum = menu.findIndex(e=>e.name==infoName);
+      let itemNum = 0;
+      //suppose unnamed are varying (like timers or events), pick the first
+      if(itemName)
+        itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
+      circleInfoNum[i-1] = infoNum;
+      circleItemNum[i-1] = itemNum;
+    }
+}
+//reload periodically for changes?
+reloadMenu();
+
+function drawEmpty(img, w, color) {
+  drawGauge(w, h3, 0, color);
+  drawInnerCircleAndTriangle(w);
+  writeCircleText(w, "?");
+  if(img)
+    g.setColor(getGradientColor(color, 0))
+      .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
+}
+
+function drawClkInfo(index, w) {
+  var info = menu[circleInfoNum[index-1]];
+  var type = settings['circle'+index];
+  if (!w) w = getCircleXPosition(type);
+  drawCircleBackground(w);
+  const color = getCircleColor(type);
+  if(!info || !info.items.length) {
+    drawEmpty(info? info.img : null, w, color);
+    return;
+  }
+  var item = info.items[circleItemNum[index-1]];
+  //TODO do hide()+get() here
+  item.show();
+  item.hide();
+  item=item.get();
+  var img = item.img;
+  if(!img) img = info.img;
+  let percent = (item.v-item.min) / item.max;
+  if(isNaN(percent)) percent = 1; //fill it up
+  drawGauge(w, h3, percent, color);
+  drawInnerCircleAndTriangle(w);
+  writeCircleText(w, item.text);
+  g.setColor(getCircleIconColor(type, color, percent))
+    .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
 
 /*
@@ -770,125 +898,15 @@ function writeCircleText(w, content) {
   g.drawString(content, w, h3);
 }
 
-function shortValue(v) {
-  if (isNaN(v)) return '-';
-  if (v <= 999) return v;
-  if (v >= 1000 && v < 10000) {
-    v = Math.floor(v / 100) * 100;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-  if (v >= 10000) {
-    v = Math.floor(v / 1000) * 1000;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-}
-
-function getSteps() {
-  if (Bangle.getHealthStatus) {
-    return Bangle.getHealthStatus("day").steps;
-  }
-  if (WIDGETS && WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return 0;
-}
-
 function getWeather() {
   let jsonWeather = storage.readJSON('weather.json');
   return jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
-}
-
-function enableHRMSensor() {
-  Bangle.setHRMPower(1, "circleclock");
-  if (hrtValue == undefined) {
-    hrtValue = '...';
-    drawHeartRate();
-  }
-}
-
-let pressureLocked = false;
-let pressureCache;
-
-function getPressureValue(type) {
-  return new Promise((resolve) => {
-    if (Bangle.getPressure) {
-      if (!pressureLocked) {
-        pressureLocked = true;
-        if (pressureCache && pressureCache[type]) {
-          resolve(pressureCache[type]);
-        }
-        Bangle.getPressure().then(function(d) {
-          pressureLocked = false;
-          if (d) {
-            pressureCache = d;
-            if (d[type]) {
-              resolve(d[type]);
-            }
-          }
-        }).catch(() => {});
-      } else {
-        if (pressureCache && pressureCache[type]) {
-          resolve(pressureCache[type]);
-        }
-      }
-    }
-  });
-}
-
-function onLock(isLocked) {
-  if (!isLocked) {
-    draw();
-    if (isCircleEnabled("hr")) {
-      enableHRMSensor();
-    }
-  } else {
-    Bangle.setHRMPower(0, "circleclock");
-  }
-}
-Bangle.on('lock', onLock);
-
-function onHRM(hrm) {
-  if (isCircleEnabled("hr")) {
-    if (hrm.confidence >= (settings.confidence)) {
-      hrtValue = hrm.bpm;
-      if (Bangle.isLCDOn()) {
-        drawHeartRate();
-      }
-    }
-    // Let us wait before we overwrite "good" HRM values:
-    if (Bangle.isLCDOn()) {
-      if (timerHrm) clearTimeout(timerHrm);
-      timerHrm = setTimeout(() => {
-        hrtValue = '...';
-        drawHeartRate();
-      }, settings.hrmValidity * 1000);
-    }
-  }
-}
-Bangle.on('HRM', onHRM);
-
-function onCharging(charging) {
-  if (isCircleEnabled("battery")) drawBattery();
-}
-Bangle.on('charging', onCharging);
-
-
-if (isCircleEnabled("hr")) {
-  enableHRMSensor();
 }
 
 Bangle.setUI({
   mode : "clock",
   remove : function() {
     // Called to unload all of the clock app
-    Bangle.removeListener('charging', onCharging);
-    Bangle.removeListener('lock', onLock);
-    Bangle.removeListener('HRM', onHRM);
-
-    Bangle.setHRMPower(0, "circleclock");
-
-    if (timerHrm) clearTimeout(timerHrm);
-    timerHrm = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
 
