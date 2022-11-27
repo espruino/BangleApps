@@ -23,6 +23,12 @@
         onchange: v => {
           writeSettings("autoloadLauncher",v);
         }
+      },
+      'Hide "Fastloading..."': {
+        value: !!settings.hideLoading,
+        onchange: v => {
+          writeSettings("hideLoading",v);
+        }
       }
     };
     return mainmenu;

@@ -57,7 +57,7 @@ global.load = fastload;
 
 Bangle.load = (o => (name) => {
   print("Bangle.load", name);
-  if (Bangle.uiRemove) loadingScreen();
+  if (Bangle.uiRemove && !SETTINGS.hideLoading) loadingScreen();
   if (SETTINGS.autoloadLauncher && !name){
     print("redirect to launcher");
     let orig = Bangle.load;
