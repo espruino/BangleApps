@@ -15,5 +15,9 @@
     "strict": true,
     "typeRoots": ["./typescript/types"]
   },
-  "include": ["./**/*"]
+  "include": ["./**/*"],
+  "exclude": [
+        "**/gpconv.d.ts",
+        "**/gpconv_bg.wasm.d.ts"
+    ]
 }

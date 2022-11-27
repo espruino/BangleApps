@@ -1,61 +1,59 @@
-/* Desktop launcher
-*
-*/
+{ // must be inside our own scope here so that when we are unloaded everything disappears
 
-var settings = Object.assign({
-  showClocks: true,
-  showLaunchers: true,
-  direct: false,
-  oneClickExit:false,
-  swipeExit: false
-}, require('Storage').readJSON("dtlaunch.json", true) || {});
+  /* Desktop launcher
+   *
+   */
 
-if( settings.oneClickExit)
-  setWatch(_=> load(), BTN1);
-  
-var s = require("Storage");
-var apps = s.list(/\.info$/).map(app=>{
-  var a=s.readJSON(app,1);
-  return a && {
-    name:a.name, type:a.type, icon:a.icon, sortorder:a.sortorder, src:a.src
-  };}).filter(
-    app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type));
+  let settings = Object.assign({
+    showClocks: true,
+    showLaunchers: true,
+    direct: false,
+    swipeExit: false,
+    timeOut: "Off"
+  }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
-apps.sort((a,b)=>{
-  var n=(0|a.sortorder)-(0|b.sortorder);
-  if (n) return n; // do sortorder first
-  if (a.name<b.name) return -1;
-  if (a.name>b.name) return 1;
-  return 0;
-});
-apps.forEach(app=>{
+  let s = require("Storage");
+  var apps = s.list(/\.info$/).map(app=>{
+    let a=s.readJSON(app,1);
+    return a && {
+      name:a.name, type:a.type, icon:a.icon, sortorder:a.sortorder, src:a.src
+    };}).filter(
+      app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type));
+
+  apps.sort((a,b)=>{
+    let n=(0|a.sortorder)-(0|b.sortorder);
+    if (n) return n; // do sortorder first
+    if (a.name<b.name) return -1;
+    if (a.name>b.name) return 1;
+    return 0;
+  });
+  apps.forEach(app=>{
     if (app.icon)
       app.icon = s.read(app.icon); // should just be a link to a memory area
   });
 
-var Napps = apps.length;
-var Npages = Math.ceil(Napps/4);
-var maxPage = Npages-1;
-var selected = -1;
-var oldselected = -1;
-var page = 0;
-const XOFF = 24;
-const YOFF = 30;
+  let Napps = apps.length;
+  let Npages = Math.ceil(Napps/4);
+  let maxPage = Npages-1;
+  let selected = -1;
+  let oldselected = -1;
+  let page = 0;
+  const XOFF = 24;
+  const YOFF = 30;
 
-function draw_icon(p,n,selected) {
-    var x = (n%2)*72+XOFF; 
-    var y = n>1?72+YOFF:YOFF;
+  let drawIcon= function(p,n,selected) {
+    let x = (n%2)*72+XOFF; 
+    let y = n>1?72+YOFF:YOFF;
     (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+11,y+3,x+60,y+52);
     g.clearRect(x+12,y+4,x+59,y+51);
     g.setColor(g.theme.fg);
     try{g.drawImage(apps[p*4+n].icon,x+12,y+4);} catch(e){}
     g.setFontAlign(0,-1,0).setFont("6x8",1);
-    var txt =  apps[p*4+n].name.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
-    var lineY = 0;
-    var line = "";
-    while (txt.length > 0){      
-      var c = txt.shift();
-      
+    let txt =  apps[p*4+n].name.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
+    let lineY = 0;
+    let line = "";
+    while (txt.length > 0){
+      let c = txt.shift();
       if (c.length + 1 + line.length > 13){
         if (line.length > 0){
           g.drawString(line.trim(),x+36,y+54+lineY*8);
@@ -67,70 +65,91 @@ function draw_icon(p,n,selected) {
       }
     }
     g.drawString(line.trim(),x+36,y+54+lineY*8);
-}
+  };
 
-function drawPage(p){
+  let drawPage = function(p){
     g.reset();
     g.clearRect(0,24,175,175);
-    var O = 88+YOFF/2-12*(Npages/2);
-    for (var j=0;j<Npages;j++){
-        var y = O+j*12;
-        g.setColor(g.theme.fg);
-        if (j==page) g.fillCircle(XOFF/2,y,4);
-        else g.drawCircle(XOFF/2,y,4);
+    let O = 88+YOFF/2-12*(Npages/2);
+    for (let j=0;j<Npages;j++){
+      let y = O+j*12;
+      g.setColor(g.theme.fg);
+      if (j==page) g.fillCircle(XOFF/2,y,4);
+      else g.drawCircle(XOFF/2,y,4);
     }
-    for (var i=0;i<4;i++) {
-        if (!apps[p*4+i]) return i;
-        draw_icon(p,i,selected==i && !settings.direct);
+    for (let i=0;i<4;i++) {
+      if (!apps[p*4+i]) return i;
+      drawIcon(p,i,selected==i && !settings.direct);
     }
     g.flip();
-}
+  };
 
-Bangle.on("swipe",(dirLeftRight, dirUpDown)=>{
+  Bangle.loadWidgets();
+  drawPage(0);
+
+  let swipeListenerDt = function(dirLeftRight, dirUpDown){
+    updateTimeoutToClock();
     selected = 0;
     oldselected=-1;
-    if(settings.swipeExit && dirLeftRight==1) load();
+    if(settings.swipeExit && dirLeftRight==1) Bangle.showClock();
     if (dirUpDown==-1||dirLeftRight==-1){
-        ++page; if (page>maxPage) page=0;
-        drawPage(page);
+      ++page; if (page>maxPage) page=0;
+      drawPage(page);
     } else if (dirUpDown==1||(dirLeftRight==1 && !settings.swipeExit)){
-        --page; if (page<0) page=maxPage;
-        drawPage(page);
+      --page; if (page<0) page=maxPage;
+      drawPage(page);
     }
-});
+  };
 
-function isTouched(p,n){
+  let isTouched = function(p,n){
     if (n<0 || n>3) return false;
-    var x1 = (n%2)*72+XOFF;  var y1 =  n>1?72+YOFF:YOFF;
-    var x2 = x1+71; var y2 = y1+81;
+    let x1 = (n%2)*72+XOFF;  let y1 =  n>1?72+YOFF:YOFF;
+    let x2 = x1+71; let y2 = y1+81;
     return (p.x>x1 && p.y>y1 && p.x<x2 && p.y<y2);
-}
+  };
 
-Bangle.on("touch",(_,p)=>{
-    var i;
+  let touchListenerDt = function(_,p){
+    updateTimeoutToClock();
+    let i;
     for (i=0;i<4;i++){
-        if((page*4+i)<Napps){
-            if (isTouched(p,i)) {
-                draw_icon(page,i,true && !settings.direct);
-                if (selected>=0 || settings.direct) {
-                    if (selected!=i && !settings.direct){
-                        draw_icon(page,selected,false);
-                    } else {
-                        load(apps[page*4+i].src);
-                    }
-                }
-                selected=i;
-                break;
+      if((page*4+i)<Napps){
+        if (isTouched(p,i)) {
+          drawIcon(page,i,true && !settings.direct);
+          if (selected>=0 || settings.direct) {
+            if (selected!=i && !settings.direct){
+              drawIcon(page,selected,false);
+            } else {
+              load(apps[page*4+i].src);
             }
+          }
+          selected=i;
+          break;
         }
+      }
     }
     if ((i==4 || (page*4+i)>Napps) && selected>=0) {
-        draw_icon(page,selected,false);
-        selected=-1;
+      drawIcon(page,selected,false);
+      selected=-1;
     }
-});
+  };
 
-Bangle.loadWidgets();
-g.clear();
-Bangle.drawWidgets();
-drawPage(0);
+  Bangle.setUI({
+    mode : 'custom',
+    back : Bangle.showClock,
+    swipe : swipeListenerDt,
+    touch : touchListenerDt,
+    remove : ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
+  });
+
+  // taken from Icon Launcher with minor alterations
+  let timeoutToClock;
+  const updateTimeoutToClock = function(){
+    if (settings.timeOut!="Off"){
+      let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+      if (timeoutToClock) clearTimeout(timeoutToClock);
+      timeoutToClock = setTimeout(Bangle.showClock,time*1000);  
+    }
+  };
+  updateTimeoutToClock();
+
+} // end of app scope

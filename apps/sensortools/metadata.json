@@ -2,7 +2,7 @@
   "id": "sensortools",
   "name": "Sensor tools",
   "shortName": "Sensor tools",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Tools for testing and debugging apps that use sensor input",
   "icon": "icon.png",
   "type": "bootloader",
@@ -12,6 +12,7 @@
   "storage": [
     {"name":"sensortools.0.boot.js","url":"boot.js"},
     {"name":"sensortools.settings.js","url":"settings.js"},
+    {"name":"sensortools","url":"lib.js"},
     {"name":"sensortools.default.json","url":"default.json"}
   ]
 }

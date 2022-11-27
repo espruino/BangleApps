@@ -5,7 +5,7 @@
   "description": "Integrates your BangleJS into HomeAssistant.",
   "icon": "ha.png",
   "type": "app",
-  "tags": "tool",
+  "tags": "tool,clkinfo",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "custom": "custom.html",

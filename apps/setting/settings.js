@@ -39,6 +39,7 @@ function resetSettings() {
     timezone: 0,                    // Set the timezone for the device
     HID: false,                     // BLE HID mode, off by default
     clock: null,                    // a string for the default clock's name
+    // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
     brightness: 1,                  // LCD brightness from 0 to 1
@@ -59,7 +60,9 @@ function resetSettings() {
 }
 
 settings = storage.readJSON('setting.json', 1);
-if (!settings) resetSettings();
+if (("object" != typeof settings) ||
+    ("object" != typeof settings.options))
+  resetSettings();
 
 const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 
@@ -236,9 +239,9 @@ function showThemeMenu() {
     }
   };
 
-  require("Storage").list(/^.*\.theme$/).forEach(
+  storage.list(/^.*\.theme$/).forEach(
     n => {
-      let newTheme = require("Storage").readJSON(n);
+      let newTheme = storage.readJSON(n);
       themesMenu[newTheme.name ? newTheme.name : n] = () => {
         upd({
         fg:cl(newTheme.fg), bg:cl(newTheme.bg),
@@ -566,11 +569,11 @@ function showUtilMenu() {
     },
     /*LANG*/'Compact Storage': () => {
       E.showMessage(/*LANG*/"Compacting...\nTakes approx\n1 minute",{title:/*LANG*/"Storage"});
-      require("Storage").compact();
+      storage.compact();
       showUtilMenu();
     },
     /*LANG*/'Rewrite Settings': () => {
-      require("Storage").write(".boot0","eval(require('Storage').read('bootupdate.js'));");
+      storage.write(".boot0","eval(require('Storage').read('bootupdate.js'));");
       load("setting.app.js");
     },
     /*LANG*/'Flatten Battery': () => {
@@ -591,9 +594,9 @@ function showUtilMenu() {
     menu[/*LANG*/'Calibrate Battery'] = () => {
       E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
         if (ok) {
-          var s=require("Storage").readJSON("setting.json");
+          var s=storage.readJSON("setting.json");
           s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
-          require("Storage").writeJSON("setting.json",s);
+          storage.writeJSON("setting.json",s);
           E.showAlert(/*LANG*/"Calibrated!").then(() => load("setting.app.js"));
         } else {
           E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
@@ -658,7 +661,7 @@ function makeConnectable() {
   });
 }
 function showClockMenu() {
-  var clockApps = require("Storage").list(/\.info$/)
+  var clockApps = storage.list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder);
@@ -674,11 +677,10 @@ function showClockMenu() {
       label = "* " + label;
     }
     clockMenu[label] = () => {
-      if (settings.clock !== app.src) {
-        settings.clock = app.src;
-        updateSettings();
-        showMainMenu();
-      }
+      settings.clock = app.src;
+      settings.clockHasWidgets = storage.read(app.src).includes("Bangle.loadWidgets");
+      updateSettings();
+      showMainMenu();
     };
   });
   if (clockApps.length === 0) {
@@ -687,7 +689,7 @@ function showClockMenu() {
   return E.showMenu(clockMenu);
 }
 function showLauncherMenu() {
-  var launcherApps = require("Storage").list(/\.info$/)
+  var launcherApps = storage.list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "launch")?a:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder);
@@ -703,11 +705,9 @@ function showLauncherMenu() {
       label = "* " + label;
     }
     launcherMenu[label] = () => {
-      if (settings.launcher !== app.src) {
-        settings.launcher = app.src;
-        updateSettings();
-        showMainMenu();
-      }
+      settings.launcher = app.src;
+      updateSettings();
+      showMainMenu();
     };
   });
   if (launcherApps.length === 0) {
@@ -867,9 +867,9 @@ function showTouchscreenCalibration() {
     Bangle.setOptions({
       touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
     });
-    var s = require("Storage").readJSON("setting.json",1)||{};
+    var s = storage.readJSON("setting.json",1)||{};
     s.touch = calib;
-    require("Storage").writeJSON("setting.json",s);
+    storage.writeJSON("setting.json",s);
     g.setFont("6x8:2").setFontAlign(0,0).drawString("Calibrated!", g.getWidth()/2, g.getHeight()/2);
     // now load the main menu again
     setTimeout(showLCDMenu, 500);

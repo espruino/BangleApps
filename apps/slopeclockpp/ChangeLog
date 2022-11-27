@@ -1,0 +1,7 @@
+0.01: Clone of original SlopeClock
+0.02: Added configuration
+0.03: Reset font to save some memory during remove
+0.04: Changed to use clock_info for displayed data
+      Made fonts smaller to avoid overlap when (eg) 22:00
+      Allowed black/white background (as that can look nice too)
+0.05: Images in clkinfo are optional now

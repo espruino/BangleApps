@@ -1,26 +1,34 @@
 {
   const s = require("Storage");
-  const settings = s.readJSON("launch.json", true) || { showClocks: true, fullscreen: false,direct:false,swipeExit:false,oneClickExit:false,fastload:false };
+  const settings = Object.assign({
+    showClocks: true,
+    fullscreen: false,
+    direct: false,
+    oneClickExit: false,
+    swipeExit: false,
+    timeOut:"Off"
+  }, s.readJSON("iconlaunch.json", true) || {});
+
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
-  let launchCache = s.readJSON("launch.cache.json", true)||{};
-  let launchHash = require("Storage").hash(/\.info/);
+  let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
+  let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
   launchCache = {
     hash : launchHash,
     apps : s.list(/\.info$/)
-      .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
+      .map(app=>{let a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
       .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
       .sort((a,b)=>{
-        var n=(0|a.sortorder)-(0|b.sortorder);
+        let n=(0|a.sortorder)-(0|b.sortorder);
         if (n) return n; // do sortorder first
         if (a.name<b.name) return -1;
         if (a.name>b.name) return 1;
         return 0;
       }) };
-    s.writeJSON("launch.cache.json", launchCache);
+    s.writeJSON("iconlaunch.cache.json", launchCache);
   }
   let scroll = 0;
   let selectedItem = -1;
@@ -54,7 +62,7 @@
     drawText(itemI);
   };
   let drawItemAuto = function(i) {
-    var y = idxToY(i);
+    let y = idxToY(i);
     g.reset().setClipRect(R.x, y, R.x2, y + itemSize);
     drawItem(i, {
       x: R.x,
@@ -86,7 +94,7 @@
     const appId = id * appsN + iconN;
     if( settings.direct && launchCache.apps[appId])
     {
-      loadApp(launchCache.apps[appId].src);
+      load(launchCache.apps[appId].src);
       return;
     }
     if (appId == selectedItem && launchCache.apps[appId]) {
@@ -94,7 +102,7 @@
       if (!app.src || s.read(app.src) === undefined) {
         E.showMessage( /*LANG*/ "App Source\nNot found");
       } else {
-        loadApp(app.src);
+        load(app.src);
       }
     }
     selectedItem = appId;
@@ -109,9 +117,9 @@
   let drawItems = function() {
     g.reset().clearRect(R.x, R.y, R.x2, R.y2);
     g.setClipRect(R.x, R.y, R.x2, R.y2);
-    var a = YtoIdx(R.y);
-    var b = Math.min(YtoIdx(R.y2), 99);
-    for (var i = a; i <= b; i++)
+    let a = YtoIdx(R.y);
+    let b = Math.min(YtoIdx(R.y2), 99);
+    for (let i = a; i <= b; i++)
       drawItem(i, {
       x: R.x,
       y: idxToY(i),
@@ -124,6 +132,7 @@
   g.flip();
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
   let onDrag = function(e) {
+    updateTimeout();
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
     let dy = e.dy;
@@ -168,47 +177,32 @@
     }
     g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
   };
-  Bangle.setUI({
+  let mode = {
     mode: "custom",
     drag: onDrag,
     touch: (_, e) => {
       if (e.y < R.y - 4) return;
-      var i = YtoIdx(e.y);
+      updateTimeout();
+      let i = YtoIdx(e.y);
       selectItem(i, e);
     },
-    swipe: (h,_) => { if(settings.swipeExit && h==1) { returnToClock(); } },
-  });
-  const returnToClock = function() {
-    loadApp(".bootcde");
-  };
-  let watch;
-  let loadApp;
-  if (settings.fastload){
-    loadApp = function(name) {
-      Bangle.setUI();
-      if (watch) clearWatch(watch);
-      delete launchCache;
-      delete launchHash;
-      delete drawItemAuto;
-      delete drawText;
-      delete selectItem;
-      delete onDrag;
-      delete drawItems;
-      delete drawItem;
-      delete returnToClock;
-      delete idxToY;
-      delete YtoIdx;
-      delete settings;
-      setTimeout(eval, 0, s.read(name));
-      return;
-    };
-  } else {
-    loadApp = function(name) {
-      load(name);
+    swipe: (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } },
+    btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
+    remove: function() {
+      if (timeout) clearTimeout(timeout);
     }
-  }
-  
-  if (settings.oneClickExit) {
-    watch = setWatch(returnToClock, BTN1);
-  }
+  };
+
+  let timeout;
+  const updateTimeout = function(){
+  if (settings.timeOut!="Off"){
+      let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(Bangle.showClock,time*1000);
+    }
+  };
+
+  updateTimeout();
+
+  Bangle.setUI(mode);
 }

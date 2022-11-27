@@ -20,19 +20,19 @@
         items: [
             {
                 name: "temperature",
-                get: () => ({ text: weather.temp, img: atob("GBiBAf/D//+B//8Y//88//88//88//88//88//8k//8k//8k//8k//8k//8k//4kf/5mf/zDP/yBP/yBP/zDP/5mf/48f/8A///D/w==")}),
+                get: () => ({ text: weather.temp, img: atob("GBiBAAA8AAB+AADnAADDAADDAADDAADDAADDAADbAADbAADbAADbAADbAADbAAHbgAGZgAM8wAN+wAN+wAM8wAGZgAHDgAD/AAA8AA==")}),
                 show: function() { weatherItems.items[0].emit("redraw"); },
                 hide: function () {}
             },
             {
                 name: "humidity",
-                get: () => ({ text: weather.hum, img: atob("GBiBAf/7///z///x///g///g///Af//Af/3Af/nA//jg//B/v/B/H+A/H8A+D8AeB8AcB4AYA8AYA8AYA+A4A/B4A//4A//8B///Dw==")}),
+                get: () => ({ text: weather.hum, img: atob("GBiBAAAEAAAMAAAOAAAfAAAfAAA/gAA/gAI/gAY/AAcfAA+AQA+A4B/A4D/B8D/h+D/j+H/n/D/n/D/n/B/H/A+H/AAH/AAD+AAA8A==")}),
                 show: function() { weatherItems.items[1].emit("redraw"); },
                 hide: function () {}
             },
             {
                 name: "wind",
-                get: () => ({ text: weather.wind, img: atob("GBiBAf4f//wP//nn//Pn//Pzg//nAf/meIAOfAAefP///P//+fAAAfAAB////////wAAP4AAH///z///z//nz//nz//zj//wH//8Pw==")}),
+                get: () => ({ text: weather.wind, img: atob("GBiBAAHgAAPwAAYYAAwYAAwMfAAY/gAZh3/xg//hgwAAAwAABg///g//+AAAAAAAAP//wH//4AAAMAAAMAAYMAAYMAAMcAAP4AADwA==")}),
                 show: function() { weatherItems.items[2].emit("redraw"); },
                 hide: function () {}
             },

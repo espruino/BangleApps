@@ -2,7 +2,7 @@
   "id": "imageclock",
   "name": "Imageclock",
   "shortName": "Imageclock",
-  "version": "0.11",
+  "version": "0.13",
   "type": "clock",
   "description": "BETA!!! File formats still subject to change --- This app is a highly customizable watchface. To use it, you need to select a watchface. You can build the watchfaces yourself without programming anything. All you need to do is write some json and create image files.",
   "icon": "app.png",

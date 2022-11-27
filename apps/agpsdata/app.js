@@ -36,7 +36,7 @@ function updateAgps() {
   g.clear();
   if (!waiting) {
     waiting = true;
-    display("Updating A-GPS...");
+    display("Updating A-GPS...", "takes ~ 10 seconds");
     require("agpsdata").pull(function() {
       waiting = false;
       display("A-GPS updated.", "touch to close");

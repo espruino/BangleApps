@@ -14,3 +14,13 @@
 0.14: Don't move pages when doing exit swipe - Bangle 2.
 0.15: 'Swipe to exit'-code is slightly altered to be more reliable - Bangle 2.
 0.16: Use default Bangle formatter for booleans
+0.17: Bangle 2: Fast loading on exit to clock face. Added option for exit to
+clock face by timeout.
+0.18: Bangle 2: Move interactions inside setUI. Replace "one click exit" with
+back-functionality through setUI, adding the red back button as well. Hardware
+button to exit is no longer an option.
+0.19: Bangle 2: Utilize new Bangle.load(), Bangle.showClock() functions to
+facilitate 'fast switching' of apps where available.
+0.20: Bangle 2: Revert use of Bangle.load() to classic load() calls since
+widgets would still be loaded when they weren't supposed to.
+
