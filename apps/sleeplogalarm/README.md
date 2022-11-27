@@ -17,8 +17,7 @@ This widget searches for active alarms and raises an own alarm event up to the d
   - __msg as prefix__ | use the customized message as prefix to the original message or replace it comlpetely if disabled  
     __on__ / _off_
   - __disable alarm__ | if enabled the original alarm will be disabled  
-    _on_ / __off__  
-    This feature does not work for alarms on the next day!
+    _on_ / __off__
   - __auto snooze__ | auto snooze option for the earlier alarm  
     __on__ / _off_
   - __Filter Alarm__ submenu

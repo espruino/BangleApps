@@ -8,19 +8,16 @@
   }
 
   // read input from keyboard
-  function readInput(setting, retPos, cb) {
-    setTimeout((setting, retPos, cb) => {
+  function readInput(v, cb) {
+    // setTimeout required to load after menu refresh
+    setTimeout((v, cb) => {
       if (require("Storage").read("textinput")) {
         g.clear();
-        require("textinput").input({text: settings[setting]}).then(result => {
-          settings[setting] = result;
-          writeSetting();
-          cb(retPos);
-        });
+        require("textinput").input({text: v}).then(v => cb(v));
       } else {
-        E.showAlert(/*LANG*/"No keyboard app installed").then(() => cb(retPos));
+        E.showAlert(/*LANG*/"No keyboard app installed").then(() => cb());
       }
-    }, 0, setting, retPos, cb);
+    }, 0, v, cb);
   }
 
   // show widget menu
@@ -32,36 +29,39 @@
       },
       /*LANG*/"< Back": () => showMain(8),
       /*LANG*/"time from": {
-        value: settings.filter_from,
-        step: 0.25,
+        value: settings.filter.from / 6E4,
+        step: 10,
         min: 0,
-        max: 24,
+        max: 1440,
         wrap: true,
         noList: true,
-        format: v => (0|v) + ":" + ("" + (0|(v%1 * 60))).padStart(2, "0"),
+        format: v => (0|v/60) + ":" + ("" + (v%60)).padStart(2, "0"),
         onchange: v => {
-          settings.filter_from = v;
+          settings.filter.from = v * 6E4;
           writeSetting();
         }
       },
       /*LANG*/"time to": {
-        value: settings.filter_to,
-        step: 0.25,
+        value: settings.filter.to / 6E4,
+        step: 10,
         min: 0,
-        max: 24,
+        max: 1440,
         wrap: true,
         noList: true,
-        format: v => (0|v) + ":" + ("" + (0|(v%1 * 60))).padStart(2, "0"),
+        format: v => (0|v/60) + ":" + ("" + (v%60)).padStart(2, "0"),
         onchange: v => {
-          settings.filter_to = v;
+          settings.filter.to = v * 6E4;
           writeSetting();
         }
       },
       /*LANG*/"msg includes": {
-        value: settings.filter_msg,
+        value: settings.filter.msg,
         format: v => !v ? "" : v.length > 6 ? v.substring(0, 6)+"..." : v,
-        // setTimeout required to load after menu refresh
-        onchange: () => readInput("filter_msg", 3, showFilterMenu)
+        onchange: v => readInput(v, v => {
+          settings.filter.msg = v;
+          writeSetting();
+          showFilterMenu(3);
+        })
       }
     };
     var menu = E.showMenu(filterMenu);
@@ -80,27 +80,27 @@
       },
       /*LANG*/"< Back": () => showMain(9),
       /*LANG*/"hide": {
-        value: settings.wid_hide,
+        value: settings.wid.hide,
         onchange: v => {
-          settings.wid_hide = v;
+          settings.wid.hide = v;
           writeSetting();
         }
       },
       /*LANG*/"show time": {
-        value: settings.wid_time,
+        value: settings.wid.time,
         onchange: v => {
-          settings.wid_time = v;
+          settings.wid.time = v;
           writeSetting();
         }
       },
       /*LANG*/"color": {
-        value: colVal.indexOf(settings.wid_color),
+        value: colVal.indexOf(settings.wid.color),
         min: 0,
         max: colVal.length -1,
         wrap: true,
         format: v => colName[v],
         onchange: v => {
-          settings.wid_color = colVal[v];
+          settings.wid.color = colVal[v];
           writeSetting();
         }
       }
@@ -147,8 +147,11 @@
       /*LANG*/"msg": {
         value: settings.msg,
         format: v => !v ? "" : v.length > 6 ? v.substring(0, 6)+"..." : v,
-        // setTimeout required to load after menu refresh
-        onchange: () => readInput("msg", 4, showMain)
+        onchange: v => readInput(v, v => {
+          settings.msg = v;
+          writeSetting();
+          showMenu(4);
+        })
       },
       /*LANG*/"msg as prefix": {
         value: settings.msgAsPrefix,

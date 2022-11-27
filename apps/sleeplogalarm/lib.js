@@ -9,18 +9,23 @@ function getNextAlarm(allAlarms, fo, withId) {
   });
   // return next active alarms in range, filter for
   //  active && not timer && not own alarm &&
-  //  after from && before to && includes msg &&
-  //  lastDate not today || after lastTime
-  return allAlarms.filter(
+  //  after from && before to && includes msg
+  var ret = allAlarms.filter(
       a => a.on && !a.timer && a.id !== "sleeplog" &&
-      a.t >= fo.from && a.t < fo.to && (!fo.msg || a.msg.includes(fo.msg)) &&
-      fo.lastDate !== new Date().getDate() || a.t > fo.lastTime
+      a.t >= fo.from && a.t < fo.to && (!fo.msg || a.msg.includes(fo.msg))
     ).map(a => { // add time to alarm
       a.tTo = sched.getTimeToAlarm(a);
       return a;
     }).filter(a => a.tTo // filter non active alarms
     // sort to get next alarm first
-    ).sort((a, b) => a.tTo - b.tTo)[0] || {};
+    ).sort((a, b) => a.tTo - b.tTo);
+  // prevent triggering for an already triggered alarm again if available
+  if (fo.lastDate) {
+    var toLast = fo.lastDate - new Date().valueOf() + 1000;
+    if (toLast > 0) ret = ret.filter(a => a.tTo > toLast);
+  }
+  // return first entry
+  return ret[0] || {};
 }
 
 exports = {
@@ -35,12 +40,16 @@ exports = {
       msgAsPrefix: true,
       disableOnAlarm: false, // !!! not available if alarm is at the next day
       as: true,
-      filter_from: 3,
-      filter_to: 12,
-      filter_msg: "",
-      wid_hide: false,
-      wid_time: true,
-      wid_color: g.theme.dark ? 65504 : 31, // yellow or blue
+      filter: {
+        from: 3 * 36E5,
+        to: 12 * 36E5,
+        msg: ""
+      },
+      wid: {
+        hide: false,
+        time: true,
+        color: g.theme.dark ? 65504 : 31 // yellow or blue
+      }
     }, require("Storage").readJSON("sleeplogalarm.settings.json", true) || {});
   },
 
@@ -53,13 +62,7 @@ exports = {
     var settings = exports.getSettings();
 
     // set the alarm time
-    this.time = getNextAlarm(sched.getAlarms(), {
-      from: settings.filter_from * 36E5,
-      to: settings.filter_to * 36E5,
-      msg: settings.filter_msg,
-      lastTime: settings.lastTime,
-      lastDate: settings.lastDate
-    }).t;
+    this.time = getNextAlarm(sched.getAlarms(), settings.filter).t;
 
     // abort if no alarm time could be found inside range
     if (!this.time) return;
@@ -90,13 +93,7 @@ exports = {
     var allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = getNextAlarm(sched.getAlarms(), {
-      from: settings.filter_from * 36E5,
-      to: settings.filter_to * 36E5,
-      msg: settings.filter_msg,
-      lastTime: settings.lastTime,
-      lastDate: settings.lastDate
-    }, settings.disableOnAlarm);
+    var alarm = getNextAlarm(sched.getAlarms(), settings.filter, settings.disableOnAlarm);
 
     // return if no alarm is found
     if (!alarm) return;
@@ -105,12 +102,12 @@ exports = {
     var now = new Date();
 
     // get date of the alarm
-    var aDate = new Date(now + alarm.tTo).getDate();
+    var aDate = new Date(now + alarm.tTo);
 
-    // disable earlier triggered alarm if set and on the same day
-    if (settings.disableOnAlarm && now.getDate() === aDate) {
-      // set alarms last to today
-      allAlarms[alarm.idx].last = aDate;
+    // disable earlier triggered alarm if set
+    if (settings.disableOnAlarm) {
+      // set alarms last to the day it would trigger
+      allAlarms[alarm.idx].last = aDate.getDate();
       // remove added indexes
       allAlarms = allAlarms.map(a => {
         delete a.idx;
@@ -131,9 +128,8 @@ exports = {
       del: true
     });
 
-    // save time of alarm and this day to prevent triggering for the same alarm again
-    settings.lastTime = alarm.t;
-    settings.lastDate = now.getDate();
+    // save date of the alarm to prevent triggering for the same alarm again
+    settings.filter.lastDate = aDate.valueOf();
     require("Storage").writeJSON("sleeplogalarm.settings.json", settings);
 
     // write changes

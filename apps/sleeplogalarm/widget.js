@@ -11,7 +11,7 @@ if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enable
     earlier: settings.earlier,
     draw: function () {
       // draw zzz
-      g.reset().setColor(settings.wid_color).drawImage(atob("BwoBD8SSSP4EEEDg"), this.x + 1, this.y);
+      g.reset().setColor(settings.wid.color).drawImage(atob("BwoBD8SSSP4EEEDg"), this.x + 1, this.y);
       // call function to draw the time of alarm if a alarm is found
       if (this.time) this.drawTime(this.time + 1);
     },
@@ -20,7 +20,7 @@ if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enable
   };
 
   // add function to draw the time of alarm if enabled
-  if (settings.wid_time) WIDGETS.sleeplogalarm.drawTime = function(time) {
+  if (settings.wid.time) WIDGETS.sleeplogalarm.drawTime = function(time) {
     // directly include Font4x5Numeric
     g.setFontCustom(atob("CAZMA/H4PgvXoK1+DhPg7W4P1uCEPg/X4O1+AA=="), 46, atob("AgQEAgQEBAQEBAQE"), 5).setFontAlign(1, 1);
     g.drawString(0|(time / 36E5), this.x + this.width + 1, this.y + 17);
