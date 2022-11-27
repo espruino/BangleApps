@@ -3,7 +3,7 @@
   "shortName" : "Fastload Utils",
   "version": "0.03",
   "icon": "icon.png",
-  "description": "Utilities for fastloading and switching between apps",
+  "description": "Enable experimental fastloading for more apps",
   "type":"bootloader",
   "tags": "system",
   "supports": ["BANGLEJS2"],
