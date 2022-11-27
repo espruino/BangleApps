@@ -1,0 +1,13 @@
+{
+  "id": "widanclk",
+  "name": "Analog clock widget",
+  "version": "0.02",
+  "description": "A simple analog clock widget that appears when not showing a fullscreen clock",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widanclk.wid.js","url":"widget.js"}
+  ]
+}

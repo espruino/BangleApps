@@ -1,12 +1,13 @@
 {
   "id": "messages",
   "name": "Messages",
-  "version": "0.52",
+  "version": "0.54",
   "description": "App to display notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies" : { "messageicons":"module" },
   "readme": "README.md",
   "storage": [
     {"name":"messages.app.js","url":"app.js"},

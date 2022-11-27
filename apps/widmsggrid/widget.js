@@ -32,15 +32,17 @@
         .setClipRect(w.x, w.y, w.x + w.width - 1, w.y + 24); // guard against oversized icons
       let r = 0, c = 0; // row, column
       const offset = pos => Math.floor(pos / cols * 24); // pixel offset for position in row/column
+      let icons = require("messageicons");
+      let defaultCol = icons.getColor("alert", {settings:settings});
       w.srcs.forEach(src => {
-        const appColor = require("messages").getMessageImageCol(src, require("messages").getMessageImageCol("alert"));
-        let colors = [g.theme.bg, g.setColor(appColor).getColor()];
+        const appColor = icons.getColor(src, {settings:settings,default:defaultCol});
+        let colors = [g.theme.bg, appColor];
         if (b) {
           if (colors[1] == g.theme.fg) colors = colors.reverse();
           else colors[1] = g.theme.fg;
         }
         g.setColor(colors[1]).setBgColor(colors[0]);
-        g.drawImage(require("messages").getMessageImage(src, "alert"), w.x+offset(c), w.y+offset(r), { scale: 1 / cols });
+        g.drawImage(icons.getImage(src), w.x+offset(c), w.y+offset(r), { scale: 1 / cols });
         if (++c >= cols) {
           c = 0;
           r++;

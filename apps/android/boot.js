@@ -91,10 +91,6 @@
         sched.reload();
       },
       //TODO perhaps move those in a library (like messages), used also for viewing events?
-      //simple package with events all together
-      "calendarevents" : function() {
-        require("Storage").writeJSON("android.calendar.json", event.events);
-      },
       //add and remove events based on activity on phone (pebble-like)
       "calendar" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
@@ -109,7 +105,7 @@
       "calendar-" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
-        if (!cal || !Array.isArray(cal)) return;
+        if (!cal || !Array.isArray(cal)) cal = [];
         cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
@@ -170,7 +166,10 @@
 
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
-  NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  NRF.on("connect", () => setTimeout(function() {
+    sendBattery();
+    GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
+  }, 2000));
   Bangle.on("charging", sendBattery);
   if (!settings.keep)
     NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
