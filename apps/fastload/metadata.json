@@ -1,7 +1,7 @@
 { "id": "fastload",
   "name": "Fastload Utils",
   "shortName" : "Fastload Utils",
-  "version": "0.02", 
+  "version": "0.03",
   "icon": "icon.png",
   "description": "Utilities for fastloading and switching between apps",
   "type":"bootloader",
@@ -9,6 +9,8 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"fastload.5.boot.js","url":"boot.js"}
-  ]
+    {"name":"fastload.5.boot.js","url":"boot.js"},
+    {"name":"fastload.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"fastload.json"}]
 }
