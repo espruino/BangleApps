@@ -27,16 +27,6 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ### Main App Usage
 ---
 
-#### View:
-| Status      | Color  |    Height |
-|-------------|:------:|----------:|
-| unknown     | black  |        0% |
-| not worn    | red    |       40% |
-| awake       | green  |       60% |
-| light sleep | cyan   |       80% |
-| deep sleep  | blue   |      100% |
-| consecutive | violet | as status |
-
 #### Controls:
   - __swipe left & right__
     to change the displayed day
@@ -49,6 +39,16 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
     to enter the settings
   - __use back button widget__ (upper left corner)
     exit the app
+
+#### View:
+| Status      | Color  |    Height |
+|-------------|:------:|----------:|
+| unknown     | black  |        0% |
+| not worn    | red    |       40% |
+| awake       | green  |       60% |
+| light sleep | cyan   |       80% |
+| deep sleep  | blue   |      100% |
+| consecutive | violet | as status |
 
 
 ---
