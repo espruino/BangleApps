@@ -5,7 +5,7 @@
   "description": "Tetris",
   "icon": "tetris.png",
   "readme": "README.md",
-  "tags": "games",
+  "tags": "game",
   "supports" : ["BANGLEJS2"],  
   "storage": [
     {"name":"tetris.app.js","url":"tetris.app.js"},
