@@ -1,6 +1,8 @@
 # Sleep Log Alarm
 
-This widget searches for active alarms and raises an own alarm event up to the defined time earlier, if in light sleep or awake phase. Optional the earlier alarm will only be triggered if comming from or in consecutive sleep. The settings of the earlier alarm can be adjusted and it is possible to filter the targeting alarms by time and message. By default the time of the targeting alarm is displayed inside the widget which can be adjusted, too. 
+This widget searches for active alarms and raises an own alarm event up to the defined time earlier, if in light sleep or awake phase. Optional the earlier alarm will only be triggered if comming from or in consecutive sleep. The settings of the earlier alarm can be adjusted and it is possible to filter the targeting alarms by time and message. By default the time of the targeting alarm is displayed inside the widget which can be adjusted, too.
+
+_This widget does not detect sleep by its own and requires the [sleeplog](/apps/?id=sleeplog) app to be installed._
 
 ---
 ### Settings
