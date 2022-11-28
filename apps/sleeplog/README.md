@@ -8,9 +8,9 @@ It is using the built in movement calculation to decide your sleeping state. Whi
 
 #### Explanations
 * __Detection of Sleep__  
-  The movement value of bangle's build in health event that is triggered every 10 minutes is checked against the thresholds for light and deep sleep. If the measured movement is lower or eaqual to the __Deep Sleep__-threshold a deep sleep phase is detected for the last 10 minutes. If the threshold is exceeded but not the __Light Sleep__-threshold than the last timeperiod is detected as light sleep phase. On exceeding even this threshold it is assumed that you were awake.
+  The movement value of bangle's build in health event that is triggered every 10 minutes is checked against the thresholds for light and deep sleep. If the measured movement is lower or equal to the __Deep Sleep__-threshold a deep sleep phase is detected for the last 10 minutes. If the threshold is exceeded but not the __Light Sleep__-threshold than the last timeperiod is detected as light sleep phase. On exceeding even this threshold it is assumed that you were awake.
 * __True Sleep__  
-  The true sleep value is a simple addition of all registert sleeping periods.
+  The true sleep value is a simple addition of all registered sleeping periods.
 * __Consecutive Sleep__  
   In addition the consecutive sleep value tries to predict the complete time you were asleep, even the very light sleeping periods when an awake period is detected based on the registered movements. All periods after a sleeping period will be summarized until the first following non sleeping period that is longer then the maximal awake duration (__Max Awake__). If this sum is lower than the minimal consecutive sleep duration (__Min Consecutive__) it is not considered, otherwise it will be added to the consecutive sleep value.
 
@@ -205,7 +205,7 @@ The passed data object has the following properties:
 #### To do list
 - Check translations.
 - Add more functionallities to interface.html.
-- Enable recieving data on the Gadgetbridge side + testing.
+- Enable receiving data on the Gadgetbridge side + testing.
   __Help appreciated!__
 
 #### Requests, Bugs and Feedback
