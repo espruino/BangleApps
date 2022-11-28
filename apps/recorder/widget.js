@@ -276,8 +276,8 @@
       if (l===undefined) return; // empty file?
       var mp, c = l.split(",");
       var la=c.indexOf("Latitude"),lo=c.indexOf("Longitude");
-      if (la<0 || lb<0) return; // no GPS!
-      l = f.readLine();
+      if (la<0 || lo<0) return; // no GPS!
+      l = f.readLine();c=[];
       while (l && !c[la]) {
         c = l.split(",");
         l = f.readLine(f);

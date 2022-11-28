@@ -22,3 +22,4 @@
 0.16: Ability to append to existing track (fix #1712)
 0.17: Use default Bangle formatter for booleans
 0.18: Improve widget load speed, allow currently recording track to be plotted in openstmap
+0.19: Fix track plotting code
