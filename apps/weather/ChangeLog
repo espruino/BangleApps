@@ -14,3 +14,4 @@
 0.15: Fix widget icon
 0.16: Don't mark app as clock
 0.17: Added clkinfo for clocks.
+0.18: Added hasRange to clkinfo.
