@@ -26,11 +26,16 @@ can change settings, move the map around, and click `Get Map` again.
 ## Bangle.js App
 
 The Bangle.js app allows you to view a map - it also turns the GPS on and marks
-the path that you've been travelling.
+the path that you've been travelling (if enabled).
 
 * Drag on the screen to move the map
 * Press the button to bring up a menu, where you can zoom, go to GPS location
-or put the map back in its default location
+, put the map back in its default location, or choose whether to draw the currently
+recording GPS track (from the `Recorder` app).
+
+**Note:** If enabled, drawing the currently recorded GPS track can take a second
+or two (which happens after you've finished scrolling the screen with your finger).
+
 
 ## Library
 

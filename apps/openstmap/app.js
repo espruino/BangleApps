@@ -4,19 +4,23 @@ var R;
 var fix = {};
 var mapVisible = false;
 var hasScrolled = false;
+var settings = require("Storage").readJSON("openstmap.json",1)||{};
 
 // Redraw the whole page
 function redraw() {
   g.setClipRect(R.x,R.y,R.x2,R.y2);
   m.draw();
   drawMarker();
-  if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
-    g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-    WIDGETS["gpsrec"].plotTrack(m);
-  }
-  if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
-    g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-    WIDGETS["recorder"].plotTrack(m);
+  // if track drawing is enabled...
+  if (settings.drawTrack) {
+    if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
+      g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
+      WIDGETS["gpsrec"].plotTrack(m);
+    }
+    if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
+      g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
+      WIDGETS["recorder"].plotTrack(m);
+    }
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
 }
@@ -75,6 +79,10 @@ function showMap() {
     /*LANG*/"Zoom Out": () =>{
       m.scale *= 2;
       showMap();
+    },
+    /*LANG*/"Draw Track": {
+      value : !!settings.drawTrack,
+      onchange : v => { settings.drawTrack=v; require("Storage").writeJSON("openstmap.json",settings); }
     },
     /*LANG*/"Center Map": () =>{
       m.lat = m.map.lat;
