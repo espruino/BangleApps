@@ -18,7 +18,7 @@ let loadingScreen = function(){
 
 let cache = require("Storage").readJSON("fastload.cache") || {};
 
-function checkApp(n){
+let checkApp = function(n){
   // no widgets, no problem
   if (!global.WIDGETS) return true;
   let app = require("Storage").read(n);
@@ -33,11 +33,11 @@ function checkApp(n){
 
 global._load = load;
 
-function slowload(n){
+let slowload = function(n){
   global._load(n);
 }
 
-function fastload(n){
+let fastload = function(n){
   if (!n || checkApp(n)){
     // Bangle.load can call load, to prevent recursion this must be the system load
     global.load = slowload;
