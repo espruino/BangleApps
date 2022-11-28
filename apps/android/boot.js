@@ -137,8 +137,7 @@
         Bangle.emit('gps', event);
       },
       "is_gps_active": function() {
-        const gpsActive = originalIsGpsOn();
-        sendGPSPowerStatus(gpsActive);
+        gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
       }
     };
     var h = HANDLERS[event.t];
@@ -202,34 +201,27 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
-
   // GPS overwrite logic
-  // Save current logic
-  const originalSetGpsPower = Bangle.setGPSPower;
-  const originalIsGpsOn = Bangle.isGPSOn;
-
-  function sendGPSPowerStatus(status) { gbSend({ t: "gps_power", status: status }); }
-
-  // Replace set GPS power logic to suppress activation of gps, if the overwrite option is active
-  Bangle.setGPSPower = (isOn, appID) => {
-    const currentSettings = require("Storage").readJSON("android.settings.json",1)||{};
-    if (!currentSettings.overwriteGps) {
-      originalSetGpsPower(isOn, appID);
-    } else {
-      sendGPSPowerStatus(Bangle.isGPSOn());
-      const logMessage = 'Ignore gps power change due to the gps overwrite from android integration app';
-      console.log(logMessage);
-      Bluetooth.println(logMessage);
+  if (settings.overwriteGps) { // if the overwrite option is set../
+    // Save current logic
+    const originalSetGpsPower = Bangle.setGPSPower;
+    // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
+    Bangle.setGPSPower = (isOn, appID) => {
+      // if not connected, use old logic
+      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID); 
+      // Emulate old GPS power logic
+      if (!Bangle._PWR) Bangle._PWR={};
+      if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
+      if (!appID) appID="?";
+      if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);
+      if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);
+      let pwr = Bangle._PWR.GPS.length>0;
+      gbSend({ t: "gps_power", status: pwr });
+      return pwr;
     }
-  }
-
-  // Replace check if the GPS is on, to show it as always active, if the overwrite option is set
-  Bangle.isGPSOn = () => {
-    const currentSettings = require("Storage").readJSON("android.settings.json",1)||{};
-    if (!currentSettings.overwriteGps) {
-      return originalIsGpsOn();
-    } else {
-      return true;
+    // Replace check if the GPS is on to check the _PWR variable
+    Bangle.isGPSOn = () => {
+      return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
     }
   }
 
