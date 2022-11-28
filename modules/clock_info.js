@@ -2,9 +2,9 @@
 that can be scrolled through on the clock face.
 
 `load()` returns an array of menu objects, where each object contains a list of menu items:
-
 * `name` : text to display and identify menu object (e.g. weather)
 * `img` : a 24x24px image
+* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date)
 * `items` : menu items such as temperature, humidity, wind etc.
 
 Note that each item is an object with:
@@ -15,7 +15,8 @@ Note that each item is an object with:
 
 {
   'text'  // the text to display for this item
-  'img'   // a 24x24px image to display for this item
+  'short' : (optional) a shorter text to display for this item (at most 6 characters)
+  'img'   // optional: a 24x24px image to display for this item
   'v'     // (if hasRange==true) a numerical value
   'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
 }
@@ -36,7 +37,8 @@ example.clkinfo.js :
     items: [
       { name : "Item1",
         get : () => ({ text : "TextOfItem1", v : 10, min : 0, max : 100,
-                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
+                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==")
+                    }),
         show : () => {},
         hide : () => {}
         // run : () => {} optional (called when tapped)
@@ -47,6 +49,15 @@ example.clkinfo.js :
 
 */
 
+let storage = require("Storage");
+let stepGoal = undefined;
+// Load step goal from health app and pedometer widget
+let d = storage.readJSON("health.json", true) || {};
+stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+if (stepGoal == undefined) {
+  d = storage.readJSON("wpedom.json", true) || {};
+  stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+}
 
 exports.load = function() {
   // info used for drawing...
@@ -80,7 +91,7 @@ exports.load = function() {
     { name : "Steps",
       hasRange : true,
       get : () => { let v = Bangle.getHealthStatus("day").steps; return {
-          text : v, v : v, min : 0, max : 10000, // TODO: do we have a target step amount anywhere?
+          text : v, v : v, min : 0, max : stepGoal,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       }},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
@@ -139,8 +150,8 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
     g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
     if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
     var midx = options.x+options.w/2;
-    g.drawImage(info.img, midx-12,options.y+4);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(info.text, midx,options.y+36);
+    if (info.img) g.drawImage(info.img, midx-12,options.y+4);
+    g.setFont("6x8:2").setFontAlign(0,1).drawString(info.text, midx,options.y+44);
   }
 });
 // then when clock 'unloads':
@@ -166,8 +177,8 @@ let clockInfoDraw = (itm, info, options) => {
   g.reset().setBgColor(options.bg).setColor(options.fg).clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
   if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1)
   var midx = options.x+options.w/2;
-  g.drawImage(info.img, midx-12,options.y);
-  g.setFont("6x15").setFontAlign(0,-1).drawString(info.text, midx,options.y+26);
+  if (info.img) g.drawImage(info.img, midx-12,options.y);
+  g.setFont("6x15").setFontAlign(0,1).drawString(info.text, midx,options.y+41);
 };
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg });
@@ -225,7 +236,7 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
-      options.menuA += ud;
+      options.menuA += lr;
       if (options.menuA<0) options.menuA = menu.length-1;
       if (options.menuA>=menu.length) options.menuA = 0;
       options.menuB = 0;

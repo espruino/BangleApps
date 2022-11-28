@@ -4,12 +4,12 @@
   "icon": "app.png",
   "type": "settings",
   "screenshots": [{"url":"screenshot_1.png"}],
-  "version":"0.08",
+  "version":"0.09",
   "description": "Sets and stores the latitude and longitude of your preferred City.  It can be set from GPS or webinterface. `mylocation.json` can be used by other apps that need your main location. See README for details.",
   "readme": "README.md",
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
-  "custom": "custom.html","custom": "custom.html",
+  "interface": "interface.html",
   "storage": [
     {"name":"mylocation.settings.js","url":"settings.js"}
   ],

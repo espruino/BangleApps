@@ -33,10 +33,11 @@
     <div id="map">
     </div>
     <div id="controls">
+      <span id="select-hint">Click the map to select a location</span>
       <button id="select" class="btn btn-primary" style="display:none">Save</button><br/>
     </div>
 
-    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/interface.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../../webtools/heatshrink.js"></script>
@@ -68,15 +69,19 @@
 
       let latlon;
       var marker;
-      
-      map.on('click', function(e){
-        console.log(e);
+
+      function setPosition(ll) {
+        latlon = ll;
         if (map.hasLayer(marker)) {
           map.removeLayer(marker);
         }
-        latlon = e.latlng;
-        marker = new L.marker(e.latlng).addTo(map);
+        marker = new L.marker(latlon).addTo(map);
+        document.getElementById("select-hint").style.display="none";
         document.getElementById("select").style.display="";
+      }
+
+      map.on('click', function(e){
+        setPosition(e.latlng);
       });
 
       document.getElementById("select").addEventListener("click", function() {
@@ -87,8 +92,22 @@
         Util.showModal("Saving...");
         Util.writeStorage("mylocation.json", JSON.stringify(settings), ()=>{
           Util.hideModal();
+          Util.close(); // close this window
         });
       });
+
+      function onInit() {
+        // read existing location
+        Util.readStorage("mylocation.json", function(data) {
+          if (data===undefined) return; // no file
+          try {
+            var j = JSON.parse(data);
+            setPosition(j);
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      }
 
     </script>
   </body>

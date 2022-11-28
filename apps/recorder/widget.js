@@ -1,10 +1,10 @@
-(() => {
-  var storageFile; // file for GPS track
-  var entriesWritten = 0;
-  var activeRecorders = [];
-  var writeInterval;
+{
+  let storageFile; // file for GPS track
+  let entriesWritten = 0;
+  let activeRecorders = [];
+  let writeInterval;
 
-  function loadSettings() {
+  let loadSettings = function() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
     settings.period = settings.period||10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
@@ -12,12 +12,12 @@
     return settings;
   }
 
-  function updateSettings(settings) {
+  let updateSettings = function(settings) {
     require("Storage").writeJSON("recorder.json", settings);
     if (WIDGETS["recorder"]) WIDGETS["recorder"].reload();
   }
 
-  function getRecorders() {
+  let getRecorders = function() {
     var recorders = {
       gps:function() {
         var lat = 0;
@@ -159,7 +159,7 @@
     return recorders;
   }
 
-  function writeLog() {
+  let writeLog = function() {
     entriesWritten++;
     WIDGETS["recorder"].draw();
     try {
@@ -178,7 +178,7 @@
   }
 
   // Called by the GPS app to reload settings and decide what to do
-  function reload() {
+  let reload = function() {
     var settings = loadSettings();
     if (writeInterval) clearInterval(writeInterval);
     writeInterval = undefined;
@@ -224,7 +224,7 @@
   // add the widget
   WIDGETS["recorder"]={area:"tl",width:0,draw:function() {
     if (!writeInterval) return;
-    g.reset();    g.drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
+    g.reset().drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
     activeRecorders.forEach((recorder,i)=>{
       recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
     });
@@ -265,23 +265,39 @@
     updateSettings(settings);
     WIDGETS["recorder"].reload();
     return Promise.resolve(settings.recording);
-  }/*,plotTrack:function(m) { // m=instance of openstmap module
-    // if we're here, settings was already loaded
-    var f = require("Storage").open(settings.file,"r");
-    var l = f.readLine(f);
-    if (l===undefined) return;
-    var c = l.split(",");
-    var mp = m.latLonToXY(+c[1], +c[2]);
-    g.moveTo(mp.x,mp.y);
-    l = f.readLine(f);
-    while(l!==undefined) {
-      c = l.split(",");
-      mp = m.latLonToXY(+c[1], +c[2]);
-      g.lineTo(mp.x,mp.y);
-      g.fillCircle(mp.x,mp.y,2); // make the track more visible
+  },plotTrack:function(m) { // m=instance of openstmap module
+    // Plots the current track in the currently set color
+    if (!activeRecorders.length) return; // not recording
+    var settings = loadSettings();
+    // keep function to draw track in RAM
+    function plot(g) { "ram";
+      var f = require("Storage").open(settings.file,"r");
+      var l = f.readLine();
+      if (l===undefined) return; // empty file?
+      var mp, c = l.split(",");
+      var la=c.indexOf("Latitude"),lo=c.indexOf("Longitude");
+      if (la<0 || lo<0) return; // no GPS!
+      l = f.readLine();c=[];
+      while (l && !c[la]) {
+        c = l.split(",");
+        l = f.readLine(f);
+      }
+      if (l===undefined) return; // empty file?
+      mp = m.latLonToXY(+c[la], +c[lo]);
+      g.moveTo(mp.x,mp.y);
       l = f.readLine(f);
+      var n = 200; // only plot first 200 points to keep things fast(ish)
+      while(l && n--) {
+        c = l.split(",");
+        if (c[la]) {
+          mp = m.latLonToXY(+c[la], +c[lo]);
+          g.lineTo(mp.x,mp.y);
+        }
+        l = f.readLine(f);
+      }
     }
-  }*/};
+    plot(g);
+  }};
   // load settings, set correct widget width
   reload();
-})()
+}
