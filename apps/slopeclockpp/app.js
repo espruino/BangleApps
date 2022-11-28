@@ -51,8 +51,9 @@ let draw = function() {
   x = R.w / 2;
   y = R.y + R.h / 2 - 12; // 12 = room for date
   var date = new Date();
-  var hourStr = date.getHours();
-  var minStr = date.getMinutes().toString().padStart(2,0);
+  var local_time = require("locale").time(date, 1);
+  var hourStr = local_time.split(":")[0].trim().padStart(2,'0');
+  var minStr = local_time.split(":")[1].trim().padStart(2, '0');
   dateStr = require("locale").dow(date, 1).toUpperCase()+ " "+
             require("locale").date(date, 0).toUpperCase();
 
@@ -121,18 +122,18 @@ let animate = function(isIn, callback) {
 
 // clock info menus (scroll up/down for info)
 let clockInfoDraw = (itm, info, options) => {
-  let texty = options.y+26;
-  g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty, options.x+options.w-2, texty+15);
+  let texty = options.y+41;
+  g.reset().setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty-15, options.x+options.w-2, texty);
 
   if (options.focus) g.setColor(options.hl);
   if (options.x < g.getWidth()/2) { // left align
     let x = options.x+2;
-    g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
-    g.setFontAlign(-1,-1).drawString(info.text, x,texty);
+    if (info.img) g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
+    g.setFontAlign(-1,1).drawString(info.text, x,texty);
   } else { // right align
     let x = options.x+options.w-3;
-    g.clearRect(x-23, options.y, x, options.y+23).drawImage(info.img, x-23, options.y);
-    g.setFontAlign(1,-1).drawString(info.text, x,texty);
+    if (info.img) g.clearRect(x-23, options.y, x, options.y+23).drawImage(info.img, x-23, options.y);
+    g.setFontAlign(1,1).drawString(info.text, x,texty);
   }
 };
 let clockInfoItems = require("clock_info").load();

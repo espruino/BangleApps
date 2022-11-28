@@ -9,7 +9,8 @@
         padding: 0;
         margin: 0;
       }
-      html, body, #map {
+      html, body, #map, #mapsLoaded, #mapContainer {
+        position: relative;
         height: 100%;
         width: 100%;
       }
@@ -27,20 +28,40 @@
         width: 256px;
         height: 256px;
       }
+      .tile-title {
+        font-weight:bold;
+        font-size: 125%;
+      }
+      .tile-map {
+        width: 128px;
+        height: 128px;
+      }
     </style>
   </head>
   <body>
-    <div id="map">
+    <div id="mapsLoadedContainer">
     </div>
-    <div id="controls">
-      <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
-      <button id="getmap" class="btn btn-primary">Get Map</button><br/>
-      <canvas id="maptiles" style="display:none"></canvas>
-      <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
-      <button id="cancel" class="btn">Cancel</button></div>
+    <div id="mapContainer">
+      <div id="map">
+      </div>
+      <div id="controls">
+        <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+        <div class="form-group" style="display:inline-block;">
+        <select class="form-select" id="mapSize">
+          <option value="4">Small</option>
+          <option value="5" selected>Medium</option>
+          <option value="6">Large</option>
+          <option value="7">XL</option>
+        </select>
+      </div>
+        <button id="getmap" class="btn btn-primary">Get Map</button><button class="btn" onclick="showLoadedMaps()">Map List</button><br/>
+        <canvas id="maptiles" style="display:none"></canvas>
+        <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
+        <button id="cancel" class="btn">Cancel</button></div>
+      </div>
     </div>
 
-    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/interface.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../../webtools/heatshrink.js"></script>
@@ -60,8 +81,6 @@ TODO:
     */
       var TILESIZE = 96; // Size of our tiles
       var OSMTILESIZE = 256; // Size of openstreetmap tiles
-      var MAPSIZE = TILESIZE*5; ///< 480 - Size of map we download
-      var OSMTILECOUNT = 3; // how many tiles do we download in each direction (Math.floor(MAPSIZE / OSMTILESIZE)+1)
       /* Can see possible tiles on http://leaflet-extras.github.io/leaflet-providers/preview/
       However some don't allow cross-origin use */
       //var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast, TOO SLOW
@@ -69,8 +88,8 @@ TODO:
       var TILELAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       var PREVIEWTILELAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-      // Create map and try and set the location to where the browser thinks we are
-      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      var loadedMaps = [];
+
       // Tiles used for Bangle.js itself
       var bangleTileLayer = L.tileLayer(TILELAYER, {
         maxZoom: 18,
@@ -82,6 +101,10 @@ TODO:
         attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
       });
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
+      // Create map and try and set the location to where the browser thinks we are
+      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      previewTileLayer.addTo(map);
 
       // Search box:
       const searchProvider = new window.GeoSearch.OpenStreetMapProvider();
@@ -96,6 +119,7 @@ TODO:
       });
       map.addControl(searchControl);
 
+      // ---------------------------------------- Run at startup
       function onInit(device) {
         if (device && device.info && device.info.g) {
           // On 3 bit devices, don't even offer the option. 3 bit is the only way
@@ -104,12 +128,120 @@ TODO:
             document.getElementById("3bitdiv").style = "display:none";
           }
         }
+
+        showLoadedMaps();
       }
 
-      var mapFiles = [];
-      previewTileLayer.addTo(map);
+      function showLoadedMaps() {
+        document.getElementById("mapsLoadedContainer").style.display = "";
+        document.getElementById("mapContainer").style.display = "none";
 
-      function tilesLoaded(ctx, width, height) {
+        Util.showModal("Loading maps...");
+        let mapsLoadedContainer = document.getElementById("mapsLoadedContainer");
+        mapsLoadedContainer.innerHTML = "";
+        loadedMaps = [];
+
+        Puck.write(`\x10Bluetooth.println(require("Storage").list(/openstmap\\.\\d+\\.json/))\n`,function(files) {
+          console.log("MAPS:",files);
+          let promise = Promise.resolve();
+          files.trim().split(",").forEach(filename => {
+            if (filename=="") return;
+            promise = promise.then(() => new Promise(resolve => {
+              Util.readStorage(filename, fileContents => {
+                console.log(filename + " => " + fileContents);
+                let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
+                let mapInfo;
+                try {
+                  mapInfo = JSON.parse(fileContents);
+                } catch (e) {
+                  console.error(e);
+                }
+                loadedMaps[mapNumber] = mapInfo;
+                if (mapInfo!==undefined) {
+                  let latlon = L.latLng(mapInfo.lat, mapInfo.lon);
+                  mapsLoadedContainer.innerHTML += `
+<div class="tile">
+  <div class="tile-icon">
+    <div class="tile-map" id="tile-map-${mapNumber}">
+    </div>
+  </div>
+  <div class="tile-content">
+    <p class="tile-title">Map ${mapNumber}</p>
+    <p class="tile-subtitle">${mapInfo.w*mapInfo.h} Tiles (${((mapInfo.imgx*mapInfo.imgy)>>11).toFixed(0)}k)</p>
+  </div>
+  <div class="tile-action">
+    <button class="btn btn-primary" onclick="onMapDelete(${mapNumber})">Delete</button>
+  </div>
+</div>
+                  `;
+                  let map = L.map(`tile-map-${mapNumber}`);
+                  L.tileLayer(PREVIEWTILELAYER, {
+                    maxZoom: 18
+                  }).addTo(map);
+                  let marker = new L.marker(latlon).addTo(map);
+                  map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
+                }
+                resolve();
+              });
+            }));
+          });
+          promise = promise.then(() => new Promise(resolve => {
+            if (!loadedMaps.length) {
+              mapsLoadedContainer.innerHTML += `
+<div class="tile">
+<div class="tile-icon">
+<div class="tile-map">
+</div>
+</div>
+<div class="tile-content">
+<p class="tile-title">No Maps Loaded</p>
+</div>
+<div class="tile-action">
+</div>
+</div>
+              `;
+            }
+            mapsLoadedContainer.innerHTML += `
+<div class="tile">
+<div class="tile-icon">
+  <div class="tile-map">
+  </div>
+</div>
+<div class="tile-content">
+</div>
+<div class="tile-action">
+<button class="btn btn-primary" onclick="showMap()">Add Map</button>
+</div>
+</div>
+            `;
+              Util.hideModal();
+          }));
+        });
+      }
+
+      function onMapDelete(mapNumber) {
+        console.log("delete", mapNumber);
+        Util.showModal(`Erasing map ${mapNumber}...`);
+        Util.eraseStorage(`openstmap.${mapNumber}.json`, function() {
+          Util.eraseStorage(`openstmap.${mapNumber}.img`, function() {
+            Util.hideModal();
+            showLoadedMaps();
+          });
+        });
+      }
+
+      function showMap() {
+        document.getElementById("mapsLoadedContainer").style.display = "none";
+        document.getElementById("mapContainer").style.display = "";
+        document.getElementById("maptiles").style.display="none";
+        document.getElementById("uploadbuttons").style.display="none";
+      }
+
+      // -----------------------------------------------------
+      var mapFiles = [];
+
+      // convert canvas into an actual tiled image file
+      function tilesLoaded(ctx, width, height, mapImageFile) {
         var options = {
           compression:false, output:"raw",
           mode:"web"
@@ -118,6 +250,7 @@ TODO:
           options = {
             compression:false, output:"raw",
             mode:"3bit",
+            diffusion:"bayer2"
           };
           /* If in 3 bit mode, go through all the data beforehand and
           turn the saturation up to maximum, so when thresholded it
@@ -166,12 +299,17 @@ TODO:
           }
         }
         return [{
-          name:"openstmap.0.img",
+          name:mapImageFile,
           content:tiledImage
         }];
       }
 
       document.getElementById("getmap").addEventListener("click", function() {
+
+        var MAPTILES = parseInt(document.getElementById("mapSize").value);
+        var MAPSIZE = TILESIZE*MAPTILES; /// Size of map we download to Bangle in pixels
+        var OSMTILECOUNT = (Math.ceil((MAPSIZE+TILESIZE) / OSMTILESIZE)+1); // how many tiles do we download from OSM in each direction
+
         var zoom = map.getZoom();
         var centerlatlon = map.getBounds().getCenter();
         var center = map.project(centerlatlon, zoom).divideBy(OSMTILESIZE);
@@ -242,8 +380,11 @@ TODO:
 
         Promise.all(tileGetters).then(() => {
           document.getElementById("uploadbuttons").style.display="";
-          mapFiles = tilesLoaded(ctx, canvas.width, canvas.height);
-          mapFiles.unshift({name:"openstmap.0.json",content:JSON.stringify({
+          var mapNumber = 0;
+          while (loadedMaps[mapNumber]) mapNumber++;
+          let mapImageFile = `openstmap.${mapNumber}.img`;
+          mapFiles = tilesLoaded(ctx, canvas.width, canvas.height, mapImageFile);
+          mapFiles.unshift({name:`openstmap.${mapNumber}.json`,content:JSON.stringify({
             imgx : canvas.width,
             imgy : canvas.height,
             tilesize : TILESIZE,
@@ -252,21 +393,31 @@ TODO:
             lon : centerlatlon.lng,
             w : Math.round(canvas.width / TILESIZE), // width in tiles
             h : Math.round(canvas.height / TILESIZE), // height in tiles
-            fn : "openstmap.0.img"
+            fn : mapImageFile
           })});
           console.log(mapFiles);
         });
       });
 
       document.getElementById("upload").addEventListener("click", function() {
-        sendCustomizedApp({
-          storage:mapFiles
+        Util.showModal("Uploading...");
+        let promise = Promise.resolve();
+        mapFiles.forEach(file => {
+          promise = promise.then(function() {
+            return new Promise(resolve => {
+              Util.writeStorage(file.name, file.content, resolve);
+            });
+          });
+        });
+        promise.then(function() {
+          Util.hideModal();
+          console.log("Upload Complete");
+          showLoadedMaps();
         });
       });
 
       document.getElementById("cancel").addEventListener("click", function() {
-        document.getElementById("maptiles").style.display="none";
-        document.getElementById("uploadbuttons").style.display="none";
+        showMap();
       });
 
     </script>
