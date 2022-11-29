@@ -1,0 +1,32 @@
+diff --git a/apps/calclock/calclock.js b/apps/calclock/calclock.js
+index cb8c6100e..2092c1a4e 100644
+--- a/apps/calclock/calclock.js
++++ b/apps/calclock/calclock.js
+@@ -3,9 +3,24 @@ var current = [];
+ var next = [];
+ 
+ function updateCalendar() {
+-  calendar = require("Storage").readJSON("android.calendar.json",true)||[];
+-  calendar = calendar.filter(e => isActive(e) || getTime() <= e.timestamp);
+-  calendar.sort((a,b) => a.timestamp - b.timestamp);
++  calendar = [
++    {
++    t: "calendar",
++    id: 2, type: 0, timestamp: getTime(), durationInSeconds: 200,
++    title: "Capture Screenshot",
++    description: "Capture Screenshot",
++    location: "",
++    calName: "",
++    color: -7151168, allDay: true },
++  {
++    t: "calendar",
++    id: 7186, type: 0, timestamp: getTime() + 2000, durationInSeconds: 100,
++    title: "Upload to BangleApps",
++    description: "",
++    location: "",
++    calName: "",
++    color: -509406, allDay: false }
++    ];
+ 
+   current = calendar.filter(isActive);
+   next = calendar.filter(e=>!isActive(e));
