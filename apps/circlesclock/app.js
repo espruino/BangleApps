@@ -106,6 +106,10 @@ let circleItemNum = [
   2, // circle3
   3, // circle4
 ];
+let weatherCircleNum = 0;
+let weatherCircleDataNum = 0;
+let weatherCircleCondNum = 0;
+let weatherCircleTempNum = 0;
 
 function hideWidgets() {
   /*
@@ -323,6 +327,49 @@ function getImage(graphic, color) {
 }
 
 function drawWeather(w) {
+  if (!w) w = getCircleXPosition("weather");
+  let weatherInfo = menu[weatherCircleNum];
+  let weatherCond = weatherCircleCondNum >= 0? weatherInfo.items[weatherCircleCondNum]: undefined;
+  let weatherData = weatherCircleDataNum >= 0? weatherInfo.items[weatherCircleDataNum]: undefined;
+  let weatherTemp = weatherCircleTempNum >= 0? weatherInfo.items[weatherCircleTempNum]: undefined;
+  let color = getCircleColor("weather");
+  let percent = 0;
+  let data = settings.weatherCircleData;
+  let tempString = "?", icon = undefined;
+
+  if(weatherCond) {
+    weatherCond.show()
+    weatherCond.hide()
+    icon = weatherCond.get().img;
+  }
+  if(weatherTemp) {
+    weatherTemp.show()
+    weatherTemp.hide()
+    tempString = weatherTemp.get().text;
+  }
+
+  drawCircleBackground(w);
+
+  if(weatherData) {
+    weatherData.show();
+    weatherData.hide();
+    let data = weatherData.get();
+    if(weatherData.hasRange) percent = (data.v-data.min) / (data.max-data.min);
+    drawGauge(w, h3, percent, color);
+  }
+
+  drawInnerCircleAndTriangle(w);
+
+  writeCircleText(w, tempString);
+
+  if(icon) {
+    g.setColor(getCircleIconColor("weather", color, percent))
+      .drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
+  } else {
+    g.drawString("?", w, h3 + radiusOuter);
+  }
+}
+function drawWeatherOld(w) {
   if (!w) w = getCircleXPosition("weather");
   let weather = getWeather();
   let tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
@@ -664,6 +711,11 @@ function reloadMenu() {
         itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
       circleInfoNum[i-1] = infoNum;
       circleItemNum[i-1] = itemNum;
+    } else if(settings['circle'+i] == "weather") {
+      weatherCircleNum = menu.findIndex(e=>e.name.toLowerCase() == "weather");
+      weatherCircleDataNum = menu[weatherCircleNum].items.findIndex(it=>it.name==settings.weatherCircleData);
+      weatherCircleCondNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="condition");
+      weatherCircleTempNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="temperature");
     }
 }
 //reload periodically for changes?
@@ -684,11 +736,11 @@ function drawClkInfo(index, w) {
   if (!w) w = getCircleXPosition(type);
   drawCircleBackground(w);
   const color = getCircleColor(type);
-  if(!info || !info.items.length) {
+  var item = info.items[circleItemNum[index-1]];
+  if(!info || !item) {
     drawEmpty(info? info.img : null, w, color);
     return;
   }
-  var item = info.items[circleItemNum[index-1]];
   item.show();
   item.hide();
   var data=item.get();
