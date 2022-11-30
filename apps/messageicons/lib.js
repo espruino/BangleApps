@@ -55,7 +55,7 @@ exports.getImage = function(msg) {
   if (s=="skype") return atob("GBgBAAAAB8AAH/8AP//AP//gf8fwfwD4fgB4fjx8fj/8Pg/8PwH8P4B8P/h8Pnx+Pjx+Hhh+HwD+D8P+B//8A//8AP/4AAPgAAAA"); // icons/skype.png
   if (s=="slack") return atob("GBgBAAAAAOcAAeeAAeeAAeeAAGeAAAeAP+ecf+eef+e+f+e+AAAAAAAAfef+fef+eef+Oef8AeAAAeYAAeeAAeeAAeeAAOcAAAAA"); // icons/slack.png
   if (s=="snapchat") return atob("GBgBAAAAAAAAAAAAAH4AAf+AAYGAAwDAAwDAAwDADwDwDwDwDgBwBwDgBwDgDgBwHAA4OAAcHAA4D4HwB//gAH4AAAAAAAAAAAAA"); // icons/snapchat.png
-  if (ss="starbucks") return atob("GBgBAAAAAAAAAAAAD//4D//8DADMDADMDADMDAD8DAD4DADADADADADADADADgHAB/+AA/8AAAAAAAAAP//wP//wAAAAAAAAAAAA"); // icons/cafe.png
+  if (s=="starbucks") return atob("GBgBAAAAAAAAAAAAD//4D//8DADMDADMDADMDAD8DAD4DADADADADADADADADgHAB/+AA/8AAAAAAAAAP//wP//wAAAAAAAAAAAA"); // icons/cafe.png
   if (s=="steam") return atob("GBgBAAAAAAAAAf+AA//AD//wD//wH/g4P/OcP/RcP+RcP+ReH8OeB4A+AAH+AMP8IC/8OS/8HN/4Dj/wD//wA//AAf+AAAAAAAAA"); // icons/steam.png
   if (s=="teams") return atob("GBgBAAAAAAgAAD4AADcYAGM8AGNmP/dmP/48MDAYMD/+PP/+PPBmPPBmPPBmPPBmP/BmP/BmH+B+AYD4AMDAAOOAAH8AABwAAAAA"); // icons/teams.png
   if (s=="telegram" || s=="telegram foss") return atob("GBgBAAAAAAAAAAAAAAAeAAB+AAP+AA/+AD/+Af9+B/z+H/n8f+P8f8f8Dw/8AB/8AB/8AB/4AAf4AAP4AAD4AABwAAAAAAAAAAAA"); // icons/telegram.png
