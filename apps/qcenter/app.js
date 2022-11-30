@@ -1,9 +1,10 @@
+{
 require("Font8x12").add(Graphics);
 
 // load pinned apps from config
-var settings = require("Storage").readJSON("qcenter.json", 1) || {};
-var pinnedApps = settings.pinnedApps || [];
-var exitGesture = settings.exitGesture || "swipeup";
+let settings = require("Storage").readJSON("qcenter.json", 1) || {};
+let pinnedApps = settings.pinnedApps || [];
+let exitGesture = settings.exitGesture || "swipeup";
 
 // if empty load a default set of apps as an example
 if (pinnedApps.length == 0) {
@@ -14,12 +15,12 @@ if (pinnedApps.length == 0) {
 }
 
 // button drawing from Layout.js, edited to have completely custom button size with icon
-function drawButton(l) {
-	var x = l.x + (0 | l.pad),
+let drawButton = function(l) {
+	let x = l.x + (0 | l.pad),
 		y = l.y + (0 | l.pad),
 		w = l.w - (l.pad << 1),
 		h = l.h - (l.pad << 1);
-	var poly = [
+	let poly = [
 			x,
 			y + 4,
 			x + 4,
@@ -54,14 +55,14 @@ function drawButton(l) {
 }
 
 // function to split array into group of 3, for button placement
-function groupBy3(data) {
-	var result = [];
-	for (var i = 0; i < data.length; i += 3) result.push(data.slice(i, i + 3));
+let groupBy3 = function(data) {
+	let result = [];
+	for (let i = 0; i < data.length; i += 3) result.push(data.slice(i, i + 3));
 	return result;
 }
 
 // generate object with buttons for apps by group of 3
-var appButtons = groupBy3(pinnedApps).map((appGroup, i) => {
+let appButtons = groupBy3(pinnedApps).map((appGroup, i) => {
 	return appGroup.map((app, j) => {
 		return {
 			type: "custom",
@@ -71,13 +72,13 @@ var appButtons = groupBy3(pinnedApps).map((appGroup, i) => {
 			pad: 5,
 			src: require("Storage").read(app.icon),
 			scale: 0.75,
-			cb: (l) => Bangle.load(app.src),
+			cb: (l) => load(app.src),
 		};
 	});
 });
 
 // create basic layout content with status info and sensor status on top
-var layoutContent = [
+let layoutContent = [
 	{
 		type: "h",
 		pad: 5,
@@ -102,19 +103,27 @@ appButtons.forEach((appGroup) => {
 
 Bangle.loadWidgets();
 
-var Layout = require("Layout");
-var layout = new Layout({
+let Layout = require("Layout");
+let layout = new Layout({
 	type: "v",
-	c: layoutContent,
+	c: layoutContent
+}, {
+  remove: ()=>{
+    Bangle.removeListener("swipe", onSwipe);
+    delete Graphics.prototype.setFont8x12;
+  }
 });
 g.clear();
 layout.render();
 Bangle.drawWidgets();
 
 // swipe event listener for exit gesture
-Bangle.on("swipe", function (lr, ud) {
+let onSwipe = function (lr, ud) {
 	if(exitGesture == "swipeup" && ud == -1) Bangle.showClock();
 	if(exitGesture == "swipedown" && ud == 1) Bangle.showClock();
 	if(exitGesture == "swipeleft" && lr == -1) Bangle.showClock();
 	if(exitGesture == "swiperight" && lr == 1) Bangle.showClock();
-});
+}
+
+Bangle.on("swipe", onSwipe);
+}
