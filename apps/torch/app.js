@@ -20,7 +20,10 @@
   g.setColor(settings.bg);
   g.fillRect(0,0,g.getWidth(),g.getHeight());
   // if Fastload Utils is installed, make Torch compatible with it.
-  if (s.readJSON('fastload.info') != undefined) Bangle.loadWidgets();
+  if (s.readJSON('fastload.info') != undefined) {
+    Bangle.loadWidgets();
+    require('widget_utils').swipeOn();
+  }
   Bangle.setUI({
     mode : 'custom',
     back : Bangle.showClock, // B2: SW back button to exit
