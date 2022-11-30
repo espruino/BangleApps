@@ -15,12 +15,12 @@ exports.listener = function(type, msg) {
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
   let loadMessages = (Bangle.CLOCK || event.important);
   if (type==="music") {
-    if (Bangle.CLOCK && msg.new && appSettings.openMusic) loadMessages = true;
+    if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;
   }
   require("messages").save(msg);
   msg.handled = true;
-  if (msg.t!=="add" || !msg.new) {
+  if ((msg.t!=="add" || !msg.new) && (type!=="music")) { // music always has t:"modify"
     return;
   }
 

@@ -112,9 +112,11 @@ function showMapMessage(msg) {
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
 
-var updateLabelsInterval;
+let updateLabelsInterval,
+  music = {artist: "", album: "", title: ""}; // defaults, so e.g. msg.title.length doesn't error
 function showMusicMessage(msg) {
   active = "music";
+  msg = Object.assign(music, msg); // combine+remember "musicinfo" and "musicstate" messages
   openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
