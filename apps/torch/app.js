@@ -20,11 +20,8 @@
   g.setTheme({bg:settings.bg,fg:"#000"});
   g.setColor(settings.bg);
   g.fillRect(0,0,g.getWidth(),g.getHeight());
-  if (s.read('fastload.cache')!==undefined) {
-    Bangle.loadWidgets();
-    if (process.env.HWVERSION==1) wu.hide();
-    if (process.env.HWVERSION==2) wu.swipeOn();
-  }
+  Bangle.loadWidgets();
+  wu.hide();
   Bangle.setUI({
     mode : 'custom',
     back : Bangle.showClock, // B2: SW back button to exit
@@ -37,4 +34,3 @@
     }
   });
 }
-
