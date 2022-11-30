@@ -41,11 +41,8 @@
 
 	function showMainMenu() {
 		var mainmenu = {
-			"": { title: "Quick Center" },
-			"< Back": () => {
-				load();
-			},
-		};
+			"": { title: "Quick Center", back: back}
+    };
 
 		// Set exit gesture
 		mainmenu["Exit Gesture: " + exitGesture] = function () {
@@ -56,10 +53,7 @@
 		pinnedApps.forEach((app, i) => {
 			mainmenu[app.name] = function () {
 				E.showMenu({
-					"": { title: app.name },
-					"< Back": () => {
-						showMainMenu();
-					},
+					"": { title: app.name, back: showMainMenu },
 					"Unpin": () => {
 						pinnedApps.splice(i, 1);
 						save("pinnedApps", pinnedApps);
@@ -97,8 +91,7 @@
 
 	// menu for adding apps to the quick launch menu, listing all apps
 	var pinAppMenu = {
-		"": { title: "Add App" },
-		"< Back": showMainMenu,
+		"": { title: "Add App", back: showMainMenu }
 	};
 	apps.forEach((a) => {
 		pinAppMenu[a.name] = function () {
@@ -113,8 +106,7 @@
 
 	// menu for setting exit gesture
 	var exitGestureMenu = {
-		"": { title: "Exit Gesture" },
-		"< Back": showMainMenu,
+		"": { title: "Exit Gesture", back: showMainMenu }
 	};
 	exitGestureMenu["Swipe Up"] = function () {
 		exitGesture = "swipeup";
