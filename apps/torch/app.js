@@ -2,6 +2,7 @@
   const SETTINGS_FILE = "torch.json";
   let settings;
   let s = require("Storage");
+  let wu = require("widget_utils");
 
   let loadSettings = function() {
     settings = s.readJSON(SETTINGS_FILE,1)|| {'bg': '#FFFFFF', 'color': 'White'};
@@ -19,10 +20,10 @@
   g.setTheme({bg:settings.bg,fg:"#000"});
   g.setColor(settings.bg);
   g.fillRect(0,0,g.getWidth(),g.getHeight());
-  // if Fastload Utils is installed, make Torch compatible with it.
-  if (s.readJSON('fastload.info') != undefined) {
+  if (s.read('fastload.cache')!==undefined) {
     Bangle.loadWidgets();
-    require('widget_utils').swipeOn();
+    if (process.env.HWVERSION==1) wu.hide();
+    if (process.env.HWVERSION==2) wu.swipeOn();
   }
   Bangle.setUI({
     mode : 'custom',
@@ -32,6 +33,8 @@
       Bangle.setLCDBrightness(brightnessBackup);
       Bangle.setOptions(optionsBackup);
       g.setTheme(themeBackup);
+      wu.show();
     }
   });
 }
+
