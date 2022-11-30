@@ -129,7 +129,7 @@ exports.getColor = function(msg,options) {
     "telegram foss": "#0088cc",
     "to do": "#3999e5",
     "twitch": "#9146ff", // https://brand.twitch.tv/
-    "twitter": "#1d9bf0, // https://about.twitter.com/en/who-we-are/brand-toolkit
+    "twitter": "#1d9bf0", // https://about.twitter.com/en/who-we-are/brand-toolkit
     "vlc": "#ff8800",
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
