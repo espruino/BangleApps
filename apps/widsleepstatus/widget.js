@@ -19,7 +19,7 @@
     width: 0,
     draw: function(w) {
       let status = sleeplog.status || 0;
-      if (w.width != (status >= 2 ? 24 : 0)){
+      if (w && w.width != (status >= 2 ? 24 : 0)){
         w.width = status >= 2 ? 24 : 0;
         return Bangle.drawWidgets();
       }
