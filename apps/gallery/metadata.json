@@ -12,6 +12,7 @@
         "BANGLEJS"
     ],
     "allow_emulator": true,
+    "interface": "interface.html",
     "storage": [
         {
             "name": "gallery.app.js",
