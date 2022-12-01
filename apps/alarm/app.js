@@ -128,7 +128,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       value: alarm.hidden || false,
       onchange: v => alarm.hidden = v
     },
-    /*LANG*/"Confirm": () {
+    /*LANG*/"Confirm": () => {
       prepareAlarmForSave(alarm, alarmIndex, time);
       saveAndReload();
       showMainMenu();
