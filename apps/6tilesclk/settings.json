@@ -1,6 +1,6 @@
 {
   "lineColor": 33808,
-  "leeding0": true,
+  "leading0": true,
   "woy": "",
   "modules": {
     "sundown": ["sunrise", "sunset"],

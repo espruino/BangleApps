@@ -307,8 +307,8 @@ function loadValues(module, time) {
 // define function to get the value of a tile
 function getValue(field, time) {
   switch(field) {
-    case "hour": { // hour with/without leeding 0
-      return ((this.leeding0 ? "0" : " ") + time.getHours()).substr(-2);
+    case "hour": { // hour with/without leading 0
+      return ((this.leading0 ? "0" : " ") + time.getHours()).substr(-2);
     }
     case "minute": { // minute
       return ("0" + time.getMinutes()).substr(-2);
