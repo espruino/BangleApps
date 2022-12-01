@@ -106,6 +106,10 @@ let circleItemNum = [
   2, // circle3
   3, // circle4
 ];
+let weatherCircleNum = 0;
+let weatherCircleDataNum = 0;
+let weatherCircleCondNum = 0;
+let weatherCircleTempNum = 0;
 
 function hideWidgets() {
   /*
@@ -323,6 +327,55 @@ function getImage(graphic, color) {
 }
 
 function drawWeather(w) {
+  if (!w) w = getCircleXPosition("weather");
+  let weatherInfo = menu[weatherCircleNum];
+  let weatherCond = weatherCircleCondNum >= 0? weatherInfo.items[weatherCircleCondNum]: undefined;
+  let weatherData = weatherCircleDataNum >= 0? weatherInfo.items[weatherCircleDataNum]: undefined;
+  let weatherTemp = weatherCircleTempNum >= 0? weatherInfo.items[weatherCircleTempNum]: undefined;
+  let color = getCircleColor("weather");
+  let percent = 0;
+  let data = settings.weatherCircleData;
+  let tempString = "?", icon = undefined;
+  let scale = 16/24; //our icons are 16x16 while clkinfo's are 24x24
+
+  if(weatherCond) {
+    weatherCond.show()
+    weatherCond.hide()
+    let data = weatherCond.get()
+    if(settings.legacyWeatherIcons) { //may disappear in future
+      icon = getWeatherIconByCode(data.v);
+      scale = 1;
+    } else
+      icon = data.img;
+  }
+  if(weatherTemp) {
+    weatherTemp.show()
+    weatherTemp.hide()
+    tempString = weatherTemp.get().text;
+  }
+
+  drawCircleBackground(w);
+
+  if(weatherData) {
+    weatherData.show();
+    weatherData.hide();
+    let data = weatherData.get();
+    if(weatherData.hasRange) percent = (data.v-data.min) / (data.max-data.min);
+    drawGauge(w, h3, percent, color);
+  }
+
+  drawInnerCircleAndTriangle(w);
+
+  writeCircleText(w, tempString);
+
+  if(icon) {
+    g.setColor(getCircleIconColor("weather", color, percent))
+      .drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: scale});
+  } else {
+    g.drawString("?", w, h3 + radiusOuter);
+  }
+}
+function drawWeatherOld(w) {
   if (!w) w = getCircleXPosition("weather");
   let weather = getWeather();
   let tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
@@ -659,12 +712,16 @@ function reloadMenu() {
       let parts = settings['circle'+i].split("/");
       let infoName = parts[0], itemName = parts[1];
       let infoNum = menu.findIndex(e=>e.name==infoName);
-      let itemNum = 0;
-      //suppose unnamed are varying (like timers or events), pick the first
-      if(itemName)
+      let itemNum = 0; //get first if dynamic
+      if(!menu[infoNum].dynamic)
         itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
       circleInfoNum[i-1] = infoNum;
       circleItemNum[i-1] = itemNum;
+    } else if(settings['circle'+i] == "weather") {
+      weatherCircleNum = menu.findIndex(e=>e.name.toLowerCase() == "weather");
+      weatherCircleDataNum = menu[weatherCircleNum].items.findIndex(it=>it.name==settings.weatherCircleData);
+      weatherCircleCondNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="condition");
+      weatherCircleTempNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="temperature");
     }
 }
 //reload periodically for changes?
@@ -685,22 +742,23 @@ function drawClkInfo(index, w) {
   if (!w) w = getCircleXPosition(type);
   drawCircleBackground(w);
   const color = getCircleColor(type);
-  if(!info || !info.items.length) {
+  var item = info.items[circleItemNum[index-1]];
+  if(!info || !item) {
     drawEmpty(info? info.img : null, w, color);
     return;
   }
-  var item = info.items[circleItemNum[index-1]];
-  //TODO do hide()+get() here
   item.show();
   item.hide();
-  item=item.get();
-  var img = item.img;
+  var data=item.get();
+  var img = data.img;
+  var percent = 1; //fill up if no range
+  var txt = data.text;
   if(!img) img = info.img;
-  let percent = (item.v-item.min) / item.max;
-  if(isNaN(percent)) percent = 1; //fill it up
+  if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
+  if(data.short) txt = data.short;
   drawGauge(w, h3, percent, color);
   drawInnerCircleAndTriangle(w);
-  writeCircleText(w, item.text);
+  writeCircleText(w, txt);
   g.setColor(getCircleIconColor(type, color, percent))
     .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
