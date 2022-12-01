@@ -31,10 +31,17 @@
         img: atob("GBiBAf+///u5//n7//8f/9wHP8gDf/gB//AB/7AH/5AcP/AQH/DwD/uAD84AD/4AA/wAAfAAAfAAAfAAAfgAA/////+bP/+zf/+zfw=="),
         items: [
             {
+                name: "conditionWithTemperature",
+                get: () => ({ text: weather.temp, img: weatherIcon(weather.code),
+                  v: parseInt(weather.temp), min: -30, max: 55}),
+                show: function() { this.emit("redraw"); },
+                hide: function () {}
+            },
+            {
                 name: "condition",
                 get: () => ({ text: weather.txt, img: weatherIcon(weather.code),
                   v: weather.code}),
-                show: function() { weatherItems.items[0].emit("redraw"); },
+                show: function() { this.emit("redraw"); },
                 hide: function () {}
             },
             {
@@ -42,7 +49,7 @@
                 hasRange : true,
                 get: () => ({ text: weather.temp, img: atob("GBiBAAA8AAB+AADnAADDAADDAADDAADDAADDAADbAADbAADbAADbAADbAADbAAHbgAGZgAM8wAN+wAN+wAM8wAGZgAHDgAD/AAA8AA=="),
                   v: parseInt(weather.temp), min: -30, max: 55}),
-                show: function() { weatherItems.items[1].emit("redraw"); },
+                show: function() { this.emit("redraw"); },
                 hide: function () {}
             },
             {
@@ -50,7 +57,7 @@
                 hasRange : true,
                 get: () => ({ text: weather.hum, img: atob("GBiBAAAEAAAMAAAOAAAfAAAfAAA/gAA/gAI/gAY/AAcfAA+AQA+A4B/A4D/B8D/h+D/j+H/n/D/n/D/n/B/H/A+H/AAH/AAD+AAA8A=="),
                   v: parseInt(weather.hum), min: 0, max: 100}),
-                show: function() { weatherItems.items[2].emit("redraw"); },
+                show: function() { this.emit("redraw"); },
                 hide: function () {}
             },
             {
@@ -58,7 +65,7 @@
                 hasRange : true,
                 get: () => ({ text: weather.wind, img: atob("GBiBAAHgAAPwAAYYAAwYAAwMfAAY/gAZh3/xg//hgwAAAwAABg///g//+AAAAAAAAP//wH//4AAAMAAAMAAYMAAYMAAMcAAP4AADwA=="),
                   v: parseInt(weather.wind), min: 0, max: 118}),
-                show: function() { weatherItems.items[3].emit("redraw"); },
+                show: function() { this.emit("redraw"); },
                 hide: function () {}
             },
         ]
