@@ -176,12 +176,14 @@ TODO:
   </div>
 </div>
                   `;
-                  let map = L.map(`tile-map-${mapNumber}`);
-                  L.tileLayer(PREVIEWTILELAYER, {
-                    maxZoom: 18
-                  }).addTo(map);
-                  let marker = new L.marker(latlon).addTo(map);
-                  map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
+                  setTimeout(function() {
+                    let map = L.map(`tile-map-${mapNumber}`);
+                    L.tileLayer(PREVIEWTILELAYER, {
+                      maxZoom: 18
+                    }).addTo(map);
+                    let marker = new L.marker(latlon).addTo(map);
+                    map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
+                  }, 100);
                 }
                 resolve();
               });
