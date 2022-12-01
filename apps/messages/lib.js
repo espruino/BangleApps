@@ -6,7 +6,6 @@ exports.music = {};
 function emit(msg) {
   let type = "text";
   if (["call", "music", "map"].includes(msg.id)) type = msg.id;
-  if (type==="music" && msg.t!=="remove" && (!("state" in msg) || (!("track" in msg)))) return; // wait for complete music info
   if (msg.src && msg.src.toLowerCase().startsWith("alarm")) type = "alarm";
   Bangle.emit("message", type, msg);
 }
