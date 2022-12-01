@@ -336,11 +336,17 @@ function drawWeather(w) {
   let percent = 0;
   let data = settings.weatherCircleData;
   let tempString = "?", icon = undefined;
+  let scale = 16/24; //our icons are 16x16 while clkinfo's are 24x24
 
   if(weatherCond) {
     weatherCond.show()
     weatherCond.hide()
-    icon = weatherCond.get().img;
+    let data = weatherCond.get()
+    if(settings.legacyWeatherIcons) { //may disappear in future
+      icon = getWeatherIconByCode(data.v);
+      scale = 1;
+    } else
+      icon = data.img;
   }
   if(weatherTemp) {
     weatherTemp.show()
@@ -364,7 +370,7 @@ function drawWeather(w) {
 
   if(icon) {
     g.setColor(getCircleIconColor("weather", color, percent))
-      .drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
+      .drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: scale});
   } else {
     g.drawString("?", w, h3 + radiusOuter);
   }

@@ -82,6 +82,12 @@
         },
         onchange: x => save('updateInterval', x),
       },
+      //TODO deprecated local icons, may disappear in future
+      /*LANG*/'legacy weather icons': {
+        value: !!settings.legacyWeatherIcons,
+        format: () => (settings.legacyWeatherIcons ? 'Yes' : 'No'),
+        onchange: x => save('legacyWeatherIcons', x),
+      },
       /*LANG*/'show big weather': {
         value: !!settings.showBigWeather,
         format: () => (settings.showBigWeather ? 'Yes' : 'No'),
