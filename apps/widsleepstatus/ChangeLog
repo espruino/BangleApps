@@ -2,3 +2,4 @@
 0.02: Load settings only once
       Better icons
       Read sleep status on every draw
+0.03: Fix potential crash
