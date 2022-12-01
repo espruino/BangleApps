@@ -128,12 +128,12 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       value: alarm.hidden || false,
       onchange: v => alarm.hidden = v
     },
+    /*LANG*/"Cancel": () => showMainMenu(),
     /*LANG*/"Confirm": () => {
       prepareAlarmForSave(alarm, alarmIndex, time);
       saveAndReload();
       showMainMenu();
-    },
-    /*LANG*/"Cancel": () => showMainMenu()
+    }
   };
 
   if (!isNew) {
@@ -298,7 +298,12 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       onchange: v => timer.hidden = v
     },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
-    /*LANG*/"Cancel": () => showMainMenu()
+    /*LANG*/"Cancel": () => showMainMenu(),
+    /*LANG*/"Confirm": () => {
+      prepareTimerForSave(timer, timerIndex, time);
+      saveAndReload();
+      showMainMenu();
+    }
   };
 
   if (!isNew) {
