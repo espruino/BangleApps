@@ -57,7 +57,7 @@
           t:event.cmd=="incoming"?"add":"remove",
           id:"call", src:"Phone",
           positive:true, negative:true,
-          title:event.name||"Call", body:"Incoming call\n"+event.number});
+          title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
       "alarm" : function() {
@@ -148,7 +148,7 @@
   Bangle.http = (url,options)=>{
     options = options||{};
     if (!NRF.getSecurityStatus().connected)
-      return Promise.reject("Not connected to Bluetooth");
+      return Promise.reject(/*LANG*/"Not connected to Bluetooth");
     if (Bangle.httpRequest === undefined)
       Bangle.httpRequest={};
     if (options.id === undefined) {
