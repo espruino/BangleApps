@@ -31,7 +31,7 @@
 
   function getAlarmText(a){
     if(a.timer) {
-      if(!a.on) return "off";
+      if(!a.on) return /*LANG*/"off";
       let time = Math.round(alarm.getTimeToAlarm(a)/(60*1000));
       if(time > 60)
         time = Math.round(time / 60) + "h";
@@ -52,7 +52,7 @@
   var img = iconAlarmOn;
   //get only alarms not created by other apps
   var alarmItems = {
-    name: "Alarms",
+    name: /*LANG*/"Alarms",
     img: img,
     dynamic: true,
     items: alarm.getAlarms().filter(a=>!a.appid)

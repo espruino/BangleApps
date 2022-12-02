@@ -183,7 +183,7 @@ function decodeDOW(alarm) {
       .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
       .join("")
       .toLowerCase()
-    : "Once"
+    : /*LANG*/"Once"
 }
 
 function showEditRepeatMenu(repeat, dow, dowChangeCallback) {

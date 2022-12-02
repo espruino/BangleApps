@@ -41,7 +41,7 @@ function stepsPerHour() {
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
   setButton(menuStepCount);
-  barChart("HOUR", data);
+  barChart(/*LANG*/"HOUR", data);
 }
 
 function stepsPerDay() {
@@ -49,7 +49,7 @@ function stepsPerDay() {
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   setButton(menuStepCount);
-  barChart("DAY", data);
+  barChart(/*LANG*/"DAY", data);
 }
 
 function hrmPerHour() {
@@ -62,7 +62,7 @@ function hrmPerHour() {
   });
   data.forEach((d,i)=>data[i] = d/cnt[i]);
   setButton(menuHRM);
-  barChart("HOUR", data);
+  barChart(/*LANG*/"HOUR", data);
 }
 
 function hrmPerDay() {
@@ -75,7 +75,7 @@ function hrmPerDay() {
   });
   data.forEach((d,i)=>data[i] = d/cnt[i]);
   setButton(menuHRM);
-  barChart("DAY", data);
+  barChart(/*LANG*/"DAY", data);
 }
 
 function movementPerHour() {
@@ -83,7 +83,7 @@ function movementPerHour() {
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
   setButton(menuMovement);
-  barChart("HOUR", data);
+  barChart(/*LANG*/"HOUR", data);
 }
 
 function movementPerDay() {
@@ -91,7 +91,7 @@ function movementPerDay() {
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
   setButton(menuMovement);
-  barChart("DAY", data);
+  barChart(/*LANG*/"DAY", data);
 }
 
 // Bar Chart Code
@@ -163,7 +163,7 @@ function setButton(fn) {
                 swipe:(lr,ud) => {
     if (lr == 1) {
       // HOUR data starts at index 0, DAY data starts at index 1
-      chart_index = Math.max((chart_label == "DAY") ? -3 : -4, chart_index - 1);
+      chart_index = Math.max((chart_label == /*LANG*/"DAY") ? -3 : -4, chart_index - 1);
     } else if (lr<0) {
       chart_index = Math.min(data_len - 5, chart_index + 1);
     } else {
