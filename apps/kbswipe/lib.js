@@ -35,6 +35,7 @@ exports.getStrokes = function(mode, cb) {
     cb("x", new Uint8Array([56, 63, 56, 67, 57, 74, 60, 89, 66, 109, 74, 129, 85, 145, 96, 158, 107, 164, 117, 167, 128, 164, 141, 155, 151, 140, 159, 122, 166, 105, 168, 89, 170, 81, 170, 73, 169, 66, 161, 63, 141, 68, 110, 83, 77, 110, 55, 134, 47, 145]));
     cb("y", new Uint8Array([42, 56, 42, 70, 48, 97, 62, 109, 85, 106, 109, 90, 126, 65, 134, 47, 137, 45, 137, 75, 127, 125, 98, 141, 70, 133, 65, 126, 92, 137, 132, 156, 149, 166]));
     cb("z", new Uint8Array([29, 62, 35, 62, 43, 62, 63, 62, 87, 62, 110, 62, 125, 62, 134, 62, 138, 62, 136, 63, 122, 68, 103, 77, 85, 91, 70, 107, 59, 120, 50, 132, 47, 138, 43, 143, 41, 148, 42, 151, 53, 155, 80, 157, 116, 158, 146, 158, 163, 158]));
+    cb("SHIFT", new Uint8Array([106, 184, 106, 182, 106, 175, 106, 165, 106, 151, 106, 135, 106, 120, 106, 106, 106, 95, 106, 87, 106, 82, 106, 78, 106, 73, 106, 70, 106, 68, 106, 66, 106, 64]));
   } else if (mode === INPUT_MODE_NUM) {
     cb("0", new Uint8Array([105, 63, 97, 63, 80, 63, 62, 64, 52, 69, 47, 79, 47, 94, 48, 111, 55, 125, 74, 138, 100, 141, 126, 137, 148, 129, 158, 119, 161, 107, 161, 98, 159, 92, 154, 87, 149, 82]));
     cb("1", new Uint8Array([123, 59, 123, 60, 123, 63, 123, 67, 123, 70, 122, 73, 121, 78, 119, 83, 118, 91, 117, 100, 116, 108, 115, 117, 114, 126, 113, 135, 112, 143, 111, 149, 111, 155, 110, 159]));
@@ -70,6 +71,7 @@ exports.input = function(options) {
   var Ry1;
   var Ry2;
   let flashInterval;
+  let shift = false;
 
   function findMarker(strArr) {
     if (strArr.length == 0) {
@@ -148,7 +150,8 @@ exports.input = function(options) {
     if (o.stroke!==undefined) {
       var ch = o.stroke;
       if (ch=="\b") text = text.slice(0,-1);
-      else text += ch;
+      else if (ch==="SHIFT") { shift=!shift; Bangle.drawWidgets(); }
+      else text += shift ? ch.toUpperCase() : ch;
       g.clearRect(R);
     }
     flashToggle = true;
@@ -159,6 +162,7 @@ exports.input = function(options) {
   function cycleInput() {
     input_mode++;
     if (input_mode > INPUT_MODE_NUM) input_mode = 0;
+    shift = false;
     setupStrokes();
     show();
     Bangle.drawWidgets();
@@ -172,15 +176,15 @@ exports.input = function(options) {
   // Create Widget to switch between alphabetic and numeric input
   WIDGETS.kbswipe={
     area:"tl",
-    width: 36, // 3 chars 6*2 px/char
+    width: 36, // 3 chars, 6*2 px/char
     draw: function() {
       g.reset();
       g.setFont("6x8:2x3");
       g.setColor("#f00");
       if (input_mode === INPUT_MODE_ALPHA) {
-        g.drawString("123", this.x, this.y);
+        g.drawString(shift ? "ABC" : "abc", this.x, this.y);
       } else if (input_mode === INPUT_MODE_NUM) {
-        g.drawString("ABC", this.x, this.y);
+        g.drawString("123", this.x, this.y);
       }
     }
   };
