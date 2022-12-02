@@ -5,6 +5,7 @@
   "version": "0.17",
   "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
   "icon": "app.png",
+  "screenshots": [{"url":"screen.png"}],
   "type": "app",
   "tags": "health,bluetooth,hrm,bthrm",
   "supports": ["BANGLEJS","BANGLEJS2"],

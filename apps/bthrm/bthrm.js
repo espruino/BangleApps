@@ -93,11 +93,11 @@ function draw(){
 
   if (bt && bt.time > (now - VALUE_TIMEOUT)) {
     layout.bt.label = bt.bpm;
-    if (bt.battery) layout.btBattery.label = bt.battery;
+    if (!isNaN(bt.battery)) layout.btBattery.label = bt.battery + "%";
     if (bt.rr) layout.btRR.label = bt.rr.join(",");
-    if (bt.location) layout.btLocation.label = BODY_LOCS[bt.location];
+    if (!isNaN(bt.location)) layout.btLocation.label = BODY_LOCS[bt.location];
     if (bt.contact !== undefined) layout.btContact.label = bt.contact ? "Yes":"No";
-    if (bt.energy) layout.btEnergy.label = bt.energy.toFixed(0) + "kJ";
+    if (!isNaN(bt.energy)) layout.btEnergy.label = bt.energy.toFixed(0) + "kJ";
   } else {
     layout.bt.label = "--";
     layout.btBattery.label = "--";
