@@ -446,10 +446,9 @@ require("messages").toggleWidget(false);
 Bangle.drawWidgets();
 
 setTimeout(() => {
-  var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
-  if (unreadTimeoutMillis) {
-    unreadTimeout = setTimeout(load, unreadTimeoutMillis);
-  }
+  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
+  if (settings.unreadTimeout)
+    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
   // only openMusic on launch if music is new
   var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
   checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
