@@ -1,7 +1,3 @@
-var intervalInt;
-var intervalBt;
-var intervalAgg;
-
 const BPM_FONT_SIZE="19%";
 const VALUE_TIMEOUT=3000;
 
@@ -19,7 +15,6 @@ var Layout = require("Layout");
 
 function border(l,c) {
   g.setColor(c).drawLine(l.x+l.w*0.05, l.y-4, l.x+l.w*0.95, l.y-4);
-  c++;
 }
 
 function getRow(id, text, additionalInfo){
@@ -68,23 +63,17 @@ var layout = new Layout( {
 var int,agg,bt;
 var firstEvent = true;
 
-var drawTimeout;
 function draw(){
-
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 1000);
-  
   if (!(int || agg || bt)) return;
-  
+
   if (firstEvent) {
     g.clearRect(Bangle.appRect);
     firstEvent = false;
   }
-  
-  if (int){
+
+  let now = Date.now();
+
+  if (int && int.time > (now - VALUE_TIMEOUT)){
     layout.int.label = int.bpm;
     if (!isNaN(int.confidence)) layout.intConfidence.label = int.confidence;
   } else {
@@ -92,7 +81,7 @@ function draw(){
     layout.intConfidence.label = "--";
   }
 
-  if (agg){
+  if (agg && agg.time > (now - VALUE_TIMEOUT)){
     layout.agg.label = agg.bpm;
     if (!isNaN(agg.confidence)) layout.aggConfidence.label = agg.confidence;
     if (agg.src) layout.aggSource.label = agg.src;
@@ -102,7 +91,7 @@ function draw(){
     layout.aggSource.label = "--";
   }
 
-  if (bt) {
+  if (bt && bt.time > (now - VALUE_TIMEOUT)) {
     layout.bt.label = bt.bpm;
     if (bt.battery) layout.btBattery.label = bt.battery;
     if (bt.rr) layout.btRR.label = bt.rr.join(",");
@@ -131,9 +120,6 @@ function draw(){
   }
 }
 
-var firstEventBt = true;
-var firstEventInt = true;
-
 
 // This can get called for the boot code to show what's happening
 function showStatusInfo(txt) {
@@ -145,37 +131,18 @@ function showStatusInfo(txt) {
 
 function onBtHrm(e) {
   bt = e;
-  if (e.bpm === 0){
-    Bangle.buzz(100,0.2);
-  }
-  if (intervalBt){
-    clearInterval(intervalBt);
-  }
-  intervalBt = setInterval(()=>{
-    bt = undefined;
-  }, VALUE_TIMEOUT);
+  bt.time = Date.now();
 }
 
 function onInt(e) {
   int = e;
-  if (intervalInt){
-    clearInterval(intervalInt);
-  }
-  intervalInt = setInterval(()=>{
-    int = undefined;
-  }, VALUE_TIMEOUT);
+  int.time = Date.now();
 }
 
 function onAgg(e) {
   agg = e;
-  if (intervalAgg){
-    clearInterval(intervalAgg);
-  }
-  intervalAgg = setInterval(()=>{
-    agg = undefined;
-  }, VALUE_TIMEOUT);
+  agg.time = Date.now();
 }
-
 
 var settings = require('Storage').readJSON("bthrm.json", true) || {};
 
@@ -195,7 +162,7 @@ Bangle.drawWidgets();
 if (Bangle.setBTHRMPower){
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2);
-  draw();
+  setInterval(draw, 1000);
 } else {
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("BTHRM disabled",g.getWidth()/2,g.getHeight()/2);
