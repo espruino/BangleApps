@@ -134,7 +134,7 @@ function read_heading() {
     Bangle.setCompassPower(1);
     var d = 0;
     var m = Bangle.getCompass();
-    if (!isNaN(m.heading)) d = -m.heading;
+    if (!isNaN(m.heading)) d = m.heading;
     heading = d;
   }
 

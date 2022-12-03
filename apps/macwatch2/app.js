@@ -20,7 +20,7 @@ function queueDraw() {
 
 function draw() {
   queueDraw();
-  
+
   // Fix theme to "light"
   g.setTheme({bg:"#fff", fg:"#000", dark:false}).clear();
   g.reset();
@@ -41,9 +41,6 @@ function draw() {
   yy = ("0"+((new Date()).getFullYear())).substr(-2);
   g.setFontCustom(font, 48, 8, 521);
   g.drawString(dd + ':' + mo + ':' + yy, 88, 120, true);
-  
-  // Hide widgets
-  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
 
@@ -61,4 +58,5 @@ Bangle.setUI("clock");
 
 // Load widgets but hide them
 Bangle.loadWidgets();
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 draw();

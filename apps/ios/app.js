@@ -1,2 +1,2 @@
 // Config app not implemented yet
-setTimeout(()=>load("messages.app.js"),10);
+setTimeout(()=>require("messages").openGUI(),10);

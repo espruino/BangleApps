@@ -91,7 +91,6 @@ function getTemperature(){
     var weatherJson = storage.readJSON('weather.json');
     var weather = weatherJson.weather;
     return Math.round(weather.temp-273.15);
-
   } catch(ex) {
     print(ex)
     return "?"
@@ -99,20 +98,7 @@ function getTemperature(){
 }
 
 function getSteps() {
-  var steps = 0;
-  try{
-      if (WIDGETS.wpedom !== undefined) {
-          steps = WIDGETS.wpedom.getSteps();
-      } else if (WIDGETS.activepedom !== undefined) {
-          steps = WIDGETS.activepedom.getSteps();
-      } else {
-        steps = Bangle.getHealthStatus("day").steps;
-      }
-  } catch(ex) {
-      // In case we failed, we can only show 0 steps.
-      return "? k";
-  }
-
+  var steps = Bangle.getHealthStatus("day").steps;
   steps = Math.round(steps/1000);
   return steps + "k";
 }
@@ -121,8 +107,7 @@ function getSteps() {
 function draw() {
   queueDraw();
 
-  g.reset();
-  g.clear();
+  g.clear(1);
   g.setColor(0, 255, 255);
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
   let background = getBackgroundImage();
@@ -143,9 +128,6 @@ function draw() {
   drawClock();
   drawRocket();
   drawBattery();
-
-  // Hide widgets
-  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
 }
 
 Bangle.on("lcdPower", (on) => {
@@ -169,7 +151,6 @@ Bangle.setUI("clock");
 
 // Load widgets, but don't show them
 Bangle.loadWidgets();
-
-g.reset();
-g.clear();
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+g.clear(1);
 draw();

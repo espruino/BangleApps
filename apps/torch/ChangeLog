@@ -3,3 +3,9 @@
 0.03: Add Color Changing Settings
 0.04: Add Support For Bangle.js 2
 0.05: Default full Brightness
+0.06: Press upper left corner to exit on Bangle.js 2
+0.07: Code tweaks
+0.08: Force background of widget field to the torch colour
+0.09: Change code taking FW tweaks into account
+0.10: Introduce fast switching.
+0.11: Make compatible with Fastload Utils by loading and hiding widgets.

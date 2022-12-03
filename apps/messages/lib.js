@@ -1,10 +1,15 @@
-function openMusic() {
-  // only read settings file for first music message
-  if ("undefined"==typeof exports._openMusic) {
-    exports._openMusic = !!((require('Storage').readJSON("messages.settings.json", true) || {}).openMusic);
-  }
-  return exports._openMusic;
+exports.music = {};
+/**
+ * Emit "message" event with appropriate type from Bangle
+ * @param {object} msg
+ */
+function emit(msg) {
+  let type = "text";
+  if (["call", "music", "map"].includes(msg.id)) type = msg.id;
+  if (msg.src && msg.src.toLowerCase().startsWith("alarm")) type = "alarm";
+  Bangle.emit("message", type, msg);
 }
+
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
@@ -12,125 +17,178 @@ function openMusic() {
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages = exports.getMessages();
   // now modify/delete as appropriate
-  var mIdx = messages.findIndex(m=>m.id==event.id);
-  if (event.t=="remove") {
-    if (mIdx>=0) messages.splice(mIdx, 1); // remove item
-    mIdx=-1;
+  if (event.t==="remove") {
+    if (event.id==="music") exports.music = {};
   } else { // add/modify
-    if (event.t=="add"){
-      if(event.new === undefined ) { // If 'new' has not been set yet, set it
-        event.new=true; // Assume it should be new
-      }
+    if (event.t==="add") {
+      if (event.new===undefined) event.new = true; // Assume it should be new
+    } else if (event.t==="modify") {
+      const old = exports.getMessages().find(m => m.id===event.id);
+      if (old) event = Object.assign(old, event);
     }
-    if (mIdx<0) {
-      mIdx=0;
-      messages.unshift(event); // add new messages to the beginning
-    }
-    else Object.assign(messages[mIdx], event);
-    if (event.id=="music" && messages[mIdx].state=="play") {
-      messages[mIdx].new = true; // new track, or playback (re)started
-      type = 'music';
+
+    // combine musicinfo and musicstate events
+    if (event.id==="music") {
+      if (event.state==="play") event.new = true; // new track, or playback (re)started
+      event = Object.assign(exports.music, event);
     }
   }
-  require("Storage").writeJSON("messages.json",messages);
-  var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
-  // if in app, process immediately
-  if ("undefined"!=typeof MESSAGES) return onMessagesModified(message);
-  // emit message event
-  var type = 'text';
-  if (["call", "music", "map"].includes(message.id)) type = message.id;
-  if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
-  Bangle.emit("message", type, message);
-  // update the widget icons shown
-  if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
-  var handleMessage = () => {
-    // if no new messages now, make sure we don't load the messages app
-    if (event.t=="remove" && exports.messageTimeout && !messages.some(m => m.new)) {
-      clearTimeout(exports.messageTimeout);
-      delete exports.messageTimeout;
-    }
-    // ok, saved now
-    if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
-      // just load the app to display music: no buzzing
-      load("messages.app.js");
-    } else if (event.t!="add") {
-      // we only care if it's new
-      return;
-    } else if (event.new==false) {
-      return;
-    }
-    // otherwise load messages/show widget
-    var loadMessages = Bangle.CLOCK || event.important;
-    var quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
-    var appSettings = require('Storage').readJSON('messages.settings.json', 1) || {};
-    var unlockWatch = appSettings.unlockWatch;
-    // don't auto-open messages in quiet mode if quietNoAutOpn is true
-    if ((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
-      loadMessages = false;
-    delete appSettings;
-    // after a delay load the app, to ensure we have all the messages
-    if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
-    exports.messageTimeout = setTimeout(function() {
-      exports.messageTimeout = undefined;
-      // if we're in a clock or it's important, go straight to messages app
-      if (loadMessages) {
-        if (!quiet && unlockWatch) {
-          Bangle.setLocked(false);
-          Bangle.setLCDPower(1); // turn screen on
-        }
-        // we will buzz when we enter the messages app
-        return load("messages.new.js");
-      }
-      if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
-      exports.buzz(message.src);
-    }, 500);
-  };
-  setTimeout(()=>{
-    if (!message.handled) handleMessage();
-  },0);
-}
-/// Remove all messages
+  // reset state (just in case)
+  delete event.handled;
+  delete event.saved;
+  emit(event);
+};
+
+/**
+ * Save a single message to flash
+ * Also sets msg.saved=true
+ *
+ * @param {object} msg
+ * @param {object} [options={}] Options:
+ *                 {boolean} [force=false] Force save even if msg.saved is already set
+ */
+exports.save = function(msg, options) {
+  if (!options) options = {};
+  if (msg.saved && !options.force) return; //already saved
+  let messages = exports.getMessages();
+  exports.apply(msg, messages);
+  exports.write(messages);
+  msg.saved = true;
+};
+
+/**
+ * Apply incoming event to array of messages
+ *
+ * @param {object} event Event to apply
+ * @param {array} messages Array of messages, *will be modified in-place*
+ * @return {array} Modified messages array
+ */
+exports.apply = function(event, messages) {
+  if (!event || !event.id) return messages;
+  const mIdx = messages.findIndex(m => m.id===event.id);
+  if (event.t==="remove") {
+    if (mIdx<0) return messages; // already gone -> nothing to do
+    messages.splice(mIdx, 1);
+  } else if (event.t==="add") {
+    if (mIdx>=0) messages.splice(mIdx, 1); // duplicate ID! erase previous version
+    messages.unshift(event);
+  } else if (event.t==="modify") {
+    if (mIdx>=0) messages[mIdx] = Object.assign(messages[mIdx], event);
+    else messages.unshift(event);
+  }
+  return messages;
+};
+
+/**
+ * Accept a call (or other acceptable event)
+ * @param {object} msg
+ */
+exports.accept = function(msg) {
+  if (msg.positive) Bangle.messageResponse(msg, true);
+};
+
+/**
+ * Dismiss a message (if applicable), and erase it from flash
+ * Emits a "message" event with t="remove", only if message existed
+ *
+ * @param {object} msg
+ */
+exports.dismiss = function(msg) {
+  if (msg.negative) Bangle.messageResponse(msg, false);
+  let messages = exports.getMessages();
+  const mIdx = messages.findIndex(m=>m.id===msg.id);
+  if (mIdx<0) return;
+  messages.splice(mIdx, 1);
+  exports.write(messages);
+  if (msg.t==="remove") return; // already removed, don't re-emit
+  msg.t = "remove";
+  emit(msg); // emit t="remove", so e.g. widgets know to update
+};
+
+/**
+ * Emit a "type=openGUI" event, to open GUI app
+ *
+ * @param {object} [msg={}] Message the app should show
+ */
+exports.openGUI = function(msg) {
+  if (!require("Storage").read("messagegui")) return; // "messagegui" module is missing!
+  // Mark the event as unhandled for GUI, but leave passed arguments intact
+  let copy = Object.assign({}, msg);
+  delete copy.handled;
+  require("messagegui").open(copy);
+};
+
+/**
+ * Show/hide the messages widget
+ *
+ * @param {boolean} show
+ */
+exports.toggleWidget = function(show) {
+  if (!require("Storage").read("messagewidget")) return; // "messagewidget" module is missing!
+  if (show) require("messagewidget").show();
+  else require("messagewidget").hide();
+};
+
+/**
+ * Replace all stored messages
+ * @param {array} messages Messages to save
+ */
+exports.write = function(messages) {
+  require("Storage").writeJSON("messages.json", messages.map(m => {
+    // we never want to save saved/handled status to file;
+    delete m.saved;
+    delete m.handled;
+    return m;
+  }));
+};
+/**
+ * Erase all messages
+ */
 exports.clearAll = function() {
-  if ("undefined"!= typeof MESSAGES) { // we're in a messages app, clear that as well
-    MESSAGES = [];
-  }
-  // Clear all messages
-  require("Storage").writeJSON("messages.json", []);
-  // if we have a widget, update it
-  if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.update([]);
-  // let message listeners know
-  Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
-  // clearAll cannot be marked as "handled"
-  // update app if in app
-  if ("function"== typeof onMessagesModified) onMessagesModified();
+  exports.write([]);
+  Bangle.emit("message", "clearAll", {});
 }
 
 /**
+ * Get saved messages
+ *
+ * Optionally pass in a message to apply to the list, this is for event handlers:
+ * By passing the message from the event, you can make sure the list is up-to-date,
+ * even if the message has not been saved (yet)
+ *
+ * Example:
+ *     Bangle.on("message", (type, msg) =>  {
+ *       console.log("All messages:", require("messages").getMessages(msg));
+ *     });
+ *
+ * @param {object} [withMessage] Apply this event to messages
  * @returns {array} All messages
  */
-exports.getMessages = function() {
-  if ("undefined"!=typeof MESSAGES) return MESSAGES; // loaded/managed by app
-  return require("Storage").readJSON("messages.json",1)||[];
-}
+exports.getMessages = function(withMessage) {
+  let messages = require("Storage").readJSON("messages.json", true);
+  messages = Array.isArray(messages) ? messages : []; // make sure we always return an array
+  if (withMessage && withMessage.id) exports.apply(withMessage, messages);
+  return messages;
+};
 
 /**
  * Check if there are any messages
+ *
+ * @param {object} [withMessage] Apply this event to messages, see getMessages
  * @returns {string} "new"/"old"/"none"
  */
- exports.status = function() {
+exports.status = function(withMessage) {
   try {
-    let status= "none";
-    for(const m of exports.getMessages()) {
+    let status = "none";
+    for(const m of exports.getMessages(withMessage)) {
       if (["music", "map"].includes(m.id)) continue;
       if (m.new) return "new";
       status = "old";
     }
     return status;
   } catch(e) {
-    return "none"; // don't bother e.g. the widget with errors
+    return "none"; // don't bother callers with errors
   }
 };
 
@@ -141,24 +199,24 @@ exports.getMessages = function() {
  */
 exports.buzz = function(msgSrc) {
   exports.stopBuzz(); // cancel any previous buzz timeouts
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
-
-  var pattern;
-  if (msgSrc && msgSrc.toLowerCase() === "phone") {
+  if ((require("Storage").readJSON("setting.json", 1) || {}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
+  const msgSettings = require("Storage").readJSON("messages.settings.json", true) || {};
+  let pattern;
+  if (msgSrc && msgSrc.toLowerCase()==="phone") {
     // special vibration pattern for incoming calls
-    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateCalls;
+    pattern = msgSettings.vibrateCalls;
   } else {
-    pattern = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrate;
+    pattern = msgSettings.vibrate;
   }
-  if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  if (pattern===undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
   if (!pattern) return Promise.resolve();
 
-  var repeat = (require('Storage').readJSON("messages.settings.json", true) || {}).repeat;
-  if (repeat===undefined) repeat=4; // repeat may be zero
+  let repeat = msgSettings.repeat;
+  if (repeat===undefined) repeat = 4; // repeat may be zero
   if (repeat) {
-    exports.buzzTimeout = setTimeout(()=>require("buzz").pattern(pattern), repeat*1000);
-    var vibrateTimeout = (require('Storage').readJSON("messages.settings.json", true) || {}).vibrateTimeout;
-    if (vibrateTimeout===undefined) vibrateTimeout=60;
+    exports.buzzTimeout = setTimeout(() => require("buzz").pattern(pattern), repeat*1000);
+    let vibrateTimeout = msgSettings.vibrateTimeout;
+    if (vibrateTimeout===undefined) vibrateTimeout = 60;
     if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopBuzz, vibrateTimeout*1000);
   }
   return require("buzz").pattern(pattern);
@@ -171,108 +229,4 @@ exports.stopBuzz = function() {
   delete exports.buzzTimeout;
   if (exports.stopTimeout) clearTimeout(exports.stopTimeout);
   delete exports.stopTimeout;
-};
-
-exports.getMessageImage = function(msg) {
-  /*
-  * icons should be 24x24px or less with 1bpp colors and 'Transparency to Color'
-  * http://www.espruino.com/Image+Converter
-  */
-  if (msg.img) return atob(msg.img);
-  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
-  if (s=="airbnb") return atob("GBgBAAAAAAAAAAAAADwAAH4AAGYAAMMAAIEAAYGAAYGAAzzAA2bABmZgBmZgDGYwDDwwCDwQCBgQDDwwB+fgA8PAAAAAAAAAAAAA");
-  if (s=="alarm" || s =="alarmclockreceiver") return atob("GBjBAP////8AAAAAAAACAEAHAOAefng5/5wTgcgHAOAOGHAMGDAYGBgYGBgYGBgYGBgYDhgYBxgMATAOAHAHAOADgcAB/4AAfgAAAAAAAAA=");
-  if (s=="bibel") return atob("GBgBAAAAA//wD//4D//4H//4H/f4H/f4H+P4H4D4H4D4H/f4H/f4H/f4H/f4H/f4H//4H//4H//4GAAAEAAAEAAACAAAB//4AAAA");
-  if (s=="bring") return atob("GBgBAAAAAAAAAAAAAAAAAHwAAFoAAf+AA/+AA/+AA/+AA/eAA+eAA0+AAx+AA7+AA/+AA//AA/+AAf8AAAIAAAAAAAAAAAAAAAAA");
-  if (s=="calendar" || s=="etar") return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B9m2B//+B//+Btm2B//+B//+Btm+B//+B//+A//8AAAAAAAAAAAAA==");
-  if (s=="corona-warn") return atob("GBgBAAAAABwAAP+AAf/gA//wB/PwD/PgDzvAHzuAP8EAP8AAPAAAPMAAP8AAH8AAHzsADzuAB/PAB/PgA//wAP/gAH+AAAwAAAAA");
-  if (s=="discord") return atob("GBgBAAAAAAAAAAAAAIEABwDgDP8wH//4H//4P//8P//8P//8Pjx8fhh+fzz+f//+f//+e//ePH48HwD4AgBAAAAAAAAAAAAAAAAA");
-  if (s=="facebook" || s=="messenger") return atob("GBiBAAAAAAAAAAAYAAD/AAP/wAf/4A/48A/g8B/g+B/j+B/n+D/n/D8A/B8A+B+B+B/n+A/n8A/n8Afn4APnwADnAAAAAAAAAAAAAA==");
-  if (s=="gmx") return atob("GBgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEJmfmd8Zuc85v847/88Z9s8fttmHIHiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-  if (s=="google") return atob("GBiBAAAAAAD/AAP/wAf/4A/D4B8AwDwAADwAAHgAAHgAAHAAAHAH/nAH/nAH/ngH/ngAHjwAPDwAfB8A+A/D8Af/4AP/wAD/AAAAAA==");
-  if (s=="google home") return atob("GBiCAAAAAAAAAAAAAAAAAAAAAoAAAAAACqAAAAAAKqwAAAAAqroAAAACquqAAAAKq+qgAAAqr/qoAACqv/6qAAKq//+qgA6r///qsAqr///6sAqv///6sAqv///6sAqv///6sA6v///6sA6v///qsA6qqqqqsA6qqqqqsA6qqqqqsAP7///vwAAAAAAAAAAAAAAAAA=="); // 2 bit unpaletted
-  if (s=="home assistant") return atob("FhaBAAAAAADAAAeAAD8AAf4AD/3AfP8D7fwft/D/P8ec572zbzbNsOEhw+AfD8D8P4fw/z/D/P8P8/w/z/AAAAA=");
-  if (s=="instagram") return atob("GBiBAAAAAAAAAAAAAAAAAAP/wAYAYAwAMAgAkAh+EAjDEAiBEAiBEAiBEAiBEAjDEAh+EAgAEAwAMAYAYAP/wAAAAAAAAAAAAAAAAA==");
-  if (s=="kalender") return atob("GBgBBgBgBQCgff++RQCiRgBiQAACf//+QAACQAACR//iRJkiRIEiR//iRNsiRIEiRJkiR//iRIEiRIEiR//iQAACQAACf//+AAAA");
-  if (s=="lieferando") return atob("GBgBABgAAH5wAP9wAf/4A//4B//4D//4H//4P/88fV8+fV4//V4//Vw/HVw4HVw4HBg4HBg4HBg4HDg4Hjw4Hj84Hj44Hj44Hj44");
-  if (s=="mattermost") return atob("GBgBAAAAAPAAA+EAB4MADgcYHAcYOA8MOB8OeD8GcD8GcH8GcD8HcD8HeBwHeAAOfAAOfgAePwA8P8D8H//4D//wB//gAf/AAH4A");
-  if (s=="n26") return atob("GBgBAAAAAAAAAAAAAAAAAP8AAAAAAAAAAAAAAOIAAOIAAPIAANoAANoAAM4AAMYAAMYAAAAAAAAAAAAAAP8AAAAAAAAAAAAAAAAA");
-  if (s=="nextbike") return atob("GBgBAAAAAAAAAAAAAAAAAAAAAACAfgDAPwDAP4HAH4N4H8f8D82GMd8CMDsDMGMDMGGGGMHOD4D8AAAAAAAAAAAAAAAAAAAAAAAA");
-  if (s=="nina") return atob("GBgBAAAABAAQCAAICAAIEAAEEgAkJAgSJBwSKRxKSj4pUn8lVP+VVP+VUgAlSgApKQBKJAASJAASEgAkEAAECAAICAAIBAAQAAAA");
-  if (s=="outlook mail") return atob("HBwBAAAAAAAAAAAIAAAfwAAP/gAB/+AAP/5/A//v/D/+/8P/7/g+Pv8Dye/gPd74w5znHDnOB8Oc4Pw8nv/Dwe/8Pj7/w//v/D/+/8P/7/gf/gAA/+AAAfwAAACAAAAAAAAAAAA=");
-  if (s=="paypal") return atob("GBgBAAAAAAAAAAAAAf+AAf/AAf/gA//gA//gA//wA//wA//wA//wB//wB//wB//gB/+AB/gAB/gAB/gAAPgAAPgAAAAAAAAAAAAA");
-  if (s=="phone") return atob("FxeBABgAAPgAAfAAB/AAD+AAH+AAP8AAP4AAfgAA/AAA+AAA+AAA+AAB+AAB+AAB+OAB//AB//gB//gA//AA/8AAf4AAPAA=");
-  if (s=="post & dhl") return atob("GBgBAPgAE/5wMwZ8NgN8NgP4NgP4HgP4HgPwDwfgD//AB/+AAf8AAAAABs7AHcdgG4MwAAAAGESAFESAEkSAEnyAEkSAFESAGETw");
-  if (s=="signal") return atob("GBgBAAAAAGwAAQGAAhggCP8QE//AB//oJ//kL//wD//0D//wT//wD//wL//0J//kB//oA//ICf8ABfxgBYBAADoABMAABAAAAAAA");
-  if (s=="skype") return atob("GhoBB8AAB//AA//+Af//wH//+D///w/8D+P8Afz/DD8/j4/H4fP5/A/+f4B/n/gP5//B+fj8fj4/H8+DB/PwA/x/A/8P///B///gP//4B//8AD/+AAA+AA==");
-  if (s=="slack") return atob("GBiBAAAAAAAAAABAAAHvAAHvAADvAAAPAB/PMB/veD/veB/mcAAAABzH8B3v+B3v+B3n8AHgAAHuAAHvAAHvAADGAAAAAAAAAAAAAA==");
-  if (s=="snapchat") return atob("GBgBAAAAAAAAAH4AAf+AAf+AA//AA//AA//AA//AA//AH//4D//wB//gA//AB//gD//wH//4f//+P//8D//wAf+AAH4AAAAAAAAA");
-  if (s=="steam") return atob("GBgBAAAAAAAAAAAAAAAAAAAAAAfgAAwwAAvQABvQABvQADvQgDww4H/g+f8A/zwAf9gAH9AAB8AAACAAAcAAAAAAAAAAAAAAAAAA");
-  if (s=="teams") return atob("GBgBAAAAAAAAAAQAAB4AAD8IAA8cP/M+f/scf/gIeDgAfvvefvvffvvffvvffvvff/vff/veP/PeAA/cAH/AAD+AAD8AAAQAAAAA");
-  if (s=="telegram" || s=="telegram foss") return atob("GBiBAAAAAAAAAAAAAAAAAwAAHwAA/wAD/wAf3gD/Pgf+fh/4/v/z/P/H/D8P/Acf/AM//AF/+AF/+AH/+ADz+ADh+ADAcAAAMAAAAA==");
-  if (s=="threema") return atob("GBjB/4Yx//8AAAAAAAAAAAAAfgAB/4AD/8AH/+AH/+AP//AP2/APw/APw/AHw+AH/+AH/8AH/4AH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
-  if (s=="to do" || s=="opentasks") return atob("GBgBAAAAAAAAAAAwAAB4AAD8AAH+AAP/DAf/Hg//Px/+f7/8///4///wf//gP//AH/+AD/8AB/4AA/wAAfgAAPAAAGAAAAAAAAAA");
-  if (s=="twitch") return atob("GBgBH//+P//+P//+eAAGeAAGeAAGeDGGeDOGeDOGeDOGeDOGeDOGeDOGeAAOeAAOeAAcf4/4f5/wf7/gf//Af/+AA/AAA+AAAcAA");
-  if (s=="twitter") return atob("GhYBAABgAAB+JgA/8cAf/ngH/5+B/8P8f+D///h///4f//+D///g///wD//8B//+AP//gD//wAP/8AB/+AB/+AH//AAf/AAAYAAA");
-  if (s=="warnapp") return atob("GBgBAAAAAAAAAAAAAH4AAP8AA//AA//AD//gP//gf//4f//+/+P+/8H//8n//4n/fxh/fzg+Pj88Dn44AA4AAAwAAAwAAAgAAAAA");
-  if (s=="whatsapp") return atob("GBiBAAB+AAP/wAf/4A//8B//+D///H9//n5//nw//vw///x///5///4///8e//+EP3/APn/wPn/+/j///H//+H//8H//4H//wMB+AA==");
-  if (s=="wordfeud") return atob("GBgCWqqqqqqlf//////9v//////+v/////++v/////++v8///Lu+v8///L++v8///P/+v8v//P/+v9v//P/+v+fx/P/+v+Pk+P/+v/PN+f/+v/POuv/+v/Ofdv/+v/NvM//+v/I/Y//+v/k/k//+v/i/w//+v/7/6//+v//////+v//////+f//////9Wqqqqqql");
-  if (s=="youtube" || s=="newpipe") return atob("GBgBAAAAAAAAAAAAAAAAAf8AH//4P//4P//8P//8P5/8P4/8f4P8f4P8P4/8P5/8P//8P//8P//4H//4Af8AAAAAAAAAAAAAAAAA");
-  if (msg.id=="music") return atob("FhaBAH//+/////////////h/+AH/4Af/gB/+H3/7/f/v9/+/3/7+f/vB/w8H+Dwf4PD/x/////////////3//+A=");
-  // if (s=="sms message" || s=="mail" || s=="gmail") // .. default icon (below)
-  return atob("FhKBAH//+P//yf/+c//z5/+fz/z/n+f/Pz/+ef/8D///////////////////////f//4///A");
-};
-
-exports.getMessageImageCol = function(msg,def) {
-  let iconColorMode = (require('Storage').readJSON("messages.settings.json", 1) || {}).iconColorMode;
-  if (iconColorMode == 'mono')
-    return g.theme.fg;
-  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
-  return {
-    // generic colors, using B2-safe colors
-    // DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used
-    "airbnb": "#f00",
-    "mail": "#ff0",
-    "music": "#f0f",
-    "phone": "#0f0",
-    "sms message": "#0ff",
-    // brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
-    // all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
-    "bibel": "#54342c",
-    "bring": "#455a64",
-    "discord": "#738adb",
-    "etar": "#36a18b",
-    "facebook": "#4267b2",
-    "gmail": "#ea4335",
-    "gmx": "#1c449b",
-    "google": "#4285F4",
-    "google home": "#fbbc05",
-// "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
-    "instagram": "#dd2a7b",
-    "lieferando": "#ee5c00",
-    "messenger": "#0078ff",
-    "mattermost": "#00f",
-    "n26": "#36a18b",
-    "nextbike": "#00f",
-    "newpipe": "#f00",
-    "nina": "#e57004",
-    "opentasks": "#409f8f",
-    "outlook mail": "#0072c6",
-    "paypal": "#003087",
-    "post & dhl": "#f2c101",
-    "signal": "#00f",
-    "skype": "#00aff0",
-    "slack": "#e51670",
-    "snapchat": "#ff0",
-    "steam": "#171a21",
-    "teams": "#464eb8",
-    "telegram": "#0088cc",
-    "telegram foss": "#0088cc",
-    "to do": "#3999e5",
-    "twitch": "#6441A4",
-    "twitter": "#1da1f2",
-    "whatsapp": "#4fce5d",
-    "wordfeud": "#e7d3c7",
-    "youtube": "#f00",
-  }[s]||(def !== undefined?def:g.theme.fg);
 };

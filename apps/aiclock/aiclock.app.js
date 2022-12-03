@@ -37,8 +37,15 @@ function drawBackground() {
     g.setFontAlign(0,0);
     g.setColor(g.theme.fg);
 
-    y = 0;
+    var bat = E.getBattery() / 100.0;
+    var y = 0;
     while(y < H){
+        // Show less lines in case of small battery level.
+        if(Math.random() > bat){
+            y += 5;
+            continue;
+        }
+
         y += 3 + Math.floor(Math.random() * 10);
         g.drawLine(0, y, W, y);
         g.drawLine(0, y+1, W, y+1);
@@ -103,7 +110,7 @@ function drawDate(){
     g.setFontAlign(0,0);
     g.setFontGochiHand();
 
-    var text = ("0"+date.getDate()).substr(-2) + "/" + ("0"+date.getMonth()).substr(-2);
+    var text = ("0"+date.getDate()).substr(-2) + "/" + ("0"+(date.getMonth()+1)).substr(-2);
     var w = g.stringWidth(text);
     g.setColor(g.theme.bg);
     g.fillRect(cx-w/2-4, 20, cx+w/2+4, 40+12);
@@ -208,8 +215,7 @@ Bangle.loadWidgets();
  * so we will blank out the draw() functions of each widget and change the
  * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-
+require('widget_utils').hide();
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();

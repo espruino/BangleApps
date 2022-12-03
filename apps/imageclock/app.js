@@ -1,7 +1,12 @@
-let unlockedDrawInterval = [];
-let lockedDrawInterval = [];
-let showWidgets = false;
-let firstDraw = true;
+let s = {};
+// unlocked draw intervals
+s.udi = [];
+// locked draw intervals
+s.ldi = [];
+// full draw
+s.fd = true;
+// performance log
+s.pl = {};
 
 {
   let x = g.getWidth()/2;
@@ -21,12 +26,10 @@ let firstDraw = true;
   let precompiledJs = eval(require("Storage").read("imageclock.draw.js"));
   let settings = require('Storage').readJSON("imageclock.json", true) || {};
 
-  let performanceLog = {};
-
   let startPerfLog = () => {};
   let endPerfLog = () => {};
   Bangle.printPerfLog = () => {print("Deactivated");};
-  Bangle.resetPerfLog = () => {performanceLog = {};};
+  Bangle.resetPerfLog = () => {s.pl = {};};
 
   let colormap={
     "#000":0,
@@ -64,35 +67,37 @@ let firstDraw = true;
   if (settings.perflog){
     startPerfLog = function(name){
       let time = getTime();
-      if (!performanceLog.start) performanceLog.start={};
-      performanceLog.start[name] = time;
+      if (!s.pl.start) s.pl.start={};
+      s.pl.start[name] = time;
     };
-    endPerfLog = function (name){
+    endPerfLog = function (name, once){
       let time = getTime();
-      if (!performanceLog.last) performanceLog.last={};
-      let duration = time - performanceLog.start[name];
-      performanceLog.last[name] = duration;
-      if (!performanceLog.cum) performanceLog.cum={};
-      if (!performanceLog.cum[name]) performanceLog.cum[name] = 0;
-      performanceLog.cum[name] += duration;
-      if (!performanceLog.count) performanceLog.count={};
-      if (!performanceLog.count[name]) performanceLog.count[name] = 0;
-      performanceLog.count[name]++;
+      if (!s.pl.start[name]) return;
+      if (!s.pl.last) s.pl.last={};
+      let duration = time - s.pl.start[name];
+      s.pl.last[name] = duration;
+      if (!s.pl.cum) s.pl.cum={};
+      if (!s.pl.cum[name]) s.pl.cum[name] = 0;
+      s.pl.cum[name] += duration;
+      if (!s.pl.count) s.pl.count={};
+      if (!s.pl.count[name]) s.pl.count[name] = 0;
+      s.pl.count[name]++;
+      if (once){s.pl.start[name] = undefined}
     };
 
     Bangle.printPerfLog = function(){
       let result = "";
       let keys = [];
-      for (let c in performanceLog.cum){
+      for (let c in s.pl.cum){
         keys.push(c);
       }
       keys.sort();
       for (let k of keys){
-        print(k, "last:", (performanceLog.last[k] * 1000).toFixed(0), "average:", (performanceLog.cum[k]/performanceLog.count[k]*1000).toFixed(0), "count:", performanceLog.count[k], "total:", (performanceLog.cum[k] * 1000).toFixed(0));
+        print(k, "last:", (s.pl.last[k] * 1000).toFixed(0), "average:", (s.pl.cum[k]/s.pl.count[k]*1000).toFixed(0), "count:", s.pl.count[k], "total:", (s.pl.cum[k] * 1000).toFixed(0));
       }
     };
   }
-
+  startPerfLog("fullDraw");
   startPerfLog("loadFunctions");
 
   let delayTimeouts = {};
@@ -202,27 +207,39 @@ let firstDraw = true;
     let firstDigitY = element.Y;
     let imageIndex = element.ImageIndex ? element.ImageIndex : 0;
 
-    let firstImage;
-    if (imageIndex){
-      firstImage = getByPath(resources, [], "" + (0 + imageIndex));
-    } else {
-      firstImage = getByPath(resources, element.ImagePath, 0);
+    let firstImage = element.cachedFirstImage;
+    if (!firstImage && !element.cachedFirstImageMissing){
+      if (imageIndex){
+        firstImage = getByPath(resources, [], "" + (0 + imageIndex));
+      } else {
+        firstImage = getByPath(resources, element.ImagePath, 0);
+      }
+      element.cachedFirstImage = firstImage;
+      if (!firstImage) element.cachedFirstImageMissing = true;
     }
 
-    let minusImage;
-    if (imageIndexMinus){
-      minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
-    } else {
-      minusImage = getByPath(resources, element.ImagePath, "minus");
+    let minusImage = element.cachedMinusImage;
+    if (!minusImage && !element.cachedMinusImageMissing){
+      if (imageIndexMinus){
+        minusImage = getByPath(resources, [], "" + (0 + imageIndexMinus));
+      } else {
+        minusImage = getByPath(resources, element.ImagePath, "minus");
+      }
+      element.cachedMinusImage = minusImage;
+      if (!minusImage) element.cachedMinusImageMissing = true;
     }
 
-    let unitImage;
+    let unitImage = element.cachedUnitImage;
     //print("Get image for unit", imageIndexUnit);
-    if (imageIndexUnit !== undefined){
-      unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
-      //print("Unit image is", unitImage);
-    } else if (element.Unit){
-      unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+    if (!unitImage && !element.cachedUnitImageMissing){
+      if (imageIndexUnit !== undefined){
+        unitImage = getByPath(resources, [], "" + (0 + imageIndexUnit));
+        //print("Unit image is", unitImage);
+      } else if (element.Unit){
+        unitImage = getByPath(resources, element.ImagePath, getMultistate(element.Unit, "unknown"));
+      }
+      unitImage = element.cachedUnitImage;
+      if (!unitImage) element.cachedUnitImageMissing = true;
     }
 
     let numberWidth = (numberOfDigits * firstImage.width) + (Math.max((numberOfDigits - 1),0) * spacing);
@@ -292,14 +309,7 @@ let firstDraw = true;
       if (resource){
         prepareImg(resource);
         //print("lastElem", typeof resource)
-        if (resource) {
-          element.cachedImage[cacheKey] = resource;
-          //print("cache res ",typeof element.cachedImage[cacheKey]);
-        } else {
-          element.cachedImage[cacheKey] = null;
-          //print("cache null",typeof element.cachedImage[cacheKey]);
-          //print("Could not create image from", resource);
-        }
+        element.cachedImage[cacheKey] = resource;
       } else {
         //print("Could not get resource from", element, lastElem);
       }
@@ -604,18 +614,22 @@ let firstDraw = true;
 
       promise.then(()=>{
         let currentDrawingTime = Date.now();
-        if (showWidgets && global.WIDGETS){
-          //print("Draw widgets");
-          restoreWidgetDraw();
-          Bangle.drawWidgets();
-          g.setColor(g.theme.fg);
-          g.drawLine(0,24,g.getWidth(),24);
-        }
         lastDrawTime = Date.now() - start;
         isDrawing=false;
-        firstDraw=false;
+        s.fd=false;
         requestRefresh = false;
         endPerfLog("initialDraw");
+        endPerfLog("fullDraw", true);
+        
+        if (!Bangle.uiRemove){
+          setUi();
+          let orig = Bangle.drawWidgets;
+          Bangle.drawWidgets = ()=>{};
+          Bangle.loadWidgets();
+          Bangle.drawWidgets = orig;
+          require("widget_utils").swipeOn();
+          Bangle.drawWidgets();
+        }
       }).catch((e)=>{
         print("Error during drawing", e);
       });
@@ -699,16 +713,16 @@ let firstDraw = true;
   
   let handleLock = function(isLocked, forceRedraw){
     //print("isLocked", Bangle.isLocked());
-    for (let i of unlockedDrawInterval){
+    for (let i of s.udi){
       //print("Clearing unlocked", i);
       clearInterval(i);
     }
-    for (let i of lockedDrawInterval){
+    for (let i of s.ldi){
       //print("Clearing locked", i);
       clearInterval(i);
     }
-    unlockedDrawInterval = [];
-    lockedDrawInterval = [];
+    s.udi = [];
+    s.ldi = [];
 
     if (!isLocked){
       if (forceRedraw || !redrawEvents || (redrawEvents.includes("unlock"))){
@@ -724,7 +738,7 @@ let firstDraw = true;
         initialDraw(watchfaceResources, watchface);
       },unlockedRedraw, (v)=>{
         //print("New matched unlocked interval", v);
-        unlockedDrawInterval.push(v);
+        s.udi.push(v);
       }, lastDrawTime);
       if (!events || events.includes("HRM")) Bangle.setHRMPower(1, "imageclock");
       if (!events || events.includes("pressure")) Bangle.setBarometerPower(1, 'imageclock');
@@ -742,53 +756,12 @@ let firstDraw = true;
         initialDraw(watchfaceResources, watchface);
       },lockedRedraw, (v)=>{
         //print("New matched locked interval", v);
-        lockedDrawInterval.push(v);
+        s.ldi.push(v);
       }, lastDrawTime);
       Bangle.setHRMPower(0, "imageclock");
       Bangle.setBarometerPower(0, 'imageclock');
     }
   };
-
-
-  let showWidgetsChanged = false;
-  let currentDragDistance = 0;
-
-  let restoreWidgetDraw = function(){
-    if (global.WIDGETS) {
-      for (let w in global.WIDGETS) {
-        let wd = global.WIDGETS[w];
-        wd.draw = originalWidgetDraw[w];
-        wd.area = originalWidgetArea[w];
-      }
-    }
-  };
-  
-  let handleDrag = function(e){
-    //print("handleDrag");
-    currentDragDistance += e.dy;
-    if (Math.abs(currentDragDistance) < 10) return;
-    dragDown = currentDragDistance > 0;
-    currentDragDistance = 0;
-    if (!showWidgets && dragDown){
-      //print("Enable widgets");
-      restoreWidgetDraw();
-      showWidgetsChanged = true;
-    }
-    if (showWidgets && !dragDown){
-      //print("Disable widgets");
-      clearWidgetsDraw();
-      firstDraw = true;
-      showWidgetsChanged = true;
-    }
-    if (showWidgetsChanged){
-      showWidgetsChanged = false;
-      //print("Draw after widget change");
-      showWidgets = dragDown;
-      initialDraw();
-    }
-  };
-
-  Bangle.on('drag', handleDrag);
 
   if (!events || events.includes("pressure")){
     Bangle.on('pressure', handlePressure);
@@ -808,69 +781,43 @@ let firstDraw = true;
   if (!events || events.includes("charging")) {
     Bangle.on('charging', handleCharging);
   }
-
-  let originalWidgetDraw = {};
-  let originalWidgetArea = {};
-
-  let clearWidgetsDraw = function(){
-    //print("Clear widget draw calls");
-    if (global.WIDGETS) {
-      originalWidgetDraw = {};
-      originalWidgetArea = {};
-      for (let w in global.WIDGETS) {
-        let wd = global.WIDGETS[w];
-        originalWidgetDraw[w] = wd.draw;
-        originalWidgetArea[w] = wd.area;
-        wd.draw = () => {};
-        wd.area = "";
-      }
-    }
-  }
   
   handleLock(Bangle.isLocked(), true);
 
-  Bangle.setUI({ 
-    mode : "clock",
-    remove : function() {
-      //print("remove calls");
-      // Called to unload all of the clock app
-      Bangle.setHRMPower(0, "imageclock");
-      Bangle.setBarometerPower(0, 'imageclock');
+  let setUi = function(){
+    Bangle.setUI({ 
+      mode : "clock",
+      remove : function() {
+        //print("remove calls");
+        // Called to unload all of the clock app
+        Bangle.setHRMPower(0, "imageclock");
+        Bangle.setBarometerPower(0, 'imageclock');
 
-      Bangle.removeListener('drag', handleDrag);
-      Bangle.removeListener('lock', handleLock);
-      Bangle.removeListener('charging', handleCharging);
-      Bangle.removeListener('HRM', handleHrm);
-      Bangle.removeListener('pressure', handlePressure);
+        Bangle.removeListener('lock', handleLock);
+        Bangle.removeListener('charging', handleCharging);
+        Bangle.removeListener('HRM', handleHrm);
+        Bangle.removeListener('pressure', handlePressure);
 
-      if (deferredTimout) clearTimeout(deferredTimout);
-      if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
-      if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
+        if (deferredTimout) clearTimeout(deferredTimout);
+        if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
+        if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
 
-      for (let i of unlockedDrawInterval){
-        //print("Clearing unlocked", i);
-        clearInterval(i);
+        for (let i of global.s.udi){
+          //print("Clearing unlocked", i);
+          clearInterval(i);
+        }
+        for (let i of global.s.ldi){
+          //print("Clearing locked", i);
+          clearInterval(i);
+        }
+
+        delete Bangle.printPerfLog;
+        if (settings.perflog){
+          delete Bangle.resetPerfLog;
+        }
+        cleanupDelays();
+        require("widget_utils").show();
       }
-      delete unlockedDrawInterval;
-      for (let i of lockedDrawInterval){
-        //print("Clearing locked", i);
-        clearInterval(i);
-      }
-      delete lockedDrawInterval;
-      delete showWidgets;
-      delete firstDraw;
-
-      delete Bangle.printPerfLog;
-      if (settings.perflog){
-        delete Bangle.resetPerfLog;
-        delete performanceLog;
-      }
-
-      cleanupDelays();
-      restoreWidgetDraw();
-    }
-  });
-
-  Bangle.loadWidgets();
-  clearWidgetsDraw();
+    });
+  }
 }

@@ -4,8 +4,8 @@
   </head>
   <body>
 
-    <script src="../../core/lib/heatshrink.js"></script>
-    <script src="../../core/lib/imageconverter.js"></script>
+    <script src="../../webtools/heatshrink.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
     <script src="../../core/lib/customize.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
 
@@ -25,6 +25,8 @@
       <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
       <input type="checkbox" id="forceOrigPlane" name="mode" disabled="true"/>
       <label for="forceOrigPlane">Force use of direct drawing (Even faster, but will produce visible artifacts on not optimized watch faces)</label></br>
+      <input type="checkbox" id="separateFiles" name="mode"/>
+      <label for="separateFiles">Do not create combined app flle (slower but more flexible for debugging, incompatible with minification)</label></br>
       <input type="checkbox" id="debugprints" name="mode"/>
       <label for="debugprints">Add debug prints to generated code</label></br>
     </p>
@@ -32,7 +34,7 @@
     <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
     <p><b>or</b></p>
     <p>Select watchface zip file: </br><input type="file" id="zipLoader" name="zip"/></p><br/>
-    
+
     <button id="btnUpload" class="btn btn-primary">Upload to watch</button></br>
     <button id="btnSave" class="btn btn-secondary">Save resources file</button></br>
     <button id="btnSaveFace" class="btn btn-secondary">Save face file</button></br>
@@ -55,15 +57,15 @@
       var expectedFiles = 0;
       var rootZip = new JSZip();
       var resourcesZip = rootZip.folder("resources");
-      
+
       function isNativeFormat(){
         return document.getElementById("useNative").checked;
       }
-      
+
       function addDebug(){
         return document.getElementById("debugprints").checked;
       }
-      
+
       function convertAmazfitTime(time){
         var result = {};
         if (time.Hours){
@@ -88,7 +90,7 @@
         }
         return result;
       }
-      
+
       function convertAmazfitDate(date){
         var result = {};
         if (date.MonthAndDay.Separate.Day) result.Day = convertAmazfitNumber(date.MonthAndDay.Separate.Day, "Day");
@@ -98,11 +100,11 @@
         }
         return result;
       }
-      
+
       var filesToMove={};
-      
+
       var zipChangePromise = Promise.resolve();
-      
+
       function performFileChanges(){
         var promise = Promise.resolve();
         //rename all files to just numbers without leading zeroes
@@ -111,7 +113,7 @@
           var tmp = resultJson[c];
           delete resultJson[c];
           resultJson[Number(c)] = tmp;
-          
+
           async function modZip(c){
             console.log("Async modification of ", c)
             var fileRegex = new RegExp(c + ".*");
@@ -120,27 +122,27 @@
             console.log("Filedata is", fileData);
             var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
             var newName = Number(c) + extension;
-            
+
             console.log("Renaming to", newName);
             resourcesZip.remove(c + extension);
             resourcesZip.file(newName, fileData);
           }
           promise = promise.then(modZip(c));
 
-          
+
         }
-          
-        
+
+
         console.log("File moves:", filesToMove);
-        
+
         for (var c in filesToMove){
           var tmp = resultJson[c];
           console.log("Handle filemove", c, filesToMove[c], tmp);
-          
+
           var element = resultJson;
           var path = filesToMove[c];
-          
-          
+
+
           async function modZip(c){
             console.log("Async modification of ", c)
             var fileRegex = new RegExp(c + ".*");
@@ -149,13 +151,13 @@
             console.log("Filedata is", fileData);
             var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
             var newName = Number(c) + extension;
-            
+
             console.log("Copying to", newName);
             resourcesZip.file(filesToMove[c].join("/") + extension, fileData);
           }
           promise = promise.then(modZip(c));
-          
-          
+
+
           for (var i = 0; i< path.length; i++){
             if (!element[path[i]]) element[path[i]] = {};
             if (i == path.length - 1){
@@ -164,7 +166,7 @@
               element = element[path[i]];
             }
           }
-          
+
         }
         promise.then(()=>{
           document.getElementById('btnUpload').disabled = true; 
@@ -172,7 +174,7 @@
         console.log("After moves", resultJson);
         return promise;
       };
-      
+
       function convertAmazfitMultistate(multistate, value, minValue, maxValue){
         var result = {
           MultiState: {
@@ -188,18 +190,18 @@
         if (multistate.ImageIndexOff) filesToMove[multistate.ImageIndexOff] = ["status", value, "off"];
         return result;
       }
-      
+
       function convertAmazfitStatus(status){
         var result = {};
-        
+
         if (status.Alarm) result.Alarm = convertAmazfitMultistate(status.Alarm,"Alarm");
         if (status.Bluetooth) result.Bluetooth = convertAmazfitMultistate(status.Bluetooth,"Bluetooth");
         if (status.DoNotDisturb) result.DoNotDisturb = convertAmazfitMultistate(status.DoNotDisturb,"Notifications");
         if (status.Lock) result.Lock = convertAmazfitMultistate(status.Lock,"Lock");
-        
+
         return result;
       }
-      
+
       function convertAmazfitNumber(element, value, minValue, maxValue){
         var number = {};
         var result = {
@@ -233,10 +235,10 @@
         if (maxValue !== undefined) number.MinValue = minValue;
         return result;
       }
-      
+
       function moveWeatherIcons(icon){
         filesToMove[icon.ImageIndex + 0] = ["weather", "fallback"];
-        
+
         // Light clouds
         filesToMove[icon.ImageIndex + 1] = ["weather", 801];
         // Cloudy, possible rain
@@ -282,7 +284,7 @@
         // Very heavy shower
         filesToMove[icon.ImageIndex + 22] = ["weather", 531];
       }
-      
+
       function convertAmazfitTemperature(temp){
         var result = {};
         result = convertAmazfitNumber(temp.Number, "WeatherTemperature");
@@ -294,15 +296,15 @@
         }
         return result;
       }
-      
+
       function convertAmazfitWeather(weather){
         var result = {};
-        
+
         if (weather.Temperature && weather.Temperature.Current){
           if (!result.Temperature) result.Temperature = {};
           result.Temperature.Current = convertAmazfitTemperature(weather.Temperature.Current);
         }
-        
+
         if (weather.Temperature && weather.Temperature.Today){
           if (!result.Temperature) result.Temperature = {};          
           if (weather.Temperature.Today.Separate){
@@ -327,10 +329,10 @@
         }
         return result;
       }
-      
+
       function convertAmazfitActivity(activity){
         var result = {};
-        
+
         if (activity.Steps){
           result.Steps = convertAmazfitNumber(activity.Steps, "Steps");
         }
@@ -339,7 +341,7 @@
         }
         return result;
       }
-      
+
       function convertAmazfitScale(scale, value, minValue, maxValue){
         var result = {};
         result.Scale = {
@@ -356,10 +358,10 @@
             Y: c.Y
           });
         }
-        
+
         return result;
       }
-      
+
       function convertAmazfitStepsProgress(steps){
         var result = {};
         if (steps.GoalImage){
@@ -378,7 +380,7 @@
         }
         return result;
       }
-      
+
       function convertAmazfitBattery(battery){
         var result = {};
         if (battery.Scale){
@@ -389,7 +391,7 @@
         }
         return result;
       }
-      
+
       function convertAmazfitImage(image){
         var result = {
           Image: {
@@ -401,11 +403,11 @@
         };
         return result;
       }
-      
+
       function convertAmazfitColor(color){
         return "#" + color.substring(2);
       }
-      
+
       function convertAmazfitHand(hand, rotationValue, minRotationValue, maxRotationValue){
         var result = {
           Filled: !hand.OnlyBorder,
@@ -418,18 +420,18 @@
           MaxRotationValue: maxRotationValue,
           MinRotationValue: minRotationValue
         };
-        
+
         result.Vertices = []
         for (var c of hand.Shape){
           result.Vertices.push(c);
         }
         return { Poly: result };
       }
-      
+
       function convertAmazfitAnalog(analog, face){
         var result = {
         };
-        
+
         if (analog.Hours){
           result.Hours = {};
           result.Hours.Hand = convertAmazfitHand(analog.Hours, "Hour12Analog", 0, 12);
@@ -464,14 +466,14 @@
         }
         return result;
       }
-      
+
       function restructureAmazfitFormat(dataString){
         console.log("Amazfit data:", dataString);
-        
-        
+
+
         var json = JSON.parse(dataString);
         faceJson = json;
-        
+
 
         var result = {};
         result.Properties = {};
@@ -479,8 +481,8 @@
         result.Properties.Redraw.Unlocked = 60000;
         result.Properties.Redraw.Locked = 60000;
         result.Properties.Redraw.Clear = true;
-        
-        
+
+
         if (json.Background){
           result.Background = json.Background;
           result.Background.Image.ImagePath = [];
@@ -491,32 +493,32 @@
           result.Time = convertAmazfitTime(json.Time);
           if (json.AnalogDialFace) result.Time.Plane = 1;
         }
-        
+
         if (json.Date){
           result.Date = convertAmazfitDate(json.Date);
           if (json.AnalogDialFace) result.Date.Plane = 1;
         }
-        
+
         if (json.Status){
           result.Status = convertAmazfitStatus(json.Status);
           if (json.AnalogDialFace) result.Status.Plane = 1;
         }
-        
+
         if (json.Weather){
           result.Weather = convertAmazfitWeather(json.Weather);
           if (json.AnalogDialFace) result.Weather.Plane = 1;
         }
-        
+
         if (json.Activity){
           result.Activity = convertAmazfitActivity(json.Activity);
           if (json.AnalogDialFace) result.Activity.Plane = 1;
         }
-        
+
         if (json.StepsProgress){
           result.StepsProgress = convertAmazfitStepsProgress(json.StepsProgress);
           if (json.AnalogDialFace) result.StepsProgress.Plane = 1;
         }
-        
+
         if (json.Battery){
           result.Battery = convertAmazfitBattery(json.Battery);
           if (json.AnalogDialFace) result.Battery.Plane = 1;
@@ -529,7 +531,7 @@
         return result;
 
       }
-      
+
       function parseFaceJson(jsonString){
           if (isNativeFormat()){
             return JSON.parse(jsonString);
@@ -537,7 +539,7 @@
             return restructureAmazfitFormat(jsonString);
           }
       }
-      
+
       function combineProperty(name, source, target){
         if (source[name] && target[name]){
           if (Array.isArray(target[name])){
@@ -556,7 +558,7 @@
         if (typeof element == "string" || typeof element == "number") return [];
         for (var c in element){
           var next = element[c];
-          
+
           combineProperty("X",element,next);
           combineProperty("Y",element,next);
           combineProperty("Width",element,next);
@@ -571,7 +573,7 @@
           combineProperty("MaxRotationValue",element,next);
           if (typeof element.Plane == "number") next.Plane = element.Plane;
           next.Layer = element.Layer ? (element.Layer) : "" + c;
-          
+
           if (["MultiState","Image","CodedImage","Number","Circle","Poly","Rect","Scale"].includes(c)){
             result.push({type:c, value: next});
           } else {
@@ -580,12 +582,12 @@
         }
         return result;
       }
-      
+
       function convertToCode(elements, properties, wrapInTimeouts, forceUseOrigPlane){        
         var code = "(function (wr, wf) {\n";
         code += "var lc;\n";
         code += "var p = Promise.resolve();\n";  
-        
+
         //get mapped by layer
         var counter = 0;
         var planes = {};
@@ -606,20 +608,20 @@
         }
         if (!planeNumbers.includes(0)) planeNumbers.push(0);
         planeNumbers.sort().reverse();
-        
+
         console.log("Found planes", planes, "with numbers", planeNumbers)
-        
+
         code += "p0 = g;\n";
-        
+
         for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
           var layers = planes[planeNumbers[planeIndex]];
           var plane = planeNumbers[planeIndex];
-          
+
           var lastSetColor;
           var lastSetBgColor;
-          
+
           if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),4,{msb:true});\n";
-          
+
           if (properties.Redraw && properties.Redraw.Clear){
             if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
               code += "p = p.then(()=>delay(0)).then(()=>{\n";
@@ -632,31 +634,31 @@
             code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
             code += "});\n";
           }
-          
+
           var previousPlane = plane + 1;
           if (previousPlane < planeNumbers.length){
             code += "p = p.then(()=>{\n";
-            
+
             if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
             //code += "g.drawImage(p" + i + ".asImage());";
             code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer, palette: palette});\n";
             code += "});\n";
           }
-          
+
           console.log("Got layers", layers);
           for (var layername in layers){
             var layerElements = layers[layername];
-            
+
             console.log("Layer elements", layername, layerElements);
             //code for whole layer
-            
+
             if (addDebug()) code += 'print("Starting layer ' + layername + '");' + "\n";
-            
+
             var checkForLayerChange = false;
             var checkcode = "";
-            
+
             if (!(properties.Redraw && properties.Redraw.Clear)){
-              checkcode = 'firstDraw';
+              checkcode = 's.fd';
               for (var i = 0; i< layerElements.length; i++){
                 var layerElement = layerElements[i];
                 var referencedElement = elements[layerElements[i].index];
@@ -664,38 +666,38 @@
                 console.log("Check for change:", layerElement, referencedElement);
                 if (layerElement.element.Value){
                   if (elementType == "MultiState" && layerElement.element.Value) {
-                    checkcode += '| isChangedMultistate(wf.Collapsed[' + layerElement.index + '].value)';
+                    checkcode += '| isChangedMultistate(wf.c[' + layerElement.index + '].value)';
                   } else {
-                    checkcode += '| isChangedNumber(wf.Collapsed[' + layerElement.index + '].value)';
+                    checkcode += '| isChangedNumber(wf.c[' + layerElement.index + '].value)';
                   }
                   checkForLayerChange = true;
                 }
               }
             }
-            
-              
+
+
             //code for elements
             for (var i = 0; i< layerElements.length; i++){
               var elementIndex = layerElements[i].index;
               var c = elements[elementIndex];
               console.log("convert to code", c);
-              
+
               var condition = "";
               if (checkcode.length > 0 && checkForLayerChange){
                 if (condition.length > 0) condition += " && ";
                 condition = '(' + checkcode + ')';
               }
-              
+
               if (c.value.HideOn && c.value.HideOn.includes("Lock")){
                 if (condition.length > 0) condition += " && ";
                 condition = '!Bangle.isLocked()';
               }
-              
+
               if (c.value.Type == "Once"){
                 if (condition.length > 0) condition += " && ";
-                condition += "firstDraw";
+                condition += "s.fd";
               }
-              
+
               var planeName = "p" + plane;
               var colorsetting = "";
               if (c.value.ForegroundColor && lastSetColor != c.value.ForegroundColor){
@@ -712,28 +714,28 @@
                 else
                   colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
               }
-              
+
               if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
-              code += "" + colorsetting;
               code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
                 if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
                   code += "p = p.then(()=>delay(0)).then(()=>{\n";
                 } else {
                   code += "p = p.then(()=>{\n";
                 }            
+              code += "" + colorsetting;
               if (addDebug()) code += 'print("Drawing element ' + elementIndex + ' with type ' + c.type + ' on plane ' + planeName + '");' + "\n";
-              code += "draw" + c.type + "(" + planeName + ", wr, wf.Collapsed[" + elementIndex + "].value);\n";
+              code += "draw" + c.type + "(" + planeName + ", wr, wf.c[" + elementIndex + "].value);\n";
 
               code += "});\n";
               code += (condition.length > 0 ? "}\n" : "");
             }
           }
           console.log("Current plane is", plane);
-          
 
-          
+
+
         }
-          
+
         code += "return p;})";
         console.log("Code:", code);
         return code
@@ -742,14 +744,14 @@
       function postProcess(){
         moveData(resultJson);
         console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
-        
+
         var properties = faceJson.Properties;        
-        faceJson = { Properties: properties, Collapsed: collapseTree(faceJson,{X:0,Y:0})};
+        faceJson = { Properties: properties, c: collapseTree(faceJson,{X:0,Y:0})};
         console.log("After collapsing", faceJson);
-        precompiledJs = convertToCode(faceJson.Collapsed, properties, document.getElementById('timeoutwrap').checked, document.getElementById('forceOrigPlane').checked);
+        precompiledJs = convertToCode(faceJson.c, properties, document.getElementById('timeoutwrap').checked, document.getElementById('forceOrigPlane').checked);
         console.log("After precompiling", precompiledJs);
       }
-      
+
       function convertJsToJson(imgstr){
         var E = {};
         E.toArrayBuffer = (s)=>s;
@@ -768,7 +770,7 @@
 
       function imageLoaded() {
         var options = {};
-        
+
         options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
         options.compression = false;
         options.alphaToColor = false;
@@ -779,12 +781,12 @@
         options.contrast = 0;
         options.mode = infoJson.color ? infoJson.color : "1bit";
         options.output = "object";
-        
+
         console.log("Loaded image has path", this.path);
         var jsonPath = this.path.split("/");
-        
+
         var forcedTransparentColorMatch = jsonPath[jsonPath.length-1].match(/.*\.t([^.]+)\..*/)        
-        
+
         var forcedTransparentColor;
         if (jsonPath[jsonPath.length-1].includes(".t.")){
           options.transparent = true;
@@ -792,13 +794,13 @@
           options.transparent = false;
           forcedTransparentColor = forcedTransparentColorMatch[1];
         }
-        
-        
+
+
         console.log("image has transparency", options.transparent);
         console.log("image has forced transparent color", forcedTransparentColor);
         jsonPath[jsonPath.length-1] = jsonPath[jsonPath.length-1].replace(/([^.]*)\..*/, "$1");
         console.log("Loaded image has json path", jsonPath);
- 
+
         var canvas = document.getElementById("canvas")
         canvas.width = this.width*2;
         canvas.height = this.height;
@@ -819,7 +821,7 @@
         imgstr = imageconverter.RGBAtoString(rgba, options);
         var outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
         ctx.putImageData(outputImageData,this.width,0);
-        
+
         imgstr = convertJsToJson(imgstr);
 
         // checkerboard for transparency on original image
@@ -827,9 +829,9 @@
         imageconverter.RGBAtoCheckerboard(imageData.data, {width:this.width,height:this.height});
         ctx.putImageData(imageData,0,0);
 
-       
+
         var currentElement = resultJson;
-       
+
         for (var i = 0; i < jsonPath.length; i++){
           if (i == jsonPath.length - 1){
             var resultingObject = JSON.parse(imgstr);
@@ -841,18 +843,18 @@
             currentElement = currentElement[jsonPath[i]];
           }
         }
-        
+
         handledFiles++;
         console.log("Expected:", expectedFiles, " handled:", handledFiles);
-        
+
         if (handledFiles == expectedFiles){
           if (!isNativeFormat()) {
             performFileChanges().then(()=>{
               postProcess();
-              
+
               rootZip.file("face.json", JSON.stringify(faceJson, null, 2));
               rootZip.file("info.json", JSON.stringify(infoJson, null, 2));
-              
+
               document.getElementById('btnSave').disabled = false;
               document.getElementById('btnSaveFace').disabled = false;
               document.getElementById('btnSaveZip').disabled = false;
@@ -860,21 +862,21 @@
             });
           } else {
             postProcess();
-              
+
             document.getElementById('btnSave').disabled = false;
             document.getElementById('btnSaveFace').disabled = false;
             document.getElementById('btnUpload').disabled = false;
           }
         }
       }
-      
+
       function handleWatchFace(infoFile, faceFile, resourceFiles){
         if (isNativeFormat()){
           var reader = new FileReader();
           reader.path = infoFile.webkitRelativePath;
           reader.onload = function(event) {
             infoJson = JSON.parse(reader.result);
-            
+
             handleFaceJson(faceFile, resourceFiles);
           };
           reader.readAsText(infoFile);
@@ -883,18 +885,18 @@
           handleFaceJson(faceFile, resourceFiles);
         }
       }
-      
+
       function handleFaceJson(faceFile, resourceFiles){
         var reader = new FileReader();
         reader.path = faceFile.webkitRelativePath;
         reader.onload = function(event) {
           faceJson = parseFaceJson(reader.result);
-          
+
           handleResourceFiles(resourceFiles);
         };
         reader.readAsText(faceFile);
       }
-      
+
       function handleResourceFiles(files){
         for (var current of files){
           console.log('Handle resource file ', current);
@@ -917,25 +919,25 @@
           reader.readAsDataURL(current);
         }
       }
-      
+
       function handleFileSelect(event) {
         handledFiles = 0;
         expectedFiles = undefined;
-        
+
         document.getElementById('btnSave').disabled = true;
         document.getElementById('btnSaveZip').disabled = true;
         document.getElementById('btnSaveFace').disabled = true;
         document.getElementById('btnUpload').disabled = true;
-        
+
         console.log("File select event", event);
         if (event.target.files.length == 0) return;
         result = "";
         resultJson= {};
-        
+
         var resourceFiles = [];
         var faceFile;
         var infoFile;
-        
+
         for (var current of event.target.files){
           console.log('Handle file ', current);
           if (isNativeFormat()){
@@ -970,10 +972,10 @@
           }
         }
         handleWatchFace(infoFile, faceFile, resourceFiles);
-       
+
       };
       document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
-     
+
       function moveData(json){
         console.log("MoveData for", json);
         for (var k in json){
@@ -997,11 +999,11 @@
           }
         }
       }
-     
+
       document.getElementById("timeoutwrap").addEventListener("click", function() {
         document.getElementById("forceOrigPlane").disabled = !document.getElementById("timeoutwrap").checked;
       });
-     
+
       document.getElementById("btnSave").addEventListener("click", function() {
         var h = document.createElement('a');
         h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(resultJson));    
@@ -1010,25 +1012,48 @@
         h.click();
       });
       document.getElementById("btnUpload").addEventListener("click", function() {
-        
+
+      console.log("Fetching app");
+      fetch('app.js').then((r) => {
+          console.log("Got response", r);
+          return r.text();
+        }
+      ).then((imageclockSrc) => {
+        console.log("Got src", imageclockSrc)
+
+        if (!document.getElementById('separateFiles').checked){
+          if (precompiledJs.length > 0){
+            const replacementString = 'eval(require("Storage").read("imageclock.draw.js"))';
+            console.log("Can replace:", imageclockSrc.includes(replacementString));
+            imageclockSrc = imageclockSrc.replace(replacementString, precompiledJs);
+          }
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.face.json")', JSON.stringify(faceJson));
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.resources.json")', JSON.stringify(resultJson));
+        }
         var appDef = {
           id : "imageclock",
           storage:[
-            {name:"imageclock.app.js", url:"app.js"},
-            {name:"imageclock.resources.json", content: JSON.stringify(resultJson)},
             {name:"imageclock.img", url:"app-icon.js", evaluate:true},
           ]
         };
+        if (document.getElementById('separateFiles').checked){
+          appDef.storage.push({name:"imageclock.app.js", url:"app.js"});
+          if (precompiledJs.length > 0){
+            appDef.storage.push({name:"imageclock.draw.js", content:precompiledJs});
+          }
+          appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
+          appDef.storage.push({name:"imageclock.resources.json", content: JSON.stringify(resultJson)});
+        } else {
+          appDef.storage.push({name:"imageclock.app.js", url:"pleaseminifycontent.js", content:imageclockSrc});
+        }
         if (resourceDataString.length > 0){
           appDef.storage.push({name:"imageclock.resources.data", content: resourceDataString});
         }
-        appDef.storage.push({name:"imageclock.draw.js", content: precompiledJs.length > 0 ? precompiledJs : "//empty"});
-        appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
-
         console.log("Uploading app:", appDef);        
         sendCustomizedApp(appDef);
+        });
       });
-            
+
 
       function handleZipSelect(evt) {
 
@@ -1040,18 +1065,18 @@
         document.getElementById('btnSaveZip').disabled = true;
         document.getElementById('btnUpload').disabled = true;
         JSZip.loadAsync(f).then(function(zip) {
-          
+
                 console.log("Zip loaded", zip);
                 result = "";
                 resultJson= {};
-                
+
                 var resourceFiles = [];
-                
+
                 var promise = zip.file("face.json").async("string").then((data)=>{
                   console.log("face.json data", data);
                   faceJson = parseFaceJson(data);
                 });
-                
+
                 if (isNativeFormat()){
                   promise = promise.then(zip.file("info.json").async("string").then((data)=>{
                     console.log("info.json data", data);
@@ -1062,12 +1087,12 @@
                     "color": "3bit",
                     "transparent": true
                   };
-                  
+
                 }
-                
+
                 zip.folder("resources").forEach(function (relativePath, file){
                   console.log("iterating over", relativePath);
-                  
+
                   if (!file.dir){
                     expectedFiles++;
                     promise = promise.then(file.async("blob").then(function (blob) {
@@ -1083,10 +1108,10 @@
                       reader.readAsDataURL(blob);
                     }));
                   }
-                  
+
                 });
-          
-          
+
+
         }, function (e) {
           console.log("Error reading " + f.name + ": " + e.message);
         });
@@ -1095,11 +1120,11 @@
 
     console.log("Zip select event", evt);
     var files = evt.target.files;
-    
+
     if (files.length > 1){
       alert("Only one file allowed");
     }
-    
+
     handleFile(files[0]);
   }
 
@@ -1113,7 +1138,7 @@
     });
   }
 
-     
+
   document.getElementById("btnSaveFace").addEventListener("click", function() {
     var h = document.createElement('a');
     h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(faceJson));    
@@ -1121,14 +1146,14 @@
     h.download = "face.json";
     h.click();
   });
-      
+
   document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
   document.getElementById('btnSaveZip').addEventListener('click', handleZipExport, false);
   document.getElementById('btnSave').disabled = true;
   document.getElementById('btnSaveFace').disabled = true;
   document.getElementById('btnSaveZip').disabled = true;
   document.getElementById('btnUpload').disabled = true;
-      
+
    </script>
 
   </body>

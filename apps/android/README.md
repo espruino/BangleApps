@@ -20,6 +20,8 @@ It contains:
 of Gadgetbridge - making your phone make noise so you can find it.
 * `Keep Msgs` - default is `Off`. When Gadgetbridge disconnects, should Bangle.js
 keep any messages it has received, or should it delete them?
+* `Overwrite GPS` - when GPS is requested by an app, this doesn't use Bangle.js's GPS
+but instead asks Gadgetbridge on the phone to use the phone's GPS
 * `Messages` - launches the messages app, showing a list of messages
 
 ## How it works

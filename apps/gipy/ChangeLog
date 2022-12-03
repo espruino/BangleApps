@@ -1,0 +1,65 @@
+0.01: Initial code
+
+0.05:
+	* We now buzz before reaching a waypoint.
+	* Display is only updated when not locked.
+	* We detect leaving path and finding path again.
+	* We display remaining distance to next point.
+
+0.06:
+	* Special display for points with steep turns.
+	* Buzz on points with steep turns and unlock.
+	* Losing gps is now displayed.
+
+0.07:
+	* We now use orientation to detect current segment
+	when segments overlap going in both directions.
+	* File format is now versioned.
+
+0.08:
+	* Don't use gps course anymore but figure it from previous positions.
+	* Bugfix: path colors are back.
+	* Always buzz when reaching waypoint even if unlocked.
+
+0.09:
+	* We now display interest points.
+	* Menu to choose which file to load.
+
+0.10:
+	* Display performances enhancement.
+	* Waypoints information is embedded in file and extracted from comments on
+	points.
+	* Bugfix in map display (last segment was missing + wrong colors).
+	* Waypoint detections using OSM + sharp angles
+	* New algorith for direction detection
+
+0.11:
+	* Better fonts (more free space, still readable).
+	* Display direction to nearest point when lost.
+	* Display average speed.
+	* Turn off gps when locked and between points
+
+0.12:
+	* Bugfix in speed computation.
+	* Bugfix in current segment detection.
+	* Bugfix : lost direction.
+	* Larger fonts.
+	* Detecting next point correctly when going back.
+
+0.13:
+	* Bugfix in lost direction.
+	* Buzzing 100m ahead instead of 50m.
+	* Detect sharp turns.
+	* Display instant speed.
+	* New instant speed algorithm.
+	* Bugfix for remaining distance when going back.
+
+0.14:
+	* Detect starting distance to compute a good average speed.
+	* Settings
+	* Account for breaks in average speed.
+
+0.15:
+	* Record traveled distance to get a good average speed.
+	* Breaks (low speed) will not count in average speed.
+	* Bugfix in average speed.
