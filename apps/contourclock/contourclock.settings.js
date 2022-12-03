@@ -5,9 +5,10 @@
   if (settings.fontIndex==undefined) {
     settings.fontIndex=0;
     settings.widgets=true;
-    settings.hide=true;
+    settings.hide=false;
     settings.weekday=true;
     settings.date=true;
+    settings.hideWhenLocked=false;
     require('Storage').writeJSON("myapp.json", settings);
   }
   E.showMenu({
@@ -18,7 +19,7 @@
       onchange : v => {settings.widgets=v; require('Storage').writeJSON('contourclock.json', settings);}
     },
     'hide Widgets': {
-      value: (settings.hide !== undefined ? settings.hide : true),
+      value: (settings.hide !== undefined ? settings.hide : false),
       onchange : v => {settings.hide=v; require('Storage').writeJSON('contourclock.json', settings);}
     },
     'Weekday': {
@@ -28,6 +29,10 @@
     'Date': {
       value: (settings.date !== undefined ? settings.date : true),
       onchange : v => {settings.date=v; require('Storage').writeJSON('contourclock.json', settings);}
+    },
+    'Hide when locked': {
+      value: (settings.hideWhenLocked !== undefined ? settings.hideWhenLocked : false),
+      onchange : v => {settings.hideWhenLocked=v; require('Storage').writeJSON('contourclock.json', settings);}
     },
     'set Font': function() {
       Bangle.removeAllListeners('drag');
@@ -40,7 +45,6 @@
         Bangle.removeAllListeners('lock');
         clearWatch(saveListener);
         g.clear();
-        //require("widget_utils").show();
         Bangle.load();
       }, BTN, { repeat:false, edge:'falling' });
       lockListener = Bangle.on('lock', function () { //discard changes and return to clock
