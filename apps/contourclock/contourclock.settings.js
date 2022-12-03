@@ -1,5 +1,4 @@
 (function(back) {
-  //Bangle.removeAllListeners('drag');
   Bangle.setUI("");
   var settings = require('Storage').readJSON('contourclock.json', true) || {};
   if (settings.fontIndex==undefined) {
