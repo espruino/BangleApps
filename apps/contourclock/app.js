@@ -34,14 +34,19 @@
   };
   
   if (settings.hideWhenLocked) Bangle.on('lock', function (locked) {
-    g.clear();
-    if (locked) require('contourclock').drawClock(settings.fontIndex);
-    else draw();
+    if (!locked) require("widget_utils").show();
+    else {
+      g.clear();
+      if (settings.hide) require("widget_utils").swipeOn();
+      else require("widget_utils").hide();
+    }
+    draw();
   });
-
+  
   require("FontTeletext10x18Ascii").add(Graphics);
   g.clear();
   draw();
+  
   Bangle.setUI({mode:"clock", remove:function() {
     if (drawTimeout) clearTimeout(drawTimeout);
     if (settings.widgets && settings.hide) require("widget_utils").show();
