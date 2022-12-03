@@ -30,6 +30,5 @@
 		{"name":"timerclk.alarm.js","url":"alarm.js"},
 		{"name":"timerclk.alarm.alert.js","url":"alarm.alert.js"}
 	],
-	"data": [{"name":"timerclk.json"},{"name":"timerclk.stopwatch.json"},{"name":"timerclk.timer.json"},{"name":"timerclk.alarm.json"}],
-	"sortorder": 0
+	"data": [{"name":"timerclk.json"},{"name":"timerclk.stopwatch.json"},{"name":"timerclk.timer.json"},{"name":"timerclk.alarm.json"}]
 }

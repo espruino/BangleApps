@@ -12,3 +12,5 @@
 0.08: fixed calendar weeknumber not shortened to two digits
 0.09: Use default Bangle formatter for booleans
 0.10: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on 2v16
+0.11: Moved enhanced Anton clock to 'Anton Clock Plus' and stripped this clock back down to make it faster for new users (270ms -> 170ms)
+      Modified to avoid leaving functions defined when using setUI({remove:...})

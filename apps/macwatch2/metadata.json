@@ -2,7 +2,7 @@
   "name": "MacWatch2",
   "shortName":"MacWatch2",
   "icon": "app.png",
-  "version":"0.05",
+  "version":"0.06",
   "description": "Classic Mac Finder clock",
   "type": "clock",
   "tags": "clock",

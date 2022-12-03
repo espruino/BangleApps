@@ -5,7 +5,7 @@
   "icon": "icon.png",
   "type": "widget",
   "tags": "widget,tool",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"widdst.wid.js","url":"widget.js"},

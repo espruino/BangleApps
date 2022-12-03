@@ -124,7 +124,7 @@ if (sleeplog.conf.enabled) {
       if (!sleeplog.info.saveUpToDate || force) {
         // save status, consecutive status and info timestamps to restore on reload
         var save = [sleeplog.info.lastCheck, sleeplog.info.awakeSince, sleeplog.info.asleepSince];
-        // add debuging status if active 
+        // add debuging status if active
         if (sleeplog.debug) save.push(sleeplog.debug.writeUntil, sleeplog.debug.fileid);
 
         // stringify entries
@@ -253,11 +253,38 @@ if (sleeplog.conf.enabled) {
         }
       }
 
+      // check if the status has changed
+      var changed = data.status !== this.status || data.consecutive !== this.consecutive;
+
+      // read and check trigger entries
+      var triggers = Object.keys(this.trigger) || [];
+      if (triggers.length) {
+        // calculate time from timestamp in ms on full minutes
+        var time = new Date();
+        time = (time.getHours() * 60 + time.getMinutes()) * 60 * 1000;
+        // go through all triggers
+        triggers.forEach(key => {
+          // read entry to key
+          var entry = this.trigger[key];
+          // check if the event matches the entries requirements
+          if (typeof entry.fn === "function" && (changed || !entry.onChange) &&
+            (entry.from || 0) <= time && (entry.to || 24 * 60 * 60 * 1000) >= time)
+            // and call afterwards with status data
+            setTimeout(entry.fn, 100, {
+              timestamp: new Date(data.timestamp),
+              status: data.status,
+              consecutive: data.consecutive,
+              prevStatus: data.status === this.status ? undefined : this.status,
+              prevConsecutive: data.consecutive === this.consecutive ? undefined : this.consecutive
+            });
+        });
+      }
+
       // cache change into a known consecutive state
       var changeIntoConsec = data.consecutive;
 
-      // check if the status has changed
-      if (data.status !== this.status || data.consecutive !== this.consecutive) {
+      // actions on a status change
+      if (changed) {
         // append status
         this.appendStatus(data.timestamp, data.status, data.consecutive);
 
@@ -268,7 +295,7 @@ if (sleeplog.conf.enabled) {
         // reset saveUpToDate status
         delete this.info.saveUpToDate;
       }
-      
+
       // send status to gadgetbridge
       var gb_kinds = "unknown,not_worn,activity,light_sleep,deep_sleep";
       Bluetooth.println(JSON.stringify({
@@ -319,7 +346,10 @@ if (sleeplog.conf.enabled) {
       }
       // return stats cache
       return this.statsCache;
-    }
+    },
+
+    // define trigger object
+    trigger: {}
   }, sleeplog);
 
   // initial starting

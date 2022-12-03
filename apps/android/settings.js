@@ -1,4 +1,7 @@
 (function(back) {
+
+  
+
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
   }
@@ -23,7 +26,17 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>load("messages.app.js"),
+    /*LANG*/"Overwrite GPS" : {
+      value : !!settings.overwriteGps,
+      onchange: newValue => {
+        if (newValue) {
+          Bangle.setGPSPower(false, 'android');
+        }
+        settings.overwriteGps = newValue;
+        updateSettings();
+      }
+    },
+    /*LANG*/"Messages" : ()=>require("message").openGUI(),
   };
   E.showMenu(mainmenu);
 })

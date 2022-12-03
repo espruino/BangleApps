@@ -12,3 +12,9 @@
 0.10: Fix clock not correctly refreshing when drawing in timeouts option is not on
 0.11: Additional option in customizer to force drawing directly
       Fix some problems in handling timeouts
+0.12: Use widget_utils module
+      Fix colorsetting in promises in generated code
+      Some performance improvements by caching lookups
+      Activate UI after first draw is complete to prevent drawing over launcher
+0.13: Use widget_utils swipeOn()
+      Allows minification by combining all but picture data into one file

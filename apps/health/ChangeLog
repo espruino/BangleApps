@@ -14,3 +14,5 @@
 0.13: Add support for internationalization
 0.14: Move settings
 0.15: Fix charts (fix #1366)
+0.16: Code tidyup, add back button in top left of health app graphs
+0.17: Add automatic translation of bar chart labels

@@ -1,7 +1,7 @@
 {
   "id": "widclose",
   "name": "Close Button",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A button to close the current app",
   "readme": "README.md",
   "icon": "icon.png",

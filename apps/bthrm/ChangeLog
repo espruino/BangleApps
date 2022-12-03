@@ -29,3 +29,14 @@
       Use default boolean formatter in custom menu and directly apply config if useful
       Allow recording unmodified internal HR
       Better connection retry handling
+0.13: Less time used during boot if disabled
+0.14: Allow bonding (Debug menu)
+      Prevent mixing of BT and internal HRM events if both are enabled
+      Always use a grace period (default 0 ms) to decouple some connection steps
+      Device not found errors now utilize increasing timeouts
+0.15: Fix recording internal sensor
+      Handle fallback to internal sensor consistently if BT bpm is 0
+      Power internal sensor down if not needed for fallback
+0.16: Set powerdownRequested correctly on BTHRM power on
+      Additional logging on errors
+      Add debug option for disabling active scanning

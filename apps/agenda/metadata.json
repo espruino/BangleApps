@@ -1,11 +1,11 @@
 {
   "id": "agenda",
   "name": "Agenda",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Simple agenda",
   "icon": "agenda.png",
   "screenshots": [{"url":"screenshot_agenda_overview.png"}, {"url":"screenshot_agenda_event1.png"}, {"url":"screenshot_agenda_event2.png"}],
-  "tags": "agenda",
+  "tags": "agenda,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,

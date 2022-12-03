@@ -29,6 +29,7 @@ This is Bangle.js's settings menu
 
 * **LCD Brightness** set how bright the LCD is. Due to hardware limitations in the LCD backlight, you may notice flicker if the LCD is not at 100% brightness.
 * **LCD Timeout** how long should the LCD stay on for if no activity is detected. 0=stay on forever
+* **Rotation** allows you to rotate (or mirror) what's displayed on the screen, eg. for left-handed wearers (needs 2v16 or 2v15 cutting edge firmware to work reliably)
 * **Wake on X** should the given activity wake up the Bangle.js LCD?
   * On Bangle.js 2 when locked the touchscreen is turned off to save power. Because of this,
     `Wake on Touch` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js.
