@@ -627,7 +627,7 @@ s.pl = {};
           Bangle.drawWidgets = ()=>{};
           Bangle.loadWidgets();
           Bangle.drawWidgets = orig;
-          require("widget_utils").swipeOn();
+          require("widget_utils").swipeOn(0);
           Bangle.drawWidgets();
         }
       }).catch((e)=>{
