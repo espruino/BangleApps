@@ -13,7 +13,7 @@
     {"url":"orig.png"},
     {"url":"impl.png"},
     {"url":"impl_2.png"},
-    {"url":"impl_3.png"},
+    {"url":"impl_3.png"}
   ],
   "storage": [
     {"name":"aiclock.app.js","url":"aiclock.app.js"},
