@@ -6,6 +6,8 @@ To get a legend of available characters, just tap the screen.
 
 To switch between the input of alphabetic and numeric characters tap the widget which displays either "123" or "ABC".
 
+To switch between lowercase and uppercase characters do an up swipe.
+
 ![](key.png)
 
 ## Usage
