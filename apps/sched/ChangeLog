@@ -14,3 +14,5 @@
       Improve timer message using formatDuration
       Fix wrong fallback for buzz pattern
 0.13: Ask to delete a timer after stopping it
+0.14: Added clkinfo for alarms and timers
+0.15: Automatic translation of some string in clkinfo

@@ -15,3 +15,4 @@
 0.14: Added ability to upload multiple sets of map tiles
       Support for zooming in on map
       Satellite count moved to widget bar to leave more room for the map
+0.15: Make track drawing an option (default off)

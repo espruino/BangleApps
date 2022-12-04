@@ -2,9 +2,9 @@
 that can be scrolled through on the clock face.
 
 `load()` returns an array of menu objects, where each object contains a list of menu items:
-
 * `name` : text to display and identify menu object (e.g. weather)
 * `img` : a 24x24px image
+* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date)
 * `items` : menu items such as temperature, humidity, wind etc.
 
 Note that each item is an object with:
@@ -15,6 +15,7 @@ Note that each item is an object with:
 
 {
   'text'  // the text to display for this item
+  'short' : (optional) a shorter text to display for this item (at most 6 characters)
   'img'   // optional: a 24x24px image to display for this item
   'v'     // (if hasRange==true) a numerical value
   'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
@@ -48,6 +49,15 @@ example.clkinfo.js :
 
 */
 
+let storage = require("Storage");
+let stepGoal = undefined;
+// Load step goal from health app and pedometer widget
+let d = storage.readJSON("health.json", true) || {};
+stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+if (stepGoal == undefined) {
+  d = storage.readJSON("wpedom.json", true) || {};
+  stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
+}
 
 exports.load = function() {
   // info used for drawing...
@@ -81,7 +91,7 @@ exports.load = function() {
     { name : "Steps",
       hasRange : true,
       get : () => { let v = Bangle.getHealthStatus("day").steps; return {
-          text : v, v : v, min : 0, max : 10000, // TODO: do we have a target step amount anywhere?
+          text : v, v : v, min : 0, max : stepGoal,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       }},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },

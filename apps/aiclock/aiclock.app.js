@@ -215,8 +215,7 @@ Bangle.loadWidgets();
  * so we will blank out the draw() functions of each widget and change the
  * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-
+require('widget_utils').hide();
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 draw();

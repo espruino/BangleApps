@@ -19,7 +19,6 @@ require("messages").pushMessage({"t":"add","id":1,"src":"Maps","title":"0 yd - H
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
-
 var Layout = require("Layout");
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var fontSmall = "6x8";
@@ -49,8 +48,11 @@ to the clock. */
 var unreadTimeout;
 /// List of all our messages
 var MESSAGES = require("messages").getMessages();
-if (!Array.isArray(MESSAGES)) MESSAGES=[];
-var onMessagesModified = function(msg) {
+
+var onMessagesModified = function(type,msg) {
+  if (msg.handled) return;
+  msg.handled = true;
+  require("messages").apply(msg, MESSAGES);
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.new && active!="map" &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
@@ -62,9 +64,15 @@ var onMessagesModified = function(msg) {
   }
   showMessage(msg&&msg.id);
 };
+Bangle.on("message", onMessagesModified);
+
 function saveMessages() {
-  require("Storage").writeJSON("messages.json",MESSAGES)
+  require("messages").write(MESSAGES.map(m => {
+    delete m.show;
+    return m;
+  }));
 }
+E.on("kill", saveMessages);
 
 function showMapMessage(msg) {
   active = "map";
@@ -104,9 +112,11 @@ function showMapMessage(msg) {
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
 
-var updateLabelsInterval;
+let updateLabelsInterval,
+  music = {artist: "", album: "", title: ""}; // defaults, so e.g. msg.title.length doesn't error
 function showMusicMessage(msg) {
   active = "music";
+  msg = Object.assign(music, msg); // combine+remember "musicinfo" and "musicstate" messages
   openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
@@ -355,12 +365,16 @@ function checkMessages(options) {
   }
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
+  var toShow = MESSAGES.find(m=>m.show);
+  if (toShow) {
+    newMessages.unshift(toShow);
+  }
   // If we have a new message, show it
-  if (options.showMsgIfUnread && newMessages.length) {
+  if ((toShow||options.showMsgIfUnread) && newMessages.length) {
     showMessage(newMessages[0].id);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
-      // this is set if we entered the messages app by loading `messages.new.js`
+      // this is set if we entered the messages app by loading `messagegui.new.js`
       // ... but only buzz the first time we view a new message
       global.BUZZ_ON_NEW_MESSAGE = false;
       // messages.buzz respects quiet mode - no need to check here
@@ -428,13 +442,13 @@ function cancelReloadTimeout() {
 g.clear();
 
 Bangle.loadWidgets();
+require("messages").toggleWidget(false);
 Bangle.drawWidgets();
 
 setTimeout(() => {
-  var unreadTimeoutMillis = (settings.unreadTimeout || 60) * 1000;
-  if (unreadTimeoutMillis) {
-    unreadTimeout = setTimeout(load, unreadTimeoutMillis);
-  }
+  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
+  if (settings.unreadTimeout)
+    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
   // only openMusic on launch if music is new
   var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
   checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
