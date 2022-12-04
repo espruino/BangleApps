@@ -6,3 +6,4 @@
       Allowed black/white background (as that can look nice too)
 0.05: Images in clkinfo are optional now
 0.06: Added support for locale based time
+0.07: README file update as UI interaction was not easy to understand
