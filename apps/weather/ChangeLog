@@ -18,3 +18,5 @@
 0.19: Added weather condition to clkinfo.
 0.20: Added weather condition with temperature to clkinfo.
 0.21: Updated clkinfo icon.
+0.22: Automatic translation of strings, some left untranslated.
+>>>>>>> b37fcacd1 (weather - autotranslate strings)
