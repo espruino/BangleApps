@@ -5,7 +5,7 @@ var TUdecodeTime = require("time_utils").decodeTime;
 var DUdows = require("date_utils").dows;
 
 /*** define global variables ***/
-var triggerHandler = {}, modCache = {}, selection = {}, touchTiles = [];
+var triggerHandler = {}, modCache = {}, selection = {};
 
 /*** storage functions ***/
 function tileRect(tile) { return [
@@ -239,10 +239,20 @@ function updateMod(module, time) {
       alarm: tmp.filter(a => !a.timer),
       timer: tmp.filter(a => a.timer)
     };
-    // set numer of pages for the selection and remove the field trigger
+    // setup alarms and timers
     Object.keys(tmp).forEach(field => {
-      selection[clock.tiles.indexOf(field)].pages = tmp[field].length;
-      triggerHandler.remove(updateOn(field), field);
+      // get tile of this field
+      var tile = clock.tiles.indexOf(field);
+      // set numer of pages for the selection 
+      selection[tile].pages = tmp[field].length;
+      // check if pages available
+      if (selection[tile].pages) {
+        // activate selection
+        selection[tile].active = true;
+      } else {
+        // remove trigger
+        triggerHandler.remove(updateOn(field), field);
+      }
     });
   }
   // use cache and draw depending values if changed
@@ -284,6 +294,7 @@ function registerTriggers() {
       var tile = clock.tiles.indexOf(field);
       // set selection object
       selection[tile] = {
+        active: false,
         opt: clock.sel[field][0],
         opts: clock.sel[field][1],
         page: 0,
@@ -322,8 +333,8 @@ function touchHandler(tile) {
   drawValue(clock.tiles[tile], new Date(( 0 | Date.now() / 6E4 ) * 6E4));
 }
 function touchListener(b, c) {
-  // check if inside any area
-  touchTiles.forEach(tile => {
+  // check if inside any active tile
+  Object.keys(selection).filter(t => selection[t].active).forEach(tile => {
     var a = tileRect(tile);
     if (!(c.x < a.x || c.x > (a.x + a.w) || c.y < a.y || c.y > (a.y + a.h))) {
       Bangle.buzz(25);
@@ -332,10 +343,6 @@ function touchListener(b, c) {
   });
 }
 function setupHID() {
-  // define array of tiles with multiple options or pages
-  touchTiles = Object.keys(selection).filter(
-    tile => (selection[tile].opts > 1 || selection[tile].pages > 1)
-  );
   // setup user interface
   Bangle.setUI({
     mode: "custom",
@@ -347,20 +354,13 @@ function setupHID() {
 
 /*** clock function ***/
 var clock = new ClockFace({
-  init: function() {
-    print("init");
-    registerTriggers();
-  },
+  init: registerTriggers,
   draw: function(time, changed) {
-    print("draw: o,", Object.keys(changed).filter(c => changed[c]).join(", "));
     drawFrame();
     triggerHandler.onChanged(time, Object.assign({o: true}, changed));
     setupHID();
   },
-  update: function(time, changed) {
-    print("update:", Object.keys(changed).filter(c => changed[c]).join(", "));
-    triggerHandler.onChanged(time, changed);
-  },
+  update: triggerHandler.onChanged,
   settingsFile: "6tilesclk.settings.json"
 });
 
