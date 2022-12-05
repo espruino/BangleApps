@@ -13,7 +13,6 @@
     {"name": "6tilesclk.app.js", "url": "app.js"},
     {"name": "6tilesclk.img", "url": "app-icon.js", "evaluate": true},
     {"name": "6tilesclk.settings.js", "url": "settings.js"},
-    {"name": "6tilesclk.layout", "url": "custom.layout.js"},
     {"name": "sundown", "url": "sundown.js"}
   ],
   "data": [
