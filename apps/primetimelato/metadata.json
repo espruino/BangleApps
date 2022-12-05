@@ -1,6 +1,6 @@
 { "id": "primetimelato",
-  "name": "Prime Time Lato",
-  "version": "0.03",  
+  "name": "Prime Lato",
+  "version": "0.04",  
   "type": "clock",
   "description": "A clock that tells you the primes of the time in the Lato font",
   "icon": "app.png",
