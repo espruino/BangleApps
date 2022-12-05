@@ -3,6 +3,7 @@
   "shortName" : "Contour Clock",
   "version":"0.28",
   "icon": "app.png",
+  "readme": "README.md",
   "description": "A Minimalist clockface with large Digits.",
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
