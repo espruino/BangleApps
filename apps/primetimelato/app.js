@@ -2,7 +2,8 @@ const h = g.getHeight();
 const w = g.getWidth();
 const SETTINGS_FILE = "primetimelato.json";
 let settings;
-
+let setStr = 'U';
+    
 Graphics.prototype.setFontLato = function(scale) {
   // Actual height 41 (43 - 3)
   this.setFontCustom(
@@ -28,6 +29,22 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.buzz_on_prime = (settings.buzz_on_prime === undefined ? false : settings.buzz_on_prime);
+  settings.debug = (settings.debug === undefined ? false : settings.debug);
+
+  switch(settings.buzz_on_prime) {
+  case true:
+    setStr = 'T';
+    break;
+
+  case false:
+    setStr = 'F';
+    break;
+
+  case undefined:
+  default:
+    setStr = 'U';
+    break;
+  }
 }
 	
 // creates a list of prime factors of n and outputs them as a string, if n is prime outputs "Prime Time!"
@@ -69,9 +86,16 @@ function draw() {
   g.setColor(0,0,0);
   g.fillRect(Bangle.appRect);
 
+  g.setColor(100,100,100);
+
+  if (settings.debug) {
+    g.setFontLatoSmall();
+    g.setFontAlign(0, 0);
+    g.drawString(setStr, w/2, h/4);
+  }
+  
   g.setFontLato();
   g.setFontAlign(0, 0);
-  g.setColor(100,100,100);
   g.drawString(timeStr, w/2, h/2);
 
   g.setFontLatoSmall();
