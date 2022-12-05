@@ -173,6 +173,9 @@ if (nextAlarmDate !== undefined) {
         setTimeout(load, 1000);
       } else if (measure && now >= minAlarm && swest === false) {
         addLog(now, "alarm");
+        if (nextAlarmConfig.js) {
+          eval(nextAlarmConfig.js); // run nextAlarmConfig.js if set
+        }
         buzz();
         measure = false;
         if (config.settings.disableAlarm) {
