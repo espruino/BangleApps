@@ -1,479 +1,367 @@
-// include modules
+/*** link modules ***/
 var ClockFace = require("ClockFace");
-var Layout = require("6tilesclk.layout"); //require("Layout");
-var decodeTime = require("time_utils").decodeTime;
+var Locale = require("locale");
+var TUdecodeTime = require("time_utils").decodeTime;
+var DUdows = require("date_utils").dows;
 
-// load local modules
-var Storage = require("Storage");
+/*** define global variables ***/
+var triggerHandler = {}, modCache = {}, selection = {}, touchTiles = [];
 
-// define global variable
-var layout;
-var cache = {};
-
-// define function to get the tile id from its field name
-function getID(field, noCat) {
-  var id;
-  ["date", "tile"].some(cat => {
-    id = (clock[cat] || []).findIndex(t => t === field) + 1;
-    if (id) return noCat ? (id -= 1) : (id = cat + id);
+/*** storage functions ***/
+function tileRect(tile) { return [
+  {x: 1, y: 100, w: 55, h: 35, x2: 56, y2: 135},
+  {x: 60, y: 100, w: 55, h: 35, x2: 115, y2: 135},
+  {x: 119, y: 100, w: 55, h: 35, x2: 174, y2: 135},
+  {x: 1, y: 139, w: 55, h: 35, x2: 56, y2: 174},
+  {x: 60, y: 139, w: 55, h: 35, x2: 115, y2: 174},
+  {x: 119, y: 139, w: 55, h: 35, x2: 174, y2: 174}
+][tile]; }
+function infoRect(full) { return [
+  {x: 1, y: 139, w: 173, h: 35, x2: 174, y2: 174},
+  {x: 1, y: 100, w: 173, h: 74, x2: 174, y2: 174}
+][full ? 1 : 0]; }
+function imgs(name) { return {
+  steps:   {str: "IBCBAAAAAYAAAAPgAAAH8AAAD/gAfAf8AP4D/gD+AfwA/gH5AP4B8gH+A+Qf/gfIf/4/kP/+fyD//n5AAAAAgP/+fwA="},
+  sunrise: {offset: -9, str: "GhCBAAAhAACIRAARIgBESIgIgEQBD8IED/wIx/+MC//0AP/8DH//jN//7Af/+AH//gN//7MP/8M="},
+  sunset:  {str: "JxCBAAAAgAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAAAAAAAAAEAAAAAIiAAAABAQAAACD4IAAAJ/yAAAAf/AAAAH/8EAAM//mAAAP/+A=="},
+  alarm0:  {w: 36, h: 32, str: "JCCBAABwAOAAHwAPgAfgAH4A/D/D8A+OBx8B84Ac+B7gAHeDyAABPDmAB9nDEcAEjAMEAIwAIIAQQAYQAgYAQcBAIAQAZ8IAQB4AIAQHEAIAQcCAIAYABAYAIAAgQAMAAQwAEAAIgAGB+BgADA8DAABgAGAAAwAMAAA+B8AABz/OAADgAHAAHAADgAOAABwAcAAA4A=="},
+  alarm1:  {w: 16, offset: -12, str: "EBCBAAGAY8ZH4s/zn/mf+R/4H/gf+B/4H/g//H/+AAADwAGA"},
+  timer0:  {w: 36, h: 32, str: "JCCBAAVVVVYAaqqqoAKAABQAKAABQAKAABQAFAACgAFAACgAFAACgACgAFAACgAFAABQAKAAAoAUAAAUBoAAAKHQAAAFGgAAACtAAAACtAAAAFCgAAAKJQAAAUAoAAAoIUAABQAKAACg8FAACj/FAAFP/ygAF//+gAF//+gAL///QAL///QAL///QAVVVVYAaqqqoA=="},
+  timer1:  {w: 16, offset: -12, str: "EBCBAABAAOAAsAGYAQwBBgF/H/5w+MGAf4A/gB+ADwAHAAIA"},
+  timeto:  {w: 16, offset: 12, str: "EBCBAAfgDDIBhgBsABgAMABhAMEBgQABAAN4AkAGUAxcOAfg"},
+  timeat:  {w: 16, offset: 12, str: "EBCBAAfgHLgxDGEGQQLBE4EhwUGBg4ABwANAAmAGMAwdOAfg"}
+}[name]; }
+function updateOn(field) {
+  var ret = "x";
+  [ ["d", "sundown,sched"],
+    ["h", ""],
+    ["m", "steps"]
+  ].some(a => {
+    if (a[1].includes(field || 0)) ret = a[0];
   });
-  return id || field;
+  return ret;
 }
-// define function to get the field name from its id
-function getField(id) {
-  return (clock[(id.match(/^[^\d]*/) || [])[0]] || [])[(id.match(/\d*$/) || [])[0] - 1];
+
+/*** helper functions ***/
+function outerRect(r) {
+  return {x: r.x-1, y: r.y-1, w: r.w+2, h: r.h+2, x2: r.x2+1, y2: r.y2+1};
 }
-// define function to get the selected page
-function getPage(field, fromID) {
-  var sel = clock.sel[fromID ? getField(field) : field] || [];
-  return 0 | (sel[0] * 1 / sel[1]);
-}
-// define function to get the selection option
-function getOpt(field, fromID) {
-  var sel = clock.sel[fromID ? getField(field) : field] || [];
-  return sel[0] & (sel[1] - 1);
+function centerSpot(r) {
+  return {x: r.x + r.w / 2, y: r.y + r.h / 2};
 }
 // define function to format ms as human-readable time
-function getHTime(ms) {
-  ms = decodeTime(0 | ms);
+function getReadableTime(ms) {
+  ms = TUdecodeTime(ms);
   return ms.h + ":" + ("0" + ms.m).substr(-2);
 }
-// define function to recalculate "time to" of an alarm object
-function recalc(alarm, time) {
-  var tmp = alarm.clone();
-  tmp.tTo += tmp.calcAt - time.valueOf();
-  tmp.tToHT = getHTime(tmp.tTo);
-  return tmp;
-}
 
-// define function for seperator lines
-function lLine(dir) {
-  var output = {
-    bgCol: clock.lineColor
-  };
-  if (dir === "h") {
-    Object.assign(output, {
-      fillx: 1,
-      height: 1
-    });
-  } else if (dir === "v") {
-    Object.assign(output, {
-      width: 1,
-      filly: 1
-    });
-  }
-  return output;
-}
-// define function for horizontal group elements
-function lHGroup(id, elements) {
-  return {
-    id: id,
-    type: "h",
-    fillx: 1,
-    c: elements
-  };
-}
-// define function for text elements
-function lDate(id) {
-  return {
-    id: id,
-    type: "txt",
-    font: "12x20",
-    pady: -1,
-    offsety: 2,
-    pxClear: true,
-    label: ""
-  };
-}
-// define function for clock elements
-function lClock(id) {
-  return {
-    id: id,
-    type: "txt",
-    font: "Vector:66",
-    pady: -6,
-    offsetx: 10,
-    offsety: 4,
-    pxClear: true,
-    label: id
-  };
-}
-// define function for tile elements
-function lTile(id) {
-  return {
-    id: id,
-    type: "custom",
-    width: Bangle.appRect.w / 3,
-    height: 36,
-    value: "-",
-    render: renderTile
-  };
-}
-// define function for tile group elements
-function lTileGroup(id) {
-  return {
-    id: id,
-    type: "h",
-    c: [
-      lTile("tile" + id[2]),
-      lLine("v"),
-      lTile("tile" + id[3]),
-      lLine("v"),
-      lTile("tile" + id[4]),
-    ]
-  };
-}
-
-// define function to draw images
-function drawImg(l) {
-  // define draw function
-  function draw(l, img) {
-    g.drawImage(atob(img.str), l.x + l.w / 2 - img.w / 2 + (0|img.offset), l.y + (img.h ? l.h / 2 - img.h / 2 : 2));
-  }
-  // get field name from id
-  var tile = getField(l.id);
-  // draw main image
-  switch (tile) {
-    case "steps": {
-      draw(l, {
-        // steps icon
-        str: "IBCBAAAAAYAAAAPgAAAH8AAAD/gAfAf8AP4D/gD+AfwA/gH5AP4B8gH+A+Qf/gfIf/4/kP/+fyD//n5AAAAAgP/+fwA=",
-        w: 32
-      });
-      break;
-    }
-    case "sunrise": {
-      draw(l, {
-        // sunrise icon
-        str: "GhCBAAAhAACIRAARIgBESIgIgEQBD8IED/wIx/+MC//0AP/8DH//jN//7Af/+AH//gN//7MP/8M=",
-        w: 44
-      });
-      break;
-    }
-    case "sunset": {
-      draw(l, {
-        // sunset icon
-        str: "JxCBAAAAgAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAAAAAAAAAEAAAAAIiAAAABAQAAACD4IAAAJ/yAAAAf/AAAAH/8EAAM//mAAAP/+A==",
-        w: 44
-      });
-      break;
-    }
-    case "alarm": {
-      if (l.value) {
-        draw(l, {
-          // alarm icon
-          str: "EBCBAAGAY8ZH4s/zn/mf+R/4H/gf+B/4H/g//H/+AAADwAGA",
-          w: 16,
-          offset: -12
-        });
-      } else {
-        draw(l, {
-          // no alarm icon
-          str: "JCCBAABwAOAAHwAPgAfgAH4A/D/D8A+OBx8B84Ac+B7gAHeDyAABPDmAB9nDEcAEjAMEAIwAIIAQQAYQAgYAQcBAIAQAZ8IAQB4AIAQHEAIAQcCAIAYABAYAIAAgQAMAAQwAEAAIgAGB+BgADA8DAABgAGAAAwAMAAA+B8AABz/OAADgAHAAHAADgAOAABwAcAAA4A==",
-          w: 36,
-          h: 32
-        });
-      }
-      break;
-    }
-    case "timer": {
-      if (l.value) {
-        draw(l, {
-          // timer icon
-          str: "EBCBAABAAOAAsAGYAQwBBgF/H/5w+MGAf4A/gB+ADwAHAAIA",
-          w: 16,
-          offset: -12
-        });
-      } else {
-        draw(l, {
-          // no timer icon
-          str: "JCCBAAVVVVYAaqqqoAKAABQAKAABQAKAABQAFAACgAFAACgAFAACgACgAFAACgAFAABQAKAAAoAUAAAUBoAAAKHQAAAFGgAAACtAAAACtAAAAFCgAAAKJQAAAUAoAAAoIUAABQAKAACg8FAACj/FAAFP/ygAF//+gAF//+gAL///QAL///QAL///QAVVVVYAaqqqoA==",
-          w: 36,
-          h: 32
-        });
-      }
-      break;
-    }
-  }
-  // draw secondary image and page for alarm or timer
-  if (l.value && (tile === "alarm" || tile === "timer")) {
-    // check for image type
-    if (l.opt) {
-      draw(l, {
-        // "time to" icon
-        str: "EBCBAAfgDDIBhgBsABgAMABhAMEBgQABAAN4AkAGUAxcOAfg",
-        w: 16,
-        offset: 12
-      });
-    } else {
-      // "at time" icon
-      draw(l, {
-        str: "EBCBAAfgHLgxDGEGQQLBE4EhwUGBg4ABwANAAmAGMAwdOAfg",
-        w: 16,
-        offset: 12
-      });
-    }
-  }
-}
-// define function to render a tile
-function renderTile(l) {
-  // cache value
-  var tmpVal = l.value;
-  // if set override value with tile name
-  if (clock.showTileIDs) l.value = "ID: " + l.id;
-  // draw image
-  drawImg(l);
-  // draw value
-  if (l.value !== undefined) g.setFontAlign(0, 1).setFont("12x20").drawString(l.value, l.x + l.w / 2, l.y + l.h + 3);
-  // draw page if available
-  if (l.page) g.setFontAlign(0, -1).setFont("6x8").drawString(l.page, l.x + l.w / 2, l.y + 8);
-  // restore cached value
-  l.value = tmpVal;
-}
-
-// touch listener for each tile
-function touchListener(b, c) {
-  // define array from fields with enabled selection
-  var a = Object.keys(clock.sel);
-  // map field to its layout objects and filter for pages
-  a = a.map(field => Object.assign(layout[getID(field)], {
-    funct: function() {
-      clock.sel[this.field][0]++;
-      setValue(this.field, new Date(( 0 | Date.now() / 6E4 ) * 6E4));
-    }
-  })).filter(l => l.page);
-  // check if inside any area
-  for (var i = 0; i < a.length; i++) {
-    if (!(c.x < a[i].x || c.x > (a[i].x + a[i].w) || c.y < a[i].y || c.y > (a[i].y + a[i].h))) {
-      Bangle.buzz(25);
-      a[i].funct();
-    }
-  }
-}
-
-// define function to load values from a module
-function loadValues(module, time) {
-  // return if module is not enabled
-  if (!clock.modules[module]) return delete cache[module];
-  // set module cache if unset
-  if (!cache[module]) cache[module] = {};
-  // define temporary cache
-  var tmp;
-  switch (module) {
-    case "sundown": {
-      // read location from myLocation app
-      var loc = Storage.readJSON("mylocation.json", 1);
-      // get sunrise/-set from sundown library
-      var sun = loc ? require("sundown")(time, loc) : 0;
-      // set sunrise/-set or error to temporary cache
-      tmp = {
-        sunrise: !loc ? "loc?" : sun ? sun.sunrise.time || "-" : "?",
-        sunset: !loc ? "loc?" : sun ? sun.sunset.time || "-" : "?"
-      };
-      break;
-    }
-    case "sched": {
-      // redefine temporary cache
-      tmp = { alarm: [], timer: [] };
-      // read active schedules
-      require("sched").getAlarms().filter(a => a.on).map(a => {
-        // calculat "time to" values
-        var tTo = require("sched").getTimeToAlarm(a, time);
-        // check for tTo and add properties to cache object
-        if (tTo) tmp[a.timer ? "timer" : "alarm"].push({
-          // add t, tTo, time of the calculation
-          t: a.t, tTo: tTo, calcAt: time.valueOf(),
-          // and calculated times in human-readable format
-          tHT: getHTime(a.t), tToHT: getHTime(tTo),
-        });
-      });
-      // sort cached schedules
-      clock.modules.sched.forEach(field => {
-        tmp[field] = tmp[field].sort((a, b) => a.tTo - b.tTo);
-      });
-      // reload touch listener if there are now new alarms/timers ?????
-      break;
-    }
-  }
-  // set to cache and return if it changed
-  if (cache[module] !== tmp) {
-    cache[module] = tmp;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-// define function to get the value of a tile
-function getValue(field, time) {
+/*** get functions ***/
+// define function to get a fields value and view object
+function getField(field, time) {
   switch(field) {
-    case "hour": { // hour with/without leading 0
-      return ((this.leading0 ? "0" : " ") + time.getHours()).substr(-2);
+    case "minute": {
+      return {value: ("0" + time.getMinutes()).substr(-2)};
     }
-    case "minute": { // minute
-      return ("0" + time.getMinutes()).substr(-2);
+    case "hour": {
+      return {value: ((clock.leading0 ? "0" : " ") + (clock.is12Hour ?
+        Locale.time(time).split(":")[0] : time.getHours()
+      )).substr(-2) + ":"};
+    }
+    case "meridian": {
+      return Locale.meridian(time);
     }
     case "date": { // short local date
-      return require('locale').date(time, 1);
+      return {value: Locale.date(time, 1)};
     }
     case "dow": { // first 2 letters of the day of the week
-      return require("locale").dow(time, 1).substr(0, 2);
+      //return Locale.dow(time, 1).substr(0, 2);
+      return {value: DUdows(0, 1)[time.getDay()]};
     }
     case "woy": { // week of the year
       var yf = new Date(time.getFullYear(), 0, 1);
       var dpy = Math.ceil((time - yf) / 86400000);
       var woy = (" " + Math.ceil((dpy + (yf.getDay() - 11) % 7 + 3) / 7)).slice(-2);
-      return (clock.woy || (/*LANG*/"Week").substr(0, 1)) + woy;
+      return {value: (clock.woy || (/*LANG*/"Week").substr(0, 1)) + woy};
     }
     case "steps": { // steps of the day
-      return Bangle.getHealthStatus("day").steps;
+      return {
+        value: Bangle.getHealthStatus("day").steps,
+        view: {type: "val_1stat_icon", img: "steps"}
+      };
     }
     case "sunrise":
     case "sunset": { // time of sunrise/-set
-      return cache.sundown[field];
+      return {
+        value: modCache.sundown ? modCache.sundown[field] : "\\ 'o' /",
+        view: {type: "val_1stat_icon", img: field}
+      };
     }
     case "alarm":
     case "timer": { // upcomming alarms and timers
-      // set default return value
-      var value = "";
-      // read selected page
-      var page = getPage(field);
-      // check if schedules of this field exist
-      if (cache.sched[field].length) {
-        // correct selection if necessary
-        if (page >= cache.sched[field].length) clock.sel[field][0] = page = 0;
-        // check if tTo and tToHT needs to be recalculated
-        var tToOpt = getOpt(field);
-        // set selected value, recalculated if needed
-        value = (tToOpt ?
-          recalc(cache.sched[field][page], time) :
-          cache.sched[field][page]
-        )[tToOpt ? "tToHT" : "tHT"];
+      return {
+        value: modCache.getSched ? modCache.getSched(field, time) : "\\ 'o' /",
+        view: {type: "val_1-2dyn_icon", img1: field, img2: "time"}
+      };
+    }
+    default: return {};
+  }
+}
+
+/*** draw functions ***/
+function drawFrame() {
+  g.reset().setColor(clock.lineColor);
+  g.drawRect(-1, 25, 176, 43);
+  g.drawRect(-1, 98, 176, 137);
+  g.drawRect(58, 98, 117, 176);
+}
+function drawDate(time) {
+  var values = clock.dateLine.map(s => getField(s, time).value);
+  g.reset().clearRect(1, 27, 174, 41).setFont12x20();
+  g.setFontAlign(-1).drawString(values[0], 1, 36);
+  g.setFontAlign(1).drawString(values[2], 176, 36);
+  var v0x2 = 1 + g.stringWidth(values[0]);
+  var v2x1 = 176 - g.stringWidth(values[2]);
+  g.setFontAlign().drawString(values[1], (v0x2 + v2x1) / 2 + 1.4, 36);
+}
+function drawHour(time) {
+  g.reset().clearRect(2, 46, 99, 95).setFont("Vector:66").setFontAlign(1);
+  g.drawString(getField("hour", time).value, 100, 75);
+  if (clock.is12Hour) g.setFont6x15().setFontAlign().drawString(
+    getField("meridian", time).value, 88, 54);
+}
+function drawMinute(time) {
+  g.reset().clearRect(100, 46, 173, 95).setFont("Vector:66").setFontAlign(1);
+  g.drawString(getField("minute", time).value, 182, 75);
+}
+function drawValue(field, time) {
+  var tile = clock.tiles.indexOf(field);
+  var rect = tileRect(tile);
+  var fObj = Object.assign(
+    {rect: rect, center: centerSpot(rect)},
+    selection[tile],
+    getField(field, time)
+  );
+  g.reset().clearRect(rect);
+  drawView(fObj);
+}
+function drawView(fObj) {
+  if (fObj.view.type.startsWith("val_") && fObj.value !== undefined) {
+    g.reset().setFont12x20().setFontAlign().drawString(
+      fObj.value, fObj.center.x + 1.4, fObj.rect.y2 - 6
+    );
+  }
+  if (fObj.view.type === "val_1stat_icon") {
+    var img = imgs(fObj.view.img);
+    g.drawImages([{
+      x: fObj.center.x + (img.offset || 0), y: fObj.rect.y + 9,
+      image: atob(img.str), center: true
+    }]);
+  }
+  if (fObj.view.type === "val_1-2dyn_icon") {
+    var img1 = imgs(fObj.view.img1 + (fObj.value ? "1" : "0"));
+    if (fObj.value) {
+      var img2 = imgs(fObj.view.img2 + (fObj.opt ? "to" : "at"));
+      var xGap = 12;
+      if (fObj.pages > 1) {
+        xGap = 18;
+        g.reset().setFont("6x8").setFontAlign().drawString(
+          fObj.page + 1 + " \n " + fObj.pages, fObj.center.x + 0.5, fObj.rect.y + 9
+        ).drawLine(fObj.center.x - 5.5,  fObj.rect.y + 15, fObj.center.x + 4.5,  fObj.rect.y + 3);
       }
-      return value;
+      g.drawImages([{
+        x: fObj.center.x - xGap + 0.5, y: fObj.rect.y + 9,
+        image: atob(img1.str), center: true
+      }, {
+        x: fObj.center.x + xGap, y: fObj.rect.y + 9,
+        image: atob(img2.str), center: true
+      }]);
+    } else {
+      g.drawImages([{
+        x: fObj.center.x, y: fObj.center.y,
+        image: atob(img1.str), center: true
+      }]);
     }
   }
 }
-
-// define function to change txt and tile values
-function setValue(field, time) {
-  // get field id and abort if not set
-  var id = getID(field);
-  if (!id) return;
-  // update field value
-  var value = getValue(field, time);
-  // get layout object
-  var l = layout[id];
-  // clear object if layout is generated
-  if (l.x !== undefined) layout.clear(l);
-  // check for a custom field
-  if (l.type === "custom") {
-    // set field name and value
-    l.field = field;
-    l.value = value;
-    // set option and page if value and selection true
-    if (value && clock.sel[field] !== undefined) {
-      l.opt = getOpt(field);
-      l.page = getPage(field) + 1;
-    }
-  } else {
-    // set text label
-    l.label = value;
-  }
-  // render object if layout is generated
-  if (l.x !== undefined) layout.render(l);
+function drawInfo(full, viewObj) {
+  var rect = infoRect(full);
+  var center = centerSpot(rect);
+  g.reset().clearRect(outerRect(rect));
+  g.setFont12x20().setFontAlign();
+  g.drawString("info " + (full ? "full" : "half"), center.x, center.y);
 }
 
-// define function to initalise the layout
-function initLayout() {
-  // setup layout
-  layout = new Layout({
-    type: "v",
-    c: [
-      { fillx: 1, height: 1 },
-      lLine("h"),
-      lHGroup("h_date", ["date1", "date2", "date3"].map(lDate)),
-      lLine("h"),
-      lHGroup("h_time", ["hour", ":", "minute"].map(lClock)),
-      lLine("h"),
-      lTileGroup("h_123"),
-      lLine("h"),
-      lTileGroup("h_456")
-    ]
-  });
-  // adjust layout
-  layout.date1.padx = 1;
-  layout.date2.fillx = 1;
-  layout.hour.fillx = 1;
-  // remove unavailable or unused modules
-  Object.keys(clock.modules).filter(module => {
-    // check if module is available
-    if (!Storage.read(module, 0, 1)) {
-      // remove tiles with unavailable modules
-      clock.modules[module].forEach(tile => {
-        clock.tile[getID(tile, true)] = "";
-      });
-      return false;
-    }
-    // check if module is used or not
-    return clock.modules[module].some(field => clock.tile.includes(field)) ? true : false;
-  });
-}
-
-// setup clock
-var clock = new ClockFace({
-  init: initLayout,
-  draw: function(time, changed) {
-    // use update and render afterwards
-    this.update(time, changed);
-    layout.render();
-    // setup UI as custom clock
-    Bangle.setUI({
-      mode: "custom",
-      clock: 1,
-      touch: touchListener,
-      btn: (n) => { if (n===1) Bangle.showLauncher(); },
+/*** module update function ***/
+function updateMod(module, time) {
+  // define temporary cache
+  var tmp;
+  if (module === "sundown") {
+    // load sundown
+    var sun = require("sundown")(time);
+    tmp = {
+      sunrise: sun ? sun.sunrise.time || "-" : "?",
+      sunset: sun ? sun.sunset.time || "-" : "?"
+    };
+  } else if (module === "sched") {
+    // set function to return the selected alarm value if it doesn't exist
+    if (!modCache.getSched) modCache.getSched = function(field, time) {
+      // get selection for tile of this field
+      var sel = selection[clock.tiles.indexOf(field)];
+      // get the selected alarm
+      var alarm = modCache.sched[field][sel.page];
+      // check for alarm entries
+      if (alarm) {
+        // calculate selected value
+        alarm = sel.opt ?
+          // as time to value
+          alarm.tTo + alarm.calcAt - time.valueOf() :
+          // as time at value or none
+          alarm.t;
+        // return as human readable value
+        return getReadableTime(alarm);
+      } else {
+        return "";
+      }
+    };
+    // load sched
+    var sched = require("sched");
+    // read active alarms/timers
+    tmp = sched.getAlarms().filter(a => a.on).map(
+      function (a) { return {
+        timer: a.timer,
+        t: a.t,
+        tTo: sched.getTimeToAlarm(a, time),
+        calcAt: time.valueOf()
+      }; }
+    ).filter(a => a.tTo).sort((a, b) => a.tTo - b.tTo);
+    // rearrange alarms and timers into seperate objects
+    tmp = {
+      alarm: tmp.filter(a => !a.timer),
+      timer: tmp.filter(a => a.timer)
+    };
+    // set numer of pages for the selection and remove the field trigger
+    Object.keys(tmp).forEach(field => {
+      selection[clock.tiles.indexOf(field)].pages = tmp[field].length;
+      triggerHandler.remove(updateOn(field), field);
     });
-  },
-  update: function(time, changed) {
-    // cut time to full minutes
-    time = new Date(( 0 | time / 6E4 ) * 6E4);
-    // new day
-    if (changed.d) {
-      // set values
-      setValue("date", time);
-      setValue("dow", time);
-      setValue("woy", time);
-      // get and set sundown values
-      if (loadValues("sundown", time)) clock.modules.sundown.forEach(field => { setValue(field, time); });
+  }
+  // use cache and draw depending values if changed
+  if (modCache[module] !== tmp) {
+    modCache[module] = tmp;
+    clock.modules[module].forEach(field => drawValue(field, time));
+  }
+}
+
+/*** register activated tiles ***/
+function registerTriggers() {
+  // setup handler for triggers
+  triggerHandler = {
+    add: function(c, field, fn) {
+      if ("odhm".includes(c)) this[c][field] = fn;
+    },
+    remove: function(c, field) {
+      if ("odhm".includes(c)) return delete this[c][field];
+    },
+    trigger: function(c, time) {
+      Object.keys(this[c]).forEach(field => this[c][field](time));
+    },
+    onChanged: function(time, changed) {
+      Object.keys(changed).forEach(c => {
+        if (changed[c]) this.trigger(c, time);
+      });
+    },
+    o: {}, // once
+    d: {date: time => drawDate(time)},
+    h: {hour: time => drawHour(time)},
+    m: {minute: time => drawMinute(time)}
+  };
+  // register trigger and default selection for all active fields
+  clock.tiles.forEach(field => {
+    triggerHandler.add(updateOn(field), field,
+      time => drawValue(field, time));
+    if (clock.sel[field]) {
+      // get tile of this field
+      var tile = clock.tiles.indexOf(field);
+      // set selection object
+      selection[tile] = {
+        opt: clock.sel[field][0],
+        opts: clock.sel[field][1],
+        page: 0,
+        pages: 0
+      };
     }
-    // new hour
-    if (changed.h) {
-      setValue("hour", time);
-      // update cached values of schedules
-      if (loadValues("sched", time)) clock.modules.sched.forEach(field => { changed[field] = true; });
-    }
-    // new minute
-    if (changed.m) {
-      setValue("minute", time);
-      setValue("steps");
-      // also update schedules with "time to" selected
-      if (clock.modules.sched) {
-        clock.modules.sched.forEach(field => {
-          if (getOpt(field)) changed[field] = true;
+  });
+  // look for needed modules
+  Object.keys(clock.modules).forEach(module => {
+    // check if module is in use
+    if (clock.modules[module].some(field => clock.tiles.includes(field))) {
+      // check if module is installed
+      if (require("Storage").read(module) !== undefined) {
+        // register trigger for the module
+        triggerHandler.add(updateOn(module), module,
+          time => updateMod(module, time));
+      } else {
+        clock.modules[module].forEach(field => {
+          // remove possible field triggers
+          triggerHandler.remove(updateOn(field), field);
+          // register trigger to be triggered just once
+          triggerHandler.add("o", field, time => drawValue(field, time));
         });
       }
     }
-    // update schedules
-    if (clock.modules.sched) {
-      clock.modules.sched.forEach(field => {
-        if (changed[field]) setValue(field, time);
-      });
+  });
+}
+
+/*** hid functions ***/
+function touchHandler(tile) {
+  var sel = selection[tile];
+  if (++sel.opt >= sel.opts) {
+    sel.opt = 0;
+    if (++sel.page >= sel.pages) sel.page = 0;
+  }
+  drawValue(clock.tiles[tile], new Date(( 0 | Date.now() / 6E4 ) * 6E4));
+}
+function touchListener(b, c) {
+  // check if inside any area
+  touchTiles.forEach(tile => {
+    var a = tileRect(tile);
+    if (!(c.x < a.x || c.x > (a.x + a.w) || c.y < a.y || c.y > (a.y + a.h))) {
+      Bangle.buzz(25);
+      touchHandler(tile);
     }
+  });
+}
+function setupHID() {
+  // define array of tiles with multiple options or pages
+  touchTiles = Object.keys(selection).filter(
+    tile => (selection[tile].opts > 1 || selection[tile].pages > 1)
+  );
+  // setup user interface
+  Bangle.setUI({
+    mode: "custom",
+    clock: 1,
+    touch: touchListener,
+    btn: (n) => { if (n===1) Bangle.showLauncher(); },
+  });
+}
+
+/*** clock function ***/
+var clock = new ClockFace({
+  init: function() {
+    print("init");
+    registerTriggers();
   },
-  pause: function() {
-    // ?
+  draw: function(time, changed) {
+    print("draw: o,", Object.keys(changed).filter(c => changed[c]).join(", "));
+    drawFrame();
+    triggerHandler.onChanged(time, Object.assign({o: true}, changed));
+    setupHID();
   },
-  settingsFile: '6tilesclk.settings.json',
+  update: function(time, changed) {
+    print("update:", Object.keys(changed).filter(c => changed[c]).join(", "));
+    triggerHandler.onChanged(time, changed);
+  },
+  settingsFile: "6tilesclk.settings.json"
 });
+
 clock.start();

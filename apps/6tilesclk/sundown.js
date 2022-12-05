@@ -297,18 +297,22 @@ function newCalculation(d, lat, lon) {
 
 // reads timestamp, latitude and longitude or timestamp and location object
 exports = function(d, lat, lon) {
+  // define variables
+  var filename = "sundown.json";
+  var Storage = require("Storage");
+
   // read input from location object if needed
-  if (lat === undefined) return;
+  if (lat === undefined) {
+    lat = Storage.readJSON("mylocation.json", 1);
+    if (lat === undefined) return;
+  };
   if (lon === undefined) {
     lon = lat.lon;
     lat = lat.lat;
   }
   
-  // define variables
-  var filename = "sundown.json";
-  var storage = require("Storage");
   // load previous cached values
-  var cache = storage.readJSON(filename, true) || false;
+  var cache = Storage.readJSON(filename, true) || false;
 
   // check cached values
   if (cache && lat === cache.lat && lon === cache.lon &&
@@ -319,7 +323,7 @@ exports = function(d, lat, lon) {
     // calculate new values
     var output = newCalculation(d, lat, lon);
     // write values to storage as cache
-    storage.writeJSON(filename, {
+    Storage.writeJSON(filename, {
       lat: lat,
       lon: lon,
       date: [d.getFullYear(), d.getMonth() + 1, d.getDate()],

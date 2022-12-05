@@ -6,16 +6,15 @@
     "sundown": ["sunrise", "sunset"],
     "sched": ["alarm", "timer"]
   },
-  "date": [
+  "dateLine": [
     "date", "dow", "woy"
   ],
-  "tile": [
+  "tiles": [
     "sunrise", "steps", "sunset",
     "", "alarm", "timer"
   ],
   "sel": {
     "alarm": [0, 2],
     "timer": [1, 2]
-  },
-  "showTileIDs": false
+  }
 }
