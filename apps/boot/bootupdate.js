@@ -1,16 +1,22 @@
 /* This rewrites boot0.js based on current settings. If settings changed then it
 recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
+{ // execute in our own scope so we don't have to free variables...
 E.showMessage(/*LANG*/"Updating boot0...");
-var s = require('Storage').readJSON('setting.json',1)||{};
-var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
-var FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
-var boot = "", bootPost = "";
+let s = require('Storage').readJSON('setting.json',1)||{};
+const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
+const FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
+const DEBUG = s.bootDebug; // we can set this to enable debugging output in boot0
+let boot = "", bootPost = "";
+if (DEBUG) {
+  boot += "var _tm=Date.now()\n";
+  bootPost += "delete _tm;";
+}
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
+  let CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
   boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 } else {
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
+  let CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
   boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 }
 boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
@@ -88,14 +94,25 @@ delete Bangle.showClock;
 if (!Bangle.showClock) boot += `Bangle.showClock = ()=>{load(".bootcde")};\n`;
 delete Bangle.load;
 if (!Bangle.load) boot += `Bangle.load = load;\n`;
+let date = new Date();
+delete date.toLocalISOString; // toLocalISOString was only introduced in 2v15
+if (!date.toLocalISOString) boot += `Date.prototype.toLocalISOString = function() {
+  var o = this.getTimezoneOffset();
+  var d = new Date(this.getTime() - o*60000);
+  var sign = o>0?"-":"+";
+  o = Math.abs(o);
+  return d.toISOString().slice(0,-1)+sign+Math.floor(o/60).toString().padStart(2,0)+(o%60).toString().padStart(2,0);
+};\n`;
 
+// show timings
+if (DEBUG) boot += `print(".boot0",0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
 // ================================================== BOOT.JS
 // Append *.boot.js files
 // These could change bleServices/bleServiceOptions if needed
-var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
-  var getPriority = /.*\.(\d+)\.boot\.js$/;
-  var aPriority = a.match(getPriority);
-  var bPriority = b.match(getPriority);
+let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
+  let getPriority = /.*\.(\d+)\.boot\.js$/;
+  let aPriority = a.match(getPriority);
+  let bPriority = b.match(getPriority);
   if (aPriority && bPriority){
     return parseInt(aPriority[1]) - parseInt(bPriority[1]);
   } else if (aPriority && !bPriority){
@@ -106,14 +123,16 @@ var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
   return a==b ? 0 : (a>b ? 1 : -1);
 });
 // precalculate file size
-var fileSize = boot.length + bootPost.length;
+let fileSize = boot.length + bootPost.length;
 bootFiles.forEach(bootFile=>{
   // match the size of data we're adding below in bootFiles.forEach
-  fileSize += 2+bootFile.length+1+require('Storage').read(bootFile).length+2;
+  if (DEBUG) fileSize += 2+bootFile.length+1; // `//${bootFile}\n` comment
+  fileSize += require('Storage').read(bootFile).length+2; // boot code plus ";\n"
+  if (DEBUG) fileSize += 48+E.toJS(bootFile).length; // `print(${E.toJS(bootFile)},0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
 });
 // write file in chunks (so as not to use up all RAM)
 require('Storage').write('.boot0',boot,0,fileSize);
-var fileOffset = boot.length;
+let fileOffset = boot.length;
 bootFiles.forEach(bootFile=>{
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
@@ -122,16 +141,18 @@ bootFiles.forEach(bootFile=>{
   // "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
   // but we need to do this without ever loading everything into RAM as some
   // boot files seem to be getting pretty big now.
-  require('Storage').write('.boot0',"//"+bootFile+"\n",fileOffset);
-  fileOffset+=2+bootFile.length+1;
-  var bf = require('Storage').read(bootFile);
+  if (DEBUG) {
+    require('Storage').write('.boot0',`//${bootFile}\n`,fileOffset);
+    fileOffset+=2+bootFile.length+1;
+  }
+  let bf = require('Storage').read(bootFile);
   // we can't just write 'bf' in one go because at least in 2v13 and earlier
   // Espruino wants to read the whole file into RAM first, and on Bangle.js 1
   // it can be too big (especially BTHRM).
-  var bflen = bf.length;
-  var bfoffset = 0;
+  let bflen = bf.length;
+  let bfoffset = 0;
   while (bflen) {
-    var bfchunk = Math.min(bflen, 2048);
+    let bfchunk = Math.min(bflen, 2048);
     require('Storage').write('.boot0',bf.substr(bfoffset, bfchunk),fileOffset);
     fileOffset+=bfchunk;
     bfoffset+=bfchunk;
@@ -139,15 +160,14 @@ bootFiles.forEach(bootFile=>{
   }
   require('Storage').write('.boot0',";\n",fileOffset);
   fileOffset+=2;
+  if (DEBUG) {
+    require('Storage').write('.boot0',`print(${E.toJS(bootFile)},0|(Date.now()-_tm),"ms");_tm=Date.now();\n`,fileOffset);
+    fileOffset += 48+E.toJS(bootFile).length
+  }
 });
 require('Storage').write('.boot0',bootPost,fileOffset);
-
-delete boot;
-delete bootPost;
-delete bootFiles;
-delete fileSize;
-delete fileOffset;
 E.showMessage(/*LANG*/"Reloading...");
-eval(require('Storage').read('.boot0'));
+}
 // .bootcde should be run automatically after if required, since
 // we normally get called automatically from '.boot0'
+eval(require('Storage').read('.boot0'));

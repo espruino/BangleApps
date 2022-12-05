@@ -553,14 +553,15 @@ exports.enable = () => {
 
     if (settings.replace){
       // register a listener for original HRM events and emit as HRM_int
-      Bangle.on("HRM", (e) => {
-        e.modified = true;
+      Bangle.on("HRM", (o) => {
+        let e = Object.assign({},o);
         log("Emitting HRM_int", e);
         Bangle.emit("HRM_int", e);
         if (fallbackActive){
           // if fallback to internal HRM is active, emit as HRM_R to which everyone listens
-          log("Emitting HRM_R(int)", e);
-          Bangle.emit("HRM_R", e);
+          o.src = "int";
+          log("Emitting HRM_R(int)", o);
+          Bangle.emit("HRM_R", o);
         }
       });
 
@@ -576,6 +577,13 @@ exports.enable = () => {
         if (name == "HRM") o("HRM_R", cb);
         else o(name, cb);
       })(Bangle.removeListener);
+    } else {
+      Bangle.on("HRM", (o)=>{
+        o.src = "int";
+        let e = Object.assign({},o);
+        log("Emitting HRM_int", e);
+        Bangle.emit("HRM_int", e);
+      });
     }
 
     Bangle.origSetHRMPower = Bangle.setHRMPower;
