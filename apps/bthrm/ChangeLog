@@ -40,3 +40,4 @@
 0.16: Set powerdownRequested correctly on BTHRM power on
       Additional logging on errors
       Add debug option for disabling active scanning
+0.17: New GUI based on layout library
