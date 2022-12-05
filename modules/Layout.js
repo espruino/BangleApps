@@ -83,7 +83,7 @@ Layout.prototype.setUI = function() {
   let uiSet;
   if (this.buttons) {
     // multiple buttons so we'll jus use back/next/select
-    Bangle.setUI({mode:"updown", back:this.options.back}, dir=>{
+    Bangle.setUI({mode:"updown", back:this.options.back, remove:this.options.remove}, dir=>{
       var s = this.selectedButton, l=this.buttons.length;
       if (dir===undefined && this.buttons[s])
         return this.buttons[s].cb();
@@ -100,7 +100,7 @@ Layout.prototype.setUI = function() {
     });
     uiSet = true;
   }
-  if (this.options.back && !uiSet) Bangle.setUI({mode: "custom", back: this.options.back});
+  if ((this.options.back || this.options.remove) && !uiSet) Bangle.setUI({mode: "custom", back: this.options.back, remove: this.options.remove});
   // physical buttons -> actual applications
   if (this.b) {
     // Handler for button watch events

@@ -77,3 +77,5 @@
 0.54: Move icons out to messageicons module
 0.55: Rename to messagegui, move global message handling library to message module
       Move widget to widmessage
+0.56: Fix handling of music messages
+0.57: Fix "unread Timeout" = off (previously defaulted to 60s)

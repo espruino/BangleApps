@@ -48,16 +48,18 @@
         <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
         <div class="form-group" style="display:inline-block;">
         <select class="form-select" id="mapSize">
-          <option value="4">Small</option>
-          <option value="5" selected>Medium</option>
-          <option value="6">Large</option>
-          <option value="7">XL</option>
+          <option value="4">Small (4x4)</option>
+          <option value="5" selected>Medium (5x5)</option>
+          <option value="7">Large (7x7)</option>
+          <option value="10">XL (10x10)</option>
+          <option value="15">XXL (15x15)</option>
         </select>
       </div>
         <button id="getmap" class="btn btn-primary">Get Map</button><button class="btn" onclick="showLoadedMaps()">Map List</button><br/>
         <canvas id="maptiles" style="display:none"></canvas>
         <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
-        <button id="cancel" class="btn">Cancel</button></div>
+        <button id="cancel" class="btn">Cancel</button>
+        <span id="mapstats"></span></div>
       </div>
     </div>
 
@@ -174,12 +176,14 @@ TODO:
   </div>
 </div>
                   `;
-                  let map = L.map(`tile-map-${mapNumber}`);
-                  L.tileLayer(PREVIEWTILELAYER, {
-                    maxZoom: 18
-                  }).addTo(map);
-                  let marker = new L.marker(latlon).addTo(map);
-                  map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
+                  setTimeout(function() {
+                    let map = L.map(`tile-map-${mapNumber}`);
+                    L.tileLayer(PREVIEWTILELAYER, {
+                      maxZoom: 18
+                    }).addTo(map);
+                    let marker = new L.marker(latlon).addTo(map);
+                    map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
+                  }, 100);
                 }
                 resolve();
               });
@@ -312,11 +316,13 @@ TODO:
 
         var zoom = map.getZoom();
         var centerlatlon = map.getBounds().getCenter();
-        var center = map.project(centerlatlon, zoom).divideBy(OSMTILESIZE);
-        // Reason for 16px adjustment below not 100% known, but it seems to
-        // align everything perfectly: https://github.com/espruino/BangleApps/issues/984
-        var ox = Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE) + 16;
-        var oy = Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE) + 16;
+        var center = map.project(centerlatlon, zoom).divideBy(OSMTILESIZE); // the center of our map
+        // ox/oy = offset in pixels
+        var ox = Math.round((center.x - Math.floor(center.x)) * OSMTILESIZE);
+        var oy = Math.round((center.y - Math.floor(center.y)) * OSMTILESIZE);
+        // adjust offset because we want to center our map
+        ox -= MAPTILES * TILESIZE / 2;
+        oy -= MAPTILES * TILESIZE / 2;
         center = center.floor(); // make sure we're in the middle of a tile
         // JS version of Bangle.js's projection
         function bproject(lat, lon) {
@@ -353,10 +359,12 @@ TODO:
         var ctx = canvas.getContext('2d');
         canvas.width = MAPSIZE;
         canvas.height = MAPSIZE;
-        for (var i = 0; i < OSMTILECOUNT; i++) {
-            for (var j = 0; j < OSMTILECOUNT; j++) {
+        var tileMin = Math.round(-OSMTILECOUNT/2);
+        var tileMax = Math.round(OSMTILECOUNT/2);
+        for (var i = tileMin; i <= tileMax; i++) {
+            for (var j = tileMin; j <= tileMax; j++) {
               (function(i,j){
-                var coords = new L.Point(center.x+i-1, center.y+j-1);
+                var coords = new L.Point(center.x+i, center.y+j);
                 coords.z = zoom;
                 var img = new Image();
                 img.crossOrigin = "Anonymous";
@@ -368,6 +376,8 @@ TODO:
                       ctx.fillRect(testPt.x-1, testPt.y-5, 3,10);
                       ctx.fillRect(testPt.x-5, testPt.y-1, 10,3);
                     }*/
+                    /*ctx.fillStyle="black";
+                    ctx.fillRect(i*OSMTILESIZE - ox, j*OSMTILESIZE - oy, 6,6);*/
                     resolve();
                   };
                 }));
@@ -395,6 +405,8 @@ TODO:
             h : Math.round(canvas.height / TILESIZE), // height in tiles
             fn : mapImageFile
           })});
+          var mapSizeInK = Math.round(mapFiles.reduce((r,m)=>m.content.length+r,0)/1000);
+          document.getElementById("mapstats").innerText = "Size : "+ (mapSizeInK+"kb");
           console.log(mapFiles);
         });
       });

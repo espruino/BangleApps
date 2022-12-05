@@ -8,6 +8,8 @@ Upon opening the gallery app, you will be presented with a list of images that y
 
 ## Adding images
 
+Once this app is installed you can manage images by pressing the Disk icon next to it or by following the manual steps below:
+
 1. The gallery app does not perform any scaling, and does not support panning. Therefore, you should use your favorite image editor to produce an image of the appropriate size for your watch. (240x240 for Bangle 1 or 176x176 for Bangle 2.) How you achieve this is up to you. If on a Bangle 2, I recommend adjusting the colors here to comply with the color restrictions.
 
 2. Upload your image to the [Espruino image converter](https://www.espruino.com/Image+Converter). I recommend enabling compression and choosing one of the following color settings:
