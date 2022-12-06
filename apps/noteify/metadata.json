@@ -1,7 +1,7 @@
 {
   "id": "noteify",
   "name": "Noteify",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Write notes using an onscreen keyboard and use them as custom messages for alarms or timers.",
   "icon": "app.png",
   "tags": "tool,alarm",
@@ -9,8 +9,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"noteify.app.js","url":"app.js"},
-    {"name":"noteify.img","url":"app-icon.js","evaluate":true},
-    {"name":"noteify.wid.js","url":"widget.js"}
+    {"name":"noteify.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"noteify.json"}],
   "dependencies": {"scheduler":"type","textinput":"type"},
