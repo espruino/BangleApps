@@ -116,11 +116,11 @@ let touchHandler = function(_, xy) {
   y = xy.y;
   len = (R.w<R.h+1)?(R.w/3):(R.h/3);
   
-  // doing a<b+1 seemed faster than a<=b, also using a>b-1 instead of a>b.
+  // doing a<b+1 seemed faster than a<=b, also using a>b-1 instead of a>=b.
   if ((R.x-1<x && x<R.x+len) && (R.y-1<y && y<R.y+len)) {
     //Menu
-    Bangle.removeAllListeners("touch");
-    Bangle.removeAllListeners("swipe");
+    Bangle.removeListener("touch", touchHandler);
+    Bangle.removeListener("swipe", swipeHandler);
     backToMenu = true;
     E.showMenu(paMenu);
   } else if ((R.x-1<x && x<R.x+len) && (R.y2-len<y && y<R.y2+1)) {
@@ -129,13 +129,13 @@ let touchHandler = function(_, xy) {
     gadgetbridgeWake();
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y-1<y && y<R.y+len)) {
     //Srch
-    Bangle.removeAllListeners("touch");
-    Bangle.removeAllListeners("swipe");
+    Bangle.removeListener("touch", touchHandler);
+    Bangle.removeListener("swipe", swipeHandler);
     E.showMenu(searchMenu);
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y2-len<y && y<R.y2+1)) {
     //Speed 
-    Bangle.removeAllListeners("touch");
-    Bangle.removeAllListeners("swipe");
+    Bangle.removeListener("touch", touchHandler);
+    Bangle.removeListener("swipe", swipeHandler);
     E.showMenu(speedMenu);
   } else if ((R.x-1<x && x<R.x+len) && (R.y+R.h/2-len/2<y && y<R.y+R.h/2+len/2)) {
     //Previous 
@@ -248,8 +248,6 @@ let backToGfx = function() {
   E.showMenu();
   g.clear();
   g.reset();
-  Bangle.removeAllListeners("touch");
-  Bangle.removeAllListeners("swipe");
   setUI();
   gfx();
   backToMenu = false;
