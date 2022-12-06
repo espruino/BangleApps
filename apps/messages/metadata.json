@@ -8,7 +8,11 @@
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "provides_modules" : ["messages"],
-  "dependencies" : { "messagegui":"module","messagewidget":"module" },
+  "dependencies" : {
+    "messagegui":"module",
+    "message":"widget"
+  },
+  "default": true,
   "readme": "README.md",
   "storage": [
     {"name":"messages","url":"lib.js"},

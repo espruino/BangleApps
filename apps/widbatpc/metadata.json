@@ -7,6 +7,7 @@
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "screenshots": [{"url":"widbatpc.full.jpg"},{"url":"widbatpc.part.jpg"}],

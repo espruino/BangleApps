@@ -6,6 +6,7 @@
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widbatv.wid.js","url":"widget.js"}

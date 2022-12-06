@@ -8,6 +8,7 @@
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "provides_modules" : ["messageicons"],
+  "default": true,
   "storage": [
     {"name":"messageicons","url":"lib.js"}
   ]
