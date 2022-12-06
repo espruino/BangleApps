@@ -183,7 +183,7 @@ if (nextAlarmDate !== undefined) {
             nextAlarmConfig.last = now.getDate();
             require('Storage').writeJSON('sched.json', alarms);
           }
-	}
+        }
       }
     });
   };
