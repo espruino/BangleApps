@@ -125,8 +125,6 @@ let backToGfx = function() {
   E.showMenu();
   g.clear();
   g.reset();
-  Bangle.removeListener("touch", touchHandler);
-  Bangle.removeListener("swipe", swipeHandler);
   setUI();
   gfx();
   backToMenu = false;
