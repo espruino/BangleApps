@@ -6,6 +6,7 @@
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,bluetooth",
+  "provides_widgets" : ["bluetooth"],
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widbt_notify.wid.js","url":"widget.js"},
@@ -13,5 +14,5 @@
   ],
   "data": [
     {"name":"widbt_notify.json"}
-  ]  
+  ]
 }

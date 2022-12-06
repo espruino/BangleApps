@@ -4,3 +4,6 @@
 Addict.
 0.04: New layout.
 0.05: Add widget field, tweak layout.
+0.06: Add compatibility with Fastload Utils.
+0.07: Remove just the specific listeners to not interfere with Quick Launch
+when fastloading.

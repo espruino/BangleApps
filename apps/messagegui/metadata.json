@@ -9,6 +9,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "dependencies" : { "messageicons":"module" },
   "provides_modules": ["messagegui"],
+  "default": true,
   "readme": "README.md",
   "storage": [
     {"name":"messagegui","url":"lib.js"},

@@ -7,6 +7,8 @@
   "type": "scheduler",
   "tags": "tool,system,alarm",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_modules" : ["sched"],
+  "default" : true,
   "readme": "README.md",
   "storage": [
     {"name":"sched.boot.js","url":"boot.js"},

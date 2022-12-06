@@ -10,6 +10,7 @@
   "readme": "README.md",
   "description": "Shows the current battery level status in the top right using the clocks colour theme",
   "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
   "storage": [
     {"name":"widbata.wid.js","url":"widbata.wid.js"}
    ]
