@@ -10,3 +10,4 @@
 0.24: Added fast load
 0.25: Minor code optimization
 0.26: BJS2: Swipe down to rotate 180 degree
+0.27: BJS2: Changed swipe down to swipe up
