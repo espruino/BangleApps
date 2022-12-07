@@ -332,19 +332,17 @@ if (BANGLEJS2) {
 			if (Math.abs(dx)>Math.abs(dy)+10) {
 				// horizontal
 				if (dx < dy) {
-
+					// for later purpose
 				} else {
-
+					// for later purpose
 				}
 			} else if (Math.abs(dy)>Math.abs(dx)+10) {
 				// vertical
 				if (dx < dy) {
 					g.clear().setRotation(2);
-					//console.log("
 					draw();
 					Bangle.loadWidgets();
 					Bangle.drawWidgets();
-
 				} else {
 					g.clear().setRotation(0);
 					draw();
@@ -354,16 +352,16 @@ if (BANGLEJS2) {
 			} else {
 				//console.log("tap " + e.x + " " + e.y);
 				if (e.x > 145 && e.y > 145) {
-					
+					// for later purpose
 				}
 			}
 		}
 	});
 	} else {
-			//setWatch(addDrink, BTN1, { repeat: true, debounce:50 }); 
-			//setWatch(removeDrink, BTN3, { repeat: true, debounce:50 });
-			//setWatch(previousDrink, BTN4, { repeat: true, debounce:50 });
-			//setWatch(nextDrink, BTN5, { repeat: true, debounce:50 });
+			//setWatch(xxx, BTN1, { repeat: true, debounce:50 }); // maybe adding this later
+			//setWatch(xxx, BTN3, { repeat: true, debounce:50 });
+			//setWatch(xxx, BTN4, { repeat: true, debounce:50 });
+			//setWatch(xxx, BTN5, { repeat: true, debounce:50 });
 		}
 }
 
@@ -402,7 +400,6 @@ if (!Bangle.isLocked())  { // Initial state
 			updatePos();
 		}
 		draw(); // draw immediately, queue redraw
-		
   }
  
 
