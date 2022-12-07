@@ -338,13 +338,13 @@ if (BANGLEJS2) {
 				}
 			} else if (Math.abs(dy)>Math.abs(dx)+10) {
 				// vertical
-				if (dx < dy) {
-					g.clear().setRotation(2);
+				if (dx < dy) { //down
+					g.clear().setRotation(0);
 					draw();
 					Bangle.loadWidgets();
 					Bangle.drawWidgets();
 				} else {
-					g.clear().setRotation(0);
+					g.clear().setRotation(2);
 					draw();
 					Bangle.loadWidgets();
 					Bangle.drawWidgets();
