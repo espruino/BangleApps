@@ -12,17 +12,15 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  //const valuesCircleTypes = ["empty", "steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "temperature", "pressure", "altitude", "timer"];
-  //const namesCircleTypes = ["empty", "steps", "distance", "heart", "battery", "weather", "sun", "temperature", "pressure", "altitude", "timer"];
-  var valuesCircleTypes = ["empty","weather", "sunprogress"];
-  var namesCircleTypes = ["empty","weather", "sun"];
+  var valuesCircleTypes = ["empty"];
+  var namesCircleTypes = ["empty"];
   clock_info.load().forEach(e=>{
     if(e.dynamic) {
       valuesCircleTypes = valuesCircleTypes.concat([e.name+"/"]);
       namesCircleTypes = namesCircleTypes.concat([e.name]);
     } else {
       let values = e.items.map(i=>e.name+"/"+i.name);
-      let names =e.name=="Bangle" ? e.items.map(i=>i.name) : values;
+      let names = e.name=="Bangle" ? e.items.map(i=>i.name) : values;
       valuesCircleTypes = valuesCircleTypes.concat(values);
       namesCircleTypes = namesCircleTypes.concat(names);
     }
