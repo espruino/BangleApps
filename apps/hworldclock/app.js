@@ -7,6 +7,7 @@ var showSunInfo;
 var colorWhenDark;
 // ------- Settings file
 
+const BANGLEJS2 = process.env.HWVERSION == 2;
 const big = g.getWidth()>200;
 // Font for primary time and date
 const primaryTimeFontSize = big?6:5;
@@ -24,6 +25,7 @@ const xcol1 = 10;
 const xcol2 = g.getWidth() - xcol1;
 
 const font = "6x8";
+let drag;
 
 /* TODO: we could totally use 'Layout' here and
 avoid a whole bunch of hard-coded offsets */
@@ -317,6 +319,54 @@ Bangle.drawWidgets();
 draw();
 
 
+
+function initDragEvents() {
+	
+if (BANGLEJS2) { 	
+	Bangle.on("drag", e => {
+		if (!drag) { // start dragging
+			drag = {x: e.x, y: e.y};
+		} else if (!e.b) { // released
+			const dx = e.x-drag.x, dy = e.y-drag.y;
+			drag = null;
+			if (Math.abs(dx)>Math.abs(dy)+10) {
+				// horizontal
+				if (dx < dy) {
+					// for later purpose
+				} else {
+					// for later purpose
+				}
+			} else if (Math.abs(dy)>Math.abs(dx)+10) {
+				// vertical
+				if (dx < dy) {
+					g.clear().setRotation(2);
+					draw();
+					Bangle.loadWidgets();
+					Bangle.drawWidgets();
+				} else {
+					g.clear().setRotation(0);
+					draw();
+					Bangle.loadWidgets();
+					Bangle.drawWidgets();
+				}
+			} else {
+				//console.log("tap " + e.x + " " + e.y);
+				if (e.x > 145 && e.y > 145) {
+					// for later purpose
+				}
+			}
+		}
+	});
+	} else {
+			//setWatch(xxx, BTN1, { repeat: true, debounce:50 }); // maybe adding this later
+			//setWatch(xxx, BTN3, { repeat: true, debounce:50 });
+			//setWatch(xxx, BTN4, { repeat: true, debounce:50 });
+			//setWatch(xxx, BTN5, { repeat: true, debounce:50 });
+		}
+}
+
+initDragEvents();
+
 if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
 			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
@@ -350,7 +400,6 @@ if (!Bangle.isLocked())  { // Initial state
 			updatePos();
 		}
 		draw(); // draw immediately, queue redraw
-		
   }
  
 

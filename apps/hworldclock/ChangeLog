@@ -9,3 +9,4 @@
 0.23: Added note to configure position in "my location" if not done yet. Small fixes.
 0.24: Added fast load
 0.25: Minor code optimization
+0.26: BJS2: Swipe down to rotate 180 degree
