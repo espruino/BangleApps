@@ -41,11 +41,6 @@ let now = Math.round(new Date().getTime() / 1000);
 // layout values:
 let colorFg = g.theme.dark ? '#fff' : '#000';
 let colorBg = g.theme.dark ? '#000' : '#fff';
-let colorGrey = '#808080';
-let colorRed = '#ff0000';
-let colorGreen = '#008000';
-let colorBlue = '#0000ff';
-let colorYellow = '#ffff00';
 let widgetOffset = showWidgets ? 24 : 0;
 let dowOffset = circleCount == 3 ? 20 : 22; // dow offset relative to date
 let h = g.getHeight() - widgetOffset;
@@ -53,7 +48,7 @@ let w = g.getWidth();
 let hOffset = (circleCount == 3 ? 34 : 30) - widgetOffset;
 let h1 = Math.round(1 * h / 5 - hOffset);
 let h2 = Math.round(3 * h / 5 - hOffset);
-let h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
+let h3 = Math.round(8 * h / 8 - hOffset - 3); // circle middle y position
 
 /*
  * circle x positions
@@ -76,28 +71,17 @@ let circlePosX = [
 ];
 
 let radiusOuter = circleCount == 3 ? 25 : 20;
+let radiusBorder = radiusOuter+3; // absolute border of circles
 let radiusInner = circleCount == 3 ? 20 : 15;
 let circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
 let circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
 let circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 let iconOffset = circleCount == 3 ? 6 : 8;
-let defaultCircleTypes = ["Bangle/Steps", "Bangle/HRM", "Bangle/Battery", "weather"];
 
-let circleInfoNum = [
-  0, // circle1
-  0, // circle2
-  0, // circle3
-  0, // circle4
-];
-let circleItemNum = [
-  0, // circle1
-  1, // circle2
-  2, // circle3
-  3, // circle4
-];
 
 function draw() {
-  g.reset().clearRect(Bangle.appRect);
+  let R = Bangle.appRect;
+  g.reset().clearRect(R.x,R.y, R.x2, h3-(radiusBorder+1));
 
   g.setColor(colorBg);
   g.fillRect(0, widgetOffset, w, h2 + 22);
@@ -139,16 +123,13 @@ function draw() {
     if (icon) g.drawImage(icon, w - 48, h1, {scale:0.75});
   }
 
-  // FIXME do we really need to redraw circles every time?
-  for (var i=1;i<=circleCount;i++)
-    drawCircle(i);
-
   queueDraw();
 }
 
 function getCircleColor(index) {
   let color = settings["circle" + index + "color"];
   if (color && color != "") return color;
+  return g.theme.fg;
 }
 
 function getGradientColor(color, percent) {
@@ -176,7 +157,7 @@ function getCircleIconColor(index, color, percent) {
   if (colorizeIcon) {
     return getGradientColor(color, percent);
   } else {
-    return "";
+    return g.theme.fg;
   }
 }
 
@@ -189,23 +170,15 @@ function drawEmpty(img, w, color) {
       .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
 
-function drawCircle(index) {
-  var info = menu[circleInfoNum[index-1]];
-  var type = settings['circle'+index];
+function drawCircle(index, item, data) {
   var w = circlePosX[index-1];
   drawCircleBackground(w);
   const color = getCircleColor(index);
-  var item = info && info.items[circleItemNum[index-1]];
-  if(!info || !item) {
-    drawEmpty(info? info.img : null, w, color);
-    return;
-  }
-  var data=item.get();
+  //drawEmpty(info? info.img : null, w, color);
   var img = data.img;
   var percent = 1; //fill up if no range
   var txt = ""+data.text;
   if (txt.endsWith(" bpm")) txt=txt.slice(0,-4); // hack for heart rate - remove the 'bpm' text
-  if(!img) img = info.img;
   if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
   if(data.short) txt = data.short;
   drawGauge(w, h3, percent, color);
@@ -293,12 +266,11 @@ function formatSeconds(s) {
  * Draws the background and the grey circle
  */
 function drawCircleBackground(w) {
-  g.clearRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
   // Draw rectangle background:
   g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  g.fillRect(w - radiusBorder, h3 - radiusBorder, w + radiusBorder, g.getHeight()-1);
   // Draw grey background circle:
-  g.setColor(colorGrey);
+  g.setColor('#808080'); // grey
   g.fillCircle(w, h3, radiusOuter);
 }
 
@@ -308,10 +280,6 @@ function drawInnerCircleAndTriangle(w) {
   g.fillCircle(w, h3, radiusInner);
   // Draw triangle which covers the bottom of the circle
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-}
-
-function radians(a) {
-  return a * Math.PI / 180;
 }
 
 /*
@@ -332,10 +300,12 @@ function drawGauge(cx, cy, percent, color) {
   color = getGradientColor(color, percent);
   g.setColor(color);
 
+  // FIXME: this one loop takes 0.25 sec EACH TIME the function is called
   for (let i = startRotation; i > endRotation - size; i -= size) {
-    x = cx + radius * Math.sin(radians(i));
-    y = cy + radius * Math.cos(radians(i));
-    g.fillCircle(x, y, size);
+    let r = i * Math.PI / 180; // radians
+    g.fillCircle(
+      cx + radius * Math.sin(r),
+      cy + radius * Math.cos(r), size);
   }
 }
 
@@ -354,35 +324,7 @@ function getWeather() {
   return jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
 }
 
-
-var menu = clock_info.load();
-for(var i=1; i<5; i++) {
-  var circleType = settings['circle'+i];
-  if(circleType.includes("/")) {
-    let parts = circleType.split("/");
-    let infoName = parts[0], itemName = parts[1];
-    let infoNum = menu.findIndex(e=>e.name==infoName);
-    if (infoNum<0) infoNum=0; // not found!
-    let itemNum = 0; //get first if dynamic
-    if(!menu[infoNum].dynamic)
-      itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
-    if (itemNum<0) itemNum=0;
-    circleInfoNum[i-1] = infoNum;
-    circleItemNum[i-1] = itemNum;
-    let menuItem = menu[infoNum].items[itemNum];
-    if (menuItem) {
-      (function(i){
-        menuItem.on('redraw', function() {
-          drawCircle(i);
-        });
-      })(i);
-      menuItem.show();
-    }
-  } else { // empty?
-    circleInfoNum[i-1] = -1;
-    circleItemNum[i-1] = -1;
-  }
-}
+g.clear(1); // clear the whole screen
 
 Bangle.setUI({
   mode : "clock",
@@ -393,11 +335,28 @@ Bangle.setUI({
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-    // must call clkinfo.hide here for any showing clkinfo
+    for(var i=1;i<=circleCount; i++)
+      clockInfoMenu[i].remove();
     delete Graphics.prototype.setFontRobotoRegular50NumericOnly;
     delete Graphics.prototype.setFontRobotoRegular21;
   }*/
 });
+
+let clockInfoDraw = (itm, info, options) => {
+  //print("Draw",itm.name,options);
+  drawCircle(options.circlePosition, itm, info);
+  if (options.focus) g.reset().drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1)
+};
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = [];
+for(var i=0;i<circleCount; i++) {
+  let w = circlePosX[i];
+  let y = h3-radiusBorder;
+  clockInfoMenu[i] = require("clock_info").addInteractive(clockInfoItems, {
+    x:w-radiusBorder, y:y, w:radiusBorder*2, h:g.getHeight()-(y+1),
+    draw : clockInfoDraw, circlePosition : i+1
+  });
+}
 
 Bangle.loadWidgets();
 if (!showWidgets) require("widget_utils").hide();
