@@ -135,7 +135,8 @@ exports.toggleWidget = function(show) {
  * @param {array} messages Messages to save
  */
 exports.write = function(messages) {
-  require("Storage").writeJSON("messages.json", messages.map(m => {
+  if (!messages.length) require("Storage").erase("messages.json");
+  else require("Storage").writeJSON("messages.json", messages.map(m => {
     // we never want to save saved/handled status to file;
     delete m.saved;
     delete m.handled;

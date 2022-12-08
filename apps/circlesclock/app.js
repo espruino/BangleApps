@@ -18,7 +18,6 @@ let settings = Object.assign(
   storage.readJSON("circlesclock.default.json", true) || {},
   storage.readJSON(SETTINGS_FILE, true) || {}
 );
-
  //TODO deprecate this (and perhaps use in the clkinfo module)
 // Load step goal from health app and pedometer widget as fallback
 if (settings.stepGoal == undefined) {
@@ -31,17 +30,7 @@ if (settings.stepGoal == undefined) {
   }
 }
 
-let timerHrm; //TODO deprecate this
 let drawTimeout;
-
-/*
- * Read location from myLocation app
- */
-function getLocation() {
-  return storage.readJSON("mylocation.json", 1) || undefined;
-}
-let location = getLocation();
-
 let showWidgets = settings.showWidgets || false;
 let circleCount = settings.circleCount || 3;
 let showBigWeather = settings.showBigWeather || false;
@@ -52,11 +41,6 @@ let now = Math.round(new Date().getTime() / 1000);
 // layout values:
 let colorFg = g.theme.dark ? '#fff' : '#000';
 let colorBg = g.theme.dark ? '#000' : '#fff';
-let colorGrey = '#808080';
-let colorRed = '#ff0000';
-let colorGreen = '#008000';
-let colorBlue = '#0000ff';
-let colorYellow = '#ffff00';
 let widgetOffset = showWidgets ? 24 : 0;
 let dowOffset = circleCount == 3 ? 20 : 22; // dow offset relative to date
 let h = g.getHeight() - widgetOffset;
@@ -64,7 +48,7 @@ let w = g.getWidth();
 let hOffset = (circleCount == 3 ? 34 : 30) - widgetOffset;
 let h1 = Math.round(1 * h / 5 - hOffset);
 let h2 = Math.round(3 * h / 5 - hOffset);
-let h3 = Math.round(8 * h / 8 - hOffset - 3); // circle y position
+let h3 = Math.round(8 * h / 8 - hOffset - 3); // circle middle y position
 
 /*
  * circle x positions
@@ -87,58 +71,17 @@ let circlePosX = [
 ];
 
 let radiusOuter = circleCount == 3 ? 25 : 20;
+let radiusBorder = radiusOuter+3; // absolute border of circles
 let radiusInner = circleCount == 3 ? 20 : 15;
 let circleFontSmall = circleCount == 3 ? "Vector:14" : "Vector:10";
 let circleFont = circleCount == 3 ? "Vector:15" : "Vector:11";
 let circleFontBig = circleCount == 3 ? "Vector:16" : "Vector:12";
 let iconOffset = circleCount == 3 ? 6 : 8;
-let defaultCircleTypes = ["Bangle/Steps", "Bangle/HRM", "Bangle/Battery", "weather"];
 
-let circleInfoNum = [
-  0, // circle1
-  0, // circle2
-  0, // circle3
-  0, // circle4
-];
-let circleItemNum = [
-  0, // circle1
-  1, // circle2
-  2, // circle3
-  3, // circle4
-];
-let weatherCircleNum = 0;
-let weatherCircleDataNum = 0;
-let weatherCircleCondNum = 0;
-let weatherCircleTempNum = 0;
-
-function hideWidgets() {
-  /*
-   * we are not drawing the widgets as we are taking over the whole screen
-   * so we will blank out the draw() functions of each widget and change the
-   * area to the top bar doesn't get cleared.
-   */
-  if (WIDGETS && typeof WIDGETS === "object") {
-    for (let wd of WIDGETS) {
-      wd.draw = () => {};
-      wd.area = "";
-    }
-  }
-}
 
 function draw() {
-  g.clear(true);
-  let widgetUtils;
-
-  try {
-    widgetUtils = require("widget_utils");
-  } catch (e) {
-  }
-  if (!showWidgets) {
-    if (widgetUtils) widgetUtils.hide(); else hideWidgets();
-  } else {
-    if (widgetUtils) widgetUtils.show();
-    Bangle.drawWidgets();
-  }
+  let R = Bangle.appRect;
+  g.reset().clearRect(R.x,R.y, R.x2, h3-(radiusBorder+1));
 
   g.setColor(colorBg);
   g.fillRect(0, widgetOffset, w, h2 + 22);
@@ -180,115 +123,13 @@ function draw() {
     if (icon) g.drawImage(icon, w - 48, h1, {scale:0.75});
   }
 
-  drawCircle(1);
-  drawCircle(2);
-  drawCircle(3);
-  if (circleCount >= 4) drawCircle(4);
-
   queueDraw();
 }
 
-function drawCircle(index) {
-  let type = settings['circle' + index];
-  if (!type) type = defaultCircleTypes[index - 1];
-  let w = getCircleXPosition(type);
-
-  switch (type) {
-    case "weather":
-      drawWeather(w);
-      break;
-    case "sunprogress":
-    case "sunProgress":
-      drawSunProgress(w);
-      break;
-    //TODO those are going to be deprecated, keep for backwards compatibility for now
-    //ideally all data should come from some clkinfo
-    case "steps":
-      drawSteps(w);
-      break;
-    case "stepsDist":
-      drawStepsDistance(w);
-      break;
-    case "hr":
-      drawHeartRate(w);
-      break;
-    case "battery":
-      drawBattery(w);
-      break;
-    case "temperature":
-      drawTemperature(w);
-      break;
-    case "pressure":
-      drawPressure(w);
-      break;
-    case "altitude":
-      drawAltitude(w);
-      break;
-    //end deprecated
-    case "empty":
-      // we draw nothing here
-      return;
-    default:
-      drawClkInfo(index, w);
-  }
-}
-
-// serves as cache for quicker lookup of circle positions
-let circlePositionsCache = [];
-/*
- * Looks in the following order if a circle with the given type is somewhere visible/configured
- * 1. circlePositionsCache
- * 2. settings
- * 3. defaultCircleTypes
- *
- * In case 2 and 3 the circlePositionsCache will be updated
- */
-function getCirclePosition(type) {
-  if (circlePositionsCache[type] >= 0) {
-    return circlePositionsCache[type];
-  }
-  for (let i = 1; i <= circleCount; i++) {
-    let setting = settings['circle' + i];
-    if (setting == type) {
-      circlePositionsCache[type] = i - 1;
-      return i - 1;
-    }
-  }
-  for (let i = 0; i < defaultCircleTypes.length; i++) {
-    if (type == defaultCircleTypes[i] && (!settings || settings['circle' + (i + 1)] == undefined)) {
-      circlePositionsCache[type] = i;
-      return i;
-    }
-  }
-  return undefined;
-}
-
-function getCircleXPosition(type) {
-  let circlePos = getCirclePosition(type);
-  if (circlePos != undefined) {
-    return circlePosX[circlePos];
-  }
-  return undefined;
-}
-
-function isCircleEnabled(type) {
-  return getCirclePosition(type) != undefined;
-}
-
-function getCircleColor(type) {
-  let pos = getCirclePosition(type);
-  let color = settings["circle" + (pos + 1) + "color"];
+function getCircleColor(index) {
+  let color = settings["circle" + index + "color"];
   if (color && color != "") return color;
-}
-
-function getCircleIconColor(type, color, percent) {
-  let pos = getCirclePosition(type);
-  let colorizeIcon = settings["circle" + (pos + 1) + "colorizeIcon"] == true;
-  if (colorizeIcon) {
-    return getGradientColor(color, percent);
-  } else {
-    return "";
-  }
+  return g.theme.fg;
 }
 
 function getGradientColor(color, percent) {
@@ -311,421 +152,14 @@ function getGradientColor(color, percent) {
   return color;
 }
 
-function getImage(graphic, color) {
-  if (!color || color == "") {
-    return graphic;
+function getCircleIconColor(index, color, percent) {
+  let colorizeIcon = settings["circle" + index + "colorizeIcon"] == true;
+  if (colorizeIcon) {
+    return getGradientColor(color, percent);
   } else {
-    return {
-      width: 16,
-      height: 16,
-      bpp: 1,
-      transparent: 0,
-      buffer: E.toArrayBuffer(graphic),
-      palette: new Uint16Array([colorBg, g.toColor(color)])
-    };
+    return g.theme.fg;
   }
 }
-
-function drawWeather(w) {
-  if (!w) w = getCircleXPosition("weather");
-  let weatherInfo = menu[weatherCircleNum];
-  let weatherCond = weatherCircleCondNum >= 0? weatherInfo.items[weatherCircleCondNum]: undefined;
-  let weatherData = weatherCircleDataNum >= 0? weatherInfo.items[weatherCircleDataNum]: undefined;
-  let weatherTemp = weatherCircleTempNum >= 0? weatherInfo.items[weatherCircleTempNum]: undefined;
-  let color = getCircleColor("weather");
-  let percent = 0;
-  let data = settings.weatherCircleData;
-  let tempString = "?", icon = undefined;
-  let scale = 16/24; //our icons are 16x16 while clkinfo's are 24x24
-
-  if(weatherCond) {
-    weatherCond.show()
-    weatherCond.hide()
-    let data = weatherCond.get()
-    if(settings.legacyWeatherIcons) { //may disappear in future
-      icon = getWeatherIconByCode(data.v);
-      scale = 1;
-    } else
-      icon = data.img;
-  }
-  if(weatherTemp) {
-    weatherTemp.show()
-    weatherTemp.hide()
-    tempString = weatherTemp.get().text;
-  }
-
-  drawCircleBackground(w);
-
-  if(weatherData) {
-    weatherData.show();
-    weatherData.hide();
-    let data = weatherData.get();
-    if(weatherData.hasRange) percent = (data.v-data.min) / (data.max-data.min);
-    drawGauge(w, h3, percent, color);
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, tempString);
-
-  if(icon) {
-    g.setColor(getCircleIconColor("weather", color, percent))
-      .drawImage(icon, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: scale});
-  } else {
-    g.drawString("?", w, h3 + radiusOuter);
-  }
-}
-function drawWeatherOld(w) {
-  if (!w) w = getCircleXPosition("weather");
-  let weather = getWeather();
-  let tempString = weather ? locale.temp(weather.temp - 273.15) : undefined;
-  let code = weather ? weather.code : -1;
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("weather");
-  let percent;
-  let data = settings.weatherCircleData;
-  switch (data) {
-    case "humidity":
-      let humidity = weather ? weather.hum : undefined;
-      if (humidity >= 0) {
-        percent = humidity / 100;
-        drawGauge(w, h3, percent, color);
-      }
-      break;
-    case "wind":
-      if (weather) {
-        let wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-        if (wind[1] >= 0) {
-          if (wind[2] == "kmh") {
-            wind[1] = windAsBeaufort(wind[1]);
-          }
-          // wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
-          percent = wind[1] / 12;
-          drawGauge(w, h3, percent, color);
-        }
-      }
-      break;
-    case "empty":
-      break;
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, tempString ? tempString : "?");
-
-  if (code > 0) {
-    let icon = getWeatherIconByCode(code);
-    if (icon) g.drawImage(getImage(icon, getCircleIconColor("weather", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-  } else {
-    g.drawString("?", w, h3 + radiusOuter);
-  }
-}
-
-function drawSunProgress(w) {
-  if (!w) w = getCircleXPosition("sunprogress");
-  let percent = getSunProgress();
-
-  // sunset icons:
-  let sunSetDown = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAAGYAPAAYAAAAAA");
-  let sunSetUp = atob("EBCBAAAAAAABgAAAAAATyAZoBCB//gAAAAABgAPABmAAAAAA");
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("sunprogress");
-
-  drawGauge(w, h3, percent, color);
-
-  drawInnerCircleAndTriangle(w);
-
-  let icon = sunSetDown;
-  let text = "?";
-  let times = getSunData();
-  if (times != undefined) {
-    let sunRise = Math.round(times.sunrise.getTime() / 1000);
-    let sunSet = Math.round(times.sunset.getTime() / 1000);
-    if (!isDay()) {
-      // night
-      if (now > sunRise) {
-        // after sunRise
-        let upcomingSunRise = sunRise + 60 * 60 * 24;
-        text = formatSeconds(upcomingSunRise - now);
-      } else {
-        text = formatSeconds(sunRise - now);
-      }
-      icon = sunSetUp;
-    } else {
-      // day, approx sunrise tomorrow:
-      text = formatSeconds(sunSet - now);
-      icon = sunSetDown;
-    }
-  }
-
-  writeCircleText(w, text);
-
-  g.drawImage(getImage(icon, getCircleIconColor("sunprogress", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-
-/*
- * Deprecated but nice as references for clkinfo
- */
-
-function drawSteps(w) {
-  if (!w) w = getCircleXPosition("steps");
-  let steps = getSteps();
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("steps");
-
-  let percent;
-  let stepGoal = settings.stepGoal;
-  if (stepGoal > 0) {
-    percent = steps / stepGoal;
-    if (stepGoal < steps) percent = 1;
-    drawGauge(w, h3, percent, color);
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, shortValue(steps));
-
-  g.drawImage(getImage(atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA"), getCircleIconColor("steps", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-
-function drawStepsDistance(w) {
-  if (!w) w = getCircleXPosition("stepsDistance");
-  let steps = getSteps();
-  let stepDistance = settings.stepLength;
-  let stepsDistance = Math.round(steps * stepDistance);
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("stepsDistance");
-
-  let percent;
-  let stepDistanceGoal = settings.stepDistanceGoal;
-  if (stepDistanceGoal > 0) {
-    percent = stepsDistance / stepDistanceGoal;
-    if (stepDistanceGoal < stepsDistance) percent = 1;
-    drawGauge(w, h3, percent, color);
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, shortValue(stepsDistance));
-
-  g.drawImage(getImage(atob("EBCBAAAACAAcAB4AHgAeABwwADgGeAZ4AHgAMAAAAHAAIAAA"), getCircleIconColor("stepsDistance", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-
-function drawHeartRate(w) {
-  if (!w) w = getCircleXPosition("hr");
-
-  let heartIcon = atob("EBCBAAAAAAAeeD/8P/x//n/+P/w//B/4D/AH4APAAYAAAAAA");
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("hr");
-
-  let percent;
-  if (hrtValue != undefined) {
-    let minHR = settings.minHR;
-    let maxHR = settings.maxHR;
-    percent = (hrtValue - minHR) / (maxHR - minHR);
-    if (isNaN(percent)) percent = 0;
-    drawGauge(w, h3, percent, color);
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  writeCircleText(w, hrtValue != undefined ? hrtValue : "-");
-
-  g.drawImage(getImage(heartIcon, getCircleIconColor("hr", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-
-function drawBattery(w) {
-  if (!w) w = getCircleXPosition("battery");
-  let battery = E.getBattery();
-
-  let powerIcon = atob("EBCBAAAAA8ADwA/wD/AP8A/wD/AP8A/wD/AP8A/wD/AH4AAA");
-
-  drawCircleBackground(w);
-
-  let color = getCircleColor("battery");
-
-  let percent;
-  if (battery > 0) {
-    percent = battery / 100;
-    drawGauge(w, h3, percent, color);
-  }
-
-  drawInnerCircleAndTriangle(w);
-
-  if (Bangle.isCharging()) {
-    color = colorGreen;
-  } else {
-    if (settings.batteryWarn != undefined && battery <= settings.batteryWarn) {
-      color = colorRed;
-    }
-  }
-  writeCircleText(w, battery + '%');
-
-  g.drawImage(getImage(powerIcon, getCircleIconColor("battery", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-}
-function drawTemperature(w) {
-  if (!w) w = getCircleXPosition("temperature");
-
-  getPressureValue("temperature").then((temperature) => {
-    drawCircleBackground(w);
-
-    let color = getCircleColor("temperature");
-
-    let percent;
-    if (temperature) {
-      let min = -40;
-      let max = 85;
-      percent = (temperature - min) / (max - min);
-      drawGauge(w, h3, percent, color);
-    }
-
-    drawInnerCircleAndTriangle(w);
-
-    if (temperature)
-      writeCircleText(w, locale.temp(temperature));
-
-    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("temperature", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-
-  });
-}
-
-function drawPressure(w) {
-  if (!w) w = getCircleXPosition("pressure");
-
-  getPressureValue("pressure").then((pressure) => {
-    drawCircleBackground(w);
-
-    let color = getCircleColor("pressure");
-
-    let percent;
-    if (pressure && pressure > 0) {
-      let minPressure = 950;
-      let maxPressure = 1050;
-      percent = (pressure - minPressure) / (maxPressure - minPressure);
-      drawGauge(w, h3, percent, color);
-    }
-
-    drawInnerCircleAndTriangle(w);
-
-    if (pressure)
-      writeCircleText(w, Math.round(pressure));
-
-    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("pressure", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-
-  });
-}
-
-function drawAltitude(w) {
-  if (!w) w = getCircleXPosition("altitude");
-
-  getPressureValue("altitude").then((altitude) => {
-    drawCircleBackground(w);
-
-    let color = getCircleColor("altitude");
-
-    let percent;
-    if (altitude) {
-      let min = 0;
-      let max = 10000;
-      percent = (altitude - min) / (max - min);
-      drawGauge(w, h3, percent, color);
-    }
-
-    drawInnerCircleAndTriangle(w);
-
-    if (altitude)
-      writeCircleText(w, locale.distance(Math.round(altitude)));
-
-    g.drawImage(getImage(atob("EBCBAAAAAYADwAJAAkADwAPAA8ADwAfgB+AH4AfgA8ABgAAA"), getCircleIconColor("altitude", color, percent)), w - iconOffset, h3 + radiusOuter - iconOffset);
-
-  });
-}
-
-function shortValue(v) {
-  if (isNaN(v)) return '-';
-  if (v <= 999) return v;
-  if (v >= 1000 && v < 10000) {
-    v = Math.floor(v / 100) * 100;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-  if (v >= 10000) {
-    v = Math.floor(v / 1000) * 1000;
-    return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-}
-
-function getSteps() {
-  if (Bangle.getHealthStatus) {
-    return Bangle.getHealthStatus("day").steps;
-  }
-  if (WIDGETS && WIDGETS.wpedom !== undefined) {
-    return WIDGETS.wpedom.getSteps();
-  }
-  return 0;
-}
-
-function getPressureValue(type) {
-  return new Promise((resolve) => {
-    if (Bangle.getPressure) {
-      if (!pressureLocked) {
-        pressureLocked = true;
-        if (pressureCache && pressureCache[type]) {
-          resolve(pressureCache[type]);
-        }
-        Bangle.getPressure().then(function(d) {
-          pressureLocked = false;
-          if (d) {
-            pressureCache = d;
-            if (d[type]) {
-              resolve(d[type]);
-            }
-          }
-        }).catch(() => {});
-      } else {
-        if (pressureCache && pressureCache[type]) {
-          resolve(pressureCache[type]);
-        }
-      }
-    }
-  });
-}
-
-/*
- * end deprecated
- */
-
-var menu = null;
-function reloadMenu() {
-  menu = clock_info.load();
-  for(var i=1; i<5; i++)
-    if(settings['circle'+i].includes("/")) {
-      let parts = settings['circle'+i].split("/");
-      let infoName = parts[0], itemName = parts[1];
-      let infoNum = menu.findIndex(e=>e.name==infoName);
-      let itemNum = 0; //get first if dynamic
-      if(!menu[infoNum].dynamic)
-        itemNum = menu[infoNum].items.findIndex(it=>it.name==itemName);
-      circleInfoNum[i-1] = infoNum;
-      circleItemNum[i-1] = itemNum;
-    } else if(settings['circle'+i] == "weather") {
-      weatherCircleNum = menu.findIndex(e=>e.name.toLowerCase() == "weather");
-      weatherCircleDataNum = menu[weatherCircleNum].items.findIndex(it=>it.name==settings.weatherCircleData);
-      weatherCircleCondNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="condition");
-      weatherCircleTempNum = menu[weatherCircleNum].items.findIndex(it=>it.name=="temperature");
-    }
-}
-//reload periodically for changes?
-reloadMenu();
 
 function drawEmpty(img, w, color) {
   drawGauge(w, h3, 0, color);
@@ -736,43 +170,22 @@ function drawEmpty(img, w, color) {
       .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
 
-function drawClkInfo(index, w) {
-  var info = menu[circleInfoNum[index-1]];
-  var type = settings['circle'+index];
-  if (!w) w = getCircleXPosition(type);
+function drawCircle(index, item, data) {
+  var w = circlePosX[index-1];
   drawCircleBackground(w);
-  const color = getCircleColor(type);
-  var item = info.items[circleItemNum[index-1]];
-  if(!info || !item) {
-    drawEmpty(info? info.img : null, w, color);
-    return;
-  }
-  item.show();
-  item.hide();
-  var data=item.get();
+  const color = getCircleColor(index);
+  //drawEmpty(info? info.img : null, w, color);
   var img = data.img;
   var percent = 1; //fill up if no range
-  var txt = data.text;
-  if(!img) img = info.img;
+  var txt = ""+data.text;
+  if (txt.endsWith(" bpm")) txt=txt.slice(0,-4); // hack for heart rate - remove the 'bpm' text
   if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
   if(data.short) txt = data.short;
   drawGauge(w, h3, percent, color);
   drawInnerCircleAndTriangle(w);
   writeCircleText(w, txt);
-  g.setColor(getCircleIconColor(type, color, percent))
+  g.setColor(getCircleIconColor(index, color, percent))
     .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
-}
-
-/*
- * wind goes from 0 to 12 (see https://en.wikipedia.org/wiki/Beaufort_scale)
- */
-function windAsBeaufort(windInKmh) {
-  let beaufort = [2, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
-  let l = 0;
-  while (l < beaufort.length && beaufort[l] < windInKmh) {
-    l++;
-  }
-  return l;
 }
 
 
@@ -795,7 +208,7 @@ function getWeatherIconByCode(code, big) {
   let weatherFoggy = big ? atob("QEDBAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAADwAAAAAAAAAPAAAAAAAAAA8AAAAAAAAADwAAAAAAAAAPAAAAAAAAAA8AAAAAAAwADwADAAAAHgAPAAeAAAAfAA8AD4AAAA+ADwAfAAAAB8APAD4AAAAD4B+AfAAAAAHw//D4AAAAAPv//fAAAAAAf///4AAAAAA/4H/AAAAAAB+AH4AAAAAAPgAHwAAAAAA8AAPAAAAAAHwAA+AAAAAAeAAB4AAAAAB4AAHgAAAAAPAAAPAAAAAAAAAA//8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8AD///AADwAAAP//8AAeAAAA///wAB4AAAD///AAPgAAAAAAAAA8AAAAAAAAAHwAAAAAAAAB+AAAAAAAAAf8AAAAD///D/4AAAAP//8P3wAAAA///w8PgAAAD///CAfAAAAAAAAAA+AAAAAAAAAB8AAAAAAAAAD4AAAAAAAAAHgAAP//8PAAMAAA///w8AAAAAD///DwAAAAAP//8PAAAAAAAAAA8AAAAAAAAADwAAAAAAAAAPAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==") : atob("EBCBAAAAAAADwAZgDDA4EGAcQAZAAgAAf74AAAAAd/4AAAAA");
   let weatherStormy = big ? atob("QEDBAP//wxgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAAB//gAAAAAAAP//gAAAAAAD///AAAAAAAf4H+AAAAAAD8AD8AAAAAAfgAH4AAAAAB8AAPwAAAAAPgAAf/AAAAB8AAA//AAAAHgAAB/+AAAAeAAAH/8AAAH4AAAIH4AAB/AAAAAHwAAf8AAAAAPgAD/wAAAAAeAAPwAAAAAB4AB8AAAAAADwAHgAAAAAAPAA+AAAAAAA8ADwAAAAAADwA/AAAAAAAPAH8AAAAAAA8A/wAAAAAAHwH4AAAAAAAfg+AAAAAAAAfHwAAAAAAAA+eAAAAAAAAB54AAAAD/AAHvAAAAAf4AAP8AAAAB/gAA/wAAAAP8AAD/AAAAA/gAAP8AAAAH+AAA/wAAAAfwAAD3gAAAD/AAAeeAAAAP4AAB58AAAB/AAAPj4AAAH8AAB8H4AAA/gAAfgP//+D//D/8Af//4f/4P/gA///B//B/8AAf/8P/8P+AAAAAAAPgAAAAAAAAB8AAAAAAAAAHwAAAAAAAAA+AAAAAAAAADwAAAAAAAAAfAAAAAAAAAB4AAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==") : atob("EBCBAAAAAYAH4AwwOBBgGEAOQMJAgjmOGcgAgACAAAAAAAAA");
   let unknown = big ? atob("QEDBAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAAAAAAf/4AAAAAAAH//4AAAAAAA///wAAAAAAH+B/gAAAAAA/AA/AAAAAAH4AB+AAAAAA/AAD4AAAAAD4H4HwAAAAAfB/4PgAAAAB8P/weAAAAAHg//h4AAAAA+Hw+HwAAAAD4eB8PAAAAAP/wDw8AAAAA//APDwAAAAD/8A8PAAAAAH/gDw8AAAAAAAAfDwAAAAAAAH4fAAAAAAAB/B4AAAAAAAf4HgAAAAAAD/A+AAAAAAAfwHwAAAAAAD8A+AAAAAAAPgH4AAAAAAB8B/AAAAAAAHgf4AAAAAAA+H+AAAAAAADwfwAAAAAAAPD8AAAAAAAA8PAAAAAAAAD/8AAAAAAAAP/wAAAAAAAA//AAAAAAAAB/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf+AAAAAAAAD/8AAAAAAAAP/wAAAAAAAA//AAAAAAAADw8AAAAAAAAPDwAAAAAAAA8PAAAAAAAADw8AAAAAAAAP/wAAAAAAAA//AAAAAAAAD/8AAAAAAAAH/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==") : undefined;
-  
+
   switch (codeGroup) {
     case 2:
       return weatherStormy;
@@ -823,7 +236,9 @@ function getWeatherIconByCode(code, big) {
       case 8:
         switch (code) {
           case 800:
-            return isDay() ? weatherSunny : weatherMoon;
+            var hr = (new Date()).getHours();
+            var isDay = (hr>6) && (hr<=18); // fixme we don't want to include ALL of suncalc just to choose one icon
+            return isDay ? weatherSunny : weatherMoon;
           case 801:
             return weatherPartlyCloudy;
           case 802:
@@ -836,16 +251,6 @@ function getWeatherIconByCode(code, big) {
   }
 }
 
-
-function isDay() {
-  let times = getSunData();
-  if (times == undefined) return true;
-  let sunRise = Math.round(times.sunrise.getTime() / 1000);
-  let sunSet = Math.round(times.sunset.getTime() / 1000);
-
-  return (now > sunRise && now < sunSet);
-}
-
 function formatSeconds(s) {
   if (s > 60 * 60) { // hours
     return Math.round(s / (60 * 60)) + "h";
@@ -856,56 +261,16 @@ function formatSeconds(s) {
   return "<1m";
 }
 
-function getSunData() {
-  if (location != undefined && location.lat != undefined) {
-    let SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
-    // get today's sunlight times for lat/lon
-    return SunCalc ? SunCalc.getTimes(new Date(), location.lat, location.lon) : undefined;
-  }
-  return undefined;
-}
-
-/*
- * Calculated progress of the sun between sunrise and sunset in percent
- *
- * Taken from rebble app and modified
- */
-function getSunProgress() {
-  let times = getSunData();
-  if (times == undefined) return 0;
-  let sunRise = Math.round(times.sunrise.getTime() / 1000);
-  let sunSet = Math.round(times.sunset.getTime() / 1000);
-
-  if (isDay()) {
-    // during day
-    let dayLength = sunSet - sunRise;
-    if (now > sunRise) {
-      return (now - sunRise) / dayLength;
-    } else {
-      return (sunRise - now) / dayLength;
-    }
-  } else {
-    // during night
-    if (now < sunRise) {
-      let prevSunSet = sunSet - 60 * 60 * 24;
-      return 1 - (sunRise - now) / (sunRise - prevSunSet);
-    } else {
-      let upcomingSunRise = sunRise + 60 * 60 * 24;
-      return (upcomingSunRise - now) / (upcomingSunRise - sunSet);
-    }
-  }
-}
 
 /*
  * Draws the background and the grey circle
  */
 function drawCircleBackground(w) {
-  g.clearRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
   // Draw rectangle background:
   g.setColor(colorBg);
-  g.fillRect(w - radiusOuter - 3, h3 - radiusOuter - 3, w + radiusOuter + 3, h3 + radiusOuter + 3);
+  g.fillRect(w - radiusBorder, h3 - radiusBorder, w + radiusBorder, g.getHeight()-1);
   // Draw grey background circle:
-  g.setColor(colorGrey);
+  g.setColor('#808080'); // grey
   g.fillCircle(w, h3, radiusOuter);
 }
 
@@ -915,10 +280,6 @@ function drawInnerCircleAndTriangle(w) {
   g.fillCircle(w, h3, radiusInner);
   // Draw triangle which covers the bottom of the circle
   g.fillPoly([w, h3, w - 15, h3 + radiusOuter + 5, w + 15, h3 + radiusOuter + 5]);
-}
-
-function radians(a) {
-  return a * Math.PI / 180;
 }
 
 /*
@@ -939,10 +300,12 @@ function drawGauge(cx, cy, percent, color) {
   color = getGradientColor(color, percent);
   g.setColor(color);
 
+  // FIXME: this one loop takes 0.25 sec EACH TIME the function is called
   for (let i = startRotation; i > endRotation - size; i -= size) {
-    x = cx + radius * Math.sin(radians(i));
-    y = cy + radius * Math.cos(radians(i));
-    g.fillCircle(x, y, size);
+    let r = i * Math.PI / 180; // radians
+    g.fillCircle(
+      cx + radius * Math.sin(r),
+      cy + radius * Math.cos(r), size);
   }
 }
 
@@ -961,18 +324,43 @@ function getWeather() {
   return jsonWeather && jsonWeather.weather ? jsonWeather.weather : undefined;
 }
 
+g.clear(1); // clear the whole screen
+
 Bangle.setUI({
   mode : "clock",
-  remove : function() {
+  /*remove : function() {
+    THIS CLOCK IS NOT YET ABLE TO UNLOAD ALL OF ITSELF.
+    DO NOT UNCOMMENT THIS WITOUT FIXING IT
+    OR THERE WILL BE HUGE MEMORY LEAKS
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-
+    for(var i=1;i<=circleCount; i++)
+      clockInfoMenu[i].remove();
     delete Graphics.prototype.setFontRobotoRegular50NumericOnly;
     delete Graphics.prototype.setFontRobotoRegular21;
-  }});
+  }*/
+});
+
+let clockInfoDraw = (itm, info, options) => {
+  //print("Draw",itm.name,options);
+  drawCircle(options.circlePosition, itm, info);
+  if (options.focus) g.reset().drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1)
+};
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = [];
+for(var i=0;i<circleCount; i++) {
+  let w = circlePosX[i];
+  let y = h3-radiusBorder;
+  clockInfoMenu[i] = require("clock_info").addInteractive(clockInfoItems, {
+    x:w-radiusBorder, y:y, w:radiusBorder*2, h:g.getHeight()-(y+1),
+    draw : clockInfoDraw, circlePosition : i+1
+  });
+}
 
 Bangle.loadWidgets();
+if (!showWidgets) require("widget_utils").hide();
+else Bangle.drawWidgets();
 
 // schedule a draw for the next second or minute
 function queueDraw() {

@@ -1,2 +1,3 @@
 0.55: Moved messages library into standalone library
 0.56: Fix handling of music messages
+0.57: Optimize saving empty message list
