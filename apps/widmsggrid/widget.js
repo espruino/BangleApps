@@ -6,7 +6,8 @@
     showRead: !!settings.showRead,
   };
   delete settings;
-  WIDGETS["msggrid"] = {
+  // widget name needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
+  WIDGETS["messages"] = {
     area: "tl", width: 0,
     flash: s.flash,
     showRead: s.showRead,
@@ -57,7 +58,9 @@
           .drawString(w.total, w.x + w.width - 1, w.y + 24, w.total > 9);
       }
       if (w.flash && w.status === "new") w.t = setTimeout(w.draw, 1000); // schedule redraw while blinking
-    }, show: function (m) {
+    },
+    // show() and hide() are required by the "message" library!
+    show: function (m) {
       delete w.hidden;
       w.width = 24;
       w.srcs = require("messages").getMessages(m)
@@ -94,6 +97,6 @@
     }
   };
   delete s;
-  const w = WIDGETS["msggrid"];
+  const w = WIDGETS["messages"];
   Bangle.on("message", w.listener);
 })();
