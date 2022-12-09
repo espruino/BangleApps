@@ -125,9 +125,10 @@ exports.openGUI = function(msg) {
  * @param {boolean} show
  */
 exports.toggleWidget = function(show) {
-  if (!require("Storage").read("messagewidget")) return; // "messagewidget" module is missing!
-  if (show) require("messagewidget").show();
-  else require("messagewidget").hide();
+  if (!global.WIDGETS || !WIDGETS["messages"]) return; // widget is missing!
+  const method = WIDGETS["messages"][show ? "show" : "hide"];
+  /* if (typeof(method)!=="function") return; // widget must always have show()+hide(), fail hard rather than hide problems */
+  method.apply(WIDGETS["messages"]);
 };
 
 /**

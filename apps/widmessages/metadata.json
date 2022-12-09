@@ -1,7 +1,7 @@
 {
   "id": "widmessages",
   "name": "Message Widget",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Widget showing new messages",
   "icon": "app.png",
   "type": "widget",
@@ -9,12 +9,10 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url": "screenshot.gif"}],
   "dependencies" : { "messageicons":"module" },
-  "provides_modules" : ["messagewidget"],
   "provides_widgets" : ["message"],
   "default" : true,
   "readme": "README.md",
   "storage": [
-    {"name":"messagewidget","url":"lib.js"},
     {"name":"widmessages.wid.js","url":"widget.js"}
   ]
 }
