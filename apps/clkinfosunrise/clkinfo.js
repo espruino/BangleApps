@@ -42,7 +42,7 @@
                      return { text : locale.time(sunset,1),
                        img : atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
         show : show, hide : hide
-      }, { name : "Time", // Time in day (uses v/min/max to show percentage through day)
+      }, { name : "Sunrise/set", // Time in day (uses v/min/max to show percentage through day)
         hasRange : true,
         get : () => {
           calculate();
@@ -59,7 +59,7 @@
           } else { // day!
             v = Math.round(100 * (d-sunrise.getTime()) / dayLength);
           }
-          return { text : locale.time(date,1),  v : v, min : 0, max : 100,
+          return { text : locale.time(day ? sunset.getTime() : sunrise.getTime(),1),  v : v, min : 0, max : 100,
                    img : day ? atob("GBiBAAAYAAAYAAAYAAgAEBwAOAx+MAD/AAH/gAP/wAf/4Af/4Of/5+f/5wf/4Af/4AP/wAH/gAD/AAx+MBwAOAgAEAAYAAAYAAAYAA==") : atob("GBiBAAfwAA/8AAP/AAH/gAD/wAB/wAB/4AA/8AA/8AA/8AAf8AAf8AAf8AAf8AA/8AA/8AA/4AB/4AB/wAD/wAH/gAf/AA/8AAfwAA==")
                   }
         },
