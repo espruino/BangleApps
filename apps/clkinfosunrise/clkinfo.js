@@ -43,6 +43,7 @@
                        img : atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
         show : show, hide : hide
       }, { name : "Time", // Time in day (uses v/min/max to show percentage through day)
+        hasRange : true,
         get : () => {
           calculate();
           let day = true;
