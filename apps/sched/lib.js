@@ -21,7 +21,7 @@ exports.getActiveAlarms = function (alarms, time) {
       && (a.last != time.getDate()) // not already fired today
       && (a.t < currentTime)
       && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
-      && (!a.date || a.date == time.toISOString().substr(0, 10)) // is allowed on this date
+      && (!a.date || a.date == time.toLocalISOString().substr(0, 10)) // is allowed on this date
     )
     .sort((a, b) => a.t - b.t);
 }
@@ -46,7 +46,7 @@ exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-  var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toISOString().substr(0,10));
+  var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toLocalISOString().substr(0,10));
   if (!active) return undefined;
   var t = alarm.t-currentTime;
   if (alarm.last == time.getDate() || t < -60000) t += 86400000;
