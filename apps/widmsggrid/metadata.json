@@ -9,6 +9,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "dependencies" : { "messages":"module" },
   "provides_modules" : ["messagewidget"],
+  "provides_widgets" : ["message"],
   "readme": "README.md",
   "storage": [
     {"name":"messagewidget","url":"lib.js"},
