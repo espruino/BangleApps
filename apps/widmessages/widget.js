@@ -7,6 +7,9 @@
       .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
   }
 
+  // NOTE when adding a custom "essages" widget:
+  // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
+  // see e.g. widmsggrid
   WIDGETS["messages"] = {
     area: "tl", width: 0, srcs: [], draw: function(recall) {
       // If we had a setTimeout queued from the last time we were called, remove it
@@ -54,7 +57,9 @@
       var w = WIDGETS["messages"];
       if (!w || !w.width || c.x<w.x || c.x>w.x+w.width || c.y<w.y || c.y>w.y+24) return;
       require("messages").openGUI();
-    }, hide() {
+    },
+    // hide() and show() are required by the "message" library!
+    hide() {
       this.hidden=true;
       if (this.width) {
         // hide widget
