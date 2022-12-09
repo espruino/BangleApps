@@ -622,7 +622,7 @@ s.pl = {};
         endPerfLog("fullDraw", true);
         
         if (!Bangle.uiRemove){
-          setUi();
+          setUi(); // Calls Bangle.setUI() (this comment also fixes lint warning)
           let orig = Bangle.drawWidgets;
           Bangle.drawWidgets = ()=>{};
           Bangle.loadWidgets();
