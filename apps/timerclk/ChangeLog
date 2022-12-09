@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Add sunrise/sunset. Fix timer bugs.
 0.03: Use default Bangle formatter for booleans
+0.04: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps

@@ -9,8 +9,8 @@ SunCalc = require("suncalc.js");
 loc = require('locale');
 const LOCATION_FILE = "mylocation.json";
 const xyCenter = g.getWidth() / 2 + 3;
-const yposTime =  60; 
-const yposDate = 100; 
+const yposTime =  60;
+const yposDate = 100;
 const yposRS   = 135;
 const yposPos  = 160;
 var rise = "07:00";
@@ -19,13 +19,21 @@ var pos     = {altitude: 20, azimuth: 135};
 var noonpos = {altitude: 37, azimuth: 180};
 let idTimeout = null;
 
+
+
 function updatePos() {
+  function radToDeg(pos) {
+    return { // instead of mofidying suncalc
+        azimuth:  Math.round((pos.azimuth / rad + 180) % 360),
+        altitude: Math.round( pos.altitude / rad)
+    };
+  }
   coord = require("Storage").readJSON(LOCATION_FILE,1)|| {"lat":53.3,"lon":10.1,"location":"Pattensen"};
-  pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);  
+  pos = radToDeg(SunCalc.getPosition(Date.now(), coord.lat, coord.lon));
   times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
   rise = times.sunrise.toString().split(" ")[4].substr(0,5);
   set  = times.sunset.toString().split(" ")[4].substr(0,5);
-  noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
+  noonpos = radToDeg(SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon));
 }
 
 function drawSimpleClock() {
@@ -38,7 +46,7 @@ function drawSimpleClock() {
 
   var time = da[4].substr(0, 5); // draw time
 
-  g.setFont("Vector",60); 
+  g.setFont("Vector",60);
   g.drawString(time, xyCenter, yposTime, true);
 
   var date = [loc.dow(new Date(),1), loc.date(d,1)].join(" "); // draw day of week, date
@@ -51,7 +59,7 @@ function drawSimpleClock() {
 
   g.setFont("Vector",21);
   g.drawString(`H${pos.altitude}/${noonpos.altitude} Az${pos.azimuth}`, xyCenter, yposPos, true); // draw sun pos
-    
+
   let t = d.getSeconds()*1000 + d.getMilliseconds();
   idTimeout = setTimeout(drawSimpleClock, 60000 - t); // time till next minute
 }

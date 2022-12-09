@@ -1,4 +1,4 @@
-var SunCalc = require("https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js");
+var SunCalc = require("suncalc"); // from modules folder
 require("f_latosmall").add(Graphics);
 const storage = require('Storage');
 const locale = require("locale");
@@ -85,7 +85,7 @@ function getSteps() {
   try {
     return Bangle.getHealthStatus("day").steps;
   } catch (e) {
-    if (WIDGETS.wpedom !== undefined) 
+    if (WIDGETS.wpedom !== undefined)
       return WIDGETS.wpedom.getSteps();
     else
       return '???';
@@ -181,12 +181,12 @@ function drawClock() {
   var d = new Date();
   var da = d.toString().split(" ");
   var time = da[4].substr(0,5);
-  
+
   var hh = da[4].substr(0,2);
   var mm = da[4].substr(3,2);
   var day = da[0];
   var month_day = da[1] + " " + da[2];
-  
+
   // fix hh for 12hr clock
   var h2 = "0" + parseInt(hh) % 12 || 12;
   if (parseInt(hh) > 12)
@@ -215,12 +215,12 @@ function drawClock() {
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(Bangle.appRect);
-  
+
   // draw a grid like graph paper
   if (settings.grid && process.env.HWVERSION !=1) {
     g.setColor("#0f0");
     for (var gx=20; gx <= w; gx += 20)
-      g.drawLine(gx, 30, gx, h - 24); 
+      g.drawLine(gx, 30, gx, h - 24);
     for (var gy=30; gy <= h - 24; gy += 20)
       g.drawLine(0, gy, w, gy);
   }
@@ -238,7 +238,7 @@ function drawClock() {
       g.drawString( (w_wind.split(' ').slice(0, 2).join(' ')), (w/2) + 6, 24 + ((y - 24)/2));
   // display first 2 words of the wind string eg '4 mph'
   }
-  
+
   if (settings.font == "Architect")
     g.setFontArchitect();
   else if (settings.font == "GochiHand")
@@ -253,7 +253,7 @@ function drawClock() {
     g.setFontSpecialElite();
   else
     g.setFontLato();
-    
+
   g.setFontAlign(1,-1);  // right aligned
   g.drawString(hh, x - 6, y);
   g.setFontAlign(-1,-1); // left aligned
@@ -310,7 +310,7 @@ function BUTTON(name,x,y,w,h,c,f,tx) {
 // if pressed the callback
 BUTTON.prototype.check = function(x,y) {
   //console.log(this.name + ":check() x=" + x + " y=" + y +"\n");
-  
+
   if (x>= this.x && x<= (this.x + this.w) && y>= this.y && y<= (this.y + this.h)) {
     log_debug(this.name + ":callback\n");
     this.callback();
@@ -366,7 +366,7 @@ function checkIdle() {
     warned = false;
     return;
   }
-  
+
   let hour = (new Date()).getHours();
   let active = (hour >= 9 && hour < 21);
   //let active = true;
@@ -397,7 +397,7 @@ function buzzer(n) {
 
   if (n-- < 1) return;
   Bangle.buzz(250);
-  
+
   if (buzzTimeout) clearTimeout(buzzTimeout);
   buzzTimeout = setTimeout(function() {
     buzzTimeout = undefined;

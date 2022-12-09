@@ -12,3 +12,4 @@
 0.26: BJS2: Swipe down to rotate 180 degree
 0.27: BJS2: Changed swipe down to swipe up
 0.28: Reverted changes to implementation of 0.25
+0.29: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
