@@ -33,9 +33,9 @@ if (settings.stepGoal == undefined) {
 }
 
 let drawTimeout;
-let showWidgets = settings.showWidgets || false;
-let circleCount = settings.circleCount || 3;
-let showBigWeather = settings.showBigWeather || false;
+const showWidgets = settings.showWidgets || false;
+const circleCount = settings.circleCount || 3;
+const showBigWeather = settings.showBigWeather || false;
 
 let hrtValue; //TODO deprecate this
 let now = Math.round(new Date().getTime() / 1000);
@@ -329,6 +329,7 @@ Bangle.setUI({
     clockInfoMenu.forEach(c => c.remove());
     delete Graphics.prototype.setFontRobotoRegular50NumericOnly;
     delete Graphics.prototype.setFontRobotoRegular21;
+    if (!showWidgets) require("widget_utils").show();
   }
 });
 
