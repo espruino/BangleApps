@@ -18,8 +18,11 @@ exports.listener = function(type, msg) {
     if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;
   }
-  if (Bangle.load === load) {
+  if (Bangle.load === load || !Bangle.uiRemove) {
     // no fast loading: store message to flash
+    /* FIXME: Maybe we need a better way of deciding if an app will
+    be fast loaded than just hard-coding a Bangle.uiRemove check.
+    Bangle.load could return a bool (as the load doesn't happen immediately). */
     require("messages").save(msg);
   } else {
     if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
