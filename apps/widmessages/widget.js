@@ -18,7 +18,7 @@
       if (!this.width) return;
       let settings = Object.assign({flash: true, maxMessages: 3}, require("Storage").readJSON("messages.settings.json", true) || {});
       if (recall!==true || settings.flash) {
-        const msgsShown = E.clip(this.srcs.length, 0, settings.maxMessages),
+        const msgsShown = E.clip(this.srcs.length, 0, settings.maxMessages);
           srcs = Object.keys(this.srcs);
         g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
         for(let i = 0; i<msgsShown; i++) {
@@ -68,6 +68,5 @@
   };
 
   Bangle.on("message", WIDGETS["messages"].onMsg);
-  this.srcs = {};
   WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 })();
