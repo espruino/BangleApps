@@ -288,8 +288,7 @@ function drawInnerCircleAndTriangle(w) {
 function drawGauge(cx, cy, percent, color) {
   let offset = 15;
   let end = 360 - offset;
-  let radius = radiusInner + (circleCount == 3 ? 3 : 2);
-  let size = radiusOuter - radiusInner - 2;
+  let radius = radiusOuter+1;
 
   if (percent <= 0) return; // no gauge needed
   if (percent > 1) percent = 1;
@@ -299,14 +298,18 @@ function drawGauge(cx, cy, percent, color) {
 
   color = getGradientColor(color, percent);
   g.setColor(color);
-
-  // FIXME: this one loop takes 0.25 sec EACH TIME the function is called
-  for (let i = startRotation; i > endRotation - size; i -= size) {
-    let r = i * Math.PI / 180; // radians
-    g.fillCircle(
+  // convert to radians
+  startRotation *= Math.PI / 180;
+  let amt = Math.PI / 10;
+  endRotation = (endRotation * Math.PI / 180) - amt;
+  // all we need to draw is an arc, because we'll fill the center
+  let poly = [cx,cy];
+  for (let r = startRotation; r > endRotation; r -= amt)
+    poly.push(
       cx + radius * Math.sin(r),
-      cy + radius * Math.cos(r), size);
-  }
+      cy + radius * Math.cos(r)
+    );
+  g.fillPoly(poly);
 }
 
 function writeCircleText(w, content) {

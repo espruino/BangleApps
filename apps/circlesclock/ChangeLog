@@ -34,3 +34,4 @@
 0.18: Improved clkinfo handling and using it for the weather circle
 0.19: Remove old code and fixing clkinfo handling (fix HRM and other items that change)
       Remove settings for what is displayed and instead allow circles to be changed by swiping
+0.20: Add much faster circle rendering (250ms -> 40ms)
