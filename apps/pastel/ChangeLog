@@ -19,3 +19,4 @@
 0.16: make check_idle boolean setting work properly with new B2 menu
 0.17: Use default Bangle formatter for booleans
 0.18: fix idle option always getting defaulted to true
+0.19: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps

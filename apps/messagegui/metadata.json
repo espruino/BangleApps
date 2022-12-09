@@ -1,7 +1,8 @@
 {
   "id": "messagegui",
   "name": "Message UI",
-  "version": "0.58",
+  "shortName": "Messages",
+  "version": "0.59",
   "description": "Default app to display notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",

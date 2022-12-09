@@ -93,6 +93,7 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
 "App gpsrec data file wildcard .gpsrc? does not include app ID",
+"App owmweather data file weather.json is also listed as data file for app weather",
 ];
 
 function globToRegex(pattern) {

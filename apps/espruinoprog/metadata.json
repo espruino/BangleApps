@@ -11,7 +11,8 @@
   "custom": "custom.html",
   "storage": [
     {"name":"espruinoprog.app.js","url":"app.js"},
-    {"name":"espruinoprog.img","url":"app-icon.js","evaluate":true},
+    {"name":"espruinoprog.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
     {"name":"espruinoprog.json"}
   ]
 }
