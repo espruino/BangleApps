@@ -16,8 +16,9 @@
 <body>
   <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
+    <script src="../../core/lib/customize.js"></script>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
+      const FontList = ["LuckiestGuy", "Bangers", "RubikOne", "Oswald", "Anton", "TitanOne", "BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
       "Yumaro", "YuseiMagic"];
       for (fontName of FontList) {
@@ -37,15 +38,10 @@
         document.forms[0].appendChild(lb);
         document.forms[0].appendChild(document.createElement('br'));
       }
-    </script>
-    <p><button id="upload" class="btn btn-primary">Upload selected Fonts</button></p>
-    <script src="../../core/lib/customize.js"></script>
-    <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
-      "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"];
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
+      btn=document.createElement('button');
+      btn.id="upload";
+      btn.innerHTML="Upload selected Fonts";
+      btn.addEventListener("click", function() {
         var n=0;
         var fonts = [];
         for (fontElement of document.getElementsByName("font")) {
@@ -63,6 +59,7 @@
         else
           alert("Please select at least one Font!");
     });
+    document.forms[0].appendChild(btn);
     </script>
   </form>
 </body>
