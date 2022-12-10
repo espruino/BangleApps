@@ -17,24 +17,23 @@
   <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko"];/*, "DinAlternate",
+      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"]*/
+      "Yumaro", "YuseiMagic"];
       for (fontName of FontList) {
         var cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.id = fontName;
+        cb.name = "font"
         var lb = document.createElement('label');
-        lb.for = fontName;
+        lb.setAttribute("for",fontName);
         var img1 = document.createElement('img')
         img1.src = "fonts/"+fontName+"-p1.png";
         var img2 = document.createElement('img')
         img2.src = "fonts/"+fontName+"-p2.png";
-        //<input type="checkbox" id="BarlowCond">
-        //<label for="BarlowCond"><img src="fonts/BarlowCond-p1.png"> <img src="fonts/BarlowCond-p2.png"></label><br>
-        document.forms[0].appendChild(cb);
         lb.appendChild(img1);
         lb.appendChild(img2);
+        document.forms[0].appendChild(cb);
         document.forms[0].appendChild(lb);
         document.forms[0].appendChild(document.createElement('br'));
       }
@@ -42,19 +41,19 @@
     <p><button id="upload" class="btn btn-primary">Upload selected Fonts</button></p>
     <script src="../../core/lib/customize.js"></script>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko"];/*, "DinAlternate",
+      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"]*/
+      "Yumaro", "YuseiMagic"];
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
         var n=0;
         var fonts = [];
-        for (fontName of FontList) {
-          if (document.getElementById(fontName).checked==true) {
+        for (fontElement of document.getElementsByName("font")) {
+          if (fontElement.checked==true) {
             var f = new Object();
             fonts.push({
               name:"contourclock-"+n+".json",
-              url:"font-"+fontName+".json"
+              url:"font-"+fontElement.id+".json"
             });
             n++;
           }
@@ -63,7 +62,6 @@
           sendCustomizedApp({storage:fonts});
         else
           alert("Please select at least one Font!");
-
     });
     </script>
   </form>
