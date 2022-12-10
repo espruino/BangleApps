@@ -8,6 +8,7 @@
   "type": "widget",
   "tags": "widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_widgets" : ["alarm"],
   "screenshots" : [ { "url":"screenshot.png" } ],
   "storage": [
     {"name":"widalarmeta.wid.js","url":"widget.js"}

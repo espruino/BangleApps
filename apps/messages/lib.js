@@ -125,9 +125,10 @@ exports.openGUI = function(msg) {
  * @param {boolean} show
  */
 exports.toggleWidget = function(show) {
-  if (!require("Storage").read("messagewidget")) return; // "messagewidget" module is missing!
-  if (show) require("messagewidget").show();
-  else require("messagewidget").hide();
+  if (!global.WIDGETS || !WIDGETS["messages"]) return; // widget is missing!
+  const method = WIDGETS["messages"][show ? "show" : "hide"];
+  /* if (typeof(method)!=="function") return; // widget must always have show()+hide(), fail hard rather than hide problems */
+  method.apply(WIDGETS["messages"]);
 };
 
 /**
@@ -135,7 +136,8 @@ exports.toggleWidget = function(show) {
  * @param {array} messages Messages to save
  */
 exports.write = function(messages) {
-  require("Storage").writeJSON("messages.json", messages.map(m => {
+  if (!messages.length) require("Storage").erase("messages.json");
+  else require("Storage").writeJSON("messages.json", messages.map(m => {
     // we never want to save saved/handled status to file;
     delete m.saved;
     delete m.handled;

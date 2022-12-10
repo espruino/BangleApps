@@ -63,10 +63,9 @@
     } catch(ex){ }
   }
 
-  var img = atob("GBiBAeAAB+AAB/v/3/v/3/v/3/v/3/v/n/n/H/z+P/48//85//+b//+b//8p//4E//yCP/kBH/oAn/oAX/oAX/oAX/oAX+AAB+AABw==")
   var smpltmrItems = {
     name: "Timer",
-    img: img,
+    img: atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwMMBgPGBgPmDAPjDAPzDAPzDP/zDP/zDH/jBn/mBj/GAw8MA4AcAeB4AH/gAB+AA=="),
     items: [
       {
         name: null,

@@ -48,6 +48,11 @@ to the clock. */
 var unreadTimeout;
 /// List of all our messages
 var MESSAGES = require("messages").getMessages();
+if (Bangle.MESSAGES) {
+  // fast loading messages
+  Bangle.MESSAGES.forEach(m => require("messages").apply(m, MESSAGES));
+  delete Bangle.MESSAGES;
+}
 
 var onMessagesModified = function(type,msg) {
   if (msg.handled) return;
@@ -105,7 +110,6 @@ function showMapMessage(msg) {
   layout.render();
   function back() { // mark as not new and return to menu
     msg.new = false;
-    saveMessages();
     layout = undefined;
     checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
   }
@@ -140,7 +144,6 @@ function showMusicMessage(msg) {
     openMusic = false;
     var wasNew = msg.new;
     msg.new = false;
-    saveMessages();
     layout = undefined;
     if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:0,openMusic:0});
     else checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
@@ -223,24 +226,20 @@ function showMessageSettings(msg) {
     },
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
-      saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Mark Unread" : () => {
       msg.new = true;
-      saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Mark all read" : () => {
       MESSAGES.forEach(msg => msg.new = false);
-      saveMessages();
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Delete all messages" : () => {
       E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
         if (isYes) {
           MESSAGES = [];
-          saveMessages();
         }
         checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
       });
@@ -295,7 +294,7 @@ function showMessage(msgid) {
   }
   function goBack() {
     layout = undefined;
-    msg.new = false; saveMessages(); // read mail
+    msg.new = false; // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
   }
@@ -303,7 +302,7 @@ function showMessage(msgid) {
   ];
   if (msg.positive) {
     buttons.push({type:"btn", src:atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA=="), cb:()=>{
-      msg.new = false; saveMessages();
+      msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
@@ -312,7 +311,7 @@ function showMessage(msgid) {
   if (msg.negative) {
     if (buttons.length) buttons.push({width:32}); // nasty hack...
     buttons.push({type:"btn", src:atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA="), cb:()=>{
-      msg.new = false; saveMessages();
+      msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});

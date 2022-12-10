@@ -28,7 +28,7 @@
     //FIXME ranges are somehow arbitrary
     var weatherItems = {
         name: "Weather",
-        img: atob("GBiBAf+///u5//n7//8f/9wHP8gDf/gB//AB/7AH/5AcP/AQH/DwD/uAD84AD/4AA/wAAfAAAfAAAfAAAfgAA/////+bP/+zf/+zfw=="),
+        img: atob("GBiBAABAAARGAAYEAADgACP4wDf8gAf+AA/+AE/4AG/jwA/v4A8P8AR/8DH/8AH//AP//g///g///g///gf//AAAAABkwABMgABMgA=="),
         items: [
             {
                 name: "conditionWithTemperature",

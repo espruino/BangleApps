@@ -173,12 +173,16 @@ if (nextAlarmDate !== undefined) {
         setTimeout(load, 1000);
       } else if (measure && now >= minAlarm && swest === false) {
         addLog(now, "alarm");
-        buzz();
         measure = false;
-        if (config.settings.disableAlarm) {
-          // disable alarm for scheduler
-          nextAlarmConfig.last = now.getDate();
-          require("Storage").writeJSON("sched.json", alarms);
+        if (nextAlarmConfig.js) {
+          eval(nextAlarmConfig.js); // run nextAlarmConfig.js if set
+        } else {
+          buzz();
+          if (config.settings.disableAlarm) {
+            // disable alarm for scheduler
+            nextAlarmConfig.last = now.getDate();
+            require('Storage').writeJSON('sched.json', alarms);
+          }
         }
       }
     });

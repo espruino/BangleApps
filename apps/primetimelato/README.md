@@ -1,4 +1,4 @@
-# Prime Time Lato (clock)
+# Prime Lato (clock)
 
 A watchface that displays time and its prime factors in the Lato font.
 For example when the time is 21:05, the prime factors are 5,421.

@@ -1,8 +1,8 @@
-{ 
+{
 	"id": "timerclk",
 	"name": "Timer Clock",
 	"shortName":"Timer Clock",
-	"version":"0.03",
+	"version":"0.04",
 	"description": "A clock with stopwatches, timers and alarms build in.",
 	"icon": "app-icon.png",
 	"type": "clock",

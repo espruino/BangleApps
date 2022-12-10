@@ -11,7 +11,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
 
 {
-  let SunCalc = require("suncalc");
+  let SunCalc = require("suncalc"); // from modules folder
   const SETTINGS_FILE = "rebble.json";
   const LOCATION_FILE = "mylocation.json";
   const GLOBAL_SETTINGS = "setting.json";
@@ -49,7 +49,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     }
 
     if(settings.sideTap!=0)
-      sideBar=parseInt(settings.sideTap)-1; //tab to 
+      sideBar=parseInt(settings.sideTap)-1; //tab to
     is12Hour = (require("Storage").readJSON(GLOBAL_SETTINGS, 1) || {})["12hour"] || false;
   }
 
@@ -110,15 +110,15 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     let date = new Date();
     let hh = date.getHours();
     let mm = date.getMinutes();
-    
+
     hh = formatHours(hh);
     mm = zeroPad(mm,2);
-    
+
     //const t = 6;
 
     if (drawCount % 60 == 0)
       updateSunRiseSunSet(location.lat, location.lon);
-    
+
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(0, 0, w2, h);
@@ -143,7 +143,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
       drawSideBar3();
       break;
     }
-    
+
     drawCount++;
     queueDraw();
   }
@@ -154,14 +154,14 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     let dd=date.getDate();
     let mm=require("date_utils").month(date.getMonth()+1,1).toUpperCase();
 
-    
+
     drawBattery(w2 + (w-w2-wb)/2,  h/10, wb, 17);
 
     setTextColor();
     g.setFont('Vector', 20);
     g.setFontAlign(0, -1);
     g.drawString(E.getBattery() + '%', w3,  (h/10) + 17 + 7);
-    
+
     drawDateAndCalendar(w3, h/2, dy, dd, mm);
   }
 
@@ -250,7 +250,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     }
 
   }
-    
+
   // format steps so they fit in the place
   let formatSteps=function() {
     let s = Bangle.getHealthStatus("day").steps;
@@ -292,8 +292,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
 
 
-  let chargingListener= function(charging) { 
-    
+  let chargingListener= function(charging) {
+
     //redraw the sidebar ( with the battery )
     switch(sideBar) {
       case 0:
@@ -304,7 +304,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
         break;
     }
   }
-  
+
   let deleteAll=function()
   {
     // Called to unload all of the clock app
@@ -320,7 +320,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     log_debug("starting..");
     loadSettings();
     loadLocation();
-  
+
     if(settings.autoCycle || settings.sideTap==0)
     {
       Bangle.setUI({
@@ -332,7 +332,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
           if (btn>0) nextSidebar();
           draw();
         });
-  
+
     }
     else{
       Bangle.setUI({

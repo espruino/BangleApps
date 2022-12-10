@@ -76,7 +76,7 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies', 'provides_modules'
+  'dependencies', 'provides_modules', 'provides_widgets', "default"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
@@ -93,7 +93,7 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
 "App gpsrec data file wildcard .gpsrc? does not include app ID",
-"App widmessages storage file messagewidget is also listed as storage file for app widmsggrid",
+"App owmweather data file weather.json is also listed as data file for app weather",
 ];
 
 function globToRegex(pattern) {
@@ -168,8 +168,8 @@ apps.forEach((app,appIdx) => {
   if (app.dependencies) {
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
-        if (!["type","app","module"].includes(app.dependencies[dependency]))
-          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type/app/module' right now`, {file:metadataFile});
+        if (!["type","app","module","widget"].includes(app.dependencies[dependency]))
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type/app/module/widget' right now`, {file:metadataFile});
         if (app.dependencies[dependency]=="type" && !METADATA_TYPES.includes(dependency))
           ERROR(`App ${app.id} 'type' dependency must be one of `+METADATA_TYPES, {file:metadataFile});
       });

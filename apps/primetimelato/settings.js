@@ -3,7 +3,8 @@
 
   // initialize with default settings...
   let s = {
-    'buzz_on_prime': true
+    'buzz_on_prime': true,
+    'debug': false
   }
 
   // ...and overwrite them with any saved values
@@ -29,6 +30,16 @@
         s.buzz_on_prime = v;
         save();
       },
+    },
+
+    'Debug': {
+      value: !!s.debug,
+      onchange: v => {
+        s.debug = v;
+        save();
+      },
     }
+
+    
   })
 })

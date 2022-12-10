@@ -14,7 +14,6 @@ Provide names and the UTC offsets for up to three other timezones in the app sto
 
 The clock does not handle summer time / daylight saving time changes automatically. If one of your three locations changes its UTC offset, you can simply change the setting in the app store and update. Currently the clock only supports 24 hour time format for the additional time zones.
 
-
 ## Requests
 
 Please use [the Espruino Forum](http://forum.espruino.com/microcosms/1424/) if you have feature requests or notice bugs.

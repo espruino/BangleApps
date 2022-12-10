@@ -29,6 +29,7 @@ exports.show = function() {
 
 /// Remove any intervals/handlers/etc that we might have added. Does NOT re-show widgets that were hidden
 exports.cleanup = function() {
+  delete exports.autohide;
   delete Bangle.appRect;
   if (exports.swipeHandler) {
     Bangle.removeListener("swipe", exports.swipeHandler);
@@ -50,11 +51,13 @@ exports.cleanup = function() {
 
 /** Put widgets offscreen, and allow them to be swiped
 back onscreen with a downwards swipe. Use .show to undo.
+First parameter controls automatic hiding time, 0 equals not hiding at all.
+Default value is 2000ms until hiding.
 Bangle.js 2 only at the moment. */
-exports.swipeOn = function() {
+exports.swipeOn = function(autohide) {
   exports.cleanup();
   if (!global.WIDGETS) return;
-
+  exports.autohide=autohide===undefined?2000:autohide;
   /* TODO: maybe when widgets are offscreen we don't even
   store them in an offscreen buffer? */
 
@@ -125,11 +128,13 @@ exports.swipeOn = function() {
       clearTimeout(exports.hideTimeout);
       delete exports.hideTimeout;
     }
-    if (ud>0 && offset<0) anim(4, function() {
+    let cb;
+    if (exports.autohide > 0) cb = function() {
       exports.hideTimeout = setTimeout(function() {
         anim(-4);
-      }, 2000);
-    });
+      }, exports.autohide);
+    }
+    if (ud>0 && offset<0) anim(4, cb);
     if (ud<0 && offset>-24) anim(-4);
 
   };
