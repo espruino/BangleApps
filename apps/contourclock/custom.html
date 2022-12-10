@@ -17,9 +17,9 @@
   <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
+      FontList = ["BarlowCond", "BebasNeue", "Dekko"];/*, "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"]
+      "Yumaro", "YuseiMagic"]*/
       for (fontName of FontList) {
         var cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -42,9 +42,9 @@
     <p><button id="upload" class="btn btn-primary">Upload selected Fonts</button></p>
     <script src="../../core/lib/customize.js"></script>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko"]//, "DinAlternate",
+      FontList = ["BarlowCond", "BebasNeue", "Dekko"];/*, "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"]
+      "Yumaro", "YuseiMagic"]*/
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
         var n=0;
