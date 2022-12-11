@@ -161,8 +161,8 @@ function drawMoonPositionPage(gps, title) {
 
 function drawMoonIlluminationPage(gps, title) {
   const phaseNames = [
-    "New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous",
-    "Full Moon", "Waning Gibbous", "Last Quater", "Waning Crescent",
+    /*LANG*/"New Moon", /*LANG*/"Waxing Crescent", /*LANG*/"First Quarter", /*LANG*/"Waxing Gibbous",
+    /*LANG*/"Full Moon", /*LANG*/"Waning Gibbous", /*LANG*/"Last Quater", /*LANG*/"Waning Crescent",
   ];
 
   const phase = SunCalc.getMoonIllumination(new Date());
@@ -275,15 +275,15 @@ function moonIndexPageMenu(gps) {
     },
     "Times": () => {
       m = E.showMenu();
-      drawMoonTimesPage(gps, "Times");
+      drawMoonTimesPage(gps, /*LANG*/"Times");
     },
     "Position": () => {
       m = E.showMenu();
-      drawMoonPositionPage(gps, "Position");
+      drawMoonPositionPage(gps, /*LANG*/"Position");
     },
     "Illumination": () => {
       m = E.showMenu();
-      drawMoonIlluminationPage(gps, "Illumination");
+      drawMoonIlluminationPage(gps, /*LANG*/"Illumination");
     },
     "< Back": () => m = indexPageMenu(gps),
   };
@@ -294,12 +294,12 @@ function moonIndexPageMenu(gps) {
 function indexPageMenu(gps) {
   const menu = {
     "": {
-      "title": "Select",
+      "title": /*LANG*/"Select",
     },
-    "Sun": () => {
+    /*LANG*/"Sun": () => {
       m = sunIndexPageMenu(gps);
     },
-    "Moon": () => {
+    /*LANG*/"Moon": () => {
       m = moonIndexPageMenu(gps);
     },
     "< Back": () => { load(); }
