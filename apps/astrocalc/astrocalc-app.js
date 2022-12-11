@@ -166,7 +166,7 @@ function drawMoonIlluminationPage(gps, title) {
   ];
 
   const phase = SunCalc.getMoonIllumination(new Date());
-  const phaseIdx = Math.round(phase.phase*8),
+  const phaseIdx = Math.round(phase.phase*8);
   const pageData = {
     Phase: phaseNames[phaseIdx],
   };
