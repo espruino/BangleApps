@@ -6,9 +6,7 @@
         get : () => {
           let d = new Date();
           let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
-          //g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
-	  //g.drawImage(atob("GBjD/wAA//8c56pSLGOylJrWwxgkknFY7HI4kkkkk5mw2mUvEkkklarVWq5XIkkksAAAAAAABkklAAAAAAAAAIk7AAAAAAAAAbHOgAAAAAAAAV4lAAAAAAAAAIlXAAdtttvgAarSgAMkkklgAWYlAAMkkklgAInXAAMkkklgAa7XAAMkkklgAa4lAAMkkklgAInSgAMkkklgAWZXAAdtttvgAaolAAAAAAAAAInOgAAAAAAAAV47AAAAAAAAAbElAAAAAAAAAIkksAAAAAAABkkklarVWq5XIkkkk5mw2mUvEkkkknFY7HI4kkk="),1,0);
-          g.drawImage(atob("GBjD/wAA//8QhEEIvvfPewhC970kk9Ho/lcrkkkkkpxOJRqNEkkkxZ3O7V6vKEkmMAAAAAAABwklAAAAAAAAAInrAAAAAAAAAZdNgAAAAAAAANoygAAAAAAAAWHrAABtttsAAZdNgAOSSSRgANoygAOEkkxgAWHrAAOEkkxgAZfrAAOEkkxgAZcygAOEkkxgAWFNgAOSSSRgANrrAABtttsAAZcygAAAAAAAAWFNgAAAAAAAANrrAAAAAAAAAZclAAAAAAAAAIkmMAAAAAAABwkkxZ3O7V6vKEkkkpxOJRqNEkkkk9Ho/lcrkkk="),1,0);
+	  g.drawImage(atob("GBjC////AADve773VWmmmmlVVW22nnlVVbLL445VVwAAAADVWAAAAAAlrAAAAAA6sAAAAAAOWAAAAAAlrAD//wA6sANVVcAOWANVVcAlrANVVcA6rANVVcA6WANVVcAlsANVVcAOrAD//wA6WAAAAAAlsAAAAAAOrAAAAAA6WAAAAAAlVwAAAADVVbLL445VVW22nnlVVWmmmmlV"),1,0);
 	  return {
             text : process.env.VERSION,
             img : g.asImage("string")
