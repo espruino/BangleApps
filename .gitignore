@@ -14,3 +14,4 @@ _site
 .owncloudsync.log
 Desktop.ini
 .sync_*.db*
+*.swp
