@@ -6,8 +6,8 @@
         get : () => {
           let d = new Date();
           let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
-	  g.drawImage(atob("GBjC////AADve773VWmmmmlVVW22nnlVVbLL445VVwAAAADVWAAAAAAlrAAAAAA6sAAAAAAOWAAAAAAlrAD//wA6sANVVcAOWANVVcAlrANVVcA6rANVVcA6WANVVcAlsANVVcAOrAD//wA6WAAAAAAlsAAAAAAOrAAAAAA6WAAAAAAlVwAAAADVVbLL445VVW22nnlVVWmmmmlV"),1,0);
-	  return {
+          g.drawImage(atob("GBjC////AADve773VWmmmmlVVW22nnlVVbLL445VVwAAAADVWAAAAAAlrAAAAAA6sAAAAAAOWAAAAAAlrAD//wA6sANVVcAOWANVVcAlrANVVcA6rANVVcA6WANVVcAlsANVVcAOrAD//wA6WAAAAAAlsAAAAAAOrAAAAAA6WAAAAAAlVwAAAADVVbLL445VVW22nnlVVWmmmmlV"),1,0);
+          return {
             text : process.env.VERSION,
             img : g.asImage("string")
           };
