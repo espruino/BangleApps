@@ -1,0 +1,13 @@
+{
+  "buzz": true,
+  "lowalarm": false,
+  "min": 950,
+  "highalarm": false,
+  "max": 1030,
+  "drop3halarm": 2,
+  "raise3halarm": 0,
+  "show": true,
+  "interval": 15,
+  "dismissDelayMin": 15,
+  "pauseDelayMin": 60
+}

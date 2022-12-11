@@ -1,9 +1,6 @@
 # Nifty Series B Clock
 
 - Display Time and Date
-- Color Configuration
-
-##
+- Colour Configuration
 
 ![](screenshot.png)
-

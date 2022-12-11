@@ -27,13 +27,11 @@
     "Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
     "Show Icon" : {
       value: settings().showIcon,
-      format: v => v?"Yes":"No",
       onchange: setIcon
     },
     "Find Phone" : function() { E.showMenu(findPhone); },
     "Record HRM" : {
       value: !!settings().hrm,
-      format: v => v?"Yes":"No",
       onchange: v => updateSetting('hrm', v)
     }    
   };

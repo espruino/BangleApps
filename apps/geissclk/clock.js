@@ -142,11 +142,13 @@ Bangle.on('lcdPower',function(on) {
     animInterval = setInterval(iterate, 50);
   }
 });
-g.clear();
+
+// Show launcher when button pressed
+Bangle.setUI("clock");g.clear();
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 iterate();
 animInterval = setInterval(iterate, 50);
 
-// Show launcher when button pressed
-Bangle.setUI("clock");
+

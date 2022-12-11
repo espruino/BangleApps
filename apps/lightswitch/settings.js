@@ -6,7 +6,8 @@
   var settings = Object.assign({
     colors: "011",
     image: "default",
-    touchOn: "clock,launch",
+    touchOn: "always",
+    oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
     unlockSide: "",
@@ -44,9 +45,11 @@
       // return entry for string value
       return {
         value: entry.value.indexOf(settings[key]),
+        min : 0,
+        max : entry.value.length - 1,
+        wrap : true,
         format: v => entry.title ? entry.title[v] : entry.value[v],
         onchange: function(v) {
-          this.value = v = v >= entry.value.length ? 0 : v < 0 ? entry.value.length - 1 : v;
           writeSetting(key, entry.value[v], entry.drawWidgets);
           if (entry.exec) entry.exec(entry.value[v]);
         }
@@ -55,10 +58,12 @@
       // return entry for numerical value
       return {
         value: settings[key] * entry.factor,
+        min : entry.min,
+        max : entry.max,
         step: entry.step,
+        wrap : true,
         format: v => v > 0 ? v + entry.unit : "off",
         onchange: function(v) {
-          this.value = v = v > entry.max ? entry.min : v < entry.min ? entry.max : v;
           writeSetting(key, v / entry.factor, entry.drawWidgets);
         },
       };
@@ -90,6 +95,14 @@
     touchOn: {
       title: ["on def clk", "on all clk", "clk+launch", "clk+setting", "except apps", "always on"],
       value: ["", "clock", "clock,setting.app.js", "clock,launch", "clock,setting.app.js,launch", "always"],
+      drawWidgets: true
+    },
+    oversize: {
+      factor: 1,
+      unit: "px",
+      min: 0,
+      max: 50,
+      step: 1,
       drawWidgets: true
     },
     dragDelay: {
@@ -133,16 +146,17 @@
         title: "Light Switch"
       },
       "< Back": () => back(),
-      "-- Widget --------": 0,
+      "-- Widget": 0,
       "Bulb col": getEntry("colors"),
       "Image": getEntry("image"),
-      "-- Control -------": 0,
+      "-- Control": 0,
       "Touch": getEntry("touchOn"),
+      "Oversize": getEntry("oversize"),
       "Drag Delay": getEntry("dragDelay"),
       "Min Value": getEntry("minValue"),
-      "-- Unlock --------": 0,
+      "-- Unlock": 0,
       "TapSide": getEntry("unlockSide"),
-      "-- Flash ---------": 0,
+      "-- Flash": 0,
       "TapSide ": getEntry("tapSide"),
       "Tap": getEntry("tapOn"),
       "Timeout": getEntry("tOut"),

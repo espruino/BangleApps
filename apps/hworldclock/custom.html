@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+      
+      <p>You can add up to 3 timezones. Please give a name and UTC offset in hours. 
+      If you want less than 3, clear the checkbox to the left.</p>
+      
+      <table id="hworldclock-offsets">
+          <tr>
+          <th>Enabled?</th>
+          <th>Name</th>
+          <th>UTC Offset</th>
+          </tr>
+      </table>
+
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+        
+      var offsets=[];
+      try{
+          var stored = localStorage.getItem('hworldclock-offset-list')
+          if(stored) offsets = JSON.parse(stored);
+          if (!offsets || offsets.length!=3) {
+              throw "Offsets invalid";
+          }
+        } catch(e){
+            offsets=[
+                [true,"London",1],
+                [true,"NY",-4],
+                [true, "Denver",-6],
+               
+           ];
+        }
+      console.log(offsets);
+      var tbl=document.getElementById("hworldclock-offsets");
+      for (var i=0; i<3; i++) {
+        var $offset = document.createElement('tr')
+        $offset.innerHTML = `
+            <td><input type="checkbox" id="enabled_${i}" ${offsets[i][0]? "checked" : ""}></td>
+            <td><input type="text" id="name_${i}" value="${offsets[i][1]}"></td>
+            <td><input type="number" id="offset_${i}" value="${offsets[i][2]}"></td>`
+        tbl.append($offset);
+      }
+          
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+          var storage_offsets=[];
+          var app_offsets=[];
+          for (var i=0; i<3; i++) {
+              var checked=document.getElementById("enabled_"+i).checked;
+              var name=document.getElementById("name_"+i).value;
+              var offset=document.getElementById("offset_"+i).value;
+              if (checked) {
+                  app_offsets.push([name,offset]);
+              }
+              storage_offsets.push([checked,name,offset]);
+          }
+          console.log(storage_offsets);
+          console.log(app_offsets);
+        localStorage.setItem('worldclock-offset-list',JSON.stringify(storage_offsets));
+        // send finished app (in addition to contents of app.json)
+        sendCustomizedApp({
+          storage:[
+            {name:"hworldclock.settings.json", content:JSON.stringify(app_offsets)},
+          ]
+        });
+      });
+
+    </script>
+  </body>
+</html>

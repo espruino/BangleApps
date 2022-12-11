@@ -1,0 +1,15 @@
+{ "id": "megadenti",
+  "name": "Denti",
+  "shortName":"My Denti",
+  "icon": "brush-teeth.png",
+  "version":"0.01",
+  "description": "This app allows you wash your teeth in an efficent way. A coloured timer guides you while your smile becomes bright!",
+  "tags": "game",
+  "supports": ["BANGLEJS"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"megadenti.app.js","url":"app.js"},
+    {"name":"megadenti.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -9,6 +9,7 @@
       io: 0,
       showDate: 1,
       fullscreen: false,
+      showLock: false,
     };
 
     updateSettings();
@@ -18,7 +19,7 @@
 
   if (!neonXSettings) resetSettings();
 
-  let thicknesses = [1, 2, 3, 4, 5, 6];
+  let thicknesses = [1, 2, 3, 4, 5, 6, 7];
 
   const menu = {
     "" : { "title":"Neon X & IO"},
@@ -55,6 +56,14 @@
       format: () => (neonXSettings.fullscreen ? 'Yes' : 'No'),
       onchange: () => {
         neonXSettings.fullscreen = !neonXSettings.fullscreen;
+        updateSettings();
+      },
+    },
+    'Show lock': {
+      value: false | neonXSettings.showLock,
+      format: () => (neonXSettings.showLock ? 'Yes' : 'No'),
+      onchange: () => {
+        neonXSettings.showLock = !neonXSettings.showLock;
         updateSettings();
       },
     },

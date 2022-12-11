@@ -1,0 +1,18 @@
+{
+  "id":"fuzzyw",
+  "name":"Fuzzy Text Clock",
+  "shortName": "Fuzzy Text",
+  "version": "0.02",
+  "description": "An imprecise clock for when you're not in a rush",
+  "readme": "README.md",
+  "icon":"fuzzyw.png",
+  "screenshots": [{"url":"fuzzyw-light.png"},{"url":"fuzzyw-dark.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"fuzzyw.app.js","url":"fuzzyw.app.js"},
+    {"name":"fuzzyw.img","url":"fuzzyw.icon.js","evaluate":true}
+  ]
+}

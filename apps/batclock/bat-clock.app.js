@@ -249,6 +249,9 @@ g.clear();
 g.setColor(0, 0.5, 0).drawImage(bg_crack);
 g.setColor(1, 1, 1).drawImage(batman);
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -256,5 +259,3 @@ Bangle.drawWidgets();
 timeInterval = setInterval(showTime, 1000);
 showTime();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");

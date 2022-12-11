@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Load widgets after setUI so widclk knows when to hide
+0.03: Show the day of the week

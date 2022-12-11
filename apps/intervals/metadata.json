@@ -7,6 +7,7 @@
   "icon": "intervals.png",
   "tags": "",
   "supports": ["BANGLEJS"],
+  "readme": "README.md",
   "storage": [
     {"name":"intervals.app.js","url":"intervals.app.js"},
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}

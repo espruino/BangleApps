@@ -1,22 +1,14 @@
-(function(back) {
-  var FILE = "ffcniftya.json";
-  // Load settings
-  var cfg = require('Storage').readJSON(FILE, 1) || { showWeekNum: true };
+(function (back) {
+  const settings = Object.assign({ showWeekNum: true }, require("Storage").readJSON("ffcniftya.json", true));
 
-  function writeSettings() {
-    require('Storage').writeJSON(FILE, cfg);
-  }
-
-  // Show the menu
   E.showMenu({
-    "" : { "title" : "Nifty-A Clock" },
-    "< Back" : () => back(),
-    'week number?': {
-      value: cfg.showWeekNum,
-      format: v => v?"On":"Off",
+    "": { "title": "Nifty-A Clock" },
+    "< Back": () => back(),
+    /*LANG*/"Show Week Number": {
+      value: settings.showWeekNum,
       onchange: v => {
-        cfg.showWeekNum = v;
-        writeSettings();
+        settings.showWeekNum = v;
+        require("Storage").writeJSON("ffcniftya.json", settings);
       }
     }
   });

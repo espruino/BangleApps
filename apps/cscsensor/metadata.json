@@ -2,11 +2,11 @@
   "id": "cscsensor",
   "name": "Cycling speed sensor",
   "shortName": "CSCSensor",
-  "version": "0.06",
+  "version": "0.07",
   "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch",
   "icon": "icons8-cycling-48.png",
   "tags": "outdoors,exercise,ble,bluetooth",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"cscsensor.app.js","url":"cscsensor.app.js"},

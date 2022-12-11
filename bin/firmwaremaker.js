@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env nodejs
 /*
 Mashes together a bunch of different apps to make
 a single firmware JS file which can be uploaded.

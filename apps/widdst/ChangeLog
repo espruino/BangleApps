@@ -1,0 +1,2 @@
+0.01: Initial version
+0.02: Checks for correct firmware; E.setDST(...) moved to boot.js

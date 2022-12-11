@@ -1,6 +1,6 @@
 (() => {
   function draw() {
-    BANGLEJS2 = process.env.HWVERSION==2;
+    const BANGLEJS2 = process.env.HWVERSION==2;
     g.reset();
     var m = process.memory();
     var percent = Math.round(m.usage*100/m.total);

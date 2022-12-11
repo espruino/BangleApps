@@ -17,7 +17,7 @@ showing available Espruino devices is popped up.
 device being connected to. Use this if you want to print data - eg: `print(E.getBattery())`
 
 When done, click 'Upload'. Your changes will be saved to local storage
-so they'll be remembered next time you upload from the same device.s
+so they'll be remembered next time you upload from the same device.
 
 ## Usage
 

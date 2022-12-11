@@ -1,0 +1,3 @@
+0.01: Moved messages widget into standalone widget app
+0.02: Fix 'srcs' being defined in global scope
+      Remove library stub

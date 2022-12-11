@@ -1,1 +1,4 @@
 0.01: New App!
+0.02: Removed "wake LCD on face-up"-feature: A watch-face should not set things like "wake LCD on face-up". 
+0.03: Fix the clock for dark mode.
+0.04: Tell clock widgets to hide.

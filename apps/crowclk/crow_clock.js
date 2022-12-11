@@ -76,7 +76,7 @@ function draw_clock(){
   // g.drawLine(clock_center.x - radius, clock_center.y, clock_center.x + radius, clock_center.y);
   // g.drawLine(clock_center.x, clock_center.y - radius, clock_center.x, clock_center.y + radius);
 
-  g.setColor(g.theme.fg);
+  g.setColor(g.theme.dark ? g.theme.bg : g.theme.fg);
   let ticks = [0, 90, 180, 270];
   ticks.forEach((item)=>{
     let agl = item+180;
@@ -92,13 +92,13 @@ function draw_clock(){
   let minute_agl = minute_angle(date);
   g.drawImage(hour_hand, hour_pos_x(hour_agl), hour_pos_y(hour_agl), {rotate:hour_agl*p180}); //
   g.drawImage(minute_hand, minute_pos_x(minute_agl), minute_pos_y(minute_agl), {rotate:minute_agl*p180}); //
-  g.setColor(g.theme.fg);
+  g.setColor(g.theme.dark ? g.theme.bg : g.theme.fg);
   g.fillCircle(clock_center.x, clock_center.y, 6);
-  g.setColor(g.theme.bg);
+  g.setColor(g.theme.dark ? g.theme.fg : g.theme.bg);
   g.fillCircle(clock_center.x, clock_center.y, 3);
 
   // draw minute ticks. Takes long time to draw!
-  g.setColor(g.theme.fg);
+  g.setColor(g.theme.dark ? g.theme.bg : g.theme.fg);
   for (var i=0; i<60; i++){
     let agl = i*6+180;
     g.drawImage(tick1.asImage(), rotate_around_x(big_wheel_x(i*6), agl, tick1), rotate_around_y(big_wheel_y(i*6), agl, tick1), {rotate:agl*p180});
@@ -133,21 +133,12 @@ Bangle.on('lcdPower', (on) => {
     clearTimers();
   }
 });
-Bangle.on('faceUp',function(up){
-  //console.log("faceUp: " + up + " LCD: " + Bangle.isLCDOn());
-  if (up && !Bangle.isLCDOn()) {
-    //console.log("faceUp and LCD off");
-    clearTimers();
-    Bangle.setLCDPower(true);
-  }
-});
-
 g.clear();
 
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 startTimers();
-// Show launcher when button pressed
-Bangle.setUI("clock");

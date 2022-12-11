@@ -231,7 +231,7 @@ document.getElementById("upload").addEventListener("click", function() {
     if (!Bangle.isLCDOn()) return;
 
     arrow(oldHeading,g.theme.bg);
-    var heading = m.heading + nextAngle;
+    var heading = (360-m.heading) + nextAngle;
     arrow(heading,"#f00");
     oldHeading = heading;
   }

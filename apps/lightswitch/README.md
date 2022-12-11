@@ -1,7 +1,10 @@
 # Light Switch Widget
 
-Whis this widget I wanted to create a solution to quickly en-/disable the LCD backlight and even change the brightness.  
+With this widget I wanted to create a solution to quickly en-/disable the LCD backlight and even change the brightness.  
 In addition it shows the lock status with the option to personalize the lock icon with a tiny image.
+
+All touch and drag inputs related to this widget are cached/masked to prevent actions in the active app.
+(See [espruino/Espruino#2151](https://github.com/espruino/Espruino/issues/2151) for more information.)
 
 ---
 ### Control
@@ -39,6 +42,9 @@ In addition it shows the lock status with the option to personalize the lock ico
     * _clk+launch_ -> on all apps of the types _clock_ and _launch_
     * _except apps_ -> on all apps of the types _clock_ and _launch_ and in the settings
     * _always on_ -> always enabled when the widget is displayed
+* __Oversize__  
+  _0px_ / _1px_ / _..._ / __20px__ / _..._ / _50px_  
+  To make it easier to hit the widget, this value extends the touch area of the widget in all directions.
 * __Drag Delay__  
   _off_ / _50ms_ / _100ms_ / _..._ / __500ms__ / _..._ / _1000ms_  
   Change the maximum delay between first touch and re-touch/drag to change the brightness or disable changing the brightness completely.
@@ -85,8 +91,6 @@ This images are stored in a seperate file _(lightswitch.images.json)_.
 ### Worth Mentioning
 ---
 #### To do list
-* Catch the touch and draw input related to this widget to prevent actions in the active app.  
-  _(For now I have no idea how to achieve this, help is appreciated)_
 * Manage images for the lock icon through a _Customize and Upload App_ page.
 
 #### Requests, Bugs and Feedback

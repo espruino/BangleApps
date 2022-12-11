@@ -2,3 +2,5 @@
 0.02: using TS and rollup to bundle
 0.03: bug fixes and support bangle 1
 0.04: removing TS
+0.05: major overhaul; now you customize your calendar based on your location for candle lighting times
+0.06: bug fixes and improvements

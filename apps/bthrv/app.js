@@ -75,7 +75,6 @@ function write(){
     data += "," + rrMax + "," + rrMin + ","+rrNumberOfValues;
     data += "\n";
     file.write(data);
-    Bangle.buzz(500);
 }
 
 function onBtHrm(e) {
@@ -87,6 +86,11 @@ function onBtHrm(e) {
     if (currentSlot <= hrvSlots.length && (Date.now() - startingTime) > (hrvSlots[currentSlot] * 1000) && !hrvValues[hrvSlots[currentSlot]]){
       hrvValues[hrvSlots[currentSlot]] = hrv;
       currentSlot++;
+      if (currentSlot == hrvSlots.length){
+        Bangle.buzz(500)
+      } else {
+        Bangle.buzz(50);
+      }
     }
   }
 

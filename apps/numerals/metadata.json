@@ -8,6 +8,7 @@
   "type": "clock",
   "tags": "numerals,clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
   "allow_emulator": true,
   "screenshots": [{"url":"bangle1-numerals-screenshot.png"}],
   "storage": [

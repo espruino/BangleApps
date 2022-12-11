@@ -17,7 +17,6 @@
     '< Back': back,
     'Enabled': {
       value: !!settings.enabled,
-      format: v => settings.enabled ? "On" : "Off",
       onchange: v => {
         settings.enabled = v;
         writeSettings();

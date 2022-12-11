@@ -1,0 +1,15 @@
+{
+  "id": "tapkb",
+  "name": "Tap keyboard",
+  "version":"0.01",
+  "description": "An onscreen tap keyboard.",
+  "icon": "app.png",
+  "type":"textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"textinput","url":"lib.js"}
+  ]
+}

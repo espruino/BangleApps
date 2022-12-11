@@ -2,7 +2,7 @@
   "id": "verticalface",
   "name": "Vertical watch face",
   "shortName": "Vertical Face",
-  "version": "0.09",
+  "version": "0.10",
   "description": "A simple vertical watch face with the date. Heart rate monitor is toggled with BTN1",
   "icon": "app.png",
   "type": "clock",

@@ -1,16 +1,17 @@
 {
   "id": "choozi",
   "name": "Choozi",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Choose people or things at random using Bangle.js.",
   "icon": "app.png",
   "tags": "tool",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
   "screenshots": [{"url":"bangle1-choozi-screenshot1.png"},{"url":"bangle1-choozi-screenshot2.png"}],
   "storage": [
-    {"name":"choozi.app.js","url":"app.js"},
+    {"name":"choozi.app.js","url":"app.js","supports": ["BANGLEJS"]},
+    {"name":"choozi.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
     {"name":"choozi.img","url":"app-icon.js","evaluate":true}
   ]
 }

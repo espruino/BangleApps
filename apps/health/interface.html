@@ -113,7 +113,7 @@ function getMonthList() {
           Util.showModal("Deleting...");
           Util.eraseStorage(filename,()=>{
             Util.hideModal();
-            getTrackList();
+            getMonthList();
           });
         }
         if (task=="downloadcsv") {

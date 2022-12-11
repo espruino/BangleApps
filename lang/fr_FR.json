@@ -164,10 +164,37 @@
         "color": "couleur",
         "Off": "Off",
         "off": "off",
-        "Theme": "Thème"
+        "Theme": "Thème",
+        "one": "une",
+        "two": "deux",
+        "three": "trois",
+        "four": "quatre",
+        "five": "cinq",
+        "six": "six",
+        "seven": "sept",
+        "eight": "huit",
+        "nine": "neuf",
+        "ten": "dix",
+        "eleven": "onze",
+        "twelve": "douze"
     },
     "alarm": {
         "//": "App-specific overrides",
         "rpt": "rép."
+    },
+    "fuzzyw": {
+        "//": "App-specific overrides",
+        "*$1 o'clock": "*$1 heures",
+        "five past *$1": "*$1 heures cinq",
+        "ten past *$1": "*$1 heures dix",
+        "quarter past *$1": "*$1 heures et quart",
+        "twenty past *$1": "*$1 heures vingt",
+        "twenty five past *$1": "*$1 heures vingt- cinq",
+        "half past *$1": "*$1 heures et demie",
+        "twenty five to *$2": "*$2 moins vingt- cinq",
+        "twenty to *$2": "*$2 heures moins vingt",
+        "quarter to *$2": "*$2 moins le quart",
+        "ten to *$2": "*$2 heures moins dix",
+        "five to *$2": "*$2 heures moins cinq"
     }
 }

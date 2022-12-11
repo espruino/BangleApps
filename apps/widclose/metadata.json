@@ -1,0 +1,15 @@
+{
+  "id": "widclose",
+  "name": "Close Button",
+  "version": "0.02",
+  "description": "A button to close the current app",
+  "readme": "README.md",
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget,tools",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot_light.png"},{"url":"screenshot_dark.png"}],
+  "storage": [
+    {"name":"widclose.wid.js","url":"widget.js"}
+  ]
+}

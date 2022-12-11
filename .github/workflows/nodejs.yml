@@ -1,0 +1,27 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Install testing dependencies
+        run: npm ci
+      - name: Test all apps and widgets
+        run: npm test
+      - name: Install typescript dependencies
+        working-directory: ./typescript
+        run: npm ci
+      - name: Build all TS apps and widgets
+        working-directory: ./typescript
+        run: npm run build

@@ -1,0 +1,17 @@
+{
+    "id": "widstep",
+    "name": "Step counter widget",
+    "version": "0.01",
+    "description": "Step counter widget, narrow but clearly readable",
+    "readme": "README.md",
+    "icon": "icons8-winter-boots-48.png",
+    "screenshots": [{"url":"widstep-light.png"},{"url":"widstep-dark.png"}],
+    "type": "widget",
+    "tags": "widget,health",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "dependencies" : {"health":"app"},
+    "allow_emulator":false,
+    "storage": [
+      {"name":"widstep.wid.js","url":"widstep.wid.js"}
+    ]
+  }

@@ -30,6 +30,11 @@
     writeSettings();
   }
 
+  function setSfx(s) {
+    settings.wptSfx = s;
+    writeSettings();
+  }
+
   
   const appMenu = {
     '': {'title': 'GPS Adv Sprt II'},
@@ -38,9 +43,9 @@
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
     'Kalman Filter' : function() { E.showMenu(kalMenu); },
+    'Wpt File Suffix' : function() { E.showMenu(sfxMenu); },
     'Touch' : {
        value : settings.touch,
-       format : v => v?"On":"Off",
        onchange : () => { settings.touch = !settings.touch; writeSettings(); }
     }
   };
@@ -69,17 +74,24 @@
     'Inverted' : function() { setColour(3); }
   };
   
+  const sfxMenu = {
+    '': {'title': 'Wpt File Suffix'},
+    '< Back': function() { E.showMenu(appMenu); },
+    'Default' : function() { setSfx(''); },
+    '1' : function() { setSfx('1'); },
+    '2' : function() { setSfx('2'); },
+    '3' : function() { setSfx('3'); }
+  };
+  
   const kalMenu = {
     '': {'title': 'Kalman Filter'},
     '< Back': function() { E.showMenu(appMenu); },
     'Speed' : {
     value : settings.spdFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
     },
     'Altitude' : {
     value : settings.altFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
     }
   };

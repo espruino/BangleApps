@@ -87,7 +87,6 @@ if (g.drawImages) {
   draw();
   var secondInterval = setInterval(draw,100);
   // load widgets
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
   // Stop when LCD goes off
   Bangle.on('lcdPower',on=>{
@@ -104,3 +103,5 @@ if (g.drawImages) {
 }
 // Show launcher when button pressed
 Bangle.setUI("clock");
+
+Bangle.loadWidgets();

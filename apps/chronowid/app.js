@@ -79,7 +79,6 @@ function showMenu() {
     },
     'Timer on': {
       value: settingsChronowid.started,
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settingsChronowid.started = v;
         updateSettings();

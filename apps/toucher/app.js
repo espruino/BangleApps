@@ -255,7 +255,7 @@ function run(){
     if (process.env.HWVERSION == 1) Bangle.setLCDMode();
     g.clear();
     g.flip();
-    E.showMessage("Loading...");
+    E.showMessage(/*LANG*/"Loading...");
     load(app.src);
   }
 

@@ -9,7 +9,7 @@
  * Calculate the Sun and Moon positions based on watch GPS and display graphically
  */
 
-const SunCalc = require("suncalc.js");
+const SunCalc = require("suncalc"); // from modules folder
 const storage = require("Storage");
 const LAST_GPS_FILE = "astrocalc.gps.json";
 let lastGPS = (storage.readJSON(LAST_GPS_FILE, 1) || null);

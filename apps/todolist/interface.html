@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+
+    <style type="text/css">
+      .alert {
+        padding: 20px;
+        background-color: #f44336; /* Red */
+        color: white;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info"></div>
+
+    <button id="btnReload" class="btn btn-primary">Reload from watch</button>
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+    <button id="btnDownload" class="btn btn-primary">Download</button>
+
+    <pre id="todos" contenteditable></pre>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      const fileTodoList = "todolist.json";
+
+      function errorFormat() {
+        var date = new Date();
+        var error =
+          '<p class="alert">' +
+          date.toUTCString() +
+          " : Wrong format, it should be JSON" +
+          "</p>";
+        return error;
+      }
+
+      function getEditableContent() {
+        return document.getElementById("todos").innerHTML.replace(/<[^>]*>/g, '');;
+      }
+
+      function isJsonString(str) {
+        try {
+          JSON.parse(str);
+        } catch (e) {
+          console.log(str)
+          console.log(e)
+          return false;
+        }
+        return true;
+      }
+
+      function uploadFile(fileid, contents) {
+        Puck.write(
+          `\x10(function() {
+          require("Storage").write("${fileid}",'${contents}');
+          Bluetooth.print("OK");
+         })()\n`,
+          (ret) => {
+            console.log("uploadFile", ret);
+          }
+        );
+      }
+
+      /* Load settings JSON file from the watch.
+       */
+      function loadTodos() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Loading...");
+        Puck.eval(`require('Storage').readJSON("${fileTodoList}")`, (data) => {
+          document.getElementById("todos").innerHTML = JSON.stringify(
+            data,
+            null,
+            2
+          );
+          Util.hideModal();
+        });
+      }
+      /* Save settings as a JSON file on the watch.
+       */
+      function uploadTodos() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Uploading...");
+        let jsonTodos = getEditableContent();
+        if (isJsonString(jsonTodos)) {
+          let shortJsonTodos = JSON.stringify(JSON.parse(jsonTodos));
+          uploadFile(fileTodoList, shortJsonTodos);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      function downloadTodos() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Downloading...");
+        let jsonTodos = getEditableContent();
+        if (isJsonString(jsonTodos)) {
+          var a = document.createElement("a"),
+            file = new Blob([jsonTodos], { type: "application/json" });
+          var url = URL.createObjectURL(file);
+          a.href = url;
+          a.download = fileTodoList;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 0);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      document
+        .getElementById("btnUpload")
+        .addEventListener("click", function () {
+          uploadTodos();
+        });
+      document
+        .getElementById("btnDownload")
+        .addEventListener("click", function () {
+          downloadTodos();
+        });
+      document
+        .getElementById("btnReload")
+        .addEventListener("click", function () {
+          loadTodos();
+        });
+      function onInit() {
+        loadTodos();
+      }
+    </script>
+  </body>
+</html>

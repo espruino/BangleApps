@@ -16,3 +16,9 @@
 0.16: Improved stability. Wind can now be shown.
 0.17: Settings for mph/kph and other minor improvements.
 0.18: Fullscreen mode can now be enabled or disabled in the settings.
+0.19: Alarms can not go bigger than 100.
+0.20: Use alarm for alarm functionality instead of own implementation.
+0.21: Add custom theming.
+0.22: Fix alarm and add build in function for step counting.
+0.23: Add warning for low flash memory
+0.24: Add ability to disable alarm functionality

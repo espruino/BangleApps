@@ -368,8 +368,8 @@ class TextBox {
     // x and y are the center points
     this.x = x;
     this.y = y;
-    this.text = (typeof text !== undefined) ? text : "Default";
-    this.col = (typeof col !== undefined) ? col : red;
+    this.text = text || "Default";
+    this.col = col || red;
 
     // console.log(`Constr TextBox ${this.text} -> Center: (${this.x}, ${this.y}) | Col ${this.col}`);
   }

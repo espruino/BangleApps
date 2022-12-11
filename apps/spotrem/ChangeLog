@@ -1,0 +1,8 @@
+0.01: New app.
+0.02: Restructure menu.
+0.03: change handling of intent extras.
+0.04: New layout.
+0.05: Add widgets field. Tweak layout.
+0.06: Make compatible with Fastload Utils app.
+0.07: Remove just the specific listeners to not interfere with Quick Launch
+when fastloading.

@@ -1,1 +1,4 @@
 0.01: New App!
+0.02: Set Bangle.js 2 compatible
+0.03: Add setting to hide the widget
+0.04: Use default Bangle formatter for booleans

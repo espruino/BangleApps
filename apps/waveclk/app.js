@@ -41,6 +41,7 @@ function draw() {
   var date = new Date();
   var timeStr = require("locale").time(date,1);
   var dateStr = require("locale").date(date).toUpperCase();
+  var dowStr = require("locale").dow(date).toUpperCase();
   // draw time
   g.setFontAlign(0,0).setFont("ZCOOL");
   g.drawString(timeStr,x,y);
@@ -48,6 +49,9 @@ function draw() {
   y += 35;
   g.setFontAlign(0,0,1).setFont("6x8");
   g.drawString(dateStr,g.getWidth()-8,g.getHeight()/2);
+  // draw the day of the week
+  g.setFontAlign(0,0,3).setFont("6x8");
+  g.drawString(dowStr,8,g.getHeight()/2);
   // queue draw in one minute
   queueDraw();
 }

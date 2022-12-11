@@ -1,0 +1,15 @@
+{ "id": "btmultimeter",
+  "name": "Bluetooth Multimeter",
+  "shortName":"BT Meter",
+  "version":"0.01",
+  "description": "Connect to compatible a Bluetooth Multimeters and display the result on your wrist!",
+  "icon": "app.png",
+  "tags": "bluetooth,tool",
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"btmultimeter.app.js","url":"app.js"},
+    {"name":"btmultimeter.img","url":"app-icon.js","evaluate":true}
+  ]
+}

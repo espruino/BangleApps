@@ -1,25 +1,34 @@
-# Languages (locale)
+Languages (locale)
+==================
 
 Country-specific app internationalisation.
 
 This is not an app, but instead it is a library that can be used by
-other applications or widgets to display messages.
+other applications or widgets to provide locale-friendly
 
-## Usage
+- Dates
+- Time (12h/24h)
+- Days of the Week
+- Months
+- Currency values
+- Distances/Lengths/Speed (metric/imperial)
+- Temperature (°C/°F)
 
-Some menus that pop up are translated automatically, but if you're
-writing an application you can use the `locale` library to
+Usage
+-----
+
+If you're writing an application you can use the `locale` library to
 do all the translation for you.
 
 See https://www.espruino.com/Bangle.js+Locale for full examples.
 
 ```JS
 // Date to date string (long)
->require('locale').date(new Date())
+>require("locale").date(new Date())
 ="Donnerstag, 02. April 2020"
 
 // Date to date string (short)
->require('locale').date(new Date(),1)
+>require("locale").date(new Date(), 1)
 ="02.04.2020"
 ```
 

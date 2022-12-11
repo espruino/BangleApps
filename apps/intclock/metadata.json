@@ -1,0 +1,17 @@
+{
+  "id": "intclock",
+  "name": "Interlaced Clock",
+  "version": "0.01",
+  "description": "A lightweight digital clock using an 'interlaced' font",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"intclock.app.js","url":"app.js"},
+    {"name":"intclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}
