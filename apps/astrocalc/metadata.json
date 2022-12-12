@@ -2,7 +2,7 @@
   "id": "astrocalc",
   "name": "Astrocalc",
   "version": "0.04",
-  "description": "Calculates interesting information on the sun and moon cycles for the current day based on your location.",
+  "description": "Calculates interesting information on the sun like sunset and sunrise and moon cycles for the current day based on your location from MyLocation app",
   "icon": "astrocalc.png",
   "tags": "app,sun,moon,cycles,tool",
   "supports": ["BANGLEJS", "BANGLEJS2"],
