@@ -10,7 +10,15 @@ exports.listener = function(type, msg) {
     clearTimeout(exports.messageTimeout);
     delete exports.messageTimeout;
   }
-  if (msg.t==="remove") return;
+  if (msg.t==="remove") {
+    // we won't open the UI for removed messages, so make sure to delete it from flash
+    if (Bangle.MESSAGES) {
+      // we were waiting for exports.messageTimeout
+      require("messages").apply(msg, Bangle.MESSAGES);
+      if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
+    }
+    return require("messages").save(msg); // always write removal to flash
+  }
 
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
   let loadMessages = (Bangle.CLOCK || event.important);
@@ -26,12 +34,12 @@ exports.listener = function(type, msg) {
     require("messages").save(msg);
   } else {
     if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
-    Bangle.MESSAGES.push(msg);
+    require("messages").apply(msg, Bangle.MESSAGES);
+    if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
   }
   const saveToFlash = () => {
     // save messages from RAM to flash after all, if we decide not to launch app
-    if (!Bangle.MESSAGES) return;
-    Bangle.MESSAGES.forEach(m => require("messages").save(m));
+    if (Bangle.MESSAGES) Bangle.MESSAGES.forEach(m => require("messages").save(m));
     delete Bangle.MESSAGES;
   }
   msg.handled = true;
@@ -50,6 +58,7 @@ exports.listener = function(type, msg) {
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
     delete exports.messageTimeout;
+    if (!Bangle.MESSAGES) return; // message was removed during the delay
     if (type!=="music") {
       if (!loadMessages) {
         // not opening the app, just buzz
