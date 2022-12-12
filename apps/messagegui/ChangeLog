@@ -82,3 +82,4 @@
 0.58: Fast load messages without writing to flash
       Don't write messages to flash until the app closes
 0.59: Ensure we do write messages if messages app can't be fast loaded (see #2373)
+0.60: Fix saving of removal messages if UI not open
