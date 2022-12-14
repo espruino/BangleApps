@@ -2,18 +2,19 @@
 
 // ------- Settings file
 const SETTINGSFILE = "hworldclock.json";
-var secondsMode;
-var showSunInfo;
-var colorWhenDark;
+let secondsMode;
+let showSunInfo;
+let colorWhenDark;
+let rotationTarget;
 // ------- Settings file
 
-const BANGLEJS2 = process.env.HWVERSION == 2;
+//const BANGLEJS2 = process.env.HWVERSION == 2;
 const big = g.getWidth()>200;
 // Font for primary time and date
 const primaryTimeFontSize = big?6:5;
 const primaryDateFontSize = big?3:2;
-require("Font5x9Numeric7Seg").add(Graphics);
-require("FontTeletext10x18Ascii").add(Graphics);
+let font5x9 = require("Font5x9Numeric7Seg").add(Graphics);
+let font10x18 = require("FontTeletext10x18Ascii").add(Graphics);
 
 // Font for single secondary time
 const secondaryTimeFontSize = 4; 
@@ -27,8 +28,6 @@ const xcol2 = g.getWidth() - xcol1;
 const font = "6x8";
 let drag;
 
-/* TODO: we could totally use 'Layout' here and
-avoid a whole bunch of hard-coded offsets */
 
 const xyCenter = g.getWidth() / 2;
 const xyCenterSeconds = xyCenter + (big ? 85 : 68);
@@ -41,22 +40,27 @@ const yposWorld = big ? 170 : 120;
 const OFFSET_TIME_ZONE = 0;
 const OFFSET_HOURS = 1;
 
-var PosInterval = 0; 
+let PosInterval = 0; 
 
-var offsets = require("Storage").readJSON("hworldclock.settings.json") || [];
+let offsets = require("Storage").readJSON("hworldclock.settings.json") || [];
 
 //=======Sun
-setting = require("Storage").readJSON("setting.json",1);
+let setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
-SunCalc = require("suncalc"); // from modules folder
+//https://raw.githubusercontent.com/pebl-hank/BangleApps/master/modules/suncalc.js
+let SunCalc = require("suncalc"); // from modules folder
 const LOCATION_FILE = "mylocation.json";
-var rise = "read";
-var set	= "...";
+let rise = "read";
+let set	= "...";
 //var pos	 = {altitude: 20, azimuth: 135};
 //var noonpos = {altitude: 37, azimuth: 180};
 //=======Sun
 
-var ampm = "AM";
+let ampm = "AM";
+
+let defaultRotation = setting.rotate || 0;
+let currentRotation = defaultRotation;
+
 
 // TESTING CODE
 // Used to test offset array values during development.
@@ -91,30 +95,36 @@ const mockOffsets = {
 // END TESTING CODE
  
 
-// Load settings
-function loadMySettings() {
-	// Helper function default setting
-	function def (value, def) {return value !== undefined ? value : def;}
-
-	var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
-	secondsMode = def(settings.secondsMode, "when unlocked");
-	showSunInfo = def(settings.showSunInfo, true);
-	colorWhenDark = def(settings.colorWhenDark, "green");
+// ================ Load settings
+// Helper function default setting
+let def = function(value, def) {
+	return value !== undefined ? value : def;
 }
+
+let settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
+secondsMode = def(settings.secondsMode, "when unlocked");
+showSunInfo = def(settings.showSunInfo, true);
+colorWhenDark = def(settings.colorWhenDark, "green");
+rotationTarget = def(settings.rotationTarget, "90");
+rotationTarget = parseInt(rotationTarget) || 0;
+if (rotationTarget == 90) rotationTarget = 1; // very lame, but works for now.
+if (rotationTarget == 180) rotationTarget = 2;
+if (rotationTarget == 270) rotationTarget = 3;
+// ================ Load settings
 
 
 // Check settings for what type our clock should be
-var _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
+let _12hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"]||false;
 
 // timeout used to update every minute
-var drawTimeout;
-var drawTimeoutSeconds;
-var secondsTimeout;
+let drawTimeout;
+let drawTimeoutSeconds;
+let secondsTimeout;
 
 g.setBgColor(g.theme.bg);
 
 // schedule a draw for the next minute
-function queueDraw() {
+let queueDraw = function() {
 	if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = setTimeout(function() {
 			drawTimeout = undefined;
@@ -123,7 +133,7 @@ function queueDraw() {
 }
 
 // schedule a draw for the next second
-function queueDrawSeconds() {
+let queueDrawSeconds = function() {
 	if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 		drawTimeoutSeconds = setTimeout(function() {
 			drawTimeoutSeconds = undefined;
@@ -132,16 +142,16 @@ function queueDrawSeconds() {
 		}, secondsTimeout - (Date.now() % secondsTimeout));
 }
 
-function doublenum(x) {
+let doublenum = function(x) {	
 	return x < 10 ? "0" + x : "" + x;
 }
 
-function getCurrentTimeFromOffset(dt, offset) {
+let getCurrentTimeFromOffset = function(dt, offset) {
 	return new Date(dt.getTime() + offset * 60 * 60 * 1000);
 }
 
-function updatePos() {
-	coord = require("Storage").readJSON(LOCATION_FILE,1)||  {"lat":0,"lon":0,"location":"-"}; //{"lat":53.3,"lon":10.1,"location":"Pattensen"};
+let updatePos = function() {	
+	let coord = require("Storage").readJSON(LOCATION_FILE,1)||  {"lat":0,"lon":0,"location":"-"}; //{"lat":53.3,"lon":10.1,"location":"Pattensen"};
 	if (coord.lat != 0 && coord.lon != 0) {
 	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);	
 	times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
@@ -154,8 +164,7 @@ function updatePos() {
 	}
 }
 
-
-function drawSeconds() {
+let drawSeconds = function() {
 	// get date
 	let d = new Date();
 	let da = d.toString().split(" ");
@@ -177,16 +186,13 @@ function drawSeconds() {
 	} else {
 		g.setColor(g.theme.fg);
 	}
-	//console.log("---");
-	//console.log(seconds);
 	if (Bangle.isLocked() && secondsMode != "always") seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
-	//console.log(seconds);
 	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
 	queueDrawSeconds();
 
 }
 
-function draw() {
+let draw = function() {
 	// get date
 	let d = new Date();
 	let da = d.toString().split(" ");
@@ -211,7 +217,6 @@ function draw() {
 		}	 
 	}	
 
-	//g.setFont(font, primaryTimeFontSize);
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
 	if (g.theme.dark) {
 		if (colorWhenDark == "green") {
@@ -293,24 +298,10 @@ function draw() {
 	if (secondsMode != "none") queueDrawSeconds();
 }
 
-// clean app screen
-g.clear();
-
-// Init the settings of the app
-loadMySettings();
-
-
-
-
-// draw immediately at first, queue update
-draw();
-
-
 
 
 	
 //if (BANGLEJS2) { 	
-	//Bangle.on("drag", e => {
 	let onDrag = e => {	
 		if (!drag) { // start dragging
 			drag = {x: e.x, y: e.y};
@@ -327,11 +318,19 @@ draw();
 			} else if (Math.abs(dy)>Math.abs(dx)+10) {
 				// vertical
 				if (dx < dy) { //down
-					g.clear().setRotation(0);
-					draw();
-					Bangle.drawWidgets();
+					//g.clear().setRotation(defaultRotation);
+					//currentRotation = defaultRotation;
+					//draw();
+					//Bangle.drawWidgets();
 				} else {
-					g.clear().setRotation(2);
+					if (currentRotation == rotationTarget) {
+						g.clear().setRotation(defaultRotation);
+						currentRotation = defaultRotation;
+					} else {
+						g.clear().setRotation(rotationTarget);
+						currentRotation = rotationTarget;
+					}
+
 					draw();
 					Bangle.drawWidgets();
 				}
@@ -344,13 +343,12 @@ draw();
 		}
 	}; //);
 	Bangle.on("drag", onDrag);
-	//} else {
+	//} <-- BJS2 only    } else {
 			//setWatch(xxx, BTN1, { repeat: true, debounce:50 }); // maybe adding this later
 			//setWatch(xxx, BTN3, { repeat: true, debounce:50 });
 			//setWatch(xxx, BTN4, { repeat: true, debounce:50 });
 			//setWatch(xxx, BTN5, { repeat: true, debounce:50 });
 	//	}
-//}
 
 
 
@@ -390,7 +388,6 @@ if (!Bangle.isLocked())  { // Initial state
   }
  
 
-//Bangle.on('lock',on=>{
 let onLock = on => {	
   if (!on) { // UNlocked
 		if (showSunInfo) {
@@ -430,11 +427,13 @@ let onLock = on => {
  };
 Bangle.on('lock', onLock);
 
+
 // Show launcher when middle button pressed
 Bangle.setUI({
   mode : "custom",clock:true,
   remove : function() {
     // Called to unload all of the clock app
+	g.setRotation(defaultRotation); // bring back default rotation
 	if (typeof PosInterval === "undefined") {
 		console.log("PosInterval is undefined");
 	} else {
@@ -445,9 +444,15 @@ Bangle.setUI({
     drawTimeoutSeconds = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-	if (BANGLEJS2) Bangle.removeListener("drag",onDrag);
+	//if (BANGLEJS2) 
+	Bangle.removeListener("drag",onDrag);
 	Bangle.removeListener("onLock",onLock);
   }});
+
+
+g.clear().setRotation(defaultRotation); // clean app screen and make sure the default rotation is set
+draw(); // draw immediately at first, queue update
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
  

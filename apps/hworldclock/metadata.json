@@ -12,6 +12,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "custom": "custom.html",
+  "dependencies": {"mylocation":"app"},  
   "storage": [
     {"name":"hworldclock.app.js","url":"app.js"},
     {"name":"hworldclock.img","url":"hworldclock-icon.js","evaluate":true},
@@ -19,6 +20,6 @@
   ],
   "data": [
     {"name":"hworldclock.settings.json"},
-	  {"name":"hworldclock.json"}
+	{"name":"hworldclock.json"}
   ]
 }
