@@ -14,4 +14,5 @@
 0.28: Reverted changes to implementation of 0.25
 0.29: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
 0.30: BJS2: swipe seems to be working now
-0.31: Remove calls to Bangle.loadWidgets as they are not needed and create warnings
+0.31: Tweaking the swipe option; Added mylocation as a dependency.
+      Remove calls to Bangle.loadWidgets as they are not needed and create warnings
