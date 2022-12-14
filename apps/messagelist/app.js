@@ -63,6 +63,7 @@
     clearUnreadStuff();
     delete Bangle.appRect;
   };
+  const quitApp = () => load(); // TODO: revert to Bangle.showClock after fixing memory leaks
   try {
     MESSAGES = require("messages").getMessages();
     // Apply fast loaded messages
@@ -167,12 +168,12 @@
     // auto-close after being paused
     if (music.state!=="play") musicTimeout = setTimeout(function() {
       musicTimeout = undefined;
-      if (active==="music" && (!music || music.state!=="play")) Bangle.showClock();
+      if (active==="music" && (!music || music.state!=="play")) quitApp();
     }, 60*1000); // paused for 1 minute
     // auto-close after "playing" way beyond song duration (because "stop" messages don't seem to exist)
     else musicTimeout = setTimeout(function() {
       musicTimeout = undefined;
-      if (active==="music" && (!music || music.state==="play")) Bangle.showClock();
+      if (active==="music" && (!music || music.state==="play")) quitApp();
     }, 2*Math.max(music.dur || 0, 5*60)*1000); // playing: assume ended after twice song duration, or at least 10 minutes
 
     if (active==="music") showMusic(); // update music screen
@@ -460,7 +461,7 @@
     else if (back==="music" && music) showMusic();
     else if (back==="messages" && MESSAGES.length) showMessage();
     else if (back) showMain(); // previous screen was "main", or no longer valid
-    else Bangle.showClock(); // no previous screen: go back to clock
+    else quitApp(); // no previous screen: go back to clock
   };
   /**
    * Leave screen, and make sure goBack() won't take us there anymore;
