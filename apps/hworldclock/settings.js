@@ -42,7 +42,8 @@
         settings.showSunInfo = v;
         writeSettings();
       }
-    }
+    },
+	"Rotation": stringInSettings("rotationTarget", ["off", "90", "180", "270"]),
   };
 
   E.showMenu(mainmenu);
