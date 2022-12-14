@@ -321,7 +321,6 @@ let draw = function() {
 					//g.clear().setRotation(defaultRotation);
 					//currentRotation = defaultRotation;
 					//draw();
-					//Bangle.loadWidgets();
 					//Bangle.drawWidgets();
 				} else {
 					if (currentRotation == rotationTarget) {
@@ -333,7 +332,6 @@ let draw = function() {
 					}
 
 					draw();
-					Bangle.loadWidgets();
 					Bangle.drawWidgets();
 				}
 			} else {
