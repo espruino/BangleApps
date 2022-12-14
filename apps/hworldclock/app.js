@@ -329,12 +329,10 @@ draw();
 				if (dx < dy) { //down
 					g.clear().setRotation(0);
 					draw();
-					Bangle.loadWidgets();
 					Bangle.drawWidgets();
 				} else {
 					g.clear().setRotation(2);
 					draw();
-					Bangle.loadWidgets();
 					Bangle.drawWidgets();
 				}
 			} else {
