@@ -61,12 +61,15 @@ if (stepGoal == undefined) {
 
 exports.load = function() {
   // info used for drawing...
-  var hrm = "--";
+  var hrm = 0;
   var alt = "--";
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
   function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
-  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
+  function hrmUpdateHandler(e) {
+    if (e && e.confidence>60) hrm = Math.round(e.bpm);
+    bangleItems[2].emit("redraw");
+  }
   function altUpdateHandler() {
     Bangle.getPressure().then(data=>{
       if (!data) return;
@@ -99,12 +102,12 @@ exports.load = function() {
     },
     { name : "HRM",
       hasRange : true,
-      get : () => { let v =  Math.round(Bangle.getHealthStatus("last").bpm); return {
-        text : v + " bpm", v : v, min : 40, max : 200,
+      get : () => { return {
+        text : (hrm||"--") + " bpm", v : hrm, min : 40, max : 200,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==")
       }},
-      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
-      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
+      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
+      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = 0; },
     }
   ],
   }];
