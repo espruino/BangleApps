@@ -1,3 +1,11 @@
+// Will calling Bangle.load reset everything? if false, we fast load
+function loadWillReset() {
+  return Bangle.load === load || !Bangle.uiRemove;
+    /* FIXME: Maybe we need a better way of deciding if an app will
+    be fast loaded than just hard-coding a Bangle.uiRemove check.
+    Bangle.load could return a bool (as the load doesn't happen immediately). */
+}
+
 /**
  * Listener set up in boot.js, calls into here to keep boot.js short
  */
@@ -26,11 +34,8 @@ exports.listener = function(type, msg) {
     if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;
   }
-  if (Bangle.load === load || !Bangle.uiRemove) {
+  if (loadWillReset()) {
     // no fast loading: store message to flash
-    /* FIXME: Maybe we need a better way of deciding if an app will
-    be fast loaded than just hard-coding a Bangle.uiRemove check.
-    Bangle.load could return a bool (as the load doesn't happen immediately). */
     require("messages").save(msg);
   } else {
     if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
@@ -79,11 +84,17 @@ exports.listener = function(type, msg) {
  * @param {object} msg
  */
 exports.open = function(msg) {
-  if (msg && msg.id && !msg.show) {
-    msg.show = 1;
-    if (Bangle.load === load) {
-      // no fast loading: store message to load in flash
+  if (msg && msg.id) {
+    // force a display by setting it as new and ensuring it ends up at the beginning of messages list
+    msg.new = 1;
+    if (loadWillReset()) {
+      // no fast loading: store message to load in flash - `msg` will be put in first
       require("messages").save(msg, {force: 1});
+    } else {
+      // fast load - putting it at the end of Bangle.MESSAGES ensures it goes at the start of messages list
+      if (!Bangle.MESSAGES) Bangle.MESSAGES=[];
+      Bangle.MESSAGES = Bangle.MESSAGES.filter(m => m.id!=msg.id)
+      Bangle.MESSAGES.push(msg); // putting at the
     }
   }
 

@@ -72,10 +72,7 @@ var onMessagesModified = function(type,msg) {
 Bangle.on("message", onMessagesModified);
 
 function saveMessages() {
-  require("messages").write(MESSAGES.map(m => {
-    delete m.show;
-    return m;
-  }));
+  require("messages").write(MESSAGES);
 }
 E.on("kill", saveMessages);
 
@@ -116,11 +113,12 @@ function showMapMessage(msg) {
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
 
-let updateLabelsInterval,
-  music = {artist: "", album: "", title: ""}; // defaults, so e.g. msg.title.length doesn't error
+let updateLabelsInterval;
+
 function showMusicMessage(msg) {
   active = "music";
-  msg = Object.assign(music, msg); // combine+remember "musicinfo" and "musicstate" messages
+  // defaults, so e.g. msg.xyz.length doesn't error. `msg` should contain up to date info
+  msg = Object.assign({artist: "", album: "", track: "Music"}, msg);
   openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
@@ -349,6 +347,7 @@ function showMessage(msgid) {
   clockIfNoMsg : bool
   clockIfAllRead : bool
   showMsgIfUnread : bool
+  openMusic : bool      // open music if it's playing
 }
 */
 function checkMessages(options) {
@@ -364,12 +363,8 @@ function checkMessages(options) {
   }
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
-  var toShow = MESSAGES.find(m=>m.show);
-  if (toShow) {
-    newMessages.unshift(toShow);
-  }
   // If we have a new message, show it
-  if ((toShow||options.showMsgIfUnread) && newMessages.length) {
+  if (options.showMsgIfUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
     showMessage(newMessages[0].id);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
@@ -382,8 +377,8 @@ function checkMessages(options) {
     }
     return;
   }
-  // no new messages: show playing music? (only if we have playing music to show)
-  if (options.openMusic && MESSAGES.some(m=>m.id=="music" && m.track && m.state=="play"))
+  // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
+  if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
     return showMessage('music');
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
@@ -449,7 +444,9 @@ setTimeout(() => {
   if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
   if (settings.unreadTimeout)
     unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
-  // only openMusic on launch if music is new
-  var newMusic = MESSAGES.some(m => m.id === "music" && m.new);
-  checkMessages({ clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1, openMusic: newMusic && settings.openMusic });
+  // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
+  var musicMsg = MESSAGES.find(m => m.id === "music");
+  checkMessages({
+    clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1,
+    openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show") });
 }, 10); // if checkMessages wants to 'load', do that
