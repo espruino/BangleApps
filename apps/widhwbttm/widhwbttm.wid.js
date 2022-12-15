@@ -1,7 +1,8 @@
 (function() {
+  let intervalRef = null;
     var v_switch; // show stats
-    if (process.env.BOARD=='BANGLEJS'||process.env.BOARD=='EMSCRIPTEN') v_font_size=16
-     else  v_font_size=13;
+    if (process.env.BOARD=='BANGLEJS'||process.env.BOARD=='EMSCRIPTEN') v_font_size=15
+     else  v_font_size=12;
     var v_str_hw=new String();
     if (v_switch == null || v_switch == '') v_switch=0;
     function draw(){      
@@ -35,11 +36,12 @@
             v_switch=0;
           }
        }    
-  g.reset().setFontVector(v_font_size).setFontAlign(-1, 0).setColor("#0ff");
-  //clean a longer previous string
-  g.drawString("                        ", this.x, this.y+11, true);
+  g.reset().setFontVector(v_font_size).setFontAlign(-1, 0); 
+  //clean a longer previous string, care with br widgets
+  g.drawString("               ", this.x, this.y+11, true);
   g.drawString(v_str_hw, this.x, this.y+11, true);  
   } //end draw
 
 WIDGETS["wdhwbttm"]={area:"bl",width:Bangle.CLOCK?0:60,draw:draw};
+if (Bangle.isLCDOn) intervalRef = setInterval(()=>WIDGETS["wdhwbttm"].draw(), 10*1000);
 })()
