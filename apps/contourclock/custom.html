@@ -54,22 +54,10 @@
             n++;
           }
         }
-        if (n>0) {
-          console.log("READING CONTOURCLOCK.JSON");
-          Util.readStorage("contourclock.json", fileContents => {
-               console.log(fileContents);
-               try {
-                 info = JSON.parse(fileContents);
-                 console.print(fileContents);
-                 console.print(info.files);
-               } catch (e) {
-                 console.error(e);
-               }
-             });
-          //sendCustomizedApp({storage:fonts});
-        } else {
+        if (n>0) 
+          sendCustomizedApp({storage:fonts});
+        else 
           alert("Please select at least one Font!");
-        }
     });
     document.forms[0].appendChild(btn);
     </script>
