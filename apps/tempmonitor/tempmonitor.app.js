@@ -23,7 +23,7 @@ if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
      v_font_size2=60;
      //g.setColor("#0ff"); //light color
   }else{
-    v_font_size1=10;
+    v_font_size1=11;
     v_font_size2=40;
     //g.setColor("#000"); //black or dark
   }
@@ -35,8 +35,8 @@ function onTemperature(v_temp) {
   g.setFontVector(v_font_size1).setFontAlign(0,0);
   var x = (rect.x+rect.x2)/2;
   var y = (rect.y+rect.y2)/2 + 20;
-  g.drawString("Records:"+v_saved_entries, x, rect.y+30);
-  g.drawString("Temperature:", x, rect.y+35+v_font_size1);
+  g.drawString("Records: "+v_saved_entries, x, rect.y+35);
+  g.drawString("Temperature:", x, rect.y+37+v_font_size1);
   //dynamic font (g.getWidth() > 200 ? 60 : 40)
   g.setFontVector(v_font_size2).setFontAlign(0,0);
   // Avg of temperature readings
@@ -48,7 +48,8 @@ function onTemperature(v_temp) {
   lastMeasure=avrTemp.toString();
   if (lastMeasure.length>4) lastMeasure=lastMeasure.substr(0,4);
   //DRAW temperature in the center
-  g.drawString(v_temp+v_t_symbol, x, y);
+  g.drawString("     ", x-20, y);
+  g.drawString(v_temp+v_t_symbol, x-20, y);
   g.flip();
 }
 // from: BJS2 pressure sensor,  BJS1 inbuilt thermistor
@@ -65,7 +66,7 @@ function saveToFile() {
   //input global vars: lastMeasure
   var a=new Date();
   var strlastSaveTime=new String();
-  var strlastSaveTime=a.toISOString();
+  strlastSaveTime=a.toISOString();
   //strlastSaveTime=strlastSaveTime.concat(a.getFullYear(),a.getMonth()+1,a.getDate(),a.getHours(),a.getMinutes());;
   if (v_mode_debug==1) console.log("saving="+strlastSaveTime+","+lastMeasure);
 
@@ -109,7 +110,7 @@ function introPage(){
     g.drawString("Save to file: "+v_saveToFile, x, y+ ((v_font_size1*1)+2) );
     g.drawString("Save freq(ms):"+saveFreq, x, y+((v_font_size1*2)+2) );
     fr=require("Storage").read(filename+"\1");//suffix required
-    if (fr)  g.drawString("Current filesize:"+fr.length.toString()+"kb", x, y+((v_font_size1*3)+2) )
+    if (fr)  g.drawString("Current filesize:"+fr.length.toString()+"kb", x, y+((v_font_size1*3)+2) );
      else g.drawString("File not exist", x, y+((v_font_size1*3)+2));
 }
 //MAIN

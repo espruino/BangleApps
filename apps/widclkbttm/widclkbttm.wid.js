@@ -4,9 +4,7 @@ WIDGETS["wdclkbttm"]={area:"br",width:Bangle.CLOCK?0:60,draw:function() {
     return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
   }
   if (!this.width) return; // if size not right, return
-  if (process.env.BOARD=='BANGLEJS'||process.env.BOARD=='EMSCRIPTEN')  v_font_size=16
-       else  v_font_size=13;  
-  g.reset().setFontVector(v_font_size).setFontAlign(-1, 0);
+  g.reset().setFont("6x8", 2).setFontAlign(-1, 0);
   var time = require("locale").time(new Date(),1);
   g.drawString(time, this.x, this.y+11, true); // 5 * 6*2 = 60
   // queue draw in one minute
