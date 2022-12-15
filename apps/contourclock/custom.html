@@ -54,18 +54,18 @@
             n++;
           }
         }
-        if (n>0)
+        if (n>0) {
           Util.readStorage("contourclock.json", fileContents => {
-               console.log(fileContents);
-               try {
-                 info = JSON.parse(fileContents);
-                 console.print(fileContents);
-                 console.print(info.files);
-               } catch (e) {
-                 console.error(e);
-               }
+            console.log(fileContents);
+            try {
+              info = JSON.parse(fileContents);
+              console.print(fileContents);
+              console.print(info.files);
+            } catch (e) {
+              console.error(e);
+            }
           //sendCustomizedApp({storage:fonts});
-        else
+          } else
           alert("Please select at least one Font!");
     });
     document.forms[0].appendChild(btn);
