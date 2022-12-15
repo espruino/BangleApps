@@ -55,6 +55,15 @@
           }
         }
         if (n>0)
+          Util.readStorage("contourclock.json", fileContents => {
+               console.log(fileContents);
+               try {
+                 info = JSON.parse(fileContents);
+                 console.print(fileContents);
+                 console.print(info.files);
+               } catch (e) {
+                 console.error(e);
+               }
           sendCustomizedApp({storage:fonts});
         else
           alert("Please select at least one Font!");
