@@ -72,6 +72,6 @@
     }
   };
 
-  Bangle.on("message", WIDGETS["messages"].onMsg);
+  Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
   WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 })();
