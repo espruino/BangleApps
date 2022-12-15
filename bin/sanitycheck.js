@@ -245,7 +245,7 @@ apps.forEach((app,appIdx) => {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
     }
     // warn if JS icon is the wrong size
-    if (file.name == app.id+".img") {
+    if (file.name == app.id+".img" && file.evaluate) {
         let icon;
         let match = fileContents.match(/^\s*E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)\s*$/);
         if (match==null) match = fileContents.match(/^\s*atob\(\"([^"]*)\"\)\s*$/);

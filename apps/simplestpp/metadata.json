@@ -1,6 +1,7 @@
 {
   "id": "simplestpp",
   "name": "Simplest++ Clock",
+  "shortName": "Simplest++",
   "version": "0.01",
   "description": "The simplest working clock, with fast load and clock_info, acts as a tutorial piece",
   "readme": "README.md",

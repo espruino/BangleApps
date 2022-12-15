@@ -183,9 +183,12 @@ let drawCircle = function(index, item, data) {
   if (txt.endsWith(" bpm")) txt=txt.slice(0,-4); // hack for heart rate - remove the 'bpm' text
   if(item.hasRange) percent = (data.v-data.min) / (data.max-data.min);
   if(data.short) txt = data.short;
+  //long text can overflow and we do not draw there anymore..
+  if(txt.length>6) txt = txt.slice(0,5)+"\n"+txt.slice(5,10)
   drawGauge(w, h3, percent, color);
   drawInnerCircleAndTriangle(w);
   writeCircleText(w, txt);
+  if(!img) return; //or get it from the clkinfo?
   g.setColor(getCircleIconColor(index, color, percent))
     .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }

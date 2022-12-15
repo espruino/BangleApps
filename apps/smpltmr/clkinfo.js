@@ -69,7 +69,7 @@
     items: [
       {
         name: null,
-        get: () => ({ text: getAlarmMinutesText() + (isAlarmEnabled() ? " min" : ""), img: null}),
+        get: () => ({ text: getAlarmMinutesText() + (isAlarmEnabled() ? " min" : ""), img: smpltmrItems.img }),
         show: function() { smpltmrItems.items[0].emit("redraw"); },
         hide: function () {},
         run: function() { }
@@ -81,7 +81,7 @@
   offsets.forEach((o, i) => {
     smpltmrItems.items = smpltmrItems.items.concat({
       name: null,
-      get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: null}),
+      get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: smpltmrItems.img }),
       show: function() { smpltmrItems.items[i+1].emit("redraw"); },
       hide: function () {},
       run: function() {

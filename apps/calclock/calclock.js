@@ -54,13 +54,15 @@ function drawEventBody(event, y) {
   var yStart = y;
   if (lines.length > 2) {
     lines = lines.slice(0,2);
-    lines[1] = lines[1].slice(0,-3)+"...";
+    lines[1] += "...";
   }
   g.drawString(lines.join('\n'),10,y);
   y+=20 * lines.length;
   if(event.location) {
     g.drawImage(atob("DBSBAA8D/H/nDuB+B+B+B3Dn/j/B+A8A8AYAYAYAAAAAAA=="),10,y);
-    g.drawString(event.location,25,y);
+    var loclines = g.wrapString(event.location, g.getWidth()-30);
+    if(loclines.length>1) loclines[0] += "...";
+    g.drawString(loclines[0],25,y);
     y+=20;
   }
   if (event.color) {
@@ -131,4 +133,3 @@ var minuteInterval = setInterval(redraw, 60 * 1000);
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-

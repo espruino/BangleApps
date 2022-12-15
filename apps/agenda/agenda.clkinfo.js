@@ -19,7 +19,7 @@
 
     agendaItems.items.push({
       name: "Agenda "+i,
-      get: () => ({ text: title + "\n" + dateStr, img: null}),
+      get: () => ({ text: title + "\n" + dateStr, img: agendaItems.img }),
       show: function() { agendaItems.items[i].emit("redraw"); },
       hide: function () {}
     });

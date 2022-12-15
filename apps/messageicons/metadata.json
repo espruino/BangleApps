@@ -1,7 +1,7 @@
 {
   "id": "messageicons",
   "name": "Message Icons",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Library containing a list of icons and colors for apps",
   "icon": "app.png",
   "type": "module",
@@ -10,6 +10,7 @@
   "provides_modules" : ["messageicons"],
   "default": true,
   "storage": [
-    {"name":"messageicons","url":"lib.js"}
+    {"name":"messageicons","url":"lib.js"},
+    {"name":"messageicons.img","url":"icons.img"}
   ]
 }
