@@ -14,7 +14,6 @@ for Noble.
 var SETTINGS = {
   pretokenise : true
 };
-var APPSDIR = __dirname+"/../apps/";
 var noble;
 ["@abandonware/noble", "noble"].forEach(module => {
   if (!noble) try {
@@ -37,36 +36,18 @@ function ERROR(msg) {
   process.exit(1);
 }
 
-//eval(require("fs").readFileSync(__dirname+"../core/js/utils.js"));
-var AppInfo = require("../core/js/appinfo.js");
-global.Const = {
-  /* Are we only putting a single app on a device? If so
-  apps should all be saved as .bootcde and we write info
-  about the current app into app.info */
-  SINGLE_APP_ONLY : false,
-};
 var deviceId = "BANGLEJS2";
-var apps = [];
-var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
-dirs.forEach(dir => {
-  var appsFile;
-  if (dir.name.startsWith("_example") || !dir.isDirectory())
-    return;
-  try {
-    appsFile = require("fs").readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
-  } catch (e) {
-    ERROR(dir.name+"/metadata.json does not exist");
-    return;
-  }
-  apps.push(JSON.parse(appsFile));
-});
 
+var apploader = require("./lib/apploader.js");
 var args = process.argv;
 
 var bangleParam = args.findIndex(arg => /-b\d/.test(arg));
 if (bangleParam!==-1) {
   deviceId = "BANGLEJS"+args.splice(bangleParam, 1)[0][2];
 }
+apploader.init({
+  DEVICEID : deviceId
+});
 if (args.length==3 && args[2]=="list") cmdListApps();
 else if (args.length==3 && args[2]=="devices") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
@@ -90,7 +71,7 @@ process.exit(0);
 }
 
 function cmdListApps() {
-  console.log(apps.map(a=>a.id).join("\n"));
+  console.log(apploader.apps.map(a=>a.id).join("\n"));
 }
 function cmdListDevices() {
   var foundDevices = [];
@@ -113,19 +94,10 @@ function cmdListDevices() {
 }
 
 function cmdInstallApp(appId, deviceAddress) {
-  var app = apps.find(a=>a.id==appId);
+  var app = apploader.apps.find(a=>a.id==appId);
   if (!app) ERROR(`App ${JSON.stringify(appId)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
-  return AppInfo.getFiles(app, {
-    fileGetter:function(url) {
-      console.log(__dirname+"/"+url);
-      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString("binary"));
-    },
-    settings : SETTINGS,
-    device : { id : deviceId }
-  }).then(files => {
-    //console.log(files);
-    var command = files.map(f=>f.cmd).join("\n")+"\n";
+  return apploader.getAppFilesString(app).then(command => {
     bangleSend(command, deviceAddress).then(() => process.exit(0));
   });
 }

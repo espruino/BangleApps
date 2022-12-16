@@ -1,17 +1,12 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 /*
 Mashes together a bunch of different apps to make
 a single firmware JS file which can be uploaded.
 */
-var SETTINGS = {
-  pretokenise : true
-};
-
 var path = require('path');
 var ROOTDIR = path.join(__dirname, '..');
-var APPDIR = ROOTDIR+'/apps';
 var OUTFILE = ROOTDIR+'/firmware.js';
-var DEVICE = "BANGLEJS";
+var DEVICEID = "BANGLEJS";
 var APPS = [ // IDs of apps to install
   "boot","launch","mclock","setting",
   "about","alarm","widbat","widbt","welcome"
@@ -19,53 +14,17 @@ var APPS = [ // IDs of apps to install
 var MINIFY = true;
 
 var fs = require("fs");
-global.Const = {
-  /* Are we only putting a single app on a device? If so
-  apps should all be saved as .bootcde and we write info
-  about the current app into app.info */
-  SINGLE_APP_ONLY : false,
-};
+var apploader = require("./lib/apploader.js");
+apploader.init({
+  DEVICEID : DEVICEID
+});
 
-var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appfiles = [];
 
-function fileGetter(url) {
-  console.log("Loading "+url)
-  if (MINIFY) {
-    /*if (url.endsWith(".js")) {
-      var f = url.slice(0,-3);
-      console.log("MINIFYING "+f);
-      const execSync = require('child_process').execSync;
-      // --config PRETOKENISE=true
-      // --minify
-      code = execSync(`espruino --config SET_TIME_ON_WRITE=false --minify  --board BANGLEJS ${f}.js -o ${f}.min.js`);
-      console.log(code.toString());
-      url = f+".min.js";
-    }*/
-    if (url.endsWith(".json")) {
-      var f = url.slice(0,-5);
-      console.log("MINIFYING JSON "+f);
-      var j = eval("("+fs.readFileSync(url).toString("binary")+")");
-      var code = JSON.stringify(j);
-      //console.log(code);
-      url = f+".min.json";
-      fs.writeFileSync(url, code);
-    }
-  }
-  return Promise.resolve(fs.readFileSync(url).toString("binary"));
-}
-
 Promise.all(APPS.map(appid => {
-  try {
-    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "/metadata.json").toString());
-  } catch (e) {
-    throw new Error(`App ${appid} not found`);
-  }
-  return AppInfo.getFiles(app, {
-    fileGetter : fileGetter,
-    settings : SETTINGS,
-    device : { id : DEVICE }
-  }).then(files => {
+  var app = apploader.apps.find(a => a.id==appid);
+  if (!app) throw new Error(`App ${appid} not found`);
+  return apploader.getAppFiles(app).then(files => {
     appfiles = appfiles.concat(files);
   });
 })).then(() => {
