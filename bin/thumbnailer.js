@@ -6,6 +6,7 @@ var DEVICEID = "BANGLEJS2";
 */
 var EMULATOR = "banglejs1";
 var DEVICEID = "BANGLEJS";
+var SCREENSHOT_DIR = __dirname+"/../screenshots/";
 
 var emu = require("./lib/emulator.js");
 var apploader = require("./lib/apploader.js");
@@ -69,7 +70,7 @@ emu.init({
 }).then(function() {
   if (singleAppId) {
     console.log("Single Screenshot");
-    getThumbnail(singleAppId, "screenshots/"+singleAppId+"-"+EMULATOR+".png");
+    getThumbnail(singleAppId, SCREENSHOT_DIR+singleAppId+"-"+EMULATOR+".png");
     return;
   }
 
@@ -79,6 +80,10 @@ emu.init({
 
   var promise = Promise.resolve();
   appList.forEach(app => {
+    if (!app.supports.includes(DEVICEID)) {
+      console.log(`App ${app.id} isn't designed for ${DEVICEID}`);
+      return;
+    }
     promise = promise.then(() => {
       var imageFile = "screenshots/"+app.id+"-"+EMULATOR+".png";
       return getThumbnail(app.id, imageFile).then(ok => {
