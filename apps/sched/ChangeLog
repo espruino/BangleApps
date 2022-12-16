@@ -17,3 +17,4 @@
 0.14: Added clkinfo for alarms and timers
 0.15: Automatic translation of some string in clkinfo
 0.16: Improve support for date timezone
+0.17: Fix midnight in local timezone (alarms wouldn't always fire as expected in timezone != 0)
