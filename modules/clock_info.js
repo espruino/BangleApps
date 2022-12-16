@@ -239,10 +239,15 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
-      options.menuA += lr;
-      if (options.menuA<0) options.menuA = menu.length-1;
-      if (options.menuA>=menu.length) options.menuA = 0;
-      options.menuB = 0;
+      do {
+        options.menuA += lr;
+        if (options.menuA<0) options.menuA = menu.length-1;
+        if (options.menuA>=menu.length) options.menuA = 0;
+        options.menuB = 0;
+        //get the next one if the menu is empty
+        //can happen for dynamic ones (alarms, events)
+        //in the worst case we come back to 0
+      } while(menu[options.menuA].items.length==0);
     }
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
