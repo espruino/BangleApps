@@ -93,7 +93,7 @@ var bwItems = {
   items: [
   { name: "WeekOfYear",
     get: () => ({ text: "Week " + weekOfYear(), img: null}),
-    show: function() { bwItems.items[0].emit("redraw"); },
+    show: function() {},
     hide: function () {}
   },
   ]
