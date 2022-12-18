@@ -81,6 +81,7 @@ function arc(minR, maxR, minAngle, maxAngle) {
 
 // draw the arc segments around the perimeter
 function drawPerimeter() {
+  g.setBgColor('#000000');
   g.clear();
   for (var i = 0; i < N; i++) {
     g.setColor(colours[i%colours.length]);
@@ -152,7 +153,7 @@ function choose() {
 // draw the current value of N in the middle of the screen, with
 // up/down arrows
 function drawN() {
-  g.setColor(g.theme.fg);
+  g.setColor('#ffffff');
   g.setFont("Vector",fontSize);
   g.drawString(N,centreX-g.stringWidth(N)/2+4,centreY-fontSize/2);
   if (N < maxN)
