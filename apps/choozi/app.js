@@ -5,14 +5,15 @@
  * James Stanley 2021
  */
 
-var colours = ['#ff0000', '#ff8080', '#00ff00', '#80ff80', '#0000ff', '#8080ff', '#ffff00', '#00ffff', '#ff00ff', '#ff8000', '#ff0080', '#8000ff', '#0080ff'];
+var colours = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff'];
+var colours2 = ['#808080', '#800080', '#808000', '#008080', '#ff4040', '#40ff40', '#4040ff'];
 
 var stepAngle = 0.18; // radians - resolution of polygon
 var gapAngle = 0.035; // radians - gap between segments
-var perimMin = 110; // px - min. radius of perimeter
-var perimMax = 120; // px - max. radius of perimeter
+var perimMin = g.getWidth()*0.44; // px - min. radius of perimeter
+var perimMax = g.getWidth()*0.49; // px - max. radius of perimeter
 
-var segmentMax = 106; // px - max radius of filled-in segment
+var segmentMax = g.getWidth()*0.42; // px - max radius of filled-in segment
 var segmentStep = 5; // px - step size of segment fill animation
 var circleStep = 4; // px - step size of circle fill animation
 
@@ -22,10 +23,10 @@ var minSpeed = 0.001; // rad/sec
 var animStartSteps = 300; // how many steps before it can start slowing?
 var accel = 0.0002; // rad/sec/sec - acc-/deceleration rate
 var ballSize = 3; // px - ball radius
-var ballTrack = 100; // px - radius of ball path
+var ballTrack = g.getWidth()*0.40; // px - radius of ball path
 
-var centreX = 120; // px - centre of screen
-var centreY = 120; // px - centre of screen
+var centreX = g.getWidth()*0.5; // px - centre of screen
+var centreY = g.getWidth()*0.5; // px - centre of screen
 
 var fontSize = 50; // px
 
@@ -33,7 +34,6 @@ var radians = 2*Math.PI; // radians per circle
 
 var defaultN = 3; // default value for N
 var minN = 2;
-var maxN = colours.length;
 var N;
 var arclen;
 
@@ -82,6 +82,7 @@ function arc(minR, maxR, minAngle, maxAngle) {
 
 // draw the arc segments around the perimeter
 function drawPerimeter() {
+  g.setBgColor('#000000');
   g.clear();
   for (var i = 0; i < N; i++) {
     g.setColor(colours[i%colours.length]);
@@ -131,6 +132,7 @@ function animateChoice(target) {
     g.fillCircle(x, y, ballSize);
     oldx=x;
     oldy=y;
+    if (process.env.HWVERSION == 2) g.flip();
   }
 }
 
@@ -186,23 +188,23 @@ function readN() {
 }
 
 shuffle(colours); // is this really best?
-Bangle.setLCDMode("direct");
-Bangle.setLCDTimeout(0); // keep screen on
+shuffle(colours2);
+colours=colours.concat(colours2);
+var maxN = colours.length;
+if (process.env.HWVERSION == 1){
+  Bangle.setLCDMode("direct");
+  Bangle.setLCDTimeout(0); // keep screen on
+}
 readN();
 drawN();
 
-setWatch(() => {
-  setN(N+1);
-  drawN();
-}, BTN1, {repeat:true});
-
-setWatch(() => {
-  writeN();
-  drawPerimeter();
-  choose();
-}, BTN2, {repeat:true});
-
-setWatch(() => {
-  setN(N-1);
-  drawN();
-}, BTN3, {repeat:true});
+Bangle.setUI("updown", (v)=>{
+  if (!v){
+    writeN();
+    drawPerimeter();
+    choose();
+  } else {
+    setN(N+v);
+    drawN();
+  }
+});

@@ -10,8 +10,7 @@
   "allow_emulator": true,
   "screenshots": [{"url":"bangle1-choozi-screenshot1.png"},{"url":"bangle1-choozi-screenshot2.png"}],
   "storage": [
-    {"name":"choozi.app.js","url":"app.js","supports": ["BANGLEJS"]},
-    {"name":"choozi.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
+    {"name":"choozi.app.js","url":"app.js"},
     {"name":"choozi.img","url":"app-icon.js","evaluate":true}
   ]
 }
