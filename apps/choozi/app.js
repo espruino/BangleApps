@@ -204,7 +204,7 @@ Bangle.setUI("updown", (v)=>{
     drawPerimeter();
     choose();
   } else {
-    setN(N+v);
+    setN(N-v);
     drawN();
   }
 });
