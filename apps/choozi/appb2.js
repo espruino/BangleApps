@@ -187,7 +187,6 @@ function readN() {
 }
 
 shuffle(colours); // is this really best?
-Bangle.setLCDTimeout(0); // keep screen on
 readN();
 drawN();
 
