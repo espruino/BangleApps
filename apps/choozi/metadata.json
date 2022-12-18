@@ -12,5 +12,8 @@
   "storage": [
     {"name":"choozi.app.js","url":"app.js"},
     {"name":"choozi.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"choozi.save"}
   ]
 }

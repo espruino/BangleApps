@@ -144,20 +144,17 @@ function setN(n) {
   drawPerimeter();
 }
 
-// save N to choozi.txt
+// save N to choozi.save
 function writeN() {
-  var file = require("Storage").open("choozi.txt","w");
-  file.write(N);
+  require("Storage").write("choozi.save","" + N);
 }
 
-// load N from choozi.txt
+// load N from choozi.save
 function readN() {
-  var file = require("Storage").open("choozi.txt","r");
-  var n = file.readLine();
+  var n = require("Storage").read("choozi.save");
   if (n !== undefined) setN(parseInt(n));
   else setN(defaultN);
 }
-
 
 if (process.env.HWVERSION == 1){
   colours=colours.concat(colours2);
