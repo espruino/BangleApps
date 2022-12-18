@@ -187,9 +187,16 @@ function readN() {
   else setN(defaultN);
 }
 
-shuffle(colours); // is this really best?
-shuffle(colours2);
-colours=colours.concat(colours2);
+
+if (process.env.HWVERSION == 1){
+  colours=colours.concat(colours2);
+  shuffle(colours);
+} else {
+  shuffle(colours);
+  shuffle(colours2);
+  colours=colours.concat(colours2);
+}
+
 var maxN = colours.length;
 if (process.env.HWVERSION == 1){
   Bangle.setLCDMode("direct");
