@@ -146,14 +146,19 @@ function setN(n) {
 
 // save N to choozi.save
 function writeN() {
-  require("Storage").write("choozi.save","" + N);
+  var savedN = read();
+  if (savedN != N) require("Storage").write("choozi.save","" + N);
+}
+
+function read(){
+  var n = require("Storage").read("choozi.save");
+  if (n !== undefined) return parseInt(n);
+  return defaultN;
 }
 
 // load N from choozi.save
 function readN() {
-  var n = require("Storage").read("choozi.save");
-  if (n !== undefined) setN(parseInt(n));
-  else setN(defaultN);
+  setN(read());
 }
 
 if (process.env.HWVERSION == 1){
