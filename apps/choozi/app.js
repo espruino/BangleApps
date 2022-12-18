@@ -4,7 +4,7 @@
  *
  * James Stanley 2021
  */
-
+const GU = require("graphics_utils");
 var colours = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff'];
 var colours2 = ['#808080', '#404040', '#000040', '#004000', '#400000', '#ff8000', '#804000', '#4000c0'];
 
@@ -51,35 +51,6 @@ function shuffle (array) {
   }
 }
 
-// draw an arc between radii minR and maxR, and between
-// angles minAngle and maxAngle
-function arc(minR, maxR, minAngle, maxAngle) {
-  var step = stepAngle;
-  var angle = minAngle;
-  var inside = [];
-  var outside = [];
-  var c, s;
-  while (angle < maxAngle) {
-    c = Math.cos(angle);
-    s = Math.sin(angle);
-    inside.push(centreX+c*minR); // x
-    inside.push(centreY+s*minR); // y
-    // outside coordinates are built up in reverse order
-    outside.unshift(centreY+s*maxR); // y
-    outside.unshift(centreX+c*maxR); // x
-    angle += step;
-  }
-  c = Math.cos(maxAngle);
-  s = Math.sin(maxAngle);
-  inside.push(centreX+c*minR);
-  inside.push(centreY+s*minR);
-  outside.unshift(centreY+s*maxR);
-  outside.unshift(centreX+c*maxR);
-  
-  var vertices = inside.concat(outside);
-  g.fillPoly(vertices, true);
-}
-
 // draw the arc segments around the perimeter
 function drawPerimeter() {
   g.setBgColor('#000000');
@@ -87,7 +58,7 @@ function drawPerimeter() {
   for (var i = 0; i < N; i++) {
     g.setColor(colours[i%colours.length]);
     var minAngle = (i/N)*radians;
-    arc(perimMin,perimMax,minAngle,minAngle+arclen);
+    GU.drawArc(g, perimMin,perimMax,minAngle,minAngle+arclen);
   }
 }
 
@@ -144,8 +115,8 @@ function choose() {
   animateChoice((minAngle+maxAngle)/2);
   g.setColor(colours[chosen%colours.length]);
   for (var i = segmentMax-segmentStep; i >= 0; i -= segmentStep)
-    arc(i, perimMax, minAngle, maxAngle);
-  arc(0, perimMax, minAngle, maxAngle);
+    GU.drawArc(g, i, perimMax, minAngle, maxAngle);
+  GU.drawArc(g, 0, perimMax, minAngle, maxAngle);
   for (var r = 1; r < segmentMax; r += circleStep)
     g.fillCircle(centreX,centreY,r);
   g.fillCircle(centreX,centreY,segmentMax);
