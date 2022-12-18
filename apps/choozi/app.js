@@ -6,7 +6,7 @@
  */
 
 var colours = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff'];
-var colours2 = ['#808080', '#800080', '#808000', '#008080', '#ff4040', '#40ff40', '#4040ff'];
+var colours2 = ['#808080', '#404040', '#000040', '#004000', '#400000', '#ff8000', '#804000', '#4000c0'];
 
 var stepAngle = 0.18; // radians - resolution of polygon
 var gapAngle = 0.035; // radians - gap between segments
