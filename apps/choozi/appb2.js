@@ -4,7 +4,8 @@
  * James Stanley 2021
  */
 
-var colours = ['#ff0000', '#ff8080', '#00ff00', '#80ff80', '#0000ff', '#8080ff', '#ffff00', '#00ffff', '#ff00ff', '#ff8000', '#ff0080', '#8000ff', '#0080ff'];
+var colours = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff'];
+var colours2 = ['#808080', '#800080', '#808000', '#008080', '#ff4040', '#40ff40', '#4040ff'];
 
 var stepAngle = 0.18; // radians - resolution of polygon
 var gapAngle = 0.035; // radians - gap between segments
@@ -32,12 +33,11 @@ var radians = 2*Math.PI; // radians per circle
 
 var defaultN = 3; // default value for N
 var minN = 2;
-var maxN = colours.length;
 var N;
 var arclen;
 
 // https://www.frankmitchell.org/2015/01/fisher-yates/
-function shuffle (array) {
+function shuffle(array) {
   var i = 0
     , j = 0
     , temp = null;
@@ -187,6 +187,10 @@ function readN() {
 }
 
 shuffle(colours); // is this really best?
+shuffle(colours2);
+colours=colours.concat(colours2);
+var maxN = colours.length;
+
 readN();
 drawN();
 
