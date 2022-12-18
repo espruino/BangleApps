@@ -114,11 +114,15 @@ function choose() {
   var maxAngle = minAngle + arclen;
   animateChoice((minAngle+maxAngle)/2);
   g.setColor(colours[chosen%colours.length]);
-  for (var i = segmentMax-segmentStep; i >= 0; i -= segmentStep)
+  for (var i = segmentMax-segmentStep; i >= 0; i -= segmentStep){
     GU.drawArc(g, i, perimMax, minAngle, maxAngle);
+    if (process.env.HWVERSION == 2) g.flip();
+  }
   GU.drawArc(g, 0, perimMax, minAngle, maxAngle);
-  for (var r = 1; r < segmentMax; r += circleStep)
+  for (var r = 1; r < segmentMax; r += circleStep){
     g.fillCircle(centreX,centreY,r);
+    if (process.env.HWVERSION == 2) g.flip();
+  }
   g.fillCircle(centreX,centreY,segmentMax);
 }
 
