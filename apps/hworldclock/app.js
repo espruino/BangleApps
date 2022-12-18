@@ -257,7 +257,7 @@ let draw = function() {
 	minutes = doublenum(dx.getMinutes());
 
 
-	if (offsets.length === 1) {
+	if (offsets.length === 1 && false) {
 		let date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
 		// For a single secondary timezone, draw it bigger and drop time zone to second line
 		const xOffset = 30;
