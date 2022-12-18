@@ -37,7 +37,7 @@
 	"Seconds": stringInSettings("secondsMode", ["always", "when unlocked", "none"]),
 	"Color w. dark": stringInSettings("colorWhenDark", ["green", "default"]),
   "1 Offset Small": {
-    value: (settings.singleOffsetSmall !== undefined ? settings.singleOffsetSmall : true),
+    value: (settings.singleOffsetSmall !== undefined ? settings.singleOffsetSmall : false),
     onchange: v=> {
       settings.singleOffsetSmall = v;
       writeSettings();
