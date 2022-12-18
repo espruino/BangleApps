@@ -1,7 +1,7 @@
 {
   "id": "choozi",
   "name": "Choozi",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Choose people or things at random using Bangle.js.",
   "icon": "app.png",
   "tags": "tool",
