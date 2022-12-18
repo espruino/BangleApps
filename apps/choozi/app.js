@@ -10,10 +10,10 @@ var colours2 = ['#808080', '#404040', '#000040', '#004000', '#400000', '#ff8000'
 
 var stepAngle = 0.18; // radians - resolution of polygon
 var gapAngle = 0.035; // radians - gap between segments
-var perimMin = g.getWidth()*0.44; // px - min. radius of perimeter
+var perimMin = g.getWidth()*0.40; // px - min. radius of perimeter
 var perimMax = g.getWidth()*0.49; // px - max. radius of perimeter
 
-var segmentMax = g.getWidth()*0.42; // px - max radius of filled-in segment
+var segmentMax = g.getWidth()*0.38; // px - max radius of filled-in segment
 var segmentStep = 5; // px - step size of segment fill animation
 var circleStep = 4; // px - step size of circle fill animation
 
@@ -23,7 +23,7 @@ var minSpeed = 0.001; // rad/sec
 var animStartSteps = 300; // how many steps before it can start slowing?
 var accel = 0.0002; // rad/sec/sec - acc-/deceleration rate
 var ballSize = 3; // px - ball radius
-var ballTrack = g.getWidth()*0.40; // px - radius of ball path
+var ballTrack = perimMin - ballSize*2; // px - radius of ball path
 
 var centreX = g.getWidth()*0.5; // px - centre of screen
 var centreY = g.getWidth()*0.5; // px - centre of screen
