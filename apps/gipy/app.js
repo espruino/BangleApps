@@ -11,20 +11,6 @@ var settings = Object.assign(
   require("Storage").readJSON("gipy.json", true) || {}
 );
 
-let back_arrow = `
-          *****
-    *     *****
-   *      *****
-  **      *****
- **************
-***************
- *************
-  **
-   *
-    *
-`;
-let back_arrow_img = Graphics.createImage(back_arrow);
-
 let profile_start_times = [];
 
 function start_profiling() {
@@ -285,7 +271,7 @@ class Status {
     let distance_to_projection = this.position.distance(projection);
     if (distance_to_projection > 50) {
       this.scale_factor =
-        Math.min(66.0 / distance_to_projection, 1.0) * 40000.0;
+        Math.min(88.0 / distance_to_projection, 1.0) * 40000.0;
       return true;
     } else {
       this.scale_factor = 40000.0;
@@ -336,8 +322,10 @@ class Status {
     }
   }
   display_stats(orientation) {
-    let remaining_distance = this.remaining_distance(orientation);
-    let rounded_distance = Math.round(remaining_distance / 100) / 10;
+    let remaining_forward_distance = this.remaining_distance(0);
+    let remaining_backward_distance = this.remaining_distance(1);
+    let rounded_forward_distance =
+      Math.round(remaining_forward_distance / 100) / 10;
     let total = Math.round(this.remaining_distances[0] / 100) / 10;
     let now = new Date();
     let minutes = now.getMinutes().toString();
@@ -345,11 +333,7 @@ class Status {
       minutes = "0" + minutes;
     }
     let hours = now.getHours().toString();
-    g.setFont("6x8:2")
-      .setFontAlign(-1, -1, 0)
-      .setColor(g.theme.fg)
-      .drawString(hours + ":" + minutes, 0, 30);
-
+    // now, distance to next point in meters
     g.setFont("6x8:2").drawString(
       "" + this.distance_to_next_point + "m",
       0,
@@ -362,20 +346,37 @@ class Status {
       (this.advanced_distance * 3.6) / done_in
     );
 
-    let eta = compute_eta(
+    let forward_eta = compute_eta(
       now.getHours(),
       now.getMinutes(),
       approximate_speed,
-      remaining_distance / 1000
+      remaining_forward_distance / 1000
     );
+
+    let backward_eta = compute_eta(
+      now.getHours(),
+      now.getMinutes(),
+      approximate_speed,
+      remaining_backward_distance / 1000
+    );
+
+    // display backward ETA
     g.setFont("6x8:2")
       .setFontAlign(-1, -1, 0)
       .setColor(g.theme.fg)
-      .drawString(eta, 0, 48);
-    if (orientation == 1) {
-      g.drawImage(back_arrow_img, 62, 32);
-    }
+      .drawString(backward_eta, 0, 30);
+    // display the clock
+    g.setFont("6x8:2")
+      .setFontAlign(-1, -1, 0)
+      .setColor(g.theme.fg)
+      .drawString(hours + ":" + minutes, 0, 48);
+    // now display ETA
+    g.setFont("6x8:2")
+      .setFontAlign(-1, -1, 0)
+      .setColor(g.theme.fg)
+      .drawString(forward_eta, 0, 66);
 
+    // display speed (avg and instant)
     let approximate_instant_speed = Math.round(this.instant_speed * 3.6);
     g.setFont("6x8:2")
       .setFontAlign(-1, -1, 0)
@@ -385,12 +386,14 @@ class Status {
         g.getHeight() - 15
       );
 
+    // display distance on path
     g.setFont("6x8:2").drawString(
-      "" + rounded_distance + "/" + total,
+      "" + rounded_forward_distance + "/" + total,
       0,
       g.getHeight() - 32
     );
 
+    // display various indicators
     if (this.distance_to_next_point <= 100) {
       if (this.path.is_waypoint(this.reaching)) {
         g.setColor(0.0, 1.0, 0.0)
