@@ -11,7 +11,7 @@ the players seated in a circle, set the number of segments equal to the number
 of players, ensure that each person knows which colour represents them, and then
 choose a segment. After a short animation, the chosen segment will fill the screen.
 
-You can use Choozi to randomly select an element from any set with 2 to 14 members,
+You can use Choozi to randomly select an element from any set with 2 to 15 members,
 as long as you can define a bijection between members of the set and coloured
 segments on the Bangle.js display.
 
