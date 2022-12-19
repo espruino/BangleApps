@@ -58,7 +58,7 @@ function drawPerimeter() {
   for (var i = 0; i < N; i++) {
     g.setColor(colours[i%colours.length]);
     var minAngle = (i/N)*radians;
-    GU.drawArc(g, perimMin,perimMax,minAngle,minAngle+arclen);
+    GU.drawArc(g, perimMin,perimMax,minAngle,minAngle+arclen, centreX, centreY, stepAngle);
   }
 }
 
@@ -115,10 +115,10 @@ function choose() {
   animateChoice((minAngle+maxAngle)/2);
   g.setColor(colours[chosen%colours.length]);
   for (var i = segmentMax-segmentStep; i >= 0; i -= segmentStep){
-    GU.drawArc(g, i, perimMax, minAngle, maxAngle);
+    GU.drawArc(g, i, perimMax, minAngle, maxAngle, centreX, centreY, stepAngle);
     if (process.env.HWVERSION == 2) g.flip();
   }
-  GU.drawArc(g, 0, perimMax, minAngle, maxAngle);
+  GU.drawArc(g, 0, perimMax, minAngle, maxAngle, centreX, centreY, stepAngle);
   for (var r = 1; r < segmentMax; r += circleStep){
     g.fillCircle(centreX,centreY,r);
     if (process.env.HWVERSION == 2) g.flip();

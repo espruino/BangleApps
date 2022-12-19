@@ -1,6 +1,6 @@
-// draw an arc between radii minR and maxR, and between angles minAngle and maxAngle
-exports.drawArc = function(graphics, minR, maxR, minAngle, maxAngle) {
-  var step = stepAngle;
+// draw an arc between radii minR and maxR, and between angles minAngle and maxAngle, all angles are radians
+exports.drawArc = function(graphics, minR, maxR, minAngle, maxAngle, X, Y, stepAngle) {
+  var step = stepAngle || 0.2;
   var angle = minAngle;
   var inside = [];
   var outside = [];
@@ -8,20 +8,28 @@ exports.drawArc = function(graphics, minR, maxR, minAngle, maxAngle) {
   while (angle < maxAngle) {
     c = Math.cos(angle);
     s = Math.sin(angle);
-    inside.push(centreX+c*minR); // x
-    inside.push(centreY+s*minR); // y
+    inside.push(X+c*minR); // x
+    inside.push(Y+s*minR); // y
     // outside coordinates are built up in reverse order
-    outside.unshift(centreY+s*maxR); // y
-    outside.unshift(centreX+c*maxR); // x
+    outside.unshift(Y+s*maxR); // y
+    outside.unshift(X+c*maxR); // x
     angle += step;
   }
   c = Math.cos(maxAngle);
   s = Math.sin(maxAngle);
-  inside.push(centreX+c*minR);
-  inside.push(centreY+s*minR);
-  outside.unshift(centreY+s*maxR);
-  outside.unshift(centreX+c*maxR);
-  
+  inside.push(X+c*minR);
+  inside.push(Y+s*minR);
+  outside.unshift(Y+s*maxR);
+  outside.unshift(X+c*maxR);
+
   var vertices = inside.concat(outside);
   graphics.fillPoly(vertices, true);
+}
+
+exports.degreesToRadians = function(degrees){
+  return Math.PI/180 * degrees;
+}
+
+exports.radiansToDegrees = function(radians){
+  return 180/Math.PI * degrees;
 }
