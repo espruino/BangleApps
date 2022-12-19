@@ -1,5 +1,5 @@
-// draw an arc between radii minR and maxR, and between angles minAngle and maxAngle, all angles are radians
-exports.drawArc = function(graphics, minR, maxR, minAngle, maxAngle, X, Y, stepAngle) {
+// draw an arc between radii minR and maxR, and between angles minAngle and maxAngle centered at X,Y. All angles are radians.
+exports.fillArc = function(graphics, X, Y, minR, maxR, minAngle, maxAngle, stepAngle) {
   var step = stepAngle || 0.2;
   var angle = minAngle;
   var inside = [];
