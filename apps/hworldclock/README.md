@@ -9,6 +9,7 @@ All this is configurable:
 
  - Show seconds only when unlocked (saves battery) / always / do not show seconds
  - Green color on dark mode (on/off)
+ - 1 Offset Small: single location shows as small (like more than 1)
  - Show sun info (on/off) (set your location in the mylocation app)
  - Rotation degree on swipe (off / 90 / 180 / 270)
 
