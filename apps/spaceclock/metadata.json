@@ -4,7 +4,8 @@
   "version":"0.01",
   "description": "Watch face in the style of Casio Prototype Space Resist",
   "icon": "app-icon.png",
-  "tags": "",
+  "type": "clock",
+  "tags": "clock, casio, retro",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
