@@ -3,7 +3,7 @@
   "shortName":"Space Clock",
   "version":"0.01",
   "description": "Watch face in the style of Casio Prototype Space Resist",
-  "icon": "spaceclock_light.png",
+  "icon": "app-icon.png",
   "tags": "",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
