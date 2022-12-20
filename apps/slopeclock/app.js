@@ -115,5 +115,4 @@ Graphics.prototype.setFontPaytoneOne = function (scale) {
   require("widget_utils").swipeOn();
 
   draw();
-  setTimeout(Bangle.drawWidgets, 0);
 }
