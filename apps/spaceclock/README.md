@@ -1,4 +1,4 @@
-# Space Clock
+# Space Clock (Casio)
 ![Light Theme version](spaceclock_light_big.png)
 ## Description
 This watch face is inspired by the Casio Prototype, which was made by Khryzteen Nakamura from Clockology Fans on Facebook.
@@ -13,4 +13,4 @@ This watch face is inspired by the Casio Prototype, which was made by Khryzteen 
 - Support of light and dark theme
 
 ## Tips
-Click on the Heart Icon to deactivate the heart rate monitor.
+Click on the heart icon to deactivate the heart rate monitor.
