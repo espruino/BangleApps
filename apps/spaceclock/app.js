@@ -230,7 +230,7 @@ Bangle.on("lock", (locked) => {
   draw();
 });
 
-Bangle.setUI({mode:"clock"});
+Bangle.setUI("clock");
 Bangle.setBarometerPower(true, APP_NAME);
 Bangle.setHRMPower(true,APP_NAME);
 
