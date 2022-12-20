@@ -37,3 +37,4 @@
 0.34: Add "Confirm" option to alarm/timer edit menus
 0.35: Add automatic translation of more strings
 0.36: alarm widget moved out of app
+0.37: add message input and dated Events
