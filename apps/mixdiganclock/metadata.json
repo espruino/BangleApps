@@ -1,0 +1,16 @@
+{
+  "id": "mixanadigclock",
+  "name": "Mix Dig&Anal Clock",
+  "version": "0.01",
+  "description": "A dual Analog and Digital Clock",
+  "icon": "mixanadigclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [{"url":"bjs1-mixanadigclock_ss.png"}],
+  "supports": ["BANGLEJS","BANGLEJS"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"mixanadigclock.app.js","url":"mixanadigclock.js"},
+    {"name":"mixanadigclock.img","url":"mixanadigclock.js","evaluate":true}
+  ]
+}

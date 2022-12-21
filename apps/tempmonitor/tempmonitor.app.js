@@ -2,6 +2,7 @@
 // Version 001 standalone for  developer
 //  PEND
 //test with small savefreq
+{
 var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 //var required for drawing with dynamic screen
 var rect = Bangle.appRect;
@@ -135,3 +136,4 @@ if (v_saveToFile=="Y") {
 setTimeout(ClearScreen, 3500);
 setTimeout(drawGraph,4000);
 setTimeout(drawTemperature,4500);
+}
