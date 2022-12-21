@@ -8,7 +8,7 @@ Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
 
 Bangle JS1
 
-![](photo_mixdigan_bjs1.jpg)
+![](pic_mixdigan_bjs1.jpg)
 
 Screenshot emulator BJS2
 

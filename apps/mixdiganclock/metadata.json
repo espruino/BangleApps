@@ -6,11 +6,11 @@
   "icon": "mixanadigclock.png",
   "type": "clock",
   "tags": "clock",
-  "screenshots": [{"url":"bjs1-mixanadigclock_ss.png"}],
+  "screenshots": [{"url":"ss_mixdigan_ems.png"}],
   "supports": ["BANGLEJS","BANGLEJS"],
   "allow_emulator": true,
   "storage": [
-    {"name":"mixanadigclock.app.js","url":"mixanadigclock.js"},
-    {"name":"mixanadigclock.img","url":"mixanadigclock.js","evaluate":true}
+    {"name":"mixanadigclock.app.js","url":"mixanadigclock.app.js"},
+    {"name":"mixanadigclock.img","url":"mixanadigclock.img","evaluate":false}
   ]
 }
