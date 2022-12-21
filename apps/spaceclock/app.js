@@ -134,7 +134,7 @@ const drawHeart = (isHRMOn) =>{
 
 const drawSteps = () => {
   var steps = Bangle.getHealthStatus("day").steps;
-  const stepsRaw =  Math.round(steps/1000);
+  const stepsRaw =  steps/1000;
   const decimal = stepsRaw >=10 ? 0 : 1;
   steps =stepsRaw.toFixed(decimal) + "K";
   console.log(steps);
