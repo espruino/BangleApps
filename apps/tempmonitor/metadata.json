@@ -5,6 +5,7 @@
   "description": "Displays the current temperature and stores in a CSV file",
   "icon": "app.png",
   "tags": "tool",
+  "interface": "interface.html",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "screenshots": [{"url":"photo_banglejs1.jpg"}],
   "allow_emulator": true,

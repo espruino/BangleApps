@@ -1,6 +1,6 @@
 # Mix Digital & Analog Clock
 A dual and simultaneous Analog and Digital Clock, also shows day, month and year.
-Color are automatically set depending on the configured Theme or device
+Color are automatically set depending on the configured Theme or device, bunt also change on realtime through touching the right side.
 
 Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
 
@@ -8,7 +8,7 @@ Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
 
 Bangle JS1
 
-![](pic_mixdigan_bjs1.jpg)
+![](photo_mixdigan_bjs1.jpg)
 
 Screenshot emulator BJS2
 
@@ -19,6 +19,14 @@ Screenshot emulator BJS1
 ![](ss_mixdigan_ems.png)
 
 
+SS emulator -color change 
+![](ss_mixdigan_ems_2.png)
+
+SS emulator -color change 
+![](ss_mixdigan_ems2_2.png)
+
+SS emulator -color change 
+![](ss_mixdigan_ems2_3.png)
 
 ## Usage
 

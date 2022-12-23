@@ -1,53 +1,73 @@
-//fork of miclock, dynamic x,y compatible with BJS1, BJS2 and bottom widgets
-/*replace g.setFontVector(height) by g.setFont("Vector", 60);
-below size 20 replace g.setFontVector(13) by 
-g.setFont("6x8",2 or  4x6 (built into all devices */
-/* jshint esversion: 6 */
+/*fork of miclock, dynamic x,y, colors on realtime,
+compatible with BJS1, BJS2 and bottom widgets
+*/
 var locale = require("locale");
-var v_mode_debug=1; //, 0=no, 1 min, 2 prone detail
+var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 var v_model=process.env.BOARD;
+var LastDrawDay; // to notice a change and repaint static texts
+//RGB565 0x White , black, 'Orange',blue,red, olive,...
+var a_colors= [0xFFFF,0x0000, 0xFD20, 0x001F,0xF800,0x7be0,0x780F,0x07E0]; //new Array(0xFFFF
+var Radius= []; //new Array();
+var TxtPosition=[];
+var v_bfont_size;
+var v_vfont_size;
+var v_color1;
+var v_color2;
+var v_color3;
+var v_color_erase;
+var v_count_col;
+var rect = Bangle.appRect;
+var v_center_x;
+var v_center_y;
+if (v_mode_debug>0) console.log("a_colors.length "+a_colors.length);
 
 g.clear();
 //show the exit button
-Bangle.setUI();
-
+//Bangle.setUI();
+Bangle.setUI("clock"); //implies center button for launcher
 /*{
   mode : "custom",
-  back : Bangle.showLauncher 
+  back : Bangle.showLauncher
 });*/
 
 Bangle.loadWidgets();
 
-// different values depending on loaded widgets or not, so after load widgets
-var rect = Bangle.appRect;
-var v_center_x =  g.getWidth()/2;
-var v_center_y =  g.getHeight()/2; //vertical middle
- 
-if (v_mode_debug>0) console.log(v_model+" center x, y "+v_center_x+" , "+v_center_y+" Max y,y2"+rect.y+" ,"+rect.y2);
-var TxtPosition = {
-  "x1": 3, "x2": g.getWidth()-3,
-  "y1": rect.y+17, "y2": rect.y2-6,
-  "x_HH": g.getWidth()/2 ,"y_mm": v_center_y+32
-  };  
 
-//emuls EMSCRIPTEN,EMSCRIPTEN2
-if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
-  var Radius = { "center": 7, "hour": 50, "min": 70, "dots": 88 };
-  var v_bfont_size=3;
-  var  v_vfont_size=35;
-  var v_color1=0xFD20; // orange
-  var v_color2=0x7be0; 
-  var v_color3=0xFFFF; //white , for hands PEND replace hardcoded by logic 
-  var v_color_erase=g.getBgColor(); //0  
-  }else{
-    var Radius = { "center": 5, "hour": 35, "min": 50, "dots": 60 };
-    var v_bfont_size=2;
-    var  v_vfont_size=22;
-    var v_color1=0x001F; // blue
-    var v_color2=0x03E0; //darkgreen
-    var v_color3=0x0000; //opposite to bg, for hands PEND replace hardcoded by logic 
-    var v_color_erase=g.getBgColor();     
-  }
+
+function setVariables() {
+// different values depending on loaded widgets or not, so after load widgets
+  rect = Bangle.appRect;
+  v_center_x =  g.getWidth()/2;
+  v_center_y =  g.getHeight()/2; //vertical middle
+  //if (v_mode_debug>1) console.log(v_model+" center x, y "+v_center_x+" , "+v_center_y+" Max y,y2"+rect.y+" ,"+rect.y2);
+  TxtPosition = {
+    "x1": 3, "x2": g.getWidth()-3,
+    "y1": rect.y+17, "y2": rect.y2-6,
+    "x_HH": g.getWidth()/2 ,"y_mm": v_center_y+32
+    };
+
+  //emuls EMSCRIPTEN,EMSCRIPTEN2
+  v_count_col=2; //1st=0 1st compatible color (dark/light theme)
+  v_color_erase=g.getBgColor();
+  if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
+    Radius = { "center": 7, "hour": 50, "min": 70, "dots": 88 };
+    v_bfont_size=3;
+    v_vfont_size=35;
+     v_color1=2; // orange
+     v_color2=4;
+     v_color3=0; //white , for hands PEND replace hardcoded by logic
+    }else{
+       Radius = { "center": 5, "hour": 35, "min": 50, "dots": 60 };
+       v_bfont_size=2;
+        v_vfont_size=22;
+       v_color1=3; // blue
+       v_color2=1; 
+       v_color3=1; //opposite to bg, for hands PEND replace hardcoded by logic
+    }
+  if (v_mode_debug>0) console.log("set vars for: "+v_model);
+}
+
+
 function rotatePoint(x, y, d) {
   rad = -1 * d / 180 * Math.PI;
   var sin = Math.sin(rad);
@@ -58,17 +78,33 @@ function rotatePoint(x, y, d) {
   return p;
 }
 
-function drawMixedClock() {
-  var date = new Date();
-  var dateArray = date.toString().split(" ");
-  var isEn = locale.name.startsWith("en");
-  var point = [];
-  var minute = date.getMinutes();
-  var hour = date.getHours();
-  var radius;
+//no need to repaint
+function drawStaticRing(){
+  // draw hour and minute dots
+  g.setColor(a_colors[v_color1]); // orange
+  for (i = 0; i < 60; i++) {
+    radius = (i % 5) ? 2 : 4;
+    point = rotatePoint(0, Radius.dots, i * 6);
+    //if (v_mode_debug>1) console.log("point"+point);
+    g.fillCircle(point[0], point[1], radius);
+  }
+}
 
-  // draw date
-  g.setColor(v_color2);
+//no need to repaint every min
+function drawDailyTxt(){
+  var date = new Date();
+  var isEn = locale.name.startsWith("en");
+  var dateArray = date.toString().split(" ");
+  LastDrawDay=locale.dow(date,true);
+  var hour = date.getHours();
+
+  if (v_mode_debug>1) {
+    console.log("full date "+date.toString());
+    console.log("locale time "+locale.time(date,true));
+    console.log("LastDrawDay "+LastDrawDay);
+    console.log("locale new day "+(locale.dow(date,true)));
+  }
+  g.setColor(a_colors[v_color2]);
   //small size then bitmap
   g.setFont("4x6", v_bfont_size);  //6x8
   g.setFontAlign(-1, 0);
@@ -77,23 +113,27 @@ function drawMixedClock() {
   g.setFontAlign(1, 0);
   g.drawString(isEn?locale.month(date,true):(' ' + dateArray[2]), TxtPosition.x2, TxtPosition.y1, true);
   g.drawString(dateArray[3], TxtPosition.x2, TxtPosition.y2, true);
+}
 
-  // draw hour and minute dots
-  g.setColor(v_color1); // orange
-  for (i = 0; i < 60; i++) {
-    radius = (i % 5) ? 2 : 4;
-    point = rotatePoint(0, Radius.dots, i * 6);
-    g.fillCircle(point[0], point[1], radius);
-  }
 
-  // erase last minutes hand
+function drawMixedClock() {
+  var date = new Date();
+  var dateArray = date.toString().split(" ");
+  //var isEn = locale.name.startsWith("en");
+  var point = [];
+  var minute = date.getMinutes();
+  var hour = date.getHours();
+  var radius;
+  //Call function only after a change of day
+  if (LastDrawDay!=locale.dow(date,true)) drawDailyTxt();
+    //ERASE previous hands
+  // erase last MINutes hand
   g.setColor(v_color_erase);
   point = rotatePoint(0, Radius.min, (minute - 1) * 6);
   g.drawLine(v_center_x, v_center_y, point[0], point[1]);
   //to increase thicknes
   g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
-
-  // erase last two hour hands
+  // erase last two HOUR hands ¿2?
   g.setColor(v_color_erase);
   p = rotatePoint(0, Radius.hour, hour % 12 * 30 + (minute - 2) / 2 | 0);
   g.drawLine(v_center_x, v_center_y, p[0], p[1]);
@@ -105,43 +145,54 @@ function drawMixedClock() {
   //to increase thicknes
   g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
 
-  // draw digital time
+  // here time DIGITs are draw  under hands
+
+  // draw new MINute hand
+  point = rotatePoint(0, Radius.min, minute * 6);
+  g.setColor(a_colors[v_color3]);
+  g.drawLine(v_center_x, v_center_y, point[0], point[1]);
+  //to increase thicknes
+  g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
+  // draw new HOUR hand
+  point = rotatePoint(0, Radius.hour, hour % 12 * 30 + date.getMinutes() / 2 | 0);
+  g.setColor(a_colors[v_color3]);
+  g.drawLine(v_center_x, v_center_y, point[0], point[1]);
+  //to increase thicknes
+  g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
+
+  // draw DIGITs of time above hands for better UX
   //g.setFont("6x8", 3); 3 bigger size
   g.setFontVector(v_vfont_size);
-  g.setColor(v_color2);
+  g.setColor(a_colors[v_color2]);
   g.setFontAlign(0, 0);
+  //by default 24H, to use format config  12H 24H read from locale
   g.drawString(dateArray[4].substr(0, 5), TxtPosition.x_HH, TxtPosition.y_mm, true);
-
-  // draw new minute hand
-  point = rotatePoint(0, Radius.min, minute * 6);
-  g.setColor(v_color3);
-  g.drawLine(v_center_x, v_center_y, point[0], point[1]);
-  //to increase thicknes
-  g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
-
-  // draw new hour hand
-  point = rotatePoint(0, Radius.hour, hour % 12 * 30 + date.getMinutes() / 2 | 0);
-  g.setColor(v_color3);
-  g.drawLine(v_center_x, v_center_y, point[0], point[1]);
-  //to increase thicknes
-  g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
-
-  // draw center
-  g.setColor(v_color1);
-  g.fillCircle(v_center_x, v_center_y, Radius.center);
+   // the central point requires redrawing because hands draw over it
+   g.setColor(a_colors[v_color1]);
+   g.fillCircle(v_center_x, v_center_y, Radius.center);
 }
 function UserInput(){
   Bangle.on('touch', function(button){
       switch(button){
           case 1:
-            //console.log("Touch 1");//left
             Bangle.showLauncher();
                break;
           case 2:
-              //console.log("Touch 2");//right
+            //testing to improve
+               if (v_mode_debug>0) console.log("v_count_col/total: "+v_count_col+"/"+a_colors.length);
+               if (v_count_col<a_colors.length){
+                v_color1=v_count_col;
+                v_color2=v_count_col;
+                v_color3=v_count_col;
+                v_count_col++; //next color
+               }
+               else setVariables();   //v_count_col=3; //reset to 1st common color
+               if (v_mode_debug>0) console.log("paint on color: "+v_count_col);
+               drawStaticRing();
+               drawDailyTxt();
                break;
-          case 3: 
-             //console.log("Touch 3");//center 1+2
+          case 3:
+             //console.log("Touch 3 aka 1+2 not for emul");//center 1+2
               break;
       }
   });
@@ -151,9 +202,14 @@ Bangle.on('lcdPower', function(on) {
     drawMixedClock();
 });
 
+setVariables();
 Bangle.drawWidgets();
 UserInput();
+
 setInterval(drawMixedClock, 5E3);
+drawStaticRing(); //pend best position
+drawDailyTxt(); //1st time
 drawMixedClock();
+
 
 

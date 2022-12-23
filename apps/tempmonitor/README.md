@@ -17,6 +17,10 @@ Screenshot BJS1
 
 ![](ss_emul_bjs1.png)
 
+Screenshot data file content
+
+![](CSV_IDE_view.png)
+![](CSV_excel_view.png)
 
 
 ## Usage
