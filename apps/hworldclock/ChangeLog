@@ -16,3 +16,4 @@
 0.30: BJS2: swipe seems to be working now
 0.31: Tweaking the swipe option; Added mylocation as a dependency.
       Remove calls to Bangle.loadWidgets as they are not needed and create warnings
+0.32: Added setting to show single timezone small, like where multiple ones are configured
