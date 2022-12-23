@@ -19,7 +19,10 @@ Screenshot BJS1
 
 Screenshot data file content
 
+![](file_interface.png)
+
 ![](CSV_IDE_view.png)
+
 ![](CSV_excel_view.png)
 
 
