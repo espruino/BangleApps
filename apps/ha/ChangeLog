@@ -4,3 +4,4 @@
 0.04: Feedback if clkinfo run is called.
 0.05: Clkinfo improvements.
 0.06: Updated clkinfo icon.
+0.07: Update clock_info to avoid a redraw

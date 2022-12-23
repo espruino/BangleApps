@@ -7,3 +7,5 @@
 0.07: Clkinfo improvements.
 0.08: Fix error in clkinfo (didn't require Storage & locale)
       Fix clkinfo icon
+0.09: Ensure Agenda supplies an image for clkinfo items
+0.10: Update clock_info to avoid a redraw

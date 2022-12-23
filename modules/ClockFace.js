@@ -58,6 +58,7 @@ function ClockFace(options) {
 
 ClockFace.prototype.tick = function() {
   "ram"
+  if (this._removed) return;
   const time = new Date();
   const now = {
     d: `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`,
@@ -131,6 +132,7 @@ ClockFace.prototype.resume = function() {
   this.tick();
 };
 ClockFace.prototype.remove = function() {
+  this._removed = true;
   if (this._timeout) clearTimeout(this._timeout);
   Bangle.removeListener("lcdPower", this._onLcd);
   if (this._remove) this._remove.apply(this);

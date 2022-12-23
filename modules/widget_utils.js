@@ -53,8 +53,14 @@ exports.cleanup = function() {
 back onscreen with a downwards swipe. Use .show to undo.
 First parameter controls automatic hiding time, 0 equals not hiding at all.
 Default value is 2000ms until hiding.
-Bangle.js 2 only at the moment. */
+Bangle.js 2 only at the moment. On Bangle.js 1 widgets will be hidden permanently.
+
+Note: On Bangle.js 1 is is possible to draw widgets in an offscreen area of the LCD
+and use Bangle.setLCDOffset. However we can't detect a downward swipe so how to
+actually make this work needs some thought.
+*/
 exports.swipeOn = function(autohide) {
+  if (process.env.HWVERSION!==2) return exports.hide();
   exports.cleanup();
   if (!global.WIDGETS) return;
   exports.autohide=autohide===undefined?2000:autohide;
