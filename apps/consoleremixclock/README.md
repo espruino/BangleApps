@@ -6,4 +6,4 @@ If editing or remixing this code, please retain leading zeroes on the hours, the
 
 Created by Giles Booth http://www.suppertime.co.uk/blogmywiki/ / https://mastodon.social/@blogmywiki
 
-[](watch-in-use.jpeg)
+[](watch-in-use.jpg)
