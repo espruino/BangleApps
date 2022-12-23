@@ -3,3 +3,4 @@
 0.03: Use the new messages library
 0.04: Fix dependency on messages library
       Fix loading message UI
+0.05: Ensure we don't clear artist info

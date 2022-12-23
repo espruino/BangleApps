@@ -26,7 +26,7 @@ E.on('ANCS',msg=>{
   // not a remove - we need to get the message info first
   function ancsHandler() {
     var msg = Bangle.ancsMessageQueue[0];
-    NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
+    NRF.ancsGetNotificationInfo( msg.uid ).then( info => { // success
 
       if(msg.preExisting === true){
         info.new = false;
@@ -36,6 +36,10 @@ E.on('ANCS',msg=>{
 
       E.emit("notify", Object.assign(msg, info));
       Bangle.ancsMessageQueue.shift();
+      if (Bangle.ancsMessageQueue.length)
+        ancsHandler();
+    }, err=>{ // failure
+      console.log("ancsGetNotificationInfo failed",err);
       if (Bangle.ancsMessageQueue.length)
         ancsHandler();
     });
@@ -196,7 +200,11 @@ Bangle.messageResponse = (msg,response) => {
   // error/warn here?
 };
 // remove all messages on disconnect
-NRF.on("disconnect", () => require("messages").clearAll());
+NRF.on("disconnect", () => {
+  require("messages").clearAll();
+  // Remove any messages from the ANCS queue
+  Bangle.ancsMessageQueue = [];
+});
 
 /*
 // For testing...

@@ -1,0 +1,13 @@
+{ "id": "clkinfofw",
+  "name": "Firmware Clockinfo",
+  "version":"0.02",
+  "description": "For clocks that display 'clockinfo', this displays the firmware version string",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "clkinfo,firmware",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfofw.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

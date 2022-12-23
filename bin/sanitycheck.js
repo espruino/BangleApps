@@ -94,6 +94,7 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
 var KNOWN_WARNINGS = [
 "App gpsrec data file wildcard .gpsrc? does not include app ID",
 "App owmweather data file weather.json is also listed as data file for app weather",
+  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
 ];
 
 function globToRegex(pattern) {
@@ -245,7 +246,7 @@ apps.forEach((app,appIdx) => {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
     }
     // warn if JS icon is the wrong size
-    if (file.name == app.id+".img") {
+    if (file.name == app.id+".img" && file.evaluate) {
         let icon;
         let match = fileContents.match(/^\s*E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)\s*$/);
         if (match==null) match = fileContents.match(/^\s*atob\(\"([^"]*)\"\)\s*$/);
