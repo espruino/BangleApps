@@ -69,9 +69,10 @@ function saveToFile() {
   strlastSaveTime=a.toISOString();
   //strlastSaveTime=strlastSaveTime.concat(a.getFullYear(),a.getMonth()+1,a.getDate(),a.getHours(),a.getMinutes());;
   if (v_mode_debug==1) console.log("saving="+strlastSaveTime+";"+lastMeasure);
-
+ 
   if (v_saveToFile=='Y'){
-    require("Storage").open(filename,"a").write(strlastSaveTime+";"+lastMeasure+"\n");
+    //write(strlastSaveTime+";"+
+    require("Storage").open(filename,"a").write(a.getMonth()+";"+a.getDate()+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure+"\n");
     //(getTime()+",");
     v_saved_entries=v_saved_entries+1;
   }
