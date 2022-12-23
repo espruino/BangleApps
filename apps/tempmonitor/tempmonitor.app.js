@@ -7,7 +7,7 @@ var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 var rect = Bangle.appRect;
 var history = [];
 var readFreq=5000; //ms //PEND add to settings
-var saveFreq=30000; //ms
+var saveFreq=60000; //ms 1min
 var v_saveToFile='Y'; //Y save //N
 //with upload file º is not displayed properly
 //with upload RAM º is  displayed
