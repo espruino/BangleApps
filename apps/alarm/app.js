@@ -124,7 +124,16 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       value: alarm.as,
       onchange: v => alarm.as = v
     },
-    /*LANG*/"Cancel": () => showMainMenu()
+    /*LANG*/"Hidden": {
+      value: alarm.hidden || false,
+      onchange: v => alarm.hidden = v
+    },
+    /*LANG*/"Cancel": () => showMainMenu(),
+    /*LANG*/"Confirm": () => {
+      prepareAlarmForSave(alarm, alarmIndex, time);
+      saveAndReload();
+      showMainMenu();
+    }
   };
 
   if (!isNew) {
@@ -174,7 +183,7 @@ function decodeDOW(alarm) {
       .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
       .join("")
       .toLowerCase()
-    : "Once"
+    : /*LANG*/"Once"
 }
 
 function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
@@ -284,8 +293,17 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       value: timer.del,
       onchange: v => timer.del = v
     },
+    /*LANG*/"Hidden": {
+      value: timer.hidden || false,
+      onchange: v => timer.hidden = v
+    },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
-    /*LANG*/"Cancel": () => showMainMenu()
+    /*LANG*/"Cancel": () => showMainMenu(),
+    /*LANG*/"Confirm": () => {
+      prepareTimerForSave(timer, timerIndex, time);
+      saveAndReload();
+      showMainMenu();
+    }
   };
 
   if (!isNew) {

@@ -37,7 +37,7 @@ function updateHrm(){
   var px = g.getWidth()/2;
   g.setFontAlign(0,-1);
   g.clearRect(0,24,g.getWidth(),80);
-  g.setFont("6x8").drawString("Confidence "+(hrmInfo.confidence || "--")+"%", px, 70);
+  g.setFont("6x8").drawString(/*LANG*/"Confidence "+(hrmInfo.confidence || "--")+"%", px, 70);
 
   updateScale();
 
@@ -46,7 +46,7 @@ function updateHrm(){
   g.setFontVector(40).setColor(hrmInfo.confidence > 50 ? g.theme.fg : "#888").drawString(str,px,45);
   px += g.stringWidth(str)/2;
   g.setFont("6x8").setColor(g.theme.fg);
-  g.drawString("BPM",px+15,45);
+  g.drawString(/*LANG*/"BPM",px+15,45);
 }
 
 function updateScale(){
@@ -101,7 +101,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 g.setColor(g.theme.fg);
 g.reset().setFont("6x8",2).setFontAlign(0,-1);
-g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
+g.drawString(/*LANG*/"Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 countDown();
 
 

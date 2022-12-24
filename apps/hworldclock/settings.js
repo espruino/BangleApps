@@ -36,13 +36,21 @@
     "< Back": () => back(),
 	"Seconds": stringInSettings("secondsMode", ["always", "when unlocked", "none"]),
 	"Color w. dark": stringInSettings("colorWhenDark", ["green", "default"]),
-    "Show SunInfo": {
-      value: (settings.showSunInfo !== undefined ? settings.showSunInfo : true),
-      onchange: v => {
-        settings.showSunInfo = v;
-        writeSettings();
-      }
+  "1 Offset Small": {
+    value: (settings.singleOffsetSmall !== undefined ? settings.singleOffsetSmall : false),
+    onchange: v=> {
+      settings.singleOffsetSmall = v;
+      writeSettings();
     }
+  },
+  "Show SunInfo": {
+    value: (settings.showSunInfo !== undefined ? settings.showSunInfo : true),
+    onchange: v => {
+      settings.showSunInfo = v;
+      writeSettings();
+    }
+  },
+	"Rotation": stringInSettings("rotationTarget", ["off", "90", "180", "270"]),
   };
 
   E.showMenu(mainmenu);

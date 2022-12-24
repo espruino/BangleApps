@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "Send commands to other Espruino devices via the Bluetooth UART interface. Customisable commands!",
   "icon": "app.png",
-  "tags": "",
+  "tags": "tool,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "custom": "custom.html",

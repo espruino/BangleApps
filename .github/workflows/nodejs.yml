@@ -22,9 +22,6 @@ jobs:
       - name: Install typescript dependencies
         working-directory: ./typescript
         run: npm ci
-      - name: Build types
-        working-directory: ./typescript
-        run: npm run build:types
       - name: Build all TS apps and widgets
         working-directory: ./typescript
         run: npm run build

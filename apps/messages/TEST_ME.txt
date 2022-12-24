@@ -1,0 +1,7 @@
+We need automated tests for this. Specifically:
+
+
+* send notification in clock with fast load -> messagesgui appears
+* send notification in clock without fast load -> messagesgui appears
+* send notification and delete notification quick -> messagesgui doesn't load
+* music?

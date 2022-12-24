@@ -77,6 +77,11 @@ var clock = new ClockFace({
     resume: function() {   // optional, called when the screen turns on
       // for example: turn GPS/compass back on
     },
+    remove: function() {   // optional, used for Fast Loading
+      // for example: remove listeners
+      // Fast Loading will not be used unless this function is present,
+      // if there is nothing to clean up, you can just leave it empty.
+    },
     up: function() {   // optional, up handler
     },
     down: function() {   // optional, down handler
@@ -208,7 +213,7 @@ let menu = {
   /*LANG*/"< Back": back,  
 };
 require("ClockFace_menu").addSettingsFile(menu, "<appid>.settings.json", [ 
-  "showDate", "loadWidgets"
+  "showDate", "loadWidgets", "powerSave",
 ]);
 E.showMenu(menu);
 

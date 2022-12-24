@@ -178,6 +178,8 @@ function draw() {
 ////////////////////////////////////////////////////
 // Bangle.setBarometerPower(true);
 
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 draw();
 
@@ -197,6 +199,5 @@ Bangle.on('lcdPower', on => {
     }
 });
 
-Bangle.setUI("clock");
 
 Bangle.drawWidgets();

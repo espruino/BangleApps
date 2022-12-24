@@ -334,6 +334,7 @@ function setRuntimeValues(resolution) {
 var hour = 0, minute = 1, second = 50;
 var batVLevel = 20;
 
+Bangle.setUI("clock");
 
 function draw() {
   var d = new Date();
@@ -371,7 +372,6 @@ function draw() {
 }
 
 // Show launcher when button pressed
-Bangle.setUI("clock");
 setRuntimeValues(g.getWidth());
 g.reset().clear();
 Bangle.loadWidgets();

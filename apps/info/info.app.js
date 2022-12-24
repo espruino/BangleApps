@@ -1,27 +1,99 @@
-var s = require("Storage");
+const storage = require("Storage");
 const locale = require('locale');
 var ENV = process.env;
 var W = g.getWidth(), H = g.getHeight();
 var screen = 0;
-const maxScreen = 2;
+
+
+var screens = [
+  {
+    name: "General",
+    items: [
+      {name: "Steps", fun:  () => getSteps()},
+      {name: "HRM", fun:  () => getBpm()},
+      {name: "", fun:  () => ""},
+      {name: "Temp.", fun:  () => getWeatherTemp()},
+      {name: "Humidity", fun:  () => getWeatherHumidity()},
+      {name: "Wind", fun:  () => getWeatherWind()},
+    ]
+  },
+  {
+    name: "Hardware",
+    items: [
+      {name: "Battery", fun: () => E.getBattery() + "%"},
+      {name: "Charge?", fun: () => Bangle.isCharging() ? "Yes" : "No"},
+      {name: "TempInt.", fun: () => locale.temp(parseInt(E.getTemperature()))},
+      {name: "Bluetooth", fun:  () => NRF.getSecurityStatus().connected ? "Conn" : "NoConn"},
+      {name: "GPS", fun:  () => Bangle.isGPSOn() ? "On" : "Off"},
+      {name: "Compass", fun:  () => Bangle.isCompassOn() ? "On" : "Off"},
+    ]
+  },
+  {
+    name: "Software",
+    items: [
+      {name: "Firmw.", fun: () => ENV.VERSION},
+      {name: "Git", fun: () => ENV.GIT_COMMIT},
+      {name: "Boot.", fun: () => getVersion("boot.info")},
+      {name: "Settings.", fun: () => getVersion("setting.info")},
+    ]
+  },
+  {
+    name: "Storage [kB]",
+    items: [
+      {name: "Total", fun: () => storage.getStats().totalBytes>>10},
+      {name: "Free", fun: () => storage.getStats().freeBytes>>10},
+      {name: "Trash", fun: () => storage.getStats().trashBytes>>10},
+      {name: "", fun: () => ""},
+      {name: "#File", fun: () => storage.getStats().fileCount},
+      {name: "#Trash", fun: () => storage.getStats().trashCount},
+    ]
+  },
+];
+
+
+function getWeatherTemp(){
+  try {
+    var weather = storage.readJSON('weather.json').weather;
+    return locale.temp(weather.temp-273.15);
+  } catch(ex) { }
+
+  return "?";
+}
+
+
+function getWeatherHumidity(){
+  try {
+    var weather = storage.readJSON('weather.json').weather;
+    return weather.hum = weather.hum + "%";
+  } catch(ex) { }
+
+  return "?";
+}
+
+
+function getWeatherWind(){
+  try {
+    var weather = storage.readJSON('weather.json').weather;
+    var speed = locale.speed(weather.wind).replace("mph", "");
+    return Math.round(speed * 1.609344) + "kph";
+  } catch(ex) { }
+
+  return "?";
+}
+
 
 function getVersion(file) {
-  var j = s.readJSON(file,1);
+  var j = storage.readJSON(file,1);
   var v = ("object"==typeof j)?j.version:false;
   return v?((v?"v"+v:"Unknown")):"NO ";
 }
 
 
-function drawData(name, value, y){
-  g.drawString(name, 5, y);
-  g.drawString(value, 100, y);
-}
-
 function getSteps(){
   try{
     return Bangle.getHealthStatus("day").steps;
   } catch(e) {
-    return ">= 2v12";
+    return ">2v12";
   }
 }
 
@@ -29,8 +101,13 @@ function getBpm(){
   try{
     return Math.round(Bangle.getHealthStatus("day").bpm) + "bpm";
   } catch(e) {
-    return ">= 2v12";
+    return ">2v12";
   }
+}
+
+function drawData(name, value, y){
+  g.drawString(name, 10, y);
+  g.drawString(value, 100, y);
 }
 
 function drawInfo() {
@@ -38,44 +115,22 @@ function drawInfo() {
   var h=18, y = h;//-h;
 
   // Header
-  g.setFont("Vector", h+2).setFontAlign(0,-1);
-  g.drawString("--==|| INFO ||==--", W/2, 0);
+  g.drawLine(0,25,W,25);
+  g.drawLine(0,26,W,26);
+
+  // Info body depending on screen
   g.setFont("Vector",h).setFontAlign(-1,-1);
+  screens[screen].items.forEach(function (item, index){
+    drawData(item.name, item.fun(), y+=h);
+  });
 
-  // Dynamic data
-  if(screen == 0){
-    drawData("Steps", getSteps(), y+=h);
-    drawData("HRM", getBpm(), y+=h);
-    drawData("Battery", E.getBattery() + "%", y+=h);
-    drawData("Voltage", E.getAnalogVRef().toFixed(2) + "V", y+=h);
-    drawData("IntTemp.", locale.temp(parseInt(E.getTemperature())), y+=h);
-  }
-
-  if(screen == 1){
-    drawData("Charging?", Bangle.isCharging() ? "Yes" : "No", y+=h);
-    drawData("Bluetooth", NRF.getSecurityStatus().connected ? "Conn." : "Disconn.", y+=h);
-    drawData("GPS", Bangle.isGPSOn() ? "On" : "Off", y+=h);
-    drawData("Compass", Bangle.isCompassOn() ? "On" : "Off", y+=h);
-    drawData("HRM", Bangle.isHRMOn() ? "On" : "Off", y+=h);
-  }
-
-  // Static data
-  if(screen == 2){
-    drawData("Firmw.", ENV.VERSION, y+=h);
-    drawData("Boot.", getVersion("boot.info"), y+=h);
-    drawData("Settings", getVersion("setting.info"), y+=h);
-    drawData("Storage", "", y+=h);
-    drawData("  Total", ENV.STORAGE>>10, y+=h);
-    drawData("  Free", require("Storage").getFree()>>10, y+=h);
-  }
-
-  if(Bangle.isLocked()){
-    g.setFont("Vector",h-2).setFontAlign(-1,-1);
-    g.drawString("Locked", 0, H-h+2);
-  }
-
+  // Bottom
+  g.drawLine(0,H-h-3,W,H-h-3);
+  g.drawLine(0,H-h-2,W,H-h-2);
+  g.setFont("Vector",h-2).setFontAlign(-1,-1);
+  g.drawString(screens[screen].name, 2, H-h+2);
   g.setFont("Vector",h-2).setFontAlign(1,-1);
-  g.drawString((screen+1) + "/3", W, H-h+2);
+  g.drawString((screen+1) + "/" + screens.length, W, H-h+2);
 }
 
 drawInfo();
@@ -88,14 +143,15 @@ Bangle.on('touch', function(btn, e){
   var isRight = e.x > right;
 
   if(isRight){
-    screen = (screen + 1) % (maxScreen+1);
+    screen = (screen + 1) % screens.length;
   }
 
   if(isLeft){
     screen -= 1;
-    screen = screen < 0 ? maxScreen : screen;
+    screen = screen < 0 ? screens.length-1 : screen;
   }
 
+  Bangle.buzz(40, 0.6);
   drawInfo();
 });
 
@@ -104,5 +160,4 @@ Bangle.on('lock', function(isLocked) {
 });
 
 Bangle.loadWidgets();
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
-// Bangle.drawWidgets();
+Bangle.drawWidgets();

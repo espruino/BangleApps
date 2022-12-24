@@ -62,12 +62,29 @@ scheduleExpiry(storage.readJSON('weather.json')||{});
  * @param x Left
  * @param y Top
  * @param r Icon Size
+ * @param ovr Graphics instance (or undefined for g)
  */
-exports.drawIcon = function(cond, x, y, r) {
+exports.drawIcon = function(cond, x, y, r, ovr) {
   var palette;
-
+  var monochrome=1;
+  if(!ovr) {
+    ovr = g;
+    monochrome=0;
+  }
+  if(monochrome) {
+    palette = {
+      sun: '#FFF',
+      cloud: '#FFF',
+      bgCloud: '#FFF',
+      rain: '#FFF',
+      lightning: '#FFF',
+      snow: '#FFF',
+      mist: '#FFF',
+      background: '#000'
+      };
+  } else
   if (B2) {
-    if (g.theme.dark) {
+    if (ovr.theme.dark) {
       palette = {
         sun: '#FF0',
         cloud: '#FFF',
@@ -89,7 +106,7 @@ exports.drawIcon = function(cond, x, y, r) {
       };
     }
   } else {
-    if (g.theme.dark) {
+    if (ovr.theme.dark) {
       palette = {
         sun: '#FE0',
         cloud: '#BBB',
@@ -113,19 +130,19 @@ exports.drawIcon = function(cond, x, y, r) {
   }
 
   function drawSun(x, y, r) {
-    g.setColor(palette.sun);
-    g.fillCircle(x, y, r);
+    ovr.setColor(palette.sun);
+    ovr.fillCircle(x, y, r);
   }
 
   function drawCloud(x, y, r, c) {
     const u = r/12;
     if (c==null) c = palette.cloud;
-    g.setColor(c);
-    g.fillCircle(x-8*u, y+3*u, 4*u);
-    g.fillCircle(x-4*u, y-2*u, 5*u);
-    g.fillCircle(x+4*u, y+0*u, 4*u);
-    g.fillCircle(x+9*u, y+4*u, 3*u);
-    g.fillPoly([
+    ovr.setColor(c);
+    ovr.fillCircle(x-8*u, y+3*u, 4*u);
+    ovr.fillCircle(x-4*u, y-2*u, 5*u);
+    ovr.fillCircle(x+4*u, y+0*u, 4*u);
+    ovr.fillCircle(x+9*u, y+4*u, 3*u);
+    ovr.fillPoly([
       x-8*u, y+7*u,
       x-8*u, y+3*u,
       x-4*u, y-2*u,
@@ -137,19 +154,23 @@ exports.drawIcon = function(cond, x, y, r) {
 
   function drawBrokenClouds(x, y, r) {
     drawCloud(x+1/8*r, y-1/8*r, 7/8*r, palette.bgCloud);
+    if(monochrome)
+      drawCloud(x-1/8*r, y+2/16*r, r, palette.background);
     drawCloud(x-1/8*r, y+1/8*r, 7/8*r);
   }
 
   function drawFewClouds(x, y, r) {
     drawSun(x+3/8*r, y-1/8*r, 5/8*r);
+    if(monochrome)
+      drawCloud(x-1/8*r, y+2/16*r, r, palette.background);
     drawCloud(x-1/8*r, y+1/8*r, 7/8*r);
   }
 
   function drawRainLines(x, y, r) {
-    g.setColor(palette.rain);
+    ovr.setColor(palette.rain);
     const y1 = y+1/2*r;
     const y2 = y+1*r;
-    const poly = g.fillPolyAA ? p => g.fillPolyAA(p) : p => g.fillPoly(p);
+    const poly = ovr.fillPolyAA ? p => ovr.fillPolyAA(p) : p => ovr.fillPoly(p);
     poly([
       x-6/12*r, y1,
       x-8/12*r, y2,
@@ -182,8 +203,8 @@ exports.drawIcon = function(cond, x, y, r) {
 
   function drawThunderstorm(x, y, r) {
     function drawLightning(x, y, r) {
-      g.setColor(palette.lightning);
-      g.fillPoly([
+      ovr.setColor(palette.lightning);
+      ovr.fillPoly([
         x-2/6*r, y-r,
         x-4/6*r, y+1/6*r,
         x-1/6*r, y+1/6*r,
@@ -194,8 +215,9 @@ exports.drawIcon = function(cond, x, y, r) {
       ]);
     }
 
-    drawBrokenClouds(x, y-1/3*r, r);
+    if(monochrome) drawBrokenClouds(x, y-1/3*r, r);
     drawLightning(x-1/12*r, y+1/2*r, 1/2*r);
+    drawBrokenClouds(x, y-1/3*r, r);
   }
 
   function drawSnow(x, y, r) {
@@ -210,7 +232,7 @@ exports.drawIcon = function(cond, x, y, r) {
       }
     }
 
-    g.setColor(palette.snow);
+    ovr.setColor(palette.snow);
     const w = 1/12*r;
     for(let i = 0; i<=6; ++i) {
       const points = [
@@ -220,7 +242,7 @@ exports.drawIcon = function(cond, x, y, r) {
         x+w, y+r,
       ];
       rotatePoints(points, x, y, i/3*Math.PI);
-      g.fillPoly(points);
+      ovr.fillPoly(points);
 
       for(let j = -1; j<=1; j += 2) {
         const points = [
@@ -231,7 +253,7 @@ exports.drawIcon = function(cond, x, y, r) {
         ];
         rotatePoints(points, x, y+7/12*r, j/3*Math.PI);
         rotatePoints(points, x, y, i/3*Math.PI);
-        g.fillPoly(points);
+        ovr.fillPoly(points);
       }
     }
   }
@@ -245,18 +267,18 @@ exports.drawIcon = function(cond, x, y, r) {
       [-0.2, 0.3],
     ];
 
-    g.setColor(palette.mist);
+    ovr.setColor(palette.mist);
     for(let i = 0; i<5; ++i) {
-      g.fillRect(x+layers[i][0]*r, y+(0.4*i-0.9)*r, x+layers[i][1]*r,
+      ovr.fillRect(x+layers[i][0]*r, y+(0.4*i-0.9)*r, x+layers[i][1]*r,
         y+(0.4*i-0.7)*r-1);
-      g.fillCircle(x+layers[i][0]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
-      g.fillCircle(x+layers[i][1]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
+      ovr.fillCircle(x+layers[i][0]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
+      ovr.fillCircle(x+layers[i][1]*r, y+(0.4*i-0.8)*r-0.5, 0.1*r-0.5);
     }
   }
 
   function drawUnknown(x, y, r) {
     drawCloud(x, y, r, palette.bgCloud);
-    g.setColor(g.theme.fg).setFontAlign(0, 0).setFont('Vector', r*2).drawString("?", x+r/10, y+r/6);
+    ovr.setColor(ovr.theme.fg).setFontAlign(0, 0).setFont('Vector', r*2).drawString("?", x+r/10, y+r/6);
   }
 
   /*

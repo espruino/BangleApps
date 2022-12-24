@@ -226,15 +226,14 @@ drawCalendar(date);
 clearWatch();
 Bangle.on("touch", area => {
   const month = date.getMonth();
-  let prevMonth;
   if (area == 1) {
     let prevMonth = month > 0 ? month - 1 : 11;
     if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
     date.setMonth(prevMonth);
   } else {
-    let prevMonth = month < 11 ? month + 1 : 0;
-    if (prevMonth === 0) date.setFullYear(date.getFullYear() + 1);
-    date.setMonth(month + 1);
+    let nextMonth = month < 11 ? month + 1 : 0;
+    if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
+    date.setMonth(nextMonth);
   }
   drawCalendar(date);
 });

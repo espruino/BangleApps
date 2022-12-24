@@ -11,6 +11,5 @@
   "storage": [
     {"name":"ratchet_launch.app.js","url":"app.js"}
   ],
-  "sortorder": -10,
   "readme":"README.md"
 }

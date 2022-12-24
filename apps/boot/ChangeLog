@@ -52,3 +52,15 @@
 0.46: Fix no clock found error on Bangle.js 2
 0.47: Add polyfill for setUI with an object as an argument (fix regression for 2v12 devices after Layout module changed)
 0.48: Workaround for BTHRM issues on Bangle.js 1 (write .boot files in chunks)
+0.49: Store first found clock as a setting to speed up further boots
+0.50: Allow setting of screen rotation
+      Remove support for 2v11 and earlier firmware
+0.51: Remove patches for 2v10 firmware (BEEPSET and setUI)
+      Add patch to ensure that compass heading is corrected on pre-2v15.68 firmware
+      Ensure clock is only fast-loaded if it doesn't contain widgets
+0.52: Ensure heading patch for pre-2v15.68 firmware applies to getCompass
+0.53: Add polyfills for pre-2v15.135 firmware for Bangle.load and Bangle.showClock
+0.54: Fix for invalid version comparison in polyfill
+0.55: Add toLocalISOString polyfill for pre-2v15 firmwares
+      Only add boot info comments if settings.bootDebug was set
+      If settings.bootDebug is set, output timing for each section of .boot0

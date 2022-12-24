@@ -57,7 +57,7 @@
           t:event.cmd=="incoming"?"add":"remove",
           id:"call", src:"Phone",
           positive:true, negative:true,
-          title:event.name||"Call", body:"Incoming call\n"+event.number});
+          title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
       "alarm" : function() {
@@ -91,10 +91,6 @@
         sched.reload();
       },
       //TODO perhaps move those in a library (like messages), used also for viewing events?
-      //simple package with events all together
-      "calendarevents" : function() {
-        require("Storage").writeJSON("android.calendar.json", event.events);
-      },
       //add and remove events based on activity on phone (pebble-like)
       "calendar" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
@@ -109,7 +105,7 @@
       "calendar-" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
-        if (!cal || !Array.isArray(cal)) return;
+        if (!cal || !Array.isArray(cal)) cal = [];
         cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
@@ -118,15 +114,74 @@
           var cal = require("Storage").readJSON("android.calendar.json",true);
           if (!cal || !Array.isArray(cal)) cal = [];
           gbSend({t:"force_calendar_sync", ids: cal.map(e=>e.id)});
+      },
+      "http":function() {
+        //get the promise and call the promise resolve
+        if (Bangle.httpRequest === undefined) return;
+        var request=Bangle.httpRequest[event.id];
+        if (request === undefined) return; //already timedout or wrong id
+        delete Bangle.httpRequest[event.id];
+        clearTimeout(request.t); //t = timeout variable
+        if(event.err!==undefined) //if is error
+          request.j(event.err); //r = reJect function
+        else
+          request.r(event); //r = resolve function
+      },
+      "gps": function() {
+        const settings = require("Storage").readJSON("android.settings.json",1)||{};
+        if (!settings.overwriteGps) return;
+        delete event.t;
+        event.satellites = NaN;
+        event.course = NaN;
+        event.fix = 1;
+        Bangle.emit('gps', event);
+      },
+      "is_gps_active": function() {
+        gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
       }
     };
     var h = HANDLERS[event.t];
     if (h) h(); else console.log("GB Unknown",event);
   };
+  // HTTP request handling - see the readme
+  // options = {id,timeout,xpath}
+  Bangle.http = (url,options)=>{
+    options = options||{};
+    if (!NRF.getSecurityStatus().connected)
+      return Promise.reject(/*LANG*/"Not connected to Bluetooth");
+    if (Bangle.httpRequest === undefined)
+      Bangle.httpRequest={};
+    if (options.id === undefined) {
+      // try and create a unique ID
+      do {
+        options.id = Math.random().toString().substr(2);
+      } while( Bangle.httpRequest[options.id]!==undefined);
+    }
+    //send the request
+    var req = {t: "http", url:url, id:options.id};
+    if (options.xpath) req.xpath = options.xpath;
+    if (options.method) req.method = options.method;
+    if (options.body) req.body = options.body;
+    if (options.headers) req.headers = options.headers;
+    gbSend(req);
+    //create the promise
+    var promise = new Promise(function(resolve,reject) {
+      //save the resolve function in the dictionary and create a timeout (30 seconds default)
+      Bangle.httpRequest[options.id]={r:resolve,j:reject,t:setTimeout(()=>{
+        //if after "timeoutMillisec" it still hasn't answered -> reject
+        delete Bangle.httpRequest[options.id];
+        reject("Timeout");
+      },options.timeout||30000)};
+    });
+    return promise;
+  }
 
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
-  NRF.on("connect", () => setTimeout(sendBattery, 2000));
+  NRF.on("connect", () => setTimeout(function() {
+    sendBattery();
+    GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
+  }, 2000));
   Bangle.on("charging", sendBattery);
   if (!settings.keep)
     NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
@@ -146,6 +201,30 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
+  // GPS overwrite logic
+  if (settings.overwriteGps) { // if the overwrite option is set../
+    // Save current logic
+    const originalSetGpsPower = Bangle.setGPSPower;
+    // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
+    Bangle.setGPSPower = (isOn, appID) => {
+      // if not connected, use old logic
+      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID); 
+      // Emulate old GPS power logic
+      if (!Bangle._PWR) Bangle._PWR={};
+      if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
+      if (!appID) appID="?";
+      if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);
+      if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);
+      let pwr = Bangle._PWR.GPS.length>0;
+      gbSend({ t: "gps_power", status: pwr });
+      return pwr;
+    }
+    // Replace check if the GPS is on to check the _PWR variable
+    Bangle.isGPSOn = () => {
+      return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
+    }
+  }
+
   // remove settings object so it's not taking up RAM
   delete settings;
 })();

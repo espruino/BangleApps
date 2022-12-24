@@ -2,7 +2,7 @@
   "id": "kanawatch",
   "name": "Kanawatch",
   "shortName": "Kanawatch",
-  "version": "0.01",
+  "version": "0.05",
   "type": "clock",
   "description": "Learn Hiragana and Katakana",
   "icon": "app.png",
@@ -25,7 +25,7 @@
   ],
   "screenshots": [
     {
-      "url": "screenshot.jpg"
+      "url": "screenshot.png"
     }
   ]
 }

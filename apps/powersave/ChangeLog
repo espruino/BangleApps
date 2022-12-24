@@ -1,0 +1,3 @@
+0.01: Initial release
+0.02: Removed accelerometer poll interval adjustment, fixed a few issues with detecting the current app
+0.03: Fix a couple of silly mistakes

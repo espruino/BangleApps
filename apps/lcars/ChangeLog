@@ -21,3 +21,4 @@
 0.21: Add custom theming.
 0.22: Fix alarm and add build in function for step counting.
 0.23: Add warning for low flash memory
+0.24: Add ability to disable alarm functionality

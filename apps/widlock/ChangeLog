@@ -4,3 +4,5 @@
 0.04: Set sortorder to -1 so that widget always takes up the furthest left position
 0.05: Set sortorder to -10 so that others can take -1 etc
 0.06: Set sortorder to -10 in widget code
+0.07: Remove check for .isLocked (extremely old firmwares), speed up widget loading
+0.08: Don't completely remove the lock widget when screen unlocked (use 1px) to ensure appRect/drawWidgets still thinks there are widgets

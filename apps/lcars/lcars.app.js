@@ -12,6 +12,7 @@ let settings = {
   themeColor1BG: "#FF9900",
   themeColor2BG: "#FF00DC",
   themeColor3BG: "#0094FF",
+  disableAlarms: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -722,12 +723,12 @@ Bangle.on('touch', function(btn, e){
   }
 
   if(lcarsViewPos == 0){
-    if(is_upper){
+    if(is_upper && !settings.disableAlarms){
       feedback();
       increaseAlarm();
       drawState();
       return;
-    } if(is_lower){
+    } if(is_lower && !settings.disableAlarms){
       feedback();
       decreaseAlarm();
       drawState();

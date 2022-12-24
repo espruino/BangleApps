@@ -185,7 +185,7 @@ let LED = // LED as minimal and only definition (as instance / singleton)
 , reset: function() { this.set(false); } // turn off
 , write: function(v) { this.set(v); }  // turn on w/ no arg or truey, else off
 , toggle: function() { this.set( ! this.isOn); } // toggle the LED
-}, LED1 = LED; // LED1 as 'synonym' for LED 
+}, LED1 = LED; // LED1 as 'synonym' for LED
 
 
 var lf = {fix:0,satellites:0};
@@ -210,7 +210,7 @@ function nxtWp(){
 }
 
 function loadWp() {
-  var w = require("Storage").readJSON('waypoints'+cfg.wptSfx+'.json')||[{name:"NONE"}];
+  var w = require("waypoints").load(cfg.wptSfx);
   if (cfg.wp>=w.length) cfg.wp=0;
   if (cfg.wp<0) cfg.wp = w.length-1;
   savSettings();
@@ -239,7 +239,7 @@ function bearing(a,b){
 function distance(a,b){
   var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
   var y = radians(b.lat-a.lat);
-  
+
   // Distance in metres
   var d = Math.sqrt(x*x + y*y) * 6371000;
   return d;
@@ -251,38 +251,38 @@ function drawScrn(dat) {
 
   buf.clear();
   buf.setBgColor(0);
-  
+
   var n;
   n = dat.val.toString();
-  
+
   var s=50;    // Font size
   var l=n.length;
-  
+
   if ( l <= 7 ) s=55;
   if ( l <= 6 ) s=60;
   if ( l <= 5 ) s=80;
   if ( l <= 4 ) s=100;
   if ( l <= 3 ) s=120;
-        
-  buf.setFontAlign(0,0); //Centre 
-  buf.setColor(1);  
+
+  buf.setFontAlign(0,0); //Centre
+  buf.setColor(1);
   buf.setFontVector(s);
   buf.drawString(n,126,52);
 
-  
+
   // Primary Units
   buf.setFontAlign(-1,1); //left, bottom
-  buf.setColor(2);  
+  buf.setColor(2);
   buf.setFontVector(35);
-  buf.drawString(dat.unit,5,164);  
-  
+  buf.drawString(dat.unit,5,164);
+
   drawMax(dat.max); // MAX display indicator
   drawWP(dat.wp);  // Waypoint name
   drawSats(dat.sats);
-   
+
   g.reset();
   g.drawImage(img,0,40);
-  
+
   LED1.write(!pwrSav);
 
 }
@@ -295,7 +295,7 @@ function drawPosn(dat) {
   var x, y;
   x=210;
   y=0;
-  buf.setFontAlign(1,-1); 
+  buf.setFontAlign(1,-1);
   buf.setFontVector(60);
   buf.setColor(1);
 
@@ -320,45 +320,45 @@ function drawPosn(dat) {
 
 function drawClock() {
   if (!canDraw) return;
-  
+
   buf.clear();
   buf.setBgColor(0);
-  
+
   var x, y;
   x=185;
   y=0;
-  buf.setFontAlign(1,-1); 
+  buf.setFontAlign(1,-1);
   buf.setFontVector(94);
   time = require("locale").time(new Date(),1);
-  
+
   buf.setColor(1);
-  
+
   buf.drawString(time.substring(0,2),x,y);
   buf.drawString(time.substring(3,5),x,y+80);
-  
+
   g.reset();
   g.drawImage(img,0,40);
-  
+
   LED1.write(!pwrSav);
 }
 
 function drawWP(wp) {
-  buf.setColor(3);  
+  buf.setColor(3);
   buf.setFontAlign(0,1); //left, bottom
   buf.setFontVector(40);
-  buf.drawString(wp,120,132);  
+  buf.drawString(wp,120,132);
 }
 
 function drawSats(sats) {
-  buf.setColor(3);  
+  buf.setColor(3);
   buf.setFont("6x8", 2);
   buf.setFontAlign(1,1); //right, bottom
-  buf.drawString(sats,240,160);  
+  buf.drawString(sats,240,160);
 }
 
 function drawMax(max) {
   buf.setFontVector(30);
-  buf.setColor(2); 
+  buf.setColor(2);
   buf.setFontAlign(0,1); //centre, bottom
   buf.drawString(max,120,164);
 }
@@ -369,7 +369,7 @@ if ( emulator ) {
     fix.speed = 10 + (Math.random()*5);
     fix.alt = 354 + (Math.random()*50);
     fix.lat = -38.92;
-    fix.lon = 175.7613350;   
+    fix.lon = 175.7613350;
     fix.course = 245;
     fix.satellites = 12;
     fix.time = new Date();
@@ -378,7 +378,7 @@ if ( emulator ) {
 
   var m;
 
-  var sp = '---';        
+  var sp = '---';
   var al = sp;
   var di = sp;
   var brg = ''; // bearing
@@ -390,15 +390,15 @@ if ( emulator ) {
   var lon = '---.--';
   var sats = sp;
   var vmg = sp;
-  
-  
+
+
   // Waypoint name
   var wpName = wp.name;
   if ( wpName == undefined || wpName == 'NONE' ) wpName = '';
-  wpName = wpName.substring(0,8);  
+  wpName = wpName.substring(0,8);
 
   if (fix.fix) lf = fix;
-  
+
   if (lf.fix) {
 
     // Smooth data
@@ -408,10 +408,10 @@ if ( emulator ) {
       lf.smoothed = 1;
       if ( maxN <= 15 ) maxN++;
     }
-    
+
     // Bearing to waypoint
     brg = bearing(lf,wp);
-    
+
     // Current course
     crs = lf.course;
 
@@ -447,19 +447,19 @@ if ( emulator ) {
     if ( di >= 100 ) di = parseFloat(di).toFixed(1);
     if ( di >= 1000 ) di = parseFloat(di).toFixed(0);
     if (isNaN(di)) di = '------';
-    
+
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
 
     // Lat / Lon
     ns = 'N';
     if ( lf.lat < 0 ) ns = 'S';
-    lat = Math.abs(lf.lat.toFixed(2)); 
+    lat = Math.abs(lf.lat.toFixed(2));
 
     ew = 'E';
     if ( lf.lon < 0 ) ew = 'W';
-    lon = Math.abs(lf.lon.toFixed(2)); 
-    
+    lon = Math.abs(lf.lon.toFixed(2));
+
     // Sats
     if ( age > 10 ) {
       sats = 'Age:'+Math.round(age);
@@ -573,7 +573,7 @@ if ( emulator ) {
         ew:ew
       });
   }
-  
+
   if ( cfg.modeA == 5 )  {
     // Large clock
     drawClock();
@@ -585,14 +585,14 @@ function prevScrn() {
     cfg.modeA = cfg.modeA-1;
     if ( cfg.modeA < 0 ) cfg.modeA = 5;
     savSettings();
-    onGPS(lf); 
+    onGPS(lf);
 }
 
 function nextScrn() {
     cfg.modeA = cfg.modeA+1;
     if ( cfg.modeA > 5 ) cfg.modeA = 0;
     savSettings();
-    onGPS(lf); 
+    onGPS(lf);
 }
 
 // Next function on a screen
@@ -610,7 +610,7 @@ function nextFunc(dur) {
 function updateClock() {
   if (!canDraw) return;
   if ( cfg.modeA != 5 )  return;
-  drawClock(); 
+  drawClock();
   if ( emulator ) {maxSpd++;maxAlt++;}
 }
 
@@ -661,10 +661,10 @@ function setButtons(){
     var dur = e.time - e.lastTime;
     nextFunc(dur);
   }, BTN1, { edge:"falling",repeat:true});
-  
-  // Power saving on/off 
+
+  // Power saving on/off
   setWatch(function(e){
-    pwrSav=!pwrSav; 
+    pwrSav=!pwrSav;
     if ( pwrSav ) {
       var s = require('Storage').readJSON('setting.json',1)||{};
       var t = s.timeout||10;
@@ -676,7 +676,7 @@ function setButtons(){
     }
       LED1.write(!pwrSav);
   }, BTN2, {repeat:true,edge:"falling"});
-  
+
   // BTN3 - next screen
   setWatch(function(e){
     nextScrn();
@@ -685,7 +685,7 @@ function setButtons(){
 
 Bangle.on('lcdPower',function(on) {
   if (!SCREENACCESS.withApp) return;
-  if (on) startDraw(); 
+  if (on) startDraw();
   else stopDraw();
 });
 
@@ -702,7 +702,7 @@ Bangle.on('touch', function(button){
 
 // == Main Prog
 
-// Read settings. 
+// Read settings.
 let cfg = require('Storage').readJSON('speedalt2.json',1)||{};
 
 cfg.spd = cfg.spd||1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
@@ -713,13 +713,13 @@ cfg.dist = cfg.dist||1000;// Multiplier for distnce unit conversions.
 cfg.dist_unit = cfg.dist_unit||'km';  // Displayed altitude units
 cfg.colour = cfg.colour||0;          // Colour scheme.
 cfg.wp = cfg.wp||0;        // Last selected waypoint for dist
-cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3 = vmg 4=Position 5=Clock 
+cfg.modeA = cfg.modeA||0;    // 0=Speed 1=Alt 2=Dist 3 = vmg 4=Position 5=Clock
 cfg.primSpd = cfg.primSpd||0;    // 1 = Spd in primary, 0 = Spd in secondary
 
-cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt; 
+cfg.spdFilt = cfg.spdFilt==undefined?true:cfg.spdFilt;
 cfg.altFilt = cfg.altFilt==undefined?true:cfg.altFilt;
 cfg.touch = cfg.touch==undefined?true:cfg.touch;
-cfg.wptSfx = cfg.wptSfx==undefined?'':cfg.wptSfx; 
+cfg.wptSfx = cfg.wptSfx==undefined?'':cfg.wptSfx;
 
 if ( cfg.spdFilt ) var spdFilter = new KalmanFilter({R: 0.1 , Q: 1 });
 if ( cfg.altFilt ) var altFilter = new KalmanFilter({R: 0.01, Q: 2 });
@@ -749,7 +749,7 @@ var SCREENACCESS = {
       withApp:true,
       request:function(){this.withApp=false;stopDraw();},
       release:function(){this.withApp=true;startDraw();}
-}; 
+};
 
 var gpssetup;
 try {

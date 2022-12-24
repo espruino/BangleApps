@@ -187,7 +187,7 @@ Bangle.on('GPS', function(f) {
 
 Bangle.on('mag', function(m) {
   if (!Bangle.isLCDOn()) return;
-  var headingrad = m.heading*Math.PI/180; // in radians
+  var headingrad = (360-m.heading)*Math.PI/180; // in radians
   if (!isFinite(headingrad)) headingrad=0;
   if (nearest)
     g.drawImage(img_fix,120,120,{

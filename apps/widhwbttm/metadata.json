@@ -1,0 +1,15 @@
+{
+  "id": "widhwbttm",
+  "name": "HW stats (Bottom) widget",
+  "shortName": "Digital clock Bottom Widget",
+  "version": "0.02",
+  "description": "Displays technical info and mem stats in the bottom of the screen (may not be compatible with some apps)",
+  "icon": "widhwbttm.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widhwbttm.wid.js","url":"widhwbttm.wid.js"}
+  ]
+}

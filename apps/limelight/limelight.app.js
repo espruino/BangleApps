@@ -10,6 +10,8 @@
  *
  */
 
+Bangle.setUI('clock');
+
 g.clear();
 
 const SETTINGS_FILE = "limelight.json";
@@ -259,5 +261,4 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI('clock');
 draw();

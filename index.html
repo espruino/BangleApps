@@ -88,8 +88,10 @@
         <div class="sort-nav hidden">
           <span>Sort by:</span>
           <label class="chip active" sortid="">None</label>
-          <label class="chip" sortid="created">New</label>
-          <label class="chip" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="created">New</label>
+          <label class="chip hidden" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="installs">Installed</label>
+          <label class="chip hidden" sortid="favourites">Favourited</label>
         </div>
       </div>
 
@@ -144,12 +146,21 @@
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
           </label>
           <label class="form-switch">
+            <input type="checkbox" id="settings-minify">
+            <i class="form-icon"></i> Minify apps before upload (smaller, faster apps - BETA)
+          </label>
+          <label class="form-switch">
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
           <label class="form-switch">
             <input type="checkbox" id="settings-ble-compat">
             <i class="form-icon"></i> Bluetooth Compatibility mode (limit to 20 byte writes)
+          </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-usage-stats">
+            <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
+              <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
           </label>
           <div class="form-group">
             <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
@@ -174,10 +185,10 @@
       </div>
     </footer>
 
-    <script src="https://www.puck-js.com/puck.js"></script>
+    <script src="webtools/puck.js"></script>
+    <script src="webtools/heatshrink.js"></script>    
     <script src="core/lib/marked.min.js"></script>
     <script src="core/lib/espruinotools.js"></script>
-    <script src="core/lib/heatshrink.js"></script>
     <script src="core/js/utils.js"></script>
     <script src="loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script> <!-- for backup.js -->

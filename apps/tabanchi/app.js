@@ -2,14 +2,18 @@
 // TABANCHI -- たばんち
 
 const scale = 6;
-let tool = -1;
 const w = g.getWidth();
 const h = g.getHeight();
+const yy = 34;
+const y = 40 - scale;
+let tool = -1;
 let hd = 1;
 let vd = 1;
 let x = 20;
 let sx = 0; // screen scroll x position
-const y = 40 - scale;
+let cacaLevel = 0;
+let cacaBirth = null;
+let angryState = 0;
 let animated = true;
 let transition = false;
 let caca = null;
@@ -22,8 +26,37 @@ let oldMode = '';
 let gameChoice = 0;
 let gameTries = 0;
 let gameWins = 0;
+let statusMode = 0;
+let lightSelect = 0;
+let lightMode = 0; // on is zero
+let frame = 0;
+
+const tama = {
+  age: 0,
+  weight: 1,
+  aspect: 6,
+  discipline: 0,
+  happy: 3,
+  sick: false,
+  hungry: 3,
+  cacas: 0,
+  // hidden
+  sickness: 0,
+  defenses: 100,
+  tummy: 100,
+  awake: 3
+};
+
 
 g.setBgColor(0);
+
+const sun = {
+  width: 8,
+  height: 8,
+  bpp: 1,
+  transparent: 1,
+  buffer: atob('773nW9rnvfc=')
+};
 
 const tama06eat0 = {
   width: 16,
@@ -387,7 +420,6 @@ const caca01 = {
   buffer: atob('////v/33v7+3+f4v0HwH////')
 };
 
-// var img = hs.decompress(atob("sFggP/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A+A"));
 const tama00 = {
   width: 16,
   height: 16,
@@ -574,23 +606,6 @@ g.drawString('Loading...', 10, 10);
 egg = egg00;
 n = tama00;
 
-const tama = {
-  // visible
-  age: 0,
-  weight: 1,
-  aspect: 6,
-  discipline: 0,
-  happy: 3,
-  sick: false,
-  hungry: 3,
-  cacas: 0, // move from cacas
-  // hidden
-  sickness: 0,
-  defenses: 100,
-  tummy: 100,
-  awake: 3
-};
-
 function drawHearts (n) {
   for (i = 0; i < 4; i++) {
     const himg = (i < n) ? heart1 : heart0;
@@ -599,7 +614,6 @@ function drawHearts (n) {
 }
 
 function drawLinebar (n, arrow) { // 0-100
-  const yy = 34;
   g.drawImage(linebar, 0, yy + (scale * 8), { scale: scale });
 
   let wop = scale * 2; // (frame++%2)? scale*3:scale*2;
@@ -631,7 +645,6 @@ function drawLinebar (n, arrow) { // 0-100
 }
 
 function drawStatus () {
-  const yy = 34;
   switch (statusMode) {
     case 0:
       g.drawImage(face, scale, yy, { scale: scale });
@@ -774,11 +787,6 @@ function drawScene () {
   }
 }
 
-var statusMode = 0;
-var lightSelect = 0;
-var lightMode = 0; // on is zero
-let frame = 0;
-
 function drawAngry () {
   const one = angryState % 2;
   g.drawImage(one ? tama06no0 : tama06no1, (scale * 5), 40, { scale: scale });
@@ -832,14 +840,6 @@ function drawMedicine () { // food eating animation
   }
   g.drawImage(tama06no0, (scale * 10), 40, { scale: scale });
 }
-
-var sun = {
-  width: 8,
-  height: 8,
-  bpp: 1,
-  transparent: 1,
-  buffer: atob('773nW9rnvfc=')
-};
 
 function drawEating () { // food eating animation
   const one = angryState % 2;
@@ -953,6 +953,7 @@ function nextItem () {
   tool++;
   if (tool > 6) tool = 0;
 }
+
 function prevItem () {
   tool--;
   if (tool < 0) tool = 7;
@@ -1099,7 +1100,6 @@ function drawCaca () {
     }
   }
 }
-var angryState = 0;
 
 function animateHappy () {
   if (transition || mode == 'happy') {
@@ -1208,7 +1208,7 @@ function animateShower () {
 }
 
 function animateToGame () {
-  if (transition || mode == 'game') {
+  if (transition || mode === 'game') {
     return;
   }
   mode = 'game';
@@ -1298,14 +1298,6 @@ function button (n) {
   }
 
   if (mode == 'game') {
-    /*
-    if (gameTries > 3) {
-      mode = "";
-      gameWins = 0;
-      gameTries = 0;
-      //tama.tired++;
-    }
-    */
     switch (n) {
       case 1:
         // pick left
@@ -1345,8 +1337,7 @@ function button (n) {
           drawScene();
           break;
         case 'status':
-          if (oldMode == 'clock') {
-          } else {
+          if (oldMode != 'clock') {
             statusMode++;
             drawScene();
           }
@@ -1363,8 +1354,7 @@ function button (n) {
           animateFromClock();
           break;
         case 'status':
-          if (oldMode == 'clock') {
-          } else {
+          if (oldMode != 'clock') {
             statusMode++;
             drawScene();
           }
@@ -1433,7 +1423,6 @@ function drawGame () {
       }
       mode = oldMode;
       oldMode = '';
-    //  g.drawImage();
     } else {
       g.drawImage(one ? tama06no1 : tama06no0, (scale * 7) + sx, 40, { scale: scale });
     }
@@ -1467,7 +1456,6 @@ function drawClock () {
     const s1 = numbers[ts[1] - '0'];
     const s2 = numbers[ts[3] - '0'];
     const s3 = numbers[ts[4] - '0'];
-    const yy = 34;
     // hours
     if (s0) {
       g.drawImage(s0, wsx, yy, { scale: scale });
@@ -1515,17 +1503,11 @@ function drawClock () {
 }
 
 setInterval(function () {
-  // if (animated) {
   updateAnimation();
   drawScene();
-  // }
 }, 1000);
 
-let cacaLevel = 0;
-let cacaBirth = null;
-
-setInterval(function () {
-  // poo maker
+function pooMaker() {
   if (tama.hungry > 0 && !tama.sleep) {
     const a = 0 | (cacaLevel / tama.tummy);
     const b = 0 | ((cacaLevel + tama.hungry) / tama.tummy);
@@ -1545,9 +1527,8 @@ setInterval(function () {
     tama.awake--;
     tama.sleep = false;
   }
-}, 5000);
-
-setInterval(function () {
+}
+function sickMaker() {
   if (tama.sleep) {
     return;
   }
@@ -1569,8 +1550,10 @@ setInterval(function () {
   if (tama.sick > 0) {
     callForAttention = true;
   }
-}, 2000);
+}
 
+setInterval(pooMaker, 5e3);
+setInterval(sickMaker, 2e3);
 updateAnimation();
 
 Bangle.on('touch', function (r, s) {
@@ -1600,4 +1583,3 @@ Bangle.on('touch', function (r, s) {
     button(2);
   }
 });
-

@@ -1,3 +1,22 @@
 0.01: Initial release
 0.02: implemented "direct launch" and "one click exit" settings
 0.03: Use default Bangle formatter for booleans
+0.04: Support new fast app switching
+0.05: Allow to directly eval apps instead of loading
+0.06: Cache apps for faster start
+0.07: Read app icons on demand
+      Add swipe-to-exit
+0.08: Only use fast loading for switching to clock to prevent problems in full screen apps
+0.09: Remove fast load option since clocks containing Bangle.loadWidgets are now always normally loaded
+0.10: changed the launch.json file name in iconlaunch.json ( launch.cache.json -> iconlaunch.cache.json)
+      used Object.assing for the settings
+      fix cache not deleted when "showClocks" options is changed
+      added timeOut to return to the clock
+0.11: Cleanup timeout when changing to clock
+      Reset timeout on swipe and drag
+0.12: Use Bangle.load and Bangle.showClock
+0.13: Fix automatic switch to clock
+0.14: Revert use of Bangle.load to classic load calls since widgets would
+      still be loaded when they weren't supposed to.
+0.15: Ensure that we hide widgets if in fullscreen mode
+      (So that widgets are still hidden if launcher is fast-loaded)

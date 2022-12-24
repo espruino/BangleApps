@@ -16,11 +16,14 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v14";
+var RECOMMENDED_VERSION = "2v16";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
 DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
+// Where we get our usage data from
+Const.APP_USAGE_JSON = "https://banglejs.com/apps/appusage.json";
+Const.APP_DATES_CSV = "appdates.csv";
 
 // Set up source code URL
 (function() {
@@ -46,10 +49,8 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
-    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="http://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
+    showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="https://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
   }
-
-
   // check against features shown?
   filterAppsForDevice(deviceId);
   /* if we'd saved a device ID but this device is different, ensure
@@ -57,6 +58,43 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
   var savedDeviceId = getSavedDeviceId();
   if (savedDeviceId!==undefined && savedDeviceId!=deviceId)
     setSavedDeviceId(undefined);
+}
+
+// Called when we refresh the list of installed apps
+function onRefreshMyApps() {
+  /* if we're allowed to, send usage stats. We'll only
+  actually send if the data has changed */
+  sendUsageStats();
+}
+
+var submittedUsageInfo = "";
+/* Send usage stats to servers if it has changed */
+function sendUsageStats() {
+  if (!SETTINGS.sendUsageStats) return; // not allowed!
+  if (device.uid === undefined) return; // no data yet!
+  /* Work out what we'll send:
+  * A suitably garbled UID so we can avoid too many duplicates
+  * firmware version
+  * apps installed
+  * apps favourited
+  */
+  var usageInfo = `uid=${encodeURIComponent(device.uid)}&fw=${encodeURIComponent(device.version)}&apps=${encodeURIComponent(device.appsInstalled.map(a=>a.id).join(","))}&favs=${encodeURIComponent(SETTINGS.favourites.join(","))}`;
+  // Do a quick check for unchanged data to reduce server load
+  if (usageInfo != submittedUsageInfo) {
+    console.log("sendUsageStats: Submitting usage stats...");
+    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+    xmlhttp.open("POST", "https://banglejs.com/submit_app_stats.php", true /*async*/);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onload = (e) => {
+      if (xmlhttp.readyState === 4)
+        console.log(`sendUsageStats (${xmlhttp.status}): ${xmlhttp.responseText}`);
+    };
+    xmlhttp.onerror = (e) => {
+      console.error("sendUsageStats ERROR: "+xmlhttp.statusText);
+    };
+    xmlhttp.send(usageInfo);
+    submittedUsageInfo = usageInfo;
+  }
 }
 
 var originalAppJSON = undefined;
@@ -122,6 +160,11 @@ window.addEventListener('load', (event) => {
     <div class="column col-12">
     <div class="form-group">
       <label class="form-switch">
+        <input type="checkbox" id="usage_stats" ${SETTINGS.sendUsageStats?"checked":""}>
+        <i class="form-icon"></i> Send favourite and installed apps to banglejs.com<br/>
+          <small>For 'Sort by Installed/Favourited' functionality (see <a href="http://www.espruino.com/Privacy">privacy policy</a>)</small>
+      </label>
+      <label class="form-switch">
         <input type="checkbox" id="remember_device">
         <i class="form-icon"></i> Don't ask again
       </label>
@@ -129,10 +172,15 @@ window.addEventListener('load', (event) => {
     </div>
   </div>`;
   showPrompt("Which Bangle.js?",html,{},false);
+  var usageStats = document.getElementById("usage_stats");
+  usageStats.addEventListener("change",event=>{
+    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+    SETTINGS.sendUsageStats = event.target.checked;
+    saveSettings();
+  });
   htmlToArray(document.querySelectorAll(".devicechooser")).forEach(button => {
     button.addEventListener("click",event => {
-      let rememberDevice = document.getElementById("remember_device").checked;
-
+      let rememberDevice = !!document.getElementById("remember_device").checked;
       let button = event.currentTarget;
       let deviceId = button.getAttribute("deviceid");
       hidePrompt();
@@ -158,7 +206,9 @@ window.addEventListener('load', (event) => {
   // Button to install all default apps in one go
   document.getElementById("reinstallall").addEventListener("click",event=>{
     var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
-      getInstalledApps().then(installedapps => {
+      Comms.reset().then(_ =>
+        getInstalledApps()
+      ).then(installedapps => {
         console.log(installedapps);
         var promise = Promise.resolve();
         installedapps.forEach(app => {
@@ -168,10 +218,12 @@ window.addEventListener('load', (event) => {
           app = appJSON.find(a => a.id==oldApp.id);
           if (!app)
             return console.log(`Ignoring ${oldApp.id} as not found`);
-          promise = promise.then(() => updateApp(app));
+          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true}));
         });
         return promise;
-      }).catch(err=>{
+      }).then( _ =>
+        Comms.showUploadFinished()
+      ).catch(err=>{
         Progress.hide({sticky:true});
         showToast("App re-install failed, "+err,"error");
       });
@@ -195,13 +247,22 @@ window.addEventListener('load', (event) => {
   });
 
   // BLE Compatibility
-  var selectLang = document.getElementById("settings-ble-compat");
-  if (SETTINGS.bleCompat!==undefined)
-    Puck.increaseMTU = !SETTINGS.bleCompat;
-  selectLang.addEventListener("change",event=>{
+  var selectBLECompat = document.getElementById("settings-ble-compat");
+  Puck.increaseMTU = !SETTINGS.bleCompat;
+  selectBLECompat.checked = !!SETTINGS.bleCompat;
+  selectBLECompat.addEventListener("change",event=>{
     console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
     SETTINGS.bleCompat = event.target.checked;
     Puck.increaseMTU = !SETTINGS.bleCompat;
+    saveSettings();
+  });
+
+  // Sending usage stats
+  var selectUsageStats = document.getElementById("settings-usage-stats");
+  selectUsageStats.checked = !!SETTINGS.sendUsageStats;
+  selectUsageStats.addEventListener("change",event=>{
+    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+    SETTINGS.sendUsageStats = event.target.checked;
     saveSettings();
   });
 

@@ -5,3 +5,4 @@
 0.03: Improve bootloader update safety. Now sets unsafeFlash:1 to allow flash with 2v11 and later
       Add CRC checks for common bootloaders that we know don't work
 0.04: Include a precompiled bootloader for easy bootloader updates
+0.05: Rename Bootloader->DFU and add explanation to avoid confusion with Bootloader app

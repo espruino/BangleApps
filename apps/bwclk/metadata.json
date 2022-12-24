@@ -1,13 +1,13 @@
 {
   "id": "bwclk",
   "name": "BW Clock",
-  "version": "0.09",
-  "description": "BW Clock.",
+  "version": "0.24",
+  "description": "A very minimalistic clock to mainly show date and time.",
   "readme": "README.md",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot_2.png"}, {"url":"screenshot_3.png"}],
+  "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot_2.png"}, {"url":"screenshot_3.png"}, {"url":"screenshot_4.png"}],
   "type": "clock",
-  "tags": "clock",
+  "tags": "clock,clkinfo",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [

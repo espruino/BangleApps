@@ -1,7 +1,18 @@
 (function(back) {
 var settings = Object.assign(require("Storage").readJSON("quicklaunch.json", true) || {});
 
+for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
+  if (!settings[c]) settings[c] = {"name":"(none)"};
+}
+
 var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
+
+// Add psuedo app to trigger Bangle.showLauncher later
+apps.push({
+    "name": "Show Launcher",
+    "type": undefined, "sortorder": -10,
+    "src": "no sorce"
+   });
 
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
@@ -29,11 +40,11 @@ function showMainMenu() {
   mainmenu["Up: "+settings.upapp.name] = function() { E.showMenu(upmenu); };
   mainmenu["Down: "+settings.downapp.name] = function() { E.showMenu(downmenu); };
   mainmenu["Tap: "+settings.tapapp.name] = function() { E.showMenu(tapmenu); };
-  
+
   return E.showMenu(mainmenu);
 }
-  
-//Left swipe menu  
+
+//Left swipe menu
 var leftmenu = {
   "" : { "title" : "Left Swipe" },
   "< Back" : showMainMenu
@@ -119,4 +130,4 @@ apps.forEach((a)=>{
 });
 
 showMainMenu();
-});
+})

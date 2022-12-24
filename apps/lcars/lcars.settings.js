@@ -13,6 +13,7 @@
     themeColor1BG: "#FF9900",
     themeColor2BG: "#FF00DC",
     themeColor3BG: "#0094FF",
+    disableAlarms: false,
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -102,6 +103,14 @@
         settings.themeColor3BG = bg_code[v];
         save();
       },
-    }
+    },
+    'Disable alarm functionality': {
+      value: settings.disableAlarms,
+      format: () => (settings.disableAlarms ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.disableAlarms = !settings.disableAlarms;
+        save();
+      },
+    },
   });
 })

@@ -1,7 +1,7 @@
 {
   "id": "widcw",
   "name": "Calendar Week Widget",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Widget which shows the current calendar week",
   "icon": "widget.png",
   "type": "widget",

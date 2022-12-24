@@ -1,11 +1,11 @@
 {
   "id": "ha",
   "name": "HomeAssistant",
-  "version": "0.01",
+  "version": "0.07",
   "description": "Integrates your BangleJS into HomeAssistant.",
   "icon": "ha.png",
   "type": "app",
-  "tags": "tool",
+  "tags": "tool,clkinfo",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "custom": "custom.html",
@@ -19,6 +19,8 @@
   ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},
+    {"name":"ha.lib.js","url":"ha.lib.js"},
+    {"name":"ha.clkinfo.js","url":"ha.clkinfo.js"},
     {"name":"ha.img","url":"ha.icon.js","evaluate":true}
   ]
 }

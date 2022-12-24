@@ -3,6 +3,10 @@
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
+  var settings = require("Storage").readJSON("agenda.settings.json",1)||{};
+  function updateSettings() {
+    require("Storage").writeJSON("agenda.settings.json", settings);
+  }
   var CALENDAR = require("Storage").readJSON("android.calendar.json",true)||[];
   var mainmenu = {
     "" : { "title" : "Agenda" },
@@ -30,6 +34,13 @@
         });
       } else {
         E.showAlert(/*LANG*/"You are not connected").then(()=>E.showMenu(mainmenu));
+      }
+    },
+    /*LANG*/"Show past events" : {
+      value : !!settings.pastEvents,
+      onchange: v => {
+        settings.pastEvents = v;
+        updateSettings();
       }
     },
   };

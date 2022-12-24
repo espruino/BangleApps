@@ -11,6 +11,8 @@ Graphics.prototype.setFontOpenSans = function(scale) {
 };
 
 var drawTimeout;
+var lastBattCheck = 0;
+var width = 0;
 
 function queueDraw(millis_now) {
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -24,12 +26,15 @@ function draw() {
     var date = new Date();
     var h = date.getHours(),
         m = date.getMinutes();
-    var d = date.getDate(),
-        w = date.getDay(); // d=1..31; w=0..6
-    const level = E.getBattery();
-    const width = level + (level/2);
+    var d = date.getDate();
     var is12Hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"];
-    var dows = require("date_utils").dows(0,1);
+    var dow = require("date_utils").dows(0,1)[date.getDay()];
+
+    if ((date.getTime() >= lastBattCheck + 15*60000) || Bangle.isCharging()) {
+      lastBattcheck = date.getTime();
+      width = E.getBattery();
+      width += width/2;
+    }
 
     g.reset();
     g.clear();
@@ -47,24 +52,35 @@ function draw() {
     g.drawString(d, g.getWidth() -6, 98);
     g.setFont('Vector', 52);
     g.setFontAlign(-1, -1);
-    g.drawString(dows[w].slice(0,2).toUpperCase(), 6, 103);
+    g.drawString(dow.slice(0,2).toUpperCase(), 6, 103);
 
     g.fillRect(9,159,166,171);
     g.fillRect(167,163,170,167);
     if (Bangle.isCharging()) {
       g.setColor(1,1,0);
-    } else if (level > 40) {
-      g.setColor(0,1,0);
+      g.fillRect(12,162,12+width,168);
     } else {
       g.setColor(1,0,0);
+      g.fillRect(12,162,57,168);
+      g.setColor(1,1,0);
+      g.fillRect(58,162,72,168);
+      g.setColor(0,1,0);
+      g.fillRect(73,162,162,168);
     }
-    g.fillRect(12,162,12+width,168);
-    if (level < 100) {
+    if (width < 150) {
       g.setColor(g.theme.bg);
       g.fillRect(12+width+1,162,162,168);
     }
 
-    g.setColor(0, 1, 0);
+    if (Bangle.isCharging()) {
+      g.setColor(1,1,0);
+    } else if (width <= 45) {
+      g.setColor(1,0,0);
+    } else if (width <= 60) {
+      g.setColor(1,1,0);
+    } else {
+      g.setColor(0, 1, 0);
+    }
     g.fillRect(0, 90, g.getWidth(), 94);
 
     // widget redraw
@@ -85,7 +101,8 @@ Bangle.on('charging', (charging) => {
     draw();
 });
 
+Bangle.setUI("clock");
+
 Bangle.loadWidgets();
 draw();
 
-Bangle.setUI("clock");

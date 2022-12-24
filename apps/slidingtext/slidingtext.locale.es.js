@@ -34,7 +34,7 @@ const spanishNumberStr = [ ["ZERO"], // 0
 
 function spanishHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return spanishNumberStr[hours][0];
@@ -45,32 +45,51 @@ function spanishMinsToText(mins){
 }
 
 class SpanishDateFormatter extends DateFormatter {
-    constructor() { super();}
-    name(){return "Spanish";}
+    constructor() {
+        super();
+    }
     formatDate(date){
-        var mins = date.getMinutes();
+        const mins = date.getMinutes();
         var hourOfDay = date.getHours();
         if(mins > 30){
             hourOfDay += 1;
         }
-        var hours = spanishHoursToText(hourOfDay);
+        const hours = spanishHoursToText(hourOfDay);
         //console.log('hourOfDay->' + hourOfDay + ' hours text->' + hours)
         // Deal with the special times first
-        if(mins == 0){
+        if(mins === 0){
             return [hours,"", "","",""];
-        } else if(mins == 30){
+        } else if(mins === 30){
             return [hours, "Y", "MEDIA",""];
-        } else if(mins == 15){
+        } else if(mins === 15){
             return [hours, "Y", "CUARTO",""];
-        } else if(mins == 45) {
+        } else if(mins === 45) {
             return [hours, "MENOS", "CUARTO",""];
         } else if(mins > 30){
-            var mins_txt = spanishMinsToText(60-mins);
+            const mins_txt = spanishMinsToText(60-mins);
             return [hours, "MENOS", mins_txt[0],mins_txt[1]];
         } else {
-            var mins_txt = spanishMinsToText(mins);
+            const mins_txt = spanishMinsToText(mins);
             return [hours, "Y", mins_txt[0],mins_txt[1]];
         }
+    }
+    defaultRowTypes(){ return {};}
+
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
     }
 }
 

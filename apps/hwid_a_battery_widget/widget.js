@@ -29,9 +29,9 @@
 	var	y = this.y;
 	if ((typeof x === 'undefined') || (typeof y === 'undefined')) {
 	} else {
-		const l = E.getBattery();
+		const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
 		let xl = x+4+l*(s-12)/100;
-		if (l != old_l){ // Delete the old value from screen
+		if ((l != old_l) && (typeof old_l != 'undefined') ){ // Delete the old value from screen
 			let xl_old = x+4+old_l*(s-12)/100;
 			g.setColor(COLORS.white);
 			// g.fillRect(x+2,y+5,x+s-6,y+18);
@@ -41,9 +41,9 @@
 			//g.fillRect(old_x,old_y,old_x+4+l*(s-12)/100,old_y+16+3); // clear (lazy) 
 			g.drawString(old_l, old_x + 14, old_y + 10);
 			g.fillRect(x+4,y+14+3,xl_old,y+16+3); // charging bar
-			old_l = l;
+			
 		}
-		
+		old_l = l;
 		//console.log(old_x);
 
 		g.setColor(levelColor(l));
@@ -64,7 +64,7 @@
 	}
 
 	Bangle.on('charging',function(charging) { draw(); });
-	var id = setInterval(()=>WIDGETS["wid_a_battery_widget"].draw(), intervalLow);
+	var id = setInterval(()=>WIDGETS["hwid_a_battery_widget"].draw(), intervalLow);
 
-	WIDGETS["wid_a_battery_widget"]={area:"tr",width:30,draw:draw};
+	WIDGETS["hwid_a_battery_widget"]={area:"tr",width:30,draw:draw};
 })();

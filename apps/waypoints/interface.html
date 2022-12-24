@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+
+    <style type="text/css">
+        html, body { height: 100% }
+        .flex-col { display:flex; flex-direction:column; height:100% }
+        #map { width:100%; height:100% }
+        #tab-map { width:100%; height:100% }
+        #tab-list { width:100%; height:100% }
+
+        /* https://stackoverflow.com/a/58686215 */
+        .arrow-icon {
+            width: 14px;
+            height: 14px;
+        }
+        .arrow-icon > div {
+            margin-left: -1px;
+            margin-top: -3px;
+            transform-origin: center center;
+            font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="flex-col">
+        <div id="statusarea">
+            <button id="download" class="btn btn-error">Reload</button> <button id="upload" class="btn btn-primary">Upload</button>
+            <span id="status"></span>
+            <span id="routestatus"></span>
+        </div>
+        <div>
+          <ul class="tab tab-block">
+            <li class="tab-item active"  id="tabitem-map">
+              <a href="#">Map</a>
+            </li>
+            <li class="tab-item" id="tabitem-list">
+              <a href="#">List</a>
+            </li>
+          </ul>
+        </div>
+        <div style="flex: 1">
+          <div id="tab-map">
+            <div id="map"></div>
+          </div>
+          <div id="tab-list" style="display:none">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Lat.</th>
+                  <th>Long.</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="waypoints">
+              </tbody>
+            </table>
+            <br>
+            <h4>Add a new waypoint</h4>
+            <form id="add_waypoint_form">
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" type="text" id="add_waypoint_name" placeholder="Name">
+                </div>
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" value="0.0000" type="number" step="any" id="add_latitude" placeholder="Lat">
+                </div>
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" value="0.0000" type="number" step="any" id="add_longtitude" placeholder="Long">
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <button id="add_name_button" class="btn btn-primary btn-sm">Add Name Only</button>
+                </div>
+                <div class="column col-3 col-xs-8">
+                  <button id="add_waypoint_button" class="btn btn-primary btn-sm">Add Waypoint</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+        var waypoints = [];
+
+  // ========================================================================== tabs
+        document.getElementById('tabitem-map').addEventListener('click',function() {
+          document.getElementById('tabitem-map').classList.remove("active");
+          document.getElementById('tabitem-list').classList.add("active");
+          document.getElementById('tab-map').style.display="block";
+          document.getElementById('tab-list').style.display="none";
+        });
+        document.getElementById('tabitem-list').addEventListener('click',function() {
+          document.getElementById('tabitem-map').classList.add("active");
+          document.getElementById('tabitem-list').classList.remove("active");
+          document.getElementById('tab-map').style.display="none";
+          document.getElementById('tab-list').style.display="block";
+        });
+	// ========================================================================== MAP
+        var map;
+        var mapmarkers = L.layerGroup();
+        var searchresult = L.layerGroup();
+        var dynamicarrow = L.layerGroup();
+        var editingroute = null;
+        var lastroutepoint;
+
+        /*** map ***/
+
+        map = L.map('map').setView([51.505, -0.09], 8);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: ['a','b','c'],
+        }).addTo(map);
+
+        L.Control.geocoder({defaultMarkGeocode: false}).addTo(map).on('markgeocode', function(e) {
+            searchresult.clearLayers();
+            var bbox = e.geocode.bbox;
+            var poly = L.polygon([
+                bbox.getSouthEast(),
+                bbox.getNorthEast(),
+                bbox.getNorthWest(),
+                bbox.getSouthWest()
+            ], {fill:false}).addTo(searchresult);
+            map.addLayer(searchresult);
+            map.fitBounds(poly.getBounds());
+        });
+
+        map.on('click', function(e) {
+            if (editingroute != null) {
+                searchresult.clearLayers();
+                addWaypoint(waypoints[editingroute].route, e.latlng.lat, e.latlng.lng, "");
+            } else {
+                swal({
+                    icon: 'info',
+                    text: "Enter a name for the waypoint:",
+                    buttons: true,
+                    content: 'input',
+                }).then((name) => {
+                    if (name != null && name != "") {
+                        searchresult.clearLayers();
+                        addWaypoint(waypoints, e.latlng.lat, e.latlng.lng, name);
+                    }
+                });
+            }
+        });
+        map.on('mousemove', function(e) {
+            if (editingroute == null) return;
+            let latlngs = [lastroutepoint, [e.latlng.lat, e.latlng.lng]];
+            dynamicarrow.clearLayers();
+            L.polyline(latlngs, { color:'black'}).addTo(dynamicarrow);
+            L.featureGroup(getArrows(latlngs, 'black', 2, map)).addTo(dynamicarrow)
+            map.addLayer(dynamicarrow);
+        });
+        /*** status ***/
+
+        function clean() {
+            $('#status').html('<i class="icon icon-check"></i> No pending changes.');
+            routestatus();
+        }
+
+        function dirty() {
+            $('#status').html('<b><i class="icon icon-edit"></i> Changes have not been sent to the watch.</b>');
+            routestatus();
+        }
+
+        function routestatus() {
+            if (editingroute == null) {
+                $('#routestatus').html('');
+                dynamicarrow.clearLayers();
+            } else {
+                $('#routestatus').html('Editing route: ' + escapeHTML(waypoints[editingroute].name) + ' <button class="btn btn-sm btn-primary" onclick="closeRoute()">close route</button>');
+            }
+        }
+
+        /*** waypoints ***/
+
+        function addWaypoint(arr, lat, lon, name) {
+            arr.push({lat:lat, lon:lon, name:name});
+            renderAllWaypoints();
+            dirty();
+        }
+
+        function deleteWaypoint(arr, i) {
+            arr.splice(i, 1);
+            if (editingroute != null) {
+                // XXX: ugly: fix editingroute index
+                if (editingroute == i) editingroute = null;
+                else if (editingroute > i) editingroute--;
+            }
+            renderAllWaypoints();
+            dirty();
+        }
+
+        function renameWaypoint(arr, i) {
+            var name = prompt("Enter new name for the waypoint:", arr[i].name);
+            if (name == null || name == "" || name == arr[i].name)
+                return;
+            arr[i].name = name;
+            renderAllWaypoints();
+            dirty();
+        }
+
+        function renderWaypointsMap(wps, isroute, parentidx) {
+            var latlngs = [];
+            for (var i = 0; i < wps.length; i++) {
+                if (wps[i].route) {
+                    renderWaypointsMap(wps[i].route, true, i);
+                    continue;
+                }
+                if (wps[i].lat == null || wps[i].lon == null)
+                    continue;
+
+                if (isroute) {
+                    L.marker([wps[i].lat, wps[i].lon], {title: wps[i].name})
+                        .bindPopup(`<h4><b>${wps[i].name}</b> <a class="btn btn-primary" href="javascript:renameWaypoint(waypoints[${parentidx}].route,${i})"><i class="icon icon-edit"></i></a> <a class="btn btn-error" href="javascript:deleteWaypoint(waypoints[${parentidx}].route, ${i})"><i class="icon icon-delete"></i></a></h4><button class="btn btn-sm btn-error" onclick="javascript:deleteEntireRoute(${parentidx})">Delete entire route</button>`)
+                        .addTo(mapmarkers);
+                    latlngs.push([wps[i].lat, wps[i].lon]);
+                    lastroutepoint = [wps[i].lat, wps[i].lon];
+                } else {
+                    L.marker([wps[i].lat, wps[i].lon], {title: wps[i].name})
+                        .bindPopup(`<h4><b>${wps[i].name}</b> <a class="btn btn-primary" href="javascript:renameWaypoint(waypoints,${i})"><i class="icon icon-edit"></i></a> <a class="btn btn-error" href="javascript:deleteWaypoint(waypoints, ${i})"><i class="icon icon-delete"></i></a></h4><button class="btn btn-sm btn-primary" onclick="javascript:makeRoute(${i})">Make route</button>`)
+                        .addTo(mapmarkers);
+                }
+            }
+            if (isroute) {
+                L.polyline(latlngs, { color:'black'}).addTo(mapmarkers);
+                L.featureGroup(getArrows(latlngs, 'black', 2, map)).addTo(mapmarkers)
+            }
+        }
+
+        function renderAllWaypoints() {
+            mapmarkers.clearLayers();
+            renderWaypointsMap(waypoints, false, 0);
+            renderWaypointsList();
+            map.addLayer(mapmarkers);
+        }
+
+        /*** routes ***/
+
+        function openRoute(i) {
+            editingroute = i;
+            console.log("edit route "+ i);
+            map.on('contextmenu', closeRoute);
+            renderAllWaypoints();
+        }
+
+        function makeRoute(i) {
+            waypoints[i].route = [{
+                name: waypoints[i].name,
+                lat: waypoints[i].lat,
+                lon: waypoints[i].lon,
+            }];
+            openRoute(i);
+            dirty();
+        }
+
+        function closeRoute() {
+            map.off('contextmenu', closeRoute);
+            editingroute = null;
+            renderAllWaypoints();
+            routestatus();
+        }
+
+        function deleteEntireRoute(i) {
+            swal({
+                icon: 'warning',
+                text: "Really delete entire route '" + waypoints[i].name + "'?",
+                buttons: true,
+            }).then((v) => {
+                console.log(v)
+                if (v) {
+                    deleteWaypoint(waypoints, i);
+                }
+            });
+        }
+
+        /*** util ***/
+
+        // https://stackoverflow.com/a/22706073
+        function escapeHTML(str){
+            return new Option(str).innerHTML;
+        }
+
+        /*** Bangle.js ***/
+
+        function gotStored(pts) {
+            waypoints = pts;
+
+            var latlngs = waypoints.filter(p => isFinite(p.lat)&&isFinite(p.lon)).map(p => [p.lat, p.lon]);
+            var poly = L.polygon(latlngs);
+            var bounds = poly.getBounds();
+            if (bounds.isValid())
+              map.fitBounds(bounds);
+
+            renderAllWaypoints();
+        }
+
+        $('#statusarea').click(closeRoute);
+
+        /*** map arrows ***/
+        // https://stackoverflow.com/a/58686215
+        function getArrows(arrLatlngs, color, arrowCount, mapObj) {
+            if (typeof arrLatlngs === undefined || arrLatlngs == null ||
+        (!arrLatlngs.length) || arrLatlngs.length < 2)
+            return [];
+
+            if (typeof arrowCount === 'undefined' || arrowCount == null)
+                arrowCount = 1;
+
+            if (typeof color === 'undefined' || color == null)
+                color = '';
+            else
+                color = 'color:' + color;
+
+            var result = [];
+            for (var i = 1; i < arrLatlngs.length; i++) {
+                var icon = L.divIcon({ className: 'arrow-icon', bgPos: [5, 5], html: '<div style="' + color + ';transform: rotate(' + getAngle(arrLatlngs[i - 1], arrLatlngs[i], -1).toString() + 'deg)">▶</div>' });
+                for (var c = 1; c <= arrowCount; c++) {
+                    result.push(L.marker(myMidPoint(arrLatlngs[i], arrLatlngs[i - 1], (c / (arrowCount + 1)), mapObj), { icon: icon }));
+                }
+            }
+            return result;
+        }
+
+        function getAngle(latLng1, latlng2, coef) {
+            var dy = latlng2[0] - latLng1[0];
+            var dx = Math.cos(Math.PI / 180 * latLng1[0]) * (latlng2[1] - latLng1[1]);
+            var ang = ((Math.atan2(dy, dx) / Math.PI) * 180 * coef);
+            return (ang).toFixed(2);
+        }
+
+        function myMidPoint(latlng1, latlng2, per, mapObj) {
+            if (!mapObj)
+                throw new Error('map is not defined');
+
+            var halfDist, segDist, dist, p1, p2, ratio,
+                points = [];
+
+            p1 = mapObj.project(new L.latLng(latlng1));
+            p2 = mapObj.project(new L.latLng(latlng2));
+
+            halfDist = distanceTo(p1, p2) * per;
+
+            if (halfDist === 0)
+                return mapObj.unproject(p1);
+
+            dist = distanceTo(p1, p2);
+
+            if (dist > halfDist) {
+                ratio = (dist - halfDist) / dist;
+                var res = mapObj.unproject(new Point(p2.x - ratio * (p2.x - p1.x), p2.y - ratio * (p2.y - p1.y)));
+                return [res.lat, res.lng];
+            }
+        }
+
+        function distanceTo(p1, p2) {
+            var x = p2.x - p1.x,
+                y = p2.y - p1.y;
+
+            return Math.sqrt(x * x + y * y);
+        }
+
+        function Point(x, y, round) {
+            this.x = (round ? Math.round(x) : x);
+            this.y = (round ? Math.round(y) : y);
+        }
+
+      // ========================================================================== LIST
+
+      var $name = document.getElementById('add_waypoint_name')
+      var $form = document.getElementById('add_waypoint_form')
+      var $button = document.getElementById('add_waypoint_button')
+      var $name_button = document.getElementById('add_name_button')
+      var $latitude = document.getElementById('add_latitude')
+      var $longtitude = document.getElementById('add_longtitude')
+      var $list = document.getElementById('waypoints')
+
+      function compare(a, b){
+            var x = a.name.toLowerCase();
+            var y = b.name.toLowerCase();
+            if (x=="none") {return -1};
+            if (y=="none") {return 1};
+            if (x < y) {return -1;}
+            if (x > y) {return 1;}
+            return 0;
+        }
+
+      $button.addEventListener('click', event => {
+        event.preventDefault()
+        var name = $name.value.trim()
+        if(!name) return;
+        var lat = parseFloat($latitude.value);
+        var lon = parseFloat($longtitude.value);
+
+        waypoints.push({
+          name, lat,lon,
+        });
+
+        waypoints.sort(compare);
+
+        renderAllWaypoints()
+        $name.value = ''
+        $latitude.value = (0).toPrecision(5);
+        $longtitude.value = (0).toPrecision(5);
+      });
+
+      $name_button.addEventListener('click', event => {
+        event.preventDefault()
+        var name = $name.value.trim()
+        if(!name) return;
+
+        waypoints.push({
+          name
+        });
+        waypoints.sort(compare);
+
+        renderAllWaypoints()
+        $name.value = ''
+        $latitude.value = 0.0000
+        $longtitude.value = 0.0000
+      });
+
+
+      function removeWaypoint(index){
+        $name.value = waypoints[index].name
+        $latitude.value = waypoints[index].lat
+        $longtitude.value = waypoints[index].lon
+        waypoints = waypoints.filter((p,i) => i!==index)
+        renderAllWaypoints()
+      }
+
+      function renderWaypointsList(){
+        $list.innerHTML = ''
+        waypoints.forEach((waypoint,index) => {
+          var $waypoint = document.createElement('tr')
+          if (index==0){
+              $waypoint.innerHTML = `<td>${waypoint.name}</td><td></td><td></td>`
+          } else if(waypoint.lat==undefined){
+            $waypoint.innerHTML = `<td>${waypoint.name}</td><td>------</td><td>-----</td>`;
+          } else {
+            $waypoint.innerHTML = `<td>${waypoint.name}</td><td>${waypoint.lat.toFixed(6)}</td><td>${waypoint.lon.toFixed(6)}</td>`;
+          }
+          $waypoint.innerHTML += `<td><button class="btn btn-action btn-primary" onclick="removeWaypoint(${index})"><i class="icon icon-delete"></i></button></td>`;
+          $list.appendChild($waypoint)
+        })
+        $name.focus()
+      }
+
+      function renderWaypoints() {
+        renderWaypointsList();
+        renderWaypointsMap();
+      }
+
+      // ========================================================================== UPLOAD/DOWNLOAD
+
+      function downloadJSONfile(fileid, callback) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              var pts = require("Storage").readJSON("${fileid}")||[{name:"NONE"}];
+              Bluetooth.print(JSON.stringify(pts));
+          })()\n`, contents => {
+              if (contents=='[{name:"NONE"}]') contents="[]";
+              var storedpts = JSON.parse(contents);
+              callback(storedpts);
+              clean();
+          });
+      }
+
+      function uploadFile(fileid, contents) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              require("Storage").write("${fileid}",'${contents}');
+              Bluetooth.print("OK");
+          })()\n`, ret => {
+              console.log("uploadFile", ret);
+              if (ret == "OK")
+                  clean();
+          });
+      }
+
+      function onInit() {
+          downloadJSONfile("waypoints.json", gotStored);
+      }
+
+      $('#download').on('click', function() {
+          downloadJSONfile("waypoints.json", gotStored);
+      });
+
+      $('#upload').click(function() {
+          var data =  JSON.stringify(waypoints);
+          uploadFile("waypoints.json",data);
+      });
+
+      // ========================================================================== FINALLY...
+      clean();
+      renderAllWaypoints();
+    </script>
+  </body>
+</html>

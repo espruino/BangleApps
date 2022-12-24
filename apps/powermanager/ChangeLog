@@ -1,3 +1,5 @@
 0.01: New App!
 0.02: Allow forcing monotonic battery voltage/percentage
 0.03: Use default Bangle formatter for booleans
+0.04: Remove calibration with current voltage (Calibrate->Auto) as it is now handled by settings app
+      Allow automatic calibration on every charge longer than 3 hours
