@@ -7,61 +7,119 @@ Graphics.prototype.setFontAudiowide = function() {
 };
 
 function getSteps() {
-		var steps = 0;
-		try{
-      if (WIDGETS.wpedom !== undefined) {
-          steps = WIDGETS.wpedom.getSteps();
-      } else if (WIDGETS.activepedom !== undefined) {
-          steps = WIDGETS.activepedom.getSteps();
-      } else {
-        steps = Bangle.getHealthStatus("day").steps;
-      }
+  var steps = 0;
+  try{
+    if (WIDGETS.wpedom !== undefined) {
+      steps = WIDGETS.wpedom.getSteps();
+    } else if (WIDGETS.activepedom !== undefined) {
+      steps = WIDGETS.activepedom.getSteps();
+    } else {
+      steps = Bangle.getHealthStatus("day").steps;
+    }
   } catch(ex) {
-      // In case we failed, we can only show 0 steps.
-      return "?";
+    // In case we failed, we can only show 0 steps.
+    return "?";
   }
 
-		return Math.round(steps);
+  return Math.round(steps);
 }
 
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
-let drawTimeout;
+  let drawTimeout;
 
 
-// Actually draw the watch face
-let draw = function() {
-  var x = g.getWidth() / 2;
-  var y = g.getHeight() / 2;
-  g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
-  var date = new Date();
-  var timeStr = require("locale").time(date, 1); // Hour and minute
-  g.setFontAlign(0, 0).setFont("Audiowide").drawString(timeStr, x, y);
-  var dateStr = require("locale").date(date, 1).toUpperCase();
-  g.setFontAlign(0, 0).setFont("6x8", 2).drawString(dateStr, x, y+28);
-	g.setFontAlign(0, 0).setFont("6x8", 2);
-  g.drawString(getSteps(), 50, y+70);
-  g.drawString(Math.round(Bangle.getHealthStatus("last").bpm), g.getWidth() -37, y + 70);
+  // Actually draw the watch face
+  let draw = function() {
+    var x = g.getWidth() / 2;
+    var y = g.getHeight() / 2;
+    g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
+    var date = new Date();
+    var timeStr = require("locale").time(date, 1); // Hour and minute
+    g.setFontAlign(0, 0).setFont("Audiowide").drawString(timeStr, x, y);
+    var dateStr = require("locale").date(date, 1).toUpperCase();
+    g.setFontAlign(0, 0).setFont("6x8", 2).drawString(dateStr, x, y+28);
+    g.setFontAlign(0, 0).setFont("6x8", 2);
+    g.drawString(getSteps(), 50, y+70);
+    g.drawString(Math.round(Bangle.getHealthStatus("last").bpm), g.getWidth() -37, y + 70);
 
-  // queue next draw
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-};
-
-// Show launcher when middle button pressed
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    // Called to unload all of the clock app
+    // queue next draw
     if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-    delete Graphics.prototype.setFontAnton;
-  }});
-// Load widgets
-Bangle.loadWidgets();
-draw();
-setTimeout(Bangle.drawWidgets,0);
+    drawTimeout = setTimeout(function() {
+      drawTimeout = undefined;
+      draw();
+    }, 60000 - (Date.now() % 60000));
+  };
+
+  // Show launcher when middle button pressed
+  Bangle.setUI({
+    mode : "clock",
+    remove : function() {
+      // Called to unload all of the clock app
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = undefined;
+      delete Graphics.prototype.setFontAnton;
+    }});
+  // Load widgets
+  Bangle.loadWidgets();
+  draw();
+  setTimeout(Bangle.drawWidgets,0);
+}
+
+// Timer function
+var timervalue = 0;
+var istimeron = false;
+var timertick;
+
+Bangle.on('touch',t => {
+  if (t == 1) {
+    // Touch on the left, reduce timervalue about 60s
+    Bangle.buzz(30);
+    if (timervalue < 60) { timervalue = 1 ; }
+    else { timervalue -= 60; }
+  }
+  // Touch on the right, raise timervaule about 300s
+  else if (t == 2) {
+    Bangle.buzz(30);
+    if (!istimeron) {
+      istimeron = true;
+      timertick = setInterval(countDown, 1000);
+    }
+    timervalue += 60*5;
+  }
+});
+
+function timeToString(duration) {
+  var hrs = ~~(duration / 3600);
+  var mins = ~~((duration % 3600) / 60);
+  var secs = ~~duration % 60;
+  var ret = "";
+  if (hrs > 0) {
+    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+  }
+  ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+  ret += "" + secs;
+  return ret;
+}
+
+function countDown() {
+  timervalue--;
+
+  g.reset().clearRect(0, 40, 44+99, g.getHeight()/2-25);
+
+  g.setFontAlign(0, -1, 0);
+  g.setFont("6x8", 2).drawString(timeToString(timervalue), 95, g.getHeight()/2-50);
+
+  if (timervalue <= 0) {
+    istimeron = false;
+    clearInterval(timertick);
+
+    Bangle.buzz().then(()=>{
+      return new Promise(resolve=>setTimeout(resolve, 500));
+    }).then(()=>{
+      return Bangle.buzz(1000);
+    });
+  }
+  else
+    if ((timervalue <= 30) && (timervalue % 10 == 0)) { Bangle.buzz(); }
 }
