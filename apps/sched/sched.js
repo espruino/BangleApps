@@ -61,7 +61,7 @@ function showAlarm(alarm) {
           // Code from qmsched.js, so we can work without it
           require("Storage").writeJSON("setting.json", Object.assign(
             require("Storage").readJSON("setting.json", 1) || {},
-            {quiet:mode}
+            {quiet:0}
           ));
         }
       }
