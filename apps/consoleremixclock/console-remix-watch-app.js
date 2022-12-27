@@ -1,4 +1,4 @@
-// Clock by Giles Booth for BangleJS2 using Büro Destruct Console Remix font
+// Clock by Giles Booth for BangleJS2 using Buro Destruct Console Remix font
 // based on code in https://www.espruino.com/Bangle.js+Clock+Font
 
 Graphics.prototype.setFontBDConsoleRemix = function() {
