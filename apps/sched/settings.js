@@ -30,6 +30,14 @@
       }
     },
 
+    /*LANG*/"Default Quiet Mode Disable": {
+      value: settings.defaultQuietModeDisable,
+      onchange: v => {
+        settings.defaultQuietModeDisable = v;
+        require("sched").setSettings(settings);
+      }
+    },
+
     /*LANG*/"Default Snooze": {
       value: settings.defaultSnoozeMillis / 60000,
       min: 5,

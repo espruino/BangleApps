@@ -165,6 +165,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
       value: alarm.hidden || false,
       onchange: v => alarm.hidden = v
     },
+    /*LANG*/"Quiet Mode Disable": {
+      value: alarm.qmdisable || false,
+      onchange: v => alarm.qmdisable = v
+    },
     /*LANG*/"Cancel": () => showMainMenu(),
     /*LANG*/"Confirm": () => {
       prepareAlarmForSave(alarm, alarmIndex, time);

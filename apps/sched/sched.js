@@ -52,6 +52,10 @@ function showAlarm(alarm) {
           alarm.on = false;
         }
       }
+      let qmdisable = alarm.qmdisable === undefined ? settings.defaultDisableQuietMode : alarm.qmdisable;
+      if (qmdisable) {
+        require("qmsched").setMode(0);
+      }
     }
 
     // The updated alarm is still a member of 'alarms'

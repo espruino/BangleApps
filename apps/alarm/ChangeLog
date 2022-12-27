@@ -38,3 +38,4 @@
 0.35: Add automatic translation of more strings
 0.36: alarm widget moved out of app
 0.37: add message input and dated Events
+0.38: Add an option to disable quiet mode after dismissing an alarm

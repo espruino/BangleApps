@@ -73,6 +73,7 @@ exports.newDefaultAlarm = function () {
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
+    qmdisable: false
   };
 
   delete settings;
@@ -91,7 +92,8 @@ exports.newDefaultTimer = function () {
     as: false,
     dow: 0b1111111,
     last: 0,
-    vibrate: settings.defaultTimerPattern
+    vibrate: settings.defaultTimerPattern,
+    qmdisable: false
   }
 
   delete settings;
@@ -106,10 +108,11 @@ exports.getSettings = function () {
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
       defaultDeleteExpiredTimers: true, // Always
+      defaultDisableQuietMode: false,
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "::",
-      defaultTimerPattern: "::"
+      defaultTimerPattern: "::",
     },
     require("Storage").readJSON("sched.settings.json", true) || {}
   );
