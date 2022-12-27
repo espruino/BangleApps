@@ -54,7 +54,16 @@ function showAlarm(alarm) {
       }
       let qmdisable = alarm.qmdisable === undefined ? settings.defaultDisableQuietMode : alarm.qmdisable;
       if (qmdisable) {
-        require("qmsched").setMode(0);
+        if ("qmsched" in WIDGETS) {
+          require("qmsched").setMode(0);
+        }
+        else {
+          // Code from qmsched.js, so we can work without it
+          require("Storage").writeJSON("setting.json", Object.assign(
+            require("Storage").readJSON("setting.json", 1) || {},
+            {quiet:mode}
+          ));
+        }
       }
     }
 
