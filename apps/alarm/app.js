@@ -364,6 +364,10 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       value: timer.hidden || false,
       onchange: v => timer.hidden = v
     },
+    /*LANG*/"Quiet Mode Disable": {
+      value: timer.qmdisable || false,
+      onchange: v => timer.qmdisable = v
+    },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(timer.vibrate, v => timer.vibrate = v),
     /*LANG*/"Cancel": () => showMainMenu(),
     /*LANG*/"Confirm": () => {
