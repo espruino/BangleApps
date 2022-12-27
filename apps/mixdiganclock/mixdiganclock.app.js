@@ -50,18 +50,18 @@ function setVariables() {
   v_count_col=2; //1st=0 1st compatible color (dark/light theme)
   v_color_erase=g.getBgColor();
   if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
-    Radius = { "center": 7, "hour": 50, "min": 70, "dots": 88 };
+    Radius = { "center": 7, "hour": 50, "min": 70, "dots": 88,"circleH":6,"circleM":2 };
     v_bfont_size=3;
     v_vfont_size=35;
      v_color1=2; // orange
      v_color2=4;
      v_color3=0; //white , for hands PEND replace hardcoded by logic
     }else{
-       Radius = { "center": 5, "hour": 35, "min": 50, "dots": 60 };
+       Radius = { "center": 5, "hour": 35, "min": 50, "dots": 60, "circleH":5,"circleM":2 };
        v_bfont_size=2;
         v_vfont_size=22;
        v_color1=3; // blue
-       v_color2=1; 
+       v_color2=1;
        v_color3=1; //opposite to bg, for hands PEND replace hardcoded by logic
     }
   if (v_mode_debug>0) console.log("set vars for: "+v_model);
@@ -79,11 +79,15 @@ function rotatePoint(x, y, d) {
 }
 
 //no need to repaint
-function drawStaticRing(){
+function drawStaticRing(v_colorparam){
   // draw hour and minute dots
-  g.setColor(a_colors[v_color1]); // orange
+  if (v_mode_debug>0) console.log("color: "+v_colorparam);
+  //g.setColor(a_colors[v_color1]);
+  g.setColor(v_colorparam);
+
   for (i = 0; i < 60; i++) {
-    radius = (i % 5) ? 2 : 4;
+    // ? 2 : 4;
+    radius = (i % 5) ? Radius.circleM : Radius.circleH;
     point = rotatePoint(0, Radius.dots, i * 6);
     //if (v_mode_debug>1) console.log("point"+point);
     g.fillCircle(point[0], point[1], radius);
@@ -188,13 +192,27 @@ function UserInput(){
                }
                else setVariables();   //v_count_col=3; //reset to 1st common color
                if (v_mode_debug>0) console.log("paint on color: "+v_count_col);
-               drawStaticRing();
+               drawStaticRing(a_colors[v_color1]);
                drawDailyTxt();
                break;
           case 3:
              //console.log("Touch 3 aka 1+2 not for emul");//center 1+2
               break;
       }
+  });
+  Bangle.on('swipe', dir => {
+    if(dir == 1) {
+      drawStaticRing(v_color_erase);
+      if (Radius.circleH<13) Radius.circleH++;
+      if (v_mode_debug>0)  console.log("radio: "+Radius.circleH);
+      drawStaticRing(a_colors[v_color1]);
+       }
+    else {
+      drawStaticRing(v_color_erase);
+      if (Radius.circleH>1) Radius.circleH--;
+      if (v_mode_debug>0) console.log("radio: "+Radius.circleH);
+      drawStaticRing(a_colors[v_color1]);
+       }
   });
 }
 Bangle.on('lcdPower', function(on) {
@@ -207,9 +225,6 @@ Bangle.drawWidgets();
 UserInput();
 
 setInterval(drawMixedClock, 5E3);
-drawStaticRing(); //pend best position
+drawStaticRing(a_colors[v_color1]); 
 drawDailyTxt(); //1st time
 drawMixedClock();
-
-
-

@@ -71,7 +71,7 @@ function saveToFile() {
   if (v_mode_debug==1) console.log("saving="+strlastSaveTime+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure);
   if (v_saveToFile=='Y'){
     //write(strlastSaveTime+";"+
-    require("Storage").open(filename,"a").write(a.getMonth()+";"+a.getDate()+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure+"\n");
+    require("Storage").open(filename,"a").write((a.getMonth()+1)+";"+a.getDate()+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure+"\n");
     //(getTime()+",");
     v_saved_entries=v_saved_entries+1;
   }

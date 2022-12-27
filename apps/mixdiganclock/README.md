@@ -41,13 +41,15 @@ Support for bottom widgets
 
 ## Controls
 
-exit: BTN2 BJS1 
-exit/launcher : left area for BJS1 or  BJS2
+Exit : BTN2 (BJS1)
+Exit/launcher : left area 
+Change Color : right area
+Increase Hour Points : swipe right
+Decrease Hour Points : swipe left
+
 
 ## Coming soon
-
-Right area or swipe - Change colors
-
+A better color combination
 
 ## Support
 
