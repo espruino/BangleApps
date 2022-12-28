@@ -31,9 +31,9 @@
     },
 
     /*LANG*/"Default Quiet Disable": {
-      value: settings.defaultQuietModeDisable,
+      value: settings.defaultDisableQuietMode,
       onchange: v => {
-        settings.defaultQuietModeDisable = v;
+        settings.defaultDisableQuietMode = v;
         require("sched").setSettings(settings);
       }
     },
