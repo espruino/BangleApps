@@ -73,7 +73,7 @@ exports.newDefaultAlarm = function () {
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultAlarmPattern,
-    qmdisable: false
+    qmdisable: settings.defaultDisableQuietMode
   };
 
   delete settings;
@@ -93,7 +93,7 @@ exports.newDefaultTimer = function () {
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultTimerPattern,
-    qmdisable: false
+    qmdisable: settings.defaultDisableQuietMode
   }
 
   delete settings;
