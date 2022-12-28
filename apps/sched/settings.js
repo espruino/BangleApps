@@ -30,7 +30,7 @@
       }
     },
 
-    /*LANG*/"Default Quiet Mode Disable": {
+    /*LANG*/"Default Quiet Disable": {
       value: settings.defaultQuietModeDisable,
       onchange: v => {
         settings.defaultQuietModeDisable = v;
