@@ -63,7 +63,7 @@
         hasRange: true,
         get: () => ({ text: getAlarmText(a), img: getAlarmIcon(a),
           v: getAlarmValue(a), min:0, max:getAlarmMax(a)}),
-        show: function() {},
+        show: function() { alarmItems.items[i].emit("redraw"); },
         hide: function () {},
         run: function() { }
       })),

@@ -52,22 +52,22 @@ var H = g.getHeight();
    items: [
      { name: "time",
      get: () => ({ text: getTime(), img: null}),
-     show: function() {},
+     show: function() { dateMenu.items[0].emit("redraw"); },
      hide: function () {}
    },
    { name: "day",
     get: () => ({ text: getDay(), img: null}),
-    show: function() {},
+    show: function() { dateMenu.items[2].emit("redraw"); },
     hide: function () {}
    },
    { name: "date",
      get: () => ({ text: getDate(), img: null}),
-     show: function() {},
+     show: function() { dateMenu.items[1].emit("redraw"); },
      hide: function () {}
    },
    { name: "week",
      get: () => ({ text: weekOfYear(), img: null}),
-     show: function() {},
+     show: function() { dateMenu.items[3].emit("redraw"); },
      hide: function () {}
    },
    ]
