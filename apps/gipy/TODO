@@ -1,10 +1,7 @@
 
-* bugs
++ use Bangle.project(latlong)
++ try to avoid camera turning when stopped but still work when walking
 
-- when exactly on turn, distance to next point is still often 50m
-    -----> it does not buzz very often on turns
-
-- when going backwards we have a tendencing to get a wrong current_segment
 
 * additional features
 
@@ -15,7 +12,6 @@
 (and look at more than next point)
 
 - display distance to next water/toilet ?
-- dynamic map rescale
 - display scale (100m)
 
 - compress path ?

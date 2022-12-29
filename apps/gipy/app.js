@@ -334,11 +334,13 @@ class Status {
     }
     let hours = now.getHours().toString();
     // now, distance to next point in meters
-    g.setFont("6x8:2").drawString(
-      "" + this.distance_to_next_point + "m",
-      0,
-      g.getHeight() - 49
-    );
+    g.setFont("6x8:2")
+      .setColor(g.theme.fg)
+      .drawString(
+        "" + this.distance_to_next_point + "m",
+        0,
+        g.getHeight() - 49
+      );
 
     let point_time = this.old_times[this.old_times.length - 1];
     let done_in = point_time - this.starting_time - this.paused_time;
@@ -458,7 +460,11 @@ class Status {
       let x = half_width - Math.round(rotated_x); // x is inverted
       let y = half_height + Math.round(rotated_y);
       if (previous_x !== null) {
-        g.setColor(g.theme.fg);
+        let segment_color = g.theme.fg;
+        if (i == this.current_segment + 1 || i == this.current_segment + 2) {
+          segment_color = 0xf800;
+        }
+        g.setColor(segment_color);
         g.drawLine(previous_x, previous_y, x, y);
 
         if (this.path.is_waypoint(i - 1)) {
