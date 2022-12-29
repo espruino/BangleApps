@@ -1,0 +1,13 @@
+{
+  "id": "clkinfostopw",
+  "name": "Stop Watch Clockinfo",
+  "version":"0.01",
+  "description": "A simple stopwatch, shown via clockinfo",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "tags": "clkinfo,timer",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"stopw.clkinfo.js","url":"clkinfo.js"}
+  ]
+}
