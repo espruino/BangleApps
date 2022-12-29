@@ -8,7 +8,8 @@
       255: /*LANG*/"Cyan",
       240: /*LANG*/"Green",
       15: /*LANG*/"Blue",
-      0: /*LANG*/"Black"
+      0: /*LANG*/"Black",
+      null: /*LANG*/"Default"
   };
 
   const save = () => require('Storage').write('dragboard.json', settings);
@@ -19,7 +20,11 @@
       menu[label] = {
         value: settings[key] == color,
         onchange: () => {
-          settings[key] = color;
+          if (color) {
+            settings[key] = color;
+          } else {
+            delete settings[key];
+          }
           save();
           setTimeout(E.showMenu, 10, appMenu);
         }
