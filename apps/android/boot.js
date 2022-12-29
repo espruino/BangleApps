@@ -137,7 +137,7 @@
         event.lon = event.long;
         delete event.long;
 
-        Bangle.emit('gps', event);
+        Bangle.emit('GPS', event);
       },
       "is_gps_active": function() {
         gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
