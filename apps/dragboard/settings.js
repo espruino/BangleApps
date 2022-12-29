@@ -9,18 +9,18 @@
       240: /*LANG*/"Green",
       15: /*LANG*/"Blue",
       0: /*LANG*/"Black",
-      null: /*LANG*/"Default"
+      '-1': /*LANG*/"Default"
   };
 
   const save = () => require('Storage').write('dragboard.json', settings);
   function colorMenu(key) {
     let menu = {'': {title: key}, '< Back': () => E.showMenu(appMenu)};
     Object.keys(colors).forEach(color => {
-      var label = colors[color] + " Color";
+      var label = colors[color];
       menu[label] = {
         value: settings[key] == color,
         onchange: () => {
-          if (color) {
+          if (color >= 0) {
             settings[key] = color;
           } else {
             delete settings[key];
@@ -35,13 +35,13 @@
 
   const appMenu = {
       '': {title: 'Dragboard'}, '< Back': back,
-      'CAPS LOCK': {
+      /*LANG*/'CAPS LOCK': {
         value: !!settings.uppercase,
         onchange: v => {settings.uppercase = v; save();}
       },
-      'ABC': () => E.showMenu(colorMenu("ABC")),
-      'Num': () => E.showMenu(colorMenu("Num")),
-      'Highlight': () => E.showMenu(colorMenu("Highlight"))
+      /*LANG*/'ABC Color': () => E.showMenu(colorMenu("ABC")),
+      /*LANG*/'Num Color': () => E.showMenu(colorMenu("Num")),
+      /*LANG*/'Highlight Color': () => E.showMenu(colorMenu("Highlight"))
   };
 
   E.showMenu(appMenu);
