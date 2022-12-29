@@ -72,8 +72,6 @@ class Status {
     this.current_segment = null; // which segment is closest
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
-    this.paused_time = 0.0; // how long did we stop (stops don't count in avg speed)
-    this.paused_since = getTime();
     this.projected_point = null;
 
     let r = [0];
@@ -88,7 +86,7 @@ class Status {
       previous_point = point;
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
-    this.starting_time = this.paused_since; // time we start
+    this.starting_time = getTime(); // time we start
     this.advanced_distance = 0.0;
     this.gps_coordinates_counter = 0; // how many coordinates did we receive
     this.old_points = [];
@@ -98,57 +96,39 @@ class Status {
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
     this.gps_coordinates_counter += 1;
-    let now = getTime();
+
+    if (this.old_points.length == 0) {
+      this.old_points.push(position);
+      let now = getTime();
+      this.old_times.push(now);
+      return null;
+    } else {
+      let previous_point = this.old_points[this.old_points.length - 1];
+      let distance_to_previous = previous_point.distance(position);
+      // gps signal is noisy but rarely above 4 meters
+      if (distance_to_previous < 4) {
+        return null;
+      }
+    }
     this.old_points.push(position);
+    let now = getTime();
     this.old_times.push(now);
 
-    if (this.old_points.length == 1) {
-      return null;
-    }
-
-    let last_point = this.old_points[this.old_points.length - 1];
     let oldest_point = this.old_points[0];
+    let distance_to_oldest = oldest_point.distance(position);
 
-    // every 7 points we count the distance
-    if (this.gps_coordinates_counter % 7 == 0) {
-      let distance = last_point.distance(oldest_point);
-      if (distance < 150.0) {
+    // every 3 points we count the distance
+    if (this.gps_coordinates_counter % 3 == 0) {
+      if (distance_to_oldest < 150.0) {
         // to avoid gps glitches
-        this.advanced_distance += distance;
+        this.advanced_distance += distance_to_oldest;
       }
     }
 
-    if (this.old_points.length == 8) {
-      let p1 = this.old_points[0]
-        .plus(this.old_points[1])
-        .plus(this.old_points[2])
-        .plus(this.old_points[3])
-        .times(1 / 4);
-      let p2 = this.old_points[4]
-        .plus(this.old_points[5])
-        .plus(this.old_points[6])
-        .plus(this.old_points[7])
-        .times(1 / 4);
-      let t1 = (this.old_times[1] + this.old_times[2]) / 2;
-      let t2 = (this.old_times[5] + this.old_times[6]) / 2;
-      this.instant_speed = p1.distance(p2) / (t2 - t1);
+    this.instant_speed = distance_to_oldest / (now - this.old_times[0]);
+    if (this.old_points.length == 4) {
       this.old_points.shift();
       this.old_times.shift();
-    } else {
-      this.instant_speed =
-        oldest_point.distance(last_point) / (now - this.old_times[0]);
-
-      // update paused time if we are too slow
-      if (this.instant_speed < 2) {
-        if (this.paused_since === null) {
-          this.paused_since = now;
-        }
-      } else {
-        if (this.paused_since !== null) {
-          this.paused_time += now - this.paused_since;
-          this.paused_since = null;
-        }
-      }
     }
     // let's just take angle of segment between newest point and a point a bit before
     let previous_index = this.old_points.length - 3;
@@ -343,7 +323,7 @@ class Status {
       );
 
     let point_time = this.old_times[this.old_times.length - 1];
-    let done_in = point_time - this.starting_time - this.paused_time;
+    let done_in = point_time - this.starting_time;
     let approximate_speed = Math.round(
       (this.advanced_distance * 3.6) / done_in
     );
