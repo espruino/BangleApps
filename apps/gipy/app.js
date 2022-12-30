@@ -1,4 +1,4 @@
-let simulated = true;
+let simulated = false;
 let file_version = 3;
 let code_key = 47490;
 
