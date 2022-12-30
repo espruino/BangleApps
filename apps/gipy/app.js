@@ -1,4 +1,4 @@
-let simulated = false;
+let simulated = true;
 let file_version = 3;
 let code_key = 47490;
 
@@ -89,17 +89,46 @@ class Status {
     this.starting_time = getTime(); // time we start
     this.advanced_distance = 0.0;
     this.gps_coordinates_counter = 0; // how many coordinates did we receive
-    this.old_points = [];
-    this.old_times = [];
+    this.old_points = []; // record previous points but only when enough distance between them
+    this.old_times = []; // the corresponding times
+    this.unfiltered_old_points = []; // record previous points
+    this.unfiltered_old_times = []; // the corresponding times
   }
   new_position_reached(position) {
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
     this.gps_coordinates_counter += 1;
 
+    this.unfiltered_old_points.push(position);
+    let now = getTime();
+    this.unfiltered_old_times.push(now);
+    // compute instant speed using unfiltered points
+    // we average the first four points, then the last four
+    // and compute the speed between the two averages.
+    // this way, at speed 0 we will get a speed close to 0
+    // whereas taking speed between first and last point will not.
+    if (this.unfiltered_old_points.length == 8) {
+      let p1 = this.unfiltered_old_points[0]
+        .plus(this.unfiltered_old_points[1])
+        .plus(this.unfiltered_old_points[2])
+        .plus(this.unfiltered_old_points[3])
+        .times(1 / 4);
+      let p2 = this.unfiltered_old_points[4]
+        .plus(this.unfiltered_old_points[5])
+        .plus(this.unfiltered_old_points[6])
+        .plus(this.unfiltered_old_points[7])
+        .times(1 / 4);
+      let t1 =
+        (this.unfiltered_old_times[1] + this.unfiltered_old_times[2]) / 2;
+      let t2 =
+        (this.unfiltered_old_times[5] + this.unfiltered_old_times[6]) / 2;
+      this.instant_speed = p1.distance(p2) / (t2 - t1);
+      this.unfiltered_old_points.shift();
+      this.unfiltered_old_times.shift();
+    }
+
     if (this.old_points.length == 0) {
       this.old_points.push(position);
-      let now = getTime();
       this.old_times.push(now);
       return null;
     } else {
@@ -111,7 +140,6 @@ class Status {
       }
     }
     this.old_points.push(position);
-    let now = getTime();
     this.old_times.push(now);
 
     let oldest_point = this.old_points[0];
@@ -125,7 +153,6 @@ class Status {
       }
     }
 
-    this.instant_speed = distance_to_oldest / (now - this.old_times[0]);
     if (this.old_points.length == 4) {
       this.old_points.shift();
       this.old_times.shift();

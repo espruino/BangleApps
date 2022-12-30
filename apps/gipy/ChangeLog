@@ -71,5 +71,4 @@
 	* Speed optimisations.
 	* Estimated time of Arrival/Going back.
 	* Display current and next segment in red so that you know where to go.
-	* Back to old instant speed algorithm (slow update if moving slowly (no
-	update if you don't move) but no angle flickering at low speed)
+	* Avoid angles flickering at low speed at the cost of less refresh.

@@ -1,7 +1,5 @@
 
 + use Bangle.project(latlong)
-+ try to avoid camera turning when stopped but still work when walking
-
 
 * additional features
 
