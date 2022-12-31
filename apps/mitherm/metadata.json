@@ -1,0 +1,15 @@
+{
+  "id": "mitherm",
+  "name": "Xiaomi Mijia Temperature and Humidity display",
+  "shortName": "MiTherm",
+  "version": "0.01",
+  "description": "Reads and displays data from Xiaomi temperature/humidity sensors running custom firmware",
+  "icon": "app.png",
+  "tags": "xiaomi,mi,ble,bluetooth,thermometer,humidity",
+  "readme": "README.md",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"mitherm.app.js","url":"app.js"},
+    {"name":"mitherm.img","url":"app-icon.js","evaluate":true}
+  ]
+}

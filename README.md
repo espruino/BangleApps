@@ -282,8 +282,11 @@ and which gives information about the app for the Launcher.
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
-  "dependencies" : { "messageicons":"module" } // optional, depend on a specific library to be used with 'require'
+  "dependencies" : { "messageicons":"module" } // optional, depend on a specific library to be used with 'require' - see provides_modules
+  "dependencies" : { "message":"widget" } // optional, depend on a specific type of widget - see provides_widgets
   "provides_modules" : ["messageicons"] // optional, this app provides a module that can be used with 'require'
+  "provides_widgets" : ["battery"] // optional, this app provides a type of widget - 'alarm/battery/bluetooth/pedometer/message'
+  "default" : true,           // set if an app is the default implementer of something (a widget/module/etc)
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
                               // A 'Read more...' link will be added under the app

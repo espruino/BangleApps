@@ -15,3 +15,6 @@
 0.15: Allow method/body/headers to be specified for `http` (needs Gadgetbridge 0.68.0b or later)
 0.16: Bangle.http now fails immediately if there is no Bluetooth connection (fix #2152)
 0.17: Now kick off Calendar sync as soon as connected to Gadgetbridge
+0.18: Use new message library
+      If connected to Gadgetbridge, allow GPS forwarding from phone (Gadgetbridge code still not merged)
+0.19: Add automatic translation for a couple of strings.

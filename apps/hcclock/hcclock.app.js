@@ -234,7 +234,7 @@ function handleMessages()
 {
   if(!hasMessages()) return;
   E.showMessage("Loading Messages...");
-  load("messages.app.js");
+  require("messages").openGUI();
 }
 
 function hasMessages()

@@ -61,3 +61,6 @@
 0.52: Ensure heading patch for pre-2v15.68 firmware applies to getCompass
 0.53: Add polyfills for pre-2v15.135 firmware for Bangle.load and Bangle.showClock
 0.54: Fix for invalid version comparison in polyfill
+0.55: Add toLocalISOString polyfill for pre-2v15 firmwares
+      Only add boot info comments if settings.bootDebug was set
+      If settings.bootDebug is set, output timing for each section of .boot0

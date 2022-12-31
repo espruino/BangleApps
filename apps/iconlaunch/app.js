@@ -12,6 +12,8 @@
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
+  } else { // for fast-load, if we had widgets then we should hide them
+    require("widget_utils").hide();
   }
   let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
   let launchHash = s.hash(/\.info/);
@@ -190,6 +192,9 @@
     btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
     remove: function() {
       if (timeout) clearTimeout(timeout);
+      if (settings.fullscreen) { // for fast-load, if we hid widgets then we should show them again
+        require("widget_utils").show();
+      }
     }
   };
 

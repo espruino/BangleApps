@@ -1,5 +1,10 @@
 ﻿# Active Pedometer
+
 Pedometer that filters out arm movement and displays a step goal progress.
+
+**Note:** Since creation of this app, Bangle.js's step counting algorithm has
+improved significantly - and as a result the algorithm in this app (which
+  runs *on top* of Bangle.js's algorithm) may no longer be accurate.
 
 I changed the step counting algorithm completely.
 Now every step is counted when in status 'active', if the time difference between two steps is not too short or too long.
@@ -9,6 +14,7 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 Steps are saved to a datafile every 5 minutes. You can watch a graph using the app.
 
 ## Screenshots
+
 * 600 steps
 ![](600.png)
 

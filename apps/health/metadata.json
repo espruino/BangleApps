@@ -1,7 +1,8 @@
 {
   "id": "health",
   "name": "Health Tracking",
-  "version": "0.15",
+  "shortName": "Health",
+  "version": "0.17",
   "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
   "tags": "tool,system,health",

@@ -20,32 +20,59 @@ function center() {
   m.draw();
 }
 
+// you can even change the scale - eg 'm/scale *= 2'
+
 */
 
-var map = require("Storage").readJSON("openstmap.0.json");
-map.center = Bangle.project({lat:map.lat,lon:map.lon});
-exports.map = map;
-exports.lat = map.lat; // actual position of middle of screen
-exports.lon = map.lon;  // actual position of middle of screen
 var m = exports;
+m.maps = require("Storage").list(/openstmap\.\d+\.json/).map(f=>{
+  let map = require("Storage").readJSON(f);
+  map.center = Bangle.project({lat:map.lat,lon:map.lon});
+  return map;
+});
+// we base our start position on the middle of the first map
+m.map = m.maps[0];
+m.scale = m.map.scale; // current scale (based on first map)
+m.lat = m.map.lat; // position of middle of screen
+m.lon = m.map.lon;  // position of middle of screen
 
 exports.draw = function() {
-  var img = require("Storage").read(map.fn);
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var ix = (p.x-map.center.x)/map.scale + (map.imgx/2) - cx;
-  var iy = (map.center.y-p.y)/map.scale + (map.imgy/2) - cy;
-  //console.log(ix,iy);
-  var tx = 0|(ix/map.tilesize);
-  var ty = 0|(iy/map.tilesize);
-  var ox = (tx*map.tilesize)-ix;
-  var oy = (ty*map.tilesize)-iy;
-  for (var x=ox,ttx=tx;x<g.getWidth();x+=map.tilesize,ttx++)
-    for (var y=oy,tty=ty;y<g.getHeight();y+=map.tilesize,tty++) {
-      if (ttx>=0 && ttx<map.w && tty>=0 && tty<map.h) g.drawImage(img,x,y,{frame:ttx+(tty*map.w)});
-      else g.clearRect(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y,x+map.tilesize-1,y+map.tilesize-1).drawLine(x,y+map.tilesize-1,x+map.tilesize-1,y);
+  m.maps.forEach((map,idx) => {
+    var d = map.scale/m.scale;
+    var ix = (p.x-map.center.x)/m.scale + (map.imgx*d/2) - cx;
+    var iy = (map.center.y-p.y)/m.scale + (map.imgy*d/2) - cy;
+    var o = {};
+    var s = map.tilesize;
+    if (d!=1) { // if the two are different, add scaling
+      s *= d;
+      o.scale = d;
     }
+    //console.log(ix,iy);
+    var tx = 0|(ix/s);
+    var ty = 0|(iy/s);
+    var ox = (tx*s)-ix;
+    var oy = (ty*s)-iy;
+    var img = require("Storage").read(map.fn);
+    // fix out of range so we don't have to iterate over them
+    if (tx<0) {
+      ox+=s*-tx;
+      tx=0;
+    }
+    if (ty<0) {
+      oy+=s*-ty;
+      ty=0;
+    }
+    var mx = g.getWidth();
+    var my = g.getHeight();
+    for (var x=ox,ttx=tx; x<mx && ttx<map.w; x+=s,ttx++)
+      for (var y=oy,tty=ty;y<my && tty<map.h;y+=s,tty++) {
+        o.frame = ttx+(tty*map.w);
+        g.drawImage(img,x,y,o);
+      }
+  });
 };
 
 /// Convert lat/lon to pixels on the screen
@@ -55,15 +82,15 @@ exports.latLonToXY = function(lat, lon) {
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   return {
-    x : (q.x-p.x)/map.scale + cx,
-    y : cy - (q.y-p.y)/map.scale
+    x : (q.x-p.x)/m.scale + cx,
+    y : cy - (q.y-p.y)/m.scale
   };
 };
 
 /// Given an amount to scroll in pixels on the screen, adjust the lat/lon of the map to match
 exports.scroll = function(x,y) {
-  var a = Bangle.project({lat:this.lat,lon:this.lon});
-  var b = Bangle.project({lat:this.lat+1,lon:this.lon+1});
-  this.lon += x * this.map.scale / (a.x-b.x);
-  this.lat -= y * this.map.scale / (a.y-b.y);
+  var a = Bangle.project({lat:m.lat,lon:m.lon});
+  var b = Bangle.project({lat:m.lat+1,lon:m.lon+1});
+  this.lon += x * m.scale / (a.x-b.x);
+  this.lat -= y * m.scale / (a.y-b.y);
 };

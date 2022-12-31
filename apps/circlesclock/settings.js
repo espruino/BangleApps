@@ -12,26 +12,6 @@
     storage.write(SETTINGS_FILE, settings);
   }
 
-  //const valuesCircleTypes = ["empty", "steps", "stepsDist", "hr", "battery", "weather", "sunprogress", "temperature", "pressure", "altitude", "timer"];
-  //const namesCircleTypes = ["empty", "steps", "distance", "heart", "battery", "weather", "sun", "temperature", "pressure", "altitude", "timer"];
-  var valuesCircleTypes = ["empty","weather", "sunprogress"];
-  var namesCircleTypes = ["empty","weather", "sun"];
-  clock_info.load().forEach(e=>{
-    //TODO filter for hasRange and other
-    if(!e.items.length || !e.items[0].name) {
-      //suppose unnamed are varying (like timers or events), pick the first
-      item = e.items[0];
-      valuesCircleTypes = valuesCircleTypes.concat([e.name+"/"]);
-      namesCircleTypes = namesCircleTypes.concat([e.name]);
-    } else {
-      let values = e.items.map(i=>e.name+"/"+i.name);
-      let names =e.name=="Bangle" ? e.items.map(i=>i.name) : values;
-      valuesCircleTypes = valuesCircleTypes.concat(values);
-      namesCircleTypes = namesCircleTypes.concat(names);
-    }
-  })
-
-
   const valuesColors = ["",        "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff",
   "#00ffff", "#fff",  "#000", "green-red",   "red-green", "fg"];
   const namesColors =  ["default", "red",     "green",   "blue",    "yellow",  "magenta",
@@ -85,6 +65,12 @@
         },
         onchange: x => save('updateInterval', x),
       },
+      //TODO deprecated local icons, may disappear in future
+      /*LANG*/'legacy weather icons': {
+        value: !!settings.legacyWeatherIcons,
+        format: () => (settings.legacyWeatherIcons ? 'Yes' : 'No'),
+        onchange: x => save('legacyWeatherIcons', x),
+      },
       /*LANG*/'show big weather': {
         value: !!settings.showBigWeather,
         format: () => (settings.showBigWeather ? 'Yes' : 'No'),
@@ -102,12 +88,6 @@
     const menu = {
       '': { 'title': /*LANG*/'Circle ' + circleId },
       /*LANG*/'< Back': ()=>showMainMenu(),
-      /*LANG*/'data': {
-        value: valuesCircleTypes.indexOf(settings[circleName]),
-        min: 0, max: valuesCircleTypes.length - 1,
-        format: v => namesCircleTypes[v],
-        onchange: x => save(circleName, valuesCircleTypes[x]),
-      },
       /*LANG*/'color': {
         value: valuesColors.indexOf(settings[colorKey]) || 0,
         min: 0, max: valuesColors.length - 1,

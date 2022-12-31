@@ -57,7 +57,7 @@
           t:event.cmd=="incoming"?"add":"remove",
           id:"call", src:"Phone",
           positive:true, negative:true,
-          title:event.name||"Call", body:"Incoming call\n"+event.number});
+          title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
       "alarm" : function() {
@@ -126,6 +126,18 @@
           request.j(event.err); //r = reJect function
         else
           request.r(event); //r = resolve function
+      },
+      "gps": function() {
+        const settings = require("Storage").readJSON("android.settings.json",1)||{};
+        if (!settings.overwriteGps) return;
+        delete event.t;
+        event.satellites = NaN;
+        event.course = NaN;
+        event.fix = 1;
+        Bangle.emit('gps', event);
+      },
+      "is_gps_active": function() {
+        gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
       }
     };
     var h = HANDLERS[event.t];
@@ -136,7 +148,7 @@
   Bangle.http = (url,options)=>{
     options = options||{};
     if (!NRF.getSecurityStatus().connected)
-      return Promise.reject("Not connected to Bluetooth");
+      return Promise.reject(/*LANG*/"Not connected to Bluetooth");
     if (Bangle.httpRequest === undefined)
       Bangle.httpRequest={};
     if (options.id === undefined) {
@@ -189,6 +201,30 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
+  // GPS overwrite logic
+  if (settings.overwriteGps) { // if the overwrite option is set../
+    // Save current logic
+    const originalSetGpsPower = Bangle.setGPSPower;
+    // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
+    Bangle.setGPSPower = (isOn, appID) => {
+      // if not connected, use old logic
+      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID); 
+      // Emulate old GPS power logic
+      if (!Bangle._PWR) Bangle._PWR={};
+      if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
+      if (!appID) appID="?";
+      if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);
+      if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);
+      let pwr = Bangle._PWR.GPS.length>0;
+      gbSend({ t: "gps_power", status: pwr });
+      return pwr;
+    }
+    // Replace check if the GPS is on to check the _PWR variable
+    Bangle.isGPSOn = () => {
+      return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
+    }
+  }
+
   // remove settings object so it's not taking up RAM
   delete settings;
 })();

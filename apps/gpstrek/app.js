@@ -259,7 +259,8 @@ let getCompassSlice = function(compassDataSource){
 
 
       if (compassDataSource.getPoints){
-        for (let p of compassDataSource.getPoints()){
+        let points = compassDataSource.getPoints(); //storing this in a variable works around a minifier bug causing a problem in the next line: for(let a of a.getPoints())
+        for (let p of points){
           g.reset();
           var bpos = p.bearing - lastDrawnValue;
           if (bpos>180) bpos -=360;
@@ -285,7 +286,8 @@ let getCompassSlice = function(compassDataSource){
         }
       }
       if (compassDataSource.getMarkers){
-        for (let m of compassDataSource.getMarkers()){
+        let markers = compassDataSource.getMarkers(); //storing this in a variable works around a minifier bug causing a problem in the next line: for(let a of a.getMarkers())
+        for (let m of markers){
           g.reset();
           g.setColor(m.fillcolor);
           let mpos = m.xpos * width;

@@ -1,5 +1,13 @@
-/**
+/************************************************
  * AI Clock
+ */
+ const storage = require('Storage');
+ const clock_info = require("clock_info");
+
+
+
+ /************************************************
+ * Assets
  */
 require("Font7x11Numeric7Seg").add(Graphics);
 Graphics.prototype.setFontGochiHand = function(scale) {
@@ -13,7 +21,7 @@ Graphics.prototype.setFontGochiHand = function(scale) {
     return this;
 }
 
-/*
+/************************************************
  * Set some important constants such as width, height and center
  */
 var W = g.getWidth(),R=W/2;
@@ -21,6 +29,120 @@ var H = g.getHeight();
 var cx = W/2;
 var cy = H/2;
 var drawTimeout;
+var lock_input = false;
+
+
+/************************************************
+ * SETTINGS
+ */
+const SETTINGS_FILE = "aiclock.setting.json";
+let settings = {
+    menuPosX: 0,
+    menuPosY: 0,
+};
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key]
+}
+
+
+/************************************************
+ * Menu
+ */
+function getDate(){
+    var date = new Date();
+    return ("0"+date.getDate()).substr(-2) + "/" + ("0"+(date.getMonth()+1)).substr(-2)
+}
+
+
+// Custom clockItems menu - therefore, its added here and not in a clkinfo.js file.
+var clockItems = {
+    name: getDate(),
+    img: null,
+    items: [
+    { name: "Week",
+      get: () => ({ text: "Week " + weekOfYear(), img: null}),
+      show: function() { clockItems.items[0].emit("redraw"); },
+      hide: function () {}
+    },
+    ]
+  };
+
+function weekOfYear() {
+    var date = new Date();
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    // January 4 is always in week 1.
+    var week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                            - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+
+
+// Load menu
+var menu = clock_info.load();
+menu = menu.concat(clockItems);
+
+
+  // Ensure that our settings are still in range (e.g. app uninstall). Otherwise reset the position it.
+  if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPosX].items.length ){
+    settings.menuPosX = 0;
+    settings.menuPosY = 0;
+  }
+
+  // Set draw functions for each item
+  menu.forEach((menuItm, x) => {
+    menuItm.items.forEach((item, y) => {
+      function drawItem() {
+        // For the clock, we have a special case, as we don't wanna redraw
+        // immediately when something changes. Instead, we update data each minute
+        // to save some battery etc. Therefore, we hide (and disable the listener)
+        // immedeately after redraw...
+        item.hide();
+
+        // After drawing the item, we enable inputs again...
+        lock_input = false;
+
+        var info = item.get();
+        drawMenuItem(info.text, info.img);
+      }
+
+      item.on('redraw', drawItem);
+    })
+  });
+
+
+  function canRunMenuItem(){
+    if(settings.menuPosY == 0){
+      return false;
+    }
+
+    var menuEntry = menu[settings.menuPosX];
+    var item = menuEntry.items[settings.menuPosY-1];
+    return item.run !== undefined;
+  }
+
+
+  function runMenuItem(){
+    if(settings.menuPosY == 0){
+      return;
+    }
+
+    var menuEntry = menu[settings.menuPosX];
+    var item = menuEntry.items[settings.menuPosY-1];
+    try{
+      var ret = item.run();
+      if(ret){
+        Bangle.buzz(300, 0.6);
+      }
+    } catch (ex) {
+      // Simply ignore it...
+    }
+  }
+
 
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
@@ -76,7 +198,50 @@ function toAngle(a){
     return a
 }
 
+
+function drawMenuItem(text, image){
+    if(text == null){
+        drawTime();
+        return
+    }
+    // image = atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==");
+
+    text = String(text);
+
+    g.reset().setBgColor("#fff").setColor("#000");
+    g.setFontAlign(0,0);
+    g.setFont("Vector", 20);
+
+    var imgWidth = image == null ? 0 : 24;
+    var strWidth = g.stringWidth(text);
+    var strHeight = text.split('\n').length > 1 ? 40 : Math.max(24, imgWidth+2);
+    var w = imgWidth + strWidth;
+
+    g.clearRect(cx-w/2-8, 40-strHeight/2-1, cx+w/2+4, 40+strHeight/2)
+
+    // Draw right line as designed by stable diffusion
+    g.drawLine(cx+w/2+5, 40-strHeight/2-1, cx+w/2+5, 40+strHeight/2);
+    g.drawLine(cx+w/2+6, 40-strHeight/2-1, cx+w/2+6, 40+strHeight/2);
+    g.drawLine(cx+w/2+7, 40-strHeight/2-1, cx+w/2+7, 40+strHeight/2);
+
+    // And finally the text
+    g.drawString(text, cx+imgWidth/2, 42);
+    g.drawString(text, cx+1+imgWidth/2, 41);
+
+    if(image != null) {
+        var scale = image.width ? imgWidth / image.width : 1;
+        g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 41-12, {scale: scale});
+    }
+
+    drawTime();
+}
+
+
 function drawTime(){
+    // Draw digital time first
+    drawDigits();
+
+    // And now the analog time
     var drawHourHand = g.drawRotRect.bind(g,8,12,R-38);
     var drawMinuteHand = g.drawRotRect.bind(g,6,12,R-12 );
 
@@ -90,39 +255,10 @@ function drawTime(){
     h += date.getMinutes()/60.0;
     h = parseInt(h*360/12);
 
-    // Draw minute and hour bg
-    g.setColor(g.theme.bg);
-    drawHourHand(toAngle(h-3));
-    drawHourHand(toAngle(h+3));
-    drawMinuteHand(toAngle(m-2));
-    drawMinuteHand(toAngle(m+3));
-
     // Draw minute and hour fg
     g.setColor(g.theme.fg);
     drawHourHand(h);
     drawMinuteHand(m);
-}
-
-
-
-function drawDate(){
-    var date = new Date();
-    g.setFontAlign(0,0);
-    g.setFontGochiHand();
-
-    var text = ("0"+date.getDate()).substr(-2) + "/" + ("0"+(date.getMonth()+1)).substr(-2);
-    var w = g.stringWidth(text);
-    g.setColor(g.theme.bg);
-    g.fillRect(cx-w/2-4, 20, cx+w/2+4, 40+12);
-
-    g.setColor(g.theme.fg);
-    // Draw right line as designed by stable diffusion
-    g.drawLine(cx+w/2+5, 20, cx+w/2+5, 40+12);
-    g.drawLine(cx+w/2+6, 20, cx+w/2+6, 40+12);
-    g.drawLine(cx+w/2+7, 20, cx+w/2+7, 40+12);
-
-    // And finally the text
-    g.drawString(text, cx, 40);
 }
 
 
@@ -156,20 +292,35 @@ function drawDigits(){
 }
 
 
+function drawDate(){
+    var menuEntry = menu[settings.menuPosX];
+
+    // The first entry is the overview...
+    if(settings.menuPosY == 0){
+        drawMenuItem(menuEntry.name, menuEntry.img);
+        return;
+    }
+
+    // Draw item if needed
+    lock_input = true;
+    var item = menuEntry.items[settings.menuPosY-1];
+    item.show();
+}
+
+
+
+
 
 function draw(){
     // Queue draw in one minute
     queueDraw();
 
-
     g.reset();
     g.clearRect(0, 0, g.getWidth(), g.getHeight());
-
     g.setColor(1,1,1);
+
     drawBackground();
     drawDate();
-    drawDigits();
-    drawTime();
     drawCircle(Bangle.isLocked());
 }
 
@@ -190,6 +341,68 @@ Bangle.on('lock', function(isLocked) {
     drawCircle(isLocked);
 });
 
+Bangle.on('touch', function(btn, e){
+    var left = parseInt(g.getWidth() * 0.22);
+    var right = g.getWidth() - left;
+    var upper = parseInt(g.getHeight() * 0.22);
+    var lower = g.getHeight() - upper;
+
+    var is_upper = e.y < upper;
+    var is_lower = e.y > lower;
+    var is_left = e.x < left && !is_upper && !is_lower;
+    var is_right = e.x > right && !is_upper && !is_lower;
+    var is_center = !is_upper && !is_lower && !is_left && !is_right;
+
+    if(lock_input){
+        return;
+    }
+
+    if(is_lower){
+        Bangle.buzz(40, 0.6);
+        settings.menuPosY = (settings.menuPosY+1) % (menu[settings.menuPosX].items.length+1);
+
+        draw();
+    }
+
+    if(is_upper){
+        Bangle.buzz(40, 0.6);
+        settings.menuPosY  = settings.menuPosY-1;
+        settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length : settings.menuPosY;
+
+        draw();
+    }
+
+    if(is_right){
+        Bangle.buzz(40, 0.6);
+        settings.menuPosX = (settings.menuPosX+1) % menu.length;
+        settings.menuPosY = 0;
+        draw();
+    }
+
+    if(is_left){
+        Bangle.buzz(40, 0.6);
+        settings.menuPosY = 0;
+        settings.menuPosX  = settings.menuPosX-1;
+        settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
+        draw();
+    }
+
+    if(is_center){
+        if(canRunMenuItem()){
+            runMenuItem();
+        }
+    }
+});
+
+
+E.on("kill", function(){
+    try{
+        storage.write(SETTINGS_FILE, settings);
+    } catch(ex){
+        // If this fails, we still kill the app...
+    }
+});
+
 
 /*
  * Some helpers
@@ -203,7 +416,6 @@ function queueDraw() {
 }
 
 
-
 /*
  * Lets start widgets, listen for btn etc.
  */
@@ -215,7 +427,7 @@ Bangle.loadWidgets();
  * so we will blank out the draw() functions of each widget and change the
  * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+require('widget_utils').hide();
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();

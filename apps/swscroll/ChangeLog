@@ -1,1 +1,2 @@
 0.01: Inital release.
+0.02: Rebasing on latest changes to showScroller_Q3 (https://github.com/espruino/Espruino/commit/2d3c34ef7c2b9fe2118e816aacd2e096adb99596).
