@@ -5,7 +5,7 @@ Gipy allows you to follow gpx traces on your watch.
 ![Screenshot](splash.png)
 
 
-It is for now meant for bicycling and but hiking might be fine.
+It is mainly meant for bicycling but hiking might be fine.
 
 It is untested on Banglejs1. If you can try it, you would be welcome.
 
@@ -52,12 +52,13 @@ Your path will be displayed in svg.
 
 ### Starting Gipy
 
-Once you start gipy you will have a menu for selecting your trace (if more than one).
-Choose the one you want and here you go :
+At start you will have a menu for selecting your trace (if more than one).
+Choose the one you want and you will reach the splash screen where you'll wait for the gps signal.
+Once you have a signal you will reach the main screen:
 
 ![Screenshot](legend.png)
 
-On your screen you can see :
+On your screen you can see:
 
 - yourself (the big black dot)
 - the path (the top of the screen is in front of you)
@@ -65,7 +66,7 @@ On your screen you can see :
 - if needed a projection of yourself on the path (small black dot)
 - points as white dots
 - waypoints as doubled white dots
-- some text on the left (from top to bottom) :
+- some text on the left (from top to bottom):
     * time to reach start point at current average speed
     * current time
     * time to reach end point at current average speed
@@ -73,10 +74,10 @@ On your screen you can see :
     * remaining distance / path length
     * average speed / instant speed
 - interest points from openstreetmap as color dots :
-    * red : bakery
-    * deep blue : water point
-    * cyan : toilets (often doubles as water point)
-    * green : artwork
+    * red: bakery
+    * deep blue: water point
+    * cyan: toilets (often doubles as water point)
+    * green: artwork
 - a *turn* indicator on the top right when you reach a turning point
 - a *gps* indicator (blinking) on the top right if you lose gps signal
 - a *lost* indicator on the top right if you stray too far away from path
