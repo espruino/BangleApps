@@ -7,25 +7,20 @@ to populate Storage initially.
 Bangle.js 1 doesn't really have anough flash space for this,
 but we have enough on v2.
 */
-var SETTINGS = {
-  pretokenise : true
-};
-
-var DEVICE = process.argv[2];
+var DEVICEID = process.argv[2];
 
 var path = require('path');
+var fs = require("fs");
 var ROOTDIR = path.join(__dirname, '..');
-var APPDIR = ROOTDIR+'/apps';
-var MINIFY = true;
 var OUTFILE, APPS;
 
-if (DEVICE=="BANGLEJS") {
+if (DEVICEID=="BANGLEJS") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs1_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","mclock","setting",
     "about","alarm","sched","widbat","widbt","welcome"
   ];
-} else if (DEVICE=="BANGLEJS2") {
+} else if (DEVICEID=="BANGLEJS2") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","antonclk","setting",
@@ -37,16 +32,12 @@ if (DEVICE=="BANGLEJS") {
   console.log("  bin/firmwaremaker_c.js BANGLEJS2");
   process.exit(1);
 }
-console.log("Device = ",DEVICE);
+console.log("Device = ",DEVICEID);
 
-
-var fs = require("fs");
-global.Const = {
-  /* Are we only putting a single app on a device? If so
-  apps should all be saved as .bootcde and we write info
-  about the current app into app.info */
-  SINGLE_APP_ONLY : false,
-};
+var apploader = require("./lib/apploader.js");
+apploader.init({
+  DEVICEID : DEVICEID
+});
 
 
 function atob(input) {
@@ -84,30 +75,7 @@ function atob(input) {
     return new Uint8Array(output);
   }
 
-var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appfiles = [];
-
-function fileGetter(url) {
-  console.log("Loading "+url)
-  if (MINIFY) {
-    if (url.endsWith(".json")) {
-      var f = url.slice(0,-5);
-      console.log("MINIFYING JSON "+f);
-      var j = eval("("+fs.readFileSync(url).toString("binary")+")");
-      var code = JSON.stringify(j);
-      //console.log(code);
-      url = f+".min.json";
-      fs.writeFileSync(url, code);
-    }
-  }
-  var blob = fs.readFileSync(url);
-  var data;
-  if (url.endsWith(".js") || url.endsWith(".json"))
-    data = blob.toString(); // allow JS/etc to be written in UTF-8
-  else
-    data = blob.toString("binary")
-  return Promise.resolve(data);
-}
 
 // If file should be evaluated, try and do it...
 function evaluateFile(file) {
@@ -132,16 +100,9 @@ function evaluateFile(file) {
 }
 
 Promise.all(APPS.map(appid => {
-  try {
-    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "/metadata.json").toString());
-  } catch (e) {
-    throw new Error(`App ${appid} not found`);
-  }
-  return AppInfo.getFiles(app, {
-    fileGetter : fileGetter,
-    settings : SETTINGS,
-    device : { id : DEVICE }
-  }).then(files => {
+  var app = apploader.apps.find(a => a.id==appid);
+  if (!app) throw new Error(`App ${appid} not found`);
+  return apploader.getAppFiles(app).then(files => {
     appfiles = appfiles.concat(files);
   });
 })).then(() => {

@@ -149,14 +149,6 @@ exports = {
 
   // define move log function, move StorageFile content into files seperated by fortnights
   moveLog: function(force) {
-    /** convert old logfile (< v0.10) if present **/
-    if (require("Storage").list("sleeplog.log", {
-        sf: false
-      }).length) {
-      convertOldLog();
-    }
-    /** may be removed in later versions **/
-
     // first day of this fortnight period
     var thisFirstDay = this.fnToMs(this.msToFn(Date.now()));
 
@@ -384,82 +376,5 @@ exports = {
         "unknown,not worn,awake,light sleep,deep sleep".split(",")[entry[1]].padEnd(12) +
         "for" + (duration + "min").padStart(8));
     });
-  },
-
-  /** convert old (< v0.10) to new logfile data **/
-  convertOldLog: function() {
-    // read old logfile
-    var oldLog = require("Storage").read("sleeplog.log") || "";
-    // decode data if needed 
-    if (!oldLog.startsWith("[")) oldLog = atob(oldLog);
-    // delete old logfile and return if it is empty or corrupted
-    if (!oldLog.startsWith("[[") || !oldLog.endsWith("]]")) {
-      require("Storage").erase("sleeplog.log");
-      return;
-    }
-
-    // transform into StorageFile and clear oldLog to have more free ram accessable
-    require("Storage").open("sleeplog_old.log", "w").write(JSON.parse(oldLog).reverse().join("\n"));
-    oldLog = undefined;
-
-    // calculate fortnight from now
-    var fnOfNow = this.msToFn(Date.now());
-
-    // open StorageFile with old log data
-    var file = require("Storage").open("sleeplog_old.log", "r");
-    // define active fortnight and file cache
-    var activeFn = true;
-    var fileCache = [];
-    // loop through StorageFile entries
-    while (activeFn) {
-      // define fortnight for this entry
-      var thisFn = false;
-      // cache new line
-      var line = file.readLine();
-      // check if line is filled
-      if (line) {
-        // parse line
-        line = line.substr(0, 15).split(",").map(e => parseInt(e));
-        // calculate fortnight for this entry
-        thisFn = this.msToFn(line[0]);
-        // convert timestamp into 10min steps
-        line[0] = line[0] / 6E5 | 0;
-        // set consecutive to unknown
-        line.push(0);
-      }
-      // check if active fortnight and file cache is set, fortnight has changed and
-      //  active fortnight is not fortnight from now
-      if (activeFn && fileCache.length && activeFn !== thisFn && activeFn !== fnOfNow) {
-        // write file cache into new file according to fortnight
-        require("Storage").writeJSON("sleeplog_" + activeFn + ".log", fileCache);
-        // clear file cache
-        fileCache = [];
-      }
-      // add line to file cache if it is filled
-      if (line) fileCache.push(line);
-      // set active fortnight
-      activeFn = thisFn;
-    }
-    // check if entries are leftover
-    if (fileCache.length) {
-      // format fileCache entries into a string
-      fileCache = fileCache.map(e => e.join(",")).join("\n");
-      // read complete new log StorageFile as string
-      file = require("Storage").open("sleeplog.log", "r");
-      var newLogString = file.read(file.getLength());
-      // add entries at the beginning of the new log string
-      newLogString = fileCache + "\n" + newLogString;
-      // rewrite new log StorageFile
-      require("Storage").open("sleeplog.log", "w").write(newLogString);
-    }
-
-    // free ram
-    file = undefined;
-    fileCache = undefined;
-
-    // clean up old files
-    require("Storage").erase("sleeplog.log");
-    require("Storage").open("sleeplog_old.log", "w").erase();
   }
-  /** may be removed in later versions **/
 };

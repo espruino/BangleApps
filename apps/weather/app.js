@@ -16,10 +16,10 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
         {type: "txt", font: "12%", valign: -1, id: "tempUnit", label: "°C"},
       ]},
       {filly: 1},
-      {type: "txt", font: "6x8", pad: 2, halign: 1, label: "Humidity"},
+      {type: "txt", font: "6x8", pad: 2, halign: 1, label: /*LANG*/"Humidity"},
       {type: "txt", font: "9%", pad: 2, halign: 1, id: "hum", label: "000%"},
       {filly: 1},
-      {type: "txt", font: "6x8", pad: 2, halign: -1, label: "Wind"},
+      {type: "txt", font: "6x8", pad: 2, halign: -1, label: /*LANG*/"Wind"},
       {type: "h", halign: -1, c: [
         {type: "txt", font: "9%", pad: 2, id: "wind",  label: "00"},
         {type: "txt", font: "6x8", pad: 2, valign: -1, id: "windUnit", label: "km/h"},
@@ -27,22 +27,22 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
     ]},
   ]},
   {filly: 1},
-  {type: "txt", font: "9%", wrap: true, height: g.getHeight()*0.18, fillx: 1, id: "cond", label: "Weather condition"},
+  {type: "txt", font: "9%", wrap: true, height: g.getHeight()*0.18, fillx: 1, id: "cond", label: /*LANG*/"Weather condition"},
   {filly: 1},
   {type: "h", c: [
     {type: "txt", font: "6x8", pad: 4, id: "loc", label: "Toronto"},
     {fillx: 1},
-    {type: "txt", font: "6x8", pad: 4, id: "updateTime", label: "15 minutes ago"},
+    {type: "txt", font: "6x8", pad: 4, id: "updateTime", label: /*LANG*/"15 minutes ago"},
   ]},
   {filly: 1},
 ]}, {lazy: true});
 
 function formatDuration(millis) {
   let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");
-  if (millis < 60000) return "< 1 minute";
-  if (millis < 3600000) return pluralize(Math.floor(millis/60000), "minute");
-  if (millis < 86400000) return pluralize(Math.floor(millis/3600000), "hour");
-  return pluralize(Math.floor(millis/86400000), "day");
+  if (millis < 60000) return /*LANG*/"< 1 minute";
+  if (millis < 3600000) return pluralize(Math.floor(millis/60000), /*LANG*/"minute");
+  if (millis < 86400000) return pluralize(Math.floor(millis/3600000), /*LANG*/"hour");
+  return pluralize(Math.floor(millis/86400000), /*LANG*/"day");
 }
 
 function draw() {
@@ -57,7 +57,7 @@ function draw() {
   layout.windUnit.label = wind[2] + " " + (current.wrose||'').toUpperCase();
   layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
-  layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`;
+  layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
   layout.update();
   layout.render();
 }
@@ -77,9 +77,9 @@ function update() {
   } else {
     layout.forgetLazyState();
     if (NRF.getSecurityStatus().connected) {
-      E.showMessage("Weather\nunknown\n\nIs Gadgetbridge\nweather\nreporting set\nup on your\nphone?");
+      E.showMessage(/*LANG*/"Weather\nunknown\n\nIs Gadgetbridge\nweather\nreporting set\nup on your\nphone?");
     } else {
-      E.showMessage("Weather\nunknown\n\nGadgetbridge\nnot connected");
+      E.showMessage(/*LANG*/"Weather\nunknown\n\nGadgetbridge\nnot connected");
       NRF.on("connect", update);
     }
   }

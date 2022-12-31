@@ -1,0 +1,5 @@
+0.01: Moved messages widget into standalone widget app
+0.02: Fix 'srcs' being defined in global scope
+      Remove library stub
+0.03: Fix messages not showing if UI auto-open is disabled
+0.04: Now shows message icons again (#2416)

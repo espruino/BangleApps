@@ -14,3 +14,9 @@
 0.15: Fix widget icon
 0.16: Don't mark app as clock
 0.17: Added clkinfo for clocks.
+0.18: Added hasRange to clkinfo.
+0.19: Added weather condition to clkinfo.
+0.20: Added weather condition with temperature to clkinfo.
+0.21: Updated clkinfo icon.
+0.22: Automatic translation of strings, some left untranslated.
+0.23: Update clock_info to avoid a redraw

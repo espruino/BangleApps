@@ -1,10 +1,15 @@
-function openMusic() {
-  // only read settings file for first music message
-  if ("undefined"==typeof exports._openMusic) {
-    exports._openMusic = !!((require('Storage').readJSON("messages.settings.json", true) || {}).openMusic);
-  }
-  return exports._openMusic;
+exports.music = {};
+/**
+ * Emit "message" event with appropriate type from Bangle
+ * @param {object} msg
+ */
+function emit(msg) {
+  let type = "text";
+  if (["call", "music", "map"].includes(msg.id)) type = msg.id;
+  if (msg.src && msg.src.toLowerCase().startsWith("alarm")) type = "alarm";
+  Bangle.emit("message", type, msg);
 }
+
 /* Push a new message onto messages queue, event is:
   {t:"add",id:int, src,title,subject,body,sender,tel, important:bool, new:bool}
   {t:"add",id:int, id:"music", state, artist, track, etc} // add new
@@ -12,125 +17,180 @@ function openMusic() {
   {t:"modify",id:int, title:string} // modified
 */
 exports.pushMessage = function(event) {
-  var messages = exports.getMessages();
   // now modify/delete as appropriate
-  var mIdx = messages.findIndex(m=>m.id==event.id);
-  if (event.t=="remove") {
-    if (mIdx>=0) messages.splice(mIdx, 1); // remove item
-    mIdx=-1;
+  if (event.t==="remove") {
+    if (event.id==="music") exports.music = {};
   } else { // add/modify
-    if (event.t=="add"){
-      if(event.new === undefined ) { // If 'new' has not been set yet, set it
-        event.new=true; // Assume it should be new
-      }
+    if (event.t==="add") {
+      if (event.new===undefined) event.new = true; // Assume it should be new
+    } else if (event.t==="modify") {
+      const old = exports.getMessages().find(m => m.id===event.id);
+      if (old) event = Object.assign(old, event);
     }
-    if (mIdx<0) {
-      mIdx=0;
-      messages.unshift(event); // add new messages to the beginning
-    }
-    else Object.assign(messages[mIdx], event);
-    if (event.id=="music" && messages[mIdx].state=="play") {
-      messages[mIdx].new = true; // new track, or playback (re)started
-      type = 'music';
+
+    // combine musicinfo and musicstate events
+    if (event.id==="music") {
+      if (event.state==="play") event.new = true; // new track, or playback (re)started
+      event = Object.assign(exports.music, event);
     }
   }
-  require("Storage").writeJSON("messages.json",messages);
-  var message = mIdx<0 ? {id:event.id, t:'remove'} : messages[mIdx];
-  // if in app, process immediately
-  if ("undefined"!=typeof MESSAGES) return onMessagesModified(message);
-  // emit message event
-  var type = 'text';
-  if (["call", "music", "map"].includes(message.id)) type = message.id;
-  if (message.src && message.src.toLowerCase().startsWith("alarm")) type = "alarm";
-  Bangle.emit("message", type, message);
-  // update the widget icons shown
-  if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages,true);
-  var handleMessage = () => {
-    // if no new messages now, make sure we don't load the messages app
-    if (event.t=="remove" && exports.messageTimeout && !messages.some(m => m.new)) {
-      clearTimeout(exports.messageTimeout);
-      delete exports.messageTimeout;
-    }
-    // ok, saved now
-    if (event.id=="music" && Bangle.CLOCK && messages[mIdx].new && openMusic()) {
-      // just load the app to display music: no buzzing
-      Bangle.load("messages.app.js");
-    } else if (event.t!="add") {
-      // we only care if it's new
-      return;
-    } else if (event.new==false) {
-      return;
-    }
-    // otherwise load messages/show widget
-    var loadMessages = Bangle.CLOCK || event.important;
-    var quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
-    var appSettings = require('Storage').readJSON('messages.settings.json', 1) || {};
-    var unlockWatch = appSettings.unlockWatch;
-    // don't auto-open messages in quiet mode if quietNoAutOpn is true
-    if ((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
-      loadMessages = false;
-    delete appSettings;
-    // after a delay load the app, to ensure we have all the messages
-    if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
-    exports.messageTimeout = setTimeout(function() {
-      exports.messageTimeout = undefined;
-      // if we're in a clock or it's important, go straight to messages app
-      if (loadMessages) {
-        if (!quiet && unlockWatch) {
-          Bangle.setLocked(false);
-          Bangle.setLCDPower(1); // turn screen on
-        }
-        // we will buzz when we enter the messages app
-        return Bangle.load("messages.new.js");
-      }
-      if (global.WIDGETS && WIDGETS.messages) WIDGETS.messages.update(messages);
-      exports.buzz(message.src);
-    }, 500);
-  };
-  setTimeout(()=>{
-    if (!message.handled) handleMessage();
-  },0);
-}
-/// Remove all messages
+  // reset state (just in case)
+  delete event.handled;
+  delete event.saved;
+  emit(event);
+};
+
+/**
+ * Save a single message to flash
+ * Also sets msg.saved=true
+ *
+ * @param {object} msg
+ * @param {object} [options={}] Options:
+ *                 {boolean} [force=false] Force save even if msg.saved is already set
+ */
+exports.save = function(msg, options) {
+  if (!options) options = {};
+  if (msg.saved && !options.force) return; //already saved
+  let messages = exports.getMessages();
+  exports.apply(msg, messages);
+  exports.write(messages);
+  msg.saved = true;
+};
+
+/**
+ * Apply incoming event to array of messages
+ *
+ * @param {object} event Event to apply
+ * @param {array} messages Array of messages, *will be modified in-place*
+ * @return {array} Modified messages array
+ */
+exports.apply = function(event, messages) {
+  if (!event || !event.id) return messages;
+  const mIdx = messages.findIndex(m => m.id===event.id);
+  if (event.t==="remove") {
+    if (mIdx<0) return messages; // already gone -> nothing to do
+    messages.splice(mIdx, 1);
+  } else if (event.t==="add") {
+    if (mIdx>=0) messages.splice(mIdx, 1); // duplicate ID! erase previous version
+    messages.unshift(event); // add at the beginning
+  } else if (event.t==="modify") {
+    if (mIdx>=0) messages[mIdx] = Object.assign(messages[mIdx], event);
+    else messages.unshift(event);
+  }
+  return messages;
+};
+
+/**
+ * Accept a call (or other acceptable event)
+ * @param {object} msg
+ */
+exports.accept = function(msg) {
+  if (msg.positive) Bangle.messageResponse(msg, true);
+};
+
+/**
+ * Dismiss a message (if applicable), and erase it from flash
+ * Emits a "message" event with t="remove", only if message existed
+ *
+ * @param {object} msg
+ */
+exports.dismiss = function(msg) {
+  if (msg.negative) Bangle.messageResponse(msg, false);
+  let messages = exports.getMessages();
+  const mIdx = messages.findIndex(m=>m.id===msg.id);
+  if (mIdx<0) return;
+  messages.splice(mIdx, 1);
+  exports.write(messages);
+  if (msg.t==="remove") return; // already removed, don't re-emit
+  msg.t = "remove";
+  emit(msg); // emit t="remove", so e.g. widgets know to update
+};
+
+/**
+ * Emit a "type=openGUI" event, to open GUI app
+ *
+ * @param {object} [msg={}] Message the app should show
+ */
+exports.openGUI = function(msg) {
+  if (!require("Storage").read("messagegui")) return; // "messagegui" module is missing!
+  // Mark the event as unhandled for GUI, but leave passed arguments intact
+  let copy = Object.assign({}, msg);
+  delete copy.handled;
+  require("messagegui").open(copy);
+};
+
+/**
+ * Show/hide the messages widget
+ *
+ * @param {boolean} show
+ */
+exports.toggleWidget = function(show) {
+  if (!global.WIDGETS || !WIDGETS["messages"]) return; // widget is missing!
+  const method = WIDGETS["messages"][show ? "show" : "hide"];
+  /* if (typeof(method)!=="function") return; // widget must always have show()+hide(), fail hard rather than hide problems */
+  method.apply(WIDGETS["messages"]);
+};
+
+/**
+ * Replace all stored messages
+ * @param {array} messages Messages to save
+ */
+exports.write = function(messages) {
+  if (!messages.length) require("Storage").erase("messages.json");
+  else require("Storage").writeJSON("messages.json", messages.map(m => {
+    // we never want to save saved/handled status to file;
+    delete m.saved;
+    delete m.handled;
+    return m;
+  }));
+};
+/**
+ * Erase all messages
+ */
 exports.clearAll = function() {
-  if ("undefined"!= typeof MESSAGES) { // we're in a messages app, clear that as well
-    MESSAGES = [];
-  }
-  // Clear all messages
-  require("Storage").writeJSON("messages.json", []);
-  // if we have a widget, update it
-  if (global.WIDGETS && WIDGETS.messages)
-    WIDGETS.messages.update([]);
-  // let message listeners know
-  Bangle.emit("message", "clearAll", {}); // guarantee listeners an object as `message`
-  // clearAll cannot be marked as "handled"
-  // update app if in app
-  if ("function"== typeof onMessagesModified) onMessagesModified();
+  exports.write([]);
+  Bangle.emit("message", "clearAll", {});
 }
 
 /**
+ * Get saved messages
+ *
+ * Optionally pass in a message to apply to the list, this is for event handlers:
+ * By passing the message from the event, you can make sure the list is up-to-date,
+ * even if the message has not been saved (yet)
+ *
+ * Example:
+ *     Bangle.on("message", (type, msg) =>  {
+ *       console.log("All messages:", require("messages").getMessages(msg));
+ *     });
+ *
+ * @param {object} [withMessage] Apply this event to messages
  * @returns {array} All messages
  */
-exports.getMessages = function() {
-  if ("undefined"!=typeof MESSAGES) return MESSAGES; // loaded/managed by app
-  return require("Storage").readJSON("messages.json",1)||[];
-}
+exports.getMessages = function(withMessage) {
+  let messages = require("Storage").readJSON("messages.json", true);
+  messages = Array.isArray(messages) ? messages : []; // make sure we always return an array
+  if (withMessage && withMessage.id) exports.apply(withMessage, messages);
+  return messages;
+};
 
 /**
  * Check if there are any messages
+ *
+ * @param {object} [withMessage] Apply this event to messages, see getMessages
  * @returns {string} "new"/"old"/"none"
  */
- exports.status = function() {
+exports.status = function(withMessage) {
   try {
-    let status= "none";
-    for(const m of exports.getMessages()) {
+    let status = "none";
+    for(const m of exports.getMessages(withMessage)) {
       if (["music", "map"].includes(m.id)) continue;
       if (m.new) return "new";
       status = "old";
     }
     return status;
   } catch(e) {
-    return "none"; // don't bother e.g. the widget with errors
+    return "none"; // don't bother callers with errors
   }
 };
 
@@ -141,24 +201,24 @@ exports.getMessages = function() {
  */
 exports.buzz = function(msgSrc) {
   exports.stopBuzz(); // cancel any previous buzz timeouts
-  if ((require('Storage').readJSON('setting.json',1)||{}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
-  var msgSettings = require('Storage').readJSON("messages.settings.json", true) || {};
-  var pattern;
-  if (msgSrc && msgSrc.toLowerCase() === "phone") {
+  if ((require("Storage").readJSON("setting.json", 1) || {}).quiet) return Promise.resolve(); // never buzz during Quiet Mode
+  const msgSettings = require("Storage").readJSON("messages.settings.json", true) || {};
+  let pattern;
+  if (msgSrc && msgSrc.toLowerCase()==="phone") {
     // special vibration pattern for incoming calls
     pattern = msgSettings.vibrateCalls;
   } else {
     pattern = msgSettings.vibrate;
   }
-  if (pattern === undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  if (pattern===undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
   if (!pattern) return Promise.resolve();
 
-  var repeat = msgSettings.repeat;
-  if (repeat===undefined) repeat=4; // repeat may be zero
+  let repeat = msgSettings.repeat;
+  if (repeat===undefined) repeat = 4; // repeat may be zero
   if (repeat) {
-    exports.buzzTimeout = setTimeout(()=>require("buzz").pattern(pattern), repeat*1000);
-    var vibrateTimeout = msgSettings.vibrateTimeout;
-    if (vibrateTimeout===undefined) vibrateTimeout=60;
+    exports.buzzTimeout = setTimeout(() => require("buzz").pattern(pattern), repeat*1000);
+    let vibrateTimeout = msgSettings.vibrateTimeout;
+    if (vibrateTimeout===undefined) vibrateTimeout = 60;
     if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopBuzz, vibrateTimeout*1000);
   }
   return require("buzz").pattern(pattern);

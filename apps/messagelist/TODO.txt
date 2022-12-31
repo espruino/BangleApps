@@ -1,0 +1,17 @@
+## Nice to have:
+* Add labels to B1 music HW buttons
+* Add volume buttons to B2 music screen (when controls are enabled)
+* Draw messages ourselves instead of piling hacks on Layout
+* Make sure all icons are 24x24px: icon sizes affect layout
+* Check/optimize layout for B1, other fonts (scrolling for just 5px is a shame)
+
+## Wishlist:
+* Option to swipe-dismiss (instead of action menu)
+* Maybe refactor showGrid() out into a general-use module?
+
+* Message replies (needs `android` support)
+* Customize replies
+* Custom replies (i.e. `textinput`)
+* Hooks to add custom replies/actions, 
+  e.g. external code could add "Send intent" option to Home Assistant messages
+  Maybe just use this for all replies, so we don't hardcode anything in "messages"?

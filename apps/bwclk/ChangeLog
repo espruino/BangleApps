@@ -21,3 +21,4 @@
 0.21: On the default menu the week of year can be shown.
 0.22: Use the new clkinfo module for the menu.
 0.23: Feedback of apps after run is now optional and decided by the corresponding clkinfo.
+0.24: Update clock_info to avoid a redraw

@@ -35,17 +35,17 @@ function drawInfo() {
   g.setFont("4x6").setFontAlign(0,0).drawString("BANGLEJS.COM",W-30,56);
   var h=8, y = 24-h;
   g.setFont("6x8").setFontAlign(-1,-1);
-  g.drawString("Powered by Espruino",0,y+=4+h);
-  g.drawString("Version "+ENV.VERSION,0,y+=h);
+  g.drawString(/*LANG*/"Powered by Espruino",0,y+=4+h);
+  g.drawString(/*LANG*/"Version "+ENV.VERSION,0,y+=h);
   g.drawString("Commit "+ENV.GIT_COMMIT,0,y+=h);
 
   getVersion("Bootloader","boot.info");
   getVersion("Launcher","launch.info");
   getVersion("Settings","setting.info");
 
-  g.drawString(MEM.total+" JS Vars",0,y+=h);
-  g.drawString("Storage: "+(require("Storage").getFree()>>10)+"k free",0,y+=h);
-  if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+"k total",0,y+=h);
+  g.drawString(MEM.total+/*LANG*/" JS Vars",0,y+=h);
+  g.drawString("Storage: "+(require("Storage").getFree()>>10)+/*LANG*/"k free",0,y+=h);
+  if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+/*LANG*/"k total",0,y+=h);
   if (ENV.SPIFLASH) g.drawString("SPI Flash: "+(ENV.SPIFLASH>>10)+"k",0,y+=h);
   imageTop = y+h;
   imgScroll = imgHeight-imageTop;

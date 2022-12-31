@@ -69,16 +69,6 @@ let tagKeys = Object.keys(tags).filter(tag => tag !== "clock" || settings.showCl
 if (!settings.fullscreen)
   Bangle.loadWidgets();
 
-let returnToClock = function() {
-  // unload everything manually
-  // ... or we could just call `load();` but it will be slower
-  Bangle.setUI(); // remove scroller's handling
-  if (lockTimeout) clearTimeout(lockTimeout);
-  Bangle.removeListener("lock", lockHandler);
-  // now load the default clock - just call .bootcde as this has the code already
-  setTimeout(eval,0,s.read(".bootcde"));
-};
-
 let showTagMenu = (tag) => {
   E.showScroller({
     h : 64*scaleval, c : appsByTag[tag].length,
@@ -121,7 +111,12 @@ let showMainMenu = () => {
       let tag = tagKeys[i];
       showTagMenu(tag);
     },
-    back : returnToClock // button press or tap in top left calls returnToClock now
+    back : Bangle.showClock, // button press or tap in top left shows clock now
+    remove : () => {
+      // cleanup the timeout to not leave anything behind after being removed from ram
+      if (lockTimeout) clearTimeout(lockTimeout);
+      Bangle.removeListener("lock", lockHandler);
+  }
   });
 };
 showMainMenu();
@@ -134,7 +129,7 @@ let lockHandler = function(locked) {
   if (lockTimeout) clearTimeout(lockTimeout);
   lockTimeout = undefined;
   if (locked) {
-    lockTimeout = setTimeout(returnToClock, 10000);
+    lockTimeout = setTimeout(Bangle.showClock, 10000);
   }
 };
 Bangle.on("lock", lockHandler);

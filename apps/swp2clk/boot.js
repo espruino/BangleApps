@@ -29,12 +29,13 @@
   })(Bangle.load);
 
   let swipeHandler = (dir) => {
-    log("swipe:" + dir + " on app: " + __FILE__);
+    let currentFile = global.__FILE__||"default";
+    log("swipe:" + dir + " on app: " + currentFile);
 
-    if (!inhibit && dir === 1 && !Bangle.CLOCK && __FILE__ != ".bootcde") {
-      log("on a not clock app " + __FILE__);
-      if ((settings.mode === 1 && settings.whiteList.includes(__FILE__)) || // "White List"
-      (settings.mode === 2 && !settings.blackList.includes(__FILE__)) || // "Black List"
+    if (!inhibit && dir === 1 && !Bangle.CLOCK) {
+      log("on a not clock app " + currentFile);
+      if ((settings.mode === 1 && settings.whiteList.includes(currentFile)) || // "White List"
+      (settings.mode === 2 && !settings.blackList.includes(currentFile)) || // "Black List"
       settings.mode === 3) { // "Always"
         log("load clock");
         Bangle.showClock();

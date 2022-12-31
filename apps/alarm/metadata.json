@@ -2,17 +2,16 @@
   "id": "alarm",
   "name": "Alarms & Timers",
   "shortName": "Alarms",
-  "version": "0.33",
+  "version": "0.36",
   "description": "Set alarms and timers on your Bangle",
   "icon": "app.png",
-  "tags": "tool,alarm,widget",
+  "tags": "tool,alarm",
   "supports": [ "BANGLEJS", "BANGLEJS2" ],
   "readme": "README.md",
-  "dependencies": { "scheduler":"type" },
+  "dependencies": { "scheduler":"type", "alarm":"widget" },
   "storage": [
     { "name": "alarm.app.js", "url": "app.js" },
-    { "name": "alarm.img", "url": "app-icon.js", "evaluate": true },
-    { "name": "alarm.wid.js", "url": "widget.js" }
+    { "name": "alarm.img", "url": "app-icon.js", "evaluate": true }
   ],
   "screenshots": [
     { "url": "screenshot-1.png" },

@@ -1,14 +1,14 @@
 {
   "id": "widmsggrid",
   "name": "Messages Grid Widget",
-  "version": "0.02",
-  "description": "Widget that display notification icons in a grid",
+  "version": "0.04",
+  "description": "Widget that displays notification icons in a grid",
   "icon": "widget.png",
   "type": "widget",
-  "dependencies": {"messages":"app"},
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "dependencies" : { "messageicons":"module" },
+  "dependencies" : { "messages":"module" },
+  "provides_widgets" : ["message"],
   "readme": "README.md",
   "storage": [
     {"name":"widmsggrid.wid.js","url":"widget.js"}

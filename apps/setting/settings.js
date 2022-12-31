@@ -146,7 +146,7 @@ function showAlertsMenu() {
     },
     /*LANG*/"Quiet Mode": {
       value: settings.quiet|0,
-      format: v => ["Off", "Alarms", "Silent"][v%3],
+      format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v%3],
       onchange: v => {
         settings.quiet = v%3;
         updateSettings();
@@ -162,9 +162,9 @@ function showAlertsMenu() {
 
 function showBLEMenu() {
   var hidV = [false, "kbmedia", "kb", "com", "joy"];
-  var hidN = ["Off", "Kbrd & Media", "Kbrd", "Kbrd & Mouse" ,"Joystick"];
+  var hidN = [/*LANG*/"Off", /*LANG*/"Kbrd & Media", /*LANG*/"Kbrd", /*LANG*/"Kbrd & Mouse", /*LANG*/"Joystick"];
   E.showMenu({
-    '': { 'title': 'Bluetooth' },
+    '': { 'title': /*LANG*/'Bluetooth' },
     '< Back': ()=>showMainMenu(),
     /*LANG*/'Make Connectable': ()=>makeConnectable(),
     /*LANG*/'BLE': {
@@ -193,11 +193,11 @@ function showBLEMenu() {
       }
     },
     /*LANG*/'Passkey BETA': {
-      value: settings.passkey?settings.passkey:"none",
+      value: settings.passkey?settings.passkey:/*LANG*/"none",
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
-      value: settings.whitelist?(settings.whitelist.length+" devs"):"off",
+      value: settings.whitelist?(settings.whitelist.length+/*LANG*/" devs"):/*LANG*/"off",
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
     }
   });
@@ -606,7 +606,7 @@ function showUtilMenu() {
   menu[/*LANG*/'Reset Settings'] = () => {
       E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
         if (v) {
-          E.showMessage('Resetting');
+          E.showMessage(/*LANG*/'Resetting');
           resetSettings();
           setTimeout(showMainMenu, 50);
         } else showUtilMenu();
@@ -824,6 +824,7 @@ function showAppSettings(app) {
 
 function showTouchscreenCalibration() {
   Bangle.setUI();
+  require('widget_utils').hide();
   // disable touchscreen calibration (passed coords right through)
   Bangle.setOptions({touchX1: 0, touchY1: 0, touchX2: g.getWidth(), touchY2: g.getHeight() });
 
@@ -847,7 +848,7 @@ function showTouchscreenCalibration() {
     g.drawLine(spot[0],spot[1]-32,spot[0],spot[1]+32);
     g.drawCircle(spot[0],spot[1], 16);
     var tapsLeft = (1-currentTry)*4+(4-currentCorner);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+" taps\nto go", g.getWidth()/2, g.getHeight()/2);
+    g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+/*LANG*/" taps\nto go", g.getWidth()/2, g.getHeight()/2);
   }
 
   function calcCalibration() {
@@ -870,7 +871,7 @@ function showTouchscreenCalibration() {
     var s = storage.readJSON("setting.json",1)||{};
     s.touch = calib;
     storage.writeJSON("setting.json",s);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString("Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
     // now load the main menu again
     setTimeout(showLCDMenu, 500);
   }
