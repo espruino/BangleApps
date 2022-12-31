@@ -13,6 +13,10 @@ var settings = Object.assign(
 
 let profile_start_times = [];
 
+let splashscreen = atob(
+  "sLCDBWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2W2W2W2W2W222W222222222222222yySySySySySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2W2W2W2W2W2WySSSSSSSSSSSSSySSSySySySySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2W2W2W2W2W222W22222ySSSSSSySSSySySySySySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2WySSSSSSSSSSSSSSSSSSSSSSSySSSySySySySySySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2WWWWWWWWWWWWWWWWWWWW/2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2W2W2W2W2W222SSSSSSSSSSSSSySSSySyT//2SySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2WSWWWWWWWWWWWWWWWWWW//2WSWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2WySSSSSSSSSSSSSSSSSSSX//222f2SSySSSySySySySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2WWWWWWWWWWWWWWWWWWWe//2WWf+2yWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2W2W2W2SSSSSSSSSSSSSSSSSSSSX/+22z/+222SSySySyOOCySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyWSWSWSWSWSWSWWWSWWWf/+2WT/2yyySy2WWXxxxx2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWySSSSSSSSSSSSSSSSSSSX/222z/2222W222Sf/+OOOSSySySySySySySySySySySySyyySyyyyyyyyyyyyyyyyyy2WWSWWWWWWWWWWWWWWWWf/2WWT+2yyz2yyyzxxwBxx2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2WWW2W2W2W2SSSSSSSSSSSSSSSSSSSSX2222z+222z+22SeAP+AAOOCSySySySySyyySyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyWSWSWSWSWSWSWSWWWSSS2WWWX+2yyz2yy2QBxxwABxwWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSQS222e2222y222SOOP+OAAOOSWySSSySySySySySySySySySyyySyyyyyyyyyyyyyyyy2SWSWSWSWSWWWSWWWWWWSASQWW2yyyT2yyxwBxxxwABwyCyy2WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW2SSSSSSSSSSSSSSSSSSSSSSAASSQ222W22WeAOOP+AAOOGQ223/yySySySySySySyyySyyyyyyyyyyyyyyyyyyyyyySSWSSSWSWSWSWSWSWSWSSSSAAASSCSyyyyBxxxxxwBxyyyy2/yWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSAACSG2WWOOOOP+AAOGS222/y22/+SySSSySySySySySySySySySyyySyyySyy2SWSWSWSWSWSWSWSWWWSWWWSSSSSSQACSQyxxxxx/xxxyyyyy3wyy3+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSQOASWeOOP//+OWWW223+G2/+SSySySySySySySyyySyyyyyyyyyyyyyyyySSSSSSSSWSSSWSWSWSWSWSWSWSSSSSSRxxyRxxxx//wyySyy2+Sy3+SWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSST//ySSSSSSSSSSSSSSSSSSOOOOOOOP//+GWWW222+W2/+SSSSSSSySSSySySySySySySySySySyyySySWSSSWSWSf//+WSWSWSWSWSWSWWSSSTwBxxxxxxxxwyyyCyy2+Sy++SWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSST////ySSSSSSSSSSSSSSSSSOAOOOOP//+ACGWw2222G22+SSSSySySySySySySySySySySyyySyyyyyySSSSSSSSf////+SSSSWSSSWSWSWSWSSRxxxxxxxxwSQCSSCyy3wyy2SWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQQQSQSSST//////ySSSSSSSSSSSSSSSSeAOOOOP/+CSSQAACSSGy22+SSSSSSSSSSSSSSSSSySSSySySySySySySySSSSSSSX//////+WSWSWSWSWSWSWSWSTxxxxxxxwSSSSSSQAACSSW2SWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQQQQSQSQf///////ySSSSSSSSSSSSSSSSOOOOP/+CSSSSSSSSSQAACSSSSSSSySSSySySySySySySySySySySyyySCSCSSSSf///////+SSSSSSSSWSSSWSWSRxxxxxwSSSWSWSWSSSSSQASWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQQQQQQQR/////////ySSSSSSSSSSSSSSSSOOP/+CSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSySSSySySySyCCSCSCT/////////+WSSSWSWSWSWSWSWSRxxxwSWSWWWSWWWWWWSSSWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQQQQQQQf//////////ySSSSSSSSSSSSSSSSeOOSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSySSSySySySySySySySCCCCCCP//////////+SSSSSSSSSSSSSSSSSSSSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWWWWWWWWWWWWWWWWWQAQAQAR////////////yQSQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSyCCCCCP////////////ySSSSWSSSWSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQAAQAR/////////////+SQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSySSSySySySyQCCCCD//x////x//////ySSSSSSSSSSSSSSSSSSSSWSSSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWWWWWWWWWWWQAAAAB//////////////wQQQQQQQQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSACACP/xx///xxxx////+SCSSSSSSSSSSSWSSSWSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWWWWWWWWWWWWWWWWQAAAB////////////////wQQQQQQQQSQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSyQAAAB/xxxxxxxxxxxxxxxxyCCCSCSCSSSSSSSSSSSSSSSSSSSSSWSSSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWQAAAP//////////////////wQQQQQQQQQQQQQSQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSQAAAPxxxxxxxxxxxxxxxxxxwCCCSCSCSSSSSSSSSWSSSWSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWWWWWWWWWWWWQAAB+P/////////////////+AQQQQQQQQQQQQQSQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSQAABxxxxxxxxxxxxxxxxxxxxwCCCCCCCCCSCSSSSSSSSSSSSSSSSSWSSSWSSSWSWSWSWSWSWSWSWSWSWWWSWWWWWQAAAP/////////////////+P/wQAQAQQQQQQQQQQQQQQQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTwAABxxxxxxxxxxxxxxxxxxxxxxyCCCCCCCCSCSCSSSSSSSSSSSWSSSWSWSWSWSWSWSWSWSWSWSWWWSWWWWWWWWWfwAAP+P+OP///////////+P/+P+OAAQAQAQQQQQQQQQQQQQSQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSST/wABxxxxxxxxxxxxxxxxxxxxxxxxxyCCCCCCCCCCCCCCCSCSSSSSSSSSSSSSSSSSSSSSWSSSWSWSWSWSWSWSWSWf/wAOP+OOOP////////////////+OOPwAAAAAAQAQQQQQQQQQQQQQQQQQSQSSSSSSSSSSSSSSSSSSSSSSSSSSSST//wABxxxxxxxxxxxxxxxxxxxxxxxxxxwCCCCCCCCCCCCCCCSCSCSSSWSSSWSSSWSWSWSWSWSWSWSWSWSWf2WWSWX/xwAOP+OOP////////////+OP///////wAAAAAAQAQAQQQQQQQQQQQQQQQSQSQSSSSSSSSSSSSSSSSSST//ySSSf//wBxxxxxxxxxxxxxxxxxxxxxxxxxxxxwAACACCCCCCCCCCCCCCCSCSCSCSSSSSSSSSSSSSWSSSWSWSWf///yWTxxxwOP+P////////////////+P/+P/////+AAAAAAAAAP//wAQAQQQQQQQQQQQQQSQSQSQSSSSSSSSSST/+OOOCf///xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwACACACCP////yCCCCCCCSCSCSSSSSSSSSWSSSWSWSWSX/xxxxwBxxxx+P/+P/////////////////+P/+P//////+AAAAAP//////+QAQAQQQQQQQQQQQQQSQSQSSSSSSSSeOOOOAAOP//+BxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwAAP/////////yCCCCCCCCCCCSCSSSSSSSSSSSSSTxxxxxwBxxxxx////////////////////////////////////wP///////////wAAQAQAQQQQQQQQQQQQQQQSQSSOOOOOOAOOOOOOBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/////////////yCCCCCCCCCSCSCSSSWSSSWSRxxxxxxxxxxxxx//+P//////////////////////+P+P////////+P////////////+QAQAQQQQQQQQQQQQQQQSeOOOOOOAOAOAOOOBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/////xxxxxxxx+CCCCCCCCCCCCCSCSCTxxxwAAAAAAAAAAAP/////////////////////////+P/+P///+OP////+OP///+OOOOOOOOEAAAAAQAQQQQQQQQOOOOOOOOOAOAOAOEhxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwBxxxxxxxxxxxx0kkCiCCCCCCCCCCRxwAAAAAAAAAAAAkkv+P//////////////////////+OOP/+P//+OOOOP//+AAAOOOOOOEkkOEuukkAgQAQAQQQQOOOOOOOAOAOAOAkkshxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwAAABxxxxwkkkkkkkkkkkCCCCCCBwBwAAAAAAAAAEkkkkuOP////////////////////////+OOOOOP/+OOOOOP////wAAOOOOsuuusssskkkkkAAAOOOOOOOOOOOOOkkkksshxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwBxxxxxxxxwABx0kkkkkkkkkkkkkiBwAAAAAAAAAAAAkkkkkkkuP///////////////////+P////+OOOOOOOOOOOAAAOOOP/+l/+OOsssssskskkkkuOOOOOOOOOOOOOOksssssskhxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwBxxwAAABxx0kh1xwkkkkkkkkkklxwBwBwBwAAAAEgAkkkkkkkkkuP////+P///////+P/////+P/////+OOOOOOOAOAAAAAAAOEkuukkgkskggkkkuOOOOOOOOOOOOOOkksuuussssshxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwAAAAAAAAAB0kkkkkkkkkkkkhwBwBwBwBwAAAAAAkkkkkkkkkkkuP//+OOP///////+P/////+OP/////+OOAAOOuAAOOskkkOAOMusssssgkkkOOOOOOOOOOOOOOOOksuuuusssssshxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwBwkhwAkkkkkkhx0kkkkkkkklxxxxxxxxwBwBwBwkkkkkkkkkkkkkkuP/+OOOP///////+OOP//+OOP///+OOOOOOAOskuAOuuusskuEksskgkkkOOOOOOOOOOOOOOOOkssuuuussskssghxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0kkkkkhwkkkkkkkkkkkkkklxxxwBwBwBwBwAAAAkkkkkkkkkkkkkkkv//+OOP/////////+OOOP/+OOP+OOOOOOOMkuuukksuussssskgsskkuOOOOOOOOOOOOOOOOkksssuuuskgsskgghxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwAkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxwBwBwEkkkkkkkkkkkkkkkkkv+OOOP/+OP//////+OOOOOOOOOOOOOEuOAEssusskssssssskggkkkOOOOOOOOOOOOOOEkskuuuusuussssusskshxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0klx0kkkkkkkkkkkkkkkkklxxxxxxxxxwBwBwAgkkkkkkkkkkkkkkkkkkkuOOOOP+OOP//+OOP+OOOOOOOAOOOAAOsukkssukksskkgkkkggkkOOOOOOOOOOOOOOOEEsssuuussuusssuusssshxxxxxxxxxxxxxxxxxxwBxxxwBxxwAAkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxwkkkkkkkkkkkkkkkkkkkkkuOOOOOOOOP//+OOP+OOOAAAOOAOOOAAuuskssukkkssggggggkOOOOOOOOOOOOOOOOOkssssussssuussksusggshxxxxxxwBxxxxxxxxxxwlwAAAAAFxwkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxwAkkkkkkkkkkkkkkkkkkkkkkuOOOOOOAOP+OOOOOOOOOOkAAAAAEuOksuusksukgkkkggkkkOOOOOOOP+OOOOOOOEkkksksskssksusssssskgsshwBxxxwABxxxxxxxxxxx0kkkkkkkl0kkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxwkkkkkkkkkkkkkkkkkkkkkkkkkuAOOOEOEOP+OOOOOOOOkOukuuuukkuusssssuukggkkkkkOOOOOOOP+OOOOOOuOEssssssskkkkkksssssksgsskgBxxx1wkhxxxxwlxxxwkklwkkkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxwlwkkkkkkkkkkkkkkkkkkkkkkkkkgAEOOEuuuOOOuOkuOOOsuuMsuuuukuksssksskgggggkuOOOOOOOOOOOOOOOOkkksksksssggsssssssssssskssgAlxwkkkhxwAlwklxwAkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxx0kkkkkkkkkkkkkkkkkkkkkkkkkkkkgAuOEuuuuOOOkOuuOuOsuuksssuusssksskkkkgggkkOOOOOOOP+OOOOOOEuEsssskkgkgkgkkkssgkkskkggkssgkhwkkkklxwEkkkkkgB0kkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkguuOuuuukOAEuusuukAMuukssssssssskskggggkkuOOOOOOOP+OOOOOOOOskuuussgkskssussggggkkksggsssgkh0kkkklwAkkkkkkkgEkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxx0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkgusuuuuuuOEksusuuuuEuuskssskkkskgkkgggkkOOOOOOOOOOOOOOOOOEkssuuussgssuuuusskksssuuussssskkkkkkkkkh0kkkkkkkh0kkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxx0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuuuugusukkgkususssssussskskgkkgggggkkOOOOOOOOP+OOOOOOOEMssskskksssssusskssssgkuuuussksskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksuuusuuuskssussssssssksskgkgkgggggkuOOOOOOOOP+OOOOOOEAksussssssgkssskkkkkkkkgkuuusssgkskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxwEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksssuussusksuussssssksggskgkggggkkkOOOOOOOOOOOOOOOOOAssuuusksgksggsssssksuuuusggkssssgsskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxttgEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkssssssksssssussksssssskkkgggggkkuOOOOOOOP/+OOOONttsEsuuussskgkssgksksskuuuusssgsskgssuskkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxtptNEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksgsskkkskskssskssskskskgkggggkuOOOOOOOOP+OOOOONttppkuksskkguuskssskggkksuussskgskkgsuuskkkkkkkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxx9tttMEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksssskgkgkskksskgkgkkssgggggkkOOOOOOOOOOOOOOOOPtttth0uskkggguusskksssgkgsssssssgkkssuuuskkkkkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxxttttOEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksssskgkggkgkksggkussskkggkkOOOOOOOOP/+OOOOOOOP9tttx0P8sskgsussskksssskgsksksssgksuuuusskkkkkkkkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxwB///+OB0EkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskkskguskkggkskkuuskkkkkggOOOOOOOOP/+OOOOOOEOlwP//xwgskusksskksskkkkssgkksksskkkuusussskkkkkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxx0kF/wOOOEAkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskgggkuusskkkksusukgkkgguOOOOOOOOP/+OOOOOOOuOB////xwEskusuusgkgggkkkkskggkksskkssssuusskkkkkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxx0kh1wP/+OEv0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgggksuuuukuskkssskkkguOOOOOOOOOP/+OOOOOOOEEkF/xx/wkkMkuuuusssgkggggkkkssggskkkskkssssskkkkkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxxxx0kkgkv+kkggkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkskssusuuuuskksskggOOOOOOOOP+OOOOOOOOOOOkkkEugl1wEEskskussssssggkgkkkssggskkkkgkssssskkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxxwgkkglwkkkEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkssksusksskskgkgggOOOOOOOOP/+OOOOOOOOOOukskEEkEEsggsskksssskkkssskkkksssgkkssssgkkssgkkkkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxwlxxwkkkkkkEggkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgksskkskkkskskggguOOOOOOOOP/+OOOOOOOEkOOusskssgkkssgkkkkskkkkkksssssskkssssuuussgkkksgkkkkkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxxx0l0kkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkggkssskkkgkkgkggguOOOOOOOOP/+OOOOOOOOEukkuskkskgggssskkkgkkkkkkkkssssskkusksusskssggkkgkkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxxx0kkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkksksskkggkgggkOOOOOOOOOP/+OOOOOOOOOEuuuuukkkksggssskssggkkkksskksskkkkuusuusskksggkggkkkkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxxxxwkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskkkkkkggggguOOOOOOOOOOOOOOOOOOOOOOOsssuuskkksggkkkkssksssssssskkkkgskuuuussskgsggkggkkkkkkkkkkkkkklxxxxxxxxxxxxxxxxxxxxxxx0kkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskssskkkgkggggOOOOOOOOOOOOOOOOOOOOOOOkkkskgsskksskggkkssssssssssskkkkggssssuuusskgkkkskgkkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxxxxxwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkssskkkgkgggggOOOOOOOOOOOOOOOOOOOOOOuEuskssgsuskksskssksssskssksksskskggssskssssskgkkkssgkkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxxx0kh0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkksskkkgkggggOOOOOOOOOP/+OOOOOOOOEOuukuuuksgsuusksskkuukkkkksskkkkkkukgksssgkkkkskkksksskkkkkkkkkkkkhxxxxxxxxxxxxxxxxxxx10kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskgkgggggOOOOOOOOOP/+OOOOOOOOOkuussksusskssuskksskuusgkskkgsskkguusskskkggkkkkksuusssskkkkkkkkkkhxxxxxxxxxxxxxxxxxxxxwl0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkskgkggguOOOOOOOOOP/+OOOOOOOOOOkuuusksssskssssskssksuusgskggsskgguussgkkkgkkkkkkuuusssskkkkkkkklxxxxxxxxxxxxxxxxxxxxxxx0kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkskgggguOOOOOOOOOP/+OOOOOOOOOOOEksussskkskskkkskkskssuuuusssssssguuksgkkkkgkskkguuusssskkkkkkklxxxxxxxxxxxxxxxxxxxxxxxx0kkkkkkgkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkkkggguOOOOOOOOOOP/+OOOOOOOOOOEskskskkkkkssksksskkksssuuussksssskssksksksskssskguuuskkskkkkkklxxxxxxxxxxxxxxxxxxxxxxxxx0kkkkgkggkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkggkgggkOOOOOOOOOOP/+OOOOOOOOOOOOssskskkkkkuuuskkkkggssksusssksskkskssssuuuusksskguuuskkskkkkkkhxxxxxxxxxxxxxxxxxxxxxxwggEkkkkgkkkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkggggkOOOOOOOOOOP/+OOOOOOOOOOOsskkkkkksksssuussskkkgskkssskssskuksksksussuuusssskssskskkkkkkkhxxxxxxxxxxxxxxxxxxxxxxx10kkkgkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgggggOOOOOOOOOOOOOOOOOOOOOOOOEssskkskkskussssssskkkgsksssskssskuuussssusksuuussssssssskgkkkkhxxxxxxxxxxxxxxxxxxxxxxxx0kkkggkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgggguOOOOOOOOOOOOOOOOOOOOOuOEEskskkkksskuuksskskkkkkskssskgssksuuuussuussssusssssgskuskgkkklxxxxxxxxxxxxxxxxxxxxxwkh0gkgkkkgkkkkkkkkkkkkggkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkggguOOOOOOOOOOOOOOOOOOOOOOkkEskkskkkksssuskksksskkkkkgkssssssksssuusksusssksssgssgskuusgkkkhxxxxxxxxxxxxxxxxxxxxxwl10kkkkkkgkkkkkkkkkkkkggkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgggOOOOOOOOOP/+OOOOOOOOOOOkuusskskskkukssssksskskkkkkkkssssssssskssskskssgkkgsgssgskuuskkklxxxxxxxxxxxxxxxxxxxxxxx10kkkkkgkkkkkkkkkgkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgguOOOOOOOOP/+OOOOOOOOOOOOEMussskkukuukksskksskskkkkkkkkskskssksssskkkgssgkkgkkssgsksussklxxxxxxxxxxxxxxxxxxxxxxxxwkkkkkkgkkkkgkkkkgkkgkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkguOOOOOOOOP/+OOOOOOOOOOOOEOskksskkuusskkskkkkkkkkkkksskkskskssgksssksggsggkkgkkksgskkssskhxxxxxxxxxxxxxxxxxxxxxxwlwkgkkkkkkkkkgkkkgkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgOOOOOOOOP//+OOOOOOOOOOOEsgkkkskuskukkkkkkkskkkkkkkksskkkkkkkkgkkkkssggssgkkkkkkkgkkkksshxxxxxxxxxxxxxxxxxxxxxxxwkgEgkkkkkkkkgkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOOOOOP//+OOOOOOOOOOOOOMkEkskkuskskkkskkssuukkuuskksskkkkkggggkgkssssksgkkuuskkgkkkksshxxxxxxxxxxxxxxxxxxxxxxwgkkkgkkkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOOOOP//+OOOOOOOOOOOOOussskssksuukkkksussusussuussgksskkskgggsssksssskkkksuuukkkkkkksshxxxxxxxxxxxxxxxxxxxxxxwgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOOOOP/+OOOOOOOOOOOOOOsEssksssssuuskkssskukksksskgggksskskgkssskgkssskkkgsuuuskksggksshxxxxxxxxxxxxxxxxxxxxxx0kEkkkkkkkkkkkkgkkkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOOOP//+OOOOOOOOOOOOOEskkskkskkkkuskkkkkkkkkkksskgkgksskkkkkksskggskskkggskuuussssgkkghxxxxxxxxxxxxxxxxxxxxwkkkgkkgkkkggkkkggkkkgkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOOP//+OOOOOOOOOOOOOEkkkkkkkkkkkkkkkkkkkkkkkkkskkgkgkkkkkkkgkkkgggksskgggskkkssssskggghxxxxxxxxxxxxxxxxxxxxxwkkgkggkkkgkkkkgkkkkgkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkuOOOP///+OOOOOOOOOOOOOOEkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgkkkgggkkkkgggsggkkkkkkkgggg=="
+);
+
 function start_profiling() {
   profile_start_times.push(getTime());
 }
@@ -91,43 +95,15 @@ class Status {
     this.gps_coordinates_counter = 0; // how many coordinates did we receive
     this.old_points = []; // record previous points but only when enough distance between them
     this.old_times = []; // the corresponding times
-    this.unfiltered_old_points = []; // record previous points
-    this.unfiltered_old_times = []; // the corresponding times
   }
   new_position_reached(position) {
     // we try to figure out direction by looking at previous points
     // instead of the gps course which is not very nice.
-    this.gps_coordinates_counter += 1;
 
-    this.unfiltered_old_points.push(position);
     let now = getTime();
-    this.unfiltered_old_times.push(now);
-    // compute instant speed using unfiltered points
-    // we average the first four points, then the last four
-    // and compute the speed between the two averages.
-    // this way, at speed 0 we will get a speed close to 0
-    // whereas taking speed between first and last point will not.
-    if (this.unfiltered_old_points.length == 8) {
-      let p1 = this.unfiltered_old_points[0]
-        .plus(this.unfiltered_old_points[1])
-        .plus(this.unfiltered_old_points[2])
-        .plus(this.unfiltered_old_points[3])
-        .times(1 / 4);
-      let p2 = this.unfiltered_old_points[4]
-        .plus(this.unfiltered_old_points[5])
-        .plus(this.unfiltered_old_points[6])
-        .plus(this.unfiltered_old_points[7])
-        .times(1 / 4);
-      let t1 =
-        (this.unfiltered_old_times[1] + this.unfiltered_old_times[2]) / 2;
-      let t2 =
-        (this.unfiltered_old_times[5] + this.unfiltered_old_times[6]) / 2;
-      this.instant_speed = p1.distance(p2) / (t2 - t1);
-      this.unfiltered_old_points.shift();
-      this.unfiltered_old_times.shift();
-    }
 
     if (this.old_points.length == 0) {
+      this.gps_coordinates_counter += 1;
       this.old_points.push(position);
       this.old_times.push(now);
       return null;
@@ -139,6 +115,7 @@ class Status {
         return null;
       }
     }
+    this.gps_coordinates_counter += 1;
     this.old_points.push(position);
     this.old_times.push(now);
 
@@ -152,6 +129,8 @@ class Status {
         this.advanced_distance += distance_to_oldest;
       }
     }
+
+    this.instant_speed = distance_to_oldest / (now - this.old_times[0]);
 
     if (this.old_points.length == 4) {
       this.old_points.shift();
@@ -578,10 +557,10 @@ function load_gpc(filename) {
     let msg = "invalid file\nsize " + file_size + "\ninstead of" + offset;
     E.showAlert(msg).then(function () {
       E.showAlert();
-      start_gipy(path_data);
+      start_gipy(filename, path_data);
     });
   } else {
-    start_gipy(path_data);
+    start_gipy(filename, path_data);
   }
 }
 
@@ -750,8 +729,6 @@ class Point {
   }
 }
 
-Bangle.loadWidgets();
-
 let fake_gps_point = 0.0;
 function simulate_gps(status) {
   // let's keep the screen on in simulations
@@ -764,8 +741,10 @@ function simulate_gps(status) {
   if (point_index >= status.path.len / 2 - 1) {
     return;
   }
-  let p1 = status.path.point(2 * point_index);
+  let p1 = status.path.point(2 * point_index); // use these to approximately follow path
   let p2 = status.path.point(2 * (point_index + 1));
+  // let p1 = status.path.point(point_index); // use these to strictly follow path
+  // let p2 = status.path.point(point_index + 1);
 
   let alpha = fake_gps_point - point_index;
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
@@ -797,7 +776,7 @@ function start(fn) {
   load_gpc(fn);
 }
 
-function start_gipy(path_data) {
+function start_gipy(filename, path_data) {
   console.log("starting");
   let path = new Path(path_data);
   let status = new Status(path);
@@ -806,15 +785,18 @@ function start_gipy(path_data) {
     status.position = new Point(status.path.point(0));
     setInterval(simulate_gps, 500, status);
   } else {
-    // let's display start while waiting for gps signal
-    let p1 = status.path.point(0);
-    let p2 = status.path.point(1);
-    let diff = p2.minus(p1);
-    let direction = Math.atan2(diff.lat, diff.lon);
+    // let's display splash screen while waiting for gps signal
+    g.clear();
+    g.drawImage(splashscreen, 0, 0);
+    g.setFont("6x8:2")
+      .setFontAlign(-1, -1, 0)
+      .setColor(0xf800)
+      .drawString(filename, 0, g.getHeight() - 30);
+
     Bangle.setLocked(false);
-    status.update_position(p1, direction);
 
     let frame = 0;
+    let started = false;
     let set_coordinates = function (data) {
       frame += 1;
       // 0,0 coordinates are considered invalid since we sometimes receive them out of nowhere
@@ -823,6 +805,10 @@ function start_gipy(path_data) {
         !isNaN(data.lon) &&
         (data.lat != 0.0 || data.lon != 0.0);
       if (valid_coordinates) {
+        if (!started) {
+          Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
+          started = true;
+        }
         status.update_position(new Point(data.lon, data.lat), null);
       }
       let gps_status_color;

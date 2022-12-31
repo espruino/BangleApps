@@ -2,12 +2,10 @@
 
 Gipy allows you to follow gpx traces on your watch.
 
-![Screenshot](screenshot1.png)
+![Screenshot](splash.png)
 
 
-It is for now meant for bicycling and not hiking
-(it uses your movement to figure out your orientation
-and walking is too slow).
+It is for now meant for bicycling and but hiking might be fine.
 
 It is untested on Banglejs1. If you can try it, you would be welcome.
 
@@ -83,10 +81,17 @@ On your screen you can see :
 - a *gps* indicator (blinking) on the top right if you lose gps signal
 - a *lost* indicator on the top right if you stray too far away from path
 
+### Lost
+
 If you stray away from path we will rescale the display to continue displaying nearby segments and
 display the direction to follow as a black segment.
 
+Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
+are. On path it just needed to scan a few points ahead and behind.
+
 ![Lost](lost.png)
+
+The distance to next point displayed corresponds to the length of the black segment.
 
 ### Settings
 
