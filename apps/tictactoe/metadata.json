@@ -6,7 +6,7 @@
   "description": "Tic Tac Toe for two players!",
   "tags": "",
   "storage": [
-    {"name":"timer.app.js","url":"app.js"},
-    {"name":"timer.img","url":"app-icon.js","evaluate":true}
+    {"name":"tictactoe.app.js","url":"app.js"},
+    {"name":"tictactoe.img","url":"app-icon.js","evaluate":true}
   ]
 }
