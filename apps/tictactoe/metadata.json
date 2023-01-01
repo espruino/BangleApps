@@ -12,5 +12,6 @@
   "screenshots" : [ 
     { "url":"tttscreenshot.png" },
     { "url":"tttscreenshot2.png" }
-  ]
+  ],
+  "supports": ["BANGLEJS2"],
 }
