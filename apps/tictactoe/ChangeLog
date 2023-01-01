@@ -1,9 +1,1 @@
-TicTacToe
-Initial upload v0.01: 12/31/2022
-By MissionMake
-
-v0.01 Known Issues
-- App icon is the wront color in app launcher
-  Resolved: app-icon.js is a white image straing
-- X and O icons not showing up/wrong color
-  Resolved: Added variables ex and oh as image string. Replaced original images referencesto storage. Also modified image string from black images to whitle images.
+0.01 - Stable Launch
