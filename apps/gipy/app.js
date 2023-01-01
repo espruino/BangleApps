@@ -1,4 +1,4 @@
-let simulated = false;
+let simulated = true;
 let file_version = 3;
 let code_key = 47490;
 
@@ -92,7 +92,7 @@ class Status {
       previous_point = point;
     }
     this.remaining_distances = r; // how much distance remains at start of each segment
-    this.starting_time = getTime(); // time we start
+    this.starting_time = null; // time we start
     this.advanced_distance = 0.0;
     this.gps_coordinates_counter = 0; // how many coordinates did we receive
     this.old_points = []; // record previous points but only when enough distance between them
@@ -745,8 +745,8 @@ function simulate_gps(status) {
   }
   let p1 = status.path.point(2 * point_index); // use these to approximately follow path
   let p2 = status.path.point(2 * (point_index + 1));
-  // let p1 = status.path.point(point_index); // use these to strictly follow path
-  // let p2 = status.path.point(point_index + 1);
+  //let p1 = status.path.point(point_index); // use these to strictly follow path
+  //let p2 = status.path.point(point_index + 1);
 
   let alpha = fake_gps_point - point_index;
   let pos = p1.times(1 - alpha).plus(p2.times(alpha));
@@ -798,7 +798,6 @@ function start_gipy(filename, path_data) {
     Bangle.setLocked(false);
 
     let frame = 0;
-    let started = false;
     let set_coordinates = function (data) {
       frame += 1;
       // 0,0 coordinates are considered invalid since we sometimes receive them out of nowhere
@@ -807,9 +806,9 @@ function start_gipy(filename, path_data) {
         !isNaN(data.lon) &&
         (data.lat != 0.0 || data.lon != 0.0);
       if (valid_coordinates) {
-        if (!started) {
+        if (this.starting_time === null) {
+          this.starting_time = getTime();
           Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
-          started = true;
         }
         status.update_position(new Point(data.lon, data.lat), null);
       }
