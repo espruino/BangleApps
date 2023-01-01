@@ -23,8 +23,8 @@ var active = false;
 var select = false;
 var next = 0;
 var winval =0;
-var ex = atob("MDCBAf/////////////////////////////////////////////////////////////////////////n///n///D///D//+B//+B//+A//8B///Af/4D///gP/wH///wH/gP///4D/Af///8B+A////+A8B/////AYD/////gAH/////wAP/////4Af/////8A//////8A//////4Af/////wAP/////gAH/////AYD////+A8B////8B+A////4D/Af///wH/gP///gP/wH///Af/4D//+A//8B//+B//+B///D///D///n///n/////////////////////////////////////////////////////////////////////////w==");
-var oh = atob("MDCBAf//////////////////////////////////8A//////AAD////8AAA////4AAAf///gD/AH///Af/4D//+B//8B//8D///A//8H///g//4P///wf/wf///4P/w////8P/g////8H/h////+H/h////+H/h////+H/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/h////+H/h////+H/h////+H/g////8H/wf///8P/wf///4P/4P///wf/8H///g//8D///A//+B//+B///Af/4D///gD/AH///4AAAf///8AAA/////AAD/////8A///////////////////////////////////w==");
+var ex = require("heatshrink").decompress(atob("mEwwI63jACEngCEvwCEv4CB/wCBn+AgP8AoMf4ED/AFBh/gg/wAoIDBA4IFBB4ITBAoIbBD4I8C/wrCGAQuCGAQuCGAQuCGAQuCAo4RFDoopFGohBFJopZFMopxFPoqJFSoqhFVooA0A"));
+var oh = require("heatshrink").decompress(atob("mEwwIdah/wAof//4ECgYFB4AFBg4FB8AFBj/wh/4AoM/wEB/gFBvwCB/wCBBAU/AQIUCj8AgIzCh+AgYmCg/AgYyCAYIHBAoXgg+AAoMBApkPLgZKBAtBBRLIprDMoJxFPoqJFSoyhCAQStFXIrFFaIrdFdIwAVA"));
 
 //calculates sum of rows, colums, and diagonals for a win condition. passes winner to win() and breaks out of calcs
 function calcWin(){
@@ -102,8 +102,6 @@ function draw(){
   }
   //Banner Displays player turn
   E.showMessage("","Player "+ playerIcon);
-  //set draw color to white
-   g.setColor(-1);
   //drawboard
   g.drawLine(62,24,62,176);
   g.drawLine(112,24,112,176);
