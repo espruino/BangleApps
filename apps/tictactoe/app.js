@@ -23,6 +23,8 @@ var active = false;
 var select = false;
 var next = 0;
 var winval =0;
+var ex = atob("MDCBAf/////////////////////////////////////////////////////////////////////////n///n///D///D//+B//+B//+A//8B///Af/4D///gP/wH///wH/gP///4D/Af///8B+A////+A8B/////AYD/////gAH/////wAP/////4Af/////8A//////8A//////4Af/////wAP/////gAH/////AYD////+A8B////8B+A////4D/Af///wH/gP///gP/wH///Af/4D//+A//8B//+B//+B///D///D///n///n/////////////////////////////////////////////////////////////////////////w==");
+var oh = atob("MDCBAf//////////////////////////////////8A//////AAD////8AAA////4AAAf///gD/AH///Af/4D//+B//8B//8D///A//8H///g//4P///wf/wf///4P/w////8P/g////8H/h////+H/h////+H/h////+H/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/D/////D/h////+H/h////+H/h////+H/g////8H/wf///8P/wf///4P/4P///wf/8H///g//8D///A//+B//+B///Af/4D///gD/AH///4AAAf///8AAA/////AAD/////8A///////////////////////////////////w==");
 
 //calculates sum of rows, colums, and diagonals for a win condition. passes winner to win() and breaks out of calcs
 function calcWin(){
@@ -110,9 +112,9 @@ function draw(){
   for(let i = 0; i<3; i++){
     for(let j = 0; j<3; j++){
       if(arr[j][i] == -1){         
-        g.drawImage(require("Storage").read("oh.img"),i*50+12,j*50+24);//, {scale:1.05});
+        g.drawImage(oh,i*50+12,j*50+24);//, {scale:1.05});
       } else if (arr[j][i] == 1){
-        g.drawImage(require("Storage").read("ex.img"),i*50+12,j*50+24);//, {scale:1.05}); 
+        g.drawImage(ex,i*50+12,j*50+24);//, {scale:1.05}); 
       } else {
         //blank spot
       }  
