@@ -102,6 +102,8 @@ function draw(){
   }
   //Banner Displays player turn
   E.showMessage("","Player "+ playerIcon);
+  //set draw color to white
+   g.setColor(-1);
   //drawboard
   g.drawLine(62,24,62,176);
   g.drawLine(112,24,112,176);
