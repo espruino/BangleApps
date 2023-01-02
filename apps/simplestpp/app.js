@@ -17,7 +17,7 @@ function draw() {
 
   clockInfoMenu.redraw();   // clock_info_support
   queueDraw(); // queue draw in one minute
-};
+}
 
 // timeout used to update every minute
 var drawTimeout;
@@ -39,8 +39,8 @@ function queueDraw() {
  * length of the image+text
  *
  */
-function clockInfoDraw(itm, info, options)
-{
+function clockInfoDraw(itm, info, options) {
+
   g.reset().setFont('Vector',24).setBgColor(options.bg).setColor(options.fg);
   
   //use info.text.toString(), steps does not have length defined
@@ -67,7 +67,7 @@ function clockInfoDraw(itm, info, options)
     g.setFontAlign(0,0).drawString(info.text, g.getWidth() / 2, options.y+12);
   }
 
-};
+}
 
 /**
  * clock_info_support: retrieve all the clock_info modules that are
