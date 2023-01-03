@@ -24,7 +24,8 @@ Stores:
   * **Off** - Don't turn HRM on, but record heart rate if the HRM was turned on by another app/widget
   * **10 Min** - Turn HRM on every 10 minutes (for each heath entry) and turn it off after 2 minutes, or when a good reading is found
   * **Always** - Keep HRM on all the time (more accurate recording, but reduces battery life to ~36 hours)
-* **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use
+* **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use and for the step goal notification
+* **Step Goal Notification** - True if you want a notification when the daily step goal is reached
 
 
 ## Technical Info
