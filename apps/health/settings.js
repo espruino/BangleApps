@@ -1,7 +1,8 @@
 (function (back) {
   var settings = Object.assign({
     hrm: 0,
-    stepGoal: 10000
+    stepGoal: 10000,
+    stepGoalNotification: false
   }, require("Storage").readJSON("health.json", true) || {});
 
   E.showMenu({
@@ -33,6 +34,14 @@
       onchange: v => {
         settings.stepGoal = v;
         setSettings(settings);
+      }
+    },
+    /*LANG*/"Step Goal Notification": {
+      value: "stepGoalNotification" in settings ? settings.stepGoalNotification : false,
+      format: () => (settings.stepGoalNotification ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.stepGoalNotification = !settings.stepGoalNotification;
+        setSettings();
       }
     }
   });
