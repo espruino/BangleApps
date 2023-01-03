@@ -20,7 +20,7 @@
         v_str_hw="Bat "+E.getBattery()+"%";
         v_count++;
        } 
-       else if (v_count==3 && v_model.substr(0,6)=='BANGLE') {             
+       else if (v_count==3 && process.env.BOARD.substr(0,6)=='BANGLE') {             
         v_str_hw="Tmp "+E.getTemperature();
           v_count++;
          }
