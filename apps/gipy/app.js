@@ -784,6 +784,7 @@ function start_gipy(filename, path_data) {
   let status = new Status(path);
 
   if (simulated) {
+    status.starting_time = getTime();
     status.position = new Point(status.path.point(0));
     setInterval(simulate_gps, 500, status);
   } else {
@@ -807,7 +808,7 @@ function start_gipy(filename, path_data) {
         (data.lat != 0.0 || data.lon != 0.0);
       if (valid_coordinates) {
         if (this.starting_time === null) {
-          this.starting_time = getTime();
+          status.starting_time = getTime();
           Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
         }
         status.update_position(new Point(data.lon, data.lat), null);
