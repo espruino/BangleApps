@@ -104,8 +104,8 @@ function handleStepGoalNotification() {
     const now = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
     if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
       Bangle.buzz(200, 0.5);
-      /*LANG*/E.showPrompt("You reached your daily goal of " + settings.stepGoal + " steps!", {
-        /*LANG*/title: "Step goal reached!",
+      E.showPrompt(/*LANG*/"You reached your daily goal of " + settings.stepGoal + " steps!", {
+        title: /*LANG*/"Step goal reached!",
         buttons: { "Ok": 1}
       }).then(function (v) {
         load();
