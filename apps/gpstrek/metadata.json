@@ -1,7 +1,7 @@
 {
   "id": "gpstrek",
   "name": "GPS Trekking",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Helper for tracking the status/progress during hiking. Do NOT depend on this for navigation!",
   "icon": "icon.png",
   "screenshots": [{"url":"screen1.png"},{"url":"screen2.png"},{"url":"screen3.png"},{"url":"screen4.png"}],

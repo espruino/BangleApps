@@ -19,3 +19,4 @@
 0.17: Don't display 'Loading...' now the watch has its own loading screen
 0.18: Add 'back' icon in top-left to go back to clock
 0.19: Fix regression after back button added (returnToClock was called twice!)
+0.20: Use Bangle.showClock for changing to clock

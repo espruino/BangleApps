@@ -9,3 +9,11 @@
 0.23: Added note to configure position in "my location" if not done yet. Small fixes.
 0.24: Added fast load
 0.25: Minor code optimization
+0.26: BJS2: Swipe down to rotate 180 degree
+0.27: BJS2: Changed swipe down to swipe up
+0.28: Reverted changes to implementation of 0.25
+0.29: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.30: BJS2: swipe seems to be working now
+0.31: Tweaking the swipe option; Added mylocation as a dependency.
+      Remove calls to Bangle.loadWidgets as they are not needed and create warnings
+0.32: Added setting to show single timezone small, like where multiple ones are configured

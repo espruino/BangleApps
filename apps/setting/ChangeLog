@@ -59,3 +59,4 @@
 0.52: Add option for left-handed users
 0.53: Ensure that when clock is set, clockHasWidgets is set correctly too
 0.54: If setting.json is corrupt, ensure it gets re-written
+0.55: More strings tagged for automatic translation.

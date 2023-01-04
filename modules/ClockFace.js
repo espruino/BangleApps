@@ -9,7 +9,7 @@ function ClockFace(options) {
     if (![
       "precision",
       "init", "draw", "update",
-      "pause", "resume",
+      "pause", "resume", "remove",
       "up", "down", "upDown",
       "settingsFile",
     ].includes(k)) throw `Invalid ClockFace option: ${k}`;
@@ -27,6 +27,7 @@ function ClockFace(options) {
   if (options.init) this.init = options.init;
   if (options.pause) this._pause = options.pause;
   if (options.resume) this._resume = options.resume;
+  if (options.remove) this._remove = options.remove;
   if ((options.up || options.down) && options.upDown) throw "ClockFace up/down and upDown cannot be used together";
   if (options.up || options.down) this._upDown = (dir) => {
     if (dir<0 && options.up) options.up.apply(this);
@@ -44,12 +45,20 @@ function ClockFace(options) {
   ["showDate", "loadWidgets"].forEach(k => {
     if (this[k]===undefined) this[k] = true;
   });
+  let s = require("Storage").readJSON("setting.json",1)||{};
+  if ((global.__FILE__===undefined || global.__FILE__===s.clock)
+    && s.clockHasWidgets!==this.loadWidgets) {
+    // save whether we can Fast Load
+    s.clockHasWidgets = this.loadWidgets;
+    require("Storage").writeJSON("setting.json", s);
+  }
   // use global 24/12-hour setting if not set by clock-settings
-  if (!('is12Hour' in this)) this.is12Hour = !!(require("Storage").readJSON("setting.json", true) || {})["12hour"];
+  if (!('is12Hour' in this)) this.is12Hour = !!(s["12hour"]);
 }
 
 ClockFace.prototype.tick = function() {
   "ram"
+  if (this._removed) return;
   const time = new Date();
   const now = {
     d: `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`,
@@ -85,16 +94,27 @@ ClockFace.prototype.start = function() {
   Bangle.CLOCK = 1;
   if (this.loadWidgets) Bangle.loadWidgets();
   if (this.init) this.init.apply(this);
-  if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
-  else Bangle.setUI("clock");
+  const uiRemove = this._remove ? () => this.remove() : undefined;
+  if (this._upDown) {
+    Bangle.setUI({
+      mode: "clockupdown",
+      remove: uiRemove,
+    }, d => this._upDown.apply(this, [d]));
+  } else {
+    Bangle.setUI({
+      mode: "clock",
+      remove: uiRemove,
+    });
+  }
   delete this._last;
   this.paused = false;
   this.tick();
 
-  Bangle.on("lcdPower", on => {
+  this._onLcd = on => {
     if (on) this.resume();
     else this.pause();
-  });
+  };
+  Bangle.on("lcdPower", this._onLcd);
 };
 
 ClockFace.prototype.pause = function() {
@@ -110,6 +130,12 @@ ClockFace.prototype.resume = function() {
   this.paused = false;
   if (this._resume) this._resume.apply(this);
   this.tick();
+};
+ClockFace.prototype.remove = function() {
+  this._removed = true;
+  if (this._timeout) clearTimeout(this._timeout);
+  Bangle.removeListener("lcdPower", this._onLcd);
+  if (this._remove) this._remove.apply(this);
 };
 
 /**

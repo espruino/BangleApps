@@ -224,27 +224,19 @@
 
     // main widget function //
     // display and setup/reset function
-    draw: function(locked) {
+    draw: function() {
       // setup shortcut to this widget
       var w = WIDGETS.lightswitch;
 
-      // set lcd brightness on unlocking
-      // all other cases are catched by the boot file
-      if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
-
       // read lock status
-      locked = Bangle.isLocked();
+      var locked = Bangle.isLocked();
 
       // remove listeners to prevent uncertainties
-      Bangle.removeListener("lock", w.draw);
       Bangle.removeListener("touch", w.touchListener);
       Bangle.removeListener("tap", require("lightswitch.js").tapListener);
 
       // draw widget icon
       w.drawIcon(locked);
-
-      // add lock listener
-      Bangle.on("lock", w.draw);
 
       // add touch listener to control the light depending on settings at first position
       if (w.touchOn === "always" || !global.__FILE__ ||
@@ -259,7 +251,15 @@
       w = undefined;
     }
   });
+  
+  Bangle.on("lock", locked => {
+    var w = WIDGETS.lightswitch;
+    // set lcd brightness on unlocking
+    // all other cases are catched by the boot file
+    if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
+    w.draw()
+  });
 
   // clear variable
-  settings = undefined;
+  delete settings;
 })()

@@ -1,14 +1,16 @@
 {
   "id": "messageicons",
   "name": "Message Icons",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Library containing a list of icons and colors for apps",
   "icon": "app.png",
   "type": "module",
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "provides_modules" : ["messageicons"],
+  "default": true,
   "storage": [
-    {"name":"messageicons","url":"lib.js"}
+    {"name":"messageicons","url":"lib.js"},
+    {"name":"messageicons.img","url":"icons.img"}
   ]
 }

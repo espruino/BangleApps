@@ -9,7 +9,8 @@
 0.09: fix battery icon size
 0.10: Tell clock widgets to hide.
 0.11: fix issue https://github.com/espruino/BangleApps/issues/2128 (#2128) ( settings undefined )
-0.12: implemented widget_utils 
+0.12: implemented widget_utils
 0.13: convert var/function into let
-0.14: cleanup code and fix fastload issue 
+0.14: cleanup code and fix fastload issue
 0.15: fix draw before widget hide
+0.16: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps

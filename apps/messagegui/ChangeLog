@@ -1,0 +1,88 @@
+0.01: New App!
+0.02: Add 'messages' library
+0.03: Fixes for Bangle.js 1
+0.04: Add require("messages").clearAll()
+0.05: Handling of message actions (ok/clear)
+0.06: New messages now go at the start (fix #898)
+      Answering true/false now exits the messages app if no new messages
+      Back now marks a message as read
+      Clicking top-left opens a menu which allows you to delete a message or mark unread
+0.07: Added settings menu with option to choose vibrate pattern and frequency (fix #909)
+0.08: Fix rendering of long messages (fix #969)
+      buzz on new message (fix #999)
+0.09: Message now disappears after 60s if no action taken and clock loads (fix 922)
+      Fix phone icon (#1014)
+0.10: Respect the 'new' attribute if it was set from iOS integrations
+0.11: Open app when touching the widget (Bangle.js 2 only)
+0.12: Extra app-specific notification icons
+      New animated notification icon (instead of large blinking 'MESSAGES')
+      Added screenshots
+0.13: Add /*LANG*/ comments for internationalisation
+      Add 'Delete All' option to message options
+      Now update correctly when 'require("messages").clearAll()' is called
+0.14: Hide widget when all unread notifications are dismissed from phone
+0.15: Don't buzz when Quiet Mode is active
+0.16: Fix text wrapping so it fits the screen even if title is big (fix #1147)
+0.17: Fix: Get dynamic dimensions of notify icon, fixed notification font
+0.18: Use app-specific icon colors
+      Spread message action buttons out
+      Back button now goes back to list of messages
+      If showMessage called with no message (eg all messages deleted) now return to the clock (fix #1267)
+0.19: Use a larger font for message text if it'll fit
+0.20: Allow tapping on the body to show a scrollable view of the message and title in a bigger font (fix #1405, #1031)
+0.21: Improve list readability on dark theme
+0.22: Add Home Assistant icon
+      Allow repeat to be switched Off, so there is no buzzing repetition.
+      Also gave the widget a pixel more room to the right
+0.23: Change message colors to match current theme instead of using green
+      Now attempt to use Large/Big/Medium fonts, and allow minimum font size to be configured
+0.24: Remove left-over debug statement
+0.25: Fix widget memory usage issues if message received and watch repeatedly calls Bangle.drawWidgets (fix #1550)
+0.26: Setting to auto-open music
+0.27: Add 'mark all read' option to popup menu (fix #1624)
+0.28: Option to auto-unlock the watch when a new message arrives
+0.29: Fix message list overwrites on Bangle.js 1 (fix #1642)
+0.30: Add new Icons (Youtube, Twitch, MS TODO, Teams, Snapchat, Signal, Post & DHL, Nina, Lieferando, Kalender, Discord, Corona Warn, Bibel)
+0.31: Option to disable icon flashing
+0.32: Added an option to allow quiet mode to override message auto-open
+0.33: Timeout from the message list screen if the message being displayed is removed and there is a timer going
+0.34: Don't buzz for 'map' update messages
+0.35: Reset graphics colors before rendering a message (possibly fix #1752)
+0.36: Ensure a new message plus an almost immediate deletion of that message doesn't load the messages app (fix #1362)
+0.37: Now use the setUI 'back' icon in the top left rather than specific buttons/menu items
+0.38: Add telegram foss handling
+0.39: Set default color for message icons according to theme
+0.40: Use default Bangle formatter for booleans
+0.41: Add notification icons in the widget
+0.42: Fix messages ignoring "Vibrate: Off" setting
+0.43: Add new Icons (Airbnb, warnwetter)
+0.44: Separate buzz pattern for incoming calls
+0.45: Added new app colors and icons
+0.46: Add 'Vibrate Timer' option to set how long to vibrate for, and fix Repeat:off
+      Fix message removal from widget bar (previously caused exception as .hide has been removed)
+0.47: Add new Icons (Nextbike, Mattermost, etc.)
+0.48: When getting new message from the clock, only buzz once the messages app is loaded
+0.49: Change messages icon (to fit within 24px) and ensure widget renders icons centrally
+0.50: Add `getMessages` and `status` functions to library
+      Option to disable auto-open of messages
+      Option to make message icons monochrome (not colored)
+      messages widget buzz now returns a promise
+0.51: Emit "message events"
+      Setting to hide widget
+      Add custom event handlers to prevent default app form loading
+      Move WIDGETS.messages.buzz() to require("messages").buzz()
+0.52: Fix require("messages").buzz() regression
+      Fix background color in messages list after one unread message is shown
+0.53: Messages now uses Bangle.load() to load messages app faster (if possible)
+0.54: Move icons out to messageicons module
+0.55: Rename to messagegui, move global message handling library to message module
+      Move widget to widmessage
+0.56: Fix handling of music messages
+0.57: Fix "unread Timeout" = off (previously defaulted to 60s)
+0.58: Fast load messages without writing to flash
+      Don't write messages to flash until the app closes
+0.59: Ensure we do write messages if messages app can't be fast loaded (see #2373)
+0.60: Fix saving of removal messages if UI not open
+0.61: Fix regression where loading into messages app stops back from working (#2398)
+0.62: Remove '.show' field, tidyup and fix .open if fast load not enabled
+0.63: Fix messages app loading on clock without fast load

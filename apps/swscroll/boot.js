@@ -1,13 +1,14 @@
-E.showScroller = (function(options) {
+E.showScroller = (function(options) {    
   /* options = {
     h = height
     c = # of items
     scroll = initial scroll position
     scrollMin = minimum scroll amount (can be negative)
     draw = function(idx, rect)
-    select = function(idx)
+    remove = function()
+    select = function(idx, touch)
   }
-  
+
   returns {
     draw  = draw all
     drawItem(idx) = draw specific item
@@ -15,46 +16,13 @@ E.showScroller = (function(options) {
   */
 if (!options) return Bangle.setUI(); // remove existing handlers
 
-var menuShowing = false;
-var R = Bangle.appRect;
-var Y = Bangle.appRect.y;
-var n = Math.ceil(R.h/options.h);
-var menuScrollMin = 0|options.scrollMin;
-var menuScrollMax = options.h*options.c - R.h;
-if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
-
-function idxToY(i) {
-  return i*options.h + R.y - rScroll;
-}
-function YtoIdx(y) {
-  return Math.floor((y + rScroll - R.y)/options.h);
-}
-
-var s = {
-  scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
-  draw : () => {
-  g.reset().clearRect(R.x,R.y,R.x2,R.y2);
-  g.setClipRect(R.x,R.y,R.x2,R.y2);
-  var a = YtoIdx(R.y);
-  var b = Math.min(YtoIdx(R.y2),options.c-1);
-  for (var i=a;i<=b;i++)
-    options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-}, drawItem : i => {
-  var y = idxToY(i);
-  g.reset().setClipRect(R.x,y,R.x2,y+options.h);
-  options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-}};
-var rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
-s.draw(); // draw the full scroller
-g.flip(); // force an update now to make this snappier
 Bangle.setUI({
   mode : "custom",
   back : options.back,
-  swipe : (hor,ver)=>{
+  remove : options.remove,
+  swipe : (_,UD)=>{
     pixels = 120;
-    var dy = ver*pixels;
+    var dy = UD*pixels;
     if (s.scroll - dy > menuScrollMax)
       dy = s.scroll - menuScrollMax-8; // Makes it so the last 'page' has the same position as previous pages. This should be done dynamically (change the static 8 to be a variable) so the offset is correct even when no widget field or title field is present.
     if (s.scroll - dy < menuScrollMin)
@@ -66,7 +34,7 @@ Bangle.setUI({
     if (!dy || options.c<=3) return; //options.c<=3 should maybe be dynamic, so 3 would be replaced by a variable dependent on R=Bangle.appRect. It's here so we don't try to scroll if all entries fit in the app rectangle.
     g.reset().setClipRect(R.x,R.y,R.x2,R.y2);
     g.scroll(0,dy);
-    var d = ver*pixels;
+    var d = UD*pixels;
     if (d < 0) {
       g.setClipRect(R.x,R.y2-(1-d),R.x2,R.y2);
       let i = YtoIdx(R.y2-(1-d));
@@ -92,9 +60,47 @@ Bangle.setUI({
   }, touch : (_,e)=>{
     if (e.y<R.y-4) return;
     var i = YtoIdx(e.y);
-    if ((menuScrollMin<0 || i>=0) && i<options.c)
-      options.select(i);
+    if ((menuScrollMin<0 || i>=0) && i<options.c){
+      let yAbs = (e.y + rScroll - R.y);
+      let yInElement = yAbs - i*options.h;
+      options.select(i, {x:e.x, y:yInElement});
+    }
   }
-});
+});  
+  
+var menuShowing = false;
+var R = Bangle.appRect;
+var Y = R.y;
+var n = Math.ceil(R.h/options.h);
+var menuScrollMin = 0|options.scrollMin;
+var menuScrollMax = options.h*options.c - R.h;
+if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
+
+function idxToY(i) {
+  return i*options.h + R.y - rScroll;
+}
+function YtoIdx(y) {
+  return Math.floor((y + rScroll - R.y)/options.h);
+}
+  
+var s = {  
+  scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
+  draw : () => {
+  g.reset().clearRect(R.x,R.y,R.x2,R.y2);
+  g.setClipRect(R.x,R.y,R.x2,R.y2);
+  var a = YtoIdx(R.y);
+  var b = Math.min(YtoIdx(R.y2),options.c-1);
+  for (var i=a;i<=b;i++)
+    options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+}, drawItem : i => {
+  var y = idxToY(i);
+  g.reset().setClipRect(R.x,y,R.x2,y+options.h);
+  options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+}};
+var rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
+s.draw(); // draw the full scroller
+g.flip(); // force an update now to make this snappier
 return s;
-});
+})

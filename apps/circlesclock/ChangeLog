@@ -31,3 +31,11 @@
 0.16: Fix const error
       Use widget_utils if available
 0.17: Load circles from clkinfo
+0.18: Improved clkinfo handling and using it for the weather circle
+0.19: Remove old code and fixing clkinfo handling (fix HRM and other items that change)
+      Remove settings for what is displayed and instead allow circles to be changed by swiping
+0.20: Add much faster circle rendering (250ms -> 40ms)
+      Add fast load capability
+0.21: Remade all icons without a palette for dark theme
+      Now re-adds widgets if they were hidden when fast-loading
+0.22: Fixed crash if item has no image and cutting long overflowing text

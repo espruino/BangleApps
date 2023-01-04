@@ -1,6 +1,6 @@
 0.01: New App!
 0.02: Fix scheduling of other alarms if there is a pending alarm from the past (fix #1667)
-0.03: Fix `getTimeToAlarm` for a timer already used at same day, don't set `last` for timers. 
+0.03: Fix `getTimeToAlarm` for a timer already used at same day, don't set `last` for timers.
 0.04: Fix `getTimeToAlarm` to check for next dow if alarm.t lower currentTime.
 0.05: Export new functions (`newDefaultAlarm/Timer`), add Settings page
 0.06: Refactor some methods to library
@@ -14,3 +14,8 @@
       Improve timer message using formatDuration
       Fix wrong fallback for buzz pattern
 0.13: Ask to delete a timer after stopping it
+0.14: Added clkinfo for alarms and timers
+0.15: Automatic translation of some string in clkinfo
+0.16: Improve support for date timezone
+0.17: Fix midnight in local timezone (alarms wouldn't always fire as expected in timezone != 0)
+0.18: Update clock_info to avoid a redraw
