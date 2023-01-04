@@ -64,7 +64,7 @@ var color3C = convert24to16(color3);
 * Requirements and globals
 */
 
-var colorPalette = new Uint16Array([/Used to change the color of the image if the user selects a color that is diffrent than the default.
+var colorPalette = new Uint16Array([//Used to change the color of the image if the user selects a color that is diffrent than the default.
   0x0000, // not used
   color2C,  // second
   color3C, // third
