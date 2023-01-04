@@ -29,7 +29,7 @@
   var dataOptions = ["Steps", "Battery", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White','Purple','Pink','Light Green','Dark Green'];
-  var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00',"#556B2F'];
+  var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00','#556B2F'];
 
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
