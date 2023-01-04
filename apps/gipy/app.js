@@ -807,7 +807,7 @@ function start_gipy(filename, path_data) {
         !isNaN(data.lon) &&
         (data.lat != 0.0 || data.lon != 0.0);
       if (valid_coordinates) {
-        if (this.starting_time === null) {
+        if (status.starting_time === null) {
           status.starting_time = getTime();
           Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
         }
