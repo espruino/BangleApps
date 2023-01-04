@@ -76,21 +76,6 @@ var H = g.getHeight();
  var menu = clock_info.load();
  menu = menu.concat(dateMenu);
 
- // Set draw functions for each item
- menu.forEach((menuItm, x) => {
-   menuItm.items.forEach((item, y) => {
-     function drawItem() {
-       item.hide();
-
-       var info = item.get();
-       drawText(item.name, info.text, (y%4)+1);
-     }
-
-     item.on('redraw', drawItem);
-   })
- });
-
-
  // Ensure that our settings are still in range (e.g. app uninstall). Otherwise reset the position it.
  if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPosX].items.length ){
    settings.menuPosX = 0;
@@ -184,8 +169,9 @@ function drawMenuItems(menuItem) {
     if (i >= menuItem.items.length) {
       continue;
     }
-    lock_input++;
-    menuItem.items[i].show();
+
+    var item = menuItem.items[i];
+    drawText(item.name, item.get().text, (i%4)+1);
   }
 }
 
@@ -217,7 +203,6 @@ function drawText(key, value, line){
   value = String(value).replace("\n", " ");
   g.drawString(key + value, x, y);
 
-  lock_input -= 1;
 }
 
 
@@ -289,14 +274,8 @@ Bangle.on('charging',function(charging) {
   draw();
 });
 
-var lock_input = 0;
 
 Bangle.on('touch', function(btn, e){
-  if(lock_input > 0){
-    return;
-  }
-  lock_input = 0;
-
   var left = parseInt(g.getWidth() * 0.22);
   var right = g.getWidth() - left;
   var upper = parseInt(g.getHeight() * 0.22) + 20;
