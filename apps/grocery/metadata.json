@@ -8,6 +8,7 @@
   "tags": "tool,outdoors,shopping,list",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "custom": "grocery.html",
+  "interface": "interface.html",
   "allow_emulator": true,
   "storage": [
     {"name":"grocery.app.js","url":"app.js"},
