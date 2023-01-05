@@ -31,6 +31,19 @@ for (const key in saved_settings) {
   settings[key] = saved_settings[key];
 }
 
+let isFullscreen = function() {
+  var s = settings.screen.toLowerCase();
+  if(s == "dynamic"){
+    return Bangle.isLocked();
+  } else {
+    return s == "full";
+  }
+};
+
+let getLineY = function(){
+  return H/5*2 + (isFullscreen() ? 0 : 8);
+}
+
 /************************************************
  * Assets
  */
@@ -86,70 +99,47 @@ let imgLock = function() {
 /************************************************
  * Menu
  */
-// Custom bwItems menu - therefore, its added here and not in a clkinfo.js file.
-let bwItems = {
-  name: null,
-  img: null,
-  items: [
-  { name: "WeekOfYear",
-    get: () => ({ text: "Week " + weekOfYear(), img: null}),
-    show: function() {},
-    hide: function () {}
-  },
-  ]
-};
+let clockInfoItems = clock_info.load();
+let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  x : 0,
+  y: 135,
+  w: W,
+  h: H-135,
+  draw : (itm, info, options) => {
+    g.setColor(g.theme.fg);
+    g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
 
-let weekOfYear = function() {
-  var date = new Date();
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  // January 4 is always in week 1.
-  var week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-};
+    g.setFontAlign(0,0);
+    g.setColor(g.theme.bg);
 
-
-// Load menu
-let menu = clock_info.load();
-menu = menu.concat(bwItems);
-
-
-// Ensure that our settings are still in range (e.g. app uninstall). Otherwise reset the position it.
-if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPosX].items.length ){
-  settings.menuPosX = 0;
-  settings.menuPosY = 0;
-}
-
-let canRunMenuItem = function() {
-  if(settings.menuPosY == 0){
-    return false;
-  }
-
-  var menuEntry = menu[settings.menuPosX];
-  var item = menuEntry.items[settings.menuPosY-1];
-  return item.run !== undefined;
-};
-
-
-let runMenuItem = function() {
-  if(settings.menuPosY == 0){
-    return;
-  }
-
-  var menuEntry = menu[settings.menuPosX];
-  var item = menuEntry.items[settings.menuPosY-1];
-  try{
-    var ret = item.run();
-    if(ret){
-      Bangle.buzz(300, 0.6);
+    if (options.focus){
+      g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
+      g.drawRect(options.x+1, options.y+1, options.x+options.w-3, options.y+options.h-2); // show if focused
     }
-  } catch (ex) {
-    // Simply ignore it...
+
+    // Set text and font
+    var image = info.img;
+    var text = String(info.text);
+    if(text.split('\n').length > 1){
+      g.setMiniFont();
+    } else {
+      g.setSmallFont();
+    }
+
+    // Compute sizes
+    var strWidth = g.stringWidth(text);
+    var imgWidth = image == null ? 0 : 24;
+    var midx = options.x+options.w/2;
+
+    // Draw
+
+    if (image) {
+      var scale = imgWidth / image.width;
+      g.drawImage(image, midx-16-parseInt(strWidth/2), options.y+8, {scale: scale});
+    }
+    g.drawString(text, midx+imgWidth-6, options.y+20);
   }
-};
+});
 
 
 /************************************************
@@ -161,7 +151,7 @@ let draw = function() {
 
   // Draw clock
   drawDate();
-  drawMenuAndTime();
+  drawTime();
   drawLock();
   drawWidgets();
 };
@@ -169,7 +159,7 @@ let draw = function() {
 
 let drawDate = function() {
     // Draw background
-    var y = H/5*2 + (isFullscreen() ? 0 : 8);
+    var y = getLineY()
     g.reset().clearRect(0,0,W,y);
 
     // Draw date
@@ -197,13 +187,11 @@ let drawDate = function() {
 };
 
 
-let drawTime = function(y, smallText) {
+let drawTime = function() {
   // Draw background
+  var y1 = getLineY();
+  var y = y1;
   var date = new Date();
-
-  // Draw time
-  g.setColor(g.theme.bg);
-  g.setFontAlign(0,0);
 
   var hours = String(date.getHours());
   var minutes = date.getMinutes();
@@ -212,67 +200,18 @@ let drawTime = function(y, smallText) {
   var timeStr = hours + colon + minutes;
 
   // Set y coordinates correctly
-  y += parseInt((H - y)/2) + 5;
+  y += parseInt((H - y)/2)-10;
 
-  // Show large or small time depending on info entry
-  if(smallText){
-    y -= 15;
-    g.setMediumFont();
-  } else {
-    g.setLargeFont();
-  }
+  // Clear region
+  g.setColor(g.theme.fg);
+  g.fillRect(0,y1,W,y+20);
+
+  g.setMediumFont();
+  g.setColor(g.theme.bg);
+  g.setFontAlign(0,0);
   g.drawString(timeStr, W/2, y);
 };
 
-let drawMenuItem = function(text, image) {
-  // First clear the time region
-  var y = H/5*2 + (isFullscreen() ? 0 : 8);
-
-  g.setColor(g.theme.fg);
-  g.fillRect(0,y,W,H);
-
-  // Draw menu text
-  var hasText = (text != null && text != "");
-  if(hasText){
-    g.setFontAlign(0,0);
-
-    // For multiline text we show an even smaller font...
-    text = String(text);
-    if(text.split('\n').length > 1){
-      g.setMiniFont();
-    } else {
-      g.setSmallFont();
-    }
-
-    var imgWidth = image == null ? 0 : 24;
-    var strWidth = g.stringWidth(text);
-    g.setColor(g.theme.fg).fillRect(0, 149-14, W, H);
-    g.setColor(g.theme.bg).drawString(text, W/2 + imgWidth/2 + 2, 149+3);
-
-    if(image != null){
-      var scale = imgWidth / image.width;
-      g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 149 - parseInt(imgWidth/2), {scale: scale});
-    }
-  }
-
-  // Draw time
-  drawTime(y, hasText);
-};
-
-
-let drawMenuAndTime = function() {
-  var menuEntry = menu[settings.menuPosX];
-
-  // The first entry is the overview...
-  if(settings.menuPosY == 0){
-    drawMenuItem(menuEntry.name, menuEntry.img);
-    return;
-  }
-
-  // Draw item if needed
-  var item = menuEntry.items[settings.menuPosY-1].get();
-  drawMenuItem(item.text, item.img);
-};
 
 let drawLock = function() {
   if(settings.showLock && Bangle.isLocked()){
@@ -289,17 +228,6 @@ let drawWidgets = function() {
     Bangle.drawWidgets();
   }
 };
-
-
-let isFullscreen = function() {
-  var s = settings.screen.toLowerCase();
-  if(s == "dynamic"){
-    return Bangle.isLocked();
-  } else {
-    return s == "full";
-  }
-};
-
 
 
 /************************************************
@@ -343,74 +271,12 @@ let lockListenerBw = function(isLocked) {
 };
 Bangle.on('lock', lockListenerBw);
 
-let chargingListenerBw = function(charging) {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = undefined;
 
-  // Jump to battery
-  settings.menuPosX = 0;
-  settings.menuPosY = 1;
-  draw();
+let kill = function(){
+  clockInfoMenu.remove();
+  delete clockInfoMenu;
 };
-Bangle.on('charging', chargingListenerBw);
-
-let touchListenerBw = function(btn, e) {
-  var widget_size = isFullscreen() ? 0 : 20; // Its not exactly 24px -- empirically it seems that 20 worked better...
-  var left = parseInt(g.getWidth() * 0.22);
-  var right = g.getWidth() - left;
-  var upper = parseInt(g.getHeight() * 0.22) + widget_size;
-  var lower = g.getHeight() - upper;
-
-  var is_upper = e.y < upper;
-  var is_lower = e.y > lower;
-  var is_left = e.x < left && !is_upper && !is_lower;
-  var is_right = e.x > right && !is_upper && !is_lower;
-  var is_center = !is_upper && !is_lower && !is_left && !is_right;
-
-  if(is_lower){
-    Bangle.buzz(40, 0.6);
-    settings.menuPosY = (settings.menuPosY+1) % (menu[settings.menuPosX].items.length+1);
-
-    drawMenuAndTime();
-  }
-
-  if(is_upper){
-    if(e.y < widget_size){
-      return;
-    }
-
-    Bangle.buzz(40, 0.6);
-    settings.menuPosY  = settings.menuPosY-1;
-    settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length : settings.menuPosY;
-
-    drawMenuAndTime();
-  }
-
-  if(is_right){
-    Bangle.buzz(40, 0.6);
-    settings.menuPosX = (settings.menuPosX+1) % menu.length;
-    settings.menuPosY = 0;
-    drawMenuAndTime();
-  }
-
-  if(is_left){
-    Bangle.buzz(40, 0.6);
-    settings.menuPosY = 0;
-    settings.menuPosX  = settings.menuPosX-1;
-    settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-    drawMenuAndTime();
-  }
-
-  if(is_center){
-    if(canRunMenuItem()){
-      runMenuItem();
-    }
-  }
-};
-Bangle.on('touch', touchListenerBw);
-
-let save = () =>  storage.write(SETTINGS_FILE, settings);
-E.on("kill", save);
+E.on("kill", kill);
 
 /************************************************
  * Startup Clock
