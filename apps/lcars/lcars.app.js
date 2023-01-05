@@ -13,6 +13,7 @@ let settings = {
   themeColor2BG: "#FF00DC",
   themeColor3BG: "#0094FF",
   disableAlarms: false,
+  disableData: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -55,7 +56,7 @@ function convert24to16(input)
   return "0x"+RGB565.toString(16);
 }
 
-var color1C = convert24to16(color1);
+var color1C = convert24to16(color1);//Converting colors to the correct format.
 var color2C = convert24to16(color2);
 var color3C = convert24to16(color3);
 
@@ -63,7 +64,7 @@ var color3C = convert24to16(color3);
 * Requirements and globals
 */
 
-var colorPalette = new Uint16Array([
+var colorPalette = new Uint16Array([//Used to change the color of the image if the user selects a color that is diffrent than the default.
   0x0000, // not used
   color2C,  // second
   color3C, // third
@@ -708,18 +709,20 @@ Bangle.on('touch', function(btn, e){
   var is_right = e.x > right;
   var is_upper = e.y < upper;
   var is_lower = e.y > lower;
+  
+  if(!settings.disableData){
+    if(is_left && lcarsViewPos == 1){
+      feedback();
+      lcarsViewPos = 0;
+      draw();
+      return;
 
-  if(is_left && lcarsViewPos == 1){
-    feedback();
-    lcarsViewPos = 0;
-    draw();
-    return;
-
-  } else if(is_right  && lcarsViewPos == 0){
-    feedback();
-    lcarsViewPos = 1;
-    draw();
-    return;
+    } else if(is_right  && lcarsViewPos == 0){
+      feedback();
+      lcarsViewPos = 1;
+      draw();
+      return;
+    }
   }
 
   if(lcarsViewPos == 0){

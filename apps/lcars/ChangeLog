@@ -20,5 +20,6 @@
 0.20: Use alarm for alarm functionality instead of own implementation.
 0.21: Add custom theming.
 0.22: Fix alarm and add build in function for step counting.
-0.23: Add warning for low flash memory
-0.24: Add ability to disable alarm functionality
+0.23: Add warning for low flash memory.
+0.24: Add ability to disable alarm functionality.
+0.25: Add more colors to the settings and add the ability to disable the data charts+Markup.
