@@ -7,7 +7,7 @@
 * Other time zones
   *  Currently hardcoded to Paris and Tokyo (this will be customizable in a future version)
 * World Map
-  *  The yellow line shows the position of the sun
+  *  The map shows day and night on Earth and the position of the Sun (yellow line)
 
 ![](screenshot.png)
 

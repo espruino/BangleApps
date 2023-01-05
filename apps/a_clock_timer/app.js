@@ -102,13 +102,24 @@ function queueNextDraw() {
 function draw() {
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight()-IMAGEHEIGHT);
   g.drawImage(getImg(),0,g.getHeight()-IMAGEHEIGHT);
-  
+
   var x_sun = 176 - (getGmt().getHours() / 24 * 176 + 4);
   g.setColor('#ff0').drawLine(x_sun, g.getHeight()-IMAGEHEIGHT, x_sun, g.getHeight());
   g.reset();
 
+  var x_night_start = 176 - (((getGmt().getHours()-6)%24) / 24 * 176 + 4);
+  var x_night_end = 176 - (((getGmt().getHours()+6)%24) / 24 * 176 + 4);
+  for (let x = x_night_start; x < 176; x+=2) {
+    g.setColor('#000').drawLine(x, g.getHeight()-IMAGEHEIGHT, x, g.getHeight());
+  }
+  if (x_night_end < x_night_start) {
+    for (let x = 0; x < x_night_end; x+=2) {
+      g.setColor('#000').drawLine(x, g.getHeight()-IMAGEHEIGHT, x, g.getHeight());
+    }
+  }
+
   var locale = require("locale");
-  
+
   var date = new Date();
   g.setFontAlign(0,0);
   g.setFont("Michroma36").drawString(locale.time(date,1), g.getWidth()/2, 46);
