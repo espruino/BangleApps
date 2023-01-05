@@ -97,7 +97,7 @@ let imgLock = function() {
 
 
 /************************************************
- * Menu
+ * Clock Info
  */
 let clockInfoItems = clock_info.load();
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
