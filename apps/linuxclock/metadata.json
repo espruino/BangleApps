@@ -1,7 +1,7 @@
 {
   "id": "linuxclock",
   "name": "Linux Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A Linux inspired clock.",
   "readme": "README.md",
   "icon": "app.png",

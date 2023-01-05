@@ -19,6 +19,8 @@ the "sched" app must be installed on your device.
  * The lower orange line indicates the battery level.
  * Display graphs (day or month) for steps + hrm on the second screen.
  * Customizable theming colors in the settings menu of the app.
+ * Enable or disable the alarm feature.
+ * Enable or disbale the graphs for steps + hrm.
 
 ## Data that can be configured
  * Steps - Steps loaded via the wpedom app.

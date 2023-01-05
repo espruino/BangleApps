@@ -4,4 +4,5 @@ apps/schoolCalendar/fullcalendar/main.js
 apps/authentiwatch/qr_packed.js
 apps/qrcode/qr-scanner.umd.min.js
 apps/gipy/pkg/gpconv.js
+apps/health/chart.min.js
 *.test.js

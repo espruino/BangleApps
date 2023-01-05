@@ -18,3 +18,4 @@
 0.18: Use new message library
       If connected to Gadgetbridge, allow GPS forwarding from phone (Gadgetbridge code still not merged)
 0.19: Add automatic translation for a couple of strings.
+0.20: Fix wrong event used for forwarded GPS data from Gadgetbridge and add mapper to map longitude value correctly.
