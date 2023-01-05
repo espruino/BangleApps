@@ -1,7 +1,7 @@
 { "id": "circlesclock",
   "name": "Circles clock",
   "shortName":"Circles clock",
-  "version":"0.22",
+  "version":"0.23",
   "description": "A clock with three or four circles for different data at the bottom in a probably familiar style",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}, {"url":"screenshot-dark-4.png"}, {"url":"screenshot-light-4.png"}],
