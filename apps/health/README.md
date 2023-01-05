@@ -50,3 +50,7 @@ and run `EspruinoDocs/bin/minify.js lib.js lib.min.js`
   * Yearly view
   * Heart rate 'zone' graph
   * .. other
+
+## License
+
+The graphs on the web interface use Chart.js, licensed under MIT License.
