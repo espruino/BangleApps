@@ -134,9 +134,9 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     // Draw
     if (image) {
       var scale = imgWidth / image.width;
-      g.drawImage(image, midx-14-parseInt(strWidth/2), options.y+6, {scale: scale});
+      g.drawImage(image, midx-parseInt(imgWidth*1.3/2)-parseInt(strWidth/2), options.y+6, {scale: scale});
     }
-    g.drawString(text, midx+imgWidth-6, options.y+20);
+    g.drawString(text, midx+parseInt(imgWidth*1.3/2), options.y+20);
   }
 });
 
