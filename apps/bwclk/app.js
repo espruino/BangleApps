@@ -14,8 +14,6 @@ const clock_info = require("clock_info");
 const SETTINGS_FILE = "bwclk.setting.json";
 const W = g.getWidth();
 const H = g.getHeight();
-let lock_input = false;
-
 
 /************************************************
  * Settings
@@ -124,28 +122,6 @@ if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPos
   settings.menuPosX = 0;
   settings.menuPosY = 0;
 }
-
-// Set draw functions for each item
-menu.forEach((menuItm, x) => {
-  menuItm.items.forEach((item, y) => {
-    let drawItem = function() {
-      // For the clock, we have a special case, as we don't wanna redraw
-      // immediately when something changes. Instead, we update data each minute
-      // to save some battery etc. Therefore, we hide (and disable the listener)
-      // immedeately after redraw...
-      item.hide();
-
-      // After drawing the item, we enable inputs again...
-      lock_input = false;
-
-      var info = item.get();
-      drawMenuItem(info.text, info.img);
-    };
-
-    item.on('redraw', drawItem);
-  });
-});
-
 
 let canRunMenuItem = function() {
   if(settings.menuPosY == 0){
@@ -294,11 +270,9 @@ let drawMenuAndTime = function() {
   }
 
   // Draw item if needed
-  lock_input = true;
-  var item = menuEntry.items[settings.menuPosY-1];
-  item.show();
+  var item = menuEntry.items[settings.menuPosY-1].get();
+  drawMenuItem(item.text, item.img);
 };
-
 
 let drawLock = function() {
   if(settings.showLock && Bangle.isLocked()){
@@ -392,10 +366,6 @@ let touchListenerBw = function(btn, e) {
   var is_left = e.x < left && !is_upper && !is_lower;
   var is_right = e.x > right && !is_upper && !is_lower;
   var is_center = !is_upper && !is_lower && !is_left && !is_right;
-
-  if(lock_input){
-    return;
-  }
 
   if(is_lower){
     Bangle.buzz(40, 0.6);
