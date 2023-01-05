@@ -38,6 +38,7 @@ function menuHRM() {
 
 function stepsPerHour() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "stepsPerHour";
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
   setButton(menuStepCount);
@@ -46,14 +47,17 @@ function stepsPerHour() {
 
 function stepsPerDay() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "stepsPerDay";
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   setButton(menuStepCount);
   barChart(/*LANG*/"DAY", data);
+  drawHorizontalLine(settings.stepGoal);
 }
 
 function hrmPerHour() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "hrmPerHour";
   var data = new Uint16Array(24);
   var cnt = new Uint8Array(23);
   require("health").readDay(new Date(), h=>{
@@ -67,6 +71,7 @@ function hrmPerHour() {
 
 function hrmPerDay() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "hrmPerDay";
   var data = new Uint16Array(31);
   var cnt = new Uint8Array(31);
   require("health").readDailySummaries(new Date(), h=>{
@@ -80,6 +85,7 @@ function hrmPerDay() {
 
 function movementPerHour() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "movementPerHour";
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
   setButton(menuMovement);
@@ -88,6 +94,7 @@ function movementPerHour() {
 
 function movementPerDay() {
   E.showMessage(/*LANG*/"Loading...");
+  current_selection = "movementPerDay";
   var data = new Uint16Array(31);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
   setButton(menuMovement);
@@ -97,12 +104,14 @@ function movementPerDay() {
 // Bar Chart Code
 const w = g.getWidth();
 const h = g.getHeight();
+const bar_bot = 140;
 
 var data_len;
 var chart_index;
 var chart_max_datum;
 var chart_label;
 var chart_data;
+var current_selection;
 
 // find the max value in the array, using a loop due to array size
 function max(arr) {
@@ -131,7 +140,6 @@ function barChart(label, dt) {
 }
 
 function drawBarChart() {
-  const bar_bot = 140;
   const bar_width = (w - 2) / 9;  // we want 9 bars, bar 5 in the centre
   var bar_top;
   var bar;
@@ -157,6 +165,11 @@ function drawBarChart() {
   }
 }
 
+function drawHorizontalLine(value) {
+  const top = bar_bot - 100 * value / chart_max_datum;
+  g.setColor(g.theme.fg).drawLine(0, top ,g.getWidth(), top);
+}
+
 function setButton(fn) {
   Bangle.setUI({mode:"custom",
                 back:fn,
@@ -170,9 +183,13 @@ function setButton(fn) {
       return fn();
     }
     drawBarChart();
+    if (current_selection == "stepsPerDay") {
+      drawHorizontalLine(settings.stepGoal);
+    }
   }});
 }
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+var settings = require("Storage").readJSON("health.json",1)||{};
 menuMain();

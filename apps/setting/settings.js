@@ -89,8 +89,8 @@ function showSystemMenu() {
     /*LANG*/'Theme': ()=>showThemeMenu(),
     /*LANG*/'LCD': ()=>showLCDMenu(),
     /*LANG*/'Locale': ()=>showLocaleMenu(),
-    /*LANG*/'Select Clock': ()=>showClockMenu(),
-    /*LANG*/'Select Launcher': ()=>showLauncherMenu(),
+    /*LANG*/'Clock': ()=>showClockMenu(),
+    /*LANG*/'Launcher': ()=>showLauncherMenu(),
     /*LANG*/'Date & Time': ()=>showSetTimeMenu()
   };
 

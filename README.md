@@ -98,7 +98,7 @@ This is the best way to test...
 
 **Note:** It's a great idea to get a local copy of the repository on your PC,
 then run `bin/sanitycheck.js` - it'll run through a bunch of common issues
-that there might be.
+that there might be. To get the project running locally, you have to initialize and update the git submodules first: `git submodule --init && git submodule update`.
 
 Be aware of the delay between commits and updates on github.io - it can take a few minutes (and a 'hard refresh' of your browser) for changes to take effect.
 
