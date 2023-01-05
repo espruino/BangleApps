@@ -105,12 +105,13 @@ function handleStepGoalNotification() {
     if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
       Bangle.buzz(200, 0.5);
       if (process.env.BOARD == "BANGLEJS2") {
+        const widgetOffset = 24;
         var medal = atob("MDCBAAAAAAAAAAAAAAAAAAA/+D/4AAB//H/8AAB//H/8AAB//v/4AAA8H/B4AAA+H/D4AAAeD+DwAAAfD+HwAAAPB8HgAAAPh8PgAAAHg8PAAAAHw8PAAAADw+eAAAAD4eeAAAAB4f+AAAAB8P8AAAAA//8AAAAA//4AAAAA//8AAAAB//+AAAAD+B/AAAAH4AfgAAAPgAHwAAAPAADwAAAfAAD4AAAeAAB4AAA+AAB8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA+AAB4AAAeAAB4AAAfAAD4AAAPAADwAAAPgAHwAAAH4AfgAAAD+B/AAAAB//+AAAAA//8AAAAAP/wAAAAAD+AAAAAAAAAAAAAAAAAAAA==");
         var ovr = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),1,{msb:true});
-        ovr.drawImage(medal, 10, 10);
+        ovr.drawImage(medal, 10, widgetOffset + 10);
         ovr.setFont("Vector:18").setFontAlign(0, 0, 0);
-        ovr.drawString(/*LANG*/settings.stepGoal + " steps", g.getWidth() / 2 + 24 , 10 + 24);
-        ovr.drawString(/*LANG*/"Step goal reached!", g.getWidth() / 2, g.getHeight() / 2);
+        ovr.drawString(/*LANG*/settings.stepGoal + " steps", g.getWidth() / 2 + 24 , widgetOffset + 10 + 24);
+        ovr.drawString(/*LANG*/"Step goal reached!", g.getWidth() / 2, widgetOffset + g.getHeight() / 2);
         Bangle.setLCDOverlay(ovr,0,0);
         setWatch(function() {
           Bangle.setLCDOverlay();
