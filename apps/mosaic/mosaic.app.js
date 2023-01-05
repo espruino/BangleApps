@@ -58,13 +58,15 @@ function draw() {
       );
     }
   }
-  let t = new Date();
+  let t = require("locale").time(new Date(), 1);
+  let hour = parseInt(t.split(":")[0]);
+  let minute = parseInt(t.split(":")[1]);
   g.setBgColor(theme.fg);
   g.setColor(theme.bg);
-  g.drawImage(digits[Math.floor(t.getHours()/10)], (mid_x-5)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
-  g.drawImage(digits[t.getHours() % 10], (mid_x+1)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
-  g.drawImage(digits[Math.floor(t.getMinutes()/10)], (mid_x-5)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
-  g.drawImage(digits[t.getMinutes() % 10], (mid_x+1)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
+  g.drawImage(digits[Math.floor(hour/10)], (mid_x-5)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
+  g.drawImage(digits[hour % 10], (mid_x+1)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
+  g.drawImage(digits[Math.floor(minute/10)], (mid_x-5)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
+  g.drawImage(digits[minute % 10], (mid_x+1)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
 
   queueDraw(timeout);
 }
