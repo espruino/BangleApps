@@ -63,3 +63,13 @@
 	* Record traveled distance to get a good average speed.
 	* Breaks (low speed) will not count in average speed.
 	* Bugfix in average speed.
+
+0.16:
+	* When lost indicates nearest point on path.
+	* Rescale display if lost and too far.
+	* New setting to hide points and increase display speed.
+	* Speed optimisations.
+	* Estimated time of Arrival/Going back.
+	* Display current and next segment in red so that you know where to go.
+	* Avoid angles flickering at low speed at the cost of less refresh.
+	* Splash screen while waiting for gps signal.
