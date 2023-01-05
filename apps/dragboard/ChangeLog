@@ -4,3 +4,4 @@
 0.04: Now displays the opened text string at launch.
 0.05: Now scrolls text when string gets longer than screen width.
 0.06: The code is now more reliable and the input snappier. Widgets will be drawn if present.
+0.07: Settings for display colors
