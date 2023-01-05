@@ -29,7 +29,6 @@ var H = g.getHeight();
 var cx = W/2;
 var cy = H/2;
 var drawTimeout;
-var lock_input = false;
 
 
 /************************************************
@@ -92,28 +91,6 @@ menu = menu.concat(clockItems);
     settings.menuPosX = 0;
     settings.menuPosY = 0;
   }
-
-  // Set draw functions for each item
-  menu.forEach((menuItm, x) => {
-    menuItm.items.forEach((item, y) => {
-      function drawItem() {
-        // For the clock, we have a special case, as we don't wanna redraw
-        // immediately when something changes. Instead, we update data each minute
-        // to save some battery etc. Therefore, we hide (and disable the listener)
-        // immedeately after redraw...
-        item.hide();
-
-        // After drawing the item, we enable inputs again...
-        lock_input = false;
-
-        var info = item.get();
-        drawMenuItem(info.text, info.img);
-      }
-
-      item.on('redraw', drawItem);
-    })
-  });
-
 
   function canRunMenuItem(){
     if(settings.menuPosY == 0){
@@ -204,8 +181,6 @@ function drawMenuItem(text, image){
         drawTime();
         return
     }
-    // image = atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==");
-
     text = String(text);
 
     g.reset().setBgColor("#fff").setColor("#000");
@@ -292,7 +267,7 @@ function drawDigits(){
 }
 
 
-function drawDate(){
+function drawMenu(){
     var menuEntry = menu[settings.menuPosX];
 
     // The first entry is the overview...
@@ -302,9 +277,8 @@ function drawDate(){
     }
 
     // Draw item if needed
-    lock_input = true;
-    var item = menuEntry.items[settings.menuPosY-1];
-    item.show();
+    var item = menuEntry.items[settings.menuPosY-1].get();
+    drawMenuItem(item.text, item.img);
 }
 
 
@@ -320,7 +294,7 @@ function draw(){
     g.setColor(1,1,1);
 
     drawBackground();
-    drawDate();
+    drawMenu();
     drawCircle(Bangle.isLocked());
 }
 
@@ -352,10 +326,6 @@ Bangle.on('touch', function(btn, e){
     var is_left = e.x < left && !is_upper && !is_lower;
     var is_right = e.x > right && !is_upper && !is_lower;
     var is_center = !is_upper && !is_lower && !is_left && !is_right;
-
-    if(lock_input){
-        return;
-    }
 
     if(is_lower){
         Bangle.buzz(40, 0.6);
