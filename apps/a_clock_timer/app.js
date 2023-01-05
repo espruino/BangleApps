@@ -83,7 +83,7 @@ function countDown() {
 function showWelcomeMessage() {
   g.reset().clearRect(0, 76, 44+44, g.getHeight()/2+6);
   g.setFontAlign(0, 0).setFont("6x8");
-  g.drawString("Touch right to", 44, 80);
+  g.drawString("Tap right to", 44, 80);
   g.drawString("start timer", 44, 88);
   setTimeout(function(){ g.reset().clearRect(0, 76, 44+44, g.getHeight()/2+6); }, 8000);
 }
