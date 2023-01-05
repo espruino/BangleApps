@@ -8,7 +8,7 @@ var rect = Bangle.appRect;
 var history = [];
 var readFreq=5000; //ms //PEND add to settings
 var saveFreq=60000; //ms 1min
-var v_saveToFile='Y'; //Y save //N
+var v_saveToFile= new Boolean(true); //true save //false 
 //with upload file º is not displayed properly
 //with upload RAM º is  displayed
 var v_t_symbol="";//ºC
@@ -69,7 +69,7 @@ function saveToFile() {
   strlastSaveTime=a.toISOString();
   //strlastSaveTime=strlastSaveTime.concat(a.getFullYear(),a.getMonth()+1,a.getDate(),a.getHours(),a.getMinutes());;
   if (v_mode_debug==1) console.log("saving="+strlastSaveTime+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure);
-  if (v_saveToFile=='Y'){
+  if (v_saveToFile==true){
     //write(strlastSaveTime+";"+
     require("Storage").open(filename,"a").write((a.getMonth()+1)+";"+a.getDate()+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure+"\n");
     //(getTime()+",");
@@ -127,7 +127,7 @@ setInterval(function() {
   drawTemperature();
 }, readFreq); //ms
 
-if (v_saveToFile=="Y") {
+if (v_saveToFile==true) {
     setInterval(function() {
       saveToFile();
     }, saveFreq); //ms

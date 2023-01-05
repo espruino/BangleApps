@@ -1,6 +1,11 @@
 WIDGETS["wdclkbttm"]={area:"br",width:Bangle.CLOCK?0:60,draw:function() {
+  console.log("clock? "+Bangle.CLOCK);
+  if (Bangle.CLOCK){
+      console.log("clock and return");
+      return;
+  };
   if (!Bangle.CLOCK == !this.width) { // if we're the wrong size for if we have a clock or not...
-    this.width = Bangle.CLOCK?0:60;      
+    this.width = Bangle.CLOCK?0:60;
     return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
   }
   if (!this.width) return; // if size not right, return
