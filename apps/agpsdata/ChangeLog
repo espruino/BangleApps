@@ -3,3 +3,5 @@
 0.03: Do not load AGPS data on boot
       Increase minimum interval to 6 hours
 0.04: Write AGPS data chunks with delay to improve reliability
+0.05: Show last success date
+      Do not start A-GPS update automatically
