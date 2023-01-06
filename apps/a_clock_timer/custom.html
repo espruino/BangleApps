@@ -41,6 +41,8 @@
           for (var i=0; i<2; i++) {
               var name=document.getElementById("name_"+i).value;
               var offset=document.getElementById("offset_"+i).value;
+              app_offsets.push([name,offset]);
+              storage_offsets.push([checked,name,offset]);
           }
           console.log(storage_offsets);
           console.log(app_offsets);
