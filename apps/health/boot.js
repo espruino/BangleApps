@@ -105,7 +105,7 @@ function handleStepGoalNotification() {
     if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
       Bangle.buzz(200, 0.5);
       require("notify").show({
-          title : /*LANG*/"8000 steps",
+          title : /*LANG*/ settings.stepGoal + " steps",
           body : /*LANG*/ "You reached your step goal!",
           icon : atob("DAyBABmD6BaBMAsA8BCBCBCBCA8AAA==")
       });
