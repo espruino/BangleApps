@@ -203,7 +203,7 @@ let drawTime = function() {
 
   // Clear region
   g.setColor(g.theme.fg);
-  g.fillRect(0,y1,W,y+20);
+  g.fillRect(0,y1,W,y+15);
 
   g.setMediumFont();
   g.setColor(g.theme.bg);
