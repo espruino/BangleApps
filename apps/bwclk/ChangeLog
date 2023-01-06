@@ -25,3 +25,5 @@
 0.25: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on fw2v16.
       ClockInfo Fix: Use .get instead of .show as .show is not implemented for weather etc.
 0.26: Use clkinfo.addInteractive instead of a custom implementation
+0.27: Clean out some leftovers in the remove function after switching to
+clkinfo.addInteractive that would cause ReferenceError.

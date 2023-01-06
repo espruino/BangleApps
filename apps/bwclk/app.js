@@ -294,13 +294,11 @@ Bangle.setUI({
     // Called to unload all of the clock app
     Bangle.removeListener('lcdPower', lcdListenerBw);
     Bangle.removeListener('lock', lockListenerBw);
-    Bangle.removeListener('charging', chargingListenerBw);
-    Bangle.removeListener('touch', touchListenerBw);
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     // save settings
-    save();
-    E.removeListener("kill", save);
+    kill();
+    E.removeListener("kill", kill);
     g.setTheme(themeBackup);
   }
 });
