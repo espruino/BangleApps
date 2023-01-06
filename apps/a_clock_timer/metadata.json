@@ -4,7 +4,7 @@
   "version": "1.00",
   "description": "A Clock with Timer, Map and Time Zones",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
