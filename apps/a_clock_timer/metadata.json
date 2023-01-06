@@ -1,7 +1,7 @@
 {
   "id": "a_clock_timer",
   "name": "A Clock with Timer",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A Clock with Timer, Map and Time Zones",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
