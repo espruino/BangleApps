@@ -12,7 +12,7 @@
 * World Map
   *  The map shows day and night on Earth and the position of the Sun (yellow line)
 
-![](screenshot.png)
+![](screenshot-1.png) ![](screenshot.png)
 
 ## Creator
 [@alainsaas](https://github.com/alainsaas)
