@@ -207,12 +207,10 @@
   };
   // GPS overwrite logic
   if (settings.overwriteGps) { // if the overwrite option is set../
-    // Save current logic
-    const originalSetGpsPower = Bangle.setGPSPower;
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
-    Bangle.setGPSPower = (isOn, appID) => {
+    Bangle.setGPSPower = (o => (isOn, appID) => {
       // if not connected, use old logic
-      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID);
+      if (!NRF.getSecurityStatus().connected) return o(isOn, appID);
       // Emulate old GPS power logic
       if (!Bangle._PWR) Bangle._PWR={};
       if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
@@ -222,7 +220,7 @@
       let pwr = Bangle._PWR.GPS.length>0;
       gbSend({ t: "gps_power", status: pwr });
       return pwr;
-    }
+    })(Bangle.setGPSPower);
     // Replace check if the GPS is on to check the _PWR variable
     Bangle.isGPSOn = () => {
       return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
