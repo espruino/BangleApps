@@ -89,6 +89,7 @@ function showWelcomeMessage() {
 }
 
 // time
+var offsets = require("Storage").readJSON("a_clock_timer.settings.json") || [ ["PAR",1], ["TYO",9] ];
 var drawTimeout;
 
 function getGmt() {
@@ -138,8 +139,8 @@ function draw() {
   g.setFont("Michroma36").drawString(locale.time(date,1), g.getWidth()/2, 46);
   g.setFont("6x8");
   g.drawString(locale.date(new Date(),1), 125, 68);
-  g.drawString("PAR "+locale.time(getTimeFromTimezone(1),1), 125, 80);
-  g.drawString("TYO "+locale.time(getTimeFromTimezone(9),1), 125, 88);
+  g.drawString(offsets[0][0]+" "+locale.time(getTimeFromTimezone(offsets[0][1]),1), 125, 80);
+  g.drawString(offsets[1][0]+" "+locale.time(getTimeFromTimezone(offsets[1][1]),1), 125, 88);
 
   queueNextDraw();
 }
