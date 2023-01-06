@@ -13,7 +13,25 @@
     redrawInterval = setInterval(() => this.emit('redraw'), 100);
   };
 
-  const duration = () => ((Date.now() - startTime) / 1000).toFixed(1);
+  const pad2 = s => ('0' + s.toFixed(0)).slice(-2);
+
+  const duration = () => {
+    let seconds = (Date.now() - startTime) / 1000;
+
+    if (seconds < 60)
+      return seconds.toFixed(1);
+
+    let mins = seconds / 60;
+    seconds %= 60;
+
+    if (mins < 60)
+      return `${pad2(mins)}m${pad2(seconds)}s`;
+
+    let hours = mins / 60;
+    mins %= 60;
+
+    return `${Math.round(hours)}h${pad2(mins)}m${pad2(seconds)}s`;
+  };
 
   return {
     name: "timer",
