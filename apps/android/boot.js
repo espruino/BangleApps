@@ -227,6 +227,10 @@
     Bangle.isGPSOn = () => {
       return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
     }
+    // stop GPS on boot if not activated
+    setTimeout(()=>{
+      if (!Bangle.isGPSOn()) gbSend({ t: "gps_power", status: false });
+    },3000);
   }
 
   // remove settings object so it's not taking up RAM
