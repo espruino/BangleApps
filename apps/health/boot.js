@@ -104,19 +104,11 @@ function handleStepGoalNotification() {
     const now = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
     if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
       Bangle.buzz(200, 0.5);
-      if (process.env.BOARD == "BANGLEJS2") {
-        require("notify").show({
-          title : /*LANG*/ settings.stepGoal + " steps",
-          body : /*LANG*/ "Step goal reached!",
-          src : "health",
-          icon : atob(
-              "MDCBAAAAAAAAAAAAAAAAAAA/+D/4AAB//H/8AAB//H/8AAB//v/4AAA8H/B4AAA+H/D4AAAeD+DwAAAfD+HwAAAPB8HgAAAPh8PgAAAHg8PAAAAHw8PAAAADw+eAAAAD4eeAAAAB4f+AAAAB8P8AAAAA//8AAAAA//4AAAAA//8AAAAB//+AAAAD+B/AAAAH4AfgAAAPgAHwAAAPAADwAAAfAAD4AAAeAAB4AAA+AAB8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA8AAA+AAB4AAAeAAB4AAAfAAD4AAAPAADwAAAPgAHwAAAH4AfgAAAD+B/AAAAB//+AAAAA//8AAAAAP/wAAAAAD+AAAAAAAAAAAAAAAAAAAA==")
-        });
-      } else {
-        E.showPrompt(/*LANG*/ "You reached your daily goal of " + settings.stepGoal + " steps!",
-                    {title : /*LANG*/ "Step goal reached!", buttons : {"Ok" : 1}}).then(function(v) { load(); });
-      }
-
+      require("notify").show({
+          title : /*LANG*/"8000 steps",
+          body : /*LANG*/ "You reached your step goal!",
+          icon : atob("DAyBABmD6BaBMAsA8BCBCBCBCA8AAA==")
+      });
       settings.stepGoalNotificationDate = now;
       require("Storage").writeJSON("health.json", settings);
     }

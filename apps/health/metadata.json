@@ -16,5 +16,6 @@
     {"name":"health","url":"lib.min.js"},
     {"name":"health.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"health.json"}]
+  "data": [{"name":"health.json"}],
+  "dependencies": {"notify":"type"},
 }
