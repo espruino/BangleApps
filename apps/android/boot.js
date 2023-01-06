@@ -134,9 +134,10 @@
         event.satellites = NaN;
         event.course = NaN;
         event.fix = 1;
-        event.lon = event.long;
-        delete event.long;
-
+        if (event.long!==undefined) {
+          event.lon = event.long;
+          delete event.long;
+        }
         Bangle.emit('GPS', event);
       },
       "is_gps_active": function() {
