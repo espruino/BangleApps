@@ -110,6 +110,7 @@ let setUI = function() {
         Bangle.removeListener("swipe", swipeHandler);
         clearWatch(buttonHandler);
         widgetUtils.show();
+        g.clearRect(0,0,R.w,Bangle.appRect.y+1); // So the widgets are not visible until the next app is loaded.
       }
     },
       ud => {
@@ -321,6 +322,6 @@ let navigationMenu = {
 
 Bangle.loadWidgets();
 setUI();
-widgetUtils.hide();
+widgetUtils.show(); // It should do without .show() here, but it seems to be needed in order for the .hide() in gfx() to take effect when 'Fastload Utils' is installed. Potential bug.
 gfx();
 }

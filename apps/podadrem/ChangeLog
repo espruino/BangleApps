@@ -7,3 +7,5 @@ Addict.
 0.06: Add compatibility with Fastload Utils.
 0.07: Remove just the specific listeners to not interfere with Quick Launch
 when fastloading.
+0.08: Hide widgets properly when fast loading to the app using 'Fastload
+Utils'.
