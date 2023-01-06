@@ -1,8 +1,20 @@
 (function(){
   var settings = require("Storage").readJSON("health.json",1)||{};
   var hrm = 0|settings.hrm;
+  let lastSuccess = 0;
+  let paused = false;
+
   if (hrm == 1 || hrm == 2) {
    function onHealth() {
+     if (paused) {
+       // paused - 6am or earlier, remain paused
+       const now = new Date();
+       if (now.getHours() <= 6)
+         return;
+
+       paused = false;
+     }
+
      Bangle.setHRMPower(1, "health");
      setTimeout(()=>Bangle.setHRMPower(0, "health"),hrm*60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
      if (hrm == 1){
@@ -16,9 +28,31 @@
        }
      }
    }
+   function onLock(locked) {
+     // assert(paused)
+     Bangle.removeListener("lock", onLock);
+     // user interaction, unpause
+     paused = false;
+   }
+
    Bangle.on("health", onHealth);
    Bangle.on('HRM', h => {
-     if (h.confidence>80) Bangle.setHRMPower(0, "health");
+     if (h.confidence>80) {
+       lastSuccess = Date.now();
+       Bangle.setHRMPower(0, "health");
+     } else {
+       const now = new Date();
+       // has it been half an hour with no success?
+       if ((now.getTime() - lastSuccess) > 1800000) {
+         // is it past midnight and 6am or before?
+         if (0 <= now.getHours() && now.getHours() <= 6) {
+           // if so, pause our recordings until 7am
+           Bangle.setHRMPower(0, "health");
+           paused = true;
+           Bangle.on("lock", onLock);
+         }
+       }
+     }
    });
    if (Bangle.getHealthStatus().bpmConfidence) return;
    onHealth();
