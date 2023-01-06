@@ -90,7 +90,7 @@
 
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
     updateTimeoutToClock();
-    selected = 0;
+    selected = -1;
     oldselected=-1;
     if(settings.swipeExit && dirLeftRight==1) Bangle.showClock();
     if (dirUpDown==-1||dirLeftRight==-1){
