@@ -84,6 +84,7 @@
     g.flip();
   };
 
+  Bangle.drawWidgets(); // To immediately update widget field to follow current theme - remove leftovers if previous app set custom theme.
   Bangle.loadWidgets();
   drawPage(0);
 

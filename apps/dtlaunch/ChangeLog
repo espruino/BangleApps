@@ -23,4 +23,6 @@ button to exit is no longer an option.
 facilitate 'fast switching' of apps where available.
 0.20: Bangle 2: Revert use of Bangle.load() to classic load() calls since
 widgets would still be loaded when they weren't supposed to.
+0.21: Bangle 2: Call Bangle.drawWidgets() early on so that the widget field
+immediately follows the correct theme.
 

@@ -11,8 +11,7 @@ The original output of stable diffusion is shown here:
 My implementation is shown below. Note that horizontal lines occur randomly, but the
 probability is correlated with the battery level. So if your screen contains only
 a few lines its time to charge your bangle again ;) Also note that the upper text
-implementes the clkinfo module and can be configured via touch left/right/up/down.
-Touch at the center to trigger the selected action.
+implements the clkinfo module and can be configured via touch and swipe left/right and up/down.
 
 ![](impl.png)
 

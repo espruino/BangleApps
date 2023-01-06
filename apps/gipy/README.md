@@ -2,12 +2,10 @@
 
 Gipy allows you to follow gpx traces on your watch.
 
-![Screenshot](screenshot1.png)
+![Screenshot](splash.png)
 
 
-It is for now meant for bicycling and not hiking
-(it uses your movement to figure out your orientation
-and walking is too slow).
+It is mainly meant for bicycling but hiking might be fine.
 
 It is untested on Banglejs1. If you can try it, you would be welcome.
 
@@ -20,10 +18,10 @@ It provides the following features :
 - display the path with current position from gps
 - detects and buzzes if you leave the path
 - buzzes before sharp turns
-- buzzes before nodes with comments
+- buzzes before waypoints 
 (for example when you need to turn in https://mapstogpx.com/)
 - display instant / average speed
-- display distance to next node
+- display distance to next point
 - display additional data from openstreetmap :
     - water points
     - toilets
@@ -54,32 +52,47 @@ Your path will be displayed in svg.
 
 ### Starting Gipy
 
-Once you start gipy you will have a menu for selecting your trace (if more than one).
-Choose the one you want and here you go :
+At start you will have a menu for selecting your trace (if more than one).
+Choose the one you want and you will reach the splash screen where you'll wait for the gps signal.
+Once you have a signal you will reach the main screen:
 
-![Screenshot](screenshot2.png)
+![Screenshot](legend.png)
 
-On your screen you can see :
+On your screen you can see:
 
 - yourself (the big black dot)
 - the path (the top of the screen is in front of you)
+- on the path, current and next segments are red and other ones are black
 - if needed a projection of yourself on the path (small black dot)
-- extremities of segments as white dots
-- turning points as doubled white dots
-- some text on the left (from top to bottom) :
+- points as white dots
+- waypoints as doubled white dots
+- some text on the left (from top to bottom):
+    * time to reach start point at current average speed
     * current time
+    * time to reach end point at current average speed
     * left distance till end of current segment
-    * distance from start of path / path length
+    * remaining distance / path length
     * average speed / instant speed
 - interest points from openstreetmap as color dots :
-    * red : bakery
-    * deep blue : water point
-    * cyan : toilets (often doubles as water point)
-    * green : artwork
+    * red: bakery
+    * deep blue: water point
+    * cyan: toilets (often doubles as water point)
+    * green: artwork
 - a *turn* indicator on the top right when you reach a turning point
 - a *gps* indicator (blinking) on the top right if you lose gps signal
 - a *lost* indicator on the top right if you stray too far away from path
-- a black segment extending from you when you are lost, indicating the rough direction of where to go
+
+### Lost
+
+If you stray away from path we will rescale the display to continue displaying nearby segments and
+display the direction to follow as a black segment.
+
+Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
+are. On path it just needed to scan a few points ahead and behind.
+
+![Lost](lost.png)
+
+The distance to next point displayed corresponds to the length of the black segment.
 
 ### Settings
 
@@ -87,6 +100,7 @@ Few settings for now (feel free to suggest me more) :
 
 - keep gps alive : if turned off, will try to save battery by turning the gps off on long segments
 - max speed : used to compute how long to turn the gps off
+- display points : display/hide points (not waypoints)
 
 ### Caveats
 
