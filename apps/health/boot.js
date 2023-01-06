@@ -36,6 +36,10 @@ Bangle.on("health", health => {
   const DB_HEADER_LEN = 8;
   const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
 
+  if (health && health.steps > 0) {
+    handleStepGoalNotification();
+  }
+
   function getRecordFN(d) {
     return "health-"+d.getFullYear()+"-"+(d.getMonth()+1)+".raw";
   }
@@ -92,3 +96,21 @@ Bangle.on("health", health => {
     health.movement /= health.movCnt;
   require("Storage").write(fn, getRecordData(health), sumPos, DB_FILE_LEN);
 });
+
+function handleStepGoalNotification() {
+  var settings = require("Storage").readJSON("health.json",1)||{};
+  const steps = Bangle.getHealthStatus("day").steps;
+  if (settings.stepGoalNotification && settings.stepGoal > 0 && steps >= settings.stepGoal) {
+    const now = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
+    if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
+      Bangle.buzz(200, 0.5);
+      require("notify").show({
+          title : /*LANG*/ settings.stepGoal + " steps",
+          body : /*LANG*/ "You reached your step goal!",
+          icon : atob("DAyBABmD6BaBMAsA8BCBCBCBCA8AAA==")
+      });
+      settings.stepGoalNotificationDate = now;
+      require("Storage").writeJSON("health.json", settings);
+    }
+  }
+}

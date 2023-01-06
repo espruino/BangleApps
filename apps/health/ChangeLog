@@ -17,3 +17,4 @@
 0.16: Code tidyup, add back button in top left of health app graphs
 0.17: Add automatic translation of bar chart labels
 0.18: Show step goal in daily step chart
+0.19: Can show notification when daily step goal is reached
