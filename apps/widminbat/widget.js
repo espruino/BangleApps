@@ -26,4 +26,5 @@
     var widget = WIDGETS.minbat;
     if(widget) {widget.update();}
   }, 10*60*1000);
+  Bangle.on('charging', () => WIDGETS.minbat.update());
 })();
