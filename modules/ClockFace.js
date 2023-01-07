@@ -47,12 +47,6 @@ function ClockFace(options) {
   if (this.hideWidgets===undefined && this.loadWidgets===false) this.hideWidgets = 1;
 
   let s = require("Storage").readJSON("setting.json",1)||{};
-  if ((global.__FILE__===undefined || global.__FILE__===s.clock)
-    && s.clockHasWidgets!==this.loadWidgets) {
-    // save whether we can Fast Load
-    s.clockHasWidgets = this.loadWidgets;
-    require("Storage").writeJSON("setting.json", s);
-  }
   // use global 24/12-hour setting if not set by clock-settings
   if (!('is12Hour' in this)) this.is12Hour = !!(s["12hour"]);
 }
