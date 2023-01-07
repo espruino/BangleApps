@@ -85,9 +85,9 @@
   }
 
   const setUI = function(options, cb) {
+    delete Bangle.uiRemove; // don't clear out things when switching UI within the app
     options = Object.assign({remove: () => uiRemove()}, options);
     Bangle.setUI(options, cb);
-    Bangle.on("message", onMessage);
   };
 
   const remove = function(msg) {
@@ -1162,7 +1162,9 @@
     if (idx>=0) alarm = MESSAGES.splice(idx, 1)[0];
   };
   if (MESSAGES!==undefined) { // only if loading MESSAGES worked
-    g.reset().clear();
+    // Internal setUI suppresses Bangle.uiRemove between internal screens, so we
+    // need to call setUI to run uiRemove from previous app when fast-loaded.
+    Bangle.setUI();
     Bangle.loadWidgets();
     require("messages").toggleWidget(false);
     Bangle.drawWidgets();
