@@ -259,7 +259,7 @@ let drawTime = function() {
 
   // Clear region and draw time
   g.setColor(g.theme.fg);
-  g.fillRect(0,y1,W,y+22 + (hideClkInfo ? 1 : 0));
+  g.fillRect(0,y1,W,y+20 + (hideClkInfo ? 1 : 0) + (isFullscreen() ? 3 : 0));
 
   g.setColor(g.theme.bg);
   g.setFontAlign(0,0);
