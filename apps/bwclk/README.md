@@ -3,16 +3,14 @@ A very minimalistic clock.
 
 ![](screenshot.png)
 
-## ToDos and known issues
-- [ ] The clkinfo is always shown and its, therefore, not possible to only show the time as shown in the screenshot.
-- [ ] The weeknumber is currently not an option in clkinfo.
-- [ ] Its not possible to run clkinfo items (e.g. trigger home assistant).
-
 ## Features
 The BW clock implements features that are exposed by other apps through the `clkinfo` module.
 For example, if you install the HomeAssistant app, this menu item will be shown if you first
 touch the bottom of the screen and then swipe left/right to the home assistant menu. To select
-sub-items simply swipe up/down.
+sub-items simply swipe up/down. To run an action (e.g. trigger home assistant), simply select the clkinfo (border) and touch on the item again. See also the screenshot below:
+
+![](screenshot_3.png)
+
 
 ## Settings
 - Screen: Normal (widgets shown), Dynamic (widgets shown if unlocked) or Full (widgets are hidden).

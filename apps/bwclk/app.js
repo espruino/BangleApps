@@ -100,12 +100,45 @@ let imgLock = function() {
  * Clock Info
  */
 let clockInfoItems = clock_info.load();
+
+// Add some custom clock-infos
+function weekOfYear() {
+  var date = new Date();
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+clockInfoItems[0].items.unshift({ name : "weekofyear",
+  get : function() { return { text : "Week " + weekOfYear(),
+                              img : null}},
+  show : function() {},
+  hide : function() {},
+})
+
+// Empty for large time
+clockInfoItems[0].items.unshift({ name : "nop",
+  get : function() { return { text : null,
+                              img : null}},
+  show : function() {},
+  hide : function() {},
+})
+
+
+
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
   x : 0,
   y: 135,
   w: W,
   h: H-135,
   draw : (itm, info, options) => {
+    var isLarge = info.text == null;
+
     g.setColor(g.theme.fg);
     g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
 
@@ -113,11 +146,18 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     g.setColor(g.theme.bg);
 
     if (options.focus){
-      g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
-      g.drawRect(options.x+1, options.y+1, options.x+options.w-3, options.y+options.h-2); // show if focused
+      var y = isLarge ? options.y+20 : options.y+2;
+      var h = isLarge ? options.h-20 : options.h-2;
+      g.drawRect(options.x, y, options.x+options.w-2, y+h-1); // show if focused
+      g.drawRect(options.x+1, y+1, options.x+options.w-3, y+h-2); // show if focused
     }
 
     // Set text and font
+    if(isLarge){
+      drawTime();
+      return;
+    }
+
     var image = info.img;
     var text = String(info.text);
     if(text.split('\n').length > 1){
@@ -137,6 +177,8 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
       g.drawImage(image, midx-parseInt(imgWidth*1.3/2)-parseInt(strWidth/2), options.y+6, {scale: scale});
     }
     g.drawString(text, midx+parseInt(imgWidth*1.3/2), options.y+20);
+
+    drawTime();
   }
 });
 
@@ -187,6 +229,8 @@ let drawDate = function() {
 
 
 let drawTime = function() {
+  var isLarge = clockInfoMenu.menuA == 0 && clockInfoMenu.menuB == 0;
+
   // Draw background
   var y1 = getLineY();
   var y = y1;
@@ -199,13 +243,19 @@ let drawTime = function() {
   var timeStr = hours + colon + minutes;
 
   // Set y coordinates correctly
-  y += parseInt((H - y)/2)-10;
+  y += parseInt((H - y)/2) + 5;
 
-  // Clear region
+  if (isLarge){
+    g.setLargeFont();
+  } else {
+    y -= 15;
+    g.setMediumFont();
+  }
+
+  // Clear region and draw time
   g.setColor(g.theme.fg);
-  g.fillRect(0,y1,W,y+20);
+  g.fillRect(0,y1,W,y+20 + (isLarge ? 1 : 0));
 
-  g.setMediumFont();
   g.setColor(g.theme.bg);
   g.setFontAlign(0,0);
   g.drawString(timeStr, W/2, y);
