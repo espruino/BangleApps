@@ -120,7 +120,7 @@ function draw() {
   g.setColor('#ff0').drawLine(x_sun, g.getHeight()-IMAGEHEIGHT, x_sun, g.getHeight());
   g.reset();
 
-  var x_night_start = 176 - (((gmtHours-6)%24) / 24 * 176 + 4);
+  var x_night_start = (176 - (((gmtHours-6)%24) / 24 * 176 + 4)) % 176;
   var x_night_end = 176 - (((gmtHours+6)%24) / 24 * 176 + 4);
   g.setColor('#000');
   for (let x = x_night_start; x < (x_night_end < x_night_start ? 176 : x_night_end); x+=2) {
