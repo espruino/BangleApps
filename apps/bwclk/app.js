@@ -330,6 +330,7 @@ let charging = function(charging){
   clockInfoMenu.menuA = 0;
   clockInfoMenu.menuB = 2;
   clockInfoMenu.redraw();
+  drawTime();
 }
 Bangle.on('charging', charging);
 
