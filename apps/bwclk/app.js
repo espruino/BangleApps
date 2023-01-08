@@ -137,7 +137,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
   w: W,
   h: H-135,
   draw : (itm, info, options) => {
-    var isLarge = info.text == null;
+    var hideClkInfo = info.text == null;
 
     g.setColor(g.theme.fg);
     g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
@@ -146,21 +146,20 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     g.setColor(g.theme.bg);
 
     if (options.focus){
-      var y = isLarge ? options.y+20 : options.y+2;
-      var h = isLarge ? options.h-20 : options.h-2;
+      var y = hideClkInfo ? options.y+20 : options.y+2;
+      var h = hideClkInfo ? options.h-20 : options.h-2;
       g.drawRect(options.x, y, options.x+options.w-2, y+h-1); // show if focused
       g.drawRect(options.x+1, y+1, options.x+options.w-3, y+h-2); // show if focused
     }
 
-    // Set text and font
-    if(isLarge){
-      // In case we are in focus and the focus box changes (fullscreen yes/no)
-      // we draw the time again. Otherwise it could happen that a while line is
-      // not cleared correctly.
-      if(options.focus) drawTime();
+    // In case we hide the clkinfo, we show the time again as the time should
+    // be drawn larger.
+    if(hideClkInfo){
+      drawTime();
       return;
     }
 
+    // Set text and font
     var image = info.img;
     var text = String(info.text);
     if(text.split('\n').length > 1){
@@ -235,7 +234,7 @@ let drawDate = function() {
 
 
 let drawTime = function() {
-  var isLarge = clockInfoMenu.menuA == 0 && clockInfoMenu.menuB == 0;
+  var hideClkInfo = clockInfoMenu.menuA == 0 && clockInfoMenu.menuB == 0;
 
   // Draw background
   var y1 = getLineY();
@@ -251,7 +250,7 @@ let drawTime = function() {
   // Set y coordinates correctly
   y += parseInt((H - y)/2) + 5;
 
-  if (isLarge){
+  if (hideClkInfo){
     g.setLargeFont();
   } else {
     y -= 15;
@@ -260,7 +259,7 @@ let drawTime = function() {
 
   // Clear region and draw time
   g.setColor(g.theme.fg);
-  g.fillRect(0,y1,W,y+20 + (isLarge ? 1 : 0));
+  g.fillRect(0,y1,W,y+22 + (hideClkInfo ? 1 : 0));
 
   g.setColor(g.theme.bg);
   g.setFontAlign(0,0);
