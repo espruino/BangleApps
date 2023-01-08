@@ -154,7 +154,9 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
 
     // Set text and font
     if(isLarge){
-      drawTime();
+      // In case we are in focus and the focus box changes (fullscreen yes/no)
+      // we draw the time again.
+      if(options.focus) drawTime();
       return;
     }
 
@@ -178,7 +180,9 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     }
     g.drawString(text, midx+parseInt(imgWidth*1.3/2), options.y+20);
 
-    drawTime();
+    // In case we are in focus and the focus box changes (fullscreen yes/no)
+    // we draw the time again.
+    if(options.focus) drawTime();
   }
 });
 
