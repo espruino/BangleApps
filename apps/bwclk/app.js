@@ -326,6 +326,13 @@ let lockListenerBw = function(isLocked) {
 };
 Bangle.on('lock', lockListenerBw);
 
+let charging = function(charging){
+  // Jump to battery
+  clockInfoMenu.menuA = 0;
+  clockInfoMenu.menuB = 2;
+  clockInfoMenu.redraw();
+}
+Bangle.on('charging', charging);
 
 let kill = function(){
   clockInfoMenu.remove();
