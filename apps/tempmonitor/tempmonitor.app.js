@@ -1,14 +1,14 @@
 // Temperature monitor that saves a log of measures
-// Version 001 standalone for  developer
-//  PEND
-//test with small savefreq
+// standalone ver for  developer, to remove testing lines
+// delimiter ; (excel) or , (oldscool)
+{
 var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 //var required for drawing with dynamic screen
 var rect = Bangle.appRect;
 var history = [];
 var readFreq=5000; //ms //PEND add to settings
-var saveFreq=30000; //ms
-var v_saveToFile='Y'; //Y save //N
+var saveFreq=60000; //ms 1min
+var v_saveToFile= new Boolean(true); //true save //false 
 //with upload file º is not displayed properly
 //with upload RAM º is  displayed
 var v_t_symbol="";//ºC
@@ -68,10 +68,10 @@ function saveToFile() {
   var strlastSaveTime=new String();
   strlastSaveTime=a.toISOString();
   //strlastSaveTime=strlastSaveTime.concat(a.getFullYear(),a.getMonth()+1,a.getDate(),a.getHours(),a.getMinutes());;
-  if (v_mode_debug==1) console.log("saving="+strlastSaveTime+","+lastMeasure);
-
-  if (v_saveToFile=='Y'){
-    require("Storage").open(filename,"a").write(strlastSaveTime+","+lastMeasure+"\n");
+  if (v_mode_debug==1) console.log("saving="+strlastSaveTime+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure);
+  if (v_saveToFile==true){
+    //write(strlastSaveTime+";"+
+    require("Storage").open(filename,"a").write((a.getMonth()+1)+";"+a.getDate()+";"+a.getHours()+":"+a.getMinutes()+";"+lastMeasure+"\n");
     //(getTime()+",");
     v_saved_entries=v_saved_entries+1;
   }
@@ -127,7 +127,7 @@ setInterval(function() {
   drawTemperature();
 }, readFreq); //ms
 
-if (v_saveToFile=="Y") {
+if (v_saveToFile==true) {
     setInterval(function() {
       saveToFile();
     }, saveFreq); //ms
@@ -135,3 +135,4 @@ if (v_saveToFile=="Y") {
 setTimeout(ClearScreen, 3500);
 setTimeout(drawGraph,4000);
 setTimeout(drawTemperature,4500);
+}

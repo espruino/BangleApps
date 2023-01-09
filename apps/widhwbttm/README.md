@@ -2,8 +2,9 @@
 A basic HW/performance monitor widget that shows on real time some technical info, such as free mem, free storage, trash mem, files, FW version. Also allows to test the unfrequently used widget bottom area.
 
 Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
+Dynamic Color dependant on Theme color bg
 
-forked from widclkbttm (Digital clock bttom widget)
+forked from my widclkbttm (Digital clock bttom widget)
 
 
 ## Photo  
@@ -13,6 +14,8 @@ Example of usage
 ![](widhwbttm.ss1.jpg)
 ![](widhwbttm.ss2.jpg)
 
+Screenshot emulator
+![](screenshot_ems2.png)
 
 
 
