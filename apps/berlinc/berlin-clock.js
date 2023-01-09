@@ -18,9 +18,9 @@ let time_digit = [];
 
 // schedule a draw for the next minute
 let queueDraw = () => {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
+  if (global.drawTimeout) clearTimeout(global.drawTimeout);
+  global.drawTimeout = setTimeout(function() {
+    global.drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
 }
@@ -99,17 +99,24 @@ let clear = () => {
   delete global.drawTimeout;
 }
 
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+let onLcdPower = on => {
   if (on) {
     draw(); // draw immediately, queue redraw
   } else { // stop draw timer
     clear();
   }
-});
+}
+
+let cleanup = () => {
+  clear();
+  Bangle.removeListener("lcdPower", onLcdPower);
+}
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',onLcdPower);
 
 // Show launcher when button pressed, handle up/down
-Bangle.setUI({mode: "clockupdown", remove: clear}, dir=> {
+Bangle.setUI({mode: "clockupdown", remove: cleanup}, dir=> {
   if (dir<0) toggleTime();
   if (dir>0) toggleDate();
 });
