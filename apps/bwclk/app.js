@@ -102,7 +102,7 @@ let imgLock = function() {
 let clockInfoItems = clock_info.load();
 
 // Add some custom clock-infos
-function weekOfYear() {
+let weekOfYear = function() {
   var date = new Date();
   date.setHours(0, 0, 0, 0);
   // Thursday in current week decides the year.
@@ -357,6 +357,7 @@ Bangle.setUI({
     // Called to unload all of the clock app
     Bangle.removeListener('lcdPower', lcdListenerBw);
     Bangle.removeListener('lock', lockListenerBw);
+    Bangle.removeListener('charging', charging);
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     // save settings
