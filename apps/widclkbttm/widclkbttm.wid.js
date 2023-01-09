@@ -1,13 +1,9 @@
-WIDGETS["wdclkbttm"]={area:"br",width:60,draw:function() {
-  console.log("clock? "+Bangle.CLOCK);
-  if (Bangle.CLOCK){
-      return; //avoid 2 clocks
-  }
+WIDGETS["wdclkbttm"]={area:"br",width:Bangle.CLOCK?0:60,draw:function() {
   if (!Bangle.CLOCK == !this.width) { // if we're the wrong size for if we have a clock or not...
     this.width = Bangle.CLOCK?0:60;
     return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
   }
-  if (!this.width) return; // if size not right, return
+  if (!this.width) return; // if not visible, return
   g.reset().setFont("6x8", 2).setFontAlign(-1, 0);
   var time = require("locale").time(new Date(),1);
   g.drawString(time, this.x, this.y+11, true); // 5 * 6*2 = 60
