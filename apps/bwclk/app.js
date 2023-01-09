@@ -327,9 +327,7 @@ Bangle.on('lock', lockListenerBw);
 
 let charging = function(charging){
   // Jump to battery
-  clockInfoMenu.menuA = 0;
-  clockInfoMenu.menuB = 2;
-  clockInfoMenu.redraw();
+  clockInfoMenu.setItem(0, 2);
   drawTime();
 }
 Bangle.on('charging', charging);
