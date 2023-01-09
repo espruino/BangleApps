@@ -19,3 +19,4 @@
 0.18: Show step goal in daily step chart
 0.19: Can show notification when daily step goal is reached
 0.20: Fix the settings page, it would not update settings correctly.
+0.21: Update boot.min.js.
