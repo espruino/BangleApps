@@ -28,3 +28,4 @@
 0.27: Clean out some leftovers in the remove function after switching to
 clkinfo.addInteractive that would cause ReferenceError.
 0.28: Option to show (1) time only and (2) week of year.
+0.29: use setItem of clockInfoMenu to change the active item
