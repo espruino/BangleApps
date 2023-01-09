@@ -306,8 +306,11 @@ exports.addInteractive = function(menu, options) {
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
       oldMenuItem.removeAllListeners("draw");
-      menuShowItem(menu[menuA].items[menuB]);
     }
+    options.menuA = menuA;
+    options.menuB = menuB;
+    menuShowItem(menu[options.menuA].items[options.menuB]);
+
     return true;
   }
   return options;
