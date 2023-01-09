@@ -5,6 +5,9 @@
     stepGoalNotification: false
   }, require("Storage").readJSON("health.json", true) || {});
 
+  function setSettings() {
+    require("Storage").writeJSON("health.json", settings);
+  }
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
 
@@ -22,7 +25,7 @@
       ][v],
       onchange: v => {
         settings.hrm = v;
-        setSettings(settings);
+        setSettings();
       }
     },
 
@@ -33,7 +36,7 @@
       step: 250,
       onchange: v => {
         settings.stepGoal = v;
-        setSettings(settings);
+        setSettings();
       }
     },
     /*LANG*/"Step Goal Notification": {
@@ -45,8 +48,4 @@
       }
     }
   });
-
-  function setSettings(settings) {
-    require("Storage").writeJSON("health.json", settings);
-  }
 })

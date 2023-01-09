@@ -25,4 +25,6 @@ facilitate 'fast switching' of apps where available.
 widgets would still be loaded when they weren't supposed to.
 0.21: Bangle 2: Call Bangle.drawWidgets() early on so that the widget field
 immediately follows the correct theme.
+0.22: Bangle 2: Change to not automatically marking the first app on a page
+when moving pages. Add caching for faster startups.
 

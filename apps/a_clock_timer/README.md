@@ -8,11 +8,11 @@
   *  Bottom Left tap: decrease by 5 minutes
   *  Short buzz at T-30, T-20, T-10 ; Double buzz at T
 * Other time zones
-  *  Currently hardcoded to Paris and Tokyo (this will be customizable in a future version)
+  *  Showing Paris and Tokyo by default, but you can customize this using the dedicated configuration page on the app store
 * World Map
   *  The map shows day and night on Earth and the position of the Sun (yellow line)
 
-![](screenshot.png)
+![](screenshot-1.png) ![](screenshot.png)
 
 ## Creator
 [@alainsaas](https://github.com/alainsaas)

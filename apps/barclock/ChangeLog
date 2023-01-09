@@ -14,3 +14,4 @@
 0.14: Use ClockFace_menu.addItems
 0.15: Add Power saving option
 0.16: Support Fast Loading
+0.17: Hide widgets instead of not loading them at all
