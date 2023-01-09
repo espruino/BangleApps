@@ -296,6 +296,20 @@ exports.addInteractive = function(menu, options) {
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);
   };
+  options.setItem = function (menuA, menuB) {
+    if (!menu[menuA] || !menu[menuA].items[menuB] || (options.menuA == menuA && options.menuB == menuB)) {
+      // menuA or menuB did not exist or did not change
+      return false;
+    }
+
+    const oldMenuItem = menu[options.menuA].items[options.menuB];
+    if (oldMenuItem) {
+      menuHideItem(oldMenuItem);
+      oldMenuItem.removeAllListeners("draw");
+      menuShowItem(menu[menuA].items[menuB]);
+    }
+    return true;
+  }
   return options;
 };
 
