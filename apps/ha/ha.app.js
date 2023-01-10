@@ -28,28 +28,19 @@ function draw() {
   g.setColor(g.theme.bg).drawString(trigger.display, W/2, ypos);
 }
 
-
-Bangle.on('touch', function(btn, e){
-  var left = parseInt(g.getWidth() * 0.3);
-  var right = g.getWidth() - left;
-  var isLeft = e.x < left;
-  var isRight = e.x > right;
-
-  if(isRight){
-    Bangle.buzz(40, 0.6);
-    position += 1;
-    position = position >= triggers.length ? 0 : position;
-    draw();
-  }
-
-  if(isLeft){
+function toLeft() {
     Bangle.buzz(40, 0.6);
     position -= 1;
     position = position < 0 ? triggers.length-1 : position;
     draw();
-  }
-
-  if(!isRight && !isLeft){
+}
+function toRight() {
+    Bangle.buzz(40, 0.6);
+    position += 1;
+    position = position >= triggers.length ? 0 : position;
+    draw();
+}
+function sendTrigger() {
     ha.sendTrigger("TRIGGER");
 
     // Now send the selected trigger
@@ -59,8 +50,33 @@ Bangle.on('touch', function(btn, e){
         Bangle.buzz(80, 0.6);
       }, 250);
     });
+}
+
+Bangle.on('touch', function(btn, e){
+  var left = parseInt(g.getWidth() * 0.3);
+  var right = g.getWidth() - left;
+  var isLeft = e.x < left;
+  var isRight = e.x > right;
+
+  if(isLeft){
+    toLeft();
+  }
+  if(isRight){
+    toRight();
+  }
+  if(!isRight && !isLeft){
+    sendTrigger();
   }
 });
+
+Bangle.on("swipe", (lr,ud) => {
+    if (lr == -1) {
+      toLeft();
+    }
+    if (lr == 1) {
+      toRight();
+    }
+  });
 
 
 // Send intent that the we started the app.
