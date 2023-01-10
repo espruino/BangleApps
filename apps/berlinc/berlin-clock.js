@@ -1,5 +1,3 @@
-// timeout used to update every minute
-let drawTimeout;
 {
 // Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
 // https://github.com/eska-muc/BangleApps
@@ -16,11 +14,14 @@ let yy = 0;
 let rowlights = [];
 let time_digit = [];
 
+// timeout used to update every minute
+let drawTimeout;
+
 // schedule a draw for the next minute
 let queueDraw = () => {
-  if (global.drawTimeout) clearTimeout(global.drawTimeout);
-  global.drawTimeout = setTimeout(function() {
-    global.drawTimeout = undefined;
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
 }
@@ -95,8 +96,8 @@ let toggleTime = () => {
 }
 
 let clear = () => {
-  if (global.drawTimeout) clearTimeout(global.drawTimeout);
-  delete global.drawTimeout;
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
 }
 
 let onLcdPower = on => {
