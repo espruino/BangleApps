@@ -41,7 +41,7 @@
             var triggerText = document.getElementById("triggers").value;
 
              Util.showModal("Saving...");
-              Util.writeStorage("ha.trigger.json", JSON.stringify(triggerText), ()=>{
+              Util.writeStorage("ha.trigger.json", triggerText, ()=>{
                 Util.hideModal();
               });
             console.log("Sent ha.trigger.json!");
