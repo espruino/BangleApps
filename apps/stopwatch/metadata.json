@@ -11,5 +11,8 @@
   "storage": [
     {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
     {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"stopwatch.json"}
   ]
 }
