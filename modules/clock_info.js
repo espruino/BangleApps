@@ -278,9 +278,12 @@ exports.addInteractive = function(menu, options) {
       if (!options.focus) {
         options.focus=true; // if not focussed, set focus
        options.redraw();
-      } else if (menu[options.menuA].items[options.menuB].run)
+      } else if (menu[options.menuA].items[options.menuB].run) {
+        Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
-      else options.focus=true;
+      } else {
+        options.focus=true;
+      }
     };
     Bangle.on("touch",touchHandler);
   }
