@@ -1,7 +1,7 @@
 {
   "id": "limelight",
   "name": "Limelight",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Simple analogue clock (with configurable fonts) based on the work of @Andreas_Rozek (Simple_Clock)",
   "icon": "limelight.png",
   "readme":"README.md",
