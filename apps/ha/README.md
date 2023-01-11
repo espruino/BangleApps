@@ -1,28 +1,30 @@
 # Home Assistant
-This app integrates your BangleJs into the HomeAssistant.
+This app integrates your Bangle.js into the Home Assistant.
 
 
 # How to use
-Click on the left and right side of the screen to select the triggers that you
-configured. Click in the middle of the screen to send the trigger to HomeAssistant.
+Click on the left or right side of the screen to select the triggers that you configured. 
+Swiping left or right works as well.
+
+Click in the middle of the screen to send the trigger to Home Assistant via Gadgetbridge.
 
 ![](screenshot.png)
 
 
 # Initial Setup
-1.) First of all, make sure that HomeAssistant and the HomeAssistant Android App works.
+1.) First of all, make sure that Home Assistant and the Home Assistant Android Companion App work.
 
-2.) Open your BangleJs Gadgetbridge App, click on the Settings icon of your BangleJs and enable "Allow Intent Access"
+2.) Open your Bangle.js Gadgetbridge App, click on the Settings icon of your Bangle.js and enable "Allow Intent Access"
 
-3.) Enable sensor in HomeAssistant Andoird App/Configuration/Companion App/Manage Sensors/LastUpdate Trigger
+3.) Enable sensor in Home Assistant Android App/Configuration/Companion App/Manage Sensors/LastUpdate Trigger
 
 4.) At the bottom of the same screen click on "Add New Intent" and enter "com.espruino.gadgetbridge.banglejs.HA"
 
-5.) The HomeAssistant Android app must be restarted in order to listen for those actions
+5.) The Home Assistant Android app must be restarted in order to listen for those actions
  -- a "Force Stop" is necessary (through Android App settings) or restart your phone!
 
 This setup must be done only once -- now you are ready to configure your BangleJS to
-control some devices or entities in your HomeAssistant :)
+control some devices or entities in your Home Assistant :)
 
 
 # Setup Trigger
@@ -35,7 +37,7 @@ The following icons are currently supported:
 - fire
 
 
-2.) Create an "automation" in the HomeAssistant WebUI for each trigger that you created on your BangleJs in order to tell HomeAssistant what you want to control. A sample configuration is shown in the image below -- I use this trigger to open the door:
+2.) Create an "automation" in the Home Assistant WebUI for each trigger that you created on your Bangle.js in order to tell Home Assistant what you want to control. A sample configuration is shown in the image below -- I use this trigger to open the door:
 
 ![](ha_automation.png)
 
@@ -48,7 +50,7 @@ This app also implements two default trigger that can always be used:
 - TRIGGER -- Will be sent whenever some trigger is executed. So you could generically listen to that.
 
 
-# How to use the library (ha.lib.js) in my own app/clk
+# How to use the library (ha.lib.js) in my own app/clock
 This app inlcludes a library that can be used by other apps or clocks
 to read all configured intents or to send a trigger. Example code:
 
@@ -74,17 +76,20 @@ ha.sendTrigger("MY_CUSTOM_TRIGGER");
 # FAQ
 
 ## Sometimes the trigger is not executed
-While playing and testing a bit I found that it is very important that you allow the android HomeAssistant app, as well as BangleJs Gadgetbridge app to (1) run in background and (2), disable energy optimizations for both apps.
-Otherwise, Android could stop one of both apps and the trigger will never be sent to HomeAssistant...
+While playing and testing a bit I found that it is very important that you allow the android Home Assistant app, as well as Bangle.js Gadgetbridge app to (1) run in background and (2), disable energy optimizations for both apps.
+Otherwise, Android could stop one of both apps and the trigger will never be sent to Home Assistant...
 
 If you still have problems, you can try another trick:
-Install "MacroDroid" from the Android AppStore and start the HomeAssistant App
+Install "MacroDroid" from the Android AppStore and start the Home Assistant App
 each time the "com.espruino.gadgetbridge.banglejs.HA" intent is send together
-with the extra trigger: APP_STARTED. Then whenever you open the app on your BangleJs
-it is ensured that HomeAssistant is running...
+with the extra trigger: APP_STARTED. Then whenever you open the app on your Bangle.js
+it is ensured that Home Assistant is running...
 
 ## Thanks to
 <a href="https://www.flaticon.com/free-icons/" title="Icons">Icons created by Flaticon</a>
 
 ## Creator
 - [David Peer](https://github.com/peerdavid).
+
+## Contributor
+- [myxor](https://github.com/myxor)
