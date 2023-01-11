@@ -2,6 +2,7 @@ Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
 };
 
+{
 const SETTINGS_FILE = "mosaic.settings.json";
 let settings;
 let theme;
@@ -87,8 +88,6 @@ let o_h = Math.floor((g.getHeight() - num_squares_h * s+offset_widgets)/2);
 let mid_x = Math.floor(num_squares_w/2);
 let mid_y = Math.floor((num_squares_h-1)/2);
 
-draw();
-
 Bangle.on('lcdPower',on=>{
   if (on) {
     draw(); // draw immediately, queue redraw
@@ -98,8 +97,23 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI('clock');
+Bangle.setUI({
+  mode : 'clock',
+  remove : function() {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    delete Array.prototype.sample;
+    require('widget_utils').show(); // re-show widgets
+  }
+});
+
+Bangle.loadWidgets();
 if (settings.showWidgets) {
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
+} else {
+  require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+}
+
+draw();
 }
