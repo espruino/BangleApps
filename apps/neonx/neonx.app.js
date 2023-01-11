@@ -19,6 +19,7 @@ let saved_settings = require('Storage').readJSON('neonx.json', 1) || settings;
 for (const key in saved_settings) {
   settings[key] = saved_settings[key]
 }
+let widget_utils = require('widget_utils');
 
 
 const digits = {
@@ -133,7 +134,7 @@ function drawAnimated(){
 function _draw(date, xc){
   // Depending on the settings, we clear all widgets or draw those.
   if(settings.fullscreen){
-    for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+    widget_utils.hide();
   } else {
     Bangle.drawWidgets();
   }
