@@ -1,4 +1,5 @@
 (() => {
+    let widget_utils = require('widget_utils');
 
     var saved = null;
 
@@ -6,25 +7,14 @@
     function hide() {
         if (!Bangle.isLCDOn() || saved) return;
         saved = [];
-        for (var wd of WIDGETS) {
-            saved.push({
-                d: wd.draw,
-                a: wd.area
-            });
-            wd.draw = () => {};
-            wd.area = "";
-        }
+        widget_utils.hide();
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, g.getWidth(), 23);
     }
 
     function reveal() {
         if (!Bangle.isLCDOn() || !saved) return;
-        for (var wd of WIDGETS) {
-            var o = saved.shift();
-            wd.draw = o.d;
-            wd.area = o.a;
-        }
+        widget_utils.show();
         Bangle.drawWidgets();
         saved = null;
     }
