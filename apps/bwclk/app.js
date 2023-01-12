@@ -6,7 +6,7 @@
 const locale = require('locale');
 const storage = require('Storage');
 const clock_info = require("clock_info");
-
+const widget_utils = require("widget_utils");
 
 /************************************************
  * Globals
@@ -277,7 +277,7 @@ let drawLock = function() {
 
 let drawWidgets = function() {
   if(isFullscreen()){
-    for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+    widget_utils.hide();
   } else {
     Bangle.drawWidgets();
   }
@@ -318,7 +318,7 @@ let lockListenerBw = function(isLocked) {
   if(!isLocked && settings.screen.toLowerCase() == "dynamic"){
     // If we have to show the widgets again, we load it from our
     // cache and not through Bangle.loadWidgets as its much faster!
-    for (let wd of WIDGETS) {wd.draw=wd._draw;wd.area=wd._area;}
+    widget_utils.show();
   }
 
   draw();
@@ -362,15 +362,12 @@ Bangle.setUI({
     kill();
     E.removeListener("kill", kill);
     g.setTheme(themeBackup);
+    widget_utils.show();
   }
 });
 
 // Load widgets and draw clock the first time
 Bangle.loadWidgets();
-
-// Cache draw function for dynamic screen to hide / show widgets
-// Bangle.loadWidgets() could also be called later on but its much slower!
-for (let wd of WIDGETS) {wd._draw=wd.draw; wd._area=wd.area;}
 
 // Draw first time
 draw();
