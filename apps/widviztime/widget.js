@@ -1,12 +1,12 @@
 (() => {
     let widget_utils = require('widget_utils');
 
-    var saved = null;
+    var saved = false;
 
 
     function hide() {
         if (!Bangle.isLCDOn() || saved) return;
-        saved = [];
+        saved = true;
         widget_utils.hide();
         g.setColor(0, 0, 0);
         g.fillRect(0, 0, g.getWidth(), 23);
@@ -15,8 +15,7 @@
     function reveal() {
         if (!Bangle.isLCDOn() || !saved) return;
         widget_utils.show();
-        Bangle.drawWidgets();
-        saved = null;
+        saved = false;
     }
 
     function draw() {
