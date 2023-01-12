@@ -279,7 +279,7 @@ let drawWidgets = function() {
   if(isFullscreen()){
     widget_utils.hide();
   } else {
-    Bangle.drawWidgets(); // Should this be replaced with widget_utils.show(); ?
+    Bangle.drawWidgets();
   }
 };
 
@@ -362,16 +362,12 @@ Bangle.setUI({
     kill();
     E.removeListener("kill", kill);
     g.setTheme(themeBackup);
+    widget_utils.show();
   }
 });
 
 // Load widgets and draw clock the first time
 Bangle.loadWidgets();
-
-// Cache draw function for dynamic screen to hide / show widgets
-// Bangle.loadWidgets() could also be called later on but its much slower!
-//for (let wd of WIDGETS) {wd._draw=wd.draw; wd._area=wd.area;} // Not sure how to replace this or if it should just be dropped?
-widget_utils.show(); // I replace with this to begin with, should I just delete it?
 
 // Draw first time
 draw();
