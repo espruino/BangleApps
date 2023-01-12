@@ -25,11 +25,11 @@ let digits = [
   E.toArrayBuffer(atob("BQcB/Gsex+A="))
 ];
 
-function loadSettings() {
+let loadSettings = function() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'showWidgets': false, 'theme':'System'};
 }
 
-function loadThemeColors() {
+let loadThemeColors = function() {
   theme = {fg: g.theme.fg, bg: g.theme.bg};
   if (settings.theme === "Dark") {
     theme.fg = g.toColor(1,1,1);
@@ -41,7 +41,7 @@ function loadThemeColors() {
   }
 }
 
-function queueDraw(seconds) {
+let queueDraw = function(seconds) {
   let millisecs = seconds * 1000;
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -50,7 +50,7 @@ function queueDraw(seconds) {
   }, millisecs - (Date.now() % millisecs));
 }
 
-function draw() {
+let draw = function() {
   // draw colourful grid
   for (let i_x = 0; i_x < num_squares_w; i_x++) {
     for (let i_y = 0; i_y < num_squares_h; i_y++) {

@@ -15,5 +15,8 @@
       {"name":"mosaic.app.js","url":"mosaic.app.js"},
       {"name":"mosaic.settings.js","url":"mosaic.settings.js"},
       {"name":"mosaic.img","url":"mosaic.icon.js","evaluate":true}
+    ],
+    "data": [
+      {"name":"mosaic.settings.json"}
     ]
   }
