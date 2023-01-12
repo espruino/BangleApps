@@ -133,8 +133,16 @@ setTimeout(() => {
       assertFalse(Bangle.isGPSOn(), "isGPSOn");
       assertFalse(Bangle.isGBGPSOn(), "isGBGPSOn");
 
+      setTimeout(() => {
+        print("Test disconnect without gps on");
 
-      print("Result Overall is " + (result ? "OK" : "FAIL"));
+        assertUndefinedOrEmpty(Bangle._PWR.GBGPS, "No GBGPS");
+        assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
+        assertFalse(Bangle.isGPSOn(), "isGPSOn");
+        assertFalse(Bangle.isGBGPSOn(), "isGBGPSOn");
+
+        print("Result Overall is " + (result ? "OK" : "FAIL"));
+      }, 0);
     }, 0);
   }, 0);
 }, 5000);
