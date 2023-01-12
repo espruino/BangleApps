@@ -1,3 +1,4 @@
 0.01: New Widget
 0.02: swipe left,right update
 0.03: Fix widget visibility code to the top bar isn't cleared by drawWidgets 
+0.04: Use widget_utils.

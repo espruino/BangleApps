@@ -23,3 +23,4 @@
 0.23: Add warning for low flash memory.
 0.24: Add ability to disable alarm functionality.
 0.25: Add more colors to the settings and add the ability to disable the data charts+Markup.
+0.26: Use widget_utils.
