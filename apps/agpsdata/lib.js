@@ -20,8 +20,10 @@ function setAGPS(b64) {
 
     try {
       writeChunks(atob(b64), ()=>{
-        Bangle.setGPSPower(0,"agpsdata");
-        resolve();
+        setTimeout(()=>{
+          Bangle.setGPSPower(0,"agpsdata");
+          resolve();
+        }, 1000);
       });
     } catch (e) {
       console.log("error:", e);
