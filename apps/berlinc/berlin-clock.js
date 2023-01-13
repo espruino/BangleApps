@@ -1,3 +1,4 @@
+{
 // Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
 // https://github.com/eska-muc/BangleApps
 const fields = [4, 4, 11, 4];
@@ -6,18 +7,18 @@ const width = g.getWidth() - 2 * offset;
 const height = g.getHeight() - 2 * offset;
 const rowHeight = height / 4;
 
-var show_date = false;
-var show_time = false;
-var yy = 0;
+let show_date = false;
+let show_time = false;
+let yy = 0;
 
-var rowlights = [];
-var time_digit = [];
+let rowlights = [];
+let time_digit = [];
 
 // timeout used to update every minute
-var drawTimeout;
+let drawTimeout;
 
 // schedule a draw for the next minute
-function queueDraw() {
+let queueDraw = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
@@ -25,7 +26,7 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-function draw() {
+let draw = () => {
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
   var now = new Date();
 
@@ -84,28 +85,39 @@ function draw() {
   queueDraw();
 }
 
-function toggleDate() {
+let toggleDate = () => {
   show_date = ! show_date;
   draw();
 }
 
-function toggleTime() {
+let toggleTime = () => {
   show_time = ! show_time;
   draw();
 }
 
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+let clear = () => {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+}
+
+let onLcdPower = on => {
   if (on) {
     draw(); // draw immediately, queue redraw
   } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
+    clear();
   }
-});
+}
+
+let cleanup = () => {
+  clear();
+  Bangle.removeListener("lcdPower", onLcdPower);
+}
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',onLcdPower);
 
 // Show launcher when button pressed, handle up/down
-Bangle.setUI("clockupdown", dir=> {
+Bangle.setUI({mode: "clockupdown", remove: cleanup}, dir=> {
   if (dir<0) toggleTime();
   if (dir>0) toggleDate();
 });
@@ -114,3 +126,4 @@ g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
+}
