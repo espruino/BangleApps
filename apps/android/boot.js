@@ -221,15 +221,14 @@
     NRF.on('disconnect', ()=>{handleConnection(0);});
 
     // Work around Serial1 for GPS not working when connected to something
-    // 
-    Serial1.println = (o => s => {
-      origSetGPSPower(1,"android_gpsserial");
-      o(s);
-    })(Serial1.println);
-    Serial1.write = (o => s => {
-      origSetGPSPower(1,"android_gpsserial");
-      o(s);
-    })(Serial1.write);
+    let wrap = function(f){
+      return (s)=>{
+        origSetGPSPower(1,"android_gpsserial");
+        f(s);
+      };
+    }
+    Serial.println = wrap(Serial1.println);
+    Serial.write = wrap(Serial1.write);
 
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
