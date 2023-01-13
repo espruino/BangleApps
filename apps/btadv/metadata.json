@@ -1,0 +1,13 @@
+{
+  "id": "btadv",
+  "name": "Export real-time sensor data over BLE",
+  "version": "0.01",
+  "description": "Advertise & export live heart rate, accel, pressure, GPS & mag data over bluetooth",
+  "icon": "heartrate.png",
+  "tags": "health,tool,sensors,bluetooth",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"btadv.app.js","url":"app.js"},
+    {"name":"btadv.img","url":"icon.js","evaluate":true}
+  ]
+}
