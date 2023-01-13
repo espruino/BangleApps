@@ -178,7 +178,7 @@
       },options.timeout||30000)};
     });
     return promise;
-  }
+  };
 
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
@@ -209,20 +209,16 @@
   if (settings.overwriteGps) { // if the overwrite option is set../
     const origSetGPSPower = Bangle.setGPSPower;
     // migrate all GPS clients to the other variant on connection events
-    let handleConnect = () => {
-      let orig = Bangle._PWR.GPS;
-      delete Bangle._PWR.GPS;
-      origSetGPSPower(0);
-      Bangle._PWR.GPS = orig;
+    let handleConnection = (state) => {
+      if (Bangle.isGPSOn()){
+        let orig = Bangle._PWR.GPS;
+        delete Bangle._PWR.GPS;
+        origSetGPSPower(state);
+        Bangle._PWR.GPS = orig;
+      }
     };
-    let handleDisconnect = () => {
-      let orig = Bangle._PWR.GPS;
-      delete Bangle._PWR.GPS;
-      origSetGPSPower(1);
-      Bangle._PWR.GPS = orig;
-    };
-    NRF.on('connect', handleConnect);
-    NRF.on('disconnect', handleDisconnect);
+    NRF.on('connect', ()=>{handleConnection(1);});
+    NRF.on('disconnect', ()=>{handleConnection(0);});
 
     // Work around Serial1 for GPS not working when connected to something
     // 
