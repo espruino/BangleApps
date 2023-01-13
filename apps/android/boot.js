@@ -238,7 +238,7 @@
     Serial1.write = (o => s => {
       origSetGPSPower(1,"android_gpsserial");
       o(s);
-    })(Serial1.println);
+    })(Serial1.write);
 
     Bangle.setGBGPSPower = (isOn, appID) => {
       if (!Bangle._PWR) Bangle._PWR={};
