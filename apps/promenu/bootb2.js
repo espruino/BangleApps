@@ -28,7 +28,9 @@ E.showMenu = function(items) {
   }
   if (options) menuItems.splice(menuItems.indexOf(""),1);
   options.fontHeight = options.fontHeight||25;
-  if (options.selected === undefined)
+  if (options.scroll)
+    options.selected = options.scroll;
+  else if (options.selected === undefined)
     options.selected = 0;
 
   var ar = Bangle.appRect;
