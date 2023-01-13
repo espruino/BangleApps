@@ -20,3 +20,4 @@
 0.19: Can show notification when daily step goal is reached
 0.20: Fix the settings page, it would not update settings correctly.
 0.21: Update boot.min.js.
+0.22: Fix timeout for heartrate sensor on 3 minute setting (#2435)
