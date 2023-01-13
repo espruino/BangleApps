@@ -151,5 +151,12 @@ E.showMenu = function(items) {
     if (dir) l.move(dir);
     else l.select();
   });
+  if (options.back) {
+    Bangle.setUI("leftright", dir => {
+      if (dir < 0) {
+        back();
+      }
+    });
+  }
   return l;
 };
