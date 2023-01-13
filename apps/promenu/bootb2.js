@@ -17,20 +17,33 @@ E.showMenu = function(items) {
     g.drawPoly(RectRnd(x1,y1,x2,y2,r),1);
     g.setColor(255,255,255);
   }
-  g.reset().clearRect(Bangle.appRect); // clear if no menu supplied
+  var menuItems = Object.keys(items);
+  var options = items[""];
+  if (!(options instanceof Object)) options = {};
+
   Bangle.setLCDPower(1); // ensure screen is on
   if (!items) {
     Bangle.setUI();
     return;
   }
-  var menuItems = Object.keys(items);
-  var options = items[""];
   if (options) menuItems.splice(menuItems.indexOf(""),1);
-  if (!(options instanceof Object)) options = {};
   options.fontHeight = options.fontHeight||25;
   if (options.selected === undefined)
     options.selected = 0;
+
   var ar = Bangle.appRect;
+  if (options.topWidgets)
+    ar = {
+      x: ar.x,
+      y: ar.y + 24,
+      w: ar.w,
+      h: ar.h - 24,
+      x2: ar.x2,
+      y2: ar.y2 - 24,
+    };
+
+  g.reset().clearRect(ar);
+
   var x = ar.x;
   var x2 = ar.x2;
   var y = ar.y;
@@ -138,5 +151,5 @@ E.showMenu = function(items) {
     if (dir) l.move(dir);
     else l.select();
   });
-  return l; 
+  return l;
 };
