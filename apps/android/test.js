@@ -19,6 +19,10 @@ function assertNotEmpty(array, text) {
   assertTrue(array && array.length > 0, text);
 }
 
+let internalOn = () => {
+  return getPinMode((process.env.HWVERSION==2)?D30:D26) == "input";
+};
+
 let sec = {
   connected: false
 };
@@ -35,15 +39,17 @@ setTimeout(() => {
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
 
-  assertTrue(Bangle.setGPSPower(1), "Switch GPS on");
+  assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
 
   assertNotEmpty(Bangle._PWR.GPS, "GPS");
   assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertTrue(internalOn(), "Internal GPS on");
 
-  assertFalse(Bangle.setGPSPower(0), "Switch GPS off");
+  assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
   print("Connected, should use GB GPS");
   sec.connected = true;
@@ -52,16 +58,19 @@ setTimeout(() => {
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-  assertTrue(Bangle.setGPSPower(1), "Switch GPS on");
+  assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
 
   assertNotEmpty(Bangle._PWR.GPS, "GPS");
   assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-  assertFalse(Bangle.setGPSPower(0), "Switch GPS off");
+  assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
   print("Connected, then reconnect cycle");
   sec.connected = true;
@@ -70,39 +79,45 @@ setTimeout(() => {
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-  assertTrue(Bangle.setGPSPower(1), "Switch GPS on");
+  assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
 
   assertNotEmpty(Bangle._PWR.GPS, "GPS");
   assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-  print("disconnect");
   NRF.emit("disconnect", {});
+  print("disconnect");
   sec.connected = false;
 
   setTimeout(() => {
 
     assertNotEmpty(Bangle._PWR.GPS, "GPS");
     assertTrue(Bangle.isGPSOn(), "isGPSOn");
+    assertTrue(internalOn(), "Internal GPS on");
 
     print("connect");
-    NRF.emit("connect", {});
     sec.connected = true;
+    NRF.emit("connect", {});
 
     setTimeout(() => {
       assertNotEmpty(Bangle._PWR.GPS, "GPS");
       assertTrue(Bangle.isGPSOn(), "isGPSOn");
+      assertFalse(internalOn(), "Internal GPS off");
 
-      assertFalse(Bangle.setGPSPower(0), "Switch GPS off");
+      assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
 
       assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
       assertFalse(Bangle.isGPSOn(), "isGPSOn");
+      assertFalse(internalOn(), "Internal GPS off");
 
       setTimeout(() => {
         print("Test disconnect without gps on");
 
         assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
         assertFalse(Bangle.isGPSOn(), "isGPSOn");
+        assertFalse(internalOn(), "Internal GPS off");
 
         print("Result Overall is " + (result ? "OK" : "FAIL"));
       }, 0);
