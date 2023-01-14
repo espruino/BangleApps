@@ -12,6 +12,8 @@
   "screenshots": [{"url":"berlin-clock-screenshot.png"}],
   "storage": [
     {"name":"berlinc.app.js","url":"berlin-clock.js"},
+    {"name":"berlinc.settings.js","url":"settings.js"},
     {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"berlinc.json"}]
 }
