@@ -1,5 +1,3 @@
-// Settings menu for the enhanced Anton clock
-
 (function(back) {
   var FILE = "berlinc.json";
   var settings = Object.assign({
