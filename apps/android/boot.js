@@ -225,12 +225,12 @@
     let wrap = function(f){
       return (s)=>{
         if (serialTimeout) clearTimeout(serialTimeout);
-        origSetGPSPower(1,"android_gpsserial");
+        handleConnection(1);
         f(s);
         serialTimeout = setTimeout(()=>{
           serialTimeout = undefined;
-          origSetGPSPower(0,"android_gpsserial");
-        },5000);
+          if (NRF.getSecurityStatus().connected) handleConnection(0);
+        }, 10000);
       };
     };
     Serial1.println = wrap(Serial1.println);
@@ -238,7 +238,6 @@
 
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
-      // disable our own request for GPS power first and always
       // if not connected use internal GPS power function
       if (!NRF.getSecurityStatus().connected) return origSetGPSPower(isOn, appID);
       if (!Bangle._PWR) Bangle._PWR={};
