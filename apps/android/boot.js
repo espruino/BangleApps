@@ -217,8 +217,8 @@
         Bangle._PWR.GPS = orig;
       }
     };
-    NRF.on('connect', ()=>{handleConnection(1);});
-    NRF.on('disconnect', ()=>{handleConnection(0);});
+    NRF.on('connect', ()=>{handleConnection(0);});
+    NRF.on('disconnect', ()=>{handleConnection(1);});
 
     // Work around Serial1 for GPS not working when connected to something
     let wrap = function(f){
