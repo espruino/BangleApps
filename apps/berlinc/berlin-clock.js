@@ -69,7 +69,7 @@ let draw = () => {
   time_digit[2] = Math.floor(now.getMinutes() / 10);
   time_digit[3] = now.getMinutes() % 10;
 
-  g.drawRect(x, offset, x + width, height + offset);
+  g.drawRect(x, offset, x + width - 1, height + offset - 1);
   for (row = 0; row < 4; row++) {
     nfields = fields[row];
     boxWidth = width / nfields;
