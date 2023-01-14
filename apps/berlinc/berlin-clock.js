@@ -40,11 +40,11 @@ let draw = () => {
   let width = Math.min(Bangle.appRect.w,Bangle.appRect.h);
   let height = width;
   let offset = g.getHeight() - height;
-  let x = (g.getWidth() - width)/2;
+  let x = Math.floor((g.getWidth() - width)/2);
 
-  if (show_date) height -= 10;
-  let rowHeight = height / 4;
-
+  if (show_date) height -= 8;
+  let rowHeight = (height - 1) / 4;
+  g.setBgColor(g.theme.bg);
   g.reset().clearRect(Bangle.appRect);
   var now = new Date();
 
@@ -69,10 +69,11 @@ let draw = () => {
   time_digit[2] = Math.floor(now.getMinutes() / 10);
   time_digit[3] = now.getMinutes() % 10;
 
+  g.setColor(g.theme.fg);
   g.drawRect(x, offset, x + width - 1, height + offset - 1);
   for (row = 0; row < 4; row++) {
     nfields = fields[row];
-    boxWidth = width / nfields;
+    boxWidth = (width - 1) / nfields;
 
     for (col = 0; col < nfields; col++) {
       x1 = col * boxWidth + x;
