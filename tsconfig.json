@@ -1,23 +1,52 @@
 {
   "compilerOptions": {
+    // input/output
+    "target": "es5",
+    "noLib": true, // "lib": ["es5"],
+    "skipLibCheck": false,
+
     "module": "commonjs",
+
+    // code-gen
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "removeComments": true,
+
+    "newLine": "lf",
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "preserveConstEnums": false,
+    "importsNotUsedAsValues": "error",
+    "preserveValueImports": false,
+
+    // interop constraints
+    "isolatedModules": false, // we're global scripts
+
+    // type checking
     "noImplicitAny": true,
-    "target": "es6",
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noLib": true,
     "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "strict": true,
+
+    // simple type checking
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true,
-    "typeRoots": ["./typescript/types"]
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    // paths
+    "rootDir": "./",
+    "typeRoots": ["./typescript/types/"]
   },
-  "include": ["./**/*"],
-  "exclude": [
-        "**/gpconv.d.ts",
-        "**/gpconv_bg.wasm.d.ts"
-    ]
+  "include": [
+    "*/*/*.ts",
+    "*/*/*.d.ts",
+    "modules/*.d.ts",
+    "typescript/types/*.d.ts"
+  ]
 }
