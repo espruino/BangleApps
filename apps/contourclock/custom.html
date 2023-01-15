@@ -16,8 +16,9 @@
 <body>
   <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
-    <script src="../../core/lib/customize.js"></script>
+    <script type="module" src="../../core/lib/customize.js"></script>
     <script>
+      console.log("TEST");
       const FontList = ["Teko", "LuckiestGuy", "Bangers", "RubikOne", "Oswald", "Anton", "TitanOne", "BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
       "Yumaro", "YuseiMagic"];
@@ -46,7 +47,9 @@
         var fonts = [];
         for (fontElement of document.getElementsByName("font")) {
           if (fontElement.checked==true) {
-            var f = new Object();
+            //var f = new Object();
+            var nextFont = require("fonts/font-"+fontElement.id+".json");
+            console.log(nextFont)
             fonts.push({
               name:"contourclock-"+n+".json",
               url:"fonts/font-"+fontElement.id+".json"
@@ -54,10 +57,11 @@
             n++;
           }
         }
-        if (n>0) 
-          sendCustomizedApp({storage:fonts});
-        else 
+        if (n>0) {
+          //sendCustomizedApp({storage:fonts});
+        } else {
           alert("Please select at least one Font!");
+        }
     });
     document.forms[0].appendChild(btn);
     </script>
