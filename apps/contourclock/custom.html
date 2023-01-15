@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-  <h1>&nbsp;&nbsp;&nbsp;5Select Fonts to upload:</h1>
+  <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
     <script src="../../core/lib/customize.js"></script>
     <script>
@@ -47,7 +47,6 @@
         var fonts = [];
         for (fontElement of document.getElementsByName("font")) {
           if (fontElement.checked==true) {
-            //var f = new Object();
             fonts.push({
               name:"contourclock-"+n+".json",
               url:"fonts/font-"+fontElement.id+".json"
