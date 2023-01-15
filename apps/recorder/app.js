@@ -348,7 +348,12 @@ function viewTrack(filename, info) {
         infc[i]++;
       }
     } else if (style=="Speed") {
-      title = /*LANG*/"Speed (m/s)";
+      // use locate to work out units
+      var localeStr = require("locale").speed(1,5); // get what 1kph equates to
+      let units = localeStr.replace(/[0-9.]*/,"");
+      var factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
+      // title
+      title = /*LANG*/"Speed"+` (${units})`;
       var latIdx = info.fields.indexOf("Latitude");
       var lonIdx = info.fields.indexOf("Longitude");
       // skip until we find our first data
@@ -381,7 +386,7 @@ function viewTrack(filename, info) {
     } else throw new Error("Unknown type "+style);
     var min=100000,max=-100000;
     for (var i=0;i<infn.length;i++) {
-      if (infc[i]>0) infn[i]/=infc[i];
+      if (infc[i]>0) infn[i]=factor*infn[i]/infc[i];
       var n = infn[i];
       if (n>max) max=n;
       if (n<min) min=n;

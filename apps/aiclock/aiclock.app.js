@@ -1,7 +1,6 @@
 /************************************************
  * AI Clock
  */
- const storage = require('Storage');
  const clock_info = require("clock_info");
 
 
@@ -21,147 +20,14 @@ Graphics.prototype.setFontGochiHand = function(scale) {
     return this;
 }
 
-/************************************************
- * Set some important constants such as width, height and center
- */
-var W = g.getWidth(),R=W/2;
-var H = g.getHeight();
-var cx = W/2;
-var cy = H/2;
-var drawTimeout;
-var lock_input = false;
 
-
-/************************************************
- * SETTINGS
- */
-const SETTINGS_FILE = "aiclock.setting.json";
-let settings = {
-    menuPosX: 0,
-    menuPosY: 0,
-};
-let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
-for (const key in saved_settings) {
-  settings[key] = saved_settings[key]
-}
-
-
-/************************************************
- * Menu
- */
-function getDate(){
-    var date = new Date();
-    return ("0"+date.getDate()).substr(-2) + "/" + ("0"+(date.getMonth()+1)).substr(-2)
-}
-
-
-// Custom clockItems menu - therefore, its added here and not in a clkinfo.js file.
-var clockItems = {
-    name: getDate(),
-    img: null,
-    items: [
-    { name: "Week",
-      get: () => ({ text: "Week " + weekOfYear(), img: null}),
-      show: function() { clockItems.items[0].emit("redraw"); },
-      hide: function () {}
-    },
-    ]
-  };
-
-function weekOfYear() {
-    var date = new Date();
-    date.setHours(0, 0, 0, 0);
-    // Thursday in current week decides the year.
-    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-    // January 4 is always in week 1.
-    var week1 = new Date(date.getFullYear(), 0, 4);
-    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                            - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-
-
-// Load menu
-var menu = clock_info.load();
-menu = menu.concat(clockItems);
-
-
-  // Ensure that our settings are still in range (e.g. app uninstall). Otherwise reset the position it.
-  if(settings.menuPosX >= menu.length || settings.menuPosY > menu[settings.menuPosX].items.length ){
-    settings.menuPosX = 0;
-    settings.menuPosY = 0;
-  }
-
-  // Set draw functions for each item
-  menu.forEach((menuItm, x) => {
-    menuItm.items.forEach((item, y) => {
-      function drawItem() {
-        // For the clock, we have a special case, as we don't wanna redraw
-        // immediately when something changes. Instead, we update data each minute
-        // to save some battery etc. Therefore, we hide (and disable the listener)
-        // immedeately after redraw...
-        item.hide();
-
-        // After drawing the item, we enable inputs again...
-        lock_input = false;
-
-        var info = item.get();
-        drawMenuItem(info.text, info.img);
-      }
-
-      item.on('redraw', drawItem);
-    })
-  });
-
-
-  function canRunMenuItem(){
-    if(settings.menuPosY == 0){
-      return false;
-    }
-
-    var menuEntry = menu[settings.menuPosX];
-    var item = menuEntry.items[settings.menuPosY-1];
-    return item.run !== undefined;
-  }
-
-
-  function runMenuItem(){
-    if(settings.menuPosY == 0){
-      return;
-    }
-
-    var menuEntry = menu[settings.menuPosX];
-    var item = menuEntry.items[settings.menuPosY-1];
-    try{
-      var ret = item.run();
-      if(ret){
-        Bangle.buzz(300, 0.6);
-      }
-    } catch (ex) {
-      // Simply ignore it...
-    }
-  }
-
-
-/*
- * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
- */
-Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
-    angle = angle % 360;
-    var w2=w/2, h=r2-r1, theta=angle*Math.PI/180;
-    return this.fillPoly(this.transformVertices([-w2,0,-w2,-h,w2,-h,w2,0],
-        {x:cx+r1*Math.sin(theta),y:cy-r1*Math.cos(theta),rotate:theta}));
-};
-
-
-function drawBackground() {
+function drawBackground(start, end) {
     g.setFontAlign(0,0);
-    g.setColor(g.theme.fg);
+    g.setColor("#000");
 
     var bat = E.getBattery() / 100.0;
-    var y = 0;
-    while(y < H){
+    var y = start;
+    while(y < end){
         // Show less lines in case of small battery level.
         if(Math.random() > bat){
             y += 5;
@@ -177,6 +43,30 @@ function drawBackground() {
 }
 
 
+/************************************************
+ * Set some important constants such as width, height and center
+ */
+var W = g.getWidth(),R=W/2;
+var H = g.getHeight();
+var cx = W/2;
+var cy = H/2;
+var drawTimeout;
+
+var clkInfoY = 60;
+
+
+/*
+ * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
+ */
+Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
+    angle = angle % 360;
+    var w2=w/2, h=r2-r1, theta=angle*Math.PI/180;
+    return this.fillPoly(this.transformVertices([-w2,0,-w2,-h,w2,-h,w2,0],
+        {x:cx+r1*Math.sin(theta),y:cy-r1*Math.cos(theta),rotate:theta}));
+};
+
+
+
 function drawCircle(isLocked){
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 12);
@@ -184,56 +74,6 @@ function drawCircle(isLocked){
     var c = isLocked ? "#f00" : g.theme.bg;
     g.setColor(c);
     g.fillCircle(cx, cy, 6);
-}
-
-function toAngle(a){
-    if (a < 0){
-        return 360 + a;
-    }
-
-    if(a > 360) {
-        return 360 - a;
-    }
-
-    return a
-}
-
-
-function drawMenuItem(text, image){
-    if(text == null){
-        drawTime();
-        return
-    }
-    // image = atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==");
-
-    text = String(text);
-
-    g.reset().setBgColor("#fff").setColor("#000");
-    g.setFontAlign(0,0);
-    g.setFont("Vector", 20);
-
-    var imgWidth = image == null ? 0 : 24;
-    var strWidth = g.stringWidth(text);
-    var strHeight = text.split('\n').length > 1 ? 40 : Math.max(24, imgWidth+2);
-    var w = imgWidth + strWidth;
-
-    g.clearRect(cx-w/2-8, 40-strHeight/2-1, cx+w/2+4, 40+strHeight/2)
-
-    // Draw right line as designed by stable diffusion
-    g.drawLine(cx+w/2+5, 40-strHeight/2-1, cx+w/2+5, 40+strHeight/2);
-    g.drawLine(cx+w/2+6, 40-strHeight/2-1, cx+w/2+6, 40+strHeight/2);
-    g.drawLine(cx+w/2+7, 40-strHeight/2-1, cx+w/2+7, 40+strHeight/2);
-
-    // And finally the text
-    g.drawString(text, cx+imgWidth/2, 42);
-    g.drawString(text, cx+1+imgWidth/2, 41);
-
-    if(image != null) {
-        var scale = image.width ? imgWidth / image.width : 1;
-        g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 41-12, {scale: scale});
-    }
-
-    drawTime();
 }
 
 
@@ -292,35 +132,23 @@ function drawDigits(){
 }
 
 
-function drawDate(){
-    var menuEntry = menu[settings.menuPosX];
-
-    // The first entry is the overview...
-    if(settings.menuPosY == 0){
-        drawMenuItem(menuEntry.name, menuEntry.img);
-        return;
-    }
-
-    // Draw item if needed
-    lock_input = true;
-    var item = menuEntry.items[settings.menuPosY-1];
-    item.show();
+function draw(){
+    // Note that we force a redraw also of the clock info as
+    // we want to ensure (for design purpose) that the hands
+    // are above the clkinfo section.
+    clockInfoMenu.redraw();
 }
 
 
-
-
-
-function draw(){
+function drawMainClock(){
     // Queue draw in one minute
     queueDraw();
 
-    g.reset();
-    g.clearRect(0, 0, g.getWidth(), g.getHeight());
-    g.setColor(1,1,1);
+    g.setColor("#fff");
+    g.reset().clearRect(0, clkInfoY, g.getWidth(), g.getHeight());
 
-    drawBackground();
-    drawDate();
+    drawBackground(clkInfoY, H);
+    drawTime();
     drawCircle(Bangle.isLocked());
 }
 
@@ -330,7 +158,7 @@ function draw(){
  */
 Bangle.on('lcdPower',on=>{
     if (on) {
-        draw(true);
+        draw();
     } else { // stop draw timer
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
@@ -341,66 +169,10 @@ Bangle.on('lock', function(isLocked) {
     drawCircle(isLocked);
 });
 
-Bangle.on('touch', function(btn, e){
-    var left = parseInt(g.getWidth() * 0.22);
-    var right = g.getWidth() - left;
-    var upper = parseInt(g.getHeight() * 0.22);
-    var lower = g.getHeight() - upper;
-
-    var is_upper = e.y < upper;
-    var is_lower = e.y > lower;
-    var is_left = e.x < left && !is_upper && !is_lower;
-    var is_right = e.x > right && !is_upper && !is_lower;
-    var is_center = !is_upper && !is_lower && !is_left && !is_right;
-
-    if(lock_input){
-        return;
-    }
-
-    if(is_lower){
-        Bangle.buzz(40, 0.6);
-        settings.menuPosY = (settings.menuPosY+1) % (menu[settings.menuPosX].items.length+1);
-
-        draw();
-    }
-
-    if(is_upper){
-        Bangle.buzz(40, 0.6);
-        settings.menuPosY  = settings.menuPosY-1;
-        settings.menuPosY = settings.menuPosY < 0 ? menu[settings.menuPosX].items.length : settings.menuPosY;
-
-        draw();
-    }
-
-    if(is_right){
-        Bangle.buzz(40, 0.6);
-        settings.menuPosX = (settings.menuPosX+1) % menu.length;
-        settings.menuPosY = 0;
-        draw();
-    }
-
-    if(is_left){
-        Bangle.buzz(40, 0.6);
-        settings.menuPosY = 0;
-        settings.menuPosX  = settings.menuPosX-1;
-        settings.menuPosX = settings.menuPosX < 0 ? menu.length-1 : settings.menuPosX;
-        draw();
-    }
-
-    if(is_center){
-        if(canRunMenuItem()){
-            runMenuItem();
-        }
-    }
-});
-
 
 E.on("kill", function(){
-    try{
-        storage.write(SETTINGS_FILE, settings);
-    } catch(ex){
-        // If this fails, we still kill the app...
-    }
+    clockInfoMenu.remove();
+    delete clockInfoMenu;
 });
 
 
@@ -414,6 +186,55 @@ function queueDraw() {
       draw();
     }, 60000 - (Date.now() % 60000));
 }
+
+
+/************************************************
+ * Clock Info
+ */
+let clockInfoItems = clock_info.load();
+let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  x : 0,
+  y: 0,
+  w: W,
+  h: clkInfoY,
+  draw : (itm, info, options) => {
+    g.setFontAlign(0,0);
+    g.setFont("Vector", 20);
+
+    g.setColor("#fff");
+    g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
+    drawBackground(0, clkInfoY+2);
+
+    // Set text and font
+    var image = info.img;
+    var text = String(info.text);
+
+    var imgWidth = image == null ? 0 : 24;
+    var strWidth = g.stringWidth(text);
+    var strHeight = text.split('\n').length > 1 ? 40 : Math.max(24, imgWidth+2);
+    var w = imgWidth + strWidth;
+
+    // Draw right line as designed by stable diffusion
+    g.setColor(options.focus ? "#0f0" : "#fff");
+    g.fillRect(cx-w/2-8, 40-strHeight/2-1, cx+w/2+4, 40+strHeight/2)
+
+    g.setColor("#000");
+    g.drawLine(cx+w/2+5, 40-strHeight/2-1, cx+w/2+5, 40+strHeight/2);
+    g.drawLine(cx+w/2+6, 40-strHeight/2-1, cx+w/2+6, 40+strHeight/2);
+    g.drawLine(cx+w/2+7, 40-strHeight/2-1, cx+w/2+7, 40+strHeight/2);
+
+    // Draw text and image
+    g.drawString(text, cx+imgWidth/2, 42);
+    g.drawString(text, cx+1+imgWidth/2, 41);
+
+    if(image != null) {
+        var scale = image.width ? imgWidth / image.width : 1;
+        g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 41-12, {scale: scale});
+    }
+
+    drawMainClock();
+  }
+});
 
 
 /*
@@ -430,7 +251,7 @@ Bangle.loadWidgets();
 require('widget_utils').hide();
 
 // Clear the screen once, at startup and draw clock
-g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+g.setTheme({bg:"#fff",fg:"#000",dark:false});
 draw();
 
 // After drawing the watch face, we can draw the widgets

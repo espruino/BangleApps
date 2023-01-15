@@ -71,11 +71,15 @@ exports.load = function() {
     bangleItems[2].emit("redraw");
   }
   function altUpdateHandler() {
-    Bangle.getPressure().then(data=>{
-      if (!data) return;
-      alt = Math.round(data.altitude) + "m";
-      bangleItems[3].emit("redraw");
-    });
+    try {
+      Bangle.getPressure().then(data=>{
+        if (!data) return;
+        alt = Math.round(data.altitude) + "m";
+        bangleItems[3].emit("redraw");
+      });
+    } catch (e) {
+      print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
+      bangleItems[3].emit('redraw');}
   }
   // actual menu
   var menu = [{
@@ -239,10 +243,15 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
-      options.menuA += lr;
-      if (options.menuA<0) options.menuA = menu.length-1;
-      if (options.menuA>=menu.length) options.menuA = 0;
-      options.menuB = 0;
+      do {
+        options.menuA += lr;
+        if (options.menuA<0) options.menuA = menu.length-1;
+        if (options.menuA>=menu.length) options.menuA = 0;
+        options.menuB = 0;
+        //get the next one if the menu is empty
+        //can happen for dynamic ones (alarms, events)
+        //in the worst case we come back to 0
+      } while(menu[options.menuA].items.length==0);
     }
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
@@ -269,9 +278,12 @@ exports.addInteractive = function(menu, options) {
       if (!options.focus) {
         options.focus=true; // if not focussed, set focus
        options.redraw();
-      } else if (menu[options.menuA].items[options.menuB].run)
+      } else if (menu[options.menuA].items[options.menuB].run) {
+        Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
-      else options.focus=true;
+      } else {
+        options.focus=true;
+      }
     };
     Bangle.on("touch",touchHandler);
   }
@@ -287,6 +299,23 @@ exports.addInteractive = function(menu, options) {
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);
   };
+  options.setItem = function (menuA, menuB) {
+    if (!menu[menuA] || !menu[menuA].items[menuB] || (options.menuA == menuA && options.menuB == menuB)) {
+      // menuA or menuB did not exist or did not change
+      return false;
+    }
+
+    const oldMenuItem = menu[options.menuA].items[options.menuB];
+    if (oldMenuItem) {
+      menuHideItem(oldMenuItem);
+      oldMenuItem.removeAllListeners("draw");
+    }
+    options.menuA = menuA;
+    options.menuB = menuB;
+    menuShowItem(menu[options.menuA].items[options.menuB]);
+
+    return true;
+  }
   return options;
 };
 

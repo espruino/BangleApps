@@ -1,6 +1,6 @@
 { "id": "clkinfofw",
   "name": "Firmware Clockinfo",
-  "version":"0.01",
+  "version":"0.02",
   "description": "For clocks that display 'clockinfo', this displays the firmware version string",
   "icon": "app.png",
   "type": "clkinfo",

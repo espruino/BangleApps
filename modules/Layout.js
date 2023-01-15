@@ -267,7 +267,7 @@ Layout.prototype.layout = function (l) {
       });
     }
   };
-  cb[l.type](l);
+  if (cb[l.type]) cb[l.type](l);
 };
 Layout.prototype.debug = function(l,c) {
   if (!l) l = this._l;

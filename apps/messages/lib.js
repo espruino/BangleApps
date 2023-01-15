@@ -72,7 +72,7 @@ exports.apply = function(event, messages) {
     messages.splice(mIdx, 1);
   } else if (event.t==="add") {
     if (mIdx>=0) messages.splice(mIdx, 1); // duplicate ID! erase previous version
-    messages.unshift(event);
+    messages.unshift(event); // add at the beginning
   } else if (event.t==="modify") {
     if (mIdx>=0) messages[mIdx] = Object.assign(messages[mIdx], event);
     else messages.unshift(event);

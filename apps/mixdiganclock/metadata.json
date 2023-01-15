@@ -1,0 +1,17 @@
+{
+  "id": "mixdiganclock",
+  "name": "Mix Dig&Anal Clock",
+  "version": "0.03",
+  "description": "A dual Analog and Digital Clock, based in Mixed Clock, but with more compatibility, change of colors, thicker clock hands... ",
+  "icon": "mixdiganclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [{"url":"pic_mixdigan_bjs1.jpg"}],
+  "supports": ["BANGLEJS","BANGLEJS"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"mixdiganclock.app.js","url":"mixdiganclock.app.js"},
+    {"name":"mixdiganclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

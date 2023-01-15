@@ -1,5 +1,10 @@
 (function(back) {
   let s = require("Storage").readJSON("barclock.settings.json", true) || {};
+  // migrate "don't load widgets" to "hide widgets"
+  if (!("hideWidgets" in s) && ("loadWidgets" in s) && !s.loadWidgets) {
+    s.hideWidgets = 1;
+  }
+  delete s.loadWidgets;
 
   function save(key, value) {
     s[key] = value;
@@ -19,7 +24,7 @@
   };
   let items = {
     showDate: s.showDate,
-    loadWidgets: s.loadWidgets,
+    hideWidgets: s.hideWidgets,
   };
   // Power saving for Bangle.js 1 doesn't make sense (no updates while screen is off anyway)
   if (process.env.HWVERSION>1) {

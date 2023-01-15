@@ -2,7 +2,7 @@
   "id": "health",
   "name": "Health Tracking",
   "shortName": "Health",
-  "version": "0.17",
+  "version": "0.22",
   "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
   "tags": "tool,system,health",
@@ -16,5 +16,6 @@
     {"name":"health","url":"lib.min.js"},
     {"name":"health.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"health.json"}]
+  "data": [{"name":"health.json"}],
+  "dependencies": {"notify":"type"}
 }

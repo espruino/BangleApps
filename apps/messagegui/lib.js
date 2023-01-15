@@ -1,3 +1,11 @@
+// Will calling Bangle.load reset everything? if false, we fast load
+function loadWillReset() {
+  return Bangle.load === load || !Bangle.uiRemove;
+    /* FIXME: Maybe we need a better way of deciding if an app will
+    be fast loaded than just hard-coding a Bangle.uiRemove check.
+    Bangle.load could return a bool (as the load doesn't happen immediately). */
+}
+
 /**
  * Listener set up in boot.js, calls into here to keep boot.js short
  */
@@ -21,39 +29,33 @@ exports.listener = function(type, msg) {
   }
 
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
-  let loadMessages = (Bangle.CLOCK || event.important);
+  let loadMessages = (Bangle.CLOCK || event.important); // should we load the messages app?
   if (type==="music") {
     if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;
   }
-  if (Bangle.load === load || !Bangle.uiRemove) {
-    // no fast loading: store message to flash
-    /* FIXME: Maybe we need a better way of deciding if an app will
-    be fast loaded than just hard-coding a Bangle.uiRemove check.
-    Bangle.load could return a bool (as the load doesn't happen immediately). */
-    require("messages").save(msg);
-  } else {
-    if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
-    require("messages").apply(msg, Bangle.MESSAGES);
-    if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
-  }
+  // Write the message to Bangle.MESSAGES. We'll deal with it in messageTimeout below
+  if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
+  require("messages").apply(msg, Bangle.MESSAGES);
+  if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
   const saveToFlash = () => {
-    // save messages from RAM to flash after all, if we decide not to launch app
-    if (Bangle.MESSAGES) Bangle.MESSAGES.forEach(m => require("messages").save(m));
+    // save messages from RAM to flash if we decide not to launch app
+    // We apply all of Bangle.MESSAGES here in one write
+    if (!Bangle.MESSAGES || !Bangle.MESSAGES.length) return;
+    let messages = require("messages").getMessages(msg);
+    (Bangle.MESSAGES || []).forEach(m => require("messages").apply(m, messages));
+    require("messages").write(messages);
     delete Bangle.MESSAGES;
   }
   msg.handled = true;
-  if ((msg.t!=="add" || !msg.new) && (type!=="music")) { // music always has t:"modify"
-    saveToFlash();
-    return;
-  }
+  if ((msg.t!=="add" || !msg.new) && (type!=="music")) // music always has t:"modify"
+    return saveToFlash();
 
   const quiet = (require("Storage").readJSON("setting.json", 1) || {}).quiet;
   const unlockWatch = appSettings.unlockWatch;
   // don't auto-open messages in quiet mode if quietNoAutOpn is true
   if ((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
     loadMessages = false;
-
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
   exports.messageTimeout = setTimeout(function() {
@@ -70,6 +72,8 @@ exports.listener = function(type, msg) {
         Bangle.setLCDPower(1); // turn screen on
       }
     }
+    // if loading the gui would reload everything, we must save our messages
+    if (loadWillReset()) saveToFlash();
     exports.open(msg);
   }, 500);
 };
@@ -79,11 +83,17 @@ exports.listener = function(type, msg) {
  * @param {object} msg
  */
 exports.open = function(msg) {
-  if (msg && msg.id && !msg.show) {
-    msg.show = 1;
-    if (Bangle.load === load) {
-      // no fast loading: store message to load in flash
+  if (msg && msg.id) {
+    // force a display by setting it as new and ensuring it ends up at the beginning of messages list
+    msg.new = 1;
+    if (loadWillReset()) {
+      // no fast loading: store message to load in flash - `msg` will be put in first
       require("messages").save(msg, {force: 1});
+    } else {
+      // fast load - putting it at the end of Bangle.MESSAGES ensures it goes at the start of messages list
+      if (!Bangle.MESSAGES) Bangle.MESSAGES=[];
+      Bangle.MESSAGES = Bangle.MESSAGES.filter(m => m.id!=msg.id)
+      Bangle.MESSAGES.push(msg); // putting at the
     }
   }
 

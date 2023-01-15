@@ -1,6 +1,6 @@
 { "id": "thering",
   "name": "The Ring",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A proof of concept clock with large ring guage for steps using pre-set images, acts as a tutorial piece for discussion",
   "icon": "app.png",
   "tags": "clock",

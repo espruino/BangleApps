@@ -166,6 +166,7 @@ function draw() {
   g.drawRect(88+8,138-24, 176-10, 138+22);
 }
 
+g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
 require("FontHaxorNarrow7x17").add(Graphics);
 g.clear();
 Bangle.loadWidgets();

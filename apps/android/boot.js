@@ -134,7 +134,11 @@
         event.satellites = NaN;
         event.course = NaN;
         event.fix = 1;
-        Bangle.emit('gps', event);
+        if (event.long!==undefined) {
+          event.lon = event.long;
+          delete event.long;
+        }
+        Bangle.emit('GPS', event);
       },
       "is_gps_active": function() {
         gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
@@ -208,7 +212,7 @@
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
       // if not connected, use old logic
-      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID); 
+      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID);
       // Emulate old GPS power logic
       if (!Bangle._PWR) Bangle._PWR={};
       if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];

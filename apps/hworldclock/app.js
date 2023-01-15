@@ -104,6 +104,7 @@ let def = function(value, def) {
 let settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
 secondsMode = def(settings.secondsMode, "when unlocked");
 showSunInfo = def(settings.showSunInfo, true);
+singleOffsetSmall = def(settings.singleOffsetSmall, false);
 colorWhenDark = def(settings.colorWhenDark, "green");
 rotationTarget = def(settings.rotationTarget, "90");
 rotationTarget = parseInt(rotationTarget) || 0;
@@ -257,7 +258,7 @@ let draw = function() {
 	minutes = doublenum(dx.getMinutes());
 
 
-	if (offsets.length === 1) {
+	if (offsets.length === 1 && !singleOffsetSmall) {
 		let date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
 		// For a single secondary timezone, draw it bigger and drop time zone to second line
 		const xOffset = 30;

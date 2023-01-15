@@ -12,7 +12,7 @@
       haItems.items.push({
         name: null,
         get: () => ({ text: trigger.display, img: trigger.getIcon()}),
-        show: function() { haItems.items[i].emit("redraw"); },
+        show: function() {},
         hide: function () {},
         run: function() {
           ha.sendTrigger("TRIGGER_BW");

@@ -60,7 +60,7 @@ exports.readDailySummaries = function(d, cb) {
   }
 }
 
-// Read all records from the given month
+// Read all records from the given day
 exports.readDay = function(d, cb) {
   var rec = getRecordIdx(d);
   var fn = getRecordFN(d);

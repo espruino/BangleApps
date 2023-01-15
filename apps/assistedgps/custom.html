@@ -133,7 +133,7 @@
       function jsFromBase64(b64) {
         var bin = atob(b64);
         var chunkSize = 128;
-        var js = "\x10Bangle.setGPSPower(1);\n"; // turn GPS on
+        var js = "\x10Bangle.setGPSPower(1,'agps');\n"; // turn GPS on
         if (isB1) { // UBLOX
           //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
           //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
@@ -158,6 +158,7 @@
           var chunk = bin.substr(i,chunkSize);
           js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
         }
+         js = "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
         return js;
       }
 

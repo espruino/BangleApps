@@ -8,6 +8,7 @@
   "type": "notify",
   "tags": "widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_modules" : ["notify"],
   "storage": [
     {"name":"notify","url":"notify.js"}
   ]
