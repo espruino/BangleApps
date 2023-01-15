@@ -114,12 +114,8 @@ function onGPS(fix) {
     layout.time.label = "Time: "+formatTime(fix.time);
     layout.sat.label = "Satellites: "+satellites;
     layout.maidenhead.label = "Maidenhead: "+maidenhead;
-    layout.dataCounter.label = dataCounter;
     layout.render();
   } else {
-    layout.clear(layout.dataCounter);
-    layout.dataCounter.label = dataCounter;
-    layout.render(layout.dataCounter);
     if (fix.satelites != lastFix.satelites) {
       layout.clear(layout.sat);
       layout.sat.label = fix.satellites;
@@ -133,6 +129,9 @@ function onGPS(fix) {
       // console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
       layout.render(layout.progress);
     }
+    layout.clear(layout.dataCounter);
+    layout.dataCounter.label = dataCounter;
+    layout.render(layout.dataCounter);
   }
 
   if (listenerGPSraw == 0 && !fix.fix) {
