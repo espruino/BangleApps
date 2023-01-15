@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-  <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
+  <h1>&nbsp;&nbsp;&nbsp;1Select Fonts to upload:</h1>
   <form>
     <script type="module" src="../../core/lib/customize.js"></script>
     <script>
@@ -56,6 +56,7 @@
           }
         }
         if (n>0) {
+          fonts.push({name:"contourclock-install.json", content:n});
           sendCustomizedApp({storage:fonts});
         } else {
           alert("Please select at least one Font!");
