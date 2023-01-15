@@ -32,6 +32,8 @@
       if (settings.weekday) g.setFontAlign(0,1).drawString(require("locale").dow(date).toUpperCase(),g.getWidth()/2,g.getHeight()-18);
       // Draw Date
       if (settings.date) g.setFontAlign(0,1).drawString(require('locale').date(new Date(),1),g.getWidth()/2,g.getHeight());
+    } else {
+      require("widget_utils").hide();
     }
     require('contourclock').drawClock(settings.fontIndex);
   };
