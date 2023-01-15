@@ -45,12 +45,9 @@
       btn.addEventListener("click", function() {
         var n=0;
         var fonts = [];
-        console.log("Installing the following fonts:");
         for (fontElement of document.getElementsByName("font")) {
           if (fontElement.checked==true) {
             //var f = new Object();
-            var nextFont = require("fonts/font-"+fontElement.id+".json");
-            console.log(nextFont);
             fonts.push({
               name:"contourclock-"+n+".json",
               url:"fonts/font-"+fontElement.id+".json"
@@ -58,9 +55,8 @@
             n++;
           }
         }
-        console.log("Installation starts now!");
         if (n>0) {
-          //sendCustomizedApp({storage:fonts});
+          sendCustomizedApp({storage:fonts});
         } else {
           alert("Please select at least one Font!");
         }
