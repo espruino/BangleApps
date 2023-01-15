@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-  <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
+  <h1>&nbsp;&nbsp;&nbsp;Ver 2.0 Select Fonts to upload:</h1>
   <form>
     <script type="module" src="../../core/lib/customize.js"></script>
     <script>
@@ -45,11 +45,12 @@
       btn.addEventListener("click", function() {
         var n=0;
         var fonts = [];
+        console.log("Installing the following fonts:");
         for (fontElement of document.getElementsByName("font")) {
           if (fontElement.checked==true) {
             //var f = new Object();
             var nextFont = require("fonts/font-"+fontElement.id+".json");
-            console.log(nextFont)
+            console.log(nextFont);
             fonts.push({
               name:"contourclock-"+n+".json",
               url:"fonts/font-"+fontElement.id+".json"
@@ -57,6 +58,7 @@
             n++;
           }
         }
+        console.log("Installation starts now!");
         if (n>0) {
           //sendCustomizedApp({storage:fonts});
         } else {
