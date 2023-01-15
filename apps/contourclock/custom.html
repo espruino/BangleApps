@@ -56,7 +56,7 @@
           }
         }
         if (n>0) {
-          fonts.push({name:"contourclock-install.json", content:n});
+          fonts.push({name:"contourclock-install.json", content:""+n});
           sendCustomizedApp({storage:fonts});
         } else {
           alert("Please select at least one Font!");
