@@ -8,3 +8,4 @@
 0.09: Fix FIFO_FULL error
 0.10: Show satellites "in view" separated by GNS-system
 0.11: Show number of packets received
+0.12: Fix number of packets received
