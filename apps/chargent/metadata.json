@@ -1,13 +1,13 @@
 { "id": "chargent",
   "name": "Charge Gently",
   "version": "0.01",
-  "description": "Reduces battery wear by buzzing when the first charge stage ended.",
+  "description": "When charging, reminds you to disconnect the watch to prolong battery life.",
   "icon": "icon.png",
   "type": "bootloader",
   "tags": "battery",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
   "storage": [
-    {"name": "chargent.boot.js", "url": "boot.js"}
+    {"name": "chargent.boot.js", "url": "boot.min.js"}
   ]
 }
