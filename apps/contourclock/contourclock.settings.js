@@ -8,7 +8,7 @@
     settings.weekday=true;
     settings.date=true;
     settings.hideWhenLocked=false;
-    require('Storage').writeJSON("myapp.json", settings);
+    require('Storage').writeJSON("contourclock.json", settings);
   }
   function mainMenu() {
     E.showMenu({
