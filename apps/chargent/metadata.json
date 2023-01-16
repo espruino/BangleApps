@@ -1,0 +1,13 @@
+{ "id": "chargent",
+  "name": "Charge Gently",
+  "version": "0.01",
+  "description": "Reduces battery wear by buzzing when the first charge stage ended.",
+  "icon": "icon.png",
+  "type": "bootloader",
+  "tags": "battery",
+  "supports": ["BANGLEJS"],
+  "readme": "README.md",
+  "storage": [
+    {"name": "chargent.boot.js", "url": "boot.js"}
+  ]
+}
