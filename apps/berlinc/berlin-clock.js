@@ -7,16 +7,6 @@ const fields = [4, 4, 11, 4];
 
 let fullscreen = !!settings.fullscreen;
 
-g.clear();
-Bangle.loadWidgets();
-
-if (fullscreen){
-  if (process.env.HWVERSION == 2) require("widget_utils").swipeOn();
-  else require("widget_utils").hide();
-}
-
-Bangle.drawWidgets();
-
 let show_date = false;
 let show_time = false;
 let yy = 0;
@@ -141,6 +131,16 @@ Bangle.setUI({mode: "clockupdown", remove: cleanup}, dir=> {
   if (dir<0) toggleTime();
   if (dir>0) toggleDate();
 });
+
+g.clear();
+Bangle.loadWidgets();
+
+if (fullscreen){
+  if (process.env.HWVERSION == 2) require("widget_utils").swipeOn();
+  else require("widget_utils").hide();
+}
+
+Bangle.drawWidgets();
 
 draw();
 }
