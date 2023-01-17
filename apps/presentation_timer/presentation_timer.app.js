@@ -49,6 +49,25 @@ function log_debug(o) {
   //console.log(o);
 }
 
+function fillBlanks(slides) {
+  start = 1;
+  time = 0;
+  let arr = [];
+  for(let idx in slides) {
+    s = slides[idx];
+    if(s[1] != start) {
+      step = (s[0] - time) / (s[1] - start + 1);
+      for(let i=0; i<s[1]-start; ++i) {
+        arr.push([+(step*(i+1)+time).toFixed(2), start+i]);
+      }
+    }
+    arr.push([s[0],+s[1]]);
+    start = (+s[1]) + 1;
+    time = s[0];
+  }
+  return arr;
+}
+
 //first must be a number
 function readSlides() {
   let csv = require("Storage").read("presentation_timer.csv");
@@ -56,6 +75,11 @@ function readSlides() {
   let lines = csv.split("\n").filter(e=>e);
   log_debug("Loading "+lines.length+" slides");
   slides = lines.map(line=>{let s=line.split(";");return [+s[0],s[1]];});
+  //all numbers and always strictly increasing
+  if(slides.filter(s=>isNaN(+s[1])).length == 0 &&
+    slides.map((p,i,a)=>p[1]-(a[i-1]?a[i-1][1]:undefined)).filter(p=>p<=0).length == 0) {
+    slides = fillBlanks(slides);
+  }
 }
 
 
