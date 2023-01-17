@@ -12,5 +12,5 @@
     {"name":"pinsafe.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"pinsafe.json"}],
-  "dependencies": {"textinput":"type"},
+  "dependencies": {"textinput":"type"}
 }
