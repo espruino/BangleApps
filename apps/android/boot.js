@@ -57,7 +57,7 @@
           t:event.cmd=="incoming"?"add":"remove",
           id:"call", src:"Phone",
           positive:true, negative:true,
-          title:event.name||"Call", body:"Incoming call\n"+event.number});
+          title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
       "alarm" : function() {
@@ -134,7 +134,11 @@
         event.satellites = NaN;
         event.course = NaN;
         event.fix = 1;
-        Bangle.emit('gps', event);
+        if (event.long!==undefined) {
+          event.lon = event.long;
+          delete event.long;
+        }
+        Bangle.emit('GPS', event);
       },
       "is_gps_active": function() {
         gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
@@ -148,7 +152,7 @@
   Bangle.http = (url,options)=>{
     options = options||{};
     if (!NRF.getSecurityStatus().connected)
-      return Promise.reject("Not connected to Bluetooth");
+      return Promise.reject(/*LANG*/"Not connected to Bluetooth");
     if (Bangle.httpRequest === undefined)
       Bangle.httpRequest={};
     if (options.id === undefined) {
@@ -208,7 +212,7 @@
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
       // if not connected, use old logic
-      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID); 
+      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID);
       // Emulate old GPS power logic
       if (!Bangle._PWR) Bangle._PWR={};
       if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];

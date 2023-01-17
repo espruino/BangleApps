@@ -17,4 +17,6 @@
 0.12: Use Bangle.load and Bangle.showClock
 0.13: Fix automatic switch to clock
 0.14: Revert use of Bangle.load to classic load calls since widgets would
-still be loaded when they weren't supposed to.
+      still be loaded when they weren't supposed to.
+0.15: Ensure that we hide widgets if in fullscreen mode
+      (So that widgets are still hidden if launcher is fast-loaded)

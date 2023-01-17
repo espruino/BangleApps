@@ -32,7 +32,8 @@ const clock = new ClockFace({
     this.unlock_precision = 1;
     if (this.HRMinConfidence === undefined) this.HRMinConfidence = 50;
     if (this.PowerOnInterval === undefined) this.PowerOnInterval = 15;
-    if (this.powerSaving===undefined) this.powerSaving = true;
+    if (this.powerSave===undefined) this.powerSave = this.powerSaving; // migrate old setting
+    if (this.powerSave===undefined) this.powerSave = true;
     ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(k => {
       if (this[k]===undefined){
         if(k == "L2") this[k] = "Date";
@@ -55,7 +56,7 @@ const clock = new ClockFace({
     });
 
     // set the services (HRM, pressure sensor, etc....)
-    if(!this.powerSaving){
+    if(!this.powerSave){
       turnOnServices();
     } else{
       setInterval(turnOnServices, this.PowerOnInterval*60000); // every PowerOnInterval min
@@ -156,7 +157,7 @@ function turnOnServices(){
   if(clock.showAltitude){
     Bangle.setBarometerPower(true, "terminalclock");
   }
-  if(clock.powerSaving){
+  if(clock.powerSave){
     setTimeout(function () {
       turnOffServices();
     }, 45000);
@@ -194,7 +195,7 @@ Clock related functions but not in the ClockFace module
 ---------------------------------------------------- */
 
 function unlock(){
-  if(clock.powerSaving){
+  if(clock.powerSave){
     turnOnServices();
   }
   clock.precision = clock.unlock_precision;

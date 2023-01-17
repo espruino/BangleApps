@@ -35,7 +35,7 @@ function drawImage(fileName) {
     Bangle.setLCDBrightness(1);     // Full brightness
 
     image = eval(storage.read(fileName));   // Sadly, the only reasonable way to do this
-    g.clear().reset().drawImage(image, 88, 88, { rotate: angle });
+    g.clear().reset().setBgColor(0).setColor("#fff").drawImage(image, 88, 88, { rotate: angle });
 }
 
 setWatch(info => {
@@ -44,7 +44,7 @@ setWatch(info => {
         else angle = 0;
         Bangle.buzz();
 
-        g.clear().reset().drawImage(image, 88, 88, { rotate: angle })
+        g.clear().reset().setBgColor(0).setColor("#fff").drawImage(image, 88, 88, { rotate: angle })
     }
 }, BTN1, { repeat: true });
 

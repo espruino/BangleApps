@@ -10,6 +10,8 @@ to change (top right or  bottom left). It should change color showing
 it is selected.
 
 * Swipe up or down to cycle through the info screens that can be displayed
+  when you have finished tap again towards the centre of the screen to unselect.
+
 * Swipe left or right to change the type of info screens displayed (by default
   there is only one type of data so this will have no effect)
 

@@ -1,0 +1,3 @@
+0.01: fork from miclock, Added compatib with b widgets, devices(dynamic x,y) and themes(dynamic colors)
+0.02: Code refactored, change colors in real time
+0.03: Hour point size can be modified on real time.

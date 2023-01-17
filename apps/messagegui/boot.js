@@ -1,3 +1,1 @@
-(function() {
-  Bangle.on("message", (type, msg) => require("messagegui").listener(type, msg));
-})();
+Bangle.on("message", (type, msg) => require("messagegui").listener(type, msg));

@@ -4,7 +4,7 @@
 
     var haItems = {
       name: "Home",
-      img: atob("GBiBAf/////////n///D//+B//8A//48T/wkD/gkD/A8D+AYB8AYA4eZ4QyZMOyZN+fb5+D/B+B+B+A8B+AYB+AYB+AYB+AYB+A8Bw=="),
+      img: atob("GBiBAAAAAAAAAAAAAAAYAAA+AAB+AADD4AHb4APD4Afn8A/n+BxmOD0mnA0ksAwAMA+B8A/D8A/n8A/n8A/n8A/n8AAAAAAAAAAAAA=="),
       items: []
     };
 
@@ -12,7 +12,7 @@
       haItems.items.push({
         name: null,
         get: () => ({ text: trigger.display, img: trigger.getIcon()}),
-        show: function() { haItems.items[i].emit("redraw"); },
+        show: function() {},
         hide: function () {},
         run: function() {
           ha.sendTrigger("TRIGGER_BW");

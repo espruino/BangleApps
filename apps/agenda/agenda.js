@@ -33,16 +33,32 @@ CALENDAR=CALENDAR.sort((a,b)=>a.timestamp - b.timestamp);
 function getDate(timestamp) {
   return new Date(timestamp*1000);
 }
+function formatDay(date) {
+  if (!settings.useToday) {
+    return Locale.date(date);
+  }
+  const dateformatted = date.toISOString().split('T')[0]; // yyyy-mm-dd
+  const today = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
+  if (dateformatted == today) {
+     return /*LANG*/"Today ";
+  } else {
+    const tomorrow = new Date(Date.now() + 86400 * 1000).toISOString().split('T')[0]; // yyyy-mm-dd
+    if (dateformatted == tomorrow) {
+       return /*LANG*/"Tomorrow ";
+    }
+    return Locale.date(date);
+  }
+}
 function formatDateLong(date, includeDay, allDay) {
   let shortTime = Locale.time(date,1)+Locale.meridian(date);
   if(allDay) shortTime = "";
-  if(includeDay || allDay)
-    return Locale.date(date)+" "+shortTime;
+  if(includeDay || allDay) {
+    return formatDay(date)+" "+shortTime;
+  }
   return shortTime;
 }
 function formatDateShort(date, allDay) {
-  return Locale.date(date).replace(/\d\d\d\d/,"")+(allDay?
-    "" : Locale.time(date,1)+Locale.meridian(date));
+  return formatDay(date).replace(/\d\d\d\d/,"")+(allDay?"":Locale.time(date,1)+Locale.meridian(date));
 }
 
 var lines = [];

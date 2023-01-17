@@ -4,7 +4,7 @@
     /*LANG*/"< Back": back,
   };
   require("ClockFace_menu").addSettingsFile(menu, "saclock.settings.json", [
-    "loadWidgets"
+    "hideWidgets"
   ]);
   E.showMenu(menu);
 });

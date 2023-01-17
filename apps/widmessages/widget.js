@@ -7,6 +7,9 @@
       .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
   }
 
+  // NOTE when adding a custom "essages" widget:
+  // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
+  // see e.g. widmsggrid
   WIDGETS["messages"] = {
     area: "tl", width: 0, srcs: [], draw: function(recall) {
       // If we had a setTimeout queued from the last time we were called, remove it
@@ -18,11 +21,10 @@
       if (!this.width) return;
       let settings = Object.assign({flash: true, maxMessages: 3}, require("Storage").readJSON("messages.settings.json", true) || {});
       if (recall!==true || settings.flash) {
-        const msgsShown = E.clip(this.srcs.length, 0, settings.maxMessages),
-          srcs = Object.keys(this.srcs);
+        const msgsShown = E.clip(this.srcs.length, 0, settings.maxMessages);
         g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
         for(let i = 0; i<msgsShown; i++) {
-          const src = srcs[i];
+          const src = this.srcs[i];
           const colors = [
             g.theme.bg,
             require("messageicons").getColor(src, {settings: settings})
@@ -54,7 +56,9 @@
       var w = WIDGETS["messages"];
       if (!w || !w.width || c.x<w.x || c.x>w.x+w.width || c.y<w.y || c.y>w.y+24) return;
       require("messages").openGUI();
-    }, hide() {
+    },
+    // hide() and show() are required by the "message" library!
+    hide() {
       this.hidden=true;
       if (this.width) {
         // hide widget
@@ -67,7 +71,6 @@
     }
   };
 
-  Bangle.on("message", WIDGETS["messages"].onMsg);
-  this.srcs = {};
+  Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
   WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 })();

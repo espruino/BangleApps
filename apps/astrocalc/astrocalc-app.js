@@ -9,10 +9,9 @@
  * Calculate the Sun and Moon positions based on watch GPS and display graphically
  */
 
-const SunCalc = require("suncalc.js");
+const SunCalc = require("suncalc"); // from modules folder
 const storage = require("Storage");
-const LAST_GPS_FILE = "astrocalc.gps.json";
-let lastGPS = (storage.readJSON(LAST_GPS_FILE, 1) || null);
+const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
@@ -73,7 +72,7 @@ function drawTitle(key) {
  */
 function drawPoint(angle, radius, color) {
   const pRad = Math.PI / 180;
-  const faceWidth = 80; // watch face radius
+  const faceWidth = g.getWidth()/3; // watch face radius
   const centerPx = g.getWidth() / 2;
 
   const a = angle * pRad;
@@ -141,6 +140,7 @@ function drawData(title, obj, startX, startY) {
 
 function drawMoonPositionPage(gps, title) {
   const pos = SunCalc.getMoonPosition(new Date(), gps.lat, gps.lon);
+  const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
 
   const pageData = {
     Azimuth: pos.azimuth.toFixed(2),
@@ -150,59 +150,61 @@ function drawMoonPositionPage(gps, title) {
   };
   const azimuthDegrees = parseInt(pos.azimuth * 180 / Math.PI);
 
-  drawData(title, pageData, null, 80);
+  drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20);
   drawPoints();
-  drawPoint(azimuthDegrees, 8, {r: 1, g: 1, b: 1});
+  drawPoint(azimuthDegrees, 8, moonColor);
 
   let m = setWatch(() => {
     let m = moonIndexPageMenu(gps);
-  }, BTN3, {repeat: false, edge: "falling"});
+  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
 }
 
 function drawMoonIlluminationPage(gps, title) {
   const phaseNames = [
-    "New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous",
-    "Full Moon", "Waning Gibbous", "Last Quater", "Waning Crescent",
+    /*LANG*/"New Moon", /*LANG*/"Waxing Crescent", /*LANG*/"First Quarter", /*LANG*/"Waxing Gibbous",
+    /*LANG*/"Full Moon", /*LANG*/"Waning Gibbous", /*LANG*/"Last Quater", /*LANG*/"Waning Crescent",
   ];
 
   const phase = SunCalc.getMoonIllumination(new Date());
+  const phaseIdx = Math.round(phase.phase*8);
   const pageData = {
-    Phase: phaseNames[phase.phase],
+    Phase: phaseNames[phaseIdx],
   };
 
   drawData(title, pageData, null, 35);
-  drawMoon(phase.phase, g.getWidth() / 2, g.getHeight() / 2);
+  drawMoon(phaseIdx, g.getWidth() / 2, g.getHeight() / 2);
 
   let m = setWatch(() => {
     let m = moonIndexPageMenu(gps);
-  }, BTN3, {repease: false, edge: "falling"});
+  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
 }
 
 
 function drawMoonTimesPage(gps, title) {
   const times = SunCalc.getMoonTimes(new Date(), gps.lat, gps.lon);
+  const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
 
   const pageData = {
     Rise: dateToTimeString(times.rise),
     Set: dateToTimeString(times.set),
   };
 
-  drawData(title, pageData, null, 105);
+  drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
   drawPoints();
 
   // Draw the moon rise position
   const risePos = SunCalc.getMoonPosition(times.rise, gps.lat, gps.lon);
   const riseAzimuthDegrees = parseInt(risePos.azimuth * 180 / Math.PI);
-  drawPoint(riseAzimuthDegrees, 8, {r: 1, g: 1, b: 1});
+  drawPoint(riseAzimuthDegrees, 8, moonColor);
 
   // Draw the moon set position
   const setPos = SunCalc.getMoonPosition(times.set, gps.lat, gps.lon);
   const setAzimuthDegrees = parseInt(setPos.azimuth * 180 / Math.PI);
-  drawPoint(setAzimuthDegrees, 8, {r: 1, g: 1, b: 1});
+  drawPoint(setAzimuthDegrees, 8, moonColor);
 
   let m = setWatch(() => {
     let m = moonIndexPageMenu(gps);
-  }, BTN3, {repease: false, edge: "falling"});
+  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
 }
 
 function drawSunShowPage(gps, key, date) {
@@ -224,7 +226,7 @@ function drawSunShowPage(gps, key, date) {
     Degrees: azimuthDegrees
   };
 
-  drawData(key, pageData, null, 85);
+  drawData(key, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
 
   drawPoints();
 
@@ -233,7 +235,7 @@ function drawSunShowPage(gps, key, date) {
 
   m = setWatch(() => {
     m = sunIndexPageMenu(gps);
-  }, BTN3, {repeat: false, edge: "falling"});
+  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
 
   return null;
 }
@@ -273,15 +275,15 @@ function moonIndexPageMenu(gps) {
     },
     "Times": () => {
       m = E.showMenu();
-      drawMoonTimesPage(gps, "Times");
+      drawMoonTimesPage(gps, /*LANG*/"Times");
     },
     "Position": () => {
       m = E.showMenu();
-      drawMoonPositionPage(gps, "Position");
+      drawMoonPositionPage(gps, /*LANG*/"Position");
     },
     "Illumination": () => {
       m = E.showMenu();
-      drawMoonIlluminationPage(gps, "Illumination");
+      drawMoonIlluminationPage(gps, /*LANG*/"Illumination");
     },
     "< Back": () => m = indexPageMenu(gps),
   };
@@ -292,15 +294,15 @@ function moonIndexPageMenu(gps) {
 function indexPageMenu(gps) {
   const menu = {
     "": {
-      "title": "Select",
+      "title": /*LANG*/"Select",
     },
-    "Sun": () => {
+    /*LANG*/"Sun": () => {
       m = sunIndexPageMenu(gps);
     },
-    "Moon": () => {
+    /*LANG*/"Moon": () => {
       m = moonIndexPageMenu(gps);
     },
-    "< Exit": () => { load(); }
+    "< Back": () => { load(); }
   };
 
   return E.showMenu(menu);
@@ -310,78 +312,9 @@ function getCenterStringX(str) {
   return (g.getWidth() - g.stringWidth(str)) / 2;
 }
 
-/**
- * GPS wait page, shows GPS locating animation until it gets a lock, then moves to the Sun page
- */
-function drawGPSWaitPage() {
-  const img = require("heatshrink").decompress(atob("mEwxH+AH4A/AH4AW43GF1wwsFwYwqFwowoFw4wmFxIwdE5YAPF/4vM5nN6YAE5vMF8YtHGIgvhFpQxKF7AuOGA4vXFyAwGF63MFyIABF6xeWMC4UDLwvNGpAJG5gwSdhIIDRBLyWCIgcJHAgJJDoouQF4vMQoICBBJoeGFx6GGACIfHL6YvaX6gvZeCIdFc4gAFXogvGFxgwFDwovQCAguOGAnMMBxeG5guTGAggGGAwNKFySREcA3N5vM5gDBdpQvXEY4AKXqovGGCKbFF7AwPZQwvZGJgtGF7vGdQItG5gSIF7gASF/44WEzgwRF0wwHF1AwFF1QwDF1gvwAH4A/AFAA=="));
-  const str1 = "Astrocalc v0.02";
-  const str2 = "Locating GPS";
-  const str3 = "Please wait...";
-
-  g.clear();
-  g.drawImage(img, 100, 50);
-  g.setFont("6x8", 1);
-  g.drawString(str1, getCenterStringX(str1), 105);
-  g.drawString(str2, getCenterStringX(str2), 140);
-  g.drawString(str3, getCenterStringX(str3), 155);
-
-  if (lastGPS) {
-    lastGPS = JSON.parse(lastGPS);
-    lastGPS.time = new Date();
-
-    const str4 = "Press Button 3 to use last GPS";
-    g.setColor("#d32e29");
-    g.fillRect(0, 190, g.getWidth(), 215);
-    g.setColor("#ffffff");
-    g.drawString(str4, getCenterStringX(str4), 200);
-
-    setWatch(() => {
-      clearWatch();
-      Bangle.setGPSPower(0);
-      m = indexPageMenu(lastGPS);
-    }, BTN3, {repeat: false});
-  }
-
-  g.flip();
-
-  const DEBUG = false;
-  if (DEBUG) {
-    clearWatch();
-
-    const gps = {
-      "lat": 56.45783133333,
-      "lon": -3.02188583333,
-      "alt": 75.3,
-      "speed": 0.070376,
-      "course": NaN,
-      "time":new Date(),
-      "satellites": 4,
-      "fix": 1
-    };
-
-    m = indexPageMenu(gps);
-
-    return;
-  }
-
-  Bangle.on('GPS', (gps) => {
-    if (gps.fix === 0) return;
-    clearWatch();
-
-    if (isNaN(gps.course)) gps.course = 0;
-    require("Storage").writeJSON(LAST_GPS_FILE, JSON.stringify(gps));
-    Bangle.setGPSPower(0);
-    Bangle.buzz();
-    Bangle.setLCDPower(true);
-
-    m = indexPageMenu(gps);
-  });
-}
-
 function init() {
-  Bangle.setGPSPower(1);
-  drawGPSWaitPage();
+  let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  indexPageMenu(location);
 }
 
 let m;

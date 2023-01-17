@@ -1,13 +1,14 @@
 {
   "id": "grocery",
   "name": "Grocery",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
   "icon": "grocery.png",
   "type": "app",
   "tags": "tool,outdoors,shopping,list",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "custom": "grocery.html",
+  "interface": "interface.html",
   "allow_emulator": true,
   "storage": [
     {"name":"grocery.app.js","url":"app.js"},

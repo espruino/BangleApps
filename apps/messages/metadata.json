@@ -1,14 +1,18 @@
 {
   "id": "messages",
   "name": "Messages",
-  "version": "0.56",
+  "version": "0.58",
   "description": "Library to handle, load and store message events received from Android/iOS",
   "icon": "app.png",
   "type": "module",
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "provides_modules" : ["messages"],
-  "dependencies" : { "messagegui":"module","messagewidget":"module" },
+  "dependencies" : {
+    "messagegui":"module",
+    "message":"widget"
+  },
+  "default": true,
   "readme": "README.md",
   "storage": [
     {"name":"messages","url":"lib.js"},

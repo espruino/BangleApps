@@ -15,8 +15,9 @@ Note that each item is an object with:
 
 {
   'text'  // the text to display for this item
-  'short' : (optional) a shorter text to display for this item (at most 6 characters)
+  'short' // optional: a shorter text to display for this item (at most 6 characters)
   'img'   // optional: a 24x24px image to display for this item
+  'color' // optional: a color string (like "#ffffff") to color the icon in compatible clocks
   'v'     // (if hasRange==true) a numerical value
   'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
 }
@@ -61,23 +62,30 @@ if (stepGoal == undefined) {
 
 exports.load = function() {
   // info used for drawing...
-  var hrm = "--";
+  var hrm = 0;
   var alt = "--";
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
   function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
-  function hrmUpdateHandler() { bangleItems[2].emit("redraw"); }
+  function hrmUpdateHandler(e) {
+    if (e && e.confidence>60) hrm = Math.round(e.bpm);
+    bangleItems[2].emit("redraw");
+  }
   function altUpdateHandler() {
-    Bangle.getPressure().then(data=>{
-      if (!data) return;
-      alt = Math.round(data.altitude) + "m";
-      bangleItems[3].emit("redraw");
-    });
+    try {
+      Bangle.getPressure().then(data=>{
+        if (!data) return;
+        alt = Math.round(data.altitude) + "m";
+        bangleItems[3].emit("redraw");
+      });
+    } catch (e) {
+      print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
+      bangleItems[3].emit('redraw');}
   }
   // actual menu
   var menu = [{
     name: "Bangle",
-    img: atob("GBiBAf8B//4B//4B//4B//4A//x4//n+f/P/P+fPn+fPn+fP3+/Px+/Px+fn3+fzn+f/n/P/P/n+f/x4//4A//4B//4B//4B//8B/w=="),
+    img: atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA=="),
     items: [
     { name : "Battery",
       hasRange : true,
@@ -99,12 +107,12 @@ exports.load = function() {
     },
     { name : "HRM",
       hasRange : true,
-      get : () => { let v =  Math.round(Bangle.getHealthStatus("last").bpm); return {
-        text : v + " bpm", v : v, min : 40, max : 200,
+      get : () => { return {
+        text : (hrm||"--") + " bpm", v : hrm, min : 40, max : 200,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==")
       }},
-      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
-      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = "--"; },
+      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
+      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = 0; },
     }
   ],
   }];
@@ -236,10 +244,15 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
-      options.menuA += lr;
-      if (options.menuA<0) options.menuA = menu.length-1;
-      if (options.menuA>=menu.length) options.menuA = 0;
-      options.menuB = 0;
+      do {
+        options.menuA += lr;
+        if (options.menuA<0) options.menuA = menu.length-1;
+        if (options.menuA>=menu.length) options.menuA = 0;
+        options.menuB = 0;
+        //get the next one if the menu is empty
+        //can happen for dynamic ones (alarms, events)
+        //in the worst case we come back to 0
+      } while(menu[options.menuA].items.length==0);
     }
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
@@ -266,9 +279,12 @@ exports.addInteractive = function(menu, options) {
       if (!options.focus) {
         options.focus=true; // if not focussed, set focus
        options.redraw();
-      } else if (menu[options.menuA].items[options.menuB].run)
+      } else if (menu[options.menuA].items[options.menuB].run) {
+        Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
-      else options.focus=true;
+      } else {
+        options.focus=true;
+      }
     };
     Bangle.on("touch",touchHandler);
   }
@@ -284,6 +300,23 @@ exports.addInteractive = function(menu, options) {
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);
   };
+  options.setItem = function (menuA, menuB) {
+    if (!menu[menuA] || !menu[menuA].items[menuB] || (options.menuA == menuA && options.menuB == menuB)) {
+      // menuA or menuB did not exist or did not change
+      return false;
+    }
+
+    const oldMenuItem = menu[options.menuA].items[options.menuB];
+    if (oldMenuItem) {
+      menuHideItem(oldMenuItem);
+      oldMenuItem.removeAllListeners("draw");
+    }
+    options.menuA = menuA;
+    options.menuB = menuB;
+    menuShowItem(menu[options.menuA].items[options.menuB]);
+
+    return true;
+  }
   return options;
 };
 

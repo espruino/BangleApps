@@ -2,11 +2,8 @@
   var FILE = "terminalclock.json";
   // Load settings
   var settings = Object.assign({
-    // ClockFace lib
-    loadWidgets: true,
     // TerminalClock specific
     HRMinConfidence: 50,
-    powerSaving: true,
     PowerOnInterval: 15,
     L2: 'Date',
     L3: 'HR',
@@ -17,6 +14,18 @@
     L8: 'Empty',
     L9: 'Empty',
   }, require('Storage').readJSON(FILE, true) || {});
+  // ClockFace lib: migrate "don't load widgets" to "hide widgets"
+  if (!("hideWidgets" in settings)) {
+    if (("loadWidgets" in settings) && !settings.loadWidgets) settings.hideWidgets = 1;
+    else settings.hideWidgets = 0;
+  }
+  delete settings.loadWidgets;
+  // ClockFace lib: migrate `powerSaving` to `powerSave`
+  if (!("powerSave" in settings)) {
+    if ("powerSaving" in settings) settings.powerSave = settings.powerSaving;
+    else settings.powerSave = true;
+  }
+  delete settings.powerSaving;
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, settings);
@@ -63,25 +72,16 @@
           writeSettings();
         }
      },
-     'Show widgets': {
-        value: settings.loadWidgets,
-        onchange: v => {
-          settings.loadWidgets = v;
-          writeSettings();
-        }
-      },
-      'Power saving': {
-        value: settings.powerSaving,
-        onchange: v => {
-          settings.powerSaving = v;
-          writeSettings();
-          setTimeout(function() {
-            E.showMenu(getMainMenu());
-          },0);
-        }
-      }
     };
-    if(settings.powerSaving){
+    const save = (key, v) => {
+      settings[key] = v;
+      writeSettings();
+    };
+    require("ClockFace_menu").addItems(mainMenu, save, {
+      hideWidgets: settings.hideWidgets,
+      powerSave: settings.powerSave,
+    });
+    if(settings.powerSave){
       mainMenu['Power on interval'] = {
         value: settings.PowerOnInterval,
         min: 3, max: 60,

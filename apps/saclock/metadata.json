@@ -1,7 +1,7 @@
 { "id": "saclock",
   "name": "Simple analog clock",
   "shortName":"Analog clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A very basic analog clock",
   "screenshots": [{"url":"screenshot.png"}],
   "icon": "icon.png",

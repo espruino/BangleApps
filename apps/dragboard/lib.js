@@ -2,12 +2,14 @@ exports.input = function(options) {
   options = options||{};
   var text = options.text;
   if ("string"!=typeof text) text="";
+  let settings = require('Storage').readJSON('dragboard.json',1)||{}
 
   var R = Bangle.appRect;
+  const paramToColor = (param) => g.toColor(`#${settings[param].toString(16).padStart(3,0)}`);
   var BGCOLOR = g.theme.bg;
-  var HLCOLOR = g.theme.fg;
-  var ABCCOLOR = g.toColor(1,0,0);//'#FF0000';
-  var NUMCOLOR = g.toColor(0,1,0);//'#00FF00';
+  var HLCOLOR = settings.Highlight ? paramToColor("Highlight") : g.theme.fg;
+  var ABCCOLOR = settings.ABC ? paramToColor("ABC") : g.toColor(1,0,0);//'#FF0000';
+  var NUMCOLOR = settings.Num ? paramToColor("Num") : g.toColor(0,1,0);//'#00FF00';
   var BIGFONT = '6x8:3';
   var BIGFONTWIDTH = parseInt(BIGFONT.charAt(0)*parseInt(BIGFONT.charAt(-1)));
   var SMALLFONT = '6x8:1';
@@ -102,6 +104,7 @@ exports.input = function(options) {
   //setTimeout(initDraw, 0); // So Bangle.appRect reads the correct environment. It would draw off to the side sometimes otherwise.
 
   function changeCase(abcHL) {
+    if (settings.uppercase) return;
     g.setColor(BGCOLOR);
     g.setFontAlign(-1, -1, 0);
     g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);

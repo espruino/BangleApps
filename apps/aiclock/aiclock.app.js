@@ -1,5 +1,12 @@
-/**
+/************************************************
  * AI Clock
+ */
+ const clock_info = require("clock_info");
+
+
+
+ /************************************************
+ * Assets
  */
 require("Font7x11Numeric7Seg").add(Graphics);
 Graphics.prototype.setFontGochiHand = function(scale) {
@@ -13,33 +20,14 @@ Graphics.prototype.setFontGochiHand = function(scale) {
     return this;
 }
 
-/*
- * Set some important constants such as width, height and center
- */
-var W = g.getWidth(),R=W/2;
-var H = g.getHeight();
-var cx = W/2;
-var cy = H/2;
-var drawTimeout;
 
-/*
- * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
- */
-Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
-    angle = angle % 360;
-    var w2=w/2, h=r2-r1, theta=angle*Math.PI/180;
-    return this.fillPoly(this.transformVertices([-w2,0,-w2,-h,w2,-h,w2,0],
-        {x:cx+r1*Math.sin(theta),y:cy-r1*Math.cos(theta),rotate:theta}));
-};
-
-
-function drawBackground() {
+function drawBackground(start, end) {
     g.setFontAlign(0,0);
-    g.setColor(g.theme.fg);
+    g.setColor("#000");
 
     var bat = E.getBattery() / 100.0;
-    var y = 0;
-    while(y < H){
+    var y = start;
+    while(y < end){
         // Show less lines in case of small battery level.
         if(Math.random() > bat){
             y += 5;
@@ -55,6 +43,30 @@ function drawBackground() {
 }
 
 
+/************************************************
+ * Set some important constants such as width, height and center
+ */
+var W = g.getWidth(),R=W/2;
+var H = g.getHeight();
+var cx = W/2;
+var cy = H/2;
+var drawTimeout;
+
+var clkInfoY = 60;
+
+
+/*
+ * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
+ */
+Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
+    angle = angle % 360;
+    var w2=w/2, h=r2-r1, theta=angle*Math.PI/180;
+    return this.fillPoly(this.transformVertices([-w2,0,-w2,-h,w2,-h,w2,0],
+        {x:cx+r1*Math.sin(theta),y:cy-r1*Math.cos(theta),rotate:theta}));
+};
+
+
+
 function drawCircle(isLocked){
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 12);
@@ -64,19 +76,12 @@ function drawCircle(isLocked){
     g.fillCircle(cx, cy, 6);
 }
 
-function toAngle(a){
-    if (a < 0){
-        return 360 + a;
-    }
-
-    if(a > 360) {
-        return 360 - a;
-    }
-
-    return a
-}
 
 function drawTime(){
+    // Draw digital time first
+    drawDigits();
+
+    // And now the analog time
     var drawHourHand = g.drawRotRect.bind(g,8,12,R-38);
     var drawMinuteHand = g.drawRotRect.bind(g,6,12,R-12 );
 
@@ -90,39 +95,10 @@ function drawTime(){
     h += date.getMinutes()/60.0;
     h = parseInt(h*360/12);
 
-    // Draw minute and hour bg
-    g.setColor(g.theme.bg);
-    drawHourHand(toAngle(h-3));
-    drawHourHand(toAngle(h+3));
-    drawMinuteHand(toAngle(m-2));
-    drawMinuteHand(toAngle(m+3));
-
     // Draw minute and hour fg
     g.setColor(g.theme.fg);
     drawHourHand(h);
     drawMinuteHand(m);
-}
-
-
-
-function drawDate(){
-    var date = new Date();
-    g.setFontAlign(0,0);
-    g.setFontGochiHand();
-
-    var text = ("0"+date.getDate()).substr(-2) + "/" + ("0"+(date.getMonth()+1)).substr(-2);
-    var w = g.stringWidth(text);
-    g.setColor(g.theme.bg);
-    g.fillRect(cx-w/2-4, 20, cx+w/2+4, 40+12);
-
-    g.setColor(g.theme.fg);
-    // Draw right line as designed by stable diffusion
-    g.drawLine(cx+w/2+5, 20, cx+w/2+5, 40+12);
-    g.drawLine(cx+w/2+6, 20, cx+w/2+6, 40+12);
-    g.drawLine(cx+w/2+7, 20, cx+w/2+7, 40+12);
-
-    // And finally the text
-    g.drawString(text, cx, 40);
 }
 
 
@@ -156,19 +132,22 @@ function drawDigits(){
 }
 
 
-
 function draw(){
+    // Note that we force a redraw also of the clock info as
+    // we want to ensure (for design purpose) that the hands
+    // are above the clkinfo section.
+    clockInfoMenu.redraw();
+}
+
+
+function drawMainClock(){
     // Queue draw in one minute
     queueDraw();
 
+    g.setColor("#fff");
+    g.reset().clearRect(0, clkInfoY, g.getWidth(), g.getHeight());
 
-    g.reset();
-    g.clearRect(0, 0, g.getWidth(), g.getHeight());
-
-    g.setColor(1,1,1);
-    drawBackground();
-    drawDate();
-    drawDigits();
+    drawBackground(clkInfoY, H);
     drawTime();
     drawCircle(Bangle.isLocked());
 }
@@ -179,7 +158,7 @@ function draw(){
  */
 Bangle.on('lcdPower',on=>{
     if (on) {
-        draw(true);
+        draw();
     } else { // stop draw timer
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
@@ -188,6 +167,12 @@ Bangle.on('lcdPower',on=>{
 
 Bangle.on('lock', function(isLocked) {
     drawCircle(isLocked);
+});
+
+
+E.on("kill", function(){
+    clockInfoMenu.remove();
+    delete clockInfoMenu;
 });
 
 
@@ -203,6 +188,54 @@ function queueDraw() {
 }
 
 
+/************************************************
+ * Clock Info
+ */
+let clockInfoItems = clock_info.load();
+let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  x : 0,
+  y: 0,
+  w: W,
+  h: clkInfoY,
+  draw : (itm, info, options) => {
+    g.setFontAlign(0,0);
+    g.setFont("Vector", 20);
+
+    g.setColor("#fff");
+    g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
+    drawBackground(0, clkInfoY+2);
+
+    // Set text and font
+    var image = info.img;
+    var text = String(info.text);
+
+    var imgWidth = image == null ? 0 : 24;
+    var strWidth = g.stringWidth(text);
+    var strHeight = text.split('\n').length > 1 ? 40 : Math.max(24, imgWidth+2);
+    var w = imgWidth + strWidth;
+
+    // Draw right line as designed by stable diffusion
+    g.setColor(options.focus ? "#0f0" : "#fff");
+    g.fillRect(cx-w/2-8, 40-strHeight/2-1, cx+w/2+4, 40+strHeight/2)
+
+    g.setColor("#000");
+    g.drawLine(cx+w/2+5, 40-strHeight/2-1, cx+w/2+5, 40+strHeight/2);
+    g.drawLine(cx+w/2+6, 40-strHeight/2-1, cx+w/2+6, 40+strHeight/2);
+    g.drawLine(cx+w/2+7, 40-strHeight/2-1, cx+w/2+7, 40+strHeight/2);
+
+    // Draw text and image
+    g.drawString(text, cx+imgWidth/2, 42);
+    g.drawString(text, cx+1+imgWidth/2, 41);
+
+    if(image != null) {
+        var scale = image.width ? imgWidth / image.width : 1;
+        g.drawImage(image, W/2 + -strWidth/2-4 - parseInt(imgWidth/2), 41-12, {scale: scale});
+    }
+
+    drawMainClock();
+  }
+});
+
 
 /*
  * Lets start widgets, listen for btn etc.
@@ -216,8 +249,9 @@ Bangle.loadWidgets();
  * area to the top bar doesn't get cleared.
  */
 require('widget_utils').hide();
+
 // Clear the screen once, at startup and draw clock
-g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();
+g.setTheme({bg:"#fff",fg:"#000",dark:false});
 draw();
 
 // After drawing the watch face, we can draw the widgets

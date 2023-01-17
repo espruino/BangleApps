@@ -1,5 +1,6 @@
 const h = g.getHeight();
 const w = g.getWidth();
+const widget_utils = require('widget_utils');
 // palette for 0-40%
 const pal1 = new Uint16Array([g.theme.bg, g.toColor("#020"), g.toColor("#0f0"), g.toColor("#00f")]);
 // palette for 50-100%
@@ -215,10 +216,8 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 /*
  * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+widget_utils.hide();
 
 draw();
 setInterval(draw, 60000);
