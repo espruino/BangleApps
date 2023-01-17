@@ -13,5 +13,8 @@
     {"name":"presentation_timer.app.js","url":"presentation_timer.app.js"},
     {"name":"presentation_timer.img","url":"presentation_timer.icon.js","evaluate":true}
   ],
-  "data": [{ "name": "presentation_timer.csv" }]
+  "data": [
+    {"name":"presentation_timer.json"}
+    { "name": "presentation_timer.csv" }
+  ]
 }
