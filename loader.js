@@ -72,6 +72,7 @@ var submittedUsageInfo = "";
 function sendUsageStats() {
   if (!SETTINGS.sendUsageStats) return; // not allowed!
   if (device.uid === undefined) return; // no data yet!
+  if (!device.appsInstalled.length) return; // no installed apps or disconnected
   /* Work out what we'll send:
   * A suitably garbled UID so we can avoid too many duplicates
   * firmware version
