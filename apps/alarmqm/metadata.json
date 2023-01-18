@@ -4,9 +4,9 @@
   "version":"0.01",
   "description": "Service that turns off quiet mode after alarm dismiss",
   "icon": "app.png",
-  "tags": "",
+  "tags": "bluetooth,quiet,mode,alarm",
   "supports" : ["BANGLEJS2"],
-  "readme": "README.md",
+  "type": "bootloader",
   "storage": [
     {"name":"alarmqm.boot.js","url":"boot.js"}
   ]
