@@ -36,6 +36,7 @@ function showAlarm(alarm) {
         alarm.ot = alarm.t;
       }
       alarm.t += settings.defaultSnoozeMillis;
+      Bangle.emit("alarmSnooze", alarm);
     } else {
       let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
       if (del) {
@@ -52,6 +53,7 @@ function showAlarm(alarm) {
           alarm.on = false;
         }
       }
+      Bangle.emit("alarmDismiss", alarm);
     }
 
     // The updated alarm is still a member of 'alarms'
