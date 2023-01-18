@@ -145,4 +145,5 @@ exports.swipeOn = function(autohide) {
 
   };
   Bangle.on("swipe", exports.swipeHandler);
+  Bangle.drawWidgets();
 };

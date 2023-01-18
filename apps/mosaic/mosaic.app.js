@@ -2,6 +2,7 @@ Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
 };
 
+{
 const SETTINGS_FILE = "mosaic.settings.json";
 let settings;
 let theme;
@@ -24,11 +25,11 @@ let digits = [
   E.toArrayBuffer(atob("BQcB/Gsex+A="))
 ];
 
-function loadSettings() {
+let loadSettings = function() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'showWidgets': false, 'theme':'System'};
 }
 
-function loadThemeColors() {
+let loadThemeColors = function() {
   theme = {fg: g.theme.fg, bg: g.theme.bg};
   if (settings.theme === "Dark") {
     theme.fg = g.toColor(1,1,1);
@@ -40,7 +41,7 @@ function loadThemeColors() {
   }
 }
 
-function queueDraw(seconds) {
+let queueDraw = function(seconds) {
   let millisecs = seconds * 1000;
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -49,7 +50,7 @@ function queueDraw(seconds) {
   }, millisecs - (Date.now() % millisecs));
 }
 
-function draw() {
+let draw = function() {
   // draw colourful grid
   for (let i_x = 0; i_x < num_squares_w; i_x++) {
     for (let i_y = 0; i_y < num_squares_h; i_y++) {
@@ -87,8 +88,6 @@ let o_h = Math.floor((g.getHeight() - num_squares_h * s+offset_widgets)/2);
 let mid_x = Math.floor(num_squares_w/2);
 let mid_y = Math.floor((num_squares_h-1)/2);
 
-draw();
-
 Bangle.on('lcdPower',on=>{
   if (on) {
     draw(); // draw immediately, queue redraw
@@ -98,8 +97,23 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI('clock');
+Bangle.setUI({
+  mode : 'clock',
+  remove : function() {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    delete Array.prototype.sample;
+    require('widget_utils').show(); // re-show widgets
+  }
+});
+
+Bangle.loadWidgets();
 if (settings.showWidgets) {
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
+} else {
+  require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+}
+
+draw();
 }
