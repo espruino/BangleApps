@@ -101,7 +101,7 @@ Bangle.on('touch',t => {
     g.setFontAlign(0, 0).setFont("6x8", 2).drawString(dateStr, x, y+28);
     g.setFontAlign(0, 0).setFont("6x8", 2);
     g.drawString(getSteps(), 50, y+70);
-    g.drawString(Math.round(Bangle.getHealthStatus("last").bpm), g.getWidth() -37, y + 70);
+    g.drawString(Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm), g.getWidth() -37, y + 70);
 
     // queue next draw
     if (drawTimeout) clearTimeout(drawTimeout);
