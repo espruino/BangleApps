@@ -4,7 +4,7 @@
   "version":"0.01",
   "description": "Service that turns off quiet mode after alarm dismiss",
   "icon": "app.png",
-  "tags": "bluetooth,quiet,mode,alarm",
+  "tags": "quiet,alarm",
   "supports" : ["BANGLEJS2"],
   "type": "bootloader",
   "storage": [
