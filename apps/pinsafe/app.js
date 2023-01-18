@@ -1,9 +1,6 @@
 var Layout = require("Layout");
-var key = "";
 var myTimeout;
 var pins = Object.assign(require('Storage').readJSON("pinsafe.json", true) || {});
-print (pins);
-
 function mainMenu() {
   if (myTimeout) clearTimeout(myTimeout);
   var menu = {
@@ -11,12 +8,13 @@ function mainMenu() {
     "< Back" : Bangle.load
   };
   if (Object.keys(pins).length==0) Object.assign(menu, {"NO CARDS":""});
-  else for (let c in pins) {
-    let pin=pins[c];
-    menu[c]=()=>{decode(pin);};
+  else for (let id in pins) {
+    let p=pins[id];
+    menu[id]=()=>{decode(p);};
   }
-  Object.assign(menu, {"Add Card": addCard});
-  Object.assign(menu, {"Remove Card":removeCard});
+  menu["Add Card"]=addCard;
+  menu["Remove Card"]=removeCard;
+  g.clear();
   E.showMenu(menu);
 }
 function decode(pin) {
@@ -48,40 +46,41 @@ function showNumpad(text, callback) {
     update();
   }
   function update() {
-    numPad.clear(numPad.output);
-    numPad.output.label="Key:"+key;
-    numPad.render(numPad.output);
+    g.reset();
+    g.clearRect(0,0,g.getWidth(),23);
+    g.setFont("Vector:24").setFontAlign(1,0).drawString(text+key,g.getWidth(),12);
   }
+  ds="12%";
   var numPad = new Layout ({
       type:"v", c: [{
-        type:"v", width:180, c: [
-          {type:"txt", font:"15%", pad:1, fillx:1, filly:1, id: "output", label:text+key},
-          {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"7", cb:l=>{addDigit("7");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"8", cb:l=>{addDigit("8");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"9", cb:l=>{addDigit("9");}}
+        type:"v", c: [
+          {type:"", height:24},
+          {type:"h",filly:1, c: [
+            {type:"btn", font:ds, width:58, label:"7", cb:l=>{addDigit("7");}},
+            {type:"btn", font:ds, width:58, label:"8", cb:l=>{addDigit("8");}},
+            {type:"btn", font:ds, width:58, label:"9", cb:l=>{addDigit("9");}}
           ]},
-        {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"4", cb:l=>{addDigit("4");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"5", cb:l=>{addDigit("5");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"6", cb:l=>{addDigit("6");}}
+          {type:"h",filly:1, c: [
+            {type:"btn", font:ds, width:58, label:"4", cb:l=>{addDigit("4");}},
+            {type:"btn", font:ds, width:58, label:"5", cb:l=>{addDigit("5");}},
+            {type:"btn", font:ds, width:58, label:"6", cb:l=>{addDigit("6");}}
           ]},
-          {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"1", cb:l=>{addDigit("1");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"2", cb:l=>{addDigit("2");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:"3", cb:l=>{addDigit("3");}}
+          {type:"h",filly:1, c: [
+            {type:"btn", font:ds, width:58, label:"1", cb:l=>{addDigit("1");}},
+            {type:"btn", font:ds, width:58, label:"2", cb:l=>{addDigit("2");}},
+            {type:"btn", font:ds, width:58, label:"3", cb:l=>{addDigit("3");}}
           ]},
-          {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:" 0 ", cb:l=>{addDigit("0");}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label:" C ", cb:l=>{key=key.slice(0,-1); update();}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, id:"OK", label:" OK", cb:callback}
+          {type:"h",filly:1, c: [
+            {type:"btn", font:ds, width:58, label:"0", cb:l=>{addDigit("0");}},
+            {type:"btn", font:ds, width:58, label:"C", cb:l=>{key=key.slice(0,-1); update();}},
+            {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb:callback}
           ]}
         ]}
       ], lazy:true});
   g.clear();
   numPad.render();  
+  update();
 }
-
 function removeCard() {
   var menu = {
     "" : {title : "select card"},
@@ -97,8 +96,12 @@ function removeCard() {
           {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Delete"},
           {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:card+"?"},
           {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{delete pins[card];mainMenu();}},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "NO", cb:l=>{mainMenu();}}
+            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+              delete pins[card];          
+              require('Storage').writeJSON("pinsafe.json", pins);
+              mainMenu();
+            }},
+            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
           ]}
         ], lazy:true});
       g.clear();
@@ -108,9 +111,9 @@ function removeCard() {
   E.showMenu(menu);
 }
 function addCard() {
-  var help = new Layout({
+  var infoScreen = new Layout({
     type:"v", c: [
-      {type:"btn", font:"8%", label:"Enter a name, PIN\nand key for your\ncard. The pin will\nbe stored on your\ndevice in encrypted\nform.", cb:l=>{
+      {type:"txt", font:"10%", label:"Enter a name, PIN\nand key for your\ncard. The PIN will\nbe stored on your\ndevice in encrypted\nform.\nTap to continue!", cb:l=>{
         require("textinput").input({text:""}).then(result => {
           if (pins[result]!=undefined) {
             E.showMenu();
@@ -132,9 +135,8 @@ function addCard() {
     ]
   });
   g.clear();
-  help.render();
+  infoScreen.render();
 }
-
 function encodeCard(name) {
   showNumpad("PIN:", function() {
     if (key.length==0) mainMenu();
@@ -157,6 +159,5 @@ function encodeCard(name) {
   });
 }
 g.reset();
-g.clear();
 Bangle.setUI();
 mainMenu();
