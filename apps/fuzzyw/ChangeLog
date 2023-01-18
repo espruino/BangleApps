@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Move translations to locale module (removed watch settings, now pick language in Bangle App Loader, More..., Settings)
+0.03: Change for fast loading, use widget_utils to hide widgets 
