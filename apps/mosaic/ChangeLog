@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Use locale time
+0.03: Change for fast loading, use widget_utils to hide widgets 

@@ -8,3 +8,4 @@
 0.26: Time formatted to locale
 0.27: Fixed the timing code, which sometimes did not update for one minute
 0.28: More config options for cleaner look, enabled fast loading
+0.29: Fixed a bug that would leave old font files in storage.

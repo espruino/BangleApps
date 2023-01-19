@@ -7,3 +7,4 @@
 0.07: Use default Bangle formatter for booleans
 0.08: fix idle timer always getting set to true
 0.09: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.10: Use widget_utils.

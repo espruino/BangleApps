@@ -1,6 +1,6 @@
 (function(back) {
 
-  
+
 
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
@@ -36,7 +36,7 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>require("message").openGUI(),
+    /*LANG*/"Messages" : ()=>require("messages").openGUI(),
   };
   E.showMenu(mainmenu);
 })
