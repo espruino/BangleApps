@@ -39,3 +39,4 @@
 0.21: Remade all icons without a palette for dark theme
       Now re-adds widgets if they were hidden when fast-loading
 0.22: Fixed crash if item has no image and cutting long overflowing text
+0.23: Setting circles colours per clkinfo and not position

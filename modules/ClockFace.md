@@ -140,7 +140,7 @@ For example:
    // now
    clock.showDate === false;
    clock.foo === 123;
-   clock.loadWidgets === true; // default when not in settings file
+   clock.hideWidgets === 0; // default when not in settings file
    clock.is12Hour === ??; // not in settings file: uses global setting
    clock.start();
 
@@ -152,13 +152,14 @@ The following properties are automatically set on the clock:
 * `is12Hour`: `true` if the "Time Format" setting is set to "12h", `false` for "24h".
 * `paused`: `true` while the clock is paused.  (You don't need to check this inside your `draw()` code)
 * `showDate`: `true` (if not overridden through the settings file.)
-* `loadWidgets`: `true` (if not overridden through the settings file.)   
-   If set to `false` before calling `start()`, the clock won't call `Bangle.loadWidgets();` for you.
-   Best is to add a setting for this, but if you never want to load widgets, you could do this:
+* `hideWidgets`: `0` (if not overridden through the settings file.)   
+   If set to `1` before calling `start()`, the clock calls `require("widget_utils")hide();` for you. 
+   (Bangle.js 2 only: `2` for swipe-down)
+   Best is to add a setting for this, but if you never want to show widgets, you could do this:
    ```js
    var ClockFace = require("ClockFace");
    var clock = new ClockFace({draw: function(){/*...*/}});
-   clock.loadWidgets = false; // prevent loading of widgets
+   clock.hideWidgets = 1; // hide widgets
    clock.start();
    ```
 
@@ -200,7 +201,7 @@ let menu = {
 };
 require("ClockFace_menu").addItems(menu, save, { 
   showDate: settings.showDate, 
-  loadWidgets: settings.loadWidgets,
+  hideWidgets: settings.hideWidgets,
 });
 E.showMenu(menu);
 
@@ -213,7 +214,7 @@ let menu = {
   /*LANG*/"< Back": back,  
 };
 require("ClockFace_menu").addSettingsFile(menu, "<appid>.settings.json", [ 
-  "showDate", "loadWidgets", "powerSave",
+  "showDate", "hideWidgets", "powerSave",
 ]);
 E.showMenu(menu);
 

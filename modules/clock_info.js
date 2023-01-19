@@ -71,11 +71,15 @@ exports.load = function() {
     bangleItems[2].emit("redraw");
   }
   function altUpdateHandler() {
-    Bangle.getPressure().then(data=>{
-      if (!data) return;
-      alt = Math.round(data.altitude) + "m";
-      bangleItems[3].emit("redraw");
-    });
+    try {
+      Bangle.getPressure().then(data=>{
+        if (!data) return;
+        alt = Math.round(data.altitude) + "m";
+        bangleItems[3].emit("redraw");
+      });
+    } catch (e) {
+      print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
+      bangleItems[3].emit('redraw');}
   }
   // actual menu
   var menu = [{
@@ -292,6 +296,23 @@ exports.addInteractive = function(menu, options) {
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);
   };
+  options.setItem = function (menuA, menuB) {
+    if (!menu[menuA] || !menu[menuA].items[menuB] || (options.menuA == menuA && options.menuB == menuB)) {
+      // menuA or menuB did not exist or did not change
+      return false;
+    }
+
+    const oldMenuItem = menu[options.menuA].items[options.menuB];
+    if (oldMenuItem) {
+      menuHideItem(oldMenuItem);
+      oldMenuItem.removeAllListeners("draw");
+    }
+    options.menuA = menuA;
+    options.menuB = menuB;
+    menuShowItem(menu[options.menuA].items[options.menuB]);
+
+    return true;
+  }
   return options;
 };
 

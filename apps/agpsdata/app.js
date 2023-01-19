@@ -23,12 +23,26 @@ Bangle.drawWidgets();
 
 let waiting = false;
 
-function start() {
+function start(restart) {
   g.reset();
   g.clear();
   waiting = false;
-  display("Retry?", "touch to retry");
+  if (!restart) {
+    display("Start?", "touch to start");
+  }
+  else {
+    display("Retry?", "touch to retry");
+  }
   Bangle.on("touch", () => { updateAgps(); });
+
+  const file = "agpsdata.json";
+  let data = require("Storage").readJSON(file, 1) || {};
+  if (data.lastUpdate) {
+    g.setFont("Vector", 11);
+    g.drawString("last success:", 5, g.getHeight() - 22);
+    g.drawString(new Date(data.lastUpdate).toISOString(), 5, g.getHeight() - 11);
+  }
+
 }
 
 function updateAgps() {
@@ -36,7 +50,7 @@ function updateAgps() {
   g.clear();
   if (!waiting) {
     waiting = true;
-    display("Updating A-GPS...", "takes ~ 10 seconds");
+    display("Updating A-GPS...", "takes ~10 seconds");
     require("agpsdata").pull(function() {
       waiting = false;
       display("A-GPS updated.", "touch to close");
@@ -45,10 +59,10 @@ function updateAgps() {
     function(error) {
       waiting = false;
       E.showAlert(error, "Error")
-                    .then(() => { start(); });
+                    .then(() => { start(true); });
     });
   } else {
     display("Waiting...");
   }
 }
-updateAgps();
+start(false);

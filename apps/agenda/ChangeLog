@@ -9,3 +9,5 @@
       Fix clkinfo icon
 0.09: Ensure Agenda supplies an image for clkinfo items
 0.10: Update clock_info to avoid a redraw
+0.11: Setting to use "Today" and "Yesterday" instead of dates
+      Added dynamic, short and range fields to clkinfo

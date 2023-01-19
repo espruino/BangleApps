@@ -85,9 +85,9 @@
   }
 
   const setUI = function(options, cb) {
+    delete Bangle.uiRemove; // don't clear out things when switching UI within the app
     options = Object.assign({remove: () => uiRemove()}, options);
     Bangle.setUI(options, cb);
-    Bangle.on("message", onMessage);
   };
 
   const remove = function(msg) {
@@ -1161,48 +1161,49 @@
     idx = MESSAGES.findIndex(m => m.src && m.src.toLowerCase().startsWith("alarm"));
     if (idx>=0) alarm = MESSAGES.splice(idx, 1)[0];
   };
-  if (MESSAGES!==undefined) { // only if loading MESSAGES worked
-    g.reset().clear();
-    Bangle.loadWidgets();
-    require("messages").toggleWidget(false);
-    Bangle.drawWidgets();
-    findSpecials(); // sets global vars for special messages
-    // any message we asked to show?
-    const showIdx = MESSAGES.findIndex(m => m.show);
-    // any new text messages?
-    const newIdx = MESSAGES.findIndex(m => m.new);
 
-    // figure out why the app was loaded
-    if (showIdx>=0) show(showIdx);
-    else if (call && call.new) showCall();
-    else if (alarm && alarm.new) showAlarm();
-    else if (map && map.new) showMap();
-    else if (music && music.new && settings().openMusic) {
-      if (settings().alwaysShowMusic===undefined) {
-        // if not explicitly disabled, enable this the first time we see music
-        let s = settings();
-        s.alwaysShowMusic = true;
-        require("Storage").writeJSON("messages.settings.json", s);
-      }
-      showMusic();
+  // Internal setUI suppresses Bangle.uiRemove between internal screens, so we
+  // need to call setUI to run uiRemove from previous app when fast-loaded.
+  Bangle.setUI();
+  Bangle.loadWidgets();
+  require("messages").toggleWidget(false);
+  Bangle.drawWidgets();
+  findSpecials(); // sets global vars for special messages
+  // any message we asked to show?
+  const showIdx = MESSAGES.findIndex(m => m.show);
+  // any new text messages?
+  const newIdx = MESSAGES.findIndex(m => m.new);
+
+  // figure out why the app was loaded
+  if (showIdx>=0) show(showIdx);
+  else if (call && call.new) showCall();
+  else if (alarm && alarm.new) showAlarm();
+  else if (map && map.new) showMap();
+  else if (music && music.new && settings().openMusic) {
+    if (settings().alwaysShowMusic===undefined) {
+      // if not explicitly disabled, enable this the first time we see music
+      let s = settings();
+      s.alwaysShowMusic = true;
+      require("Storage").writeJSON("messages.settings.json", s);
     }
-    // check for new message last: Maybe we already showed it, but timed out before
-    // if that happened, and we're loading for e.g. music now, we want to show the music screen
-    else if (newIdx>=0) {
-      showMessage(newIdx);
-      // auto-loaded for message(s): auto-close after timeout
-      let unreadTimeoutSecs = settings().unreadTimeout;
-      if (unreadTimeoutSecs===undefined) unreadTimeoutSecs = 60;
-      if (unreadTimeoutSecs) {
-        unreadTimeout = setTimeout(load, unreadTimeoutSecs*1000);
-      }
-    } else if (MESSAGES.length) { // not autoloaded, but we have messages to show
-      back = "main"; // prevent "back" from loading clock
-      showMessage();
-    } else showMain();
-
-    // stop buzzing, auto-close timeout on input
-    ["touch", "drag", "swipe"].forEach(l => Bangle.on(l, clearUnreadStuff));
-    (B2 ? [BTN1] : [BTN1, BTN2, BTN3]).forEach(b => watches.push(setWatch(clearUnreadStuff, b, false)));
+    showMusic();
   }
+  // check for new message last: Maybe we already showed it, but timed out before
+  // if that happened, and we're loading for e.g. music now, we want to show the music screen
+  else if (newIdx>=0) {
+    showMessage(newIdx);
+    // auto-loaded for message(s): auto-close after timeout
+    let unreadTimeoutSecs = settings().unreadTimeout;
+    if (unreadTimeoutSecs===undefined) unreadTimeoutSecs = 60;
+    if (unreadTimeoutSecs) {
+      unreadTimeout = setTimeout(load, unreadTimeoutSecs*1000);
+    }
+  } else if (MESSAGES.length) { // not autoloaded, but we have messages to show
+    back = "main"; // prevent "back" from loading clock
+    showMessage();
+  } else showMain();
+
+  // stop buzzing, auto-close timeout on input
+  ["touch", "drag", "swipe"].forEach(l => Bangle.on(l, clearUnreadStuff));
+  (B2 ? [BTN1] : [BTN1, BTN2, BTN3]).forEach(b => watches.push(setWatch(clearUnreadStuff, b, false)));
 }
