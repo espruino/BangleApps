@@ -47,6 +47,8 @@ layout.render();
 - A `wrap` field to enable line wrapping. Requires some combination of `width`/`height` and `fillx`/`filly` to be set. Not compatible with text rotation.
 - A `col` field, eg `#f00` for red
 - A `bgCol` field for background color (will automatically fill on render)
+- A `btnCol` field for button background color (will default to theme if not set)
+- A `btnBorder` field for button border color (will default to theme if not set)
 - A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
 - A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
 - A `pad` integer field to set pixels padding
