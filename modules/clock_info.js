@@ -54,7 +54,7 @@ let storage = require("Storage");
 let stepGoal = undefined;
 // Load step goal from health app and pedometer widget
 let d = storage.readJSON("health.json", true) || {};
-stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+stepGoal = d.stepGoal;
 if (stepGoal == undefined) {
   d = storage.readJSON("wpedom.json", true) || {};
   stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
