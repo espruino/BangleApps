@@ -1,4 +1,6 @@
 (function () {
+  var settings = require("Storage").readJSON("backswipe.json", 1) || {};
+
   // Overrride the default setUI method, so we can save the back button callback
   var setUI = Bangle.setUI;
   Bangle.setUI = function (mode, cb) {
@@ -7,9 +9,11 @@
       options = mode;
     }
 
+    var currentFile = global.__FILE__ || "";
+
     print("Setting UI");
     if(global.BACK) delete global.BACK;
-    if (options && options.back) {
+    if (options && options.back && enabledForApp(currentFile)) {
       print("Saving back callback");
       global.BACK = options.back;
     }
@@ -28,6 +32,17 @@
     }
   }
 
+  function enabledForApp(app) {
+    if (!settings) return true;
+    if (settings.mode === "blacklist") {
+      return !settings.apps.includes(app);
+    } else if (settings.mode === "whitelist") {
+      return settings.apps.includes(app);
+    } else {
+      return settings.mode === "on" ? true : false;
+    }
+  }
+  
   // Listen to left to right swipe
   Bangle.on("swipe", goBack);
 })();

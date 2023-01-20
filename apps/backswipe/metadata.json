@@ -8,6 +8,10 @@
   "supports" : ["BANGLEJS2"],
   "type": "bootloader",
   "storage": [
-    {"name":"backswipe.boot.js","url":"boot.js"}
+    {"name":"backswipe.boot.js","url":"boot.js"},
+    {"name":"backswipe.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"backswipe.json"}
   ]
 }
