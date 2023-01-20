@@ -1,5 +1,3 @@
-// TODO debounce
-
 const UPDATE_MILLISECONDS = 30 * 1000;
 
 let acc: undefined | AccelData;
@@ -217,7 +215,6 @@ const updateBleAdvert = () => {
 // }
 const encodeHrm = () => [0, hrm ? hrm.bpm : 0];
 
-// TODO: emit this via set/updateServices
 const encodeBarServiceData = (data: PressureData) => {
   const t = toByteArray(Math.round(data.temperature * 100), 2, true);
   const p = toByteArray(Math.round(data.pressure * 1000), 4, false);
@@ -338,6 +335,8 @@ NRF.on("disconnect", () => {
   updateInterval = undefined;
 });
 
+// TODO debounce
+// TODO: emit other data beside HRM (via set/updateServices)
 // FIXME: ui overlap
 // Bangle.loadWidgets();
 // Bangle.drawWidgets();
