@@ -1,6 +1,6 @@
 {
   "id": "btadv",
-  "name": "Export real-time sensor data over BLE",
+  "name": "btadv",
   "shortName": "btadv",
   "version": "0.01",
   "description": "Advertise & export live heart rate, accel, pressure, GPS & mag data over bluetooth",
