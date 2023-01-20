@@ -11,3 +11,4 @@
 0.10: Update clock_info to avoid a redraw
 0.11: Setting to use "Today" and "Yesterday" instead of dates
       Added dynamic, short and range fields to clkinfo
+0.12: Added color field and updating clkinfo periodically (running events)
