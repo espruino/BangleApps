@@ -1,5 +1,19 @@
 "use strict";
-var UPDATE_MILLISECONDS = 30 * 1000;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var _a, _b;
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+var ADVERT_MS = 30 * 1000;
 var acc;
 var bar;
 var gps;
@@ -23,8 +37,7 @@ var showMainMenu = function () {
         curMenu = cur;
     }; };
     mainMenu[""] = {
-        "title": "--  btadv  --",
-        back: showMainMenu,
+        "title": "BLE Advert",
     };
     mainMenu[""].scroll = mainMenuScroll;
     mainMenu["Acceleration"] = showMenu(accMenu, 0, "acc");
@@ -36,15 +49,18 @@ var showMainMenu = function () {
     E.showMenu(mainMenu);
     curMenu = "main";
 };
+var optionsCommon = {
+    back: showMainMenu,
+};
 var accMenu = {
-    "": { "title": "- Acceleration -" },
+    "": __assign({ "title": "Acceleration -" }, optionsCommon),
     "Active": { value: "true (fixed)" },
     "x": { value: "" },
     "y": { value: "" },
     "z": { value: "" },
 };
 var barMenu = {
-    "": { "title": "-  Barometer   -" },
+    "": __assign({ "title": "Barometer" }, optionsCommon),
     "Active": {
         value: settings.barEnabled,
         onchange: function (v) { return updateSetting('barEnabled', v); },
@@ -54,7 +70,7 @@ var barMenu = {
     "Temp": { value: "" },
 };
 var gpsMenu = {
-    "": { "title": "-      GPS     -" },
+    "": __assign({ "title": "GPS" }, optionsCommon),
     "Active": {
         value: settings.gpsEnabled,
         onchange: function (v) { return updateSetting('gpsEnabled', v); },
@@ -66,7 +82,7 @@ var gpsMenu = {
     "HDOP": { value: "" },
 };
 var hrmMenu = {
-    "": { "title": "-  Heart Rate  -" },
+    "": __assign({ "title": "-  Heart Rate  -" }, optionsCommon),
     "Active": {
         value: settings.hrmEnabled,
         onchange: function (v) { return updateSetting('hrmEnabled', v); },
@@ -75,7 +91,7 @@ var hrmMenu = {
     "Confidence": { value: "" },
 };
 var magMenu = {
-    "": { "title": "- Magnetometer -" },
+    "": __assign({ "title": "Magnetometer" }, optionsCommon),
     "Active": {
         value: settings.magEnabled,
         onchange: function (v) { return updateSetting('magEnabled', v); },
@@ -132,26 +148,26 @@ var updateMenu = function () {
     }
 };
 var updateBleAdvert = function () {
+    var _a, _b;
     var bleAdvert;
     if (!(bleAdvert = Bangle.bleAdvert))
         bleAdvert = Bangle.bleAdvert = {};
     if (hrm) {
-        bleAdvert[0x180d] = undefined;
+        bleAdvert["0x180d"] = undefined;
         if (NRF.getSecurityStatus().connected) {
-            NRF.updateServices({
-                0x180d: {
-                    0x2a37: {
+            NRF.updateServices((_a = {},
+                _a["0x180d"] = (_b = {},
+                    _b["0x2a37"] = {
                         value: [0, hrm.bpm],
                         notify: true,
-                    }
-                }
-            });
+                    },
+                    _b),
+                _a));
             return;
         }
     }
-    var interval = UPDATE_MILLISECONDS;
     NRF.setAdvertising(Bangle.bleAdvert, {
-        interval: interval,
+        interval: ADVERT_MS,
     });
 };
 var encodeHrm = function () { return [0, hrm ? hrm.bpm : 0]; };
@@ -207,28 +223,30 @@ var updateSetting = function (name, value) {
     settings[name] = value;
     enableSensors();
 };
-NRF.setServices({
-    0x180d: {
-        0x2a37: {
+NRF.setServices((_a = {},
+    _a["0x180d"] = (_b = {},
+        _b["0x2a37"] = {
             value: encodeHrm(),
             readable: true,
             notify: true,
         },
-    },
-}, {
+        _b),
+    _a), {
     advertise: [
         '180d',
     ]
 });
 var updateServices = function () {
-    NRF.updateServices({
-        0x180d: {
-            0x2a37: {
+    var _a, _b;
+    NRF.updateServices((_a = {},
+        _a["0x180d"] = (_b = {},
+            _b["0x2a37"] = {
                 value: encodeHrm(),
                 notify: true,
-            }
-        }
-    });
+                dog: 1,
+            },
+            _b),
+        _a));
 };
 Bangle.on('accel', function (newAcc) { return acc = newAcc; });
 Bangle.on('pressure', function (newBar) { return bar = newBar; });

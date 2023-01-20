@@ -1,4 +1,11 @@
-const UPDATE_MILLISECONDS = 30 * 1000;
+// TODO: emit other data beside HRM (via set/updateServices)
+
+const enum Intervals {
+  BLE_ADVERT = 30 * 1000,
+  BLE = 1000,
+  MENU_WAKE = 1000,
+  MENU_SLEEP = 30 * 1000,
+}
 
 let acc: undefined | AccelData;
 let bar: undefined | PressureData;
@@ -8,7 +15,6 @@ let mag: undefined | CompassData;
 
 type BtAdvMenu = "acc" | "bar" | "gps" | "hrm" | "mag" | "main";
 let curMenu: BtAdvMenu = "main";
-let updateInterval: undefined | number;
 let mainMenuScroll = 0;
 const settings = {
   barEnabled: false,
@@ -28,8 +34,7 @@ const showMainMenu = () => {
   };
 
   mainMenu[""] = {
-    "title": "--  btadv  --",
-    back: showMainMenu,
+    "title": "BLE Advert",
   };
   (mainMenu[""] as any).scroll = mainMenuScroll; // typehack
 
@@ -44,8 +49,12 @@ const showMainMenu = () => {
   curMenu = "main";
 };
 
+const optionsCommon = {
+  back: showMainMenu,
+};
+
 const accMenu = {
-  "": { "title" : "- Acceleration -" },
+  "": { "title" : "Acceleration -", ...optionsCommon },
   "Active": { value: "true (fixed)" },
   "x": { value: "" },
   "y": { value: "" },
@@ -53,7 +62,7 @@ const accMenu = {
 };
 
 const barMenu = {
-  "": { "title" : "-  Barometer   -" },
+  "": { "title" : "Barometer", ...optionsCommon },
   "Active": {
     value: settings.barEnabled,
     onchange: (v: boolean) => updateSetting('barEnabled', v),
@@ -64,7 +73,7 @@ const barMenu = {
 };
 
 const gpsMenu = {
-  "": { "title" : "-      GPS     -" },
+  "": { "title" : "GPS", ...optionsCommon },
   "Active": {
     value: settings.gpsEnabled,
     onchange: (v: boolean) => updateSetting('gpsEnabled', v),
@@ -77,7 +86,7 @@ const gpsMenu = {
 };
 
 const hrmMenu = {
-  "": { "title" : "-  Heart Rate  -" },
+  "": { "title" : "-  Heart Rate  -", ...optionsCommon },
   "Active": {
     value: settings.hrmEnabled,
     onchange: (v: boolean) => updateSetting('hrmEnabled', v),
@@ -87,7 +96,7 @@ const hrmMenu = {
 };
 
 const magMenu = {
-  "": { "title" : "- Magnetometer -" },
+  "": { "title" : "Magnetometer", ...optionsCommon },
   "Active": {
     value: settings.magEnabled,
     onchange: (v: boolean) => updateSetting('magEnabled', v),
@@ -149,8 +158,15 @@ const updateMenu = () => {
   }
 };
 
+const enum BleServ {
+  HRM = "0x180d",
+}
+const enum BleChar {
+  HRM = "0x2a37",
+}
+
 const updateBleAdvert = () => {
-  let bleAdvert: { [key: number]: undefined };
+  let bleAdvert: { [key: string]: undefined };
 
   if (!(bleAdvert = (Bangle as any).bleAdvert))
     bleAdvert = (Bangle as any).bleAdvert = {};
@@ -168,13 +184,13 @@ const updateBleAdvert = () => {
   // }
 
   if (hrm) {
-    bleAdvert[0x180d] = undefined; // Advertise HRM
+    bleAdvert[BleServ.HRM] = undefined; // Advertise HRM
 
     // hack
     if (NRF.getSecurityStatus().connected) {
       NRF.updateServices({
-        0x180d: {
-          0x2a37: {
+        [BleServ.HRM]: {
+          [BleChar.HRM]: {
             value: [0, hrm.bpm],
             notify: true,
           }
@@ -192,14 +208,7 @@ const updateBleAdvert = () => {
   //   mag = undefined;
   // }
 
-  const interval = UPDATE_MILLISECONDS; // / data.length;
-
-  NRF.setAdvertising(
-    (Bangle as any).bleAdvert,
-    {
-      interval,
-    },
-  );
+  NRF.setAdvertising((Bangle as any).bleAdvert);
 };
 
 // {
@@ -288,8 +297,8 @@ const updateSetting = (
 
 NRF.setServices(
   {
-    0x180d: {
-      0x2a37: {
+    [BleServ.HRM]: {
+      [BleChar.HRM]: {
         value: encodeHrm(),
         readable: true,
         notify: true,
@@ -306,8 +315,8 @@ NRF.setServices(
 
 const updateServices = () => {
   NRF.updateServices({
-    0x180d: {
-      0x2a37: {
+    [BleServ.HRM]: {
+      [BleChar.HRM]: {
         value: encodeHrm(),
         notify: true,
       }
@@ -321,22 +330,27 @@ Bangle.on('GPS', newGps => gps = newGps);
 Bangle.on('HRM', newHrm => hrm = newHrm);
 Bangle.on('mag', newMag => mag = newMag);
 
-enableSensors();
+// show menu first to have it reserve space for widgets (appRect)
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 showMainMenu();
+enableSensors();
 
-// setInterval(updateAdvert, 10000);
-setInterval(updateMenu, 1000);
+setInterval(updateBleAdvert, Intervals.BLE_ADVERT);
 
+const menuInterval = setInterval(updateMenu, Intervals.MENU_WAKE);
+Bangle.on("lock", locked => {
+  changeInterval(
+    menuInterval,
+    locked ? Intervals.MENU_SLEEP : Intervals.MENU_WAKE,
+  );
+});
+
+let serviceInterval: undefined | number;
 NRF.on("connect", () => {
-  updateInterval = setInterval(updateServices, 1000);
+  serviceInterval = setInterval(updateServices, Intervals.BLE);
 });
 NRF.on("disconnect", () => {
-  clearInterval(updateInterval);
-  updateInterval = undefined;
+  clearInterval(serviceInterval);
+  serviceInterval = undefined;
 });
-
-// TODO debounce
-// TODO: emit other data beside HRM (via set/updateServices)
-// FIXME: ui overlap
-// Bangle.loadWidgets();
-// Bangle.drawWidgets();
