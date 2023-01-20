@@ -13,8 +13,8 @@
     "removeComments": true,
 
     "newLine": "lf",
-    "noEmitHelpers": true,
-    "noEmitOnError": true,
+    "noEmitHelpers": false,
+    "noEmitOnError": false,
     "preserveConstEnums": false,
     "importsNotUsedAsValues": "error",
     "preserveValueImports": false,
