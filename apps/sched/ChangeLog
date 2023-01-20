@@ -21,3 +21,4 @@
 0.18: Update clock_info to avoid a redraw
 0.19: Update clock_info to refresh periodically on active alarms/timers
 0.20: Alarm dismiss and snooze events
+0.21: Fix crash in clock_info
