@@ -154,11 +154,9 @@ E.showMenu = function(items) {
     else l.select();
   });
   if (options.back) {
-    Bangle.setUI("leftright", dir => {
-      if (dir < 0) {
-        back();
-      }
-    });
+    Bangle.on('swipe', (lr, _ud) => {
+      if (lr < 0) back();
+    })
   }
   return l;
 };
