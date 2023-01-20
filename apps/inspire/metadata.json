@@ -7,7 +7,7 @@
   "icon": "app-icon.png",
   "tags": "tools,health",
   "screenshots": [{"url":"screenshot.png"}],
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"inspire.app.js","url":"app.js"},
