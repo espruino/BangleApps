@@ -186,11 +186,11 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ], bg = l.selected?gfx.theme.bgH:gfx.theme.bg2, 
-      btnborder = l.selected?gfx.theme.fgH:gfx.theme.fg2;
-    //add button color option
-    if(l.bgCol!==undefined) bg = l.bgCol;
-    if(l.btnBorder!==undefined) btnborder = l.btnBorder;
+      ], bg = l.bgCol!==undefined?l.bgCol:gfx.theme.bg2,
+      btnborder = l.btnBorder!==undefined?l.btnBorder:gfx.theme.fg2;
+    if(l.selected){
+      bg = gfx.theme.bgH, btnborder = gfx.theme.fgH;
+    }
     gfx.setColor(bg).fillPoly(poly).setColor(btnborder).drawPoly(poly);   
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(bg).drawImage(
