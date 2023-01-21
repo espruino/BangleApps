@@ -189,8 +189,8 @@ Layout.prototype.render = function (l) {
       ], bg = l.selected?gfx.theme.bgH:gfx.theme.bg2, 
       btnborder = l.selected?gfx.theme.fgH:gfx.theme.fg2;
     //add button color option
-    if(l.btnCol!==undefined) bg = l.btnCol;
-    if(l.btnBorder1!==undefined) btnborder = l.btnBorder;
+    if(l.bgCol!==undefined) bg = l.bgCol;
+    if(l.btnBorder!==undefined) btnborder = l.btnBorder;
     gfx.setColor(bg).fillPoly(poly).setColor(btnborder).drawPoly(poly);   
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(bg).drawImage(
