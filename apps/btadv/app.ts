@@ -115,6 +115,9 @@ const updateMenu = () => {
         accMenu.y.value = acc.y.toFixed(2);
         accMenu.z.value = acc.z.toFixed(2);
         E.showMenu(accMenu);
+      } else if (accMenu.x.value !== "...") {
+        accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
+        E.showMenu(accMenu);
       }
       break;
 
@@ -124,6 +127,9 @@ const updateMenu = () => {
         barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
         barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
         E.showMenu(barMenu);
+      } else if (barMenu.Altitude.value !== "...") {
+        barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
+        E.showMenu(accMenu);
       }
       break;
 
@@ -135,6 +141,10 @@ const updateMenu = () => {
         gpsMenu.Satellites.value = "" + gps.satellites;
         gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
         E.showMenu(gpsMenu);
+      } else if (gpsMenu.Lat.value !== "...") {
+        gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
+          gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
+        E.showMenu(gpsMenu);
       }
       break;
 
@@ -142,6 +152,9 @@ const updateMenu = () => {
       if (hrm) {
         hrmMenu.BPM.value = "" + hrm.bpm;
         hrmMenu.Confidence.value = hrm.confidence + '%';
+        E.showMenu(hrmMenu);
+      } else if (hrmMenu.BPM.value !== "...") {
+        hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
         E.showMenu(hrmMenu);
       }
       break;
@@ -152,6 +165,9 @@ const updateMenu = () => {
         magMenu.y.value = "" + mag.y;
         magMenu.z.value = "" + mag.z;
         magMenu.Heading.value = mag.heading.toFixed(1);
+        E.showMenu(magMenu);
+      } else if (magMenu.x.value !== "...") {
+        magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
         E.showMenu(magMenu);
       }
       break;
@@ -279,9 +295,20 @@ const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) =>
 
 const enableSensors = () => {
   Bangle.setBarometerPower(settings.barEnabled, "btadv");
+  if (!settings.barEnabled)
+    bar = undefined;
+
   Bangle.setGPSPower(settings.gpsEnabled, "btadv");
+  if (!settings.gpsEnabled)
+    gps = undefined;
+
   Bangle.setHRMPower(settings.hrmEnabled, "btadv");
+  if (!settings.hrmEnabled)
+    hrm = undefined;
+
   Bangle.setCompassPower(settings.magEnabled, "btadv");
+  if (!settings.magEnabled)
+    mag = undefined;
 };
 
 const updateSetting = (

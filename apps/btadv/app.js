@@ -11,16 +11,12 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var _a, _b;
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-var ADVERT_MS = 30 * 1000;
 var acc;
 var bar;
 var gps;
 var hrm;
 var mag;
 var curMenu = "main";
-var updateInterval;
 var mainMenuScroll = 0;
 var settings = {
     barEnabled: false,
@@ -110,6 +106,10 @@ var updateMenu = function () {
                 accMenu.z.value = acc.z.toFixed(2);
                 E.showMenu(accMenu);
             }
+            else if (accMenu.x.value !== "...") {
+                accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
+                E.showMenu(accMenu);
+            }
             break;
         case "bar":
             if (bar) {
@@ -117,6 +117,10 @@ var updateMenu = function () {
                 barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
                 barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
                 E.showMenu(barMenu);
+            }
+            else if (barMenu.Altitude.value !== "...") {
+                barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
+                E.showMenu(accMenu);
             }
             break;
         case "gps":
@@ -128,11 +132,20 @@ var updateMenu = function () {
                 gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
                 E.showMenu(gpsMenu);
             }
+            else if (gpsMenu.Lat.value !== "...") {
+                gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
+                    gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
+                E.showMenu(gpsMenu);
+            }
             break;
         case "hrm":
             if (hrm) {
                 hrmMenu.BPM.value = "" + hrm.bpm;
                 hrmMenu.Confidence.value = hrm.confidence + '%';
+                E.showMenu(hrmMenu);
+            }
+            else if (hrmMenu.BPM.value !== "...") {
+                hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
                 E.showMenu(hrmMenu);
             }
             break;
@@ -142,6 +155,10 @@ var updateMenu = function () {
                 magMenu.y.value = "" + mag.y;
                 magMenu.z.value = "" + mag.z;
                 magMenu.Heading.value = mag.heading.toFixed(1);
+                E.showMenu(magMenu);
+            }
+            else if (magMenu.x.value !== "...") {
+                magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
                 E.showMenu(magMenu);
             }
             break;
@@ -166,9 +183,7 @@ var updateBleAdvert = function () {
             return;
         }
     }
-    NRF.setAdvertising(Bangle.bleAdvert, {
-        interval: ADVERT_MS,
-    });
+    NRF.setAdvertising(Bangle.bleAdvert);
 };
 var encodeHrm = function () { return [0, hrm ? hrm.bpm : 0]; };
 var encodeBarServiceData = function (data) {
@@ -215,9 +230,17 @@ var toByteArray = function (value, numberOfBytes, isSigned) {
 };
 var enableSensors = function () {
     Bangle.setBarometerPower(settings.barEnabled, "btadv");
+    if (!settings.barEnabled)
+        bar = undefined;
     Bangle.setGPSPower(settings.gpsEnabled, "btadv");
+    if (!settings.gpsEnabled)
+        gps = undefined;
     Bangle.setHRMPower(settings.hrmEnabled, "btadv");
+    if (!settings.hrmEnabled)
+        hrm = undefined;
     Bangle.setCompassPower(settings.magEnabled, "btadv");
+    if (!settings.magEnabled)
+        mag = undefined;
 };
 var updateSetting = function (name, value) {
     settings[name] = value;
@@ -243,7 +266,6 @@ var updateServices = function () {
             _b["0x2a37"] = {
                 value: encodeHrm(),
                 notify: true,
-                dog: 1,
             },
             _b),
         _a));
@@ -253,13 +275,20 @@ Bangle.on('pressure', function (newBar) { return bar = newBar; });
 Bangle.on('GPS', function (newGps) { return gps = newGps; });
 Bangle.on('HRM', function (newHrm) { return hrm = newHrm; });
 Bangle.on('mag', function (newMag) { return mag = newMag; });
-enableSensors();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 showMainMenu();
-setInterval(updateMenu, 1000);
+enableSensors();
+setInterval(updateBleAdvert, 30000);
+var menuInterval = setInterval(updateMenu, 1000);
+Bangle.on("lock", function (locked) {
+    changeInterval(menuInterval, locked ? 30000 : 1000);
+});
+var serviceInterval;
 NRF.on("connect", function () {
-    updateInterval = setInterval(updateServices, 1000);
+    serviceInterval = setInterval(updateServices, 1000);
 });
 NRF.on("disconnect", function () {
-    clearInterval(updateInterval);
-    updateInterval = undefined;
+    clearInterval(serviceInterval);
+    serviceInterval = undefined;
 });
