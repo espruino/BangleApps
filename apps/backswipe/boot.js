@@ -15,10 +15,8 @@
 
     var currentFile = global.__FILE__ || "";
 
-    print("Setting UI");
     if(global.BACK) delete global.BACK;
     if (options && options.back && enabledForApp(currentFile)) {
-      print("Saving back callback");
       global.BACK = options.back;
     }
     setUI(mode, cb);
@@ -27,10 +25,8 @@
   function goBack(lr, ud) {
     // if it is a left to right swipe
     if (lr === 1) {
-      print("Back swipe detected");
       // if we're in an app that has a back button, run the callback for it
       if (global.BACK) {
-        print("Running back callback");
         global.BACK();
       }
     }
