@@ -20,6 +20,7 @@
   }
   let installedFonts = require('Storage').readJSON("contourclock-install.json") || {};
   if (installedFonts.n>0) { //New install - check for unused font files
+    settings.fontIndex=E.clip(settings.fontIndex,-installedFonts.n+1,installedFonts.n-1);
     for (let n=installedFonts.n; ;n++) { 
       if (require("Storage").read("contourclock-"+n+".json")==undefined) break;
       require("Storage").erase("contourclock-"+n+".json");
@@ -61,11 +62,9 @@
       }
     };
     let onTap = d => {
-      if (d.double) {
-        drawExtras();
-        if (extrasTimeout) clearTimeout(extrasTimeout);
-        extrasTimeout = setTimeout(hideExtras, 5000);
-      }
+      drawExtras();
+      if (extrasTimeout) clearTimeout(extrasTimeout);
+      extrasTimeout = setTimeout(hideExtras, 5000);
     };
     let onTwist = () => {
       drawExtras();
