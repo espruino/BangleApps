@@ -22,15 +22,17 @@ let bgColorDow = color2;
 let bgColorWeekend = color3;
 let fgOtherMonth = gray1;
 let fgSameMonth = white;
+let bgEvent = blue;
+const eventsPerDay=6; // how much different events per day we can display
 
+const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
-if (settings.ndColors === undefined)
-  if (process.env.HWVERSION == 2) {
-    settings.ndColors = true;
-  } else {
-    settings.ndColors = false;
-  }
+const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date); // all alarms that run on a specific date
+
+if (settings.ndColors === undefined) {
+  settings.ndColors = !g.theme.dark;
+}
 
 if (settings.ndColors === true) {
   bgColor = white;
@@ -39,6 +41,7 @@ if (settings.ndColors === true) {
   bgColorWeekend = yellow;
   fgOtherMonth = blue;
   fgSameMonth = black;
+  bgEvent = color2;
 }
 
 function getDowLbls(locale) {
@@ -101,6 +104,12 @@ function getDowLbls(locale) {
       break;
   }
   return dowLbls;
+}
+
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 }
 
 function drawCalendar(date) {
@@ -188,14 +197,15 @@ function drawCalendar(date) {
     for (x = 0; x < colN; x++) {
       i++;
       const day = days[i];
-      const isToday =
-        today.year === year && today.month === month && today.day === day - 50;
+      const curMonth = day < 15 ? month+1 : day < 50 ? month-1 : month;
+      const curDay = new Date(year, curMonth, day > 50 ? day-50 : day);
+      const isToday = sameDay(curDay, new Date());
+      const x1 = x * colW;
+      const y1 = y * rowH + headerH + rowH;
+      const x2 = x * colW + colW;
+      const y2 = y * rowH + headerH + rowH + rowH;
       if (isToday) {
         g.setColor(red);
-        let x1 = x * colW;
-        let y1 = y * rowH + headerH + rowH;
-        let x2 = x * colW + colW;
-        let y2 = y * rowH + headerH + rowH + rowH;
         g.drawRect(x1, y1, x2, y2);
         g.drawRect(
           x1 + 1,
@@ -204,6 +214,22 @@ function drawCalendar(date) {
           y2 - 1
         );
       }
+
+      // Display events for this day
+      const eventsCurDay = events.filter(ev => ev.date === curDay.toLocalISOString().substr(0, 10));
+      if (eventsCurDay.length > 0) {
+        g.setColor(bgEvent);
+        eventsCurDay.forEach(ev => {
+          const time = timeutils.decodeTime(ev.t);
+          const hour = time.h + time.m/60.0;
+          const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+          const height = (y2-2) - (y1+2); // height of a cell
+          const sliceHeight = height/eventsPerDay;
+          const ystart = (y1+2) + slice*sliceHeight;
+          g.fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+        });
+      }
+
       require("Font8x12").add(Graphics);
       g.setFont("8x12", fontSize);
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
@@ -217,11 +243,6 @@ function drawCalendar(date) {
 }
 
 const date = new Date();
-const today = {
-  day: date.getDate(),
-  month: date.getMonth(),
-  year: date.getFullYear()
-};
 drawCalendar(date);
 clearWatch();
 Bangle.on("touch", area => {

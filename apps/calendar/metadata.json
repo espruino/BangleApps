@@ -1,7 +1,7 @@
 {
   "id": "calendar",
   "name": "Calendar",
-  "version": "0.11",
+  "version": "0.12",
   "description": "Simple calendar",
   "icon": "calendar.png",
   "screenshots": [{"url":"screenshot_calendar.png"}],
