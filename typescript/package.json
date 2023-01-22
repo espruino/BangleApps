@@ -4,7 +4,7 @@
   "author": "Sebastian Di Luzio <sebastian@diluz.io> (https://diluz.io) and qucchia <qucchia0@gmail.com> (https://github.com/qucchia)",
   "version": "0.0.1",
   "devDependencies": {
-    "typescript": "4.5.2"
+    "typescript": "4.9.4"
   },
   "scripts": {
     "build": "tsc"
