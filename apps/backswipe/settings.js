@@ -1,60 +1,60 @@
-(function() {
+(function(back) {
     var FILE = 'backswipe.json';
     // Mode can be 'blacklist', 'whitelist', 'on' or 'disabled'
-    // Apps is an array of app names, where all the apps that are there are either blocked or allowed, depending on the mode
+    // Apps is an array of app info objects, where all the apps that are there are either blocked or allowed, depending on the mode
     var DEFAULTS = {
-        'mode': 'blacklist',
+        'mode': 0,
         'apps': []
     };
 
     var settings = {};
     
     var loadSettings = function() {
-        var settings = require('Storage').readJSON(FILE, 1) || DEFAULTS;
-        return settings;
+        settings = require('Storage').readJSON(FILE, 1) || DEFAULTS;
     }
 
     var saveSettings = function(settings) {
         require('Storage').write(FILE, settings);
     }
 
+    // Get all app info files
     var getApps = function() {
-        var apps = require('Storage').list(/\.info$/).map(app => {
-            return app.replace('.info', '');
+        var apps = require('Storage').list(/\.info$/).map(appInfoFileName => {
+            var appInfo = require('Storage').readJSON(appInfoFileName, 1);
+            return appInfo && {
+                'name': appInfo.name,
+                'sortorder': appInfo.sortorder,
+                'src': appInfo.src
+            };
+        }).filter(app => app && !!app.src);
+        apps.sort((a, b) => {
+            var n = (0 | a.sortorder) - (0 | b.sortorder);
+            if (n) return n; // do sortorder first
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
         });
         return apps;
     }
 
-    var getSettings = function() {
-        var settings = loadSettings();
-        return {
-            mode: settings.mode,
-            apps: settings.apps,
-        };
-    }
-
     var showMenu = function() {
-        var settings = getSettings();
         var menu = {
             '': { 'title': 'Backswipe' },
             '< Back': () => {
-                load();
-                E.showMenu();
+                back();
             },
             'Mode': {
                 value: settings.mode,
-                format: v => v,
+                min: 0,
+                max: 3,
+                format: v => ["Blacklist", "Whitelist", "Always On", "Disabled"][v],
                 onchange: v => {
                     settings.mode = v;
+                    saveSettings(settings);
                 },
-                options: ['blacklist', 'whitelist', 'on', 'disabled']
             },
-            'App List': {
-                value: '',
-                format: v => v,
-                onchange: v => {
-                    showAppSubMenu();
-                }
+            'App List': () => {
+                showAppSubMenu();
             }
         };
         
@@ -72,10 +72,11 @@
             }
         };
         settings.apps.forEach(app => {
-            menu[app.app] = () => {
+            menu[app.name] = () => {
                 settings.apps.splice(settings.apps.indexOf(app), 1);
+                saveSettings(settings);
+                showAppSubMenu();
             }
-            saveSettings(settings);
         });
         E.showMenu(menu);
     }
@@ -89,8 +90,8 @@
             }
         };
         apps.forEach(app => {
-            menu[app] = () => {
-                settings.apps.push(app);
+            menu[app.name] = () => {
+                settings.apps.push(app); 
                 saveSettings(settings);
                 showAppSubMenu();
             }

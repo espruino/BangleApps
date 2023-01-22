@@ -1,5 +1,9 @@
 (function () {
-  var settings = require("Storage").readJSON("backswipe.json", 1) || {};
+  var DEFAULTS = {
+    mode: 0,
+    apps: [],
+  };
+  var settings = require("Storage").readJSON("backswipe.json", 1) || DEFAULTS;
 
   // Overrride the default setUI method, so we can save the back button callback
   var setUI = Bangle.setUI;
@@ -32,17 +36,19 @@
     }
   }
 
+  // Check if the back button should be enabled for the current app
+  // app is the src file of the app
   function enabledForApp(app) {
     if (!settings) return true;
-    if (settings.mode === "blacklist") {
-      return !settings.apps.includes(app);
-    } else if (settings.mode === "whitelist") {
-      return settings.apps.includes(app);
+    if (settings.mode === 0) {
+      return !(settings.apps.filter((a) => a.src === app).length > 0);
+    } else if (settings.mode === 1) {
+      return settings.apps.filter((a) => a.src === app).length > 0;
     } else {
-      return settings.mode === "on" ? true : false;
+      return settings.mode === 2 ? true : false;
     }
   }
-  
+
   // Listen to left to right swipe
   Bangle.on("swipe", goBack);
 })();
