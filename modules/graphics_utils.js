@@ -31,5 +31,5 @@ exports.degreesToRadians = function(degrees){
 }
 
 exports.radiansToDegrees = function(radians){
-  return 180/Math.PI * degrees;
+  return 180/Math.PI * radians;
 }
