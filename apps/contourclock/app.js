@@ -1,5 +1,4 @@
 {
-  const interval = 60000;
   let digits = [];
   let drawTimeout;
   let extrasTimeout;
@@ -21,6 +20,7 @@
   let installedFonts = require('Storage').readJSON("contourclock-install.json") || {};
   if (installedFonts.n>0) { //New install - check for unused font files
     settings.fontIndex=E.clip(settings.fontIndex,-installedFonts.n+1,installedFonts.n-1);
+    require('Storage').writeJSON("contourclock.json", settings);
     for (let n=installedFonts.n; ;n++) { 
       if (require("Storage").read("contourclock-"+n+".json")==undefined) break;
       require("Storage").erase("contourclock-"+n+".json");
@@ -31,11 +31,9 @@
   
   let drawExtras = function() { //draw date, day of the week and widgets
     let date = new Date();
-    g.setFont("Teletext10x18Ascii");
-    if (settings.weekday) 
-      g.setFontAlign(0,1).drawString(require("locale").dow(date).toUpperCase(),g.getWidth()/2,g.getHeight()-18);
-    if (settings.date) 
-      g.setFontAlign(0,1).drawString(require('locale').date(date,1),g.getWidth()/2,g.getHeight());
+    g.setFont("Teletext10x18Ascii").setFontAlign(0,1);
+    if (settings.weekday) g.drawString(require("locale").dow(date).toUpperCase(),g.getWidth()/2,g.getHeight()-18);
+    if (settings.date) g.drawString(require('locale').date(date,1),g.getWidth()/2,g.getHeight());
     require("widget_utils").show();
   };
   let hideExtras = function() {
@@ -49,10 +47,10 @@
     else require("widget_utils").hide();
     require('contourclock').drawClock(settings.fontIndex);
     if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = setTimeout(draw, interval - (Date.now() % interval));
+    drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
   };
   if (settings.hideWhenLocked) {
-    let onLock = locked => {
+    onLock = locked => {
       if (!locked) {
         require("widget_utils").show();
         drawExtras();
@@ -61,12 +59,12 @@
         hideExtras();
       }
     };
-    let onTap = d => {
+    onTap = d => {
       drawExtras();
       if (extrasTimeout) clearTimeout(extrasTimeout);
       extrasTimeout = setTimeout(hideExtras, 5000);
     };
-    let onTwist = () => {
+    onTwist = () => {
       drawExtras();
       if (extrasTimeout) clearTimeout(extrasTimeout);
       extrasTimeout = setTimeout(hideExtras, 5000);
@@ -76,9 +74,9 @@
     if (settings.twistToShow) Bangle.on('twist', onTwist);
   }
   Bangle.setUI({mode:"clock", remove:function() {
-    if (onLock) Bangle.removeListener('lock',onLock);
-    if (onTap) Bangle.removeListener('tap', onTap);
-    if (onTwist) Bangle.removeListener('twist',onTwist);
+    Bangle.removeListener('lock',onLock);
+    Bangle.removeListener('tap', onTap);
+    Bangle.removeListener('twist',onTwist);
     if (drawTimeout) clearTimeout(drawTimeout);
     if (extrasTimeout) clearTimeout(extrasTimeout);
     if (settings.hideWhenLocked) require("widget_utils").show();
