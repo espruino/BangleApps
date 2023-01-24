@@ -2,37 +2,47 @@
 compatible with BJS1, BJS2 and bottom widgets
 */
 var locale = require("locale");
-var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
+var v_mode_debug=0 //, 0=no, 1 min, 2 prone detail
 var v_model=process.env.BOARD;
+var v_array4colors=0; // 0 undef, 1 forDark, 2 forLight
+var a_colors=[]; //new Array(), values will depend on b_isarray4dark
 var LastDrawDay; // to notice a change and repaint static texts
-//RGB565 0x White , black, 'Orange',blue,red, olive,...
-var a_colors= [0xFFFF,0x0000, 0xFD20, 0x001F,0xF800,0x7be0,0x780F,0x07E0]; //new Array(0xFFFF
 var Radius= []; //new Array();
 var TxtPosition=[];
 var v_bfont_size;
 var v_vfont_size;
+var v_str_pix_width; // to clear timer area
 var v_color1;
 var v_color2;
 var v_color3;
-var v_color_erase;
+var v_color_erase; //dynamic
 var v_count_col;
 var rect = Bangle.appRect;
 var v_center_x;
 var v_center_y;
-if (v_mode_debug>0) console.log("a_colors.length "+a_colors.length);
 
-g.clear();
+g.clear(); //ONLY 1ST TIME
 //show the exit button
-//Bangle.setUI();
 Bangle.setUI("clock"); //implies center button for launcher
-/*{
-  mode : "custom",
-  back : Bangle.showLauncher
-});*/
 
 Bangle.loadWidgets();
 
-
+function getColorArray4BG() {    //1st=0 1st compatible color (dark/light theme)
+  var var_bg=g.getBgColor();
+  if (v_mode_debug>1) console.log(g.theme);
+  if (v_mode_debug>0) console.log("func getbgcolor: "+var_bg+" g.theme.bg:  "+g.theme.bg);
+  if (v_array4colors==0) {
+    if (g.theme.dark==1)  v_array4colors=1;
+      else if (g.theme.dark==0)    v_array4colors=2;
+  }
+  //for dark/black bg
+  if (v_array4colors==1) a_colors= [0xFFFF, 0x0000, 0xFD20, 0x001F,0xF800,0x7be0,0x780F,0x07E0,0x07FF,0x7BEF,0xFFE0,0xFFBF00];
+  //for light/white theme
+  if (v_array4colors==2) a_colors= [0x0000, 0xFFFF, 0xFD20, 0x001F,0xF800,0x000F,0x780F,0x07E0,0xFFBF00];
+  v_color_erase=a_colors[1];
+  if (v_mode_debug>1) console.log(" erase: "+v_color_erase);
+ return (v_array4colors);  //opt as using global vars
+}
 
 function setVariables() {
 // different values depending on loaded widgets or not, so after load widgets
@@ -43,30 +53,52 @@ function setVariables() {
   TxtPosition = {
     "x1": 3, "x2": g.getWidth()-3,
     "y1": rect.y+17, "y2": rect.y2-6,
-    "x_HH": g.getWidth()/2 ,"y_mm": v_center_y+32
+    "x_HH": g.getWidth()/2 ,"y_mm": v_center_y+32 //center position for setFontAlign0,0
     };
 
-  //emuls EMSCRIPTEN,EMSCRIPTEN2
-  v_count_col=2; //1st=0 1st compatible color (dark/light theme)
-  v_color_erase=g.getBgColor();
+  v_count_col=2; //realtime colors(avoid b/w) begin from this array position
+  getColorArray4BG(); //set colors
+  //v_color_erase=g.getBgColor();
+
   if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
     Radius = { "center": 7, "hour": 50, "min": 70, "dots": 88,"circleH":6,"circleM":2 };
     v_bfont_size=3;
     v_vfont_size=35;
-     v_color1=2; // orange
-     v_color2=4;
-     v_color3=0; //white , for hands PEND replace hardcoded by logic
+    //1st watchface is multicolor
+     v_color1=3; //ring orange
+     v_color2=5; //text red
+     v_color3=0; //hands, opposite to bg
     }else{
        Radius = { "center": 5, "hour": 35, "min": 50, "dots": 60, "circleH":5,"circleM":2 };
        v_bfont_size=2;
         v_vfont_size=22;
-       v_color1=3; // blue
-       v_color2=1;
-       v_color3=1; //opposite to bg, for hands PEND replace hardcoded by logic
+       v_color1=4; //ring
+       v_color2=8; //text
+       v_color3=0; //hands, opposite to bg
     }
-  if (v_mode_debug>0) console.log("set vars for: "+v_model);
 }
 
+function ClearScreen(){
+  //avoid widget areas
+ // var var_bg=g.getBgColor();
+  if (v_mode_debug>1) console.log("ClearScreen getbgcolor: "+g.getBgColor()+" erasecl: "+v_color_erase);
+  if (v_mode_debug>1) console.log("rect: "+rect.y+" "+rect.x2+" "+rect.y2);
+  //g.setColor(v_color_erase);
+  g.setBgColor(v_color_erase);
+   //Fill a rectangular area in the Background Color
+  g.clearRect(rect.x, rect.y, rect.x2, rect.y2);
+  g.flip();
+}
+
+function ClearTimerArea(){   
+  g.setBgColor(v_color_erase);
+ // g.setBgColor(0xFFFFFF-a_colors[v_color1]); //kind of inverted clr just for testing   
+  if (v_mode_debug>1) console.log("ClearTimerArea getbgcolor: "+g.getBgColor()+" erasecl: "+v_color_erase);
+  if (v_mode_debug>1) console.log("txt x: "+TxtPosition.x_HH+" y "+TxtPosition.y_mm+" w "+v_str_pix_width);      
+  //Fill a rectangular area in the Background Color, coords depends of setFontAlign 0,0=center
+  g.clearRect(TxtPosition.x_HH-(v_str_pix_width/2), TxtPosition.y_mm-(v_vfont_size/2), TxtPosition.x_HH+(v_str_pix_width/2), TxtPosition.y_mm+(v_vfont_size/2));
+  g.flip();  
+}
 
 function rotatePoint(x, y, d) {
   rad = -1 * d / 180 * Math.PI;
@@ -130,8 +162,7 @@ function drawMixedClock() {
   var radius;
   //Call function only after a change of day
   if (LastDrawDay!=locale.dow(date,true)) drawDailyTxt();
-    //ERASE previous hands
-  // erase last MINutes hand
+  //ERASE previous last MINutes hand
   g.setColor(v_color_erase);
   point = rotatePoint(0, Radius.min, (minute - 1) * 6);
   g.drawLine(v_center_x, v_center_y, point[0], point[1]);
@@ -149,8 +180,6 @@ function drawMixedClock() {
   //to increase thicknes
   g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
 
-  // here time DIGITs are draw  under hands
-
   // draw new MINute hand
   point = rotatePoint(0, Radius.min, minute * 6);
   g.setColor(a_colors[v_color3]);
@@ -164,13 +193,20 @@ function drawMixedClock() {
   //to increase thicknes
   g.drawLine(v_center_x+1, v_center_y, point[0]+1, point[1]);
 
-  // draw DIGITs of time above hands for better UX
+
+  //drawing Time DIGITs above hands for allegedly better UX
   //g.setFont("6x8", 3); 3 bigger size
+  ClearTimerArea();
   g.setFontVector(v_vfont_size);
   g.setColor(a_colors[v_color2]);
   g.setFontAlign(0, 0);
-  //by default 24H, to use format config  12H 24H read from locale
-  g.drawString(dateArray[4].substr(0, 5), TxtPosition.x_HH, TxtPosition.y_mm, true);
+  //by default 24H, to use format config 12H 24H read from locale
+  //x,y,solid - For bitmap fonts, true empty pixels be filled with bgcolor¿theme?
+  //true clean previous text but default is not our erase
+  //false write oiver previus text
+  //g.drawString(dateArray[4].substr(0, 5), TxtPosition.x_HH, TxtPosition.y_mm, false);  
+  v_str_pix_width=g.stringWidth(dateArray[4].substr(0, 5));
+  g.drawString(dateArray[4].substr(0, 5), TxtPosition.x_HH, TxtPosition.y_mm);  
    // the central point requires redrawing because hands draw over it
    g.setColor(a_colors[v_color1]);
    g.fillCircle(v_center_x, v_center_y, Radius.center);
@@ -182,7 +218,7 @@ function UserInput(){
             Bangle.showLauncher();
                break;
           case 2:
-            //testing to improve
+            //change color but monocolor watchface
                if (v_mode_debug>0) console.log("v_count_col/total: "+v_count_col+"/"+a_colors.length);
                if (v_count_col<a_colors.length){
                 v_color1=v_count_col;
@@ -196,22 +232,40 @@ function UserInput(){
                drawDailyTxt();
                break;
           case 3:
-             //console.log("Touch 3 aka 1+2 not for emul");//center 1+2
+             //console.log("Touch 3 aka 1+2 not for BJS1 emul");//center 1+2
               break;
       }
   });
+  //changing dimensions
   Bangle.on('swipe', dir => {
     if(dir == 1) {
       drawStaticRing(v_color_erase);
-      if (Radius.circleH<13) Radius.circleH++;
+      if (Radius.circleH<13) Radius.circleH++
+      else Radius.circleH=2;
       if (v_mode_debug>0)  console.log("radio: "+Radius.circleH);
       drawStaticRing(a_colors[v_color1]);
        }
-    else {
-      drawStaticRing(v_color_erase);
-      if (Radius.circleH>1) Radius.circleH--;
-      if (v_mode_debug>0) console.log("radio: "+Radius.circleH);
-      drawStaticRing(a_colors[v_color1]);
+    else { //swipe left, pend to refactor
+      if (v_array4colors==1) { //if black  bg
+         v_array4colors=2; // then white
+         getColorArray4BG(); //set new list of colors
+         g.setBgColor( v_color_erase);// 0 white, 1 black
+         ClearScreen();
+         //g.clear();//impact on widgets
+         drawStaticRing(a_colors[v_color1]);
+         drawDailyTxt(); //1st time
+         drawMixedClock();
+      } else if (v_array4colors==2) { //if white  bg
+        v_array4colors=1;
+        getColorArray4BG();
+        console.log(a_colors[1]);
+         g.setBgColor(v_color_erase);// 0 white, 1 black
+         //g.clear();
+         ClearScreen();
+         drawStaticRing(a_colors[v_color1]);
+         drawDailyTxt(); //1st time
+         drawMixedClock(); //or just wait?
+        }
        }
   });
 }
@@ -223,8 +277,7 @@ Bangle.on('lcdPower', function(on) {
 setVariables();
 Bangle.drawWidgets();
 UserInput();
-
-setInterval(drawMixedClock, 5E3);
-drawStaticRing(a_colors[v_color1]); 
-drawDailyTxt(); //1st time
+setInterval(drawMixedClock, 30000);//not realtime update
+drawStaticRing(a_colors[v_color1]);
+drawDailyTxt();
 drawMixedClock();
