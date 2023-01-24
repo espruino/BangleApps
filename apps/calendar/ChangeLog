@@ -10,3 +10,4 @@
 0.09: Fix scope of let variables
 0.10: Use default Bangle formatter for booleans
 0.11: Fix off-by-one-error on next year
+0.12: Mark dated events on a day

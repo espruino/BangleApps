@@ -54,7 +54,7 @@ let storage = require("Storage");
 let stepGoal = undefined;
 // Load step goal from health app and pedometer widget
 let d = storage.readJSON("health.json", true) || {};
-stepGoal = d != undefined && d.settings != undefined ? d.settings.stepGoal : undefined;
+stepGoal = d.stepGoal;
 if (stepGoal == undefined) {
   d = storage.readJSON("wpedom.json", true) || {};
   stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
@@ -120,8 +120,10 @@ exports.load = function() {
 
   if (Bangle.getPressure){  // Altimeter may not exist
     bangleItems.push({ name : "Altitude",
+      hasRange : true,
       get : () => ({
-        text : alt, v : alt,
+        text : alt, v : parseInt(alt),
+        min : 0, max : 3000,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==")
       }),
       show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
@@ -266,7 +268,14 @@ exports.addInteractive = function(menu, options) {
   }
   Bangle.on("swipe",swipeHandler);
   var touchHandler;
+  var lockHandler;
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
+    lockHandler = function() {
+      if(options.focus) {
+        options.focus=false;
+        options.redraw();
+      }
+    };
     touchHandler = function(_,e) {
       if (e.x<options.x || e.y<options.y ||
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
@@ -278,7 +287,7 @@ exports.addInteractive = function(menu, options) {
       }
       if (!options.focus) {
         options.focus=true; // if not focussed, set focus
-       options.redraw();
+        options.redraw();
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
@@ -287,6 +296,7 @@ exports.addInteractive = function(menu, options) {
       }
     };
     Bangle.on("touch",touchHandler);
+    Bangle.on("lock", lockHandler);
   }
   // draw the first item
   menuShowItem(menu[options.menuA].items[options.menuB]);
@@ -294,6 +304,7 @@ exports.addInteractive = function(menu, options) {
   options.remove = function() {
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
+    if (lockHandler) Bangle.removeListener("lock", lockHandler);
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
   };

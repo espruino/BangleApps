@@ -118,8 +118,8 @@
           this.switchTimeout = _doSwitchTimeout.call(this, a, switchTimeout);
         },
         hide: function() {
-          clearInterval(this.interval);
-          clearTimeout(this.switchTimeout);
+          if (this.interval) clearInterval(this.interval);
+          if (this.switchTimeout) clearTimeout(this.switchTimeout);
           this.interval = undefined;
           this.switchTimeout = undefined;
         },
