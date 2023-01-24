@@ -30,7 +30,10 @@
   let showExtras = function() { //show extras for a limited time
     drawExtras();
     if (extrasTimeout) clearTimeout(extrasTimeout);
-    extrasTimeout = setTimeout(hideExtras, 5000);
+    extrasTimeout = setTimeout(() => {
+      extrasTimeout = undefined;
+      drawExtras();
+    }, 5000);
   };
   let drawExtras = function() { //draw date, day of the week and widgets
     let date = new Date();
@@ -45,10 +48,8 @@
     g.clearRect(0, 138, g.getWidth() - 1, 176);
     require("widget_utils").hide();
     extrasShown = false;
-    print(drawTimeout);
   };
   let draw = function() {
-    print(process.memory().usage + " - " + drawTimeout);
     let date = new Date();
     g.reset();
     if (extrasShown) drawExtras();
