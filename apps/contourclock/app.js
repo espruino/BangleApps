@@ -32,7 +32,7 @@
     if (extrasTimeout) clearTimeout(extrasTimeout);
     extrasTimeout = setTimeout(() => {
       extrasTimeout = undefined;
-      drawExtras();
+      hideExtras();
     }, 5000);
   };
   let drawExtras = function() { //draw date, day of the week and widgets
