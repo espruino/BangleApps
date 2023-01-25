@@ -141,7 +141,7 @@
         Bangle.emit('GPS', event);
       },
       "is_gps_active": function() {
-        gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
+        gbSend({ t: "gps_power", status: Bangle.isGPSOn() });
       }
     };
     var h = HANDLERS[event.t];
@@ -178,7 +178,7 @@
       },options.timeout||30000)};
     });
     return promise;
-  }
+  };
 
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
@@ -207,13 +207,39 @@
   };
   // GPS overwrite logic
   if (settings.overwriteGps) { // if the overwrite option is set../
-    // Save current logic
-    const originalSetGpsPower = Bangle.setGPSPower;
+    const origSetGPSPower = Bangle.setGPSPower;
+    // migrate all GPS clients to the other variant on connection events
+    let handleConnection = (state) => {
+      if (Bangle.isGPSOn()){
+        let orig = Bangle._PWR.GPS;
+        delete Bangle._PWR.GPS;
+        origSetGPSPower(state);
+        Bangle._PWR.GPS = orig;
+      }
+    };
+    NRF.on('connect', ()=>{handleConnection(0);});
+    NRF.on('disconnect', ()=>{handleConnection(1);});
+
+    // Work around Serial1 for GPS not working when connected to something
+    let serialTimeout;
+    let wrap = function(f){
+      return (s)=>{
+        if (serialTimeout) clearTimeout(serialTimeout);
+        handleConnection(1);
+        f(s);
+        serialTimeout = setTimeout(()=>{
+          serialTimeout = undefined;
+          if (NRF.getSecurityStatus().connected) handleConnection(0);
+        }, 10000);
+      };
+    };
+    Serial1.println = wrap(Serial1.println);
+    Serial1.write = wrap(Serial1.write);
+
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
-      // if not connected, use old logic
-      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID);
-      // Emulate old GPS power logic
+      // if not connected use internal GPS power function
+      if (!NRF.getSecurityStatus().connected) return origSetGPSPower(isOn, appID);
       if (!Bangle._PWR) Bangle._PWR={};
       if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
       if (!appID) appID="?";
@@ -222,11 +248,15 @@
       let pwr = Bangle._PWR.GPS.length>0;
       gbSend({ t: "gps_power", status: pwr });
       return pwr;
-    }
-    // Replace check if the GPS is on to check the _PWR variable
+    };
+    // Allow checking for GPS via GadgetBridge
     Bangle.isGPSOn = () => {
-      return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
-    }
+      return !!(Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0);
+    };
+    // stop GPS on boot if not activated
+    setTimeout(()=>{
+      if (!Bangle.isGPSOn()) gbSend({ t: "gps_power", status: false });
+    },3000);
   }
 
   // remove settings object so it's not taking up RAM
