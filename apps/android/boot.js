@@ -132,7 +132,7 @@
         if (!settings.overwriteGps) return;
         delete event.t;
         event.satellites = NaN;
-        event.course = NaN;
+        if (!isFinite(event.course)) event.course = NaN;
         event.fix = 1;
         if (event.long!==undefined) {
           event.lon = event.long;
