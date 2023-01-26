@@ -63,15 +63,21 @@ const enum BleChar {
 }
 
 type BleCharAdvert = {
-  value: Array<number>,
+  value?: Array<number>,
   readable?: true,
   notify?: true,
   indicate?: true, // notify + ACK
+  maxLen?: number,
 };
 
 type BleServAdvert = {
   [key in BleChar]?: BleCharAdvert;
 };
+
+type LenFunc<T> = {
+  (_: T): Array<number>,
+  maxLen: number,
+}
 
 let acc: undefined | AccelData;
 let bar: undefined | PressureData;
@@ -245,7 +251,7 @@ const updateMenu = () => {
   }
 };
 
-const encodeHrm = (hrm: Hrm) =>
+const encodeHrm: LenFunc<Hrm> = (hrm: Hrm) =>
   // {
   //   flags: u8,
   //   bytes: [u8...]
@@ -257,18 +263,22 @@ const encodeHrm = (hrm: Hrm) =>
   //   1 << 3: energy expended, next 16 bits
   //   1 << 4: "rr" data available, u16s, intervals
   // }
-  [0, hrm ? hrm.bpm : 0];
+  [0, hrm.bpm];
+encodeHrm.maxLen = 2;
 
-const encodePressure = (data: PressureData) =>
+const encodePressure: LenFunc<PressureData> = (data: PressureData) =>
   toByteArray(Math.round(data.pressure * 1000), 4, false);
+encodePressure.maxLen = 4;
 
-const encodeElevation = (data: PressureData) =>
+const encodeElevation: LenFunc<PressureData> = (data: PressureData) =>
   toByteArray(Math.round(data.altitude * 100), 3, true);
+encodeElevation.maxLen = 3;
 
-const encodeTemp = (data: PressureData) =>
+const encodeTemp: LenFunc<PressureData> = (data: PressureData) =>
   toByteArray(Math.round(data.temperature * 100), 2, true);
+encodeTemp.maxLen = 2;
 
-const encodeGps = (data: GPSFix) => {
+const encodeGps: LenFunc<GPSFix> = (data: GPSFix) => {
   // flags: 16 bits
   //   bit 0: Instantaneous Speed Present
   //   bit 1: Total Distance Present
@@ -323,14 +333,16 @@ const encodeGps = (data: GPSFix) => {
       heading[0]!, heading[1]!
   ];
 };
+encodeGps.maxLen = 17;
 
-const encodeMag = (data: CompassData) => {
+const encodeMag: LenFunc<CompassData> = (data: CompassData) => {
   const x = toByteArray(data.x, 2, true);
   const y = toByteArray(data.y, 2, true);
   const z = toByteArray(data.z, 2, true);
 
   return [ x[0]!, x[1]!, y[0]!, y[1]!, z[0]!, z[1]! ];
 };
+encodeMag.maxLen = 6;
 
 const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) => {
   const byteArray: Array<number> = new Array(numberOfBytes);
@@ -362,9 +374,6 @@ const enableSensors = () => {
   Bangle.setCompassPower(settings.magEnabled, "btadv");
   if (!settings.magEnabled)
     mag = undefined;
-
-  updateBleAdvert();
-  updateServices();
 };
 
 const updateSetting = (
@@ -378,9 +387,6 @@ const updateSetting = (
 
 // ----------------------------
 
-const haveNew = () =>
-  haveNewAcc || haveNewBar || haveNewGps || haveNewHrm || haveNewMag;
-
 const serviceActive = (serv: BleServ): boolean => {
   switch (serv) {
     case BleServ.HRM: return !!hrm;
@@ -389,71 +395,87 @@ const serviceActive = (serv: BleServ): boolean => {
   }
 };
 
-const serviceToAdvert = (serv: BleServ): BleServAdvert => {
+const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
   switch (serv) {
     case BleServ.HRM:
-      if (hrm) {
-        return {
-          [BleChar.HRM]: {
-            value: encodeHrm(hrm),
-            readable: true,
-            notify: true,
-          },
+      if (hrm || initial) {
+        const o: BleCharAdvert = {
+          maxLen: encodeHrm.maxLen,
+          readable: true,
+          notify: true,
         };
+        if (hrm) {
+          o.value = encodeHrm(hrm);
+        }
+
+        return { [BleChar.HRM]: o };
       }
       return {};
 
     case BleServ.LocationAndNavigation:
-      if (gps) {
-        return {
-          [BleChar.LocationAndSpeed]: {
-            value: encodeGps(gps),
-            readable: true,
-            notify: true,
-          },
+      if (gps || initial) {
+        const o: BleCharAdvert = {
+          maxLen: encodeGps.maxLen,
+          readable: true,
+          notify: true,
         };
+        if (gps) {
+          o.value = encodeGps(gps);
+        }
+
+        return { [BleChar.LocationAndSpeed]: o };
       }
       return {};
 
     case BleServ.EnvSensing: {
       const o: BleServAdvert = {};
 
-      if (bar) {
+      if (bar || initial) {
           o[BleChar.Elevation] = {
-            value: encodeElevation(bar),
+            maxLen: encodeElevation.maxLen,
             readable: true,
             notify: true,
           };
           o[BleChar.TempCelsius] = {
-            value: encodeTemp(bar),
+            maxLen: encodeTemp.maxLen,
             readable: true,
             notify: true,
           };
           o[BleChar.Pressure] = {
-            value: encodePressure(bar),
+            maxLen: encodePressure.maxLen,
             readable: true,
             notify: true,
           };
+
+          if (bar) {
+            o[BleChar.Elevation]!.value = encodeElevation(bar);
+            o[BleChar.TempCelsius]!.value = encodeTemp(bar);
+            o[BleChar.Pressure]!.value = encodePressure(bar);
+          }
       }
 
-      if (mag) {
-          o[BleChar.MagneticFlux3D] = {
-            value: encodeMag(mag),
-            readable: true,
-            notify: true,
-          };
-      };
+      if (mag || initial) {
+        o[BleChar.MagneticFlux3D] = {
+          maxLen: encodeMag.maxLen,
+          readable: true,
+          notify: true,
+        };
+
+        if (mag) {
+          o[BleChar.MagneticFlux3D]!.value = encodeMag(mag);
+        }
+      }
 
       return o;
     }
   }
 };
 
-const getBleAdvert = <T>(map: (s: BleServ) => T) => {
+const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
   const advert: { [key in BleServ]?: T } = {};
 
   for (const serv of services) {
-    if (serviceActive(serv)) {
+    if (all || serviceActive(serv)) {
       advert[serv] = map(serv);
     }
   }
@@ -461,7 +483,7 @@ const getBleAdvert = <T>(map: (s: BleServ) => T) => {
   return advert;
 };
 
-// call this when settings changes
+// TODO: call this at the start, set the advert
 const updateBleAdvert = () => {
   let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
 
@@ -482,27 +504,16 @@ const updateBleAdvert = () => {
 const updateServices = () => {
   const newAdvert = getBleAdvert(serviceToAdvert);
 
-  if (NRF.getSecurityStatus().connected) {
-    NRF.updateServices(newAdvert);
-  } else {
-    NRF.setServices(
-      newAdvert,
-      {
-        advertise: Object
-          .keys(newAdvert)
-          .map((k: string) => k.replace("0x", ""))
-      },
-    );
-  }
+  NRF.updateServices(newAdvert);
 };
 
-Bangle.on('accel', newAcc => { acc = newAcc; haveNewAcc = true; });
-Bangle.on('pressure', newBar => { bar = newBar; haveNewBar = true; });
-Bangle.on('GPS', newGps => { gps = newGps; haveNewGps = true; });
-Bangle.on('HRM', newHrm => { hrm = newHrm; haveNewHrm = true; });
-Bangle.on('mag', newMag => { mag = newMag; haveNewMag = true; });
+Bangle.on('accel', newAcc => acc = newAcc);
+Bangle.on('pressure', newBar => bar = newBar);
+Bangle.on('GPS', newGps => gps = newGps);
+Bangle.on('HRM', newHrm => hrm = newHrm);
+Bangle.on('mag', newMag => mag = newMag);
 
-// show menu first to have it reserve space for widgets (appRect)
+// show widgets to affect appRect
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -517,7 +528,25 @@ Bangle.on("lock", locked => {
 });
 
 // turn things on
-enableSensors(); // calls updateBleAdvert
+enableSensors();
+
+// set services/advert once at startup:
+{
+  // must have fixed services from the start:
+  const ad = getBleAdvert(serv => serviceToAdvert(serv, true), /*all*/true);
+
+  NRF.setServices(
+    ad,
+    {
+      // FIXME: go via setAdvertising(), merge wth Bangle.bleAdvert
+      advertise: Object
+        .keys(ad)
+        .map((k: string) => k.replace("0x", ""))
+
+      // TODO: uart: false,
+    },
+  );
+}
 
 let iv: undefined | number;
 const setIntervals = (connected: boolean) => {
@@ -526,15 +555,13 @@ const setIntervals = (connected: boolean) => {
       changeInterval(iv, Intervals.BLE);
     } else {
       iv = setInterval(
-        () => {
-          if (haveNew())
-            updateServices();
-        },
+        updateServices,
         Intervals.BLE
       );
     }
   } else if (iv) {
     clearInterval(iv);
+    iv = undefined;
   }
 };
 
