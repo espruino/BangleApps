@@ -16,12 +16,8 @@ var bar;
 var gps;
 var hrm;
 var mag;
-var haveNewAcc = false;
-var haveNewBar = false;
-var haveNewGps = false;
-var haveNewHrm = false;
-var haveNewMag = false;
-var curMenu = "main";
+var curMenuName = "main";
+var curMenu;
 var mainMenuScroll = 0;
 var settings = {
     barEnabled: false,
@@ -33,9 +29,9 @@ var showMainMenu = function () {
     var onOff = function (b) { return b ? " (on)" : " (off)"; };
     var mainMenu = {};
     var showMenu = function (menu, scroll, cur) { return function () {
-        E.showMenu(menu);
         mainMenuScroll = scroll;
-        curMenu = cur;
+        curMenu = E.showMenu(menu);
+        curMenuName = cur;
     }; };
     mainMenu[""] = {
         "title": "BLE Advert",
@@ -47,8 +43,8 @@ var showMainMenu = function () {
     mainMenu["Heart Rate" + onOff(settings.hrmEnabled)] = showMenu(hrmMenu, 3, "hrm");
     mainMenu["Magnetometer" + onOff(settings.magEnabled)] = showMenu(magMenu, 4, "mag");
     mainMenu["Exit"] = function () { return load(); };
-    E.showMenu(mainMenu);
-    curMenu = "main";
+    curMenu = E.showMenu(mainMenu);
+    curMenuName = "main";
 };
 var optionsCommon = {
     back: showMainMenu,
@@ -102,18 +98,24 @@ var magMenu = {
     "z": { value: "" },
     "Heading": { value: "" },
 };
+var redrawMenu = function (newMenu) {
+    var scroll = curMenu.scroller.scroll;
+    curMenu = E.showMenu(newMenu);
+    curMenu.scroller.scroll = scroll;
+    curMenu.draw();
+};
 var updateMenu = function () {
-    switch (curMenu) {
+    switch (curMenuName) {
         case "acc":
             if (acc) {
                 accMenu.x.value = acc.x.toFixed(2);
                 accMenu.y.value = acc.y.toFixed(2);
                 accMenu.z.value = acc.z.toFixed(2);
-                E.showMenu(accMenu);
+                redrawMenu(accMenu);
             }
             else if (accMenu.x.value !== "...") {
                 accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
-                E.showMenu(accMenu);
+                redrawMenu(accMenu);
             }
             break;
         case "bar":
@@ -121,11 +123,11 @@ var updateMenu = function () {
                 barMenu.Altitude.value = bar.altitude.toFixed(1) + 'm';
                 barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
                 barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
-                E.showMenu(barMenu);
+                redrawMenu(barMenu);
             }
             else if (barMenu.Altitude.value !== "...") {
                 barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
-                E.showMenu(accMenu);
+                redrawMenu(accMenu);
             }
             break;
         case "gps":
@@ -135,23 +137,23 @@ var updateMenu = function () {
                 gpsMenu.Altitude.value = gps.alt + 'm';
                 gpsMenu.Satellites.value = "" + gps.satellites;
                 gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
-                E.showMenu(gpsMenu);
+                redrawMenu(gpsMenu);
             }
             else if (gpsMenu.Lat.value !== "...") {
                 gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
                     gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
-                E.showMenu(gpsMenu);
+                redrawMenu(gpsMenu);
             }
             break;
         case "hrm":
             if (hrm) {
                 hrmMenu.BPM.value = "" + hrm.bpm;
                 hrmMenu.Confidence.value = hrm.confidence + '%';
-                E.showMenu(hrmMenu);
+                redrawMenu(hrmMenu);
             }
             else if (hrmMenu.BPM.value !== "...") {
                 hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
-                E.showMenu(hrmMenu);
+                redrawMenu(hrmMenu);
             }
             break;
         case "mag":
@@ -160,27 +162,31 @@ var updateMenu = function () {
                 magMenu.y.value = "" + mag.y;
                 magMenu.z.value = "" + mag.z;
                 magMenu.Heading.value = mag.heading.toFixed(1);
-                E.showMenu(magMenu);
+                redrawMenu(magMenu);
             }
             else if (magMenu.x.value !== "...") {
                 magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
-                E.showMenu(magMenu);
+                redrawMenu(magMenu);
             }
             break;
     }
 };
 var encodeHrm = function (hrm) {
-    return [0, hrm ? hrm.bpm : 0];
+    return [0, hrm.bpm];
 };
+encodeHrm.maxLen = 2;
 var encodePressure = function (data) {
     return toByteArray(Math.round(data.pressure * 1000), 4, false);
 };
+encodePressure.maxLen = 4;
 var encodeElevation = function (data) {
     return toByteArray(Math.round(data.altitude * 100), 3, true);
 };
+encodeElevation.maxLen = 3;
 var encodeTemp = function (data) {
     return toByteArray(Math.round(data.temperature * 100), 2, true);
 };
+encodeTemp.maxLen = 2;
 var encodeGps = function (data) {
     var speed = toByteArray(Math.round(1000 * data.speed / 36), 2, false);
     var lat = toByteArray(Math.round(data.lat * 10000000), 4, true);
@@ -197,12 +203,14 @@ var encodeGps = function (data) {
         heading[0], heading[1]
     ];
 };
+encodeGps.maxLen = 17;
 var encodeMag = function (data) {
     var x = toByteArray(data.x, 2, true);
     var y = toByteArray(data.y, 2, true);
     var z = toByteArray(data.z, 2, true);
     return [x[0], x[1], y[0], y[1], z[0], z[1]];
 };
+encodeMag.maxLen = 6;
 var toByteArray = function (value, numberOfBytes, isSigned) {
     var byteArray = new Array(numberOfBytes);
     if (isSigned && (value < 0)) {
@@ -226,15 +234,10 @@ var enableSensors = function () {
     Bangle.setCompassPower(settings.magEnabled, "btadv");
     if (!settings.magEnabled)
         mag = undefined;
-    updateBleAdvert();
-    updateServices();
 };
 var updateSetting = function (name, value) {
     settings[name] = value;
     enableSensors();
-};
-var haveNew = function () {
-    return haveNewAcc || haveNewBar || haveNewGps || haveNewHrm || haveNewMag;
 };
 var serviceActive = function (serv) {
     switch (serv) {
@@ -243,67 +246,80 @@ var serviceActive = function (serv) {
         case "0x1819": return !!(gps && gps.lat && gps.lon);
     }
 };
-var serviceToAdvert = function (serv) {
+var serviceToAdvert = function (serv, initial) {
     var _a, _b;
+    if (initial === void 0) { initial = false; }
     switch (serv) {
         case "0x180d":
-            if (hrm) {
-                return _a = {},
-                    _a["0x2a37"] = {
-                        value: encodeHrm(hrm),
-                        readable: true,
-                        notify: true,
-                    },
-                    _a;
+            if (hrm || initial) {
+                var o = {
+                    maxLen: encodeHrm.maxLen,
+                    readable: true,
+                    notify: true,
+                };
+                if (hrm) {
+                    o.value = encodeHrm(hrm);
+                }
+                return _a = {}, _a["0x2a37"] = o, _a;
             }
             return {};
         case "0x1819":
-            if (gps) {
-                return _b = {},
-                    _b["0x2a67"] = {
-                        value: encodeGps(gps),
-                        readable: true,
-                        notify: true,
-                    },
-                    _b;
+            if (gps || initial) {
+                var o = {
+                    maxLen: encodeGps.maxLen,
+                    readable: true,
+                    notify: true,
+                };
+                if (gps) {
+                    o.value = encodeGps(gps);
+                }
+                return _b = {}, _b["0x2a67"] = o, _b;
             }
             return {};
         case "0x181a": {
             var o = {};
-            if (bar) {
+            if (bar || initial) {
                 o["0x2a6c"] = {
-                    value: encodeElevation(bar),
+                    maxLen: encodeElevation.maxLen,
                     readable: true,
                     notify: true,
                 };
                 o["0x2A1F"] = {
-                    value: encodeTemp(bar),
+                    maxLen: encodeTemp.maxLen,
                     readable: true,
                     notify: true,
                 };
                 o["0x2a6d"] = {
-                    value: encodePressure(bar),
+                    maxLen: encodePressure.maxLen,
                     readable: true,
                     notify: true,
                 };
+                if (bar) {
+                    o["0x2a6c"].value = encodeElevation(bar);
+                    o["0x2A1F"].value = encodeTemp(bar);
+                    o["0x2a6d"].value = encodePressure(bar);
+                }
             }
-            if (mag) {
+            if (mag || initial) {
                 o["0x2aa1"] = {
-                    value: encodeMag(mag),
+                    maxLen: encodeMag.maxLen,
                     readable: true,
                     notify: true,
                 };
+                if (mag) {
+                    o["0x2aa1"].value = encodeMag(mag);
+                }
             }
-            ;
             return o;
         }
     }
 };
-var getBleAdvert = function (map) {
+var getBleAdvert = function (map, all) {
+    if (all === void 0) { all = false; }
     var advert = {};
     for (var _i = 0, services_1 = services; _i < services_1.length; _i++) {
         var serv = services_1[_i];
-        if (serviceActive(serv)) {
+        if (all || serviceActive(serv)) {
             advert[serv] = map(serv);
         }
     }
@@ -324,22 +340,13 @@ var updateBleAdvert = function () {
 };
 var updateServices = function () {
     var newAdvert = getBleAdvert(serviceToAdvert);
-    if (NRF.getSecurityStatus().connected) {
-        NRF.updateServices(newAdvert);
-    }
-    else {
-        NRF.setServices(newAdvert, {
-            advertise: Object
-                .keys(newAdvert)
-                .map(function (k) { return k.replace("0x", ""); })
-        });
-    }
+    NRF.updateServices(newAdvert);
 };
-Bangle.on('accel', function (newAcc) { acc = newAcc; haveNewAcc = true; });
-Bangle.on('pressure', function (newBar) { bar = newBar; haveNewBar = true; });
-Bangle.on('GPS', function (newGps) { gps = newGps; haveNewGps = true; });
-Bangle.on('HRM', function (newHrm) { hrm = newHrm; haveNewHrm = true; });
-Bangle.on('mag', function (newMag) { mag = newMag; haveNewMag = true; });
+Bangle.on('accel', function (newAcc) { return acc = newAcc; });
+Bangle.on('pressure', function (newBar) { return bar = newBar; });
+Bangle.on('GPS', function (newGps) { return gps = newGps; });
+Bangle.on('HRM', function (newHrm) { return hrm = newHrm; });
+Bangle.on('mag', function (newMag) { return mag = newMag; });
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 showMainMenu();
@@ -348,6 +355,14 @@ Bangle.on("lock", function (locked) {
     changeInterval(menuInterval, locked ? 30000 : 1000);
 });
 enableSensors();
+{
+    var ad = getBleAdvert(function (serv) { return serviceToAdvert(serv, true); }, true);
+    NRF.setServices(ad, {
+        advertise: Object
+            .keys(ad)
+            .map(function (k) { return k.replace("0x", ""); })
+    });
+}
 var iv;
 var setIntervals = function (connected) {
     if (connected) {
@@ -355,14 +370,12 @@ var setIntervals = function (connected) {
             changeInterval(iv, 1000);
         }
         else {
-            iv = setInterval(function () {
-                if (haveNew())
-                    updateServices();
-            }, 1000);
+            iv = setInterval(updateServices, 1000);
         }
     }
     else if (iv) {
         clearInterval(iv);
+        iv = undefined;
     }
 };
 setIntervals(NRF.getSecurityStatus().connected);
