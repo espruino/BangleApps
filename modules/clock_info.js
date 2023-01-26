@@ -273,6 +273,7 @@ exports.addInteractive = function(menu, options) {
     lockHandler = function() {
       if(options.focus) {
         options.focus=false;
+        delete Bangle.CLKINFO_FOCUS;
         options.redraw();
       }
     };
@@ -281,18 +282,21 @@ exports.addInteractive = function(menu, options) {
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
         if (options.focus) {
           options.focus=false;
+          delete Bangle.CLKINFO_FOCUS;
           options.redraw();
         }
         return; // outside area
       }
       if (!options.focus) {
         options.focus=true; // if not focussed, set focus
+        Bangle.CLKINFO_FOCUS=true;
         options.redraw();
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
       } else {
         options.focus=true;
+        Bangle.CLKINFO_FOCUS=true;
       }
     };
     Bangle.on("touch",touchHandler);
@@ -305,6 +309,7 @@ exports.addInteractive = function(menu, options) {
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
+    delete Bangle.CLKINFO_FOCUS;
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
   };
