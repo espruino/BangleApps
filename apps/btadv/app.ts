@@ -1,3 +1,10 @@
+// TODO:
+// [ ] fix format of EnvSensing data
+// [-] handle NaNs in data
+// [x] fix sending of HRM / changing service?
+// [.] fix menu scrolling/jumping
+// [ ] fix resetting to accel menu
+
 const enum Intervals {
   BLE_ADVERT = 60 * 1000,
   BLE = 1000,
