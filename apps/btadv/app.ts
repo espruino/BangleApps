@@ -84,14 +84,10 @@ let bar: undefined | PressureData;
 let gps: undefined | GPSFix;
 let hrm: undefined | Hrm;
 let mag: undefined | CompassData;
-let haveNewAcc = false;
-let haveNewBar = false;
-let haveNewGps = false;
-let haveNewHrm = false;
-let haveNewMag = false;
 
 type BtAdvMenu = "acc" | "bar" | "gps" | "hrm" | "mag" | "main";
-let curMenu: BtAdvMenu = "main";
+let curMenuName: BtAdvMenu = "main";
+let curMenu: MenuInstance;
 let mainMenuScroll = 0;
 const settings = {
   barEnabled: false,
@@ -105,9 +101,11 @@ const showMainMenu = () => {
   const mainMenu: Menu = {};
 
   const showMenu = (menu: Menu, scroll: number, cur: BtAdvMenu) => () => {
-    E.showMenu(menu);
-    mainMenuScroll = scroll;
-    curMenu = cur;
+    mainMenuScroll = scroll; // int
+
+    curMenu = E.showMenu(menu);
+
+    curMenuName = cur;
   };
 
   mainMenu[""] = {
@@ -122,8 +120,8 @@ const showMainMenu = () => {
   mainMenu["Magnetometer" + onOff(settings.magEnabled)] = showMenu(magMenu, 4, "mag");
   mainMenu["Exit"]                                      = () => (load as any)(); // avoid `this` + typehack
 
-  E.showMenu(mainMenu);
-  curMenu = "main";
+  curMenu = E.showMenu(mainMenu);
+  curMenuName = "main";
 };
 
 const optionsCommon = {
@@ -184,17 +182,27 @@ const magMenu = {
   "Heading": { value: "" },
 };
 
+const redrawMenu = (newMenu: Menu) => {
+  const scroll = (curMenu as any).scroller.scroll;
+
+  curMenu = E.showMenu(newMenu);
+
+  // FIXME: doesn't work for promenu
+  (curMenu as any).scroller.scroll = scroll; // typehack
+  curMenu.draw();
+};
+
 const updateMenu = () => {
-  switch (curMenu) {
+  switch (curMenuName) {
     case "acc":
       if (acc) {
         accMenu.x.value = acc.x.toFixed(2);
         accMenu.y.value = acc.y.toFixed(2);
         accMenu.z.value = acc.z.toFixed(2);
-        E.showMenu(accMenu);
+        redrawMenu(accMenu);
       } else if (accMenu.x.value !== "...") {
         accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
-        E.showMenu(accMenu);
+        redrawMenu(accMenu);
       }
       break;
 
@@ -203,10 +211,10 @@ const updateMenu = () => {
         barMenu.Altitude.value = bar.altitude.toFixed(1) + 'm';
         barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
         barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
-        E.showMenu(barMenu);
+        redrawMenu(barMenu);
       } else if (barMenu.Altitude.value !== "...") {
         barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
-        E.showMenu(accMenu);
+        redrawMenu(accMenu);
       }
       break;
 
@@ -217,11 +225,11 @@ const updateMenu = () => {
         gpsMenu.Altitude.value = gps.alt + 'm';
         gpsMenu.Satellites.value = "" + gps.satellites;
         gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
-        E.showMenu(gpsMenu);
+        redrawMenu(gpsMenu);
       } else if (gpsMenu.Lat.value !== "...") {
         gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
           gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
-        E.showMenu(gpsMenu);
+        redrawMenu(gpsMenu);
       }
       break;
 
@@ -229,10 +237,10 @@ const updateMenu = () => {
       if (hrm) {
         hrmMenu.BPM.value = "" + hrm.bpm;
         hrmMenu.Confidence.value = hrm.confidence + '%';
-        E.showMenu(hrmMenu);
+        redrawMenu(hrmMenu);
       } else if (hrmMenu.BPM.value !== "...") {
         hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
-        E.showMenu(hrmMenu);
+        redrawMenu(hrmMenu);
       }
       break;
 
@@ -242,10 +250,10 @@ const updateMenu = () => {
         magMenu.y.value = "" + mag.y;
         magMenu.z.value = "" + mag.z;
         magMenu.Heading.value = mag.heading.toFixed(1);
-        E.showMenu(magMenu);
+        redrawMenu(magMenu);
       } else if (magMenu.x.value !== "...") {
         magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
-        E.showMenu(magMenu);
+        redrawMenu(magMenu);
       }
       break;
   }
