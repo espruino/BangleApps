@@ -1,10 +1,3 @@
-// TODO:
-// [ ] fix format of EnvSensing data
-// [-] handle NaNs in data
-// [x] fix sending of HRM / changing service?
-// [.] fix menu scrolling/jumping
-// [.] fix resetting to accel menu
-
 const Layout = require("Layout") as Layout_.Layout;
 
 const enum Intervals {

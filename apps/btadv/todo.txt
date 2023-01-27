@@ -1,0 +1,7 @@
+[ ] g.dump() - screenshot via IDE
+[ ] fix format of EnvSensing data
+[-] handle NaNs in data
+[x] fix sending of HRM / changing service?
+[x] fix menu scrolling/jumping
+[x] fix resetting to accel menu
+[ ] fix button lag / slow down BLE on menu?
