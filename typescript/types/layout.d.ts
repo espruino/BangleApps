@@ -36,13 +36,13 @@ declare module Layout_ {
 			hier: T,
 			options?: {
 				lazy: boolean,
-				btns: {
+				btns?: {
 					label: string,
 					cb: () => void,
 					cbl: () => void,
 				}[],
-				back: () => void,
-				remove: () => void,
+				back?: () => void,
+				remove?: () => void,
 			},
 		): Layouter<T>;
 	};
@@ -71,11 +71,11 @@ declare module Layout_ {
 			id?: string,
 			font?: FontNameWithScaleFactor,
 			scale?: number,
-			col: ColorResolvable,
-			bgCol: ColorResolvable,
-			pad: number,
-			fillx: Fill,
-			filly: Fill,
+			col?: ColorResolvable,
+			bgCol?: ColorResolvable,
+			pad?: number,
+			fillx?: Fill,
+			filly?: Fill,
 			width?: number,
 			height?: number,
 		} & (
@@ -92,17 +92,17 @@ declare module Layout_ {
 		{
 			type: "v",
 			c: Hierarchy[],
-			halign: Align,
+			halign?: Align,
 		} | {
 			type: "h"
 			c: Hierarchy[],
-			valign: Align,
+			valign?: Align,
 		} | {
 			type: "txt",
 			label: string,
 			font: FontNameWithScaleFactor,
 		} | {
-			type: undefined,
+			type: undefined, // blank, for padding
 		} | (
 			{
 				type: "btn",
@@ -112,8 +112,8 @@ declare module Layout_ {
 				type: "btn",
 				cb: () => void,
 				label: string,
-				font: FontNameWithScaleFactor,
-				scale: number,
+				font?: FontNameWithScaleFactor,
+				scale?: number,
 			}
 		) | {
 			type: "img",
