@@ -1,10 +1,13 @@
 const Layout = require("Layout") as Layout_.Layout;
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
 const enum Intervals {
-  BLE_ADVERT = 60 * 1000,
+  // BLE_ADVERT = 60 * 1000,
   BLE = 1000,
-  MENU_WAKE = 1000,
-  MENU_SLEEP = 30 * 1000,
+  MENU_WAKE = 2 * 1000,
+  MENU_SLEEP = 15 * 1000,
 }
 
 type Hrm = { bpm: number, confidence: number };
@@ -99,6 +102,8 @@ const idToName: BtAdvMap<string, true> = {
   hrm: "HRM",
   mag: "Magnetometer",
 };
+
+const infoFont: FontNameWithScaleFactor = "6x8:2";
 
 const colour = {
   on: "#0f0",
@@ -213,149 +218,107 @@ const btnLayout = new Layout(
 
 const setBtnsShown = (b: boolean) => {
   btnsShown = b;
-  g.clearRect(Bangle.appRect);
   redraw();
 };
 
-const infoFont: FontNameWithScaleFactor = "6x8:2";
-const infoCommon = {
-  type: "txt",
-  label: "",
-  font: infoFont,
-  pad: 5,
-} as const;
+const drawInfo = () => {
+  let { y, x, w } = Bangle.appRect;
+  const mid = x + w / 2
+  let drawn = false;
 
-const infoLayout = new Layout(
-  {
-    type: "v",
-    c: [
-      {
-        type: "h",
-        c: [
-          { id: "bar_alti", ...infoCommon },
-          { id: "bar_pres", ...infoCommon },
-          { id: "bar_temp", ...infoCommon },
-        ]
-      },
-      {
-        type: "h",
-        c: [
-          { id: "gps_lat", ...infoCommon },
-          { id: "gps_lon", ...infoCommon },
-          { id: "gps_altitude", ...infoCommon },
-          { id: "gps_satellites", ...infoCommon },
-          { id: "gps_hdop", ...infoCommon },
-        ]
-      },
-      {
-        type: "h",
-        c: [
-          { id: "hrm_bpm", ...infoCommon },
-          { id: "hrm_confidence", ...infoCommon },
-        ]
-      },
-      {
-        type: "h",
-        c: [
-          { id: "mag_x", ...infoCommon },
-          { id: "mag_y", ...infoCommon },
-          { id: "mag_z", ...infoCommon },
-          { id: "mag_heading", ...infoCommon },
-        ]
-      },
-      {
-        type: "btn",
-        label: "Set",
-        cb: () => {
-          setBtnsShown(true);
-        },
-        ...btnStyle,
-      },
-    ]
-  },
-  {
-    lazy: true,
-    // back: () => (load as any)(),
-  }
-);
+  g.reset()
+    .clearRect(Bangle.appRect)
+    .setFont(infoFont)
+    .setFontAlign(0, -1);
 
-const showElem = (
-  layout: Layout_.Hierarchy & { type: "txt" },
-  s: string,
-) => {
-  layout.label = s;
-  // delete layout.width; TODO?
-  delete layout.height;
-};
-
-const hideElem = (layout: Layout_.Hierarchy) => {
-  layout.height = 0;
-};
-
-const populateInfo = () => {
   if (bar) {
-    showElem(infoLayout["bar_alti"]!, `${bar.altitude.toFixed(1)}m`);
-    showElem(infoLayout["bar_pres"]!, `${bar.pressure.toFixed(1)}mbar`);
-    showElem(infoLayout["bar_temp"]!, `${bar.temperature.toFixed(1)}C`);
-  } else {
-    hideElem(infoLayout["bar_alti"]!);
-    hideElem(infoLayout["bar_pres"]!);
-    hideElem(infoLayout["bar_temp"]!);
+    g.drawString(`${bar.altitude.toFixed(1)}m`, mid, y);
+    y += g.getFontHeight();
+
+    g.drawString(`${bar.pressure.toFixed(1)}mbar`, mid, y);
+    y += g.getFontHeight();
+
+    g.drawString(`${bar.temperature.toFixed(1)}C`, mid, y);
+    y += g.getFontHeight();
+
+    drawn = true;
   }
 
   if (gps) {
-    showElem(infoLayout["gps_lat"]!, gps.lat.toFixed(4));
-    showElem(infoLayout["gps_lon"]!, gps.lon.toFixed(4));
-    showElem(infoLayout["gps_altitude"]!, `${gps.alt}m`);
-    showElem(infoLayout["gps_satellites"]!, `${gps.satellites}`);
-    showElem(infoLayout["gps_hdop"]!, `${(gps.hdop * 5).toFixed(1)}m`);
-  } else {
-    hideElem(infoLayout["gps_lat"]!);
-    hideElem(infoLayout["gps_lon"]!);
-    hideElem(infoLayout["gps_altitude"]!);
-    hideElem(infoLayout["gps_satellites"]!);
-    hideElem(infoLayout["gps_hdop"]!);
+    g.drawString(
+      `${gps.lat.toFixed(4)} lat, ${gps.lon.toFixed(4)} lon`,
+      mid,
+      y,
+    );
+    y += g.getFontHeight();
+
+    g.drawString(
+      `${gps.alt}m (${gps.satellites} sat)`,
+      mid,
+      y,
+    );
+    y += g.getFontHeight();
+
+    drawn = true;
   }
 
   if (hrm) {
-    showElem(infoLayout["hrm_bpm"]!, `${hrm.bpm}`);
-    showElem(infoLayout["hrm_confidence"]!, `${hrm.confidence}%`);
-  } else {
-    hideElem(infoLayout["hrm_bpm"]!);
-    hideElem(infoLayout["hrm_confidence"]!);
+    g.drawString(`${hrm.bpm} BPM (${hrm.confidence}%)`, mid, y);
+    y += g.getFontHeight();
+
+    drawn = true;
   }
 
   if (mag) {
-    showElem(infoLayout["mag_x"]!, `${mag.x}`);
-    showElem(infoLayout["mag_y"]!, `${mag.y}`);
-    showElem(infoLayout["mag_z"]!, `${mag.z}`);
-    showElem(infoLayout["mag_heading"]!, mag.heading.toFixed(1));
-  } else {
-    hideElem(infoLayout["mag_x"]!);
-    hideElem(infoLayout["mag_y"]!);
-    hideElem(infoLayout["mag_z"]!);
-    hideElem(infoLayout["mag_heading"]!);
+    g.drawString(
+      `${mag.x} ${mag.y} ${mag.z}`,
+      mid,
+      y
+    );
+    y += g.getFontHeight();
+
+    g.drawString(
+      `heading: ${mag.heading.toFixed(1)}`,
+      mid,
+      y
+    );
+    y += g.getFontHeight();
+
+    drawn = true;
+  }
+
+  if (!drawn) {
+    g.drawString(`swipe to enable`, mid, y);
+    y += g.getFontHeight();
   }
 };
 
+const onTap = (_: { /* ... */ }) => {
+  setBtnsShown(true);
+};
+
 const redraw = () => {
-  let layout;
-
   if (btnsShown) {
-    layout = btnLayout;
+    if (!prevBtnsShown) {
+      prevBtnsShown = btnsShown;
+
+      Bangle.removeListener("swipe", onTap);
+
+      btnLayout.setUI();
+      btnLayout.forgetLazyState();
+      g.clearRect(Bangle.appRect); // in case btnLayout isn't full screen
+    }
+
+    btnLayout.render();
   } else {
-    populateInfo();
-    infoLayout.update();
+    if (prevBtnsShown) {
+      prevBtnsShown = btnsShown;
 
-    layout = infoLayout;
+      Bangle.setUI(); // remove all existing input handlers
+      Bangle.on("swipe", onTap);
+    }
+    drawInfo();
   }
-
-  if (btnsShown !== prevBtnsShown) {
-    prevBtnsShown = btnsShown;
-    layout.forgetLazyState();
-    layout.setUI();
-  }
-  layout.render();
 };
 
 const encodeHrm: LenFunc<Hrm> = (hrm: Hrm) =>
@@ -616,10 +579,6 @@ Bangle.on('pressure', newBar => bar = newBar);
 Bangle.on('GPS', newGps => gps = newGps);
 Bangle.on('HRM', newHrm => hrm = newHrm);
 Bangle.on('mag', newMag => mag = newMag);
-
-// show UI
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 
 setBtnsShown(true);
 
