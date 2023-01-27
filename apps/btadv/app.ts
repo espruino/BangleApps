@@ -487,7 +487,7 @@ const enableSensors = () => {
 
 // ----------------------------
 
-const serviceActive = (serv: BleServ): boolean => {
+const haveServiceData = (serv: BleServ): boolean => {
   switch (serv) {
     case BleServ.HRM: return !!hrm;
     case BleServ.EnvSensing: return !!(bar || mag);
@@ -506,6 +506,7 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
         };
         if (hrm) {
           o.value = encodeHrm(hrm);
+          hrm = undefined;
         }
 
         return { [BleChar.HRM]: o };
@@ -521,6 +522,7 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
         };
         if (gps) {
           o.value = encodeGps(gps);
+          gps = undefined;
         }
 
         return { [BleChar.LocationAndSpeed]: o };
@@ -551,6 +553,7 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
             o[BleChar.Elevation]!.value = encodeElevation(bar);
             o[BleChar.TempCelsius]!.value = encodeTemp(bar);
             o[BleChar.Pressure]!.value = encodePressure(bar);
+            bar = undefined;
           }
       }
 
@@ -563,6 +566,7 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
 
         if (mag) {
           o[BleChar.MagneticFlux3D]!.value = encodeMag(mag);
+          mag = undefined;
         }
       }
 
@@ -575,7 +579,7 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
   const advert: { [key in BleServ]?: T } = {};
 
   for (const serv of services) {
-    if (all || serviceActive(serv)) {
+    if (all || haveServiceData(serv)) {
       advert[serv] = map(serv);
     }
   }
@@ -665,10 +669,10 @@ const setIntervals = (connected: boolean) => {
   }
 };
 
-// setIntervals(NRF.getSecurityStatus().connected);
-// NRF.on("connect", () => {
-//   setIntervals(true);
-// });
-// NRF.on("disconnect", () => {
-//   setIntervals(false);
-// });
+setIntervals(NRF.getSecurityStatus().connected);
+NRF.on("connect", () => {
+  setIntervals(true);
+});
+NRF.on("disconnect", () => {
+  setIntervals(false);
+});
