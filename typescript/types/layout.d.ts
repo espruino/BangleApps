@@ -3,7 +3,9 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 type ExtractIds<T extends Layout_.Hierarchy, Depth extends Prev[number] = 9> =
 	[Depth] extends [never]
 	? never
-	: (T extends { id: infer Id extends string } ? Id : never)
+	: (T extends { id: infer Id extends string }
+		? { [k in Id]: T }
+		: never)
 	|
 	(
 		T extends { c: Array<infer Sub extends Layout_.Hierarchy> }
@@ -13,9 +15,9 @@ type ExtractIds<T extends Layout_.Hierarchy, Depth extends Prev[number] = 9> =
 
 declare module Layout_ {
 	type Layouter<T extends Hierarchy> =
+		ExtractIds<T>
+		&
 		{
-			[k in ExtractIds<T>]: number;
-		} & {
 			// these actually change T
 			render(l?: T): void;
 			layout(l: T): void;
