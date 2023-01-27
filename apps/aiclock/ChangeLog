@@ -5,3 +5,4 @@
 0.05: Support for clkinfo.
 0.06: ClockInfo Fix: Use .get instead of .show as .show is not implemented for weather etc.
 0.07: Use clock_info.addInteractive instead of a custom implementation
+0.08: Use clock_info module as an app

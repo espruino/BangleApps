@@ -1,54 +1,4 @@
-/* Module that allows for loading of clock 'info' displays
-that can be scrolled through on the clock face.
-
-`load()` returns an array of menu objects, where each object contains a list of menu items:
-* `name` : text to display and identify menu object (e.g. weather)
-* `img` : a 24x24px image
-* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date)
-* `items` : menu items such as temperature, humidity, wind etc.
-
-Note that each item is an object with:
-
-* `item.name` : friendly name to identify an item (e.g. temperature)
-* `item.hasRange` : if `true`, `.get` returns `v/min/max` values (for progress bar/guage)
-* `item.get` : function that returns an object:
-
-{
-  'text'  // the text to display for this item
-  'short' // optional: a shorter text to display for this item (at most 6 characters)
-  'img'   // optional: a 24x24px image to display for this item
-  'color' // optional: a color string (like "#ffffff") to color the icon in compatible clocks
-  'v'     // (if hasRange==true) a numerical value
-  'min','max' // (if hasRange==true) a minimum and maximum numerical value (if this were to be displayed as a guage)
-}
-
-* `item.show` : called when item should be shown. Enables updates. Call BEFORE 'get'
-* `item.hide` : called when item should be hidden. Disables updates.
-* `.on('redraw', ...)` : event that is called when 'get' should be called again (only after 'item.show')
-* `item.run` : (optional) called if the info screen is tapped - can perform some action. Return true if the caller should feedback the user.
-
-See the bottom of this file for example usage...
-
-example.clkinfo.js :
-
-(function() {
-  return {
-    name: "Bangle",
-    img: atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==") }),
-    items: [
-      { name : "Item1",
-        get : () => ({ text : "TextOfItem1", v : 10, min : 0, max : 100,
-                      img : atob("GBiBAAD+AAH+AAH+AAH+AAH/AAOHAAYBgAwAwBgwYBgwYBgwIBAwOBAwOBgYIBgMYBgAYAwAwAYBgAOHAAH/AAH+AAH+AAH+AAD+AA==")
-                    }),
-        show : () => {},
-        hide : () => {}
-        // run : () => {} optional (called when tapped)
-      }
-    ]
-  };
-}) // must not have a semi-colon!
-
-*/
+/* See the README for more info... */
 
 let storage = require("Storage");
 let stepGoal = undefined;
@@ -60,7 +10,21 @@ if (stepGoal == undefined) {
   stepGoal = d != undefined && d.settings != undefined ? d.settings.goal : 10000;
 }
 
+// Load the settings, with defaults
+exports.loadSettings = function() {
+  return Object.assign({
+      hrmOn : 0, // 0(Always), 1(Tap)
+      defocusOnLock : true,
+      maxAltitude : 3000,
+      apps : {}
+    },
+    require("Storage").readJSON("clock_info.json",1)||{}
+  );
+};
+
 exports.load = function() {
+  var settings = exports.loadSettings();
+  delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
   var hrm = 0;
   var alt = "--";
@@ -111,8 +75,31 @@ exports.load = function() {
         text : (hrm||"--") + " bpm", v : hrm, min : 40, max : 200,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAADAAADAAAHAAAHjAAHjgAPngH9n/n82/gA+AAA8AAA8AAAcAAAYAAAYAAAAAAAAAAAAAAAAAAAAAA==")
       }},
-      show : function() { Bangle.setHRMPower(1,"clkinfo"); Bangle.on("HRM", hrmUpdateHandler); hrm = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm); hrmUpdateHandler(); },
-      hide : function() { Bangle.setHRMPower(0,"clkinfo"); Bangle.removeListener("HRM", hrmUpdateHandler); hrm = 0; },
+      run : function() {
+        Bangle.setHRMPower(1,"clkinfo");
+        if (settings.hrmOn==1/*Tap*/) {
+          /* turn off after 1 minute. If Health HRM monitoring is
+          enabled we will still get HRM events every so often */
+          this.timeout = setTimeout(function() {
+            this.timeout = undefined;
+            Bangle.setHRMPower(0,"clkinfo");
+          }, 60000);
+        }
+      },
+      show : function() {
+        Bangle.on("HRM", hrmUpdateHandler);
+        hrm = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm); hrmUpdateHandler();
+        this.run(); // start HRM
+      },
+      hide : function() {
+        Bangle.setHRMPower(0,"clkinfo");
+        Bangle.removeListener("HRM", hrmUpdateHandler);
+        if (this.timeout) {
+          clearTimeout(this.timeout);
+          this.timeout = undefined;
+        }
+        hrm = 0;
+      },
     }
   ],
   }];
@@ -123,7 +110,7 @@ exports.load = function() {
       hasRange : true,
       get : () => ({
         text : alt, v : parseInt(alt),
-        min : 0, max : 3000,
+        min : 0, max : settings.maxAltitude,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==")
       }),
       show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
@@ -148,8 +135,17 @@ exports.load = function() {
   return menu;
 };
 
+
 /** Adds an interactive menu that could be used on a clock face by swiping.
 Simply supply the menu data (from .load) and a function to draw the clock info.
+
+options = {
+  app : "str",                // optional: app ID used when saving clock_info positions
+                              // if defined, your app will remember its own positions,
+                              // otherwise all apps share the same ones
+  x : 20, y: 20, w: 80, h:80, // dimensions of area used for clock_info
+  draw : (itm, info, options) // draw function
+}
 
 For example:
 
@@ -181,7 +177,7 @@ clockInfoMenu is the 'options' parameter, with the following added:
 * `redraw` : function - force a redraw
 * `focus` : function - bool to show if menu is focused or not
 
-You can have more than one clock_info at once as well, sfor instance:
+You can have more than one clock_info at once as well, for instance:
 
 let clockInfoDraw = (itm, info, options) => {
   g.reset().setBgColor(options.bg).setColor(options.fg).clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
@@ -201,19 +197,19 @@ exports.addInteractive = function(menu, options) {
   options.index = 0|exports.loadCount;
   exports.loadCount = options.index+1;
   options.focus = options.index==0 && options.x===undefined; // focus if we're the first one loaded and no position has been defined
-  const appName = "default:"+options.index;
+  const appName = (options.app||"default")+":"+options.index;
 
-  { // load the currently showing clock_infos
-    let settings = require("Storage").readJSON("clock_info.json",1)||{};
-    if (settings[appName]) {
-      let a = settings[appName].a|0;
-      let b = settings[appName].b|0;
-      if (menu[a] && menu[a].items[b]) { // all ok
-        options.menuA = a;
-        options.menuB = b;
-      }
+  // load the currently showing clock_infos
+  let settings = exports.loadSettings()
+  if (settings.apps[appName]) {
+    let a = settings.apps[appName].a|0;
+    let b = settings.apps[appName].b|0;
+    if (menu[a] && menu[a].items[b]) { // all ok
+      options.menuA = a;
+      options.menuB = b;
     }
   }
+
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
   function drawItem(itm) {
@@ -262,21 +258,13 @@ exports.addInteractive = function(menu, options) {
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
     // save the currently showing clock_info
-    let settings = require("Storage").readJSON("clock_info.json",1)||{};
-    settings[appName] = {a:options.menuA,b:options.menuB};
+    let settings = exports.loadSettings();
+    settings.apps[appName] = {a:options.menuA,b:options.menuB};
     require("Storage").writeJSON("clock_info.json",settings);
   }
   Bangle.on("swipe",swipeHandler);
-  var touchHandler;
-  var lockHandler;
+  let touchHandler, lockHandler;
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
-    lockHandler = function() {
-      if(options.focus) {
-        options.focus=false;
-        delete Bangle.CLKINFO_FOCUS;
-        options.redraw();
-      }
-    };
     touchHandler = function(_,e) {
       if (e.x<options.x || e.y<options.y ||
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
@@ -300,7 +288,16 @@ exports.addInteractive = function(menu, options) {
       }
     };
     Bangle.on("touch",touchHandler);
-    Bangle.on("lock", lockHandler);
+    if (settings.defocusOnLock) {
+      lockHandler = function() {
+        if(options.focus) {
+          options.focus=false;
+          delete Bangle.CLKINFO_FOCUS;
+          options.redraw();
+        }
+      };
+      Bangle.on("lock", lockHandler);
+    }
   }
   // draw the first item
   menuShowItem(menu[options.menuA].items[options.menuB]);
@@ -333,6 +330,8 @@ exports.addInteractive = function(menu, options) {
 
     return true;
   }
+
+  delete settings; // don't keep settings in RAM - save space
   return options;
 };
 
