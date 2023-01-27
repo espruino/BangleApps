@@ -10,166 +10,207 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var Layout = require("Layout");
 var services = ["0x180d", "0x181a", "0x1819"];
 var acc;
 var bar;
 var gps;
 var hrm;
 var mag;
-var curMenuName = "main";
-var curMenu;
-var mainMenuScroll = 0;
+var btnsShown = false;
+var prevBtnsShown = undefined;
 var settings = {
-    barEnabled: false,
-    gpsEnabled: false,
-    hrmEnabled: false,
-    magEnabled: false,
+    bar: false,
+    gps: false,
+    hrm: false,
+    mag: false,
 };
-var showMainMenu = function () {
-    var onOff = function (b) { return b ? " (on)" : " (off)"; };
-    var mainMenu = {};
-    var showMenu = function (menu, scroll, cur) { return function () {
-        mainMenuScroll = scroll;
-        curMenu = E.showMenu(menu);
-        curMenuName = cur;
-    }; };
-    mainMenu[""] = {
-        "title": "BLE Advert",
-    };
-    mainMenu[""].scroll = mainMenuScroll;
-    mainMenu["Acceleration"] = showMenu(accMenu, 0, "acc");
-    mainMenu["Barometer" + onOff(settings.barEnabled)] = showMenu(barMenu, 1, "bar");
-    mainMenu["GPS" + onOff(settings.gpsEnabled)] = showMenu(gpsMenu, 2, "gps");
-    mainMenu["Heart Rate" + onOff(settings.hrmEnabled)] = showMenu(hrmMenu, 3, "hrm");
-    mainMenu["Magnetometer" + onOff(settings.magEnabled)] = showMenu(magMenu, 4, "mag");
-    mainMenu["Exit"] = function () { return load(); };
-    curMenu = E.showMenu(mainMenu);
-    curMenuName = "main";
+var idToName = {
+    acc: "Acceleration",
+    bar: "Barometer",
+    gps: "GPS",
+    hrm: "HRM",
+    mag: "Magnetometer",
 };
-var optionsCommon = {
-    back: showMainMenu,
+var colour = {
+    on: "#0f0",
+    off: "#fff",
 };
-var accMenu = {
-    "": __assign({ "title": "Acceleration" }, optionsCommon),
-    "Active": { value: "true (fixed)" },
-    "x": { value: "" },
-    "y": { value: "" },
-    "z": { value: "" },
+var makeToggle = function (id) { return function () {
+    settings[id] = !settings[id];
+    var entry = btnLayout[id];
+    var col = settings[id] ? colour.on : colour.off;
+    entry.btnBorder = entry.col = col;
+    btnLayout.update();
+    btnLayout.render();
+    enableSensors();
+}; };
+var btnStyle = {
+    font: "Vector:14",
+    fillx: 1,
+    filly: 1,
+    col: g.theme.fg,
+    bgCol: g.theme.bg,
+    btnBorder: "#fff",
 };
-var barMenu = {
-    "": __assign({ "title": "Barometer" }, optionsCommon),
-    "Active": {
-        value: settings.barEnabled,
-        onchange: function (v) { return updateSetting('barEnabled', v); },
+var btnLayout = new Layout({
+    type: "v",
+    c: [
+        {
+            type: "h",
+            c: [
+                __assign({ type: "btn", label: idToName.bar, id: "bar", cb: makeToggle('bar') }, btnStyle),
+                __assign({ type: "btn", label: idToName.gps, id: "gps", cb: makeToggle('gps') }, btnStyle),
+            ]
+        },
+        {
+            type: "h",
+            c: [
+                __assign({ type: "btn", label: idToName.hrm, id: "hrm", cb: makeToggle('hrm') }, btnStyle),
+                __assign({ type: "btn", label: idToName.mag, id: "mag", cb: makeToggle('mag') }, btnStyle),
+            ]
+        },
+        {
+            type: "h",
+            c: [
+                __assign(__assign({ type: "btn", label: idToName.acc, id: "acc", cb: function () { } }, btnStyle), { col: colour.on, btnBorder: colour.on }),
+                __assign({ type: "btn", label: "Back", cb: function () {
+                        setBtnsShown(false);
+                    } }, btnStyle),
+            ]
+        }
+    ]
+}, {
+    lazy: true,
+    back: function () {
+        setBtnsShown(false);
     },
-    "Altitude": { value: "" },
-    "Press": { value: "" },
-    "Temp": { value: "" },
+});
+var setBtnsShown = function (b) {
+    btnsShown = b;
+    g.clearRect(Bangle.appRect);
+    redraw();
 };
-var gpsMenu = {
-    "": __assign({ "title": "GPS" }, optionsCommon),
-    "Active": {
-        value: settings.gpsEnabled,
-        onchange: function (v) { return updateSetting('gpsEnabled', v); },
-    },
-    "Lat": { value: "" },
-    "Lon": { value: "" },
-    "Altitude": { value: "" },
-    "Satellites": { value: "" },
-    "HDOP": { value: "" },
+var infoFont = "6x8:2";
+var infoCommon = {
+    type: "txt",
+    label: "",
+    font: infoFont,
+    pad: 5,
 };
-var hrmMenu = {
-    "": __assign({ "title": "Heart Rate" }, optionsCommon),
-    "Active": {
-        value: settings.hrmEnabled,
-        onchange: function (v) { return updateSetting('hrmEnabled', v); },
-    },
-    "BPM": { value: "" },
-    "Confidence": { value: "" },
+var infoLayout = new Layout({
+    type: "v",
+    c: [
+        {
+            type: "h",
+            c: [
+                __assign({ id: "bar_alti" }, infoCommon),
+                __assign({ id: "bar_pres" }, infoCommon),
+                __assign({ id: "bar_temp" }, infoCommon),
+            ]
+        },
+        {
+            type: "h",
+            c: [
+                __assign({ id: "gps_lat" }, infoCommon),
+                __assign({ id: "gps_lon" }, infoCommon),
+                __assign({ id: "gps_altitude" }, infoCommon),
+                __assign({ id: "gps_satellites" }, infoCommon),
+                __assign({ id: "gps_hdop" }, infoCommon),
+            ]
+        },
+        {
+            type: "h",
+            c: [
+                __assign({ id: "hrm_bpm" }, infoCommon),
+                __assign({ id: "hrm_confidence" }, infoCommon),
+            ]
+        },
+        {
+            type: "h",
+            c: [
+                __assign({ id: "mag_x" }, infoCommon),
+                __assign({ id: "mag_y" }, infoCommon),
+                __assign({ id: "mag_z" }, infoCommon),
+                __assign({ id: "mag_heading" }, infoCommon),
+            ]
+        },
+        __assign({ type: "btn", label: "Set", cb: function () {
+                setBtnsShown(true);
+            } }, btnStyle),
+    ]
+}, {
+    lazy: true,
+});
+var showElem = function (layout, s) {
+    layout.label = s;
+    delete layout.height;
 };
-var magMenu = {
-    "": __assign({ "title": "Magnetometer" }, optionsCommon),
-    "Active": {
-        value: settings.magEnabled,
-        onchange: function (v) { return updateSetting('magEnabled', v); },
-    },
-    "x": { value: "" },
-    "y": { value: "" },
-    "z": { value: "" },
-    "Heading": { value: "" },
+var hideElem = function (layout) {
+    layout.height = 0;
 };
-var redrawMenu = function (newMenu) {
-    var scroll = curMenu.scroller.scroll;
-    curMenu = E.showMenu(newMenu);
-    curMenu.scroller.scroll = scroll;
-    curMenu.draw();
-};
-var updateMenu = function () {
-    switch (curMenuName) {
-        case "acc":
-            if (acc) {
-                accMenu.x.value = acc.x.toFixed(2);
-                accMenu.y.value = acc.y.toFixed(2);
-                accMenu.z.value = acc.z.toFixed(2);
-                redrawMenu(accMenu);
-            }
-            else if (accMenu.x.value !== "...") {
-                accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
-                redrawMenu(accMenu);
-            }
-            break;
-        case "bar":
-            if (bar) {
-                barMenu.Altitude.value = bar.altitude.toFixed(1) + 'm';
-                barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
-                barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
-                redrawMenu(barMenu);
-            }
-            else if (barMenu.Altitude.value !== "...") {
-                barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
-                redrawMenu(accMenu);
-            }
-            break;
-        case "gps":
-            if (gps) {
-                gpsMenu.Lat.value = gps.lat.toFixed(4);
-                gpsMenu.Lon.value = gps.lon.toFixed(4);
-                gpsMenu.Altitude.value = gps.alt + 'm';
-                gpsMenu.Satellites.value = "" + gps.satellites;
-                gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
-                redrawMenu(gpsMenu);
-            }
-            else if (gpsMenu.Lat.value !== "...") {
-                gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
-                    gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
-                redrawMenu(gpsMenu);
-            }
-            break;
-        case "hrm":
-            if (hrm) {
-                hrmMenu.BPM.value = "" + hrm.bpm;
-                hrmMenu.Confidence.value = hrm.confidence + '%';
-                redrawMenu(hrmMenu);
-            }
-            else if (hrmMenu.BPM.value !== "...") {
-                hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
-                redrawMenu(hrmMenu);
-            }
-            break;
-        case "mag":
-            if (mag) {
-                magMenu.x.value = "" + mag.x;
-                magMenu.y.value = "" + mag.y;
-                magMenu.z.value = "" + mag.z;
-                magMenu.Heading.value = mag.heading.toFixed(1);
-                redrawMenu(magMenu);
-            }
-            else if (magMenu.x.value !== "...") {
-                magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
-                redrawMenu(magMenu);
-            }
-            break;
+var populateInfo = function () {
+    if (bar) {
+        showElem(infoLayout["bar_alti"], "".concat(bar.altitude.toFixed(1), "m"));
+        showElem(infoLayout["bar_pres"], "".concat(bar.pressure.toFixed(1), "mbar"));
+        showElem(infoLayout["bar_temp"], "".concat(bar.temperature.toFixed(1), "C"));
     }
+    else {
+        hideElem(infoLayout["bar_alti"]);
+        hideElem(infoLayout["bar_pres"]);
+        hideElem(infoLayout["bar_temp"]);
+    }
+    if (gps) {
+        showElem(infoLayout["gps_lat"], gps.lat.toFixed(4));
+        showElem(infoLayout["gps_lon"], gps.lon.toFixed(4));
+        showElem(infoLayout["gps_altitude"], "".concat(gps.alt, "m"));
+        showElem(infoLayout["gps_satellites"], "".concat(gps.satellites));
+        showElem(infoLayout["gps_hdop"], "".concat((gps.hdop * 5).toFixed(1), "m"));
+    }
+    else {
+        hideElem(infoLayout["gps_lat"]);
+        hideElem(infoLayout["gps_lon"]);
+        hideElem(infoLayout["gps_altitude"]);
+        hideElem(infoLayout["gps_satellites"]);
+        hideElem(infoLayout["gps_hdop"]);
+    }
+    if (hrm) {
+        showElem(infoLayout["hrm_bpm"], "".concat(hrm.bpm));
+        showElem(infoLayout["hrm_confidence"], "".concat(hrm.confidence, "%"));
+    }
+    else {
+        hideElem(infoLayout["hrm_bpm"]);
+        hideElem(infoLayout["hrm_confidence"]);
+    }
+    if (mag) {
+        showElem(infoLayout["mag_x"], "".concat(mag.x));
+        showElem(infoLayout["mag_y"], "".concat(mag.y));
+        showElem(infoLayout["mag_z"], "".concat(mag.z));
+        showElem(infoLayout["mag_heading"], mag.heading.toFixed(1));
+    }
+    else {
+        hideElem(infoLayout["mag_x"]);
+        hideElem(infoLayout["mag_y"]);
+        hideElem(infoLayout["mag_z"]);
+        hideElem(infoLayout["mag_heading"]);
+    }
+};
+var redraw = function () {
+    var layout;
+    if (btnsShown) {
+        layout = btnLayout;
+    }
+    else {
+        populateInfo();
+        infoLayout.update();
+        layout = infoLayout;
+    }
+    if (btnsShown !== prevBtnsShown) {
+        prevBtnsShown = btnsShown;
+        layout.forgetLazyState();
+        layout.setUI();
+    }
+    layout.render();
 };
 var encodeHrm = function (hrm) {
     return [0, hrm.bpm];
@@ -222,22 +263,19 @@ var toByteArray = function (value, numberOfBytes, isSigned) {
     return byteArray;
 };
 var enableSensors = function () {
-    Bangle.setBarometerPower(settings.barEnabled, "btadv");
-    if (!settings.barEnabled)
+    Bangle.setBarometerPower(settings.bar, "btadv");
+    if (!settings.bar)
         bar = undefined;
-    Bangle.setGPSPower(settings.gpsEnabled, "btadv");
-    if (!settings.gpsEnabled)
+    Bangle.setGPSPower(settings.gps, "btadv");
+    if (!settings.gps)
         gps = undefined;
-    Bangle.setHRMPower(settings.hrmEnabled, "btadv");
-    if (!settings.hrmEnabled)
+    Bangle.setHRMPower(settings.hrm, "btadv");
+    if (!settings.hrm)
         hrm = undefined;
-    Bangle.setCompassPower(settings.magEnabled, "btadv");
-    if (!settings.magEnabled)
+    Bangle.setCompassPower(settings.mag, "btadv");
+    if (!settings.mag)
         mag = undefined;
-};
-var updateSetting = function (name, value) {
-    settings[name] = value;
-    enableSensors();
+    console.log("enableSensors():", settings);
 };
 var serviceActive = function (serv) {
     switch (serv) {
@@ -349,10 +387,10 @@ Bangle.on('HRM', function (newHrm) { return hrm = newHrm; });
 Bangle.on('mag', function (newMag) { return mag = newMag; });
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-showMainMenu();
-var menuInterval = setInterval(updateMenu, 1000);
+setBtnsShown(true);
+var redrawInterval = setInterval(redraw, 1000);
 Bangle.on("lock", function (locked) {
-    changeInterval(menuInterval, locked ? 30000 : 1000);
+    changeInterval(redrawInterval, locked ? 30000 : 1000);
 });
 enableSensors();
 {
@@ -378,10 +416,3 @@ var setIntervals = function (connected) {
         iv = undefined;
     }
 };
-setIntervals(NRF.getSecurityStatus().connected);
-NRF.on("connect", function () {
-    setIntervals(true);
-});
-NRF.on("disconnect", function () {
-    setIntervals(false);
-});

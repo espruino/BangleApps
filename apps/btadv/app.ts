@@ -3,7 +3,9 @@
 // [-] handle NaNs in data
 // [x] fix sending of HRM / changing service?
 // [.] fix menu scrolling/jumping
-// [ ] fix resetting to accel menu
+// [.] fix resetting to accel menu
+
+const Layout = require("Layout") as Layout_.Layout;
 
 const enum Intervals {
   BLE_ADVERT = 60 * 1000,
@@ -84,179 +86,283 @@ let bar: undefined | PressureData;
 let gps: undefined | GPSFix;
 let hrm: undefined | Hrm;
 let mag: undefined | CompassData;
+let btnsShown = false;
+let prevBtnsShown: boolean | undefined = undefined;
 
-type BtAdvMenu = "acc" | "bar" | "gps" | "hrm" | "mag" | "main";
-let curMenuName: BtAdvMenu = "main";
-let curMenu: MenuInstance;
-let mainMenuScroll = 0;
-const settings = {
-  barEnabled: false,
-  gpsEnabled: false,
-  hrmEnabled: false,
-  magEnabled: false,
+type BtAdvType<IncludeAcc = false> = "bar" | "gps" | "hrm" | "mag" | (IncludeAcc extends true ? "acc" : never);
+type BtAdvMap<T, IncludeAcc = false> = { [key in BtAdvType<IncludeAcc>]: T };
+
+const settings: BtAdvMap<boolean> = {
+  bar: false,
+  gps: false,
+  hrm: false,
+  mag: false,
 };
 
-const showMainMenu = () => {
-  const onOff = (b: boolean) => b ? " (on)" : " (off)";
-  const mainMenu: Menu = {};
-
-  const showMenu = (menu: Menu, scroll: number, cur: BtAdvMenu) => () => {
-    mainMenuScroll = scroll; // int
-
-    curMenu = E.showMenu(menu);
-
-    curMenuName = cur;
-  };
-
-  mainMenu[""] = {
-    "title": "BLE Advert",
-  };
-  (mainMenu[""] as any).scroll = mainMenuScroll; // typehack
-
-  mainMenu["Acceleration"]                              = showMenu(accMenu, 0, "acc");
-  mainMenu["Barometer" + onOff(settings.barEnabled)]    = showMenu(barMenu, 1, "bar");
-  mainMenu["GPS" + onOff(settings.gpsEnabled)]          = showMenu(gpsMenu, 2, "gps");
-  mainMenu["Heart Rate" + onOff(settings.hrmEnabled)]   = showMenu(hrmMenu, 3, "hrm");
-  mainMenu["Magnetometer" + onOff(settings.magEnabled)] = showMenu(magMenu, 4, "mag");
-  mainMenu["Exit"]                                      = () => (load as any)(); // avoid `this` + typehack
-
-  curMenu = E.showMenu(mainMenu);
-  curMenuName = "main";
+const idToName: BtAdvMap<string, true> = {
+  acc: "Acceleration",
+  bar: "Barometer",
+  gps: "GPS",
+  hrm: "HRM",
+  mag: "Magnetometer",
 };
 
-const optionsCommon = {
-  back: showMainMenu,
+const colour = {
+  on: "#0f0",
+  off: "#fff",
+} as const;
+
+const makeToggle = (id: BtAdvType) => () => {
+  settings[id] = !settings[id];
+
+  const entry = btnLayout[id]!;
+  const col = settings[id] ? colour.on : colour.off;
+
+  entry.btnBorder = entry.col = col;
+
+  btnLayout.update();
+  btnLayout.render();
+
+  //require('Storage').writeJSON(SETTINGS_FILENAME, settings);
+  enableSensors();
 };
 
-const accMenu = {
-  "": { "title" : "Acceleration", ...optionsCommon },
-  "Active": { value: "true (fixed)" },
-  "x": { value: "" },
-  "y": { value: "" },
-  "z": { value: "" },
+const btnStyle: {
+  font: FontNameWithScaleFactor,
+  fillx?: 1,
+  filly?: 1,
+  col: ColorResolvable,
+  bgCol: ColorResolvable,
+  btnBorder: ColorResolvable,
+} = {
+  font: "Vector:14",
+  fillx: 1,
+  filly: 1,
+  col: g.theme.fg,
+  bgCol: g.theme.bg,
+  btnBorder: "#fff",
 };
 
-const barMenu = {
-  "": { "title" : "Barometer", ...optionsCommon },
-  "Active": {
-    value: settings.barEnabled,
-    onchange: (v: boolean) => updateSetting('barEnabled', v),
+const btnLayout = new Layout(
+  {
+    type: "v",
+    c: [
+      {
+        type: "h",
+        c: [
+          {
+            type: "btn",
+            label: idToName.bar,
+            id: "bar",
+            cb: makeToggle('bar'),
+            ...btnStyle,
+          },
+          {
+            type: "btn",
+            label: idToName.gps,
+            id: "gps",
+            cb: makeToggle('gps'),
+            ...btnStyle,
+          },
+        ]
+      },
+      {
+        type: "h",
+        c: [
+          // hrm, mag
+          {
+            type: "btn",
+            label: idToName.hrm,
+            id: "hrm",
+            cb: makeToggle('hrm'),
+            ...btnStyle,
+          },
+          {
+            type: "btn",
+            label: idToName.mag,
+            id: "mag",
+            cb: makeToggle('mag'),
+            ...btnStyle,
+          },
+        ]
+      },
+      {
+        type: "h",
+        c: [
+          {
+            type: "btn",
+            label: idToName.acc,
+            id: "acc",
+            cb: () => {},
+            ...btnStyle,
+            col: colour.on,
+            btnBorder: colour.on,
+          },
+          {
+            type: "btn",
+            label: "Back",
+            cb: () => {
+              setBtnsShown(false);
+            },
+            ...btnStyle,
+          },
+        ]
+      }
+    ]
   },
-  "Altitude": { value: "" },
-  "Press": { value: "" },
-  "Temp": { value: "" },
-};
-
-const gpsMenu = {
-  "": { "title" : "GPS", ...optionsCommon },
-  "Active": {
-    value: settings.gpsEnabled,
-    onchange: (v: boolean) => updateSetting('gpsEnabled', v),
+  {
+    lazy: true,
+    back: () => {
+      setBtnsShown(false);
+    },
   },
-  "Lat": { value: "" },
-  "Lon": { value: "" },
-  "Altitude": { value: "" },
-  "Satellites": { value: "" },
-  "HDOP": { value: "" },
+);
+
+const setBtnsShown = (b: boolean) => {
+  btnsShown = b;
+  g.clearRect(Bangle.appRect);
+  redraw();
 };
 
-const hrmMenu = {
-  "": { "title" : "Heart Rate", ...optionsCommon },
-  "Active": {
-    value: settings.hrmEnabled,
-    onchange: (v: boolean) => updateSetting('hrmEnabled', v),
+const infoFont: FontNameWithScaleFactor = "6x8:2";
+const infoCommon = {
+  type: "txt",
+  label: "",
+  font: infoFont,
+  pad: 5,
+} as const;
+
+const infoLayout = new Layout(
+  {
+    type: "v",
+    c: [
+      {
+        type: "h",
+        c: [
+          { id: "bar_alti", ...infoCommon },
+          { id: "bar_pres", ...infoCommon },
+          { id: "bar_temp", ...infoCommon },
+        ]
+      },
+      {
+        type: "h",
+        c: [
+          { id: "gps_lat", ...infoCommon },
+          { id: "gps_lon", ...infoCommon },
+          { id: "gps_altitude", ...infoCommon },
+          { id: "gps_satellites", ...infoCommon },
+          { id: "gps_hdop", ...infoCommon },
+        ]
+      },
+      {
+        type: "h",
+        c: [
+          { id: "hrm_bpm", ...infoCommon },
+          { id: "hrm_confidence", ...infoCommon },
+        ]
+      },
+      {
+        type: "h",
+        c: [
+          { id: "mag_x", ...infoCommon },
+          { id: "mag_y", ...infoCommon },
+          { id: "mag_z", ...infoCommon },
+          { id: "mag_heading", ...infoCommon },
+        ]
+      },
+      {
+        type: "btn",
+        label: "Set",
+        cb: () => {
+          setBtnsShown(true);
+        },
+        ...btnStyle,
+      },
+    ]
   },
-  "BPM": { value: "" },
-  "Confidence": { value: "" },
-};
-
-const magMenu = {
-  "": { "title" : "Magnetometer", ...optionsCommon },
-  "Active": {
-    value: settings.magEnabled,
-    onchange: (v: boolean) => updateSetting('magEnabled', v),
-  },
-  "x": { value: "" },
-  "y": { value: "" },
-  "z": { value: "" },
-  "Heading": { value: "" },
-};
-
-const redrawMenu = (newMenu: Menu) => {
-  const scroll = (curMenu as any).scroller.scroll;
-
-  curMenu = E.showMenu(newMenu);
-
-  // FIXME: doesn't work for promenu
-  (curMenu as any).scroller.scroll = scroll; // typehack
-  curMenu.draw();
-};
-
-const updateMenu = () => {
-  switch (curMenuName) {
-    case "acc":
-      if (acc) {
-        accMenu.x.value = acc.x.toFixed(2);
-        accMenu.y.value = acc.y.toFixed(2);
-        accMenu.z.value = acc.z.toFixed(2);
-        redrawMenu(accMenu);
-      } else if (accMenu.x.value !== "...") {
-        accMenu.x.value = accMenu.y.value = accMenu.z.value = "...";
-        redrawMenu(accMenu);
-      }
-      break;
-
-    case "bar":
-      if (bar) {
-        barMenu.Altitude.value = bar.altitude.toFixed(1) + 'm';
-        barMenu.Press.value = bar.pressure.toFixed(1) + 'mbar';
-        barMenu.Temp.value = bar.temperature.toFixed(1) + 'C';
-        redrawMenu(barMenu);
-      } else if (barMenu.Altitude.value !== "...") {
-        barMenu.Altitude.value = barMenu.Press.value = barMenu.Temp.value = "...";
-        redrawMenu(accMenu);
-      }
-      break;
-
-    case "gps":
-      if (gps) {
-        gpsMenu.Lat.value = gps.lat.toFixed(4);
-        gpsMenu.Lon.value = gps.lon.toFixed(4);
-        gpsMenu.Altitude.value = gps.alt + 'm';
-        gpsMenu.Satellites.value = "" + gps.satellites;
-        gpsMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
-        redrawMenu(gpsMenu);
-      } else if (gpsMenu.Lat.value !== "...") {
-        gpsMenu.Lat.value = gpsMenu.Lon.value = gpsMenu.Altitude.value =
-          gpsMenu.Satellites.value = gpsMenu.HDOP.value = "...";
-        redrawMenu(gpsMenu);
-      }
-      break;
-
-    case "hrm":
-      if (hrm) {
-        hrmMenu.BPM.value = "" + hrm.bpm;
-        hrmMenu.Confidence.value = hrm.confidence + '%';
-        redrawMenu(hrmMenu);
-      } else if (hrmMenu.BPM.value !== "...") {
-        hrmMenu.BPM.value = hrmMenu.Confidence.value = "...";
-        redrawMenu(hrmMenu);
-      }
-      break;
-
-    case "mag":
-      if (mag) {
-        magMenu.x.value = "" + mag.x;
-        magMenu.y.value = "" + mag.y;
-        magMenu.z.value = "" + mag.z;
-        magMenu.Heading.value = mag.heading.toFixed(1);
-        redrawMenu(magMenu);
-      } else if (magMenu.x.value !== "...") {
-        magMenu.x.value = magMenu.y.value = magMenu.z.value = magMenu.Heading.value = "...";
-        redrawMenu(magMenu);
-      }
-      break;
+  {
+    lazy: true,
+    // back: () => (load as any)(),
   }
+);
+
+const showElem = (
+  layout: Layout_.Hierarchy & { type: "txt" },
+  s: string,
+) => {
+  layout.label = s;
+  // delete layout.width; TODO?
+  delete layout.height;
+};
+
+const hideElem = (layout: Layout_.Hierarchy) => {
+  layout.height = 0;
+};
+
+const populateInfo = () => {
+  if (bar) {
+    showElem(infoLayout["bar_alti"]!, `${bar.altitude.toFixed(1)}m`);
+    showElem(infoLayout["bar_pres"]!, `${bar.pressure.toFixed(1)}mbar`);
+    showElem(infoLayout["bar_temp"]!, `${bar.temperature.toFixed(1)}C`);
+  } else {
+    hideElem(infoLayout["bar_alti"]!);
+    hideElem(infoLayout["bar_pres"]!);
+    hideElem(infoLayout["bar_temp"]!);
+  }
+
+  if (gps) {
+    showElem(infoLayout["gps_lat"]!, gps.lat.toFixed(4));
+    showElem(infoLayout["gps_lon"]!, gps.lon.toFixed(4));
+    showElem(infoLayout["gps_altitude"]!, `${gps.alt}m`);
+    showElem(infoLayout["gps_satellites"]!, `${gps.satellites}`);
+    showElem(infoLayout["gps_hdop"]!, `${(gps.hdop * 5).toFixed(1)}m`);
+  } else {
+    hideElem(infoLayout["gps_lat"]!);
+    hideElem(infoLayout["gps_lon"]!);
+    hideElem(infoLayout["gps_altitude"]!);
+    hideElem(infoLayout["gps_satellites"]!);
+    hideElem(infoLayout["gps_hdop"]!);
+  }
+
+  if (hrm) {
+    showElem(infoLayout["hrm_bpm"]!, `${hrm.bpm}`);
+    showElem(infoLayout["hrm_confidence"]!, `${hrm.confidence}%`);
+  } else {
+    hideElem(infoLayout["hrm_bpm"]!);
+    hideElem(infoLayout["hrm_confidence"]!);
+  }
+
+  if (mag) {
+    showElem(infoLayout["mag_x"]!, `${mag.x}`);
+    showElem(infoLayout["mag_y"]!, `${mag.y}`);
+    showElem(infoLayout["mag_z"]!, `${mag.z}`);
+    showElem(infoLayout["mag_heading"]!, mag.heading.toFixed(1));
+  } else {
+    hideElem(infoLayout["mag_x"]!);
+    hideElem(infoLayout["mag_y"]!);
+    hideElem(infoLayout["mag_z"]!);
+    hideElem(infoLayout["mag_heading"]!);
+  }
+};
+
+const redraw = () => {
+  let layout;
+
+  if (btnsShown) {
+    layout = btnLayout;
+  } else {
+    populateInfo();
+    infoLayout.update();
+
+    layout = infoLayout;
+  }
+
+  if (btnsShown !== prevBtnsShown) {
+    prevBtnsShown = btnsShown;
+    layout.forgetLazyState();
+    layout.setUI();
+  }
+  layout.render();
 };
 
 const encodeHrm: LenFunc<Hrm> = (hrm: Hrm) =>
@@ -367,30 +473,23 @@ const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) =>
 };
 
 const enableSensors = () => {
-  Bangle.setBarometerPower(settings.barEnabled, "btadv");
-  if (!settings.barEnabled)
+  Bangle.setBarometerPower(settings.bar, "btadv");
+  if (!settings.bar)
     bar = undefined;
 
-  Bangle.setGPSPower(settings.gpsEnabled, "btadv");
-  if (!settings.gpsEnabled)
+  Bangle.setGPSPower(settings.gps, "btadv");
+  if (!settings.gps)
     gps = undefined;
 
-  Bangle.setHRMPower(settings.hrmEnabled, "btadv");
-  if (!settings.hrmEnabled)
+  Bangle.setHRMPower(settings.hrm, "btadv");
+  if (!settings.hrm)
     hrm = undefined;
 
-  Bangle.setCompassPower(settings.magEnabled, "btadv");
-  if (!settings.magEnabled)
+  Bangle.setCompassPower(settings.mag, "btadv");
+  if (!settings.mag)
     mag = undefined;
-};
 
-const updateSetting = (
-  name: keyof typeof settings,
-  value: boolean,
-) => {
-  settings[name] = value;
-  //require('Storage').writeJSON(SETTINGS_FILENAME, settings);
-  enableSensors();
+  console.log("enableSensors():", settings);
 };
 
 // ----------------------------
@@ -521,16 +620,16 @@ Bangle.on('GPS', newGps => gps = newGps);
 Bangle.on('HRM', newHrm => hrm = newHrm);
 Bangle.on('mag', newMag => mag = newMag);
 
-// show widgets to affect appRect
+// show UI
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-// show UI
-showMainMenu();
-const menuInterval = setInterval(updateMenu, Intervals.MENU_WAKE);
+setBtnsShown(true);
+
+const redrawInterval = setInterval(redraw, Intervals.MENU_WAKE);
 Bangle.on("lock", locked => {
   changeInterval(
-    menuInterval,
+    redrawInterval,
     locked ? Intervals.MENU_SLEEP : Intervals.MENU_WAKE,
   );
 });
@@ -573,10 +672,10 @@ const setIntervals = (connected: boolean) => {
   }
 };
 
-setIntervals(NRF.getSecurityStatus().connected);
-NRF.on("connect", () => {
-  setIntervals(true);
-});
-NRF.on("disconnect", () => {
-  setIntervals(false);
-});
+// setIntervals(NRF.getSecurityStatus().connected);
+// NRF.on("connect", () => {
+//   setIntervals(true);
+// });
+// NRF.on("disconnect", () => {
+//   setIntervals(false);
+// });
