@@ -283,7 +283,7 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:"MUTE", id: msg.id });
   };
   // GPS overwrite logic
-  if (settings.overwriteGps) { // if the overwrite option is set../
+  if (settings.overwriteGps) { // if the overwrite option is set..
     const origSetGPSPower = Bangle.setGPSPower;
     // migrate all GPS clients to the other variant on connection events
     Bangle.moveGPSPower = (state) => {
@@ -300,21 +300,16 @@
     let wrap = function(f){
       return (s)=>{
         if (serialTimeout) clearTimeout(serialTimeout);
-        Bangle.moveGPSPower(1);
+        origSetGPSPower(1, "androidgpsserial")
         f(s);
         serialTimeout = setTimeout(()=>{
           serialTimeout = undefined;
-          if (gpsState.firstGPSEvent) Bangle.moveGPSPower(0);
+          origSetGPSPower(0, "androidgpsserial");
         }, 10000);
       };
     };
     Serial1.println = wrap(Serial1.println);
     Serial1.write = wrap(Serial1.write);
-
-    // update the GPS state on reconnect
-    NRF.on("connect", ()=>{
-      gbSend({ t: "gps_power", status: Bangle.isGPSOn() });
-    });
 
     // replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
@@ -323,7 +318,7 @@
         // use internal GPS power function if no gps event has arrived from GadgetBridge
         pwr = origSetGPSPower(isOn, appID);
       } else {
-        // we currently expecting the next GPS event from GadgetBridge, keep track of GPS state per App
+        // we are currently expecting the next GPS event from GadgetBridge, keep track of GPS state per app
         if (!Bangle._PWR) Bangle._PWR={};
         if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
         if (!appID) appID="?";
