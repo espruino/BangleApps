@@ -94,20 +94,55 @@ teststeps.push(()=>{
 });
 
 teststeps.push(()=>{
-  print("Test disconnect without gps on");
+  print("Wait for all timeouts to run out");
+  return 12000;
+});
 
-  assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
-  assertFalse(Bangle.isGPSOn(), "isGPSOn");
+teststeps.push(()=>{
+  print("Check auto switch when no GPS event arrives");
+
+  assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
+
+  assertNotEmpty(Bangle._PWR.GPS, "GPS");
+  assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertTrue(internalOn(), "Internal GPS on");
+
+  print("Send minimal GadgetBridge GPS event to trigger switch");
+  GB({t:"gps"});
+
+  print("Internal should be switched off now");
+
+  assertNotEmpty(Bangle._PWR.GPS, "GPS");
+  assertTrue(Bangle.isGPSOn(), "isGPSOn");
   assertFalse(internalOn(), "Internal GPS off");
 
+  //wait on next test
+  return 12000;
+});
+
+teststeps.push(()=>{
+  print("Check state and disable GPS, internal should be on");
+
+  assertNotEmpty(Bangle._PWR.GPS, "GPS");
+  assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertTrue(internalOn(), "Internal GPS on");
+
+  assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
+});
+
+teststeps.push(()=>{
   print("Result Overall is " + (result ? "OK" : "FAIL"));
 });
 
 let wrap = (functions) => {
   if (functions.length > 0) {
     setTimeout(()=>{
-      functions.shift()();
-      wrap(functions);
+      let waitingTime = functions.shift()();
+      if (waitingTime){
+        print("WAITING: ", waitingTime);
+        setTimeout(()=>{wrap(functions);}, waitingTime);
+      } else
+        wrap(functions);
     },0);
   }
 };
