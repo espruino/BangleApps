@@ -28,13 +28,12 @@ let sec = {
 };
 
 NRF.getSecurityStatus = () => sec;
+// add an empty starting point to make the asserts work
+Bangle._PWR={};
 
 let teststeps = [];
 
 teststeps.push(()=>{
-    // add an empty starting point to make the asserts work
-  Bangle._PWR={};
-
   print("Not connected, should use internal GPS");
   assertTrue(!NRF.getSecurityStatus().connected, "Not connected");
 
@@ -53,6 +52,9 @@ teststeps.push(()=>{
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
   assertFalse(internalOn(), "Internal GPS off");
 
+});
+
+teststeps.push(()=>{
   print("Connected, should use GB GPS");
   sec.connected = true;
 
@@ -62,53 +64,28 @@ teststeps.push(()=>{
   assertFalse(Bangle.isGPSOn(), "isGPSOn");
   assertFalse(internalOn(), "Internal GPS off");
 
+
+  print("Internal GPS stays on until the first GadgetBridge event arrives");
   assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
 
-  assertNotEmpty(Bangle._PWR.GPS, "GPS");
-  assertTrue(Bangle.isGPSOn(), "isGPSOn");
-  assertFalse(internalOn(), "Internal GPS off");
-
-  assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
-
-  assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
-  assertFalse(Bangle.isGPSOn(), "isGPSOn");
-  assertFalse(internalOn(), "Internal GPS off");
-
-  print("Connected, then reconnect cycle");
-  sec.connected = true;
-
-  assertTrue(NRF.getSecurityStatus().connected, "Connected");
-
-  assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
-  assertFalse(Bangle.isGPSOn(), "isGPSOn");
-  assertFalse(internalOn(), "Internal GPS off");
-
-  assertTrue(Bangle.setGPSPower(1, "test"), "Switch GPS on");
-
-  assertNotEmpty(Bangle._PWR.GPS, "GPS");
-  assertTrue(Bangle.isGPSOn(), "isGPSOn");
-  assertFalse(internalOn(), "Internal GPS off");
-
-  NRF.emit("disconnect", {});
-  print("disconnect");
-  sec.connected = false;
-});
-
-teststeps.push(()=>{
   assertNotEmpty(Bangle._PWR.GPS, "GPS");
   assertTrue(Bangle.isGPSOn(), "isGPSOn");
   assertTrue(internalOn(), "Internal GPS on");
 
-  print("connect");
-  sec.connected = true;
-  NRF.emit("connect", {});
+  print("Send minimal GadgetBridge GPS event to trigger switch");
+  GB({t:"gps"});
 });
 
 teststeps.push(()=>{
+  print("GPS should be on, internal off");
+
   assertNotEmpty(Bangle._PWR.GPS, "GPS");
   assertTrue(Bangle.isGPSOn(), "isGPSOn");
   assertFalse(internalOn(), "Internal GPS off");
+});
 
+teststeps.push(()=>{
+  print("Switching GPS off turns both GadgetBridge as well as internal off");
   assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
@@ -116,7 +93,7 @@ teststeps.push(()=>{
   assertFalse(internalOn(), "Internal GPS off");
 });
 
-setTimeout(()=>{
+teststeps.push(()=>{
   print("Test disconnect without gps on");
 
   assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
@@ -138,3 +115,4 @@ let wrap = (functions) => {
 setTimeout(()=>{
   wrap(teststeps);
 }, 5000);
+
