@@ -29,8 +29,10 @@ let sec = {
 
 NRF.getSecurityStatus = () => sec;
 
-setTimeout(() => {
-  // add an empty starting point to make the asserts work
+let teststeps = [];
+
+teststeps.push(()=>{
+    // add an empty starting point to make the asserts work
   Bangle._PWR={};
 
   print("Not connected, should use internal GPS");
@@ -90,37 +92,49 @@ setTimeout(() => {
   NRF.emit("disconnect", {});
   print("disconnect");
   sec.connected = false;
+});
 
-  setTimeout(() => {
+teststeps.push(()=>{
+  assertNotEmpty(Bangle._PWR.GPS, "GPS");
+  assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertTrue(internalOn(), "Internal GPS on");
 
-    assertNotEmpty(Bangle._PWR.GPS, "GPS");
-    assertTrue(Bangle.isGPSOn(), "isGPSOn");
-    assertTrue(internalOn(), "Internal GPS on");
+  print("connect");
+  sec.connected = true;
+  NRF.emit("connect", {});
+});
 
-    print("connect");
-    sec.connected = true;
-    NRF.emit("connect", {});
+teststeps.push(()=>{
+  assertNotEmpty(Bangle._PWR.GPS, "GPS");
+  assertTrue(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-    setTimeout(() => {
-      assertNotEmpty(Bangle._PWR.GPS, "GPS");
-      assertTrue(Bangle.isGPSOn(), "isGPSOn");
-      assertFalse(internalOn(), "Internal GPS off");
+  assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
 
-      assertFalse(Bangle.setGPSPower(0, "test"), "Switch GPS off");
+  assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
+  assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
+});
 
-      assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
-      assertFalse(Bangle.isGPSOn(), "isGPSOn");
-      assertFalse(internalOn(), "Internal GPS off");
+setTimeout(()=>{
+  print("Test disconnect without gps on");
 
-      setTimeout(() => {
-        print("Test disconnect without gps on");
+  assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
+  assertFalse(Bangle.isGPSOn(), "isGPSOn");
+  assertFalse(internalOn(), "Internal GPS off");
 
-        assertUndefinedOrEmpty(Bangle._PWR.GPS, "No GPS");
-        assertFalse(Bangle.isGPSOn(), "isGPSOn");
-        assertFalse(internalOn(), "Internal GPS off");
+  print("Result Overall is " + (result ? "OK" : "FAIL"));
+});
 
-        print("Result Overall is " + (result ? "OK" : "FAIL"));
-      }, 0);
-    }, 0);
-  }, 0);
+let wrap = (functions) => {
+  if (functions.length > 0) {
+    setTimeout(()=>{
+      functions.shift()();
+      wrap(functions);
+    },0);
+  }
+};
+
+setTimeout(()=>{
+  wrap(teststeps);
 }, 5000);
