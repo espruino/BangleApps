@@ -7,7 +7,7 @@
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
-  function draw() {
+  function draw(widget) {
     const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm)).filter(a => a !== undefined);
     const next = Math.min.apply(null, times);
     let calcWidth = 0;
@@ -48,13 +48,16 @@
 
     // redraw next full minute or second
     const period = drawSeconds ? 1000 : 60000;
-    let timeout = next > 0 ? next % period : period - (Date.now() % period);
+    let timeout = (isFinite(next) && next > 0) ? next % period : period - (Date.now() % period);
     if (timeout === 0) {
       timeout += period;
     }
-    setTimeout(()=>{
-      WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]);
-    }, timeout);
+    if (widget.drawTimeout) clearTimeout(widget.drawTimeout);
+    widget.drawTimeout = setTimeout((w)=>{
+      widget.drawTimeout = undefined;
+      w.draw(w);
+    }, timeout, widget);
+    
   } /* draw */
 
   if (config.maxhours > 0) {

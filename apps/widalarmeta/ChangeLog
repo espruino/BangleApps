@@ -2,3 +2,4 @@
 0.02: Change font to 5x9 7 segment-style
       Add settings page
       Add option to show seconds
+0.03: Fix settings thousands of timeouts and slowing down everything if no next alarm found
