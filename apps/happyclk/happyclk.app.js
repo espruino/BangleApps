@@ -58,15 +58,15 @@ function quadraticCurve(t, p0x, p0y, p1x, p1y, p2x, p2y){
 }
 
 let drawSmile = function(isLocked){
-    var w = 8;
     var y = 120;
     var o = parseInt(E.getBattery()*0.8);
-    for(var i = 0; i < w; i++){
-        drawCurve(30, y+i, W/2+12, y+i+o, W-40, y+i);
-    }
 
+    // Draw smile
+    drawCurve(30, y, W/2+12, y+o, W-40, y);
+
+    // And the two "mouth lines"
     var reachedSteps = Bangle.getHealthStatus("day").steps >= 10000;
-    for(var i=0; i < w-2; i++){
+    for(var i=0; i < 6; i++){
         if(isLocked) g.drawLine(25, y+6+i, 35, y-5+i);
         if(reachedSteps) g.drawLine(W-35, y+5+i, W-45, y-5+i);
     }
@@ -88,12 +88,15 @@ let drawCurve = function(x1, y1, x2, y2, x3, y3){
     var p2 = { x: x3, y: y3};
     var time = 0;
     var stepping = 0.1; // Stepping defines the speed.
-    var pathPts = [];
-    for(time = 0; time <= 1; time+= stepping){
-      var pos = quadraticCurve(time, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
-      pathPts.push(pos.x, pos.y);
+
+    for(var y = 0; y < 8; y++){
+        var pathPts = [];
+        for(time = 0; time <= 1; time+= stepping){
+        var pos = quadraticCurve(time, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
+        pathPts.push(pos.x, pos.y+y);
+        }
+        g.drawPoly(pathPts, false);
     }
-    g.drawPoly(pathPts, false);
     g.flip();
 }
 
