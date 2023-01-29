@@ -75,7 +75,6 @@ let drawEyeBrow = function(){
     var w = 4;
     var steps = Bangle.getHealthStatus("day").steps;
     var reached = steps / 10000.0;
-    reached = 1.1;
     for(var i = 0; i < w; i++){
         if(reached > 0.5) g.drawLine(25, 25+i, 70, 15+i);
         if(reached > 1.0) g.drawLine(W-25, 25+i, W-70, 15+i);
