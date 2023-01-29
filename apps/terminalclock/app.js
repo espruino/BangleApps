@@ -78,6 +78,8 @@
       });
     },
 
+    /*
+    // todo add fastloading when the memory leak is fixed
     remove: function() {
       if (this.turnOnInterval){
         clearInterval(this.turnOnInterval);
@@ -91,6 +93,7 @@
       if (this.onHRM) Bangle.removeListener('HRM', this.onHRM);
       if (this.onPressure) Bangle.removeListener('onPressure', this.onPressure);
     }
+    */
 
   });
 
