@@ -251,7 +251,7 @@
       w = undefined;
     }
   });
-  
+
   Bangle.on("lock", locked => {
     var w = WIDGETS.lightswitch;
     // set lcd brightness on unlocking
