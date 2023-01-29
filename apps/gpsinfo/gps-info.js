@@ -61,6 +61,7 @@ function getMaidenHead(param1,param2){
   return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]+L[subLat]+extLon+extLat;
 }
 function onGPS(fix) {
+  dataCounter++;
   if (lastFix.fix != fix.fix) {
     // if fix is different, change the layout
     if (fix.fix && leaveNofixLayout) {
@@ -127,10 +128,10 @@ function onGPS(fix) {
       layout.progress.label = "in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL;
       // console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
       layout.render(layout.progress);
-      layout.clear(layout.dataCounter);
-      layout.dataCounter.label = ++dataCounter;
-      layout.render(layout.dataCounter);
     }
+    layout.clear(layout.dataCounter);
+    layout.dataCounter.label = dataCounter;
+    layout.render(layout.dataCounter);
   }
 
   if (listenerGPSraw == 0 && !fix.fix) {
@@ -156,6 +157,7 @@ Bangle.drawWidgets();
 Bangle.on('GPS', onGPS);
 //Bangle.on('GPS-raw', onGPSraw);
 Bangle.setGPSPower(1, "app");
+
 
 function  exitApp() {
   load();

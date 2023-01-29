@@ -11,7 +11,7 @@
            Bangle.setHRMPower(1, "health");
            setTimeout(()=>{
              Bangle.setHRMPower(0, "health");
-           }, (i * 200000) + 60000);
+           }, 60000);
          }, (i * 200000));
        }
      }

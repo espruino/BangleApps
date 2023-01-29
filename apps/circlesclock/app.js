@@ -116,11 +116,13 @@ let draw = function() {
   queueDraw();
 }
 
-let getCircleColor = function(item, clkmenu) {
+let getCircleColor = function(item, data, clkmenu) {
   let colorKey = clkmenu.name;
   if(!clkmenu.dynamic) colorKey += "/"+item.name;
   colorKey += "_color";
   let color = settings[colorKey];
+  //use default color only if no other color is set
+  if(data.color && !color) return data.color;
   if (color && color != "") return color;
   return g.theme.fg;
 }
@@ -137,10 +139,12 @@ let getGradientColor = function(color, percent) {
   if (color == "green-red") {
     let colorIndex = Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length) - 1] || "#00ff00";
+    //return g.blendColor('#00ff00', '#ff0000', percent); //mostly dithering
   }
   if (color == "red-green") {
     let colorIndex = colorList.length - Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length)] || "#ff0000";
+    //return g.blendColor('#ff0000', '#00ff00', percent);
   }
   colorList = [
     '#0000ff', '#8800ff', '#ff00ff', '#ff0088', '#ff0000'
@@ -148,10 +152,12 @@ let getGradientColor = function(color, percent) {
   if (color == "blue-red") {
     let colorIndex = Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length) - 1] || "#0000ff";
+    //return g.blendColor('#0000ff', '#ff0000', percent);
   }
   if (color == "red-blue") {
     let colorIndex = colorList.length - Math.round(colorList.length * percent);
     return colorList[Math.min(colorIndex, colorList.length)] || "#ff0000";
+    //return g.blendColor('#ff0000', '#0000ff', percent);
   }
   return color;
 }
@@ -177,7 +183,7 @@ let drawEmpty = function(img, w, color) {
 let drawCircle = function(index, item, data, clkmenu) {
   var w = circlePosX[index-1];
   drawCircleBackground(w);
-  const color = getCircleColor(item, clkmenu);
+  const color = getCircleColor(item, data, clkmenu);
   //drawEmpty(info? info.img : null, w, color);
   var img = data.img;
   var percent = 1; //fill up if no range
@@ -350,6 +356,7 @@ for(var i=0;i<circleCount; i++) {
   let w = circlePosX[i];
   let y = h3-radiusBorder;
   clockInfoMenu[i] = require("clock_info").addInteractive(clockInfoItems, {
+    app:"circlesclock",
     x:w-radiusBorder, y:y, w:radiusBorder*2, h:g.getHeight()-(y+1),
     draw : clockInfoDraw, circlePosition : i+1
   });

@@ -5,3 +5,4 @@
 0.04: Write AGPS data chunks with delay to improve reliability
 0.05: Show last success date
       Do not start A-GPS update automatically
+0.06: Switch off gps after updating

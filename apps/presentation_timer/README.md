@@ -26,8 +26,12 @@ The only requirement is that timings are increasing,
 so slides number don't have to be consecutive,
 some can be skipped and they can even be short texts.
 
-At the moment the app is just quick and dirty
-but it should do its job.
+In case the series of slide numbers/names is strictly increasing and doesn't
+contain strings, but numbers are not consecutive integers, the app will
+interpolate intermediate slides (i.e. the first slide in the csv is 5 at minute
+5, the app will add slide 1 at minute 1, slide 2 at minute 2, etc.)
+
+At the moment the app is just quick and dirty but it should do its job.
 
 ## Screenshots
 

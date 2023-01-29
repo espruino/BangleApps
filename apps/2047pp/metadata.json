@@ -2,7 +2,7 @@
   "name": "2047pp",
   "shortName":"2047pp",
   "icon": "app.png",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Bangle version of a tile shifting game",
   "supports" : ["BANGLEJS","BANGLEJS2"],
   "allow_emulator": true,

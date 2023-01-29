@@ -2,6 +2,7 @@ const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
 const storage = require('Storage')
+const widget_utils = require('widget_utils');
 let settings = {
   alarm: -1,
   dataRow1: "Steps",
@@ -552,7 +553,7 @@ function draw(){
 
     // After drawing the watch face, we can draw the widgets
     if(settings.fullscreen){
-      for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+      widget_utils.hide();
     } else {
       Bangle.drawWidgets();
     }

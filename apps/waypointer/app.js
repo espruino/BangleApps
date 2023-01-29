@@ -85,31 +85,22 @@ function newHeading(m,h){
 }
 
 var CALIBDATA = require("Storage").readJSON("magnav.json",1) || {};
-
-function tiltfixread(O,S){
-  var m = Bangle.getCompass();
-  if (O === undefined || S === undefined) {
-    // no valid calibration from magnav, use built in
-    return m.heading;
-  }
-  var g = Bangle.getAccel();
-  m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
-  var d = Math.atan2(-m.dx,m.dy)*180/Math.PI;
-  if (d<0) d+=360;
-  var phi = Math.atan(-g.x/-g.z);
-  var cosphi = Math.cos(phi), sinphi = Math.sin(phi);
-  var theta = Math.atan(-g.y/(-g.x*sinphi-g.z*cosphi));
-  var costheta = Math.cos(theta), sintheta = Math.sin(theta);
-  var xh = m.dy*costheta + m.dx*sinphi*sintheta + m.dz*cosphi*sintheta;
-  var yh = m.dz*sinphi - m.dx*cosphi;
-  var psi = Math.atan2(yh,xh)*180/Math.PI;
-  if (psi<0) psi+=360;
-  return psi;
+let tiltfixread;
+try {
+  tiltfixread = require("magnav").tiltfixread;
+} catch(e) {
+  // magnav not installed
 }
 
 // Note actual mag is 360-m, error in firmware
 function read_compass() {
-  var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
+  let d;
+  if (tiltfixread === undefined || CALIBDATA.offset === undefined || CALIBDATA.scale === undefined) {
+    // magnav not installed or no valid calibration, use built in
+    d = Bangle.getCompass().heading;
+  } else {
+    d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
+  }
   if (isNaN(d)) return; // built in compass heading can return NaN when uncalibrated
   heading = newHeading(d,heading);
   direction = wp_bearing - heading;
@@ -278,6 +269,9 @@ function doselect(){
      wp = waypoints[wpindex];
      require("waypoints").save(waypoints);
   }
+  if (selected) {
+    Bangle.resetCompass(); // reset built in compass when a waypoint is selected
+  }
   selected=!selected;
   drawN();
 }
@@ -294,6 +288,7 @@ Bangle.drawWidgets();
 // load widgets can turn off GPS
 Bangle.setGPSPower(1);
 Bangle.setCompassPower(1);
+Bangle.resetCompass() // reset built in compass on start in case we are not using tilt compensation
 drawAll();
 startTimers();
 Bangle.on('GPS', onGPS);

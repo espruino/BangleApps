@@ -53,6 +53,98 @@ exports.get = function() {
 
 scheduleExpiry(storage.readJSON('weather.json')||{});
 
+function getPalette(monochrome, ovr) {
+  var palette;
+  if(monochrome) {
+    palette = {
+      sun: '#FFF',
+      cloud: '#FFF',
+      bgCloud: '#FFF',
+      rain: '#FFF',
+      lightning: '#FFF',
+      snow: '#FFF',
+      mist: '#FFF',
+      background: '#000'
+    };
+  } else {
+    if (B2) {
+      if (ovr.theme.dark) {
+        palette = {
+          sun: '#FF0',
+          cloud: '#FFF',
+          bgCloud: '#777', // dithers on B2, but that's ok
+          rain: '#0FF',
+          lightning: '#FF0',
+          snow: '#FFF',
+          mist: '#FFF'
+        };
+      } else {
+        palette = {
+          sun: '#FF0',
+          cloud: '#777', // dithers on B2, but that's ok
+          bgCloud: '#000',
+          rain: '#00F',
+          lightning: '#FF0',
+          snow: '#0FF',
+          mist: '#0FF'
+        };
+      }
+    } else {
+      if (ovr.theme.dark) {
+        palette = {
+          sun: '#FE0',
+          cloud: '#BBB',
+          bgCloud: '#777',
+          rain: '#0CF',
+          lightning: '#FE0',
+          snow: '#FFF',
+          mist: '#FFF'
+        };
+      } else {
+        palette = {
+          sun: '#FC0',
+          cloud: '#000',
+          bgCloud: '#777',
+          rain: '#07F',
+          lightning: '#FC0',
+          snow: '#CCC',
+          mist: '#CCC'
+        };
+      }
+    }
+  }
+  return palette;
+}
+
+exports.getColor = function(code) {
+  const codeGroup = Math.round(code / 100);
+  const palette = getPalette(0, g);
+  const cloud = g.blendColor(palette.cloud, palette.bgCloud, .5); //theme independent
+  switch (codeGroup) {
+    case 2: return g.blendColor(cloud, palette.lightning, .5);
+    case 3: return palette.rain;
+    case 5:
+      switch (code) {
+        case 511: return palette.snow;
+        case 520: return g.blendColor(palette.rain, palette.sun, .5);
+        case 521: return g.blendColor(palette.rain, palette.sun, .5);
+        case 522: return g.blendColor(palette.rain, palette.sun, .5);
+        case 531: return g.blendColor(palette.rain, palette.sun, .5);
+        default: return palette.rain;
+      }
+    case 6: return palette.snow;
+    case 7: return palette.mist;
+    case 8:
+      switch (code) {
+        case 800: return palette.sun;
+        case 801: return palette.sun;
+        case 802: return cloud;
+        default: return cloud;
+      }
+    default: return cloud;
+  }
+}
+
 /**
  *
  * @param cond Weather condition, as one of:
@@ -71,63 +163,8 @@ exports.drawIcon = function(cond, x, y, r, ovr) {
     ovr = g;
     monochrome=0;
   }
-  if(monochrome) {
-    palette = {
-      sun: '#FFF',
-      cloud: '#FFF',
-      bgCloud: '#FFF',
-      rain: '#FFF',
-      lightning: '#FFF',
-      snow: '#FFF',
-      mist: '#FFF',
-      background: '#000'
-      };
-  } else
-  if (B2) {
-    if (ovr.theme.dark) {
-      palette = {
-        sun: '#FF0',
-        cloud: '#FFF',
-        bgCloud: '#777', // dithers on B2, but that's ok
-        rain: '#0FF',
-        lightning: '#FF0',
-        snow: '#FFF',
-        mist: '#FFF'
-      };
-    } else {
-      palette = {
-        sun: '#FF0',
-        cloud: '#777', // dithers on B2, but that's ok
-        bgCloud: '#000',
-        rain: '#00F',
-        lightning: '#FF0',
-        snow: '#0FF',
-        mist: '#0FF'
-      };
-    }
-  } else {
-    if (ovr.theme.dark) {
-      palette = {
-        sun: '#FE0',
-        cloud: '#BBB',
-        bgCloud: '#777',
-        rain: '#0CF',
-        lightning: '#FE0',
-        snow: '#FFF',
-        mist: '#FFF'
-      };
-    } else {
-      palette = {
-        sun: '#FC0',
-        cloud: '#000',
-        bgCloud: '#777',
-        rain: '#07F',
-        lightning: '#FC0',
-        snow: '#CCC',
-        mist: '#CCC'
-      };
-    }
-  }
+
+  palette = getPalette(monochrome, ovr);
 
   function drawSun(x, y, r) {
     ovr.setColor(palette.sun);

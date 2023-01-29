@@ -72,6 +72,7 @@ var submittedUsageInfo = "";
 function sendUsageStats() {
   if (!SETTINGS.sendUsageStats) return; // not allowed!
   if (device.uid === undefined) return; // no data yet!
+  if (!device.appsInstalled.length) return; // no installed apps or disconnected
   /* Work out what we'll send:
   * A suitably garbled UID so we can avoid too many duplicates
   * firmware version
@@ -248,23 +249,27 @@ window.addEventListener('load', (event) => {
 
   // BLE Compatibility
   var selectBLECompat = document.getElementById("settings-ble-compat");
-  Puck.increaseMTU = !SETTINGS.bleCompat;
-  selectBLECompat.checked = !!SETTINGS.bleCompat;
-  selectBLECompat.addEventListener("change",event=>{
-    console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
-    SETTINGS.bleCompat = event.target.checked;
+  if (selectBLECompat) {
     Puck.increaseMTU = !SETTINGS.bleCompat;
-    saveSettings();
-  });
+    selectBLECompat.checked = !!SETTINGS.bleCompat;
+    selectBLECompat.addEventListener("change",event=>{
+      console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
+      SETTINGS.bleCompat = event.target.checked;
+      Puck.increaseMTU = !SETTINGS.bleCompat;
+      saveSettings();
+    });
+  }
 
   // Sending usage stats
   var selectUsageStats = document.getElementById("settings-usage-stats");
-  selectUsageStats.checked = !!SETTINGS.sendUsageStats;
-  selectUsageStats.addEventListener("change",event=>{
-    console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
-    SETTINGS.sendUsageStats = event.target.checked;
-    saveSettings();
-  });
+  if (selectUsageStats) {
+    selectUsageStats.checked = !!SETTINGS.sendUsageStats;
+    selectUsageStats.addEventListener("change",event=>{
+      console.log("Send Usage Stats "+(event.target.checked?"on":"off"));
+      SETTINGS.sendUsageStats = event.target.checked;
+      saveSettings();
+    });
+  }
 
   // Load language list
   httpGet("lang/index.json").then(languagesJSON=>{

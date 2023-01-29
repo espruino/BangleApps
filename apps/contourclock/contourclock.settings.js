@@ -4,11 +4,12 @@
   if (settings.fontIndex==undefined) {
     settings.fontIndex=0;
     settings.widgets=true;
-    settings.hide=false;
     settings.weekday=true;
     settings.date=true;
     settings.hideWhenLocked=false;
-    require('Storage').writeJSON("myapp.json", settings);
+    settings.tapToShow=false;
+    settings.twistToShow=false;
+    require('Storage').writeJSON("contourclock.json", settings);
   }
   function mainMenu() {
     E.showMenu({
@@ -18,10 +19,6 @@
         value: (settings.widgets !== undefined ? settings.widgets : true),
         onchange : v => {settings.widgets=v; require('Storage').writeJSON('contourclock.json', settings);}
       },
-      'hide Widgets': {
-        value: (settings.hide !== undefined ? settings.hide : false),
-        onchange : v => {settings.hide=v; require('Storage').writeJSON('contourclock.json', settings);}
-      },
       'Weekday': {
         value: (settings.weekday !== undefined ? settings.weekday : true),
         onchange : v => {settings.weekday=v; require('Storage').writeJSON('contourclock.json', settings);}
@@ -30,9 +27,17 @@
         value: (settings.date !== undefined ? settings.date : true),
         onchange : v => {settings.date=v; require('Storage').writeJSON('contourclock.json', settings);}
       },
-      'Hide when locked': {
+      'Hide widgets, weekday and date when locked': {
         value: (settings.hideWhenLocked !== undefined ? settings.hideWhenLocked : false),
         onchange : v => {settings.hideWhenLocked=v; require('Storage').writeJSON('contourclock.json', settings);}
+      },
+      'Tap to show': {
+        value: (settings.tapToShow !== undefined ? settings.tapToShow : false),
+        onchange : v => {settings.tapToShow=v; require('Storage').writeJSON('contourclock.json', settings);}
+      },
+      'Twist to show': {
+        value: (settings.twistToShow !== undefined ? settings.twistToShow : false),
+        onchange : v => {settings.twistToShow=v; require('Storage').writeJSON('contourclock.json', settings);}
       },
       'set Font': () => fontMenu() 
     });

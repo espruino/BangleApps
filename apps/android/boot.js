@@ -3,8 +3,11 @@
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
-  var lastMsg;
+  var lastMsg; // for music messages - may not be needed now...
+  var actInterval; // Realtime activity reporting interval when `act` is true
+  var actHRMHandler; // For Realtime activity reporting
 
+  // this settings var is deleted after this executes to save memory
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
   if (settings.rp == undefined) settings.rp = true;
@@ -60,6 +63,7 @@
           title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
+      // {"t":"alarm", "d":[{h:int,m:int,rep:int},... }
       "alarm" : function() {
         //wipe existing GB alarms
         var sched;
@@ -92,6 +96,7 @@
       },
       //TODO perhaps move those in a library (like messages), used also for viewing events?
       //add and remove events based on activity on phone (pebble-like)
+      // {t:"calendar", id:int, type:int, timestamp:seconds, durationInSeconds, title:string, description:string,location:string,calName:string.color:int,allDay:bool
       "calendar" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
         if (!cal || !Array.isArray(cal)) cal = [];
@@ -102,6 +107,7 @@
           cal[i] = event;
         require("Storage").writeJSON("android.calendar.json", cal);
       },
+      // {t:"calendar-", id:int}
       "calendar-" : function() {
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
@@ -110,11 +116,13 @@
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       //triggered by GB, send all ids
+      // { t:"force_calendar_sync_start" }
       "force_calendar_sync_start" : function() {
           var cal = require("Storage").readJSON("android.calendar.json",true);
           if (!cal || !Array.isArray(cal)) cal = [];
           gbSend({t:"force_calendar_sync", ids: cal.map(e=>e.id)});
       },
+      // {t:"http",resp:"......",[id:"..."]}
       "http":function() {
         //get the promise and call the promise resolve
         if (Bangle.httpRequest === undefined) return;
@@ -127,21 +135,44 @@
         else
           request.r(event); //r = resolve function
       },
+      // {t:"gps", lat, lon, alt, speed, course, time, satellites, hdop, externalSource:true }
       "gps": function() {
         const settings = require("Storage").readJSON("android.settings.json",1)||{};
         if (!settings.overwriteGps) return;
         delete event.t;
         event.satellites = NaN;
-        event.course = NaN;
+        if (!isFinite(event.course)) event.course = NaN;
         event.fix = 1;
-        if (event.long!==undefined) {
+        if (event.long!==undefined) { // for earlier Gadgetbridge implementations
           event.lon = event.long;
           delete event.long;
         }
         Bangle.emit('GPS', event);
       },
+      // {t:"is_gps_active"}
       "is_gps_active": function() {
-        gbSend({ t: "gps_power", status: Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0 });
+        gbSend({ t: "gps_power", status: Bangle.isGPSOn() });
+      },
+      // {t:"act", hrm:bool, stp:bool, int:int}
+      "act": function() {
+        if (actInterval) clearInterval(actInterval);
+        actInterval = undefined;
+        if (actHRMHandler)
+        actHRMHandler = undefined;
+        Bangle.setHRMPower(event.hrm,"androidact");
+        if (!(event.hrm || event.stp)) return;
+        if (!isFinite(event.int)) event.int=1;
+        var lastSteps = Bangle.getStepCount();
+        var lastBPM = 0;
+        actHRMHandler = function(e) {
+          lastBPM = e.bpm;
+        };
+        Bangle.on('HRM',actHRMHandler);
+        actInterval = setInterval(function() {
+          var steps = Bangle.getStepCount();
+          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM });
+          lastSteps = steps;
+        }, event.int*1000);
       }
     };
     var h = HANDLERS[event.t];
@@ -178,21 +209,28 @@
       },options.timeout||30000)};
     });
     return promise;
-  }
+  };
 
   // Battery monitor
   function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
+  Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
     GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
   }, 2000));
-  Bangle.on("charging", sendBattery);
-  if (!settings.keep)
-    NRF.on("disconnect", () => require("messages").clearAll()); // remove all messages on disconnect
+  NRF.on("disconnect", () => {
+    // disable HRM/activity monitoring ('act' message)
+    GB({t:"act",stp:0,hrm:0,int:0}); // just call the handler to save duplication
+    // remove all messages on disconnect (if enabled)
+    var settings = require("Storage").readJSON("android.settings.json",1)||{};
+    if (!settings.keep)
+      require("messages").clearAll();
+  });
   setInterval(sendBattery, 10*60*1000);
   // Health tracking
   Bangle.on('health', health=>{
-    gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
+    if (actInterval===undefined) // if 'realtime' we do it differently
+      gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
   });
   // Music control
   Bangle.musicControl = cmd => {
@@ -207,13 +245,39 @@
   };
   // GPS overwrite logic
   if (settings.overwriteGps) { // if the overwrite option is set../
-    // Save current logic
-    const originalSetGpsPower = Bangle.setGPSPower;
+    const origSetGPSPower = Bangle.setGPSPower;
+    // migrate all GPS clients to the other variant on connection events
+    let handleConnection = (state) => {
+      if (Bangle.isGPSOn()){
+        let orig = Bangle._PWR.GPS;
+        delete Bangle._PWR.GPS;
+        origSetGPSPower(state);
+        Bangle._PWR.GPS = orig;
+      }
+    };
+    NRF.on('connect', ()=>{handleConnection(0);});
+    NRF.on('disconnect', ()=>{handleConnection(1);});
+
+    // Work around Serial1 for GPS not working when connected to something
+    let serialTimeout;
+    let wrap = function(f){
+      return (s)=>{
+        if (serialTimeout) clearTimeout(serialTimeout);
+        handleConnection(1);
+        f(s);
+        serialTimeout = setTimeout(()=>{
+          serialTimeout = undefined;
+          if (NRF.getSecurityStatus().connected) handleConnection(0);
+        }, 10000);
+      };
+    };
+    Serial1.println = wrap(Serial1.println);
+    Serial1.write = wrap(Serial1.write);
+
     // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
     Bangle.setGPSPower = (isOn, appID) => {
-      // if not connected, use old logic
-      if (!NRF.getSecurityStatus().connected) return originalSetGpsPower(isOn, appID);
-      // Emulate old GPS power logic
+      // if not connected use internal GPS power function
+      if (!NRF.getSecurityStatus().connected) return origSetGPSPower(isOn, appID);
       if (!Bangle._PWR) Bangle._PWR={};
       if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
       if (!appID) appID="?";
@@ -222,11 +286,15 @@
       let pwr = Bangle._PWR.GPS.length>0;
       gbSend({ t: "gps_power", status: pwr });
       return pwr;
-    }
-    // Replace check if the GPS is on to check the _PWR variable
+    };
+    // Allow checking for GPS via GadgetBridge
     Bangle.isGPSOn = () => {
-      return Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0;
-    }
+      return !!(Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0);
+    };
+    // stop GPS on boot if not activated
+    setTimeout(()=>{
+      if (!Bangle.isGPSOn()) gbSend({ t: "gps_power", status: false });
+    },3000);
   }
 
   // remove settings object so it's not taking up RAM

@@ -1,7 +1,7 @@
 {
   "id": "entonclk",
   "name": "Enton Clock",
-  "version": "0.2",
+  "version": "0.3",
   "description": "A simple clock using the Audiowide font with timer. ",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

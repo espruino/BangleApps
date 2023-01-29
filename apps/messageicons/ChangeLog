@@ -2,4 +2,4 @@
 0.02: Added several new icons and colors
 0.03: Fix icons broken in 0v02 (#2386)
       Store all icons in a separate binary file (much faster lookup)
-
+0.04: Add message icon for 'clock'

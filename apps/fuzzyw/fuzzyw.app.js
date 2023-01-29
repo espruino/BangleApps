@@ -1,6 +1,8 @@
 // adapted from https://github.com/hallettj/Fuzzy-Text-International/
+{
+  const SETTINGS_FILE = "fuzzyw.settings.json";
 
-let fuzzy_string = {
+  let fuzzy_string = {
   "hours":[
     /*LANG*/"twelve",
     /*LANG*/"one",
@@ -35,7 +37,11 @@ let text_scale = 3.5;
 let timeout = 2.5*60;
 let drawTimeout;
 
-function queueDraw(seconds) {
+let loadSettings = function() {
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'showWidgets': false};
+}
+
+let queueDraw = function(seconds) {
   let millisecs = seconds * 1000;
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -47,7 +53,7 @@ function queueDraw(seconds) {
 const h = g.getHeight();
 const w = g.getWidth();
 
-function getTimeString(date) {
+let getTimeString = function(date) {
   let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
   let hour = date.getHours() + Math.floor(segment/12);
   f_string = fuzzy_string.minutes[segment % 12];
@@ -59,7 +65,7 @@ function getTimeString(date) {
     return f_string;
 }
 
-function draw() {
+let draw = function() {
   let time_string = getTimeString(new Date()).replace('*', '');
   // print(time_string);
   g.setFont('Vector', (h-24*2)/text_scale);
@@ -71,7 +77,7 @@ function draw() {
 }
 
 g.clear();
-draw();
+loadSettings();
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
@@ -83,6 +89,22 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI('clock');
+Bangle.setUI({
+  mode : 'clock',
+  remove : function() {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    require('widget_utils').show(); // re-show widgets
+  }
+});
+
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+if (settings.showWidgets) {
+  Bangle.drawWidgets();
+} else {
+  require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+}
+
+draw();
+}

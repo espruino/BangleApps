@@ -14,6 +14,7 @@ Bangle.setUI('clock');
 
 g.clear();
 
+const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "limelight.json";
 var UPDATE_PERIOD;
 var drawTimeout;
@@ -84,10 +85,8 @@ if (settings.fullscreen) {
   /*
    * We load the widgets as some like widpedom accumualte the step count.
    * we are not drawing the widgets as we are taking over the whole screen
-   * so we will blank out the draw() functions of each widget and change the
-   * widgets area to the top bar doesn't get cleared.
    */
-  for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+  widget_utils.hide();
 }
 
 function debug(o) {
