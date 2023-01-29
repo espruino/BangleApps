@@ -59,25 +59,22 @@ let drawSmile = function(isLocked){
     var w = 8;
     var y = 120;
     var o = parseInt(E.getBattery()*0.8);
-
-    var isConnected = NRF.getSecurityStatus().connected;
     for(var i = 0; i < w; i++){
         drawCurve(30, y+i, W/2+10, y+i+o, W-40, y+i);
     }
 
+    var reachedSteps = Bangle.getHealthStatus("day").steps >= 10000;
     for(var i=0; i < w-2; i++){
         if(isLocked) g.drawLine(25, y+5+i, 35, y-5+i);
-        if(isConnected) g.drawLine(W-35, y+5+i, W-45, y-5+i);
+        if(reachedSteps) g.drawLine(W-35, y+5+i, W-45, y-5+i);
     }
 }
 
 let drawEyeBrow = function(){
     var w = 4;
-    var steps = Bangle.getHealthStatus("day").steps;
-    var reached = steps / 10000.0;
     for(var i = 0; i < w; i++){
-        if(reached > 0.5) g.drawLine(25, 25+i, 70, 15+i);
-        if(reached > 1.0) g.drawLine(W-25, 25+i, W-70, 15+i);
+        g.drawLine(25, 25+i, 70, 15+i);
+        g.drawLine(W-25, 25+i, W-70, 15+i);
     }
 }
 
