@@ -9,7 +9,7 @@ var drawTimeout;
 /*
  * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
  */
-Graphics.prototype.drawRotRect = function(cx, cy, r1, r2, angle) {
+Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
     angle = angle % 360;
     var theta=angle*Math.PI/180;
     var x = parseInt(cx+r1*Math.sin(theta)*1.2);
@@ -18,16 +18,18 @@ Graphics.prototype.drawRotRect = function(cx, cy, r1, r2, angle) {
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 32);
     g.setColor(g.theme.bg);
-    g.fillCircle(cx, cy, 28);
+    g.fillCircle(cx, cy, 27);
+    g.fillCircle(cx+dx, cy+dy, 28);
 
     g.setColor(g.theme.fg);
-    g.fillCircle(x, y, 12);
+    g.fillCircle(x, y, 8);
+    g.fillCircle(x+1, y, 8);
 };
 
 let drawEyes = function(){
     // And now the analog time
-    var drawHourHand = g.drawRotRect.bind(g,55,70,12,R-38);
-    var drawMinuteHand = g.drawRotRect.bind(g,125,70,12,R-12);
+    var drawHour = g.drawPupils.bind(g,55,70,12,1,0,R-38);
+    var drawMinute = g.drawPupils.bind(g,125,70,12,0,1,R-12);
 
     g.setFontAlign(0,0);
 
@@ -41,8 +43,8 @@ let drawEyes = function(){
 
     // Draw minute and hour fg
     g.setColor(g.theme.fg);
-    drawHourHand(h);
-    drawMinuteHand(m);
+    drawHour(h);
+    drawMinute(m);
 }
 
 function quadraticCurve(t, p0x, p0y, p1x, p1y, p2x, p2y){
@@ -65,16 +67,16 @@ let drawSmile = function(isLocked){
 
     var reachedSteps = Bangle.getHealthStatus("day").steps >= 10000;
     for(var i=0; i < w-2; i++){
-        if(isLocked) g.drawLine(25, y+5+i, 35, y-5+i);
+        if(isLocked) g.drawLine(25, y+6+i, 35, y-5+i);
         if(reachedSteps) g.drawLine(W-35, y+5+i, W-45, y-5+i);
     }
 }
 
 let drawEyeBrow = function(){
-    var w = 4;
+    var w = 6;
     for(var i = 0; i < w; i++){
-        g.drawLine(25, 25+i, 70, 15+i);
-        g.drawLine(W-25, 25+i, W-70, 15+i);
+        g.drawLine(25, 25+i, 70, 15+i%3);
+        g.drawLine(W-25, 28+i%3, W-68, 19+i);
     }
 }
 

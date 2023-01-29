@@ -1,6 +1,8 @@
 # Happy Clock
 
-A really happy clock.
+A happy clock.
+
+![](screenshot_1.png)
 
 The left eye shows the hour, the right hour the minutes.
 The mouth the battery percentage, each eyebrow the left mouthline shows whether your bangle is locked or not and the right whether you reached 10k steps.

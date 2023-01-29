@@ -6,7 +6,7 @@
   "version":"0.01",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
-  "description": ":)",
+  "description": "A happy clock :)",
   "type": "clock",
   "tags": "clock",
   "screenshots": [
