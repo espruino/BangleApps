@@ -4,4 +4,6 @@
 [x] fix sending of HRM / changing service?
 [x] fix menu scrolling/jumping
 [x] fix resetting to accel menu
-[ ] fix button lag / slow down BLE on menu?
+[x] fix button lag / slow down BLE on menu?
+	- sometimes events come through stale though
+[ ] fast load / remove() handler
