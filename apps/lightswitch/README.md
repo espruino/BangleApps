@@ -51,6 +51,8 @@ All touch and drag inputs related to this widget are cached/masked to prevent ac
 * __Min Value__
   _1%_ / _2%_ / _..._ / __10%__ / _..._ / _100%_
  Set the minimal level of brightness you can change to.
+* __Tap to lock__
+ Tapping the widget locks the screen, rather than toggling brightness.
 
 #### Unlock - Set double tap side to unlock:
 * __TapSide__

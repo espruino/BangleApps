@@ -7,6 +7,7 @@
     oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
+    tapToLock: false,
     unlockSide: "",
     tapSide: "right",
     tapOn: "always",
@@ -208,8 +209,12 @@
               w.dragStatus = "off";
             }, w.dragDelay, w);
           }
-          // switch backlight
-          w.changeValue();
+          if (w.tapToLock) {
+            Bangle.setLocked(true);
+          } else {
+            // switch backlight
+            w.changeValue();
+          }
           // masks this touch event by messing up the event handler
           // see https://github.com/espruino/Espruino/issues/2151
           Bangle.removeListener("touch", w.touchListener);
