@@ -4,8 +4,11 @@ A happy clock.
 
 ![](screenshot_1.png)
 
-The left eye shows the hour, the right hour the minutes.
-The mouth the battery percentage, each eyebrow the left mouthline shows whether your bangle is locked or not and the right whether you reached 10k steps.
+## How to read?
+- The left eye shows the hour, the right hour the minutes.
+- The happiness decreases as the battery level decreases.
+- The left mouthline shows whether your bangle is locked or not
+- The right mouthline whether you reached 10k steps or not.
 
 ## Creator
 - [David Peer](https://github.com/peerdavid).
