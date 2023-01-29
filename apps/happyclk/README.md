@@ -4,7 +4,7 @@ A happy clock.
 
 ![](screenshot_1.png)
 
-## How to read?
+## How to read this happy clock?
 - The left eye shows the hour, the right hour the minutes.
 - The happiness decreases as the battery level decreases.
 - The left mouthline shows whether your bangle is locked or not
