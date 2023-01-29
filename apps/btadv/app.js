@@ -91,12 +91,16 @@ var btnLayout = new Layout({
 });
 var setBtnsShown = function (b) {
     btnsShown = b;
+    hook(!btnsShown);
+    setIntervals();
     redraw();
 };
-var drawInfo = function () {
+var drawInfo = function (force) {
     var _a = Bangle.appRect, y = _a.y, x = _a.x, w = _a.w;
     var mid = x + w / 2;
     var drawn = false;
+    if (!force && !bar && !gps && !hrm && !mag)
+        return;
     g.reset()
         .clearRect(Bangle.appRect)
         .setFont(infoFont)
@@ -130,11 +134,16 @@ var drawInfo = function () {
         drawn = true;
     }
     if (!drawn) {
-        g.drawString("swipe to enable", mid, y);
+        if (!force || Object.values(settings).every(function (x) { return !x; })) {
+            g.drawString("swipe to enable", mid, y);
+        }
+        else {
+            g.drawString("waiting for events...", mid, y);
+        }
         y += g.getFontHeight();
     }
 };
-var onTap = function (_) {
+var onTap = function () {
     setBtnsShown(true);
 };
 var redraw = function () {
@@ -153,8 +162,11 @@ var redraw = function () {
             prevBtnsShown = btnsShown;
             Bangle.setUI();
             Bangle.on("swipe", onTap);
+            drawInfo(true);
         }
-        drawInfo();
+        else {
+            drawInfo();
+        }
     }
 };
 var encodeHrm = function (hrm) {
@@ -220,7 +232,6 @@ var enableSensors = function () {
     Bangle.setCompassPower(settings.mag, "btadv");
     if (!settings.mag)
         mag = undefined;
-    console.log("enableSensors():", settings);
 };
 var haveServiceData = function (serv) {
     switch (serv) {
@@ -312,61 +323,64 @@ var getBleAdvert = function (map, all) {
     }
     return advert;
 };
-var updateBleAdvert = function () {
-    var bleAdvert;
-    if (!(bleAdvert = Bangle.bleAdvert)) {
-        bleAdvert = getBleAdvert(function (_) { return undefined; });
-        Bangle.bleAdvert = bleAdvert;
-    }
-    try {
-        NRF.setAdvertising(bleAdvert);
-    }
-    catch (e) {
-        console.log("setAdvertising(): " + e);
-    }
-};
 var updateServices = function () {
     var newAdvert = getBleAdvert(serviceToAdvert);
     NRF.updateServices(newAdvert);
 };
-Bangle.on('accel', function (newAcc) { return acc = newAcc; });
-Bangle.on('pressure', function (newBar) { return bar = newBar; });
-Bangle.on('GPS', function (newGps) { return gps = newGps; });
-Bangle.on('HRM', function (newHrm) { return hrm = newHrm; });
-Bangle.on('mag', function (newMag) { return mag = newMag; });
+var onAccel = function (newAcc) { return acc = newAcc; };
+var onPressure = function (newBar) { return bar = newBar; };
+var onGPS = function (newGps) { return gps = newGps; };
+var onHRM = function (newHrm) { return hrm = newHrm; };
+var onMag = function (newMag) { return mag = newMag; };
+var hook = function (enable) {
+    if (enable) {
+        Bangle.on("accel", onAccel);
+        Bangle.on("pressure", onPressure);
+        Bangle.on("GPS", onGPS);
+        Bangle.on("HRM", onHRM);
+        Bangle.on("mag", onMag);
+    }
+    else {
+        Bangle.removeListener("accel", onAccel);
+        Bangle.removeListener("pressure", onPressure);
+        Bangle.removeListener("GPS", onGPS);
+        Bangle.removeListener("HRM", onHRM);
+        Bangle.removeListener("mag", onMag);
+    }
+};
+var setIntervals = function (locked, connected) {
+    if (locked === void 0) { locked = Bangle.isLocked(); }
+    if (connected === void 0) { connected = NRF.getSecurityStatus().connected; }
+    changeInterval(redrawInterval, locked ? 15000 : 5000);
+    if (connected) {
+        var interval = btnsShown ? 5000 : 1000;
+        if (bleInterval) {
+            changeInterval(bleInterval, interval);
+        }
+        else {
+            bleInterval = setInterval(updateServices, interval);
+        }
+    }
+    else if (bleInterval) {
+        clearInterval(bleInterval);
+        bleInterval = undefined;
+    }
+};
+var redrawInterval = setInterval(redraw, 1000);
+Bangle.on("lock", function (locked) { return setIntervals(locked); });
+var bleInterval;
+NRF.on("connect", function () { return setIntervals(undefined, true); });
+NRF.on("disconnect", function () { return setIntervals(undefined, false); });
+setIntervals();
 setBtnsShown(true);
-var redrawInterval = setInterval(redraw, 2000);
-Bangle.on("lock", function (locked) {
-    changeInterval(redrawInterval, locked ? 15000 : 2000);
-});
 enableSensors();
 {
     var ad = getBleAdvert(function (serv) { return serviceToAdvert(serv, true); }, true);
+    var adServices = Object
+        .keys(ad)
+        .map(function (k) { return k.replace("0x", ""); });
     NRF.setServices(ad, {
-        advertise: Object
-            .keys(ad)
-            .map(function (k) { return k.replace("0x", ""); })
+        advertise: adServices,
+        uart: false,
     });
 }
-var iv;
-var setIntervals = function (connected) {
-    if (connected) {
-        if (iv) {
-            changeInterval(iv, 1000);
-        }
-        else {
-            iv = setInterval(updateServices, 1000);
-        }
-    }
-    else if (iv) {
-        clearInterval(iv);
-        iv = undefined;
-    }
-};
-setIntervals(NRF.getSecurityStatus().connected);
-NRF.on("connect", function () {
-    setIntervals(true);
-});
-NRF.on("disconnect", function () {
-    setIntervals(false);
-});
