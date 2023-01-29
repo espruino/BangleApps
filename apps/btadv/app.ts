@@ -5,9 +5,10 @@ Bangle.drawWidgets();
 
 const enum Intervals {
   // BLE_ADVERT = 60 * 1000,
-  BLE = 1000,
-  MENU_WAKE = 2 * 1000,
-  MENU_SLEEP = 15 * 1000,
+  BLE = 1000, // info screen
+  BLE_BACKGROUND = 5000, // button screen
+  UI_INFO = 5 * 1000, // info refresh, wake
+  UI_INFO_SLEEP = 15 * 1000, // info refresh, asleep
 }
 
 type Hrm = { bpm: number, confidence: number };
@@ -218,13 +219,20 @@ const btnLayout = new Layout(
 
 const setBtnsShown = (b: boolean) => {
   btnsShown = b;
+
+  hook(!btnsShown);
+  setIntervals();
+
   redraw();
 };
 
-const drawInfo = () => {
+const drawInfo = (force?: true) => {
   let { y, x, w } = Bangle.appRect;
   const mid = x + w / 2
   let drawn = false;
+
+  if (!force && !bar && !gps && !hrm && !mag)
+    return;
 
   g.reset()
     .clearRect(Bangle.appRect)
@@ -288,12 +296,16 @@ const drawInfo = () => {
   }
 
   if (!drawn) {
-    g.drawString(`swipe to enable`, mid, y);
+    if (!force || Object.values(settings).every((x: boolean) => !x)) {
+      g.drawString(`swipe to enable`, mid, y);
+    } else {
+      g.drawString(`waiting for events...`, mid, y);
+    }
     y += g.getFontHeight();
   }
 };
 
-const onTap = (_: { /* ... */ }) => {
+const onTap = (/* _: { ... } */) => {
   setBtnsShown(true);
 };
 
@@ -316,8 +328,11 @@ const redraw = () => {
 
       Bangle.setUI(); // remove all existing input handlers
       Bangle.on("swipe", onTap);
+
+      drawInfo(true);
+    } else {
+      drawInfo();
     }
-    drawInfo();
   }
 };
 
@@ -444,8 +459,6 @@ const enableSensors = () => {
   Bangle.setCompassPower(settings.mag, "btadv");
   if (!settings.mag)
     mag = undefined;
-
-  console.log("enableSensors():", settings);
 };
 
 // ----------------------------
@@ -550,47 +563,88 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
   return advert;
 };
 
-// TODO: call this at the start, set the advert
-const updateBleAdvert = () => {
-  let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
+// done via advertise in setServices()
+//const updateBleAdvert = () => {
+//  let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
+//
+//  if (!(bleAdvert = (Bangle as any).bleAdvert)) {
+//    bleAdvert = getBleAdvert(_ => undefined);
+//
+//    (Bangle as any).bleAdvert = bleAdvert;
+//  }
+//
+//  try {
+//    NRF.setAdvertising(bleAdvert);
+//  } catch (e) {
+//    console.log("couldn't setAdvertising():", e);
+//  }
+//};
 
-  if (!(bleAdvert = (Bangle as any).bleAdvert)) {
-    bleAdvert = getBleAdvert(_ => undefined);
-
-    (Bangle as any).bleAdvert = bleAdvert;
-  }
-
-  try {
-    NRF.setAdvertising(bleAdvert);
-  } catch (e) {
-    console.log("setAdvertising(): " + e);
-  }
-};
-
-// call this when settings changes, or when we have new data to send/serve
 const updateServices = () => {
   const newAdvert = getBleAdvert(serviceToAdvert);
 
   NRF.updateServices(newAdvert);
 };
 
-Bangle.on('accel', newAcc => acc = newAcc);
-Bangle.on('pressure', newBar => bar = newBar);
-Bangle.on('GPS', newGps => gps = newGps);
-Bangle.on('HRM', newHrm => hrm = newHrm);
-Bangle.on('mag', newMag => mag = newMag);
+const onAccel = (newAcc: typeof acc) => acc = newAcc;
+const onPressure = (newBar: typeof bar) => bar = newBar;
+const onGPS = (newGps: typeof gps) => gps = newGps;
+const onHRM = (newHrm: typeof hrm) => hrm = newHrm;
+const onMag = (newMag: typeof mag) => mag = newMag;
 
-setBtnsShown(true);
+const hook = (enable: boolean) => {
+  // need to disable for perf reasons, when buttons are shown
+  if (enable) {
+    Bangle.on("accel", onAccel);
+    Bangle.on("pressure", onPressure);
+    Bangle.on("GPS", onGPS);
+    Bangle.on("HRM", onHRM);
+    Bangle.on("mag", onMag);
+  } else {
+    Bangle.removeListener("accel", onAccel);
+    Bangle.removeListener("pressure", onPressure);
+    Bangle.removeListener("GPS", onGPS);
+    Bangle.removeListener("HRM", onHRM);
+    Bangle.removeListener("mag", onMag);
+  }
+}
 
-const redrawInterval = setInterval(redraw, Intervals.MENU_WAKE);
-Bangle.on("lock", locked => {
+// --- intervals ---
+
+const setIntervals = (
+  locked: boolean = Bangle.isLocked(),
+  connected: boolean = NRF.getSecurityStatus().connected,
+) => {
   changeInterval(
     redrawInterval,
-    locked ? Intervals.MENU_SLEEP : Intervals.MENU_WAKE,
+    locked ? Intervals.UI_INFO_SLEEP : Intervals.UI_INFO,
   );
-});
+
+  if (connected) {
+    const interval = btnsShown ? Intervals.BLE_BACKGROUND : Intervals.BLE;
+
+    if (bleInterval) {
+      changeInterval(bleInterval, interval);
+    } else {
+      bleInterval = setInterval(updateServices, interval);
+    }
+  } else if (bleInterval) {
+    clearInterval(bleInterval);
+    bleInterval = undefined;
+  }
+};
+
+const redrawInterval = setInterval(redraw, /*replaced*/1000);
+Bangle.on("lock", locked => setIntervals(locked));
+
+let bleInterval: undefined | number;
+NRF.on("connect", () => setIntervals(undefined, true));
+NRF.on("disconnect", () => setIntervals(undefined, false));
+
+setIntervals();
 
 // turn things on
+setBtnsShown(true);
 enableSensors();
 
 // set services/advert once at startup:
@@ -598,40 +652,20 @@ enableSensors();
   // must have fixed services from the start:
   const ad = getBleAdvert(serv => serviceToAdvert(serv, true), /*all*/true);
 
+  const adServices = Object
+        .keys(ad)
+        .map((k: string) => k.replace("0x", ""));
+
   NRF.setServices(
     ad,
     {
-      // FIXME: go via setAdvertising(), merge wth Bangle.bleAdvert
-      advertise: Object
-        .keys(ad)
-        .map((k: string) => k.replace("0x", ""))
-
-      // TODO: uart: false,
+      advertise: adServices,
+      uart: false,
     },
   );
 }
 
-let iv: undefined | number;
-const setIntervals = (connected: boolean) => {
-  if (connected) {
-    if (iv) {
-      changeInterval(iv, Intervals.BLE);
-    } else {
-      iv = setInterval(
-        updateServices,
-        Intervals.BLE
-      );
-    }
-  } else if (iv) {
-    clearInterval(iv);
-    iv = undefined;
-  }
-};
-
-setIntervals(NRF.getSecurityStatus().connected);
-NRF.on("connect", () => {
-  setIntervals(true);
-});
-NRF.on("disconnect", () => {
-  setIntervals(false);
-});
+// touch events sometimes come through stale :(
+// Bangle.on("touch", (button, xy) => {
+//   console.log(`touch: button=${button}, x=${xy?.x} y=${xy?.y}`);
+// })
