@@ -7,8 +7,10 @@ var drawTimeout;
 
 
 /*
- * Based on the great multi clock from https://github.com/jeffmer/BangleApps/
+ * HELPER
  */
+
+// Based on the great multi clock from https://github.com/jeffmer/BangleApps/
 Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
     angle = angle % 360;
     var theta=angle*Math.PI/180;
@@ -26,6 +28,40 @@ Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
     g.fillCircle(x+1, y, 8);
 };
 
+let quadraticCurve = function(t, p0x, p0y, p1x, p1y, p2x, p2y){
+    var t2 = t * t;
+    var oneMinT = 1 - t;
+    var oneMinT2 = oneMinT * oneMinT;
+    return {
+      x: p0x * oneMinT2 + 2 * p1x * t * oneMinT + p2x *t2,
+      y: p0y * oneMinT2 + 2 * p1y * t * oneMinT + p2y *t2
+    };
+}
+
+// Thanks to user stephaneAG from the Espruino forum!
+// https://forum.espruino.com/conversations/330154/#comment14593349
+let drawCurve = function(x1, y1, x2, y2, x3, y3){
+    var p0 = { x: x1, y: y1};
+    var p1 = { x: x2, y: y2};
+    var p2 = { x: x3, y: y3};
+    var time = 0;
+    var stepping = 0.1; // Stepping defines the speed.
+
+    for(var y = 0; y < 8; y++){
+        var pathPts = [];
+        for(time = 0; time <= 1; time+= stepping){
+        var pos = quadraticCurve(time, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
+        pathPts.push(pos.x, pos.y+y);
+        }
+        g.drawPoly(pathPts, false);
+    }
+    g.flip();
+}
+
+
+/*
+ * Draw the clock
+ */
 let drawEyes = function(){
     // And now the analog time
     var drawHour = g.drawPupils.bind(g,55,70,12,1,0);
@@ -47,15 +83,6 @@ let drawEyes = function(){
     drawMinute(m);
 }
 
-function quadraticCurve(t, p0x, p0y, p1x, p1y, p2x, p2y){
-    var t2 = t * t;
-    var oneMinT = 1 - t;
-    var oneMinT2 = oneMinT * oneMinT;
-    return {
-      x: p0x * oneMinT2 + 2 * p1x * t * oneMinT + p2x *t2,
-      y: p0y * oneMinT2 + 2 * p1y * t * oneMinT + p2y *t2
-    };
-}
 
 let drawSmile = function(isLocked){
     var y = 120;
@@ -80,25 +107,6 @@ let drawEyeBrow = function(){
     }
 }
 
-// Thanks to user stephaneAG from the Espruino forum!
-// https://forum.espruino.com/conversations/330154/#comment14593349
-let drawCurve = function(x1, y1, x2, y2, x3, y3){
-    var p0 = { x: x1, y: y1};
-    var p1 = { x: x2, y: y2};
-    var p2 = { x: x3, y: y3};
-    var time = 0;
-    var stepping = 0.1; // Stepping defines the speed.
-
-    for(var y = 0; y < 8; y++){
-        var pathPts = [];
-        for(time = 0; time <= 1; time+= stepping){
-        var pos = quadraticCurve(time, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
-        pathPts.push(pos.x, pos.y+y);
-        }
-        g.drawPoly(pathPts, false);
-    }
-    g.flip();
-}
 
 
 let draw = function(){
