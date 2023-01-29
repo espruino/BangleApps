@@ -62,7 +62,7 @@ let drawSmile = function(isLocked){
     var y = 120;
     var o = parseInt(E.getBattery()*0.8);
     for(var i = 0; i < w; i++){
-        drawCurve(30, y+i, W/2+10, y+i+o, W-40, y+i);
+        drawCurve(30, y+i, W/2+12, y+i+o, W-40, y+i);
     }
 
     var reachedSteps = Bangle.getHealthStatus("day").steps >= 10000;
@@ -87,9 +87,7 @@ let drawCurve = function(x1, y1, x2, y2, x3, y3){
     var p1 = { x: x2, y: y2};
     var p2 = { x: x3, y: y3};
     var time = 0;
-    //var stepping = 0.005; // seems the nicest
-    //var stepping = 0.05; // a little less neat, yet faster
-    var stepping = 0.1; // quick enough ?
+    var stepping = 0.1; // Stepping defines the speed.
     var pathPts = [];
     for(time = 0; time <= 1; time+= stepping){
       var pos = quadraticCurve(time, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
@@ -113,8 +111,8 @@ let drawHelper = function(isLocked){
     g.reset().clear();
 
     drawEyes();
-    drawSmile(isLocked);
     drawEyeBrow();
+    drawSmile(isLocked);
 }
 
 
