@@ -8,7 +8,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],
-  "allow_emulator": true,
+  "allow_emulator": false,
   "readme": "README.md",
   "storage": [
     {"name": "terminalclock.app.js","url": "app.js"},
