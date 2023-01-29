@@ -28,8 +28,8 @@ Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
 
 let drawEyes = function(){
     // And now the analog time
-    var drawHour = g.drawPupils.bind(g,55,70,12,1,0,R-38);
-    var drawMinute = g.drawPupils.bind(g,125,70,12,0,1,R-12);
+    var drawHour = g.drawPupils.bind(g,55,70,12,1,0);
+    var drawMinute = g.drawPupils.bind(g,125,70,12,0,1);
 
     g.setFontAlign(0,0);
 
