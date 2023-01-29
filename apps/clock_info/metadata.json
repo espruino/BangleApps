@@ -1,0 +1,18 @@
+{ "id": "clock_info",
+  "name": "Clock Info Module",
+  "shortName": "Clock Info",
+  "version":"0.01",
+  "description": "A library used by clocks to provide extra information on the clock face (Altitude, BPM, etc)",
+  "icon": "app.png",
+  "type": "module",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "provides_modules" : ["clock_info"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"clock_info","url":"lib.js"},
+    {"name":"clock_info.settings.js","url":"settings.js"}
+  ], "data": [
+    {"name":"clock_info.json","url":"lib.js"}
+  ]
+}

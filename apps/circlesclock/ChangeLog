@@ -40,3 +40,5 @@
       Now re-adds widgets if they were hidden when fast-loading
 0.22: Fixed crash if item has no image and cutting long overflowing text
 0.23: Setting circles colours per clkinfo and not position
+0.24: Using suggested color from clock_info if set as default and available
+0.25: Use clock_info module as an app

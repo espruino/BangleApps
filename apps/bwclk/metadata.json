@@ -1,7 +1,7 @@
 {
   "id": "bwclk",
   "name": "BW Clock",
-  "version": "0.29",
+  "version": "0.31",
   "description": "A very minimalistic clock.",
   "readme": "README.md",
   "icon": "app.png",
@@ -9,6 +9,7 @@
   "type": "clock",
   "tags": "clock,clkinfo",
   "supports": ["BANGLEJS2"],
+  "dependencies" : { "clock_info":"module" },
   "allow_emulator": true,
   "storage": [
     {"name":"bwclk.app.js","url":"app.js"},

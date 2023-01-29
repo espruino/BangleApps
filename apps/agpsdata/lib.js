@@ -10,20 +10,24 @@ readSettings();
 
 function setAGPS(b64) {
   return new Promise(function(resolve, reject) {
-    var initCommands = "Bangle.setGPSPower(1);\n"; // turn GPS on
     const gnsstype = settings.gnsstype || 1;       // default GPS
-    initCommands += `Serial1.println("${CASIC_CHECKSUM("$PCAS04," + gnsstype)}")\n`; // set GNSS mode
     // What about:
     // NAV-TIMEUTC (0x01 0x10)
     // NAV-PV (0x01 0x03)
     // or AGPS.zip uses AID-INI (0x0B 0x01)
-
-    eval(initCommands);
+    Bangle.setGPSPower(1,"agpsdata"); // turn GPS on
+    Serial1.println(CASIC_CHECKSUM("$PCAS04," + gnsstype)); // set GNSS mode
 
     try {
-      writeChunks(atob(b64), resolve);
+      writeChunks(atob(b64), ()=>{
+        setTimeout(()=>{
+          Bangle.setGPSPower(0,"agpsdata");
+          resolve();
+        }, 1000);
+      });
     } catch (e) {
       console.log("error:", e);
+      Bangle.setGPSPower(0,"agpsdata");
       reject();
     }
   });
@@ -36,9 +40,8 @@ function writeChunks(bin, resolve) {
     setTimeout(function() {
       if (chunkI < bin.length) {
         var chunk = bin.substr(chunkI, chunkSize);
-        js = `Serial1.write(atob("${btoa(chunk)}"))\n`;
-        eval(js);
-
+        Serial1.write(atob(btoa(chunk)));
+        
         chunkI += chunkSize;
         writeChunks(bin, resolve);
       } else {

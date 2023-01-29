@@ -24,3 +24,4 @@
 0.18: Improve widget load speed, allow currently recording track to be plotted in openstmap
 0.19: Fix track plotting code
 0.20: Automatic translation of some more strings.
+0.21: Speed report now uses speed units from locale

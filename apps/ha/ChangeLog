@@ -5,3 +5,5 @@
 0.05: Clkinfo improvements.
 0.06: Updated clkinfo icon.
 0.07: Update clock_info to avoid a redraw
+0.08: Allow swiping to switch triggers
+0.09: Improve web interface, arrows in UI

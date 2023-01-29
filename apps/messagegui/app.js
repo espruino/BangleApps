@@ -263,6 +263,12 @@ function showMessage(msgid) {
   active = "message";
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
+  var body=msg.body, bodyFont = fontLarge;
+  // If no body, use the title text instead...
+  if (body===undefined) {
+    body = title;
+    title = undefined;
+  }
   if (title) {
     var w = g.getWidth()-48;
     if (g.setFont(titleFont).stringWidth(title) > w) {
@@ -276,7 +282,7 @@ function showMessage(msgid) {
     }
   }
   // If body of message is only two lines long w/ large font, use large font.
-  var body=msg.body, bodyFont = fontLarge;
+
   if (body) {
     var w = g.getWidth()-10;
     if (g.setFont(bodyFont).stringWidth(body) > w * 2) {

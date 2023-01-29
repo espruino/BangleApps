@@ -1,9 +1,21 @@
+const CONFIGFILE = "presentation_timer.json";
+
+const now = Date.now();
+const config = Object.assign({
+    state: {
+        total: now,
+        start: now,
+        current: now,
+        running: false,
+    }
+}, require("Storage").readJSON(CONFIGFILE,1) || {});
+
 let w = g.getWidth();
 let h = g.getHeight();
-let tTotal = Date.now();
-let tStart = tTotal;
-let tCurrent = tTotal;
-let running = false;
+let tTotal = config.state.total;
+let tStart = config.state.start;
+let tCurrent = config.state.current;
+let running = config.state.running;
 let timeY = 2*h/5;
 let displayInterval;
 let redrawButtons = true;
@@ -14,6 +26,14 @@ const iconScale = g.getWidth() / 178; // scale up/down based on Bangle 2 size
 const pause_img = atob("GBiBAf////////////////wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP////////////////w==");
 const play_img = atob("GBjBAP//AAAAAAAAAAAIAAAOAAAPgAAP4AAP+AAP/AAP/wAP/8AP//AP//gP//gP//AP/8AP/wAP/AAP+AAP4AAPgAAOAAAIAAAAAAAAAAA=");
 const reset_img = atob("GBiBAf////////////AAD+AAB+f/5+f/5+f/5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+f/5+f/5+f/5+AAB/AAD////////////w==");
+
+function saveState() {
+    config.state.total = tTotal;
+    config.state.start = tStart;
+    config.state.current = tCurrent;
+    config.state.running = running;
+    require("Storage").writeJSON(CONFIGFILE, config);
+}
 
 const margin = 0.5; //half a minute tolerance
 
@@ -29,6 +49,25 @@ function log_debug(o) {
   //console.log(o);
 }
 
+function fillBlanks(slides) {
+  start = 1;
+  time = 0;
+  let arr = [];
+  for(let idx in slides) {
+    s = slides[idx];
+    if(s[1] != start) {
+      step = (s[0] - time) / (s[1] - start + 1);
+      for(let i=0; i<s[1]-start; ++i) {
+        arr.push([+(step*(i+1)+time).toFixed(2), start+i]);
+      }
+    }
+    arr.push([s[0],+s[1]]);
+    start = (+s[1]) + 1;
+    time = s[0];
+  }
+  return arr;
+}
+
 //first must be a number
 function readSlides() {
   let csv = require("Storage").read("presentation_timer.csv");
@@ -36,6 +75,11 @@ function readSlides() {
   let lines = csv.split("\n").filter(e=>e);
   log_debug("Loading "+lines.length+" slides");
   slides = lines.map(line=>{let s=line.split(";");return [+s[0],s[1]];});
+  //all numbers and always strictly increasing
+  if(slides.filter(s=>isNaN(+s[1])).length == 0 &&
+    slides.map((p,i,a)=>p[1]-(a[i-1]?a[i-1][1]:undefined)).filter(p=>p<=0).length == 0) {
+    slides = fillBlanks(slides);
+  }
 }
 
 
@@ -147,6 +191,7 @@ function stopStart() {
   } else {
     draw();
   }
+  saveState();
 }
 
 function setButtonImages() {
@@ -171,6 +216,7 @@ function lapReset() {
     g.clearRect(0,24,w,h);
     draw();
   }
+  saveState();
 }
 
 // simple on screen button class
@@ -268,5 +314,10 @@ g.fillRect(0,0,w,h);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 readSlides();
-draw();
+setButtonImages();
+if (running) {
+    startTimer();
+} else {
+    draw();
+}
 setWatch(() => load(), BTN, { repeat: false, edge: "falling" });

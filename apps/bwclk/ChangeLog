@@ -29,3 +29,5 @@
 clkinfo.addInteractive that would cause ReferenceError.
 0.28: Option to show (1) time only and (2) week of year.
 0.29: use setItem of clockInfoMenu to change the active item
+0.30: Use widget_utils
+0.31: Use clock_info module as an app
