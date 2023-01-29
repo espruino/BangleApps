@@ -10,6 +10,10 @@ A happy clock.
 - The left mouthline shows whether your bangle is locked or not
 - The right mouthline whether you reached 10k steps or not.
 
+Here you can see an example of a locked bangle with a low battery:
+
+![](screenshot_3.png)
+
 ## Creator
 - [David Peer](https://github.com/peerdavid).
 
