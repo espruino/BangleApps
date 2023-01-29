@@ -36,6 +36,7 @@
       'hideifmorethan': 100,
       'alwaysoncharge': false,
       'removejitter': 0, // 0 == off, 1 == downwards only
+      'buzzoncharge': true,
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k];
@@ -161,7 +162,9 @@
   }
 
   Bangle.on('charging',function(charging) {
-    if(charging) Bangle.buzz();
+    if (setting('buzzoncharge')) {
+      if(charging) Bangle.buzz();
+    }
     update();
     g.flip();
   });
