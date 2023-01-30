@@ -21,7 +21,7 @@
     '< Back': back,
     'Theme': {
       value: 0 | colorOptions.indexOf(settings.color),
-      min: 0, max: colorOptions.length,
+      min: 0, max: colorOptions.length-1,
       format: v => colorOptions[v],
       onchange: v => {
         settings.color = colorOptions[v];
