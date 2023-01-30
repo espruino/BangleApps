@@ -1,6 +1,78 @@
 /************************************************
  * Happy Clock
  */
+
+
+/************************************************
+ * Settings
+ */
+const storage = require('Storage');
+const SETTINGS_FILE = "happyclk.setting.json";
+
+let settings = {
+    color: "Dark"
+};
+
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+    settings[key] = saved_settings[key];
+}
+
+var color_map = {
+    "Dark":{
+        fg: "#fff",
+        bg: "#000",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Black":{
+        fg: "#fff",
+        bg: "#000",
+        eye: "#000",
+        eyePupils: "#fff"
+    },
+    "White":{
+        fg: "#000",
+        bg: "#fff",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Blue":{
+        fg: "#fff",
+        bg: "#00f",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Green":{
+        fg: "#000",
+        bg: "#0f0",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Red":{
+        fg: "#fff",
+        bg: "#f00",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Purple":{
+        fg: "#fff",
+        bg: "#f0f",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Yellow":{
+        fg: "#000",
+        bg: "#ff0",
+        eye: "#fff",
+        eyePupils: "#000"
+    }
+};
+var colors = color_map[settings.color];
+
+/************************************************
+ * Globals
+ */
 var W = g.getWidth(),R=W/2;
 var H = g.getHeight();
 var drawTimeout;
@@ -19,11 +91,12 @@ Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
 
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 32);
-    g.setColor(g.theme.bg);
+
+    g.setColor(colors.eye);
     g.fillCircle(cx, cy, 27);
     g.fillCircle(cx+dx, cy+dy, 28);
 
-    g.setColor(g.theme.fg);
+    g.setColor(colors.eyePupils);
     g.fillCircle(x, y, 8);
     g.fillCircle(x+1, y, 8);
 };
@@ -85,6 +158,7 @@ let drawEyes = function(){
 
 
 let drawSmile = function(isLocked){
+    g.setColor(colors.fg);
     var y = 120;
     var o = parseInt(E.getBattery()*0.8);
 
@@ -100,6 +174,7 @@ let drawSmile = function(isLocked){
 }
 
 let drawEyeBrow = function(){
+    g.setColor(colors.fg);
     var w = 6;
     for(var i = 0; i < w; i++){
         g.drawLine(25, 25+i, 70, 15+i%3);
@@ -170,7 +245,7 @@ Bangle.loadWidgets();
 require('widget_utils').hide();
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#fff",fg:"#000",dark:false});
+g.setTheme({bg:colors.bg,fg:colors.fg,dark:false});
 draw();
 
 // After drawing the watch face, we can draw the widgets
