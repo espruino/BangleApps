@@ -5,7 +5,7 @@
   const storage = require('Storage')
   let settings = {
     color: "Dark",
-    screen: "Full"
+    screen: "Dynamic"
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -17,7 +17,7 @@
   }
 
   var colorOptions = ["Dark", "Black", "White", "Blue", "Green", "Red", "Purple", "Yellow"];
-  var screenOptions = ["Normal", "Full"];
+  var screenOptions = ["Normal", "Dynamic", "Full"];
   E.showMenu({
     '': { 'title': 'Happy Clock' },
     '< Back': back,

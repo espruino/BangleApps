@@ -3,15 +3,18 @@
  */
 
 
+const storage = require('Storage');
+const widget_utils = require("widget_utils");
+
+
 /************************************************
  * Settings
  */
-const storage = require('Storage');
 const SETTINGS_FILE = "happyclk.setting.json";
 
 let settings = {
     color: "Dark",
-    screen: "Full"
+    screen: "Dynamic"
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -82,6 +85,16 @@ var drawTimeout;
 /*
  * HELPER
  */
+
+let isFullscreen = function() {
+    var s = settings.screen.toLowerCase();
+    if(s == "dynamic"){
+      return Bangle.isLocked();
+    } else {
+      return s == "full";
+    }
+  };
+
 
 // Based on the great multi clock from https://github.com/jeffmer/BangleApps/
 Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
@@ -175,7 +188,7 @@ let drawSmile = function(isLocked){
 }
 
 let drawEyeBrow = function(){
-    if(settings.screen != "Full") return;
+    if(!isFullscreen()) return;
 
     g.setColor(colors.fg);
     var w = 6;
@@ -187,8 +200,8 @@ let drawEyeBrow = function(){
 
 
 let drawWidgets = function(){
-    if (settings.screen == "Full") {
-        require('widget_utils').hide();
+    if (isFullscreen()) {
+        widget_utils.hide();
     } else {
         Bangle.drawWidgets();
     }
@@ -229,6 +242,15 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('lock', function(isLocked) {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+
+    if(!isLocked && settings.screen.toLowerCase() == "dynamic"){
+        // If we have to show the widgets again, we load it from our
+        // cache and not through Bangle.loadWidgets as its much faster!
+        widget_utils.show();
+    }
+
     draw(isLocked);
 });
 
