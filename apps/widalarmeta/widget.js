@@ -8,7 +8,12 @@
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
   function draw() {
-    const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm)).filter(a => a !== undefined);
+    const times = alarms
+      .map(alarm => {
+        alarm.hidden !== true
+          && require("sched").getTimeToAlarm(alarm)
+      })
+      .filter(a => a !== undefined);
     const next = times.length > 0 ? Math.min.apply(null, times) : 0;
     let calcWidth = 0;
     let drawSeconds = false;
