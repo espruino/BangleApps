@@ -199,11 +199,10 @@ let drawEyeBrow = function(){
 }
 
 
-let drawWidgets = function(isLocked){
+let drawWidgets = function(){
     if (isFullscreen()) {
         widget_utils.hide();
     } else {
-        if (isLocked) return;
         Bangle.drawWidgets();
     }
 }
@@ -219,14 +218,16 @@ let draw = function(){
 }
 
 let drawHelper = function(isLocked){
+    g.setColor(g.theme.bg);
+
+    g.fillRect(0, isFullscreen() ? 0 : 24, W, H);
     g.setColor(g.theme.fg);
-    g.reset().clear();
 
     drawEyes();
     drawEyeBrow();
     drawSmile(isLocked);
 
-    drawWidgets(isLocked);
+    drawWidgets();
 }
 
 
