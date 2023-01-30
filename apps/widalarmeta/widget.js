@@ -8,8 +8,13 @@
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
   function draw() {
-    const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm)).filter(a => a !== undefined);
-    const next = Math.min.apply(null, times);
+    const times = alarms
+      .map(alarm => {
+        alarm.hidden !== true
+          && require("sched").getTimeToAlarm(alarm)
+      })
+      .filter(a => a !== undefined);
+    const next = times.length > 0 ? Math.min.apply(null, times) : 0;
     let calcWidth = 0;
     let drawSeconds = false;
 
@@ -34,7 +39,7 @@
       if (drawSeconds) {
         calcWidth += 3*5;
       }
-    } else if (times.length > 0 && config.drawBell) {
+    } else if (config.drawBell && alarms.some(alarm=>alarm.on&&(alarm.hidden!==true))) {
       // next alarm too far in future, draw only widalarm bell
       g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
       calcWidth = 24;
@@ -52,8 +57,13 @@
     if (timeout === 0) {
       timeout += period;
     }
-    setTimeout(()=>{
-      WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]);
+
+    if (this.timeoutId !== undefined) {
+      clearTimeout(this.timeoutId);
+    }
+    this.timeoutId = setTimeout(()=>{
+      this.timeoutId = undefined;
+      this.draw();
     }, timeout);
   } /* draw */
 

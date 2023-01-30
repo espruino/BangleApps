@@ -2,3 +2,5 @@
 0.02: Change font to 5x9 7 segment-style
       Add settings page
       Add option to show seconds
+0.03: Fix Bell not appearing on alarms > 24h and redrawing interval
+      Update to match the default alarm widget, and not show itself when an alarm is hidden.
