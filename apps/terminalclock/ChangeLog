@@ -7,3 +7,4 @@
 0.07: Use ClockFace module and rework the settings to be able to personnalize the order of the lines
 0.08: Hide widgets instead of not loading them at all
       Use Clockface_menu for widgets and power saving settings
+0.09: Add default HRM value, default altitude value 
