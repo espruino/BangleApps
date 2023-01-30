@@ -1,4 +1,6 @@
 (() => {
+  const pin = process.env.HWVERSION === 2 ? D3 : D30;
+
   var id;
   Bangle.on('charging', (charging) => {
     if (charging) {
@@ -6,9 +8,9 @@
         var max = 0;
         var count = 0;
         id = setInterval(() => {
-          var d30 = analogRead(D30);
-          if (max < d30) {
-            max = d30;
+          var battlvl = analogRead(pin);
+          if (max < battlvl) {
+            max = battlvl;
             count = 0;
           } else {
             count++;
