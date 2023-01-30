@@ -32,13 +32,14 @@
       }) };
     s.writeJSON("iconlaunch.cache.json", launchCache);
   }
-  let scroll = 0;
+
   let selectedItem = -1;
   const R = Bangle.appRect;
   const iconSize = 48;
   const appsN = Math.floor(R.w / iconSize);
   const whitespace = (R.w - appsN * iconSize) / (appsN + 1);
   const itemSize = iconSize + whitespace;
+
   let drawItem = function(itemI, r) {
     g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     let x = 0;
@@ -61,36 +62,26 @@
       }
       x += iconSize;
     }
-    drawText(itemI);
+    drawText(itemI, r.y);
   };
-  let drawItemAuto = function(i) {
-    let y = idxToY(i);
-    g.reset().setClipRect(R.x, y, R.x2, y + itemSize);
-    drawItem(i, {
-      x: R.x,
-      y: y,
-      w: R.w,
-      h: itemSize
-    });
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  let lastIsDown = false;
-  let drawText = function(i) {
+
+  let drawText = function(i, appY) {
     const selectedApp = launchCache.apps[selectedItem];
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (!selectedApp || i != idy) return;
-    const appY = idxToY(idy) + iconSize / 2;
+    appY = appY + itemSize/2;
     g.setFontAlign(0, 0, 0);
     g.setFont("12x20");
     const rect = g.stringMetrics(selectedApp.name);
     g.clearRect(
-      R.w / 2 - rect.width / 2,
-      appY - rect.height / 2,
-      R.w / 2 + rect.width / 2,
-      appY + rect.height / 2
+      R.w / 2 - rect.width / 2 - 2,
+      appY - rect.height / 2 - 2,
+      R.w / 2 + rect.width / 2 + 1,
+      appY + rect.height / 2 + 1
     );
     g.drawString(selectedApp.name, R.w / 2, appY);
   };
+
   let selectItem = function(id, e) {
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
@@ -108,95 +99,31 @@
       }
     }
     selectedItem = appId;
-    drawItems();
+    if (scroller) scroller.draw();
   };
-  let idxToY = function(i) {
-    return i * itemSize + R.y - (scroll & ~1);
-  };
-  let YtoIdx = function(y) {
-    return Math.floor((y + (scroll & ~1) - R.y) / itemSize);
-  };
-  let drawItems = function() {
-    g.reset().clearRect(R.x, R.y, R.x2, R.y2);
-    g.setClipRect(R.x, R.y, R.x2, R.y2);
-    let a = YtoIdx(R.y);
-    let b = Math.min(YtoIdx(R.y2), 99);
-    for (let i = a; i <= b; i++)
-      drawItem(i, {
-      x: R.x,
-      y: idxToY(i),
-      w: R.w,
-      h: itemSize,
-    });
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  drawItems();
-  g.flip();
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
-  let onDrag = function(e) {
-    updateTimeout();
-    g.setColor(g.theme.fg);
-    g.setBgColor(g.theme.bg);
-    let dy = e.dy;
-    if (scroll + R.h - dy > itemsN * itemSize) {
-      dy = scroll + R.h - itemsN * itemSize;
-    }
-    if (scroll - dy < 0) {
-      dy = scroll;
-    }
-    scroll -= dy;
-    scroll = E.clip(scroll, 0, itemSize * (itemsN - 1));
-    g.setClipRect(R.x, R.y, R.x2, R.y2);
-    g.scroll(0, dy);
-    if (dy < 0) {
-      g.setClipRect(R.x, R.y2 - (1 - dy), R.x2, R.y2);
-      let i = YtoIdx(R.y2 - (1 - dy));
-      let y = idxToY(i);
-      while (y < R.y2) {
-        drawItem(i, {
-          x: R.x,
-          y: y,
-          w: R.w,
-          h: itemSize,
-        });
-        i++;
-        y += itemSize;
-      }
-    } else {
-      g.setClipRect(R.x, R.y, R.x2, R.y + dy);
-      let i = YtoIdx(R.y + dy);
-      let y = idxToY(i);
-      while (y > R.y - itemSize) {
-        drawItem(i, {
-          x: R.x,
-          y: y,
-          w: R.w,
-          h: itemSize,
-        });
-        y -= itemSize;
-        i--;
-      }
-    }
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  let mode = {
-    mode: "custom",
-    drag: onDrag,
-    touch: (_, e) => {
-      if (e.y < R.y - 4) return;
-      updateTimeout();
-      let i = YtoIdx(e.y);
-      selectItem(i, e);
-    },
-    swipe: (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } },
-    btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
+
+  let back = ()=>{};
+  if (settings.oneClickExit) back = Bangle.showClock;
+
+  let options = {
+    h: itemSize,
+    c: itemsN,
+    draw: drawItem,
+    select: selectItem,
+    back: back,
     remove: function() {
       if (timeout) clearTimeout(timeout);
+      Bangle.removeListener("drag", updateTimeout);
+      Bangle.removeListener("touch", updateTimeout);
+      Bangle.removeListener("swipe", swipeHandler);
       if (settings.fullscreen) { // for fast-load, if we hid widgets then we should show them again
         require("widget_utils").show();
       }
     }
   };
+
+  let scroller = E.showScroller(options);
 
   let timeout;
   const updateTimeout = function(){
@@ -207,7 +134,11 @@
     }
   };
 
-  updateTimeout();
+  let swipeHandler = (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } };
+  
+  Bangle.on("swipe", swipeHandler)
+  Bangle.on("drag", updateTimeout);
+  Bangle.on("touch", updateTimeout);
 
-  Bangle.setUI(mode);
+  updateTimeout();
 }
