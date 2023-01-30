@@ -10,7 +10,7 @@ const config = Object.assign({
         disableAlarm: false,
     }
 }, require("Storage").readJSON(CONFIGFILE,1) || {});
-const active = alarms.filter(a=>a.on);
+const active = alarms.filter(alarm => require("sched").getTimeToAlarm(alarm));
 const schedSettings = require("sched").getSettings();
 let buzzCount = schedSettings.buzzCount;
 let logs = [];
