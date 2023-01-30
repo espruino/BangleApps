@@ -4,7 +4,8 @@
   // initialize with default settings...
   const storage = require('Storage')
   let settings = {
-    color: "Dark"
+    color: "Dark",
+    screen: "Full"
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -16,9 +17,19 @@
   }
 
   var colorOptions = ["Dark", "Black", "White", "Blue", "Green", "Red", "Purple", "Yellow"];
+  var screenOptions = ["Normal", "Full"];
   E.showMenu({
     '': { 'title': 'Happy Clock' },
     '< Back': back,
+    'Screen': {
+      value: 0 | screenOptions.indexOf(settings.screen),
+      min: 0, max: screenOptions.length-1,
+      format: v => screenOptions[v],
+      onchange: v => {
+        settings.screen = screenOptions[v];
+        save();
+      },
+    },
     'Theme': {
       value: 0 | colorOptions.indexOf(settings.color),
       min: 0, max: colorOptions.length-1,
@@ -27,6 +38,6 @@
         settings.color = colorOptions[v];
         save();
       },
-    }
+    },
   });
 })

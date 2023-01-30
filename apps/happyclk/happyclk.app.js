@@ -10,7 +10,8 @@ const storage = require('Storage');
 const SETTINGS_FILE = "happyclk.setting.json";
 
 let settings = {
-    color: "Dark"
+    color: "Dark",
+    screen: "Full"
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
@@ -174,11 +175,22 @@ let drawSmile = function(isLocked){
 }
 
 let drawEyeBrow = function(){
+    if(settings.screen != "Full") return;
+
     g.setColor(colors.fg);
     var w = 6;
     for(var i = 0; i < w; i++){
         g.drawLine(25, 25+i, 70, 15+i%3);
         g.drawLine(W-25, 28+i%3, W-68, 19+i);
+    }
+}
+
+
+let drawWidgets = function(){
+    if (settings.screen == "Full") {
+        require('widget_utils').hide();
+    } else {
+        Bangle.drawWidgets();
     }
 }
 
@@ -199,6 +211,8 @@ let drawHelper = function(isLocked){
     drawEyes();
     drawEyeBrow();
     drawSmile(isLocked);
+
+    drawWidgets();
 }
 
 
@@ -237,12 +251,6 @@ let queueDraw = function() {
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-require('widget_utils').hide();
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:colors.bg,fg:colors.fg,dark:false});
