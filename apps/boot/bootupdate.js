@@ -37,10 +37,10 @@ if (s.log>=2) { // logging to file
     boot += `_DBGLOG=require("Storage").open("log.txt","a");
 `;
 } if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
-  if (s.log>=2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
-LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+  if (s.log>=2) { boot += `_DBGLOG=require("Storage").open("log.txt","a");`;
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 LoopbackA.setConsole(true);\n`;
-  else if (s.log==1||s.log==3) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
+  } else if (s.log==1) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
   else boot += `E.setConsole(null,{force:true});\n`; // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
   /* If not programmable add our own handler for Bluetooth data
   to allow Gadgetbridge commands to be received*/
