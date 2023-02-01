@@ -40,6 +40,14 @@ function handleFirstDayOfWeek(dow) {
 // Check the first day of week and update the dow field accordingly (alarms only!)
 alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
+function getLabel(e) {
+  const dateStr = e.date && require("locale").date(new Date(e.date), 1);
+  return (e.timer
+      ? require("time_utils").formatDuration(e.timer)
+      : (dateStr ? `${dateStr} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : ""))
+      ) + (e.msg ? " " + e.msg : "");
+}
+
 function showMainMenu() {
   const menu = {
     "": { "title": /*LANG*/"Alarms & Timers" },
@@ -48,11 +56,7 @@ function showMainMenu() {
   };
 
   alarms.forEach((e, index) => {
-    var label = (e.timer
-      ? require("time_utils").formatDuration(e.timer)
-      : (e.date ? `${e.date.substring(5,10)} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : ""))
-      ) + (e.msg ? " " + e.msg : "");
-    menu[label] = {
+    menu[getLabel(e)] = {
       value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
       onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
     };
@@ -184,7 +188,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
 
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
+      E.showPrompt(getLabel(alarm) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
         if (confirm) {
           alarms.splice(alarmIndex, 1);
           saveAndReload();
@@ -264,7 +268,7 @@ function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
     },
     /*LANG*/"Custom": {
       value: isCustom ? decodeDOW({ rp: true, dow: dow }) : false,
-      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalRepeat, originalDow)
+      onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
     }
   };
 
@@ -372,7 +376,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
+      E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
         if (confirm) {
           alarms.splice(timerIndex, 1);
           saveAndReload();
