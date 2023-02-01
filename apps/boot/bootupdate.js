@@ -33,11 +33,8 @@ if (s.ble!==false) {
   }
 }
 // settings.log 0-off, 1-display, 2-log, 3-both
-if (s.log>=2) { // logging to file
-    boot += `_DBGLOG=require("Storage").open("log.txt","a");
-`;
-} if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
-  if (s.log>=2) { boot += `_DBGLOG=require("Storage").open("log.txt","a");`;
+if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
+  if (s.log>=2) { boot += `_DBGLOG=require("Storage").open("log.txt","a");
 LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 LoopbackA.setConsole(true);\n`;
   } else if (s.log==1) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
@@ -60,7 +57,7 @@ Bluetooth.on('line',function(l) {
   if (s.log>=2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
 LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
-  else if (s.log==1||s.log==3) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
+  else if (s.log==1) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
   else boot += `Bluetooth.setConsole(true);\n`; // else if no debug, force REPL to Bluetooth
 }
 // we just reset, so BLE should be on.
