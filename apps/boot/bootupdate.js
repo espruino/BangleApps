@@ -58,7 +58,7 @@ Bluetooth.on('line',function(l) {
 });\n`;
 } else {
   if (s.log>=2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
-LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
   else if (s.log==1||s.log==3) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
   else boot += `Bluetooth.setConsole(true);\n`; // else if no debug, force REPL to Bluetooth
