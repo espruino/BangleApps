@@ -21,13 +21,13 @@
 
 * **Show Temp** Shows the current temperature.
 
+### Note
+Using the watch in a normal fashion can raise the temperature it's sensing to quite a few degrees above the surrounding temperature and it may take half an hour or so to drop to close to the surrounding temperature. After that it seems to give quite accurate readings, assuming the thermometer I've been comparing it to is itself reasonably accurate. So best to load the app then not touch the watch for half an hour before starting a recording. This is assuming you're not wearing the app and are just using it to record the temperature where you've put the watch. You could of course wear it and it'll still draw a graph, which might also be useful.
+
 ### Screenshots
 ![](screenshot_1.png)
 ![](screenshot_2.png)
 ![](screenshot_3.png)
-
-### Note
-Using the watch in a normal fashion can raise the temperature it's sensing to quite a few degrees above the surrounding temperature and it may take half an hour or so to drop to close to the surrounding temperature. After that it seems to give quite accurate readings, assuming the thermometer I've been comparing it to is itself reasonably accurate. So best to load the app then not touch the watch for half an hour before starting a recording. This is assuming you're not wearing the app and are just using it to record the temperature where you've put the watch. You could of course wear it and it'll still draw a graph, which might also be useful.
 
 ### Creator
 Carl Read ([mail](mailto:cread98@orcon.net.nz), [github](https://github.com/CarlR9))
