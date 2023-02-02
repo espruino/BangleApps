@@ -1,0 +1,223 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/0.0.3/ical.min.js"></script>
+    <script>
+let dataElement = document.getElementById("data");
+let alarms;
+let schedSettings;
+
+function readFile(input) {
+  document.getElementById('upload').disabled = true;
+  const offsetMinutes = document.getElementById("offsetMinutes").value;
+
+  for(let i=0; i<input.files.length; i++) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const jCalData = ICAL.parse(reader.result);
+      const comp = new ICAL.Component(jCalData[1]);
+      // Fetch the VEVENT part
+      comp.getAllSubcomponents('vevent').forEach(vevent => {
+        event = new ICAL.Event(vevent);
+        const exists = alarms.some(alarm => alarm.id === event.uid);
+
+        const alarm = eventToAlarm(event, offsetMinutes*60*1000);
+        renderAlarm(alarm, exists);
+
+        if (exists) {
+          alarms = alarms.filter(alarm => alarm.id !== event.uid); // remove if already exists
+          const tr = document.querySelector(`.event-row[data-uid='${event.uid}']`);
+          document.getElementById('events').removeChild(tr);
+        }
+        alarms.push(alarm);
+      });
+    }, false);
+
+    reader.readAsText(input.files[i], "UTF-8");
+  }
+}
+
+function dateToMsSinceMidnight(date) {
+  const dateMidnight = new Date(date);
+  dateMidnight.setHours(0,0,0,0);
+  return date - dateMidnight;
+}
+
+function dateFromAlarm(alarm) {
+  const date = new Date(alarm.date);
+  return new Date(date.getTime() + alarm.t);
+}
+
+function getAlarmDefaults() {
+  const date = new Date();
+  return {
+    on: true,
+    t: dateToMsSinceMidnight(date),
+    dow: 127,
+    date: date.toISOString().substring(0,10),
+    last: 0,
+    rp: "defaultRepeat" in schedSettings ? schedSettings.defaultRepeat : false,
+    vibrate: "defaultAlarmPattern" in schedSettings ? schedSettings.defaultAlarmPattern : "::",
+    as: false,
+  };
+}
+
+function eventToAlarm(event, offsetMs) {
+  const dateOrig = event.startDate.toJSDate();
+  const date = offsetMs ? new Date(dateOrig - offsetMs) : dateOrig;
+
+  const alarm = {...getAlarmDefaults(), ...{
+    id: event.uid,
+    msg: event.summary,
+    t: dateToMsSinceMidnight(date),
+    date: date.toISOString().substring(0,10),
+    data: {end: event.endDate.toJSDate().toISOString()}
+  }};
+  if (offsetMs) { // Alarm time is not real event time, so do a backup
+    alarm.data.time = dateOrig.toISOString();
+  }
+  return alarm;
+}
+
+function upload() {
+  Util.showModal("Saving...");
+  Util.writeStorage("sched.json", JSON.stringify(alarms), () => {
+    location.reload(); // reload so we see current data
+  });
+}
+
+function renderAlarm(alarm, exists) {
+  const localDate = dateFromAlarm(alarm);
+
+  const tr = document.createElement('tr');
+  tr.classList.add('event-row');
+  tr.dataset.uid = alarm.id;
+  const tdTime = document.createElement('td');
+  tr.appendChild(tdTime);
+  const inputTime = document.createElement('input');
+  inputTime.type = "datetime-local";
+  inputTime.classList.add('event-date');
+  inputTime.classList.add('form-input');
+  inputTime.dataset.uid = alarm.id;
+  inputTime.value = localDate.toISOString().slice(0,16);
+  inputTime.onchange = (e => {
+    const date = new Date(inputTime.value);
+    alarm.t = dateToMsSinceMidnight(date);
+    alarm.date = date.toISOString().substring(0,10);
+  });
+  tdTime.appendChild(inputTime);
+
+  const tdSummary = document.createElement('td');
+  tr.appendChild(tdSummary);
+  const inputSummary = document.createElement('input');
+  inputSummary.type = "text";
+  inputSummary.classList.add('event-summary');
+  inputSummary.classList.add('form-input');
+  inputSummary.dataset.uid = alarm.id;
+  inputSummary.maxLength=40;
+  const realHumanStartTime = alarm.data?.time ? ' ' + (new Date(alarm.data.time)).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+  const summary = (alarm.msg?.substring(0, inputSummary.maxLength) || "");
+  inputSummary.value = summary.endsWith(realHumanStartTime) ? summary : summary + realHumanStartTime;
+  inputSummary.onchange = (e => {
+    alarm.msg = inputSummary.value;
+  });
+  tdSummary.appendChild(inputSummary);
+  inputSummary.onchange();
+
+  const tdInfo = document.createElement('td');
+  tr.appendChild(tdInfo);
+
+  const buttonDelete = document.createElement('button');
+  buttonDelete.classList.add('btn');
+  buttonDelete.classList.add('btn-action');
+  tdInfo.prepend(buttonDelete);
+  const iconDelete = document.createElement('i');
+  iconDelete.classList.add('icon');
+  iconDelete.classList.add('icon-delete');
+  buttonDelete.appendChild(iconDelete);
+  buttonDelete.onclick = (e => {
+    alarms = alarms.filter(a => a !== alarm);
+    document.getElementById('events').removeChild(tr);
+  });
+
+  document.getElementById('events').appendChild(tr);
+  document.getElementById('upload').disabled = false;
+}
+
+function addAlarm() {
+  const alarm = getAlarmDefaults();
+  renderAlarm(alarm);
+  alarms.push(alarm);
+}
+
+function getData() {
+  Util.showModal("Loading...");
+  Util.readStorage('sched.json',data=>{
+    alarms = JSON.parse(data || "[]") || [];
+
+    Util.readStorage('sched.settings.json',data=>{
+      schedSettings = JSON.parse(data || "{}") || {};
+      Util.hideModal();
+      alarms.forEach(alarm => {
+        if (alarm.date) {
+          renderAlarm(alarm, true);
+        }
+      });
+    });
+  });
+}
+
+// Called when app starts
+function onInit() {
+  getData();
+}
+    </script>
+  </head>
+  <body>
+    <h4>Manage dated events</h4>
+
+    <div class="float-right">
+      <button class="btn" onclick="addAlarm()">
+        <i class="icon icon-plus"></i>
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Summary</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="events">
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-5 col-xs-12">
+          <label class="form-label" for="fileinput">Add from iCalendar file</label>
+        </div>
+        <div class="col-7 col-xs-12">
+          <input id="fileinput" class="form-input" type="file" onchange="readFile(this)" accept=".ics,.ifb,.ical,.ifbf" multiple/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-5 col-xs-12">
+          <label class="form-label" for="fileinput">Minutes to alarm in advance</label>
+        </div>
+        <div class="col-7 col-xs-12">
+          <input id="offsetMinutes" class="form-input" type="number" value="0" min="0" step="5"/>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <button id="upload" class="btn btn-primary" onClick="upload()" disabled>Upload</button>
+    <button id="reload" class="btn" onClick="location.reload()">Reload</button>
+  </body>
+</html>
