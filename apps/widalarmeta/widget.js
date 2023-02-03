@@ -9,10 +9,10 @@
 
   function draw() {
     const times = alarms
-      .map(alarm => {
+      .map(alarm =>
         alarm.hidden !== true
           && require("sched").getTimeToAlarm(alarm)
-      })
+      )
       .filter(a => a !== undefined);
     const next = times.length > 0 ? Math.min.apply(null, times) : 0;
     let calcWidth = 0;
