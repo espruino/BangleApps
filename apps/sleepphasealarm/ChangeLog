@@ -14,3 +14,4 @@
 0.11: Minor tweaks
 0.12: Support javascript command to execute as defined in scheduler 'js' configuration
 0.13: Fix dated events alarm on wrong date
+0.14: Reduce update interval of current time when seconds are not shown
