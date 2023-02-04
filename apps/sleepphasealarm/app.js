@@ -146,8 +146,9 @@ function addLog(time, type) {
 var minAlarm = new Date();
 var measure = true;
 if (nextAlarmDate !== undefined) {
-  config.logs[nextAlarmDate.getDate()] = []; // overwrite log on each day of month
-  logs = config.logs[nextAlarmDate.getDate()];
+  const logday = BANGLEJS2 ? nextAlarmDate.getDate() : 0;
+  config.logs[logday] = []; // overwrite log on each day of month
+  logs = config.logs[logday];
   g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
