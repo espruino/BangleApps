@@ -3,7 +3,6 @@
 
 Bangle.setBarometerPower(true,"tempgraph");
 Bangle.loadWidgets();
-var wids=WIDGETS;
 var widsOn=true;
 var rm=null;
 var gt=null;
@@ -50,10 +49,10 @@ var duration=times[durInd];
 function drawWids(){
 	g.clear();
 	if(widsOn){
-		WIDGETS=wids;
 		Bangle.drawWidgets();
+		require("widget_utils").show();
 	} else {
-		WIDGETS={};
+		require("widget_utils").hide();
 	}
 }
 
