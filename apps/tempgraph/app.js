@@ -31,7 +31,7 @@ var timesData=[
 	{dur:12,u:"Hrs",d:6,s:3600},
 	{dur:16,u:"Hrs",d:4,s:3600},
 	{dur:20,u:"Hrs",d:5,s:3600},
-	{dur:1,u:"Day",d:4,s:3600},
+	{dur:1,u:"Day",d:4,s:86400},
 	{dur:2,u:"Days",d:4,s:86400},
 	{dur:3,u:"Days",d:3,s:86400},
 	{dur:4,u:"Days",d:4,s:86400},
