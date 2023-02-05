@@ -2,7 +2,11 @@ exports.input = function(options) {
   options = options||{};
   var text = options.text;
   if ("string"!=typeof text) text="";
-  let settings = require('Storage').readJSON('dragboard.json',1)||{}
+  let settings = require('Storage').readJSON('dragboard.json',1)||{};
+
+  // Disregard touch screen calibration when using dragboard. Otherwise it can be impossible to access some characters. Calibration is restored when done writing.
+  let touchCalibrationBackup = {touchX1: Bangle.getOptions().touchX1, touchY1: Bangle.getOptions().touchY1, touchX2: Bangle.getOptions().touchX2, touchY2: Bangle.getOptions().touchY2};
+  Bangle.setOptions({touchX1: 0, touchY1: 0, touchX2: 160, touchY2: 160});
 
   var R = Bangle.appRect;
   const paramToColor = (param) => g.toColor(`#${settings[param].toString(16).padStart(3,0)}`);
@@ -120,6 +124,7 @@ exports.input = function(options) {
       back: ()=>{
         Bangle.setUI();
         g.clearRect(Bangle.appRect);
+        Bangle.setOptions(touchCalibrationBackup);
         resolve(text);
       },
       drag: function(event) {
