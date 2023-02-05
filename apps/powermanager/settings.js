@@ -36,6 +36,12 @@
         writeSettings("forceMonoVoltage", v);
       }
     },
+    'Log': {
+      value: !!settings.log,
+      onchange: v => {
+        writeSettings("log", v);
+      }
+    },
     'Charge warning': function() {
       E.showMenu(submenu_chargewarn);
     },

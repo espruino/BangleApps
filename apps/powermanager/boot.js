@@ -3,11 +3,89 @@
     require('Storage').readJSON("powermanager.default.json", true) || {},
     require('Storage').readJSON("powermanager.json", true) || {}
   );
-  
+
+  if (settings.log) {
+    let logFile = require('Storage').open("powermanager.log","a");
+    let def = require('Storage').readJSON("powermanager.def.json", true) || {};
+    if (!def.start) def.start = Date.now();
+    if (!def.deferred) def.deferred = {};
+    let sen = require('Storage').readJSON("powermanager.sen.json", true) || {};
+    if (!sen.start) sen.start = Date.now();
+    if (!sen.power) sen.power = {};
+
+    E.on("kill", ()=>{
+      let defExists = require("Storage").read("powermanager.def.json")!==undefined;
+      if (!(!defExists && def.saved)){
+        def.saved = Date.now();
+        require('Storage').writeJSON("powermanager.def.json", def);
+      }
+      let senExists = require("Storage").read("powermanager.sen.json")!==undefined;
+      if (!(!senExists && sen.saved)){
+        sen.saved = Date.now();
+        require('Storage').writeJSON("powermanager.sen.json", sen);
+      }
+    });
+
+
+    let logPower = (type, oldstate, state, app) => {
+      logFile.write("p," + type + ',' + (oldstate?1:0) + ',' + (state?1:0) + ',' + app + "\n");
+    };
+    let logDeferred = (type, duration, source) => {
+      logFile.write(type + ',' + duration + ',' + source + "\n");
+    };
+
+    let lastPowerOn = {};
+
+    const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
+    for (let c of TO_WRAP){
+      let functionName = "set" + c + "Power";
+      let checkName = "is" + c + "On";
+      let type = c + "";
+      if (!sen.power[type]) sen.power[type] = 0;
+
+      lastPowerOn[type] = Date.now();
+
+      Bangle[functionName] = ((o) => (a,b) => {
+        let oldstate = Bangle[checkName]();
+        let result = o(a,b);
+        if (!(oldstate && result)) {
+          if (result) {
+            //switched on, store time
+            lastPowerOn[type] = Date.now();
+          } else {
+            //switched off
+            sen.power[type] += Date.now() - lastPowerOn[type];
+          }
+        }
+        if (settings.logDetails) logPower(type, oldstate, result, b);
+        return result;
+      })(Bangle[functionName]);
+    }
+
+    let functions = {};
+
+    let wrapDeferred = ((o,t) => (a,b,c,d) => {
+      let wrapped = (q,w,e,r)=>{
+        let start = Date.now();
+        let result = a(q,w,e,r);
+        let end = Date.now()-start;
+        let f = a.toString().substring(0,100);
+        if (settings.logDetails) logDeferred(t, end, f);
+        if (!def.deferred[f]) def.deferred[f] = 0;
+        def.deferred[f] += end;
+        return result;
+      };
+      return o(wrapped,b,c,d);
+    });
+
+    global.setTimeout = wrapDeferred(global.setTimeout, "t");
+    global.setInterval = wrapDeferred(global.setInterval, "i");
+  }
+
   if (settings.warnEnabled){
     var chargingInterval;
 
-    function handleCharging(charging){
+    let handleCharging = (charging) => {
         if (charging){
           if (chargingInterval) clearInterval(chargingInterval);
           chargingInterval = setInterval(()=>{
@@ -20,12 +98,12 @@
         clearInterval(chargingInterval);
         chargingInterval = undefined;
       }
-    }
+    };
 
     Bangle.on("charging",handleCharging);
     handleCharging(Bangle.isCharging());
   }
-  
+
   if (settings.forceMonoPercentage){
     var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
     var op = E.getBattery;

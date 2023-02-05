@@ -9,6 +9,7 @@
   "tags": "tool",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name":"powermanager.boot.js","url":"boot.js"},
     {"name":"powermanager.settings.js","url":"settings.js"},
