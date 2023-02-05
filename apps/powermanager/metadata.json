@@ -15,5 +15,10 @@
     {"name":"powermanager.settings.js","url":"settings.js"},
     {"name":"powermanager","url":"lib.js"},
     {"name":"powermanager.default.json","url":"default.json"}
+  ],
+  "data": [
+    {"name":"powermanager.sen.json"},
+    {"name":"powermanager.def.json"},
+    {"name":"powermanager.log"}
   ]
 }
