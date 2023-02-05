@@ -22,7 +22,7 @@
     setUI(mode, cb);
   };
 
-  function goBack(lr, ud) {
+  function goBack(lr, _) {
     // if it is a left to right swipe
     if (lr === 1) {
       // if we're in an app that has a back button, run the callback for it
