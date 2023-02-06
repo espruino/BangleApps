@@ -111,6 +111,7 @@ let layout = new Layout({
   remove: ()=>{
     Bangle.removeListener("swipe", onSwipe);
     Bangle.removeListener("touch", updateTimeout);
+    if (timeout) clearTimeout(timeout);
     delete Graphics.prototype.setFont8x12;
   }
 });
