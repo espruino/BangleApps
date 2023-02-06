@@ -323,6 +323,11 @@ function setWeather() {
   draw(a);
 }
 
+function readWeather() {
+  data = require("Storage").readJSON('weather.json').weather;
+  require("Storage").write('mtnclock.json', data);
+}
+
 const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="weather") {
@@ -340,6 +345,7 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
+    readWeather();
     setWeather();
     queueDraw();
   }, 60000 - (Date.now() % 60000));
