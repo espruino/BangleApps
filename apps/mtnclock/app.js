@@ -324,8 +324,13 @@ function setWeather() {
 }
 
 function readWeather() {
-  data = require("Storage").readJSON('weather.json').weather;
-  require("Storage").write('mtnclock.json', data);
+  var weatherData = require("Storage").readJSON('weather.json', true);
+  if (weatherData !== undefined) {
+    if (weatherData.weather.time > data.time) {
+      data = weatherData.weather;
+      require("Storage").write('mtnclock.json', data);
+    }
+  }
 }
 
 const _GB = global.GB;
