@@ -15,5 +15,6 @@
     {"name":"sleepphasealarm.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"sleepphasealarm.json"}],
-  "interface": "interface.html"
+  "interface": "interface.html",
+  "screenshots": [ {"url":"screenshot.png"}, {"url":"screenshot_log.png"} ]
 }
