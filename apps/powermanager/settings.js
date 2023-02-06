@@ -42,17 +42,8 @@
     'Calibrate': function() {
       E.showMenu(submenu_calibrate);
     },
-    'Logging': {
-      value: !!settings.log,
-      onchange: v => {
-        writeSettings("log", v);
-      }
-    },
-    'Detail logging': {
-      value: !!settings.logDetails,
-      onchange: v => {
-        writeSettings("logDetails", v);
-      }
+    'Logging': function() {
+      E.showMenu(submenu_logging);
     }
   };
 
@@ -128,6 +119,27 @@
       }
     }
   };
+
+  var submenu_logging = {
+    '': {
+      title: "Logging",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
+    },
+    'Enabled': {
+      value: !!settings.log,
+      onchange: v => {
+        writeSettings("log", v);
+      }
+    },
+    'Trace': {
+      value: !!settings.logDetails,
+      onchange: v => {
+        writeSettings("logDetails", v);
+      }
+    }
+  }
 
   E.showMenu(mainmenu);
 })
