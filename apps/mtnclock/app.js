@@ -344,7 +344,7 @@ global.GB = (event) => {
       code: event.code,
       time: Date.now()
     };
-    require("Storage").write('mtnclock.json', event);
+    require("Storage").writeJSON('mtnclock.json', data);
     setWeather();
   }
   if (_GB) setTimeout(_GB, 0, event);
