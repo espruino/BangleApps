@@ -64,18 +64,27 @@
 
     let functions = {};
 
-    let wrapDeferred = ((o,t) => (a,b,c,d) => {
-      let wrapped = (q,w,e,r)=>{
-        let start = Date.now();
-        let result = a(q,w,e,r);
-        let end = Date.now()-start;
-        let f = a.toString().substring(0,100);
-        if (settings.logDetails) logDeferred(t, end, f);
-        if (!def.deferred[f]) def.deferred[f] = 0;
-        def.deferred[f] += end;
-        return result;
-      };
-      return o(wrapped,b,c,d);
+    let wrapDeferred = ((o,t) => (a) => {
+      if (a == eval){
+        return o.apply(this, arguments);
+      } else {
+        let wrapped = ()=>{
+          let start = Date.now();
+          let result = a.apply(undefined, arguments.slice(1));
+          let end = Date.now()-start;
+          let f = a.toString().substring(0,100);
+          if (settings.logDetails) logDeferred(t, end, f);
+          if (!def.deferred[f]) def.deferred[f] = 0;
+          def.deferred[f] += end;
+          return result;
+        };
+        for (let p in a){
+          wrapped[p] = a[p];
+        }
+        let newArgs = arguments.slice();
+        newArgs[0] = wrapped;
+        return o.apply(this, newArgs);
+      }
     });
 
     global.setTimeout = wrapDeferred(global.setTimeout, "t");
