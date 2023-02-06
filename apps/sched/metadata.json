@@ -10,6 +10,7 @@
   "provides_modules" : ["sched"],
   "default" : true,
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name":"sched.boot.js","url":"boot.js"},
     {"name":"sched.js","url":"sched.js"},

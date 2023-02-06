@@ -14,6 +14,10 @@ Here you can see an example of a locked bangle with a low battery:
 
 ![](screenshot_3.png)
 
+## Settings
+- Screen: Normal (widgets shown), Dynamic (widgets shown if unlocked) or Full (widgets are hidden).
+- Theme: Select your custom theme, independent of system settings.
+
 ## Creator
 - [David Peer](https://github.com/peerdavid).
 

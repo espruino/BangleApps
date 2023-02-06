@@ -1,6 +1,82 @@
 /************************************************
  * Happy Clock
  */
+
+
+const storage = require('Storage');
+const widget_utils = require("widget_utils");
+
+
+/************************************************
+ * Settings
+ */
+const SETTINGS_FILE = "happyclk.setting.json";
+
+let settings = {
+    color: "Dark",
+    screen: "Dynamic"
+};
+
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+    settings[key] = saved_settings[key];
+}
+
+var color_map = {
+    "Dark":{
+        fg: "#fff",
+        bg: "#000",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Black":{
+        fg: "#fff",
+        bg: "#000",
+        eye: "#000",
+        eyePupils: "#fff"
+    },
+    "White":{
+        fg: "#000",
+        bg: "#fff",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Blue":{
+        fg: "#fff",
+        bg: "#00f",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Green":{
+        fg: "#000",
+        bg: "#0f0",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Red":{
+        fg: "#fff",
+        bg: "#f00",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Purple":{
+        fg: "#fff",
+        bg: "#f0f",
+        eye: "#fff",
+        eyePupils: "#000"
+    },
+    "Yellow":{
+        fg: "#000",
+        bg: "#ff0",
+        eye: "#fff",
+        eyePupils: "#000"
+    }
+};
+var colors = color_map[settings.color];
+
+/************************************************
+ * Globals
+ */
 var W = g.getWidth(),R=W/2;
 var H = g.getHeight();
 var drawTimeout;
@@ -9,6 +85,16 @@ var drawTimeout;
 /*
  * HELPER
  */
+
+let isFullscreen = function() {
+    var s = settings.screen.toLowerCase();
+    if(s == "dynamic"){
+      return Bangle.isLocked();
+    } else {
+      return s == "full";
+    }
+  };
+
 
 // Based on the great multi clock from https://github.com/jeffmer/BangleApps/
 Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
@@ -19,11 +105,12 @@ Graphics.prototype.drawPupils = function(cx, cy, r1, dx, dy, angle) {
 
     g.setColor(g.theme.fg);
     g.fillCircle(cx, cy, 32);
-    g.setColor(g.theme.bg);
+
+    g.setColor(colors.eye);
     g.fillCircle(cx, cy, 27);
     g.fillCircle(cx+dx, cy+dy, 28);
 
-    g.setColor(g.theme.fg);
+    g.setColor(colors.eyePupils);
     g.fillCircle(x, y, 8);
     g.fillCircle(x+1, y, 8);
 };
@@ -85,6 +172,7 @@ let drawEyes = function(){
 
 
 let drawSmile = function(isLocked){
+    g.setColor(colors.fg);
     var y = 120;
     var o = parseInt(E.getBattery()*0.8);
 
@@ -100,10 +188,22 @@ let drawSmile = function(isLocked){
 }
 
 let drawEyeBrow = function(){
+    if(!isFullscreen()) return;
+
+    g.setColor(colors.fg);
     var w = 6;
     for(var i = 0; i < w; i++){
         g.drawLine(25, 25+i, 70, 15+i%3);
         g.drawLine(W-25, 28+i%3, W-68, 19+i);
+    }
+}
+
+
+let drawWidgets = function(){
+    if (isFullscreen()) {
+        widget_utils.hide();
+    } else {
+        Bangle.drawWidgets();
     }
 }
 
@@ -118,12 +218,16 @@ let draw = function(){
 }
 
 let drawHelper = function(isLocked){
+    g.setColor(g.theme.bg);
+
+    g.fillRect(0, isFullscreen() ? 0 : 24, W, H);
     g.setColor(g.theme.fg);
-    g.reset().clear();
 
     drawEyes();
     drawEyeBrow();
     drawSmile(isLocked);
+
+    drawWidgets();
 }
 
 
@@ -140,6 +244,15 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.on('lock', function(isLocked) {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+
+    if(!isLocked && settings.screen.toLowerCase() == "dynamic"){
+        // If we have to show the widgets again, we load it from our
+        // cache and not through Bangle.loadWidgets as its much faster!
+        widget_utils.show();
+    }
+
     draw(isLocked);
 });
 
@@ -162,15 +275,9 @@ let queueDraw = function() {
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-/*
- * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
- */
-require('widget_utils').hide();
 
 // Clear the screen once, at startup and draw clock
-// g.setTheme({bg:"#fff",fg:"#000",dark:false});
+g.setTheme({bg:colors.bg,fg:colors.fg,dark:false});
 draw();
 
 // After drawing the watch face, we can draw the widgets
