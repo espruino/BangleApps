@@ -13,7 +13,9 @@
     if (!sen.start) sen.start = Date.now();
     if (!sen.power) sen.power = {};
 
-    E.on("kill", ()=>{
+    const saveEvery = 1000 * 60 * 5;
+
+    let save = ()=>{
       let defExists = require("Storage").read("powermanager.def.json")!==undefined;
       if (!(!defExists && def.saved)){
         def.saved = Date.now();
@@ -24,7 +26,11 @@
         sen.saved = Date.now();
         require('Storage').writeJSON("powermanager.sen.json", sen);
       }
-    });
+    }
+
+    setInterval(save, saveEvery);
+
+    E.on("kill", save);
 
 
     let logPower = (type, oldstate, state, app) => {
