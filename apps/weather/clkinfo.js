@@ -5,10 +5,10 @@
     function updateWeather() {
       weather = weatherLib.get();
       if(weather){
-        weather.temp = require("locale").temp(weather.temp-273.15);
+	    weather.temp = locale.temp(weather.temp-273.15, 2);
         weather.hum = weather.hum + "%";
-        weather.wind = require("locale").speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-        weather.wind = Math.round(weather.wind[1]) + "kph";
+        weather.wind = locale.speed(weather.wind*3.6, 2).match(/^(\D*\d*)[.](\D*\d*)(.*)$/);
+        weather.wind = weather.wind[1] + "." + weather.wind[2] + "km/h";
       } else {
         weather = {
           temp: "?",
