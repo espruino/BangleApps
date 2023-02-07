@@ -21,7 +21,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
       {filly: 1},
       {type: "txt", font: "6x8", pad: 2, halign: -1, label: /*LANG*/"Wind"},
       {type: "h", halign: -1, c: [
-        {type: "txt", font: "9%", pad: 2, id: "wind",  label: "00"},
+        {type: "txt", font: "9%", pad: 2, id: "wind",  label: "000"},
         {type: "txt", font: "6x8", pad: 2, valign: -1, id: "windUnit", label: "km/h"},
       ]},
     ]},
@@ -30,7 +30,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {type: "txt", font: "9%", wrap: true, height: g.getHeight()*0.18, fillx: 1, id: "cond", label: /*LANG*/"Weather condition"},
   {filly: 1},
   {type: "h", c: [
-    {type: "txt", font: "6x8", pad: 4, id: "loc", label: "Toronto"},
+    {type: "txt", font: "6x8", pad: 4, id: "loc", label: "Warsaw"},
     {fillx: 1},
     {type: "txt", font: "6x8", pad: 4, id: "updateTime", label: /*LANG*/"15 minutes ago"},
   ]},
@@ -48,13 +48,13 @@ function formatDuration(millis) {
 function draw() {
   layout.icon.txt = current.txt;
   layout.icon.code = current.code;
-  const temp = locale.temp(current.temp-273.15).match(/^(\D*\d*)(.*)$/);
-  layout.temp.label = temp[1];
-  layout.tempUnit.label = temp[2];
+  const temp = locale.temp(current.temp-273.15, 2).match(/^(\D*\d*)[.](\D*\d*)(.*)$/);
+  layout.temp.label = temp[1]+"."+temp[2];
+  layout.tempUnit.label = temp[3];
   layout.hum.label = current.hum+"%";
-  const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
-  layout.wind.label = wind[1];
-  layout.windUnit.label = wind[2] + " " + (current.wrose||'').toUpperCase();
+  const wind = locale.speed(current.wind*3.6, 2).match(/^(\D*\d*)[.](\D*\d*)(.*)$/);
+  layout.wind.label = wind[1]+"."+wind[2];
+  layout.windUnit.label = wind[3] + " " + (current.wrose||'').toUpperCase();
   layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
