@@ -37,11 +37,13 @@ exports.load = function() {
   }
   function altUpdateHandler() {
     try {
+      Bangle.setBarometerPower(true) ///maybe will help mp
       Bangle.getPressure().then(data=>{
         if (!data) return;
         alt = Math.round(data.altitude) + "m";
         bangleItems[3].emit("redraw");
       });
+      Bangle.setBarometerPower(false) ///maybe will help mp
     } catch (e) {
       print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
       bangleItems[3].emit('redraw');}
