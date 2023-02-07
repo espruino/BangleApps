@@ -48,9 +48,9 @@ function formatDuration(millis) {
 function draw() {
   layout.icon.txt = current.txt;
   layout.icon.code = current.code;
-  const temp = locale.temp(current.temp-273.15).match(/^(\D*\d*)(.*)$/);
-  layout.temp.label = temp[1];
-  layout.tempUnit.label = temp[2];
+  const temp = locale.temp(current.temp-273.15, 2).match(/^(\D*\d*)[.](\D*\d*)(.*)$/);
+  layout.temp.label = temp[1]+"."+temp[2];
+  layout.tempUnit.label = temp[3];
   layout.hum.label = current.hum+"%";
   const wind = locale.speed(current.wind*3.6, 2).match(/^(\D*\d*)[.](\D*\d*)(.*)$/);
   layout.wind.label = wind[1]+"."+wind[2];
