@@ -22,11 +22,21 @@
     setUI(mode, cb);
   };
 
+  function countHandlers(eventType) {
+    if (Bangle["#on"+eventType] === undefined) {
+      return 0;
+    } else if (Bangle["#on"+eventType] instanceof Array) {
+      return Bangle["#on"+eventType].length;
+    } else if (Bangle["#on"+eventType] !== undefiened) {
+      return 1;
+    }
+  }
+
   function goBack(lr, _) {
     // if it is a left to right swipe
     if (lr === 1) {
       // if we're in an app that has a back button, run the callback for it
-      if (global.BACK) {
+      if (global.BACK && countHandlers("swipe")<4 && countHandlers("drag")<1) { // # of allowed handlers should be user configurable in settings
         global.BACK();
       }
     }
