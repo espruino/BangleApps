@@ -16,7 +16,7 @@
     var currentFile = global.__FILE__ || "";
 
     if (global.BACK) delete global.BACK;
-    if (options && options.back && enabledForApp(currentFile) && !((Bangle["#onswipe"] instanceof Array)&&Bangle["#onswipe"].length>1 )) {
+    if (options && options.back && enabledForApp(currentFile)) {
       global.BACK = options.back;
     }
     setUI(mode, cb);
