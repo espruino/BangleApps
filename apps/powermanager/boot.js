@@ -14,6 +14,7 @@
     if (!sen.power) sen.power = {};
 
     const saveEvery = 1000 * 60 * 5;
+    const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
 
     let save = ()=>{
       let defExists = require("Storage").read("powermanager.def.json")!==undefined;
@@ -30,7 +31,14 @@
 
     setInterval(save, saveEvery);
 
-    E.on("kill", save);
+    E.on("kill", ()=>{
+      for (let c of TO_WRAP){
+        if (lastPowerOn[c] && Bangle["is"+c+"On"]()){
+          sen.power[c] += Date.now() - lastPowerOn[c];
+        }
+      }
+      save();
+    });
 
 
     let logPower = (type, oldstate, state, app) => {
@@ -42,27 +50,26 @@
 
     let lastPowerOn = {};
 
-    const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
     for (let c of TO_WRAP){
       let functionName = "set" + c + "Power";
       let checkName = "is" + c + "On";
       let type = c + "";
-      if (!sen.power[type]) sen.power[type] = 0;
+      lastPowerOn[type] = (!lastPowerOn[type] && Bangle[checkName]()) ? Date.now() : undefined;
 
       lastPowerOn[type] = Date.now();
 
       Bangle[functionName] = ((o) => (a,b) => {
         let oldstate = Bangle[checkName]();
         let result = o(a,b);
-        if (!(oldstate && result)) {
-          if (result) {
-            //switched on, store time
-            lastPowerOn[type] = Date.now();
-          } else {
-            //switched off
-            sen.power[type] += Date.now() - lastPowerOn[type];
-          }
+        if (!lastPowerOn[type] && result) {
+          //switched on, store time
+          lastPowerOn[type] = Date.now();
+        } else if (lastPowerOn[type] && !result){
+          //switched off
+          sen.power[type] += Date.now() - lastPowerOn[type];
+          lastPowerOn[type] = undefined;
         }
+
         if (settings.logDetails) logPower(type, oldstate, result, b);
         return result;
       })(Bangle[functionName]);
