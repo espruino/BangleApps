@@ -23,6 +23,7 @@
     '': {
       'title': 'Power Manager'
     },
+    "< Back" : back,
     'Monotonic percentage': {
       value: !!settings.forceMonoPercentage,
       onchange: v => {

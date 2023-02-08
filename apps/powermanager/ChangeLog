@@ -3,3 +3,4 @@
 0.03: Use default Bangle formatter for booleans
 0.04: Remove calibration with current voltage (Calibrate->Auto) as it is now handled by settings app
       Allow automatic calibration on every charge longer than 3 hours
+0.05: Add back button to settings menu.
