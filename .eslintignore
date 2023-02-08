@@ -7,7 +7,5 @@ apps/gipy/pkg/gpconv.js
 apps/health/chart.min.js
 *.test.js
 
-# typescript
+# typescript/generated files
 apps/btadv/*.js
-apps/promenu/*.js
-apps/widChargingStatus/*.js
