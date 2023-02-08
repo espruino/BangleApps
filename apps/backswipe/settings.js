@@ -58,7 +58,7 @@
       'App List': () => {
         showAppSubMenu();
       },
-      'standard # of swipe handlers' : { // If more than this many handlers are present backswipe will not go back
+      'Standard # of swipe handlers' : { // If more than this many handlers are present backswipe will not go back
         value: 0|settings.standardNumSwipeHandlers,
         min: 0,
         max: 10,
@@ -68,7 +68,7 @@
           saveSettings(settings);
         },
       },
-      'standard # of drag handlers' : { // If more than this many handlers are present backswipe will not go back
+      'Standard # of drag handlers' : { // If more than this many handlers are present backswipe will not go back
         value: 0|settings.standardNumDragHandlers,
         min: 0,
         max: 10,
