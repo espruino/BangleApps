@@ -557,11 +557,11 @@ function showUtilMenu() {
   var menu = {
     '': { 'title': /*LANG*/'Utilities' },
     '< Back': ()=>showMainMenu(),
-    /*LANG*/'Debug Info': {
-      value: E.clip(0|settings.log,0,2),
+    /*LANG*/'Debug': {
+      value: E.clip(0|settings.log,0,3),
       min: 0,
-      max: 2,
-      format: v => [/*LANG*/"Hide",/*LANG*/"Show",/*LANG*/"Log"][E.clip(0|v,0,2)],
+      max: 3,
+      format: v => [/*LANG*/"Off",/*LANG*/"Display",/*LANG*/"Log", /*LANG*/"Both"][E.clip(0|v,0,3)],
       onchange: v => {
         settings.log = v;
         updateSettings();
