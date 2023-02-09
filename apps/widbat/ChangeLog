@@ -6,3 +6,4 @@
 0.07: Move CHARGING variable to more readable string
 0.08: Ensure battery updates every 60s even if LCD was on at boot and stays on
 0.09: Misc speed/memory tweaks
+0.10: Color changes due to the battery level

@@ -326,7 +326,7 @@ function setWeather() {
 function readWeather() {
   var weatherJson = require("Storage").readJSON('weather.json', 1);
   // save updated weather data if available and it has been an hour since last updated
-  if (weatherJson !== undefined && (data.time === undefined || (data.time + 3600000) < weatherJson.weather.time)) {
+  if (weatherJson && weatherJson.weather && weatherJson.weather.time && (data.time === undefined || (data.time + 3600000) < weatherJson.weather.time)) {
     data = {
       time: weatherJson.weather.time,
       temp: weatherJson.weather.temp,
