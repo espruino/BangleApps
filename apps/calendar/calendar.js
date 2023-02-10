@@ -204,9 +204,9 @@ function drawCalendar(date) {
 
   const weekBeforeMonth = new Date(date.getTime());
   weekBeforeMonth.setDate(weekBeforeMonth.getDate() - 7);
-  const weekAfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
-  weekAfterMonth.setDate(weekAfterMonth.getDate() + 7);
-  const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < weekAfterMonth);
+  const week2AfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+  week2AfterMonth.setDate(week2AfterMonth.getDate() + 14);
+  const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
 
   let i = 0;
   for (y = 0; y < rowN - 1; y++) {
