@@ -158,7 +158,7 @@
           var chunk = bin.substr(i,chunkSize);
           js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
         }
-         js = "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
+        js += "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
         return js;
       }
 
