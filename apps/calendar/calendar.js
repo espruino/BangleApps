@@ -234,7 +234,7 @@ function drawCalendar(date) {
       if (eventsThisMonth.length > 0) {
         // Display events for this day
         g.setColor(bgEvent);
-        eventsThisMonth.forEach(ev => {
+        eventsThisMonth.forEach((ev, idx) => {
           if (sameDay(ev.date, curDay)) {
             const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
             const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
@@ -242,6 +242,8 @@ function drawCalendar(date) {
             const sliceHeight = height/eventsPerDay;
             const ystart = (y1+2) + slice*sliceHeight;
             g.fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+
+            eventsThisMonth.splice(idx, 1); // this event is no longer needed
           }
         });
       }
