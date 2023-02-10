@@ -4,6 +4,7 @@ roll anywhere from 1-6 dice at the same time, and display stats like the highest
 
 ![the start-up screen](main.png)
 ![two rolled dice](2d20.png)
+
 ![the startup screen](menuPercent.png)
 ![one large dice](d100.png)
 
