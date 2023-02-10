@@ -21,11 +21,3 @@ roll anywhere from 1-6 dice (d4, d6, d8, d10, d12, d20, & d percentile). If only
 ## Controls
 
 No button is used in the app, it simply uses touch controls (W.I.P: accelerometor to roll the dice & compatability with the bangle.js 1).
-
-## Requests
-
-Le3Kat@gmail.com
-
-## Creator
-
-Le~Kat
