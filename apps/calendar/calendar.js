@@ -39,8 +39,6 @@ const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a
   date.setSeconds(time.s);
   return {date: date, msg: a.msg};
 });
-events.forEach(a => {
-});
 events.sort((a,b) => a.date - b.date);
 
 if (settings.ndColors === undefined) {
