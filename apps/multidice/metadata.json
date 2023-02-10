@@ -4,7 +4,7 @@
   "version":"0.90",
   "description": "roll anywhere from 1-6 dice at the same time, and display stats like the highest & lowest roll, the total sum of the dice, and the average of all dice",
   "icon": "app.png",
-  "tags": "",
+  "tags": "tool,game",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "allow_emulator": true,
