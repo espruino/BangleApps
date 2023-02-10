@@ -24,7 +24,6 @@ let fgOtherMonth = gray1;
 let fgSameMonth = white;
 let bgEvent = blue;
 const eventsPerDay=6; // how much different events per day we can display
-let menuVisible = false;
 const date = new Date();
 
 const timeutils = require("time_utils");
