@@ -1,0 +1,14 @@
+{ "id": "multidice",
+  "name": "multiple dice roller",
+  "shortName":"multidice",
+  "version":"0.90",
+  "description": "roll anywhere from 1-6 dice at the same time, and display stats like the highest & lowest roll, the total sum of the dice, and the average of all dice",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"multidice.app.js","url":"app.js"},
+    {"name":"multidice.img","url":"app-icon.js","evaluate":true}
+  ]
+}
