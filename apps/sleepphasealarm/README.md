@@ -23,6 +23,11 @@ Replacing the watch strap with a more comfortable one (e.g. made of nylon) is re
 ## Logging
 
 For each day of month (1..31) the ESS states are logged. An entry will be overwritten in the next month, e.g. an entry on the 4th May will overwrite an entry on the 4th April.
-The logs can be viewed with the download button:
+On Bangle.js 1 only one day is logged due to low memory.
+The logs can be plotted from the settings menu:
 
-![](screenshot.jpg)
+![](screenshot_log.png)
+
+The logs can also be viewed with the download button in the App Loader:
+
+![](interface.jpg)

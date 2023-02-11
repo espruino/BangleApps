@@ -1,0 +1,19 @@
+{ "id": "tempgraph",
+  "name": "Temperature Graph",
+  "shortName":"Temp Graph",
+  "version":"0.03",
+  "description": "An app for recording the temperature for time periods ranging from 10 minutes to 7 days.",
+  "icon": "app.png",  
+  "type": "app",
+  "tags": "temperature,tempgraph,graph",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"tempgraph.app.js","url":"app.js"},
+    {"name":"tempgraph.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"tempgraph.json"}
+  ],
+  "screenshots": [{"url":"screenshot_1.png"},{"url":"screenshot_2.png"},{"url":"screenshot_3.png"}]
+}

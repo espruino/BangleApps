@@ -34,8 +34,9 @@ function getDate(timestamp) {
   return new Date(timestamp*1000);
 }
 function formatDay(date) {
+  let formattedDate = Locale.dow(date,1) + " " + Locale.date(date).replace(/\d\d\d\d/,"");
   if (!settings.useToday) {
-    return Locale.date(date);
+    return formattedDate;
   }
   const dateformatted = date.toISOString().split('T')[0]; // yyyy-mm-dd
   const today = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
@@ -46,7 +47,7 @@ function formatDay(date) {
     if (dateformatted == tomorrow) {
        return /*LANG*/"Tomorrow ";
     }
-    return Locale.date(date);
+    return formattedDate;
   }
 }
 function formatDateLong(date, includeDay, allDay) {
@@ -58,7 +59,7 @@ function formatDateLong(date, includeDay, allDay) {
   return shortTime;
 }
 function formatDateShort(date, allDay) {
-  return formatDay(date).replace(/\d\d\d\d/,"")+(allDay?"":Locale.time(date,1)+Locale.meridian(date));
+  return formatDay(date)+(allDay?"":Locale.time(date,1)+Locale.meridian(date));
 }
 
 var lines = [];
@@ -75,25 +76,29 @@ function showEvent(ev) {
   if (titleCnt) lines.push(""); // add blank line after title
   if(start.getDay() == end.getDay() && start.getMonth() == end.getMonth())
     includeDay = false;
-  if(includeDay || ev.allDay) {
+  if(includeDay && ev.allDay) {
+    //single day all day (average to avoid getting previous day)
     lines = lines.concat(
-      /*LANG*/"Start:",
+      g.wrapString(formatDateLong(new Date((start+end)/2), includeDay, ev.allDay), g.getWidth()-10));
+  } else if(includeDay || ev.allDay) {
+    lines = lines.concat(
+      /*LANG*/"Start"+":",
       g.wrapString(formatDateLong(start, includeDay, ev.allDay), g.getWidth()-10),
-      /*LANG*/"End:",
+      /*LANG*/"End"+":",
       g.wrapString(formatDateLong(end, includeDay, ev.allDay), g.getWidth()-10));
   } else {
     lines = lines.concat(
-      g.wrapString(Locale.date(start), g.getWidth()-10),
+      g.wrapString(formatDateShort(start,true), g.getWidth()-10),
       g.wrapString(/*LANG*/"Start"+": "+formatDateLong(start, includeDay, ev.allDay), g.getWidth()-10),
       g.wrapString(/*LANG*/"End"+": "+formatDateLong(end, includeDay, ev.allDay), g.getWidth()-10));
   }
   if(ev.location)
-    lines = lines.concat(/*LANG*/"Location"+": ", g.wrapString(ev.location, g.getWidth()-10));
-  if(ev.description)
+    lines = lines.concat("",/*LANG*/"Location"+": ", g.wrapString(ev.location, g.getWidth()-10));
+  if(ev.description && ev.description.trim())
     lines = lines.concat("",g.wrapString(ev.description, g.getWidth()-10));
   if(ev.calName)
-    lines = lines.concat(/*LANG*/"Calendar"+": ", g.wrapString(ev.calName, g.getWidth()-10));
-  lines = lines.concat(["",/*LANG*/"< Back"]);
+    lines = lines.concat("",/*LANG*/"Calendar"+": ", g.wrapString(ev.calName, g.getWidth()-10));
+  lines = lines.concat("",/*LANG*/"< Back");
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
     c : lines.length, // number of menu items
@@ -120,7 +125,7 @@ function showList() {
     CALENDAR = CALENDAR.filter(ev=>ev.timestamp + ev.durationInSeconds > now/1000);
   }
   if(CALENDAR.length == 0) {
-    E.showMessage("No events");
+    E.showMessage(/*LANG*/"No events");
     return;
   }
   E.showScroller({

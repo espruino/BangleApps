@@ -8,6 +8,7 @@
   "tags": "xiaomi,mi,ble,bluetooth,thermometer,humidity",
   "readme": "README.md",
   "supports": ["BANGLEJS", "BANGLEJS2"],
+  "dependencies": {"textinput":"type"},
   "storage": [
     {"name":"mitherm.app.js","url":"app.js"},
     {"name":"mitherm.img","url":"app-icon.js","evaluate":true}
