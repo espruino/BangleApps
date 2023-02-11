@@ -464,7 +464,7 @@ const enableSensors = () => {
 
   Bangle.setHRMPower(settings.hrm, "btadv");
   if (!settings.hrm)
-    hrm = undefined;
+    hrm = hrmAny = undefined;
 
   Bangle.setCompassPower(settings.mag, "btadv");
   if (!settings.mag)
