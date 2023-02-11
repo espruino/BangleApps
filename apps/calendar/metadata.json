@@ -5,7 +5,7 @@
   "description": "Simple calendar",
   "icon": "calendar.png",
   "screenshots": [{"url":"screenshot_calendar.png"}],
-  "tags": "calendar",
+  "tags": "calendar,tool",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
