@@ -145,7 +145,7 @@ var drawInfo = function (force) {
             g.drawString("swipe to enable", mid, y);
         }
         else {
-            g.drawString("waiting for events...", mid, y);
+            g.drawString("events pending", mid, y);
         }
         y += g.getFontHeight();
     }

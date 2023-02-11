@@ -107,6 +107,7 @@ const idToName: BtAdvMap<string, true> = {
   mag: "Magnetometer",
 };
 
+// 15 characters per line
 const infoFont: FontNameWithScaleFactor = "6x8:2";
 
 const colour = {
@@ -308,7 +309,7 @@ const drawInfo = (force?: true) => {
     if (!force || Object.values(settings).every((x: boolean) => !x)) {
       g.drawString(`swipe to enable`, mid, y);
     } else {
-      g.drawString(`waiting for events...`, mid, y);
+      g.drawString(`events pending`, mid, y);
     }
     y += g.getFontHeight();
   }
