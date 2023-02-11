@@ -13,6 +13,8 @@ const enum Intervals {
 
 type Hrm = { bpm: number, confidence: number };
 
+const HRM_MIN_CONFIDENCE = 75;
+
 // https://github.com/sputnikdev/bluetooth-gatt-parser/blob/master/src/main/resources/gatt/
 const enum BleServ {
   // org.bluetooth.service.heart_rate
@@ -82,6 +84,7 @@ let acc: undefined | AccelData;
 let bar: undefined | PressureData;
 let gps: undefined | GPSFix;
 let hrm: undefined | Hrm;
+let hrmAny: undefined | Hrm;
 let mag: undefined | CompassData;
 let btnsShown = false;
 let prevBtnsShown: boolean | undefined = undefined;
@@ -275,6 +278,12 @@ const drawInfo = (force?: true) => {
     y += g.getFontHeight();
 
     drawn = true;
+  } else if (hrmAny) {
+    g.drawString(`~${hrmAny.bpm} BPM (${hrmAny.confidence}%)`, mid, y);
+    y += g.getFontHeight();
+
+    drawn = true;
+
   }
 
   if (mag) {
@@ -586,11 +595,15 @@ const updateServices = () => {
   NRF.updateServices(newAdvert);
 };
 
-const onAccel = (newAcc: typeof acc) => acc = newAcc;
-const onPressure = (newBar: typeof bar) => bar = newBar;
-const onGPS = (newGps: typeof gps) => gps = newGps;
-const onHRM = (newHrm: typeof hrm) => hrm = newHrm;
-const onMag = (newMag: typeof mag) => mag = newMag;
+const onAccel = (newAcc: NonNull<typeof acc>) => acc = newAcc;
+const onPressure = (newBar: NonNull<typeof bar>) => bar = newBar;
+const onGPS = (newGps: NonNull<typeof gps>) => gps = newGps;
+const onHRM = (newHrm: NonNull<typeof hrm>) => {
+    if (newHrm.confidence >= HRM_MIN_CONFIDENCE)
+        hrm = newHrm;
+    hrmAny = newHrm;
+};
+const onMag = (newMag: NonNull<typeof mag>) => mag = newMag;
 
 const hook = (enable: boolean) => {
   // need to disable for perf reasons, when buttons are shown

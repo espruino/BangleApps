@@ -13,11 +13,13 @@ var __assign = (this && this.__assign) || function () {
 var Layout = require("Layout");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+var HRM_MIN_CONFIDENCE = 75;
 var services = ["0x180d", "0x181a", "0x1819"];
 var acc;
 var bar;
 var gps;
 var hrm;
+var hrmAny;
 var mag;
 var btnsShown = false;
 var prevBtnsShown = undefined;
@@ -123,6 +125,11 @@ var drawInfo = function (force) {
     }
     if (hrm) {
         g.drawString("".concat(hrm.bpm, " BPM (").concat(hrm.confidence, "%)"), mid, y);
+        y += g.getFontHeight();
+        drawn = true;
+    }
+    else if (hrmAny) {
+        g.drawString("~".concat(hrmAny.bpm, " BPM (").concat(hrmAny.confidence, "%)"), mid, y);
         y += g.getFontHeight();
         drawn = true;
     }
@@ -330,7 +337,11 @@ var updateServices = function () {
 var onAccel = function (newAcc) { return acc = newAcc; };
 var onPressure = function (newBar) { return bar = newBar; };
 var onGPS = function (newGps) { return gps = newGps; };
-var onHRM = function (newHrm) { return hrm = newHrm; };
+var onHRM = function (newHrm) {
+    if (newHrm.confidence >= HRM_MIN_CONFIDENCE)
+        hrm = newHrm;
+    hrmAny = newHrm;
+};
 var onMag = function (newMag) { return mag = newMag; };
 var hook = function (enable) {
     if (enable) {
