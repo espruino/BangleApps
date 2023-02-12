@@ -5,7 +5,7 @@
   "description": "Workout heart rate monitor notifies you with a buzz if your heart rate goes above or below the set limits.",
   "icon": "app.png",
   "type": "app",
-  "tags": "hrm,workout",
+  "tags": "hrm,workout,health",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
