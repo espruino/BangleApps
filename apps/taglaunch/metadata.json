@@ -12,7 +12,8 @@
   "screenshots": [ {"url":"screenshot.png"} ],
   "storage": [
     {"name":"taglaunch.app.js","url":"app.js"},
-    {"name":"taglaunch.settings.js","url":"settings.js"}
+    {"name":"taglaunch.settings.js","url":"settings.js"},
+    {"name":"taglaunch.health.img","url":"health-icon.js","evaluate":true}
   ],
   "data": [{"name":"taglaunch.json"},{"name":"taglaunch.cache.json"}]
 }
