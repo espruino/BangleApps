@@ -25,9 +25,19 @@
     mode: "custom",  
     touch: touchHandler,
     swipe : swipeHandler,
-    remove: ()=>{}
+    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
   });
 
   g.clearRect(Bangle.appRect);
   Bangle.loadWidgets();
+  Bangle.drawWidgets();
+
+  // taken from Icon Launcher with some alterations
+  let timeoutToClock;
+  const updateTimeoutToClock = function(){
+    let time=2; // seconds
+    if (timeoutToClock) clearTimeout(timeoutToClock);
+    timeoutToClock = setTimeout(Bangle.showClock,time*1000);  
+  };
+  updateTimeoutToClock();
 }
