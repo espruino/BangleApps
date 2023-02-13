@@ -8,9 +8,9 @@
   "tags": "tools, system",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name": "quicklaunch.settings.js", "url": "settings.js"},
-    {"name": "quicklaunch.boot.js", "url": "boot.js"},
-    {"name": "quicklaunch.app.js", "url": "app.js"}
+    {"name":"quicklaunch.settings.js","url":"settings.js"},
+    {"name":"quicklaunch.boot.js","url":"boot.js"},
+    {"name":"quicklaunch.app.js","url":"app.js"}
   ],
-  "data": [{"name": "quicklaunch.json"}]
+  "data": [{"name":"quicklaunch.json"}]
 }
