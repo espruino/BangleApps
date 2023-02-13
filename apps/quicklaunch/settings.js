@@ -11,8 +11,17 @@ var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);retur
 // Add psuedo app to trigger Bangle.showLauncher later
 apps.push({
     "name": "Show Launcher",
-    "type": undefined, "sortorder": -10,
+    "type": undefined,
+    "sortorder": -10,
     "src": "no source"
+   });
+
+// Add the Quick Launch extestion app
+apps.push({
+    "name": "Quick Launch Extension",
+    "type": "app",
+    "sortorder": -9,
+    "src": "quicklaunch.app.js"
    });
 
 apps.sort((a,b)=>{
