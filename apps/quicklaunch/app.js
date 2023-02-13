@@ -1,7 +1,6 @@
 {
   const storage = require("Storage");
   let settings = storage.readJSON("quicklaunch.json", true) || {};
-  let wu =require("widget_utils");
 
   let reset = function(name){
     if (!settings[name]) settings[name] = {"name":"(none)"};
@@ -29,7 +28,6 @@
     remove: ()=>{}
   });
 
-  g.clear();
+  g.clearRect(Bangle.appRect);
   Bangle.loadWidgets();
-  wu.show();
 }
