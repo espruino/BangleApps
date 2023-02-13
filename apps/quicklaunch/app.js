@@ -28,6 +28,6 @@
     remove: ()=>{}
   });
 
-  Bangle.loadWidgets();
   g.clear();
+  Bangle.loadWidgets();
 }
