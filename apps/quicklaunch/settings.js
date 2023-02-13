@@ -12,7 +12,7 @@ var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);retur
 apps.push({
     "name": "Show Launcher",
     "type": undefined,
-    "sortorder": -10,
+    "sortorder": -12,
     "src": "no source"
    });
 
@@ -20,7 +20,7 @@ apps.push({
 apps.push({
     "name": "Quick Launch Extension",
     "type": "app",
-    "sortorder": -9,
+    "sortorder": -11,
     "src": "quicklaunch.app.js"
    });
 
