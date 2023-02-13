@@ -16,7 +16,7 @@ apps.push({
     "src": "no source"
    });
 
-// Add the Quick Launch extestion app
+// Add the Quick Launch extension app
 apps.push({
     "name": "Quick Launch Extension",
     "type": "app",
