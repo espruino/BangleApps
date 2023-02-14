@@ -6,6 +6,7 @@
     let settings;
 
     function loadSettings() { // stolen from https://github.com/espruino/BangleApps/blob/master/apps/widpedom/widget.js
+try {
         const d = require('Storage').readJSON("widbgjs.settings.json", 1) || {};
         settings = Object.assign({
             'unitIsMmol': true,
@@ -14,6 +15,9 @@
             'hide': false
         }, d || {});
         return d;
+} catch(e){
+return null;
+}
     }
 
     function loadVals() {
@@ -103,9 +107,9 @@
 
     function draw() {
         loadSettings();
-        try {
-            if (settings.hide) return;
-        } catch (e) { }
+        if(settings.hide) {
+return;
+}
         loadVals();
 
         outpt = getBG(storedData.bg);
