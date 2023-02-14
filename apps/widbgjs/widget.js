@@ -11,7 +11,7 @@ try {
         settings = Object.assign({
             'unitIsMmol': true,
             'expireThreshold': 600000,
-            'reloadInterval': 5 * 60000,
+            'reloadInterval': 300000,
             'hide': false
         }, d || {});
         return d;
