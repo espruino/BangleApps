@@ -27,7 +27,7 @@
         storedData = Object.assign({
             'bg': null,
             'bgTimeStamp': null,
-            'bgDirection': "Flat"
+            'bgDirection': null
         }, d || {});
         return d;
       } catch(e) {
