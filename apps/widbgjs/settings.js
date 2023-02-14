@@ -1,5 +1,5 @@
 (function (back) {
-    const SAVEFILE = "wpbgjs.settings.json";
+    const SAVEFILE = "widbgjs.settings.json";
 
     // initialize with default settings...
     let s = {
