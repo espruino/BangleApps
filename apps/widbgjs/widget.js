@@ -25,7 +25,7 @@
       try {
         const d = require('Storage').readJSON("widbgjs.json", 1) || {};
         storedData = Object.assign({
-            'bg': 100,
+            'bg': null,
             'bgTimeStamp': null,
             'bgDirection': "Flat"
         }, d || {});
