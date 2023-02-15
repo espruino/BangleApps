@@ -173,7 +173,7 @@
       Bangle.setBarometerPower(true, "terminalclock");
     }
     if(clock.powerSave){
-      delete clock.turnOffServiceTimeout;
+      if(clock.turnOffServiceTimeout) clearTimeout(clock.turnOffServiceTimeout);
       clock.turnOffServiceTimeout = setTimeout(function () {
         turnOffServices();
       }, 45000);
