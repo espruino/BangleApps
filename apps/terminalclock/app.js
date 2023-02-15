@@ -78,7 +78,7 @@
       });
     },
 
-    /*
+    
     // todo add fastloading when the memory leak is fixed
     remove: function() {
       if (this.turnOnInterval){
@@ -87,13 +87,13 @@
       }
       if (this.turnOffServiceTimeout){
         clearTimeout(this.turnOffServiceTimeout)
+        delete this.turnOffServiceTimeout
       }
       turnOffServices();
       if (this.onLock) Bangle.removeListener('lock', this.onLock);
       if (this.onHRM) Bangle.removeListener('HRM', this.onHRM);
       if (this.onPressure) Bangle.removeListener('onPressure', this.onPressure);
     }
-    */
 
   });
 
@@ -173,6 +173,7 @@
       Bangle.setBarometerPower(true, "terminalclock");
     }
     if(clock.powerSave){
+      delete clock.turnOffServiceTimeout;
       clock.turnOffServiceTimeout = setTimeout(function () {
         turnOffServices();
       }, 45000);
