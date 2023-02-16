@@ -1,28 +1,120 @@
-Modules.addCached("Layout",™(){™p(b,k){™d(h){h.idû(f[h.id]=h);h.type†(h.type="");h.cûh.c.forEach(d)}Ø._l=Ø.l=b;Ø.physBtns=2äprocess.env.HWVERSION?1:3;Ø.options=k†{};Ø.lazy=Ø.options.lazy†!1;≠a;£(2åprocess.env.HWVERSION){a=[];™h(m){"btn"äm.typeûa.push(m);m.cûm.c.forEach(h)}h(b);a.lengthû(Ø.physBtns=0,Ø.buttons=a,Ø.selectedButton=-1)}£(Ø.options.btns)£(b=Ø.options.btns,Ø.physBtnsëb.length){Ø.b=b;≠h=Math.floor(Bangle.appRect.h/Ø.physBtns);ß(2<Ø.physBtnsû1äb.lengthûb.unshift({label:""});Ø.physBtns>b.length;)b.push({label:""});Ø._l.width=g.getWidth()-8;Ø._l={type:"h",filly:1,c:[Ø._l,{type:"v",pad:1,filly:1,c:b.map(m¢(m.type="txt",m.font="6x8",m.height=h,m.r=1,m))}]}}§Ø._l.width=g.getWidth()-32,Ø._l={type:"h",c:[Ø._l,{type:"v",c:b.map(h¢(h.type="btn",h.filly=1,h.width=32,h.r=1,h))}]},aûa.push.apply(a,Ø._l.c[1].c);Ø.setUI();¨f=Ø;d(Ø._l);Ø.updateNeeded=!0}™r(b,k,d,a,f){¨h=∂äb.bgCol?f:g.toColor(b.bgCol);£(håf†"txt"äb.type†"btn"äb.type†"img"äb.type†"custom"äb.type){¨m=b.c;æb.c;¨c="H"+E.CRC32(E.toJS(b));mû(b.c=m);æk[c]†((a[c]=[b.x,b.y,b.x+b.w-1,b.y+b.h-1]).bg=∂äf?g.theme.bg:f,dû(d.push(b),d=∂))}£(b.c)ß(¨l∆b.c)r(l,k,d,a,h)}p.prototype.setUI=™(){Bangle.setUI();≠b;Ø.buttonsû(Bangle.setUI({mode:"updown",back:Ø.options.back},k¢{¨d=Ø.selectedButton,a=Ø.buttons.length;£(¿0ãkûØ.buttons[d])´Ø.buttons[d].cb();Ø.buttons[d]û(æØ.buttons[d].selected,Ø.render(Ø.buttons[d]));d=(d+a+k)%a;Ø.buttons[d]û(Ø.buttons[d].selected=1,Ø.render(Ø.buttons[d]));Ø.selectedButton=d}),b=!0);Ø.options.backû!bûBangle.setUI({mode:"custom",back:Ø.options.back});£(Ø.b){™k(d,a){.75<a.time-a.lastTimeûØ.b[d].cbl?Ø.b[d].cbl(a):Ø.b[d].cbûØ.b[d].cb(a)}Bangle.btnWatchesûBangle.btnWatches.forEach(clearWatch);Bangle.btnWatches=[];Ø.b[0]ûBangle.btnWatches.push(setWatch(k.bind(Ø,0),BTN1,{repeat:!0,edge:-1}));Ø.b[1]ûBangle.btnWatches.push(setWatch(k.bind(Ø,1),BTN2,{repeat:!0,edge:-1}));Ø.b[2]ûBangle.btnWatches.push(setWatch(k.bind(Ø,2),BTN3,{repeat:!0,edge:-1}))}£(2äprocess.env.HWVERSION){™k(d,a){d.cbûa.xëd.xûa.yëd.yûa.xéd.x+d.wûa.yéd.y+d.hû(2äa.typeûd.cbl?d.cbl(a):d.cbûd.cb(a));d.cûd.c.forEach(f¢k(f,a))}Bangle.touchHandler=(d,a)¢k(Ø._l,a);Bangle.on("touch",Bangle.touchHandler)}};p.prototype.render=™(b){™k(c){"ram";g.reset();¿0çc.colûg.setColor(c.col);¿0çc.bgColûg.setBgColor(c.bgCol).clearRect(c.x,c.y,c.x+c.w-1,c.y+c.h-1);d[c.type](c)}b†(b=Ø._l);Ø.updateNeededûØ.update();¨d={"":™(){},txt:™(c){£(c.wrap){g.setFont(c.font).setFontAlign(0,-1);¨l=g.wrapString(c.label,c.w),e=c.y+(c.h-g.getFontHeight()*l.lengthí1);l.forEach((n,q)¢g.drawString(n,c.x+(c.wí1),e+g.getFontHeight()*q))}§g.setFont(c.font).setFontAlign(0,0,c.r).drawString(c.label,c.x+(c.wí1),c.y+(c.hí1))},btn:™(c){¨l=c.x+(0|c.pad),e=c.y+(0|c.pad),n=c.w-(c.padè1),q=c.h-(c.padè1);l=[l,e+4,l+4,e,l+n-5,e,l+n-1,e+4,l+n-1,e+q-5,l+n-5,e+q-1,l+4,e+q-1,l,e+q-5,l,e+4];e=c.selected?g.theme.bgH:g.theme.bg2;g.setColor(e).fillPoly(l).setColor(c.selected?g.theme.fgH:g.theme.fg2).drawPoly(l);¿0çc.colûg.setColor(c.col);c.src?g.setBgColor(e).drawImage("function"äøc.src?c.src():c.src,c.x+c.w/2,c.y+c.h/2,{scale:c.scale†¿0,rotate:.5*Math.PI*(c.r†0)}):g.setFont(c.font†"6x8:2").setFontAlign(0,0,c.r).drawString(c.label,c.x+c.w/2,c.y+c.h/2)},img:™(c){g.drawImage("function"äøc.src?c.src():c.src,c.x+c.w/2,c.y+c.h/2,{scale:c.scale†¿0,rotate:.5*Math.PI*(c.r†0)})},custom:™(c){c.render(c)},h:™(c){c.c.forEach(k)},v:™(c){c.c.forEach(k)}};£(Ø.lazy){Ø.rects†(Ø.rects={});¨a=Ø.rects.clone(),f=[];r(b,a,f,Ø.rects,∂);ß(¨hπa)æØ.rects[h];b=Object.keys(a).map(c¢a[c]).reverse();ß(¨m∆b)g.setBgColor(m.bg).clearRect.apply(g,m);f.forEach(k)}§k(b)};p.prototype.forgetLazyState=™(){Ø.rects={}};p.prototype.layout=™(b){ª(b.type){º"h":¨k=b.x+(0|b.pad),d=0,a=b.cûb.c.reduce((e,n)¢e+(0|n.fillx),0);a†(kñb.w-b._wí1,a=1);¨f=k;b.c.forEach(e¢{e.x=0|f;kñe._w;dñ0|e.fillx;f=k+Math.floor(d*(b.w-b._w)/a);e.w=0|f-e.x;e.h=0|(e.filly?b.h-(b.padè1):e._h);e.y=0|b.y+(0|b.pad)+((1+(0|e.valign))*(b.h-(b.padè1)-e.h)í1);e.cûØ.layout(e)});®;º"v":¨h=b.y+(0|b.pad),m=0,c=b.cûb.c.reduce((e,n)¢e+(0|n.filly),0);c†(hñb.h-b._hí1,c=1);¨l=h;b.c.forEach(e¢{e.y=0|l;hñe._h;mñ0|e.filly;l=h+Math.floor(m*(b.h-b._h)/c);e.h=0|l-e.y;e.w=0|(e.fillx?b.w-(b.padè1):e._w);e.x=0|b.x+(0|b.pad)+((1+(0|e.halign))*(b.w-(b.padè1)-e.w)í1);e.cûØ.layout(e)})}};p.prototype.debug=™(b,k){b†(b=Ø._l);k=k†1;g.setColor(k&1,k&2,k&4).drawRect(b.x+k-1,b.y+k-1,b.x+b.w-k,b.y+b.h-k);b.padûg.drawRect(b.x+b.pad-1,b.y+b.pad-1,b.x+b.w-b.pad,b.y+b.h-b.pad);kò;b.cûb.c.forEach(d¢Ø.debug(d,k))};p.prototype.update=™(){™b(a){"ram";k[a.type](a);£(a.r&1){¨f=a._w;a._w=a._h;a._h=f}a._w=0|Math.max(a._w+(a.padè1),0|a.width);a._h=0|Math.max(a._h+(a.padè1),0|a.height)}æØ.updateNeeded;¨k={txt:™(a){a.font.endsWith("%")û(a.font="Vector"+Math.round(g.getHeight()*a.font.slice(0,-1)/100));£(a.wrap)a._h=a._w=0;§{¨f=g.setFont(a.font).stringMetrics(a.label);a._w=f.width;a._h=f.height}},btn:™(a){a.fontûa.font.endsWith("%")û(a.font="Vector"+Math.round(g.getHeight()*a.font.slice(0,-1)/100));¨f=a.src?g.imageMetrics("function"äøa.src?a.src():a.src):g.setFont(a.font†"6x8:2").stringMetrics(a.label);a._h=16+f.height;a._w=20+f.width},img:™(a){¨f=g.imageMetrics("function"äøa.src?a.src():a.src),h=a.scale†1;a._w=f.width*h;a._h=f.height*h},"":™(a){a._w=0;a._h=0},custom:™(a){a._w=0;a._h=0},h:™(a){a.c.forEach(b);a._h=a.c.reduce((f,h)¢Math.max(f,h._h),0);a._w=a.c.reduce((f,h)¢f+h._w,0);∂äa.fillxûa.c.some(f¢f.fillx)û(a.fillx=1);∂äa.fillyûa.c.some(f¢f.filly)û(a.filly=1)},v:™(a){a.c.forEach(b);a._h=a.c.reduce((f,h)¢f+h._h,0);a._w=a.c.reduce((f,h)¢Math.max(f,h._w),0);∂äa.fillxûa.c.some(f¢f.fillx)û(a.fillx=1);∂äa.fillyûa.c.some(f¢f.filly)û(a.filly=1)}},d=Ø._l;b(d);d.fillx†d.filly?(d.w=Bangle.appRect.w,d.h=Bangle.appRect.h,d.x=Bangle.appRect.x,d.y=Bangle.appRect.y):(d.w=d._w,d.h=d._h,d.x=Bangle.appRect.w-d.wí1,d.y=Bangle.appRect.y+(Bangle.appRect.h-d.hí1));Ø.layout(d)};p.prototype.clear=™(b){b†(b=Ø._l);g.reset();¿0çb.bgColûg.setBgColor(b.bgCol);g.clearRect(b.x,b.y,b.x+b.w-1,b.y+b.h-1)};exports=p});
-Modules.addCached("exstats",™(){¨state={active:µ,lastGPS:{},thisGPS:{},startSteps:Bangle.getStepCount(),lastSteps:Bangle.getStepCount(),stepHistory:∏Uint8Array(60),notify:{dist:{increment:0,next:0,},steps:{increment:0,next:0,},time:{increment:0,next:0,},},};¨stats={};™calcDistance(a,b){™radians(a){´a*Math.PI/180;}¨x=radians(b.lon-a.lon)*Math.cos(radians((a.lat+b.lat)/2));¨y=radians(b.lat-a.lat);´Math.sqrt(x*x+y*y)*6371000;}™formatTime(ms){≠hrs=Math.floor(ms/3600000).toString();≠mins=(Math.floor(ms/60000)%60).toString();≠secs=(Math.floor(ms/1000)%60).toString();£(hrsã'0')´mins.padStart(2,0)+":"+secs.padStart(2,0);§´hrs+":"+mins.padStart(2,0)+":"+secs.padStart(2,0);}™formatPace(speed,paceLength){£(speed<0.1667){´`__:__`;}Æpace=Math.round(paceLength/speed);Æmin=Math.floor(pace/60);Æsec=pace%60;´('0'+min).substr(-2)+`:`+('0'+sec).substr(-2);}Bangle.on("GPS",™(fix){£(!fix.fix)´;state.lastGPS=state.thisGPS;state.thisGPS=fix;£(stats["altg"])stats["altg"].emit("changed",stats["altg"]);£(stats["speed"])stats["speed"].emit("changed",stats["speed"]);£(!state.active)´;£(state.lastGPS.fix)state.distanceñcalcDistance(state.lastGPS,fix);£(stats["dist"])stats["dist"].emit("changed",stats["dist"]);¨duration=Date.now()-state.startTime;state.avrSpeed=state.distance*1000/duration;£(!isNaN(fix.speed))state.curSpeed=state.curSpeed*0.8+fix.speed*0.2/3.6;£(stats["pacea"])stats["pacea"].emit("changed",stats["pacea"]);£(stats["pacec"])stats["pacec"].emit("changed",stats["pacec"]);£(state.notify.dist.increment>0ûstate.notify.dist.nextéstate.distance){stats["dist"].emit("notify",stats["dist"]);state.notify.dist.next=state.notify.dist.next+state.notify.dist.increment;}});Bangle.on("step",™(steps){£(!state.active)´;£(stats["step"])stats["step"].emit("changed",stats["step"]);state.stepHistory[0]ñsteps-state.lastStepCount;state.lastStepCount=steps;£(state.notify.step.increment>0ûstate.notify.step.nextésteps){stats["step"].emit("notify",stats["step"]);state.notify.step.next=state.notify.step.next+state.notify.step.increment;}});Bangle.on("HRM",™(h){£(h.confidenceë60){state.BPM=h.bpm;state.BPMage=0;£(state.maxBPM<h.bpm){state.maxBPM=h.bpm;£(stats["maxbpm"])stats["maxbpm"].emit("changed",stats["maxbpm"]);}£(stats["bpm"])stats["bpm"].emit("changed",stats["bpm"]);}});£(Bangle.setBarometerPower)Bangle.on("pressure",™(e){£(state.altã∑)state.alt=e.altitude;§state.alt=state.alt*0.9+e.altitude*0.1;¨i=Math.round(state.alt);£(içstate.alti){state.alti=i;£(stats["altb"])stats["altb"].emit("changed",stats["altb"]);}});exports.getList=™(){¨l=[{name:"Time",id:"time"},{name:"Distance",id:"dist"},{name:"Steps",id:"step"},{name:"Heart (BPM)",id:"bpm"},{name:"Max BPM",id:"maxbpm"},{name:"Pace (avg)",id:"pacea"},{name:"Pace (curr)",id:"pacec"},{name:"Speed",id:"speed"},{name:"Cadence",id:"caden"},{name:"Altitude (GPS)",id:"altg"}];£(Bangle.setBarometerPower)l.push({name:"Altitude (baro)",id:"altb"});´l;};exports.getStats=™(statIDs,options){options=options†{};options.paceLength=options.paceLength†1000;options.notify.dist.increment=(options.notifyûoptions.notify.distûoptions.notify.dist.increment)†0;options.notify.step.increment=(options.notifyûoptions.notify.stepûoptions.notify.step.increment)†0;options.notify.time.increment=(options.notifyûoptions.notify.timeûoptions.notify.time.increment)†0;¨needGPS,needHRM,needBaro;£(statIDs.includes("time")){stats["time"]={title:"Time",getValue:™(){´Date.now()-state.startTime;},getString:™(){´formatTime(Ø.getValue())},};}£(statIDs.includes("dist")){needGPS=¥;stats["dist"]={title:"Dist",getValue:™(){´state.distance;},getString:™(){´require("locale").distance(state.distance,2);},};}£(statIDs.includes("step")){stats["step"]={title:"Steps",getValue:™(){´Bangle.getStepCount()-state.startSteps;},getString:™(){´Ø.getValue().toString()},};}£(statIDs.includes("bpm")){needHRM=¥;stats["bpm"]={title:"BPM",getValue:™(){´state.BPM;},getString:™(){´state.BPM†"--"},};}£(statIDs.includes("maxbpm")){needHRM=¥;stats["maxbpm"]={title:"Max BPM",getValue:™(){´state.maxBPM;},getString:™(){´state.maxBPM†"--"},};}£(statIDs.includes("pacea")){needGPS=¥;stats["pacea"]={title:"A Pace",getValue:™(){´state.avrSpeed;},getString:™(){´formatPace(state.avrSpeed,options.paceLength);},};}£(statIDs.includes("pacec")){needGPS=¥;stats["pacec"]={title:"C Pace",getValue:™(){´state.curSpeed;},getString:™(){´formatPace(state.curSpeed,options.paceLength);},};}£(statIDs.includes("speed")){needGPS=¥;stats["speed"]={title:"Speed",getValue:™(){´state.curSpeed*3.6;},getString:™(){´require("locale").speed(state.curSpeed*3.6,2);},};}£(statIDs.includes("caden")){stats["caden"]={title:"Cadence",getValue:™(){´state.stepsPerMin;},getString:™(){´state.stepsPerMin;},};}£(statIDs.includes("altg")){needGPS=¥;stats["altg"]={title:"Altitude",getValue:™(){´state.thisGPS.alt;},getString:™(){´(state.thisGPS.altã∑)?"-":Math.round(state.thisGPS.alt)+"m";},};}£(statIDs.includes("altb")){needBaro=¥;stats["altb"]={title:"Altitude",getValue:™(){´state.alt;},getString:™(){´(state.altã∑)?"-":state.alti+"m";},};}ß(¨iπstats)stats[i].id=i;£(needGPS)Bangle.setGPSPower(¥,"exs");£(needHRM)Bangle.setHRMPower(¥,"exs");£(needBaro)Bangle.setBarometerPower(¥,"exs");setInterval(™(){£(!state.active)´;¨now=Date.now();¨duration=now-state.startTime;state.stepsPerMin=Math.round(60000*E.sum(state.stepHistory)/Math.min(duration,60000));£(stats["caden"])stats["caden"].emit("changed",stats["caden"]);state.stepHistory.set(state.stepHistory,1);state.stepHistory[0]=0;£(stats["time"])stats["time"].emit("changed",stats["time"]);state.BPMageò;£(state.BPMûstate.BPMage>60){state.BPM=0;£(stats["bpm"])stats["bpm"].emit("changed",stats["bpm"]);}£(state.notify.time.increment>0ûstate.notify.time.nexténow){stats["time"].emit("notify",stats["time"]);state.notify.time.next=state.notify.time.next+state.notify.time.increment;}},1000);™reset(){state.startTime=Date.now();state.startSteps=state.lastSteps=Bangle.getStepCount();state.lastSteps=0;state.stepHistory.fill(0);state.stepsPerMin=0;state.distance=0;state.avrSpeed=0;state.curSpeed=0;state.BPM=0;state.BPMage=0;state.maxBPM=0;state.alt=∑;state.alti=0;state.notify=options.notify;£(options.notify.dist.increment>0){state.notify.dist.next=state.distance+options.notify.dist.increment;}£(options.notify.step.increment>0){state.notify.step.next=state.startSteps+options.notify.step.increment;}£(options.notify.time.increment>0){state.notify.time.next=state.startTime+options.notify.time.increment;}}reset();´{stats:stats,state:state,start:™(){state.active=¥;reset();},stop:™(){state.active=µ;}};};exports.appendMenuItems=™(menu,settings,saveSettings){¨paceNames=["1000m","1 mile","1/2 Mthn","Marathon",];¨paceAmts=[1000,1609,21098,42195];menu['Pace']={min:0,max:paceNames.length-1,value:Math.max(paceAmts.indexOf(settings.paceLength),0),format:v¢paceNames[v],onchange:v¢{settings.paceLength=paceAmts[v];saveSettings();},};}exports.appendNotifyMenuItems=™(menu,settings,saveSettings){¨distNames=['Off',"1000m","1 mile","1/2 Mthn","Marathon",];¨distAmts=[0,1000,1609,21098,42195];menu['Ntfy Dist']={min:0,max:distNames.length-1,value:Math.max(distAmts.indexOf(settings.notify.dist.increment),0),format:v¢distNames[v],onchange:v¢{settings.notify.dist.increment=distAmts[v];saveSettings();},};¨stepNames=['Off','100','500','1000','5000','10000'];¨stepAmts=[0,100,500,1000,5000,10000];menu['Ntfy Steps']={min:0,max:stepNames.length-1,value:Math.max(stepAmts.indexOf(settings.notify.step.increment),0),format:v¢stepNames[v],onchange:v¢{settings.notify.step.increment=stepAmts[v];saveSettings();},};¨timeNames=['Off','30s','1min','2min','5min','10min','30min','1hr'];¨timeAmts=[0,30000,60000,120000,300000,600000,1800000,3600000];menu['Ntfy Time']={min:0,max:timeNames.length-1,value:Math.max(timeAmts.indexOf(settings.notify.time.increment),0),format:v¢timeNames[v],onchange:v¢{settings.notify.time.increment=timeAmts[v];saveSettings();},};};});
-¨ExStats=require("exstats");
-¨B2=process.env.HWVERSIONã2;
-¨Layout=require("Layout");
-¨locale=require("locale");
-¨fontHeading="6x8:2";
-¨fontValue=B2?"6x15:2":"6x8:3";
-¨headingCol="#888";
-¨fixCount=0;
-¨isMenuDisplayed=µ;
+//The calculation of the Heart Rate Zones is based on the Karvonnen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
+//Other methods are even more approximative.
 g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-≠settings=Object.assign({record:¥,B1:"dist",B2:"time",B3:"pacea",B4:"bpm",B5:"step",B6:"caden",paceLength:1000,notify:{dist:{value:0,notifications:[],},step:{value:0,notifications:[],},time:{value:0,notifications:[],},},},require("Storage").readJSON("run.json",1)†{});
-¨statIDs=[settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s¢sç"");
-¨exs=ExStats.getStats(statIDs,settings);
-™onStartStop(){¨running=!exs.state.active;¨prepPromises=[];£(settings.recordûWIDGETS["recorder"]){£(running){isMenuDisplayed=¥;prepPromises.push(WIDGETS["recorder"].setRecording(¥).then(()¢{isMenuDisplayed=µ;layout.setUI();layout.forgetLazyState();layout.render();}));}§{prepPromises.push(WIDGETS["recorder"].setRecording(µ));}}£(!prepPromises.length)prepPromises.push(Promise.resolve());Promise.all(prepPromises).then(()¢{£(running){exs.start();}§{exs.stop();}layout.button.label=running?"STOP":"START";layout.status.label=running?"RUN":"STOP";layout.status.bgCol=running?"#0f0":"#f00";layout.render();});}
-¨lc=[];
-ß(¨i=0;i<statIDs.length;iñ2){¨sa=exs.stats[statIDs[i+0]];¨sb=exs.stats[statIDs[i+1]];lc.push({type:"h",filly:1,c:[sa?{type:"txt",font:fontHeading,label:sa.title.toUpperCase(),fillx:1,col:headingCol}:{},sb?{type:"txt",font:fontHeading,label:sb.title.toUpperCase(),fillx:1,col:headingCol}:{}]},{type:"h",filly:1,c:[sa?{type:"txt",font:fontValue,label:sa.getString(),id:sa.id,fillx:1}:{},sb?{type:"txt",font:fontValue,label:sb.getString(),id:sb.id,fillx:1}:{}]});£(sa)sa.on('changed',e¢layout[e.id].label=e.getString());£(sb)sb.on('changed',e¢layout[e.id].label=e.getString());}
-lc.push({type:"h",filly:1,c:[{type:"txt",font:fontHeading,label:"GPS",id:"gps",fillx:1,bgCol:"#f00"},{type:"txt",font:fontHeading,label:"00:00",id:"clock",fillx:1,bgCol:g.theme.fg,col:g.theme.bg},{type:"txt",font:fontHeading,label:"STOP",id:"status",fillx:1}]});
-¨layout=∏Layout({type:"v",c:lc},{lazy:¥,btns:[{label:"START",cb:onStartStop,id:"button"}]});
-ælc;
-layout.render();
-™configureNotification(stat){stat.on('notify',(e)¢{settings.notify[e.id].notifications.reduce(™(promise,buzzPattern){´promise.then(™(){´Bangle.buzz(buzzPattern[0],buzzPattern[1]);});},Promise.resolve());});}
-Object.keys(settings.notify).forEach((statType)¢{£(settings.notify[statType].increment>0ûexs.stats[statType]){configureNotification(exs.stats[statType]);}});
-Bangle.on("GPS",™(fix){layout.gps.bgCol=fix.fix?"#0f0":"#f00";£(!fix.fix)´;£(fixCountòã0){Bangle.buzz();}});
-setInterval(™(){layout.clock.label=locale.time(∏Date(),1);£(!isMenuDisplayed)layout.render();},1000);
+// ########### The settings section ? How does this work ? #############
+let settings = Object.assign({
+  minhr: {
+    value: 0}
+  maxhr: {
+    value: 0}
+}, require("Storage").readJSON("run.json", 1) || {});
+// ######## end of settings section
+
+// ########## listening to swipes ? How does this work ? #########
+//to go back and forth between Run and karvonnen
+Bangle.on('swipe', function(directionLR, directionUD) { ... });
+
+// ###### The app itself ############
+g.drawLine(40,64,88,52,136,64);
+g.drawLine(88,52,136,64);
+g.drawLine(40,112,88,124);
+g.drawLine(88,124,132,112);
+g.setFont("Vector",20);
+
+//To calculate Heart rate zones, we need to know the heart rate reserve (HRR)
+// HRR = maximum HR - Minimum HR. minhr is minimum hr, maxhr is maximum hr.
+//get the hrr (heart rate reserve).
+// I put random data here, but this has to come as a menu in the settings section so that users can change it.
+let minhr = 48;
+let maxhr = 187;
+
+function calculatehrr(minhr, maxhr) {
+  return maxhr - minhr;}
+
+//test input for hrr (it works).
+let hrr = calculatehrr(minhr, maxhr);
+console.log(hrr);
+
+//Test input to verify the zones work. The following value for "hr" has to be deleted and replaced with the Heart Rate Monitor input.
+let hr = 174;
+var hr1 = hr;
+// These variables display next and previous HR zone.
+//get the hrzones right. The calculation of the Heart rate zones here is based on the Karvonnen method
+//60-70% of HRR+minHR = zone2. //70-80% of HRR+minHR = zone3. //80-90% of HRR+minHR = zone4. //90-99% of HRR+minHR = zone5. //=>99% of HRR+minHR = serious risk of heart attack
+var minzone2 = hrr * 0.6 + minhr;
+var maxzone2 = hrr * 0.7 + minhr;
+var maxzone3 = hrr * 0.8 + minhr;
+var maxzone4 = hrr * 0.9 + minhr;
+var maxzone5 = hrr * 0.99 + minhr;
+
+// HR data: large, readable, in the middle of the screen
+g.setFont("Vector",50);
+g.drawString(hr1, 62,66);
+
+//To shorten the code, I'll reference some variables and reuse them.
+let centreX = 0.5 * g.getWidth();
+let centreY = 0.5 * g.getWidth();
+let minRadius = 0.38 * g.getWidth();
+let maxRadius = 0.50 * g.getWidth();
+
+//####### A function to simplify a bit the code ######
+function simplify (sA, eA, Z) {
+const zone= require("graphics_utils");
+let startAngle = zone.degreesToRadians(sA);
+let endAngle = zone.degreesToRadians(eA);
+zone.fillArc(g, centreX, centreY, minRadius, maxRadius, startAngle, endAngle);
+g.drawString(Z, 29,80);}
+
+//####### A function to simplify next&previous zones ######
+function zoning (max, min) {
+g.drawString(max, 56,28);g.drawString(min, 60,128);}
+
+//Thenext functions call arcs to display different HR zones.
+//draw background image (dithered green zones)(I will draw different zones in different dithered colors)
+ const HRzones= require("graphics_utils");
+ let minRadiusz = 0.44 * g.getWidth();
+ let startAngle = HRzones.degreesToRadians(-88.5);
+ let endAngle = HRzones.degreesToRadians(268.5);
+ g.setColor("#002200");
+ HRzones.fillArc(g, centreX, centreY, minRadiusz, maxRadius, startAngle, endAngle);
+ g.setFont("Vector",24);
+
+function getzone1() {g.setColor("#00ffff");{(simplify (-88.5, -20, "Z1"));}zoning(minzone2, minhr);}
+function getzone2a() {g.setColor("#00ff00");{(simplify (-43.5, -21.5, "Z2"));}zoning(maxzone2, minzone2);}
+function getzone2b() {g.setColor("#00ff00");{(simplify (-20, 1.5, "Z2"));}zoning(maxzone2, minzone2);}
+function getzone2c() {g.setColor("#00ff00");{(simplify (3, 24, "Z2"));}zoning(maxzone2, minzone2);}
+function getzone3a() {g.setColor("#ffff00");{(simplify (25.5, 46.5, "Z3"));}zoning(maxzone3, maxzone2);}
+function getzone3b() {g.setColor("#ffff00");{(simplify (48, 69, "Z3"));}zoning(maxzone3, maxzone2);}
+function getzone3c() {g.setColor("#ffff00");{(simplify (70.5, 91.5, "Z3"));}zoning(maxzone3, maxzone2);}
+function getzone4a() {g.setColor("#ff8000");{(simplify (91, 114.5, "Z4"));}zoning(maxzone4, maxzone3);}
+function getzone4b() {g.setColor("#ff8000");{(simplify (116, 137.5, "Z4"));}zoning(maxzone4, maxzone3);}
+function getzone4c() {g.setColor("#ff8000");{(simplify (139, 160, "Z4"));}zoning(maxzone4, maxzone3);}
+function getzone5a() {g.setColor("#ff0000");{(simplify (161.5, 182.5, "Z5"));}zoning(maxzone5, maxzone4);}
+function getzone5b() {g.setColor("#ff0000");{(simplify (184, 205, "Z5"));}zoning(maxzone5, maxzone4);}
+function getzone5c() {g.setColor("#ff0000");{(simplify (206.5, 227.5, "Z5"));}zoning(maxzone5, maxzone4);}
+
+function getzonealert() {
+ const HRzonemax = require("graphics_utils");
+ var centreX1,centreY1,maxRadius1 = 1;
+ let minRadius = 0.40 * g.getWidth();
+ let startAngle1 = HRzonemax.degreesToRadians(-90);
+ let endAngle1 = HRzonemax.degreesToRadians(270);
+ g.setFont("Vector",38);g.setColor("#ff0000");
+ HRzonemax.fillArc(g, centreX, centreY, minRadius, maxRadius, startAngle1, endAngle1);
+ g.drawString("ALERT", 26,66);}
+//Subdivided zones for better readability of zones when calling the images. //Changing HR zones will trigger the function with the image and previous&next HR zones.
+
+  if (hr <= hrr*0.6 + minhr) {(getzone1());
+} else if (hr <= hrr*0.64 + minhr) {(getzone2a());
+} else if (hr <= hrr*0.67+minhr) {(getzone2b());
+} else if (hr <= hrr * 0.7 + minhr) {(getzone2c());
+} else if (hr <= hrr * 0.74 + minhr) {(getzone3a());
+} else if (hr <= hrr * 0.77 + minhr) {(getzone3b());
+} else if (hr <= hrr * 0.8 + minhr) {(getzone3c());
+} else if (hr <= hrr * 0.84 + minhr) {(getzone4a());
+} else if (hr <= hrr * 0.87 + minhr) {(getzone4b());
+} else if (hr <= hrr * 0.9 + minhr) {(getzone4c());
+} else if (hr <= hrr * 0.94 + minhr) {(getzone5a());
+} else if (hr <= hrr * 0.96 + minhr) {(getzone5b());
+} else if (hr <= hrr * 0.98 + minhr) {(getzone5c());
+} else if (hr >= maxhr - 2) {g.clear();(getzonealert());}
