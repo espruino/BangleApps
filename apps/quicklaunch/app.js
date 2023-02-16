@@ -25,19 +25,18 @@
     mode: "custom",  
     touch: touchHandler,
     swipe : swipeHandler,
-    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
+    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);} // Compatability with Fastload Utils.
   });
 
   g.clearRect(Bangle.appRect);
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
+  Bangle.loadWidgets(); // Compatability with Fastload Utils.
 
   // taken from Icon Launcher with some alterations
   let timeoutToClock;
   const updateTimeoutToClock = function(){
-    let time=2; // seconds
+    let time = 1000; // milliseconds
     if (timeoutToClock) clearTimeout(timeoutToClock);
-    timeoutToClock = setTimeout(load,time*1000);  
+    timeoutToClock = setTimeout(load,time);  
   };
   updateTimeoutToClock();
 }
