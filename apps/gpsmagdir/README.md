@@ -1,0 +1,12 @@
+TODO:
+- Add Widget
+- Add Settings
+- Test on BangleJS
+- Document settings with defaults
+- Document Widget
+- Write a summary why
+- Drop a note about compass north vs true north
+- Note that top of Bangle must point at moving direction when compass
+- Document uncompensated compass only when clock is faced up
+- Note to regularly calibrate compass before use
+- Note compass value not when NaN after calibration
