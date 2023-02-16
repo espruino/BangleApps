@@ -23,6 +23,7 @@ exports.calibrate = () => {
 }
 
 exports.tiltfix = (m,g,O,S) => {
+  "ram"
   if (O & S) {
     m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
   }
