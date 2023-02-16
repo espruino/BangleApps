@@ -22,11 +22,10 @@ exports.calibrate = () => {
   });
 }
 
-exports.tiltfixread = (O,S) => {
-  "ram"
-  var m = Bangle.getCompass();
-  var g = Bangle.getAccel();
-  m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
+exports.tiltfix = (m,g,O,S) => {
+  if (O & S) {
+    m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
+  }
   var d = Math.atan2(-m.dx,m.dy)*180/Math.PI;
   if (d<0) d+=360;
   var phi = Math.atan(-g.x/-g.z);
@@ -38,4 +37,11 @@ exports.tiltfixread = (O,S) => {
   var psi = Math.atan2(yh,xh)*180/Math.PI;
   if (psi<0) psi+=360;
   return psi;
+}
+
+exports.tiltfixread = (O,S) => {
+  "ram"
+  var m = Bangle.getCompass({noTiltComp: true});
+  var g = Bangle.getAccel();
+  return exports.tiltfix(m,g,O,S);
 }
