@@ -37,7 +37,7 @@
   const updateTimeoutToClock = function(){
     let time=2; // seconds
     if (timeoutToClock) clearTimeout(timeoutToClock);
-    timeoutToClock = setTimeout(Bangle.showClock,time*1000);  
+    timeoutToClock = setTimeout(load,time*1000);  
   };
   updateTimeoutToClock();
 }
