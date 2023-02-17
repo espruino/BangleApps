@@ -78,8 +78,6 @@
       });
     },
 
-    
-    // todo add fastloading when the memory leak is fixed
     remove: function() {
       if (this.turnOnInterval){
         clearInterval(this.turnOnInterval);
