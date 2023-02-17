@@ -92,7 +92,7 @@
       turnOffServices();
       if (this.onLock) Bangle.removeListener('lock', this.onLock);
       if (this.onHRM) Bangle.removeListener('HRM', this.onHRM);
-      if (this.onPressure) Bangle.removeListener('onPressure', this.onPressure);
+      if (this.onPressure) Bangle.removeListener('pressure', this.onPressure);
     }
 
   });
