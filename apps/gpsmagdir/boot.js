@@ -7,6 +7,19 @@
   }, require("Storage").readJSON("gpsmagdir.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) || {} : undefined;
 
+  // Check if magnav is installed
+  try {
+    require("magnav");
+  } catch(err) {
+    // not installed, adjust settings to work without magnav
+    if (settings.compassSrc === 2) {
+      settings.compassSrc = 1;
+    }
+    if (settings.tiltCompensation) {
+      settings.tiltCompensation = false;
+    }
+  }
+
   // execute Bangle.resetCompass() after Bangle.setCompassPower();
   if (settings.resetCompassOnPwr) {
     const origSetCompassPower = Bangle.setCompassPower;
