@@ -1,0 +1,80 @@
+(() => {
+  const settings = Object.assign({
+    compassSrc: 1, // 0 = off
+    showWidget: 2, // 0 = never, 1 = when replacing GPS course with compass course, 2 = when GPS is on
+  }, require("Storage").readJSON("gpsmagdir.json", true) || {});
+
+  function isInside(rect, e) {
+    return e.x>=rect.x && e.x<rect.x+rect.w
+          && e.y>=rect.y && e.y<=rect.y+rect.h;
+  }
+
+  function draw() {
+    if (this.width) {
+      g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
+
+      if (this.show) {
+        this.width = 24;
+        g.reset();
+        g.drawImage(require("heatshrink").decompress(atob("jEYwgrohEN6EwBQ+DBYM4wALFxGA7vdB4IWFxEABYMAnAlECwMNBYPQCIQLDgALDDAI5EBYIFBBYIeBBYRBGA4QnBCAZBDA4ILLEZYLMKYR9FAgaKFNYpgCD4RBFAwQLBCwpOELAwACgeIwbLHK5ILPAAwA=")), this.x, this.y);
+        if (this.show === 2) {
+          // draw stroke
+          g.setColor(1,0,0).fillPoly([this.x+2, 0,
+                                      this.x+this.width-1,this.y+21,
+                                      this.x+this.width-3, this.y+23,
+                                      this.x, 2
+                                     ]);
+        }
+      }
+    }
+
+    const newWidth = this.show ? 24 : 0;
+    if (newWidth !== this.width) {
+      this.width = newWidth;
+      Bangle.drawWidgets();
+    }
+  }
+
+  if (settings.compassSrc > 0 && settings.showWidget > 0) {
+    // add your widget
+    WIDGETS.gpsmagdir={
+      area:"tr", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
+      width: 0, // hide by default
+      draw:draw,
+      show:0 // 0 = hide, 1 = show, 2 = with stroke
+    };
+
+    // show only when GPS course is replaced
+    Bangle.on('GPS', function(gps) {
+      if (gps.courseOrig && WIDGETS.gpsmagdir.show !== 1 && Bangle.isGPSOn()) {
+        WIDGETS.gpsmagdir.show = 1;
+        WIDGETS.gpsmagdir.draw();
+      } else if (WIDGETS.gpsmagdir.show) {
+        WIDGETS.gpsmagdir.show = settings.showWidget === 1 ? 0 : 2;
+        WIDGETS.gpsmagdir.draw();
+      }
+    });
+
+    // hide widget if GPS is turned off
+    const origSetGPSPower = Bangle.setGPSPower;
+    Bangle.setGPSPower = function(on, id) {
+      const isGPSon = origSetGPSPower(on, id);
+      if (!isGPSon && WIDGETS.gpsmagdir.show) {
+        WIDGETS.gpsmagdir.show = 0;
+        WIDGETS.gpsmagdir.draw();
+      } else if (isGPSon && !WIDGETS.gpsmagdir.show) {
+        WIDGETS.gpsmagdir.show = 2;
+        WIDGETS.gpsmagdir.draw();
+      }
+      return isGPSon;
+    };
+
+    // reset compass on click on widget
+    Bangle.on('touch', function(button, touch) {
+      if (WIDGETS.gpsmagdir && WIDGETS.gpsmagdir.x && WIDGETS.gpsmagdir.width && isInside({x: WIDGETS.gpsmagdir.x, y: WIDGETS.gpsmagdir.y, w: WIDGETS.gpsmagdir.width, h: 24}, touch)) {
+        Bangle.buzz(50);
+        Bangle.resetCompass();
+      }
+    });
+  } // if (settings.compassSrc > 0 && settings.showWidget)
+})();

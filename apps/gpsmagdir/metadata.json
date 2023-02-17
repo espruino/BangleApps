@@ -6,11 +6,12 @@
   "version":"0.01",
   "description": "Replace GPS heading with compass heading when speed is slow or standing still to avoid the heading from jumping around randomly.",
   "type": "bootloader",
-  "tags": "outdoors",
+  "tags": "outdoors,widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"gpsmagdir.boot.js","url":"boot.js"}
+    {"name":"gpsmagdir.boot.js","url":"boot.js"},
+    {"name":"gpsmagdir.wid.js","url":"widget.js"}
   ],
   "data": [{"name":"gpsmagdir.json"}]
 }
