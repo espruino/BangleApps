@@ -5,7 +5,7 @@
     resetCompassOnPwr: true, // reset compass on power on
     tiltCompensation: true, // tilt compensation on default compass
   }, require("Storage").readJSON("gpsmagdir.json", true) || {});
-  const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) || {} : undefined;
+  const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
 
   // Check if magnav is installed
   try {
@@ -18,6 +18,10 @@
     if (settings.tiltCompensation) {
       settings.tiltCompensation = false;
     }
+  }
+  if (settings.compassSrc === 2 && !CALIBDATA) {
+    // No calibration for magnav, fallback to default compass
+    settings.compassSrc = 1;
   }
 
   // execute Bangle.resetCompass() after Bangle.setCompassPower();
