@@ -4,7 +4,6 @@ let wu = require("widget_utils");
 let runInterval;
 let karvonnenActive = false;
 // Run interface wrapped in a function
-//function run() {
 let ExStats = require("exstats");
 let B2 = process.env.HWVERSION===2;
 let Layout = require("Layout");
@@ -172,8 +171,6 @@ run();
 
 // Korvonnen pasted inside a function
 function karvonnen() {
-  // Attempt to stop listening to button
-  //clearWatch();
   clearInterval(runInterval);
   runInterval = undefined;
   karvonnenActive = true;
