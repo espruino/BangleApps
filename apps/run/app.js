@@ -157,7 +157,6 @@ function run() {
   // We always call ourselves once a second to update
   if (!runInterval){
     runInterval = setInterval(function() {
-      print(runInterval);
       layout.clock.label = locale.time(new Date(),1);
       if (!isMenuDisplayed && !karvonnenActive) layout.render();
     }, 1000);
@@ -171,6 +170,7 @@ run();
 
 // Korvonnen pasted inside a function
 function karvonnen() {
+  // stop updating and drawing the traditional run app UI
   clearInterval(runInterval);
   runInterval = undefined;
   karvonnenActive = true;
