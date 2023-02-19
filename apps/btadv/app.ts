@@ -419,8 +419,8 @@ const encodeGps: LenFunc<GPSFix> = (data: GPSFix) => {
   const heading = toByteArray(Math.round(data.course * 100), 2, false);
 
   return [
-      0x9d, // 0b10011101: speed, location, elevation, heading [...]
-      0x2,  // 0b00000010: position ok, 3d speed/distance(?)
+      0b10011101, // speed, location, elevation, heading [...]
+      0b00000010, // position ok, 3d speed/distance
       speed[0]!, speed[1]!,
       lat[0]!, lat[1]!, lat[2]!, lat[3]!,
       lon[0]!, lon[1]!, lon[2]!, lon[3]!,
