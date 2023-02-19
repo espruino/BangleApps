@@ -362,7 +362,7 @@ const encodeHrm: LenFunc<Hrm> = (hrm: Hrm) =>
 encodeHrm.maxLen = 2;
 
 const encodePressure: LenFunc<PressureData> = (data: PressureData) =>
-  toByteArray(Math.round(data.pressure * 1000), 4, false);
+  toByteArray(Math.round(data.pressure * 10), 4, false);
 encodePressure.maxLen = 4;
 
 const encodeElevation: LenFunc<PressureData> = (data: PressureData) =>
@@ -370,7 +370,7 @@ const encodeElevation: LenFunc<PressureData> = (data: PressureData) =>
 encodeElevation.maxLen = 3;
 
 const encodeTemp: LenFunc<PressureData> = (data: PressureData) =>
-  toByteArray(Math.round(data.temperature * 100), 2, true);
+  toByteArray(Math.round(data.temperature * 10), 2, true);
 encodeTemp.maxLen = 2;
 
 const encodeGps: LenFunc<GPSFix> = (data: GPSFix) => {

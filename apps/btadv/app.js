@@ -110,7 +110,7 @@ var drawInfo = function (force) {
     if (bar) {
         g.drawString("".concat(bar.altitude.toFixed(1), "m"), mid, y);
         y += g.getFontHeight();
-        g.drawString("".concat(bar.pressure.toFixed(1), "mbar"), mid, y);
+        g.drawString("".concat(bar.pressure.toFixed(1), " hPa"), mid, y);
         y += g.getFontHeight();
         g.drawString("".concat(bar.temperature.toFixed(1), "C"), mid, y);
         y += g.getFontHeight();
