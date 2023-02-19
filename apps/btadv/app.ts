@@ -430,6 +430,18 @@ const encodeGps: LenFunc<GPSFix> = (data: GPSFix) => {
 };
 encodeGps.maxLen = 17;
 
+const encodeGpsHeadingOnly: LenFunc<CompassData> = (data: CompassData) => {
+  // see encodeGps()
+  const heading = toByteArray(Math.round(data.heading * 100), 2, false);
+
+  return [
+      0b00010000, // heading present
+      0b00010000, // heading source: mag
+      heading[0]!, heading[1]!
+  ];
+};
+encodeGpsHeadingOnly.maxLen = 17;
+
 const encodeMag: LenFunc<CompassData> = (data: CompassData) => {
   const x = toByteArray(data.x, 2, true);
   const y = toByteArray(data.y, 2, true);
@@ -477,7 +489,7 @@ const haveServiceData = (serv: BleServ): boolean => {
   switch (serv) {
     case BleServ.HRM: return !!hrm;
     case BleServ.EnvSensing: return !!(bar || mag);
-    case BleServ.LocationAndNavigation: return !!(gps && gps.lat && gps.lon);
+    case BleServ.LocationAndNavigation: return !!(gps && gps.lat && gps.lon || mag);
   }
 };
 
@@ -510,6 +522,15 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
           o.value = encodeGps(gps);
           gps = undefined;
         }
+
+        return { [BleChar.LocationAndSpeed]: o };
+      } else if (mag) {
+        const o: BleCharAdvert = {
+          maxLen: encodeGpsHeadingOnly.maxLen,
+          readable: true,
+          notify: true,
+          value: encodeGpsHeadingOnly(mag),
+        };
 
         return { [BleChar.LocationAndSpeed]: o };
       }
@@ -552,7 +573,6 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
 
         if (mag) {
           o[BleChar.MagneticFlux3D]!.value = encodeMag(mag);
-          mag = undefined;
         }
       }
 
@@ -569,6 +589,9 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
       advert[serv] = map(serv);
     }
   }
+
+  // clear mag only after both EnvSensing and LocationAndNavigation have run
+  mag = undefined;
 
   return advert;
 };
