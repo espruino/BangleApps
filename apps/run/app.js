@@ -96,7 +96,7 @@ function onStartStop() {
 let lc = [];
 // Load stats in pair by pair
 for (let i=0;i<statIDs.length;i+=2) {
-  let sa = exs.stats[statIDs[i+0]];
+  let sa = exs.stats[statIDs[i+0]]
   let sb = exs.stats[statIDs[i+1]];
   lc.push({ type:"h", filly:1, c:[
     sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol }:{},
@@ -148,8 +148,6 @@ Bangle.on("GPS", function(fix) {
 
 // run() function used to switch between traditional run UI and karvonnen UI
 function run() {
-  if (karvonnenActive) g.reset().clear();
-  karvonnenActive = false;
   wu.show();
   layout.lazy = false;
   layout.render();
@@ -175,11 +173,18 @@ function stopRunUI() {
   karvonnenActive = true;
 }
 
-// Define the function to go back and foth between the different UI's
-function swipeHandler(LR,_) {
-  if (LR==-1 && karvonnenActive && !isMenuDisplayed) run();
-  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); require("run_karvonnen").show(settings.HRM);}
+function stopKarvonnenUI() {
+  g.reset().clear();
+  clearInterval(karvonnenInterval);
+  karvonnenInterval = undefined;
+  karvonnenActive = false;
 }
 
+let karvonnenInterval;
+// Define the function to go back and foth between the different UI's
+function swipeHandler(LR,_) {
+  if (LR==-1 && karvonnenActive && !isMenuDisplayed) {stopKarvonnenUI(); run();}
+  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); karvonnenInterval = require("run_karvonnen").show(settings.HRM, exs.stats.bpm);}
+}
 // Listen for swipes with the swipeHandler
 Bangle.on("swipe", swipeHandler);

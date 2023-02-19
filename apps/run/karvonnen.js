@@ -1,5 +1,5 @@
 // Korvonnen pasted inside a function
-exports.show = function karvonnen(hrmSettings) {
+exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   //This app is an extra feature implementation for the Run.app of the bangle.js. It's called run+
   //The calculation of the Heart Rate Zones is based on the Karvonnen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
   //Other methods are even more approximative.
@@ -29,7 +29,7 @@ exports.show = function karvonnen(hrmSettings) {
   console.log(hrr);
   
   //Test input to verify the zones work. The following value for "hr" has to be deleted and replaced with the Heart Rate Monitor input.
-  let hr = 174;
+  let hr = exsHrmStats.getValue();
   let hr1 = hr;
   // These letiables display next and previous HR zone.
   //get the hrzones right. The calculation of the Heart rate zones here is based on the Karvonnen method
@@ -41,8 +41,12 @@ exports.show = function karvonnen(hrmSettings) {
   let maxzone5 = hrr * 0.99 + minhr;
   
   // HR data: large, readable, in the middle of the screen
-  g.setFont("Vector",50);
-  g.drawString(hr1, 62,66);
+  function drawHR() {
+    g.clearRect(62,66,62+80,70+40);
+    g.setFont("Vector",50);
+    g.drawString(hr, 62,66);
+  }
+  drawHR();
   //These functions call arcs to show different HR zones.
   
   //To shorten the code, I'll reference some letiables and reuse them.
@@ -53,24 +57,32 @@ exports.show = function karvonnen(hrmSettings) {
   
   //####### A function to simplify a bit the code ######
   function simplify (sA, eA, Z) {
-  const zone= require("graphics_utils");
-  let startAngle = zone.degreesToRadians(sA);
-  let endAngle = zone.degreesToRadians(eA);
-  zone.fillArc(g, centreX, centreY, minRadius, maxRadius, startAngle, endAngle);
-  g.drawString(Z, 29,80);}
-  
+    const zone= require("graphics_utils");
+    let startAngle = zone.degreesToRadians(sA);
+    let endAngle = zone.degreesToRadians(eA);
+    zone.fillArc(g, centreX, centreY, minRadius, maxRadius, startAngle, endAngle);
+    g.setFont("Vector",24);
+    g.drawString(Z, 29,80);
+  }
+
   //####### A function to simplify next&previous zones ######
   function zoning (max, min) {
-  g.drawString(max, 56,28);g.drawString(min, 60,128);}
-  
+    g.setFont("Vector",20);
+    g.clearRect(56,28,56+20*3,28+20).clearRect(60,128,60+20*3,128+20);
+    g.drawString(max, 56,28);g.drawString(min, 60,128);
+  }
+
   //draw background image (dithered green zones)(I should draw different zones in different dithered colors)
-   const HRzones= require("graphics_utils");
-   let minRadiusz = 0.44 * g.getWidth();
-   let startAngle = HRzones.degreesToRadians(-88.5);
-   let endAngle = HRzones.degreesToRadians(268.5);
-   g.setColor("#002200");
-   HRzones.fillArc(g, centreX, centreY, minRadiusz, maxRadius, startAngle, endAngle);
-   g.setFont("Vector",24);
+  const HRzones= require("graphics_utils");
+  let minRadiusz = 0.44 * R.w;//g.getWidth();
+  let startAngle = HRzones.degreesToRadians(-88.5);
+  let endAngle = HRzones.degreesToRadians(268.5);
+
+  function drawBackGround() {
+    g.setColor("#002200");
+    HRzones.fillArc(g, centreX, centreY, minRadiusz, maxRadius, startAngle, endAngle);
+  }
+  drawBackGround();
   
   function getzone1() {g.setColor("#00ffff");{(simplify (-88.5, -20, "Z1"));}zoning(minzone2, minhr);}
   function getzone2a() {g.setColor("#00ff00");{(simplify (-43.5, -21.5, "Z2"));}zoning(maxzone2, minzone2);}
@@ -96,20 +108,41 @@ exports.show = function karvonnen(hrmSettings) {
    HRzonemax.fillArc(g, centreX, centreY, minRadius, maxRadius, startAngle1, endAngle1);
    g.drawString("ALERT", 26,66);
   }
-  //Subdivided zones for better readability of zones when calling the images. //Changing HR zones will trigger the function with the image and previous&next HR zones.
   
-    if (hr <= hrr*0.6 + minhr) {(getzone1());
-  } else if (hr <= hrr*0.64 + minhr) {(getzone2a());
-  } else if (hr <= hrr*0.67+minhr) {(getzone2b());
-  } else if (hr <= hrr * 0.7 + minhr) {(getzone2c());
-  } else if (hr <= hrr * 0.74 + minhr) {(getzone3a());
-  } else if (hr <= hrr * 0.77 + minhr) {(getzone3b());
-  } else if (hr <= hrr * 0.8 + minhr) {(getzone3c());
-  } else if (hr <= hrr * 0.84 + minhr) {(getzone4a());
-  } else if (hr <= hrr * 0.87 + minhr) {(getzone4b());
-  } else if (hr <= hrr * 0.9 + minhr) {(getzone4c());
-  } else if (hr <= hrr * 0.94 + minhr) {(getzone5a());
-  } else if (hr <= hrr * 0.96 + minhr) {(getzone5b());
-  } else if (hr <= hrr * 0.98 + minhr) {(getzone5c());
-  } else if (hr >= maxhr - 2) {g.clear();(getzonealert());}
-}
+  //Subdivided zones for better readability of zones when calling the images. //Changing HR zones will trigger the function with the image and previous&next HR zones.
+  function drawZones() {
+    if (hr <= hrr*0.6 + minhr) getzone1();
+    else if (hr <= hrr*0.64 + minhr) getzone2a();
+    else if (hr <= hrr*0.67 + minhr) getzone2b();
+    else if (hr <= hrr * 0.7 + minhr) getzone2c();
+    else if (hr <= hrr * 0.74 + minhr) getzone3a();
+    else if (hr <= hrr * 0.77 + minhr) getzone3b();
+    else if (hr <= hrr * 0.8 + minhr) getzone3c();
+    else if (hr <= hrr * 0.84 + minhr) getzone4a();
+    else if (hr <= hrr * 0.87 + minhr) getzone4b();
+    else if (hr <= hrr * 0.9 + minhr) getzone4c();
+    else if (hr <= hrr * 0.94 + minhr) getzone5a();
+    else if (hr <= hrr * 0.96 + minhr) getzone5b();
+    else if (hr <= hrr * 0.98 + minhr) getzone5c();
+    else if (hr >= maxhr - 2) {g.clear();getzonealert();}
+  }
+  drawZones();
+
+  let hrLast;
+  function updateUI() {
+    hrLast = hr;
+    hr = exsHrmStats.getValue();
+    if (hr!=hrLast) {
+      drawHR();
+      drawBackGround();
+      drawZones();
+    }
+  }
+  updateUI();
+  
+    karvonnenInterval = setInterval(function() {
+      if (!isMenuDisplayed && karvonnenActive) updateUI();
+    }, 1000);
+  
+  return karvonnenInterval;
+};
