@@ -1,7 +1,7 @@
 {
-  "id": "gpsmagdir",
+  "id": "gpsmagcourse",
   "name": "GPS Compass heading switcher",
-  "shortName":"GPS/Compass direction",
+  "shortName":"GPS/Comp. course",
   "icon": "app.png",
   "version":"0.01",
   "description": "Replace GPS heading with compass heading when speed is slow or standing still to avoid the heading from jumping around randomly.",
@@ -10,9 +10,9 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"gpsmagdir.boot.js","url":"boot.js"},
-    {"name":"gpsmagdir.wid.js","url":"widget.js"}
+    {"name":"gpsmagcourse.boot.js","url":"boot.js"},
+    {"name":"gpsmagcourse.wid.js","url":"widget.js"}
   ],
-  "data": [{"name":"gpsmagdir.json"}]
+  "data": [{"name":"gpsmagcourse.json"}]
 }
 

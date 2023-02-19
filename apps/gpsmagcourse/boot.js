@@ -4,7 +4,7 @@
     compassSrc: 1, // [off, built-in, magnav]
     resetCompassOnPwr: true, // reset compass on power on
     tiltCompensation: true, // tilt compensation on built-in compass
-  }, require("Storage").readJSON("gpsmagdir.json", true) || {});
+  }, require("Storage").readJSON("gpsmagcourse.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
 
   // Check if magnav is installed
@@ -91,7 +91,7 @@
     const origSetGPSPower = Bangle.setGPSPower;
     Bangle.setGPSPower = function(on, id) {
       const isGPSon = origSetGPSPower(on, id);
-      Bangle.setCompassPower(isGPSon, "gpsmagdir");
+      Bangle.setCompassPower(isGPSon, "gpsmagcourse");
       return isGPSon;
     };
   } // if (settings.compassSrc > 0)
