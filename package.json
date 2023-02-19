@@ -22,7 +22,6 @@
     "update-local-apps": "apps/*/metadata.json"
   },
   "dependencies": {
-    "acorn": "^7.2.0",
-    "typescript": "4.9.4"
+    "acorn": "^7.2.0"
   }
 }
