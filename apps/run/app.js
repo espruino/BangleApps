@@ -156,6 +156,7 @@ function run() {
   layout.lazy = true;
   // We always call ourselves once a second to update
   if (!runInterval){
+    runInterval = setInterval(function() {
       layout.clock.label = locale.time(new Date(),1);
       if (!isMenuDisplayed && !karvonnenActive) layout.render();
     }, 1000);
