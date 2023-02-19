@@ -54,7 +54,7 @@ type MenuOptions = {
 type Menu = {
   ""?: MenuOptions;
   [key: string]:
-    | MenuOptions // not actually an option here
+    | MenuOptions
     | (() => void)
     | MenuBooleanItem
     | MenuNumberItem
