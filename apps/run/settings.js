@@ -138,18 +138,18 @@
   hrmMenu[/*LANG*/"min"] = {
     min: 1, max: 100,
     value: 65 | settings.HRM.min,
-    format: v => v,
-    onchange: v => {
-      settings.HRM.min = v;
+    format: w => w,
+    onchange: w => {
+      settings.HRM.min = w;
       saveSettings();
     },
   }
   hrmMenu[/*LANG*/"max"] = {
     min: 120, max: 190,
     value: 165 | settings.HRM.max,
-    format: w => w,
-    onchange: w => {
-      settings.HRM.max = w;
+    format: v => v,
+    onchange: v => {
+      settings.HRM.max = v;
       saveSettings();
     },
   }
