@@ -1,5 +1,6 @@
 (() => {
-  WIDGETS.stat = {area: "tr", width: 21, draw: function() {
+  WIDGETS.devst = {area: "tr", width: 21, draw: function() {
+    if (WIDGETS.devst._draw) return;
     var x = this.x;
     var y = this.y;
     g.reset();
@@ -22,7 +23,7 @@
     return p < 0.5 ? '#0f0' : (p < 0.8 ? '#f80' : '#f00');
   }
 
-  var draw = WIDGETS.stat.draw.bind(WIDGETS.stat);
+  var draw = WIDGETS.devst.draw.bind(WIDGETS.devst);
   var iid = setInterval(draw, 2000);
 
   Bangle.on('lcdPower', (on) => {
