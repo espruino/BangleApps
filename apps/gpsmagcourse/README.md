@@ -42,7 +42,6 @@ On Bangle.js 2 a click on the widget does reset the built-in compass.
   - GPS on
 
 ## TODO:
-- Add Settings
 - Document settings with defaults
 - Check magnav dependency in settings
 - note magnav silently downgrade

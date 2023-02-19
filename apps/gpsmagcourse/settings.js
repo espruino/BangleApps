@@ -27,9 +27,9 @@
       settings.tiltCompensation = false;
     }
   }
-  const compassSrcOpts = ["off", "built-in"];
+  const compassSrcOpts = [/*LANG*/"off", /*LANG*/"built-in"];
   if (magnavInstalled) {
-    compassSrcOpts.push("magnav");
+    compassSrcOpts.push(/*LANG*/"magnav");
   }
 
   function writeSettings() {
@@ -37,11 +37,11 @@
   }
 
   const menu = {
-    "" : { "title" : /*LANG*/"GPS/Comp. course" },
+    "" : { "title" : /*LANG*/"GPS/Com.course" },
     "< Back" : () => back(),
     /*LANG*/'Speed threshold': {
       value: settings.speed,
-      min: 1, max: 20,
+      min: 1, max: 20, step: 0.5,
       onchange: v => {
         settings.speed = v;
         writeSettings();
@@ -67,7 +67,7 @@
     /*LANG*/'Show Widget': {
       value: settings.showWidget,
       min: 0, max: 2,
-      format: v => ["Never", "Active", "GPS on"][v],
+      format: v => [/*LANG*/"Never", /*LANG*/"Active", /*LANG*/"GPS on"][v],
       onchange: v => {
         settings.showWidget = v;
         writeSettings();
@@ -88,4 +88,4 @@
 
   // Show the menu
   E.showMenu(menu);
-})(load);
+})

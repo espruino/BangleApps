@@ -1,7 +1,7 @@
 {
   "id": "gpsmagcourse",
-  "name": "GPS Compass heading switcher",
-  "shortName":"GPS/Comp. course",
+  "name": "GPS Compass course switcher",
+  "shortName":"GPS/Compass course",
   "icon": "app.png",
   "version":"0.01",
   "description": "Replace GPS heading with compass heading when speed is slow or standing still to avoid the heading from jumping around randomly.",
@@ -11,7 +11,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"gpsmagcourse.boot.js","url":"boot.js"},
-    {"name":"gpsmagcourse.wid.js","url":"widget.js"}
+    {"name":"gpsmagcourse.wid.js","url":"widget.js"},
+    {"name":"gpsmagcourse.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"gpsmagcourse.json"}]
 }
