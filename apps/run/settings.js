@@ -31,6 +31,10 @@
         notifications: [],
       },
     },
+    HRM: {
+      min: 65,
+      max: 165,
+    },
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
     storage.write(SETTINGS_FILE, settings)
@@ -125,5 +129,29 @@
     'Box 6': getBoxChooser("B6"),
   });
   menu[/*LANG*/"Boxes"] = function() { E.showMenu(boxMenu)};
+
+  var hrmMenu = {
+    '< Back': function() { E.showMenu(menu) },
+  }
+
+  menu[/*LANG*/"HRM min/max"] = function() { E.showMenu(hrmMenu)};
+  hrmMenu[/*LANG*/"min"] = {
+    min: 0, max: 100,
+    value: settings.HRM.min|65,
+    format: v => v,
+    onchange: v => {
+      settings[HRM][min] = v;
+      saveSettings();
+    },
+  }
+  hrmMenu[/*LANG*/"max"] = {
+    min: 120, max: 190,
+    value: settings.HRM.min|165,
+    format: v => v,
+    onchange: v => {
+      settings[HRM][max] = v;
+      saveSettings();
+    },
+  }
   E.showMenu(menu);
 })
