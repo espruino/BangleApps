@@ -1,5 +1,5 @@
 // Korvonnen pasted inside a function
-exports.show = function karvonnen() {
+exports.show = function karvonnen(hrmSettings) {
   //This app is an extra feature implementation for the Run.app of the bangle.js. It's called run+
   //The calculation of the Heart Rate Zones is based on the Karvonnen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
   //Other methods are even more approximative.
@@ -18,8 +18,8 @@ exports.show = function karvonnen() {
   // HRR = maximum HR - Minimum HR. minhr is minimum hr, maxhr is maximum hr.
   //get the hrr (heart rate reserve).
   // I put random data here, but this has to come as a menu in the settings section so that users can change it.
-  let minhr = 48;
-  let maxhr = 187;
+  let minhr = hrmSettings.min;
+  let maxhr = hrmSettings.max;
   
   function calculatehrr(minhr, maxhr) {
     return maxhr - minhr;}

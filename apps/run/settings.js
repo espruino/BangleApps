@@ -146,7 +146,7 @@
   }
   hrmMenu[/*LANG*/"max"] = {
     min: 120, max: 190,
-    value: settings.HRM.min|165,
+    value: settings.HRM.max|165,
     format: v => v,
     onchange: v => {
       settings[HRM][max] = v;
