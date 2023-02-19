@@ -23,6 +23,7 @@ var hrmAny;
 var mag;
 var btnsShown = false;
 var prevBtnsShown = undefined;
+var hrmAnyClear;
 var settings = {
     bar: false,
     gps: false,
@@ -132,6 +133,12 @@ var drawInfo = function (force) {
         g.drawString("~".concat(hrmAny.bpm, " BPM (").concat(hrmAny.confidence, "%)"), mid, y);
         y += g.getFontHeight();
         drawn = true;
+        if (!settings.hrm && !hrmAnyClear) {
+            hrmAnyClear = setTimeout(function () {
+                hrmAny = undefined;
+                hrmAnyClear = undefined;
+            }, 10000);
+        }
     }
     if (mag) {
         g.drawString("".concat(mag.x, " ").concat(mag.y, " ").concat(mag.z), mid, y);

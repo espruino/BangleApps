@@ -88,6 +88,7 @@ let hrmAny: undefined | Hrm;
 let mag: undefined | CompassData;
 let btnsShown = false;
 let prevBtnsShown: boolean | undefined = undefined;
+let hrmAnyClear: undefined | number;
 
 type BtAdvType<IncludeAcc = false> = "bar" | "gps" | "hrm" | "mag" | (IncludeAcc extends true ? "acc" : never);
 type BtAdvMap<T, IncludeAcc = false> = { [key in BtAdvType<IncludeAcc>]: T };
@@ -285,6 +286,14 @@ const drawInfo = (force?: true) => {
 
     drawn = true;
 
+    if (!settings.hrm && !hrmAnyClear) {
+        // hrm is erased, but hrmAny will remain until cleared (or reset)
+        // if it runs via health check, we reset it here
+        hrmAnyClear = setTimeout(() => {
+            hrmAny = undefined;
+            hrmAnyClear = undefined;
+        }, 10000);
+    }
   }
 
   if (mag) {
