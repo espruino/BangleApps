@@ -140,7 +140,7 @@
     value: 65 | settings.HRM.min,
     format: v => v,
     onchange: v => {
-      settings[HRM][min] = v;
+      settings.HRM.min = v;
       saveSettings();
     },
   }
