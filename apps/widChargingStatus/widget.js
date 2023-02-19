@@ -1,7 +1,7 @@
 "use strict";
-(() => {
-    const icon = require('heatshrink').decompress(atob('ikggMAiEAgYIBmEAg4EB+EAh0AgPggEeCAIEBnwQBAgP+gEP//x///j//8f//k///H//4BYOP/4lBv4bDvwEB4EAvAEBwEAuA7DCAI7BgAQBhEAA'));
-    const iconWidth = 18;
+(function () {
+    var icon = require('heatshrink').decompress(atob('ikggMAiEAgYIBmEAg4EB+EAh0AgPggEeCAIEBnwQBAgP+gEP//x///j//8f//k///H//4BYOP/4lBv4bDvwEB4EAvAEBwEAuA7DCAI7BgAQBhEAA'));
+    var iconWidth = 18;
     function draw() {
         g.reset();
         if (Bangle.isCharging()) {
@@ -16,8 +16,8 @@
         width: Bangle.isCharging() ? iconWidth : 0,
         draw: draw,
     };
-    Bangle.on('charging', (charging) => {
-        const widget = WIDGETS.chargingStatus;
+    Bangle.on('charging', function (charging) {
+        var widget = WIDGETS.chargingStatus;
         if (widget) {
             if (charging) {
                 Bangle.buzz();
@@ -26,7 +26,7 @@
             else {
                 widget.width = 0;
             }
-            Bangle.drawWidgets(); // re-layout widgets
+            Bangle.drawWidgets();
             g.flip();
         }
     });

@@ -16,6 +16,7 @@
     }
   }
 
+  // @ts-ignore
   WIDGETS.chargingStatus = {
     area: 'tr',
     width: Bangle.isCharging() ? iconWidth : 0,
@@ -23,6 +24,7 @@
   };
 
   Bangle.on('charging', (charging) => {
+    // @ts-ignore
     const widget = WIDGETS.chargingStatus;
     if (widget) {
       if (charging) {
