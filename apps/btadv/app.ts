@@ -247,7 +247,7 @@ const drawInfo = (force?: true) => {
     g.drawString(`${bar.altitude.toFixed(1)}m`, mid, y);
     y += g.getFontHeight();
 
-    g.drawString(`${bar.pressure.toFixed(1)}mbar`, mid, y);
+    g.drawString(`${bar.pressure.toFixed(1)} hPa`, mid, y);
     y += g.getFontHeight();
 
     g.drawString(`${bar.temperature.toFixed(1)}C`, mid, y);
