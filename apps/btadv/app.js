@@ -181,7 +181,7 @@ var encodeHrm = function (hrm) {
 };
 encodeHrm.maxLen = 2;
 var encodePressure = function (data) {
-    return toByteArray(Math.round(data.pressure * 1000), 4, false);
+    return toByteArray(Math.round(data.pressure * 10), 4, false);
 };
 encodePressure.maxLen = 4;
 var encodeElevation = function (data) {
@@ -189,7 +189,7 @@ var encodeElevation = function (data) {
 };
 encodeElevation.maxLen = 3;
 var encodeTemp = function (data) {
-    return toByteArray(Math.round(data.temperature * 100), 2, true);
+    return toByteArray(Math.round(data.temperature * 10), 2, true);
 };
 encodeTemp.maxLen = 2;
 var encodeGps = function (data) {
@@ -199,8 +199,8 @@ var encodeGps = function (data) {
     var elevation = toByteArray(Math.round(data.alt * 100), 3, true);
     var heading = toByteArray(Math.round(data.course * 100), 2, false);
     return [
-        0x9d,
-        0x2,
+        157,
+        2,
         speed[0], speed[1],
         lat[0], lat[1], lat[2], lat[3],
         lon[0], lon[1], lon[2], lon[3],
@@ -209,6 +209,15 @@ var encodeGps = function (data) {
     ];
 };
 encodeGps.maxLen = 17;
+var encodeGpsHeadingOnly = function (data) {
+    var heading = toByteArray(Math.round(data.heading * 100), 2, false);
+    return [
+        16,
+        16,
+        heading[0], heading[1]
+    ];
+};
+encodeGpsHeadingOnly.maxLen = 17;
 var encodeMag = function (data) {
     var x = toByteArray(data.x, 2, true);
     var y = toByteArray(data.y, 2, true);
@@ -244,11 +253,11 @@ var haveServiceData = function (serv) {
     switch (serv) {
         case "0x180d": return !!hrm;
         case "0x181a": return !!(bar || mag);
-        case "0x1819": return !!(gps && gps.lat && gps.lon);
+        case "0x1819": return !!(gps && gps.lat && gps.lon || mag);
     }
 };
 var serviceToAdvert = function (serv, initial) {
-    var _a, _b;
+    var _a, _b, _c;
     if (initial === void 0) { initial = false; }
     switch (serv) {
         case "0x180d":
@@ -277,6 +286,15 @@ var serviceToAdvert = function (serv, initial) {
                     gps = undefined;
                 }
                 return _b = {}, _b["0x2a67"] = o, _b;
+            }
+            else if (mag) {
+                var o = {
+                    maxLen: encodeGpsHeadingOnly.maxLen,
+                    readable: true,
+                    notify: true,
+                    value: encodeGpsHeadingOnly(mag),
+                };
+                return _c = {}, _c["0x2a67"] = o, _c;
             }
             return {};
         case "0x181a": {
@@ -312,7 +330,6 @@ var serviceToAdvert = function (serv, initial) {
                 };
                 if (mag) {
                     o["0x2aa1"].value = encodeMag(mag);
-                    mag = undefined;
                 }
             }
             return o;
@@ -328,6 +345,7 @@ var getBleAdvert = function (map, all) {
             advert[serv] = map(serv);
         }
     }
+    mag = undefined;
     return advert;
 };
 var updateServices = function () {
