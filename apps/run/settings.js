@@ -137,7 +137,7 @@
   menu[/*LANG*/"HRM min/max"] = function() { E.showMenu(hrmMenu)};
   hrmMenu[/*LANG*/"min"] = {
     min: 0, max: 100,
-    value: settings.HRM.min|65,
+    value: 65 | settings.HRM.min,
     format: v => v,
     onchange: v => {
       settings[HRM][min] = v;
@@ -146,10 +146,10 @@
   }
   hrmMenu[/*LANG*/"max"] = {
     min: 120, max: 190,
-    value: settings.HRM.max|165,
+    value: 165 | settings.HRM.max,
     format: v => v,
     onchange: v => {
-      settings[HRM][max] = v;
+      settings.HRM.max = v;
       saveSettings();
     },
   }
