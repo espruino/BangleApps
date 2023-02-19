@@ -701,8 +701,3 @@ enableSensors();
     },
   );
 }
-
-// touch events sometimes come through stale :(
-// Bangle.on("touch", (button, xy) => {
-//   console.log(`touch: button=${button}, x=${xy?.x} y=${xy?.y}`);
-// })
