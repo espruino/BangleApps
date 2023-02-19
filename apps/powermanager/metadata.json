@@ -13,6 +13,7 @@
   "storage": [
     {"name":"powermanager.boot.js","url":"boot.js"},
     {"name":"powermanager.settings.js","url":"settings.js"},
+    {"name":"powermanager.wid.js","url":"settings.js"},
     {"name":"powermanager","url":"lib.js"},
     {"name":"powermanager.default.json","url":"default.json"}
   ],
