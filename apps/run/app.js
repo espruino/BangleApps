@@ -178,7 +178,7 @@ function stopRunUI() {
 // Define the function to go back and foth between the different UI's
 function swipeHandler(LR,_) {
   if (LR==-1 && karvonnenActive && !isMenuDisplayed) run();
-  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); require("run_karvonnen").show()};
+  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); require("run_karvonnen").show();}
 }
 
 // Listen for swipes with the swipeHandler
