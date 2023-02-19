@@ -1,9 +1,9 @@
 {
   const settings = Object.assign({
     speed: 6, // when lower then this use direction from compass
-    compassSrc: 1, // [off, firmware, magnav]
+    compassSrc: 1, // [off, built-in, magnav]
     resetCompassOnPwr: true, // reset compass on power on
-    tiltCompensation: true, // tilt compensation on default compass
+    tiltCompensation: true, // tilt compensation on built-in compass
   }, require("Storage").readJSON("gpsmagdir.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
 
@@ -64,7 +64,7 @@
 
     const changeGpsCourse = (gps) => {
       if (gps.speed < settings.speed) {
-        if (settings.compassSrc === 1 && (settings.tiltCompensation || isFaceUp(Bangle.getAccel()))) { // Use uncompensated firmware heading only if face is up
+        if (settings.compassSrc === 1 && (settings.tiltCompensation || isFaceUp(Bangle.getAccel()))) { // Use uncompensated built-in compass heading only if face is up
           const heading = Bangle.getCompass().heading;
           if (!isNaN(heading)) {
             gps.courseOrig = gps.course;
