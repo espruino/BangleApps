@@ -150,6 +150,9 @@
           event.lon = event.long;
           delete event.long;
         }
+        if (event.time){
+          event.time = new Date(event.time);
+        }
 
         if (!gpsState.firstGPSEvent) {
           // this is the first event, save time of arrival and deactivate internal GPS
