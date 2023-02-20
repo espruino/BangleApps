@@ -5,7 +5,7 @@
   "description": "Simple grocery (shopping) list - Display a list of product and track if you already put them in your cart.",
   "icon": "grocery.png",
   "type": "app",
-  "tags": "tool,outdoors,shopping,list",
+  "tags": "tool,shopping,list",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "custom": "grocery.html",
   "interface": "interface.html",
