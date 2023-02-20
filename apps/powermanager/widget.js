@@ -30,10 +30,21 @@ currently-running apps */
     g.clearRect(this.x, this.y, this.x + 24, this.y + 24);
 
     let current = APPROX_IDLE;
-    if (Bangle.isGPSOn()) current += APPROX_GPS;
-    if (Bangle.isHRMOn()) current += APPROX_HRM;
+    let mostExpensive = "P";
+
     if (!Bangle.isLocked()) current += APPROX_TOUCH + brightness();
-    if (Bangle.isCompassOn()) current += APPROX_COMPASS;
+    if (Bangle.isCompassOn()) {
+      current += APPROX_COMPASS;
+      mostExpensive = "C";
+    }
+    if (Bangle.isHRMOn()) {
+      current += APPROX_HRM;
+      mostExpensive = "H";
+    }
+    if (Bangle.isGPSOn()) {
+      current += APPROX_GPS;
+      mostExpensive = "G";
+    }
 
     current = current / MAX;
 
@@ -41,7 +52,7 @@ currently-running apps */
 
     g.setFont6x15();
     g.setFontAlign(0, 0);
-    g.drawString("P", this.x + 12, this.y + 15);
+    g.drawString(mostExpensive, this.x + 12, this.y + 15);
 
     let end = 135 + (current * (405 - 135));
     g.setColor(current > 0.7 ? "#f00" : (current > 0.3 ? "#ff0" : "#0f0"));
@@ -62,6 +73,8 @@ currently-running apps */
     width: 24,
     draw: draw
   };
+
+  Bangle.on("lock", draw);
 
   // conserve memory
   delete settings;
