@@ -59,7 +59,7 @@ function handleCliParameters ()
                 console.log('      --turl URL   In combination with --deepl, use URL as the API base URL');
                 process.exit(0);
             default:
-                die("Unknown parameter: "+param);
+                die("Unknown parameter: "+param+", use --help for options");
         }
     }
     if((hadTURL !== false || hadDEEPL !== false) && hadTURL !== hadDEEPL)
