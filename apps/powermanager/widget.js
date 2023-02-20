@@ -1,7 +1,7 @@
 /* run widgets in their own function scope so they don't interfere with
 currently-running apps */
 (() => {
-
+  const GU = require("graphics_utils");
   const APPROX_IDLE = 0.3;
   const APPROX_HIGH_BW_BLE = 0.5;
   const APPROX_COMPASS = process.HWVERSION == 2 ? 5.5 : 2;
@@ -13,36 +13,40 @@ currently-running apps */
   const MAX = APPROX_IDLE + APPROX_HIGH_BW_BLE + APPROX_COMPASS + APPROX_HRM + APPROX_CPU + APPROX_GPS + APPROX_TOUCH + APPROX_BACKLIGHT;
 
   function draw() {
-    g.reset(); // reset the graphics context to defaults (color/font/etc)
-    // add your code
+    g.reset();
+    g.clearRect(this.x, this.y, this.x+24, this.y+24);
 
     let current = APPROX_IDLE;
     if (Bangle.isGPSOn()) current += APPROX_GPS;
     if (Bangle.isHRMOn()) current += APPROX_HRM;
-    if (Bangle.isLocked()) current += APPROX_TOUCH + APPROX_BACKLIGHT;
+    if (!Bangle.isLocked()) current += APPROX_TOUCH + APPROX_BACKLIGHT;
     if (Bangle.isCompassOn()) current += APPROX_COMPASS;
-    g.setColor(g.theme.fg);
-    g.setFont6x15();
-    g.setFontAlign(1,-1);
-    g.drawString("mA", this.x + 14, this.y+13);
-    g.setFont6x15();
-    g.setFontAlign(1,-1);
-    g.drawString(current.toFixed(0), this.x + 14, this.y);
 
-    timeout = 5000;
+    current = current/MAX;
+    
+    g.setColor(g.theme.fg);
+
+    g.setFont6x15();
+    g.setFontAlign(0,0);
+    g.drawString("P", this.x + 12, this.y+15);
+
+    let end = 135 + (current*(405-135));
+    g.setColor(current > 0.7 ? "#f00" : (current > 0.3 ? "#ff0" : "#0f0"));
+    GU.fillArc(g, this.x + 12, this.y + 12, 8, 12, GU.degreesToRadians(135), GU.degreesToRadians(end));
+
     if (this.timeoutId !== undefined) {
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(()=>{
       this.timeoutId = undefined;
       this.draw();
-    }, timeout);
+    }, Bangle.isLocked() ? 60000 : 5000);
   }
 
   // add your widget
   WIDGETS.powermanager={
     area:"tl",
-    width: 14,
+    width: 24,
     draw:draw
   };
 })()
