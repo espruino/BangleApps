@@ -95,7 +95,7 @@ currently-running apps */
     draw: draw
   };
 
-  Bangle.on("lock", draw);
+  Bangle.on("lock", ()=>{draw(WIDGETS.powermanager);});
 
   // conserve memory
   delete settings;
