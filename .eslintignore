@@ -6,3 +6,6 @@ apps/qrcode/qr-scanner.umd.min.js
 apps/gipy/pkg/gpconv.js
 apps/health/chart.min.js
 *.test.js
+
+# typescript/generated files
+apps/btadv/*.js
