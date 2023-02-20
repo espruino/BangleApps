@@ -12,41 +12,57 @@ currently-running apps */
   const APPROX_BACKLIGHT = process.HWVERSION == 2 ? 16 : 40;
   const MAX = APPROX_IDLE + APPROX_HIGH_BW_BLE + APPROX_COMPASS + APPROX_HRM + APPROX_CPU + APPROX_GPS + APPROX_TOUCH + APPROX_BACKLIGHT;
 
+  let settings = require("Storage").readJSON("setting.json") || {};
+
+  let brightnessSetting = settings.brightness || 1;
+  Bangle.setLCDBrightness = ((o) => (a) => {
+    brightnessSetting = a;
+    draw();
+    return o(a);
+  })(Bangle.setLCDBrightness);
+
+  let brightness = () => {
+    return process.HWVERSION == 2 ? (brightnessSetting * APPROX_BACKLIGHT) : (brightnessSetting * 0.9 * 33 + 7);
+  };
+
   function draw() {
     g.reset();
-    g.clearRect(this.x, this.y, this.x+24, this.y+24);
+    g.clearRect(this.x, this.y, this.x + 24, this.y + 24);
 
     let current = APPROX_IDLE;
     if (Bangle.isGPSOn()) current += APPROX_GPS;
     if (Bangle.isHRMOn()) current += APPROX_HRM;
-    if (!Bangle.isLocked()) current += APPROX_TOUCH + APPROX_BACKLIGHT;
+    if (!Bangle.isLocked()) current += APPROX_TOUCH + brightness();
     if (Bangle.isCompassOn()) current += APPROX_COMPASS;
 
-    current = current/MAX;
-    
+    current = current / MAX;
+
     g.setColor(g.theme.fg);
 
     g.setFont6x15();
-    g.setFontAlign(0,0);
-    g.drawString("P", this.x + 12, this.y+15);
+    g.setFontAlign(0, 0);
+    g.drawString("P", this.x + 12, this.y + 15);
 
-    let end = 135 + (current*(405-135));
+    let end = 135 + (current * (405 - 135));
     g.setColor(current > 0.7 ? "#f00" : (current > 0.3 ? "#ff0" : "#0f0"));
     GU.fillArc(g, this.x + 12, this.y + 12, 8, 12, GU.degreesToRadians(135), GU.degreesToRadians(end));
 
     if (this.timeoutId !== undefined) {
       clearTimeout(this.timeoutId);
     }
-    this.timeoutId = setTimeout(()=>{
+    this.timeoutId = setTimeout(() => {
       this.timeoutId = undefined;
       this.draw();
     }, Bangle.isLocked() ? 60000 : 5000);
   }
 
   // add your widget
-  WIDGETS.powermanager={
-    area:"tl",
+  WIDGETS.powermanager = {
+    area: "tl",
     width: 24,
-    draw:draw
+    draw: draw
   };
-})()
+
+  // conserve memory
+  delete settings;
+})();
