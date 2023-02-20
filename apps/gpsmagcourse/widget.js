@@ -71,7 +71,7 @@
 
     // reset compass on click on widget
     Bangle.on('touch', function(button, touch) {
-      if (WIDGETS.gpsmagcourse && WIDGETS.gpsmagcourse.x && WIDGETS.gpsmagcourse.width && isInside({x: WIDGETS.gpsmagcourse.x, y: WIDGETS.gpsmagcourse.y, w: WIDGETS.gpsmagcourse.width, h: 24}, touch)) {
+      if (touch && WIDGETS.gpsmagcourse && WIDGETS.gpsmagcourse.x && WIDGETS.gpsmagcourse.width && isInside({x: WIDGETS.gpsmagcourse.x, y: WIDGETS.gpsmagcourse.y, w: WIDGETS.gpsmagcourse.width, h: 24}, touch)) {
         Bangle.buzz(50);
         Bangle.resetCompass();
       }

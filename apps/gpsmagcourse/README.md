@@ -1,9 +1,9 @@
-# GPS Compass heading switcher
+# GPS Compass course switcher
 The GPS course and speed is calculated by the difference of positions.
 However GPS position is noisy and prone to jump around.
 This results in randomly jumping GPS course values when speed is slow or standing still.
-So in these cases a user might want to get his moving direction from a compass instead.
-This is why this app replaces the GPS heading with the compass heading when the speed is slower then 6 km/h (threshold is configurable, see settings).
+So in these cases a user might want to get the moving direction from a compass instead.
+This is why this app replaces the GPS course with the compass heading when the speed is slower then 6 km/h (threshold is configurable, see settings).
 
 ## Important Notes
 * **Watch orientation**
@@ -19,30 +19,25 @@ This is why this app replaces the GPS heading with the compass heading when the 
   However the error from local magnetic interference and from calibration will probably be higher..
 
 ## Widget
-The widget indicates if the current GPS heading is provided from GPS or compass.
+The widget indicates if the current GPS course is provided from GPS or compass.
 It can be turned off in the settings.
 On Bangle.js 2 a click on the widget does reset the built-in compass.
 
 ## Settings
-* **speed**
-  - (default = 6 km/h) When lower then this use direction from compass
-* **compassSrc**
-  - off:
-  - built-in (default):
-  - Navigation Compass:
-* **reset compass on power on**
-  - off:
-  - on (default):
-* **tilt compensation**
-  - off:
-  - on (default):
-* **show Widget**
-  - Never
-  - Active (default): When replacing GPS course with compass course
-  - GPS on
-
-## TODO:
-- Document settings with defaults
-- Check magnav dependency in settings
-- note magnav silently downgrade
-- Test on BangleJS
+* **Speed threshold**
+  - (default = 6 km/h) When GPS speed is lower then this threshold use the compass direction.
+* **Compass source**
+  - off: Disables this addon.
+  - built-in (default): Uses the built-in compass. Its calibration can be restarted by pressing the Widget. When tilt compensation is disabled or "Navigation compass" is not installed the watch must be orientated horizontally for the compass heading to be used.
+  - magnav (only if "Navigation Compass" is installed): Compass heading is provided by "Navigation Compass" (magnav). Remember to calibrate it regularly.
+* **Reset compass when powered on**
+  - Off: Do nothing when compass is turned on.
+  - On (default): The calibration of the built-in compass is reset when it is turned on.
+* **Tilt compensation on built-in compass**
+  Only available if "Navigation Compass" is installed.
+  - Off: Leaves the value of the built-in compass unchanged.
+  - On (default): Apply the tilt compensation from "Navigation Compass" to the built-in compass in _all_ applications.
+* **Show Widget**
+  - Never: Widget is hidden.
+  - Active (default): Widget is only visible when replacing GPS course with compass heading.
+  - GPS on: Widget is shown as soon as GPS is enabled, crossed out when GPS provides the course and displayed normally when the compass heading is used.
