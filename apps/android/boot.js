@@ -143,7 +143,7 @@
 
         // modify event for using it as Bangle GPS event
         delete event.t;
-        event.satellites = NaN;
+        if (!isFinite(event.satellites)) event.satellites = NaN;
         if (!isFinite(event.course)) event.course = NaN;
         event.fix = 1;
         if (event.long!==undefined) { // for earlier Gadgetbridge implementations
