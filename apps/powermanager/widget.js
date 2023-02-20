@@ -27,7 +27,7 @@ currently-running apps */
 
   function draw() {
     g.reset();
-    g.clearRect(this.x, this.y, this.x + 24, this.y + 24);
+    g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
 
     let current = APPROX_IDLE;
     let mostExpensive = "P";
