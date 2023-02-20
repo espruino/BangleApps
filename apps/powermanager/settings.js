@@ -24,6 +24,12 @@
       'title': 'Power Manager'
     },
     "< Back" : back,
+    'Show widget': {
+      value: !!settings.widget,
+      onchange: v => {
+        writeSettings("widget", v);
+      }
+    },
     'Monotonic percentage': {
       value: !!settings.forceMonoPercentage,
       onchange: v => {

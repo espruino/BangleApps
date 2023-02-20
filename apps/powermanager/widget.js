@@ -1,6 +1,10 @@
 /* run widgets in their own function scope so they don't interfere with
 currently-running apps */
 (() => {
+  const s = require("Storage").readJSON("powermanager.json") || {};
+  
+  if (!s.widget) return;
+
   const GU = require("graphics_utils");
   const APPROX_IDLE = 0.3;
   const APPROX_HIGH_BW_BLE = 0.5;
