@@ -45,7 +45,7 @@ let settings = Object.assign({
     HRM: {
       min: 65,
       max: 170,
-    },
+    }
   },
 }, require("Storage").readJSON("run.json", 1) || {});
 let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
@@ -121,7 +121,7 @@ lc.push({ type:"h", filly:1, c:[
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"START", cb: onStartStop, id:"button"}]});
+},{lazy:true, btns:[{ label:"START", cb: ()=>{if (karvonnenActive) {stopKarvonnenUI();run();}; onStartStop();}, id:"button"}]});
 delete lc;
 layout.render();
 
