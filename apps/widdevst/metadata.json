@@ -1,11 +1,11 @@
 { "id": "widdevst",
   "name": "Device Status Widget",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Shows power status of Bluetooth, Compass, GPS and Heart Rate Monitor as well as storage and memory usage.",
   "icon": "icon.png",
   "type": "widget",
   "tags": "widget,bluetooth,compass,gps,hrm",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name": "widdevst.wid.js", "url": "wid.js"}

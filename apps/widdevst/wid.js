@@ -24,12 +24,18 @@
   }
 
   var draw = WIDGETS.devst.draw.bind(WIDGETS.devst);
-  var iid = setInterval(draw, 2000);
+  var iid = setInterval(draw, Bangle.isLocked() ? 6e4 : 2e3);
 
   Bangle.on('lcdPower', (on) => {
     if (on) {
       draw();
-      if (!iid) iid = setInterval(draw, 2000);
+      if (!iid) iid = setInterval(draw, Bangle.isLocked() ? 6e4 : 2e3);
     } else if (iid) iid = clearInterval(iid);
+  });
+  Bangle.on('lock', (on) => {
+    if (iid) {
+      clearInterval(iid);
+      iid = setInterval(draw, on ? 6e4 : 2e3);
+    }
   });
 })();
