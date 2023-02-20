@@ -1,10 +1,10 @@
 {
-  let settings = require("Storage").readJSON("quicklaunch.json", true) || {};
   const storage = require("Storage");
+  let settings = storage.readJSON("quicklaunch.json", true) || {};
 
   let reset = function(name){
     if (!settings[name]) settings[name] = {"name":"(none)"};
-    if (!require("Storage").read(settings[name].src)) settings[name] = {"name":"(none)"};
+    if (!storage.read(settings[name].src)) settings[name] = {"name":"(none)"};
     storage.write("quicklaunch.json", settings);
   };
 
@@ -13,7 +13,7 @@
     if (Bangle.CLKINFO_FOCUS) return;
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
-    if (settings.tapapp.src){ if (!storage.read(settings.tapapp.src)) reset("tapapp"); else load(settings.tapapp.src); }
+    if (settings.tapapp.src){ if (settings.tapapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.tapapp.src)) reset("tapapp"); else load(settings.tapapp.src); }
   });
 
   Bangle.on("swipe", (lr,ud) => {
