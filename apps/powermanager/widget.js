@@ -17,7 +17,7 @@ currently-running apps */
   let brightnessSetting = settings.brightness || 1;
   Bangle.setLCDBrightness = ((o) => (a) => {
     brightnessSetting = a;
-    draw();
+    draw(WIDGETS.powermanager);
     return o(a);
   })(Bangle.setLCDBrightness);
 
@@ -25,7 +25,7 @@ currently-running apps */
     return process.HWVERSION == 2 ? (brightnessSetting * APPROX_BACKLIGHT) : (brightnessSetting * 0.9 * 33 + 7);
   };
 
-  function draw() {
+  function draw(w) {
     g.reset();
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
 
@@ -63,7 +63,7 @@ currently-running apps */
     }
     this.timeoutId = setTimeout(() => {
       this.timeoutId = undefined;
-      this.draw();
+      w.draw(w);
     }, Bangle.isLocked() ? 60000 : 5000);
   }
 
