@@ -70,17 +70,28 @@ currently-running apps */
     GU.fillArc(g, w.x + 12, w.y + 12, 5.5, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu), GU.degreesToRadians(30));
   }
   let sTimeout;
+  let s2Timeout;
+  let systickDiff;
   function draw(w) {
+    let nextRefresh = Bangle.isLocked() ?  ((s.refreshLocked || 60) * 1000 ): ((s.refreshUnlocked || 1) * 1000)
+
+    if (s2Timeout) clearTimeout(s2Timeout);
     if (sTimeout) clearTimeout(sTimeout);
-    let systickNow = peek32(0xE000E018);
-    let t = Date.now();
-    sTimeout = setTimeout(() => {
+
+    let t,systickNow;
+    sTimeout = setTimeout(()=>{
+      systickNow = peek32(0xE000E018);
+      t = Date.now();
+    }, nextRefresh - SYSTICKWAIT - 100);
+
+    s2Timeout = setTimeout(() => {
       let tLater = Date.now();
       let systickLater = peek32(0xE000E018);
-      let systickDiff = systickLater - systickNow;
+      systickDiff = systickLater - systickNow;
       if (systickDiff < 0) systickDiff += SYSTICKMAX;
-      doDraw(w, 1 - systickDiff/SYSTICKMAX);
-    }, SYSTICKWAIT);
+    }, nextRefresh - 100);
+
+    doDraw(w, systickDiff ? (1 - systickDiff/SYSTICKMAX) : 0);
 
     if (w.timeoutId !== undefined) {
       clearTimeout(w.timeoutId);
@@ -88,7 +99,7 @@ currently-running apps */
     w.timeoutId = setTimeout(() => {
       w.timeoutId = undefined;
       w.draw(w);
-    }, Bangle.isLocked() ?  ((s.refreshLocked || 60) * 1000 ): ((s.refreshUnlocked || 1) * 1000));
+    }, nextRefresh);
   }
 
   // add your widget
@@ -98,7 +109,7 @@ currently-running apps */
     draw: draw
   };
 
-  Bangle.on("lock", ()=>{draw(WIDGETS.powermanager);});
+  Bangle.on("lock", ()=>{WIDGETS.powermanager.draw(WIDGETS.powermanager);});
 
   // conserve memory
   delete settings;
