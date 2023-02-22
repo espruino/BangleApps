@@ -47,7 +47,7 @@ let settings = Object.assign({
       max: 170,
     }
   },
-}, require("Storage").readJSON("run.json", 1) || {});
+}, require("Storage").readJSON("runplus.json", 1) || {});
 let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 let exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
@@ -188,7 +188,7 @@ let karvonnenInterval;
 // Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
   if (LR==-1 && karvonnenActive && !isMenuDisplayed) {stopKarvonnenUI(); run();}
-  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); karvonnenInterval = eval(require("Storage").read("run_karvonnen"))(settings.HRM, exs.stats.bpm);}
+  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); karvonnenInterval = eval(require("Storage").read("runplus_karvonnen"))(settings.HRM, exs.stats.bpm);}
 }
 // Listen for swipes with the swipeHandler
 Bangle.on("swipe", swipeHandler);
