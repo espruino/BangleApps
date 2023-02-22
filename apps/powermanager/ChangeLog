@@ -5,3 +5,4 @@
       Allow automatic calibration on every charge longer than 3 hours
 0.05: Add back button to settings menu.
 0.06: Allow logging of some things using power
+      Add widget for live monitoring of power use
