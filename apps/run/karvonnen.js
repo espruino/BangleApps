@@ -1,4 +1,4 @@
-exports.show = function karvonnen(hrmSettings, exsHrmStats) {
+(function karvonnen(hrmSettings, exsHrmStats) {
   //This app is an extra feature implementation for the Run.app of the bangle.js. It's called run+
   //The calculation of the Heart Rate Zones is based on the Karvonnen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
   //Other methods are even more approximative.
@@ -10,11 +10,10 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   g.reset().clearRect(R).setFontAlign(0,0,0);
     
   const x = "x"; const y = "y";
-  function Rdiv(axis, divisor) { // Used when placing things on the screen.
+  function Rdiv(axis, divisor) { // Used when placing things on the screen
     return axis=="x" ? (R.x + (R.w-1)/divisor):(R.y + (R.h-1)/divisor);
   }
-
-  let arrowData = { // Used to update points in the drawArrows function.
+  let linePoints = { //Not lists of points, but used to update points in the drawArrows function.
     x: [
   175/40,
   2,
@@ -32,11 +31,11 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   function drawArrows() {
     g.setColor(g.theme.fg);
     // Upper
-    g.drawLine(Rdiv(x,arrowData.x[0]), Rdiv(y,arrowData.y[0]), Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[1]));
-    g.drawLine(Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[1]), Rdiv(x,arrowData.x[2]), Rdiv(y,arrowData.y[0]));
+    g.drawLine(Rdiv(x,linePoints.x[0]), Rdiv(y,linePoints.y[0]), Rdiv(x,linePoints.x[1]), Rdiv(y,linePoints.y[1]));
+    g.drawLine(Rdiv(x,linePoints.x[1]), Rdiv(y,linePoints.y[1]), Rdiv(x,linePoints.x[2]), Rdiv(y,linePoints.y[0]));
     // Lower
-    g.drawLine(Rdiv(x,arrowData.x[0]), Rdiv(y,arrowData.y[2]), Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[3]));
-    g.drawLine(Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[3]), Rdiv(x,arrowData.x[2]), Rdiv(y,arrowData.y[2]));
+    g.drawLine(Rdiv(x,linePoints.x[0]), Rdiv(y,linePoints.y[2]), Rdiv(x,linePoints.x[1]), Rdiv(y,linePoints.y[3]));
+    g.drawLine(Rdiv(x,linePoints.x[1]), Rdiv(y,linePoints.y[3]), Rdiv(x,linePoints.x[2]), Rdiv(y,linePoints.y[2]));
   }
   
   //To calculate Heart rate zones, we need to know the heart rate reserve (HRR)
@@ -214,4 +213,4 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   }, 1000);
 
   return karvonnenInterval;
-};
+})
