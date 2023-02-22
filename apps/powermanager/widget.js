@@ -73,11 +73,11 @@ currently-running apps */
 
     let end = 135 + (current * (405 - 135));
     g.setColor(current > 0.7 ? "#f00" : (current > 0.3 ? "#ff0" : "#0f0"));
-    GU.fillArc(g, this.x + 12, this.y + 12, 9, 12, GU.degreesToRadians(135), GU.degreesToRadians(end));
+    GU.fillArc(g, this.x + 12, this.y + 12, 9, 12, GU.degreesToRadians(135), GU.degreesToRadians(end), GU.degreesToRadians(30));
 
     g.setColor(g.theme.fg);
     let endCpu = 135 + (cpu * (405 - 135));
-    GU.fillArc(g, this.x + 12, this.y + 12, 6, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu));
+    GU.fillArc(g, this.x + 12, this.y + 12, 6, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu), GU.degreesToRadians(30));
 
     if (this.timeoutId !== undefined) {
       clearTimeout(this.timeoutId);
