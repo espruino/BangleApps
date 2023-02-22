@@ -5,16 +5,8 @@ currently-running apps */
   
   if (!s.widget) return;
 
-  const systickMax = peek32(0xE000E014);
-  let t, systickNow, tLater, systickLater, systickDiff;
-  setInterval(() => {
-    tLater = Date.now();
-    systickLater = peek32(0xE000E018);
-    systickDiff = systickLater - systickNow;
-    if (systickDiff < 0) systickDiff += systickMax;
-    t = Date.now();
-    systickNow = peek32(0xE000E018);
-  }, 250);
+  const SYSTICKMAX = peek32(0xE000E014);
+  const SYSTICKWAIT = SYSTICKMAX/64000; // 64 MHz clock rate, Systick counting down on every non idle clock
 
   const GU = require("graphics_utils");
   const APPROX_IDLE = 0.3;
@@ -40,10 +32,9 @@ currently-running apps */
     return process.HWVERSION == 2 ? (brightnessSetting * APPROX_BACKLIGHT) : (brightnessSetting * 0.9 * 33 + 7);
   };
 
-  function draw(w) {
+  function doDraw(w, cpu){
     g.reset();
 
-    let cpu = 1 - systickDiff/systickMax;
     let current = APPROX_IDLE + cpu * APPROX_CPU;
     let mostExpensive = "P";
 
@@ -63,29 +54,38 @@ currently-running apps */
 
     current = current / MAX;
 
-    g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
+    g.clearRect(w.x, w.y, w.x + 23, w.y + 23);
 
     g.setColor(g.theme.fg);
 
     g.setFont6x15();
     g.setFontAlign(0, 0);
-    g.drawString(mostExpensive, this.x + 12, this.y + 15);
-
+    g.drawString(mostExpensive, w.x + 12, w.y + 15);
     let end = 135 + (current * (405 - 135));
     g.setColor(current > 0.7 ? "#f00" : (current > 0.3 ? "#ff0" : "#0f0"));
-    GU.fillArc(g, this.x + 12, this.y + 12, 9, 12, GU.degreesToRadians(135), GU.degreesToRadians(end), GU.degreesToRadians(30));
+    GU.fillArc(g, w.x + 12, w.y + 12, 9, 12, GU.degreesToRadians(135), GU.degreesToRadians(end), GU.degreesToRadians(30));
 
     g.setColor(g.theme.fg);
     let endCpu = 135 + (cpu * (405 - 135));
-    GU.fillArc(g, this.x + 12, this.y + 12, 6, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu), GU.degreesToRadians(30));
+    GU.fillArc(g, w.x + 12, w.y + 12, 5.5, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu), GU.degreesToRadians(30));
+  }
 
-    if (this.timeoutId !== undefined) {
-      clearTimeout(this.timeoutId);
-    }
-    this.timeoutId = setTimeout(() => {
-      this.timeoutId = undefined;
-      w.draw(w);
-    }, Bangle.isLocked() ? 60000 : 2000);
+  function draw(w) {
+    setTimeout((t, systickNow) => {
+      let tLater = Date.now();
+      let systickLater = peek32(0xE000E018);
+      let systickDiff = systickLater - systickNow;
+      if (systickDiff < 0) systickDiff += SYSTICKMAX;
+      doDraw(w, 1 - systickDiff/SYSTICKMAX);
+
+      if (w.timeoutId !== undefined) {
+        clearTimeout(w.timeoutId);
+      }
+      w.timeoutId = setTimeout(() => {
+        w.timeoutId = undefined;
+        w.draw(w);
+      }, Bangle.isLocked() ? 60000 : (s.unlockedRefresh || 1000) - SYSTICKWAIT);
+    }, SYSTICKWAIT, Date.now(), peek32(0xE000E018));
   }
 
   // add your widget
