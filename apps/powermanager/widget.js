@@ -69,23 +69,26 @@ currently-running apps */
     let endCpu = 135 + (cpu * (405 - 135));
     GU.fillArc(g, w.x + 12, w.y + 12, 5.5, 8, GU.degreesToRadians(135), GU.degreesToRadians(endCpu), GU.degreesToRadians(30));
   }
-
+  let sTimeout;
   function draw(w) {
-    setTimeout((t, systickNow) => {
+    if (sTimeout) clearTimeout(sTimeout);
+    let systickNow = peek32(0xE000E018);
+    let t = Date.now();
+    sTimeout = setTimeout(() => {
       let tLater = Date.now();
       let systickLater = peek32(0xE000E018);
       let systickDiff = systickLater - systickNow;
       if (systickDiff < 0) systickDiff += SYSTICKMAX;
       doDraw(w, 1 - systickDiff/SYSTICKMAX);
+    }, SYSTICKWAIT);
 
-      if (w.timeoutId !== undefined) {
-        clearTimeout(w.timeoutId);
-      }
-      w.timeoutId = setTimeout(() => {
-        w.timeoutId = undefined;
-        w.draw(w);
-      }, Bangle.isLocked() ?  (s.refreshLocked || 60) * 1000 : (s.refreshUnlocked || 1) * 1000 - SYSTICKWAIT);
-    }, SYSTICKWAIT, Date.now(), peek32(0xE000E018));
+    if (w.timeoutId !== undefined) {
+      clearTimeout(w.timeoutId);
+    }
+    w.timeoutId = setTimeout(() => {
+      w.timeoutId = undefined;
+      w.draw(w);
+    }, Bangle.isLocked() ?  ((s.refreshLocked || 60) * 1000 ): ((s.refreshUnlocked || 1) * 1000));
   }
 
   // add your widget
