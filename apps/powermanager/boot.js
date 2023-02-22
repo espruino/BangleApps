@@ -9,9 +9,9 @@
     let def = require('Storage').readJSON("powermanager.def.json", true) || {};
     if (!def.start) def.start = Date.now();
     if (!def.deferred) def.deferred = {};
-    let sen = require('Storage').readJSON("powermanager.sen.json", true) || {};
-    if (!sen.start) sen.start = Date.now();
-    if (!sen.power) sen.power = {};
+    let hw = require('Storage').readJSON("powermanager.hw.json", true) || {};
+    if (!hw.start) hw.start = Date.now();
+    if (!hw.power) hw.power = {};
 
     const saveEvery = 1000 * 60 * 5;
     const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
@@ -22,10 +22,10 @@
         def.saved = Date.now();
         require('Storage').writeJSON("powermanager.def.json", def);
       }
-      let senExists = require("Storage").read("powermanager.sen.json")!==undefined;
-      if (!(!senExists && sen.saved)){
-        sen.saved = Date.now();
-        require('Storage').writeJSON("powermanager.sen.json", sen);
+      let hwExists = require("Storage").read("powermanager.hw.json")!==undefined;
+      if (!(!hwExists && hw.saved)){
+        hw.saved = Date.now();
+        require('Storage').writeJSON("powermanager.hw.json", hw);
       }
     }
 
@@ -34,7 +34,7 @@
     E.on("kill", ()=>{
       for (let c of TO_WRAP){
         if (lastPowerOn[c] && Bangle["is"+c+"On"]()){
-          sen.power[c] += Date.now() - lastPowerOn[c];
+          hw.power[c] += Date.now() - lastPowerOn[c];
         }
       }
       save();
@@ -45,7 +45,7 @@
       logFile.write("p," + type + ',' + (oldstate?1:0) + ',' + (state?1:0) + ',' + app + "\n");
     };
     let logDeferred = (type, duration, source) => {
-      logFile.write(type + ',' + duration + ',' + source + "\n");
+      logFile.write(type + ',' + duration + ',' + source.replace(/\n/g, " ").replace(/,/g,"") + "\n");
     };
 
     let lastPowerOn = {};
@@ -66,7 +66,7 @@
           lastPowerOn[type] = Date.now();
         } else if (lastPowerOn[type] && !result){
           //switched off
-          sen.power[type] += Date.now() - lastPowerOn[type];
+          hw.power[type] += Date.now() - lastPowerOn[type];
           lastPowerOn[type] = undefined;
         }
 
@@ -76,23 +76,28 @@
     }
 
     let functions = {};
-
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval){
         return o.apply(this, arguments);
       } else {
-        let wrapped = ()=>{
-          let start = Date.now();
-          let result = a.apply(undefined, arguments.slice(1));
-          let end = Date.now()-start;
-          let f = a.toString().substring(0,100);
-          if (settings.logDetails) logDeferred(t, end, f);
-          if (!def.deferred[f]) def.deferred[f] = 0;
-          def.deferred[f] += end;
-          return result;
-        };
-        for (let p in a){
-          wrapped[p] = a[p];
+        let wrapped = a;
+        if (!a.__wrapped){
+          wrapped = ()=>{
+            let start = Date.now();
+            let result = a.apply(undefined, arguments.slice(1));
+            let end = Date.now()-start;
+            let f = a.toString().substring(0,100);
+            if (settings.logDetails) logDeferred(t, end, f);
+            if (!def.deferred[f]) def.deferred[f] = 0;
+            def.deferred[f] += end;
+            return result;
+          };
+          //copy over properties of functions
+          for (let p in a){
+            wrapped[p] = a[p];
+          }
+          //mark function as wrapped
+          wrapped.__wrapped = true;
         }
         let newArgs = arguments.slice();
         newArgs[0] = wrapped;

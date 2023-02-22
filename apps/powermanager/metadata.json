@@ -18,7 +18,7 @@
     {"name":"powermanager.default.json","url":"default.json"}
   ],
   "data": [
-    {"name":"powermanager.sen.json"},
+    {"name":"powermanager.hw.json"},
     {"name":"powermanager.def.json"},
     {"name":"powermanager.log"}
   ]
