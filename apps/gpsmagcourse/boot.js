@@ -6,6 +6,7 @@
     tiltCompensation: true, // tilt compensation on built-in compass
   }, require("Storage").readJSON("gpsmagcourse.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
+  let cntAboveSpeed = 0;
 
   // Check if magnav is installed
   try {
@@ -63,7 +64,8 @@
     };
 
     const changeGpsCourse = (gps) => {
-      if (gps.speed < settings.speed) {
+      cntAboveSpeed = gps.speed < settings.speed ? 0 : cntAboveSpeed+1;
+      if (cntAboveSpeed < 10) { // need to stay x events above or equal threshold
         if (settings.compassSrc === 1 && (settings.tiltCompensation || isFaceUp(Bangle.getAccel()))) { // Use uncompensated built-in compass heading only if face is up
           const heading = Bangle.getCompass().heading;
           if (!isNaN(heading)) {

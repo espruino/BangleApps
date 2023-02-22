@@ -49,7 +49,7 @@
       if (gps.courseOrig && WIDGETS.gpsmagcourse.show !== 1 && Bangle.isGPSOn()) {
         WIDGETS.gpsmagcourse.show = 1;
         WIDGETS.gpsmagcourse.draw();
-      } else if (WIDGETS.gpsmagcourse.show) {
+      } else if (!gps.courseOrig && WIDGETS.gpsmagcourse.show === 1) {
         WIDGETS.gpsmagcourse.show = settings.showWidget === 1 ? 0 : 2;
         WIDGETS.gpsmagcourse.draw();
       }

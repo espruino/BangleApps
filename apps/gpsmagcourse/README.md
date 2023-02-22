@@ -25,7 +25,7 @@ On Bangle.js 2 a click on the widget does reset the built-in compass.
 
 ## Settings
 * **Speed threshold**
-  - (default = 6 km/h) When GPS speed is lower then this threshold use the compass direction.
+  - (default = 6 km/h) When GPS speed is lower then this threshold use the compass direction. The speed must be for at least 10 seconds this fast to switch back to GPS course.
 * **Compass source**
   - off: Disables this addon.
   - built-in (default): Uses the built-in compass. Its calibration can be restarted by pressing the Widget. When tilt compensation is disabled or "Navigation compass" is not installed the watch must be orientated horizontally for the compass heading to be used.
