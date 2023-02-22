@@ -185,7 +185,7 @@ function stopKarvonnenUI() {
 }
 
 let karvonnenInterval;
-// Define the function to go back and foth between the different UI's
+// Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
   if (LR==-1 && karvonnenActive && !isMenuDisplayed) {stopKarvonnenUI(); run();}
   if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); karvonnenInterval = eval(require("Storage").read("run_karvonnen"))(settings.HRM, exs.stats.bpm);}
