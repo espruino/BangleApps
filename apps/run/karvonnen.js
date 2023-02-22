@@ -10,18 +10,33 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   g.reset().clearRect(R).setFontAlign(0,0,0);
     
   const x = "x"; const y = "y";
-  function Rdiv(xOrY, divisor) { // Used when placing things on the screen
-    return xOrY=="x" ? (R.x + (R.w-1)/divisor):(R.y + (R.h-1)/divisor);
+  function Rdiv(axis, divisor) { // Used when placing things on the screen.
+    return axis=="x" ? (R.x + (R.w-1)/divisor):(R.y + (R.h-1)/divisor);
   }
+
+  let arrowData = { // Used to update points in the drawArrows function.
+    x: [
+  175/40,
+  2,
+  175/135,
+    ],
+    y: [
+  175/64,
+  175/52,
+  175/110,
+  175/122,
+    ],
   
-  function drawLines() {
+  };
+  
+  function drawArrows() {
     g.setColor(g.theme.fg);
     // Upper
-    g.drawLine(Rdiv(x,175/40), Rdiv(y,175/64), Rdiv(x,2), Rdiv(y,175/52));
-    g.drawLine(Rdiv(x,2), Rdiv(y,175/52), Rdiv(x,175/135), Rdiv(y,175/64));
+    g.drawLine(Rdiv(x,arrowData.x[0]), Rdiv(y,arrowData.y[0]), Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[1]));
+    g.drawLine(Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[1]), Rdiv(x,arrowData.x[2]), Rdiv(y,arrowData.y[0]));
     // Lower
-    g.drawLine(Rdiv(x,175/40), Rdiv(y,175/110), Rdiv(x,2), Rdiv(y,175/122));
-    g.drawLine(Rdiv(x,2), Rdiv(y,175/122), Rdiv(x,175/135), Rdiv(y,175/110));
+    g.drawLine(Rdiv(x,arrowData.x[0]), Rdiv(y,arrowData.y[2]), Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[3]));
+    g.drawLine(Rdiv(x,arrowData.x[1]), Rdiv(y,arrowData.y[3]), Rdiv(x,arrowData.x[2]), Rdiv(y,arrowData.y[2]));
   }
   
   //To calculate Heart rate zones, we need to know the heart rate reserve (HRR)
@@ -60,20 +75,20 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   }
 
   function drawWaitHR() {
+    g.setColor(g.theme.fg);
+    // Waiting for HRM
     g.setFontAlign(0,0,0);
-    //g.clearRect(62,66,62+90,70+40);
-    g.setColor(g.theme.fg);
     g.setFont("Vector",50);
-    g.drawString("--", Rdiv(x,2), Rdiv(y,2)+4);
-    
-    // draw values of upper and lower limit of current zone
-    g.setFont("Vector",20);
-    g.setColor(g.theme.fg);
-    g.drawString("--", Rdiv(x,2), Rdiv(y,9/2));
-    g.drawString("--", Rdiv(x,2), Rdiv(y,9/7));
-    
+    g.drawString("--", Rdiv(x,2)+4, Rdiv(y,2)+4);
+
+    // Waiting for current Zone
     g.setFont("Vector",24);
     g.drawString("Z-", Rdiv(x,4.3), Rdiv(y,2)+2);
+
+    // waiting for upper and lower limit of current zone
+    g.setFont("Vector",20);
+    g.drawString("--", Rdiv(x,2)+2, Rdiv(y,9/2));
+    g.drawString("--", Rdiv(x,2)+2, Rdiv(y,9/7));
   }
   
   //These functions call arcs to show different HR zones.
@@ -90,8 +105,8 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   let startAngle = HRzones.degreesToRadians(-88.5);
   let endAngle = HRzones.degreesToRadians(268.5);
 
-  function drawBackGround() {
-    g.setColor("#002200");
+  function drawBgArc() {
+    g.setColor(g.theme.dark==false?0xC618:"#002200");
     HRzones.fillArc(g, centreX, centreY, minRadiusz, maxRadius, startAngle, endAngle);
   }
   
@@ -124,7 +139,7 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   }
   
   function getZone(zone) {
-    drawBackGround();
+    drawBgArc();
     clearCurrentZone();
     if (zone >= 0)  {zoning(minzone2, minhr);g.setColor("#00ffff");simplify(-88.5, -45, "Z1", 0, zone);}
     if (zone >= 1)  {zoning(maxzone2, minzone2);g.setColor("#00ff00");simplify(-43.5, -21.5, "Z2", 1, zone);}
@@ -155,7 +170,7 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   //Subdivided zones for better readability of zones when calling the images. //Changing HR zones will trigger the function with the image and previous&next HR zones.
   let subZoneLast;
   function drawZones() {
-    if ((hr < maxhr - 2) && subZoneLast==13) {g.clear(); drawLines(); drawHR();} // Reset UI when coming down from zone alert.
+    if ((hr < maxhr - 2) && subZoneLast==13) {g.clear(); drawArrows(); drawHR();} // Reset UI when coming down from zone alert.
     if (hr <= hrr * 0.6 + minhr) {if (subZoneLast!=0) {subZoneLast=0; getZone(subZoneLast);}} // Z1
     else if (hr <= hrr * 0.64 + minhr) {if (subZoneLast!=1) {subZoneLast=1; getZone(subZoneLast);}} // Z2a
     else if (hr <= hrr * 0.67 + minhr) {if (subZoneLast!=2) {subZoneLast=2; getZone(subZoneLast);}} // Z2b
@@ -173,20 +188,22 @@ exports.show = function karvonnen(hrmSettings, exsHrmStats) {
   }
   
   function initDraw() {
-    drawLines();
+    drawArrows();
     drawWaitHR();
-    drawBackGround();
+    drawBgArc();
     //drawZones();
   }
 
   let hrLast;
-  function updateUI() { // Update UI, only draw if warranted by change in HR
+  //h = 0; // Used to force hr update to trigger draws, together with `if (h!=0) hr = h;` below.
+  function updateUI() { // Update UI, only draw if warranted by change in HR.
     hrLast = hr;
     hr = exsHrmStats.getValue();
+    //if (h!=0) hr = h;
     if (hr!=hrLast) {
       drawHR();
       drawZones();
-    }
+    } //g.setColor(g.theme.fg).drawLine(175/2,0,175/2,175).drawLine(0,175/2,175,175/2); // Used to align UI elements.
   }
   
   initDraw();
