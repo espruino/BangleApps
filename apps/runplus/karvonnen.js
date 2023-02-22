@@ -82,7 +82,7 @@
 
     // Waiting for current Zone
     g.setFont("Vector",24);
-    g.drawString("Z-", Rdiv(x,4.3), Rdiv(y,2)+2);
+    g.drawString("Z-", Rdiv(x,4.3)-3, Rdiv(y,2)+2);
 
     // waiting for upper and lower limit of current zone
     g.setFont("Vector",20);
