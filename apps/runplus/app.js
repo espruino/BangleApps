@@ -41,12 +41,12 @@ let settings = Object.assign({
     time: {
       value: 0,
       notifications: [],
-    }
+    },
   },
   HRM: {
     min: 65,
     max: 170,
-  }
+  },
 }, require("Storage").readJSON("runplus.json", 1) || {});
 let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 let exs = ExStats.getStats(statIDs, settings);
@@ -100,7 +100,7 @@ function onStartStop() {
 let lc = [];
 // Load stats in pair by pair
 for (let i=0;i<statIDs.length;i+=2) {
-  let sa = exs.stats[statIDs[i+0]]
+  let sa = exs.stats[statIDs[i+0]];
   let sb = exs.stats[statIDs[i+1]];
   lc.push({ type:"h", filly:1, c:[
     sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol }:{},

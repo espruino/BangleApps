@@ -188,15 +188,14 @@
   
   function initDraw() {
     drawArrows();
-    drawWaitHR();
-    drawBgArc();
+    if (hr!=0) updateUI(true); else {drawWaitHR(); drawBgArc();}
     //drawZones();
   }
 
   let hrLast;
-  //h = 0; // Used to force hr update to trigger draws, together with `if (h!=0) hr = h;` below.
-  function updateUI() { // Update UI, only draw if warranted by change in HR.
-    hrLast = hr;
+  //h = 0; // Used to force hr update via web ui console field to trigger draws, together with `if (h!=0) hr = h;` below.
+  function updateUI(resetHrLast) { // Update UI, only draw if warranted by change in HR.
+    hrLast = resetHrLast?0:hr; // Handles correct updating on init depending on if we've got HRM readings yet or not.
     hr = exsHrmStats.getValue();
     //if (h!=0) hr = h;
     if (hr!=hrLast) {
