@@ -84,7 +84,7 @@ currently-running apps */
       w.timeoutId = setTimeout(() => {
         w.timeoutId = undefined;
         w.draw(w);
-      }, Bangle.isLocked() ? 60000 : (s.unlockedRefresh || 1000) - SYSTICKWAIT);
+      }, Bangle.isLocked() ?  (s.refreshLocked || 60) * 1000 : (s.refreshUnlocked || 1) * 1000 - SYSTICKWAIT);
     }, SYSTICKWAIT, Date.now(), peek32(0xE000E018));
   }
 
