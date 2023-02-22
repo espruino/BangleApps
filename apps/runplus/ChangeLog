@@ -15,3 +15,10 @@
 0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
 0.15: Keep run state between runs (allowing you to exit and restart the app)
 0.16: Added ability to resume a run that was stopped previously (fix #1907)
+0.17: Diverge from the standard "Run" app. Swipe to intensity interface a la Karvonen (curtesy of FTeacher at https://github.com/f-teacher)
+0.18: Don't clear zone 2b indicator segment when updating HRM reading.
+Write to correct settings file, fixing settings not working.
+0.19: Fix typo in variable name preventing starting a run
+0.20: Tweak HRM min/max defaults. Extend min/max intervals in settings. Fix
+	another typo.
+0.21: Rebase on "Run" app ver. 0.16.

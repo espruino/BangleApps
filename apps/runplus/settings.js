@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "run.json";
+  const SETTINGS_FILE = "runplus.json";
   var ExStats = require("exstats");
   var statsList = ExStats.getList();
   statsList.unshift({name:"-",id:""}); // add blank menu item
@@ -30,6 +30,10 @@
         increment: 0,
         notifications: [],
       },
+    },
+    HRM: {
+      min: 55,
+      max: 185,
     },
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
@@ -125,5 +129,29 @@
     'Box 6': getBoxChooser("B6"),
   });
   menu[/*LANG*/"Boxes"] = function() { E.showMenu(boxMenu)};
+
+  var hrmMenu = {
+    '< Back': function() { E.showMenu(menu) },
+  }
+
+  menu[/*LANG*/"HRM min/max"] = function() { E.showMenu(hrmMenu)};
+  hrmMenu[/*LANG*/"min"] = {
+    min: 1, max: 100,
+    value: settings.HRM.min,
+    format: w => w,
+    onchange: w => {
+      settings.HRM.min = w;
+      saveSettings();
+    },
+  }
+  hrmMenu[/*LANG*/"max"] = {
+    min: 101, max: 220,
+    value: settings.HRM.max,
+    format: v => v,
+    onchange: v => {
+      settings.HRM.max = v;
+      saveSettings();
+    },
+  }
   E.showMenu(menu);
 })

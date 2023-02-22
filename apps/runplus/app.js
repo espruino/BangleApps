@@ -1,16 +1,23 @@
-var ExStats = require("exstats");
-var B2 = process.env.HWVERSION===2;
-var Layout = require("Layout");
-var locale = require("locale");
-var fontHeading = "6x8:2";
-var fontValue = B2 ? "6x15:2" : "6x8:3";
-var headingCol = "#888";
-var fixCount = 0;
-var isMenuDisplayed = false;
+// Use widget utils to show/hide widgets
+let wu = require("widget_utils");
 
-g.clear();
+let runInterval;
+let karvonenActive = false;
+// Run interface wrapped in a function
+let ExStats = require("exstats");
+let B2 = process.env.HWVERSION===2;
+let Layout = require("Layout");
+let locale = require("locale");
+let fontHeading = "6x8:2";
+let fontValue = B2 ? "6x15:2" : "6x8:3";
+let headingCol = "#888";
+let fixCount = 0;
+let isMenuDisplayed = false;
+
+g.reset().clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+wu.show();
 
 // ---------------------------
 let settings = Object.assign({
@@ -36,9 +43,13 @@ let settings = Object.assign({
       notifications: [],
     },
   },
-}, require("Storage").readJSON("run.json", 1) || {});
-var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
-var exs = ExStats.getStats(statIDs, settings);
+  HRM: {
+    min: 55,
+    max: 185,
+  },
+}, require("Storage").readJSON("runplus.json", 1) || {});
+let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
+let exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
 function setStatus(running) {
@@ -100,11 +111,11 @@ function onStartStop() {
   });
 }
 
-var lc = [];
+let lc = [];
 // Load stats in pair by pair
-for (var i=0;i<statIDs.length;i+=2) {
-  var sa = exs.stats[statIDs[i+0]];
-  var sb = exs.stats[statIDs[i+1]];
+for (let i=0;i<statIDs.length;i+=2) {
+  let sa = exs.stats[statIDs[i+0]];
+  let sb = exs.stats[statIDs[i+1]];
   lc.push({ type:"h", filly:1, c:[
     sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol }:{},
     sb?{type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol }:{}
@@ -122,9 +133,9 @@ lc.push({ type:"h", filly:1, c:[
   {type:"txt", font:fontHeading, label:"---", id:"status", fillx:1 }
 ]});
 // Now calculate the layout
-var layout = new Layout( {
+let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {stopKarvonenUI();run();} onStartStop();}), id:"button"}]});
 delete lc;
 setStatus(exs.state.active);
 layout.render();
@@ -132,16 +143,16 @@ layout.render();
 function configureNotification(stat) {
   stat.on('notify', (e)=>{
     settings.notify[e.id].notifications.reduce(function (promise, buzzPattern) {
-        return promise.then(function () {
-          return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
-        });
+      return promise.then(function () {
+        return Bangle.buzz(buzzPattern[0], buzzPattern[1]);
+      });
     }, Promise.resolve());
   });
 }
 
 Object.keys(settings.notify).forEach((statType) => {
   if (settings.notify[statType].increment > 0 && exs.stats[statType]) {
-      configureNotification(exs.stats[statType]);
+    configureNotification(exs.stats[statType]);
   }
 });
 
@@ -153,8 +164,46 @@ Bangle.on("GPS", function(fix) {
     Bangle.buzz(); // first fix, does not need to respect quiet mode
   }
 });
-// We always call ourselves once a second to update
-setInterval(function() {
-  layout.clock.label = locale.time(new Date(),1);
-  if (!isMenuDisplayed) layout.render();
-}, 1000);
+
+// run() function used to switch between traditional run UI and karvonen UI
+function run() {
+  wu.show();
+  layout.lazy = false;
+  layout.render();
+  layout.lazy = true;
+  // We always call ourselves once a second to update
+  if (!runInterval){
+    runInterval = setInterval(function() {
+      layout.clock.label = locale.time(new Date(),1);
+      if (!isMenuDisplayed && !karvonenActive) layout.render();
+    }, 1000);
+  }
+}
+run();
+
+///////////////////////////////////////////////
+//                Karvonen
+///////////////////////////////////////////////
+
+function stopRunUI() {
+  // stop updating and drawing the traditional run app UI
+  clearInterval(runInterval);
+  runInterval = undefined;
+  karvonenActive = true;
+}
+
+function stopKarvonenUI() {
+  g.reset().clear();
+  clearInterval(karvonenInterval);
+  karvonenInterval = undefined;
+  karvonenActive = false;
+}
+
+let karvonenInterval;
+// Define the function to go back and forth between the different UI's
+function swipeHandler(LR,_) {
+  if (LR==-1 && karvonenActive && !isMenuDisplayed) {stopKarvonenUI(); run();}
+  if (LR==1 && !karvonenActive && !isMenuDisplayed) {stopRunUI(); karvonenInterval = eval(require("Storage").read("runplus_karvonen"))(settings.HRM, exs.stats.bpm);}
+}
+// Listen for swipes with the swipeHandler
+Bangle.on("swipe", swipeHandler);
