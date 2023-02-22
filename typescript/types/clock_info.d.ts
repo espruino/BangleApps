@@ -20,7 +20,7 @@ declare module ClockInfo {
       hasRange: true,
       get(): RangeItem,
     } | {
-      hasRange: false,
+      hasRange?: false,
       get(): Item,
     }
   );

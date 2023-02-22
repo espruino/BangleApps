@@ -10096,11 +10096,11 @@ interface String {
   /**
    *
    * @param {number} start - The start character index, if negative it is from the end of the string
-   * @param {any} end - The end character index, if negative it is from the end of the string, and if omitted it is the end of the string
+   * @param {any} [end] - [optional] The end character index, if negative it is from the end of the string, and if omitted it is the end of the string
    * @returns {any} Part of this string from start for len characters
    * @url http://www.espruino.com/Reference#l_String_slice
    */
-  slice(start: number, end: any): any;
+  slice(start: number, end?: any): any;
 
   /**
    * Return an array made by splitting this string up by the separator. e.g.
