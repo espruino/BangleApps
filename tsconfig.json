@@ -13,7 +13,7 @@
     "removeComments": true,
 
     "newLine": "lf",
-    "noEmitHelpers": false,
+    "noEmitHelpers": true, // we link to specific banglejs implementations
     "noEmitOnError": false,
     "preserveConstEnums": false,
     "importsNotUsedAsValues": "error",
