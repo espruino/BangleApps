@@ -140,7 +140,6 @@
       "gps": function() {
         const settings = require("Storage").readJSON("android.settings.json",1)||{};
         if (!settings.overwriteGps) return;
-
         // modify event for using it as Bangle GPS event
         delete event.t;
         if (!isFinite(event.satellites)) event.satellites = NaN;
@@ -154,27 +153,24 @@
           event.time = new Date(event.time);
         }
 
-        if (!gpsState.firstGPSEvent) {
+        if (!gpsState.lastGPSEvent) {
           // this is the first event, save time of arrival and deactivate internal GPS
-          gpsState.firstGPSEvent = Date.now();
           Bangle.moveGPSPower(0);
         } else {
-          if (!gpsState.interval){
-            // this is the second event, store the intervall for expecting the next GPS event
-            gpsState.interval = Date.now() - gpsState.firstGPSEvent;
-          }
+          // this is the second event, store the intervall for expecting the next GPS event
+          gpsState.interval = Date.now() - gpsState.lastGPSEvent;
         }
+        gpsState.lastGPSEvent = Date.now();
         // in any case, cleanup the GPS state in case no new events arrive
         if (gpsState.timeoutGPS) clearTimeout(gpsState.timeoutGPS);
         gpsState.timeoutGPS = setTimeout(()=>{
           // reset state
-          gpsState.firstGPSEvent = undefined;
+          gpsState.lastGPSEvent = undefined;
           gpsState.timeoutGPS = undefined;
           gpsState.interval = undefined;
           // did not get an expected GPS event but have GPS clients, switch back to internal GPS
           if (Bangle.isGPSOn()) Bangle.moveGPSPower(1);
         }, (gpsState.interval || 10000) + 1000);
-
         Bangle.emit('GPS', event);
       },
       // {t:"is_gps_active"}
@@ -288,7 +284,6 @@
   // GPS overwrite logic
   if (settings.overwriteGps) { // if the overwrite option is set..
     const origSetGPSPower = Bangle.setGPSPower;
-    // migrate all GPS clients to the other variant on connection events
     Bangle.moveGPSPower = (state) => {
       if (Bangle.isGPSOn()){
         let orig = Bangle._PWR.GPS;
@@ -303,7 +298,7 @@
     let wrap = function(f){
       return (s)=>{
         if (serialTimeout) clearTimeout(serialTimeout);
-        origSetGPSPower(1, "androidgpsserial")
+        origSetGPSPower(1, "androidgpsserial");
         f(s);
         serialTimeout = setTimeout(()=>{
           serialTimeout = undefined;
@@ -315,9 +310,9 @@
     Serial1.write = wrap(Serial1.write);
 
     // replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
-    Bangle.setGPSPower = (isOn, appID) => {
+    Bangle.setGPSPower = ((isOn, appID) => {
       let pwr;
-      if (!gpsState.firstGPSEvent){
+      if (!this.lastGPSEvent){
         // use internal GPS power function if no gps event has arrived from GadgetBridge
         pwr = origSetGPSPower(isOn, appID);
       } else {
@@ -334,7 +329,7 @@
       // always update Gadgetbridge on current power state
       gbSend({ t: "gps_power", status: pwr });
       return pwr;
-    };
+    }).bind(gpsState);
     // allow checking for GPS via GadgetBridge
     Bangle.isGPSOn = () => {
       return !!(Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0);
