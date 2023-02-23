@@ -26,7 +26,6 @@
     },
     /*LANG*/'Draw bell': {
       value: !!settings.drawBell,
-      format: v => v?/*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         settings.drawBell = v;
         writeSettings();

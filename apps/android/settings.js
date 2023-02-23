@@ -12,7 +12,7 @@
   var mainmenu = {
     "" : { "title" : "Android" },
     "< Back" : back,
-    /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
+    /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?/*LANG*/"Yes":/*LANG*/"No" },
     /*LANG*/"Find Phone" : () => E.showMenu({
         "" : { "title" : /*LANG*/"Find Phone" },
         "< Back" : ()=>E.showMenu(mainmenu),

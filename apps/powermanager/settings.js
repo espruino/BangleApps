@@ -106,7 +106,6 @@
     },
     'Enabled': {
       value: !!settings.warnEnabled,
-      format: v => settings.warnEnabled ? "On" : "Off",
       onchange: v => {
         writeSettings("warnEnabled", v);
       }

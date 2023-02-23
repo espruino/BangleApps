@@ -64,8 +64,6 @@ if (("object" != typeof settings) ||
     ("object" != typeof settings.options))
   resetSettings();
 
-const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
-
 function showMainMenu() {
 
   const mainmenu = {
@@ -102,7 +100,6 @@ function showAlertsMenu() {
   if (BANGLEJS2) {
     beepMenuItem = {
       value: settings.beep!=false,
-      format: boolFormat,
       onchange: v => {
         settings.beep = v;
         updateSettings();
@@ -134,7 +131,6 @@ function showAlertsMenu() {
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
       value: settings.vibrate,
-      format: boolFormat,
       onchange: () => {
         settings.vibrate = !settings.vibrate;
         updateSettings();
@@ -169,7 +165,6 @@ function showBLEMenu() {
     /*LANG*/'Make Connectable': ()=>makeConnectable(),
     /*LANG*/'BLE': {
       value: settings.ble,
-      format: boolFormat,
       onchange: () => {
         settings.ble = !settings.ble;
         updateSettings();
@@ -177,7 +172,6 @@ function showBLEMenu() {
     },
     /*LANG*/'Programmable': {
       value: settings.blerepl,
-      format: boolFormat,
       onchange: () => {
         settings.blerepl = !settings.blerepl;
         updateSettings();
@@ -428,7 +422,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
@@ -439,7 +432,6 @@ function showLCDMenu() {
     Object.assign(lcdMenu, {
     /*LANG*/'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN2 = !settings.options.wakeOnBTN2;
         updateOptions();
@@ -447,7 +439,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on BTN3': {
       value: settings.options.wakeOnBTN3,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
@@ -456,7 +447,6 @@ function showLCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnFaceUp = !settings.options.wakeOnFaceUp;
         updateOptions();
@@ -464,7 +454,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on Touch': {
       value: settings.options.wakeOnTouch,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
         updateOptions();
@@ -472,7 +461,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on Twist': {
       value: settings.options.wakeOnTwist,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnTwist = !settings.options.wakeOnTwist;
         updateOptions();

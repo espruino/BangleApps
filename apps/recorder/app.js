@@ -56,7 +56,6 @@ function showMainMenu() {
     '< Back': ()=>{load();},
     /*LANG*/'RECORD': {
       value: !!settings.recording,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
       onchange: v => {
         setTimeout(function() {
           E.showMenu();

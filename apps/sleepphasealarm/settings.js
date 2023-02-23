@@ -91,7 +91,6 @@
       "" : { "title" : "SleepPhaseAlarm" },
       'Keep alarm enabled': {
         value: !!config.settings.disableAlarm,
-        format: v => v?"No":"Yes",
         onchange: v => {
           config.settings.disableAlarm = v;
           writeSettings();
