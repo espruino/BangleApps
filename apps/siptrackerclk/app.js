@@ -39,6 +39,7 @@ Bangle.on('touch', (n, e) => {
   }
 });
 
+//visuals
 function drawTap(x,y,c,b){ //blue box
   if (d.getDate() != nowDate){
     tap=0;
@@ -73,13 +74,15 @@ function boxTap(x, y, color) { //progress
 }
 
 function milestone(phrase){ //progress
-  g.setFont(nameFont).drawString(phrase, 170, 20).setFontAlign(-1,0);
+  g.setFontAlign(1,0);
+  g.setFont(nameFont).drawString(phrase, 170, 20);
 }
 
-function encourage(phrase){
-  g.setFont(nameFont).drawString(phrase, 65, 20).setFontAlign(0,0);
+function encourage(phrase){ //non-bar tap
+  g.setFont(nameFont).drawString(phrase, 65, 20).setFontAlign(-1,0);
 }
 
+//time
 function isDay(state){
   var d = new Date();
   var currentHr = d.getHours();
