@@ -77,7 +77,7 @@
         }
       },
       'Unlock on alarm': {
-        value: settings.unlock,
+        value: !!settings.unlock,
         onchange: v => {
           settings.unlock = v;
           activityreminder.writeSettings(settings);
