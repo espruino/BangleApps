@@ -58,7 +58,6 @@
     },
     /*LANG*/'Reset compass when powered on': {
       value: !!settings.resetCompassOnPwr,
-      format: v => v?/*LANG*/"On":/*LANG*/"Off",
       onchange: v => {
         settings.resetCompassOnPwr = v;
         writeSettings();
@@ -78,7 +77,6 @@
   if (magnavInstalled) {
       menu[/*LANG*/'Tilt compensation on built-in compass'] = {
       value: !!settings.tiltCompensation,
-      format: v => v?/*LANG*/"On":/*LANG*/"Off",
       onchange: v => {
         settings.tiltCompensation = v;
         writeSettings();
