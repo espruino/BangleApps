@@ -2,6 +2,8 @@
 
 Made for Bangle.js 2
 
+![screenshot.png](https://github.com/elykittytee/BangleApps/blob/elykittytee-patch-1/apps/siptrackerclk/screenshot.png?raw=true)
+
 # Features
 - BG changes based on time
 
