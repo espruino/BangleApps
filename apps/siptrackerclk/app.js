@@ -3,13 +3,20 @@ const locale = require("locale");
 require("FontDylex7x13").add(Graphics);
 const nameFont= g.getFont();
 
-const width = 175;
+const width = 175; 
 const height = 175;
 
-var tap = 0;
+const bx1 = 120;
+const by2 = 165;
+const bFull = 135;
+const bWidth = 25;
+const offset = 30
+
+var tap = 0;//tap counter
 var d = new Date();
 var nowDate = d.getDate(); //today's date
-
+var encourage = ["You\'re doing great!","Pas de deux it!","Amazing~"];
+//images
 var imgDay = {
   width : 175, height : 175, bpp : 8,
   transparent : 254,
@@ -27,97 +34,91 @@ var imgDsk = {
   palette : new Uint16Array([13269,65535,31702,25381,25401,42097,52019,15317,17365,37938,31670,29654,52428,40017,37907,19413]),
   buffer : require("heatshrink").decompress(atob("iIA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4Aei93AAkAAwoA/AH4A/AHGHIH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AdgAJIuEHJf4A/AH4A3w5A/ACt4xBYJxBM/ABWIK5JiBJn6uLAAJbBLQRfCAQRaDCQRwEN4YECEAQFCvANCvAUGEQY3ECAQfCAQRGEHgj/DIAY1DAHyPCABhjDAH4AX/BA/ACuPK/4AW/4ABLI+PBQJN/VxJXCAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A0/e734KH3e7CxQVIBYQZBBRIwCA4QdKDRQDEJY5XDG4gwBAwRPFCoQMJBoQHCGQIEDAYIMCAgQCCSoyMHNwQMEGYoKDAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4Am2UiAH4A/AH4A/AH4AflWqACeiGcgQIHpyT/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A9qtVBRElBYNWJ35WJqQKJAANmsRQ/UQ9WsxVJBYIABNBSu7JQRWOK+g1BVhkms1lfQIXFq1lKwYOBB4r1vK5YNCT4RNBBQUmBQYADMwRXxJAVWsS7LIgJWCCIZUFAAohKVlBFDA4QODTQL3DAASuDVQoQFK2TkCsQHCqRKHIw5WFK4pSq8zaCJwT0BGwY+CdIhWKMYR0DDwbPCAFAsERwJIGWYavJBQYUDKoyurIIQ9BIwo7LBRBuIV2A9CGYayBHgo7FJYdSMBIAGK9MuKwfmKwpXEKxNVZwwAKJj3uABpWCKgQABqw6DCI5nBBYRwDABVuHBwAdIgdWVgo6E8te9yuDMoQcFAAJeGK1ozFsqSGCARhCM4IDEEZRTG8tVVtQALM4llXoYCCFiBWBK85WOtwPEKQT3UKwNWCaAALDhRWTXZIANY4NWYSIAKqpXQAwwXCKxVeEAosHVgLCTKxYdc9yyHsp+EBoJWLVzXlG4RXcVw7zBIoZJGKoIOCKzaNEKzavGsoFEQBAUFR7QeD9OZAAueCQ60YtwoFKoodJ9IDCDIoRID4VpKwwAGCIQECChmWKooTHBwY0OABed7oABzx1BrIVNCIJWBHARqOIxh5EAGdWRx3mf4wAGVbQAdrJHNAGGd7oAB6tVAAVdBAQAPC4YABCRgrECRorUJ5QyFABIZJCLIA/AH4A/AH4Ai7oAO6ownFEAA/AH4A/AH4A/AH4A/AH4A/AH4A0rnMAH4A/AH4A/AAlEAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AppEzmdE/9DBIdPCAv0okz//0pASFAggYBCQP//80/H0AwIACmg1FAogeBE4OPFwI9Noc/HYISBoc85nMLIPDAQIABmAyCMYMzgc8Bok8AwQaB4lDpk0DQYOBCYYnBCgM8JwU0HAJfBmdACQgZB4fMCgJEDCQQ9CJYgOBAAw3DDgISBCgQTIAAxLCCiIvCJgYUQIgQAXDQZJPYIiSCGpgjEThYUFEhgcFZ4otOcwJWFLQgvKCgKAFIxI9EEgoKCXgYMC4YiBFIj1BngpFHQgMBCgRZDCYYdDF5QhBDASNFGYTODKIgYCBQSKIABYUCJwYTMFYRjEChhjFChwqDAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AGmAA="))
 };
+var bg = [imgDay,imgNt,imgDsk];
 
+//TAP ALL THE THINGS
 Bangle.on('touch', (n, e) => {
   // <88, top
-  if (e.x > 120 && e.y < 165) {
-    boxTap(120, 30, 0x001F);
-    tap+=3;
+  if (e.x > bx1 && e.y < by2) { //bar
+    //tap counter, then draw
+    boxTap(bx1, by2);
   }
   else {
-    encourage("RANDOM ENCOURAGEMENT");
+    clearText();
+    g.setColor(0,0,0).setFont(nameFont).setFontAlign(0,0).drawString(getEncour(), width/2, 25);
+    setInterval(clearText,2000);
   }
 });
 
-//visuals
-function drawTap(x,y,c,b){ //blue box
-  if (d.getDate() != nowDate){
+//getters
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function getEncour(){ //return string
+  let string;  
+  return encourage[getRandomInt(encourage.length)];
+}
+
+//clear stuff
+function clearText(){
+  g.clearRect(0,10,175,offset-2);
+}
+
+function clearBar(){
+  g.setColor(1,1,1).fillRect(bx1+1, bWidth, by2, by2); //meterwhite
+  g.setColor(0x000).drawRect(bx1, bWidth, by2, by2); //meteroutline
+  g.clearRect(0,10,175,25); //textbox  
+}
+
+//progress bar
+function boxTap(x, y) {
+  if (tap <= 135) { 
+    //clear textbox, add progress bar
+    clearText();
+    g.setColor(0,0,1).fillRect(x+1, y - tap, y-1, y);
+    tap+=3;
+  } else { //HYDRATION ACHIEVED
+    g.setColor(0x000);
+    g.setColor(0,0,0).setFont(nameFont).setFontAlign(0,0).drawString("Hydration Achieved!", width/2, 25);
+  }
+}
+
+function time() {
+  var day = d.getDate();
+  var time = require("locale").time(d, 1);
+  var date = require("locale").date(d);
+  var mo = require("date_utils").month(d.getMonth() + 1, 1);
+
+  if (d.getDate() != nowDate){ //reset every new day
     tap=0;
+    clearBar();
   }
-  else {
-    g.setColor(0x000).drawRect(x, y, b, b);
-    g.setColor(c).fillRect(x, b - tap, b, b);
-  }
+
+  g.setFontAlign(1, 0);
+  g.setFont(nameFont, 5).drawString(time, 107, 80);
+  g.setFont(nameFont, 3).drawString(mo + " " + day, 100, 110);
 }
 
-function boxTap(x, y, color) { //progress
-  let b = 165;
-  if (tap>=120 && tap<=130) {
-    g.setColor(0x000);
-    milestone("Almost there~");
-    drawTap(x, y, color, b);
-  }  else if (tap>=65 && tap<=70) {
-    g.setColor(0x000);
-    milestone("OHHH YOU'RE HALFWAY THERE");
-    drawTap(x, y, color, b);
-  } else if (tap>=18 && tap<=20) {
-    g.setColor(0x000);
-    milestone("Great start!!");
-    drawTap(x, y, color, b);
-  } else if (tap <= 135) {
-    g.clearRect(0,10,175,25); //textbox clear
-    drawTap(x, y, color, b);
-  } else {
-    g.setColor(0x000);
-    milestone("Hydration achieved!");
-  }
-}
 
-function milestone(phrase){ //progress
-  g.setFontAlign(1,0);
-  g.setFont(nameFont).drawString(phrase, 170, 20);
-}
-
-function encourage(phrase){ //non-bar tap
-  g.setFont(nameFont).drawString(phrase, 65, 20).setFontAlign(-1,0);
-}
-
-//time
-function isDay(state){
-  var d = new Date();
+function go() {
   var currentHr = d.getHours();
-  if (currentHr>=19 && currentHr<=8){
+  if (currentHr>=19 && currentHr<=8){ //bg change on time
     g.drawImage(imgNt,0,20);
   } else if (currentHr>=17){
     g.drawImage(imgDsk,0,20);
   } else {
     g.drawImage(imgDay,0,20);
   }
-}
 
-function time(state) {
-  if (state==1){
-    g.setColor(1,1,1);
-  } else {
-    g.setColor(0,0,0);
-  }
-  var day = d.getDate();
-  var time = require("locale").time(d, 1);
-  var date = require("locale").date(d);
-  var mo = require("date_utils").month(d.getMonth() + 1, 1);
-  g.setFontAlign(1, 0);
-  g.setFont(nameFont, 5).drawString(time, 107, 80);
-  g.setFont(nameFont, 3).drawString(mo + " " + day, 100, 110);
-}
-
-function go() {  
-  //g.setColor(0xFF0).fillRect(0,0,175,175); //bg
-  isDay();
-  g.setColor(1,1,1).fillRect(120, 30, 165, 165); //meterwhite
-  g.setColor(0x000).drawRect(120, 30, 165, 165); //meteroutline
+  g.setColor(1,1,1).fillRect(bx1+1, bWidth, by2, by2); //meterwhite
+  g.setColor(0x000).drawRect(bx1, offset, by2, by2); //meteroutline
   g.clearRect(0,10,175,25); //textbox  
   time();
 }
+
+
+// g.clearRect(0,10,175,25); //textbox clear
 
 //ready set go!
 g.clear();
