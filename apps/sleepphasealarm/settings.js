@@ -92,7 +92,7 @@
       'Keep alarm enabled': {
         value: !!config.settings.disableAlarm,
         onchange: v => {
-          config.settings.disableAlarm = v;
+          config.settings.disableAlarm = !v;
           writeSettings();
         }
       },   "< Back" : () => back(),
