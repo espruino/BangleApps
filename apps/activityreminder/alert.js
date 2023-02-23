@@ -26,6 +26,13 @@
     if (!(storage.readJSON('setting.json', 1) || {}).quiet) {
       Bangle.buzz(400);
     }
+
+    if ((storage.readJSON('activityreminder.s.json', 1) || {}).unlock) {
+      console.log("unlock");
+      Bangle.setLocked(false);
+      Bangle.setLCDPower(1);
+    }
+
     setTimeout(load, 20000);
   }
 
