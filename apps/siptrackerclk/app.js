@@ -10,7 +10,7 @@ const bx1 = 120;
 const by2 = 165;
 const bFull = 135;
 const bWidth = 25;
-const offset = 30
+const offset = 30;
 
 var tap = 0;//tap counter
 var d = new Date();
@@ -34,8 +34,6 @@ var imgDsk = {
   palette : new Uint16Array([13269,65535,31702,25381,25401,42097,52019,15317,17365,37938,31670,29654,52428,40017,37907,19413]),
   buffer : require("heatshrink").decompress(atob("iIA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4Aei93AAkAAwoA/AH4A/AHGHIH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AdgAJIuEHJf4A/AH4A3w5A/ACt4xBYJxBM/ABWIK5JiBJn6uLAAJbBLQRfCAQRaDCQRwEN4YECEAQFCvANCvAUGEQY3ECAQfCAQRGEHgj/DIAY1DAHyPCABhjDAH4AX/BA/ACuPK/4AW/4ABLI+PBQJN/VxJXCAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A0/e734KH3e7CxQVIBYQZBBRIwCA4QdKDRQDEJY5XDG4gwBAwRPFCoQMJBoQHCGQIEDAYIMCAgQCCSoyMHNwQMEGYoKDAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4Am2UiAH4A/AH4A/AH4AflWqACeiGcgQIHpyT/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A9qtVBRElBYNWJ35WJqQKJAANmsRQ/UQ9WsxVJBYIABNBSu7JQRWOK+g1BVhkms1lfQIXFq1lKwYOBB4r1vK5YNCT4RNBBQUmBQYADMwRXxJAVWsS7LIgJWCCIZUFAAohKVlBFDA4QODTQL3DAASuDVQoQFK2TkCsQHCqRKHIw5WFK4pSq8zaCJwT0BGwY+CdIhWKMYR0DDwbPCAFAsERwJIGWYavJBQYUDKoyurIIQ9BIwo7LBRBuIV2A9CGYayBHgo7FJYdSMBIAGK9MuKwfmKwpXEKxNVZwwAKJj3uABpWCKgQABqw6DCI5nBBYRwDABVuHBwAdIgdWVgo6E8te9yuDMoQcFAAJeGK1ozFsqSGCARhCM4IDEEZRTG8tVVtQALM4llXoYCCFiBWBK85WOtwPEKQT3UKwNWCaAALDhRWTXZIANY4NWYSIAKqpXQAwwXCKxVeEAosHVgLCTKxYdc9yyHsp+EBoJWLVzXlG4RXcVw7zBIoZJGKoIOCKzaNEKzavGsoFEQBAUFR7QeD9OZAAueCQ60YtwoFKoodJ9IDCDIoRID4VpKwwAGCIQECChmWKooTHBwY0OABed7oABzx1BrIVNCIJWBHARqOIxh5EAGdWRx3mf4wAGVbQAdrJHNAGGd7oAB6tVAAVdBAQAPC4YABCRgrECRorUJ5QyFABIZJCLIA/AH4A/AH4Ai7oAO6ownFEAA/AH4A/AH4A/AH4A/AH4A/AH4A0rnMAH4A/AH4A/AAlEAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AppEzmdE/9DBIdPCAv0okz//0pASFAggYBCQP//80/H0AwIACmg1FAogeBE4OPFwI9Noc/HYISBoc85nMLIPDAQIABmAyCMYMzgc8Bok8AwQaB4lDpk0DQYOBCYYnBCgM8JwU0HAJfBmdACQgZB4fMCgJEDCQQ9CJYgOBAAw3DDgISBCgQTIAAxLCCiIvCJgYUQIgQAXDQZJPYIiSCGpgjEThYUFEhgcFZ4otOcwJWFLQgvKCgKAFIxI9EEgoKCXgYMC4YiBFIj1BngpFHQgMBCgRZDCYYdDF5QhBDASNFGYTODKIgYCBQSKIABYUCJwYTMFYRjEChhjFChwqDAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AGmAA="))
 };
-var bg = [imgDay,imgNt,imgDsk];
-
 //TAP ALL THE THINGS
 Bangle.on('touch', (n, e) => {
   // <88, top
@@ -68,13 +66,12 @@ function clearText(){
 function clearBar(){
   g.setColor(1,1,1).fillRect(bx1+1, bWidth, by2, by2); //meterwhite
   g.setColor(0x000).drawRect(bx1, bWidth, by2, by2); //meteroutline
-  g.clearRect(0,10,175,25); //textbox  
+  g.clearRect(0,10,175,25); //textbox
 }
 
 //progress bar
 function boxTap(x, y) {
-  if (tap <= 135) { 
-    //clear textbox, add progress bar
+  if (tap <= 135) { //clear textbox, add progress bar
     clearText();
     g.setColor(0,0,1).fillRect(x+1, y - tap, y-1, y);
     tap+=3;
@@ -84,7 +81,7 @@ function boxTap(x, y) {
   }
 }
 
-function time() {
+function drawTime() {
   var day = d.getDate();
   var time = require("locale").time(d, 1);
   var date = require("locale").date(d);
@@ -110,15 +107,11 @@ function go() {
   } else {
     g.drawImage(imgDay,0,20);
   }
-
   g.setColor(1,1,1).fillRect(bx1+1, bWidth, by2, by2); //meterwhite
   g.setColor(0x000).drawRect(bx1, offset, by2, by2); //meteroutline
   g.clearRect(0,10,175,25); //textbox  
-  time();
+  drawTime();
 }
-
-
-// g.clearRect(0,10,175,25); //textbox clear
 
 //ready set go!
 g.clear();
