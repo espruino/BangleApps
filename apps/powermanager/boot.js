@@ -84,7 +84,7 @@
         if (!a.__wrapped){
           wrapped = ()=>{
             let start = Date.now();
-            let result = a.apply(undefined, arguments.slice(1));
+            let result = a.apply(undefined, arguments.slice(2)); // function arguments for deferred calls start at index 2, first is function, second is time
             let end = Date.now()-start;
             let f = a.toString().substring(0,100);
             if (settings.logDetails) logDeferred(t, end, f);
