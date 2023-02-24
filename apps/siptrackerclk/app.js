@@ -10,7 +10,7 @@ const bx1 = 120;
 const by2 = 165;
 const bFull = 135;
 const bWidth = 25;
-const offset = 30
+const offset = 30;
 
 var tap = 0;//tap counter
 var d = new Date();
