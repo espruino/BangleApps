@@ -67,7 +67,7 @@
   // HR data: large, readable, in the middle of the screen
   function drawHR() {
     g.setFontAlign(-1,0,0);
-    g.clearRect(Rdiv(x,11/4),Rdiv(y,2)-25,Rdiv(x,11/4)+50*2,Rdiv(y,2)+25);
+    g.clearRect(Rdiv(x,11/4),Rdiv(y,2)-25,Rdiv(x,11/4)+50*2-14,Rdiv(y,2)+25);
     g.setColor(g.theme.fg);
     g.setFont("Vector",50);
     g.drawString(hr, Rdiv(x,11/4), Rdiv(y,2)+4);
