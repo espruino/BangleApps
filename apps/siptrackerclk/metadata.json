@@ -8,6 +8,7 @@
   "tags": "clock",
   "supports" : ["BANGLEJS2"],  
   "allow_emulator": true,
+  "screenshots" : [ { "url":"screenshot.png" } ],
   "readme": "README.md",
   "storage": [
     {"name":"siptrackerclk.app.js","url":"app.js"},
