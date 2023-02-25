@@ -81,22 +81,16 @@ function touchHandler (button, xy) {
 
 function accelHandler (xyz) {
 	
-	Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
 	if (xyz.diff >= 0.3) {
 		
-		menu = false;
-		rollDice();
+		Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
 		
-		Bangle.buzz(50, 0.5).then (() => {
+		menu = false;
+		rollDice (function() {
 			
-			setTimeout (function() { // wait 50ms *after* the buzzing has stopped
-				
-				Bangle.on ('accel', accelHandler);
-			}, 50);
+			Bangle.on ('accel', accelHandler); // re-enable acceleration events
 		});
 	}
-	
-	Bangle.on ('accel', accelHandler); // re-enable acceleration events
 }
 
 function voidFn() {
@@ -104,7 +98,7 @@ function voidFn() {
 	return;
 }
 
-function rollDice() {
+function rollDice (timeoutFunctionRef) {
 	
 	resultsArr = new Uint8Array (8);
 	for (i = 0; i < 8; i++) {
@@ -133,6 +127,16 @@ function rollDice() {
 			g.drawString (("	 " + resultsArr [i]).slice (-3), 96, 10 + 40 * (i - 4));
 		}
 	}
+	
+	vibrate (timeoutFunctionRef);
+}
+
+function vibrate (timeoutFunctionRef) {
+	
+	Bangle.buzz(50, 0.5).then (() => {
+		
+		setTimeout (timeoutFunctionRef, 50);
+	});
 }
 
 function random (max) {
@@ -142,17 +146,10 @@ function random (max) {
 
 drawMenu();
 Bangle.on ('touch', touchHandler);
-//Bangle.on ('accel', accelHandler);
-setWatch (function() {
+Bangle.on ('accel', accelHandler);
+/*setWatch (function() {
 	
 	menu = false;
 	rollDice();
 	
-	Bangle.buzz(50, 0.5).then (() => {
-		
-		setTimeout (function() { // wait 50ms *after* the buzzing has stopped
-			
-			//Bangle.on ('accel', accelHandler);
-		}, 50);
-	});
-}, BTN, {repeat: true, edge: "falling", debounce: 10});
+}, BTN, {repeat: true, edge: "falling", debounce: 10});*/
