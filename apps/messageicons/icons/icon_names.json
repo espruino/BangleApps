@@ -42,6 +42,7 @@
   { "app":"google play store", "icon":"google play store.png" },
   { "app":"home assistant", "icon":"home assistant.png" },
   { "app":"instagram", "icon":"instagram.png" },
+  { "app":"jira", "icon":"jira.png" },
   { "app":"kalender", "icon":"kalender.png" },
   { "app":"keep notes", "icon":"google keep.png" },
   { "app":"lieferando", "icon":"lieferando.png" },

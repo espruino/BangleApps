@@ -15,7 +15,6 @@
     "< Back" : () => back(),
     'Smooth arrow rot': {
       value: !!settings.smoothDirection,
-      format: v => v?"Yes":"No",
       onchange: v => {
         settings.smoothDirection = v;
         writeSettings();

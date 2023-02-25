@@ -25,3 +25,4 @@
 0.19: Fix track plotting code
 0.20: Automatic translation of some more strings.
 0.21: Speed report now uses speed units from locale
+0.22: Convert Yes/No On/Off in settings to checkboxes

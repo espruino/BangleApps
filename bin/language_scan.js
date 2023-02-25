@@ -59,7 +59,7 @@ function handleCliParameters ()
                 console.log('      --turl URL   In combination with --deepl, use URL as the API base URL');
                 process.exit(0);
             default:
-                die("Unknown parameter: "+param);
+                die("Unknown parameter: "+param+", use --help for options");
         }
     }
     if((hadTURL !== false || hadDEEPL !== false) && hadTURL !== hadDEEPL)
@@ -122,25 +122,11 @@ function log(s) {
   console.log(s);
 }
 
-var appsFile, apps;
-try {
-  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
-} catch (e) {
-  ERROR("apps.json not found");
-}
-if (appsFile.indexOf("---") === 0 && fs.existsSync(BASEDIR+"bin/create_apps_json.sh"))
-{
-    console.log("apps.json has not been generated, running bin/create_apps_json.sh to build it...");
-    childProcess.execFileSync(BASEDIR+'bin/create_apps_json.sh',[],{
-        stdio: 'inherit'
-    });
-  appsFile = fs.readFileSync(BASEDIR+"apps.json").toString();
-}
-try{
-  apps = JSON.parse(appsFile);
-} catch (e) {
-  ERROR("apps.json not valid JSON");
-}
+var apploader = require("./lib/apploader.js");
+apploader.init({
+  DEVICEID : "BANGLEJS2"
+});
+var apps = apploader.apps;
 
 // Given a string value, work out if it's obviously not a text string
 function isNotString(s, wasFnCall, wasArrayAccess) {

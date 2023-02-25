@@ -46,8 +46,8 @@ var mainMenu = {
   "Reset Homework": function() {
     E.showPrompt("Are you sure you want to delete homework.txt?", {
       buttons: {
-        "No": false,
-        "Yes": true
+        /*LANG*/"No": false,
+        /*LANG*/"Yes": true
       }
     }).then(function(v) {
       if (v) {

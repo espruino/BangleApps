@@ -17,3 +17,5 @@
 0.14: Reduce update interval of current time when seconds are not shown
       Limit logging on Bangle.js 1 to one day due to low memory
       Add plot logged data to settings
+0.15: Convert Yes/No On/Off in settings to checkboxes
+0.16: Fix Keep alarm enabled inverted settings

@@ -26,8 +26,7 @@ function showMenu() {
       viewLogs();
     },
     /*LANG*/"Log raw data" : {
-      value : logRawData,
-      format : v => v?/*LANG*/"Yes":/*LANG*/"No",
+      value : !!logRawData,
       onchange : v => { logRawData=v; }
     },
   };
