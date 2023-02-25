@@ -5,3 +5,4 @@
 1.03: vibration caused the accelerometer to never stop
 1.04: decreased vibration strength
 1.05: toggled the acceleration handler to prevent infinite buzz loop
+1.06: increased vibration again
