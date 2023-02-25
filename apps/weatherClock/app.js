@@ -22,9 +22,9 @@ var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqg
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-  settings.day = settings.day||true;
-  settings.date = settings.date||true;
-  settings.wind = settings.wind||true;
+  settings.day = (settings.day === undefined ? true : settings.day);
+  settings.date = (settings.date === undefined ? true : settings.date);
+  settings.wind = (settings.wind === undefined ? true : settings.wind);
 }
 
 /**
