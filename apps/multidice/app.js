@@ -83,12 +83,12 @@ function accelHandler (xyz) {
 	
 	if (xyz.diff >= 0.3) {
 		
-		//Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
+		Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
 		
 		menu = false;
 		rollDice (function() {
 			
-			//Bangle.on ('accel', accelHandler); // re-enable acceleration events
+			Bangle.on ('accel', accelHandler); // re-enable acceleration events
 		});
 	}
 }
@@ -135,7 +135,7 @@ function vibrate (timeoutFunctionRef) {
 	
 	Bangle.buzz(50, 0.5).then (() => {
 		
-		setTimeout (timeoutFunctionRef, 50);
+		setTimeout (timeoutFunctionRef, 150);
 	});
 }
 
