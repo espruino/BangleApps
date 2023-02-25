@@ -2,7 +2,7 @@
   "id": "weatherClock",
   "name": "Weather Clock",
   "shortName": "Weather Clock",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A clock which displays current weather conditions (requires Gadgetbridge and Weather apps).",
   "icon": "app.png",
   "dependencies": {"weather":"app"},
@@ -15,7 +15,7 @@
   "storage": [
     {"name":"weatherClock.app.js","url":"app.js"},
     {"name":"weatherClock.img","url":"app-icon.js","evaluate":true},
-    {"name":"weatherClock.settings.js","url":"weatherClock.settings.js"}
+    {"name":"weatherClock.settings.js","url":"settings.js"}
    ],
   "data": [{"name":"weatherClock.json"}]
 }
