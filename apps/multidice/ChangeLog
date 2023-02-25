@@ -10,3 +10,4 @@
 1.08: still trying to fix the lack of vibrations
 1.09: hopefully now it's fixed?
 1.10: not having web bluetooth to debug is a PAIN
+1.11: decreased vibration time, decreased accel requirement

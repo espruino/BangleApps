@@ -84,7 +84,7 @@ function touchHandler (button, xy) {
 
 function accelHandler (xyz) {
 	
-	if (xyz.diff >= 0.4) {
+	if (xyz.diff >= 0.3) {
 		
 		menu = false;
 		rollDice();
@@ -126,12 +126,7 @@ function rollDice() {
 		}
 	}
 	
-	Bangle.on ('accel', voidFn);
-	console.log ("before");
-	Bangle.buzz().then(()=>{
-		Bangle.on ('accel', accelHandler);
-	});
-	console.log ("after");
+	vibrate();
 }
 
 function random (max) {
@@ -142,9 +137,8 @@ function random (max) {
 function vibrate() {
 	
 	Bangle.on ('accel', voidFn);
-	Bangle.buzz().then ((value) => {
+	Bangle.buzz(50, 1).then ((value) => {
 		
-		console.log ("I ran.");
 		Bangle.on ('accel', accelHandler);
 	});
 }
