@@ -7,3 +7,4 @@
 1.05: toggled the acceleration handler to prevent infinite buzz loop
 1.06: increased vibration again
 1.07: IDK how to use promises properly
+1.08: still trying to fix the lack of vibrations

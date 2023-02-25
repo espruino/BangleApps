@@ -1,7 +1,7 @@
 { "id": "multidice",
   "name": "multiple dice roller",
   "shortName":"multidice",
-  "version":"1.07",
+  "version":"1.08",
   "description": "roll anywhere from 1-8 dice at the same time",
   "icon": "app.png",
   "tags": "tool,game",
