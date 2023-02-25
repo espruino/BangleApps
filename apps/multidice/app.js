@@ -109,7 +109,7 @@ function rollDice() {
     }
   }
   
-  Bangle.buzz();
+  Bangle.buzz (200, 0.1);
 }
 
 function random (max) {
@@ -121,7 +121,7 @@ drawMenu();
 Bangle.on ('touch', touchHandler);
 Bangle.on ('accel', function (xyz) {
   
-  if (xyz.diff >= 0.5) {
+  if (xyz.diff >= 0.4) {
     
     menu = false;
     rollDice();
