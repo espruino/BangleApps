@@ -2,7 +2,6 @@ const Layout = require("Layout");
 const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
-let settings;
 
 // weather icons from https://icons8.com/icon/set/weather/color
 var sunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
@@ -20,12 +19,10 @@ var stormIcon = require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmY
 // err icon - https://icons8.com/icons/set/error
 var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
 
-function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-  settings.day = (settings.day === undefined ? true : settings.day);
-  settings.date = (settings.date === undefined ? true : settings.date);
-  settings.wind = (settings.wind === undefined ? true : settings.wind);
-}
+var settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+settings.day = (settings.day === undefined ? true : settings.day);
+settings.date = (settings.date === undefined ? true : settings.date);
+settings.wind = (settings.wind === undefined ? true : settings.wind);
 
 /**
 Choose weather icon to display based on condition.
@@ -92,6 +89,8 @@ function getWeather() {
   return jsonWeather;
 }
 
+let fontTemp = settings.wind ? "10%" : "20%";
+let fontWind = settings.wind ? "10%" : "0%";
 var clockLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
@@ -104,10 +103,10 @@ var clockLayout = new Layout( {
       {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "temp", label: "000 °C"},
+            {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},
           ]},
           {type: "h", c: [
-            {type: "txt", font: "10%", id: "wind", label: "00 km/h"},
+            {type: "txt", font: fontWind, id: "wind", label: "00 km/h"},
           ]}
         ]
       },
@@ -155,8 +154,6 @@ function draw() {
   // queue draw in one minute
   queueDraw();
 }
-
-loadSettings();
 
 g.clear();
 Bangle.setUI("clock");  // Show launcher when middle button pressed
