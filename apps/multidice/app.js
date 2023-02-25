@@ -105,7 +105,7 @@ function rollDice() {
     
     if (SELECTION_ARRAY [i] != 0) {
       
-      g.drawString (("   " + resultsArr [i]).slice (-3), 96, 10 + 40 * i);
+      g.drawString (("   " + resultsArr [i]).slice (-3), 96, 10 + 40 * (i - 4));
     }
   }
 }
