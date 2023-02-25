@@ -1,6 +1,8 @@
 const Layout = require("Layout");
 const storage = require('Storage');
 const locale = require("locale");
+const SETTINGS_FILE = "weatherClock.json";
+let settings;
 
 // weather icons from https://icons8.com/icon/set/weather/color
 var sunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
@@ -17,6 +19,13 @@ var stormIcon = require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmY
 
 // err icon - https://icons8.com/icons/set/error
 var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
+
+function loadSettings() {
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.day = settings.day||true;
+  settings.date = settings.date||true;
+  settings.wind = settings.wind||true;
+}
 
 /**
 Choose weather icon to display based on condition.
@@ -120,8 +129,8 @@ function queueDraw() {
 function draw() {
   var date = new Date();
   clockLayout.time.label = locale.time(date, 1);
-  clockLayout.date.label = locale.date(date, 1).toUpperCase();
-  clockLayout.dow.label = locale.dow(date, 1).toUpperCase() + " ";
+  clockLayout.date.label = (settings.date) ? locale.date(date, 1).toUpperCase() : "";
+  clockLayout.dow.label = (settings.day) ? locale.dow(date, 1).toUpperCase() + " " : "";
   var weatherJson = getWeather();
   if(weatherJson && weatherJson.weather){
       var currentWeather = weatherJson.weather;
