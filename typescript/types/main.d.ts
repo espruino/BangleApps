@@ -8963,32 +8963,32 @@ interface Function {
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} params - Optional Parameters
    * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_call
    */
-  call(this: any, ...params: any[]): any;
+  call(thisArg: any, ...params: any[]): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} args - Optional Array of Arguments
    * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_apply
    */
-  apply(this: any, args: any): any;
+  apply(thisArg: any, args: ArrayLike<any>): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} params - Optional Default parameters that are prepended to the call
    * @returns {any} The 'bound' function
    * @url http://www.espruino.com/Reference#l_Function_bind
    */
-  bind(this: any, ...params: any[]): any;
+  bind(thisArg: any, ...params: any[]): any;
 }
 
 /**
