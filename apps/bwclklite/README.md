@@ -5,9 +5,9 @@ This is a fork of a very minimalistic clock.
 
 ## Features
 The BW clock implements features that are exposed by other apps through the `clkinfo` module.
-For example, if you install the HomeAssistant app, this menu item will be shown if you first
-touch the bottom of the screen and then swipe left/right to the home assistant menu. To select
-sub-items simply swipe up/down. To run an action (e.g. trigger home assistant), simply select the clkinfo (border) and touch on the item again. See also the screenshot below:
+For example, if you install the Simple Timer app, this menu item will be shown if you first
+touch the bottom of the screen and then swipe left/right to the Simple Timer menu. To select
+sub-items simply swipe up/down. To run an action (e.g. add 5 min), simply select the clkinfo (border) and touch on the item again. See also the screenshot below:
 
 ![](screenshot_3.png)
 
