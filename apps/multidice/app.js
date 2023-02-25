@@ -35,9 +35,6 @@ function touchHandler (button, xy) {
 		return;
 	}
 	
-	rollDice();
-	return;
-	
 	if (xy.x <= 87) { // left
 		
 		if (xy.y <= 43) {
@@ -84,11 +81,22 @@ function touchHandler (button, xy) {
 
 function accelHandler (xyz) {
 	
+	Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
 	if (xyz.diff >= 0.3) {
 		
 		menu = false;
 		rollDice();
+		
+		Bangle.buzz(50, 0.5).then (() => {
+			
+			setTimeout (function() { // wait 50ms *after* the buzzing has stopped
+				
+				Bangle.on ('accel', accelHandler);
+			}, 50);
+		});
 	}
+	
+	Bangle.on ('accel', accelHandler); // re-enable acceleration events
 }
 
 function voidFn() {
@@ -125,15 +133,6 @@ function rollDice() {
 			g.drawString (("	 " + resultsArr [i]).slice (-3), 96, 10 + 40 * (i - 4));
 		}
 	}
-	
-	Bangle.on ('accel', voidFn);
-	Bangle.buzz(50, 0.5).then (() => {
-		
-		setTimeout (function() { // wait 50ms *after* the buzzing has stopped
-			
-			Bangle.on ('accel', accelHandler);
-		}, 1000);
-	});
 }
 
 function random (max) {
