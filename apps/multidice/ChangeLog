@@ -17,3 +17,4 @@
 1.15: moved accel & vibration commands to the accelHandler function
 1.16: enabled button usage & temporarily disabled acceleration
 1.17: made changes to when accelHandler gets overwritten, temporarily disabled button usage
+1.18: decided to keep around the button even while testing, disabled all safety round the accelHandler self-triggering

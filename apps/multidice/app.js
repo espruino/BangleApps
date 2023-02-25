@@ -83,12 +83,12 @@ function accelHandler (xyz) {
 	
 	if (xyz.diff >= 0.3) {
 		
-		Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
+		//Bangle.on ('accel', voidFn); // temporarily disable more acceleration events
 		
 		menu = false;
 		rollDice (function() {
 			
-			Bangle.on ('accel', accelHandler); // re-enable acceleration events
+			//Bangle.on ('accel', accelHandler); // re-enable acceleration events
 		});
 	}
 }
@@ -147,9 +147,9 @@ function random (max) {
 drawMenu();
 Bangle.on ('touch', touchHandler);
 Bangle.on ('accel', accelHandler);
-/*setWatch (function() {
+setWatch (function() {
 	
 	menu = false;
-	rollDice();
+	rollDice (voidFn);
 	
-}, BTN, {repeat: true, edge: "falling", debounce: 10});*/
+}, BTN, {repeat: true, edge: "falling", debounce: 10});
