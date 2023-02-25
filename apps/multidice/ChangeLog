@@ -1,3 +1,4 @@
 0.90: got most of the features done, lacking some polish and real-hardware testing
 1.00: overhauled the whole app, made some margins larger to be easier to tap on
 1.01: fixed bug that caused rolled dice on the right of screen to be writ off-screen
+1.02: added vibration when dice is rolled

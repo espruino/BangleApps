@@ -108,6 +108,8 @@ function rollDice() {
       g.drawString (("   " + resultsArr [i]).slice (-3), 96, 10 + 40 * (i - 4));
     }
   }
+  
+  Bangle.buzz();
 }
 
 function random (max) {
