@@ -22,9 +22,10 @@
     storage.write(SETTINGS_FILE, settings)
   }
 
- 
   E.showMenu({
-    '': { 'title': 'Show Day of Week': {
+    '': { 'title': 'Weather Clock' },
+    '< Back': back,
+	'Show DoW': {
       value: !!s.day,
       onchange: v => {
         s.day = v;
@@ -38,7 +39,7 @@
         save();
       },
     },
-    'Show Wind Speed': {
+    'Show Wind': {
       value: !!s.wind,
       onchange: v => {
         s.wind = v;
