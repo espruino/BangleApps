@@ -3,4 +3,4 @@
 0.03: Minor layout extra spaces.
 0.04: Layout now compatible with Bangle.js 2.
 0.05: Use weather condition code for icon selection.
-0.07: Dev2-New settings to hide day of week, date and wind speed.
+0.06: Dev3-New settings to hide day of week, date and wind speed.
