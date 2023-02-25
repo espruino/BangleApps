@@ -25,21 +25,21 @@
   E.showMenu({
     '': { 'title': 'Weather Clock' },
     '< Back': back,
-	'Show DoW': {
+	'Day Of Week': {
       value: !!s.day,
       onchange: v => {
         s.day = v;
         save();
       },
     },
-    'Show Date': {
+    'Date': {
       value: !!s.date,
       onchange: v => {
         s.date = v;
         save();
       },
     },
-    'Show Wind': {
+    'Wind Speed': {
       value: !!s.wind,
       onchange: v => {
         s.wind = v;
