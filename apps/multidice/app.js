@@ -142,4 +142,17 @@ function random (max) {
 
 drawMenu();
 Bangle.on ('touch', touchHandler);
-Bangle.on ('accel', accelHandler);
+//Bangle.on ('accel', accelHandler);
+setWatch (function() {
+	
+	menu = false;
+	rollDice();
+	
+	Bangle.buzz(50, 0.5).then (() => {
+		
+		setTimeout (function() { // wait 50ms *after* the buzzing has stopped
+			
+			//Bangle.on ('accel', accelHandler);
+		}, 50);
+	});
+}, BTN, {repeat: true, edge: "falling", debounce: 10});

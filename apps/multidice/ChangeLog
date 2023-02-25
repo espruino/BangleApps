@@ -15,3 +15,4 @@
 1.13: added a delay after the buzzer stops to prevent multi-rolling
 1.14: made the delay needlessly long to see if it even does anything
 1.15: moved accel & vibration commands to the accelHandler function
+1.16: enabled button usage & temporarily disabled acceleration
