@@ -13,3 +13,4 @@
 1.11: decreased vibration time, decreased accel requirement
 1.12: issue with app calling roll function too many times at startup
 1.13: added a delay after the buzzer stops to prevent multi-rolling
+1.14: made the delay needlessly long to see if it even does anything
