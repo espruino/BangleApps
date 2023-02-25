@@ -1,169 +1,127 @@
 var menu = true;
-var diceOpts = {amount: 2, selected: 5}; // TODO: grab values from settings
-const DICE_ARRAY = [4, 6, 8, 10, 12, 20, 100]; // TODO: place in settings
+const DICE_ARRAY = [0, 4, 6, 8, 10, 12, 20, 100];
+const SELECTION_ARRAY = [6, 0, 0, 0, 0, 0, 0, 0]; // default to selecting a single d20
 
 function drawMenu() {
   
+  stringArr = new Array ("", "", "", "", "", "", "", "");
+  for (i = 0; i < 8; i++) {
+    
+    if (SELECTION_ARRAY [i] != 0) {
+      
+      stringArr [i] = "" + DICE_ARRAY [SELECTION_ARRAY [i]];
+    }
+  }
+  
   g.clear();
-  g.setFont ("6x8", 2);
+  g.setFont ("Vector", 40);
   
-  g.drawString ("# of dice:", 5, 5);
-  g.drawString (diceOpts.amount, 137, 5); 
-  
-  g.drawString ("dice:", 5, 32);
-  g.drawString (DICE_ARRAY [diceOpts.selected], 137, 32); 
+  g.drawString (("   " + stringArr [0]).slice (-3), 5, 10);
+  g.drawString (("   " + stringArr [1]).slice (-3), 5, 50);
+  g.drawString (("   " + stringArr [2]).slice (-3), 5, 90);
+  g.drawString (("   " + stringArr [3]).slice (-3), 5, 130);
+  g.drawString (("   " + stringArr [4]).slice (-3), 96, 10);
+  g.drawString (("   " + stringArr [5]).slice (-3), 96, 50);
+  g.drawString (("   " + stringArr [6]).slice (-3), 96, 90);
+  g.drawString (("   " + stringArr [7]).slice (-3), 96, 130);
 }
 
 function touchHandler (button, xy) {
   
-  if (menu) {
-    
-    if (xy.y <= 26) { // selecting number of dice
-      
-      if (xy.x <= 87) { // left edge: decrease
-        
-        if (diceOpts.amount > 1)
-          diceOpts.amount--;
-      } else { // right edge: increase
-        
-        if (diceOpts.amount < 6)
-          diceOpts.amount++;
-      }
-      
-      drawMenu();
-    } else if (xy.y <= 53) { // selecting dice type
-      
-      if (xy.x <= 87) { // left edge: decrease
-        
-        if (diceOpts.selected > 0)
-          diceOpts.selected--;
-      } else { // right edge: increase
-        
-        if (diceOpts.selected < DICE_ARRAY.length - 1)
-          diceOpts.selected++;
-      }
-      
-      drawMenu();
-    } else {
-      
-      rollDice();
-    }
-  } else { // return to menu screen
+  if (! menu) {
     
     menu = true;
-    drawMenu ();
+    drawMenu();
+    return;
   }
+  
+  if (xy.x <= 87) { // left
+    
+    if (xy.y <= 43) {
+      
+      selection = 0;
+    } else if (xy.y <= 87) {
+      
+      selection = 1;
+    } else if (xy.y <= 131) {
+      
+      selection = 2;
+    } else {
+      
+      selection = 3;
+    }
+  } else { // right
+    
+    if (xy.y <= 43) {
+      
+      selection = 4;
+    } else if (xy.y <= 87) {
+      
+      selection = 5;
+    } else if (xy.y <= 131) {
+      
+      selection = 6;
+    } else {
+      
+      selection = 7;
+    }
+  }
+  
+  // increment SELECTION_ARRAY [selection]
+  if (SELECTION_ARRAY [selection] == 7) {
+    
+    SELECTION_ARRAY [selection] = 0;
+  } else {
+    
+    SELECTION_ARRAY [selection] += 1;
+  }
+  
+  drawMenu();
 }
 
 function rollDice() {
   
-  menu = false;
-  if (diceOpts.amount == 1) {
+  resultsArr = new Uint8Array (8);
+  for (i = 0; i < 8; i++) {
     
-    let output = random (DICE_ARRAY [diceOpts.selected]);
-    
-    g.clear();
-    g.setFont ("Vector", 90);
-    
-    g.drawString (("   " + output).slice (-3), 10, 0);
-  } else {
-    
-    let output = new Int8Array ([-1, -1, -1, -1, -1, -1]);
-    for (let i = 0; i < diceOpts.amount; i++) {
+    if (SELECTION_ARRAY [i] != 0) {
       
-      output [i] = random (DICE_ARRAY [diceOpts.selected]);
+      resultsArr [i] = random (DICE_ARRAY [SELECTION_ARRAY [i]]);
     }
+  }
+  
+  g.clear();
+  g.setFont ("Vector", 40);
+  
+  for (i = 0; i < 4; i++) {
     
-    g.clear();
-    g.setFont ("Vector", 40);
-    
-    for (let i = 0; i < 3; i++) { // draws all the numbers in two rows
+    if (SELECTION_ARRAY [i] != 0) {
       
-      if (output [i * 2 + 0] == -1) {
-        
-        break;
-      } else if (output [i * 2 + 1] == -1) {
-        
-        
-        g.drawString (("   " + output [i * 2]).slice (-3), 5, 5 + i * 40);
-      } else {
-        
-        g.drawString (("   " + output [i * 2]).slice (-3) + " " + ("   " + output [i * 2 + 1]).slice (-3), 5, 5 + i * 40);
-      }
+      g.drawString (("   " + resultsArr [i]).slice (-3), 5, 10 + 40 * i);
     }
+  }
+  
+  for (i = 4; i < 8; i++) {
     
-    g.setFont ("Vector", 20);
-    g.drawString ("H: " + ("   " + max (output)).slice (-3), 5, 130);
-    g.drawString ("L: " + ("   " + min (output)).slice (-3), 110, 130);
-    g.drawString ("T: " + ("   " + total (output)).slice (-3), 5, 150);
-    g.drawString ("A: " + ("   " + average (output)).slice (-3), 110, 150);
+    if (SELECTION_ARRAY [i] != 0) {
+      
+      g.drawString (("   " + resultsArr [i]).slice (-3), 96, 10 + 40 * i);
+    }
   }
 }
 
-function random (max) { // number is always between 1 and max
+function random (max) {
   
   return Math.round (Math.random() * (max - 1) + 1);
 }
 
-function max (array) {
-  
-  let max = 0;
-  for (let i = 0; i < 6; i++) {
-    
-    if (array [i] == -1)
-      break;
-    
-    if (array [i] > max)
-      max = array [i];
-  }
-  
-  return max;
-}
-
-function min (array) {
-  
-  let min = array [0];
-  for (let i = 1; i < 6; i++) {
-    
-    if (array [i] == -1)
-      break;
-    
-    if (array [i] < min)
-      min = array [i];
-  }
-  
-  return min;
-}
-
-function total (array) {
-  
-  let total = 0;
-  for (let i = 0; i < 6; i++) {
-    
-    if (array [i] == -1)
-      break;
-    
-    total += array [i];
-  }
-  
-  return total;
-}
-
-function average (array) {
-  
-  let average = 0;
-  let rounds = 0;
-  for (let i = 0; i < 6; i++) {
-    
-    if (array [i] == -1)
-      break;
-    
-    average += array [i];
-    rounds++;
-  }
-  
-  return Math.round (average / rounds);
-}
-
 drawMenu();
 Bangle.on ('touch', touchHandler);
+Bangle.on ('accel', function (xyz) {
+  
+  if (xyz.diff >= 0.3) {
+    
+    menu = false;
+    rollDice();
+  }
+});
