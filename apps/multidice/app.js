@@ -35,6 +35,9 @@ function touchHandler (button, xy) {
 		return;
 	}
 	
+	rollDice();
+	return;
+	
 	if (xy.x <= 87) { // left
 		
 		if (xy.y <= 43) {
@@ -122,6 +125,13 @@ function rollDice() {
 			g.drawString (("	 " + resultsArr [i]).slice (-3), 96, 10 + 40 * (i - 4));
 		}
 	}
+	
+	Bangle.on ('accel', voidFn);
+	console.log ("before");
+	Bangle.buzz().then(()=>{
+		Bangle.on ('accel', accelHandler);
+	});
+	console.log ("after");
 }
 
 function random (max) {
@@ -134,7 +144,8 @@ function vibrate() {
 	Bangle.on ('accel', voidFn);
 	Bangle.buzz().then ((value) => {
 		
-		Bangle.on ('accel', accelHandler)
+		console.log ("I ran.");
+		Bangle.on ('accel', accelHandler);
 	});
 }
 
