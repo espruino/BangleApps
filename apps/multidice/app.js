@@ -121,7 +121,7 @@ drawMenu();
 Bangle.on ('touch', touchHandler);
 Bangle.on ('accel', function (xyz) {
   
-  if (xyz.diff >= 0.3) {
+  if (xyz.diff >= 0.5) {
     
     menu = false;
     rollDice();
