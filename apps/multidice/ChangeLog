@@ -11,3 +11,4 @@
 1.09: hopefully now it's fixed?
 1.10: not having web bluetooth to debug is a PAIN
 1.11: decreased vibration time, decreased accel requirement
+1.12: issue with app calling roll function too many times at startup
