@@ -126,21 +126,19 @@ function rollDice() {
 		}
 	}
 	
-	vibrate();
+	Bangle.on ('accel', voidFn);
+	Bangle.buzz(50, 0.5).then (() => {
+		
+		setTimeout (function() { // wait 50ms *after* the buzzing has stopped
+			
+			Bangle.on ('accel', accelHandler);
+		}, 50);
+	});
 }
 
 function random (max) {
 	
 	return Math.round (Math.random() * (max - 1) + 1);
-}
-
-function vibrate() {
-	
-	Bangle.on ('accel', voidFn);
-	Bangle.buzz(50, 0.5).then ((value) => {
-		
-		Bangle.on ('accel', accelHandler);
-	});
 }
 
 drawMenu();
