@@ -4,3 +4,4 @@
 1.02: added vibration when dice is rolled
 1.03: vibration caused the accelerometer to never stop
 1.04: decreased vibration strength
+1.05: toggled the acceleration handler to prevent infinite buzz loop
