@@ -137,7 +137,7 @@ function random (max) {
 function vibrate() {
 	
 	Bangle.on ('accel', voidFn);
-	Bangle.buzz(50, 1).then ((value) => {
+	Bangle.buzz(50, 0.5).then ((value) => {
 		
 		Bangle.on ('accel', accelHandler);
 	});
