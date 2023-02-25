@@ -1,5 +1,5 @@
-# BW Clock
-A very minimalistic clock.
+# BW Clock Lite
+This is a fork of a very minimalistic clock.
 
 ![](screenshot.png)
 
@@ -25,3 +25,6 @@ Note: Check out the settings to change different themes.
 
 ## Creator
 [David Peer](https://github.com/peerdavid)
+
+## Contributors
+thyttan

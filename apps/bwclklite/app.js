@@ -11,7 +11,7 @@ const widget_utils = require("widget_utils");
 /************************************************
  * Globals
  */
-const SETTINGS_FILE = "bwclk.setting.json";
+const SETTINGS_FILE = "bwclklite.setting.json";
 const W = g.getWidth();
 const H = g.getHeight();
 
@@ -92,7 +92,7 @@ clockInfoItems[0].items.unshift({ name : "nop",
 
 
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
-  app: "bwclk",
+  app: "bwclklite",
   x : 0,
   y: 135,
   w: W,

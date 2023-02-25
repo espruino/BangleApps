@@ -1,5 +1,5 @@
 (function(back) {
-    const SETTINGS_FILE = "bwclk.setting.json";
+    const SETTINGS_FILE = "bwclklite.setting.json";
 
     // initialize with default settings...
     const storage = require('Storage')
