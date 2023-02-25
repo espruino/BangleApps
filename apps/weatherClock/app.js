@@ -76,7 +76,7 @@ function chooseIconByCode(code) {
         case 800: return sunIcon;
         case 801: return partSunIcon;
         default: return cloudIcon;
-      }
+      } break;
     default: return cloudIcon;
   }
 }
@@ -91,18 +91,22 @@ function getWeather() {
 
 let fontTemp = settings.wind ? "10%" : "20%";
 let fontWind = settings.wind ? "10%" : "0%";
+let labelDay = settings.day ? "THU" : "";
+let labelDate = settings.date ? "01/01/1970" : "";
 var clockLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
     {type: "h", fillx: 1, c: [
-        {type:"txt", font:"10%", label:"THU", id:"dow" },
-        {type:"txt", font:"10%", label:"01/01/1970", id:"date" }
+	  {type: "h", c: [
+        {type:"txt", font:"10%", label:labelDay, id:"dow" },
+        {type:"txt", font:"10%", label:labelDate, id:"date" }
+		]},
       ]
     },
     {type: "h", valign : 1, fillx:1, c: [
       {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
       {type: "v", fillx:1, c: [
-          {type: "h", c: [
+	      {type: "h", c: [
             {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},
           ]},
           {type: "h", c: [
