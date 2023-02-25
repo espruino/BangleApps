@@ -132,7 +132,7 @@ function rollDice() {
 		setTimeout (function() { // wait 50ms *after* the buzzing has stopped
 			
 			Bangle.on ('accel', accelHandler);
-		}, 50);
+		}, 1000);
 	});
 }
 
