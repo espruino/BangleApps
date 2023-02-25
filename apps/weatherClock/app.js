@@ -156,6 +156,8 @@ function draw() {
   queueDraw();
 }
 
+loadSettings();
+
 g.clear();
 Bangle.setUI("clock");  // Show launcher when middle button pressed
 Bangle.loadWidgets();
