@@ -27,16 +27,12 @@ let isQuiet = function(){
   return quiet;
 };
 
-let settings = (() => {
-  let tmp = {};
-
-  tmp.fontSmall = "6x8";
-  tmp.fontMedium = "Vector:14";
-  tmp.fontBig = "Vector:20";
-  tmp.fontLarge = "Vector:30";
-
-  return tmp;
-})();
+let settings = {
+  fontSmall:"6x8",
+  fontMedium:"Vector:14",
+  fontBig:"Vector:20",
+  fontLarge:"Vector:30",
+};
 
 let eventQueue = [];
 let callInProgress = false;
@@ -145,7 +141,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
 let showMessage = function(ovr, msg) {
   LOG("showMessage");
-  ovr.setBgColor(settings.colBg);
+  ovr.setBgColor(ovr.theme.bg);
 
   if (typeof msg.CanscrollDown === "undefined")
     msg.CanscrollDown = false;
