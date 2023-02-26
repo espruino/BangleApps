@@ -1,22 +1,14 @@
 (function(back) {
   const SETTINGS_FILE = "weatherClock.json";
 
-  // initialize with default settings...
-  let s = {
-	'icon': true,
-    'day': true,
-    'date': true,
-    'wind': true
-  }
-
-  // ...and overwrite them with any saved values
-  // This way saved values are preserved if a new version adds more settings
+  // Load setings file
   const storage = require('Storage')
   let settings = storage.readJSON(SETTINGS_FILE, 1) || {}
-  const saved = settings || {}
-  for (const key in saved) {
-    s[key] = saved[key]
-  }
+  let s;
+  s.icon = (settings.icon === undefined ? true : settings.icon);
+  s.day = (settings.day === undefined ? true : settings.day);
+  s.date = (settings.date === undefined ? true : settings.date);
+  s.wind = (settings.wind === undefined ? true : settings.wind);
 
   function save() {
     settings = s
