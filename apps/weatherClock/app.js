@@ -134,6 +134,7 @@ let fontTemp = settings.wind ? "10%" : "20%";
 let fontWind = settings.wind ? "10%" : "0%";
 let labelDay = settings.day ? "THU" : "";
 let labelDate = settings.date ? "01/01/1970" : "";
+let srcWeather = settings.icon ? sunIcon : "";
 var clockLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
@@ -145,7 +146,7 @@ var clockLayout = new Layout( {
       ]
     },
     {type: "h", valign : 1, fillx:1, c: [
-      {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
+      {type: "img", filly: 1, id: "weatherIcon", src: srcWeather},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
             {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},

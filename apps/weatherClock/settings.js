@@ -3,6 +3,7 @@
 
   // initialize with default settings...
   let s = {
+	'icon': true,
     'day': true,
     'date': true,
     'wind': true
@@ -25,6 +26,13 @@
   E.showMenu({
     '': { 'title': 'Weather Clock' },
     '< Back': back,
+	'Weather Icon': {
+      value: !!s.icon,
+      onchange: v => {
+        s.icon = v;
+        save();
+      },
+    },
 	'Day Of Week': {
       value: !!s.day,
       onchange: v => {
