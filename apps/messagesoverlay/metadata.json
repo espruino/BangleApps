@@ -4,7 +4,7 @@
   "version": "0.01",
   "description": "An overlay based implementation of a messages UI (display notifications from iOS and Gadgetbridge/Android)",
   "icon": "app.png",
-  "type": "app",
+  "type": "bootloader",
   "tags": "tool,system",
   "supports": ["BANGLEJS2"],
   "dependencies" : { "messageicons":"module","messages":"app" },
