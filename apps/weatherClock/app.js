@@ -139,7 +139,7 @@ function draw() {
 }
 
 function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings = storage.readJSON(SETTINGS_FILE,1)||{};
   settings.icon = (settings.icon === undefined ? true : settings.icon);
   settings.day = (settings.day === undefined ? true : settings.day);
   settings.date = (settings.date === undefined ? true : settings.date);

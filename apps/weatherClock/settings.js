@@ -1,10 +1,10 @@
 (function(back) {
   const SETTINGS_FILE = "weatherClock.json";
 
-  // Load setings file
-  const storage = require('Storage')
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || {}
-  let s;
+  // Load settings file
+  const storage = require('Storage');
+  let settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+  let s = {};
   s.icon = (settings.icon === undefined ? true : settings.icon);
   s.day = (settings.day === undefined ? true : settings.day);
   s.date = (settings.date === undefined ? true : settings.date);
@@ -46,5 +46,5 @@
         save();
       },
     }
-  })
-})
+  });
+});

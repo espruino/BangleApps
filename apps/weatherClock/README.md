@@ -1,6 +1,8 @@
 # Weather Clock
 
-A clock which displays the current weather conditions. Temperature, wind speed, and an icon indicating the weather conditions are displayed.
+A clock which displays the current weather conditions. Time, day of week, date, temperature, wind speed, and an icon indicating the weather conditions are displayed.
+
+As of Weather Clock v0.06 the day of week, date, temperature and/or wind speed can be hidden using settings.
 
 Standard widgets are displayed.
 
