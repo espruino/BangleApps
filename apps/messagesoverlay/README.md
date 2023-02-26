@@ -10,6 +10,9 @@ Messages are ephemeral and not stored on the Bangle.
 
 Close app by tapping the X and scroll by swiping. The border of the pop up changes color if the Bangle is locked. The color depends on your currently active theme.
 
+## Firmware hint
+Current stable firmware draws incorrect colors for emojis. Nightly firmware builds correct this.
+
 ## Creator
 
 [halemmerich](https://github.com/halemmerich)
