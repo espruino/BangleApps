@@ -3,7 +3,7 @@ The GPS course and speed is calculated by the difference of positions.
 However GPS position is noisy and prone to jump around.
 This results in randomly jumping GPS course values when speed is slow or standing still.
 So in these cases a user might want to get the moving direction from a compass instead.
-This is why this app replaces the GPS course with the compass heading when the speed is slower then 6 km/h (threshold is configurable, see settings).
+This is why this service replaces the GPS course with the compass heading when the speed is slower then 6 km/h (threshold is configurable, see settings).
 
 ## Important Notes
 * **Watch orientation**
@@ -13,7 +13,7 @@ This is why this app replaces the GPS course with the compass heading when the s
   When "Navigation Compass" is installed the built-in compass gets automatic tilt compensation. This can be turned off in settings. Without "Navigation Compass" installed or this feature disabled the watch must be orientated with the display up to provide a useable compass value.
 * **Compass reset and calibration**
   When using "Navigation Compass" as compass source (see settings) please remember to calibrate it regularly.
-  With this app installed the built-in compass calibration is automatically reset when the compass is turned on (deactivatable in settings). It can also be reset with a tap on the Widget (Bangle.js 2 only). Please note that directly after a reset the built-in compass must be turned 360 degrees to provide a useable value.
+  With this service installed the built-in compass calibration is automatically reset when the compass is turned on (deactivatable in settings). It can also be reset with a tap on the Widget (Bangle.js 2 only). Please note that directly after a reset the built-in compass must be turned 360 degrees to provide a useable value.
 * **True north vs magnetic north**
   Please note that the compass does not point to the "real north" but depending on your location there is an offset, see [Magnetic declination](https://en.wikipedia.org/wiki/Magnetic_declination)
   However the error from local magnetic interference and from calibration will probably be higher..
