@@ -21,6 +21,10 @@ let LOG = function() {
   //print.apply(null, arguments);
 };
 
+let isQuiet = function(){
+  return (require('Storage').readJSON('setting.json', 1) || {}).quiet;
+};
+
 let settings = (() => {
   let tmp = {};
 
@@ -28,8 +32,6 @@ let settings = (() => {
   tmp.fontMedium = "Vector:16";
   tmp.fontBig = "Vector:20";
   tmp.fontLarge = "Vector:30";
-
-  tmp.quiet = ((require('Storage').readJSON('settings.json', 1) || {}).quiet);
 
   return tmp;
 })();
@@ -163,7 +165,7 @@ let showMessage = function(ovr, msg) {
 
   drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
-  if (!settings.quiet && msg.new) {
+  if (!isQuiet() && msg.new) {
     msg.new = false;
     Bangle.buzz();
   }
@@ -209,7 +211,7 @@ let showCall = function(ovr, msg) {
   drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
   stopCallBuzz();
-  if (!settings.quiet) {
+  if (!isQuiet()) {
     if (msg.new) {
       msg.new = false;
       if (callBuzzTimer) clearInterval(callBuzzTimer);
