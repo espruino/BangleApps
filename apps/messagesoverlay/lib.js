@@ -25,9 +25,9 @@ let settings = (() => {
   let tmp = {};
 
   tmp.fontSmall = "6x8";
-  tmp.fontMedium = g.getFonts().includes("Vector") ? "Vector:16" : "6x8:2";
-  tmp.fontBig = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-  tmp.fontLarge = g.getFonts().includes("6x15") ? "6x15:2" : "6x8:4";
+  tmp.fontMedium = "Vector:16";
+  tmp.fontBig = "Vector:20";
+  tmp.fontLarge = "Vector:30";
 
   tmp.quiet = ((require('Storage').readJSON('settings.json', 1) || {}).quiet);
 
@@ -110,22 +110,26 @@ let roundedRect = function(ovr, x,y,w,h,filled){
 
 let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(0,0,ovr.getWidth(),40);
+  ovr.clearRect(0,0,ovr.getWidth(),39);
 
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
-  ovr.drawString(src, (ovr.getWidth()-ovrx)/2, 2);
+  ovr.drawString(src, (ovr.getWidth()+35-26)/2, 2);
 
+  ovr.setFontAlign(0,0);
   ovr.setFont(titleFont);
-  ovr.drawString(title, (ovr.getWidth()-ovrx)/2, 12);
+  ovr.drawString(title, (ovr.getWidth()+35-26)/2, 39/2 + 6);
 
   ovr.setColor(ovr.theme.fg2);
-  roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
-  ovr.drawString("X",ovr.getWidth()-16,10);
 
+  ovr.setFont(settings.fontMedium);
+  roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
+  ovr.drawString("X",ovr.getWidth()-14,21);
+
+  ovr.setColor("#888");
+  roundedRect(ovr, 5,5,30,30,true);
   ovr.setColor(iconcolor);
-  ovr.setBgColor("#fff");
   ovr.drawImage(icon,8,8);
 };
 
@@ -144,7 +148,7 @@ let showMessage = function(ovr, msg) {
     titleFont = settings.fontLarge,
     lines;
   if (title) {
-    let w = ovr.getWidth() - 48;
+    let w = ovr.getWidth() - 35 - 26;
     if (ovr.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (ovr.setFont(titleFont).stringWidth(title) > w) {
@@ -189,7 +193,7 @@ let showCall = function(ovr, msg) {
     titleFont = settings.fontLarge,
     lines;
   if (title) {
-    let w = ovr.getWidth() - 40;
+    let w = ovr.getWidth() - 35 -26;
     if (ovr.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (ovr.setFont(titleFont).stringWidth(title) > w) {
@@ -313,6 +317,7 @@ let drawMessage = function(ovr, msg) {
   let yText = 40;
 
   ovr.setBgColor(ovr.theme.bg);
+  ovr.setColor(ovr.theme.fg);
   ovr.clearRect(2, yText, ovrw-2, ovrh-2);
   let xText = Padding;
   yText += Padding;
@@ -321,7 +326,7 @@ let drawMessage = function(ovr, msg) {
 
   yText = ((ovrh - yText) / 2) - (linesToPrint.length * HText / 2) + yText;
 
-  if (linesToPrint.length <= 2) {
+  if (linesToPrint.length <= 3) {
     ovr.setFontAlign(0, -1);
     xText = ovr.getWidth() / 2;
   } else
