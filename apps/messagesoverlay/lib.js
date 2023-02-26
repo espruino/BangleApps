@@ -109,7 +109,7 @@ let roundedRect = function(ovr, x,y,w,h,filled){
 
 let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(0,0,ovr.getWidth(),39);
+  ovr.clearRect(2,2,ovr.getWidth()-3,37);
 
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
@@ -434,13 +434,9 @@ let main = function(ovr, event) {
   Bangle.on('swipe', swipeHandler);
 
   if (event !== undefined){
+    drawBorder(ovr);
     manageEvent(ovr, event);
     Bangle.setLCDPower(1);
-    drawBorder(ovr);
-    if (eventQueue.length>=1)
-      Bangle.setLCDOverlay(ovr,10,10);
-    else
-      Bangle.setLCDOverlay();
   } else {
     LOG("No event given");
     cleanup();
