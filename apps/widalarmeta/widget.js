@@ -6,21 +6,21 @@
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
+  function getNextAlarm(date) {
+    const alarms = (require("Storage").readJSON("sched.json",1) || []).filter(alarm => alarm.on && alarm.hidden !== true);
+    WIDGETS["widalarmeta"].numActiveAlarms = alarms.length;
+    const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
+    const eta = times.length > 0 ? Math.min.apply(null, times) : 0;
+    if (eta !== Number.POSITIVE_INFINITY) {
+      const idx = times.indexOf(eta);
+      const alarm = alarms[idx];
+      delete alarm.msg; delete alarm.id; delete alarm.data; // free some memory
+      return alarm;
+    }
+  } // getNextAlarm
+
   function draw() {
     if (this.nextAlarm === undefined) {
-      const getNextAlarm = (date) => {
-        const alarms = (require("Storage").readJSON("sched.json",1) || []).filter(alarm => alarm.on && alarm.hidden !== true);
-        this.numActiveAlarms = alarms.length;
-        const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
-        const eta = times.length > 0 ? Math.min.apply(null, times) : 0;
-        if (eta !== Number.POSITIVE_INFINITY) {
-          const idx = times.indexOf(eta);
-          const alarm = alarms[idx];
-          delete alarm.msg; delete alarm.id; delete alarm.data; // free some memory
-          return alarm;
-        }
-      }; // getNextAlarm
-
       let alarm = getNextAlarm();
       if (alarm === undefined) {
         // try again with next hour
