@@ -19,7 +19,7 @@
     }
   } // getNextAlarm
 
-  function draw() {
+  function draw(fromInterval) {
     if (this.nextAlarm === undefined) {
       let alarm = getNextAlarm();
       if (alarm === undefined) {
@@ -58,10 +58,14 @@
       if (drawSeconds) {
         calcWidth += 3*5;
       }
+      this.bellVisible = false;
     } else if (config.drawBell && this.numActiveAlarms > 0) {
-      // next alarm too far in future, draw only widalarm bell
-      g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
       calcWidth = 24;
+      // next alarm too far in future, draw only widalarm bell
+      if (this.bellVisible !== true || fromInterval !== true) {
+        g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
+        this.bellVisible = true;
+      }
     }
 
     if (this.width !== calcWidth) {
@@ -81,8 +85,8 @@
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(()=>{
-      this.timeoutId = undefined;
-      this.draw();
+      WIDGETS["widalarmeta"].timeoutId = undefined;
+      WIDGETS["widalarmeta"].draw(true);
     }, timeout);
   } /* draw */
 
