@@ -13,6 +13,7 @@ var rainIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AFgczmYWWDCgWDmc
 var stormIcon = require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmYuVGAY0OFwocHC6pNLCxYXYJBQXuCxhhJRpgYKCyBKFFyIXFCyJIFC/4XaO66nU3eza6k7C4IWFGBwXBCwwwO3ewC5AZMC6RaCIxZiI3e7AYYwRCQIIBC4QwPIQIpDC5owDhYREIxgAEFIouNC4orDFyBGBGAcLC6BaFhYWRLSRIFISQXcCyqhRAH4Az"));
 // err icon - https://icons8.com/icons/set/error
 var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
+var dummyIcon = require("heatshrink").decompress(atob("gMBwMAwA"));
 
 /**
 Choose weather icon to display based on condition.
@@ -134,7 +135,7 @@ let fontTemp = settings.wind ? "10%" : "20%";
 let fontWind = settings.wind ? "10%" : "0%";
 let labelDay = settings.day ? "THU" : "";
 let labelDate = settings.date ? "01/01/1970" : "";
-let srcWeather = settings.icon ? sunIcon : "";
+let srcWeather = settings.icon ? sunIcon : dummyIcon;
 var clockLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
