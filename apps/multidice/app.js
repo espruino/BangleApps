@@ -81,7 +81,7 @@ function touchHandler (button, xy) {
 
 function accelHandler (xyz) {
 	
-	if (xyz.diff >= 0.4) {
+	if (xyz.diff >= 0.3) {
 		
 		menu = false;
 		mutex (rollDice);
@@ -158,6 +158,7 @@ function vibrate() {
 	});
 }
 
+// returns a integer [1, max]
 function random (max) {
 	
 	return Math.round (Math.random() * (max - 1) + 1);
