@@ -14,6 +14,7 @@ const ovrx = 10;
 const ovry = 10;
 const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
+let _g = g;
 
 let lockListener;
 let quiet;
@@ -36,6 +37,15 @@ let settings = {
 
 let eventQueue = [];
 let callInProgress = false;
+
+let show = function(ovr){
+  let img = ovr;
+  if (ovr.getBPP() == 1) {
+    img = ovr.asImage();
+    img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
+  }
+  Bangle.setLCDOverlay(img, ovrx, ovry);
+};
 
 let manageEvent = function(ovr, event) {
   event.new = true;
@@ -137,7 +147,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
   ovr.setColor("#888");
   roundedRect(ovr, 5,5,30,30,true);
-  ovr.setColor(iconcolor);
+  ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.bg2);
   ovr.drawImage(icon,8,8);
 };
 
@@ -181,7 +191,7 @@ let drawBorder = function(ovr) {
     ovr.setColor(ovr.theme.fg);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  Bangle.setLCDOverlay(ovr,ovrx,ovry);
+  show(ovr);
   if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
@@ -357,7 +367,7 @@ let drawMessage = function(ovr, msg) {
     drawTriangleDown(ovr);
   } else
     msg.CanscrollDown = false;
-  Bangle.setLCDOverlay(ovr,ovrx,ovry);
+  show(ovr);
   if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
@@ -453,18 +463,24 @@ let ovr;
 exports.pushMessage = function(event) {
   if( event.id=="music") return require_real("messages").pushMessage(event);
 
+  bpp = 4;
+  if (process.memory().free < 2000) bpp = 1;
+
   if (!ovr) {
-    ovr = Graphics.createArrayBuffer(ovrw, ovrh, 4, {
+    ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
   } else {
     ovr.clear();
   }
 
-  let _g = g;
   g = ovr;
 
-  ovr.theme = g.theme;
+  if (bpp == 4)
+    ovr.theme = g.theme;
+  else
+    ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+
   main(ovr, event);
 
   g = _g;

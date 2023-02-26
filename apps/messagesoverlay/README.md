@@ -13,6 +13,10 @@ Close app by tapping the X and scroll by swiping. The border of the pop up chang
 ## Firmware hint
 Current stable firmware draws incorrect colors for emojis. Nightly firmware builds correct this.
 
+## Low memory mode
+
+If free memory is below 2000 blocks, the overlay automatically only uses 1 bit depth. Default uses roundabout 1300 blocks, while low memory mode uses about 600.
+
 ## Creator
 
 [halemmerich](https://github.com/halemmerich)
