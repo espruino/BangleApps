@@ -180,7 +180,8 @@ let drawBorder = function(ovr) {
     ovr.setColor(ovr.theme.fg);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  Bangle.setLCDOverlay(ovr,10,10);
+  Bangle.setLCDOverlay(ovr,ovrx,ovry);
+  if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
 let showCall = function(ovr, msg) {
@@ -356,6 +357,7 @@ let drawMessage = function(ovr, msg) {
   } else
     msg.CanscrollDown = false;
   Bangle.setLCDOverlay(ovr,ovrx,ovry);
+  if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
 let getSwipeHandler = function(ovr){
@@ -438,7 +440,6 @@ let main = function(ovr, event) {
   if (event !== undefined){
     drawBorder(ovr);
     manageEvent(ovr, event);
-    Bangle.setLCDPower(1);
   } else {
     LOG("No event given");
     cleanup();
