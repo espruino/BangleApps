@@ -76,12 +76,11 @@ let manageEvent = function(ovr, event) {
         next(ovr);
 
       else {
-        let neweventQueue = [];
+        eventQueue.length = 0; // empty existing queue
         eventQueue.forEach(element => {
           if (element.id != event.id)
             neweventQueue.push(element);
         });
-        eventQueue = neweventQueue;
       }
 
       break;
@@ -142,7 +141,6 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 let showMessage = function(ovr, msg) {
   LOG("showMessage");
   ovr.setBgColor(settings.colBg);
-
 
   if (typeof msg.CanscrollDown === "undefined")
     msg.CanscrollDown = false;
@@ -214,6 +212,7 @@ let showCall = function(ovr, msg) {
   if (!settings.quiet) {
     if (msg.new) {
       msg.new = false;
+      if (callBuzzTimer) clearInterval(callBuzzTimer);
       callBuzzTimer = setInterval(function() {
         Bangle.buzz(500);
       }, 1000);
@@ -252,7 +251,7 @@ let callBuzzTimer = null;
 let stopCallBuzz = function() {
   if (callBuzzTimer) {
     clearInterval(callBuzzTimer);
-    callBuzzTimer = null;
+    callBuzzTimer = undefined;
   }
 };
 
@@ -357,14 +356,6 @@ let drawMessage = function(ovr, msg) {
   Bangle.setLCDOverlay(ovr,ovrx,ovry);
 };
 
-let doubleTapUnlock = function(data) {
-  if (data.double)
-  {
-    Bangle.setLocked(false);
-    Bangle.setLCDPower(1);
-  }
-};
-
 let getSwipeHandler = function(ovr){
   return (lr, ud) => {
     if (ud == 1) {
@@ -394,6 +385,7 @@ let restoreHandler = function(event){
 };
 
 let backupHandler = function(event){
+  if (eventQueue.length > 1 && ovr) return; // do not backup, overlay is already up
   backup[event] = Bangle["#on" + event];
   Bangle.removeAllListeners(event);
 };
@@ -407,9 +399,14 @@ let cleanup = function(){
   restoreHandler("swipe");
   restoreHandler("drag");
 
-  Bangle.removeListener("tap", doubleTapUnlock);
-  if (touchHandler) Bangle.removeListener("touch", touchHandler);
-  if (swipeHandler) Bangle.removeListener("swipe", swipeHandler);
+  if (touchHandler) {
+    Bangle.removeListener("touch", touchHandler);
+    touchHandler = undefined;
+  }
+  if (swipeHandler) {
+    Bangle.removeListener("swipe", swipeHandler);
+    swipeHandler = undefined;
+  }
   Bangle.setLCDOverlay();
   ovr = undefined;
 };
@@ -418,18 +415,17 @@ let backup = {};
 
 let main = function(ovr, event) {
   LOG("Main", event, settings);
+
   if (!lockListener) {
     lockListener = function (){
       drawBorder(ovr);
     };
     Bangle.on('lock', lockListener);
   }
-
   backupHandler("touch");
   backupHandler("swipe");
   backupHandler("drag");
 
-  Bangle.on('tap', doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch",touchHandler);
   if (swipeHandler) Bangle.removeListener("swipe",swipeHandler);
   touchHandler = getTouchHandler(ovr);
@@ -441,7 +437,10 @@ let main = function(ovr, event) {
     manageEvent(ovr, event);
     Bangle.setLCDPower(1);
     drawBorder(ovr);
-    Bangle.setLCDOverlay(ovr,10,10);
+    if (eventQueue.length>=1)
+      Bangle.setLCDOverlay(ovr,10,10);
+    else
+      Bangle.setLCDOverlay();
   } else {
     LOG("No event given");
     cleanup();
@@ -465,9 +464,7 @@ exports.pushMessage = function(event) {
   g = ovr;
 
   ovr.theme = g.theme;
-  if(event.t=="remove") return;
   main(ovr, event);
-  Bangle.setLCDOverlay(ovr, 10, 10);
 
   g = _g;
 };
