@@ -118,8 +118,10 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   let textCenter = (ovr.getWidth()+35-26)/2;
 
   if (src) {
-    while (ovr.stringWidth(src) > ovr.getWidth()-80) src = src.substring(0,src.length-2);
-    ovr.drawString(src + "...", textCenter, 2);
+    let shortened = src;
+    while (ovr.stringWidth(shortened) > ovr.getWidth()-80) shortened = shortened.substring(0,shortened.length-2);
+    if (shortened.length != src.length) shortened += "...";
+    ovr.drawString(shortened, textCenter, 2);
   }
 
   ovr.setFontAlign(0,0);
