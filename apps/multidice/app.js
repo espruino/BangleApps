@@ -100,9 +100,10 @@ function mutex (functionRef) {
 	lock = true;
 	return new Promise (() => {
 		
-		functionRef.then (() => {
+		functionRef.then ((result) => {
 			
 			lock = false;
+			resolve (result);
 		});
 	});
 }
