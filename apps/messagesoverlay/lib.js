@@ -411,6 +411,7 @@ let cleanup = function(){
   if (touchHandler) Bangle.removeListener("touch", touchHandler);
   if (swipeHandler) Bangle.removeListener("swipe", swipeHandler);
   Bangle.setLCDOverlay();
+  ovr = undefined;
 };
 
 let backup = {};
@@ -447,12 +448,18 @@ let main = function(ovr, event) {
   }
 };
 
+let ovr;
+
 exports.pushMessage = function(event) {
   if( event.id=="music") return require_real("messages").pushMessage(event);
 
-  let ovr = Graphics.createArrayBuffer(ovrw, ovrh, 4, {
-    msb: true
-  });
+  if (!ovr) {
+    ovr = Graphics.createArrayBuffer(ovrw, ovrh, 4, {
+      msb: true
+    });
+  } else {
+    ovr.clear();
+  }
 
   let _g = g;
   g = ovr;
