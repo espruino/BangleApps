@@ -2,27 +2,17 @@ const Layout = require("Layout");
 const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
+let settings;
 
 // weather icons from https://icons8.com/icon/set/weather/color
 var sunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
-
 var partSunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AY6AWVhvdC6vd7owUFwIABFiYAFGR4Xa93u9oXTCwIYDC6HeC4fuC56MBC4ySOIwpIQXYQXHmYABRpwXECwQYKF5HjC4kwL5gQCAYYwO7wqFAAowK7wWKJBgXLJBPd6YX/AAoVMAAM/Cw0DC5yRHCx5JGFyAwGCyIwFC/4XyR4inXa64wRFwowQCw4A/AH4AkA"));
-
 var cloudIcon = require("heatshrink").decompress(atob("mEwwhC/AH4A/AH4AtgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAH4A/AH4A/ADg="));
-
 var snowIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AhxGAC9YUBC4QZRhAVBAIWIC6QAEI6IYEI5cIBgwWOC64NCKohHPNox3RBgqnQEo7XPHpKONR5AXYAH4ASLa4XWXILiBC6r5LDBgWWDBRrKC5hsCEacIHawvMCIwvQC5QvQFAROEfZ5ADLJ4YGCywvVI7CPGC9IA/AH4AF"));
-
 var rainIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AFgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAGeIBJEIwAVJhGIC5AJBC5QMJEJQMEC44JBC6QSCC54FHLxgNBBgYSEDgKpPMhQXneSwuUAH4A/AA4="));
-
 var stormIcon = require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmYuVGAY0OFwocHC6pNLCxYXYJBQXuCxhhJRpgYKCyBKFFyIXFCyJIFC/4XaO66nU3eza6k7C4IWFGBwXBCwwwO3ewC5AZMC6RaCIxZiI3e7AYYwRCQIIBC4QwPIQIpDC5owDhYREIxgAEFIouNC4orDFyBGBGAcLC6BaFhYWRLSRIFISQXcCyqhRAH4Az"));
-
 // err icon - https://icons8.com/icons/set/error
 var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
-
-var settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-settings.day = (settings.day === undefined ? true : settings.day);
-settings.date = (settings.date === undefined ? true : settings.date);
-settings.wind = (settings.wind === undefined ? true : settings.wind);
 
 /**
 Choose weather icon to display based on condition.
@@ -89,34 +79,6 @@ function getWeather() {
   return jsonWeather;
 }
 
-let fontTemp = settings.wind ? "10%" : "20%";
-let fontWind = settings.wind ? "10%" : "0%";
-let labelDay = settings.day ? "THU" : "";
-let labelDate = settings.date ? "01/01/1970" : "";
-var clockLayout = new Layout( {
-  type:"v", c: [
-    {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
-    {type: "h", fillx: 1, c: [
-      {type: "h", c: [
-        {type:"txt", font:"10%", label:labelDay, id:"dow" },
-        {type:"txt", font:"10%", label:labelDate, id:"date" }
-		]},
-      ]
-    },
-    {type: "h", valign : 1, fillx:1, c: [
-      {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
-      {type: "v", fillx:1, c: [
-          {type: "h", c: [
-            {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},
-          ]},
-          {type: "h", c: [
-            {type: "txt", font: fontWind, id: "wind", label: "00 km/h"},
-          ]}
-        ]
-      },
-    ]}]
-});
-
 // timeout used to update every minute
 var drawTimeout;
 
@@ -158,6 +120,43 @@ function draw() {
   // queue draw in one minute
   queueDraw();
 }
+
+function loadSettings() {
+  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.day = (settings.day === undefined ? true : settings.day);
+  settings.date = (settings.date === undefined ? true : settings.date);
+  settings.wind = (settings.wind === undefined ? true : settings.wind);
+}
+
+loadSettings();
+
+let fontTemp = settings.wind ? "10%" : "20%";
+let fontWind = settings.wind ? "10%" : "0%";
+let labelDay = settings.day ? "THU" : "";
+let labelDate = settings.date ? "01/01/1970" : "";
+var clockLayout = new Layout( {
+  type:"v", c: [
+    {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
+    {type: "h", fillx: 1, c: [
+      {type: "h", c: [
+        {type:"txt", font:"10%", label:labelDay, id:"dow" },
+        {type:"txt", font:"10%", label:labelDate, id:"date" }
+		]},
+      ]
+    },
+    {type: "h", valign : 1, fillx:1, c: [
+      {type: "img", filly: 1, id: "weatherIcon", src: sunIcon},
+      {type: "v", fillx:1, c: [
+          {type: "h", c: [
+            {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},
+          ]},
+          {type: "h", c: [
+            {type: "txt", font: fontWind, id: "wind", label: "00 km/h"},
+          ]}
+        ]
+      },
+    ]}]
+});
 
 g.clear();
 Bangle.setUI("clock");  // Show launcher when middle button pressed
