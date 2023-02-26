@@ -370,32 +370,33 @@ let getTouchHandler = function(ovr){
 
 let touchHandler;
 
+let restoreHandler = function(event){
+  if (backup[event]){
+    Bangle["#on" + event]=backup[event];
+    backup[event] = undefined;
+  }
+};
+
+let backupHandler = function(event){
+  backup[event] = Bangle["#on" + event];
+  Bangle.removeAllListeners(event);
+};
+
 let cleanup = function(){
   if (lockListener) {
     Bangle.removeListener("lock", lockListener);
     lockListener = undefined;
   }
-  if (touchBack){
-    Bangle["#ontouch"]=touchBack;
-    touchBack = undefined;
-  }
-  if (swipeBack){
-    Bangle["#onswipe"]=swipeBack;
-    swipeBack = undefined;
-  }
-  if (dragBack){
-    Bangle["#ondrag"]=dragBack;
-    dragBack = undefined;
-  }
+  restoreHandler("touch");
+  restoreHandler("swipe");
+  restoreHandler("drag");
 
   Bangle.removeListener("tap", doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch", touchHandler);
   Bangle.setLCDOverlay();
 };
 
-let touchBack;
-let swipeBack;
-let dragBack;
+let backup = {};
 
 let main = function(ovr, event) {
   LOG("Main", event, settings);
@@ -406,12 +407,9 @@ let main = function(ovr, event) {
     Bangle.on('lock', lockListener);
   }
 
-  touchBack = Bangle["#ontouch"];
-  Bangle.removeAllListeners("touch");
-  swipeBack = Bangle["#onswipe"];
-  Bangle.removeAllListeners("swipe");
-  dragBack = Bangle["#ondrag"];
-  Bangle.removeAllListeners("drag");
+  backupHandler("touch");
+  backupHandler("swipe");
+  backupHandler("drag");
 
   Bangle.on('tap', doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch",touchHandler);
