@@ -86,7 +86,7 @@
     return changed;
   }
 
-  function draw(fromIntervall) {
+  function draw(fromInterval) {
   // if hidden, don't draw
     if (!WIDGETS["batpc"].width) return;
     // else...
@@ -104,7 +104,7 @@
       }
     }
 
-    if (fromIntervall === true && this.prevLevel === l && this.prevCharging === Bangle.isCharging()) {
+    if (fromInterval === true && this.prevLevel === l && this.prevCharging === Bangle.isCharging()) {
       return; // unchanged, do nothing
     }
 
@@ -157,8 +157,6 @@
     // can affect the width and mess with the whole widget layout
     setWidth();
     g.clear();
-    WIDGETS["batpc"].prevLevel = undefined;
-    WIDGETS["batpc"].prevCharging = undefined;
     Bangle.drawWidgets();
   }
 
