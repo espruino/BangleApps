@@ -16,20 +16,22 @@ const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
 
 let lockListener;
+let quiet;
 
 let LOG = function() {
   //print.apply(null, arguments);
 };
 
 let isQuiet = function(){
-  return (require('Storage').readJSON('setting.json', 1) || {}).quiet;
+  if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
+  return quiet;
 };
 
 let settings = (() => {
   let tmp = {};
 
   tmp.fontSmall = "6x8";
-  tmp.fontMedium = "Vector:16";
+  tmp.fontMedium = "Vector:14";
   tmp.fontBig = "Vector:20";
   tmp.fontLarge = "Vector:30";
 
@@ -126,12 +128,13 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
   ovr.setFontAlign(0,0);
   ovr.setFont(titleFont);
-  if (title) ovr.drawString(title, textCenter, 39/2 + 6);
+  if (title) ovr.drawString(title, textCenter, 38/2 + 5);
 
   ovr.setColor(ovr.theme.fg2);
 
   ovr.setFont(settings.fontMedium);
   roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
+  ovr.setFont("Vector:16");
   ovr.drawString("X",ovr.getWidth()-14,21);
 
   ovr.setColor("#888");
@@ -244,7 +247,7 @@ let next = function(ovr) {
 };
 
 let showMapMessage = function(ovr, msg) {
-  ovr.clearRect(Bangle.appRect);
+  ovr.clearRect(2,2,ovr.getWidth()-3,ovr.getHeight()-3);
   drawMessage(ovr, {
     body: "Not implemented!"
   });
@@ -326,7 +329,7 @@ let drawMessage = function(ovr, msg) {
 
   ovr.setBgColor(ovr.theme.bg);
   ovr.setColor(ovr.theme.fg);
-  ovr.clearRect(2, yText, ovrw-2, ovrh-2);
+  ovr.clearRect(2, yText, ovrw-3, ovrh-3);
   let xText = Padding;
   yText += Padding;
   ovr.setFont(bodyFont);
@@ -413,6 +416,7 @@ let cleanup = function(){
   }
   Bangle.setLCDOverlay();
   ovr = undefined;
+  quiet = undefined;
 };
 
 let backup = {};
