@@ -5,15 +5,31 @@ const SETTINGS_FILE = "weatherClock.json";
 let settings;
 
 // weather icons from https://icons8.com/icon/set/weather/color
-var sunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
-var partSunIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AY6AWVhvdC6vd7owUFwIABFiYAFGR4Xa93u9oXTCwIYDC6HeC4fuC56MBC4ySOIwpIQXYQXHmYABRpwXECwQYKF5HjC4kwL5gQCAYYwO7wqFAAowK7wWKJBgXLJBPd6YX/AAoVMAAM/Cw0DC5yRHCx5JGFyAwGCyIwFC/4XyR4inXa64wRFwowQCw4A/AH4AkA"));
-var cloudIcon = require("heatshrink").decompress(atob("mEwwhC/AH4A/AH4AtgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAH4A/AH4A/ADg="));
-var snowIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AhxGAC9YUBC4QZRhAVBAIWIC6QAEI6IYEI5cIBgwWOC64NCKohHPNox3RBgqnQEo7XPHpKONR5AXYAH4ASLa4XWXILiBC6r5LDBgWWDBRrKC5hsCEacIHawvMCIwvQC5QvQFAROEfZ5ADLJ4YGCywvVI7CPGC9IA/AH4AF"));
-var rainIcon = require("heatshrink").decompress(atob("mEwwhC/AH4AFgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAGeIBJEIwAVJhGIC5AJBC5QMJEJQMEC44JBC6QSCC54FHLxgNBBgYSEDgKpPMhQXneSwuUAH4A/AA4="));
-var stormIcon = require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmYuVGAY0OFwocHC6pNLCxYXYJBQXuCxhhJRpgYKCyBKFFyIXFCyJIFC/4XaO66nU3eza6k7C4IWFGBwXBCwwwO3ewC5AZMC6RaCIxZiI3e7AYYwRCQIIBC4QwPIQIpDC5owDhYREIxgAEFIouNC4orDFyBGBGAcLC6BaFhYWRLSRIFISQXcCyqhRAH4Az"));
+function getSun() {
+  return require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
+}
+function getPartSun() { 
+  return require("heatshrink").decompress(atob("mEwwhC/AH4AY6AWVhvdC6vd7owUFwIABFiYAFGR4Xa93u9oXTCwIYDC6HeC4fuC56MBC4ySOIwpIQXYQXHmYABRpwXECwQYKF5HjC4kwL5gQCAYYwO7wqFAAowK7wWKJBgXLJBPd6YX/AAoVMAAM/Cw0DC5yRHCx5JGFyAwGCyIwFC/4XyR4inXa64wRFwowQCw4A/AH4AkA"));
+}
+function getCloud() {
+  return require("heatshrink").decompress(atob("mEwwhC/AH4A/AH4AtgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAH4A/AH4A/ADg="));
+}
+function getSnow() {
+  return require("heatshrink").decompress(atob("mEwwhC/AH4AhxGAC9YUBC4QZRhAVBAIWIC6QAEI6IYEI5cIBgwWOC64NCKohHPNox3RBgqnQEo7XPHpKONR5AXYAH4ASLa4XWXILiBC6r5LDBgWWDBRrKC5hsCEacIHawvMCIwvQC5QvQFAROEfZ5ADLJ4YGCywvVI7CPGC9IA/AH4AF"));
+}
+function getRain() {
+  return require("heatshrink").decompress(atob("mEwwhC/AH4AFgczmYWWDCgWDmcwIKAuEGBoSGGCAWKC7BIKIxYX6CpgABn4tUSJIWPJIwuQGAwWRGAoX/C+SPEU67XXGCIuFGCAWHAGeIBJEIwAVJhGIC5AJBC5QMJEJQMEC44JBC6QSCC54FHLxgNBBgYSEDgKpPMhQXneSwuUAH4A/AA4="));
+}
+function getStorm() {
+  return require("heatshrink").decompress(atob("mEwwhC/AFEzmcwCyoYUgYXDmYuVGAY0OFwocHC6pNLCxYXYJBQXuCxhhJRpgYKCyBKFFyIXFCyJIFC/4XaO66nU3eza6k7C4IWFGBwXBCwwwO3ewC5AZMC6RaCIxZiI3e7AYYwRCQIIBC4QwPIQIpDC5owDhYREIxgAEFIouNC4orDFyBGBGAcLC6BaFhYWRLSRIFISQXcCyqhRAH4Az"));
+}
 // err icon - https://icons8.com/icons/set/error
-var errIcon = require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
-var dummyIcon = require("heatshrink").decompress(atob("gMBwMAwA"));
+function getErr() {
+  return require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
+}
+function getDummy() {
+  return require("heatshrink").decompress(atob("gMBwMAwA"));
+}
 
 /**
 Choose weather icon to display based on condition.
@@ -22,20 +38,20 @@ sent from gadget bridge.
 */
 function chooseIcon(condition) {
   condition = condition.toLowerCase();
-  if (condition.includes("thunderstorm")) return stormIcon;
+  if (condition.includes("thunderstorm")) return getStorm;
   if (condition.includes("freezing")||condition.includes("snow")||
     condition.includes("sleet")) {
-    return snowIcon;
+    return getSnow;
   }
   if (condition.includes("drizzle")||
     condition.includes("shower")) {
-    return rainIcon;
+    return getRain;
   }
-  if (condition.includes("rain")) return rainIcon;
-  if (condition.includes("clear")) return sunIcon;
-  if (condition.includes("few clouds")) return partSunIcon;
-  if (condition.includes("scattered clouds")) return cloudIcon;
-  if (condition.includes("clouds")) return cloudIcon;
+  if (condition.includes("rain")) return getRain;
+  if (condition.includes("clear")) return getSun;
+  if (condition.includes("few clouds")) return getPartSun;
+  if (condition.includes("scattered clouds")) return getCloud;
+  if (condition.includes("clouds")) return getCloud;
   if (condition.includes("mist") ||
     condition.includes("smoke") ||
     condition.includes("haze") ||
@@ -45,9 +61,9 @@ function chooseIcon(condition) {
     condition.includes("ash") ||
     condition.includes("squalls") ||
     condition.includes("tornado")) {
-    return cloudIcon;
+    return getCloud;
   }
-  return cloudIcon;
+  return getCloud;
 }
 
 /*
@@ -57,18 +73,18 @@ function chooseIcon(condition) {
 function chooseIconByCode(code) {
   const codeGroup = Math.round(code / 100);
   switch (codeGroup) {
-    case 2: return stormIcon;
-    case 3: return rainIcon;
-    case 5: return rainIcon;
-    case 6: return snowIcon;
-    case 7: return cloudIcon;
+    case 2: return getStorm;
+    case 3: return getRain;
+    case 5: return getRain;
+    case 6: return getSnow;
+    case 7: return getCloud;
     case 8:
       switch (code) {
-        case 800: return sunIcon;
-        case 801: return partSunIcon;
-        default: return cloudIcon;
+        case 800: return getSun;
+        case 801: return getPartSun;
+        default: return getCloud;
       }
-    default: return cloudIcon;
+    default: return getCloud;
   }
 }
 
@@ -104,9 +120,9 @@ function draw() {
       clockLayout.temp.label = temp[1] + " " + temp[2];
       const code = currentWeather.code || -1;
       if (code > 0) {
-        clockLayout.weatherIcon.src = settings.icon ? chooseIconByCode(code) : dummyIcon;
+        clockLayout.weatherIcon.src = settings.icon ? chooseIconByCode(code) : getDummy;
       } else {
-        clockLayout.weatherIcon.src = settings.icon ? chooseIcon(currentWeather.txt) : dummyIcon;
+        clockLayout.weatherIcon.src = settings.icon ? chooseIcon(currentWeather.txt) : getDummy;
       }
       const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
       clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
@@ -114,7 +130,7 @@ function draw() {
   else{
       clockLayout.temp.label = "Err";
       clockLayout.wind.label = "No Data";
-      clockLayout.weatherIcon.src = settings.icon ? errIcon : dummyIcon;
+      clockLayout.weatherIcon.src = settings.icon ? getErr : getDummy;
   }
   clockLayout.clear();
   clockLayout.render();
@@ -132,7 +148,7 @@ function loadSettings() {
 
 loadSettings();
 
-let srcWeather = settings.icon ? sunIcon : dummyIcon;
+let srcWeather = settings.icon ? getSun : getDummy;
 let fontTemp = settings.wind ? "10%" : "20%";
 let fontWind = settings.wind ? "10%" : "0%";
 let labelDay = settings.day ? "THU" : "";
@@ -144,7 +160,7 @@ var clockLayout = new Layout( {
       {type: "h", c: [
         {type:"txt", font:"10%", label:labelDay, id:"dow" },
         {type:"txt", font:"10%", label:labelDate, id:"date" }
-		]},
+        ]},
       ]
     },
     {type: "h", valign : 1, fillx:1, c: [
