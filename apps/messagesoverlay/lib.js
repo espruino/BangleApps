@@ -30,8 +30,6 @@ let settings = (() => {
   tmp.fontBig = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
   tmp.fontLarge = g.getFonts().includes("6x15") ? "6x15:2" : "6x8:4";
 
-  tmp.colLock = g.theme.dark ? "#ff0000" : "#ff0000";
-
   tmp.quiet = ((require('Storage').readJSON('settings.json', 1) || {}).quiet);
 
   return tmp;
@@ -169,9 +167,9 @@ let showMessage = function(ovr, msg) {
 
 let DrawLock = function(ovr) {
   if (Bangle.isLocked())
-    ovr.setColor(settings.colLock);
+    ovr.setColor(ovr.theme.fgH);
   else
-    ovr.setColor(ovr.theme.bg2);
+    ovr.setColor(ovr.theme.fg);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   Bangle.setLCDOverlay(ovr,10,10);
