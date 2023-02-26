@@ -20,6 +20,7 @@
   "data": [
     {"name":"powermanager.hw.json"},
     {"name":"powermanager.def.json"},
+    {"name":"powermanager.json"},
     {"name":"powermanager.log"}
   ]
 }
