@@ -10,6 +10,10 @@
   }
 */
 
+const ovrx = 10;
+const ovry = 10;
+const ovrw = g.getWidth()-2*ovrx;
+const ovrh = g.getHeight()-2*ovry;
 
 let lockListener;
 
@@ -91,22 +95,7 @@ let manageEvent = function(ovr, event) {
   }
 };
 
-let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
-  ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(0,0,ovr.getWidth(),40);
-
-  ovr.setColor(ovr.theme.fg2);
-  ovr.setFont(settings.fontSmall);
-  ovr.setFontAlign(0,-1);
-  ovr.drawString(src, ovr.getWidth()/2, 2);
-
-  ovr.setFont(titleFont);
-  ovr.drawString(title, ovr.getWidth()/2, 12);
-
-  let x = 150;
-  let y = 5;
-  let w = 22;
-  let h = 30;
+let roundedRect = function(ovr, x,y,w,h,filled){
   var poly = [
     x,y+4,
     x+4,y,
@@ -118,13 +107,29 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
     x,y+h-5,
     x,y+4
   ];
-  ovr.setColor(ovr.theme.fg2);
   ovr.drawPoly(poly,true);
-  ovr.drawString("X",160,10);
+  if (filled) ovr.fillPoly(poly,true);
+};
+
+let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
+  ovr.setBgColor(ovr.theme.bg2);
+  ovr.clearRect(0,0,ovr.getWidth(),40);
+
+  ovr.setColor(ovr.theme.fg2);
+  ovr.setFont(settings.fontSmall);
+  ovr.setFontAlign(0,-1);
+  ovr.drawString(src, (ovr.getWidth()-ovrx)/2, 2);
+
+  ovr.setFont(titleFont);
+  ovr.drawString(title, (ovr.getWidth()-ovrx)/2, 12);
+
+  ovr.setColor(ovr.theme.fg2);
+  roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
+  ovr.drawString("X",ovr.getWidth()-16,10);
 
   ovr.setColor(iconcolor);
   ovr.setBgColor("#fff");
-  ovr.drawImage(icon,10,10);
+  ovr.drawImage(icon,8,8);
 };
 
 let showMessage = function(ovr, msg) {
@@ -169,7 +174,7 @@ let DrawLock = function(ovr) {
     ovr.setColor(ovr.theme.bg2);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  Bangle.setLCDOverlay(ovr,0,0);
+  Bangle.setLCDOverlay(ovr,10,10);
 };
 
 let showCall = function(ovr, msg) {
@@ -188,7 +193,7 @@ let showCall = function(ovr, msg) {
     titleFont = settings.fontLarge,
     lines;
   if (title) {
-    let w = ovr.getWidth() - 48;
+    let w = ovr.getWidth() - 40;
     if (ovr.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (ovr.setFont(titleFont).stringWidth(title) > w) {
@@ -304,20 +309,20 @@ let PrintMessageStrings = function(ovr, msg) {
     }
   }
 
-  let NumLines = 9;
+  let NumLines = 7;
   let linesToPrint = (msg.lines.length > NumLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + NumLines) : msg.lines;
 
 
   let yText = 40;
 
   ovr.setBgColor(ovr.theme.bg);
-  ovr.clearRect(0, yText, 176, 176);
+  ovr.clearRect(0, yText, ovrw, ovrh);
   let xText = Padding;
   yText += Padding;
   ovr.setFont(bodyFont);
   let HText = ovr.getFontHeight();
 
-  yText = ((176 - yText) / 2) - (linesToPrint.length * HText / 2) + yText;
+  yText = ((ovrh - yText) / 2) - (linesToPrint.length * HText / 2) + yText;
 
   if (linesToPrint.length <= 2) {
     ovr.setFontAlign(0, -1);
@@ -353,9 +358,9 @@ let doubleTapUnlock = function(data) {
 
 let getTouchHandler = function(ovr){
   return (button, xy) => {
-    if (xy.y < 40){
+    if (xy.y < ovry + 40){
       next(ovr);
-    } else if (xy.y < (ovr.getHeight() - 40)/2) {
+    } else if (xy.y < (ovry + ovr.getHeight() - 40)/2) {
       ScrollUp(ovr);
     } else {
       ScrollDown(ovr);
@@ -404,7 +409,7 @@ let main = function(ovr, event) {
     manageEvent(ovr, event);
     Bangle.setLCDPower(1);
     DrawLock(ovr);
-    Bangle.setLCDOverlay(ovr,0,0);
+    Bangle.setLCDOverlay(ovr,10,10);
   } else {
     LOG("No event given");
     cleanup();
@@ -414,7 +419,7 @@ let main = function(ovr, event) {
 exports.pushMessage = function(event) {
   if( event.id=="music") return require_real("messages").pushMessage(event);
 
-  let ovr = Graphics.createArrayBuffer(g.getWidth(), g.getHeight(), 4, {
+  let ovr = Graphics.createArrayBuffer(ovrw, ovrh, 4, {
     msb: true
   });
 
@@ -424,7 +429,7 @@ exports.pushMessage = function(event) {
   ovr.theme = g.theme;
   if(event.t=="remove") return;
   main(ovr, event);
-  Bangle.setLCDOverlay(ovr, 0, 0);
+  Bangle.setLCDOverlay(ovr, 10, 10);
 
   g = _g;
 };
