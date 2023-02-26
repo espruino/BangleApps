@@ -21,3 +21,4 @@
 1.19: added longer delay before resetting accelHandler
 1.20: removed all traces of accel b/c I've given up
 1.21: added a drawWidgets command to see if I have the padding right
+1.22: ok the buzzing *might* work now
