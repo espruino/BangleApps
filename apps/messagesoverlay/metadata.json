@@ -11,7 +11,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"messagesoverlay.settings.js","url":"settings.js"},
-    {"name":"messagesoverlay.img","url":"app-icon.js","evaluate":true},
     {"name":"messagesoverlay","url":"lib.js"},
     {"name":"messagesoverlay.boot.js","url":"boot.js"}
   ]
