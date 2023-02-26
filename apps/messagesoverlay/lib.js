@@ -115,11 +115,17 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
-  ovr.drawString(src, (ovr.getWidth()+35-26)/2, 2);
+
+  let textCenter = (ovr.getWidth()+35-26)/2;
+
+  if (src) {
+    while (ovr.stringWidth(src) > ovr.getWidth()-80) src = src.substring(0,src.length-2);
+    ovr.drawString(src + "...", textCenter, 2);
+  }
 
   ovr.setFontAlign(0,0);
   ovr.setFont(titleFont);
-  ovr.drawString(title, (ovr.getWidth()+35-26)/2, 39/2 + 6);
+  if (title) ovr.drawString(title, textCenter, 39/2 + 6);
 
   ovr.setColor(ovr.theme.fg2);
 
