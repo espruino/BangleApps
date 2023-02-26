@@ -18,12 +18,11 @@ const ovrh = g.getHeight()-2*ovry;
 let lockListener;
 
 let LOG = function() {
-  print.apply(null, arguments);
+  //print.apply(null, arguments);
 };
 
 let settings = (() => {
   let tmp = {};
-  tmp.NewEventFileName = "messagesoverlay.NewEvent.json";
 
   tmp.fontSmall = "6x8";
   tmp.fontMedium = g.getFonts().includes("Vector") ? "Vector:16" : "6x8:2";
@@ -34,9 +33,9 @@ let settings = (() => {
 
   return tmp;
 })();
-let EventQueue = [];
-let callInProgress = false;
 
+let eventQueue = [];
+let callInProgress = false;
 
 let manageEvent = function(ovr, event) {
   event.new = true;
@@ -48,7 +47,7 @@ let manageEvent = function(ovr, event) {
   }
   switch (event.t) {
     case "add":
-      EventQueue.unshift(event);
+      eventQueue.unshift(event);
 
       if (!callInProgress)
         showMessage(ovr, event);
@@ -56,33 +55,33 @@ let manageEvent = function(ovr, event) {
 
     case "modify":
       let find = false;
-      EventQueue.forEach(element => {
+      eventQueue.forEach(element => {
         if (element.id == event.id) {
           find = true;
           Object.assign(element, event);
         }
       });
       if (!find)
-        EventQueue.unshift(event);
+        eventQueue.unshift(event);
 
       if (!callInProgress)
         showMessage(ovr, event);
       break;
 
     case "remove":
-      if (EventQueue.length == 0 && !callInProgress)
+      if (eventQueue.length == 0 && !callInProgress)
         next(ovr);
 
-      if (!callInProgress && EventQueue[0] !== undefined && EventQueue[0].id == event.id)
+      if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
         next(ovr);
 
       else {
-        let newEventQueue = [];
-        EventQueue.forEach(element => {
+        let neweventQueue = [];
+        eventQueue.forEach(element => {
           if (element.id != event.id)
-            newEventQueue.push(element);
+            neweventQueue.push(element);
         });
-        EventQueue = newEventQueue;
+        eventQueue = neweventQueue;
       }
 
       break;
@@ -132,14 +131,13 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
 let showMessage = function(ovr, msg) {
   LOG("showMessage");
-  LOG(msg);
   ovr.setBgColor(settings.colBg);
 
 
-  if (typeof msg.CanScrollDown === "undefined")
-    msg.CanScrollDown = false;
-  if (typeof msg.CanScrollUp === "undefined")
-    msg.CanScrollUp = false;
+  if (typeof msg.CanscrollDown === "undefined")
+    msg.CanscrollDown = false;
+  if (typeof msg.CanscrollUp === "undefined")
+    msg.CanscrollUp = false;
 
   // Normal text message display
   let title = msg.title,
@@ -162,10 +160,10 @@ let showMessage = function(ovr, msg) {
     Bangle.buzz();
   }
 
-  PrintMessageStrings(ovr, msg);
+  drawMessage(ovr, msg);
 };
 
-let DrawLock = function(ovr) {
+let drawBorder = function(ovr) {
   if (Bangle.isLocked())
     ovr.setColor(ovr.theme.fgH);
   else
@@ -202,91 +200,92 @@ let showCall = function(ovr, msg) {
 
   drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
-  StopBuzzCall();
+  stopCallBuzz();
   if (!settings.quiet) {
     if (msg.new) {
       msg.new = false;
-      CallBuzzTimer = setInterval(function() {
+      callBuzzTimer = setInterval(function() {
         Bangle.buzz(500);
       }, 1000);
 
       Bangle.buzz(500);
     }
   }
-  PrintMessageStrings(ovr, msg);
+  drawMessage(ovr, msg);
 };
 
 let next = function(ovr) {
   LOG("next");
-  StopBuzzCall();
+  stopCallBuzz();
 
   if (!callInProgress)
-    EventQueue.shift();
+    eventQueue.shift();
 
   callInProgress = false;
-  if (EventQueue.length == 0) {
+  if (eventQueue.length == 0) {
     LOG("no element in queue - closing");
     cleanup();
     return;
   }
 
-  showMessage(ovr, EventQueue[0]);
+  showMessage(ovr, eventQueue[0]);
 };
 
 let showMapMessage = function(ovr, msg) {
   ovr.clearRect(Bangle.appRect);
-  PrintMessageStrings(ovr, {
+  drawMessage(ovr, {
     body: "Not implemented!"
   });
 };
 
-let CallBuzzTimer = null;
-let StopBuzzCall = function() {
-  if (CallBuzzTimer) {
-    clearInterval(CallBuzzTimer);
-    CallBuzzTimer = null;
+let callBuzzTimer = null;
+let stopCallBuzz = function() {
+  if (callBuzzTimer) {
+    clearInterval(callBuzzTimer);
+    callBuzzTimer = null;
   }
 };
 
-let DrawTriangleUp = function(ovr) {
+let drawTriangleUp = function(ovr) {
   ovr.reset();
-  ovr.fillPoly([169, 46, 164, 56, 174, 56]);
+  ovr.fillPoly([ovr.getWidth()-9, 46,ovr.getWidth()-14, 56,ovr.getWidth()-4, 56]);
 };
 
-let DrawTriangleDown = function(ovr) {
+let drawTriangleDown = function(ovr) {
   ovr.reset();
-  ovr.fillPoly([169, 170, 164, 160, 174, 160]);
+  ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
 };
 
-let ScrollUp = function(ovr, msg) {
-  msg = EventQueue[0];
-
+let scrollUp = function(ovr) {
+  msg = eventQueue[0];
+  LOG("up", msg);
   if (typeof msg.FirstLine === "undefined")
     msg.FirstLine = 0;
-  if (typeof msg.CanScrollUp === "undefined")
-    msg.CanScrollUp = false;
+  if (typeof msg.CanscrollUp === "undefined")
+    msg.CanscrollUp = false;
 
-  if (!msg.CanScrollUp) return;
+  if (!msg.CanscrollUp) return;
 
   msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
 
-  PrintMessageStrings(ovr, msg);
+  drawMessage(ovr, msg);
 };
 
-let ScrollDown = function(ovr, msg) {
-  msg = EventQueue[0];
+let scrollDown = function(ovr) {
+  msg = eventQueue[0];
+  LOG("down", msg);
   if (typeof msg.FirstLine === "undefined")
     msg.FirstLine = 0;
-  if (typeof msg.CanScrollDown === "undefined")
-    msg.CanScrollDown = false;
+  if (typeof msg.CanscrollDown === "undefined")
+    msg.CanscrollDown = false;
 
-  if (!msg.CanScrollDown) return;
+  if (!msg.CanscrollDown) return;
 
   msg.FirstLine = msg.FirstLine + 1;
-  PrintMessageStrings(ovr, msg);
+  drawMessage(ovr, msg);
 };
 
-let PrintMessageStrings = function(ovr, msg) {
+let drawMessage = function(ovr, msg) {
   let MyWrapString = function(str, maxWidth) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
@@ -295,7 +294,7 @@ let PrintMessageStrings = function(ovr, msg) {
   if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
 
   let bodyFont = typeof msg.bodyFont === "undefined" ? settings.fontMedium : msg.bodyFont;
-  let Padding = 2;
+  let Padding = 3;
   if (typeof msg.lines === "undefined") {
     ovr.setFont(bodyFont);
     msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
@@ -308,13 +307,13 @@ let PrintMessageStrings = function(ovr, msg) {
   }
 
   let NumLines = 7;
-  let linesToPrint = (msg.lines.length > NumLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + NumLines) : msg.lines;
 
+  let linesToPrint = (msg.lines.length > NumLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + NumLines) : msg.lines;
 
   let yText = 40;
 
   ovr.setBgColor(ovr.theme.bg);
-  ovr.clearRect(0, yText, ovrw, ovrh);
+  ovr.clearRect(2, yText, ovrw-2, ovrh-2);
   let xText = Padding;
   yText += Padding;
   ovr.setFont(bodyFont);
@@ -334,16 +333,17 @@ let PrintMessageStrings = function(ovr, msg) {
   });
 
   if (msg.FirstLine != 0) {
-    msg.CanScrollUp = true;
-    DrawTriangleUp(ovr);
+    msg.CanscrollUp = true;
+    drawTriangleUp(ovr);
   } else
-    msg.CanScrollUp = false;
+    msg.CanscrollUp = false;
 
   if (msg.FirstLine + linesToPrint.length < msg.lines.length) {
-    msg.CanScrollDown = true;
-    DrawTriangleDown(ovr);
+    msg.CanscrollDown = true;
+    drawTriangleDown(ovr);
   } else
-    msg.CanScrollDown = false;
+    msg.CanscrollDown = false;
+  Bangle.setLCDOverlay(ovr,ovrx,ovry);
 };
 
 let doubleTapUnlock = function(data) {
@@ -354,19 +354,26 @@ let doubleTapUnlock = function(data) {
   }
 };
 
+let getSwipeHandler = function(ovr){
+  return (lr, ud) => {
+    if (ud == 1) {
+      scrollUp(ovr);
+    } else if (ud == -1){
+      scrollDown(ovr);
+    }
+  };
+};
+
 let getTouchHandler = function(ovr){
-  return (button, xy) => {
+  return (_, xy) => {
     if (xy.y < ovry + 40){
       next(ovr);
-    } else if (xy.y < (ovry + ovr.getHeight() - 40)/2) {
-      ScrollUp(ovr);
-    } else {
-      ScrollDown(ovr);
     }
   };
 };
 
 let touchHandler;
+let swipeHandler;
 
 let restoreHandler = function(event){
   if (backup[event]){
@@ -391,6 +398,7 @@ let cleanup = function(){
 
   Bangle.removeListener("tap", doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch", touchHandler);
+  if (swipeHandler) Bangle.removeListener("swipe", swipeHandler);
   Bangle.setLCDOverlay();
 };
 
@@ -400,7 +408,7 @@ let main = function(ovr, event) {
   LOG("Main", event, settings);
   if (!lockListener) {
     lockListener = function (){
-      DrawLock(ovr);
+      drawBorder(ovr);
     };
     Bangle.on('lock', lockListener);
   }
@@ -411,13 +419,16 @@ let main = function(ovr, event) {
 
   Bangle.on('tap', doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch",touchHandler);
+  if (swipeHandler) Bangle.removeListener("swipe",swipeHandler);
   touchHandler = getTouchHandler(ovr);
+  swipeHandler = getSwipeHandler(ovr);
   Bangle.on('touch', touchHandler);
+  Bangle.on('swipe', swipeHandler);
 
   if (event !== undefined){
     manageEvent(ovr, event);
     Bangle.setLCDPower(1);
-    DrawLock(ovr);
+    drawBorder(ovr);
     Bangle.setLCDOverlay(ovr,10,10);
   } else {
     LOG("No event given");
