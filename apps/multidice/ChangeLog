@@ -20,3 +20,4 @@
 1.18: decided to keep around the button even while testing, disabled all safety round the accelHandler self-triggering
 1.19: added longer delay before resetting accelHandler
 1.20: removed all traces of accel b/c I've given up
+1.21: added a drawWidgets command to see if I have the padding right
