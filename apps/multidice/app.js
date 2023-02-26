@@ -81,7 +81,7 @@ function touchHandler (button, xy) {
 
 function accelHandler (xyz) {
 	
-	if (xyz.diff >= 0.3) {
+	if (xyz.diff >= 0.4) {
 		
 		menu = false;
 		mutex (rollDice);
@@ -109,11 +109,6 @@ function mutex (functionRef) {
 			reject (error);
 		});
 	});
-}
-
-function voidFn() {
-	
-	return;
 }
 
 function rollDice() {
@@ -151,7 +146,16 @@ function rollDice() {
 
 function vibrate() {
 	
-	return Bangle.buzz(50, 0.5);
+	return new Promise ((resolve, reject) => {
+		
+		return Bangle.buzz (50, 0.5).then ((value) => {
+			
+			setTimeout (() => {
+				
+				resolve (value);
+			}, 150);
+		});
+	});
 }
 
 function random (max) {
