@@ -84,8 +84,7 @@ function accelHandler (xyz) {
 	if (xyz.diff >= 0.3) {
 		
 		menu = false;
-		//rollDice();
-		//mutex (rollDice);
+		mutex (rollDice);
 	}
 }
 
@@ -166,6 +165,5 @@ Bangle.on ('accel', accelHandler);
 setWatch (function() {
 	
 	menu = false;
-	//rollDice();
 	mutex (rollDice);
 }, BTN, {repeat: true, edge: "falling", debounce: 10});
