@@ -98,12 +98,16 @@ function mutex (functionRef) {
 	}
 	
 	lock = true;
-	return new Promise (() => {
+	return new Promise ((resolve, reject) => {
 		
-		functionRef.then ((result) => {
+		functionRef().then ((result) => {
 			
 			lock = false;
 			resolve (result);
+		}).catch ((error) => {
+			
+			lock = false;
+			reject (error);
 		});
 	});
 }
