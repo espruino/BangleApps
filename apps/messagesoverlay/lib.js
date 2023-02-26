@@ -377,8 +377,15 @@ let cleanup = function(){
   }
   if (touchBack){
     Bangle["#ontouch"]=touchBack;
-    LOG("Restored touch handlers:", touchBack);
     touchBack = undefined;
+  }
+  if (swipeBack){
+    Bangle["#onswipe"]=swipeBack;
+    swipeBack = undefined;
+  }
+  if (dragBack){
+    Bangle["#ondrag"]=dragBack;
+    dragBack = undefined;
   }
 
   Bangle.removeListener("tap", doubleTapUnlock);
@@ -387,6 +394,8 @@ let cleanup = function(){
 };
 
 let touchBack;
+let swipeBack;
+let dragBack;
 
 let main = function(ovr, event) {
   LOG("Main", event, settings);
@@ -399,6 +408,10 @@ let main = function(ovr, event) {
 
   touchBack = Bangle["#ontouch"];
   Bangle.removeAllListeners("touch");
+  swipeBack = Bangle["#onswipe"];
+  Bangle.removeAllListeners("swipe");
+  dragBack = Bangle["#ondrag"];
+  Bangle.removeAllListeners("drag");
 
   Bangle.on('tap', doubleTapUnlock);
   if (touchHandler) Bangle.removeListener("touch",touchHandler);
