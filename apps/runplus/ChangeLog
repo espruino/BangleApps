@@ -13,5 +13,7 @@
 0.12: Fix for recorder not stopping at end of run. Bug introduced in 0.11
 0.13: Revert #1578 (stop duplicate entries) as with 2v12 menus it causes other boxes to be wiped (fix #1643)
 0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
-0.15: Diverge from the standard "Run" app. Swipe to intensity interface a la Karvonnen (curtesy of FTeacher at https://github.com/f-teacher)
+0.15: Diverge from the standard "Run" app. Swipe to intensity interface a la Karvonen (curtesy of FTeacher at https://github.com/f-teacher)
       Keep run state between runs (allowing you to exit and restart the app)
+0.16: Don't clear zone 2b indicator segment when updating HRM reading.
+      Write to correct settings file, fixing settings not working.

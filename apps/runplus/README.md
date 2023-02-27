@@ -67,3 +67,10 @@ app loader, the module is automatically included in the app's source. However
 when developing via the IDE the module won't get pulled in by default.
 
 There are some options to fix this easily - please check out the [modules README.md file](https://github.com/espruino/BangleApps/blob/master/modules/README.md)
+## Contributors (Run and Run+)
+gfwilliams
+hughbarney
+GrandVizierOlaf
+BartS23
+f-teacher
+thyttan

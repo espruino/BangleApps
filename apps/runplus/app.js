@@ -2,7 +2,7 @@
 let wu = require("widget_utils");
 
 let runInterval;
-let karvonnenActive = false;
+let karvonenActive = false;
 // Run interface wrapped in a function
 let ExStats = require("exstats");
 let B2 = process.env.HWVERSION===2;
@@ -63,7 +63,6 @@ function setStatus(running) {
 function onStartStop() {
   let running = !exs.state.active;
   let prepPromises = [];
-
   // start/stop recording
   // Do this first in case recorder needs to prompt for
   // an overwrite before we start tracking exstats
@@ -155,7 +154,7 @@ Bangle.on("GPS", function(fix) {
   }
 });
 
-// run() function used to switch between traditional run UI and karvonnen UI
+// run() function used to switch between traditional run UI and karvonen UI
 function run() {
   wu.show();
   layout.lazy = false;
@@ -165,35 +164,35 @@ function run() {
   if (!runInterval){
     runInterval = setInterval(function() {
       layout.clock.label = locale.time(new Date(),1);
-      if (!isMenuDisplayed && !karvonnenActive) layout.render();
+      if (!isMenuDisplayed && !karvonenActive) layout.render();
     }, 1000);
   }
 }
 run();
 
 ///////////////////////////////////////////////
-//                Karvonnen
+//                Karvonen
 ///////////////////////////////////////////////
 
 function stopRunUI() {
   // stop updating and drawing the traditional run app UI
   clearInterval(runInterval);
   runInterval = undefined;
-  karvonnenActive = true;
+  karvonenActive = true;
 }
 
-function stopKarvonnenUI() {
+function stopKarvonenUI() {
   g.reset().clear();
-  clearInterval(karvonnenInterval);
-  karvonnenInterval = undefined;
-  karvonnenActive = false;
+  clearInterval(karvonenInterval);
+  karvonenInterval = undefined;
+  karvonenActive = false;
 }
 
-let karvonnenInterval;
+let karvonenInterval;
 // Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
-  if (LR==-1 && karvonnenActive && !isMenuDisplayed) {stopKarvonnenUI(); run();}
-  if (LR==1 && !karvonnenActive && !isMenuDisplayed) {stopRunUI(); karvonnenInterval = eval(require("Storage").read("runplus_karvonnen"))(settings.HRM, exs.stats.bpm);}
+  if (LR==-1 && karvonenActive && !isMenuDisplayed) {stopKarvonenUI(); run();}
+  if (LR==1 && !karvonenActive && !isMenuDisplayed) {stopRunUI(); karvonenInterval = eval(require("Storage").read("runplus_karvonen"))(settings.HRM, exs.stats.bpm);}
 }
 // Listen for swipes with the swipeHandler
 Bangle.on("swipe", swipeHandler);
