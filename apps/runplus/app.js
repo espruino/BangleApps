@@ -63,7 +63,6 @@ function setStatus(running) {
 function onStartStop() {
   let running = !exs.state.active;
   let prepPromises = [];
-https://github.com/espruino/BangleApps/pull/2600/conflict?name=apps%252Frunplus%252Fapp.js&ancestor_oid=15e0427592259f3112ee70d43bc7ce6fab20e1d8&base_oid=06270850f707ea94957a2990fb83425e7dc68d7f&head_oid=633e47983e015446796f69837501c8fc72255031
   // start/stop recording
   // Do this first in case recorder needs to prompt for
   // an overwrite before we start tracking exstats
