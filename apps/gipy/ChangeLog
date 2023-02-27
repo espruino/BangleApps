@@ -73,3 +73,5 @@
 	* Display current and next segment in red so that you know where to go.
 	* Avoid angles flickering at low speed at the cost of less refresh.
 	* Splash screen while waiting for gps signal.
+  
+0.17: Convert Yes/No On/Off in settings to checkboxes

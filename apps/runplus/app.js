@@ -52,11 +52,18 @@ let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,setti
 let exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
+function setStatus(running) {
+  layout.button.label = running ? "STOP" : "START";
+  layout.status.label = running ? "RUN" : "STOP";
+  layout.status.bgCol = running ? "#0f0" : "#f00";
+  layout.render();
+}
+
 // Called to start/stop running
 function onStartStop() {
   let running = !exs.state.active;
   let prepPromises = [];
-
+https://github.com/espruino/BangleApps/pull/2600/conflict?name=apps%252Frunplus%252Fapp.js&ancestor_oid=15e0427592259f3112ee70d43bc7ce6fab20e1d8&base_oid=06270850f707ea94957a2990fb83425e7dc68d7f&head_oid=633e47983e015446796f69837501c8fc72255031
   // start/stop recording
   // Do this first in case recorder needs to prompt for
   // an overwrite before we start tracking exstats
@@ -88,12 +95,9 @@ function onStartStop() {
     } else {
       exs.stop();
     }
-    layout.button.label = running ? "STOP" : "START";
-    layout.status.label = running ? "RUN" : "STOP";
-    layout.status.bgCol = running ? "#0f0" : "#f00";
     // if stopping running, don't clear state
     // so we can at least refer to what we've done
-    layout.render();
+    setStatus(running);
   });
 }
 
@@ -116,13 +120,14 @@ for (let i=0;i<statIDs.length;i+=2) {
 lc.push({ type:"h", filly:1, c:[
   {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
   {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
-  {type:"txt", font:fontHeading, label:"STOP", id:"status", fillx:1 }
+  {type:"txt", font:fontHeading, label:"---", id:"status", fillx:1 }
 ]});
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"START", cb: ()=>{if (karvonenActive) {stopKarvonenUI();run();} onStartStop();}, id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: ()=>{if (karvonnenActive) {stopKarvonnenUI();run();} onStartStop();}, id:"button"}]});
 delete lc;
+setStatus(exs.state.active);
 layout.render();
 
 function configureNotification(stat) {

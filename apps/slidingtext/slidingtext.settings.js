@@ -173,8 +173,7 @@
         "Colour": stringInSettings("color_scheme", ["black","white", "red","grey","purple","blue"]),
         "Style": stringInSettings("date_format", locales, (l)=>locale_mappings[l] ),
         "Live Control": {
-            value: (settings.enable_live_controls !== undefined ? settings.enable_live_controls : true),
-            format: v => v ? "On" : "Off",
+            value: (settings.enable_live_controls !== undefined ? !!settings.enable_live_controls : true),
             onchange: v => {
                 settings.enable_live_controls = v;
                 writeSettings();

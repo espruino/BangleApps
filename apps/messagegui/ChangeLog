@@ -87,3 +87,4 @@
 0.62: Remove '.show' field, tidyup and fix .open if fast load not enabled
 0.63: Fix messages app loading on clock without fast load
 0.64: Ensure we don't get 'undefined' as the message body
+0.65: Make sure messages are saved if not in the clock app (fix #2460)
