@@ -7,6 +7,7 @@
   }, require("Storage").readJSON("gpsmagcourse.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
   let cntAboveSpeed = 0;
+  let lastMag;
 
   // Check if magnav is installed
   try {
@@ -40,13 +41,10 @@
   if (settings.tiltCompensation) {
     const origGetCompass = Bangle.getCompass;
     Bangle.getCompass = function(argObj) {
-      const mag = origGetCompass();
-      if (!isNaN(mag.heading) && (argObj === undefined || !argObj.noTiltComp)) {
-        const d = require("magnav").tiltfix(mag, Bangle.getAccel());
-        mag.headingOrig = mag.heading;
-        mag.heading = d;
+      if (!isNaN(lastMag.heading) && (argObj === undefined || !argObj.noTiltComp)) {
+        return lastMag;
       }
-      return mag;
+      return origGetCompass();
     };
 
     Bangle.on('mag', function(mag) {
@@ -55,6 +53,7 @@
         mag.headingOrig = mag.heading;
         mag.heading = d;
       }
+      lastMag = mag;
     });
   } // if (settings.tiltCompensation)
 
