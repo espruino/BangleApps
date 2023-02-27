@@ -265,6 +265,7 @@ function UserInput(){
             } 
       });  //endof setUI 
 
+};  
 
 function mainBtnShortcut() { 
     //if messages app installed shortcut otherwise default access to launcher 
