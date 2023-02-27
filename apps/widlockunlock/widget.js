@@ -1,9 +1,5 @@
 WIDGETS["lockunlock"] = {
-  area: (() => {
-    const settings = require("Storage")
-        .readJSON("lockunlock.settings.json", true) || {};
-    return settings.location || "tl";
-  })(),
+  area: "tl",
   sortorder: 10,
   width: 14,
   draw: w => {

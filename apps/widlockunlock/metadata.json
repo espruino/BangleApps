@@ -8,7 +8,6 @@
   "tags": "widget,lock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"widlockunlock.wid.js","url":"widget.js"},
-    {"name":"widlockunlock.settings.js","url":"settings.js"}
+    {"name":"widlockunlock.wid.js","url":"widget.js"}
   ]
 }
