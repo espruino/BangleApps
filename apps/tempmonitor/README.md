@@ -36,6 +36,7 @@ Screenshot data file content
 
 Open and see a temperature in the screen 
 Download the CSV file and process in your favourite spreadsheet software
+if you have any problem enable the modedebug in code; v_mode_debug=1 or 2
 
 ## Features
 
