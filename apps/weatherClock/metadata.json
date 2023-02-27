@@ -15,7 +15,8 @@
   "storage": [
     {"name":"weatherClock.app.js","url":"app.js"},
     {"name":"weatherClock.img","url":"app-icon.js","evaluate":true},
-    {"name":"weatherClock.settings.js","url":"settings.js"}
+    {"name":"weatherClock.settings.js","url":"settings.js"},
+	{"name":"weatherClock","url":"lib.js"}
    ],
   "data": [{"name":"weatherClock.json"}]
 }

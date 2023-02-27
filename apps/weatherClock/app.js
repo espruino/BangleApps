@@ -3,7 +3,7 @@ const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
 let settings;
-const weather = require('weather');
+const weather = require('weatherClock');
 
 // weather icons from https://icons8.com/icon/set/weather/color
 function getSun() {
@@ -152,7 +152,7 @@ function loadSettings() {
 loadSettings();
 
 function weatherIcon(code) {
-  var ovr = Graphics.createArrayBuffer(48,56,1,{msb:true});
+  var ovr = Graphics.createArrayBuffer(50,50,1,{msb:true});
   if (typeof code == "number") weather.drawIcon({code:code},24,24,24,ovr);
   if (typeof code == "string") weather.drawIcon({code},24,24,24,ovr);
   var img = ovr.asImage();
