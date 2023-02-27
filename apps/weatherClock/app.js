@@ -3,6 +3,7 @@ const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
 let settings;
+const weather = require('weather');
 
 // weather icons from https://icons8.com/icon/set/weather/color
 function getSun() {
@@ -111,21 +112,22 @@ function queueDraw() {
 function draw() {
   var date = new Date();
   clockLayout.time.label = locale.time(date, 1);
-  clockLayout.date.label = (settings.date) ? locale.date(date, 1).toUpperCase() : "";
-  clockLayout.dow.label = (settings.day) ? locale.dow(date, 1).toUpperCase() + " " : "";
-  var weatherJson = getWeather();
-  if(weatherJson && weatherJson.weather){
-      var currentWeather = weatherJson.weather;
-      const temp = locale.temp(currentWeather.temp-273.15).match(/^(\D*\d*)(.*)$/);
+  clockLayout.date.label = settings.date ? locale.date(date, 1).toUpperCase() : "";
+  clockLayout.dow.label = settings.day ? locale.dow(date, 1).toUpperCase() + " " : "";
+  let current = weather.get();
+  if(current){
+      const temp = locale.temp(current.temp-273.15).match(/^(\D*\d*)(.*)$/);
       clockLayout.temp.label = temp[1] + " " + temp[2];
-      const code = currentWeather.code || -1;
+      const code = current.code || -1;
       if (code > 0) {
-        clockLayout.weatherIcon.src = settings.icon ? chooseIconByCode(code) : getDummy;
+        let srcIconsCode = settings.src ? weatherIcon(current.code) : chooseIconByCode(current.code);
+        clockLayout.weatherIcon.src = settings.icon ? srcIconsCode : getDummy;
       } else {
-        clockLayout.weatherIcon.src = settings.icon ? chooseIcon(currentWeather.txt) : getDummy;
+        let srcIconsTxt = settings.src ? weatherIcon(current.txt) : chooseIcon(current.txt);
+        clockLayout.weatherIcon.src = settings.icon ? srcIconsTxt : getDummy;
       }
-      const wind = locale.speed(currentWeather.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (currentWeather.wrose||'').toUpperCase();
+      const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
+      clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (current.wrose||'').toUpperCase();
   }
   else{
       clockLayout.temp.label = "Err";
@@ -140,15 +142,26 @@ function draw() {
 
 function loadSettings() {
   settings = storage.readJSON(SETTINGS_FILE,1)||{};
-  settings.icon = (settings.icon === undefined ? true : settings.icon);
-  settings.day = (settings.day === undefined ? true : settings.day);
-  settings.date = (settings.date === undefined ? true : settings.date);
-  settings.wind = (settings.wind === undefined ? true : settings.wind);
+  settings.src = settings.src === undefined ? false : settings.src;
+  settings.icon = settings.icon === undefined ? true : settings.icon;
+  settings.day = settings.day === undefined ? true : settings.day;
+  settings.date = settings.date === undefined ? true : settings.date;
+  settings.wind = settings.wind === undefined ? true : settings.wind;
 }
 
 loadSettings();
 
-let srcWeather = settings.icon ? getSun : getDummy;
+function weatherIcon(code) {
+  var ovr = Graphics.createArrayBuffer(48,56,1,{msb:true});
+  if (typeof code == "number") weather.drawIcon({code:code},24,24,24,ovr);
+  if (typeof code == "string") weather.drawIcon({code},24,24,24,ovr);
+  var img = ovr.asImage();
+  img.transparent = 0;
+  return img;
+}
+
+let srcIcons = settings.src ? weatherIcon(800) : getSun;
+let srcWeather = settings.icon ? srcIcons : getDummy;
 let fontTemp = settings.wind ? "10%" : "20%";
 let fontWind = settings.wind ? "10%" : "0%";
 let labelDay = settings.day ? "THU" : "";
@@ -164,7 +177,7 @@ var clockLayout = new Layout( {
       ]
     },
     {type: "h", valign : 1, fillx:1, c: [
-      {type: "img", filly: 1, id: "weatherIcon", src: srcWeather},
+      {type: "img", filly: 1, pad: 8, id: "weatherIcon", src: srcWeather},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
             {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},

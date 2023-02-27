@@ -5,6 +5,7 @@
   const storage = require('Storage');
   let settings = storage.readJSON(SETTINGS_FILE, 1) || {};
   let s = {};
+  s.src = (settings.src === undefined ? false : settings.src);
   s.icon = (settings.icon === undefined ? true : settings.icon);
   s.day = (settings.day === undefined ? true : settings.day);
   s.date = (settings.date === undefined ? true : settings.date);
@@ -43,6 +44,13 @@
       value: !!s.wind,
       onchange: v => {
         s.wind = v;
+        save();
+      },
+    },
+    'Icons from weather app': {
+      value: !!s.src,
+      onchange: v => {
+        s.src = v;
         save();
       },
     }
