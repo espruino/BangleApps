@@ -152,7 +152,7 @@ function loadSettings() {
 loadSettings();
 
 function weatherIcon(code) {
-  var ovr = Graphics.createArrayBuffer(50,50,1,{msb:true});
+  var ovr = Graphics.createArrayBuffer(50,50,8,{msb:true});
   if (typeof code == "number") weather.drawIcon({code:code},24,24,24,ovr);
   if (typeof code == "string") weather.drawIcon({code},24,24,24,ovr);
   var img = ovr.asImage();

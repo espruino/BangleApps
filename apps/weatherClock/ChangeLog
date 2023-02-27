@@ -3,4 +3,4 @@
 0.03: Minor layout extra spaces.
 0.04: Layout now compatible with Bangle.js 2.
 0.05: Use weather condition code for icon selection.
-0.06: Dev12-New settings to optionally hide elements. Images placed into functions for performance.
+0.06: Dev13-New settings to optionally hide elements. Images placed into functions for performance.
