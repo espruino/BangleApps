@@ -48,7 +48,7 @@ function chooseIcon(condition) {
   }
   if (condition.includes("drizzle")||
     condition.includes("shower")||
-	condition.includes("rain")) return getRain;
+    condition.includes("rain")) return getRain;
   if (condition.includes("clear")) return getSun;
   if (condition.includes("clouds")) return getCloud;
   if (condition.includes("few clouds")||
@@ -75,7 +75,7 @@ function chooseIconByCode(code) {
     case 2: return getStorm;
     case 3: return getRain;
     case 5: 
-	  switch (code) {
+      switch (code) {
           case 511: return getSnow;
           default: return getRain;
       }
@@ -83,20 +83,12 @@ function chooseIconByCode(code) {
     case 7: return getPartSun;
     case 8:
       switch (code) {
-		case 800: return getSun;
+        case 800: return getSun;
         case 804: return getCloud;
         default: return getPartSun;
       }
     default: return getCloud;
   }
-}
-
-/**
-Get weather stored in json file by weather app.
-*/
-function getWeather() {
-  let jsonWeather = storage.readJSON('weather.json');
-  return jsonWeather;
 }
 
 // timeout used to update every minute
