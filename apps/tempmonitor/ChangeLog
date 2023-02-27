@@ -1,2 +1,3 @@
 0.01: 1st version: saves values to csv
 0.02: added HTML interface
+0.03: Added Stop/start recording, change BG color, filesize info
