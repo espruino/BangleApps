@@ -8689,6 +8689,15 @@ interface ObjectConstructor {
   entries(object: any): Array<[string, any]>;
 
   /**
+   * Transforms an array of key-value pairs into an object
+   *
+   * @param {any} entries - An array of `[key,value]` pairs to be used to create an object
+   * @returns {any} An object containing all the specified pairs
+   * @url http://www.espruino.com/Reference#l_Object_fromEntries
+   */
+  fromEntries(entries: any): any;
+
+  /**
    * Creates a new object with the specified prototype object and properties.
    * properties are currently unsupported.
    *
@@ -8708,6 +8717,15 @@ interface ObjectConstructor {
    * @url http://www.espruino.com/Reference#l_Object_getOwnPropertyDescriptor
    */
   getOwnPropertyDescriptor(obj: any, name: any): any;
+
+  /**
+   * Get information on all properties in the object (from `Object.getOwnPropertyDescriptor`), or just `{}` if no properties
+   *
+   * @param {any} obj - The object
+   * @returns {any} An object containing all the property descriptors of an object
+   * @url http://www.espruino.com/Reference#l_Object_getOwnPropertyDescriptors
+   */
+  getOwnPropertyDescriptors(obj: any): any;
 
   /**
    * Add a new property to the Object. 'Desc' is an object with the following fields:
@@ -8945,32 +8963,32 @@ interface Function {
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} params - Optional Parameters
    * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_call
    */
-  call(this: any, ...params: any[]): any;
+  call(thisArg: any, ...params: any[]): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} args - Optional Array of Arguments
    * @returns {any} The return value of executing this function
    * @url http://www.espruino.com/Reference#l_Function_apply
    */
-  apply(this: any, args: any): any;
+  apply(thisArg: any, args: ArrayLike<any>): any;
 
   /**
    * This executes the function with the supplied 'this' argument and parameters
    *
-   * @param {any} this - The value to use as the 'this' argument when executing the function
+   * @param {any} thisArg - The value to use as the 'this' argument when executing the function
    * @param {any} params - Optional Default parameters that are prepended to the call
    * @returns {any} The 'bound' function
    * @url http://www.espruino.com/Reference#l_Function_bind
    */
-  bind(this: any, ...params: any[]): any;
+  bind(thisArg: any, ...params: any[]): any;
 }
 
 /**

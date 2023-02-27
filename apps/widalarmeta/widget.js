@@ -1,24 +1,43 @@
 (() => {
   require("Font5x9Numeric7Seg").add(Graphics);
-  const alarms = require("Storage").readJSON("sched.json",1) || [];
   const config = Object.assign({
     maxhours: 24,
     drawBell: false,
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
-  function draw() {
-    const times = alarms
-      .map(alarm =>
-        alarm.hidden !== true
-          && require("sched").getTimeToAlarm(alarm)
-      )
-      .filter(a => a !== undefined);
-    const next = times.length > 0 ? Math.min.apply(null, times) : 0;
+  function getNextAlarm(date) {
+    const alarms = (require("Storage").readJSON("sched.json",1) || []).filter(alarm => alarm.on && alarm.hidden !== true);
+    WIDGETS["widalarmeta"].numActiveAlarms = alarms.length;
+    const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
+    const eta = times.length > 0 ? Math.min.apply(null, times) : 0;
+    if (eta !== Number.POSITIVE_INFINITY) {
+      const idx = times.indexOf(eta);
+      const alarm = alarms[idx];
+      delete alarm.msg; delete alarm.id; delete alarm.data; // free some memory
+      return alarm;
+    }
+  } // getNextAlarm
+
+  function draw(fromInterval) {
+    if (this.nextAlarm === undefined) {
+      let alarm = getNextAlarm();
+      if (alarm === undefined) {
+        // try again with next hour
+        const nextHour = new Date();
+        nextHour.setHours(nextHour.getHours()+1);
+        alarm = getNextAlarm(nextHour);
+      }
+      if (alarm !== undefined) {
+        this.nextAlarm = alarm;
+      }
+    }
+    const next = this.nextAlarm !== undefined ? require("sched").getTimeToAlarm(this.nextAlarm) : 0;
+
     let calcWidth = 0;
     let drawSeconds = false;
 
-    if (next > 0 && next < config.maxhours*60*60*1000) {
+    if (next > 0 && next <= config.maxhours*60*60*1000) {
       const hours = Math.floor((next-1) / 3600000).toString();
       const minutes = Math.floor(((next-1) % 3600000) / 60000).toString();
       const seconds = Math.floor(((next-1) % 60000) / 1000).toString();
@@ -39,10 +58,14 @@
       if (drawSeconds) {
         calcWidth += 3*5;
       }
-    } else if (config.drawBell && alarms.some(alarm=>alarm.on&&(alarm.hidden!==true))) {
-      // next alarm too far in future, draw only widalarm bell
-      g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
+      this.bellVisible = false;
+    } else if (config.drawBell && this.numActiveAlarms > 0) {
       calcWidth = 24;
+      // next alarm too far in future, draw only widalarm bell
+      if (this.bellVisible !== true || fromInterval !== true) {
+        g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
+        this.bellVisible = true;
+      }
     }
 
     if (this.width !== calcWidth) {
@@ -51,8 +74,8 @@
       Bangle.drawWidgets();
     }
 
-    // redraw next full minute or second
-    const period = drawSeconds ? 1000 : 60000;
+    // redraw next hour when no alarm else full minute or second
+    const period = next === 0 ? 3600000 : (drawSeconds ? 1000 : 60000);
     let timeout = next > 0 ? next % period : period - (Date.now() % period);
     if (timeout === 0) {
       timeout += period;
@@ -62,8 +85,8 @@
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(()=>{
-      this.timeoutId = undefined;
-      this.draw();
+      WIDGETS["widalarmeta"].timeoutId = undefined;
+      WIDGETS["widalarmeta"].draw(true);
     }, timeout);
   } /* draw */
 
