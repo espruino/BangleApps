@@ -9,13 +9,15 @@
   function getNextAlarm(date) {
     const alarms = (require("Storage").readJSON("sched.json",1) || []).filter(alarm => alarm.on && alarm.hidden !== true);
     WIDGETS["widalarmeta"].numActiveAlarms = alarms.length;
-    const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
-    const eta = times.length > 0 ? Math.min.apply(null, times) : 0;
-    if (eta !== Number.POSITIVE_INFINITY) {
-      const idx = times.indexOf(eta);
-      const alarm = alarms[idx];
-      delete alarm.msg; delete alarm.id; delete alarm.data; // free some memory
-      return alarm;
+    if (alarms.length > 0) {
+      const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
+      const eta = Math.min.apply(null, times);
+      if (eta !== Number.POSITIVE_INFINITY) {
+        const idx = times.indexOf(eta);
+        const alarm = alarms[idx];
+        delete alarm.msg; delete alarm.id; delete alarm.data; // free some memory
+        return alarm;
+      }
     }
   } // getNextAlarm
 
