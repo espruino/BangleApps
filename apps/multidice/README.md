@@ -2,7 +2,6 @@
 
 roll anywhere from 1-8 dice at the same time.
 
-
 ## Usage
 
 On the menu screen: tap on the dice to change what variant is selected, & shake/or press BTN to roll the dice
