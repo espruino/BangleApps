@@ -133,11 +133,11 @@ function saveToFile(){
      //(getTime()+",");
        v_saved_entries=v_saved_entries+1; 
        if (v_mode_debug>1) console.log("append to already exist "+f.name+" , "+v_saved_entries);         
-     };
+     }
     }
   }
   else if (v_mode_debug>0) console.log("recording mode stopped");
-};
+}
 
 function drawGraph(){
     var img_obj_thermo =   {
@@ -265,7 +265,7 @@ function UserInput(){
             } 
       });  //endof setUI 
 
-};  
+}
 
 function mainBtnShortcut() { 
     //if messages app installed shortcut otherwise default access to launcher 
