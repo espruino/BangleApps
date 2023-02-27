@@ -134,16 +134,13 @@ function draw() {
   queueDraw();
 }
 
-function loadSettings() {
-  s = storage.readJSON(SETTINGS_FILE,1)||{};
-  s.src = s.src === undefined ? false : s.src;
-  s.icon = s.icon === undefined ? true : s.icon;
-  s.day = s.day === undefined ? true : s.day;
-  s.date = s.date === undefined ? true : s.date;
-  s.wind = s.wind === undefined ? true : s.wind;
-}
-
-loadSettings();
+// Load settings from file
+s = storage.readJSON(SETTINGS_FILE,1)||{};
+s.src = s.src === undefined ? false : s.src;
+s.icon = s.icon === undefined ? true : s.icon;
+s.day = s.day === undefined ? true : s.day;
+s.date = s.date === undefined ? true : s.date;
+s.wind = s.wind === undefined ? true : s.wind;
 
 function wDrawIcon(code) {
   var ovr = Graphics.createArrayBuffer(50,50,8,{msb:true});
