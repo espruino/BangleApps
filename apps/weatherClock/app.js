@@ -2,8 +2,8 @@ const Layout = require("Layout");
 const storage = require('Storage');
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
-let settings;
-const weather = require('weatherClock');
+let s;
+const w = require('weather');
 
 // weather icons from https://icons8.com/icon/set/weather/color
 function getSun() {
@@ -39,30 +39,28 @@ sent from gadget bridge.
 */
 function chooseIcon(condition) {
   condition = condition.toLowerCase();
-  if (condition.includes("thunderstorm")) return getStorm;
+  if (condition.includes("thunderstorm")||
+    condition.includes("squalls")||
+    condition.includes("tornado")) return getStorm;
   if (condition.includes("freezing")||condition.includes("snow")||
     condition.includes("sleet")) {
     return getSnow;
   }
   if (condition.includes("drizzle")||
-    condition.includes("shower")) {
-    return getRain;
-  }
-  if (condition.includes("rain")) return getRain;
+    condition.includes("shower")||
+	condition.includes("rain")) return getRain;
   if (condition.includes("clear")) return getSun;
-  if (condition.includes("few clouds")) return getPartSun;
-  if (condition.includes("scattered clouds")) return getCloud;
   if (condition.includes("clouds")) return getCloud;
-  if (condition.includes("mist") ||
-    condition.includes("smoke") ||
-    condition.includes("haze") ||
-    condition.includes("sand") ||
-    condition.includes("dust") ||
-    condition.includes("fog") ||
-    condition.includes("ash") ||
-    condition.includes("squalls") ||
-    condition.includes("tornado")) {
-    return getCloud;
+  if (condition.includes("few clouds")||
+    condition.includes("scattered clouds")||
+    condition.includes("mist")||
+    condition.includes("smoke")||
+    condition.includes("haze")||
+    condition.includes("sand")||
+    condition.includes("dust")||
+    condition.includes("fog")||
+    condition.includes("ash")) {
+    return getPartSun;
   }
   return getCloud;
 }
@@ -76,14 +74,18 @@ function chooseIconByCode(code) {
   switch (codeGroup) {
     case 2: return getStorm;
     case 3: return getRain;
-    case 5: return getRain;
+    case 5: 
+	  switch (code) {
+          case 511: return getSnow;
+          default: return getRain;
+      }
     case 6: return getSnow;
-    case 7: return getCloud;
+    case 7: return getPartSun;
     case 8:
       switch (code) {
-        case 800: return getSun;
-        case 801: return getPartSun;
-        default: return getCloud;
+		case 800: return getSun;
+        case 804: return getCloud;
+        default: return getPartSun;
       }
     default: return getCloud;
   }
@@ -111,62 +113,62 @@ function queueDraw() {
 
 function draw() {
   var date = new Date();
-  clockLayout.time.label = locale.time(date, 1);
-  clockLayout.date.label = settings.date ? locale.date(date, 1).toUpperCase() : "";
-  clockLayout.dow.label = settings.day ? locale.dow(date, 1).toUpperCase() + " " : "";
-  let current = weather.get();
-  if(current){
-      const temp = locale.temp(current.temp-273.15).match(/^(\D*\d*)(.*)$/);
-      clockLayout.temp.label = temp[1] + " " + temp[2];
-      const code = current.code || -1;
+  cLayout.time.label = locale.time(date, 1);
+  cLayout.dow.label = s.day ? locale.dow(date, 1).toUpperCase() + " " : "";
+  cLayout.date.label = s.date ? locale.date(date, 1).toUpperCase() : "";
+  let curr = w.get(); // Get weather from weather app.
+  if(curr){
+      const temp = locale.temp(curr.temp-273.15).match(/^(\D*\d*)(.*)$/);
+      cLayout.temp.label = temp[1] + " " + temp[2];
+      const code = curr.code || -1;
       if (code > 0) {
-        let srcIconsCode = settings.src ? weatherIcon(current.code) : chooseIconByCode(current.code);
-        clockLayout.weatherIcon.src = settings.icon ? srcIconsCode : getDummy;
+        let showIconC = s.src ? wDrawIcon(curr.code) : chooseIconByCode(curr.code);
+        cLayout.wIcon.src = s.icon ? showIconC : getDummy;
       } else {
-        let srcIconsTxt = settings.src ? weatherIcon(current.txt) : chooseIcon(current.txt);
-        clockLayout.weatherIcon.src = settings.icon ? srcIconsTxt : getDummy;
+        let showIconT = s.src ? wDrawIcon(curr.txt) : chooseIcon(curr.txt);
+        cLayout.wIcon.src = s.icon ? showIconT : getDummy;
       }
-      const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
-      clockLayout.wind.label = wind[1] + " " + wind[2] + " " + (current.wrose||'').toUpperCase();
+      const wind = locale.speed(curr.wind).match(/^(\D*\d*)(.*)$/);
+      cLayout.wind.label = wind[1] + " " + wind[2] + " " + (curr.wrose||'').toUpperCase();
   }
   else{
-      clockLayout.temp.label = "Err";
-      clockLayout.wind.label = "No Data";
-      clockLayout.weatherIcon.src = settings.icon ? getErr : getDummy;
+      cLayout.temp.label = "Err";
+      cLayout.wind.label = "No Data";
+      cLayout.wIcon.src = s.icon ? getErr : getDummy;
   }
-  clockLayout.clear();
-  clockLayout.render();
+  cLayout.clear();
+  cLayout.render();
   // queue draw in one minute
   queueDraw();
 }
 
 function loadSettings() {
-  settings = storage.readJSON(SETTINGS_FILE,1)||{};
-  settings.src = settings.src === undefined ? false : settings.src;
-  settings.icon = settings.icon === undefined ? true : settings.icon;
-  settings.day = settings.day === undefined ? true : settings.day;
-  settings.date = settings.date === undefined ? true : settings.date;
-  settings.wind = settings.wind === undefined ? true : settings.wind;
+  s = storage.readJSON(SETTINGS_FILE,1)||{};
+  s.src = s.src === undefined ? false : s.src;
+  s.icon = s.icon === undefined ? true : s.icon;
+  s.day = s.day === undefined ? true : s.day;
+  s.date = s.date === undefined ? true : s.date;
+  s.wind = s.wind === undefined ? true : s.wind;
 }
 
 loadSettings();
 
-function weatherIcon(code) {
+function wDrawIcon(code) {
   var ovr = Graphics.createArrayBuffer(50,50,8,{msb:true});
-  if (typeof code == "number") weather.drawIcon({code:code},24,24,24,ovr);
-  if (typeof code == "string") weather.drawIcon({code},24,24,24,ovr);
+  if (typeof code == "number") w.drawIcon({code:code},24,24,24,ovr);
+  if (typeof code == "string") w.drawIcon({txt:code},24,24,24,ovr);
   var img = ovr.asImage();
   img.transparent = 0;
   return img;
 }
 
-let srcIcons = settings.src ? weatherIcon(800) : getSun;
-let srcWeather = settings.icon ? srcIcons : getDummy;
-let fontTemp = settings.wind ? "10%" : "20%";
-let fontWind = settings.wind ? "10%" : "0%";
-let labelDay = settings.day ? "THU" : "";
-let labelDate = settings.date ? "01/01/1970" : "";
-var clockLayout = new Layout( {
+let srcIcons = s.src ? wDrawIcon(800) : getSun;
+let srcWeather = s.icon ? srcIcons : getDummy;
+let fontTemp = s.wind ? "10%" : "20%";
+let fontWind = s.wind ? "10%" : "0%";
+let labelDay = s.day ? "THU" : "";
+let labelDate = s.date ? "01/01/1970" : "";
+var cLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"35%", halign: 0, fillx:1, pad: 8, label:"00:00", id:"time" },
     {type: "h", fillx: 1, c: [
@@ -177,7 +179,7 @@ var clockLayout = new Layout( {
       ]
     },
     {type: "h", valign : 1, fillx:1, c: [
-      {type: "img", filly: 1, pad: 8, id: "weatherIcon", src: srcWeather},
+      {type: "img", filly: 1, pad: 8, id: "wIcon", src: srcWeather},
       {type: "v", fillx:1, c: [
           {type: "h", c: [
             {type: "txt", font: fontTemp, id: "temp", label: "000 °C"},
@@ -194,5 +196,5 @@ g.clear();
 Bangle.setUI("clock");  // Show launcher when middle button pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-clockLayout.render();
+cLayout.render();
 draw();
