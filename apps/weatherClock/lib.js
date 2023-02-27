@@ -158,7 +158,7 @@ exports.getColor = function(code) {
  */
 exports.drawIcon = function(cond, x, y, r, ovr) {
   var palette;
-  var monochrome=1;
+  var monochrome=0;
   if(!ovr) {
     ovr = g;
     monochrome=0;
