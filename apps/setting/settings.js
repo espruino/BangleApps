@@ -43,10 +43,6 @@ function resetSettings() {
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
     brightness: 1,                  // LCD brightness from 0 to 1
-    whitelist: {                    // Bluetooth whitelist
-      macs: [],
-      disabled: true,
-    },
     // welcomed : undefined/true (whether welcome app should show)
     options: {
       wakeOnBTN1: true,
@@ -197,10 +193,10 @@ function showBLEMenu() {
     /*LANG*/'Whitelist': {
       value:
         (
-          settings.whitelist.disabled ? /*LANG*/"off" : /*LANG*/"on"
+          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
         ) + (
-          settings.whitelist.macs
-          ? " (" + settings.whitelist.macs.length + ")"
+          settings.whitelist
+          ? " (" + settings.whitelist.length + ")"
           : ""
         ),
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
@@ -353,25 +349,25 @@ function showWhitelistMenu() {
   var menu = {
     "< Back" : ()=>showBLEMenu(),
   };
-  if (settings.whitelist.disabled) {
+  if (settings.whitelist_disabled) {
     menu[/*LANG*/"Enable"] = () => {
-      delete settings.whitelist.disabled;
+      delete settings.whitelist_disabled;
       updateSettings();
       showBLEMenu();
     };
   } else {
     menu[/*LANG*/"Disable"] = () => {
-      settings.whitelist.disabled = true;
+      settings.whitelist_disabled = true;
       updateSettings();
       showBLEMenu();
     };
   }
 
-  if (settings.whitelist.macs) settings.whitelist.macs.forEach(function(d){
+  if (settings.whitelist) settings.whitelist.forEach(function(d){
     menu[d.substr(0,17)] = function() {
       E.showPrompt(/*LANG*/'Remove\n'+d).then((v) => {
         if (v) {
-          settings.whitelist.macs.splice(settings.whitelist.macs.indexOf(d),1);
+          settings.whitelist.splice(settings.whitelist.indexOf(d),1);
           updateSettings();
         }
         setTimeout(showWhitelistMenu, 50);
@@ -385,7 +381,9 @@ function showWhitelistMenu() {
     });
     NRF.removeAllListeners('connect');
     NRF.on('connect', function(addr) {
-      settings.whitelist.macs.push(addr);
+      if (!settings.whitelist) settings.whitelist=[];
+      delete settings.whitelist_disabled;
+      settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
       showWhitelistMenu();
