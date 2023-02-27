@@ -6,3 +6,5 @@
       Update to match the default alarm widget, and not show itself when an alarm is hidden.
 0.04: Fix check for active alarm
 0.05: Convert Yes/No On/Off in settings to checkboxes
+0.06: Remember next alarm to reduce calculation amount
+      Redraw only every hour when no alarm in next 24h

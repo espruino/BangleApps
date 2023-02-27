@@ -1,6 +1,6 @@
-(function karvonnen(hrmSettings, exsHrmStats) {
+(function karvonen(hrmSettings, exsHrmStats) {
   //This app is an extra feature implementation for the Run.app of the bangle.js. It's called run+
-  //The calculation of the Heart Rate Zones is based on the Karvonnen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
+  //The calculation of the Heart Rate Zones is based on the Karvonen method. It requires to know maximum and minimum heart rates. More precise calculation methods require a lab.
   //Other methods are even more approximative.
   let wu = require("widget_utils");
   wu.hide();
@@ -56,7 +56,7 @@
   let hr = exsHrmStats.getValue();
   let hr1 = hr;
   // These letiables display next and previous HR zone.
-  //get the hrzones right. The calculation of the Heart rate zones here is based on the Karvonnen method
+  //get the hrzones right. The calculation of the Heart rate zones here is based on the Karvonen method
   //60-70% of HRR+minHR = zone2. //70-80% of HRR+minHR = zone3. //80-90% of HRR+minHR = zone4. //90-99% of HRR+minHR = zone5. //=>99% of HRR+minHR = serious risk of heart attack
   let minzone2 = hrr * 0.6 + minhr;
   let maxzone2 = hrr * 0.7 + minhr;
@@ -67,7 +67,7 @@
   // HR data: large, readable, in the middle of the screen
   function drawHR() {
     g.setFontAlign(-1,0,0);
-    g.clearRect(Rdiv(x,11/4),Rdiv(y,2)-25,Rdiv(x,11/4)+50*2,Rdiv(y,2)+25);
+    g.clearRect(Rdiv(x,11/4),Rdiv(y,2)-25,Rdiv(x,11/4)+50*2-14,Rdiv(y,2)+25);
     g.setColor(g.theme.fg);
     g.setFont("Vector",50);
     g.drawString(hr, Rdiv(x,11/4), Rdiv(y,2)+4);
@@ -207,9 +207,9 @@
   initDraw();
 
   // check for updates every second.
-  karvonnenInterval = setInterval(function() {
-    if (!isMenuDisplayed && karvonnenActive) updateUI();
+  karvonenInterval = setInterval(function() {
+    if (!isMenuDisplayed && karvonenActive) updateUI();
   }, 1000);
 
-  return karvonnenInterval;
+  return karvonenInterval;
 })
