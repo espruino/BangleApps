@@ -1,1 +1,2 @@
 0.01: Initial fork from messages_light
+0.02: Fix touch/drag/swipe handlers not being restored correctly if a message is removed
