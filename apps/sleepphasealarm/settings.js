@@ -90,7 +90,7 @@
     E.showMenu({
       "" : { "title" : "SleepPhaseAlarm" },
       'Keep alarm enabled': {
-        value: !config.settings.disableAlarm,
+        value: !!config.settings.disableAlarm,
         onchange: v => {
           config.settings.disableAlarm = !v;
           writeSettings();
