@@ -19,6 +19,14 @@ You can switch on logging in the options to diagnose unexpected power use. Curre
 
 Do not use trace logging for extended time, it uses a lot of storage and can fill up the flash quite quick.
 
+### TODO
+
+* Wrap functions given as strings to setTimeout/setInterval
+* Handle eval in setTimeout/setInterval
+* Track functions executed as event handlers
+* Track buzzer
+* Modify browser interface to estimate power use like widget does
+
 ## Internals
 
 Battery calibration offset is set by writing `batFullVoltage` in setting.json 

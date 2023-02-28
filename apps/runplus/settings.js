@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "run.json";
+  const SETTINGS_FILE = "runplus.json";
   var ExStats = require("exstats");
   var statsList = ExStats.getList();
   statsList.unshift({name:"-",id:""}); // add blank menu item

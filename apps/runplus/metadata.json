@@ -1,10 +1,10 @@
 {
   "id": "runplus",
   "name": "Run+",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Displays distance, time, steps, cadence, pace and more for runners. Based on the Run app, but extended with additional screen for heart rate interval training.",
   "icon": "app.png",
-  "tags": "run,running,fitness,outdoors,gps,karvonnen",
+  "tags": "run,running,fitness,outdoors,gps,karvonen,karvonnen",
   "supports": [
     "BANGLEJS2"
   ],
@@ -29,8 +29,8 @@
       "url": "settings.js"
     },
     {
-      "name": "runplus_karvonnen",
-      "url": "karvonnen.js"
+      "name": "runplus_karvonen",
+      "url": "karvonen.js"
     }
   ],
   "data": [

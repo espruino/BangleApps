@@ -1,7 +1,7 @@
 {
   "id": "tempmonitor",
   "name": "Temperature monitor",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Displays the current temperature and stores in a CSV file",
   "icon": "app.png",
   "tags": "tool",
