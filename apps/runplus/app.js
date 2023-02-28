@@ -44,8 +44,8 @@ let settings = Object.assign({
     },
   },
   HRM: {
-    min: 65,
-    max: 170,
+    min: 55,
+    max: 185,
   },
 }, require("Storage").readJSON("runplus.json", 1) || {});
 let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
