@@ -20,15 +20,29 @@ TODO:
 
 */
 
-// A si
-var TEST = {
+// A simpletest
+/*var TEST = {
   app : "android",
   tests : [ {
-    load : "messagesgui.app.js",
     steps : [
+      {t:"load", fn:"messagesgui.app.js"},
       {t:"gb", "obj":{"t":"notify","id":1234,"src":"Twitter","title":"A Name","body":"message contents"}},
       {t:"cmd", "js":"X='hello';"},
       {t:"eval", "js":"X", eq:"hello"}
+    ]
+  }]
+};*/
+var TEST = {
+  app : "antonclk",
+  tests : [ {
+    steps : [
+      {t:"cmd", "js": "Bangle.loadWidgets()"},
+      {t:"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {t:"cmd", "js":"Bangle.setUI()"}, // load and free
+      {t:"saveMemoryUsage"},
+      {t:"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {t:"cmd", "js":"Bangle.setUI()"}, // load and free
+      {t:"checkMemoryUsage"}, // check memory usage is the same
     ]
   }]
 };
@@ -73,34 +87,57 @@ function runTest(test) {
       console.log(`"${test.app}" Test ${subtestIdx}`);
       console.log(`==============================`);
       emu.factoryReset();
-      console.log("Sending app "+test.app);
+      console.log("> Sending app "+test.app);
       emu.tx(command);
-      console.log("Sent app");
-      emu.tx(test.load ? `load(${JSON.stringify(test.load)})\n` : "load()\n");
-      console.log("App Loaded.");
+      console.log("> Sent app");
+      emu.tx("reset()\n");
+      console.log("> Reset.");
       var ok = true;
       subtest.steps.forEach(step => {
         if (ok) switch(step.t) {
-          case "cmd" : emu.tx(`${step.js}\n`); break;
+          case "load" :
+            console.log(`> Loading file "${step.fn}"`);
+            emu.tx(`load(${JSON.stringify(step.fn)})\n`);
+            break;
+          case "cmd" :
+            console.log(`> Sending JS "${step.js}"`);
+            emu.tx(`${step.js}\n`);
+            break;
           case "gb" : emu.tx(`GB(${JSON.stringify(step.obj)})\n`); break;
           case "tap" : emu.tx(`Bangle.emit(...)\n`); break;
           case "eval" :
+            console.log(`> Evaluate "${step.js}"`);
             emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
             var result = emu.getLastLine();
             var expected = JSON.stringify(step.eq);
-            console.log("GOT "+result);
+            console.log("> GOT "+result);
             if (result!=expected) {
-              console.log("EXPECTED "+expected);
+              console.log("> FAIL: EXPECTED "+expected);
               ok = false;
             }
             break;
             // tap/touch/drag/button press
             // delay X milliseconds?
           case "screenshot" :
-            console.log("Compare screenshots");
+            console.log(`> Compare screenshots - UNIMPLEMENTED`);
+            break;
+          case "saveMemoryUsage" :
+            emu.tx(`\x10print(process.memory().usage)\n`);
+            subtest.memUsage = parseInt( emu.getLastLine());
+            console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
+            break;
+          case "checkMemoryUsage" :
+            emu.tx(`\x10print(process.memory().usage)\n`);
+            var memUsage =  emu.getLastLine();
+            console.log("> CURRENT MEMORY USAGE", memUsage);
+            if (subtest.memUsage != memUsage ) {
+              console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
+              ok = false;
+            }
             break;
           default: ERROR("Unknown step type "+step.t);
         }
+        emu.idle();
       });
     });
     emu.stopIdle();

@@ -43,6 +43,13 @@
         updateSettings();
       }
     },
+    /*LANG*/"Use 'Today',..." : {
+      value : !!settings.useToday,
+      onchange: v => {
+        settings.useToday = v;
+        updateSettings();
+      }
+    },
   };
   E.showMenu(mainmenu);
 })

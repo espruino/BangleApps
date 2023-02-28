@@ -1,6 +1,6 @@
 { "id": "widdst",
   "name": "Daylight Saving",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Widget to set daylight saving rules. Requires Espruino 2v14.49 or later - see the instructions below for more information.",
   "icon": "icon.png",
   "type": "widget",

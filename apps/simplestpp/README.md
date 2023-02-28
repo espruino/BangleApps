@@ -1,6 +1,6 @@
 # Simplest++ Clock
 
-The simplest working clock, with fast load and clock_info
+The simplest working clock, with clock_info
 
 ![](screenshot1.png)
 ![](screenshot2.png)
@@ -35,8 +35,6 @@ This provides a working demo of how to use the clock_info modules.
 
 
 ## References
-
-* [What is Fast Load and how does it work](http://www.espruino.com/Bangle.js+Fast+Load)
 
 * [Clock Info Tutorial](http://www.espruino.com/Bangle.js+Clock+Info)
 

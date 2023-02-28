@@ -40,6 +40,14 @@ function handleFirstDayOfWeek(dow) {
 // Check the first day of week and update the dow field accordingly (alarms only!)
 alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
+function getLabel(e) {
+  const dateStr = e.date && require("locale").date(new Date(e.date), 1);
+  return (e.timer
+      ? require("time_utils").formatDuration(e.timer)
+      : (dateStr ? `${dateStr} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : ""))
+      ) + (e.msg ? " " + e.msg : "");
+}
+
 function showMainMenu() {
   const menu = {
     "": { "title": /*LANG*/"Alarms & Timers" },
@@ -48,10 +56,7 @@ function showMainMenu() {
   };
 
   alarms.forEach((e, index) => {
-    var label = e.timer
-      ? require("time_utils").formatDuration(e.timer)
-      : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : "");
-    menu[label] = {
+    menu[getLabel(e)] = {
       value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
       onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
     };
@@ -67,11 +72,12 @@ function showNewMenu() {
     "": { "title": /*LANG*/"New..." },
     "< Back": () => showMainMenu(),
     /*LANG*/"Alarm": () => showEditAlarmMenu(undefined, undefined),
-    /*LANG*/"Timer": () => showEditTimerMenu(undefined, undefined)
+    /*LANG*/"Timer": () => showEditTimerMenu(undefined, undefined),
+    /*LANG*/"Event": () => showEditAlarmMenu(undefined, undefined, true)
   });
 }
 
-function showEditAlarmMenu(selectedAlarm, alarmIndex) {
+function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
@@ -82,11 +88,16 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   }
 
   var time = require("time_utils").decodeTime(alarm.t);
+  if (withDate && !alarm.date) alarm.date = new Date().toLocalISOString().slice(0,10);
+  var date = alarm.date ? new Date(alarm.date) : undefined;
+  var title = date ? (isNew ? /*LANG*/"New Event" : /*LANG*/"Edit Event") : (isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm");
+  var keyboard = "textinput";
+  try {keyboard = require(keyboard);} catch(e) {keyboard = null;}
 
   const menu = {
-    "": { "title": isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm" },
+    "": { "title": title },
     "< Back": () => {
-      prepareAlarmForSave(alarm, alarmIndex, time);
+      prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
       showMainMenu();
     },
@@ -106,6 +117,36 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       wrap: true,
       onchange: v => time.m = v
     },
+    /*LANG*/"Day": {
+      value: date ? date.getDate() : null,
+      min: 1,
+      max: 31,
+      wrap: true,
+      onchange: v => date.setDate(v)
+    },
+    /*LANG*/"Month": {
+      value: date ? date.getMonth() + 1 : null,
+      format: v => require("date_utils").month(v),
+      onchange: v => date.setMonth((v+11)%12)
+    },
+    /*LANG*/"Year": {
+      value: date ? date.getFullYear() : null,
+      min: new Date().getFullYear(),
+      max: 2100,
+      onchange: v => date.setFullYear(v)
+    },
+    /*LANG*/"Message": {
+      value: alarm.msg,
+      onchange: () => {
+        setTimeout(() => {
+          keyboard.input({text:alarm.msg}).then(result => {
+            alarm.msg = result;
+            prepareAlarmForSave(alarm, alarmIndex, time, date, true);
+            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
+          });
+        }, 100);
+      }
+    },
     /*LANG*/"Enabled": {
       value: alarm.on,
       onchange: v => alarm.on = v
@@ -115,8 +156,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
       onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, alarm.dow, (repeat, dow) => {
         alarm.rp = repeat;
         alarm.dow = dow;
-        alarm.t = require("time_utils").encodeTime(time);
-        setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex);
+        prepareAlarmForSave(alarm, alarmIndex, time, date, true);
+        setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
       })
     },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(alarm.vibrate, v => alarm.vibrate = v),
@@ -136,16 +177,25 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
     }
   };
 
+  if (!keyboard) delete menu[/*LANG*/"Message"];
+  if (alarm.date || withDate) {
+    delete menu[/*LANG*/"Repeat"];
+  } else {
+    delete menu[/*LANG*/"Day"];
+    delete menu[/*LANG*/"Month"];
+    delete menu[/*LANG*/"Year"];
+  }
+
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
+      E.showPrompt(getLabel(alarm) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
         if (confirm) {
           alarms.splice(alarmIndex, 1);
           saveAndReload();
           showMainMenu();
         } else {
           alarm.t = require("time_utils").encodeTime(time);
-          setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex);
+          setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
         }
       });
     };
@@ -154,14 +204,17 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex) {
   E.showMenu(menu);
 }
 
-function prepareAlarmForSave(alarm, alarmIndex, time) {
+function prepareAlarmForSave(alarm, alarmIndex, time, date, temp) {
   alarm.t = require("time_utils").encodeTime(time);
   alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
+  if(date) alarm.date = date.toLocalISOString().slice(0,10);
 
-  if (alarmIndex === undefined) {
-    alarms.push(alarm);
-  } else {
-    alarms[alarmIndex] = alarm;
+  if(!temp) {
+    if (alarmIndex === undefined) {
+      alarms.push(alarm);
+    } else {
+      alarms[alarmIndex] = alarm;
+    }
   }
 }
 
@@ -215,7 +268,7 @@ function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
     },
     /*LANG*/"Custom": {
       value: isCustom ? decodeDOW({ rp: true, dow: dow }) : false,
-      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalRepeat, originalDow)
+      onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
     }
   };
 
@@ -255,6 +308,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   }
 
   var time = require("time_utils").decodeTime(timer.timer);
+  var keyboard = "textinput";
+  try {keyboard = require(keyboard);} catch(e) {keyboard = null;}
 
   const menu = {
     "": { "title": isNew ? /*LANG*/"New Timer" : /*LANG*/"Edit Timer" },
@@ -285,6 +340,18 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
       wrap: true,
       onchange: v => time.s = v
     },
+    /*LANG*/"Message": {
+      value: timer.msg,
+      onchange: () => {
+        setTimeout(() => {
+          keyboard.input({text:timer.msg}).then(result => {
+            timer.msg = result;
+            prepareTimerForSave(timer, timerIndex, time, true);
+            setTimeout(showEditTimerMenu, 10, timer, timerIndex);
+          });
+        }, 100);
+      }
+    },
     /*LANG*/"Enabled": {
       value: timer.on,
       onchange: v => timer.on = v
@@ -306,9 +373,10 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     }
   };
 
+  if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
+      E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
         if (confirm) {
           alarms.splice(timerIndex, 1);
           saveAndReload();
@@ -324,15 +392,17 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   E.showMenu(menu);
 }
 
-function prepareTimerForSave(timer, timerIndex, time) {
+function prepareTimerForSave(timer, timerIndex, time, temp) {
   timer.timer = require("time_utils").encodeTime(time);
   timer.t = require("time_utils").getCurrentTimeMillis() + timer.timer;
   timer.last = 0;
 
-  if (timerIndex === undefined) {
-    alarms.push(timer);
-  } else {
-    alarms[timerIndex] = timer;
+  if (!temp) {
+    if (timerIndex === undefined) {
+      alarms.push(timer);
+    } else {
+      alarms[timerIndex] = timer;
+    }
   }
 }
 

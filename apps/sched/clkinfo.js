@@ -49,6 +49,52 @@
     return val;
   }
 
+  /*
+   * Returns the array [interval, switchTimeout]
+   * `interval` is the refresh rate (hourly or per minute)
+   * `switchTimeout` is the time before the refresh rate should change (or expiration)
+   */
+  function getRefreshIntervals(a) {
+    const minute = 60 * 1000;
+    const halfhour = 30 * minute;
+    const hour = 2 * halfhour;
+    let msecs = alarm.getTimeToAlarm(a);
+    if(typeof msecs == "undefined" || msecs == 0)
+      return [];
+    if(msecs > hour) { //refresh every half an hour
+      let remain = (msecs+minute) % halfhour;
+      if(remain < 27 * minute && remain != 0) //first align period (some tolerance)
+        return [ halfhour, remain ];
+      return [ halfhour, msecs - hour ];
+    } else { //refresh every minute
+      //alarms just need the progress bar refreshed, no need every minute
+      if(!a.timer) return [];
+      return [ minute, msecs ];
+    }
+  }
+
+  function _doInterval(interval) {
+    return setTimeout(()=>{
+      this.emit("redraw");
+      this.interval = setInterval(()=>{
+        this.emit("redraw");
+      }, interval);
+    }, interval);
+  }
+  function _doSwitchTimeout(a, switchTimeout) {
+    return setTimeout(()=>{
+      this.emit("redraw");
+      clearInterval(this.interval);
+      this.interval = undefined;
+      var tmp = getRefreshIntervals(a);
+      var interval = tmp[0];
+      var switchTimeout = tmp[1];
+      if(!interval) return;
+      this.interval = _doInterval.call(this, interval);
+      this.switchTimeout = _doSwitchTimeout.call(this, a, switchTimeout);
+    }, switchTimeout);
+  }
+
   var img = iconAlarmOn;
   //get only alarms not created by other apps
   var alarmItems = {
@@ -63,8 +109,20 @@
         hasRange: true,
         get: () => ({ text: getAlarmText(a), img: getAlarmIcon(a),
           v: getAlarmValue(a), min:0, max:getAlarmMax(a)}),
-        show: function() {},
-        hide: function () {},
+        show: function() {
+          var tmp = getRefreshIntervals(a);
+          var interval = tmp[0];
+          var switchTimeout = tmp[1];
+          if(!interval) return;
+          this.interval = _doInterval.call(this, interval);
+          this.switchTimeout = _doSwitchTimeout.call(this, a, switchTimeout);
+        },
+        hide: function() {
+          if (this.interval) clearInterval(this.interval);
+          if (this.switchTimeout) clearTimeout(this.switchTimeout);
+          this.interval = undefined;
+          this.switchTimeout = undefined;
+        },
         run: function() { }
       })),
   };

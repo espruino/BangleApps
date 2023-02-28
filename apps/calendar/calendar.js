@@ -22,15 +22,27 @@ let bgColorDow = color2;
 let bgColorWeekend = color3;
 let fgOtherMonth = gray1;
 let fgSameMonth = white;
+let bgEvent = blue;
+const eventsPerDay=6; // how much different events per day we can display
+const date = new Date();
 
+const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
-if (settings.ndColors === undefined)
-  if (process.env.HWVERSION == 2) {
-    settings.ndColors = true;
-  } else {
-    settings.ndColors = false;
-  }
+ // all alarms that run on a specific date
+const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
+  const date = new Date(a.date);
+  const time = timeutils.decodeTime(a.t);
+  date.setHours(time.h);
+  date.setMinutes(time.m);
+  date.setSeconds(time.s);
+  return {date: date, msg: a.msg};
+});
+events.sort((a,b) => a.date - b.date);
+
+if (settings.ndColors === undefined) {
+  settings.ndColors = !g.theme.dark;
+}
 
 if (settings.ndColors === true) {
   bgColor = white;
@@ -39,6 +51,7 @@ if (settings.ndColors === true) {
   bgColorWeekend = yellow;
   fgOtherMonth = blue;
   fgSameMonth = black;
+  bgEvent = color2;
 }
 
 function getDowLbls(locale) {
@@ -101,6 +114,12 @@ function getDowLbls(locale) {
       break;
   }
   return dowLbls;
+}
+
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 }
 
 function drawCalendar(date) {
@@ -183,19 +202,26 @@ function drawCalendar(date) {
     }
   }
 
+  const weekBeforeMonth = new Date(date.getTime());
+  weekBeforeMonth.setDate(weekBeforeMonth.getDate() - 7);
+  const week2AfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+  week2AfterMonth.setDate(week2AfterMonth.getDate() + 14);
+  const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
+
   let i = 0;
   for (y = 0; y < rowN - 1; y++) {
     for (x = 0; x < colN; x++) {
       i++;
       const day = days[i];
-      const isToday =
-        today.year === year && today.month === month && today.day === day - 50;
+      const curMonth = day < 15 ? month+1 : day < 50 ? month-1 : month;
+      const curDay = new Date(year, curMonth, day > 50 ? day-50 : day);
+      const isToday = sameDay(curDay, new Date());
+      const x1 = x * colW;
+      const y1 = y * rowH + headerH + rowH;
+      const x2 = x * colW + colW;
+      const y2 = y * rowH + headerH + rowH + rowH;
       if (isToday) {
         g.setColor(red);
-        let x1 = x * colW;
-        let y1 = y * rowH + headerH + rowH;
-        let x2 = x * colW + colW;
-        let y2 = y * rowH + headerH + rowH + rowH;
         g.drawRect(x1, y1, x2, y2);
         g.drawRect(
           x1 + 1,
@@ -204,6 +230,24 @@ function drawCalendar(date) {
           y2 - 1
         );
       }
+
+      if (eventsThisMonth.length > 0) {
+        // Display events for this day
+        g.setColor(bgEvent);
+        eventsThisMonth.forEach((ev, idx) => {
+          if (sameDay(ev.date, curDay)) {
+            const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
+            const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+            const height = (y2-2) - (y1+2); // height of a cell
+            const sliceHeight = height/eventsPerDay;
+            const ystart = (y1+2) + slice*sliceHeight;
+            g.fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+
+            eventsThisMonth.splice(idx, 1); // this event is no longer needed
+          }
+        });
+      }
+
       require("Font8x12").add(Graphics);
       g.setFont("8x12", fontSize);
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
@@ -216,28 +260,51 @@ function drawCalendar(date) {
   }
 }
 
-const date = new Date();
-const today = {
-  day: date.getDate(),
-  month: date.getMonth(),
-  year: date.getFullYear()
-};
-drawCalendar(date);
-clearWatch();
-Bangle.on("touch", area => {
-  const month = date.getMonth();
-  if (area == 1) {
-    let prevMonth = month > 0 ? month - 1 : 11;
-    if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
-    date.setMonth(prevMonth);
-  } else {
-    let nextMonth = month < 11 ? month + 1 : 0;
-    if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
-    date.setMonth(nextMonth);
-  }
-  drawCalendar(date);
-});
+function setUI() {
+  Bangle.setUI({
+    mode : "custom",
+    swipe: (dirLR, dirUD) => {
+      if (dirLR<0) { // left
+        const month = date.getMonth();
+        let prevMonth = month > 0 ? month - 1 : 11;
+        if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
+        date.setMonth(prevMonth);
+        drawCalendar(date);
+      } else if (dirLR>0) { // right
+        const month = date.getMonth();
+        let nextMonth = month < 11 ? month + 1 : 0;
+        if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
+        date.setMonth(nextMonth);
+        drawCalendar(date);
+      } else if (dirUD<0) { // up
+        date.setFullYear(date.getFullYear() - 1);
+        drawCalendar(date);
+      } else if (dirUD>0) { // down
+        date.setFullYear(date.getFullYear() + 1);
+        drawCalendar(date);
+      }
+    },
+    btn: (n) => n === (process.env.HWVERSION === 2 ? 1 : 3) && load(),
+    touch: (n,e) => {
+      const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
+        const dateStr = require("locale").date(e.date, 1);
+        const timeStr = require("locale").time(e.date, 1);
+        return { title: `${dateStr} ${timeStr}` + (e.msg ? " " + e.msg : "") };
+      });
+      if (menu.length === 0) {
+        menu.push({title: /*LANG*/"No events"});
+      }
+      menu[""] = { title: require("locale").month(date) + " " + date.getFullYear() };
+      menu["< Back"] = () => {
+        E.showMenu();
+        drawCalendar(date);
+        setUI();
+      };
+      E.showMenu(menu);
+    }
+  });
+}
 
-// Show launcher when button pressed
-setWatch(() => load(), process.env.HWVERSION === 2 ? BTN : BTN3, { repeat: false, edge: "falling" });
+drawCalendar(date);
+setUI();
 // No space for widgets!

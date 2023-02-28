@@ -205,7 +205,7 @@ exports.enable = () => {
           "alt": 100,
           "speed": 10,
           "course": 12,
-          "time": Date.now(),
+          "time": new Date(),
           "satellites": 7,
           "fix": 1,
           "hdop": 1
@@ -228,7 +228,7 @@ exports.enable = () => {
           
           let result = {
             "speed": Math.random() * 3 + 2,
-            "time": Date.now(),
+            "time": new Date(),
             "satellites": Math.floor(Math.random()*5)+3,
             "fix": 1,
             "hdop": Math.floor(Math.random(30)+1)
@@ -268,7 +268,7 @@ exports.enable = () => {
           "alt": NaN,
           "speed": NaN,
           "course": NaN,
-          "time": Date.now(),
+          "time": new Date(),
           "satellites": 2,
           "fix": 0,
           "hdop": NaN
@@ -301,7 +301,7 @@ exports.enable = () => {
           "alt": currentAlt,
           "speed": currentSpeed,
           "course": currentCourse,
-          "time": Date.now(),
+          "time": new Date(),
           "satellites": currentSats,
           "fix": 1,
           "hdop": 1

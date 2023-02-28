@@ -1,11 +1,11 @@
 {
   "id": "calendar",
   "name": "Calendar",
-  "version": "0.11",
+  "version": "0.13",
   "description": "Simple calendar",
   "icon": "calendar.png",
   "screenshots": [{"url":"screenshot_calendar.png"}],
-  "tags": "calendar",
+  "tags": "calendar,tool",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,

@@ -9,3 +9,4 @@
 0.07: README file update as UI interaction was not easy to understand
 0.08: Stability improvements - ensure we continue even if a flat string can't be allocated
       Stop ClockInfo text drawing outside the allocated area
+0.09: Use clock_info module as an app

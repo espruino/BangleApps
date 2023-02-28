@@ -41,17 +41,12 @@ function ClockFace(options) {
       this[k] = settings[k];
     });
   }
-  // these default to true
-  ["showDate", "loadWidgets"].forEach(k => {
-    if (this[k]===undefined) this[k] = true;
-  });
+  // showDate defaults to true
+  if (this.showDate===undefined) this.showDate = true;
+  // if (old) setting was to not load widgets, default to hiding them
+  if (this.hideWidgets===undefined && this.loadWidgets===false) this.hideWidgets = 1;
+
   let s = require("Storage").readJSON("setting.json",1)||{};
-  if ((global.__FILE__===undefined || global.__FILE__===s.clock)
-    && s.clockHasWidgets!==this.loadWidgets) {
-    // save whether we can Fast Load
-    s.clockHasWidgets = this.loadWidgets;
-    require("Storage").writeJSON("setting.json", s);
-  }
   // use global 24/12-hour setting if not set by clock-settings
   if (!('is12Hour' in this)) this.is12Hour = !!(s["12hour"]);
 }
@@ -92,7 +87,9 @@ ClockFace.prototype.start = function() {
   .CLOCK is set by Bangle.setUI('clock') but we want to load widgets so we can check appRect and *then*
   call setUI. see #1864 */
   Bangle.CLOCK = 1;
-  if (this.loadWidgets) Bangle.loadWidgets();
+  Bangle.loadWidgets();
+  const widget_util = ["show", "hide", "swipeOn"][this.hideWidgets|0];
+  require("widget_utils")[widget_util]();
   if (this.init) this.init.apply(this);
   const uiRemove = this._remove ? () => this.remove() : undefined;
   if (this._upDown) {
@@ -133,6 +130,7 @@ ClockFace.prototype.resume = function() {
 };
 ClockFace.prototype.remove = function() {
   this._removed = true;
+  require("widget_utils").show();
   if (this._timeout) clearTimeout(this._timeout);
   Bangle.removeListener("lcdPower", this._onLcd);
   if (this._remove) this._remove.apply(this);

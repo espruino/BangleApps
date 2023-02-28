@@ -5,7 +5,7 @@ function satelliteImage() {
 var Layout = require("Layout");
 var layout;
 //Bangle.setGPSPower(1, "app");
-E.showMessage(/*LANG*/"Loading..."); // avoid showing rubbish on screen
+E.showMessage(/*LANG*/"Waiting for GNS data..."); // avoid showing rubbish on screen
 
 var lastFix = {
   fix: -1,
@@ -19,6 +19,7 @@ var lastFix = {
 var SATinView = 0, lastSATinView = -1, nofGP = 0, nofBD = 0, nofGL = 0;
 const leaveNofixLayout = 1;  // 0 = stay on initial screen for debugging (default = 1)
 var listenerGPSraw = 0;
+var dataCounter = 0;
 
 function formatTime(now) {
   if (now == undefined) {
@@ -60,6 +61,7 @@ function getMaidenHead(param1,param2){
   return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]+L[subLat]+extLon+extLat;
 }
 function onGPS(fix) {
+  dataCounter++;
   if (lastFix.fix != fix.fix) {
     // if fix is different, change the layout
     if (fix.fix && leaveNofixLayout) {
@@ -80,10 +82,14 @@ function onGPS(fix) {
         type:"v", c: [
           {type:"txt", font:"6x8:2", label:"GPS Info" },
           {type:"img", src:satelliteImage, pad:4 },
-          {type:"txt", font:"6x8", label:"Waiting for GPS" },
+          {type:"txt", font:"6x8", label:"Waiting for GPS fix" },
           {type:"h", c: [
             {type:"txt", font:"10%", label:fix.satellites, pad:2, id:"sat" },
             {type:"txt", font:"6x8", pad:3, label:"Satellites used" }
+          ]},
+          {type:"h", c: [
+            {type:"txt", font:"10%", label:dataCounter, pad:2, id:"dataCounter" },
+            {type:"txt", font:"6x8", pad:3, label:"packets received" }
           ]},
           {type:"txt", font:"6x8", label:"", fillx:true, id:"progress" }
         ]},{lazy:false});
@@ -123,6 +129,9 @@ function onGPS(fix) {
       // console.log("in view GP/BD/GL: " + nofGP + " " + nofBD + " " + nofGL);
       layout.render(layout.progress);
     }
+    layout.clear(layout.dataCounter);
+    layout.dataCounter.label = dataCounter;
+    layout.render(layout.dataCounter);
   }
 
   if (listenerGPSraw == 0 && !fix.fix) {
@@ -148,6 +157,7 @@ Bangle.drawWidgets();
 Bangle.on('GPS', onGPS);
 //Bangle.on('GPS-raw', onGPSraw);
 Bangle.setGPSPower(1, "app");
+
 
 function  exitApp() {
   load();

@@ -1,6 +1,6 @@
 (function(back) {
 
-  
+
 
   function gb(j) {
     Bluetooth.println(JSON.stringify(j));
@@ -12,7 +12,7 @@
   var mainmenu = {
     "" : { "title" : "Android" },
     "< Back" : back,
-    /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
+    /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?/*LANG*/"Yes":/*LANG*/"No" },
     /*LANG*/"Find Phone" : () => E.showMenu({
         "" : { "title" : /*LANG*/"Find Phone" },
         "< Back" : ()=>E.showMenu(mainmenu),
@@ -36,7 +36,7 @@
         updateSettings();
       }
     },
-    /*LANG*/"Messages" : ()=>require("message").openGUI(),
+    /*LANG*/"Messages" : ()=>require("messages").openGUI(),
   };
   E.showMenu(mainmenu);
 })
