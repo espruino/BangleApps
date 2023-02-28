@@ -434,9 +434,11 @@ let main = function(ovr, event) {
   backupHandler("touch");
   backupHandler("swipe");
   backupHandler("drag");
+  if (!backupDone){
+    Bangle.on('touch', getTouchHandler(ovr));
+    Bangle.on('swipe', getSwipeHandler(ovr));
+  }
   backupDone=true;
-  Bangle.on('touch', getTouchHandler(ovr));
-  Bangle.on('swipe', getSwipeHandler(ovr));
 
   if (event !== undefined){
     drawBorder(ovr);
