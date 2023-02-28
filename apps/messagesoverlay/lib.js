@@ -389,19 +389,17 @@ let getTouchHandler = function(ovr){
   };
 };
 
-let touchHandler;
-let swipeHandler;
-
 let restoreHandler = function(event){
-  if (backup[event]){
-    Bangle["#on" + event]=backup[event];
-    backup[event] = undefined;
-  }
+  LOG("Restore", event, backup[event]);
+  Bangle.removeAllListeners(event);
+  Bangle["#on" + event]=backup[event];
+  backup[event] = undefined;
 };
 
 let backupHandler = function(event){
-  if (eventQueue.length > 1 && ovr) return; // do not backup, overlay is already up
+  if (backupDone) return; // do not backup, overlay is already up
   backup[event] = Bangle["#on" + event];
+  LOG("Backed up", backup[event]);
   Bangle.removeAllListeners(event);
 };
 
@@ -414,20 +412,15 @@ let cleanup = function(){
   restoreHandler("swipe");
   restoreHandler("drag");
 
-  if (touchHandler) {
-    Bangle.removeListener("touch", touchHandler);
-    touchHandler = undefined;
-  }
-  if (swipeHandler) {
-    Bangle.removeListener("swipe", swipeHandler);
-    swipeHandler = undefined;
-  }
   Bangle.setLCDOverlay();
+  backupDone = false;
   ovr = undefined;
   quiet = undefined;
 };
 
 let backup = {};
+
+let backupDone = false;
 
 let main = function(ovr, event) {
   LOG("Main", event, settings);
@@ -441,13 +434,11 @@ let main = function(ovr, event) {
   backupHandler("touch");
   backupHandler("swipe");
   backupHandler("drag");
-
-  if (touchHandler) Bangle.removeListener("touch",touchHandler);
-  if (swipeHandler) Bangle.removeListener("swipe",swipeHandler);
-  touchHandler = getTouchHandler(ovr);
-  swipeHandler = getSwipeHandler(ovr);
-  Bangle.on('touch', touchHandler);
-  Bangle.on('swipe', swipeHandler);
+  if (!backupDone){
+    Bangle.on('touch', getTouchHandler(ovr));
+    Bangle.on('swipe', getSwipeHandler(ovr));
+  }
+  backupDone=true;
 
   if (event !== undefined){
     drawBorder(ovr);
