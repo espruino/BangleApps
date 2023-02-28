@@ -3,9 +3,8 @@
   // Load settings
   const settings = Object.assign({
     speed: 6, // when lower then this use direction from compass
-    compassSrc: 1, // [off, built-in, magnav]
+    compassSrc: 2, // [off, built-in, magnav]
     resetCompassOnPwr: true, // reset compass on power on
-    tiltCompensation: true, // tilt compensation on built-in compass
     showWidget: 2, // 0 = never, 1 = when replacing GPS course with compass course, 2 = when GPS is on
   }, require("Storage").readJSON(FILE, true) || {});
 
@@ -22,9 +21,6 @@
     // adjust settings to work without magnav
     if (settings.compassSrc === 2) {
       settings.compassSrc = 1;
-    }
-    if (settings.tiltCompensation) {
-      settings.tiltCompensation = false;
     }
   }
   const compassSrcOpts = [/*LANG*/"off", /*LANG*/"built-in"];
@@ -73,16 +69,6 @@
       }
     },
   };
-
-  if (magnavInstalled) {
-      menu[/*LANG*/'Tilt compensation on built-in compass'] = {
-      value: !!settings.tiltCompensation,
-      onchange: v => {
-        settings.tiltCompensation = v;
-        writeSettings();
-      }
-    };
-  }
 
   // Show the menu
   E.showMenu(menu);
