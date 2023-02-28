@@ -12,33 +12,27 @@
 
 
 
-//TODO: quando apro l'app dal menu principale ( quindi non c'è niente nella queue)
-//visualizzo l'interfaccia per la musica ( o un settings che mi sceglie di aprire la musica? )
 
 let LOG=function(){  
   //print.apply(null, arguments);
 }
 
 
-let settings= (()=>{
-  let tmp={};
-  tmp.NewEventFileName="messages_light.NewEvent.json";
-
-  tmp.fontSmall = "6x8";
-  tmp.fontMedium = g.getFonts().includes("Vector")?"Vector:16":"6x8:2";
-  tmp.fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-  tmp.fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+let settings= {
+  NewEventFileName:"messages_light.NewEvent.json",
+  fontSmall : "6x8",
+  fontMedium : "Vector:16",
+  fontBig : "Vector:20",
+  fontLarge : "Vector:30",
   
+  colHeadBg : g.theme.dark ? "#141":"#4f4",
   
-  tmp.colHeadBg = g.theme.dark ? "#141":"#4f4";
-  tmp.colBg = g.theme.dark ? "#000":"#fff";
-  tmp.colLock = g.theme.dark ? "#ff0000":"#ff0000";
+  colBg : g.theme.dark ? "#000":"#fff",
+  colLock : g.theme.dark ? "#ff0000":"#ff0000",
 
-  tmp.quiet=!!((require('Storage').readJSON("setting.json", true) || {}).quiet);
-  tmp.timeOut=(require('Storage').readJSON("messages_light.settings.json", true) || {}).timeOut || "Off";
-
-  return tmp;
-})();
+  quiet:!!((require('Storage').readJSON('setting.json', 1) || {}).quiet),
+  timeOut:(require('Storage').readJSON("messages_light.settings.json", true) || {}).timeOut || "Off",
+};
 
 
 
@@ -46,15 +40,6 @@ let settings= (()=>{
 let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
-//TODO: implemento il resto ( nel template )
-var music=undefined;
-//se definita, vuol dire che è arrivata una richiesta di musica -> dopo aver fino la queue di messaggi, ri-visualizza la schermata di musica
-//se premo "back" in quella di musica -> esco dall'app
-//template qua sotto
-/*{
-  artist:"",
-  track:"",
-}*/
 
 let justOpened=true;
 
@@ -72,60 +57,7 @@ var manageEvent = function(event) {
       showCall(event);
   }
   else if( event.id=="music"){
-
-
-      /*
-      //DEBUG -> save the event into file
-      let musicLogFile="music_log";
-      let logMusic = require('Storage').readJSON(musicLogFile, true) || [];
-      logMusic.push(event);
-      require('Storage').writeJSON(musicLogFile, logMusic);
-      */
-
-
-      //se c'è qualcosa nella queue, quindi app già aperta,
-      //se musicRunngin==true, vuol dire che c'è già della musica in ascolto prima
-      // quindi non mostro nulla
-
-      //se prima era musicRunngin == false
-      //NON DOVREBBE NEANCHE ARRIVA QUA ( da codice nel proxy )
-
-
-
-      //LOGICA DA QUA->
-      //aggiorno i dati della musica 
-
-
-
-      LOG("old music",music)
-      LOG("music event",event)
-      if( music==undefined) music={};
-      Object.assign(music,event);
-       //tolgo tutto quello che non mi serve salvare ( non lo faccio prima perchè non so se l'event verrà usato da altri)
-      delete music.t;
-      delete music.id;
-      delete music.title;
-      delete music.new;
-      LOG("joined",music)
-
-
-      
-      //quindi se mi arriva la notifica vuol dire che:
-      //l'app l'ho appena aperta  ->  visualizzo la schermata di musica
-      //oppure 
-      //l'app era già stata aperta in modalità musica -> non faccio nulla ( avendo già aggiornato i dati della musica )
-
-      //POI
-      //se c'è roba nella queue -> NON visualizzo la schermata di musica ( quando finirà la queue, la next visualizzerà la musica )
-      //se non c'è roba nella queue -> aggiorno la visualizzazione
-
-
-      // ho unito le due condizioni di prima 
-
-      if( justOpened  || EventQueue.length==0)
-        showMusic();
-    
-      
+      //la musica non la gestisco più ( uso l'app standard o un altra app)
   }
   else{ 
 
@@ -170,7 +102,12 @@ var manageEvent = function(event) {
             if(element.id != event.id)
               newEventQueue.push(element);
           });
-          EventQueue=newEventQueue;
+
+          //non sovrascrivo, cosi uso lo stesso oggetto in memoria e dovrei avere meno problemi di memory leak
+          EventQueue.length=0;
+          newEventQueue.forEach(element => {
+            EventQueue.push(element);
+          });
         }
     }
     //-----------------
@@ -334,17 +271,6 @@ let showCall = function(msg)
 
 
 
-let musicCode=undefined;
-//visualizza cioè che c'è nella variabile music ( se undefined, richiama la next)
-let showMusic=function(){
-  if( music===undefined) next();    //TOCHECK: controllo rimuovibile?
-
-  //carico dinamicamente il codice per la musica ( non mi serve sempre ) 
-  if(musicCode===undefined) musicCode = require("messages_light.music.js") //eval(require("Storage").read("messages_light.music.js"));
-  
-  musicCode.show();
-
-}
 
 
 
@@ -360,19 +286,11 @@ let next=function(){
     EventQueue.shift();    //passa al messaggio successivo, se presente - tolgo il primo
 
   callInProgress=false; 
+  LOG(EventQueue.length);
   if( EventQueue.length == 0)
   {
-    LOG("no element in queue - closing")
-    if( music!==undefined)
-    {
-      LOG("opened/received music -> show music");
-      showMusic();
-    }
-    else
-    {
-      LOG("no music -> close")
-      setTimeout(_ => load());
-    }
+    LOG("no element in queue - closing");
+    setTimeout(_ => load());
     return;
   }
 
@@ -383,32 +301,12 @@ let next=function(){
 
 
 
-
-
-
-
-
-
-
-
-let showMap=function(msg) {
-
-  g.clearRect(Bangle.appRect);
-  PrintMessageStrings({body:"Not implemented!"});
-
-}
-
-
-
-
-
-
-let CallBuzzTimer=null;
+let CallBuzzTimer=undefined;
 let StopBuzzCall=function()
 {
   if (CallBuzzTimer){
     clearInterval(CallBuzzTimer);
-    CallBuzzTimer=null;
+    CallBuzzTimer=undefined;
   }
 }
 let DrawTriangleUp=function()
@@ -546,7 +444,7 @@ let doubleTapUnlock=function(data) {
     Bangle.setLCDPower(1);
   }
 }
-let toushScroll=function(button, xy) { 
+let toushScroll=function(_, xy) { 
   updateTimeout();
 
   let height=176; //g.getHeight(); -> 176 B2
@@ -581,15 +479,6 @@ const removeTimeout=function(){
 }
 
 
-//not currently used -> for fast load?
-let unsetApp=function(){
-  delete(music);
-  delete(manageEvent);
-  removeTimeout();
-}
-
-
-
 let main = function(){
   LOG("Main");
 
@@ -611,9 +500,8 @@ let main = function(){
     manageEvent(eventToShow);
   else
   {
-    LOG("file event not found! -> Open in music mode");
-    music={}; //imposto un oggetto nella variabile music, cosi non viene chiuso il programma dalla showMusic
-    setTimeout(_ => showMusic(), 0);
+    LOG("file event not found! -> ?? open debug text");
+    setTimeout(_=>{      GB({"t":"notify","id":15754117198411,"src":"Hangouts","title":"A Name","body":"Debug notification \nmessage contents  demo demo demo demo"})    },0);
   }
   justOpened=false;
 
