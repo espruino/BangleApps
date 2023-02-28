@@ -279,6 +279,8 @@ let drawTriangleDown = function(ovr) {
   ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
 };
 
+let linesScroll = 6;
+
 let scrollUp = function(ovr) {
   msg = eventQueue[0];
   LOG("up", msg);
@@ -289,7 +291,7 @@ let scrollUp = function(ovr) {
 
   if (!msg.CanscrollUp) return;
 
-  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
+  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - linesScroll : 0;
 
   drawMessage(ovr, msg);
 };
@@ -304,7 +306,7 @@ let scrollDown = function(ovr) {
 
   if (!msg.CanscrollDown) return;
 
-  msg.FirstLine = msg.FirstLine + 1;
+  msg.FirstLine = msg.FirstLine + linesScroll;
   drawMessage(ovr, msg);
 };
 
