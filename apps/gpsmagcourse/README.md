@@ -11,7 +11,7 @@ You can switch between the built-in compass and "Navigation Compass" (magnav) as
   When the GPS is calculating the course the orientation of the watch does not matter.
   When the Compass is used as the source of the current heading its top must obviously point at the moving direction (Usually away from you).
 * **Compass reset and calibration**
-  When using "Navigation Compass" as compass source (see settings) please remember to calibrate it regularly.
+  When using "Navigation Compass" as compass source (see settings) please remember to calibrate it regularly. The author recommends to calibrate before every use and at least each time after attaching the charge cable.
   With this service installed the built-in compass calibration is automatically reset when the compass is turned on (deactivatable in settings). It can also be reset with a tap on the Widget (Bangle.js 2 only). Please note that directly after a reset the built-in compass must be turned 360 degrees to provide a useable value.
 * **True north vs magnetic north**
   Please note that the compass does not point to the "real north" but depending on your location there is an offset, see [Magnetic declination](https://en.wikipedia.org/wiki/Magnetic_declination)
@@ -20,15 +20,15 @@ You can switch between the built-in compass and "Navigation Compass" (magnav) as
 ## Widget
 The widget indicates if the current GPS course is provided from GPS or compass.
 It can be turned off in the settings.
-On Bangle.js 2 a click on the widget does reset the built-in compass, has only an affect if the built-in compass is used.
+On Bangle.js 2 a click on the widget does reset the built-in compass, it has only an affect if the built-in compass is used.
 
 ## Settings
 * **Speed threshold**
-  - (default = 6 km/h) When GPS speed is lower then this threshold use the compass direction. The speed must be for at least 10 seconds this fast to switch back to GPS course.
+  - (default = 6 km/h) When GPS speed is lower then this threshold use the compass direction. The speed must be for at least 10 seconds this fast to switch back to GPS course. The optimum threshold varies with the quality of the GPS reception.
 * **Compass source**
   - off: Disables this service.
   - built-in (default if "Navigation Compass" is not installed): Uses the built-in compass. Its calibration can be restarted by pressing the Widget. The watch must be orientated horizontally for the compass heading to be used.
-  - magnav (default if "Navigation Compass" is installed): Compass heading is provided by "Navigation Compass" (magnav). Remember to calibrate it regularly, at least each time after attaching the charge cable.
+  - magnav (default if "Navigation Compass" is installed and calibrated): Compass heading is provided by "Navigation Compass" (magnav).
 * **Reset compass when powered on**
   - Off: Do nothing when compass is turned on.
   - On (default): The calibration of the built-in compass is reset when it is turned on.

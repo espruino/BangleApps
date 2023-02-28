@@ -6,6 +6,7 @@
   }, require("Storage").readJSON("gpsmagcourse.json", true) || {});
   const CALIBDATA = (settings.compassSrc === 2) ? require("Storage").readJSON("magnav.json",1) : undefined;
   let cntAboveSpeed = 0;
+  let lastGPS;
 
   // Check if magnav is installed
   try {
@@ -17,7 +18,7 @@
     }
   }
   if (settings.compassSrc === 2 && !CALIBDATA) {
-    // No calibration for magnav, fallback to default compass
+    // No calibration for magnav, fallback to built-in compass
     settings.compassSrc = 1;
   }
 
@@ -47,7 +48,7 @@
             gps.courseOrig = gps.course;
             gps.course = Bangle.getCompass().heading;
           }
-        } else if (settings.compassSrc === 2) { // magnav tilt correction with magnav calibration
+        } else if (settings.compassSrc === 2) { // magnav
           gps.courseOrig = gps.course;
           gps.course = require("magnav").tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
         }
@@ -57,18 +58,21 @@
 
     // Modify GPS event
     Bangle.on('GPS', gps => {
-      changeGpsCourse(gps);
+      lastGPS = gps;
+      if (!isNaN(gps.course)) {
+        changeGpsCourse(gps);
+      }
     });
     const origGetGPSFix = Bangle.getGPSFix;
     Bangle.getGPSFix = function() {
-      return changeGpsCourse(origGetGPSFix());
+      return lastGPS === undefined ? origGetGPSFix() : lastGPS;
     };
 
     // Enable Compass with GPS
     const origSetGPSPower = Bangle.setGPSPower;
     Bangle.setGPSPower = function(on, id) {
       const isGPSon = origSetGPSPower(on, id);
-      Bangle.setCompassPower(isGPSon, "gpsmagcourse");
+      Bangle.setCompassPower(isGPSon, "gpsmagcourse" + (id || ''));
       return isGPSon;
     };
   } // if (settings.compassSrc > 0)
