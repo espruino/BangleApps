@@ -1,11 +1,11 @@
 const Layout = require("Layout");
-const storage = require('Storage');
+const storage = require("Storage");
 const locale = require("locale");
 const SETTINGS_FILE = "weatherClock.json";
 let s;
-const w = require('weather');
+const w = require("weather");
 
-// weather icons from https://icons8.com/icon/set/weather/color
+// Weather icons from https://icons8.com/icon/set/weather/color
 function getSun() {
   return require("heatshrink").decompress(atob("mEwwhC/AH4AbhvQC6vd7ouVC4IwUCwIwUFwQwQCYgAHDZQXc9wACC6QWDDAgXN7wXF9oXPCwowDC5guGGAYXMCw4wCC5RGJJAZGTJBiNISIylQVJrLCC5owGF65fXR7AwBC5jvhC7JIILxapDFxAXOGAy9KC4owGBAQXODAgHDC54AHC8T0FAAQSOGg4qPGA4WUGAIuVC7AA/AH4AEA="));
 }
@@ -91,10 +91,10 @@ function chooseIconByCode(code) {
   }
 }
 
-// timeout used to update every minute
+// Timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute
+// Schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -121,7 +121,7 @@ function draw() {
         cLayout.wIcon.src = s.icon ? showIconT : getDummy;
       }
       const wind = locale.speed(curr.wind).match(/^(\D*\d*)(.*)$/);
-      cLayout.wind.label = wind[1] + " " + wind[2] + " " + (curr.wrose||'').toUpperCase();
+      cLayout.wind.label = wind[1] + " " + wind[2] + " " + (curr.wrose||"").toUpperCase();
   }
   else{
       cLayout.temp.label = "Err";
@@ -130,7 +130,7 @@ function draw() {
   }
   cLayout.clear();
   cLayout.render();
-  // queue draw in one minute
+  // Queue draw in one minute
   queueDraw();
 }
 

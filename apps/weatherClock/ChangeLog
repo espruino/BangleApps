@@ -3,4 +3,4 @@
 0.03: Minor layout extra spaces.
 0.04: Layout now compatible with Bangle.js 2.
 0.05: Use weather condition code for icon selection.
-0.06: Dev-Add settings menu to hide elements. Images placed into functions for performance. Use lib.js of weather app for drawing weather icons. WeatherClock icons now match weather conditions better.
+0.06: WeatherClock icons now reflect weather conditions better. Add settings menu to hide elements and to use weather icons of Weather app. Images placed into functions for performance.
