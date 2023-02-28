@@ -77,14 +77,14 @@
 
     let functions = {};
     let wrapDeferred = ((o,t) => (a) => {
-      if (a == eval){
+      if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
       } else {
         let wrapped = a;
         if (!a.__wrapped){
           wrapped = ()=>{
             let start = Date.now();
-            let result = a.apply(undefined, arguments.slice(1));
+            let result = a.apply(undefined, arguments.slice(2)); // function arguments for deferred calls start at index 2, first is function, second is time
             let end = Date.now()-start;
             let f = a.toString().substring(0,100);
             if (settings.logDetails) logDeferred(t, end, f);
