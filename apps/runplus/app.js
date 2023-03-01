@@ -124,7 +124,7 @@ lc.push({ type:"h", filly:1, c:[
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: ()=>{if (karvonnenActive) {stopKarvonnenUI();run();} onStartStop();}, id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {stopKarvonnenUI();run();} onStartStop();}), id:"button"}]});
 delete lc;
 setStatus(exs.state.active);
 layout.render();
