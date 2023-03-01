@@ -13,6 +13,9 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
     settings[key] = saved_settings[key]
 }
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
+  "12hour"
+];
 
 /*
  * Set some important constants such as width, height and center
@@ -199,6 +202,9 @@ function drawTime(){
 
     // Hour
     var h = state.currentDate.getHours();
+    if (is12Hour && h > 12) {
+      h = h - 12;
+    }
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
     drawTextCleared(h1, cx, posY+8);
