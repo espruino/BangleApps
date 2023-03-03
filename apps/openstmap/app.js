@@ -28,9 +28,12 @@ function redraw() {
 
 // Draw the POIs
 function drawPOI() {
-  var waypoints = require("waypoints").load();
-  if (!waypoints)
+  try {
+    var waypoints = require("waypoints").load();
+  } catch (ex) {
+    // Waypoints module not available.
     return;
+  }
   g.setFont("Vector", 18);
   waypoints.forEach((wp, idx) => {
     var p = m.latLonToXY(wp.lat, wp.lon);
