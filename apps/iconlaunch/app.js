@@ -9,6 +9,7 @@
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
 
+  
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -103,15 +104,12 @@
   };
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
 
-  let back = ()=>{};
-  if (settings.oneClickExit) back = Bangle.showClock;
-
+  let idWatch = null;
   let options = {
     h: itemSize,
     c: itemsN,
     draw: drawItem,
     select: selectItem,
-    back: back,
     remove: function() {
       if (timeout) clearTimeout(timeout);
       Bangle.removeListener("drag", updateTimeout);
@@ -120,8 +118,26 @@
       if (settings.fullscreen) { // for fast-load, if we hid widgets then we should show them again
         require("widget_utils").show();
       }
-    }
+      if(idWatch) clearWatch(idWatch);
+    },
+    btn:Bangle.showClock
   };
+  
+  //work both the fullscreen and the oneClickExit
+  if( settings.fullscreen && settings.oneClickExit)
+  {
+      idWatch=setWatch(function(e) { 
+        Bangle.showClock();
+      }, BTN, {repeat:false, edge:'rising' });
+    
+  }
+  else if( settings.oneClickExit ) 
+  {
+      options.back=Bangle.showClock;
+  }
+
+  
+
 
   let scroller = E.showScroller(options);
 
