@@ -26,7 +26,6 @@ exports.input = function(options) {
   var middleWidth;
   var middleStart;
   var topStart;
-  g.setFontAlign(-1, -1, 0);
 
   function drawAbcRow() {
     g.clear();
@@ -35,6 +34,7 @@ exports.input = function(options) {
     } catch (_) {}
     g.setColor(ABCCOLOR);
     g.setFont('6x8:2x1');
+    g.setFontAlign(-1, -1, 0);
     g.drawString(RIGHT.split("").join("\n\n"), R.x2-28, topStart);
     g.drawString(LEFT.split("").join("\n\n"), R.x+22, topStart);
     g.setFont('6x8:1x2');
@@ -52,6 +52,7 @@ exports.input = function(options) {
     g.setFont('6x8:1x2');
     g.setColor(NUMCOLOR);
     NUMPADDING = (R.x2-g.stringWidth(NUM))/2;
+    g.setFontAlign(-1, -1, 0);
     g.drawString(NUM, NUMPADDING, (R.y2)/4);
     g.drawString("<-", NUMPADDING+10, showCharY+5);
     g.drawString("->", R.x2-(NUMPADDING+20), showCharY+5);
@@ -68,6 +69,7 @@ exports.input = function(options) {
     //draw cursor at end of text
     g.fillRect(R.x+rectLen+5,R.y,R.x+rectLen+10,R.y+9);
     g.setColor(HLCOLOR);
+    g.setFontAlign(-1, -1, 0);
     g.drawString(text.length<=27? text : '<- '+text.substr(-24,24), R.x+5, R.y+1);
   }
 
@@ -81,6 +83,7 @@ exports.input = function(options) {
     // show new large character
     g.setColor(HLCOLOR);
     g.setFont(BIGFONT);
+    g.setFontAlign(-1, -1, 0);
     g.drawString(chars, (R.x2 - g.stringWidth(chars))/2, showCharY+4);
   }
 
