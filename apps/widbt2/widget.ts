@@ -48,8 +48,8 @@
 
 			g.drawImage(
 				atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
-				this.x + 2,
-				this.y + 2
+				this.x! + 2,
+				this.y! + 2
 			);
 		},
 		width: width(),
