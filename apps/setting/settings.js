@@ -191,7 +191,14 @@ function showBLEMenu() {
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
-      value: settings.whitelist?(settings.whitelist.length+/*LANG*/" devs"):/*LANG*/"off",
+      value:
+        (
+          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
+        ) + (
+          settings.whitelist
+          ? " (" + settings.whitelist.length + ")"
+          : ""
+        ),
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
     }
   });
@@ -341,12 +348,21 @@ function showPasskeyMenu() {
 function showWhitelistMenu() {
   var menu = {
     "< Back" : ()=>showBLEMenu(),
-    /*LANG*/"Disable" : () => {
-      settings.whitelist = undefined;
+  };
+  if (settings.whitelist_disabled) {
+    menu[/*LANG*/"Enable"] = () => {
+      delete settings.whitelist_disabled;
       updateSettings();
       showBLEMenu();
-    }
-  };
+    };
+  } else {
+    menu[/*LANG*/"Disable"] = () => {
+      settings.whitelist_disabled = true;
+      updateSettings();
+      showBLEMenu();
+    };
+  }
+
   if (settings.whitelist) settings.whitelist.forEach(function(d){
     menu[d.substr(0,17)] = function() {
       E.showPrompt(/*LANG*/'Remove\n'+d).then((v) => {
@@ -366,6 +382,7 @@ function showWhitelistMenu() {
     NRF.removeAllListeners('connect');
     NRF.on('connect', function(addr) {
       if (!settings.whitelist) settings.whitelist=[];
+      delete settings.whitelist_disabled;
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');

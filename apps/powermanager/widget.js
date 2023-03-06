@@ -24,7 +24,7 @@ currently-running apps */
   let brightnessSetting = settings.brightness || 1;
   Bangle.setLCDBrightness = ((o) => (a) => {
     brightnessSetting = a;
-    draw(WIDGETS.powermanager);
+    WIDGETS.powermanager.draw(WIDGETS.powermanager);
     return o(a);
   })(Bangle.setLCDBrightness);
 
