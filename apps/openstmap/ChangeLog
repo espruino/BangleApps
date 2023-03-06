@@ -16,3 +16,4 @@
       Support for zooming in on map
       Satellite count moved to widget bar to leave more room for the map
 0.15: Make track drawing an option (default off)
+0.16: Draw waypoints, too.
