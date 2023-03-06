@@ -2,9 +2,14 @@
 (function () {
     "ram";
     var _a;
-    var state = NRF.getSecurityStatus().connected
-        ? 2
-        : 0;
+    var state = (function () {
+        var status = NRF.getSecurityStatus();
+        if (status.connected)
+            return 2;
+        if (status.advertising)
+            return 1;
+        return 0;
+    })();
     var width = function () { return state > 0 ? 15 : 0; };
     var update = function (newState) {
         state = newState;

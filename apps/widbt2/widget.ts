@@ -7,9 +7,13 @@
 		Connected
 	}
 
-	let state: State = NRF.getSecurityStatus().connected
-		? State.Connected
-		: State.Asleep; // could be active, assuming not here
+	let state: State = (() => {
+		const status = NRF.getSecurityStatus();
+
+		if (status.connected) return State.Connected;
+		if (status.advertising) return State.Active;
+		return State.Asleep;
+	})();
 
 	const width = () => state > State.Asleep ? 15 : 0;
 
