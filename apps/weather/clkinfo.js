@@ -22,7 +22,7 @@
 
     function weatherIcon(code) {
       var ovr = Graphics.createArrayBuffer(24,24,1,{msb:true});
-      weatherLib.drawIcon({code:code},12,12,12,ovr);
+      weatherLib.drawIcon({code:code},12,12,12,ovr,true);
       var img = ovr.asImage();
       img.transparent = 0;
       return img;
