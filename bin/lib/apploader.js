@@ -26,8 +26,10 @@ var device = { id : DEVICEID, appsInstalled : [] };
 
 // call with {DEVICEID:"BANGLEJS/BANGLEJS2"}
 exports.init = function(options) {
-  if (options.DEVICEID)
+  if (options.DEVICEID) {
     DEVICEID = options.DEVICEID;
+    device.id = options.DEVICEID;
+  }
   // Load app metadata
   var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
   dirs.forEach(dir => {
