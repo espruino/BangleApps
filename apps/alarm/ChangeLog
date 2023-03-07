@@ -41,3 +41,4 @@
 0.38: Display date in locale
       When switching 'repeat' from 'Workdays', 'Weekends' to 'Custom' preset Custom menu with previous selection
       Display alarm label in delete prompt
+0.39: Dated event repeat option
