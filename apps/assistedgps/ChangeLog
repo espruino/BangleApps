@@ -2,3 +2,4 @@
 0.02: Update to work with Bangle.js 2
 0.03: Select GNSS systems to use for Bangle.js 2
 0.04: Now turns GPS off after upload
+0.05: Fix regression in 0.04 that caused AGPS data not to get loaded

@@ -75,7 +75,14 @@
           settings.tempThreshold = v;
           activityreminder.writeSettings(settings);
         }
-      }
+      },
+      'Unlock on alarm': {
+        value: !!settings.unlock,
+        onchange: v => {
+          settings.unlock = v;
+          activityreminder.writeSettings(settings);
+        }
+      },
     };
 
     return mainMenu;

@@ -141,8 +141,8 @@ let clockInfoDraw = (itm, info, options) => {
   g.setClipRect(0,0,g.getWidth()-1, g.getHeight()-1);
 };
 let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/ });
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { x:0, y:115, w:50, h:40, draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg });
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"slopeclockpp",x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/ });
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { app:"slopeclockpp",x:0, y:115, w:50, h:40, draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg });
 
 // Show launcher when middle button pressed
 Bangle.setUI({

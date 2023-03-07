@@ -73,7 +73,7 @@ let lastTemp = 0;
 
 const phone = {
   get status() {
-    return NRF.getSecurityStatus().connected ? "Yes" : "No";
+    return NRF.getSecurityStatus().connected ? /*LANG*/"Yes" : /*LANG*/"No";
   },
   message: null,
   messageTimeout: null,

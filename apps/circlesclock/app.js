@@ -356,6 +356,7 @@ for(var i=0;i<circleCount; i++) {
   let w = circlePosX[i];
   let y = h3-radiusBorder;
   clockInfoMenu[i] = require("clock_info").addInteractive(clockInfoItems, {
+    app:"circlesclock",
     x:w-radiusBorder, y:y, w:radiusBorder*2, h:g.getHeight()-(y+1),
     draw : clockInfoDraw, circlePosition : i+1
   });

@@ -62,3 +62,6 @@
 0.55: More strings tagged for automatic translation.
 0.56: make System menu items shorter and more consistant, Eg 'Clock', intead
 of 'Select Clock'
+0.57: Settings.log = 0,1,2,3 for off,display,log,both
+0.58: On/Off settings items now use checkboxes
+0.59: Preserve BLE whitelist even when disabled

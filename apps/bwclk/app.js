@@ -132,6 +132,7 @@ clockInfoItems[0].items.unshift({ name : "nop",
 
 
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  app: "bwclk",
   x : 0,
   y: 135,
   w: W,

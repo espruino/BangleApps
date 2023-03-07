@@ -64,3 +64,5 @@
 0.55: Add toLocalISOString polyfill for pre-2v15 firmwares
       Only add boot info comments if settings.bootDebug was set
       If settings.bootDebug is set, output timing for each section of .boot0
+0.56: Settings.log = 0,1,2,3 for off,display, log, both
+0.57: Handle the whitelist being disabled

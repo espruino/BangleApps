@@ -6,14 +6,19 @@
     let settings;
 
     function loadSettings() { // stolen from https://github.com/espruino/BangleApps/blob/master/apps/widpedom/widget.js
-        const d = require('Storage').readJSON("widbgjs.settings.json", 1) || {};
-        settings = Object.assign({
-            'unitIsMmol': true,
-            'expireThreshold': 600000,
-            'reloadInterval': 5 * 60000,
-            'hide': false
-        }, d || {});
-        return d;
+      try {
+          const d = require('Storage').readJSON("widbgjs.settings.json", 1) || {};
+          settings = Object.assign({
+              'unitIsMmol': true,
+              'expireThreshold': 600000,
+              //'reloadInterval': 300000, // 2add in the future
+              'hide': false
+          }, d || {});
+          return d;
+      } catch(e){
+        //console.log(e.toString());
+        return;
+      }
     }
 
     function loadVals() {
@@ -28,7 +33,7 @@
       } catch(e) {
         Bangle.removeFile("widbgjs.json");
       }
-      return null;
+      return;
     }
 
     function calculateRotation(bgDirection) {
@@ -103,9 +108,10 @@
 
     function draw() {
         loadSettings();
-        try {
-            if (settings.hide) return;
-        } catch (e) { }
+        if(settings.hide) {
+          return;
+        }
+        console.log(settings.unitIsMmol.toString());
         loadVals();
 
         outpt = getBG(storedData.bg);
@@ -120,16 +126,19 @@
         g.setFont('Vector', 22);
         g.setColor(g.theme.fg);
 
-        // check if the value is too old
-        if (!isBgTooOld(storedData.bgTimeStamp)) {
-            g.drawImage(atob("FBQBAGAADwAB+AA/wAduAGZgAGAABgAAYAAGAABgAAYAAGAABgAAYAAGAABgAAYAAGAABgA="), this.x + 60, this.y + 9, { rotate: calculateRotation(storedData.bgDirection) });
+        // if the value is too old strikethrough it
+        if (isBgTooOld(storedData.bgTimeStamp)) {
+          g.fillRect(this.x + 5, this.y + 9, g.stringWidth(outpt),this.y + 10);
         }
+
+       g.drawImage(atob("FBQBAGAADwAB+AA/wAduAGZgAGAABgAAYAAGAABgAAYAAGAABgAAYAAGAABgAAYAAGAABgA="), this.x + 60, this.y + 9, { rotate: calculateRotation(storedData.bgDirection)});
         g.setColor(g.theme.fg).drawString(outpt, this.x + 5, this.y);
+
     }
 
     setInterval(function () {
         WIDGETS["widbgjs"].draw(WIDGETS["widbgjs"]);
-    }, 5 * 60000); //  update every 5 minutes (%* 60000
+    }, 5 * 60000); //  update every 5 minutes (5 * 60000)
 
 
     // add your widget

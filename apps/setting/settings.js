@@ -64,8 +64,6 @@ if (("object" != typeof settings) ||
     ("object" != typeof settings.options))
   resetSettings();
 
-const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
-
 function showMainMenu() {
 
   const mainmenu = {
@@ -102,7 +100,6 @@ function showAlertsMenu() {
   if (BANGLEJS2) {
     beepMenuItem = {
       value: settings.beep!=false,
-      format: boolFormat,
       onchange: v => {
         settings.beep = v;
         updateSettings();
@@ -134,7 +131,6 @@ function showAlertsMenu() {
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
       value: settings.vibrate,
-      format: boolFormat,
       onchange: () => {
         settings.vibrate = !settings.vibrate;
         updateSettings();
@@ -169,7 +165,6 @@ function showBLEMenu() {
     /*LANG*/'Make Connectable': ()=>makeConnectable(),
     /*LANG*/'BLE': {
       value: settings.ble,
-      format: boolFormat,
       onchange: () => {
         settings.ble = !settings.ble;
         updateSettings();
@@ -177,7 +172,6 @@ function showBLEMenu() {
     },
     /*LANG*/'Programmable': {
       value: settings.blerepl,
-      format: boolFormat,
       onchange: () => {
         settings.blerepl = !settings.blerepl;
         updateSettings();
@@ -197,7 +191,14 @@ function showBLEMenu() {
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
-      value: settings.whitelist?(settings.whitelist.length+/*LANG*/" devs"):/*LANG*/"off",
+      value:
+        (
+          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
+        ) + (
+          settings.whitelist
+          ? " (" + settings.whitelist.length + ")"
+          : ""
+        ),
       onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
     }
   });
@@ -347,12 +348,21 @@ function showPasskeyMenu() {
 function showWhitelistMenu() {
   var menu = {
     "< Back" : ()=>showBLEMenu(),
-    /*LANG*/"Disable" : () => {
-      settings.whitelist = undefined;
+  };
+  if (settings.whitelist_disabled) {
+    menu[/*LANG*/"Enable"] = () => {
+      delete settings.whitelist_disabled;
       updateSettings();
       showBLEMenu();
-    }
-  };
+    };
+  } else {
+    menu[/*LANG*/"Disable"] = () => {
+      settings.whitelist_disabled = true;
+      updateSettings();
+      showBLEMenu();
+    };
+  }
+
   if (settings.whitelist) settings.whitelist.forEach(function(d){
     menu[d.substr(0,17)] = function() {
       E.showPrompt(/*LANG*/'Remove\n'+d).then((v) => {
@@ -372,6 +382,7 @@ function showWhitelistMenu() {
     NRF.removeAllListeners('connect');
     NRF.on('connect', function(addr) {
       if (!settings.whitelist) settings.whitelist=[];
+      delete settings.whitelist_disabled;
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
@@ -428,7 +439,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
@@ -439,7 +449,6 @@ function showLCDMenu() {
     Object.assign(lcdMenu, {
     /*LANG*/'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN2 = !settings.options.wakeOnBTN2;
         updateOptions();
@@ -447,7 +456,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on BTN3': {
       value: settings.options.wakeOnBTN3,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
@@ -456,7 +464,6 @@ function showLCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnFaceUp = !settings.options.wakeOnFaceUp;
         updateOptions();
@@ -464,7 +471,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on Touch': {
       value: settings.options.wakeOnTouch,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
         updateOptions();
@@ -472,7 +478,6 @@ function showLCDMenu() {
     },
     /*LANG*/'Wake on Twist': {
       value: settings.options.wakeOnTwist,
-      format: boolFormat,
       onchange: () => {
         settings.options.wakeOnTwist = !settings.options.wakeOnTwist;
         updateOptions();
@@ -557,11 +562,11 @@ function showUtilMenu() {
   var menu = {
     '': { 'title': /*LANG*/'Utilities' },
     '< Back': ()=>showMainMenu(),
-    /*LANG*/'Debug Info': {
-      value: E.clip(0|settings.log,0,2),
+    /*LANG*/'Debug': {
+      value: E.clip(0|settings.log,0,3),
       min: 0,
-      max: 2,
-      format: v => [/*LANG*/"Hide",/*LANG*/"Show",/*LANG*/"Log"][E.clip(0|v,0,2)],
+      max: 3,
+      format: v => [/*LANG*/"Off",/*LANG*/"Display",/*LANG*/"Log", /*LANG*/"Both"][E.clip(0|v,0,3)],
       onchange: v => {
         settings.log = v;
         updateSettings();

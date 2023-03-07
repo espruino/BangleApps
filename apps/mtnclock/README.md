@@ -4,7 +4,7 @@ Based on the Pebble watchface Weather Land.
 
 Mountain Pass Clock changes depending on time (day/night) and weather conditions.
 
-This clock requires Gadgetbridge and an app that Gadgetbridge can use to get the current weather from OpenWeatherMap (e.g. Weather Notification). To set up Gadgetbridge and weather, see https://codeberg.org/Freeyourgadget/Gadgetbridge/wiki/Weather. 
+This clock requires Gadgetbridge and an app that Gadgetbridge can use to get the current weather from OpenWeatherMap (e.g. Weather Notification), or a Bangle app that will update weather.json such as OWM Weather. To set up Gadgetbridge and weather, see https://codeberg.org/Freeyourgadget/Gadgetbridge/wiki/Weather.
 
 The scene will change according to the following OpenWeatherMap conditions: clear, cloudy, overcast, lightning, drizzle, rain, fog and snow. Each weather condition has night/day scenes.
 

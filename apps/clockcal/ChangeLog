@@ -4,3 +4,5 @@
 0.04: Use default Bangle formatter for booleans
 0.05: Improved colors (connected vs disconnected)
 0.06: Tell clock widgets to hide.
+0.07: Convert Yes/No On/Off in settings to checkboxes
+0.08: Fixed typo in settings.js for DRAGDOWN to make option work

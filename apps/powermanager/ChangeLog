@@ -3,3 +3,9 @@
 0.03: Use default Bangle formatter for booleans
 0.04: Remove calibration with current voltage (Calibrate->Auto) as it is now handled by settings app
       Allow automatic calibration on every charge longer than 3 hours
+0.05: Add back button to settings menu.
+0.06: Allow logging of some things using power
+      Add widget for live monitoring of power use
+0.07: Convert Yes/No On/Off in settings to checkboxes
+0.08: Fix the wrapping of intervals/timeouts with parameters
+      Fix the widget drawing if widgets are hidden and Bangle.setLCDBrightness is called
