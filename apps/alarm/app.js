@@ -46,7 +46,7 @@ function getLabel(e) {
   const dateStr = e.date && require("locale").date(new Date(e.date), 1);
   return (e.timer
       ? require("time_utils").formatDuration(e.timer)
-      : (e.date ? `${e.date.substring(5,10)}${e.rp?"*":""} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeRepeat(e)}` : ""))
+      : (dateStr ? `${dateStr}${e.rp?"*":""} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeRepeat(e)}` : ""))
       ) + (e.msg ? ` ${e.msg}` : "");
 }
 
