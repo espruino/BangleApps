@@ -84,6 +84,9 @@ function showAlarm(alarm) {
     let date = new Date(alarm.date);
     let rp = alarm.rp;
     switch(rp.interval) {
+      case true:
+        date.setDate(date.getDate() + 1);
+        break;
       case "day":
         date.setDate(date.getDate() + rp.num);
         break;
@@ -99,6 +102,9 @@ function showAlarm(alarm) {
         if (!alarm.od) alarm.od = date.getDate();
         date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
         if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      default: 
+        console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
         break;
     }
     alarm.date = date.toLocalISOString().slice(0,10);
