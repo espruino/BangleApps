@@ -493,7 +493,7 @@ let main = function(){
   Bangle.on('tap', doubleTapUnlock);
   Bangle.on('touch', toushScroll);
 
-  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( NewMessage.json )
+  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( messages_light.NewEvent.json )
   let eventToShow = require('Storage').readJSON(settings.NewEventFileName, true);
   require("Storage").erase(settings.NewEventFileName)
   if( eventToShow!==undefined)
