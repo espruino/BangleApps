@@ -98,6 +98,8 @@ function onInit(device) {
     if (crc==4056371285) version = "2v13";
     if (crc==1038322422) version = "2v14";
     if (crc==2560806221) version = "2v15";
+    if (crc==2886730689) version = "2v16";
+    if (crc==156320890) version = "2v17";
     if (!ok) {
       version += 	`(&#9888; update required)`;
     }
@@ -317,7 +319,7 @@ function createJS_app(binary, startAddress, endAddress) {
   hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1207580954) { print("DFU 2v10.236 needs update"); load();}\n`;
   hexJS += '\x10var s = require("Storage");\n';
   hexJS += '\x10s.erase(".firmware");\n';
-  var CHUNKSIZE = 2048;
+  var CHUNKSIZE = 1024;
   for (var i=0;i<binary.length;i+=CHUNKSIZE) {
     var l = binary.length-i;
     if (l>CHUNKSIZE) l=CHUNKSIZE;

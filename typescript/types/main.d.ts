@@ -83,7 +83,10 @@ type WidgetArea = "tl" | "tr" | "bl" | "br";
 type Widget = {
   area: WidgetArea;
   width: number;
-  draw: (this: { x: number; y: number }) => void;
+  sortorder?: number;
+  draw: (this: Widget, w: Widget) => void;
+  x?: number;
+  y?: number;
 };
 declare const WIDGETS: { [key: string]: Widget };
 
@@ -179,6 +182,23 @@ type NRFFilters = {
   serviceData?: object;
   manufacturerData?: object;
 };
+
+type NRFSecurityStatus = {
+  advertising: boolean,
+} & (
+  {
+    connected: true,
+    encrypted: boolean,
+    mitm_protected: boolean,
+    bonded: boolean,
+    connected_addr?: string,
+  } | {
+    connected: false,
+    encrypted: false,
+    mitm_protected: false,
+    bonded: false,
+  }
+);
 
 type ImageObject = {
   width: number;
@@ -718,7 +738,7 @@ declare class NRF {
    * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
    */
-  static getSecurityStatus(): any;
+  static getSecurityStatus(): NRFSecurityStatus;
 
   /**
    * @returns {any} An object
@@ -1895,6 +1915,7 @@ declare class NRF {
    *   encrypted       // Communication on this link is encrypted.
    *   mitm_protected  // The encrypted communication is also protected against man-in-the-middle attacks.
    *   bonded          // The peer is bonded with us
+   *   advertising     // Are we currently advertising?
    *   connected_addr  // If connected=true, the MAC address of the currently connected device
    * }
    * ```
@@ -1903,7 +1924,7 @@ declare class NRF {
    * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
    */
-  static getSecurityStatus(): any;
+  static getSecurityStatus(): NRFSecurityStatus;
 
   /**
    *
@@ -4550,7 +4571,7 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} An object
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_getSecurityStatus
    */
-  getSecurityStatus(): any;
+  getSecurityStatus(): NRFSecurityStatus;
 
   /**
    * See `NRF.connect` for usage examples.

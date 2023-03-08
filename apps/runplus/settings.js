@@ -32,8 +32,8 @@
       },
     },
     HRM: {
-      min: 65,
-      max: 165,
+      min: 55,
+      max: 185,
     },
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
@@ -145,7 +145,7 @@
     },
   }
   hrmMenu[/*LANG*/"max"] = {
-    min: 120, max: 190,
+    min: 101, max: 220,
     value: settings.HRM.max,
     format: v => v,
     onchange: v => {

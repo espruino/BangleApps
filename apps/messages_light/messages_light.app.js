@@ -10,34 +10,38 @@
   }
 */
 
+
+
+
 let LOG=function(){  
   //print.apply(null, arguments);
 }
 
 
-
-
-let settings= (()=>{
-  let tmp={};
-  tmp.NewEventFileName="messages_light.NewEvent.json";
-
-  tmp.fontSmall = "6x8";
-  tmp.fontMedium = g.getFonts().includes("Vector")?"Vector:16":"6x8:2";
-  tmp.fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-  tmp.fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+let settings= {
+  NewEventFileName:"messages_light.NewEvent.json",
+  fontSmall : "6x8",
+  fontMedium : "Vector:16",
+  fontBig : "Vector:20",
+  fontLarge : "Vector:30",
   
+  colHeadBg : g.theme.dark ? "#141":"#4f4",
   
-  tmp.colHeadBg = g.theme.dark ? "#141":"#4f4";
-  tmp.colBg = g.theme.dark ? "#000":"#fff";
-  tmp.colLock = g.theme.dark ? "#ff0000":"#ff0000";
+  colBg : g.theme.dark ? "#000":"#fff",
+  colLock : g.theme.dark ? "#ff0000":"#ff0000",
 
-  tmp.quiet=((require('Storage').readJSON('setting.json', 1) || {}).quiet)
+  quiet:!!((require('Storage').readJSON('setting.json', 1) || {}).quiet),
+  timeOut:(require('Storage').readJSON("messages_light.settings.json", true) || {}).timeOut || "Off",
+};
 
-  return tmp;
-})();
+
+
+
 let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
+
+let justOpened=true;
 
 
 
@@ -46,68 +50,73 @@ var manageEvent = function(event) {
 
   event.new=true;
 
-
   LOG("manageEvent");
-  if( event.id=="call")
-  {
-    showCall(event);
-    return;
+  LOG(event);
+
+  if( event.id=="call"){
+      showCall(event);
   }
-  switch(event.t)
-  {
-    case "add":
-      EventQueue.unshift(event);
+  else if( event.id=="music"){
+      //la musica non la gestisco più ( uso l'app standard o un altra app)
+  }
+  else{ 
 
-      if(!callInProgress)
-        showMessage(event);
-    break;
-
-    case "modify":
-      //cerco l'evento nella lista, se lo trovo, lo modifico, altrimenti lo pusho
-      let find=false;
-      EventQueue.forEach(element => {
-        if(element.id == event.id)
-        {
-          find=true;
-          Object.assign(element,event);
-        }
-      });
-      if(!find)   //se non l'ho trovato, lo aggiungo in fondo
+    //-----------------
+    //notification
+    //-----------------
+    if(event.t=="add"){
         EventQueue.unshift(event);
-
-      if(!callInProgress)
-        showMessage(event);
-      break;
-
-    case "remove":
-      
-      //se non c'è niente nella queue e non c'è una chiamata in corso
-      if( EventQueue.length==0 && !callInProgress)
-        next();
-
-      //se l'id è uguale a quello attualmente visualizzato  ( e non siamo in chiamata ) 
-      if(!callInProgress &&  EventQueue[0] !== undefined && EventQueue[0].id == event.id)
-        next();   //passo al messaggio successivo ( per la rimozione ci penserà la next ) 
-
-      else{
-        //altrimenti rimuovo tutti gli elementi con quell'id( creando un nuovo array )
-        let newEventQueue=[];
+  
+        if(!callInProgress)
+          showMessage(event);
+    }
+    else if(event.t=="modify"){
+        //cerco l'evento nella lista, se lo trovo, lo modifico, altrimenti lo pusho
+        let find=false;
         EventQueue.forEach(element => {
-          if(element.id != event.id)
-            newEventQueue.push(element);
+          if(element.id == event.id)
+          {
+            find=true;
+            Object.assign(element,event);
+          }
         });
-        EventQueue=newEventQueue;
-      }
-      
-      
+        if(!find)   //se non l'ho trovato, lo aggiungo in fondo
+          EventQueue.unshift(event);
+  
+        if(!callInProgress)
+          showMessage(event);
+    }
+    else if(event.t=="remove"){       
+        //se non c'è niente nella queue e non c'è una chiamata in corso
+        if( EventQueue.length==0 && !callInProgress)
+          next();
+  
+        //se l'id è uguale a quello attualmente visualizzato  ( e non siamo in chiamata ) 
+        if(!callInProgress &&  EventQueue[0] !== undefined && EventQueue[0].id == event.id)
+          next();   //passo al messaggio successivo ( per la rimozione ci penserà la next ) 
+  
+        else{
+          //altrimenti rimuovo tutti gli elementi con quell'id( creando un nuovo array )
+          let newEventQueue=[];
+          EventQueue.forEach(element => {
+            if(element.id != event.id)
+              newEventQueue.push(element);
+          });
 
-      
-      break;
-    case "musicstate":
-    case "musicinfo":
-        
-        break;
+          //non sovrascrivo, cosi uso lo stesso oggetto in memoria e dovrei avere meno problemi di memory leak
+          EventQueue.length=0;
+          newEventQueue.forEach(element => {
+            EventQueue.push(element);
+          });
+        }
+    }
+    //-----------------
+    //notification
+    //-----------------
+
+
   }
+  
 };
 
 
@@ -118,6 +127,10 @@ var manageEvent = function(event) {
 let showMessage = function(msg){
   LOG("showMessage");
   LOG(msg);
+
+  updateTimeout();
+
+
   g.setBgColor(settings.colBg);
 
 
@@ -208,7 +221,7 @@ let showCall = function(msg)
   }
 
   callInProgress=true;
-
+  updateTimeout();
 
 
   //se è una chiamata ( o una nuova chiamata, diversa dalla precedente )
@@ -262,7 +275,6 @@ let showCall = function(msg)
 
 
 
-
   
 let next=function(){
   LOG("next");
@@ -274,9 +286,10 @@ let next=function(){
     EventQueue.shift();    //passa al messaggio successivo, se presente - tolgo il primo
 
   callInProgress=false; 
+  LOG(EventQueue.length);
   if( EventQueue.length == 0)
   {
-    LOG("no element in queue - closing")
+    LOG("no element in queue - closing");
     setTimeout(_ => load());
     return;
   }
@@ -288,31 +301,12 @@ let next=function(){
 
 
 
-
-
-
-
-
-
-
-
-let showMapMessage=function(msg) {
-
-  g.clearRect(Bangle.appRect);
-  PrintMessageStrings({body:"Not implemented!"});
-
-}
-
-
-
-
-
-let CallBuzzTimer=null;
+let CallBuzzTimer=undefined;
 let StopBuzzCall=function()
 {
   if (CallBuzzTimer){
     clearInterval(CallBuzzTimer);
-    CallBuzzTimer=null;
+    CallBuzzTimer=undefined;
   }
 }
 let DrawTriangleUp=function()
@@ -443,13 +437,16 @@ let PrintMessageStrings=function(msg)
 
 
 let doubleTapUnlock=function(data) {
+  updateTimeout();        
   if( data.double)  //solo se in double
   {
     Bangle.setLocked(false);
     Bangle.setLCDPower(1);
   }
 }
-let toushScroll=function(button, xy) { 
+let toushScroll=function(_, xy) { 
+  updateTimeout();
+
   let height=176; //g.getHeight(); -> 176 B2
   height/=2;
   
@@ -461,6 +458,24 @@ let toushScroll=function(button, xy) {
   {
     ScrollDown();
   }
+}
+
+
+
+let timeout;
+const updateTimeout = function(){
+if (settings.timeOut!="Off"){
+    removeTimeout();
+    if( callInProgress) return; //c'è una chiamata in corso -> no timeout
+    if( music!=undefined && EventQueue.length==0 ) return; //ho aperto l'interfaccia della musica e non ho messaggi davanti -> no timeout
+
+
+    let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
+    timeout = setTimeout(next,time*1000); //next or Bangle.showClock/load()???
+  }
+};
+const removeTimeout=function(){
+  if (timeout) clearTimeout(timeout);
 }
 
 
@@ -478,16 +493,18 @@ let main = function(){
   Bangle.on('tap', doubleTapUnlock);
   Bangle.on('touch', toushScroll);
 
-  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( NewMessage.json )
+  //quando apro quest'app, do per scontato che c'è un messaggio da leggere posto in un file particolare ( messages_light.NewEvent.json )
   let eventToShow = require('Storage').readJSON(settings.NewEventFileName, true);
   require("Storage").erase(settings.NewEventFileName)
   if( eventToShow!==undefined)
     manageEvent(eventToShow);
   else
   {
-    LOG("file not found!");
-    setTimeout(_ => load(), 0);
+    LOG("file event not found! -> ?? open debug text");
+    setTimeout(_=>{      GB({"t":"notify","id":15754117198411,"src":"Hangouts","title":"A Name","body":"Debug notification \nmessage contents  demo demo demo demo"})    },0);
   }
+  justOpened=false;
+
 };
 
 

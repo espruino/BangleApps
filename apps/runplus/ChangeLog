@@ -17,3 +17,6 @@
       Keep run state between runs (allowing you to exit and restart the app)
 0.16: Don't clear zone 2b indicator segment when updating HRM reading.
       Write to correct settings file, fixing settings not working.
+0.17: Fix typo in variable name preventing starting a run.
+0.18: Tweak HRM min/max defaults. Extend min/max intervals in settings. Fix
+      another typo.

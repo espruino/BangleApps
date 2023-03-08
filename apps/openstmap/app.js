@@ -10,6 +10,7 @@ var settings = require("Storage").readJSON("openstmap.json",1)||{};
 function redraw() {
   g.setClipRect(R.x,R.y,R.x2,R.y2);
   m.draw();
+  drawPOI();
   drawMarker();
   // if track drawing is enabled...
   if (settings.drawTrack) {
@@ -23,6 +24,26 @@ function redraw() {
     }
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+}
+
+// Draw the POIs
+function drawPOI() {
+  try {
+    var waypoints = require("waypoints").load();
+  } catch (ex) {
+    // Waypoints module not available.
+    return;
+  }
+  g.setFont("Vector", 18);
+  waypoints.forEach((wp, idx) => {
+    var p = m.latLonToXY(wp.lat, wp.lon);
+    var sz = 2;
+    g.setColor(0,0,0);
+    g.fillRect(p.x-sz, p.y-sz, p.x+sz, p.y+sz);
+    g.setColor(0,0,0);
+    g.drawString(wp.name, p.x, p.y);
+    print(wp.name);
+  })
 }
 
 // Draw the marker for where we are
