@@ -1,3 +1,0 @@
-0.01: 1st version !
-0.02: Supports bottom widgets and UI based in UI4swatch!
-0.03: Several fixes, added comaptibility with BJS2
