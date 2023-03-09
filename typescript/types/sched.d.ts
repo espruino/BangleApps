@@ -16,10 +16,8 @@ declare module Sched {
     appid?: string,
     on: boolean,
     dow?: number,
-    date?: `${number}-${number}-${number}`,
     msg: string,
     last: number,
-    rp: boolean, // repeat
     vibrate?: VibratePattern,
     hidden?: boolean,
     as?: boolean, // auto snooze
@@ -32,7 +30,20 @@ declare module Sched {
     } | {
       timer: number, // this is a timer - the time in ms
     }
+  ) & (
+    {
+      date: `${number}-${number}-${number}`,
+      rp?: Repeat,
+    } | {
+      date: undefined,
+      rp: boolean,
+    }
   );
+
+  type Repeat = {
+    num: number,
+    interval: "day" | "week" | "month" | "year",
+  };
 
   type SchedSettings = {
     unlockAtBuzz: boolean,
