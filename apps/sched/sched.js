@@ -83,10 +83,9 @@ function showAlarm(alarm) {
   function setNextRepeatDate(alarm) {
     let date = new Date(alarm.date);
     let rp = alarm.rp;
-    switch(rp.interval) {
-      case true:
-        date.setDate(date.getDate() + 1);
-        break;
+    if (rp===true) { // fallback in case rp is set wrong
+      date.setDate(date.getDate() + 1);
+    } else switch(rp.interval) { // rp is an object
       case "day":
         date.setDate(date.getDate() + rp.num);
         break;
