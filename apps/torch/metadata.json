@@ -7,6 +7,7 @@
   "icon": "app.png",
   "tags": "tool,torch",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme":"README.md",
   "storage": [
     {"name":"torch.app.js","url":"app.js"},
     {"name":"torch.wid.js","url":"widget.js","supports": ["BANGLEJS"]},

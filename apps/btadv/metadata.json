@@ -7,6 +7,7 @@
   "icon": "icon.png",
   "tags": "health,tool,sensors,bluetooth",
   "supports": ["BANGLEJS2"],
+  "readme":"README.md",
   "storage": [
     {"name":"btadv.app.js","url":"app.js"},
     {"name":"btadv.img","url":"icon.js","evaluate":true}
