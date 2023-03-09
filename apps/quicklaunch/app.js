@@ -21,11 +21,13 @@
     if (ud == 1 && settings.extdownapp && settings.extdownapp.src){ if (settings.extdownapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.extdownapp.src)) reset("extdownapp"); else load(settings.extdownapp.src); }
   };
 
+  let removeUI = ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
+
   Bangle.setUI({
-    mode: "custom",  
+    mode: "custom",
     touch: touchHandler,
     swipe : swipeHandler,
-    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);} // Compatability with Fastload Utils.
+    remove: removeUI // Compatability with Fastload Utils.
   });
 
   g.clearRect(Bangle.appRect);
@@ -36,7 +38,14 @@
   const updateTimeoutToClock = function(){
     let time = 1000; // milliseconds
     if (timeoutToClock) clearTimeout(timeoutToClock);
-    timeoutToClock = setTimeout(load,time);  
+    timeoutToClock = setTimeout(load,time);
   };
   updateTimeoutToClock();
+  
+  let R = Bangle.appRect; 
+  g.setFont("Vector", 11)
+    .setFontAlign(0,1,0).drawString(settings.extupapp.name, R.x+R.w/2, R.y2)
+    .setFontAlign(0,1,1).drawString(settings.extrightapp.name, R.x, R.y+R.h/2)
+    .setFontAlign(0,-1,0).drawString(settings.extdownapp.name, R.x+R.w/2, R.y)
+    .setFontAlign(0,1,3).drawString(settings.extleftapp.name, R.x2, R.y+R.h/2);
 }
