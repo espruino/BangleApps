@@ -1,7 +1,7 @@
 // ts helpers:
 const __assign = Object.assign;
 
-const Layout = require("Layout") as Layout_.Layout;
+const Layout = require("Layout");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
