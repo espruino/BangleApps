@@ -279,7 +279,7 @@ function showEditRepeatMenu(repeat, day, dowChangeCallback) {
       }
     };
   } else {
-    var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
+    // var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
     dow = EVERY_DAY;
     repeat = repeat || {interval: "month", num: 1};
 

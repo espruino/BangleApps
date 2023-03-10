@@ -7,6 +7,10 @@
 
     "module": "commonjs",
 
+    // toggle these to check everything (and optionally change the include below to "apps/myapp/*.js")
+    // "checkJs": true,
+    // "noEmit": true,
+
     // code-gen
     "declaration": false,
     "emitDeclarationOnly": false,
@@ -45,6 +49,7 @@
   },
   "include": [
     "*/*/*.ts",
+    "apps/*/*.js", // with checkJs: true
     "*/*/*.d.ts",
     "modules/*.d.ts",
     "typescript/types/*.d.ts"
