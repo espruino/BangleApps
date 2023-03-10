@@ -2,7 +2,8 @@
   var settings = Object.assign({
     hrm: 0,
     stepGoal: 10000,
-    stepGoalNotification: false
+    stepGoalNotification: false,
+    withRecentMovement: false,
   }, require("Storage").readJSON("health.json", true) || {});
 
   function setSettings() {
@@ -44,6 +45,15 @@
       format: () => (settings.stepGoalNotification ? 'Yes' : 'No'),
       onchange: () => {
         settings.stepGoalNotification = !settings.stepGoalNotification;
+        setSettings();
+      }
+    },
+
+    /*LANG*/"Only detect when moving": {
+      value: settings.withRecentMovement,
+      format: () => settings.withRecentMovement ? 'Yes' : 'No',
+      onchange: () => {
+        settings.withRecentMovement = !settings.withRecentMovement;
         setSettings();
       }
     }
