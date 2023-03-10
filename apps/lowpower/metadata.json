@@ -1,0 +1,15 @@
+{
+  "id": "lowpower",
+  "name": "Low Power Mode",
+  "version": "0.01",
+  "description": "Switches to displaying a simple clock when the battery percentage is low, nothing more",
+  "readme": "README.md",
+  "icon": "TODOOOOOOOOOOOOOOOO.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"lowpower.boot.js","url":"boot.js"},
+    {"name":"lowpower.app.js","url":"app.js"}
+  ]
+}
