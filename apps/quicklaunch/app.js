@@ -8,8 +8,6 @@
     storage.write("quicklaunch.json", settings);
   };
 
-  // l=left, r=right, u=up, d=down, t=tap.
-
   let touchHandler = (_,e) => {
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
@@ -51,8 +49,8 @@
   
   // Draw app hints
   g.setFont("Vector", 11)
-    .setFontAlign(0,1,0).drawString(settings[qlTrace+"app"].name, R.x+R.w/2, R.y2)
-    .setFontAlign(0,1,1).drawString(settings[qlTrace+"app"].name, R.x, R.y+R.h/2)
-    .setFontAlign(0,-1,0).drawString(settings[qlTrace+"app"].name, R.x+R.w/2, R.y)
-    .setFontAlign(0,1,3).drawString(settings[qlTrace+"app"].name, R.x2, R.y+R.h/2);
+    .setFontAlign(0,1,3).drawString(settings[qlTrace+"lapp"].name, R.x2, R.y+R.h/2)
+    .setFontAlign(0,1,1).drawString(settings[qlTrace+"rapp"].name, R.x, R.y+R.h/2)
+    .setFontAlign(0,1,0).drawString(settings[qlTrace+"uapp"].name, R.x+R.w/2, R.y2)
+    .setFontAlign(0,-1,0).drawString(settings[qlTrace+"dapp"].name, R.x+R.w/2, R.y);
 }

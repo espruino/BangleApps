@@ -1,5 +1,4 @@
 {
-  // TODO: Change the settings object and settings.js to match qlTrace.
   const storage = require("Storage");
   let settings = storage.readJSON("quicklaunch.json", true) || {};
 

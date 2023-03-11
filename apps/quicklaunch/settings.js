@@ -22,7 +22,7 @@ let extension = {
     "type": "app",
     "sortorder": -11,
     "src": "quicklaunch.app.js"
-   }
+   };
 apps.push(extension);
 
 apps.sort((a,b)=>{
@@ -33,16 +33,13 @@ apps.sort((a,b)=>{
   return 0;
 });
 
-function findPath(key) {
-  let path = key.substring(0, key.lenght-3);
-  return path;
-}
+function findPath(key) {return key.substring(0, key.length-3);}
 
 function save(key, value) {
   let path = findPath(key);
   // If changing from extension app (to something else) remove downstream settings entries.
   if (settings[key].name == extension.name && value.name != extension.name) {
-      for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapapp"]) {
+      for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapp"]) {
         delete settings[c];
       }
     }
@@ -51,6 +48,7 @@ function save(key, value) {
   if (value.name == "Quick Launch Extension" && settings[key].name != extension.name) {
       for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapp"]) {
         settings[c] = {"name":"(none)"};
+        storage.write("quicklaunch.json",settings);
       }
     }
   
@@ -67,17 +65,18 @@ function showMainMenu() {
   };
 
   //List all selected apps
-  for (let key of settings.keys()) {
-    mainmenu[key+ ": "+settings[key].name] = function() {showSubMenu(key);};
-    }
+  for (let key of Object.keys(settings)) {
+    let keyCurrent = key;
+    mainmenu[key+ ": "+settings[key].name] = function() {showSubMenu(keyCurrent);};
+  }
 
   return E.showMenu(mainmenu);
 }
 
 function showSubMenu(key) {
-  //Left swipe menu
+  let path = findPath(key);
   var submenu = {
-    "" : { "title" : "path: "+findPath(key)},
+    "" : { "title" : "path: "+path},
     "< Back" : showMainMenu
   };
   
