@@ -2,7 +2,7 @@
 var storage = require("Storage");
 var settings = Object.assign(storage.readJSON("quicklaunch.json", true) || {});
 
-for (let c of ["leftapp","rightapp","upapp","downapp","tapapp","extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
+for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d=down, t=tap.
   if (!settings[c]) settings[c] = {"name":"(none)"};
 }
 
@@ -17,12 +17,13 @@ apps.push({
    });
 
 // Add the Quick Launch extension app
-apps.push({
+let extension = {
     "name": "Quick Launch Extension",
     "type": "app",
     "sortorder": -11,
     "src": "quicklaunch.app.js"
-   });
+   }
+apps.push(extension);
 
 apps.sort((a,b)=>{
   var n=(0|a.sortorder)-(0|b.sortorder);
@@ -32,7 +33,28 @@ apps.sort((a,b)=>{
   return 0;
 });
 
+function findPath(key) {
+  let path = key.substring(0, key.lenght-3);
+  return path;
+}
+
 function save(key, value) {
+  let path = findPath(key);
+  // If changing from extension app (to something else) remove downstream settings entries.
+  if (settings[key].name == extension.name && value.name != extension.name) {
+      for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapapp"]) {
+        delete settings[c];
+      }
+    }
+
+  // If changing to extension app (from something else) add downstream settings entries.
+  if (value.name == "Quick Launch Extension" && settings[key].name != extension.name) {
+      for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapp"]) {
+        settings[c] = {"name":"(none)"};
+      }
+    }
+  
+  // Now change the setting on the current level in the path.
   settings[key] = value;
   storage.write("quicklaunch.json",settings);
 }
@@ -45,202 +67,33 @@ function showMainMenu() {
   };
 
   //List all selected apps
-  mainmenu["Left: "+settings.leftapp.name] = function() { E.showMenu(leftmenu); };
-  mainmenu["Right: "+settings.rightapp.name] = function() { E.showMenu(rightmenu); };
-  mainmenu["Up: "+settings.upapp.name] = function() { E.showMenu(upmenu); };
-  mainmenu["Down: "+settings.downapp.name] = function() { E.showMenu(downmenu); };
-  mainmenu["Tap: "+settings.tapapp.name] = function() { E.showMenu(tapmenu); };
-  mainmenu["Extend Quick Launch"] = showExtMenu;
+  for (let key of settings.keys()) {
+    mainmenu[key+ ": "+settings[key].name] = function() {showSubMenu(key);};
+    }
 
   return E.showMenu(mainmenu);
 }
 
-//Left swipe menu
-var leftmenu = {
-  "" : { "title" : "Left Swipe" },
-  "< Back" : showMainMenu
-};
-
-leftmenu["(none)"] = function() {
-  save("leftapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  leftmenu[a.name] = function() {
-    save("leftapp", a);
-    showMainMenu();
-    };
-});
-
-//Right swipe menu
-var rightmenu = {
-  "" : { "title" : "Right Swipe" },
-  "< Back" : showMainMenu
-};
-
-rightmenu["(none)"] = function() {
-  save("rightapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  rightmenu[a.name] = function() {
-    save("rightapp", a);
-    showMainMenu();
-    };
-});
-
-//Up swipe menu
-var upmenu = {
-  "" : { "title" : "Up Swipe" },
-  "< Back" : showMainMenu
-};
-
-upmenu["(none)"] = function() {
-  save("upapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  upmenu[a.name] = function() {
-    save("upapp", a);
-    showMainMenu();
-    };
-});
-
-//Down swipe menu
-var downmenu = {
-  "" : { "title" : "Down Swipe" },
-  "< Back" : showMainMenu
-};
-
-downmenu["(none)"] = function() {
-  save("downapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  downmenu[a.name] = function() {
-    save("downapp", a);
-    showMainMenu();
-    };
-});
-
-//Tap menu
-var tapmenu = {
-  "" : { "title" : "Tap" },
-  "< Back" : showMainMenu
-};
-
-tapmenu["(none)"] = function() {
-  save("tapapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  tapmenu[a.name] = function() {
-    save("tapapp", a);
-    showMainMenu();
-    };
-});
-
-function showExtMenu() {
-  // Extend Quick Launch menu
-  var extmenu = {
-    "" : { "title" : "Extend Quick Launch" },
-    "< Back" : ()=>{showMainMenu();}
+function showSubMenu(key) {
+  //Left swipe menu
+  var submenu = {
+    "" : { "title" : "path: "+findPath(key)},
+    "< Back" : showMainMenu
   };
+  
+  submenu["(none)"] = function() {
+    save(key, {"name":"(none)"});
+    showMainMenu();
+  };
+  apps.forEach((a)=>{
+    submenu[a.name] = function() {
+      save(key, a);
+      showMainMenu();
+      };
+  });
 
-  //List all selected apps
-  extmenu["Left: "+settings.extleftapp.name] = function() { E.showMenu(extleftmenu); };
-  extmenu["Right: "+settings.extrightapp.name] = function() { E.showMenu(extrightmenu); };
-  extmenu["Up: "+settings.extupapp.name] = function() { E.showMenu(extupmenu); };
-  extmenu["Down: "+settings.extdownapp.name] = function() { E.showMenu(extdownmenu); };
-  extmenu["Tap: "+settings.exttapapp.name] = function() { E.showMenu(exttapmenu); };
-
-  return E.showMenu(extmenu);
+  return E.showMenu(submenu);
 }
-
-//Extension Left swipe menu
-var extleftmenu = {
-  "" : { "title" : "Extension Left Swipe" },
-  "< Back" : showExtMenu
-};
-
-extleftmenu["(none)"] = function() {
-  save("extleftapp", {"name":"(none)"});
-  showExtMenu();
-};
-apps.forEach((a)=>{
-  extleftmenu[a.name] = function() {
-    save("extleftapp", a);
-    showExtMenu();
-    };
-});
-
-//Extension Right swipe menu
-var extrightmenu = {
-  "" : { "title" : "Extension Right Swipe" },
-  "< Back" : showExtMenu
-};
-
-extrightmenu["(none)"] = function() {
-  save("extrightapp", {"name":"(none)"});
-  showExtMenu();
-};
-apps.forEach((a)=>{
-  extrightmenu[a.name] = function() {
-    save("extrightapp", a);
-    showExtMenu();
-    };
-});
-
-//Extension Up swipe menu
-var extupmenu = {
-  "" : { "title" : "Extension Up Swipe" },
-  "< Back" : showExtMenu
-};
-
-extupmenu["(none)"] = function() {
-  save("extupapp", {"name":"(none)"});
-  showExtMenu();
-};
-apps.forEach((a)=>{
-  extupmenu[a.name] = function() {
-    save("extupapp", a);
-    showExtMenu();
-    };
-});
-
-//Extension Down swipe menu
-var extdownmenu = {
-  "" : { "title" : "Extension Down Swipe" },
-  "< Back" : showExtMenu
-};
-
-downmenu["(none)"] = function() {
-  save("extdownapp", {"name":"(none)"});
-  showExtMenu();
-};
-apps.forEach((a)=>{
-  extdownmenu[a.name] = function() {
-    save("extdownapp", a);
-    showExtMenu();
-    };
-});
-
-//Extension Tap menu
-var exttapmenu = {
-  "" : { "title" : "Extension Tap" },
-  "< Back" : showExtMenu
-};
-
-exttapmenu["(none)"] = function() {
-  save("exttapapp", {"name":"(none)"});
-  showExtMenu();
-};
-apps.forEach((a)=>{
-  exttapmenu[a.name] = function() {
-    save("exttapapp", a);
-    showExtMenu();
-    };
-});
 
 showMainMenu();
 })
