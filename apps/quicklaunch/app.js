@@ -8,18 +8,20 @@
     storage.write("quicklaunch.json", settings);
   };
 
+  // l=left, r=right, u=up, d=down, t=tap.
+
   let touchHandler = (_,e) => {
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
-    qlTrace += "tap";
+    qlTrace += "t";
     if (settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
   };
 
   let swipeHandler = (lr,ud) => {
-    if (lr == -1) qlTrace += "left";
-    if (lr == 1) qlTrace += "right";
-    if (ud == -1) qlTrace += "up";
-    if (ud == 1) qlTrace += "down";
+    if (lr == -1) qlTrace += "l"; // l=left, 
+    if (lr == 1) qlTrace += "r"; // r=right,
+    if (ud == -1) qlTrace += "u"; // u=up,
+    if (ud == 1) qlTrace += "d"; // d=down.
     if (lr == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
     if (lr == 1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
     if (ud == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
