@@ -11,27 +11,30 @@
   let touchHandler = (_,e) => {
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
-    if (settings.exttapapp.src){ if (settings.exttapapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.exttapapp.src)) reset("exttapapp"); else load(settings.exttapapp.src); }
+    qlTrace += "tap";
+    if (settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
   };
 
   let swipeHandler = (lr,ud) => {
-    if (lr == -1 && settings.extleftapp && settings.extleftapp.src){ if (settings.extleftapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.extleftapp.src)) reset("extleftapp"); else load(settings.extleftapp.src); }
-    if (lr == 1 && settings.extrightapp && settings.extrightapp.src){ if (settings.extrightapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.extrightapp.src)) reset("extrightapp"); else load(settings.extrightapp.src); }
-    if (ud == -1 && settings.extupapp && settings.extupapp.src){ if (settings.extupapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.extupapp.src)) reset("extupapp"); else load(settings.extupapp.src); }
-    if (ud == 1 && settings.extdownapp && settings.extdownapp.src){ if (settings.extdownapp.name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings.extdownapp.src)) reset("extdownapp"); else load(settings.extdownapp.src); }
+    if (lr == -1) qlTrace += "left";
+    if (lr == 1) qlTrace += "right";
+    if (ud == -1) qlTrace += "up";
+    if (ud == 1) qlTrace += "down";
+    if (lr == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
+    if (lr == 1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
+    if (ud == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
+    if (ud == 1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
   };
-
-  let removeUI = ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
 
   Bangle.setUI({
     mode: "custom",
     touch: touchHandler,
     swipe : swipeHandler,
-    remove: removeUI // Compatability with Fastload Utils.
+    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);} // Compatibility with Fastload Utils.
   });
 
   g.clearRect(Bangle.appRect);
-  Bangle.loadWidgets(); // Compatability with Fastload Utils.
+  Bangle.loadWidgets(); // Compatibility with Fastload Utils.
 
   // taken from Icon Launcher with some alterations
   let timeoutToClock;
@@ -43,9 +46,11 @@
   updateTimeoutToClock();
   
   let R = Bangle.appRect; 
+  
+  // Draw app hints
   g.setFont("Vector", 11)
-    .setFontAlign(0,1,0).drawString(settings.extupapp.name, R.x+R.w/2, R.y2)
-    .setFontAlign(0,1,1).drawString(settings.extrightapp.name, R.x, R.y+R.h/2)
-    .setFontAlign(0,-1,0).drawString(settings.extdownapp.name, R.x+R.w/2, R.y)
-    .setFontAlign(0,1,3).drawString(settings.extleftapp.name, R.x2, R.y+R.h/2);
+    .setFontAlign(0,1,0).drawString(settings[qlTrace+"app"].name, R.x+R.w/2, R.y2)
+    .setFontAlign(0,1,1).drawString(settings[qlTrace+"app"].name, R.x, R.y+R.h/2)
+    .setFontAlign(0,-1,0).drawString(settings[qlTrace+"app"].name, R.x+R.w/2, R.y)
+    .setFontAlign(0,1,3).drawString(settings[qlTrace+"app"].name, R.x2, R.y+R.h/2);
 }
