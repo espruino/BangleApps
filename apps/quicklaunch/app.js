@@ -42,7 +42,7 @@
   });
 
   g.clearRect(Bangle.appRect);
-  if (settings.fuInstalled) Bangle.loadWidgets(); // Compatibility with Fastload Utils.
+  let loadWidgets = "Bangle.loadWidgets();"; // Hack: Fool Fastload Utils that we call Bangle.loadWidgets(). This way we get the fastest possibe loading in whichever environment we find ourselvs.
 
   // taken from Icon Launcher with some alterations
   let timeoutToClock;
