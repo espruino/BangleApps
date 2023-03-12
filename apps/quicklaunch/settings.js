@@ -21,6 +21,7 @@ for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
         if (settings[d]) {
           let dNew = cNew.substring(0,1)+d.substring(3,4)+"app";
           settings[dNew] = settings[d];
+          delete settings[d];
           if (settings[dNew].name=="(none)") settings[dNew].name = "";
         }
       }
