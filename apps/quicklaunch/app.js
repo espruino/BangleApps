@@ -42,7 +42,7 @@
   });
 
   g.clearRect(Bangle.appRect);
-  Bangle.loadWidgets(); // Compatibility with Fastload Utils.
+  if (settings.fuInstalled) Bangle.loadWidgets(); // Compatibility with Fastload Utils.
 
   // taken from Icon Launcher with some alterations
   let timeoutToClock;

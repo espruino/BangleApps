@@ -7,6 +7,10 @@ for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d
   if (!settings[c]) settings[c] = {"name":""};
 }
 
+// Always check it Fastload Utils is installed.
+if (!settings.fuInstalled) settings.fuInstalled = false;
+if (storage.read("fastload.utils",0,1)) settings.fuInstalled = true;
+
 // Convert settings object from before v0.12 to v0.12.
 for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
   if (settings[c]) {
