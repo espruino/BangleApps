@@ -107,9 +107,8 @@ function showMainMenu() {
 }
 
 function showSubMenu(key) {
-  let path = findPath(key);
   var submenu = {
-    "" : { "title" : "path: "+path},
+    "" : { "title" : "Path: "+findPath(key).toUpperCase()},
     "< Back" : showMainMenu
   };
   
