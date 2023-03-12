@@ -2,6 +2,11 @@
 var storage = require("Storage");
 var settings = Object.assign(storage.readJSON("quicklaunch.json", true) || {});
 
+// Add default settings if they haven't been configured before. 
+for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d=down, t=tap.
+  if (!settings[c]) settings[c] = {"name":"(none)"};
+}
+
 // Convert settings object from before v0.12 to v0.12.
 for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
   if (settings[c]) {
@@ -13,7 +18,7 @@ for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
       settings[cNew].name = "Extension";
       for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
         if (settings[d]) {
-          let dNew = cNew+d.substring(3,4)+"app";
+          let dNew = cNew.substring(0,1)+d.substring(3,4)+"app";
           settings[dNew] = settings[d];
         }
       }
@@ -22,11 +27,6 @@ for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
 }
 for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
   if (settings[d]) delete settings[d];
-}
-
-// Add default settings if they haven't been configured before. 
-for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d=down, t=tap.
-  if (!settings[c]) settings[c] = {"name":"(none)"};
 }
 
 var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
