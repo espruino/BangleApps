@@ -19,7 +19,7 @@
   let touchHandler = (_,e) => {
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
-    trace = leaveTrace(trace+"t");
+    trace = leaveTrace(trace+"t"); // t=tap.
     if (settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
   };
 
@@ -42,7 +42,7 @@
   });
 
   g.clearRect(Bangle.appRect);
-  let loadWidgets = "Bangle.loadWidgets();"; // Hack: Fool Fastload Utils that we call Bangle.loadWidgets(). This way we get the fastest possibe loading in whichever environment we find ourselvs.
+  "Bangle.loadWidgets()"; // Hack: Fool Fastload Utils that we call Bangle.loadWidgets(). This way we get the fastest possibe loading in whichever environment we find ourselves.
 
   // taken from Icon Launcher with some alterations
   let timeoutToClock;
