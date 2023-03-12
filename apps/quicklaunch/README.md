@@ -17,7 +17,8 @@ Below is extension screens where current apps have been set like so:
 *Extension screen when Fastload Utils is present.*
 
 ## Contributors
-frigis1 (Creator)
-halemmerich
-thyttan
-glemco
+
+frigis1 (Creator),
+halemmerich,
+thyttan,
+glemco.
