@@ -15,3 +15,9 @@ Below is extension screens where current apps have been set like so:
 ![](screenshot1.png)
 
 *Extension screen when Fastload Utils is present.*
+
+## Contributors
+frigis1 (Creator)
+halemmerich
+thyttan
+glemco
