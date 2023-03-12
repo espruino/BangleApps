@@ -47,19 +47,24 @@
   // taken from Icon Launcher with some alterations
   let timeoutToClock;
   const updateTimeoutToClock = function(){
-    let time = 1000; // milliseconds
+    let time = 1500; // milliseconds
     if (timeoutToClock) clearTimeout(timeoutToClock);
     timeoutToClock = setTimeout(load,time);
   };
   updateTimeoutToClock();
-  
+
   let R = Bangle.appRect; 
-  
+
   // Draw app hints
+  let lname = settings[trace+"lapp"].name=="(none)"?"":settings[trace+"lapp"].name;
+  let rname = settings[trace+"rapp"].name=="(none)"?"":settings[trace+"rapp"].name;
+  let uname = settings[trace+"uapp"].name=="(none)"?"":settings[trace+"uapp"].name;
+  let dname = settings[trace+"dapp"].name=="(none)"?"":settings[trace+"dapp"].name;
+  let tname = settings[trace+"tapp"].name=="(none)"?"":settings[trace+"tapp"].name;
   g.setFont("Vector", 11)
-    .setFontAlign(0,1,3).drawString(settings[trace+"lapp"].name, R.x2, R.y+R.h/2)
-    .setFontAlign(0,1,1).drawString(settings[trace+"rapp"].name, R.x, R.y+R.h/2)
-    .setFontAlign(0,1,0).drawString(settings[trace+"uapp"].name, R.x+R.w/2, R.y2)
-    .setFontAlign(0,-1,0).drawString(settings[trace+"dapp"].name, R.x+R.w/2, R.y)
-    .setFontAlign(0,0,0).drawString(settings[trace+"tapp"].name, R.x+R.w/2, R.y+R.h/2);
+    .setFontAlign(0,1,3).drawString(lname, R.x2, R.y+R.h/2)
+    .setFontAlign(0,1,1).drawString(rname, R.x, R.y+R.h/2)
+    .setFontAlign(0,1,0).drawString(uname, R.x+R.w/2, R.y2)
+    .setFontAlign(0,-1,0).drawString(dname, R.x+R.w/2, R.y)
+    .setFontAlign(0,0,0).drawString(tname, R.x+R.w/2, R.y+R.h/2);
 }
