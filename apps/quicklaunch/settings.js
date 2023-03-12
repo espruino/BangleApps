@@ -94,7 +94,7 @@ function showMainMenu() {
 
   // List all selected apps.
   for (let key of Object.keys(settings)) {
-    if (key == "trace" || key == "fuInstalled") continue;
+    if (key == "trace") continue;
     let keyCurrent = key;
     let entry = findPath(key).toUpperCase();
     if (entry=="L") entry = "Left";
