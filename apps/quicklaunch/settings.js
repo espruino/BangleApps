@@ -30,8 +30,6 @@ for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
   if (settings[d]) delete settings[d];
 }
 
-
-
 var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
 
 // Add psuedo app to trigger Bangle.showLauncher later
