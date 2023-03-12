@@ -18,7 +18,7 @@ apps.push({
 
 // Add the Quick Launch extension app
 let extension = {
-    "name": "Quick Launch Extension",
+    "name": "Extension",
     "type": "app",
     "sortorder": -11,
     "src": "quicklaunch.app.js"
@@ -45,7 +45,7 @@ function save(key, value) {
     }
 
   // If changing to extension app (from something else) add downstream settings entries.
-  if (value.name == "Quick Launch Extension" && settings[key].name != extension.name) {
+  if (value.name == extension.name && settings[key].name != extension.name) {
       for (let c of [path+"lapp", path+"rapp", path+"uapp", path+"dapp", path+"tapp"]) {
         settings[c] = {"name":"(none)"};
         storage.write("quicklaunch.json",settings);
@@ -54,7 +54,7 @@ function save(key, value) {
   
   // Now change the setting on the current level in the path.
   settings[key] = value;
-  storage.write("quicklaunch.json",settings);
+  storage.writeJSON("quicklaunch.json",settings);
 }
 
 function showMainMenu() {
@@ -66,8 +66,15 @@ function showMainMenu() {
 
   //List all selected apps
   for (let key of Object.keys(settings)) {
+    if (key == "trace") continue;
     let keyCurrent = key;
-    mainmenu[key+ ": "+settings[key].name] = function() {showSubMenu(keyCurrent);};
+    let entry = findPath(key).toUpperCase();
+    if (entry=="L") entry = "Left";
+    if (entry=="R") entry = "Right";
+    if (entry=="U") entry = "Up";
+    if (entry=="D") entry = "Down";
+    if (entry=="T") entry = "Tap";
+    mainmenu[entry+ ": "+settings[key].name] = function() {showSubMenu(keyCurrent);};
   }
 
   return E.showMenu(mainmenu);

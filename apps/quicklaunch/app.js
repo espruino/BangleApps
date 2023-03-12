@@ -8,22 +8,30 @@
     storage.write("quicklaunch.json", settings);
   };
 
+  let leaveTrace = function(trace) {
+    settings.trace = trace;
+    storage.writeJSON("quicklaunch.json", settings);
+    return trace;
+  };
+
+  let trace = settings.trace;
+
   let touchHandler = (_,e) => {
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
-    qlTrace += "t";
-    if (settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
+    trace = leaveTrace(trace+"t");
+    if (settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
   };
 
   let swipeHandler = (lr,ud) => {
-    if (lr == -1) qlTrace += "l"; // l=left, 
-    if (lr == 1) qlTrace += "r"; // r=right,
-    if (ud == -1) qlTrace += "u"; // u=up,
-    if (ud == 1) qlTrace += "d"; // d=down.
-    if (lr == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
-    if (lr == 1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
-    if (ud == -1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
-    if (ud == 1 && settings[qlTrace+"app"] && settings[qlTrace+"app"].src){ if (settings[qlTrace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[qlTrace+"app"].src)) reset(qlTrace+"app"); else load(settings[qlTrace+"app"].src); }
+    if (lr == -1) trace = leaveTrace(trace+"l"); // l=left, 
+    if (lr == 1) trace = leaveTrace(trace+"r"); // r=right,
+    if (ud == -1) trace = leaveTrace(trace+"u"); // u=up,
+    if (ud == 1) trace = leaveTrace(trace+"d"); // d=down.
+    if (lr == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    if (lr == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    if (ud == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    if (ud == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
   };
 
   Bangle.setUI({
@@ -49,8 +57,9 @@
   
   // Draw app hints
   g.setFont("Vector", 11)
-    .setFontAlign(0,1,3).drawString(settings[qlTrace+"lapp"].name, R.x2, R.y+R.h/2)
-    .setFontAlign(0,1,1).drawString(settings[qlTrace+"rapp"].name, R.x, R.y+R.h/2)
-    .setFontAlign(0,1,0).drawString(settings[qlTrace+"uapp"].name, R.x+R.w/2, R.y2)
-    .setFontAlign(0,-1,0).drawString(settings[qlTrace+"dapp"].name, R.x+R.w/2, R.y);
+    .setFontAlign(0,1,3).drawString(settings[trace+"lapp"].name, R.x2, R.y+R.h/2)
+    .setFontAlign(0,1,1).drawString(settings[trace+"rapp"].name, R.x, R.y+R.h/2)
+    .setFontAlign(0,1,0).drawString(settings[trace+"uapp"].name, R.x+R.w/2, R.y2)
+    .setFontAlign(0,-1,0).drawString(settings[trace+"dapp"].name, R.x+R.w/2, R.y)
+    .setFontAlign(0,0,0).drawString(settings[trace+"tapp"].name, R.x+R.w/2, R.y+R.h/2);
 }
