@@ -2,14 +2,15 @@
 var storage = require("Storage");
 var settings = Object.assign(storage.readJSON("quicklaunch.json", true) || {});
 
+// Always check it Fastload Utils is installed. If it was uninstalled we want to stop loading widgets in quicklaunch.app.js.
+if (!settings.fuInstalled) settings.fuInstalled = false;
+if (storage.read("fastload.utils",0,1)) settings.fuInstalled = true;
+
 // Add default settings if they haven't been configured before. 
 for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d=down, t=tap.
   if (!settings[c]) settings[c] = {"name":""};
 }
-
-// Always check it Fastload Utils is installed.
-if (!settings.fuInstalled) settings.fuInstalled = false;
-if (storage.read("fastload.utils",0,1)) settings.fuInstalled = true;
+storage.writeJSON("quicklaunch.json",settings);
 
 // Convert settings object from before v0.12 to v0.12.
 for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
@@ -36,6 +37,7 @@ for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
 for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
   if (settings[d]) delete settings[d];
 }
+
 
 var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
 
@@ -97,7 +99,7 @@ function showMainMenu() {
 
   // List all selected apps.
   for (let key of Object.keys(settings)) {
-    if (key == "trace") continue;
+    if (key == "trace" || key == "fuInstalled") continue;
     let keyCurrent = key;
     let entry = findPath(key).toUpperCase();
     if (entry=="L") entry = "Left";
