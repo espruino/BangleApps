@@ -2,6 +2,19 @@
 var storage = require("Storage");
 var settings = Object.assign(storage.readJSON("quicklaunch.json", true) || {});
 
+// Convert settings object from before v.0.12
+for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
+  if (settings[c]) {
+    if (settings[c].name=="Quick Launch Extension") settings[c].name = "Extension";
+    settings[c.substring(0,1)+"app"] = settings[c];
+    delete settings[c];
+  } 
+}
+for (let c of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
+  if (settings[c]) delete settings[c];
+}
+
+// Add default settings if they haven't been configured before. 
 for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d=down, t=tap.
   if (!settings[c]) settings[c] = {"name":"(none)"};
 }
