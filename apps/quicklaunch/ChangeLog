@@ -10,3 +10,6 @@
 0.10: Extend the functionality via a quicklaunch.app.js file that can be launched
 	with quicklaunch itself.
 0.11: Add hints to the extension app. Tweak remove function.
+0.12: Stackable extension screens. After updating, please visit the quicklaunch
+	settings page to prompt an automatic update of the quicklaunch.json settings file with
+	new key names.
