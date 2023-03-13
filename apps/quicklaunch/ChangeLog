@@ -13,3 +13,4 @@
 0.12: Stackable extension screens. After updating, please visit the quicklaunch
 	settings page to prompt an automatic update of the quicklaunch.json settings file with
 	new key names.
+0.13: Touch and hold to pause the timeout to clock temporarily.
