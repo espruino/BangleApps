@@ -14,6 +14,12 @@
     return trace;
   };
 
+  let launchApp = function(trace) {
+    if (settings[trace+"app"].src){ 
+      if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); 
+    }
+  }
+
   let trace = settings.trace;
 
   let touchHandler = (_,e) => {
@@ -21,7 +27,7 @@
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
     trace = leaveTrace(trace+"t"); // t=tap.
-    if (settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
   };
 
   let swipeHandler = (lr,ud) => {
@@ -30,7 +36,7 @@
     if (lr == 1) trace = leaveTrace(trace+"r"); // r=right,
     if (ud == -1) trace = leaveTrace(trace+"u"); // u=up,
     if (ud == 1) trace = leaveTrace(trace+"d"); // d=down.
-    if (settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
   };
 
   let onLongTouchDoPause = (e)=>{
