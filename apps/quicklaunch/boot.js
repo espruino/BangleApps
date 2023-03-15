@@ -14,6 +14,12 @@
     return trace;
   };
 
+  let launchApp = function(trace) {
+    if (settings[trace+"app"].src){ 
+      if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); 
+    }
+  }
+
   let trace;
 
   Bangle.on("touch", (_,e) => {
@@ -22,7 +28,7 @@
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
     trace = leaveTrace("t"); // t=tap
-    if (settings[trace].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
   });
 
   Bangle.on("swipe", (lr,ud) => {
@@ -32,9 +38,6 @@
     if (lr == 1) trace = leaveTrace("r"); // r=right,
     if (ud == -1) trace = leaveTrace("u"); // u=up,
     if (ud == 1) trace = leaveTrace("d"); // d=down.
-    if (lr == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (lr == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (ud == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (ud == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
   });
 }

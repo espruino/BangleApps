@@ -14,30 +14,41 @@
     return trace;
   };
 
+  let launchApp = function(trace) {
+    if (settings[trace+"app"].src){ 
+      if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); 
+    }
+  }
+
   let trace = settings.trace;
 
   let touchHandler = (_,e) => {
+    if (e.type == 2) return;
     let R = Bangle.appRect;
     if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
     trace = leaveTrace(trace+"t"); // t=tap.
-    if (settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
   };
 
   let swipeHandler = (lr,ud) => {
+    print("swipe", lr,ud);
     if (lr == -1) trace = leaveTrace(trace+"l"); // l=left, 
     if (lr == 1) trace = leaveTrace(trace+"r"); // r=right,
     if (ud == -1) trace = leaveTrace(trace+"u"); // u=up,
     if (ud == 1) trace = leaveTrace(trace+"d"); // d=down.
-    if (lr == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (lr == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (ud == -1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
-    if (ud == 1 && settings[trace+"app"] && settings[trace+"app"].src){ if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); }
+    launchApp(trace);
+  };
+
+  let onLongTouchDoPause = (e)=>{
+    if (e.b == 1 && timeoutToClock) {clearTimeout(timeoutToClock); timeoutToClock = false;}
+    if (e.b == 0 && !timeoutToClock) updateTimeoutToClock();
   };
 
   Bangle.setUI({
     mode: "custom",
     touch: touchHandler,
     swipe : swipeHandler,
+    drag : onLongTouchDoPause,
     remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);} // Compatibility with Fastload Utils.
   });
 
