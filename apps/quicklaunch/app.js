@@ -31,7 +31,6 @@
   };
 
   let swipeHandler = (lr,ud) => {
-    print("swipe", lr,ud);
     if (lr == -1) trace = leaveTrace(trace+"l"); // l=left, 
     if (lr == 1) trace = leaveTrace(trace+"r"); // r=right,
     if (ud == -1) trace = leaveTrace(trace+"u"); // u=up,
