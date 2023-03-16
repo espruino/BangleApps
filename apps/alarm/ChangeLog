@@ -42,3 +42,4 @@
       When switching 'repeat' from 'Workdays', 'Weekends' to 'Custom' preset Custom menu with previous selection
       Display alarm label in delete prompt
 0.39: Dated event repeat option
+0.40: Use substring of message when it's longer than fits the designated menu entry.
