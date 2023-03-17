@@ -3,7 +3,7 @@ Bangle.drawWidgets();
 
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
-const WORKDAYS = 62
+const WORKDAYS = 62;
 const WEEKEND = firstDayOfWeek ? 192 : 65;
 const EVERY_DAY = firstDayOfWeek ? 254 : 127;
 const INTERVALS = ["day", "week", "month", "year"];
@@ -50,6 +50,12 @@ function getLabel(e) {
       ) + (e.msg ? ` ${e.msg}` : "");
 }
 
+function trimLabel(label, maxLength) {
+  return (label.length > maxLength
+      ? label.substring(0,maxLength-3) + "..."
+      : label.substring(0,maxLength));
+}
+
 function showMainMenu() {
   const menu = {
     "": { "title": /*LANG*/"Alarms & Timers" },
@@ -58,7 +64,7 @@ function showMainMenu() {
   };
 
   alarms.forEach((e, index) => {
-    menu[getLabel(e)] = {
+    menu[trimLabel(getLabel(e),40)] = {
       value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
       onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
     };
@@ -139,6 +145,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     },
     /*LANG*/"Message": {
       value: alarm.msg,
+      format: v => (v.length > 7
+                    ? (v.substring(0,6)+"...")
+                    : v.substring(0,7)),
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:alarm.msg}).then(result => {
@@ -238,7 +247,7 @@ function decodeRepeat(alarm) {
         .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
         .join("")
         .toLowerCase())
-    : /*LANG*/"Once"
+    : /*LANG*/"Once";
 }
 
 function showEditRepeatMenu(repeat, day, dowChangeCallback) {
@@ -310,7 +319,7 @@ function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow)
       // If the user unchecks all the days then we assume repeat = once
       // and we force the dow to every day.
       var repeat = dow > 0;
-      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY)
+      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY);
     }
   };
 
@@ -321,7 +330,7 @@ function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow)
     };
   });
 
-  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback)
+  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback);
 
   E.showMenu(menu);
 }
@@ -370,6 +379,9 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     },
     /*LANG*/"Message": {
       value: timer.msg,
+      format: v => (v.length > 7
+                    ? (v.substring(0,6)+"...")
+                    : v.substring(0,7)),
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:timer.msg}).then(result => {
@@ -411,7 +423,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
           showMainMenu();
         } else {
           timer.timer = require("time_utils").encodeTime(time);
-          setTimeout(showEditTimerMenu, 10, timer, timerIndex)
+          setTimeout(showEditTimerMenu, 10, timer, timerIndex);
         }
       });
     };
@@ -458,9 +470,9 @@ function enableAll(on) {
           alarm.on = on;
           if (on) {
             if (alarm.timer) {
-              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer))
+              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer));
             } else {
-              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t))
+              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t));
             }
           }
         });
