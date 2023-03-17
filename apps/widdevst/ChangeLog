@@ -1,2 +1,3 @@
 0.01: First version
 0.02: Support for Bangle.js 2
+0.03: Update storage usage and perform GC every minute

@@ -1,22 +1,31 @@
 (() => {
-  WIDGETS.devst = {area: "tr", width: 21, draw: function() {
+  var stat = {date: 0};
+
+  WIDGETS.devst = {area: "tr", width: 22, draw: function() {
     if (WIDGETS.devst._draw) return;
+    var d = new Date();
+    var t;
+    if ((d - stat.date) < 6e4) {
+      t = process.memory(false);
+    } else {
+      stat.date = d;
+      t = require('Storage').getStats();
+      stat.sto = t.fileBytes / t.totalBytes;
+      t = process.memory();
+    }
+    t = t.usage / t.total;
     var x = this.x;
     var y = this.y;
     g.reset();
-    g.clearRect(x, y, x + 20, y + 23);
-    g.drawRect(x + 1, y + 1, x + 19, y + 22);
+    g.clearRect(x, y, x + 21, y + 23);
+    g.drawRect(x + 2, y + 1, x + 20, y + 21);
     g.setFont('6x8', 1);
-    if (NRF.getSecurityStatus().connected) g.drawString('B', x + 4, y + 3);
-    if (Bangle.isCompassOn()) g.drawString('C', x + 12, y + 3);
-    if (Bangle.isGPSOn()) g.drawString('G', x + 4, y + 13);
-    if (Bangle.isHRMOn()) g.drawString('H', x + 12, y + 13);
-    var t = require('Storage').getStats();
-    var u = t.fileBytes / t.totalBytes;
-    g.setColor(col(u)); g.drawRect(x + 1, y + 22, x + 1 + u * 18, y + 23);
-    t = process.memory(false);
-    u = t.usage / t.total;
-    g.setColor(col(u)); g.drawRect(x, y + 22 - u * 21, x + 1, y + 22);
+    if (NRF.getSecurityStatus().connected) g.drawString('B', x + 5, y + 3);
+    if (Bangle.isCompassOn()) g.drawString('C', x + 13, y + 3);
+    if (Bangle.isGPSOn()) g.drawString('G', x + 5, y + 12);
+    if (Bangle.isHRMOn()) g.drawString('H', x + 13, y + 12);
+    g.setColor(col(stat.sto)); g.drawRect(x + 2, y + 21, x + 2 + stat.sto * 18, y + 22);
+    g.setColor(col(t)); g.drawRect(x + 1, y + 21 - t * 20, x + 2, y + 21);
   }};
 
   function col(p) {
