@@ -9,16 +9,20 @@
   };
 
   let leaveTrace = function(trace) {
-    settings.trace = trace;
-    storage.writeJSON("quicklaunch.json", settings);
+    if (settings[trace+"app"].name != "") {
+      settings.trace = trace;
+      storage.writeJSON("quicklaunch.json", settings);
+    } else { trace = trace.substring(0, trace.length-1); }
     return trace;
   };
 
   let launchApp = function(trace) {
-    if (settings[trace+"app"].src){ 
-      if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); 
+    if (settings[trace+"app"]) {
+      if (settings[trace+"app"].src){
+        if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src);
+      }
     }
-  }
+  };
 
   let trace = settings.trace;
 
