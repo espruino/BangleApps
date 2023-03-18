@@ -56,6 +56,16 @@ function trimLabel(label, maxLength) {
       : label.substring(0,maxLength));
 }
 
+function formatAlarmMessage(msg) {
+  if (msg == null) {
+    return msg;
+  } else if (msg.length > 7) {
+    return msg.substring(0,6)+"...";
+  } else {
+    return msg.substring(0,7);
+  }
+}
+
 function showMainMenu() {
   const menu = {
     "": { "title": /*LANG*/"Alarms & Timers" },
@@ -145,9 +155,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     },
     /*LANG*/"Message": {
       value: alarm.msg,
-      format: v => (v.length > 7
-                    ? (v.substring(0,6)+"...")
-                    : v.substring(0,7)),
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:alarm.msg}).then(result => {
@@ -379,9 +387,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     },
     /*LANG*/"Message": {
       value: timer.msg,
-      format: v => (v.length > 7
-                    ? (v.substring(0,6)+"...")
-                    : v.substring(0,7)),
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:timer.msg}).then(result => {
