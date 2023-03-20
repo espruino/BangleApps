@@ -14,3 +14,4 @@
 	settings page to prompt an automatic update of the quicklaunch.json settings file with
 	new key names.
 0.13: Touch and hold to pause the timeout to clock temporarily.
+0.14: Extension: Don't go down a path if nothing waits at the end. Revisit the current intersection instead.
