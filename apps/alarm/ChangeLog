@@ -43,3 +43,4 @@
       Display alarm label in delete prompt
 0.39: Dated event repeat option
 0.40: Use substring of message when it's longer than fits the designated menu entry.
+0.41: Fix a menu bug affecting alarms with empty messages.
