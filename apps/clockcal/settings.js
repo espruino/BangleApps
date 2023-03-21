@@ -16,7 +16,7 @@
 
     actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]"];
     require("Storage").list(RegExp(".app.js")).forEach(element => actions.push(element.replace(".app.js","")));
-  
+
     function writeSettings() {
         require('Storage').writeJSON(FILE, settings);
     }
@@ -26,7 +26,6 @@
         "< Back": () => back(),
         'Buzz(dis)conn.?': {
             value: settings.BUZZ_ON_BT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.BUZZ_ON_BT = v;
                 writeSettings();
@@ -59,7 +58,6 @@
         },
         'Red Saturday?': {
             value: settings.REDSAT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSAT = v;
                 writeSettings();
@@ -67,7 +65,6 @@
         },
         'Red Sunday?': {
             value: settings.REDSUN,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSUN = v;
                 writeSettings();
@@ -96,7 +93,7 @@
             value: actions.indexOf(settings.DRAGDOWN),
             format: v => actions[v],
             onchange: v => {
-                settings.DRGDOWN = actions[v];
+                settings.DRAGDOWN = actions[v];
                 writeSettings();
             }
         },
@@ -109,18 +106,11 @@
                 writeSettings();
             }
         },
-        'Load deafauls?': {
-            value: 0,
-            min: 0, max: 1,
-            format: v => ["No", "Yes"][v],
-            onchange: v => {
-                if (v == 1) {
-                    settings = defaults;
-                    writeSettings();
-                    load();
-                }
-            }
-        },
+        'Load defaults': () => {
+            settings = defaults;
+            writeSettings();
+            load();
+        }
     };
     // Show the menu
     E.showMenu(menu);

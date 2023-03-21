@@ -35,19 +35,27 @@ class Card {
   get clipRect() {
     return this.clippedRect;
   }
+  fillRect(x,y,x2,y2,r) {
+    //This function allows using new rounded corners on newer firmware
+    if(process.env.VERSION === "2v12" || process.env.VERSION === "2v11" || process.env.VERSION === "2v10") {
+      g.fillRect(x,y,x2,y2);
+    } else {
+      g.fillRect({x:x,y:y,x2:x2,y2:y2,r:r});
+    }
+  }
   draw(x,y,outlined) {
     this.rect = {x1: x, x2: x+80, y1: y, y2: y+100};
     this.clippedRect = {x1: x, x2: x+24, y1: y, y2: y+100};
     var colorIndex = colors.indexOf(this.cardColor);
     var colorArr = colorsHex[colorIndex];
     var colorRule = colorsRules[colorIndex];
-    g.setColor(colorArr);
-    g.setBgColor(colorArr);
-    g.fillRect(x,y,x+80,y+100);
     if(outlined) {
       g.setColor(0,0,0);
-      g.drawRect(x,y,x+80,y+100);
+      this.fillRect(x-1,y-1,x+81,y+101,6);
     }
+    g.setColor(colorArr);
+    g.setBgColor(colorArr);
+    this.fillRect(x,y,x+80,y+100,6);
     g.setColor(255,255,255);
     g.setFont("Vector:40");
     g.setFontAlign(0,0,0);
@@ -61,21 +69,23 @@ class Card {
   drawBack(x,y,flipped) {
     this.rect = {x1: x, x2: x+80, y1: y, y2: y-100};
     this.clippedRect = {x1: x, x2: x+24, y1: y, y2: y-100};
-    g.setColor(255,255,255);
     g.setBgColor(0,0,0);
     if(flipped) {
-      g.fillRect(x,y,x+80,-100);
       g.setColor(0,0,0);
-      g.drawRect(x,y,x+80,-100);
+      this.fillRect(x-1,y+1,x+81,y-101,6);
+      g.setColor(255,255,255);
+      this.fillRect(x,y,x+80,y-100,6);
       g.setFontAlign(0,0,2);
       g.setColor(255,0,0);
       g.setBgColor(255,255,255);
       g.setFont("Vector:40");
       //g.drawString(7,x+40,y-40,true);
     } else {
-      g.fillRect(x,y,x+80,y+100);
       g.setColor(0,0,0);
-      g.drawRect(x,y,x+80,y+100);
+      this.fillRect(x-1,y-1,x+81,y+101,6);
+      g.setColor(255,255,255);
+      this.fillRect(x,y,x+80,y+100,6);
+      g.setColor(0,0,0);
       g.setFontAlign(0,0,0);
       g.setColor(255,0,0);
       g.setBgColor(255,255,255);
@@ -91,7 +101,7 @@ class Card {
     var colorRule = colorsRules[colorIndex];
     g.setColor(colorArr);
     g.setBgColor(colorArr);
-    g.fillRect(x,y,x+110,y+45);
+    this.fillRect(x,y,x+110,y+45,6);
     g.setColor(255,255,255);
     g.setFontAlign(0,0,0);
     g.setFont("6x8:2");
@@ -104,7 +114,7 @@ class Card {
     var colorArr = colorsHex[colorIndex];
     g.setColor(colorArr);
     g.setBgColor(colorArr);
-    g.fillRect(x,y,x+20,y+20);
+    this.fillRect(x,y,x+20,y+20,2);
     g.setFontAlign(0,0,0);
     g.setFont("6x8:2");
     g.setColor(255,255,255);
@@ -703,8 +713,8 @@ function drawScreenHelp() {
 }
 
 function drawGameOver(win) {
+  startedGame = false;
   E.showAlert(win ? "AI has given up. You Win!" : "You cannot play. AI wins.").then(function(){
-    startedGame = false;
     undoStack = [];
     drawMainMenu();
   });

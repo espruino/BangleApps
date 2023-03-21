@@ -32,8 +32,42 @@
         Bangle.removeListener('BTHRM', onHRM);
         if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(0,"recorder");
       },
-      draw : (x,y) => g.setColor((bpm != "")?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+      draw : (x,y) => g.setColor((Bangle.isBTHRMActive && Bangle.isBTHRMActive())?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
     };
-  }
+  };
+  recorders.hrmint = function() {
+    var active = false;
+    var bpmTimeout;
+    var bpm = "", bpmConfidence = "";
+    function onHRM(h) {
+      bpmConfidence = h.confidence;
+      bpm = h.bpm;
+      if (h.bpm > 0){
+        active = true;
+        if (bpmTimeout) clearTimeout(bpmTimeout);
+        bpmTimeout = setTimeout(()=>{
+          active = false;
+        },3000);
+      }
+    }
+    return {
+      name : "HR int",
+      fields : ["Int Heartrate", "Int Confidence"],
+      getValues : () => {
+        var r = [bpm,bpmConfidence];
+        bpm = ""; bpmConfidence = "";
+        return r;
+      },
+      start : () => {
+        Bangle.on('HRM_int', onHRM);
+        if (Bangle.origSetHRMPower) Bangle.origSetHRMPower(1,"recorder");
+      },
+      stop : () => {
+        Bangle.removeListener('HRM_int', onHRM);
+        if (Bangle.origSetHRMPower) Bangle.origSetHRMPower(0,"recorder");
+      },
+      draw : (x,y) => g.setColor(( Bangle.origIsHRMOn && Bangle.origIsHRMOn() && active)?"#0f0":"#8f8").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
+    };
+  };
 })
 

@@ -1,0 +1,18 @@
+{
+  "id": "hrmmar",
+  "name": "HRM Motion Artifacts removal",
+  "shortName":"HRM MA removal",
+  "icon": "app.png",
+  "version":"0.02",
+  "description": "Removes Motion Artifacts in Bangle.js's heart rate sensor data.",
+  "type": "bootloader",
+  "tags": "health",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"hrmmar.boot.js","url":"boot.js"},
+    {"name":"hrmfftelim","url":"fftelim.js"},
+    {"name":"hrmmar.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"hrmmar.json"}]
+}

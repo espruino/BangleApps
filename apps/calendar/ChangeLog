@@ -5,3 +5,11 @@
 0.05: Update calendar weekend colors for start on Sunday
 0.06: Use larger font for dates
 0.07: Fix off-by-one-error on previous month
+0.08: Do not register as watch, manually start clock on button
+      read start of week from system settings
+0.09: Fix scope of let variables
+0.10: Use default Bangle formatter for booleans
+0.11: Fix off-by-one-error on next year
+0.12: Mark dated events on a day
+0.13: Switch to swipe left/right for month and up/down for year selection
+      Display events for current month on touch

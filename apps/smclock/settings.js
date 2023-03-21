@@ -46,7 +46,6 @@
     "Analog Face": {
       value:
         settings.showAnalogFace !== undefined ? settings.showAnalogFace : false,
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.showAnalogFace = v;
         writeSettings();
@@ -71,7 +70,6 @@
     "Week Info": {
       value:
         settings.showWeekInfo !== undefined ? settings.showWeekInfo : false,
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.showWeekInfo = v;
         writeSettings();
@@ -80,7 +78,6 @@
     "Vector Font": {
       value:
         settings.useVectorFont !== undefined ? settings.useVectorFont : false,
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.useVectorFont = v;
         writeSettings();

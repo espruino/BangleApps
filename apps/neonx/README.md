@@ -24,4 +24,4 @@ Shows the watchface in fullscreen mode.
 Note: In fullscreen mode, widgets are hidden, but still loaded.
 
 ### Show lock status
-If enabled, color changes when unlocked to detect the lock state easily.
+If enabled, the lock/unlock event is animated by changing the colors.

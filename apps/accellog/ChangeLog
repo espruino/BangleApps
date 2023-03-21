@@ -1,3 +1,6 @@
 0.01: New App!
 0.02: Use the new multiplatform 'Layout' library
 0.03: Exit as first menu option, dont show decimal places for seconds
+0.04: Localisation, change Exit->Back to allow back-arrow to appear on 2v13 firmware
+0.05: Add max G values during recording, record actual G values and magnitude to CSV
+0.06: Convert Yes/No On/Off in settings to checkboxes

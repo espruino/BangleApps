@@ -1,120 +1,79 @@
-var settings = Object.assign(require("Storage").readJSON("quicklaunch.json", true) || {});
+{
+  const storage = require("Storage");
+  let settings = storage.readJSON("quicklaunch.json", true) || {};
 
-var apps = require("Storage").list(/\.info$/).map(app=>{var a=require("Storage").readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
-
-apps.sort((a,b)=>{
-  var n=(0|a.sortorder)-(0|b.sortorder);
-  if (n) return n; // do sortorder first
-  if (a.name<b.name) return -1;
-  if (a.name>b.name) return 1;
-  return 0;
-});
-
-function save(key, value) {
-  settings[key] = value;
-  require("Storage").write("quicklaunch.json",settings);
-}
-
-// Quick Launch menu
-function showMainMenu() {
-  var mainmenu = {
-    "" : { "title" : "Quick Launch" },
-    "< Back" : ()=>{load();}
+  let reset = function(name){
+    if (!settings[name]) settings[name] = {"name":"(none)"};
+    if (!storage.read(settings[name].src)) settings[name] = {"name":"(none)"};
+    storage.write("quicklaunch.json", settings);
   };
 
-  //List all selected apps
-  mainmenu["Left: "+settings.leftapp.name] = function() { E.showMenu(leftmenu); };
-  mainmenu["Right: "+settings.rightapp.name] = function() { E.showMenu(rightmenu); };
-  mainmenu["Up: "+settings.upapp.name] = function() { E.showMenu(upmenu); };
-  mainmenu["Down: "+settings.downapp.name] = function() { E.showMenu(downmenu); };
-  mainmenu["Tap: "+settings.tapapp.name] = function() { E.showMenu(tapmenu); };
-  
-  return E.showMenu(mainmenu);
+  let leaveTrace = function(trace) {
+    if (settings[trace+"app"].name != "") {
+      settings.trace = trace;
+      storage.writeJSON("quicklaunch.json", settings);
+    } else { trace = trace.substring(0, trace.length-1); }
+    return trace;
+  };
+
+  let launchApp = function(trace) {
+    if (settings[trace+"app"]) {
+      if (settings[trace+"app"].src){
+        if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src);
+      }
+    }
+  };
+
+  let trace = settings.trace;
+
+  let touchHandler = (_,e) => {
+    if (e.type == 2) return;
+    let R = Bangle.appRect;
+    if (e.x < R.x || e.x > R.x2 || e.y < R.y || e.y > R.y2 ) return;
+    trace = leaveTrace(trace+"t"); // t=tap.
+    launchApp(trace);
+  };
+
+  let swipeHandler = (lr,ud) => {
+    if (lr == -1) trace = leaveTrace(trace+"l"); // l=left, 
+    if (lr == 1) trace = leaveTrace(trace+"r"); // r=right,
+    if (ud == -1) trace = leaveTrace(trace+"u"); // u=up,
+    if (ud == 1) trace = leaveTrace(trace+"d"); // d=down.
+    launchApp(trace);
+  };
+
+  let onLongTouchDoPause = (e)=>{
+    if (e.b == 1 && timeoutToClock) {clearTimeout(timeoutToClock); timeoutToClock = false;}
+    if (e.b == 0 && !timeoutToClock) updateTimeoutToClock();
+  };
+
+  Bangle.setUI({
+    mode: "custom",
+    touch: touchHandler,
+    swipe : swipeHandler,
+    drag : onLongTouchDoPause,
+    remove: ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);} // Compatibility with Fastload Utils.
+  });
+
+  g.clearRect(Bangle.appRect);
+  "Bangle.loadWidgets()"; // Hack: Fool Fastload Utils that we call Bangle.loadWidgets(). This way we get the fastest possibe loading in whichever environment we find ourselves.
+
+  // taken from Icon Launcher with some alterations
+  let timeoutToClock;
+  const updateTimeoutToClock = function(){
+    let time = 1500; // milliseconds
+    if (timeoutToClock) clearTimeout(timeoutToClock);
+    timeoutToClock = setTimeout(load,time);
+  };
+  updateTimeoutToClock();
+
+  let R = Bangle.appRect; 
+
+  // Draw app hints
+  g.setFont("Vector", 11)
+    .setFontAlign(0,1,3).drawString(settings[trace+"lapp"].name, R.x2, R.y+R.h/2)
+    .setFontAlign(0,1,1).drawString(settings[trace+"rapp"].name, R.x, R.y+R.h/2)
+    .setFontAlign(0,1,0).drawString(settings[trace+"uapp"].name, R.x+R.w/2, R.y2)
+    .setFontAlign(0,-1,0).drawString(settings[trace+"dapp"].name, R.x+R.w/2, R.y)
+    .setFontAlign(0,0,0).drawString(settings[trace+"tapp"].name, R.x+R.w/2, R.y+R.h/2);
 }
-  
-//Left swipe menu  
-var leftmenu = {
-  "" : { "title" : "Left Swipe" },
-  "< Back" : showMainMenu
-};
-
-leftmenu["(none)"] = function() {
-  save("leftapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  leftmenu[a.name] = function() {
-    save("leftapp", a);
-    showMainMenu();
-    };
-});
-
-//Right swipe menu
-var rightmenu = {
-  "" : { "title" : "Right Swipe" },
-  "< Back" : showMainMenu
-};
-
-rightmenu["(none)"] = function() {
-  save("rightapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  rightmenu[a.name] = function() {
-    save("rightapp", a);
-    showMainMenu();
-    };
-});
-
-//Up swipe menu
-var upmenu = {
-  "" : { "title" : "Up Swipe" },
-  "< Back" : showMainMenu
-};
-
-upmenu["(none)"] = function() {
-  save("upapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  upmenu[a.name] = function() {
-    save("upapp", a);
-    showMainMenu();
-    };
-});
-
-//Down swipe menu
-var downmenu = {
-  "" : { "title" : "Down Swipe" },
-  "< Back" : showMainMenu
-};
-
-downmenu["(none)"] = function() {
-  save("downapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  downmenu[a.name] = function() {
-    save("downapp", a);
-    showMainMenu();
-    };
-});
-
-//Tap menu
-var tapmenu = {
-  "" : { "title" : "Tap" },
-  "< Back" : showMainMenu
-};
-
-tapmenu["(none)"] = function() {
-  save("tapapp", {"name":"(none)"});
-  showMainMenu();
-};
-apps.forEach((a)=>{
-  tapmenu[a.name] = function() {
-    save("tapapp", a);
-    showMainMenu();
-    };
-});
-
-showMainMenu();

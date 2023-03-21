@@ -10,19 +10,16 @@
       '< Back': back,
       'Star names': {
         value: !!settings.starnames,
-        format: v =>v?'On':'Off',
         onchange: v => {
           save('starnames',v);
         }},
         'Constellations': {
             value: !!settings.constellations,
-            format: v =>v?'On':'Off',
             onchange: v => {
               save('constellations',v);
             }},
         'Const. names': {
           value: !!settings.consnames,
-          format: v =>v?'On':'Off',
           onchange: v => {
             save('consnames',v);
           }},

@@ -1,49 +1,31 @@
 (function (back) {
-  const storage = require('Storage');
-  const SETTINGS_FILE = "ffcniftyb.json";
+  const settings = Object.assign({ color: 63488 }, require("Storage").readJSON("ffcniftyb.json", true));
 
   const colors = {
-    65535: 'White',
-    63488: 'Red',
-    65504: 'Yellow',
-    2047: 'Cyan',
-    2016: 'Green',
-    31: 'Blue',
-    0: 'Black',
+    65535: /*LANG*/"White",
+    63488: /*LANG*/"Red",
+    65504: /*LANG*/"Yellow",
+    2047: /*LANG*/"Cyan",
+    2016: /*LANG*/"Green",
+    31: /*LANG*/"Blue",
+    0: /*LANG*/"Black"
   }
 
-  function load(settings) {
-    return Object.assign(settings, storage.readJSON(SETTINGS_FILE, 1) || {});
-  }
+  const menu = {};
+  menu[""] = { title: "Nifty-B Clock" };
+  menu["< Back"] = back;
 
-  function save(settings) {
-    storage.write(SETTINGS_FILE, settings)
-  }
-
-  const settings = load({
-    color: 63488 /* red */,
+  Object.keys(colors).forEach(color => {
+    var label = colors[color];
+    menu[label] = {
+      value: settings.color == color,
+      onchange: () => {
+        settings.color = color;
+        require("Storage").write("ffcniftyb.json", settings);
+        setTimeout(load, 10);
+      }
+    };
   });
 
-  const saveColor = (color) => () => {
-    settings.color = color;
-    save(settings);
-    back();
-  };
-
-  function showMenu(items, opt) {
-    items[''] = opt || {};
-    items['< Back'] = back;
-    E.showMenu(items);
-  }
-
-  showMenu(
-    Object.keys(colors).reduce((menu, color) => {
-      menu[colors[color]] = saveColor(color);
-      return menu;
-    }, {}),
-    {
-      title: 'Color',
-      selected: Object.keys(colors).indexOf(settings.color)
-    }
-  );
+  E.showMenu(menu);
 });

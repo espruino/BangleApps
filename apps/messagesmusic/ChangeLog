@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Remove one line of code that didn't do anything other than in some instances hinder the function of the app.
+0.03: Use the new messages library
+0.04: Fix dependency on messages library
+      Fix loading message UI
+0.05: Ensure we don't clear artist info

@@ -2,7 +2,7 @@
   "id": "touchtimer",
   "name": "Touch Timer",
   "shortName": "Touch Timer",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Quickly and easily create a timer with touch-only input. The time can be easily set with a number pad.",
   "icon": "app.png",
   "tags": "tools",

@@ -1,21 +1,23 @@
 (function(back) {
   const SETTINGS_FILE = "pebble.json";
 
-  // initialize with default settings...
+  // TODO Only the color/theme indices should be written in the settings file so the labels can be translated
+
+  // Initialize with default settings...
   let s = {'bg': '#0f0', 'color': 'Green', 'theme':'System', 'showlock':false}
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
-  const storage = require('Storage')
+  const storage = require('Storage');
   let settings = storage.readJSON(SETTINGS_FILE, 1) || s;
-  const saved = settings || {}
+  const saved = settings || {};
   for (const key in saved) {
     s[key] = saved[key]
   }
 
   function save() {
-    settings = s
-    storage.write(SETTINGS_FILE, settings)
+    settings = s;
+    storage.write(SETTINGS_FILE, settings);
   }
 
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
@@ -24,8 +26,8 @@
   
   E.showMenu({
     '': { 'title': 'Pebble Clock' },
-    '< Back': back,
-    'Colour': {
+    /*LANG*/'< Back': back,
+    /*LANG*/'Colour': {
       value: 0 | color_options.indexOf(s.color),
       min: 0, max: 5,
       format: v => color_options[v],
@@ -35,7 +37,7 @@
         save();
       }
     },
-    'Theme': {
+    /*LANG*/'Theme': {
       value: 0 | theme_options.indexOf(s.theme),
       min: 0, max: theme_options.length - 1,
       format: v => theme_options[v],
@@ -44,13 +46,13 @@
         save();
       }
     },
-    'Show Lock': {
+    /*LANG*/'Show Lock': {
       value: settings.showlock,
-      format: () => (settings.showlock ? 'Yes' : 'No'),
+      format: () => (settings.showlock ? /*LANG*/'Yes' : /*LANG*/'No'),
       onchange: () => {
         settings.showlock = !settings.showlock;
         save();
       }
     },
   });
-})
+});

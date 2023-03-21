@@ -4,7 +4,7 @@
   "version": "0.02",
   "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
   "icon": "icon.png",
-  "type": "boot",
+  "type": "bootloader",
   "tags": "system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",

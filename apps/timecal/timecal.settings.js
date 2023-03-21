@@ -64,9 +64,7 @@
         format: v => v ? /*LANG*/"show" : /*LANG*/"none",
         onchange: v => chngdSttngs.calBrdr = v
       },
-      /*LANG*/"Today settings": () => {
-        showTodayMenu();
-      },
+      /*LANG*/"Today settings": () => showTodayMenu(),
       /*LANG*/"< Cancel": () => cancelExitSettings()
     });
   };
@@ -75,9 +73,9 @@
     E.showMenu({
       "": {
         "title": /*LANG*/"Today settings"
-    },
-    "< Back": () => showMainMenu(),
-    /*LANG*/"Color": {
+      },
+      "< Back": () => showMainMenu(),
+      /*LANG*/"Color": {
         value: chngdSttngs.tdyNumClr,
         min: 0, max: 3,
         format: v => [/*LANG*/"none", /*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
@@ -91,8 +89,8 @@
       },
       /*LANG*/"Mrk.Color": {
         value: chngdSttngs.tdyMrkClr,
-        min: 0, max: 2,
-        format: v => [/*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
+        min: 1, max: 3,
+        format: v => [undefined, /*LANG*/"red", /*LANG*/"green", /*LANG*/"blue"][v],
         onchange: v => chngdSttngs.tdyMrkClr = v
       },
       /*LANG*/"Mrk.Size": {
@@ -101,8 +99,8 @@
         format: v => v+"px",
         onchange: v => chngdSttngs.tdyMrkPxl = v
       },
-    /*LANG*/"< Cancel": () => cancelExitSettings()
-  });
+      /*LANG*/"< Cancel": () => cancelExitSettings()
+    });
   };
 
   showMainMenu();

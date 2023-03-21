@@ -209,7 +209,7 @@ function nxtWp(inc){
 }
 
 function loadWp() {
-  var w = require("Storage").readJSON('waypoints.json')||[{name:"NONE"}];
+  var w = require("waypoints").load();
   if (cfg.wp>=w.length) cfg.wp=0;
   if (cfg.wp<0) cfg.wp = w.length-1;
   savSettings();

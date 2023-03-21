@@ -1,0 +1,22 @@
+0.01: New App!
+0.02: Set pace format to mm:ss, time format to h:mm:ss,
+      added settings to opt out of GPS and HRM
+0.03: Fixed distance calculation, tested against Garmin Etrex, Amazfit GTS 2
+0.04: Use the exstats module, and make what is displayed configurable
+0.05: exstats updated so update 'distance' label is updated, option for 'speed'
+0.06: Add option to record a run using the recorder app automatically
+0.07: Fix crash if an odd number of active boxes are configured (fix #1473)
+0.08: Added support for notifications from exstats. Support all stats from exstats
+0.09: Fix broken start/stop if recording not enabled (fix #1561)
+0.10: Don't allow the same setting to be chosen for 2 boxes (fix #1578)
+0.11: Notifications fixes
+0.12: Fix for recorder not stopping at end of run. Bug introduced in 0.11
+0.13: Revert #1578 (stop duplicate entries) as with 2v12 menus it causes other boxes to be wiped (fix #1643)
+0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
+0.15: Diverge from the standard "Run" app. Swipe to intensity interface a la Karvonen (curtesy of FTeacher at https://github.com/f-teacher)
+      Keep run state between runs (allowing you to exit and restart the app)
+0.16: Don't clear zone 2b indicator segment when updating HRM reading.
+      Write to correct settings file, fixing settings not working.
+0.17: Fix typo in variable name preventing starting a run.
+0.18: Tweak HRM min/max defaults. Extend min/max intervals in settings. Fix
+      another typo.

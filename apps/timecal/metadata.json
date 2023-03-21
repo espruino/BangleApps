@@ -1,7 +1,7 @@
 { "id": "timecal",
   "name": "TimeCal",
   "shortName":"TimeCal",
-  "version":"0.05",
+  "version":"0.06",
   "description": "TimeCal shows the date/time along with a 3 week calendar",
   "icon": "icon.png",
   "type": "clock",

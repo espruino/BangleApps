@@ -10,6 +10,7 @@
     oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
+    tapToLock: false,
     unlockSide: "",
     tapSide: "right",
     tapOn: "always",
@@ -119,6 +120,11 @@
       max: 100,
       step: 1
     },
+    tapToLock: {
+      title: ["on", "off"],
+      value: [true, false],
+      drawWidgets: false
+    },
     unlockSide: {
       title: ["off", "left", "right", "top", "bottom", "front", "back"],
       value: ["", "left", "right", "top", "bottom", "front", "back"]
@@ -154,6 +160,7 @@
       "Oversize": getEntry("oversize"),
       "Drag Delay": getEntry("dragDelay"),
       "Min Value": getEntry("minValue"),
+      "Tap to lock": getEntry("tapToLock"),
       "-- Unlock": 0,
       "TapSide": getEntry("unlockSide"),
       "-- Flash": 0,

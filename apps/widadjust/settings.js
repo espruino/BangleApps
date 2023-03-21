@@ -80,9 +80,7 @@
       min: 0,
       max: intervalV.length - 1,
       format: v => intervalN[v],
-      onchange: v => {
-        settings.updateInterval = intervalV[v];
-      },
+      onchange: v => settings.updateInterval = intervalV[v] ,
     },
 
     'Threshold': {
@@ -97,10 +95,9 @@
 
     'Save State': {
       value: settings.saveState,
-      format: v => v ? 'On' : 'Off',
-      onchange: () => {
-        settings.saveState = !settings.saveState;
-        if (!settings.saveState && !stateFileErased) {
+      onchange: (v) => {
+        settings.saveState = v;
+        if (!v && !stateFileErased) {
           stateFileErased = true;
           require("Storage").erase(STATE_FILE);
         }
@@ -109,10 +106,7 @@
 
     'Debug Log': {
       value: settings.debugLog,
-      format: v => v ? 'On' : 'Off',
-      onchange: () => {
-        settings.debugLog = !settings.debugLog;
-      },
+      onchange: v => settings.debugLog = v,
     },
   };
 

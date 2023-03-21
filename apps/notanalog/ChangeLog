@@ -2,3 +2,6 @@
 0.02: 12k steps are 360 degrees - improves readability of steps.
 0.03: Battery improvements through sleep (no minute updates) and partial updates of drawing.
 0.04: Use alarm for timer instead of own alarm implementation.
+0.05: Use internal step counter if no widget is available.
+0.06: Use widget_utils.
+0.07: Respect system setting for 12h or 24h time

@@ -115,22 +115,18 @@ function showEditAlarmMenu(alarmIndex, alarm) {
     },
     Enabled: {
       value: alarm.on,
-      format: (v) => (v ? "On" : "Off"),
       onchange: (v) => (alarm.on = v),
     },
     Repeat: {
       value: alarm.rp,
-      format: (v) => (v ? "Yes" : "No"),
       onchange: (v) => (alarm.rp = v),
     },
     "Auto snooze": {
       value: alarm.as,
-      format: (v) => (v ? "Yes" : "No"),
       onchange: (v) => (alarm.as = v),
     },
     Hard: {
       value: alarm.hard,
-      format: (v) => (v ? "Yes" : "No"),
       onchange: (v) => (alarm.hard = v),
     },
     "Days of week": () => showDaysMenu(alarmIndex, getAlarm()),
@@ -175,7 +171,6 @@ function showDaysMenu(alarmIndex, alarm) {
     let dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: alarm.daysOfWeek[i],
-      format: (v) => (v ? "Yes" : "No"),
       onchange: (v) => (alarm.daysOfWeek[i] = v),
     };
   }
@@ -235,12 +230,10 @@ function showEditTimerMenu(timerIndex) {
     },
     Enabled: {
       value: alarm.on,
-      format: (v) => (v ? "On" : "Off"),
       onchange: (v) => (alarm.on = v),
     },
     Hard: {
       value: alarm.hard,
-      format: (v) => (v ? "On" : "Off"),
       onchange: (v) => (alarm.hard = v),
     },
   };

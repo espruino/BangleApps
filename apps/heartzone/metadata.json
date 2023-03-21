@@ -1,0 +1,21 @@
+{
+  "id": "heartzone",
+  "name": "HeartZone",
+  "version": "0.01",
+  "description": "Exercise app for keeping your heart rate in the aerobic zone. Buzzes the watch at configurable intervals when your heart rate is outside of configured limits.",
+  "readme":"README.md",
+  "screenshots": [
+    {"url": "screenshots/start.png"},
+    {"url": "screenshots/running.png"},
+    {"url": "screenshots/paused.png"}
+  ],
+  "icon": "icon.png",
+  "tags": "health",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"heartzone.app.js","url":"app.js"},
+    {"name":"heartzone.settings.js","url":"settings.js"},
+    {"name":"heartzone.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"heartzone.settings.json"}]
+}

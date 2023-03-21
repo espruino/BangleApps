@@ -37,12 +37,7 @@
     '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
-    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
-    'Vibrate' : {
-    value : settings.buzz,
-    format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }*/
+    'Kalman Filter' : function() { E.showMenu(kalMenu); }
   };
   
   const unitsMenu = {
@@ -73,12 +68,10 @@
     '< Back': function() { E.showMenu(appMenu); },
     'Speed' : {
     value : settings.spdFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
     },
     'Altitude' : {
     value : settings.altFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
     }
   };

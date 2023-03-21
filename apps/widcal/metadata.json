@@ -1,7 +1,7 @@
 {
   "id": "widcal",
   "name": "Calendar Widget",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Widget with the current date",
   "icon": "widget.png",
   "type": "widget",

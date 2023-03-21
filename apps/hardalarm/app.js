@@ -66,17 +66,14 @@ function editAlarm(alarmIndex) {
     },
     /*LANG*/'Enabled': {
       value: en,
-      format: v=>v?"On":"Off",
       onchange: v=>en=v
     },
     /*LANG*/'Repeat': {
       value: en,
-      format: v=>v?"Yes":"No",
       onchange: v=>repeat=v
     },
     /*LANG*/'Auto snooze': {
       value: as,
-      format: v=>v?"Yes":"No",
       onchange: v=>as=v
     }
   };

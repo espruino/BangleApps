@@ -1,0 +1,14 @@
+{
+  "id": "widbthide",
+  "name": "Bluetooth Widget (hides when no connection)",
+  "version": "0.01",
+  "description": "Shows Bluetooth icon (when connected) in the top right of the clock",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,bluetooth",
+  "provides_widgets" : ["bluetooth"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widbthide.wid.js","url":"widget.js"}
+  ]
+}

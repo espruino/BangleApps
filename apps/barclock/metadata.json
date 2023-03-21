@@ -1,7 +1,7 @@
 {
   "id": "barclock",
   "name": "Bar Clock",
-  "version": "0.09",
+  "version": "0.17",
   "description": "A simple digital clock showing seconds as a bar",
   "icon": "clock-bar.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot_pm.png"}],
@@ -12,6 +12,10 @@
   "allow_emulator": true,
   "storage": [
     {"name":"barclock.app.js","url":"clock-bar.js"},
+    {"name":"barclock.settings.js","url":"settings.js"},
     {"name":"barclock.img","url":"clock-bar-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"barclock.settings.json"}
   ]
 }

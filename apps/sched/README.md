@@ -8,8 +8,18 @@ Other apps can use this to provide alarm functionality.
 App
 ---
 
-The Alarm app allows you to add/modify any running timers.
+The **Alarms & Timers** app allows you to add/modify any running alarms and timers.
 
+Global Settings
+---------------
+
+- `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
+- `Default Auto Snooze` - Default _Auto Snooze_ value for newly created alarms (_Alarms_ only)
+- `Default Snooze` - Default _Snooze_ value for newly created alarms/timers
+- `Default Repeat` - Default _Repeat_ value for newly created alarms (_Alarms_ only)
+- `Buzz Count` - The number of buzzes before the watch goes silent
+- `Buzz Interval` - The interval between one buzz and the next
+- `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
 
 Internals / Library
 -------------------
@@ -29,17 +39,20 @@ Alarms are stored in an array in `sched.json`, and take the form:
     //  WED = 8
     //  THU = 16
     //  FRI = 32
-    //  SAT = 64    
+    //  SAT = 64
 
   date : "2022-04-04", // OPTIONAL date for the alarm, in YYYY-MM-DD format
                        // eg (new Date()).toISOString().substr(0,10)
   msg : "Eat food",    // message to display.
   last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (No change from 0 on timers)
-  rp : true,           // repeat the alarm every day?
+  rp : true,           // repeat the alarm every day? If date is given, pass an object instead of a boolean,
+                       // e.g. repeat every 2 months: { interval: "month", num: 2 }.
+                       // Supported intervals: day, week, month, year
   vibrate : "...",     // OPTIONAL pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
   hidden : false,      // OPTIONAL if false, the widget should not show an icon for this alarm
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
+  del : false,         // OPTIONAL - if true, delete the timer after expiration
   js : "load('myapp.js')" // OPTIONAL - a JS command to execute when the alarm activates (*instead* of loading 'sched.js')
                           // when this code is run, you're responsible for setting alarm.on=false (or removing the alarm)
   data : { ... }       // OPTIONAL - your app can store custom data in here if needed (don't store a lot of data here)
@@ -53,21 +66,37 @@ use too much RAM.
 It can be used as follows:
 
 ```
-// add/update an existing alarm
-require("sched").setAlarm("mytimer", {
+// Get a new alarm with default values
+let alarm = require("sched").newDefaultAlarm();
+
+// Get a new timer with default values
+let timer = require("sched").newDefaultTimer();
+
+// Add/update an existing alarm (using fields from the object shown above)
+require("sched").setAlarm("mytimer", { // as a timer
   msg : "Wake up",
-  timer : 10*60*1000, // 10 Minutes
+  timer : 10 * 60 * 1000 // 10 minutes
 });
+require("sched").setAlarm("myalarm", { // as an alarm
+  msg : "Wake up",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+require("sched").setAlarm("mydayalarm", { // as an alarm on a date
+  msg : "Wake up",
+  date : "2022-04-04",
+  t : 9 * 3600000 // 9 o'clock (in ms)
+});
+
 // Ensure the widget and alarm timer updates to schedule the new alarm properly
 require("sched").reload();
 
 // Get the time to the next alarm for us
-var timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm("mytimer"));
-// timeToNext===undefined if no alarm or alarm disabled
+let timeToNext = require("sched").getTimeToAlarm(require("sched").getAlarm("mytimer"));
+// timeToNext === undefined if no alarm or alarm disabled
 
-// delete an alarm
+// Delete an alarm
 require("sched").setAlarm("mytimer", undefined);
-// reload after deleting...
+// Reload after deleting
 require("sched").reload();
 
 // Or add an alarm that runs your own code - in this case
@@ -76,12 +105,15 @@ require("sched").reload();
 require("sched").setAlarm("customrunner", {
   appid : "myapp",
   js : "load('setting.app.js')",
-  timer : 1*60*1000, // 1 Minute
+  timer : 1 * 60 * 1000 // 1 minute
 });
 
 // If you have been specifying `appid` you can also find any alarms that
 // your app has created with the following:
-require("sched").getAlarms().filter(a=>a.appid=="myapp");
+require("sched").getAlarms().filter(a => a.appid == "myapp");
+
+// Get the scheduler settings
+let settings = require("sched").getSettings();
 ```
 
 If your app requires alarms, you can specify that the alarms app needs to

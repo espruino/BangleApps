@@ -33,12 +33,10 @@
     '< Back': function() { E.showMenu(appMenu); },
     'Speed' : {
     value : settings.spdFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
     },
     'Altitude' : {
     value : settings.altFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
     }
   };

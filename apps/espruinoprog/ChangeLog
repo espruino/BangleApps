@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Add 'pre' code that can erase the device
+      Wait more between sending code snippets
+      Now force use of 'Storage' (assume 2v00 or later)

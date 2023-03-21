@@ -7,7 +7,7 @@ var m;
 var files;
 
 function delete_file(fn) {
-  E.showPrompt("Delete\n"+fn+"?", {buttons: {"No":false, "Yes":true}}).then(function(v) {
+  E.showPrompt(/*LANG*/"Delete\n"+fn+"?", {buttons: {/*LANG*/"No":false, /*LANG*/"Yes":true}}).then(function(v) {
     if (v) {
       if (fn.charCodeAt(fn.length-1)==1) {
         var fh = STOR.open(fn.substr(0, fn.length-1), "r");

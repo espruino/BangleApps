@@ -2,6 +2,5 @@
 0.02: Course marker
 0.03: Tilt compensation and calibration
 0.04: Fix Font size
-0.05: Inital portable version 
-
-
+0.05: Initial portable version
+0.06: Outsource tilt compensation to library

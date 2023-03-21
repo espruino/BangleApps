@@ -6,6 +6,10 @@ Bangle 1:
 
 In the picture above, the Settings app is selected.
 
+
+![](sshot_e1.png)
+
+
 Bangle 2:
 
 ![shot1](https://user-images.githubusercontent.com/89286474/146471756-ec6d16de-6916-4fde-b991-ba88c2c8fa1a.png)
@@ -25,10 +29,16 @@ Bangle 2:
 
 **Swipe Right** - move to previous page of app icons
 
+**Touch Left(1) area** -  "Back" to Clock
+
+**Touch Right(2) area** - move forward through app icons
+
+**Touch Middle(1+2) area** - run the selected app
+
 ## Controls- Bangle 2
 
-**Touch** - icon to select, scond touch launches app
+**Touch** - icon to select, second touch launches app
 
-**Swipe Left** -  move to next page of app icons
+**Swipe Left/Up** -  move to next page of app icons
 
-**Swipe Right** - move to previous page of app icons
+**Swipe Right/Down** - move to previous page of app icons

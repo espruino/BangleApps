@@ -1,7 +1,7 @@
 Bangle.js App Loader (and Apps)
 ================================
 
-[![Build Status](https://app.travis-ci.com/espruino/BangleApps.svg?branch=master)](https://app.travis-ci.com/github/espruino/BangleApps)
+[![Build Status](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml/badge.svg)](https://github.com/espruino/BangleApps/actions/workflows/nodejs.yml)
 
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [espruino.github.io](https://espruino.github.io/BangleApps/)
@@ -74,7 +74,7 @@ try and keep filenames short to avoid overflowing the buffer.
 
 ### Screenshots
 
-In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { url:"screenshot.png" } ],`
+In the app `metadata.json` file you can add a list of screenshots with a line like: `"screenshots" : [ { "url":"screenshot.png" } ],`
 
 To get a screenshot you can:
 
@@ -98,7 +98,7 @@ This is the best way to test...
 
 **Note:** It's a great idea to get a local copy of the repository on your PC,
 then run `bin/sanitycheck.js` - it'll run through a bunch of common issues
-that there might be.
+that there might be. To get the project running locally, you have to initialize and update the git submodules first: `git submodule --init && git submodule update`.
 
 Be aware of the delay between commits and updates on github.io - it can take a few minutes (and a 'hard refresh' of your browser) for changes to take effect.
 
@@ -186,12 +186,12 @@ The widget example is available in [`apps/_example_widget`](apps/_example_widget
 
 Widgets are just small bits of code that run whenever an app that supports them
 calls `Bangle.loadWidgets()`. If they want to display something in the 24px high
-widget bar at the top of the screen they can add themselves to the global 
+widget bar at the top of the screen they can add themselves to the global
 `WIDGETS` array with:
 
 ```
 WIDGETS["mywidget"]={
-  area:"tl", // tl (top left), tr (top right)
+  area:"tl", // tl (top left), tr (top right), bl (bottom left), br (bottom right)
   sortorder:0, // (Optional) determines order of widgets in the same corner
   width: 24, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
   draw:draw // called to draw the widget
@@ -226,10 +226,8 @@ and which gives information about the app for the Launcher.
   "name":"Short Name", // for Bangle.js menu
   "icon":"*myappid", // for Bangle.js menu
   "src":"-myappid", // source file
-  "type":"widget/clock/app/bootloader", // optional, default "app"
-     // if this is 'widget' then it's not displayed in the menu  
-     // if it's 'clock' then it'll be loaded by default at boot time
-     // if this is 'bootloader' then it's code that is run at boot time, but is not in a menu  
+  "type":"widget/clock/app/bootloader/...", // optional, default "app"
+     // see 'type' in 'metadata.json format' below for more options/info
   "version":"1.23",
      // added by BangleApps loader on upload based on metadata.json
   "files:"file1,file2,file3",
@@ -252,19 +250,43 @@ and which gives information about the app for the Launcher.
   "version": "0v01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
-  "screenshots" : [ { url:"screenshot.png" } ], // optional screenshot for app
+  "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app
   "type":"...",               // optional(if app) -  
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
-                              //   'launch' - replacement launcher app
-                              //   'bootloader' - code that runs at startup only
+                              //   'module' - this provides a module that can be used with 'require'.
+                              //              'provides_modules' should be used if type:module is specified
+                              //   'bootloader' - an app that at startup (app.boot.js) but doesn't have a launcher entry for 'app.js'
+                              //   'settings' - apps that appear in Settings->Apps (with appname.settings.js) but that have no 'app.js'
+                              //   'clkinfo' - Provides a 'myapp.clkinfo.js' file that can be used to display info in clocks - see modules/clock_info.js
                               //   'RAM' - code that runs and doesn't upload anything to storage
+                              //   'launch' - replacement 'Launcher'
+                              //   'textinput' - provides a 'textinput' library that allows text to be input on the Bangle
+                              //   'scheduler' - provides 'sched' library and boot code for scheduling alarms/timers
+                              //                 (currently only 'sched' app)
+                              //   'notify' - provides 'notify' library for showing notifications
+                              //   'locale' - provides 'locale' library for language-specific date/distance/etc
+                              //              (a version of 'locale' is included in the firmware)
   "tags": "",                 // comma separated tag list for searching
+                              // common types are:
+                              //   'clock' - it's a clock
+                              //   'widget' - it is (or provides) a widget
+                              //   'outdoors' - useful for outdoor activities
+                              //   'tool' - a useful utility (timer, calculator, etc)
+                              //   'game' - a game
+                              //   'bluetooth' - uses Bluetooth LE
+                              //   'system' - used by the system
+                              //   'clkinfo' - provides or uses clock_info module for data on your clock face (see modules/clock_info.js)
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
-  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on
+  "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'
+  "dependencies" : { "messageicons":"module" } // optional, depend on a specific library to be used with 'require' - see provides_modules
+  "dependencies" : { "message":"widget" } // optional, depend on a specific type of widget - see provides_widgets
+  "provides_modules" : ["messageicons"] // optional, this app provides a module that can be used with 'require'
+  "provides_widgets" : ["battery"] // optional, this app provides a type of widget - 'alarm/battery/bluetooth/pedometer/message'
+  "default" : true,           // set if an app is the default implementer of something (a widget/module/etc)
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
                               // A 'Read more...' link will be added under the app
@@ -319,7 +341,7 @@ and which gives information about the app for the Launcher.
 ```
 
 * name, icon and description present the app in the app loader.
-* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher` or empty.
+* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher`, `bluetooth` or empty.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
 
@@ -415,7 +437,7 @@ Example `settings.js`
 // make sure to enclose the function in parentheses
 (function(back) {
   let settings = require('Storage').readJSON('myappid.json',1)||{};
-  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value 
+  if (typeof settings.monkeys !== "number") settings.monkeys = 12; // default value
   function save(key, value) {
     settings[key] = value;
     require('Storage').write('myappid.json', settings);
@@ -449,7 +471,10 @@ It should also add `myappid.json` to `data`, to make sure it is cleaned up when 
 ## Modules
 
 You can include any of [Espruino's modules](https://www.espruino.com/Modules) as
-normal with `require("modulename")`. If you want to develop your own module for your
+normal with `require("modulename")`. To include [Bangle's modules](modules) for use in the Web
+IDE, [upload the modules to internal storage](modules#upload-the-module-to-the-bangles-internal-storage)
+or [change the IDE's search path](modules#change-the-web-ide-search-path-to-include-banglejs-modules).
+If you want to develop your own module for your
 app(s) then you can do that too. Just add the module into the `modules` folder
 then you can use it from your app as normal.
 

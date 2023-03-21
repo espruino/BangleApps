@@ -44,7 +44,9 @@ let cx = W/2;
 let cy = H/2;
 let Timeout;
 
-Bangle.loadWidgets();
+Bangle.setUI("clock");
+// load widgets after 'setUI' so they're aware there is a clock active
+Bangle.loadWidgets(); 
 
 /* Custom version of Bangle.drawWidgets (does not clear the widget areas) Thanks to rozek */
 
@@ -142,8 +144,4 @@ Bangle.on('lcdPower', (on) => {
     displayRefresh();
   }
 });
-
-Bangle.setUI("clock");
-// load widgets after 'setUI' so they're aware there is a clock active
-Bangle.loadWidgets(); 
 displayRefresh();

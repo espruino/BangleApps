@@ -1,10 +1,10 @@
 // Stardate clock face, by KaiRo.at, 2021-2022
 
-var redrawClock = true;
-var clockface = "digital";
+let redrawClock = true;
+let clockface = "digital";
 
 // note: Bangle.js 1 has 240x240x16, 2 has 176x176x3 screen
-var bpp = g.getBPP ? g.getBPP() : 16;
+const bpp = g.getBPP ? g.getBPP() : 16;
 
 // Load fonts
 Graphics.prototype.setFontAntonio27 = function(scale) {
@@ -22,16 +22,15 @@ const fontSizeLarge = 1;
 const fontHeightLarge = 42 * fontSizeLarge;
 
 // LCARS dimensions
+let baseUnit1 = 5;
+let baseUnit2 = 3;
+let baseUnit3 = 10;
 if (g.getWidth() < 200) { // Bangle.js 2
-  const baseUnit1 = 3;
-  const baseUnit2 = 2;
-  const baseUnit3 = 7;
+  baseUnit1 = 3;
+  baseUnit2 = 2;
+  baseUnit3 = 7;
 }
-else {
-  const baseUnit1 = 5;
-  const baseUnit2 = 3;
-  const baseUnit3 = 10;
-}
+
 const widgetsHeight = 24;
 const sbarWid = baseUnit3 * 5;
 const hbarHt = baseUnit1;
@@ -86,19 +85,19 @@ const colorLCARSPurple = "#A06060";
 const colorLCARSBrown = "#C09070";
 // More colors: teal #008484, yellow FFCF00, purple #6050B0
 
-var lastSDateString;
-var lastTimeStringToMin;
-var lastTimeStringSec;
-var lastDateString;
-var lastAnalogDate;
+let lastSDateString;
+let lastTimeStringToMin;
+let lastTimeStringSec;
+let lastDateString;
+let lastAnalogDate;
 
 function updateStardate() {
-  var curDate = new Date();
+  const curDate = new Date();
 
   // Note that the millisecond division and the 1000-unit multiplier cancel each other out.
-  var sdateval = (curDate - gSDBase) / secondsPerYear;
+  const sdateval = (curDate - gSDBase) / secondsPerYear;
 
-  var sdatestring = (Math.floor(sdateval * sdateDecFactor) / sdateDecFactor).toFixed(sdateDecimals);
+  const sdatestring = (Math.floor(sdateval * sdateDecFactor) / sdateDecFactor).toFixed(sdateDecimals);
 
   // Reset the state of the graphics library.
   g.reset();
@@ -120,34 +119,33 @@ function updateStardate() {
   lastSDateString = sdatestring;
 
   // Schedule next when an update to the last decimal is due.
-  var mstonextUpdate = (Math.ceil(sdateval * sdateDecFactor) / sdateDecFactor - sdateval) * secondsPerYear;
+  const mstonextUpdate = (Math.ceil(sdateval * sdateDecFactor) / sdateDecFactor - sdateval) * secondsPerYear;
   if (redrawClock) {
     setTimeout(updateStardate, mstonextUpdate);
   }
 }
 
 function updateConventionalTime() {
-  var curDate = new Date();
+  const curDate = new Date();
 
   if (clockface == "digital") {
     drawDigitalClock(curDate);
-  }
-  else {
+  } else {
     drawAnalogClock(curDate);
   }
 
   // Schedule next when an update to the last second is due.
-  var mstonextUpdate = Math.ceil(curDate / 1000) * 1000 - curDate;
+  const mstonextUpdate = Math.ceil(curDate / 1000) * 1000 - curDate;
   if (redrawClock) {
     setTimeout(updateConventionalTime, mstonextUpdate);
   }
 }
 
 function drawDigitalClock(curDate) {
-  var timestringToMin = ("0" + curDate.getHours()).substr(-2) + ":"
+  const timestringToMin = ("0" + curDate.getHours()).substr(-2) + ":"
     + ("0" + curDate.getMinutes()).substr(-2) + ":";
-  var timestringSec = ("0" + curDate.getSeconds()).substr(-2);
-  var datestring = "" + curDate.getFullYear() + "-"
+  const timestringSec = ("0" + curDate.getSeconds()).substr(-2);
+  const datestring = "" + curDate.getFullYear() + "-"
     + ("0" + (curDate.getMonth() + 1)).substr(-2) + "-"
     + ("0" + curDate.getDate()).substr(-2);
 
@@ -156,7 +154,7 @@ function drawDigitalClock(curDate) {
   g.setBgColor(colorBg);
   // Set Font
   g.setFont(fontNameLarge, fontSizeLarge);
-  var ctimePosLeft = ctimePosCenter - g.stringWidth("12:34:56") / 2;
+  let ctimePosLeft = ctimePosCenter - g.stringWidth("12:34:56") / 2;
   if (ctimePosLeft + g.stringWidth("00:00:00") > g.getWidth()) {
     ctimePosLeft = g.getWidth() - g.stringWidth("00:00:00");
   }
@@ -174,7 +172,7 @@ function drawDigitalClock(curDate) {
     g.drawString(timestringToMin, ctimePosLeft, ctimePosTop);
     lastTimeStringToMin = timestringToMin;
   }
-  var ctimePosLeftSec = ctimePosLeft + g.stringWidth(timestringToMin);
+  const ctimePosLeftSec = ctimePosLeft + g.stringWidth(timestringToMin);
   if (lastTimeStringSec) {
     // Clear the area where we want to draw the seconds.
     //g.setBgColor("#FF6600"); // for debugging
@@ -190,7 +188,7 @@ function drawDigitalClock(curDate) {
   if (datestring != lastDateString) {
     // Set Font
     g.setFont(fontName, fontSize);
-    var cdatePosLeft = cdatePosCenter - g.stringWidth("1234-56-78") / 2;
+    const cdatePosLeft = cdatePosCenter - g.stringWidth("1234-56-78") / 2;
     if (lastDateString) {
       // Clear the area where we want to draw the time.
       //g.setBgColor("#FF6600"); // for debugging
@@ -212,8 +210,7 @@ function drawLine(x1, y1, x2, y2, color) {
   // On high-bpp devices, use anti-aliasing. Low-bpp (Bangle.js 2) doesn't clear nicely with AA.
   if (bpp > 3 && g.drawLineAA) {
     g.drawLineAA(x1, y1, x2, y2);
-  }
-  else {
+  } else {
     g.drawLine(x1, y1, x2, y2);
   }
 }
@@ -228,17 +225,17 @@ function drawAnalogClock(curDate) {
   g.setBgColor(colorBg);
   // Init variables for drawing any seconds we have not drawn.
   // If minute changed, we'll set for the full wheel below.
-  var firstDrawSecond = lastAnalogDate ? lastAnalogDate.getSeconds() + 1 : curDate.getSeconds();
-  var lastDrawSecond = curDate.getSeconds();
+  let firstDrawSecond = lastAnalogDate ? lastAnalogDate.getSeconds() + 1 : curDate.getSeconds();
+  let lastDrawSecond = curDate.getSeconds();
   if (!lastAnalogDate || curDate.getMinutes() != lastAnalogDate.getMinutes()) {
     // Draw the main hour lines.
     //g.setColor("#9C9CFF");
     //g.drawCircle(clockCtrX, clockCtrY, analogRad);
     for (let i = 0; i < 60; i = i + 15) {
-      let edgeX = clockCtrX + analogRad * Math.sin(i * Math.PI / 30);
-      let edgeY = clockCtrY - analogRad * Math.cos(i * Math.PI / 30);
-      let innerX = clockCtrX + (analogRad - analogMainLineLength) * Math.sin(i * Math.PI / 30);
-      let innerY = clockCtrY - (analogRad - analogMainLineLength) * Math.cos(i * Math.PI / 30);
+      const edgeX = clockCtrX + analogRad * Math.sin(i * Math.PI / 30);
+      const edgeY = clockCtrY - analogRad * Math.cos(i * Math.PI / 30);
+      const innerX = clockCtrX + (analogRad - analogMainLineLength) * Math.sin(i * Math.PI / 30);
+      const innerY = clockCtrY - (analogRad - analogMainLineLength) * Math.cos(i * Math.PI / 30);
       drawLine(edgeX, edgeY, innerX, innerY, colorHours);
     }
     // Set for drawing the full second wheel.
@@ -247,17 +244,15 @@ function drawAnalogClock(curDate) {
   }
   // Draw the second wheel, or the parts of it that we haven't done yet.
   for (let i = firstDrawSecond; i <= lastDrawSecond; i++) {
-    let edgeX = clockCtrX + analogRad * Math.sin(i * Math.PI / 30);
-    let edgeY = clockCtrY - analogRad * Math.cos(i * Math.PI / 30);
-    let innerX = clockCtrX + (analogRad - analogSubLineLength) * Math.sin(i * Math.PI / 30);
-    let innerY = clockCtrY - (analogRad - analogSubLineLength) * Math.cos(i * Math.PI / 30);
+    const edgeX = clockCtrX + analogRad * Math.sin(i * Math.PI / 30);
+    const edgeY = clockCtrY - analogRad * Math.cos(i * Math.PI / 30);
+    const innerX = clockCtrX + (analogRad - analogSubLineLength) * Math.sin(i * Math.PI / 30);
+    const innerY = clockCtrY - (analogRad - analogSubLineLength) * Math.cos(i * Math.PI / 30);
     if (i <= curDate.getSeconds()) {
       drawLine(edgeX, edgeY, innerX, innerY, colorSeconds);
-    }
-    else if (i % 5 == 0) {
+    } else if (i % 5 == 0) {
       drawLine(edgeX, edgeY, innerX, innerY, colorHours);
-    }
-    else {
+    } else {
       clearLine(edgeX, edgeY, innerX, innerY);
     }
   }
@@ -265,25 +260,25 @@ function drawAnalogClock(curDate) {
     // Clear previous hands.
     if (curDate.getMinutes() != lastAnalogDate.getMinutes()) {
       // Clear hour hand.
-      let HhAngle = (lastAnalogDate.getHours() + lastAnalogDate.getMinutes() / 60) * Math.PI / 6;
-      let HhEdgeX = clockCtrX + analogHourHandLength * Math.sin(HhAngle);
-      let HhEdgeY = clockCtrY - analogHourHandLength * Math.cos(HhAngle);
+      const HhAngle = (lastAnalogDate.getHours() + lastAnalogDate.getMinutes() / 60) * Math.PI / 6;
+      const HhEdgeX = clockCtrX + analogHourHandLength * Math.sin(HhAngle);
+      const HhEdgeY = clockCtrY - analogHourHandLength * Math.cos(HhAngle);
       clearLine(HhEdgeX, HhEdgeY, clockCtrX, clockCtrY);
       // Clear minute hand.
-      let MhEdgeX = clockCtrX + analogMinuteHandLength * Math.sin(lastAnalogDate.getMinutes() * Math.PI / 30);
-      let MhEdgeY = clockCtrY - analogMinuteHandLength * Math.cos(lastAnalogDate.getMinutes() * Math.PI / 30);
+      const MhEdgeX = clockCtrX + analogMinuteHandLength * Math.sin(lastAnalogDate.getMinutes() * Math.PI / 30);
+      const MhEdgeY = clockCtrY - analogMinuteHandLength * Math.cos(lastAnalogDate.getMinutes() * Math.PI / 30);
       clearLine(MhEdgeX, MhEdgeY, clockCtrX, clockCtrY);
     }
   }
   if (!lastAnalogDate || curDate.getMinutes() != lastAnalogDate.getMinutes()) {
     // Draw hour hand.
-    let HhAngle = (curDate.getHours() + curDate.getMinutes() / 60) * Math.PI / 6;
-    let HhEdgeX = clockCtrX + analogHourHandLength * Math.sin(HhAngle);
-    let HhEdgeY = clockCtrY - analogHourHandLength * Math.cos(HhAngle);
+    const HhAngle = (curDate.getHours() + curDate.getMinutes() / 60) * Math.PI / 6;
+    const HhEdgeX = clockCtrX + analogHourHandLength * Math.sin(HhAngle);
+    const HhEdgeY = clockCtrY - analogHourHandLength * Math.cos(HhAngle);
     drawLine(HhEdgeX, HhEdgeY, clockCtrX, clockCtrY, colorHands);
     // Draw minute hand.
-    let MhEdgeX = clockCtrX + analogMinuteHandLength * Math.sin(curDate.getMinutes() * Math.PI / 30);
-    let MhEdgeY = clockCtrY - analogMinuteHandLength * Math.cos(curDate.getMinutes() * Math.PI / 30);
+    const MhEdgeX = clockCtrX + analogMinuteHandLength * Math.sin(curDate.getMinutes() * Math.PI / 30);
+    const MhEdgeY = clockCtrY - analogMinuteHandLength * Math.cos(curDate.getMinutes() * Math.PI / 30);
     drawLine(MhEdgeX, MhEdgeY, clockCtrX, clockCtrY, colorHands);
   }
   lastAnalogDate = curDate;
@@ -292,8 +287,7 @@ function drawAnalogClock(curDate) {
 function switchClockface() {
   if (clockface == "digital") {
     clockface = "analog";
-  }
-  else {
+  } else {
     clockface = "digital";
   }
   // Clear whole lower area.
@@ -340,10 +334,10 @@ updateStardate();
 updateConventionalTime();
 // Make sure widgets can be shown.
 //g.setColor("#FF0000"); g.fillRect(0, 0, g.getWidth(), widgetsHeight); // debug
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 // Show launcher on button press as usual for a clock face
 Bangle.setUI("clock", Bangle.showLauncher);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', on => {
   if (on) {
@@ -351,8 +345,7 @@ Bangle.on('lcdPower', on => {
     // Draw immediately to kick things off.
     updateStardate();
     updateConventionalTime();
-  }
-  else {
+  } else {
     redrawClock = false;
   }
 });

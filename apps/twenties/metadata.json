@@ -1,0 +1,13 @@
+{
+  "id": "twenties",
+  "name": "Twenties",
+  "shortName": "twenties",
+  "version": "0.04",
+  "description": "Buzzes every 20m to stand / sit and look 20ft away for 20s.",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "alarm,tool",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [{ "name": "twenties.boot.js", "url": "boot.js" }]
+}

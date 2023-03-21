@@ -19,3 +19,10 @@
 0.13: Fix for when widget is used before app
 0.14: Remove unneeded variable assignment
 0.15: Show distance more accurately in conjunction with new locale app (fix #1523)
+0.16: Ability to append to existing track (fix #1712)
+0.17: Use default Bangle formatter for booleans
+0.18: Improve widget load speed, allow currently recording track to be plotted in openstmap
+0.19: Fix track plotting code
+0.20: Automatic translation of some more strings.
+0.21: Speed report now uses speed units from locale
+0.22: Convert Yes/No On/Off in settings to checkboxes

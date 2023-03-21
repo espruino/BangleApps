@@ -1,0 +1,20 @@
+0.01: New App
+0.02: Allow drawing polys
+0.03: Allow partly importing Amazfit decompiler formatted watchfaces
+0.04: Allow writing all image data to separate file to save some RAM
+      Allow hiding elements on lock
+0.05: Add precompilation to js for performance
+0.06: Watchfaces can be refreshed partly
+0.07: Allow wrapping drawing in timeouts to get faster reactions
+      Show/Hide widgets with swipe up or down
+0.08: Use default Bangle formatter for booleans
+0.09: Support new fast app switching
+0.10: Fix clock not correctly refreshing when drawing in timeouts option is not on
+0.11: Additional option in customizer to force drawing directly
+      Fix some problems in handling timeouts
+0.12: Use widget_utils module
+      Fix colorsetting in promises in generated code
+      Some performance improvements by caching lookups
+      Activate UI after first draw is complete to prevent drawing over launcher
+0.13: Use widget_utils swipeOn()
+      Allows minification by combining all but picture data into one file

@@ -1,0 +1,16 @@
+{ "id": "f9lander",
+  "name": "Falcon9 Lander",
+  "shortName":"F9lander",
+  "version":"0.03",
+  "description": "Land a rocket booster",
+  "icon": "f9lander.png",
+  "screenshots" : [ { "url":"f9lander_screenshot1.png" }, { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot3.png" }],
+  "readme": "README.md",
+  "tags": "game",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"f9lander.app.js","url":"app.js"},
+    {"name":"f9lander.img","url":"app-icon.js","evaluate":true},
+    {"name":"f9lander.settings.js", "url":"settings.js"}
+  ]
+}

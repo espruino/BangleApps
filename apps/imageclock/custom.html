@@ -1,0 +1,1160 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <script src="../../webtools/heatshrink.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
+    <script src="../../core/lib/customize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
+
+    <h4>Upload watchface:</h4>
+
+    <p>
+      Select format:</br>
+      <input type="radio" id="useNative" name="mode" checked/>
+      <label for="useNative">Native</label></br>
+      <input type="radio" id="useAmazefit" name="mode"/>
+      <label for="useAmazefit">ALPHA: Decompiled Amazfit</label></br>
+    </p>
+
+    <p>
+      Options:</br>
+      <input type="checkbox" id="timeoutwrap" name="mode"/>
+      <label for="timeoutwrap">Wrap draw calls in timeouts (Slower, more RAM use, better interactivity)</label></br>
+      <input type="checkbox" id="forceOrigPlane" name="mode" disabled="true"/>
+      <label for="forceOrigPlane">Force use of direct drawing (Even faster, but will produce visible artifacts on not optimized watch faces)</label></br>
+      <input type="checkbox" id="separateFiles" name="mode"/>
+      <label for="separateFiles">Do not create combined app flle (slower but more flexible for debugging, incompatible with minification)</label></br>
+      <input type="checkbox" id="debugprints" name="mode"/>
+      <label for="debugprints">Add debug prints to generated code</label></br>
+    </p>
+
+    <p>Select watchface folder:</br><input type="file" id="fileLoader" name="files[]" multiple directory="" webkitdirectory="" moxdirectory="" /></p>
+    <p><b>or</b></p>
+    <p>Select watchface zip file: </br><input type="file" id="zipLoader" name="zip"/></p><br/>
+
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button></br>
+    <button id="btnSave" class="btn btn-secondary">Save resources file</button></br>
+    <button id="btnSaveFace" class="btn btn-secondary">Save face file</button></br>
+    <button id="btnSaveZip" class="btn btn-secondary">Save watchface zip file</button></br>
+    <canvas id="canvas" style="display:none;"></canvas></br>
+    <p>Download Demo Watchface here: </br>
+      <a href="digitalretro.zip">digitalretro.zip</a></br>
+      <a href="simpleanalog.zip">simpleanalog.zip</a></br>
+    </p>
+
+    <script>     
+      var result = "";
+      var resultJson = {};
+      var infoJson;
+      var faceJson;
+      var precompiledJs = "";
+      var resourceDataString = "";
+      var resourceDataOffset = 0;
+      var handledFiles = 0;
+      var expectedFiles = 0;
+      var rootZip = new JSZip();
+      var resourcesZip = rootZip.folder("resources");
+
+      function isNativeFormat(){
+        return document.getElementById("useNative").checked;
+      }
+
+      function addDebug(){
+        return document.getElementById("debugprints").checked;
+      }
+
+      function convertAmazfitTime(time){
+        var result = {};
+        if (time.Hours){
+          result.Hours = {
+            Tens: convertAmazfitNumber(time.Hours.Tens, "HourTens", 0, 10),
+            Ones: convertAmazfitNumber(time.Hours.Ones, "HourOnes", 0, 10)
+          }
+          result.Hours.Tens.Number.Alignment = "TopLeft";
+          result.Hours.Tens.Number.Spacing = 0;
+          result.Hours.Ones.Number.Alignment = "TopLeft";
+          result.Hours.Ones.Number.Spacing = 0;
+        }
+        if (time.Minutes){
+          result.Minutes = {
+            Tens: convertAmazfitNumber(time.Minutes.Tens, "MinuteTens", 0, 10),
+            Ones: convertAmazfitNumber(time.Minutes.Ones, "MinuteOnes", 0, 10)
+          }
+          result.Minutes.Tens.Number.Alignment = "TopLeft";
+          result.Minutes.Tens.Number.Spacing = 0;
+          result.Minutes.Ones.Number.Alignment = "TopLeft";
+          result.Minutes.Ones.Number.Spacing = 0;
+        }
+        return result;
+      }
+
+      function convertAmazfitDate(date){
+        var result = {};
+        if (date.MonthAndDay.Separate.Day) result.Day = convertAmazfitNumber(date.MonthAndDay.Separate.Day, "Day");
+        if (date.MonthAndDay.Separate.Month) result.Month = convertAmazfitNumber(date.MonthAndDay.Separate.Month, "Month");
+        if (date.WeekDay){
+          result.WeekDay = convertAmazfitNumber(date.WeekDay, "WeekDayMondayFirst");
+        }
+        return result;
+      }
+
+      var filesToMove={};
+
+      var zipChangePromise = Promise.resolve();
+
+      function performFileChanges(){
+        var promise = Promise.resolve();
+        //rename all files to just numbers without leading zeroes
+        for (var c in resultJson){
+          console.log("Renaming", c, resultJson[c]);
+          var tmp = resultJson[c];
+          delete resultJson[c];
+          resultJson[Number(c)] = tmp;
+
+          async function modZip(c){
+            console.log("Async modification of ", c)
+            var fileRegex = new RegExp(c + ".*");
+            var fileObject = resourcesZip.file(fileRegex)[0];
+            var fileData = await fileObject.async("uint8array");
+            console.log("Filedata is", fileData);
+            var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
+            var newName = Number(c) + extension;
+
+            console.log("Renaming to", newName);
+            resourcesZip.remove(c + extension);
+            resourcesZip.file(newName, fileData);
+          }
+          promise = promise.then(modZip(c));
+
+
+        }
+
+
+        console.log("File moves:", filesToMove);
+
+        for (var c in filesToMove){
+          var tmp = resultJson[c];
+          console.log("Handle filemove", c, filesToMove[c], tmp);
+
+          var element = resultJson;
+          var path = filesToMove[c];
+
+
+          async function modZip(c){
+            console.log("Async modification of ", c)
+            var fileRegex = new RegExp(c + ".*");
+            var fileObject = resourcesZip.file(fileRegex)[0];
+            var fileData = await fileObject.async("uint8array");
+            console.log("Filedata is", fileData);
+            var extension = resourcesZip.file(fileRegex)[0].name.match(/\.[^.]*$/);
+            var newName = Number(c) + extension;
+
+            console.log("Copying to", newName);
+            resourcesZip.file(filesToMove[c].join("/") + extension, fileData);
+          }
+          promise = promise.then(modZip(c));
+
+
+          for (var i = 0; i< path.length; i++){
+            if (!element[path[i]]) element[path[i]] = {};
+            if (i == path.length - 1){
+              element[path[i]] = tmp;
+            } else {
+              element = element[path[i]];
+            }
+          }
+
+        }
+        promise.then(()=>{
+          document.getElementById('btnUpload').disabled = true; 
+        });
+        console.log("After moves", resultJson);
+        return promise;
+      };
+
+      function convertAmazfitMultistate(multistate, value, minValue, maxValue){
+        var result = {
+          MultiState: {
+            X: multistate.Coordinates.X,
+            Y: multistate.Coordinates.Y,
+            Value: value,
+            ImagePath: [value]
+          }
+        };
+        if (minValue !== undefined) result.MultiState.MinValue = minValue;
+        if (maxValue !== undefined) result.MultiState.MaxValue = maxValue;
+        if (multistate.ImageIndexOn) filesToMove[multistate.ImageIndexOn] = ["status", value, "vibrate"];
+        if (multistate.ImageIndexOff) filesToMove[multistate.ImageIndexOff] = ["status", value, "off"];
+        return result;
+      }
+
+      function convertAmazfitStatus(status){
+        var result = {};
+
+        if (status.Alarm) result.Alarm = convertAmazfitMultistate(status.Alarm,"Alarm");
+        if (status.Bluetooth) result.Bluetooth = convertAmazfitMultistate(status.Bluetooth,"Bluetooth");
+        if (status.DoNotDisturb) result.DoNotDisturb = convertAmazfitMultistate(status.DoNotDisturb,"Notifications");
+        if (status.Lock) result.Lock = convertAmazfitMultistate(status.Lock,"Lock");
+
+        return result;
+      }
+
+      function convertAmazfitNumber(element, value, minValue, maxValue){
+        var number = {};
+        var result = {
+          Number: number
+        };
+        if (element.Alignment == "BottomRight"){
+          number.X = element.BottomRightX;
+          number.Y = element.BottomRightY;
+        } else if (element.Alignment == "TopLeft"){
+          number.X = element.TopLeftX;
+          number.Y = element.TopLeftY;
+        } else if (element.Alignment == "TopRight"){
+          number.X = element.BottomRightX;
+          number.Y = element.TopLeftY;
+        } else if (element.Alignment == "BottomLeft"){
+          number.X = element.TopLeftX;
+          number.Y = element.BottomLeftY;
+        } else if (element.Alignment == "Center"){
+          number.X = (element.TopLeftX + (element.BottomRightX - element.TopLeftX)/2),
+          number.Y = (element.TopLeftY + (element.BottomRightY - element.TopLeftY)/2)
+        } else {
+          number.X = element.X,
+          number.Y = element.Y
+        }
+        number.Alignment = element.Alignment;
+        number.Spacing = element.Spacing;
+        number.ImageIndex = element.ImageIndex;
+        number.ImagePath = [];
+        number.Value = value;
+        if (minValue !== undefined) number.MaxValue = maxValue;
+        if (maxValue !== undefined) number.MinValue = minValue;
+        return result;
+      }
+
+      function moveWeatherIcons(icon){
+        filesToMove[icon.ImageIndex + 0] = ["weather", "fallback"];
+
+        // Light clouds
+        filesToMove[icon.ImageIndex + 1] = ["weather", 801];
+        // Cloudy, possible rain
+        filesToMove[icon.ImageIndex + 2] = ["weather", 500];
+        // Cloudy, possible snow
+        filesToMove[icon.ImageIndex + 3] = ["weather", 600];
+        // Clear
+        filesToMove[icon.ImageIndex + 4] = ["weather", 800];
+        // Clouds
+        filesToMove[icon.ImageIndex + 5] = ["weather", 803];
+        // Light Rain
+        filesToMove[icon.ImageIndex + 6] = ["weather", 501];
+        // Light Snow
+        filesToMove[icon.ImageIndex + 7] = ["weather", 601];
+        // Rain
+        filesToMove[icon.ImageIndex + 8] = ["weather", 502];
+        // Snow
+        filesToMove[icon.ImageIndex + 9] = ["weather", 602];
+        // Heavy Snow
+        filesToMove[icon.ImageIndex + 10] = ["weather", 621];
+        // Heavy Rain
+        filesToMove[icon.ImageIndex + 11] = ["weather", 503];
+        // Sandstorm
+        filesToMove[icon.ImageIndex + 12] = ["weather", 751];
+        // Snow and Rain
+        filesToMove[icon.ImageIndex + 13] = ["weather", 616];
+        // Fog
+        filesToMove[icon.ImageIndex + 14] = ["weather", 741];
+        // Mist
+        filesToMove[icon.ImageIndex + 15] = ["weather", 701];
+        // Shower
+        filesToMove[icon.ImageIndex + 16] = ["weather", 521];
+        // Hail
+        filesToMove[icon.ImageIndex + 17] = ["weather", 611];
+        // Hailstorm
+        filesToMove[icon.ImageIndex + 18] = ["weather", 613];
+        // Heavy Shower
+        filesToMove[icon.ImageIndex + 19] = ["weather", 522];
+        // Dust whirls
+        filesToMove[icon.ImageIndex + 20] = ["weather", 731];
+        // Tornado
+        filesToMove[icon.ImageIndex + 21] = ["weather", 781];
+        // Very heavy shower
+        filesToMove[icon.ImageIndex + 22] = ["weather", 531];
+      }
+
+      function convertAmazfitTemperature(temp){
+        var result = {};
+        result = convertAmazfitNumber(temp.Number, "WeatherTemperature");
+        if (temp.MinusImageIndex){
+          result.Number.ImageIndexMinus = temp.MinusImageIndex;
+        }
+        if (temp.DegreesImageIndex){
+          result.Number.ImageIndexUnit = temp.DegreesImageIndex;
+        }
+        return result;
+      }
+
+      function convertAmazfitWeather(weather){
+        var result = {};
+
+        if (weather.Temperature && weather.Temperature.Current){
+          if (!result.Temperature) result.Temperature = {};
+          result.Temperature.Current = convertAmazfitTemperature(weather.Temperature.Current);
+        }
+
+        if (weather.Temperature && weather.Temperature.Today){
+          if (!result.Temperature) result.Temperature = {};          
+          if (weather.Temperature.Today.Separate){
+            if (weather.Temperature.Today.Separate.Day){
+              result.Temperature.Day = convertAmazfitTemperature(weather.Temperature.Today.Separate.Day);
+            }
+            if (weather.Temperature.Today.Separate.Night){
+              result.Temperature.Night = convertAmazfitTemperature(weather.Temperature.Today.Separate.Night);
+            }
+          }
+        }
+        if (weather.Icon){
+          result.WeatherIcon = {
+            CodedImage: {
+              X: weather.Icon.CustomIcon.X,
+              Y: weather.Icon.CustomIcon.Y,
+              Value: "WeatherCode",
+              ImagePath: ["weather"]
+            }
+          }
+          moveWeatherIcons(weather.Icon.CustomIcon);
+        }
+        return result;
+      }
+
+      function convertAmazfitActivity(activity){
+        var result = {};
+
+        if (activity.Steps){
+          result.Steps = convertAmazfitNumber(activity.Steps, "Steps");
+        }
+        if (activity.Pulse){
+          result.Pulse = convertAmazfitNumber(activity.Pulse, "Pulse");
+        }
+        return result;
+      }
+
+      function convertAmazfitScale(scale, value, minValue, maxValue){
+        var result = {};
+        result.Scale = {
+          ImageIndex: scale.StartImageIndex,
+          ImagePath: [],
+          Value: value,
+          MaxValue: maxValue,
+          MinValue: minValue
+        };
+        result.Scale.Segments = [];
+        for (var c of scale.Segments){
+          result.Scale.Segments.push({
+            X: c.X,
+            Y: c.Y
+          });
+        }
+
+        return result;
+      }
+
+      function convertAmazfitStepsProgress(steps){
+        var result = {};
+        if (steps.GoalImage){
+          result.Goal = {
+            MultiState: {
+              X: steps.GoalImage.X,
+              Y: steps.GoalImage.Y,
+              Value: "StepsGoal",
+              ImagePath: ["StepsGoal"]
+            }
+          }
+          filesToMove[steps.GoalImage.ImageIndex] = ["StepsGoal", "on"];
+        }
+        if (steps.Linear){
+          result.Scale = convertAmazfitScale(steps.Linear, "Steps", 0, "StepsGoal").Scale;
+        }
+        return result;
+      }
+
+      function convertAmazfitBattery(battery){
+        var result = {};
+        if (battery.Scale){
+          result.Scale = convertAmazfitScale(battery.Scale, "BatteryPercentage", 0, 100).Scale;
+        }
+        if (battery.Text){
+          result.Number = convertAmazfitNumber(battery.Text, "BatteryPercentage", 0, 100).Number;
+        }
+        return result;
+      }
+
+      function convertAmazfitImage(image){
+        var result = {
+          Image: {
+            X: image.X,
+            Y: image.Y,
+            ImagePath: [],
+            ImageIndex: image.ImageIndex
+          }
+        };
+        return result;
+      }
+
+      function convertAmazfitColor(color){
+        return "#" + color.substring(2);
+      }
+
+      function convertAmazfitHand(hand, rotationValue, minRotationValue, maxRotationValue){
+        var result = {
+          Filled: !hand.OnlyBorder,
+          X: hand.Center.X,
+          Y: hand.Center.Y,
+          ForegroundColor: convertAmazfitColor(hand.Color),
+          BackgroundColor: convertAmazfitColor(hand.Color),
+          RotationValue: rotationValue,
+          RotationOffset: 0.25,
+          MaxRotationValue: maxRotationValue,
+          MinRotationValue: minRotationValue
+        };
+
+        result.Vertices = []
+        for (var c of hand.Shape){
+          result.Vertices.push(c);
+        }
+        return { Poly: result };
+      }
+
+      function convertAmazfitAnalog(analog, face){
+        var result = {
+        };
+
+        if (analog.Hours){
+          result.Hours = {};
+          result.Hours.Hand = convertAmazfitHand(analog.Hours, "Hour12Analog", 0, 12);
+          if (analog.Hours.CenterImage){
+            result.Hours.Center = convertAmazfitImage(analog.Hours.CenterImage);
+          }
+        }
+        if (analog.Minutes){
+          result.Minutes = {};
+          result.Minutes.Hand = convertAmazfitHand(analog.Minutes, "Minute", 0, 60);
+          if (!face.Properties) face.Properties = {};
+          if (!face.Properties.Redraw) face.Properties.Redraw = {};
+          face.Properties.Redraw.Unlocked = 10000;
+          face.Properties.Redraw.Locked = 60000;
+          if (analog.Minutes.CenterImage){
+            result.Minutes.Center = convertAmazfitImage(analog.Minutes.CenterImage);
+          }
+        }
+        if (analog.Seconds){
+          result.Seconds = {};
+          result.Seconds = convertAmazfitHand(analog.Seconds, "Second", 0, 60);
+          result.Seconds.Poly.HideOn = ["Lock"];
+          if (!face.Properties) face.Properties = {};
+          if (!face.Properties.Redraw) face.Properties.Redraw = {};
+          face.Properties.Redraw.Unlocked = 1000;
+          face.Properties.Redraw.Locked = 60000;
+          if (!face.Properties.Redraw.Events) face.Properties.Redraw.Events = [];
+          if (!face.Properties.Redraw.Events.includes("lock")) face.Properties.Redraw.Events.push("lock");
+          if (analog.Seconds.CenterImage){
+            result.Seconds.Center = convertAmazfitImage(analog.Seconds.CenterImage);
+          }
+        }
+        return result;
+      }
+
+      function restructureAmazfitFormat(dataString){
+        console.log("Amazfit data:", dataString);
+
+
+        var json = JSON.parse(dataString);
+        faceJson = json;
+
+
+        var result = {};
+        result.Properties = {};
+        result.Properties.Redraw = {};
+        result.Properties.Redraw.Unlocked = 60000;
+        result.Properties.Redraw.Locked = 60000;
+        result.Properties.Redraw.Clear = true;
+
+
+        if (json.Background){
+          result.Background = json.Background;
+          result.Background.Image.ImagePath = [];
+          delete result.Background.Preview;
+          if (json.AnalogDialFace) result.Background.Plane = 1;
+        }
+        if (json.Time){
+          result.Time = convertAmazfitTime(json.Time);
+          if (json.AnalogDialFace) result.Time.Plane = 1;
+        }
+
+        if (json.Date){
+          result.Date = convertAmazfitDate(json.Date);
+          if (json.AnalogDialFace) result.Date.Plane = 1;
+        }
+
+        if (json.Status){
+          result.Status = convertAmazfitStatus(json.Status);
+          if (json.AnalogDialFace) result.Status.Plane = 1;
+        }
+
+        if (json.Weather){
+          result.Weather = convertAmazfitWeather(json.Weather);
+          if (json.AnalogDialFace) result.Weather.Plane = 1;
+        }
+
+        if (json.Activity){
+          result.Activity = convertAmazfitActivity(json.Activity);
+          if (json.AnalogDialFace) result.Activity.Plane = 1;
+        }
+
+        if (json.StepsProgress){
+          result.StepsProgress = convertAmazfitStepsProgress(json.StepsProgress);
+          if (json.AnalogDialFace) result.StepsProgress.Plane = 1;
+        }
+
+        if (json.Battery){
+          result.Battery = convertAmazfitBattery(json.Battery);
+          if (json.AnalogDialFace) result.Battery.Plane = 1;
+        }
+        if (json.AnalogDialFace){
+          result.Analog = convertAmazfitAnalog(json.AnalogDialFace, result);
+          result.Analog.Plane = 0;
+        }
+        console.log("Converted to native:", result);
+        return result;
+
+      }
+
+      function parseFaceJson(jsonString){
+          if (isNativeFormat()){
+            return JSON.parse(jsonString);
+          } else {
+            return restructureAmazfitFormat(jsonString);
+          }
+      }
+
+      function combineProperty(name, source, target){
+        if (source[name] && target[name]){
+          if (Array.isArray(target[name])){
+            target[name] = target[name].concat(source[name]);
+            target[name].filter((item, i) => target[name].indexOf(item) === i)
+          } else if (typeof target[name] == "number"){
+            target[name] = source[name] + target[name];
+          }
+        } else if (source[name]){
+          target[name] = source[name]
+        }
+      }
+
+      function collapseTree(element, props){
+        var result = [];
+        if (typeof element == "string" || typeof element == "number") return [];
+        for (var c in element){
+          var next = element[c];
+
+          combineProperty("X",element,next);
+          combineProperty("Y",element,next);
+          combineProperty("Width",element,next);
+          combineProperty("Height",element,next);
+          combineProperty("HideOn",element,next);
+          combineProperty("Type",element,next);
+          combineProperty("ForegroundColor",element,next);
+          combineProperty("BackgroundColor",element,next);
+          combineProperty("RotationValue",element,next);
+          combineProperty("RotationOffset",element,next);
+          combineProperty("MinRotationValue",element,next);
+          combineProperty("MaxRotationValue",element,next);
+          if (typeof element.Plane == "number") next.Plane = element.Plane;
+          next.Layer = element.Layer ? (element.Layer) : "" + c;
+
+          if (["MultiState","Image","CodedImage","Number","Circle","Poly","Rect","Scale"].includes(c)){
+            result.push({type:c, value: next});
+          } else {
+            result = result.concat(collapseTree(next));
+          }
+        }
+        return result;
+      }
+
+      function convertToCode(elements, properties, wrapInTimeouts, forceUseOrigPlane){        
+        var code = "(function (wr, wf) {\n";
+        code += "var lc;\n";
+        code += "var p = Promise.resolve();\n";  
+
+        //get mapped by layer
+        var counter = 0;
+        var planes = {};
+        var planeNumbers = [];
+        for (var i = 0; i< elements.length; i++){
+          var c = elements[i].value;
+          console.log("Check element", c);
+          var name = c.Layer;
+          var plane = (wrapInTimeouts && !forceUseOrigPlane) ? 1 : 0;
+          if (typeof c.Plane == "number"){
+            plane = c.Plane;
+          }
+          console.log("Found plane for element", plane, c);
+          if (!planeNumbers.includes(plane)) planeNumbers.push(plane);
+          if (!planes[plane]) planes[plane] = {};
+          if (!planes[plane][name]) planes[plane][name] = [];
+          planes[plane][name].push({index: i, element: c});
+        }
+        if (!planeNumbers.includes(0)) planeNumbers.push(0);
+        planeNumbers.sort().reverse();
+
+        console.log("Found planes", planes, "with numbers", planeNumbers)
+
+        code += "p0 = g;\n";
+
+        for (var planeIndex = 0; planeIndex < planeNumbers.length; planeIndex++){
+          var layers = planes[planeNumbers[planeIndex]];
+          var plane = planeNumbers[planeIndex];
+
+          var lastSetColor;
+          var lastSetBgColor;
+
+          if (plane != 0) code += "if (!p" + plane + ") p" + plane + " = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),4,{msb:true});\n";
+
+          if (properties.Redraw && properties.Redraw.Clear){
+            if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
+              code += "p = p.then(()=>delay(0)).then(()=>{\n";
+            } else {
+              code += "p = p.then(()=>{\n";
+            }
+            if (addDebug()) code += 'print("Clear for redraw of plane ' + p + '");'+"\n";
+            code += 'startPerfLog("initialDraw_g.clear");'+"\n";
+            code += "p" + plane + ".clear(true);\n";
+            code += 'endPerfLog("initialDraw_g.clear");'+ "\n";
+            code += "});\n";
+          }
+
+          var previousPlane = plane + 1;
+          if (previousPlane < planeNumbers.length){
+            code += "p = p.then(()=>{\n";
+
+            if (addDebug()) code += 'print("Copying of plane ' + previousPlane + ' to display");'+"\n";
+            //code += "g.drawImage(p" + i + ".asImage());";
+            code += "p0.drawImage({width: p" + previousPlane + ".getWidth(), height: p" + previousPlane + ".getHeight(), bpp: p" + previousPlane + ".getBPP(), buffer: p" + previousPlane + ".buffer, palette: palette});\n";
+            code += "});\n";
+          }
+
+          console.log("Got layers", layers);
+          for (var layername in layers){
+            var layerElements = layers[layername];
+
+            console.log("Layer elements", layername, layerElements);
+            //code for whole layer
+
+            if (addDebug()) code += 'print("Starting layer ' + layername + '");' + "\n";
+
+            var checkForLayerChange = false;
+            var checkcode = "";
+
+            if (!(properties.Redraw && properties.Redraw.Clear)){
+              checkcode = 's.fd';
+              for (var i = 0; i< layerElements.length; i++){
+                var layerElement = layerElements[i];
+                var referencedElement = elements[layerElements[i].index];
+                var elementType = referencedElement.type;
+                console.log("Check for change:", layerElement, referencedElement);
+                if (layerElement.element.Value){
+                  if (elementType == "MultiState" && layerElement.element.Value) {
+                    checkcode += '| isChangedMultistate(wf.c[' + layerElement.index + '].value)';
+                  } else {
+                    checkcode += '| isChangedNumber(wf.c[' + layerElement.index + '].value)';
+                  }
+                  checkForLayerChange = true;
+                }
+              }
+            }
+
+
+            //code for elements
+            for (var i = 0; i< layerElements.length; i++){
+              var elementIndex = layerElements[i].index;
+              var c = elements[elementIndex];
+              console.log("convert to code", c);
+
+              var condition = "";
+              if (checkcode.length > 0 && checkForLayerChange){
+                if (condition.length > 0) condition += " && ";
+                condition = '(' + checkcode + ')';
+              }
+
+              if (c.value.HideOn && c.value.HideOn.includes("Lock")){
+                if (condition.length > 0) condition += " && ";
+                condition = '!Bangle.isLocked()';
+              }
+
+              if (c.value.Type == "Once"){
+                if (condition.length > 0) condition += " && ";
+                condition += "s.fd";
+              }
+
+              var planeName = "p" + plane;
+              var colorsetting = "";
+              if (c.value.ForegroundColor && lastSetColor != c.value.ForegroundColor){
+                lastSetColor = c.value.ForegroundColor;
+                if (plane > 0)
+                  colorsetting += planeName + ".setColor(colormap[\"" + c.value.ForegroundColor + "\"]);\n";
+                else
+                  colorsetting += planeName + ".setColor(\"" + c.value.ForegroundColor + "\");\n";
+              }
+              if (c.value.BackgroundColor && lastSetBgColor != c.value.BackgroundColor){
+                lastSetBgColor = c.value.BackgroundColor;
+                if (plane > 0)
+                  colorsetting += planeName + ".setBgColor(colormap[\"" + c.value.BackgroundColor + "\"]);\n";
+                else
+                  colorsetting += planeName + ".setBgColor(\"" + c.value.BackgroundColor + "\");\n";
+              }
+
+              if (addDebug()) code += 'print("Element condition is ' + condition + '");' + "\n";
+              code += (condition.length > 0 ? "if (" + condition + "){\n" : "");
+                if (wrapInTimeouts && (plane != 0 || forceUseOrigPlane)){
+                  code += "p = p.then(()=>delay(0)).then(()=>{\n";
+                } else {
+                  code += "p = p.then(()=>{\n";
+                }            
+              code += "" + colorsetting;
+              if (addDebug()) code += 'print("Drawing element ' + elementIndex + ' with type ' + c.type + ' on plane ' + planeName + '");' + "\n";
+              code += "draw" + c.type + "(" + planeName + ", wr, wf.c[" + elementIndex + "].value);\n";
+
+              code += "});\n";
+              code += (condition.length > 0 ? "}\n" : "");
+            }
+          }
+          console.log("Current plane is", plane);
+
+
+
+        }
+
+        code += "return p;})";
+        console.log("Code:", code);
+        return code
+      }
+
+      function postProcess(){
+        moveData(resultJson);
+        console.log("Created data file", resourceDataString, resourceDataOffset, resultJson);
+
+        var properties = faceJson.Properties;        
+        faceJson = { Properties: properties, c: collapseTree(faceJson,{X:0,Y:0})};
+        console.log("After collapsing", faceJson);
+        precompiledJs = convertToCode(faceJson.c, properties, document.getElementById('timeoutwrap').checked, document.getElementById('forceOrigPlane').checked);
+        console.log("After precompiling", precompiledJs);
+      }
+
+      function convertJsToJson(imgstr){
+        var E = {};
+        E.toArrayBuffer = (s)=>s;
+        var atob = (s)=>s;
+        var imgstr = "imgstr = " + imgstr;
+        eval(imgstr);
+        imgstr.img = imgstr.buffer;
+        delete imgstr.buffer;
+        if (imgstr.palette) {
+          imgstr.paletteData = "[" + imgstr.palette.toString() + "]";
+          delete imgstr.palette;
+        }
+        console.log("converted Image JSON", JSON.stringify(imgstr));
+        return JSON.stringify(imgstr);
+      }
+
+      function imageLoaded() {
+        var options = {};
+
+        options.diffusion = infoJson.diffusion ? infoJson.diffusion : "none";
+        options.compression = false;
+        options.alphaToColor = false;
+        options.transparent = infoJson.transparent ? infoJson.transparent : false;
+        options.inverted = false;
+        options.autoCrop = false;
+        options.brightness = 0;
+        options.contrast = 0;
+        options.mode = infoJson.color ? infoJson.color : "1bit";
+        options.output = "object";
+
+        console.log("Loaded image has path", this.path);
+        var jsonPath = this.path.split("/");
+
+        var forcedTransparentColorMatch = jsonPath[jsonPath.length-1].match(/.*\.t([^.]+)\..*/)        
+
+        var forcedTransparentColor;
+        if (jsonPath[jsonPath.length-1].includes(".t.")){
+          options.transparent = true;
+        } else if (forcedTransparentColorMatch){
+          options.transparent = false;
+          forcedTransparentColor = forcedTransparentColorMatch[1];
+        }
+
+
+        console.log("image has transparency", options.transparent);
+        console.log("image has forced transparent color", forcedTransparentColor);
+        jsonPath[jsonPath.length-1] = jsonPath[jsonPath.length-1].replace(/([^.]*)\..*/, "$1");
+        console.log("Loaded image has json path", jsonPath);
+
+        var canvas = document.getElementById("canvas")
+        canvas.width = this.width*2;
+        canvas.height = this.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(this,0,0);
+
+        var imgstr = "";
+
+
+        var imageData = ctx.getImageData(0, 0, this.width, this.height);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(options.width, 0, this.width, this.height);
+        var rgba = imageData.data;
+        options.rgbaOut = rgba;
+        options.width = this.width;
+        options.height = this.height;
+        console.log("options", options);
+        imgstr = imageconverter.RGBAtoString(rgba, options);
+        var outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
+        ctx.putImageData(outputImageData,this.width,0);
+
+        imgstr = convertJsToJson(imgstr);
+
+        // checkerboard for transparency on original image
+        var imageData = ctx.getImageData(0, 0, this.width, this.height);
+        imageconverter.RGBAtoCheckerboard(imageData.data, {width:this.width,height:this.height});
+        ctx.putImageData(imageData,0,0);
+
+
+        var currentElement = resultJson;
+
+        for (var i = 0; i < jsonPath.length; i++){
+          if (i == jsonPath.length - 1){
+            var resultingObject = JSON.parse(imgstr);
+            if (forcedTransparentColor !== undefined) resultingObject.transparent = forcedTransparentColor;
+            currentElement[jsonPath[i]] = resultingObject;
+            console.log("result is ", resultingObject);
+          } else {
+            if (!currentElement[jsonPath[i]]) currentElement[jsonPath[i]] = {};
+            currentElement = currentElement[jsonPath[i]];
+          }
+        }
+
+        handledFiles++;
+        console.log("Expected:", expectedFiles, " handled:", handledFiles);
+
+        if (handledFiles == expectedFiles){
+          if (!isNativeFormat()) {
+            performFileChanges().then(()=>{
+              postProcess();
+
+              rootZip.file("face.json", JSON.stringify(faceJson, null, 2));
+              rootZip.file("info.json", JSON.stringify(infoJson, null, 2));
+
+              document.getElementById('btnSave').disabled = false;
+              document.getElementById('btnSaveFace').disabled = false;
+              document.getElementById('btnSaveZip').disabled = false;
+              document.getElementById('btnUpload').disabled = false;
+            });
+          } else {
+            postProcess();
+
+            document.getElementById('btnSave').disabled = false;
+            document.getElementById('btnSaveFace').disabled = false;
+            document.getElementById('btnUpload').disabled = false;
+          }
+        }
+      }
+
+      function handleWatchFace(infoFile, faceFile, resourceFiles){
+        if (isNativeFormat()){
+          var reader = new FileReader();
+          reader.path = infoFile.webkitRelativePath;
+          reader.onload = function(event) {
+            infoJson = JSON.parse(reader.result);
+
+            handleFaceJson(faceFile, resourceFiles);
+          };
+          reader.readAsText(infoFile);
+        } else {
+          console.log("Handling amazfit watch face");
+          handleFaceJson(faceFile, resourceFiles);
+        }
+      }
+
+      function handleFaceJson(faceFile, resourceFiles){
+        var reader = new FileReader();
+        reader.path = faceFile.webkitRelativePath;
+        reader.onload = function(event) {
+          faceJson = parseFaceJson(reader.result);
+
+          handleResourceFiles(resourceFiles);
+        };
+        reader.readAsText(faceFile);
+      }
+
+      function handleResourceFiles(files){
+        for (var current of files){
+          console.log('Handle resource file ', current);
+          var reader = new FileReader();
+          console.log("Handling ", current.name, " with path ", current.webkitRelativePath);
+          var filteredPath;
+          if (isNativeFormat()){
+            filteredPath = current.webkitRelativePath.replace(/.*\/resources\//,"");
+          } else {
+            filteredPath = current.webkitRelativePath.replace(/.*\//,"");
+          }
+          reader.path = filteredPath;
+          resourcesZip.file(filteredPath, current);
+          reader.onload = function(event) {
+            var img = new Image();
+            img.path = this.path;
+            img.onload = imageLoaded;
+            img.src = event.target.result;
+          };        
+          reader.readAsDataURL(current);
+        }
+      }
+
+      function handleFileSelect(event) {
+        handledFiles = 0;
+        expectedFiles = undefined;
+
+        document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnSaveZip').disabled = true;
+        document.getElementById('btnSaveFace').disabled = true;
+        document.getElementById('btnUpload').disabled = true;
+
+        console.log("File select event", event);
+        if (event.target.files.length == 0) return;
+        result = "";
+        resultJson= {};
+
+        var resourceFiles = [];
+        var faceFile;
+        var infoFile;
+
+        for (var current of event.target.files){
+          console.log('Handle file ', current);
+          if (isNativeFormat()){
+            if (current.webkitRelativePath.split("/")[1].startsWith("resources")){
+              console.log('Found resource file', current.name);
+              resourceFiles.push(current);
+              expectedFiles = resourceFiles.length;
+            } else if (current.name == "face.json"){
+              console.log('Found face file', current.name);
+              faceFile = current;
+            } else if (current.name == "info.json"){
+              console.log('Found info file', current.name);
+              infoFile = current;
+            } else {
+              console.log('Found unsupported file', current.name);
+            }
+          } else {
+            infoJson = {
+              "color": "3bit",
+              "transparent": true
+            };
+            if (current.name.includes(".png")){
+              console.log('Found resource file', current.name);
+              resourceFiles.push(current);
+              expectedFiles = resourceFiles.length;
+            } else if (current.name.includes(".json")){
+              console.log('Found amazfit file', current.name);
+              faceFile = current;
+            } else {
+              console.log('Found unsupported file', current.name);
+            }
+          }
+        }
+        handleWatchFace(infoFile, faceFile, resourceFiles);
+
+      };
+      document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
+
+      function moveData(json){
+        console.log("MoveData for", json);
+        for (var k in json){
+          var c = json[k];
+          if (c.img){
+            var currentData = atob(c.img);
+            delete c.img;
+            c.dataOffset = resourceDataOffset;
+            c.dataLength = currentData.length;
+            resourceDataString += currentData;
+            resourceDataOffset += currentData.length;
+          } else if (c.compressed){
+            var currentData = atob(c.compressed);
+            c.compressed = true;
+            c.dataOffset = resourceDataOffset;
+            c.dataLength = currentData.length;
+            resourceDataString += currentData;
+            resourceDataOffset += currentData.length;
+          } else {
+            moveData(c);
+          }
+        }
+      }
+
+      document.getElementById("timeoutwrap").addEventListener("click", function() {
+        document.getElementById("forceOrigPlane").disabled = !document.getElementById("timeoutwrap").checked;
+      });
+
+      document.getElementById("btnSave").addEventListener("click", function() {
+        var h = document.createElement('a');
+        h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(resultJson));    
+        h.target = '_blank';
+        h.download = "imageclock.resources.json";
+        h.click();
+      });
+      document.getElementById("btnUpload").addEventListener("click", function() {
+
+      console.log("Fetching app");
+      fetch('app.js').then((r) => {
+          console.log("Got response", r);
+          return r.text();
+        }
+      ).then((imageclockSrc) => {
+        console.log("Got src", imageclockSrc)
+
+        if (!document.getElementById('separateFiles').checked){
+          if (precompiledJs.length > 0){
+            const replacementString = 'eval(require("Storage").read("imageclock.draw.js"))';
+            console.log("Can replace:", imageclockSrc.includes(replacementString));
+            imageclockSrc = imageclockSrc.replace(replacementString, precompiledJs);
+          }
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.face.json")', JSON.stringify(faceJson));
+          imageclockSrc = imageclockSrc.replace('require("Storage").readJSON("imageclock.resources.json")', JSON.stringify(resultJson));
+        }
+        var appDef = {
+          id : "imageclock",
+          storage:[
+            {name:"imageclock.img", url:"app-icon.js", evaluate:true},
+          ]
+        };
+        if (document.getElementById('separateFiles').checked){
+          appDef.storage.push({name:"imageclock.app.js", url:"app.js"});
+          if (precompiledJs.length > 0){
+            appDef.storage.push({name:"imageclock.draw.js", content:precompiledJs});
+          }
+          appDef.storage.push({name:"imageclock.face.json", content: JSON.stringify(faceJson)});
+          appDef.storage.push({name:"imageclock.resources.json", content: JSON.stringify(resultJson)});
+        } else {
+          appDef.storage.push({name:"imageclock.app.js", url:"pleaseminifycontent.js", content:imageclockSrc});
+        }
+        if (resourceDataString.length > 0){
+          appDef.storage.push({name:"imageclock.resources.data", content: resourceDataString});
+        }
+        console.log("Uploading app:", appDef);        
+        sendCustomizedApp(appDef);
+        });
+      });
+
+
+      function handleZipSelect(evt) {
+
+      function handleFile(f) {
+        expectedFiles = 0;
+        handledFiles = 0;
+        document.getElementById('btnSave').disabled = true;
+        document.getElementById('btnSaveFace').disabled = true;
+        document.getElementById('btnSaveZip').disabled = true;
+        document.getElementById('btnUpload').disabled = true;
+        JSZip.loadAsync(f).then(function(zip) {
+
+                console.log("Zip loaded", zip);
+                result = "";
+                resultJson= {};
+
+                var resourceFiles = [];
+
+                var promise = zip.file("face.json").async("string").then((data)=>{
+                  console.log("face.json data", data);
+                  faceJson = parseFaceJson(data);
+                });
+
+                if (isNativeFormat()){
+                  promise = promise.then(zip.file("info.json").async("string").then((data)=>{
+                    console.log("info.json data", data);
+                    infoJson = JSON.parse(data);
+                  }));
+                } else {
+                  infoJson = {
+                    "color": "3bit",
+                    "transparent": true
+                  };
+
+                }
+
+                zip.folder("resources").forEach(function (relativePath, file){
+                  console.log("iterating over", relativePath);
+
+                  if (!file.dir){
+                    expectedFiles++;
+                    promise = promise.then(file.async("blob").then(function (blob) {
+                      var reader = new FileReader();
+                      console.log("Handling ", file.name, " with path ", relativePath);
+                      reader.path = relativePath;
+                      reader.onload = function(event) {
+                        var img = new Image();
+                        img.path = this.path;
+                        img.onload = imageLoaded;
+                        img.src = event.target.result;
+                      };  
+                      reader.readAsDataURL(blob);
+                    }));
+                  }
+
+                });
+
+
+        }, function (e) {
+          console.log("Error reading " + f.name + ": " + e.message);
+        });
+    }
+
+
+    console.log("Zip select event", evt);
+    var files = evt.target.files;
+
+    if (files.length > 1){
+      alert("Only one file allowed");
+    }
+
+    handleFile(files[0]);
+  }
+
+  function handleZipExport(){
+    rootZip.generateAsync({type:"base64"}).then(function (base64) {
+      var h = document.createElement('a');
+      h.href="data:application/zip;base64," + base64;
+      h.target = '_blank';
+      h.download = "watchface.zip";
+      h.click();
+    });
+  }
+
+
+  document.getElementById("btnSaveFace").addEventListener("click", function() {
+    var h = document.createElement('a');
+    h.href = 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(faceJson));    
+    h.target = '_blank';
+    h.download = "face.json";
+    h.click();
+  });
+
+  document.getElementById('zipLoader').addEventListener('change', handleZipSelect, false);
+  document.getElementById('btnSaveZip').addEventListener('click', handleZipExport, false);
+  document.getElementById('btnSave').disabled = true;
+  document.getElementById('btnSaveFace').disabled = true;
+  document.getElementById('btnSaveZip').disabled = true;
+  document.getElementById('btnUpload').disabled = true;
+
+   </script>
+
+  </body>
+</html>

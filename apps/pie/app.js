@@ -11,7 +11,7 @@ function scrollX(){
   gfx.clearRect(0,gfx.getHeight()*(1/4),gfx.getWidth(),0);
   gfx.scroll(0,gfx.getHeight()/4);
   score++;
-  if(typeof(m) != undefined && score>0){
+  if(typeof m !== 'undefined' && score>0){
   clearInterval(m);
   m = setInterval(scrollY,Math.abs(100/score+15-0.1*score));}
   gfx.setColor(1,1,1);

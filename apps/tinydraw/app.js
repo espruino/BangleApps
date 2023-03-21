@@ -1,10 +1,10 @@
 (function () {
-  var pen = 'circle';
-  var discard = null;
-  var kule = [0, 255, 255];  // R, G, B
-  var oldLock = false;
+  let pen = 'circle';
+  let discard = null;
+  const kule = [0, 255, 255]; // R, G, B
+  let oldLock = false;
 
-  setInterval(() => {
+Bangle.on("lock", function() {
     if (Bangle.isLocked()) {
       if (oldLock) {
         return;
@@ -19,8 +19,7 @@
       oldLock = false;
       drawUtil();
     }
-  }, 1000);
-
+});
   function nextColor () {
     kule[0] = Math.random();
     kule[1] = Math.random();
@@ -35,10 +34,33 @@
       case 'square': pen = 'circle'; break;
       default: pen = 'pixel'; break;
     }
-    console.log('set time');
     drawUtil();
 
-    discard = setTimeout(function () { console.log('timeout'); discard = null; }, 500);
+    discard = setTimeout(function () { oldX = -1; oldY = -1; console.log('timeout'); discard = null; }, 500);
+  }
+
+  var oldX = -1;
+  var oldY = -1;
+
+  function drawBrushIcon () {
+    const w = g.getWidth();
+    switch (pen) {
+      case 'circle':
+        g.fillCircle(w - 10, 10, 5);
+        break;
+      case 'square':
+        g.fillRect(w - 5, 5, w - 15, 15);
+        break;
+      case 'pixel':
+        g.setPixel(10, 10);
+        g.fillCircle(w - 10, 10, 2);
+        break;
+      case 'crayon':
+        g.drawLine(w - 10, 5, w - 10, 15);
+        g.drawLine(w - 14, 6, w - 10, 12);
+        g.drawLine(w - 6, 6, w - 10, 12);
+        break;
+    }
   }
 
   function drawUtil () {
@@ -58,35 +80,32 @@
     g.setColor('#fff');
     g.fillCircle(g.getWidth() - 10, 10, 8);
     g.setColor('#000');
-
-    var w = g.getWidth();
-    switch (pen) {
-      case 'circle':
-        g.fillCircle(w - 10, 10, 5);
-        break;
-      case 'square':
-        g.fillRect(w - 5, 5, w - 15, 15);
-        break;
-      case 'pixel':
-        g.setPixel(10, 10);
-        g.fillCircle(w - 10, 10, 2);
-        break;
-      case 'crayon':
-        var tap = { x: 10, y: 15, dy: -5, dx: 5 };
-        g.drawLine(w - tap.x, tap.y, w - tap.x + tap.dx, tap.y + tap.dy);
-        g.drawLine(w - tap.x + 1, tap.y + 2, w - tap.x + tap.dx, tap.y + tap.dy - 2);
-        g.drawLine(w - tap.x + 2, tap.y + 2, w - tap.x + tap.dx, tap.y + tap.dy + 2);
-        break;
-    }
+    drawBrushIcon();
   }
-  var tapTimer = null;
+
+  let tapTimer = null;
+  let dragTimer = null;
   Bangle.on('drag', function (tap) {
+    let from = { x: tap.x, y: tap.y };
+    const to = { x: tap.x + tap.dx, y: tap.y + tap.dy };
+    if (oldX != -1) {
+      from = { x: oldX, y: oldY };
+    }
     if (tap.b === 0) {
       if (tapTimer !== null) {
         clearTimeout(tapTimer);
         tapTimer = null;
       }
     }
+    if (dragTimer != null) {
+      clearTimeout(dragTimer);
+      dragTimer = null;
+    }
+    dragTimer = setTimeout(function () {
+      oldX = -1;
+      oldY = -1;
+    }, 100);
+
     // tap and hold the clear button
     if (tap.x < 32 && tap.y < 32) {
       if (tap.b === 1) {
@@ -110,6 +129,8 @@
           tapTimer = setTimeout(function () {
             g.clear();
             drawUtil();
+            oldX = -1; oldY = -1;
+
             tapTimer = null;
           }, 800);
         }
@@ -127,28 +148,34 @@
       drawUtil();
       return;
     }
-
+    oldX = to.x;
+    oldY = to.y;
     g.setColor(kule[0], kule[1], kule[2]);
 
     switch (pen) {
       case 'pixel':
-        g.setPixel(tap.x, tap.y);
-        g.drawLine(tap.x, tap.y, tap.x + tap.dx, tap.y + tap.dy);
+        g.drawLine(from.x, from.y, to.x, to.y);
         break;
       case 'crayon':
-        g.drawLine(tap.x, tap.y, tap.x + tap.dx, tap.y + tap.dy);
-        g.drawLine(tap.x + 1, tap.y + 2, tap.x + tap.dx, tap.y + tap.dy - 2);
-        g.drawLine(tap.x + 2, tap.y + 2, tap.x + tap.dx, tap.y + tap.dy + 2);
+        g.drawLine(from.x, from.y, to.x, to.y);
+        g.drawLine(from.x + 1, from.y + 2, to.x, to.y - 2);
+        g.drawLine(from.x + 2, from.y + 2, to.x, to.y + 2);
         break;
       case 'circle':
-        var XS = tap.dx / 10;
-        var YS = tap.dy / 10;
-        for (i = 0; i < 10; i++) {
-          g.fillCircle(tap.x + (i * XS), tap.y + (i * YS), 4, 4);
+        var XS = (to.x - from.x) / 32;
+        var YS = (to.y - from.y) / 32;
+        for (i = 0; i < 32; i++) {
+          g.fillCircle(from.x + (i * XS), from.y + (i * YS), 4, 4);
         }
         break;
       case 'square':
-        g.fillRect(tap.x - 10, tap.y - 10, tap.x + 10, tap.y + 10);
+        var XS = (to.x - from.x) / 32;
+        var YS = (to.y - from.y) / 32;
+        for (i = 0; i < 32; i++) {
+          const posX = from.x + (i * XS);
+          const posY = from.y + (i * YS);
+          g.fillRect(posX - 10, posY - 10, posX + 10, posY + 10);
+        }
         break;
     }
     drawUtil();
@@ -157,3 +184,4 @@
   g.clear();
   drawUtil();
 })();
+

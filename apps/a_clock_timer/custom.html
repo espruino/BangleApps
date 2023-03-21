@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+      <p>You can set the 2 additional timezones displayed by the clock.</p>
+      <table id="a_clock_timer-offsets">
+          <tr>
+          <th>Name</th>
+          <th>UTC Offset (Hours)</th>
+          </tr>
+      </table>
+    <p>Click <button id="upload" class="btn btn-primary">Upload</button></p>
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+      var offsets=[];
+      try{
+          var stored = localStorage.getItem('a_clock_timer-offset-list')
+          if(stored) offsets = JSON.parse(stored);
+          if (!offsets || offsets.length!=2) {
+              throw "Offsets invalid";
+          }
+        } catch(e){
+            offsets=[
+                ["PAR",1],
+                ["TYO",9],
+           ];
+        }
+      console.log(offsets);
+      var tbl=document.getElementById("a_clock_timer-offsets");
+      for (var i=0; i<2; i++) {
+        var $offset = document.createElement('tr')
+        $offset.innerHTML = `
+            <td><input type="text" size="4" maxlength="3" id="name_${i}" value="${offsets[i][0]}"></td>
+            <td><input type="number" id="offset_${i}" value="${offsets[i][1]}"></td>`
+        tbl.append($offset);
+      }
+      document.getElementById("upload").addEventListener("click", function() {
+          var storage_offsets=[];
+          var app_offsets=[];
+          for (var i=0; i<2; i++) {
+              var name=document.getElementById("name_"+i).value;
+              var offset=document.getElementById("offset_"+i).value;
+              app_offsets.push([name,offset]);
+              storage_offsets.push([name,offset]);
+          }
+          console.log(storage_offsets);
+          console.log(app_offsets);
+        localStorage.setItem('a_clock_timer-offset-list',JSON.stringify(storage_offsets));
+        sendCustomizedApp({
+          storage:[
+            {name:"a_clock_timer.settings.json", content:JSON.stringify(app_offsets)},
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env node
 /* Simple Command-line app loader for Node.js
 ===============================================
 
@@ -8,52 +8,46 @@ as a normal dependency) because we want `sanitycheck.js`
 to be able to run *quickly* in travis for every commit,
 and we don't want NPM pulling in (and compiling native modules)
 for Noble.
+
 */
 
 var SETTINGS = {
   pretokenise : true
 };
-var APPSDIR = __dirname+"/../apps/";
-var Utils = require("../core/js/utils.js");
-var AppInfo = require("../core/js/appinfo.js");
 var noble;
-try {
-  noble  = require('@abandonware/noble');
-} catch (e) {}
-if (!noble) try {
-  noble  = require('noble');
-} catch (e) { }
+["@abandonware/noble", "noble"].forEach(module => {
+  if (!noble) try {
+    noble = require(module);
+  } catch(e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e;
+    }
+  }
+});
 if (!noble) {
   console.log("You need to:")
   console.log("  npm install @abandonware/noble")
   console.log("or:")
   console.log("  npm install noble")
+  process.exit(1);
 }
-
-var apps = [];
-
 function ERROR(msg) {
   console.error(msg);
   process.exit(1);
 }
 
-var apps = [];
-var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
-dirs.forEach(dir => {
-  var appsFile;
-  if (dir.name.startsWith("_example") || !dir.isDirectory())
-    return;
-  try {
-    appsFile = require("fs").readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
-  } catch (e) {
-    ERROR(dir.name+"/metadata.json does not exist");
-    return;
-  }
-  apps.push(JSON.parse(appsFile));
-});
+var deviceId = "BANGLEJS2";
 
+var apploader = require("./lib/apploader.js");
 var args = process.argv;
 
+var bangleParam = args.findIndex(arg => /-b\d/.test(arg));
+if (bangleParam!==-1) {
+  deviceId = "BANGLEJS"+args.splice(bangleParam, 1)[0][2];
+}
+apploader.init({
+  DEVICEID : deviceId
+});
 if (args.length==3 && args[2]=="list") cmdListApps();
 else if (args.length==3 && args[2]=="devices") cmdListDevices();
 else if (args.length==4 && args[2]=="install") cmdInstallApp(args[3]);
@@ -68,13 +62,16 @@ apploader.js list
   - list available apps
 apploader.js devices
   - list available device addresses
-apploader.js install appname [de:vi:ce:ad:dr:es]
+apploader.js install [-b1] appname [de:vi:ce:ad:dr:es]
+
+NOTE: By default this App Loader expects the device it uploads to
+(deviceId) to be BANGLEJS2, pass '-b1' for it to work with Bangle.js 1
 `);
 process.exit(0);
 }
 
 function cmdListApps() {
-  console.log(apps.map(a=>a.id).join("\n"));
+  console.log(apploader.apps.map(a=>a.id).join("\n"));
 }
 function cmdListDevices() {
   var foundDevices = [];
@@ -97,16 +94,10 @@ function cmdListDevices() {
 }
 
 function cmdInstallApp(appId, deviceAddress) {
-  var app = apps.find(a=>a.id==appId);
+  var app = apploader.apps.find(a=>a.id==appId);
   if (!app) ERROR(`App ${JSON.stringify(appId)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
-  return AppInfo.getFiles(app, {
-    fileGetter:function(url) {
-      console.log(__dirname+"/"+url);
-      return Promise.resolve(require("fs").readFileSync(__dirname+"/../"+url).toString("binary"));
-    }, settings : SETTINGS}).then(files => {
-    //console.log(files);
-    var command = files.map(f=>f.cmd).join("\n")+"\n";
+  return apploader.getAppFilesString(app).then(command => {
     bangleSend(command, deviceAddress).then(() => process.exit(0));
   });
 }

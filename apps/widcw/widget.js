@@ -34,8 +34,8 @@
     }
     
     // redraw when date changes
-    setTimeout(()=>WIDGETS["widcw"].draw(), (86401 - Math.floor(date/1000) % 86400)*1000);
-    
+    if (WIDGETS["widcw"].to) clearTimeout(WIDGETS["widcw"].to);
+    WIDGETS["widcw"].to = setTimeout(()=>WIDGETS["widcw"].draw(), (86401 - Math.floor(date/1000) % 86400)*1000);
   }
 
   // add your widget

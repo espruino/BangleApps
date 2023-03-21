@@ -41,7 +41,6 @@
     },
     'Idle Warning': {
       value: !!s.idle_check,
-      format: v => v ? /*LANG*/"Yes":/*LANG*/"No",
       onchange: v => {
         s.idle_check = v;
         save();

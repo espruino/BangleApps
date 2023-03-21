@@ -2,7 +2,7 @@
   "id": "accellog",
   "name": "Acceleration Logger",
   "shortName": "Accel Log",
-  "version": "0.03",
+  "version": "0.06",
   "description": "Logs XYZ acceleration data to a CSV file that can be downloaded to your PC",
   "icon": "app.png",
   "tags": "outdoor",
