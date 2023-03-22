@@ -1,1 +1,1 @@
-﻿Bangle.on("message", (type, msg) => require("xxlmessage").listener(type, msg));
+﻿Bangle.on("message", (type, msg) => require("message").listener(type, msg));
