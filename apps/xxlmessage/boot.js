@@ -1,0 +1,1 @@
+﻿Bangle.on("message", (type, msg) => require("xxlmessage").listener(type, msg));

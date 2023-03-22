@@ -1,0 +1,19 @@
+﻿{
+  "id": "xxlmessage",
+  "name": "XXL Message",
+  "shortName": "XXL Msg",
+  "version": "0.01",
+  "description": "App to display large notifications from iOS and Gadgetbridge/Android",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"xxlmessage.app.js","url":"app.js"},
+    {"name":"xxlmessage.boot.js","url":"boot.js"},
+    {"name":"xxlmessage.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [{"url":"screenshot.png"}],
+  "sortorder": -9
+}
