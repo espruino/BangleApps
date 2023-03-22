@@ -10,7 +10,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"xxlmessage.app.js","url":"app.js"},
+    {"name":"xxlmessage.app.js","url":"xxlmessage.js"},
     {"name":"xxlmessage.boot.js","url":"boot.js"},
     {"name":"xxlmessage.img","url":"app-icon.js","evaluate":true}
   ],
