@@ -1,9 +1,12 @@
+// GB({t:"notify",id:1679479178,src:"Gadgetbridge",subject:"Test",body:"Test",sender:"Test",tel:"Test"})
 var xxl = {
 // private:
     msg: [],
-    drawTimeout: undefined, // = undefined;
+    drawTimeout: undefined,
     xpos : 0,
     loopCount : 0,
+    txt:'',
+    wtot:0,
     fontStr:undefined,
     fontStr2:undefined,
         
@@ -23,9 +26,12 @@ var xxl = {
     
 //public:
     show: function(theMessage){
-        console.log("msg = ");
-        console.log(theMessage);
+        // console.log("msg = ");
+        // console.log(theMessage);
         xxl.msg = theMessage;
+        xxl.txt = xxl.msg.subject + ': ' + xxl.msg.body;
+        xxl.setFont();
+        xxl.wtot = g.stringMetrics(xxl.txt).width;
         xxl.xpos = 2 * g.getWidth();
 
         Bangle.loadWidgets();
@@ -50,7 +56,7 @@ var xxl = {
 
     
     stop:function() {
-        console.log("stop");
+        // console.log("stop");
         if (xxl.drawTimeout) { clearTimeout(xxl.drawTimeout); }
         xxl.drawTimeout = undefined;
         g.reset();
@@ -77,23 +83,23 @@ var xxl = {
 
 
         var gw = g.getWidth();
-        var text = xxl.msg.title + ': ' + xxl.msg.body;
-        var wtot = g.stringMetrics(text).width;
+        // var text = xxl.msg.subject + ': ' + xxl.msg.body;
+        // var wtot = g.stringMetrics(text).width;
 
         g.setBgColor('#000000');
 
         g.setColor('#ffffff');
         wh = 24; // widgets height
         h = g.getHeight() - wh;
-        g.drawString(text, xxl.xpos, wh);// widgets height
-        g.drawString(text, xxl.xpos - gw - 32, h / 2 + wh);
+        g.drawString(xxl.txt, xxl.xpos, wh);// widgets height
+        g.drawString(xxl.txt, xxl.xpos - gw - 32, h / 2 + wh);
 
         g.reset();
         // widget redraw
         Bangle.drawWidgets();
                                             
-        xxl.xpos -= 24;
-        if (xxl.xpos < -wtot - gw * 2) {
+        xxl.xpos -= 32;
+        if (xxl.xpos < -xxl.wtot - gw * 2) {
             ++xxl.loopCount;
             if (xxl.loopCount > 2) {
                 xxl.stop();
@@ -117,11 +123,10 @@ exports.listener = function (type, msg) {
         msg.handled = true; // don't do anything else with the message
         xxl.show(msg);
     }
-    
 };
 
 // debug
-// var mymsg = {t:'add', new:true, handled:false, title:'SMS', body:'Hello World'};
+// var mymsg = {t:'notify', id:1231, src:'Gadgetbridge', new:true, handled:false, subject:'SMS', body:'Hello World. This is a long message. Can you read it?'};
 // exports.listener('text', mymsg);
 
 
