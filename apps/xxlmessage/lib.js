@@ -20,7 +20,7 @@ var xxl = {
         console.log(theMessage);
         xxl.msg = theMessage;
         // prepare string and metrics
-        xxl.txt = xxl.msg.src + ": " + xxl.msg.title + '  -  ' + xxl.msg.body;
+        xxl.txt = xxl.msg.src + ": " + xxl.msg.body;
         xxl.setFont();
         xxl.wtot = g.stringMetrics(xxl.txt).width;
         xxl.xpos = 2 * g.getWidth();
