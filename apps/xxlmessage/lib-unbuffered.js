@@ -10,24 +10,25 @@ var xxl = {
     img:undefined,
     imgcol:'#ffffff',
 
-    // gfx buffer
-    bufimg:undefined,
-    pal4color:undefined,
-    bufw:0,
-    bufh:0,
-    
-    
+    setFont: function(){
+        g.setFont('6x8:5x9'); // TODO this is a bottleneck. How to prepare the font once?
+    },
+
 //public:
     show: function(theMessage){
         console.log("theMessage is:");
         console.log(theMessage);
         xxl.msg = theMessage;
+        // prepare string and metrics
+        xxl.txt = xxl.msg.src + ": " + xxl.msg.body;
+        xxl.setFont();
+        xxl.wtot = g.stringMetrics(xxl.txt).width;
+        xxl.xpos = 2 * g.getWidth();
 
         // get icon
-        try{
-            xxl.img = require("messageicons").getImage(xxl.msg);
-            xxl.imgcol = require("messageicons").getColor(xxl.msg, '#ffffff');
-        }catch(e){}
+        xxl.img = require("messageicons").getImage(xxl.msg);
+        xxl.imgcol = require("messageicons").getColor(xxl.msg, '#ffffff');
+
         Bangle.loadWidgets();
 
         Bangle.on('touch', function (b, xy) {
@@ -36,22 +37,6 @@ var xxl = {
         setWatch(xxl.stop, BTN1);
         Bangle.buzz(500,1);
 
-                                            
-        // offscreen gfx buffer                    
-        // screen is 176x176
-        // font should be scaled 5x9=30x72px
-        // built in fonts are 4x6, 6x8,12x20,6x15,Vector
-        xxl.pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
-        xxl.bufw=35; // 6x15 font scaled by 5 on 176 screen width
-        xxl.bufh=16;
-        xxl.bufimg = Graphics.createArrayBuffer(xxl.bufw,xxl.bufh,2,{msb:true});
-                                            
-        // prepare string and metrics
-        xxl.txt = xxl.msg.src + ": " + xxl.msg.body;
-        g.setFont('6x15');
-        xxl.wtot = g.stringMetrics(xxl.txt).width;
-        xxl.xpos = 2 * xxl.bufw; // g.getWidth();
-                                            
         xxl.draw();
     },
 
@@ -62,7 +47,7 @@ var xxl = {
             xxl.drawTimeout = setTimeout(function () {
             xxl.drawTimeout = undefined;
             xxl.draw();
-        }, 16 - (Date.now() % 16));
+        }, 33 - (Date.now() % 33));
     },
 
 
@@ -80,21 +65,6 @@ var xxl = {
         setTimeout(load, 100);
     },
 
-    
-    megaPrint: function(txt, x, y){
-        xxl.bufimg.setFont('6x15');
-        xxl.bufimg.setFontAlign(-1, -1);
-        xxl.bufimg.setColor(1); // index in palette
-        xxl.bufimg.clear();
-        xxl.bufimg.drawString(txt, x, 0);
-        g.drawImage({width:xxl.bufw, height:xxl.bufh, bpp:2
-                     , buffer: xxl.bufimg.buffer
-                     , palette: xxl.pal4color}
-                    , 0, y
-                    ,{scale:5}
-                   );
-    },
-    
     draw: function() {
         wh = 24; // widgets height
         var gw = g.getWidth();
@@ -113,30 +83,28 @@ var xxl = {
                        );
         }
 
-        // xxl.setFont();
-        
+        xxl.setFont();
+        g.setFontAlign(-1, -1);
 
         // draw both lines
-        // g.setBgColor('#000000');
-        // g.setColor('#ffffff');
-        // g.drawString(xxl.txt, xxl.xpos, wh);
-        // g.drawString(xxl.txt, xxl.xpos - gw - 32, h + wh);
-        xxl.megaPrint(xxl.txt, xxl.xpos, wh);
-        xxl.megaPrint(xxl.txt, xxl.xpos - xxl.bufw-6, h + wh);
-                                            
+        g.setBgColor('#000000');
+        g.setColor('#ffffff');
+        g.drawString(xxl.txt, xxl.xpos, wh);
+        g.drawString(xxl.txt, xxl.xpos - gw - 32, h + wh);
+
         g.reset();
         // widget redraw
         Bangle.drawWidgets();
 
         // scroll
-        xxl.xpos -= 8;
+        xxl.xpos -= 25;
         if (xxl.xpos < -xxl.wtot - gw * 2) {
             ++xxl.loopCount;
             if (xxl.loopCount > 2) {
                 xxl.stop();
                 return;
             }
-            xxl.xpos = 3 * xxl.bufw; // gw;
+            xxl.xpos = 3 * gw;
         }
         // loop drawing
         xxl.queueDraw();
@@ -155,9 +123,6 @@ exports.listener = function (type, msg) {
         xxl.show(msg);
     }
 };
-
-// var msg = {t:"add",id:12341, src:"SMS",title:undefined,subject:undefined,body:"Hello SMS message",sender:"phoo",tel:undefined, important:false, new:true};
-// exports.listener('text', msg);
 
 // debug
 // Bangle.on("message", (type, msg) => exports.listener(type, msg));
