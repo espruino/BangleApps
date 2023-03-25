@@ -10,7 +10,7 @@
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
-  "allow_emulator": true,
+  "allow_emulator": false,
   "storage": [
     {"name":"nesclock.app.js","url":"app.js"},
     {"name":"nesclock.settings.js","url":"settings.js"},
