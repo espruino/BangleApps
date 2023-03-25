@@ -1,7 +1,7 @@
 {
   "id": "boldclk",
   "name": "Bold Clock",
-  "version": "0.05",
+  "version": "0.07",
   "description": "Simple, readable and practical clock",
   "icon": "bold_clock.png",
   "screenshots": [{"url":"screenshot_bold.png"}],

@@ -2,3 +2,5 @@
 0.03: Tweak for more efficient rendering, and firmware 2v06
 0.04: Work with themes, smaller screens
 0.05: Adjust hand lengths to be within 'tick' points
+0.06: Removed "wake LCD on face-up"-feature: A watch-face should not set things like "wake LCD on face-up". 
+0.07: Tell clock widgets to hide.

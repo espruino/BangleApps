@@ -186,7 +186,7 @@ function drawCompass(lastHeading) {
     'NW'
   ];
   const cps = Bangle.getCompass();
-  let angle = cps.heading;
+  let angle = 360-cps.heading;
   let heading = angle?
     directions[Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 45) % 8]:
     "-- ";

@@ -1,0 +1,20 @@
+{
+  "batteryWarn": 30,
+  "showWidgets": false,
+  "weatherCircleData": "humidity",
+  "circleCount": 3,
+  "Bangle/Battery_color":"red-green",
+  "Bangle/Steps_color":"#0000ff",
+  "Bangle/HRM_color":"green-red",
+  "Bangle/Altitude_color":"#00ff00",
+  "Weather/humidity_color":"#00ffff",
+  "Weather/wind_color":"fg",
+  "Weather/temperature_color":"blue-red",
+  "Alarms_color":"#00ff00",
+  "circle1colorizeIcon": true,
+  "circle2colorizeIcon": true,
+  "circle3colorizeIcon": true,
+  "circle4colorizeIcon": false,
+  "updateInterval": 60,
+  "showBigWeather": false
+}

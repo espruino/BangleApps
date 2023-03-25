@@ -238,10 +238,12 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 g.clear();
 startTimers();
 Bangle.loadWidgets();
 drawAll();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");
+

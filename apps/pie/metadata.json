@@ -1,0 +1,14 @@
+{ "id": "pie",
+  "name": "In this game you need to make highest pie",
+  "shortName":"Pie maker",
+  "version":"0.01",
+  "description": "In this game you will be making pie out of different pieces",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "game",
+  "supports" : ["BANGLEJS"],
+  "storage": [
+    {"name":"pie.app.js","url":"app.js"},
+    {"name":"pie.img","url":"app-icon.js","evaluate":true}
+  ]
+}

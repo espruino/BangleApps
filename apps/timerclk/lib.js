@@ -125,3 +125,5 @@ exports.registerControls = function(o) {
     });
   }
 };
+
+exports.timerExpiresIn=t=>t.time-(Date.now()-t.start);

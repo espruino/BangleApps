@@ -1,8 +1,15 @@
 # My Location
 
-   *Sets and stores GPS lat and lon of your preferred city*
+*Sets and stores GPS lat and lon of your preferred city*
 
-* Select one of the preset Cities or setup through the GPS
+To access, you have two options:
+
+**In the App Loader** once My Location is installed, click on the 'Save' icon
+next to it - and you can choose your location on a map.
+
+**On Bangle.js** go to `Settings -> Apps -> My Location`
+
+* Select one of the preset Cities, setup through the GPS or use the webinterface from the AppLoader
 * Other Apps can read this information to do calculations based on location
 * When the City shows ??? it means the location has been set through the GPS
 

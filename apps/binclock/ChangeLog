@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Fixed bug where screen didn't clear so incorrect time displayed.
 0.03: Update to use Bangle.setUI instead of setWatch
+0.04: Tell clock widgets to hide.

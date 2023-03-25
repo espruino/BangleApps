@@ -1,9 +1,19 @@
 (function(back) {
+  const iconColorModes = ['color', 'mono'];
+
   function settings() {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-    if (settings.vibrate===undefined) settings.vibrate=".";
+    if (settings.vibrate===undefined) settings.vibrate=":";
+    if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
     if (settings.repeat===undefined) settings.repeat=4;
+    if (settings.vibrateTimeout===undefined) settings.vibrateTimeout=60;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
+    if (settings.maxMessages===undefined) settings.maxMessages=3;
+    if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
+    settings.unlockWatch=!!settings.unlockWatch;
+    settings.openMusic=!!settings.openMusic;
+    settings.maxUnreadTimeout=240;
+    if (settings.flash===undefined) settings.flash=true;
     return settings;
   }
   function updateSetting(setting, value) {
@@ -12,31 +22,67 @@
     require('Storage').writeJSON("messages.settings.json", settings);
   }
 
-  var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
-  var currentVib = settings().vibrate;
   var mainmenu = {
     "" : { "title" : /*LANG*/"Messages" },
     "< Back" : back,
-    /*LANG*/'Vibrate': {
-      value: Math.max(0,vibPatterns.indexOf(settings().vibrate)),
-      min: 0, max: vibPatterns.length,
-      format: v => vibPatterns[v]||"Off",
-      onchange: v => {
-        updateSetting("vibrate", vibPatterns[v]);
-      }
-    },
+    /*LANG*/'Vibrate': require("buzz_menu").pattern(settings().vibrate, v => updateSetting("vibrate", v)),
+    /*LANG*/'Vibrate for calls': require("buzz_menu").pattern(settings().vibrateCalls, v => updateSetting("vibrateCalls", v)),
     /*LANG*/'Repeat': {
       value: settings().repeat,
-      min: 2, max: 10,
-      format: v => v+"s",
+      min: 0, max: 10,
+      format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
+    },
+    /*LANG*/'Vibrate timer': {
+      value: settings().vibrateTimeout,
+      min: 0, max: settings().maxUnreadTimeout, step : 10,
+      format: v => v?v+"s":/*LANG*/"Off",
+      onchange: v => updateSetting("vibrateTimeout", v)
     },
     /*LANG*/'Unread timer': {
       value: settings().unreadTimeout,
-      min: 0, max: 240, step : 10,
+      min: 0, max: settings().maxUnreadTimeout, step : 10,
       format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("unreadTimeout", v)
     },
+    /*LANG*/'Min Font': {
+      value: 0|settings().fontSize,
+      min: 0, max: 1,
+      format: v => [/*LANG*/"Small",/*LANG*/"Medium"][v],
+      onchange: v => updateSetting("fontSize", v)
+    },
+    /*LANG*/'Auto-Open Music': {
+      value: !!settings().openMusic,
+      onchange: v => updateSetting("openMusic", v)
+    },
+    /*LANG*/'Unlock Watch': {
+      value: !!settings().unlockWatch,
+      onchange: v => updateSetting("unlockWatch", v)
+    },
+    /*LANG*/'Flash Icon': {
+      value: !!settings().flash,
+      onchange: v => updateSetting("flash", v)
+    },
+    /*LANG*/'Quiet mode disables auto-open': {
+      value: !!settings().quietNoAutOpn,
+      onchange: v => updateSetting("quietNoAutOpn", v)
+    },
+    /*LANG*/'Disable auto-open': {
+      value: !!settings().noAutOpn,
+      onchange: v => updateSetting("noAutOpn", v)
+    },
+    /*LANG*/'Widget messages': {
+      value:0|settings().maxMessages,
+      min: 0, max: 5,
+      format: v => v ? v :/*LANG*/"Hide",
+      onchange: v => updateSetting("maxMessages", v)
+    },
+    /*LANG*/'Icon color mode': {
+      value: Math.max(0,iconColorModes.indexOf(settings().iconColorMode)),
+      min: 0, max: iconColorModes.length - 1,
+      format: v => iconColorModes[v],
+      onchange: v => updateSetting("iconColorMode", iconColorModes[v])
+    }
   };
   E.showMenu(mainmenu);
-})
+});

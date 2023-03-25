@@ -16,7 +16,7 @@ var commands = [];
 var showSeconds = true;
 
 function pushCommand(command) {
-  let hash = E.CRC32(E.toJS(arguments));
+  var hash = E.CRC32(E.toJS(arguments));
   if (!delete rectsToClear[hash]) {
     commands.push({hash: hash, command: Function.apply.bind(command, null, arguments.slice(1))});
   }
@@ -80,6 +80,8 @@ function draw() {
   pushCommand(drawVectorText, dateText, dateFontSize, x + width/2, y, 0, -1, datecol);
 
   executeCommands();
+
+  if (process.env.HWVERSION==2) Bangle.drawWidgets();
 }
 
 var timeout;
@@ -160,8 +162,6 @@ if ("buzz"==chimetype || "beep"==chimetype)
 
 g.clear();
 tick();
+Bangle.setUI("clock"); // Show launcher when middle button is pressed
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

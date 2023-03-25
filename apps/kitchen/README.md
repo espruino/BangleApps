@@ -60,7 +60,7 @@ The following buttons depend on which face is currently in use
 ![](screenshot_stepo.jpg)
 
 - now replaced by Stepo2 but still available if you install manually
-- Requires one of the pedominter widgets to be installed 
+- Requires one of the pedominter widgets to be installed
 - Displays the time in large font
 - Display current step count in a doughnut gauge
 - Show step count in the middle of the doughnut gauge
@@ -208,14 +208,8 @@ which will obviously limit this.
 
 ### Waypoint Editor
 
-Clicking on the download icon of gpsnav in the app loader invokes the
-waypoint editor.  The editor downloads and displays the current
-`waypoints.json` file. Clicking the `Edit` button beside an entry
-causes the entry to be deleted from the list and displayed in the
-edit boxes. It can be restored - by clicking the `Add waypoint`
-button. A new markable entry is created by using the `Add name`
-button. The edited `waypoints.json` file is uploaded to the Bangle by
-clicking the `Upload` button.
+Clicking on the download icon of `Waypoints` in the app loader invokes the
+waypoint editor. See the `Waypoints` app for more information.
 
 
 ### Calibration of the Compass
@@ -280,3 +274,8 @@ The following error codes will be displayed if one of the dependancies is not me
 * Add a small graph to the heart rate monitor app
 * Add a facility to call the Arrow calibration process
 * Maybe create waypoints.json file if missing
+
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

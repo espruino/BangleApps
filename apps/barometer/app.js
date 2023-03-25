@@ -59,6 +59,7 @@ function drawTicks(){
 function drawScaleLabels(){
   g.setColor(g.theme.fg);
   g.setFont("Vector",12);
+  g.setFontAlign(-1,-1);
 
   let label = MIN;
   for (let i=0;i <= NUMBER_OF_LABELS; i++){
@@ -103,18 +104,29 @@ function drawIcons() {
 }
 
 g.setBgColor(g.theme.bg);
-g.clear();
-
-drawTicks();
-drawScaleLabels();
-drawIcons();
 
 try {
-  Bangle.getPressure().then(data => {
-    drawHand(Math.round(data.pressure));
-  });
+  function baroHandler(data) {
+    g.clear();
+
+    drawTicks();
+    drawScaleLabels();
+    drawIcons();
+    if (data!==undefined) {
+      drawHand(Math.round(data.pressure));
+    }
+  }
+  Bangle.getPressure().then(baroHandler);
+  setInterval(() => Bangle.getPressure().then(baroHandler), 1000);
 } catch(e) {
-  print(e.message);
-  print("barometer not supporter, show a demo value");
+  if (e !== undefined) {
+    print(e.message);
+  }
+  print("barometer not supported, show a demo value");
   drawHand(MIN);
 }
+
+Bangle.setUI({
+  mode : "custom",
+  back : function() {load();}
+});

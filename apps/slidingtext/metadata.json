@@ -1,17 +1,18 @@
 {
   "id": "slidingtext",
   "name": "Sliding Clock",
-  "version": "0.07",
+  "version": "0.12",
   "description": "Inspired by the Pebble sliding clock, old times are scrolled off the screen and new times on. You are also able to change language on the fly so you can see the time written in other languages using button 1. Currently English, French, Japanese, Spanish and German are supported",
   "icon": "slidingtext.png",
+  "screenshots": [{"url":"slidingtext-screenshot.english.png"},{"url":"slidingtext-screenshot.english2.png"},{"url":"slidingtext-screenshot.hybrid.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
-  "custom": "custom.html",
-  "allow_emulator": false,
+  "allow_emulator": true,
   "storage": [
     {"name":"slidingtext.app.js","url":"slidingtext.js"},
+    {"name":"slidingtext.settings.js","url":"slidingtext.settings.js"},
     {"name":"slidingtext.img","url":"slidingtext-icon.js","evaluate":true},
     {"name":"slidingtext.locale.en.js","url":"slidingtext.locale.en.js"},
     {"name":"slidingtext.locale.en2.js","url":"slidingtext.locale.en2.js"},
@@ -19,7 +20,12 @@
     {"name":"slidingtext.locale.es.js","url":"slidingtext.locale.es.js"},
     {"name":"slidingtext.locale.fr.js","url":"slidingtext.locale.fr.js"},
     {"name":"slidingtext.locale.jp.js","url":"slidingtext.locale.jp.js"},
+    {"name":"slidingtext.utils.de.js","url":"slidingtext.utils.de.js"},
     {"name":"slidingtext.locale.de.js","url":"slidingtext.locale.de.js"},
+    {"name":"slidingtext.locale.de2.js","url":"slidingtext.locale.de2.js"},
+    {"name":"slidingtext.locale.dgt.js","url":"slidingtext.locale.dgt.js"},
+    {"name":"slidingtext.locale.hyb.js","url":"slidingtext.locale.hyb.js"},
     {"name":"slidingtext.dtfmt.js","url":"slidingtext.dtfmt.js"}
-  ]
+  ],
+  "data": [{"name": "slidingtext.settings.json"}]
 }

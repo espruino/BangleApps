@@ -8,8 +8,14 @@ const color_schemes = [
   {
     name: "black",
     background : [0.0,0.0,0.0],
-    main_bar: [1.0,1.0,1.0],
-    other_bars: [0.85,0.85,0.85],
+    main_bar: [1.0,0.0,0.0],
+    other_bars: [0.9,0.9,0.9],
+  },
+  {
+    name: "white",
+    background : [1.0,1.0,1.0],
+    main_bar: [0.0,0.0,0.0],
+    other_bars: [0.1,0.1,0.1],
   },
   {
     name: "red",
@@ -25,14 +31,14 @@ const color_schemes = [
   },
   {
     name: "purple",
-    background : [1.0,0.0,1.0],
+    background : [0.3,0.0,0.6],
     main_bar: [1.0,1.0,0.0],
     other_bars: [0.85,0.85,0.85]
   },
   {
     name: "blue",
-    background : [0.4,0.7,1.0],
-    main_bar: [1.0,1.0,1.0],
+    background : [0.1,0.2,1.0],
+    main_bar: [1.0,1.0,0.0],
     other_bars: [0.9,0.9,0.9]
   }
 ];
@@ -60,17 +66,12 @@ let command_stack_high_priority = [];
 let command_stack_low_priority = [];
 
 function next_command(){
-  command = command_stack_high_priority.pop();
+  var command = command_stack_high_priority.pop();
   if(command == null){
-    //console.log("Low priority command");
     command = command_stack_low_priority.pop();
-  } else {
-    //console.log("High priority command");
   }
   if(command != null){
     command.call();
-  } else {
-    //console.log("no command");
   }
 }
 
@@ -81,7 +82,7 @@ function reset_commands(){
 
 function has_commands(){
   return  command_stack_high_priority.length > 0 ||
-      command_stack_low_priority.lenth > 0;
+      command_stack_low_priority.length > 0;
 }
 
 class ShiftText {
@@ -96,7 +97,9 @@ class ShiftText {
   constructor(x,y,txt,font_name,
               font_size,speed_x,speed_y,freq_millis,
               color,
-              bg_color){
+              bg_color,
+              row_context,
+              rotation){
     this.x = x;
     this.tgt_x = x;
     this.init_x = x;
@@ -112,17 +115,15 @@ class ShiftText {
     this.freq_millis = freq_millis;
     this.color = color;
     this.bg_color = bg_color;
+    this.row_context = row_context;
+    this.rotation = rotation;
     this.finished_callback=null;
     this.timeoutId = null;
   }
-  setColor(color){
-    this.color = color;
-  }
-  setBgColor(bg_color){
-    this.bg_color = bg_color;
-  }
+  getRowContext(){ return this.row_context;}
+  setColor(color){ this.color = color; }
+  setBgColor(bg_color){ this.bg_color = bg_color; }
   reset(hard_reset) {
-    //console.log("reset");
     this.hide();
     this.x = this.init_x;
     this.y = this.init_y;
@@ -135,13 +136,13 @@ class ShiftText {
     }
   }
   show() {
-    g.setFontAlign(-1,-1,0);
+    g.setFontAlign(-1,-1,this.rotation);
     g.setFont(this.font_name,this.font_size);
     g.setColor(this.color[0],this.color[1],this.color[2]);
     g.drawString(this.txt, this.x, this.y);
   }
   hide(){
-    g.setFontAlign(-1,-1,0);
+    g.setFontAlign(-1,-1,this.rotation);
     g.setFont(this.font_name,this.font_size);
     //console.log("bgcolor:" + this.bg_color);
     g.setColor(this.bg_color[0],this.bg_color[1],this.bg_color[2]);
@@ -181,6 +182,36 @@ class ShiftText {
   moveToY(new_y){
     this.tgt_y = new_y;
     this._doMove();
+  }
+  scrollInFromBottom(txt,to_y){
+    if(to_y == null)
+      to_y = this.init_y;
+
+    this.setTextPosition(txt, this.init_x, g.getHeight()*2);
+    this.moveTo(this.init_x,to_y);
+  }
+  scrollInFromLeft(txt,to_x){
+    if(to_x == null)
+      to_x = this.init_x;
+
+    this.setTextPosition(txt, -txt.length * this.font_size - this.font_size, this.init_y);
+    this.moveTo(to_x,this.init_y);
+  }
+  scrollInFromRight(txt,to_x){
+    if(to_x == null)
+      to_x = this.init_x;
+
+    this.setTextPosition(txt, g.getWidth() + this.font_size, this.init_y);
+    this.moveTo(to_x,this.init_y);
+  }
+  scrollOffToLeft(){
+    this.moveTo(-this.txt.length * this.font_size, this.init_y);
+  }
+  scrollOffToRight(){
+    this.moveTo(g.getWidth() + this.font_size, this.init_y);
+  }
+  scrollOffToBottom(){
+    this.moveTo(this.init_x,g.getHeight()*2);
   }
   onFinished(finished_callback){
     this.finished_callback = finished_callback;
@@ -224,131 +255,234 @@ class ShiftText {
     if(!finished){
       this.timeoutId = setTimeout(this._doMove.bind(this), this.freq_millis);
     } else if(this.finished_callback != null){
-      //console.log("finished - calling:" + this.finished_callback);
       this.finished_callback.call();
       this.finished_callback = null;
     }
   }
 }
 
-const CLOCK_TEXT_SPEED_X = 10;
-// a list of display rows
-let row_displays;
-function setRowDisplays(y, heights) {
-  var cols = [
-    main_color(), other_color(), other_color(), other_color(), main_color()
-  ];
-  row_displays = [];
-  for (var i=0;i<heights.length;i++) {
-    row_displays.push(new ShiftText(g.getWidth(),y,'',"Vector",heights[i],CLOCK_TEXT_SPEED_X,1,10,cols[i],bg_color()));
-    y += heights[i];
-  }
+function bangleVersion(){
+  return (g.getHeight()>200)? 1 : 2;
 }
-if (g.getHeight()>200)
-  setRowDisplays(50, [40,30,30,30,40]);
-else
-  setRowDisplays(34, [35,25,25,25,35]);
+
+let row_displays;
+function initDisplay(settings) {
+  if(row_displays != null){
+    return;
+  }
+  if(settings == null){
+    settings = {};
+  }
+  var row_types = {
+    large: {
+      color: 'major',
+      speed: 'medium',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'large'
+    },
+    medium: {
+      color: 'minor',
+      speed: 'slow',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'medium'
+    },
+    small: {
+      color: 'minor',
+      speed: 'superslow',
+      angle_to_horizontal: 0,
+      scroll_off: ['left'],
+      scroll_in: ['right'],
+      size: 'small'
+    }
+  };
+
+  function mergeMaps(map1,map2){
+    if(map2 == null){
+      return;
+    }
+    Object.keys(map2).forEach(key => {
+      if(map1.hasOwnProperty(key)){
+        map1[key] = mergeObjects(map1[key], map2[key]);
+      } else {
+        map1[key] = map2[key];
+      }
+    });
+  }
+
+  function mergeObjects(obj1, obj2){
+    const result = {};
+    Object.keys(obj1).forEach(key => result[key] = (obj2.hasOwnProperty(key))? obj2[key] : obj1[key]);
+    return result;
+  }
+
+  const row_type_overide = date_formatter.defaultRowTypes();
+  mergeMaps(row_types,row_type_overide);
+  mergeMaps(row_types,settings.row_types);
+  var row_defs = (settings.row_defs != null && settings.row_defs.length > 0)?
+      settings.row_defs : date_formatter.defaultRowDefs();
+
+  var heights = {
+    vvsmall: [15,13],
+    vsmall: [20,15],
+    ssmall: [22,17],
+    small: [25,20],
+    msmall: [29,22],
+    medium: [40,25],
+    mlarge: [45,35],
+    large: [50,40],
+    vlarge: [60,50],
+    slarge: [110,90]
+  };
+
+  var rotations = {
+    0: 0,
+    90: 3,
+    180: 2,
+    270: 1,
+  };
+
+  var speeds = {
+    fast: 20,
+    medium: 10,
+    slow: 5,
+    vslow: 2,
+    superslow: 1
+  };
+
+  function create_row_type(row_type, row_def){
+    const speed = speeds[row_type.speed];
+    const rotation = rotations[row_type.angle_to_horizontal];
+    const height = heights[row_type.size];
+    const scroll_ins = [];
+    if(row_type.scroll_in.includes('left')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromLeft(txt));
+    }
+    if(row_type.scroll_in.includes('right')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromRight(txt));
+    }
+    if(row_type.scroll_in.includes('up')){
+      scroll_ins.push((row_display,txt)=> row_display.scrollInFromBottom(txt));
+    }
+    var scroll_in;
+    if(scroll_ins.length === 0){
+      scroll_in = (row_display,txt)=> row_display.scrollInFromLeft(txt);
+    } else if(scroll_ins.length === 1){
+      scroll_in = scroll_ins[0];
+    } else {
+      scroll_in = (row_display,txt) =>{
+        const idx = (Math.random() * scroll_ins.length) | 0;
+        return scroll_ins[idx](row_display,txt);
+      };
+    }
+
+    const scroll_offs = [];
+    if(row_type.scroll_off.includes('left')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToLeft());
+    }
+    if(row_type.scroll_off.includes('right')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToRight());
+    }
+    if(row_type.scroll_off.includes('down')){
+      scroll_offs.push((row_display)=> row_display.scrollOffToBottom());
+    }
+    var scroll_off;
+    if(scroll_offs.length === 0){
+      scroll_off = (row_display)=> row_display.scrollOffToLeft();
+    } else if(scroll_offs.length === 1){
+      scroll_off = scroll_offs[0];
+    } else {
+      scroll_off = (row_display) =>{
+        var idx = (Math.random() * scroll_off.length) | 0;
+        return scroll_offs[idx](row_display);
+      };
+    }
+
+    var text_formatter = (txt)=>txt;
+    const SPACES = '                                                ';
+    if(row_def.hasOwnProperty("alignment")){
+      const alignment = row_def.alignment;
+      if(alignment.startsWith("centre")){
+        const padding = parseInt(alignment.split("-")[1]);
+        if(padding > 0){
+          text_formatter = (txt) => {
+            const front_spaces = (padding - txt.length)/2 | 0;
+            return front_spaces > 0? SPACES.substring(0,front_spaces + 1) + txt : txt;
+          };
+        }
+      }
+    }
+
+    const version = bangleVersion() - 1;
+    const Y_RESERVED = 20;
+    return {
+      row_speed: speed,
+      row_height: height[version],
+      row_rotation: rotation,
+      x: (row_no) => row_def.init_coords[0] * g.getWidth() + row_def.row_direction[0] * height[version] * row_no,
+      y: (row_no) => Y_RESERVED + row_def.init_coords[1] * (g.getHeight() - Y_RESERVED) + row_def.row_direction[1] * height[version] * row_no,
+      scroll_in: scroll_in,
+      scroll_off: scroll_off,
+      fg_color: () => (row_type.color === 'major')? main_color(): other_color(),
+      row_text_formatter : text_formatter
+    };
+  }
+  row_displays = [];
+  row_defs.forEach(row_def =>{
+    const row_type = create_row_type(row_types[row_def.type],row_def);
+    // we now create the number of rows specified of that type
+    for(var row_no=0; row_no<row_def.rows; row_no++){
+      row_displays.push(new ShiftText(row_type.x(row_no),
+          row_type.y(row_no),
+          '',
+          "Vector",
+          row_type.row_height,
+          row_type.row_speed,
+          row_type.row_speed,
+          10,
+          row_type.fg_color(),
+          bg_color(),
+          row_type,
+          row_type.row_rotation
+        )
+      );
+    }
+  });
+  // dereference the setup variables to release the memory
+  row_defs = null;
+  row_types = null;
+  heights = null;
+  rotations = null;
+  speeds = null;
+}
 
 function nextColorTheme(){
-  //console.log("next color theme");
   color_scheme_index += 1;
-  if(color_scheme_index >= row_displays.length){
+  if(color_scheme_index >= color_schemes.length){
     color_scheme_index = 0;
   }
-  setColorScheme(color_schemes[color_scheme_index]);
-  reset_clock(true);
-  draw_clock();
+  updateColorScheme();
+  resetClock(true);
+  drawClock();
 }
 
-function setColorScheme(color_scheme){
-  setColor(color_scheme.main_bar,
-      color_scheme.other_bars,
-      color_scheme.background);
-}
-
-function setColor(main_color,other_color,bg_color){
-  row_displays[0].setColor(main_color);
-  row_displays[0].setBgColor(bg_color);
-  for(var i=1; i<row_displays.length - 1; i++){
-    row_displays[i].setColor(other_color);
-    row_displays[i].setBgColor(bg_color);
+function updateColorScheme(){
+  const bgcolor = bg_color();
+  for(var i=0; i<row_displays.length; i++){
+    row_displays[i].setColor(row_displays[i].getRowContext().fg_color());
+    row_displays[i].setBgColor(bgcolor);
   }
-  row_displays[row_displays.length - 1].setColor(main_color);
-  row_displays[row_displays.length - 1].setBgColor(bg_color);
-  g.setColor(bg_color[0],bg_color[1],bg_color[2]);
-  g.fillRect(0,24, g.getWidth(), g.getHeight());
+  g.setColor(bgcolor[0],bgcolor[1],bgcolor[2]);
+  g.fillRect(0, 24, g.getWidth(), g.getHeight());
 }
 
-// load the date formats and laguages required
-LANGUAGES_FILE = "slidingtext.languages.json";
-var LANGUAGES_DEFAULT = ["en","en2"];
-var locales = null;
-try{
-  locales = require("Storage").readJSON(LANGUAGES_FILE);
-  if(locales != null){
-    console.log("loaded languages:" + JSON.stringify(locales));
-  } else {
-    console.log("no languages loaded");
-    locales = LANGUAGES_DEFAULT;
-  }
-} catch(e){
-  console.log("failed to load languages:" + e);
-}
-if(locales == null || locales.length == 0){
-  locales = LANGUAGES_DEFAULT;
-  console.log("defaulting languages to locale:" + locales);
-}
-
-let date_formatters = [];
-for(var i=0; i< locales.length; i++){
-  console.log("loading locale:" + locales[i]);
-  var Formatter = require("slidingtext.locale." + locales[i] + ".js");
-  date_formatters.push(new Formatter());
-}
-
-// current index of the date formatter to display
-let date_formatter_idx = 0;
-let date_formatter = date_formatters[date_formatter_idx];
-
-function changeFormatter(){
-  date_formatter_idx += 1;
-  if(date_formatter_idx >= date_formatters.length){
-    date_formatter_idx = 0;
-  }
-  console.log("changing to formatter " + date_formatter_idx);
-  date_formatter = date_formatters[date_formatter_idx];
-  reset_clock(true);
-  draw_clock();
-  command_stack_high_priority.unshift(
-      function() {
-        //console.log("move in new:" + txt);
-        // first select the top or bottom to display the formatter name
-        // We choose the first spare row without text
-        var format_name_display = row_displays[row_displays.length - 1];
-        if (format_name_display.txt != '') {
-          format_name_display = row_displays[0];
-        }
-        if (format_name_display.txt != ''){
-          return;
-        }
-        format_name_display.speed_x = 3;
-        format_name_display.onFinished(function(){
-          format_name_display.speed_x = CLOCK_TEXT_SPEED_X;
-          console.log("return speed to:" + format_name_display.speed_x)
-          next_command();
-        });
-        format_name_display.setTextXPosition(date_formatter.name(),220);
-        format_name_display.moveToX(-date_formatter.name().length * format_name_display.font_size);
-      }
-  );
-
-}
-
-var DISPLAY_TEXT_X = 20;
-function reset_clock(hard_reset){
+function resetClock(hard_reset){
   console.log("reset_clock hard_reset:" + hard_reset);
 
-  setColorScheme(color_schemes[color_scheme_index]);
+  updateColorScheme();
   if(!hard_reset && last_draw_time != null){
     // If its not a hard reset then we want to reset the
     // rows set to the last time. If the last time is too long
@@ -356,15 +490,14 @@ function reset_clock(hard_reset){
     // In this way the watch wakes by scrolling
     // off the last time and scroll on the new time
     var reset_time = last_draw_time;
-    var last_minute_millis = Date.now() - 60000;
+    const last_minute_millis = Date.now() - 60000;
     if(reset_time.getTime() < last_minute_millis){
       reset_time = display_time(new Date(last_minute_millis));
     }
-    var rows = date_formatter.formatDate(reset_time);
+    const rows = date_formatter.formatDate(reset_time);
     for (var i = 0; i < rows.length; i++) {
       row_displays[i].hide();
-      row_displays[i].speed_x = CLOCK_TEXT_SPEED_X;
-      row_displays[i].x = DISPLAY_TEXT_X;
+      row_displays[i].x = row_displays[i].init_x;
       row_displays[i].y = row_displays[i].init_y;
       if(row_displays[i].timeoutId != null){
         clearTimeout(row_displays[i].timeoutId);
@@ -374,12 +507,8 @@ function reset_clock(hard_reset){
     }
   } else {
     // do a hard reset and clear everything out
-    for (var i = 0; i < row_displays.length; i++) {
-      row_displays[i].speed_x = CLOCK_TEXT_SPEED_X;
-      row_displays[i].reset(hard_reset);
-    }
+    row_displays.forEach(row_display => row_display.reset(hard_reset));
   }
-
   reset_commands();
 }
 
@@ -395,13 +524,13 @@ function display_time(date){
   }
 }
 
-function draw_clock(){
+function drawClock(){
   var date = new Date();
 
   // we don't want the time to be displayed
   // and then immediately be trigger another time
   if(last_draw_time != null &&
-      Date.now() - last_draw_time.getTime() < next_minute_boundary_secs * 1000 &&
+      date.getTime() - last_draw_time.getTime() < next_minute_boundary_secs * 1000 &&
       has_commands() ){
     console.log("skipping draw clock");
     return;
@@ -410,66 +539,54 @@ function draw_clock(){
   }
   reset_commands();
   date = display_time(date);
-  console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString());
-  // for debugging only
-  //date.setMinutes(37);
-  var rows = date_formatter.formatDate(date);
-  var display;
+  const mem = process.memory(false);
+  console.log("draw_clock:" + last_draw_time.toISOString() + " display:" + date.toISOString() +
+      " memory:" + mem.usage / mem.total);
+
+  const rows = date_formatter.formatDate(date);
   for (var i = 0; i < rows.length; i++) {
-    display = row_displays[i];
-    var txt = rows[i];
-    //console.log(i + "->" + txt);
-    display_row(display,txt);
+    const display = row_displays[i];
+    if(display != null){
+      const txt = display.getRowContext().row_text_formatter(rows[i]);
+      display_row(display,txt);
+    }
   }
   // If the dateformatter has not returned enough
-  // rows then treat the reamining rows as empty
+  // rows then treat the remaining rows as empty
   for (var j = i; j < row_displays.length; j++) {
-    display = row_displays[j];
-    //console.log(i + "->''(empty)");
+    const display = row_displays[j];
     display_row(display,'');
   }
   next_command();
-  //console.log(date);
 }
 
 function display_row(display,txt){
   if(display == null) {
-    console.log("no display for text:" + txt)
     return;
   }
 
-  if(display.txt == null || display.txt == ''){
-    if(txt != '') {
-      command_stack_high_priority.unshift(
-          function () {
-            //console.log("move in new:" + txt);
+  if(display.txt == null || display.txt === ''){
+    if(txt !== '') {
+      command_stack_high_priority.unshift(()=>{
             display.onFinished(next_command);
-            display.setTextXPosition(txt, 240);
-            display.moveToX(DISPLAY_TEXT_X);
+            display.getRowContext().scroll_in(display,txt);
           }
       );
     }
-  } else if(txt != display.txt && display.txt != null){
-    command_stack_high_priority.push(
-        function(){
-          //console.log("move out:" + txt);
+  } else if(txt !== display.txt && display.txt != null){
+    command_stack_high_priority.push(()=>{
           display.onFinished(next_command);
-          display.moveToX(-display.txt.length * display.font_size);
+          display.getRowContext().scroll_off(display);
         }
     );
-    command_stack_low_priority.push(
-        function(){
-          //console.log("move in:" + txt);
+    command_stack_low_priority.push(() => {
           display.onFinished(next_command);
-          display.setTextXPosition(txt,240);
-          display.moveToX(DISPLAY_TEXT_X);
+          display.getRowContext().scroll_in(display,txt);
         }
     );
   } else {
-    command_stack_high_priority.push(
-        function(){
-          //console.log("move in2:" + txt);
-          display.setTextXPosition(txt,DISPLAY_TEXT_X);
+    command_stack_high_priority.push(() => {
+          display.setTextPosition(txt,display.init_x, display.init_y);
           next_command();
         }
     );
@@ -480,80 +597,139 @@ function display_row(display,txt){
  * called from load_settings on startup to
  * set the color scheme to named value
  */
-function set_colorscheme(colorscheme_name){
+function setColorScheme(colorscheme_name){
   console.log("setting color scheme:" + colorscheme_name);
   for (var i=0; i < color_schemes.length; i++) {
-    if(color_schemes[i].name == colorscheme_name){
+    if(color_schemes[i].name === colorscheme_name){
       color_scheme_index = i;
-      console.log("match");
-      setColorScheme(color_schemes[color_scheme_index]);
+      updateColorScheme();
       break;
     }
   }
 }
 
-function set_dateformat(dateformat_name){
-  console.log("setting date format:" + dateformat_name);
-  for (var i=0; i < date_formatters.length; i++) {
-    if(date_formatters[i].name() == dateformat_name){
-      date_formatter_idx = i;
-      date_formatter = date_formatters[date_formatter_idx];
-      console.log("match");
+var date_formatter;
+function setDateformat(shortname){
+  /**
+   * Demonstration Date formatter so that we can see the
+   * clock working in the emulator
+   */
+  class DigitDateTimeFormatter {
+    constructor() {}
+
+    format00(num){
+      const value = (num | 0);
+      if(value > 99 || value < 0)
+        throw "must be between in range 0-99";
+      if(value < 10)
+        return "0" + value.toString();
+      else
+        return value.toString();
     }
+
+    formatDate(now){
+      const hours = now.getHours() ;
+      const time_txt = this.format00(hours) + ":" + this.format00(now.getMinutes());
+      const date_txt = require('locale').dow(now,1) + " " + this.format00(now.getDate());
+      const month_txt = require('locale').month(now);
+      return [time_txt, date_txt, month_txt];
+    }
+
+    defaultRowTypes(){
+      return {
+        large: {
+          scroll_off: ['left', 'right', 'down'],
+          scroll_in: ['left', 'right', 'up'],
+          size: 'vlarge'
+        },
+        small: {
+          angle_to_horizontal: 90,
+          scroll_off: ['down'],
+          scroll_in: ['up'],
+          size: 'vvsmall'
+        }
+      };
+    }
+
+    defaultRowDefs() {
+      return [
+        {
+          type: 'large',
+          row_direction: [0.0,1.0],
+          init_coords: [0.1,0.35],
+          rows: 1
+        },
+        {
+          type: 'small',
+          row_direction: [1.0,0],
+          init_coords: [0.85,0.99],
+          rows: 2
+        }
+      ];
+    }
+  }
+  console.log("setting date format:" + shortname);
+  try {
+    if (date_formatter == null) {
+      if(shortname === "default"){
+        date_formatter = new DigitDateTimeFormatter();
+      } else {
+        const date_formatter_class = require("slidingtext.locale." + shortname + ".js");
+        date_formatter = new date_formatter_class();
+      }
+    }
+  } catch(e){
+    console.log("not loaded:" + shortname);
+  }
+  if(date_formatter == null){
+    date_formatter = new DigitDateTimeFormatter();
   }
 }
 
+var enable_live_controls = false;
 const PREFERENCE_FILE = "slidingtext.settings.json";
 /**
  * Called on startup to set the watch to the last preference settings
  */
-function load_settings(){
-  var setScheme = false;
-  try{
-    settings = require("Storage").readJSON(PREFERENCE_FILE);
-    if(settings != null){
-      console.log("loaded:" + JSON.stringify(settings));
-      if(settings.color_scheme != null){
-        set_colorscheme(settings.color_scheme);
-        setScheme = true;
-      }
-      if(settings.date_format != null){
-        set_dateformat(settings.date_format);
-      }
-    } else {
-      console.log("no settings to load");
+function loadSettings() {
+  try {
+    const settings = Object.assign({},
+        require('Storage').readJSON(PREFERENCE_FILE, true) || {});
+    if (settings.date_formatter == null) {
+        settings.date_formatter = "en";
     }
-  } catch(e){
+    console.log("loaded settings:" + JSON.stringify(settings));
+    setDateformat(settings.date_formatter);
+    initDisplay(settings);
+    if (settings.color_scheme != null) {
+      setColorScheme(settings.color_scheme);
+    } else {
+      setColorScheme("black");
+    }
+    if (settings.enable_live_controls == null) {
+      settings.enable_live_controls = (bangleVersion() <= 1);
+    }
+    enable_live_controls = settings.enable_live_controls;
+    console.log("enable_live_controls=" + enable_live_controls);
+  } catch (e) {
     console.log("failed to load settings:" + e);
   }
   // just set up as default
-  if (!setScheme)
-    setColorScheme(color_schemes[color_scheme_index]);
-}
-
-/**
- * Called on button press to save down the last preference settings
- */
-function save_settings(){
-  var settings = {
-    date_format : date_formatter.name(),
-    color_scheme : color_schemes[color_scheme_index].name,
-  };
-  console.log("saving:" + JSON.stringify(settings));
-  require("Storage").writeJSON(PREFERENCE_FILE,settings);
-}
-
-function button1pressed() {
-  changeFormatter();
-  save_settings();
+  if (row_displays === undefined) {
+    setDateformat("default");
+    initDisplay();
+    updateColorScheme();
+  }
+  const mem = process.memory(true);
+  console.log("init complete memory:" + mem.usage / mem.total);
 }
 
 function button3pressed() {
-  console.log("button3pressed");
-  nextColorTheme();
-  reset_clock(true);
-  draw_clock();
-  save_settings();
+  if (enable_live_controls) {
+    nextColorTheme();
+    resetClock(true);
+    drawClock();
+  }
 }
 
 // The interval reference for updating the clock
@@ -567,12 +743,11 @@ function clearTimers(){
 }
 
 function startTimers(){
-  var date = new Date();
-  var secs = date.getSeconds();
-  var nextMinuteStart = 60 - secs;
-  //console.log("scheduling clock draw in " + nextMinuteStart + " seconds");
+  const date = new Date();
+  const secs = date.getSeconds();
+  const nextMinuteStart = 60 - secs;
   setTimeout(scheduleDrawClock,nextMinuteStart * 1000);
-  draw_clock();
+  drawClock();
 }
 
 /**
@@ -591,17 +766,17 @@ function scheduleDrawClock(){
   if (Bangle.isLCDOn()) {
     console.log("schedule draw of clock");
     intervalRef = setInterval(() => {
-        if (!shouldRedraw()) {
-          console.log("draw clock callback - skipped redraw");
-        } else {
-          console.log("draw clock callback");
-          draw_clock()
-        }
-      }, 60 * 1000
+      if (!shouldRedraw()) {
+        console.log("draw clock callback - skipped redraw");
+      } else {
+        console.log("draw clock callback");
+        drawClock();
+      }
+    }, 60 * 1000
     );
 
     if (shouldRedraw()) {
-      draw_clock();
+      drawClock();
     } else {
       console.log("scheduleDrawClock - skipped redraw");
     }
@@ -614,32 +789,23 @@ Bangle.on('lcdPower', (on) => {
   if (on) {
     console.log("lcdPower: on");
     Bangle.drawWidgets();
-    reset_clock(false);
+    resetClock(false);
     startTimers();
   } else {
     console.log("lcdPower: off");
-    reset_clock(false);
+    resetClock(false);
     clearTimers();
-  }
-});
-
-Bangle.on('faceUp',function(up){
-  //console.log("faceUp: " + up + " LCD: " + Bangle.isLCDOn());
-  if (up && !Bangle.isLCDOn()) {
-    //console.log("faceUp and LCD off");
-    clearTimers();
-    Bangle.setLCDPower(true);
   }
 });
 
 g.clear();
-load_settings();
+loadSettings();
+// Show launcher when button pressed
+Bangle.setUI("clockupdown", d=>{
+  if (d>0) button3pressed();
+});
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 startTimers();
-// Show launcher when button pressed
-Bangle.setUI("clockupdown", d=>{
-  if (d<0) button1pressed();
-  if (d>0) button3pressed();
-});
+

@@ -3,8 +3,8 @@
   "name": "Q Alarm and Timer",
   "shortName": "Q Alarm",
   "icon": "app.png",
-  "version": "0.04",
-  "description": "Alarm and timer app with days of week and 'hard' option.",
+  "version": "0.05",
+  "description": "[Not recommended - use 'Alarm & Timer' app] Alarm and timer app with days of week and 'hard' option.",
   "tags": "tool,alarm,widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [

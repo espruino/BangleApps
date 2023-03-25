@@ -1,7 +1,13 @@
-0.01: first release
-0.02: included deployment of pebble.settings.js in apps.json
+0.01: First release
+0.02: Included deployment of pebble.settings.js in apps.json
 0.03: Changed time+calendar font to LECO1976Regular, changed to slanting boot
 0.04: Fix widget hiding code (fix #1046)
 0.05: Fix typo in settings - Purple
-0.06: Added dependancy on Pedometer Widget
-0.07: Fixed icon and ong file to 48x48
+0.06: Add dependancy on Pedometer Widget
+0.07: Fix icon and ong file to 48x48
+0.08: Add theme options and optional lock symbol
+0.09: Add support for internationalization (LANG placeholders + "locale" module)
+      Get steps from built-in step counter (widpedom no more needed, fix #1697)
+0.10: Tell clock widgets to hide.
+0.11: Swipe down to see widgets
+      Support for fast loading

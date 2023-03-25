@@ -107,3 +107,8 @@ try {
 
 * Some useful code on Github can be found [here](https://portal.u-blox.com/s/question/0D52p0000925T00CAE/ublox-max-m8q-getting-stuck-when-sleeping-with-extint-pin-control)
 and [here](https://github.com/thasti/utrak/blob/master/gps.c)
+
+
+Written by: [Hugh Barney, with support from Gordon Williams](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

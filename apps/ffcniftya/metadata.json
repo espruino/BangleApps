@@ -1,7 +1,7 @@
 {
   "id": "ffcniftya",
   "name": "Nifty-A Clock",
-  "version": "0.02",
+  "version": "0.04",
   "description": "A nifty clock with time and date",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_nifty.png"}],

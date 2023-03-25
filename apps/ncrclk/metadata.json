@@ -2,7 +2,7 @@
   "id": "ncrclk",
   "name": "NCR Clock",
   "shortName": "NCR Clock",
-  "version": "0.02",
+  "version": "0.03",
   "description": "NodeConf Remote clock",
   "icon": "app.png",
   "type": "clock",

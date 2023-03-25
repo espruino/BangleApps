@@ -1,0 +1,3 @@
+0.01: Release
+0.02: Recfactoring and show weather data
+0.03: Show sizes for used, free and trash through storage.getStats

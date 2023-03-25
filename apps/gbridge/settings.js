@@ -24,24 +24,22 @@
   var mainmenu = {
     "" : { "title" : "Gadgetbridge" },
     "< Back" : back,
-    "Connected" : { value : NRF.getSecurityStatus().connected?"Yes":"No" },
-    "Show Icon" : {
+    /*LANG*/"Connected" : { value : NRF.getSecurityStatus().connected?/*LANG*/"Yes":/*LANG*/"No" },
+    /*LANG*/"Show Icon" : {
       value: settings().showIcon,
-      format: v => v?"Yes":"No",
       onchange: setIcon
     },
-    "Find Phone" : function() { E.showMenu(findPhone); },
-    "Record HRM" : {
+    /*LANG*/"Find Phone" : function() { E.showMenu(findPhone); },
+    /*LANG*/"Record HRM" : {
       value: !!settings().hrm,
-      format: v => v?"Yes":"No",
       onchange: v => updateSetting('hrm', v)
-    }    
+    }
   };
 
   var findPhone = {
     "" : { "title" : "-- Find Phone --" },
-    "On" : _=>gb({t:"findPhone",n:true}),
-    "Off" : _=>gb({t:"findPhone",n:false}),
+    /*LANG*/"On" : _=>gb({t:"findPhone",n:true}),
+    /*LANG*/"Off" : _=>gb({t:"findPhone",n:false}),
     "< Back" : function() { E.showMenu(mainmenu); },
   };
 

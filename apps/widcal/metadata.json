@@ -1,0 +1,13 @@
+{
+  "id": "widcal",
+  "name": "Calendar Widget",
+  "version": "0.02",
+  "description": "Widget with the current date",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,calendar",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widcal.wid.js","url":"widget.js"}
+  ]
+}

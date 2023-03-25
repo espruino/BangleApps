@@ -11,6 +11,8 @@ const speedUnits = { // how many kph per X?
   "kmh": 1,
   "kph": 1,
   "km/h": 1,
+  "kmt": 1,
+  "km/tim": 1,
   "mph": 1.60934,
   "kts": 1.852
 };
@@ -34,33 +36,8 @@ const codePages = {
 `.replace(/[ \n]/g,"")
   }
 };
-/* When it's not in the codepage, try and use
-these conversions */
-const charFallbacks = {
-  "ą":"a",
-  "ā":"a",
-  "č":"c",
-  "ć":"c",
-  "ě":"e",
-  "ę":"e",
-  "ē":"e",
-  "ģ":"g",
-  "i":"ī",
-  "ķ":"k",
-  "ļ":"l",
-  "ł":"l",
-  "ń":"n",
-  "ņ":"n",
-  "ő":"o",
-  "ó":"o",
-  "ř":"r",
-  "ś":"s",
-  "š":"s",
-  "ū":"u",
-  "ż":"z",
-  "ź":"z",
-  "ž":"z",
- };
+
+// charFallbacks is now in core/js/utils.js as CODEPAGE_CONVERSIONS
 
 /*
 timePattern / datePattern:
@@ -80,7 +57,7 @@ timePattern / datePattern:
     %S	second (00..60)
     %p	locale's equivalent of either AM or PM; blank if not known
     %P  like %p, but lower case
-*/ 
+*/
 
 var locales = {
   "en_GB": { // this is default
@@ -108,6 +85,25 @@ var locales = {
     currency_symbol: "Rs.",
     currency_first: true,
     int_curr_symbol: "INR",
+    speed: 'kmh',
+    distance: { "0": "m", "1": "km" },
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%d %b %Y", 1: "%d/%m/%Y" }, // 28 Feb 2020" // "28/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "en_IE": {
+    lang: "en_IE",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    currency_first: true,
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
@@ -154,7 +150,7 @@ var locales = {
     month: "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     abday: "So,Mo,Di,Mi,Do,Fr,Sa",
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
-    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", 
+    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus",
 			"< Back": "< Zurück", "Delete": "Löschen", "Mark Unread": "Als ungelesen markieren" }
   },
   "en_US": {
@@ -164,7 +160,7 @@ var locales = {
     currency_symbol: "$", currency_first: true,
     int_curr_symbol: "USD",
     speed: "mph",
-    distance: { 0: "yd", 1: "mi" },
+    distance: { 0: "m", 1: "mi" },
     temperature: "°F",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
@@ -271,7 +267,7 @@ var locales = {
     thousands_sep: ".",
     currency_symbol: "kr",
     int_curr_symbol: "SKR",
-    speed: "kmh",
+    speed: "km/tim",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
     ampm: { 0: "fm", 1: "em" },
@@ -289,7 +285,7 @@ var locales = {
     thousands_sep: ".",
     currency_symbol: "kr",
     int_curr_symbol: "SKR",
-    speed: 'kmh',
+    speed: 'km/h',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "", 1: "" },
@@ -353,7 +349,7 @@ var locales = {
     month: "Jänner,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     abday: "So,Mo,Di,Mi,Do,Fr,Sa",
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
-    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus", 
+    trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus",
 			"< Back": "< Zurück", "Delete": "Löschen", "Mark Unread": "Als ungelesen markieren" }
   },
   "en_IL": {
@@ -475,7 +471,7 @@ var locales = {
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "", 1: "" },
-    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00                 
+    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00
     datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     month: "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
@@ -493,7 +489,7 @@ var locales = {
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
     ampm: { 0: "", 1: "" },
-    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00                 
+    timePattern: { 0: "%HH:%MM.%SS ", 1: "%HH:%MM" }, // 17:00.00 // 17:00
     datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     month: "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
@@ -572,7 +568,7 @@ var locales = {
     abday: "dg,dl,dm,dc,dj,dv,ds",
     day: "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
     trans: { yes: "òc", Yes: "Òc", no: "non", No: "Non", ok: "ok", on: "on", off: "off" }
-  },  
+  },
   "pt_BR": {
     lang: "pt_BR",
     decimal_point: ",",
@@ -589,9 +585,9 @@ var locales = {
     month: "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
     abday: "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
     day: "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
-    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "certo", on: "ligado", off: "desligado" }
+    trans: { yes: "sim", Yes: "Sim", no: "não", No: "Não", ok: "confirmar", on: "ativado", off: "desativado" }
   },
-  "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use charFallbacks
+  "cs_CZ": { // THIS NEVER WORKED PROPERLY - many chars are not in the ISO8859-1 codepage and we use CODEPAGE_CONVERSIONS
     lang: "cs_CZ",
     decimal_point: ",",
     thousands_sep: " ",
@@ -608,6 +604,24 @@ var locales = {
     abday: "ne,po,út,st,čt,pá,so",
     day: "neděle,pondělí,úterý,středa,čtvrtek,pátek,sobota",
     trans: { yes: "ano", Yes: "Ano", no: "ne", No: "Ne", ok: "ok", on: "zap", off: "vyp" }
+  },
+    "hr_HR": {
+    lang: "hr_HR",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "km/h",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "dop.", 1: "pop." },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%-d. %b %Y", 1: "%-d.%-m.%Y" }, // "3. jan. 2020" // "3.1.2020"(short)
+    abmonth: "sij.,velj.,ožu.,tra.,svi,lip.,srp.,kol.,ruj.,lis.,stu.,pro.",
+    month: "siječanj,veljača,ožujak,travanj,svibanj,lipanj,srpanj,kolovoz,rujan,listopad,studeni,prosinac",
+    abday: "ned.,pon.,uto.,sri.,čet.,pet.,sub.",
+    day: "nedjelja,ponedjeljak,utorak,srijeda,četvrtak,petak,subota",
+    trans: { yes: "da", Yes: "Da", no: "ne", No: "Ne", ok: "ok", on: "Uklj.", off: "Isklj.", "< Back": "< Natrag" }
   },
   "sl_SI": {
     lang: "sl_SI",
@@ -680,6 +694,42 @@ var locales = {
     abday: "Pr,Ot,Tr,Ce,Pk,Se,Sv",
     day: "Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena,Svētdiena",
     trans: { yes: "jā", Yes: "Jā", no: "nē", No: "Nē", ok: "labi", on: "Ieslēgt", off: "Izslēgt", "< Back": "< Atpakaļ" }
+  },
+  "nn_NO": { // Using charfallbacks
+    lang: "nn_NO",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "kr",
+    int_curr_symbol: "NOK",
+    speed: "kmt",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
+    abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
+    month: "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
+    abday: "Su,Må,Ty,On,To,Fr,La",
+    day: "Sundag,Måndag,Tysdag,Onsdag,Torsdag,Fredag,Laurdag",
+    trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulesen" }
+  },
+  "nb_NO": { // Using charfallbacks
+    lang: "nb_NO",
+    decimal_point: ",",
+    thousands_sep: " ",
+    currency_symbol: "kr",
+    int_curr_symbol: "NOK",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
+    abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
+    month: "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
+    abday: "Sø,Ma,Ti,On,To,Fr,Lø",
+    day: "Søndag,Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag",
+    trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
   },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399

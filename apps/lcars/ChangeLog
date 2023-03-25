@@ -13,3 +13,14 @@
 0.13: Improved battery visualization.
 0.14: Added altitude as an option to display.
 0.15: Using wpedom to count steps.
+0.16: Improved stability. Wind can now be shown.
+0.17: Settings for mph/kph and other minor improvements.
+0.18: Fullscreen mode can now be enabled or disabled in the settings.
+0.19: Alarms can not go bigger than 100.
+0.20: Use alarm for alarm functionality instead of own implementation.
+0.21: Add custom theming.
+0.22: Fix alarm and add build in function for step counting.
+0.23: Add warning for low flash memory.
+0.24: Add ability to disable alarm functionality.
+0.25: Add more colors to the settings and add the ability to disable the data charts+Markup.
+0.26: Use widget_utils.

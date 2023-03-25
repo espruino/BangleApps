@@ -42,19 +42,25 @@
     if (top) g             .clearRect(x,y,     x+w-1,y+top-1); // erase above bar
     if (f)   g.setColor(col).fillRect(x,y+top, x+w-1,y+h-1);   // even for f=0.001 this is still 1 pixel high
   }
+  let batColor=Bangle.isCharging()?'#ff0':'#0f0';
   function draw() {
     g.reset();
     const x = this.x, y = this.y,
-      m = process.memory();
+      m = process.memory(false);
     let b=0;
     // ==HRM==         bar(x+(w*b++),y,'#f00'/*red    */,bpm/200); // >200 seems very unhealthy; if we have no valid bpm this will just be empty space
     // ==Temperature== bar(x+(w*b++),y,'#ff0'/*yellow */,E.getTemperature()/50); // you really don't want to wear a watch that's hotter than 50°C
     bar(x+(w*b++),y,g.theme.dark?'#0ff':'#00f'/*cyan/blue*/,1-(require('Storage').getFree() / process.env.STORAGE));
     bar(x+(w*b++),y,'#f0f'/*magenta*/,m.usage/m.total);
-    bar(x+(w*b++),y,'#0f0'/*green  */,E.getBattery()/100);
+    bar(x+(w*b++),y,batColor,E.getBattery()/100);
   }
 
   let redraw;
+  Bangle.on('charging', function(charging) {
+    batColor=charging?'#ff0':'#0f0';
+    WIDGETS["bars"].draw();
+  });
+  
   Bangle.on('lcdPower', on => {
     if (redraw) clearInterval(redraw)
     redraw = undefined;

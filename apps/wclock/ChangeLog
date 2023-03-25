@@ -1,2 +1,3 @@
 0.02: Modified for use with new bootloader and firmware
 0.03: setUI and support for different screens
+0.04: Tell clock widgets to hide.

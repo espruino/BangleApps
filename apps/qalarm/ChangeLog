@@ -4,3 +4,4 @@
       Fix app icon
       Change menu order so 'back' is at the top
 0.04: Fix alarm not activating sometimes.
+0.05: Use default Bangle formatter for booleans

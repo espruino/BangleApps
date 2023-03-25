@@ -1,11 +1,10 @@
-function drawTemperature() {
+function drawTemperature(h) {
   g.reset(1).clearRect(0,24,g.getWidth(),g.getHeight());
   g.setFont("6x8",2).setFontAlign(0,0);
   var x = g.getWidth()/2;
   var y = g.getHeight()/2 + 10;
   g.drawString("Temp", x, y - 45);
   g.setFontVector(70).setFontAlign(0,0);
-  var h = E.getTemperature();
   if (avg.length < 10) {
   avg[avg.length] = h;
   } else {
@@ -18,8 +17,14 @@ function drawTemperature() {
 }
 const avg = []; 
 setInterval(function() {
-  drawTemperature();
+  if (Bangle.getPressure){
+    Bangle.getPressure().then((p)=>{
+      drawTemperature(p.temperature);
+    });
+  } else {
+    drawTemperature(E.getTemperature());
+  }
 }, 2000);
-E.showMessage("Loading...");
+E.showMessage(/*LANG*/"Loading...");
 Bangle.loadWidgets();
 Bangle.drawWidgets();

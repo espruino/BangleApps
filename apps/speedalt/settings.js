@@ -37,26 +37,21 @@
     '< Load GPS Adv Sport': ()=>{load('speedalt.app.js');},
     'Units' : function() { E.showMenu(unitsMenu); },
     'Colours' : function() { E.showMenu(colMenu); },
-    'Kalman Filter' : function() { E.showMenu(kalMenu); }/*,
-    'Vibrate' : {
-    value : settings.buzz,
-    format : v => v?"On":"Off",
-    onchange : () => { settings.buzz = !settings.buzz; writeSettings(); }
-    }*/
+    'Kalman Filter' : function() { E.showMenu(kalMenu); }
   };
   
   const unitsMenu = {
     '': {'title': 'Units'},
     '< Back': function() { E.showMenu(appMenu); },
     'default (spd)' : function() { setUnits(0,''); },
-    'Kph (spd)' : function() { setUnits(1,'kph'); },
+    'km/h (spd)' : function() { setUnits(1,'km/h'); },
     'Knots (spd)' : function() { setUnits(1.852,'kts'); },
     'Mph (spd)' : function() { setUnits(1.60934,'mph'); },
     'm/s (spd)' : function() { setUnits(3.6,'m/s'); },
     'Km (dist)' : function() { setUnitsDist(1000,'km'); },
     'Miles (dist)' : function() { setUnitsDist(1609.344,'mi'); },
     'Nm (dist)' : function() { setUnitsDist(1852.001,'nm'); },
-    'Meters (alt)' : function() { setUnitsAlt(1,'m'); },
+    'Meters (alt)' : function() { setUnitsAlt(1,'meter'); },
     'Feet (alt)' : function() { setUnitsAlt(0.3048,'ft'); }
   };
 
@@ -73,12 +68,10 @@
     '< Back': function() { E.showMenu(appMenu); },
     'Speed' : {
     value : settings.spdFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.spdFilt = !settings.spdFilt; writeSettings(); }
     },
     'Altitude' : {
     value : settings.altFilt,
-    format : v => v?"On":"Off",
     onchange : () => { settings.altFilt = !settings.altFilt; writeSettings(); }
     }
   };

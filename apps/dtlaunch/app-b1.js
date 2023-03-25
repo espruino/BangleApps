@@ -13,13 +13,13 @@ function wdog(handle,timeout){
  wdog.timeout = timeout;
  }
  if(wdog.timer){
-   clearTimeout(wdog.timer)
+   clearTimeout(wdog.timer);
  }
- wdog.timer = setTimeout(wdog.handle,wdog.timeout)
+ wdog.timer = setTimeout(wdog.handle,wdog.timeout);
 }
 
 // reset after two minutes of inactivity
-wdog(load,120000)
+wdog(load,120000);
 
 var s = require("Storage");
 var apps = s.list(/\.info$/).map(app=>{
@@ -48,7 +48,14 @@ function draw_icon(p,n,selected) {
     var x = (n%3)*80; 
     var y = n>2?130:40;
     (selected?g.setColor(0.3,0.3,0.3):g.setColor(0,0,0)).fillRect(x,y,x+79,y+89);
-    g.drawImage(s.read(apps[p*6+n].icon),x+10,y+10,{scale:1.25});
+    g.setColor(g.theme.fg);
+    //bad g.drawImage(s.read(apps[p*6+n].icon),x+10,y+10,{scale:1.25});
+    if  ((apps[p*6+n].icon)){
+      if (s.read(apps[p*6+n].icon))  //ensure that graph exist    
+       g.drawImage(s.read(apps[p*6+n].icon),x+10,y+10,{scale:1.25});    
+      else console.log("icon file NOT exist :"+apps[p*6+n].icon);   
+     } 
+     else console.log("icon property NOT exist");    
     g.setColor(-1).setFontAlign(0,-1,0).setFont("6x8",1);
     var txt =  apps[p*6+n].name.split(" ");
     for (var i = 0; i < txt.length; i++) {
@@ -64,10 +71,31 @@ function drawPage(p){
         if (!apps[p*6+i]) return i;
         draw_icon(p,i,selected==i);
     }
-}
+  }
+
+    // case was not working 
+Bangle.on("touch", function(tzone){
+  //(tzone)=>{
+    //console.log("tzone"+tzone);
+    switch(tzone){  
+    case 1: //left managed by
+        console.log("1, left or back to clock?");		  
+        load();//clock
+        //nextapp(-1);             
+        break;	
+      case 2: // right                 
+        nextapp(1);
+        break;
+      case 3: //center 1+2 no for emul
+         doselect();
+        break;
+      default:
+         console.log("no match");		 
+    }
+  });
 
 Bangle.on("swipe",(dir)=>{
-    wdog()
+    wdog();
     selected = 0;
     oldselected=-1;
     if (dir<0){

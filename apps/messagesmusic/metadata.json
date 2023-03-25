@@ -1,0 +1,18 @@
+{
+  "id": "messagesmusic",
+  "name":"Messages Music",
+  "shortName": "Music",
+  "version":"0.05",
+  "description": "Uses Messages library to push a music message which in turn displays Messages app music controls",
+  "icon":"app.png",
+  "type": "app",
+  "tags":"tool,music",
+  "screenshots": [{"url":"screenshot.png"}],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"messagesmusic.app.js","url":"app.js"},
+    {"name":"messagesmusic.img","url":"app-icon.js","evaluate":true}
+  ],
+  "dependencies":{"messages":"module"}
+}

@@ -2,3 +2,4 @@
 0.03: A few tweaks to improve rendering speed
 0.04: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
 0.05: Don't use Bangle.setLCDMode, just use offscreen buffer (allows widgets)
+0.06: Bangle.js 2 enhancements - remove offscreen buffer and render direct

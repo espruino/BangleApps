@@ -52,7 +52,8 @@ where "*n*" is the next unused number.
 
 Select a waypoint using the menu. Once the waypoint is selected and you're
 back on the main screen, press either the top or bottom button (`BTN1` or
-`BTN3`). Confirm that you want to delete the waypoint with the middle
+`BTN3`), or, on Bangle.js 2, scroll the screen up or down.
+Confirm that you want to delete the waypoint with the middle
 button (`BTN2`).
 
 ## Waypoint editor
@@ -68,27 +69,43 @@ This will load up the waypoint editor:
 
 ### Add a waypoint
 
-Use the map to find your destination. Clicking on the map will
-populate the latitude/longitude input boxes with the coordinates
-of the point you clicked on. Type in a name for the waypoint and
-click "Add Waypoint". Click "Upload" to send the updated list of
-waypoints to the watch.
+Click on the map to add a waypoint. You'll be prompted to give it
+a name.
 
 ### Edit a waypoint
 
-Click on the pencil icon next to the waypoint you wish to edit.
-This will remove the waypoint from the list and populate the
-input boxes.
-Edit the coordinates by hand, or by clicking on the map. Edit
-the name if you want. Click "Add Waypoint" to save the waypoint
-back to the list. Click "Upload" to send the updated list of
-waypoints to the watch.
+Click on the map marker of the waypoint you wish to edit. You
+can then click on the blue pencil icon to edit the name of the
+waypoint. If you want to move the waypoint to a new location then
+you need to delete it and re-add it.
 
 ### Delete a waypoint
 
-Click on the pencil icon next to the waypoint you wish to edit.
-This will remove the waypoint from the list.
-Click "Upload" to send the updated list of waypoints to the watch.
+Click on the map marker of the waypoint you wish to delete. You
+can then click on the red bin icon to delete the waypoint.
+
+### Add a route
+
+![](newroute.png)
+
+Click on the map to place the first waypoint. The name of the first
+waypoint will become the name of the route.
+
+Click on the map marker for the new waypoint and click "Make route".
+Now every time you click on the map it will add another point
+on this route. When you're done either right click or click the
+"Close route" button above the map.
+
+Points along the route don't have names by default, but if you wish
+to add one you can click on the waypoint and use the blue pencil icon
+to give it a name.
+
+![](editroute.png)
+
+### Delete a route
+
+Click on the map marker for any point on the route, and select
+"Delete entire route".
 
 ## Mounting the watch on the bike
 
@@ -123,6 +140,7 @@ Compared to the original Way Pointer app, Waypointer Moto:
  * can add new waypoints from inside the app without requiring a blank slot
  * can delete waypoints from inside the app without needing the PC
  * still uses the same `waypoints.json` file
+ * supports "routes" which automatically step from one waypoint to the next
 
 ## Gotchas
 
@@ -144,8 +162,6 @@ turns white again.
 
 ## Possible Future Enhancements
 
- - "routes" with multiple waypoints; automatically step from one
-   waypoint to the next when you get near to it
  - some way to manually input coordinates directly on the watch
  - make the text & arrow more legible in direct sunlight
  - integrate a charging connector into the handlebar mount

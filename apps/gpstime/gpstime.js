@@ -10,7 +10,7 @@ var Layout = require("Layout");
 Bangle.setGPSPower(1, "app");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-E.showMessage("Loading..."); // avoid showing rubbish on screen
+E.showMessage(/*LANG*/"Loading..."); // avoid showing rubbish on screen
 
 function setGPSTime() {
   if (fix.time!==undefined) {

@@ -24,7 +24,7 @@ need to travel in to reach the selected waypoint. The blue text is
 the name of the current waypoint. NONE means that there is no
 waypoint set and so bearing and distance will remain at 0. To select
 a waypoint, press BTN2 (middle) and wait for the blue text to turn
-white. Then use BTN1 and BTN3 to select a waypoint. The waypoint
+white. Then use BTN1 and BTN3 (swipe up/down on Bangle.js 2) to select a waypoint. The waypoint
 choice is fixed by pressing BTN2 again. In the screen shot below a
 waypoint giving the location of Stone Henge has been selected.
 
@@ -61,58 +61,10 @@ The app indicates that WP2 is now marked by adding the prefix @ to
 it's name. The distance should be small as shown in the screen shot
 as you have just marked your current location.
 
-## Waypoint JSON file
+## Setting Waypoints
 
-When the app is loaded from the app loader, a file named
-`waypoints.json` is loaded along with the javascript etc. The file
-has the following contents:
-
-
-```
-[
-  {
-  "name":"NONE"
-  },
-  {
-  "name":"No10",
-  "lat":51.5032,
-  "lon":-0.1269
-  },
-  {
-  "name":"Stone",
-  "lat":51.1788,
-  "lon":-1.8260
-  },
-  { "name":"WP0" },
-  { "name":"WP1" },
-  { "name":"WP2" },
-  { "name":"WP3" },
-  { "name":"WP4" }
-]
-```
-
-The file contains the initial NONE waypoint which is useful if you
-just want to display course and speed. The next two entries are
-waypoints to No 10 Downing Street and to Stone Henge - obtained from
-Google Maps. The last five entries are entries which can be *marked*.
-
-You add and delete entries using the Web IDE to load and then save
-the file from and to watch storage. The app itself does not limit the
-number of entries although it does load the entire file into RAM
-which will obviously limit this.
-
-
-## Waypoint Editor
-
-Clicking on the download icon of gpsnav in the app loader invokes the
-waypoint editor.  The editor downloads and displays the current
-`waypoints.json` file. Clicking the `Edit` button beside an entry
-causes the entry to be deleted from the list and displayed in the
-edit boxes. It can be restored - by clicking the `Add waypoint`
-button. A new markable entry is created by using the `Add name`
-button. The edited `waypoints.json` file is uploaded to the Bangle by
-clicking the `Upload` button.
-
+Check out the documentation for the `Waypoints` app. This provides
+the ability to set waypoints from your browser.
 
 ## Calibration of the Compass
 
@@ -174,3 +126,7 @@ The majority of the code in this application is a merge of
 [jeffmer's](https://github.com/jeffmer/JeffsBangleAppsDev) GPS
 Navigation and Compass Navigation Applications.
 
+
+Written by: [Hugh Barney](https://github.com/hughbarney) For support
+and discussion please post in the [Bangle JS
+Forum](http://forum.espruino.com/microcosms/1424/)

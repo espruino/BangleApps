@@ -1,0 +1,3 @@
+0.01: 3/Feb/2023 Added 'Temperature Graph' app to depository.
+0.02: 4/Feb/2023 Rewrote the widget handling after discovering there's a 'widget_utils' module to properly hide and show them.
+0.03: 4/Feb/2023 Fixed number error in timesData array.

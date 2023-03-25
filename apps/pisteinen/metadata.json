@@ -1,0 +1,16 @@
+{ "id": "pisteinen",
+  "name": "Pisteinen - Dotted watch face",
+  "shortName":"Pisteinen",
+  "version":"0.01",
+  "description": "A minimal digital watch face made with dots.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"pisteinen.app.js","url":"app.js"},
+    {"name":"pisteinen.img","url":"app-icon.js","evaluate":true}
+  ]
+}

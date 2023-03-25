@@ -1,3 +1,9 @@
 0.01: First version
 0.02: Don't break if running on 2v08 firmware (just don't display anything)
 0.03: Fix positioning
+0.04: Show GPS fix status
+0.05: Don't poll for GPS status, override setGPSPower handler (fix #1456)
+0.06: Periodically update so the always on display does show current GPS fix
+0.07: Alternative marker icon (configurable via settings)
+0.08: Add ability to hide the icon when GPS is off, for a cleaner appearance.
+0.09: Do not take widget space if icon is hidden

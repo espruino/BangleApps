@@ -13,6 +13,7 @@ function draw() {
   g.setFontAlign(0, 0);
   g.setColor(g.theme.fg);
   g.drawString(timeStr, w/2, h/2);
+  console.log(timeStr + ", simplest");
   queueDraw();
 }
 

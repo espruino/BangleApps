@@ -1,0 +1,15 @@
+{
+  "id": "messagesdebug",
+  "name": "Messages Debug",
+  "version": "0.01",
+  "description": "Write all messages to a file, for debugging purposes",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"messagesdebug.boot.js","url":"boot.js"}
+  ],
+  "data": [{"name":"messagesdebug.log"}]
+}

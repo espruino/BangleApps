@@ -5,6 +5,7 @@ let menu = {
 
 function showMainMenu() {
   menu["< Back"] =  () => load();
+  Bangle.drawWidgets();
   return E.showMenu(menu);
 }
 
@@ -55,5 +56,6 @@ function waitMessage() {
   E.showMessage("scanning");
 }
 
+Bangle.loadWidgets();
 scan();
 waitMessage();

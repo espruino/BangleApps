@@ -1,0 +1,68 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <style>
+    input[type=checkbox] {
+      opacity:0;
+    }
+    input[type=checkbox] + label {
+      opacity:0.2;
+    }
+    input[type=checkbox]:checked + label {
+      opacity:1;
+    }
+  </style>
+</head>
+<body>
+  <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
+  <form>
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+      console.log("TEST");
+      const FontList = ["Teko", "LuckiestGuy", "Bangers", "RubikOne", "Oswald", "Anton", "TitanOne", "BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
+      "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
+      "Yumaro", "YuseiMagic", "MouseMemoirs", "ArchivoNarrow", "FjallaOne", "NerkoOne"];
+      for (fontName of FontList) {
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = fontName;
+        cb.name = "font"
+        var lb = document.createElement('label');
+        lb.setAttribute("for",fontName);
+        var img1 = document.createElement('img')
+        img1.src = "fonts/"+fontName+"-p1.png";
+        var img2 = document.createElement('img')
+        img2.src = "fonts/"+fontName+"-p2.png";
+        lb.appendChild(img1);
+        lb.appendChild(img2);
+        document.forms[0].appendChild(cb);
+        document.forms[0].appendChild(lb);
+        document.forms[0].appendChild(document.createElement('br'));
+      }
+      btn=document.createElement('button');
+      btn.id="upload";
+      btn.innerHTML="Upload selected Fonts";
+      btn.addEventListener("click", function() {
+        var n=0;
+        var fonts = [];
+        for (fontElement of document.getElementsByName("font")) {
+          if (fontElement.checked==true) {
+            fonts.push({
+              name:"contourclock-"+n+".json",
+              url:"fonts/font-"+fontElement.id+".json"
+            });
+            n++;
+          }
+        }
+        if (n>0) {
+          fonts.push({name:"contourclock-install.json", content:"{\"n\":"+n+"}"});
+          sendCustomizedApp({storage:fonts});
+        } else {
+          alert("Please select at least one Font!");
+        }
+    });
+    document.forms[0].appendChild(btn);
+    </script>
+  </form>
+</body>
+</html>

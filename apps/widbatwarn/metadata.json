@@ -2,7 +2,7 @@
   "id": "widbatwarn",
   "name": "Battery Warning",
   "shortName": "Battery Warning",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Show a warning when the battery runs low.",
   "icon": "widget.png",
   "screenshots": [{"url":"screenshot.png"}],

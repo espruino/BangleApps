@@ -5,6 +5,7 @@
   let s = {
     'grid': false,
     'weather': false,
+    'idle_check': true,
     'font': "Lato"
   }
 
@@ -37,18 +38,23 @@
       },
     },
     'Show Grid': {
-      value: s.grid,
-      format: () => (s.grid ? 'Yes' : 'No'),
-      onchange: () => {
-        s.grid = !s.grid;
+      value: !!s.grid,
+      onchange: v => {
+        s.grid = v;
         save();
       },
     },
     'Show Weather': {
-      value: s.weather,
-      format: () => (s.weather ? 'Yes' : 'No'),
-      onchange: () => {
-        s.weather = !s.weather;
+      value: !!s.weather,
+      onchange: v => {
+        s.weather = v;
+        save();
+      },
+    },
+    'Idle Warning': {
+      value: !!s.idle_check,
+      onchange: v => {
+        s.idle_check = v;
         save();
       },
     }

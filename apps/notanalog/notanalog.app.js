@@ -1,9 +1,10 @@
 /**
  * NOT ANALOG CLOCK
  */
-
+const TIMER_IDX = "notanalog";
 const locale = require('locale');
 const storage = require('Storage')
+const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "notanalog.setting.json";
 let settings = {
     alarm: -1,
@@ -12,6 +13,9 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
     settings[key] = saved_settings[key]
 }
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
+  "12hour"
+];
 
 /*
  * Set some important constants such as width, height and center
@@ -88,20 +92,22 @@ Graphics.prototype.setNormalFont = function(scale) {
 };
 
 
-
 function getSteps() {
+    var steps = 0;
     try{
         if (WIDGETS.wpedom !== undefined) {
-            return WIDGETS.wpedom.getSteps();
+            steps = WIDGETS.wpedom.getSteps();
         } else if (WIDGETS.activepedom !== undefined) {
-            return WIDGETS.activepedom.getSteps();
+            steps = WIDGETS.activepedom.getSteps();
+        } else {
+          steps = Bangle.getHealthStatus("day").steps;
         }
     } catch(ex) {
         // In case we failed, we can only show 0 steps.
     }
 
-    return 0;
-  }
+    return steps;
+}
 
 
 function drawBackground() {
@@ -196,6 +202,9 @@ function drawTime(){
 
     // Hour
     var h = state.currentDate.getHours();
+    if (is12Hour && h > 12) {
+      h = h - 12;
+    }
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
     drawTextCleared(h1, cx, posY+8);
@@ -289,9 +298,11 @@ function drawSleep(){
 
 
 function draw(fastUpdate){
+    // Queue draw in one minute
+    queueDraw();
+
     // Execute handlers
     handleState(fastUpdate);
-    handleAlarm();
 
     if(state.sleep){
         drawSleep();
@@ -321,9 +332,6 @@ function draw(fastUpdate){
     drawState();
     drawTime();
     drawData();
-
-    // Queue draw in one minute
-    queueDraw();
 }
 
 
@@ -377,81 +385,79 @@ Bangle.on('touch', function(btn, e){
  * Some helpers
  */
 function queueDraw() {
+
+    // Faster updates during alarm to ensure that it is
+    // shown correctly...
+    var timeout = isAlarmEnabled() ? 10000 : 60000;
+
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
-      draw(true);
-    }, 60000 - (Date.now() % 60000));
+      draw();
+    }, timeout - (Date.now() % timeout));
 }
 
 
 /*
  * Handle alarm
  */
-function getCurrentTimeInMinutes(){
-    return Math.floor(Date.now() / (1000*60));
-}
-
 function isAlarmEnabled(){
-    return settings.alarm >= 0;
-}
+    try{
+      var alarm = require('sched');
+      var alarmObj = alarm.getAlarm(TIMER_IDX);
+      if(alarmObj===undefined || !alarmObj.on){
+        return false;
+      }
+
+      return true;
+
+    } catch(ex){ }
+    return false;
+  }
 
 function getAlarmMinutes(){
-    var currentTime = getCurrentTimeInMinutes();
-    return settings.alarm - currentTime;
-}
-
-function handleAlarm(){
     if(!isAlarmEnabled()){
-        return;
+        return -1;
     }
 
-    if(getAlarmMinutes() > 0){
-        return;
-    }
-
-    // Alarm
-    var t = 300;
-    Bangle.buzz(t, 1)
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, t)))
-    .then(() => Bangle.buzz(t, 1))
-    .then(() => new Promise(resolve => setTimeout(resolve, 5E3)))
-    .then(() => {
-        // Update alarm state to disabled
-        settings.alarm = -1;
-        storage.writeJSON(SETTINGS_FILE, settings);
-    });
+    var alarm = require('sched');
+    var alarmObj =  alarm.getAlarm(TIMER_IDX);
+    return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
 }
-
 
 function increaseAlarm(){
-    if(isAlarmEnabled()){
-        settings.alarm += 5;
-    } else {
-        settings.alarm = getCurrentTimeInMinutes() + 5;
-    }
-
-    storage.writeJSON(SETTINGS_FILE, settings);
+    try{
+        var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+        var alarm = require('sched')
+        alarm.setAlarm(TIMER_IDX, {
+        timer : (minutes+5)*60*1000,
+        });
+        alarm.reload();
+    } catch(ex){ }
 }
 
-
 function decreaseAlarm(){
-    if(isAlarmEnabled() && (settings.alarm-5 > getCurrentTimeInMinutes())){
-        settings.alarm -= 5;
-    } else {
-        settings.alarm = -1;
-    }
+    try{
+        var minutes = getAlarmMinutes();
+        minutes -= 5;
 
-    storage.writeJSON(SETTINGS_FILE, settings);
+        var alarm = require('sched')
+        alarm.setAlarm(TIMER_IDX, undefined);
+
+        if(minutes > 0){
+        alarm.setAlarm(TIMER_IDX, {
+            timer : minutes*60*1000,
+        });
+        }
+
+        alarm.reload();
+    } catch(ex){ }
 }
 
 function feedback(){
     Bangle.buzz(40, 0.6);
 }
+
 
 /*
  * Lets start widgets, listen for btn etc.
@@ -461,10 +467,8 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 /*
  * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+widget_utils.hide();
 
 // Clear the screen once, at startup and draw clock
 // g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();

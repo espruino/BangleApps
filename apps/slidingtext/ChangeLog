@@ -5,3 +5,8 @@
 0.05: BUGFIX: pedometer widget interfered with the clock Font Alignment
 0.06: Use Bangle.setUI for button/launcher handling
 0.07: Support for Bangle.js 2 and themes
+0.08: Removed "wake LCD on face-up"-feature: A watch-face should not set things like "wake LCD on face-up".
+0.09: Added button control toggle and other live controls to new settings screen.
+0.10: Tell clock widgets to hide.
+0.11: Added new styling and watch faces
+0.12: Convert Yes/No On/Off in settings to checkboxes

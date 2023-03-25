@@ -2,15 +2,16 @@
   "id": "blackjack",
   "name": "Black Jack game",
   "shortName": "Black Jack game",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Simple implementation of card game Black Jack",
   "icon": "blackjack.png",
   "tags": "game",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"bangle1-black-jack-game-screenshot.png"}],
   "allow_emulator": true,
   "storage": [
-    {"name":"blackjack.app.js","url":"blackjack.app.js"},
+    {"name":"blackjack.app.js","url":"blackjack.app.js","supports": ["BANGLEJS"]},
+    {"name":"blackjack.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
     {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
   ]
 }

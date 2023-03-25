@@ -1,0 +1,20 @@
+{
+  "id": "smclock",
+  "name": "Monogram Watch Face",
+  "shortName": "MonoClock",
+  "icon": "app.png",
+  "screenshots": [{ "url": "screenshot0.png" }, {"url": "screenshot1.png" }],
+  "version": "0.07",
+  "description": "A simple watchface based on my stylised monogram.",
+  "type": "clock",
+  "tags": "clock",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    { "name": "smclock.app.js", "url": "app.js" },
+    { "name": "smclock.settings.js", "url": "settings.js" },
+    { "name": "smclock.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "data": [{ "name": "smclock.json" }]
+}

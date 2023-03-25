@@ -1,0 +1,20 @@
+{
+  "id": "info",
+  "name": "Info",
+  "version": "0.03",
+  "description": "An application that displays information such as battery level, steps etc.",
+  "icon": "info.png",
+  "type": "app",
+  "tags": "tool",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_2.png"},
+    {"url":"screenshot_3.png"},
+    {"url":"screenshot_4.png"}],
+  "storage": [
+    {"name":"info.app.js","url":"info.app.js"},
+    {"name":"info.img","url":"info.icon.js","evaluate":true}
+  ]
+}

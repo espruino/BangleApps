@@ -1,0 +1,3 @@
+0.01: New App!
+0.02: Fix issue setting colors after showMessage
+0.03: Fix BG/FG Color if e.g. theme background is black

@@ -1,7 +1,7 @@
 {
   "id": "widbars",
   "name": "Bars Widget",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Display several measurements as vertical bars.",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],

@@ -7,3 +7,11 @@
 0.07: Update to use Bangle.setUI instead of setWatch
 0.08: Use theme colors, Layout library
 0.09: Fix time/date disappearing after fullscreen notification
+0.10: Use ClockFace library
+0.11: Use ClockFace.is12Hour
+0.12: Add settings to hide date,widgets
+0.13: Add font setting
+0.14: Use ClockFace_menu.addItems
+0.15: Add Power saving option
+0.16: Support Fast Loading
+0.17: Hide widgets instead of not loading them at all

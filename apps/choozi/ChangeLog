@@ -1,1 +1,9 @@
 0.01: New App!
+0.02: Support Bangle.js 2
+0.03: Fix bug for Bangle.js 2 where g.flip was not being called.
+0.04: Combine code for both apps
+      Better colors for Bangle.js 2
+      Fix selection animation for Bangle.js 2
+      New icon
+      Slightly wider arc segments for better visibility
+      Extract arc drawing code in library

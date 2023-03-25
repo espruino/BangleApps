@@ -1,9 +1,21 @@
+const CONFIGFILE = "stopwatch.json";
+
+const now = Date.now();
+const config = Object.assign({
+    state: {
+        total: now,
+        start: now,
+        current: now,
+        running: false,
+    }
+}, require("Storage").readJSON(CONFIGFILE,1) || {});
+
 let w = g.getWidth();
 let h = g.getHeight();
-let tTotal = Date.now();
-let tStart = tTotal;
-let tCurrent = tTotal;
-let running = false;
+let tTotal = config.state.total;
+let tStart = config.state.start;
+let tCurrent = config.state.current;
+let running = config.state.running;
 let timeY = 2*h/5;
 let displayInterval;
 let redrawButtons = true;
@@ -14,6 +26,14 @@ const iconScale = g.getWidth() / 178; // scale up/down based on Bangle 2 size
 const pause_img = atob("GBiBAf////////////////wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP////////////////w==");
 const play_img = atob("GBjBAP//AAAAAAAAAAAIAAAOAAAPgAAP4AAP+AAP/AAP/wAP/8AP//AP//gP//gP//AP/8AP/wAP/AAP+AAP4AAPgAAOAAAIAAAAAAAAAAA=");
 const reset_img = atob("GBiBAf////////////AAD+AAB+f/5+f/5+f/5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+f/5+f/5+f/5+AAB/AAD////////////w==");
+
+function saveState() {
+    config.state.total = tTotal;
+    config.state.start = tStart;
+    config.state.current = tCurrent;
+    config.state.running = running;
+    require("Storage").writeJSON(CONFIGFILE, config);
+}
 
 function log_debug(o) {
   //console.log(o);
@@ -106,6 +126,7 @@ function stopStart() {
   } else {
     draw();
   }
+  saveState();
 }
 
 function setButtonImages() {
@@ -130,6 +151,7 @@ function lapReset() {
     g.clearRect(0,24,w,h);
     draw();
   }
+  saveState();
 }
 
 // simple on screen button class
@@ -185,17 +207,27 @@ resetBtn.setImage(pause_img);
 
 
 Bangle.on('touch', function(button, xy) {
+  var x = xy.x;
+  var y = xy.y;
+
+  // adjust for outside the dimension of the screen
+  // http://forum.espruino.com/conversations/371867/#comment16406025
+  if (y > h) y = h;
+  if (y < 0) y = 0;
+  if (x > w) x = w;
+  if (x < 0) x = 0;
+
   // not running, and reset
-  if (!running && tCurrent == tTotal && bigPlayPauseBtn.check(xy.x, xy.y)) return;
+  if (!running && tCurrent == tTotal && bigPlayPauseBtn.check(x, y)) return;
 
   // paused and hit play
-  if (!running && tCurrent != tTotal && smallPlayPauseBtn.check(xy.x, xy.y)) return;
+  if (!running && tCurrent != tTotal && smallPlayPauseBtn.check(x, y)) return;
 
   // paused and press reset
-  if (!running && tCurrent != tTotal && resetBtn.check(xy.x, xy.y)) return;
+  if (!running && tCurrent != tTotal && resetBtn.check(x, y)) return;
 
   // must be running
-  if (running && bigPlayPauseBtn.check(xy.x, xy.y)) return;
+  if (running && bigPlayPauseBtn.check(x, y)) return;
 });
 
 // Stop updates when LCD is off, restart when on
@@ -216,5 +248,10 @@ g.fillRect(0,0,w,h);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-draw();
-Bangle.setUI("clock"); // Show launcher when button pressed
+setButtonImages();
+if (running) {
+    startTimer();
+} else {
+    draw();
+}
+setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
