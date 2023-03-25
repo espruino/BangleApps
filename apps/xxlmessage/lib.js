@@ -12,12 +12,14 @@ var xxl = {
 
     // gfx buffer
     bufimg:undefined,
-    pal4color:undefined,
-    bufw:0,
-    bufh:0,
-    
-    
-//public:
+    bufpal4color:undefined,
+    buffnt:'6x15', // font to use. Built-in: 4x6, 6x8,12x20,6x15,Vector
+    bufw:0, // width of buffer for all lines
+    bufh:0, // height of buffer
+    buflin:0, // number of lines to print
+    bufscale:0, // scale factor for buffer to screen
+
+// public:
     show: function(theMessage){
         console.log("theMessage is:");
         console.log(theMessage);
@@ -26,8 +28,9 @@ var xxl = {
         // get icon
         try{
             xxl.img = require("messageicons").getImage(xxl.msg);
-            xxl.imgcol = require("messageicons").getColor(xxl.msg, '#ffffff');
+            xxl.imgcol = (require("messageicons").getColor(xxl.msg, '#ffffff')||'#00ffff');
         }catch(e){}
+
         Bangle.loadWidgets();
 
         Bangle.on('touch', function (b, xy) {
@@ -36,27 +39,32 @@ var xxl = {
         setWatch(xxl.stop, BTN1);
         Bangle.buzz(500,1);
 
-                                            
-        // offscreen gfx buffer                    
+
+        // offscreen gfx buffer
         // screen is 176x176
         // font should be scaled 5x9=30x72px
         // built in fonts are 4x6, 6x8,12x20,6x15,Vector
-        xxl.pal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
-        xxl.bufw=35; // 6x15 font scaled by 5 on 176 screen width
-        xxl.bufh=16;
+        xxl.bufpal4color = new Uint16Array([0x0000,0xFFFF,0x7BEF,0xAFE5],0,2);   // b,w,grey,greenyellow
+        g.setFont(xxl.buffnt);
+        var hfont = g.getFontHeight();
+        xxl.bufscale=parseInt((g.getHeight() - 24/*widgets*/)/2) / hfont;
+        xxl.buflin=2; // number of lines
+        xxl.bufw=(g.getWidth() * xxl.buflin) / xxl.bufscale; // 6x15 font scaled by 5 on 176 screen width
+        xxl.bufh=hfont;
+
         xxl.bufimg = Graphics.createArrayBuffer(xxl.bufw,xxl.bufh,2,{msb:true});
-                                            
+
         // prepare string and metrics
-        xxl.txt = xxl.msg.src + ": " + xxl.msg.body;
-        g.setFont('6x15');
+        xxl.txt = (xxl.msg.src||"MSG") + ": " + (xxl.msg.body||"-x-");
+        g.setFont(xxl.buffnt);
         xxl.wtot = g.stringMetrics(xxl.txt).width;
-        xxl.xpos = 2 * xxl.bufw; // g.getWidth();
-                                            
+        xxl.xpos = xxl.bufw; // g.getWidth();
+
         xxl.draw();
     },
 
 //private:
-    // schedule a draw for 30 FPS
+    // schedule a draw for 60 FPS
     queueDraw: function() {
         if (xxl.drawTimeout) { return; } // clearTimeout(xxl.drawTimeout); }
             xxl.drawTimeout = setTimeout(function () {
@@ -80,23 +88,43 @@ var xxl = {
         setTimeout(load, 100);
     },
 
-    
+    // this is even slower than the scaled printing :(
+    // megaPrintBufferd: function(txt, x, y){
+    //     xxl.bufimg.setFont(xxl.buffnt);
+    //     xxl.bufimg.setFontAlign(-1, -1);
+    //     xxl.bufimg.setColor(1); // index in palette
+    //     xxl.bufimg.clear();
+    //     xxl.bufimg.drawString(txt, x, 0);
+    //     for(var i = 0; i<xxl.buflin; ++i){
+    //         g.drawImage({
+    //                      width:xxl.bufw, height:xxl.bufh, bpp:2
+    //                      , buffer: xxl.bufimg.buffer
+    //                      , palette: xxl.bufpal4color
+    //                     }
+    //                     , -i*g.getWidth(), y
+    //                     ,{scale:xxl.bufscale}
+    //                 );
+    //         y+=xxl.bufscale*xxl.bufh;
+    //     }
+    // },
+
+    // x: pixels in buffer. Must scale this.
+    // y: screen position
     megaPrint: function(txt, x, y){
-        xxl.bufimg.setFont('6x15');
-        xxl.bufimg.setFontAlign(-1, -1);
-        xxl.bufimg.setColor(1); // index in palette
-        xxl.bufimg.clear();
-        xxl.bufimg.drawString(txt, x, 0);
-        g.drawImage({width:xxl.bufw, height:xxl.bufh, bpp:2
-                     , buffer: xxl.bufimg.buffer
-                     , palette: xxl.pal4color}
-                    , 0, y
-                    ,{scale:5}
-                   );
+        g.setFont(xxl.buffnt+':'+xxl.bufscale);
+        g.setColor('#ffffff');
+        g.setFontAlign(-1, -1);
+        for(var i = 0; i<xxl.buflin; ++i){
+            g.drawString(txt
+                         , x*xxl.bufscale-i*g.getWidth()
+                         , y
+                    );
+            y+=xxl.bufscale*xxl.bufh;
+        }
     },
-    
+
     draw: function() {
-        wh = 24; // widgets height
+        var wh = 24; // widgets height
         var gw = g.getWidth();
         var h = (g.getHeight() - wh)/2; // height of drawing area per stripe
 
@@ -105,38 +133,35 @@ var xxl = {
         g.setBgColor('#000000');
         g.clear();
 
+        // center line
+        g.setColor(xxl.imgcol);
+        g.fillRect(      0,wh+h-3,gw/2-26,wh+h-1);
+        g.fillRect(gw/2+26,wh+h-3,   gw-1,wh+h-1);
+
+        // image
         if (xxl.img) { // 24x24
             g.setColor(xxl.imgcol);
             g.drawImage(xxl.img
-                        , gw/2, wh+h // center point
+                        , gw/2, wh+h-2 // center point
                         ,{rotate:0,scale:2}
                        );
         }
-
-        // xxl.setFont();
-        
-
-        // draw both lines
-        // g.setBgColor('#000000');
-        // g.setColor('#ffffff');
-        // g.drawString(xxl.txt, xxl.xpos, wh);
-        // g.drawString(xxl.txt, xxl.xpos - gw - 32, h + wh);
+        // scroll message
         xxl.megaPrint(xxl.txt, xxl.xpos, wh);
-        xxl.megaPrint(xxl.txt, xxl.xpos - xxl.bufw-6, h + wh);
                                             
         g.reset();
         // widget redraw
         Bangle.drawWidgets();
 
         // scroll
-        xxl.xpos -= 8;
-        if (xxl.xpos < -xxl.wtot - gw * 2) {
+        xxl.xpos -= 3; // buffer pixels
+        if (xxl.xpos < -xxl.wtot - xxl.bufw/xxl.buflin - 4) {
             ++xxl.loopCount;
             if (xxl.loopCount > 2) {
                 xxl.stop();
                 return;
             }
-            xxl.xpos = 3 * xxl.bufw; // gw;
+            xxl.xpos = (3*xxl.bufw)/2;
         }
         // loop drawing
         xxl.queueDraw();
@@ -156,11 +181,11 @@ exports.listener = function (type, msg) {
     }
 };
 
-// var msg = {t:"add",id:12341, src:"SMS",title:undefined,subject:undefined,body:"Hello SMS message",sender:"phoo",tel:undefined, important:false, new:true};
+// debug
+// var msg = {t:"add",id:12341, src:"SMS",title:undefined,subject:undefined,body:"yes",sender:"phoo",tel:undefined, important:false, new:true};
 // exports.listener('text', msg);
 
-// debug
-// Bangle.on("message", (type, msg) => exports.listener(type, msg));
+
 
 
 
