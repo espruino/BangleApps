@@ -6,6 +6,7 @@
   "icon": "app.png",
   "tags": "back,gesture,swipe",
   "supports" : ["BANGLEJS2"],
+  "readme":"README.md",
   "type": "bootloader",
   "storage": [
     {"name":"backswipe.boot.js","url":"boot.js"},

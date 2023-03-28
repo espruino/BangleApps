@@ -162,7 +162,14 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} screenshot file ${screenshot.url} not found`, {file:metadataFile});
     });
   }
-  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  if (app.readme) {
+    if (!fs.existsSync(appDir+app.readme)) 
+      ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  } else {
+    let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
+    if (readme) 
+      ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
+  }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
   if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`, {file:metadataFile});
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`, {file:metadataFile});

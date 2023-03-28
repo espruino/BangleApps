@@ -93,7 +93,7 @@
             value: actions.indexOf(settings.DRAGDOWN),
             format: v => actions[v],
             onchange: v => {
-                settings.DRGDOWN = actions[v];
+                settings.DRAGDOWN = actions[v];
                 writeSettings();
             }
         },
