@@ -12,6 +12,7 @@ const offset = 25;
 
 var d = new Date();
 var nowDate = d.getDate(); //today's date
+var drawTimeout;
 var encourage = ["you\'re doing\ngreat!","pas de deux it!","you\'re amazing~","you got dis","keep going","you\'re one\nin a melon!","we\'re rooting\nfor you!","believe in\nyourself","dance like\nno one\'s\nwatching"];
 var encouragementtest = "you\'re one\nin a melon!";
 
