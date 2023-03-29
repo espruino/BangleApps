@@ -159,8 +159,8 @@ exports = { name : "en_GB", currencySym:"£",
           "%HH": "('0'+getHours(d)).slice(-2)",
           "%MM": "('0'+d.getMinutes()).slice(-2)",
           "%SS": "('0'+d.getSeconds()).slice(-2)",
-          "%A":  `${js(locale.day)}.split(',')[d.getDay()]`,
-          "%a":  `${js(locale.abday)}.split(',')[d.getDay()]`,
+          "%A":  `${js(locale.day)}.split('µ')[d.getDay()]`,
+          "%a":  `${js(locale.abday)}.split('µ')[d.getDay()]`,
           "%B":  `${js(locale.month)}.split(',')[d.getMonth()]`,
           "%b":  `${js(locale.abmonth)}.split(',')[d.getMonth()]`,
           "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
@@ -198,7 +198,7 @@ function getHours(d) {
 exports = {
   name: ${js(locale.lang)},
   currencySym: ${js(locale.currency_symbol)},
-  dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
+  dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split('µ')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
     if (dec == null) dec = 2;
