@@ -49,7 +49,15 @@ function clearText(){
   g.drawRect(0,offset*2,175,175-offset*2);
 }
 
-function time() {
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    drawtime();
+  }, 60000 - (Date.now() % 60000));
+}
+
+function drawtime() {
   var time = locale.time(d, 1);
   var date = locale.date(d);
   var mo = dateutil.month(d.getMonth() + 1, 1);
@@ -59,14 +67,16 @@ function time() {
   g.setFontAlign(0,0).setFont(currentFont, 3).drawString(mo + " " + nowDate, width/2, 130);
 }
 
-
 function loader() {
-  g.clear();
-  Bangle.setUI("clock");
-  Bangle.drawWidgets();
-  Bangle.loadWidgets();
-  time();
+  drawtime();
+  queueDraw();
 }
 
 //ready set go!
-loader();
+g.clear();
+
+loader(); //drawthings
+
+Bangle.setUI("clock");
+Bangle.drawWidgets();
+Bangle.loadWidgets();
