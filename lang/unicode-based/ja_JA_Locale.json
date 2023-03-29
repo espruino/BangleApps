@@ -1,0 +1,8 @@
+{
+    "//": "Japanese locale",
+    "GLOBAL": {
+        "//": "Translations that apply for all apps",
+        "Monday": "月曜日",
+        "Tuesday": "火曜日"
+    }
+}
