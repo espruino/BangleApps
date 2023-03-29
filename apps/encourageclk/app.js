@@ -12,7 +12,7 @@ const offset = 25;
 
 var d = new Date();
 var nowDate = d.getDate(); //today's date
-var encourage = ["you\'re doing great!","pas de deux it!","you\'re amazing~","you got dis","keep going","you\'re one\nin a melon!","we\'re rooting\nfor you!","believe in\nyourself","dance like\nno one\'s\nwatching"];
+var encourage = ["you\'re doing\ngreat!","pas de deux it!","you\'re amazing~","you got dis","keep going","you\'re one\nin a melon!","we\'re rooting\nfor you!","believe in\nyourself","dance like\nno one\'s\nwatching"];
 var encouragementtest = "you\'re one\nin a melon!";
 
 var bgimg = {
@@ -62,13 +62,11 @@ function time() {
 
 function loader() {
   g.clear();
+  Bangle.setUI("clock");
   Bangle.drawWidgets();
   Bangle.loadWidgets();
   time();
 }
 
 //ready set go!
-g.clear();
-Bangle.drawWidgets();
-Bangle.loadWidgets();
-time();
+loader();
