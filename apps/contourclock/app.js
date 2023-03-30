@@ -45,6 +45,7 @@
   };
   let hideExtras = function() {
     if (extrasTimeout) clearTimeout(extrasTimeout);
+    delete extrasTimeout;
     g.clearRect(0, 138, g.getWidth() - 1, 176);
     require("widget_utils").hide();
     extrasShown = false;
@@ -83,6 +84,8 @@
       Bangle.removeListener('twist', showExtras);
       if (drawTimeout) clearTimeout(drawTimeout);
       if (extrasTimeout) clearTimeout(extrasTimeout);
+      delete drawTimeout;
+      delete extrasTimeout;
       if (settings.hideWhenLocked) require("widget_utils").show();
       g.reset();
       g.clear();
