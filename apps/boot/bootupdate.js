@@ -105,7 +105,8 @@ if (!date.toLocalISOString) boot += `Date.prototype.toLocalISOString = function(
 // show timings
 if (DEBUG) boot += `print(".boot0",0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
 // ================================================== BOOT.JS
-// Append *.boot.js files
+// Append *.boot.js files. 
+// Name files with a number - eg 'foo.5.boot.js' to enforce order (lowest first). Numbered files get placed before non-numbered
 // These could change bleServices/bleServiceOptions if needed
 let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
   let getPriority = /.*\.(\d+)\.boot\.js$/;
