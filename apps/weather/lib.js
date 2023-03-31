@@ -157,7 +157,7 @@ exports.getColor = function(code) {
  * @param ovr Graphics instance (or undefined for g)
  * @param monochrome If true, produce a monochromatic icon
  */
-exports.drawIcon = function(cond, x, y, r, ovr, monochrome)) {
+exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
   var palette;
   if(!ovr) ovr = g;
 
