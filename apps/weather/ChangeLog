@@ -21,3 +21,4 @@
 0.22: Automatic translation of strings, some left untranslated.
 0.23: Update clock_info to avoid a redraw
 0.24: Redraw clock_info on update and provide color field for condition
+0.25: Added monochrome parameter to drawIcon in lib
