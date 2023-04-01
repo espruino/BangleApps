@@ -1,0 +1,14 @@
+{ "id": "longpressbuzz",
+  "name": "Long Press, Buzz!",
+  "shortName":"LPB",
+  "version":"0.01",
+  "description": "Buzz on long press (assumed and hardcoded to 1500ms) to indicate the watch will be reinitiated per your command.",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"longpressbuzz.boot.js","url":"boot.js"}
+  ]
+}
