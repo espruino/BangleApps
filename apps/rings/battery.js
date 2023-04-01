@@ -10,9 +10,10 @@
 const watch = { 
   x:0, y:0, w:0, h:0, 
   color:"#000000", 
-  dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 , bubble:false},
+  dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 , bubble:true},
   hourRing : { size:82, weight:20, color:"#00FFFF", numbers: true, range: 12, bubble:true},
-  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: false, range: 60, bubble:false},
+  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: true, range: 60, bubble:false},
+  batteryRing: { size :30, weight:10, color:"#ff3300", numbers: false, range: 100, bubble:false},
   screen : { width:g.getWidth(), height:g.getHeight(), centerX: g.getWidth() *0.5, centerY: g.getHeight() * 0.5, cursor: 14, font:"6x8:2" },
 };
 
@@ -72,6 +73,34 @@ function drawTimeCircle(color, size, weight, range, value ) {
   
 }
 
+function drawArc(percent, color, ArchR) {
+  let offset = 0;
+  let end = 360;
+  let radius = ArchR + 2;
+
+  if (percent <= 0) return; // no gauge needed
+  if (percent > 1) percent = 1;
+
+  let startRotation = -offset;
+  let endRotation = startRotation - (end * percent);
+
+  g.setColor(color);
+  // convert to radians
+  startRotation *= Math.PI / 180;
+  let amt = Math.PI / 10;
+  endRotation = (endRotation * Math.PI / 180) - amt;
+  // all we need to draw is an arc, because we'll fill the center
+  let poly = [watch.screen.centerX, watch.screen.centerY];
+  for (let r = startRotation; r > endRotation; r -= amt)
+    poly.push(
+      watch.screen.centerX - radius * Math.sin(r),
+      watch.screen.centerY - radius * Math.cos(r)
+    );
+  g.fillPoly(poly);
+  g.setColor("#000000").fillCircle(watch.screen.centerX, watch.screen.centerY, ArchR - 10);
+  g.setColor(color).fillCircle(watch.screen.centerX - (radius -5) * Math.sin(endRotation + amt),  watch.screen.centerY - (radius -5) * Math.cos(endRotation + amt), 4);
+}
+
 
 function drawCircle(ringValues, offset, value ) {  
   // variables for vertex transformations and positioning time
@@ -88,17 +117,9 @@ function drawCircle(ringValues, offset, value ) {
   if(ringValues.bubble){
     tver = [-1, 0, 1, 0, 1, -ringValues.size-offset, -1, -(ringValues.size + offset -21)];
     tran = g.transformVertices(tver, tobj);
-    if(ringValues.numbers){
-      g.setColor("#000000").fillCircle((tran[4]+tran[6]) / 2 , (tran[5]+tran[7]) / 2, 17 + offset/10);
-    }else{
-      g.setColor("#000000").fillCircle((tran[4]+tran[6]) / 2 , (tran[5]+tran[7]) / 2, 10 + offset/10);
-    }
+    g.setColor("#000000").fillCircle((tran[4]+tran[6]) / 2 , (tran[5]+tran[7]) / 2, 17 + offset/10);
   }else{
-    if(ringValues.numbers){
-      tver = [-watch.screen.cursor, 0, watch.screen.cursor, 0, watch.screen.cursor, -ringValues.size*1.01 - offset, -watch.screen.cursor, -ringValues.size*1.05 - offset];
-    }else{
-      tver = [-watch.screen.cursor * 0.4, 0, watch.screen.cursor * 0.4, 0, watch.screen.cursor *0.4, -ringValues.size*1.01 - offset, -watch.screen.cursor*0.4, -ringValues.size*1.05 - offset];
-    }
+    tver = [-watch.screen.cursor, 0, watch.screen.cursor, 0, watch.screen.cursor, -ringValues.size*1.01 - offset, -watch.screen.cursor, -ringValues.size*1.05 - offset];
     tran = g.transformVertices(tver, tobj);
     g.fillPoly(tran);
   
@@ -119,7 +140,7 @@ function drawCircle(ringValues, offset, value ) {
 }
 
 // Draws text for month and year in date circle
-function drawMonthCircleText( text, circleSize, range, value){
+function drawMonthCircleText( text, circleSize, range, value, delta){
 
   // If the text isn't the same as last time, write it into a graphic object.
   if(text != lastMonthCircleImageText){
@@ -135,7 +156,7 @@ function drawMonthCircleText( text, circleSize, range, value){
     grimg.transparent = 1;  
     monthCircleTextBuffer.setColor(1,1,1);
 
-    for(z=0; z < text.length; z++){      
+    for(z=0; z < text.length; z++){
       tobj = { x:watch.screen.centerX, y:watch.screen.centerY, scale:1, rotate: ((z + 1) / range) * (Math.PI * 2) };
       tver = [-1, 0, 1, 0, 1, -circleSize, -1, -(circleSize -21)];
       tran = monthCircleTextBuffer.transformVertices(tver, tobj);
@@ -165,7 +186,6 @@ function drawMonthCircleText( text, circleSize, range, value){
 function shrinkCircles(toggle){   
   // If there's a queued draw operation,removeit so animation isn't interrupted.
   if (drawTimeout) clearTimeout(drawTimeout);
-  
   var date = new Date();
   var delta = 1;
   
@@ -188,17 +208,15 @@ function shrinkCircles(toggle){
   
   // Draw the date ring (unless it's the last run of an expansion).
   if(counter < 11 || toggle){
-    
-    //drawTimeCircle(watch.dateRing.color, watch.dateRing.size + delta, watch.dateRing.weight, getDays(date.getFullYear(), date.getMonth()+1), date.getDate() );
-     drawCircle(watch.dateRing, delta, date.getDate()); 
+    drawTimeCircle(watch.dateRing.color, watch.dateRing.size + delta, watch.dateRing.weight, getDays(date.getFullYear(), date.getMonth()+1), date.getDate() );
+    //drawCircle(watch.dateRing, delta, date.getDate());  
     // Draw month and year in date ring
     drawMonthCircleText( month[date.getMonth()]+" "+date.getFullYear(), watch.dateRing.size - 24, getDays(date.getFullYear(), date.getMonth()+1), date.getDate()) ;
   }
   
-  //drawTimeCircle(watch.hourRing.color, watch.hourRing.size + delta, watch.hourRing.weight, 12, date.getHours() );
-  drawCircle(watch.hourRing, delta, date.getHours()); 
-  drawCircle(watch.minuteRing, delta, date.getMinutes()); 
-  //drawTimeCircle(watch.minuteRing.color, watch.minuteRing.size + delta, watch.minuteRing.weight, 60, date.getMinutes() );
+  drawCircle(watch.hourRing, delta, date.getHours());
+  drawCircle(watch.minuteRing, delta, date.getMinutes());
+
   
   counter += 1;
   setTimeout(shrinkCircles, 10, toggle);
@@ -221,7 +239,6 @@ function draw() {
   // If unlocked, draw date ring and text and make hour and minute rings smaller
   if(!Bangle.isLocked()){
     unLockedOffset = 24;
-    console.log("jee");
     var days_month = getDays(date.getFullYear(), date.getMonth()+1);
     // if the day has changed
     if(watch.dateRing.range != days_month) watch.dateRing.range = days_month;
@@ -234,6 +251,8 @@ function draw() {
   //drawTimeCircle(watch.minuteRing.color, watch.minuteRing.size -unLockedOffset , watch.minuteRing.weight, 60, date.getMinutes() );
   drawCircle(watch.hourRing, -unLockedOffset, date.getHours());
   drawCircle(watch.minuteRing, -unLockedOffset, date.getMinutes());
+  drawArc(1, watch.batteryRing.color, watch.batteryRing.size); 
+  //drawCircle(watch.batteryRing, -unLockedOffset, E.getBattery());
   queueDraw();
 }
 
