@@ -5,7 +5,7 @@
   "description": "Buzz on long press (assumed and hardcoded to 1500ms) to indicate the watch will be reinitiated per your command.",
   "icon": "app.png",
   "type": "bootloader",
-  "tags": "",
+  "tags": "system",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
