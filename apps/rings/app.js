@@ -2,21 +2,33 @@
 // for Bangle.js 2 
 // by Amos Blanton
 // Remixed from / inspired by Rinkulainen watch face by Jukio Kallio
-
+// 2023: pinq- added new futures
 // To Do:
 // Make Month / year text buffer 1/2 size
 // Optimize text positioning transforms 
 
-const watch = { 
-  x:0, y:0, w:0, h:0, 
+
+const watch = {  
   color:"#000000", 
-  dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 , bubble:false},
+  dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 , bubble:true},
   hourRing : { size:82, weight:20, color:"#00FFFF", numbers: true, range: 12, bubble:true},
   minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: false, range: 60, bubble:false},
   batteryRing: { size :30, weight:10, color:"#ff3300", numbers: false, range: 100, bubble:false},
   screen : { width:g.getWidth(), height:g.getHeight(), centerX: g.getWidth() *0.5, centerY: g.getHeight() * 0.5, cursor: 14, font:"6x8:2" },
 };
 
+var settings = require('Storage').readJSON("rings.settings.json", true) || {};
+
+if(settings.minute){
+  watch.minuteRing.numbers = settings.minute.numbers;
+  watch.minuteRing.bubble = settings.minute.bubble;
+  watch.hourRing.numbers = settings.hour.numbers;
+  watch.hourRing.bubble = settings.hour.bubble;
+  watch.dateRing.numbers = settings.date.numbers;
+  watch.dateRing.bubble = settings.date.bubble;
+}
+
+delete settings;
 const month= ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY",
             "AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
 
@@ -44,33 +56,6 @@ function queueDraw() {
     drawTimeout = undefined;
     draw();
   }, wait - (Date.now() % wait));
-}
-
-// Draws a time circle (date, hours, minutes)
-function drawTimeCircle(color, size, weight, range, value ) {  
-  // variables for vertex transformations and positioning time
-  var tver, tobj, tran;
-  var ttime = (value / range) * (Math.PI * 2);
-
-  // draw circle and line
-  g.setColor(color).fillCircle(watch.screen.centerX, watch.screen.centerY, size);
-  g.setColor("#000000").fillCircle(watch.screen.centerX, watch.screen.centerY, size - weight);
-
-  tver = [-watch.screen.cursor, 0, watch.screen.cursor, 0, watch.screen.cursor, -size*1.01, -watch.screen.cursor, -size*1.05];
-
-  tobj = { x:watch.screen.centerX, y:watch.screen.centerY, scale:1, rotate:ttime };
-  tran = g.transformVertices(tver, tobj);
-  g.fillPoly(tran);
-    
-  // Draw numbers
-  g.setFontAlign(0,0).setFont(watch.screen.font, 2).setColor(1,1,1);
-  
-  // size - 21 is the right offset to get the numbers aligned in the circle.
-  tver = [-1, 0, 1, 0, 1, -size, -1, -(size -21)];
-  tran = g.transformVertices(tver, tobj);
-  g.setColor(1,1,1);
-  g.drawString(value, (tran[4]+tran[6]) / 2 , (tran[5]+tran[7]) / 2 ); 
-  
 }
 
 
@@ -117,7 +102,6 @@ function drawCircle(ringValues, offset, value ) {
   
 }
 
-
 // For battery disable 
 function drawArc(percent, color, ArchR) {
   let offset = 0;
@@ -146,7 +130,6 @@ function drawArc(percent, color, ArchR) {
   g.setColor("#000000").fillCircle(watch.screen.centerX, watch.screen.centerY, ArchR - 10);
   g.setColor(color).fillCircle(watch.screen.centerX - (radius -5) * Math.sin(endRotation + amt),  watch.screen.centerY - (radius -5) * Math.cos(endRotation + amt), 4);
 }
-
 
 // Draws text for month and year in date circle
 function drawMonthCircleText( text, circleSize, range, value){
