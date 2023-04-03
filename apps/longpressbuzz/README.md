@@ -10,8 +10,8 @@ Just install and it will run as boot code.
 
 ## Requests
 
-Mention @[thyttan](https://github.com/thyttan) in an issue to the official [BangleApps repository](https://github.com/espruino/BangleApps/issues) for bug reports and feature requests.
+Mention @[thyttan](https://github.com/thyttan) in an issue to the official [BangleApps repository](https://github.com/espruino/BangleApps/issues) for feature requests and bug reports.
 
-## Creator
+## Creators
 
-[thyttan](https://github.com/thyttan)
+[thyttan](https://github.com/thyttan) and [Gordon Williams](https://github.com/gfwilliams).
