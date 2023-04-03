@@ -30,7 +30,7 @@ Bangle.on('touch', (n, e) => {
     clearText();
     g.setColor(0,0,0);
     g.setFont("Dylex7x13",2).setFontAlign(0,0).drawString(getEncour(), width/2, height/2);
-    setInterval(loader,3000);
+    setInterval(draw,3000);
   }
 });
 
