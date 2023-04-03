@@ -1,6 +1,6 @@
 # Long Press, Buzz!
 
-Buzz on long press (assumed and hardcoded to 1500ms) to indicate the watch will be reinitiated per your command.
+Buzz at boot after a long press to indicate the watch was reinitiated per your command.
 
 ## Usage
 
