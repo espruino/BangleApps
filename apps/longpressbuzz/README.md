@@ -2,6 +2,8 @@
 
 Buzz at boot after a long press to indicate the watch was reinitiated per your command.
 
+To infinity and beyond, space ranger!
+
 ## Usage
 
 Just install and it will run as boot code.
