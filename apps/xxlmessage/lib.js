@@ -1,4 +1,5 @@
-// GB({"t":"notify","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"})
+// GB({t:"notify",id:1680248072,src:"SMS Messenger",title:"Fabia",body:"Nein"})
+// msg = {"t":"add","id":1680248072,"src":"SMS Messenger","title":"Fabia","body":"Nein","new":true,"handled":true}
 var xxl = {
 // private:
     msg: [],
@@ -21,8 +22,8 @@ var xxl = {
 
 // public:
     show: function(theMessage){
-        console.log("theMessage is:");
-        console.log(theMessage);
+        // console.log("theMessage is:");
+        // console.log(theMessage);
         xxl.msg = theMessage;
 
         // get icon
@@ -55,7 +56,7 @@ var xxl = {
         xxl.bufimg = Graphics.createArrayBuffer(xxl.bufw,xxl.bufh,2,{msb:true});
 
         // prepare string and metrics
-        xxl.txt = (xxl.msg.src||"MSG") + ": " + (xxl.msg.body||"-x-");
+        xxl.txt = (xxl.msg.title||(xxl.msg.src||"MSG")) + ": " + (xxl.msg.body||"-x-");
         g.setFont(xxl.buffnt);
         xxl.wtot = g.stringMetrics(xxl.txt).width;
         xxl.xpos = xxl.bufw; // g.getWidth();
@@ -75,7 +76,7 @@ var xxl = {
 
 
     stop:function() {
-        console.log("stop");
+        // console.log("stop");
         if (xxl.drawTimeout) { clearTimeout(xxl.drawTimeout); }
         xxl.drawTimeout = undefined;
         g.reset();
@@ -85,7 +86,7 @@ var xxl = {
         // Bangle.setLCDPower(0); // light off
         // Bangle.setLocked(true); // disable touch
 
-        setTimeout(load, 100);
+        setTimeout(function(){Bangle.showClock();}, 100);
     },
 
     // this is even slower than the scaled printing :(
