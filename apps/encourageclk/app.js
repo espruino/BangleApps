@@ -76,8 +76,7 @@ function loader() {
 //ready set go!
 g.clear();
 
-Bangle.setUI("clock"); //load all the things
-Bangle.drawWidgets();
+Bangle.drawWidgets(); //load all the things
 Bangle.loadWidgets();
 
 loader(); //draw all the things
