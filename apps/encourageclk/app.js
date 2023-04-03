@@ -54,22 +54,21 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
-    drawtime();
+    draw();
   }, 60000 - (Date.now() % 60000));
 }
 
-function drawtime() {
+function draw() {
   var time = locale.time(d, 1);
   var date = locale.date(d);
   var mo = dateutil.month(d.getMonth() + 1, 1);
-  g.drawImage(bgimg,0,offset);
+  
+  g.drawImage(bgimg,0,offset); //bg
   g.setFont("HaxorNarrow7x17").setColor(0,0,0);
   g.setFontAlign(0, 0).setFont(currentFont, 7).drawString(time, width/2, 100);
   g.setFontAlign(0,0).setFont(currentFont, 3).drawString(mo + " " + nowDate, width/2, 130);
-}
-
-function loader() {
-  drawtime();
+  
+  Bangle.drawWidgets(); //redraw
   queueDraw();
 }
 
@@ -79,4 +78,4 @@ g.clear();
 Bangle.drawWidgets(); //load all the things
 Bangle.loadWidgets();
 
-loader(); //draw all the things
+draw(); //draw all the things
