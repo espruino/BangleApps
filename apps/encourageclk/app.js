@@ -39,11 +39,7 @@ function getEncour(){ //return string
   let rando = getRandomInt(encourage.length);
   return encourage[rando];
 }
-//clear stuff
-function clearText(){
-  g.clearRect(0,offset*2,175,175-offset*2);
-  g.drawRect(0,offset*2,175,175-offset*2);
-}
+
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
