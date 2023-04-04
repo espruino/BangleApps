@@ -58,7 +58,7 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-function draw() {
+function time(){
   var time = locale.time(d, 1);
   var date = locale.date(d);
   var mo = dateutil.month(d.getMonth() + 1, 1);
@@ -67,16 +67,18 @@ function draw() {
   g.setFont("HaxorNarrow7x17").setColor(0,0,0);
   g.setFontAlign(0, 0).setFont(currentFont, 7).drawString(time, width/2, 100);
   g.setFontAlign(0,0).setFont(currentFont, 3).drawString(mo + " " + nowDate, width/2, 130);
-  
-  Bangle.drawWidgets(); //redraw
+}
+
+function draw() {
+  time();
   queueDraw();
 }
 
 //ready set go!
 g.clear();
 
+draw(); //draw all the things
+
 Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-draw(); //draw all the things
