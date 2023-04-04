@@ -1,3 +1,5 @@
+//230404
+
 require("FontHaxorNarrow7x17").add(Graphics);
 require("FontDylex7x13").add(Graphics);
 
@@ -24,13 +26,13 @@ var bgimg = {
 //TAP ALL THE THINGS
 Bangle.on('touch', (n, e) => {
   // <88, top
-  if (e.x > offset && e.y < height) { //bar
-    clearText();
+  if (e.x < width && e.y > offset) { 
     g.setColor(0,0,0);
     g.setFont("Dylex7x13",2).setFontAlign(0,0).drawString(getEncour(), width/2, height/2);
-    setInterval(loader,3000);
+    setInterval(draw,3000);
   }
 });
+
 //getters
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -39,7 +41,7 @@ function getEncour(){ //return string
   let rando = getRandomInt(encourage.length);
   return encourage[rando];
 }
-
+//everymine
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
