@@ -108,7 +108,7 @@ function deleteBefore(dateString) {
       total = "" + files.length
       files.forEach((file, i) => {
         Util.showModal("Deleting file " + ("" + (i + 1)).padStart(total.length) + "/" + total + ": " + file);
-        Util.eraseStorage(filename, () => { callback(); });
+        Util.eraseStorage(filename);
       })
     });
     Util.hideModal();
