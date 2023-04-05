@@ -106,7 +106,7 @@ function deleteBefore(dateString, callback) {
     Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)` +
       `.filter(file => (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5 < ` + date.valueOf() + `)` +
       `.map(file => require("Storage").erase(file)).length`, count => {
-      window.confirm(count + " files deleted");
+      window.alert(count + " files deleted");
       Util.hideModal();
       callback();
     })
