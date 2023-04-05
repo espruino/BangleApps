@@ -105,9 +105,9 @@ function deleteBefore(dateString, callback) {
     Util.showModal("Deleting all data before" + date.toLocaleDateString(undefined) + " ...");
     Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)` +
       `.filter(file => (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5 < ` + date.valueOf() + `)` +
-      `.forEach(file => require("Storage").erase(file))`, files => {
+      `.map(file => require("Storage").erase(file)).length`, count => {
       Util.hideModal();
-      window.prompt(files.length + " files deleted");
+      window.prompt(count + " files deleted");
       callback();
     })
   }
