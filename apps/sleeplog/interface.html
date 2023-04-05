@@ -99,7 +99,7 @@ function deleteFile(filename, callback) {
   }
 }
 
-function deleteBefore(dateString) {
+function deleteBefore(dateString, callback) {
   date = new Date(dateString);
   if (window.confirm("Do you really want to remove all data before " + date.toLocaleDateString(undefined))) {
     Util.showModal("Deleting all data before" + date.toLocaleDateString(undefined) + " ...");
@@ -206,7 +206,7 @@ function viewFiles() {
         if (task === "view") readLog(date, logData => viewLog(logData, filename));
         else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
         else if (task === "del") deleteFile(filename, () => viewFiles());
-        else if (task === "delBefore") deleteBefore(document.getElementById("delBeforeDate").value);
+        else if (task === "delBefore") deleteBefore(document.getElementById("delBeforeDate").value, () => viewFiles());
       });
     }
   });
