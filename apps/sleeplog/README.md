@@ -19,7 +19,7 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 | Filename (* _example_)       | Content         | Removeable in     |
 |------------------------------|-----------------|-------------------|
 | `sleeplog.log (StorageFile)` | recent logfile  | App Web Interface |
-| `sleeplog_1234.log`*         | old logfiles    | App Web Interface |
+| `sleeplog_1234.log`*         | past logfiles   | App Web Interface |
 | `sleeplog_123456.csv`*       | debugging files | Web IDE           |
 
 
@@ -28,16 +28,16 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ---
 
 #### Controls:
-  - __swipe left & right__
+  - __swipe left & right__  
     to change the displayed day
-  - __touch the "title"__ (e.g. `Night to Fri 20/05/2022`)
+  - __touch the "title"__ (e.g. `Night to Fri 20/05/2022`)  
     to enter day selection prompt
-  - __touch the info area__
+  - __touch the info area__  
     to change the displayed information
     (by default: consecutive & true sleeping)
-  - __touch the wrench__ (upper right corner)
+  - __touch the wrench__ (upper right corner)  
     to enter the settings
-  - __use back button widget__ (upper left corner)
+  - __use back button widget__ (upper left corner)  
     exit the app
 
 #### View:
@@ -55,42 +55,42 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ### Settings Usage
 ---
 
-  - __Thresholds__ submenu
+  - __Thresholds__ submenu  
     Changes take effect from now on, not retrospective!
-    - __Max Awake__ | maximal awake duration
+    - __Max Awake__ | maximal awake duration  
       _10min_ / _20min_ / ... / __60min__ / ... / _120min_
-    - __Min Consecutive__ | minimal consecutive sleep duration
+    - __Min Consecutive__ | minimal consecutive sleep duration  
       _10min_ / _20min_ / ... / __30min__ / ... / _120min_
-    - __Deep Sleep__ | deep sleep threshold
+    - __Deep Sleep__ | deep sleep threshold  
       _30_ / _31_ / ... / __100__ / ... / _200_
-    - __Light Sleep__ | light sleep threshold
+    - __Light Sleep__ | light sleep threshold  
       _100_ / _110_ / ... / __200__ / ... / _400_
     - __Reset to Default__ | reset to bold values above
-  - __BreakToD__ | time of day to break view
+  - __BreakToD__ | time of day to break view  
     _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
-  - __App Timeout__ | app specific lock timeout
+  - __App Timeout__ | app specific lock timeout  
     __0s__ / _10s_ / ... / _120s_
-  - __Enabled__ | completely en-/disables the background service
+  - __Enabled__ | completely en-/disables the background service  
     __on__ / _off_
   - __Debugging__ submenu
-    - __View log__ | display logfile data
+    - __View log__ | display logfile data  
       Select the logfile by its starting time.
       Thresholds are shown as line with its value.
-      - __swipe left & right__
+      - __swipe left & right__  
         to change displayed duration
-      - __swipe up & down__
+      - __swipe up & down__  
         to change displayed value range
-      - __touch the graph__
+      - __touch the graph__  
         to change between light & dark colors
-      - __use back button widget__ (upper left corner)
+      - __use back button widget__ (upper left corner)  
         to go back to the logfile selection
-    - __Enabled__ | en-/disables debugging
+    - __Enabled__ | en-/disables debugging  
       _on_ / __off__
-    - __write File__ | toggles if a logfile is written
+    - __write File__ | toggles if a logfile is written  
       _on_ / __off__
-    - __Duration__ | duration for writing into logfile
+    - __Duration__ | duration for writing into logfile  
       _1h_ / _2h_ / ... / __12h__ / _96_
-    - The following data is logged to a csv-file:
+    - The following data is logged to a csv-file:  
       _timestamp_ (in days since 1900-01-01 00:00 UTC used by office software) _, movement, status, consecutive, asleepSince, awakeSince, bpm, bpmConfidence_
 
 
@@ -100,33 +100,40 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 
 Available through the App Loader when your watch is connected.
 
-- __view data__
-  Display the data to each timestamp in a table.
-- __save csv-file__
-  Download a csv-file with the data to each timestamp.
-  The time format is chooseable beneath the file list.
-- __delete file__
-  Deletes the logfile from the watch. __Please backup your data first!__
+- A list of all found logfiles with following options for each file:
+  - __view data__  
+    Display the data to each timestamp in a table.
+  - __save csv-file__  
+    Download a csv-file with the data to each timestamp.  
+    The time format is chooseable beneath the file list.
+  - __delete file__  
+    Deletes the logfile from the watch. __Please backup your data first!__
+- __csv time format__  
+    __JavaScript (milliseconds since 1970)__ /  
+    _UNIX (seconds since 1970)_ /  
+    _Office (days since 1900)_
+- __delete all logfiles before__  
+  Deletes all logfile before the given date from the watch. __Please backup your data first!__
 
 ---
 ### Timestamps and Files
 ---
 
-1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:
+1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:  
   seconds since 1970-01-01 00:00 UTC
-2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:
+2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:  
   10 minutes since 1970-01-01 00:00 UTC (`Bangle / (10 * 60 * 1000)`)
-3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:
+3. debug .csv file ID (`sleeplog_123456.csv`) has a hourly resolution:  
   hours since 1970-01-01 00:00 UTC (`Bangle / (60 * 60 * 1000)`)
-4. logged timestamps inside the debug .csv file are formatted for office calculation software:
+4. logged timestamps inside the debug .csv file are formatted for office calculation software:  
   days since 1900-01-01 00:00 UTC (`Bangle / (24 * 60 * 60 * 1000) + 25569`)
-5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:
+5. every 14 days the `sleeplog.log (StorageFile)` is reduced and old entries are moved into separat files for each fortnight (`sleeplog_1234.log`) but still accessible though the app:  
   fortnights since 1970-01-04 12:00 UTC (converted with `require("sleeplog").msToFn(Bangle)` and `require("sleeplog").fnToMs(fortnight)`)
 
-- __Logfiles from before 0.10:__
+- __Logfiles from before 0.10:__  
   timestamps and sleeping status of old logfiles are automatically converted on your first consecutive sleep or manually by `require("sleeplog").convertOldLog()`
 
-- __View logged data:__
+- __View logged data:__  
   if you'd like to view your logged data in the IDE, you can access it with `require("sleeplog").printLog(since, until)` or `require("sleeplog").readLog(since, until)` to view the raw data
   since & until in Bangle timestamp, e.g. `require("sleeplog").printLog(Date()-24*60*60*1000, Date())` for the last 24h
 
@@ -136,11 +143,11 @@ Available through the App Loader when your watch is connected.
 ---
 
 #### Access statistics
-- Last Asleep Time [Date]:
+- Last Asleep Time [Date]:  
   `Date(sleeplog.awakeSince)`
-- Last Awake Duration [ms]:
+- Last Awake Duration [ms]:  
   `Date() - sleeplog.awakeSince`
-- Last Statistics [object]:
+- Last Statistics [object]:  
   ```
   // get stats of the last night (period as displayed inside the app)
   //  as this might be the mostly used function the data is cached inside the global object
@@ -184,19 +191,23 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
     from: 0,           // 0 as default, in ms, first time fn will be called
     to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called
       // reference time to from & to is rounded to full minutes
-    fn: function(data) { print(data); } // function to be executed
+    fn: function(data, thisTriggerEntry) { print(data); } // function to be executed
   };
 }
 ```
-The passed data object has the following properties:
-- timestamp: of the status change as date object,
+
+The passed __data__ object has the following properties:
+- timestamp: of the status change as date object,  
     (should be around 10min. before "now", the actual call of the function)
-- status: value of the new status (0-4),
+- status: value of the new status (0-4),  
     (0 = unknown, 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep)
-- consecutive: value of the new status (0-2),
+- consecutive: value of the new status (0-2),  
     (0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep)
 - prevStatus: if changed the value of the previous status (0-4) else undefined,
 - prevConsecutive: if changed the value of the previous status (0-2) else undefined
+
+
+If you want to use other variables or functions from the trigger object inside the trigger fn function, you will find them inside the __thisTriggerEntry__ object, as the this keyword is not working in this scenario. The function itself (the fn property) is not passed inside the thisTriggerEntry object.
 
 
 ---
