@@ -186,7 +186,7 @@ function viewFiles() {
             <input class="form-input" id="delBeforeDate" type="date" value="2022-01-01">
           </div>
           <div class="col-mx-auto">
-            <button class="btn tooltip btn-error" data-tooltip="delete old files" task="delBefore" filename="_" date="_">
+            <button class="btn tooltip btn-error" data-tooltip="delete old files" task="delBefore">
               <i class="icon icon-delete"></i>
             </button>
           </div>
@@ -200,13 +200,16 @@ function viewFiles() {
       buttons[i].addEventListener("click", event => {
         var button = event.currentTarget;
         var task = button.getAttribute("task");
-        var filename = button.getAttribute("filename");
-        var date = button.getAttribute("date") - 0;
-        if (!task || !filename || !date) return;
-        if (task === "view") readLog(date, logData => viewLog(logData, filename));
-        else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
-        else if (task === "del") deleteFile(filename, () => viewFiles());
-        else if (task === "delBefore") deleteBefore(document.getElementById("delBeforeDate").value, () => viewFiles());
+        if (task === "delBefore") {
+          deleteBefore(document.getElementById("delBeforeDate").value, () => viewFiles());
+        } else {
+          var filename = button.getAttribute("filename");
+          var date = button.getAttribute("date") - 0;
+          if (!task || !filename || !date) return;
+          if (task === "view") readLog(date, logData => viewLog(logData, filename));
+          else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
+          else if (task === "del") deleteFile(filename, () => viewFiles());
+        }
       });
     }
   });
