@@ -103,15 +103,16 @@ function deleteBefore(dateString) {
   date = new Date(dateString);
   if (window.confirm("Do you really want to remove all data before" + date.toLocaleDateString(undefined))) {
     Util.showModal("Deleting all data before" + date.toLocaleDateString(undefined) + " ...");
-    Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/).forEach(file => {
-      date = (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5
-      if (date < ` + date + `) {
-        require("Storage").erase(file)
-      }
-    })`, () => {
-      Util.hideModal();
-      callback();
+    Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)`, files => {
+      files = files.filter(file => (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5 < date);
+      total = "" + files.length
+      files.forEach((file, i) => {
+        Util.showModal("Deleting file " + ("" + (i + 1)).padStart(total.length) + "/" + total + ": " + file);
+        Util.eraseStorage(filename, () => { callback(); });
+      })
     });
+    Util.hideModal();
+    callback();
   }
 }
 
