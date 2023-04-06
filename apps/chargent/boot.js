@@ -27,6 +27,7 @@
             // TODO ? customizable
             Bangle.buzz(500);
             setTimeout(() => Bangle.buzz(500), 1000);
+            E.showAlert("Charge peak reached").then(() => load());
           }
         }, 30*1000);
       }
