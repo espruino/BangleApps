@@ -174,6 +174,12 @@ type BangleOptions = {
   btnLoadTimeout: number;
 };
 
+type SetUIArg<Mode> = Mode | {
+  mode: Mode,
+  back?: () => void,
+  remove?: () => void,
+};
+
 type NRFFilters = {
   services?: string[];
   name?: string;
@@ -4294,7 +4300,11 @@ declare class Bangle {
    * @param {any} callback - A function with one argument which is the direction
    * @url http://www.espruino.com/Reference#l_Bangle_setUI
    */
-  static setUI(type?: "updown" | "leftright" | "clock" | "clockupdown" | { mode: "custom"; back?: () => void; touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: number) => void, remove?: () => void, clock?: boolean }, callback?: (direction?: -1 | 1) => void): void;
+  static setUI(type?: undefined): void;
+  static setUI(type: SetUIArg<"updown" | "leftright">, callback: (direction?: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"clock">): void;
+  static setUI(type: SetUIArg<"clockupdown">, callback?: (direction: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"custom"> & { touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: 1 | 2 | 3) => void; clock?: boolean | 0 | 1 }): void;
 
   /**
    * @url http://www.espruino.com/Reference#l_Bangle_setUI
@@ -8946,10 +8956,10 @@ interface Object {
    * ```
    * For more information see `Object.on`
    *
-   * @param {any} event - The name of the event, for instance `'data'`. If not specified *all* listeners are removed.
+   * @param {any} [event] - [optional] The name of the event, for instance `'data'`. If not specified *all* listeners are removed.
    * @url http://www.espruino.com/Reference#l_Object_removeAllListeners
    */
-  removeAllListeners(event: any): void;
+  removeAllListeners(event?: any): void;
 }
 
 /**
