@@ -24,6 +24,13 @@ forceOff("HRM");
 // events
 Bangle.removeAllListeners();
 
+// UI
+Bangle.setOptions({
+  wakeOnFaceUp: false,
+  wakeOnTouch: false,
+  wakeOnTwist: false,
+});
+
 // clock
 let nextDraw: number | undefined;
 const draw = () => {

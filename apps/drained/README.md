@@ -18,7 +18,7 @@ With this app installed, your Bangle will automatically switch into low power mo
 [x] Turn off already-running GPS / HRM
 
 ## Features
-[ ] Wake on twist -> off (#2502)
+[x] Wake on twist -> off (#2502)
 
 # Creator
 
