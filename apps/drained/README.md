@@ -10,12 +10,12 @@ With this app installed, your Bangle will automatically switch into low power mo
 
 ## No backlight (#2502)
 [x] LCD brightness
-[ ] LCD timeout
+[ ] LCD timeout?
 
 ## Peripherals
 [x] Disable auto heart rate measurement in health app (#2502)
 [x] Overwrite setGPSPower() function (#2502)
-[ ] Turn off already-running GPS / HRM
+[x] Turn off already-running GPS / HRM
 
 ## Features
 [ ] Wake on twist -> off (#2502)

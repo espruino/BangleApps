@@ -1,3 +1,5 @@
+const app = "drained";
+
 // from boot.js
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
@@ -6,7 +8,18 @@ if(typeof drainedInterval !== "undefined")
 Bangle.setLCDBrightness(0);
 
 // peripherals
-Bangle.setGPSPower = Bangle.setHRMPower = (_val: boolean, _name: string) => false;
+const powerNoop = () => false;
+
+const forceOff = (name: "GPS" | "HRM" | "Compass" /*| "Barom"*/) => {
+  (Bangle as any)._PWR[name] = [];
+
+  // if(name === "Barom"){ setBarometerPower(...) }
+  //                               ^^^^
+  Bangle[`set${name}Power`](false, app);
+  Bangle[`set${name}Power`] = powerNoop;
+};
+forceOff("GPS");
+forceOff("HRM");
 
 // events
 Bangle.removeAllListeners();
