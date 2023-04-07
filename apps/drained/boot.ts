@@ -1,8 +1,8 @@
-let lowpowerInterval: number | undefined = setInterval(() => {
+let drainedInterval: number | undefined = setInterval(() => {
   if(Bangle.isCharging())
     return;
   if(E.getBattery() > 5)
     return;
 
-  load("lowpower.app.js");
+  load("drained.app.js");
 }, 5 * 60 * 1000);

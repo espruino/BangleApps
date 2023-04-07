@@ -1,6 +1,6 @@
 "use strict";
-if (typeof lowpowerInterval !== "undefined")
-    lowpowerInterval = clearInterval(lowpowerInterval);
+if (typeof drainedInterval !== "undefined")
+    drainedInterval = clearInterval(drainedInterval);
 Bangle.setLCDBrightness(0);
 Bangle.setGPSPower = Bangle.setHRMPower = function (_val, _name) { return false; };
 Bangle.removeAllListeners();

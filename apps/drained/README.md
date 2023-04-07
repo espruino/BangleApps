@@ -1,4 +1,4 @@
-# Low Power Mode
+# Drained
 
 With this app installed, your Bangle will automatically switch into low power mode when the battery reaches a specified threshold, displaying a simple clock.
 

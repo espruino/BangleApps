@@ -1,6 +1,6 @@
 // from boot.js
-if(typeof lowpowerInterval !== "undefined")
-  lowpowerInterval = clearInterval(lowpowerInterval) as undefined;
+if(typeof drainedInterval !== "undefined")
+  drainedInterval = clearInterval(drainedInterval) as undefined;
 
 // backlight
 Bangle.setLCDBrightness(0);
