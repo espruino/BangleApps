@@ -5,7 +5,9 @@ if (typeof drainedInterval !== "undefined")
 Bangle.setLCDBrightness(0);
 var powerNoop = function () { return false; };
 var forceOff = function (name) {
-    Bangle._PWR[name] = [];
+    var _a;
+    if ((_a = Bangle._PWR) === null || _a === void 0 ? void 0 : _a[name])
+        Bangle._PWR[name] = [];
     Bangle["set".concat(name, "Power")](false, app);
     Bangle["set".concat(name, "Power")] = powerNoop;
 };

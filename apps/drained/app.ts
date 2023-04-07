@@ -11,7 +11,8 @@ Bangle.setLCDBrightness(0);
 const powerNoop = () => false;
 
 const forceOff = (name: "GPS" | "HRM" | "Compass" /*| "Barom"*/) => {
-  (Bangle as any)._PWR[name] = [];
+  if ((Bangle as any)._PWR?.[name])
+    (Bangle as any)._PWR[name] = [];
 
   // if(name === "Barom"){ setBarometerPower(...) }
   //                               ^^^^
