@@ -1,9 +1,22 @@
 "use strict";
+var app = "drained";
 if (typeof drainedInterval !== "undefined")
     drainedInterval = clearInterval(drainedInterval);
 Bangle.setLCDBrightness(0);
-Bangle.setGPSPower = Bangle.setHRMPower = function (_val, _name) { return false; };
+var powerNoop = function () { return false; };
+var forceOff = function (name) {
+    Bangle._PWR[name] = [];
+    Bangle["set".concat(name, "Power")](false, app);
+    Bangle["set".concat(name, "Power")] = powerNoop;
+};
+forceOff("GPS");
+forceOff("HRM");
 Bangle.removeAllListeners();
+Bangle.setOptions({
+    wakeOnFaceUp: false,
+    wakeOnTouch: false,
+    wakeOnTwist: false,
+});
 var nextDraw;
 var draw = function () {
     var x = g.getWidth() / 2;
