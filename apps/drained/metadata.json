@@ -4,7 +4,7 @@
   "version": "0.01",
   "description": "Switches to displaying a simple clock when the battery percentage is low, and disables some peripherals",
   "readme": "README.md",
-  "icon": "TODOOOOOOOOOOOOOOOO.png",
+  "icon": "icon.png",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
