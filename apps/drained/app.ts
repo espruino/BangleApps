@@ -47,7 +47,7 @@ const draw = () => {
 
   g.reset()
     .clearRect(Bangle.appRect)
-    .setFont("Vector", 32)
+    .setFont("Vector", 55)
     .setFontAlign(0, 0)
     .drawString(timeStr, x, y)
     .setFont("Vector", 24)
