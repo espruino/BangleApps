@@ -13,7 +13,10 @@ var forceOff = function (name) {
 };
 forceOff("GPS");
 forceOff("HRM");
+NRF.disconnect();
+NRF.sleep();
 Bangle.removeAllListeners();
+clearWatch();
 Bangle.setOptions({
     wakeOnFaceUp: false,
     wakeOnTouch: false,
