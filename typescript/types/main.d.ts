@@ -11450,7 +11450,7 @@ declare function setWatch(func: ((arg: { state: boolean, time: number, lastTime:
  * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearWatch
  */
-declare function clearWatch(id: number): void;
+declare function clearWatch(id?: number): void;
 
 /**
  * A variable containing the arguments given to the function:

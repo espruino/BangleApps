@@ -21,9 +21,12 @@ const forceOff = (name: "GPS" | "HRM" | "Compass" /*| "Barom"*/) => {
 };
 forceOff("GPS");
 forceOff("HRM");
+NRF.disconnect();
+NRF.sleep();
 
 // events
 Bangle.removeAllListeners();
+clearWatch();
 
 // UI
 Bangle.setOptions({
