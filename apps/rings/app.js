@@ -12,7 +12,7 @@ const watch = {
   color:"#000000", 
   dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 , bubble:true},
   hourRing : { size:82, weight:20, color:"#00FFFF", numbers: true, range: 12, bubble:true},
-  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: false, range: 60, bubble:false},
+  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: true, range: 60, bubble:false},
   batteryRing: { size :30, weight:10, color:"#ff3300", numbers: false, range: 100, bubble:false},
   screen : { width:g.getWidth(), height:g.getHeight(), centerX: g.getWidth() *0.5, centerY: g.getHeight() * 0.5, cursor: 14, font:"6x8:2" },
 };
@@ -27,7 +27,6 @@ if(settings.minute){
   watch.dateRing.numbers = settings.date.numbers;
   watch.dateRing.bubble = settings.date.bubble;
 }
-
 delete settings;
 const month= ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY",
             "AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
@@ -56,6 +55,33 @@ function queueDraw() {
     drawTimeout = undefined;
     draw();
   }, wait - (Date.now() % wait));
+}
+
+// Draws a time circle (date, hours, minutes)
+function drawTimeCircle(color, size, weight, range, value ) {  
+  // variables for vertex transformations and positioning time
+  var tver, tobj, tran;
+  var ttime = (value / range) * (Math.PI * 2);
+
+  // draw circle and line
+  g.setColor(color).fillCircle(watch.screen.centerX, watch.screen.centerY, size);
+  g.setColor("#000000").fillCircle(watch.screen.centerX, watch.screen.centerY, size - weight);
+
+  tver = [-watch.screen.cursor, 0, watch.screen.cursor, 0, watch.screen.cursor, -size*1.01, -watch.screen.cursor, -size*1.05];
+
+  tobj = { x:watch.screen.centerX, y:watch.screen.centerY, scale:1, rotate:ttime };
+  tran = g.transformVertices(tver, tobj);
+  g.fillPoly(tran);
+    
+  // Draw numbers
+  g.setFontAlign(0,0).setFont(watch.screen.font, 2).setColor(1,1,1);
+  
+  // size - 21 is the right offset to get the numbers aligned in the circle.
+  tver = [-1, 0, 1, 0, 1, -size, -1, -(size -21)];
+  tran = g.transformVertices(tver, tobj);
+  g.setColor(1,1,1);
+  g.drawString(value, (tran[4]+tran[6]) / 2 , (tran[5]+tran[7]) / 2 ); 
+  
 }
 
 
@@ -148,7 +174,7 @@ function drawMonthCircleText( text, circleSize, range, value){
     grimg.transparent = 1;  
     monthCircleTextBuffer.setColor(1,1,1);
 
-    for(z=0; z < text.length; z++){      
+    for(z=0; z < text.length; z++){
       tobj = { x:watch.screen.centerX, y:watch.screen.centerY, scale:1, rotate: ((z + 1) / range) * (Math.PI * 2) };
       tver = [-1, 0, 1, 0, 1, -circleSize, -1, -(circleSize -21)];
       tran = monthCircleTextBuffer.transformVertices(tver, tobj);
@@ -178,7 +204,6 @@ function drawMonthCircleText( text, circleSize, range, value){
 function shrinkCircles(toggle){   
   // If there's a queued draw operation,removeit so animation isn't interrupted.
   if (drawTimeout) clearTimeout(drawTimeout);
-  
   var date = new Date();
   var delta = 1;
   
@@ -230,21 +255,23 @@ function draw() {
   g.fillRect(0, 0, watch.screen.width, watch.screen.height);
     
   // If unlocked, draw date ring and text and make hour and minute rings smaller
+  var days_month = getDays(date.getFullYear(), date.getMonth()+1);
   if(!Bangle.isLocked()){
     unLockedOffset = 24;
-    var days_month = getDays(date.getFullYear(), date.getMonth()+1);
     // if the day has changed
     if(watch.dateRing.range != days_month) watch.dateRing.range = days_month;
-    drawCircle(watch.dateRing, -unLockedOffset, days_month);
+    drawCircle(watch.dateRing, -unLockedOffset, date.getDate());
     drawMonthCircleText( month[date.getMonth()]+" "+date.getFullYear(), watch.dateRing.size - unLockedOffset, getDays(date.getFullYear(), date.getMonth()+1), date.getDate()) ;
   }
   drawCircle(watch.hourRing, -unLockedOffset, date.getHours());
   drawCircle(watch.minuteRing, -unLockedOffset, date.getMinutes());
-  drawArc(E.getBattery() / 100, watch.batteryRing.color, watch.batteryRing.size);
+  if(Bangle.isLocked()){
+    drawArc(E.getBattery() / 100, watch.batteryRing.color, watch.batteryRing.size);
+  }
   queueDraw();
 }
 
-// Trigger shrink / expand animation on unlock / lock events 
+//drawArc(E.getBattery() / 100, watch.batteryRing.color, watch.batteryRing.size); Trigger shrink / expand animation on unlock / lock events 
 Bangle.on('lock', on=>{
   if (on) { // locked, expand circles
       counter = 1;
@@ -266,7 +293,7 @@ g.clear();
 draw();
 
 
-// console.log("Whatevs");
+// .log("Whatevs");
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
