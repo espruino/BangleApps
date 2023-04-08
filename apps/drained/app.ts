@@ -65,12 +65,13 @@ const draw = () => {
 };
 
 Bangle.setUI({
-  mode: "clock",
+  mode: "custom",
   remove: () => {
     if (nextDraw) clearTimeout(nextDraw);
     nextDraw = undefined;
   },
 });
+Bangle.CLOCK=1;
 
 g.clear();
 draw();
