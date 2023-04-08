@@ -11447,10 +11447,11 @@ declare function setWatch(func: ((arg: { state: boolean, time: number, lastTime:
  * Clear the Watch that was created with setWatch. If no parameter is supplied, all watches will be removed.
  * To avoid accidentally deleting all Watches, if a parameter is supplied but is `undefined` then an Exception will be thrown.
  *
- * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.**
+ * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.** (or pass nothing to clear all watches)
  * @url http://www.espruino.com/Reference#l__global_clearWatch
  */
-declare function clearWatch(id?: number): void;
+declare function clearWatch(id: number): void;
+declare function clearWatch(): void;
 
 /**
  * A variable containing the arguments given to the function:
