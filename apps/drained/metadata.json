@@ -11,6 +11,7 @@
   "allow_emulator": true,
   "storage": [
     {"name":"drained.boot.js","url":"boot.js"},
-    {"name":"drained.app.js","url":"app.js"}
+    {"name":"drained.app.js","url":"app.js"},
+    {"name":"drained.settings.js","url":"settings.js"}
   ]
 }

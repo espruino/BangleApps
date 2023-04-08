@@ -7,6 +7,7 @@ With this app installed, your Bangle will automatically switch into low power mo
 ## Time
 - [x] Show simple date/time
 - [ ] Disable alarms - with a setting?
+- [ ] Smarter/backoff interval for checking battery percentage
 
 ## No backlight (#2502)
 - [x] LCD brightness

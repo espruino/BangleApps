@@ -1,8 +1,11 @@
+const { battery = 5, interval = 10 } = require("Storage")
+  .readJSON(`${app}.setting.json`, true) || {};
+
 let drainedInterval: number | undefined = setInterval(() => {
   if(Bangle.isCharging())
     return;
-  if(E.getBattery() > 5)
+  if(E.getBattery() > battery)
     return;
 
   load("drained.app.js");
-}, 5 * 60 * 1000);
+}, interval * 60 * 1000);
