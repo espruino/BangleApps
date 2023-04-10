@@ -232,7 +232,7 @@ function draw() {
     // if the day has changed
     if(watch.dateRing.range != days_month) watch.dateRing.range = days_month;
     drawCircle(watch.dateRing, -unLockedOffset, date.getDate());
-    drawMonthCircleText( month[date.getMonth()]+" "+date.getFullYear(), watch.dateRing.size - unLockedOffset, getDays(date.getFullYear(), date.getMonth()+1), date.getDate()) ;
+    drawMonthCircleText( date.getDate() + " " + month[date.getMonth()] + " " +date.getFullYear(), watch.dateRing.size - 24, getDays(date.getFullYear(), date.getMonth()+1), date.getDate());
   }
   drawCircle(watch.hourRing, -unLockedOffset, date.getHours());
   drawCircle(watch.minuteRing, -unLockedOffset, date.getMinutes());

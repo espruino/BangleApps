@@ -3,15 +3,15 @@
   // Load settings
   var settings = Object.assign({
     minute: {
-      numbers: true,
+      numbers: false,
     },
     hour: {
-      numbers: true
+      numbers: false
     },
     date: {
-      numbers: true,
+      numbers: false,
     },  
-    bubble: true,   
+    bubble: false,   
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings(key, value) {
