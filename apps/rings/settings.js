@@ -3,17 +3,15 @@
   // Load settings
   var settings = Object.assign({
     minute: {
-      bubble: true,
       numbers: true,
     },
     hour: {
-      bubble: true,
       numbers: true
     },
     date: {
-      bubble: true,
       numbers: true,
-    },    
+    },  
+    bubble: true,   
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings(key, value) {
@@ -26,13 +24,6 @@
     /*LANG*/"Minute" : () => E.showMenu({
         "" : { "title" : /*LANG*/"Minute" },
         "< Back" : ()=>E.showMenu(mainmenu),
-        /*LANG*/"Bubble" : {
-                  value: settings.minute.bubble,
-                  onchange: (m) => { 
-                    settings.minute.bubble = m,
-                    writeSettings(); 
-                    },
-                  },
         /*LANG*/"Number" : {
                   value: settings.minute.numbers,
                   onchange: (m) => { 
@@ -44,13 +35,6 @@
       /*LANG*/"Hour" : () => E.showMenu({
         "" : { "title" : /*LANG*/"Hour" },
         "< Back" : ()=>E.showMenu(mainmenu),
-        /*LANG*/"Bubble" : {
-                  value: settings.hour.bubble,
-                  onchange: (m) => { 
-                    settings.hour.bubble = m,
-                    writeSettings(); 
-                    },
-                  },
         /*LANG*/"Number" : {
                   value: settings.hour.numbers,
                   onchange: (m) => { 
@@ -62,13 +46,6 @@
       /*LANG*/"Date" : () => E.showMenu({
         "" : { "title" : /*LANG*/"Date" },
         "< Back" : ()=>E.showMenu(mainmenu),
-        /*LANG*/"Bubble" : {
-                  value: settings.date.bubble,
-                  onchange: (m) => { 
-                    settings.date.bubble = m,
-                    writeSettings(); 
-                    },
-                  },
         /*LANG*/"Number" : {
                   value: settings.date.numbers,
                   onchange: (m) => { 
@@ -76,7 +53,14 @@
                     writeSettings(); 
                     },
                   }
-      }),      
+      }),
+      /*LANG*/"BG Bubble?" : {
+      value : settings.bubble,
+      onchange: (m) => {
+        settings.bubble = m;
+        writeSettings();
+      }
+    },      
   }
 
   // Show the menu
