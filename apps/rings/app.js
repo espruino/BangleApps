@@ -10,9 +10,9 @@
 
 const watch = {
   color:"#000000", 
-  dateRing : { size:109, weight:20, color:"#00FF00", numbers: true, range: 30 },
-  hourRing : { size:82, weight:20, color:"#00FFFF", numbers: true, range: 12},
-  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: true, range: 60},
+  dateRing : { size:109, weight:20, color:"#00FF00", numbers: false, range: 30 },
+  hourRing : { size:82, weight:20, color:"#00FFFF", numbers: false, range: 12},
+  minuteRing : { size:55, weight:18, color:"#FFFF00", numbers: false, range: 60},
   batteryRing: { size :30, weight:10, color:"#ff3300", numbers: false, range: 100},
   screen : { width:g.getWidth(), height:g.getHeight(), centerX: g.getWidth() *0.5, centerY: g.getHeight() * 0.5, cursor: 14, font:"Vector:18", bubble:false },
 };
@@ -232,7 +232,7 @@ function draw() {
     // if the day has changed
     if(watch.dateRing.range != days_month) watch.dateRing.range = days_month;
     drawCircle(watch.dateRing, -unLockedOffset, date.getDate());
-    drawMonthCircleText( date.getDate() + " " + month[date.getMonth()] + " " +date.getFullYear(), watch.dateRing.size - 24, getDays(date.getFullYear(), date.getMonth()+1), date.getDate());
+    drawMonthCircleText( date.getDate() + " " + month[date.getMonth()] + " " + date.getFullYear(), watch.dateRing.size - 24, getDays(date.getFullYear(), date.getMonth()+1), date.getDate());
   }
   drawCircle(watch.hourRing, -unLockedOffset, date.getHours());
   drawCircle(watch.minuteRing, -unLockedOffset, date.getMinutes());

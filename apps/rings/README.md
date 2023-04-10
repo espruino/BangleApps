@@ -7,5 +7,16 @@ By Amos Blanton, inspired by and remixed from Rinkulainen by Jukio Kallio.
 ![](screenshot1.png) 
 View when watch is locked. 
 
+![](screenshot4.png) 
+View when watch is locked with numbers and bubble settings on
+
+![](screenshot5.png) 
+View when watch is locked with numbers settings on
+
+![](screenshot3.png) 
+Watch unlocked, without numbers 
+
 ![](screenshot2.png) 
 Watch unlocked, showing the date.
+
+
