@@ -16,7 +16,7 @@ const forceOff = (name: "GPS" | "HRM" | "Compass" /*| "Barom"*/) => {
 
   // if(name === "Barom"){ setBarometerPower(...) }
   //                               ^^^^
-  Bangle[`set${name}Power`](false, app);
+  Bangle[`set${name}Power`](0, app);
   Bangle[`set${name}Power`] = powerNoop;
 };
 forceOff("GPS");
@@ -30,9 +30,9 @@ clearWatch();
 
 // UI
 Bangle.setOptions({
-  wakeOnFaceUp: false,
-  wakeOnTouch: false,
-  wakeOnTwist: false,
+  wakeOnFaceUp: 0,
+  wakeOnTouch: 0,
+  wakeOnTwist: 0,
 });
 
 // clock
