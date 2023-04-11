@@ -8,7 +8,7 @@ var forceOff = function (name) {
     var _a;
     if ((_a = Bangle._PWR) === null || _a === void 0 ? void 0 : _a[name])
         Bangle._PWR[name] = [];
-    Bangle["set".concat(name, "Power")](false, app);
+    Bangle["set".concat(name, "Power")](0, app);
     Bangle["set".concat(name, "Power")] = powerNoop;
 };
 forceOff("GPS");
@@ -18,9 +18,9 @@ NRF.sleep();
 Bangle.removeAllListeners();
 clearWatch();
 Bangle.setOptions({
-    wakeOnFaceUp: false,
-    wakeOnTouch: false,
-    wakeOnTwist: false,
+    wakeOnFaceUp: 0,
+    wakeOnTouch: 0,
+    wakeOnTwist: 0,
 });
 var nextDraw;
 var draw = function () {
@@ -47,12 +47,13 @@ var draw = function () {
     }, 60000 - (date.getTime() % 60000));
 };
 Bangle.setUI({
-    mode: "clock",
+    mode: "custom",
     remove: function () {
         if (nextDraw)
             clearTimeout(nextDraw);
         nextDraw = undefined;
     },
 });
+Bangle.CLOCK = 1;
 g.clear();
 draw();
