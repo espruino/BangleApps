@@ -90,6 +90,8 @@ type Widget = {
 };
 declare const WIDGETS: { [key: string]: Widget };
 
+type ShortBoolean = boolean | 0 | 1;
+
 type AccelData = {
   x: number;
   y: number;
@@ -153,13 +155,13 @@ type LCDMode =
   | "120x120"
   | "80x80"
 
-type BangleOptions = {
-  wakeOnBTN1: boolean;
-  wakeOnBTN2: boolean;
-  wakeOnBTN3: boolean;
-  wakeOnFaceUp: boolean;
-  wakeOnTouch: boolean;
-  wakeOnTwist: boolean;
+type BangleOptions<Boolean = boolean> = {
+  wakeOnBTN1: Boolean;
+  wakeOnBTN2: Boolean;
+  wakeOnBTN3: Boolean;
+  wakeOnFaceUp: Boolean;
+  wakeOnTouch: Boolean;
+  wakeOnTwist: Boolean;
   twistThreshold: number;
   twistMaxY: number;
   twistTimeout: number;
@@ -3789,7 +3791,7 @@ declare class Bangle {
    * @param {any} options
    * @url http://www.espruino.com/Reference#l_Bangle_setOptions
    */
-  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions[key] }): void;
+  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions<ShortBoolean>[key] }): void;
 
   /**
    * Return the current state of options as set by `Bangle.setOptions`
@@ -3850,7 +3852,7 @@ declare class Bangle {
    * @returns {boolean} Is HRM on?
    * @url http://www.espruino.com/Reference#l_Bangle_setHRMPower
    */
-  static setHRMPower(isOn: boolean, appID: string): boolean;
+  static setHRMPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the Heart rate monitor powered?
@@ -3874,7 +3876,7 @@ declare class Bangle {
    * @returns {boolean} Is the GPS on?
    * @url http://www.espruino.com/Reference#l_Bangle_setGPSPower
    */
-  static setGPSPower(isOn: boolean, appID: string): boolean;
+  static setGPSPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the GPS powered?
@@ -3906,7 +3908,7 @@ declare class Bangle {
    * @returns {boolean} Is the Compass on?
    * @url http://www.espruino.com/Reference#l_Bangle_setCompassPower
    */
-  static setCompassPower(isOn: boolean, appID: string): boolean;
+  static setCompassPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the compass powered?
@@ -3934,7 +3936,7 @@ declare class Bangle {
    * @returns {boolean} Is the Barometer on?
    * @url http://www.espruino.com/Reference#l_Bangle_setBarometerPower
    */
-  static setBarometerPower(isOn: boolean, appID: string): boolean;
+  static setBarometerPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the Barometer powered?
@@ -4326,7 +4328,7 @@ declare class Bangle {
    */
   static appRect: { x: number, y: number, w: number, h: number, x2: number, y2: number };
 
-  static CLOCK: boolean;
+  static CLOCK: ShortBoolean;
   static strokes: undefined | { [key: string]: Unistroke };
 }
 
