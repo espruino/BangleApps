@@ -13,21 +13,23 @@
   E.showMenu({
     "": { "title": "Drained" },
     "< Back": back,
-    "Trigger when battery reaches": {
+    "Trigger at batt%": {
       value: settings.battery,
       min: 0,
       max: 95,
       step: 5,
+      format: (v: number) => `${v}%`,
       onchange: (v: number) => {
         settings.battery = v;
         save();
       },
     },
-    "Check every N minutes": {
+    "Poll interval": {
       value: settings.interval,
       min: 1,
       max: 60 * 2,
       step: 5,
+      format: (v: number) => `${v} mins`,
       onchange: (v: number) => {
         settings.interval = v;
         save();

@@ -12,21 +12,23 @@
     E.showMenu({
         "": { "title": "Drained" },
         "< Back": back,
-        "Trigger when battery reaches": {
+        "Trigger at batt%": {
             value: settings.battery,
             min: 0,
             max: 95,
             step: 5,
+            format: function (v) { return "".concat(v, "%"); },
             onchange: function (v) {
                 settings.battery = v;
                 save();
             },
         },
-        "Check every N minutes": {
+        "Poll interval": {
             value: settings.interval,
             min: 1,
             max: 60 * 2,
             step: 5,
+            format: function (v) { return "".concat(v, " mins"); },
             onchange: function (v) {
                 settings.interval = v;
                 save();
