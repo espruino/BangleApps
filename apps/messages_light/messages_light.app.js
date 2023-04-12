@@ -467,7 +467,7 @@ const updateTimeout = function(){
 if (settings.timeOut!="Off"){
     removeTimeout();
     if( callInProgress) return; //c'è una chiamata in corso -> no timeout
-    if( music!=undefined && EventQueue.length==0 ) return; //ho aperto l'interfaccia della musica e non ho messaggi davanti -> no timeout
+    //if( typeof music !== 'undefined'  && EventQueue.length==0 ) return; //ho aperto l'interfaccia della musica e non ho messaggi davanti -> no timeout
 
 
     let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
