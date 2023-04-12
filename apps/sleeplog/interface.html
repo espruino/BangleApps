@@ -38,7 +38,7 @@ function viewLog(logData, filename) {
           <td>` +
             new Date(entry[0] * 6E5).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) + `
           </td>
-          <td style="text-align: right"><div class="container"` + 
+          <td style="text-align: right"><div class="container"` +
             (duration >= 60 ? ` style="background-color: hsl(192, 50%, ` +
               (duration > 480 ? 50 : 100 - Math.floor(duration / 60) * 50 / 8) +
               `%)">` : `>`) +
@@ -84,7 +84,7 @@ function readLog(date, callback) {
 
 function deleteFile(filename, callback) {
   if (window.confirm("Do you really want to remove " + filename)) {
-    Util.showModal("Deleting...");
+    Util.showModal("Deleting " + filename + " ...");
     if (filename.endsWith(" (StorageFile)")) {
       Util.eraseStorageFile(filename, () => {
         Util.hideModal();
@@ -99,15 +99,29 @@ function deleteFile(filename, callback) {
   }
 }
 
+function deleteBefore(dateString, callback) {
+  date = new Date(dateString);
+  if (window.confirm("Do you really want to remove all data before " + date.toLocaleDateString(undefined))) {
+    Util.showModal("Deleting all data before" + date.toLocaleDateString(undefined) + " ...");
+    Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)` +
+      `.filter(file => (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5 < ` + date.valueOf() + ` - 12096E5)` +
+      `.map(file => require("Storage").erase(file)).length`, count => {
+      Util.hideModal();
+      window.alert(count + " files deleted");
+      callback();
+    })
+  }
+}
+
 function viewFiles() {
   Util.showModal("Loading...");
   domTable.innerHTML = "";
-  Puck.eval(`require("Storage").list(/^sleeplog_\\d\\d\\d\\d\\.log$/)`, files => {
+  Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)`, files => {
     // add active log
     files.push("" + Math.floor(Date.now() / 12096E5 - 0.25));
     files = files.map(file => { return {
       filename: file.length === 4 ? "sleeplog.log (StorageFile)" : file,
-      date: (parseInt(file.match(/\d{4}/)[0]) + 0.25) * 12096E5
+      date: (parseInt(file.match(/\d+/)[0]) + 0.25) * 12096E5
     }});
     files = files.sort((a, b) => a.date - b.date);
     var html = `
@@ -146,15 +160,32 @@ function viewFiles() {
     <div class="container">
       <form class="form-horizontal">
         <div class="form-group">
-          <div class="col-3 col-sm-12">
+          <div class="col-sm-12">
             <label class="form-label"><b>csv time format</b></label>
           </div>
-          <div class="col-9 col-sm-12">
+          <div class="col-sm-12">
             <select class="form-select" id="csvTime">
               <option>JavaScript (milliseconds since 1970)</option>
               <option>UNIX (seconds since 1970)</option>
               <option>Office (days since 1900)</option>
             </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="container">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="form-label"><b>Delete all logfiles before</b></label>
+          </div>
+          <div class="col-sm-10">
+            <input class="form-input" id="delBeforeDate" type="date" value="2022-01-01">
+          </div>
+          <div class="col-mx-auto">
+            <button class="btn tooltip btn-error" data-tooltip="delete old files" task="delBefore">
+              <i class="icon icon-delete"></i>
+            </button>
           </div>
         </div>
       </form>
@@ -166,12 +197,16 @@ function viewFiles() {
       buttons[i].addEventListener("click", event => {
         var button = event.currentTarget;
         var task = button.getAttribute("task");
-        var filename = button.getAttribute("filename");
-        var date = button.getAttribute("date") - 0;
-        if (!task || !filename || !date) return;
-        if (task === "view") readLog(date, logData => viewLog(logData, filename));
-        else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
-        else if (task === "del") deleteFile(filename, () => viewFiles());
+        if (task === "delBefore") {
+          deleteBefore(document.getElementById("delBeforeDate").value, () => viewFiles());
+        } else {
+          var filename = button.getAttribute("filename");
+          var date = button.getAttribute("date") - 0;
+          if (!task || !filename || !date) return;
+          if (task === "view") readLog(date, logData => viewLog(logData, filename));
+          else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
+          else if (task === "del") deleteFile(filename, () => viewFiles());
+        }
       });
     }
   });
