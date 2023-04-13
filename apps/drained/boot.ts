@@ -1,4 +1,4 @@
-const { battery = 5, interval = 10 } = require("Storage")
+const { battery = 5, interval = 10 }: DrainedSettings = require("Storage")
   .readJSON(`${app}.setting.json`, true) || {};
 
 let drainedInterval: number | undefined = setInterval(() => {

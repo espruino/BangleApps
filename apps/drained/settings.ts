@@ -1,8 +1,13 @@
+type DrainedSettings = {
+  battery?: number,
+  interval?: number,
+};
+
 ((back: () => void) => {
   const SETTINGS_FILE = "drained.setting.json";
 
   const storage = require("Storage")
-  const settings = storage.readJSON(SETTINGS_FILE, true) || {};
+  const settings: DrainedSettings = storage.readJSON(SETTINGS_FILE, true) || {};
   settings.battery ??= 5;
   settings.interval ??= 10;
 

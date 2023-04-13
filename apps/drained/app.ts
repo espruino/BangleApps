@@ -1,6 +1,7 @@
 const app = "drained";
 
 // from boot.js
+declare var drainedInterval: number | undefined;
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
 
