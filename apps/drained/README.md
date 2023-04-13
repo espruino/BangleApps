@@ -20,6 +20,7 @@ With this app installed, your Bangle will automatically switch into low power mo
 
 ## Features
 - [x] Wake on twist -> off (#2502)
+- [x] Emit `"drained"` event
 
 # Creator
 

@@ -57,3 +57,4 @@ Bangle.setUI({
 Bangle.CLOCK = 1;
 g.clear();
 draw();
+Bangle.emit("drained", E.getBattery());

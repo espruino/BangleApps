@@ -76,3 +76,6 @@ Bangle.CLOCK=1;
 
 g.clear();
 draw();
+
+// permit other apps to put themselves into low-power mode
+Bangle.emit("drained", E.getBattery());
