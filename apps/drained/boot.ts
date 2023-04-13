@@ -1,3 +1,4 @@
+{
 const { battery: threshold = 5, interval = 10, disableBoot = false }: DrainedSettings
   = require("Storage").readJSON(`drained.setting.json`, true) || {};
 
@@ -7,14 +8,9 @@ drainedInterval = setInterval(() => {
   if(E.getBattery() > threshold)
     return;
 
-  if(disableBoot){
+  if(disableBoot)
     require("Storage").erase(".boot0");
-
-    Bangle.on("charging", charging => {
-      if (charging)
-        eval(require('Storage').read('bootupdate.js'));
-    });
-  }
 
   load("drained.app.js");
 }, interval * 60 * 1000);
+}

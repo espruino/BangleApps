@@ -58,3 +58,10 @@ Bangle.CLOCK = 1;
 g.clear();
 draw();
 Bangle.emit("drained", E.getBattery());
+var _a = (require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}).disableBoot, disableBoot = _a === void 0 ? false : _a;
+if (disableBoot) {
+    Bangle.on("charging", function (charging) {
+        if (charging)
+            eval(require('Storage').read('bootupdate.js'));
+    });
+}

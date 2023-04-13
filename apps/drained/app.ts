@@ -79,3 +79,14 @@ draw();
 
 // permit other apps to put themselves into low-power mode
 Bangle.emit("drained", E.getBattery());
+
+// restore normal boot on charge
+const { disableBoot = false }: DrainedSettings
+  = require("Storage").readJSON(`${app}.setting.json`, true) || {};
+
+if(disableBoot){
+  Bangle.on("charging", charging => {
+    if (charging)
+      eval(require('Storage').read('bootupdate.js'));
+  });
+}
