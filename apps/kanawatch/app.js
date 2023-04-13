@@ -102,6 +102,7 @@ hiragana['RU'] = image(51, 50, "gf/AAXAgF/AoX8gEPBgeAgIFD/EAn4MEg4FD8EACQoACn4lB
 hiragana['RE'] = image(56, 50, "gEf8AGF+AGigP/wAGDg//GYQGBh//C4M/AYICB/AGDv///gGC+P/AwQKB+YGB/wNC+//w4GDBYMDAwn4AwQ3BFQIGF8AGF4AGFgAGEAYMDHwIGBAYIGDn5XBAwhlBAwd/Axh6CAwSPBAwMHAxEDAwqdBAwidDAw5IBOoQGDU4QGDUAIGE//fAwufCgrmCh4iCAwk4nwGE/EcAwbSBjAGFegReCUgIGJOYIUEQIYGCIYOAAwPgAwIAIA=");
 hiragana['RO'] = image(50, 50, "AAf4gEB/4AC8EAv4FC/kAj4MDwEHAofwDAgSBDAoACn/+AocfAokP/4FDE4OAApED//AAohJBAAI5BAocAIQIFEHghFCD4QFCBoU/KIQMBNQZ9BOAhOCQYYFE/B8CE4QFBM4JGB4YuDj/7AocD/xIE/+fP4c/84FDh/8QoZyBj5mE4aFDn5yEDAIFDGIIFDIgIXDDwKREv4eEv4eBiAFCDwMH+A8BIQLnEEgLnDSooqBQYQFCDgQ2DAoolCJAgAD");
 hiragana['WA'] = image(51, 50, "AAV/4AFDh/4AocB/4DBj/ggE/AQMD/0Ag/8DgWAgH/AQMP+ASB//AgISBAoIDC4Ef///+ASBh4FB/4SBgYFC+E/4IFC/8H/F///9//g/8f/3/x/+j/nAQPwv/j/H/wf+I4N/KAJlBv+P9/4MoMP/f9/xlBAIIqBwAUBn/vFwIdBg40BNIIOBIIR7B+BbC8B7BKoX4uAyCAwM+GQX5//f8IyCn/z/hHCK4N/4/8h/8/4EB/4lBF4P/z5wB8f+RYJjBPoPAFwO/BQP4IQX/wJkCTAUfVYf4gf4BgS4BbQRiCcgbSCAAILEcALkCAAM/DoYeCC4ZLBfoIeD/ASEDAhoBAoYlBDwcAg/ABggAEA=");
+hiragana['WO'] = image(50, 52, "/4AE34FE94FE/YFE/wYYGocB/+AAwd/8AFDn/4AocP/gFDgf/KovADAnwDB43B45EE+IFE/F/KAkfBgmHAonhAonwDAn8h4MEN5X/N4l/N4k/KwkfRwgoBDwcHOohoBOoYFBEgY2BEgYFBEgYFBJIYXBFQYpBFQZ3CAoIWCKoQQCGwQLDHgR8CAoQdCAoQvCOYYFFn5gENgKREbYgAGA"); // XXX there's no WO in hiragana, so we fill it with a copy of the katakana char
 hiragana['N'] = image(54, 50, "AAVgAYUP8EHwAGCv/Av4RD/8D/wFCgf8g/8DQf4j/4AwU/8E/+AaDwF//4VBgIfB/4GCD4MPAwcf+YFB/4jBn4FC/4jBAof/4AYC//n/+DBYeD/wZC/f/FgIrCGIQsCKYU/444CKYP/z4xCvxOBv+/8EBQQP4B4KFCCoJeCNIYPBQgQKBj53CAYSbBCYQDBHgJbCTYUDOQZHBM4QTBTYX/GQQxBP4Y8BDQRGBTYY4Eh5MDHgZTDAojdEbAYGEHgIGEv7/DHgIhFfAh1EEIg8GEIg8GTYYhDHhYAF");
 /// /////////////////////////////////////////
 
@@ -123,7 +124,6 @@ function next () {
     }
   }
   curkana = 'KA';
-  kana = hiramode ? hiragana[curkana] : katakana[curkana];
   updateWatch(ohhmm);
 }
 
@@ -133,7 +133,6 @@ function randKana() {
     const total = keys.length;
     let index = 0 | (Math.random() * total);
     curkana = keys[index];
-    kana = hiramode ? hiragana[curkana] : katakana[curkana];
   } catch (e) {
     randKana();
   }
@@ -146,7 +145,6 @@ function prev () {
     if (curkana === k) {
       if (count > 0) {
         curkana = oldk;
-        kana = katakana[curkana];
         return;
       }
     }
@@ -154,7 +152,6 @@ function prev () {
     count++;
   }
   curkana = oldk;
-  kana = katakana[curkana];
   updateWatch(ohhmm);
 }
 
@@ -269,5 +266,4 @@ Bangle.setUI('clock');
 Bangle.loadWidgets();
 tickWatch();
 setInterval(tickWatch, 1000 * 60);
-
 

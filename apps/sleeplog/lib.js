@@ -123,7 +123,7 @@ exports = {
         // free ram
         files = undefined;
 
-        // check if log from files is available 
+        // check if log from files is available
         if (filesLog.length) {
           // remove unwanted entries
           filesLog = filesLog.filter((entry, index, filesLog) => (
