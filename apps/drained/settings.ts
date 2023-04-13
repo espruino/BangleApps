@@ -1,6 +1,7 @@
 type DrainedSettings = {
   battery?: number,
   interval?: number,
+  disableBoot?: ShortBoolean,
 };
 
 ((back: () => void) => {
@@ -10,6 +11,7 @@ type DrainedSettings = {
   const settings: DrainedSettings = storage.readJSON(SETTINGS_FILE, true) || {};
   settings.battery ??= 5;
   settings.interval ??= 10;
+  settings.disableBoot ??= false;
 
   const save = () => {
     storage.writeJSON(SETTINGS_FILE, settings)
@@ -18,6 +20,14 @@ type DrainedSettings = {
   E.showMenu({
     "": { "title": "Drained" },
     "< Back": back,
+    "Keep startup code": {
+      value: settings.disableBoot,
+      format: () => settings.disableBoot ? "No" : "Yes",
+      onchange: () => {
+        settings.disableBoot = !settings.disableBoot;
+        save();
+      },
+    },
     "Trigger at batt%": {
       value: settings.battery,
       min: 0,
