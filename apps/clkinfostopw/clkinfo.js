@@ -21,10 +21,10 @@
         var mins = seconds / 60;
         seconds %= 60;
         if (mins < 60)
-            return "".concat(mins.toFixed(0)+":").concat(pad2(seconds));
+            return "".concat(pad2(mins), "m").concat(pad2(seconds), "s");
         var hours = mins / 60;
         mins %= 60;
-        return "".concat(hours.toFixed(0)+":").concat(pad2(mins)).concat(pad2(seconds));
+        return "".concat(Math.round(hours), "h").concat(pad2(mins), "m").concat(pad2(seconds), "s");
     };
     var img = function () { return atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA=="); };
     return {
