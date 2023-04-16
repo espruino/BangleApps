@@ -12,7 +12,7 @@
 
   const queueRedraw = function(this: ClockInfo.MenuItem) {
     unqueueRedraw();
-    redrawInterval = setInterval(() => this.emit('redraw'), 100);
+    redrawInterval = setInterval(() => this.emit('redraw'), 1000);
   };
 
   const pad2 = (s: number) => ('0' + s.toFixed(0)).slice(-2);
