@@ -9,3 +9,4 @@
 0.06: Remember next alarm to reduce calculation amount
       Redraw only every hour when no alarm in next 24h
 0.07: Fix when no alarms are present
+0.08: Selectable font. Allow to disable hour padding.

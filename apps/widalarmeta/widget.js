@@ -1,9 +1,13 @@
 (() => {
   require("Font5x9Numeric7Seg").add(Graphics);
+  require("FontTeletext5x9Ascii").add(Graphics);
+  require("Font4x5").add(Graphics);
   const config = Object.assign({
     maxhours: 24,
     drawBell: false,
+    padHours: true,
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
+    font: 0, // 0=segment style font, 1=teletest font, 2=4x5
   }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
   function getNextAlarm(date) {
@@ -46,20 +50,30 @@
       drawSeconds = (config.showSeconds & 0b01 && !Bangle.isLocked()) || (config.showSeconds & 0b10 && next <= 1000*60);
 
       g.reset(); // reset the graphics context to defaults (color/font/etc)
-      g.setFontAlign(0,0); // center fonts
+      g.setFontAlign(-1,0); // center font in y direction
       g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
 
-      var text = hours.padStart(2, '0') + ":" + minutes.padStart(2, '0');
+      var text = "";
+      if (config.padHours) {
+        text += hours.padStart(2, '0');
+      } else {
+        text += hours;
+      }
+      text += ":" + minutes.padStart(2, '0');
       if (drawSeconds) {
         text += ":" + seconds.padStart(2, '0');
       }
-      g.setFont("5x9Numeric7Seg:1x2");
-      g.drawString(text, this.x+this.width/2, this.y+12);
-
-      calcWidth = 5*5+2;
-      if (drawSeconds) {
-        calcWidth += 3*5;
+      if (config.font == 1) {
+        g.setFont("Teletext5x9Ascii:1x2");
+      } else if (config.font == 2) {
+        g.setFont("4x5");
+      } else {
+        // Default to this if no other font is set.
+        g.setFont("5x9Numeric7Seg:1x2");
       }
+      g.drawString(text, this.x+1, this.y+12);
+
+      calcWidth = g.stringWidth(text) + 2; // One pixel on each side
       this.bellVisible = false;
     } else if (config.drawBell && this.numActiveAlarms > 0) {
       calcWidth = 24;
