@@ -53,7 +53,13 @@
             : durationOnPause,
           img: img(),
         }),
-        show: queueRedraw,
+        show: function(this: ClockInfo.MenuItem) {
+          if(startTime){ // only queue if active
+            queueRedraw.call(this);
+          }else{
+            this.emit('redraw')
+          }
+        },
         hide: unqueueRedraw,
         run: function() { // tapped
           if (startTime) {
