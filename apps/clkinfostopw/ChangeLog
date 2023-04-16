@@ -1,2 +1,2 @@
 0.01: New clkinfo!
-0.02: changed format to h:mm:ss, to reduce size of text string
+0.02: Added format option, reduced battery usage
