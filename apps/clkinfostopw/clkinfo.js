@@ -1,4 +1,3 @@
-"use strict";
 (function () {
     var durationOnPause = "---";
     var redrawInterval;

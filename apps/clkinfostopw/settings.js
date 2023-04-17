@@ -1,4 +1,3 @@
-"use strict";
 (function (back) {
     var _a;
     var SETTINGS_FILE = "clkinfostopw.setting.json";
