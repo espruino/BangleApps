@@ -13,9 +13,11 @@
         "< Back": back,
         "Format": {
             value: settings.format,
-            format: function () { return settings.format == 0 ? "12h34m56s" : "12:34:56"; },
-            onchange: function () {
-                settings.format = (settings.format + 1) % 2;
+            min: 0,
+            max: 1,
+            format: function (v) { return v === 0 ? "12m34s" : "12:34"; },
+            onchange: function (v) {
+                settings.format = v;
                 save();
             },
         },

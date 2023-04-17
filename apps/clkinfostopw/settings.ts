@@ -22,9 +22,11 @@ type StopWatchSettings = {
     "< Back": back,
     "Format": {
       value: settings.format,
-      format: () => settings.format == StopWatchFormat.HMS ? "12h34m56s" : "12:34:56",
-      onchange: () => {
-        settings.format = (settings.format + 1) % 2;
+      min: StopWatchFormat.HMS,
+      max: StopWatchFormat.Colon,
+      format: v => v === StopWatchFormat.HMS ? "12m34s" : "12:34",
+      onchange: v => {
+        settings.format = v;
         save();
       },
     },
