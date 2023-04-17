@@ -1,4 +1,3 @@
-"use strict";
 (function () {
     var icon = require('heatshrink').decompress(atob('ikggMAiEAgYIBmEAg4EB+EAh0AgPggEeCAIEBnwQBAgP+gEP//x///j//8f//k///H//4BYOP/4lBv4bDvwEB4EAvAEBwEAuA7DCAI7BgAQBhEAA'));
     var iconWidth = 18;

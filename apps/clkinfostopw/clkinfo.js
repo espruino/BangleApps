@@ -1,8 +1,8 @@
-"use strict";
 (function () {
     var durationOnPause = "---";
     var redrawInterval;
     var startTime;
+    var _a = (require("Storage").readJSON("clkinfostopw.setting.json", true) || {}).format, format = _a === void 0 ? 0 : _a;
     var unqueueRedraw = function () {
         if (redrawInterval)
             clearInterval(redrawInterval);
@@ -11,7 +11,7 @@
     var queueRedraw = function () {
         var _this = this;
         unqueueRedraw();
-        redrawInterval = setInterval(function () { return _this.emit('redraw'); }, 100);
+        redrawInterval = setInterval(function () { return _this.emit('redraw'); }, 1000);
     };
     var pad2 = function (s) { return ('0' + s.toFixed(0)).slice(-2); };
     var duration = function (start) {
@@ -21,10 +21,14 @@
         var mins = seconds / 60;
         seconds %= 60;
         if (mins < 60)
-            return "".concat(pad2(mins), "m").concat(pad2(seconds), "s");
+            return format === 0
+                ? "".concat(pad2(mins), "m").concat(pad2(seconds), "s")
+                : "".concat(mins.toFixed(0), ":").concat(pad2(seconds));
         var hours = mins / 60;
         mins %= 60;
-        return "".concat(Math.round(hours), "h").concat(pad2(mins), "m").concat(pad2(seconds), "s");
+        return format === 0
+            ? "".concat(hours.toFixed(0), "h").concat(pad2(mins), "m").concat(pad2(seconds), "s")
+            : "".concat(hours.toFixed(0), ":").concat(pad2(mins), ":").concat(pad2(seconds));
     };
     var img = function () { return atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA=="); };
     return {
@@ -39,7 +43,14 @@
                         : durationOnPause,
                     img: img(),
                 }); },
-                show: queueRedraw,
+                show: function () {
+                    if (startTime) {
+                        queueRedraw.call(this);
+                    }
+                    else {
+                        this.emit('redraw');
+                    }
+                },
                 hide: unqueueRedraw,
                 run: function () {
                     if (startTime) {

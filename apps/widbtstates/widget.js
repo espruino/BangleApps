@@ -1,4 +1,3 @@
-"use strict";
 (function () {
     "ram";
     var _a;
