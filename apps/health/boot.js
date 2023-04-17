@@ -18,9 +18,9 @@
     }
     Bangle.on("health", onHealth);
     Bangle.on("HRM", (h) => {
-      if (h.confidence > 80 && Math.abs(Bangle.getHealthStatus().bpm - h.bpm) < 1) Bangle.setHRMPower(0, "health");
+      if (h.confidence > 90 && Math.abs(Bangle.getHealthStatus().bpm - h.bpm) < 1) Bangle.setHRMPower(0, "health");
     });
-    if (Bangle.getHealthStatus().bpmConfidence > 80) return;
+    if (Bangle.getHealthStatus().bpmConfidence > 90) return;
     onHealth();
   } else Bangle.setHRMPower(!!hrm, "health");
 })();
