@@ -2,6 +2,8 @@
   let durationOnPause = "---";
   let redrawInterval: number | undefined;
   let startTime: number | undefined;
+  let { format = StopWatchFormat.HMS }: StopWatchSettings
+    = require("Storage").readJSON("clkinfostopw.setting.json", true) || {};
 
   const unqueueRedraw = () => {
     if (redrawInterval) clearInterval(redrawInterval);
@@ -10,7 +12,7 @@
 
   const queueRedraw = function(this: ClockInfo.MenuItem) {
     unqueueRedraw();
-    redrawInterval = setInterval(() => this.emit('redraw'), 100);
+    redrawInterval = setInterval(() => this.emit('redraw'), 1000);
   };
 
   const pad2 = (s: number) => ('0' + s.toFixed(0)).slice(-2);
@@ -25,12 +27,16 @@
     seconds %= 60;
 
     if (mins < 60)
-      return `${pad2(mins)}m${pad2(seconds)}s`;
+      return format === StopWatchFormat.HMS
+        ? `${pad2(mins)}m${pad2(seconds)}s`
+        : `${mins.toFixed(0)}:${pad2(seconds)}`;
 
     let hours = mins / 60;
     mins %= 60;
 
-    return `${Math.round(hours)}h${pad2(mins)}m${pad2(seconds)}s`;
+    return format === StopWatchFormat.HMS
+      ? `${hours.toFixed(0)}h${pad2(mins)}m${pad2(seconds)}s`
+      : `${hours.toFixed(0)}:${pad2(mins)}:${pad2(seconds)}`;
   };
 
   const img = () => atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA==");
@@ -47,7 +53,13 @@
             : durationOnPause,
           img: img(),
         }),
-        show: queueRedraw,
+        show: function(this: ClockInfo.MenuItem) {
+          if(startTime){ // only queue if active
+            queueRedraw.call(this);
+          }else{
+            this.emit('redraw')
+          }
+        },
         hide: unqueueRedraw,
         run: function() { // tapped
           if (startTime) {

@@ -15,6 +15,7 @@
     "declaration": false,
     "emitDeclarationOnly": false,
     "removeComments": true,
+    "noImplicitUseStrict": true, // disable "use strict"
 
     "newLine": "lf",
     "noEmitHelpers": true, // we link to specific banglejs implementations
@@ -35,7 +36,14 @@
     "noImplicitOverride": true,
     "exactOptionalPropertyTypes": true,
     "useUnknownInCatchVariables": true,
-    "strict": true,
+    //"strict": true, // can't have this with noImplicitUseStrict, instead:
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
 
     // simple type checking
     "noUnusedLocals": true,
