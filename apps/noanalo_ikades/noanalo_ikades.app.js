@@ -1,17 +1,18 @@
 /**
- * NOT ANALOG CLOCK
+ * NOT ANALOG CLOCK IKADES VERSION
  */
-const TIMER_IDX = "notanalog";
+const TIMER_IDX = "noanalog_ikades";
 const locale = require('locale');
-const storage = require('Storage')
+const storage = require('Storage');
+const clock_info = require("clock_info");
 const widget_utils = require('widget_utils');
-const SETTINGS_FILE = "notanalog.setting.json";
+const SETTINGS_FILE = "noanalog_ikades.setting.json";
 let settings = {
     alarm: -1,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
-    settings[key] = saved_settings[key]
+    settings[key] = saved_settings[key];
 }
 const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
     "12hour"
@@ -25,6 +26,8 @@ var H = g.getHeight();
 var cx = W/2;
 var cy = H/2;
 var drawTimeout;
+var img_temp;
+var text_temp;
 
 var state = {
     color: "#ff0000",
@@ -34,7 +37,7 @@ var state = {
     has_weather: false,
     temp: "-",
     sleep: false,
-}
+};
 
 var chargeImg = {
     width : 32, height : 32, bpp : 1,
@@ -91,6 +94,116 @@ Graphics.prototype.setNormalFont = function(scale) {
     return this;
 };
 
+Graphics.prototype.setMiniFont = function (scale) {
+    // Actual height 16 (15 - 0)
+    this.setFontCustom(atob('AAAAAAAAAAAAAD/Yf/g/0DwAPAA8ADwADMAMwA/wP/g/8D7ADMAMwB/4P/g/8AzADMAOYA5gH2A7eDt4G+AZ4AnAHAA+MDZwNuA/wB/gB/AO8B2YOfAw8ADgAPAB+Dv4Pxh/GGcYf7g98DnwAfAAODgAeAA4AA/wH/w//ngfcAZwBngeP/4f/A/wFgAeABwAfwB/ABwANgASAAMAAwADAB/gH+APwAMAAwADAAAwADwAPAAYAwADAAMAAwADAAMAAwADAAMAADAAOAA4ADAAMABwAOABwAOADwAeADwAOAAP4B/wP/gwODB4P/A/8A/AEAA/8D/4P/gfwBwwPHg4+DH4M/g/uD8wHjAwMDA4MBgzGDOYP7g/+BzwAOAPgD/AP8AAwB/4P/g/8ADAHzA/MD84MzAzMDPwM/AR4A/gH/A/8Ds4BxgHMAPwA+AAwDAAMHAx+Hfwf4B+ADwAOAAN4B/wP/AzODM4Mzg/8D/wH/AIwA8AHxA/uDG4MfA78B/gH8AGcAZwBmAGMAY8BjgAAAeAB8APwBzAGOAQYATADMAMwAzADMAMwAzABAAQABhgGMAdwA+ABwAYADgAMdhz+GPQPwA+ADwAB+Af8B/wOTg3mHfYZNhk2GfYZ7g38DHAPMAfwA/AAPAD+A/wH8A/gDmAOYA/gB/gD/gD+ABwD/Af8D/4MzgzGDMYP7gf8B/wAOAH4A/wH/A/+Dg4MDg4ODg4GHAAIB/gP/A/+Dh4ODA4MBxwH/AP4A/AA4AP4B/wP/g/ODMYMzgzODMwMBAP4D/wP/g/8HGAcwAzADEAIAAPwB/wH/A8eDA4MxgzGDM4M/gT8AHwAMAf8D/wP/Af4AMAAwADAB/wP/g/8B/AH/A/8D/wH+AB8AHwAPgAOAA4P/g/8D/wH8AP8D/4P/A/4AfAD+Ae8BxwODAYEA/wP/A/+D/4ADgAOAA4ADAAMA/wH/g/+D/gP4Af4APgH+A/AD/gP/Af8AfgH/A/+D/4HvAPAAfAAeAA8B/4P/gf8AAAB8AP8B/wH/g4ODg4MDg4ODg4H/Af8A/gA4Af4B/wP/g/8DGAMYA7gB8AHwAOAAfAD+Af8DzwODgwODA4OHA88B/8H/wH3B/wP/g/+DOAM+Az8D/wPngcEBwwPjA/OD84Mzgz+DHwMfAQ4BgAOAA4AD/wP/g/+D/gOAA4ADgAH8A/4D/wAPgAOAA4APAf8D/gP8A+AD+AP+AP8AH4APgD8A/gH8A/ADwAP8A/8D/wAfAH8D/gPwA/wB/wAfAP8D/wP+AfADgwOHg88B/gD8AHgA/AH/A88DhwPAA+AB8AB/AD+APwD4AfAD4APAAwcDD4Mfgz+De4Pzg+MDwwGBA//j/+eB9gAyACOAA8AB8AB4ADwAHwAHAAMCACYAM//z/+H/4cADwAeABgAHAAOAAcAAAMAAwADAAMAAwADAAMAAwADAAMAAwgADAAOAAYABgABnAG+A74DpgMmA64D/gH8AP4ABAf4D/wP/A/OAYYBjgH8AfwA+ABwAfgB/AP8Aw4DDgMOAw4DHAAMAPgA/AH+AYYBhg/OH/wP/Af4APgB/AP+A64DJgMmA+4D7AHMAEAAwA/8D/4f/hmAGYAJgAD5gf2B/cGPw47DjcHfwf+A/wB+B/wP/g/8D8ABgAGAAfwB/gD8ADAA/A3+Hfwd/AwAAADN/83/zf+MPAH8D/4P/A/wAPgB3AGcAQwABA/4D/wP/gAGAAwABAD8AfwD/APAAfAA8ABwAfABwAP8AfwB/AD8Af4B/APAA4ADgAP4AfwB/gB8APgB/AP8Aw4DDgMOAw4D/AP8AfgAYAB/wP/B/8GGAYYBjgH+AfwA/AAwAPgB/AH8A54DDgMOA48D/4H/gPmA+AH8A/4DnAMAAwADAAEAAcwDzAPuA24DbgM8AzwAGAGAAYAH+A/8D/4BjgGMAYwB+AP8Af4AHgAOAA4APgH8A/wB8AHAA/AB+AB8AB4AHgB8AfwD8APAA/gD/AH8APwD/APgA/AB/AA8A/wD/APwAQwDjgPcAfwA8ADwAfgD3AOcAQwBwIHxgfuAf4AfAD4A/AH4AeABHAMcAz4DfgNuA+4DzgOMAQQAcAf+D/+f34gBn/+f/4/+CAGPn4//h/8AYAAABgAOAAwABgAGAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=='), 32, atob("BQMEDQgMCwMFBQgJBAkECQgFCAkICAkICggDBAYIBggPDAoKCwkJDAsECQoJDQwNCgwJCQoKCw4KCgkFCAUHCwUKCgkJCQgKCgUFCQYMCgsKCggICAoKDAoJCQUDBQgI"), 16 + (scale << 8) + (1 << 16));
+    return this;
+};
+
+/************************************************
+* Clock Info
+*/
+let clockInfoItems = clock_info.load();
+
+// Add some custom clock-infos
+let weekOfYear = function () {
+    var date = new Date();
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    // January 4 is always in week 1.
+    var week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+clockInfoItems[0].items.unshift({
+    name: "weekofyear",
+    get: function () {
+        return {
+            text: "W " + weekOfYear(),
+            img: null
+        }
+    },
+    show: function () { },
+    hide: function () { },
+})
+
+// Empty for large time
+clockInfoItems[0].items.unshift({
+    name: "nop",
+    get: function () {
+        return {
+            text: null,
+            img: null
+        }
+    },
+    show: function () { },
+    hide: function () { },
+})
+
+function drawClockInfo(img_tmp, text_tmp) {
+    g.setColor(g.theme.fg);
+    // Set text and font
+    var image = img_tmp;
+    var text = String(text_tmp);
+    if (text.indexOf("km/h") >= 0) {
+        text = text.slice(0, text.indexOf("km/h"));
+    }
+    g.setMiniFont();
+
+    // Compute sizes
+    var imgWidth = image == null ? 0 : 24;
+    var midx = cx / 2 - 2;
+
+    // Draw
+    if (image) {
+        var scale = imgWidth / image.width;
+        g.drawImage(image, midx - parseInt(imgWidth * 1.3 / 2), cy + cy / 2 - 21, { scale: scale });
+    }
+    g.drawString(text.slice(0, 6), midx, cy + cy / 2 + 14);
+}
+
+let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+    app: "noanalog_ikades",
+    x: cx / 2 - 30,
+    y: cy + cy / 2 - 23,
+    w: 56,
+    h: 53,
+    draw: (itm, info, options) => {
+        var hideClkInfo = info.text == null;
+
+        g.setColor(g.theme.bg);
+        g.fillRect(options.x, options.y, options.x + options.w, options.y + options.h);
+
+        g.setFontAlign(0, 0);
+        g.setColor(g.theme.fg);
+
+        if (options.focus) {
+            var y = hideClkInfo ? options.y + 20 : options.y + 2;
+            var h = hideClkInfo ? options.h - 20 : options.h - 2;
+            g.drawRect(options.x, y, options.x + options.w - 2, y + h - 1); // show if focused
+            g.drawRect(options.x + 1, y + 1, options.x + options.w - 3, y + h - 2); // show if focused
+        }
+
+        // In case we hide the clkinfo, we show the time again as the time should
+        // be drawn larger.
+        if (hideClkInfo) {
+            return;
+        }
+
+        img_temp = info.img;
+        text_temp = info.text;
+        drawClockInfo(img_temp, text_temp);
+
+    }
+});
+
+
+/************************************************
+* Clock Info
+     */
 
 function getSteps() {
     var steps = 0;
@@ -248,7 +361,7 @@ function handleState(fastUpdate){
      */
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
-    if(!isAlarmEnabled() && fastUpdate && hours == 00 && minutes == 01){
+    if(!isAlarmEnabled() && fastUpdate && hours == 0 && minutes == 01){
         state.sleep = true;
         return;
     }
@@ -332,6 +445,7 @@ function draw(fastUpdate){
     drawState();
     drawTime();
     drawData();
+    drawClockInfo(img_temp, text_temp);
 }
 
 
@@ -428,7 +542,7 @@ function getAlarmMinutes(){
 function increaseAlarm(){
     try{
         var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-        var alarm = require('sched')
+        var alarm = require('sched');
         alarm.setAlarm(TIMER_IDX, {
         timer : (minutes+5)*60*1000,
         });
@@ -441,7 +555,7 @@ function decreaseAlarm(){
         var minutes = getAlarmMinutes();
         minutes -= 5;
 
-        var alarm = require('sched')
+        var alarm = require('sched');
         alarm.setAlarm(TIMER_IDX, undefined);
 
         if(minutes > 0){
