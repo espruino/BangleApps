@@ -6,8 +6,9 @@
             return;
         if (E.getBattery() > threshold_1)
             return;
+        var app = "drained.app.js";
         if (disableBoot_1)
-            require("Storage").erase(".boot0");
-        load("drained.app.js");
+            require("Storage").write(".boot0", "if(typeof __FILE__ === \"undefined\" || __FILE__ !== \"".concat(app, "\") setTimeout(load, 100, \"").concat(app, "\");"));
+        load(app);
     }, interval * 60 * 1000);
 }

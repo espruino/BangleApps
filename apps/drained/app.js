@@ -13,8 +13,13 @@ var forceOff = function (name) {
 };
 forceOff("GPS");
 forceOff("HRM");
-NRF.disconnect();
-NRF.sleep();
+try {
+    NRF.disconnect();
+    NRF.sleep();
+}
+catch (e) {
+    console.log("couldn't disable ble: ".concat(e));
+}
 Bangle.removeAllListeners();
 clearWatch();
 Bangle.setOptions({
@@ -46,22 +51,53 @@ var draw = function () {
         draw();
     }, 60000 - (date.getTime() % 60000));
 };
-Bangle.setUI({
-    mode: "custom",
-    remove: function () {
-        if (nextDraw)
-            clearTimeout(nextDraw);
-        nextDraw = undefined;
-    },
-});
-Bangle.CLOCK = 1;
-g.clear();
-draw();
+var reload = function () {
+    Bangle.setUI({
+        mode: "custom",
+        remove: function () {
+            if (nextDraw)
+                clearTimeout(nextDraw);
+            nextDraw = undefined;
+        },
+        btn: function () {
+            E.showPrompt("Restore watch to full power?").then(function (v) {
+                if (v) {
+                    drainedRestore();
+                }
+                else {
+                    reload();
+                }
+            });
+        }
+    });
+    Bangle.CLOCK = 1;
+    g.clear();
+    draw();
+};
+reload();
 Bangle.emit("drained", E.getBattery());
-var _a = (require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}).disableBoot, disableBoot = _a === void 0 ? false : _a;
+var _a = require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}, _b = _a.disableBoot, disableBoot = _b === void 0 ? false : _b, _c = _a.restore, restore = _c === void 0 ? 20 : _c;
+function drainedRestore() {
+    if (disableBoot) {
+        try {
+            eval(require('Storage').read('bootupdate.js'));
+        }
+        catch (e) {
+            console.log("error restoring bootupdate:" + e);
+        }
+    }
+    load();
+}
 if (disableBoot) {
+    var checkCharge_1 = function () {
+        if (E.getBattery() < restore)
+            return;
+        drainedRestore();
+    };
+    if (Bangle.isCharging())
+        checkCharge_1();
     Bangle.on("charging", function (charging) {
         if (charging)
-            eval(require('Storage').read('bootupdate.js'));
+            checkCharge_1();
     });
 }
