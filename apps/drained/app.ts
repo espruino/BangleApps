@@ -22,8 +22,12 @@ const forceOff = (name: "GPS" | "HRM" | "Compass" /*| "Barom"*/) => {
 };
 forceOff("GPS");
 forceOff("HRM");
-NRF.disconnect();
-NRF.sleep();
+try{
+  NRF.disconnect();
+  NRF.sleep();
+}catch(e){
+  console.log(`couldn't disable ble: ${e}`);
+}
 
 // events
 Bangle.removeAllListeners();
