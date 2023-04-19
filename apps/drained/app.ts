@@ -90,11 +90,14 @@ const { disableBoot = false, restore = 20 }: DrainedSettings
 
 // re-enable normal boot code when we're above a threshold:
 if(disableBoot){
-  const checkCharge = () => {
-    if(E.getBattery() < restore) return;
-
+  function drainedRestore() { // "public", to allow users to call
     eval(require('Storage').read('bootupdate.js'));
     load(); // necessary after updating boot.0
+  }
+
+  const checkCharge = () => {
+    if(E.getBattery() < restore) return;
+    drainedRestore();
   };
 
   if (Bangle.isCharging())
