@@ -8,9 +8,14 @@ drainedInterval = setInterval(() => {
   if(E.getBattery() > threshold)
     return;
 
-  if(disableBoot)
-    require("Storage").erase(".boot0");
+  const app = "drained.app.js";
 
-  load("drained.app.js");
+  if(disableBoot)
+    require("Storage").write(
+      ".boot0",
+      `if(typeof __FILE__ === "undefined" || __FILE__ !== "${app}") setTimeout(load, 100, "${app}");`
+    );
+
+  load(app);
 }, interval * 60 * 1000);
 }
