@@ -1,5 +1,6 @@
 type DrainedSettings = {
   battery?: number,
+  restore?: number,
   interval?: number,
   disableBoot?: ShortBoolean,
 };
@@ -10,6 +11,7 @@ type DrainedSettings = {
   const storage = require("Storage")
   const settings: DrainedSettings = storage.readJSON(SETTINGS_FILE, true) || {};
   settings.battery ??= 5;
+  settings.restore ??= 20;
   settings.interval ??= 10;
   settings.disableBoot ??= false;
 
@@ -47,6 +49,17 @@ type DrainedSettings = {
       format: (v: number) => `${v} mins`,
       onchange: (v: number) => {
         settings.interval = v;
+        save();
+      },
+    },
+    "Restore watch at %": {
+      value: settings.restore,
+      min: 0,
+      max: 95,
+      step: 5,
+      format: (v: number) => `${v}%`,
+      onchange: (v: number) => {
+        settings.restore = v;
         save();
       },
     },

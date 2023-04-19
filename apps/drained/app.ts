@@ -81,12 +81,22 @@ draw();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { disableBoot = false }: DrainedSettings
+const { disableBoot = false, restore = 20 }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
+// re-enable normal boot code when we're above a threshold:
 if(disableBoot){
+  const checkCharge = () => {
+    if(E.getBattery() < restore) return;
+
+    eval(require('Storage').read('bootupdate.js'));
+    load(); // necessary after updating boot.0
+  };
+
+  if (Bangle.isCharging())
+    checkCharge();
+
   Bangle.on("charging", charging => {
-    if (charging)
-      eval(require('Storage').read('bootupdate.js'));
+    if(charging) checkCharge();
   });
 }
