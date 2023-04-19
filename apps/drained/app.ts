@@ -103,7 +103,11 @@ const { disableBoot = false, restore = 20 }: DrainedSettings
 // re-enable normal boot code when we're above a threshold:
 function drainedRestore() { // "public", to allow users to call
   if(disableBoot){
-    eval(require('Storage').read('bootupdate.js'));
+    try{
+      eval(require('Storage').read('bootupdate.js'));
+    }catch(e){
+      console.log("error restoring bootupdate:" + e);
+    }
   }
   load(); // necessary after updating boot.0
 }
