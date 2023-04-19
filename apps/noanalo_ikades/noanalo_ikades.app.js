@@ -28,11 +28,14 @@ var cy = H/2;
 var drawTimeout;
 var img_temp;
 var text_temp;
+var HRM_temp;
 
 var state = {
     color: "#ff0000",
     steps: 0,
+    bpm: 0,
     maxSteps: 10000,
+    maxHRM: 210,
     bat: 0,
     has_weather: false,
     temp: "-",
@@ -201,6 +204,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
 });
 
 
+
 /************************************************
 * Clock Info
      */
@@ -220,6 +224,15 @@ function getSteps() {
     }
 
     return steps;
+}
+
+
+function getBpm() {
+    var bpm = 0;
+
+    bpm = Bangle.getHealthStatus("10min").bpm;
+
+    return bpm;
 }
 
 
@@ -295,8 +308,9 @@ function drawData() {
         return;
     }
 
-    // Default are the steps
-    drawDataHand(parseInt(state.steps*360/12000));
+    // Default are the bpm
+    // drawDataHand(parseInt(state.steps*360/12000));
+    drawDataHand(parseInt(state.bpm * 360 / 210));
 }
 
 function drawTextCleared(s, x, y){
@@ -367,13 +381,18 @@ function handleState(fastUpdate){
     }
 
     // Set steps
-    state.steps = getSteps();
+    //state.steps = getSteps();
+    state.bpm = getBpm();
 
     // Color based on state
+    /*
     state.color = isAlarmEnabled() ? "#FF6A00" :
         state.steps > state.maxSteps ? "#00ff00" :
         "#ff0000";
-
+    */
+    state.color = isAlarmEnabled() ? "#FF6A00" :
+        state.bpm > state.maxHRM / 2 ? "#ff0000" :
+            "#00ff00";
     /*
      * 5 Minute updates
      */
