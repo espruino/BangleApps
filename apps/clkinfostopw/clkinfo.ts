@@ -2,6 +2,7 @@
   let durationOnPause = "---";
   let redrawInterval: number | undefined;
   let startTime: number | undefined;
+  let over1s = false;
   let { format = StopWatchFormat.HMS }: StopWatchSettings
     = require("Storage").readJSON("clkinfostopw.setting.json", true) || {};
 
@@ -12,7 +13,17 @@
 
   const queueRedraw = function(this: ClockInfo.MenuItem) {
     unqueueRedraw();
-    redrawInterval = setInterval(() => this.emit('redraw'), 1000);
+    redrawInterval = setInterval(() => {
+        if (startTime) {
+            if (!over1s && Date.now() - startTime > 1000) {
+                over1s = true;
+                changeInterval(redrawInterval, 1000);
+            }
+        } else {
+            unqueueRedraw();
+        }
+        this.emit('redraw')
+    }, 100);
   };
 
   const pad2 = (s: number) => ('0' + s.toFixed(0)).slice(-2);
@@ -20,8 +31,10 @@
   const duration = (start: number) => {
     let seconds = (Date.now() - start) / 1000;
 
-    if (seconds < 60)
+    if (seconds <= 1)
       return seconds.toFixed(1);
+    if (seconds < 60)
+      return seconds.toFixed(0);
 
     let mins = seconds / 60;
     seconds %= 60;
@@ -64,10 +77,10 @@
         run: function() { // tapped
           if (startTime) {
             durationOnPause = duration(startTime);
-            startTime = undefined;
-            unqueueRedraw();
+            startTime = undefined; // this also unqueues the redraw
           } else {
             queueRedraw.call(this);
+            over1s = false;
             startTime = Date.now();
           }
         }
