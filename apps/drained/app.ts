@@ -69,17 +69,29 @@ const draw = () => {
   }, 60000 - (date.getTime() % 60000));
 };
 
-Bangle.setUI({
-  mode: "custom",
-  remove: () => {
-    if (nextDraw) clearTimeout(nextDraw);
-    nextDraw = undefined;
-  },
-});
-Bangle.CLOCK=1;
+const reload = () => {
+  Bangle.setUI({
+    mode: "custom",
+    remove: () => {
+      if (nextDraw) clearTimeout(nextDraw);
+      nextDraw = undefined;
+    },
+    btn: () => {
+      E.showPrompt("Restore watch to full power?").then(v => {
+        if(v){
+          drainedRestore();
+        }else{
+          reload();
+        }
+      })
+    }
+  });
+  Bangle.CLOCK=1;
 
-g.clear();
-draw();
+  g.clear();
+  draw();
+};
+reload();
 
 // permit other apps to put themselves into low-power mode
 Bangle.emit("drained", E.getBattery());
@@ -89,12 +101,14 @@ const { disableBoot = false, restore = 20 }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:
-if(disableBoot){
-  function drainedRestore() { // "public", to allow users to call
+function drainedRestore() { // "public", to allow users to call
+  if(disableBoot){
     eval(require('Storage').read('bootupdate.js'));
-    load(); // necessary after updating boot.0
   }
+  load(); // necessary after updating boot.0
+}
 
+if(disableBoot){
   const checkCharge = () => {
     if(E.getBattery() < restore) return;
     drainedRestore();
