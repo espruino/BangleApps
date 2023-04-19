@@ -2,7 +2,7 @@
     var durationOnPause = "---";
     var redrawInterval;
     var startTime;
-    var over1s = false;
+    var showMillis = true;
     var _a = (require("Storage").readJSON("clkinfostopw.setting.json", true) || {}).format, format = _a === void 0 ? 0 : _a;
     var unqueueRedraw = function () {
         if (redrawInterval)
@@ -14,8 +14,8 @@
         unqueueRedraw();
         redrawInterval = setInterval(function () {
             if (startTime) {
-                if (!over1s && Date.now() - startTime > 1000) {
-                    over1s = true;
+                if (showMillis && Date.now() - startTime > 60000) {
+                    showMillis = false;
                     changeInterval(redrawInterval, 1000);
                 }
             }
@@ -36,7 +36,7 @@
         seconds %= 60;
         if (mins < 60)
             return format === 0
-                ? "".concat(pad2(mins), "m").concat(pad2(seconds), "s")
+                ? "".concat(mins.toFixed(0), "m").concat(pad2(seconds), "s")
                 : "".concat(mins.toFixed(0), ":").concat(pad2(seconds));
         var hours = mins / 60;
         mins %= 60;
@@ -73,7 +73,7 @@
                     }
                     else {
                         queueRedraw.call(this);
-                        over1s = false;
+                        showMillis = true;
                         startTime = Date.now();
                     }
                 }

@@ -2,7 +2,7 @@
   let durationOnPause = "---";
   let redrawInterval: number | undefined;
   let startTime: number | undefined;
-  let over1s = false;
+  let showMillis = true;
   let { format = StopWatchFormat.HMS }: StopWatchSettings
     = require("Storage").readJSON("clkinfostopw.setting.json", true) || {};
 
@@ -15,8 +15,8 @@
     unqueueRedraw();
     redrawInterval = setInterval(() => {
         if (startTime) {
-            if (!over1s && Date.now() - startTime > 1000) {
-                over1s = true;
+            if (showMillis && Date.now() - startTime > 60000) {
+                showMillis = false;
                 changeInterval(redrawInterval, 1000);
             }
         } else {
@@ -80,7 +80,7 @@
             startTime = undefined; // this also unqueues the redraw
           } else {
             queueRedraw.call(this);
-            over1s = false;
+            showMillis = true;
             startTime = Date.now();
           }
         }
