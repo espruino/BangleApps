@@ -41,7 +41,7 @@
 
     if (mins < 60)
       return format === StopWatchFormat.HMS
-        ? `${pad2(mins)}m${pad2(seconds)}s`
+        ? `${mins.toFixed(0)}m${pad2(seconds)}s`
         : `${mins.toFixed(0)}:${pad2(seconds)}`;
 
     let hours = mins / 60;
