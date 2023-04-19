@@ -6,3 +6,4 @@
 0.06: Use widget_utils.
 0.07: Respect system setting for 12h or 24h time
 0.08: I'm stealing notanalog to modify it a bit
+0.09: Minute hand change from steps to bpm
