@@ -1,4 +1,3 @@
-"use strict";
 var app = "drained";
 if (typeof drainedInterval !== "undefined")
     drainedInterval = clearInterval(drainedInterval);

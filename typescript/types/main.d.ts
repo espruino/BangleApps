@@ -304,6 +304,12 @@ type VariableSizeInformation = {
   more?: VariableSizeInformation;
 };
 
+type PipeOptions = {
+  chunkSize?: number,
+  end?: boolean,
+  complete?: () => void,
+};
+
 
 // CLASSES
 
@@ -803,6 +809,29 @@ declare class NRF {
   static on(event: "security", callback: (status: any) => void): void;
 
   /**
+   * Called when Bluetooth advertising starts or stops on Espruino
+   * @param {string} event - The event to listen to.
+   * @param {(isAdvertising: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `isAdvertising` Whether we are advertising or not
+   * @url http://www.espruino.com/Reference#l_NRF_advertising
+   */
+  static on(event: "advertising", callback: (isAdvertising: boolean) => void): void;
+
+  /**
+   * Called during the bonding process to update on status
+   * `status` is one of:
+   * * `"request"` - Bonding has been requested in code via `NRF.startBonding`
+   * * `"start"` - The bonding procedure has started
+   * * `"success"` - The bonding procedure has succeeded (`NRF.startBonding`'s promise resolves)
+   * * `"fail"` - The bonding procedure has failed (`NRF.startBonding`'s promise rejects)
+   * @param {string} event - The event to listen to.
+   * @param {(status: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `status` One of `'request'/'start'/'success'/'fail'`
+   * @url http://www.espruino.com/Reference#l_NRF_bond
+   */
+  static on(event: "bond", callback: (status: any) => void): void;
+
+  /**
    * Called with a single byte value when Espruino is set up as a HID device and the
    * computer it is connected to sends a HID report back to Espruino. This is usually
    * used for handling indications such as the Caps Lock LED.
@@ -993,15 +1022,17 @@ declare class NRF {
    * `options` is an object, which can contain:
    * ```
    * {
-   *   name: "Hello" // The name of the device
-   *   showName: true/false // include full name, or nothing
-   *   discoverable: true/false // general discoverable, or limited - default is limited
-   *   connectable: true/false // whether device is connectable - default is true
-   *   scannable : true/false // whether device can be scanned for scan response packets - default is true
-   *   interval: 600 // Advertising interval in msec, between 20 and 10000 (default is 375ms)
-   *   manufacturer: 0x0590 // IF sending manufacturer data, this is the manufacturer ID
-   *   manufacturerData: [...] // IF sending manufacturer data, this is an array of data
-   *   phy: "1mbps/2mbps/coded" // (NRF52840 only) use the long-range coded phy for transmission (1mbps default)
+   *   name: "Hello"              // The name of the device
+   *   showName: true/false       // include full name, or nothing
+   *   discoverable: true/false   // general discoverable, or limited - default is limited
+   *   connectable: true/false    // whether device is connectable - default is true
+   *   scannable : true/false     // whether device can be scanned for scan response packets - default is true
+   *   whenConnected : true/false // keep advertising when connected (nRF52 only)
+   *                              // switches to advertising as non-connectable when it is connected
+   *   interval: 600              // Advertising interval in msec, between 20 and 10000 (default is 375ms)
+   *   manufacturer: 0x0590       // IF sending manufacturer data, this is the manufacturer ID
+   *   manufacturerData: [...]    // IF sending manufacturer data, this is an array of data
+   *   phy: "1mbps/2mbps/coded"   // (NRF52840 only) use the long-range coded phy for transmission (1mbps default)
    * }
    * ```
    * Setting `connectable` and `scannable` to false gives the lowest power
@@ -2282,7 +2313,7 @@ declare class Socket {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_Socket_pipe
    */
-  pipe(destination: any, options?: any): void;
+  pipe(destination: any, options?: PipeOptions): void
 
   /**
    * This function writes the `data` argument as a string. Data that is passed in
@@ -2477,7 +2508,7 @@ declare class httpSRq {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_httpSRq_pipe
    */
-  pipe(destination: any, options?: any): void;
+  pipe(dest: any, options?: PipeOptions): void
 }
 
 /**
@@ -2700,7 +2731,7 @@ declare class httpCRs {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_httpCRs_pipe
    */
-  pipe(destination: any, options?: any): void;
+  pipe(destination: any, options?: PipeOptions): void
 }
 
 /**
@@ -2914,20 +2945,11 @@ declare class Microbit {
 
 }
 
-/**
- * This is the File object - it allows you to stream data to and from files (As
- * opposed to the `require('fs').readFile(..)` style functions that read an entire
- * file).
- * To create a File object, you must type ```var fd =
- * E.openFile('filepath','mode')``` - see [E.openFile](#l_E_openFile) for more
- * information.
- * **Note:** If you want to remove an SD card after you have started using it, you
- * *must* call `E.unmountSD()` or you may cause damage to the card.
- * @url http://www.espruino.com/Reference#File
- */
-declare class File {
+interface FileConstructor {
 
+}
 
+interface File {
   /**
    * Close an open file.
    * @url http://www.espruino.com/Reference#l_File_close
@@ -2984,8 +3006,21 @@ declare class File {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_File_pipe
    */
-  pipe(destination: any, options?: any): void;
+  pipe(destination: any, options?: PipeOptions): void
 }
+
+/**
+ * This is the File object - it allows you to stream data to and from files (As
+ * opposed to the `require('fs').readFile(..)` style functions that read an entire
+ * file).
+ * To create a File object, you must type ```var fd =
+ * E.openFile('filepath','mode')``` - see [E.openFile](#l_E_openFile) for more
+ * information.
+ * **Note:** If you want to remove an SD card after you have started using it, you
+ * *must* call `E.unmountSD()` or you may cause damage to the card.
+ * @url http://www.espruino.com/Reference#File
+ */
+declare const File: FileConstructor
 
 /**
  * Class containing [Puck.js's](http://www.puck-js.com) utility functions.
@@ -3527,7 +3562,7 @@ declare class Bangle {
    * @param {string} event - The event to listen to.
    * @param {(button: number, xy: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `button` `1` for left, `2` for right
-   * * `xy` Object of form `{x,y}` containing touch coordinates (if the device supports full touch). Clipped to 0..175 (LCD pixel coordinates) on firmware 2v13 and later.
+   * * `xy` Object of form `{x,y,type}` containing touch coordinates (if the device supports full touch). Clipped to 0..175 (LCD pixel coordinates) on firmware 2v13 and later.`type` is only available on Bangle.js 2 and is an integer, either 0 for swift touches or 2 for longer ones.
    * @url http://www.espruino.com/Reference#l_Bangle_touch
    */
   static on(event: "touch", callback: TouchCallback): void;
@@ -7984,7 +8019,7 @@ declare class E {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_E_pipe
    */
-  static pipe(source: any, destination: any, options?: { chunkSize?: number, end?: boolean, complete?: () => void }): void
+  static pipe(source: any, destination: any, options?: PipeOptions): void
 
   /**
    * Create an ArrayBuffer from the given string. This is done via a reference, not a
@@ -8621,6 +8656,12 @@ declare class E {
 /**
  * This class provides a software-defined OneWire master. It is designed to be
  * similar to Arduino's OneWire library.
+ * **Note:** OneWire commands are very timing-sensitive, and on nRF52 devices
+ * (Bluetooth LE Espruino boards) the bluetooth stack can get in the way. Before
+ * version 2v18 of Espruino OneWire could be unreliable, but as of firmware 2v18
+ * Espruino now schedules OneWire accesses with the bluetooth stack to ensure it doesn't interfere.
+ * OneWire is now reliable but some functions such as `OneWire.search` can now take
+ * a while to execute (around 1 second).
  * @url http://www.espruino.com/Reference#OneWire
  */
 declare class OneWire {
@@ -9680,6 +9721,19 @@ declare class StorageFile {
    * @url http://www.espruino.com/Reference#l_StorageFile_erase
    */
   erase(): void;
+
+  /**
+   * Pipe this file to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} [options]
+   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
+   * @url http://www.espruino.com/Reference#l_StorageFile_pipe
+   */
+  pipe(destination: any, options?: PipeOptions): void
 }
 
 interface processConstructor {
@@ -10014,7 +10068,7 @@ declare class Serial {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_Serial_pipe
    */
-  pipe(destination: any, options?: any): void;
+  pipe(destination: any, options?: PipeOptions): void
 }
 
 interface StringConstructor {
@@ -12004,6 +12058,10 @@ declare module "neopixel" {
    * white). These are still supported but the array of data supplied must still be a
    * multiple of 3 bytes long. Just round the size up - it won't cause any problems.
    * * On some platforms like STM32, pins capable of hardware SPI MOSI are required.
+   * * On STM32, `neopixel.write` chooses a hardware SPI device to output the signal on
+   * and uses that. However in order to avoid spikes in the output, if that hardware device is *already
+   * initialised* it will not be re-initialised. This means that if the SPI device was already in use,
+   * you may have to use `SPIx.setup({baud:3200000, mosi:the_pin})` to force it to be re-setup on the pin.
    * * Espruino devices tend to have 3.3v IO, while WS2812/etc run off of 5v. Many
    * WS2812 will only register a logic '1' at 70% of their input voltage - so if
    * powering them off 5v you will not be able to send them data reliably. You can
@@ -12928,7 +12986,7 @@ declare module "fs" {
    * end : call the 'end' function on the destination when the source is finished
    * @url http://www.espruino.com/Reference#l_fs_pipe
    */
-  function pipe(source: any, destination: any, options?: any): void;
+  function pipe(destination: any, options?: PipeOptions): void
 }
 
 /**
@@ -13285,7 +13343,7 @@ declare module "Storage" {
 
   /**
    * The Flash Storage system is journaling. To make the most of the limited write
-   * cycles of Flash memory, Espruino marks deleted/replaced files as garbage and
+   * cycles of Flash memory, Espruino marks deleted/replaced files as garbage/trash files and
    * moves on to a fresh part of flash memory. Espruino only fully erases those files
    * when it is running low on flash, or when `compact` is called.
    * `compact` may fail if there isn't enough RAM free on the stack to use as swap
@@ -13324,7 +13382,7 @@ declare module "Storage" {
    *   fileBytes // How many bytes of allocated files do we have?
    *   fileCount // How many allocated files do we have?
    *   trashBytes // How many bytes of trash files do we have?
-   *   trashCount // How many trash files do we have?
+   *   trashCount // How many trash files do we have? (can be cleared with .compact)
    * }
    * ```
    * @returns {any} An object containing info about the current Storage system
