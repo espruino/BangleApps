@@ -6,7 +6,7 @@ type StopWatchSettings = {
   format: StopWatchFormat,
 };
 
-((back: () => void) => {
+(back => {
   const SETTINGS_FILE = "clkinfostopw.setting.json";
 
   const storage = require("Storage");
@@ -31,4 +31,4 @@ type StopWatchSettings = {
       },
     },
   });
-})
+}) satisfies SettingsFunc

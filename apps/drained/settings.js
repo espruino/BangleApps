@@ -1,4 +1,3 @@
-"use strict";
 (function (back) {
     var _a, _b, _c, _d;
     var SETTINGS_FILE = "drained.setting.json";

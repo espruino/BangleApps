@@ -5,7 +5,7 @@ type DrainedSettings = {
   disableBoot?: ShortBoolean,
 };
 
-((back: () => void) => {
+(back => {
   const SETTINGS_FILE = "drained.setting.json";
 
   const storage = require("Storage")
@@ -64,4 +64,4 @@ type DrainedSettings = {
       },
     },
   });
-})
+}) satisfies SettingsFunc

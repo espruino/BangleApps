@@ -1,4 +1,3 @@
-"use strict";
 {
     var _a = require("Storage").readJSON("drained.setting.json", true) || {}, _b = _a.battery, threshold_1 = _b === void 0 ? 5 : _b, _c = _a.interval, interval = _c === void 0 ? 10 : _c, _d = _a.disableBoot, disableBoot_1 = _d === void 0 ? false : _d;
     drainedInterval = setInterval(function () {
