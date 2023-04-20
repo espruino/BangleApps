@@ -26,6 +26,8 @@ var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+var active; // active screen
+var openMusic = false; // go back to music screen after we handle something else?
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -46,31 +48,31 @@ we should start a timeout for settings.unreadTimeout to return
 to the clock. */
 var unreadTimeout;
 /// List of all our messages
-var MESSAGES;
-try {
-  MESSAGES = require("messages").load();
-  // Write them back to storage when we're done
-  E.on("kill", ()=>{ require("messages").save(MESSAGES); delete MESSAGES; });
-} catch (e) {
-  g.clear();
-  E.showPrompt(/*LANG*/"Message file corrupt, erase all messages?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
-    if (isYes) {    // OK: erase message file and reload this app
-      require("messages").save([]);
-      load("messages.app.js");
-    } else {
-      load();// well, this app won't work... let's go back to the clock
-    }
-  });
-}
-// used by lib.js to inform app of updates
+var MESSAGES = require("Storage").readJSON("messages.json",1)||[];
+if (!Array.isArray(MESSAGES)) MESSAGES=[];
 var onMessagesModified = function(msg) {
   // TODO: if new, show this new one
-  if (msg && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
-    if (WIDGETS["messages"]) WIDGETS["messages"].buzz();
-    else Bangle.buzz();
+  if (msg && msg.id!=="music" && msg.new && !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
+    if (WIDGETS["messages"]) {
+      WIDGETS["messages"].buzz();
+    } else {
+        Bangle.buzz();
+
+        if ((require('Storage').readJSON('messages.settings.json',1)||{}).unlockWatch != false){
+          Bangle.setLocked(false);
+          Bangle.setLCDPower(1); // turn screen on
+        }
+    }
+  }
+  if (msg && msg.id=="music") {
+    if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
+    if (active!="music") return; // don't open music over other screens
   }
   showMessage(msg&&msg.id);
 };
+function saveMessages() {
+  require("Storage").writeJSON("messages.json",MESSAGES)
+}
 
 function getBackImage() {
   return atob("FhYBAAAAEAAAwAAHAAA//wH//wf//g///BwB+DAB4EAHwAAPAAA8AADwAAPAAB4AAHgAB+AH/wA/+AD/wAH8AA==");
@@ -147,6 +149,7 @@ function getMessageImageCol(msg,def) {
 }
 
 function showMapMessage(msg) {
+  active = "map";
   var m;
   var distance, street, target, eta;
   m=msg.title.match(/(.*) - (.*)/);
@@ -178,13 +181,16 @@ function showMapMessage(msg) {
   Bangle.setUI("updown",function() {
     // any input to mark as not new and return to menu
     msg.new = false;
+    saveMessages();
     layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
   });
 }
 
+var updateLabelsInterval;
 function showMusicMessage(msg) {
-  var updateLabelsInterval;
+  active = "music";
+  openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
   var albumScrollOffset = 0;
@@ -205,9 +211,14 @@ function showMusicMessage(msg) {
 
   function back() {
     clearInterval(updateLabelsInterval);
+    updateLabelsInterval = undefined;
+    openMusic = false;
+    var wasNew = msg.new;
     msg.new = false;
+    saveMessages();
     layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
+    if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:0,openMusic:0});
+    else checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
   }
   function updateLabels() {
     trackName = reduceStringAndPad(msg.track, trackScrollOffset, 13);
@@ -253,6 +264,7 @@ function showMusicMessage(msg) {
 }
 
 function showMessageScroller(msg) {
+  active = "scroller";
   var bodyFont = fontBig;
   g.setFont(bodyFont);
   var lines = [];
@@ -282,6 +294,7 @@ function showMessageScroller(msg) {
 }
 
 function showMessageSettings(msg) {
+  active = "settings";
   E.showMenu({"":{"title":/*LANG*/"Message"},
     "< Back" : () => showMessage(msg.id),
     /*LANG*/"View Message" : () => {
@@ -289,16 +302,26 @@ function showMessageSettings(msg) {
     },
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
-      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Mark Unread" : () => {
       msg.new = true;
-      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+    },
+    /*LANG*/"Mark all read" : () => {
+      MESSAGES.forEach(msg => msg.new = false);
+      saveMessages();
+      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
     /*LANG*/"Delete all messages" : () => {
       E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
-        if (isYes) require('messages').clearAll();
-        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0});
+        if (isYes) {
+          MESSAGES = [];
+          saveMessages();
+        }
+        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
       });
     },
   });
@@ -306,15 +329,20 @@ function showMessageSettings(msg) {
 
 function showMessage(msgid) {
   var msg = MESSAGES.find(m=>m.id==msgid);
-  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0}); // go home if no message found
-  if (msg.src=="Maps") {
-    cancelReloadTimeout(); // don't auto-reload to clock now
-    return showMapMessage(msg);
+  if (updateLabelsInterval) {
+    clearInterval(updateLabelsInterval);
+    updateLabelsInterval=undefined;
   }
+  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic}); // go home if no message found
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
   }
+  if (msg.src=="Maps") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMapMessage(msg);
+  }
+  active = "message";
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
   if (title) {
@@ -345,9 +373,9 @@ function showMessage(msgid) {
     }
   }
   function goBack() {
-    msg.new = false; // read mail
+    msg.new = false; saveMessages(); // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
   }
   var buttons = [
     {type:"btn", src:getBackImage(), cb:goBack} // back
@@ -355,19 +383,19 @@ function showMessage(msgid) {
   if (msg.positive) {
     buttons.push({fillx:1});
     buttons.push({type:"btn", src:getPosImage(), cb:()=>{
-      msg.new = false;
+      msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
     }});
   }
   if (msg.negative) {
     buttons.push({fillx:1});
     buttons.push({type:"btn", src:getNegImage(), cb:()=>{
-      msg.new = false;
+      msg.new = false; saveMessages();
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
     }});
   }
 
@@ -416,15 +444,19 @@ function checkMessages(options) {
     return load();
   }
   // we have >0 messages
-  var newMessages = MESSAGES.filter(m=>m.new);
+  var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
   // If we have a new message, show it
   if (options.showMsgIfUnread && newMessages.length)
     return showMessage(newMessages[0].id);
+  // no new messages: show playing music? (only if we have playing music to show)
+  if (options.openMusic && MESSAGES.some(m=>m.id=="music" && m.track && m.state=="play"))
+    return showMessage('music');
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
   // we don't have to time out of this screen...
   cancelReloadTimeout();
+  active = "main";
   // Otherwise show a menu
   E.showScroller({
     h : 48,
@@ -476,18 +508,18 @@ function cancelReloadTimeout() {
 }
 
 
-if (MESSAGES !== undefined) { // only if loading MESSAGES worked
-  g.clear();
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
-  setTimeout(() => {
-    var unreadTimeoutSecs = settings.unreadTimeout;
-    if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
-    if (unreadTimeoutSecs)
-      unreadTimeout = setTimeout(function() {
-        print("Message not seen - reloading");
-        load();
-      }, unreadTimeoutSecs*1000);
-    checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1});
-  },10); // if checkMessages wants to 'load', do that
-}
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+setTimeout(() => {
+  var unreadTimeoutSecs = settings.unreadTimeout;
+  if (unreadTimeoutSecs===undefined) unreadTimeoutSecs=60;
+  if (unreadTimeoutSecs)
+    unreadTimeout = setTimeout(function() {
+      print("Message not seen - reloading");
+      load();
+    }, unreadTimeoutSecs*1000);
+  // only openMusic on launch if music is new
+  var newMusic = MESSAGES.some(m=>m.id==="music"&&m.new);
+  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:1,openMusic:newMusic&&settings.openMusic});
+},10); // if checkMessages wants to 'load', do that
