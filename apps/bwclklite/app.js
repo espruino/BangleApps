@@ -95,7 +95,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
   app: "bwclklite",
   x : 0,
   y: 135,
-  w: W,
+  w: W+1,
   h: H-135,
   draw : (itm, info, options) => {
     let hideClkInfo = info.text == null;
