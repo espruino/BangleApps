@@ -7,11 +7,11 @@ This app logs and displays the following states:
 It is using the built in movement calculation to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
 
 #### Explanations
-* __Detection of Sleep__  
+* __Detection of Sleep__
   The movement value of bangle's build in health event that is triggered every 10 minutes is checked against the thresholds for light and deep sleep. If the measured movement is lower or equal to the __Deep Sleep__-threshold a deep sleep phase is detected for the last 10 minutes. If the threshold is exceeded but not the __Light Sleep__-threshold than the last timeperiod is detected as light sleep phase. On exceeding even this threshold it is assumed that you were awake.
-* __True Sleep__  
+* __True Sleep__
   The true sleep value is a simple addition of all registered sleeping periods.
-* __Consecutive Sleep__  
+* __Consecutive Sleep__
   In addition the consecutive sleep value tries to predict the complete time you were asleep, even the very light sleeping periods when an awake period is detected based on the registered movements. All periods after a sleeping period will be summarized until the first following non sleeping period that is longer then the maximal awake duration (__Max Awake__). If this sum is lower than the minimal consecutive sleep duration (__Min Consecutive__) it is not considered, otherwise it will be added to the consecutive sleep value.
 
 Logfiles are not removed on un-/reinstall to prevent data loss.
@@ -19,7 +19,7 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 | Filename (* _example_)       | Content         | Removeable in     |
 |------------------------------|-----------------|-------------------|
 | `sleeplog.log (StorageFile)` | recent logfile  | App Web Interface |
-| `sleeplog_1234.log`*         | old logfiles    | App Web Interface |
+| `sleeplog_1234.log`*         | past logfiles   | App Web Interface |
 | `sleeplog_123456.csv`*       | debugging files | Web IDE           |
 
 
@@ -100,13 +100,20 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 
 Available through the App Loader when your watch is connected.
 
-- __view data__
-  Display the data to each timestamp in a table.
-- __save csv-file__
-  Download a csv-file with the data to each timestamp.
-  The time format is chooseable beneath the file list.
-- __delete file__
-  Deletes the logfile from the watch. __Please backup your data first!__
+- A list of all found logfiles with following options for each file:
+  - __view data__
+    Display the data to each timestamp in a table.
+  - __save csv-file__
+    Download a csv-file with the data to each timestamp.
+    The time format is chooseable beneath the file list.
+  - __delete file__
+    Deletes the logfile from the watch. __Please backup your data first!__
+- __csv time format__
+    __JavaScript (milliseconds since 1970)__ /
+    _UNIX (seconds since 1970)_ /
+    _Office (days since 1900)_
+- __delete all logfiles before__
+  Deletes all logfile before the given date from the watch. __Please backup your data first!__
 
 ---
 ### Timestamps and Files
@@ -184,11 +191,12 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
     from: 0,           // 0 as default, in ms, first time fn will be called
     to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called
       // reference time to from & to is rounded to full minutes
-    fn: function(data) { print(data); } // function to be executed
+    fn: function(data, thisTriggerEntry) { print(data); } // function to be executed
   };
 }
 ```
-The passed data object has the following properties:
+
+The passed __data__ object has the following properties:
 - timestamp: of the status change as date object,
     (should be around 10min. before "now", the actual call of the function)
 - status: value of the new status (0-4),
@@ -199,10 +207,16 @@ The passed data object has the following properties:
 - prevConsecutive: if changed the value of the previous status (0-2) else undefined
 
 
+If you want to use other variables or functions from the trigger object inside the trigger fn function, you will find them inside the __thisTriggerEntry__ object, as the this keyword is not working in this scenario. The function itself (the fn property) is not passed inside the thisTriggerEntry object.
+
+
 ---
 ### Worth Mentioning
 ---
 #### To do list
+- Optimize interface.html:
+  - Open logfile through require("Storage") instead of require("sleeplog").
+  - Give feedback how much files have been deleted on "delete all logfiles before".
 - Check translations.
 - Add more functionallities to interface.html.
 - Enable receiving data on the Gadgetbridge side + testing.

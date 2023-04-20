@@ -24,16 +24,17 @@
               lim = sum / cnt;
               require('Storage').writeJSON('chargent.json', {limit: lim});
             }
+            require('notify').show({id: 'chargent', title: 'Fully charged'});
             // TODO ? customizable
             Bangle.buzz(500);
             setTimeout(() => Bangle.buzz(500), 1000);
           }
-        }, 30*1000);
+        }, 3e4);
       }
     } else {
       if (id) {
-        clearInterval(id);
-        id = undefined;
+        id = clearInterval(id);
+        require('notify').hide({id: 'chargent'});
       }
     }
   });

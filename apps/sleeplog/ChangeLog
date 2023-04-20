@@ -8,3 +8,5 @@
 0.10beta: Add interface.html to view saved log data, add "View log" function for debugging log, send data for gadgetbridge, change caching for global getStats
 0.11: Prevent module not found error
 0.12: Improve README, option to add functions triggered by status changes or time periods, remove old log (<0.10) conversion
+0.13: Prevent to stay in consecutive sleep if not worn, correct trigger calling, add trigger object itself as argument to the fn function
+0.14: Add "Delete all logfiles before" to interface.html, display all logfiles in the interface
