@@ -90,6 +90,8 @@ type Widget = {
 };
 declare const WIDGETS: { [key: string]: Widget };
 
+type ShortBoolean = boolean | 0 | 1;
+
 type AccelData = {
   x: number;
   y: number;
@@ -153,13 +155,13 @@ type LCDMode =
   | "120x120"
   | "80x80"
 
-type BangleOptions = {
-  wakeOnBTN1: boolean;
-  wakeOnBTN2: boolean;
-  wakeOnBTN3: boolean;
-  wakeOnFaceUp: boolean;
-  wakeOnTouch: boolean;
-  wakeOnTwist: boolean;
+type BangleOptions<Boolean = boolean> = {
+  wakeOnBTN1: Boolean;
+  wakeOnBTN2: Boolean;
+  wakeOnBTN3: Boolean;
+  wakeOnFaceUp: Boolean;
+  wakeOnTouch: Boolean;
+  wakeOnTwist: Boolean;
   twistThreshold: number;
   twistMaxY: number;
   twistTimeout: number;
@@ -172,6 +174,12 @@ type BangleOptions = {
   lcdPowerTimeout: number;
   backlightTimeout: number;
   btnLoadTimeout: number;
+};
+
+type SetUIArg<Mode> = Mode | {
+  mode: Mode,
+  back?: () => void,
+  remove?: () => void,
 };
 
 type NRFFilters = {
@@ -3783,7 +3791,7 @@ declare class Bangle {
    * @param {any} options
    * @url http://www.espruino.com/Reference#l_Bangle_setOptions
    */
-  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions[key] }): void;
+  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions<ShortBoolean>[key] }): void;
 
   /**
    * Return the current state of options as set by `Bangle.setOptions`
@@ -3844,7 +3852,7 @@ declare class Bangle {
    * @returns {boolean} Is HRM on?
    * @url http://www.espruino.com/Reference#l_Bangle_setHRMPower
    */
-  static setHRMPower(isOn: boolean, appID: string): boolean;
+  static setHRMPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the Heart rate monitor powered?
@@ -3868,7 +3876,7 @@ declare class Bangle {
    * @returns {boolean} Is the GPS on?
    * @url http://www.espruino.com/Reference#l_Bangle_setGPSPower
    */
-  static setGPSPower(isOn: boolean, appID: string): boolean;
+  static setGPSPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the GPS powered?
@@ -3900,7 +3908,7 @@ declare class Bangle {
    * @returns {boolean} Is the Compass on?
    * @url http://www.espruino.com/Reference#l_Bangle_setCompassPower
    */
-  static setCompassPower(isOn: boolean, appID: string): boolean;
+  static setCompassPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the compass powered?
@@ -3928,7 +3936,7 @@ declare class Bangle {
    * @returns {boolean} Is the Barometer on?
    * @url http://www.espruino.com/Reference#l_Bangle_setBarometerPower
    */
-  static setBarometerPower(isOn: boolean, appID: string): boolean;
+  static setBarometerPower(isOn: ShortBoolean, appID: string): boolean;
 
   /**
    * Is the Barometer powered?
@@ -4294,7 +4302,11 @@ declare class Bangle {
    * @param {any} callback - A function with one argument which is the direction
    * @url http://www.espruino.com/Reference#l_Bangle_setUI
    */
-  static setUI(type?: "updown" | "leftright" | "clock" | "clockupdown" | { mode: "custom"; back?: () => void; touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: number) => void, remove?: () => void, clock?: boolean }, callback?: (direction?: -1 | 1) => void): void;
+  static setUI(type?: undefined): void;
+  static setUI(type: SetUIArg<"updown" | "leftright">, callback: (direction?: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"clock">): void;
+  static setUI(type: SetUIArg<"clockupdown">, callback?: (direction: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"custom"> & { touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: 1 | 2 | 3) => void; clock?: boolean | 0 | 1 }): void;
 
   /**
    * @url http://www.espruino.com/Reference#l_Bangle_setUI
@@ -4316,7 +4328,7 @@ declare class Bangle {
    */
   static appRect: { x: number, y: number, w: number, h: number, x2: number, y2: number };
 
-  static CLOCK: boolean;
+  static CLOCK: ShortBoolean;
   static strokes: undefined | { [key: string]: Unistroke };
 }
 
@@ -8946,10 +8958,10 @@ interface Object {
    * ```
    * For more information see `Object.on`
    *
-   * @param {any} event - The name of the event, for instance `'data'`. If not specified *all* listeners are removed.
+   * @param {any} [event] - [optional] The name of the event, for instance `'data'`. If not specified *all* listeners are removed.
    * @url http://www.espruino.com/Reference#l_Object_removeAllListeners
    */
-  removeAllListeners(event: any): void;
+  removeAllListeners(event?: any): void;
 }
 
 /**
@@ -11437,10 +11449,11 @@ declare function setWatch(func: ((arg: { state: boolean, time: number, lastTime:
  * Clear the Watch that was created with setWatch. If no parameter is supplied, all watches will be removed.
  * To avoid accidentally deleting all Watches, if a parameter is supplied but is `undefined` then an Exception will be thrown.
  *
- * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.**
+ * @param {any} id - The id returned by a previous call to setWatch. **Only one argument is allowed.** (or pass nothing to clear all watches)
  * @url http://www.espruino.com/Reference#l__global_clearWatch
  */
 declare function clearWatch(id: number): void;
+declare function clearWatch(): void;
 
 /**
  * A variable containing the arguments given to the function:
