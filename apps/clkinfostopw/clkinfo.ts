@@ -3,8 +3,7 @@
   let redrawInterval: number | undefined;
   let startTime: number | undefined;
   let showMillis = true;
-  let { format = StopWatchFormat.HMS }: StopWatchSettings
-    = require("Storage").readJSON("clkinfostopw.setting.json", true) || {};
+  const milliTime = 60;
 
   const unqueueRedraw = () => {
     if (redrawInterval) clearInterval(redrawInterval);
@@ -15,7 +14,7 @@
     unqueueRedraw();
     redrawInterval = setInterval(() => {
         if (startTime) {
-            if (showMillis && Date.now() - startTime > 60000) {
+            if (showMillis && Date.now() - startTime > milliTime * 1000) {
                 showMillis = false;
                 changeInterval(redrawInterval, 1000);
             }
@@ -31,25 +30,19 @@
   const duration = (start: number) => {
     let seconds = (Date.now() - start) / 1000;
 
-    if (seconds <= 1)
+    if (seconds < milliTime)
       return seconds.toFixed(1);
-    if (seconds < 60)
-      return seconds.toFixed(0);
 
     let mins = seconds / 60;
     seconds %= 60;
 
     if (mins < 60)
-      return format === StopWatchFormat.HMS
-        ? `${mins.toFixed(0)}m${pad2(seconds)}s`
-        : `${mins.toFixed(0)}:${pad2(seconds)}`;
+      return `${mins.toFixed(0)}:${pad2(seconds)}`;
 
     let hours = mins / 60;
     mins %= 60;
 
-    return format === StopWatchFormat.HMS
-      ? `${hours.toFixed(0)}h${pad2(mins)}m${pad2(seconds)}s`
-      : `${hours.toFixed(0)}:${pad2(mins)}:${pad2(seconds)}`;
+    return `${hours.toFixed(0)}:${pad2(mins)}:${pad2(seconds)}`;
   };
 
   const img = () => atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA==");

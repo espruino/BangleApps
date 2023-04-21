@@ -3,7 +3,7 @@
     var redrawInterval;
     var startTime;
     var showMillis = true;
-    var _a = (require("Storage").readJSON("clkinfostopw.setting.json", true) || {}).format, format = _a === void 0 ? 0 : _a;
+    var milliTime = 60;
     var unqueueRedraw = function () {
         if (redrawInterval)
             clearInterval(redrawInterval);
@@ -14,7 +14,7 @@
         unqueueRedraw();
         redrawInterval = setInterval(function () {
             if (startTime) {
-                if (showMillis && Date.now() - startTime > 60000) {
+                if (showMillis && Date.now() - startTime > milliTime * 1000) {
                     showMillis = false;
                     changeInterval(redrawInterval, 1000);
                 }
@@ -28,21 +28,15 @@
     var pad2 = function (s) { return ('0' + s.toFixed(0)).slice(-2); };
     var duration = function (start) {
         var seconds = (Date.now() - start) / 1000;
-        if (seconds <= 1)
+        if (seconds < milliTime)
             return seconds.toFixed(1);
-        if (seconds < 60)
-            return seconds.toFixed(0);
         var mins = seconds / 60;
         seconds %= 60;
         if (mins < 60)
-            return format === 0
-                ? "".concat(mins.toFixed(0), "m").concat(pad2(seconds), "s")
-                : "".concat(mins.toFixed(0), ":").concat(pad2(seconds));
+            return "".concat(mins.toFixed(0), ":").concat(pad2(seconds));
         var hours = mins / 60;
         mins %= 60;
-        return format === 0
-            ? "".concat(hours.toFixed(0), "h").concat(pad2(mins), "m").concat(pad2(seconds), "s")
-            : "".concat(hours.toFixed(0), ":").concat(pad2(mins), ":").concat(pad2(seconds));
+        return "".concat(hours.toFixed(0), ":").concat(pad2(mins), ":").concat(pad2(seconds));
     };
     var img = function () { return atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA=="); };
     return {
