@@ -1,6 +1,7 @@
 (function () {
   var timeout;
   var last_fix;
+  var fixTs;
   var geo = require("geotools");
 
   var resetLastFix = function() {
@@ -32,6 +33,7 @@
     // we got a fix
     if (fix.fix) {
       last_fix = fix;
+      fixTs = Math.round(getTime());
       // cancel the timeout, if not already timed out
       if (this.timeout) {
 	clearTimeout(timeout);
@@ -45,6 +47,13 @@
 	Bangle.setGPSPower(1,"clkinfo");
       }, 90000);
     }
+
+    // if our last fix was more than 4 minutes ago, reset the fix to show gps time + satelites
+    if (Math.round(getTime()) - fixTs > 240) {
+      resetLastFix();
+      fixTs = Math.round(getTime());
+    }
+    
     info.items[0].emit("redraw"); 
   };
 
@@ -52,8 +61,9 @@
     if (last_fix === undefined)
       return '';
 
+    // show gps time and satelite count
     if (!last_fix.fix) 
-      return formatTime(last_fix.time);
+      return formatTime(last_fix.time) + '.' + formatTime(last_fix.satelites);
     
     return geo.gpsToOSMapRef(last_fix);
   };
@@ -72,10 +82,12 @@
           this.timeout = setTimeout(function() {
             this.timeout = undefined;
             Bangle.setGPSPower(0,"clkinfo");
+	    resetLastFix();
           }, 300000);
 	},
         show: function () {
           resetLastFix();
+	  fixTs = Math.round(getTime());
 	  Bangle.on("GPS",onGPS);
 	  this.run();
         },
