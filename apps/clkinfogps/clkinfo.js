@@ -1,6 +1,7 @@
 (function () {
   var timeout;
   var last_fix;
+  var geo = require("geotools");
 
   var resetLastFix = function() {
     last_fix = {
@@ -49,13 +50,12 @@
 
   var gpsText = function() {
     if (last_fix === undefined)
-      return '----- , -----';
+      return '';
 
     if (!last_fix.fix) 
       return formatTime(last_fix.time);
     
-    // use basic lat,lon for now
-    return last_fix.lat.toFixed(3) + ' , ' + last_fix.lon.toFixed(3);
+    return gpsToOSMapRef(last_fix),    
   };
   
   var info = {
