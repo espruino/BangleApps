@@ -63,7 +63,7 @@
 
     // show gps time and satelite count
     if (!last_fix.fix) 
-      return formatTime(last_fix.time) + '.' + formatTime(last_fix.satelites);
+      return formatTime(last_fix.time) + '.' + last_fix.satelites;
     
     return geo.gpsToOSMapRef(last_fix);
   };
