@@ -39,11 +39,11 @@
       }
       // power off the GPS
       Bangle.setGPSPower(0,"clkinfo");
-      // power on the GPS again in 3 minutes
+      // power on the GPS again in 90 seconds
       timeout = setTimeout(function() {
 	timeout = undefined;
 	Bangle.setGPSPower(1,"clkinfo");
-      }, 180000);
+      }, 90000);
     }
     info.items[0].emit("redraw"); 
   };
