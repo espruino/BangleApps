@@ -1,4 +1,4 @@
-((): ClockInfo.Menu => {
+(() => {
   let durationOnPause = "---";
   let redrawInterval: number | undefined;
   let startTime: number | undefined;
@@ -80,4 +80,4 @@
       }
     ]
   };
-})
+}) satisfies ClockInfoFunc
