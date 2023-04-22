@@ -55,7 +55,7 @@
     if (!last_fix.fix) 
       return formatTime(last_fix.time);
     
-    return geo.gpsToOSMapRef(last_fix.fix);
+    return geo.gpsToOSMapRef(last_fix);
   };
   
   var info = {
