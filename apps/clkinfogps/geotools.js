@@ -123,6 +123,6 @@ exports.gpsToOSGrid = function(gps_fix) {
 
 // string with an OS Map grid reference
 exports.gpsToOSMapRef = function(gps_fix) {
-  let os = OsGridRef.latLongToOsGrid(last_fix);
+  let os = OsGridRef.latLongToOsGrid(gps_fix);
   return to_map_ref(6, os.easting, os.northing);
 }

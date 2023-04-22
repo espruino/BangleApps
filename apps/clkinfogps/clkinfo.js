@@ -26,7 +26,7 @@
   };
 
   var onGPS = function(fix) {
-    console.log(fix);
+    //console.log(fix);
     last_fix.time = fix.time;
 
     // we got a fix
@@ -55,7 +55,7 @@
     if (!last_fix.fix) 
       return formatTime(last_fix.time);
     
-    return geo.gpsToOSMapRef(last_fix);
+    return geo.gpsToOSMapRef(last_fix.fix);
   };
   
   var info = {
