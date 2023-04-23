@@ -70,7 +70,6 @@
       w.total = w.srcs.length;
       w.srcs = w.srcs.filter((src, i, uniq) => uniq.indexOf(src) === i); // keep unique entries only
       Bangle.drawWidgets();
-      Bangle.setLCDPower(1); // turns screen on
     }, hide: function () {
       w.hidden = true;
       w.width = 0;
