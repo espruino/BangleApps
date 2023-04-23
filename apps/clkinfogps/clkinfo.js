@@ -48,17 +48,6 @@
     debug("gps on queued");
   };
 
-  var queueGPSoff = function() {
-    // turn off after 5 minutes, sooner if we get a fix
-    clearTimer();
-    timeout = setTimeout(function() {
-      timeout = undefined;
-      Bangle.setGPSPower(0,"clkinfo");
-      resetLastFix();
-    }, 300000);
-    debug("gps off queued");
-  };
-
   var onGPS = function(fix) {
     //console.log(fix);
     last_fix.time = fix.time;
@@ -78,11 +67,18 @@
     if (Math.round(getTime()) - fixTs > 240) {
       resetLastFix();
       fixTs = Math.round(getTime());
+      // cancel the timeout and power off the gps, tap required to restart
+      clearTimer();
+      Bangle.setGPSPower(0,"clkinfo");
     }
     
     info.items[0].emit("redraw"); 
   };
 
+  var img = function() {
+    return atob("GBgBAAAAAAAAABgAAb2ABzzgB37gD37wHn54AAAADEwIPn58Pn58Pv58Pn58FmA4AAAAHn54D37wD37gBzzAAb2AABgAAAAAAAAA");
+  };
+  
   var gpsText = function() {
     if (last_fix === undefined)
       return '';
@@ -100,6 +96,7 @@
       {
         name: "gridref",
         get: function () { return ({
+	  img: img(),
           text: gpsText()
         }); },
 	run : function() {
@@ -107,8 +104,6 @@
 	  // if the timer is already runnuing reset it, we can get multiple run calls by tapping
 	  clearTimer();
           Bangle.setGPSPower(1,"clkinfo");
-	  // turn GPS off after 5 mins if we dont get a fix, sooner if we get a fix
-	  queueGPSoff();
 	},
         show: function () {
 	  console.log("show");
