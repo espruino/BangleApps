@@ -4,6 +4,10 @@
   var fixTs;
   var geo = require("geotools");
 
+  var debug = function(o) {
+    console.log(o);
+  };
+  
   var resetLastFix = function() {
     last_fix = {
       fix: 0,
@@ -26,6 +30,35 @@
     }
   };
 
+  var clearTimer = function() {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = undefined;
+      debug("timer cleared");
+    }
+  };
+
+  var queueGPSon = function() {
+    clearTimer();
+    // power on the GPS again in 90 seconds
+    timeout = setTimeout(function() {
+      timeout = undefined;
+      Bangle.setGPSPower(1,"clkinfo");
+    }, 90000);
+    debug("gps on queued");
+  };
+
+  var queueGPSoff = function() {
+    // turn off after 5 minutes, sooner if we get a fix
+    clearTimer();
+    timeout = setTimeout(function() {
+      timeout = undefined;
+      Bangle.setGPSPower(0,"clkinfo");
+      resetLastFix();
+    }, 300000);
+    debug("gps off queued");
+  };
+
   var onGPS = function(fix) {
     //console.log(fix);
     last_fix.time = fix.time;
@@ -35,17 +68,10 @@
       last_fix = fix;
       fixTs = Math.round(getTime());
       // cancel the timeout, if not already timed out
-      if (this.timeout) {
-	clearTimeout(timeout);
-	this.timeout = undefined;
-      }
+      clearTimer();
       // power off the GPS
       Bangle.setGPSPower(0,"clkinfo");
-      // power on the GPS again in 90 seconds
-      timeout = setTimeout(function() {
-	timeout = undefined;
-	Bangle.setGPSPower(1,"clkinfo");
-      }, 90000);
+      queueGPSon();
     }
 
     // if our last fix was more than 4 minutes ago, reset the fix to show gps time + satelites
@@ -63,8 +89,8 @@
 
     // show gps time and satelite count
     if (!last_fix.fix) 
-      return formatTime(last_fix.time) + '.' + last_fix.satelites;
-    
+      return formatTime(last_fix.time) + ' ' + last_fix.satellites;
+
     return geo.gpsToOSMapRef(last_fix);
   };
   
@@ -77,27 +103,25 @@
           text: gpsText()
         }); },
 	run : function() {
+	  console.log("run");
+	  // if the timer is already runnuing reset it, we can get multiple run calls by tapping
+	  clearTimer();
           Bangle.setGPSPower(1,"clkinfo");
-          /* turn off after 5 minutes, sooner if we get a fix */
-          this.timeout = setTimeout(function() {
-            this.timeout = undefined;
-            Bangle.setGPSPower(0,"clkinfo");
-	    resetLastFix();
-          }, 300000);
+	  // turn GPS off after 5 mins if we dont get a fix, sooner if we get a fix
+	  queueGPSoff();
 	},
         show: function () {
+	  console.log("show");
           resetLastFix();
 	  fixTs = Math.round(getTime());
 	  Bangle.on("GPS",onGPS);
 	  this.run();
         },
         hide: function() {
+	  console.log("hide");
+	  clearTimer();
           Bangle.setGPSPower(0,"clkinfo");
           Bangle.removeListener("GPS", onGPS);
-          if (this.timeout) {
-            clearTimeout(this.timeout);
-            this.timeout = undefined;
-          }
           resetLastFix();
         }
       }
