@@ -21,3 +21,4 @@
 0.20: Fix the settings page, it would not update settings correctly.
 0.21: Update boot.min.js.
 0.22: Fix timeout for heartrate sensor on 3 minute setting (#2435)
+0.23: Fix HRM logic
