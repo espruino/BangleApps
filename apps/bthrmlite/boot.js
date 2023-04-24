@@ -1,6 +1,6 @@
-(function() {
-  var log = function() {};//print
-  var gatt;
+{
+  let log = function() {};//print
+  let gatt;
 
   Bangle.enableBTHRMLog = function() {
     log = print;
@@ -57,8 +57,11 @@
           log("Ready");
           console.log("Done!");
         }).catch(function(err) {
-          console.log("Error",err);
+          console.log("BTHRM Error",err);
           gatt = undefined;
+          // retry connection if we got a connect timeout
+          if (err == "Connection Timeout")
+            setTimeout(Bangle.setHRMPower, 1000, isOn, app);
         });
       }
     } else { // not on
@@ -72,4 +75,15 @@
       }
     }
   };
-})();
+// disconnect when swapping apps
+E.on("kill", function() {
+  if (gatt) {
+    log("HRM connected - disconnecting");
+    try {gatt.disconnect();}catch(e) {
+      log("HRM disconnect error", e);
+    }
+    gatt = undefined;
+  }
+});
+
+}
