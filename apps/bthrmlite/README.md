@@ -37,6 +37,8 @@ So far it has been tested on:
 
 This replaces `Bangle.setHRMPower` with its own implementation.
 
+To get debug info, you can call `Bangle.enableBTHRMLog()` in the IDE to enable log messages.
+
 ## Creator
 
 Gordon Williams

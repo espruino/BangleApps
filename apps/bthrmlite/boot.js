@@ -2,6 +2,10 @@
   var log = function() {};//print
   var gatt;
 
+  Bangle.enableBTHRMLog = function() {
+    log = print;
+  };
+
   Bangle.setHRMPower = function(isOn, app) {
     // Do app power handling
     if (!app) app="?";
