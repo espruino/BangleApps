@@ -12,6 +12,7 @@
   "storage": [
     {"name":"drained.boot.js","url":"boot.js"},
     {"name":"drained.app.js","url":"app.js"},
-    {"name":"drained.settings.js","url":"settings.js"}
+    {"name":"drained.settings.js","url":"settings.js"},
+    {"name":"drained.img","url":"app-icon.js","evaluate":true}
   ]
 }
