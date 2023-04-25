@@ -5,6 +5,7 @@ var fix = {};
 var mapVisible = false;
 var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
+var plotTrack;
 
 // Redraw the whole page
 function redraw() {
@@ -20,7 +21,9 @@ function redraw() {
     }
     if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-      WIDGETS["recorder"].plotTrack(m);
+      plotTrack = WIDGETS["recorder"].plotTrack(m, { async : true, callback : function() {
+        plotTrack = undefined;
+      }});
     }
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
@@ -79,6 +82,7 @@ function showMap() {
   g.reset().clearRect(R);
   redraw();
   Bangle.setUI({mode:"custom",drag:e=>{
+    if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
       g.setClipRect(R.x,R.y,R.x2,R.y2);
       g.scroll(e.dx,e.dy);
@@ -90,6 +94,7 @@ function showMap() {
       redraw();
     }
   }, btn: btn=>{
+    if (plotTrack && plotTrack.stop) plotTrack.stop();
     mapVisible = false;
     var menu = {"":{title:"Map"},
     "< Back": ()=> showMap(),
