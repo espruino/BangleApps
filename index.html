@@ -147,10 +147,6 @@
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
           </label>
           <label class="form-switch">
-            <input type="checkbox" id="settings-minify">
-            <i class="form-icon"></i> Minify apps before upload (BETA, not recommended. Uploads smaller, faster apps but this may cause some apps to stop working)
-          </label>
-          <label class="form-switch">
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
@@ -163,6 +159,13 @@
             <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
               <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
           </label>
+          <details>
+            <summary>Advanced Options</summary>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-minify">
+              <i class="form-icon"></i> Minify apps before upload (DANGER: BETA, not recommended. Uploads smaller, faster apps but this minification <b>will</b> break some apps)
+            </label>
+          </details>
           <div class="form-group">
             <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
               <option value="">None (English)</option>
