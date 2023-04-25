@@ -26,3 +26,6 @@
 0.20: Automatic translation of some more strings.
 0.21: Speed report now uses speed units from locale
 0.22: Convert Yes/No On/Off in settings to checkboxes
+0.23: Add graphing for HRM, fix some other graphs
+      Altitude graphing now uses barometer altitude if it exists
+      plotTrack in widget allows track to be drawn in the background (doesn't block execution)

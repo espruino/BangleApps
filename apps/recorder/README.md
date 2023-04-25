@@ -20,9 +20,28 @@ You can record
 * **BAT** Battery percentage and voltage
 * **Core** CoreTemp body temperature
 
+You can then start/stop recording from the Recorder app itself (and as long as widgets are
+enabled in the app you're using, you can move to another app and continue recording).
+Some apps like the [Run app](https://banglejs.com/apps/?id=run) are able to automatically start/stop the Recorder too.
+
 **Note:** It is possible for other apps to record information using this app
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`
 function in `widget.js` for more information.
+
+## Graphing
+
+You can download the information to the PC using [the App Loader](https://banglejs.com/apps/?id=recorder). Connect
+to your Bangle, then in `My Apps` click the disk icon next to the `Recorder` app to download data.
+
+You can also view some information on the watch.
+
+* Tap `View Tracks`
+* Tap on the Track number you're interested in, and you'll see a page with information about that track...
+  * `Plot Map` plots a map using GPS coordinates
+  * `Plot OpenStMap` plots a map using GPS coordinates on top of an OpenStreetMap map (if the app is installed)
+  * `Plot Alt` plots altitude over time
+  * `Plot Speed` plots speed over time
+  * `Plot HRM` plots heart rate over time
 
 ## Tips
 
