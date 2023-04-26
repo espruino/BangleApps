@@ -7,7 +7,7 @@
   var debug = function(o) {
     console.log(o);
   };
-  
+
   var resetLastFix = function() {
     last_fix = {
       fix: 0,
@@ -20,7 +20,7 @@
       satellites: 0
     };
   };
-  
+
   var formatTime = function(now) {
     try {
       var fd = now.toUTCString().split(" ");
@@ -71,50 +71,50 @@
       clearTimer();
       Bangle.setGPSPower(0,"clkinfo");
     }
-    
-    info.items[0].emit("redraw"); 
+
+    info.items[0].emit("redraw");
   };
 
   var img = function() {
     return atob("GBgBAAAAAAAAABgAAb2ABzzgB37gD37wHn54AAAADEwIPn58Pn58Pv58Pn58FmA4AAAAHn54D37wD37gBzzAAb2AABgAAAAAAAAA");
   };
-  
+
   var gpsText = function() {
     if (last_fix === undefined)
       return '';
 
     // show gps time and satelite count
-    if (!last_fix.fix) 
+    if (!last_fix.fix)
       return formatTime(last_fix.time) + ' ' + last_fix.satellites;
 
     return geo.gpsToOSMapRef(last_fix);
   };
-  
+
   var info = {
     name: "Gps",
     items: [
       {
         name: "gridref",
         get: function () { return ({
-	  img: img(),
+          img: img(),
           text: gpsText()
         }); },
-	run : function() {
-	  console.log("run");
-	  // if the timer is already runnuing reset it, we can get multiple run calls by tapping
-	  clearTimer();
+        run : function() {
+          console.log("run");
+          // if the timer is already runnuing reset it, we can get multiple run calls by tapping
+          clearTimer();
           Bangle.setGPSPower(1,"clkinfo");
-	},
+        },
         show: function () {
-	  console.log("show");
+          console.log("show");
           resetLastFix();
-	  fixTs = Math.round(getTime());
-	  Bangle.on("GPS",onGPS);
-	  this.run();
+          fixTs = Math.round(getTime());
+          Bangle.on("GPS",onGPS);
+          this.run();
         },
         hide: function() {
-	  console.log("hide");
-	  clearTimer();
+          console.log("hide");
+          clearTimer();
           Bangle.setGPSPower(0,"clkinfo");
           Bangle.removeListener("GPS", onGPS);
           resetLastFix();
