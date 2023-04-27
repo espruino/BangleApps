@@ -44,7 +44,7 @@ const clock = new ClockFace({
   precision: 1,
   settingsFile: "cogclock.settings.json",
   init: function() {
-    this.r1 = 84; // inner radius
+    this.r1 = (process.env.HWVERSION>1) ? 68 : 84; // inner radius
     this.r3 = Math.min(Bangle.appRect.w/2, Bangle.appRect.h/2); // outer radius
     this.r2 = (this.r1*3+this.r3*2)/5;
     this.teeth = 12;
