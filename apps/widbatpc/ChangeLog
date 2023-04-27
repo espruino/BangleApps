@@ -16,3 +16,4 @@
 0.17: Add option 'Remove Jitter'='Drop only' to prevent percentage from getting up again when not charging
       Add option to disable vibration when charger connects
 0.18: Only redraw when values change
+0.19: Match draw() API e.g. to allow wid_edit to alter this widget
