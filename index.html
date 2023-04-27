@@ -159,6 +159,11 @@
             <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
               <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
           </label>
+          <div class="form-group">
+            <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
+              <option value="">None (English)</option>
+            </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
+          </div>
           <details>
             <summary>Advanced Options</summary>
             <label class="form-switch">
@@ -166,11 +171,6 @@
               <i class="form-icon"></i> Minify apps before upload (DANGER: BETA, not recommended. Uploads smaller, faster apps but this minification <b>will</b> break some apps)
             </label>
           </details>
-          <div class="form-group">
-            <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
-              <option value="">None (English)</option>
-            </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
-          </div>
           <button class="btn" id="defaultsettings">Default settings</button>
         </div>
         <div id="more-deviceinfo" style="display:none">
