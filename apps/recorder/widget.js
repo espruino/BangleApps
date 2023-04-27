@@ -289,13 +289,14 @@
         l = f.readLine(f);
       }
       var asyncTimeout;
+      var color = g.getColor();
       function plotPartial() {
         asyncTimeout = undefined;
         if (l===undefined) return; // empty file?
         mp = m.latLonToXY(+c[la], +c[lo]);
-        g.moveTo(mp.x,mp.y);
+        g.moveTo(mp.x,mp.y).setColor(color);
         l = f.readLine(f);
-        var n = options.async ? 50 : 200; // only plot first 200 points to keep things fast(ish)
+        var n = options.async ? 20 : 200; // only plot first 200 points to keep things fast(ish)
         while(l && n--) {
           c = l.split(",");
           if (c[la]) {
