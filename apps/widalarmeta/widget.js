@@ -25,7 +25,7 @@
     }
   } // getNextAlarm
 
-  function draw(fromInterval) {
+  function draw(_w, fromInterval) {
     if (this.nextAlarm === undefined) {
       let alarm = getNextAlarm();
       if (alarm === undefined) {
@@ -101,8 +101,9 @@
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(()=>{
-      WIDGETS["widalarmeta"].timeoutId = undefined;
-      WIDGETS["widalarmeta"].draw(true);
+      var w = WIDGETS["widalarmeta"];
+      w.timeoutId = undefined;
+      w.draw(w, true);
     }, timeout);
   } /* draw */
 
