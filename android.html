@@ -20,9 +20,6 @@
     <title>Bangle.js App Loader</title>
   </head>
   <body>
-<!--<button id="test">Test</button>
-<div id="status"></div>-->
-
     <header class="navbar-primary navbar">
       <section class="navbar-section" >
         <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2" ><img src="img/banglejs-logo-sml.png" alt="Bangle.js">
@@ -78,18 +75,23 @@
         <div class="filter-nav">
           <label class="chip active" filterid="">Default</label>
           <label class="chip" filterid="clock">Clocks</label>
+          <label class="chip" filterid="launch">Launchers</label>
           <label class="chip" filterid="game">Games</label>
           <label class="chip" filterid="tool">Tools</label>
+          <label class="chip" filterid="textinput">Keyboards</label>
           <label class="chip" filterid="widget">Widgets</label>
           <label class="chip" filterid="bluetooth">Bluetooth</label>
           <label class="chip" filterid="outdoors">Outdoors</label>
+          <label class="chip" filterid="ram">Online</label>
           <label class="chip" filterid="favourites">Favourites</label>
         </div>
         <div class="sort-nav hidden">
           <span>Sort by:</span>
           <label class="chip active" sortid="">None</label>
-          <label class="chip" sortid="created">New</label>
-          <label class="chip" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="created">New</label>
+          <label class="chip hidden" sortid="modified">Updated</label>
+          <label class="chip hidden" sortid="installs">Installed</label>
+          <label class="chip hidden" sortid="favourites">Favourited</label>
         </div>
       </div>
 
@@ -134,7 +136,8 @@
            <button class="btn" id="removeall" data-tooltip="Delete everything from your Bangle, leaving it blank">Remove all Apps</button>
            <button class="btn" id="reinstallall" data-tooltip="Remove and re-install every app, leaving all other data intact">Reinstall apps</button>
            <button class="btn" id="installdefault">Install default apps</button>
-           <button class="btn" id="installfavourite" data-tooltip="Delete everything, install apps you've marked as favourites">Install favourite apps</button></p>
+           <button class="btn" id="installfavourite" data-tooltip="Delete everything, install apps you've marked as favourites">Install favourite apps</button>
+           <button class="btn" id="newGithubIssue" data-tooltip="Create a new issue on github">New issue on github</button></p>
         <p><button class="btn tooltip tooltip-right" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
            <button class="btn tooltip tooltip-right" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button></p>
         <h3>Settings</h3>
@@ -147,12 +150,24 @@
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-usage-stats">
+            <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
+              <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
+          </label>
           <div class="form-group">
             <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
               <option value="">None (English)</option>
             </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
           </div>
-          <button class="btn" id="defaultsettings">Default settings</button>
+          <details>
+            <summary>Advanced Options</summary>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-minify">
+              <i class="form-icon"></i> Minify apps before upload (DANGER: BETA, not recommended. Uploads smaller, faster apps but this minification <b>will</b> break some apps)
+            </label>
+            <button class="btn" id="defaultsettings">Reset to default settings</button>
+          </details>
         </div>
         <div id="more-deviceinfo" style="display:none">
         <h3>Device info</h3>
