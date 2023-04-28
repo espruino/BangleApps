@@ -125,3 +125,16 @@ a.btn.btn-link.dropdown-toggle {
   transform: translate(-50%,-50%);
   content: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='2 2 28 28' width='1.5em' height='1.5em'%3E%3Cpath d='M 6 4 C 4.895 4 4 4.895 4 6 L 4 24 C 4 25.105 4.895 26 6 26 L 24 26 C 25.105 26 26 25.105 26 24 L 26 8 L 22 4 L 20 4 L 20 10 C 20 10.552 19.552 11 19 11 L 10 11 C 9.448 11 9 10.552 9 10 L 9 4 L 6 4 z M 16 4 L 16 9 L 18 9 L 18 4 L 16 4 z M 10 16 L 20 16 C 21.105 16 22 16.895 22 18 L 22 24 L 8 24 L 8 18 C 8 16.895 8.895 16 10 16 z'/%3E%3C/svg%3E");
 }
+
+/* https://github.com/picturepan2/spectre/issues/595 */
+.chip.tooltip:hover {
+  overflow: visible;
+  overflow-y: unset;
+}
+
+/* Normally tooltips don't wrap, but if you enable it, then they wrap until they are really thin!
+Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wrap) */
+/*.tooltip:hover::after {
+  white-space: normal;
+  min-width: 160px;
+}*/
