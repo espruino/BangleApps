@@ -67,7 +67,7 @@
     function highlight() {
       if (WIDGET.width > 0) {
         // draw widget, then draw a highlighted border on top
-        WIDGET.draw();
+        WIDGET.draw(WIDGET);
         g.setColor(g.theme.fgH)
           .drawRect(WIDGET.x, WIDGET.y, WIDGET.x+WIDGET.width-1, WIDGET.y+23);
       } else {

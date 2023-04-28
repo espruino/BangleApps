@@ -9,7 +9,7 @@
   "dependencies" : { "clock_info":"module" },
   "description": "A watch face that was designed by an AI (stable diffusion) and implemented by a human.",
   "type": "clock",
-  "tags": "clock",
+  "tags": "clock,clkinfo",
   "screenshots": [
     {"url":"orig.png"},
     {"url":"impl.png"},
