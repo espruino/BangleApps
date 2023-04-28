@@ -181,7 +181,7 @@
     if (on) update();
   });
 
-  var id = setInterval(()=>WIDGETS["batpc"].draw(true), intervalLow);
+  var id = setInterval(()=>WIDGETS["batpc"].draw(WIDGETS["batpc"], true), intervalLow);
 
   WIDGETS["batpc"]={area:"tr",width:40,draw:draw,reload:reload};
   setWidth();

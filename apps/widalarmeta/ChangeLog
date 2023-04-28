@@ -10,3 +10,4 @@
       Redraw only every hour when no alarm in next 24h
 0.07: Fix when no alarms are present
 0.08: Selectable font. Allow to disable hour padding.
+0.09: Match draw() API e.g. to allow wid_edit to alter this widget
