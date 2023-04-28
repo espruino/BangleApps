@@ -5,7 +5,7 @@
   var geo = require("geotools");
 
   var debug = function(o) {
-    console.log(o);
+    //console.log(o);
   };
 
   var resetLastFix = function() {
