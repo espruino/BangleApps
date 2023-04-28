@@ -147,10 +147,6 @@
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
           </label>
           <label class="form-switch">
-            <input type="checkbox" id="settings-minify">
-            <i class="form-icon"></i> Minify apps before upload (BETA, not recommended. Uploads smaller, faster apps but this may cause some apps to stop working)
-          </label>
-          <label class="form-switch">
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
@@ -168,6 +164,13 @@
               <option value="">None (English)</option>
             </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
           </div>
+          <details>
+            <summary>Advanced Options</summary>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-minify">
+              <i class="form-icon"></i> Minify apps before upload (DANGER: BETA, not recommended. Uploads smaller, faster apps but this minification <b>will</b> break some apps)
+            </label>
+          </details>
           <button class="btn" id="defaultsettings">Default settings</button>
         </div>
         <div id="more-deviceinfo" style="display:none">
