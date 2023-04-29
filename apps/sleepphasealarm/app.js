@@ -10,10 +10,11 @@ const config = Object.assign({
         disableAlarm: false,
     }
 }, require("Storage").readJSON(CONFIGFILE,1) || {});
-const active = alarms.filter(a=>a.on);
+const active = alarms.filter(alarm => require("sched").getTimeToAlarm(alarm));
 const schedSettings = require("sched").getSettings();
 let buzzCount = schedSettings.buzzCount;
 let logs = [];
+let drawTimeTimeout;
 
 // Sleep/Wake detection with Estimation of Stationary Sleep-segments (ESS):
 // Marko Borazio, Eugen Berlin, Nagihan Kücükyildiz, Philipp M. Scholl and Kristof Van Laerhoven, "Towards a Benchmark for Wearable Sleep Analysis with Inertial Wrist-worn Sensing Units", ICHI 2014, Verona, Italy, IEEE Press, 2014.
@@ -21,12 +22,12 @@ let logs = [];
 //
 // Function needs to be called for every measurement but returns a value at maximum once a second (see winwidth)
 // start of sleep marker is delayed by sleepthresh due to continous data reading
-const winwidth=13;
-const nomothresh=0.03; // 0.006 was working on Bangle1, but Bangle2 has higher noise.
+const winwidth=13; // Actually 12.5 Hz, rounded
+const nomothresh=0.023; // Original implementation: 6, resolution 11 bit, scale +-4G = 6/(2^(11-1))*4 = 0.023438 in G
 const sleepthresh=600;
 var ess_values = [];
 var slsnds = 0;
-function calc_ess(acc_magn) {
+function calc_ess(acc_magn) {"ram"
   ess_values.push(acc_magn);
 
   if (ess_values.length == winwidth) {
@@ -69,6 +70,9 @@ active.forEach(alarm => {
   }
 });
 
+const LABEL_ETA = /*LANG*/"ETA";
+const LABEL_WAKEUP_TIME = /*LANG*/"Alarm at";
+
 var layout = new Layout({
   type:"v", c: [
     {type:"txt", font:"10%", label:"Sleep Phase Alarm", bgCol:g.theme.bgH, fillx: true, height:Bangle.appRect.h/6},
@@ -84,24 +88,37 @@ function drawApp() {
   var alarmMinute = nextAlarmDate.getMinutes();
   if (alarmHour < 10) alarmHour = "0" + alarmHour;
   if (alarmMinute < 10) alarmMinute = "0" + alarmMinute;
-  layout.alarm_date.label = "Alarm at " + alarmHour + ":" + alarmMinute;
+  layout.alarm_date.label = `${LABEL_WAKEUP_TIME}: ${alarmHour}:${alarmMinute}`;
   layout.render();
 
-  function drawTime() {
+  function drawTime() {"ram"
+    const drawSeconds = !Bangle.isLocked();
+
     if (Bangle.isLCDOn()) {
       const now = new Date();
-      layout.date.label = locale.time(now, BANGLEJS2 && Bangle.isLocked() ? 1 : 0); // hide seconds on bangle 2
+      layout.date.label = locale.time(now, !drawSeconds); // hide seconds on bangle 2
       const diff = nextAlarmDate - now;
       const diffHour = Math.floor((diff % 86400000) / 3600000).toString();
       const diffMinutes = Math.floor(((diff % 86400000) % 3600000) / 60000).toString();
-      layout.eta.label = "ETA: -"+ diffHour + ":" + diffMinutes.padStart(2, '0');
+      layout.eta.label = `${LABEL_ETA}: ${diffHour}:${diffMinutes.padStart(2, '0')}`;
       layout.render();
     }
 
-    setTimeout(()=>{
+    const period = drawSeconds ? 1000 : 60000;
+    if (this.drawTimeTimeout !== undefined) {
+      clearTimeout(this.drawTimeTimeout);
+    }
+    drawTimeTimeout = setTimeout(()=>{
+      drawTimeTimeout = undefined;
       drawTime();
-    }, 1000 - (Date.now() % 1000));
+    }, period - (Date.now() % period));
   }
+
+  Bangle.on('lock', function(on) {
+    if (on === false) {
+      drawTime();
+    }
+  });
 
   drawTime();
 }
@@ -129,8 +146,9 @@ function addLog(time, type) {
 var minAlarm = new Date();
 var measure = true;
 if (nextAlarmDate !== undefined) {
-  config.logs[nextAlarmDate.getDate()] = []; // overwrite log on each day of month
-  logs = config.logs[nextAlarmDate.getDate()];
+  const logday = BANGLEJS2 ? nextAlarmDate.getDate() : 0;
+  config.logs[logday] = []; // overwrite log on each day of month
+  logs = config.logs[logday];
   g.clear();
   Bangle.loadWidgets();
   Bangle.drawWidgets();
@@ -139,18 +157,18 @@ if (nextAlarmDate !== undefined) {
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarmDate.getTime() - (30*60*1000));
   run = () => {
-    layout.state.label = "Start";
+    layout.state.label = /*LANG*/"Start";
     layout.render();
     Bangle.setOptions({powerSave: false}); // do not dynamically change accelerometer poll interval
     Bangle.setPollInterval(80); // 12.5Hz
-    Bangle.on('accel', (accelData) => {
+    Bangle.on('accel', (accelData) => {"ram"
       const now = new Date();
       const acc = accelData.mag;
       const swest = calc_ess(acc);
 
       if (swest !== undefined) {
         if (Bangle.isLCDOn()) {
-          layout.state.label = swest ? "Sleep" : "Awake";
+          layout.state.label = swest ? /*LANG*/"Sleep" : /*LANG*/"Awake";
           layout.render();
         }
         // log
@@ -168,14 +186,18 @@ if (nextAlarmDate !== undefined) {
         // The alarm widget should handle this one
         addLog(now, "alarm");
         setTimeout(load, 1000);
-      } else if (measure && now >= minAlarm && swest_last === false) {
+      } else if (measure && now >= minAlarm && swest === false) {
         addLog(now, "alarm");
-        buzz();
         measure = false;
-        if (config.settings.disableAlarm) {
-          // disable alarm for scheduler
-          nextAlarmConfig.last = now.getDate();
-          require("Storage").writeJSON("sched.json", alarms);
+        if (nextAlarmConfig.js) {
+          eval(nextAlarmConfig.js); // run nextAlarmConfig.js if set
+        } else {
+          buzz();
+          if (config.settings.disableAlarm) {
+            // disable alarm for scheduler
+            nextAlarmConfig.last = now.getDate();
+            require('Storage').writeJSON('sched.json', alarms);
+          }
         }
       }
     });

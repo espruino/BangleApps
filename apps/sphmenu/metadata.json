@@ -4,7 +4,7 @@
   "version": "0.1",
   "description": "Replace Bangle.js 2's menus with a version that contains smaller text",
   "icon": "icon.png",
-  "type": "boot",
+  "type": "bootloader",
   "tags": "system",
   "screenshots": [{ "url": "screenshot.png" }],
   "supports": ["BANGLEJS2"],

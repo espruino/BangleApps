@@ -1,0 +1,14 @@
+{ "id": "openhaystack",
+  "name": "OpenHaystack (AirTag)",
+  "icon": "icon.png",
+  "version":"0.01",
+  "description": "Copy a base64 key from https://github.com/seemoo-lab/openhaystack and make your Bangle.js trackable as if it's an AirTag",
+  "tags": "openhaystack,bluetooth,ble,tracking,airtag",
+  "type": "bootloader",
+  "custom": "custom.html",
+  "readme": "README.md",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"openhaystack.boot.js"}
+  ]
+}

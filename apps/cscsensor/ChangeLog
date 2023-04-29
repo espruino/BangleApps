@@ -6,3 +6,4 @@
 0.06: Now read wheel rev as well as cadence sensor
       Improve connection code
 0.07: Make Bangle.js 2 compatible
+0.08: Convert Yes/No On/Off in settings to checkboxes

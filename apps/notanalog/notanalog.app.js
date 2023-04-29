@@ -4,6 +4,7 @@
 const TIMER_IDX = "notanalog";
 const locale = require('locale');
 const storage = require('Storage')
+const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "notanalog.setting.json";
 let settings = {
     alarm: -1,
@@ -12,6 +13,9 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
     settings[key] = saved_settings[key]
 }
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
+  "12hour"
+];
 
 /*
  * Set some important constants such as width, height and center
@@ -198,6 +202,9 @@ function drawTime(){
 
     // Hour
     var h = state.currentDate.getHours();
+    if (is12Hour && h > 12) {
+      h = h - 12;
+    }
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
     drawTextCleared(h1, cx, posY+8);
@@ -460,10 +467,8 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 /*
  * we are not drawing the widgets as we are taking over the whole screen
- * so we will blank out the draw() functions of each widget and change the
- * area to the top bar doesn't get cleared.
  */
-for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+widget_utils.hide();
 
 // Clear the screen once, at startup and draw clock
 // g.setTheme({bg:"#fff",fg:"#000",dark:false}).clear();

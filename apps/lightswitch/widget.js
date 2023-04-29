@@ -7,6 +7,7 @@
     oversize: 20,
     dragDelay: 500,
     minValue: 0.1,
+    tapToLock: false,
     unlockSide: "",
     tapSide: "right",
     tapOn: "always",
@@ -208,8 +209,12 @@
               w.dragStatus = "off";
             }, w.dragDelay, w);
           }
-          // switch backlight
-          w.changeValue();
+          if (w.tapToLock) {
+            Bangle.setLocked(true);
+          } else {
+            // switch backlight
+            w.changeValue();
+          }
           // masks this touch event by messing up the event handler
           // see https://github.com/espruino/Espruino/issues/2151
           Bangle.removeListener("touch", w.touchListener);
@@ -224,27 +229,19 @@
 
     // main widget function //
     // display and setup/reset function
-    draw: function(locked) {
+    draw: function() {
       // setup shortcut to this widget
       var w = WIDGETS.lightswitch;
 
-      // set lcd brightness on unlocking
-      // all other cases are catched by the boot file
-      if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
-
       // read lock status
-      locked = Bangle.isLocked();
+      var locked = Bangle.isLocked();
 
       // remove listeners to prevent uncertainties
-      Bangle.removeListener("lock", w.draw);
       Bangle.removeListener("touch", w.touchListener);
       Bangle.removeListener("tap", require("lightswitch.js").tapListener);
 
       // draw widget icon
       w.drawIcon(locked);
-
-      // add lock listener
-      Bangle.on("lock", w.draw);
 
       // add touch listener to control the light depending on settings at first position
       if (w.touchOn === "always" || !global.__FILE__ ||
@@ -260,6 +257,14 @@
     }
   });
 
+  Bangle.on("lock", locked => {
+    var w = WIDGETS.lightswitch;
+    // set lcd brightness on unlocking
+    // all other cases are catched by the boot file
+    if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
+    w.draw()
+  });
+
   // clear variable
-  settings = undefined;
+  delete settings;
 })()

@@ -1,28 +1,28 @@
-(function(){
-  var settings = require("Storage").readJSON("health.json",1)||{};
+(function() {
+  var settings = require("Storage").readJSON("health.json", 1) || {};
   var hrm = 0|settings.hrm;
   if (hrm == 1 || hrm == 2) {
-   function onHealth() {
-     Bangle.setHRMPower(1, "health");
-     setTimeout(()=>Bangle.setHRMPower(0, "health"),hrm*60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
-     if (hrm == 1){
-       for (var i = 1; i <= 2; i++){
-         setTimeout(()=>{
-           Bangle.setHRMPower(1, "health");
-           setTimeout(()=>{
-             Bangle.setHRMPower(0, "health");
-           }, (i * 200000) + 60000);
-         }, (i * 200000));
-       }
-     }
-   }
-   Bangle.on("health", onHealth);
-   Bangle.on('HRM', h => {
-     if (h.confidence>80) Bangle.setHRMPower(0, "health");
-   });
-   if (Bangle.getHealthStatus().bpmConfidence) return;
-   onHealth();
-  } else Bangle.setHRMPower(hrm!=0, "health");
+    function onHealth() {
+      Bangle.setHRMPower(1, "health");
+      setTimeout(() => Bangle.setHRMPower(0, "health"), hrm * 60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
+      if (hrm == 1) {
+        function startMeasurement() {
+          Bangle.setHRMPower(1, "health");
+          setTimeout(() => {
+            Bangle.setHRMPower(0, "health");
+          }, 60000);
+        }
+        setTimeout(startMeasurement, 200000);
+        setTimeout(startMeasurement, 400000);
+      }
+    }
+    Bangle.on("health", onHealth);
+    Bangle.on("HRM", (h) => {
+      if (h.confidence > 90 && Math.abs(Bangle.getHealthStatus().bpm - h.bpm) < 1) Bangle.setHRMPower(0, "health");
+    });
+    if (Bangle.getHealthStatus().bpmConfidence > 90) return;
+    onHealth();
+  } else Bangle.setHRMPower(!!hrm, "health");
 })();
 
 Bangle.on("health", health => {
@@ -35,6 +35,10 @@ Bangle.on("health", health => {
   const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
   const DB_HEADER_LEN = 8;
   const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
+
+  if (health && health.steps > 0) {
+    handleStepGoalNotification();
+  }
 
   function getRecordFN(d) {
     return "health-"+d.getFullYear()+"-"+(d.getMonth()+1)+".raw";
@@ -92,3 +96,21 @@ Bangle.on("health", health => {
     health.movement /= health.movCnt;
   require("Storage").write(fn, getRecordData(health), sumPos, DB_FILE_LEN);
 });
+
+function handleStepGoalNotification() {
+  var settings = require("Storage").readJSON("health.json",1)||{};
+  const steps = Bangle.getHealthStatus("day").steps;
+  if (settings.stepGoalNotification && settings.stepGoal > 0 && steps >= settings.stepGoal) {
+    const now = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
+    if (!settings.stepGoalNotificationDate || settings.stepGoalNotificationDate < now) { // notification not yet shown today?
+      Bangle.buzz(200, 0.5);
+      require("notify").show({
+          title : settings.stepGoal + /*LANG*/ " steps",
+          body : /*LANG*/ "You reached your step goal!",
+          icon : atob("DAyBABmD6BaBMAsA8BCBCBCBCA8AAA==")
+      });
+      settings.stepGoalNotificationDate = now;
+      require("Storage").writeJSON("health.json", settings);
+    }
+  }
+}

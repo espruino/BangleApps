@@ -416,9 +416,9 @@ var layout = new Layout( {
 
 // Clear the screen once, at startup
 g.clear();
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-Bangle.setUI("clock");
 layout.render();
 
 Bangle.on('lock', function(locked) {

@@ -1,0 +1,19 @@
+
++ use Bangle.project(latlong)
+
+* additional features
+
+- config screen
+    - are we on foot (and should use compass)
+
+- we need to buzz 200m before sharp turns (or even better, 30seconds)
+(and look at more than next point)
+
+- display distance to next water/toilet ?
+- display scale (100m)
+
+- compress path ?
+
+* misc
+
+- code is becoming messy

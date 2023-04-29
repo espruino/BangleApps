@@ -24,5 +24,6 @@
   {"code":"sk_SK","name":"Slovak","url":"sk_SK.json"},
   {"code":"sl_SL","name":"Slovenian","url":"sl_SL.json"},
   {"code":"nn_NO","name":"Norwegian (Nynorsk)","url":"nn_NO.json"},
-  {"code":"hr_HR","name":"Croatian","url":"hr_HR.json"}
+  {"code":"hr_HR","name":"Croatian","url":"hr_HR.json"},
+  {"code":"ja_JA","name":"Japanese (beta)","url":"ja_JA.json"}  
 ]

@@ -9,7 +9,7 @@
 	delete settings;
 
 	Bangle.on('GPS',function(fix) {
-		if (fix.fix) {
+		if (fix.fix && fix.time) {
 			var curTime = fix.time.getTime()/1000;
 			setTime(curTime);
 			lastTimeSet = curTime;

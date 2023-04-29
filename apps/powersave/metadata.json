@@ -1,0 +1,18 @@
+{
+  "id": "powersave",
+  "name": "Power Save",
+  "version": "0.03",
+  "description": "Halts foreground app execution while screen is off while still allowing background processes.",
+  "readme": "README.md",
+  "icon": "powersave.png",
+  "type": "bootloader",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"powersave.boot.js","url":"boot.js"},
+    {"name":"powersave.screen.js","url":"screen.js"}
+  ],
+  "data": [
+    {"name": "powersave.json"}
+  ]
+}

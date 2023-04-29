@@ -5,6 +5,7 @@
     "version": "0.08",
     "description": "A clock based on the portal series",
     "icon": "app.png",
+    "screenshots": [{"url":"screenshot.png"}],
     "type": "clock",
     "tags": "clock",
     "supports": ["BANGLEJS2"],

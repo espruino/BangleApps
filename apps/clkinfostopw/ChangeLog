@@ -1,0 +1,3 @@
+0.01: New clkinfo!
+0.02: Added format option, reduced battery usage
+0.03: Hardcode colon-format, show milliseconds for the first minute

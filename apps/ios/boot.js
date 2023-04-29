@@ -26,7 +26,7 @@ E.on('ANCS',msg=>{
   // not a remove - we need to get the message info first
   function ancsHandler() {
     var msg = Bangle.ancsMessageQueue[0];
-    NRF.ancsGetNotificationInfo( msg.uid ).then( info => {
+    NRF.ancsGetNotificationInfo( msg.uid ).then( info => { // success
 
       if(msg.preExisting === true){
         info.new = false;
@@ -36,6 +36,10 @@ E.on('ANCS',msg=>{
 
       E.emit("notify", Object.assign(msg, info));
       Bangle.ancsMessageQueue.shift();
+      if (Bangle.ancsMessageQueue.length)
+        ancsHandler();
+    }, err=>{ // failure
+      console.log("ancsGetNotificationInfo failed",err);
       if (Bangle.ancsMessageQueue.length)
         ancsHandler();
     });
@@ -127,18 +131,34 @@ E.on('notify',msg=>{
     '261':"a",
     '262':"C",
     '263':"c",
+    '268':"C",
+    '269':"c",
+    '270':"D",
+    '271':"d",
     '280':"E",
     '281':"e",
+    '282':"E",
+    '283':"e",
     '321':"L",
     '322':"l",
     '323':"N",
     '324':"n",
+    '327':"N",
+    '328':"n",
+    '344':"R",
+    '345':"r",
     '346':"S",
     '347':"s",
+    '352':"S",
+    '353':"s",
+    '356':"T",
+    '357':"t",
     '377':"Z",
     '378':"z",
     '379':"Z",
     '380':"z",
+    '381':"Z",
+    '382':"z",
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
@@ -180,7 +200,11 @@ Bangle.messageResponse = (msg,response) => {
   // error/warn here?
 };
 // remove all messages on disconnect
-NRF.on("disconnect", () => require("messages").clearAll());
+NRF.on("disconnect", () => {
+  require("messages").clearAll();
+  // Remove any messages from the ANCS queue
+  Bangle.ancsMessageQueue = [];
+});
 
 /*
 // For testing...
