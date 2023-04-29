@@ -53,6 +53,7 @@
 
     appList.forEach((app) => {
       if (settings.whiteList.indexOf(app.src) >= 0) {
+        let index = settings.whiteList.indexOf(app.src);
         whiteListMenu[app.name] = () => {
           E.showPrompt("Delete from WL?", {
             title: "Delete from WL?",
@@ -101,6 +102,7 @@
 
     appList.forEach((app) => {
       if (settings.blackList.indexOf(app.src) >= 0) {
+        let index = settings.whiteList.indexOf(app.src);
         blackListMenu[app.name] = () => {
           E.showPrompt("Delete from BL?", {
             title: "Delete from BL?",

@@ -96,6 +96,18 @@
         writeSettings("debuglog",v);
       }
     },
+    'Use bonding': {
+      value: !!settings.bonding,
+      onchange: v => {
+        writeSettings("bonding",v);
+      }
+    },
+    'Use active scanning': {
+      value: !!settings.active,
+      onchange: v => {
+        writeSettings("active",v);
+      }
+    },
     'Grace periods': function() { E.showMenu(submenu_grace); }
   };
 

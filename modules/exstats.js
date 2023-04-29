@@ -93,6 +93,16 @@ var state = {
 // list of active stats (indexed by ID)
 var stats = {};
 
+const DATA_FILE = "exstats.json";
+// Load the state from a saved file if there was one
+state = Object.assign(state, require("Storage").readJSON(DATA_FILE,1)||{});
+// force step history to a uint8array
+state.stepHistory = new Uint8Array(state.stepHistory);
+// when we exit, write the current state
+E.on('kill', function() {
+  require("Storage").writeJSON(DATA_FILE, state);
+});
+
 // distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
 // https://www.movable-type.co.uk/scripts/latlong.html
 // (Equirectangular approximation)
@@ -359,9 +369,10 @@ exports.getStats = function(statIDs, options) {
       state.notify.time.next = state.startTime + options.notify.time.increment;
     }
   }
-  reset();
+  if (!state.active) reset(); // we might already be active
   return {
-    stats : stats, state : state,
+    stats : stats,
+    state : state,
     start : function() {
       state.active = true;
       reset();

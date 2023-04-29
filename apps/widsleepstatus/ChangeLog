@@ -1,0 +1,4 @@
+0.01: First version
+0.02: Load settings only once
+      Better icons
+      Read sleep status on every draw

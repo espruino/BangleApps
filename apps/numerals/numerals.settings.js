@@ -30,10 +30,8 @@
       onchange: v=> { numeralsSettings.drawMode=dm[v]; updateSettings();}
     },
     "Date on touch": {
-      value: 0|numeralsSettings.showDate,
-      min:0,max:1,
-      format: v=>v?"On":"Off",
-      onchange: v=> { numeralsSettings.showDate=v; updateSettings();}
+      value: !!numeralsSettings.showDate,
+      onchange: v=> { numeralsSettings.showDate=v?1:0; updateSettings();}
     },
     "< back": back
   };

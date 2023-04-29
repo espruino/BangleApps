@@ -15,13 +15,13 @@
     localSettings[key] = saved[key]
   }
 
-  function save() {
+  let save=function() {
     settings = localSettings
     storage.write(SETTINGS_FILE, settings)
   }
 
-  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
-  var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
+  let color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
+  let bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   
   function showMenu()
   {
@@ -66,7 +66,7 @@
     E.showMenu(menu);
   }
 
-  function NumberToSideTap(Number)
+  let NumberToSideTap=function(Number)
   {
     if(Number==0)
       return 'on';

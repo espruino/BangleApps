@@ -4,7 +4,7 @@
     /*LANG*/"< Back": back,
   };
   require("ClockFace_menu").addSettingsFile(menu, "cogclock.settings.json", [
-    "showDate", "loadWidgets"
+    "showDate", "hideWidgets"
   ]);
   E.showMenu(menu);
 });

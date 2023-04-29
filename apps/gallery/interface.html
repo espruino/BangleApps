@@ -1,0 +1,165 @@
+<html>
+ <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+ </head>
+ <body>
+   <script src="../../webtools/heatshrink.js"></script>
+   <script src="../../webtools/imageconverter.js"></script>
+   <script src="../../core/lib/interface.js"></script>
+
+   <h4>Existing Images</h4>
+   <ul id="imagelist">
+   </ul>
+
+   <h4>Convert & Upload Images</h4>
+
+   <input type="file" id="fileLoader"/><br/>
+   <input type="checkbox" id="compression" onchange="imageLoaded()"> Use Compression?</input><br/>
+   <input type="checkbox" id="alphaToColor" onchange="imageLoaded()"> Transparency to Color</input><br/>
+   <input type="checkbox" id="transparent" onchange="imageLoaded()" checked> Transparency?</input><br/>
+   <input type="checkbox" id="inverted" onchange="imageLoaded()"> Inverted?</input><br/>
+   <input type="checkbox" id="autoCrop" onchange="imageLoaded()"> Crop?</input><br/>
+   Diffusion: <select id="diffusion" onchange="imageLoaded()"></select><br/>
+
+   Brightness: <span id="brightnessv"></span>
+   <input type="range" id="brightness" min="-127" max="127" value="0" onchange="imageLoaded()"></input><br/>
+   Contrast: <span id="contrastv"></span>
+   <input type="range" id="contrast" min="-255" max="255" value="0" onchange="imageLoaded()"></input><br/>
+   Colours: <select id="colorStyle" onchange="imageLoaded()"></select><br/>
+
+   <canvas id="canvas" style="display:none;"></canvas>
+
+   <button class="btn btn-default" id="btnUpload" disabled="disabled">Upload</button>
+
+   <script>
+     // load available colour formats and diffusion...
+     imageconverter.setFormatOptions(document.getElementById("colorStyle"));
+     imageconverter.setDiffusionOptions(document.getElementById("diffusion"));
+
+     let img;
+     let screenSize;
+     let imgstr;
+     const uploadBtn = document.getElementById("btnUpload");
+     uploadBtn.addEventListener("click", function() {
+       const filename = document.getElementById("fileLoader").value.split(/(\\|\/)/g).pop();
+       const filenameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+       Util.showModal("Uploading...");
+       Util.writeStorage("gal-" + filenameWithoutExt.substring(0, 12) + ".img", imgstr, () => {
+         Util.hideModal();
+         updateFileList();
+       });
+     });
+
+     function imageLoaded() {
+       if (img === undefined) return;
+       if (screenSize !== img.width + "x" + img.height) {
+           alert("Image must be " + screenSize);
+           return;
+       }
+       let options = {};
+       let diffusionSelect = document.getElementById("diffusion");
+       options.diffusion = diffusionSelect.options[diffusionSelect.selectedIndex].value;
+       options.compression = document.getElementById("compression").checked;
+       options.alphaToColor = document.getElementById("alphaToColor").checked;
+       options.transparent = document.getElementById("transparent").checked;
+       options.inverted = document.getElementById("inverted").checked;
+       options.autoCrop = document.getElementById("autoCrop").checked;
+       options.brightness = 0|document.getElementById("brightness").value;
+       document.getElementById("brightnessv").innerText = options.brightness;
+       options.contrast = 0|document.getElementById("contrast").value;
+       document.getElementById("contrastv").innerText = options.contrast;
+       let colorSelect = document.getElementById("colorStyle");
+       options.mode = colorSelect.options[colorSelect.selectedIndex].value;
+
+       options.output = "string";
+
+       let canvas = document.getElementById("canvas")
+       canvas.width = img.width*2;
+       canvas.height = img.height;
+       canvas.style = "display:block;border:1px solid black;margin:8px;"
+       let ctx = canvas.getContext("2d");
+       ctx.drawImage(img,0,0);
+
+       let imageData1 = ctx.getImageData(0, 0, img.width, img.height);
+       ctx.fillStyle = 'white';
+       ctx.fillRect(options.width, 0, img.width, img.height);
+       let rgba = imageData1.data;
+       options.rgbaOut = rgba;
+       options.width = img.width;
+       options.height = img.height;
+       imgstr = imageconverter.RGBAtoString(rgba, options);
+       let outputImageData = new ImageData(options.rgbaOut, options.width, options.height);
+       ctx.putImageData(outputImageData,img.width,0);
+
+       // checkerboard for transparency on original image
+       let imageData2 = ctx.getImageData(0, 0, img.width, img.height);
+       imageconverter.RGBAtoCheckerboard(imageData2.data, {width:img.width,height:img.height});
+       ctx.putImageData(imageData2,0,0);
+
+       uploadBtn.disabled=false;
+     }
+     function handleFileSelect(event) {
+        if (event.target.files.length != 1) return;
+        let reader = new FileReader();
+        reader.onload = function(event) {
+          img = new Image();
+          img.onload = imageLoaded;
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+     };
+     document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
+
+     function updateFileList() {
+       Puck.write(`\x10(function() {
+           Bluetooth.print(JSON.stringify(require("Storage").list(/^gal-.*\.img/).sort()));
+       })()\n`, contents => {
+         let fileNames = JSON.parse(contents);
+
+         const imagelist = document.getElementById("imagelist");
+         imagelist.innerHTML=""; // remove all children
+         // add a list of existing files
+         if (fileNames.length === 0) {
+           const span = document.createElement("span");
+           span.textContent = "No existing images";
+           imagelist.appendChild(span);
+         }
+         fileNames.forEach(fileName => {
+           const li = document.createElement("li");
+           const span = document.createElement("span");
+           span.classList.add("label");
+           span.textContent = fileName.substr(4, fileName.length - 8);
+           li.appendChild(span);
+
+           const buttonDelete = document.createElement("button");
+           buttonDelete.classList.add('btn');
+           buttonDelete.classList.add('btn-link');
+           buttonDelete.textContent = "Delete";
+           buttonDelete.onclick = () => {
+             Util.showModal(`Erasing ${fileName}...`);
+             Util.eraseStorage(fileName, () => {
+               Util.hideModal();
+               updateFileList();
+             });
+           }
+           li.appendChild(buttonDelete);
+           imagelist.appendChild(li);
+         });
+         Util.hideModal(); // Loading modal
+       });
+     }
+     Util.showModal("Loading...");
+
+     // Called when app starts
+     function onInit() {
+       // Read BangleJS screen size
+       Puck.write(`\x10(function() {
+           Bluetooth.print(g.getWidth() + "x" + g.getHeight());
+       })()\n`, contents => {
+           screenSize = contents;
+           updateFileList();
+       });
+     }
+   </script>
+ </body>
+</html>

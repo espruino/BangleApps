@@ -1,0 +1,16 @@
+{ "id": "widmeda",
+  "name": "Medical Alert Widget",
+  "shortName":"Medical Alert",
+  "version":"0.02",
+  "description": "Display a medical alert in the bottom widget section.",
+  "icon": "widget.png",  
+  "type": "widget",
+  "dependencies" : { "medicalinfo":"app" },
+  "tags": "health,medical,tools,widget",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"screenshot_light.png"}],
+  "storage": [
+    {"name":"widmeda.wid.js","url":"widget.js"}
+  ]
+}

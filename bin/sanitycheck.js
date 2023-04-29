@@ -3,7 +3,7 @@
 */
 
 var fs = require("fs");
-var heatshrink = require("../core/lib/heatshrink");
+var heatshrink = require("../webtools/heatshrink");
 var acorn;
 try {
   acorn = require("acorn");
@@ -30,7 +30,11 @@ function ERROR(msg, opt) {
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
-  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  if (KNOWN_WARNINGS.includes(msg)) {
+    console.log(`Known warning : ${msg}`);
+  } else {
+    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  }
   warningCount++;
 }
 
@@ -72,12 +76,12 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies'
+  'dependencies', 'provides_modules', 'provides_widgets', "default"
 ];
-const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports'];
+const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","textinput","scheduler","notify","locale","settings","waypoints"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -86,6 +90,12 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
   'waypoints' : ['waypoints'],
   // notify?
 };
+/* These are warnings we know about but don't want in our output */
+var KNOWN_WARNINGS = [
+"App gpsrec data file wildcard .gpsrc? does not include app ID",
+"App owmweather data file weather.json is also listed as data file for app weather",
+  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
+];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -106,7 +116,7 @@ apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
   var appDir = APPSDIR+app.id+"/";
-  var metadataFile = appDirRelative+"metadata.json";
+  var metadataFile = appDirRelative+"metadata.json";  
   if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`, {file:metadataFile});
   existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
@@ -114,6 +124,7 @@ apps.forEach((app,appIdx) => {
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
+  var appTags = app.tags ? app.tags.split(",") : [];
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -152,23 +163,33 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} screenshot file ${screenshot.url} not found`, {file:metadataFile});
     });
   }
-  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  if (app.readme) {
+    if (!fs.existsSync(appDir+app.readme)) 
+      ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  } else {
+    let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
+    if (readme) 
+      ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
+  }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
   if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`, {file:metadataFile});
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`, {file:metadataFile});
   if (app.dependencies) {
+    if (app.dependencies.clock_info && !appTags.includes("clkinfo"))
+      WARN(`App ${app.id} uses clock_info but doesn't have clkinfo tag`, {file:metadataFile});
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
-        if (!["type","app"].includes(app.dependencies[dependency]))
-          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type' or 'app' right now`, {file:metadataFile});
+        if (!["type","app","module","widget"].includes(app.dependencies[dependency]))
+          ERROR(`App ${app.id} 'dependencies' must all be tagged 'type/app/module/widget' right now`, {file:metadataFile});
         if (app.dependencies[dependency]=="type" && !METADATA_TYPES.includes(dependency))
           ERROR(`App ${app.id} 'type' dependency must be one of `+METADATA_TYPES, {file:metadataFile});
-
       });
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
-  
+
+  if (app.storage.find(f=>f.name.endsWith(".clkinfo.js")) && !appTags.includes("clkinfo"))
+    WARN(`App ${app.id} provides ...clkinfo.js but doesn't have clkinfo tag`, {file:metadataFile});
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
@@ -225,12 +246,19 @@ apps.forEach((app,appIdx) => {
         console.log("=====================================================");
         ERROR(`App ${app.id}'s ${file.name} is a JS file but isn't valid JS`, {file:appDirRelative+file.url});
       }
+      // clock app checks
+      if (app.type=="clock") {
+        var a = fileContents.indexOf("Bangle.loadWidgets()");
+        var b = fileContents.indexOf("Bangle.setUI(");
+        if (a>=0 && b>=0 && a<b)
+          WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
+      }
     }
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
     }
     // warn if JS icon is the wrong size
-    if (file.name == app.id+".img") {
+    if (file.name == app.id+".img" && file.evaluate) {
         let icon;
         let match = fileContents.match(/^\s*E\.toArrayBuffer\(atob\(\"([^"]*)\"\)\)\s*$/);
         if (match==null) match = fileContents.match(/^\s*atob\(\"([^"]*)\"\)\s*$/);
@@ -309,6 +337,15 @@ apps.forEach((app,appIdx) => {
     INTERNAL_FILES_IN_APP_TYPE[app.type].forEach(fileName => {
       if (!fileNames.includes(fileName))
         ERROR(`App ${app.id} should include file named ${fileName} but it doesn't`, {file:metadataFile});
+    });
+  }
+  if (app.type=="module" && !app.provides_modules) {
+    ERROR(`App ${app.id} has type:module but it doesn't have a provides_modules field`, {file:metadataFile});
+  }
+  if (app.provides_modules) {
+    app.provides_modules.forEach(modulename => {
+      if (!app.storage.find(s=>s.name==modulename))
+        ERROR(`App ${app.id} has provides_modules ${modulename} but it doesn't provide that filename`, {file:metadataFile});
     });
   }
 });

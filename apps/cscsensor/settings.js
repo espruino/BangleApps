@@ -23,17 +23,17 @@
     }
   }
   const menu = {
-    '': { 'title': 'Cycle speed sensor' },
+    '': { 'title': /*LANG*/'Cycle speed sensor' },
     '< Back': back,
-    'Wheel circ.(mm)': {
+    /*LANG*/'Wheel circ.(mm)': {
       value: s.wheelcirc,
       min: 800,
       max: 2400,
       step: 5,
       onchange: save('wheelcirc'),
     },
-    'Reset total distance': function() {
-      E.showPrompt("Zero total distance?", {buttons: {"No":false, "Yes":true}}).then(function(v) {
+    /*LANG*/'Reset total distance': function() {
+      E.showPrompt(/*LANG*/"Zero total distance?", {buttons: {/*LANG*/"No":false, /*LANG*/"Yes":true}}).then(function(v) {
         if (v) {
           s['totaldist'] = 0;
           storage.write(SETTINGS_FILE, s);

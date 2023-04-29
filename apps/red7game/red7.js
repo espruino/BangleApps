@@ -814,8 +814,20 @@ function drawMainMenu() {
     }
   }
   menu["New Game"] = function() {
+    if(startedGame == true) {  
+      E.showPrompt("Discard and start new game?").then(function(v) {
+            if(v) {
+              E.showMenu();
+              resetToNewGame();  
+            } else {
+              E.showMenu();
+              drawScreen1();
+            }
+      });  
+    } else {
       E.showMenu();
       resetToNewGame();
+    }
     };
   menu["Help"] = function() {
       drawScreenHelp();

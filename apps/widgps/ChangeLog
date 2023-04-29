@@ -6,3 +6,4 @@
 0.06: Periodically update so the always on display does show current GPS fix
 0.07: Alternative marker icon (configurable via settings)
 0.08: Add ability to hide the icon when GPS is off, for a cleaner appearance.
+0.09: Do not take widget space if icon is hidden

@@ -25,11 +25,9 @@
     "" : { "title":"Neon X & IO"},
     "< Back": back,
     "Neon IO X": {
-      value: 0 | neonXSettings.io,
-      min: 0, max: 1,
-      format: v => v ? "On" : "Off",
+      value: !!neonXSettings.io,
       onchange: v => {
-        neonXSettings.io = v;
+        neonXSettings.io = v?1:0;
         updateSettings();
       }
     },
@@ -43,27 +41,23 @@
       }
     },
     "Date on touch": {
-      value: 0 | neonXSettings.showDate,
-      min: 0, max: 1,
-      format: v => v ? "On" : "Off",
+      value: !!neonXSettings.showDate,
       onchange: v => {
-        neonXSettings.showDate = v;
+        neonXSettings.showDate = v?1:0;
         updateSettings();
       }
     },
     'Fullscreen': {
-      value: false | neonXSettings.fullscreen,
-      format: () => (neonXSettings.fullscreen ? 'Yes' : 'No'),
-      onchange: () => {
-        neonXSettings.fullscreen = !neonXSettings.fullscreen;
+      value: !!neonXSettings.fullscreen,
+      onchange: v => {
+        neonXSettings.fullscreen = v;
         updateSettings();
       },
     },
     'Show lock': {
-      value: false | neonXSettings.showLock,
-      format: () => (neonXSettings.showLock ? 'Yes' : 'No'),
-      onchange: () => {
-        neonXSettings.showLock = !neonXSettings.showLock;
+      value: !!neonXSettings.showLock,
+      onchange: v => {
+        neonXSettings.showLock = v;
         updateSettings();
       },
     },

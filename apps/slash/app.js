@@ -57,6 +57,10 @@ function draw() {
   var minutes = ("0"+m).substr(-2);
   g.reset();
   
+  // If midnight clear display to remove day / date artifacts
+  if (h == 0 && m == 0)
+    g.clear();
+  
   // Convert to 12hr time mode
   if (is12Hour && h > 12) {
     h = h - 12;

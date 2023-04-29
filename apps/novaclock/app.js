@@ -249,13 +249,13 @@ var open = false;
 var timemode = true;
 var clockmode;
 var novaYPos = -7;
+Bangle.setUI("clock");
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 g.drawImage(nova(), -10, -10, {
   scale: 2.2
 });
-Bangle.setUI("clock");
 
 g.drawImage(star(), 5, -5, {scale:0.8});
 g.drawImage(star(), -10, 120, {scale:0.8});

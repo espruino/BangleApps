@@ -1,8 +1,8 @@
-{ 
+{
 	"id": "timerclk",
 	"name": "Timer Clock",
 	"shortName":"Timer Clock",
-	"version":"0.03",
+	"version":"0.04",
 	"description": "A clock with stopwatches, timers and alarms build in.",
 	"icon": "app-icon.png",
 	"type": "clock",
@@ -30,6 +30,5 @@
 		{"name":"timerclk.alarm.js","url":"alarm.js"},
 		{"name":"timerclk.alarm.alert.js","url":"alarm.alert.js"}
 	],
-	"data": [{"name":"timerclk.json"},{"name":"timerclk.stopwatch.json"},{"name":"timerclk.timer.json"},{"name":"timerclk.alarm.json"}],
-	"sortorder": 0
+	"data": [{"name":"timerclk.json"},{"name":"timerclk.stopwatch.json"},{"name":"timerclk.timer.json"},{"name":"timerclk.alarm.json"}]
 }

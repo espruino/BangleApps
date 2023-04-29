@@ -5,6 +5,7 @@
 (function(back) {
   const SETTINGS_FILE = 'widbatpc.json'
   const COLORS = ['By Level', 'Green', 'Monochrome']
+  const RM_JITTER_OPTIONS = [/*LANG*/'Off', /*LANG*/'Drop only'];
 
   // initialize with default settings...
   let s = {
@@ -14,6 +15,8 @@
     'charger': true,
     'hideifmorethan': 100,
     'alwaysoncharge': false,
+    'removejitter': 0,
+    'buzzoncharge': true,
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -28,7 +31,9 @@
     return function (value) {
       s[key] = value;
       storage.write(SETTINGS_FILE, s);
-      WIDGETS["batpc"].reload();
+      if ("WIDGETS" in global && WIDGETS["batpc"] !== undefined) {
+        WIDGETS["batpc"].reload();
+      }
     }
   }
 
@@ -36,17 +41,17 @@
   const menu = {
     '': { 'title': 'Battery Widget' },
     '< Back': back,
-    'Percentage': {
+    /*LANG*/'Percentage': {
       value: s.percentage,
       format: onOffFormat,
       onchange: save('percentage'),
     },
-    'Charging Icon': {
+    /*LANG*/'Charging Icon': {
       value: s.charger,
       format: onOffFormat,
       onchange: save('charger'),
     },
-    'Color': {
+    /*LANG*/'Color': {
       format: () => s.color,
       onchange: function () {
         // cycles through options
@@ -56,12 +61,12 @@
         save('color')(s.color)
       }
     },
-    'Fill Bar': {
+    /*LANG*/'Fill Bar': {
       value: s.fillbar,
       format: onOffFormat,
       onchange: save('fillbar'),
     },
-    'Hide if >': {
+    /*LANG*/'Hide if >': {
       value: s.hideifmorethan||100,
       min: 10,
       max : 100,
@@ -69,10 +74,21 @@
       format: x => x+"%",
       onchange: save('hideifmorethan'),
     },
-    'Show on charge': { // Not sure if this is readable enough in the 'big' menu
+    /*LANG*/'Show on charge': { // Not sure if this is readable enough in the 'big' menu
       value: s.alwaysoncharge,
       format: onOffFormat,
       onchange: save('alwaysoncharge'),
+    },
+    /*LANG*/'Buzz on charge': {
+      value: s.buzzoncharge,
+      format: onOffFormat,
+      onchange: save('buzzoncharge'),
+    },
+    /*LANG*/'Remove Jitter': {
+      value: s.removejitter,
+      min: 0, max: 1,
+      format: v => RM_JITTER_OPTIONS[v],
+      onchange: save('removejitter'),
     },
   }
   E.showMenu(menu)

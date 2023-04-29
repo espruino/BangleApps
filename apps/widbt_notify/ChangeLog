@@ -12,3 +12,5 @@
 0.13: Added "connection restored" notification. Fixed restoring of the watchface.
 0.14: Added configuration option
 0.15: Added option to hide widget when connected
+0.16: Simplify code, add option to disable displaying a message
+0.17: Minor display fix

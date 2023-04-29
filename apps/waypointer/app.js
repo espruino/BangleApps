@@ -8,6 +8,11 @@ var buf1 = Graphics.createArrayBuffer(160*scale,160*scale,1, {msb:true});
 var buf2 = Graphics.createArrayBuffer(g.getWidth()/3,40*scale,1, {msb:true});
 var arrow_img = require("heatshrink").decompress(atob("lEowIPMjAEDngEDvwED/4DCgP/wAEBgf/4AEBg//8AEBh//+AEBj///AEBn///gEBv///wmCAAImCAAIoBFggE/AkaaEABo="));
 
+var settings = Object.assign({
+  // default values
+  smoothDirection: true,
+}, require('Storage').readJSON("waypointer.json", true) || {});
+
 function flip1(x,y) {
   g.drawImage({width:160*scale,height:160*scale,bpp:1,buffer:buf1.buffer, palette:pal_by},x,y);
   buf1.clear();
@@ -68,38 +73,34 @@ function newHeading(m,h){
     var delta = (m>h)?1:-1;
     if (s>=180){s=360-s; delta = -delta;}
     if (s<2) return h;
-    var hd = h + delta*(1 + Math.round(s/5));
+    var hd;
+    if (settings.smoothDirection) {
+        hd = h + delta*(1 + Math.round(s/5));
+    } else {
+        hd = h + delta*s;
+    }
     if (hd<0) hd+=360;
     if (hd>360)hd-= 360;
     return hd;
 }
 
 var CALIBDATA = require("Storage").readJSON("magnav.json",1) || {};
-
-function tiltfixread(O,S){
-  var m = Bangle.getCompass();
-  if (O === undefined || S === undefined) {
-    // no valid calibration from magnav, use built in
-    return 360-m.heading;
-  }
-  var g = Bangle.getAccel();
-  m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;
-  var d = Math.atan2(-m.dx,m.dy)*180/Math.PI;
-  if (d<0) d+=360;
-  var phi = Math.atan(-g.x/-g.z);
-  var cosphi = Math.cos(phi), sinphi = Math.sin(phi);
-  var theta = Math.atan(-g.y/(-g.x*sinphi-g.z*cosphi));
-  var costheta = Math.cos(theta), sintheta = Math.sin(theta);
-  var xh = m.dy*costheta + m.dx*sinphi*sintheta + m.dz*cosphi*sintheta;
-  var yh = m.dz*sinphi - m.dx*cosphi;
-  var psi = Math.atan2(yh,xh)*180/Math.PI;
-  if (psi<0) psi+=360;
-  return psi;
+let tiltfixread;
+try {
+  tiltfixread = require("magnav").tiltfixread;
+} catch(e) {
+  // magnav not installed
 }
 
 // Note actual mag is 360-m, error in firmware
 function read_compass() {
-  var d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
+  let d;
+  if (tiltfixread === undefined || CALIBDATA.offset === undefined || CALIBDATA.scale === undefined) {
+    // magnav not installed or no valid calibration, use built in
+    d = Bangle.getCompass().heading;
+  } else {
+    d = tiltfixread(CALIBDATA.offset,CALIBDATA.scale);
+  }
   if (isNaN(d)) return; // built in compass heading can return NaN when uncalibrated
   heading = newHeading(d,heading);
   direction = wp_bearing - heading;
@@ -263,10 +264,13 @@ function nextwp(inc){
 }
 
 function doselect(){
-  if (selected && wpindex!=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
+  if (selected && wpindex>=0 && waypoints[wpindex].lat===undefined && savedfix.fix) {
      waypoints[wpindex] ={name:"@"+wp.name, lat:savedfix.lat, lon:savedfix.lon};
      wp = waypoints[wpindex];
      require("waypoints").save(waypoints);
+  }
+  if (selected) {
+    Bangle.resetCompass(); // reset built in compass when a waypoint is selected
   }
   selected=!selected;
   drawN();
@@ -284,6 +288,7 @@ Bangle.drawWidgets();
 // load widgets can turn off GPS
 Bangle.setGPSPower(1);
 Bangle.setCompassPower(1);
+Bangle.resetCompass() // reset built in compass on start in case we are not using tilt compensation
 drawAll();
 startTimers();
 Bangle.on('GPS', onGPS);

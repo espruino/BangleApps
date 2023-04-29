@@ -1,0 +1,12 @@
+{
+  "name": "gpconv",
+  "version": "0.1.0",
+  "files": [
+    "gpconv_bg.wasm",
+    "gpconv.js",
+    "gpconv.d.ts"
+  ],
+  "module": "gpconv.js",
+  "types": "gpconv.d.ts",
+  "sideEffects": false
+}

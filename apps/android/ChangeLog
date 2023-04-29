@@ -13,3 +13,12 @@
 0.13: Added Bangle.http function (see Readme file for more info)
 0.14: Fix timeout of http function not being cleaned up
 0.15: Allow method/body/headers to be specified for `http` (needs Gadgetbridge 0.68.0b or later)
+0.16: Bangle.http now fails immediately if there is no Bluetooth connection (fix #2152)
+0.17: Now kick off Calendar sync as soon as connected to Gadgetbridge
+0.18: Use new message library
+      If connected to Gadgetbridge, allow GPS forwarding from phone (Gadgetbridge code still not merged)
+0.19: Add automatic translation for a couple of strings.
+0.20: Fix wrong event used for forwarded GPS data from Gadgetbridge and add mapper to map longitude value correctly.
+0.21: Fix broken 'Messages' button in menu
+0.22: Handle connection events for GPS forwarding from phone
+0.23: Handle 'act' Gadgetbridge messages for realtime activity monitoring

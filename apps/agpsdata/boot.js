@@ -16,13 +16,6 @@
   }
 
   if (settings.enabled) {
-    let lastUpdate = settings.lastUpdate;
-    if (!lastUpdate || lastUpdate + settings.refresh * 1000 * 60 < Date.now()){
-      if (!waiting){
-        waiting = true;
-        require("agpsdata").pull(successCallback, errorCallback);
-      }
-    }
     setInterval(() => {
       if (!waiting && NRF.getSecurityStatus().connected){
         waiting = true;
