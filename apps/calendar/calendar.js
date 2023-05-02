@@ -36,7 +36,12 @@ const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a
   date.setHours(time.h);
   date.setMinutes(time.m);
   date.setSeconds(time.s);
-  return {date: date, msg: a.msg};
+  return {date: date, msg: a.msg, type: "e"};
+});
+// add holidays
+(require("Storage").readJSON("calendar.holiday.json",1) || []).forEach(h => {
+  const date = new Date(h.date);
+  events.push({date: date, msg: h.name, type: "h"});
 });
 events.sort((a,b) => a.date - b.date);
 
@@ -167,6 +172,27 @@ function drawCalendar(date) {
       const y1 = y * rowH + headerH + rowH;
       const x2 = x * colW + colW;
       const y2 = y * rowH + headerH + rowH + rowH;
+
+      if (eventsThisMonth.length > 0) {
+        // Display events for this day
+        eventsThisMonth.forEach((ev, idx) => {
+          if (sameDay(ev.date, curDay)) {
+            if (ev.type === "e") { // alarm/event
+              const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
+              const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+              const height = (y2-2) - (y1+2); // height of a cell
+              const sliceHeight = height/eventsPerDay;
+              const ystart = (y1+2) + slice*sliceHeight;
+              g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+            } else if (ev.type === "h") { // holiday
+              g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
+            }
+
+            eventsThisMonth.splice(idx, 1); // this event is no longer needed
+          }
+        });
+      }
+
       if (isToday) {
         g.setColor(red);
         g.drawRect(x1, y1, x2, y2);
@@ -176,23 +202,6 @@ function drawCalendar(date) {
           x2 - 1,
           y2 - 1
         );
-      }
-
-      if (eventsThisMonth.length > 0) {
-        // Display events for this day
-        g.setColor(bgEvent);
-        eventsThisMonth.forEach((ev, idx) => {
-          if (sameDay(ev.date, curDay)) {
-            const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
-            const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
-            const height = (y2-2) - (y1+2); // height of a cell
-            const sliceHeight = height/eventsPerDay;
-            const ystart = (y1+2) + slice*sliceHeight;
-            g.fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
-
-            eventsThisMonth.splice(idx, 1); // this event is no longer needed
-          }
-        });
       }
 
       require("Font8x12").add(Graphics);
@@ -236,7 +245,7 @@ function setUI() {
       const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
         const dateStr = require("locale").date(e.date, 1);
         const timeStr = require("locale").time(e.date, 1);
-        return { title: `${dateStr} ${timeStr}` + (e.msg ? " " + e.msg : "") };
+        return { title: `${dateStr} ${e.type === "e" ? timeStr : ""}` + (e.msg ? " " + e.msg : "") };
       });
       if (menu.length === 0) {
         menu.push({title: /*LANG*/"No events"});
