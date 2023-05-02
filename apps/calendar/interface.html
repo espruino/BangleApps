@@ -129,14 +129,23 @@ function addHoliday() {
 }
 
 function getData() {
-  Util.showModal("Loading...");
-  Util.readStorage('calendar.holiday.json',data=>{
-    holidays = JSON.parse(data || "[]") || [];
+  Puck.write(`\x10(function() {
+    Bluetooth.print(JSON.stringify(require("Storage").list("calendar.holiday.json").sort()));
+    })()\n`, contents => {
+      const fileNames = JSON.parse(contents);
+      if (fileNames.length > 0) {
+        Util.showModal("Loading...");
+        Util.readStorage('calendar.holiday.json',data=>{
+          holidays = JSON.parse(data || "[]") || [];
 
-    Util.hideModal();
-    holidays.forEach(holiday => {
-      renderHoliday(holiday);
-    });
+          Util.hideModal();
+          holidays.forEach(holiday => {
+            renderHoliday(holiday);
+          });
+        });
+      } else {
+        holidays = [];
+      }
   });
 }
 
