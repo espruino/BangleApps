@@ -54,7 +54,7 @@
     Graphics.prototype.setFontZapf = function() {
         // Actual height 56 (55 - 0)
         return this.setFontCustom(
-            zaph,
+            zapf,
             32,
             atob("EhQVLiUwNQsXFx4yEhcSESUlJSUlJSUlJSUUFDIyMh47Ky8pMismLzQaGTInOi4uKy4vJSstKzsnKCgXERc="),
             60 | 65536
