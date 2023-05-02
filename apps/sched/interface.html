@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <script src="../../core/lib/interface.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/0.0.3/ical.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
     <script>
 let dataElement = document.getElementById("data");
 let alarms;
@@ -17,7 +17,7 @@ function readFile(input) {
     const reader = new FileReader();
     reader.addEventListener("load", () => {
       const jCalData = ICAL.parse(reader.result);
-      const comp = new ICAL.Component(jCalData[1]);
+      const comp = new ICAL.Component(jCalData);
       // Fetch the VEVENT part
       comp.getAllSubcomponents('vevent').forEach(vevent => {
         event = new ICAL.Event(vevent);
@@ -50,13 +50,17 @@ function dateFromAlarm(alarm) {
   return new Date(date.getTime() + alarm.t);
 }
 
+function formatDate(d) {
+  return d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + d.getDate().toString().padStart(2, '0');
+}
+
 function getAlarmDefaults() {
   const date = new Date();
   return {
     on: true,
     t: dateToMsSinceMidnight(date),
     dow: 127,
-    date: date.toISOString().substring(0,10),
+    date: formatDate(date),
     last: 0,
     rp: "defaultRepeat" in schedSettings ? schedSettings.defaultRepeat : false,
     vibrate: "defaultAlarmPattern" in schedSettings ? schedSettings.defaultAlarmPattern : "::",
@@ -72,7 +76,7 @@ function eventToAlarm(event, offsetMs) {
     id: event.uid,
     msg: event.summary,
     t: dateToMsSinceMidnight(date),
-    date: date.toISOString().substring(0,10),
+    date: formatDate(date),
     data: {end: event.endDate.toJSDate().toISOString()}
   }};
   if (offsetMs) { // Alarm time is not real event time, so do a backup
@@ -105,7 +109,7 @@ function renderAlarm(alarm, exists) {
   inputTime.onchange = (e => {
     const date = new Date(inputTime.value);
     alarm.t = dateToMsSinceMidnight(date);
-    alarm.date = date.toISOString().substring(0,10);
+    alarm.date = formatDate(date);
   });
   tdTime.appendChild(inputTime);
 
