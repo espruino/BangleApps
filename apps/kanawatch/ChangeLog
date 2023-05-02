@@ -2,4 +2,5 @@
 0.02: Improve battery life, sprite resolution, fix launcher issue and unaligned text bug
 0.03: Reduce code size, refresh once a minute and faster refresh
 0.04: Show a random kana every minute to improve learning
-0.05: Tell clock widgets to hide.
+0.05: Tell clock widgets to hide
+0.06: Fix exception when showing missing hiragana 'WO'

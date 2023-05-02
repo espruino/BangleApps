@@ -116,7 +116,7 @@ apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
   var appDir = APPSDIR+app.id+"/";
-  var metadataFile = appDirRelative+"metadata.json";
+  var metadataFile = appDirRelative+"metadata.json";  
   if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`, {file:metadataFile});
   existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
@@ -124,6 +124,7 @@ apps.forEach((app,appIdx) => {
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
+  var appTags = app.tags ? app.tags.split(",") : [];
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -174,6 +175,8 @@ apps.forEach((app,appIdx) => {
   if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`, {file:metadataFile});
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`, {file:metadataFile});
   if (app.dependencies) {
+    if (app.dependencies.clock_info && !appTags.includes("clkinfo"))
+      WARN(`App ${app.id} uses clock_info but doesn't have clkinfo tag`, {file:metadataFile});
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
         if (!["type","app","module","widget"].includes(app.dependencies[dependency]))
@@ -185,6 +188,8 @@ apps.forEach((app,appIdx) => {
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
 
+  if (app.storage.find(f=>f.name.endsWith(".clkinfo.js")) && !appTags.includes("clkinfo"))
+    WARN(`App ${app.id} provides ...clkinfo.js but doesn't have clkinfo tag`, {file:metadataFile});
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});

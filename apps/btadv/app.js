@@ -1,4 +1,3 @@
-"use strict";
 var __assign = Object.assign;
 var Layout = require("Layout");
 Bangle.loadWidgets();

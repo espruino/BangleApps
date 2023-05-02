@@ -1,7 +1,7 @@
 {
   "id": "clkinfostopw",
   "name": "Stop Watch Clockinfo",
-  "version":"0.01",
+  "version":"0.03",
   "description": "A simple stopwatch, shown via clockinfo",
   "icon": "app.png",
   "type": "clkinfo",

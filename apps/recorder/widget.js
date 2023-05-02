@@ -265,8 +265,14 @@
     updateSettings(settings);
     WIDGETS["recorder"].reload();
     return Promise.resolve(settings.recording);
-  },plotTrack:function(m) { // m=instance of openstmap module
-    // Plots the current track in the currently set color
+  },plotTrack:function(m, options) { // m=instance of openstmap module
+    /* Plots the current track in the currently set color.
+      options can be {
+        async: if true, plots the path a bit at a time - returns an object with a 'stop' function to stop
+        callback: a function to call back when plotting is finished
+      }
+     */
+    options = options||{};
     if (!activeRecorders.length) return; // not recording
     var settings = loadSettings();
     // keep function to draw track in RAM
@@ -282,19 +288,35 @@
         c = l.split(",");
         l = f.readLine(f);
       }
-      if (l===undefined) return; // empty file?
-      mp = m.latLonToXY(+c[la], +c[lo]);
-      g.moveTo(mp.x,mp.y);
-      l = f.readLine(f);
-      var n = 200; // only plot first 200 points to keep things fast(ish)
-      while(l && n--) {
-        c = l.split(",");
-        if (c[la]) {
-          mp = m.latLonToXY(+c[la], +c[lo]);
-          g.lineTo(mp.x,mp.y);
-        }
+      var asyncTimeout;
+      var color = g.getColor();
+      function plotPartial() {
+        asyncTimeout = undefined;
+        if (l===undefined) return; // empty file?
+        mp = m.latLonToXY(+c[la], +c[lo]);
+        g.moveTo(mp.x,mp.y).setColor(color);
         l = f.readLine(f);
+        var n = options.async ? 20 : 200; // only plot first 200 points to keep things fast(ish)
+        while(l && n--) {
+          c = l.split(",");
+          if (c[la]) {
+            mp = m.latLonToXY(+c[la], +c[lo]);
+            g.lineTo(mp.x,mp.y);
+          }
+          l = f.readLine(f);
+        }
+        if (options.async && n<0)
+          asyncTimeout = setTimeout(plotPartial, 20);
+        else if (options.callback) options.callback();
       }
+      plotPartial();
+      if (options.async) return {
+        stop : function() {
+          if (asyncTimeout) clearTimeout(asyncTimeout);
+          asyncTimeout = undefined;
+          if (options.callback) options.callback();
+        }
+      };
     }
     plot(g);
   }};

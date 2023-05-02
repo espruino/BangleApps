@@ -1,6 +1,6 @@
 # Bluetooth Heart Rate Monitor
 
-When this app is installed it overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.
+When this app is installed it overrides Bangle.js's built in heart rate monitor with an external Bluetooth one.
 
 HRM is requested it searches on Bluetooth for a heart rate monitor, connects, and sends data back using the `Bangle.on('HRM')` event as if it came from the on board monitor.
 
@@ -44,7 +44,7 @@ So far it has been tested on:
 
 ## Recorder plugin
 
-The recorder plugin can record the BT HRM event (blue) and the original unchanged HRM event (green). This is mainly useful for debugging purposes or comparing the BT with the internal HRM, as the resulting "merged" HRM can be recordet using the default HRM recorder.
+The recorder plugin can record the BT HRM event (blue) and the original unchanged HRM event (green). This is mainly useful for debugging purposes or comparing the BT with the internal HRM, as the resulting "merged" HRM can be recorded using the default HRM recorder.
 
 ## Internals
 
