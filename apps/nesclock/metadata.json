@@ -2,7 +2,7 @@
   "id": "nesclock",
   "name": "NES Clock",
   "shortName": "NES Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A clock themed after different NES title screens.",
   "readme":"README.md",
   "icon": "app.png",
