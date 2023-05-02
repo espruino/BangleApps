@@ -4,6 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "This is a graphical clock based on Anton Clock with date, day and moon phase. Beta",
+ "screenshots" : [ { "url":"screenshot.png" } ],
   "tags": "clock",
  "supports": ["BANGLEJS2"],
   "storage": [
