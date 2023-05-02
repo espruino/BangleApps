@@ -6,7 +6,7 @@
   "description": "This is a graphical clock based on Anton Clock with date, day and moon phase. Beta",
   "tags": "clock",
   "storage": [
-    {"name":"timer.app.js","url":"app.js"},
-    {"name":"timer.img","url":"app-icon.js","evaluate":true}
+    {"name":"polymath.app.js","url":"app.js"},
+    {"name":"polymath.img","url":"app-icon.js","evaluate":true}
   ]
 }
