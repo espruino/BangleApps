@@ -23,7 +23,6 @@ const ensureCache = (): NonNull<typeof cache> => {
 
 const saveCache = () => {
 	require("Storage").writeJSON("popcon.cache.json", cache);
-	console.log("saved cache:" + JSON.stringify(cache, 0, 2));
 	if(orderchanged){
 		// wipe launcher cache
 		require("Storage")
@@ -74,11 +73,9 @@ require("Storage").readJSON = ((fname, skipExceptions) => {
 		let so;
 
 		if(j.src && (so = cache[j.src]?.sortorder) != null)
-			j.sortorder = so,
-			console.log("readJSON(), modifying " + fname + "'s sort order to " + j.sortorder);
+			j.sortorder = so;
 		else
-			j.sortorder = 99,
-			console.log("readJSON(), leaving " + fname + "'s sort order as 99");
+			j.sortorder = 99;
 	}
 
 	return j;
@@ -88,12 +85,11 @@ const oldLoad = load;
 global.load = (src: string) => {
 	if(src){
 		const cache = ensureCache();
-		console.log("load(\"" + src + "\")");
-		const ent = cache[src] ||= (console.log("new cache entry"), {
+		const ent = cache[src] ||= {
 			pop: 0,
 			last: 0,
 			sortorder: -10,
-		});
+		};
 		ent.pop++;
 		ent.last = Date.now();
 		sortCache();
