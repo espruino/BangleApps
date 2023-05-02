@@ -55,65 +55,12 @@ if (settings.ndColors === true) {
 }
 
 function getDowLbls(locale) {
-  let dowLbls;
-  //TODO: Find some clever way to generate this programmatically from locale lib
-  switch (locale) {
-    case "de_AT":
-    case "de_CH":
-    case "de_DE":
-      if (startOnSun) {
-        dowLbls = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-      } else {
-        dowLbls = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
-      }
-      break;
-    case "nl_NL":
-      if (startOnSun) {
-        dowLbls = ["zo", "ma", "di", "wo", "do", "vr", "za"];
-      } else {
-        dowLbls = ["ma", "di", "wo", "do", "vr", "za", "zo"];
-      }
-      break;
-    case "fr_BE":
-    case "fr_CH":
-    case "fr_FR":
-      if (startOnSun) {
-        dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
-      }
-      break;
-    case "sv_SE":
-      if (startOnSun) {
-        dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
-      }
-      break;
-    case "it_CH":
-    case "it_IT":
-      if (startOnSun) {
-        dowLbls = ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"];
-      }
-      break;
-    case "oc_FR":
-      if (startOnSun) {
-        dowLbls = ["dg", "dl", "dm", "dc", "dj", "dv", "ds"];
-      } else {
-        dowLbls = ["dl", "dm", "dc", "dj", "dv", "ds", "dg"];
-      }
-      break;
-    default:
-      if (startOnSun) {
-        dowLbls = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-      } else {
-        dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      }
-      break;
-  }
-  return dowLbls;
+  let days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+  const d = new Date();
+  return days.map(i => {
+    d.setDate(d.getDate() + (i + 7 - d.getDay()) % 7);
+    return require("locale").dow(d, 1);
+  });
 }
 
 function sameDay(d1, d2) {
