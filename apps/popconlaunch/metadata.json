@@ -5,12 +5,13 @@
   "version": "0.01",
   "description": "Launcher displaying your favourite (popular) apps first",
   "readme": "README.md",
-  "icon": "TODO_app.png",
+  "icon": "app.png",
   "type": "bootloader",
   "tags": "tool,system,launcher",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name":"popcon.boot.js","url":"boot.js"}
+    {"name":"popcon.boot.js","url":"boot.js"},
+    {"name":"popcon.img","url":"icon.js","evaluate":true}
   ],
   "data": [
     {"name":"popcon.cache.json"}
