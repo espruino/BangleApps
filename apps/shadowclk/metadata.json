@@ -4,7 +4,7 @@
   "version": "0.01",
   "description": "A simple clock using the Londrina font with color and a shadowed outline. Based on the Anton Clock.",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
