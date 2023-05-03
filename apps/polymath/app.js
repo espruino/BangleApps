@@ -110,7 +110,8 @@ let drawWeek = function() {
      if (d < 5 ){
        g.setColor(g.theme.bg);
        g.fillRect(pos, 175-15, pos+22, 175);
-     }else{                                 g.setColor(g.blendColor(g.theme.bg,g.theme.fg,0.25));
+     }else{        
+       g.setColor(g.blendColor(g.theme.bg,g.theme.fg,0.25));
        g.fillRect(pos, 175-15, pos+22, 175);
      }
     
@@ -122,7 +123,7 @@ var mphaseq=-1; // moonphase 0-3
 var qday = -1; // day in week quater moon
 var moonssince; // full moons since May 5th 2023
 var lundaymo; // lunation day monday
-var tms = date.getTime() + 3*86400000;//
+var tms = date.getTime() + 86400000;//
 var weekdayms = weekday * 86400000 ;//seconds since monday
 var startd = tms - weekdayms; // monday
 var perc;// percent of cycle
