@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "This is a simple 3D scalig demo based on Anton Clock",
- "screenshots" : [ { "url":"screenshot.png" }, { "url":"polymathclock.jpg" } ],
+ "screenshots" : [ { "url":"screenshot.png" }],
  "type":"clock",   
   "tags": "clock",
   "readme": "README.md", 
