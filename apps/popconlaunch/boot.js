@@ -1,7 +1,6 @@
 var oldRead = require("Storage").readJSON;
 var monthAgo = Date.now() - 1000 * 86400 * 28;
 var cache;
-var orderchanged = false;
 var ensureCache = function () {
     if (!cache) {
         cache = oldRead("popcon.cache.json", true);
@@ -10,12 +9,12 @@ var ensureCache = function () {
     }
     return cache;
 };
-var saveCache = function () {
+var saveCache = function (orderChanged) {
     require("Storage").writeJSON("popcon.cache.json", cache);
-    if (orderchanged) {
-        require("Storage")
-            .list(/launch.*cache/)
-            .forEach(function (f) { return require("Storage").erase(f); });
+    if (orderChanged) {
+        var info = oldRead("popcon.info", true);
+        info.cacheBuster = !info.cacheBuster;
+        require("Storage").writeJSON("popcon.info", info);
     }
 };
 var sortCache = function () {
@@ -40,12 +39,14 @@ var sortCache = function () {
         return 0;
     });
     var i = 0;
+    var orderChanged = false;
     for (var _i = 0, ents_1 = ents; _i < ents_1.length; _i++) {
         var ent = ents_1[_i];
         if (ent.sortorder !== i)
-            orderchanged = true;
+            orderChanged = true;
         ent.sortorder = i++;
     }
+    return orderChanged;
 };
 require("Storage").readJSON = (function (fname, skipExceptions) {
     var _a;
@@ -71,8 +72,8 @@ global.load = function (src) {
         });
         ent.pop++;
         ent.last = Date.now();
-        sortCache();
-        saveCache();
+        var orderChanged = sortCache();
+        saveCache(orderChanged);
     }
     return oldLoad(src);
 };
