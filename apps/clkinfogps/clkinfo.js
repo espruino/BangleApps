@@ -5,7 +5,7 @@
   var geo = require("geotools");
 
   var debug = function(o) {
-    console.log(o);
+    //console.log(o);
   };
 
   var resetLastFix = function() {
@@ -49,7 +49,7 @@
   };
 
   var onGPS = function(fix) {
-    //console.log(fix);
+    debug(fix);
     last_fix.time = fix.time;
 
     // we got a fix
@@ -100,20 +100,20 @@
           text: gpsText()
         }); },
         run : function() {
-          console.log("run");
+          debug("run");
           // if the timer is already runnuing reset it, we can get multiple run calls by tapping
           clearTimer();
           Bangle.setGPSPower(1,"clkinfo");
         },
         show: function () {
-          console.log("show");
+          debug("show");
           resetLastFix();
           fixTs = Math.round(getTime());
           Bangle.on("GPS",onGPS);
           this.run();
         },
         hide: function() {
-          console.log("hide");
+          debug("hide");
           clearTimer();
           Bangle.setGPSPower(0,"clkinfo");
           Bangle.removeListener("GPS", onGPS);
