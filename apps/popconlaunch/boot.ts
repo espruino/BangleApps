@@ -10,7 +10,6 @@ let cache: undefined | {
 		last: Timestamp,
 	}
 };
-let orderchanged = false;
 
 const ensureCache = (): NonNull<typeof cache> => {
 	if(!cache){
@@ -21,7 +20,7 @@ const ensureCache = (): NonNull<typeof cache> => {
 	return cache;
 };
 
-const saveCache = () => {
+const saveCache = (orderChanged: boolean) => {
 	require("Storage").writeJSON("popcon.cache.json", cache);
 	if(orderchanged){
 		// wipe launcher cache
@@ -58,10 +57,12 @@ const sortCache = () => {
 	});
 
 	let i = 0;
+	let orderChanged = false;
 	for(const ent of ents){
-		if(ent.sortorder !== i) orderchanged = true;
+		if(ent.sortorder !== i) orderChanged = true;
 		ent.sortorder = i++;
 	}
+	return orderChanged;
 };
 
 require("Storage").readJSON = ((fname, skipExceptions) => {
@@ -92,8 +93,8 @@ global.load = (src: string) => {
 		};
 		ent.pop++;
 		ent.last = Date.now();
-		sortCache();
-		saveCache();
+		const orderChanged = sortCache();
+		saveCache(orderChanged);
 	}
 
 	return oldLoad(src);
