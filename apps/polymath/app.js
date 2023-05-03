@@ -1,7 +1,5 @@
 // Clock with date day and moon based on the "Anton Clock"
 
-//require("Font4x4").add(Graphics);
-
 
 Graphics.prototype.setFontmoonphases = function() {
   // Actual height 23 (23 - 1)
@@ -124,7 +122,7 @@ var mphaseq=-1; // moonphase 0-3
 var qday = -1; // day in week quater moon
 var moonssince; // full moons since May 5th 2023
 var lundaymo; // lunation day monday
-var tms = date.getTime();//
+var tms = date.getTime() + 3*86400000;//
 var weekdayms = weekday * 86400000 ;//seconds since monday
 var startd = tms - weekdayms; // monday
 var perc;// percent of cycle
@@ -143,7 +141,14 @@ var yoffset = (qday == weekday )*24;
 g.setFontAlign(0, 0).setFont("moonphases", 1).drawString(String.fromCharCode(48), qday*(176/7)+11, g.getHeight() - 22- yoffset);
 g.setColor(1,1,1); // moonshape
    //g.setFontAlign(0, 0).setFont("moonphases", 1).drawString(String.fromCharCode(65+mphaseq*26/4), qday*(176/7)+11, g.getHeight() - 26- yoffset); // next moon or :
-g.setFontAlign(0, 0).setFont("moonphases", 1).drawString(String.fromCharCode(65+perc*26), qday*(176/7)+11, g.getHeight() - 22- yoffset);
+  // exception for full moon:
+  var char;
+  if (Math.round(65+perc*26)==77) { 
+       char = 48;
+      }else{
+   char = Math.round(65+perc*26);
+      }
+g.setFontAlign(0, 0).setFont("moonphases", 1).drawString(String.fromCharCode(char), qday*(176/7)+11, g.getHeight() - 22- yoffset);
 
 // queue next drawWeek
   if (drawWeekTimeout) clearTimeout(drawWeekTimeout);
