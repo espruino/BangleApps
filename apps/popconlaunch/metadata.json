@@ -3,7 +3,7 @@
   "name": "Popcon Launcher",
   "shortName": "Popcon",
   "version": "0.01",
-  "description": "Launcher displaying your favourite (popular) apps first",
+  "description": "Launcher modification - your launchers will display your favourite (popular) apps first",
   "readme": "README.md",
   "icon": "app.png",
   "type": "bootloader",
