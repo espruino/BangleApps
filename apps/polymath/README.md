@@ -1,4 +1,5 @@
 
+Intended for the dark theme.
 The clock does not show widgets but a custom battery indicator.
 
 You can revert this in the code easily by uncommenting the respective lines.
@@ -12,3 +13,4 @@ Number in the middle is hour and minutes, in 12h format.
 Bottom row: days in the week, with current date, and moonphase
 placed on the date of next change of moon quartal (full moon, half moon etc)
 
+Please report any bugs and feature requetsts in the forum.
