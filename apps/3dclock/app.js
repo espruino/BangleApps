@@ -36,7 +36,8 @@ let draw = function() {
   var fsizeh = basesize * scaleh;
   
   g.drawImage(moonimg,0,0);
-
+  g.setColor(0,0,0);
+  g.fillRect(0,175-32,175,175);
  // g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
   g.setColor(1,1,1);
   g.setFontAlign(1, 0).setFont("Vector",fsizeh).drawString(hour, x, y); 
