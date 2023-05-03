@@ -22,11 +22,11 @@ const ensureCache = (): NonNull<typeof cache> => {
 
 const saveCache = (orderChanged: boolean) => {
 	require("Storage").writeJSON("popcon.cache.json", cache);
-	if(orderchanged){
-		// wipe launcher cache
-		require("Storage")
-			.list(/launch.*cache/)
-			.forEach(f => require("Storage").erase(f))
+	if(orderChanged){
+		// ensure launchers reload their caches:
+		const info: AppInfo & { cacheBuster?: boolean } = oldRead("popcon.info", true);
+		info.cacheBuster = !info.cacheBuster;
+		require("Storage").writeJSON("popcon.info", info);
 	}
 };
 
