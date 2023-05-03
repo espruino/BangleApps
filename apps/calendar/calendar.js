@@ -38,12 +38,15 @@ const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a
   date.setSeconds(time.s);
   return {date: date, msg: a.msg, type: "e"};
 });
-// add holidays
-(require("Storage").readJSON("calendar.holiday.json",1) || []).forEach(h => {
-  const date = new Date(h.date);
-  events.push({date: date, msg: h.name, type: "h"});
+// add holidays & other events
+(require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
+  const date = new Date(d.date);
+  const o = {date: date, msg: d.name, type: d.type};
+  if (d.repeat) {
+    o.repeat = d.repeat;
+  }
+  events.push(o);
 });
-events.sort((a,b) => a.date - b.date);
 
 if (settings.ndColors === undefined) {
   settings.ndColors = !g.theme.dark;
@@ -158,8 +161,12 @@ function drawCalendar(date) {
   weekBeforeMonth.setDate(weekBeforeMonth.getDate() - 7);
   const week2AfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
   week2AfterMonth.setDate(week2AfterMonth.getDate() + 14);
+  events.forEach(ev => {
+    if (ev.repeat === "y") {
+      ev.date.setFullYear(date.getFullYear());
+    }
+  });
   const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
-
   let i = 0;
   for (y = 0; y < rowN - 1; y++) {
     for (x = 0; x < colN; x++) {
@@ -177,15 +184,21 @@ function drawCalendar(date) {
         // Display events for this day
         eventsThisMonth.forEach((ev, idx) => {
           if (sameDay(ev.date, curDay)) {
-            if (ev.type === "e") { // alarm/event
-              const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
-              const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
-              const height = (y2-2) - (y1+2); // height of a cell
-              const sliceHeight = height/eventsPerDay;
-              const ystart = (y1+2) + slice*sliceHeight;
-              g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
-            } else if (ev.type === "h") { // holiday
-              g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
+            switch(ev.type) {
+              case "e": // alarm/event
+                const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
+                const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+                const height = (y2-2) - (y1+2); // height of a cell
+                const sliceHeight = height/eventsPerDay;
+                const ystart = (y1+2) + slice*sliceHeight;
+                g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+                break;
+              case "h": // holiday
+                g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
+                break;
+              case "o": // other
+                g.setColor("#88ff00").fillRect(x1+1, y1+1, x2-1, y2-1);
+                break;
             }
 
             eventsThisMonth.splice(idx, 1); // this event is no longer needed
@@ -242,6 +255,7 @@ function setUI() {
     },
     btn: (n) => n === (process.env.HWVERSION === 2 ? 1 : 3) && load(),
     touch: (n,e) => {
+      events.sort((a,b) => a.date - b.date);
       const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
         const dateStr = require("locale").date(e.date, 1);
         const timeStr = require("locale").time(e.date, 1);

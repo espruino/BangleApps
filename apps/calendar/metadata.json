@@ -15,5 +15,5 @@
     {"name":"calendar.settings.js","url":"settings.js"},
     {"name":"calendar.img","url":"calendar-icon.js","evaluate":true}
   ],
-  "data": [{"name":"calendar.json"}, {"name":"calendar.holiday.json"}]
+  "data": [{"name":"calendar.json"}, {"name":"calendar.days.json"}]
 }

@@ -53,6 +53,7 @@ function eventToHoliday(event) {
   const holiday = {
     date: formatDate(date),
     name: event.summary,
+    type: 'h',
   };
   return holiday;
 }
@@ -63,7 +64,7 @@ function formatDate(d) {
 
 function upload() {
   Util.showModal("Saving...");
-  Util.writeStorage("calendar.holiday.json", JSON.stringify(holidays), () => {
+  Util.writeStorage("calendar.days.json", JSON.stringify(holidays), () => {
     location.reload(); // reload so we see current data
   });
 }
@@ -82,7 +83,7 @@ function renderHoliday(holiday) {
   inputTime.value = formatDate(localDate)
   inputTime.onchange = (e => {
     const date = new Date(inputTime.value);
-    holiday.date = formatDate(date.toISOString())
+    holiday.date = formatDate(date);
   });
   tdTime.appendChild(inputTime);
 
@@ -101,13 +102,50 @@ function renderHoliday(holiday) {
   tdSummary.appendChild(inputSummary);
   inputSummary.onchange();
 
-  const tdInfo = document.createElement('td');
-  tr.appendChild(tdInfo);
+  const tdType = document.createElement('td');
+  tr.appendChild(tdType);
+  const selectType = document.createElement("select");
+  selectType.classList.add('form-select');
+  tdType.prepend(selectType);
+  const optionHoliday = document.createElement("option");
+  optionHoliday.text = "Holiday";
+  optionHoliday.value = "h";
+  optionHoliday.selected = holiday.type === "h";
+  selectType.add(optionHoliday);
+  const optionOther = document.createElement("option");
+  optionOther.text = "Other";
+  optionOther.value = "o";
+  optionOther.selected = holiday.type === "o";
+  selectType.add(optionOther);
+  selectType.onchange = (e => {
+    holiday.type = e.target.value;
+  });
+
+  const tdRepeat = document.createElement('td');
+  tr.appendChild(tdRepeat);
+  const selectRepeat = document.createElement("select");
+  selectRepeat.classList.add('form-select');
+  tdRepeat.prepend(selectRepeat);
+  const optionNever = document.createElement("option");
+  optionNever.text = "Never";
+  optionNever.selected = !holiday.repeat;
+  selectRepeat.add(optionNever);
+  const optionYearly = document.createElement("option");
+  optionYearly.text = "Yearly";
+  optionYearly.value = "y";
+  optionYearly.selected = holiday.repeat === "y";
+  selectRepeat.add(optionYearly);
+  selectRepeat.onchange = (e => {
+    holiday.repeat = e.target.value;
+  });
+
+  const tdAction = document.createElement('td');
+  tr.appendChild(tdAction);
 
   const buttonDelete = document.createElement('button');
   buttonDelete.classList.add('btn');
   buttonDelete.classList.add('btn-action');
-  tdInfo.prepend(buttonDelete);
+  tdAction.prepend(buttonDelete);
   const iconDelete = document.createElement('i');
   iconDelete.classList.add('icon');
   iconDelete.classList.add('icon-delete');
@@ -129,22 +167,21 @@ function addHoliday() {
 }
 
 function getData() {
+  Util.showModal("Loading...");
   Puck.write(`\x10(function() {
-    Bluetooth.print(JSON.stringify(require("Storage").list("calendar.holiday.json").sort()));
+    Bluetooth.print(JSON.stringify(require("Storage").list("calendar.days.json").sort()));
     })()\n`, contents => {
       const fileNames = JSON.parse(contents);
       if (fileNames.length > 0) {
-        Util.showModal("Loading...");
-        Util.readStorage('calendar.holiday.json',data=>{
+        Util.readStorage('calendar.days.json',data=>{
           holidays = JSON.parse(data || "[]") || [];
 
           Util.hideModal();
-          holidays.forEach(holiday => {
-            renderHoliday(holiday);
-          });
+          render();
         });
       } else {
         holidays = [];
+        Util.hideModal();
       }
   });
 }
@@ -156,7 +193,7 @@ function onInit() {
     </script>
   </head>
   <body>
-    <h4>Holidays</h4>
+    <h4 class="float-left">Holidays</h4>
 
     <div class="float-right">
       <button class="btn" onclick="addHoliday();">
@@ -164,11 +201,13 @@ function onInit() {
       </button>
     </div>
 
-    <table class="table">
+    <table class="table table-scroll" style="clear:both;">
       <thead>
         <tr>
           <th>Date</th>
           <th>Holiday</th>
+          <th>Type</th>
+          <th>Repeat</th>
           <th></th>
         </tr>
       </thead>
