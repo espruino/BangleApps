@@ -160,7 +160,7 @@ function renderHoliday(holiday) {
 }
 
 function addHoliday() {
-  const holiday = {date: formatDate(new Date())};
+  const holiday = {date: formatDate(new Date()), type: 'h'};
   renderHoliday(holiday);
   holidays.push(holiday);
   render();

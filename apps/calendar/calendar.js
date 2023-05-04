@@ -16,6 +16,7 @@ const white = "#ffffff";
 const red = "#d41706";
 const blue = "#0000ff";
 const yellow = "#ffff00";
+const cyan = "#00ffff";
 let bgColor = color4;
 let bgColorMonth = color1;
 let bgColorDow = color2;
@@ -23,6 +24,7 @@ let bgColorWeekend = color3;
 let fgOtherMonth = gray1;
 let fgSameMonth = white;
 let bgEvent = blue;
+let bgOtherEvent = "#ff8800";
 const eventsPerDay=6; // how much different events per day we can display
 const date = new Date();
 
@@ -60,6 +62,7 @@ if (settings.ndColors === true) {
   fgOtherMonth = blue;
   fgSameMonth = black;
   bgEvent = color2;
+  bgOtherEvent = cyan;
 }
 
 function getDowLbls(locale) {
@@ -163,10 +166,11 @@ function drawCalendar(date) {
   week2AfterMonth.setDate(week2AfterMonth.getDate() + 14);
   events.forEach(ev => {
     if (ev.repeat === "y") {
-      ev.date.setFullYear(date.getFullYear());
+      ev.date.setFullYear(ev.date.getMonth() < 6 ? week2AfterMonth.getFullYear() : weekBeforeMonth.getFullYear());
     }
   });
   const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
+  eventsThisMonth.sort((a,b) => a.date - b.date);
   let i = 0;
   for (y = 0; y < rowN - 1; y++) {
     for (x = 0; x < colN; x++) {
@@ -197,7 +201,7 @@ function drawCalendar(date) {
                 g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
                 break;
               case "o": // other
-                g.setColor("#88ff00").fillRect(x1+1, y1+1, x2-1, y2-1);
+                g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
                 break;
             }
 
