@@ -232,7 +232,7 @@ window.addEventListener('load', (event) => {
   });
 
   // Button to install all default apps in one go
-  document.getElementById("installdefault").addEventListener("click",event=>{
+  document.getElementById("installdefault").addEventListener("click", event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
         return httpGet("defaultapps_banglejs1.json");
@@ -246,6 +246,15 @@ window.addEventListener('load', (event) => {
       showToast("App Install failed, "+err,"error");
     });
   });
+
+  // Button to reset the Bangle's settings
+  document.getElementById("defaultbanglesettings").addEventListener("click", event=>{
+    showPrompt("Reset Settings","Really reset Bangle.js settings?").then(() => {
+      Comms.write("\x10require('Storage').erase('setting.json');load()\n");
+      showToast("Settings reset!", "success");
+    }, function() { /* cancelled */ });
+  });
+  
 
   // BLE Compatibility
   var selectBLECompat = document.getElementById("settings-ble-compat");
