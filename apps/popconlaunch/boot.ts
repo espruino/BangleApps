@@ -1,4 +1,4 @@
-// TODO: fastload
+{
 type Timestamp = number;
 
 const oldRead = require("Storage").readJSON;
@@ -99,3 +99,4 @@ global.load = (src: string) => {
 
 	return oldLoad(src);
 };
+}
