@@ -152,11 +152,12 @@
       return v;
     };
   }
-  
+
   if (settings.autoCalibration){
     let chargeStart;
+    if (Bangle.isCharging()) chargeStart = Date.now();
     Bangle.on("charging", (charging)=>{
-      if (charging) chargeStart = Date.now();
+      if (!chargeStart && charging) chargeStart = Date.now();
       if (chargeStart && !charging && (Date.now() - chargeStart > 1000*60*60*3)) require("powermanager").setCalibration();
       if (!charging) chargeStart = undefined;
     });
