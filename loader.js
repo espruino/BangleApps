@@ -107,22 +107,24 @@ function filterAppsForDevice(deviceId) {
   // set the device dropdown
   document.querySelector(".devicetype-nav span").innerText = device ? device.name : "All apps";
 
-  if (!device) {
-    if (deviceId!==undefined)
-      showToast(`Device ID ${deviceId} not recognised. Some apps may not work`, "warning");
-    appJSON = originalAppJSON;
-  } else {
-    // Now filter apps
-    appJSON = originalAppJSON.filter(app => {
-      var supported = ["BANGLEJS"];
-      if (!app.supports) {
-        console.log(`App ${app.id} doesn't include a 'supports' field - ignoring`);
+  if (originalAppJSON) { // JSON might not have loaded yet
+    if (!device) {
+      if (deviceId!==undefined)
+        showToast(`Device ID ${deviceId} not recognised. Some apps may not work`, "warning");
+      appJSON = originalAppJSON;
+    } else {
+      // Now filter apps
+      appJSON = originalAppJSON.filter(app => {
+        var supported = ["BANGLEJS"];
+        if (!app.supports) {
+          console.log(`App ${app.id} doesn't include a 'supports' field - ignoring`);
+          return false;
+        }
+        if (app.supports.includes(deviceId)) return true;
+        //console.log(`Dropping ${app.id} because ${deviceId} is not in supported list ${app.supports.join(",")}`);
         return false;
-      }
-      if (app.supports.includes(deviceId)) return true;
-      //console.log(`Dropping ${app.id} because ${deviceId} is not in supported list ${app.supports.join(",")}`);
-      return false;
-    });
+      });
+    }
   }
   refreshLibrary();
 }
