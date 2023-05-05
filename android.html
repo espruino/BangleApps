@@ -377,36 +377,55 @@ if (typeof Android!=="undefined") {
       if ("object"==typeof err) console.log(err.stack);
     });
   }, 500);
+} else {
+  showToast("You're running the App Loader version for Gadgetbridge, but you don't seem to be in Gadgetbridge!","error");
+}
+
+function showWebRTCID(id) {
+  showToast("Bridge's Peer ID: "+id);
+      showPrompt("Web IDE Remote Access",`
+Remote access enabled. Peer ID:
+<br/><br/>
+<b>${id}</b>
+<br/><br/>
+Go to <b>espruino.com/ide</b> on your
+desktop and enter this code under
+<b>Remote Connection Bridge Peer ID</b> in Settings.
+Then connect to the <b>Android</b> device.
+`,{ok:1},false/*shouldEscapeHtml*/).then(() => {
+      }, function() { /* cancelled */ });
 }
 
 // Button to Enable Remote Web IDE
 var el = document.getElementById("webideremote");
+var webrtc;
 if (el) el.addEventListener("click", event=>{
-  webrtc = webrtcInit({
-    bridge:true, 
-    onStatus : function(s) {
-      showToast(s);
-    },
-    onPeerID : function(s) {
-      showToast("Bridge's Peer ID: "+s);
-      showPrompt("Web IDE Remote Access","Remote access enabled\nPeer ID: "+s).then(() => {
-      }, function() { /* cancelled */ });
-    },
-    onGetPorts : function(cb) {
-      cb([{path:"Android",description:"Remote Device Connection",type:"socket"}]);
+  if (webrtc) showWebRTCID(webrtc.peerId);
+  else {
+    webrtc = webrtcInit({
+      bridge:true, 
+      onStatus : function(s) {
+        showToast(s);
       },
-    onPortConnect : function(serialPort, cb) {
-      cb(); // we're already connected...
-    },
-    onPortDisconnect : function(serialPort) {
-    },
-    onPortWrite : function(data, cb) {
-      Puck.write(data, cb);        
-    }
-  });
-  connection.on("data", function(d) {
-    webrtc.onPortReceived(d);
-  });
+      onPeerID : function(id) {
+        showWebRTCID(id);
+      },
+      onGetPorts : function(cb) {
+        cb([{path:"Android",description:"Remote Device Connection",type:"socket"}]);
+        },
+      onPortConnect : function(serialPort, cb) {
+        cb(); // we're already connected...
+      },
+      onPortDisconnect : function(serialPort) {
+      },
+      onPortWrite : function(data, cb) {
+        Puck.write(data, cb);        
+      }
+    });
+    connection.on("data", function(d) {
+      webrtc.onPortReceived(d);
+    });
+  }
 });
 
 </script>
