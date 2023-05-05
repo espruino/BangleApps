@@ -232,7 +232,7 @@ if (typeof Android!=="undefined") {
       if (writecb) setTimeout(writecb,10);
     },
     close : function() {},
-    on : function(evt,cb) { handlers[evt] = cb; },
+    on : function(evt,cb) { connection.handlers[evt] = cb; },
     received : "",
     hadData : false,
     handlers : []
