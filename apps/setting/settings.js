@@ -403,6 +403,12 @@ function showLCDMenu() {
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
+  };
+  if (BANGLEJS2)
+    Object.assign(lcdMenu, {
+    /*LANG*/'Calibrate': () => showTouchscreenCalibration()
+    });
+  Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
       min: 0.1,
@@ -444,7 +450,7 @@ function showLCDMenu() {
         updateOptions();
       }
     }
-  };
+  });
   if (!BANGLEJS2)
     Object.assign(lcdMenu, {
     /*LANG*/'Wake on BTN2': {
@@ -514,10 +520,7 @@ function showLCDMenu() {
       }
     }
   });
-  if (BANGLEJS2)
-    Object.assign(lcdMenu, {
-    /*LANG*/'Calibrate': () => showTouchscreenCalibration()
-    });
+
   return E.showMenu(lcdMenu)
 }
 
@@ -852,17 +855,17 @@ function showTouchscreenCalibration() {
     g.drawLine(spot[0]-32,spot[1],spot[0]+32,spot[1]);
     g.drawLine(spot[0],spot[1]-32,spot[0],spot[1]+32);
     g.drawCircle(spot[0],spot[1], 16);
-    var tapsLeft = (1-currentTry)*4+(4-currentCorner);
+    var tapsLeft = (2-currentTry)*4+(4-currentCorner);
     g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+/*LANG*/" taps\nto go", g.getWidth()/2, g.getHeight()/2);
   }
 
   function calcCalibration() {
     g.clear(1);
-    // we should now have 4 of each tap in 'pt'
-    pt.x1 /= 4;
-    pt.y1 /= 4;
-    pt.x2 /= 4;
-    pt.y2 /= 4;
+    // we should now have 6 of each tap in 'pt'
+    pt.x1 /= 6;
+    pt.y1 /= 6;
+    pt.x2 /= 6;
+    pt.y2 /= 6;
     // work out final values
     var calib = {
       x1 : Math.round(pt.x1 - (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
@@ -870,13 +873,19 @@ function showTouchscreenCalibration() {
       x2 : Math.round(pt.x2 + (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
       y2 : Math.round(pt.y2 + (pt.y2-pt.y1)*P/(g.getHeight()-P*2))
     };
-    Bangle.setOptions({
-      touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
-    });
-    var s = storage.readJSON("setting.json",1)||{};
-    s.touch = calib;
-    storage.writeJSON("setting.json",s);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    var dx = calib.x2-calib.x1;
+    var dy = calib.y2-calib.y1;
+    if(dx<100 || dx>280 || dy<100 || dy>280) {
+      g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Out of Range.\nPlease\ntry again", g.getWidth()/2, g.getHeight()/2);
+    } else {
+      Bangle.setOptions({
+        touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
+      });
+      var s = storage.readJSON("setting.json",1)||{};
+      s.touch = calib;
+      storage.writeJSON("setting.json",s);
+      g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    }
     // now load the main menu again
     setTimeout(showLCDMenu, 500);
   }
@@ -897,7 +906,7 @@ function showTouchscreenCalibration() {
     if (currentCorner>=corners.length) {
       currentCorner = 0;
       currentTry++;
-      if (currentTry==2) {
+      if (currentTry==3) {
         Bangle.removeListener('touch', touchHandler);
         return calcCalibration();
       }

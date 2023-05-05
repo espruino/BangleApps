@@ -147,7 +147,10 @@
           for (var i=0; i<radios.length; i++)
             if (radios[i].checked)
               gnss_select=radios[i].value;
+          js += `\x10var t=getTime()+0.5;while (getTime()<t);\n`; // This is nasty - but we just wait here until the GPS has had time to boot
           js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`; // set GNSS mode
+          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS03,1,0,0,1,1,0,0,0")}")\n`; // enable GGA,GSV,RMC packets (new Bangle.js 2 GPS firmwares don't include RMC by default!)
+          // Serial1.println("$PCAS06,0*1B") gets the current firmware version
           // What about:
           // NAV-TIMEUTC (0x01 0x10)
           // NAV-PV (0x01 0x03)
