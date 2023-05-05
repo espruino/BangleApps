@@ -53,7 +53,7 @@
     /*LANG*/'Font': {
       value: settings.font,
       min: 0, max: 2,
-      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8"][v || 1],
+      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8"][v === undefined ? 1 : v],
       onchange: v => {
         settings.font = v;
         writeSettings();
