@@ -14,11 +14,11 @@ Shadow Clock uses the "Londrina" font in a user selectable color and surrounds i
 
 Anton Clock is configured by the standard settings mechanism of Bangle.js's operating system:
 Open the `Settings` app, then the `Apps` submenu and below it the `Shadow Clock` menu.
-You configure Shadow Clock by selecting a `Light` or `Dark` system wide theme and then selecting the color of the clock numbers.
+You configure Shadow Clock by selecting a `Light` or `Dark` system wide theme and then selecting the `color` of the clock numbers.
 
 ## Compatibility
 
-Shadow Clock should be compatible with with Bangle.js 1, however it was built and tested with Bangle.js 2
+Shadow Clock should be fully compatible with with Bangle.js 1 and Bangle.js 2. However, it was built and tested with Bangle.js 2
 
 ## Creator
 
