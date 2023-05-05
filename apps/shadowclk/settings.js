@@ -16,6 +16,12 @@
     require('Storage').writeJSON(LOC, appSettings);
   }
 
+  // Sync theme with current Bangle.js theme
+  function syncTheme() {
+    let sysSettings = require('Storage').readJSON(SYS, 1) || {};
+    appSettings.theme = sysSettings.theme && sysSettings.theme.dark ? 'dark' : 'light';
+  }
+
   // Switch theme and save to storage
   function switchTheme(mode) {
     if (mode === g.theme.dark) return;
@@ -30,9 +36,12 @@
     if (Bangle.CLOCK) load(global.__FILE__);
   }
 
+  // Sync theme before showing settings menu
+  syncTheme();
+
   // Show settings menu
   E.showMenu({
-    "": { "title": "Shadow Clock" },
+    "": {"title": "Shadow Clock"},
     "< Back": () => back(),
     'Theme:': {
       value: (appSettings.theme === 'dark'),
