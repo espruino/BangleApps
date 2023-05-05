@@ -9,3 +9,4 @@
 0.07: Convert Yes/No On/Off in settings to checkboxes
 0.08: Fix the wrapping of intervals/timeouts with parameters
       Fix the widget drawing if widgets are hidden and Bangle.setLCDBrightness is called
+0.09: Cache the app-launch info

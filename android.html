@@ -133,14 +133,19 @@
         <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
-        <p><button class="btn tooltip" id="settime" data-tooltip="Set the Bangle's time to your Browser's time">Set Bangle.js Time</button>
+        <p>
+           <button class="btn tooltip" id="settime" data-tooltip="Set the Bangle's time to your Browser's time">Set Bangle.js Time</button>
            <button class="btn tooltip" id="removeall" data-tooltip="Delete everything, leave it blank">Remove all Apps</button>
            <button class="btn tooltip" id="reinstallall" data-tooltip="Re-install every app, leave all data">Reinstall apps</button>
            <button class="btn tooltip" id="installdefault" data-tooltip="Delete everything, install default apps">Install default apps</button>
            <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
-           <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button></p>
-        <p><button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
-           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button></p>
+        </p><p>
+           <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button>
+           <button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
+           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button>
+           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
+           <button class="btn tooltip" id="webideremote" data-tooltip="Enable the Web IDE remote server">Web IDE Remote</button>
+        </p>
         <h3>Settings</h3>
         <div class="form-group">
           <label class="form-switch">
@@ -167,7 +172,7 @@
               <input type="checkbox" id="settings-minify">
               <i class="form-icon"></i> Minify apps before upload (⚠️DANGER⚠️: Not recommended. Uploads smaller, faster apps but this <b>will</b> break many apps)
             </label>
-            <button class="btn" id="defaultsettings">Reset to default settings</button>
+            <button class="btn" id="defaultsettings">Reset to default App Loader settings</button>
           </details>
         </div>
         <div id="more-deviceinfo" style="display:none">
@@ -199,6 +204,9 @@
     <script src="core/js/appinfo.js"></script>
     <script src="core/js/index.js"></script>
     <script src="core/js/pwa.js" defer></script>
+    <!-- FIXME - use espruino.com/ide, github -->
+    <script src="https://espruino.github.io/EspruinoWebIDE/js/libs/peerjs.min.js"></script>
+    <script src="https://espruino.github.io/EspruinoWebIDE/EspruinoTools/libs/webrtc-connection.js"></script>
 <script>
 /*Android = {
   bangleTx : function(data) {
@@ -224,8 +232,10 @@ if (typeof Android!=="undefined") {
       if (writecb) setTimeout(writecb,10);
     },
     close : function() {},
+    on : function(evt,cb) { connection.handlers[evt] = cb; },
     received : "",
-    hadData : false
+    hadData : false,
+    handlers : []
   }
 
   function bangleRx(data) {
@@ -233,6 +243,9 @@ if (typeof Android!=="undefined") {
     connection.received += data;
     connection.hadData = true;
     if (connection.cb)  connection.cb(data);
+    // call data event
+    if (connection.handlers["data"])
+      connection.handlers["data"](data);
   }
 
   function log(level, s) {
@@ -317,6 +330,7 @@ if (typeof Android!=="undefined") {
 
   // ----------------------------------------------------------
 
+
   Puck = {
     /// Are we writing debug information? 0 is no, 1 is some, 2 is more, 3 is all.
     debug : Puck.debug,
@@ -327,7 +341,8 @@ if (typeof Android!=="undefined") {
     /// Called with the current send progress or undefined when done - you can replace this with your own function
     writeProgress : Puck.writeProgress,
     connect : function(callback) {
-      setTimeout(callback, 10);
+      setTimeout(callback, 10, connection);
+      return connection;
     },
     write : write,
     eval : function(expr, cb) {
@@ -362,7 +377,57 @@ if (typeof Android!=="undefined") {
       if ("object"==typeof err) console.log(err.stack);
     });
   }, 500);
+} else {
+  showToast("You're running the App Loader version for Gadgetbridge, but you don't seem to be in Gadgetbridge!","error");
 }
+
+function showWebRTCID(id) {
+  showToast("Bridge's Peer ID: "+id);
+      showPrompt("Web IDE Remote Access",`
+Remote access enabled. Peer ID:
+<br/><br/>
+<b>${id}</b>
+<br/><br/>
+Go to <b>espruino.com/ide</b> on your
+desktop and enter this code under
+<b>Remote Connection Bridge Peer ID</b> in Settings.
+Then connect to the <b>Android</b> device.
+`,{ok:1},false/*shouldEscapeHtml*/).then(() => {
+      }, function() { /* cancelled */ });
+}
+
+// Button to Enable Remote Web IDE
+var el = document.getElementById("webideremote");
+var webrtc;
+if (el) el.addEventListener("click", event=>{
+  if (webrtc) showWebRTCID(webrtc.peerId);
+  else {
+    webrtc = webrtcInit({
+      bridge:true, 
+      onStatus : function(s) {
+        showToast(s);
+      },
+      onPeerID : function(id) {
+        showWebRTCID(id);
+      },
+      onGetPorts : function(cb) {
+        cb([{path:"Android",description:"Remote Device Connection",type:"socket"}]);
+        },
+      onPortConnect : function(serialPort, cb) {
+        cb(); // we're already connected...
+      },
+      onPortDisconnect : function(serialPort) {
+      },
+      onPortWrite : function(data, cb) {
+        Puck.write(data, cb);        
+      }
+    });
+    connection.on("data", function(d) {
+      webrtc.onPortReceived(d);
+    });
+  }
+});
+
 </script>
   </body>
 </html>

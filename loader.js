@@ -107,22 +107,24 @@ function filterAppsForDevice(deviceId) {
   // set the device dropdown
   document.querySelector(".devicetype-nav span").innerText = device ? device.name : "All apps";
 
-  if (!device) {
-    if (deviceId!==undefined)
-      showToast(`Device ID ${deviceId} not recognised. Some apps may not work`, "warning");
-    appJSON = originalAppJSON;
-  } else {
-    // Now filter apps
-    appJSON = originalAppJSON.filter(app => {
-      var supported = ["BANGLEJS"];
-      if (!app.supports) {
-        console.log(`App ${app.id} doesn't include a 'supports' field - ignoring`);
+  if (originalAppJSON) { // JSON might not have loaded yet
+    if (!device) {
+      if (deviceId!==undefined)
+        showToast(`Device ID ${deviceId} not recognised. Some apps may not work`, "warning");
+      appJSON = originalAppJSON;
+    } else {
+      // Now filter apps
+      appJSON = originalAppJSON.filter(app => {
+        var supported = ["BANGLEJS"];
+        if (!app.supports) {
+          console.log(`App ${app.id} doesn't include a 'supports' field - ignoring`);
+          return false;
+        }
+        if (app.supports.includes(deviceId)) return true;
+        //console.log(`Dropping ${app.id} because ${deviceId} is not in supported list ${app.supports.join(",")}`);
         return false;
-      }
-      if (app.supports.includes(deviceId)) return true;
-      //console.log(`Dropping ${app.id} because ${deviceId} is not in supported list ${app.supports.join(",")}`);
-      return false;
-    });
+      });
+    }
   }
   refreshLibrary();
 }
@@ -204,8 +206,11 @@ window.addEventListener('load', (event) => {
     });
   });
 
+  var el;
+
   // Button to install all default apps in one go
-  document.getElementById("reinstallall").addEventListener("click",event=>{
+  el = document.getElementById("reinstallall");
+  if (el) el.addEventListener("click",event=>{
     var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
       Comms.reset().then(_ =>
         getInstalledApps()
@@ -231,8 +236,10 @@ window.addEventListener('load', (event) => {
     });
   });
 
+  
   // Button to install all default apps in one go
-  document.getElementById("installdefault").addEventListener("click",event=>{
+  el = document.getElementById("installdefault");
+  if (el) el.addEventListener("click", event=>{
     getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
         return httpGet("defaultapps_banglejs1.json");
@@ -246,6 +253,16 @@ window.addEventListener('load', (event) => {
       showToast("App Install failed, "+err,"error");
     });
   });
+
+  // Button to reset the Bangle's settings
+  el = document.getElementById("defaultbanglesettings");
+  if (el) el.addEventListener("click", event=>{
+    showPrompt("Reset Settings","Really reset Bangle.js settings?").then(() => {
+      Comms.write("\x10require('Storage').erase('setting.json');load()\n");
+      showToast("Settings reset!", "success");
+    }, function() { /* cancelled */ });
+  });
+  
 
   // BLE Compatibility
   var selectBLECompat = document.getElementById("settings-ble-compat");

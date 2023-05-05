@@ -65,3 +65,5 @@ of 'Select Clock'
 0.57: Settings.log = 0,1,2,3 for off,display,log,both
 0.58: On/Off settings items now use checkboxes
 0.59: Preserve BLE whitelist even when disabled
+0.60: Moved LCD calibration to top of menu, and use 12 taps (not 8)
+      LCD calibration will now error if the calibration is obviously wrong

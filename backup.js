@@ -70,7 +70,7 @@ function bangleUpload() {
     var zip = new JSZip();
     var cmds = "";
     zip.loadAsync(data).then(function(zip) {
-      return showPrompt("Restore from ZIP","Are you sure? This will remove all existing apps");
+      return showPrompt("Restore from ZIP","Are you sure? This will overwrite existing apps");
     }).then(()=>{
       Progress.show({title:`Reading ZIP`});
       zip.forEach(function (path, file){
@@ -91,10 +91,15 @@ function bangleUpload() {
       });
       return promise;
     })
-    .then(() => {
-      Progress.hide({sticky:true});
-      Progress.show({title:`Erasing...`});
-      return Comms.removeAllApps(); })
+    .then(()=>new Promise(resolve => {
+      showPrompt("Erase Storage","Erase Storage? If restoring a complete backup you should erase storage, but in some cases you may want to upload files from a ZIP while keeping your Bangle's existing data.").then(()=>resolve(true), ()=>resolve(false));
+    }))
+    .then(eraseStorage => {
+      if (eraseStorage) {
+        Progress.hide({sticky:true});
+        Progress.show({title:`Erasing...`});
+        return Comms.removeAllApps();
+      }})
     .then(() => {
       Progress.hide({sticky:true});
       Progress.show({title:`Restoring...`, sticky:true});
