@@ -20,5 +20,9 @@
       "url": "icon.js",
       "evaluate": true
     }
+  ],
+  "data": [
+    {"name":"stlap.state.json"},
+    {"wildcard":"stlap-*.json"}
   ]
 }
