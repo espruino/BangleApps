@@ -1,0 +1,16 @@
+{
+	"id": "rep",
+	"name": "Rep",
+	"version":"0.01",
+	"description": "Steps through reps, to aid in run schedules",
+	"icon": "app.png", // TODO
+	"tags": "run,running,fitness,outdoors",
+	"supports" : ["BANGLEJS2"],
+	"readme": "README.md",
+  "interface": "interface.html",
+	"storage": [
+		{"name":"rep.app.js","url":"app.js"},
+		{"name":"rep.img","url":"app-icon.js","evaluate":true}
+	],
+	"data": [{"name":"rep.json"}]
+}
