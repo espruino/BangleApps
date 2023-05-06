@@ -8,7 +8,7 @@ const BUTTON_ICONS = {
   reset: heatshrink.decompress(atob("jEYwMA/4BB/+BAQPDAQPnAQIAKv///0///8j///EP//wAQQICBwQUCEhgyCHAQ+CIgI="))
 };
 
-let state = storage.readJSON(STATE_PATH);
+let state = storage.readJSON(STATE_PATH, 1);
 const STATE_DEFAULT = {
   wasRunning: false,              //If the stopwatch was ever running since being reset
   sessionStart: 0,                //When the stopwatch was first started
