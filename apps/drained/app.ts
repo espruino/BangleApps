@@ -99,7 +99,7 @@ reload();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { keepStartup = true, restore = 20 }: DrainedSettings
+const { keepStartup = true, restore = 20, exceptions = ["widdst.0"] }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:

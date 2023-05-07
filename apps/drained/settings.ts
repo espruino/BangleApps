@@ -3,6 +3,7 @@ type DrainedSettings = {
   restore?: number,
   interval?: number,
   keepStartup?: ShortBoolean,
+  exceptions?: string[],
 };
 
 (back => {
@@ -14,6 +15,7 @@ type DrainedSettings = {
   settings.restore ??= 20;
   settings.interval ??= 10;
   settings.keepStartup ??= true;
+  settings.exceptions ??= ["widdst.0"]; // daylight savings
 
   const save = () => {
     storage.writeJSON(SETTINGS_FILE, settings)
@@ -21,7 +23,7 @@ type DrainedSettings = {
 
   const formatBool = (b: boolean) => b ? "On" : "Off";
 
-  E.showMenu({
+  const menu: Menu = {
     "": { "title": "Drained" },
     "< Back": back,
     "Trigger at batt%": {
@@ -63,7 +65,43 @@ type DrainedSettings = {
       onchange: (b: boolean) => {
         settings.keepStartup = b;
         save();
+        updateMenu();
+        E.showMenu(menu);
       },
     },
-  });
+  };
+
+  const updateMenu = () => {
+    if (settings.keepStartup) {
+      delete menu["Startup exceptions"];
+      return;
+    }
+    menu["Startup exceptions"] = () => E.showMenu(bootExceptions);
+
+    const bootExceptions: Menu = {
+      "": { "title" : "Startup exceptions" },
+      "< Back": () => E.showMenu(menu),
+    };
+
+    storage.list(/\.boot\.js/)
+      .map(name => name.replace(".boot.js", ""))
+      .forEach((name: string) => {
+        bootExceptions[name] = {
+          value: settings.exceptions!.indexOf(name) >= 0,
+          format: formatBool,
+          onchange: (b: boolean) => {
+            if (b) {
+              settings.exceptions!.push(name);
+            } else {
+              const i = settings.exceptions!.indexOf(name);
+              if (i >= 0) settings.exceptions!.splice(i, 1);
+            }
+            save();
+          },
+        };
+      });
+  };
+
+  updateMenu();
+  E.showMenu(menu);
 }) satisfies SettingsFunc
