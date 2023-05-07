@@ -99,12 +99,12 @@ reload();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { disableBoot = false, restore = 20 }: DrainedSettings
+const { keepStartup = true, restore = 20 }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:
 function drainedRestore() { // "public", to allow users to call
-  if(disableBoot){
+  if(!keepStartup){
     try{
       eval(require('Storage').read('bootupdate.js'));
     }catch(e){

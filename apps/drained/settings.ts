@@ -2,7 +2,7 @@ type DrainedSettings = {
   battery?: number,
   restore?: number,
   interval?: number,
-  disableBoot?: ShortBoolean,
+  keepStartup?: ShortBoolean,
 };
 
 (back => {
@@ -13,23 +13,17 @@ type DrainedSettings = {
   settings.battery ??= 5;
   settings.restore ??= 20;
   settings.interval ??= 10;
-  settings.disableBoot ??= false;
+  settings.keepStartup ??= true;
 
   const save = () => {
     storage.writeJSON(SETTINGS_FILE, settings)
   };
 
+  const formatBool = (b: boolean) => b ? "On" : "Off";
+
   E.showMenu({
     "": { "title": "Drained" },
     "< Back": back,
-    "Keep startup code": {
-      value: settings.disableBoot,
-      format: () => settings.disableBoot ? "No" : "Yes",
-      onchange: () => {
-        settings.disableBoot = !settings.disableBoot;
-        save();
-      },
-    },
     "Trigger at batt%": {
       value: settings.battery,
       min: 0,
@@ -60,6 +54,14 @@ type DrainedSettings = {
       format: (v: number) => `${v}%`,
       onchange: (v: number) => {
         settings.restore = v;
+        save();
+      },
+    },
+    "Keep startup code": {
+      value: settings.keepStartup as boolean,
+      format: formatBool,
+      onchange: (b: boolean) => {
+        settings.keepStartup = b;
         save();
       },
     },
