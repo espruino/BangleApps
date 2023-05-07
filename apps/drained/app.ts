@@ -125,3 +125,15 @@ if (Bangle.isCharging())
 Bangle.on("charging", charging => {
   if(charging) checkCharge();
 });
+
+if(!keepStartup){
+  const storage = require("Storage");
+  for(const boot of exceptions){
+    try{
+      const js = storage.read(`${boot}.boot.js`);
+      if(js) eval(js);
+    }catch(e){
+      console.log(`error loading boot exception "${boot}": ${e}`);
+    }
+  }
+}
