@@ -403,6 +403,8 @@ function onGPS(fix) {
 
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
+    if (isNaN(sp)) sp = '---';
+
     if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
 
     // Altitude
