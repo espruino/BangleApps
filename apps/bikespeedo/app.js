@@ -507,14 +507,6 @@ function onPressure(dat) {
   altiBaro = Number(dat.altitude.toFixed(0)) + Number(cfg.altDiff);
 }
 
-Bangle.setBarometerPower(1); // needs some time...
-g.clearRect(0,screenYstart,screenW,screenH);
-onGPS(lf);
-Bangle.setGPSPower(1);
-Bangle.on('GPS', onGPS);
-Bangle.on('pressure', onPressure);
-
-Bangle.setCompassPower(1);
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 if (!CALIBDATA) calibrateCompass = true;
 function Compass_tiltfixread(O,S){
@@ -552,11 +544,30 @@ function Compass_reading() {
   Compass_heading = Compass_newHeading(d,Compass_heading);
   hdngCompass = Compass_heading.toFixed(0);
 }
-if (!calibrateCompass) setInterval(Compass_reading,200);
 
-setButtons();
-if (emulator) setInterval(updateClock, 2000);
-else setInterval(updateClock, 10000);
+function start() {
+  Bangle.setBarometerPower(1); // needs some time...
+  g.clearRect(0,screenYstart,screenW,screenH);
+  onGPS(lf);
+  Bangle.setGPSPower(1);
+  Bangle.on('GPS', onGPS);
+  Bangle.on('pressure', onPressure);
+
+  Bangle.setCompassPower(1);
+  if (!calibrateCompass) setInterval(Compass_reading,200);
+
+  setButtons();
+  if (emulator) setInterval(updateClock, 2000);
+  else setInterval(updateClock, 10000);
+
+  Bangle.drawWidgets();
+}
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+if (cfg.record && WIDGETS["recorder"]) {
+  WIDGETS["recorder"]
+    .setRecording(true)
+    .then(start);
+} else {
+  start();
+}
