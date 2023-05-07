@@ -112,16 +112,14 @@ function drainedRestore() { // "public", to allow users to call
   load(); // necessary after updating boot.0
 }
 
-if(disableBoot){
-  const checkCharge = () => {
-    if(E.getBattery() < restore) return;
-    drainedRestore();
-  };
+const checkCharge = () => {
+  if(E.getBattery() < restore) return;
+  drainedRestore();
+};
 
-  if (Bangle.isCharging())
-    checkCharge();
+if (Bangle.isCharging())
+  checkCharge();
 
-  Bangle.on("charging", charging => {
-    if(charging) checkCharge();
-  });
-}
+Bangle.on("charging", charging => {
+  if(charging) checkCharge();
+});
