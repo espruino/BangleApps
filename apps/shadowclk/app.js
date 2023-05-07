@@ -30,7 +30,7 @@ Graphics.prototype.setFontLondrinaSolid = function() {
     );
   };
   
-  const storage = require('Storage');
+  let storage = require('Storage');
   
   var settings = Object.assign({
     // default values
@@ -92,4 +92,4 @@ Graphics.prototype.setFontLondrinaSolid = function() {
     Bangle.loadWidgets();
     draw();
     setTimeout(Bangle.drawWidgets, 0);
-  });
+  })();
