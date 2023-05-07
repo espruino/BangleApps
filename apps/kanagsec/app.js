@@ -25,15 +25,13 @@ Graphics.prototype.setFontDarumadropOneRegular_small = function() {
 };
 
 const storage = require('Storage');
-
-//require("FontHaxorNarrow7x17").add(Graphics);
 require("Font8x16").add(Graphics);
 
 var IMAGEWIDTH = 176;
 var IMAGEHEIGHT = 176;
 var energySave = false;
-var batteryLvl=E.getBattery()+"%";
-var temperature="";
+var batteryLvl= E.getBattery()+"%";
+var temperature= getTemperature();
 
 // timeout used to update every minute
 var drawTimeout;
@@ -60,8 +58,6 @@ function draw()
   //draw main background image
   g.drawImage(getKanagawa(),0,0);
 
-
-
   // only update the batterylvl and temperature every 30 seconds
   if (date.getSeconds() % 30==0)
   {
@@ -83,7 +79,7 @@ function draw()
 
   var dateStr = require("locale").date(new Date(), 1);
   dateStr = dateStr.replace(new RegExp('/', 'g'), '.');
-  
+
   var nameOfCurrentDay = require("locale").dow(date,0).toUpperCase();
 
   //---Hour and minute---
@@ -130,7 +126,7 @@ function getTemperature(){
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lock',on=>{
-  if (!on) 
+  if (!on)
   {
    energySave=false;
    queueDraw();
