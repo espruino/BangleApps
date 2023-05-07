@@ -58,7 +58,7 @@ const lowerLshape = {
 };
 
 const centerBar = {
-	//1.5 =height*2
+    //1.5 =height*2
   minY: (upperLshape.bottom + upperLshape.top - (upperLshape.rectWidth*1.5))/2,
   maxY: (upperLshape.bottom + upperLshape.top + (upperLshape.rectWidth*1.5))/2,
   confidenceWidth: isB1 ? 10 : 8,
@@ -182,8 +182,8 @@ function renderCurrentHeartRate() {
   g.setFontAlign(0, 0, 0);//center
   g.drawString(currentHeartRate,
               // Math.max(upperLshape.right+upperLshape.cornerRoundness, lowerLshape.right-lowerLshape.cornerRoundness),
-			  // Math.max(upperLshape.right+upperLshape.cornerRoundness, lowerLshape.right-lowerLshape.cornerRoundness)-(g.stringWidth(currentHeartRate)/2),
-			   centerBar.minX+((centerBar.maxX-centerBar.minX)/2),
+              // Math.max(upperLshape.right+upperLshape.cornerRoundness, lowerLshape.right-lowerLshape.cornerRoundness)-(g.stringWidth(currentHeartRate)/2),
+               centerBar.minX+((centerBar.maxX-centerBar.minX)/2),
                (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults
