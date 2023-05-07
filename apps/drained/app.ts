@@ -52,6 +52,8 @@ const draw = () => {
   const dateStr = require("locale").date(date, 0).toUpperCase() +
     "\n" +
     require("locale").dow(date, 0).toUpperCase();
+  const x2 = x + 6;
+  const y2 = y + 66;
 
   g.reset()
     .clearRect(Bangle.appRect)
@@ -59,8 +61,8 @@ const draw = () => {
     .setFontAlign(0, 0)
     .drawString(timeStr, x, y)
     .setFont("Vector", 24)
-    .drawString(dateStr, x, y + 56)
-    .drawString(`${E.getBattery()}%`, x, y + 104);
+    .drawString(dateStr, x2, y2)
+    .drawString(`${E.getBattery()}%`, x2, y2 + 48);
 
   if(nextDraw) clearTimeout(nextDraw);
   nextDraw = setTimeout(() => {
