@@ -11,7 +11,15 @@
     '< Back': back,
     '< Load Bike Speedometer': ()=>{load('bikespeedo.app.js');},
     'Barometer Altitude adjustment' : function() { E.showMenu(altdiffMenu); },
-    'Kalman Filters' : function() { E.showMenu(kalMenu); }
+    'Kalman Filters' : function() { E.showMenu(kalMenu); },
+    'Speed units': {
+      value: !!settings.localeUnits,
+      format: b => b ? "Locale" : "km/h",
+      onchange: b => {
+        settings.localeUnits = b;
+        writeSettings();
+      }
+    },
   };
 
   const altdiffMenu = {

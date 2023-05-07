@@ -416,6 +416,12 @@ function onGPS(fix) {
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+  } else {
+    // populate spd_unit
+    if (cfg.spd == 0) {
+      m = require("locale").speed(0).match(/[0-9,\.]+(.*)/);
+      cfg.spd_unit = m[1];
+    }
   }
 
   if ( cfg.modeA == 1 ) {
@@ -465,7 +471,7 @@ function updateClock() {
 // Read settings.
 let cfg = require('Storage').readJSON('bikespeedo.json',1)||{};
 
-cfg.spd = 1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd = !cfg.localeUnits;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 cfg.spd_unit = 'km/h';  // Displayed speed unit
 cfg.alt = 1; // Multiplier for altitude unit conversions. (feet:'0.3048')
 cfg.alt_unit = 'm';  // Displayed altitude units ('feet')
