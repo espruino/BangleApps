@@ -1,8 +1,8 @@
 (function (back) {
-  const LOC = "shadowclk.json";
-  const SYS = "setting.json";
-  const teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
-  const teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
+  let LOC = "shadowclk.json";
+  let SYS = "setting.json";
+  let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
+  let teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
 
   // Load and set default settings
   let appSettings = Object.assign({
