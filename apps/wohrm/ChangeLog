@@ -9,3 +9,4 @@
 0.09: Ported to Bangle.js2
       Home returns to clock, instead of menu
       Add settings
+0.10: Increased(font sizes and bg height for current HR), BJS2 (added support for bottom widgets)
