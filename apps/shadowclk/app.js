@@ -84,6 +84,9 @@ Graphics.prototype.setFontLondrinaSolid = function() {
       remove: function() {
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
+        delete Graphics.prototype.setFontLondrinaSolid;
+        delete Graphics.prototype.setFontLondrinaShadow;
+        delete Graphics.prototype.setFontDotGothic16;
       }
     });
     Bangle.loadWidgets();
