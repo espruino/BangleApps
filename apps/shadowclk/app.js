@@ -92,4 +92,4 @@ Graphics.prototype.setFontLondrinaSolid = function() {
     Bangle.loadWidgets();
     draw();
     setTimeout(Bangle.drawWidgets, 0);
-  })();
+  });
