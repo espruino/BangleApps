@@ -118,18 +118,20 @@
 		redraw();
 	});
 
+	//const DEBUG = true;
 	const sendHid = (code: number) => {
+		//if(DEBUG) return;
 		NRF.sendHIDReport(
 			[1, code],
 			() => NRF.sendHIDReport([1, 0]),
 		);
 	};
 
-	const next = () => sendHid(0x01);
-	const prev = () => sendHid(0x02);
-	const toggle = () => sendHid(0x10);
-	const up = () => sendHid(0x40);
-	const down = () => sendHid(0x80);
+	const next = () => /*DEBUG ? console.log("next") : */ sendHid(0x01);
+	const prev = () => /*DEBUG ? console.log("prev") : */ sendHid(0x02);
+	const toggle = () => /*DEBUG ? console.log("toggle") : */ sendHid(0x10);
+	const up = () => /*DEBUG ? console.log("up") : */ sendHid(0x40);
+	const down = () => /*DEBUG ? console.log("down") : */ sendHid(0x80);
 
 	const suspendOthers = () => {
 		const swipeHandler = (Bangle as {swipeHandler?: () => void}).swipeHandler;
