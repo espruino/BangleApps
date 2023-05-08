@@ -60,9 +60,9 @@
 		}
 
 		// had a drag in a single axis
-		/**/ if(dx > 40) { next(); onEvent(); waitForRelease = true; }
+		if(dx > 40){       next(); onEvent(); waitForRelease = true; }
 		else if(dx < -40){ prev(); onEvent(); waitForRelease = true; }
-		else if(dy > 30) { down(); onEvent(); setStart(e); }
+		else if(dy > 30){  down(); onEvent(); setStart(e); }
 		else if(dy < -30){ up();   onEvent(); setStart(e); }
 	}) satisfies DragCallback;
 
