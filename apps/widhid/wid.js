@@ -157,7 +157,12 @@
             if (handlers)
                 for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
                     var handler = handlers_1[_i];
-                    Bangle.on(event, handler);
+                    try {
+                        Bangle.on(event, handler);
+                    }
+                    catch (e) {
+                        console.log("couldn't restore \"".concat(event, "\" handler:"), e);
+                    }
                 }
         }
     };
