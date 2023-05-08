@@ -109,7 +109,7 @@
 				this.y! + 2
 			);
 		},
-		width: 24,
+		width: NRF.getSecurityStatus().connected ? 24 : 0,
 	};
 
 	const redraw = () => setTimeout(Bangle.drawWidgets, 50);

@@ -105,7 +105,7 @@
                 ? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
                 : require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")), this.x + 2, this.y + 2);
         },
-        width: 24,
+        width: NRF.getSecurityStatus().connected ? 24 : 0,
     };
     var redraw = function () { return setTimeout(Bangle.drawWidgets, 50); };
     NRF.on("connect", function () {
