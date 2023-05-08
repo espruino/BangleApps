@@ -13,6 +13,7 @@
   "tags": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "allow_emulator": true,
   "storage": [{
       "name": "shadowclk.app.js",
