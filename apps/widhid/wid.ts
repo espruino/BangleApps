@@ -179,7 +179,11 @@
 
 			if(handlers)
 				for(const handler of handlers)
-					Bangle.on(event as any, handler);
+					try{
+						Bangle.on(event as any, handler);
+					}catch(e){
+						console.log(`couldn't restore "${event}" handler:`, e);
+					}
 		}
 	};
 })()
