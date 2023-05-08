@@ -15,7 +15,7 @@
     require('Storage').writeJSON(LOC, appSettings);
   }
   
-  // Colors from 'Ligh BW' and 'Dark BW' themes
+  // Colors from 'Light BW' and 'Dark BW' themes
   function createThemeColors(mode) {
     const cl = x => g.setColor(x).getColor();
     return mode ? {
