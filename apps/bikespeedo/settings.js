@@ -22,7 +22,7 @@
     },
   };
 
-  if (global.WIDGETS && WIDGETS["recorder"])
+  if (global.WIDGETS && WIDGETS["recorder"]) {
     appMenu[/*LANG*/"Record rides"] = {
       value : !!settings.record,
       onchange : v => {
@@ -30,6 +30,14 @@
         writeSettings();
       }
     };
+    appMenu[/*LANG*/"Stop record on exit"] = {
+      value : !!settings.recordStopOnExit,
+      onchange : v => {
+        settings.recordStopOnExit = v;
+        writeSettings();
+      }
+    };
+  }
 
   const altdiffMenu = {
     '': { 'title': 'Altitude adjustment' },

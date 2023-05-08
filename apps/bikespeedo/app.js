@@ -568,6 +568,9 @@ if (cfg.record && WIDGETS["recorder"]) {
   WIDGETS["recorder"]
     .setRecording(true)
     .then(start);
+
+  if (cfg.recordStopOnExit)
+    E.on('kill', () => WIDGETS["recorder"].setRecording(false));
 } else {
   start();
 }
