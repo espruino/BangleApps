@@ -1,6 +1,6 @@
 (function (back) {
-  let LOC = "shadowclk.json";
-  let SYS = "setting.json";
+
+
   let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
   let teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
 
@@ -8,11 +8,11 @@
   let appSettings = Object.assign({
     color: teletextColors[6],
     theme: 'light',
-  }, require('Storage').readJSON(LOC, true) || {});
+  }, require('Storage').readJSON(shadowclk.json, true) || {});
 
   // Save settings to storage
   function writeSettings() {
-    require('Storage').writeJSON(LOC, appSettings);
+    require('Storage').writeJSON(shadowclk.json, appSettings);
   }
   
   // Colors from 'Light BW' and 'Dark BW' themes
@@ -28,9 +28,9 @@
   // Switch theme and save to storage
   function switchTheme(mode) {
     if (mode === g.theme.dark) return;
-    let s = require("Storage").readJSON(SYS, 1) || {};
+    let s = require("Storage").readJSON(setting.json, 1) || {};
     s.theme = createThemeColors(mode);
-    require("Storage").writeJSON(SYS, s);
+    require("Storage").writeJSON(setting.json, s);
     updateTheme(mode);
   }
   
@@ -51,7 +51,7 @@
 
   // Read the current system theme
   function getCurrentTheme() {
-    let s = require("Storage").readJSON(SYS, 1) || {};
+    let s = require("Storage").readJSON(setting.json, 1) || {};
     return s.theme.dark ? 'dark' : 'light';
   }
 
