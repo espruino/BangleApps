@@ -21,8 +21,6 @@ type DrainedSettings = {
     storage.writeJSON(SETTINGS_FILE, settings)
   };
 
-  const formatBool = (b: boolean) => b ? "On" : "Off";
-
   const menu: Menu = {
     "": { "title": "Drained" },
     "< Back": back,
@@ -61,7 +59,6 @@ type DrainedSettings = {
     },
     "Keep startup code": {
       value: settings.keepStartup as boolean,
-      format: formatBool,
       onchange: (b: boolean) => {
         settings.keepStartup = b;
         save();
@@ -88,7 +85,6 @@ type DrainedSettings = {
       .forEach((name: string) => {
         bootExceptions[name] = {
           value: settings.exceptions!.indexOf(name) >= 0,
-          format: formatBool,
           onchange: (b: boolean) => {
             if (b) {
               settings.exceptions!.push(name);
