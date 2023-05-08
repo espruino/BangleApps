@@ -4,25 +4,38 @@ function getKanagawa() {
 
 
 
-Graphics.prototype.setFontDarumadropOneRegular = function() {
+Graphics.prototype.setFontDarumadropOneRegular = function () {
   // Actual height 36 (42 - 7)
   return this.setFontCustom(
     E.toString(require('heatshrink').decompress(atob('ACHwAol+Aokf4AFDg4SEgP8CQl/AokPwASEJT1wAol8G4oxEv5KEn5KEn//CIn/DAYFF/4FJgILKDoQpDBY4FDj//TIcH//gDAilEn6rFAokAC4gAah/4AohLEAoIMDAoIMDKIP/UIUDAoP+QQgSDAoQfCOwISDOwOPCQQkBBwJgBEgOAIoZ8BgIYCn4PBcAQPCj4+BgYPBh7gBHoPAEIIYC+AICB4ISBVQQPB4F/GIf+JQoABN4i9DAoSxCCQR8CCQSPDOAJDBSoYFDGQTbEar4AJRgV8KAQwBn58CJwMPSokDJYS0BBAQeB8Z2DQQYYBQQauDR4jmCDDuAcAZQBJQYACSwgVBSs8DAQMwAQMBIIM/TwMBHYMPZ4RUBg7tCv/wgZjCj5UBMYTyBBwR8CwE/PgZvBPgfgCgJ8C/AUBDAX+AoIYD4auS/bgDDoIYCn///z5CCQT5CCQUBDARICv6CCOwMfPgKkeAoabCvBmBG4U/MwQCBVYUfAQMHB4ICCPgMH4BjC/+D+E/CQICB/kPYIJmBv+DLIJcBEYKxBDAOP/AYDQQIYDPgPDDAShCDAauN/75CAoRjD/1/EgISCFoKbC/+BAocDfIKncg4wCSwQqDKIStCAoRPCOwYLENAR8DfwR8CDAf/+YYE+AYDg/gn4YCgHAEAJEDZ4ITDHAImDHASJEVwYXCLAd/DAhLCDATIDGIQGBTYk/GwQZCJQYyBYwRlDAokfDAkDSoYAYIYpvBHoYFB/kBA4J1CgJFBMQXAv5ICDAMfH4KUB/kHPgJ7CgJ8BRwOfDAIzB/+HDAcf8P+DAQCBv/nGIIbBWoSnCw7HDDAK0Dg/wHIIeBJoI5BSwU/HIK6ChBMCVAiiFn6bbPwTBEG4Z3CBgYFCKAIFDHwYFCCQQFCCQV/AoIlCLYP1Z4SHB/EfY4J0BTYbHCFoI8Ev4rBv/H/E/SoMPTYMfSoXwGQIxCnC0EgjuDKIQSBDwIABHII9BAAISBKwQSCXQSuCBYgAXaQpJBIQY8HGwimEDwQYLJIaSCDAgXBgauBh4XBg52BgaMBh4aCXwLHE8CPDj/7AoIbBTQRMDAoTgEKQZKBAoYYCJYYFFPgK5Dg5pEgB7EADMD+EPFgQ+Bh4nCRIPvOQJdEPgZXEMYZ8CCQhQB//zOwIkBBQN/EoP/g/8HAU/wP/gYYBBAN/4AYBBAMf+E/DAN/JIMfDAMf84xGVAQxCJQ7gCMYSXC//xZoQlB/E/AoRJBgIFCgEMVDsPbIY+CAoowDWgJbBWgbnEfIpjBCQauC4FgKwP+R4N8DwUD/t/CQKxBCYKuC8AgBSoX4H4KVC/w/BJgV/4KVDcAZFBCASbEAohEDMYZdEv4FEZwIFDgF+VDsHZokH+KJDgf8PAKcDz57BTgXvUQcP+YYGJQkPKIcOgIkDABQ'))),
     46,
     atob("DBkiGhobHxkbHBsbDQ=="),
-    50|65536
+    50 | 65536
   );
 };
 
-Graphics.prototype.setFontDarumadropOneRegular_small = function() {
+Graphics.prototype.setFontDarumadropOneRegular_small = function () {
   // Actual height 15 (16 - 2)
   return this.setFontCustom(
     E.toString(require('heatshrink').decompress(atob('AAcwgEHwAECAAkHgEB/EAv8An/Ag/wgP8gEfC4PgC4oVD8EP/8A//wj8PgPwAgWA/PwBwfgg4lCEAegkEOg+B8/4j//wP/Agf8F4JKBAAlwuEPx4xB/Eej4dHh/nwF4NoeAuEeg8B814jnnCYN4DAZUBJ4PzNwsD+BZBKwKBBAgMIAQM//ED/+AAgMAvCmHj/hgP+nEf8eB904jw2B9/wjiuBg42DgQCB/wsBSoQdBJQPHgff+EZHYMPDAN8QwqmC4DRCj0BgPhNARtDFgIBBhzzEA4J8DCYM4jnzXomABwMHxg2FvxCBQwUQj1/XoRtCd4MPRAITBUgu8NoPAAgQABA'))),
     46,
     atob("BQoNCgoLDAoLCwsLBQ=="),
-    20|65536
+    20 | 65536
   );
 };
+
+// returns the temperature from weather json, if weather is provided trough 
+//android/ios .. if no temperature is available, it wont be displayed.
+//(returns empty string).
+function getTemperature() {
+  try {
+    var weatherJson = storage.readJSON('weather.json');
+    var weather = weatherJson.weather;
+    return "Temp: " + Math.round(weather.temp - 273.15);
+  } catch (ex) {
+    return "";
+  }
+}
 
 const storage = require('Storage');
 require("Font8x16").add(Graphics);
@@ -30,8 +43,8 @@ require("Font8x16").add(Graphics);
 var IMAGEWIDTH = 176;
 var IMAGEHEIGHT = 176;
 var energySave = false;
-var batteryLvl= E.getBattery()+"%";
-var temperature= getTemperature();
+var batteryLvl = E.getBattery() + "%";
+var temperature = getTemperature();
 
 // timeout used to update every minute
 var drawTimeout;
@@ -39,16 +52,14 @@ var drawTimeout;
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() 
-  {
+  drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
-  }, (energySave==true?60000:1000) - (Date.now() % (energySave==true?60000:1000)));
+  }, (energySave == true ? 60000 : 1000) - (Date.now() % (energySave == true ? 60000 : 1000)));
 }
 
 
-function draw() 
-{
+function draw() {
   var date = new Date();
   var x = 10;
   var y = 2;
@@ -56,84 +67,66 @@ function draw()
   g.reset();
 
   //draw main background image
-  g.drawImage(getKanagawa(),0,0);
+  g.drawImage(getKanagawa(), 0, 0);
 
   // only update the batterylvl and temperature every 30 seconds
-  if (date.getSeconds() % 30==0)
-  {
-    batteryLvl=E.getBattery()+"%";
-    temperature=getTemperature();
+  if (date.getSeconds() % 30 == 0) {
+    batteryLvl = E.getBattery() + "%";
+    temperature = getTemperature();
   }
 
   g.setFont("8x16");
-  g.drawString(temperature,4,g.getHeight()-40);
-  g.drawString(batteryLvl,g.getWidth()-g.stringWidth(batteryLvl)-2,y);
+  g.drawString(temperature, 4, g.getHeight() - 40);
+  g.drawString(batteryLvl, g.getWidth() - g.stringWidth(batteryLvl) - 2, y);
 
   // work out locale-friendly date/time
   var h = date.getHours();
   var m = date.getMinutes();
   var s = date.getSeconds();
 
-  var timeStr =h.toString().padStart(2,0)+':'+m.toString().padStart(2,0);
-  var timeStr2 =s.toString().padStart(2,0);
+  var timeStr = h.toString().padStart(2, 0) + ':' + m.toString().padStart(2, 0);
+  var timeStr2 = s.toString().padStart(2, 0);
 
   var dateStr = require("locale").date(new Date(), 1);
   dateStr = dateStr.replace(new RegExp('/', 'g'), '.');
 
-  var nameOfCurrentDay = require("locale").dow(date,0).toUpperCase();
+  var nameOfCurrentDay = require("locale").dow(date, 0).toUpperCase();
 
   //---Hour and minute---
   g.setColor("#000000");
   g.setFont("DarumadropOneRegular");
-  g.drawString(timeStr,x,y);
+  g.drawString(timeStr, x, y);
 
   // ---Seconds---
-  x+= 2+g.stringWidth(timeStr);
-  y+= 24;
+  x += 2 + g.stringWidth(timeStr);
+  y += 24;
 
   //only print seconds if screen is active and not locked
-  if (!energySave)
-  {
+  if (!energySave) {
     g.setFont("DarumadropOneRegular_small");
-    g.drawString(timeStr2,x,y);
+    g.drawString(timeStr2, x, y);
   }
 
   // ---draw date---
   y += 45;
   g.setColor("#000000");
   g.setFont("8x16");
-  g.drawString(nameOfCurrentDay,65,y);
-  y+=15;
-  g.drawString(dateStr,65,y);
+  g.drawString(nameOfCurrentDay, 65, y);
+  y += 15;
+  g.drawString(dateStr, 65, y);
 
   queueDraw();
 }
 
 
-// returns the temperature from weather json, if weather is provided trough 
-//android/ios .. if no temperature is available, it wont be displayed.
-//(returns empty string).
-function getTemperature(){
-  try {
-    var weatherJson = storage.readJSON('weather.json');
-    var weather = weatherJson.weather;
-    return "Temp: "+Math.round(weather.temp-273.15);
-  } catch(ex)
-  {
-    return "";
-  }
-}
-
 // Stop updates when LCD is off, restart when on
-Bangle.on('lock',on=>{
-  if (!on)
-  {
-   energySave=false;
-   queueDraw();
+Bangle.on('lock', on => {
+  if (!on) {
+    energySave = false;
+    queueDraw();
   }
-  else
-  {
-    energySave=true;
+  else {
+    energySave = true;
   }
 });
 
@@ -143,10 +136,9 @@ draw();
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
 Bangle.loadWidgets();
-try{
+try {
   require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 }
-catch(ex)
-{
+catch (ex) {
   require("widget_utils").hide();
 }
