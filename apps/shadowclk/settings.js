@@ -15,7 +15,7 @@
 
   // Colors from 'Light BW' and 'Dark BW' themes
   function createThemeColors(mode) {
-    const cl = x => g.setColor(x).getColor();
+    let cl = x => g.setColor(x).getColor();
     return mode ? {
       fg: cl("#fff"),
       bg: cl("#000"),
