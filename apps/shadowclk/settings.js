@@ -67,6 +67,9 @@
   // Read the current system theme
   function getCurrentTheme() {
     let s = require('Storage').readJSON("setting.json", 1) || {};
+    if (!s.theme) {
+      return appSettings.theme; // fallback to appSettings.theme (light or dark)
+    }
     return s.theme.dark ? 'dark' : 'light';
   }
 
