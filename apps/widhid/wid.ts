@@ -5,64 +5,91 @@
 		return;
 	}
 
-	let start = {x:0,y:0}, end = {x:0,y:0};
+	let anchor = {x:0,y:0};
+	let start = {x:0,y:0};
 	let dragging = false;
 	let activeTimeout: number | undefined;
+	let waitForRelease = true;
 
 	Bangle.on("swipe", (_lr, ud) => {
-		if(ud! > 0){
+		if(!activeTimeout && ud! > 0){
 			listen();
-			Bangle.buzz();
+			Bangle.buzz(20);
 		}
 	});
 
-	Bangle.on("drag", e => {
-		if(!activeTimeout) return;
+	const onDrag = (e => {
+		if(e.b === 0){
+			// released
+			const wasDragging = dragging;
+			dragging = false;
 
-		if(!dragging){
-			dragging = true;
-			start.x = e.x;
-			start.y = e.y;
-			return;
-		}
-
-		const released = e.b === 0;
-		if(released){
-			const dx = end.x - start.x;
-			const dy = end.y - start.y;
-
-			if(Math.abs(dy) < 10){
-				if(dx > 40) next();
-				else if(dx < 40) prev();
-			}else if(Math.abs(dx) < 10){
-				if(dy > 40) down();
-				else if(dy < 40) up();
-			}else if(dx === 0 && dy === 0){
-				toggle();
+			if(waitForRelease){
+				waitForRelease = false;
+				return;
 			}
-			Bangle.buzz(); // feedback event sent
 
-			listen(); // had an event, keep listening for more
+			if(!wasDragging // i.e. tap
+			|| (Math.abs(e.x - anchor.x) < 2 && Math.abs(e.y - anchor.y) < 2))
+			{
+				toggle();
+				onEvent();
+				return;
+			}
+		}
+		if(waitForRelease) return;
+
+		if(e.b && !dragging){
+			dragging = true;
+			setStart(e);
+			Object.assign(anchor, start);
 			return;
 		}
 
-		end.x = e.x;
-		end.y = e.y;
-	});
+		const dx = e.x - start.x;
+		const dy = e.y - start.y;
+
+		if(Math.abs(dy) > 25 && Math.abs(dx) > 25){
+			// diagonal, ignore
+			setStart(e);
+			return;
+		}
+
+		// had a drag in a single axis
+		/**/ if(dx > 40) { next(); onEvent(); waitForRelease = true; }
+		else if(dx < -40){ prev(); onEvent(); waitForRelease = true; }
+		else if(dy > 30) { down(); onEvent(); setStart(e); }
+		else if(dy < -30){ up();   onEvent(); setStart(e); }
+	}) satisfies DragCallback;
+
+	const setStart = ({ x, y }: { x: number, y: number }) => {
+		start.x = x;
+		start.y = y;
+	};
+
+	const onEvent = () => {
+		Bangle.buzz(20); // feedback event sent
+		listen(); // had an event, keep listening for more
+	};
 
 	const listen = () => {
-		suspendOthers();
-
 		const wasActive = !!activeTimeout;
+		if(!wasActive){
+			suspendOthers();
+			waitForRelease = true; // wait for first touch up before accepting gestures
+			Bangle.on("drag", onDrag);
+			redraw();
+		}
 
-		clearTimeout(activeTimeout);
+		if(activeTimeout) clearTimeout(activeTimeout);
 		activeTimeout = setTimeout(() => {
 			activeTimeout = undefined;
-			resumeOthers();
-			redraw();
-		}, 5000);
 
-		if(!wasActive) redraw();
+			Bangle.removeListener("drag", onDrag);
+			resumeOthers();
+
+			redraw();
+		}, 3000);
 	};
 
 	WIDGETS["hid"] = {
