@@ -42,22 +42,22 @@ Graphics.prototype.setFontLondrinaSolid = function() {
     let drawTimeout;
   
     function draw() {
-      const x = g.getWidth() / 2;
-      const y = g.getHeight() / 2;
+      var x = g.getWidth() / 2;
+      var y = g.getHeight() / 2;
       g.reset().clearRect(Bangle.appRect);
-      const date = new Date();
+      var date = new Date();
       var hour = String(date.getHours()).padStart(2, '0');
       if (hour[0] === '0') hour = hour[1];
       var minutes = String(date.getMinutes()).padStart(2, '0');
-      const timeStr = hour + ':' + minutes;
+      var timeStr = hour + ':' + minutes;
       var color = settings.color;
       g.setFontAlign(0, 0).setFont("LondrinaSolid").setColor(color).drawString(timeStr, x - 1, y);
       g.reset().setFontAlign(0, 0).setFont("LondrinaShadow").drawString(timeStr, x - 1, y);
   
-      const locale = require("locale");
-      const dayOfMonth = date.getDate();
-      const month = locale.month(date, 1).slice(0, 1).toUpperCase() + locale.month(date, 1).slice(1).toLowerCase();
-      const year = date.getFullYear();
+      var locale = require("locale");
+      var dayOfMonth = date.getDate();
+      var month = locale.month(date, 1).slice(0, 1).toUpperCase() + locale.month(date, 1).slice(1).toLowerCase();
+      var year = date.getFullYear();
       var dayOfMonthStr = dayOfMonth.toString();
       if (dayOfMonth === 1 || dayOfMonth === 21 || dayOfMonth === 31) {
         dayOfMonthStr += "st";
@@ -68,8 +68,8 @@ Graphics.prototype.setFontLondrinaSolid = function() {
       } else {
         dayOfMonthStr += "th";
       }
-      const dayOfWeek = locale.dow(date, 0).slice(0, 1).toUpperCase() + locale.dow(date, 0).slice(1).toLowerCase();
-      const dateStr = month + " " + dayOfMonthStr + ", " + year + "\n" + dayOfWeek;
+      var dayOfWeek = locale.dow(date, 0).slice(0, 1).toUpperCase() + locale.dow(date, 0).slice(1).toLowerCase();
+      var dateStr = month + " " + dayOfMonthStr + ", " + year + "\n" + dayOfWeek;
       g.setFontAlign(0, 0).setFont("DotGothic16").drawString(dateStr, x, y + 48);
   
       if (drawTimeout) clearTimeout(drawTimeout);
