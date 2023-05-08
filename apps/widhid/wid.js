@@ -124,14 +124,41 @@
     var toggle = function () { return sendHid(0x10); };
     var up = function () { return sendHid(0x40); };
     var down = function () { return sendHid(0x80); };
+    var touchEvents = {
+        tap: null,
+        gesture: null,
+        aiGesture: null,
+        swipe: null,
+        touch: null,
+        drag: null,
+        stroke: null,
+    };
     var suspendOthers = function () {
-        var swipeHandler = Bangle.swipeHandler;
-        if (swipeHandler)
-            Bangle.removeListener("swipe", swipeHandler);
+        for (var event in touchEvents) {
+            var handlers = Bangle["#on".concat(event)];
+            if (!handlers)
+                continue;
+            var newEvents = void 0;
+            if (handlers instanceof Array)
+                newEvents = handlers.slice();
+            else
+                newEvents = [handlers];
+            for (var _i = 0, newEvents_1 = newEvents; _i < newEvents_1.length; _i++) {
+                var handler = newEvents_1[_i];
+                Bangle.removeListener(event, handler);
+            }
+            touchEvents[event] = newEvents;
+        }
     };
     var resumeOthers = function () {
-        var swipeHandler = Bangle.swipeHandler;
-        if (swipeHandler)
-            Bangle.on("swipe", swipeHandler);
+        for (var event in touchEvents) {
+            var handlers = touchEvents[event];
+            touchEvents[event] = null;
+            if (handlers)
+                for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
+                    var handler = handlers_1[_i];
+                    Bangle.on(event, handler);
+                }
+        }
     };
 })();

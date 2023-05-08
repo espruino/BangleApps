@@ -138,14 +138,48 @@
 	const up = () => /*DEBUG ? console.log("up") : */ sendHid(0x40);
 	const down = () => /*DEBUG ? console.log("down") : */ sendHid(0x80);
 
+	// similarly to the lightswitch app, we tangle with the listener arrays to
+	// disable event handlers
+	type Handler = () => void;
+	const touchEvents: {
+		[key: string]: null | Handler[]
+	} = {
+		tap: null,
+		gesture: null,
+		aiGesture: null,
+		swipe: null,
+		touch: null,
+		drag: null,
+		stroke: null,
+	};
+
 	const suspendOthers = () => {
-		const swipeHandler = (Bangle as {swipeHandler?: () => void}).swipeHandler;
-		if(swipeHandler)
-			Bangle.removeListener("swipe", swipeHandler); // swiperclocklaunch
+		for(const event in touchEvents){
+			const handlers: Handler[] | Handler | undefined
+				= (Bangle as any)[`#on${event}`];
+
+			if(!handlers) continue;
+
+			let newEvents;
+			if(handlers instanceof Array)
+				newEvents = handlers.slice();
+			else
+				newEvents = [handlers /* single fn */];
+
+			for(const handler of newEvents)
+				Bangle.removeListener(event, handler);
+
+			touchEvents[event] = newEvents;
+		}
 	};
 	const resumeOthers = () => {
-		const swipeHandler = (Bangle as {swipeHandler?: () => void}).swipeHandler;
-		if(swipeHandler)
-			Bangle.on("swipe", swipeHandler);
+		for(const event in touchEvents){
+			const handlers = touchEvents[event];
+			touchEvents[event] = null;
+
+			if(handlers)
+				for(const handler of handlers)
+					Bangle.on(event as any, handler);
+		}
 	};
 })()
