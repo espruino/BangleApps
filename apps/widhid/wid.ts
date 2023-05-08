@@ -1,5 +1,5 @@
 (() => {
-	const settings: Settings = require('Storage').readJSON('setting.json', true) || { HID: false } as Settings;
+	const settings: Settings = require("Storage").readJSON("setting.json", true) || { HID: false } as Settings;
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
 		return;
@@ -16,7 +16,7 @@
 		}
 	});
 
-	Bangle.on('drag', e => {
+	Bangle.on("drag", e => {
 		if(!activeTimeout) return;
 
 		if(!dragging){
