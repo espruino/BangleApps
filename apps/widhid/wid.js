@@ -95,6 +95,8 @@
         area: "tr",
         sortorder: -20,
         draw: function () {
+            if (this.width === 0)
+                return;
             g.drawImage(activeTimeout
                 ? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
                 : require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")), this.x + 2, this.y + 2);
