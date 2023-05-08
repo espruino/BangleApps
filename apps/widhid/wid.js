@@ -10,12 +10,16 @@
     var activeTimeout;
     var waitForRelease = true;
     Bangle.on("swipe", function (_lr, ud) {
+        if (Bangle.CLKINFO_FOCUS)
+            return;
         if (!activeTimeout && ud > 0) {
             listen();
             Bangle.buzz(20);
         }
     });
     var onDrag = (function (e) {
+        if (Bangle.CLKINFO_FOCUS)
+            return;
         if (e.b === 0) {
             var wasDragging = dragging;
             dragging = false;

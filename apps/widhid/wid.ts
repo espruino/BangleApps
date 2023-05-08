@@ -12,6 +12,8 @@
 	let waitForRelease = true;
 
 	Bangle.on("swipe", (_lr, ud) => {
+		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
+
 		if(!activeTimeout && ud! > 0){
 			listen();
 			Bangle.buzz(20);
@@ -19,6 +21,8 @@
 	});
 
 	const onDrag = (e => {
+		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
+
 		if(e.b === 0){
 			// released
 			const wasDragging = dragging;
