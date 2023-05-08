@@ -71,8 +71,8 @@
 		draw: function() {
 			g.drawImage(
 				activeTimeout
-				? require("heatshrink").decompress(atob("mEwxH+AH4A/AH4A/AG8gkAvvAAYvvGVIvIGcwvMGMQv/F/4vTGpQvmNJAvqBggvtAEQv/F/4v/F/4nbFIYvlFooAHF1wvgFxwvfFx4v/Fz4v/F/4v/F/4wfFzwvwGBwugGBouiGBYukGJAtnAH4A/AH4A/ACIA=="))
-				: require("heatshrink").decompress(atob("mEwxH+AH4A/AH4A/AG9lsovvAAYvvGVIvIGcwvMGMQv/F/4vTGpQvmNJAvqBggvtAEQv/F/4v/F/4nbFIYvlFooAHF1wvgFxwvfFx4v/Fz4v/F/4v/F/4wfFzwvwGBwugGBouiGBYukGJAtnAH4A/AH4A/ACIA==")),
+				? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
+				: require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")),
 				this.x! + 2,
 				this.y! + 2
 			);
