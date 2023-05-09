@@ -10,6 +10,7 @@ Basic calendar
 - Swipe down (Bangle.js 2 only) to go to the next year
 - Touch to display events for current month
 - Press the button (button 3 on Bangle.js 1) to exit
+- Holidays have same color as weekends and can be edited with the 'Download'-interface, e.g. by uploading an iCalendar file.
 
 ## Settings
 
