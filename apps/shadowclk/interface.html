@@ -281,7 +281,21 @@
         // Update UI with loaded settings
         let previewBox = document.getElementById("preview-box");
         previewBox.style.backgroundColor = isDarkBg ? "black" : "white";
-        drawText(selectedColor);
+
+        (function () {
+          // Load fonts before drawing for the first time
+          function loadFont(font) {
+            return document.fonts.load(font);
+          }
+
+          Promise.all([
+            loadFont('81px Londrina Solid'),
+            loadFont('81px Londrina Shadow'),
+            loadFont('19px DotGothic16')
+          ]).then(() => {
+            drawText(selectedColor);
+          });
+        })();
 
         // Start updating the time every second after loading the settings
         updateTime();
@@ -326,7 +340,11 @@
       }, 5000);
     });
 
-    (function() {
+    // Call loadSettings when the page loads
+    loadSettings();
+
+    // Fallback to defaults if we can't load settings
+    (function () {
       // Load fonts before drawing for the first time
       function loadFont(font) {
         return document.fonts.load(font);
@@ -340,9 +358,6 @@
         drawText(selectedColor);
       });
     })();
-
-    // Call loadSettings when the page loads
-    loadSettings();
   </script>
 </body>
 
