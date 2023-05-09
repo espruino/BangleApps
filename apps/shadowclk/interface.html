@@ -78,31 +78,34 @@
     #upload {
       margin-top: 20px;
     }
+
+    #message {
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-  <script src="../../lib/interface.js"></script>
+  <script src="../../core/lib/interface.js"></script>
   <div class="main-container">
     <h1>3-Bit Color Picker</h1>
-    <div>
-      <script>
-        let colors = ['#000', '#f00', '#0f0', '#ff0', '#00f', '#f0f', '#0ff', '#fff'];
-        colors.forEach((color, i) => {
-          document.write(`<button class="color-button color-${i}" data-color="${color}"></button>`);
-        });
-      </script>
-    </div>
+    <div id="color-buttons-container"></div>
     <button id="toggle-bg" class="btn btn-primary" onclick="toggleBackground()">Light/Dark</button>
     <div id="preview-box">
       <canvas id="preview-canvas" width="176" height="176"></canvas>
     </div>
     <button id="upload" class="btn btn-primary">Upload</button>
-    <script src="../../core/lib/customize.js"></script>
+    <div id="message"></div>
   </div>
   <script>
-    let selectedColor = "#0ff";
-    let isDarkBg = false; // Add this line to track the background state
+    let colors = ['#000', '#f00', '#0f0', '#ff0', '#00f', '#f0f', '#0ff', '#fff'];
+    let colorButtonsContainer = document.getElementById('color-buttons-container');
+    colors.forEach((color, i) => {
+      let button = document.createElement('button');
+      button.className = `color-button color-${i}`;
+      button.dataset.color = color;
+      colorButtonsContainer.appendChild(button);
+    });
     document.querySelectorAll(".color-button").forEach(button => {
       button.addEventListener("click", () => {
         selectedColor = button.dataset.color;
@@ -205,11 +208,6 @@
       ctx.fillText(currentDay, xPos, yPos + 20);
     }
 
-    // Update the time every second
-    setInterval(() => {
-      drawText(selectedColor);
-    }, 1000);
-
     function hexToDec(hex) {
       if (hex.length === 4) {
         hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
@@ -263,6 +261,54 @@
       });
     }
 
+    // Load Shadow Clock color and theme setting
+    let selectedColor = "#0ff";
+    let isDarkBg = false;
+
+    function loadSettings() {
+      Puck.eval('require("Storage").readJSON("shadowclk.json", true)', (data) => {
+        if (data && data.color && data.theme) {
+          // Apply color and theme from JSON
+          const { color, theme } = data;
+          selectedColor = color;
+          isDarkBg = theme === "dark";
+        } else {
+          // Use default values if there is no data for color and theme
+          selectedColor = "#0ff";
+          isDarkBg = false;
+        }
+
+        // Update UI with loaded settings
+        let previewBox = document.getElementById("preview-box");
+        previewBox.style.backgroundColor = isDarkBg ? "black" : "white";
+
+        (function () {
+          // Load fonts before drawing for the first time
+          function loadFont(font) {
+            return document.fonts.load(font);
+          }
+
+          Promise.all([
+            loadFont('81px Londrina Solid'),
+            loadFont('81px Londrina Shadow'),
+            loadFont('19px DotGothic16')
+          ]).then(() => {
+            drawText(selectedColor);
+          });
+        })();
+
+        // Start updating the time every second after loading the settings
+        updateTime();
+      });
+    }
+
+    function updateTime() {
+      setInterval(() => {
+        drawText(selectedColor);
+      }, 1000);
+    }
+
+    const messageDiv = document.getElementById('message');
     document.getElementById("upload").addEventListener("click", function () {
       // Save theme settings to Bangle.js
       let themeColors = createThemeColors(isDarkBg);
@@ -276,7 +322,42 @@
       Puck.write(`require("Storage").write("shadowclk.json", ${JSON.stringify(data)});\n`, (result) => {
         console.log('Color saved:', result);
       });
+
+      // Remove any existing message
+      while (messageDiv.firstChild) {
+        messageDiv.removeChild(messageDiv.firstChild);
+      }
+
+      // Create a new message element
+      const message = document.createElement('p');
+      message.innerHTML = 'Configuration sent...<br>Hold button on Bangle.js';
+      message.style.fontSize = '24px';
+      messageDiv.appendChild(message);
+
+      // Remove the message element after the timeout
+      setTimeout(() => {
+        messageDiv.removeChild(message);
+      }, 5000);
     });
+
+    // Call loadSettings when the page loads
+    loadSettings();
+
+    // Fallback to defaults if we can't load settings
+    (function () {
+      // Load fonts before drawing for the first time
+      function loadFont(font) {
+        return document.fonts.load(font);
+      }
+
+      Promise.all([
+        loadFont('81px Londrina Solid'),
+        loadFont('81px Londrina Shadow'),
+        loadFont('19px DotGothic16')
+      ]).then(() => {
+        drawText(selectedColor);
+      });
+    })();
   </script>
 </body>
 
