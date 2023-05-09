@@ -11,14 +11,14 @@
 	let activeTimeout: number | undefined;
 	let waitForRelease = true;
 
-	Bangle.on("swipe", (_lr, ud) => {
+	const onSwipe = ((_lr, ud) => {
 		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
 
 		if(!activeTimeout && ud! > 0){
 			listen();
 			Bangle.buzz(20);
 		}
-	});
+	}) satisfies SwipeCallback;
 
 	const onDrag = (e => {
 		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
@@ -96,6 +96,9 @@
 		}, 3000);
 	};
 
+	const redraw = () => setTimeout(Bangle.drawWidgets, 50);
+
+	const connected = NRF.getSecurityStatus().connected;
 	WIDGETS["hid"] = {
 		area: "tr",
 		sortorder: -20,
@@ -109,17 +112,20 @@
 				this.y! + 2
 			);
 		},
-		width: NRF.getSecurityStatus().connected ? 24 : 0,
+		width: connected ? 24 : 0,
 	};
 
-	const redraw = () => setTimeout(Bangle.drawWidgets, 50);
+	if(connected)
+		Bangle.on("swipe", onSwipe);
 
 	NRF.on("connect", () => {
 		WIDGETS["hid"]!.width = 24;
+		Bangle.on("swipe", onSwipe);
 		redraw();
 	});
 	NRF.on("disconnect", () => {
 		WIDGETS["hid"]!.width = 0;
+		Bangle.removeListener("swipe", onSwipe);
 		redraw();
 	});
 

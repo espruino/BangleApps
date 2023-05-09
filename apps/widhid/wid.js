@@ -9,7 +9,7 @@
     var dragging = false;
     var activeTimeout;
     var waitForRelease = true;
-    Bangle.on("swipe", function (_lr, ud) {
+    var onSwipe = (function (_lr, ud) {
         if (Bangle.CLKINFO_FOCUS)
             return;
         if (!activeTimeout && ud > 0) {
@@ -95,6 +95,8 @@
             redraw();
         }, 3000);
     };
+    var redraw = function () { return setTimeout(Bangle.drawWidgets, 50); };
+    var connected = NRF.getSecurityStatus().connected;
     WIDGETS["hid"] = {
         area: "tr",
         sortorder: -20,
@@ -105,15 +107,18 @@
                 ? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
                 : require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")), this.x + 2, this.y + 2);
         },
-        width: NRF.getSecurityStatus().connected ? 24 : 0,
+        width: connected ? 24 : 0,
     };
-    var redraw = function () { return setTimeout(Bangle.drawWidgets, 50); };
+    if (connected)
+        Bangle.on("swipe", onSwipe);
     NRF.on("connect", function () {
         WIDGETS["hid"].width = 24;
+        Bangle.on("swipe", onSwipe);
         redraw();
     });
     NRF.on("disconnect", function () {
         WIDGETS["hid"].width = 0;
+        Bangle.removeListener("swipe", onSwipe);
         redraw();
     });
     var sendHid = function (code) {
