@@ -1,7 +1,7 @@
 {
   "id": "calendar",
   "name": "Calendar",
-  "version": "0.13",
+  "version": "0.14",
   "description": "Simple calendar",
   "icon": "calendar.png",
   "screenshots": [{"url":"screenshot_calendar.png"}],
@@ -9,10 +9,11 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
+  "interface": "interface.html",
   "storage": [
     {"name":"calendar.app.js","url":"calendar.js"},
     {"name":"calendar.settings.js","url":"settings.js"},
     {"name":"calendar.img","url":"calendar-icon.js","evaluate":true}
   ],
-  "data": [{"name":"calendar.json"}]
+  "data": [{"name":"calendar.json"}, {"name":"calendar.days.json"}]
 }
