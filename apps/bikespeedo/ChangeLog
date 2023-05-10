@@ -2,3 +2,4 @@
 0.02: Barometer altitude adjustment setting
 0.03: Use default Bangle formatter for booleans
 0.04: Add options for units in locale and recording GPS
+0.05: Fix resetting GPS recording when exiting the app
