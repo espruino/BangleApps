@@ -403,6 +403,8 @@ function onGPS(fix) {
 
     if ( sp < 10 ) sp = sp.toFixed(1);
     else sp = Math.round(sp);
+    if (isNaN(sp)) sp = '---';
+
     if (parseFloat(sp) > parseFloat(max.spd) && max.n > 15 ) max.spd = parseFloat(sp);
 
     // Altitude
@@ -416,6 +418,12 @@ function onGPS(fix) {
 
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
+  } else {
+    // populate spd_unit
+    if (cfg.spd == 0) {
+      m = require("locale").speed(0).match(/[0-9,\.]+(.*)/);
+      cfg.spd_unit = m[1];
+    }
   }
 
   if ( cfg.modeA == 1 ) {
@@ -465,7 +473,7 @@ function updateClock() {
 // Read settings.
 let cfg = require('Storage').readJSON('bikespeedo.json',1)||{};
 
-cfg.spd = 1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd = !cfg.localeUnits;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 cfg.spd_unit = 'km/h';  // Displayed speed unit
 cfg.alt = 1; // Multiplier for altitude unit conversions. (feet:'0.3048')
 cfg.alt_unit = 'm';  // Displayed altitude units ('feet')
@@ -499,14 +507,6 @@ function onPressure(dat) {
   altiBaro = Number(dat.altitude.toFixed(0)) + Number(cfg.altDiff);
 }
 
-Bangle.setBarometerPower(1); // needs some time...
-g.clearRect(0,screenYstart,screenW,screenH);
-onGPS(lf);
-Bangle.setGPSPower(1);
-Bangle.on('GPS', onGPS);
-Bangle.on('pressure', onPressure);
-
-Bangle.setCompassPower(1);
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 if (!CALIBDATA) calibrateCompass = true;
 function Compass_tiltfixread(O,S){
@@ -544,11 +544,33 @@ function Compass_reading() {
   Compass_heading = Compass_newHeading(d,Compass_heading);
   hdngCompass = Compass_heading.toFixed(0);
 }
-if (!calibrateCompass) setInterval(Compass_reading,200);
 
-setButtons();
-if (emulator) setInterval(updateClock, 2000);
-else setInterval(updateClock, 10000);
+function start() {
+  Bangle.setBarometerPower(1); // needs some time...
+  g.clearRect(0,screenYstart,screenW,screenH);
+  onGPS(lf);
+  Bangle.setGPSPower(1);
+  Bangle.on('GPS', onGPS);
+  Bangle.on('pressure', onPressure);
+
+  Bangle.setCompassPower(1);
+  if (!calibrateCompass) setInterval(Compass_reading,200);
+
+  setButtons();
+  if (emulator) setInterval(updateClock, 2000);
+  else setInterval(updateClock, 10000);
+
+  Bangle.drawWidgets();
+}
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+if (cfg.record && WIDGETS["recorder"]) {
+  WIDGETS["recorder"]
+    .setRecording(true)
+    .then(start);
+
+  if (cfg.recordStopOnExit)
+    E.on('kill', () => WIDGETS["recorder"].setRecording(false));
+} else {
+  start();
+}
