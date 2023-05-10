@@ -12,9 +12,33 @@
 	let dragging = false;
 	let activeTimeout: number | undefined;
 	let waitForRelease = true;
+	let menuShown = 0;
+
+	// If the user shows a menu, we want to temporarily disable ourselves
+	// We can detect showing of a menu by overriding E.showMenu
+	// to detect hiding of a menu, we hook setUI, since all menus
+	// either show other menus, load() or (eventually) call it
+	// (I hope)
+	//
+	// Alternatively we could watch for when Bangle.dragHandler and
+	// Bangle.swipeHandler get removed from Bangle["#on<event>"]
+	const origShowMenu = E.showMenu;
+	E.showMenu = ((menu: Menu): MenuInstance => {
+		menuShown++;
+
+		const origSetUI = Bangle.setUI;
+		Bangle.setUI = ((mode: unknown, cb: () => void) => {
+			menuShown--;
+			Bangle.setUI = origSetUI;
+			return origSetUI(mode as any, cb);
+		}) as any;
+
+		return origShowMenu(menu);
+	}) as any;
 
 	const onSwipe = ((_lr, ud) => {
 		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
+		if(menuShown) return;
 
 		if(!activeTimeout && ud! > 0){
 			listen();

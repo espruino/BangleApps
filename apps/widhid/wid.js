@@ -10,8 +10,22 @@
     var dragging = false;
     var activeTimeout;
     var waitForRelease = true;
+    var menuShown = 0;
+    var origShowMenu = E.showMenu;
+    E.showMenu = (function (menu) {
+        menuShown++;
+        var origSetUI = Bangle.setUI;
+        Bangle.setUI = (function (mode, cb) {
+            menuShown--;
+            Bangle.setUI = origSetUI;
+            return origSetUI(mode, cb);
+        });
+        return origShowMenu(menu);
+    });
     var onSwipe = (function (_lr, ud) {
         if (Bangle.CLKINFO_FOCUS)
+            return;
+        if (menuShown)
             return;
         if (!activeTimeout && ud > 0) {
             listen();
