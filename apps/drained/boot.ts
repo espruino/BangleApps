@@ -1,4 +1,4 @@
-{
+(() => {
 const { battery: threshold = 5, interval = 10, keepStartup = true }: DrainedSettings
   = require("Storage").readJSON(`drained.setting.json`, true) || {};
 
@@ -18,4 +18,4 @@ drainedInterval = setInterval(() => {
 
   load(app);
 }, interval * 60 * 1000);
-}
+})()
