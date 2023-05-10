@@ -11,7 +11,6 @@
     var save = function () {
         storage.writeJSON(SETTINGS_FILE, settings);
     };
-    var formatBool = function (b) { return b ? "On" : "Off"; };
     var menu = {
         "": { "title": "Drained" },
         "< Back": back,
@@ -50,16 +49,15 @@
         },
         "Keep startup code": {
             value: settings.keepStartup,
-            format: formatBool,
             onchange: function (b) {
                 settings.keepStartup = b;
                 save();
-                updateMenu();
-                E.showMenu(menu);
+                updateAndRedraw();
             },
         },
     };
-    var updateMenu = function () {
+    var updateAndRedraw = function () {
+        setTimeout(function () { E.showMenu(menu); }, 10);
         if (settings.keepStartup) {
             delete menu["Startup exceptions"];
             return;
@@ -74,7 +72,6 @@
             .forEach(function (name) {
             bootExceptions[name] = {
                 value: settings.exceptions.indexOf(name) >= 0,
-                format: formatBool,
                 onchange: function (b) {
                     if (b) {
                         settings.exceptions.push(name);
@@ -89,6 +86,5 @@
             };
         });
     };
-    updateMenu();
-    E.showMenu(menu);
+    updateAndRedraw();
 });
