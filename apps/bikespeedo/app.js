@@ -449,7 +449,12 @@ function onGPS(fix) {
 }
 
 function setButtons(){
-  setWatch(_=>load(), BTN1);
+  setWatch(_=>{
+    if (cfg.recordStopOnExit && WIDGETS["recorder"])
+      WIDGETS["recorder"].setRecording(false);
+
+    load();
+  }, BTN1);
 
 onGPS(lf);
 }
