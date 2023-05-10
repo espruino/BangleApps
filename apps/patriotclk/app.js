@@ -14,7 +14,7 @@ Graphics.prototype.setFontAudiowide = function() {
   let options = require("Storage").readJSON("patriotclk.opts",1)||{};
 
   // timeout used to update every minute
-  let drawTimeout;
+  let drawTimeout, widgetTimeout;
 
   // draw everything
   let draw = function() {
@@ -55,17 +55,35 @@ Graphics.prototype.setFontAudiowide = function() {
     }, 60000 - (Date.now() % 60000));
   };
 
-  // Clear the screen once, at startup
-  g.clear();
-  // draw immediately at first, queue update
-  draw();
   // Show launcher when middle button pressed
   Bangle.setUI({mode:"clock", remove:function() { //f ree memory
     if (drawTimeout) clearTimeout(drawTimeout);
+    if (widgetTimeout) clearTimeout(widgetTimeout);
+    require("widget_utils").show();
+    var e = WIDGETS["patriot"];
+    g.reset().clearRect(e.x,e.y,e.x+63,e.y+23);
+    delete WIDGETS["patriot"];
     delete Graphics.prototype.setFontAudiowide;
-    require("widget_utils").cleanup();
   }});  
   // Load widgets (make them swipeable)
   Bangle.loadWidgets();
+  WIDGETS["patriot"] = {
+    area:"tl",
+    width: 64, // how wide is the widget? You can change this and call Bangle.drawWidgets() to re-layout
+    draw : function(e) {
+      g.reset().clearRect(e.x,e.y,e.x+63,e.y+23);
+      var d = new Date();
+      g.setFont("6x8").setFontAlign(-1,0).drawString(require("locale").dow(d,0), e.x+2, e.y+8);
+      g.setFont("6x8").setFontAlign(-1,0).drawString(require("locale").date(d).trim(), e.x+2, e.y+16);
+      widgetTimeout = setTimeout(function() { // redraw every hour (it's just easier that working out timezones)
+        widgetTimeout = undefined;
+        WIDGETS["patriot"].draw(WIDGETS["patriot"]);
+      }, 3600000 - (Date.now() % 3600000));
+    }
+  };
   require("widget_utils").swipeOn();
+  // Clear the screen once, at startup
+  g.clear();
+  // draw immediately at first, queue update
+  draw();  
 }
