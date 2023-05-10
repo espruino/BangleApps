@@ -62,13 +62,15 @@ type DrainedSettings = {
       onchange: (b: boolean) => {
         settings.keepStartup = b;
         save();
-        updateMenu();
-        E.showMenu(menu);
+        updateAndRedraw();
       },
     },
   };
 
-  const updateMenu = () => {
+  const updateAndRedraw = () => {
+    // will change the menu, queue redraw:
+    setTimeout(() => { E.showMenu(menu) }, 10);
+
     if (settings.keepStartup) {
       delete menu["Startup exceptions"];
       return;
@@ -98,6 +100,5 @@ type DrainedSettings = {
       });
   };
 
-  updateMenu();
-  E.showMenu(menu);
+  updateAndRedraw();
 }) satisfies SettingsFunc
