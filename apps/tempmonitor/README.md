@@ -1,5 +1,5 @@
 # Temperature Monitor (with logging)
-Temperature monitor that shows temperature on real time but also allows to store in a file for a later process.
+Temperature / Thermometer monitor that not only shows degrees on real time but also allows to store this info in a file for a later process.
 
 Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
 

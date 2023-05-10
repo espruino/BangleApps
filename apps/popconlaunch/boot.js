@@ -1,6 +1,7 @@
 (function () {
     var oldRead = require("Storage").readJSON;
-    var monthAgo = Date.now() - 1000 * 86400 * 28;
+    var oneMonth = 1000 * 86400 * 28;
+    var monthAgo = Date.now() - oneMonth;
     var cache;
     var ensureCache = function () {
         if (!cache) {
@@ -10,7 +11,19 @@
         }
         return cache;
     };
-    var saveCache = function (orderChanged) {
+    var trimCache = function (cache) {
+        var threeMonthsBack = Date.now() - oneMonth * 3;
+        var del = [];
+        for (var k in cache)
+            if (cache[k].last < threeMonthsBack)
+                del.push(k);
+        for (var _i = 0, del_1 = del; _i < del_1.length; _i++) {
+            var k = del_1[_i];
+            delete cache[k];
+        }
+    };
+    var saveCache = function (cache, orderChanged) {
+        trimCache(cache);
         require("Storage").writeJSON("popcon.cache.json", cache);
         if (orderChanged) {
             var info = oldRead("popcon.info", true);
@@ -74,7 +87,7 @@
             ent.pop++;
             ent.last = Date.now();
             var orderChanged = sortCache();
-            saveCache(orderChanged);
+            saveCache(cache_2, orderChanged);
         }
         return oldLoad(src);
     };

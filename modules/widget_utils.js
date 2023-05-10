@@ -88,7 +88,7 @@ exports.swipeOn = function(autohide) {
   }
 
   for (var w of global.WIDGETS) {
-    if (w._draw) return; // already hidden
+    if (w._draw) continue; // already hidden
     w._draw = w.draw;
     w.draw = function() {
       g=og;
