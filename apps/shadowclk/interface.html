@@ -259,7 +259,8 @@
 
     // Save the provided theme to Bangle.js storage and set Shadow Clock as the default clock
     function saveThemeToSettings(theme) {
-      Puck.eval('require("Storage").readJSON("setting.json", true)', (data) => {
+      Puck.eval('[require("Storage").readJSON("setting.json", true)]', (dataArray) => {
+        let data = dataArray ? dataArray[0] : null;
         if (data) {
           // Ensure that data.theme exists
           if (!data.theme) {
@@ -277,7 +278,7 @@
       });
     }
 
-    // Initialize Shadow Clock color and theme settings with defaults
+    // Initialize color and theme settings
     let selectedColor = "#0ff";
     let isDarkBg = false;
 
@@ -285,7 +286,7 @@
     function loadSettings(callback) {
       // Set a timeout for loading the settings
       const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout occurred")), 50)
+        setTimeout(() => reject(new Error("Timeout occurred")), 1000)
       );
       // Load settings from Bangle.js storage
       const loadSettingsFromStorage = new Promise((resolve) => {
