@@ -1,4 +1,9 @@
 (() => {
+	type BangleEventKeys = "tap" | "gesture" | "aiGesture" | "swipe" | "touch" | "drag" | "stroke";
+	type BangleEvents = {
+		[key in BangleEventKeys as `#on${key}`]?: Handler | (Handler | undefined)[]
+	};
+
 	const settings: Settings = require("Storage").readJSON("setting.json", true) || { HID: false } as Settings;
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
@@ -12,35 +17,35 @@
 	let dragging = false;
 	let activeTimeout: number | undefined;
 	let waitForRelease = true;
-	let menuShown = 0;
 
 	// If the user shows a menu, we want to temporarily disable ourselves
-	// We can detect showing of a menu by overriding E.showMenu
-	// to detect hiding of a menu, we hook setUI, since all menus
-	// either show other menus, load() or (eventually) call it
-	// (I hope)
 	//
-	// Alternatively we could watch for when Bangle.dragHandler and
-	// Bangle.swipeHandler get removed from Bangle["#on<event>"]
-	const origShowMenu = E.showMenu;
-	E.showMenu = ((menu: Menu): MenuInstance => {
-		menuShown++;
+	// We could detect showing of a menu by overriding E.showMenu
+	// and to detect hiding of a menu, we hook setUI
+	//
+	// Perhaps easier to check Bangle.swipeHandler - set by setUI,
+	// called by E.showMenu
+	const mayInterceptSwipe = () => {
+		if((Bangle as BangleExt).CLKINFO_FOCUS) return 0;
+		if(Bangle.CLOCK) return 1;
 
-		const origSetUI = Bangle.setUI;
-		Bangle.setUI = ((mode: unknown, cb: () => void) => {
-			menuShown--;
-			Bangle.setUI = origSetUI;
-			return origSetUI(mode as any, cb);
-		}) as any;
+		const swipes = (Bangle as BangleEvents)["#onswipe"];
+		if(typeof swipes === "function"){
+			if(swipes !== onSwipe)
+				return swipes.length > 1; // second argument is up/down
+		}else if(swipes){
+			for(const handler of swipes)
+				if(handler !== onSwipe && handler?.length > 1)
+					return 0;
+		}
 
-		return origShowMenu(menu);
-	}) as any;
+		if((Bangle as BangleEvents)["#ondrag"]) return 0;
+		return 1;
+	};
 
 	const onSwipe = ((_lr, ud) => {
-		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
-		if(menuShown) return;
-
-		if(!activeTimeout && ud! > 0){
+		// do these checks in order of cheapness
+		if(ud! > 0 && !activeTimeout && mayInterceptSwipe()){
 			listen();
 			Bangle.buzz(20);
 		}
@@ -174,7 +179,7 @@
 	// disable event handlers
 	type Handler = () => void;
 	const touchEvents: {
-		[key: string]: null | Handler[]
+		[key in BangleEventKeys]: null | Handler[]
 	} = {
 		tap: null,
 		gesture: null,
@@ -186,15 +191,15 @@
 	};
 
 	const suspendOthers = () => {
-		for(const event in touchEvents){
-			const handlers: Handler[] | Handler | undefined
-				= (Bangle as any)[`#on${event}`];
+		for(const event_ in touchEvents){
+			const event = event_ as BangleEventKeys;
+			const handlers = (Bangle as BangleEvents)[`#on${event}`];
 
 			if(!handlers) continue;
 
 			let newEvents;
 			if(handlers instanceof Array)
-				newEvents = handlers.slice();
+				newEvents = handlers.filter(f=>f) as Handler[];
 			else
 				newEvents = [handlers /* single fn */];
 
@@ -205,7 +210,8 @@
 		}
 	};
 	const resumeOthers = () => {
-		for(const event in touchEvents){
+		for(const event_ in touchEvents){
+			const event = event_ as BangleEventKeys;
 			const handlers = touchEvents[event];
 			touchEvents[event] = null;
 

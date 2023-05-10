@@ -10,24 +10,29 @@
     var dragging = false;
     var activeTimeout;
     var waitForRelease = true;
-    var menuShown = 0;
-    var origShowMenu = E.showMenu;
-    E.showMenu = (function (menu) {
-        menuShown++;
-        var origSetUI = Bangle.setUI;
-        Bangle.setUI = (function (mode, cb) {
-            menuShown--;
-            Bangle.setUI = origSetUI;
-            return origSetUI(mode, cb);
-        });
-        return origShowMenu(menu);
-    });
-    var onSwipe = (function (_lr, ud) {
+    var mayInterceptSwipe = function () {
         if (Bangle.CLKINFO_FOCUS)
-            return;
-        if (menuShown)
-            return;
-        if (!activeTimeout && ud > 0) {
+            return 0;
+        if (Bangle.CLOCK)
+            return 1;
+        var swipes = Bangle["#onswipe"];
+        if (typeof swipes === "function") {
+            if (swipes !== onSwipe)
+                return swipes.length > 1;
+        }
+        else if (swipes) {
+            for (var _i = 0, swipes_1 = swipes; _i < swipes_1.length; _i++) {
+                var handler = swipes_1[_i];
+                if (handler !== onSwipe && (handler === null || handler === void 0 ? void 0 : handler.length) > 1)
+                    return 0;
+            }
+        }
+        if (Bangle["#ondrag"])
+            return 0;
+        return 1;
+    };
+    var onSwipe = (function (_lr, ud) {
+        if (ud > 0 && !activeTimeout && mayInterceptSwipe()) {
             listen();
             Bangle.buzz(20);
         }
@@ -153,13 +158,14 @@
         stroke: null,
     };
     var suspendOthers = function () {
-        for (var event in touchEvents) {
+        for (var event_ in touchEvents) {
+            var event = event_;
             var handlers = Bangle["#on".concat(event)];
             if (!handlers)
                 continue;
             var newEvents = void 0;
             if (handlers instanceof Array)
-                newEvents = handlers.slice();
+                newEvents = handlers.filter(function (f) { return f; });
             else
                 newEvents = [handlers];
             for (var _i = 0, newEvents_1 = newEvents; _i < newEvents_1.length; _i++) {
@@ -170,7 +176,8 @@
         }
     };
     var resumeOthers = function () {
-        for (var event in touchEvents) {
+        for (var event_ in touchEvents) {
+            var event = event_;
             var handlers = touchEvents[event];
             touchEvents[event] = null;
             if (handlers)
