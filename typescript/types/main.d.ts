@@ -1584,7 +1584,7 @@ declare class NRF {
    * @param {any} callback - A callback function to be called when the data is sent
    * @url http://www.espruino.com/Reference#l_NRF_sendHIDReport
    */
-  static sendHIDReport(data: any, callback: any): void;
+  static sendHIDReport(data: number[], callback?: () => void): void
 
   /**
    * Check if Apple Notification Center Service (ANCS) is currently active on the BLE
@@ -3188,8 +3188,10 @@ declare class Puck {
    * Check out [the Puck.js page on the
    * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
    * information.
+   * **Note:** Puck.js cannot currently read every sample from the
+   * accelerometer at sample rates above 208Hz.
    *
-   * @param {number} samplerate - The sample rate in Hz, or undefined
+   * @param {number} samplerate - The sample rate in Hz, or `undefined` (default is 12.5 Hz)
    * @url http://www.espruino.com/Reference#l_Puck_accelOn
    */
   static accelOn(samplerate: number): void;
@@ -3819,6 +3821,9 @@ declare class Bangle {
    *   and polling rate may not be exact. The algorithm's filtering is tuned for
    *   20-40ms poll intervals, so higher/lower intervals may effect the reliability
    *   of the BPM reading.
+   * * `hrmSportMode` - on the newest Bangle.js 2 builds with with the proprietary
+   *   heart rate algorithm, this is the sport mode passed to the algorithm. See `libs/misc/vc31_binary/algo.h`
+   *   for more info. 0 = normal (default), 1 = running, 2 = ...
    * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for
    *   calculating altitude with the pressure sensor
    * Where accelerations are used they are in internal units, where `8192 = 1g`
@@ -13222,7 +13227,7 @@ declare module "Storage" {
    * @returns {any} An object containing parsed JSON from the file, or undefined
    * @url http://www.espruino.com/Reference#l_Storage_readJSON
    */
-  function readJSON(name: string, noExceptions: boolean): any;
+  function readJSON(name: string, noExceptions: ShortBoolean): any;
 
   /**
    * Read a file from the flash storage area that has been written with

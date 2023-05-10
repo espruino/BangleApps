@@ -15,10 +15,11 @@ You can record
 
 * **Time** The current time
 * **GPS** GPS Latitude, Longitude and Altitude
-* **Steps** Steps counted by the step counter
 * **HR** Heart rate and confidence
 * **BAT** Battery percentage and voltage
-* **Core** CoreTemp body temperature
+* **Steps** Steps counted by the step counter
+* **Baro** (Bangle.js 2) Using the built-in barometer to record Temperature, Pressure and Altitude
+* **Core** CoreTemp body temperature *if* you have a CoreTemp device and the https://banglejs.com/apps/?id=coretemp app installed
 
 You can then start/stop recording from the Recorder app itself (and as long as widgets are
 enabled in the app you're using, you can move to another app and continue recording).

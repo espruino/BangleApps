@@ -1,7 +1,7 @@
 {
   "id": "stlap",
   "name": "Stopwatch",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A stopwatch that remembers its state, with a lap timer and a gesture mode (enable by swiping)",
   "icon": "icon.png",
   "type": "app",
@@ -20,5 +20,9 @@
       "url": "icon.js",
       "evaluate": true
     }
+  ],
+  "data": [
+    {"name":"stlap.state.json"},
+    {"wildcard":"stlap-*.json"}
   ]
 }
