@@ -6,8 +6,7 @@
   <link rel="stylesheet" href="../../css/spectre.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Londrina+Shadow&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
-  <title>3-Bit Color Picker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">  <title>3-Bit Color Picker</title>
   <style>
     .main-container {
       display: flex;
@@ -199,7 +198,7 @@
       ctx.fillText(currentTime, xPos, yPos);
 
       // Set the font for the date
-      ctx.font = "19px DotGothic16";
+      ctx.font = "16px Righteous";
 
       // Get the current date
       let currentDate = getCurrentDate();
@@ -209,7 +208,7 @@
       xPos = (canvas.width - dateWidth) / 2;
 
       // Draw the date
-      yPos += 20;
+      yPos += 28;
       ctx.fillText(currentDate, xPos, yPos);
 
       // Get the current day of the week
@@ -220,7 +219,7 @@
       xPos = (canvas.width - dayWidth) / 2;
 
       // Draw the day of the week
-      ctx.fillText(currentDay, xPos, yPos + 20);
+      ctx.fillText(currentDay, xPos, yPos + 18);
     }
 
     // Converts a hexadecimal color code to a 16-bit integer value.
@@ -364,7 +363,7 @@
       return Promise.all([
         document.fonts.load('81px Londrina Solid'),
         document.fonts.load('81px Londrina Shadow'),
-        document.fonts.load('19px DotGothic16')
+        document.fonts.load('16px Righteous')
       ]);
     }
 
