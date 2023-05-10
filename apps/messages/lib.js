@@ -215,8 +215,9 @@ exports.buzz = function(msgSrc) {
 
   let repeat = msgSettings.repeat;
   if (repeat===undefined) repeat = 4; // repeat may be zero
-  if (repeat) {
-    exports.buzzTimeout = setTimeout(() => require("buzz").pattern(pattern), repeat*1000);
+  if (repeat) 
+  {
+    exports.buzzTimeout = setInterval(() => require("buzz").pattern(pattern), repeat*1000);
     let vibrateTimeout = msgSettings.vibrateTimeout;
     if (vibrateTimeout===undefined) vibrateTimeout = 60;
     if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopBuzz, vibrateTimeout*1000);
