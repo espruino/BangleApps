@@ -19,8 +19,6 @@
         }
     });
     var onDrag = (function (e) {
-        if (Bangle.CLKINFO_FOCUS)
-            return;
         if (e.b === 0) {
             var wasDragging = dragging;
             dragging = false;

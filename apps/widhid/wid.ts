@@ -23,8 +23,6 @@
 	}) satisfies SwipeCallback;
 
 	const onDrag = (e => {
-		if((Bangle as BangleExt).CLKINFO_FOCUS) return;
-
 		if(e.b === 0){
 			// released
 			const wasDragging = dragging;
