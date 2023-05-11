@@ -380,6 +380,7 @@
             // Use the JSON values if they exist, otherwise use the current values
             leadingZero = enableLeadingZero !== undefined ? enableLeadingZero : leadingZero;
             suffix = enableSuffix !== undefined ? enableSuffix : suffix;
+            updateButtonState();
             displayMessage("Previous settings loaded.", 3000);
           } else {
             setDefaultSettings();
