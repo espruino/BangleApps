@@ -51,8 +51,8 @@ let settings = Object.assign({
     hour = String(hour);
     if (settings.enableLeadingZero) {
       hour = hour.padStart(2, '0');
-    } else if (hour[0] === '0') {
-      hour = hour[1];
+    } else if (hour === '00') {
+      hour = '0';
     }
     var minutes = String(date.getMinutes()).padStart(2, '0');
     var timeStr = hour + ':' + minutes;
