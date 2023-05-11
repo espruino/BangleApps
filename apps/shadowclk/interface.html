@@ -202,13 +202,11 @@
     function formatTime(date, leadingZero) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
-
       // If 12 hour format is selected, adjust hours
-      if (!is12Hour) {
+      if (is12Hour) {
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12' in 12h format
       }
-
       let formattedHours = leadingZero && hours < 10 ? `0${hours}` : `${hours}`;
       let formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
       return `${formattedHours}:${formattedMinutes}`;
