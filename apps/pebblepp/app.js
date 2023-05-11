@@ -78,7 +78,7 @@ let clockInfoDraw = (itm, info, options) => {
       the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
       draw the image, and then flood-fill the rectangle back to the background color. floodFill
       was only added in 2v18 so we have to check for it and fallback if not. */
-      g.setBgColor(theme.bg).clearRect(midx-25,y,midx+23,y+47);
+      g.setBgColor(theme.bg).clearRect(midx-25,y-1,midx+24,y+48);
       g.drawImage(info.img, midx-24,y,{scale:2});
       g.floodFill(midx-25,y,settings.bg);
     } else { // fallback
