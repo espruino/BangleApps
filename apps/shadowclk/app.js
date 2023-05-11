@@ -47,16 +47,30 @@ let settings = Object.assign({
     var y = g.getHeight() / 2;
     g.reset().clearRect(Bangle.appRect);
     var date = new Date();
+    var appSettings = require("Storage").readJSON("shadowclk.json", 1) || {};
+    var settings = require("Storage").readJSON("setting.json", 1) || {};
+    var is12HourFormat = settings["12hour"];
     var hour = date.getHours();
-    hour = String(hour);
-    if (settings.enableLeadingZero) {
-      hour = hour.padStart(2, '0');
-    } else if (hour === '00') {
-      hour = '0';
-    }
     var minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Handle 12-hour format
+    if (is12HourFormat) {
+      hour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
+    } else {
+      // If the leading zero option is enabled and hour is less than 10, add leading zero
+      if (appSettings.enableLeadingZero && hour < 10) {
+        hour = '0' + hour;
+      }
+    }
+
     var timeStr = hour + ':' + minutes;
-    var color = settings.color;
+
+    // Handle midnight in 12-hour format specifically
+    if (is12HourFormat && hour === 0) {
+      timeStr = '12' + timeStr.substring(2);
+    }
+
+    var color = appSettings.color;
     g.setFontAlign(0, 0).setFont("LondrinaSolid").setColor(color).drawString(timeStr, x - 1, y);
     g.reset().setFontAlign(0, 0).setFont("LondrinaShadow").drawString(timeStr, x - 1, y);
 
