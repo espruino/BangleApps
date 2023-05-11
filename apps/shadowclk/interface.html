@@ -6,7 +6,8 @@
   <link rel="stylesheet" href="../../css/spectre.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Londrina+Shadow&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">  <title>3-Bit Color Picker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+  <title>Shadow Clock Customizer</title>
   <style>
     .main-container {
       display: flex;
@@ -75,6 +76,18 @@
       margin-top: 20px;
     }
 
+    #toggle-leading-zero {
+      margin-top: 10px;
+    }
+
+    #toggle-suffix {
+      margin-top: 10px;
+    }
+
+    #toggle-hour-format {
+      margin-top: 10px;
+    }
+
     #upload {
       margin-top: 20px;
     }
@@ -87,13 +100,15 @@
   </style>
 </head>
 
-
 <body>
   <script src="../../core/lib/interface.js"></script>
   <div class="main-container">
-    <h1>3-Bit Color Picker</h1>
+    <h1>Clock Customizer</h1>
     <div id="color-buttons-container"></div>
-    <button id="toggle-bg" class="btn btn-primary" onclick="toggleBackground()">Light/Dark</button>
+    <button id="toggle-bg" class="btn btn-primary" onclick="toggleBackground()">Light / Dark</button>
+    <button id="toggle-hour-format" class="btn btn-primary" onclick="toggleHourFormat()">24 Hour</button>
+    <button id="toggle-leading-zero" class="btn btn-primary" onclick="toggleLeadingZero()">Leading Zero: Off</button>
+    <button id="toggle-suffix" class="btn btn-primary" onclick="toggleSuffix()">Suffix: On</button>
     <div id="preview-box">
       <canvas id="preview-canvas" width="176" height="176"></canvas>
     </div>
@@ -104,6 +119,15 @@
   </div>
   <script>
     const messageDiv = document.getElementById('message');
+
+    // Initialize app and system settings
+    let selectedColor = "#0ff";
+    let isDarkBg = false;
+    let leadingZero = false;
+    let prevLeadingZeroState = false;
+    let suffix = true;
+    let is12Hour = false;
+
     // Create and add color buttons to the UI
     let colors = ['#000', '#f00', '#0f0', '#ff0', '#00f', '#f0f', '#0ff', '#fff'];
     let colorButtonsContainer = document.getElementById('color-buttons-container');
@@ -120,32 +144,45 @@
       });
     });
 
-    // Format the current time in the desired format
-    function formatTime(date) {
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let formattedHours = hours < 10 ? `${hours}` : `${hours}`;
-      let formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-      return `${formattedHours}:${formattedMinutes}`;
+    let leadingZeroButton = document.getElementById('toggle-leading-zero');
+    let hourFormatButton = document.getElementById('toggle-hour-format');
+    let suffixButton = document.getElementById('toggle-suffix');
+
+    // Function to update the button text based on the current state
+    function updateButtonState() {
+      if (leadingZeroButton.disabled) {
+        leadingZeroButton.textContent = prevLeadingZeroState ? 'Leading Zero: ON' : 'Leading Zero: OFF';
+      } else {
+        leadingZeroButton.textContent = leadingZero ? 'Leading Zero: ON' : 'Leading Zero: OFF';
+      }
+
+      hourFormatButton.textContent = is12Hour ? '12 Hour' : '24 Hour';
+      suffixButton.textContent = suffix ? 'Suffix: On' : 'Suffix: Off';
+
+      if (is12Hour) {
+        if (leadingZero) prevLeadingZeroState = true;
+        leadingZero = false;
+        leadingZeroButton.disabled = true;
+      } else {
+        leadingZero = prevLeadingZeroState;
+        leadingZeroButton.disabled = false;
+      }
     }
 
-    // Get the current date as a formatted string
-    function getCurrentDate() {
-      let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      let suffixes = ["st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"];
-      let date = new Date();
-      let month = months[date.getMonth()];
-      let day = date.getDate();
-      let suffix = suffixes[day - 1];
-      let year = date.getFullYear();
-      return `${month} ${day}${suffix}, ${year}`;
+    function toggleLeadingZero() {
+      if (!is12Hour) { // Only allow toggle if in 24-hour mode
+        leadingZero = !leadingZero;
+        prevLeadingZeroState = leadingZero; // Update previous state on each toggle
+        updateButtonState();
+        drawText(selectedColor);
+      }
     }
 
-    // Get the current day of the week as a string
-    function getCurrentDay() {
-      let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      let date = new Date();
-      return days[date.getDay()];
+    // Function to toggle between 12 and 24 hour format
+    function toggleHourFormat() {
+      is12Hour = !is12Hour;
+      updateButtonState();
+      drawText(selectedColor);
     }
 
     // Toggle the background color between dark and light
@@ -154,6 +191,46 @@
       let previewBox = document.getElementById("preview-box");
       previewBox.style.backgroundColor = isDarkBg ? "black" : "white";
       drawText(selectedColor); // Redraw the text with updated color
+    }
+
+    function toggleSuffix() {
+      suffix = !suffix;
+      document.getElementById("toggle-suffix").textContent = `Suffix: ${suffix ? 'On' : 'Off'}`;
+      updateButtonState();
+    }
+
+    function formatTime(date, leadingZero) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+
+      // If 12 hour format is selected, adjust hours
+      if (!is12Hour) {
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12' in 12h format
+      }
+
+      let formattedHours = leadingZero && hours < 10 ? `0${hours}` : `${hours}`;
+      let formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+      return `${formattedHours}:${formattedMinutes}`;
+    }
+
+    // Get the current date as a formatted string
+    function getCurrentDate(suffix) {
+      let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let suffixes = ["st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"];
+      let date = new Date();
+      let month = months[date.getMonth()];
+      let day = date.getDate();
+      let suffixString = suffix ? suffixes[day - 1] : '';
+      let year = date.getFullYear();
+      return `${month} ${day}${suffixString}, ${year}`;
+    }
+
+    // Get the current day of the week as a string
+    function getCurrentDay() {
+      let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      let date = new Date();
+      return days[date.getDay()];
     }
 
     // Draw the time, date, and day of the week on the canvas
@@ -171,7 +248,7 @@
       ctx.fillStyle = color;
 
       // Get the current local system time
-      let currentTime = formatTime(new Date());
+      let currentTime = formatTime(new Date(), leadingZero);
 
       // Measure the text width and calculate the horizontal position
       let timeWidth = ctx.measureText(currentTime).width;
@@ -198,10 +275,10 @@
       ctx.fillText(currentTime, xPos, yPos);
 
       // Set the font for the date
-      ctx.font = "16px Righteous";
+      ctx.font = "13px Righteous";
 
       // Get the current date
-      let currentDate = getCurrentDate();
+      let currentDate = getCurrentDate(suffix);
 
       // Measure the date width and calculate the horizontal position
       let dateWidth = ctx.measureText(currentDate).width;
@@ -219,7 +296,7 @@
       xPos = (canvas.width - dayWidth) / 2;
 
       // Draw the day of the week
-      ctx.fillText(currentDay, xPos, yPos + 18);
+      ctx.fillText(currentDay, xPos, yPos + 12);
     }
 
     // Converts a hexadecimal color code to a 16-bit integer value.
@@ -257,7 +334,7 @@
     }
 
     // Save the provided theme to Bangle.js storage and set Shadow Clock as the default clock
-    function saveThemeToSettings(theme) {
+    function saveThemeToSettings(themeColors) {
       Puck.eval('[require("Storage").readJSON("setting.json", true)]', (dataArray) => {
         let data = dataArray ? dataArray[0] : null;
         if (data) {
@@ -266,10 +343,13 @@
             data.theme = {};
           }
           // Save all theme values
-          for (let key in theme) {
-            data.theme[key] = theme[key];
+          for (let key in themeColors) {
+            data.theme[key] = themeColors[key];
           }
-          data.clock = "shadowclk.app.js"; // Set Shadow Clock as default
+          // Save settings for 12 or 24 hour mode
+          data["12hour"] = is12Hour;
+          // Set Shadow Clock as default
+          data.clock = "shadowclk.app.js";
           Puck.write(`require("Storage").write("setting.json", ${JSON.stringify(data)});\n`, (result) => {
             console.log('Theme saved:', result);
           });
@@ -277,11 +357,14 @@
       });
     }
 
-    // Initialize color and theme settings
-    let selectedColor = "#0ff";
-    let isDarkBg = false;
+    // Set default settings
+    function setDefaultSettings() {
+      selectedColor = "#0ff";
+      isDarkBg = false;
+      leadingZero = false;
+      suffix = true;
+    }
 
-    // Load settings from Bangle.js storage
     function loadSettings(callback) {
       // Set a timeout for loading the settings
       const timeout = new Promise((_, reject) =>
@@ -292,15 +375,16 @@
         Puck.eval('[require("Storage").readJSON("shadowclk.json", true)]', (dataArray) => {
           let data = dataArray ? dataArray[0] : null;
           if (data) {
-            // Apply color and theme from JSON
-            const { color, theme } = data;
+            // Apply color, theme, enableLeadingZero and enableSuffix from JSON
+            let { color, theme, enableLeadingZero, enableSuffix } = data;
             selectedColor = color;
             isDarkBg = theme === "dark";
+            // Use the JSON values if they exist, otherwise use the current values
+            leadingZero = enableLeadingZero !== undefined ? enableLeadingZero : leadingZero;
+            suffix = enableSuffix !== undefined ? enableSuffix : suffix;
             displayMessage("Previous settings loaded.", 3000);
           } else {
-            // Use default values if there is no data for color and theme
-            selectedColor = "#0ff";
-            isDarkBg = false;
+            setDefaultSettings();
           }
           resolve();
         });
@@ -310,9 +394,7 @@
         .then(() => callback())
         .catch((error) => {
           console.error(error);
-          // Use default values in case of a timeout or error
-          selectedColor = "#0ff";
-          isDarkBg = false;
+          setDefaultSettings();
           callback();
         });
     }
@@ -341,19 +423,24 @@
       }, timeout);
     }
 
-    // Attach an event listener to the 'upload' button to save theme and color settings to Bangle.js storage
+    // Attach an event listener to the 'upload' button to save color and theme settings to Bangle.js storage
     document.getElementById("upload").addEventListener("click", function () {
       // Save theme settings to Bangle.js
       let themeColors = createThemeColors(isDarkBg);
       saveThemeToSettings(themeColors);
-      // Save Shadow Clock color setting
+      // Save Shadow Clock app setting
       let data = {
         color: selectedColor,
-        theme: isDarkBg ? "dark" : "light"
+        theme: isDarkBg ? "dark" : "light",
+        enableLeadingZero: leadingZero,
+        enableSuffix: suffix
       };
+
+      // Write the updated settings back to shadowclk.json
       Puck.write(`require("Storage").write("shadowclk.json", ${JSON.stringify(data)});\n`, (result) => {
-        console.log('Color saved:', result);
+        console.log('App settings saved:', result);
       });
+
       // Display the message using displayMessage function
       displayMessage('Configuration sent...<br>Hold button on Bangle.js', 5000);
     });
@@ -363,7 +450,7 @@
       return Promise.all([
         document.fonts.load('81px Londrina Solid'),
         document.fonts.load('81px Londrina Shadow'),
-        document.fonts.load('16px Righteous')
+        document.fonts.load('13px Righteous')
       ]);
     }
 
