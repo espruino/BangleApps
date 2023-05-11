@@ -42,10 +42,10 @@
 
 
     let logPower = (type, oldstate, state, app) => {
-      logFile.write("p," + type + ',' + (oldstate?1:0) + ',' + (state?1:0) + ',' + app + "\n");
+      logFile.write(Date.now() + ",p," + type + ',' + (oldstate?1:0) + ',' + (state?1:0) + ',' + app + "\n");
     };
     let logDeferred = (type, duration, source) => {
-      logFile.write(type + ',' + duration + ',' + source.replace(/\n/g, " ").replace(/,/g,"") + "\n");
+      logFile.write(Date.now() + "," + type + ',' + duration + ',' + source.replace(/\n/g, " ").replace(/,/g,"") + "\n");
     };
 
     let lastPowerOn = {};
