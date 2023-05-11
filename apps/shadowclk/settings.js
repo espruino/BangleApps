@@ -1,4 +1,4 @@
-(function(back) {
+(function (back) {
   let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
   let teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
 
@@ -6,7 +6,10 @@
   let appSettings = Object.assign({
     color: teletextColors[6],
     theme: 'light',
+    enableSuffix: true,
+    enableLeadingZero: false,
   }, require('Storage').readJSON("shadowclk.json", true) || {});
+
 
   // Save settings to storage
   function writeSettings() {
@@ -52,10 +55,10 @@
     writeSettings();
     delete g.reset;
     g._reset = g.reset;
-    g.reset = function(n) {
+    g.reset = function (n) {
       return g._reset().setColor(newTheme.fg).setBgColor(newTheme.bg);
     };
-    g.clear = function(n) {
+    g.clear = function (n) {
       if (n) g.reset();
       return g.clearRect(0, 0, g.getWidth(), g.getHeight());
     };
@@ -96,6 +99,22 @@
           writeSettings();
         },
         format: v => teletextColorNames[v]
+      },
+      'Date Suffix:': {
+        value: appSettings.enableSuffix,
+        format: v => v ? 'Yes' : 'No',
+        onchange: v => {
+          appSettings.enableSuffix = v;
+          writeSettings();
+        }
+      },
+      'Lead Zero:': {
+        value: appSettings.enableLeadingZero,
+        format: v => v ? 'Yes' : 'No',
+        onchange: v => {
+          appSettings.enableLeadingZero = v;
+          writeSettings();
+        }
       }
     });
   }
