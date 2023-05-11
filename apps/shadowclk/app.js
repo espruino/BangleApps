@@ -32,7 +32,7 @@ Graphics.prototype.setFontRighteous = function() {
 
 // Load and set default appSettings
 let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
-let appSettings = Object.assign({
+let defaultAppSettings = Object.assign({
   color: teletextColors[6],
   theme: 'light',
   enableSuffix: true,
@@ -48,7 +48,7 @@ let appSettings = Object.assign({
     var y = g.getHeight() / 2;
     g.reset().clearRect(Bangle.appRect);
     var date = new Date();
-    var appSettings = require("Storage").readJSON("shadowclk.json", 1) || {};
+    var appSettings = require("Storage").readJSON("shadowclk.json", 1) || defaultAppSettings;
     var settings = require("Storage").readJSON("setting.json", 1) || {};
     var is12HourFormat = settings["12hour"];
     var hour = date.getHours();
@@ -56,8 +56,11 @@ let appSettings = Object.assign({
     // Handle 12-hour format
     if (is12HourFormat) {
       hour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
-    } else if (appSettings.enableLeadingZero) {
-      hour = hour.toString().padStart(2, '0');
+    } else {
+      // If the leading zero option is enabled and hour is less than 10, add leading zero
+      if (appSettings.enableLeadingZero && hour < 10) {
+        hour = '0' + hour;
+      }
     }
     var timeStr = hour + ':' + minutes;
     // Handle midnight in 12-hour format specifically
@@ -68,7 +71,7 @@ let appSettings = Object.assign({
     var color = appSettings.color;
     g.setFontAlign(0, 0).setFont("LondrinaSolid").setColor(color).drawString(timeStr, x - 1, y);
     g.reset().setFontAlign(0, 0).setFont("LondrinaShadow").drawString(timeStr, x - 1, y);
-    // Get full date and handle formatting
+    // Get full date and format it
     var locale = require("locale");
     var dayOfMonth = date.getDate();
     var month = locale.month(date, 1).slice(0, 1).toUpperCase() + locale.month(date, 1).slice(1).toLowerCase();
@@ -87,12 +90,16 @@ let appSettings = Object.assign({
       }
       dayOfMonthStr += suffix;
     }
+    // Combine and print date string
     var dayOfWeek = locale.dow(date, 0).slice(0, 1).toUpperCase() + locale.dow(date, 0).slice(1).toLowerCase();
     var dateStr = month + " " + dayOfMonthStr + ", " + year + "\n" + dayOfWeek;
     g.setFontAlign(0, 0).setFont("Righteous").drawString(dateStr, x, y + 56);
     // Time interval set to redraw every 60 seconds
     if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
+    drawTimeout = setTimeout(() => {
+      drawTimeout = undefined;
+      draw();
+    }, 60000 - (Date.now() % 60000));
   }
   Bangle.setUI({
     mode: "clock",
