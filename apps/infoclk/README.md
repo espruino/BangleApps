@@ -16,6 +16,8 @@ There are generally a few apps that the user uses far more frequently than the o
 
 ## Configurability
 
+Dual stage unlock allows for unlocking to be split into two stages: lighting the screen upon the actual unlock, and displaying the extra information and shortcuts after a user-configurable number of taps. This may be useful if you want to quickly glance at the clock with a wrist flick in the dark, or if you want to show the time to other people. Swipe shortcuts are active even after the first stage.
+
 Displaying the seconds allows for more precise timing, but waking up the CPU to refresh the display more often consumes battery. The user can enable or disable them completely, but can also configure them to be enabled or disabled automatically based on some hueristics:
 
 * They can be hidden while the display is locked, if the user expects to unlock their watch when they need the seconds.
