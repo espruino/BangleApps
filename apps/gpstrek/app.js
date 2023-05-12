@@ -419,7 +419,7 @@ let parseRouteData = function(filename, progressMonitor){
 
   routeInfo.up = 0;
   routeInfo.down = 0;
-  
+
   let size = getApproxFileSize(filename);
 
   while ((scanOffset = getEntry(filename, scanOffset, waypoint)) > 0) {
@@ -526,7 +526,7 @@ let showRouteSelector  = function(){
   };
 
   STORAGE.list(/\.trf$/).forEach((file)=>{
-     menu[file] = ()=>{handleLoading(file);};
+      menu[file] = ()=>{handleLoading(file);};
   });
 
   E.showMenu(menu);
@@ -740,14 +740,14 @@ const compassSliceData = {
   },
   getPoints: function (){
     let points = [];
-    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint){
-      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().route.currentWaypoint), color:"#0f0"});
-    }
     if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route){
       points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, getLast(WIDGETS.gpstrek.getState().route)), icon: finishIcon});
     }
     if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().waypoint){
       points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().waypoint), icon: finishIcon});
+    }
+    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint){
+      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().route.currentWaypoint), color:"#0f0"});
     }
     return points;
   },
@@ -758,14 +758,26 @@ const compassSliceData = {
 
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
+  minimumDistance: Number.MAX_VALUE,
   getProgress: function() {
     return (WIDGETS.gpstrek.getState().route.index + 1) + "/" + WIDGETS.gpstrek.getState().route.count;
   },
   getTarget: function (){
-    if (distance(WIDGETS.gpstrek.getState().currentPos,WIDGETS.gpstrek.getState().route.currentWaypoint) < 30 && hasNext(WIDGETS.gpstrek.getState().route)){
-      next(WIDGETS.gpstrek.getState().route);
-      Bangle.buzz(1000);
+    let currentDistanceToTarget = distance(WIDGETS.gpstrek.getState().currentPos,WIDGETS.gpstrek.getState().route.currentWaypoint);
+    if (currentDistanceToTarget < this.minimumDistance){
+      this.minimumDistance = currentDistanceToTarget;
     }
+    let nextAvailable = hasNext(WIDGETS.gpstrek.getState().route);
+    if (currentDistanceToTarget < 30 && nextAvailable){
+      next(WIDGETS.gpstrek.getState().route);
+      this.minimumDistance = Number.MAX_VALUE;
+    } else if (this.minimumDistance < currentDistanceToTarget - 30){
+      stopDrawing();
+      setClosestWaypoint(WIDGETS.gpstrek.getState().route, WIDGETS.gpstrek.getState().route.index, showProgress);
+      Bangle.buzz(1000);
+      removeMenu();
+    }
+
     return WIDGETS.gpstrek.getState().route.currentWaypoint;
   },
   getStart: function (){
@@ -885,7 +897,7 @@ let draw = function(){
     ypos += sliceHeight+1;
     g.drawLine(0,ypos-1,g.getWidth(),ypos-1);
   }
-  
+
   if (scheduleDraw){
     drawInTimeout();
   }
