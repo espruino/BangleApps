@@ -38,9 +38,7 @@
       "name": "infoclk.json"
     }
   ],
-  "dependencies": [
-    {
-      "weather": "app"
-    }
-  ]
+  "dependencies": {
+    "weather": "app"
+  }
 }
