@@ -168,7 +168,6 @@
             loader.cleanAndSave(config);
             changed = false;
         }
-        ;
     };
     E.on('kill', save);
     var showMainMenu = function () {
