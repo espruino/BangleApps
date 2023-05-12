@@ -14,3 +14,4 @@
       Averaging for smoothing compass headings
       Save state if route or waypoint has been chosen
 0.09: Workaround a minifier issue allowing to install gpstrek with minification enabled
+0.10: Automatically search for new waypoint if moving away from current target
