@@ -9,12 +9,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <title>Shadow Clock Customizer</title>
   <style>
+    .underlined-heading {
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    .underlined-heading::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      border-bottom: 5px solid;
+    }
+
     .main-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      padding-bottom: 100px;
     }
 
     .color-button {
@@ -72,24 +87,39 @@
       display: block;
     }
 
-    #toggle-bg {
-      margin-top: 20px;
-    }
-
-    #toggle-leading-zero {
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 360px;
       margin-top: 10px;
     }
 
-    #toggle-suffix {
-      margin-top: 10px;
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 5px;
     }
 
-    #toggle-hour-format {
-      margin-top: 10px;
+    .btn {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0;
+      margin: 5px;
+      width: 160px;
     }
 
     #upload {
+      width: 150px;
+    }
+
+    #upload-container {
       margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      width: 160px;
     }
 
     #message-container {
@@ -103,16 +133,25 @@
 <body>
   <script src="../../core/lib/interface.js"></script>
   <div class="main-container">
-    <h1>Clock Customizer</h1>
+    <h1 class="underlined-heading">Clock Customizer</h1>
     <div id="color-buttons-container"></div>
-    <button id="toggle-bg" class="btn btn-primary" onclick="toggleBackground()">Light / Dark</button>
-    <button id="toggle-hour-format" class="btn btn-primary" onclick="toggleHourFormat()">24 Hour</button>
-    <button id="toggle-leading-zero" class="btn btn-primary" onclick="toggleLeadingZero()">Leading Zero: Off</button>
-    <button id="toggle-suffix" class="btn btn-primary" onclick="toggleSuffix()">Suffix: On</button>
+    <div class="button-container">
+      <div class="button-row">
+        <button id="toggle-hour-format" class="btn btn-primary" onclick="toggleHourFormat()">Time Mode: 24 Hour</button>
+        <button id="toggle-bg" class="btn btn-primary" onclick="toggleBackground()">Theme: Light</button>
+      </div>
+      <div class="button-row">
+        <button id="toggle-leading-zero" class="btn btn-primary" onclick="toggleLeadingZero()">Leading Zero:
+          OFF</button>
+        <button id="toggle-suffix" class="btn btn-primary" onclick="toggleSuffix()">Suffix: ON</button>
+      </div>
+    </div>
     <div id="preview-box">
       <canvas id="preview-canvas" width="176" height="176"></canvas>
     </div>
-    <button id="upload" class="btn btn-primary">Upload</button>
+    <div id="upload-container">
+      <button id="upload" class="btn btn-primary">Upload</button>
+    </div>
     <div id="message-container">
       <div id="message"></div>
     </div>
@@ -147,6 +186,7 @@
     let leadingZeroButton = document.getElementById('toggle-leading-zero');
     let hourFormatButton = document.getElementById('toggle-hour-format');
     let suffixButton = document.getElementById('toggle-suffix');
+    let bgButton = document.getElementById('toggle-bg');
 
     // Function to update the button text based on the current state
     function updateButtonState() {
@@ -155,17 +195,18 @@
       } else {
         leadingZeroButton.textContent = leadingZero ? 'Leading Zero: ON' : 'Leading Zero: OFF';
       }
-
-      hourFormatButton.textContent = is12Hour ? '12 Hour' : '24 Hour';
-      suffixButton.textContent = suffix ? 'Suffix: On' : 'Suffix: Off';
+      hourFormatButton.textContent = is12Hour ? 'Time Mode: 12 Hour' : 'Time Mode: 24 Hour';
+      suffixButton.textContent = suffix ? 'Suffix: ON' : 'Suffix: OFF';
+      bgButton.textContent = isDarkBg ? 'Theme: Dark' : 'Theme: Light';
 
       if (is12Hour) {
-        if (leadingZero) prevLeadingZeroState = true;
-        leadingZero = false;
+        prevLeadingZeroState = leadingZero; // Store the state before disabling
         leadingZeroButton.disabled = true;
+        leadingZeroButton.textContent = prevLeadingZeroState ? 'Leading Zero: ON' : 'Leading Zero: OFF';
       } else {
-        leadingZero = prevLeadingZeroState;
+        leadingZero = prevLeadingZeroState; // Retrieve the stored state
         leadingZeroButton.disabled = false;
+        leadingZeroButton.textContent = leadingZero ? 'Leading Zero: ON' : 'Leading Zero: OFF';
       }
     }
 
@@ -178,18 +219,19 @@
       }
     }
 
-    // Function to toggle between 12 and 24 hour format
     function toggleHourFormat() {
       is12Hour = !is12Hour;
-      updateButtonState();
+      updateButtonState();  // This will also correctly update leadingZero
       drawText(selectedColor);
     }
+
 
     // Toggle the background color between dark and light
     function toggleBackground() {
       isDarkBg = !isDarkBg; // Toggle the background state
       let previewBox = document.getElementById("preview-box");
       previewBox.style.backgroundColor = isDarkBg ? "black" : "white";
+      updateButtonState();
       drawText(selectedColor); // Redraw the text with updated color
     }
 
@@ -197,9 +239,10 @@
       suffix = !suffix;
       document.getElementById("toggle-suffix").textContent = `Suffix: ${suffix ? 'On' : 'Off'}`;
       updateButtonState();
+      drawText(selectedColor);
     }
 
-    function formatTime(date, leadingZero) {
+    function formatTime(date) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
       // If 12 hour format is selected, adjust hours
@@ -207,7 +250,7 @@
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12' in 12h format
       }
-      let formattedHours = leadingZero && hours < 10 ? `0${hours}` : `${hours}`;
+      let formattedHours = (!is12Hour && leadingZero && hours < 10) ? `0${hours}` : `${hours}`;
       let formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
       return `${formattedHours}:${formattedMinutes}`;
     }
@@ -246,7 +289,7 @@
       ctx.fillStyle = color;
 
       // Get the current local system time
-      let currentTime = formatTime(new Date(), leadingZero);
+      let currentTime = formatTime(new Date());
 
       // Measure the text width and calculate the horizontal position
       let timeWidth = ctx.measureText(currentTime).width;
@@ -355,47 +398,33 @@
       });
     }
 
-    // Set default settings
-    function setDefaultSettings() {
-      selectedColor = "#0ff";
-      isDarkBg = false;
-      leadingZero = false;
-      suffix = true;
-    }
-
     function loadSettings(callback) {
-      // Set a timeout for loading the settings
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout occurred")), 1000)
-      );
-      // Load settings from Bangle.js storage
-      const loadSettingsFromStorage = new Promise((resolve) => {
-        Puck.eval('[require("Storage").readJSON("shadowclk.json", true)]', (dataArray) => {
-          let data = dataArray ? dataArray[0] : null;
-          if (data) {
-            // Apply color, theme, enableLeadingZero and enableSuffix from JSON
-            let { color, theme, enableLeadingZero, enableSuffix } = data;
-            selectedColor = color;
-            isDarkBg = theme === "dark";
-            // Use the JSON values if they exist, otherwise use the current values
-            leadingZero = enableLeadingZero !== undefined ? enableLeadingZero : leadingZero;
-            suffix = enableSuffix !== undefined ? enableSuffix : suffix;
-            updateButtonState();
-            displayMessage("Previous settings loaded.", 3000);
-          } else {
-            setDefaultSettings();
-          }
-          resolve();
-        });
+      Puck.eval('[require("Storage").readJSON("shadowclk.json", true)]', (dataArray) => {
+        let data = dataArray ? dataArray[0] : null;
+        if (data) {
+          // Apply color, theme, enableLeadingZero, enableSuffix and timeMode from JSON
+          let { color, theme, enableLeadingZero, enableSuffix, enable12Hour } = data;
+          selectedColor = color !== undefined ? color : selectedColor;
+          isDarkBg = theme !== undefined ? (theme === "dark") : isDarkBg;
+          // Use the JSON values if they exist, otherwise use the current values
+          leadingZero = enableLeadingZero !== undefined ? enableLeadingZero : leadingZero;
+          prevLeadingZeroState = leadingZero; // Store the current state
+          suffix = enableSuffix !== undefined ? enableSuffix : suffix;
+          is12Hour = enable12Hour !== undefined ? enable12Hour : is12Hour; // Update the time mode from the settings
+          displayMessage("Previous settings loaded.", 3000);
+        } else {
+          // If no JSON data, load defaults
+          selectedColor = selectedColor;
+          isDarkBg = isDarkBg;
+          leadingZero = leadingZero;
+          prevLeadingZeroState = leadingZero;
+          suffix = suffix;
+          is12Hour = is12Hour;
+          displayMessage("Defaults loaded.", 3000);
+        }
+        updateButtonState(); // Update button state regardless
+        callback();
       });
-      // Execute the callback after loading the settings, or use default values in case of a timeout or error
-      Promise.race([loadSettingsFromStorage, timeout])
-        .then(() => callback())
-        .catch((error) => {
-          console.error(error);
-          setDefaultSettings();
-          callback();
-        });
     }
 
     // Update the time display every second
@@ -432,7 +461,8 @@
         color: selectedColor,
         theme: isDarkBg ? "dark" : "light",
         enableLeadingZero: leadingZero,
-        enableSuffix: suffix
+        enableSuffix: suffix,
+        enable12Hour: is12Hour
       };
 
       // Write the updated settings back to shadowclk.json
