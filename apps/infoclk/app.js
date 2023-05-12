@@ -419,10 +419,6 @@
   };
   Bangle.on('lock', onLock);
 
-  // Load widgets
-  Bangle.loadWidgets();
-  Bangle.drawWidgets();
-
   // Launch an app given the current ID. Handles special cases:
   //    false: Do nothing
   //    '#LAUNCHER': Open the launcher
@@ -511,6 +507,10 @@
       g.reset();
     }
   });
+
+  // Load widgets
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
 
   drawLockedSeconds(true);
 

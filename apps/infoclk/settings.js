@@ -161,7 +161,7 @@
                 name: appInfo.name,
                 val: appInfo.id
             });
-        };
+        }
 
         E.showMenu({
             '': {
