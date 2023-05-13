@@ -186,37 +186,8 @@
     switch (entry.type) {
       case "app":
         Bangle.buzz();
-        let app = config.apps[entry.id]!;
         let infoFile = storage.readJSON(entry.id + '.info', false);
-        if (app.fast) Bangle.load(infoFile.src);
-        else if (config.fastNag && !app.nagged)
-          E.showPrompt(/*LANG*/ 'Would you like to fast load?', {
-            title: infoFile.name,
-            buttons: {
-              "Yes": 0,
-              "Not now": 1,
-              "Never": 2
-            }
-          }).then((value: number) => {
-            switch (value) {
-              case 0:
-                app.nagged = true;
-                app.fast = true;
-                loader.cleanAndSave(config);
-                Bangle.load(infoFile.src);
-                break;
-              case 1:
-                load(infoFile.src);
-                break;
-              default:
-                app.nagged = true;
-                loader.cleanAndSave(config);
-                load(infoFile.src);
-                break;
-            }
-          });
-        else load(infoFile.src);
-        break;
+        load(infoFile.src);
       case "folder":
         Bangle.buzz();
         resetTimeout();

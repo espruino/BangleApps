@@ -11,8 +11,6 @@ The apps and folders will be presented in a grid layout, configurable in size. T
 
 Swiping up and down will scroll. Swiping from the left, using the back button, or pressing BTN1 will take you up a level to the folder containing the current one, or exit the launcher if you are at the top level.
 
-The first time you launch an app, you will be asked if you want to fast load it, if the feature is enabled. Fast loading saves time by skipping much of the initialization between apps. Instead, the launcher just undoes the changes it made to the watch's state. However, fast loading can only be done between two apps that support widgets, so the decision to fast load has to be made for each app. The options are "Yes", "Not now", and "Never", so choose "Yes" if the app uses widgets, "Not now" if you don't remember, and "Never" if you know for sure it doesn't use widgets.
-
 ## Settings menu
 
 * Show clocks / Show launcher: Whether clock and launcher apps are displayed in the UI to be launched. The default is no.
@@ -25,8 +23,6 @@ The first time you launch an app, you will be asked if you want to fast load it,
     * Font size: How much height of each grid cell to allocate for the app or folder name. If size zero is selected, there will be no title for apps and folders will use a size of 12. (This is important because it is not possible to distinguish folders solely by icon.) The default is 12.
 
     To prevent the launcher from becoming unusable, if neither icons nor text are enabled in the settings menu, text will still be drawn.
-
-* Prompt for fast launch: If yes, when launching an app that does not yet have a setting saved, ask whether it should be fast loaded. If no, already saved settings are still applied, but apps that have not been assigned a setting will be slow loaded. The default is yes.
 
 * Timeout: If the launcher is left idle for too long, return to the clock. This is convenient if you often accidentally open the launcher without noticing. At zero seconds, the timeout is disabled. The default is 30 seconds.
 

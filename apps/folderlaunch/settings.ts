@@ -245,14 +245,6 @@
                     }
                 });
             },
-            'Prompt for fast launch': {
-                value: config.fastNag,
-                format: value => (value ? 'Yes' : 'No'),
-                onchange: value => {
-                    config.fastNag = value;
-                    changed = true;
-                }
-            },
             'Timeout': {
                 value: config.timeout,
                 format: value => value ? `${value / 1000} sec` : 'None',

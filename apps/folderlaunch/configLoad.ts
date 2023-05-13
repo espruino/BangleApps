@@ -11,7 +11,6 @@ const DEFAULT_CONFIG: Config = {
         icon: true,
         font: 12
     },
-    fastNag: true,
     timeout: 30000,
     rootFolder: {
         folders: {},
@@ -128,7 +127,6 @@ export = {
             if (!config.apps.hasOwnProperty(app.id)) {
                 config.apps[app.id] = {
                     folder: [],
-                    fast: false,
                     nagged: false
                 };
             }

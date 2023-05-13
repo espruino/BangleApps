@@ -29,7 +29,6 @@ type Config = {
         icon: boolean,              // Whether to show icons
         font: number                // Which font to use for the name, or false to not show the name
     },
-    fastNag: boolean,               // Ask whether new apps should be fast-loaded the first time they are launched
     timeout: number,                // How many ms before returning to the clock, or zero to never return
     rootFolder: Folder,             // The top level folder, first displayed when opened
     apps: {                         // Saved info for each app
