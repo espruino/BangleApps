@@ -1,8 +1,8 @@
 {
-    var loader_1 = require('folderlaunch-configLoad.js');
+    var loader = require('folderlaunch-configLoad.js');
     var storage_1 = require('Storage');
     var FOLDER_ICON_1 = require("heatshrink").decompress(atob("mEwwMA///wAJCAoPAAongAonwAon4Aon8Aon+Aon/AooA/AH4A/AFgA="));
-    var config_1 = loader_1.getConfig();
+    var config_1 = loader.getConfig();
     var timeout_1;
     var resetTimeout_1 = function () {
         if (timeout_1) {
@@ -112,7 +112,7 @@
             }
         }
         if (empty)
-            E.showMessage('Folder is empty. Swipe left, back button, or BTN1 to go back.');
+            E.showMessage('Folder is empty. Swipe from left, back button, or BTN1 to go back.');
         if (nPages_1 > 1) {
             var barSize = (g.getHeight() - 24) / nPages_1;
             var barTop = 24 + (page_1 * barSize);
@@ -134,39 +134,8 @@
         switch (entry.type) {
             case "app":
                 Bangle.buzz();
-                var app_2 = config_1.apps[entry.id];
-                var infoFile_1 = storage_1.readJSON(entry.id + '.info', false);
-                if (app_2.fast)
-                    Bangle.load(infoFile_1.src);
-                else if (config_1.fastNag && !app_2.nagged)
-                    E.showPrompt('Would you like to fast load?', {
-                        title: infoFile_1.name,
-                        buttons: {
-                            "Yes": 0,
-                            "Not now": 1,
-                            "Never": 2
-                        }
-                    }).then(function (value) {
-                        switch (value) {
-                            case 0:
-                                app_2.nagged = true;
-                                app_2.fast = true;
-                                loader_1.cleanAndSave(config_1);
-                                Bangle.load(infoFile_1.src);
-                                break;
-                            case 1:
-                                load(infoFile_1.src);
-                                break;
-                            default:
-                                app_2.nagged = true;
-                                loader_1.cleanAndSave(config_1);
-                                load(infoFile_1.src);
-                                break;
-                        }
-                    });
-                else
-                    load(infoFile_1.src);
-                break;
+                var infoFile = storage_1.readJSON(entry.id + '.info', false);
+                load(infoFile.src);
             case "folder":
                 Bangle.buzz();
                 resetTimeout_1();

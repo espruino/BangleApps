@@ -9,7 +9,6 @@ var DEFAULT_CONFIG = {
         icon: true,
         font: 12
     },
-    fastNag: true,
     timeout: 30000,
     rootFolder: {
         folders: {},
@@ -80,7 +79,6 @@ module.exports = {
             if (!config.apps.hasOwnProperty(app_1.id)) {
                 config.apps[app_1.id] = {
                     folder: [],
-                    fast: false,
                     nagged: false
                 };
             }
