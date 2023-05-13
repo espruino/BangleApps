@@ -185,7 +185,7 @@
     let entry: GridEntry = grid[x]![y]!;
     switch (entry.type) {
       case "app":
-        // Bangle.buzz();
+        Bangle.buzz();
         let infoFile = storage.readJSON(entry.id + '.info', false);
         load(infoFile.src);
         break;

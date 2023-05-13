@@ -133,6 +133,7 @@
         var entry = grid_1[x][y];
         switch (entry.type) {
             case "app":
+                Bangle.buzz();
                 var infoFile = storage_1.readJSON(entry.id + '.info', false);
                 load(infoFile.src);
                 break;
