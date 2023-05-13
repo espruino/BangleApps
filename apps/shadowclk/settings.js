@@ -1,6 +1,16 @@
 (function (back) {
   let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
   let teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
+  let sysSettings = require('Storage').readJSON("setting.json", 1) || {};
+
+  // Load and set default settings
+  let appSettings = Object.assign({
+    color: teletextColors[6],
+    theme: 'light',
+    enableSuffix: true,
+    enableLeadingZero: false,
+    enable12Hour: false // default time mode
+  }, require('Storage').readJSON("shadowclk.json", true) || {});
 
   // Colors from 'Light BW' and 'Dark BW' themes
   function createThemeColors(mode) {
@@ -24,8 +34,21 @@
     };
   }
 
-  function updateTheme(mode, newTheme) {
+  // Switch theme and save to storage
+  function switchTheme(mode) {
+    if (mode === g.theme.dark) return;
+    let s = require('Storage').readJSON("setting.json", 1) || {};
+    s.theme = createThemeColors(mode);
+    require('Storage').writeJSON("setting.json", s);
+    updateTheme(mode);
+  }
+
+  // Update the current menu with the new theme
+  function updateTheme(mode) {
+    let newTheme = createThemeColors(mode);
     g.theme = newTheme;
+    appSettings.theme = mode ? 'dark' : 'light';
+    writeSettings();
     delete g.reset;
     g._reset = g.reset;
     g.reset = function (n) {
@@ -40,43 +63,47 @@
     showMenu();
   }
 
+  // Read current system theme setting
+  function getCurrentTheme() {
+    if (appSettings && appSettings.theme) {
+      return appSettings.theme;
+    }
+    return sysSettings && sysSettings.theme && sysSettings.theme.dark ? 'dark' : 'light';
+  }
+
+  // Read the current time mode
+  function getCurrentTimeMode() {
+    if (appSettings && appSettings.enable12Hour !== undefined) {
+      return appSettings.enable12Hour;
+    }
+    return sysSettings && sysSettings['12hour'] !== undefined ? sysSettings['12hour'] : undefined;
+  }
+
+  // Save settings to storage
+  function writeSettings() {
+    require('Storage').writeJSON("shadowclk.json", appSettings);
+  }
+
+  function writeTimeModeSetting() {
+    sysSettings['12hour'] = appSettings.enable12Hour;
+    require('Storage').writeJSON("setting.json", sysSettings);
+  }
+
   function showMenu() {
-    let sysSettings = require('Storage').readJSON("setting.json", 1) || {};
-    // Load and set default settings
-    let appSettings = Object.assign({
-      color: teletextColors[6],
-      theme: 'light',
-      enableSuffix: true,
-      enableLeadingZero: false,
-      enable12Hour: '24hour' // default time mode
-    }, require('Storage').readJSON("shadowclk.json", true) || {});
-
-    let currentTheme = sysSettings.theme ? (sysSettings.theme.dark ? 'dark' : 'light') : appSettings.theme;
-    let currentTimeMode = sysSettings['12hour'] ? '12hour' : '24hour';
-
-    appSettings.theme = currentTheme;
-    appSettings.enable12Hour = currentTimeMode;
+    appSettings.theme = getCurrentTheme();
+    appSettings.enable12Hour = getCurrentTimeMode();
 
     E.showMenu({
       "": {
         "title": "Shadow Clock"
       },
-      "< Back": () => {
-        // Save settings to storage
-        appSettings.enable12Hour = appSettings.enable12Hour === '12hour' ? '12hour' : '24hour';
-        require('Storage').writeJSON("shadowclk.json", appSettings);
-        back();
-      },
+      "< Back": () => back(),
       'Theme:': {
         value: (appSettings.theme === 'dark'),
         format: v => v ? "Dark" : "Light",
         onchange: v => {
-          appSettings.theme = v ? 'dark' : 'light';
-          let newTheme = createThemeColors(v);
-          // Save theme to storage
-          sysSettings.theme = newTheme;
-          require('Storage').writeJSON("setting.json", sysSettings);
-          updateTheme(v, newTheme);
+          writeSettings();
+          switchTheme(v);
         }
       },
       'Color:': {
@@ -85,6 +112,7 @@
         max: 7,
         onchange: v => {
           appSettings.color = teletextColors[v];
+          writeSettings();
         },
         format: v => teletextColorNames[v]
       },
@@ -93,6 +121,7 @@
         format: v => v ? 'Yes' : 'No',
         onchange: v => {
           appSettings.enableSuffix = v;
+          writeSettings();
         }
       },
       'Lead Zero:': {
@@ -100,16 +129,16 @@
         format: v => v ? 'Yes' : 'No',
         onchange: v => {
           appSettings.enableLeadingZero = v;
+          writeSettings();
         }
       },
       'Time Mode:': {
-        value: (appSettings.enable12Hour === '12hour'),
+        value: appSettings.enable12Hour,
         format: v => v ? '12 Hr' : '24 Hr',
         onchange: v => {
-          let mode = v ? '12hour' : '24hour';
-          appSettings.enable12Hour = mode;
-          sysSettings['12hour'] = mode === '12hour';
-          require('Storage').writeJSON("setting.json", sysSettings);
+          appSettings.enable12Hour = v;
+          writeSettings();
+          writeTimeModeSetting();
         }
       }
     });
