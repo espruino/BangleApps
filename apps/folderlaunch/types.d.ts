@@ -1,16 +1,3 @@
-type AppInfoFile = {                // Contents of a .info file
-    id: string,
-    name: string,
-    type?: string,
-    src?: string,
-    icon: string,
-    version: string,
-    tags: string,
-    files: string,
-    data: string,
-    sortorder?: number
-};
-
 type Folder = {
     folders: {                      // name: folder pairs of all nested folders
         [key: string]: Folder
