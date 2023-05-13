@@ -10,34 +10,14 @@
     var dragging = false;
     var activeTimeout;
     var waitForRelease = true;
-    var mayInterceptSwipe = function () {
-        if (Bangle.CLKINFO_FOCUS)
-            return 0;
-        if (Bangle.CLOCK)
-            return 1;
-        var swipes = Bangle["#onswipe"];
-        if (typeof swipes === "function") {
-            if (swipes !== onSwipe)
-                return swipes.length > 1;
-        }
-        else if (swipes) {
-            for (var _i = 0, swipes_1 = swipes; _i < swipes_1.length; _i++) {
-                var handler = swipes_1[_i];
-                if (handler !== onSwipe && (handler === null || handler === void 0 ? void 0 : handler.length) > 1)
-                    return 0;
-            }
-        }
-        if (Bangle["#ondrag"])
-            return 0;
-        return 1;
-    };
     var onSwipe = (function (_lr, ud) {
-        if (ud > 0 && !activeTimeout && mayInterceptSwipe()) {
+        if (ud > 0 && !activeTimeout && !Bangle.CLKINFO_FOCUS) {
             listen();
             Bangle.buzz(20);
         }
     });
     var onDrag = (function (e) {
+        E.stopEventPropagation && E.stopEventPropagation();
         if (e.b === 0) {
             var wasDragging = dragging;
             dragging = false;
@@ -99,9 +79,9 @@
     var listen = function () {
         var wasActive = !!activeTimeout;
         if (!wasActive) {
-            suspendOthers();
             waitForRelease = true;
             Bangle.on("drag", onDrag);
+            Bangle["#ondrag"] = [onDrag].concat(Bangle["#ondrag"].filter(function (f) { return f !== onDrag; }));
             redraw();
         }
         if (activeTimeout)
@@ -109,7 +89,6 @@
         activeTimeout = setTimeout(function () {
             activeTimeout = undefined;
             Bangle.removeListener("drag", onDrag);
-            resumeOthers();
             redraw();
         }, 3000);
     };
@@ -148,48 +127,4 @@
     var toggle = function () { return sendHid(0x10); };
     var up = function () { return sendHid(0x40); };
     var down = function () { return sendHid(0x80); };
-    var touchEvents = {
-        tap: null,
-        gesture: null,
-        aiGesture: null,
-        swipe: null,
-        touch: null,
-        drag: null,
-        stroke: null,
-    };
-    var suspendOthers = function () {
-        for (var event_ in touchEvents) {
-            var event = event_;
-            var handlers = Bangle["#on".concat(event)];
-            if (!handlers)
-                continue;
-            var newEvents = void 0;
-            if (handlers instanceof Array)
-                newEvents = handlers.filter(function (f) { return f; });
-            else
-                newEvents = [handlers];
-            for (var _i = 0, newEvents_1 = newEvents; _i < newEvents_1.length; _i++) {
-                var handler = newEvents_1[_i];
-                Bangle.removeListener(event, handler);
-            }
-            touchEvents[event] = newEvents;
-        }
-    };
-    var resumeOthers = function () {
-        for (var event_ in touchEvents) {
-            var event = event_;
-            var handlers = touchEvents[event];
-            touchEvents[event] = null;
-            if (handlers)
-                for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
-                    var handler = handlers_1[_i];
-                    try {
-                        Bangle.on(event, handler);
-                    }
-                    catch (e) {
-                        console.log("couldn't restore \"".concat(event, "\" handler:"), e);
-                    }
-                }
-        }
-    };
 })();

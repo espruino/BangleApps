@@ -1,9 +1,4 @@
 (() => {
-	type BangleEventKeys = "tap" | "gesture" | "aiGesture" | "swipe" | "touch" | "drag" | "stroke";
-	type BangleEvents = {
-		[key in BangleEventKeys as `#on${key}`]?: Handler | (Handler | undefined)[]
-	};
-
 	const settings: Settings = require("Storage").readJSON("setting.json", true) || { HID: false } as Settings;
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
@@ -18,40 +13,18 @@
 	let activeTimeout: number | undefined;
 	let waitForRelease = true;
 
-	// If the user shows a menu, we want to temporarily disable ourselves
-	//
-	// We could detect showing of a menu by overriding E.showMenu
-	// and to detect hiding of a menu, we hook setUI
-	//
-	// Perhaps easier to check Bangle.swipeHandler - set by setUI,
-	// called by E.showMenu
-	const mayInterceptSwipe = () => {
-		if((Bangle as BangleExt).CLKINFO_FOCUS) return 0;
-		if(Bangle.CLOCK) return 1;
-
-		const swipes = (Bangle as BangleEvents)["#onswipe"];
-		if(typeof swipes === "function"){
-			if(swipes !== onSwipe)
-				return swipes.length > 1; // second argument is up/down
-		}else if(swipes){
-			for(const handler of swipes)
-				if(handler !== onSwipe && handler?.length > 1)
-					return 0;
-		}
-
-		if((Bangle as BangleEvents)["#ondrag"]) return 0;
-		return 1;
-	};
-
 	const onSwipe = ((_lr, ud) => {
 		// do these checks in order of cheapness
-		if(ud! > 0 && !activeTimeout && mayInterceptSwipe()){
+		if(ud! > 0 && !activeTimeout && !(Bangle as BangleExt).CLKINFO_FOCUS){
 			listen();
 			Bangle.buzz(20);
 		}
 	}) satisfies SwipeCallback;
 
 	const onDrag = (e => {
+		// Espruino/35c8cb9be11
+		(E as any).stopEventPropagation && (E as any).stopEventPropagation();
+
 		if(e.b === 0){
 			// released
 			const wasDragging = dragging;
@@ -108,9 +81,14 @@
 	const listen = () => {
 		const wasActive = !!activeTimeout;
 		if(!wasActive){
-			suspendOthers();
 			waitForRelease = true; // wait for first touch up before accepting gestures
+
 			Bangle.on("drag", onDrag);
+			// move our drag to the start of the event listener array
+			(Bangle as any)["#ondrag"] = [onDrag].concat(
+				(Bangle as any)["#ondrag"].filter((f: unknown) => f !== onDrag)
+			);
+
 			redraw();
 		}
 
@@ -119,7 +97,6 @@
 			activeTimeout = undefined;
 
 			Bangle.removeListener("drag", onDrag);
-			resumeOthers();
 
 			redraw();
 		}, 3000);
@@ -174,54 +151,4 @@
 	const toggle = () => /*DEBUG ? console.log("toggle") : */ sendHid(0x10);
 	const up = () => /*DEBUG ? console.log("up") : */ sendHid(0x40);
 	const down = () => /*DEBUG ? console.log("down") : */ sendHid(0x80);
-
-	// similarly to the lightswitch app, we tangle with the listener arrays to
-	// disable event handlers
-	type Handler = () => void;
-	const touchEvents: {
-		[key in BangleEventKeys]: null | Handler[]
-	} = {
-		tap: null,
-		gesture: null,
-		aiGesture: null,
-		swipe: null,
-		touch: null,
-		drag: null,
-		stroke: null,
-	};
-
-	const suspendOthers = () => {
-		for(const event_ in touchEvents){
-			const event = event_ as BangleEventKeys;
-			const handlers = (Bangle as BangleEvents)[`#on${event}`];
-
-			if(!handlers) continue;
-
-			let newEvents;
-			if(handlers instanceof Array)
-				newEvents = handlers.filter(f=>f) as Handler[];
-			else
-				newEvents = [handlers /* single fn */];
-
-			for(const handler of newEvents)
-				Bangle.removeListener(event, handler);
-
-			touchEvents[event] = newEvents;
-		}
-	};
-	const resumeOthers = () => {
-		for(const event_ in touchEvents){
-			const event = event_ as BangleEventKeys;
-			const handlers = touchEvents[event];
-			touchEvents[event] = null;
-
-			if(handlers)
-				for(const handler of handlers)
-					try{
-						Bangle.on(event as any, handler);
-					}catch(e){
-						console.log(`couldn't restore "${event}" handler:`, e);
-					}
-		}
-	};
 })()
