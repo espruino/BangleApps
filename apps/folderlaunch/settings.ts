@@ -1,4 +1,4 @@
-(function (back: Function) {
+(function (back) {
     const loader = require('folderlaunch-configLoad.js');
     const storage = require('Storage');
     const textinput = require('textinput');
@@ -181,7 +181,7 @@
             config.hash = 0;    // Invalidate the cache so changes to hidden apps or folders actually get reflected
             loader.cleanAndSave(config);
             changed = false; // So we don't do it again on exit
-        };
+        }
     };
 
     E.on('kill', save);
@@ -269,4 +269,4 @@
         });
     };
     showMainMenu();
-});
+} satisfies SettingsFunc);
