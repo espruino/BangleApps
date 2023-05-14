@@ -5,7 +5,7 @@
 SetUI, Layout, and setWatch( function(b) { }, BTN1, { repeat: true, edge:'falling' })
 */
 {
-var v_mode_debug=2; //, 0=no, 1 min, 2 prone detail
+var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 //var required for drawing with dynamic screen
 var rect = Bangle.appRect;
 var history = [];
