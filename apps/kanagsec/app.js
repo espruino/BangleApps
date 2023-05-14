@@ -50,9 +50,11 @@ var temperature = getTemperature();
 var drawTimeout;
 
 // schedule a draw for the next minute
-function queueDraw() {
+function queueDraw() 
+{
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function () {
+  drawTimeout = setTimeout(function () 
+  {
     drawTimeout = undefined;
     draw();
   }, (energySave == true ? 60000 : 1000) - (Date.now() % (energySave == true ? 60000 : 1000)));
@@ -60,6 +62,11 @@ function queueDraw() {
 
 
 function draw() {
+  
+  // sometimes, when gadgetbridge sends a message, the locked event is not thrown after the messages was displayed.
+  // this checks the lock state manually and set the energysave.
+  if (!energySave && Bangle.isLocked()) { energySave=true; }
+
   var date = new Date();
   var x = 10;
   var y = 2;
@@ -69,8 +76,9 @@ function draw() {
   //draw main background image
   g.drawImage(getKanagawa(), 0, 0);
 
-  // only update the batterylvl and temperature every 30 seconds
-  if (date.getSeconds() % 30 == 0) {
+  // only update the batterylvl and temperature every 30 seconds or every minute if energysave is on
+  if (date.getSeconds() % 30 == 0) 
+  {
     batteryLvl = E.getBattery() + "%";
     temperature = getTemperature();
   }
@@ -121,13 +129,13 @@ function draw() {
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lock', on => {
-  if (!on) {
-    energySave = false;
-    queueDraw();
-  }
-  else {
+  if (on) {
     energySave = true;
   }
+  else {
+    energySave = false;
+  }
+  draw();
 });
 
 g.clear();
