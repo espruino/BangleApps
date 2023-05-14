@@ -139,6 +139,56 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime)
   };
 };
 
+let getMapSlice = function(refreshTime){
+  let lastDrawn = Date.now() - Math.random()*refreshTime;
+  return {
+    refresh: function (){
+      let refresh = (Bangle.isLocked()?(refreshTime?refreshTime*5:10000):(refreshTime?refreshTime*2:1000));
+      let old = (Date.now() - lastDrawn) > refresh;
+      return true;
+    },
+    draw: function (graphics, x, y, height, width){
+      lastDrawn = Date.now();
+ 
+      graphics.clearRect(x,y,x+width,y+height);
+      graphics.setClipRect(x,y,x+width,y+height);
+
+      let course = WIDGETS.gpstrek.getState().currentPos.course;
+      if  (course === undefined) course = WIDGETS.gpstrek.getState().avgComp;
+      let route = WIDGETS.gpstrek.getState().route;
+      let startingPoint = Bangle.project(route.currentWaypoint);
+      let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+  
+      let poly=[ current.x, current.y ];
+  
+      for (let i = 0; i < 63; i++){
+        let nextPoint = getNext(route, route.index + i);
+        if (!nextPoint.lat) break;
+        let toDraw = Bangle.project(nextPoint);
+        poly.push(toDraw.x);
+        poly.push(toDraw.y);
+      }
+      poly = graphics.transformVertices(poly, {
+        x: -current.x,
+        y: -current.y,
+      });
+      poly = graphics.transformVertices(poly, {
+        rotate:require("graphics_utils").degreesToRadians(course),
+      });
+      poly = graphics.transformVertices(poly, {
+        scale:0.05,
+      });
+      poly = graphics.transformVertices(poly, {
+        x: x+width/2,
+        y: y+height
+      });
+      print(current, poly);
+      graphics.fillCircle(poly[0], poly[1], 5);
+      graphics.drawPoly(poly, false);
+    }
+  };
+};
+
 let getTargetSlice = function(targetDataSource){
   let nameIndex = 0;
   let lastDrawn = Date.now() - Math.random()*3000;
@@ -453,14 +503,26 @@ let parseRouteData = function(filename, progressMonitor){
   return routeInfo;
 };
 
-let hasPrev = function(route){
+let hasPrev = function(route, index){
+  if (!index) index = route.index;
   if (route.mirror) return route.index < (route.count - 1);
   return route.index > 0;
 };
 
-let hasNext = function(route){
+let hasNext = function(route, index){
+  if (!index) index = route.index;
   if (route.mirror) return route.index > 0;
   return route.index < (route.count - 1);
+};
+
+let getNext = function(route, index){
+  if (!index) index = route.index;
+  if (!hasNext(route, index)) return;
+  if (route.mirror) --index;
+  if (!route.mirror) ++index;
+  let result = {};
+  getEntry(route.filename, route.refs[index], result);
+  return result;
 };
 
 let next = function(route){
@@ -758,6 +820,12 @@ const compassSliceData = {
     return [{xpos:0.5, width:10, height:10, linecolor:g.theme.fg, fillcolor:"#f00"}];
   }
 };
+  
+const mapSliceData = {
+  getRoute: function() {
+    return WIDGETS.gpstrek.getState().route;
+  }
+};
 
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
@@ -789,6 +857,7 @@ let getSliceHeight = function(number){
 };
 
 let compassSlice = getCompassSlice(compassSliceData);
+let mapSlice = getMapSlice(mapSliceData);
 let waypointSlice = getTargetSlice(waypointData);
 let finishSlice = getTargetSlice(finishData);
 let eleSlice = getDoubleLineSlice("Up","Down",()=>{
@@ -842,6 +911,7 @@ let updateSlices = function(){
   slices = [];
   slices.push(compassSlice);
 
+  if (WIDGETS.gpstrek.getState().route) slices.push(mapSlice);
   if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint && WIDGETS.gpstrek.getState().route.index < WIDGETS.gpstrek.getState().route.count - 1) {
     slices.push(waypointSlice);
   }
