@@ -217,7 +217,7 @@ exports.buzz = function(msgSrc) {
   if (repeat===undefined) repeat = 4; // repeat may be zero
   if (repeat) 
   {
-    exports.buzzTimeout = setInterval(() => require("buzz").pattern(pattern), repeat*1000);
+    exports.buzzInterval = setInterval(() => require("buzz").pattern(pattern), repeat*1000);
     let vibrateTimeout = msgSettings.vibrateTimeout;
     if (vibrateTimeout===undefined) vibrateTimeout = 60;
     if (vibrateTimeout && !exports.stopTimeout) exports.stopTimeout = setTimeout(exports.stopBuzz, vibrateTimeout*1000);
@@ -228,8 +228,8 @@ exports.buzz = function(msgSrc) {
  * Stop buzzing
  */
 exports.stopBuzz = function() {
-  if (exports.buzzTimeout) clearTimeout(exports.buzzTimeout);
-  delete exports.buzzTimeout;
+  if (exports.buzzInterval) clearInterval(exports.buzzInterval);
+  delete exports.buzzInterval;
   if (exports.stopTimeout) clearTimeout(exports.stopTimeout);
   delete exports.stopTimeout;
 };
