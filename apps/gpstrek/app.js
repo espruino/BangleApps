@@ -149,20 +149,24 @@ let getMapSlice = function(refreshTime){
     },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
- 
+  
       graphics.clearRect(x,y,x+width,y+height);
       graphics.setClipRect(x,y,x+width,y+height);
 
       let course = WIDGETS.gpstrek.getState().currentPos.course;
       if  (course === undefined) course = WIDGETS.gpstrek.getState().avgComp;
+      if  (course === undefined) course = 0;
+
       let route = WIDGETS.gpstrek.getState().route;
       let startingPoint = Bangle.project(route.currentWaypoint);
-      let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
-  
+      let current = startingPoint;
+      if (WIDGETS.gpstrek.getState().currentPos.lat) current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+
       let poly=[ current.x, current.y ];
-  
-      for (let i = 0; i < 63; i++){
-        let nextPoint = getNext(route, route.index + i);
+
+      for (let i = route.index -10; i < route.index + 50; i++){
+        if (i < 0) continue;
+        let nextPoint = getNext(route, i);
         if (!nextPoint.lat) break;
         let toDraw = Bangle.project(nextPoint);
         poly.push(toDraw.x);
@@ -180,10 +184,11 @@ let getMapSlice = function(refreshTime){
       });
       poly = graphics.transformVertices(poly, {
         x: x+width/2,
-        y: y+height
+        y: y+height*0.6
       });
       print(current, poly);
-      graphics.fillCircle(poly[0], poly[1], 5);
+      graphics.drawLine(poly[0]-height*0.1, poly[1]+height*0.2, poly[0], poly[1]);
+      graphics.drawLine(poly[0]+height*0.1, poly[1]+height*0.2, poly[0], poly[1]);
       graphics.drawPoly(poly, false);
     }
   };
@@ -833,7 +838,6 @@ const waypointData = {
     return (WIDGETS.gpstrek.getState().route.index + 1) + "/" + WIDGETS.gpstrek.getState().route.count;
   },
   getTarget: function (){
-
     return WIDGETS.gpstrek.getState().route.currentWaypoint;
   },
   getStart: function (){
