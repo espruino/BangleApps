@@ -87,7 +87,6 @@ let getEntry = function(filename, offset, result){
   offset++;
 
   result.fileLength = offset - result.fileOffset;
-  //print(result);
   return offset;
 };
 
@@ -142,14 +141,9 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime)
 let getMapSlice = function(refreshTime){
   let lastDrawn = Date.now() - Math.random()*refreshTime;
   return {
-    refresh: function (){
-      let refresh = (Bangle.isLocked()?(refreshTime?refreshTime*5:10000):(refreshTime?refreshTime*2:1000));
-      let old = (Date.now() - lastDrawn) > refresh;
-      return true;
-    },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
-  
+
       graphics.clearRect(x,y,x+width,y+height);
       graphics.setClipRect(x,y,x+width,y+height);
 
@@ -159,36 +153,45 @@ let getMapSlice = function(refreshTime){
 
       let route = WIDGETS.gpstrek.getState().route;
       let startingPoint = Bangle.project(route.currentWaypoint);
-      let current = startingPoint;
-      if (WIDGETS.gpstrek.getState().currentPos.lat) current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+      if (WIDGETS.gpstrek.getState().currentPos.lat) {
+        let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+        current.x = startingPoint.x - current.x;
+        current.y = (startingPoint.y - current.y)*-1;
+        current.x *= 0.05;
+        current.y *= 0.05;
+        current.x += x + width/2;
+        current.y += y + height*0.7;
+        
+        if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
+        if (current.x > x + width) {current.x = x + width - height*0.15; graphics.setColor(1,0,0).fillRect(x + width - height * 0.1,y,x + width ,y+height);}
+        if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
+        if (current.y > y + height) { current.y = y + height - height*0.15; graphics.setColor(1,0,0).fillRect(x,y + height * 0.9,x + width ,y+height);}
 
-      let poly=[ current.x, current.y ];
+        graphics.setColor(graphics.theme.fg);
 
-      for (let i = route.index -10; i < route.index + 50; i++){
+        graphics.drawLine(current.x, current.y, current.x-height*0.1, current.y+height*0.1);
+        graphics.drawLine(current.x, current.y, current.x+height*0.1, current.y+height*0.1);
+      }
+
+      let poly=[];
+
+      for (let i = route.index; i < route.index + 60; i++){
         if (i < 0) continue;
         let nextPoint = getNext(route, i);
-        if (!nextPoint.lat) break;
+        if (!nextPoint || !nextPoint.lat) break;
         let toDraw = Bangle.project(nextPoint);
-        poly.push(toDraw.x);
-        poly.push(toDraw.y);
+        poly.push(startingPoint.x-toDraw.x);
+        poly.push((startingPoint.y-toDraw.y)*-1);
       }
       poly = graphics.transformVertices(poly, {
-        x: -current.x,
-        y: -current.y,
-      });
-      poly = graphics.transformVertices(poly, {
+        scale: 0.05,
         rotate:require("graphics_utils").degreesToRadians(course),
-      });
-      poly = graphics.transformVertices(poly, {
-        scale:0.05,
-      });
-      poly = graphics.transformVertices(poly, {
         x: x+width/2,
-        y: y+height*0.6
+        y: y+height*0.7
       });
-      print(current, poly);
-      graphics.drawLine(poly[0]-height*0.1, poly[1]+height*0.2, poly[0], poly[1]);
-      graphics.drawLine(poly[0]+height*0.1, poly[1]+height*0.2, poly[0], poly[1]);
+      //print(current, poly);
+      
+      
       graphics.drawPoly(poly, false);
     }
   };
@@ -517,7 +520,7 @@ let hasPrev = function(route, index){
 let hasNext = function(route, index){
   if (!index) index = route.index;
   if (route.mirror) return route.index > 0;
-  return route.index < (route.count - 1);
+  return index < (route.count - 1);
 };
 
 let getNext = function(route, index){
@@ -939,11 +942,8 @@ let clear = function() {
 
 let minimumDistance = Number.MAX_VALUE;
 let lastSearch = 0;
-let updateInProgress = false;
 
 let updateRouting = function() {
-  if (updateInProgress) return;
-  updateInProgress = true;
   if (WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().currentPos.lat) {
     let currentDistanceToTarget = distance(WIDGETS.gpstrek.getState().currentPos,WIDGETS.gpstrek.getState().route.currentWaypoint);
     if (currentDistanceToTarget < minimumDistance){
@@ -962,7 +962,6 @@ let updateRouting = function() {
       switchNav();
     }
   }
-  updateInProgress = false;
 };
 
 let draw = function(){
@@ -979,7 +978,6 @@ let draw = function(){
   }
   if (firstDraw) Bangle.drawWidgets();
   lastDrawnScreen = screen;
-  updateRouting();
 
   let sliceHeight = getSliceHeight();
   for (let slice of slices.slice(firstSlice,firstSlice + WIDGETS.gpstrek.getState().numberOfSlices)) {
