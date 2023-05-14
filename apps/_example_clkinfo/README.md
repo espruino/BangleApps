@@ -1,8 +1,8 @@
-# Widget Name
+# Clock Info Name
 
-More info on making Widgets and what they are: http://www.espruino.com/Bangle.js+Widgets
+More info on making Clock Infos and what they are: http://www.espruino.com/Bangle.js+Clock+Info
 
-Describe the app...
+Describe the clock info...
 
 Add screen shots (if possible) to the app folder and link then  into this file with ![](<name>.png)
 

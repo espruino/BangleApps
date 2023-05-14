@@ -1,4 +1,4 @@
-{
+(() => {
 type Timestamp = number;
 type Cache = {
 	[key: string]: {
@@ -113,4 +113,4 @@ global.load = (src: string) => {
 
 	return oldLoad(src);
 };
-}
+})()

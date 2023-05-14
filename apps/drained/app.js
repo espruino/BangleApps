@@ -35,14 +35,16 @@ var draw = function () {
     var dateStr = require("locale").date(date, 0).toUpperCase() +
         "\n" +
         require("locale").dow(date, 0).toUpperCase();
+    var x2 = x + 6;
+    var y2 = y + 66;
     g.reset()
         .clearRect(Bangle.appRect)
         .setFont("Vector", 55)
         .setFontAlign(0, 0)
         .drawString(timeStr, x, y)
         .setFont("Vector", 24)
-        .drawString(dateStr, x, y + 56)
-        .drawString("".concat(E.getBattery(), "%"), x, y + 104);
+        .drawString(dateStr, x2, y2)
+        .drawString("".concat(E.getBattery(), "%"), x2, y2 + 48);
     if (nextDraw)
         clearTimeout(nextDraw);
     nextDraw = setTimeout(function () {
@@ -75,9 +77,9 @@ var reload = function () {
 };
 reload();
 Bangle.emit("drained", E.getBattery());
-var _a = require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}, _b = _a.disableBoot, disableBoot = _b === void 0 ? false : _b, _c = _a.restore, restore = _c === void 0 ? 20 : _c;
+var _a = require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}, _b = _a.keepStartup, keepStartup = _b === void 0 ? true : _b, _c = _a.restore, restore = _c === void 0 ? 20 : _c, _d = _a.exceptions, exceptions = _d === void 0 ? ["widdst.0"] : _d;
 function drainedRestore() {
-    if (disableBoot) {
+    if (!keepStartup) {
         try {
             eval(require('Storage').read('bootupdate.js'));
         }
@@ -87,16 +89,28 @@ function drainedRestore() {
     }
     load();
 }
-if (disableBoot) {
-    var checkCharge_1 = function () {
-        if (E.getBattery() < restore)
-            return;
-        drainedRestore();
-    };
-    if (Bangle.isCharging())
-        checkCharge_1();
-    Bangle.on("charging", function (charging) {
-        if (charging)
-            checkCharge_1();
-    });
+var checkCharge = function () {
+    if (E.getBattery() < restore)
+        return;
+    drainedRestore();
+};
+if (Bangle.isCharging())
+    checkCharge();
+Bangle.on("charging", function (charging) {
+    if (charging)
+        checkCharge();
+});
+if (!keepStartup) {
+    var storage = require("Storage");
+    for (var _i = 0, exceptions_1 = exceptions; _i < exceptions_1.length; _i++) {
+        var boot = exceptions_1[_i];
+        try {
+            var js = storage.read("".concat(boot, ".boot.js"));
+            if (js)
+                eval(js);
+        }
+        catch (e) {
+            console.log("error loading boot exception \"".concat(boot, "\": ").concat(e));
+        }
+    }
 }

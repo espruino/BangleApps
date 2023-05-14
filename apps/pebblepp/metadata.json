@@ -1,0 +1,18 @@
+{
+  "id": "pebblepp",
+  "name": "Pebble++ Clock",
+  "shortName": "Pebble++",
+  "version": "0.01",
+  "description": "A pebble style clock (based on the 'Pebble Clock' app) but with two configurable ClockInfo items at the top",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"pebblepp.app.js","url":"app.js"},
+    {"name":"pebblepp.settings.js","url":"settings.js"},
+    {"name":"pebblepp.img","url":"icon.js","evaluate":true}
+  ]
+}

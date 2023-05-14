@@ -1,5 +1,5 @@
-{
-const { battery: threshold = 5, interval = 10, disableBoot = false }: DrainedSettings
+(() => {
+const { battery: threshold = 5, interval = 10, keepStartup = true }: DrainedSettings
   = require("Storage").readJSON(`drained.setting.json`, true) || {};
 
 drainedInterval = setInterval(() => {
@@ -10,7 +10,7 @@ drainedInterval = setInterval(() => {
 
   const app = "drained.app.js";
 
-  if(disableBoot)
+  if(!keepStartup)
     require("Storage").write(
       ".boot0",
       `if(typeof __FILE__ === "undefined" || __FILE__ !== "${app}") setTimeout(load, 100, "${app}");`
@@ -18,4 +18,4 @@ drainedInterval = setInterval(() => {
 
   load(app);
 }, interval * 60 * 1000);
-}
+})()

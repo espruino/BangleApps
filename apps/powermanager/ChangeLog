@@ -10,3 +10,5 @@
 0.08: Fix the wrapping of intervals/timeouts with parameters
       Fix the widget drawing if widgets are hidden and Bangle.setLCDBrightness is called
 0.09: Accidental version bump
+0.10: Use charging state on boot for auto calibration
+      Log additional timestamp for trace log

@@ -140,6 +140,19 @@
       onchange: v => {
         writeSettings("logDetails", v);
       }
+    },
+    'Clear logs': function (){
+      E.showPrompt("Delete logs and reload?").then((v)=>{
+        if (v) {
+          require('Storage').open("powermanager.log","w").erase();
+          require("Storage").erase("powermanager.def.json");
+          require("Storage").erase("powermanager.hw.json");
+          load();
+        } else 
+          E.showMenu(submenu_logging); 
+       }).catch(()=>{
+        E.showMenu(submenu_logging);
+      });
     }
   }
 
