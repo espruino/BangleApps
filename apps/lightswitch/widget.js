@@ -165,13 +165,12 @@
       w.changeValue(value, event.b);
 
       // masks this drag event by messing up the event handler
-      // see https://github.com/espruino/Espruino/issues/2151
-      Bangle.removeListener("drag", w.dragListener);
-      Bangle["#ondrag"] = [w.dragListener].concat(Bangle["#ondrag"]);
+      E.stopEventPropagation&&E.stopEventPropagation();
 
       // on touch release remove drag listener and reset drag status to indicate stopped drag action
       if (!event.b) {
         Bangle.removeListener("drag", w.dragListener);
+        Bangle.removeListener("swipe", w.swipeListener);
         w.dragStatus = "off";
       }
 
@@ -179,6 +178,11 @@
       w = undefined;
       y = undefined;
       value = undefined;
+    },
+
+    swipeListener: function(_,__) {
+      // masks this swipe event by messing up the event handler
+      E.stopEventPropagation&&E.stopEventPropagation();
     },
 
     // listener function //
@@ -197,12 +201,14 @@
           Bangle.buzz(25);
           // check if drag is disabled
           if (w.dragDelay) {
-            // add drag listener at first position
+            // add drag and swipe listeners at respective first position
             Bangle["#ondrag"] = [w.dragListener].concat(Bangle["#ondrag"]);
+            Bangle["#onswipe"] = [w.swipeListener].concat(Bangle["#onswipe"]);
             // set drag timeout
             w.dragStatus = setTimeout((w) => {
-              // remove drag listener
+              // remove drag and swipe listeners
               Bangle.removeListener("drag", w.dragListener);
+              Bangle.removeListener("swipe", w.swipeListener);
               // clear drag timeout
               if (typeof w.dragStatus === "number") clearTimeout(w.dragStatus);
               // reset drag status to indicate stopped drag action
