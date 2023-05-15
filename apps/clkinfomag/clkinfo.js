@@ -27,6 +27,7 @@
             g.drawLine(8,12,16,12);
           else
             g.fillPoly(g.transformVertices([0,-10,4,10,-4,10],{x:12,y:12,rotate:-heading/57}));
+          g.transparent=0; // only works on 2v18+, ignored otherwise (makes image background transparent)
           return { text : isNaN(heading)?"--":Math.round(heading),
                       v : 0|heading, min : 0, max : 360,
                       img : g.asImage("string") }},
