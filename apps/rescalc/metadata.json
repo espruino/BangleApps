@@ -1,0 +1,12 @@
+{ "id": "rescalc",
+  "name": "Resitstor Calculator",
+  "shortName" : "Resistor Calc",
+  "icon": "rescalc.png",
+  "description": "An intuitive, easy-to-use app that aids in the interpretation of resistor color codes and calculation of resistance values.",
+  "tags": "app,tool,electric,ohm,converter",
+  "storage": [
+    {"name":"rescalc.app.js","url":"app.js"},
+    {"name":"rescalc.img","url":"app-icon.js","evaluate":true}
+    {"name":"rescalc.app.img","url":"resistor.js","evaluate":true}
+  ],
+},
