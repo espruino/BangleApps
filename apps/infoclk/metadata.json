@@ -1,8 +1,7 @@
 {
   "id": "infoclk",
   "name": "Informational clock",
-  "version": "0.08",
-  "dependencies": {"weather":"app"},
+  "version": "0.09",
   "description": "A configurable clock with extra info and shortcuts when unlocked, but large time when locked",
   "readme": "README.md",
   "icon": "icon.png",
@@ -25,6 +24,10 @@
       "url": "font.js"
     },
     {
+      "name": "infoclk-config.js",
+      "url": "configLoad.js"
+    },
+    {
       "name": "infoclk.img",
       "url": "icon.js",
       "evaluate": true
@@ -34,5 +37,8 @@
     {
       "name": "infoclk.json"
     }
-  ]
+  ],
+  "dependencies": {
+    "weather": "app"
+  }
 }
