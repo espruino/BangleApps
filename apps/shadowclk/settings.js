@@ -1,4 +1,4 @@
-(function(back) {
+(function (back) {
   let teletextColors = ["#000", "#f00", "#0f0", "#ff0", "#00f", "#f0f", "#0ff", "#fff"];
   let teletextColorNames = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "White"];
   let sysSettings = require('Storage').readJSON("setting.json", 1) || {};
@@ -9,7 +9,7 @@
     theme: 'light',
     enableSuffix: true,
     enableLeadingZero: false,
-    enable12Hour: '24hour' // default time mode
+    enable12Hour: false // default time mode
   }, require('Storage').readJSON("shadowclk.json", true) || {});
 
   // Colors from 'Light BW' and 'Dark BW' themes
@@ -51,10 +51,10 @@
     writeSettings();
     delete g.reset;
     g._reset = g.reset;
-    g.reset = function(n) {
+    g.reset = function (n) {
       return g._reset().setColor(newTheme.fg).setBgColor(newTheme.bg);
     };
-    g.clear = function(n) {
+    g.clear = function (n) {
       if (n) g.reset();
       return g.clearRect(0, 0, g.getWidth(), g.getHeight());
     };
@@ -63,31 +63,29 @@
     showMenu();
   }
 
-  // Read the current system theme
+  // Read current system theme setting
   function getCurrentTheme() {
-    if (!sysSettings.theme) {
-      return appSettings.theme; // fallback to appSettings.theme (light or dark)
+    if (appSettings && appSettings.theme) {
+      return appSettings.theme;
     }
-    return sysSettings.theme.dark ? 'dark' : 'light';
+    return sysSettings && sysSettings.theme && sysSettings.theme.dark ? 'dark' : 'light';
   }
 
   // Read the current time mode
   function getCurrentTimeMode() {
-    if (!sysSettings['12hour']) {
-      return appSettings.enable12Hour; // fallback to appSettings.enable12Hour
+    if (appSettings && appSettings.enable12Hour !== undefined) {
+      return appSettings.enable12Hour;
     }
-    return sysSettings['12hour'] ? '12hour' : '24hour';
+    return sysSettings && sysSettings['12hour'] !== undefined ? sysSettings['12hour'] : undefined;
   }
 
   // Save settings to storage
   function writeSettings() {
-    appSettings.enable12Hour = appSettings.enable12Hour === '12hour' ? '12hour' : '24hour';
     require('Storage').writeJSON("shadowclk.json", appSettings);
   }
 
-  // Save time mode to system settings
   function writeTimeModeSetting() {
-    sysSettings['12hour'] = appSettings.enable12Hour === '12hour';
+    sysSettings['12hour'] = appSettings.enable12Hour;
     require('Storage').writeJSON("setting.json", sysSettings);
   }
 
@@ -104,6 +102,7 @@
         value: (appSettings.theme === 'dark'),
         format: v => v ? "Dark" : "Light",
         onchange: v => {
+          writeSettings();
           switchTheme(v);
         }
       },
@@ -134,10 +133,10 @@
         }
       },
       'Time Mode:': {
-        value: (appSettings.enable12Hour === '12hour'),
+        value: appSettings.enable12Hour,
         format: v => v ? '12 Hr' : '24 Hr',
         onchange: v => {
-          appSettings.enable12Hour = v ? '12hour' : '24hour';
+          appSettings.enable12Hour = v;
           writeSettings();
           writeTimeModeSetting();
         }
