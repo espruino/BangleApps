@@ -1,7 +1,7 @@
 {
   "id": "keytimer",
   "name": "Keypad Timer",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A timer with a keypad that runs in the background",
   "icon": "icon.png",
   "type": "app",
@@ -10,6 +10,7 @@
     "BANGLEJS2"
   ],
   "allow_emulator": true,
+  "dependencies": {"scheduler":"type"},
   "storage": [
     {
       "name": "keytimer.app.js",
@@ -19,10 +20,6 @@
       "name": "keytimer.img",
       "url": "icon.js",
       "evaluate": true
-    },
-    {
-      "name": "keytimer.boot.js",
-      "url": "boot.js"
     },
     {
       "name": "keytimer-com.js",
