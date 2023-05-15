@@ -1,9 +1,10 @@
 (function() {
   const TIMER_IDX = "smpltmr";
+  var alarm = require('sched');
 
   function isAlarmEnabled(){
     try{
-      var alarm = require('sched');
+
       var alarmObj = alarm.getAlarm(TIMER_IDX);
       if(alarmObj===undefined || !alarmObj.on){
         return false;
@@ -19,25 +20,20 @@
     if(!isAlarmEnabled()){
         return -1;
     }
-
-    var alarm = require('sched');
     var alarmObj =  alarm.getAlarm(TIMER_IDX);
     return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
   }
 
   function getAlarmMinutesText(){
     var min = getAlarmMinutes();
-    if(min < 0){
+    if(min < 0)
       return "OFF";
-    }
-
-    return "T-" + String(min);
+    return "T-" + String(min)+ " min";
   }
 
   function increaseAlarm(t){
     try{
         var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-        var alarm = require('sched')
         alarm.setAlarm(TIMER_IDX, {
           timer : (minutes+t)*60*1000,
         });
@@ -50,9 +46,7 @@
         var minutes = getAlarmMinutes();
         minutes -= t;
 
-        var alarm = require('sched')
         alarm.setAlarm(TIMER_IDX, undefined);
-
         if(minutes > 0){
           alarm.setAlarm(TIMER_IDX, {
               timer : minutes*60*1000,
@@ -69,10 +63,10 @@
     items: [
       {
         name: null,
-        get: () => ({ text: getAlarmMinutesText() + (isAlarmEnabled() ? " min" : ""), img: smpltmrItems.img }),
-        show: function() {},
-        hide: function () {},
-        run: function() { }
+        get: () => ({ text: getAlarmMinutesText(), img: smpltmrItems.img } ),
+        show: function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); },
+        hide: function () { clearInterval(this.interval); delete this.interval; },
+        //run: function() { } // should tapping do something?
       },
     ]
   };
@@ -82,8 +76,8 @@
     smpltmrItems.items = smpltmrItems.items.concat({
       name: null,
       get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: smpltmrItems.img }),
-      show: function() {},
-      hide: function () {},
+      show: function() { },
+      hide: function () { },
       run: function() {
         if(o > 0) increaseAlarm(o);
         else decreaseAlarm(Math.abs(o));
