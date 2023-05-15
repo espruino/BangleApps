@@ -10,6 +10,7 @@
     "BANGLEJS2"
   ],
   "allow_emulator": true,
+  "dependencies": {"scheduler":"type"},
   "storage": [
     {
       "name": "keytimer.app.js",
