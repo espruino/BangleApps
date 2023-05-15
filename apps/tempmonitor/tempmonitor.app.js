@@ -106,9 +106,20 @@ g.flip();
 // from: BJS2 pressure sensor,  BJS1 inbuilt thermistor
 function getTemperature() {
 if(v_model.substr(0,10)!='EMSCRIPTEN'){
-if (Bangle.getPressure) {
-Bangle.getPressure().then(p =>{if (p) printTemperature(p);});
-} else printTemperature(E.getTemperature());
+  /*//supposed more aqcurate and it works but sometimes promise fails
+  //Uncaught Error: Unhandled promise rejection: undefined    
+    if (Bangle.getPressure) {
+   if (v_mode_debug>1) console.log("getpressure supported but..");
+    //v_pressure=Bangle.getPressure().then(print);
+    //wait for premise
+    Bangle.getPressure().then(p =>{if (p)  v_pressureTemp=p.temperature; v_pressurePress=p.pressure;
+     if (v_mode_debug>1) console.log("getpressure t, p: "+v_pressureTemp+" , "+v_pressurePress);
+     if ((v_pressureTemp) && (v_pressureTemp!="")) printTemperature(v_pressureTemp)
+      else  printTemperature(E.getTemperature());
+    });  
+  } else printTemperature(E.getTemperature());
+}*/
+ printTemperature(E.getTemperature());
 }
 else  printTemperature(-11.2+Math.random());//fake temperature medition for emulators
 }
