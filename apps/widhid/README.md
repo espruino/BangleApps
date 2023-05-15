@@ -13,6 +13,7 @@ Swipe down to enable - note the icon changes from blue to orange, indicating it'
 
 All other watch interaction is disabled for 3 seconds, to prevent clashing taps/drags - this period is extended as you continue to alter the volume, play/pause and jump between tracks.
 
+Requires espruino firmware > 2v17 to avoid event handler clashes.
 
 # Setup / Technical details
 

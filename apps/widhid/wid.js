@@ -11,16 +11,13 @@
     var activeTimeout;
     var waitForRelease = true;
     var onSwipe = (function (_lr, ud) {
-        if (Bangle.CLKINFO_FOCUS)
-            return;
-        if (!activeTimeout && ud > 0) {
+        if (ud > 0 && !activeTimeout && !Bangle.CLKINFO_FOCUS) {
             listen();
             Bangle.buzz(20);
         }
     });
     var onDrag = (function (e) {
-        if (Bangle.CLKINFO_FOCUS)
-            return;
+        E.stopEventPropagation && E.stopEventPropagation();
         if (e.b === 0) {
             var wasDragging = dragging;
             dragging = false;
@@ -82,9 +79,9 @@
     var listen = function () {
         var wasActive = !!activeTimeout;
         if (!wasActive) {
-            suspendOthers();
             waitForRelease = true;
             Bangle.on("drag", onDrag);
+            Bangle["#ondrag"] = [onDrag].concat(Bangle["#ondrag"].filter(function (f) { return f !== onDrag; }));
             redraw();
         }
         if (activeTimeout)
@@ -92,7 +89,6 @@
         activeTimeout = setTimeout(function () {
             activeTimeout = undefined;
             Bangle.removeListener("drag", onDrag);
-            resumeOthers();
             redraw();
         }, 3000);
     };
@@ -131,46 +127,4 @@
     var toggle = function () { return sendHid(0x10); };
     var up = function () { return sendHid(0x40); };
     var down = function () { return sendHid(0x80); };
-    var touchEvents = {
-        tap: null,
-        gesture: null,
-        aiGesture: null,
-        swipe: null,
-        touch: null,
-        drag: null,
-        stroke: null,
-    };
-    var suspendOthers = function () {
-        for (var event in touchEvents) {
-            var handlers = Bangle["#on".concat(event)];
-            if (!handlers)
-                continue;
-            var newEvents = void 0;
-            if (handlers instanceof Array)
-                newEvents = handlers.slice();
-            else
-                newEvents = [handlers];
-            for (var _i = 0, newEvents_1 = newEvents; _i < newEvents_1.length; _i++) {
-                var handler = newEvents_1[_i];
-                Bangle.removeListener(event, handler);
-            }
-            touchEvents[event] = newEvents;
-        }
-    };
-    var resumeOthers = function () {
-        for (var event in touchEvents) {
-            var handlers = touchEvents[event];
-            touchEvents[event] = null;
-            if (handlers)
-                for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
-                    var handler = handlers_1[_i];
-                    try {
-                        Bangle.on(event, handler);
-                    }
-                    catch (e) {
-                        console.log("couldn't restore \"".concat(event, "\" handler:"), e);
-                    }
-                }
-        }
-    };
 })();
