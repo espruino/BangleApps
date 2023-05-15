@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-exp.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <style>
+    .badgeerror[data-badge]::after { background-color: red; }
+    </style>
+  </head>
+  <body>
+    <input type="file" id="fileSelector">
+  </div>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      var options;
+
+      document.getElementById('fileSelector').addEventListener('change', event => {
+        const file = document.getElementById('fileSelector').files[0];
+        if (!file) {
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.readAsText(file,'UTF-8');
+
+        // here we tell the reader what to do when it's done reading...
+        reader.onload = readerEvent => {
+            var content = readerEvent.target.result; // this is the content!
+            console.log( content );
+
+            const xsltProcessor = new XSLTProcessor();
+
+            // Load the xsl file using synchronous (third param is set to false) XMLHttpRequest
+            const myXMLHTTPRequest = new XMLHttpRequest();
+            myXMLHTTPRequest.open("GET", "convert.xsl", false);
+            myXMLHTTPRequest.send(null);
+
+            const xslRef = myXMLHTTPRequest.responseXML;
+
+            // Finally import the .xsl
+            xsltProcessor.importStylesheet(xslRef);
+
+            const parser = new DOMParser();
+            console.log(file.text);
+            const doc = parser.parseFromString(content, "text/xml");
+
+            console.log(doc);
+
+            const fragment = xsltProcessor.transformToFragment(doc, document);
+
+            var serializer = new XMLSerializer();
+            var str = serializer.serializeToString(fragment);
+            console.log("Fragment", str);
+
+            let filename = file.name.replaceAll(".gpx",".trf");
+            console.log("New file name", filename);
+
+            Util.showModal("Saving...");
+            Util.writeStorage(filename, str, function() {
+                Util.hideModal();
+            });
+        }
+
+
+      });
+
+
+      function onInit() {
+      }
+    </script>
+  </body>
+</html>

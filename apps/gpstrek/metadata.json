@@ -9,6 +9,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : { "waypoints":"type" },
+  "interface" : "interface.html",
   "storage": [
     {"name":"gpstrek.app.js","url":"app.js"},
     {"name":"gpstrek.wid.js","url":"widget.js"},
