@@ -81,7 +81,10 @@
         if (!wasActive) {
             waitForRelease = true;
             Bangle.on("drag", onDrag);
-            Bangle["#ondrag"] = [onDrag].concat(Bangle["#ondrag"].filter(function (f) { return f !== onDrag; }));
+            var dragHandlers = Bangle["#ondrag"];
+            if (dragHandlers && typeof dragHandlers !== "function") {
+                Bangle["#ondrag"] = [onDrag].concat(dragHandlers.filter(function (f) { return f !== onDrag; }));
+            }
             redraw();
         }
         if (activeTimeout)

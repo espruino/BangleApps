@@ -23,7 +23,7 @@
 
 	const onDrag = (e => {
 		// Espruino/35c8cb9be11
-		(E as any).stopEventPropagation && (E as any).stopEventPropagation();
+		E.stopEventPropagation && E.stopEventPropagation();
 
 		if(e.b === 0){
 			// released
@@ -84,10 +84,15 @@
 			waitForRelease = true; // wait for first touch up before accepting gestures
 
 			Bangle.on("drag", onDrag);
+
 			// move our drag to the start of the event listener array
-			(Bangle as any)["#ondrag"] = [onDrag].concat(
-				(Bangle as any)["#ondrag"].filter((f: unknown) => f !== onDrag)
-			);
+			const dragHandlers = (Bangle as BangleEvents)["#ondrag"]
+
+			if(dragHandlers && typeof dragHandlers !== "function"){
+				(Bangle as BangleEvents)["#ondrag"] = [onDrag as undefined | typeof onDrag].concat(
+					dragHandlers.filter((f: unknown) => f !== onDrag)
+				);
+			}
 
 			redraw();
 		}
