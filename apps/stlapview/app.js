@@ -93,11 +93,8 @@ function showMainMenu() {
     }
   };
 
-  //I know eval is evil, but I can't think of any other way to do this.
   for (let lapFile of LAP_FILES) {
-    mainMenu[fileNameToDateString(lapFile)] = eval(`(function() {
-      view('${lapFile}');
-    })`);
+    mainMenu[fileNameToDateString(lapFile)] = () => view(lapFile);
   }
 
   if (LAP_FILES.length == 0) {
