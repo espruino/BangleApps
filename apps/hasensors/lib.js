@@ -14,19 +14,30 @@ function post(sensor, data) {
 
 exports.sendBattery = function () {
     if (!NRF.getSecurityStatus().connected) return;
+    const b = E.getBattery(), 
+        c = Bangle.isCharging();
+    let i = "mdi:battery";
+    if (c) i += "-charging";
+
+    post('battery_state', {
+        state: c ? 'charging' : 'discharging',
+        attributes: {
+            friendly_name: "{name} Battery State",
+            icon: i + (c ? "" : "-minus"),
+        }
+    });
+
+    if (b<10) i += "-outline"; // there is no battery-0
+    else if (b<100 || c) i += "-" + Math.floor(b/10)*10; // no battery-100 either
+
     post('battery_level', {
-        state: E.getBattery(),
+        state: b,
         attributes: {
             friendly_name: "{name} Battery Level",
             unit_of_measurement: "%",
             device_class: "battery",
             state_class: "measurement",
-        }
-    });
-    post('battery_state', {
-        state: Bangle.isCharging() ? 'charging' : 'discharging',
-        attributes: {
-            friendly_name: "{name} Battery State",
+            icon: i,
         }
     });
 }
