@@ -103,17 +103,14 @@ let matchFontSize = function(graphics, text, height, width){
   }
 };
 
-let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime){
-  let lastDrawn = Date.now() - Math.random()*refreshTime;
+let getDoubleLineSlice = function(title1,title2,provider1,provider2){
   let lastValue1 = 0;
   let lastValue2 = 0;
   return {
     refresh: function (){
       let bigChange1 = (Math.abs(lastValue1 - provider1()) > 1);
       let bigChange2 = (Math.abs(lastValue2 - provider2()) > 1);
-      let refresh = (Bangle.isLocked()?(refreshTime?refreshTime*5:10000):(refreshTime?refreshTime*2:1000));
-      let old = (Date.now() - lastDrawn) > refresh;
-      return (bigChange1 || bigChange2) && old;
+      return (bigChange1 || bigChange2);
     },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
@@ -138,11 +135,9 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2,refreshTime)
   };
 };
 
-let getMapSlice = function(refreshTime){
-  let lastDrawn = Date.now() - Math.random()*refreshTime;
+let getMapSlice = function(){
   return {
     draw: function (graphics, x, y, height, width){
-      lastDrawn = Date.now();
 
       graphics.clearRect(x,y,x+width,y+height);
       graphics.setClipRect(x,y,x+width,y+height);
@@ -199,13 +194,8 @@ let getMapSlice = function(refreshTime){
 
 let getTargetSlice = function(targetDataSource){
   let nameIndex = 0;
-  let lastDrawn = Date.now() - Math.random()*3000;
   return {
-    refresh: function (){
-      return Date.now() - lastDrawn > (Bangle.isLocked()?3000:10000);
-    },
     draw: function (graphics, x, y, height, width){
-      lastDrawn = Date.now();
       graphics.clearRect(x,y,x+width,y+height);
       if (targetDataSource.icon){
         graphics.drawImage(targetDataSource.icon,x,y + (height - 16)/2);
@@ -288,15 +278,12 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
 };
 
 let getCompassSlice = function(compassDataSource){
-  let lastDrawn = Date.now() - Math.random()*2000;
   let lastDrawnValue = 0;
   const buffers = 4;
   let buf = [];
   return {
     refresh : function (){
-      let bigChange = (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > 2);
-      let old = (Bangle.isLocked()?(Date.now() - lastDrawn > 2000):true);
-      return bigChange && old;
+      return (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > 2);
     },
     draw: function (graphics, x,y,height,width){
       lastDrawn = Date.now();
@@ -893,7 +880,7 @@ let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
   let course = "---°";
   if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) course = WIDGETS.gpstrek.getState().currentPos.course + "°";
   return course;
-},200);
+});
 
 let healthSlice = getDoubleLineSlice("Heart","Steps",()=>{
   return WIDGETS.gpstrek.getState().bpm || "---";
