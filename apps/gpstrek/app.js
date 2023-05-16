@@ -137,8 +137,7 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2){
 
 let getMapSlice = function(){
   return {
-    draw: function (graphics, x, y, height, width){
-
+    draw: function (graphics, x, y, height, width){  
       graphics.clearRect(x,y,x+width,y+height);
       graphics.setClipRect(x,y,x+width,y+height);
 
@@ -156,7 +155,7 @@ let getMapSlice = function(){
         current.y *= 0.05;
         current.x += x + width/2;
         current.y += y + height*0.7;
-        
+
         if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
         if (current.x > x + width) {current.x = x + width - height*0.15; graphics.setColor(1,0,0).fillRect(x + width - height * 0.1,y,x + width ,y+height);}
         if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
@@ -183,10 +182,8 @@ let getMapSlice = function(){
         rotate:require("graphics_utils").degreesToRadians(course),
         x: x+width/2,
         y: y+height*0.7
-      });
-      //print(current, poly);
-      
-      
+      });        
+
       graphics.drawPoly(poly, false);
     }
   };
@@ -746,7 +743,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },500);
+  },Bangle.isLocked()?2000:500);
 };
 
 let switchNav = function(){
@@ -800,25 +797,20 @@ const compassSliceData = {
   },
   getPoints: function (){
     let points = [];
-    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route){
-      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, getLast(WIDGETS.gpstrek.getState().route)), icon: finishIcon});
+    let s = WIDGETS.gpstrek.getState();
+    if (s.currentPos && s.currentPos.lon && s.route){
+      points.push({bearing:bearing(s.currentPos, getLast(s.route)), icon: finishIcon});
     }
-    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().waypoint){
-      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().waypoint), icon: finishIcon});
+    if (s.currentPos && s.currentPos.lon && s.waypoint){
+      points.push({bearing:bearing(s.currentPos, s.waypoint), icon: finishIcon});
     }
-    if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lon && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint){
-      points.push({bearing:bearing(WIDGETS.gpstrek.getState().currentPos, WIDGETS.gpstrek.getState().route.currentWaypoint), color:"#0f0"});
+    if (s.currentPos && s.currentPos.lon && s.route && s.route.currentWaypoint){
+      points.push({bearing:bearing(s.currentPos, s.route.currentWaypoint), color:"#0f0"});
     }
     return points;
   },
   getMarkers: function (){
     return [{xpos:0.5, width:10, height:10, linecolor:g.theme.fg, fillcolor:"#f00"}];
-  }
-};
-  
-const mapSliceData = {
-  getRoute: function() {
-    return WIDGETS.gpstrek.getState().route;
   }
 };
 
@@ -838,8 +830,9 @@ const waypointData = {
 const finishData = {
   icon: atob("EBABAAA/4DmgJmAmYDmgOaAmYD/gMAAwADAAMAAwAAAAAAA="),
   getTarget: function (){
-    if (WIDGETS.gpstrek.getState().route) return getLast(WIDGETS.gpstrek.getState().route);
-    if (WIDGETS.gpstrek.getState().waypoint) return WIDGETS.gpstrek.getState().waypoint;
+    let s = WIDGETS.gpstrek.getState();
+    if (s.route) return getLast(s.route);
+    if (s.waypoint) return s.waypoint;
   },
   getStart: function (){
     return WIDGETS.gpstrek.getState().currentPos;
@@ -851,25 +844,29 @@ let getSliceHeight = function(number){
 };
 
 let compassSlice = getCompassSlice(compassSliceData);
-let mapSlice = getMapSlice(mapSliceData);
+let mapSlice = getMapSlice();
 let waypointSlice = getTargetSlice(waypointData);
 let finishSlice = getTargetSlice(finishData);
 let eleSlice = getDoubleLineSlice("Up","Down",()=>{
-  return loc.distance(WIDGETS.gpstrek.getState().up,3) + "/" + (WIDGETS.gpstrek.getState().route ? loc.distance(WIDGETS.gpstrek.getState().route.up,3):"---");
+  let s = WIDGETS.gpstrek.getState();
+  return loc.distance(s.up,3) + "/" + (s.route ? loc.distance(s.route.up,3):"---");
 },()=>{
-  return loc.distance(WIDGETS.gpstrek.getState().down,3) + "/" + (WIDGETS.gpstrek.getState().route ? loc.distance(WIDGETS.gpstrek.getState().route.down,3): "---");
+  let s = WIDGETS.gpstrek.getState();
+  return loc.distance(s.down,3) + "/" + (s.route ? loc.distance(s.route.down,3): "---");
 });
 
 let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
   let speed = 0;
-  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.speed) speed = WIDGETS.gpstrek.getState().currentPos.speed;
+  let s = WIDGETS.gpstrek.getState();
+  if (s.currentPos && s.currentPos.speed) speed = s.currentPos.speed;
   return loc.speed(speed,2);
 },()=>{
   let alt = Infinity;
-  if (!isNaN(WIDGETS.gpstrek.getState().altitude)){
-    alt = isNaN(WIDGETS.gpstrek.getState().calibAltDiff) ? WIDGETS.gpstrek.getState().altitude : (WIDGETS.gpstrek.getState().altitude - WIDGETS.gpstrek.getState().calibAltDiff);
+  let s = WIDGETS.gpstrek.getState();
+  if (!isNaN(s.altitude)){
+    alt = isNaN(s.calibAltDiff) ? s.altitude : (s.altitude - s.calibAltDiff);
   }
-  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.alt) alt = WIDGETS.gpstrek.getState().currentPos.alt;
+  if (s.currentPos && s.currentPos.alt) alt = s.currentPos.alt;
   if (isNaN(alt)) return "---";
   return loc.distance(alt,3);
 });
@@ -878,7 +875,8 @@ let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
   return getAveragedCompass() + "°";
 },()=>{
   let course = "---°";
-  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) course = WIDGETS.gpstrek.getState().currentPos.course + "°";
+  let s = WIDGETS.gpstrek.getState();
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course + "°";
   return course;
 });
 
@@ -902,17 +900,18 @@ let systemSlice = getDoubleLineSlice("RAM","Storage",()=>{
 });
 
 let updateSlices = function(){
+  let s = WIDGETS.gpstrek.getState();
   slices = [];
   slices.push(compassSlice);
 
-  if (WIDGETS.gpstrek.getState().route) slices.push(mapSlice);
-  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat && WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.currentWaypoint && WIDGETS.gpstrek.getState().route.index < WIDGETS.gpstrek.getState().route.count - 1) {
+  if (s.route) slices.push(mapSlice);
+  if (s.currentPos && s.currentPos.lat && s.route && s.route.currentWaypoint && s.route.index < s.route.count - 1) {
     slices.push(waypointSlice);
   }
-  if (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.lat && (WIDGETS.gpstrek.getState().route || WIDGETS.gpstrek.getState().waypoint)) {
+  if (s.currentPos && s.currentPos.lat && (s.route || s.waypoint)) {
     slices.push(finishSlice);
   }
-  if ((WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().route.down !== undefined) || WIDGETS.gpstrek.getState().down != undefined) {
+  if ((s.route && s.route.down !== undefined) || s.down != undefined) {
     slices.push(eleSlice);
   }
   slices.push(statusSlice);
@@ -920,7 +919,7 @@ let updateSlices = function(){
   slices.push(healthSlice);
   slices.push(systemSlice);
   slices.push(system2Slice);
-  maxScreens = Math.ceil(slices.length/WIDGETS.gpstrek.getState().numberOfSlices);
+  maxScreens = Math.ceil(slices.length/s.numberOfSlices);
 };
 
 let clear = function() {
@@ -931,19 +930,20 @@ let minimumDistance = Number.MAX_VALUE;
 let lastSearch = 0;
 
 let updateRouting = function() {
-  if (WIDGETS.gpstrek.getState().route && WIDGETS.gpstrek.getState().currentPos.lat) {
-    let currentDistanceToTarget = distance(WIDGETS.gpstrek.getState().currentPos,WIDGETS.gpstrek.getState().route.currentWaypoint);
+  let s = WIDGETS.gpstrek.getState();
+  if (s.route && s.currentPos.lat) {
+    let currentDistanceToTarget = distance(s.currentPos,s.route.currentWaypoint);
     if (currentDistanceToTarget < minimumDistance){
       minimumDistance = currentDistanceToTarget;
     }
-    let nextAvailable = hasNext(WIDGETS.gpstrek.getState().route);
+    let nextAvailable = hasNext(s.route);
     if (currentDistanceToTarget < 30 && nextAvailable){
-      next(WIDGETS.gpstrek.getState().route);
+      next(s.route);
       minimumDistance = Number.MAX_VALUE;
     } else if (lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - 30){
       stopDrawing();
       Bangle.buzz(1000);
-      setClosestWaypoint(WIDGETS.gpstrek.getState().route, WIDGETS.gpstrek.getState().route.index, showProgress);
+      setClosestWaypoint(s.route, s.route.index, showProgress);
       minimumDistance = Number.MAX_VALUE;
       lastSearch = Date.now();
       switchNav();
@@ -954,8 +954,9 @@ let updateRouting = function() {
 let draw = function(){
   if (!global.screen) return;
   let ypos = Bangle.appRect.y;
+  let s = WIDGETS.gpstrek.getState();
 
-  let firstSlice = (screen-1)*WIDGETS.gpstrek.getState().numberOfSlices;
+  let firstSlice = (screen-1)*s.numberOfSlices;
 
   updateSlices();
 
@@ -967,7 +968,7 @@ let draw = function(){
   lastDrawnScreen = screen;
 
   let sliceHeight = getSliceHeight();
-  for (let slice of slices.slice(firstSlice,firstSlice + WIDGETS.gpstrek.getState().numberOfSlices)) {
+  for (let slice of slices.slice(firstSlice,firstSlice + s.numberOfSlices)) {
     g.reset();
     if (!slice.refresh || slice.refresh() || force) slice.draw(g,0,ypos,sliceHeight,g.getWidth());
     ypos += sliceHeight+1;
