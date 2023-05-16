@@ -89,7 +89,8 @@ function showMainMenu() {
 
   let mainMenu = {
     '': {
-      'title': 'Sessions'
+      'title': 'Sessions',
+      'back': () => load()
     }
   };
 
