@@ -83,7 +83,7 @@ function colorBandsToResistance(colorBands) {
   let firstBand = colorBands[0];
   let secondBand = colorBands[1];
   let multiplierBand = colorBands[2];
-  let toleranceBand = colorBands[3];
+  let toleranceBand = colorBands[3] || 'none';  // Add a default value for toleranceBand
   let significantDigits = colorData[firstBand].value * 10 + colorData[secondBand].value;
   let multiplier = colorData[multiplierBand].multiplier;
   let resistance = significantDigits * multiplier;
@@ -225,7 +225,7 @@ function drawResistance(resistance, tolerance) {
     tolerance = 20;
   }
 
-  var toleranceStr = "±" + tolerance + "%";
+  var toleranceStr = "Â±" + tolerance + "%";
   var toleranceX = tolerance.toString().replace('.', '').length > 2 ? 10 : 14;
   g.drawString(toleranceStr.padEnd(4), 176 - toleranceX, y);
 }
@@ -419,9 +419,9 @@ function drawResistance(resistance, tolerance) {
     E.showMenu(toleranceMenu);
   }
 
-  function drawResistorAndResistance(resistance, tolerance) {
+  function drawResistorAndResistance(resistance, tolerance, multipliedResistance) {
     console.log('Draw Resistor clicked');
-    let colorBands = resistanceToColorBands((settings.resistance * settings.multiplier), settings.tolerance);
+    let colorBands = resistanceToColorBands(multipliedResistance || resistance, tolerance);
     drawResistor(colorBands, tolerance);
     drawResistance(resistance, tolerance);
     resetSettings();
@@ -462,7 +462,7 @@ function drawResistance(resistance, tolerance) {
       let formattedResistance = formatResistance(multipliedValue);
       let resistanceString = `${formattedResistance.value}${formattedResistance.unit}`;
       if (settings.tolerance) {
-        return `${resistanceString}, ± ${settings.tolerance}%`;
+        return `${resistanceString}, Â± ${settings.tolerance}%`;
       } else {
         return v ? `${resistanceString}` : '';
       }
