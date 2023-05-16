@@ -156,7 +156,7 @@ function drawResistor(colorBands, tolerance) {
     g.drawLine(bandX, bandY, bandX, bandY + bandHeight); // left outline
     g.drawLine(bandX + bandWidth, bandY, bandX + bandWidth, bandY + bandHeight); // right outline
 
-    // if it's the fourth band, shift it over by an additional 6 pixels
+    // if it's the fourth band, shift it over by an additional 8 pixels
     if (i === 2) {
       currentX = bandX + bandWidth + 5 + 8; // update the current X position for the next band, accounting for the spacing
     } else {
