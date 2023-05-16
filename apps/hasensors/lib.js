@@ -1,16 +1,13 @@
 // split out into a separate file to keep bootcode short.
-function s(key) {
-    return (require('Storage').readJSON('hasensors.settings.js', true) || {})[key];
-}
-
+// placeholders are replaced by custom.html before upload
 function post(sensor, data) {
-    const url = s('url') + '/api/states/sensor.' + s('id') + '_' + sensor;
+    const url = '{url}/api/states/sensor.{id}_' + sensor;
     Bangle.http(url, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + s('token'),
+            Authorization: 'Bearer {token}',
         }
     });
 }
@@ -20,7 +17,7 @@ exports.sendBattery = function () {
     post('battery_level', {
         state: E.getBattery(),
         attributes: {
-            friendly_name: s('name') + " Battery Level",
+            friendly_name: "{name} Battery Level",
             unit_of_measurement: "%",
             device_class: "battery",
             state_class: "measurement",
@@ -29,7 +26,7 @@ exports.sendBattery = function () {
     post('battery_state', {
         state: Bangle.isCharging() ? 'charging' : 'discharging',
         attributes: {
-            friendly_name: s('name') + " Battery State",
+            friendly_name: "{name} Battery State",
         }
     });
 }
