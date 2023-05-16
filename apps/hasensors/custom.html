@@ -43,19 +43,19 @@
 </p>
 <script src="../../core/lib/customize.js"></script>
 <script>
-    const STORAGE_KEY = 'hasensors-config';
-    const fields = ['id', 'name', 'url', 'token'];
-    const form = document.getElementById('sensorform');
-    const LIBRARY_URL = './lib.js';
+    const STORAGE_KEY = "hasensors-config";
+    const fields = ["id", "name", "url", "token"];
+    const form = document.getElementById("sensorform");
+    const LIBRARY_URL = "./lib.js";
 
-    // fetch library code template, enable upload button once we've got it
+    // fetch library code template, enable upload button once we"ve got it
     let libTpl;
     fetch(LIBRARY_URL).then(response=>{
         if (! response.ok) return;
 console.log(response);
         response.text().then(code=>{
             libTpl = code;
-            document.getElementById('upload').disabled = false;
+            document.getElementById("upload").disabled = false;
         });
     });
 
@@ -91,7 +91,7 @@ console.log(response);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
         // replace {placeholders} in library code template
         const lib = libTpl.replace(/\{(\w+)\}/g, (_,f) => config[f]);
-        console.log('config:', config, JSON.stringify(config));
+        console.log("config:", config, JSON.stringify(config));
         sendCustomizedApp({
             id: "hasensors",
             storage: [

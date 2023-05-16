@@ -1,13 +1,13 @@
 // split out into a separate file to keep bootcode short.
 // placeholders are replaced by custom.html before upload
 function post(sensor, data) {
-    const url = '{url}/api/states/sensor.{id}_' + sensor;
+    const url = "{url}/api/states/sensor.{id}_" + sensor;
     Bangle.http(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer {token}',
+            "Content-Type": "application/json",
+            Authorization: "Bearer {token}",
         }
     });
 }
@@ -19,8 +19,8 @@ exports.sendBattery = function () {
     let i = "mdi:battery";
     if (c) i += "-charging";
 
-    post('battery_state', {
-        state: c ? 'charging' : 'discharging',
+    post("battery_state", {
+        state: c ? "charging" : "discharging",
         attributes: {
             friendly_name: "{name} Battery State",
             icon: i + (c ? "" : "-minus"),
@@ -30,7 +30,7 @@ exports.sendBattery = function () {
     if (b<10) i += "-outline"; // there is no battery-0
     else if (b<100 || c) i += "-" + Math.floor(b/10)*10; // no battery-100 either
 
-    post('battery_level', {
+    post("battery_level", {
         state: b,
         attributes: {
             friendly_name: "{name} Battery Level",
