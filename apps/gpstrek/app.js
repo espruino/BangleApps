@@ -14,7 +14,7 @@ let init = function(){
 
   Bangle.loadWidgets();
   WIDGETS.gpstrek.start(false);
-  if (!WIDGETS.gpstrek.getState().numberOfSlices) WIDGETS.gpstrek.getState().numberOfSlices = 3;
+  if (!WIDGETS.gpstrek.getState().numberOfSlices) WIDGETS.gpstrek.getState().numberOfSlices = 2;
 };
 
 let cleanup = function(){
@@ -135,6 +135,36 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2){
   };
 };
 
+const arrow = Graphics.createImage(`
+    XXX
+    XXXXX
+  XXX XXX
+  XXX   XXX
+XXX     XXX
+`);
+
+const cross = Graphics.createImage(`
+XX       XX
+  XX     XX 
+  XX   XX
+    XX XX
+    XXX
+    XX XX
+  XX   XX
+  XX     XX
+XX       XX
+`);
+
+const point = Graphics.createImage(`
+    XXXX
+    XXXXXX
+  XXX  XXX
+  XXX    XXX
+  XXX  XXX
+    XXXXXX
+    XXXX
+`);
+
 let getMapSlice = function(){
   return {
     draw: function (graphics, x, y, height, width){  
@@ -147,8 +177,11 @@ let getMapSlice = function(){
 
       let route = WIDGETS.gpstrek.getState().route;
       let startingPoint = Bangle.project(route.currentWaypoint);
+      let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+
+      graphics.setColor(graphics.theme.fg);
+
       if (WIDGETS.gpstrek.getState().currentPos.lat) {
-        let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
         current.x = startingPoint.x - current.x;
         current.y = (startingPoint.y - current.y)*-1;
         current.x *= 0.05;
@@ -161,30 +194,49 @@ let getMapSlice = function(){
         if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
         if (current.y > y + height) { current.y = y + height - height*0.15; graphics.setColor(1,0,0).fillRect(x,y + height * 0.9,x + width ,y+height);}
 
-        graphics.setColor(graphics.theme.fg);
-
-        graphics.drawLine(current.x, current.y, current.x-height*0.1, current.y+height*0.1);
-        graphics.drawLine(current.x, current.y, current.x+height*0.1, current.y+height*0.1);
+        graphics.drawImage(arrow, current.x-5,current.y);
+      } else {
+        graphics.drawImage(point, width/2-5,y + height*0.7-4);
       }
 
-      let poly=[];
+      let drawPath = function(iter, reverse){
+        let poly=[ 0, 0 ];
+        let i = 0;
+        let maxViewableDistance = graphics.getHeight()/2/0.05;
+        let named = [];
+        do {
+          i = i + (reverse?-1:1);
+          let p = iter(route, route.index + i);
+          if (!p || !p.lat) break;
+          if (p.name) named.push({i:poly.length,n:p.name});
+          let toDraw = Bangle.project(p);
+          poly.push(startingPoint.x-toDraw.x);
+          poly.push((startingPoint.y-toDraw.y)*-1);
 
-      for (let i = route.index; i < route.index + 60; i++){
-        if (i < 0) continue;
-        let nextPoint = getNext(route, i);
-        if (!nextPoint || !nextPoint.lat) break;
-        let toDraw = Bangle.project(nextPoint);
-        poly.push(startingPoint.x-toDraw.x);
-        poly.push((startingPoint.y-toDraw.y)*-1);
-      }
-      poly = graphics.transformVertices(poly, {
-        scale: 0.05,
-        rotate:require("graphics_utils").degreesToRadians(course),
-        x: x+width/2,
-        y: y+height*0.7
-      });        
+          if (poly[poly.length - 2] < -maxViewableDistance
+              || poly[poly.length - 2] > maxViewableDistance
+              || poly[poly.length - 1] < -maxViewableDistance
+              || poly[poly.length - 1] > maxViewableDistance) {
+            break;
+          }
+        } while (i*(reverse?-1:1) < (reverse?10:50));
 
-      graphics.drawPoly(poly, false);
+        poly = graphics.transformVertices(poly, {
+          scale: 0.05,
+          rotate:require("graphics_utils").degreesToRadians(180-course),
+          x: x+width/2,
+          y: y+height*0.7
+        });
+
+        graphics.drawPoly(poly, false);
+        graphics.setFont6x15();
+        for (let c of named){
+          graphics.drawImage(cross, poly[c.i]-5, poly[c.i+1]-4.5);
+          graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
+        }
+      };
+      drawPath(getNext,false);
+      drawPath(getPrev,true);
     }
   };
 };
@@ -517,6 +569,16 @@ let getNext = function(route, index){
   return result;
 };
 
+let getPrev = function(route, index){
+  if (!index) index = route.index;
+  if (!hasPrev(route, index)) return;
+  if (route.mirror) ++index;
+  if (!route.mirror) --index;
+  let result = {};
+  getEntry(route.filename, route.refs[index], result);
+  return result;
+};
+
 let next = function(route){
   if (!hasNext(route)) return;
   if (route.mirror) set(route, --route.index);
@@ -524,6 +586,7 @@ let next = function(route){
 };
 
 let set = function(route, index){
+  if (!route) return;
   route.currentWaypoint = {};
   route.index = index;
   getEntry(route.filename, route.refs[index], route.currentWaypoint);
