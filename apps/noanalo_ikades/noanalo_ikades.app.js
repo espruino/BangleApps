@@ -298,7 +298,8 @@ function drawData() {
     // Draw battery hand
     g.setColor(g.theme.fg);
     g.setFontAlign(0,0,0);
-    drawBatteryHand(parseInt(state.bat*360/100));
+    // drawBatteryHand(parseInt(state.bat*360/100));
+    drawBatteryHand(parseInt(state.currentDate.getHours()*360/12));
 
     // Draw data hand - depending on state
     g.setColor(state.color);
@@ -310,7 +311,8 @@ function drawData() {
 
     // Default are the bpm
     // drawDataHand(parseInt(state.steps*360/12000));
-    drawDataHand(parseInt(state.bpm * 360 / 210));
+    // drawDataHand(parseInt(state.bpm * 360 / 210));
+    drawDataHand(parseInt(state.currentDate.getMinutes() * 360 / 60));
 }
 
 function drawTextCleared(s, x, y){
