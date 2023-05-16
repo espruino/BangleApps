@@ -123,7 +123,12 @@
         redraw();
     });
     var sendHid = function (code) {
-        NRF.sendHIDReport([1, code], function () { return NRF.sendHIDReport([1, 0]); });
+        try {
+            NRF.sendHIDReport([1, code], function () { return NRF.sendHIDReport([1, 0]); });
+        }
+        catch (e) {
+            console.log("sendHIDReport:", e);
+        }
     };
     var next = function () { return sendHid(0x01); };
     var prev = function () { return sendHid(0x02); };

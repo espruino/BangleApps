@@ -145,10 +145,14 @@
 	//const DEBUG = true;
 	const sendHid = (code: number) => {
 		//if(DEBUG) return;
-		NRF.sendHIDReport(
-			[1, code],
-			() => NRF.sendHIDReport([1, 0]),
-		);
+		try{
+			NRF.sendHIDReport(
+				[1, code],
+				() => NRF.sendHIDReport([1, 0]),
+			);
+		}catch(e){
+			console.log("sendHIDReport:", e);
+		}
 	};
 
 	const next = () => /*DEBUG ? console.log("next") : */ sendHid(0x01);
