@@ -299,7 +299,7 @@ function drawData() {
     g.setColor(g.theme.fg);
     g.setFontAlign(0,0,0);
     // drawBatteryHand(parseInt(state.bat*360/100));
-    drawBatteryHand(parseInt(state.currentDate.getHours()*360/12));
+    drawBatteryHand(parseInt(state.currentDate.getHours()*360/12 + state.currentDate.getMinutes()/720));
 
     // Draw data hand - depending on state
     g.setColor(state.color);
