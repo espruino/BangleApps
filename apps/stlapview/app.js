@@ -95,7 +95,10 @@ function showMainMenu() {
   };
 
   for (let lapFile of LAP_FILES) {
-    mainMenu[fileNameToDateString(lapFile)] = () => view(lapFile);
+    // `let` variables in JS have special behaviour in loops,
+    // where capturing them captures that instance of the variable,
+    // but for espruino we need to do a slightly older trick:
+    mainMenu[fileNameToDateString(lapFile)] = ((lapFile) => () => view(lapFile))(lapFile);
   }
 
   if (LAP_FILES.length == 0) {
