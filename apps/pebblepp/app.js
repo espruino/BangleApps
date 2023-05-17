@@ -86,7 +86,7 @@ let clockInfoDraw = (itm, info, options) => {
     }
   }
   g.setFontLECO1976Regular22().setFontAlign(0, 0);
-  g.drawString(info.text, midx,options.y+options.h-12); // draw the text
+  g.drawString(info.text.toString().toUpperCase(), midx,options.y+options.h-12); // draw the text
 };
 
 let clockInfoMenuA = require("clock_info").addInteractive(clockInfoItems, {
