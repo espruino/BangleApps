@@ -27,6 +27,13 @@ let cleanup = function(){
   delete global.maxScreens;
 };
 
+let rotate = function(point, rotation, center){
+  return {
+    x: ((point.x - center.x) * Math.cos(rotation) - (point.y - center.y) * Math.sin(rotation)) + center.x,
+    y: ((point.y - center.y) * Math.cos(rotation) + (point.x - center.x) * Math.sin(rotation)) + center.y
+  };
+};
+
 init();
 scheduleDraw = true;
 
@@ -156,13 +163,14 @@ XX       XX
 `);
 
 const point = Graphics.createImage(`
-    XXXX
-    XXXXXX
-  XXX  XXX
-  XXX    XXX
-  XXX  XXX
-    XXXXXX
-    XXXX
+    XXX
+  XXXXXXX
+XXX   XXX
+XX     XX
+XX     XX
+XXX   XXX
+  XXXXXXX
+    XXX
 `);
 
 let getMapSlice = function(){
@@ -179,25 +187,7 @@ let getMapSlice = function(){
       let startingPoint = Bangle.project(route.currentWaypoint);
       let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
 
-      graphics.setColor(graphics.theme.fg);
 
-      if (WIDGETS.gpstrek.getState().currentPos.lat) {
-        current.x = startingPoint.x - current.x;
-        current.y = (startingPoint.y - current.y)*-1;
-        current.x *= 0.05;
-        current.y *= 0.05;
-        current.x += x + width/2;
-        current.y += y + height*0.7;
-
-        if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
-        if (current.x > x + width) {current.x = x + width - height*0.15; graphics.setColor(1,0,0).fillRect(x + width - height * 0.1,y,x + width ,y+height);}
-        if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
-        if (current.y > y + height) { current.y = y + height - height*0.15; graphics.setColor(1,0,0).fillRect(x,y + height * 0.9,x + width ,y+height);}
-
-        graphics.drawImage(arrow, current.x-5,current.y);
-      } else {
-        graphics.drawImage(point, width/2-5,y + height*0.7-4);
-      }
 
       let drawPath = function(iter, reverse){
         let poly=[ 0, 0 ];
@@ -237,6 +227,39 @@ let getMapSlice = function(){
       };
       drawPath(getNext,false);
       drawPath(getPrev,true);
+
+      graphics.setColor(graphics.theme.fg);
+
+      if (WIDGETS.gpstrek.getState().currentPos.lat) {
+        current.x = startingPoint.x - current.x;
+        current.y = (startingPoint.y - current.y)*-1;
+        current.x *= 0.05;
+        current.y *= 0.05;
+        current.x += x + width/2;
+        current.y += y + height*0.7;
+
+        if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
+        if (current.x > x + width) {current.x = x + width - height*0.15; graphics.setColor(1,0,0).fillRect(x + width - height * 0.1,y,x + width ,y+height);}
+        if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
+        if (current.y > y + height) { current.y = y + height - height*0.15; graphics.setColor(1,0,0).fillRect(x,y + height * 0.9,x + width ,y+height);}
+
+        graphics.drawImage(arrow, current.x-5,current.y);
+      } else {
+        graphics.drawImage(point, width/2-5,y + height*0.7-4);
+      }
+
+      let compass = [ 0,0, 0, height*0.4, 0, -height*0.4, height*0.4,0,-height*0.4,0 ];
+      compass = graphics.transformVertices(compass, {
+        rotate:require("graphics_utils").degreesToRadians(course),
+        x: x+width/2,
+        y: y+height/2
+      });
+      graphics.setFontAlign(0,0);
+      graphics.drawCircle(x+width/2,y+height/2,height*0.4);
+      graphics.drawString("N", compass[2], compass[3], true);
+      graphics.drawString("S", compass[4], compass[5], true);
+      graphics.drawString("W", compass[6], compass[7], true);
+      graphics.drawString("O", compass[8], compass[9], true);
     }
   };
 };
@@ -806,7 +829,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },Bangle.isLocked()?2000:500);
+  },Bangle.isLocked()?2000:0);
 };
 
 let switchNav = function(){
