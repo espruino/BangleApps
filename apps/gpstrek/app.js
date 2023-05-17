@@ -143,6 +143,7 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2){
 };
 
 const arrow = Graphics.createImage(`
+      X
     XXX
     XXXXX
   XXX XXX
@@ -187,7 +188,9 @@ let getMapSlice = function(){
       let startingPoint = Bangle.project(route.currentWaypoint);
       let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
 
-
+      let compassHeight = height*0.4;
+      if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
+      let mapCenterX = x+(width-10)/2+compassHeight+5;
 
       let drawPath = function(iter, reverse){
         let poly=[ 0, 0 ];
@@ -214,7 +217,7 @@ let getMapSlice = function(){
         poly = graphics.transformVertices(poly, {
           scale: 0.05,
           rotate:require("graphics_utils").degreesToRadians(180-course),
-          x: x+width/2,
+          x: mapCenterX,
           y: y+height*0.7
         });
 
@@ -235,7 +238,7 @@ let getMapSlice = function(){
         current.y = (startingPoint.y - current.y)*-1;
         current.x *= 0.05;
         current.y *= 0.05;
-        current.x += x + width/2;
+        current.x += mapCenterX;
         current.y += y + height*0.7;
 
         if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
@@ -245,21 +248,24 @@ let getMapSlice = function(){
 
         graphics.drawImage(arrow, current.x-5,current.y);
       } else {
-        graphics.drawImage(point, width/2-5,y + height*0.7-4);
+        graphics.drawImage(point, mapCenterX-5,y + height*0.7-4);
       }
 
-      let compass = [ 0,0, 0, height*0.4, 0, -height*0.4, height*0.4,0,-height*0.4,0 ];
+      let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
       compass = graphics.transformVertices(compass, {
-        rotate:require("graphics_utils").degreesToRadians(course),
-        x: x+width/2,
-        y: y+height/2
+        rotate:require("graphics_utils").degreesToRadians(180-course),
+        x: x + 5 + compassHeight,
+        y: y + 5 + compassHeight
       });
       graphics.setFontAlign(0,0);
-      graphics.drawCircle(x+width/2,y+height/2,height*0.4);
+      graphics.setColor(graphics.theme.bg);
+      graphics.fillCircle(x+5+compassHeight,y+5+compassHeight,compassHeight+8);
+      graphics.setColor(graphics.theme.fg);
+      graphics.drawCircle(x+5+compassHeight,y+5+compassHeight,compassHeight);
       graphics.drawString("N", compass[2], compass[3], true);
       graphics.drawString("S", compass[4], compass[5], true);
       graphics.drawString("W", compass[6], compass[7], true);
-      graphics.drawString("O", compass[8], compass[9], true);
+      graphics.drawString("E", compass[8], compass[9], true);
     }
   };
 };
@@ -829,7 +835,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },Bangle.isLocked()?2000:0);
+  },250);
 };
 
 let switchNav = function(){
