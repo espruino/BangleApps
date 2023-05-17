@@ -90,10 +90,12 @@ let clockInfoDraw = (itm, info, options) => {
 };
 
 let clockInfoMenuA = require("clock_info").addInteractive(clockInfoItems, {
+  app:"pebblepp",
   x : 0, y: 0, w: w/2, h:h/2,
   draw : clockInfoDraw
 });
 let clockInfoMenuB = require("clock_info").addInteractive(clockInfoItems, {
+  app:"pebblepp",
   x : w/2, y: 0, w: w/2, h:h/2,
   draw : clockInfoDraw
 });

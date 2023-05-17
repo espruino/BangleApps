@@ -2,7 +2,7 @@
   "id": "simplestpp",
   "name": "Simplest++ Clock",
   "shortName": "Simplest++",
-  "version": "0.03",
+  "version": "0.04",
   "description": "The simplest working clock, with clock_info, acts as a tutorial piece",
   "readme": "README.md",
   "icon": "app.png",

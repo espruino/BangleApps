@@ -1,1 +1,2 @@
 0.01: First release
+0.02: clock_info now uses app name to maintain settings specifically for this clock face
