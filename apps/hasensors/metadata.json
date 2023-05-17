@@ -2,7 +2,7 @@
   "id": "hasensors",
   "name": "Home Assistant Sensors",
   "shortName": "HA sensors",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Send sensor values to Home Assistant using the Android Integration.",
   "icon": "ha.png",
   "type": "bootloader",
@@ -14,8 +14,5 @@
   "storage": [
     {"name":"hasensors","url":"lib.js"},
     {"name":"hasensors.boot.js","url":"boot.js"}
-  ],
-  "data": [
-    {"name":"hasensors.settings.json"}
   ]
 }
