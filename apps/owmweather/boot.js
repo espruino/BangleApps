@@ -1,8 +1,9 @@
 {
   let waiting = false;
-  let settings = require("Storage").readJSON("owmweather.json", 1) || {
-    enabled: false
-  };
+  let settings = Object.assign(
+    require('Storage').readJSON("owmweather.default.json", true) || {},
+    require('Storage').readJSON("owmweather.json", true) || {}
+  );
   
   let completion = function(){
     waiting = false;
