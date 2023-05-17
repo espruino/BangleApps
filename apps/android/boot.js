@@ -138,7 +138,6 @@
       },
       // {t:"gps", lat, lon, alt, speed, course, time, satellites, hdop, externalSource:true }
       "gps": function() {
-        const settings = require("Storage").readJSON("android.settings.json",1)||{};
         if (!settings.overwriteGps) return;
         // modify event for using it as Bangle GPS event
         delete event.t;
