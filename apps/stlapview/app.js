@@ -53,7 +53,7 @@ function view(fileName) {
   let lapMenu = {
     '': {
       'title': fileNameToDateString(fileName),
-      'back': showMainMenu
+      'back': () => showMainMenu()
     },
   };
   lapMenu[`Total time: ${msToHumanReadable(fileData[fileData.length - 1])}`] = () => { };
