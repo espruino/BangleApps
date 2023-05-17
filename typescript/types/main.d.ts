@@ -466,6 +466,46 @@ declare class ESP32 {
   static deepSleep(us: number): void;
 
   /**
+   * Put device in deepsleep state until interrupted by pin "pin".
+   * Eligible pin numbers are restricted to those [GPIOs designated
+   * as RTC GPIOs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#gpio-summary).
+   *
+   * @param {Pin} pin - Pin to trigger wakeup
+   * @param {number} level - Logic level to trigger
+   * @url http://www.espruino.com/Reference#l_ESP32_deepSleepExt0
+   */
+  static deepSleepExt0(pin: Pin, level: number): void;
+
+  /**
+   * Put device in deepsleep state until interrupted by pins in the "pinVar" array.
+   * The trigger "mode" determines the pin state which will wake up the device.
+   * Valid modes are:
+   * * `0: ESP_EXT1_WAKEUP_ALL_LOW` - all nominated pins must be set LOW to trigger wakeup
+   * * `1: ESP_EXT1_WAKEUP_ANY_HIGH` - any of nominated pins set HIGH will trigger wakeup
+   * Eligible pin numbers are restricted to those [GPIOs designated
+   * as RTC GPIOs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#gpio-summary).
+   *
+   * @param {any} pinVar - Array of Pins to trigger wakeup
+   * @param {number} mode - Trigger mode
+   * @url http://www.espruino.com/Reference#l_ESP32_deepSleepExt1
+   */
+  static deepSleepExt1(pinVar: any, mode: number): void;
+
+  /**
+   * Returns a variable identifying the cause of wakeup from deep sleep.
+   * Possible causes include:
+   * * `0: ESP_SLEEP_WAKEUP_UNDEFINED` - reset was not caused by exit from deep sleep
+   * * `2: ESP_SLEEP_WAKEUP_EXT0` - Wakeup caused by external signal using RTC_IO
+   * * `3: ESP_SLEEP_WAKEUP_EXT1` - Wakeup caused by external signal using RTC_CNTL
+   * * `4: ESP_SLEEP_WAKEUP_TIMER` - Wakeup caused by timer
+   * * `5: ESP_SLEEP_WAKEUP_TOUCHPAD` - Wakeup caused by touchpad
+   * * `6: ESP_SLEEP_WAKEUP_ULP` - Wakeup caused by ULP program
+   * @returns {number} The cause of the ESP32's wakeup from sleep
+   * @url http://www.espruino.com/Reference#l_ESP32_getWakeupCause
+   */
+  static getWakeupCause(): number;
+
+  /**
    * Returns an object that contains details about the state of the ESP32 with the
    * following fields:
    * * `sdkVersion` - Version of the SDK.
@@ -5597,7 +5637,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    *   `width,height,bpp,[transparent,]image_bytes...`. If a transparent colour is
    *   specified the top bit of `bpp` should be set.
    * * An ArrayBuffer Graphics object (if `bpp<8`, `msb:true` must be set) - this is
-   *   disabled on devices without much flash memory available
+   *   disabled on devices without much flash memory available. If a Graphics object
+   *   is supplied, it can also contain transparent/palette fields as if it were
+   *   an image.
    * Draw an image at the specified position.
    * * If the image is 1 bit, the graphics foreground/background colours will be
    *   used.
@@ -5678,6 +5720,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
+   * If the `Graphics` object contains `transparent` or `pelette` fields,
+   * [as you might find in an image](http://www.espruino.com/Graphics#images-bitmaps),
+   * those will be included in the generated image too.
    *
    * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
    * @returns {any} An Image that can be used with `Graphics.drawImage`
@@ -5799,6 +5844,19 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_transformVertices
    */
   transformVertices(arr: number[], transformation: { x?: number, y?: number, scale?: number, rotate?: number } | [number, number, number, number, number, number]): number[];
+
+  /**
+   * Flood fills the given Graphics instance out from a particular point.
+   * **Note:** This only works on Graphics instances that support readback with `getPixel`. It
+   * is also not capable of filling over dithered patterns (eg non-solid colours on Bangle.js 2)
+   *
+   * @param {number} x - X coordinate to start from
+   * @param {number} y - Y coordinate to start from
+   * @param {any} col - The color to fill with (if undefined, foreground is used)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_floodFill
+   */
+  floodFill(x: number, y: number, col: any): Graphics;
 
   /**
    * Returns an object of the form:
@@ -8223,6 +8281,10 @@ declare class E {
   /**
    * Dump any locked variables that aren't referenced from `global` - for debugging
    * memory leaks only.
+   * **Note:** This does a linear scan over memory, finding variables
+   * that are currently locked. In some cases it may show variables
+   * like `Unknown 66` which happen when *part* of a string has ended
+   * up placed in memory ahead of the String that it's part of. See https://github.com/espruino/Espruino/issues/2345
    * @url http://www.espruino.com/Reference#l_E_dumpLockedVars
    */
   static dumpLockedVars(): void;
@@ -8655,6 +8717,24 @@ declare class E {
    */
   static decodeUTF8(str: string, lookup: string[], replaceFn: string | ((charCode: number) => string)): string;
 
+  /**
+   * When using events with `X.on('foo', function() { ... })`
+   * and then `X.emit('foo')` you might want to stop subsequent
+   * event handlers from being executed.
+   * Calling this function doing the execution of events will
+   * ensure that no subsequent event handlers are executed.
+   * ```
+   * var X = {}; // in Espruino all objects are EventEmitters
+   * X.on('foo', function() { print("A"); })
+   * X.on('foo', function() { print("B"); E.stopEventPropagation(); })
+   * X.on('foo', function() { print("C"); })
+   * X.emit('foo');
+   * // prints A,B but not C
+   * ```
+   * @url http://www.espruino.com/Reference#l_E_stopEventPropagation
+   */
+  static stopEventPropagation(): void;
+
 
 }
 
@@ -8959,6 +9039,9 @@ interface Object {
    * o.emit('answer', 44);
    * // nothing printed
    * ```
+   * If you have more than one handler for an event, and you'd
+   * like that handler to stop the event being passed to other handlers
+   * then you can call `E.stopEventPropagation()` in that handler.
    *
    * @param {any} event - The name of the event, for instance 'data'
    * @param {any} listener - The listener to call when this event is received
@@ -10074,6 +10157,12 @@ declare class Serial {
    * @url http://www.espruino.com/Reference#l_Serial_pipe
    */
   pipe(destination: any, options?: PipeOptions): void
+
+  /**
+   * Flush this serial stream (pause execution until all data has been sent)
+   * @url http://www.espruino.com/Reference#l_Serial_flush
+   */
+  flush(): void;
 }
 
 interface StringConstructor {
