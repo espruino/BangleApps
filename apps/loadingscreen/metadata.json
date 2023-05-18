@@ -3,6 +3,7 @@
   "version":"0.01",
   "description": "On Bangle.js 2v18+, customize the app loading screen",
   "icon": "app.png",
+  "screenshots" : [ { "url":"screenshot1.png" }, { "url":"screenshot2.png" } ],
   "tags": "tool",
   "type": "settings",
   "supports" : ["BANGLEJS2"],
