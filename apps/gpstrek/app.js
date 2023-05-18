@@ -196,8 +196,8 @@ let getMapSlice = function(){
       graphics.setClipRect(x,y,x+width,y+height);
 
       let course = WIDGETS.gpstrek.getState().currentPos.course;
-      if  (course === undefined) course = WIDGETS.gpstrek.getState().avgComp;
-      if  (course === undefined) course = 0;
+      if  (isNaN(course)) course = getAveragedCompass();;
+      if  (isNaN(course)) course = 0;
 
       let route = WIDGETS.gpstrek.getState().route;
       if (!route) return;
@@ -414,7 +414,6 @@ let getCompassSlice = function(){
       return (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > 2);
     },
     draw: function (graphics, x,y,height,width){
-      lastDrawn = Date.now();
       const max = 180;
       const increment=width/max;
 
@@ -1079,9 +1078,13 @@ let draw = function(){
 
   if (global.screen == 1) {
     let split = s.route?(Bangle.appRect.h/4):Bangle.appRect.h;
+    g.reset();
     compassSlice.draw(g,Bangle.appRect.x,ypos,split,Bangle.appRect.w);
     ypos += split + 1;
-    if (s.route) mapSlice.draw(g,0,ypos, Bangle.appRect.h - split,Bangle.appRect.w);
+    if (s.route){
+      g.reset();
+      mapSlice.draw(g,0,ypos, Bangle.appRect.h - split,Bangle.appRect.w);
+    }
   } else {
     let sliceHeight = getSliceHeight();
     let slicesToDraw = slices.slice(firstSlice,firstSlice + s.numberOfSlices);
