@@ -126,7 +126,7 @@ function resistanceToColorBands(resistance, tolerance) {
 }
 
 function drawResistor(colorBands, tolerance) {
-  let img = require("Storage").read("rescalc.app.img");
+  let img = require("Storage").read("rescalc-resistor.img");
   let resistorBodyWidth = 51;
   let resistorBodyHeight = 43;
   let resistorStartX = 57;
