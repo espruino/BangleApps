@@ -129,7 +129,7 @@ function drawResistor(colorBands, tolerance) {
   let img = require("Storage").read("rescalc-resistor.img");
   let resistorBodyWidth = 51;
   let resistorBodyHeight = 43;
-  let resistorStartX = 57;
+  let resistorStartX = 52;
   var bandColors = colorBands;
   var numcolorBands = bandColors.length;
   var resistorStartY = ((g.getHeight() - resistorBodyHeight) / 2) + 48;
@@ -156,9 +156,9 @@ function drawResistor(colorBands, tolerance) {
     g.drawLine(bandX, bandY, bandX, bandY + bandHeight); // left outline
     g.drawLine(bandX + bandWidth, bandY, bandX + bandWidth, bandY + bandHeight); // right outline
 
-    // if it's the fourth band, shift it over by an additional 8 pixels
+    // if it's the fourth band, shift it over by an additional 12 pixels
     if (i === 2) {
-      currentX = bandX + bandWidth + 5 + 8; // update the current X position for the next band, accounting for the spacing
+      currentX = bandX + bandWidth + 5 + 12; // update the current X position for the next band, accounting for the spacing
     } else {
       currentX = bandX + bandWidth + 5; // update the current X position for the next band, accounting for the spacing
     }
