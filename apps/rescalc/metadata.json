@@ -16,6 +16,6 @@
   "storage": [
     {"name": "rescalc.app.js", "url": "app.js"},
     {"name": "rescalc.img", "url": "app-icon.js", "evaluate": true},
-    {"name": "rescalc.app.img", "url": "resistor.js", "evaluate": true}
+    {"name": "rescalc-resistor.img", "url": "resistor.js", "evaluate": true}
   ]
 }
