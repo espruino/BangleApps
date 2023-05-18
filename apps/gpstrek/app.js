@@ -355,7 +355,33 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
   }
 };
 
-let getCompassSlice = function(compassDataSource){
+let getCompassSlice = function(){
+  let compassDataSource = {
+    getCourseType: function(){
+      return (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) ? "GPS" : "MAG";
+    },
+    getCourse: function (){
+      if(compassDataSource.getCourseType() == "GPS") return WIDGETS.gpstrek.getState().currentPos.course;
+      return getAveragedCompass();
+    },
+    getPoints: function (){
+      let points = [];
+      let s = WIDGETS.gpstrek.getState();
+      if (s.currentPos && s.currentPos.lon && s.route){
+        points.push({bearing:bearing(s.currentPos, getLast(s.route)), icon: finishIcon});
+      }
+      if (s.currentPos && s.currentPos.lon && s.waypoint){
+        points.push({bearing:bearing(s.currentPos, s.waypoint), icon: finishIcon});
+      }
+      if (s.currentPos && s.currentPos.lon && s.route && s.route.currentWaypoint){
+        points.push({bearing:bearing(s.currentPos, s.route.currentWaypoint), color:"#0f0"});
+      }
+      return points;
+    },
+    getMarkers: function (){
+      return [{xpos:0.5, width:10, height:10, linecolor:g.theme.fg, fillcolor:"#f00"}];
+    }
+  };
   let lastDrawnValue = 0;
   const buffers = 4;
   let buf = [];
@@ -879,33 +905,6 @@ let setClosestWaypoint = function(route, startindex, progress){
 
 const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
 
-const compassSliceData = {
-  getCourseType: function(){
-    return (WIDGETS.gpstrek.getState().currentPos && WIDGETS.gpstrek.getState().currentPos.course) ? "GPS" : "MAG";
-  },
-  getCourse: function (){
-    if(compassSliceData.getCourseType() == "GPS") return WIDGETS.gpstrek.getState().currentPos.course;
-    return getAveragedCompass();
-  },
-  getPoints: function (){
-    let points = [];
-    let s = WIDGETS.gpstrek.getState();
-    if (s.currentPos && s.currentPos.lon && s.route){
-      points.push({bearing:bearing(s.currentPos, getLast(s.route)), icon: finishIcon});
-    }
-    if (s.currentPos && s.currentPos.lon && s.waypoint){
-      points.push({bearing:bearing(s.currentPos, s.waypoint), icon: finishIcon});
-    }
-    if (s.currentPos && s.currentPos.lon && s.route && s.route.currentWaypoint){
-      points.push({bearing:bearing(s.currentPos, s.route.currentWaypoint), color:"#0f0"});
-    }
-    return points;
-  },
-  getMarkers: function (){
-    return [{xpos:0.5, width:10, height:10, linecolor:g.theme.fg, fillcolor:"#f00"}];
-  }
-};
-
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
   getProgress: function() {
@@ -935,7 +934,7 @@ let getSliceHeight = function(number){
   return Math.floor(Bangle.appRect.h/WIDGETS.gpstrek.getState().numberOfSlices);
 };
 
-let compassSlice = getCompassSlice(compassSliceData);
+let compassSlice = getCompassSlice();
 let mapSlice = getMapSlice();
 let waypointSlice = getTargetSlice(waypointData);
 let finishSlice = getTargetSlice(finishData);
