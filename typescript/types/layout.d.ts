@@ -51,7 +51,7 @@ declare module Layout {
 
   type Image = string;
 
-  type Fill = 0 | 1 | 2; // 0=no, 1=yes, 2=2x more space
+  type Fill = number; // fill a proportion of space, relative to sibling `filly`s
 
   type RenderedHierarchy =
     Hierarchy & {
