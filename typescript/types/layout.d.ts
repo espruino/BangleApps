@@ -19,12 +19,12 @@ declare module Layout {
     &
     {
       // these actually change T
-      render(l?: T): void;
-      layout(l: T): void;
+      render(l?: Hierarchy): void;
+      layout(l: Hierarchy): void;
 
-      debug(l?: T, c?: ColorResolvable): void;
+      debug(l?: Hierarchy, c?: ColorResolvable): void;
       update(): void; // changes layoutObject into a RenderedHierarchy
-      clear(obj?: T): void;
+      clear(obj?: Hierarchy): void;
 
       forgetLazyState(): void;
 
