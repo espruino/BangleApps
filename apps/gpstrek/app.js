@@ -237,6 +237,7 @@ let getMapSlice = function(){
             poly.push(startingPoint.x-toDraw.x);
             poly.push((startingPoint.y-toDraw.y)*-1);
           }
+          i -= 1;
           poly = graphics.transformVertices(poly, mapTrans);
           graphics.drawPoly(poly, false);
           if (i > 50 || breakLoop) break;
@@ -367,10 +368,10 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
     var res = i + frag;
     if (res%90==0) {
       graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
-      graphics.fillRect(xpos-2,Math.floor(y+height*0.6),xpos+2,Math.floor(y+height));
+      graphics.fillRect(xpos-2,Math.floor(y+height*0.8),xpos+2,Math.floor(y+height));
     } else if (res%45==0) {
       graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
-      graphics.fillRect(xpos-2,Math.floor(y+height*0.75),xpos+2,Math.floor(y+height));
+      graphics.fillRect(xpos-2,Math.floor(y+height*0.7),xpos+2,Math.floor(y+height));
     } else if (res%15==0) {
       graphics.fillRect(xpos,Math.floor(y+height*0.9),xpos+1,Math.floor(y+height));
     }
@@ -1014,29 +1015,6 @@ let systemSlice = getDoubleLineSlice("RAM","Storage",()=>{
   return (STORAGE.getFree()/1024).toFixed(0)+"kB";
 });
 
-let updateSlices = function(){
-  let s = WIDGETS.gpstrek.getState();
-  slices = [];
-  slices.push(compassSlice);
-
-  if (s.route) slices.push(mapSlice);
-  if (s.currentPos && s.currentPos.lat && s.route && s.route.currentWaypoint && s.route.index < s.route.count - 1) {
-    slices.push(waypointSlice);
-  }
-  if (s.currentPos && s.currentPos.lat && (s.route || s.waypoint)) {
-    slices.push(finishSlice);
-  }
-  if ((s.route && s.route.down !== undefined) || s.down != undefined) {
-    slices.push(eleSlice);
-  }
-  slices.push(statusSlice);
-  slices.push(status2Slice);
-  slices.push(healthSlice);
-  slices.push(systemSlice);
-  slices.push(system2Slice);
-  maxScreens = Math.ceil(slices.length/s.numberOfSlices);
-};
-
 let clear = function() {
   g.clearRect(Bangle.appRect);
 };
@@ -1066,28 +1044,54 @@ let updateRouting = function() {
   }
 };
 
+let updateSlices = function(){
+  let s = WIDGETS.gpstrek.getState();
+  slices = [];
+  if (s.currentPos && s.currentPos.lat && s.route && s.route.currentWaypoint && s.route.index < s.route.count - 1) {
+    slices.push(waypointSlice);
+  }
+  if (s.currentPos && s.currentPos.lat && (s.route || s.waypoint)) {
+    slices.push(finishSlice);
+  }
+  if ((s.route && s.route.down !== undefined) || s.down != undefined) {
+    slices.push(eleSlice);
+  }
+  slices.push(statusSlice);
+  slices.push(status2Slice);
+  slices.push(healthSlice);
+  slices.push(systemSlice);
+  slices.push(system2Slice);
+  maxScreens = Math.ceil(slices.length/s.numberOfSlices) + 1;
+};
+
 let draw = function(){
   if (!global.screen) return;
   let ypos = Bangle.appRect.y;
   let s = WIDGETS.gpstrek.getState();
 
-  let firstSlice = (screen-1)*s.numberOfSlices;
-
-  updateSlices();
-
+  let firstSlice = (screen-2)*s.numberOfSlices;
   let force = lastDrawnScreen != screen || firstDraw;
   if (force){
     clear();
   }
   if (firstDraw) Bangle.drawWidgets();
   lastDrawnScreen = screen;
+  updateSlices();
 
-  let sliceHeight = getSliceHeight();
-  for (let slice of slices.slice(firstSlice,firstSlice + s.numberOfSlices)) {
-    g.reset();
-    if (!slice.refresh || slice.refresh() || force) slice.draw(g,0,ypos,sliceHeight,g.getWidth());
-    ypos += sliceHeight+1;
-    g.drawLine(0,ypos-1,g.getWidth(),ypos-1);
+  if (global.screen == 1) {
+    let split = s.route?(Bangle.appRect.h/4):Bangle.appRect.h;
+    compassSlice.draw(g,Bangle.appRect.x,ypos,split,Bangle.appRect.w);
+    ypos += split + 1;
+    if (s.route) mapSlice.draw(g,0,ypos, Bangle.appRect.h - split,Bangle.appRect.w);
+  } else {
+    let sliceHeight = getSliceHeight();
+    let slicesToDraw = slices.slice(firstSlice,firstSlice + s.numberOfSlices);
+    for (let slice of slicesToDraw) {
+      g.reset();
+      if (!slice.refresh || slice.refresh() || force) slice.draw(g,0,ypos,sliceHeight,g.getWidth());
+      ypos += sliceHeight+1;
+      g.drawLine(0,ypos-1,g.getWidth(),ypos-1);
+    }
   }
 
   updateRouting();
