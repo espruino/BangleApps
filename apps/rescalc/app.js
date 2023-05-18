@@ -83,7 +83,7 @@ function colorBandsToResistance(colorBands) {
   let firstBand = colorBands[0];
   let secondBand = colorBands[1];
   let multiplierBand = colorBands[2];
-  let toleranceBand = colorBands[3] || 'none';  // Add a default value for toleranceBand
+  let toleranceBand = colorBands[3] || 'none'; // Add a default value for toleranceBand
   let significantDigits = colorData[firstBand].value * 10 + colorData[secondBand].value;
   let multiplier = colorData[multiplierBand].multiplier;
   let resistance = significantDigits * multiplier;
@@ -134,7 +134,7 @@ function drawResistor(colorBands, tolerance) {
   var numcolorBands = bandColors.length;
   var resistorStartY = ((g.getHeight() - resistorBodyHeight) / 2) + 48;
   clearScreen();
-  g.drawImage(img, 0, 48);
+  g.drawImage(img, 0, 112);
   var bandWidth = (resistorBodyWidth - (numcolorBands * 2 - 1)) / numcolorBands; // width of each band, accounting for the spacing
   var bandHeight = resistorBodyHeight; // height of each band
   var currentX = resistorStartX; // starting point for the first band
@@ -453,7 +453,7 @@ function drawResistance(resistance, tolerance) {
       showDrawingMenu();
     }
   };
-  
+
   function showResistanceEntryMenu() {
     // Update the 'Ohms' field
     resistanceEntryMenu['Ohms'].value = settings.resistance;
@@ -474,7 +474,7 @@ function drawResistance(resistance, tolerance) {
 
     E.showMenu(resistanceEntryMenu);
   }
-  
+
   function showDrawingMenu() {
     let drawingMenu = {
       '': {
@@ -508,4 +508,4 @@ function drawResistance(resistance, tolerance) {
     },
   };
   E.showMenu(mainMenu);
-})(load);
+})();
