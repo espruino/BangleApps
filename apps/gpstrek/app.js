@@ -217,14 +217,15 @@ let getMapSlice = function(){
 
       let drawPath = function(iter, reverse){
         let i = 0;
-        let named = [];
 
         let time = Date.now(); 
 
         let poly;
         let breakLoop = false;
+        graphics.setFont6x15();
         do {
           poly = [];
+          let named = [];
           for (let j = 0; j < 10; j++){
             i = i + (reverse?-1:1);
             let p = iter(route, route.index + i);
@@ -232,25 +233,23 @@ let getMapSlice = function(){
               breakLoop = true;
               break;
             }
-            if (p.name) named.push({i:poly.length,n:p.name});
             let toDraw = Bangle.project(p);
+            if (p.name) named.push({i:poly.length,n:p.name});
             poly.push(startingPoint.x-toDraw.x);
             poly.push((startingPoint.y-toDraw.y)*-1);
           }
-          i -= 1;
           poly = graphics.transformVertices(poly, mapTrans);
           graphics.drawPoly(poly, false);
+          for (let c of named){
+            graphics.drawImage(cross, poly[c.i]-5, poly[c.i+1]-4.5);
+            graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
+          }
+          i -= 1;
           if (i > 50 || breakLoop) break;
         } while (poly[poly.length - 2] > x
               && poly[poly.length - 2] < x + width
               && poly[poly.length - 1] > y
               && poly[poly.length - 1] < y + height);
-
-        graphics.setFont6x15();
-        for (let c of named){
-          graphics.drawImage(cross, poly[c.i]-5, poly[c.i+1]-4.5);
-          graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
-        }
       };
 
       drawPath(getNext,false);
