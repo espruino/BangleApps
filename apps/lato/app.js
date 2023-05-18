@@ -37,13 +37,13 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
 {
   // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
-  
+
   let draw = function() {
     var date = new Date();
     var timeStr = require("locale").time(date,1);
     var h = g.getHeight();
     var w = g.getWidth();
-    
+
     g.reset();
     g.setColor(g.theme.bg);
     g.fillRect(Bangle.appRect);
@@ -66,7 +66,7 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
   /**
    * clock_info_support
    * this is the callback function that get invoked by clockInfoMenu.redraw();
-   * 
+   *
    * We will display the image and text on the same line and centre the combined
    * length of the image+text
    *
@@ -76,7 +76,7 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
     //g.reset().setFont('Vector',24).setBgColor(options.bg).setColor(options.fg);
     g.reset().setFontLatoSmall();
     g.setBgColor(options.bg).setColor(options.fg);
-    
+
     //use info.text.toString(), steps does not have length defined
     var text_w = g.stringWidth(info.text.toString());
     // gap between image and text
@@ -88,7 +88,7 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
 
     // clear the whole info line, allow additional 2 pixels in case LatoFont overflows area
     g.clearRect(0, options.y -2, g.getWidth(), options.y+ 23 + 2);
-    
+
     // draw the image if we have one
     if (info.img) {
       // image start
@@ -110,8 +110,8 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
   // clock_info_support
   // setup the way we wish to interact with the menu
   // the hl property defines the color the of the info when the menu is selected after tapping on it
-  let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
-  
+  let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app : "lato", x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
+
   // timeout used to update every minute
   var drawTimeout;
   g.clear();

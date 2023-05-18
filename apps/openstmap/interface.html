@@ -239,6 +239,8 @@ TODO:
         document.getElementById("mapContainer").style.display = "";
         document.getElementById("maptiles").style.display="none";
         document.getElementById("uploadbuttons").style.display="none";
+        map.invalidateSize();
+        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       }
 
       // -----------------------------------------------------

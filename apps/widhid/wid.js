@@ -81,7 +81,10 @@
         if (!wasActive) {
             waitForRelease = true;
             Bangle.on("drag", onDrag);
-            Bangle["#ondrag"] = [onDrag].concat(Bangle["#ondrag"].filter(function (f) { return f !== onDrag; }));
+            var dragHandlers = Bangle["#ondrag"];
+            if (dragHandlers && typeof dragHandlers !== "function") {
+                Bangle["#ondrag"] = [onDrag].concat(dragHandlers.filter(function (f) { return f !== onDrag; }));
+            }
             redraw();
         }
         if (activeTimeout)
@@ -120,7 +123,12 @@
         redraw();
     });
     var sendHid = function (code) {
-        NRF.sendHIDReport([1, code], function () { return NRF.sendHIDReport([1, 0]); });
+        try {
+            NRF.sendHIDReport([1, code], function () { return NRF.sendHIDReport([1, 0]); });
+        }
+        catch (e) {
+            console.log("sendHIDReport:", e);
+        }
     };
     var next = function () { return sendHid(0x01); };
     var prev = function () { return sendHid(0x02); };

@@ -1,35 +1,43 @@
 // split out into a separate file to keep bootcode short.
-function s(key) {
-    return (require('Storage').readJSON('hasensors.settings.js', true) || {})[key];
-}
-
+// placeholders are replaced by custom.html before upload
 function post(sensor, data) {
-    const url = s('url') + '/api/states/sensor.' + s('id') + '_' + sensor;
+    const url = "{url}/api/states/sensor.{id}_" + sensor;
     Bangle.http(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + s('token'),
+            "Content-Type": "application/json",
+            Authorization: "Bearer {token}",
         }
     });
 }
 
 exports.sendBattery = function () {
     if (!NRF.getSecurityStatus().connected) return;
-    post('battery_level', {
-        state: E.getBattery(),
+    const b = E.getBattery(), 
+        c = Bangle.isCharging();
+    let i = "mdi:battery";
+    if (c) i += "-charging";
+
+    post("battery_state", {
+        state: c ? "charging" : "discharging",
         attributes: {
-            friendly_name: s('name') + " Battery Level",
+            friendly_name: "{name} Battery State",
+            icon: i + (c ? "" : "-minus"),
+        }
+    });
+
+    if (b<10) i += "-outline"; // there is no battery-0
+    else if (b<100 || c) i += "-" + Math.floor(b/10)*10; // no battery-100 either
+
+    post("battery_level", {
+        state: b,
+        attributes: {
+            friendly_name: "{name} Battery Level",
             unit_of_measurement: "%",
             device_class: "battery",
             state_class: "measurement",
-        }
-    });
-    post('battery_state', {
-        state: Bangle.isCharging() ? 'charging' : 'discharging',
-        attributes: {
-            friendly_name: s('name') + " Battery State",
+            icon: i,
         }
     });
 }
