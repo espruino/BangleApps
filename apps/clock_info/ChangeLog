@@ -1,2 +1,6 @@
 0.01: Moved from modules/clock_info.js
 0.02: Fix settings page
+0.03: Reported image for battery now reflects charge level
+0.04: On 2v18+ firmware, we can now stop swipe events from being handled by other apps
+      eg. when a clockinfo is selected, swipes won't affect swipe-down widgets
+0.05: Reported image for battery is now transparent (2v18+)

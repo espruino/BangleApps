@@ -57,3 +57,7 @@ declare module ClockInfo {
       focus: boolean,
     };
 }
+
+interface BangleExt {
+  CLKINFO_FOCUS?: true;
+}

@@ -79,6 +79,6 @@ let clockInfoDraw = (itm, info, options) => {
 
 };
 let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 }

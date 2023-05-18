@@ -224,6 +224,7 @@ function drawKana (x, y) {
   g.setColor(0, 0, 0);
   g.fillRect(0, 0, g.getWidth(), 6 * (h / 8) + 1);
   g.setColor(1, 1, 1);
+  kana = hiramode ? hiragana[curkana] : katakana[curkana];
   g.drawImage(kana, x + 20, 40, { scale: 1.6 });
   g.setColor(1, 1, 1);
   g.setFont('Vector', 24);
@@ -266,4 +267,3 @@ Bangle.setUI('clock');
 Bangle.loadWidgets();
 tickWatch();
 setInterval(tickWatch, 1000 * 60);
-

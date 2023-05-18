@@ -1,6 +1,15 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+
+    <style> 
+      .table_wrapper{
+        display: block;
+        overflow-x: auto;
+        margin-right: 0.8rem;
+        white-space: nowrap;
+      }
+    </style>
   </head>
   <body>
     <div id="content"></div>
@@ -119,18 +128,21 @@ function viewDeferredTable(filename) {
             <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
             <div>
               This are functions used in timeouts and intervals and their accumulated execution times. Recorded in a time span of <b>${timeFormat(duration)}</b>. Timeouts/intervals have run for <b>${timeFormat(sum)} (${(sum/duration*100).toFixed(2)}%)</b>. Percentages are calculated from summarized timeout/interval running time.
-            </div>
-            <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Percentage</th>
-                <th>Function</th>
-              </tr>
-            </thead>
-            <tbody>\n`;
+            </div>           
+
+            <div class="table_wrapper">
+
+              <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Percentage</th>
+                  <th>Function</th>
+                </tr>
+              </thead>
+              <tbody>\n`;
           htmlOverview += tableRows;
-          htmlOverview += `</tbody></table>`;
+          htmlOverview += `</tbody></table></div>`;
           domContent.innerHTML = htmlOverview;
           domContent.querySelector("#back").addEventListener("click",event => {
             show();
@@ -234,24 +246,46 @@ function viewDetailsTable(filename) {
       Util.hideModal();
       
       var htmlOverview = `<h1>Detailed logging</h1>
-
-      This is a trace log of all logged power entries, first column denotes the type. p for power, i for interval and t for timeout. Power is logged with old state, new state and calling app if available. Functions are logged with execution duraion and source if available.
-
       <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
-      <table class="table table-striped table-hover">
-      <tbody>\n`;
+      <div>
+        This is a trace log of all logged entries. Power is logged with type, state transition (old &rarr; new) and calling app if available. Functions are logged with execution duration and source if available.
+      </div>
+      <div class="table_wrapper">
+
+        <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>\n`;
         let rows = data.trim().split("\n");
+        let firstTimestamp;
         for (var row of rows) {
           let cols = row.split(",");
-          htmlOverview += `<tr>
-          <td>${cols[0]}</td>
-          <td>${cols[1]}</td>
-          <td>${cols[2]}</td>
-          <td>${cols[3]}</td>
-          <td>${cols[4]}</td>
-          </tr>`
+          let col = 0;
+          if (!firstTimestamp) firstTimestamp = cols[0];
+
+          if (cols[1] == "p"){
+            cols[1] = "Power";
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]}</td>
+            <td>${cols[col++]}</br>${cols[col++]} &rarr; ${cols[col++]}</br>${cols[col++]}</td>
+            </tr>`
+          } else {
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]=="t"?"Timeout":"Interval"}</td>
+            <td>${new Number(cols[col++]).toFixed(0)}ms</br><pre>${cols[col++]}</pre></td>
+            </tr>`
+          }
       }
-      htmlOverview += `</tbody></table>`;
+      htmlOverview += `</tbody></table></div>`;
+
+
       domContent.innerHTML = htmlOverview;
       domContent.querySelector("#back").addEventListener("click",event => {
          show();

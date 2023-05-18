@@ -1,15 +1,17 @@
-{
+(() => {
 type Timestamp = number;
-
-const oldRead = require("Storage").readJSON;
-const monthAgo = Date.now() - 1000 * 86400 * 28;
-let cache: undefined | {
+type Cache = {
 	[key: string]: {
 		sortorder: number,
 		pop: number, // amount of launches
 		last: Timestamp,
 	}
 };
+
+const oldRead = require("Storage").readJSON;
+const oneMonth = 1000 * 86400 * 28;
+const monthAgo = Date.now() - oneMonth;
+let cache: undefined | Cache;
 
 const ensureCache = (): NonNull<typeof cache> => {
 	if(!cache){
@@ -20,7 +22,19 @@ const ensureCache = (): NonNull<typeof cache> => {
 	return cache;
 };
 
-const saveCache = (orderChanged: boolean) => {
+const trimCache = (cache: Cache) => {
+	const threeMonthsBack = Date.now() - oneMonth * 3;
+	const del = [];
+	for(const k in cache)
+		if(cache[k]!.last < threeMonthsBack)
+			del.push(k);
+
+	for(const k of del)
+		delete cache[k];
+};
+
+const saveCache = (cache: Cache, orderChanged: boolean) => {
+	trimCache(cache);
 	require("Storage").writeJSON("popcon.cache.json", cache);
 	if(orderChanged){
 		// ensure launchers reload their caches:
@@ -94,9 +108,9 @@ global.load = (src: string) => {
 		ent.pop++;
 		ent.last = Date.now();
 		const orderChanged = sortCache();
-		saveCache(orderChanged);
+		saveCache(cache, orderChanged);
 	}
 
 	return oldLoad(src);
 };
-}
+})()

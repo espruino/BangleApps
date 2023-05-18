@@ -1,0 +1,143 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      .flag {
+        width : 100px;
+        cursor: pointer;
+      }
+      #preview {
+        width : 176px;
+        height: 176px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Please choose your country's flag:</p>
+    <div id="flaglist"></div>
+    <p>Is your flag not here? Please <a href="https://github.com/espruino/BangleApps/tree/master/apps/patriotclk/img" target="_blank">add it here</a>! </p>
+    <div style="float:right">Preview:<br/><canvas width="176" height="176" id="preview"></canvas></div>
+    <div class="form-group">
+      <label class="form-switch">
+        <input type="checkbox" id="box_zoom">
+        <i class="form-icon"></i> Zoom
+      </label>
+      <label class="form-switch">
+        <input type="checkbox" id="box_textbottom">
+        <i class="form-icon"></i> Time at bottom
+      </label>      
+    </div>
+
+    
+    <p>Click <button id="upload" class="btn btn-primary disabled" style>Upload</button></p>
+    
+    <img id="preview_overlay" src="app-preview.png" style="display:none">
+    <img id="preview_overlay_btm" src="app-preview-btm.png" style="display:none">
+    
+
+    <script src="../../core/lib/customize.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
+
+    <script>
+      var FLAGS = `
+      icons8-australia-480.png
+      icons8-austria-480.png
+      icons8-belgium-480.png
+      icons8-brazil-480.png
+      icons8-canada-480.png
+      icons8-china-480.png
+      icons8-denmark-480.png
+      icons8-england-480.png
+      icons8-flag-of-europe-480.png
+      icons8-france-480.png
+      icons8-germany-480.png
+      icons8-great-britain-480.png
+      icons8-greece-480.png
+      icons8-hungary-480.png
+      icons8-italy-480.png
+      icons8-lgbt-flag-480.png
+      icons8-netherlands-480.png
+      icons8-new-zealand-480.png
+      icons8-norway-480.png
+      icons8-scotland-480.png
+      icons8-spain-480.png
+      icons8-sweden-480.png
+      icons8-switzerland-480.png
+      icons8-ukraine-480.png
+      icons8-usa-480.png
+      icons8-wales-480.png
+      `.trim().split("\n").map(s=>s.trim());
+      // If we can't map a flag direct to 3 bit color, enable dithering
+      var DITHERED_FLAGS = `
+      icons8-lgbt-flag-480.png
+      icons8-ukraine-480.png
+      `.trim().split("\n").map(s=>s.trim()); 
+
+      var selectedImage;
+      var bgImageData;
+      var clockOptions = {
+        bottomText : false
+      };
+
+      document.getElementById("flaglist").innerHTML = 
+        FLAGS.map(f => `<img class="flag" src="img/${f}" data-file="${f}"/>`).join("\n");
+      var elements = document.querySelectorAll(".flag");
+      for (var i=0;i<elements.length;i++)
+        elements[i].addEventListener("click", function(e) {
+          selectedImage = e.target;
+          drawPreview();
+          document.getElementById("upload").classList.remove("disabled")
+        });
+
+
+      function drawPreview() {
+        if (!selectedImage) return;
+        var imgFile = selectedImage.getAttribute("data-file");
+        var zoom = document.getElementById("box_zoom").checked;
+        clockOptions.bottomText = document.getElementById("box_textbottom").checked;
+        const canvas = document.getElementById("preview");
+        canvas.width = 176; // setting size clears canvas
+        canvas.height = 176;
+        const ctx = canvas.getContext("2d");
+        var y = 0;
+        if (clockOptions.bottomText)
+          y = -28;
+        if (zoom) 
+          ctx.drawImage(selectedImage, 90, 90, 300, 300, 0, y, 176, 176);
+        else
+          ctx.drawImage(selectedImage, 20, 20, 440, 440, 0, y, 176, 176);
+        var options = {
+          mode:"3bit", 
+          output:"raw", 
+          compression:false, 
+          updateCanvas:true, 
+          transparent:false,
+          contrast:128
+        };
+        if (DITHERED_FLAGS.includes(imgFile))
+          options.diffusion = "bayer2";
+        bgImageData = imageconverter.canvastoString(canvas, options);
+        ctx.drawImage(document.getElementById(clockOptions.bottomText?"preview_overlay_btm":"preview_overlay"),0,0);        
+      }
+
+      // If options changed
+      document.getElementById("box_zoom").addEventListener("click", function() {
+        drawPreview();
+      });
+      document.getElementById("box_textbottom").addEventListener("click", function() {
+        drawPreview();
+      });
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+        // send finished app (in addition to contents of metadata.json)
+        if (bgImageData) sendCustomizedApp({
+          storage:[
+            {name:"patriotclk.bg.img", content:bgImageData},
+            {name:"patriotclk.opts", content:JSON.stringify(clockOptions)}, // we don't save as .json or we'd have a sanitycheck warning
+          ]
+        });
+      });
+
+    </script>
+  </body>
+</html>

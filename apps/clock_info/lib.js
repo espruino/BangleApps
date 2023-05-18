@@ -53,10 +53,18 @@ exports.load = function() {
     items: [
     { name : "Battery",
       hasRange : true,
-      get : () => { let v = E.getBattery(); return {
-        text : v + "%", v : v, min:0, max:100,
-        img : atob(Bangle.isCharging() ? "GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==" : "GBiBAAAAAAAAAAAAAAAAAAAAAD//+P///IAAAr//Ar//Ar//A7//A7//A7//A7//Ar//AoAAAv///D//+AAAAAAAAAAAAAAAAAAAAA==")
-      }},
+      get : () => { let v = E.getBattery();
+        var img;
+        if (!Bangle.isCharging()) {
+          var s=24, g=Graphics.createArrayBuffer(24,24,1,{msb:true});
+          g.fillRect(0,6,s-3,18).clearRect(2,8,s-5,16).fillRect(s-2,10,s,15).fillRect(3,9,3+v*(s-9)/100,15);
+          g.transparent=0; // only works on 2v18+, ignored otherwise (makes image background transparent)
+          img = g.asImage("string");
+        } else img=atob("GBiBAAABgAADwAAHwAAPgACfAAHOAAPkBgHwDwP4Hwf8Pg/+fB//OD//kD//wD//4D//8D//4B//QB/+AD/8AH/4APnwAHAAACAAAA==");
+        return {
+          text : v + "%", v : v, min:0, max:100, img : img
+        }
+      },
       show : function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); Bangle.on("charging", batteryUpdateHandler); batteryUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
@@ -261,6 +269,8 @@ exports.addInteractive = function(menu, options) {
     let settings = exports.loadSettings();
     settings.apps[appName] = {a:options.menuA,b:options.menuB};
     require("Storage").writeJSON("clock_info.json",settings);
+    // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
+    E.stopEventPropagation&&E.stopEventPropagation();
   }
   Bangle.on("swipe",swipeHandler);
   let touchHandler, lockHandler;

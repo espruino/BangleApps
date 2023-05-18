@@ -64,7 +64,7 @@ function queueDraw() {
 /**
  * clock_info_support
  * this is the callback function that get invoked by clockInfoMenu.redraw();
- * 
+ *
  * We will display the image and text on the same line and centre the combined
  * length of the image+text
  *
@@ -109,8 +109,8 @@ let clockInfoItems = require("clock_info").load();
  * selected after tapping on it
  *
  */
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
-  
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app : "lato", x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
+
 g.clear();
 
 // Show launcher when middle button pressed

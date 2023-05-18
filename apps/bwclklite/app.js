@@ -100,11 +100,8 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
   draw : (itm, info, options) => {
     let hideClkInfo = info.text == null;
 
-    g.setColor(g.theme.fg);
-    g.fillRect(options.x, options.y, options.x+options.w, options.y+options.h);
-
-    g.setFontAlign(0,0);
-    g.setColor(g.theme.bg);
+    g.reset().setBgColor(g.theme.fg).clearRect(options.x, options.y, options.x+options.w, options.y+options.h);
+    g.setFontAlign(0,0).setColor(g.theme.bg);
 
     if (options.focus){
       let y = hideClkInfo ? options.y+20 : options.y+2;

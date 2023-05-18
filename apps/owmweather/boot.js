@@ -1,19 +1,21 @@
 {
   let waiting = false;
-  let settings = require("Storage").readJSON("owmweather.json", 1) || {
-    enabled: false
-  };
+  let settings = Object.assign(
+    require('Storage').readJSON("owmweather.default.json", true) || {},
+    require('Storage').readJSON("owmweather.json", true) || {}
+  );
   
   let completion = function(){
     waiting = false;
+    settings.updated = Date.now();
+    require('Storage').writeJSON("owmweather.json", settings);
   }
 
   if (settings.enabled) {    
     let weather = require("Storage").readJSON('weather.json') || {};
-    let lastUpdate;
     if (weather && weather.weather && weather.weather.time) lastUpdate = weather.weather.time;
 
-    if (!lastUpdate || lastUpdate + settings.refresh * 1000 * 60 < Date.now()){
+    if (!settings.updated || settings.updated + settings.refresh * 1000 * 60 < Date.now()){
       setTimeout(() => {
         if (!waiting){
           waiting = true;

@@ -25,7 +25,7 @@ function parseWeather(response) {
 
     json.weather = weather;
     require("Storage").writeJSON('weather.json', json);
-    require("weather").emit("update", json.weather);
+    if (require("Storage").read("weather")!==undefined) require("weather").emit("update", json.weather);
     return undefined;
   } else {
     return /*LANG*/"Not OWM data";

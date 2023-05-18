@@ -2,8 +2,6 @@
 
 Logs health data to a file in a defined interval, and provides an app to view it
 
-**BETA - requires firmware 2v11 or later**
-
 ## Usage
 
 Once installed, health data is logged automatically.
