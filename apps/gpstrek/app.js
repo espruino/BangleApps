@@ -2,6 +2,9 @@
 { //run in own scope for fast switch
 const STORAGE = require("Storage");
 const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
+const SETTINGS = {
+  mapCompass: false
+};
 
 let init = function(){
   global.screen = 1;
@@ -293,23 +296,25 @@ let getMapSlice = function(){
         graphics.drawImage(point, mapCenterX-point.width/2,y + height*0.7-point.height/2);
       }
 
-      let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
-      let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
-      let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
-      compass = graphics.transformVertices(compass, {
-        rotate:require("graphics_utils").degreesToRadians(180-course),
-        x: compassCenterX,
-        y: compassCenterY
-      });
-      graphics.setFontAlign(0,0);
-      graphics.setColor(graphics.theme.bg);
-      graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+5);
-      graphics.setColor(graphics.theme.fg);
-      graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
-      graphics.drawString("N", compass[2], compass[3], true);
-      graphics.drawString("S", compass[4], compass[5], true);
-      graphics.drawString("W", compass[6], compass[7], true);
-      graphics.drawString("E", compass[8], compass[9], true);
+      if (SETTINGS.mapCompass){
+        let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
+        let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
+        let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
+        compass = graphics.transformVertices(compass, {
+          rotate:require("graphics_utils").degreesToRadians(180-course),
+          x: compassCenterX,
+          y: compassCenterY
+        });
+        graphics.setFontAlign(0,0);
+        graphics.setColor(graphics.theme.bg);
+        graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+5);
+        graphics.setColor(graphics.theme.fg);
+        graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
+        graphics.drawString("N", compass[2], compass[3], true);
+        graphics.drawString("S", compass[4], compass[5], true);
+        graphics.drawString("W", compass[6], compass[7], true);
+        graphics.drawString("E", compass[8], compass[9], true);
+      }
     }
   };
 };
@@ -386,11 +391,11 @@ let drawCompass = function(graphics, x, y, height, width, increment, start){
   for (let i=start;i<=720;i+=15){
     var res = i + frag;
     if (res%90==0) {
-      graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
-      graphics.fillRect(xpos-2,Math.floor(y+height*0.8),xpos+2,Math.floor(y+height));
+      graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+height*0.1);
+      graphics.fillRect(xpos-1,Math.floor(y+height*0.8),xpos+1,Math.floor(y+height));
     } else if (res%45==0) {
-      graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+2);
-      graphics.fillRect(xpos-2,Math.floor(y+height*0.7),xpos+2,Math.floor(y+height));
+      graphics.drawString(labels[Math.floor(res/45)%8],xpos,y+height*0.1);
+      graphics.fillRect(xpos-1,Math.floor(y+height*0.7),xpos+1,Math.floor(y+height));
     } else if (res%15==0) {
       graphics.fillRect(xpos,Math.floor(y+height*0.9),xpos+1,Math.floor(y+height));
     }
