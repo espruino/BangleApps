@@ -88,3 +88,4 @@
 0.63: Fix messages app loading on clock without fast load
 0.64: Ensure we don't get 'undefined' as the message body
 0.65: Make sure messages are saved if not in the clock app (fix #2460)
+0.66: Updated Navigation handling to work with new Gadgetbridge release

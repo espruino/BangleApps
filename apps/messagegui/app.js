@@ -15,7 +15,7 @@
 // a message
 require("messages").pushMessage({"t":"add","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"})
 // maps
-require("messages").pushMessage({"t":"add","id":1,"src":"Maps","title":"0 yd - High St","body":"Campton - 11:48 ETA","img":"GhqBAAAMAAAHgAAD8AAB/gAA/8AAf/gAP/8AH//gD/98B//Pg/4B8f8Afv+PP//n3/f5//j+f/wfn/4D5/8Aef+AD//AAf/gAD/wAAf4AAD8AAAeAAADAAA="});
+GB({t:"nav",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
@@ -78,30 +78,34 @@ E.on("kill", saveMessages);
 
 function showMapMessage(msg) {
   active = "map";
-  var m, distance, street, target, eta;
-  m=msg.title.match(/(.*) - (.*)/);
-  if (m) {
-    distance = m[1];
-    street = m[2];
-  } else street=msg.title;
-  m=msg.body.match(/(.*) - (.*)/);
-  if (m) {
-    target = m[1];
-    eta = m[2];
-  } else target=msg.body;
+  var m, distance, street, target, img;
+  if (msg.distance!==undefined)
+    distance = require("locale").distance(msg.distance);
+  if (msg.instr) {
+    if (msg.instr.includes("towards")) {
+      m = msg.instr.split("towards");
+      target = m[0].trim();
+      street = m[1].trim();
+    }else
+      target = msg.instr;
+  }
+  if (msg.action=="continue") img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";
+  else if (msg.action=="left") img = "GhcBAYAAAPAAAHwAAD4AAB8AAA+AAAf//8P///x///+PAAPx4AA8fAAHD4ABwfAAcDwAHAIABwAAAcAAAHAAABwAAAcAAAHAAABwAAAc";
+  else if (msg.action=="right") img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";
+  else if (msg.action=="finish") img = "HhsBAcAAAD/AAAH/wAAPB4AAeA4AAcAcAAYIcAA4cMAA48MAA4cMAAYAcAAcAcAAcA4AAOA4AAOBxjwHBzjwHjj/4Dnn/4B3P/4B+Pj4A8fj8Acfj8AI//8AA//+AA/j+AB/j+AB/j/A";
   layout = new Layout({ type:"v", c: [
     {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 },
-    {type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
+    street?{type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
-    ]},
+    ]}:{},
     {type:"h",fillx:1, filly:1, c: [
-      msg.img?{type:"img",src:atob(msg.img), scale:2}:{},
+      img?{type:"img",src:atob(img), scale:2, pad:6}:{},
       {type:"v", fillx:1, c: [
         {type:"txt", font:fontLarge, label:distance||"" }
       ]},
     ]},
-    {type:"txt", font:"6x8:2", label:eta }
+    {type:"txt", font:"6x8:2", label:msg.eta||"" }
   ]});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
@@ -256,7 +260,7 @@ function showMessage(msgid) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
   }
-  if (msg.src=="Maps") {
+  if (msg.id=="nav") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
