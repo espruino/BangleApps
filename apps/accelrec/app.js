@@ -102,7 +102,7 @@ function showData() {
   g.drawString("FINISH",g.getWidth()-4,g.getHeight()/2);
   setWatch(function() {
     showMenu();
-  }, BTN2);
+  }, global.BTN2?BTN2:BTN);
 }
 
 function showBig(txt) {
