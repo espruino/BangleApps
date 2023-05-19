@@ -178,6 +178,8 @@
         event.id="nav";
         if (event.instr) {
           event.t="add";
+          event.src="maps"; // for the icon
+          event.title="Navigation";
         } else {
           event.t="remove";
         }
