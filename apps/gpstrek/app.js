@@ -254,11 +254,11 @@ let getMapSlice = function(){
           graphics.drawPoly(poly, false);
 
           for (let c of named){
-            graphics.drawImage(cross, poly[c.i]-5, poly[c.i+1]-4.5);
+            graphics.drawImage(cross, poly[c.i]-cross.width/2, poly[c.i+1]-cross.height/2);
             graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
           }
 
-          if (finish) graphics.drawImage(finishIcon, poly[poly.length - 2] - 3, poly[poly.length - 1] - 3);
+          if (finish) graphics.drawImage(finishIcon, poly[poly.length - 2] -5, poly[poly.length - 1] - 4);
 
           i -= 1;
           if (i > maxPoints || breakLoop) break;
@@ -288,9 +288,9 @@ let getMapSlice = function(){
         if (current.y < y) {current.y = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
         if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
 
-        graphics.drawImage(arrow, current.x-5,current.y-2);
+        graphics.drawImage(arrow, current.x-arrow.width/2,current.y);
       } else {
-        graphics.drawImage(point, mapCenterX-5,y + height*0.7-4);
+        graphics.drawImage(point, mapCenterX-point.width/2,y + height*0.7-point.height/2);
       }
 
       let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
