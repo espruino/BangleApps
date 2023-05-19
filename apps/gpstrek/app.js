@@ -994,7 +994,7 @@ let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
 },()=>{
   let course = "---°";
   let s = WIDGETS.gpstrek.getState();
-  if (s.currentPos && s.currentPos.course) course = s.currentPos.course + "°";
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "°";
   return course;
 });
 
