@@ -378,7 +378,7 @@ function checkMessages(options) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
     showMessage(newMessages[0].id);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
-    if (global.BUZZ_ON_NEW_MESSAGE) {
+    if (global.BUZZ_ON_NEW_MESSAGE && active!="map") {
       // this is set if we entered the messages app by loading `messagegui.new.js`
       // ... but only buzz the first time we view a new message
       global.BUZZ_ON_NEW_MESSAGE = false;
