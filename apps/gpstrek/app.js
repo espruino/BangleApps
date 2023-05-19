@@ -256,6 +256,8 @@ let getMapSlice = function(){
       drawPath(getPrev,true);
 
       graphics.setColor(graphics.theme.fg);
+      
+      const errorMarkerSize=3;
 
       if (WIDGETS.gpstrek.getState().currentPos.lat) {
         current.x = startingPoint.x - current.x;
@@ -265,27 +267,29 @@ let getMapSlice = function(){
         current.x += mapCenterX;
         current.y += y + height*0.7;
 
-        if (current.x < x) { current.x = x + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x+height*0.1,y+height);}
-        if (current.x > x + width) {current.x = x + width - height*0.15; graphics.setColor(1,0,0).fillRect(x + width - height * 0.1,y,x + width ,y+height);}
-        if (current.y < y) {current.y = y + height*0.15; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+height*0.1);}
-        if (current.y > y + height) { current.y = y + height - height*0.15; graphics.setColor(1,0,0).fillRect(x,y + height * 0.9,x + width ,y+height);}
+        if (current.x < x) { current.x = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+        if (current.x > x + width) {current.x = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+        if (current.y < y) {current.y = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+        if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
 
-        graphics.drawImage(arrow, current.x-5,current.y);
+        graphics.drawImage(arrow, current.x-5,current.y-2);
       } else {
         graphics.drawImage(point, mapCenterX-5,y + height*0.7-4);
       }
 
       let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
+      let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
+      let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
       compass = graphics.transformVertices(compass, {
         rotate:require("graphics_utils").degreesToRadians(180-course),
-        x: x + 5 + compassHeight,
-        y: y + 5 + compassHeight
+        x: compassCenterX,
+        y: compassCenterY
       });
       graphics.setFontAlign(0,0);
       graphics.setColor(graphics.theme.bg);
-      graphics.fillCircle(x+5+compassHeight,y+5+compassHeight,compassHeight+8);
+      graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+5);
       graphics.setColor(graphics.theme.fg);
-      graphics.drawCircle(x+5+compassHeight,y+5+compassHeight,compassHeight);
+      graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
       graphics.drawString("N", compass[2], compass[3], true);
       graphics.drawString("S", compass[4], compass[5], true);
       graphics.drawString("W", compass[6], compass[7], true);
