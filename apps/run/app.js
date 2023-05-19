@@ -71,7 +71,7 @@ function onStartStop() {
     if (running) {
       isMenuDisplayed = true;
       promise = promise.
-        then(() => WIDGETS["recorder"].setRecording(true)).
+        then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
         then(() => {
           isMenuDisplayed = false;
           layout.setUI(); // grab our input handling again

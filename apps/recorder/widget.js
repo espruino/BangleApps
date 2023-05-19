@@ -231,35 +231,43 @@
   },getRecorders:getRecorders,reload:function() {
     reload();
     Bangle.drawWidgets(); // relayout all widgets
-  },setRecording:function(isOn, forceAppend) {
+  },setRecording:function(isOn, options) {
+    /* options = {
+      force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested
+    } */
     var settings = loadSettings();
-    if (isOn && !settings.recording && !settings.file) {
-      settings.file = "recorder.log0.csv";
-    } else if (isOn && !forceAppend && !settings.recording && require("Storage").list(settings.file).length){
-      var logfiles=require("Storage").list(/recorder.log.*/);
-      var maxNumber=0;
-      for (var c of logfiles){
-          maxNumber = Math.max(maxNumber, c.match(/\d+/)[0]);
-      }
-      var newFileName;
-      if (maxNumber < 99){
-        newFileName="recorder.log" + (maxNumber + 1) + ".csv";
-        updateSettings(settings);
-      }
-      var buttons={/*LANG*/"Yes":"overwrite",/*LANG*/"No":"cancel"};
-      if (newFileName) buttons[/*LANG*/"New"] = "new";
-      buttons[/*LANG*/"Append"] = "append";
-      return E.showPrompt(/*LANG*/"Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:/*LANG*/"Recorder",buttons:buttons}).then(selection=>{
-        if (selection==="cancel") return false; // just cancel
-        if (selection==="overwrite")
+    options = options||{};
+    if (isOn && !settings.recording) {
+      if (!settings.file) { // if no filename set
+        settings.file = "recorder.log0.csv";
+      } else if (require("Storage").list(settings.file).length){ // if file exists
+        if (!options.force) { // if not forced, ask the question
+          g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
+          return E.showPrompt(
+                    /*LANG*/"Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",
+                    { title:/*LANG*/"Recorder",
+                      buttons:{/*LANG*/"Yes":"overwrite",/*LANG*/"No":"cancel",/*LANG*/"New":"new",/*LANG*/"Append":"append"}
+                    }).then(selection=>{
+            if (selection==="cancel") return false; // just cancel
+            if (selection==="overwrite") return WIDGETS["recorder"].setRecording(1,{force:"overwrite"});
+            if (selection==="new") return WIDGETS["recorder"].setRecording(1,{force:"new"});
+            if (selection==="append") return WIDGETS["recorder"].setRecording(1,{force:"append"});
+            throw new Error("Unknown response!");
+          });
+        } else if (options.force=="append") {
+          // do nothing, filename is the same - we are good
+        } else if (options.force=="overwrite") {
+          // wipe the file
           require("Storage").open(settings.file,"r").erase();
-        if (selection==="new"){
+        } else if (options.force=="new") {
+          // new file - find the max log file number and add one
+          var maxNumber=0;
+          require("Storage").list(/recorder.log.*/).forEach( fn => maxNumber = Math.max(maxNumber, fn.match(/\d+/)[0]) );
+          var newFileName = "recorder.log" + (maxNumber + 1) + ".csv";
+          // FIXME: use date?
           settings.file = newFileName;
-          updateSettings(settings);
-        }
-        // if (selection==="append") // we do nothing - all is fine
-        return WIDGETS["recorder"].setRecording(1,true/*force append*/);
-      });
+        } else throw new Error("Unknown options.force, "+options.force);
+      }
     }
     settings.recording = isOn;
     updateSettings(settings);

@@ -1,4 +1,4 @@
-# Recorder
+**# Recorder
 
 ![icon](app.png)
 
@@ -43,6 +43,16 @@ You can also view some information on the watch.
   * `Plot Alt` plots altitude over time
   * `Plot Speed` plots speed over time
   * `Plot HRM` plots heart rate over time
+
+## Usage in code
+
+As long as widgets are loaded, you can:
+
+* Call `WIDGETS["recorder"].setRecording(true)` to start recording (it returns a promise, and may show a menu)
+* Call `WIDGETS["recorder"].setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
+* Call `WIDGETS["recorder"].setRecording(false)` to stop recording
+
+
 
 ## Tips
 

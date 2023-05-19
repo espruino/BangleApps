@@ -29,3 +29,4 @@
 0.23: Add graphing for HRM, fix some other graphs
       Altitude graphing now uses barometer altitude if it exists
       plotTrack in widget allows track to be drawn in the background (doesn't block execution)
+0.24: Can now specify `setRecording(true, {force:...` to not show a menu
