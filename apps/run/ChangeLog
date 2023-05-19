@@ -14,3 +14,4 @@
 0.13: Revert #1578 (stop duplicate entries) as with 2v12 menus it causes other boxes to be wiped (fix #1643)
 0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
 0.15: Keep run state between runs (allowing you to exit and restart the app)
+0.16: Added ability to resume a run that was stopped previously (fix #1907)

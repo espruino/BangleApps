@@ -61,7 +61,9 @@ E.showMenu(menu);
 */
 var state = {
   active : false, // are we working or not?
-  // startTime, // time exercise started
+  // startTime, // time exercise started (in ms from 1970)
+  // lastTime, // time we had our last reading (in ms from 1970)
+  duration : 0, // the length of this exercise (in ms)
   lastGPS:{}, thisGPS:{}, // This & previous GPS readings
   // distance : 0, ///< distance in meters
   // avrSpeed : 0, ///< speed over whole run in m/sec
@@ -146,8 +148,7 @@ Bangle.on("GPS", function(fix) {
   if (state.lastGPS.fix)
     state.distance += calcDistance(state.lastGPS, fix);
   if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
-  var duration = Date.now() - state.startTime; // in ms
-  state.avrSpeed = state.distance * 1000 / duration; // meters/sec
+  state.avrSpeed = state.distance * 1000 / state.duration; // meters/sec
   if (!isNaN(fix.speed)) state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2/3.6; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
@@ -160,8 +161,8 @@ Bangle.on("GPS", function(fix) {
 Bangle.on("step", function(steps) {
   if (!state.active) return;
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
-  state.stepHistory[0] += steps-state.lastStepCount;
-  state.lastStepCount = steps;
+  state.stepHistory[0] += steps-state.lastSteps;
+  state.lastSteps = steps;
   if (state.notify.step.increment > 0 && state.notify.step.next <= steps) {
     stats["step"].emit("notify",stats["step"]);
     state.notify.step.next = state.notify.step.next + state.notify.step.increment;
@@ -325,9 +326,10 @@ exports.getStats = function(statIDs, options) {
     if (!state.active) return;
     // called once a second
     var now = Date.now();
-    var duration = now - state.startTime; // in ms
+    state.duration += now - state.lastTime; // in ms
+    state.lastTime = now;
     // set cadence -> steps over last minute
-    state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(duration,60000));
+    state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(state.duration,60000));
     if (stats["caden"]) stats["caden"].emit("changed",stats["caden"]);
     // move step history onwards
     state.stepHistory.set(state.stepHistory,1);
@@ -345,9 +347,9 @@ exports.getStats = function(statIDs, options) {
     }
   }, 1000);
   function reset() {
-    state.startTime = Date.now();
+    state.startTime = state.lastTime = Date.now();
+    state.duration = 0;
     state.startSteps = state.lastSteps = Bangle.getStepCount();
-    state.lastSteps = 0;
     state.stepHistory.fill(0);
     state.stepsPerMin = 0;
     state.distance = 0;
@@ -374,12 +376,17 @@ exports.getStats = function(statIDs, options) {
     stats : stats,
     state : state,
     start : function() {
-      state.active = true;
       reset();
+      state.active = true;
     },
     stop : function() {
       state.active = false;
-    }
+    },
+    resume : function() {
+      state.lastTime = Date.now();
+      state.lastSteps = Bangle.getStepCount()
+      state.active = true;
+    },
   };
 };
 
