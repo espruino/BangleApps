@@ -78,6 +78,10 @@ declare module Layout {
       filly?: Fill,
       width?: number,
       height?: number,
+
+      // technically only on children of a h/v
+      halign?: Align, // children of a v
+      valign?: Align, // children of a h
     } & (
       {
         r?: number, // 0: 0°, 1: 90°, 2: 180°, 3: 270°.
@@ -86,7 +90,13 @@ declare module Layout {
       }
     );
 
-  type Align = -1 | 0 | 1;
+  const enum Align {
+    Left = -1,
+    Top = -1,
+    Center = 0,
+    Right = 1,
+    Bottom = -1,
+  }
 
   const enum Rotation {
     None = 0,
@@ -99,11 +109,9 @@ declare module Layout {
     {
       type: "v",
       c: Hierarchy[],
-      halign?: Align,
     } | {
       type: "h"
       c: Hierarchy[],
-      valign?: Align,
     } | {
       type: "txt",
       label: string,
