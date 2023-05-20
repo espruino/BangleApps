@@ -54,19 +54,21 @@ const reps: Rep[] = [
 const fontSzMain = 64;
 const fontSzRep = 20;
 
+// FIXME: `Layout_` name
 const repLayout = (id: string): (Layout_.Hierarchy & {type:"txt"})[] => [
 	{
 		id: `${id}_name`,
 		type: "txt",
 		font: `Vector:${fontSzRep}`,
 		label: "Name PH",
-		pad: 4,
+		//pad: 4,
+		fillx: 1,
 	}, {
 		id: `${id}_dur`,
 		type: "txt",
 		font: `Vector:${fontSzRep}`,
 		label: "DURATION",
-		pad: 4,
+		halign: Layout_.Align.Right,
 	}
 ];
 
