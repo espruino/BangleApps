@@ -136,7 +136,8 @@ const repToLabel = (i: number, id: string) => {
 	const rep = reps[i];
 	if(rep){
 		layout[`${id}_name`]!.label = `${i+1}: ${rep.label}`;
-		layout[`${id}_dur`]!.label = `${rep.dur}m`;
+		// FIXME: display time, i.e. hh:mm
+		layout[`${id}_dur`]!.label = `${rep.dur.toFixed(0)}m`;
 	}else{
 		emptyLabel(id);
 	}
