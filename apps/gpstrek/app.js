@@ -200,7 +200,12 @@ XXX   XXX
 
 const mapScale = 0.09;
 
+let isGpsCourse = function(){
+  return WIDGETS.gpstrek.getState().currentPos && !isNaN(WIDGETS.gpstrek.getState().currentPos.course);
+};
+
 let getMapSlice = function(){
+  let lastDrawn = 0;
   return {
     draw: function (graphics, x, y, height, width){
       graphics.clearRect(x,y,x+width,y+height);
@@ -217,104 +222,107 @@ let getMapSlice = function(){
       let prevPoint = getPrev(route, route.index);
       if (prevPoint && prevPoint.lat) startingPoint = Bangle.project(prevPoint);
 
+
+      const errorMarkerSize=3;
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
-      let mapCenterX = x+(width-10)/2+compassHeight+5;
-      let mapRot = require("graphics_utils").degreesToRadians(180-course);
-      let mapTrans = {
-        scale: mapScale,
-        rotate: mapRot,
-        x: mapCenterX,
-        y: y+height*0.7
-      };
 
-      const maxPoints = 50;
+      if (Date.now() - lastDrawn > 500){
+        lastDrawn = Date.now();
+        let mapCenterX = x+(width-10)/2+compassHeight+5;
+        let mapRot = require("graphics_utils").degreesToRadians(180-course);
+        let mapTrans = {
+          scale: mapScale,
+          rotate: mapRot,
+          x: mapCenterX,
+          y: y+height*0.7
+        };
 
-      let drawPath = function(iter, reverse){
-        "ram";
-        let i = 0;
+        const maxPoints = 50;
 
-        let time = Date.now(); 
+        let drawPath = function(iter, reverse){
+          "ram";
+          let i = 0;
 
-        //Adds starting point on first iteration
-        let poly = [0,0];
-        let breakLoop = false;
-        let finish;
-        let toDraw;
-        graphics.setFont6x15();
-        do {
-          let named = [];
-          for (let j = 0; j < 10; j++){
-            i = i + (reverse?-1:1);
-            let p = iter(route, route.index + i);
-            if (!p || !p.lat) {
-              breakLoop = true;
-              break;
+          let time = Date.now(); 
+
+          //Adds starting point on first iteration
+          let poly = [0,0];
+          let breakLoop = false;
+          let finish;
+          let toDraw;
+          graphics.setFont6x15();
+          do {
+            let named = [];
+            for (let j = 0; j < 10; j++){
+              i = i + (reverse?-1:1);
+              let p = iter(route, route.index + i);
+              if (!p || !p.lat) {
+                breakLoop = true;
+                break;
+              }
+              toDraw = Bangle.project(p);
+              if (p.name) named.push({i:poly.length,n:p.name});
+              if (route.index + i + 1 == route.count - 1) finish = true;
+              poly.push(startingPoint.x-toDraw.x);
+              poly.push((startingPoint.y-toDraw.y)*-1);
             }
-            toDraw = Bangle.project(p);
-            if (p.name) named.push({i:poly.length,n:p.name});
-            if (route.index + i + 1 == route.count - 1) finish = true;
-            poly.push(startingPoint.x-toDraw.x);
-            poly.push((startingPoint.y-toDraw.y)*-1);
-          }
 
-          poly = graphics.transformVertices(poly, mapTrans);
-          graphics.drawPoly(poly, false);
+            poly = graphics.transformVertices(poly, mapTrans);
+            graphics.drawPoly(poly, false);
 
-          for (let c of named){
-            if (i != 0 || WIDGETS.gpstrek.getState().currentPos.lat){
-              graphics.drawImage(point, poly[c.i]-point.width/2, poly[c.i+1]-point.height/2);
-              graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
+            for (let c of named){
+              if (i != 0 || WIDGETS.gpstrek.getState().currentPos.lat){
+                graphics.drawImage(point, poly[c.i]-point.width/2, poly[c.i+1]-point.height/2);
+                graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
+              }
             }
-          }
 
-          if (!reverse){
-            if (finish)
-              graphics.drawImage(finishIcon, poly[poly.length - 2] -5, poly[poly.length - 1] - 4);
-            else if (breakLoop)
-              graphics.drawImage(cross, poly[poly.length - 2] - cross.width/2, poly[poly.length - 1] - cross.height/2);
-          }
+            if (!reverse){
+              if (finish)
+                graphics.drawImage(finishIcon, poly[poly.length - 2] -5, poly[poly.length - 1] - 4);
+              else if (breakLoop)
+                graphics.drawImage(cross, poly[poly.length - 2] - cross.width/2, poly[poly.length - 1] - cross.height/2);
+            }
 
-          //Add last drawn point to get closed path
-          if (toDraw) {
-            poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
-            toDraw = null;
-          }
+            //Add last drawn point to get closed path
+            if (toDraw) {
+              poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
+              toDraw = null;
+            }
 
-        } while (i < maxPoints && !breakLoop && !(poly[poly.length - 2] < x
-              && poly[poly.length - 2] > x + width
-              && poly[poly.length - 1] < y
-              && poly[poly.length - 1] > y + height));
-      };
+          } while (i < maxPoints && !breakLoop && !(poly[poly.length - 2] < x
+                && poly[poly.length - 2] > x + width
+                && poly[poly.length - 1] < y
+                && poly[poly.length - 1] > y + height));
+        };
 
-      drawPath(getNext,false);
-      drawPath(getPrev,true);
+        drawPath(getNext,false);
+        drawPath(getPrev,true);
 
-      graphics.setColor(graphics.theme.fg);
+        graphics.setColor(graphics.theme.fg);
 
-      const errorMarkerSize=3;
+        if (WIDGETS.gpstrek.getState().currentPos.lat) {
+          current.x = startingPoint.x - current.x;
+          current.y = (startingPoint.y - current.y)*-1;
+          current.x *= mapScale;
+          current.y *= mapScale;
+          current.x += mapCenterX;
+          current.y += y + height*0.7;
 
-      if (WIDGETS.gpstrek.getState().currentPos.lat) {
-        current.x = startingPoint.x - current.x;
-        current.y = (startingPoint.y - current.y)*-1;
-        current.x *= mapScale;
-        current.y *= mapScale;
-        current.x += mapCenterX;
-        current.y += y + height*0.7;
+          if (current.x < x) { current.x = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+          if (current.x > x + width) {current.x = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+          if (current.y < y) {current.y = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+          if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
 
-        if (current.x < x) { current.x = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
-        if (current.x > x + width) {current.x = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
-        if (current.y < y) {current.y = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-        if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
+          graphics.drawImage(arrow, current.x-arrow.width/2,current.y);
+        }
 
-        graphics.drawImage(arrow, current.x-arrow.width/2,current.y);
+        graphics.setColor(0,1,0);
+        graphics.fillCircle(mapCenterX,y + height*0.7, 5);
+        graphics.setColor(graphics.theme.fg);
       }
-
-      graphics.setColor(0,1,0);
-      graphics.fillCircle(mapCenterX,y + height*0.7, 5);
-      graphics.setColor(graphics.theme.fg);
-
       if (SETTINGS.mapCompass){
         let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
         let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
@@ -333,6 +341,12 @@ let getMapSlice = function(){
         graphics.drawString("S", compass[4], compass[5], true);
         graphics.drawString("W", compass[6], compass[7], true);
         graphics.drawString("E", compass[8], compass[9], true);
+
+        if(!isGpsCourse()) {
+          let xh = E.clip(((WIDGETS.gpstrek.getState().acc.x))*compassHeight, -compassHeight, compassHeight);
+          let yh = E.clip(((WIDGETS.gpstrek.getState().acc.y))*compassHeight, -compassHeight, compassHeight);
+          graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
+        }
       }
     }
   };
