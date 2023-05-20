@@ -7,6 +7,8 @@ const SETTINGS = {
   mapScale:0.09,
   mapRefresh:500,
   mapChunkSize: 10,
+  overviewScroll: 30,
+  overviewScale: 0.01,
   refresh:100,
   cacheMinFreeMem:1000,
   cacheMaxEntries:0,
@@ -207,7 +209,10 @@ let isGpsCourse = function(){
   return WIDGETS.gpstrek.getState().currentPos && !isNaN(WIDGETS.gpstrek.getState().currentPos.course);
 };
 
+let isMapOverview = false;
+
 let getMapSlice = function(){
+  let lastMode = isMapOverview;
   let lastDrawn = 0;
   let lastCourse = 0;
   let lastStart;
@@ -216,9 +221,12 @@ let getMapSlice = function(){
     draw: function (graphics, x, y, height, width){
       graphics.setClipRect(x,y,x+width,y+height);
       let s = WIDGETS.gpstrek.getState();
-      let course = s.currentPos.course;
-      if  (isNaN(course)) course = getAveragedCompass();
-      if  (isNaN(course)) course = 0;
+      let course = 0;
+      if (!isMapOverview){
+        course = s.currentPos.course;
+        if  (isNaN(course)) course = getAveragedCompass();
+        if  (isNaN(course)) course = 0;
+      }
 
       let route = s.route;
       if (!route) return;
@@ -226,6 +234,8 @@ let getMapSlice = function(){
       let current = startingPoint;
       let prevPoint = getPrev(route, route.index);
       if (prevPoint && prevPoint.lat) startingPoint = Bangle.project(prevPoint);
+
+      let mapScale = isMapOverview ? mapOverviewScale : SETTINGS.mapScale;
 
 
       const errorMarkerSize=3;
@@ -236,19 +246,22 @@ let getMapSlice = function(){
       if (Date.now() - lastDrawn > SETTINGS.mapRefresh &&
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
-          || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))) {
+          || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))
+          || isMapOverview || lastMode != isMapOverview) {
+        lastMode = isMapOverview;
         graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         lastCourse = course;
         lastStart = startingPoint;
         lastCurrent = current;
-        let mapCenterX = x+(width-10)/2+compassHeight+5;
+        let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
+        let mapCenterY = isMapOverview?mapOverviewY:y+height*0.7;
         let mapRot = require("graphics_utils").degreesToRadians(180-course);
         let mapTrans = {
-          scale: SETTINGS.mapScale,
+          scale: mapScale,
           rotate: mapRot,
           x: mapCenterX,
-          y: y+height*0.7
+          y: mapCenterY
         };
 
         const maxPoints = 50;
@@ -284,10 +297,10 @@ let getMapSlice = function(){
             poly = graphics.transformVertices(poly, mapTrans);
             graphics.drawPoly(poly, false);
 
-            if (poly[poly.length-2] < (x - 10)
+            if (!isMapOverview && (poly[poly.length-2] < (x - 10)
               || poly[poly.length-2] > (x + width + 10)
               || poly[poly.length-1] < (y - 10)
-              || poly[poly.length-1] > (y + height + 10)) breakLoop = true;
+              || poly[poly.length-1] > (y + height + 10))) breakLoop = true;
 
             for (let c of named){
               if (i != 0 || s.currentPos.lat){
@@ -309,7 +322,7 @@ let getMapSlice = function(){
               toDraw = null;
             }
 
-          } while (i < maxPoints && !breakLoop);
+          } while ((i < maxPoints || isMapOverview) && !breakLoop);
         };
 
         drawPath(getNext,false);
@@ -320,10 +333,10 @@ let getMapSlice = function(){
         if (s.currentPos.lat) {
           current.x = startingPoint.x - current.x;
           current.y = (startingPoint.y - current.y)*-1;
-          current.x *= SETTINGS.mapScale;
-          current.y *= SETTINGS.mapScale;
+          current.x *= mapScale;
+          current.y *= mapScale;
           current.x += mapCenterX;
-          current.y += y + height*0.7;
+          current.y += mapCenterY;
 
           if (current.x < x) { current.x = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
           if (current.x > x + width) {current.x = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
@@ -334,7 +347,7 @@ let getMapSlice = function(){
         }
 
         graphics.setColor(0,1,0);
-        graphics.fillCircle(mapCenterX,y + height*0.7, 5);
+        graphics.fillCircle(mapCenterX,mapCenterY, 5);
         graphics.setColor(graphics.theme.fg);
       }
       if (SETTINGS.mapCompass){
@@ -357,10 +370,23 @@ let getMapSlice = function(){
         graphics.drawString("W", compass[6], compass[7], true);
         graphics.drawString("E", compass[8], compass[9], true);
 
-        if(!isGpsCourse()) {
+        if(!isGpsCourse() && !isMapOverview) {
           let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
           let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
           graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
+        } else if (isMapOverview) {
+          graphics.setColor(0,0,1);
+          graphics.fillCircle(compassCenterX, compassCenterY,3);
+
+          graphics.setFont("Vector",20);
+          graphics.setColor(graphics.theme.fg);
+          graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+          graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+          graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
+
+          graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+          graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+          graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
         }
       }
     }
@@ -613,22 +639,52 @@ let triangle = function(x, y, width, height){
   ];
 };
 
-let onSwipe = function(dir){
-  if (dir < 0) {
-    nextScreen();
-  } else if (dir > 0) {
-    switchMenu();
+mapOverviewX = g.getWidth()/2;
+mapOverviewY = g.getHeight()/2;
+mapOverviewScale = SETTINGS.overviewScale;
+
+let onAction = function(_,xy){
+  if (WIDGETS.gpstrek.getState().route && global.screen == 1){
+    if (xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
+      if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
+        mapOverviewScale *=0.3;
+      else
+        mapOverviewScale *=1.5;
+    } else {
+      isMapOverview = !isMapOverview;
+      if (!isMapOverview){
+        mapOverviewX = g.getWidth()/2;
+        mapOverviewY = g.getHeight()/2;
+        mapOverviewScale = SETTINGS.overviewScale;
+      }
+    }
   } else {
     nextScreen();
   }
 };
 
+let onSwipe = function(dirLR,dirUD){
+  if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
+    if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
+    if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
+  } else {
+    if (dirLR < 0) {
+      nextScreen();
+    } else if (dirLR > 0) {
+      switchMenu();
+    } else {
+      nextScreen();
+    }
+  }
+};
+
+
 let setButtons = function(){
   let options = {
     mode: "custom",
     swipe: onSwipe,
-    btn: nextScreen,
-    touch: nextScreen
+    btn: onAction,
+    touch: onAction
   };
   Bangle.setUI(options);
 };
