@@ -3,7 +3,7 @@
 const STORAGE = require("Storage");
 const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
 const SETTINGS = {
-  mapCompass: false
+  mapCompass: true
 };
 
 let init = function(){
@@ -232,6 +232,7 @@ let getMapSlice = function(){
       const maxPoints = 50;
 
       let drawPath = function(iter, reverse){
+        "ram";
         let i = 0;
 
         let time = Date.now(); 
@@ -1087,7 +1088,7 @@ let updateRouting = function() {
 
 let updateSlices = function(){
   let s = WIDGETS.gpstrek.getState();
-  slices = [];
+  slices = [ compassSlice ];
   if (s.currentPos && s.currentPos.lat && s.route && s.route.currentWaypoint && s.route.index < s.route.count - 1) {
     slices.push(waypointSlice);
   }
@@ -1102,15 +1103,16 @@ let updateSlices = function(){
   slices.push(healthSlice);
   slices.push(systemSlice);
   slices.push(system2Slice);
-  maxScreens = Math.ceil(slices.length/s.numberOfSlices) + 1;
+  let hasMapScreen = s.route ? 1:0;
+  maxScreens = Math.ceil(slices.length/s.numberOfSlices) + hasMapScreen;
 };
 
 let draw = function(){
   if (!global.screen) return;
   let ypos = Bangle.appRect.y;
   let s = WIDGETS.gpstrek.getState();
-
-  let firstSlice = (screen-2)*s.numberOfSlices;
+  let hasMapScreen = s.route ? 2:1;
+  let firstSlice = (screen-hasMapScreen)*s.numberOfSlices;
   let force = lastDrawnScreen != screen || firstDraw;
   if (force){
     clear();
@@ -1119,15 +1121,9 @@ let draw = function(){
   lastDrawnScreen = screen;
   updateSlices();
 
-  if (global.screen == 1) {
-    let split = s.route?(Bangle.appRect.h/4):Bangle.appRect.h;
+  if (global.screen == 1 && s.route) {
     g.reset();
-    compassSlice.draw(g,Bangle.appRect.x,ypos,split,Bangle.appRect.w);
-    ypos += split + 1;
-    if (s.route){
-      g.reset();
-      mapSlice.draw(g,0,ypos, Bangle.appRect.h - split,Bangle.appRect.w);
-    }
+    mapSlice.draw(g,Bangle.appRect.x,Bangle.appRect.y, Bangle.appRect.h,Bangle.appRect.w);
   } else {
     let sliceHeight = getSliceHeight();
     let slicesToDraw = slices.slice(firstSlice,firstSlice + s.numberOfSlices);
