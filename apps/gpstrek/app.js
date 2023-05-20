@@ -77,6 +77,7 @@ let cache = {};
 let cacheInsertion = [];
 
 let getEntry = function(filename, offset, result){
+  if (offset < 0) return offset;
   if(cache.filename != filename) cache = {};
   if(filename && cache[offset]) {
     Object.assign(result, cache[offset]);
@@ -212,7 +213,9 @@ let getMapSlice = function(){
       let route = WIDGETS.gpstrek.getState().route;
       if (!route) return;
       let startingPoint = Bangle.project(route.currentWaypoint);
-      let current = Bangle.project(WIDGETS.gpstrek.getState().currentPos);
+      let current = startingPoint;
+      let prevPoint = getPrev(route, route.index);
+      if (prevPoint && prevPoint.lat) startingPoint = Bangle.project(prevPoint);
 
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
@@ -256,7 +259,6 @@ let getMapSlice = function(){
           }
 
           poly = graphics.transformVertices(poly, mapTrans);
-
           graphics.drawPoly(poly, false);
 
           for (let c of named){
@@ -274,7 +276,10 @@ let getMapSlice = function(){
           }
 
           //Add last drawn point to get closed path
-          if (toDraw) poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
+          if (toDraw) {
+            poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
+            toDraw = null;
+          }
 
         } while (i < maxPoints && !breakLoop && !(poly[poly.length - 2] < x
               && poly[poly.length - 2] > x + width
@@ -664,19 +669,19 @@ let parseRouteData = function(filename, progressMonitor){
 };
 
 let hasPrev = function(route, index){
-  if (!index) index = route.index;
+  if (isNaN(index)) index = route.index;
   if (route.mirror) return route.index < (route.count - 1);
-  return route.index > 0;
+  return index > 0;
 };
 
 let hasNext = function(route, index){
-  if (!index) index = route.index;
+  if (isNaN(index)) index = route.index;
   if (route.mirror) return route.index > 0;
   return index < (route.count - 1);
 };
 
 let getNext = function(route, index){
-  if (!index) index = route.index;
+  if (isNaN(index)) index = route.index;
   if (!hasNext(route, index)) return;
   if (route.mirror) --index;
   if (!route.mirror) ++index;
@@ -686,7 +691,7 @@ let getNext = function(route, index){
 };
 
 let getPrev = function(route, index){
-  if (!index) index = route.index;
+  if (isNaN(index)) index = route.index;
   if (!hasPrev(route, index)) return;
   if (route.mirror) ++index;
   if (!route.mirror) --index;
