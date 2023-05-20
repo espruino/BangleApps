@@ -208,7 +208,6 @@ let getMapSlice = function(){
   let lastDrawn = 0;
   return {
     draw: function (graphics, x, y, height, width){
-      graphics.clearRect(x,y,x+width,y+height);
       graphics.setClipRect(x,y,x+width,y+height);
 
       let course = WIDGETS.gpstrek.getState().currentPos.course;
@@ -229,6 +228,7 @@ let getMapSlice = function(){
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
 
       if (Date.now() - lastDrawn > 500){
+        graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         let mapCenterX = x+(width-10)/2+compassHeight+5;
         let mapRot = require("graphics_utils").degreesToRadians(180-course);
@@ -272,6 +272,11 @@ let getMapSlice = function(){
             poly = graphics.transformVertices(poly, mapTrans);
             graphics.drawPoly(poly, false);
 
+            if (poly[poly.length-2] < x
+              || poly[poly.length-2] > (x + width)
+              || poly[poly.length-1] < y
+              || poly[poly.length-1] > (y + height)) breakLoop = true;
+
             for (let c of named){
               if (i != 0 || WIDGETS.gpstrek.getState().currentPos.lat){
                 graphics.drawImage(point, poly[c.i]-point.width/2, poly[c.i+1]-point.height/2);
@@ -292,10 +297,7 @@ let getMapSlice = function(){
               toDraw = null;
             }
 
-          } while (i < maxPoints && !breakLoop && !(poly[poly.length - 2] < x
-                && poly[poly.length - 2] > x + width
-                && poly[poly.length - 1] < y
-                && poly[poly.length - 1] > y + height));
+          } while (i < maxPoints && !breakLoop);
         };
 
         drawPath(getNext,false);
@@ -324,6 +326,7 @@ let getMapSlice = function(){
         graphics.setColor(graphics.theme.fg);
       }
       if (SETTINGS.mapCompass){
+        graphics.setFont6x15();
         let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
         let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
         let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
@@ -334,7 +337,7 @@ let getMapSlice = function(){
         });
         graphics.setFontAlign(0,0);
         graphics.setColor(graphics.theme.bg);
-        graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+5);
+        graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+7);
         graphics.setColor(graphics.theme.fg);
         graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
         graphics.drawString("N", compass[2], compass[3], true);
@@ -942,7 +945,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },250);
+  },100);
 };
 
 let switchNav = function(){
