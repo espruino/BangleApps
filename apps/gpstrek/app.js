@@ -174,16 +174,16 @@ XX
 `);
 
 const arrow = Graphics.createImage(`
-      X
+     X
     XXX
-    XXXXX
+   XXXXX
   XXX XXX
-  XXX   XXX
+ XXX   XXX
 XXX     XXX
 `);
 
 const cross = Graphics.createImage(`
-XX       XX
+XX        XX
   XX     XX 
   XX   XX
     XX XX
@@ -191,18 +191,18 @@ XX       XX
     XX XX
   XX   XX
   XX     XX
-XX       XX
+XX        XX
 `);
 
 const point = Graphics.createImage(`
-    XXX
-  XXXXXXX
-XXX     XXX
-XX       XX
-XX       XX
-XXX     XXX
-  XXXXXXX
-    XXX
+   XX
+  XXXX
+ XX  XX
+XX    XX
+XX    XX
+ XX  XX
+  XXXX
+   XX
 `);
 
 let isGpsCourse = function(){
@@ -211,6 +211,7 @@ let isGpsCourse = function(){
 
 let isMapOverview = false;
 let isMapOverviewChanged = true;
+let isMapLiveChanged = true;
 
 let getMapSlice = function(){
   let lastMode = isMapOverview;
@@ -237,7 +238,7 @@ let getMapSlice = function(){
       let prevPoint = getPrev(route, route.index);
       if (prevPoint && prevPoint.lat) startingPoint = Bangle.project(prevPoint);
 
-      let mapScale = isMapOverview ? mapOverviewScale : SETTINGS.mapScale;
+      let mapScale = isMapOverview ? mapOverviewScale : mapLiveScale;
 
 
       const errorMarkerSize=3;
@@ -249,9 +250,11 @@ let getMapSlice = function(){
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
           || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))
-          || isMapOverviewChanged) {
+          || isMapOverviewChanged
+          || isMapLiveChanged) {
         lastMode = isMapOverview;
         isMapOverviewChanged = false;
+        isMapLiveChanged = false;
         graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         lastCourse = course;
@@ -352,6 +355,33 @@ let getMapSlice = function(){
         graphics.setColor(0,1,0);
         graphics.fillCircle(mapCenterX,mapCenterY, 5);
         graphics.setColor(graphics.theme.fg);
+
+        graphics.setFont("Vector",25).setFontAlign(0,0);
+        graphics.setColor(graphics.theme.fg);
+        graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+        graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+        graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
+
+        graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+        graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+        graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
+
+        let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
+        let l = width*0.4;
+        let scale = "<100";
+        for (let c of refs){
+          if (c*mapScale > l)
+            break;
+          else
+            scale = c;
+        }
+        graphics.setFontAlign(-1,1).setFont("Vector",14);
+        graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1);
+        if (!isNaN(scale)){
+          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
+          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
+          graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
+        }
       }
       if (SETTINGS.mapCompass){
         graphics.setFont6x15();
@@ -377,21 +407,12 @@ let getMapSlice = function(){
           let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
           let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
           graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
-        } else if (isMapOverview) {
+        } else if (isMapOverview){
           graphics.setColor(0,0,1);
           graphics.fillCircle(compassCenterX, compassCenterY,3);
-
-          graphics.setFont("Vector",20);
-          graphics.setColor(graphics.theme.fg);
-          graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-          graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-          graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
-
-          graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-          graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-          graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
         }
       }
+
     }
   };
 };
@@ -414,7 +435,7 @@ let getTargetSlice = function(targetDataSource){
 
       let dist = distance(start,target);
       if (isNaN(dist)) dist = Infinity;
-      let bearingString = bearing(start,target) + "Â°";
+      let bearingString = bearing(start,target) + "°";
       if (target.name) {
         graphics.setFont("Vector",Math.floor(height*0.5));
         let scrolledName = (target.name || "").substring(nameIndex);
@@ -432,7 +453,7 @@ let getTargetSlice = function(targetDataSource){
         graphics.drawString(distanceString, x + width, y+(height*0.5));
       } else {
         graphics.setFont("Vector",Math.floor(height*1));
-        let bearingString = bearing(start,target) + "Â°";
+        let bearingString = bearing(start,target) + "°";
         let formattedDist = loc.distance(dist,2);
         let distNum = (formattedDist.match(/[0-9\.]+/) || [Infinity])[0];
         let size = 0.8;
@@ -645,21 +666,32 @@ let triangle = function(x, y, width, height){
 mapOverviewX = g.getWidth()/2;
 mapOverviewY = g.getHeight()/2;
 mapOverviewScale = SETTINGS.overviewScale;
+mapLiveScale = SETTINGS.mapScale;
 
 let onAction = function(_,xy){
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
     if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
-        mapOverviewScale *=0.3;
+        if (isMapOverview) {
+          mapOverviewScale /= 1.5;
+        } else {
+          mapLiveScale /= 1.5;
+        }
       else
-        mapOverviewScale *=1.5;
-      isMapOverviewChanged = true;
+        if (isMapOverview) {
+          mapOverviewScale *= 1.5;
+        } else {
+          mapLiveScale *= 1.5;
+        }
+      if (isMapOverview)
+        isMapOverviewChanged = true;
+      else
+        isMapLiveChanged = true;
     } else {
       isMapOverview = !isMapOverview;
       if (!isMapOverview){
         mapOverviewX = g.getWidth()/2;
         mapOverviewY = g.getHeight()/2;
-        mapOverviewScale = SETTINGS.overviewScale;
       }
     }
   } else {
@@ -1125,11 +1157,11 @@ let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return getAveragedCompass() + "Â°";
+  return getAveragedCompass() + "°";
 },()=>{
-  let course = "---Â°";
+  let course = "---°";
   let s = WIDGETS.gpstrek.getState();
-  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "Â°";
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "°";
   return course;
 });
 
