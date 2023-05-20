@@ -3,7 +3,12 @@
 const STORAGE = require("Storage");
 const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
 const SETTINGS = {
-  mapCompass: true
+  mapCompass: true,
+  mapScale:0.09,
+  mapRefresh:500,
+  refresh:100,
+  cacheMinFreeMem:1000,
+  cacheMaxEntries:0,
 };
 
 let init = function(){
@@ -28,13 +33,6 @@ let cleanup = function(){
   delete global.firstDraw;
   delete global.slices;
   delete global.maxScreens;
-};
-
-let rotate = function(point, rotation, center){
-  return {
-    x: ((point.x - center.x) * Math.cos(rotation) - (point.y - center.y) * Math.sin(rotation)) + center.x,
-    y: ((point.y - center.y) * Math.cos(rotation) + (point.x - center.x) * Math.sin(rotation)) + center.y
-  };
 };
 
 init();
@@ -109,8 +107,13 @@ let getEntry = function(filename, offset, result){
   result.fileLength = offset - result.fileOffset;
   cache[result.fileOffset] = result;
   cacheInsertion.push(result.fileOffset);
-  if (process.memory(false).free < 1000){
+  if (SETTINGS.cacheMinFreeMem && process.memory(false).free < SETTINGS.cacheMinFreeMem){
     if (cacheInsertion.length > 0) cache[cacheInsertion.shift()] = undefined;
+  }
+  if (SETTINGS.cacheMaxEntries){
+    while (cacheInsertion.length > SETTINGS.cacheMaxEntries){
+      cache[cacheInsertion.shift()] = undefined;
+    }
   }
   cache.filename = filename;
   return offset;
@@ -198,8 +201,6 @@ XXX   XXX
     XXX
 `);
 
-const mapScale = 0.09;
-
 let isGpsCourse = function(){
   return WIDGETS.gpstrek.getState().currentPos && !isNaN(WIDGETS.gpstrek.getState().currentPos.course);
 };
@@ -227,13 +228,13 @@ let getMapSlice = function(){
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
 
-      if (Date.now() - lastDrawn > 500){
+      if (Date.now() - lastDrawn > SETTINGS.mapRefresh) {
         graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         let mapCenterX = x+(width-10)/2+compassHeight+5;
         let mapRot = require("graphics_utils").degreesToRadians(180-course);
         let mapTrans = {
-          scale: mapScale,
+          scale: SETTINGS.mapScale,
           rotate: mapRot,
           x: mapCenterX,
           y: y+height*0.7
@@ -308,8 +309,8 @@ let getMapSlice = function(){
         if (WIDGETS.gpstrek.getState().currentPos.lat) {
           current.x = startingPoint.x - current.x;
           current.y = (startingPoint.y - current.y)*-1;
-          current.x *= mapScale;
-          current.y *= mapScale;
+          current.x *= SETTINGS.mapScale;
+          current.y *= SETTINGS.mapScale;
           current.x += mapCenterX;
           current.y += y + height*0.7;
 
@@ -945,7 +946,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },100);
+  },SETTINGS.refresh);
 };
 
 let switchNav = function(){
@@ -1061,17 +1062,17 @@ let healthSlice = getDoubleLineSlice("Heart","Steps",()=>{
   return !isNaN(WIDGETS.gpstrek.getState().steps)? WIDGETS.gpstrek.getState().steps: "---";
 });
 
-let system2Slice = getDoubleLineSlice("Bat","",()=>{
+let system2Slice = getDoubleLineSlice("Bat","Storage",()=>{
   return (Bangle.isCharging()?"+":"") + E.getBattery().toFixed(0)+"% " + (analogRead(D3)*4.2/BAT_FULL).toFixed(2) + "V";
 },()=>{
-  return "";
+  return (STORAGE.getFree()/1024).toFixed(0)+"kB";
 });
 
-let systemSlice = getDoubleLineSlice("RAM","Storage",()=>{
+let systemSlice = getDoubleLineSlice("RAM","WP Cache",()=>{
   let ram = process.memory(false);
   return ((ram.blocksize * ram.free)/1024).toFixed(0)+"kB";
 },()=>{
-  return (STORAGE.getFree()/1024).toFixed(0)+"kB";
+  return cacheInsertion.length?cacheInsertion.length:0;
 });
 
 let clear = function() {
