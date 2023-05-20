@@ -197,10 +197,10 @@ XX       XX
 const point = Graphics.createImage(`
     XXX
   XXXXXXX
-XXX   XXX
-XX     XX
-XX     XX
-XXX   XXX
+XXX     XXX
+XX       XX
+XX       XX
+XXX     XXX
   XXXXXXX
     XXX
 `);
@@ -210,6 +210,7 @@ let isGpsCourse = function(){
 };
 
 let isMapOverview = false;
+let isMapOverviewChanged = true;
 
 let getMapSlice = function(){
   let lastMode = isMapOverview;
@@ -221,6 +222,7 @@ let getMapSlice = function(){
     draw: function (graphics, x, y, height, width){
       graphics.setClipRect(x,y,x+width,y+height);
       let s = WIDGETS.gpstrek.getState();
+
       let course = 0;
       if (!isMapOverview){
         course = s.currentPos.course;
@@ -247,8 +249,9 @@ let getMapSlice = function(){
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
           || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))
-          || isMapOverview || lastMode != isMapOverview) {
+          || isMapOverviewChanged) {
         lastMode = isMapOverview;
+        isMapOverviewChanged = false;
         graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         lastCourse = course;
@@ -645,11 +648,12 @@ mapOverviewScale = SETTINGS.overviewScale;
 
 let onAction = function(_,xy){
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
-    if (xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
+    if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
         mapOverviewScale *=0.3;
       else
         mapOverviewScale *=1.5;
+      isMapOverviewChanged = true;
     } else {
       isMapOverview = !isMapOverview;
       if (!isMapOverview){
@@ -667,6 +671,7 @@ let onSwipe = function(dirLR,dirUD){
   if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
     if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
     if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
+    isMapOverviewChanged = true;
   } else {
     if (dirLR < 0) {
       nextScreen();
@@ -1237,4 +1242,3 @@ switchNav();
 
 clear();
 }
-
