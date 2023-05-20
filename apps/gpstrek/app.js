@@ -9,6 +9,7 @@ const SETTINGS = {
   refresh:100,
   cacheMinFreeMem:1000,
   cacheMaxEntries:0,
+  minCourseChange: 5
 };
 
 let init = function(){
@@ -207,6 +208,9 @@ let isGpsCourse = function(){
 
 let getMapSlice = function(){
   let lastDrawn = 0;
+  let lastCourse = 0;
+  let lastStart;
+  let lastCurrent;
   return {
     draw: function (graphics, x, y, height, width){
       graphics.setClipRect(x,y,x+width,y+height);
@@ -228,9 +232,15 @@ let getMapSlice = function(){
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
 
-      if (Date.now() - lastDrawn > SETTINGS.mapRefresh) {
+      if (Date.now() - lastDrawn > SETTINGS.mapRefresh &&
+          (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
+          || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
+          || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))) {
         graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
+        lastCourse = course;
+        lastStart = startingPoint;
+        lastCurrent = current;
         let mapCenterX = x+(width-10)/2+compassHeight+5;
         let mapRot = require("graphics_utils").degreesToRadians(180-course);
         let mapTrans = {
@@ -473,7 +483,7 @@ let getCompassSlice = function(){
   let buf = [];
   return {
     refresh : function (){
-      return (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > 2);
+      return (Math.abs(lastDrawnValue - compassDataSource.getCourse()) > SETTINGS.minCourseChange);
     },
     draw: function (graphics, x,y,height,width){
       const max = 180;
