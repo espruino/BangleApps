@@ -269,17 +269,17 @@ let getMapSlice = function(){
           if (!reverse){
             if (finish)
               graphics.drawImage(finishIcon, poly[poly.length - 2] -5, poly[poly.length - 1] - 4);
-            else
+            else if (breakLoop)
               graphics.drawImage(cross, poly[poly.length - 2] - cross.width/2, poly[poly.length - 1] - cross.height/2);
           }
+
           //Add last drawn point to get closed path
           if (toDraw) poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
 
-          if (i > maxPoints || breakLoop) break;
-        } while (poly[poly.length - 2] > x
-              && poly[poly.length - 2] < x + width
-              && poly[poly.length - 1] > y
-              && poly[poly.length - 1] < y + height);
+        } while (i < maxPoints && !breakLoop && !(poly[poly.length - 2] < x
+              && poly[poly.length - 2] > x + width
+              && poly[poly.length - 1] < y
+              && poly[poly.length - 1] > y + height));
       };
 
       drawPath(getNext,false);
