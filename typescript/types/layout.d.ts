@@ -120,6 +120,6 @@ declare module Layout_ {
       src: Image | (() => Image),
     } | {
       type: "custom",
-      render: (h: Hierarchy) => void,
+      render: (h: RenderedHierarchy) => void,
     };
 }
