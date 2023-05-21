@@ -65,7 +65,7 @@
     require("Storage").readJSON = (function (fname, skipExceptions) {
         var _a;
         var j = oldRead(fname, skipExceptions);
-        if (/\.info$/.test(fname)) {
+        if (j && /\.info$/.test(fname)) {
             var cache_1 = ensureCache();
             var so = void 0;
             if (j.src && (so = (_a = cache_1[j.src]) === null || _a === void 0 ? void 0 : _a.sortorder) != null)
