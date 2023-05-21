@@ -4,4 +4,4 @@ declare function require(moduleName: "sched"): typeof Sched;
 
 declare function require(moduleName: "ClockFace"): typeof ClockFace_.ClockFace;
 declare function require(moduleName: "clock_info"): typeof ClockInfo;
-declare function require(moduleName: "Layout"): typeof Layout_.Layout;
+declare function require(moduleName: "Layout"): typeof Layout.Layout;
