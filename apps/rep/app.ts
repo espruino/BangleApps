@@ -8,6 +8,7 @@ const Layout = require("Layout");
 type Rep = {
 	dur: number,
 	label: string,
+	accDur: number,
 };
 
 const reps: Rep[] = [
@@ -21,8 +22,8 @@ const reps: Rep[] = [
 	{dur:3/60, label:"1st-sec"},
 	{dur:5/60, label:"5-sec"},
 
-	// {dur:4, label:"jog"},
-	// {dur:4, label:"recovery"},
+	{dur:4/60, label:"jog"},
+	{dur:4/60, label:"recovery"},
 
 	// {dur:2, label:"jog"},
 	// {dur:2, label:"recovery"},
@@ -49,7 +50,17 @@ const reps: Rep[] = [
 
 	// {dur:3, label:"static recovery"},
 	// {dur:4, label:"finish"},
-];
+].map(((r: Rep, i: number, a: Rep[]): Rep => {
+	const r2 = r as Rep;
+
+	r2.dur = r2.dur * 60 * 1000;
+
+	r2.accDur = i > 0
+		? a[i-1]!.accDur + r.dur
+		: r.dur;
+
+	return r as Rep;
+}) as any);
 
 const fontSzMain = 64;
 const fontSzRep = 20;
@@ -65,10 +76,16 @@ const layout = new Layout({
 	type: "v",
 	c: [
 		{
+			id: "repIdx",
+			type: "txt",
+			label: "Rep 1", // TODO: update in render
+			font: `Vector:${fontSzRepDesc}`,
+		},
+		{
 			id: "duration",
 			lazyBuster: 1,
 			type: "custom",
-			font: `Vector:${fontSzMain}` as FontNameWithScaleFactor, // modified in draw
+			font: `Vector:${fontSzMain}` as FontNameWithScaleFactor,
 			fillx: 1,
 			filly: 1,
 			render: (l: Layout_.RenderedHierarchy) => {
@@ -77,25 +94,26 @@ const layout = new Layout({
 				g.clearRect(l.x, l.y, l.x+l.w, l.y+l.h);
 
 				if(state){
-					const elapsed = getElapsed(state);
-					const i = currentRepIndex(elapsed);
+					// TODO: inefficient
+					const i = state.currentRepIndex();
+					const repElapsed = state.getElapsedForRep();
 
-					if(i == null){
-						// FIXME: dodgy end-of-rep handling
-						lbl = msToHM(elapsed);
-					}else{
-						const thisDur = repDuration(reps[i]!);
-						const remaining = thisDur - elapsed;
-						lbl = msToHM(remaining);
+					if(i !== null){
+						let thisDur = reps[i]!.dur;
 
-						const fract = elapsed / thisDur;
-						g.setColor("#00f")
+						const remaining = thisDur - repElapsed;
+						lbl = msToMinSec(remaining);
+
+						const fract = repElapsed / thisDur;
+						g.setColor("#86caf7")
 							.fillRect(
 								l.x,
 								l.y,
 								l.x + fract * l.w,
-								l.y+l.h
+								l.y + l.h
 							);
+					}else{
+						lbl = msToMinSec(repElapsed);
 					}
 				}else{
 					lbl = "RDY";
@@ -167,16 +185,9 @@ const layout = new Layout({
 }, {lazy: true});
 
 const onToggle = () => {
-	if(!state){
-		state = {
-			begin: Date.now(),
-			accumulated: 0,
-		};
-		play(true, state);
-	}else{
-		play(paused, state);
-	}
-
+	if(!state)
+		state = new State();
+	state.toggle();
 	drawRep();
 };
 
@@ -186,47 +197,55 @@ const onPrev = () => {
 const onNext = () => {
 };
 
-const play = (p: boolean, state: State) => {
-	if(p){
-		layout["play"]!.label = "Pause";
+class State {
+	paused: boolean = true;
+	begin: number = Date.now(); // only valid if !paused
+	accumulated: number = 0;
 
-		state.begin = Date.now();
+	toggle() {
+		if(this.paused){
+			this.begin = Date.now();
 
-		drawInterval = setInterval(drawRep, 1000);
-	}else{
-		layout["play"]!.label = "Play";
+			// TODO: move draw out
+			drawInterval = setInterval(drawRep, 1000);
+		}else{
+			const diff = Date.now() - this.begin;
+			this.accumulated += diff;
 
-		const diff = Date.now() - state.begin;
-		state.accumulated += diff;
+			clearInterval(drawInterval!);
+		}
 
-		clearInterval(drawInterval!);
+		this.paused = !this.paused;
 	}
 
-	paused = !p;
+	getElapsedTotal() {
+		return (this.paused ? 0 : Date.now() - this.begin) + this.accumulated;
+	}
+
+	getElapsedForRep() {
+		const elapsed = this.getElapsedTotal();
+		const i = this.currentRepIndex();
+
+		return elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
+	}
+
+	currentRepIndex() {
+		const elapsed = this.getElapsedTotal();
+		let ent;
+		for(let i = 0; ent = reps[i]; i++)
+			if(elapsed < ent.accDur)
+				return i;
+		return null;
+	}
 }
 
-type State = { begin: number, accumulated: number };
-
 let state: State | undefined;
-//let drawTimeout: number | undefined;
-let paused = false; // TODO: ditch this, used drawInterval
 let drawInterval: IntervalId | undefined;
-
-const currentRepIndex = (elapsedMs: number) => {
-	let total = 0;
-	let ent;
-	for(let i = 0; ent = reps[i]; i++){
-		total += repDuration(ent);
-		if(elapsedMs <= total)
-			return i;
-	}
-	return null;
-};
 
 const repToLabel = (i: number, id: string) => {
 	const rep = reps[i];
 	if(rep){
-		layout[`${id}_name`]!.label = `${i+1}: ${rep.label} / ${rep.dur.toFixed(0)}m`;
+		layout[`${id}_name`]!.label = `${rep.label} / ${msToMinSec(rep.dur)}`;
 		// FIXME: display time, i.e. hh:mm
 		//layout[`${id}_dur`]!.label = ``;
 	}else{
@@ -240,12 +259,7 @@ const emptyLabel = (id: string) => {
 
 const pad2 = (s: number) => ('0' + s.toFixed(0)).slice(-2);
 
-const repDuration = (rep: Rep) => rep.dur * 60 * 1000;
-
-const getElapsed = (state: State) =>
-	Date.now() - state.begin + state.accumulated;
-
-const msToHM = (ms: number) => {
+const msToMinSec = (ms: number) => {
 	const sec = Math.round(ms / 1000);
 	const min = Math.round(sec / 60);
 	return min.toFixed(0) + ":" + pad2(sec % 60);
@@ -257,8 +271,9 @@ const drawRep = () => {
 	if(state){
 		// TODO: layout.clear(layout.next_name); layout.render(layout.next_name)
 
-		const elapsed = getElapsed(state);
-		const i = currentRepIndex(elapsed);
+		layout["play"]!.label = state.paused ? "Play" : "Pause";
+
+		const i = state.currentRepIndex();
 		if(i !== null){
 			repToLabel(i, "cur");
 			repToLabel(i+1, "next");
@@ -272,6 +287,7 @@ const drawRep = () => {
 
 	/*
 	// TODO: figure out next rep change time? or every 5s, then countdown from 10-->0
+	// TODO: and then use that to Bangle.buzz() on next rep
 	if (drawTimeout) clearTimeout(drawTimeout);
 	drawTimeout = setTimeout(function() {
 		drawTimeout = undefined;
