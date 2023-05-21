@@ -4,7 +4,7 @@ const STORAGE = require("Storage");
 const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
 const SETTINGS = {
   mapCompass: true,
-  mapScale:0.09,
+  mapScale:0.2,
   mapRefresh:500,
   mapChunkSize: 10,
   overviewScroll: 30,
@@ -12,7 +12,8 @@ const SETTINGS = {
   refresh:100,
   cacheMinFreeMem:1000,
   cacheMaxEntries:0,
-  minCourseChange: 5
+  minCourseChange: 5,
+  waypointChangeDist: 50
 };
 
 let init = function(){
@@ -353,6 +354,7 @@ let getMapSlice = function(){
           graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
           graphics.setColor(0,1,0);
           graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
+          graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
           graphics.setColor(graphics.theme.fg);
         } else {
           graphics.setColor(0,1,0);
@@ -1204,10 +1206,10 @@ let updateRouting = function() {
       minimumDistance = currentDistanceToTarget;
     }
     let nextAvailable = hasNext(s.route);
-    if (currentDistanceToTarget < 30 && nextAvailable){
+    if (currentDistanceToTarget < SETTINGS.waypointChangeDist && nextAvailable){
       next(s.route);
       minimumDistance = Number.MAX_VALUE;
-    } else if (lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - 30){
+    } else if (lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
       stopDrawing();
       Bangle.buzz(1000);
       setClosestWaypoint(s.route, s.route.index, showProgress);
