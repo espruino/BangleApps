@@ -241,6 +241,10 @@ let getMapSlice = function(){
       let mapScale = isMapOverview ? mapOverviewScale : mapLiveScale;
 
 
+      if (s.currentPos.lat) {
+        current = Bangle.project(s.currentPos);
+      }
+
       const errorMarkerSize=3;
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
@@ -337,19 +341,16 @@ let getMapSlice = function(){
         graphics.setColor(graphics.theme.fg);
 
         if (s.currentPos.lat) {
-          current.x = startingPoint.x - current.x;
-          current.y = (startingPoint.y - current.y)*-1;
-          current.x *= mapScale;
-          current.y *= mapScale;
-          current.x += mapCenterX;
-          current.y += mapCenterY;
+          let proj = Bangle.project(s.currentPos);
+          let pos = graphics.transformVertices([ startingPoint.x - proj.x, (startingPoint.y - proj.y)*-1 ], mapTrans);
 
-          if (current.x < x) { current.x = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
-          if (current.x > x + width) {current.x = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
-          if (current.y < y) {current.y = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-          if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
 
-          graphics.drawImage(arrow, current.x-arrow.width/2,current.y);
+          if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+          if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+          if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+          if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
+
+          graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
           graphics.setColor(0,1,0);
           graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
           graphics.setColor(graphics.theme.fg);
