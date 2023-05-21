@@ -350,11 +350,15 @@ let getMapSlice = function(){
           if (current.y > y + height) { current.y = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
 
           graphics.drawImage(arrow, current.x-arrow.width/2,current.y);
+          graphics.setColor(0,1,0);
+          graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
+          graphics.setColor(graphics.theme.fg);
+        } else {
+          graphics.setColor(0,1,0);
+          graphics.fillCircle(mapCenterX,mapCenterY, 5);
+          graphics.setColor(graphics.theme.fg);
         }
 
-        graphics.setColor(0,1,0);
-        graphics.fillCircle(mapCenterX,mapCenterY, 5);
-        graphics.setColor(graphics.theme.fg);
 
         graphics.setFont("Vector",25).setFontAlign(0,0);
         graphics.setColor(graphics.theme.fg);
