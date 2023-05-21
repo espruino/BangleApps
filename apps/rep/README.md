@@ -8,5 +8,8 @@ You can rewind, fast-forward and play/pause with the control buttons.
 # Todo
 
 - [ ] Loading of reps, web interface
+- [ ] Fix widget drawing
+- [ ] Check/tweak UI for real watch
 - [ ] Fastload: scoping, unregister layout handlers etc
+
 - [ ] Swipe handlers as well as "<<" / ">>" buttons
