@@ -10,12 +10,17 @@
   <body>
     <h1>Upload tracks to your watch</h1>
     <p>Allows uploading a GPX format track file to your watch. Converts tracks containing "trkpt"-nodes into the GPS Trekking format.</p>
-    <input type="file" id="fileSelector">
+    <input class="form-input" type="file" id="fileSelector"><br/>
+    <label class="form-label" for="fileName">Filename on watch (must end with .trf an be shorter than 28 characters total)</label>
+    <input class="form-input" placeholder="route.trf" id="fileName" pattern="^.{0,24}\.trf$"><br/>
+    <button class="btn btn-primary" type="button" id="upload">Upload</button><br/>
   </div>
     <script src="../../core/lib/interface.js"></script>
 
     <script>
       var options;
+
+      let converted;
 
       document.getElementById('fileSelector').addEventListener('change', event => {
         const file = document.getElementById('fileSelector').files[0];
@@ -51,23 +56,27 @@
 
             const fragment = xsltProcessor.transformToFragment(doc, document);
 
-            var serializer = new XMLSerializer();
-            var str = serializer.serializeToString(fragment);
-            console.log("Fragment", str);
+            let serializer = new XMLSerializer();
+            converted = serializer.serializeToString(fragment);
+            console.log("Fragment", converted);
 
             let filename = file.name.replaceAll(".gpx",".trf");
             console.log("New file name", filename);
 
-            Util.showModal("Saving...");
-            Util.writeStorage(filename, str, function() {
-                Util.hideModal();
-            });
+            if (document.getElementById('fileName').value == ""){
+              document.getElementById('fileName').value = filename;
+            }
         }
 
 
       });
 
-
+      document.getElementById('upload').addEventListener('click', event => {
+        Util.showModal("Saving...");
+        Util.writeStorage(document.getElementById('fileName').value, converted, function() {
+            Util.hideModal();
+        });
+      });
       function onInit() {
       }
     </script>
