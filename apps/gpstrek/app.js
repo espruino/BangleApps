@@ -962,7 +962,7 @@ let showRouteSelector  = function(){
     }
   };
 
-  STORAGE.list(/\.trf$/).forEach((file)=>{
+  STORAGE.list(/\.trf$/).sort().forEach((file)=>{
       menu[file] = ()=>{handleLoading(file);};
   });
 
