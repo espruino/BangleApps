@@ -13,9 +13,10 @@
 /* For example for maps:
 
 // a message
-require("messages").pushMessage({"t":"add","id":1575479849,"src":"Hangouts","title":"A Name","body":"message contents"})
+require("messages").pushMessage({"t":"add","id":1575479849,"src":"Skype","title":"My Friend","body":"Hey! How's everything going?",positive:1,negative:1})
 // maps
-GB({t:"nav",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:12345,action:"left_slight",eta:"08:39"})
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
@@ -25,6 +26,7 @@ var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+var fontVLarge = g.getFonts().includes("6x15")?"12x20:2":"6x8:5";
 var active; // active screen
 var openMusic = false; // go back to music screen after we handle something else?
 // hack for 2v10 firmware's lack of ':size' font handling
@@ -92,9 +94,12 @@ function showMapMessage(msg) {
   if (msg.action=="continue") img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";
   else if (msg.action=="left") img = "GhcBAYAAAPAAAHwAAD4AAB8AAA+AAAf//8P///x///+PAAPx4AA8fAAHD4ABwfAAcDwAHAIABwAAAcAAAHAAABwAAAcAAAHAAABwAAAc";
   else if (msg.action=="right") img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";
+  else if (msg.action=="left_slight") img = "ERgB//B/+D/8H4AP4Af4A74Bz4Dj4HD4OD4cD4AD4ADwADwADgAHgAPAAOAAcAA4ABwADgAH";
+  else if (msg.action=="right_slight") img = "ERgBB/+D/8H/4APwA/gD/APuA+cD44Phw+Dj4HPgAeAB4ADgAPAAeAA4ABwADgAHAAOAAcAA";
   else if (msg.action=="finish") img = "HhsBAcAAAD/AAAH/wAAPB4AAeA4AAcAcAAYIcAA4cMAA48MAA4cMAAYAcAAcAcAAcA4AAOA4AAOBxjwHBzjwHjj/4Dnn/4B3P/4B+Pj4A8fj8Acfj8AI//8AA//+AA/j+AB/j+AB/j/A";
+
   layout = new Layout({ type:"v", c: [
-    {type:"txt", font:fontMedium, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:2 },
+    {type:"txt", font:street?fontMedium:fontLarge, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:3 },
     street?{type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
       {type:"txt", font:"6x8", label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
@@ -102,10 +107,10 @@ function showMapMessage(msg) {
     {type:"h",fillx:1, filly:1, c: [
       img?{type:"img",src:atob(img), scale:2, pad:6}:{},
       {type:"v", fillx:1, c: [
-        {type:"txt", font:fontLarge, label:distance||"" }
+        {type:"txt", font:fontVLarge, label:distance||"" }
       ]},
     ]},
-    {type:"txt", font:"6x8:2", label:msg.eta||"" }
+    {type:"txt", font:"6x8:2", label:msg.eta?`ETA ${msg.eta}`:"" }
   ]});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
@@ -210,7 +215,7 @@ function showMessageScroller(msg) {
       g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
         setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
         clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
-      g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
+      g.setFont(bodyFont).setFontAlign(0,-1).drawString(lines[idx], r.x+r.w/2, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
         showMessage(msg.id);
@@ -221,7 +226,7 @@ function showMessageScroller(msg) {
 
 function showMessageSettings(msg) {
   active = "settings";
-  E.showMenu({"":{"title":/*LANG*/"Message"},
+  var menu = {"":{"title":/*LANG*/"Message"},
     "< Back" : () => showMessage(msg.id),
     /*LANG*/"View Message" : () => {
       showMessageScroller(msg);
@@ -230,6 +235,19 @@ function showMessageSettings(msg) {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
+  };
+  if (Bangle.messageIgnore && msg.src)
+    menu[/*LANG*/"Ignore"] = () => {
+      E.showPrompt(/*LANG*/"Ignore all messages from "+E.toJS(msg.src)+"?", {title:/*LANG*/"Ignore"}).then(isYes => {
+        if (isYes) {
+          Bangle.messageIgnore(msg);
+          MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
+        }
+        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+      });
+    };
+
+  menu = Object.assign(menu, {
     /*LANG*/"Mark Unread" : () => {
       msg.new = true;
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
@@ -247,6 +265,7 @@ function showMessageSettings(msg) {
       });
     },
   });
+  E.showMenu(menu);
 }
 
 function showMessage(msgid) {
@@ -285,20 +304,21 @@ function showMessage(msgid) {
       title = (lines.length>2) ? lines.slice(0,2).join("\n")+"..." : lines.join("\n");
     }
   }
-  // If body of message is only two lines long w/ large font, use large font.
-
-  if (body) {
-    var w = g.getWidth()-10;
-    if (g.setFont(bodyFont).stringWidth(body) > w * 2) {
+  if (body) { // Try and find a font that fits...
+    var w = g.getWidth()-2, h = Bangle.appRect.h-60;
+    if (g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
       bodyFont = fontBig;
-      if (settings.fontSize!=1 && g.setFont(bodyFont).stringWidth(body) > w * 3)
+      if (settings.fontSize!=1 && g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
         bodyFont = fontMedium;
+      }
     }
-    if (g.setFont(bodyFont).stringWidth(body) > w) {
-      lines = g.setFont(bodyFont).wrapString(msg.body, w);
-      var maxLines = Math.floor((g.getHeight()-110) / g.getFontHeight());
-      body = (lines.length>maxLines) ? lines.slice(0,maxLines).join("\n")+"..." : lines.join("\n");
-    }
+    // Now crop, given whatever font we have available
+    lines = g.setFont(bodyFont).wrapString(body, w);
+    var maxLines = Math.floor(h / g.getFontHeight());
+    if (lines.length>maxLines) // if too long, wrap with a bit less spae so we have room for '...'
+      body = g.setFont(bodyFont).wrapString(body, w-10).slice(0,maxLines).join("\n")+"...";
+    else
+      body = lines.join("\n");
   }
   function goBack() {
     layout = undefined;
@@ -306,26 +326,26 @@ function showMessage(msgid) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
   }
-  var buttons = [
-  ];
-  if (msg.positive) {
-    buttons.push({type:"btn", src:atob("GRSBAAAAAYAAAcAAAeAAAfAAAfAAAfAAAfAAAfAAAfBgAfA4AfAeAfAPgfAD4fAA+fAAP/AAD/AAA/AAAPAAADAAAA=="), cb:()=>{
-      msg.new = false;
-      cancelReloadTimeout(); // don't auto-reload to clock now
-      Bangle.messageResponse(msg,true);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
-    }});
-  }
+  var negHandler,posHandler,footer = [ ];
   if (msg.negative) {
-    if (buttons.length) buttons.push({width:32}); // nasty hack...
-    buttons.push({type:"btn", src:atob("FhaBADAAMeAB78AP/4B/fwP4/h/B/P4D//AH/4AP/AAf4AB/gAP/AB/+AP/8B/P4P4fx/A/v4B//AD94AHjAAMA="), cb:()=>{
+    negHandler = ()=>{
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
-    }});
+    }; footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
+  footer.push({fillx:1}); // push images to left/right
+  if (msg.positive) {
+    posHandler = ()=>{
+      msg.new = false;
+      cancelReloadTimeout(); // don't auto-reload to clock now
+      Bangle.messageResponse(msg,true);
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+    };
+        footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
 
+  }
 
   layout = new Layout({ type:"v", c: [
     {type:"h", fillx:1, bgCol:g.theme.bg2, col: g.theme.fg2,  c: [
@@ -346,8 +366,14 @@ function showMessage(msgid) {
       // allow tapping to show a larger version
       showMessageScroller(msg);
     } },
-    {type:"h",fillx:1, c: buttons}
+    {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
+
+  Bangle.swipeHandler = lr => {
+    if (lr>0 && posHandler) posHandler();
+    if (lr<0 && negHandler) negHandler();
+  };
+  Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
   layout.render();
 }
@@ -378,7 +404,7 @@ function checkMessages(options) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
     showMessage(newMessages[0].id);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
-    if (global.BUZZ_ON_NEW_MESSAGE && active!="map") {
+    if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
       // ... but only buzz the first time we view a new message
       global.BUZZ_ON_NEW_MESSAGE = false;
@@ -460,3 +486,4 @@ setTimeout(() => {
     clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1,
     openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show") });
 }, 10); // if checkMessages wants to 'load', do that
+

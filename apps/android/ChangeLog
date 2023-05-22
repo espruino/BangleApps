@@ -23,3 +23,4 @@
 0.22: Handle connection events for GPS forwarding from phone
 0.23: Handle 'act' Gadgetbridge messages for realtime activity monitoring
 0.24: Handle new 'nav' event for navigation
+0.25: Added option to 'ignore' an app from the message

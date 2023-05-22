@@ -254,6 +254,9 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
+  Bangle.messageIgnore = msg => {
+    if (isFinite(msg.id)) return gbSend({ t: "notify", n:"MUTE", id: msg.id });
+  };
   // GPS overwrite logic
   if (settings.overwriteGps) { // if the overwrite option is set../
     const origSetGPSPower = Bangle.setGPSPower;
