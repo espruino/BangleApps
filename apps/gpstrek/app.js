@@ -188,7 +188,7 @@ XX       XX
  XX     XX
   XX   XX
    XX XX
-     XX
+    XXX
    XX XX
   XX   XX
  XX     XX
