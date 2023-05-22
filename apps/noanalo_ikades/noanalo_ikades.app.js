@@ -158,13 +158,14 @@ function drawClockInfo(img_tmp, text_tmp) {
 
     // Compute sizes
     var imgWidth = image == null ? 0 : 24;
+    var midx = cx / 2 - 2;
 
     // Draw
     if (image) {
         var scale = imgWidth / image.width;
         g.drawImage(image, midx - parseInt(imgWidth * 1.3 / 2), cy + cy / 2 - 21, { scale: scale });
     }
-    g.drawString(text.slice(0, 6), cx / 2 - 2, cy + cy / 2 + 14);
+    g.drawString(text.slice(0, 6), midx, cy + cy / 2 + 14);
 }
 
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
@@ -463,9 +464,9 @@ function draw(fastUpdate){
     drawDate();
     drawLock();
     drawState();
-    drawClockInfo(img_temp, text_temp);
     drawTime();
     drawData();
+    drawClockInfo(img_temp, text_temp);
 }
 
 
