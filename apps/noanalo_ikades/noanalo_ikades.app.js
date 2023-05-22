@@ -384,7 +384,7 @@ function handleState(fastUpdate){
 
     // Set steps
     //state.steps = getSteps();
-    state.bpm = getBpm();
+    //state.bpm = getBpm();
 
     // Color based on state
     /*
@@ -403,7 +403,7 @@ function handleState(fastUpdate){
     }
 
     // Set battery
-    state.bat = E.getBattery();
+    //state.bat = E.getBattery();
 
     // Set weather
     state.has_weather = true;
@@ -463,10 +463,10 @@ function draw(fastUpdate){
 
     drawDate();
     drawLock();
+    drawClockInfo(img_temp, text_temp);
     drawState();
     drawTime();
     drawData();
-    drawClockInfo(img_temp, text_temp);
 }
 
 
