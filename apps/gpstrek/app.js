@@ -212,8 +212,7 @@ let isGpsCourse = function(){
 };
 
 let isMapOverview = false;
-let isMapOverviewChanged = true;
-let isMapLiveChanged = true;
+let forceMapRedraw = false;
 
 let activeTimeouts = [];
 let timeoutQueue = [];
@@ -260,7 +259,6 @@ let getMapSlice = function(){
   return {
     draw: function (graphics, x, y, height, width){
       if (queueProcessing) return;
-      graphics.setClipRect(x,y,x+width,y+height);
       let s = WIDGETS.gpstrek.getState();
 
       let course = 0;
@@ -293,11 +291,9 @@ let getMapSlice = function(){
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
           || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))
-          || isMapOverviewChanged
-          || isMapLiveChanged) {
+          || forceMapRedraw) {
         lastMode = isMapOverview;
-        isMapOverviewChanged = false;
-        isMapLiveChanged = false;
+        forceMapRedraw = false;
         lastDrawn = Date.now();
         lastCourse = course;
         lastStart = startingPoint;
@@ -323,6 +319,7 @@ let getMapSlice = function(){
 
           let drawChunk = function(data){
             if (data.breakLoop) return;
+            graphics.setClipRect(x,y,x+width,y+height);
             let finish;
             let toDraw;
             let named = [];
@@ -381,6 +378,7 @@ let getMapSlice = function(){
         drawPath(getPrev,true);
 
         let drawCurrentPos = function(){
+          graphics.setClipRect(x,y,x+width,y+height);
           graphics.setColor(graphics.theme.fg);
 
           if (s.currentPos.lat) {
@@ -408,6 +406,7 @@ let getMapSlice = function(){
         addToTimeoutQueue(drawCurrentPos);
 
         let drawInterface = function(){
+          graphics.setClipRect(x,y,x+width,y+height);
           graphics.setFont("Vector",25).setFontAlign(0,0);
           graphics.setColor(graphics.theme.fg);
           graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
@@ -440,6 +439,7 @@ let getMapSlice = function(){
       }
       if (SETTINGS.mapCompass){
         let drawMapCompass = function(){
+          graphics.setClipRect(x,y,x+width,y+height);
           graphics.setFont6x15();
           let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
           let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
@@ -473,7 +473,10 @@ let getMapSlice = function(){
       }
 
       prependTimeoutQueue(()=>{
-        graphics.clearRect(x,y,x+width,y+height);
+        //clear map view
+        graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
+        //clear space between buttons
+        graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
       });
       processTimeoutQueue();
     }
@@ -732,8 +735,9 @@ mapOverviewScale = SETTINGS.overviewScale;
 mapLiveScale = SETTINGS.mapScale;
 
 let onAction = function(_,xy){
+  clearTimeoutQueue();
+  forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
-    clearTimeoutQueue();
     if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
         if (isMapOverview) {
@@ -747,10 +751,6 @@ let onAction = function(_,xy){
         } else {
           mapLiveScale *= 1.5;
         }
-      if (isMapOverview)
-        isMapOverviewChanged = true;
-      else
-        isMapLiveChanged = true;
     } else {
       isMapOverview = !isMapOverview;
       if (!isMapOverview){
@@ -758,19 +758,19 @@ let onAction = function(_,xy){
         mapOverviewY = g.getHeight()/2;
       }
     }
-    if (scheduleDraw) draw();
+    if (scheduleDraw) drawInTimeout();
   } else {
     nextScreen();
   }
 };
 
 let onSwipe = function(dirLR,dirUD){
+  clearTimeoutQueue();
+  forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
-    clearTimeoutQueue();
     if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
     if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
-    isMapOverviewChanged = true;
-    if (scheduleDraw) draw();
+    if (scheduleDraw) drawInTimeout();
   } else {
     if (dirLR < 0) {
       nextScreen();
