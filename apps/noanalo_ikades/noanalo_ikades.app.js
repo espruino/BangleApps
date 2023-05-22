@@ -403,7 +403,7 @@ function handleState(fastUpdate){
     }
 
     // Set battery
-    //state.bat = E.getBattery();
+    state.bat = E.getBattery();
 
     // Set weather
     state.has_weather = true;
@@ -463,8 +463,8 @@ function draw(fastUpdate){
 
     drawDate();
     drawLock();
-    drawClockInfo(img_temp, text_temp);
     drawState();
+    drawClockInfo(img_temp, text_temp);
     drawTime();
     drawData();
 }
