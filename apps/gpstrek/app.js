@@ -756,7 +756,7 @@ let onAction = function(_,xy){
         } else {
           mapLiveScale *= 1.5;
         }
-    } else {
+    } else if (xy && xy.y > Bangle.appRect.y){
       isMapOverview = !isMapOverview;
       if (!isMapOverview){
         mapOverviewX = g.getWidth()/2;
