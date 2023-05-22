@@ -184,15 +184,15 @@ XXX     XXX
 `);
 
 const cross = Graphics.createImage(`
-XX        XX
-  XX     XX 
+XX       XX
+ XX     XX
   XX   XX
-    XX XX
-    XXX
-    XX XX
+   XX XX
+     XX
+   XX XX
   XX   XX
-  XX     XX
-XX        XX
+ XX     XX
+XX       XX
 `);
 
 const point = Graphics.createImage(`
