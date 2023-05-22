@@ -228,18 +228,22 @@ let prependTimeoutQueue = function (func, data){
   timeoutQueue.unshift({f:func,d:data});
 };
 
-let processTimeoutQueue = function(){
-  queueProcessing = true;
-  addToTimeoutQueue(()=>{queueProcessing=false;});
+let runNextTimeout = function(){
   if (timeoutQueue.length > 0){
     let current = timeoutQueue.shift();
     let id = setTimeout(()=>{
       current.f(current.d);
       activeTimeouts = activeTimeouts.filter((c)=>c!=id);
-      processTimeoutQueue();
+      runNextTimeout();
     },0);
     activeTimeouts.push(id);
   }
+};
+
+let processTimeoutQueue = function(){
+  queueProcessing = true;
+  addToTimeoutQueue(()=>{queueProcessing=false;});
+  runNextTimeout();
 };
 
 let clearTimeoutQueue = function(){
@@ -738,6 +742,7 @@ let onAction = function(_,xy){
   clearTimeoutQueue();
   forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
+    stopDrawing();
     if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
         if (isMapOverview) {
@@ -758,7 +763,7 @@ let onAction = function(_,xy){
         mapOverviewY = g.getHeight()/2;
       }
     }
-    if (scheduleDraw) drawInTimeout();
+    startDrawing();
   } else {
     nextScreen();
   }
@@ -768,9 +773,10 @@ let onSwipe = function(dirLR,dirUD){
   clearTimeoutQueue();
   forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
+    stopDrawing();
     if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
     if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
-    if (scheduleDraw) drawInTimeout();
+    startDrawing();
   } else {
     if (dirLR < 0) {
       nextScreen();
@@ -1114,6 +1120,12 @@ let switchMenu = function(){
 let stopDrawing = function(){
   if (drawTimeout) clearTimeout(drawTimeout);
   scheduleDraw = false;
+};
+
+let startDrawing = function(){
+  scheduleDraw = true;
+  draw();
+  drawInTimeout();
 };
 
 let drawInTimeout = function(){
