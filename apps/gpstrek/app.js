@@ -10,10 +10,11 @@ const SETTINGS = {
   overviewScroll: 30,
   overviewScale: 0.01,
   refresh:100,
-  cacheMinFreeMem:1000,
+  cacheMinFreeMem:2000,
   cacheMaxEntries:0,
   minCourseChange: 5,
-  waypointChangeDist: 50
+  waypointChangeDist: 50,
+  maxPoints: 50
 };
 
 let init = function(){
@@ -214,6 +215,42 @@ let isMapOverview = false;
 let isMapOverviewChanged = true;
 let isMapLiveChanged = true;
 
+let activeTimeouts = [];
+let timeoutQueue = [];
+let queueProcessing = false;
+
+let addToTimeoutQueue = function (func, data){
+  if (queueProcessing) return;
+  timeoutQueue.push({f:func,d:data});
+};
+
+let prependTimeoutQueue = function (func, data){
+  if (queueProcessing) return;
+  timeoutQueue.unshift({f:func,d:data});
+};
+
+let processTimeoutQueue = function(){
+  queueProcessing = true;
+  addToTimeoutQueue(()=>{queueProcessing=false;});
+  if (timeoutQueue.length > 0){
+    let current = timeoutQueue.shift();
+    let id = setTimeout(()=>{
+      current.f(current.d);
+      activeTimeouts = activeTimeouts.filter((c)=>c!=id);
+      processTimeoutQueue();
+    },0);
+    activeTimeouts.push(id);
+  }
+};
+
+let clearTimeoutQueue = function(){
+  timeoutQueue = [];
+  for (let c of activeTimeouts){
+    clearTimeout(c);
+  }
+  queueProcessing = false;
+};
+
 let getMapSlice = function(){
   let lastMode = isMapOverview;
   let lastDrawn = 0;
@@ -222,6 +259,7 @@ let getMapSlice = function(){
   let lastCurrent;
   return {
     draw: function (graphics, x, y, height, width){
+      if (queueProcessing) return;
       graphics.setClipRect(x,y,x+width,y+height);
       let s = WIDGETS.gpstrek.getState();
 
@@ -260,7 +298,6 @@ let getMapSlice = function(){
         lastMode = isMapOverview;
         isMapOverviewChanged = false;
         isMapLiveChanged = false;
-        graphics.clearRect(x,y,x+width,y+height);
         lastDrawn = Date.now();
         lastCourse = course;
         lastStart = startingPoint;
@@ -275,151 +312,170 @@ let getMapSlice = function(){
           y: mapCenterY
         };
 
-        const maxPoints = 50;
-
         let drawPath = function(iter, reverse){
           "ram";
-          let i = 0;
 
-          let time = Date.now(); 
+          let data = {
+            i:0,
+            poly:[0,0],
+            breakLoop: false
+          };
 
-          //Adds starting point on first iteration
-          let poly = [0,0];
-          let breakLoop = false;
-          let finish;
-          let toDraw;
-          graphics.setFont6x15();
-          do {
+          let drawChunk = function(data){
+            if (data.breakLoop) return;
+            let finish;
+            let toDraw;
             let named = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
-              i = i + (reverse?-1:1);
-              let p = iter(route, route.index + i);
+              data.i = data.i + (reverse?-1:1);
+              let p = iter(route, route.index + data.i);
               if (!p || !p.lat) {
-                breakLoop = true;
+                data.breakLoop = true;
                 break;
               }
               toDraw = Bangle.project(p);
-              if (p.name) named.push({i:poly.length,n:p.name});
-              if (route.index + i + 1 == route.count - 1) finish = true;
-              poly.push(startingPoint.x-toDraw.x);
-              poly.push((startingPoint.y-toDraw.y)*-1);
+              if (p.name) named.push({i:data.poly.length,n:p.name});
+              if (route.index + data.i + 1 == route.count - 1) finish = true;
+              data.poly.push(startingPoint.x-toDraw.x);
+              data.poly.push((startingPoint.y-toDraw.y)*-1);
             }
 
-            poly = graphics.transformVertices(poly, mapTrans);
-            graphics.drawPoly(poly, false);
+            data.poly = graphics.transformVertices(data.poly, mapTrans);
+            graphics.drawPoly(data.poly, false);
 
-            if (!isMapOverview && (poly[poly.length-2] < (x - 10)
-              || poly[poly.length-2] > (x + width + 10)
-              || poly[poly.length-1] < (y - 10)
-              || poly[poly.length-1] > (y + height + 10))) breakLoop = true;
+            if (!isMapOverview && (data.poly[data.poly.length-2] < (x - 10)
+              || data.poly[data.poly.length-2] > (x + width + 10)
+              || data.poly[data.poly.length-1] < (y - 10)
+              || data.poly[data.poly.length-1] > (y + height + 10))) data.breakLoop = true;
 
+            graphics.setFont6x15();
             for (let c of named){
-              if (i != 0 || s.currentPos.lat){
-                graphics.drawImage(point, poly[c.i]-point.width/2, poly[c.i+1]-point.height/2);
-                graphics.drawString(c.n, poly[c.i] + 10, poly[c.i+1]);
+              if (data.i != 0 || s.currentPos.lat){
+                graphics.drawImage(point, data.poly[c.i]-point.width/2, data.poly[c.i+1]-point.height/2);
+                graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
               }
             }
 
             if (!reverse){
               if (finish)
-                graphics.drawImage(finishIcon, poly[poly.length - 2] -5, poly[poly.length - 1] - 4);
-              else if (breakLoop)
-                graphics.drawImage(cross, poly[poly.length - 2] - cross.width/2, poly[poly.length - 1] - cross.height/2);
+                graphics.drawImage(finishIcon, data.poly[data.poly.length - 2] -5, data.poly[data.poly.length - 1] - 4);
+              else if (data.breakLoop)
+                graphics.drawImage(cross, data.poly[data.poly.length - 2] - cross.width/2, data.poly[data.poly.length - 1] - cross.height/2);
             }
 
             //Add last drawn point to get closed path
             if (toDraw) {
-              poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
+              data.poly = [ startingPoint.x-toDraw.x, (startingPoint.y-toDraw.y)*-1];
               toDraw = null;
             }
 
-          } while ((i < maxPoints || isMapOverview) && !breakLoop);
+          };
+          let startIndex = 0;
+          do {
+            addToTimeoutQueue(drawChunk, data);
+            startIndex += SETTINGS.mapChunkSize;
+          } while ((startIndex < SETTINGS.maxPoints || (isMapOverview && startIndex < route.count)));
         };
 
         drawPath(getNext,false);
         drawPath(getPrev,true);
 
-        graphics.setColor(graphics.theme.fg);
-
-        if (s.currentPos.lat) {
-          let proj = Bangle.project(s.currentPos);
-          let pos = graphics.transformVertices([ startingPoint.x - proj.x, (startingPoint.y - proj.y)*-1 ], mapTrans);
-
-
-          if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
-          if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
-          if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-          if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
-
-          graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
-          graphics.setColor(0,1,0);
-          graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
-          graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
+        let drawCurrentPos = function(){
           graphics.setColor(graphics.theme.fg);
-        } else {
-          graphics.setColor(0,1,0);
-          graphics.fillCircle(mapCenterX,mapCenterY, 5);
+
+          if (s.currentPos.lat) {
+            let proj = Bangle.project(s.currentPos);
+            let pos = graphics.transformVertices([ startingPoint.x - proj.x, (startingPoint.y - proj.y)*-1 ], mapTrans);
+
+
+            if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+            if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+            if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+            if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
+
+            graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
+            graphics.setColor(0,1,0);
+            graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
+            graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
+            graphics.setColor(graphics.theme.fg);
+          } else {
+            graphics.setColor(0,1,0);
+            graphics.fillCircle(mapCenterX,mapCenterY, 5);
+            graphics.setColor(graphics.theme.fg);
+          }
+        };
+
+        addToTimeoutQueue(drawCurrentPos);
+
+        let drawInterface = function(){
+          graphics.setFont("Vector",25).setFontAlign(0,0);
           graphics.setColor(graphics.theme.fg);
-        }
+          graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+          graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+          graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
 
+          graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+          graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+          graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
 
-        graphics.setFont("Vector",25).setFontAlign(0,0);
-        graphics.setColor(graphics.theme.fg);
-        graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-        graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-        graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
-
-        graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-        graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-        graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
-
-        let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
-        let l = width*0.4;
-        let scale = "<100";
-        for (let c of refs){
-          if (c*mapScale > l)
-            break;
-          else
-            scale = c;
-        }
-        graphics.setFontAlign(-1,1).setFont("Vector",14);
-        graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1);
-        if (!isNaN(scale)){
-          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
-          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
-          graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
-        }
+          let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
+          let l = width*0.4;
+          let scale = "<100";
+          for (let c of refs){
+            if (c*mapScale > l)
+              break;
+            else
+              scale = c;
+          }
+          graphics.setFontAlign(-1,1).setFont("Vector",14);
+          graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1);
+          if (!isNaN(scale)){
+            graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
+            graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
+            graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
+          }
+        };
+        addToTimeoutQueue(drawInterface);
+        prependTimeoutQueue(drawInterface);
       }
       if (SETTINGS.mapCompass){
-        graphics.setFont6x15();
-        let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
-        let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
-        let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
-        compass = graphics.transformVertices(compass, {
-          rotate:require("graphics_utils").degreesToRadians(180-course),
-          x: compassCenterX,
-          y: compassCenterY
-        });
-        graphics.setFontAlign(0,0);
-        graphics.setColor(graphics.theme.bg);
-        graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+7);
-        graphics.setColor(graphics.theme.fg);
-        graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
-        graphics.drawString("N", compass[2], compass[3], true);
-        graphics.drawString("S", compass[4], compass[5], true);
-        graphics.drawString("W", compass[6], compass[7], true);
-        graphics.drawString("E", compass[8], compass[9], true);
+        let drawMapCompass = function(){
+          graphics.setFont6x15();
+          let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
+          let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
+          let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
+          compass = graphics.transformVertices(compass, {
+            rotate:require("graphics_utils").degreesToRadians(180-course),
+            x: compassCenterX,
+            y: compassCenterY
+          });
+          graphics.setFontAlign(0,0);
+          graphics.setColor(graphics.theme.bg);
+          graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+7);
+          graphics.setColor(graphics.theme.fg);
+          graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
+          graphics.drawString("N", compass[2], compass[3], true);
+          graphics.drawString("S", compass[4], compass[5], true);
+          graphics.drawString("W", compass[6], compass[7], true);
+          graphics.drawString("E", compass[8], compass[9], true);
 
-        if(!isGpsCourse() && !isMapOverview) {
-          let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
-          let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
-          graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
-        } else if (isMapOverview){
-          graphics.setColor(0,0,1);
-          graphics.fillCircle(compassCenterX, compassCenterY,3);
-        }
+          if(!isGpsCourse() && !isMapOverview) {
+            let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
+            let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
+            graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
+          } else if (isMapOverview){
+            graphics.setColor(0,0,1);
+            graphics.fillCircle(compassCenterX, compassCenterY,3);
+          }
+        };
+        addToTimeoutQueue(drawMapCompass);
+        prependTimeoutQueue(drawMapCompass);
       }
 
+      prependTimeoutQueue(()=>{
+        graphics.clearRect(x,y,x+width,y+height);
+      });
+      processTimeoutQueue();
     }
   };
 };
@@ -677,6 +733,7 @@ mapLiveScale = SETTINGS.mapScale;
 
 let onAction = function(_,xy){
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
+    clearTimeoutQueue();
     if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
         if (isMapOverview) {
@@ -701,6 +758,7 @@ let onAction = function(_,xy){
         mapOverviewY = g.getHeight()/2;
       }
     }
+    if (scheduleDraw) draw();
   } else {
     nextScreen();
   }
@@ -708,9 +766,11 @@ let onAction = function(_,xy){
 
 let onSwipe = function(dirLR,dirUD){
   if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
+    clearTimeoutQueue();
     if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
     if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
     isMapOverviewChanged = true;
+    if (scheduleDraw) draw();
   } else {
     if (dirLR < 0) {
       nextScreen();
