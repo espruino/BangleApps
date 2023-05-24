@@ -24,3 +24,4 @@
 0.24: Add ability to disable alarm functionality.
 0.25: Add more colors to the settings and add the ability to disable the data charts+Markup.
 0.26: Use widget_utils.
+0.27: Report latest HRM rather than HRM 10 minutes ago (fix #2395)
