@@ -2,16 +2,17 @@
   "id": "popconlaunch",
   "name": "Popcon Launcher",
   "shortName": "Popcon",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Launcher modification - your launchers will display your favourite (popular) apps first. Overrides `readJSON`, may slow down your watch",
   "readme": "README.md",
   "icon": "app.png",
   "type": "bootloader",
-  "tags": "tool,system,launcher",
+  "tags": "tool,system",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"popcon.boot.js","url":"boot.js"},
-    {"name":"popcon.img","url":"icon.js","evaluate":true}
+    {"name":"popcon.img","url":"icon.js","evaluate":true},
+    {"name":"popcon.settings.js","url":"settings.js"}
   ],
   "data": [
     {"name":"popcon.cache.json"}
