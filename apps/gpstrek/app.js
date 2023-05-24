@@ -241,8 +241,9 @@ let runNextTimeout = function(){
 };
 
 let processTimeoutQueue = function(){
-  queueProcessing = true;
+  if (queueProcessing) return;
   addToTimeoutQueue(()=>{queueProcessing=false;});
+  queueProcessing = true;
   runNextTimeout();
 };
 
@@ -263,6 +264,7 @@ let getMapSlice = function(){
   return {
     draw: function (graphics, x, y, height, width){
       if (queueProcessing) return;
+      print("DRAW");
       let s = WIDGETS.gpstrek.getState();
 
       let course = 0;
@@ -291,11 +293,13 @@ let getMapSlice = function(){
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
 
-      if (Date.now() - lastDrawn > SETTINGS.mapRefresh &&
+      let refreshMap = Date.now() - lastDrawn > SETTINGS.mapRefresh &&
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
           || (!lastCurrent || (Math.abs(lastCurrent.x - current.x)) > 10 || (Math.abs(lastCurrent.y - current.y)) > 10))
-          || forceMapRedraw) {
+          || forceMapRedraw;
+
+      if (refreshMap) {
         lastMode = isMapOverview;
         forceMapRedraw = false;
         lastDrawn = Date.now();
@@ -311,6 +315,13 @@ let getMapSlice = function(){
           x: mapCenterX,
           y: mapCenterY
         };
+
+        prependTimeoutQueue(()=>{
+          //clear map view
+          graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
+          //clear space between buttons
+          graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
+        });
 
         let drawPath = function(iter, reverse){
           "ram";
@@ -476,12 +487,6 @@ let getMapSlice = function(){
         prependTimeoutQueue(drawMapCompass);
       }
 
-      prependTimeoutQueue(()=>{
-        //clear map view
-        graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
-        //clear space between buttons
-        graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
-      });
       processTimeoutQueue();
     }
   };
