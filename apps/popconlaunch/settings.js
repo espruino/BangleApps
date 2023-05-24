@@ -3,7 +3,11 @@
         '': { 'title': 'Popcon' },
         '< Back': back,
         'Reset app popularities': function () {
-            require("Storage").erase("popcon.cache.json");
+            var S = require("Storage");
+            S.erase("popcon.cache.json");
+            var info = S.readJSON("popcon.info", true);
+            info.cacheBuster = !info.cacheBuster;
+            S.writeJSON("popcon.info", info);
             E.showMessage("Popcon reset", "Done");
         },
     };
