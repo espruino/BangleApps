@@ -7,7 +7,7 @@
   "readme": "README.md",
   "icon": "app.png",
   "type": "bootloader",
-  "tags": "tool,system,launcher",
+  "tags": "tool,system",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"popcon.boot.js","url":"boot.js"},
