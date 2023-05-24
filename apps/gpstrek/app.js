@@ -264,7 +264,6 @@ let getMapSlice = function(){
   return {
     draw: function (graphics, x, y, height, width){
       if (queueProcessing) return;
-      print("DRAW");
       let s = WIDGETS.gpstrek.getState();
 
       let course = 0;
@@ -293,6 +292,68 @@ let getMapSlice = function(){
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
 
+      let drawInterface = function(){
+        graphics.setClipRect(x,y,x+width,y+height);
+        graphics.setFont("Vector",25).setFontAlign(0,0);
+        graphics.setColor(graphics.theme.fg);
+        graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+        graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
+        graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
+
+        graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+        graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
+        graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
+
+        let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
+        let l = width*0.4;
+        let scale = "<100";
+        for (let c of refs){
+          if (c*mapScale > l)
+            break;
+          else
+            scale = c;
+        }
+        graphics.setFontAlign(-1,1).setFont("Vector",14);
+        graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1);
+        if (!isNaN(scale)){
+          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
+          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
+          graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
+        }
+      };
+
+      let drawMapCompass = function(){
+        graphics.setClipRect(x,y,x+width,y+height);
+        graphics.setFont6x15();
+        let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
+        let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
+        let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
+        compass = graphics.transformVertices(compass, {
+          rotate:require("graphics_utils").degreesToRadians(180-course),
+          x: compassCenterX,
+          y: compassCenterY
+        });
+        graphics.setFontAlign(0,0);
+        graphics.setColor(graphics.theme.bg);
+        graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+7);
+        graphics.setColor(graphics.theme.fg);
+        graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
+        graphics.drawString("N", compass[2], compass[3], true);
+        graphics.drawString("S", compass[4], compass[5], true);
+        graphics.drawString("W", compass[6], compass[7], true);
+        graphics.drawString("E", compass[8], compass[9], true);
+
+        if(!isGpsCourse() && !isMapOverview) {
+          let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
+          let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
+          graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
+        } else if (isMapOverview){
+          graphics.setColor(0,0,1);
+          graphics.fillCircle(compassCenterX, compassCenterY,3);
+        }
+      };
+      
+      
       let refreshMap = Date.now() - lastDrawn > SETTINGS.mapRefresh &&
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
@@ -321,6 +382,9 @@ let getMapSlice = function(){
           graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
           //clear space between buttons
           graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
+
+          drawInterface();
+          drawMapCompass();
         });
 
         let drawPath = function(iter, reverse){
@@ -419,74 +483,11 @@ let getMapSlice = function(){
         };
 
         addToTimeoutQueue(drawCurrentPos);
-
-        let drawInterface = function(){
-          graphics.setClipRect(x,y,x+width,y+height);
-          graphics.setFont("Vector",25).setFontAlign(0,0);
-          graphics.setColor(graphics.theme.fg);
-          graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-          graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-          graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
-
-          graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-          graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-          graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
-
-          let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
-          let l = width*0.4;
-          let scale = "<100";
-          for (let c of refs){
-            if (c*mapScale > l)
-              break;
-            else
-              scale = c;
-          }
-          graphics.setFontAlign(-1,1).setFont("Vector",14);
-          graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1);
-          if (!isNaN(scale)){
-            graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
-            graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
-            graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
-          }
-        };
         addToTimeoutQueue(drawInterface);
-        prependTimeoutQueue(drawInterface);
       }
       if (SETTINGS.mapCompass){
-        let drawMapCompass = function(){
-          graphics.setClipRect(x,y,x+width,y+height);
-          graphics.setFont6x15();
-          let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
-          let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
-          let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
-          compass = graphics.transformVertices(compass, {
-            rotate:require("graphics_utils").degreesToRadians(180-course),
-            x: compassCenterX,
-            y: compassCenterY
-          });
-          graphics.setFontAlign(0,0);
-          graphics.setColor(graphics.theme.bg);
-          graphics.fillCircle(compassCenterX, compassCenterY,compassHeight+7);
-          graphics.setColor(graphics.theme.fg);
-          graphics.drawCircle(compassCenterX, compassCenterY,compassHeight);
-          graphics.drawString("N", compass[2], compass[3], true);
-          graphics.drawString("S", compass[4], compass[5], true);
-          graphics.drawString("W", compass[6], compass[7], true);
-          graphics.drawString("E", compass[8], compass[9], true);
-
-          if(!isGpsCourse() && !isMapOverview) {
-            let xh = E.clip(s.acc.x*compassHeight, -compassHeight, compassHeight);
-            let yh = E.clip(s.acc.y*compassHeight, -compassHeight, compassHeight);
-            graphics.fillCircle(compassCenterX + xh, compassCenterY + yh,3);
-          } else if (isMapOverview){
-            graphics.setColor(0,0,1);
-            graphics.fillCircle(compassCenterX, compassCenterY,3);
-          }
-        };
         addToTimeoutQueue(drawMapCompass);
-        prependTimeoutQueue(drawMapCompass);
       }
-
       processTimeoutQueue();
     }
   };
