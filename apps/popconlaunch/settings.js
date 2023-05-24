@@ -5,9 +5,9 @@
         'Reset app popularities': function () {
             var S = require("Storage");
             S.erase("popcon.cache.json");
-            var info = S.readJSON("popcon.info", true);
+            var info = S.readJSON("popconlaunch.info", true);
             info.cacheBuster = !info.cacheBuster;
-            S.writeJSON("popcon.info", info);
+            S.writeJSON("popconlaunch.info", info);
             E.showMessage("Popcon reset", "Done");
         },
     };

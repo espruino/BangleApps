@@ -26,9 +26,9 @@
         trimCache(cache);
         require("Storage").writeJSON("popcon.cache.json", cache);
         if (orderChanged) {
-            var info = oldRead("popcon.info", true);
+            var info = oldRead("popconlaunch.info", true);
             info.cacheBuster = !info.cacheBuster;
-            require("Storage").writeJSON("popcon.info", info);
+            require("Storage").writeJSON("popconlaunch.info", info);
         }
     };
     var sortCache = function () {
