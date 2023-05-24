@@ -10,10 +10,12 @@
   <body>
     <h1>Upload tracks to your watch</h1>
     <p>Allows uploading a GPX format track file to your watch. Converts tracks containing "trkpt"-nodes into the GPS Trekking format.</p>
-    <input class="form-input" type="file" id="fileSelector"><br/>
-    <label class="form-label" for="fileName">Filename on watch (must end with .trf an be shorter than 28 characters total)</label>
-    <input class="form-input" placeholder="route.trf" id="fileName" pattern="^.{0,24}\.trf$"><br/>
-    <button class="btn btn-primary" type="button" id="upload">Upload</button><br/>
+    <form>
+      <input class="form-input" type="file" id="fileSelector"><br/>
+      <label class="form-label" for="fileName">Filename on watch (must end with .trf an be shorter than 28 characters total)</label>
+      <input class="form-input" placeholder="route.trf" id="fileName" required pattern="^.{0,24}\.trf$"><br/>
+      <button class="btn btn-primary" disabled="true" type="button" id="upload">Upload</button><br/>
+    </form>
   </div>
     <script src="../../core/lib/interface.js"></script>
 
@@ -66,6 +68,10 @@
             if (document.getElementById('fileName').value == ""){
               document.getElementById('fileName').value = filename;
             }
+
+            if (converted && converted.length > 0){
+              document.getElementById('upload').disabled = false;
+            }
         }
 
 
@@ -73,9 +79,14 @@
 
       document.getElementById('upload').addEventListener('click', event => {
         Util.showModal("Saving...");
-        Util.writeStorage(document.getElementById('fileName').value, converted, function() {
-            Util.hideModal();
-        });
+        let name = document.getElementById('fileName').value;
+        if (!name || name.length == 0)
+          name = document.getElementById('fileName').placeholder;
+        if (name && converted && converted.length > 0){
+          Util.writeStorage(name, converted, function() {
+              Util.hideModal();
+          });
+        }
       });
       function onInit() {
       }
