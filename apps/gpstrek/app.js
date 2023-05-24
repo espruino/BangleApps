@@ -6,10 +6,11 @@ const SETTINGS = {
   mapCompass: true,
   mapScale:0.2,
   mapRefresh:500,
-  mapChunkSize: 10,
+  mapChunkSize: 5,
   overviewScroll: 30,
   overviewScale: 0.01,
-  refresh:100,
+  refresh:200,
+  refreshLocked:3000,
   cacheMinFreeMem:2000,
   cacheMaxEntries:0,
   minCourseChange: 5,
@@ -291,6 +292,8 @@ let getMapSlice = function(){
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
+      let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
+      let mapCenterY = isMapOverview?mapOverviewY:y+height*0.7;
 
       let drawInterface = function(){
         graphics.setClipRect(x,y,x+width,y+height);
@@ -352,8 +355,33 @@ let getMapSlice = function(){
           graphics.fillCircle(compassCenterX, compassCenterY,3);
         }
       };
-      
-      
+
+      let drawCurrentPos = function(){
+        graphics.setClipRect(x,y,x+width,y+height);
+        graphics.setColor(graphics.theme.fg);
+
+        if (s.currentPos.lat) {
+          let proj = Bangle.project(s.currentPos);
+          let pos = graphics.transformVertices([ startingPoint.x - proj.x, (startingPoint.y - proj.y)*-1 ], mapTrans);
+
+
+          if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+          if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+          if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+          if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
+
+          graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
+          graphics.setColor(0,1,0);
+          graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
+          graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
+          graphics.setColor(graphics.theme.fg);
+        } else {
+          graphics.setColor(0,1,0);
+          graphics.fillCircle(mapCenterX,mapCenterY, 5);
+          graphics.setColor(graphics.theme.fg);
+        }
+      };
+
       let refreshMap = Date.now() - lastDrawn > SETTINGS.mapRefresh &&
           (Math.abs(lastCourse - course) > SETTINGS.minCourseChange
           || (!lastStart || lastStart.x != startingPoint.x || lastStart.y != startingPoint.y)
@@ -367,8 +395,6 @@ let getMapSlice = function(){
         lastCourse = course;
         lastStart = startingPoint;
         lastCurrent = current;
-        let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
-        let mapCenterY = isMapOverview?mapOverviewY:y+height*0.7;
         let mapRot = require("graphics_utils").degreesToRadians(180-course);
         let mapTrans = {
           scale: mapScale,
@@ -383,8 +409,11 @@ let getMapSlice = function(){
           //clear space between buttons
           graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
 
+          drawCurrentPos();
           drawInterface();
-          drawMapCompass();
+          if (SETTINGS.mapCompass){
+            drawMapCompass();
+          }
         });
 
         let drawPath = function(iter, reverse){
@@ -455,32 +484,6 @@ let getMapSlice = function(){
 
         drawPath(getNext,false);
         drawPath(getPrev,true);
-
-        let drawCurrentPos = function(){
-          graphics.setClipRect(x,y,x+width,y+height);
-          graphics.setColor(graphics.theme.fg);
-
-          if (s.currentPos.lat) {
-            let proj = Bangle.project(s.currentPos);
-            let pos = graphics.transformVertices([ startingPoint.x - proj.x, (startingPoint.y - proj.y)*-1 ], mapTrans);
-
-
-            if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
-            if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
-            if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-            if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
-
-            graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
-            graphics.setColor(0,1,0);
-            graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
-            graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
-            graphics.setColor(graphics.theme.fg);
-          } else {
-            graphics.setColor(0,1,0);
-            graphics.fillCircle(mapCenterX,mapCenterY, 5);
-            graphics.setColor(graphics.theme.fg);
-          }
-        };
 
         addToTimeoutQueue(drawCurrentPos);
         addToTimeoutQueue(drawInterface);
@@ -1139,7 +1142,7 @@ let drawInTimeout = function(){
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();
-  },SETTINGS.refresh);
+  },Bangle.isLocked()?SETTINGS.refreshLocked:SETTINGS.refresh);
 };
 
 let switchNav = function(){
