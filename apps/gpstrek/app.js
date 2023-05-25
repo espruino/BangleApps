@@ -216,40 +216,45 @@ let isMapOverview = false;
 let forceMapRedraw = false;
 
 let activeTimeouts = [];
-let timeoutQueue = [];
+let taskQueue = [];
 let queueProcessing = false;
 
-let addToTimeoutQueue = function (func, data){
+let addToTaskQueue = function (func, data){
   if (queueProcessing) print("Adding during processing, this should not happen");
-  timeoutQueue.push({f:func,d:data});
+  taskQueue.push({f:func,d:data});
 };
 
-let prependTimeoutQueue = function (func, data, force){
+let prependTaskQueue = function (func, data, force){
   if (queueProcessing && !force) print("Prepending during processing, this should not happen");
-  timeoutQueue.unshift({f:func,d:data});
+  taskQueue.unshift({f:func,d:data});
 };
 
-let runNextTimeout = function(){
-  if (timeoutQueue.length > 0){
-    let current = timeoutQueue.shift();
-    let id = setTimeout(()=>{
+let runQueue = function(inTimeouts){
+  if (taskQueue.length > 0){
+    let current = taskQueue.shift();
+    if (inTimeouts){
+      let id = setTimeout(()=>{
+        current.f(current.d);
+        activeTimeouts = activeTimeouts.filter((c)=>c!=id);
+        runQueue();
+      },0);
+      activeTimeouts.push(id);
+    } else {
       current.f(current.d);
-      activeTimeouts = activeTimeouts.filter((c)=>c!=id);
-      runNextTimeout();
-    },0);
-    activeTimeouts.push(id);
+      runQueue();
+    }
   }
 };
 
-let processTimeoutQueue = function(){
+let processTaskQueue = function(inTimeouts){
   if (queueProcessing) return;
-  addToTimeoutQueue(()=>{queueProcessing=false;});
+  addToTaskQueue(()=>{queueProcessing=false;});
   queueProcessing = true;
-  runNextTimeout();
+  runQueue(inTimeouts);
 };
 
 let clearTimeoutQueue = function(){
-  timeoutQueue = [];
+  taskQueue = [];
   for (let c of activeTimeouts){
     clearTimeout(c);
   }
@@ -276,13 +281,17 @@ let getMapSlice = function(){
 
       let route = s.route;
       if (!route) return;
-      let startingPoint = Bangle.project(route.currentWaypoint);
+      let waypoint = {};
+      getEntry(route.filename, route.refs[route.index], waypoint);
+      let startingPoint = Bangle.project(waypoint);
       let current = startingPoint;
-      let prevPoint = getPrev(route, route.index);
-      if (prevPoint && prevPoint.lat) startingPoint = Bangle.project(prevPoint);
 
       if (s.currentPos.lat) {
         current = Bangle.project(s.currentPos);
+      } else {
+        // in case of no actual position assume previous waypoint as current
+        let prevPoint = getPrev(route, route.index);
+        if (prevPoint && prevPoint.lat) current = Bangle.project(prevPoint);
       }
 
       const errorMarkerSize=3;
@@ -290,7 +299,7 @@ let getMapSlice = function(){
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
       let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
-      let mapCenterY = isMapOverview?mapOverviewY:y+height*0.7;
+      let mapCenterY = isMapOverview?mapOverviewY:y+height*0.4;
       let mapScale = isMapOverview?mapOverviewScale : mapLiveScale;
       let mapRot = require("graphics_utils").degreesToRadians(180-course);
       let mapTrans = {
@@ -401,7 +410,7 @@ let getMapSlice = function(){
         lastStart = startingPoint;
         lastCurrent = current;
 
-        prependTimeoutQueue(()=>{
+        prependTaskQueue(()=>{
           //clear map view
           graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
           //clear space between buttons
@@ -418,7 +427,7 @@ let getMapSlice = function(){
           "ram";
 
           let data = {
-            i:0,
+            i:reverse?0:-1,
             poly:[0,0],
             breakLoop: false
           };
@@ -431,7 +440,6 @@ let getMapSlice = function(){
             let toDraw;
             let named = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
-              data.i = data.i + (reverse?-1:1);
               let p = iter(route, route.index + data.i);
               if (!p || !p.lat) {
                 data.breakLoop = true;
@@ -442,6 +450,7 @@ let getMapSlice = function(){
               if (route.index + data.i + 1 == route.count - 1) finish = true;
               data.poly.push(startingPoint.x-toDraw.x);
               data.poly.push((startingPoint.y-toDraw.y)*-1);
+              data.i = data.i + (reverse?-1:1);
             }
 
             data.poly = graphics.transformVertices(data.poly, mapTrans);
@@ -476,24 +485,23 @@ let getMapSlice = function(){
             if (!isMapOverview && Math.abs(data.i) > SETTINGS.maxPoints)
               data.breakLoop = true;
             if (!data.breakLoop){
-              //be careful when modifying the queue during processing
-              prependTimeoutQueue(drawChunk, data, true);
+              prependTaskQueue(drawChunk, data, true);
             }
           };
-          addToTimeoutQueue(drawChunk, data);
+          addToTaskQueue(drawChunk, data);
         };
 
 
         drawPath(getNext,false);
         drawPath(getPrev,true);
 
-        addToTimeoutQueue(drawCurrentPos);
-        addToTimeoutQueue(drawInterface);
+        addToTaskQueue(drawCurrentPos);
+        addToTaskQueue(drawInterface);
       }
       if (SETTINGS.mapCompass){
-        addToTimeoutQueue(drawMapCompass);
+        addToTaskQueue(drawMapCompass);
       }
-      processTimeoutQueue();
+      processTaskQueue(true);
     }
   };
 };
@@ -516,7 +524,7 @@ let getTargetSlice = function(targetDataSource){
 
       let dist = distance(start,target);
       if (isNaN(dist)) dist = Infinity;
-      let bearingString = bearing(start,target) + "ý";
+      let bearingString = bearing(start,target) + "°";
       if (target.name) {
         graphics.setFont("Vector",Math.floor(height*0.5));
         let scrolledName = (target.name || "").substring(nameIndex);
@@ -534,7 +542,7 @@ let getTargetSlice = function(targetDataSource){
         graphics.drawString(distanceString, x + width, y+(height*0.5));
       } else {
         graphics.setFont("Vector",Math.floor(height*1));
-        let bearingString = bearing(start,target) + "ý";
+        let bearingString = bearing(start,target) + "°";
         let formattedDist = loc.distance(dist,2);
         let distNum = (formattedDist.match(/[0-9\.]+/) || [Infinity])[0];
         let size = 0.8;
@@ -1247,11 +1255,11 @@ let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return getAveragedCompass() + "ý";
+  return getAveragedCompass() + "°";
 },()=>{
-  let course = "---ý";
+  let course = "---°";
   let s = WIDGETS.gpstrek.getState();
-  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "ý";
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "°";
   return course;
 });
 
