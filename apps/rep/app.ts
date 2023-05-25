@@ -60,8 +60,9 @@ const renderDuration = (l: Layout.RenderedHierarchy) => {
 		lbl = "RDY";
 	}
 
+	g.setFont(l.font!); // don't chain - might be undefined (TODO: typings)
+
 	g.setColor(l.col || g.theme.fg)
-		.setFont(l.font!)
 		.setFontAlign(0, 0)
 		.drawString(
 			lbl,
