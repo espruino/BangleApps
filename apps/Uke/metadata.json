@@ -4,7 +4,7 @@
   "icon": "uke.img",
   "version":"0.01",
   "description": "Wrist mounted ukulele chords",
-  "tags": "",
+  "tags": "uke",
   "storage": [
     {"name":"novadawn999.app.js","url":"app.js"},
     {"name":"uke.img","url":"app-icon.js","evaluate":true}
