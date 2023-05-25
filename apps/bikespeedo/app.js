@@ -536,19 +536,20 @@ if (cfg.record && WIDGETS["recorder"]) {
   if (cfg.recordStopOnExit)
     E.on('kill', () => WIDGETS["recorder"].setRecording(false));
 
-  Bangle.setUI(
-    "custom",
-    () => {
-      const wid = WIDGETS["recorder"];
-      const active = wid.isRecording();
-
-      if(active)
-        wid.setRecording(false);
-      else
-        wid.setRecording(true, { force: "append" });
-    },
-  );
-
 } else {
   start();
 }
+
+Bangle.setUI({
+  mode: "custom",
+  btn: () => {
+    const rec = WIDGETS["recorder"];
+    if(!rec) return;
+
+    const active = rec.isRecording();
+    if(active)
+      rec.setRecording(false);
+    else
+      rec.setRecording(true, { force: "append" });
+  },
+});
