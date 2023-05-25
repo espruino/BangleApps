@@ -403,11 +403,6 @@ function onGPS(fix) {
   }
 }
 
-function setButtons(){
-  setWatch(_=>load(), BTN1);
-}
-
-
 function updateClock() {
   drawTime();
   g.reset();
@@ -508,10 +503,24 @@ function start() {
   Bangle.setCompassPower(1);
   if (!calibrateCompass) setInterval(Compass_reading,200);
 
-  setButtons();
   if (emulator) setInterval(updateClock, 2000);
   else setInterval(updateClock, 10000);
 
+  Bangle.setUI({
+    mode: "custom",
+    btn: () => {
+      const rec = WIDGETS["recorder"];
+      if(!rec) return;
+
+      const active = rec.isRecording();
+      if(active)
+        rec.setRecording(false);
+      else
+        rec.setRecording(true, { force: "append" });
+    },
+  });
+
+  // can't delay loadWidgets til here - need to have already done so for recorder
   Bangle.drawWidgets();
 }
 
@@ -527,17 +536,3 @@ if (cfg.record && WIDGETS["recorder"]) {
 } else {
   start();
 }
-
-Bangle.setUI({
-  mode: "custom",
-  btn: () => {
-    const rec = WIDGETS["recorder"];
-    if(!rec) return;
-
-    const active = rec.isRecording();
-    if(active)
-      rec.setRecording(false);
-    else
-      rec.setRecording(true, { force: "append" });
-  },
-});
