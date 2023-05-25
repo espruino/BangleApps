@@ -205,7 +205,7 @@ function drawFix(dat) {
   v = (cfg.primSpd)?dat.speed.toString():dat.alt.toString();
 
   // Primary Units
-  u = (cfg.primSpd)?cfg.spd_unit:dat.alt_units;
+  u = (showMax ? 'max ' : '') + (cfg.primSpd?cfg.spd_unit:dat.alt_units);
 
   drawPrimary(v,u);
 
@@ -307,16 +307,6 @@ function drawSats(sats) {
   g.setFont("6x8", 2);
   g.setFontAlign(1,1); //right, bottom
   g.drawString(sats,screenW,screenH);
-
-  g.setFontVector(18);
-  g.setColor(col1);
-
-  if ( cfg.modeA == 1 ) {
-    if ( showMax ) {
-      g.setFontAlign(0,1); //centre, bottom
-      g.drawString('MAX',120,164);
-    }
-  }
 }
 
 function onGPS(fix) {
