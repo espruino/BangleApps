@@ -425,6 +425,7 @@ let getMapSlice = function(){
 
           let drawChunk = function(data){
             if (data.breakLoop) return;
+            graphics.setColor(graphics.theme.fg);
             graphics.setClipRect(x,y,x+width,y+height);
             let finish;
             let toDraw;
