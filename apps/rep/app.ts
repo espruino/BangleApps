@@ -7,56 +7,19 @@ type Rep = {
 	accDur: number,
 };
 
-const reps: Rep[] = [
-	// 1 X 4 mins - 4 min recovery
-	// 2 X 2 mins - 2 min recoveries
-	// 4 X 1 min - 1 min recoveries (turn for home after the 2nd minute)
-	// 8 X 30 secs - 30 sec recoveries
-	// 3 min static recovery
-	// 1 X 4 mins to finish
+const reps: Rep[] = (require("Storage")
+	.readJSON("rep.json") as Rep[] | undefined /* TODO */)
+	.map(((r: Rep, i: number, a: Rep[]): Rep => {
+		const r2 = r as Rep;
 
-	{dur:3/60, label:"1st-sec"},
-	{dur:5/60, label:"5-sec"},
+		r2.dur = r2.dur * 60 * 1000;
 
-	{dur:4/60, label:"jog"},
-	{dur:4/60, label:"recovery"},
+		r2.accDur = i > 0
+			? a[i-1]!.accDur + r.dur
+			: r.dur;
 
-	// {dur:2, label:"jog"},
-	// {dur:2, label:"recovery"},
-	// {dur:2, label:"jog"},
-	// {dur:2, label:"recovery"},
-
-	// {dur:1, label:"jog"},
-	// {dur:1, label:"recovery"},
-	// {dur:1, label:"jog"},
-	// {dur:1, label:"recovery"},
-	// {dur:1, label:"jog"},
-	// {dur:1, label:"recovery"},
-	// {dur:1, label:"jog"},
-	// {dur:1, label:"recovery"},
-
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-	// {dur:0.5, label:"jog"}, {dur:0.5, label:"recovery"},
-
-	// {dur:3, label:"static recovery"},
-	// {dur:4, label:"finish"},
-].map(((r: Rep, i: number, a: Rep[]): Rep => {
-	const r2 = r as Rep;
-
-	r2.dur = r2.dur * 60 * 1000;
-
-	r2.accDur = i > 0
-		? a[i-1]!.accDur + r.dur
-		: r.dur;
-
-	return r as Rep;
-}) as any);
+		return r as Rep;
+	}) as any);
 
 const fontSzMain = 64;
 const fontSzRep = 20;
