@@ -461,12 +461,12 @@ let getMapSlice = function(){
               || data.poly[data.poly.length-1] < (y - 10)
               || data.poly[data.poly.length-1] > (y + height + 10))) data.breakLoop = true;
 
-            graphics.setFont6x15();
+            graphics.setFont6x15().setFontAlign(-1,0);
             for (let c of named){
               if (data.i != 0 || s.currentPos.lat){
                 graphics.drawImage(point, data.poly[c.i]-point.width/2, data.poly[c.i+1]-point.height/2);
-                graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
               }
+              graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
             }
 
             if (!reverse){
