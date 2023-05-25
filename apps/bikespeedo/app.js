@@ -510,6 +510,7 @@ function start() {
   if (emulator) setInterval(updateClock, 2000);
   else setInterval(updateClock, 10000);
 
+  let createdRecording = false;
   Bangle.setUI({
     mode: "custom",
     touch: nextMode,
@@ -517,10 +518,12 @@ function start() {
       const rec = WIDGETS["recorder"];
       if(rec){
         const active = rec.isRecording();
-        if(active)
+        if(active){
+          createdRecording = true;
           rec.setRecording(false);
-        else
-          rec.setRecording(true, { force: "append" });
+        }else{
+          rec.setRecording(true, { force: createdRecording ? "append" : "new" });
+        }
       }else{
         nextMode();
       }
