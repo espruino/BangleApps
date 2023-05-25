@@ -492,6 +492,10 @@ function Compass_reading() {
   hdngCompass = Compass_heading.toFixed(0);
 }
 
+function nextMode() {
+  showMax = 1 - showMax;
+}
+
 function start() {
   Bangle.setBarometerPower(1); // needs some time...
   g.clearRect(0,screenYstart,screenW,screenH);
@@ -508,15 +512,18 @@ function start() {
 
   Bangle.setUI({
     mode: "custom",
+    touch: nextMode,
     btn: () => {
       const rec = WIDGETS["recorder"];
-      if(!rec) return;
-
-      const active = rec.isRecording();
-      if(active)
-        rec.setRecording(false);
-      else
-        rec.setRecording(true, { force: "append" });
+      if(rec){
+        const active = rec.isRecording();
+        if(active)
+          rec.setRecording(false);
+        else
+          rec.setRecording(true, { force: "append" });
+      }else{
+        nextMode();
+      }
     },
   });
 
