@@ -363,17 +363,6 @@ function showWhitelistMenu() {
     };
   }
 
-  if (settings.whitelist) settings.whitelist.forEach(function(d){
-    menu[d.substr(0,17)] = function() {
-      E.showPrompt(/*LANG*/'Remove\n'+d).then((v) => {
-        if (v) {
-          settings.whitelist.splice(settings.whitelist.indexOf(d),1);
-          updateSettings();
-        }
-        setTimeout(showWhitelistMenu, 50);
-      });
-    }
-  });
   menu[/*LANG*/'Add Device']=function() {
     E.showAlert(/*LANG*/"Connect device\nto add to\nwhitelist",/*LANG*/"Whitelist").then(function() {
       NRF.removeAllListeners('connect');
@@ -389,6 +378,30 @@ function showWhitelistMenu() {
       showWhitelistMenu();
     });
   };
+
+  menu[/*LANG*/'Temporarily Add Device']=function() {
+    E.showAlert(/*LANG*/"Whitelist disabled\nConnect device",/*LANG*/"Whitelist").then(function() {
+      NRF.removeAllListeners('connect');
+      showWhitelistMenu();
+    });
+    NRF.removeAllListeners('connect'); // this is sufficient to allow any device to connect
+    NRF.on('connect', function(addr) {
+      showWhitelistMenu();
+    });
+  };
+
+  if (settings.whitelist) settings.whitelist.forEach(function(d){
+    menu[d.substr(0,17)] = function() {
+      E.showPrompt(/*LANG*/'Remove\n'+d).then((v) => {
+        if (v) {
+          settings.whitelist.splice(settings.whitelist.indexOf(d),1);
+          updateSettings();
+        }
+        setTimeout(showWhitelistMenu, 50);
+      });
+    }
+  });
+
   E.showMenu(menu);
 }
 
