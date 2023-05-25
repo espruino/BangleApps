@@ -75,19 +75,24 @@ const layout = new Layout({
 	type: "v",
 	c: [
 		{
-			id: "repIdx",
-			type: "txt",
-			label: "Begin",
-			font: `Vector:${fontSzRepDesc}`,
-		},
-		{
-			id: "duration",
-			lazyBuster: 1,
-			type: "custom",
-			font: `Vector:${fontSzMain}` as FontNameWithScaleFactor,
-			fillx: 1,
-			filly: 1,
-			render: renderDuration,
+			type: "h",
+			c: [
+				{
+					id: "duration",
+					lazyBuster: 1,
+					type: "custom",
+					font: `Vector:${fontSzMain}` as FontNameWithScaleFactor,
+					fillx: 1,
+					filly: 1,
+					render: renderDuration,
+				},
+				{
+					id: "repIdx",
+					type: "txt",
+					font: "6x8",
+					r: Rotation.Deg90,
+				},
+			]
 		},
 		{
 			type: "txt",
