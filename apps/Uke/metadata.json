@@ -1,14 +1,14 @@
 { "id": "Uke",
   "name": "Uke Chords",
   "shortName":"Uke",
-  "icon": "uke.png",
   "version":"0.01",
   "description": "Wrist mounted ukulele chords",
-  "tags": "uke",
+  "icon": "app.png",
+  "tags": "uke, chords",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
-    {"name":"novadawn999.app.js","url":"app.js"},
-    {"name":"uke.img","url":"app-icon.js","evaluate":true}
+    {"name":"Uke.app.js","url":"app.js"},
+    {"name":"Uke.img","url":"app-icon.js","evaluate":true}
   ]
 }
