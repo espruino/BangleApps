@@ -415,8 +415,6 @@ function onGPS(fix) {
 
 function setButtons(){
   setWatch(_=>load(), BTN1);
-
-onGPS(lf);
 }
 
 
