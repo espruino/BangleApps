@@ -1,0 +1,12 @@
+{ "id": "Uke",
+  "name": "Uke Chords",
+  "shortName":"Uke",
+  "icon": "uke.img",
+  "version":"0.01",
+  "description": "Wrist mounted ukulele chords",
+  "tags": "",
+  "storage": [
+    {"name":"novadawn999.app.js","url":"app.js"},
+    {"name":"uke.img","url":"app-icon.js","evaluate":true}
+  ]
+}
