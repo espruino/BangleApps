@@ -11,7 +11,7 @@
 
 
   E.showMenu({
-    "" : { "title" : "Carging rotation" },
+    "" : { "title" : "Charging rotation" },
     "< Back" : () => back(),
     'Rotate': {
       value: 0|appSettings.rotate,
