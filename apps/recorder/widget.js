@@ -231,6 +231,8 @@
   },getRecorders:getRecorders,reload:function() {
     reload();
     Bangle.drawWidgets(); // relayout all widgets
+  },isRecording:function() {
+    return !!writeInterval;
   },setRecording:function(isOn, options) {
     /* options = {
       force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested
