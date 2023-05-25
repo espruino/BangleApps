@@ -31,6 +31,45 @@ let state: State | undefined;
 let drawInterval: IntervalId | undefined;
 let lastRepIndex: number | null = null;
 
+const renderDuration = (l: Layout.RenderedHierarchy) => {
+	let lbl;
+
+	g.clearRect(l.x, l.y, l.x+l.w, l.y+l.h);
+
+	if(state){
+		const [i, repElapsed] = state.currentRepPair();
+
+		if(i !== null){
+			let thisDur = reps[i]!.dur;
+
+			const remaining = thisDur - repElapsed;
+			lbl = msToMinSec(remaining);
+
+			const fract = repElapsed / thisDur;
+			g.setColor(blue)
+				.fillRect(
+					l.x,
+					l.y,
+					l.x + fract * l.w,
+					l.y + l.h
+				);
+		}else{
+			lbl = msToMinSec(repElapsed);
+		}
+	}else{
+		lbl = "RDY";
+	}
+
+	g.setColor(l.col || g.theme.fg)
+		.setFont(l.font!)
+		.setFontAlign(0, 0)
+		.drawString(
+			lbl,
+			l.x+(l.w>>1),
+			l.y+(l.h>>1)
+		);
+};
+
 const layout = new Layout({
 	type: "v",
 	c: [
@@ -47,44 +86,7 @@ const layout = new Layout({
 			font: `Vector:${fontSzMain}` as FontNameWithScaleFactor,
 			fillx: 1,
 			filly: 1,
-			render: (l: Layout.RenderedHierarchy) => {
-				let lbl;
-
-				g.clearRect(l.x, l.y, l.x+l.w, l.y+l.h);
-
-				if(state){
-					const [i, repElapsed] = state.currentRepPair();
-
-					if(i !== null){
-						let thisDur = reps[i]!.dur;
-
-						const remaining = thisDur - repElapsed;
-						lbl = msToMinSec(remaining);
-
-						const fract = repElapsed / thisDur;
-						g.setColor(blue)
-							.fillRect(
-								l.x,
-								l.y,
-								l.x + fract * l.w,
-								l.y + l.h
-							);
-					}else{
-						lbl = msToMinSec(repElapsed);
-					}
-				}else{
-					lbl = "RDY";
-				}
-
-				g.setColor(l.col || g.theme.fg)
-					.setFont(l.font!)
-					.setFontAlign(0, 0)
-					.drawString(
-						lbl,
-						l.x+(l.w>>1),
-						l.y+(l.h>>1)
-					);
-			},
+			render: renderDuration,
 		},
 		{
 			type: "txt",
