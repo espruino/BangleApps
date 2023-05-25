@@ -5,6 +5,8 @@
   "version":"0.01",
   "description": "Wrist mounted ukulele chords",
   "tags": "uke",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
   "storage": [
     {"name":"novadawn999.app.js","url":"app.js"},
     {"name":"uke.img","url":"app-icon.js","evaluate":true}
