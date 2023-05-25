@@ -88,6 +88,13 @@ declare module Layout {
 
   type Align = -1 | 0 | 1;
 
+  const enum Rotation {
+    None = 0,
+    Deg90 = 1,
+    Deg180 = 2,
+    Deg270 = 3,
+  }
+
   type HierarchyParts =
     {
       type: "v",
@@ -108,16 +115,19 @@ declare module Layout {
         type: "btn",
         src: Image,
         cb: () => void,
+        r?: Rotation,
       } | {
         type: "btn",
         cb: () => void,
         label: string,
         font?: FontNameWithScaleFactor,
         scale?: number,
+        r?: Rotation,
       }
     ) | {
       type: "img",
       src: Image | (() => Image),
+      r?: Rotation,
     } | {
       type: "custom",
       render: (h: Hierarchy) => void,
