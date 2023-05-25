@@ -220,12 +220,12 @@ let timeoutQueue = [];
 let queueProcessing = false;
 
 let addToTimeoutQueue = function (func, data){
-  if (queueProcessing) return;
+  if (queueProcessing) print("Adding during processing, this should not happen");
   timeoutQueue.push({f:func,d:data});
 };
 
-let prependTimeoutQueue = function (func, data){
-  if (queueProcessing) return;
+let prependTimeoutQueue = function (func, data, force){
+  if (queueProcessing && !force) print("Prepending during processing, this should not happen");
   timeoutQueue.unshift({f:func,d:data});
 };
 
@@ -473,13 +473,16 @@ let getMapSlice = function(){
               toDraw = null;
             }
 
+            if (!isMapOverview && Math.abs(data.i) > SETTINGS.maxPoints)
+              data.breakLoop = true;
+            if (!data.breakLoop){
+              //be careful when modifying the queue during processing
+              prependTimeoutQueue(drawChunk, data, true);
+            }
           };
-          let startIndex = 0;
-          do {
-            addToTimeoutQueue(drawChunk, data);
-            startIndex += SETTINGS.mapChunkSize;
-          } while ((startIndex < SETTINGS.maxPoints || (isMapOverview && startIndex < route.count)));
+          addToTimeoutQueue(drawChunk, data);
         };
+
 
         drawPath(getNext,false);
         drawPath(getPrev,true);
