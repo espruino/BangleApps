@@ -72,12 +72,28 @@ var ee = [
 
 var index = 0;
 var chords = [];
+var menu = {
+    "" : {
+        "title" : "Uke Chords"
+    },
+    "C" : function() { draw(cc); },
+    "D" : function() { draw(dd); },
+    "E" : function() { draw(ee); },
+    "Em" : function() { draw(em); },
+    "A" : function() { draw(aa); },
+    "Am" : function() { draw(am); },
+    "F" : function() { draw(ff); },
+    "G" : function() { draw(gg); },
+    "About" : function() {
+        E.showMessage(
+            "Created By:\nNovaDawn999", {
+              title:"About"
+            }
+        );
+    }
+};
 
-function init() {
-  g.setFontAlign(0,0); // center font
-  g.setFont("6x8",2); // bitmap font, 8x magnified
-  chords.push(cc, dd, gg, am, em, aa, ff, ee);
-}
+
 
 function drawBase() {
   for (let i = 0; i < 4; i++) {
@@ -87,18 +103,18 @@ function drawBase() {
 }
 
 function drawChord(chord) {
-    g.drawString(chord[0], g.getWidth() * 0.5 + 2, 18);
+    g.drawString(chord[0], g.getWidth() * 0.5 - 3, 18);
     for (let i = 0; i < chord.length; i++) {
         if (i === 0 || chord[i][0] === "x") {
             continue;
         }
         if (chord[i][0] === "0") {
-            g.drawString(chord[i][1], x + (i - 1) * stringInterval + 1, y + fretHeight * chord[i][0], true);
-            g.drawCircle(x + (i - 1) * stringInterval -1, y + fretHeight * chord[i][0], 8);
+            g.drawString(chord[i][1], x + (i - 1) * stringInterval - 5, y + fretHeight * chord[i][0] + 2, true);
+            g.drawCircle(x + (i - 1) * stringInterval -1, y + fretHeight * chord[i][0], 10);
         }
         else {
-            g.drawString(chord[i][1], x + (i - 1) * stringInterval + 1, y -fingerOffset + fretHeight * chord[i][0], true);
-            g.drawCircle(x + (i - 1) * stringInterval -1, y -fingerOffset + fretHeight * chord[i][0], 8);
+            g.drawString(chord[i][1], x + (i - 1) * stringInterval -5, y -fingerOffset + fretHeight * chord[i][0] + 2, true);
+            g.drawCircle(x + (i - 1) * stringInterval -1, y -fingerOffset + fretHeight * chord[i][0], 10);
         }
     }
 }
@@ -107,22 +123,19 @@ function buttonPress() {
   setWatch(() => {
     buttonPress();
     }, BTN);
-  index++;
-  if (index >= chords.length) { index = 0; }
-  draw();
+  E.showMenu(menu);
 }
 
-function draw() {
+function draw(chord) {
   g.clear();
   drawBase();
-  drawChord(chords[index]);
+  drawChord(chord);
 }
 
 
 
 function main() {
-  init();
-  draw();
+  E.showMenu(menu);
   setWatch(() => {
     buttonPress();
     }, BTN);
