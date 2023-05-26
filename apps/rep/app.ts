@@ -252,16 +252,21 @@ const drawRep = () => {
 		if(i !== lastRepIndex){
 			buzzNewRep();
 			lastRepIndex = i;
+
+			const repIdx = layout["repIdx"]!;
+			repIdx.label = i !== null ? `Rep ${i+1}` : "Done";
+
+			// work around a bug in clearing a rotated txt(?)
+			layout.forgetLazyState();
+			layout.clear();
 		}
 
 		layout["play"]!.label = state.paused ? "Play" : "Pause";
 
 		if(i !== null){
-			layout["repIdx"]!.label = `Rep ${i+1}`;
 			repToLabel(i, "cur");
 			repToLabel(i+1, "next");
 		}else{
-			layout["repIdx"]!.label = "Done";
 			emptyLabel("cur");
 			emptyLabel("next");
 		}
