@@ -21,7 +21,8 @@ const reps: Rep[] = (require("Storage")
 		return r as Rep;
 	}) as any);
 
-const fontSzMain = 64;
+const fontSzMain = 54;
+const fontScaleRep = 2;
 const fontSzRep = 20;
 const fontSzRepDesc = 12;
 const blue = "#86caf7";
@@ -89,7 +90,7 @@ const layout = new L({
 				{
 					id: "repIdx",
 					type: "txt",
-					font: "6x8",
+					font: `6x8:${fontScaleRep}`,
 					label: "---",
 					r: Layout.Rotation.Deg90,
 				},
