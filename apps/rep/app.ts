@@ -1,5 +1,5 @@
 {
-const Layout = require("Layout");
+const L = require("Layout");
 
 type Rep = {
 	dur: number,
@@ -71,7 +71,7 @@ const renderDuration = (l: Layout.RenderedHierarchy) => {
 		);
 };
 
-const layout = new Layout({
+const layout = new L({
 	type: "v",
 	c: [
 		{
@@ -90,7 +90,8 @@ const layout = new Layout({
 					id: "repIdx",
 					type: "txt",
 					font: "6x8",
-					r: Rotation.Deg90,
+					label: "---",
+					r: Layout.Rotation.Deg90,
 				},
 			]
 		},
