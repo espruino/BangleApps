@@ -2,7 +2,7 @@
     const SETTINGS_FILE = "pebbleDistance.json";
 
     // initialize with default settings...
-    let s = {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75, 'localization': 'world'};
+    let s = {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75, 'localization': 'World'};
 
     // ...and overwrite them with any saved values
     // This way saved values are preserved if a new version adds more settings
