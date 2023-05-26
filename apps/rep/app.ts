@@ -25,7 +25,7 @@ const fontSzMain = 54;
 const fontScaleRep = 2;
 const fontSzRep = 20;
 const fontSzRepDesc = 12;
-const blue = "#86caf7";
+const blue = "#205af7";
 const ffStep = 5 * 1000;
 
 let state: State | undefined;
