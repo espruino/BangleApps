@@ -26,7 +26,7 @@ const fontScaleRep = 2;
 const fontSzRep = 20;
 const fontSzRepDesc = 12;
 const blue = "#86caf7";
-const step = 5 * 1000;
+const ffStep = 5 * 1000;
 
 let state: State | undefined;
 let drawInterval: IntervalId | undefined;
@@ -215,11 +215,11 @@ class State {
 	}
 
 	forward() {
-		this.accumulated += step;
+		this.accumulated += ffStep;
 	}
 
 	rewind() {
-		this.accumulated -= step;
+		this.accumulated -= ffStep;
 	}
 }
 
