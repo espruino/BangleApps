@@ -41,8 +41,8 @@ function draw() {
   const t = 6;
   const stps = getSteps();
   const distInKm = (stps / 1000 * settings.avStep).toFixed(2);
-  const distance = settings.localization === "US" ? distInKm / 1.609 : distInKm;
-  const distanceStr = settings.localization === "US" ? distance + ' miles' : distance + ' KM';
+  const distance = settings.localization === "US" ? (distInKm / 1.609).toFixed(2) : distInKm;
+  const distanceStr = settings.localization === "US" ? distance + ' MI' : distance + ' KM';
 
   // turn the warning on once we have dipped below 25%
   if (E.getBattery() < 25)
