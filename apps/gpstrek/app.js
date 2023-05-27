@@ -281,7 +281,8 @@ let getMapSlice = function(){
       let route = s.route;
       if (!route) return;
       let waypoint = {};
-      getEntry(route.filename, route.refs[route.index], waypoint);
+      let currentRouteIndex = route.index;
+      getEntry(route.filename, route.refs[currentRouteIndex], waypoint);
       let startingPoint = Bangle.project(waypoint);
       let current = startingPoint;
 
@@ -289,7 +290,7 @@ let getMapSlice = function(){
         current = Bangle.project(s.currentPos);
       } else {
         // in case of no actual position assume previous waypoint as current
-        let prevPoint = getPrev(route, route.index);
+        let prevPoint = getPrev(route, currentRouteIndex);
         if (prevPoint && prevPoint.lat) current = Bangle.project(prevPoint);
       }
 
@@ -438,14 +439,14 @@ let getMapSlice = function(){
             let toDraw;
             let named = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
-              let p = iter(route, route.index + data.i);
+              let p = iter(route, currentRouteIndex + data.i);
               if (!p || !p.lat) {
                 data.breakLoop = true;
                 break;
               }
               toDraw = Bangle.project(p);
               if (p.name) named.push({i:data.poly.length,n:p.name});
-              if (route.index + data.i + 1 == route.count - 1) finish = true;
+              if (currentRouteIndex + data.i + 1 == route.count - 1) finish = true;
               data.poly.push(startingPoint.x-toDraw.x);
               data.poly.push((startingPoint.y-toDraw.y)*-1);
               data.i = data.i + (reverse?-1:1);
@@ -522,7 +523,7 @@ let getTargetSlice = function(targetDataSource){
 
       let dist = distance(start,target);
       if (isNaN(dist)) dist = Infinity;
-      let bearingString = bearing(start,target) + "°";
+      let bearingString = bearing(start,target) + "ý";
       if (target.name) {
         graphics.setFont("Vector",Math.floor(height*0.5));
         let scrolledName = (target.name || "").substring(nameIndex);
@@ -540,7 +541,7 @@ let getTargetSlice = function(targetDataSource){
         graphics.drawString(distanceString, x + width, y+(height*0.5));
       } else {
         graphics.setFont("Vector",Math.floor(height*1));
-        let bearingString = bearing(start,target) + "°";
+        let bearingString = bearing(start,target) + "ý";
         let formattedDist = loc.distance(dist,2);
         let distNum = (formattedDist.match(/[0-9\.]+/) || [Infinity])[0];
         let size = 0.8;
@@ -1253,11 +1254,11 @@ let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return getAveragedCompass() + "°";
+  return getAveragedCompass() + "ý";
 },()=>{
-  let course = "---°";
+  let course = "---ý";
   let s = WIDGETS.gpstrek.getState();
-  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "°";
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "ý";
   return course;
 });
 
