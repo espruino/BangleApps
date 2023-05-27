@@ -236,12 +236,12 @@ let runQueue = function(inTimeouts){
       let id = setTimeout(()=>{
         current.f(current.d);
         activeTimeouts = activeTimeouts.filter((c)=>c!=id);
-        runQueue();
+        runQueue(inTimeouts);
       },0);
       activeTimeouts.push(id);
     } else {
       current.f(current.d);
-      runQueue();
+      runQueue(inTimeouts);
     }
   }
 };
@@ -269,7 +269,6 @@ let getMapSlice = function(){
   let lastCurrent;
   return {
     draw: function (graphics, x, y, height, width){
-      if (queueProcessing) return;
       let s = WIDGETS.gpstrek.getState();
 
       let course = 0;
@@ -403,6 +402,7 @@ let getMapSlice = function(){
           || forceMapRedraw;
 
       if (refreshMap) {
+        clearTimeoutQueue();
         lastMode = isMapOverview;
         forceMapRedraw = false;
         lastDrawn = Date.now();
@@ -424,8 +424,6 @@ let getMapSlice = function(){
         });
 
         let drawPath = function(iter, reverse){
-          "ram";
-
           let data = {
             i:reverse?0:-1,
             poly:[0,0],
