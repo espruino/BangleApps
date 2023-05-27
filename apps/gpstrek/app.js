@@ -253,7 +253,7 @@ let processTaskQueue = function(inTimeouts){
   runQueue(inTimeouts);
 };
 
-let clearTimeoutQueue = function(){
+let clearTaskQueue = function(){
   taskQueue = [];
   for (let c of activeTimeouts){
     clearTimeout(c);
@@ -403,13 +403,7 @@ let getMapSlice = function(){
           || forceMapRedraw;
 
       if (refreshMap) {
-        clearTimeoutQueue();
-        lastMode = isMapOverview;
-        forceMapRedraw = false;
-        lastDrawn = Date.now();
-        lastCourse = course;
-        lastStart = startingPoint;
-        lastCurrent = current;
+        clearTaskQueue();
 
         prependTaskQueue(()=>{
           //clear map view
@@ -423,6 +417,13 @@ let getMapSlice = function(){
             drawMapCompass();
           }
         });
+
+        lastMode = isMapOverview;
+        forceMapRedraw = false;
+        lastDrawn = Date.now();
+        lastCourse = course;
+        lastStart = startingPoint;
+        lastCurrent = current;
 
         let drawPath = function(iter, reverse){
           let data = {
@@ -496,10 +497,13 @@ let getMapSlice = function(){
 
         addToTaskQueue(drawCurrentPos);
         addToTaskQueue(drawInterface);
+      } else {
+        drawInterface();
+        if (SETTINGS.mapCompass){
+          drawMapCompass();
+        }
       }
-      if (SETTINGS.mapCompass){
-        addToTaskQueue(drawMapCompass);
-      }
+
       processTaskQueue(true);
     }
   };
@@ -757,7 +761,7 @@ mapOverviewScale = SETTINGS.overviewScale;
 mapLiveScale = SETTINGS.mapScale;
 
 let onAction = function(_,xy){
-  clearTimeoutQueue();
+  clearTaskQueue();
   forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1){
     stopDrawing();
@@ -788,7 +792,7 @@ let onAction = function(_,xy){
 };
 
 let onSwipe = function(dirLR,dirUD){
-  clearTimeoutQueue();
+  clearTaskQueue();
   forceMapRedraw = true;
   if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
     stopDrawing();
