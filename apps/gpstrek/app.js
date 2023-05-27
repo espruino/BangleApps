@@ -14,8 +14,7 @@ const SETTINGS = {
   cacheMinFreeMem:2000,
   cacheMaxEntries:0,
   minCourseChange: 5,
-  waypointChangeDist: 50,
-  maxPoints: 50
+  waypointChangeDist: 50
 };
 
 let init = function(){
@@ -482,8 +481,6 @@ let getMapSlice = function(){
               toDraw = null;
             }
 
-            if (!isMapOverview && Math.abs(data.i) > SETTINGS.maxPoints)
-              data.breakLoop = true;
             if (!data.breakLoop){
               prependTaskQueue(drawChunk, data, true);
             }
