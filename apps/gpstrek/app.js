@@ -79,7 +79,7 @@ let parseWaypointWithElevationAndName = function(filename, offset, result){
 };
 
 let cache = {};
-let cacheInsertion = [];
+let cachedOffsets = [];
 
 let getEntry = function(filename, offset, result){
   if (offset < 0) return offset;
@@ -113,13 +113,13 @@ let getEntry = function(filename, offset, result){
 
   result.fileLength = offset - result.fileOffset;
   cache[result.fileOffset] = result;
-  cacheInsertion.push(result.fileOffset);
+  cachedOffsets.push(result.fileOffset);
   if (SETTINGS.cacheMinFreeMem && process.memory(false).free < SETTINGS.cacheMinFreeMem){
-    if (cacheInsertion.length > 0) cache[cacheInsertion.shift()] = undefined;
+    if (cachedOffsets.length > 0) cache[cachedOffsets.shift()] = undefined;
   }
   if (SETTINGS.cacheMaxEntries){
-    while (cacheInsertion.length > SETTINGS.cacheMaxEntries){
-      cache[cacheInsertion.shift()] = undefined;
+    while (cachedOffsets.length > SETTINGS.cacheMaxEntries){
+      cache[cachedOffsets.shift()] = undefined;
     }
   }
   cache.filename = filename;
@@ -282,7 +282,7 @@ let getMapSlice = function(){
       if (!route) return;
       let waypoint = {};
       let currentRouteIndex = route.index;
-      getEntry(route.filename, route.refs[currentRouteIndex], waypoint);
+      getEntry(route.filename, route.indexToOffset[currentRouteIndex], waypoint);
       let startingPoint = Bangle.project(waypoint);
       let current = startingPoint;
 
@@ -821,27 +821,28 @@ let setButtons = function(){
   Bangle.setUI(options);
 };
 
-let getApproxFileSize = function(name){
-  let currentStart = STORAGE.getStats().totalBytes;
-  let currentSize = 0;
-  for (let i = currentStart; i > 500; i/=2){
-    let currentDiff = i;
-    //print("Searching", currentDiff);
-    while (STORAGE.read(name, currentSize+currentDiff, 1) == ""){
-      //print("Loop", currentDiff);
-      currentDiff = Math.ceil(currentDiff/2);
-    }
-    i = currentDiff*2;
-    currentSize += currentDiff;
-  }
-  return currentSize;
+let getFileSize = function(filename){
+  return STORAGE.readArrayBuffer(filename).byteLength;
 };
 
-let parseRouteData = function(filename, progressMonitor){
+let writeUint24 = function(filename, number, offset, size){
+  let b = new ArrayBuffer(3);
+  let n = new Uint24Array(b,0,1);
+  n[0] = number;
+  STORAGE.write(filename,b,offset,size);
+};
+
+let writeUint32 = function(filename, number, offset, size){
+  let b = new ArrayBuffer(4);
+  let n = new Uint32Array(b,0,1);
+  n[0] = number;
+  STORAGE.write(filename,b,offset,size);
+};
+
+let loadRouteData = function(filename, progressMonitor){
   let routeInfo = {};
 
   routeInfo.filename = filename;
-  routeInfo.refs = [];
 
   let c = {};
   let scanOffset = 0;
@@ -855,7 +856,22 @@ let parseRouteData = function(filename, progressMonitor){
   routeInfo.up = 0;
   routeInfo.down = 0;
 
-  let size = getApproxFileSize(filename);
+  let trfHash = E.CRC32(STORAGE.read(filename));
+  let size = getFileSize(filename);
+  let indexFileName = filename.substring(0,filename.length-1) + "i";
+  //shortest possible entry is 24 characters + linebreak, 3 bytes per entry, 4 bytes hash in front
+  let indexFileSize = Math.ceil(size/25*3 + 4);
+  let createIndexFile = !STORAGE.read(indexFileName);
+  if (!createIndexFile){
+    let currentHash = new Uint32Array(STORAGE.readArrayBuffer(indexFileName),0,1)[0];
+    if (currentHash != trfHash){
+      createIndexFile = true;
+    }
+  }
+
+  // write hash into index file, will be recreated by this
+  if (createIndexFile)
+    writeUint32(indexFileName, trfHash, 0, indexFileSize);
 
   while ((scanOffset = getEntry(filename, scanOffset, waypoint)) > 0) {
     if (routeInfo.count % 5 == 0) progressMonitor(scanOffset, "Loading", size);
@@ -874,12 +890,14 @@ let parseRouteData = function(filename, progressMonitor){
         }
       }
     }
+    if (createIndexFile) writeUint24(indexFileName, waypoint.fileOffset, 4 + routeInfo.count * 3, indexFileSize);
     routeInfo.count++;
-    routeInfo.refs.push(waypoint.fileOffset);
     lastSeenWaypoint = waypoint;
     if (!isNaN(waypoint.alt)) lastSeenAlt = waypoint.alt;
     waypoint = {};
   }
+
+  routeInfo.indexToOffset = new Uint24Array(STORAGE.readArrayBuffer(indexFileName),4);
 
   set(routeInfo, 0);
   return routeInfo;
@@ -903,7 +921,7 @@ let getNext = function(route, index){
   if (route.mirror) --index;
   if (!route.mirror) ++index;
   let result = {};
-  getEntry(route.filename, route.refs[index], result);
+  getEntry(route.filename, route.indexToOffset[index], result);
   return result;
 };
 
@@ -913,7 +931,7 @@ let getPrev = function(route, index){
   if (route.mirror) ++index;
   if (!route.mirror) --index;
   let result = {};
-  getEntry(route.filename, route.refs[index], result);
+  getEntry(route.filename, route.indexToOffset[index], result);
   return result;
 };
 
@@ -927,7 +945,7 @@ let set = function(route, index){
   if (!route) return;
   route.currentWaypoint = {};
   route.index = index;
-  getEntry(route.filename, route.refs[index], route.currentWaypoint);
+  getEntry(route.filename, route.indexToOffset[index], route.currentWaypoint);
 };
 
 let prev = function(route){
@@ -942,8 +960,8 @@ let cachedLast;
 let getLast = function(route){
   let wp = {};
   if (lastMirror != route.mirror){
-    if (route.mirror) getEntry(route.filename, route.refs[0], wp);
-    if (!route.mirror) getEntry(route.filename, route.refs[route.count - 1], wp);
+    if (route.mirror) getEntry(route.filename, route.indexToOffset[0], wp);
+    if (!route.mirror) getEntry(route.filename, route.indexToOffset[route.count - 1], wp);
     lastMirror = route.mirror;
     cachedLast = wp;
   }
@@ -971,7 +989,7 @@ let showProgress = function(progress, title, max){
 let handleLoading = function(c){
   E.showMenu();
   let s = WIDGETS.gpstrek.getState();
-  s.route = parseRouteData(c, showProgress);
+  s.route = loadRouteData(c, showProgress);
   s.waypoint = null;
   s.route.mirror = false;
   removeMenu();
@@ -1186,7 +1204,7 @@ let setClosestWaypoint = function(route, startindex, progress){
   for (let i = startindex?startindex:0; i < route.count - 1; i++){
     if (progress && (i % 5 == 0)) progress(i-(startindex?startindex:0), "Searching", route.count);
     let wp = {};
-    getEntry(route.filename, route.refs[i], wp);
+    getEntry(route.filename, route.indexToOffset[i], wp);
     let curDist = distance(s.currentPos, wp);
     if (curDist < minDist){
       minDist = curDist;
@@ -1282,7 +1300,7 @@ let systemSlice = getDoubleLineSlice("RAM","WP Cache",()=>{
   let ram = process.memory(false);
   return ((ram.blocksize * ram.free)/1024).toFixed(0)+"kB";
 },()=>{
-  return cacheInsertion.length?cacheInsertion.length:0;
+  return cachedOffsets.length?cachedOffsets.length:0;
 });
 
 let clear = function() {
