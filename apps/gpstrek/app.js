@@ -80,14 +80,42 @@ let parseWaypointWithElevationAndName = function(filename, offset, result){
 let cache = {};
 let cachedOffsets = [];
 
-let getEntry = function(filename, offset, result){
-  if (offset < 0) return offset;
-  if(cache.filename != filename) cache = {};
-  if(filename && cache[offset]) {
+let getFromCache = function(filename, offset, result){
+  if(filename == cache.filename && cache[offset]) {
     Object.assign(result, cache[offset]);
     result.access = Date.now();
     return offset + cache[offset].fileLength;
   }
+  return offset;
+};
+
+let cacheCleanup = function (){
+  if (SETTINGS.cacheMinFreeMem){
+    while (cachedOffsets.length > 0 && process.memory(false).free < SETTINGS.cacheMinFreeMem){
+      cache[cachedOffsets.shift()] = undefined;
+    }
+  }
+  if (SETTINGS.cacheMaxEntries){
+    while (cachedOffsets.length > SETTINGS.cacheMaxEntries){
+      cache[cachedOffsets.shift()] = undefined;
+    }
+  }
+};
+
+let cacheAdd = function (filename, result) {
+  cacheCleanup();
+  if(cache.filename != filename) {
+    cache = {};
+    cache.filename = filename;
+  }
+  cache[result.fileOffset] = result;
+  cachedOffsets.push(result.fileOffset);
+};
+
+let getEntry = function(filename, offset, result, noCaching){
+  if (offset < 0) return offset;
+  let cacheOffset = getFromCache(filename, offset, result);
+  if (cacheOffset != offset) return cacheOffset;
   result.fileOffset = offset;
   let type = STORAGE.read(filename, offset++, 1);
   if (type == "") return -1;
@@ -111,17 +139,9 @@ let getEntry = function(filename, offset, result){
   offset++;
 
   result.fileLength = offset - result.fileOffset;
-  cache[result.fileOffset] = result;
-  cachedOffsets.push(result.fileOffset);
-  if (SETTINGS.cacheMinFreeMem && process.memory(false).free < SETTINGS.cacheMinFreeMem){
-    if (cachedOffsets.length > 0) cache[cachedOffsets.shift()] = undefined;
+  if (!noCaching && (SETTINGS.cacheMaxEntries || SETTINGS.cacheMinFreeMem)){
+    cacheAdd(filename, result);
   }
-  if (SETTINGS.cacheMaxEntries){
-    while (cachedOffsets.length > SETTINGS.cacheMaxEntries){
-      cache[cachedOffsets.shift()] = undefined;
-    }
-  }
-  cache.filename = filename;
   return offset;
 };
 
@@ -870,7 +890,7 @@ let loadRouteData = function(filename, progressMonitor){
   if (createIndexFile)
     writeUint32(indexFileName, trfHash, 0, indexFileSize);
 
-  while ((scanOffset = getEntry(filename, scanOffset, waypoint)) > 0) {
+  while ((scanOffset = getEntry(filename, scanOffset, waypoint, true)) > 0) {
     if (routeInfo.count % 5 == 0) progressMonitor(scanOffset, "Loading", size);
     if (lastSeenWaypoint){
       routeInfo.length += distance(lastSeenWaypoint, waypoint);
@@ -952,7 +972,6 @@ let prev = function(route){
 };
 
 let lastMirror;
-let cachedLast;
 
 let getLast = function(route){
   let wp = {};
@@ -960,9 +979,8 @@ let getLast = function(route){
     if (route.mirror) getEntry(route.filename, route.indexToOffset[0], wp);
     if (!route.mirror) getEntry(route.filename, route.indexToOffset[route.count - 1], wp);
     lastMirror = route.mirror;
-    cachedLast = wp;
   }
-  return cachedLast;
+  return wp;
 };
 
 let removeMenu = function(){
