@@ -523,7 +523,7 @@ let getTargetSlice = function(targetDataSource){
 
       let dist = distance(start,target);
       if (isNaN(dist)) dist = Infinity;
-      let bearingString = bearing(start,target) + "ý";
+      let bearingString = bearing(start,target) + "Â°";
       if (target.name) {
         graphics.setFont("Vector",Math.floor(height*0.5));
         let scrolledName = (target.name || "").substring(nameIndex);
@@ -541,7 +541,7 @@ let getTargetSlice = function(targetDataSource){
         graphics.drawString(distanceString, x + width, y+(height*0.5));
       } else {
         graphics.setFont("Vector",Math.floor(height*1));
-        let bearingString = bearing(start,target) + "ý";
+        let bearingString = bearing(start,target) + "Â°";
         let formattedDist = loc.distance(dist,2);
         let distNum = (formattedDist.match(/[0-9\.]+/) || [Infinity])[0];
         let size = 0.8;
@@ -1254,11 +1254,11 @@ let statusSlice = getDoubleLineSlice("Speed","Alt",()=>{
 });
 
 let status2Slice = getDoubleLineSlice("Compass","GPS",()=>{
-  return getAveragedCompass() + "ý";
+  return getAveragedCompass() + "Â°";
 },()=>{
-  let course = "---ý";
+  let course = "---Â°";
   let s = WIDGETS.gpstrek.getState();
-  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "ý";
+  if (s.currentPos && s.currentPos.course) course = s.currentPos.course.toFixed(0) + "Â°";
   return course;
 });
 
