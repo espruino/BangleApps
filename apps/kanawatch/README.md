@@ -12,7 +12,7 @@ cards for learning.
 
 ## Author
 
-Written by pancake in 2022, powered by insomnia
+Written by pancake in 2022, maintained during 2023 and powered by insomnia
 
 ## Screenshots
 
