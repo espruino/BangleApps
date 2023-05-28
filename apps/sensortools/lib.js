@@ -5,6 +5,7 @@ exports.enable = () => {
   );
 
   let log = function(text, param) {
+    if (!settings.log) return;
     let logline = new Date().toISOString() + " - " + "Sensortools - " + text;
     if (param) logline += ": " + JSON.stringify(param);
     print(logline);
