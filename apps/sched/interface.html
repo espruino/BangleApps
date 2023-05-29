@@ -89,7 +89,9 @@ function upload() {
   Util.showModal("Saving...");
   Util.writeStorage("sched.json", JSON.stringify(alarms), () => {
     Puck.write(`\x10load()\n`, () => { // reload watch to load alarms
-      location.reload(); // reload so we see current data
+      setTimeout(() => {
+        location.reload(); // reload so we see current data
+      }, 500);
     });
   });
 }
