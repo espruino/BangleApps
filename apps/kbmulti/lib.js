@@ -89,7 +89,7 @@ exports.input = function(options) {
   }
 
   function newCharacter(ch) {
-    displayText();
+    displayText(false);
     if (ch && textIndex < text.length) textIndex ++;
     charCurrent = ch;
     charIndex = 0;
@@ -121,7 +121,7 @@ exports.input = function(options) {
       newCharacter();
       retireCurrent();
     }, settings.charTimeout);
-    displayText(charTimeout);
+    displayText(true);
   }
 
   function retireCurrent(why) {
