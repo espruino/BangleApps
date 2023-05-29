@@ -1,7 +1,7 @@
 // check if enabled in settings
 if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enabled: true}).enabled) {
   // read settings
-  settings = require("sleeplogalarm").getSettings(); // is undefined if used with var
+  let settings = require("sleeplogalarm").getSettings();
 
   // insert neccessary settings into widget
   WIDGETS.sleeplogalarm = {

@@ -68,7 +68,7 @@ exports = {
     if (!this.time) return;
 
     // set widget width if not hidden
-    if (!settings.hidden) this.width = 8;
+    if (!settings.wid.hide) this.width = 8;
 
     // insert sleeplogalarm conditions and function
     sleeplog.trigger.sleeplogalarm = {
