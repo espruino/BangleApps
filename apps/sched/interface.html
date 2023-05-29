@@ -235,8 +235,8 @@ function addTimer() {
   const alarmDefaults = getAlarmDefaults();
   const timer = {
     timer: hmsToMs("00:00:30"),
-    on: false,
     t: 0,
+    on: alarmDefaults.on,
     dow: alarmDefaults.dow,
     last: alarmDefaults.last,
     rp: alarmDefaults.rp,
