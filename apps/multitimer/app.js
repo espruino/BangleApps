@@ -228,8 +228,7 @@ function editTimer(idx, a) {
     else a = timers[idx];
   }
   if (!a.data) {
-    a.data = {};
-    a.data.hm = false;
+    a.data = { hm: false, oneshot: false };
   }
   var t = decodeTime(a.timer);
 
@@ -291,10 +290,14 @@ function editTimer(idx, a) {
       }
     },
     "Hard Mode": {
-      value: a.data.hm,
+      value: !!a.data.hm,
       onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
+    "Oneshot": {
+      value: !!a.data.oneshot,
+      onchange: v => a.data.oneshot = v
+    },
     "Msg": {
       value: !a.msg ? "" : a.msg.length > 6 ? a.msg.substring(0, 6)+"..." : a.msg,
       //menu glitch? setTimeout required here
@@ -556,8 +559,7 @@ function editAlarm(idx, a) {
     else a = require("sched").newDefaultAlarm();
   }
   if (!a.data) {
-    a.data = {};
-    a.data.hm = false;
+    a.data = { hm: false, oneshot: false };
   }
   var t = decodeTime(a.t);
 
@@ -582,8 +584,8 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
-      if (a.data.hm == true) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
-      if (a.data.hm == false && a.js) delete a.js;
+      if (a.data.hm || a.data.oneshot) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
+      else if (a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);
       require("sched").setAlarms(alarms);
@@ -617,10 +619,14 @@ function editAlarm(idx, a) {
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(idx,a);})
     },
     "Hard Mode": {
-      value: a.data.hm,
+      value: !!a.data.hm,
       onchange: v => a.data.hm = v
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
+    "Oneshot": {
+      value: !!a.data.oneshot,
+      onchange: v => a.data.oneshot = v
+    },
     "Auto Snooze": {
       value: a.as,
       onchange: v => a.as = v

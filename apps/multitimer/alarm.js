@@ -105,7 +105,13 @@ function showAlarm(alarm) {
             alarm.t = alarm.ot;
             delete alarm.ot;
         }
-        if (!alarm.rp) alarm.on = false;
+        if (!alarm.rp) {
+          alarm.on = false;
+          if (alarm.data.oneshot) {
+            const i = alarms.indexOf(alarm);
+            if (i >= 0) alarms.splice(i, 1);
+          }
+        }
       }
       //reset timer value
       if (alarm.timer) alarm.timer = alarm.data.ot;
