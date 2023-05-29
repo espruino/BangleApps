@@ -203,6 +203,29 @@ function addAlarm() {
   alarms.push(alarm);
 }
 
+function addDailyAlarm() {
+  const alarm = getAlarmDefaults();
+  delete alarm.date;
+  renderAlarm(alarm);
+  alarms.push(alarm);
+}
+
+function addTimer() {
+  const alarmDefaults = getAlarmDefaults();
+  const timer = {
+    timer: hmsToMs("00:00:30"),
+    on: false,
+    t: 0,
+    dow: alarmDefaults.dow,
+    last: alarmDefaults.last,
+    rp: alarmDefaults.rp,
+    vibrate: alarmDefaults.vibrate,
+    as: alarmDefaults.as,
+  };;
+  renderAlarm(timer);
+  alarms.push(timer);
+}
+
 function getData() {
   Util.showModal("Loading...");
   Util.readStorage('sched.json',data=>{
@@ -241,6 +264,15 @@ function onInit() {
     <div class="float-right">
       <button class="btn" onclick="addAlarm()">
         <i class="icon icon-plus"></i>
+        Alarm (with date)
+      </button>
+      <button class="btn" onclick="addDailyAlarm()">
+        <i class="icon icon-plus"></i>
+        Alarm
+      </button>
+      <button class="btn" onclick="addTimer()">
+        <i class="icon icon-plus"></i>
+        Timer
       </button>
     </div>
 
