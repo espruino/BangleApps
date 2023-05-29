@@ -1,8 +1,8 @@
 (function(back) {
-  var filename = "lightswitch.json";
+  let filename = "lightswitch.json";
 
   // set Storage and load settings
-  var storage = require("Storage");
+  let storage = require("Storage");
   var settings = Object.assign({
     colors: "011",
     image: "default",
@@ -17,7 +17,7 @@
     tOut: 2000,
     minFlash: 0.2
   }, storage.readJSON(filename, true) || {});
-  var images = storage.readJSON(filename.replace(".", ".images."), true) || false;
+  let images = storage.readJSON(filename.replace(".", ".images."), true) || false;
 
   // write change to storage and widget
   function writeSetting(key, value, drawWidgets) {
@@ -30,7 +30,7 @@
     // check if widgets are loaded
     if (global.WIDGETS) {
       // setup shortcut to the widget
-      var w = WIDGETS.lightswitch;
+      let w = WIDGETS.lightswitch;
       // assign changes to widget
       w = Object.assign(w, settings);
       // redraw widgets if neccessary
@@ -40,7 +40,7 @@
 
   // generate entry for circulating values
   function getEntry(key) {
-    var entry = entries[key];
+    let entry = entries[key];
     // check for existing titles to decide value type
     if (entry.value) {
       // return entry for string value
@@ -72,7 +72,7 @@
   }
 
   // define menu entries with circulating values
-  var entries = {
+  let entries = {
     colors: {
       title: ["red", "yellow", "green", "cyan", "blue", "magenta"],
       value: ["100", "110", "010", "011", "001", "101"],
@@ -83,14 +83,13 @@
       value: images ? ["default", "random"].concat(Object.keys(images)) : ["default"],
       exec: function(value) {
         // draw selected image in upper right corner
-        var x = 152,
+        let x = 152,
           y = 26,
           i = images ? images[value] : false;
         g.reset();
         if (!i) g.setColor(g.theme.bg);
         g.drawImage(atob("Dw+BADAYYDDAY//v////////////////////////3/8A"), x + 4, y);
         if (i) g.drawImage(atob(i.str), x + i.x, y - 9 + i.y);
-        i = undefined;
       }
     },
     touchOn: {
@@ -147,7 +146,7 @@
 
   // show main menu
   function showMain() {
-    var mainMenu = E.showMenu({
+    let mainMenu = E.showMenu({
       "": {
         title: "Light Switch"
       },

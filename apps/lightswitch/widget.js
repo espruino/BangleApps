@@ -29,17 +29,13 @@
     // write settings to storage
     writeSettings: function(changes) {
       // define variables
-      var filename = "lightswitch.json";
-      var storage = require("Storage");
+      let filename = "lightswitch.json";
+      let storage = require("Storage");
 
       // write changes into json file
       storage.writeJSON(filename, Object.assign(
         storage.readJSON(filename, true) || {}, changes
       ));
-
-      // clear variables
-      filename = undefined;
-      storage = undefined;
     },
 
     // internal function //
@@ -67,17 +63,17 @@
     // draw widget icon
     drawIcon: function(locked) {
       // define icons
-      var icons = {
+      let icons = {
         bulb: "DxSBAAAAD4BgwYDCAIgAkAEgAkAEgAiAIYDBgwH8A/gH8A/gH8AfABwA",
         shine: "FxeBAAgQIAgggBBBABAECAAALAABhAAEAAAAAAAAAAAAAAAHAABwAAAAAAAAAAAAAAAQABDAABoAAAgQBABABACACAIACAA=",
         lock: "DxCBAAAAH8B/wMGBgwMGBgwf/H/8+Pnx8/fn78/fn/8f/A==",
         image: "DxSBAA/gP+Dg4YDDAYYDDAYYDH/9////////////////////////+//g"
       };
       // read images
-      var images = require("Storage").readJSON("lightswitch.images.json", true) || false;
+      let images = require("Storage").readJSON("lightswitch.images.json", true) || false;
 
       // select image if images are found
-      var image = (!images || image === "default") ? false :
+      let image = (!images || image === "default") ? false :
         (function(i) {
           if (i === "random") {
             i = Object.keys(images);
@@ -100,11 +96,6 @@
 
       // draw bulb color depending on backlight status
       if (!locked) this.drawInnerBulb();
-
-      // clear variables
-      icons = undefined;
-      images = undefined;
-      image = undefined;
     },
 
     // internal function //
@@ -143,7 +134,7 @@
     // drag listener for brightness change mode
     dragListener: function(event) {
       // setup shortcut to this widget
-      var w = WIDGETS.lightswitch;
+      let w = WIDGETS.lightswitch;
 
       // first drag recognised
       if (event.b && typeof w.dragStatus === "number") {
@@ -159,7 +150,7 @@
       var y = event.y;
       y = y < 20 ? 0 : y > 170 ? 150 : y - 20;
       // calculate brightness respecting minimal value in settings
-      var value = (1 - Math.round(y / 1.5) / 100) * (1 - w.minValue) + w.minValue;
+      let value = (1 - Math.round(y / 1.5) / 100) * (1 - w.minValue) + w.minValue;
 
       // change brigthness value, skip write to storage while still touching
       w.changeValue(value, event.b);
@@ -176,16 +167,14 @@
       }
 
       // clear variables
-      w = undefined;
       y = undefined;
-      value = undefined;
     },
 
     // listener function //
     // touch listener for light control
     touchListener: function(button, cursor) {
       // setup shortcut to this widget
-      var w = WIDGETS.lightswitch;
+      let w = WIDGETS.lightswitch;
 
       // skip all if drag action ongoing
       if (w.dragStatus === "off") {
@@ -222,19 +211,16 @@
         }
 
       }
-
-      // clear variable
-      w = undefined;
     },
 
     // main widget function //
     // display and setup/reset function
     draw: function() {
       // setup shortcut to this widget
-      var w = WIDGETS.lightswitch;
+      let w = WIDGETS.lightswitch;
 
       // read lock status
-      var locked = Bangle.isLocked();
+      let locked = Bangle.isLocked();
 
       // remove listeners to prevent uncertainties
       Bangle.removeListener("touch", w.touchListener);
@@ -251,14 +237,11 @@
 
       // add tap listener to unlock and/or flash backlight
       if (w.unlockSide || w.tapSide) Bangle.on("tap", require("lightswitch.js").tapListener);
-
-      // clear variables
-      w = undefined;
     }
   });
 
   Bangle.on("lock", locked => {
-    var w = WIDGETS.lightswitch;
+    let w = WIDGETS.lightswitch;
     // set lcd brightness on unlocking
     // all other cases are catched by the boot file
     if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);

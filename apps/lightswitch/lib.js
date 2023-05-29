@@ -6,24 +6,20 @@ exports = {
     // check for double tap and direction
     if (data.double) {
       // setup shortcut to this widget or load from storage
-      var w = global.WIDGETS ? WIDGETS.lightswitch : Object.assign({
+      let w = global.WIDGETS ? WIDGETS.lightswitch : Object.assign({
         unlockSide: "",
         tapSide: "right",
         tapOn: "always",
       }, require("Storage").readJSON("lightswitch.json", true) || {});
 
       // cache lock status
-      var locked = Bangle.isLocked();
+      let locked = Bangle.isLocked();
 
       // check to unlock
       if (locked && data.dir === w.unlockSide) Bangle.setLocked();
 
       // check to flash
       if (data.dir === w.tapSide && (w.tapOn === "always" || locked === (w.tapOn === "locked"))) require("lightswitch.js").flash();
-
-      // clear variables
-      w = undefined;
-      locked = undefined;
     }
   },
 
@@ -31,7 +27,7 @@ exports = {
   // function to flash backlight
   flash: function(tOut) {
     // setup shortcut to this widget or load from storage
-    var w = global.WIDGETS ? WIDGETS.lightswitch : Object.assign({
+    let w = global.WIDGETS ? WIDGETS.lightswitch : Object.assign({
       tOut: 3000,
       minFlash: 0.2,
       value: 1,
@@ -42,7 +38,7 @@ exports = {
     if (Bangle.isLocked() || !w.isOn || w.value < w.minFlash) {
 
       // set inner bulb and brightness
-      var setBrightness = function(w, value) {
+      let setBrightness = function(w, value) {
         if (w.drawInnerBulb) w.drawInnerBulb(value);
         Bangle.setLCDBrightness(value);
       };
@@ -53,7 +49,7 @@ exports = {
       // check lock state
       if (Bangle.isLocked()) {
         // cache options
-        var options = Bangle.getOptions();
+        let options = Bangle.getOptions();
         // set shortened lock and backlight timeout
         Bangle.setOptions({
           lockTimeout: tOut,
@@ -63,9 +59,6 @@ exports = {
         Bangle.setLocked(false);
         // set timeout to reset options
         setTimeout(Bangle.setOptions, tOut + 100, options);
-
-        // clear variable
-        options = undefined;
       } else {
         // set timeout to reset backlight
         setTimeout((w, funct) => {
@@ -77,13 +70,7 @@ exports = {
       setTimeout((w, funct) => {
         funct(w, w.value < w.minFlash ? w.minFlash : w.value);
       }, 10, w, setBrightness);
-
-      // clear variable
-      setBrightness = undefined;
     }
-
-    // clear variable
-    w = undefined;
   },
 
   // external access to internal function //
@@ -95,8 +82,8 @@ exports = {
       WIDGETS.lightswitch.changeValue(value, skipWrite);
     } else {
       // load settings from storage
-      var filename = "lightswitch.json";
-      var storage = require("Storage");
+      let filename = "lightswitch.json";
+      let storage = require("Storage");
       var settings = Object.assign({
         value: 1,
         isOn: true
@@ -116,8 +103,6 @@ exports = {
       if (!skipWrite) storage.writeJSON(filename, settings);
 
       // clear variables
-      filename = undefined;
-      storage = undefined;
       settings = undefined;
     }
   }
