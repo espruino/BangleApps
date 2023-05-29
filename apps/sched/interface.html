@@ -164,10 +164,24 @@ function renderAlarm(alarm, exists) {
   const tdInfo = document.createElement('td');
   tr.appendChild(tdInfo);
 
+  const onOffCheck = document.createElement('input');
+  onOffCheck.type = 'checkbox';
+  onOffCheck.checked = alarm.on;
+  onOffCheck.onchange = e => {
+    alarm.on = !alarm.on;
+  };
+  const onOffIcon = document.createElement('i');
+  onOffIcon.classList.add('form-icon');
+  const onOff = document.createElement('label');
+  onOff.classList.add('form-switch');
+  onOff.appendChild(onOffCheck);
+  onOff.appendChild(onOffIcon);
+  tdInfo.appendChild(onOff);
+
   const buttonDelete = document.createElement('button');
   buttonDelete.classList.add('btn');
   buttonDelete.classList.add('btn-action');
-  tdInfo.prepend(buttonDelete);
+  tdInfo.appendChild(buttonDelete);
   const iconDelete = document.createElement('i');
   iconDelete.classList.add('icon');
   iconDelete.classList.add('icon-delete');
