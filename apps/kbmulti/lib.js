@@ -9,6 +9,7 @@ exports.input = function(options) {
   if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
+  if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");

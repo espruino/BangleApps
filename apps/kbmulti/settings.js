@@ -3,6 +3,7 @@
       var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
       if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
       if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
+      if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
       return settings;
     }
       
