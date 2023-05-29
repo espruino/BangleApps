@@ -211,6 +211,17 @@ function getData() {
     Util.readStorage('sched.settings.json',data=>{
       schedSettings = JSON.parse(data || "{}") || {};
       Util.hideModal();
+      alarms.sort((a, b) => {
+        let x;
+
+        x = !!b.date - !!a.date;
+        if(x) return x;
+
+        x = !!a.timer - !!b.timer;
+        if(x) return x;
+
+        return a.t - b.t;
+      });
       alarms.forEach(alarm => {
         renderAlarm(alarm, true);
       });
