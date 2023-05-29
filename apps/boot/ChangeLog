@@ -66,3 +66,4 @@
       If settings.bootDebug is set, output timing for each section of .boot0
 0.56: Settings.log = 0,1,2,3 for off,display, log, both
 0.57: Handle the whitelist being disabled
+0.58: "Make Connectable" temporarily bypasses the whitelist
