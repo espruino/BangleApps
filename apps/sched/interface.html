@@ -138,7 +138,11 @@ function renderAlarm(alarm, exists) {
       };
     }
   }
-  if (!exists) tdType.textContent = "* " + tdType.textContent;
+  if (!exists) {
+    const asterisk = document.createElement('sup');
+    asterisk.textContent = '*';
+    tdType.appendChild(asterisk);
+  }
   inputTime.classList.add('event-date');
   inputTime.classList.add('form-input');
   inputTime.dataset.uid = alarm.id;
