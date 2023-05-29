@@ -21,6 +21,10 @@
         format: v => v,
         onchange: v => updateSetting("charTimeout", v),
       },
+      /*LANG*/'Lowercase after first uppercase': {
+        value: !!settings().autoLowercase,
+        onchange: v =>  updateSetting("autoLowercase", v)
+      },
       /*LANG*/'Show help button?': {
         value: !!settings().showHelpBtn,
         onchange: v =>  updateSetting("showHelpBtn", v)

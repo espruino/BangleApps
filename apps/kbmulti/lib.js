@@ -96,12 +96,14 @@ exports.input = function(options) {
   }
 
   function onKeyPad(key) {
+    var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
     if (key==charCurrent) {
       charIndex = (charIndex+1) % letters[charCurrent].length;
       text = text.slice(0, -1);
     } else {
+      retire = charCurrent !== undefined;
       newCharacter(key);
     }
     var newLetter = letters[charCurrent][charIndex];
@@ -109,13 +111,22 @@ exports.input = function(options) {
     let post = text.slice(textIndex, text.length);
     
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
+
+    if(retire)
+      retireCurrent();
     
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
       newCharacter();
+      retireCurrent();
     }, settings.charTimeout);
     displayText(charTimeout);
+  }
+
+  function retireCurrent(why) {
+    if (caps && settings.autoLowercase)
+      setCaps();
   }
 
   var moveMode = false;
