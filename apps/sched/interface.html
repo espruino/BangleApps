@@ -108,7 +108,7 @@ function renderAlarm(alarm, exists) {
   tr.appendChild(tdType);
   const inputTime = document.createElement('input');
   if (localDate) {
-    tdType.textContent = "Alarm";
+    tdType.textContent = "Event";
     inputTime.type = "datetime-local";
     inputTime.value = localDate.toISOString().slice(0,16);
     inputTime.onchange = (e => {
@@ -218,13 +218,13 @@ function hmsToMs(hms) {
   return ((hours * 60 + mins) * 60 + secs) * 1000;
 }
 
-function addAlarm() {
-  const alarm = getAlarmDefaults();
-  renderAlarm(alarm);
-  alarms.push(alarm);
+function addEvent() {
+  const event = getAlarmDefaults();
+  renderAlarm(event);
+  alarms.push(event);
 }
 
-function addDailyAlarm() {
+function addAlarm() {
   const alarm = getAlarmDefaults();
   delete alarm.date;
   renderAlarm(alarm);
@@ -283,11 +283,11 @@ function onInit() {
     <h4>Manage dated events</h4>
 
     <div class="float-right">
-      <button class="btn" onclick="addAlarm()">
+      <button class="btn" onclick="addEvent()">
         <i class="icon icon-plus"></i>
-        Alarm (with date)
+        Event
       </button>
-      <button class="btn" onclick="addDailyAlarm()">
+      <button class="btn" onclick="addAlarm()">
         <i class="icon icon-plus"></i>
         Alarm
       </button>
