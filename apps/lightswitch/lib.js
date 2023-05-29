@@ -84,7 +84,7 @@ exports = {
       // load settings from storage
       let filename = "lightswitch.json";
       let storage = require("Storage");
-      var settings = Object.assign({
+      let settings = Object.assign({
         value: 1,
         isOn: true
       }, storage.readJSON(filename, true) || {});
@@ -101,9 +101,6 @@ exports = {
       Bangle.setLCDBrightness(settings.isOn ? settings.value : 0);
       // write changes to storage if not skipped
       if (!skipWrite) storage.writeJSON(filename, settings);
-
-      // clear variables
-      settings = undefined;
     }
   }
 };

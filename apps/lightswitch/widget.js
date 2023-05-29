@@ -1,6 +1,6 @@
 (function() {
   // load settings
-  var settings = Object.assign({
+  let settings = Object.assign({
     colors: "011",
     image: "default",
     touchOn: "always",
@@ -147,7 +147,7 @@
       }
 
       // read y position, pleasant usable area 20-170
-      var y = event.y;
+      let y = event.y;
       y = y < 20 ? 0 : y > 170 ? 150 : y - 20;
       // calculate brightness respecting minimal value in settings
       let value = (1 - Math.round(y / 1.5) / 100) * (1 - w.minValue) + w.minValue;
@@ -165,9 +165,6 @@
         Bangle.removeListener("drag", w.dragListener);
         w.dragStatus = "off";
       }
-
-      // clear variables
-      y = undefined;
     },
 
     // listener function //
@@ -247,7 +244,4 @@
     if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
     w.draw()
   });
-
-  // clear variable
-  delete settings;
 })()

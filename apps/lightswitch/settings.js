@@ -3,7 +3,7 @@
 
   // set Storage and load settings
   let storage = require("Storage");
-  var settings = Object.assign({
+  let settings = Object.assign({
     colors: "011",
     image: "default",
     touchOn: "always",
