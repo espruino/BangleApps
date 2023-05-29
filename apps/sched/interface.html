@@ -161,8 +161,8 @@ function renderAlarm(alarm, exists) {
   tdSummary.appendChild(inputSummary);
   inputSummary.onchange();
 
-  const tdInfo = document.createElement('td');
-  tr.appendChild(tdInfo);
+  const tdOptions = document.createElement('td');
+  tr.appendChild(tdOptions);
 
   const onOffCheck = document.createElement('input');
   onOffCheck.type = 'checkbox';
@@ -176,7 +176,10 @@ function renderAlarm(alarm, exists) {
   onOff.classList.add('form-switch');
   onOff.appendChild(onOffCheck);
   onOff.appendChild(onOffIcon);
-  tdInfo.appendChild(onOff);
+  tdOptions.appendChild(onOff);
+
+  const tdInfo = document.createElement('td');
+  tr.appendChild(tdInfo);
 
   const buttonDelete = document.createElement('button');
   buttonDelete.classList.add('btn');
@@ -298,6 +301,7 @@ function onInit() {
           <th>Type</th>
           <th>Date/Time</th>
           <th>Summary</th>
+          <th></th>
           <th></th>
         </tr>
       </thead>
