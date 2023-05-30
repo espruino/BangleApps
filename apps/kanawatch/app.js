@@ -131,15 +131,25 @@ WO: image(52, 49, "AAMf+AFDgP+Bgk/8AFDgYMM/gkD/4AC+EBAof/BkA5FhEAg45Cg/AgF/AQMBB
 N: image(54, 49, "AAMHAwsf8AGE/+AAocD/wTF+AGEv/ACZUP/ATKgP/CYv8Awk/IQgTBIQkHCYxCFCYxWTIQxWGFAhCBAwkPAwJCE/5KDCYQiBhhCBAwJlBn+Aj/+/49BDoP/8IDBgf8IQIDBKgUf/EPLAJUBv/gn/AFgKZCAIMHCIP4DQSXBAIIaC/+BCIIaBYwKZCLwIuBCYLRCFwIKBEYX/CYUfEYP4TIRACCYQ+BwZUBDwIYBOgITCRAQVCEIP//0BYISjB+CtDUYRNBAwQ5Bg7gDBQIA="),
 
 };
-
+const keys = [
+  "A","I","U","E","O",
+  "HA","HI","HU","HE","HO",
+  "KA","KI","KU","KE","KO",
+  "MA","MI","MU","ME","MO",
+  "NA","NI","NU","NE","NO",
+  "RA","RI","RU","RE","RO",
+  "SA","SI","SU","SE","SO",
+  "TA","TI","TU","TE","TO",
+  "WA","WO","YO","YU","N",
+ ];
 let kana = katakana.KA;
 let scroll = 0;
-const keys = Object.keys(katakana).sort();
+// const keys = Object.keys(katakana).sort();
+// console.log(keys);
 let hiramode = false;
 let curkana = 'KA';
 
 console.log("StartupTime: "+startupTime.diff());
-
 
 function next () {
   const off = keys.indexOf(curkana);
@@ -318,7 +328,7 @@ function hiraPush(d,dx) {
     }
     zpos -= 0.04;
     render(ohhmm);
-    setTimeout(paint, 5);
+    setTimeout(paint, 100);
   }
   setTimeout (paint, 5);
 }
@@ -352,7 +362,7 @@ function hiraSwipe(d,dx, dostuff) {
       return;
     }
     if (dx) {
-      xpos += (4*d);
+      xpos += (8*d);
     } else {
       ypos -= (4*d);
     }
@@ -405,5 +415,13 @@ g.clear(true);
 Bangle.setUI('clock');
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
+// redraw widgets every 10 minutes
+setInterval(function() {
+    // maybe not always necessary
+    Bangle.drawWidgets();
+}, 1000 * 60 * 10);
 tickWatch();
 setInterval(tickWatch, 1000 * 60);
+
+
