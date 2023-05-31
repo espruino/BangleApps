@@ -47,7 +47,7 @@
   function switchTheme(mode) {
     if (mode === g.theme.dark) return;
     sysSettings.theme = createThemeColors(mode);
-    if (sysSettings.clock && sysSettings.clock === "shadowclk.app.js") {
+    if (sysSettings.clock === "shadowclk.app.js") {
       require('Storage').writeJSON("setting.json", sysSettings);
     }
     updateTheme(mode);
@@ -95,7 +95,7 @@
   }
 
   function writeTimeModeSetting() {
-    if (sysSettings.clock && sysSettings.clock === "shadowclk.app.js") {
+    if (sysSettings.clock === "shadowclk.app.js") {
         sysSettings['12hour'] = appSettings.enable12Hour;
         require('Storage').writeJSON("setting.json", sysSettings);
     }
