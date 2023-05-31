@@ -61,7 +61,7 @@
           t:event.cmd=="incoming"?"add":"remove",
           id:"call", src:"Phone",
           positive:true, negative:true,
-          title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
+          title:event.number ||/*LANG*/"Call", body:/*LANG*/"From\n"+event.name});
         require("messages").pushMessage(event);
       },
       // {"t":"alarm", "d":[{h:int,m:int,rep:int},... }
