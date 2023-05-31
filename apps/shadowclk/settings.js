@@ -9,8 +9,17 @@
     theme: 'light',
     enableSuffix: true,
     enableLeadingZero: false,
-    enable12Hour: false // default time mode
+    enable12Hour: false
   }, require('Storage').readJSON("shadowclk.json", true) || {});
+
+  // Check if shadowclk is the selected clock
+  if (sysSettings.clock === "shadowclk.app.js") {
+      // Sync app settings with system settings
+      appSettings.theme = sysSettings.theme.dark ? 'dark' : 'light';
+      if (sysSettings['12hour'] !== undefined) {
+          appSettings.enable12Hour = sysSettings['12hour'];
+      }
+  }
 
   // Colors from 'Light BW' and 'Dark BW' themes
   function createThemeColors(mode) {
@@ -37,9 +46,10 @@
   // Switch theme and save to storage
   function switchTheme(mode) {
     if (mode === g.theme.dark) return;
-    let s = require('Storage').readJSON("setting.json", 1) || {};
-    s.theme = createThemeColors(mode);
-    require('Storage').writeJSON("setting.json", s);
+    sysSettings.theme = createThemeColors(mode);
+    if (sysSettings.clock === "shadowclk.app.js") {
+      require('Storage').writeJSON("setting.json", sysSettings);
+    }
     updateTheme(mode);
   }
 
@@ -85,8 +95,10 @@
   }
 
   function writeTimeModeSetting() {
-    sysSettings['12hour'] = appSettings.enable12Hour;
-    require('Storage').writeJSON("setting.json", sysSettings);
+    if (sysSettings.clock === "shadowclk.app.js") {
+        sysSettings['12hour'] = appSettings.enable12Hour;
+        require('Storage').writeJSON("setting.json", sysSettings);
+    }
   }
 
   function showMenu() {
