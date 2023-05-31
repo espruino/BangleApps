@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 const distanceUnits = { // how many meters per X?
   "m": 1,
+  "ft": 0.3048,
   "yd": 0.9144,
   "mi": 1609.34,
   "km": 1000,
@@ -160,7 +161,7 @@ var locales = {
     currency_symbol: "$", currency_first: true,
     int_curr_symbol: "USD",
     speed: "mph",
-    distance: { 0: "m", 1: "mi" },
+    distance: { 0: "ft", 1: "mi" },
     temperature: "°F",
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
