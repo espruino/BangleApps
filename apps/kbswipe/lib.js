@@ -239,7 +239,7 @@ exports.input = function(options) {
     area:"tl",
     width: 36, // 3 chars, 6*2 px/char
     draw: function() {
-      g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 24);
+      g.reset().clearRect(this.x, this.y, this.x + this.width-1, this.y + 23);
       g.setFont("6x8:2x3");
       g.setColor("#f00");
       if (input_mode === exports.INPUT_MODE_ALPHA) {
