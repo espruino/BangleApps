@@ -7,26 +7,27 @@ const UNITS = {
   "Resistance (R)": "Ohms",
   "Power (P)": "Watts",
 };
+
 const FORMULAS = {
   'Voltage (V)': {
-    'Current (I), Resistance (R)': "{0} * {1}",
-    'Power (P), Current (I)': "{0} / {1}",
-    'Power (P), Resistance (R)': "Math.sqrt({0} * {1})"
+    'Current (I), Resistance (R)': { equation: "{0} * {1}", display: "V = I * R" },
+    'Power (P), Current (I)': { equation: "{0} / {1}", display: "V = P / I" },
+    'Power (P), Resistance (R)': { equation: "Math.sqrt({0} * {1})", display: "V = sqrt(P * R)" }
   },
   'Current (I)': {
-    'Voltage (V), Resistance (R)': "{0} / {1}",
-    'Power (P), Voltage (V)': "{0} / {1}",
-    'Power (P), Resistance (R)': "Math.sqrt({0} / {1})"
+    'Voltage (V), Resistance (R)': { equation: "{0} / {1}", display: "I = V / R" },
+    'Power (P), Voltage (V)': { equation: "{0} / {1}", display: "I = P / V" },
+    'Power (P), Resistance (R)': { equation: "Math.sqrt({0} / {1})", display: "I = sqrt(P / R)" }
   },
   'Resistance (R)': {
-    'Voltage (V), Current (I)': "{0} / {1}",
-    'Power (P), Current (I)': "{0} / (Math.pow({1}, 2))",
-    'Power (P), Voltage (V)': "(Math.pow({1}, 2)) / {0}"
+    'Voltage (V), Current (I)': { equation: "{0} / {1}", display: "R = V / I" },
+    'Power (P), Current (I)': { equation: "{0} / (Math.pow({1}, 2))", display: "R = P / I^2" },
+    'Power (P), Voltage (V)': { equation: "(Math.pow({1}, 2)) / {0}", display: "R = V^2 / P" }
   },
   'Power (P)': {
-    'Voltage (V), Current (I)': "{0} * {1}",
-    'Current (I), Resistance (R)': "(Math.pow({0}, 2)) * {1}",
-    'Voltage (V), Resistance (R)': "(Math.pow({0}, 2)) / {1}"
+    'Voltage (V), Current (I)': { equation: "{0} * {1}", display: "P = V * I" },
+    'Current (I), Resistance (R)': { equation: "(Math.pow({0}, 2)) * {1}", display: "P = I^2 * R" },
+    'Voltage (V), Resistance (R)': { equation: "(Math.pow({0}, 2)) / {1}", display: "P = V^2 / R" }
   },
 };
 
@@ -125,7 +126,9 @@ function calculateValue(calculatedVariable, variableValues) {
     let formulaKey = formulaKeys[i];
     let variables = formulaKey.split(', ');
     if (variables.every(variable => variableValues.hasOwnProperty(variable))) {
-      let formula = formulas[formulaKey];
+      let formulaData = formulas[formulaKey];
+      let formula = formulaData.equation;
+      let formulaDisplay = formulaData.display;
       let formulaValues = variables.map(variable => variableValues[variable]);
       let calculatedValue = eval(formula.replace(/\{(\d+)\}/g, (_, index) => formulaValues[index]));
 
@@ -147,7 +150,7 @@ function calculateValue(calculatedVariable, variableValues) {
       });
       result.push([calculatedVariable, `${calculatedValue} ${formatUnit(UNITS[calculatedVariable], calculatedValue.toString())}`]);
       return {
-        formula: formula.replace(/\{(\d+)\}/g, (_, index) => formulaValues[index]),
+        formula: formulaDisplay.replace(/\{(\d+)\}/g, (_, index) => formulaValues[index]),
         value: calculatedValue,
         unit: formatUnit(UNITS[calculatedVariable], calculatedValue),
         result: result,
@@ -273,6 +276,70 @@ function calculateValue(calculatedVariable, variableValues) {
     };
   }
 
+  // Function to display the results screen with the values from the result.result array
+  function drawResultScreen(result) {
+    let drawPage = function() {
+      clearScreen();
+      let fontSize = 30;  // Adjust to fit the display
+      let lineSpacing = 15; // Space between lines
+
+      // Define the vertical positions of the titles
+      let titlePositions = [10, 72, 132];
+
+      for (let i = 0; i < result.result.length; i++) {
+        let currentResult = result.result[i];
+        let resultTitle = currentResult[0];
+        let resultValue = currentResult[1];
+
+        // Draw title
+        g.setFontVector(fontSize / 2); // Small font for title
+        let titleX = (g.getWidth() - g.stringWidth(resultTitle)) / 2;
+        let titleY = titlePositions[i]; // Get the vertical position for the title
+        g.drawString(resultTitle, titleX, titleY); // Draw at the desired position
+
+        let underlineYPosition = titleY + g.getFontHeight() - 3;
+        g.drawLine(titleX, underlineYPosition, titleX + g.stringWidth(resultTitle), underlineYPosition); // Draw underline
+
+        let valueX;
+        let valueY = titleY + g.getFontHeight(); // Draw below the title
+        let valueFontSize = fontSize;
+
+        // Draw value with smaller font size if necessary
+        g.setFontVector(valueFontSize); // Large font for value
+        if (g.stringWidth(resultValue) > g.getWidth()) {
+          valueFontSize /= 1.5; // Small font for value
+          g.setFontVector(valueFontSize);
+          if (g.stringWidth(resultValue) > g.getWidth()) {
+            valueFontSize /= 1.5; // Smallest font for value
+            g.setFontVector(valueFontSize);
+          }
+        }
+
+        valueY += g.getFontHeight() / 2 + 2;
+        valueX = (g.getWidth() - g.stringWidth(resultValue)) / 2;
+        g.drawString(resultValue, valueX, valueY); // Draw at the desired position
+
+        // Move down for the next entry
+        let nextTitleY = (i + 1 < titlePositions.length) ? titlePositions[i + 1] : titleY + 1.5 * fontSize + lineSpacing;
+        yPosition = nextTitleY;
+      }
+      g.flip();
+    };
+
+    // Shows the back button on the result screen
+    return function() {
+      clearScreen();
+      let resultMenu = {
+        '': { 'title': 'Results' },
+        '< Back': function() {
+          E.showMenu(resultsMenu);
+        }
+      };
+      E.showMenu(resultMenu);
+      drawPage();
+    };
+  }
+
   // Shows the results menu with the calculated results and options
   function showResultsScreen(result) {
     let backButton = function () {
@@ -286,8 +353,9 @@ function calculateValue(calculatedVariable, variableValues) {
         E.showMenu(mainMenu);
       },
     };
+    console.log(result);
     resultsMenu[result.value + ' ' + result.unit] = drawValueScreen(result);
-    resultsMenu[result.formula + " = " + calculatedVariable] = {};
+    resultsMenu[result.formula] = drawResultScreen(result);
     resultsMenu['Exit'] = function () {
       Bangle.showClock();
     };
