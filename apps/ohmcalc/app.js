@@ -364,7 +364,6 @@ function calculateValue(calculatedVariable, variableValues) {
         E.showMenu(mainMenu);
       },
     };
-    console.log(result);
     resultsMenu[result.value + ' ' + result.unit] = drawValueScreen(result);
     resultsMenu[result.formula] = drawResultScreen(result);
     resultsMenu['Exit'] = function () {
