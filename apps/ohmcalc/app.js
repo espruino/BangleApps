@@ -43,6 +43,7 @@ let calculatedVariable;
 let selectedVariable;
 let variableValues = {};
 let inputStr = "";
+let invalidInput = false;
 
 // Function references
 let handleEnter;
@@ -108,6 +109,9 @@ function setValue(newStr) {
 
 // Function to handle the press of a button and append its value to the current input
 function handleButtonPress(value) {
+  if (invalidInput) {
+    return; // Don't allow input if an invalid input error message is displayed
+  }
   inputStr = value === 'C' ? '' : inputStr + value;
   setValue(inputStr);
 }
@@ -176,7 +180,10 @@ function calculateValue(calculatedVariable, variableValues) {
     clearScreen();
     let variableSelectionMenu = {
       '': { 'title': 'Select Variable' },
-      '< Back': () => E.showMenu(mainMenu)
+      '< Back': () => {
+        E.showMenu(mainMenu);
+        variableValues = {};
+      }
     };
     let variables = Object.keys(UNITS);
     let remainingVariables = variables.filter(v => v !== calculatedVariable && !variableValues[v]);
@@ -208,8 +215,12 @@ function calculateValue(calculatedVariable, variableValues) {
     if (inputStr === "" || isNaN(inputStr) || (inputStr.match(/\./g) || []).length > 1) {
       // Show error message
       setValue("Invalid Input");
+      invalidInput = true;  // Prevent further input
       // Clear error message after 2 seconds
-      setTimeout(() => setValue(''), 2000);
+      setTimeout(() => {
+        setValue('');
+        invalidInput = false;  // Allow input again
+      }, 2000);
       return;
     }
 
