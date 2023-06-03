@@ -21,7 +21,7 @@ const FORMULAS = {
   'Resistance (R)': {
     'Voltage (V), Current (I)': "{0} / {1}",
     'Power (P), Current (I)': "{0} / (Math.pow({1}, 2))",
-    'Power (P), Voltage (V)': "(Math.pow({0}, 2)) / {1}"
+    'Power (P), Voltage (V)': "(Math.pow({1}, 2)) / {0}"
   },
   'Power (P)': {
     'Voltage (V), Current (I)': "{0} * {1}",
