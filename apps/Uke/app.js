@@ -220,7 +220,7 @@ function drawBase() {
 }
 
 function drawChord(chord) {
-    g.drawString(chord[0], g.getWidth() * 0.5 - 3, 18);
+  g.drawString(chord[0], g.getWidth() * 0.5 - (chord[0].length * 5), 16);
     for (let i = 0; i < chord.length; i++) {
         if (i === 0 || chord[i][0] === "x") {
             continue;
