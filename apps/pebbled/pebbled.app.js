@@ -16,6 +16,15 @@ let drawTimeout;
 let loadSettings = function() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75};
 };
+  
+let tConv24 = function(time24) {
+  var ts = time24;
+  var H = +ts.substr(0, 2);
+  var h = (H % 12) || 12;
+  h = (h < 10)?("0"+h):h;
+  ts = h + ts.substr(2, 3);
+  return ts;
+}
 
 const img = require("heatshrink").decompress(atob("oFAwkEogA/AH4A/AH4A/AH4A/AE8AAAoeXoAfeDQUBmcyD7A+Dh///8QD649CiAfaHwUvD4sEHy0DDYIfEICg+Cn4fHICY+DD4nxcgojOHwgfEIAYfRCIQaDD4ZAFD5r7DH4//kAfRCIZ/GAAnwD5p9DX44fTHgYSBf4ofVDAQEBl4fFUAgfOXoQzBgIfFBAIfPP4RAEAoYAB+cRiK/SG4h/WIBAfXIA7CBAAswD55AHn6fUIBMCD65AHl4gCmcziAfQQJqfQQJpiDgk0IDXxQLRAEECaBM+QgRYRYgUIA0CD4ggSQJiDCiAKBICszAAswD55AHABKBVD7BAFABIqBD5pAFABPxD55AOD6BADiIAJQAyxLABwf/gaAPAH4A/AH4ARA=="));
 
@@ -30,16 +39,19 @@ let batteryWarning = false;
 let draw = function() {
   let date = new Date();
   let da = date.toString().split(" ");
-  let timeStr = da[4].substr(0,5);
+  let timeStr = settings.localization === "US" ? tConv24(da[4].substr(0,5)) : da[4].substr(0,5);
   const t = 6;
   let stps = Bangle.getHealthStatus("day").steps;
+  const distInKm = (stps / 1000 * settings.avStep).toFixed(2);
+  const distance = settings.localization === "US" ? (distInKm / 1.609).toFixed(2) : distInKm;
+  const distanceStr = settings.localization === "US" ? distance + ' MI' : distance + ' KM';
 
-  // turn the warning on once we have dipped below 15%
-  if (E.getBattery() < 15)
+  // turn the warning on once we have dipped below 25%
+  if (E.getBattery() < 25)
     batteryWarning = true;
 
-  // turn the warning off once we have dipped above 20%
-  if (E.getBattery() > 20)
+  // turn the warning off once we have dipped above 30%
+  if (E.getBattery() > 30)
     batteryWarning = false;
 
   g.reset();
@@ -88,7 +100,7 @@ let draw = function() {
     g.setColor('#fff'); // white on blue or red best contrast
   else
     g.setColor('#000'); // otherwise black regardless of theme
-  g.drawString((stps / 1000 * settings.avStep).toFixed(2) + ' KM', w/2, ha + 107);
+  g.drawString(distanceStr, w/2, ha + 107);
 
   // queue next draw
   if (drawTimeout) clearTimeout(drawTimeout);
