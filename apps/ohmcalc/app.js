@@ -143,10 +143,7 @@ function calculateValue(calculatedVariable, variableValues) {
 
       // Round and trim long decimal numbers
       if (!isInteger) {
-        calculatedValue = Math.round(calculatedValue * 1000) / 1000;
-        calculatedValue = calculatedValue.toString().replace(/(\.\d*?)0+$/, '$1');
-      } else {
-        calculatedValue = calculatedValue.toFixed(0);
+        calculatedValue = calculatedValue.toFixed(3);
       }
 
       let result = Object.entries(variableValues).map(function (entry) {
