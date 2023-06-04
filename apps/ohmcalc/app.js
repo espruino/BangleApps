@@ -291,7 +291,7 @@ function calculateValue(calculatedVariable, variableValues) {
   function drawResultScreen(result) {
     let drawPage = function() {
       clearScreen();
-      let fontSize = 30;  // Adjust to fit the display
+      let fontSize = 30;  // Initial font size
       let lineSpacing = 15; // Space between lines
 
       // Define the vertical positions of the titles
@@ -313,17 +313,13 @@ function calculateValue(calculatedVariable, variableValues) {
 
         let valueX;
         let valueY = titleY + g.getFontHeight(); // Draw below the title
-        let valueFontSize = fontSize;
 
-        // Draw value with smaller font size if necessary
-        g.setFontVector(valueFontSize); // Large font for value
-        if (g.stringWidth(resultValue) > g.getWidth()) {
-          valueFontSize /= 1.5; // Small font for value
+        // Calculate the font size for value dynamically
+        let valueFontSize = fontSize; // Initialize with maximum possible font size
+        g.setFontVector(valueFontSize);
+        while (g.stringWidth(resultValue) > g.getWidth() && valueFontSize > 1) {
+          valueFontSize *= 0.9; // Reduce the font size by 10%
           g.setFontVector(valueFontSize);
-          if (g.stringWidth(resultValue) > g.getWidth()) {
-            valueFontSize /= 1.5; // Smallest font for value
-            g.setFontVector(valueFontSize);
-          }
         }
 
         valueY += g.getFontHeight() / 2 + 2;
