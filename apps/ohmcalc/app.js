@@ -50,6 +50,7 @@ let handleEnter;
 let showVariableSelectionMenu;
 let showInputMenu;
 let resultsMenu;
+let mainMenu;
 
 // Setup the layout for input buttons
 let layout = new Layout({
@@ -59,7 +60,7 @@ let layout = new Layout({
     { type: "h", c: "123".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
     { type: "h", c: "456".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
     { type: "h", c: "789".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
-    { type: "h", c: ".0C".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
+    { type: "h", c: ".0C".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, cbl: i === "C" ? () => { E.showMenu(mainMenu); Bangle.buzz(20); } : undefined, fillx: 1, filly: 1 })) },
     { type: "h", c: [{ type: "btn", font: "6x8:2", label: "Enter", cb: () => { handleEnter(); }, fillx: 1, filly: 1 }] }
   ]
 }, { lazy: false });
@@ -109,6 +110,7 @@ function setValue(newStr) {
 
 // Function to handle the press of a button and append its value to the current input
 function handleButtonPress(value) {
+  Bangle.buzz(20);
   if (invalidInput) {
     return; // Don't allow input if an invalid input error message is displayed
   }
@@ -165,7 +167,7 @@ function calculateValue(calculatedVariable, variableValues) {
 
 // Main function to initialize the application and setup the main menu
 (function () {
-  let mainMenu = {
+  mainMenu = {
     '': { 'title': 'Ohm\'s Law Calc' },
     '< Back': () => Bangle.showClock()
   };
