@@ -315,11 +315,10 @@ function calculateValue(calculatedVariable, variableValues) {
         let valueY = titleY + g.getFontHeight(); // Draw below the title
 
         // Calculate the font size for value dynamically
-        let valueFontSize = fontSize; // Initialize with maximum possible font size
-        g.setFontVector(valueFontSize);
+        g.setFontVector(fontSize);
         while (g.stringWidth(resultValue) > g.getWidth() - 10) {
-          valueFontSize--; // Reduce the font size by 1
-          g.setFontVector(valueFontSize);
+          fontSize--; // Reduce the font size by 1
+          g.setFontVector(fontSize);
         }
 
         valueY += g.getFontHeight() / 2 + 2;
