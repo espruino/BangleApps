@@ -256,7 +256,7 @@ function calculateValue(calculatedVariable, variableValues) {
       g.setFontVector(fontSize);
 
       // Reduce the font size until both the value and unit fit on the screen
-      while (g.stringWidth(result.value) > g.getWidth() - 20 || g.getFontHeight() > g.getHeight() / 2) {
+      while (g.stringWidth(result.value) > g.getWidth() - 10 || g.getFontHeight() > g.getHeight() / 2) {
         fontSize--;
         g.setFontVector(fontSize);
       }
@@ -317,8 +317,8 @@ function calculateValue(calculatedVariable, variableValues) {
         // Calculate the font size for value dynamically
         let valueFontSize = fontSize; // Initialize with maximum possible font size
         g.setFontVector(valueFontSize);
-        while (g.stringWidth(resultValue) > g.getWidth() && valueFontSize > 1) {
-          valueFontSize *= 0.9; // Reduce the font size by 10%
+        while (g.stringWidth(resultValue) > g.getWidth() - 10) {
+          valueFontSize--; // Reduce the font size by 1
           g.setFontVector(valueFontSize);
         }
 
