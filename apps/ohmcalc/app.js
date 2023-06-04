@@ -60,7 +60,7 @@ let layout = new Layout({
     { type: "h", c: "123".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
     { type: "h", c: "456".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
     { type: "h", c: "789".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, fillx: 1, filly: 1 })) },
-    { type: "h", c: ".0C".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, cbl: i === "C" ? () => { E.showMenu(mainMenu); Bangle.buzz(20); } : undefined, fillx: 1, filly: 1 })) },
+    { type: "h", c: ".0C".split("").map(i => ({ type: "btn", font: "6x8:3", label: i, cb: () => { handleButtonPress(i); }, cbl: i === "C" ? () => { showVariableSelectionMenu(); Bangle.buzz(20); } : undefined, fillx: 1, filly: 1 })) },
     { type: "h", c: [{ type: "btn", font: "6x8:2", label: "Enter", cb: () => { handleEnter(); }, fillx: 1, filly: 1 }] }
   ]
 }, { lazy: false });
