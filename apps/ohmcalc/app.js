@@ -144,6 +144,7 @@ function calculateValue(calculatedVariable, variableValues) {
       // Round and trim long decimal numbers
       if (!isInteger) {
         calculatedValue = calculatedValue.toFixed(3);
+        calculatedValue = calculatedValue.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
       }
 
       let result = Object.entries(variableValues).map(function (entry) {
