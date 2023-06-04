@@ -16,49 +16,9 @@ const cc = [
 
 const dd = [
   "D",
+  "22",
   "23",
-  "22",
   "24",
-  "x"
-];
-
-const gg = [
-  "G",
-  "x",
-  "21",
-  "33",
-  "22",
-];
-
-const am = [
-  "Am",
-  "22",
-  "x",
-  "x",
-  "x"
-];
-
-const em = [
-  "Em",
-  "x",
-  "43",
-  "32",
-  "21"
-];
-
-const aa = [
-  "A",
-  "22",
-  "11",
-  "x",
-  "x"
-];
-
-const ff = [
-  "F",
-  "22",
-  "x",
-  "11",
   "x"
 ];
 
@@ -70,27 +30,184 @@ var ee = [
   "11"
 ];
 
+const ff = [
+  "F",
+  "22",
+  "x",
+  "11",
+  "x"
+];
+
+const gg = [
+  "G",
+  "x",
+  "21",
+  "33",
+  "22",
+];
+
+const aa = [
+  "A",
+  "22",
+  "11",
+  "x",
+  "x"
+];
+
+const bb = [
+  "B",
+  "42",
+  "43",
+  "44",
+  "21"
+];
+
+const cm = [
+  "Cm",
+  "11",
+  "x",
+  "12",
+  "34"
+];
+
+const dm = [
+  "Dm",
+  "x",
+  "22",
+  "33",
+  "11"
+];
+
+const em = [
+  "Em",
+  "x",
+  "43",
+  "32",
+  "21"
+];
+
+const fm = [
+  "Fm",
+  "33",
+  "11",
+  "11",
+  "11"
+];
+
+const gm = [
+  "Gm",
+  "x",
+  "22",
+  "33",
+  "11"
+];
+
+const am = [
+  "Am",
+  "22",
+  "23",
+  "11",
+  "x"
+];
+
+const bm = [
+  "Bm",
+  "x",
+  "43",
+  "32",
+  "21"
+];
+
+const c7 = [
+  "C7",
+  "22",
+  "33",
+  "11",
+  "x"
+];
+
+const d7 = [
+  "D7",
+  "x",
+  "22",
+  "11",
+  "23"
+];
+
+const e7 = [
+  "E7",
+  "x",
+  "11",
+  "x",
+  "x"
+];
+
+const f7 = [
+  "F7",
+  "11",
+  "22",
+  "11",
+  "11"
+];
+
+const g7 = [
+  "G7",
+  "x",
+  "x",
+  "x",
+  "11"
+];
+
+const a7 = [
+  "A7",
+  "21",
+  "21",
+  "21",
+  "32"
+];
+
+const b7 = [
+  "B7",
+  "11",
+  "22",
+  "x",
+  "23"
+];
+
+
+
 var index = 0;
 var chords = [];
 var menu = {
-    "" : {
-        "title" : "Uke Chords"
-    },
-    "C" : function() { draw(cc); },
-    "D" : function() { draw(dd); },
-    "E" : function() { draw(ee); },
-    "Em" : function() { draw(em); },
-    "A" : function() { draw(aa); },
-    "Am" : function() { draw(am); },
-    "F" : function() { draw(ff); },
-    "G" : function() { draw(gg); },
-    "About" : function() {
-        E.showMessage(
-            "Created By:\nNovaDawn999", {
-              title:"About"
-            }
-        );
-    }
+  "" : { "title" : "Uke Chords" },
+  "C" : function() { draw(cc); },
+  "D" : function() { draw(dd); },
+  "E" : function() { draw(ee); },
+  "F" : function() { draw(ff); },
+  "G" : function() { draw(gg); },
+  "A" : function() { draw(aa); },
+  "B" : function() { draw(bb); },
+  "C7" : function() { draw(c7); },
+  "D7" : function() { draw(d7); },
+  "E7" : function() { draw(e7); },
+  "F7" : function() { draw(f7); },
+  "G7" : function() { draw(g7); },
+  "A7" : function() { draw(a7); },
+  "B7" : function() { draw(b7); },
+  "Cm" : function() { draw(cm); },
+  "Dm" : function() { draw(dm); },
+  "Em" : function() { draw(em); },
+  "Fm" : function() { draw(fm); },
+  "Gm" : function() { draw(gm); },
+  "Am" : function() { draw(am); },
+  "Bm" : function() { draw(bm); },
+  "About" : function() {
+      E.showMessage(
+          "Created By:\nNovaDawn999", {
+            title:"About"
+          }
+      );
+  }
 };
 
 
