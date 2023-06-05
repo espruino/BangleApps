@@ -12,7 +12,7 @@ const fontFactorB2 = 2/3;
 const colfg=g.theme.fg, colbg=g.theme.bg;
 const col1=colfg, colUncertain="#88f"; // if (lf.fix) g.setColor(col1); else g.setColor(colUncertain);
 
-var altiGPS=0, altiBaro=0;
+var altiBaro=0;
 var hdngGPS=0, hdngCompass=0, calibrateCompass=false;
 
 /*kalmanjs, Wouter Bulten, MIT, https://github.com/wouterbulten/kalmanjs */
@@ -183,7 +183,6 @@ var KalmanFilter = (function () {
 
 var lf = {fix:0,satellites:0};
 var showMax = 0;        // 1 = display the max values. 0 = display the cur fix
-var canDraw = 1;
 var time = '';    // Last time string displayed. Re displayed in background colour to remove before drawing new time.
 var sec; // actual seconds for testing purposes
 
@@ -194,30 +193,9 @@ max.n = 0;    // counter. Only start comparing for max after a certain number of
 
 var emulator = (process.env.BOARD=="EMSCRIPTEN" || process.env.BOARD=="EMSCRIPTEN2")?1:0;  // 1 = running in emulator. Supplies test values;
 
-var wp = {};        // Waypoint to use for distance from cur position.
 var SATinView = 0;
 
-function radians(a) {
-  return a*Math.PI/180;
-}
-
-function distance(a,b){
-  var x = radians(a.lon-b.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
-
-  // Distance in selected units
-  var d = Math.sqrt(x*x + y*y) * 6371000;
-  d = (d/parseFloat(cfg.dist)).toFixed(2);
-  if ( d >= 100 ) d = parseFloat(d).toFixed(1);
-  if ( d >= 1000 ) d = parseFloat(d).toFixed(0);
-
-  return d;
-}
-
 function drawFix(dat) {
-
-  if (!canDraw) return;
-
   g.clearRect(0,screenYstart,screenW,screenH);
 
   var v = '';
@@ -227,7 +205,7 @@ function drawFix(dat) {
   v = (cfg.primSpd)?dat.speed.toString():dat.alt.toString();
 
   // Primary Units
-  u = (cfg.primSpd)?cfg.spd_unit:dat.alt_units;
+  u = (showMax ? 'max ' : '') + (cfg.primSpd?cfg.spd_unit:dat.alt_units);
 
   drawPrimary(v,u);
 
@@ -256,14 +234,6 @@ function drawFix(dat) {
       drawSats('View:' + SATinView);
     }
   }
-  g.reset();
-}
-
-
-function drawClock() {
-  if (!canDraw) return;
-  g.clearRect(0,screenYstart,screenW,screenH);
-  drawTime();
   g.reset();
 }
 
@@ -337,16 +307,6 @@ function drawSats(sats) {
   g.setFont("6x8", 2);
   g.setFontAlign(1,1); //right, bottom
   g.drawString(sats,screenW,screenH);
-
-  g.setFontVector(18);
-  g.setColor(col1);
-
-  if ( cfg.modeA == 1 ) {
-    if ( showMax ) {
-      g.setFontAlign(0,1); //centre, bottom
-      g.drawString('MAX',120,164);
-    }
-  }
 }
 
 function onGPS(fix) {
@@ -367,7 +327,6 @@ function onGPS(fix) {
 
   var sp = '---';
   var al = '---';
-  var di = '---';
   var age = '---';
 
   if (fix.fix) lf = fix;
@@ -412,10 +371,6 @@ function onGPS(fix) {
     al = Math.round(parseFloat(al)/parseFloat(cfg.alt));
     if (parseFloat(al) > parseFloat(max.alt) && max.n > 15 ) max.alt = parseFloat(al);
 
-    // Distance to waypoint
-    di = distance(lf,wp);
-    if (isNaN(di)) di = 0;
-
     // Age of last fix (secs)
     age = Math.max(0,Math.round(getTime())-(lf.time.getTime()/1000));
   } else {
@@ -448,15 +403,7 @@ function onGPS(fix) {
   }
 }
 
-function setButtons(){
-  setWatch(_=>load(), BTN1);
-
-onGPS(lf);
-}
-
-
 function updateClock() {
-  if (!canDraw) return;
   drawTime();
   g.reset();
 
@@ -545,6 +492,10 @@ function Compass_reading() {
   hdngCompass = Compass_heading.toFixed(0);
 }
 
+function nextMode() {
+  showMax = 1 - showMax;
+}
+
 function start() {
   Bangle.setBarometerPower(1); // needs some time...
   g.clearRect(0,screenYstart,screenW,screenH);
@@ -556,10 +507,30 @@ function start() {
   Bangle.setCompassPower(1);
   if (!calibrateCompass) setInterval(Compass_reading,200);
 
-  setButtons();
   if (emulator) setInterval(updateClock, 2000);
   else setInterval(updateClock, 10000);
 
+  let createdRecording = false;
+  Bangle.setUI({
+    mode: "custom",
+    touch: nextMode,
+    btn: () => {
+      const rec = WIDGETS["recorder"];
+      if(rec){
+        const active = rec.isRecording();
+        if(active){
+          createdRecording = true;
+          rec.setRecording(false);
+        }else{
+          rec.setRecording(true, { force: createdRecording ? "append" : "new" });
+        }
+      }else{
+        nextMode();
+      }
+    },
+  });
+
+  // can't delay loadWidgets til here - need to have already done so for recorder
   Bangle.drawWidgets();
 }
 
@@ -571,6 +542,7 @@ if (cfg.record && WIDGETS["recorder"]) {
 
   if (cfg.recordStopOnExit)
     E.on('kill', () => WIDGETS["recorder"].setRecording(false));
+
 } else {
   start();
 }
