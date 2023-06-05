@@ -37,7 +37,6 @@ let color = appSettings.color !== undefined ? appSettings.color : "#0ff";
 let enableLeadingZero = appSettings.enableLeadingZero !== undefined ? appSettings.enableLeadingZero : false;
 let enableSuffix = appSettings.enableSuffix !== undefined ? appSettings.enableSuffix : true;
 
-// Draw the time and date
 (function () {
   let drawTimeout;
 
@@ -46,30 +45,17 @@ let enableSuffix = appSettings.enableSuffix !== undefined ? appSettings.enableSu
     var y = g.getHeight() / 2;
     g.reset().clearRect(Bangle.appRect);
     var date = new Date();
-    var hour = date.getHours();
-    var minutes = String(date.getMinutes()).padStart(2, '0');
+    var locale = require("locale");
+    var timeStr = locale.time(date, 1);
 
-    // Handle 12-hour format
-    if (is12Hour) {
-      hour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
-    } else {
-      // If the leading zero option is enabled and hour is less than 10, add leading zero
-      if (enableLeadingZero && hour < 10) {
-        hour = '0' + hour;
-      }
-    }
-
-    var timeStr = hour + ':' + minutes;
-
-    // Handle midnight in 12-hour format specifically
-    if (is12Hour && hour === 0) {
-      timeStr = '12' + timeStr.substring(2);
+    // If 24-hour format and leading zero should be removed
+    if (!is12Hour && !enableLeadingZero && timeStr.charAt(0) === '0') {
+      timeStr = timeStr.substr(1);
     }
 
     g.setFontAlign(0, 0).setFont("LondrinaSolid").setColor(color).drawString(timeStr, x - 1, y);
     g.reset().setFontAlign(0, 0).setFont("LondrinaShadow").drawString(timeStr, x - 1, y);
 
-    var locale = require("locale");
     var dayOfMonth = date.getDate();
     var month = locale.month(date, 1).slice(0, 1).toUpperCase() + locale.month(date, 1).slice(1).toLowerCase();
     var year = date.getFullYear();

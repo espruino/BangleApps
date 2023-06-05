@@ -1,7 +1,7 @@
 {
   "id": "shadowclk",
   "name": "Shadow Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A simple clock using the Londrina font in color with a shadowed outline. Based on the Anton Clock.",
   "icon": "app.png",
   "screenshots": [{
