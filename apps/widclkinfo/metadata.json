@@ -6,6 +6,7 @@
   "screenshots" : [ { "url":"screenshot.png" }],
   "type": "widget",
   "tags": "widget,clkinfo",
+  "dependencies" : { "clock_info":"module" },
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"widclkinfo.wid.js","url":"widget.js"}
