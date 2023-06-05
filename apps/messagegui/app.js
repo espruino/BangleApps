@@ -84,8 +84,8 @@ function showMapMessage(msg) {
   if (msg.distance!==undefined)
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
-    if (msg.instr.includes("towards")) {
-      m = msg.instr.split("towards");
+    if (msg.instr.includes("towards") || msg.instr.includes("toward")) {
+      m = msg.instr.split(/towards|toward/);
       target = m[0].trim();
       street = m[1].trim();
     }else
