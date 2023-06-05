@@ -36,25 +36,35 @@ function colorBandsToResistance(colorBands) {
 }
 
 function resistanceToColorBands(resistance, tolerance) {
-  let resistanceStr = resistance.toString();
   let firstDigit, secondDigit, multiplier;
-  if (resistanceStr.length === 1) { // Check if resistance is a single digit
-    firstDigit = 0;
-    secondDigit = Number(resistanceStr.charAt(0));
-    multiplier = 0;
-  } else if (resistance >= 100) {
-    // Extract the first two digits from the resistance value
-    firstDigit = Number(resistanceStr.charAt(0));
-    secondDigit = Number(resistanceStr.charAt(1));
-    // Calculate the multiplier
-    multiplier = resistanceStr.length - 2;
+  if (resistance < 1) {
+    // The resistance is less than 1, so we need to handle this case specially
+    let count = 0;
+    while (resistance < 1) {
+      resistance *= 10;
+      count++;
+    }
+    // Now, resistance is a whole number and count is how many times we had to multiply by 10
+    let resistanceStr = resistance.toString();
+    firstDigit = 0; // Set the first band color to be black
+    secondDigit = Number(resistanceStr.charAt(0)); // Set the second band color to be the significant digit
+    // Use count to determine the multiplier
+    multiplier = count === 1 ? 0.1 : 0.01;
   } else {
-    // For values between 10-99, shift the color to the first band
-    firstDigit = Number(resistanceStr.charAt(0));
-    secondDigit = Number(resistanceStr.charAt(1));
-    multiplier = 0;
+    // Convert the resistance to a string so we can manipulate it easily
+    let resistanceStr = resistance.toString();
+    if (resistanceStr.length === 1) { // Check if resistance is a single digit
+      firstDigit = 0;
+      secondDigit = Number(resistanceStr.charAt(0));
+      multiplier = 1; // Set multiplier to 1 for single digit resistance values
+    } else {
+      // Extract the first two digits from the resistance value
+      firstDigit = Number(resistanceStr.charAt(0));
+      secondDigit = Number(resistanceStr.charAt(1));
+      // Calculate the multiplier by matching it directly with the length of digits
+      multiplier = resistanceStr.length - 2 >= 0 ? Math.pow(10, resistanceStr.length - 2) : Math.pow(10, resistanceStr.length - 1);
+    }
   }
-
   let firstBandEntry = Object.entries(colorData).find(function(entry) {
     return entry[1].value === firstDigit;
   });
@@ -64,7 +74,7 @@ function resistanceToColorBands(resistance, tolerance) {
   });
   let secondBand = secondBandEntry ? secondBandEntry[1].hex : undefined;
   let multiplierBandEntry = Object.entries(colorData).find(function(entry) {
-    return entry[1].multiplier === Math.pow(10, multiplier);
+    return entry[1].multiplier === multiplier;
   });
   let multiplierBand = multiplierBandEntry ? multiplierBandEntry[1].hex : undefined;
   let toleranceBandEntry = Object.entries(colorData).find(function(entry) {
@@ -352,7 +362,7 @@ function drawResistance(resistance, tolerance) {
     E.showMenu(toleranceMenu);
   }
 
-  function drawResistorAndResistance(resistance, tolerance) {
+  function drawResistorAndResistance(resistance, tolerance) {    
     if (inputColorBands) {
       colorBands = inputColorBands.map(color => {
         if (colorData.hasOwnProperty(color)) {
@@ -362,8 +372,11 @@ function drawResistance(resistance, tolerance) {
         }
       });
     } else {
+      console.log("Using colorBands = resistanceToColorBands(resistance, tolerance)" + "\nResistance: " + resistance + "\nTolerance: " + tolerance);
       colorBands = resistanceToColorBands(resistance, tolerance);
     }
+    console.log(inputColorBands);
+    console.log(colorBands);
     drawResistor(colorBands, tolerance);
     drawResistance(resistance, tolerance);
     resetSettings();
