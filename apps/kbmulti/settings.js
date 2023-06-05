@@ -3,6 +3,7 @@
       var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
       if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
       if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
+      if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
       return settings;
     }
       
@@ -20,6 +21,10 @@
         min: 200, max: 1500, step : 50,
         format: v => v,
         onchange: v => updateSetting("charTimeout", v),
+      },
+      /*LANG*/'Lowercase after first uppercase': {
+        value: !!settings().autoLowercase,
+        onchange: v =>  updateSetting("autoLowercase", v)
       },
       /*LANG*/'Show help button?': {
         value: !!settings().showHelpBtn,
