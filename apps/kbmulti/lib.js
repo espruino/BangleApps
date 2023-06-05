@@ -9,6 +9,7 @@ exports.input = function(options) {
   if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
+  if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -89,19 +90,21 @@ exports.input = function(options) {
   }
 
   function newCharacter(ch) {
-    displayText();
+    displayText(false);
     if (ch && textIndex < text.length) textIndex ++;
     charCurrent = ch;
     charIndex = 0;
   }
 
   function onKeyPad(key) {
+    var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
     if (key==charCurrent) {
       charIndex = (charIndex+1) % letters[charCurrent].length;
       text = text.slice(0, -1);
     } else {
+      retire = charCurrent !== undefined;
       newCharacter(key);
     }
     var newLetter = letters[charCurrent][charIndex];
@@ -109,13 +112,22 @@ exports.input = function(options) {
     let post = text.slice(textIndex, text.length);
     
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
+
+    if(retire)
+      retireCurrent();
     
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
       newCharacter();
+      retireCurrent();
     }, settings.charTimeout);
-    displayText(charTimeout);
+    displayText(true);
+  }
+
+  function retireCurrent(why) {
+    if (caps && settings.autoLowercase)
+      setCaps();
   }
 
   var moveMode = false;

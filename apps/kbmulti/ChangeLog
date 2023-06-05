@@ -3,3 +3,4 @@
 0.03: Use default Bangle formatter for booleans
 0.04: Allow moving the cursor
 0.05: Switch swipe directions for Caps Lock and moving cursor.
+0.06: Add ability to auto-lowercase after a capital letter insertion.

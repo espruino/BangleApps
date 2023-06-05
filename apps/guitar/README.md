@@ -1,6 +1,6 @@
-# Uke Chords
+# Guitar Chords
 
-An app that simply describes finger placements on a Ukulele to form common chords.
+An app that simply describes finger placements on a Guitar to form common chords.
 
 ## Usage
 
