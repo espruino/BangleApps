@@ -65,19 +65,19 @@ function resistanceToColorBands(resistance, tolerance) {
       multiplier = resistanceStr.length - 2 >= 0 ? Math.pow(10, resistanceStr.length - 2) : Math.pow(10, resistanceStr.length - 1);
     }
   }
-  let firstBandEntry = Object.entries(colorData).find(function(entry) {
+  let firstBandEntry = Object.entries(colorData).find(function (entry) {
     return entry[1].value === firstDigit;
   });
   let firstBand = firstBandEntry ? firstBandEntry[1].hex : undefined;
-  let secondBandEntry = Object.entries(colorData).find(function(entry) {
+  let secondBandEntry = Object.entries(colorData).find(function (entry) {
     return entry[1].value === secondDigit;
   });
   let secondBand = secondBandEntry ? secondBandEntry[1].hex : undefined;
-  let multiplierBandEntry = Object.entries(colorData).find(function(entry) {
+  let multiplierBandEntry = Object.entries(colorData).find(function (entry) {
     return entry[1].multiplier === multiplier;
   });
   let multiplierBand = multiplierBandEntry ? multiplierBandEntry[1].hex : undefined;
-  let toleranceBandEntry = Object.entries(colorData).find(function(entry) {
+  let toleranceBandEntry = Object.entries(colorData).find(function (entry) {
     return entry[1].tolerance === tolerance;
   });
   let toleranceBand = toleranceBandEntry ? toleranceBandEntry[1].hex : undefined;
@@ -175,7 +175,7 @@ function drawResistance(resistance, tolerance) {
   g.drawString(toleranceStr.padEnd(4), 176 - toleranceX, y);
 }
 
-(function() {
+(function () {
   let colorBands;
   let inputColorBands;
   let settings = {
@@ -200,7 +200,7 @@ function drawResistance(resistance, tolerance) {
       '': {
         'title': `Band ${bandNumber}`
       },
-      '< Back': function() {
+      '< Back': function () {
         E.showMenu(colorEntryMenu);
       },
     };
@@ -209,24 +209,24 @@ function drawResistance(resistance, tolerance) {
     for (let color in colorData) {
       if (bandNumber === 1 || bandNumber === 2) {
         if (color !== 'none' && color !== 'gold' && color !== 'silver') {
-          (function(color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function() {
+          (function (color) {
+            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
         }
       } else if (bandNumber === 3) {
         if (color !== 'none') {
-          (function(color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function() {
+          (function (color) {
+            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
         }
       } else if (bandNumber === 4) {
         if (colorData[color].hasOwnProperty('tolerance')) {
-          (function(color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function() {
+          (function (color) {
+            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
@@ -248,7 +248,7 @@ function drawResistance(resistance, tolerance) {
       '': {
         'title': 'Band Color'
       },
-      '< Back': function() {
+      '< Back': function () {
         clearScreen();
         E.showMenu(mainMenu);
       },
@@ -284,7 +284,7 @@ function drawResistance(resistance, tolerance) {
           setTimeout(() => showColorBandMenu(4), 5);
         }
       },
-      'Draw Resistor': function() {
+      'Draw Resistor': function () {
         inputColorBands = settings.colorBands;
         let values = colorBandsToResistance(inputColorBands);
         settings.resistance = values[0];
@@ -301,7 +301,7 @@ function drawResistance(resistance, tolerance) {
       '': {
         'title': 'Multiplier'
       },
-      '< Back': function() {
+      '< Back': function () {
         showResistanceEntryMenu();
       }
     };
@@ -314,7 +314,7 @@ function drawResistance(resistance, tolerance) {
         multiplierMenu[`${formattedMultiplier}`] = () => {
           settings.multiplier = multiplierValue;
           // Update the value of 'Multiplier' in resistanceEntryMenu
-          resistanceEntryMenu["Multiplier"] = function() {
+          resistanceEntryMenu["Multiplier"] = function () {
             showMultiplierMenu();
           };
           showResistanceEntryMenu();
@@ -340,7 +340,7 @@ function drawResistance(resistance, tolerance) {
       '': {
         'title': 'Tolerance'
       },
-      '< Back': function() {
+      '< Back': function () {
         showResistanceEntryMenu();
       }
     };
@@ -352,7 +352,7 @@ function drawResistance(resistance, tolerance) {
         toleranceMenu[`${tolerance}%`] = () => {
           settings.tolerance = tolerance;
           // Update the value of 'Tolerance (%)' in resistanceEntryMenu
-          resistanceEntryMenu["Tolerance (%)"] = function() {
+          resistanceEntryMenu["Tolerance (%)"] = function () {
             showToleranceMenu();
           };
           showResistanceEntryMenu();
@@ -362,7 +362,7 @@ function drawResistance(resistance, tolerance) {
     E.showMenu(toleranceMenu);
   }
 
-  function drawResistorAndResistance(resistance, tolerance) {    
+  function drawResistorAndResistance(resistance, tolerance) {
     if (inputColorBands) {
       colorBands = inputColorBands.map(color => {
         if (colorData.hasOwnProperty(color)) {
@@ -372,11 +372,8 @@ function drawResistance(resistance, tolerance) {
         }
       });
     } else {
-      console.log("Using colorBands = resistanceToColorBands(resistance, tolerance)" + "\nResistance: " + resistance + "\nTolerance: " + tolerance);
       colorBands = resistanceToColorBands(resistance, tolerance);
     }
-    console.log(inputColorBands);
-    console.log(colorBands);
     drawResistor(colorBands, tolerance);
     drawResistance(resistance, tolerance);
     resetSettings();
@@ -386,7 +383,7 @@ function drawResistance(resistance, tolerance) {
     '': {
       'title': 'Resistance'
     },
-    '< Back': function() {
+    '< Back': function () {
       clearScreen();
       E.showMenu(mainMenu);
     },
@@ -396,15 +393,15 @@ function drawResistance(resistance, tolerance) {
       max: 99,
       wrap: true,
       format: v => '',
-      onchange: v => {}
+      onchange: v => { }
     },
-    'Multiplier': function() {
+    'Multiplier': function () {
       showMultiplierMenu();
     },
-    'Tolerance (%)': function() {
+    'Tolerance (%)': function () {
       showToleranceMenu();
     },
-    'Draw Resistor': function() {
+    'Draw Resistor': function () {
       showDrawingMenu();
     }
   };
@@ -433,7 +430,7 @@ function drawResistance(resistance, tolerance) {
       '': {
         'title': ''
       },
-      '< Back': function() {
+      '< Back': function () {
         clearScreen();
         E.showMenu(mainMenu);
       },
@@ -449,11 +446,11 @@ function drawResistance(resistance, tolerance) {
       'title': 'Resistor Calc'
     },
     '< Back': () => Bangle.showClock(), // return to the clock app
-    'Resistance': function() {
+    'Resistance': function () {
       resetSettings();
       showResistanceEntryMenu();
     },
-    'Colors': function() {
+    'Colors': function () {
       resetSettings();
       showColorEntryMenu();
     },
