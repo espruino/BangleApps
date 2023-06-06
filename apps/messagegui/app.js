@@ -91,12 +91,18 @@ function showMapMessage(msg) {
     }else
       target = msg.instr;
   }
-  if (msg.action=="continue") img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";
-  else if (msg.action=="left") img = "GhcBAYAAAPAAAHwAAD4AAB8AAA+AAAf//8P///x///+PAAPx4AA8fAAHD4ABwfAAcDwAHAIABwAAAcAAAHAAABwAAAcAAAHAAABwAAAc";
-  else if (msg.action=="right") img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";
-  else if (msg.action=="left_slight") img = "ERgB//B/+D/8H4AP4Af4A74Bz4Dj4HD4OD4cD4AD4ADwADwADgAHgAPAAOAAcAA4ABwADgAH";
-  else if (msg.action=="right_slight") img = "ERgBB/+D/8H/4APwA/gD/APuA+cD44Phw+Dj4HPgAeAB4ADgAPAAeAA4ABwADgAHAAOAAcAA";
-  else if (msg.action=="finish") img = "HhsBAcAAAD/AAAH/wAAPB4AAeA4AAcAcAAYIcAA4cMAA48MAA4cMAAYAcAAcAcAAcA4AAOA4AAOBxjwHBzjwHjj/4Dnn/4B3P/4B+Pj4A8fj8Acfj8AI//8AA//+AA/j+AB/j+AB/j/A";
+  switch (msg.action) {
+  case "continue": img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";break;
+  case "left": img = "GhcBAYAAAPAAAHwAAD4AAB8AAA+AAAf//8P///x///+PAAPx4AA8fAAHD4ABwfAAcDwAHAIABwAAAcAAAHAAABwAAAcAAAHAAABwAAAc";break;
+  case "right": img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";break;
+  case "left_slight": img = "ERgB//B/+D/8H4AP4Af4A74Bz4Dj4HD4OD4cD4AD4ADwADwADgAHgAPAAOAAcAA4ABwADgAH";break;
+  case "right_slight": img = "ERgBB/+D/8H/4APwA/gD/APuA+cD44Phw+Dj4HPgAeAB4ADgAPAAeAA4ABwADgAHAAOAAcAA";break;
+  case "finish": img = "HhsBAcAAAD/AAAH/wAAPB4AAeA4AAcAcAAYIcAA4cMAA48MAA4cMAAYAcAAcAcAAcA4AAOA4AAOBxjwHBzjwHjj/4Dnn/4B3P/4B+Pj4A8fj8Acfj8AI//8AA//+AA/j+AB/j+AB/j/A";break;
+  case "roundabout_left": img = "HhcCAAAAAAAAAAAADwAAAEAAAAP8AAGqkAAA/8ABqqqAAD/wAGqqqgAP/AAKpAakA/8AAakAGoD/////QACpP/////gABpP/////gABpD/////wACpA/8AAv4AGoAP/AAf/QakAD/wAL//qgAA/8AC//qAAAP8AAf/kAAADwAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAA=";break;
+  case "roundabout_right": img = "HhcCAAAAAAAAAAAAZAAADwAAAf/9AAP8AAB///gAP/AAH///4AD/wAP/Rv9AA/8Af8AH/AAP/AvwAD/////w/wAC/////8/wAC/////8vwAB/////wf8AGpAAP/AP/QaoAA/8AH//qkAD/wAB//6QAP/AAAf/0AAP8AAAA/QAADwAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAA=";break;
+  case "roundabout_straight": img = "EhwCAABQAAAAH0AAAAf9AAAB//QAAH//0AAf//9AB////QH/v+/0P+P8v8L4P8L4CQP8BgAC/+QAAP/+kAA//+pAC/4GqQD/AAqgH+AAagL8AAKkL8AAKkH+AAagD/AAqgC/4GqQA//+pAAP/+kAAC/+QAAAP8AAAAP8AAAAP8AA";break;
+  }
+  //FIXME: what about countries where we drive on the right? How will we know to flip the icons?
 
   layout = new Layout({ type:"v", c: [
     {type:"txt", font:street?fontMedium:fontLarge, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:3 },

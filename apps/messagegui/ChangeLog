@@ -91,3 +91,4 @@
 0.66: Updated Navigation handling to work with new Gadgetbridge release
 0.67: Support for 'Ignore' for messages from Gadgetbridge
       Message view is now taller, and we use swipe left/right to dismiss messages rather than buttons
+0.68: More navigation icons (for roundabouts)
