@@ -31,3 +31,4 @@
       plotTrack in widget allows track to be drawn in the background (doesn't block execution)
 0.24: Can now specify `setRecording(true, {force:...` to not show a menu
 0.25: Widget now has `isRecording()` for retrieving recording status.
+0.26: Now record filename based on date
