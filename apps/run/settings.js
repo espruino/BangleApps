@@ -7,7 +7,7 @@
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
-  const storage = require('Storage')
+  const storage = require('Storage');
   let settings = Object.assign({
     record: true,
     B1: "dist",
@@ -34,7 +34,7 @@
     exposeHRM: false
   }, storage.readJSON(SETTINGS_FILE, 1) || {});
   function saveSettings() {
-    storage.write(SETTINGS_FILE, settings)
+    storage.write(SETTINGS_FILE, settings);
   }
 
   function getBoxChooser(boxID) {
@@ -46,7 +46,7 @@
         settings[boxID] = statsIDs[v];
         saveSettings();
       },
-    }
+    };
   }
 
   function sampleBuzz(buzzPatterns) {
@@ -70,9 +70,9 @@
       }
     };
   var notificationsMenu = {
-    '< Back': function () { E.showMenu(menu) },
-  }
-  menu[/*LANG*/"Notifications"] = function () { E.showMenu(notificationsMenu) };
+    '< Back': function () { E.showMenu(menu); },
+  };
+  menu[/*LANG*/"Notifications"] = function () { E.showMenu(notificationsMenu); };
   ExStats.appendMenuItems(menu, settings, saveSettings);
   ExStats.appendNotifyMenuItems(notificationsMenu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
@@ -93,7 +93,7 @@
       sampleBuzz(vibTimes[v]);
       saveSettings();
     }
-  }
+  };
   notificationsMenu[/*LANG*/"Step Pattern"] = {
     value: Math.max(0, vibTimes.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.step.notifications))),
     min: 0, max: vibTimes.length - 1,
@@ -103,7 +103,7 @@
       sampleBuzz(vibTimes[v]);
       saveSettings();
     }
-  }
+  };
   notificationsMenu[/*LANG*/"Time Pattern"] = {
     value: Math.max(0, vibTimes.findIndex((p) => JSON.stringify(p) === JSON.stringify(settings.notify.time.notifications))),
     min: 0, max: vibTimes.length - 1,
@@ -113,10 +113,10 @@
       sampleBuzz(vibTimes[v]);
       saveSettings();
     }
-  }
+  };
   var boxMenu = {
-    '< Back': function () { E.showMenu(menu) },
-  }
+    '< Back': function () { E.showMenu(menu); },
+  };
   Object.assign(boxMenu, {
     'Box 1': getBoxChooser("B1"),
     'Box 2': getBoxChooser("B2"),
@@ -125,7 +125,7 @@
     'Box 5': getBoxChooser("B5"),
     'Box 6': getBoxChooser("B6"),
   });
-  menu[/*LANG*/"Boxes"] = function () { E.showMenu(boxMenu) };
+  menu[/*LANG*/"Boxes"] = function () { E.showMenu(boxMenu); };
 
   menu[/*LANG*/"Expose HRM"] = {
     value: false,
@@ -133,7 +133,7 @@
       settings.exposeHRM = v;
       saveSettings();
     }
-  }
+  };
 
   E.showMenu(menu);
-})
+});

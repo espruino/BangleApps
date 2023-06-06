@@ -155,7 +155,7 @@ function onStartStop() {
   promise = promise.then(() => {
     if (running) {
       if (shouldResume)
-        exs.resume()
+        exs.resume();
       else
         exs.start();
     } else {
