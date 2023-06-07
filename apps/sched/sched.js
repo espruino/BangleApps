@@ -40,7 +40,7 @@ function showAlarm(alarm) {
     } else {
       let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
       if (del) {
-        alarms.splice(alarmIndex, 1);
+        if (alarmIndex >= 0) alarms.splice(alarmIndex, 1);
       } else {
         if (alarm.date && alarm.rp) {
           setNextRepeatDate(alarm);
