@@ -232,7 +232,7 @@ function editTimer(idx, a) {
   }
   var t = decodeTime(a.timer);
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -385,7 +385,7 @@ function swMenu(idx, a) {
     }, 100 - (a.t % 100));
   }
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -559,11 +559,11 @@ function editAlarm(idx, a) {
     else a = require("sched").newDefaultAlarm();
   }
   if (!a.data) {
-    a.data = { hm: false, oneshot: false };
+    a.data = { hm: false };
   }
   var t = decodeTime(a.t);
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -659,7 +659,7 @@ Bangle.on("drag", e=>{
   if (layer < 0) return;
   if (!drag) { // start dragging
     drag = {x: e.x, y: e.y};
-  } 
+  }
   else if (!e.b) { // released
     const dx = e.x-drag.x, dy = e.y-drag.y;
     drag = null;
