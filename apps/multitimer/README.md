@@ -2,7 +2,7 @@
 With this app, you can set timers and chronographs (stopwatches) and watch them count down/up in real time. You can also set alarms - swipe left or right to switch between the three functions.
 
 "Hard mode" is also available for timers and alarms. It will double the number of buzz counts and you will have to swipe the screen five to eight times correctly - make a mistake, and you will need to start over.
-"Oneshot" can be set on timers and alarms to have it delete itself once it's sounded.
+"Oneshot" can be set on timers and alarms to have it delete itself once it's sounded (uses the "Delete after expiration" setting from the alarm app).
 
 ## WARNING
 * Editing timers in another app (such as the default Alarm app) is not recommended. Editing alarms should not be a problem (in theory).

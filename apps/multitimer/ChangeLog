@@ -1,4 +1,4 @@
 0.01: Initial version
 0.02: Update for time_utils module
 0.03: Use default Bangle formatter for booleans
-0.04: Add "Oneshot" setting to delete an alarm/timer after it sounds
+0.04: Merge in alarm app's newer changes:

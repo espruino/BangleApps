@@ -228,7 +228,7 @@ function editTimer(idx, a) {
     else a = timers[idx];
   }
   if (!a.data) {
-    a.data = { hm: false, oneshot: false };
+    a.data = { hm: false };
   }
   var t = decodeTime(a.timer);
 
@@ -295,8 +295,8 @@ function editTimer(idx, a) {
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Oneshot": {
-      value: !!a.data.oneshot,
-      onchange: v => a.data.oneshot = v
+      value: !!a.del,
+      onchange: v => a.del = v
     },
     "Msg": {
       value: !a.msg ? "" : a.msg.length > 6 ? a.msg.substring(0, 6)+"..." : a.msg,
@@ -584,7 +584,7 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
-      if (a.data.hm || a.data.oneshot) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
+      if (a.data.hm) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
       else if (a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);
@@ -624,8 +624,8 @@ function editAlarm(idx, a) {
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Oneshot": {
-      value: !!a.data.oneshot,
-      onchange: v => a.data.oneshot = v
+      value: !!a.del,
+      onchange: v => a.del = v
     },
     "Auto Snooze": {
       value: a.as,
