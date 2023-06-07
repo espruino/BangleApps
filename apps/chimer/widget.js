@@ -16,16 +16,10 @@
 
   var settings = readSettings();
 
-  function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
-
   function chime() {
-    for (var i = 0; i < settings.repeat; i++) {
+    let count = settings.repeat;
+
+    const chime1 = () => {
       if (settings.type === 1) {
         Bangle.buzz(100);
       } else if (settings.type === 2) {
@@ -33,8 +27,11 @@
       } else {
         return;
       }
-      sleep(150);
-    }
+      if (--count > 0)
+        setTimeout(chime1, 150);
+    };
+
+    chime1();
   }
 
   let lastHour = new Date().getHours();
