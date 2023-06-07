@@ -173,6 +173,7 @@ function renderAlarm(alarm, exists) {
   onOffCheck.checked = alarm.on;
   onOffCheck.onchange = e => {
     alarm.on = !alarm.on;
+    if (alarm.on) delete alarm.last;
   };
   const onOffIcon = document.createElement('i');
   onOffIcon.classList.add('form-icon');
