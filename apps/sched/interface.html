@@ -88,7 +88,7 @@ function eventToAlarm(event, offsetMs) {
 function upload() {
   Util.showModal("Saving...");
   Util.writeStorage("sched.json", JSON.stringify(alarms), () => {
-    Puck.write(`\x10E.showMessage("Hold button to\\nreload alarms")\n`, () => {
+    Puck.write(`\x10require("sched").reload();\n`, () => {
       location.reload(); // reload so we see current data
     });
   });
