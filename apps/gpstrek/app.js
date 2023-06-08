@@ -21,7 +21,9 @@ const SETTINGS = {
   minCourseChange: 5, //course change needed in degrees before redrawing the map
   minPosChange: 5, //position change needed in pixels before redrawing the map
   waypointChangeDist: 50, //distance in m to next waypoint before advancing automatically
-  queueWaitingTime: 5 // waiting time during processing of task queue items when running with timeouts
+  queueWaitingTime: 5, // waiting time during processing of task queue items when running with timeouts
+  autosearch: false,
+  maxDistForWaypointSearch: 300
 };
 
 let init = function(){
@@ -119,6 +121,8 @@ let cacheAdd = function (filename, result) {
   cache[result.fileOffset] = result;
   cachedOffsets.push(result.fileOffset);
 };
+
+
 
 let getEntry = function(filename, offset, result, noCaching){
   if (offset < 0) return offset;
@@ -308,7 +312,7 @@ let getMapSlice = function(){
       let route = s.route;
       if (!route) return;
       let waypoint = get(route);
-      let currentRouteIndex = getIndex(route);
+      let currentRouteIndex = getWaypointIndex(route);
       let startingPoint = Bangle.project(waypoint);
       let current = startingPoint;
       let currentPosFromGPS = false;
@@ -430,7 +434,6 @@ let getMapSlice = function(){
       let liveChanged = !isMapOverview && (startChanged || currentChanged || courseChanged);
       let refreshMap = forceMapRedraw || (oldEnough && (liveChanged));
 
-      
       let renderInTimeouts = isMapOverview || !Bangle.isLocked();
       if (refreshMap) {
         clearTaskQueue();
@@ -468,7 +471,7 @@ let getMapSlice = function(){
             let toDraw;
             let named = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
-              let p = get(route, currentRouteIndex + data.i);
+              let p = get(route, data.i);
               if (!p || !p.lat) {
                 data.breakLoop = true;
                 break;
@@ -523,8 +526,8 @@ let getMapSlice = function(){
           addToTaskQueue(drawChunk, data);
         };
 
-        drawPath(true, 0);
-        drawPath(false, 0);
+        drawPath(true, currentRouteIndex);
+        drawPath(false, currentRouteIndex);
 
         addToTaskQueue(drawInterface);
         addToTaskQueue(()=>{
@@ -969,47 +972,40 @@ let loadRouteData = function(filename, progressMonitor){
 };
 
 let hasPrev = function(route, index){
-  if (isNaN(index)) index = route.index;
-  if (route.mirror) return index < (route.indexToOffset.length - 1);
+  if (isNaN(index)) index = getWaypointIndex(route);
   return index > 0;
 };
 
 let hasNext = function(route, index, count){
   if (!count) count = 1;
   if (isNaN(index)) index = route.index;
-  if (route.mirror) return index - count > 0;
-  return index + count < (route.indexToOffset.length - 1);
+  return getWaypointIndex(route, index) + count < (route.indexToOffset.length - 1);
 };
 
 let getNext = function(route, index, count){
   if (!count) count = 1;
-  if (isNaN(index)) index = route.index;
-  if (!hasNext(route, index, count)) return;
-  if (route.mirror) index -= count;
-  if (!route.mirror) index += count;
+  if (isNaN(index)) index = getWaypointIndex(route);
+  index += count;
+  if (index >= route.indexToOffset.length) return;
   let result = {};
-  getEntry(route.filename, route.indexToOffset[index], result);
+  getEntry(route.filename, route.indexToOffset[getWaypointIndex(route, index)], result);
   return result;
 };
 
 let get = function(route, index){
-  if (isNaN(index)) index = route.index;
+  if (isNaN(index)) index = getWaypointIndex(route);
   if (index >= route.indexToOffset.length || index < 0) return;
   let result = {};
-  getEntry(route.filename, route.indexToOffset[getIndex(route, index)], result);
+  getEntry(route.filename, route.indexToOffset[getWaypointIndex(route, index)], result);
   return result;
 };
 
-/*
-return the current waypoint 
-*/
-let getIndex = function(route, index){
+let getWaypointIndex = function(route, index){
   if (isNaN(index)) index = route.index;
-  print("getIndex", route.mirror?route.indexToOffset.length-1-index:index);
   return route.mirror?route.indexToOffset.length-1-index:index;
 };
 
-let setIndex = function(route, waypointIndex){
+let setWaypointIndex = function(route, waypointIndex){
   if (route.mirror)
     route.index = route.indexToOffset.length - 1 - waypointIndex;
   else
@@ -1017,7 +1013,7 @@ let setIndex = function(route, waypointIndex){
 };
 
 let getPrev = function(route, index){
-  if (isNaN(index)) index = route.index;
+  if (isNaN(index)) index = getWaypointIndex(route);
   if (!hasPrev(route, index)) return;
   if (route.mirror) ++index;
   if (!route.mirror) --index;
@@ -1028,13 +1024,12 @@ let getPrev = function(route, index){
 
 let next = function(route){
   if (!hasNext(route)) return;
-  if (route.mirror) set(route, --route.index);
-  if (!route.mirror) set(route, ++route.index);
+  set(route, getWaypointIndex(route)+1);
 };
 
 let set = function(route, index){
   if (!route) return;
-  route.index = index;
+  route.index = getWaypointIndex(route, index);
 };
 
 let prev = function(route){
@@ -1044,10 +1039,8 @@ let prev = function(route){
 };
 
 let getLast = function(route){
-  let wp = {};
-  getEntry(route.filename, route.indexToOffset[getIndex(route, route.index)], wp);
   lastMirror = route.mirror;
-  return wp;
+  return get(route, route.indexToOffset.length - 1);
 };
 
 let isLast = function(route, index){
@@ -1111,29 +1104,29 @@ let showRouteMenu = function(){
       onchange: v=>{
         if (s.route.mirror != v){
           s.route.mirror = v;
-          setIndex(route, 0);
+          setWaypointIndex(s.route, 0);
           removeMenu();
         }
       }
     };
     menu['Select closest waypoint'] = function () {
       if (s.currentPos && s.currentPos.lat){
-        setClosestWaypoint(s.route, null, showProgress); removeMenu();
+        setClosestWaypoint(s.route, 0, showProgress); removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
     };
     menu['Select closest waypoint (not visited)'] = function () {
       if (s.currentPos && s.currentPos.lat){
-        setClosestWaypoint(s.route, getIndex(s.route), showProgress); removeMenu();
+        setClosestWaypoint(s.route, getWaypointIndex(s.route), showProgress); removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
     };
     menu['Select waypoint'] = {
-      value : getIndex(s.route),
+      value : getWaypointIndex(s.route),
       min:0,max:s.route.indexToOffset.length-1,step:1,
-      onchange : v => { set(s.route, v); }
+      onchange : v => { setWaypointIndex(s.route, v); }
     };
     menu['Select waypoint as current position'] = function (){
       let c = get(s.route);
@@ -1274,7 +1267,6 @@ let switchNav = function(){
 };
 
 let setSlicesPage = function(change){
-  print("ssp", change, maxSlicePages, page_slices);
   page_slices -= change;
   if (page_slices >= maxSlicePages){
     page_slices = 0;
@@ -1288,22 +1280,22 @@ let setSlicesPage = function(change){
 let setClosestWaypoint = function(route, startindex, progress){
   let s = WIDGETS.gpstrek.getState();
 
-  let searchAfterMin = !startindex;
+  let stopSearchAfterFirstMatch = !isFinite(startindex);
   if (!startindex) startindex = 0;
   if (startindex >= s.route.indexToOffset.length) startindex = s.route.indexToOffset.length - 1;
   if (startindex < 0) startindex = 0;
+
   if (!s.currentPos.lat){
     set(route, startindex);
     return;
   }
-  let minDist = Number.MAX_VALUE;
+  let minDist = SETTINGS.maxDistForWaypointSearch;
   let mincount = 0;
 
   let currentPos = s.currentPos;
   let count = 0;
   let wp;
   do {
-    count++;
     if (progress && (count % 5 == 0)) progress(count+startindex, "Searching", route.indexToOffset.length);
     wp = getNext(route, startindex, count);
     if (!wp) break;
@@ -1312,8 +1304,9 @@ let setClosestWaypoint = function(route, startindex, progress){
       minDist = curDist;
       mincount = count;
     } else {
-      if (searchAfterMin) break;
+      if (stopSearchAfterFirstMatch) break;
     }
+    count++;
   } while (wp);
   set(route, startindex + mincount);
 };
@@ -1323,7 +1316,7 @@ const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
   getProgress: function() {
-    return (getIndex(WIDGETS.gpstrek.getState().route) + 1) + "/" + WIDGETS.gpstrek.getState().route.indexToOffset.length;
+    return (getWaypointIndex(WIDGETS.gpstrek.getState().route) + 1) + "/" + WIDGETS.gpstrek.getState().route.indexToOffset.length;
   },
   getTarget: function (){
     return get(WIDGETS.gpstrek.getState().route);
@@ -1419,14 +1412,14 @@ let updateRouting = function() {
     if (currentDistanceToTarget < minimumDistance){
       minimumDistance = currentDistanceToTarget;
     }
-    let nextAvailable = hasNext(s.route);
-    if (currentDistanceToTarget < SETTINGS.waypointChangeDist && nextAvailable){
+    while (hasNext(s.route) && distance(s.currentPos,get(s.route)) < SETTINGS.waypointChangeDist) {
       next(s.route);
       minimumDistance = Number.MAX_VALUE;
-    } else if (!isMapOverview && lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
+    }
+    if (SETTINGS.autosearch && !isMapOverview && lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
       stopDrawing();
       Bangle.buzz(1000);
-      setClosestWaypoint(s.route, getIndex(s.route), showProgress);
+      setClosestWaypoint(s.route, getWaypointIndex(s.route));
       next(s.route);
       minimumDistance = Number.MAX_VALUE;
       lastSearch = Date.now();
