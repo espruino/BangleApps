@@ -16,7 +16,7 @@
  */
 exports.pattern = pattern => new Promise(resolve => {
   function doBuzz() {
-    if (pattern == "") resolve();
+    if (pattern == "") return resolve();
     var c = pattern[0];
     pattern = pattern.substr(1);
     const BUZZ_WEAK = 0.25, BUZZ_STRONG = 1;
