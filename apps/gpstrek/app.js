@@ -530,6 +530,9 @@ let getMapSlice = function(){
         drawPath(false, currentRouteIndex);
 
         addToTaskQueue(drawInterface);
+
+        addToTaskQueue(drawCurrentPos);
+
         addToTaskQueue(()=>{
           lastCourse = course;
           lastStart = startingPoint;
