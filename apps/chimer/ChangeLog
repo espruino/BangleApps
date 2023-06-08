@@ -1,2 +1,3 @@
 0.01: Initial Creation
 0.02: Fixed some sleep bugs. Added a sleep mode toggle
+0.03: Reduce busy-loop and code
