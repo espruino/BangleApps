@@ -813,16 +813,14 @@ let onAction = function(_,xy){
         } else {
           mapLiveScale *= 1.5;
         }
-    } else if (xy && xy.y > Bangle.appRect.y){
-      isMapOverview = !isMapOverview;
-      if (!isMapOverview){
-        mapOverviewX = g.getWidth()/2;
-        mapOverviewY = g.getHeight()/2;
-      }
+    } else if (isMapOverview && xy && xy.y > Bangle.appRect.y){
+      scrolling = !scrolling;
     }
     startDrawing();
   }
 };
+
+let scrolling = false;
 
 let onSwipe = function(dirLR,dirUD){
   let s = WIDGETS.gpstrek.getState();
@@ -830,14 +828,24 @@ let onSwipe = function(dirLR,dirUD){
   forceMapRedraw = true;
 
   if (s.mode == MODE_MAP){
-    if (dirLR > 0) {
-      switchMode(MODE_MENU);
-    } else if (dirLR < 0) {
-      switchMode(MODE_SLICES);
-    }
-    if (dirUD){
-      isMapOverview = !isMapOverview;
-      startDrawing();
+    if (!scrolling){
+      if (dirLR > 0) {
+        switchMode(MODE_MENU);
+      } else if (dirLR < 0) {
+        switchMode(MODE_SLICES);
+      }
+      if (dirUD){
+        isMapOverview = !isMapOverview;
+        if (!isMapOverview){
+          mapOverviewX = g.getWidth()/2;
+          mapOverviewY = g.getHeight()/2;
+          scrolling = false;
+        }
+        startDrawing();
+      }
+    } else {
+      mapOverviewX += dirLR * SETTINGS.overviewScroll;
+      mapOverviewY += dirUD * SETTINGS.overviewScroll;
     }
   } else if (s.mode == MODE_SLICES){
     if (dirLR > 0) {
@@ -863,23 +871,6 @@ let onSwipe = function(dirLR,dirUD){
       }
     }
   }
-
-
-/*
-  if (WIDGETS.gpstrek.getState().route && global.screen == 1 && isMapOverview){
-    stopDrawing();
-    if (dirLR) mapOverviewX += SETTINGS.overviewScroll*dirLR;
-    if (dirUD) mapOverviewY += SETTINGS.overviewScroll*dirUD;
-    startDrawing();
-  } else {
-    if (dirUD < 0) {
-      nextSlicePage();
-    } else if (dirUD > 0) {
-      prevSlicePage();
-    } else {
-      nextScreen();
-    }
-  }*/
 };
 
 
