@@ -32,7 +32,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
       // indicate focus - make background reddish
       //if (clockInfoMenu.focus) g.setBgColor(g.blendColor(g.theme.bg, "#f00", 0.25));
       if (clockInfoMenu.focus) g.setColor("#f00");
-      g.clearRect(o.x, o.y, o.x+o.w-1, o.y+o.h);
+      g.clearRect(o.x, o.y, o.x+o.w-1, o.y+o.h-1);
       if (clockInfoInfo) {
         var x = o.x;
         if (clockInfoInfo.img) {
