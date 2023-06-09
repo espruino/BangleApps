@@ -17,6 +17,7 @@ require("messages").pushMessage({"t":"add","id":1575479849,"src":"Skype","title"
 // maps
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:12345,action:"left_slight",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"Main St / I-29 ALT / Centerpoint Dr",distance:12345,action:"left_slight",eta:"08:39"})
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
@@ -84,12 +85,13 @@ function showMapMessage(msg) {
   if (msg.distance!==undefined)
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
-    if (msg.instr.includes("towards") || msg.instr.includes("toward")) {
-      m = msg.instr.split(/towards|toward/);
+    var instr = msg.instr.replace(/\s*\/\s*/g," \/\n"); // convert slashes to newlines
+    if (instr.includes("towards") || instr.includes("toward")) {
+      m = instr.split(/towards|toward/);
       target = m[0].trim();
       street = m[1].trim();
     }else
-      target = msg.instr;
+      target = instr;
   }
   switch (msg.action) {
   case "continue": img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";break;
