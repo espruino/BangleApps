@@ -13,6 +13,8 @@ function loadLocation () {
   }
 }
 
+Bangle.setUI("clock");
+Bangle.loadWidgets();
 const latlon = loadLocation();
 const lat = latlon.lat || 41.38;
 const lon = latlon.lon || 2.168;
@@ -177,6 +179,7 @@ function ypos (x) {
 
 let sunRiseX = 0;
 let sunSetX = 0;
+const sinStep = 12;
 
 function drawSinuses () {
   let x = 0;
@@ -187,14 +190,14 @@ function drawSinuses () {
   let y = oy;
   for (i = 0; i < w; i++) {
     x = i;
-    x2 = x + 6;
+    x2 = x + sinStep + 1;
     y2 = ypos(i);
     if (x == 0) {
       y = y2;
     }
     g.drawLine(x, y, x2, y2);
     y = y2;
-    i += 5; // no need to draw all steps
+    i += sinStep; // no need to draw all steps
   }
 
   // sea level line
@@ -293,7 +296,6 @@ function renderScreen () {
   g.setBgColor(0, 0, 0);
   g.clear();
   if (realTime) {
-    Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
   drawGlow();
