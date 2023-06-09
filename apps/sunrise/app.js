@@ -204,9 +204,9 @@ function drawSinuses () {
   const sl1 = seaLevel(hh1);
   sunRiseX = xfromTime(hh0) + (r / 2);
   sunSetX = xfromTime(hh1) + (r / 2);
-  g.setColor(0, 0, 1);
+  g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0, w, sl1);
-  g.setColor(0, 0, 1);
+  g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0 + 1, w, sl1 + 1);
   /*
   g.setColor(0, 0, 1);
@@ -311,7 +311,11 @@ function drawClock () {
   const mins = ((fmins < 10) ? '0' : '') + (0 | fmins);
   curTime = hours + ':' + mins;
   g.setFont('Vector', 30);
-  g.setColor(1, 1, 1);
+  if (realTime) {
+    g.setColor(1, 1, 1);
+  } else {
+    g.setColor(0, 1, 1);
+  }
   g.drawString(curTime, w / 1.9, ypos);
   // day-month
   if (realTime) {
@@ -324,13 +328,13 @@ function drawClock () {
 }
 
 function renderScreen () {
+  g.setColor(0, 0, 0);
+  g.fillRect(0, 30, w, h);
   realPos = xfromTime((new Date()).getHours());
   g.setFontAlign(-1, -1, 0);
-  g.setBgColor(0, 0, 0);
-  g.clear();
-  if (realTime) {
-    Bangle.drawWidgets();
-  }
+
+  Bangle.drawWidgets();
+
   drawGlow();
   drawSinuses();
   drawTimes();
@@ -360,7 +364,11 @@ renderScreen();
 realPos = xfromTime((new Date()).getHours());
 
 function initialAnimationFrame () {
-  curPos += (realPos - curPos) / 3;
+  let distance = (realPos - curPos) / 4;
+  if (distance > 20) {
+    distance = 20;
+  }
+  curPos += distance;
   pos = curPos;
   renderScreen();
   if (curPos >= realPos) {
@@ -382,7 +390,12 @@ function initialAnimation () {
   initialAnimationFrame();
 }
 
-setInterval(renderScreen, 60 * 1000);
+function main () {
+  g.setBgColor(0, 0, 0);
+  g.clear();
+  setInterval(renderScreen, 60 * 1000);
+  pos = 0;
+  initialAnimation();
+}
 
-pos = 0;
-initialAnimation();
+main();
