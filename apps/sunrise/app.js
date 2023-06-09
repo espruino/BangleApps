@@ -177,6 +177,7 @@ function ypos (x) {
 
 let sunRiseX = 0;
 let sunSetX = 0;
+const sinStep = 12;
 
 function drawSinuses () {
   let x = 0;
@@ -187,14 +188,14 @@ function drawSinuses () {
   let y = oy;
   for (i = 0; i < w; i++) {
     x = i;
-    x2 = x + 6;
+    x2 = x + sinStep + 1;
     y2 = ypos(i);
     if (x == 0) {
       y = y2;
     }
     g.drawLine(x, y, x2, y2);
     y = y2;
-    i += 5; // no need to draw all steps
+    i += sinStep; // no need to draw all steps
   }
 
   // sea level line
@@ -318,4 +319,5 @@ Bangle.on('tap', () => {
 });
 renderScreen();
 
+Bangle.setUI("clock");
 setInterval(renderScreen, 60 * 1000);
