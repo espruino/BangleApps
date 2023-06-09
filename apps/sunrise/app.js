@@ -7,7 +7,7 @@ let location;
 // requires the myLocation app
 function loadLocation () {
   try {
-    return require('Storage').readJSON(LOCATION_FILE, 1) || {};
+    return require('Storage').readJSON(LOCATION_FILE, 1);
   } catch (e) {
     return { };
   }
