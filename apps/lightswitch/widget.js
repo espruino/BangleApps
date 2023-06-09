@@ -57,8 +57,7 @@
         );
       } else {
         // backlight off
-        let innerColorWhenOff = g.getBgColor();
-        g.setColor(innerColorWhenOff);
+        g.setColor(g.theme.bg);
       }
       // draw circle
       g.drawImage(atob("CwuBAB8H8f9/////////f8fwfAA="), this.x + 6, this.y + 6);
