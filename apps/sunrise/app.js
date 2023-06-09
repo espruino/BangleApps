@@ -13,6 +13,8 @@ function loadLocation () {
   }
 }
 
+Bangle.setUI("clock");
+Bangle.loadWidgets();
 const latlon = loadLocation();
 const lat = latlon.lat || 41.38;
 const lon = latlon.lon || 2.168;
@@ -294,7 +296,6 @@ function renderScreen () {
   g.setBgColor(0, 0, 0);
   g.clear();
   if (realTime) {
-    Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
   drawGlow();
@@ -319,5 +320,4 @@ Bangle.on('tap', () => {
 });
 renderScreen();
 
-Bangle.setUI("clock");
 setInterval(renderScreen, 60 * 1000);
