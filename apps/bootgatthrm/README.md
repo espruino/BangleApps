@@ -1,16 +1,16 @@
-# BLE GATT Battery Service
+# BLE GATT HRM Service
 
-Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.
+Adds the GATT HRM Service to advertise the current HRM over Bluetooth.
 
 ## Usage
 
 This boot code runs in the background and has no user interface.
 
-## Requests
-
-If you have any suggestions or ideas please post in [this forum thread](http://forum.espruino.com/conversations/351959/),
-or [@jjok](https://github.com/jjok) in your Github issue.
-
 ## Creator
 
-[Jonathan Jefferies](https://github.com/jjok)
+[Another Stranger](https://github.com/anotherstranger)
+
+## Aknowledgements
+
+Special thanks to [Jonathan Jefferies](https://github.com/jjok) for creating the
+bootgattbat app, which was the inspiration for this App!
