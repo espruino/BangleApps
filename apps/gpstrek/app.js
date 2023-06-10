@@ -1083,6 +1083,7 @@ let handleLoading = function(c){
   E.showMenu();
   let s = WIDGETS.gpstrek.getState();
   s.route = loadRouteData(c, showProgress);
+  if(SETTINGS.autosearch) setClosestWaypoint(s.route, 0, showProgress);
   s.waypoint = null;
   removeMenu();
 };
