@@ -22,7 +22,7 @@ const SETTINGS = {
   minPosChange: 5, //position change needed in pixels before redrawing the map
   waypointChangeDist: 50, //distance in m to next waypoint before advancing automatically
   queueWaitingTime: 5, // waiting time during processing of task queue items when running with timeouts
-  autosearch: false,
+  autosearch: true,
   maxDistForWaypointSearch: 300
 };
 
@@ -1401,23 +1401,21 @@ let lastSearch = 0;
 
 let updateRouting = function() {
   let s = WIDGETS.gpstrek.getState();
-  if (s.route && s.currentPos.lat) {
+  if (s.mode != MODE_MENU && s.route && s.currentPos.lat) {
     let currentDistanceToTarget = distance(s.currentPos,get(s.route));
     if (currentDistanceToTarget < minimumDistance){
       minimumDistance = currentDistanceToTarget;
     }
+    if (SETTINGS.autosearch && !isMapOverview && lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
+      Bangle.buzz(1000);
+      setClosestWaypoint(s.route, getWaypointIndex(s.route));
+      minimumDistance = Number.MAX_VALUE;
+      lastSearch = Date.now();
+    }
+    let counter = 0;
     while (hasNext(s.route) && distance(s.currentPos,get(s.route)) < SETTINGS.waypointChangeDist) {
       next(s.route);
       minimumDistance = Number.MAX_VALUE;
-    }
-    if (SETTINGS.autosearch && !isMapOverview && lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
-      stopDrawing();
-      Bangle.buzz(1000);
-      setClosestWaypoint(s.route, getWaypointIndex(s.route));
-      next(s.route);
-      minimumDistance = Number.MAX_VALUE;
-      lastSearch = Date.now();
-      startDrawing();
     }
   }
 };
@@ -1510,8 +1508,6 @@ let draw = function(){
   }
 
   firstDraw = false;
-
-  updateRouting();
   lastDrawnMode = s.mode;
 
   if (scheduleDraw){
@@ -1520,6 +1516,8 @@ let draw = function(){
 };
 
 switchMode(MODE_SLICES);
+
+setInterval(updateRouting, 500);
 
 clear();
 }
