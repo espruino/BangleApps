@@ -326,6 +326,7 @@ let getMapSlice = function(){
         if (prevPoint && prevPoint.lat) current = Bangle.project(prevPoint);
       }
 
+      const interfaceHeight = g.getHeight()*0.1;
       const errorMarkerSize=3;
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
@@ -342,16 +343,17 @@ let getMapSlice = function(){
       };
 
       let drawInterface = function(){
+
         graphics.setClipRect(x,y,x+width,y+height);
         graphics.setFont("Vector",25).setFontAlign(0,0);
         graphics.setColor(graphics.theme.fg);
-        graphics.clearRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-        graphics.drawRect(x,y+height-g.getHeight()*0.2,x+width/4,y+height-1);
-        graphics.drawString("-", x+width*0.125,y+height-g.getHeight()*0.1);
+        graphics.clearRect(x,y+height-interfaceHeight,x+width,y+height-1);
 
-        graphics.clearRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-        graphics.drawRect(x+width*0.75,y+height-g.getHeight()*0.2,x+width-1,y+height-1);
-        graphics.drawString("+", x+width*0.875,y+height-g.getHeight()*0.1);
+        graphics.drawRect(x,y+height-interfaceHeight,x+width/4,y+height-1);
+        graphics.drawString("-", x+width*0.125,y+height-interfaceHeight*0.5);
+
+        graphics.drawRect(x+width*0.75,y+height-interfaceHeight,x+width-1,y+height-1);
+        graphics.drawString("+", x+width*0.875,y+height-interfaceHeight*0.5);
 
         let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
         let l = width*0.4;
@@ -362,17 +364,19 @@ let getMapSlice = function(){
           else
             scale = c;
         }
-        graphics.setFontAlign(-1,1).setFont("Vector",14);
-        graphics.drawString(scale+"m",x+width*0.3,y+height-g.getHeight()*0.1, true);
+
+        let scaleHeight = interfaceHeight * 0.2;
+        graphics.setFontAlign(-1,-1).setFont("Vector",12);
+        graphics.drawString(scale+"m",x+width*0.31,y+height-interfaceHeight, true);
         if (isFinite(scale)){
-          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1);
-          graphics.drawLine(x+width*0.3,y+height-g.getHeight()*0.1,x+width*0.3,y+height-g.getHeight()*0.05);
-          graphics.drawLine(x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.1,x+width*0.3+scale*mapScale,y+height-g.getHeight()*0.05);
+          graphics.drawLine(x+width*0.3,y+height-scaleHeight,x+width*0.3+scale*mapScale,y+height-scaleHeight);
+          graphics.drawLine(x+width*0.3,y+height-scaleHeight,x+width*0.3,y+height-interfaceHeight);
+          graphics.drawLine(x+width*0.3+scale*mapScale,y+height-scaleHeight,x+width*0.3+scale*mapScale,y+height-interfaceHeight);
         }
       };
 
       let drawMapCompass = function(){
-        graphics.setClipRect(x,y,x+width,y+height);
+        graphics.setClipRect(x,y,x+width,y+height-interfaceHeight-1);
         graphics.setFont6x15();
         let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
         let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
@@ -403,7 +407,7 @@ let getMapSlice = function(){
       };
 
       let drawCurrentPos = function(){
-        graphics.setClipRect(x,y,x+width,y+height);
+        graphics.setClipRect(x,y,x+width,y+height-interfaceHeight-1);
         graphics.setColor(graphics.theme.fg);
 
         if (currentPosFromGPS) {
@@ -413,7 +417,7 @@ let getMapSlice = function(){
           if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
           if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
           if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-          if (pos[1] > y + height) { pos[1] = y + height - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize,x + width ,y+height);}
+          if (pos[1] > y + height - interfaceHeight -1) { pos[1] = y + height - errorMarkerSize - 5-interfaceHeight-1; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize-interfaceHeight-1,x + width ,y+height-interfaceHeight-1);}
 
           graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
           graphics.setColor(0,1,0);
@@ -440,9 +444,7 @@ let getMapSlice = function(){
         clearTaskQueue();
 
         //clear map view
-        graphics.clearRect(x,y,x+width,y+height-g.getHeight()*0.2-1);
-        //clear space between buttons
-        graphics.clearRect(x+width/4+1,y+height-g.getHeight()*0.2,x+width*0.75-1,y+height-1);
+        graphics.clearRect(x,y,x+width,y+height-interfaceHeight-1);
 
         if (!isMapOverview){
           drawCurrentPos();
@@ -466,7 +468,7 @@ let getMapSlice = function(){
           let drawChunk = function(data){
             if (data.breakLoop) return;
             graphics.setColor(graphics.theme.fg);
-            graphics.setClipRect(x,y,x+width,y+height);
+            graphics.setClipRect(x,y,x+width,y+height-interfaceHeight-1);
             let finish;
             let last;
             let toDraw;
@@ -807,15 +809,15 @@ let onAction = function(_,xy){
     if (xy && xy.y > Bangle.appRect.y+Bangle.appRect.h-g.getHeight()*0.2 && xy.y <= Bangle.appRect.y2){
       if (xy.x < Bangle.appRect.x + Bangle.appRect.w/2)
         if (isMapOverview) {
-          mapOverviewScale /= 1.5;
+          mapOverviewScale /= 1.33;
         } else {
-          mapLiveScale /= 1.5;
+          mapLiveScale /= 1.33;
         }
       else
         if (isMapOverview) {
-          mapOverviewScale *= 1.5;
+          mapOverviewScale *= 1.33;
         } else {
-          mapLiveScale *= 1.5;
+          mapLiveScale *= 1.33;
         }
     } else if (isMapOverview && xy && xy.y > Bangle.appRect.y){
       scrolling = !scrolling;
