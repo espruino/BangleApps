@@ -172,14 +172,7 @@ let matchFontSize = function(graphics, text, height, width){
 };
 
 let getDoubleLineSlice = function(title1,title2,provider1,provider2){
-  let lastValue1 = 0;
-  let lastValue2 = 0;
   return {
-    refresh: function (){
-      let bigChange1 = (Math.abs(lastValue1 - provider1()) > 1);
-      let bigChange2 = (Math.abs(lastValue2 - provider2()) > 1);
-      return (bigChange1 || bigChange2);
-    },
     draw: function (graphics, x, y, height, width){
       lastDrawn = Date.now();
       if (typeof title1 == "function") title1 = title1();
@@ -1464,9 +1457,7 @@ let updateSlices = function(){
   if (s.currentPos && s.currentPos.lat && (s.route || s.waypoint)) {
     slices.push(finishSlice);
   }
-  if ((s.route && s.route.down !== undefined) || s.down != undefined) {
-    slices.push(eleSlice);
-  }
+  slices.push(eleSlice);
   slices.push(statusSlice);
   slices.push(status2Slice);
   slices.push(healthSlice);
