@@ -86,6 +86,16 @@ function eventToAlarm(event, offsetMs) {
 }
 
 function upload() {
+  // kick off all the (active) timers
+  const now = new Date();
+  const currentTime = now.getHours()*3600000
+    + now.getMinutes()*60000
+    + now.getSeconds()*1000;
+
+  for (const alarm of alarms)
+    if (alarm.timer != undefined && alarm.on)
+      alarm.t = currentTime + alarm.timer;
+
   Util.showModal("Saving...");
   Util.writeStorage("sched.json", JSON.stringify(alarms), () => {
     Puck.write(`\x10require("sched").reload();\n`, () => {
@@ -125,9 +135,7 @@ function renderAlarm(alarm, exists) {
       tdType.textContent = "Timer";
       inputTime.onchange = e => {
         alarm.timer = hmsToMs(inputTime.value);
-        const now = new Date();
-        const currentTime = (now.getHours()*3600000)+(now.getMinutes()*60000)+(now.getSeconds()*1000);
-        alarm.t = currentTime + alarm.timer;
+        // alarm.t is set on upload
       };
     } else {
       tdType.textContent = "Alarm";
