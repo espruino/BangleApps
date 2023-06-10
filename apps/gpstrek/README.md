@@ -24,13 +24,9 @@ If they are on display, the source is the magnetometer and you should keep the b
 
 ### Route
 
-Routes can be created from .gpx files containing "trkpt" elements with this script: [createRoute.sh](createRoute.sh)
-
-The resulting file needs to be uploaded to the watch and will be shown in the file selection menu.
-
 The route can be mirrored to switch start and destination.
 
-If the GPS position is closer than 30m to the next waypoint, the route is automatically advanced to the next waypoint.
+If the GPS position is close enough to the next waypoint, the route is automatically advanced to the next waypoint.
 
 ### Waypoints
 
