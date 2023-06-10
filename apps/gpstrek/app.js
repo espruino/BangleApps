@@ -509,6 +509,7 @@ let getMapSlice = function(){
               data.poly.push((startingPoint.y-toDraw.y)*-1);
               if (j < SETTINGS.mapChunkSize - 1) data.i = data.i + (reverse?-1:1);
             }
+            finish = isLast(route, data.i - 1);
 
             data.poly = graphics.transformVertices(data.poly, mapTrans);
             graphics.drawPoly(data.poly, false);
@@ -525,13 +526,10 @@ let getMapSlice = function(){
               }
               graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
             }
-
-            finish = isLast(route, currentRouteIndex + data.i);
             
             if (finish)
               graphics.drawImage(finishIcon, data.poly[data.poly.length - 2] -5, data.poly[data.poly.length - 1] - 4);
-            
-            if (last) {
+            else if (last) {
               graphics.drawImage(cross, data.poly[data.poly.length - 2] - cross.width/2, data.poly[data.poly.length - 1] - cross.height/2);
             }
 
@@ -1055,12 +1053,12 @@ let prev = function(route){
 };
 
 let getLast = function(route){
-  lastMirror = route.mirror;
   return get(route, route.indexToOffset.length - 1);
 };
 
 let isLast = function(route, index){
   if (isNaN(index)) index = route.index;
+  index = getWaypointIndex(route, index);
   return route.indexToOffset.length - 1 == index;
 };
 
