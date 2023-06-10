@@ -229,6 +229,24 @@ XX       XX
 XX       XX
 `);
 
+const move = Graphics.createImage(`
+      X
+     XXX
+    X X X
+      X
+      X
+  X   X   X
+ X    X    X
+XXXXXXXXXXXXX
+ X    X    X
+  X   X   X
+      X
+      X
+    X X X
+     XXX
+      X
+`);
+
 const point = Graphics.createImage(`
    XX
   XXXX
@@ -331,6 +349,8 @@ let getMapSlice = function(){
       let compassHeight = height*0.4;
       if (!SETTINGS.mapCompass) compassHeight=0;
       if (compassHeight > g.getHeight()*0.1) compassHeight = g.getHeight()*0.1;
+      let compassCenterX = x + errorMarkerSize + 8 + compassHeight;
+      let compassCenterY = y + errorMarkerSize + 8 + compassHeight;
       let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
       let mapCenterY = isMapOverview?mapOverviewY:y+height*0.4;
       let mapScale = isMapOverview?mapOverviewScale : mapLiveScale;
@@ -379,8 +399,6 @@ let getMapSlice = function(){
         graphics.setClipRect(x,y,x+width,y+height-interfaceHeight-1);
         graphics.setFont6x15();
         let compass = [ 0,0, 0, compassHeight, 0, -compassHeight, compassHeight,0,-compassHeight,0 ];
-        let compassCenterX = x + errorMarkerSize + 5 + compassHeight;
-        let compassCenterY = y + errorMarkerSize + 5 + compassHeight + 3;
         compass = graphics.transformVertices(compass, {
           rotate:require("graphics_utils").degreesToRadians(180-course),
           x: compassCenterX,
@@ -445,6 +463,13 @@ let getMapSlice = function(){
 
         //clear map view
         graphics.clearRect(x,y,x+width,y+height-interfaceHeight-1);
+
+        if (isMapOverview && scrolling){
+          addToTaskQueue(()=>{
+            graphics.setColor(graphics.theme.fg);
+            graphics.drawImage(move, compassCenterX-move.width/2, compassCenterY-move.height/2);
+          });
+        }
 
         if (!isMapOverview){
           drawCurrentPos();
