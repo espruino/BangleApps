@@ -6,11 +6,17 @@ This app is inspired by and uses code from "GPS Navigation" and "Navigation comp
 
 ## Usage
 
-Tapping or button to switch to the next information display, swipe right for the menu.
+Swipe left and right to change between map, info and menu. Swipe up and down in map and info display to change the displayed information.
 
-Choose either a route or a waypoint as basis for the display.
+### Menu
+Choose either a route or a waypoint as basis for the display and configure settings to your liking.
 
-After this selection and availability of a GPS fix the compass will show a checkered flag for your destination and a green dot for possibly available waypoints on the way.
+### Map
+The map shows the loaded route. Current waypoint is a green dot with a circle around it that denotes how close you need to be to autoselect the next waypoint as target.
+Secondary map mode is an overview map. Tap the overview to enter scrolling mode and move it around. Tap again to get back to normal function navigation.
+
+### Info
+After selecting a target and availability of a GPS fix the compass will show a checkered flag for your destination and a green dot for possibly available waypoints on the way.
 Waypoints are shown with name if available and distance to waypoint.
 
 As long as no GPS signal is available the compass shows the heading from the build in magnetometer. When a GPS fix becomes available, the compass display shows the GPS course. This can be differentiated by the display of bubble levels on top and sides of the compass.
