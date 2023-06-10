@@ -94,6 +94,14 @@ function getKeys(characterArrays) {
   }
 }
 
+/**
+ * Given a set of characters, determine whether or not this needs to be a matryoshka key, a basic key, or a special key.
+ * Then generate that key. If the key is a matryoshka key, we queue up the generation of its sub-keys for later to
+ * improve load times.
+ * @param chars
+ * @param i
+ * @returns {Promise<unknown>}
+ */
 function generateKeyFromChars(chars, i) {
   return new Promise((resolve, reject) => {
     let special;
@@ -170,9 +178,11 @@ function getKeyByIndex(charSet, i, special) {
 
 /**
  * This is probably the most intense part of this keyboard library. If you don't do it ahead of time, it will happen
- * when you call the keyboard, and it can take up to 1.5 seconds for a full keyboard. Not a super great user experience
- * SO if you have a tiny keyset, don't worry about it so much, but if you want to maximize performance, generate
- * a keyboard ahead of time and pass it into the "keyboard" argument of the object in the "input" function.
+ * when you call the keyboard, and it can take up to 0.5 seconds for a full alphanumeric keyboard. Depending on what
+ * is an acceptable user experience for you, and how many keys you are actually generating, you may choose to do this
+ * ahead of time and pass the result to the "input" function of this library. NOTE: This function would need to be
+ * called once per key set - so if you have a keyboard with a "shift" key you'd need to run it once for your base
+ * keyset and once for your shift keyset.
  * @param charSets
  * @returns {Promise<unknown>}
  */
@@ -184,6 +194,7 @@ function generateKeyboard(charSets) {
   return getKeys(charSets);
 }
 
+// Default layout
 const defaultCharSet = [
   ["a", "b", "c", "d", "e", "f", "g", "h", "i"],
   ["j", "k", "l", "m", "n", "o", "p", "q", "r"],
@@ -196,6 +207,7 @@ const defaultCharSet = [
   "del"
 ];
 
+// Default layout with shift pressed
 const defaultCharSetShift = [
   ["A", "B", "C", "D", "E", "F", "G", "H", "I"],
   ["J", "K", "L", "M", "N", "O", "P", "Q", "R"],
@@ -241,7 +253,7 @@ function input(options) {
 
   /**
    * Draw an individual keyboard key - handles special formatting and the rectangle pad, followed by the character
-   * rendering. Returns a promise so that you can do many of these in a loop without blocking the thread.
+   * rendering.
    * @param key
    */
   function drawKey(key) {
@@ -347,7 +359,7 @@ function input(options) {
   }
 
   /**
-   * Based on a touch even, determine which key was pressed by the user.
+   * Based on a touch event, determine which key was pressed by the user.
    * @param touchEvent
    * @param keys
    * @returns {*}
