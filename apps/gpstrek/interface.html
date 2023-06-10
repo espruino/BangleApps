@@ -6,6 +6,72 @@
     <style>
     .badgeerror[data-badge]::after { background-color: red; }
     </style>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      var converted;
+      var filename;
+
+      function handleOnload(readerEvent){
+        var content = readerEvent.target.result;
+
+        var xsltProcessor = new XSLTProcessor();
+
+        var myXMLHTTPRequest = new XMLHttpRequest();
+        myXMLHTTPRequest.open("GET", "convert.xsl", false);
+        myXMLHTTPRequest.send(null);
+
+        var xslRef = myXMLHTTPRequest.responseXML;
+
+        xsltProcessor.importStylesheet(xslRef);
+
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(content, "text/xml");
+
+        var fragment = xsltProcessor.transformToFragment(doc, document);
+
+        var serializer = new XMLSerializer();
+        converted = serializer.serializeToString(fragment);
+
+        document.getElementById('upload').disabled = false;
+      }
+
+      function handleFileChange(event){
+        document.getElementById('error').innerHTML = "";
+        var file = event.target.files[0];
+        if (!file) {
+          document.getElementById('error').innerHTML = "No valid file selected";
+          return;
+        }
+
+        filename = file.name.replace(/\.gpx/,".trf");
+        document.getElementById('fileName').value = filename;
+
+        var reader = new FileReader();
+
+        reader.onload = handleOnload;
+
+        reader.readAsText(file,'UTF-8');
+      }
+
+      function handleClick(event){
+        if (converted){
+          Util.showModal("Saving...");
+          var name = document.getElementById('fileName').value;
+          if (!name || name.length == 0)
+            name = document.getElementById('fileName').placeholder;
+          if (name){
+            Util.writeStorage(name, converted, function() {
+                Util.hideModal();
+            });
+          }
+        } else {
+          document.getElementById('status').innerHTML += "error" + "</br>";
+          document.getElementById('error').innerHTML = "File could not be converted correctly.";
+        }
+      }
+      function onInit() {}
+    </script>
   </head>
   <body>
     <h1>Upload tracks to your watch</h1>
@@ -13,83 +79,15 @@
     <form>
       <input class="form-input" type="file" id="fileSelector"><br/>
       <label class="form-label" for="fileName">Filename on watch (must end with .trf an be shorter than 28 characters total)</label>
-      <input class="form-input" placeholder="route.trf" id="fileName" required pattern="^.{0,24}\.trf$"><br/>
+      <input class="form-input" placeholder="route.trf" id="fileName" pattern="^.{0,24}\.trf$"><br/>
       <button class="btn btn-primary" type="button" id="upload">Upload</button><br/>
     </form>
-  </div>
-    <script src="../../core/lib/interface.js"></script>
-
+    <div id="error"></div>
+    <div id="status"></div>
     <script>
-      var options;
-
-      let converted;
-
-      document.getElementById('fileSelector').addEventListener('change', event => {
-        const file = document.getElementById('fileSelector').files[0];
-        if (!file) {
-            return;
-        }
-
-        var reader = new FileReader();
-        reader.readAsText(file,'UTF-8');
-
-        // here we tell the reader what to do when it's done reading...
-        reader.onload = readerEvent => {
-            var content = readerEvent.target.result; // this is the content!
-            console.log( content );
-
-            const xsltProcessor = new XSLTProcessor();
-
-            // Load the xsl file using synchronous (third param is set to false) XMLHttpRequest
-            const myXMLHTTPRequest = new XMLHttpRequest();
-            myXMLHTTPRequest.open("GET", "convert.xsl", false);
-            myXMLHTTPRequest.send(null);
-
-            const xslRef = myXMLHTTPRequest.responseXML;
-
-            // Finally import the .xsl
-            xsltProcessor.importStylesheet(xslRef);
-
-            const parser = new DOMParser();
-            console.log(file.text);
-            const doc = parser.parseFromString(content, "text/xml");
-
-            console.log(doc);
-
-            const fragment = xsltProcessor.transformToFragment(doc, document);
-
-            let serializer = new XMLSerializer();
-            converted = serializer.serializeToString(fragment);
-            console.log("Fragment", converted);
-
-            let filename = file.name.replaceAll(".gpx",".trf");
-            console.log("New file name", filename);
-
-            if (document.getElementById('fileName').value == ""){
-              document.getElementById('fileName').value = filename;
-            }
-
-            if (converted && converted.length > 0){
-              document.getElementById('upload').disabled = false;
-            }
-        }
-
-
-      });
-
-      document.getElementById('upload').addEventListener('click', event => {
-        Util.showModal("Saving...");
-        let name = document.getElementById('fileName').value;
-        if (!name || name.length == 0)
-          name = document.getElementById('fileName').placeholder;
-        if (name && converted && converted.length > 0){
-          Util.writeStorage(name, converted, function() {
-              Util.hideModal();
-          });
-        }
-      });
-      function onInit() {
-      }
+      document.getElementById('upload').disabled = true;
+      document.getElementById('fileSelector').addEventListener('change', handleFileChange);
+      document.getElementById('upload').addEventListener('click', handleClick);
     </script>
   </body>
 </html>
