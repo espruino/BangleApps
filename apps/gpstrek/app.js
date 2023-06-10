@@ -368,19 +368,20 @@ let getMapSlice = function(){
         graphics.drawRect(x+width*0.75,y+height-interfaceHeight,x+width-1,y+height-1);
         graphics.drawString("+", x+width*0.875,y+height-interfaceHeight*0.5);
 
-        let refs = [100,200,300,400,500,800,1000,2000,5000,10000,50000];
+        let refs = [10,20,50,100,200,300,400,500,800,1000,2000,5000,10000,50000];
         let l = width*0.4;
-        let scale = "<100";
+        let scale = refs[0];
         for (let c of refs){
           if (c*mapScale > l)
             break;
           else
             scale = c;
         }
+        let scaleString = loc.distance(scale, 2);
 
         let scaleHeight = interfaceHeight * 0.2;
         graphics.setFontAlign(-1,-1).setFont("Vector",12);
-        graphics.drawString(scale+"m",x+width*0.31,y+height-interfaceHeight, true);
+        graphics.drawString(scaleString,x+width*0.31,y+height-interfaceHeight, true);
         if (isFinite(scale)){
           graphics.drawLine(x+width*0.3,y+height-scaleHeight,x+width*0.3+scale*mapScale,y+height-scaleHeight);
           graphics.drawLine(x+width*0.3,y+height-scaleHeight,x+width*0.3,y+height-interfaceHeight);
