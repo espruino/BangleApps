@@ -23,7 +23,7 @@ const SETTINGS = {
   waypointChangeDist: 50, //distance in m to next waypoint before advancing automatically
   queueWaitingTime: 5, // waiting time during processing of task queue items when running with timeouts
   autosearch: true,
-  maxDistForWaypointSearch: 300,
+  maxDistForAutosearch: 300,
   autosearchLimit: 3
 };
 
@@ -1299,7 +1299,7 @@ let setSlicesPage = function(change){
   drawInTimeout();
 };
 
-let setClosestWaypoint = function(route, startindex, progress){
+let setClosestWaypoint = function(route, startindex, progress, maxDist){
   let s = WIDGETS.gpstrek.getState();
 
   let stopSearchAfterFirstMatch = !isFinite(startindex);
@@ -1311,7 +1311,8 @@ let setClosestWaypoint = function(route, startindex, progress){
     set(route, startindex);
     return;
   }
-  let minDist = SETTINGS.maxDistForWaypointSearch;
+  if (!maxDist) maxDist = Number.MAX_VALUE;
+  let minDist = maxDist;
   let mincount = 0;
 
   let currentPos = s.currentPos;
@@ -1322,6 +1323,9 @@ let setClosestWaypoint = function(route, startindex, progress){
     wp = getNext(route, startindex, count);
     if (!wp) break;
     let curDist = distance(currentPos, wp);
+    if (curDist > maxDist) {
+      break;
+    }
     if (curDist < minDist){
       minDist = curDist;
       mincount = count;
@@ -1437,7 +1441,7 @@ let updateRouting = function() {
     }
     if (SETTINGS.autosearch && autosearchCounter < SETTINGS.autosearchLimit && !isMapOverview && lastSearch + 15000 < Date.now() && minimumDistance < currentDistanceToTarget - SETTINGS.waypointChangeDist){
       Bangle.buzz(1000);
-      setClosestWaypoint(s.route, getWaypointIndex(s.route));
+      setClosestWaypoint(s.route, getWaypointIndex(s.route), null, SETTINGS.maxDistForAutosearch);
       minimumDistance = Number.MAX_VALUE;
       lastSearch = Date.now();
       autosearchCounter++;
