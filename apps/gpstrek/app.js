@@ -499,7 +499,7 @@ let getMapSlice = function(){
             graphics.setFont6x15().setFontAlign(-1,0);
             for (let c of named){
               if (data.i != 0 || currentPosFromGPS){
-                graphics.drawImage(point, data.poly[c.i]-point.width/2, data.poly[c.i+1]-point.height/2);
+                graphics.drawImage(point, Math.round(data.poly[c.i]-point.width/2), Math.round(data.poly[c.i+1]-point.height/2));
               }
               graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
             }
