@@ -1,7 +1,7 @@
 (back => {
   const S = require('Storage');
 
-  const SETTINGS_FILE = "hwid_a_battery_widget.settings.json";
+  const SETTINGS_FILE = "hwid_batt.settings.json";
   const settings = S.readJSON(SETTINGS_FILE, 1) || {
     showHighMark: true,
   };

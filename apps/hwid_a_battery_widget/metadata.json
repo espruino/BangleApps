@@ -14,5 +14,5 @@
     {"name":"hwid_a_battery_widget.wid.js","url":"widget.js"},
     {"name":"hwid_a_battery_widget.setting.js","url":"settings.js"}
   ],
-  "data": [{"name":"hwid_a_battery_widget.settings.json"}]
+  "data": [{"name":"hwid_batt.settings.json"}]
 }
