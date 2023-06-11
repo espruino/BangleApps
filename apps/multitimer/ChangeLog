@@ -1,4 +1,4 @@
 0.01: Initial version
 0.02: Update for time_utils module
 0.03: Use default Bangle formatter for booleans
-0.04: Merge in alarm app's newer changes:
+0.04: Use sched's triggercheck to run hardmode, and listeners for timer reset
