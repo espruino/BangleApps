@@ -1,6 +1,6 @@
 (function(){
 	const showHighMark = (
-		require("Storage").readJSON("hwid_batt.settings.json",1) || {
+		require("Storage").readJSON("hwid_battwid.settings.json",1) || {
 			showHighMark: true,
 	}).showHighMark;
 
