@@ -275,7 +275,7 @@ exports.enable = () => {
         let currentAlt=500;
         let currentSats=5;
         
-        (() => {
+        modGps(() => {
           currentLat += 0.01;
           if (currentLat > 50) currentLat = 20;
           currentLon += 0.01;
