@@ -1062,7 +1062,17 @@ let isLast = function(route, index){
 };
 
 let removeMenu = function(){
+  let s = WIDGETS.gpstrek.getState();
   E.showMenu();
+  switch(searchNeeded){
+    case 1:
+      setClosestWaypoint(s.route, getWaypointIndex(s.route), showProgress);
+      break;
+    case 2:
+      setClosestWaypoint(s.route, 0, showProgress)
+      break;
+  }
+  searchNeeded = 0;
   onSwipe(-1,0);
 };
 
@@ -1082,9 +1092,8 @@ let handleLoading = function(c){
   E.showMenu();
   let s = WIDGETS.gpstrek.getState();
   s.route = loadRouteData(c, showProgress);
-  if(SETTINGS.autosearch) setClosestWaypoint(s.route, 0, showProgress);
+  if(SETTINGS.autosearch && searchNeeded < 2) searchNeeded = 2;
   s.waypoint = null;
-  removeMenu();
 };
 
 let showRouteSelector  = function(){
@@ -1095,11 +1104,14 @@ let showRouteSelector  = function(){
   };
 
   STORAGE.list(/\.trf$/).sort().forEach((file)=>{
-      menu[file] = ()=>{handleLoading(file);};
+      menu[file] = ()=>{handleLoading(file); showRouteMenu()};
   });
 
   E.showMenu(menu);
 };
+
+// 1 for complete search, 2 for starting at current waypoint
+let searchNeeded = 0;
 
 let showRouteMenu = function(){
   var menu = {
@@ -1118,21 +1130,25 @@ let showRouteMenu = function(){
       onchange: v=>{
         if (s.route.mirror != v){
           s.route.mirror = v;
-          setWaypointIndex(s.route, 0);
-          removeMenu();
+          if(SETTINGS.autosearch)
+            if (searchNeeded < 2) searchNeeded = 2;
+          else
+            setWaypointIndex(s.route, 0);
         }
       }
     };
     menu['Select closest waypoint'] = function () {
       if (s.currentPos && s.currentPos.lat){
-        setClosestWaypoint(s.route, 0, showProgress); removeMenu();
+        if (searchNeeded < 2) searchNeeded = 2;
+        removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
     };
     menu['Select closest waypoint (not visited)'] = function () {
       if (s.currentPos && s.currentPos.lat){
-        setClosestWaypoint(s.route, getWaypointIndex(s.route), showProgress); removeMenu();
+        if (searchNeeded < 1) searchNeeded = 1;
+        removeMenu();
       } else {
         E.showAlert("No position").then(()=>{E.showMenu(menu);});
       }
@@ -1221,8 +1237,8 @@ let showBackgroundMenu = function(){
       "title" : "Background",
       back : showMenu,
     },
-    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); removeMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
-    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); removeMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
+    "Start" : ()=>{ E.showPrompt("Start?").then((v)=>{ if (v) {WIDGETS.gpstrek.start(true); showMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
+    "Stop" : ()=>{ E.showPrompt("Stop?").then((v)=>{ if (v) {WIDGETS.gpstrek.stop(true); showMenu();} else {showMenu();}}).catch(()=>{showMenu();});},
   };
   E.showMenu(menu);
 };
