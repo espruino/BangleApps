@@ -24,7 +24,7 @@
 	function draw() {
 	if (typeof old_x === 'undefined') old_x = this.x;
 	if (typeof old_y === 'undefined') old_y = this.y;
-	var s = 29;
+	var s = width - 1;
 	var x = this.x;
 	var	y = this.y;
 	if ((typeof x === 'undefined') || (typeof y === 'undefined')) {
@@ -65,6 +65,7 @@
 
 	Bangle.on('charging',function(charging) { draw(); });
 	var id = setInterval(()=>WIDGETS["hwid_a_battery_widget"].draw(), intervalLow);
+	var width = 30;
 
-	WIDGETS["hwid_a_battery_widget"]={area:"tr",width:30,draw:draw};
+	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw:draw};
 })();
