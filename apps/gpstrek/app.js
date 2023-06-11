@@ -984,7 +984,7 @@ let loadRouteData = function(filename, progressMonitor){
     if (isFinite(waypoint.alt)) lastSeenAlt = waypoint.alt;
     waypoint = {};
   }
-  routeInfo.count = count-1;
+  routeInfo.count = count;
   loadIndex(routeInfo);
 
   set(routeInfo, 0);
