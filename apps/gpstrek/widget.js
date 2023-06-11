@@ -144,7 +144,7 @@ function start(bg){
   Bangle.setHRMPower(1, "gpstrek");
   Bangle.setCompassPower(1, "gpstrek");
   Bangle.setBarometerPower(1, "gpstrek");
-  initState();
+  
   if (bg){
     if (!state.active) bgChanged = true;
     state.active = true;

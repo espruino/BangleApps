@@ -42,16 +42,6 @@ let init = function(){
   if (!WIDGETS.gpstrek.getState().mode) WIDGETS.gpstrek.getState().mode = MODE_MENU;
 };
 
-let cleanup = function(){
-  if (global.drawTimeout) clearTimeout(global.drawTimeout);
-  delete global.screen;
-  delete global.drawTimeout;
-  delete global.lastDrawnScreen;
-  delete global.firstDraw;
-  delete global.slices;
-  delete global.maxSlicePages;
-};
-
 init();
 scheduleDraw = true;
 
@@ -122,8 +112,6 @@ let cacheAdd = function (filename, result) {
   cache[result.fileOffset] = result;
   cachedOffsets.push(result.fileOffset);
 };
-
-
 
 let getEntry = function(filename, offset, result, noCaching){
   if (offset < 0) return offset;
@@ -883,7 +871,7 @@ let onSwipe = function(dirLR,dirUD){
     if (dirUD){
       setSlicesPage(dirUD);
     }
-  } else if (s.mode == MODE_MENU){
+  } else {
     if (dirLR > 0) {
       switchMode(MODE_SLICES);
     } else if (dirLR < 0) {
