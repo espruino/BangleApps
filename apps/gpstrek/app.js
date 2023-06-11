@@ -672,6 +672,9 @@ let getCompassSlice = function(){
   const buffers = 4;
   let buf = [];
   return {
+    refresh: function(){
+      return Math.abs(lastDrawnValue - compassDataSource.getCourse()) > SETTINGS.minCourseChange;
+    },
     draw: function (graphics, x,y,height,width){
       const max = 180;
       const increment=width/max;
@@ -680,7 +683,6 @@ let getCompassSlice = function(){
 
       let course = isGpsCourse() ? s.currentPos.course : getAveragedCompass();
 
-      if (Math.abs(lastDrawnValue - compassDataSource.getCourse()) < SETTINGS.minCourseChange) return;
       lastDrawnValue = course;
 
       graphics.clearRect(x,y,x+width,y+height);
