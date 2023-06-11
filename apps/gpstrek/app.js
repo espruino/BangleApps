@@ -890,6 +890,7 @@ let onSwipe = function(dirLR,dirUD){
 
 
 let setButtons = function(){
+  Bangle.removeListener("swipe", onSwipe);
   let options = {
     mode: "custom",
     swipe: onSwipe,
@@ -1262,8 +1263,9 @@ let showMenu = function(){
   };
 
   E.showMenu(mainmenu);
+  Bangle.removeListener("swipe", onSwipe);
+  Bangle.on("swipe",onSwipe);
 };
-
 
 let switchMenu = function(){
   stopDrawing();
