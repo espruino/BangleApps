@@ -598,15 +598,12 @@ let getTargetSlice = function(targetDataSource){
         let bearingString = bearing(start,target) + "°";
         let formattedDist = loc.distance(dist,2);
         let distNum = (formattedDist.match(/[0-9\.]+/) || [Infinity])[0];
-        let size = 0.8;
-        let distNumMetrics;
-        while (graphics.stringMetrics(bearingString).width + (distNumMetrics = graphics.stringMetrics(distNum)).width > 0.90 * width){
-          size -= 0.05;
-          graphics.setFont("Vector",Math.floor(height*size));
-        }
-        graphics.drawString(bearingString, x+2, y + (height - distNumMetrics.height)/2);
+
+        matchFontSize(graphics, bearingString + distNum, height*0.8, width);
+        graphics.setFontAlign(-1,-1);
+        graphics.drawString(bearingString, x+2, y);
         graphics.setFontAlign(1,-1);
-        graphics.drawString(distNum, x + width, y + (height - distNumMetrics.height)/2);
+        graphics.drawString(distNum, x + width, y);
         graphics.setFont("Vector",Math.floor(height*0.25));
 
         graphics.setFontAlign(-1,1);
