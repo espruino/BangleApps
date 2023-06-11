@@ -253,6 +253,10 @@ apps.forEach((app,appIdx) => {
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
+      // if settings, suggest adding to datafiles
+      if (file.name.endsWith("setting.js") && !app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+        WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+      }
     }
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
