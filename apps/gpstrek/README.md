@@ -13,6 +13,7 @@ Choose either a route or a waypoint as basis for the display and configure setti
 
 ### Map
 The map shows the loaded route. Current waypoint is a green dot with a circle around it that denotes how close you need to be to autoselect the next waypoint as target.
+The map is centered on the currently selected waypoint and the position will be shown relative to the waypoint. If the position is farther away than can be shown on the display the icon turns red and shows the approximate direction on the border of the map.
 Secondary map mode is an overview map. Tap the overview to enter scrolling mode and move it around. Tap again to get back to normal function navigation.
 
 ### Info
