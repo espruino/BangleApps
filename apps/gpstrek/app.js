@@ -411,11 +411,12 @@ let getMapSlice = function(){
         if (currentPosFromGPS) {
           let pos = graphics.transformVertices([ startingPoint.x - current.x, (startingPoint.y - current.y)*-1 ], mapTrans);
 
-
-          if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
-          if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
-          if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
-          if (pos[1] > y + height - interfaceHeight -1) { pos[1] = y + height - errorMarkerSize - 5-interfaceHeight-1; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize-interfaceHeight-1,x + width ,y+height-interfaceHeight-1);}
+          if (!isMapOverview){
+            if (pos[0] < x) { pos[0] = x + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x+errorMarkerSize,y+height);}
+            if (pos[0] > x + width) {pos[0] = x + width - errorMarkerSize - 5; graphics.setColor(1,0,0).fillRect(x + width - errorMarkerSize,y,x + width ,y+height);}
+            if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
+            if (pos[1] > y + height - interfaceHeight -1) { pos[1] = y + height - errorMarkerSize - 5-interfaceHeight-1; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize-interfaceHeight-1,x + width ,y+height-interfaceHeight-1);}
+          }
 
           if (isMapOverview) {
             graphics.drawImage(arrow, pos[0],pos[1], {rotate: require("graphics_utils").degreesToRadians(course)});
@@ -483,12 +484,14 @@ let getMapSlice = function(){
             let toDraw;
             let named = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
+              data.i = data.i + (reverse?-1:1);
               let p = get(route, data.i);
               if (!p || !p.lat) {
+                data.i = data.i + (reverse?1:-1);
                 data.breakLoop = true;
                 break;
               }
-              if (data.maxWaypoints && Math.abs(data.i) > data.maxWaypoints) {
+              if (data.maxWaypoints && Math.abs(startingIndex - data.i) > data.maxWaypoints) {
                 data.breakLoop = true;
                 last = true;
                 break;
@@ -497,9 +500,8 @@ let getMapSlice = function(){
               if (p.name) named.push({i:data.poly.length,n:p.name});
               data.poly.push(startingPoint.x-toDraw.x);
               data.poly.push((startingPoint.y-toDraw.y)*-1);
-              if (j < SETTINGS.mapChunkSize - 1) data.i = data.i + (reverse?-1:1);
             }
-            finish = isLast(route, data.i - 1);
+            finish = isLast(route, getWaypointIndex(route, data.i));
 
             data.poly = graphics.transformVertices(data.poly, mapTrans);
             graphics.drawPoly(data.poly, false);
@@ -536,8 +538,8 @@ let getMapSlice = function(){
           addToTaskQueue(drawChunk, data);
         };
 
-        drawPath(true, currentRouteIndex);
-        drawPath(false, currentRouteIndex);
+        drawPath(true, currentRouteIndex+1);
+        drawPath(false, currentRouteIndex-1);
 
         addToTaskQueue(drawInterface);
 
@@ -997,14 +999,14 @@ let hasPrev = function(route, index){
 let hasNext = function(route, index, count){
   if (!count) count = 1;
   if (isNaN(index)) index = route.index;
-  return getWaypointIndex(route, index) + count < (getRouteIndex(route).length - 1);
+  return getWaypointIndex(route, index) + count < (getRouteIndex(route).length);
 };
 
 let getNext = function(route, index, count){
   if (!count) count = 1;
   if (isNaN(index)) index = getWaypointIndex(route);
   index += count;
-  if (index >= getRouteIndex(route).length) return;
+  if (index >= getRouteIndex(route).length || index < 0) return;
   let result = {};
   getEntry(route.filename, getRouteIndex(route)[getWaypointIndex(route, index)], result);
   return result;
@@ -1031,13 +1033,7 @@ let setWaypointIndex = function(route, waypointIndex){
 };
 
 let getPrev = function(route, index){
-  if (isNaN(index)) index = getWaypointIndex(route);
-  if (!hasPrev(route, index)) return;
-  if (route.mirror) ++index;
-  if (!route.mirror) --index;
-  let result = {};
-  getEntry(route.filename, getIndex(route)[index], result);
-  return result;
+  return getNext(route, index, -1);
 };
 
 let next = function(route){
@@ -1052,8 +1048,7 @@ let set = function(route, index){
 
 let prev = function(route){
   if (!hasPrev(route)) return;
-  if (route.mirror) set(route, ++route.index);
-  if (!route.mirror) set(route, --route.index);
+  set(route, getWaypointIndex(route)-1);
 };
 
 let getLast = function(route){
