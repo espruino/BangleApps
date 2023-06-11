@@ -11,8 +11,6 @@
   "tags": "widget,battery",
   "provides_widgets" : ["battery"],
   "storage": [
-    {"name":"hwid_a_battery_widget.wid.js","url":"widget.js"},
-    {"name":"hwid_battwid.setting.js","url":"settings.js"}
-  ],
-  "data": [{"name":"hwid_battwid.settings.json"}]
+    {"name":"hwid_a_battery_widget.wid.js","url":"widget.js"}
+  ]
 }

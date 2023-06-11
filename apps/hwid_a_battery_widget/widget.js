@@ -1,9 +1,4 @@
 (function(){
-	const showHighMark = (
-		require("Storage").readJSON("hwid_battwid.settings.json",1) || {
-			showHighMark: true,
-	}).showHighMark;
-
 	const intervalLow  = 60000; // update time when not charging
 	const intervalHigh = 2000; // update time when charging
 	var old_l;
@@ -53,8 +48,6 @@
 
 		g.setColor(levelColor(l));
 		g.fillRect(x+4,y+14+3,xl,y+16+3); // charging bar
-		if (showHighMark)
-			g.fillRect((x+4+100*(s-12)/100)-1,y+14+3,x+4+100*(s-12)/100,y+16+3); // charging bar "full mark"
 		// Show percentage
 		g.setColor(COLORS.black);
 		g.setFontAlign(0,0);
