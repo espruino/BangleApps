@@ -27,6 +27,7 @@ let bgChanged = false;
 
 function saveState(){
   state.saved = Date.now();
+  if (state.route) delete state.route.indexToOffset;
   STORAGE.writeJSON("gpstrek.state.json", state);
 }
 

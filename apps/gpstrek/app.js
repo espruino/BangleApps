@@ -913,6 +913,19 @@ let writeUint32 = function(filename, number, offset, size){
   STORAGE.write(filename,b,offset,size);
 };
 
+let getRouteIndex = function(route){
+  if (!route.indexToOffset) loadIndex(route);
+  return route.indexToOffset;
+}
+
+let getIndexFileName = function(filename){
+  return filename.substring(0,filename.length-1) + "i";
+}
+
+let loadIndex = function(routeInfo){
+  routeInfo.indexToOffset = new Uint24Array(STORAGE.readArrayBuffer(getIndexFileName(routeInfo.filename)),4,routeInfo.count);
+}
+
 let loadRouteData = function(filename, progressMonitor){
   let routeInfo = {};
 
@@ -967,7 +980,8 @@ let loadRouteData = function(filename, progressMonitor){
     if (isFinite(waypoint.alt)) lastSeenAlt = waypoint.alt;
     waypoint = {};
   }
-  routeInfo.indexToOffset = new Uint24Array(STORAGE.readArrayBuffer(indexFileName),4,count);
+  routeInfo.count = count-1;
+  loadIndex(routeInfo);
 
   set(routeInfo, 0);
   return routeInfo;
@@ -981,35 +995,35 @@ let hasPrev = function(route, index){
 let hasNext = function(route, index, count){
   if (!count) count = 1;
   if (isNaN(index)) index = route.index;
-  return getWaypointIndex(route, index) + count < (route.indexToOffset.length - 1);
+  return getWaypointIndex(route, index) + count < (getRouteIndex(route).length - 1);
 };
 
 let getNext = function(route, index, count){
   if (!count) count = 1;
   if (isNaN(index)) index = getWaypointIndex(route);
   index += count;
-  if (index >= route.indexToOffset.length) return;
+  if (index >= getRouteIndex(route).length) return;
   let result = {};
-  getEntry(route.filename, route.indexToOffset[getWaypointIndex(route, index)], result);
+  getEntry(route.filename, getRouteIndex(route)[getWaypointIndex(route, index)], result);
   return result;
 };
 
 let get = function(route, index){
   if (isNaN(index)) index = getWaypointIndex(route);
-  if (index >= route.indexToOffset.length || index < 0) return;
+  if (index >= getRouteIndex(route).length || index < 0) return;
   let result = {};
-  getEntry(route.filename, route.indexToOffset[getWaypointIndex(route, index)], result);
+  getEntry(route.filename, getRouteIndex(route)[getWaypointIndex(route, index)], result);
   return result;
 };
 
 let getWaypointIndex = function(route, index){
   if (isNaN(index)) index = route.index;
-  return route.mirror?route.indexToOffset.length-1-index:index;
+  return route.mirror?getRouteIndex(route).length-1-index:index;
 };
 
 let setWaypointIndex = function(route, waypointIndex){
   if (route.mirror)
-    route.index = route.indexToOffset.length - 1 - waypointIndex;
+    route.index = getRouteIndex(route).length - 1 - waypointIndex;
   else
     route.index = waypointIndex;
 };
@@ -1020,7 +1034,7 @@ let getPrev = function(route, index){
   if (route.mirror) ++index;
   if (!route.mirror) --index;
   let result = {};
-  getEntry(route.filename, route.indexToOffset[index], result);
+  getEntry(route.filename, getIndex(route)[index], result);
   return result;
 };
 
@@ -1041,13 +1055,13 @@ let prev = function(route){
 };
 
 let getLast = function(route){
-  return get(route, route.indexToOffset.length - 1);
+  return get(route, getRouteIndex(route).length - 1);
 };
 
 let isLast = function(route, index){
   if (isNaN(index)) index = route.index;
   index = getWaypointIndex(route, index);
-  return route.indexToOffset.length - 1 == index;
+  return getRouteIndex(route).length - 1 == index;
 };
 
 let removeMenu = function(){
@@ -1128,7 +1142,7 @@ let showRouteMenu = function(){
     };
     menu['Select waypoint'] = {
       value : getWaypointIndex(s.route),
-      min:0,max:s.route.indexToOffset.length-1,step:1,
+      min:0,max:getRouteIndex(s.route).length-1,step:1,
       onchange : v => { setWaypointIndex(s.route, v); }
     };
     menu['Select waypoint as current position'] = function (){
@@ -1285,7 +1299,7 @@ let setClosestWaypoint = function(route, startindex, progress, maxDist){
 
   let stopSearchAfterFirstMatch = !isFinite(startindex);
   if (!startindex) startindex = 0;
-  if (startindex >= s.route.indexToOffset.length) startindex = s.route.indexToOffset.length - 1;
+  if (startindex >= getRouteIndex(s.route).length) startindex = getRouteIndex(s.route).length - 1;
   if (startindex < 0) startindex = 0;
 
   if (!s.currentPos.lat){
@@ -1300,7 +1314,7 @@ let setClosestWaypoint = function(route, startindex, progress, maxDist){
   let count = 0;
   let wp;
   do {
-    if (progress && (count % 5 == 0)) progress(count+startindex, "Searching", route.indexToOffset.length);
+    if (progress && (count % 5 == 0)) progress(count+startindex, "Searching", getRouteIndex(route).length);
     wp = getNext(route, startindex, count);
     if (!wp) break;
     let curDist = distance(currentPos, wp);
@@ -1323,7 +1337,7 @@ const finishIcon = atob("CggB//meZmeZ+Z5n/w==");
 const waypointData = {
   icon: atob("EBCBAAAAAAAAAAAAcIB+zg/uAe4AwACAAAAAAAAAAAAAAAAA"),
   getProgress: function() {
-    return (getWaypointIndex(WIDGETS.gpstrek.getState().route) + 1) + "/" + WIDGETS.gpstrek.getState().route.indexToOffset.length;
+    return (getWaypointIndex(WIDGETS.gpstrek.getState().route) + 1) + "/" + getRouteIndex(WIDGETS.gpstrek.getState().route).length;
   },
   getTarget: function (){
     return get(WIDGETS.gpstrek.getState().route);
