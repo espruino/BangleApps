@@ -24,45 +24,57 @@ function showAlarm(alarm) {
   Bangle.drawWidgets();
 
   let buzzCount = settings.buzzCount;
+  let showPrompt = true;
 
-  E.showPrompt(message, {
-    title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons: { /*LANG*/"Snooze": true, /*LANG*/"Stop": false } // default is sleep so it'll come back in some mins
-  }).then(function (sleep) {
-    buzzCount = 0;
-
-    if (sleep) {
-      if (alarm.ot === undefined) {
-        alarm.ot = alarm.t;
-      }
-      alarm.t += settings.defaultSnoozeMillis;
-      Bangle.emit("alarmSnooze", alarm);
-    } else {
-      let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
-      if (del) {
-        if (alarmIndex >= 0) alarms.splice(alarmIndex, 1);
-      } else {
-        if (alarm.date && alarm.rp) {
-          setNextRepeatDate(alarm);
-        } else if (!alarm.timer) {
-          alarm.last = new Date().getDate();
-        }
-        if (alarm.ot !== undefined) {
-          alarm.t = alarm.ot;
-          delete alarm.ot;
-        }
-        if (!alarm.rp) {
-          alarm.on = false;
-        }
-      }
-      Bangle.emit("alarmDismiss", alarm);
+  if (alarm.triggercheck) {
+    try {
+      const action = eval(alarm.triggercheck);
+      if (action === "skipPrompt")
+        showPrompt = false;
+    } catch (e) {
+      // ignore errors, continue
     }
+  }
+  if (showPrompt) {
+    E.showPrompt(message, {
+      title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
+      buttons: { /*LANG*/"Snooze": true, /*LANG*/"Stop": false } // default is sleep so it'll come back in some mins
+    }).then(function (sleep) {
+      buzzCount = 0;
 
-    // The updated alarm is still a member of 'alarms'
-    // so writing to array writes changes back directly
-    require("sched").setAlarms(alarms);
-    load();
-  });
+      if (sleep) {
+        if (alarm.ot === undefined) {
+          alarm.ot = alarm.t;
+        }
+        alarm.t += settings.defaultSnoozeMillis;
+        Bangle.emit("alarmSnooze", alarm);
+      } else {
+        let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
+        if (del) {
+          if (alarmIndex >= 0) alarms.splice(alarmIndex, 1);
+        } else {
+          if (alarm.date && alarm.rp) {
+            setNextRepeatDate(alarm);
+          } else if (!alarm.timer) {
+            alarm.last = new Date().getDate();
+          }
+          if (alarm.ot !== undefined) {
+            alarm.t = alarm.ot;
+            delete alarm.ot;
+          }
+          if (!alarm.rp) {
+            alarm.on = false;
+          }
+        }
+        Bangle.emit("alarmDismiss", alarm);
+      }
+
+      // The updated alarm is still a member of 'alarms'
+      // so writing to array writes changes back directly
+      require("sched").setAlarms(alarms);
+      load();
+    });
+  }
 
   function buzz() {
     if (settings.unlockAtBuzz) {
@@ -102,7 +114,7 @@ function showAlarm(alarm) {
         date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
         if (date.getDate() != alarm.od) date.setDate(0);
         break;
-      default: 
+      default:
         console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
         break;
     }

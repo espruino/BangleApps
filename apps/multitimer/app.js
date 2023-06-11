@@ -1,6 +1,13 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+const triggercheck = `
+  eval(require("Storage").read("multitimer.ext.js"));
+  buzzCount *= 3;
+  startHM();
+  "skipPrompt"
+`;
+
 var R = Bangle.appRect;
 var layer;
 var drag;
@@ -290,8 +297,13 @@ function editTimer(idx, a) {
       }
     },
     "Hard Mode": {
-      value: !!a.data.hm,
-      onchange: v => a.data.hm = v
+      value: !!a.triggercheck,
+      onchange: v => {
+        if (v)
+          a.triggercheck = triggercheck;
+        else
+          delete a.triggercheck;
+      },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Oneshot": {
@@ -619,8 +631,13 @@ function editAlarm(idx, a) {
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(idx,a);})
     },
     "Hard Mode": {
-      value: !!a.data.hm,
-      onchange: v => a.data.hm = v
+      value: !!a.triggercheck,
+      onchange: v => {
+        if (v)
+          a.triggercheck = triggercheck;
+        else
+          delete a.triggercheck;
+      },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Oneshot": {

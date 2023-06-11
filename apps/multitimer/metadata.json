@@ -14,7 +14,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"multitimer.app.js","url":"app.js"},
-    {"name":"multitimer.alarm.js","url":"alarm.js"},
+    {"name":"multitimer.boot.js","url":"boot.js"},
+    {"name":"multitimer.ext.js","url":"ext.js"},
     {"name":"multitimer.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"multitimer.json"}],
