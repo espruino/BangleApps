@@ -22,8 +22,8 @@
 	};
 
 	function draw() {
-	if (typeof old_x === 'undefined') old_x = this.x;	
-	if (typeof old_y === 'undefined') old_y = this.y;	
+	if (typeof old_x === 'undefined') old_x = this.x;
+	if (typeof old_y === 'undefined') old_y = this.y;
 	var s = 29;
 	var x = this.x;
 	var	y = this.y;
@@ -38,10 +38,10 @@
 			g.fillRect(x,y,xl+4,y+16+3); //Clear
 			g.setFontAlign(0,0);
 			g.setFont('Vector',16);
-			//g.fillRect(old_x,old_y,old_x+4+l*(s-12)/100,old_y+16+3); // clear (lazy) 
+			//g.fillRect(old_x,old_y,old_x+4+l*(s-12)/100,old_y+16+3); // clear (lazy)
 			g.drawString(old_l, old_x + 14, old_y + 10);
 			g.fillRect(x+4,y+14+3,xl_old,y+16+3); // charging bar
-			
+
 		}
 		old_l = l;
 		//console.log(old_x);
@@ -54,11 +54,11 @@
 		g.setFontAlign(0,0);
 		g.setFont('Vector',16);
 		g.drawString(l, x + 14, y + 10);
-		
+
 	}
 		old_x = this.x;
-		old_y = this.y;	
-	
+		old_y = this.y;
+
 	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
 		else					 changeInterval(id, intervalLow);
 	}
