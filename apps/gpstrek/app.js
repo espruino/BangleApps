@@ -302,12 +302,10 @@ let getMapSlice = function(){
       let s = WIDGETS.gpstrek.getState();
 
       let course = 0;
-      if (!isMapOverview){
-        if (isGpsCourse())
-          course = s.currentPos.course;
-        else
-          course = getAveragedCompass();
-      }
+      if (isGpsCourse())
+        course = s.currentPos.course;
+      else
+        course = getAveragedCompass();
 
       let route = s.route;
       if (!route) return;
@@ -335,7 +333,7 @@ let getMapSlice = function(){
       let mapCenterX = isMapOverview?mapOverviewX:x+(width-10)/2+compassHeight+5;
       let mapCenterY = isMapOverview?mapOverviewY:y+height*0.4;
       let mapScale = isMapOverview?mapOverviewScale : mapLiveScale;
-      let mapRot = require("graphics_utils").degreesToRadians(180-course);
+      let mapRot = require("graphics_utils").degreesToRadians(180-(isMapOverview?0:course));
       let mapTrans = {
         scale: mapScale,
         rotate: mapRot,
@@ -419,7 +417,11 @@ let getMapSlice = function(){
           if (pos[1] < y) {pos[1] = y + errorMarkerSize + 5; graphics.setColor(1,0,0).fillRect(x,y,x + width,y+errorMarkerSize);}
           if (pos[1] > y + height - interfaceHeight -1) { pos[1] = y + height - errorMarkerSize - 5-interfaceHeight-1; graphics.setColor(1,0,0).fillRect(x,y + height - errorMarkerSize-interfaceHeight-1,x + width ,y+height-interfaceHeight-1);}
 
-          graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
+          if (isMapOverview) {
+            graphics.drawImage(arrow, pos[0],pos[1], {rotate: require("graphics_utils").degreesToRadians(course)});
+          } else {
+            graphics.drawImage(arrow, pos[0]-arrow.width/2,pos[1]);
+          }
           graphics.setColor(0,1,0);
           graphics.fillRect(mapCenterX-1,mapCenterY-1, mapCenterX+1,mapCenterY+1);
           graphics.drawCircle(mapCenterX,mapCenterY, mapScale*SETTINGS.waypointChangeDist);
