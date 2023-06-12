@@ -1,8 +1,13 @@
 const textInput = require("textinput");
+
 g.clearRect(Bangle.appRect);
 g.reset();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+
+let currentTaskRef;
+const completedTasks  = [];
+const incompleteTasks = [];
 
 function createButton(x, y, w, h, text, callback) {
   text              = text || "";
@@ -32,6 +37,7 @@ function createButton(x, y, w, h, text, callback) {
     x, y, w, h, r, text, getDrawable, padding, onTouch
   };
 }
+
 
 function drawButton(button) {
   const textMaxWidth = button.w - 2 * button.padding;
@@ -169,12 +175,14 @@ function createMenu(options) {
   let marginLeft      = 0;
   let marginRight     = 0;
   const swipeControls = options.swipeControls || [];
+  // Add some margin space to fit swipe control hints if they exist.
   swipeControls.forEach(control => {
     if (control.rot === 0) marginBottom += 8;
     if (control.rot === 1) marginLeft += 8;
     if (control.rot === 2) marginBottom += 8;
     if (control.rot === 3) marginRight += 8;
   });
+  // Add top margin to fit the title.
   if (options.title) {
     const mets = g.setFont(titleFont)
                   .stringMetrics(options.title);
@@ -187,10 +195,12 @@ function createMenu(options) {
   const shortDim      = isHorizontal ? width : height;
   const length        = ((shortDim - spaceBetween) / numGridSpaces) - spaceAround;
   const buttons       = [];
+  // currentGrid tracks what grid square we are covering. Any item may cover multiple grid squares.
   let currentGrid     = 0;
-  options.items.forEach((item, index) => {
+  options.items.forEach((item) => {
     let x, y, w, h;
     const mySize   = item.size || 1;
+    // myLength represents the shorter of the two dimensions of the button (depending on menu orientation, w / h).
     const myLength = length * mySize + spaceBetween * (mySize - 1);
     if (isHorizontal) {
       x = spaceAround + currentGrid * (length + spaceBetween) + marginLeft;
@@ -238,22 +248,45 @@ if (textInput.generateKeyboard) {
   keyboard      = textInput.generateKeyboard(charSet);
 }
 
-function createTask() {
-  textInput.input({text: "", keyboardMain: keyboard})
+function newTask(initialText) {
+  initialText = initialText || "";
+  textInput.input({text: initialText, keyboardMain: keyboard})
            .then(text => {
-             const newMenu = createMenu({items: [{text}], swipeControls: taskSwipeControls});
+             const task = createTask(text)
+             incompleteTasks.unshift(task);
+             currentTaskRef = task;
              g.clear();
-             setMenu(newMenu);
+             Bangle.drawWidgets();
+             setMenu(task.getMenu());
            })
 }
 
 const taskSwipeControls = [
-  createSwipeControl(2, "Menu", () => setMenu(m1)), createSwipeControl(0, "New Task", createTask),
+  createSwipeControl(2, "Menu", () => setMenu(m1)),
+  createSwipeControl(0, "New Task", newTask),
+  createSwipeControl(1, "Edit Task", () => newTask("Initial text")) // Placeholder
 ];
+
+function createTask(text) {
+  const incrementalBackoffSet = [0.5, 1, 2, 4, 8, 16, 32];
+  const getMenu               = () => createMenu({
+    items: [{text}], spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls
+  });
+  return {
+    text,
+    affirmCount      : 0,
+    distractCount    : 0,
+    unresponsiveCount: 0,
+    interval         : 30,
+    backoffIndex     : 1,
+    incrementalBackoffSet,
+    getMenu
+  };
+}
 
 const m1 = createMenu({
   title          : "Working Memory", items: [
-    {text: "New Task", size: 2, callback: createTask}, {
+    {text: "New Task", size: 2, callback: newTask}, {
       text: "Manage", size: 1, callback: () => console.log("SETTINGS")
     }
   ], isHorizontal: false
