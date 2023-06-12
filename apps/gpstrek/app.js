@@ -452,7 +452,7 @@ let getMapSlice = function(){
         if (isMapOverview && scrolling){
           addToTaskQueue(()=>{
             graphics.setColor(graphics.theme.fg);
-            graphics.drawImage(move, compassCenterX-move.width/2, compassCenterY-move.height/2);
+            graphics.drawImage(move, compassCenterX-compassHeight, compassCenterY-compassHeight);
           });
         }
 
