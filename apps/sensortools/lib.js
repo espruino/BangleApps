@@ -5,6 +5,7 @@ exports.enable = () => {
   );
 
   let log = function(text, param) {
+    if (!settings.log) return;
     let logline = new Date().toISOString() + " - " + "Sensortools - " + text;
     if (param) logline += ": " + JSON.stringify(param);
     print(logline);
@@ -138,63 +139,63 @@ exports.enable = () => {
       
           function interpolate(a,b,progress){
             return {
-              lat: a.lat * progress + b.lat * (1-progress),
-              lon: a.lon * progress + b.lon * (1-progress),
-              ele: a.ele * progress + b.ele * (1-progress)
+              lat: b.lat * progress + a.lat * (1-progress),
+              lon: b.lon * progress + a.lon * (1-progress),
+              alt: b.alt * progress + a.alt * (1-progress)
             }
           }
           
           function getSquareRoute(){
             return [
-              {lat:"47.2577411",lon:"11.9927442",ele:2273},
-              {lat:"47.266761",lon:"11.9926673",ele:2166},
-              {lat:"47.2667605",lon:"12.0059511",ele:2245},
-              {lat:"47.2577516",lon:"12.0059925",ele:1994}
+              {lat:47.2577411,lon:11.9927442,alt:2273},
+              {lat:47.266761,lon:11.9926673,alt:2166},
+              {lat:47.2667605,lon:12.0059511,alt:2245},
+              {lat:47.2577516,lon:12.0059925,alt:1994}
             ];
           }
           function getSquareRouteFuzzy(){
             return [
-              {lat:"47.2578455",lon:"11.9929891",ele:2265},
-              {lat:"47.258592",lon:"11.9923341",ele:2256},
-              {lat:"47.2594506",lon:"11.9927412",ele:2230},
-              {lat:"47.2603323",lon:"11.9924949",ele:2219},
-              {lat:"47.2612056",lon:"11.9928175",ele:2199},
-              {lat:"47.2621002",lon:"11.9929817",ele:2182},
-              {lat:"47.2629025",lon:"11.9923915",ele:2189},
-              {lat:"47.2637828",lon:"11.9926486",ele:2180},
-              {lat:"47.2646733",lon:"11.9928167",ele:2191},
-              {lat:"47.2655617",lon:"11.9930357",ele:2185},
-              {lat:"47.2662862",lon:"11.992252",ele:2186},
-              {lat:"47.2669305",lon:"11.993173",ele:2166},
-              {lat:"47.266666",lon:"11.9944419",ele:2171},
-              {lat:"47.2667579",lon:"11.99576",ele:2194},
-              {lat:"47.2669409",lon:"11.9970579",ele:2207},
-              {lat:"47.2666562",lon:"11.9983128",ele:2212},
-              {lat:"47.2666027",lon:"11.9996335",ele:2262},
-              {lat:"47.2667245",lon:"12.0009395",ele:2278},
-              {lat:"47.2668457",lon:"12.002256",ele:2297},
-              {lat:"47.2666126",lon:"12.0035373",ele:2303},
-              {lat:"47.2664554",lon:"12.004841",ele:2251},
-              {lat:"47.2669461",lon:"12.005948",ele:2245},
-              {lat:"47.2660877",lon:"12.006323",ele:2195},
-              {lat:"47.2652729",lon:"12.0057552",ele:2163},
-              {lat:"47.2643926",lon:"12.0060123",ele:2131},
-              {lat:"47.2634978",lon:"12.0058302",ele:2095},
-              {lat:"47.2626129",lon:"12.0060759",ele:2066},
-              {lat:"47.2617325",lon:"12.0058188",ele:2037},
-              {lat:"47.2608668",lon:"12.0061784",ele:1993},
-              {lat:"47.2600155",lon:"12.0057392",ele:1967},
-              {lat:"47.2591203",lon:"12.0058233",ele:1949},
-              {lat:"47.2582307",lon:"12.0059718",ele:1972},
-              {lat:"47.2578014",lon:"12.004804",ele:2011},
-              {lat:"47.2577232",lon:"12.0034834",ele:2044},
-              {lat:"47.257745",lon:"12.0021656",ele:2061},
-              {lat:"47.2578682",lon:"12.0008597",ele:2065},
-              {lat:"47.2577082",lon:"11.9995526",ele:2071},
-              {lat:"47.2575917",lon:"11.9982348",ele:2102},
-              {lat:"47.2577401",lon:"11.996924",ele:2147},
-              {lat:"47.257715",lon:"11.9956061",ele:2197},
-              {lat:"47.2578996",lon:"11.9943081",ele:2228}
+              {lat:47.2578455,lon:11.9929891,alt:2265},
+              {lat:47.258592,lon:11.9923341,alt:2256},
+              {lat:47.2594506,lon:11.9927412,alt:2230},
+              {lat:47.2603323,lon:11.9924949,alt:2219},
+              {lat:47.2612056,lon:11.9928175,alt:2199},
+              {lat:47.2621002,lon:11.9929817,alt:2182},
+              {lat:47.2629025,lon:11.9923915,alt:2189},
+              {lat:47.2637828,lon:11.9926486,alt:2180},
+              {lat:47.2646733,lon:11.9928167,alt:2191},
+              {lat:47.2655617,lon:11.9930357,alt:2185},
+              {lat:47.2662862,lon:11.992252,alt:2186},
+              {lat:47.2669305,lon:11.993173,alt:2166},
+              {lat:47.266666,lon:11.9944419,alt:2171},
+              {lat:47.2667579,lon:11.99576,alt:2194},
+              {lat:47.2669409,lon:11.9970579,alt:2207},
+              {lat:47.2666562,lon:11.9983128,alt:2212},
+              {lat:47.2666027,lon:11.9996335,alt:2262},
+              {lat:47.2667245,lon:12.0009395,alt:2278},
+              {lat:47.2668457,lon:12.002256,alt:2297},
+              {lat:47.2666126,lon:12.0035373,alt:2303},
+              {lat:47.2664554,lon:12.004841,alt:2251},
+              {lat:47.2669461,lon:12.005948,alt:2245},
+              {lat:47.2660877,lon:12.006323,alt:2195},
+              {lat:47.2652729,lon:12.0057552,alt:2163},
+              {lat:47.2643926,lon:12.0060123,alt:2131},
+              {lat:47.2634978,lon:12.0058302,alt:2095},
+              {lat:47.2626129,lon:12.0060759,alt:2066},
+              {lat:47.2617325,lon:12.0058188,alt:2037},
+              {lat:47.2608668,lon:12.0061784,alt:1993},
+              {lat:47.2600155,lon:12.0057392,alt:1967},
+              {lat:47.2591203,lon:12.0058233,alt:1949},
+              {lat:47.2582307,lon:12.0059718,alt:1972},
+              {lat:47.2578014,lon:12.004804,alt:2011},
+              {lat:47.2577232,lon:12.0034834,alt:2044},
+              {lat:47.257745,lon:12.0021656,alt:2061},
+              {lat:47.2578682,lon:12.0008597,alt:2065},
+              {lat:47.2577082,lon:11.9995526,alt:2071},
+              {lat:47.2575917,lon:11.9982348,alt:2102},
+              {lat:47.2577401,lon:11.996924,alt:2147},
+              {lat:47.257715,lon:11.9956061,alt:2197},
+              {lat:47.2578996,lon:11.9943081,alt:2228}
             ];
           }
       
@@ -215,51 +216,43 @@ exports.enable = () => {
         let interpSteps;
         if (settings.gps.name == "routeFuzzy"){
           route = getSquareRouteFuzzy();
-          interpSteps = 5;
+          interpSteps = 74;
         } else {
           route = getSquareRoute();
-          interpSteps = 50;
+          interpSteps = 740;
         }
 
         let step = 0;
         let routeIndex = 0;
         modGps(() => {
           let newIndex = (routeIndex + 1)%route.length;
-          
+          let followingIndex = (routeIndex + 2)%route.length;
+
           let result = {
-            "speed": Math.random() * 3 + 2,
+            "speed": Math.random()*1 + 4.5,
             "time": new Date(),
             "satellites": Math.floor(Math.random()*5)+3,
             "fix": 1,
             "hdop": Math.floor(Math.random(30)+1)
           };
-          
+
           let oldPos = route[routeIndex];
-          if (step != 0){
-            oldPos = interpolate(route[routeIndex], route[newIndex], E.clip(0,1,step/interpSteps));
-          }
           let newPos = route[newIndex];
-          if (step < interpSteps - 1){
-            newPos = interpolate(route[routeIndex], route[newIndex], E.clip(0,1,(step+1)%interpSteps/interpSteps));
+          let followingPos = route[followingIndex];
+          let interpPos = interpolate(oldPos, newPos, E.clip(0,1,step/interpSteps));
+
+          if (step > 0.5* interpSteps) {
+          result.course = bearing(interpPos, interpolate(newPos, followingPos, E.clip(0,1,(step-0.5*interpSteps)/interpSteps)));
+          } else {
+            result.course = bearing(oldPos, newPos);
           }
 
-          if (step == interpSteps - 1){
-            let followingIndex = (routeIndex + 2)%route.length;
-            newPos = interpolate(route[newIndex], route[followingIndex], E.clip(0,1,1/interpSteps));
-          }
-          
-          result.lat = oldPos.lat;
-          result.lon = oldPos.lon;
-          result.alt = oldPos.ele;
-          
-          result.course = bearing(oldPos,newPos);
-          
           step++;
           if (step == interpSteps){
             routeIndex = (routeIndex + 1) % route.length;
             step = 0;
           }
-          return result;
+          return Object.assign(result, interpPos);
         });
       } else if (settings.gps.name == "nofix") {
         modGps(() => { return {
@@ -281,6 +274,7 @@ exports.enable = () => {
         let currentDir=1000;
         let currentAlt=500;
         let currentSats=5;
+        
         modGps(() => {
           currentLat += 0.01;
           if (currentLat > 50) currentLat = 20;
