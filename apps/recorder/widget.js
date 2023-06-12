@@ -240,8 +240,9 @@
     var settings = loadSettings();
     options = options||{};
     if (isOn && !settings.recording) {
+      var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
       if (!settings.file) { // if no filename set
-        settings.file = "recorder.log0.csv";
+        settings.file = "recorder.log" + date + trackNo.toString(36) + ".csv";
       } else if (require("Storage").list(settings.file).length){ // if file exists
         if (!options.force) { // if not forced, ask the question
           g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
@@ -263,7 +264,6 @@
           require("Storage").open(settings.file,"r").erase();
         } else if (options.force=="new") {
           // new file - use the current date
-          var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
           var newFileName;
           do { // while a file exists, add one to the letter after the date
             newFileName = "recorder.log" + date + trackNo.toString(36) + ".csv";

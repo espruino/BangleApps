@@ -17,6 +17,7 @@ require("messages").pushMessage({"t":"add","id":1575479849,"src":"Skype","title"
 // maps
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:12345,action:"left_slight",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"Main St / I-29 ALT / Centerpoint Dr",distance:12345,action:"left_slight",eta:"08:39"})
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
@@ -84,12 +85,13 @@ function showMapMessage(msg) {
   if (msg.distance!==undefined)
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
-    if (msg.instr.includes("towards") || msg.instr.includes("toward")) {
-      m = msg.instr.split(/towards|toward/);
+    var instr = msg.instr.replace(/\s*\/\s*/g," \/\n"); // convert slashes to newlines
+    if (instr.includes("towards") || instr.includes("toward")) {
+      m = instr.split(/towards|toward/);
       target = m[0].trim();
       street = m[1].trim();
     }else
-      target = msg.instr;
+      target = instr;
   }
   switch (msg.action) {
   case "continue": img = "EBgBAIABwAPgD/Af+D/8f/773/PPY8cDwAPAA8ADwAPAA8AAAAPAA8ADwAAAA8ADwAPA";break;
@@ -97,10 +99,15 @@ function showMapMessage(msg) {
   case "right": img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";break;
   case "left_slight": img = "ERgB//B/+D/8H4AP4Af4A74Bz4Dj4HD4OD4cD4AD4ADwADwADgAHgAPAAOAAcAA4ABwADgAH";break;
   case "right_slight": img = "ERgBB/+D/8H/4APwA/gD/APuA+cD44Phw+Dj4HPgAeAB4ADgAPAAeAA4ABwADgAHAAOAAcAA";break;
+  case "keep_left": img = "ERmBAACAAOAB+AD+AP+B/+H3+PO+8c8w4wBwADgAHgAPAAfAAfAAfAAfAAeAAeAAcAA8AA4ABwADgA==";break;
+  case "keep_right": img = "ERmBAACAAOAA/AD+AP+A//D/fPueeceY4YBwADgAPAAeAB8AHwAfAB8ADwAPAAcAB4ADgAHAAOAAAA==";break;
+  case "uturn_left": img = "GRiBAAAH4AAP/AAP/wAPj8APAfAPAHgHgB4DgA8BwAOA4AHAcADsOMB/HPA7zvgd9/gOf/gHH/gDh/gBwfgA4DgAcBgAOAAAHAAADgAABw==";break;
+  case "uturn_right": img = "GRiBAAPwAAf+AAf/gAfj4AfAeAPAHgPADwHgA4DgAcBwAOA4AHAcBjhuB5x/A+57gP99wD/84A/8cAP8OAD8HAA4DgAMBwAAA4AAAcAAAA==";break;
   case "finish": img = "HhsBAcAAAD/AAAH/wAAPB4AAeA4AAcAcAAYIcAA4cMAA48MAA4cMAAYAcAAcAcAAcA4AAOA4AAOBxjwHBzjwHjj/4Dnn/4B3P/4B+Pj4A8fj8Acfj8AI//8AA//+AA/j+AB/j+AB/j/A";break;
-  case "roundabout_left": img = "HhcCAAAAAAAAAAAADwAAAEAAAAP8AAGqkAAA/8ABqqqAAD/wAGqqqgAP/AAKpAakA/8AAakAGoD/////QACpP/////gABpP/////gABpD/////wACpA/8AAv4AGoAP/AAf/QakAD/wAL//qgAA/8AC//qAAAP8AAf/kAAADwAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAAAAAAAB/AAA=";break;
-  case "roundabout_right": img = "HhcCAAAAAAAAAAAAZAAADwAAAf/9AAP8AAB///gAP/AAH///4AD/wAP/Rv9AA/8Af8AH/AAP/AvwAD/////w/wAC/////8/wAC/////8vwAB/////wf8AGpAAP/AP/QaoAA/8AH//qkAD/wAB//6QAP/AAAf/0AAP8AAAA/QAADwAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAAA/QAAAAAAA=";break;
-  case "roundabout_straight": img = "EhwCAABQAAAAH0AAAAf9AAAB//QAAH//0AAf//9AB////QH/v+/0P+P8v8L4P8L4CQP8BgAC/+QAAP/+kAA//+pAC/4GqQD/AAqgH+AAagL8AAKkL8AAKkH+AAagD/AAqgC/4GqQA//+pAAP/+kAAC/+QAAAP8AAAAP8AAAAP8AA";break;
+  case "roundabout_left": img = "HBaCAAADwAAAAAAAD/AAAVUAAD/wABVVUAD/wABVVVQD/wAAVABUD/wAAVAAFT/////wABX/////8AAF//////AABT/////wABUP/AAD/AAVA/8AA/8AVAD/wAD//VQAP/AAP/1QAA/wAA/9AAADwAAD/AAAAAAAA/wAAAAAAAP8AAAAAAAD/AAAAAAAA/wAAAAAAAP8AAAAAAAD/AA=";break;
+  case "roundabout_right": img = "HRaCAAAAAAAA8AAAP/8AAP8AAD///AA/8AA////AA/8AP/A/8AA/8A/wAP8AA/8P8AA/////8/wAD///////AAD//////8AAP////8P8ABUAAP/A/8AVQAD/wA//1UAA/8AA//VAAP/AAA/9AAA/wAAAPwAAA8AAAA/AAAAAAAAD8AAAAAAAAPwAAAAAAAA/AAAAAAAAD8AAAAAAAAPwAAAAAAA=";break;
+  case "roundabout_straight": img = "EBuCAAADwAAAD/AAAD/8AAD//wAD///AD///8D/P8/z/D/D//A/wPzAP8AwA//UAA//1QA//9VA/8AFUP8AAVD8AAFQ/AABUPwAAVD8AAFQ/wABUP/ABVA//9VAD//VAAP/1AAAP8AAAD/AAAA/wAA==";break;
+  case "roundabout_uturn": img = "ICCBAAAAAAAAAAAAAAAAAAAP4AAAH/AAAD/4AAB4fAAA8DwAAPAcAADgHgAA4B4AAPAcAADwPAAAeHwAADz4AAAc8AAABPAAAADwAAAY8YAAPPPAAD73gAAf/4AAD/8AABf8AAAb+AAAHfAAABzwAAAcYAAAAAAAAAAAAAAAAAAAAAAA";break;
   }
   //FIXME: what about countries where we drive on the right? How will we know to flip the icons?
 
@@ -208,7 +215,7 @@ function showMessageScroller(msg) {
   var bodyFont = fontBig;
   g.setFont(bodyFont);
   var lines = [];
-  if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10)
+  if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10);
   var titleCnt = lines.length;
   if (titleCnt) lines.push(""); // add blank line after title
   lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10),["",/*LANG*/"< Back"]);
