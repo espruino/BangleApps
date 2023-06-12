@@ -8,6 +8,8 @@ Show the current battery level and charging status in the top right of the clock
   *  Blue when charging
 *  40 pixels wide
 
+The high-level marker (a little bar at the 100% point) can be toggled in settings.
+
 ![](a_battery_widget-pic.jpg)
 
 ## Creator
