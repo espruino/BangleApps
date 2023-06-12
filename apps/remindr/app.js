@@ -6,9 +6,24 @@ E.showMessage("Loading ... ");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-let currentTaskRef;
-const allTasks = [];
-let taskTimeout;
+const allTasks     = [];
+const nudgeManager = {
+  activeTask             : null, taskTimeout: null, responseTimeout: null, interrupt: () => {
+    if (this.taskTimeout) clearTimeout(this.taskTimeout);
+    if (this.responseTimeout) clearTimeout(this.responseTimeout);
+    this.activeTask = null;
+  }, queueNudge          : (task, nudgeFn) => {
+    if (this.responseTimeout) clearTimeout(this.responseTimeout);
+    if (this.taskTimeout) clearTimeout(this.taskTimeout);
+    this.activeTask  = task;
+    const time       = task.incrementalBackoffSet[task.backoffIndex] * task.interval * 1000;
+    this.taskTimeout = setTimeout(nudgeFn, time);
+  }, queueResponseTimeout: (defaultFn) => {
+    // This timeout shouldn't be set if we've queued a response timeout, but we clear it anyway.
+    if (this.taskTimeout) clearTimeout(this.taskTimeout);
+    this.responseTimeout = setTimeout(defaultFn, 15000);
+  },
+}
 
 function createButton(x, y, w, h, text, callback) {
   text              = text || "";
@@ -261,11 +276,54 @@ function newTask(initialText) {
 }
 
 function startTask(task) {
-  currentTaskRef = task;
-  taskTimeout = setTimeout(() => Bangle.buzz(100, 1), 3000);
+  nudgeManager.queueNudge(task, () => nudge(task));
   g.clear();
   Bangle.drawWidgets();
   setMenu(getTaskMenu(task));
+}
+
+function nudge(task) {
+  Bangle.buzz(250, 1)
+        .then(() => {
+          Bangle.setLocked(false);
+          Bangle.setLCDPower(true);
+        });
+  const nudgeMenu = createMenu({
+    title          : "Are you on task?", titleFont: "6x8", items: [
+      {text: task.text, size: 1}, {text: "On Task", size: 2, callback: () => affirmOnTask(task)}, {
+        text: "Distracted", size: 2, callback: () => affirmDistracted(task)
+      }
+    ], isHorizontal: false
+  });
+  setMenu(nudgeMenu);
+  nudgeManager.queueResponseTimeout(() => concludeUnresponsive(task));
+}
+
+function affirmOnTask(task) {
+  task.affirmCount++;
+  task.backoffIndex = Math.min(task.incrementalBackoffSet.length - 1, task.backoffIndex + 1);
+  showTempMessage("Great job!", "On Task!", () => startTask(task));
+}
+
+function affirmDistracted(task) {
+  task.distractCount++;
+  task.backoffIndex = Math.max(0, task.backoffIndex - 1);
+  showTempMessage("Don't worry! You've got this!", "Distracted!", () => startTask(task));
+}
+
+function concludeUnresponsive(task) {
+  Bangle.buzz(250, 1).then(() => Bangle.setLCDPower(true));
+  task.unresponsiveCount++;
+  task.backoffIndex = Math.max(0, task.backoffIndex - 1);
+  nudgeManager.queueResponseTimeout(() => concludeUnresponsive(task))
+}
+
+function showTempMessage(text, title, thenFn) {
+  E.showMessage(text,{title});
+  setTimeout(() => {
+    Bangle.setLocked(true);
+    thenFn();
+  }, 1500);
 }
 
 /**
@@ -273,6 +331,7 @@ function startTask(task) {
  * @param task
  */
 function completeTask(task) {
+  nudgeManager.interrupt();
   task.complete = true;
   removeTask(task, allTasks);
   allTasks.push(task);
@@ -283,7 +342,7 @@ function restartTask(task) {
   task.complete = false;
   removeTask(task, allTasks);
   allTasks.unshift(task);
-  setMenu(getTaskMenu(task))
+  startTask(task);
 }
 
 function removeTask(task, list) {
@@ -314,7 +373,8 @@ function createTask(text) {
 
 function getTaskMenu(task) {
   const taskSwipeControls = [
-    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(mainMenu)), createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
+    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(mainMenu)),
+    createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
   ];
   const items             = [];
   if (task.complete) {
@@ -367,7 +427,7 @@ function editTask(task, backFn) {
   } else {
     editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))})
   }
-  editMenu[""]   = {title: task.text, back: backFn};
+  editMenu[""] = {title: task.text, back: backFn};
   E.showMenu(editMenu);
 }
 
@@ -381,13 +441,13 @@ function renameTask(task, backFn) {
 
 function showTaskList(list, backFn) {
   let taskMenu = [];
-  taskMenu = taskMenu.concat(list.map(task => {
+  taskMenu     = taskMenu.concat(list.map(task => {
     return {
       // Workaround - navigation has phantom buttons rendered with E.showMenu unless you delay slightly.
       title: task.text, onchange: st5(() => editTask(task, () => showTaskList(list, backFn)))
     }
   }))
-  taskMenu[""]   = {title: "Tasks", back: backFn};
+  taskMenu[""] = {title: "Tasks", back: backFn};
   E.showMenu(taskMenu);
 }
 
