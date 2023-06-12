@@ -1,7 +1,13 @@
 (function() {
   var sui = Bangle.setUI;
+  var oldSwipe;
+
   Bangle.setUI = function(mode, cb) {
+    if (oldSwipe && oldSwipe !== Bangle.swipeHandler)
+      Bangle.removeListener("swipe", oldSwipe);
     sui(mode,cb);
+    oldSwipe = Bangle.swipeHandler;
+
     if(!mode) return;
     if ("object"==typeof mode) mode = mode.mode;
     if (mode.startsWith("clock")) {
