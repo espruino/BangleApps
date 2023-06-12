@@ -100,7 +100,7 @@ let animate = function(isIn, callback) {
   minuteX = isAnimIn ? -g2.getWidth() : 0;
   drawMinute();
   animInterval = setInterval(function() {
-    minuteX += 8;
+    minuteX += 8 - 8 * Math.pow((x + minuteX + g2.getWidth() / 2) / R.w, 3);
     let stop = false;
     if (isAnimIn && minuteX>=0) {
       minuteX=0;
