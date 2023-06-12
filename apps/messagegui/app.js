@@ -15,8 +15,8 @@
 // a message
 require("messages").pushMessage({"t":"add","id":1575479849,"src":"Skype","title":"My Friend","body":"Hey! How's everything going?",positive:1,negative:1})
 // maps
-GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:966,action:"continue",eta:"08:39"})
-GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:12345,action:"left_slight",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:"966yd",action:"continue",eta:"08:39"})
+GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:"12km",action:"left_slight",eta:"08:39"})
 GB({t:"nav",src:"maps",title:"Navigation",instr:"Main St / I-29 ALT / Centerpoint Dr",distance:12345,action:"left_slight",eta:"08:39"})
 // call
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
@@ -82,7 +82,9 @@ E.on("kill", saveMessages);
 function showMapMessage(msg) {
   active = "map";
   var m, distance, street, target, img;
-  if (msg.distance!==undefined)
+  if ("string"==typeof msg.distance) // new gadgetbridge
+    distance = msg.distance;
+  else if ("number"==typeof msg.distance) // 0.74 gadgetbridge
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
     var instr = msg.instr.replace(/\s*\/\s*/g," \/\n"); // convert slashes to newlines
