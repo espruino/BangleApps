@@ -94,3 +94,4 @@
 0.68: More navigation icons (for roundabouts)
 0.69: More navigation icons (keep/uturn left/right)
       Nav messages with '/' now get split on newlines
+0.70: Handle nav messages from newer Gadgetbridge builds that output distance as a String
