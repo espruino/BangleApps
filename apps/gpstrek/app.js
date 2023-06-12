@@ -1557,9 +1557,9 @@ let draw = function(){
   }
 };
 
+clear();
+
 switchMode(MODE_SLICES);
 
 setInterval(updateRouting, 500);
-
-clear();
 }
