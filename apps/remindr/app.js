@@ -2,12 +2,12 @@ const textInput = require("textinput");
 
 g.clearRect(Bangle.appRect);
 g.reset();
+E.showMessage("Loading ... ");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 let currentTaskRef;
-const completedTasks  = [];
-const incompleteTasks = [];
+const allTasks = [];
 
 function createButton(x, y, w, h, text, callback) {
   text              = text || "";
@@ -242,36 +242,62 @@ function setMenu(menu) {
   menu.setUI();
 }
 
-let keyboard;
+let keyboardAlpha, keyboardNum;
 if (textInput.generateKeyboard) {
   const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
-  keyboard      = textInput.generateKeyboard(charSet);
+  keyboardAlpha      = textInput.generateKeyboard(charSet);
+  keyboardNum = textInput.generateKeyboard([["1","2","3","4","5","6","7","8","9"],["0"],"del", "ok"]);
 }
 
 function newTask(initialText) {
   initialText = initialText || "";
-  textInput.input({text: initialText, keyboardMain: keyboard})
+  textInput.input({text: initialText, keyboardMain: keyboardAlpha})
            .then(text => {
              const task = createTask(text)
-             incompleteTasks.unshift(task);
-             currentTaskRef = task;
-             g.clear();
-             Bangle.drawWidgets();
-             setMenu(task.getMenu());
+             allTasks.unshift(task);
+             startTask(task);
            })
 }
 
-const taskSwipeControls = [
-  createSwipeControl(2, "Menu", () => setMenu(m1)),
-  createSwipeControl(0, "New Task", newTask),
-  createSwipeControl(1, "Edit Task", () => newTask("Initial text")) // Placeholder
-];
+function startTask(task) {
+  currentTaskRef = task;
+  g.clear();
+  Bangle.drawWidgets();
+  setMenu(getTaskMenu(task));
+}
+
+/**
+ * Mark the task as completed and then push it to the bottom of the list.
+ * @param task
+ */
+function completeTask(task) {
+  task.complete = true;
+  removeTask(task, allTasks);
+  allTasks.push(task);
+  setMenu(getTaskMenu(task));
+}
+
+function restartTask(task) {
+  task.complete = false;
+  removeTask(task, allTasks);
+  allTasks.unshift(task);
+  setMenu(getTaskMenu(task))
+}
+
+function removeTask(task, list) {
+  const taskIndex = list.findIndex((item) => item === task);
+  if (taskIndex !== -1) {
+    list.splice(taskIndex, 1);
+  }
+}
+
+
+const SWIPE = {
+  LEFT: 2, RIGHT: 0, UP: 3, DOWN: 1,
+}
 
 function createTask(text) {
   const incrementalBackoffSet = [0.5, 1, 2, 4, 8, 16, 32];
-  const getMenu               = () => createMenu({
-    items: [{text}], spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls
-  });
   return {
     text,
     affirmCount      : 0,
@@ -280,11 +306,51 @@ function createTask(text) {
     interval         : 30,
     backoffIndex     : 1,
     incrementalBackoffSet,
-    getMenu
+    complete         : false
   };
 }
 
-const m1 = createMenu({
+function getTaskMenu(task) {
+  const taskSwipeControls = [
+    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(m1)), createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
+  ];
+  const items             = [];
+  if (task.complete) {
+    taskSwipeControls.push(createSwipeControl(SWIPE.UP, "Restart", () => restartTask(task)));
+    items.push({text: task.text + " completed!", size: 1});
+    const nextTask = getNextTask(task, allTasks);
+    if (nextTask) {
+      items.push({text: "next task: " + nextTask.text, size: 2, callback: () => startTask(nextTask)})
+    } else {
+      items.push({
+        text: "Affirmed: " + task.affirmCount + "\nDistracted: " + task.distractCount + "\nUnresponsive: " + task.unresponsiveCount,
+        size: 3
+      });
+    }
+  } else {
+    items.push({text: task.text})
+    taskSwipeControls.push(createSwipeControl(SWIPE.DOWN, "Complete", () => completeTask(task)))
+  }
+  return createMenu({
+    items, spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls
+  });
+}
+
+function getNextTask(task, list) {
+  const activeList       = list.filter(x => (!x.complete || x === task));
+  const thisTaskPosition = activeList.findIndex(t => t === task);
+  let nextTask           = activeList[0];
+  if (thisTaskPosition !== -1 && activeList[thisTaskPosition + 1]) {
+    nextTask = activeList[thisTaskPosition + 1];
+  }
+  return nextTask === task ? undefined : nextTask;
+}
+
+function showTaskList(list) {
+  
+}
+
+const mainMenu = createMenu({
   title          : "Working Memory", items: [
     {text: "New Task", size: 2, callback: newTask}, {
       text: "Manage", size: 1, callback: () => console.log("SETTINGS")
@@ -292,4 +358,4 @@ const m1 = createMenu({
   ], isHorizontal: false
 });
 
-setMenu(m1);
+setMenu(mainMenu);
