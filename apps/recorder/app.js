@@ -33,10 +33,8 @@ function updateSettings() {
 function getTrackNumber(filename) {
   var trackNum = 0;
   var matches = filename.match(/^recorder\.log(.*)\.csv$/);
-  if (matches) {
-    trackNum = parseInt(matches[1]||0);
-  }
-  return trackNum;
+  if (matches) return matches[1];
+  return 0;
 }
 
 function showMainMenu() {
@@ -62,23 +60,13 @@ function showMainMenu() {
           WIDGETS["recorder"].setRecording(v).then(function() {
             //print("Record start Complete");
             loadSettings();
-            print("Recording: "+settings.recording);
+            //print("Recording: "+settings.recording);
             showMainMenu();
           });
         }, 1);
       }
     },
-    /*LANG*/'File #': {
-      value: getTrackNumber(settings.file),
-      min: 0,
-      max: 99,
-      step: 1,
-      onchange: v => {
-        settings.recording = false; // stop recording if we change anything
-        settings.file = "recorder.log"+v+".csv";
-        updateSettings();
-      }
-    },
+    /*LANG*/'File' : {value:getTrackNumber(settings.file)},
     /*LANG*/'View Tracks': ()=>{viewTracks();},
     /*LANG*/'Time Period': {
       value: settings.period||10,
@@ -110,7 +98,7 @@ function viewTracks() {
   var found = false;
   require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).forEach(filename=>{
     found = true;
-    menu[/*LANG*/"Track "+getTrackNumber(filename)] = ()=>viewTrack(filename,false);
+    menu[/*LANG*/getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });
   if (!found)
     menu[/*LANG*/"No Tracks found"] = function(){};
@@ -353,7 +341,7 @@ function viewTrack(filename, info) {
         infc[i]++;
       }
     } else if (style=="Altitude") {
-      title = /*LANG*/"Altitude (m)";      
+      title = /*LANG*/"Altitude (m)";
       var altIdx = info.fields.indexOf("Barometer Altitude");
       if (altIdx<0) altIdx = info.fields.indexOf("Altitude");
       while(l!==undefined) {

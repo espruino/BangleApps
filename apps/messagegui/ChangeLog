@@ -91,3 +91,8 @@
 0.66: Updated Navigation handling to work with new Gadgetbridge release
 0.67: Support for 'Ignore' for messages from Gadgetbridge
       Message view is now taller, and we use swipe left/right to dismiss messages rather than buttons
+0.68: More navigation icons (for roundabouts)
+0.69: More navigation icons (keep/uturn left/right)
+      Nav messages with '/' now get split on newlines
+0.70: Handle nav messages from newer Gadgetbridge builds that output distance as a String
+      If we receive a 'music' message and we're in the messages app (but not showing a message) show music (#2814)

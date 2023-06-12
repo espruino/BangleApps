@@ -658,6 +658,7 @@ function showUtilMenu() {
 function makeConnectable() {
   try { NRF.wake(); } catch (e) { }
   Bluetooth.setConsole(1);
+  NRF.ignoreWhitelist = 1;
   var name = "Bangle.js " + NRF.getAddress().substr(-5).replace(":", "");
   E.showPrompt(name + /*LANG*/"\nStay Connectable?", { title: /*LANG*/"Connectable" }).then(r => {
     if (settings.ble != r) {
@@ -665,6 +666,7 @@ function makeConnectable() {
       updateSettings();
     }
     if (!r) try { NRF.sleep(); } catch (e) { }
+    delete NRF.ignoreWhitelist;
     showMainMenu();
   });
 }

@@ -291,13 +291,11 @@ function calculateValue(calculatedVariable, variableValues) {
   function drawResultScreen(result) {
     let drawPage = function() {
       clearScreen();
-      let fontSize = 30;  // Initial font size
-      let lineSpacing = 15; // Space between lines
-
       // Define the vertical positions of the titles
       let titlePositions = [10, 72, 132];
-
+      let lineSpacing = 15; // Space between lines
       for (let i = 0; i < result.result.length; i++) {
+        let fontSize = 30;  // Initial font size
         let currentResult = result.result[i];
         let resultTitle = currentResult[0];
         let resultValue = currentResult[1];

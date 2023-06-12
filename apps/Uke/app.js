@@ -16,49 +16,9 @@ const cc = [
 
 const dd = [
   "D",
+  "22",
   "23",
-  "22",
   "24",
-  "x"
-];
-
-const gg = [
-  "G",
-  "x",
-  "21",
-  "33",
-  "22",
-];
-
-const am = [
-  "Am",
-  "22",
-  "x",
-  "x",
-  "x"
-];
-
-const em = [
-  "Em",
-  "x",
-  "43",
-  "32",
-  "21"
-];
-
-const aa = [
-  "A",
-  "22",
-  "11",
-  "x",
-  "x"
-];
-
-const ff = [
-  "F",
-  "22",
-  "x",
-  "11",
   "x"
 ];
 
@@ -70,14 +30,187 @@ var ee = [
   "11"
 ];
 
+const ff = [
+  "F",
+  "22",
+  "x",
+  "11",
+  "x"
+];
+
+const gg = [
+  "G",
+  "x",
+  "21",
+  "33",
+  "22",
+];
+
+const aa = [
+  "A",
+  "22",
+  "11",
+  "x",
+  "x"
+];
+
+const bb = [
+  "B",
+  "42",
+  "43",
+  "44",
+  "21"
+];
+
+const cm = [
+  "Cm",
+  "11",
+  "x",
+  "12",
+  "34"
+];
+
+const dm = [
+  "Dm",
+  "x",
+  "22",
+  "33",
+  "11"
+];
+
+const em = [
+  "Em",
+  "x",
+  "43",
+  "32",
+  "21"
+];
+
+const fm = [
+  "Fm",
+  "33",
+  "11",
+  "11",
+  "11"
+];
+
+const gm = [
+  "Gm",
+  "x",
+  "22",
+  "33",
+  "11"
+];
+
+const am = [
+  "Am",
+  "22",
+  "23",
+  "11",
+  "x"
+];
+
+const bm = [
+  "Bm",
+  "x",
+  "43",
+  "32",
+  "21"
+];
+
+const c7 = [
+  "C7",
+  "22",
+  "33",
+  "11",
+  "x"
+];
+
+const d7 = [
+  "D7",
+  "x",
+  "22",
+  "11",
+  "23"
+];
+
+const e7 = [
+  "E7",
+  "x",
+  "11",
+  "x",
+  "x"
+];
+
+const f7 = [
+  "F7",
+  "11",
+  "22",
+  "11",
+  "11"
+];
+
+const g7 = [
+  "G7",
+  "x",
+  "x",
+  "x",
+  "11"
+];
+
+const a7 = [
+  "A7",
+  "21",
+  "21",
+  "21",
+  "32"
+];
+
+const b7 = [
+  "B7",
+  "11",
+  "22",
+  "x",
+  "23"
+];
+
+
+
 var index = 0;
 var chords = [];
+var menu = {
+  "" : { "title" : "Uke Chords" },
+  "C" : function() { draw(cc); },
+  "D" : function() { draw(dd); },
+  "E" : function() { draw(ee); },
+  "F" : function() { draw(ff); },
+  "G" : function() { draw(gg); },
+  "A" : function() { draw(aa); },
+  "B" : function() { draw(bb); },
+  "C7" : function() { draw(c7); },
+  "D7" : function() { draw(d7); },
+  "E7" : function() { draw(e7); },
+  "F7" : function() { draw(f7); },
+  "G7" : function() { draw(g7); },
+  "A7" : function() { draw(a7); },
+  "B7" : function() { draw(b7); },
+  "Cm" : function() { draw(cm); },
+  "Dm" : function() { draw(dm); },
+  "Em" : function() { draw(em); },
+  "Fm" : function() { draw(fm); },
+  "Gm" : function() { draw(gm); },
+  "Am" : function() { draw(am); },
+  "Bm" : function() { draw(bm); },
+  "About" : function() {
+      E.showMessage(
+          "Created By:\nNovaDawn999", {
+            title:"About"
+          }
+      );
+  }
+};
 
-function init() {
-  g.setFontAlign(0,0); // center font
-  g.setFont("6x8",2); // bitmap font, 8x magnified
-  chords.push(cc, dd, gg, am, em, aa, ff, ee);
-}
+
 
 function drawBase() {
   for (let i = 0; i < 4; i++) {
@@ -87,18 +220,18 @@ function drawBase() {
 }
 
 function drawChord(chord) {
-    g.drawString(chord[0], g.getWidth() * 0.5 + 2, 18);
+  g.drawString(chord[0], g.getWidth() * 0.5 - (chord[0].length * 5), 16);
     for (let i = 0; i < chord.length; i++) {
         if (i === 0 || chord[i][0] === "x") {
             continue;
         }
         if (chord[i][0] === "0") {
-            g.drawString(chord[i][1], x + (i - 1) * stringInterval + 1, y + fretHeight * chord[i][0], true);
-            g.drawCircle(x + (i - 1) * stringInterval -1, y + fretHeight * chord[i][0], 8);
+            g.drawString(chord[i][1], x + (i - 1) * stringInterval - 5, y + fretHeight * chord[i][0] + 2, true);
+            g.drawCircle(x + (i - 1) * stringInterval -1, y + fretHeight * chord[i][0], 10);
         }
         else {
-            g.drawString(chord[i][1], x + (i - 1) * stringInterval + 1, y -fingerOffset + fretHeight * chord[i][0], true);
-            g.drawCircle(x + (i - 1) * stringInterval -1, y -fingerOffset + fretHeight * chord[i][0], 8);
+            g.drawString(chord[i][1], x + (i - 1) * stringInterval -5, y -fingerOffset + fretHeight * chord[i][0] + 2, true);
+            g.drawCircle(x + (i - 1) * stringInterval -1, y -fingerOffset + fretHeight * chord[i][0], 10);
         }
     }
 }
@@ -107,22 +240,19 @@ function buttonPress() {
   setWatch(() => {
     buttonPress();
     }, BTN);
-  index++;
-  if (index >= chords.length) { index = 0; }
-  draw();
+  E.showMenu(menu);
 }
 
-function draw() {
+function draw(chord) {
   g.clear();
   drawBase();
-  drawChord(chords[index]);
+  drawChord(chord);
 }
 
 
 
 function main() {
-  init();
-  draw();
+  E.showMenu(menu);
   setWatch(() => {
     buttonPress();
     }, BTN);

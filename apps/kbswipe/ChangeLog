@@ -5,3 +5,4 @@
 0.05: Keep drag-function in ram, hopefully improving performance and input reliability somewhat.
 0.06: Support input of numbers and uppercase characters.
 0.07: Support input of symbols.
+0.08: Redone patterns a,e,m,w,z.
