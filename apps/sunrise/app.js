@@ -4,18 +4,20 @@
 const LOCATION_FILE = 'mylocation.json';
 let location;
 
+Bangle.setUI('clock');
+Bangle.loadWidgets();
 // requires the myLocation app
 function loadLocation () {
   try {
     return require('Storage').readJSON(LOCATION_FILE, 1);
   } catch (e) {
-    return { };
+    return { lat: 41.38, lon: 2.168 };
   }
 }
-
-Bangle.setUI("clock");
-Bangle.loadWidgets();
-const latlon = loadLocation();
+let frames = 0; // amount of pending frames to render (0 if none)
+let curPos = 0; // x position of the sun
+let realPos = 0; // x position of the sun depending on currentime
+const latlon = loadLocation() || {};
 const lat = latlon.lat || 41.38;
 const lon = latlon.lon || 2.168;
 
@@ -172,11 +174,6 @@ const w = g.getWidth();
 const h = g.getHeight();
 const oy = h / 1.7;
 
-function ypos (x) {
-  const pc = (x * 100 / w);
-  return oy + (32 * Math.sin(1.7 + (pc / 16)));
-}
-
 let sunRiseX = 0;
 let sunSetX = 0;
 const sinStep = 12;
@@ -201,21 +198,27 @@ function drawSinuses () {
   }
 
   // sea level line
-  const sl0 = seaLevel(sunrise.getHours());
-  const sl1 = seaLevel(sunset.getHours());
-  sunRiseX = xfromTime(sunrise.getHours());
-  sunSetX = xfromTime(sunset.getHours());
-  g.setColor(0.5, 0.5, 1);
+  const hh0 = sunrise.getHours();
+  const hh1 = sunset.getHours();
+  const sl0 = seaLevel(hh0);
+  const sl1 = seaLevel(hh1);
+  sunRiseX = xfromTime(hh0) + (r / 2);
+  sunSetX = xfromTime(hh1) + (r / 2);
+  g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0, w, sl1);
+  g.setColor(0, 0.5, 1);
+  g.drawLine(0, sl0 + 1, w, sl1 + 1);
+  /*
   g.setColor(0, 0, 1);
   g.drawLine(0, sl0 + 1, w, sl1 + 1);
   g.setColor(0, 0, 0.5);
   g.drawLine(0, sl0 + 2, w, sl1 + 2);
+  */
 }
 
 function drawTimes () {
   g.setColor(1, 1, 1);
-  g.setFont('Vector', 20);
+  g.setFont('6x8', 2);
   g.drawString(sr, 10, h - 20);
   g.drawString(ss, w - 60, h - 20);
 }
@@ -226,23 +229,34 @@ const r = 10;
 
 function drawGlow () {
   const now = new Date();
-  if (realTime) {
+  if (frames < 1 && realTime) {
     pos = xfromTime(now.getHours());
   }
+  const rh = r / 2;
   const x = pos;
-  const y = ypos(x - (r / 2));
-  const r2 = (x > sunRiseX && x < sunSetX) ? r + 20 : r + 10;
-
-  g.setColor(0.3, 0.3, 0.3);
-  g.fillCircle(x, y, r2);
-  g.setColor(0.5, 0.5, 0.5);
-  g.fillCircle(x, y, r + 3);
+  const y = ypos(x - r);
+  const r2 = 0;
+  if (x > sunRiseX && x < sunSetX) {
+    g.setColor(0.2, 0.2, 0);
+    g.fillCircle(x, y, r + 20);
+    g.setColor(0.5, 0.5, 0);
+    // wide glow
+  } else {
+    g.setColor(0.2, 0.2, 0);
+  }
+  // smol glow
+  g.fillCircle(x, y, r + 8);
 }
 
 function seaLevel (hour) {
   // hour goes from 0 to 24
   // to get the X we divide the screen in 24
   return ypos(xfromTime(hour));
+}
+
+function ypos (x) {
+  const pc = (x * 100 / w);
+  return oy + (32 * Math.sin(1.7 + (pc / 16)));
 }
 
 function xfromTime (t) {
@@ -252,72 +266,136 @@ function xfromTime (t) {
 function drawBall () {
   let x = pos;
   const now = new Date();
-  if (realTime) {
+  if (frames < 1 && realTime) {
     x = xfromTime(now.getHours());
-    pos = x;
   }
-  const y = ypos(x - (r / 2));
+  const y = ypos(x - r);
 
   // glow
-  g.setColor(1, 1, 0);
-  if (x < sunRiseX) {
-    g.setColor(0.2, 0.2, 0);
-  } else if (x > sunSetX) {
-    g.setColor(0.2, 0.2, 0);
+  if (x < sunRiseX || x > sunSetX) {
+    g.setColor(0.5, 0.5, 0);
+  } else {
+    g.setColor(1, 1, 1);
   }
+  const rh = r / 2;
   g.fillCircle(x, y, r);
-  g.setColor(1, 1, 1);
+  g.setColor(1, 1, 0);
   g.drawCircle(x, y, r);
+}
+function drawClock () {
+  const now = new Date();
+
   let curTime = '';
   let fhours = 0.0;
   let fmins = 0.0;
+  let ypos = 32;
   if (realTime) {
     fhours = now.getHours();
     fmins = now.getMinutes();
   } else {
+    ypos = 32;
     fhours = 24 * (pos / w);
     if (fhours > 23) {
       fhours = 0;
     }
-    fmins = (24 - fhours) % 60;
+    const nexth = 24 * 60 * (pos / w);
+    fmins = 59 - ((24 * 60) - nexth) % 60;
     if (fmins < 0) {
       fmins = 0;
     }
+  }
+  if (fmins > 59) {
+    fmins = 59;
   }
   const hours = ((fhours < 10) ? '0' : '') + (0 | fhours);
   const mins = ((fmins < 10) ? '0' : '') + (0 | fmins);
   curTime = hours + ':' + mins;
   g.setFont('Vector', 30);
-  g.setColor(1, 1, 1);
-  g.drawString(curTime, w / 1.9, 32);
+  if (realTime) {
+    g.setColor(1, 1, 1);
+  } else {
+    g.setColor(0, 1, 1);
+  }
+  g.drawString(curTime, w / 1.9, ypos);
+  // day-month
+  if (realTime) {
+    const mo = now.getMonth() + 1;
+    const da = now.getDate();
+    const daymonth = '' + da + '/' + mo;
+    g.setFont('6x8', 2);
+    g.drawString(daymonth, 5, 30);
+  }
 }
 
 function renderScreen () {
-  g.setBgColor(0, 0, 0);
-  g.clear();
-  if (realTime) {
-    Bangle.drawWidgets();
-  }
+  g.setColor(0, 0, 0);
+  g.fillRect(0, 30, w, h);
+  realPos = xfromTime((new Date()).getHours());
+  g.setFontAlign(-1, -1, 0);
+
+  Bangle.drawWidgets();
+
   drawGlow();
   drawSinuses();
   drawTimes();
+  drawClock();
   drawBall();
 }
 
 Bangle.on('drag', function (tap, top) {
-  pos = tap.x;
-  realTime = false;
+  if (tap.y < h / 3) {
+    curPos = pos;
+    initialAnimation();
+  } else {
+    pos = tap.x - 5;
+    realTime = false;
+  }
   renderScreen();
 });
 
 Bangle.on('lock', () => {
+  // TODO: render animation here
   realTime = Bangle.isLocked();
   renderScreen();
 });
-Bangle.on('tap', () => {
-  realTime = true;
-  renderScreen();
-});
+
 renderScreen();
 
-setInterval(renderScreen, 60 * 1000);
+realPos = xfromTime((new Date()).getHours());
+
+function initialAnimationFrame () {
+  let distance = (realPos - curPos) / 4;
+  if (distance > 20) {
+    distance = 20;
+  }
+  curPos += distance;
+  pos = curPos;
+  renderScreen();
+  if (curPos >= realPos) {
+    frame = 0;
+  }
+  frames--;
+  if (frames-- > 0) {
+    setTimeout(initialAnimationFrame, 50);
+  } else {
+    realTime = true;
+    renderScreen();
+  }
+}
+
+function initialAnimation () {
+  const distance = Math.abs(realPos - pos);
+  frames = distance / 4;
+  realTime = false;
+  initialAnimationFrame();
+}
+
+function main () {
+  g.setBgColor(0, 0, 0);
+  g.clear();
+  setInterval(renderScreen, 60 * 1000);
+  pos = 0;
+  initialAnimation();
+}
+
+main();
