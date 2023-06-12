@@ -28,7 +28,7 @@ var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 var fontVLarge = g.getFonts().includes("6x15")?"12x20:2":"6x8:5";
-var active; // active screen
+var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
@@ -68,7 +68,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="music") {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
-    if (active!="music") return; // don't open music over other screens
+    if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
   }
   showMessage(msg&&msg.id);
 };
@@ -405,6 +405,7 @@ function checkMessages(options) {
   options=options||{};
   // If no messages, just show 'no messages' and return
   if (!MESSAGES.length) {
+    active=undefined; // no messages
     if (!options.clockIfNoMsg) return E.showPrompt(/*LANG*/"No Messages",{
       title:/*LANG*/"Messages",
       img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
@@ -434,7 +435,7 @@ function checkMessages(options) {
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
-  active = "main";
+  active = "list";
   // Otherwise show a menu
   E.showScroller({
     h : 48,
