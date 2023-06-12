@@ -8,6 +8,7 @@ Bangle.drawWidgets();
 
 let currentTaskRef;
 const allTasks = [];
+let taskTimeout;
 
 function createButton(x, y, w, h, text, callback) {
   text              = text || "";
@@ -245,8 +246,8 @@ function setMenu(menu) {
 let keyboardAlpha, keyboardNum;
 if (textInput.generateKeyboard) {
   const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
-  keyboardAlpha      = textInput.generateKeyboard(charSet);
-  keyboardNum = textInput.generateKeyboard([["1","2","3","4","5","6","7","8","9"],["0"],"del", "ok"]);
+  keyboardAlpha = textInput.generateKeyboard(charSet);
+  // keyboardNum   = textInput.generateKeyboard([["1", "2", "3", "4", "5", "6", "7", "8", "9"], ["0"], "del", "ok"]);
 }
 
 function newTask(initialText) {
@@ -261,6 +262,7 @@ function newTask(initialText) {
 
 function startTask(task) {
   currentTaskRef = task;
+  taskTimeout = setTimeout(() => Bangle.buzz(100, 1), 3000);
   g.clear();
   Bangle.drawWidgets();
   setMenu(getTaskMenu(task));
@@ -312,7 +314,7 @@ function createTask(text) {
 
 function getTaskMenu(task) {
   const taskSwipeControls = [
-    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(m1)), createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
+    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(mainMenu)), createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
   ];
   const items             = [];
   if (task.complete) {
@@ -346,14 +348,53 @@ function getNextTask(task, list) {
   return nextTask === task ? undefined : nextTask;
 }
 
-function showTaskList(list) {
-  
+/**
+ * This function is a workaround wrapper for a menu navigation bug. After 'onchange' the menu re-renders itself
+ * so to avoid graphical glitches we postpone whatever funciton we actually want by 5ms.
+ * @param fn The function you actually want to call
+ * @returns {function(): any} The same function wrapped in a setTimeout with a 5ms delay.
+ */
+function st5(fn) {
+  return () => setTimeout(fn, 5);
+}
+
+function editTask(task, backFn) {
+  let editMenu = [];
+  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
+  if (task.complete) {
+    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))})
+    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))})
+  } else {
+    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))})
+  }
+  editMenu[""]   = {title: task.text, back: backFn};
+  E.showMenu(editMenu);
+}
+
+function renameTask(task, backFn) {
+  return textInput.input({text: task.text, keyboardMain: keyboardAlpha})
+                  .then(text => {
+                    task.text = text
+                    backFn();
+                  })
+}
+
+function showTaskList(list, backFn) {
+  let taskMenu = [];
+  taskMenu = taskMenu.concat(list.map(task => {
+    return {
+      // Workaround - navigation has phantom buttons rendered with E.showMenu unless you delay slightly.
+      title: task.text, onchange: st5(() => editTask(task, () => showTaskList(list, backFn)))
+    }
+  }))
+  taskMenu[""]   = {title: "Tasks", back: backFn};
+  E.showMenu(taskMenu);
 }
 
 const mainMenu = createMenu({
   title          : "Working Memory", items: [
     {text: "New Task", size: 2, callback: newTask}, {
-      text: "Manage", size: 1, callback: () => console.log("SETTINGS")
+      text: "Manage", size: 1, callback: () => showTaskList(allTasks, () => setMenu(mainMenu))
     }
   ], isHorizontal: false
 });
