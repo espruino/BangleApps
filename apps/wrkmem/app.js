@@ -7,14 +7,12 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const localTaskFile = "wrkmem.json";
-let savedData       = require("Storage")
-.readJSON(localTaskFile, true);
-if (!savedData) {
-  savedData = {
-    tasks: [], keyboardAlpha: undefined
+const savedData     = {
+  tasks: [], keyboardAlpha: undefined, settings: {textOutlines: true, noWordBreaks: true}
+};
 
-  }
-}
+Object.assign(savedData, require("Storage")
+.readJSON(localTaskFile, true) || {});
 
 let currentMenu;
 
@@ -32,10 +30,10 @@ const nudgeManager = {
   }, queueNudge          : (task, nudgeFn) => {
     if (this.responseTimeout) clearTimeout(this.responseTimeout);
     if (this.taskTimeout) clearTimeout(this.taskTimeout);
-    this.activeTask  = task;
+    this.activeTask    = task;
     const backoffIndex = task.useBackoff ? task.backoffIndex : 1;
-    const time       = task.incrementalBackoffSet[backoffIndex] * task.interval * 1000;
-    this.taskTimeout = setTimeout(nudgeFn, time);
+    const time         = task.incrementalBackoffSet[backoffIndex] * task.interval * 1000;
+    this.taskTimeout   = setTimeout(nudgeFn, time);
   }, queueResponseTimeout: (defaultFn) => {
     // This timeout shouldn't be set if we've queued a response timeout, but we clear it anyway.
     if (this.taskTimeout) clearTimeout(this.taskTimeout);
@@ -94,18 +92,20 @@ function drawButton(button) {
                     .wrapString(button.text, textMaxWidth)
                     .filter(t => !!t)
                     .join("\n");
-  g.setFontAlign(0, 0)
-   .setColor(textOutlineCol)
-   .drawString(wrapText, button.x + button.w / 2 + 1, button.y + button.h / 2 - 1, false);
-  g.setFontAlign(0, 0)
-   .setColor(textOutlineCol)
-   .drawString(wrapText, button.x + button.w / 2 - 1, button.y + button.h / 2 - 1, false);
-  g.setFontAlign(0, 0)
-   .setColor(textOutlineCol)
-   .drawString(wrapText, button.x + button.w / 2 - 1, button.y + button.h / 2 + 1, false);
-  g.setFontAlign(0, 0)
-   .setColor(textOutlineCol)
-   .drawString(wrapText, button.x + button.w / 2 + 1, button.y + button.h / 2 + 1, false);
+  if (savedData.settings.textOutlines) {
+    g.setFontAlign(0, 0)
+     .setColor(textOutlineCol)
+     .drawString(wrapText, button.x + button.w / 2 + 1, button.y + button.h / 2 - 1, false);
+    g.setFontAlign(0, 0)
+     .setColor(textOutlineCol)
+     .drawString(wrapText, button.x + button.w / 2 - 1, button.y + button.h / 2 - 1, false);
+    g.setFontAlign(0, 0)
+     .setColor(textOutlineCol)
+     .drawString(wrapText, button.x + button.w / 2 - 1, button.y + button.h / 2 + 1, false);
+    g.setFontAlign(0, 0)
+     .setColor(textOutlineCol)
+     .drawString(wrapText, button.x + button.w / 2 + 1, button.y + button.h / 2 + 1, false);
+  }
   g.setFontAlign(0, 0)
    .setColor(textCol)
    .drawString(wrapText, button.x + button.w / 2, button.y + button.h / 2, false);
@@ -122,7 +122,7 @@ function getBestFontForButton(button) {
   const vectorRatio   = sampleMetric.height / sampleMetric.width;
   // Effective height helps us handle tall skinny buttons, since text is usually horizontal.
   let effectiveHeight = Math.min(button.h, button.w);
-  if (!button.text.includes(" ")) {
+  if (!button.text.includes(" ") && savedData.settings.noWordBreaks) {
     effectiveHeight = effectiveHeight / vectorRatio
   }
   const buttonArea = button.w * effectiveHeight;
@@ -263,13 +263,15 @@ function createMenu(options) {
 
   const touchFunc = (button, xy) => buttons.forEach(b => b.onTouch && b.onTouch(button, xy));
   const swipeFunc = (LR, UD) => swipeControls.forEach(s => s.onSwipe(LR, UD));
+  const btnFunc   = options.backFn;
   return {
-    buttons, render, setUI: () => Bangle.setUI({mode: "custom", touch: touchFunc, swipe: swipeFunc})
+    buttons, render, setUI: () => Bangle.setUI({mode: "custom", touch: touchFunc, swipe: swipeFunc, btn: btnFunc})
   };
 }
 
 
 function setMenu(menu) {
+  save();
   g.clearRect(Bangle.appRect);
   g.reset();
   currentMenu = menu;
@@ -299,7 +301,11 @@ function startTask(task) {
   nudgeManager.queueNudge(task, () => nudge(task));
   g.clear();
   Bangle.drawWidgets();
-  setMenu(getTaskMenu(task));
+  const onPressBack = () => {
+    nudgeManager.interrupt();
+    setMenu(mainMenu)
+  }
+  setMenu(getTaskMenu(task, onPressBack));
 }
 
 function nudge(task) {
@@ -391,14 +397,15 @@ function createTask(text) {
     backoffIndex     : 1,
     incrementalBackoffSet,
     complete         : false,
-    useBackoff: true
+    useBackoff       : true
   };
 }
 
-function getTaskMenu(task) {
-  const d = new Date();
-  const h = d.getHours(), m = d.getMinutes();
-  const time = h + ":" + m.toString().padStart(2,0);
+function getTaskMenu(task, backFn) {
+  const d                 = new Date();
+  const h                 = d.getHours(), m = d.getMinutes();
+  const time              = h + ":" + m.toString()
+                                       .padStart(2, 0);
   const taskSwipeControls = [
     createSwipeControl(SWIPE.LEFT, "Menu", () => {
       setMenu(mainMenu);
@@ -427,7 +434,7 @@ function getTaskMenu(task) {
     taskSwipeControls.push(createSwipeControl(SWIPE.DOWN, "Edit Task", () => editTask(task, () => startTask(task))))
   }
   return createMenu({
-    items, spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls, title: time
+    items, spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls, title: time, backFn
   });
 }
 
@@ -454,15 +461,17 @@ function st5(fn) {
 function editTask(task, backFn) {
   nudgeManager.interrupt();
   let editMenu = [];
-  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
   if (task.complete) {
-    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))})
-    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))})
+    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))});
+    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))});
   } else {
-    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))})
+    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))});
   }
-  editMenu.push({ title:"Interval", value: task.interval, min:10, step: 10, onchange: v => task.interval = v })
-  editMenu.push({ title:"Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v })
+  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
+  editMenu.push({title: "Interval", value: task.interval, min: 10, step: 10, onchange: v => task.interval = v});
+  editMenu.push({title: "Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v});
+  editMenu.push({title: "Statistics:"})
+  editMenu.push({title: "On Task: " + task.affirmCount})
   editMenu[""] = {title: task.text, back: backFn};
   E.showMenu(editMenu);
 }
@@ -488,10 +497,23 @@ function showTaskList(list, backFn) {
   E.showMenu(taskMenu);
 }
 
+function showSettingsMenu(backFn) {
+  const completeTasks   = allTasks.filter(task => task.complete);
+  const incompleteTasks = allTasks.filter(task => !task.complete);
+  const settingsMenu    = {
+    ""               : {title: "Manage", back: backFn},
+    "Pending Tasks"  : () => showTaskList(incompleteTasks, () => showSettingsMenu(backFn)),
+    "Completed Tasks": () => showTaskList(completeTasks, () => showSettingsMenu(backFn)),
+    "Text Outlines"  : {value: savedData.settings.textOutlines, onchange: v => savedData.settings.textOutlines = v},
+    "No Word Breaks" : {value: savedData.settings.noWordBreaks, onchange: v => savedData.settings.noWordBreaks = v}
+  }
+  E.showMenu(settingsMenu);
+}
+
 const mainMenu = createMenu({
   title          : "Working Memory", items: [
-    {text: "New Task", size: 2, callback: newTask}, {
-      text: "Manage", size: 1, callback: () => showTaskList(allTasks, () => setMenu(mainMenu))
+    {text: "New Task", size: 2, callback: () => newTask("")}, {
+      text: "Manage", size: 1, callback: () => showSettingsMenu(() => setMenu(mainMenu))
     }
   ], isHorizontal: false
 });
