@@ -16,9 +16,11 @@
   if (settings.vibrate == undefined) settings.vibrate = "..";
   require('Storage').writeJSON("android.settings.json", settings);
   var _GB = global.GB;
+  let fetchRecInterval;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
     if (_GB) setTimeout(_GB,0,Object.assign({},event));
+
 
     /* TODO: Call handling, fitness */
     var HANDLERS = {
@@ -229,6 +231,49 @@
           require("health").readFullDatabase(actCb);
         }
         gbSend({t: "actfetch", state: "end", count: actCount});
+      },
+      //{t:"listRecs", id:"20230616a"}
+      "listRecs": function() {
+        let recs = require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).map(s => s.slice(12, 21));
+        if (event.id.length > 2) { // Handle if there was no id supplied. Then we send a list all available recorder logs back.
+          let firstNonsyncedIdx = recs.findIndex((logId) => logId > event.id);
+          if (-1 == firstNonsyncedIdx) {
+            recs = []
+          } else {
+            recs = recs.slice(firstNonsyncedIdx);
+          }
+        }
+        gbSend({t:"actTrksList", list: recs}); // TODO: split up in multiple transmissions?
+      },
+      //{t:"fetchRec", id:"20230616a"}
+      "fetchRec": function() {
+        // TODO: Decide on what names keys should have.
+        if (fetchRecInterval) {
+          clearInterval(fetchRecInterval);
+          fetchRecInterval = undefined;
+        }
+        if (event.id=="stop") {
+          return
+        } else {
+          let log = require("Storage").open("recorder.log"+event.id+".csv","r");
+          let lines = "init";// = log.readLine();
+          let pkgcnt = 0;
+          gbSend({t:"actTrk", log:event.id, lines:"erase", cnt:pkgcnt}); // "erase" will prompt Gadgetbridge to erase the contents of a already fetched log so we can rewrite it without keeping lines from the previous (probably failed) fetch.
+          let sendlines = ()=>{
+            lines = log.readLine();
+            for (var i = 0; i < 3; i++) {
+              let line = log.readLine();
+              if (line) lines += line;
+            }
+            pkgcnt++;
+            gbSend({t:"actTrk", log:event.id, lines:lines, cnt:pkgcnt});
+            if (!lines && fetchRecInterval) {
+              clearInterval(fetchRecInterval);
+              fetchRecInterval = undefined;
+            }
+          }
+          fetchRecInterval = setInterval(sendlines, 50)
+        }
       },
       "nav": function() {
         event.id="nav";
