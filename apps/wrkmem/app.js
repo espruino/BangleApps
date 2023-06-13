@@ -6,7 +6,24 @@ E.showMessage("Loading ... ");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-const allTasks     = [];
+const localTaskFile = "wrkmem.json";
+let savedData       = require("Storage")
+.readJSON(localTaskFile, true);
+if (!savedData) {
+  savedData = {
+    tasks: [], keyboardAlpha: undefined
+
+  }
+}
+
+let currentMenu;
+
+function save() {
+  require("Storage")
+  .writeJSON("wrkmem.json", savedData);
+}
+
+const allTasks     = savedData.tasks;
 const nudgeManager = {
   activeTask             : null, taskTimeout: null, responseTimeout: null, interrupt: () => {
     if (this.taskTimeout) clearTimeout(this.taskTimeout);
@@ -16,7 +33,8 @@ const nudgeManager = {
     if (this.responseTimeout) clearTimeout(this.responseTimeout);
     if (this.taskTimeout) clearTimeout(this.taskTimeout);
     this.activeTask  = task;
-    const time       = task.incrementalBackoffSet[task.backoffIndex] * task.interval * 1000;
+    const backoffIndex = task.useBackoff ? task.backoffIndex : 1;
+    const time       = task.incrementalBackoffSet[backoffIndex] * task.interval * 1000;
     this.taskTimeout = setTimeout(nudgeFn, time);
   }, queueResponseTimeout: (defaultFn) => {
     // This timeout shouldn't be set if we've queued a response timeout, but we clear it anyway.
@@ -254,23 +272,25 @@ function createMenu(options) {
 function setMenu(menu) {
   g.clearRect(Bangle.appRect);
   g.reset();
+  currentMenu = menu;
   menu.render();
   menu.setUI();
 }
 
-let keyboardAlpha, keyboardNum;
+let keyboardAlpha;
 if (textInput.generateKeyboard) {
   const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
-  keyboardAlpha = textInput.generateKeyboard(charSet);
-  // keyboardNum   = textInput.generateKeyboard([["1", "2", "3", "4", "5", "6", "7", "8", "9"], ["0"], "del", "ok"]);
+  keyboardAlpha = textInput.generateKeyboard(charSet)
 }
 
 function newTask(initialText) {
+  nudgeManager.interrupt();
   initialText = initialText || "";
   textInput.input({text: initialText, keyboardMain: keyboardAlpha})
            .then(text => {
              const task = createTask(text)
              allTasks.unshift(task);
+             save();
              startTask(task);
            })
 }
@@ -290,8 +310,8 @@ function nudge(task) {
         });
   const nudgeMenu = createMenu({
     title          : "Are you on task?", titleFont: "6x8", items: [
-      {text: task.text, size: 1}, {text: "On Task", size: 2, callback: () => affirmOnTask(task)}, {
-        text: "Distracted", size: 2, callback: () => affirmDistracted(task)
+      {text: task.text, size: 1}, {text: "On Task", size: 1, callback: () => affirmOnTask(task)}, {
+        text: "Distracted", size: 1, callback: () => affirmDistracted(task)
       }
     ], isHorizontal: false
   });
@@ -312,14 +332,15 @@ function affirmDistracted(task) {
 }
 
 function concludeUnresponsive(task) {
-  Bangle.buzz(250, 1).then(() => Bangle.setLCDPower(true));
+  Bangle.buzz(250, 1)
+        .then(() => Bangle.setLCDPower(true));
   task.unresponsiveCount++;
   task.backoffIndex = Math.max(0, task.backoffIndex - 1);
   nudgeManager.queueResponseTimeout(() => concludeUnresponsive(task))
 }
 
 function showTempMessage(text, title, thenFn) {
-  E.showMessage(text,{title});
+  E.showMessage(text, {title});
   setTimeout(() => {
     Bangle.setLocked(true);
     thenFn();
@@ -335,6 +356,7 @@ function completeTask(task) {
   task.complete = true;
   removeTask(task, allTasks);
   allTasks.push(task);
+  save();
   setMenu(getTaskMenu(task));
 }
 
@@ -342,6 +364,7 @@ function restartTask(task) {
   task.complete = false;
   removeTask(task, allTasks);
   allTasks.unshift(task);
+  save();
   startTask(task);
 }
 
@@ -367,18 +390,27 @@ function createTask(text) {
     interval         : 30,
     backoffIndex     : 1,
     incrementalBackoffSet,
-    complete         : false
+    complete         : false,
+    useBackoff: true
   };
 }
 
 function getTaskMenu(task) {
+  const d = new Date();
+  const h = d.getHours(), m = d.getMinutes();
+  const time = h + ":" + m.toString().padStart(2,0);
   const taskSwipeControls = [
-    createSwipeControl(SWIPE.LEFT, "Menu", () => setMenu(mainMenu)),
-    createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
+    createSwipeControl(SWIPE.LEFT, "Menu", () => {
+      setMenu(mainMenu);
+      nudgeManager.interrupt();
+    }), createSwipeControl(SWIPE.RIGHT, "New Task", newTask),
   ];
   const items             = [];
   if (task.complete) {
     taskSwipeControls.push(createSwipeControl(SWIPE.UP, "Restart", () => restartTask(task)));
+    taskSwipeControls.push(createSwipeControl(SWIPE.DOWN,
+      "Task List",
+      () => showTaskList(allTasks, () => startTask(task))));
     items.push({text: task.text + " completed!", size: 1});
     const nextTask = getNextTask(task, allTasks);
     if (nextTask) {
@@ -390,11 +422,12 @@ function getTaskMenu(task) {
       });
     }
   } else {
-    items.push({text: task.text})
-    taskSwipeControls.push(createSwipeControl(SWIPE.DOWN, "Complete", () => completeTask(task)))
+    items.push({text: task.text, size: 2})
+    taskSwipeControls.push(createSwipeControl(SWIPE.UP, "Complete", () => completeTask(task)))
+    taskSwipeControls.push(createSwipeControl(SWIPE.DOWN, "Edit Task", () => editTask(task, () => startTask(task))))
   }
   return createMenu({
-    items, spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls
+    items, spaceAround: 0, spaceBetween: 0, swipeControls: taskSwipeControls, title: time
   });
 }
 
@@ -419,6 +452,7 @@ function st5(fn) {
 }
 
 function editTask(task, backFn) {
+  nudgeManager.interrupt();
   let editMenu = [];
   editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
   if (task.complete) {
@@ -427,6 +461,8 @@ function editTask(task, backFn) {
   } else {
     editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))})
   }
+  editMenu.push({ title:"Interval", value: task.interval, min:10, step: 10, onchange: v => task.interval = v })
+  editMenu.push({ title:"Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v })
   editMenu[""] = {title: task.text, back: backFn};
   E.showMenu(editMenu);
 }
@@ -435,6 +471,7 @@ function renameTask(task, backFn) {
   return textInput.input({text: task.text, keyboardMain: keyboardAlpha})
                   .then(text => {
                     task.text = text
+                    save();
                     backFn();
                   })
 }
