@@ -1,7 +1,7 @@
 const app = "drained";
 
 // from boot.js
-declare var drainedInterval: number | undefined;
+declare var drainedInterval: IntervalId | undefined;
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
 
@@ -41,7 +41,7 @@ Bangle.setOptions({
 });
 
 // clock
-let nextDraw: number | undefined;
+let nextDraw: TimeoutId | undefined;
 const draw = () => {
   const x = g.getWidth() / 2;
   const y = g.getHeight() / 2 - 48;

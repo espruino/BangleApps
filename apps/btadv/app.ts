@@ -686,7 +686,7 @@ const setIntervals = (
 const redrawInterval = setInterval(redraw, /*replaced*/1000);
 Bangle.on("lock", locked => setIntervals(locked));
 
-let bleInterval: undefined | number;
+let bleInterval: undefined | IntervalId;
 NRF.on("connect", () => setIntervals(undefined, true));
 NRF.on("disconnect", () => setIntervals(undefined, false));
 

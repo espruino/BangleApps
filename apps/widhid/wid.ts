@@ -10,7 +10,7 @@
 	let anchor = {x:0,y:0};
 	let start = {x:0,y:0};
 	let dragging = false;
-	let activeTimeout: number | undefined;
+	let activeTimeout: TimeoutId | undefined;
 	let waitForRelease = true;
 
 	const onSwipe = ((_lr, ud) => {
