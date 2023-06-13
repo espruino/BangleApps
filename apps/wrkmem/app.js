@@ -1,7 +1,7 @@
 const textInput = require("textinput");
 
-g.clearRect(Bangle.appRect);
 g.reset();
+g.clearRect(Bangle.appRect);
 E.showMessage("Loading ... ");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -16,12 +16,16 @@ Object.assign(savedData, require("Storage")
 
 let currentMenu;
 
-function save() {
-  require("Storage")
-  .writeJSON("wrkmem.json", savedData);
+const allTasks = savedData.tasks;
+const SWIPE    = {
+  LEFT: 2, RIGHT: 0, UP: 3, DOWN: 1,
 }
 
-const allTasks     = savedData.tasks;
+/**
+ * A management object that helps us keep track of all our task timeouts.
+ * @type {{queueResponseTimeout: nudgeManager.queueResponseTimeout, taskTimeout: null, queueNudge:
+ *   nudgeManager.queueNudge, interrupt: nudgeManager.interrupt, responseTimeout: null, activeTask: null}}
+ */
 const nudgeManager = {
   activeTask             : null, taskTimeout: null, responseTimeout: null, interrupt: () => {
     if (this.taskTimeout) clearTimeout(this.taskTimeout);
@@ -41,6 +45,58 @@ const nudgeManager = {
   },
 }
 
+let keyboardAlpha, keyboardAlphaShift;
+
+if (textInput.generateKeyboard) {
+  //const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
+  keyboardAlpha = textInput.generateKeyboard([
+    ["a", "b", "c", "j", "k", "l", "s", "t", "u"],
+    ["d", "e", "f", "m", "n", "o", "v", "w", "x"],
+    ["g", "h", "i", "p", "q", "r", "y", "z"],
+    "spc",
+    "ok",
+    "del"
+  ]);
+  keyboardAlphaShift = textInput.generateKeyboard([
+    ["A", "B", "C", "J", "K", "L", "S", "T", "U"],
+    ["D", "E", "F", "M", "N", "O", "V", "W", "X"],
+    ["G", "H", "I", "P", "Q", "R", "Y", "Z"],
+    "spc",
+    "cncl",
+    "del"
+  ])
+}
+
+/**
+ * Save the data in 'savedData' to flash memory.
+ */
+function save() {
+  require("Storage")
+  .writeJSON("wrkmem.json", savedData);
+}
+
+/**
+ * This function is a workaround wrapper for a menu navigation bug. After 'onchange' the menu re-renders itself
+ * so to avoid graphical glitches we postpone whatever funciton we actually want by 5ms.
+ * @param fn The function you actually want to call
+ * @returns {function(): any} The same function wrapped in a setTimeout with a 5ms delay.
+ */
+function st5(fn) {
+  return () => setTimeout(fn, 5);
+}
+
+/**
+ * Given a position and set of dimensions, create a button object that represents a rectangle in space containing text
+ * and some associated functionality.
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param text
+ * @param callback
+ * @returns {{padding: number, r: number, getDrawable: (function(*, *, *, *, *): {r, x, y, y2, x2}), w, x, h, y, text:
+ *   string, onTouch: ((function(*, *): (*|undefined))|*)}}
+ */
 function createButton(x, y, w, h, text, callback) {
   text              = text || "";
   const x2          = x + w;
@@ -70,7 +126,10 @@ function createButton(x, y, w, h, text, callback) {
   };
 }
 
-
+/**
+ * Given a button object, draw that button onto the screen. This includes the background, borders, effects, and text.
+ * @param button
+ */
 function drawButton(button) {
   const textMaxWidth = button.w - 2 * button.padding;
   let textOutlineCol = g.theme.bgH;
@@ -112,6 +171,12 @@ function drawButton(button) {
   g.reset();
 }
 
+/**
+ * Given a button object, determine what font would be best to display the button's text without breaching the
+ * dimensions of the button itself. Not perfectly at the moment, but serviceably.
+ * @param button
+ * @returns {string}
+ */
 function getBestFontForButton(button) {
   const allowedFonts  = ["12x20", "6x15", "6x8", "4x6"];
   let stringMet       = g.setFont("Vector:100")
@@ -143,6 +208,14 @@ function getBestFontForButton(button) {
   return allowedFonts[i];
 }
 
+/**
+ * Given a rotation (0-3) and a label, create an object representing a swipe hint, complete with draw instructions,
+ * a handler, and the specified rotation.
+ * @param rot A number, preferably from the SWIPE enum. 0 = 0 degrees. 1 = 90 degrees. 2 = 180 degrees, etc.
+ * @param text The text to display on the swipe hint
+ * @param callback The function to be called when the corresponding direction is swiped.
+ * @returns {{rot, onSwipe: ((function(*, *): (*|undefined))|*), draw: draw}}
+ */
 function createSwipeControl(rot, text, callback) {
   let draw     = () => {};
   let appRect  = Bangle.appRect;
@@ -176,6 +249,14 @@ function createSwipeControl(rot, text, callback) {
   return {draw, onSwipe, rot};
 }
 
+/**
+ * Given a position, rotation, text, and mirror option, draw a swipe hint on the screen.
+ * @param x The x position of the center of the swipe hint.
+ * @param y The y position of the center of the swipe hint.
+ * @param rot The SWIPE rotation enumerated value (0-3) indicating the direction.
+ * @param text The text to display in the hint.
+ * @param flip Whether or not to flip the direction of the swipe hint (left to right, up to down, etc).
+ */
 function drawSwipeHint(x, y, rot, text, flip) {
   const tw   = g.setFont("6x8")
                 .stringWidth(text);
@@ -197,6 +278,12 @@ function drawSwipeHint(x, y, rot, text, flip) {
    .drawImage(gRot, x, y, {rotate: Math.PI / 2 * rot});
 }
 
+/**
+ * Given a set of options, create a drawable / UI-able menu object that attempts to lay out buttons and swipe hints in
+ * a given space. Returns an object with both setUI and render functions.
+ * @param options
+ * @returns {{setUI: (function(): void), buttons: *[], render: render}}
+ */
 function createMenu(options) {
   let width           = options.width || Bangle.appRect.w;
   let height          = options.height || Bangle.appRect.h;
@@ -269,27 +356,34 @@ function createMenu(options) {
   };
 }
 
-
+/**
+ * Given a menu object (a custom menu object created in this app, not an Espruino menu object) draw the menu to the
+ * screen and set the UI framework to the one appropriate to that menu.
+ * @param menu
+ */
 function setMenu(menu) {
   save();
-  g.clearRect(Bangle.appRect);
   g.reset();
+  g.clearRect(Bangle.appRect);
   currentMenu = menu;
   menu.render();
   menu.setUI();
+  Bangle.drawWidgets();
 }
 
-let keyboardAlpha;
-if (textInput.generateKeyboard) {
-  //const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
-  keyboardAlpha = textInput.generateKeyboard([["A", "B", "C", "J", "K", "L", "S", "T", "U"],["D", "E", "F", "M", "N", "O", "V", "W", "X"],["G", "H", "I", "P", "Q", "R", "Y", "Z"], "spc", "ok", "del"])
-}
-
+/**
+ * Create a new task with a given set of initial text. The user will be prompted with a keyboard to title the task.
+ * Once the task is created, begin that task.
+ * @param initialText
+ */
 function newTask(initialText) {
   nudgeManager.interrupt();
   initialText = initialText || "";
-  textInput.input({text: initialText, keyboardMain: keyboardAlpha})
+  textInput.input({text: initialText, keyboardMain: keyboardAlpha, keyboardShift: keyboardAlphaShift})
            .then(text => {
+             if (!text) {
+               setMenu(mainMenu);
+             }
              const task = createTask(text)
              allTasks.unshift(task);
              save();
@@ -297,10 +391,13 @@ function newTask(initialText) {
            })
 }
 
+/**
+ * Begin the indicated task, taking the user to the corresponding menu / display screen and starting all relevant timers
+ * @param task
+ */
 function startTask(task) {
   nudgeManager.queueNudge(task, () => nudge(task));
   g.clear();
-  Bangle.drawWidgets();
   const onPressBack = () => {
     nudgeManager.interrupt();
     setMenu(mainMenu)
@@ -308,6 +405,11 @@ function startTask(task) {
   setMenu(getTaskMenu(task, onPressBack));
 }
 
+/**
+ * Remind the user of an ongoing task, prompting them to affirm that they are on task, distracted, or, after a set time
+ * period, unresponsive.
+ * @param task
+ */
 function nudge(task) {
   Bangle.buzz(250, 1)
         .then(() => {
@@ -325,18 +427,33 @@ function nudge(task) {
   nudgeManager.queueResponseTimeout(() => concludeUnresponsive(task));
 }
 
+/**
+ * Invoked when the user affirms that they are on task, increasing the affirmation count on the given task and
+ * advancing the incremental backoff counter. Congratulates the user for the response.
+ * @param task
+ */
 function affirmOnTask(task) {
   task.affirmCount++;
   task.backoffIndex = Math.min(task.incrementalBackoffSet.length - 1, task.backoffIndex + 1);
   showTempMessage("Great job!", "On Task!", () => startTask(task));
 }
 
+/**
+ * Invoked when the user affirms that they were distracted, increasing the distraction count and lowering the
+ * incremental backoff counter. Encourages the user to keep trying.
+ * @param task
+ */
 function affirmDistracted(task) {
   task.distractCount++;
   task.backoffIndex = Math.max(0, task.backoffIndex - 1);
   showTempMessage("Don't worry! You've got this!", "Distracted!", () => startTask(task));
 }
 
+/**
+ * Invoked when the user has not responded to an "on task?" prompt. Increments the unresponsive count and decrements
+ * the incremental backoff counter.
+ * @param task
+ */
 function concludeUnresponsive(task) {
   Bangle.buzz(250, 1)
         .then(() => Bangle.setLCDPower(true));
@@ -345,6 +462,12 @@ function concludeUnresponsive(task) {
   nudgeManager.queueResponseTimeout(() => concludeUnresponsive(task))
 }
 
+/**
+ * Shows the user a message for a short period of time, then calls the "then function"
+ * @param text
+ * @param title
+ * @param thenFn
+ */
 function showTempMessage(text, title, thenFn) {
   E.showMessage(text, {title});
   setTimeout(() => {
@@ -365,6 +488,10 @@ function completeTask(task) {
   setMenu(getTaskMenu(task));
 }
 
+/**
+ * Mark the task as not completed and then push it to the top of the list.
+ * @param task
+ */
 function restartTask(task) {
   task.complete = false;
   removeTask(task, allTasks);
@@ -373,6 +500,11 @@ function restartTask(task) {
   startTask(task);
 }
 
+/**
+ * Remove the task from the given list.
+ * @param task
+ * @param list
+ */
 function removeTask(task, list) {
   const taskIndex = list.findIndex((item) => item === task);
   if (taskIndex !== -1) {
@@ -380,11 +512,12 @@ function removeTask(task, list) {
   }
 }
 
-
-const SWIPE = {
-  LEFT: 2, RIGHT: 0, UP: 3, DOWN: 1,
-}
-
+/**
+ * Creates a task object given a set of text.
+ * @param text
+ * @returns {{distractCount: number, backoffIndex: number, incrementalBackoffSet: number[], affirmCount: number,
+ *   unresponsiveCount: number, interval: number, text, complete: boolean, useBackoff: boolean}}
+ */
 function createTask(text) {
   const incrementalBackoffSet = [0.5, 1, 2, 4, 8, 16, 32];
   return {
@@ -400,6 +533,73 @@ function createTask(text) {
   };
 }
 
+/**
+ * Shows a menu for editing the various properties of a given task. Also exposes the functions to start, restart, or
+ * delete the given task.
+ * @param task
+ * @param backFn
+ */
+function editTask(task, backFn) {
+  nudgeManager.interrupt();
+  let editMenu = [];
+  if (task.complete) {
+    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))});
+    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))});
+  } else {
+    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))});
+  }
+  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
+  editMenu.push({title: "Interval", value: task.interval, min: 10, step: 10, onchange: v => task.interval = v});
+  editMenu.push({title: "Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v});
+  editMenu.push({title: "DELETE", onchange: st5(() => deleteTask(task, () => editTask(task, backFn), backFn))});
+  editMenu.push({title: "Statistics:"});
+  editMenu.push({title: "On Task: " + task.affirmCount});
+  editMenu.push({title: "Distracted: " + task.distractCount});
+  editMenu.push({title: "Unresponsive: " + task.unresponsiveCount});
+  editMenu[""] = {title: task.text, back: backFn};
+  E.showMenu(editMenu);
+}
+
+/**
+ * Remove the given task from the task list permanently if the user hits "yes" on the confirmation dialogue.
+ * @param task The task to delete.
+ * @param backFn The function to be called when the user cancels.
+ * @param deleteBackFn The function to be called when the user confirms.
+ */
+function deleteTask(task, backFn, deleteBackFn) {
+  E.showPrompt("Delete " + task.text + "?")
+   .then(shouldDelete => {
+     if (shouldDelete) {
+       removeTask(task, allTasks);
+       deleteBackFn();
+     } else {
+       backFn();
+     }
+   });
+}
+
+/**
+ * Change the text of the given task, and then execute the given function.
+ * @param task
+ * @param backFn The function to execute after the renaming. Typically to show some previous menu.
+ * @returns {*}
+ */
+function renameTask(task, backFn) {
+  return textInput.input({text: task.text, keyboardMain: keyboardAlpha, keyboardShift: keyboardAlphaShift})
+                  .then(text => {
+                    task.text = text
+                    save();
+                    backFn();
+                  })
+}
+
+/**
+ * Get the "menu" that displays a given active task. This may not seem like a menu to users, but it includes swipe
+ * controls and can sometimes include pressable buttons as well.
+ * @param task
+ * @param backFn
+ * @returns {{setUI: (function(): void), buttons: *[], render: render}}
+ */
 function getTaskMenu(task, backFn) {
   const d                 = new Date();
   const h                 = d.getHours(), m = d.getMinutes();
@@ -437,6 +637,13 @@ function getTaskMenu(task, backFn) {
   });
 }
 
+/**
+ * Given a task, determine the next incomplete task in the task list and return it. Return undefined if there are no
+ * other incomplete tasks.
+ * @param task
+ * @param list
+ * @returns {undefined|*}
+ */
 function getNextTask(task, list) {
   const activeList       = list.filter(x => (!x.complete || x === task));
   const thisTaskPosition = activeList.findIndex(t => t === task);
@@ -448,63 +655,14 @@ function getNextTask(task, list) {
 }
 
 /**
- * This function is a workaround wrapper for a menu navigation bug. After 'onchange' the menu re-renders itself
- * so to avoid graphical glitches we postpone whatever funciton we actually want by 5ms.
- * @param fn The function you actually want to call
- * @returns {function(): any} The same function wrapped in a setTimeout with a 5ms delay.
+ * Show the list of tasks in a menu, filtered by the filterFn. Selecting a task in this menu will bring you to that
+ * task's edit menu.
+ * @param filterFn
+ * @param backFn
  */
-function st5(fn) {
-  return () => setTimeout(fn, 5);
-}
-
-function editTask(task, backFn) {
-  nudgeManager.interrupt();
-  let editMenu = [];
-  if (task.complete) {
-    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))});
-    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))});
-  } else {
-    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))});
-  }
-  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
-  editMenu.push({title: "Interval", value: task.interval, min: 10, step: 10, onchange: v => task.interval = v});
-  editMenu.push({title: "Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v});
-  editMenu.push({title: "DELETE", onchange: st5(() => deleteTask(task, () => editTask(task, backFn), backFn))});
-  editMenu.push({title: "Statistics:"});
-  editMenu.push({title: "On Task: " + task.affirmCount});
-  editMenu.push({title: "Distracted: " + task.distractCount});
-  editMenu.push({title: "Unresponsive: " + task.unresponsiveCount});
-  editMenu[""] = {title: task.text, back: backFn};
-  E.showMenu(editMenu);
-}
-
-function deleteTask(task, backFn, deleteBackFn) {
-  E.showPrompt("Delete " + task.text + "?")
-   .then(shouldDelete => {
-     if (shouldDelete) {
-       const foundIndex = allTasks.findIndex(t => t === task);
-       if (foundIndex !== -1) {
-         allTasks.splice(foundIndex, 1);
-       }
-       deleteBackFn();
-     } else {
-       backFn();
-     }
-   });
-}
-
-function renameTask(task, backFn) {
-  return textInput.input({text: task.text, keyboardMain: keyboardAlpha})
-                  .then(text => {
-                    task.text = text
-                    save();
-                    backFn();
-                  })
-}
-
 function showTaskList(filterFn, backFn) {
   let taskMenu = [];
-  const list = allTasks.filter(filterFn);
+  const list   = allTasks.filter(filterFn);
   taskMenu     = taskMenu.concat(list.map(task => {
     return {
       // Workaround - navigation has phantom buttons rendered with E.showMenu unless you delay slightly.
@@ -515,10 +673,12 @@ function showTaskList(filterFn, backFn) {
   E.showMenu(taskMenu);
 }
 
+/**
+ * Show the menu for editing settings and tasks.
+ * @param backFn
+ */
 function showSettingsMenu(backFn) {
-  const completeTasks   = allTasks.filter(task => task.complete);
-  const incompleteTasks = allTasks.filter(task => !task.complete);
-  const settingsMenu    = {
+  const settingsMenu = {
     ""               : {title: "Manage", back: backFn},
     "Pending Tasks"  : () => showTaskList(task => !task.complete, () => showSettingsMenu(backFn)),
     "Completed Tasks": () => showTaskList(task => task.complete, () => showSettingsMenu(backFn)),
@@ -527,7 +687,6 @@ function showSettingsMenu(backFn) {
   }
   E.showMenu(settingsMenu);
 }
-
 const mainMenu = createMenu({
   title          : "Working Memory", items: [
     {text: "New Task", size: 2, callback: () => newTask("")}, {

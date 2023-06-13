@@ -26,18 +26,17 @@ You must have some kind of keyboard library available in order to enter task des
 only supported on BangleJS2
 
 ## Styling
-This app attempts to match whatever theme your Bangle watch is using. Styling options are not currently available
-beyond that, but tweaking some things will eventually be possible, like the size and presence of swipe hints, whether
-or not task text is outlined, etc.
+This app attempts to match whatever theme your Bangle watch is using. You can also modify whether individual
+words are wrapped and whether outlines are drawn on text.
 
 ## Task settings
 You can edit the settings of any individual task. You can rename the task, restart (un-complete) the task, or change
-some of the reminder cadence settings. As far as cadence, there are a couple that warrante explanation:
+some of the reminder cadence settings. As far as cadence, there are a couple that warrant explanation:
 
-#### Interval
+### Interval
 This is the base reminder interval for your task. If it is 30, your first reminder will be after 30 seconds.
 
-#### Incremental Backoff
+### Incremental Backoff
 Incremental backoff is a strategy for timing the reminder notifications you get based on how well you stay on task.
 Each time you affirm that you are "on task", incremental backoff means it will wait longer before reminding you again.
 Similarly each time you affirm that you are "distracted" the incremental backoff will wait less time before reminding 
