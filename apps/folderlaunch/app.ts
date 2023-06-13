@@ -115,7 +115,7 @@
         // Get the icon and text, skip if the space is empty. Always draw text for folders even if disabled
         switch (entry.type) {
           case 'app':
-            let app: AppInfo = storage.readJSON(entry.id + '.info', false);
+            let app = storage.readJSON(entry.id + '.info', false) as AppInfo;
             icon = storage.read(app.icon!)!;
             text = app.name;
             empty = false;
@@ -186,7 +186,7 @@
     switch (entry.type) {
       case "app":
         Bangle.buzz();
-        let infoFile = storage.readJSON(entry.id + '.info', false);
+        let infoFile = storage.readJSON(entry.id + '.info', false) as AppInfo;
         load(infoFile.src);
         break;
       case "folder":

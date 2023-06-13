@@ -26,7 +26,7 @@
         trimCache(cache);
         require("Storage").writeJSON("popcon.cache.json", cache);
         if (orderChanged) {
-            var info = oldRead("popconlaunch.info", true);
+            var info = oldRead("popconlaunch.info", true) || { cacheBuster: true };
             info.cacheBuster = !info.cacheBuster;
             require("Storage").writeJSON("popconlaunch.info", info);
         }

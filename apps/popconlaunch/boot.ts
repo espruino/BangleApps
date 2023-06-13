@@ -38,7 +38,7 @@ const saveCache = (cache: Cache, orderChanged: boolean) => {
 	require("Storage").writeJSON("popcon.cache.json", cache);
 	if(orderChanged){
 		// ensure launchers reload their caches:
-		const info = (oldRead("popconlaunch.info", true) as undefined | AppInfo & { cacheBuster?: boolean }) || {};
+		const info = (oldRead("popconlaunch.info", true) as undefined | AppInfo & { cacheBuster?: boolean }) || {cacheBuster:true};
 		info.cacheBuster = !info.cacheBuster;
 		require("Storage").writeJSON("popconlaunch.info", info);
 	}

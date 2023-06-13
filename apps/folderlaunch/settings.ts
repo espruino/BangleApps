@@ -24,7 +24,7 @@
         onchange    // Do nothing, but stop typescript from yelling at me for this function being unused. It gets used by eval. I know eval is evil, but the menus are a bit limited.
 
         for (let app in config.apps) {
-            let appInfo: AppInfo = storage.readJSON(app + '.info', false);
+            let appInfo = storage.readJSON(app + '.info', false) as AppInfo;
             menu[appInfo.name] = {
                 value: config.hidden.includes(app),
                 format: (value: boolean) => (value ? 'Yes' : 'No'),
@@ -36,7 +36,7 @@
     };
 
     let getAppInfo = (id: string): AppInfo => {
-        return storage.readJSON(id + '.info', false);
+        return storage.readJSON(id + '.info', false) as AppInfo;
     }
 
     let showFolderMenu = (path: Array<string>) => {
@@ -142,7 +142,7 @@
                 }
             }
             for (let appId of folder.apps) {
-                menu[storage.readJSON(appId + '.info', false).name] = () => { };
+                menu[(storage.readJSON(appId + '.info', false) as AppInfo).name] = () => { };
             }
             E.showMenu(menu);
         }

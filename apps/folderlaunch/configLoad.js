@@ -28,7 +28,7 @@ function cleanAndSave(config) {
     var installedAppIds = [];
     for (var _i = 0, infoFiles_1 = infoFiles; _i < infoFiles_1.length; _i++) {
         var infoFile = infoFiles_1[_i];
-        installedAppIds.push(storage.readJSON(infoFile, true).id);
+        installedAppIds.push((storage.readJSON(infoFile, true) || {}).id);
     }
     var toRemove = [];
     for (var appId in config.apps)
@@ -67,7 +67,7 @@ module.exports = {
         infoFiles.sort(infoFileSorter);
         for (var _i = 0, infoFiles_2 = infoFiles; _i < infoFiles_2.length; _i++) {
             var infoFile = infoFiles_2[_i];
-            var app_1 = storage.readJSON(infoFile, false);
+            var app_1 = storage.readJSON(infoFile, false) || {};
             if ((!config.showClocks && app_1.type == 'clock') ||
                 (!config.showLaunchers && app_1.type == 'launch') ||
                 (app_1.type == 'widget') ||
