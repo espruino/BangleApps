@@ -281,8 +281,8 @@ function setMenu(menu) {
 
 let keyboardAlpha;
 if (textInput.generateKeyboard) {
-  const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
-  keyboardAlpha = textInput.generateKeyboard(charSet)
+  //const charSet = textInput.createCharSet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ["spc", "ok", "del"]);
+  keyboardAlpha = textInput.generateKeyboard([["A", "B", "C", "J", "K", "L", "S", "T", "U"],["D", "E", "F", "M", "N", "O", "V", "W", "X"],["G", "H", "I", "P", "Q", "R", "Y", "Z"], "spc", "ok", "del"])
 }
 
 function newTask(initialText) {
@@ -348,7 +348,6 @@ function concludeUnresponsive(task) {
 function showTempMessage(text, title, thenFn) {
   E.showMessage(text, {title});
   setTimeout(() => {
-    Bangle.setLocked(true);
     thenFn();
   }, 1500);
 }
@@ -417,7 +416,7 @@ function getTaskMenu(task, backFn) {
     taskSwipeControls.push(createSwipeControl(SWIPE.UP, "Restart", () => restartTask(task)));
     taskSwipeControls.push(createSwipeControl(SWIPE.DOWN,
       "Task List",
-      () => showTaskList(allTasks, () => startTask(task))));
+      () => showTaskList(() => true, () => startTask(task))));
     items.push({text: task.text + " completed!", size: 1});
     const nextTask = getNextTask(task, allTasks);
     if (nextTask) {
@@ -470,10 +469,28 @@ function editTask(task, backFn) {
   editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
   editMenu.push({title: "Interval", value: task.interval, min: 10, step: 10, onchange: v => task.interval = v});
   editMenu.push({title: "Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v});
-  editMenu.push({title: "Statistics:"})
-  editMenu.push({title: "On Task: " + task.affirmCount})
+  editMenu.push({title: "DELETE", onchange: st5(() => deleteTask(task, () => editTask(task, backFn), backFn))});
+  editMenu.push({title: "Statistics:"});
+  editMenu.push({title: "On Task: " + task.affirmCount});
+  editMenu.push({title: "Distracted: " + task.distractCount});
+  editMenu.push({title: "Unresponsive: " + task.unresponsiveCount});
   editMenu[""] = {title: task.text, back: backFn};
   E.showMenu(editMenu);
+}
+
+function deleteTask(task, backFn, deleteBackFn) {
+  E.showPrompt("Delete " + task.text + "?")
+   .then(shouldDelete => {
+     if (shouldDelete) {
+       const foundIndex = allTasks.findIndex(t => t === task);
+       if (foundIndex !== -1) {
+         allTasks.splice(foundIndex, 1);
+       }
+       deleteBackFn();
+     } else {
+       backFn();
+     }
+   });
 }
 
 function renameTask(task, backFn) {
@@ -485,12 +502,13 @@ function renameTask(task, backFn) {
                   })
 }
 
-function showTaskList(list, backFn) {
+function showTaskList(filterFn, backFn) {
   let taskMenu = [];
+  const list = allTasks.filter(filterFn);
   taskMenu     = taskMenu.concat(list.map(task => {
     return {
       // Workaround - navigation has phantom buttons rendered with E.showMenu unless you delay slightly.
-      title: task.text, onchange: st5(() => editTask(task, () => showTaskList(list, backFn)))
+      title: task.text, onchange: st5(() => editTask(task, () => showTaskList(filterFn, backFn)))
     }
   }))
   taskMenu[""] = {title: "Tasks", back: backFn};
@@ -502,8 +520,8 @@ function showSettingsMenu(backFn) {
   const incompleteTasks = allTasks.filter(task => !task.complete);
   const settingsMenu    = {
     ""               : {title: "Manage", back: backFn},
-    "Pending Tasks"  : () => showTaskList(incompleteTasks, () => showSettingsMenu(backFn)),
-    "Completed Tasks": () => showTaskList(completeTasks, () => showSettingsMenu(backFn)),
+    "Pending Tasks"  : () => showTaskList(task => !task.complete, () => showSettingsMenu(backFn)),
+    "Completed Tasks": () => showTaskList(task => task.complete, () => showSettingsMenu(backFn)),
     "Text Outlines"  : {value: savedData.settings.textOutlines, onchange: v => savedData.settings.textOutlines = v},
     "No Word Breaks" : {value: savedData.settings.noWordBreaks, onchange: v => savedData.settings.noWordBreaks = v}
   }
