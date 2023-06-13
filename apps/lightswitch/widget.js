@@ -57,7 +57,7 @@
         );
       } else {
         // backlight off
-        g.setColor(g.theme.bg);
+        g.setColor(0);
       }
       // draw circle
       g.drawImage(atob("CwuBAB8H8f9/////////f8fwfAA="), this.x + 6, this.y + 6);
