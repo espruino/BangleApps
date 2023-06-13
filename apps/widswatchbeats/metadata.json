@@ -1,0 +1,18 @@
+{
+	"id": "widswatchbeats",
+	"name": "Swatch Internet Time",
+	"icon": "widget.png",
+	"version": "0.01",
+	"description": "Displays the current .beat (Swatch Internet Time)",
+	"tags": "time,swatch,internet,beat,.beat,clock",
+	"storage": [{
+			"name": "widswatchbeats.wid.js",
+			"url": "widget.js"
+		},
+		{
+			"name": "widswatchbeats.img",
+			"url": "widget-icon.js",
+			"evaluate": true
+		}
+	]
+}
