@@ -195,6 +195,14 @@
                     changed = true;
                 }
             },
+            'Disable vibration': {
+                value: !!config.disableVibration,
+                format: function (value) { return (value ? 'Yes' : 'No'); },
+                onchange: function (value) {
+                    config.disableVibration = value;
+                    changed = true;
+                }
+            },
             'Hidden apps': hiddenAppsMenu,
             'Display': function () {
                 E.showMenu({

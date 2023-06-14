@@ -211,6 +211,14 @@
                     changed = true;
                 }
             },
+            'Disable vibration': {
+                value: !!config.disableVibration,
+                format: (value: boolean) => (value ? 'Yes' : 'No'),
+                onchange: (value: boolean) => {
+                    config.disableVibration = value;
+                    changed = true;
+                }
+            },
             'Hidden apps': hiddenAppsMenu,
             'Display': () => {
                 E.showMenu({

@@ -5,6 +5,7 @@ const SETTINGS_FILE: string = "folderlaunch.json";
 const DEFAULT_CONFIG: Config = {
     showClocks: false,
     showLaunchers: false,
+    disableVibration: false,
     hidden: [],
     display: {
         rows: 2,

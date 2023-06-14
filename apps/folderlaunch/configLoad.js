@@ -3,6 +3,7 @@ var SETTINGS_FILE = "folderlaunch.json";
 var DEFAULT_CONFIG = {
     showClocks: false,
     showLaunchers: false,
+    disableVibration: false,
     hidden: [],
     display: {
         rows: 2,
