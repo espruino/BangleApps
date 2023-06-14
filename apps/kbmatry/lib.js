@@ -1,3 +1,5 @@
+const widgetUtils = require("widget_utils");
+
 /**
  * Attempt to lay out a set of characters in a logical way to optimize the number of buttons with the number
  * of characters per button. Useful if you need to dynamically (or frequently) change your character set
@@ -230,6 +232,7 @@ const defaultCharSetShift = [
  * @returns {Promise<unknown>}
  */
 function input(options) {
+  widgetUtils.hide();
   options             = options || {};
   let typed           = options.text || "";
   let resolveFunction = () => {};
@@ -487,7 +490,8 @@ function input(options) {
       Bangle.setLocked(false);
     })
   }).then((result) => {
-    g.clearRect(Bangle.appRect);
+    g.clear(true);
+    widgetUtils.show();
     clearInterval(blinkInterval);
     Bangle.setUI();
     return result;

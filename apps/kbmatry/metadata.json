@@ -1,6 +1,6 @@
 { "id": "kbmatry",
   "name": "Matryoshka Keyboard",
-  "version":"1.06",
+  "version":"1.07",
   "description": "A library for text input via onscreen keyboard. Easily enter characters with nested keyboards.",
   "icon": "icon.png",
   "type":"textinput",
