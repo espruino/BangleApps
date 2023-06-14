@@ -15,7 +15,7 @@ let cache: undefined | Cache;
 
 const ensureCache = (): NonNull<typeof cache> => {
 	if(!cache){
-		cache = oldRead("popcon.cache.json", true);
+		cache = oldRead("popcon.cache.json", true) as Cache | undefined;
 		if(!cache)
 			cache = {};
 	}
@@ -38,7 +38,7 @@ const saveCache = (cache: Cache, orderChanged: boolean) => {
 	require("Storage").writeJSON("popcon.cache.json", cache);
 	if(orderChanged){
 		// ensure launchers reload their caches:
-		const info: AppInfo & { cacheBuster?: boolean } = oldRead("popconlaunch.info", true);
+		const info = (oldRead("popconlaunch.info", true) as undefined | AppInfo & { cacheBuster?: boolean }) || {cacheBuster:true};
 		info.cacheBuster = !info.cacheBuster;
 		require("Storage").writeJSON("popconlaunch.info", info);
 	}
@@ -80,10 +80,10 @@ const sortCache = () => {
 };
 
 require("Storage").readJSON = ((fname, skipExceptions) => {
-	const j: AppInfo = oldRead(fname, skipExceptions);
-	//       ^ technically only AppInfo if we're "*.info"
+	const j = oldRead(fname, skipExceptions) as AppInfo | undefined;
+	// technically only AppInfo if we're "*.info" ^
 
-	if(/\.info$/.test(fname)){
+	if(j && /\.info$/.test(fname)){
 		const cache = ensureCache();
 		let so;
 

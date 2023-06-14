@@ -6,7 +6,7 @@
 			const S = require("Storage");
 			S.erase("popcon.cache.json");
 
-			const info: AppInfo & { cacheBuster?: boolean } = S.readJSON("popconlaunch.info", true);
+			const info = S.readJSON("popconlaunch.info", true) as AppInfo & { cacheBuster?: boolean };
 			info.cacheBuster = !info.cacheBuster;
 			S.writeJSON("popconlaunch.info", info);
 

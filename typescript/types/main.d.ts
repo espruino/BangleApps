@@ -260,6 +260,9 @@ type Theme = {
   dark: boolean;
 };
 
+type IntervalId = number & { _brand: "interval" };
+type TimeoutId = number & { _brand: "timeout" };
+
 type PinMode =
   | "analog"
   | "input"
@@ -3863,7 +3866,7 @@ declare class Bangle {
    *   of the BPM reading.
    * * `hrmSportMode` - on the newest Bangle.js 2 builds with with the proprietary
    *   heart rate algorithm, this is the sport mode passed to the algorithm. See `libs/misc/vc31_binary/algo.h`
-   *   for more info. 0 = normal (default), 1 = running, 2 = ...
+   *   for more info. -1 = auto, 0 = normal (default), 1 = running, 2 = ...
    * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for
    *   calculating altitude with the pressure sensor
    * Where accelerations are used they are in internal units, where `8192 = 1g`
@@ -4092,7 +4095,8 @@ declare class Bangle {
   static getHealthStatus(range?: "current" | "last" | "day"): HealthStatus;
 
   /**
-   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount` and `pollInterval`.
+   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount`, `pollInterval` and others.
+   * Please see the declaration of this function for more information (click the `==>` link above [this description](http://www.espruino.com/Reference#l_Bangle_dbg))
    * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_dbg
    */
@@ -4296,6 +4300,13 @@ declare class Bangle {
    * @url http://www.espruino.com/Reference#l_Bangle_showClock
    */
   static showClock(): void;
+
+  /**
+   * Show a 'recovery' menu that allows you to perform certain tasks on your Bangle.
+   * You can also enter this menu by restarting while holding down the `BTN1`
+   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
+   */
+  static showRecoveryMenu(): void;
 
   /**
    * This behaves the same as the global `load()` function, but if fast
@@ -4971,11 +4982,19 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * XXXXXXXXX
    * `);
    * g.drawImage(img, x,y);
+   * var img = Graphics.createImage(`
+   * .....
+   * .XXX.
+   * .X.X.
+   * .XXX.
+   * .....
+   * `);
+   * g.drawImage(img, x,y);
    * ```
    * If the characters at the beginning and end of the string are newlines, they will
    * be ignored. Spaces are treated as `0`, and any other character is a `1`
    *
-   * @param {any} str - A String containing a newline-separated image - space is 0, anything else is 1
+   * @param {any} str - A String containing a newline-separated image - space/. is 0, anything else is 1
    * @returns {any} An Image object that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_createImage
    */
@@ -5351,6 +5370,14 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_setFontCustom
    */
   setFontCustom(bitmap: ArrayBuffer, firstChar: number, width: number | string, height: number): Graphics;
+
+  /**
+   *
+   * @param {any} file - The font as a PBF file
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontPBF
+   */
+  setFontPBF(file: any): Graphics;
 
   /**
    * Set the alignment for subsequent calls to `drawString`
@@ -8097,21 +8124,65 @@ declare class E {
   static toArrayBuffer(str: string): ArrayBuffer;
 
   /**
-   * Returns a 'flat' string representing the data in the arguments, or return
-   * `undefined` if a flat string cannot be created.
-   * This creates a string from the given arguments. If an argument is a String or an
-   * Array, each element is traversed and added as an 8 bit character. If it is
-   * anything else, it is converted to a character directly.
+   * Returns a `String` representing the data in the arguments.
+   * This creates a string from the given arguments in the same way as `E.toUint8Array`. If each argument is:
+   * * A String or an Array, each element is traversed and added as an 8 bit character
+   * * `{data : ..., count : N}` causes `data` to be repeated `count` times
+   * * `{callback : fn}` calls the function and adds the result
+   * * Anything else is converted to a character directly.
    * In the case where there's one argument which is an 8 bit typed array backed by a
    * flat string of the same length, the backing string will be returned without
    * doing a copy or other allocation. The same applies if there's a single argument
    * which is itself a flat string.
+   * ```JS
+   * E.toString(0,1,2,"Hi",3)
+   * "\0\1\2Hi\3"
+   * E.toString(1,2,{data:[3,4], count:4},5,6)
+   * "\1\2\3\4\3\4\3\4\3\4\5\6"
+   * >E.toString(1,2,{callback : () => "Hello World"},5,6)
+   * ="\1\2Hello World\5\6"
+   * ```
+   * **Note:** Prior to Espruino 2v18 `E.toString` would always return a flat string,
+   * or would return `undefined` if one couldn't be allocated. Now, it will return
+   * a normal (fragmented) String if a contiguous chunk of memory cannot be allocated.
+   * You can still check if the returned value is a Flat string using `E.getAddressOf(str, true)!=0`,
+   * or can use `E.toFlatString` instead.
    *
    * @param {any} args - The arguments to convert to a String
-   * @returns {any} A String (or `undefined` if a Flat String cannot be created)
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_E_toString
    */
-  static toString(...args: any[]): string | undefined;
+  static toString(...args: any[]): string;
+
+  /**
+   * Returns a Flat `String` representing the data in the arguments, or `undefined` if one can't be allocated.
+   * This provides the same behaviour that `E.toString` had in Espruino before 2v18 - see `E.toString` for
+   * more information.
+   *
+   * @param {any} args - The arguments to convert to a Flat String
+   * @returns {any} A Flat String (or undefined)
+   * @url http://www.espruino.com/Reference#l_E_toFlatString
+   */
+  static toFlatString(...args: any[]): string | undefined;
+
+  /**
+   * By default, strings in Espruino are standard 8 bit binary strings.
+   * However calling E.asUTF8 will convert one of those strings to
+   * UTF8.
+   * ```
+   * var s = String.fromCharCode(0xF0,0x9F,0x8D,0x94);
+   * var u = E.asUTF8(s);
+   * s.length // 4
+   * s[0] // "\xF0"
+   * u.length // 1
+   * u[0] // hamburger emoji
+   * ```
+   *
+   * @param {any} str - The string to turn into a UTF8 Unicode String
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_E_asUTF8
+   */
+  static asUTF8(str: any): string;
 
   /**
    * This creates a Uint8Array from the given arguments. These are handled as
@@ -11226,7 +11297,7 @@ declare function getSerial(): any;
  * @returns {any} An ID that can be passed to clearInterval
  * @url http://www.espruino.com/Reference#l__global_setInterval
  */
-declare function setInterval(func: any, timeout: number, ...args: any[]): any;
+declare function setInterval(func: string | Function, timeout: number, ...args: any[]): IntervalId;
 
 /**
  * Call the function (or evaluate the string) specified ONCE after the timeout in
@@ -11261,7 +11332,7 @@ declare function setInterval(func: any, timeout: number, ...args: any[]): any;
  * @returns {any} An ID that can be passed to clearTimeout
  * @url http://www.espruino.com/Reference#l__global_setTimeout
  */
-declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
+declare function setTimeout(func: string | Function, timeout: number, ...args: any[]): TimeoutId;
 
 /**
  * Clear the Interval that was created with `setInterval`, for example:
@@ -11273,7 +11344,7 @@ declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
  * @param {any} id - The id returned by a previous call to setInterval. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearInterval
  */
-declare function clearInterval(...id: any[]): void;
+declare function clearInterval(id: IntervalId): void;
 
 /**
  * Clear the Timeout that was created with `setTimeout`, for example:
@@ -11285,7 +11356,7 @@ declare function clearInterval(...id: any[]): void;
  * @param {any} id - The id returned by a previous call to setTimeout. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearTimeout
  */
-declare function clearTimeout(...id: any[]): void;
+declare function clearTimeout(id: TimeoutId): void;
 
 /**
  * Change the Interval on a callback created with `setInterval`, for example:
@@ -11299,7 +11370,7 @@ declare function clearTimeout(...id: any[]): void;
  * @param {number} time - The new time period in ms
  * @url http://www.espruino.com/Reference#l__global_changeInterval
  */
-declare function changeInterval(id: any, time: number): void;
+declare function changeInterval(id: IntervalId, time: number): void;
 
 /**
  * Read 8 bits of memory at the given location - DANGEROUS!
@@ -13155,10 +13226,13 @@ declare module "tensorflow" {
  * Functions here take and return buffers of data. There is no support for
  * streaming, so both the compressed and decompressed data must be able to fit in
  * memory at the same time.
+ * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
  * @url http://www.espruino.com/Reference#heatshrink
  */
 declare module "heatshrink" {
   /**
+   * Compress the heatshrink-encoded data supplied as input.
+   * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to compress
    * @returns {any} Returns the result as an ArrayBuffer
@@ -13167,6 +13241,8 @@ declare module "heatshrink" {
   function compress(data: any): ArrayBuffer;
 
   /**
+   * Decompress the heatshrink-encoded data supplied as input.
+   * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to decompress
    * @returns {any} Returns the result as an ArrayBuffer
@@ -13316,7 +13392,8 @@ declare module "Storage" {
    * @returns {any} An object containing parsed JSON from the file, or undefined
    * @url http://www.espruino.com/Reference#l_Storage_readJSON
    */
-  function readJSON(name: string, noExceptions: ShortBoolean): any;
+  function readJSON(name: string, noExceptions?: false | 0): unknown;
+  function readJSON(name: string, noExceptions?: ShortBoolean): unknown | undefined;
 
   /**
    * Read a file from the flash storage area that has been written with

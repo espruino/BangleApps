@@ -10,8 +10,10 @@ type StopWatchSettings = {
   const SETTINGS_FILE = "clkinfostopw.setting.json";
 
   const storage = require("Storage");
-  const settings: StopWatchSettings = storage.readJSON(SETTINGS_FILE, true) || {};
-  settings.format ??= StopWatchFormat.HMS;
+  const settings: StopWatchSettings = Object.assign(
+    { format: StopWatchFormat.HMS },
+    storage.readJSON(SETTINGS_FILE, true),
+  );
 
   const save = () => {
     storage.writeJSON(SETTINGS_FILE, settings)

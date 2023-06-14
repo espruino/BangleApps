@@ -53,7 +53,7 @@ function cleanAndSave(config: Config): Config {
     let infoFiles: Array<string> = storage.list(/\.info$/);
     let installedAppIds: Array<string> = [];
     for (let infoFile of infoFiles)
-        installedAppIds.push(storage.readJSON(infoFile, true).id);
+        installedAppIds.push(((storage.readJSON(infoFile, true) || {}) as AppInfo).id);
 
     // Remove nonexistent apps from appInfo
     let toRemove: Array<string> = [];
@@ -77,8 +77,8 @@ function cleanAndSave(config: Config): Config {
  * @return negative if a should go first, positive if b should go first, zero if equivalent.
  */
 let infoFileSorter = (a: string, b: string): number => {
-    let aJson: AppInfo = storage.readJSON(a, false);
-    let bJson: AppInfo = storage.readJSON(b, false);
+    let aJson = storage.readJSON(a, false) as AppInfo;
+    let bJson = storage.readJSON(b, false) as AppInfo;
     var n = (0 | aJson.sortorder!) - (0 | bJson.sortorder!);
     if (n) return n; // do sortorder first
     if (aJson.name < bJson.name) return -1;
@@ -97,7 +97,7 @@ export = {
      * @return the loaded configuration
      */
     getConfig: (): Config => {
-        let config = storage.readJSON(SETTINGS_FILE, true) || DEFAULT_CONFIG;
+        let config = (storage.readJSON(SETTINGS_FILE, true) as Config | undefined) || DEFAULT_CONFIG;
 
         // We only need to load data from the filesystem if there is a change
         if (config.hash == storage.hash(/\.info$/)) {
@@ -110,7 +110,7 @@ export = {
         infoFiles.sort(infoFileSorter);
 
         for (let infoFile of infoFiles) {
-            let app: AppInfo = storage.readJSON(infoFile, false);
+            let app = storage.readJSON(infoFile, false) as AppInfo | undefined || ({} as AppInfo);
 
             // If the app is to be hidden by policy, exclude it completely
             if (
@@ -138,12 +138,12 @@ export = {
             // Note: Relies on curFolder secretly being a reference rather than a copy
             let curFolder: Folder = config.rootFolder;
             let depth = 0;
-            for (let folderName of config.apps[app.id].folder) {
+            for (let folderName of config.apps[app.id]!.folder) {
                 if (curFolder.folders.hasOwnProperty(folderName)) {
                     curFolder = curFolder.folders[folderName]!;
                     depth++;
                 } else {
-                    config.apps[app.id].folder = config.apps[app.id].folder.slice(0, depth);
+                    config.apps[app.id]!.folder = config.apps[app.id]!.folder.slice(0, depth);
                     break;
                 }
             }

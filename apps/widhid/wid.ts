@@ -1,5 +1,5 @@
 (() => {
-	const settings: Settings = require("Storage").readJSON("setting.json", true) || { HID: false } as Settings;
+	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
 		return;
@@ -10,7 +10,7 @@
 	let anchor = {x:0,y:0};
 	let start = {x:0,y:0};
 	let dragging = false;
-	let activeTimeout: number | undefined;
+	let activeTimeout: TimeoutId | undefined;
 	let waitForRelease = true;
 
 	const onSwipe = ((_lr, ud) => {
