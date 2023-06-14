@@ -76,6 +76,16 @@ function save() {
 }
 
 /**
+ * This function is a workaround wrapper for a menu navigation bug. After 'onchange' the menu re-renders itself
+ * so to avoid graphical glitches we postpone whatever funciton we actually want by 5ms.
+ * @param fn The function you actually want to call
+ * @returns {function(): any} The same function wrapped in a setTimeout with a 5ms delay.
+ */
+function st5(fn) {
+  return () => setTimeout(fn, 5);
+}
+
+/**
  * Given a position and set of dimensions, create a button object that represents a rectangle in space containing text
  * and some associated functionality.
  * @param x
@@ -533,15 +543,15 @@ function editTask(task, backFn) {
   nudgeManager.interrupt();
   let editMenu = [];
   if (task.complete) {
-    editMenu.push({title: "Start Task", onchange: () => restartTask(task)});
-    editMenu.push({title: "View Task", onchange: () => startTask(task)});
+    editMenu.push({title: "Start Task", onchange: st5(() => restartTask(task))});
+    editMenu.push({title: "View Task", onchange: st5(() => startTask(task))});
   } else {
-    editMenu.push({title: "Resume Task", onchange: () => startTask(task)});
+    editMenu.push({title: "Resume Task", onchange: st5(() => startTask(task))});
   }
-  editMenu.push({title: "Rename", onchange: () => renameTask(task, () => editTask(task, backFn))});
+  editMenu.push({title: "Rename", onchange: st5(() => renameTask(task, () => editTask(task, backFn)))});
   editMenu.push({title: "Interval", value: task.interval, min: 10, step: 10, onchange: v => task.interval = v});
   editMenu.push({title: "Incremental Backoff", value: !!task.useBackoff, onchange: v => task.useBackoff = v});
-  editMenu.push({title: "DELETE", onchange: () => deleteTask(task, () => editTask(task, backFn), backFn)});
+  editMenu.push({title: "DELETE", onchange: st5(() => deleteTask(task, () => editTask(task, backFn), backFn))});
   editMenu.push({title: "Statistics:"});
   editMenu.push({title: "On Task: " + task.affirmCount});
   editMenu.push({title: "Distracted: " + task.distractCount});
@@ -656,7 +666,7 @@ function showTaskList(filterFn, backFn) {
   taskMenu     = taskMenu.concat(list.map(task => {
     return {
       // Workaround - navigation has phantom buttons rendered with E.showMenu unless you delay slightly.
-      title: task.text, onchange: () => editTask(task, () => showTaskList(filterFn, backFn))
+      title: task.text, onchange: st5(() => editTask(task, () => showTaskList(filterFn, backFn)))
     }
   }))
   taskMenu[""] = {title: "Tasks", back: backFn};
