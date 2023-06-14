@@ -189,13 +189,7 @@
             render_1();
         }
     };
-    var buzz_1 = function (length, strength) {
-        if (length === void 0) { length = undefined; }
-        if (strength === void 0) { strength = undefined; }
-        if (!config_1.disableVibration) {
-            Bangle.buzz(length, strength);
-        }
-    };
+    var buzz_1 = config_1.disableVibration ? function () { } : Bangle.buzz;
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     Bangle.setUI({

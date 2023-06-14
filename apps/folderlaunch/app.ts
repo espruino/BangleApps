@@ -255,12 +255,7 @@
   /**
    * Vibrate the watch if vibration is enabled
    */
-  let buzz = (length: number | undefined = undefined, strength: number | undefined = undefined) => {
-    if (!config.disableVibration) {
-      Bangle.buzz(length, strength);
-    }
-  }
-
+  let buzz = config.disableVibration ? () => {} : Bangle.buzz;
 
   Bangle.loadWidgets();
   Bangle.drawWidgets();
