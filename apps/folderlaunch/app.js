@@ -133,12 +133,12 @@
         var entry = grid_1[x][y];
         switch (entry.type) {
             case "app":
-                Bangle.buzz();
+                buzz_1();
                 var infoFile = storage_1.readJSON(entry.id + '.info', false);
                 load(infoFile.src);
                 break;
             case "folder":
-                Bangle.buzz();
+                buzz_1();
                 resetTimeout_1();
                 page_1 = 0;
                 folderPath_1.push(entry.id);
@@ -160,7 +160,7 @@
         else if (ud == 1) {
             resetTimeout_1();
             if (page_1 == 0) {
-                Bangle.buzz(200);
+                buzz_1(200);
                 return;
             }
             else
@@ -169,7 +169,7 @@
         else if (ud == -1) {
             resetTimeout_1();
             if (page_1 == nPages_1 - 1) {
-                Bangle.buzz(200);
+                buzz_1(200);
                 return;
             }
             else
@@ -178,7 +178,7 @@
         render_1();
     };
     var onBackButton_1 = function () {
-        Bangle.buzz();
+        buzz_1();
         if (folderPath_1.length == 0)
             Bangle.showClock();
         else {
@@ -189,6 +189,7 @@
             render_1();
         }
     };
+    var buzz_1 = config_1.disableVibration ? function () { } : Bangle.buzz;
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     Bangle.setUI({

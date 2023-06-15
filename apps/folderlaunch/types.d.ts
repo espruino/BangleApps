@@ -10,6 +10,7 @@ type FolderList = Array<string>;
 type Config = {
     showClocks: boolean,            // Whether clocks are shown
     showLaunchers: boolean,         // Whether launchers are shown
+    disableVibration: boolean,      // Whether vibration is disabled
     hidden: Array<String>,          // IDs of apps to explicitly hide
     display: {
         rows: number,               // Display an X by X grid of apps

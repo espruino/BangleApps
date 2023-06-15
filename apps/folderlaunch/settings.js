@@ -23,7 +23,6 @@
             var appInfo = storage.readJSON(app_1 + '.info', false);
             menu[appInfo.name] = {
                 value: config.hidden.includes(app_1),
-                format: function (value) { return (value ? 'Yes' : 'No'); },
                 onchange: eval("(value) => { onchange(value, \"".concat(app_1, "\"); }"))
             };
         }
@@ -180,18 +179,23 @@
                 }
             },
             'Show clocks': {
-                value: config.showClocks,
-                format: function (value) { return (value ? 'Yes' : 'No'); },
+                value: !!config.showClocks,
                 onchange: function (value) {
                     config.showClocks = value;
                     changed = true;
                 }
             },
             'Show launchers': {
-                value: config.showLaunchers,
-                format: function (value) { return (value ? 'Yes' : 'No'); },
+                value: !!config.showLaunchers,
                 onchange: function (value) {
                     config.showLaunchers = value;
+                    changed = true;
+                }
+            },
+            'Disable vibration': {
+                value: !!config.disableVibration,
+                onchange: function (value) {
+                    config.disableVibration = value;
                     changed = true;
                 }
             },
@@ -212,7 +216,6 @@
                     },
                     'Show icons?': {
                         value: config.display.icon,
-                        format: function (value) { return (value ? 'Yes' : 'No'); },
                         onchange: function (value) {
                             config.display.icon = value;
                             changed = true;

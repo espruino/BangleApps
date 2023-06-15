@@ -27,7 +27,6 @@
             let appInfo = storage.readJSON(app + '.info', false) as AppInfo;
             menu[appInfo.name] = {
                 value: config.hidden.includes(app),
-                format: (value: boolean) => (value ? 'Yes' : 'No'),
                 onchange: eval(`(value) => { onchange(value, "${app}"); }`)
             }
         }
@@ -196,18 +195,23 @@
                 }
             },
             'Show clocks': {
-                value: config.showClocks,
-                format: value => (value ? 'Yes' : 'No'),
-                onchange: value => {
+                value: !!config.showClocks,
+                onchange: (value: boolean) => {
                     config.showClocks = value;
                     changed = true;
                 }
             },
             'Show launchers': {
-                value: config.showLaunchers,
-                format: value => (value ? 'Yes' : 'No'),
-                onchange: value => {
+                value: !!config.showLaunchers,
+                onchange: (value: boolean) => {
                     config.showLaunchers = value;
+                    changed = true;
+                }
+            },
+            'Disable vibration': {
+                value: !!config.disableVibration,
+                onchange: (value: boolean) => {
+                    config.disableVibration = value;
                     changed = true;
                 }
             },
@@ -228,7 +232,6 @@
                     },
                     'Show icons?': {
                         value: config.display.icon,
-                        format: value => (value ? 'Yes' : 'No'),
                         onchange: value => {
                             config.display.icon = value;
                             changed = true;

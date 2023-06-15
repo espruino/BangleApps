@@ -15,6 +15,8 @@ Swiping up and down will scroll. Swiping from the left, using the back button, o
 
 * Show clocks / Show launcher: Whether clock and launcher apps are displayed in the UI to be launched. The default is no.
 
+* Disable vibration: Whether vibration is disabled in the launcher. The default is no.
+
 * Hidden apps: Displays the list of installed apps, enabling them to be manually hidden. (Or unhidden, if hidden from here.) This may be convenient for apps that you have some other shortcut to access, or apps that are only shortcuts to an infrequently used settings menu. By default, no apps are hidden.
 
 * Display:
