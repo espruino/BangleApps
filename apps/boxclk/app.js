@@ -1,19 +1,27 @@
 (function() {
-  let w = g.getWidth();
-  let h = g.getHeight();
-  let totalWidth, totalHeight;
-  let touchHandler;
-  let dragHandler;
-  let drawTimeout;
-  let enableSuffix = true;
+  // 1. Module dependencies and initial configurations
   let storage = require("Storage");
   let locale = require("locale");
   let date = new Date();
-
   let bgImage;
   let boxesConfig = storage.readJSON('boxclk.json', 1) || {};
   let boxes = {};
+  let boxPos = {};
+  let isDragging = {};
+  let wasDragging = {};
 
+  // 2. Graphical and visual configurations
+  let w = g.getWidth();
+  let h = g.getHeight();
+  let totalWidth, totalHeight;
+  let enableSuffix = true;
+  let drawTimeout;
+
+  // 3. Handlers
+  let touchHandler;
+  let dragHandler;
+
+  // 4. Font loading function
   function loadCustomFont() {
     Graphics.prototype.setFontBrunoAce = function() {
       // Actual height 23 (24 - 2)
@@ -26,6 +34,7 @@
     };
   }
 
+  // 5. Initial settings of boxes and their positions
   for (let key in boxesConfig) {
     if (key === 'bg' && boxesConfig[key].img) {
       bgImage = storage.read(boxesConfig[key].img);
@@ -33,10 +42,6 @@
       boxes[key] = Object.assign({}, boxesConfig[key]);
     }
   }
-
-  let boxPos = {};
-  let isDragging = {};
-  let wasDragging = {};
 
   Object.keys(boxes).forEach((boxKey) => {
     let boxConfig = boxes[boxKey];
@@ -48,6 +53,7 @@
     wasDragging[boxKey] = false;
   });
 
+  // 6. Text and drawing functions
   let g_drawString = g.drawString;
   g.drawString = function(box, str, x, y) {
     outlineText(box, str, x, y);
@@ -84,6 +90,7 @@
     };
   }
 
+  // 7. Date and time related functions
   function getDate() {
     const date = new Date();
     const dayOfMonth = date.getDate();
@@ -107,6 +114,7 @@
     return locale.dow(date, 0);
   }
 
+  // 8. Main draw function
   function draw(boxes) {
     date = new Date();
     g.clear();
@@ -146,6 +154,7 @@
     }
   }
 
+  // 9. Setup function to configure event handlers
   function setup() {
     // Define the touchHandler function
     touchHandler = function(zone, e) {
@@ -210,6 +219,7 @@
     draw(boxes);
   }
 
+  // 10. Helper function for touch event
   function touchInText(e, boxItem, boxKey) {
     calcBoxSize(boxItem);
     const pos = calcBoxPos(boxKey);
@@ -219,6 +229,7 @@
           e.y <= pos.y2;
   }
 
+  // 11. Main execution part
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
   setup();
