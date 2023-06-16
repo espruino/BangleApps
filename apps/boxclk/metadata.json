@@ -16,7 +16,7 @@
   "storage": [
     {"name":"boxclk.app.js","url":"app.js"},
     {"name":"boxclk.img","url":"icon.js","evaluate":true},
-    {"name":"boxclk.beachhouse.img","url":"beachhouse.js","evaluate":true},
+    {"name":"boxclk.beachhouse.img","url":"beachhouse.js","evaluate":true}
   ],
   "data": [
     {"name":"boxclk.json","url":"boxclk.json"}
