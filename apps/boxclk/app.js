@@ -1,4 +1,4 @@
-(function() {
+{
   // 1. Module dependencies and initial configurations
   let storage = require("Storage");
   let locale = require("locale");
@@ -22,7 +22,7 @@
   let dragHandler;
 
   // 4. Font loading function
-  function loadCustomFont() {
+  let loadCustomFont = function() {
     Graphics.prototype.setFontBrunoAce = function() {
       // Actual height 23 (24 - 2)
       return this.setFontCustom(
@@ -32,7 +32,7 @@
         32|65536
       );
     };
-  }
+  };
 
   // 5. Initial settings of boxes and their positions
   for (let key in boxesConfig) {
@@ -61,7 +61,7 @@
     g_drawString.call(g, str, x, y);
   };
 
-  function outlineText(box, str, x, y) {
+  let outlineText = function(box, str, x, y) {
     let px = box.outline;
     let dx = [-px, 0, px, -px, px, -px, 0, px];
     let dy = [-px, -px, -px, 0, 0, px, px, px];
@@ -69,9 +69,9 @@
     for (let i = 0; i < dx.length; i++) {
       g_drawString.call(g, str, x + dx[i], y + dy[i]);
     }
-  }
+  };
 
-  function calcBoxSize(boxItem) {
+  let calcBoxSize = function(boxItem) {
     g.reset();
     g.setFontAlign(0,0);
     g.setFont(boxItem.font, boxItem.fontSize);
@@ -79,19 +79,19 @@
     let fontHeight = g.getFontHeight() + 2 * boxItem.outline;
     totalWidth = strWidth + 2 * boxItem.xPadding;
     totalHeight = fontHeight + 2 * boxItem.yPadding;
-  }
+  };
 
-  function calcBoxPos(boxKey) {
+  let calcBoxPos = function(boxKey) {
     return {
       x1: boxPos[boxKey].x - totalWidth / 2,
       y1: boxPos[boxKey].y - totalHeight / 2,
       x2: boxPos[boxKey].x + totalWidth / 2,
       y2: boxPos[boxKey].y + totalHeight / 2
     };
-  }
+  };
 
   // 7. Date and time related functions
-  function getDate() {
+  let getDate = function() {
     const date = new Date();
     const dayOfMonth = date.getDate();
     const month = locale.month(date, 1);
@@ -108,14 +108,14 @@
     }
     let dayOfMonthStr = enableSuffix ? dayOfMonth + suffix : dayOfMonth;
     return month + " " + dayOfMonthStr + ", " + year;
-  }
+  };
 
-  function getDayOfWeek(date) {
+  let getDayOfWeek = function(date) {
     return locale.dow(date, 0);
-  }
+  };
 
   // 8. Main draw function
-  function draw(boxes) {
+  let draw = function(boxes) {
     date = new Date();
     g.clear();
     if (bgImage) {
@@ -152,10 +152,10 @@
       if (drawTimeout) clearTimeout(drawTimeout);
       drawTimeout = setTimeout(() => draw(boxes), 60000 - (Date.now() % 60000));
     }
-  }
+  };
 
   // 9. Setup function to configure event handlers
-  function setup() {
+  let setup = function() {
     // Define the touchHandler function
     touchHandler = function(zone, e) {
       wasDragging = Object.assign({}, isDragging);
@@ -192,7 +192,7 @@
             boxPos[boxKey].x = newX;
             boxPos[boxKey].y = newY;
           }
-          const pos = (boxKey);
+          const pos = calcBoxPos(boxKey);
           g.clearRect(pos.x1, pos.y1, pos.x2, pos.y2);
         }
       });
@@ -217,20 +217,20 @@
     });
     loadCustomFont();
     draw(boxes);
-  }
+  };
 
   // 10. Helper function for touch event
-  function touchInText(e, boxItem, boxKey) {
+  let touchInText = function(e, boxItem, boxKey) {
     calcBoxSize(boxItem);
     const pos = calcBoxPos(boxKey);
     return e.x >= pos.x1 &&
           e.x <= pos.x2 &&
           e.y >= pos.y1 &&
           e.y <= pos.y2;
-  }
+  };
 
   // 11. Main execution part
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
   setup();
-})();
+}
