@@ -171,6 +171,8 @@
         Object.keys(isDragging).forEach((boxKey) => {
           isDragging[boxKey] = false;
         });
+        require("widget_utils").show();
+        require("widget_utils").swipeOn();
       }
       if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
         draw(boxes);
@@ -181,6 +183,7 @@
     dragHandler = function(e) {
       Object.keys(boxes).forEach((boxKey) => {
         if (isDragging[boxKey]) {
+          require("widget_utils").hide();
           let boxItem = boxes[boxKey];
           calcBoxSize(boxItem);
           let newX = boxPos[boxKey].x + e.dx;
