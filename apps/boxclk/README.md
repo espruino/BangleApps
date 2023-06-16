@@ -10,15 +10,16 @@ This intuitive feature allows you to reposition any element (box) on the clock f
 
 __JSON Configuration:__
 
-Each box can be customized extensively via a simple JSON configuration. Here's what an example configuration might look like:
+Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string": "Your custom text here", attribute. Here's what an example configuration might look like:
 
 ```
 {
-  "time": {
-    "font": "BrunoAce",
+  "customBox": {
+    "string": "Your custom text here",
+    "font": "CustomFont",
     "fontSize": 1,
     "outline": 2,
-    "color": "#000",
+    "color": "#FF9900",
     "outlineColor": "#fff",
     "border": "#000",
     "xPadding": 1,
@@ -32,6 +33,8 @@ Each box can be customized extensively via a simple JSON configuration. Here's w
   }
 }
 ```
+* **string:** The text string to be displayed inside the box.
+
 * **font:** The font name given to g.setFont()
 
 * **fontSize:** The size of the font.
