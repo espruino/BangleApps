@@ -13,7 +13,7 @@ let bgImage;
 let boxesConfig = storage.readJSON('boxclk.json', 1) || {};
 let boxes = {};
 
-function setCustomFont() {
+function loadCustomFont() {
   Graphics.prototype.setFontBrunoAce = function() {
     // Actual height 23 (24 - 2)
     return this.setFontCustom(
@@ -88,7 +88,6 @@ function getDate() {
   const dayOfMonth = date.getDate();
   const month = locale.month(date, 1);
   const year = date.getFullYear();
-
   let suffix;
   if ([1, 21, 31].includes(dayOfMonth)) {
     suffix = "st";
@@ -99,9 +98,7 @@ function getDate() {
   } else {
     suffix = "th";
   }
-
   let dayOfMonthStr = enableSuffix ? dayOfMonth + suffix : dayOfMonth;
-
   return month + " " + dayOfMonthStr + ", " + year;
 }
 
@@ -206,11 +203,9 @@ function setup() {
       delete Graphics.prototype.setFontBrunoAce;
       g.drawString = g_drawString;
       require("widget_utils").show();
-      setCustomFont();
     }
   });
-
-  setCustomFont();
+  loadCustomFont();
   draw(boxes);
 }
 
