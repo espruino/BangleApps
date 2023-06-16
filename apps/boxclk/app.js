@@ -1,6 +1,8 @@
 let w = g.getWidth();
 let h = g.getHeight();
 let totalWidth, totalHeight;
+let touchHandler;
+let dragHandler;
 let drawTimeout;
 let enableSuffix = true;
 let storage = require("Storage");
@@ -10,6 +12,18 @@ let date = new Date();
 let bgImage;
 let boxesConfig = storage.readJSON('boxclk.json', 1) || {};
 let boxes = {};
+
+function setCustomFont() {
+  Graphics.prototype.setFontBrunoAce = function() {
+    // Actual height 23 (24 - 2)
+    return this.setFontCustom(
+      E.toString(require('heatshrink').decompress(atob('ABMHwADBh4DKg4bKgIPDAYUfAYV/AYX/AQMD/gmC+ADBn/AByE/GIU8AYUwLxcfAYX/8AnB//4JIP/FgMP4F+CQQBBjwJBFYRbBAd43DHoJpBh/g/xPEK4ZfDgEEORKDDAY8////wADLfZrTCgITBnhEBAYJMBAYMPw4DCM4QDjhwDCjwDBn0+AYMf/gDBh/4AYMH+ADBLpc4ToK/NGYZfnAYcfL4U/x5fBW4LvB/7vC+LvBgHAsBfIn76Cn4WBcYQDFEgJ+CQQYDyH4L/BAZbHLNYjjCAZc8ngDunycBZ4KkBa4KwBnEHY4UB+BfMgf/ZgMH/4XBc4cf4F/gE+ZgRjwAYcfj5jBM4U4M4RQBM4UA8BjIngDFEYJ8BAYUDAYQvCM4ZxBC4V+AYQvBnkBQ4M8gabBJQPAI4WAAYM/GYQaBAYJKCnqyCn5OCn4aBAYIaBAYJPCU4IABnBhIuDXCFAMD+Z/BY4IDBQwOPwEfv6TDAYUPAcwrDAYQ7BAYY/BI4cD8bLCK4RfEAA0BRYTeDcwIrFn0Pw43Bg4DugYDBjxBBU4SvDMYMH/5QBgP/LAQAP8EHN4UPwADHB4YAHA'))),
+      46,
+      atob("CBEdChgYGhgaGBsaCQ=="),
+      32|65536
+    );
+  };
+}
 
 for (let key in boxesConfig) {
   if (key === 'bg' && boxesConfig[key].img) {
@@ -135,27 +149,8 @@ function draw(boxes) {
 }
 
 function setup() {
-  Graphics.prototype.setFontBrunoAce = function() {
-    // Actual height 23 (24 - 2)
-    return this.setFontCustom(
-      E.toString(require('heatshrink').decompress(atob('ABMHwADBh4DKg4bKgIPDAYUfAYV/AYX/AQMD/gmC+ADBn/AByE/GIU8AYUwLxcfAYX/8AnB//4JIP/FgMP4F+CQQBBjwJBFYRbBAd43DHoJpBh/g/xPEK4ZfDgEEORKDDAY8////wADLfZrTCgITBnhEBAYJMBAYMPw4DCM4QDjhwDCjwDBn0+AYMf/gDBh/4AYMH+ADBLpc4ToK/NGYZfnAYcfL4U/x5fBW4LvB/7vC+LvBgHAsBfIn76Cn4WBcYQDFEgJ+CQQYDyH4L/BAZbHLNYjjCAZc8ngDunycBZ4KkBa4KwBnEHY4UB+BfMgf/ZgMH/4XBc4cf4F/gE+ZgRjwAYcfj5jBM4U4M4RQBM4UA8BjIngDFEYJ8BAYUDAYQvCM4ZxBC4V+AYQvBnkBQ4M8gabBJQPAI4WAAYM/GYQaBAYJKCnqyCn5OCn4aBAYIaBAYJPCU4IABnBhIuDXCFAMD+Z/BY4IDBQwOPwEfv6TDAYUPAcwrDAYQ7BAYY/BI4cD8bLCK4RfEAA0BRYTeDcwIrFn0Pw43Bg4DugYDBjxBBU4SvDMYMH/5QBgP/LAQAP8EHN4UPwADHB4YAHA'))),
-      46,
-      atob("CBEdChgYGhgaGBsaCQ=="),
-      32|65536
-    );
-  };
-
-  Bangle.setUI({
-    mode : "clock",
-    remove : function() {
-      if (drawTimeout) clearTimeout(drawTimeout);
-      drawTimeout = undefined;
-      delete Graphics.prototype.setFontBrunoAce;
-      g.drawString = g_drawString;
-      require("widget_utils").show();
-    }});
-
-  Bangle.on('touch', function(zone, e) {
+  // Define the touchHandler function
+  touchHandler = function(zone, e) {
     wasDragging = Object.assign({}, isDragging);
     let boxTouched = false;
     Object.keys(boxes).forEach((boxKey) => {
@@ -173,9 +168,10 @@ function setup() {
     if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
       draw(boxes);
     }
-  });
+  };
 
-  Bangle.on('drag', function(e) {
+  // Define the dragHandler function
+  dragHandler = function(e) {
     Object.keys(boxes).forEach((boxKey) => {
       if (isDragging[boxKey]) {
         let boxItem = boxes[boxKey];
@@ -194,8 +190,27 @@ function setup() {
       }
     });
     draw(boxes);
+  };
+
+  Bangle.on('touch', touchHandler);
+  Bangle.on('drag', dragHandler);
+
+  Bangle.setUI({
+    mode : "clock",
+    remove : function() {
+      // remove the event handlers when the app should be removed
+      Bangle.removeListener('touch', touchHandler);
+      Bangle.removeListener('drag', dragHandler);
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = undefined;
+      delete Graphics.prototype.setFontBrunoAce;
+      g.drawString = g_drawString;
+      require("widget_utils").show();
+      setCustomFont();
+    }
   });
-  g.reset();
+
+  setCustomFont();
   draw(boxes);
 }
 
