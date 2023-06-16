@@ -154,7 +154,17 @@
     }
   };
 
-  // 9. Setup function to configure event handlers
+  // 9. Helper function for touch event
+  let touchInText = function(e, boxItem, boxKey) {
+    calcBoxSize(boxItem);
+    const pos = calcBoxPos(boxKey);
+    return e.x >= pos.x1 &&
+          e.x <= pos.x2 &&
+          e.y >= pos.y1 &&
+          e.y <= pos.y2;
+  };
+
+  // 10. Setup function to configure event handlers
   let setup = function() {
     // Define the touchHandler function
     touchHandler = function(zone, e) {
@@ -208,28 +218,18 @@
     Bangle.setUI({
       mode : "clock",
       remove : function() {
-        // remove the event handlers when the app should be removed
+        // Remove event handlers, stop draw timer, remove custom font if used
         Bangle.removeListener('touch', touchHandler);
         Bangle.removeListener('drag', dragHandler);
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
         delete Graphics.prototype.setFontBrunoAce;
-        g.drawString = g_drawString;
+        g.drawString = g_drawString; // Return to original without outlines
         require("widget_utils").show();
       }
     });
     loadCustomFont();
     draw(boxes);
-  };
-
-  // 10. Helper function for touch event
-  let touchInText = function(e, boxItem, boxKey) {
-    calcBoxSize(boxItem);
-    const pos = calcBoxPos(boxKey);
-    return e.x >= pos.x1 &&
-          e.x <= pos.x2 &&
-          e.y >= pos.y1 &&
-          e.y <= pos.y2;
   };
 
   // 11. Main execution part
