@@ -47,11 +47,11 @@
     "border": "#000",
     "xPadding": -0.5,
     "yPadding": -0.5,
-    "xOffset": 1,
+    "xOffset": 2,
     "yOffset": 1,
     "boxPos": { "x": 0.92, "y": 0.95 }
   },
   "bg": {
-    "img": "beachhouse.img"
+    "img": "boxclk.beachhouse.img"
   }
 }
