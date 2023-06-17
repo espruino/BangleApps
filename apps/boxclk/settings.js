@@ -41,7 +41,17 @@
       hasDefaultConfig = true;
       let defaultConfig = storage.readJSON(file, 1);
       if (defaultConfig && defaultConfig.selectedConfig != null) {
-        selectedConfig = defaultConfig.selectedConfig;
+        // Check if corresponding config file exists
+        let configFileName = 'boxclk-' + defaultConfig.selectedConfig + '.json';
+        if (storage.read(configFileName)) {
+          // If it exists, assign selectedConfig
+          selectedConfig = defaultConfig.selectedConfig;
+        } else {
+          // If it does not exist, set selectedConfig to 0 and update boxclk.json
+          defaultConfig.selectedConfig = 0;
+          storage.writeJSON("boxclk.json", defaultConfig);
+          selectedConfig = 0;
+        }
       }
     }
   });
