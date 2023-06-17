@@ -6,11 +6,11 @@
     "color": "#000",
     "outlineColor": "#fff",
     "border": "#000",
-    "xPadding": 1,
+    "xPadding": 0,
     "yPadding": -4,
     "xOffset": 0,
     "yOffset": 3,
-    "boxPos": { "x": 0.65, "y": 0.16 }
+    "boxPos": { "x": 0.633, "y": 0.16 }
   },
   "dow": {
     "font": "6x8",
@@ -23,7 +23,7 @@
     "yPadding": 0.5,
     "xOffset": 1,
     "yOffset": 1,
-    "boxPos": { "x": 0.65, "y": 0.3 }
+    "boxPos": { "x": 0.633, "y": 0.3 }
   },
   "date": {
     "font": "6x8",
@@ -36,7 +36,7 @@
     "yPadding": 0.5,
     "xOffset": 1,
     "yOffset": 1,
-    "boxPos": { "x": 0.65, "y": 0.39 }
+    "boxPos": { "x": 0.633, "y": 0.39 }
   },
   "batt": {
     "font": "4x6",
