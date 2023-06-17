@@ -27,6 +27,7 @@
   // 3. Touchscreen Handlers
   let touchHandler;
   let dragHandler;
+  let movementDistance = 0;
 
   // 4. Font loading function
   let loadCustomFont = function() {
@@ -171,71 +172,92 @@
           e.y <= pos.y2;
   };
 
+  let deselectAllBoxes = function() {
+    Object.keys(isDragging).forEach((boxKey) => {
+      isDragging[boxKey] = false;
+    });
+    require("widget_utils").show();
+    require("widget_utils").swipeOn();
+  };
+
+  let displaySaveIcon = function() {
+    g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
+    // Display save icon for 2 seconds
+    setTimeout(() => {
+      g.clearRect(w / 2 - 24, h / 2 - 24, w / 2 + 24, h / 2 + 24);
+      draw(boxes);
+    }, 2000);
+  };
+
   // 10. Setup function to configure event handlers
   let setup = function() {
     // Define the touchHandler function
     touchHandler = function(zone, e) {
-      if (doubleTapTimer) {
-        clearTimeout(doubleTapTimer);
-        doubleTapTimer = null;
-        Object.keys(boxPos).forEach((boxKey) => {
-          boxesConfig[boxKey].boxPos.x = boxPos[boxKey].x / w;
-          boxesConfig[boxKey].boxPos.y = boxPos[boxKey].y / h;
-        });
-        storage.write(fileName, JSON.stringify(boxesConfig));
-        g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
-        // Display save icon for 2 seconds
-        setTimeout(() => {
-          g.clearRect(w / 2 - 24, h / 2 - 24, w / 2 + 24, h / 2 + 24);
-          draw(boxes);
-        }, 2000);
-        return;
+      wasDragging = Object.assign({}, isDragging);
+      let boxTouched = false;
+      Object.keys(boxes).forEach((boxKey) => {
+        if (touchInText(e, boxes[boxKey], boxKey)) {
+          isDragging[boxKey] = true;
+          wasDragging[boxKey] = true;
+          boxTouched = true;
+        }
+      });
+      if (!boxTouched) {
+        if (!Object.values(isDragging).some(Boolean)) { // check if no boxes are being dragged
+          deselectAllBoxes();
+          if (doubleTapTimer) {
+            clearTimeout(doubleTapTimer);
+            doubleTapTimer = null;
+            // Save boxesConfig on double tap outside of any box and when no boxes are being dragged
+            Object.keys(boxPos).forEach((boxKey) => {
+              boxesConfig[boxKey].boxPos.x = boxPos[boxKey].x / w;
+              boxesConfig[boxKey].boxPos.y = boxPos[boxKey].y / h;
+            });
+            storage.write(fileName, JSON.stringify(boxesConfig));
+            displaySaveIcon();
+            return;
+          }
+        } else {
+          // if any box is being dragged, just deselect all without saving
+          deselectAllBoxes();
+        }
+      }
+      if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
+        draw(boxes);
       }
       doubleTapTimer = setTimeout(() => {
         doubleTapTimer = null;
-        wasDragging = Object.assign({}, isDragging);
-        let boxTouched = false;
-        Object.keys(boxes).forEach((boxKey) => {
-          if (touchInText(e, boxes[boxKey], boxKey)) {
-            isDragging[boxKey] = true;
-            wasDragging[boxKey] = true;
-            boxTouched = true;
-          }
-        });
-        if (!boxTouched) {
-          Object.keys(isDragging).forEach((boxKey) => {
-            isDragging[boxKey] = false;
-          });
-          require("widget_utils").show();
-          require("widget_utils").swipeOn();
-        }
-        if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
-          draw(boxes);
-        }
-      }, 300); // Increase or decrease this value based on the desired double tap timing
+      }, 1000); // Increase or decrease this value based on the desired double tap timing
+      movementDistance = 0;
     };
 
     // Define the dragHandler function
     dragHandler = function(e) {
-      Object.keys(boxes).forEach((boxKey) => {
-        if (isDragging[boxKey]) {
-          require("widget_utils").hide();
-          let boxItem = boxes[boxKey];
-          calcBoxSize(boxItem);
-          let newX = boxPos[boxKey].x + e.dx;
-          let newY = boxPos[boxKey].y + e.dy;
-          if (newX - totalWidth / 2 >= 0 &&
-              newX + totalWidth / 2 <= w &&
-              newY - totalHeight / 2 >= 0 &&
-              newY + totalHeight / 2 <= h ) {
-            boxPos[boxKey].x = newX;
-            boxPos[boxKey].y = newY;
+      // Calculate the movement distance
+      movementDistance += Math.abs(e.dx) + Math.abs(e.dy);
+
+      // Check if the movement distance exceeds a threshold
+      if (movementDistance > 5) {
+        Object.keys(boxes).forEach((boxKey) => {
+          if (isDragging[boxKey]) {
+            require("widget_utils").hide();
+            let boxItem = boxes[boxKey];
+            calcBoxSize(boxItem);
+            let newX = boxPos[boxKey].x + e.dx;
+            let newY = boxPos[boxKey].y + e.dy;
+            if (newX - totalWidth / 2 >= 0 &&
+                newX + totalWidth / 2 <= w &&
+                newY - totalHeight / 2 >= 0 &&
+                newY + totalHeight / 2 <= h ) {
+              boxPos[boxKey].x = newX;
+              boxPos[boxKey].y = newY;
+            }
+            const pos = calcBoxPos(boxKey);
+            g.clearRect(pos.x1, pos.y1, pos.x2, pos.y2);
           }
-          const pos = calcBoxPos(boxKey);
-          g.clearRect(pos.x1, pos.y1, pos.x2, pos.y2);
-        }
-      });
-      draw(boxes);
+        });
+        draw(boxes);
+      }
     };
 
     Bangle.on('touch', touchHandler);
