@@ -40,8 +40,8 @@
     } else if (file === "boxclk.json") {
       hasDefaultConfig = true;
       let defaultConfig = storage.readJSON(file, 1);
-      if (defaultConfig && defaultConfig.selectedConfig) {
-        selectedConfig = defaultConfig.selectedConfig === 0 ? 0 : defaultConfig.selectedConfig;
+      if (defaultConfig && defaultConfig.selectedConfig != null) {
+        selectedConfig = defaultConfig.selectedConfig;
       }
     }
   });
@@ -59,7 +59,10 @@
   let menu = {
     '': { 'title': '-- Box Clock --' },
     '< Back': () => Bangle.showClock(),
-    'Cfg:': { value: selectedConfig === 0 ? "Default" : selectedConfig, format: () => selectedConfig === 0 ? "Default" : selectedConfig },
+    'Cfg:': {
+              value: selectedConfig === 0 ? "Default" : selectedConfig,
+              format: () => selectedConfig === 0 ? "Default" : selectedConfig
+            }
   };
 
   if (hasDefaultConfig) {
