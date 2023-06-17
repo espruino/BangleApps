@@ -58,7 +58,7 @@
 
   let menu = {
     '': { 'title': '-- Box Clock --' },
-    '< Back': () => Bangle.showLauncher(),
+    '< Back': () => Bangle.showClock(),
     'Cfg:': { value: selectedConfig === 0 ? "Default" : selectedConfig, format: () => selectedConfig === 0 ? "Default" : selectedConfig },
   };
 
