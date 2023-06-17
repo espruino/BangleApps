@@ -8,6 +8,10 @@ __Drag & Drop:__
 
 This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing.
 
+__Double Tap to Save:__
+
+After you've found the perfect position for your boxes, you can save their positions with a quick double tap on the background. This makes it easy to ensure your custom layout is stored for future use. A save icon will appear momentarily to confirm that your configuration has been saved.
+
 __JSON Configuration:__
 
 Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string" attribute. Here's what an example configuration might look like:
