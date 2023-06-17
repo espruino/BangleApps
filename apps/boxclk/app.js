@@ -71,7 +71,9 @@
     }
   }
 
-  Object.keys(boxes).forEach((key) => {
+  let boxKeys = Object.keys(boxes);
+
+  boxKeys.forEach((key) => {
     let boxConfig = boxes[key];
     boxPos[key] = {
       x: w * boxConfig.boxPos.x,
@@ -182,7 +184,7 @@
     if (boxes.batt) {
       boxes.batt.string = E.getBattery() + "%";
     }
-    Object.keys(boxes).forEach((boxKey) => {
+    boxKeys.forEach((boxKey) => {
       let boxItem = boxes[boxKey];
       calcBoxSize(boxItem);
       const pos = calcBoxPos(boxKey);
@@ -237,7 +239,7 @@
     touchHandler = function(zone, e) {
       wasDragging = Object.assign({}, isDragging);
       let boxTouched = false;
-      Object.keys(boxes).forEach((boxKey) => {
+      boxKeys.forEach((boxKey) => {
         if (touchInText(e, boxes[boxKey], boxKey)) {
           isDragging[boxKey] = true;
           wasDragging[boxKey] = true;
@@ -281,7 +283,7 @@
       movementDistance += Math.abs(e.dx) + Math.abs(e.dy);
       // Check if the movement distance exceeds a threshold
       if (movementDistance > 5) {
-        Object.keys(boxes).forEach((boxKey) => {
+        boxKeys.forEach((boxKey) => {
           if (isDragging[boxKey]) {
             require("widget_utils").hide();
             let boxItem = boxes[boxKey];
