@@ -11,6 +11,10 @@
 
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
   let fileName = 'boxclk' + (configNumber > 0 ? `-${configNumber}` : '') + '.json';
+  // Add a condition to check if the file exists, if it does not, default to 'boxclk.json'
+  if (!storage.read(fileName)) {
+    fileName = 'boxclk.json';
+  }
   let boxesConfig = storage.readJSON(fileName, 1) || {};
 
   let boxes = {};
