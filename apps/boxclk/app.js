@@ -1,5 +1,9 @@
 {
-  // 1. Module dependencies and initial configurations
+  /**
+  * ---------------------------------------------------------------
+  * 1. Module dependencies and initial configurations
+  * ---------------------------------------------------------------
+  */
   let storage = require("Storage");
   let locale = require("locale");
   let date = new Date();
@@ -17,19 +21,31 @@
 
   let saveIcon = require("heatshrink").decompress(atob("mEwwkEogA/AHdP/4AK+gWVDBQWNAAIuVGBAIB+UQdhMfGBAHBCxUAgIXHIwPyCxQwEJAgXB+MAl/zBwQGBn8ggQjBGAQXG+EA/4XI/8gBIQXTGAMPC6n/C6HzkREBC6YACC6QAFC57aHCYIXOOgLsEn4XPABIX/C6vykQAEl6/WgCQBC5imFAAT2BC5gCBI4oUCC5x0IC/4X/C4K8Bl4XJ+TCCC4wKBABkvC4tEEoMQCxcBB4IWEC4XyDBUBFwIXGJAIAOIwowDABoWGGB4uHDBwWJAH4AzA"));
 
-  // 2. Graphical and visual configurations
+  /**
+  * ---------------------------------------------------------------
+  * 2. Graphical and visual configurations
+  * ---------------------------------------------------------------
+  */
   let w = g.getWidth();
   let h = g.getHeight();
   let totalWidth, totalHeight;
   let enableSuffix = true;
   let drawTimeout;
 
-  // 3. Touchscreen Handlers
+  /**
+  * ---------------------------------------------------------------
+  * 3. Touchscreen Handlers
+  * ---------------------------------------------------------------
+  */
   let touchHandler;
   let dragHandler;
   let movementDistance = 0;
 
-  // 4. Font loading function
+  /**
+  * ---------------------------------------------------------------
+  * 4. Font loading function
+  * ---------------------------------------------------------------
+  */
   let loadCustomFont = function() {
     Graphics.prototype.setFontBrunoAce = function() {
       // Actual height 23 (24 - 2)
@@ -42,7 +58,11 @@
     };
   };
 
-  // 5. Initial settings of boxes and their positions
+  /**
+  * ---------------------------------------------------------------
+  * 5. Initial settings of boxes and their positions
+  * ---------------------------------------------------------------
+  */
   for (let key in boxesConfig) {
     if (key === 'bg' && boxesConfig[key].img) {
       bgImage = storage.read(boxesConfig[key].img);
@@ -61,7 +81,11 @@
     wasDragging[key] = false;
   });
 
-  // 6. Text and drawing functions
+  /**
+  * ---------------------------------------------------------------
+  * 6. Text and drawing functions
+  * ---------------------------------------------------------------
+  */
   let g_drawString = g.drawString;
   g.drawString = function(box, str, x, y) {
     outlineText(box, str, x, y);
@@ -98,7 +122,20 @@
     };
   };
 
-  // 7. Date and time related functions
+  let displaySaveIcon = function() {
+    g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
+    // Display save icon for 2 seconds
+    setTimeout(() => {
+      g.clearRect(w / 2 - 24, h / 2 - 24, w / 2 + 24, h / 2 + 24);
+      draw(boxes);
+    }, 2000);
+  };
+
+  /**
+  * ---------------------------------------------------------------
+  * 7. Date and time related functions
+  * ---------------------------------------------------------------
+  */
   let getDate = function() {
     const date = new Date();
     const dayOfMonth = date.getDate();
@@ -122,7 +159,11 @@
     return locale.dow(date, 0);
   };
 
-  // 8. Main draw function
+  /**
+  * ---------------------------------------------------------------
+  * 8. Main draw function
+  * ---------------------------------------------------------------
+  */
   let draw = function(boxes) {
     date = new Date();
     g.clear();
@@ -162,7 +203,11 @@
     }
   };
 
-  // 9. Helper function for touch event
+  /**
+  * ---------------------------------------------------------------
+  * 9. Helper function for touch event
+  * ---------------------------------------------------------------
+  */
   let touchInText = function(e, boxItem, boxKey) {
     calcBoxSize(boxItem);
     const pos = calcBoxPos(boxKey);
@@ -180,18 +225,15 @@
     require("widget_utils").swipeOn();
   };
 
-  let displaySaveIcon = function() {
-    g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
-    // Display save icon for 2 seconds
-    setTimeout(() => {
-      g.clearRect(w / 2 - 24, h / 2 - 24, w / 2 + 24, h / 2 + 24);
-      draw(boxes);
-    }, 2000);
-  };
-
-  // 10. Setup function to configure event handlers
+  /**
+  * ---------------------------------------------------------------
+  * 10. Setup function to configure event handlers
+  * ---------------------------------------------------------------
+  */
   let setup = function() {
+    // ------------------------------------
     // Define the touchHandler function
+    // ------------------------------------
     touchHandler = function(zone, e) {
       wasDragging = Object.assign({}, isDragging);
       let boxTouched = false;
@@ -231,11 +273,12 @@
       movementDistance = 0;
     };
 
+    // ------------------------------------
     // Define the dragHandler function
+    // ------------------------------------
     dragHandler = function(e) {
       // Calculate the movement distance
       movementDistance += Math.abs(e.dx) + Math.abs(e.dy);
-
       // Check if the movement distance exceeds a threshold
       if (movementDistance > 5) {
         Object.keys(boxes).forEach((boxKey) => {
@@ -280,7 +323,11 @@
     draw(boxes);
   };
 
-  // 11. Main execution part
+  /**
+  * ---------------------------------------------------------------
+  * 11. Main execution part
+  * ---------------------------------------------------------------
+  */
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
   setup();
