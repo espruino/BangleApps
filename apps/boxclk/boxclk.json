@@ -44,7 +44,7 @@
     "outline": 1,
     "color": "#0ff",
     "outlineColor": "#000",
-    "border": "#000",
+    "border": "#fff",
     "xPadding": -0.5,
     "yPadding": -0.5,
     "xOffset": 2,
