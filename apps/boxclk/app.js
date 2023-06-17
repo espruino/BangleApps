@@ -4,13 +4,18 @@
   let locale = require("locale");
   let date = new Date();
   let bgImage;
+
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
   let fileName = 'boxclk' + (configNumber > 0 ? `-${configNumber}` : '') + '.json';
   let boxesConfig = storage.readJSON(fileName, 1) || {};
+
   let boxes = {};
   let boxPos = {};
   let isDragging = {};
   let wasDragging = {};
+  let doubleTapTimer = null;
+
+  let saveIcon = require("heatshrink").decompress(atob("mEwwkEogA/AHdP/4AK+gWVDBQWNAAIuVGBAIB+UQdhMfGBAHBCxUAgIXHIwPyCxQwEJAgXB+MAl/zBwQGBn8ggQjBGAQXG+EA/4XI/8gBIQXTGAMPC6n/C6HzkREBC6YACC6QAFC57aHCYIXOOgLsEn4XPABIX/C6vykQAEl6/WgCQBC5imFAAT2BC5gCBI4oUCC5x0IC/4X/C4K8Bl4XJ+TCCC4wKBABkvC4tEEoMQCxcBB4IWEC4XyDBUBFwIXGJAIAOIwowDABoWGGB4uHDBwWJAH4AzA"));
 
   // 2. Graphical and visual configurations
   let w = g.getWidth();
@@ -19,7 +24,7 @@
   let enableSuffix = true;
   let drawTimeout;
 
-  // 3. Handlers
+  // 3. Touchscreen Handlers
   let touchHandler;
   let dragHandler;
 
@@ -170,25 +175,44 @@
   let setup = function() {
     // Define the touchHandler function
     touchHandler = function(zone, e) {
-      wasDragging = Object.assign({}, isDragging);
-      let boxTouched = false;
-      Object.keys(boxes).forEach((boxKey) => {
-        if (touchInText(e, boxes[boxKey], boxKey)) {
-          isDragging[boxKey] = true;
-          wasDragging[boxKey] = true;
-          boxTouched = true;
-        }
-      });
-      if (!boxTouched) {
-        Object.keys(isDragging).forEach((boxKey) => {
-          isDragging[boxKey] = false;
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        doubleTapTimer = null;
+        Object.keys(boxPos).forEach((boxKey) => {
+          boxesConfig[boxKey].boxPos.x = boxPos[boxKey].x / w;
+          boxesConfig[boxKey].boxPos.y = boxPos[boxKey].y / h;
         });
-        require("widget_utils").show();
-        require("widget_utils").swipeOn();
+        storage.write(fileName, JSON.stringify(boxesConfig));
+        g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
+        // Display save icon for 2 seconds
+        setTimeout(() => {
+          g.clearRect(w / 2 - 24, h / 2 - 24, w / 2 + 24, h / 2 + 24);
+          draw(boxes);
+        }, 2000);
+        return;
       }
-      if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
-        draw(boxes);
-      }
+      doubleTapTimer = setTimeout(() => {
+        doubleTapTimer = null;
+        wasDragging = Object.assign({}, isDragging);
+        let boxTouched = false;
+        Object.keys(boxes).forEach((boxKey) => {
+          if (touchInText(e, boxes[boxKey], boxKey)) {
+            isDragging[boxKey] = true;
+            wasDragging[boxKey] = true;
+            boxTouched = true;
+          }
+        });
+        if (!boxTouched) {
+          Object.keys(isDragging).forEach((boxKey) => {
+            isDragging[boxKey] = false;
+          });
+          require("widget_utils").show();
+          require("widget_utils").swipeOn();
+        }
+        if (Object.values(wasDragging).some(Boolean) || !boxTouched) {
+          draw(boxes);
+        }
+      }, 300); // Increase or decrease this value based on the desired double tap timing
     };
 
     // Define the dragHandler function
