@@ -6,6 +6,7 @@
   */
   let storage = require("Storage");
   let locale = require("locale");
+  let widgets = require("widget_utils");
   let date = new Date();
   let bgImage;
 
@@ -227,8 +228,8 @@
     Object.keys(isDragging).forEach((boxKey) => {
       isDragging[boxKey] = false;
     });
-    require("widget_utils").show();
-    require("widget_utils").swipeOn();
+    widgets.show();
+    widgets.swipeOn();
   };
 
   /**
@@ -289,7 +290,7 @@
       if (movementDistance > 5) {
         boxKeys.forEach((boxKey) => {
           if (isDragging[boxKey]) {
-            require("widget_utils").hide();
+            widgets.hide();
             let boxItem = boxes[boxKey];
             calcBoxSize(boxItem);
             let newX = boxPos[boxKey].x + e.dx;
@@ -322,7 +323,7 @@
         drawTimeout = undefined;
         delete Graphics.prototype.setFontBrunoAce;
         g.drawString = g_drawString; // Return to original without outlines
-        require("widget_utils").show();
+        widgets.show();
       }
     });
     loadCustomFont();
@@ -335,6 +336,6 @@
   * ---------------------------------------------------------------
   */
   Bangle.loadWidgets();
-  require("widget_utils").swipeOn();
+  widgets.swipeOn();
   setup();
 }
