@@ -1,24 +1,23 @@
-let storage = require("Storage");
-let fileRegex = /^boxclk-(\d+)\.json$/;
-let selectedConfig;
-
-function getNextConfigNumber() {
-  let maxNumber = 0;
-  storage.list().forEach(file => {
-    let match = file.match(fileRegex);
-    if (match) {
-      let number = parseInt(match[1]);
-      if (number > maxNumber) {
-        maxNumber = number;
-      }
-    }
-  });
-  return maxNumber + 1;
-}
-
 (function () {
+  let storage = require("Storage");
+  let fileRegex = /^boxclk-(\d+)\.json$/;
+  let selectedConfig;
   let configs = {};
   let hasDefaultConfig = false;
+
+  function getNextConfigNumber() {
+    let maxNumber = 0;
+    storage.list().forEach(file => {
+      let match = file.match(fileRegex);
+      if (match) {
+        let number = parseInt(match[1]);
+        if (number > maxNumber) {
+          maxNumber = number;
+        }
+      }
+    });
+    return maxNumber + 1;
+  }
 
   function handleSelection(config) {
     return function () {
@@ -72,4 +71,4 @@ function getNextConfigNumber() {
   });
 
   E.showMenu(menu);
-})();
+});
