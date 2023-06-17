@@ -10,13 +10,15 @@ This intuitive feature allows you to reposition any element (box) on the clock f
 
 __JSON Configuration:__
 
-Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string": "Your custom text here", attribute. Here's what an example configuration might look like:
+Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string" attribute. Here's what an example configuration might look like:
+
+## Config File Structure
 
 ```
 {
-  "customBox": {
-    "string": "Your custom text here",
-    "font": "CustomFont",
+  "customBox": { //
+    "string": "Your text here",
+    "font": "CustomFont", // Custom fonts must be in main program and removed in setUI
     "fontSize": 1,
     "outline": 2,
     "color": "#FF9900",
@@ -28,11 +30,12 @@ Each box can be customized extensively via a simple JSON configuration. You can 
     "yOffset": 3,
     "boxPos": { "x": 0.5, "y": 0.5 }
   },
-  "bg": {
+  "bg": { // Can also be removed for no backround
     "img": "YourImageName.img"
   }
 }
 ```
+
 * **string:** The text string to be displayed inside the box.
 
 * **font:** The font name given to g.setFont()
@@ -54,6 +57,12 @@ Each box can be customized extensively via a simple JSON configuration. You can 
 * **boxPos:** Initial position of the box on the screen. Values are fractions of the screen width (x) and height (y), so { "x": 0.5, "y": 0.5 } would be in the middle of the screen.
 
 * **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
+
+## Multiple Configurations
+
+The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored in the default JSON file alongside the other configuration data using the selectedConfig property.
+
+If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention boxclk-N.json, where N is the configuration number. The settings menu will list all available configurations.
 
 ## Compatibility
 

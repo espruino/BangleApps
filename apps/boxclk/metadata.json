@@ -15,6 +15,7 @@
   "allow_emulator": true,
   "storage": [
     {"name":"boxclk.app.js","url":"app.js"},
+    {"name": "boxclk.settings.js","url":"settings.js"},
     {"name":"boxclk.img","url":"icon.js","evaluate":true},
     {"name":"boxclk.beachhouse.img","url":"beachhouse.js","evaluate":true}
   ],
