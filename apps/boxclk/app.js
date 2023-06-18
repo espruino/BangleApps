@@ -93,6 +93,20 @@
   * 6. Text and drawing functions
   * ---------------------------------------------------------------
   */
+
+  // Overwrite the setColor function to allow the
+  // use of (x) in g.theme.x as a string
+  // in your JSON config ("fg", "bg", "fg2", "bg2", "fgH", "bgH")
+  let g_setColor = g.setColor;
+  g.setColor = function(color) {
+    if (typeof color === "string" && color in g.theme) {
+      g_setColor.call(g, g.theme[color]);
+    } else {
+      g_setColor.call(g, color);
+    }
+  };
+
+  // Overwrite the drawString function
   let g_drawString = g.drawString;
   g.drawString = function(box, str, x, y) {
     outlineText(box, str, x, y);
@@ -130,6 +144,7 @@
   };
 
   let displaySaveIcon = function() {
+    draw(boxes);
     g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
     // Display save icon for 2 seconds
     setTimeout(() => {
@@ -259,8 +274,8 @@
             doubleTapTimer = null;
             // Save boxesConfig on double tap outside of any box and when no boxes are being dragged
             Object.keys(boxPos).forEach((boxKey) => {
-              boxesConfig[boxKey].boxPos.x = boxPos[boxKey].x / w;
-              boxesConfig[boxKey].boxPos.y = boxPos[boxKey].y / h;
+              boxesConfig[boxKey].boxPos.x = (boxPos[boxKey].x / w).toFixed(3);
+              boxesConfig[boxKey].boxPos.y = (boxPos[boxKey].y / h).toFixed(3);
             });
             storage.write(fileName, JSON.stringify(boxesConfig));
             displaySaveIcon();
@@ -322,7 +337,10 @@
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
         delete Graphics.prototype.setFontBrunoAce;
-        g.drawString = g_drawString; // Return to original without outlines
+        // Restore original drawString function (no outlines)
+        g.drawString = g_drawString;
+        // Restore original setColor function (no string filtering)
+        g.setColor = g_setColor;
         widgets.show();
       }
     });
