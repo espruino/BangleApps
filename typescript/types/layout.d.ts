@@ -124,6 +124,7 @@ declare module Layout {
         src: Image,
         cb: () => void,
         r?: Rotation,
+        btnBorder?: ColorResolvable,
       } | {
         type: "btn",
         cb: () => void,
@@ -131,6 +132,7 @@ declare module Layout {
         font?: FontNameWithScaleFactor,
         scale?: number,
         r?: Rotation,
+        btnBorder?: ColorResolvable,
       }
     ) | {
       type: "img",
