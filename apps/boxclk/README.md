@@ -25,7 +25,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
     "font": "CustomFont", // Custom fonts must be in main program and removed in setUI
     "fontSize": 1,
     "outline": 2,
-    "color": "#FF9900", // You can use 6-digit or 3-digit hex color code
+    "color": "#FF9900", // You can use 6-digit or 3-digit hex color codes
     "outlineColor": "bgH", // You can match system theme colors like this
     "border": 65535, // Or use 16-bit decimal color codes like this
     "xPadding": 1,
