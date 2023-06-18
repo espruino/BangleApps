@@ -7,7 +7,6 @@ You can rewind, fast-forward and play/pause with the control buttons.
 
 # Todo
 
-- [ ] Loading of reps, web interface
 - [ ] Check colours on light theme
 
 - [ ] Fastload: scoping, unregister layout handlers etc
