@@ -130,6 +130,7 @@
   };
 
   let displaySaveIcon = function() {
+    draw(boxes);
     g.drawImage(saveIcon, w / 2 - 24, h / 2 - 24);
     // Display save icon for 2 seconds
     setTimeout(() => {
