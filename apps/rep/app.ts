@@ -1,8 +1,4 @@
-// TODO: buzz on stage change, better setTimeout()
-// TODO: fastload: scoping, unregister layout handlers etc
-// TODO: spaces vs tabs
-// TODO: const colfg=g.theme.fg, colbg=g.theme.bg;
-
+{
 const Layout = require("Layout");
 
 type Rep = {
@@ -65,20 +61,20 @@ const reps: Rep[] = [
 const fontSzMain = 64;
 const fontSzRep = 20;
 const fontSzRepDesc = 12;
+const blue = "#86caf7";
+const step = 5 * 1000;
 
-// FIXME: `Layout_` name, e.g. Layout_.Align.Right
+let state: State | undefined;
+let drawInterval: IntervalId | undefined;
+let lastRepIndex: number | null = null;
 
-// top: show current rep: name & duration
-// middle: show time left on current rep
-// bottom: show next rep
-// ctrl: play/pause button. back & forward?
 const layout = new Layout({
 	type: "v",
 	c: [
 		{
 			id: "repIdx",
 			type: "txt",
-			label: "Rep 1", // TODO: update in render
+			label: "Begin",
 			font: `Vector:${fontSzRepDesc}`,
 		},
 		{
@@ -88,15 +84,13 @@ const layout = new Layout({
 			font: `Vector:${fontSzMain}` as FontNameWithScaleFactor,
 			fillx: 1,
 			filly: 1,
-			render: (l: Layout_.RenderedHierarchy) => {
+			render: (l: Layout.RenderedHierarchy) => {
 				let lbl;
 
 				g.clearRect(l.x, l.y, l.x+l.w, l.y+l.h);
 
 				if(state){
-					// TODO: inefficient
-					const i = state.currentRepIndex();
-					const repElapsed = state.getElapsedForRep();
+					const [i, repElapsed] = state.currentRepPair();
 
 					if(i !== null){
 						let thisDur = reps[i]!.dur;
@@ -105,7 +99,7 @@ const layout = new Layout({
 						lbl = msToMinSec(remaining);
 
 						const fract = repElapsed / thisDur;
-						g.setColor("#86caf7")
+						g.setColor(blue)
 							.fillRect(
 								l.x,
 								l.y,
@@ -135,10 +129,11 @@ const layout = new Layout({
 			label: "Activity / Duration",
 		},
 		{
-			id: `cur_name`,
+			id: "cur_name",
 			type: "txt",
 			font: `Vector:${fontSzRep}`,
 			label: "",
+			col: blue,
 			//pad: 4,
 			fillx: 1,
 		},
@@ -148,7 +143,7 @@ const layout = new Layout({
 			label: "Next / Duration",
 		},
 		{
-			id: `next_name`,
+			id: "next_name",
 			type: "txt",
 			font: `Vector:${fontSzRep}`,
 			label: "",
@@ -161,41 +156,49 @@ const layout = new Layout({
 				{
 					id: "prev",
 					type: "btn",
-					label: "<",
+					label: "<<",
 					fillx: 1,
-					cb: () => onPrev(),
+					cb: () => {
+						buzzInteraction();
+						state?.rewind();
+					},
 				},
 				{
 					id: "play",
 					type: "btn",
-					label: "Play", // TODO: change
+					label: "Play",
 					fillx: 1,
-					cb: () => onToggle(),
+					cb: () => {
+						buzzInteraction();
+						if(!state)
+							state = new State();
+
+						state.toggle();
+
+						if(state.paused){
+							clearInterval(drawInterval!);
+							drawInterval = undefined;
+						}else{
+							drawInterval = setInterval(drawRep, 1000);
+						}
+
+						drawRep();
+					},
 				},
 				{
 					id: "next",
 					type: "btn",
-					label: ">",
+					label: ">>",
 					fillx: 1,
-					cb: () => onNext(),
+					cb: () => {
+						buzzInteraction();
+						state?.forward();
+					},
 				}
 			]
 		}
 	]
 }, {lazy: true});
-
-const onToggle = () => {
-	if(!state)
-		state = new State();
-	state.toggle();
-	drawRep();
-};
-
-const onPrev = () => {
-};
-
-const onNext = () => {
-};
 
 class State {
 	paused: boolean = true;
@@ -205,14 +208,9 @@ class State {
 	toggle() {
 		if(this.paused){
 			this.begin = Date.now();
-
-			// TODO: move draw out
-			drawInterval = setInterval(drawRep, 1000);
 		}else{
 			const diff = Date.now() - this.begin;
 			this.accumulated += diff;
-
-			clearInterval(drawInterval!);
 		}
 
 		this.paused = !this.paused;
@@ -223,10 +221,15 @@ class State {
 	}
 
 	getElapsedForRep() {
+		return this.currentRepPair()[1];
+	}
+
+	currentRepPair(): [number | null, number] {
 		const elapsed = this.getElapsedTotal();
 		const i = this.currentRepIndex();
+		const repElapsed = elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
 
-		return elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
+		return [i, repElapsed];
 	}
 
 	currentRepIndex() {
@@ -237,20 +240,22 @@ class State {
 				return i;
 		return null;
 	}
-}
 
-let state: State | undefined;
-let drawInterval: IntervalId | undefined;
+	forward() {
+		this.accumulated += step;
+	}
+
+	rewind() {
+		this.accumulated -= step;
+	}
+}
 
 const repToLabel = (i: number, id: string) => {
 	const rep = reps[i];
-	if(rep){
+	if(rep)
 		layout[`${id}_name`]!.label = `${rep.label} / ${msToMinSec(rep.dur)}`;
-		// FIXME: display time, i.e. hh:mm
-		//layout[`${id}_dur`]!.label = ``;
-	}else{
+	else
 		emptyLabel(id);
-	}
 };
 
 const emptyLabel = (id: string) => {
@@ -269,37 +274,36 @@ const drawRep = () => {
 	(layout["duration"] as any).lazyBuster ^= 1;
 
 	if(state){
-		// TODO: layout.clear(layout.next_name); layout.render(layout.next_name)
+		const i = state.currentRepIndex();
+
+		if(i !== lastRepIndex){
+			buzzNewRep();
+			lastRepIndex = i;
+		}
 
 		layout["play"]!.label = state.paused ? "Play" : "Pause";
 
-		const i = state.currentRepIndex();
 		if(i !== null){
+			layout["repIdx"]!.label = `Rep ${i+1}`;
 			repToLabel(i, "cur");
 			repToLabel(i+1, "next");
 		}else{
+			layout["repIdx"]!.label = "Done";
 			emptyLabel("cur");
 			emptyLabel("next");
 		}
 	}
 
 	layout.render();
-
-	/*
-	// TODO: figure out next rep change time? or every 5s, then countdown from 10-->0
-	// TODO: and then use that to Bangle.buzz() on next rep
-	if (drawTimeout) clearTimeout(drawTimeout);
-	drawTimeout = setTimeout(function() {
-		drawTimeout = undefined;
-		drawRep();
-	}, 1000 - (Date.now() % 1000));
-	*/
 };
+
+const buzzInteraction = () => Bangle.buzz(20);
+const buzzNewRep = () => Bangle.buzz(500);
+
+Bangle.loadWidgets();
 
 g.clear();
 drawRep();
 
-// TODO: swipe handlers
-//Bangle.setUI
-
-// TODO: widgets
+Bangle.drawWidgets();
+}
