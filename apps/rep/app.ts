@@ -1,25 +1,35 @@
 {
 const L = require("Layout");
 
-type Rep = {
+type StoreRep = {
+	/// duration in ms
 	dur: number,
+	/// label of this rep
 	label: string,
+};
+
+type Rep = StoreRep & {
+	/// cumulative duration (ms)
 	accDur: number,
 };
 
-const reps: Rep[] = (require("Storage")
-	.readJSON("rep.json") as Rep[] | undefined /* TODO */)
-	.map(((r: Rep, i: number, a: Rep[]): Rep => {
-		const r2 = r as Rep;
+const storeReps = require("Storage")
+	.readJSON("rep.json") as Rep[] | undefined;
 
-		r2.dur = r2.dur * 60 * 1000;
+if(storeReps == null){
+	E.showAlert("No reps in storage\nLoad them on with the app loader")
+		.then(() => load());
 
-		r2.accDur = i > 0
-			? a[i-1]!.accDur + r.dur
-			: r.dur;
+	throw new Error("no storage");
+}
 
-		return r as Rep;
-	}) as any);
+const reps = storeReps.map((r: StoreRep, i: number, a: Rep[]): Rep => {
+	const r2 = r as Rep;
+	r2.accDur = i > 0
+		? a[i-1]!.accDur + r.dur
+		: r.dur;
+	return r2;
+});
 
 const fontSzMain = 54;
 const fontScaleRep = 2;
