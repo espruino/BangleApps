@@ -54,6 +54,9 @@ layout.render();
 - A `fillx` int to choose if the object should fill available space in x. 0=no, 1=yes, 2=2x more space
 - A `filly` int to choose if the object should fill available space in y. 0=no, 1=yes, 2=2x more space
 - `width` and `height` fields to optionally specify minimum size options is an object containing:
+
+`options` has:
+
 - `lazy` - a boolean specifying whether to enable automatic lazy rendering
 - `btns` - array of objects containing:
   - `label` - the text on the button
