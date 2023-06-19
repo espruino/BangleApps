@@ -14,9 +14,11 @@ After you've found the perfect position for your boxes, you can save their posit
 
 __JSON Configuration:__
 
-Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string" attribute. Here's what an example configuration might look like:
+Each box can be customized extensively via a simple JSON configuration. You can add a custom text string to your configuration with the "string" parameter and you can match system theme colors by using "fg", "bg", "fg2", "bg2", "fgH", or "bgH" for any of the color parameters.
 
 ## Config File Structure
+
+Here's what an example configuration might look like:
 
 ```
 {
@@ -39,6 +41,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
   }
 }
 ```
+__Breakdown of Parameters:__
 
 * **string:** The text string to be displayed inside the box.
 
@@ -48,7 +51,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
 
 * **outline:** The thickness of the outline around the text.
 
-* **color:** The color of the text. Match current system theme colors with: ("fg", "bg", "fg2", "bg2", "fgH", "bgH").
+* **color:** The color of the text.
 
 * **outlineColor:** The color of the text outline.
 
