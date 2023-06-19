@@ -6,7 +6,7 @@ Box Clock is a customizable clock app for Bangle.js 2 that features an interacti
 
 __Drag & Drop:__
 
-This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing.
+This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing. **Note:** Roll the tip of your finger slowly on the screen for fine adjustments.
 
 __Double Tap to Save:__
 
