@@ -9,7 +9,6 @@
   let widgets = require("widget_utils");
   let date = new Date();
   let bgImage;
-
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
   let fileName = 'boxclk' + (configNumber > 0 ? `-${configNumber}` : '') + '.json';
   // Add a condition to check if the file exists, if it does not, default to 'boxclk.json'
@@ -17,12 +16,12 @@
     fileName = 'boxclk.json';
   }
   let boxesConfig = storage.readJSON(fileName, 1) || {};
-
   let boxes = {};
   let boxPos = {};
   let isDragging = {};
   let wasDragging = {};
   let doubleTapTimer = null;
+  let g_setColor;
 
   let saveIcon = require("heatshrink").decompress(atob("mEwwkEogA/AHdP/4AK+gWVDBQWNAAIuVGBAIB+UQdhMfGBAHBCxUAgIXHIwPyCxQwEJAgXB+MAl/zBwQGBn8ggQjBGAQXG+EA/4XI/8gBIQXTGAMPC6n/C6HzkREBC6YACC6QAFC57aHCYIXOOgLsEn4XPABIX/C6vykQAEl6/WgCQBC5imFAAT2BC5gCBI4oUCC5x0IC/4X/C4K8Bl4XJ+TCCC4wKBABkvC4tEEoMQCxcBB4IWEC4XyDBUBFwIXGJAIAOIwowDABoWGGB4uHDBwWJAH4AzA"));
 
@@ -97,12 +96,23 @@
   // Overwrite the setColor function to allow the
   // use of (x) in g.theme.x as a string
   // in your JSON config ("fg", "bg", "fg2", "bg2", "fgH", "bgH")
-  let g_setColor = g.setColor;
-  g.setColor = function(color) {
-    if (typeof color === "string" && color in g.theme) {
-      g_setColor.call(g, g.theme[color]);
-    } else {
-      g_setColor.call(g, color);
+  let modSetColor = function() {
+    // Save the original setColor function
+    g_setColor = g.setColor;
+    // Overwrite setColor with the new function
+    g.setColor = function(color) {
+      if (typeof color === "string" && color in g.theme) {
+        g_setColor.call(g, g.theme[color]);
+      } else {
+        g_setColor.call(g, color);
+      }
+    };
+  };
+
+  let restoreSetColor = function() {
+    // Restore the original setColor function
+    if (g_setColor) {
+      g.setColor = g_setColor;
     }
   };
 
@@ -243,8 +253,10 @@
     Object.keys(isDragging).forEach((boxKey) => {
       isDragging[boxKey] = false;
     });
+    restoreSetColor();
     widgets.show();
     widgets.swipeOn();
+    modSetColor();
   };
 
   /**
@@ -339,8 +351,7 @@
         delete Graphics.prototype.setFontBrunoAce;
         // Restore original drawString function (no outlines)
         g.drawString = g_drawString;
-        // Restore original setColor function (no string filtering)
-        g.setColor = g_setColor;
+        restoreSetColor();
         widgets.show();
       }
     });
@@ -355,5 +366,6 @@
   */
   Bangle.loadWidgets();
   widgets.swipeOn();
+  modSetColor();
   setup();
 }
