@@ -314,7 +314,7 @@
       // Calculate the movement distance
       movementDistance += Math.abs(e.dx) + Math.abs(e.dy);
       // Check if the movement distance exceeds a threshold
-      if (movementDistance > 5) {
+      if (movementDistance > 1) {
         boxKeys.forEach((boxKey) => {
           if (isDragging[boxKey]) {
             widgets.hide();
