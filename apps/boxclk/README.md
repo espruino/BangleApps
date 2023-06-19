@@ -34,7 +34,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
     "yOffset": 3,
     "boxPos": { "x": 0.5, "y": 0.5 }
   },
-  "bg": { // Can also be removed for no backround
+  "bg": { // Can also be removed for no background
     "img": "YourImageName.img"
   }
 }
@@ -48,7 +48,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
 
 * **outline:** The thickness of the outline around the text.
 
-* **color:** The color of the text.
+* **color:** The color of the text. Match current system theme colors with: ("fg", "bg", "fg2", "bg2", "fgH", "bgH").
 
 * **outlineColor:** The color of the text outline.
 
