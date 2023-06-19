@@ -96,3 +96,4 @@
       Nav messages with '/' now get split on newlines
 0.70: Handle nav messages from newer Gadgetbridge builds that output distance as a String
       If we receive a 'music' message and we're in the messages app (but not showing a message) show music (#2814)
+0.71: Cancel buzzing when watch unlocked, or when different messages viewed

@@ -62,7 +62,7 @@ var onMessagesModified = function(type,msg) {
   msg.handled = true;
   require("messages").apply(msg, MESSAGES);
   // TODO: if new, show this new one
-  if (msg && msg.id!=="music" && msg.new && active!="map" &&
+  if (msg && msg.id!=="music" && msg.id!=="nav" && msg.new &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     require("messages").buzz(msg.src);
   }
@@ -81,6 +81,7 @@ E.on("kill", saveMessages);
 
 function showMapMessage(msg) {
   active = "map";
+  require("messages").stopBuzz(); // stop repeated buzzing while the map is showing
   var m, distance, street, target, img;
   if ("string"==typeof msg.distance) // new gadgetbridge
     distance = msg.distance;
@@ -399,10 +400,14 @@ function showMessage(msgid) {
   clockIfAllRead : bool
   showMsgIfUnread : bool
   openMusic : bool      // open music if it's playing
+  dontStopBuzz : bool   // don't stuf buzzing (any time other than the first this is undefined/false)
 }
 */
 function checkMessages(options) {
   options=options||{};
+  // If there's been some user interaction, it's time to stop repeated buzzing
+  if (!options.dontStopBuzz)
+    require("messages").stopBuzz();
   // If no messages, just show 'no messages' and return
   if (!MESSAGES.length) {
     active=undefined; // no messages
@@ -474,7 +479,10 @@ function checkMessages(options) {
       if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
-    select : idx => showMessage(MESSAGES[idx].id),
+    select : idx => {
+      if (idx < MESSAGES.length)
+        showMessage(MESSAGES[idx].id);
+    },
     back : () => load()
   });
 }
@@ -500,6 +508,13 @@ setTimeout(() => {
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({
     clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1,
-    openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show") });
+    openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show"),
+    dontStopBuzz: 1 });
 }, 10); // if checkMessages wants to 'load', do that
 
+/* If the Bangle is unlocked by the user, treat that
+as a queue to stop repeated buzzing */
+Bangle.on('lock',locked => {
+  if (!locked)
+    require("messages").stopBuzz();
+});
