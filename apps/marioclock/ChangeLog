@@ -13,3 +13,4 @@
 0.13: Fix drawPyramid function so pyramids are drawn in correct Y position
 0.14: Add jumping frame for characters
 0.15: Disable notification buzz during Quiet Mode
+0.16: Issue newline before GB commands (solves issue with console.log and ignored commands)
