@@ -254,7 +254,7 @@ apps.forEach((app,appIdx) => {
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
       // if settings, suggest adding to datafiles
-      if (file.name.endsWith("setting.js") && !app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+      if (/\.settings?\.js$/.test(file.name) && (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json")))) {
         WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
       }
     }
