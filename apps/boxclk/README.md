@@ -6,7 +6,7 @@ Box Clock is a customizable clock app for Bangle.js 2 that features an interacti
 
 __Drag & Drop:__
 
-This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing.
+This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing. **Note:** Roll the tip of your finger slowly on the screen for fine adjustments.
 
 __Double Tap to Save:__
 
@@ -14,9 +14,11 @@ After you've found the perfect position for your boxes, you can save their posit
 
 __JSON Configuration:__
 
-Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string" attribute. Here's what an example configuration might look like:
+Each box can be customized extensively via a simple JSON configuration. You can add a custom text string to your configuration with the "string" parameter and you can match system theme colors by using "fg", "bg", "fg2", "bg2", "fgH", or "bgH" for any of the color parameters.
 
 ## Config File Structure
+
+Here's what an example configuration might look like:
 
 ```
 {
@@ -39,7 +41,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
     "short": false // Gets long format value of time, meridian, date, or DoW
 
   },
-  "bg": { // Can also be removed for no backround
+  "bg": { // Can also be removed for no background
     "img": "YourImageName.img"
   }
 }
