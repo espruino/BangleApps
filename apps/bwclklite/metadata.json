@@ -39,5 +39,10 @@
       "name": "bwclklite.settings.js",
       "url": "settings.js"
     }
+  ],
+  "data": [
+    {
+      "name": "bwclklite.setting.json"
+    }
   ]
 }

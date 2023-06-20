@@ -6,10 +6,13 @@
   "type":"textinput",
   "tags": "keyboard",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"screenshot.png"}],  
+  "screenshots": [{"url":"screenshot.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"textinput","url":"lib.js"},
     {"name":"dragboard.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"dragboard.json"}
   ]
 }

@@ -12,5 +12,8 @@
     {"name":"cscsensor.app.js","url":"cscsensor.app.js"},
     {"name":"cscsensor.settings.js","url":"settings.js"},
     {"name":"cscsensor.img","url":"cscsensor-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"cscsensor.json"}
   ]
 }
