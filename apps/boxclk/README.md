@@ -44,6 +44,9 @@ Each box can be customized extensively via a simple JSON configuration. You can 
   }
 }
 ```
+
+__Breakdown of Parameters:__
+
 * **Box Name:** The name of your text box. The app includes functional support for "time", "date", "meridian", "dow" (Day of Week), "batt" (Battery), and "step" (Step count). You can add additional custom boxes with unique titles.
 
 * **string:** The text string to be displayed inside the box.
