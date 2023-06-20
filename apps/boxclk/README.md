@@ -22,7 +22,7 @@ Here's what an example configuration might look like:
 
 ```
 {
-  "customBox": { //
+  "customBox": {
     "string": "Your text here",
     "font": "CustomFont", // Custom fonts must be removed in setUI
     "fontSize": 1,
@@ -34,14 +34,22 @@ Here's what an example configuration might look like:
     "yPadding": -4,
     "xOffset": 0,
     "yOffset": 3,
-    "boxPos": { "x": 0.5, "y": 0.5 }
+    "boxPos": { "x": 0.5, "y": 0.5 },
+    "prefix": "", // Adds a string to the beginning of the main string
+    "suffix": "", // Adds a string to the end of the main string
+    "disableSuffix": true, // Only used to remove the DayOfMonth suffix
+    "short": false // Gets long format value of time, meridian, date, or DoW
+
   },
   "bg": { // Can also be removed for no background
     "img": "YourImageName.img"
   }
 }
 ```
+
 __Breakdown of Parameters:__
+
+* **Box Name:** The name of your text box. Box Clock includes functional support for "time", "date", "meridian" (AM/PM), "dow" (Day of Week), "batt" (Battery), and "step" (Step count). You can add additional custom boxes with unique titles.
 
 * **string:** The text string to be displayed inside the box.
 
@@ -62,6 +70,14 @@ __Breakdown of Parameters:__
 * **xOffset, yOffset:** Offsets the text position within the box.
 
 * **boxPos:** Initial position of the box on the screen. Values are fractions of the screen width (x) and height (y), so { "x": 0.5, "y": 0.5 } would be in the middle of the screen.
+
+* **prefix:** Adds a string to the beginning of the main string. For example, you can set "prefix": "Steps: " to display "Steps: 100" for the step count.
+
+* **suffix:** Adds a string to the end of the main string. For example, you can set "suffix": "%" to display "80%" for the battery percentage.
+
+* **disableSuffix:** Applies only to the "date" box. Set to true to disable the DayOfMonth suffix. This is used to remove the "st","nd","rd", or "th" from the DayOfMonth number
+
+* **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default, 
 
 * **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
 

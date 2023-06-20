@@ -32,11 +32,11 @@
     };
   }
 
+  let configFiles = [];
   storage.list().forEach(file => {
     let match = file.match(fileRegex);
     if (match) {
-      let configNumber = match[1];
-      configs[configNumber] = handleSelection(configNumber);
+      configFiles.push({ file: file, number: parseInt(match[1]) });
     } else if (file === "boxclk.json") {
       hasDefaultConfig = true;
       let defaultConfig = storage.readJSON(file, 1);
@@ -54,6 +54,13 @@
         }
       }
     }
+  });
+
+  // Sort the config files by number
+  configFiles.sort((a, b) => a.number - b.number);
+
+  configFiles.forEach(configFile => {
+    configs[configFile.number] = handleSelection(configFile.number);
   });
 
   if (!selectedConfig) {
