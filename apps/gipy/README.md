@@ -16,6 +16,7 @@ This software is not perfect but surprisingly useful.
 It provides the following features :
 
 - display the path with current position from gps
+- display a local map around you, downloaded from openstreetmap
 - detects and buzzes if you leave the path
 - buzzes before sharp turns
 - buzzes before waypoints 
@@ -28,17 +29,14 @@ It provides the following features :
     - artwork
     - bakeries
 
-optionally it can also:
-
-- try to turn off gps between crossroads to save battery
-
 ## Usage
 
 ### Preparing the file
 
 You first need to have a trace file in *gpx* format.
 Usually I download from [komoot](https://www.komoot.com/) or I export
-from google maps using [mapstogpx](https://mapstogpx.com/).
+from google maps using [mapstogpx](https://mapstogpx.com/). [Brouter](https://brouter.damsy.net) is
+also a nice open source option.
 
 Note that *mapstogpx* has a super nice feature in its advanced settings.
 You can turn on 'next turn info' and be warned by the watch when you need to turn.
@@ -58,16 +56,16 @@ Once you have a signal you will reach the main screen:
 
 ![Screenshot](legend.png)
 
+The screen is oriented so that the top of the image is in front of you.
+It will rotate as you turn.
 On your screen you can see:
 
 - yourself (the big black dot)
-- the path (the top of the screen is in front of you)
-- on the path, current and next segments are red and other ones are black
+- the path (thick red line)
+- a green arrow telling you which way is forward
 - if needed a projection of yourself on the path (small black dot)
-- points as white dots
-- waypoints as doubled white dots
+- waypoints as large white dots
 - some text on the left (from top to bottom):
-    * time to reach start point at current average speed
     * current time
     * time to reach end point at current average speed
     * left distance till end of current segment
@@ -90,17 +88,18 @@ display the direction to follow as a black segment.
 Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
 are. On path it just needed to scan a few points ahead and behind.
 
-![Lost](lost.png)
-
 The distance to next point displayed corresponds to the length of the black segment.
+
+### Menu
+
+If you click the button you'll reach a menu where you can currently zoom out to see more of the map
+(with a slower refresh rate) and reverse the path direction.
 
 ### Settings
 
 Few settings for now (feel free to suggest me more) :
 
-- keep gps alive : if turned off, will try to save battery by turning the gps off on long segments
-- max speed : used to compute how long to turn the gps off
-- display points : display/hide points (not waypoints)
+- lost distance : at which distance from path are you considered to be lost ?
 
 ### Caveats
 
@@ -109,8 +108,8 @@ It is good to use but you should know :
 - the gps might take a long time to start initially (see the assisted gps update app).
 - gps signal is noisy : there is therefore a small delay for instant speed. sometimes you may jump somewhere else.
 - your gpx trace has been decimated and approximated : the **REAL PATH** might be **A FEW METERS AWAY**
-- sometimes the watch will tell you that you are lost but you are in fact on the path.
-- battery saving by turning off gps is not very well tested (disabled by default).
+- sometimes the watch will tell you that you are lost but you are in fact on the path. It usually figures again
+the real gps position after a few minutes. It usually happens when the signal is acquired very fast.
 - buzzing does not always work: when there is a high load on the watch, the buzzes might just never happen :-(.
 - buzzes are not strong enough to be always easily noticed.
 - be careful when **GOING DOWNHILL AT VERY HIGH SPEED**. I already missed a few turning points and by the time I realized it,

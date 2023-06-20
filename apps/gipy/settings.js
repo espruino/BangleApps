@@ -3,8 +3,7 @@
   // Load settings
   var settings = Object.assign(
     {
-      keep_gps_alive: false,
-      max_speed: 35,
+      lost_distance: 50,
     },
     require("Storage").readJSON(FILE, true) || {}
   );
@@ -19,7 +18,8 @@
     "< Back": () => back(),
     "keep gps alive": {
       value: !!settings.keep_gps_alive, // !! converts undefined to false
-      onchange: v => {
+      format: (v) => (v ? "Yes" : "No"),
+      onchange: (v) => {
         settings.keep_gps_alive = v;
         writeSettings();
       },
