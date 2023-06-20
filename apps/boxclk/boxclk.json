@@ -49,9 +49,9 @@
     "border": "#fff",
     "xPadding": -0.5,
     "yPadding": -0.5,
-    "xOffset": 2,
+    "xOffset": 1,
     "yOffset": 1,
-    "boxPos": { "x": 0.92, "y": 0.95 },
+    "boxPos": { "x": 0.9, "y": 0.95 },
     "suffix": "%"
   },
   "bg": {
