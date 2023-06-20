@@ -1,7 +1,11 @@
 {
   "id": "boxclk",
   "name": "Box Clock",
+<<<<<<< HEAD
   "version": "0.02",
+=======
+  "version": "0.01",
+>>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   "description": "A customizable clock with configurable text boxes that can be positioned to show your favorite background",
   "icon": "app.png",
   "screenshots": [

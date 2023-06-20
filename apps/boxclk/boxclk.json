@@ -23,8 +23,12 @@
     "yPadding": 0.5,
     "xOffset": 1,
     "yOffset": 1,
+<<<<<<< HEAD
     "boxPos": { "x": 0.633, "y": 0.3 },
     "short": false
+=======
+    "boxPos": { "x": 0.633, "y": 0.3 }
+>>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   },
   "date": {
     "font": "6x8",
@@ -37,8 +41,12 @@
     "yPadding": 0.5,
     "xOffset": 1,
     "yOffset": 1,
+<<<<<<< HEAD
     "boxPos": { "x": 0.633, "y": 0.39 },
     "short": false
+=======
+    "boxPos": { "x": 0.633, "y": 0.39 }
+>>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   },
   "batt": {
     "font": "4x6",
@@ -51,8 +59,12 @@
     "yPadding": -0.5,
     "xOffset": 2,
     "yOffset": 1,
+<<<<<<< HEAD
     "boxPos": { "x": 0.92, "y": 0.95 },
     "suffix": "%"
+=======
+    "boxPos": { "x": 0.92, "y": 0.95 }
+>>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   },
   "bg": {
     "img": "boxclk.beachhouse.img"

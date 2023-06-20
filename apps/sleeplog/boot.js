@@ -303,6 +303,7 @@ if (sleeplog.conf.enabled) {
 
       // send status to gadgetbridge
       var gb_kinds = "unknown,not_worn,activity,light_sleep,deep_sleep";
+      Bluetooth.println("");
       Bluetooth.println(JSON.stringify({
         t: "act",
         act: gb_kinds.split(",")[data.status],

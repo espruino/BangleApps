@@ -92,6 +92,7 @@ function writeSettings(newSettings) {
 }
 
 function phoneOutbound(msg) {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify(msg));
 }
 

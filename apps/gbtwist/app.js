@@ -22,14 +22,17 @@ var counter = 0; //stores your counted your twists
 var tstate = false; //are you ready to count the twists?
 
 function playx() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({t:"music", n:"play"}));
 }
 
 function volup() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({t:"music", n:"volumeup"}));
 }
 
 function voldn() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({t:"music", n:"volumedown"}));
 }
 
