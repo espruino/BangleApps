@@ -186,7 +186,7 @@
     } else {
       suffix = "th";
     }
-    let dayOfMonthStr = short ? dayOfMonth : (disableSuffix ? dayOfMonth : dayOfMonth + suffix);
+    let dayOfMonthStr = disableSuffix ? dayOfMonth : dayOfMonth + suffix;
     return month + " " + dayOfMonthStr + (short ? '' : (", " + year)); // not including year for short version
   };
 
