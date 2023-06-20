@@ -116,7 +116,7 @@ apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
   var appDir = APPSDIR+app.id+"/";
-  var metadataFile = appDirRelative+"metadata.json";  
+  var metadataFile = appDirRelative+"metadata.json";
   if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`, {file:metadataFile});
   existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
@@ -164,11 +164,11 @@ apps.forEach((app,appIdx) => {
     });
   }
   if (app.readme) {
-    if (!fs.existsSync(appDir+app.readme)) 
+    if (!fs.existsSync(appDir+app.readme))
       ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
   } else {
     let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
-    if (readme) 
+    if (readme)
       ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
   }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
