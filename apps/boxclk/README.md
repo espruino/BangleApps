@@ -6,11 +6,7 @@ Box Clock is a customizable clock app for Bangle.js 2 that features an interacti
 
 __Drag & Drop:__
 
-<<<<<<< HEAD
 This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing.
-=======
-This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing. **Note:** Roll the tip of your finger slowly on the screen for fine adjustments.
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
 
 __Double Tap to Save:__
 
@@ -18,7 +14,6 @@ After you've found the perfect position for your boxes, you can save their posit
 
 __JSON Configuration:__
 
-<<<<<<< HEAD
 Each box can be customized extensively via a simple JSON configuration. You can also add a custom text string to your configuration with the "string" attribute. Here's what an example configuration might look like:
 
 ## Config File Structure
@@ -26,17 +21,6 @@ Each box can be customized extensively via a simple JSON configuration. You can 
 ```
 {
   "customBox": {
-=======
-Each box can be customized extensively via a simple JSON configuration. You can add a custom text string to your configuration with the "string" parameter and you can match system theme colors by using "fg", "bg", "fg2", "bg2", "fgH", or "bgH" for any of the color parameters.
-
-## Config File Structure
-
-Here's what an example configuration might look like:
-
-```
-{
-  "customBox": { //
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
     "string": "Your text here",
     "font": "CustomFont", // Custom fonts must be removed in setUI
     "fontSize": 1,
@@ -48,7 +32,6 @@ Here's what an example configuration might look like:
     "yPadding": -4,
     "xOffset": 0,
     "yOffset": 3,
-<<<<<<< HEAD
     "boxPos": { "x": 0.5, "y": 0.5 },
     "prefix": "", // Adds a string to the beginning of the main string
     "suffix": "", // Adds a string to the end of the main string
@@ -57,20 +40,11 @@ Here's what an example configuration might look like:
 
   },
   "bg": { // Can also be removed for no backround
-=======
-    "boxPos": { "x": 0.5, "y": 0.5 }
-  },
-  "bg": { // Can also be removed for no background
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
     "img": "YourImageName.img"
   }
 }
 ```
-<<<<<<< HEAD
 * **Box Name:** The name of your text box. The app includes functional support for "time", "date", "meridian", "dow" (Day of Week), "batt" (Battery), and "step" (Step count). You can add additional custom boxes with unique titles.
-=======
-__Breakdown of Parameters:__
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
 
 * **string:** The text string to be displayed inside the box.
 
@@ -92,7 +66,6 @@ __Breakdown of Parameters:__
 
 * **boxPos:** Initial position of the box on the screen. Values are fractions of the screen width (x) and height (y), so { "x": 0.5, "y": 0.5 } would be in the middle of the screen.
 
-<<<<<<< HEAD
 * **prefix:** Adds a string to the beginning of the main string. For example, you can set "prefix": "Steps: " to display "Steps: 100" for the step count.
 
 * **suffix:** Adds a string to the end of the main string. For example, you can set "suffix": "%" to display "80%" for the battery percentage.
@@ -101,8 +74,6 @@ __Breakdown of Parameters:__
 
 * **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default, 
 
-=======
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
 * **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
 
 ## Multiple Configurations

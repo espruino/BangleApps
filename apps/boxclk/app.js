@@ -33,10 +33,6 @@
   let w = g.getWidth();
   let h = g.getHeight();
   let totalWidth, totalHeight;
-<<<<<<< HEAD
-=======
-  let enableSuffix = true;
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   let drawTimeout;
 
   /**
@@ -168,7 +164,6 @@
 
   /**
   * ---------------------------------------------------------------
-<<<<<<< HEAD
   * 7. String forming helper functions
   * ---------------------------------------------------------------
   */
@@ -180,15 +175,6 @@
     const date = new Date();
     const dayOfMonth = date.getDate();
     const month = short ? locale.month(date, 0) : locale.month(date, 1);
-=======
-  * 7. Date and time related functions
-  * ---------------------------------------------------------------
-  */
-  let getDate = function() {
-    const date = new Date();
-    const dayOfMonth = date.getDate();
-    const month = locale.month(date, 1);
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
     const year = date.getFullYear();
     let suffix;
     if ([1, 21, 31].includes(dayOfMonth)) {
@@ -200,7 +186,6 @@
     } else {
       suffix = "th";
     }
-<<<<<<< HEAD
     let dayOfMonthStr = short ? dayOfMonth : (disableSuffix ? dayOfMonth : dayOfMonth + suffix);
     return month + " " + dayOfMonthStr + (short ? '' : (", " + year)); // not including year for short version
   };
@@ -219,14 +204,6 @@
     let prefix = boxItem.prefix || '';
     let suffix = boxItem.suffix || '';
     return prefix + data + suffix;
-=======
-    let dayOfMonthStr = enableSuffix ? dayOfMonth + suffix : dayOfMonth;
-    return month + " " + dayOfMonthStr + ", " + year;
-  };
-
-  let getDayOfWeek = function(date) {
-    return locale.dow(date, 0);
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
   };
 
   /**
@@ -234,7 +211,6 @@
   * 8. Main draw function
   * ---------------------------------------------------------------
   */
-<<<<<<< HEAD
   let draw = (function() {
     let updatePerMinute = true; // variable to track the state of time display
 
@@ -285,46 +261,6 @@
       }
     };
   })();
-=======
-  let draw = function(boxes) {
-    date = new Date();
-    g.clear();
-    if (bgImage) {
-      g.drawImage(bgImage, 0, 0);
-    }
-    if (boxes.time) {
-      boxes.time.string = locale.time(date, 1);
-    }
-    if (boxes.date) {
-      boxes.date.string = getDate();
-    }
-    if (boxes.dow) {
-      boxes.dow.string = getDayOfWeek(date);
-    }
-    if (boxes.batt) {
-      boxes.batt.string = E.getBattery() + "%";
-    }
-    boxKeys.forEach((boxKey) => {
-      let boxItem = boxes[boxKey];
-      calcBoxSize(boxItem);
-      const pos = calcBoxPos(boxKey);
-      if (isDragging[boxKey]) {
-        g.setColor(boxItem.border);
-        g.drawRect(pos.x1, pos.y1, pos.x2, pos.y2);
-      }
-      g.drawString(
-        boxItem,
-        boxItem.string,
-        boxPos[boxKey].x +  boxItem.xOffset,
-        boxPos[boxKey].y +  boxItem.yOffset
-      );
-    });
-    if (!Object.values(isDragging).some(Boolean)) {
-      if (drawTimeout) clearTimeout(drawTimeout);
-      drawTimeout = setTimeout(() => draw(boxes), 60000 - (Date.now() % 60000));
-    }
-  };
->>>>>>> ba7a2f79968ed26d3caa8ac2821e07856369e60e
 
   /**
   * ---------------------------------------------------------------
