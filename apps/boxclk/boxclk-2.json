@@ -46,7 +46,8 @@
     "boxPos": {
       "x": "0.5",
       "y": "0.75"
-    }
+    },
+    "shortMonth": false
   },
   "step": {
     "font": "4x6",
