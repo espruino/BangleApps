@@ -18,7 +18,7 @@ Each box can be customized extensively via a simple JSON configuration. You can 
 
 ## Config File Structure
 
-Here's what an example configuration might look like:
+Here's an example of what a configuration might contain:
 
 ```
 {
@@ -88,7 +88,7 @@ __Breakdown of Parameters:__
 
 __Settings Menu:__
 
-The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a number in the default `boxclk.josn` file using the selectedConfig property.
+The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a number in the default `boxclk.json` file using the selectedConfig property.
 
 If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention `boxclk-N.json`, where `N` is the configuration number. The settings menu will list all available configurations.
 
