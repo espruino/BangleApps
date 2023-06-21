@@ -38,7 +38,7 @@ Here's what an example configuration might look like:
     "prefix": "", // Adds a string to the beginning of the main string
     "suffix": "", // Adds a string to the end of the main string
     "disableSuffix": true, // Use to remove DayOfMonth suffix only
-    "short": false // Use long format of time, meridian, date, or DoW
+    "short": false, // Use long format of time, meridian, date, or DoW
     "shortMonth": false // Use long format of month within date
 
   },
