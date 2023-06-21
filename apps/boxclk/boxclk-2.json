@@ -47,7 +47,8 @@
       "x": "0.5",
       "y": "0.75"
     },
-    "shortMonth": false
+    "shortMonth": false,
+    "disableSuffix": true
   },
   "step": {
     "font": "4x6",
