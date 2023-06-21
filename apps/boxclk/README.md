@@ -80,7 +80,7 @@ __Breakdown of Parameters:__
 
 * **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default if not specified.
 
-* **shortMonth:** Set to false to get the long format value of the month. Short format is used by default if not specified.
+* **shortMonth:** Applies only to the "date" box. Set to false to get the long format value of the month. Short format is used by default if not specified.
 
 * **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
 
@@ -88,7 +88,7 @@ __Breakdown of Parameters:__
 
 __Settings Menu:__
 
-The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a numner in the default `boxclk.josn` file using the selectedConfig property.
+The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a number in the default `boxclk.josn` file using the selectedConfig property.
 
 If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention `boxclk-N.json`, where `N` is the configuration number. The settings menu will list all available configurations.
 
