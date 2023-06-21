@@ -96,7 +96,7 @@ To easily try out other configs, download and place the JSON configs and/or back
 __Space Theme:__
 
 - **Config:** [boxclk-1.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-1.json)
-- **Background:** boxclk.space.img ([Source](https://www.pixilart.com/art/fallin-from-outer-space-sr2e0c1a705749a))
+- **Background:** [boxclk.space.img](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk.space.img) ([Original Source](https://www.pixilart.com/art/fallin-from-outer-space-sr2e0c1a705749a))
 
 __System Color Theme:__
 
