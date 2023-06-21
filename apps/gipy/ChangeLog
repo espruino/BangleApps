@@ -75,5 +75,8 @@
 	* Splash screen while waiting for gps signal.
 	
 0.17:
+	* Convert Yes/No On/Off in settings to checkboxes
+
+0.18:
 	* Major rewrite of display : now tile based
 	* We have a map. Never get lost again.
