@@ -13,5 +13,8 @@
     {"name":"limelight.app.js","url":"limelight.app.js"},
     {"name":"limelight.settings.js","url":"limelight.settings.js"},
     {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"limelight.json"}
   ]
 }

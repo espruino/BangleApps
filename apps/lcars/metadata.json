@@ -16,5 +16,6 @@
     {"name":"lcars.app.js","url":"lcars.app.js"},
     {"name":"lcars.img","url":"lcars.icon.js","evaluate":true},
     {"name":"lcars.settings.js","url":"lcars.settings.js"}
-  ]
+  ],
+  "data":[{"name":"lcars.setting.json"}]
 }

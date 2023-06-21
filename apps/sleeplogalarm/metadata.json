@@ -17,5 +17,6 @@
     {"name": "sleeplogalarm", "url": "lib.js"},
     {"name": "sleeplogalarm.settings.js", "url": "settings.js"},
     {"name": "sleeplogalarm.wid.js", "url": "widget.js"}
-  ]
+  ],
+  "data":[{"name":"sleeplogalarm.settings.json"}]
 }

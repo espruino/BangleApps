@@ -15,5 +15,8 @@
     {"name":"rebble.app.js","url":"rebble.app.js"},
     {"name":"rebble.settings.js","url":"rebble.settings.js"},
     {"name":"rebble.img","url":"rebble.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"rebble.settings.json"}
   ]
 }

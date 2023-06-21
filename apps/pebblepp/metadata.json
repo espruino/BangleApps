@@ -15,5 +15,8 @@
     {"name":"pebblepp.app.js","url":"app.js"},
     {"name":"pebblepp.settings.js","url":"settings.js"},
     {"name":"pebblepp.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"pebblepp.settings.json"}
   ]
 }

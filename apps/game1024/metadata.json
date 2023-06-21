@@ -14,5 +14,6 @@
       {"name":"game1024.app.js","url":"app.js"},
       {"name":"game1024.settings.js","url":"settings.js"},
       {"name":"game1024.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data":[{"name":"game1024.settings.json"}]
   }

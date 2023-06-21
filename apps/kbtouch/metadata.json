@@ -12,5 +12,6 @@
     {"name":"textinput","url":"lib.js"},
     {"name":"kbtouch.settings.js","url":"settings.js"}
   ],
-  "sortorder":-1
+  "sortorder":-1,
+  "data":[{"name":"kbtouch.settings.json"}]
 }

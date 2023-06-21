@@ -20,5 +20,6 @@
     {"name":"happyclk.app.js","url":"happyclk.app.js"},
     {"name":"happyclk.img","url":"happyclk.icon.js","evaluate":true},
     {"name":"happyclk.settings.js","url":"happyclk.settings.js"}
-  ]
+  ],
+  "data":[{"name":"happyclk.setting.json"}]
 }
