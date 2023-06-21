@@ -93,12 +93,12 @@ If the selectedConfig property is not present or is set to 0, the app will use t
 
 To easily try out other configs, download and place the JSON configs and/or background images from below onto your Bangle.js storage. Then go to the Box Clock settings menu to select the new config number. You can also modify them to suit your personal preferences.
 
-### Space Theme:
+__Space Theme:__
 
 - **Config:** [boxclk-1.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-1.json)
 - **Background:** boxclk.space.img ([Source](https://www.pixilart.com/art/fallin-from-outer-space-sr2e0c1a705749a))
 
-### System Color Theme:
+__System Color Theme:__
 
 - **Config:** [boxclk-2.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-2.json)
 
