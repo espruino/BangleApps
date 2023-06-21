@@ -6,7 +6,8 @@
   "icon": "app.png",
   "screenshots": [
     {"url":"screenshot.png"},
-    {"url":"screenshot-1.png"}
+    {"url":"screenshot-1.png"},
+    {"url":"screenshot-2.png"}
   ],
   "type": "clock",
   "tags": "clock",

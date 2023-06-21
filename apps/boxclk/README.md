@@ -51,9 +51,9 @@ __Breakdown of Parameters:__
 
 * **Box Name:** The name of your text box. Box Clock includes functional support for "time", "date", "meridian" (AM/PM), "dow" (Day of Week), "batt" (Battery), and "step" (Step count). You can add additional custom boxes with unique titles.
 
-* **string:** The text string to be displayed inside the box.
+* **string:** The text string to be displayed inside the box. This is only required for custom Box Names.
 
-* **font:** The font name given to g.setFont()
+* **font:** The font name given to g.setFont().
 
 * **fontSize:** The size of the font.
 
@@ -83,9 +83,24 @@ __Breakdown of Parameters:__
 
 ## Multiple Configurations
 
-The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored in the default JSON file alongside the other configuration data using the selectedConfig property.
+__Settings Menu:__
 
-If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention boxclk-N.json, where N is the configuration number. The settings menu will list all available configurations.
+The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a numner in the default `boxclk.josn` file using the selectedConfig property.
+
+If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention `boxclk-N.json`, where `N` is the configuration number. The settings menu will list all available configurations.
+
+## Example Configs:
+
+To easily try out other configs, download and place the JSON configs and/or background images from below onto your Bangle.js storage. Then go to the Box Clock settings menu to select the new config number. You can also modify them to suit your personal preferences.
+
+### Space Theme:
+
+- **Config:** [boxclk-1.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-1.json)
+- **Background:** boxclk.space.img ([Source](https://www.pixilart.com/art/fallin-from-outer-space-sr2e0c1a705749a))
+
+### System Color Theme:
+
+- **Config:** [boxclk-2.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-2.json)
 
 ## Compatibility
 
