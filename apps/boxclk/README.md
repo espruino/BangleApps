@@ -37,8 +37,8 @@ Here's what an example configuration might look like:
     "boxPos": { "x": 0.5, "y": 0.5 },
     "prefix": "", // Adds a string to the beginning of the main string
     "suffix": "", // Adds a string to the end of the main string
-    "disableSuffix": true, // Only used to remove the DayOfMonth suffix
-    "short": false // Gets long format value of time, meridian, date, or DoW
+    "disableSuffix": true, // Use to remove DayOfMonth suffix only
+    "short": false // Use long format of time, meridian, date, or DoW
 
   },
   "bg": { // Can also be removed for no background
