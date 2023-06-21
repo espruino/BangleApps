@@ -39,6 +39,7 @@ Here's what an example configuration might look like:
     "suffix": "", // Adds a string to the end of the main string
     "disableSuffix": true, // Use to remove DayOfMonth suffix only
     "short": false // Use long format of time, meridian, date, or DoW
+    "shortMonth": false // Use long format of month within date
 
   },
   "bg": { // Can also be removed for no background
@@ -75,9 +76,11 @@ __Breakdown of Parameters:__
 
 * **suffix:** Adds a string to the end of the main string. For example, you can set "suffix": "%" to display "80%" for the battery percentage.
 
-* **disableSuffix:** Applies only to the "date" box. Set to true to disable the DayOfMonth suffix. This is used to remove the "st","nd","rd", or "th" from the DayOfMonth number
+* **disableSuffix:** Applies only to the "date" box. Set to true to disable the DayOfMonth suffix. This is used to remove the "st","nd","rd", or "th" from the DayOfMonth number.
 
-* **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default, 
+* **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default if not specified.
+
+* **shortMonth:** Set to false to get the long format value of the month. Short format is used by default if not specified.
 
 * **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
 

@@ -171,10 +171,10 @@
     return typeof val !== 'undefined' ? Boolean(val) : defaultVal;
   };
 
-  let getDate = function(short, disableSuffix) {
+  let getDate = function(short, shortMonth, disableSuffix) {
     const date = new Date();
     const dayOfMonth = date.getDate();
-    const month = short ? locale.month(date, 0) : locale.month(date, 1);
+    const month = shortMonth ? locale.month(date, 1) : locale.month(date, 0);
     const year = date.getFullYear();
     let suffix;
     if ([1, 21, 31].includes(dayOfMonth)) {
@@ -228,7 +228,12 @@
         boxes.meridian.string = modString(boxes.meridian, locale.meridian(date, isBool(boxes.meridian.short, true)));
       }
       if (boxes.date) {
-        boxes.date.string = modString(boxes.date, getDate(isBool(boxes.date.short, true), isBool(boxes.date.disableSuffix, false)));
+        boxes.date.string = (
+          modString(boxes.date,
+          getDate(isBool(boxes.date.short, true),
+          isBool(boxes.date.shortMonth, true),
+          isBool(boxes.date.disableSuffix, false)
+        )));
       }
       if (boxes.dow) {
         boxes.dow.string = modString(boxes.dow, getDayOfWeek(date, isBool(boxes.dow.short, true)));
