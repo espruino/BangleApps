@@ -24,7 +24,7 @@ Here's an example of what a configuration might contain:
 {
   "customBox": {
     "string": "Your text here",
-    "font": "CustomFont", // Add custom fonts to "boxclk.lib"
+    "font": "CustomFont", // Custom fonts must be removed in setUI
     "fontSize": 1,
     "outline": 2,
     "color": "#FF9900", // Use 6 or 3 digit hex color codes
@@ -54,7 +54,7 @@ __Breakdown of Parameters:__
 
 * **string:** The text string to be displayed inside the box. This is only required for custom Box Names.
 
-* **font:** The font name given to g.setFont(). To use a custom font, use the Espruino Font Converter and add it to "boxclk.lib" next to the other custom fonts. Use the font name beginning after "setFont" in your JSON config.
+* **font:** The font name given to g.setFont().
 
 * **fontSize:** The size of the font.
 

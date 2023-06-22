@@ -1,15 +1,15 @@
 {
   "time": {
-    "font": "Orbitron",
-    "fontSize": 1,
+    "font": "6x8",
+    "fontSize": 3,
     "outline": 2,
     "color": "#0ff",
     "outlineColor": "#00f",
     "border": "#0f0",
-    "xPadding": 0,
-    "yPadding": -3.5,
-    "xOffset": 0,
-    "yOffset": 2,
+    "xPadding": -1,
+    "yPadding": -2.5,
+    "xOffset": 2,
+    "yOffset": 0,
     "boxPos": {
       "x": "0.33",
       "y": "0.29"
@@ -35,7 +35,7 @@
   "dow": {
     "font": "6x8",
     "fontSize": 2,
-    "outline": 2,
+    "outline": 1,
     "color": "#000",
     "outlineColor": "#fff",
     "border": "#0f0",
@@ -45,13 +45,13 @@
     "yOffset": 1,
     "boxPos": {
       "x": "0.5",
-      "y": "0.83"
+      "y": "0.82"
     }
   },
   "step": {
     "font": "6x8",
     "fontSize": 2,
-    "outline": 2,
+    "outline": 1,
     "color": "#000",
     "outlineColor": "#fff",
     "border": "#0f0",
