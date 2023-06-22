@@ -70,6 +70,8 @@ var onMessagesModified = function(type,msg) {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
     if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
   }
+  if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
+    return; // don't show an updated nav message if we're just in the menu
   showMessage(msg&&msg.id);
 };
 Bangle.on("message", onMessagesModified);

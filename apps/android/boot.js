@@ -203,6 +203,8 @@
           event.t="add";
           event.src="maps"; // for the icon
           event.title="Navigation";
+          if (require("messages").getMessages().find(m=>m.id=="nav"))
+            event.t = "modify";
         } else {
           event.t="remove";
         }

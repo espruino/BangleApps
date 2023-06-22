@@ -26,3 +26,4 @@
 0.25: Added option to 'ignore' an app from the message
 0.26: Change handling of GPS status to depend on GPS events instead of connection events
 0.27: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.28: Navigation messages no longer launch the Maps view unless they're new

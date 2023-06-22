@@ -98,3 +98,4 @@
       If we receive a 'music' message and we're in the messages app (but not showing a message) show music (#2814)
 0.71: Cancel buzzing when watch unlocked, or when different messages viewed
       On 2v18.64+ firmware, 'No Messages' now has a 'back' button
+0.72: Nav message updastes don't automatically launch navigation menu unless they're new
