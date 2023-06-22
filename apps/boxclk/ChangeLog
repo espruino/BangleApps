@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: New config options such as step, meridian, short/long formats, custom prefix/suffix
+0.03: Allows showing the month in short or long format by setting `"shortMonth"` to true or false
