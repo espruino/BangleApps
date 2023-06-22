@@ -364,7 +364,7 @@
         Bangle.removeListener('drag', dragHandler);
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
-        unloadCustomBoxclkFonts(); // Remove custom fonts
+        unloadCustomBoxClkFonts(); // Remove custom fonts
         // Restore original drawString function (no outlines)
         g.drawString = g_drawString;
         restoreSetColor();
