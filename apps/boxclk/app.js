@@ -7,6 +7,7 @@
   let storage = require("Storage");
   let locale = require("locale");
   let widgets = require("widget_utils");
+  let customFonts = require("boxclk.lib");
   let date = new Date();
   let bgImage;
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
@@ -46,24 +47,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 4. Font loading function
-  * ---------------------------------------------------------------
-  */
-  let loadCustomFont = function() {
-    Graphics.prototype.setFontBrunoAce = function() {
-      // Actual height 23 (24 - 2)
-      return this.setFontCustom(
-        E.toString(require('heatshrink').decompress(atob('ABMHwADBh4DKg4bKgIPDAYUfAYV/AYX/AQMD/gmC+ADBn/AByE/GIU8AYUwLxcfAYX/8AnB//4JIP/FgMP4F+CQQBBjwJBFYRbBAd43DHoJpBh/g/xPEK4ZfDgEEORKDDAY8////wADLfZrTCgITBnhEBAYJMBAYMPw4DCM4QDjhwDCjwDBn0+AYMf/gDBh/4AYMH+ADBLpc4ToK/NGYZfnAYcfL4U/x5fBW4LvB/7vC+LvBgHAsBfIn76Cn4WBcYQDFEgJ+CQQYDyH4L/BAZbHLNYjjCAZc8ngDunycBZ4KkBa4KwBnEHY4UB+BfMgf/ZgMH/4XBc4cf4F/gE+ZgRjwAYcfj5jBM4U4M4RQBM4UA8BjIngDFEYJ8BAYUDAYQvCM4ZxBC4V+AYQvBnkBQ4M8gabBJQPAI4WAAYM/GYQaBAYJKCnqyCn5OCn4aBAYIaBAYJPCU4IABnBhIuDXCFAMD+Z/BY4IDBQwOPwEfv6TDAYUPAcwrDAYQ7BAYY/BI4cD8bLCK4RfEAA0BRYTeDcwIrFn0Pw43Bg4DugYDBjxBBU4SvDMYMH/5QBgP/LAQAP8EHN4UPwADHB4YAHA'))),
-        46,
-        atob("CBEdChgYGhgaGBsaCQ=="),
-        32|65536
-      );
-    };
-  };
-
-  /**
-  * ---------------------------------------------------------------
-  * 5. Initial settings of boxes and their positions
+  * 4. Initial settings of boxes and their positions
   * ---------------------------------------------------------------
   */
   for (let key in boxesConfig) {
@@ -88,7 +72,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 6. Text and drawing functions
+  * 5. Text and drawing functions
   * ---------------------------------------------------------------
   */
 
@@ -164,7 +148,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 7. String forming helper functions
+  * 6. String forming helper functions
   * ---------------------------------------------------------------
   */
   let isBool = function(val, defaultVal) {
@@ -208,7 +192,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 8. Main draw function
+  * 7. Main draw function
   * ---------------------------------------------------------------
   */
   let draw = (function() {
@@ -269,7 +253,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 9. Helper function for touch event
+  * 8. Helper function for touch event
   * ---------------------------------------------------------------
   */
   let touchInText = function(e, boxItem, boxKey) {
@@ -293,7 +277,7 @@
 
   /**
   * ---------------------------------------------------------------
-  * 10. Setup function to configure event handlers
+  * 9. Setup function to configure event handlers
   * ---------------------------------------------------------------
   */
   let setup = function() {
@@ -380,20 +364,19 @@
         Bangle.removeListener('drag', dragHandler);
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
-        delete Graphics.prototype.setFontBrunoAce;
+        unloadCustomBoxclkFonts(); // Remove custom fonts
         // Restore original drawString function (no outlines)
         g.drawString = g_drawString;
         restoreSetColor();
         widgets.show();
       }
     });
-    loadCustomFont();
     draw(boxes);
   };
 
   /**
   * ---------------------------------------------------------------
-  * 11. Main execution part
+  * 10. Main execution part
   * ---------------------------------------------------------------
   */
   Bangle.loadWidgets();
