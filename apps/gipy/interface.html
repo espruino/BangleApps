@@ -1,21 +1,27 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+     integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+     crossorigin=""/>
+
   <style>
-svg { width:95% }
+#svgmap { width: 95%; }
+#map { height: 180px; }
   </style>
   </head>
   <body>
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+ <div id="map"></div>
 
-      <p>Please select a gpx file to be converted to gpc and loaded.</p>
-
+      <p>Please select a gpx file OR an area on the map using shift + drag the mouse.</p>
 
     gpx file : <input type="file" is="gpx_file" id="fileInput" accept=".gpx">
     <br>
-    gpc filename : <input type="text" id="gpc_file" name="gpc_file" maxlength="24">.gpc (max 24 characters)
+    gps filename : <input type="text" id="gps_file" name="gps_file" maxlength="24">.gps (max 24 characters)
     <br>
-    <input type="checkbox" id="osm" name="osm" checked>
-      <label for="osm">fetch interests from openstreetmap</label>
     <table>
         <tr>
             <th><bold>OpenstreetMap <a href="https://wiki.openstreetmap.org/wiki/Tags">NODE Tags</a></bold></th>
@@ -46,7 +52,7 @@ svg { width:95% }
 
     <input type="button" id="upload" name="upload" value="Upload" disabled>
     <div id="status"></div>
-    <div id="map"></div>
+    <div id="svgmap"></div>
 
     <script src="../../core/lib/interface.js"></script>
     <script>
@@ -65,40 +71,82 @@ function vec_to_string(vec) {
   return final_string;
 }
 
-import init, { convert_gpx_strings, convert_gpx_strings_no_osm, get_gpc, get_svg } from "./pkg/gpconv.js";
+function display_polygon(map) {
+	  document.getElementById('upload').disabled = true;
+    if (displayed_polygon !== null) {
+      displayed_polygon.remove();
+    }
+      let polygon = get_polygon(gps_data);
+      let min_lat = polygon[0];
+      let max_lat = polygon[0];
+      let min_lng = polygon[1];
+      let max_lng = polygon[1];
+      let map_polygon = [];
+      for (let i = 0 ; i < polygon.length ; i+=2) {
+        map_polygon.push([polygon[i], polygon[i+1]]);
+        if (min_lat > polygon[i]) {
+          min_lat = polygon[i];
+        } else if (max_lat < polygon[i]) {
+          max_lat = polygon[i];
+        }
+
+        if (min_lng > polygon[i+1]) {
+          min_lng = polygon[i+1];
+        } else if (max_lng < polygon[i+1]) {
+          max_lng = polygon[i+1];
+        }
+      }
+      displayed_polygon = L.polygon(map_polygon).addTo(map);
+      map.fitBounds(L.latLngBounds(L.latLng(min_lat, min_lng), L.latLng(max_lat, max_lng)));
+	  document.getElementById('convert').disabled = false;
+}
+
+import init, { load_gps_from_string, get_polygon, request_map, get_gps_content, get_gps_map_svg, gps_from_area } from "./pkg/gps.js";
 console.log("imported wasm");
 
-let osm_checkbox = document.querySelector("input[name=osm]");
-let with_osm = true;
+// start map
+ L.Map.BoxPrinter = L.Map.BoxZoom.extend({
+         _onMouseUp: function (e) {
 
-osm_checkbox.addEventListener('change', function() {
-  if (this.checked) {
-    with_osm = true;
-	document.getElementById('key1').disabled = false;
-	document.getElementById('key2').disabled = false;
-	document.getElementById('key3').disabled = false;
-	document.getElementById('key4').disabled = false;
-	document.getElementById('value1').disabled = false;
-	document.getElementById('value2').disabled = false;
-	document.getElementById('value3').disabled = false;
-	document.getElementById('value4').disabled = false;
-  } else {
-    with_osm = false;
-	document.getElementById('key1').disabled = true;
-	document.getElementById('key2').disabled = true;
-	document.getElementById('key3').disabled = true;
-	document.getElementById('key4').disabled = true;
-	document.getElementById('value1').disabled = true;
-	document.getElementById('value2').disabled = true;
-	document.getElementById('value3').disabled = true;
-	document.getElementById('value4').disabled = true;
-  }
-});
+if ((e.which !== 1) && (e.button !== 1)) { return; }
 
+		this._finish();
+
+		if (!this._moved) { return; }
+		// Postpone to next JS tick so internal click event handling
+		// still see it as "moved".
+		setTimeout(L.bind(this._resetState, this), 0);
+
+		var bounds = new L.LatLngBounds(
+		        this._map.containerPointToLatLng(this._startPoint),
+		        this._map.containerPointToLatLng(this._point));
+    let south_west = bounds.getSouthWest();
+    let north_east = bounds.getNorthEast();
+    gps_data = gps_from_area(south_west.lng, south_west.lat, north_east.lng, north_east.lat);
+		document.getElementById('gps_file').value = "";
+    display_polygon(this._map);
+
+    this._map.fire('boxzoomend', {boxZoomBounds: bounds});
+    }
+ });
+ L.Map.mergeOptions({boxPrinter: true});
+ L.Map.addInitHook('addHandler', 'boxPrinter', L.Map.BoxPrinter);
+
+// now the interactions
 let status = document.getElementById("status");
-let gpx_content = null;
-let gpc_filename = null;
-let gpc_content = null;
+let gps_data = null;
+let gps_filename = null;
+let gps_content = null;
+let displayed_polygon = null;
+
+init().then(() => {
+
+ var map = L.map('map').setView([45.1825, 5.6731], 1);
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
 
 document
   .getElementById("fileInput")
@@ -112,10 +160,10 @@ document
     status.innerHTML = "reading file";
 
     let gpx_filename = this.files[0].name;
-	if (gpc_filename === null || gpc_filename == "") {
+	if (gps_filename === null || gps_filename == "") {
     	if (gpx_filename.length <= 28) {
-    		gpc_filename = gpx_filename.slice(0, gpx_filename.length - 4);
-			document.getElementById('gpc_file').value = gpc_filename;
+    		gps_filename = gpx_filename.slice(0, gpx_filename.length - 4);
+			document.getElementById('gps_file').value = gps_filename;
     	}
 	}
 
@@ -123,8 +171,10 @@ document
     reader.onload = function fileReadCompleted() {
       console.log("reading file completed");
       status.innerHTML = "file reading completed";
-	  gpx_content = reader.result;
-	  document.getElementById('convert').disabled = false;
+	  let gpx_content = reader.result;
+
+      gps_data = load_gps_from_string(gpx_content);
+      display_polygon(map);
 	};
     reader.readAsText(this.files[0]);
 });
@@ -136,9 +186,6 @@ document
 	document.getElementById('convert').disabled = true;
     document.getElementById('upload').disabled = true;
     status.innerHTML = "please wait, converting file";
-    init().then(() => {
-      let gpc_svg;
-      if (with_osm) {
         let key1 = document.getElementById('key1').value;
         let key2 = document.getElementById('key2').value;
         let key3 = document.getElementById('key3').value;
@@ -147,32 +194,30 @@ document
         let value2 = document.getElementById('value2').value;
         let value3 = document.getElementById('value3').value;
         let value4 = document.getElementById('value4').value;
-        gpc_svg = convert_gpx_strings(gpx_content, key1, value1, key2, value2, key3, value3, key4, value4);
-      } else {
-        gpc_svg = convert_gpx_strings_no_osm(gpx_content);
-      }
-      gpc_svg.then(gs => {
+        request_map(gps_data, key1, value1, key2, value2, key3, value3, key4, value4).then(
+            () => {
+
         status.innerHTML = "file converted";
-        let svg = get_svg(gs);
-        let svg_string = vec_to_string(svg);
-        let img = document.getElementById("map");
+        gps_content = get_gps_content(gps_data);
+        let svg_string = get_gps_map_svg(gps_data);
+        console.log("svg string is", svg_string);
+        let img = document.getElementById("svgmap");
         img.innerHTML = svg_string;
-        gpc_content = get_gpc(gs);
-        if (gpc_filename !== null) {
+        if (gps_filename !== null) {
           document.getElementById('upload').disabled = false;
         }
-      });
-    });
+            }
+        );
 });
 
 document
-  .getElementById("gpc_file")
+  .getElementById("gps_file")
   .addEventListener('change', function() {
-  gpc_filename = document.getElementById("gpc_file").value;
-  if (gpc_filename == "") {
+  gps_filename = document.getElementById("gps_file").value;
+  if (gps_filename == "") {
     document.getElementById("upload").disabled = true;
   } else {
-    if (gpc_content !== null) {
+    if (gps_content !== null) {
       document.getElementById("upload").disabled = false;
     }
   }
@@ -185,12 +230,12 @@ document
     document.getElementById('upload').disabled = true;
     status.innerHTML = "uploading file";
     console.log("uploading");
-    let gpc_string = vec_to_string(gpc_content);
-    Util.writeStorage(gpc_filename + ".gpc", gpc_string, () => {
+    let gps_string = vec_to_string(gps_content);
+    Util.writeStorage(gps_filename + ".gps", gps_string, () => {
       status.innerHTML = "Checking upload";
-      Util.readStorage(gpc_filename + ".gpc", uploaded_content => {
-        if (uploaded_content == gpc_string) {
-            status.innerHTML = `${gpc_filename}.gpc uploaded`;
+      Util.readStorage(gps_filename + ".gps", uploaded_content => {
+        if (uploaded_content == gps_string) {
+            status.innerHTML = `${gps_filename}.gps uploaded`;
             console.log("DONE");
         } else {
             status.innerHTML = "Upload FAILED";
@@ -198,6 +243,7 @@ document
         }
       });
     });
+});
 });
 
     </script>

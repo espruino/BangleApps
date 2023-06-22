@@ -3,8 +3,7 @@
   // Load settings
   var settings = Object.assign(
     {
-      keep_gps_alive: false,
-      max_speed: 35,
+      lost_distance: 50,
     },
     require("Storage").readJSON(FILE, true) || {}
   );
@@ -17,17 +16,10 @@
   E.showMenu({
     "": { title: "Gipy" },
     "< Back": () => back(),
-    "keep gps alive": {
-      value: !!settings.keep_gps_alive, // !! converts undefined to false
-      onchange: v => {
-        settings.keep_gps_alive = v;
-        writeSettings();
-      },
-    },
-    "max speed": {
-      value: 35 | settings.max_speed, // 0| converts undefined to 0
-      min: 0,
-      max: 130,
+    "lost distance": {
+      value: 50 | settings.lost_distance, // 0| converts undefined to 0
+      min: 10,
+      max: 500,
       onchange: (v) => {
         settings.max_speed = v;
         writeSettings();
