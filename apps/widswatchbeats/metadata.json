@@ -8,7 +8,6 @@
   "tags": "widget,time,swatch,internet,beat,.beat,clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name": "widswatchbeats.wid.js","url": "widget.js"},
-    {"name": "widswatchbeats.img","url": "widget-icon.js","evaluate": true}
+    {"name": "widswatchbeats.wid.js","url": "widget.js"}
   ]
 }
