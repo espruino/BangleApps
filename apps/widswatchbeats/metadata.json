@@ -1,18 +1,14 @@
 {
-	"id": "widswatchbeats",
-	"name": "Swatch Internet Time",
-	"icon": "widget.png",
-	"version": "0.01",
-	"description": "Displays the current .beat (Swatch Internet Time)",
-	"tags": "time,swatch,internet,beat,.beat,clock",
-	"storage": [{
-			"name": "widswatchbeats.wid.js",
-			"url": "widget.js"
-		},
-		{
-			"name": "widswatchbeats.img",
-			"url": "widget-icon.js",
-			"evaluate": true
-		}
-	]
+  "id": "widswatchbeats",
+  "name": "Swatch Internet Time",
+  "icon": "widget-icon.png",
+  "type": "widget",
+  "version": "0.01",
+  "description": "Displays the current .beat (e.g. @500 for midday)",
+  "tags": "widget,time,swatch,internet,beat,.beat,clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name": "widswatchbeats.wid.js","url": "widget.js"},
+    {"name": "widswatchbeats.img","url": "widget-icon.js","evaluate": true}
+  ]
 }

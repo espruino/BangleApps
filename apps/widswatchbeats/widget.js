@@ -1,7 +1,7 @@
 (function() {
   const WIDTH = 50;
   const SEC_PER_BEAT = 86.4;
-  
+
   let drawTimeout;
 
   function getSecondsSinceMidnight() {
@@ -23,7 +23,7 @@
     const seconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     const beats = Math.floor(seconds / SEC_PER_BEAT);
     const beatsString = '@' + beats.toString().padStart(3, '0');
-    
+
     g.reset();
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + WIDTH, this.y+22);
