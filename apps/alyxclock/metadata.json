@@ -1,0 +1,17 @@
+{
+  "id": "alyxclock",
+  "name": "Alyx Clock",
+  "version": "0.01",
+  "description": "A clock in the style of half-life alyx gravity gloves",
+  "icon": "alyxclock.png",
+  "screenshots": [{"url":"screenshot_alyxclock.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"alyxclock.app.js","url":"alyxclock.app.js"},
+    {"name":"alyxclock.img","url":"alyxclock.icon.js","evaluate":true}
+  ]
+}
