@@ -144,6 +144,7 @@ let simpleSearchTerm = function() { // input a simple search term without tags, 
 
 let searchPlayWOTags = function() { //make a search and play using entered terms
   searchString = simpleSearch;
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: "android.media.action.MEDIA_PLAY_FROM_SEARCH",
@@ -157,6 +158,7 @@ let searchPlayWOTags = function() { //make a search and play using entered terms
 };
 
 let gadgetbridgeWake = function() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     target: "activity",
@@ -174,6 +176,7 @@ let actFn = function(actName, activOrServ) {
 // Send the intent message to Gadgetbridge
 let btMsg = function(activOrServ, cls, actName, xtra) {
 
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: actFn(actName, activOrServ),
