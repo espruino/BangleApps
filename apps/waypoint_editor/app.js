@@ -159,26 +159,28 @@ function removeCard() {
     "< Back" : mainMenu
   };
   if (Object.keys(wp).length==0) Object.assign(menu, {"NO CARDS":""});
-  else for (let c in wp) {
-    let card=c;
-    menu[c]=()=>{
-      E.showMenu();
-      var confirmRemove = new Layout (
-        {type:"v", c: [
-          {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Delete"},
-          {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:card+"?"},
-          {type:"h", c: [
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-              delete wp[card];
-              writeWP();
-              mainMenu();
-            }},
-            {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
-          ]}
-        ], lazy:true});
-      g.clear();
-      confirmRemove.render();
-    };
+  else {
+    wp.forEach((val, card) => {
+      const name = wp[card].name;
+      menu[name]=()=>{
+        E.showMenu();
+        var confirmRemove = new Layout (
+          {type:"v", c: [
+            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Delete"},
+            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:name},
+            {type:"h", c: [
+              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+                wp.splice(card, 1);
+                writeWP();
+                mainMenu();
+              }},
+              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
+            ]}
+          ], lazy:true});
+        g.clear();
+        confirmRemove.render();
+      };
+    });
   }
   E.showMenu(menu);
 }
