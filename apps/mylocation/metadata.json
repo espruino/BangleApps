@@ -10,7 +10,6 @@
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "interface": "interface.html",
-  "dependencies" : { "waypoints":"type" },
   "storage": [
     {"name":"mylocation.settings.js","url":"settings.js"}
   ],

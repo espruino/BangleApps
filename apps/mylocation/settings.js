@@ -93,9 +93,14 @@ function showMainMenu() {
         }
       }
     },
-    /*LANG*/'Set From GPS': ()=>{ setFromGPS(); },
-    /*LANG*/'Set From Waypoint': ()=>{ setFromWaypoint(); },
+    /*LANG*/'Set From GPS': ()=>{ setFromGPS(); }
   };
+  try {
+    require("waypoints");
+    mainmenu[/*LANG*/'Set From Waypoint'] = ()=>{ setFromWaypoint(); };
+  } catch(err) {
+    // waypoints not installed, thats ok
+  }
   return E.showMenu(mainmenu);
 }
 
