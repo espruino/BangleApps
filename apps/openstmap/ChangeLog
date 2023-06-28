@@ -19,3 +19,4 @@
 0.16: Draw waypoints, too.
 0.17: With new Recorder app allow track to be drawn in the background
       Switch tile layer URL for faster/more reliable map tiles
+0.18: Prefer map with highest resolution
