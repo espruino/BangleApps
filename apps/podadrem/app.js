@@ -67,7 +67,6 @@ let touchHandler = function(_, xy) {
   } else if ((R.x-1<x && x<R.x+len) && (R.y2-len<y && y<R.y2+1)) {
     //Wake 
     gadgetbridgeWake();
-    gadgetbridgeWake();
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y-1<y && y<R.y+len)) {
     //Srch
     Bangle.removeListener("touch", touchHandler);
