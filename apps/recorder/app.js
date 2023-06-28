@@ -224,6 +224,12 @@ function viewTrack(filename, info) {
     // Function to convert lat/lon to XY
     var getMapXY;
     if (info.qOSTM) {
+      // scale map to view full track
+      const max = Bangle.project({lat: info.maxLat, lon: info.maxLong});
+      const min = Bangle.project({lat: info.minLat, lon: info.minLong});
+      const scaleX = (max.x-min.x)/Bangle.appRect.w;
+      const scaleY = (max.y-min.y)/Bangle.appRect.h;
+      osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
       getMapXY = osm.latLonToXY.bind(osm);
     } else {
       getMapXY = function(lat, lon) { "ram"
