@@ -183,7 +183,7 @@ TODO:
                     }).addTo(map);
                     let marker = new L.marker(latlon).addTo(map);
                     map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
-                  }, 100);
+                  }, 500);
                 }
                 resolve();
               });

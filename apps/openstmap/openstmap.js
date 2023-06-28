@@ -30,6 +30,7 @@ m.maps = require("Storage").list(/openstmap\.\d+\.json/).map(f=>{
   map.center = Bangle.project({lat:map.lat,lon:map.lon});
   return map;
 });
+m.maps.sort((a,b) => b.scale-a.scale); // sort by scale so highest resolution is drawn last
 // we base our start position on the middle of the first map
 m.map = m.maps[0];
 m.scale = m.map.scale; // current scale (based on first map)
