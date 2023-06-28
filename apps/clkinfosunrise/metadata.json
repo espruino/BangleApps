@@ -5,6 +5,7 @@
   "icon": "app.png",
   "type": "clkinfo",
   "tags": "clkinfo,sunrise",
+  "dependencies": {"mylocation":"app"},
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"sunrise.clkinfo.js","url":"clkinfo.js"}
