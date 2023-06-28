@@ -249,7 +249,7 @@
         boxes.batt.string = modString(boxes.batt, E.getBattery());
       }
       if (boxes.step) {
-        boxes.step.string = modString(boxes.step, Bangle.getStepCount());
+        boxes.step.string = modString(boxes.step, Bangle.getHealthStatus("day").steps);
       }
       boxKeys.forEach((boxKey) => {
         let boxItem = boxes[boxKey];
