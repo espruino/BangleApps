@@ -83,3 +83,4 @@
 
 0.19:
 	* Several fixes for osm requests and map computations
+	* Display path in leaflet
