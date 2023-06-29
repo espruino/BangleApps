@@ -652,8 +652,8 @@ class Status {
     } else {
       let previous_point = this.old_points[this.old_points.length - 1];
       let distance_to_previous = previous_point.distance(position);
-      // gps signal is noisy but rarely above 4 meters
-      if (distance_to_previous < 4) {
+      // gps signal is noisy but rarely above 5 meters
+      if (distance_to_previous < 5) {
         return null;
       }
     }
@@ -723,12 +723,6 @@ class Status {
     //     return;
     //   }
     //     console.log("we are not late");
-    // }
-
-    // // abort most frames if locked
-    // if (Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
-    //     console.log("we are filtered");
-    //   return;
     // }
 
     if (this.path !== null) {
@@ -803,6 +797,12 @@ class Status {
         }
       }
     }
+
+    // abort most frames if locked
+    if (Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
+      return;
+    }
+
     // re-display
     this.display();
   }
@@ -1376,6 +1376,7 @@ function start_gipy(path, maps, interests) {
   status.display();
 
   Bangle.on("stroke", (o) => {
+    console.log("stroke");
     if (in_menu) {
       return;
     }
@@ -1391,8 +1392,8 @@ function start_gipy(path, maps, interests) {
     let s = status.adjusted_sin_direction;
     let rotated_x = xdiff * c - ydiff * s;
     let rotated_y = xdiff * s + ydiff * c;
-    status.displayed_x += rotated_x / ((status.scale_factor * 4) / 3);
-    status.displayed_y -= rotated_y / ((status.scale_factor * 4) / 3);
+    status.displayed_position.lon += 1.3 * rotated_x / status.scale_factor;
+    status.displayed_position.lat -= 1.3 * rotated_y / status.scale_factor;
     status.display();
   });
 
