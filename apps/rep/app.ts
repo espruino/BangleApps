@@ -249,8 +249,8 @@ const emptyLabel = (id: string) => {
 const pad2 = (s: number) => ('0' + s.toFixed(0)).slice(-2);
 
 const msToMinSec = (ms: number) => {
-	const sec = Math.round(ms / 1000);
-	const min = Math.round(sec / 60);
+	const sec = Math.floor(ms / 1000);
+	const min = Math.floor(sec / 60);
 	return min.toFixed(0) + ":" + pad2(sec % 60);
 };
 
