@@ -20,15 +20,16 @@
     let count = settings.repeat;
 
     const chime1 = () => {
+      let p;
       if (settings.type === 1) {
-        Bangle.buzz(100);
+        p = Bangle.buzz(100);
       } else if (settings.type === 2) {
-        Bangle.beep();
+        p = Bangle.beep();
       } else {
         return;
       }
       if (--count > 0)
-        setTimeout(chime1, 150);
+        p.then(() => setTimeout(chime1, 150));
     };
 
     chime1();
