@@ -140,6 +140,6 @@ declare module Layout {
       r?: Rotation,
     } | {
       type: "custom",
-      render: (h: Hierarchy) => void,
+      render: (h: RenderedHierarchy) => void,
     };
 }
