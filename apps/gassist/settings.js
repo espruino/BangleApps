@@ -1,14 +1,15 @@
-let storage = require('Storage');
-
 (function (back) {
+  let storage = require('Storage');
+  let file = "gassist.json";
+
   // Load and set default settings
   let appSettings = Object.assign({
     enableTap : true
-  }, storage.readJSON("gassist.json", true) || {});
+  }, storage.readJSON(file, true) || {});
 
   // Save settings to storage
   function writeSettings() {
-    storage.writeJSON("gassist.json", appSettings);
+    storage.writeJSON(file, appSettings);
   }
 
   function showMenu() {
