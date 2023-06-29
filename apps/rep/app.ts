@@ -287,7 +287,17 @@ const drawRep = () => {
 };
 
 const buzzInteraction = () => Bangle.buzz(20);
-const buzzNewRep = () => Bangle.buzz(500);
+const buzzNewRep = () => {
+	let n = 3;
+	const buzz = () => {
+		Bangle.buzz(1000).then(() => {
+			if (--n <= 0)
+				return;
+			setTimeout(buzz, 250);
+		});
+	};
+	buzz();
+};
 
 Bangle.loadWidgets();
 
