@@ -1,4 +1,4 @@
-// called by alarm.triggercheck
+// called by getActiveAlarms(...)[0].js
 
 function hardMode(tries, max) {
   var R = Bangle.appRect;
@@ -62,3 +62,22 @@ function startHM() {
   //between 5-8 random swipes
   hardMode(0, Math.abs(E.hwRand()%4)+5);
 }
+
+function buzz() {
+  let buzzCount = 3 * require("sched").getSettings().buzzCount;
+
+  require("buzz").pattern(alarm.vibrate === undefined ? "::" : alarm.vibrate).then(() => {
+    if (buzzCount--) {
+      setTimeout(buzz, settings.buzzIntervalMillis);
+    } else if (alarm.as) { // auto-snooze
+      buzzCount = settings.buzzCount;
+      setTimeout(buzz, settings.defaultSnoozeMillis);
+    }
+  });
+}
+
+let alarms = require("sched").getAlarms();
+let active = require("sched").getActiveAlarms(alarms);
+// active[0] is a HM alarm (otherwise we'd have triggered sched.js instead of this file)
+startHM();
+buzz();

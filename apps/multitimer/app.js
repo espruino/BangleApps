@@ -63,6 +63,14 @@ function clearInt() {
   timerInt2 = [];
 }
 
+function setHM(alarm, on) {
+  if (on)
+    alarm.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
+  else
+    delete alarm.js;
+  alarm.data.hm = on;
+}
+
 function drawTimers() {
   layer = 0;
   var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
@@ -297,14 +305,8 @@ function editTimer(idx, a) {
       }
     },
     "Hard Mode": {
-      value: !!a.triggercheck,
-      onchange: v => {
-        if (v)
-          a.triggercheck = triggercheck;
-        else
-          delete a.triggercheck;
-        a.data.hm = v;
-      },
+      value: a.data.hm,
+      onchange: v => setHM(a, v),
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Delete After Expiration": {
@@ -630,14 +632,8 @@ function editAlarm(idx, a) {
       onchange: () => editDOW(a.dow, d=>{a.dow=d;editAlarm(idx,a);})
     },
     "Hard Mode": {
-      value: !!a.triggercheck,
-      onchange: v => {
-        if (v)
-          a.triggercheck = triggercheck;
-        else
-          delete a.triggercheck;
-        a.data.hm = v;
-      },
+      value: a.data.hm,
+      onchange: v => setHM(a, v),
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
     "Delete After Expiration": {
