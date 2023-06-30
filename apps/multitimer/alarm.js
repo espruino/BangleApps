@@ -64,7 +64,8 @@ function startHM() {
 }
 
 function buzz() {
-  let buzzCount = 3 * require("sched").getSettings().buzzCount;
+  const settings = require("sched").getSettings();
+  let buzzCount = 3 * settings.buzzCount;
 
   require("buzz").pattern(alarm.vibrate === undefined ? "::" : alarm.vibrate).then(() => {
     if (buzzCount--) {
@@ -78,6 +79,7 @@ function buzz() {
 
 let alarms = require("sched").getAlarms();
 let active = require("sched").getActiveAlarms(alarms);
+let alarm = active[0];
 // active[0] is a HM alarm (otherwise we'd have triggered sched.js instead of this file)
 startHM();
 buzz();
