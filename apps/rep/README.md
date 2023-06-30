@@ -7,7 +7,6 @@ You can rewind, fast-forward and play/pause with the control buttons.
 
 # Todo
 
-- [ ] Check colours on light theme
-
+- [ ] Recorder functionality
 - [ ] Fastload: scoping, unregister layout handlers etc
 - [ ] Swipe handlers as well as "<<" / ">>" buttons
