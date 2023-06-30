@@ -281,7 +281,10 @@ function editTimer(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      onchange: v => a.on = v
+      onchange: v => {
+        delete a.last;
+        a.on = v;
+      }
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
@@ -607,7 +610,10 @@ function editAlarm(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      onchange: v => a.on = v
+      onchange: v => {
+        delete a.last;
+        a.on = v;
+      }
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
