@@ -145,6 +145,7 @@ const layout = new L({
 					cb: () => {
 						buzzInteraction();
 						state?.rewind();
+						drawRep();
 					},
 				},
 				{
@@ -177,6 +178,7 @@ const layout = new L({
 					cb: () => {
 						buzzInteraction();
 						state?.forward();
+						drawRep();
 					},
 				}
 			]
