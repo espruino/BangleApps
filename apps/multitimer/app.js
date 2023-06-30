@@ -307,7 +307,7 @@ function editTimer(idx, a) {
       },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
-    "Oneshot": {
+    "Delete After Expiration": {
       value: !!a.del,
       onchange: v => a.del = v
     },
@@ -640,7 +640,7 @@ function editAlarm(idx, a) {
       },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
-    "Oneshot": {
+    "Delete After Expiration": {
       value: !!a.del,
       onchange: v => a.del = v
     },
