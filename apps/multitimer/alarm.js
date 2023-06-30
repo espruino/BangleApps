@@ -1,4 +1,8 @@
 // called by getActiveAlarms(...)[0].js
+if (Bangle.SCHED) {
+  clearInterval(Bangle.SCHED);
+  delete Bangle.SCHED;
+}
 
 function hardMode(tries, max) {
   var R = Bangle.appRect;
