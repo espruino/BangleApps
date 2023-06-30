@@ -303,6 +303,7 @@ function editTimer(idx, a) {
           a.triggercheck = triggercheck;
         else
           delete a.triggercheck;
+        a.data.hm = v;
       },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
@@ -635,6 +636,7 @@ function editAlarm(idx, a) {
           a.triggercheck = triggercheck;
         else
           delete a.triggercheck;
+        a.data.hm = v;
       },
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
