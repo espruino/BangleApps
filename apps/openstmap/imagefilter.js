@@ -30,7 +30,7 @@ function imageFilterFor3BPP(srcData, dstData, options) {
       rgbaSrc[i+0], rgbaSrc[i+1], rgbaSrc[i+2]
     ];
   }
-  function dmul(a, mul) { return a.map(a => a.map(n=>n*mul)); };
+  function dmul(a, mul) { return a.map(a => a.map(n=>n*mul)); }
   const KS = 5; // kernel size
   const KO = 2; // kernel offset
   const K = dmul([ // 5x5 sharpening kernel
