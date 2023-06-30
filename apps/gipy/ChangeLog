@@ -86,3 +86,4 @@
 	* Display path in leaflet
 	* Reduce framerate if locked
 	* Stroke to move around in the map
+	* Fix for missing paths in display
