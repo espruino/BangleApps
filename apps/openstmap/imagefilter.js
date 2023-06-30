@@ -8,7 +8,7 @@ Stick this in a file so we can
 function imageFilterFor3BPP(srcData, dstData, options) {
   options = options || {};
   if (options.colLo === undefined)
-    options.colLo = 115; // when adding contrast/saturation, this is the max saturaton we add
+    options.colLo = 140; // when adding contrast/saturation, this is the max saturaton we add
   if (options.colHi === undefined)
     options.colHi = 250;
   if (options.sharpen === undefined)
