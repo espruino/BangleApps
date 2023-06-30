@@ -1,4 +1,4 @@
-let simulated = true;
+let simulated = false;
 let displaying = false;
 let in_menu = false;
 let go_backwards = false;
@@ -1388,7 +1388,6 @@ function start_gipy(path, maps, interests) {
   status.display();
 
   Bangle.on("stroke", (o) => {
-    console.log("stroke");
     if (in_menu) {
       return;
     }
