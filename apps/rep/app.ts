@@ -41,6 +41,7 @@ const ffStep = 5 * 1000;
 let state: State | undefined;
 let drawInterval: IntervalId | undefined;
 let lastRepIndex: number | null = null;
+let firstTime = true;
 
 const renderDuration = (l: Layout.RenderedHierarchy) => {
 	let lbl;
@@ -288,9 +289,10 @@ const drawRep = () => {
 	layout.render();
 };
 
-const buzzInteraction = () => Bangle.buzz(20);
+const buzzInteraction = () => Bangle.buzz(250);
 const buzzNewRep = () => {
-	let n = 3;
+	let n = firstTime ? 1 : 3;
+	firstTime = false;
 	const buzz = () => {
 		Bangle.buzz(1000).then(() => {
 			if (--n <= 0)
