@@ -596,8 +596,6 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
-      if (a.data.hm) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
-      else if (a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);
       require("sched").setAlarms(alarms);
