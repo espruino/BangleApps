@@ -65,10 +65,6 @@ declare module Sched {
     js?: string,
     data?: unknown,
 
-    // optional features
-    triggercheck?: string, // code that's eval'd when the alarm is triggered,
-                           // may return "skipPrompt" to cancel the default behaviour
-
     // set by sched
     last?: number,
   } & (

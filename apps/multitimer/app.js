@@ -1,13 +1,6 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-const triggercheck = `
-  eval(require("Storage").read("multitimer.ext.js"));
-  buzzCount *= 3;
-  startHM();
-  "skipPrompt"
-`;
-
 var R = Bangle.appRect;
 var layer;
 var drag;
