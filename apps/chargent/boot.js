@@ -2,7 +2,7 @@
   const pin = process.env.HWVERSION === 2 ? D3 : D30;
 
   var id;
-  Bangle.on('charging', (charging) => {
+  function gent(charging) {
     if (charging) {
       if (!id) {
         var max = 0;
@@ -37,5 +37,8 @@
         require('notify').hide({id: 'chargent'});
       }
     }
-  });
+  }
+
+  Bangle.on('charging', gent);
+  if (Bangle.isCharging()) gent(true);
 })();
