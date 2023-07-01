@@ -1,3 +1,7 @@
+type RepSettings = {
+	stepMs: number,
+};
+
 {
 const L = require("Layout");
 
@@ -31,12 +35,13 @@ const reps = storeReps.map((r: StoreRep, i: number, a: Rep[]): Rep => {
 	return r2;
 });
 
+const settings = require("Storage").readJSON("rep.setting.json") as RepSettings;
 const fontSzMain = 54;
 const fontScaleRep = 2;
 const fontSzRep = 20;
 const fontSzRepDesc = 12;
 const blue = "#205af7";
-const ffStep = 5 * 1000;
+const ffStep = settings.stepMs;
 
 let state: State | undefined;
 let drawInterval: IntervalId | undefined;

@@ -14,12 +14,13 @@
             : r.dur;
         return r2;
     });
+    var settings = require("Storage").readJSON("rep.setting.json");
     var fontSzMain = 54;
     var fontScaleRep = 2;
     var fontSzRep = 20;
     var fontSzRepDesc = 12;
     var blue_1 = "#205af7";
-    var ffStep_1 = 5 * 1000;
+    var ffStep_1 = settings.stepMs;
     var state_1;
     var drawInterval_1;
     var lastRepIndex_1 = null;
