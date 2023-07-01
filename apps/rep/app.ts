@@ -37,7 +37,11 @@ const reps = storeReps.map((r: StoreRep, i: number, a: Rep[]): Rep => {
 	return r2;
 });
 
-const settings = require("Storage").readJSON("rep.setting.json") as RepSettings;
+const settings = (require("Storage").readJSON("rep.setting.json", true) || {}) as RepSettings;
+settings.record ??= false;
+settings.recordStopOnExit ??= false;
+settings.stepMs ??= 5 * 1000;
+
 const fontSzMain = 54;
 const fontScaleRep = 2;
 const fontSzRep = 20;
