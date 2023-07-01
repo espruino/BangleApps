@@ -328,7 +328,7 @@ class Map {
     let on_screen_center_x = center_x - rotated_center_x;
     let on_screen_center_y = center_y + rotated_center_y;
 
-    let scaled_side = side * scale_factor;
+    let scaled_side = side * scale_factor * Math.sqrt(1/2);
 
     if (on_screen_center_x + scaled_side <= 0) {
       return false;
