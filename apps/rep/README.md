@@ -7,6 +7,7 @@ You can rewind, fast-forward and play/pause with the control buttons.
 
 # Todo
 
-- [ ] Recorder functionality
+- [X] Recorder functionality
+	- [ ] Recorder toggle functionality
 - [ ] Fastload: scoping, unregister layout handlers etc
 - [ ] Swipe handlers as well as "<<" / ">>" buttons

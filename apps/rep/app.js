@@ -246,8 +246,20 @@
         };
         buzz();
     };
+    var init = function () {
+        g.clear();
+        drawRep_1();
+        Bangle.drawWidgets();
+    };
     Bangle.loadWidgets();
-    g.clear();
-    drawRep_1();
-    Bangle.drawWidgets();
+    if (settings.record && WIDGETS["recorder"]) {
+        WIDGETS["recorder"]
+            .setRecording(true)
+            .then(init);
+        if (settings.recordStopOnExit)
+            E.on('kill', function () { return WIDGETS["recorder"].setRecording(false); });
+    }
+    else {
+        init();
+    }
 }

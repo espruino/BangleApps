@@ -1,4 +1,6 @@
 type RepSettings = {
+	record: boolean,
+	recordStopOnExit: boolean,
 	stepMs: number,
 };
 
@@ -308,10 +310,23 @@ const buzzNewRep = () => {
 	buzz();
 };
 
+const init = () => {
+	g.clear();
+	drawRep();
+
+	Bangle.drawWidgets();
+};
+
 Bangle.loadWidgets();
+if (settings.record && WIDGETS["recorder"]) {
+  (WIDGETS["recorder"] as RecorderWidget)
+    .setRecording(true)
+    .then(init);
 
-g.clear();
-drawRep();
+  if (settings.recordStopOnExit)
+    E.on('kill', () => (WIDGETS["recorder"] as RecorderWidget).setRecording(false));
+} else {
+	init();
+}
 
-Bangle.drawWidgets();
 }
