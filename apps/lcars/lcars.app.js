@@ -239,6 +239,9 @@ function _drawData(key, y, c){
   } else if (key == "VREF"){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
+  } else if (key =="BATTVOLT" ) {
+    text = "BATV";
+    value = (E.getAnalogVRef()*analogRead(3)*4).toFixed(2) + "V";
   } else if(key == "HRM"){
     value = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
 
