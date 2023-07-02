@@ -13,6 +13,5 @@
     {"name":"chess.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"chess.json"}],
-  "screenshots": [ {"url":"screenshot.png"} ],
-  "allow_emulator": true
+  "screenshots": [ {"url":"screenshot.png"} ]
 }
