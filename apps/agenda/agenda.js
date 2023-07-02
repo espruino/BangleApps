@@ -38,13 +38,12 @@ function formatDay(date) {
   if (!settings.useToday) {
     return formattedDate;
   }
-  const dateformatted = date.toISOString().split('T')[0]; // yyyy-mm-dd
-  const today = new Date(Date.now()).toISOString().split('T')[0]; // yyyy-mm-dd
-  if (dateformatted == today) {
+  const today = new Date(Date.now());
+  if (date.getDay() == today.getDay() && date.getMonth() == today.getMonth())
      return /*LANG*/"Today ";
-  } else {
-    const tomorrow = new Date(Date.now() + 86400 * 1000).toISOString().split('T')[0]; // yyyy-mm-dd
-    if (dateformatted == tomorrow) {
+  else {
+    const tomorrow = new Date(Date.now() + 86400 * 1000);
+    if (date.getDay() == tomorrow.getDay() && date.getMonth() == tomorrow.getMonth()) {
        return /*LANG*/"Tomorrow ";
     }
     return formattedDate;
