@@ -13,3 +13,4 @@
       Added dynamic, short and range fields to clkinfo
 0.12: Added color field and updating clkinfo periodically (running events)
 0.13: Show day of the week in date
+0.14: Fixed "Today" and "Yesterday" wrongly displayed for allDay events on some time zones
