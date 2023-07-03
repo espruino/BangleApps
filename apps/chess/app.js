@@ -83,7 +83,7 @@ const drawPiece = (buf, x, y, piece) => {
 };
 
 const drawBoard = () => {
-  console.log("Free: " + process.memory().free);
+  //console.log("Free: " + process.memory().free);
 
   g.setBgColor("#555").setColor("#aaa").drawImage(bgImage, Bangle.appRect.x, Bangle.appRect.y);
   for(let idxrow=0; idxrow<8; idxrow++) {
@@ -155,7 +155,7 @@ const showAlert = (msg) => {
 
 const move = (from,to) => {
   const res = state.move(from, to);
-  console.log(res);
+  //console.log(res);
   if (!res.ok) {
     showAlert("Illegal move");
   } else {
@@ -165,12 +165,9 @@ const move = (from,to) => {
       showAlert("A king is in check");
     } else if (res.flags & engine.P4_MOVE_FLAG_DRAW) {
       showAlert("A draw is available");
-    } else {
-      drawBoard();
-      drawSelectedField();
     }
   }
-  return res.ok;
+  return res;
 };
 
 const showMessage = (msg) => {
@@ -220,17 +217,23 @@ Bangle.on('touch', (button, xy) => {
         const posFrom = idx2Pos(startfield[0]/FIELD_WIDTH, startfield[1]/FIELD_HEIGHT);
         const posTo = idx2Pos(colTo/FIELD_WIDTH, rowTo/FIELD_HEIGHT);
         setTimeout(() => {
-          if (move(posFrom, posTo)) {
-            // human move ok, do computer move
+          if (move(posFrom, posTo).ok) {
+            // human move ok, update
+            drawBoard();
+            drawSelectedField();
+            // do computer move
             Bangle.setLCDTimeout(0.1); // this can take some time, turn off to save power
             showMessage(/*LANG*/"Calculating..");
             setTimeout(() => {
               const compMove = state.findmove(settings.computer_level+1);
-              move(compMove[0], compMove[1]);
+              const result = move(compMove[0], compMove[1]);
               writeSettings();
               Bangle.setLCDPower(true);
               Bangle.setLocked(false);
               Bangle.setLCDTimeout(DEFAULT_TIMEOUT/1000); // restore
+              if (!showmenu) {
+                showAlert(result.string);
+              }
             }, 200); // execute after display update
           }
         }, 100); // execute after display update
