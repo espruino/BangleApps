@@ -1,4 +1,5 @@
-// ts helpers:
+{
+// @ts-ignore helper
 const __assign = Object.assign;
 
 const Layout = require("Layout");
@@ -712,4 +713,5 @@ enableSensors();
       uart: false,
     },
   );
+}
 }

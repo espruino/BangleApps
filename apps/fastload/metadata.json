@@ -1,7 +1,7 @@
 { "id": "fastload",
   "name": "Fastload Utils",
   "shortName" : "Fastload Utils",
-  "version": "0.03",
+  "version": "0.04",
   "icon": "icon.png",
   "description": "Enable experimental fastloading for more apps",
   "type":"bootloader",

@@ -56,6 +56,14 @@ function clearInt() {
   timerInt2 = [];
 }
 
+function setHM(alarm, on) {
+  if (on)
+    alarm.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
+  else
+    delete alarm.js;
+  alarm.data.hm = on;
+}
+
 function drawTimers() {
   layer = 0;
   var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
@@ -228,12 +236,11 @@ function editTimer(idx, a) {
     else a = timers[idx];
   }
   if (!a.data) {
-    a.data = {};
-    a.data.hm = false;
+    a.data = { hm: false };
   }
   var t = decodeTime(a.timer);
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -267,7 +274,10 @@ function editTimer(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      onchange: v => a.on = v
+      onchange: v => {
+        delete a.last;
+        a.on = v;
+      }
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
@@ -292,9 +302,13 @@ function editTimer(idx, a) {
     },
     "Hard Mode": {
       value: a.data.hm,
-      onchange: v => a.data.hm = v
+      onchange: v => setHM(a, v),
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
+    "Delete After Expiration": {
+      value: !!a.del,
+      onchange: v => a.del = v
+    },
     "Msg": {
       value: !a.msg ? "" : a.msg.length > 6 ? a.msg.substring(0, 6)+"..." : a.msg,
       //menu glitch? setTimeout required here
@@ -382,7 +396,7 @@ function swMenu(idx, a) {
     }, 100 - (a.t % 100));
   }
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -556,12 +570,11 @@ function editAlarm(idx, a) {
     else a = require("sched").newDefaultAlarm();
   }
   if (!a.data) {
-    a.data = {};
-    a.data.hm = false;
+    a.data = { hm: false };
   }
   var t = decodeTime(a.t);
 
-  function editMsg(idx, a) { 
+  function editMsg(idx, a) {
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -582,8 +595,6 @@ function editAlarm(idx, a) {
   var menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
-      if (a.data.hm == true) a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
-      if (a.data.hm == false && a.js) delete a.js;
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
       else alarms.push(a);
       require("sched").setAlarms(alarms);
@@ -592,7 +603,10 @@ function editAlarm(idx, a) {
     },
     "Enabled": {
       value: a.on,
-      onchange: v => a.on = v
+      onchange: v => {
+        delete a.last;
+        a.on = v;
+      }
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
@@ -618,9 +632,13 @@ function editAlarm(idx, a) {
     },
     "Hard Mode": {
       value: a.data.hm,
-      onchange: v => a.data.hm = v
+      onchange: v => setHM(a, v),
     },
     "Vibrate": require("buzz_menu").pattern(a.vibrate, v => a.vibrate = v),
+    "Delete After Expiration": {
+      value: !!a.del,
+      onchange: v => a.del = v
+    },
     "Auto Snooze": {
       value: a.as,
       onchange: v => a.as = v
@@ -653,7 +671,7 @@ Bangle.on("drag", e=>{
   if (layer < 0) return;
   if (!drag) { // start dragging
     drag = {x: e.x, y: e.y};
-  } 
+  }
   else if (!e.b) { // released
     const dx = e.x-drag.x, dy = e.y-drag.y;
     drag = null;

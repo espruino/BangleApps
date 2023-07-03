@@ -15,3 +15,4 @@
 	new key names.
 0.13: Touch and hold to pause the timeout to clock temporarily.
 0.14: Extension: Don't go down a path if nothing waits at the end. Revisit the current intersection instead.
+0.15: Extension: Compatibility with "Fastload Utils" app history feature.
