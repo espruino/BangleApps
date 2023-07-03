@@ -24,7 +24,7 @@
     }
   };
 
-  let trace = settings.trace;
+  let trace = (settings[settings.trace+"app"].src=="quicklaunch.app.js") ? settings.trace : settings.trace.substring(0, settings.trace.length-1); // If the stored trace leads beyond extension screens, walk back to the last extension screen. Compatibility with "Fastload Utils" App History feature.
 
   let touchHandler = (_,e) => {
     if (e.type == 2) return;

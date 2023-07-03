@@ -2,7 +2,7 @@
   "id": "quicklaunch",
   "name": "Quick Launch",
   "icon": "app.png",
-  "version": "0.14",
+  "version": "0.15",
   "description": "Tap or swipe left/right/up/down on your clock face to launch up to five apps of your choice. Configurations can be accessed through Settings->Apps.",
   "type": "bootloader",
   "tags": "tools, system",
