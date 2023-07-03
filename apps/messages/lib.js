@@ -107,7 +107,7 @@ exports.dismiss = function(msg) {
 };
 
 /**
- * Emit a "type=openGUI" event, to open GUI app
+ * Open the Messages GUI app
  *
  * @param {object} [msg={}] Message the app should show
  */
@@ -215,7 +215,7 @@ exports.buzz = function(msgSrc) {
 
   let repeat = msgSettings.repeat;
   if (repeat===undefined) repeat = 4; // repeat may be zero
-  if (repeat) 
+  if (repeat)
   {
     exports.buzzInterval = setInterval(() => require("buzz").pattern(pattern), repeat*1000);
     let vibrateTimeout = msgSettings.vibrateTimeout;
