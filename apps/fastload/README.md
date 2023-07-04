@@ -12,6 +12,7 @@ This allows fast loading of all apps with two conditions:
 * If Quick Launch is installed it can be excluded from app history
 * Allows to redirect all loads usually loading the clock to the launcher instead
 * The "Fastloading..." screen can be switched off
+* FastLoad into Widget-less uses widget_utils to hide widgets but remain in RAM.
 
 ## App history
 
@@ -29,3 +30,4 @@ It checks the app to be loaded for widget use and stores the result of that and 
 
 # Contributors
 [thyttan](https://github.com/thyttan)
+[d3nd3](https://github.com/d3nd3)

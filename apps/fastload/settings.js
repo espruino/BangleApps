@@ -30,7 +30,7 @@
             setTimeout(()=>E.showMenu(buildMainMenu()), 0); // Update the menu so it can be seen if a value was automatically set to false (app history vs load launcher).
           }
         }
-      };
+    };
 
     if (isQuicklaunchPresent) {
       mainmenu['Exclude Quick Launch from history'] = {
@@ -50,15 +50,22 @@
             setTimeout(()=>E.showMenu(buildMainMenu()), 0); // Update the menu so it can be seen if a value was automatically set to false (app history vs load launcher).
           } // Don't use app history and load to launcher together.
         }
-      };
+    };
 
     mainmenu['Hide "Fastloading..."'] = {
         value: !!settings.hideLoading,
         onchange: v => {
           writeSettings("hideLoading",v);
         }
-      };
-
+        
+    };
+    
+    mainmenu['FastLoad into Widget-less'] = {
+        value: !!settings.force,
+        onchange: v => {
+          writeSettings("force",v);
+        }
+    };
     return mainmenu;
   }
 

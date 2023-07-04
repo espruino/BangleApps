@@ -39,12 +39,21 @@ let slowload = function(n){
 };
 
 let fastload = function(n){
-  if (!n || checkApp(n)){
+  let force = SETTINGS.force;
+  let checked = n ? checkApp(n) : true;
+  if (force || !n || checkApp(n)){
     // Bangle.load can call load, to prevent recursion this must be the system load
     global.load = slowload;
+    if (force && n === ".bootcde") n = ""; // hide that we direct call clock.
     Bangle.load(n);
+    //its loaded because above line would had reset mem otherwise.
+    global.__FILE__ = n; // restore
     // if fastloading worked, we need to set load back to this method
     global.load = fastload;
+    if (force) { 
+      if (checked) require("widget_utils").show();
+      else require("widget_utils").hide();
+    }
   }
   else
     slowload(n);
