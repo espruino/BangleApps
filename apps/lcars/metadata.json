@@ -3,7 +3,7 @@
   "name": "LCARS Clock",
   "shortName":"LCARS",
   "icon": "lcars.png",
-  "version":"0.28",
+  "version":"0.29",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "description": "Library Computer Access Retrieval System (LCARS) clock.",
