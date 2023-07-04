@@ -76,6 +76,9 @@ function display_polygon(map) {
     if (displayed_polygon !== null) {
       displayed_polygon.remove();
     }
+    if (displayed_path !== null) {
+      displayed_path.remove();
+    }
       let polygon = get_polygon(gps_data);
       let min_lat = polygon[0];
       let max_lat = polygon[0];
@@ -97,11 +100,21 @@ function display_polygon(map) {
         }
       }
       displayed_polygon = L.polygon(map_polygon).addTo(map);
+
+      let polyline = get_polyline(gps_data);
+      if (polyline.length > 0) {
+        let map_polyline = [];
+        for (let i = 0 ; i < polyline.length ; i+= 2) {
+          map_polyline.push([polyline[i], polyline[i+1]]);
+        }
+        displayed_path = L.polyline(map_polyline, {color: 'red'}).addTo(map);
+      }
+
       map.fitBounds(L.latLngBounds(L.latLng(min_lat, min_lng), L.latLng(max_lat, max_lng)));
 	  document.getElementById('convert').disabled = false;
 }
 
-import init, { load_gps_from_string, get_polygon, request_map, get_gps_content, get_gps_map_svg, gps_from_area } from "./pkg/gps.js";
+import init, { load_gps_from_string, get_polygon, get_polyline, request_map, get_gps_content, get_gps_map_svg, gps_from_area } from "./pkg/gps.js";
 console.log("imported wasm");
 
 // start map
@@ -138,6 +151,7 @@ let gps_data = null;
 let gps_filename = null;
 let gps_content = null;
 let displayed_polygon = null;
+let displayed_path = null;
 
 init().then(() => {
 
@@ -200,7 +214,6 @@ document
         status.innerHTML = "file converted";
         gps_content = get_gps_content(gps_data);
         let svg_string = get_gps_map_svg(gps_data);
-        console.log("svg string is", svg_string);
         let img = document.getElementById("svgmap");
         img.innerHTML = svg_string;
         if (gps_filename !== null) {

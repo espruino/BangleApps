@@ -80,3 +80,10 @@
 0.18:
 	* Major rewrite of display : now tile based
 	* We have a map. Never get lost again.
+
+0.19:
+	* Several fixes for osm requests and map computations
+	* Display path in leaflet
+	* Reduce framerate if locked
+	* Stroke to move around in the map
+	* Fix for missing paths in display

@@ -243,6 +243,7 @@ class Map {
     let local_y = displayed_y - this.start_coordinates[1];
     let tile_x = Math.floor(local_x / this.side);
     let tile_y = Math.floor(local_y / this.side);
+
     let limit = 1;
     if (!zoomed) {
       limit = 2;
@@ -266,6 +267,18 @@ class Map {
             sin_direction
           )
         ) {
+//           let colors = [
+//             [0, 0, 0],
+//             [0, 0, 1],
+//             [0, 1, 0],
+//             [0, 1, 1],
+//             [1, 0, 0],
+//             [1, 0, 1],
+//             [1, 1, 0],
+//             [1, 1, 0.5],
+//             [0.5, 0, 0.5],
+//             [0, 0.5, 0.5],
+//           ];
           if (this.color[0] == 1 && this.color[1] == 0 && this.color[2] == 0) {
             this.display_thick_tile(
               x,
@@ -301,33 +314,32 @@ class Map {
     cos_direction,
     sin_direction
   ) {
-    let center_x = g.getWidth() / 2;
-    let center_y = g.getHeight() / 2 + Y_OFFSET;
+    let width = g.getWidth();
+    let height = g.getHeight();
+    let center_x = width / 2;
+    let center_y = height / 2 + Y_OFFSET;
     let side = this.side;
-    let x1 = tile_x * side;
-    let y1 = tile_y * side;
-    let x2 = x1 + side;
-    let y2 = y1 + side;
-    let scaled_x1 = (x1 - current_x) * scale_factor;
-    let scaled_y1 = (y1 - current_y) * scale_factor;
-    let rotated_x1 = scaled_x1 * cos_direction - scaled_y1 * sin_direction;
-    let rotated_y1 = scaled_x1 * sin_direction + scaled_y1 * cos_direction;
-    let scaled_x2 = (x2 - current_x) * scale_factor;
-    let scaled_y2 = (y2 - current_y) * scale_factor;
-    let rotated_x2 = scaled_x2 * cos_direction - scaled_y2 * sin_direction;
-    let rotated_y2 = scaled_x2 * sin_direction + scaled_y2 * cos_direction;
+    let tile_center_x = (tile_x + 0.5) * side;
+    let tile_center_y = (tile_y + 0.5) * side;
+    let scaled_center_x = (tile_center_x - current_x) * scale_factor;
+    let scaled_center_y = (tile_center_y - current_y) * scale_factor;
+    let rotated_center_x = scaled_center_x * cos_direction - scaled_center_y * sin_direction;
+    let rotated_center_y = scaled_center_x * sin_direction + scaled_center_y * cos_direction;
+    let on_screen_center_x = center_x - rotated_center_x;
+    let on_screen_center_y = center_y + rotated_center_y;
 
-    if (center_x < rotated_x1 && center_x < rotated_x2) {
-      return false;
-    }
-    if (-center_x > rotated_x1 && -center_x > rotated_x2) {
-      return false;
-    }
+    let scaled_side = side * scale_factor * Math.sqrt(1/2);
 
-    if (center_y < rotated_y1 && center_y < rotated_y2) {
+    if (on_screen_center_x + scaled_side <= 0) {
       return false;
     }
-    if (-center_y > rotated_y1 && -center_y > rotated_y2) {
+    if (on_screen_center_x - scaled_side >= width) {
+      return false;
+    }
+    if (on_screen_center_y + scaled_side <= 0) {
+      return false;
+    }
+    if (on_screen_center_y - scaled_side >= height) {
       return false;
     }
     return true;
@@ -652,8 +664,8 @@ class Status {
     } else {
       let previous_point = this.old_points[this.old_points.length - 1];
       let distance_to_previous = previous_point.distance(position);
-      // gps signal is noisy but rarely above 4 meters
-      if (distance_to_previous < 4) {
+      // gps signal is noisy but rarely above 5 meters
+      if (distance_to_previous < 5) {
         return null;
       }
     }
@@ -723,12 +735,6 @@ class Status {
     //     return;
     //   }
     //     console.log("we are not late");
-    // }
-
-    // // abort most frames if locked
-    // if (Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
-    //     console.log("we are filtered");
-    //   return;
     // }
 
     if (this.path !== null) {
@@ -803,6 +809,12 @@ class Status {
         }
       }
     }
+
+    // abort most frames if locked
+    if (Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
+      return;
+    }
+
     // re-display
     this.display();
   }
@@ -1391,8 +1403,8 @@ function start_gipy(path, maps, interests) {
     let s = status.adjusted_sin_direction;
     let rotated_x = xdiff * c - ydiff * s;
     let rotated_y = xdiff * s + ydiff * c;
-    status.displayed_x += rotated_x / ((status.scale_factor * 4) / 3);
-    status.displayed_y -= rotated_y / ((status.scale_factor * 4) / 3);
+    status.displayed_position.lon += 1.3 * rotated_x / status.scale_factor;
+    status.displayed_position.lat -= 1.3 * rotated_y / status.scale_factor;
     status.display();
   });
 
