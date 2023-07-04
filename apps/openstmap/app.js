@@ -82,7 +82,7 @@ Bangle.setGPSPower(1, "app");
 
 if (HASWIDGETS) {
   Bangle.loadWidgets();
-  if (WIDGETS["GPS"]) { // one GPS Widget is enough
+  if (!WIDGETS["gps"]) { // one GPS Widget is enough
     WIDGETS["sats"] = { area:"tl", width:48, draw:w=>{
       var txt = (0|fix.satellites)+" Sats";
       if (!fix.fix) txt += "\nNO FIX";
