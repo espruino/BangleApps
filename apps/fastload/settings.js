@@ -61,9 +61,9 @@
     };
     
     mainmenu['FastLoad into Widget-less'] = {
-        value: !!settings.force,
+        value: !!settings.hiddenWidgets,
         onchange: v => {
-          writeSettings("force",v);
+          writeSettings("hiddenWidgets",v);
         }
     };
     return mainmenu;

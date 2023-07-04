@@ -32,44 +32,78 @@ let checkApp = function(n){
   return cache[n].fast;
 };
 
-global._load = load;
-
-let slowload = function(n){
-  global._load(n);
-};
-
-let fastload = function(n){
-  let force = SETTINGS.force;
-  let checked = n ? checkApp(n) : true;
-  if (force || !n || checkApp(n)){
-    // Bangle.load can call load, to prevent recursion this must be the system load
-    global.load = slowload;
-    if (force && n === ".bootcde") n = ""; // hide that we direct call clock.
-    Bangle.load(n);
-    //its loaded because above line would had reset mem otherwise.
-    global.__FILE__ = n; // restore
-    // if fastloading worked, we need to set load back to this method
-    global.load = fastload;
-    if (force) { 
-      if (checked) require("widget_utils").show();
-      else require("widget_utils").hide();
-    }
-  }
-  else
-    slowload(n);
-};
-global.load = fastload;
-
 let appHistory, resetHistory, recordHistory;
 if (SETTINGS.useAppHistory){
   appHistory  = s.readJSON("fastload.history.json",true)||[];
   resetHistory = ()=>{appHistory=[];s.writeJSON("fastload.history.json",appHistory);};
   recordHistory = ()=>{s.writeJSON("fastload.history.json",appHistory);};
 }
+/*
+    load(file)/Bang.load(file) -> transformName() -> validate() -> (orig)Bangle.load()
+    slowload resets memory.                                 -> load()
+    Attempt to convert a slowEntry into a fastEntry.
+*/
+Bangle.load = (fastload => {
+  //global.load()
+  let slowEntry = (n) => {
+    hookload(n,false);
+  };
+  //Bangle.load()
+  let fastEntry = (n) => {
+    hookload(n,true);
+  };
 
-Bangle.load = (o => (name) => {
-  if (Bangle.uiRemove && !SETTINGS.hideLoading) loadingScreen();
-  if (SETTINGS.useAppHistory){
+  // double function hook
+  let hookload = (name,fastRequest) => {
+    if (SETTINGS.useAppHistory) name = rememberAppName(name); 
+    if (!Bangle.uiRemove) {
+      slowload(name);
+      return; // never gets here.
+    }
+    if (SETTINGS.autoloadLauncher) name = transformName(name);
+    let force = SETTINGS.hiddenWidgets; // always true
+    // bootloader(bootcde) internally checks if target clock calls LoadWidgets thus why true.
+    let isValidApp = name ? checkApp(name) : true; 
+    if (!SETTINGS.hideLoading) loadingScreen();
+    if (validate(name,isValidApp,force)) {
+      //if (!fastRequest) print("Upgraded slow to fast!");
+      //else print("Intended fast!");
+      if (force && name === ".bootcde") name = ""; // disguise to allow clock @bootloader.js
+      global.load = slowload;
+      fastload(name); // guaranteed to fastload (uiRemove=true)
+      global.load = slowEntry;
+      if (force) { 
+        global.__FILE__ = name; // restore from disguise
+        if (isValidApp) require("widget_utils").show();
+        else require("widget_utils").hide();
+      }
+    }
+    else {
+      slowload(name);
+    }
+  };
+
+  // Does the target app contain LoadWidgets()?
+  let validate = function(n,valid,force){
+    if ( force || !n || checkApp(n)) return true;
+    // invalidate named app without LoadWidgets.
+    return false;
+  };
+
+  // Intercept App Load.
+  let transformName = function(name) {
+    // empty name is converted into launcher name
+    if (!name){
+      Bangle.load = (n)=>{
+        name = n;
+      };
+      Bangle.showLauncher(); // calls Bangle.load()
+      Bangle.load = fastEntry;
+    }
+    return name;
+  };
+
+  let rememberAppName = function(name) {
     if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
       // store the name of the app to launch
       appHistory.push(name);
@@ -82,18 +116,16 @@ Bangle.load = (o => (name) => {
       appHistory.pop();
       name = appHistory[appHistory.length-1];
     }
-  }
-  if (SETTINGS.autoloadLauncher && !name){
-    let orig = Bangle.load;
-    Bangle.load = (n)=>{
-      Bangle.load = orig;
-      fastload(n);
-    };
-    Bangle.showLauncher();
-    Bangle.load = orig;
-  } else
-    o(name);
+    //print(appHistory);
+    return name;
+  };
+
+  let slowload = global.load;
+  // Intercept load too.
+  global.load = slowEntry;
+  return fastEntry;
 })(Bangle.load);
 
-if (SETTINGS.useAppHistory) E.on('kill', ()=>{if (!BTN.read()) recordHistory(); else resetHistory();}); // Usually record history, but reset it if long press of HW button was used.
+// Usually record history, but reset it if long press of HW button was used.
+if (SETTINGS.useAppHistory) E.on('kill', ()=>{if (!BTN.read()) recordHistory(); else resetHistory();}); 
 }
