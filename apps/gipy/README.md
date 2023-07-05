@@ -119,4 +119,7 @@ I had to go back uphill by quite a distance.
 
 Feel free to give me feedback : is it useful for you ? what other features would you like ?
 
+If you want to raise issues the main repository is [https://github.com/wagnerf42/BangleApps](here) and
+the rust code doing the actual map computations is located [https://github.com/wagnerf42/gps](here).
+
 frederic.wagner@imag.fr
