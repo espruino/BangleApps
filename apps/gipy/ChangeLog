@@ -87,3 +87,8 @@
 	* Reduce framerate if locked
 	* Stroke to move around in the map
 	* Fix for missing paths in display
+
+0.20:
+	* Large display for instant speed
+	* Bugfix for negative coordinates
+	* Disable menu while the map is not loaded

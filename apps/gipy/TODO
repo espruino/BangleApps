@@ -1,19 +1,15 @@
 
++ disable backlight during day ?
++ put back foot only ways
++ disable bluetooth
++ disable lcd completely
++ try fiddling with jit
++ put back street names
++ put back shortest paths but with points cache this time and jit
++ how to display paths from shortest path ?
+
+
+misc:
 + use Bangle.project(latlong)
 
-* additional features
 
-- config screen
-    - are we on foot (and should use compass)
-
-- we need to buzz 200m before sharp turns (or even better, 30seconds)
-(and look at more than next point)
-
-- display distance to next water/toilet ?
-- display scale (100m)
-
-- compress path ?
-
-* misc
-
-- code is becoming messy

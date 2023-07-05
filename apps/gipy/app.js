@@ -152,7 +152,7 @@ class Map {
       color_array[2] / 255,
     ];
     offset += 3;
-    this.first_tile = Uint32Array(buffer, offset, 2); // absolute tile id of first tile
+    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
     offset += 2 * 4;
     this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
     offset += 2 * 4;
@@ -471,7 +471,7 @@ class Map {
 
 class Interests {
   constructor(buffer, offset) {
-    this.first_tile = Uint32Array(buffer, offset, 2); // absolute tile id of first tile
+    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
     offset += 2 * 4;
     this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
     offset += 2 * 4;
@@ -971,11 +971,17 @@ class Status {
         .drawString(
           "" +
             approximate_speed +
-            "km/h (in." +
-            approximate_instant_speed +
-            ")",
+            "km/h",
           0,
           g.getHeight() - 15
+        );
+
+      g.setFont("6x8:3")
+        .setFontAlign(1, -1, 0)
+        .drawString(
+            ""+approximate_instant_speed,
+          g.getWidth(),
+          g.getHeight() - 22
         );
     }
 
@@ -1374,6 +1380,46 @@ function start_gipy(path, maps, interests) {
   console.log("starting");
   status = new Status(path, maps, interests);
 
+  setWatch(
+    function () {
+      if (in_menu) {
+        return;
+      }
+      in_menu = true;
+      const menu = {
+        "": { title: "choose action" },
+        "Go Backward": {
+          value: go_backwards,
+          format: (v) => (v ? "On" : "Off"),
+          onchange: (v) => {
+            go_backwards = v;
+          },
+        },
+        Zoom: {
+          value: zoomed,
+          format: (v) => (v ? "In" : "Out"),
+          onchange: (v) => {
+            status.invalidate_caches();
+            zoomed = v;
+          },
+        },
+        "back to map": function () {
+          in_menu = false;
+          E.showMenu();
+          g.clear();
+          g.flip();
+          if (status !== null) {
+              status.display();
+          }
+        },
+      };
+      E.showMenu(menu);
+    },
+    BTN1,
+    { repeat: true }
+  );
+
+
   if (status.path !== null) {
     let start = status.path.point(0);
     status.displayed_position = start;
@@ -1455,44 +1501,6 @@ function start_gipy(path, maps, interests) {
   }
 }
 
-setWatch(
-  function () {
-    if (in_menu) {
-      return;
-    }
-    in_menu = true;
-    const menu = {
-      "": { title: "choose action" },
-      "Go Backward": {
-        value: go_backwards,
-        format: (v) => (v ? "On" : "Off"),
-        onchange: (v) => {
-          go_backwards = v;
-        },
-      },
-      Zoom: {
-        value: zoomed,
-        format: (v) => (v ? "In" : "Out"),
-        onchange: (v) => {
-          status.invalidate_caches();
-          zoomed = v;
-        },
-      },
-      "back to map": function () {
-        in_menu = false;
-        E.showMenu();
-        g.clear();
-        g.flip();
-        if (status !== null) {
-            status.display();
-        }
-      },
-    };
-    E.showMenu(menu);
-  },
-  BTN1,
-  { repeat: true }
-);
 
 let files = s.list(".gps");
 if (files.length <= 1) {
