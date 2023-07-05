@@ -6,11 +6,27 @@ var mapVisible = false;
 var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
+let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
+
+if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
+  // restore last view
+  m.lat = settings.lat;
+  m.lon = settings.lon;
+  m.scale = settings.scale;
+  checkMapPos = true;
+}
 
 // Redraw the whole page
 function redraw() {
   g.setClipRect(R.x,R.y,R.x2,R.y2);
-  m.draw();
+  const count = m.draw();
+  if (checkMapPos && count === 0) {
+    // no map at these coordinates, lets try again with first map
+    m.lat = m.map.lat;
+    m.lon = m.map.lon;
+    m.scale = m.map.scale;
+    m.draw();
+  }
   drawPOI();
   drawMarker();
   // if track drawing is enabled...
@@ -45,7 +61,7 @@ function drawPOI() {
     g.fillRect(p.x-sz, p.y-sz, p.x+sz, p.y+sz);
     g.setColor(0,0,0);
     g.drawString(wp.name, p.x, p.y);
-    print(wp.name);
+    //print(wp.name);
   })
 }
 
@@ -59,23 +75,32 @@ function drawMarker() {
 
 Bangle.on('GPS',function(f) {
   fix=f;
-  if (HASWIDGETS) WIDGETS["sats"].draw(WIDGETS["sats"]);
+  if (HASWIDGETS && WIDGETS["sats"]) WIDGETS["sats"].draw(WIDGETS["sats"]);
   if (mapVisible) drawMarker();
 });
 Bangle.setGPSPower(1, "app");
 
 if (HASWIDGETS) {
   Bangle.loadWidgets();
-  WIDGETS["sats"] = { area:"tl", width:48, draw:w=>{
-    var txt = (0|fix.satellites)+" Sats";
-    if (!fix.fix) txt += "\nNO FIX";
-      g.reset().setFont("6x8").setFontAlign(0,0)
-        .drawString(txt,w.x+24,w.y+12);
-    }
-  };
+  if (!WIDGETS["gps"]) { // one GPS Widget is enough
+    WIDGETS["sats"] = { area:"tl", width:48, draw:w=>{
+      var txt = (0|fix.satellites)+" Sats";
+      if (!fix.fix) txt += "\nNO FIX";
+        g.reset().setFont("6x8").setFontAlign(0,0)
+          .drawString(txt,w.x+24,w.y+12);
+      }
+    };
+  }
   Bangle.drawWidgets();
 }
 R = Bangle.appRect;
+
+function writeSettings() {
+  settings.lat = m.lat;
+  settings.lon = m.lon;
+  settings.scale = m.scale;
+  require("Storage").writeJSON("openstmap.json",settings);
+}
 
 function showMap() {
   mapVisible = true;
@@ -108,7 +133,7 @@ function showMap() {
     },
     /*LANG*/"Draw Track": {
       value : !!settings.drawTrack,
-      onchange : v => { settings.drawTrack=v; require("Storage").writeJSON("openstmap.json",settings); }
+      onchange : v => { settings.drawTrack=v; writeSettings(); }
     },
     /*LANG*/"Center Map": () =>{
       m.lat = m.map.lat;
@@ -126,3 +151,6 @@ function showMap() {
 }
 
 showMap();
+
+// Write settings on exit via button
+setWatch(() => writeSettings(), BTN, { repeat: true, edge: "rising" });
