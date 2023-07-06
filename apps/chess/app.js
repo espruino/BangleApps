@@ -259,6 +259,9 @@ Bangle.on('touch', (button, xy) => {
 
 // show menu on button
 setWatch(() => {
+  if (showmenu) {
+    return;
+  }
   showmenu = true;
   piece_sel = 0;
   startfield[0] = startfield[1] = undefined;
