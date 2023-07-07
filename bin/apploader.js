@@ -38,7 +38,7 @@ function ERROR(msg) {
 
 var deviceId = "BANGLEJS2";
 
-var apploader = require("./lib/apploader.js");
+var apploader = require("../core/lib/apploader.js");
 var args = process.argv;
 
 var bangleParam = args.findIndex(arg => /-b\d/.test(arg));

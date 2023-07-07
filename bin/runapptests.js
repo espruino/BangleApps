@@ -62,11 +62,11 @@ if (!require("fs").existsSync(DIR_IDE)) {
   process.exit(1);
 }
 
-var apploader = require(BASE_DIR+"/bin/lib/apploader.js");
+var apploader = require(BASE_DIR+"/core/lib/apploader.js");
 apploader.init({
   DEVICEID : DEVICEID
 });
-var emu = require(BASE_DIR+"/bin/lib/emulator.js");
+var emu = require(BASE_DIR+"/core/lib/emulator.js");
 
 // Last set of text received
 var lastTxt;
