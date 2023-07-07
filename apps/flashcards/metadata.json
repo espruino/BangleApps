@@ -4,6 +4,7 @@
   "shortName": "Flash Cards",
   "version": "1.2",
   "description": "Flash cards based on public Trello board",
+  "readme":"README.md",
   "screenshots" : [ { "url":"screenshot.png" }],  
   "icon": "app.png",
   "tags": "flash cards",
