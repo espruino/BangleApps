@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 SHOGEL
+ * Copyright 2023 Crisp Advice
  * We believe in Finnish
  */
 
