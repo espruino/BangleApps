@@ -92,3 +92,6 @@
 	* Large display for instant speed
 	* Bugfix for negative coordinates
 	* Disable menu while the map is not loaded
+	* Turn screen off while idling to save battery
+	* New setting : disable buzz on turns
+	* New setting : turn bluetooth off to save battery
