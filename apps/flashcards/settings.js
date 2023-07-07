@@ -39,7 +39,7 @@
                 headers: { "Content-Type": "application/json" }
               }).then(data=>{
                 var cardsJSON = JSON.parse(data.resp);
-                storage.write(dataFile, JSON.stringify(result));
+                storage.write(dataFile, JSON.stringify(cardsJSON));
                 E.showMessage('i: downloaded');
               })
               .catch((e) => {
