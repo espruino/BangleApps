@@ -23,6 +23,7 @@
      }
     ,*/
     "Get from Trello": () => {
+      if (!storage.read(settingsFile)) { writeSettings();}
       E.showPrompt("Download cards?").then((v) => {
         let delay = 500;
         if (v) {

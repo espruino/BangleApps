@@ -7,7 +7,7 @@
 let SWAP_SIDE_BUZZ_MILLISECONDS = 50;
 let CARD_DATA_FILE = "flashcards.data.json";
 let CARD_EMPTY = "empty card";
-let CARD_LINE_LENGTH = 9;
+let CARD_LINE_LENGTH = 8;
 let CARD_LINE_FONT = "20%";
 
 // Modules
