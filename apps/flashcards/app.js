@@ -2,9 +2,6 @@
  * Copyright 2023 SHOGEL
  * We believe in Finnish
  */
-var Layout = require("Layout");
-var locale = require("locale");
-var storage = require("Storage");
 
 // Constants
 let SWAP_SIDE_BUZZ_MILLISECONDS = 50;
@@ -13,13 +10,15 @@ let CARD_EMPTY = "empty card";
 let CARD_LINE_LENGTH = 9;
 let CARD_LINE_FONT = "20%";
 
-// Global variables
-let cards = [];
+// Modules
+var Layout = require("Layout");
+var locale = require("locale");
+var storage = require("Storage");
 
-let cardIndex = 0;
-let backSide = false;
-let lastDragX = 0;
-let lastDragY = 0;
+// Global variables
+var cards = [];
+var cardIndex = 0;
+var backSide = false;
 
 // Cards data
 function wordWrap(str, maxLength) {
@@ -48,10 +47,12 @@ function wordWrap(str, maxLength) {
 }
 
 function loadLocalCards() {
+  var cardsJSON = "";
   if (storage.read(CARD_DATA_FILE))
   {
-    refreshCards(storage.readJSON(CARD_DATA_FILE, 1)  || {},false);
+    cardsJSON = storage.readJSON(CARD_DATA_FILE, 1)  || {};
   }
+  refreshCards(cardsJSON,false);
 }
 
 function refreshCards(cardsJSON,showMsg)
@@ -88,7 +89,7 @@ let queueDraw = function() {
 var cardLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"6x8:3", label:"", id:"widgets", fillx:1 },
-    {type:"txt", font:CARD_LINE_FONT, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÄÖ", filly:1, id:"card" },
+    {type:"txt", font:CARD_LINE_FONT, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZï¿½ï¿½ï¿½", filly:1, id:"card" },
     {type:"txt", font:"6x8:2", label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg }
   ]
 }, {lazy:true});
