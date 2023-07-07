@@ -12,7 +12,10 @@
   "readme": "README.md",
   "storage": [
     { "name": "cassioWatch.app.js", "url": "app.js" },
-    {"name":"cassioWatch.settings.js","url":"settings.js"},
+    { "name": "cassioWatch.settings.js","url": "settings.js" },
     { "name": "cassioWatch.img", "url": "icon.js", "evaluate": true }
+  ],
+  "data": [
+    { "name": "cassioWatch.settings.json" }
   ]
 }

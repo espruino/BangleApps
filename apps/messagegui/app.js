@@ -70,6 +70,8 @@ var onMessagesModified = function(type,msg) {
     if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
     if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
   }
+  if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
+    return; // don't show an updated nav message if we're just in the menu
   showMessage(msg&&msg.id);
 };
 Bangle.on("message", onMessagesModified);
@@ -102,6 +104,8 @@ function showMapMessage(msg) {
   case "right": img = "GhcBAABgAAA8AAAPgAAB8AAAPgAAB8D///j///9///+/AAPPAAHjgAD44AB8OAA+DgAPA4ABAOAAADgAAA4AAAOAAADgAAA4AAAOAAAA";break;
   case "left_slight": img = "ERgB//B/+D/8H4AP4Af4A74Bz4Dj4HD4OD4cD4AD4ADwADwADgAHgAPAAOAAcAA4ABwADgAH";break;
   case "right_slight": img = "ERgBB/+D/8H/4APwA/gD/APuA+cD44Phw+Dj4HPgAeAB4ADgAPAAeAA4ABwADgAHAAOAAcAA";break;
+  case "left_sharp": img = "GBaBAAAA+AAB/AAH/gAPjgAeBwA8BwB4B+DwB+HgB+PAB+eAB+8AB+4AB/wAB/gAB//gB//gB//gBwAABwAABwAABwAABw=="; break;
+  case "right_sharp": img = "GBaBAB8AAD+AAH/gAHHwAOB4AOA8AOAeAOAPB+AHh+ADx+AB5+AA9+AAd+AAP+AAH+AH/+AH/+AH/+AAAOAAAOAAAOAAAA==";break;
   case "keep_left": img = "ERmBAACAAOAB+AD+AP+B/+H3+PO+8c8w4wBwADgAHgAPAAfAAfAAfAAfAAeAAeAAcAA8AA4ABwADgA==";break;
   case "keep_right": img = "ERmBAACAAOAA/AD+AP+A//D/fPueeceY4YBwADgAPAAeAB8AHwAfAB8ADwAPAAcAB4ADgAHAAOAAAA==";break;
   case "uturn_left": img = "GRiBAAAH4AAP/AAP/wAPj8APAfAPAHgHgB4DgA8BwAOA4AHAcADsOMB/HPA7zvgd9/gOf/gHH/gDh/gBwfgA4DgAcBgAOAAAHAAADgAABw==";break;
@@ -414,8 +418,9 @@ function checkMessages(options) {
     if (!options.clockIfNoMsg) return E.showPrompt(/*LANG*/"No Messages",{
       title:/*LANG*/"Messages",
       img:require("heatshrink").decompress(atob("kkk4UBrkc/4AC/tEqtACQkBqtUDg0VqAIGgoZFDYQIIM1sD1QAD4AIBhnqA4WrmAIBhc6BAWs8AIBhXOBAWz0AIC2YIC5wID1gkB1c6BAYFBEQPqBAYXBEQOqBAnDAIQaEnkAngaEEAPDFgo+IKA5iIOhCGIAFb7RqAIGgtUBA0VqobFgNVA")),
-      buttons : {/*LANG*/"Ok":1}
-    }).then(() => { load() });
+      buttons : {/*LANG*/"Ok":1},
+      back: () => load()
+    }).then(() => load());
     return load();
   }
   // we have >0 messages

@@ -32,5 +32,8 @@
       "name": "pomoplus.settings.js",
       "url": "settings.js"
     }
+  ],
+  "data": [
+    {"name":"pomoplus.settings.json"}
   ]
 }

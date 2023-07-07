@@ -241,9 +241,12 @@
     options = options||{};
     if (isOn && !settings.recording) {
       var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
-      if (!settings.file) { // if no filename set
-        settings.file = "recorder.log" + date + trackNo.toString(36) + ".csv";
-      } else if (require("Storage").list(settings.file).length){ // if file exists
+      function getTrackFilename() { return "recorder.log" + date + trackNo.toString(36) + ".csv"; }
+      if (!settings.file || !settings.file.startsWith("recorder.log" + date)) {
+        // if no filename set or date different, set up a new filename
+        settings.file = getTrackFilename();
+      }
+      if (require("Storage").list(settings.file).length){ // if file exists
         if (!options.force) { // if not forced, ask the question
           g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
           return E.showPrompt(
@@ -266,7 +269,7 @@
           // new file - use the current date
           var newFileName;
           do { // while a file exists, add one to the letter after the date
-            newFileName = "recorder.log" + date + trackNo.toString(36) + ".csv";
+            newFileName = getTrackFilename();
             trackNo++;
           } while (require("Storage").list(newFileName).length);
           settings.file = newFileName;

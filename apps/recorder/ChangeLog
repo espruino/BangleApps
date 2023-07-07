@@ -33,3 +33,5 @@
 0.25: Widget now has `isRecording()` for retrieving recording status.
 0.26: Now record filename based on date
 0.27: Fix first ever recorded filename being log0 (now all are dated)
+0.28: Automatically create new track if the filename is different
+0.29: When plotting with OpenStMap scale map to track width & height

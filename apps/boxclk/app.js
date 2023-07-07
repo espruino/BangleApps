@@ -4,6 +4,7 @@
   * 1. Module dependencies and initial configurations
   * ---------------------------------------------------------------
   */
+
   let storage = require("Storage");
   let locale = require("locale");
   let widgets = require("widget_utils");
@@ -30,6 +31,7 @@
   * 2. Graphical and visual configurations
   * ---------------------------------------------------------------
   */
+
   let w = g.getWidth();
   let h = g.getHeight();
   let totalWidth, totalHeight;
@@ -40,6 +42,7 @@
   * 3. Touchscreen Handlers
   * ---------------------------------------------------------------
   */
+
   let touchHandler;
   let dragHandler;
   let movementDistance = 0;
@@ -49,6 +52,7 @@
   * 4. Font loading function
   * ---------------------------------------------------------------
   */
+
   let loadCustomFont = function() {
     Graphics.prototype.setFontBrunoAce = function() {
       // Actual height 23 (24 - 2)
@@ -66,6 +70,7 @@
   * 5. Initial settings of boxes and their positions
   * ---------------------------------------------------------------
   */
+
   for (let key in boxesConfig) {
     if (key === 'bg' && boxesConfig[key].img) {
       bgImage = storage.read(boxesConfig[key].img);
@@ -167,14 +172,15 @@
   * 7. String forming helper functions
   * ---------------------------------------------------------------
   */
+
   let isBool = function(val, defaultVal) {
     return typeof val !== 'undefined' ? Boolean(val) : defaultVal;
   };
 
-  let getDate = function(short, disableSuffix) {
+  let getDate = function(short, shortMonth, disableSuffix) {
     const date = new Date();
     const dayOfMonth = date.getDate();
-    const month = short ? locale.month(date, 0) : locale.month(date, 1);
+    const month = shortMonth ? locale.month(date, 1) : locale.month(date, 0);
     const year = date.getFullYear();
     let suffix;
     if ([1, 21, 31].includes(dayOfMonth)) {
@@ -211,6 +217,7 @@
   * 8. Main draw function
   * ---------------------------------------------------------------
   */
+
   let draw = (function() {
     let updatePerMinute = true; // variable to track the state of time display
 
@@ -228,7 +235,12 @@
         boxes.meridian.string = modString(boxes.meridian, locale.meridian(date, isBool(boxes.meridian.short, true)));
       }
       if (boxes.date) {
-        boxes.date.string = modString(boxes.date, getDate(isBool(boxes.date.short, true), isBool(boxes.date.disableSuffix, false)));
+        boxes.date.string = (
+          modString(boxes.date,
+          getDate(isBool(boxes.date.short, true),
+          isBool(boxes.date.shortMonth, true),
+          isBool(boxes.date.disableSuffix, false)
+        )));
       }
       if (boxes.dow) {
         boxes.dow.string = modString(boxes.dow, getDayOfWeek(date, isBool(boxes.dow.short, true)));
@@ -237,7 +249,7 @@
         boxes.batt.string = modString(boxes.batt, E.getBattery());
       }
       if (boxes.step) {
-        boxes.step.string = modString(boxes.step, Bangle.getStepCount());
+        boxes.step.string = modString(boxes.step, Bangle.getHealthStatus("day").steps);
       }
       boxKeys.forEach((boxKey) => {
         let boxItem = boxes[boxKey];
@@ -267,6 +279,7 @@
   * 9. Helper function for touch event
   * ---------------------------------------------------------------
   */
+
   let touchInText = function(e, boxItem, boxKey) {
     calcBoxSize(boxItem);
     const pos = calcBoxPos(boxKey);
@@ -291,6 +304,7 @@
   * 10. Setup function to configure event handlers
   * ---------------------------------------------------------------
   */
+
   let setup = function() {
     // ------------------------------------
     // Define the touchHandler function
@@ -338,6 +352,8 @@
     // Define the dragHandler function
     // ------------------------------------
     dragHandler = function(e) {
+      // Check if any box is being dragged
+      if (!Object.values(isDragging).some(Boolean)) return;
       // Calculate the movement distance
       movementDistance += Math.abs(e.dx) + Math.abs(e.dy);
       // Check if the movement distance exceeds a threshold
@@ -391,6 +407,7 @@
   * 11. Main execution part
   * ---------------------------------------------------------------
   */
+
   Bangle.loadWidgets();
   widgets.swipeOn();
   modSetColor();

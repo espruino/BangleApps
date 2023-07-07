@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"loadingscreen.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data":[{"name":".loading"}]
 }

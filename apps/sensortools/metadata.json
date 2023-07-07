@@ -14,5 +14,8 @@
     {"name":"sensortools.settings.js","url":"settings.js"},
     {"name":"sensortools","url":"lib.js"},
     {"name":"sensortools.default.json","url":"default.json"}
+  ],
+  "data": [
+    {"name":"sensortools.settings.json"}
   ]
 }

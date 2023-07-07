@@ -1,6 +1,6 @@
 { "id": "waypoint_editor",
   "name": "Waypoint editor",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Allows editing waypoints on device",
   "icon": "app.png",
   "readme": "README.md",

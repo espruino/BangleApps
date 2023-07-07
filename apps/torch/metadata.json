@@ -13,5 +13,8 @@
     {"name":"torch.wid.js","url":"widget.js","supports": ["BANGLEJS"]},
     {"name":"torch.img","url":"app-icon.js","evaluate":true},
     {"name":"torch.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"torch.settings.json"}
   ]
 }

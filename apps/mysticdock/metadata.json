@@ -13,5 +13,8 @@
     {"name":"mysticdock.boot.js","url":"mystic-dock-boot.js"},
     {"name":"mysticdock.settings.js","url":"mystic-dock-settings.js"},
     {"name":"mysticdock.img","url":"mystic-dock-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"mysticdock.settings.json"}
   ]
 }
