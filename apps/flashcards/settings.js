@@ -17,6 +17,11 @@
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
     "< Back" : () => back(),
+    "List ID": {
+      value: settings.listId,
+      onchange: v=> { settings.listId=v; writeSettings();}
+     }
+    ,
     "Get from Trello": () => {
       E.showPrompt("Download cards?").then((v) => {
         let delay = 500;
