@@ -1,34 +1,34 @@
 (function(back) {
   var storage = require("Storage");
 
-  var settingsFILE = "flashcards.settings.json";
+  var settingsFile = "flashcards.settings.json";
   var dataFile = "flashcards.data.json";
   var trelloTimeout = 3000;
   var trelloURL = "https://api.trello.com/1/lists/$cardsListId/cards/?fields=name%2Cdesc%2Clist";
 
   var settings = Object.assign({
     listId: ""
-  }, storage.readJSON(settingsFILE, true) || {});
+  }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {
-    storage.writeJSON(FILE, settings);
+    storage.writeJSON(settingsFile, settings);
   }
 
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
     "< Back" : () => back(),
-    "List ID": {
+    /*"List ID": {
       value: settings.listId,
       onchange: v=> { settings.listId=v; writeSettings();}
      }
-    ,
+    ,*/
     "Get from Trello": () => {
       E.showPrompt("Download cards?").then((v) => {
         let delay = 500;
         if (v) {
           if (Bangle.http)
           {
-            if (settings.listId.length)
+            if (settings.listId)
             {
               delay = delay + trelloTimeout;
               E.showMessage('i: downloading');
@@ -58,4 +58,4 @@
   }
   // Show the menu
   E.showMenu(settingsMenu);
-})(load)
+})//(load)
