@@ -140,9 +140,10 @@ function handleDrag(event) {
 
 
 // initialize
-loadLocalCards();
 cardLayout.update();
 Bangle.loadWidgets();
+loadLocalCards();
+
 Bangle.on("touch", handleTouch);
 Bangle.on("stroke", handleDrag);
 
