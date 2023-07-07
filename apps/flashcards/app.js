@@ -89,7 +89,7 @@ let queueDraw = function() {
 var cardLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"6x8:3", label:"", id:"widgets", fillx:1 },
-    {type:"txt", font:CARD_LINE_FONT, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZ���", filly:1, id:"card" },
+    {type:"txt", font:CARD_LINE_FONT, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÖÄ", filly:1, fillx:1, id:"card" },
     {type:"txt", font:"6x8:2", label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg }
   ]
 }, {lazy:true});
