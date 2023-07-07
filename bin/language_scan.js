@@ -3,6 +3,23 @@
 outputs a list of strings that have been found.
 
 See https://github.com/espruino/BangleApps/issues/1311
+
+Needs old 'translate':
+
+npm install translate@1.4.1
+
+For actual translation you need to sign up for a free Deepl API at https://www.deepl.com/
+
+```
+# show status
+bin/language_scan.js -r
+
+# add missing keys for all languages (in english)
+bin/language_scan.js -r
+
+# for translation
+bin/language_scan.js --deepl YOUR_API_KEY --turl https://api-free.deepl.com
+
 */
 
 var childProcess = require('child_process');

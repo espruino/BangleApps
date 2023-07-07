@@ -30,20 +30,32 @@ exports.init = function(options) {
     DEVICEID = options.DEVICEID;
     device.id = options.DEVICEID;
   }
-  // Load app metadata
-  var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
-  dirs.forEach(dir => {
-    var appsFile;
-    if (dir.name.startsWith("_example") || !dir.isDirectory())
-      return;
-    try {
-      appsFile = require("fs").readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
-    } catch (e) {
-      ERROR(dir.name+"/metadata.json does not exist");
-      return;
-    }
-    apps.push(JSON.parse(appsFile));
-  });
+  // Try loading from apps.json
+  apps.length=0;
+  try {
+    var appsStr = require("fs").readFileSync(BASE_DIR+"/apps.json");
+    var appList = JSON.parse(appsStr);
+    appList.forEach(a => apps.push(a));
+  } catch (e) {
+    console.log("Couldn't load apps.json", e.toString());
+  }
+  // Load app metadata from each app
+  if (!apps.length) {
+    console.log("Loading apps/.../metadata.json");
+    var dirs = require("fs").readdirSync(APPSDIR, {withFileTypes: true});
+    dirs.forEach(dir => {
+      var appsFile;
+      if (dir.name.startsWith("_example") || !dir.isDirectory())
+        return;
+      try {
+        appsFile = require("fs").readFileSync(APPSDIR+dir.name+"/metadata.json").toString();
+      } catch (e) {
+        console.error(dir.name+"/metadata.json does not exist");
+        return;
+      }
+      apps.push(JSON.parse(appsFile));
+    });
+  }
 };
 
 exports.AppInfo = AppInfo;
