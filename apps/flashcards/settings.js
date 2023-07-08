@@ -7,7 +7,9 @@
   var trelloURL = "https://api.trello.com/1/lists/$cardsListId/cards/?fields=name%2Cdesc%2Clist";
 
   var settings = Object.assign({
-    listId: ""
+    listId: "",
+    textSize: 9,
+    fontSize: "20%"
   }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {
@@ -17,12 +19,18 @@
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
     "< Back" : () => back(),
-    /*"List ID": {
-      value: settings.listId,
-      onchange: v=> { settings.listId=v; writeSettings();}
-     }
-    ,*/
-    "Get from Trello": () => {
+    /*LANG*/"Font Size": {
+      value: settings.fontSize,
+      min: 0, max: 2,
+      format: v => ["15%","20%","25%"][v],
+      onchange: v => { settings.fontSize = v; writeSettings(); }
+    },
+    /*LANG*/"Text Size": {
+      value: settings.textSize,
+      min: 4, max: 14,
+      onchange: v => { settings.textSize = v; writeSettings(); }
+    },    
+    /*LANG*/"Get from Trello": () => {
       if (!storage.read(settingsFile)) { writeSettings();}
       E.showPrompt("Download cards?").then((v) => {
         let delay = 500;

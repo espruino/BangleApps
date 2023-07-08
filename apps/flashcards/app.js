@@ -3,27 +3,27 @@
  * We believe in Finnish
  */
 
-// Constants
-let SWAP_SIDE_BUZZ_MILLISECONDS = 50;
-let CARD_DATA_FILE = "flashcards.data.json";
-let CARD_EMPTY = "found no cards";
-let CARD_LINE_LENGTH = 8;
-let CARD_LINE_FONT = "20%";
-
 // Modules
 var Layout = require("Layout");
 var locale = require("locale");
 var storage = require("Storage");
 
 // Global variables
-var cards = [];
-var cardIndex = 0;
-var backSide = false;
+let SWAP_SIDE_BUZZ_MILLISECONDS = 50;
+let CARD_DATA_FILE = "flashcards.data.json";
+let CARD_SETTINGS_FILE = "flashcards.settings.json";
+let CARD_EMPTY = "no cards found";
+let cards = [];
+let cardIndex = 0;
+let backSide = false;
+let drawTimeout = undefined;
+
+let settings = storage.readJSON(CARD_SETTINGS_FILE,1) || { litsId: "", fontSize: "20%", textSize: 9 };
 
 // Cards data
 function wordWrap(str, maxLength) {
   if (maxLength == undefined) {
-    maxLength = CARD_LINE_LENGTH;
+    maxLength = settings.textSize;
   }
   let res = '';
   while (str.length > maxLength) {
@@ -76,7 +76,6 @@ function refreshCards(cardsJSON,showMsg)
 }
 
 // Drawing a card
-let drawTimeout;
 let queueDraw = function() {
   let timeout = 60000;
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -86,10 +85,10 @@ let queueDraw = function() {
   }, timeout - (Date.now() % timeout));
 };
 
-var cardLayout = new Layout( {
+let cardLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"6x8:3", label:"", id:"widgets", fillx:1 },
-    {type:"txt", font:CARD_LINE_FONT, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÖÄ", filly:1, fillx:1, id:"card" },
+    {type:"txt", font:settings.fontSize, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÖÄ", filly:1, fillx:1, id:"card" },
     {type:"txt", font:"6x8:2", label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg }
   ]
 }, {lazy:true});
