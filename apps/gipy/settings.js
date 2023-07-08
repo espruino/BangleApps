@@ -20,17 +20,15 @@
             title: "Gipy"
         },
         "< Back": () => back(),
-        "buzz on turns": {
-            value: !!settings.buzz_on_turns, // !! converts undefined to false
-            format: (v) => (v ? "Yes" : "No"),
+        /*LANG*/"buzz on turns": {
+            value: settings.buzz_on_turns == true,
             onchange: (v) => {
                 settings.buzz_on_turns = v;
                 writeSettings();
             }
         },
-        "disable bluetooth": {
-            value: !!settings.disable_bluetooth, // !! converts undefined to false
-            format: (v) => (v ? "Yes" : "No"),
+        /*LANG*/"disable bluetooth": {
+            value: settings.disable_bluetooth == true,
             onchange: (v) => {
                 settings.disable_bluetooth = v;
                 writeSettings();
@@ -45,9 +43,8 @@
                 writeSettings();
             },
         },
-        "power lcd off": {
-            value: !!settings.power_lcd_off, // !! converts undefined to false
-            format: (v) => (v ? "Yes" : "No"),
+        /*LANG*/"power lcd off": {
+            value: settings.power_lcd_off == true,
             onchange: (v) => {
                 settings.power_lcd_off = v;
                 writeSettings();
