@@ -8,8 +8,8 @@
 
   var settings = Object.assign({
     listId: "",
-    textSize: 9,
-    fontSize: 1
+    fontSize: 1,
+    textSize: 9
   }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {

@@ -19,7 +19,11 @@ let backSide = false;
 let drawTimeout = undefined;
 let fontSizes = ["15%","20%","25%"];
 
-let settings = storage.readJSON(CARD_SETTINGS_FILE,1) || { litsId: "", fontSize: fontSizes[1], textSize: 9 };
+let settings = Object.assign({
+  listId: "",
+  fontSize: 1,
+  textSize: 9
+}, storage.readJSON(CARD_SETTINGS_FILE, true) || {});
 
 // Cards data
 function wordWrap(str, maxLength) {
