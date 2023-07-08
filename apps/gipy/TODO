@@ -1,8 +1,5 @@
 
-+ disable backlight during day ?
 + put back foot only ways
-+ disable bluetooth
-+ disable lcd completely
 + try fiddling with jit
 + put back street names
 + put back shortest paths but with points cache this time and jit

@@ -18,8 +18,8 @@ It provides the following features :
 - display the path with current position from gps
 - display a local map around you, downloaded from openstreetmap
 - detects and buzzes if you leave the path
-- buzzes before sharp turns
-- buzzes before waypoints 
+- (optional) buzzes before sharp turns
+- (optional) buzzes before waypoints 
 (for example when you need to turn in https://mapstogpx.com/)
 - display instant / average speed
 - display distance to next point
@@ -51,8 +51,8 @@ Your path will be displayed in svg.
 ### Starting Gipy
 
 At start you will have a menu for selecting your trace (if more than one).
-Choose the one you want and you will reach the splash screen where you'll wait for the gps signal.
-Once you have a signal you will reach the main screen:
+Choose the one you want and you will reach the splash screen where you'll wait for the map.
+Once the map is loaded you will reach the main screen:
 
 ![Screenshot](legend.png)
 
@@ -83,7 +83,7 @@ On your screen you can see:
 ### Lost
 
 If you stray away from path we will rescale the display to continue displaying nearby segments and
-display the direction to follow as a black segment.
+display the direction to follow as a purple segment.
 
 Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
 are. On path it just needed to scan a few points ahead and behind.
@@ -100,6 +100,10 @@ If you click the button you'll reach a menu where you can currently zoom out to 
 Few settings for now (feel free to suggest me more) :
 
 - lost distance : at which distance from path are you considered to be lost ?
+- buzz on turns : should the watch buzz when reaching a waypoint ?
+- disable bluetooth : turn bluetooth off completely to try to save some power. 
+- power lcd off : turn lcd off after 30 seconds to save power. the watch will wake up when reaching waypoints
+and when you touch the screen.
 
 ### Caveats
 
@@ -121,5 +125,6 @@ Feel free to give me feedback : is it useful for you ? what other features would
 
 If you want to raise issues the main repository is [https://github.com/wagnerf42/BangleApps](here) and
 the rust code doing the actual map computations is located [https://github.com/wagnerf42/gps](here).
+You can try the cutting edge version at [https://wagnerf42.github.io/BangleApps/](https://wagnerf42.github.io/BangleApps/)
 
 frederic.wagner@imag.fr

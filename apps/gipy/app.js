@@ -20,6 +20,7 @@ var settings = Object.assign({
         lost_distance: 50,
         buzz_on_turns: false,
         disable_bluetooth: true,
+        power_lcd_off: true,
     },
     s.readJSON("gipy.json", true) || {}
 );
@@ -815,7 +816,7 @@ class Status {
         }
 
         // abort most frames if locked
-        if (Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
+        if (!Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
             return;
         }
 
@@ -1087,7 +1088,7 @@ class Status {
                 let rotated_y = tx * sin + ty * cos;
                 let x = half_width - Math.round(rotated_x); // x is inverted
                 let y = half_height + Math.round(rotated_y);
-                g.setColor(g.theme.fgH).drawLine(half_width, half_height, x, y);
+                g.setColor(1, 0, 1).drawLine(half_width, half_height, x, y);
             }
 
             // display current-segment's projection
@@ -1386,12 +1387,17 @@ function start(fn) {
 function start_gipy(path, maps, interests) {
     console.log("starting");
 
-    Bangle.setOptions({
-        lockTimeout: 10000,
-        backlightTimeout: 20000,
-        lcdPowerTimeout: 30000,
-        hrmSportMode: 2,
-    });
+    if (settings.power_lcd_off) {
+        Bangle.setOptions({
+            lockTimeout: 10000,
+            backlightTimeout: 20000,
+            lcdPowerTimeout: 30000,
+            hrmSportMode: 2,
+            wakeOnTwist: false, // if true watch will never sleep due to speed and road bumps. tried several tresholds.
+            wakeOnFaceUp: false,
+            wakeOnTouch: true,
+        });
+    }
     if (!simulated && settings.disable_bluetooth) {
         NRF.sleep(); // disable bluetooth completely
     }

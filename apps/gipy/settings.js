@@ -5,6 +5,7 @@
             lost_distance: 50,
             buzz_on_turns: false,
             disable_bluetooth: true,
+            power_lcd_off: true,
         },
         require("Storage").readJSON(FILE, true) || {}
     );
@@ -43,6 +44,14 @@
                 settings.max_speed = v;
                 writeSettings();
             },
+        },
+        "power lcd off": {
+            value: !!settings.power_lcd_off, // !! converts undefined to false
+            format: (v) => (v ? "Yes" : "No"),
+            onchange: (v) => {
+                settings.power_lcd_off = v;
+                writeSettings();
+            }
         },
     });
 });

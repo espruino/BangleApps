@@ -92,6 +92,7 @@
 	* Large display for instant speed
 	* Bugfix for negative coordinates
 	* Disable menu while the map is not loaded
-	* Turn screen off while idling to save battery
+	* Turn screen off while idling to save battery (with setting)
 	* New setting : disable buzz on turns
 	* New setting : turn bluetooth off to save battery
+	* Color change for lost direction (now purple)
