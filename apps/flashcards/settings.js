@@ -9,25 +9,26 @@
   var settings = Object.assign({
     listId: "",
     textSize: 9,
-    fontSize: "20%"
+    fontSize: 1
   }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {
     storage.writeJSON(settingsFile, settings);
   }
 
+  const fontSizes = ["15%","20%","25%"];
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
     "< Back" : () => back(),
     /*LANG*/"Font Size": {
       value: settings.fontSize,
-      min: 0, max: 2,
-      format: v => ["15%","20%","25%"][v],
+      min: 0, max: 2, wrap: true,
+      format: v => fontSizes[v],
       onchange: v => { settings.fontSize = v; writeSettings(); }
     },
     /*LANG*/"Text Size": {
       value: settings.textSize,
-      min: 4, max: 14,
+      min: 5, max: 14,
       onchange: v => { settings.textSize = v; writeSettings(); }
     },    
     /*LANG*/"Get from Trello": () => {

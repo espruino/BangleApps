@@ -17,8 +17,9 @@ let cards = [];
 let cardIndex = 0;
 let backSide = false;
 let drawTimeout = undefined;
+let fontSizes = ["15%","20%","25%"];
 
-let settings = storage.readJSON(CARD_SETTINGS_FILE,1) || { litsId: "", fontSize: "20%", textSize: 9 };
+let settings = storage.readJSON(CARD_SETTINGS_FILE,1) || { litsId: "", fontSize: fontSizes[1], textSize: 9 };
 
 // Cards data
 function wordWrap(str, maxLength) {
@@ -88,7 +89,7 @@ let queueDraw = function() {
 let cardLayout = new Layout( {
   type:"v", c: [
     {type:"txt", font:"6x8:3", label:"", id:"widgets", fillx:1 },
-    {type:"txt", font:settings.fontSize, label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÖÄ", filly:1, fillx:1, id:"card" },
+    {type:"txt", font:fontSizes[settings.fontSize], label:"ABCDEFGHIJ KLMNOPQRST UVWXYZÅÖÄ", filly:1, fillx:1, id:"card" },
     {type:"txt", font:"6x8:2", label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg }
   ]
 }, {lazy:true});
