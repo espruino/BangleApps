@@ -1,30 +1,103 @@
-const chords = {
-  // name: [name, ...finger_placement, fret],
-  c: ["C", "0x", "33", "22", "x", "11", "x", 0],
-  d: ["D", "0x", "0x", "x", "21", "33", "22", 0],
-  dm: ["Dm", "0x", "0x", "x", "22", "33", "11", 0],
-  e: ["E", "x", "22", "23", "11", "x", "x", 0],
-  em: ["Em", "x", "22", "23", "x", "x", "x", 0],
-  em7: ["Em7", "x", "11", "x", "x", "x", "x", 0],
-  f: ["F", "0x", "0x", "33", "22", "11", "11", 0],
-  g: ["G", "32", "21", "x", "x", "x", "33", 0],
-  a: ["A", "0x", "x", "21", "22", "23", "x", 0],
-  am: ["Am", "0x", "x", "23", "22", "11", "x", 0],
-  a7: ["A7", "0x", "x", "21", "x", "23", "x", 0],
-  b7: ["B7", "0x", "22", "11", "23", "x", "24", 0],
-  cadd9: ["Cadd9", "0x", "32", "21", "x", "33", "34", 0],
-  dadd11: ["Dadd11", "0x", "33", "22", "x", "11", "x", 3],
-  csus2: ["Csus2", "0x", "33", "x", "x", "11", "0x", 0],
-  gadd9: ["Gadd9", "32", "0x", "x", "21", "x", "33", 0],
-  aadd9: ["Aadd9", "11", "33", "34", "22", "x", "x", 5],
-  fsharp7add11: ["F#7add11", "21", "43", "44", "32", "x", "x", 0],
-  d9: ["D9", "0x", "22", "11", "23", "23", "0x", 4],
-  g7: ["G7", "33", "22", "x", "x", "34", "11", 0],
-  bflatd: ["Bb/D", "0x", "33", "11", "11", "11", "0x", 3],
-  e7sharp9: ["E7#9", "0x", "22", "11", "23", "34", "0x", 6],
-  a11: ["A11", "33", "0x", "34", "22", "11", "0x", 0],
-  a9: ["A9", "32", "0x", "33", "21", "34", "0x", 3],
-}
+const chords = [
+  // name: [name, placement, fingers, fret],
+  // sourced from https://github.com/spilth/chord_diagrams/blob/main/lib/chord_diagrams/fingerings.csv
+  ['A', 'x02220', '', 0],
+  ['B', 'x24442', '', 0],
+  ['Bb', 'x13331', '', 0],
+  ['C', 'x32010', '', 0],
+  ['C#', 'x46664', '', 0],
+  ['D', 'xx0232', '', 0],
+  ['D#', 'x68886', '', 0],
+  ['E', '022100', '', 0],
+  ['Eb', 'x68886', '', 0],
+  ['F', '133211', '', 0],
+  ['F#', '244322', '', 0],
+  ['G', '320003', '', 0],
+  ['G#', '466544', '', 0],
+  ['C5', 'x355xx', '', 0],
+  ['D5', 'x577xx', '', 0],
+  ['D#5', 'x688xx', '', 0],
+  ['C6', 'x32210', '', 0],
+  ['D6', 'xx0202', '', 0],
+  ['E6', '022120', '', 0],
+  ['G6', '320000', '', 0],
+  ['A7', '002020', '', 0],
+  ['B7', 'x21202', '', 0],
+  ['C7', 'x32310', '', 0],
+  ['C#7', 'x46464', '', 0],
+  ['D7', 'x00212', '', 0],
+  ['E7', '020100', '', 0],
+  ['E7sus4', '020200', '', 0],
+  ['F7', '131211', '', 0],
+  ['F#7', '242322', '', 0],
+  ['G7', '320001', '', 0],
+  ['G#7', '464544', '', 0],
+  ['AM7', 'x02120', '', 0],
+  ['CM7', 'x32000', '', 0],
+  ['DM7', 'xx0222', '', 0],
+  ['EM7', 'xx2444', '', 0],
+  ['FM7', '132211', '', 0],
+  ['Cadd9', 'x32033', '', 0],
+  ['Fadd9', 'xx3213', '', 0],
+  ['Dsus2', 'xx0230', '', 0],
+  ['Asus2', 'x02200', '', 0],
+  ['Asus4', 'x02230', '', 0],
+  ['Dsus4', 'xx0233', '', 0],
+  ['Esus4', '022200', '', 0],
+  ['A7sus4', '002030', '', 0],
+  ['G7sus4', '353533', '', 0],
+  ['G+', 'x21003', '', 0],
+  ['Am', '002210', '', 0],
+  ['Bm', 'x24432', '', 0],
+  ['Cm', 'x35543', '', 0],
+  ['C#m', 'x46654', '', 0],
+  ['Dm', 'x00231', '', 0],
+  ['Em', '022000', '', 0],
+  ['Fm', '133111', '', 0],
+  ['F#m', '244222', '', 0],
+  ['Gm', '355333', '', 0],
+  ['G#m', '466444', '', 0],
+  ['Am7', '002010', '', 0],
+  ['A#m7', 'x13121', '', 0],
+  ['Bm7', 'x24232', '', 0],
+  ['Cm7', 'x35343', '', 0],
+  ['C#m7', 'x46454', '', 0],
+  ['Dm7', 'x00211', '', 0],
+  ['Em7', '020030', '', 0],
+  ['Fm7', '131111', '', 0],
+  ['F#m7', '242222', '', 0],
+  ['Gm7', '353333', '', 0],
+  ['Am9', 'x05557', '', 0],
+  ['Bm11', 'x20220', '', 0],
+  ['F#m11', '202200', '', 0],
+  ['A/C#', '042220', '', 0],
+  ['A/E', '00222x', '', 0],
+  ['A/F#', '202220', '', 0],
+  ['Bb/A', 'x00331', '', 0],
+  ['C/B', 'x22010', '', 0],
+  ['C/E', '032010', '', 0],
+  ['D/A', 'x04232', '', 0],
+  ['D/F#', '200232', '', 0],
+  ['F/A', 'x03211', '', 0],
+  ['G/B', 'x20003', '', 0],
+  ['C7/G', '3323xx', '', 0],
+  ['D7/F#', '200212', '', 0],
+  ['G7/F', '123003', '', 0],
+  ['D9/F#', '2x0210', '', 0],
+  ['Am/D', 'xx0210', '', 0],
+  ['Am/G', '302210', '', 0],
+  ['A#m/D#', 'xx1321', '', 0],
+  ['Dm/F', '10323x', '', 0],
+  ['Gm/Bb', 'x10333', '', 0],
+  ['A7/G', '302020', '', 0],
+  ['G#dim', '4564xx', '', 0],
+  ['Adim', 'x01212', '', 0],
+  ['D#dim7', 'xx1212', '', 0],
+  ['G#dim7', '456464', '', 0],
+  ['Daug', 'xx0332', '', 0],
+  ['Aaug', 'x03221', '', 0],
+  ['Dadd11', 'xx0032', '', 0],
+]
 
 const chordHeight = 85;
 const chordWidth = 80;
@@ -72,34 +145,39 @@ function drawChord(buffer, chord, x, y, options) {
   }
 
   for (let i = 0; i < 6; i++) {
+      const placement = chord[0];
+      const fingers = chord[1];
       const xPos = x + i * stringWidths;
-      let yPos = y + fretHeight * parseInt(chord[i][0]) - fretHeight/2
+      let yPos = y + fretHeight * parseInt(placement[i]) - fretHeight/2
 
-      if (chord[i] === "x") {
+      if (placement[i] === "0") {
         buffer.setColor(0x1).drawCircle(xPos, y - 5, 2);
         continue;
-      }
-      if (chord[i] === "0x") {
+      } else if (placement[i] === "x") {
         buffer.setFontAlign(0, 0);
         buffer.setColor(0x1).drawString('x', xPos, y - 5);
         continue;
       }
       buffer.setFontAlign(0, 0);
-      if (drawFinger) {
+      if (drawFinger && chord[i].length>1) {
         buffer.setColor(0x0).fillCircle(xPos, yPos, circleSize);
         if (drawCircleRim) {
           buffer.setColor(0x1).drawCircle(xPos, yPos, circleSize);
         }
-        buffer.setColor(0x1).drawString(chord[i][1], xPos, yPos);
+        if (parseInt(fingers[i])) {
+          buffer.setColor(0x1).drawString(fingers[i], xPos, yPos);
+        }
       } else {
         buffer.setColor(0x1).fillCircle(xPos, yPos, circleSize);
         buffer.setFontAlign(0, -1)
-        buffer.setColor(0x1).drawString(chord[i][1], xPos, y + fretHeight*4 + 2);
+        if (parseInt(fingers[i])) {
+          buffer.setColor(0x1).drawString(fingers[i], xPos, y + fretHeight*4 + 2);
+        }
       }
   }
-  if (chord[6] !== 0) {
+  if (chord[2] !== 0) {
     buffer.setFontAlign(-1, -1);
-    buffer.drawString(chord[6] + 'fr', x + 5 * stringWidths + 2, y);
+    buffer.drawString(chord[2] + 'fr', x + 5 * stringWidths + 2, y);
   }
 }
 
@@ -132,7 +210,7 @@ function main(song) {
   const lyrics = song.lyrics;
   const foundChords = song.chords;
   const lyricsLines = lyrics.split('\n');
-  const chordsDraw = Object.values(chords).filter(c=>foundChords.includes(c[0]));
+  const chordsDraw = chords.filter(c=>foundChords.includes(c[0]));
   const R = Bangle.appRect;
   g.clear();
   drawApp(lyricsLines, chordsDraw, currentScrollY, chordScrollX);
