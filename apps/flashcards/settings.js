@@ -32,7 +32,7 @@
             if (settings.listId)
             {
               delay = delay + trelloTimeout;
-              E.showMessage('i: downloading');
+              E.showMessage(/*LANG*/"Downloading");
               Bangle.http(trelloURL.replace("$cardsListId", settings.listId),
               {
                 timeout : trelloTimeout,
@@ -41,16 +41,16 @@
               }).then(data=>{
                 var cardsJSON = JSON.parse(data.resp);
                 storage.write(dataFile, JSON.stringify(cardsJSON));
-                E.showMessage('i: downloaded');
+                E.showMessage(/*LANG*/"Downloaded");
               })
               .catch((e) => {
-                  E.showMessage("e: " + e);
+                  E.showMessage(/*LANG*/"Error:" + e);
               });
             } else {
-              E.showMessage("e: list Id not found");
+              E.showMessage(/*LANG*/"List Id not found");
             }
           } else {
-            E.showMessage("e: Gadgetbridge not found");
+            E.showMessage(/*LANG*/"Gadgetbridge not found");
           }
         }
         setTimeout(() => E.showMenu(settingsMenu), delay);
