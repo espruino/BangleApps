@@ -21,24 +21,7 @@
   const swipeGestures = [/*LANG*/"Stroke",/*LANG*/"Drag"];  
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
-    "< Back" : () => back(),
-    /*LANG*/"Font size": {
-      value: settings.fontSize,
-      min: 0, max: 2, wrap: true,
-      format: v => fontSizes[v],
-      onchange: v => { settings.fontSize = v; writeSettings(); }
-    },
-    /*LANG*/"Card width": {
-      value: settings.cardWidth,
-      min: 5, max: 14,
-      onchange: v => { settings.cardWidth = v; writeSettings(); }
-    },    
-    /*LANG*/"Swipe gesture": {
-      value: settings.swipeGesture,
-      min: 0, max: 1, wrap: true,
-      format: v => swipeGestures[v],
-      onchange: v => { settings.swipeGesture = v; writeSettings(); }
-    },     
+    "< Back" : () => back(),     
     /*LANG*/"Get from Trello": () => {
       if (!storage.read(settingsFile)) { writeSettings();}
       E.showPrompt("Download cards?").then((v) => {
@@ -72,6 +55,23 @@
         }
         setTimeout(() => E.showMenu(settingsMenu), delay);
       });
+    },
+    /*LANG*/"Font size": {
+      value: settings.fontSize,
+      min: 0, max: 2, wrap: true,
+      format: v => fontSizes[v],
+      onchange: v => { settings.fontSize = v; writeSettings(); }
+    },
+    /*LANG*/"Card width": {
+      value: settings.cardWidth,
+      min: 6, max: 12,
+      onchange: v => { settings.cardWidth = v; writeSettings(); }
+    },    
+    /*LANG*/"Swipe gesture": {
+      value: settings.swipeGesture,
+      min: 0, max: 1, wrap: true,
+      format: v => swipeGestures[v],
+      onchange: v => { settings.swipeGesture = v; writeSettings(); }
     }
   }
   // Show the menu
