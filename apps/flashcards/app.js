@@ -16,7 +16,7 @@ let CARD_EMPTY = "no cards found";
 let cards = [];
 let cardIndex = 0;
 let backSide = false;
-let drawTimeout = undefined;
+let drawTimeout;
 let fontSizes = ["15%","20%","25%"];
 let lastDragX = 0;
 let lastDragY = 0;
@@ -29,15 +29,16 @@ let settings = Object.assign({
 }, storage.readJSON(CARD_SETTINGS_FILE, true) || {});
 
 // Cards data
-function wordWrap(str, maxLength) {
+function wordWrap(textStr, maxLength) {
   if (maxLength == undefined) {
     maxLength = settings.cardWidth;
   }
   let res = '';
+  let str = textStr.trim();
   while (str.length > maxLength) {
     let found = false;
     // Inserts new line at first whitespace of the line
-    for (i = maxLength - 1; i >= 0; i--) {
+    for (i = maxLength - 1; i > 0; i--) {
       if (str.charAt(i)==' ') {
         res = res + [str.slice(0, i), "\n"].join('');
         str = str.slice(i + 1);
