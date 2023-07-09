@@ -18,17 +18,20 @@ let cardIndex = 0;
 let backSide = false;
 let drawTimeout = undefined;
 let fontSizes = ["15%","20%","25%"];
+let lastDragX = 0;
+let lastDragY = 0;
 
 let settings = Object.assign({
   listId: "",
   fontSize: 1,
-  textSize: 9
+  cardWidth: 9,
+  swipeGesture: 0
 }, storage.readJSON(CARD_SETTINGS_FILE, true) || {});
 
 // Cards data
 function wordWrap(str, maxLength) {
   if (maxLength == undefined) {
-    maxLength = settings.textSize;
+    maxLength = settings.cardWidth;
   }
   let res = '';
   while (str.length > maxLength) {
@@ -116,6 +119,17 @@ function draw() {
   queueDraw();
 }
 
+function swipeCard(forward)
+{
+  if(forward) {
+    cardIndex = (cardIndex + 1) % cards.length;
+  }
+  else if(--cardIndex < 0) {
+    cardIndex = cards.length - 1;
+  }
+  drawCard();
+}
+
 // Handle a touch: swap card side
 function handleTouch(zone, event) {
   backSide = !backSide;
@@ -123,23 +137,27 @@ function handleTouch(zone, event) {
   Bangle.buzz(SWAP_SIDE_BUZZ_MILLISECONDS);
 }
 
-// Handle a drag event: cycle cards
-function handleDrag(event) {
+// Handle a stroke event: cycle cards
+function handleStroke(event) {
   let first_x = event.xy[0];
   let last_x = event.xy[event.xy.length - 2];
-  let xdiff = last_x - first_x;
-  /*
-  let first_y = event.xy[1];
-  let last_y = event.xy[event.xy.length - 1];
-  let ydiff = last_y - first_y;
-  */
-  if(xdiff > 0) {
-    cardIndex = (cardIndex + 1) % cards.length;
+  swipeCard((last_x - first_x) > 0);
+}
+
+// Handle a drag event: cycle cards
+function handleDrag(event) {
+  let isFingerReleased = (event.b === 0);
+  if(isFingerReleased) {
+    let isHorizontalDrag = (Math.abs(lastDragX) >= Math.abs(lastDragY)) &&
+                           (lastDragX !== 0);
+    if(isHorizontalDrag) {
+      swipeCard(lastDragX > 0);
+    }
   }
-  else if(--cardIndex < 0) {
-    cardIndex = cards.length - 1;
+  else {
+    lastDragX = event.dx;
+    lastDragY = event.dy;
   }
-  drawCard();
 }
 
 
@@ -149,7 +167,7 @@ Bangle.loadWidgets();
 loadLocalCards();
 
 Bangle.on("touch", handleTouch);
-Bangle.on("stroke", handleDrag);
+if (settings.swipeGesture) { Bangle.on("drag", handleDrag); } else { Bangle.on("stroke", handleStroke); }
 
 // On start: display the first card
 g.clear();
@@ -160,5 +178,5 @@ Bangle.setUI({mode:"clock", remove:function() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   Bangle.removeListener("touch", handleTouch);
-  Bangle.removeListener("stroke", handleDrag);
+  if (settings.swipeGesture) { Bangle.removeListener("drag", handleDrag);} else { Bangle.removeListener("stroke", handleStroke); }  
 }});

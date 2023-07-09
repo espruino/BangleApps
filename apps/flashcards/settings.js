@@ -9,28 +9,36 @@
   var settings = Object.assign({
     listId: "",
     fontSize: 1,
-    textSize: 9
+    cardWidth: 9,
+    swipeGesture: 0
   }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {
     storage.writeJSON(settingsFile, settings);
   }
 
-  const fontSizes = ["15%","20%","25%"];
+  const fontSizes = [/*LANG*/"Small",/*LANG*/"Medium",/*LANG*/"Large"];
+  const swipeGestures = [/*LANG*/"Stroke",/*LANG*/"Drag"];  
   var settingsMenu = {
     "" : { "title" : "Flash Cards" },
     "< Back" : () => back(),
-    /*LANG*/"Font Size": {
+    /*LANG*/"Font size": {
       value: settings.fontSize,
       min: 0, max: 2, wrap: true,
       format: v => fontSizes[v],
       onchange: v => { settings.fontSize = v; writeSettings(); }
     },
-    /*LANG*/"Text Size": {
-      value: settings.textSize,
+    /*LANG*/"Card width": {
+      value: settings.cardWidth,
       min: 5, max: 14,
-      onchange: v => { settings.textSize = v; writeSettings(); }
+      onchange: v => { settings.cardWidth = v; writeSettings(); }
     },    
+    /*LANG*/"Swipe gesture": {
+      value: settings.swipeGesture,
+      min: 0, max: 1, wrap: true,
+      format: v => swipeGestures[v],
+      onchange: v => { settings.swipeGesture = v; writeSettings(); }
+    },     
     /*LANG*/"Get from Trello": () => {
       if (!storage.read(settingsFile)) { writeSettings();}
       E.showPrompt("Download cards?").then((v) => {
