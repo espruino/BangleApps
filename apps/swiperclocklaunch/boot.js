@@ -8,8 +8,9 @@
     sui(mode,cb);
     oldSwipe = Bangle.swipeHandler;
 
-    if(!mode) return;
     if ("object"==typeof mode) mode = mode.mode;
+    if (!mode) return;
+
     if (mode.startsWith("clock")) {
       // clock -> launcher
       Bangle.swipeHandler = dir => { if (dir<0) Bangle.showLauncher(); };
