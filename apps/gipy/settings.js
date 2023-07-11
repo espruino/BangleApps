@@ -5,7 +5,8 @@
             lost_distance: 50,
             buzz_on_turns: false,
             disable_bluetooth: true,
-            power_lcd_off: true,
+            brightness: 0.5,
+            power_lcd_off: false,
         },
         require("Storage").readJSON(FILE, true) || {}
     );
@@ -35,14 +36,25 @@
             }
         },
         "lost distance": {
-            value: 50 | settings.lost_distance, // 0| converts undefined to 0
+            value: settings.lost_distance,
             min: 10,
             max: 500,
             onchange: (v) => {
-                settings.max_speed = v;
+                settings.lost_distance = v;
                 writeSettings();
             },
         },
+        "brightness": {
+            value: settings.brightness,
+            min: 0,
+            max: 1,
+            step: 0.1,
+            onchange: (v) => {
+                settings.brightness = v;
+                writeSettings();
+            },
+        },
+
         /*LANG*/"power lcd off": {
             value: settings.power_lcd_off == true,
             onchange: (v) => {

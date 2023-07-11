@@ -93,7 +93,7 @@ The distance to next point displayed corresponds to the length of the black segm
 ### Menu
 
 If you click the button you'll reach a menu where you can currently zoom out to see more of the map
-(with a slower refresh rate) and reverse the path direction.
+(with a slower refresh rate), reverse the path direction and disable power saving (keeping backlight on).
 
 ### Settings
 
@@ -102,7 +102,8 @@ Few settings for now (feel free to suggest me more) :
 - lost distance : at which distance from path are you considered to be lost ?
 - buzz on turns : should the watch buzz when reaching a waypoint ?
 - disable bluetooth : turn bluetooth off completely to try to save some power. 
-- power lcd off : turn lcd off after 30 seconds to save power. the watch will wake up when reaching waypoints
+- brightness : how bright should screen be ? (by default 0.5, again saving power)
+- power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points
 and when you touch the screen.
 
 ### Caveats
@@ -111,6 +112,7 @@ It is good to use but you should know :
 
 - the gps might take a long time to start initially (see the assisted gps update app).
 - gps signal is noisy : there is therefore a small delay for instant speed. sometimes you may jump somewhere else.
+- if you adventure in gorges the gps signal will become garbage.
 - your gpx trace has been decimated and approximated : the **REAL PATH** might be **A FEW METERS AWAY**
 - sometimes the watch will tell you that you are lost but you are in fact on the path. It usually figures again
 the real gps position after a few minutes. It usually happens when the signal is acquired very fast.

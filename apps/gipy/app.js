@@ -3,6 +3,7 @@ let displaying = false;
 let in_menu = false;
 let go_backwards = false;
 let zoomed = true;
+let powersaving = true;
 let status;
 
 let interests_colors = [
@@ -18,9 +19,10 @@ let s = require("Storage");
 
 var settings = Object.assign({
         lost_distance: 50,
+        brightness: 0.5,
         buzz_on_turns: false,
         disable_bluetooth: true,
-        power_lcd_off: true,
+        power_lcd_off: false,
     },
     s.readJSON("gipy.json", true) || {}
 );
@@ -606,6 +608,8 @@ class Interests {
 class Status {
     constructor(path, maps, interests) {
         this.path = path;
+        this.active = false; // should we have screen on
+        this.last_activity = getTime();
         this.maps = maps;
         this.interests = interests;
         let half_screen_width = g.getWidth() / 2;
@@ -643,6 +647,32 @@ class Status {
         this.gps_coordinates_counter = 0; // how many coordinates did we receive
         this.old_points = []; // record previous points but only when enough distance between them
         this.old_times = []; // the corresponding times
+    }
+    activate() {
+        this.last_activity = getTime();
+        if (this.active) {
+            return;
+        } else {
+            this.active = true;
+            Bangle.setLCDBrightness(settings.brightness);
+            Bangle.setLocked(false);
+            if (settings.power_lcd_off) {
+                Bangle.setLCDPower(true);
+            }
+        }
+    }
+    check_activity() {
+        if (!this.active || !powersaving) {
+            return;
+        }
+        if (getTime() - this.last_activity > 30) {
+            this.active = false;
+            Bangle.setLCDBrightness(0);
+            Bangle.setLocked(true);
+            if (settings.power_lcd_off) {
+                Bangle.setLCDPower(false);
+            }
+        }
     }
     invalidate_caches() {
         for (let i = 0; i < this.maps.length; i++) {
@@ -713,6 +743,7 @@ class Status {
         if (in_menu) {
             return;
         }
+        this.check_activity(); // if we don't move or are in menu we should stay on
 
         this.adjusted_cos_direction = Math.cos(-direction - Math.PI / 2.0);
         this.adjusted_sin_direction = Math.sin(-direction - Math.PI / 2.0);
@@ -768,6 +799,7 @@ class Status {
             // now check if we strayed away from path or back to it
             let lost = this.is_lost(next_segment);
             if (this.on_path == lost) {
+                this.activate();
                 // if status changes
                 if (lost) {
                     Bangle.buzz(); // we lost path
@@ -798,6 +830,7 @@ class Status {
             //   }
             // }
             if (this.reaching != next_point && this.distance_to_next_point <= 100) {
+                this.activate();
                 this.reaching = next_point;
                 let reaching_waypoint = this.path.is_waypoint(next_point);
                 if (reaching_waypoint) {
@@ -807,16 +840,12 @@ class Status {
                         setTimeout(() => Bangle.buzz(), 1000);
                         setTimeout(() => Bangle.buzz(), 1500);
                     }
-                    if (!Bangle.isLCDOn()) {
-                        Bangle.setLCDPower(true);
-                        Bangle.setLocked(false);
-                    }
                 }
             }
         }
 
-        // abort most frames if locked
-        if (!Bangle.isLocked() && this.gps_coordinates_counter % 5 != 0) {
+        // abort most frames if inactive
+        if (!this.active && this.gps_coordinates_counter % 5 != 0) {
             return;
         }
 
@@ -1353,9 +1382,9 @@ function simulate_gps(status) {
         let pos = p1.times(1 - alpha).plus(p2.times(alpha));
 
         if (go_backwards) {
-            fake_gps_point -= 0.05; // advance simulation
+            fake_gps_point -= 0.01; // advance simulation
         } else {
-            fake_gps_point += 0.05; // advance simulation
+            fake_gps_point += 0.01; // advance simulation
         }
         status.update_position(pos, null, null);
     }
@@ -1387,17 +1416,18 @@ function start(fn) {
 function start_gipy(path, maps, interests) {
     console.log("starting");
 
-    if (settings.power_lcd_off) {
-        Bangle.setOptions({
-            lockTimeout: 10000,
-            backlightTimeout: 20000,
-            lcdPowerTimeout: 30000,
-            hrmSportMode: 2,
-            wakeOnTwist: false, // if true watch will never sleep due to speed and road bumps. tried several tresholds.
-            wakeOnFaceUp: false,
-            wakeOnTouch: true,
-        });
-    }
+    // we handle manually the backlight
+    Bangle.setOptions({
+        lockTimeout: 0,
+        backlightTimeout: 0,
+        lcdPowerTimeout: 0,
+        hrmSportMode: 2,
+        wakeOnTwist: false, // if true watch will never sleep due to speed and road bumps. tried several tresholds.
+        wakeOnFaceUp: false,
+        wakeOnTouch: false,
+        powerSave: false,
+    });
+    Bangle.setPollInterval(4000); // disable accelerometer as much as we can
     if (!simulated && settings.disable_bluetooth) {
         NRF.sleep(); // disable bluetooth completely
     }
@@ -1406,6 +1436,7 @@ function start_gipy(path, maps, interests) {
 
     setWatch(
         function() {
+            status.activate();
             if (in_menu) {
                 return;
             }
@@ -1428,6 +1459,12 @@ function start_gipy(path, maps, interests) {
                         status.invalidate_caches();
                         zoomed = v;
                     },
+                },
+                /*LANG*/"powersaving": {
+                    value: powersaving,
+                    onchange: (v) => {
+                        powersaving = v;
+                    }
                 },
                 "back to map": function() {
                     in_menu = false;
@@ -1461,6 +1498,7 @@ function start_gipy(path, maps, interests) {
     status.display();
 
     Bangle.on("stroke", (o) => {
+        status.activate();
         if (in_menu) {
             return;
         }
@@ -1488,7 +1526,7 @@ function start_gipy(path, maps, interests) {
         Bangle.setLCDPower(1);
         setInterval(simulate_gps, 500, status);
     } else {
-        Bangle.setLocked(false);
+        status.activate();
 
         let frame = 0;
         let set_coordinates = function(data) {
@@ -1519,14 +1557,8 @@ function start_gipy(path, maps, interests) {
 
         Bangle.setGPSPower(true, "gipy");
         Bangle.on("GPS", set_coordinates);
-        Bangle.on("lock", function(on) {
-            if (!on) {
-                Bangle.setGPSPower(true, "gipy"); // activate gps when unlocking
-            }
-        });
     }
 }
-
 
 let files = s.list(".gps");
 if (files.length <= 1) {
