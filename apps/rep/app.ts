@@ -316,6 +316,7 @@ const buzzNewRep = () => {
 
 const init = () => {
 	g.clear();
+	layout.setUI();
 	drawRep();
 
 	Bangle.drawWidgets();
