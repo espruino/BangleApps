@@ -1594,6 +1594,7 @@ function p4_random_int(state, top){
 exports.p4_new_game = p4_new_game;
 exports.p4_fen2state = p4_fen2state;
 exports.p4_state2fen = p4_state2fen;
+exports.p4_random_int = p4_random_int;
 exports.P4_INITIAL_BOARD = P4_INITIAL_BOARD;
 exports.P4_PAWN = P4_PAWN;
 exports.P4_ROOK = P4_ROOK;

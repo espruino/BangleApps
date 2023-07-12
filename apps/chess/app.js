@@ -20,11 +20,12 @@ const settings = Object.assign({
   computer_level: 0, // default to "stupid" which is the fastest
 }, require("Storage").readJSON(SETTINGS_FILE,1) || {});
 
-var ovr = Graphics.createArrayBuffer(Bangle.appRect.w,Bangle.appRect.h,2,{msb:true});
+const ovr = Graphics.createArrayBuffer(Bangle.appRect.w,Bangle.appRect.h,2,{msb:true});
 const curfield = [4*FIELD_WIDTH, 6*FIELD_HEIGHT]; // e2
 const startfield = Array(2);
 let piece_sel = 0;
 let showmenu = false;
+let finished = false;
 
 const writeSettings = () => {
   settings.state = engine.p4_state2fen(state);
@@ -32,7 +33,7 @@ const writeSettings = () => {
 };
 
 const generateBgImage = () => {
-  var buf = Graphics.createArrayBuffer(Bangle.appRect.w,Bangle.appRect.h,1,{msb:true});
+  let buf = Graphics.createArrayBuffer(Bangle.appRect.w,Bangle.appRect.h,1,{msb:true});
   for(let idxrow=0; idxrow<8; idxrow++) {
     for(let idxcol=0; idxcol<8; idxcol++) {
       const bgCol = idxrow % 2 != idxcol % 2 ? 0 : 1;
@@ -112,7 +113,7 @@ const roundY = (y) => {
 
 const drawSelectedField = () => {
   ovr.clear();
-  if (!showmenu) {
+  if (!showmenu && !finished) {
     if (startfield[0] !== undefined && startfield[1] !== undefined) {
       // remove piece from startfield
       const x = startfield[0];
@@ -143,28 +144,34 @@ const isInside = (rect, e) => {
     && e.y>=rect.y && e.y<=rect.y+rect.h;
 };
 
-const showAlert = (msg) => {
+const showAlert = (msg, cb) => {
   showmenu = true;
   drawSelectedField();
   E.showAlert(msg).then(function() {
     showmenu = false;
     drawBoard();
     drawSelectedField();
+    if (cb) {
+      cb();
+    }
   });
 };
 
-const move = (from,to) => {
+const move = (from,to,cbok) => {
   const res = state.move(from, to);
   //console.log(res);
   if (!res.ok) {
     showAlert("Illegal move");
   } else {
     if (res.flags & engine.P4_MOVE_FLAG_MATE) {
-      showAlert("Checkmate or stalemate");
+      finished = true;
+      showAlert("Checkmate or stalemate", cbok);
     } else if (res.flags & engine.P4_MOVE_FLAG_CHECK) {
-      showAlert("A king is in check");
+      showAlert("A king is in check", cbok);
     } else if (res.flags & engine.P4_MOVE_FLAG_DRAW) {
-      showAlert("A draw is available");
+      showAlert("A draw is available", cbok);
+    } else if (cbok) {
+      cbok();
     }
   }
   return res;
@@ -217,26 +224,31 @@ Bangle.on('touch', (button, xy) => {
         const posFrom = idx2Pos(startfield[0]/FIELD_WIDTH, startfield[1]/FIELD_HEIGHT);
         const posTo = idx2Pos(colTo/FIELD_WIDTH, rowTo/FIELD_HEIGHT);
         setTimeout(() => {
-          if (move(posFrom, posTo).ok) {
+          const cb = () => {
             // human move ok, update
             drawBoard();
             drawSelectedField();
-            // do computer move
-            Bangle.setLCDTimeout(0.1); // this can take some time, turn off to save power
-            showMessage(/*LANG*/"Calculating..");
-            setTimeout(() => {
-              const compMove = state.findmove(settings.computer_level+1);
-              const result = move(compMove[0], compMove[1]);
-              writeSettings();
-              Bangle.setLCDPower(true);
-              Bangle.setLocked(false);
-              Bangle.setLCDTimeout(DEFAULT_TIMEOUT/1000); // restore
-              if (!showmenu) {
-                showAlert(result.string);
-              }
-            }, 200); // execute after display update
-          }
-        }, 100); // execute after display update
+            if (!finished) {
+              // do computer move
+              Bangle.setLCDTimeout(0.1); // this can take some time, turn off to save power
+              showMessage(/*LANG*/"Calculating..");
+              setTimeout(() => {
+                const compMove = state.findmove(settings.computer_level+1);
+                const result = move(compMove[0], compMove[1]);
+                if (result.ok) {
+                  writeSettings();
+                }
+                Bangle.setLCDPower(true);
+                Bangle.setLocked(false);
+                Bangle.setLCDTimeout(DEFAULT_TIMEOUT/1000); // restore
+                if (!showmenu) {
+                  showAlert(result.string);
+                }
+              }, 200); // execute after display update
+            }
+          };
+          move(posFrom, posTo,cb);
+        }, 200); // execute after display update
       } // piece_sel === 0
       startfield[0] = startfield[1] = undefined;
       piece_sel = 0;
@@ -247,7 +259,12 @@ Bangle.on('touch', (button, xy) => {
 
 // show menu on button
 setWatch(() => {
+  if (showmenu) {
+    return;
+  }
   showmenu = true;
+  piece_sel = 0;
+  startfield[0] = startfield[1] = undefined;
   drawSelectedField();
 
   const closeMenu = () => {
@@ -267,6 +284,7 @@ setWatch(() => {
     },
     /*LANG*/"Undo Move" : () => {
       state.jump_to_moveno(-2);
+      writeSettings();
       closeMenu();
     },
     /*LANG*/'Level': {
