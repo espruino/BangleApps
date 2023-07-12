@@ -184,7 +184,7 @@ var _a, _b, _c;
         State.prototype.currentRepIndex = function () {
             var elapsed = this.getElapsedTotal();
             var ent;
-            for (var i = 0; ent = reps_1[i]; i++)
+            for (var i = 0; (ent = reps_1[i]); i++)
                 if (elapsed < ent.accDur)
                     return i;
             return null;

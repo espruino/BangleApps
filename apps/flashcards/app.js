@@ -161,6 +161,15 @@ function handleDrag(event) {
   }
 }
 
+// Ensure pressing the button goes to the launcher (by making this seem like a clock?)
+Bangle.setUI({mode:"clock"/*, remove:function() {
+  // Code to enable fast load. NOTE: this doesn't work on this app because all
+  // functions and vars are declared global: https://www.espruino.com/Bangle.js+Fast+Load
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+  Bangle.removeListener("touch", handleTouch);
+  if (settings.swipeGesture) { Bangle.removeListener("drag", handleDrag);} else { Bangle.removeListener("stroke", handleStroke); }  
+}*/});
 
 // initialize
 cardLayout.update();
@@ -174,10 +183,5 @@ if (settings.swipeGesture) { Bangle.on("drag", handleDrag); } else { Bangle.on("
 g.clear();
 draw();
 
-// cleanup
-Bangle.setUI({mode:"clock", remove:function() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = undefined;
-  Bangle.removeListener("touch", handleTouch);
-  if (settings.swipeGesture) { Bangle.removeListener("drag", handleDrag);} else { Bangle.removeListener("stroke", handleStroke); }  
-}});
+
+
