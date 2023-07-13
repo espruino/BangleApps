@@ -233,7 +233,7 @@ class State {
 	currentRepIndex() {
 		const elapsed = this.getElapsedTotal();
 		let ent;
-		for(let i = 0; ent = reps[i]; i++)
+		for(let i = 0; (ent = reps[i]); i++)
 			if(elapsed < ent.accDur)
 				return i;
 		return null;
