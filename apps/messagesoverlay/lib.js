@@ -434,6 +434,7 @@ let ovr;
 exports.message = function(type, event) {
   // only handle some event types
   if(!(type=="text" || type == "call")) return;
+  if(type=="text" && event.id == "nav") return;
   if(event.handled) return;
 
   bpp = 4;
