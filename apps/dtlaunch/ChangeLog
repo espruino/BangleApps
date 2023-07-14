@@ -28,4 +28,4 @@ immediately follows the correct theme.
 0.22: Bangle 2: Change to not automatically marking the first app on a page
 when moving pages. Add caching for faster startups.
 0.23: Bangle 1: Fix issue with missing icons, added touch screen interactions
-
+0.24: Add buzz-on-interaction setting
