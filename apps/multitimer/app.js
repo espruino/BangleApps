@@ -1,3 +1,4 @@
+{
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -112,6 +113,7 @@ function drawTimers() {
       else if (idx > 0 && idx < timers.length+1) timerMenu(idx-1);
     }
   });
+  setUI();
 }
 
 function timerMenu(idx) {
@@ -256,6 +258,7 @@ function editTimer(idx, a) {
     E.showAlert("Must install keyboard app").then(function() {
       editTimer(idx, a);
     });
+    setUI();
   }
 
   var menu = {
@@ -325,6 +328,7 @@ function editTimer(idx, a) {
   };
 
   E.showMenu(menu);
+  setUI();
 }
 
 function drawSw() {
@@ -414,6 +418,7 @@ function swMenu(idx, a) {
     E.showAlert("Must install keyboard app").then(function() {
       swMenu(idx, a);
     });
+    setUI();
   }
 
   var s = E.showScroller({
@@ -551,6 +556,7 @@ function editDOW(dow, onchange) {
     };
   })(i);
   E.showMenu(menu);
+  setUI();
 }
 
 function editAlarm(idx, a) {
@@ -590,6 +596,7 @@ function editAlarm(idx, a) {
     E.showAlert("Must install keyboard app").then(function() {
       editAlarm(idx, a);
     });
+    setUI();
   }
 
   var menu = {
@@ -663,11 +670,20 @@ function editAlarm(idx, a) {
   };
 
   E.showMenu(menu);
+  setUI();
 }
 
-drawTimers();
+function setUI() {
+  // E.showMenu/E.showScroller/E.showAlert call setUI, so we register onDrag() separately
+  // and tack on uiRemove after the fact to avoid interfering
+  Bangle.uiRemove = () => {
+    Bangle.removeListener("drag", onDrag);
+    Object.values(timerInt1).forEach(clearTimeout);
+    Object.values(timerInt2).forEach(clearTimeout);
+  };
+}
 
-Bangle.on("drag", e=>{
+function onDrag(e) {
   if (layer < 0) return;
   if (!drag) { // start dragging
     drag = {x: e.x, y: e.y};
@@ -688,4 +704,9 @@ Bangle.on("drag", e=>{
       else if (layer == 2) drawAlarms();
     }
   }
-});
+}
+
+drawTimers();
+
+Bangle.on("drag", onDrag);
+}
