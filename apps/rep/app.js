@@ -252,6 +252,7 @@ var _a, _b, _c;
     };
     var init = function () {
         g.clear();
+        layout_1.setUI();
         drawRep_1();
         Bangle.drawWidgets();
     };

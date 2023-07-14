@@ -59,8 +59,8 @@ function renderRep(rep) {
       }
       buttonDelete.appendChild(iconDelete);
       buttonDelete.onclick = (e => {
-        reps = reps.filter(a => a !== alarm);
-        document.getElementById("events").removeChild(tr);
+        reps = reps.filter(a => a !== rep);
+        document.getElementById("repsTable").removeChild(tr);
       });
     }
     tdInfo.appendChild(buttonDelete);
