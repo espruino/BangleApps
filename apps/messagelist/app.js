@@ -86,7 +86,8 @@
 
   const setUI = function(options, cb) {
     delete Bangle.uiRemove; // don't clear out things when switching UI within the app
-    options = Object.assign({remove: () => uiRemove()}, options);
+    options = Object.assign({mode:"custom", remove: () => uiRemove()}, options);
+    // If options={} assume we still want `remove` to be called when leaving via fast load (so we must have 'mode:custom')
     Bangle.setUI(options, cb);
   };
 
@@ -1164,6 +1165,7 @@
 
   // Internal setUI suppresses Bangle.uiRemove between internal screens, so we
   // need to call setUI to run uiRemove from previous app when fast-loaded.
+  // GW: This shouldn't be needed! When fast loading setUI() gets called automatically
   Bangle.setUI();
   Bangle.loadWidgets();
   require("messages").toggleWidget(false);
