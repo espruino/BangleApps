@@ -25,10 +25,12 @@ function redraw() {
     m.lat = m.map.lat;
     m.lon = m.map.lon;
     m.scale = m.map.scale;
+    checkMapPos = false;
     m.draw();
   }
   drawPOI();
   drawMarker();
+  drawLocation();
   // if track drawing is enabled...
   if (settings.drawTrack) {
     if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
@@ -67,16 +69,35 @@ function drawPOI() {
 
 // Draw the marker for where we are
 function drawMarker() {
-  if (!fix.fix) return;
+  if (!fix.fix || !settings.drawMarker) return;
   var p = m.latLonToXY(fix.lat, fix.lon);
   g.setColor(1,0,0);
   g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
 }
 
+// Draw current location with LCD Overlay (Bangle.js 2 only)
+function drawLocation() {
+  if (!Bangle.setLCDOverlay) {
+    return; // Overlay not supported
+  }
+
+  if (!fix.fix || !mapVisible) {
+    Bangle.setLCDOverlay(); // clear if map is not visible or no fix
+    return;
+  }
+
+  const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
+  var p = m.latLonToXY(fix.lat, fix.lon);
+  Bangle.setLCDOverlay(icon, p.x-24/2, p.y-24);
+}
+
 Bangle.on('GPS',function(f) {
   fix=f;
   if (HASWIDGETS && WIDGETS["sats"]) WIDGETS["sats"].draw(WIDGETS["sats"]);
-  if (mapVisible) drawMarker();
+  if (mapVisible) {
+    drawMarker();
+    drawLocation();
+  }
 });
 Bangle.setGPSPower(1, "app");
 
@@ -105,6 +126,7 @@ function showMenu() {
   if (plotTrack && plotTrack.stop)
     plotTrack.stop();
   mapVisible = false;
+  drawLocation();
   var menu = {
     "":{title:/*LANG*/"Map"},
     "< Back": ()=> showMap(),
@@ -127,6 +149,10 @@ function showMenu() {
   /*LANG*/"Draw Track": {
     value : !!settings.drawTrack,
     onchange : v => { settings.drawTrack=v; writeSettings(); }
+  },
+  /*LANG*/"Draw cont. position": {
+    value : !!settings.drawMarker,
+    onchange : v => { settings.drawMarker=v; writeSettings(); }
   },
   /*LANG*/"Center Map": () =>{
     m.lat = m.map.lat;
