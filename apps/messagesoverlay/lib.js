@@ -1,15 +1,3 @@
-/* MESSAGES is a list of:
-  {id:int,
-    src,
-    title,
-    subject,
-    body,
-    sender,
-    tel:string,
-    new:true // not read yet
-  }
-*/
-
 const ovrx = 10;
 const ovry = 10;
 const ovrw = g.getWidth()-2*ovrx;
@@ -84,18 +72,8 @@ let manageEvent = function(ovr, event) {
 
       if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
         next(ovr);
-
-      else {
-        eventQueue.length = 0; // empty existing queue
-        eventQueue.forEach(element => {
-          if (element.id != event.id)
-            neweventQueue.push(element);
-        });
-      }
-
-      break;
-    case "musicstate":
-    case "musicinfo":
+      else 
+        eventQueue = [];
 
       break;
   }
@@ -453,8 +431,11 @@ let main = function(ovr, event) {
 
 let ovr;
 
-exports.pushMessage = function(event) {
-  if( event.id=="music") return require_real("messages").pushMessage(event);
+exports.message = function(type, event) {
+  // only handle some event types
+  if(!(type=="text" || type == "call")) return;
+  if(type=="text" && event.id == "nav") return;
+  if(event.handled) return;
 
   bpp = 4;
   if (process.memory().free < 2000) bpp = 1;
@@ -475,14 +456,6 @@ exports.pushMessage = function(event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   main(ovr, event);
-
+  event.handled = true;
   g = _g;
 };
-
-
-//Call original message library
-exports.clearAll = function() { return require_real("messages").clearAll();};
-exports.getMessages = function() { return require_real("messages").getMessages();};
-exports.status = function() { return require_real("messages").status();};
-exports.buzz = function() { return require_real("messages").buzz(msgSrc);};
-exports.stopBuzz = function() { return require_real("messages").stopBuzz();};
