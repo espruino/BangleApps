@@ -2,3 +2,4 @@
 0.02: Update for time_utils module
 0.03: Use default Bangle formatter for booleans
 0.04: Remove copied sched alarm.js & import newer features (oneshot alarms)
+0.05: Fix creating new alarms/timers in hardmode
