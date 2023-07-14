@@ -14,7 +14,6 @@ Bangle.loadWidgets = (o => ()=>{
   const W = global.WIDGETS;
   global.WIDGETS = {};
   Object.keys(W)
-    .sort()
     .sort((a, b) => (0|W[b].sortorder)-(0|W[a].sortorder))
     .forEach(k => global.WIDGETS[k] = W[k]);
 })(Bangle.loadWidgets);
