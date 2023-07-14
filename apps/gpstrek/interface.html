@@ -15,6 +15,9 @@
       function handleOnload(readerEvent){
         var content = readerEvent.target.result;
 
+        // Replace the gpx version 1.0 with 1.1 to allow parsing older gpx files. The nodes referenced by the xsl exist in both versions.
+        content = content.replaceAll("http://www.topografix.com/GPX/1/0", "http://www.topografix.com/GPX/1/1");
+
         var xsltProcessor = new XSLTProcessor();
 
         var myXMLHTTPRequest = new XMLHttpRequest();
