@@ -10,7 +10,7 @@
     listId: "",
     fontSize: 1,
     cardWidth: 9,
-    swipeGesture: 0
+    swipeGesture: 1
   }, storage.readJSON(settingsFile, true) || {});
 
   function writeSettings() {
@@ -24,7 +24,7 @@
     "< Back" : () => back(),     
     /*LANG*/"Get from Trello": () => {
       if (!storage.read(settingsFile)) { writeSettings();}
-      E.showPrompt("Download cards?").then((v) => {
+      E.showPrompt(/*LANG*/"Download cards?").then((v) => {
         let delay = 500;
         if (v) {
           if (Bangle.http)
