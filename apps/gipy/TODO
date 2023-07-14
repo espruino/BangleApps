@@ -36,6 +36,10 @@ my conclusion is that:
 
 **************************
 
++ when you walk the direction still has a tendency to shift
++ don't do the new powersave if you walk ?
++ can we turn lcd off without locking ?
++ function Graphics.transformVertices  
 
 + put back foot only ways
 + try fiddling with jit
