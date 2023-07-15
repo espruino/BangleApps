@@ -3,23 +3,36 @@
  * @param {int} mode Quiet Mode
  */
 function switchTheme(mode) {
-  if (!!mode === g.theme.dark) return; // nothing to do
   let s = require("Storage").readJSON("setting.json", 1) || {};
+  print("Theme is ", s.theme);
+  if (!!mode === s.theme.quiet) return; // nothing to do
   // default themes, copied from settings.js:showThemeMenu()
   function cl(x) { return g.setColor(x).getColor(); }
-  s.theme = mode ? {
+
+  let q = require("Storage").readJSON("qmsched.json", 1) || {};
+  let quietTheme = {
     // 'Dark BW'
     fg: cl("#fff"), bg: cl("#000"),
     fg2: cl("#0ff"), bg2: cl("#000"),
     fgH: cl("#fff"), bgH: cl("#00f"),
-    dark: true
-  } : {
+    dark: true,
+    quiet: true
+  };
+  let normalTheme = {
     // 'Light BW'
     fg: cl("#000"), bg: cl("#fff"),
     fg2: cl("#000"), bg2: cl("#cff"),
     fgH: cl("#000"), bgH: cl("#0ff"),
-    dark: false
+    dark: false,
+    quiet: false
   };
+
+  if (q.normalTheme) normalTheme = q.normalTheme;
+  if (q.quietTheme) quietTheme = q.quietTheme;
+
+  s.theme = mode ? quietTheme : normalTheme;
+  print("New theme is ", s.theme);
+
   require("Storage").writeJSON("setting.json", s);
   // reload clocks with new theme, otherwise just wait for user to switch apps
   if (Bangle.CLOCK) load(global.__FILE__);

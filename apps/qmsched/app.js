@@ -4,7 +4,8 @@ Bangle.drawWidgets();
 const modeNames = [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"];
 const B2 = process.env.HWVERSION===2;
 // load global settings
-let bSettings = require('Storage').readJSON('setting.json',true)||{};
+const STORAGE = require('Storage');
+let bSettings = STORAGE.readJSON('setting.json',true)||{};
 let current = 0|bSettings.quiet;
 delete bSettings; // we don't need any other global settings
 
@@ -17,8 +18,8 @@ delete bSettings; // we don't need any other global settings
  * Save settings to qmsched.json
  */
 function save() {
-  require('Storage').writeJSON('qmsched.json', settings);
-  eval(require('Storage').read('qmsched.boot.js')); // apply new schedules right away
+  STORAGE.writeJSON('qmsched.json', settings);
+  eval(STORAGE.read('qmsched.boot.js')); // apply new schedules right away
 }
 function get(key, def) {
   return (key in settings) ? settings[key] : def;
@@ -37,12 +38,12 @@ let settings,
  * Load settings file, check if we need to migrate old setting formats to new
  */
 function loadSettings() {
-  settings = require('Storage').readJSON("qmsched.json", true) || {};
+  settings = STORAGE.readJSON("qmsched.json", true) || {};
 
   if (Array.isArray(settings)) {
     // migrate old file (plain array of schedules, qmOptions stored in global settings file)
-    require("Storage").erase("qmsched.json"); // need to erase old file, or Things Break, somehow...
-    let bOptions = require('Storage').readJSON('setting.json',true)||{};
+    STORAGE.erase("qmsched.json"); // need to erase old file, or Things Break, somehow...
+    let bOptions = STORAGE.readJSON('setting.json',true)||{};
     settings = {
       options: bOptions.qmOptions || {},
       scheds: settings,
@@ -51,7 +52,7 @@ function loadSettings() {
     save();
     // and clean up qmOptions from global settings file
     delete bOptions.qmOptions;
-    require('Storage').writeJSON('setting.json',bOptions);
+    STORAGE.writeJSON('setting.json',bOptions);
   }
   // apply defaults
   settings = Object.assign({
@@ -82,7 +83,7 @@ function formatTime(t) {
  * Apply theme
  */
 function applyTheme() {
-  const theme = (require("Storage").readJSON("setting.json", 1) || {}).theme;
+  const theme = (STORAGE.readJSON("setting.json", 1) || {}).theme;
   if (theme && theme.dark===g.theme.dark) return; // already correct
   g.theme = theme;
   delete g.reset;
@@ -93,6 +94,55 @@ function applyTheme() {
   Bangle.drawWidgets();
   delete m.lastIdx; // force redraw
   m.draw();
+}
+
+/**
+ * This creates menu entries for setting themes. This code is lifted from the setting app.
+ * @returns 
+ */
+function showThemeMenu(back, quiet){
+  const option = quiet ? "quietTheme" : "normalTheme";
+  function cl(x) { return g.setColor(x).getColor(); }
+  var themesMenu = {
+    '':{title:/*LANG*/'Theme', back: back},
+    /*LANG*/'Dark BW': ()=>{
+      set(option, {
+        fg:cl("#fff"), bg:cl("#000"),
+        fg2:cl("#fff"), bg2:cl("#004"),
+        fgH:cl("#fff"), bgH:cl("#00f"),
+        dark:true,
+        quiet: true
+      });
+      back();
+    },
+    /*LANG*/'Light BW': ()=>{
+      set(option, {
+        fg:cl("#000"), bg:cl("#fff"),
+        fg2:cl("#000"), bg2:cl("#cff"),
+        fgH:cl("#000"), bgH:cl("#0ff"),
+        dark:false,
+        quiet: true
+      });
+      back();
+    }
+  };
+
+  STORAGE.list(/^.*\.theme$/).forEach(
+    n => {
+      let newTheme = STORAGE.readJSON(n);
+      themesMenu[newTheme.name ? newTheme.name : n] = () => {
+        set(option, {
+        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
+        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
+        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+        dark:newTheme.dark,
+        quiet: quiet
+      });
+      back();
+      };
+    }
+  );
+  E.showMenu(themesMenu);
 }
 
 /**
@@ -127,7 +177,7 @@ function showMainMenu() {
     value: !!get("switchTheme"),
     onchange: v => v ? set("switchTheme", v) : unset("switchTheme"),
   };
-  menu[/*LANG*/"LCD Settings"] = () => showOptionsMenu();
+  menu[/*LANG*/"Options"] = () => showOptionsMenu();
   m = E.showMenu(menu);
 }
 
@@ -251,6 +301,10 @@ function showOptionsMenu() {
       onchange: () => {toggle("wakeOnTwist");},
     },
   };
+
+  oMenu[/*LANG*/"Normal Theme"] = () => showThemeMenu(showOptionsMenu, false);
+  oMenu[/*LANG*/"Quiet Theme"] = () => showThemeMenu(showOptionsMenu, true);
+
   m = E.showMenu(oMenu);
 }
 
