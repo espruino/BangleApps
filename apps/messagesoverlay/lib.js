@@ -163,6 +163,7 @@ let showMessage = function(ovr, msg) {
 };
 
 let drawBorder = function(ovr) {
+  LOG("drawBorder", isQuiet());
   if (Bangle.isLocked())
     ovr.setColor(ovr.theme.fgH);
   else
@@ -170,7 +171,6 @@ let drawBorder = function(ovr) {
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   show(ovr);
-  if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
 let showCall = function(ovr, msg) {
@@ -432,6 +432,7 @@ let main = function(ovr, event) {
 let ovr;
 
 exports.message = function(type, event) {
+  LOG("Got message", type, event);
   // only handle some event types
   if(!(type=="text" || type == "call")) return;
   if(type=="text" && event.id == "nav") return;
@@ -456,6 +457,7 @@ exports.message = function(type, event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   main(ovr, event);
+  if (!isQuiet()) Bangle.setLCDPower(1);
   event.handled = true;
   g = _g;
 };

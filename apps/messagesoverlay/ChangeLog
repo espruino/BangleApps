@@ -2,3 +2,4 @@
 0.02: Fix touch/drag/swipe handlers not being restored correctly if a message is removed
 0.03: Scroll six lines per swipe, leaving the previous top/bottom row visible.
 0.04: Use the event mechanism for getting messages
+0.05: Fix the overlay keeping the LCD on
