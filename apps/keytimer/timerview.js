@@ -17,11 +17,11 @@ function drawButtons() {
         .drawLine(g.getWidth() / 2, BAR_TOP, g.getWidth() / 2, g.getHeight())
 
         //Draw the buttons
-        .drawImage(BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP);
+        .drawImage(BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP + 12, {rotate:0}); // rotate option centers the image
     if (common.running()) {
-        g.drawImage(BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP);
+        g.drawImage(BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     } else {
-        g.drawImage(BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP);
+        g.drawImage(BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     }
 }
 
