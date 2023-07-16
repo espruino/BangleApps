@@ -1,7 +1,7 @@
 {
   "id": "keytimer",
   "name": "Keypad Timer",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A timer with a keypad that runs in the background",
   "icon": "icon.png",
   "type": "app",
