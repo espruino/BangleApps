@@ -83,6 +83,7 @@ function drawTimers() {
     back : function() {load();},
     draw : (idx, r) => {
       function drawMenuItem(a) {
+        var msg;
         g.setClipRect(R.x,R.y,R.x2,R.y2);
         if (idx > 0 && timers[idx-1].msg) msg = "\n"+(timers[idx-1].msg.length > 10 ?
           timers[idx-1].msg.substring(0, 10)+"..." : timers[idx-1].msg);
@@ -126,7 +127,6 @@ function timerMenu(idx) {
     }
   }
   var a = timers[timerIdx[idx]];
-  var msg = "";
 
   function updateTimer() {
     if (timerInt1[0] == undefined) timerInt1[0] = setTimeout(function() {
@@ -152,6 +152,7 @@ function timerMenu(idx) {
       }
 
       if (i == 0) {
+        var msg = "";
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         if (a.on == true) {
           drawMenuItem(formatTime(a.t-getCurrentTime())+msg);
@@ -237,6 +238,7 @@ function editTimer(idx, a) {
   var t = decodeTime(a.timer);
 
   function editMsg(idx, a) {
+    var msg;
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -344,6 +346,7 @@ function drawSw() {
     draw : (idx, r) => {
 
       function drawMenuItem(a) {
+        var msg;
         g.setClipRect(R.x,R.y,R.x2,R.y2);
         if (idx > 0 && sw[idx-1].msg) msg = "\n"+(sw[idx-1].msg.length > 10 ?
           sw[idx-1].msg.substring(0, 10)+"..." : sw[idx-1].msg);
@@ -396,7 +399,7 @@ function swMenu(idx, a) {
 
   function editMsg(idx, a) {
     g.clear();
-    msg = a.msg;
+    var msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
     if (result != "") {
       a.msg = result;
@@ -430,6 +433,7 @@ function swMenu(idx, a) {
       }
 
       if (i == 0) {
+        var msg;
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         else msg = "";
         if (a.on == true) {
@@ -572,6 +576,7 @@ function editAlarm(idx, a) {
   var t = decodeTime(a.t);
 
   function editMsg(idx, a) {
+    var msg;
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
