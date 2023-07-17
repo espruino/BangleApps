@@ -265,7 +265,6 @@ function editTimer(idx, a) {
       a.last = 0;
       a.data.ot = a.timer;
       a.appid = "multitimer";
-      a.js = "(require('Storage').read('multitimer.alarm.js') !== undefined) ? load('multitimer.alarm.js') : load('sched.js')";
       if (idx < 0) alarms.push(a);
       else alarms[timerIdx[idx]] = a;
       require("sched").setAlarms(alarms);
