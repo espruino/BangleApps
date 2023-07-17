@@ -68,7 +68,6 @@ function setHM(alarm, on) {
 function drawTimers() {
   layer = 0;
   var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
-  var alarms = require("sched").getAlarms();
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -79,7 +78,7 @@ function drawTimers() {
     }, 1000 - (timers[idx].t % 1000));
   }
 
-  var s = E.showScroller({
+  E.showScroller({
     h : 40, c : timers.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -120,12 +119,10 @@ function timerMenu(idx) {
   layer = -1;
   var timers = require("sched").getAlarms();
   var timerIdx = [];
-  var j = 0;
   for (let i = 0; i < timers.length; i++) {
     if (timers[i].timer && timers[i].appid == "multitimer") {
       a = i;
       timerIdx.push(a);
-      j++;
     }
   }
   var a = timers[timerIdx[idx]];
@@ -140,7 +137,7 @@ function timerMenu(idx) {
     }, 1000 - (a.t % 1000));
   }
 
-  var s = E.showScroller({
+  E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
@@ -225,12 +222,9 @@ function editTimer(idx, a) {
   var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
   var alarms = require("sched").getAlarms();
   var timerIdx = [];
-  var j = 0;
   for (let i = 0; i < alarms.length; i++) {
     if (alarms[i].timer && alarms[i].appid == "multitimer") {
-      b = i;
-      timerIdx.push(b);
-      j++;
+      timerIdx.push(i);
     }
   }
   if (!a) {
@@ -344,7 +338,7 @@ function drawSw() {
     }, 1000 - (sw[idx].t % 1000));
   }
 
-  var s = E.showScroller({
+  E.showScroller({
     h : 40, c : sw.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -421,7 +415,7 @@ function swMenu(idx, a) {
     setUI();
   }
 
-  var s = E.showScroller({
+  E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
@@ -507,7 +501,7 @@ function drawAlarms() {
   layer = 2;
   var alarms = require("sched").getAlarms().filter(a => !a.timer);
 
-  var s = E.showScroller({
+  E.showScroller({
     h : 40, c : alarms.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -563,12 +557,9 @@ function editAlarm(idx, a) {
   layer = -1;
   var alarms = require("sched").getAlarms();
   var alarmIdx = [];
-  var j = 0;
   for (let i = 0; i < alarms.length; i++) {
     if (!alarms[i].timer) {
-      b = i;
-      alarmIdx.push(b);
-      j++;
+      alarmIdx.push(i);
     }
   }
   if (!a) {
