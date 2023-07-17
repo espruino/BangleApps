@@ -82,13 +82,17 @@ function drawLocation() {
   }
 
   if (!fix.fix || !mapVisible) {
-    Bangle.setLCDOverlay(); // clear if map is not visible or no fix
+    if (this.hasOverlay) {
+      Bangle.setLCDOverlay(); // clear if map is not visible or no fix
+      this.hasOverlay = false;
+    }
     return;
   }
 
   const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
   var p = m.latLonToXY(fix.lat, fix.lon);
   Bangle.setLCDOverlay(icon, p.x-24/2, p.y-24);
+  this.hasOverlay = true;
 }
 
 Bangle.on('GPS',function(f) {
@@ -171,6 +175,7 @@ function showMenu() {
       }
     };
   }
+  menu[/*LANG*/"Exit"] = () => load();
   E.showMenu(menu);
 }
 
@@ -186,6 +191,7 @@ function showMap() {
       m.scroll(e.dx,e.dy);
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
       hasScrolled = true;
+      drawLocation();
     } else if (hasScrolled) {
       hasScrolled = false;
       redraw();
