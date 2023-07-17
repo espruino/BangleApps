@@ -67,7 +67,7 @@ function setHM(alarm, on) {
 
 function drawTimers() {
   layer = 0;
-  var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
+  const timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -83,11 +83,10 @@ function drawTimers() {
     back : function() {load();},
     draw : (idx, r) => {
       function drawMenuItem(a) {
-        var msg;
+        let msg = "";
         g.setClipRect(R.x,R.y,R.x2,R.y2);
         if (idx > 0 && timers[idx-1].msg) msg = "\n"+(timers[idx-1].msg.length > 10 ?
           timers[idx-1].msg.substring(0, 10)+"..." : timers[idx-1].msg);
-        else msg = "";
         return g.setColor(g.theme.bg2).fillRect({x:r.x+4,y:r.y+2,w:r.w-8, h:r.h-4, r:5})
         .setColor(g.theme.fg2).setFont("6x8:2").setFontAlign(-1,0).drawString(a+msg,r.x+12,r.y+(r.h/2));
       }
@@ -118,15 +117,17 @@ function drawTimers() {
 
 function timerMenu(idx) {
   layer = -1;
-  var timers = require("sched").getAlarms();
-  var timerIdx = [];
+  const timers = require("sched").getAlarms();
+  const timerIdx = [];
+  let a;
+
   for (let i = 0; i < timers.length; i++) {
     if (timers[i].timer && timers[i].appid == "multitimer") {
       a = i;
       timerIdx.push(a);
     }
   }
-  var a = timers[timerIdx[idx]];
+  a = timers[timerIdx[idx]];
 
   function updateTimer() {
     if (timerInt1[0] == undefined) timerInt1[0] = setTimeout(function() {
@@ -152,7 +153,7 @@ function timerMenu(idx) {
       }
 
       if (i == 0) {
-        var msg = "";
+        let msg = "";
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         if (a.on == true) {
           drawMenuItem(formatTime(a.t-getCurrentTime())+msg);
@@ -220,9 +221,9 @@ function timerMenu(idx) {
 
 function editTimer(idx, a) {
   layer = -1;
-  var timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
-  var alarms = require("sched").getAlarms();
-  var timerIdx = [];
+  const timers = require("sched").getAlarms().filter(a => a.timer && a.appid == "multitimer");
+  const alarms = require("sched").getAlarms();
+  const timerIdx = [];
   for (let i = 0; i < alarms.length; i++) {
     if (alarms[i].timer && alarms[i].appid == "multitimer") {
       timerIdx.push(i);
@@ -235,10 +236,10 @@ function editTimer(idx, a) {
   if (!a.data) {
     a.data = { hm: false };
   }
-  var t = decodeTime(a.timer);
+  const t = decodeTime(a.timer);
 
   function editMsg(idx, a) {
-    var msg;
+    let msg;
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -257,7 +258,7 @@ function editTimer(idx, a) {
     setUI();
   }
 
-  var menu = {
+  const menu = {
     "": { "title": "Timer" },
     "< Back": () => {
       a.t = getCurrentTime() + a.timer;
@@ -312,7 +313,7 @@ function editTimer(idx, a) {
       value: !a.msg ? "" : a.msg.length > 6 ? a.msg.substring(0, 6)+"..." : a.msg,
       //menu glitch? setTimeout required here
       onchange: () => {
-        var kbapp = require("Storage").read("textinput");
+        const kbapp = require("Storage").read("textinput");
         if (kbapp != undefined) setTimeout(editMsg, 0, idx, a);
         else setTimeout(kbAlert, 0);
       }
@@ -329,7 +330,7 @@ function editTimer(idx, a) {
 
 function drawSw() {
   layer = 1;
-  var sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const sw = require("Storage").readJSON("multitimer.json", true) || [];
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -346,7 +347,7 @@ function drawSw() {
     draw : (idx, r) => {
 
       function drawMenuItem(a) {
-        var msg;
+        let msg;
         g.setClipRect(R.x,R.y,R.x2,R.y2);
         if (idx > 0 && sw[idx-1].msg) msg = "\n"+(sw[idx-1].msg.length > 10 ?
           sw[idx-1].msg.substring(0, 10)+"..." : sw[idx-1].msg);
@@ -380,7 +381,7 @@ function drawSw() {
 
 function swMenu(idx, a) {
   layer = -1;
-  var sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const sw = require("Storage").readJSON("multitimer.json", true) || [];
   if (sw[idx]) a = sw[idx];
   else {
     a = {"t" : 0, "on" : false, "msg" : ""};
@@ -399,7 +400,7 @@ function swMenu(idx, a) {
 
   function editMsg(idx, a) {
     g.clear();
-    var msg = a.msg;
+    const msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
     if (result != "") {
       a.msg = result;
@@ -433,7 +434,7 @@ function swMenu(idx, a) {
       }
 
       if (i == 0) {
-        var msg;
+        let msg;
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         else msg = "";
         if (a.on == true) {
@@ -486,7 +487,7 @@ function swMenu(idx, a) {
       //edit message
       if (i == 3) {
         clearInt();
-        var kbapp = require("Storage").read("textinput");
+        const kbapp = require("Storage").read("textinput");
         if (kbapp != undefined) editMsg(idx, a);
         else kbAlert();
       }
@@ -503,7 +504,7 @@ function swMenu(idx, a) {
 
 function drawAlarms() {
   layer = 2;
-  var alarms = require("sched").getAlarms().filter(a => !a.timer);
+  const alarms = require("sched").getAlarms().filter(a => !a.timer);
 
   E.showScroller({
     h : 40, c : alarms.length+2,
@@ -512,8 +513,8 @@ function drawAlarms() {
 
       function drawMenuItem(a) {
         g.setClipRect(R.x,R.y,R.x2,R.y2);
-        var on = "";
-        var dow = "";
+        let on = "";
+        let dow = "";
         if (idx > 0 && alarms[idx-1].on == true) on = " - on";
         else if (idx > 0 && alarms[idx-1].on == false) on = " - off";
         if (idx > 0 && idx < alarms.length+1) dow = "\n"+"SMTWTFS".split("").map((d,n)=>alarms[idx-1].dow&(1<<n)?d:".").join("");
@@ -529,7 +530,7 @@ function drawAlarms() {
         .setColor(g.theme.fg).setFont("6x8:2").setFontAlign(0,0).drawString("<   Swipe   >",r.x+(r.w/2),r.y+(r.h/2));
       }
       else if (idx > 0 && idx < alarms.length+1){
-        var str = formatTime(alarms[idx-1].t);
+        const str = formatTime(alarms[idx-1].t);
         drawMenuItem(str.slice(0, -3));
       }
     },
@@ -546,8 +547,8 @@ function editDOW(dow, onchange) {
     '': { 'title': 'Days of Week' },
     '< Back' : () => onchange(dow)
   };
-  for (var i = 0; i < 7; i++) (i => {
-    var dayOfWeek = require("locale").dow({ getDay: () => i });
+  for (let i = 0; i < 7; i++) (i => {
+    const dayOfWeek = require("locale").dow({ getDay: () => i });
     menu[dayOfWeek] = {
       value: !!(dow&(1<<i)),
       onchange: v => v ? dow |= 1<<i : dow &= ~(1<<i),
@@ -559,8 +560,8 @@ function editDOW(dow, onchange) {
 
 function editAlarm(idx, a) {
   layer = -1;
-  var alarms = require("sched").getAlarms();
-  var alarmIdx = [];
+  const alarms = require("sched").getAlarms();
+  const alarmIdx = [];
   for (let i = 0; i < alarms.length; i++) {
     if (!alarms[i].timer) {
       alarmIdx.push(i);
@@ -573,10 +574,10 @@ function editAlarm(idx, a) {
   if (!a.data) {
     a.data = { hm: false };
   }
-  var t = decodeTime(a.t);
+  const t = decodeTime(a.t);
 
   function editMsg(idx, a) {
-    var msg;
+    let msg;
     g.clear();
     idx < 0 ? msg = "" : msg = a.msg;
     require("textinput").input({text:msg}).then(result => {
@@ -595,7 +596,7 @@ function editAlarm(idx, a) {
     setUI();
   }
 
-  var menu = {
+  const menu = {
     "": { "title": "Alarm" },
     "< Back": () => {
       if (idx >= 0) alarms[alarmIdx[idx]] = a;
@@ -650,7 +651,7 @@ function editAlarm(idx, a) {
       value: !a.msg ? "" : a.msg.length > 6 ? a.msg.substring(0, 6)+"..." : a.msg,
       //menu glitch? setTimeout required here
       onchange: () => {
-        var kbapp = require("Storage").read("textinput");
+        const kbapp = require("Storage").read("textinput");
         if (kbapp != undefined) setTimeout(editMsg, 0, idx, a);
         else setTimeout(kbAlert, 0);
       }
