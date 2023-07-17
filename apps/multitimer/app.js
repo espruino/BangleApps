@@ -2,11 +2,11 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var R = Bangle.appRect;
-var layer;
-var drag;
-var timerInt1 = [];
-var timerInt2 = [];
+const R = Bangle.appRect;
+let layer;
+let drag;
+let timerInt1 = [];
+let timerInt2 = [];
 
 function getCurrentTime() {
   let time = new Date();
