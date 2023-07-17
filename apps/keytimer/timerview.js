@@ -7,21 +7,25 @@ const BUTTON_ICONS = {
 
 let common;
 
+let s = require("Storage").readJSON("setting.json");
+
 function drawButtons() {
     //Draw the backdrop
     const BAR_TOP = g.getHeight() - 24;
-    g.setColor(0, 0, 1).setFontAlign(0, -1)
+    g.setBgColor(s.theme.bg2).setColor(s.theme.fg2).setFontAlign(0, -1)
         .clearRect(0, BAR_TOP, g.getWidth(), g.getHeight())
-        .fillRect(0, BAR_TOP, g.getWidth(), g.getHeight())
-        .setColor(1, 1, 1)
+        .setColor(s.theme.fg2)
         .drawLine(g.getWidth() / 2, BAR_TOP, g.getWidth() / 2, g.getHeight())
 
         //Draw the buttons
-        .drawImage(BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP);
+        .setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP + 12, {rotate:0}); // rotate option centers the image
     if (common.running()) {
-        g.drawImage(BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP);
+        g.setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     } else {
-        g.drawImage(BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP);
+        g.setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     }
 }
 
