@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exslt="http://exslt.org/common" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:_="http://www.topografix.com/GPX/1/1" xmlns:DEFAULT="http://www.topografix.com/GPX/1/1" version="1.0" extension-element-prefixes="exslt">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exslt="http://exslt.org/common" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:_="http://www.topografix.com/GPX/1/1" xmlns:DEFAULT="http://www.topografix.com/GPX/1/1" version="1.0" extension-element-prefixes="exslt">
   <xsl:output omit-xml-declaration="no" indent="yes"/>
 
   <xsl:template match="/">

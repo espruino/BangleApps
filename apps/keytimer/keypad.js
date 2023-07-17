@@ -95,7 +95,8 @@ function getFontSize(length) {
 
 function updateDisplay() {
     let displayString = inputStringToDisplayString(common.state.inputString);
-    g.clearRect(0, 24, 175, 43).setColor(storage.readJSON('setting.json').theme.fg2).setFontAlign(1, -1).setFont("Vector", getFontSize(displayString.length)).drawString(displayString, 176, 24);
+    let t = storage.readJSON('setting.json').theme;
+    g.setBgColor(t.bg2).clearRect(0, 24, 175, 43).setColor(t.fg2).setFontAlign(1, -1).setFont("Vector", getFontSize(displayString.length)).drawString(displayString, 176, 24);
 }
 
 exports.show = function (callerCommon) {
