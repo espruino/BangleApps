@@ -4,7 +4,6 @@
  */
 function switchTheme(mode) {
   let s = require("Storage").readJSON("setting.json", 1) || {};
-  print("Theme is ", s.theme);
   if (!!mode === s.theme.quiet) return; // nothing to do
   // default themes, copied from settings.js:showThemeMenu()
   function cl(x) { return g.setColor(x).getColor(); }
@@ -31,7 +30,6 @@ function switchTheme(mode) {
   if (q.quietTheme) quietTheme = q.quietTheme;
 
   s.theme = mode ? quietTheme : normalTheme;
-  print("New theme is ", s.theme);
 
   require("Storage").writeJSON("setting.json", s);
   // reload clocks with new theme, otherwise just wait for user to switch apps
