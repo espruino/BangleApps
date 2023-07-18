@@ -84,7 +84,6 @@ function formatTime(t) {
  */
 function applyTheme() {
   const theme = (STORAGE.readJSON("setting.json", 1) || {}).theme;
-  if (theme && theme.dark===g.theme.dark) return; // already correct
   g.theme = theme;
   delete g.reset;
   g._reset = g.reset;
@@ -105,24 +104,8 @@ function showThemeMenu(back, quiet){
   function cl(x) { return g.setColor(x).getColor(); }
   var themesMenu = {
     '':{title:/*LANG*/'Theme', back: back},
-    /*LANG*/'Dark BW': ()=>{
-      set(option, {
-        fg:cl("#fff"), bg:cl("#000"),
-        fg2:cl("#fff"), bg2:cl("#004"),
-        fgH:cl("#fff"), bgH:cl("#00f"),
-        dark:true,
-        quiet: true
-      });
-      back();
-    },
-    /*LANG*/'Light BW': ()=>{
-      set(option, {
-        fg:cl("#000"), bg:cl("#fff"),
-        fg2:cl("#000"), bg2:cl("#cff"),
-        fgH:cl("#000"), bgH:cl("#0ff"),
-        dark:false,
-        quiet: true
-      });
+    /*LANG*/'Default': ()=>{
+      unset(option);
       back();
     }
   };
@@ -131,14 +114,8 @@ function showThemeMenu(back, quiet){
     n => {
       let newTheme = STORAGE.readJSON(n);
       themesMenu[newTheme.name ? newTheme.name : n] = () => {
-        set(option, {
-        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
-        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
-        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
-        dark:newTheme.dark,
-        quiet: quiet
-      });
-      back();
+        set(option, n);
+        back();
       };
     }
   );
