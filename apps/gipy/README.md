@@ -103,8 +103,8 @@ Few settings for now (feel free to suggest me more) :
 - buzz on turns : should the watch buzz when reaching a waypoint ?
 - disable bluetooth : turn bluetooth off completely to try to save some power. 
 - brightness : how bright should screen be ? (by default 0.5, again saving power)
-- power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points
-and when you touch the screen.
+- power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points,
+when you touch the screen and when speed is below 13km/h.
 
 ### Caveats
 

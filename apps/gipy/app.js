@@ -608,6 +608,7 @@ class Interests {
 class Status {
     constructor(path, maps, interests) {
         this.path = path;
+        this.default_options = true; // do we still have default options ?
         this.active = false; // should we have screen on
         this.last_activity = getTime();
         this.maps = maps;
@@ -668,7 +669,6 @@ class Status {
         if (getTime() - this.last_activity > 30) {
             this.active = false;
             Bangle.setLCDBrightness(0);
-            Bangle.setLocked(true);
             if (settings.power_lcd_off) {
                 Bangle.setLCDPower(false);
             }
@@ -698,6 +698,10 @@ class Status {
             let distance_to_previous = previous_point.distance(position);
             // gps signal is noisy but rarely above 5 meters
             if (distance_to_previous < 5) {
+                // update instant speed and return
+                let oldest_point = this.old_points[0];
+                let distance_to_oldest = oldest_point.distance(position);
+                this.instant_speed = distance_to_oldest / (now - this.old_times[0]);
                 return null;
             }
         }
@@ -731,17 +735,46 @@ class Status {
         let angle = Math.atan2(diff.lat, diff.lon);
         return angle;
     }
-    update_position(new_position, maybe_direction, timestamp) {
+    update_position(new_position) {
         let direction = this.new_position_reached(new_position);
         if (direction === null) {
-            if (maybe_direction === null) {
-                return;
-            } else {
-                direction = maybe_direction;
+            if (this.old_points.length > 1) {
+                this.display(); // re-display because speed has changed
             }
+            return;
         }
         if (in_menu) {
             return;
+        }
+        if (this.instant_speed * 3.6 < 13) {
+            this.activate(); // if we go too slow turn on, we might be looking for the direction to follow
+            if (!this.default_options) {
+                this.default_options = true;
+
+                Bangle.setOptions({
+                    lockTimeout: 10000,
+                    backlightTimeout: 10000,
+                    wakeOnTwist: true,
+                    powerSave: true,
+                });
+            }
+        } else {
+            if (this.default_options) {
+                this.default_options = false;
+
+                Bangle.setOptions({
+                    lockTimeout: 0,
+                    backlightTimeout: 0,
+                    lcdPowerTimeout: 0,
+                    hrmSportMode: 2,
+                    wakeOnTwist: false, // if true watch will never sleep due to speed and road bumps. tried several tresholds.
+                    wakeOnFaceUp: false,
+                    wakeOnTouch: true,
+                    powerSave: false,
+                });
+                Bangle.setPollInterval(4000); // disable accelerometer as much as we can
+            }
+
         }
         this.check_activity(); // if we don't move or are in menu we should stay on
 
@@ -759,16 +792,6 @@ class Status {
             new_position.lon + cos_direction * this.instant_speed * 0.00001,
             new_position.lat + sin_direction * this.instant_speed * 0.00001
         );
-
-        // abort if we are late
-        // if (timestamp !== null) {
-        //   let elapsed = Date.now() - timestamp;
-        //   if (elapsed > 1000) {
-        //     console.log("we are late");
-        //     return;
-        //   }
-        //     console.log("we are not late");
-        // }
 
         if (this.path !== null) {
             // detect segment we are on now
@@ -1364,7 +1387,7 @@ function simulate_gps(status) {
         if (fake_gps_point < 1) {
             fake_gps_point += 0.01;
         }
-        status.update_position(pos, null, null);
+        status.update_position(pos);
     } else {
         if (fake_gps_point > status.path.len - 1 || fake_gps_point < 0) {
             return;
@@ -1386,7 +1409,7 @@ function simulate_gps(status) {
         } else {
             fake_gps_point += 0.01; // advance simulation
         }
-        status.update_position(pos, null, null);
+        status.update_position(pos);
     }
 }
 
@@ -1416,18 +1439,6 @@ function start(fn) {
 function start_gipy(path, maps, interests) {
     console.log("starting");
 
-    // we handle manually the backlight
-    Bangle.setOptions({
-        lockTimeout: 0,
-        backlightTimeout: 0,
-        lcdPowerTimeout: 0,
-        hrmSportMode: 2,
-        wakeOnTwist: false, // if true watch will never sleep due to speed and road bumps. tried several tresholds.
-        wakeOnFaceUp: false,
-        wakeOnTouch: false,
-        powerSave: false,
-    });
-    Bangle.setPollInterval(4000); // disable accelerometer as much as we can
     if (!simulated && settings.disable_bluetooth) {
         NRF.sleep(); // disable bluetooth completely
     }
@@ -1460,7 +1471,8 @@ function start_gipy(path, maps, interests) {
                         zoomed = v;
                     },
                 },
-                /*LANG*/"powersaving": {
+                /*LANG*/
+                "powersaving": {
                     value: powersaving,
                     onchange: (v) => {
                         powersaving = v;
@@ -1540,7 +1552,7 @@ function start_gipy(path, maps, interests) {
                     status.starting_time = getTime();
                     Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
                 }
-                status.update_position(new Point(data.lon, data.lat), null, data.time);
+                status.update_position(new Point(data.lon, data.lat));
             }
             let gps_status_color;
             if (frame % 2 == 0 || valid_coordinates) {
