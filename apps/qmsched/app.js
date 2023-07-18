@@ -136,8 +136,8 @@ function setAppQuietMode(mode) {
 
 let m;
 function showMainMenu() {
-  let menu = {"": {"title": /*LANG*/"Quiet Mode"},};
-  menu[B2 ? /*LANG*/"< Back" : /*LANG*/"< Exit"] = () => {load();};
+  let menu = {"": {"title": /*LANG*/"Quiet Mode"}};
+  menu[B2 ? "< Back" : /*LANG*/"< Exit"] = () => {load();};
   menu[/*LANG*/"Current Mode"] = {
     value: current,
     min:0, max:2, wrap: true,
@@ -169,7 +169,7 @@ function showEditMenu(index) {
     mode = s.mode;
   }
   let menu = {"": {"title": (isNew ? /*LANG*/"Add Schedule" : /*LANG*/"Edit Schedule")}};
-  menu[B2 ? /*LANG*/"< Back" : /*LANG*/"< Cancel"] =  () => showMainMenu();
+  menu[B2 ? "< Back" : /*LANG*/"< Cancel"] =  () => showMainMenu();
   menu[/*LANG*/"Hours"] = {
     value: hrs,
     min:0, max:23, wrap:true,
@@ -226,7 +226,7 @@ function showOptionsMenu() {
   let resetTimeout;
   const oMenu = {
     "": {"title": /*LANG*/"LCD Settings"},
-    /*LANG*/"< Back": () => showMainMenu(),
+    "< Back": () => showMainMenu(),
     /*LANG*/"LCD Brightness": {
       value: get("brightness", 0),
       min: 0, // 0 = use default
