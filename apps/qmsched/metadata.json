@@ -2,7 +2,7 @@
   "id": "qmsched",
   "name": "Quiet Mode Schedule and Widget",
   "shortName": "Quiet Mode",
-  "version": "0.09",
+  "version": "0.10",
   "description": "Automatically turn Quiet Mode on or off at set times, change theme and LCD options while Quiet Mode is active.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
