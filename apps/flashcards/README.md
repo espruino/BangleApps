@@ -10,7 +10,7 @@ Configuration:
 4. Add ".json" to the end of the Trello board URL and refresh page
 5. Find your list ID
 6. Save list ID to the "flashcards.settings.json" file on your watch, e.g.: 
-{"listId":"65942f7b27z68000996ddc00","fontSize":1,"cardWidth":9,"swipeGesture":0}
+{"listId":"65942f7b27z68000996ddc00","fontSize":1,"cardWidth":9,"swipeGesture":1}
 7. Connect phone with Gadgetbridge to the watch
 8. Enable "Allow Internet Access" in Gadgetbridge
 9. On the watch go to Settings -> Apps -> Flash Cards -> Get from Trello

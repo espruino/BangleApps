@@ -2,7 +2,7 @@
   "id": "flashcards",
   "name": "Flash Cards",
   "shortName": "Flash Cards",
-  "version": "1.3",
+  "version": "1.31",
   "description": "Flash cards based on public Trello board",
   "readme":"README.md",
   "screenshots" : [ { "url":"screenshot.png" }],  
