@@ -24,3 +24,5 @@
 0.20: Make Satellite counter widget 24px wide (was 48)
       Move 'Center GPS' to the top of the menu
       If 'Recorder' app installed, add a 'Record' menu item
+0.21: Draw a current position marker (Bangle.js 2 only)
+      Enable/Disable previous position marker in new setting "Draw cont. position"
