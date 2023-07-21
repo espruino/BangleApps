@@ -8,8 +8,8 @@ var EMULATOR = "banglejs1";
 var DEVICEID = "BANGLEJS";
 var SCREENSHOT_DIR = __dirname+"/../screenshots/";
 
-var emu = require("./lib/emulator.js");
-var apploader = require("./lib/apploader.js");
+var emu = require("../core/lib/emulator.js");
+var apploader = require("../core/lib/apploader.js");
 
 var singleAppId;
 

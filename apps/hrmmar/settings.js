@@ -2,7 +2,7 @@
   var FILE = "hrmmar.json";
   // Load settings
   var settings = Object.assign({
-   mAremoval: 0,
+   mAremoval: 1,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {

@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: New config options such as step, meridian, short/long formats, custom prefix/suffix
+0.03: Allows showing the month in short or long format by setting `"shortMonth"` to true or false
+0.04: Improves touchscreen drag handling for background apps such as Pattern Launcher
+0.05: Fixes step count not resetting after a new day starts

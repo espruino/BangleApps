@@ -1,7 +1,8 @@
+{
 const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
-const storage = require('Storage')
+const storage = require('Storage');
 const widget_utils = require('widget_utils');
 let settings = {
   alarm: -1,
@@ -18,7 +19,7 @@ let settings = {
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
-  settings[key] = saved_settings[key]
+  settings[key] = saved_settings[key];
 }
 
 /*
@@ -36,10 +37,10 @@ let cGrey = "#424242";
  */
 let lcarsViewPos = 0;
 // let hrmValue = 0;
-var plotMonth = false;
+let plotMonth = false;
 
 
-function convert24to16(input)
+let convert24to16 = function(input)
 {
   let RGB888 = parseInt(input.replace(/^#/, ''), 16);
   let r = (RGB888 & 0xFF0000) >> 16;
@@ -55,17 +56,17 @@ function convert24to16(input)
   RGB565 = RGB565 | b;
 
   return "0x"+RGB565.toString(16);
-}
+};
 
-var color1C = convert24to16(color1);//Converting colors to the correct format.
-var color2C = convert24to16(color2);
-var color3C = convert24to16(color3);
+let color1C = convert24to16(color1);//Converting colors to the correct format.
+let color2C = convert24to16(color2);
+let color3C = convert24to16(color3);
 
 /*
 * Requirements and globals
 */
 
-var colorPalette = new Uint16Array([//Used to change the color of the image if the user selects a color that is diffrent than the default.
+let colorPalette = new Uint16Array([//Used to change the color of the image if the user selects a color that is diffrent than the default.
   0x0000, // not used
   color2C,  // second
   color3C, // third
@@ -84,73 +85,73 @@ var colorPalette = new Uint16Array([//Used to change the color of the image if t
   0x0000  // not used
 ],0,1);
 
-var bgLeftFullscreen =  {
+let bgLeftFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress((atob("/4AB+VJkmSAQV///+BAtJn//5IIFkmf/4IGyVP/gIGpMnF41PHIImGF4ImHJoQmGJoIdK8hNHNY47C/JNGBIJZGyYJBQA5GCKH5Q/KAQAoUP7y/KH5QGDoQAy0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyDCKH5Q1GShlJChQLCCg5TCHw5TMAD35FAoIIkgJB8hGGv/8Mg8/+QIFp4cB5IRGBIIvI/4IFybyCF4wTCDp5NBHZZiGz4JBLJKAGk4JBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4"))),
   palette: colorPalette
 };
 
-var bgLeftNotFullscreen = {
+let bgLeftNotFullscreen = {
   width : 27, height : 152, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress((atob("/4AB+VJkmSAQV///+BAtJn//5IIFkmf/4IGyVP/gIGpMnF41PHIImGF4ImHJoQmGJoIdK8hNHNY47C/JNGBIJZGyYJBQA5GCKH5Q/KAQAy0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyhCKH5Q1GShlJChQLCCg5TCHw5TMAD35FAoIIkgJB8hGGv/8Mg8/+QIFp4cB5IRGBIIvI/4IFybyCF4wTCDp5NBHZZiGz4JBLJKAGk4JBO4xQ/KGQA8UP7y/KH5QnAHih/eX5Q/GQ4JCGRJlKCgxTDBAwgCCg5TCHwxTCNA4A=="))),
   palette: colorPalette
 };
 
-var bgRightFullscreen =  {
+let bgRightFullscreen =  {
   width : 27, height : 176, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress((atob("yVJkgCCyf/AAPJBAYCBk4JB8gUFyVP//yBAoCB//5BAwUCAAIUHAAIgGChopGv5TIn5TIz4yLKYxxC/iGI/xxGKH5Q/agwAnUP7y/KH4yGeVYAJ0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkp4CS4xGCWoyhCKH5QuDoxQCDpI7GDoJZGHYIRGLIQvGO4QvGMQRNJADv+GIqTC/5PGz4JBJ41JBIPJCg2TD4QLGn4JB/gUaHwRTGHwRTHBIRTGNAQyJ8gyI+QdFp4JB/IdFk5lLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJoyJC/4A=="))),
   palette: colorPalette
 };
 
-var bgRightNotFullscreen =  {
+let bgRightNotFullscreen =  {
   width : 27, height : 152, bpp : 3,
   transparent : 0,
   buffer : require("heatshrink").decompress((atob("yVJkgCCyf/AAPJBAYCBk4JB8gUFyVP//yBAoCB//5BAwUCAAIUHAAIgGChopGv5TIn5TIz4yLKYxxC/iGI/xxGKH5Q/agwAx0hGF34JB6RGFr4JB9JkFl4JB+gdFy4JB/QdFpYJB/odFkqrCS4xGCWoyhCKH5QuDoxQCDpI7GDoJZGHYIRGLIQvGO4QvGMQRNJADv+GIqTC/5PGz4JBJ41JBIPJCg2TD4QLGn4JB/gUaHwRTGHwRTHBIRTGNAQyJ8gyI+QdFp4JB/IdFk5lLKH5QvAHih/eX5Q/KE4A8UP7y/KH5QGDpg7HJoxZCCIx3CJowmCF4yACJoyJC/4A="))),
   palette: colorPalette
 };
 
-var bgLeft = settings.fullscreen ? bgLeftFullscreen : bgLeftNotFullscreen;
-var bgRight= settings.fullscreen ? bgRightFullscreen : bgRightNotFullscreen;
+let bgLeft = settings.fullscreen ? bgLeftFullscreen : bgLeftNotFullscreen;
+let bgRight= settings.fullscreen ? bgRightFullscreen : bgRightNotFullscreen;
 
-var iconEarth = {
+let iconEarth = {
   width : 50, height : 50, bpp : 3,
   buffer : require("heatshrink").decompress(atob("AFtx48ECBsDwU5k/yhARLjgjBjlzAQMQEZcIkOP/fn31IEZgCBnlz58cEpM4geugEgwU/8+WNZJHDuHHvgmBCQ8goEOnVgJoMnyV58mACItHI4X8uAFBuVHnnz4BuGxk4////Egz3IkmWvPgNw8f/prB//BghTC+AjE7848eMjNnzySBwUJkmf/BuGuPDAQIjBiPHhhTCSQnjMo0ITANJn44Dg8MuFBggCCiFBcAJ0Bv5xEh+ITo2OhHkyf/OIQdBWwVHhgjBNwUE+fP/5EEgePMoYLBhMgyVJk/+BQQdC688I4XxOIc8v//NAvr+QEBj/5NwKVBy1/QYUciPBhk1EAJrC+KeC489QYaMBgU/8BNB9+ChEjz1Jkn/QYMBDQIgCcYTCCiP/nlzJQmenMAgV4//uy/9wRaB/1J8iVCcAfHjt9TYYICnhKCgRKBw159/v//r927OIeeoASBDQccvv3791KYVDBYPLJQeCnPnz//AAP6ocEjEkXgMgJQtz79fLAP8KYkccAcJ8Gf/f/xu/cAMQ4eP5MlyQRCMolx40YsOGBAPfnnzU4KVDpKMBvz8Dh0/8me7IICgkxJQXPIgZTD58sEgcJk+eNoONnFBhk4/5uB/pcDg5KD+4mEv4CBXISVDhEn31/8/+mH7x//JQK5CAAMB4JBCnnxJQf/+fJEgkAa4L+CAQOOjMn/1bXIRxDJQXx58f//Hhlz/88EgsChMgz/Zs/+nfkyV/8huDOI6SD498NwoACi1Z8+S/Plz17/+QCI7jC+ZxBmfPnojIAAMDcYWSp//2wRJEwq2GABECjMgNYwAmA="))
 };
 
-var iconSaturn = {
+let iconSaturn = {
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("AH4A/AEkQuPHCJ0ChEAwARNjAjBjgjOhs06Q2OEYVx4ARMhEggUMkANIDoIgBoEEgEBNxJEC6ZrBAAMwNxAjDNYcHNxIjB7dtEwIHBwRoKj158+cuPEjlwCRAjC23bpu0wRNDAAsHEYWeEwaSJ6YjCAQUNSRQjEzxQBWZMNEYlsmg2JWAIjCz95SoJuJggjDtuw6dMG5JKCz998wFBJRVNEYW0yaVBJRNhJQN9+4pCzhKJmBKC4YpB/fINxIgCzFxSoQ3J4ENm3CAQPb98wbpEcAQMYWwKYBNxMDXgc2/fv3g2IEAOAgAjBjy5CEhEMfYICBgfPnjdLjj+CgMHiC3JknDhhoINw4jCAB0IJQIANR4QjPAH4A/AFA"))
 };
 
-var iconMoon = {
+let iconMoon = {
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("AH4AQjlx44CCCZsg8eOkHDwAQKEYgmPhEgEQM48AOIgMHEYoCB4ATI8UAmH/x04JoRuJsImHuBKLn37EwZuIgEQOI8cEpXj/yYBhE8+YNGgkYoJxITBUPnAaC///nC+FjBuIOJZEB8YeCh/8AoYACoMEEAnEjhQDPQJKJ/DCDAoi5DoLdHAoMQgLjFWYPOnngh02IwXzwDjEgPGEYS8BI4MBYoSVG4fP/nghkAgZrDkngJQqSG4gvBg4sBQgkImHihEAWwP8ZBMBEYl5/+cSoVAGQIUFh04weJn///0gj/OEw5KEz45BzhuCTYQAEgePB4IACAoJuBnAQEa4XHjxKB//xFgWHJQsCRgMDEonipwjENwUBDQNx8+evvn/hTDLw3igE+EgZxB8UOXIvEJQUfEYOfv53DEQkgga5BJQvzx84cAj+CDoNh8/eEYJKDuCSEcocnEon+/7xEgFBIIcfB4Mf/IICXI2DgDdBAAn758gCIq5Dv4zBvJuIOIfjEgvP/ARHgwdCB4P3AoTdFAAk4EYk8SQgAFTALaDSQwAGh08//vnDmBABYmEEZYAzA=="))
 };
 
-var iconMars = {
+let iconMars = {
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("AH4ATjlwCJ+Dh0wwAQMg0cuPHjFhCZkDps0yVJkmQCBMEjFx42atOmzQmLhMkEYQCCCREQoOGEYmmzB0IEY4CBkARGoJKBEYQCEzgSGkGSpAjDyYCCphuGiFhJQgCD8ASFgRHGAQKbB6BuHJRGeOIsINxEk6dNmARDgMEjQjHAQPnVQojIyZKB6YSDNwK5FAQt54BuDXJIjBEwK5EgxKKXgq5BJRdgXIojJAQJKMcAM0EwM2JUApDoCVFExa7FkGCgAmIkAREEwUEjAmHCIgABhEggQmFpACBCIojBEwRQCzVhwkQU4YADgQmBwQCCI4IFBCAojFAQojGJQQjDAQgRGEZICBEo4gFyUIkilFJQUYEAZrBAQMYNw5KDSQSbCNwwABgOGEwgCBsPACQ5xGwdNnARJcAVh48evvnCJK8Chs+/fv33gCRcB48cuPHCBYA/ADAA=="))
 };
 
-var iconSatellite =  {
+let iconSatellite =  {
   width : 50, height : 50, bpp : 3,
   transparent : 2,
   buffer : require("heatshrink").decompress(atob("pMkyQC/ATGXhIRPyNl0gmPjlwCJ9ly1aCJ1c+fHJR1Hy1ZJR1I+fPnlx6QRLpe+/JKBr5KMuYjBJQMdCJce/fvJQW0CJUlEYQCBSpvvJQbXJjl0NwnzNxGQwEOnHhgF78+WqQyIrFx48cAQXz4ShJgAABh0+8cP//9LJEhg4jDuP3//0LhGQgYlBgeAn///5cIy8MuAmDCIP/9I4HkmCEYMOgHfCQWkCI0cuBuDgF/CIP+CI1Ny1IkeAgHANwIAB/QRFrj7BhkxEwQRC/4RFpbXDgSVBg4RCSorXDI4MJAQMfCIP8cwImDn37fwN58+kwHgLgSVFub7CI4NyBAJKDLgkuEYX78+evKtCLg0jEYRKC58JMoRcFkwjDJQTFDl65EkojEAQMdcwn/+gFC3YjEJQLXEpYRDWwQmEdI6SHAQO0CJUkx4jDF4gCIJQgRMXIjCEARIjCCJ2XEYPKCJqJBJQIROcAUpCJ0kybaDARtdCKAC2kAA="))
 };
 
-var iconCharging =   {
+let iconCharging =   {
   width : 50, height : 50, bpp : 3,
   transparent : 5,
   buffer : require("heatshrink").decompress(atob("23btugAwUBtoICARG0h048eODQYCJ6P/AAUCCJfbo4SDxYRLtEcuPHjlwgoRJ7RnIloUHoYjDAQfAExEAwUIkACEkSAIEYwCBhZKH6EIJI0CJRFHEY0BJRWBSgf//0AJRYSE4BKLj4SE8BKLv4RD/hK/JS2AXY0gXwRKG4cMmACCJQMAg8csEFJQsBAwfasEAm379u0gFbcBfHzgFBz1xMQZKBjY/D0E2+BOChu26yVEEYdww+cgAFCg+cgIfB6RKF4HbgEIkGChEAthfCJQ0eEAIjBBAMxk6GCJQtgtyVBwRKBAQMbHAJKGXIIFCgACBhl54qVG2E+EAJKBJoWAm0WJQ6SCXgdxFgMLJQvYjeAEAUwFIUitEtJQ14NwUHgEwKYZKGwOwNYX7XgWCg3CJQ5rB4MevPnAoPDJRJrCgEG/ECAoNsJRUwoEesIIBiJKI3CVDti/CJRKVDiJHBSo0YsOGjED8AjBcAcIgdhcAXAPIUAcAYIBcA4dBAQUG8BrBgBuCgOwcBEeXIK2BBAIFBgRqBGoYAChq8CcYUE4FbUYOACQsHzgjDgwFBCIImBAQsDtwYD7cAloRI22B86YBw5QBgoRJ7dAgYEDCJaeBJoMcsARMAQNoJIIRE6A"))
 };
 
-var iconWarning = {
+let iconWarning = {
   width : 50, height : 50, bpp : 3,
   transparent : 1,
   buffer : require("heatshrink").decompress(atob("kmSpIC/AWMyoQIFsmECJFJhMmA4QXByVICIwODAQ4RRFIQGD5JVLkIGDzJqMyAGDph8MiRKGyApEAoZKFyYIDQwMkSQNkQZABBhIIOOJRuEL5gRIAUKACVQMhmUSNYNDQYJTBBwYFByGTkOE5FJWYNMknCAQKYCiaSCpmGochDoSYBhMwTAZrChILBhmEzKPBF4ImBTAREBDoMmEwJVDoYjBycJFgWEJQRuLJQ1kmQCCjJlCBYbjCagaDBwyDBmBuBF4TjJAUQKINBChCDQxZBcZIIQF4NIgEAgKSDiQmEVQKMBoARBAAMCSQLLBVoxqKL4gaCChVCNwoRKOIo4CJIgABBoSMHpIRFgDdJOIJUBCAUJRgJuEAQb+DIIgRIAX4C/ASOQA"))
@@ -172,26 +173,26 @@ Graphics.prototype.setFontAntonioLarge = function(scale) {
 /*
  * Draw watch face
  */
-var drawTimeout;
-function queueDraw() {
+let drawTimeout;
+let queueDraw = function() {
 
   // Faster updates during alarm to ensure that it is
   // shown correctly...
-  var timeout = isAlarmEnabled() ? 10000 : 60000;
+  let timeout = isAlarmEnabled() ? 10000 : 60000;
 
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
   }, timeout - (Date.now() % timeout));
-}
+};
 
 /**
  * This function plots a data row in LCARS style.
  * Note: It can be called async and therefore, the text alignment and
  * font is set each time the function is called.
  */
-function printRow(text, value, y, c){
+let printRow = function(text, value, y, c){
   g.setFontAntonioMedium();
   g.setFontAlign(-1,-1,0);
 
@@ -210,23 +211,23 @@ function printRow(text, value, y, c){
   g.setColor(c);
   g.setFontAlign(1,-1,0);
   g.drawString(value, 126, y);
-}
+};
 
 
-function drawData(key, y, c){
+let drawData = function(key, y, c){
   try{
     _drawData(key, y, c);
   } catch(ex){
     // Show last error - next try hopefully works.
   }
-}
+};
 
 
-function _drawData(key, y, c){
+let _drawData = function(key, y, c){
   key = key.toUpperCase()
-  var text = key;
-  var value = "ERR";
-  var should_print= true;
+  let text = key;
+  let value = "ERR";
+  let should_print= true;
 
   if(key == "STEPS"){
     text = "STEP";
@@ -239,21 +240,24 @@ function _drawData(key, y, c){
   } else if (key == "VREF"){
     value = E.getAnalogVRef().toFixed(2) + "V";
 
+  } else if (key =="BATTVOLT" ) {
+    text = "BATV";
+    value = (E.getAnalogVRef()*analogRead(3)*4).toFixed(2) + "V";
   } else if(key == "HRM"){
-    value = Math.round(Bangle.getHealthStatus("last").bpm);
+    value = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
 
   } else if (key == "TEMP"){
-    var weather = getWeather();
+    let weather = getWeather();
     value = weather.temp;
 
   } else if (key == "HUMIDITY"){
     text = "HUM";
-    var weather = getWeather();
+    let weather = getWeather();
     value = weather.hum;
 
   } else if (key == "WIND"){
     text = "WND";
-    var weather = getWeather();
+    let weather = getWeather();
     value = weather.wind;
 
   } else if (key == "ALTITUDE"){
@@ -277,18 +281,18 @@ function _drawData(key, y, c){
   if(should_print){
     printRow(text, value, y, c);
   }
-}
+};
 
-function drawHorizontalBgLine(color, x1, x2, y, h){
+let drawHorizontalBgLine = function(color, x1, x2, y, h){
   g.setColor(color);
 
-  for(var i=0; i<h; i++){
+  for(let i=0; i<h; i++){
     g.drawLine(x1, y+i, x2,y+i);
   }
-}
+};
 
 
-function drawInfo(){
+let drawInfo = function(){
   if(lcarsViewPos != 0 || !settings.fullscreen){
     return;
   }
@@ -310,9 +314,9 @@ function drawInfo(){
     g.setColor(color3);
     g.drawString("LOCK", 128, 53);
   }
-}
+};
 
-function drawState(){
+let drawState = function(){
   if(lcarsViewPos != 0){
     return;
   }
@@ -322,11 +326,11 @@ function drawState(){
   g.setFontAntonioMedium();
 
   if(!isAlarmEnabled()){
-    var bat = E.getBattery();
-    var flash = storage.getFree() / process.env.STORAGE;
-    var current = new Date();
-    var hours = current.getHours();
-    var iconMsg =
+    let bat = E.getBattery();
+    let flash = storage.getFree() / process.env.STORAGE;
+    let current = new Date();
+    let hours = current.getHours();
+    let iconMsg =
         Bangle.isCharging() ? { icon: iconCharging, text: "STATUS" } :
         bat < 30 ? { icon: iconWarning, text: "BAT" } :
         flash < 0.1 ? { icon: iconWarning, text: "DISK" } :
@@ -348,12 +352,12 @@ function drawState(){
   }
 
   g.setFontAlign(-1, -1, 0);
-}
+};
 
 
-function drawPosition0(){
+let drawPosition0 = function(){
   // Draw background image
-  var offset = settings.fullscreen ? 0 : 24;
+  let offset = settings.fullscreen ? 0 : 24;
   g.drawImage(bgLeft, 0, offset);
   drawHorizontalBgLine(color1, 25, 120, offset, 4);
   drawHorizontalBgLine(color1, 130, 176, offset, 4);
@@ -363,13 +367,13 @@ function drawPosition0(){
   drawHorizontalBgLine(color2, 120, 176, 87, 4);
 
   // The last line is a battery indicator too
-  var bat = E.getBattery() / 100.0;
-  var batStart = 19;
-  var batWidth = 172 - batStart;
-  var batX2 = parseInt(batWidth * bat + batStart);
+  let bat = E.getBattery() / 100.0;
+  let batStart = 19;
+  let batWidth = 172 - batStart;
+  let batX2 = parseInt(batWidth * bat + batStart);
   drawHorizontalBgLine(color2, batStart, batX2, 171, 5);
   drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
-  for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
+  for(let i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
     drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
   }
 
@@ -379,8 +383,8 @@ function drawPosition0(){
   // Write time
   g.setFontAlign(-1, -1, 0);
   g.setColor(cWhite);
-  var currentDate = new Date();
-  var timeStr = locale.time(currentDate,1);
+  let currentDate = new Date();
+  let timeStr = locale.time(currentDate,1);
   g.setFontAntonioLarge();
   if(settings.fullscreen){
     g.drawString(timeStr, 27, 10);
@@ -392,13 +396,13 @@ function drawPosition0(){
   g.setColor(cWhite);
   g.setFontAntonioMedium();
   if(settings.fullscreen){
-    var dayStr = locale.dow(currentDate, true).toUpperCase();
+    let dayStr = locale.dow(currentDate, true).toUpperCase();
     dayStr += " " + currentDate.getDate();
     dayStr += " " + locale.month(currentDate, 1).toUpperCase();
     g.drawString(dayStr, 30, 56);
   } else {
-    var dayStr = locale.dow(currentDate, true).toUpperCase();
-    var date = currentDate.getDate();
+    let dayStr = locale.dow(currentDate, true).toUpperCase();
+    let date = currentDate.getDate();
     g.drawString(dayStr, 128, 35);
     g.drawString(date, 128, 55);
   }
@@ -412,11 +416,11 @@ function drawPosition0(){
 
   // Draw state
   drawState();
-}
+};
 
-function drawPosition1(){
+let drawPosition1 = function(){
   // Draw background image
-  var offset = settings.fullscreen ? 0 : 24;
+  let offset = settings.fullscreen ? 0 : 24;
   g.drawImage(bgRight, 149, offset);
   if(settings.fullscreen){
     drawHorizontalBgLine(color1, 0, 140, offset, 4);
@@ -444,8 +448,8 @@ function drawPosition1(){
 
   // Plot HRM graph
   if(plotMonth){
-    var data = new Uint16Array(32);
-    var cnt = new Uint8Array(32);
+    let data = new Uint16Array(32);
+    let cnt = new Uint8Array(32);
     health.readDailySummaries(new Date(), h=>{
       data[h.day]+=h.bpm;
       if (h.bpm) cnt[h.day]++;
@@ -462,9 +466,9 @@ function drawPosition1(){
     });
 
     // Plot step graph
-    var data = new Uint16Array(32);
+    data = new Uint16Array(32);
     health.readDailySummaries(new Date(), h=>data[h.day]+=h.steps/1000);
-    var gridY = parseInt(Math.max.apply(Math, data)/2);
+    let gridY = parseInt(Math.max.apply(Math, data)/2);
     gridY = gridY <= 0 ? 1 : gridY;
     require("graph").drawBar(g, data, {
       axes : true,
@@ -490,8 +494,8 @@ function drawPosition1(){
 
   // Plot day
   } else {
-    var data = new Uint16Array(24);
-    var cnt = new Uint8Array(24);
+    let data = new Uint16Array(24);
+    let cnt = new Uint8Array(24);
     health.readDay(new Date(), h=>{
       data[h.hr]+=h.bpm;
       if (h.bpm) cnt[h.hr]++;
@@ -508,9 +512,9 @@ function drawPosition1(){
     });
 
     // Plot step graph
-    var data = new Uint16Array(24);
+    data = new Uint16Array(24);
     health.readDay(new Date(), h=>data[h.hr]+=h.steps);
-    var gridY = parseInt(Math.max.apply(Math, data)/1000)*1000;
+    let gridY = parseInt(Math.max.apply(Math, data)/1000)*1000;
     gridY = gridY <= 0 ? 1000 : gridY;
     require("graph").drawBar(g, data, {
       axes : true,
@@ -534,9 +538,9 @@ function drawPosition1(){
       g.drawString("DAY", 154, 115);
     }
   }
-}
+};
 
-function draw(){
+let draw = function(){
     // Queue draw first to ensure that its called in one minute again.
     queueDraw();
 
@@ -557,14 +561,14 @@ function draw(){
     } else {
       Bangle.drawWidgets();
     }
-}
+};
 
 
 /*
  * Step counter via widget
  */
-function getSteps() {
-  var steps = 0;
+let getSteps = function() {
+  let steps = 0;
   try{
       if (WIDGETS.wpedom !== undefined) {
           steps = WIDGETS.wpedom.getSteps();
@@ -578,15 +582,15 @@ function getSteps() {
   }
 
   return steps;
-}
+};
 
 
-function getWeather(){
-  var weatherJson;
+let getWeather = function(){
+  let weatherJson;
 
   try {
     weatherJson = storage.readJSON('weather.json');
-    var weather = weatherJson.weather;
+    let weather = weatherJson.weather;
 
     // Temperature
     weather.temp = locale.temp(weather.temp-273.15);
@@ -596,7 +600,7 @@ function getWeather(){
 
     // Wind
     const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-    var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
+    let speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
     weather.wind = Math.round(wind[1] * speedFactor);
 
     return weather
@@ -613,15 +617,15 @@ function getWeather(){
     wdir: " ? ",
     wrose: " ? "
   };
-}
+};
 
 /*
  * Handle alarm
  */
-function isAlarmEnabled(){
+let isAlarmEnabled = function(){
   try{
-    var alarm = require('sched');
-    var alarmObj = alarm.getAlarm(TIMER_IDX);
+    let alarm = require('sched');
+    let alarmObj = alarm.getAlarm(TIMER_IDX);
     if(alarmObj===undefined || !alarmObj.on){
       return false;
     }
@@ -630,35 +634,35 @@ function isAlarmEnabled(){
 
   } catch(ex){ }
   return false;
-}
+};
 
-function getAlarmMinutes(){
+let getAlarmMinutes = function(){
   if(!isAlarmEnabled()){
       return -1;
   }
 
-  var alarm = require('sched');
-  var alarmObj =  alarm.getAlarm(TIMER_IDX);
+  let alarm = require('sched');
+  let alarmObj =  alarm.getAlarm(TIMER_IDX);
   return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
-}
+};
 
-function increaseAlarm(){
+let increaseAlarm = function(){
   try{
-      var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-      var alarm = require('sched')
+      let minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
+      let alarm = require('sched')
       alarm.setAlarm(TIMER_IDX, {
         timer : (minutes+5)*60*1000,
       });
       alarm.reload();
   } catch(ex){ }
-}
+};
 
-function decreaseAlarm(){
+let decreaseAlarm = function(){
   try{
-      var minutes = getAlarmMinutes();
+      let minutes = getAlarmMinutes();
       minutes -= 5;
 
-      var alarm = require('sched')
+      let alarm = require('sched')
       alarm.setAlarm(TIMER_IDX, undefined);
 
       if(minutes > 0){
@@ -669,13 +673,13 @@ function decreaseAlarm(){
 
       alarm.reload();
   } catch(ex){ }
-}
+};
 
 
 /*
  * Listeners
  */
-Bangle.on('lcdPower',on=>{
+let onLcdPower = on=>{
   if (on) {
     // Whenever we connect to Gadgetbridge, reading data from
     // health failed. Therefore, we update only partially...
@@ -685,32 +689,35 @@ Bangle.on('lcdPower',on=>{
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
   }
-});
+};
+Bangle.on('lcdPower', onLcdPower);
 
-Bangle.on('lock', function(isLocked) {
+let onLock = function(isLocked) {
   drawInfo();
-});
+};
+Bangle.on('lock', onLock);
 
-Bangle.on('charging',function(charging) {
+
+let onCharge = function(charging) {
   drawState();
-});
+};
+Bangle.on('charging', onCharge);
 
-function feedback(){
+let feedback = function(){
   Bangle.buzz(40, 0.3);
-}
+};
 
-// Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
-Bangle.on('touch', function(btn, e){
-  var left = parseInt(g.getWidth() * 0.2);
-  var right = g.getWidth() - left;
-  var upper = parseInt(g.getHeight() * 0.2);
-  var lower = g.getHeight() - upper;
+let onTouch = function(btn, e){
+  let left = parseInt(g.getWidth() * 0.2);
+  let right = g.getWidth() - left;
+  let upper = parseInt(g.getHeight() * 0.2);
+  let lower = g.getHeight() - upper;
 
-  var is_left = e.x < left;
-  var is_right = e.x > right;
-  var is_upper = e.y < upper;
-  var is_lower = e.y > lower;
-  
+  let is_left = e.x < left;
+  let is_right = e.x > right;
+  let is_upper = e.y < upper;
+  let is_lower = e.y > lower;
+
   if(!settings.disableData){
     if(is_left && lcarsViewPos == 1){
       feedback();
@@ -744,16 +751,30 @@ Bangle.on('touch', function(btn, e){
     draw();
     return;
   }
-});
+};
+// Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
+Bangle.on('touch', onTouch);
 
-
+let themeBefore = g.theme;
 /*
  * Lets start widgets, listen for btn etc.
  */
 // Show launcher when middle button pressed
-Bangle.setUI("clock");
+Bangle.setUI({mode:"clock",remove:function() {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    delete Graphics.prototype.setFontAntonioMedium;
+    delete Graphics.prototype.setFontAntonioLarge;
+    Bangle.removeListener("lcdPower",onLcdPower);
+    Bangle.removeListener("lock",onLock);
+    Bangle.removeListener("charging",onCharge);
+    Bangle.removeListener("touch",onTouch);
+    require('sched').setAlarm(TIMER_IDX, undefined);
+    g.setTheme(themeBefore);
+    widget_utils.cleanup();
+}});
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
+}

@@ -1,19 +1,25 @@
 # kanawatch
 
-A simple watchface design with hiragana and katakana
-cards for learning.
+A simple watchface design perfect for learning hiragana and katakana.
 
-## Changelog
+* Interact with the interface using swipes
+* Swipe up/down to switch between hiragana (H) and katakana (K)
+* Swipe right/left to display the next or previous letter
+* Tap to change accent color (always 24h, not configurable)
+* Non-intrustive transition animations
+* Low battery consumption
 
-0.01: First release
-0.02: Improve battery life, sprite resolution, fix launcher issue and unaligned text bug
-0.03: Reduce code size, refresh once a minute and faster refresh
-0.04: Show a random kana every minute to improve learning
+## TODO
+
+* Only render what needs to be repainted
+* Dont redraw the widgets if not necessary
+* Minigame to guess kata/hira phonem
 
 ## Author
 
-Written by pancake in 2022, powered by insomnia
+Written by pancake in 2022, maintained during 2023 and powered by insomnia
 
 ## Screenshots
 
-![hiragana and katakana](screenshot.png)
+![katakana](screenshot.png)
+![hiragana ](screenshot2.png)

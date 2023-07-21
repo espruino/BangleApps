@@ -18,5 +18,6 @@
     {"name":"bthrm.settings.js","url":"settings.js"},
     {"name":"bthrm","url":"lib.js"},
     {"name":"bthrm.default.json","url":"default.json"}
-  ]
+  ],
+  "data": [{"name":"bthrm.json"}]
 }

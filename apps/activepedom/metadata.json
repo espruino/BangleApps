@@ -14,5 +14,6 @@
     {"name":"activepedom.settings.js","url":"settings.js"},
     {"name":"activepedom.img","url":"app-icon.js","evaluate":true},
     {"name":"activepedom.app.js","url":"app.js"}
-  ]
+  ],
+  "data":[{"name":"activepedom.settings.json"}]
 }

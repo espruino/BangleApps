@@ -56,9 +56,10 @@ The exact effects depend on the app.  In general the watch will not wake up by i
 
 
 * **Debug Info** should debug info be shown on the watch's screen or not?
-  * `Hide` (default) do not show debug information
-  * `Show` Show on the Bangle's screen (when not connected to Bluetooth or `Programmable:off`)
+  * `Off` (default) do not show debug information
+  * `Display` Show on the Bangle's screen (when not connected to Bluetooth or `Programmable:off`)
   * `Log` Show on the Bangle's screen **and** write to a file called `log.txt` on Storage (when not connected to Bluetooth or `Programmable:off`). Warning - this file is appended to so may grow to be large if this is left enabled.
+  * `Both` Log and display on Bangle's screen
 * **Compact Storage** Removes deleted/old files from Storage - this will speed up your Bangle.js
 * **Rewrite Settings** Should not normally be required, but if `.boot0` has been deleted/corrupted (and so no settings are being loaded) this will fix it.
 * **Flatten Battery** Turns on all devices and draws as much power as possible, attempting to flatten the Bangle.js battery. This can still take 5+ hours.  

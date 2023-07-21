@@ -12,6 +12,6 @@ Uses the multitap keypad logic originally from here: http://www.espruino.com/Mor
 ![](screenshot_2.png)
 ![](screenshot_3.png)
 
-Written by: [Sir Indy](https://github.com/sir-indy) and [Thyttan](https://github.com/thyttan)
+Written by: [Sir Indy](https://github.com/sir-indy), [Thyttan](https://github.com/thyttan) and [bobrippling](https://github.com/bobrippling).
 
 For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)

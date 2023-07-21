@@ -15,7 +15,7 @@
     <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span></p>
   </ul>
     <div id="fw-ok" style="display:none">
-      <p>If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
+      <p  id="fw-old-bootloader-msg">If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
         will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to DFU 2v12</a> and then click the 'Upload' button that appears.</p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
@@ -98,10 +98,16 @@ function onInit(device) {
     if (crc==4056371285) version = "2v13";
     if (crc==1038322422) version = "2v14";
     if (crc==2560806221) version = "2v15";
+    if (crc==2886730689) version = "2v16";
+    if (crc==156320890) version = "2v17";
+    if (crc==4012421318) version = "2v18"; 
     if (!ok) {
       version += 	`(&#9888; update required)`;
     }
     document.getElementById("boot-version").innerHTML = version;
+    var versionNumber = parseFloat(version.replace(".","").replace("v","."));
+    if (versionNumber>=2.15)
+      document.getElementById("fw-old-bootloader-msg").style.display = "none";
   });
 }
 
@@ -154,7 +160,8 @@ function checkForFileOnServer() {
       for (var i=0;i<fwlinks.length;i++)
         fwlinks[i].addEventListener("click", e => {
           e.preventDefault();
-          downloadURL(e.target.href).then(info=>{
+          var href = e.target.href;
+          if (href) downloadURL(href).then(info=>{
             document.getElementById("upload").style = ""; // show upload
           });
         });
@@ -317,7 +324,7 @@ function createJS_app(binary, startAddress, endAddress) {
   hexJS += `\x10if (E.CRC32(E.memoryArea(0xF7000,0x7000))==1207580954) { print("DFU 2v10.236 needs update"); load();}\n`;
   hexJS += '\x10var s = require("Storage");\n';
   hexJS += '\x10s.erase(".firmware");\n';
-  var CHUNKSIZE = 2048;
+  var CHUNKSIZE = 1024;
   for (var i=0;i<binary.length;i+=CHUNKSIZE) {
     var l = binary.length-i;
     if (l>CHUNKSIZE) l=CHUNKSIZE;

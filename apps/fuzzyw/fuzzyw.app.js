@@ -33,13 +33,17 @@
   ]
 };
 
-let text_scale = 3.5;
+let text_scale = 4;
 let timeout = 2.5*60;
 let drawTimeout;
+let animInterval;
+let time_string = "";
+let time_string_old = "";
+let time_string_old_wrapped = "";
 
 let loadSettings = function() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'showWidgets': false};
-}
+};
 
 let queueDraw = function(seconds) {
   let millisecs = seconds * 1000;
@@ -48,10 +52,7 @@ let queueDraw = function(seconds) {
     drawTimeout = undefined;
     draw();
   }, millisecs - (Date.now() % millisecs));
-}
-
-const h = g.getHeight();
-const w = g.getWidth();
+};
 
 let getTimeString = function(date) {
   let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
@@ -63,18 +64,47 @@ let getTimeString = function(date) {
     f_string = f_string.replace('$2', fuzzy_string.hours[(hour + 1) % 12]);
   }
     return f_string;
-}
+};
 
 let draw = function() {
-  let time_string = getTimeString(new Date()).replace('*', '');
-  // print(time_string);
-  g.setFont('Vector', (h-24*2)/text_scale);
-  g.setFontAlign(0, 0);
-  g.clearRect(0, 24, w, h-24);
-  g.setColor(g.theme.fg);
-  g.drawString(g.wrapString(time_string, w).join("\n"), w/2, h/2);
+  time_string = getTimeString(new Date()).replace('*', '');
+  //print(time_string);
+  if (time_string != time_string_old) {
+    g.setFont('Vector', R.h/text_scale).setFontAlign(0, 0);
+    animate(3);
+  }
   queueDraw(timeout);
-}
+};
+
+let animate = function(step) {
+  if (animInterval) clearInterval(animInterval);
+  let time_string_new_wrapped = g.wrapString(time_string, R.w).join("\n");
+  slideX = 0;
+  animInterval = setInterval(function() {
+    let time_start = getTime()
+    //blank old time
+    g.setColor(g.theme.bg);
+    g.drawString(time_string_old_wrapped, R.x + R.w/2 + slideX, R.y + R.h/2);
+    g.drawString(time_string_new_wrapped, R.x - R.w/2 + slideX, R.y + R.h/2);
+    g.setColor(g.theme.fg);
+    slideX += step;
+    let stop = false;
+    if (slideX>=R.w) {
+      slideX=R.w;
+      stop = true;
+    }
+    //draw shifted new time
+    g.drawString(time_string_old_wrapped, R.x + R.w/2 + slideX, R.y + R.h/2);
+    g.drawString(time_string_new_wrapped, R.x - R.w/2 + slideX, R.y + R.h/2);
+    if (stop) {
+      time_string_old = time_string;
+      clearInterval(animInterval);
+      animInterval=undefined;
+      time_string_old_wrapped = time_string_new_wrapped;
+    }
+    print(Math.round((getTime() - time_start)*1000))
+  }, 30);
+};
 
 g.clear();
 loadSettings();
@@ -95,6 +125,8 @@ Bangle.setUI({
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    if (animInterval) clearInterval(animInterval);
+    animInterval = undefined;
     require('widget_utils').show(); // re-show widgets
   }
 });
@@ -106,5 +138,6 @@ if (settings.showWidgets) {
   require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 }
 
+R = Bangle.appRect;
 draw();
 }

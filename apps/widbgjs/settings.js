@@ -1,5 +1,5 @@
 (function (back) {
-    const SAVEFILE = "wpbgjs.settings.json";
+    const SAVEFILE = "widbgjs.settings.json";
 
     // initialize with default settings...
     let s = {
@@ -10,14 +10,14 @@
     // ...and overwrite them with any saved values
     // This way saved values are preserved if a new version adds more settings
     const storage = require('Storage');
-    const d = storage.readJSON(SAVEFILE, 1) || {};
-    const saved = d.settings || {};
+    var d = storage.readJSON(SAVEFILE, 1) || {};
+    const saved = d || {};
     for (const key in saved) {
         s[key] = saved[key];
     }
 
     function save() {
-        d.settings = s;
+        d = s;
         storage.write(SAVEFILE, d);
         WIDGETS['widbgjs'].draw();
     }

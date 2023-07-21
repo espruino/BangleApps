@@ -415,6 +415,7 @@ let tCommand = {};
  * @param {string} command - "play"/"pause"/"next"/"previous"/"volumeup"/"volumedown"
  */
 function sendCommand(command) {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({t: "music", n: command}));
   // for control color
   if (command in tCommand) {

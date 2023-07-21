@@ -38,3 +38,9 @@
 0.35: Add automatic translation of more strings
 0.36: alarm widget moved out of app
 0.37: add message input and dated Events
+0.38: Display date in locale
+      When switching 'repeat' from 'Workdays', 'Weekends' to 'Custom' preset Custom menu with previous selection
+      Display alarm label in delete prompt
+0.39: Dated event repeat option
+0.40: Use substring of message when it's longer than fits the designated menu entry.
+0.41: Fix a menu bug affecting alarms with empty messages.

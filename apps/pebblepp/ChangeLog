@@ -1,0 +1,4 @@
+0.01: First release
+0.02: clock_info now uses app name to maintain settings specifically for this clock face
+      ensure clockinfo text is usppercase (font doesn't render lowercase)
+0.03: Use smaller font if clock_info test doesn't fit in area

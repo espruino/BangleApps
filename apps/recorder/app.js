@@ -33,10 +33,8 @@ function updateSettings() {
 function getTrackNumber(filename) {
   var trackNum = 0;
   var matches = filename.match(/^recorder\.log(.*)\.csv$/);
-  if (matches) {
-    trackNum = parseInt(matches[1]||0);
-  }
-  return trackNum;
+  if (matches) return matches[1];
+  return 0;
 }
 
 function showMainMenu() {
@@ -56,30 +54,19 @@ function showMainMenu() {
     '< Back': ()=>{load();},
     /*LANG*/'RECORD': {
       value: !!settings.recording,
-      format: v=>v?/*LANG*/"On":/*LANG*/"Off",
       onchange: v => {
         setTimeout(function() {
           E.showMenu();
           WIDGETS["recorder"].setRecording(v).then(function() {
-            print(/*LANG*/"Complete");
+            //print("Record start Complete");
             loadSettings();
-            print(settings.recording);
+            //print("Recording: "+settings.recording);
             showMainMenu();
           });
         }, 1);
       }
     },
-    /*LANG*/'File #': {
-      value: getTrackNumber(settings.file),
-      min: 0,
-      max: 99,
-      step: 1,
-      onchange: v => {
-        settings.recording = false; // stop recording if we change anything
-        settings.file = "recorder.log"+v+".csv";
-        updateSettings();
-      }
-    },
+    /*LANG*/'File' : {value:getTrackNumber(settings.file)},
     /*LANG*/'View Tracks': ()=>{viewTracks();},
     /*LANG*/'Time Period': {
       value: settings.period||10,
@@ -111,7 +98,7 @@ function viewTracks() {
   var found = false;
   require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).forEach(filename=>{
     found = true;
-    menu[/*LANG*/"Track "+getTrackNumber(filename)] = ()=>viewTrack(filename,false);
+    menu[/*LANG*/getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });
   if (!found)
     menu[/*LANG*/"No Tracks found"] = function(){};
@@ -186,7 +173,7 @@ function viewTrack(filename, info) {
     '': { 'title': /*LANG*/'Track '+info.fn }
   };
   if (info.time)
-    menu[info.time.toISOString().substr(0,16).replace("T"," ")] = function(){};
+    menu[info.time.toISOString().substr(0,16).replace("T"," ")] = {};
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
   if (info.fields.includes("Latitude"))
@@ -199,13 +186,18 @@ function viewTrack(filename, info) {
       info.qOSTM = true;
       plotTrack(info);
     }
-  if (info.fields.includes("Altitude"))
+  if (info.fields.includes("Altitude") ||
+      info.fields.includes("Barometer Altitude"))
     menu[/*LANG*/'Plot Alt.'] = function() {
       plotGraph(info, "Altitude");
     };
   if (info.fields.includes("Latitude"))
     menu[/*LANG*/'Plot Speed'] = function() {
       plotGraph(info, "Speed");
+    };
+  if (info.fields.includes("Heartrate"))
+    menu[/*LANG*/'Plot HRM'] = function() {
+      plotGraph(info, "Heartrate");
     };
   // TODO: steps, heart rate?
   menu[/*LANG*/'Erase'] = function() {
@@ -232,6 +224,12 @@ function viewTrack(filename, info) {
     // Function to convert lat/lon to XY
     var getMapXY;
     if (info.qOSTM) {
+      // scale map to view full track
+      const max = Bangle.project({lat: info.maxLat, lon: info.maxLong});
+      const min = Bangle.project({lat: info.minLat, lon: info.minLong});
+      const scaleX = (max.x-min.x)/Bangle.appRect.w;
+      const scaleY = (max.y-min.y)/Bangle.appRect.h;
+      osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
       getMapXY = osm.latLonToXY.bind(osm);
     } else {
       getMapXY = function(lat, lon) { "ram"
@@ -332,14 +330,26 @@ function viewTrack(filename, info) {
     var l = f.readLine(f);
     l = f.readLine(f); // skip headers
     var nl = 0, c, i;
+    var factor = 1; // multiplier used for values when graphing
     var timeIdx = info.fields.indexOf("Time");
     if (l!==undefined) {
       c = l.split(",");
       strt = c[timeIdx];
     }
-    if (style=="Altitude") {
+    if (style=="Heartrate") {
+      title = /*LANG*/"Heartrate (bpm)";
+      var hrmIdx = info.fields.indexOf("Heartrate");
+      while(l!==undefined) {
+        ++nl;c=l.split(",");l = f.readLine(f);
+        if (c[hrmIdx]=="") continue;
+        i = Math.round(80*(c[timeIdx] - strt)/dur);
+        infn[i]+=+c[hrmIdx];
+        infc[i]++;
+      }
+    } else if (style=="Altitude") {
       title = /*LANG*/"Altitude (m)";
-      var altIdx = info.fields.indexOf("Altitude");
+      var altIdx = info.fields.indexOf("Barometer Altitude");
+      if (altIdx<0) altIdx = info.fields.indexOf("Altitude");
       while(l!==undefined) {
         ++nl;c=l.split(",");l = f.readLine(f);
         if (c[altIdx]=="") continue;
@@ -351,7 +361,7 @@ function viewTrack(filename, info) {
       // use locate to work out units
       var localeStr = require("locale").speed(1,5); // get what 1kph equates to
       let units = localeStr.replace(/[0-9.]*/,"");
-      var factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
+      factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
       // title
       title = /*LANG*/"Speed"+` (${units})`;
       var latIdx = info.fields.indexOf("Latitude");
@@ -387,6 +397,10 @@ function viewTrack(filename, info) {
     var min=100000,max=-100000;
     for (var i=0;i<infn.length;i++) {
       if (infc[i]>0) infn[i]=factor*infn[i]/infc[i];
+      else { // no data - search back and see if we can find something
+        for (var j=i-1;j>=0;j--)
+          if (infc[j]) { infn[i]=infn[j]; break; }
+      }
       var n = infn[i];
       if (n>max) max=n;
       if (n<min) min=n;

@@ -1,6 +1,6 @@
 # Messages library
 
-This library handles the passing of messages. It can storess a list of messages 
+This library handles the passing of messages. It can stores a list of messages
 and allows them to be retrieved by other apps.
 
 ## Example
@@ -37,18 +37,10 @@ myMessageListener = Bangle.on("message", (type, message)=>{
 });
 ```
 
-Apps can launch the full GUI by calling `require("messages").openGUI()`, if you
-want to write your own GUI, it should include boot code that listens for
-`"messageGUI"` events:
-
-```js
-Bangle.on("messageGUI", message=>{
-  if (message.handled) return; // another app already opened it's GUI
-  message.handled = true; // prevent other apps form launching
-  Bangle.load("my_message_gui.app.js");
-})
-
-```
+Apps can launch the currently installed Message GUI by calling `require("messages").openGUI()`.
+If you want to write your own GUI, it should include a library called `messagegui`
+with a method called `open` that will cause it to be opened, with the
+optionally supplied message. See `apps/messagegui/lib.js` for an example.
 
 
 ## Requests

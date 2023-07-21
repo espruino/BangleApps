@@ -11,7 +11,7 @@
   // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
   // see e.g. widmsggrid
   WIDGETS["messages"] = {
-    area: "tl", width: 0, srcs: [], draw: function(recall) {
+    area: "tl", width: 0, srcs: [], draw: function(_w, recall) {
       // If we had a setTimeout queued from the last time we were called, remove it
       if (WIDGETS["messages"].i) {
         clearTimeout(WIDGETS["messages"].i);
@@ -42,7 +42,7 @@
             this.x+12+i*24, this.y+12, {rotate: 0/*force centering*/});
         }
       }
-      WIDGETS["messages"].i = setTimeout(() => WIDGETS["messages"].draw(true), 1000);
+      WIDGETS["messages"].i = setTimeout(() => WIDGETS["messages"].draw(WIDGETS["messages"], true), 1000);
       if (process.env.HWVERSION>1) Bangle.on("touch", this.touch);
     }, onMsg: function(type, msg) {
       if (this.hidden) return;

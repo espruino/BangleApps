@@ -9,3 +9,4 @@
 0.09: Added button control toggle and other live controls to new settings screen.
 0.10: Tell clock widgets to hide.
 0.11: Added new styling and watch faces
+0.12: Convert Yes/No On/Off in settings to checkboxes

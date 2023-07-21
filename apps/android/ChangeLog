@@ -22,3 +22,9 @@
 0.21: Fix broken 'Messages' button in menu
 0.22: Handle connection events for GPS forwarding from phone
 0.23: Handle 'act' Gadgetbridge messages for realtime activity monitoring
+0.24: Handle new 'nav' event for navigation
+0.25: Added option to 'ignore' an app from the message
+0.26: Change handling of GPS status to depend on GPS events instead of connection events
+0.27: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.28: Navigation messages no longer launch the Maps view unless they're new
+0.29: Support for http request xpath return format

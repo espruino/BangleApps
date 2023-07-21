@@ -4,7 +4,7 @@ Launcher
 Based on the default launcher but puts all applications in a submenu by their tag.
 With many applications installed this can result in a faster applications selection than the linear access of the default launcher.
 
-Currently the following tags are supported: clock, game, tool, bluetooth, outdoors, misc.
+Currently the following tags are supported: clock, game, tool, bluetooth, outdoors, health and misc.
 
 Settings
 --------

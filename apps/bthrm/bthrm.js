@@ -96,7 +96,7 @@ function draw(){
     if (!isNaN(bt.battery)) layout.btBattery.label = bt.battery + "%";
     if (bt.rr) layout.btRR.label = bt.rr.join(",");
     if (!isNaN(bt.location)) layout.btLocation.label = BODY_LOCS[bt.location];
-    if (bt.contact !== undefined) layout.btContact.label = bt.contact ? "Yes":"No";
+    if (bt.contact !== undefined) layout.btContact.label = bt.contact ? /*LANG*/"Yes":/*LANG*/"No";
     if (!isNaN(bt.energy)) layout.btEnergy.label = bt.energy.toFixed(0) + "kJ";
   } else {
     layout.bt.label = "--";

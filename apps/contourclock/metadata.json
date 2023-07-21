@@ -15,5 +15,6 @@
     {"name":"contourclock.settings.js","url":"contourclock.settings.js"},
     {"name":"contourclock","url":"lib.js"},
     {"name":"contourclock.img","url":"app-icon.js","evaluate":true}
-    ]
+  ],
+  "data": [{"name":"contourclock.json"}]
 }

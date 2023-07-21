@@ -31,7 +31,11 @@
       x+=16;
     }
     g.setColor(g.theme.fg).fillRect(x,y+2,x+s-4,y+21).clearRect(x+2,y+4,x+s-6,y+19).fillRect(x+s-3,y+10,x+s,y+14);
-    g.setColor("#0f0").fillRect(x+4,y+6,x+4+E.getBattery()*(s-12)/100,y+17);
+    var battery = E.getBattery();
+    if(battery < 20) {g.setColor("#f00");}
+    else if (battery < 40) {g.setColor(g.theme.dark ? "#ff0" : "#f80");}
+    else {g.setColor("#0f0");}
+    g.fillRect(x+4,y+6,x+4+battery*(s-12)/100,y+17);
   }};
   setWidth();
 })()

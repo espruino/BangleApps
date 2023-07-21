@@ -34,7 +34,7 @@ if (DEVICEID=="BANGLEJS") {
 }
 console.log("Device = ",DEVICEID);
 
-var apploader = require("./lib/apploader.js");
+var apploader = require("../core/lib/apploader.js");
 apploader.init({
   DEVICEID : DEVICEID
 });

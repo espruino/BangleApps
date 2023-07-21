@@ -1,0 +1,38 @@
+0.01: New App.
+0.02: Use build in function for steps and other improvements.
+0.03: Adapt colors based on the theme of the user.
+0.04: Steps can be hidden now such that the time is even larger.
+0.05: Included icons for information.
+0.06: Design and usability improvements.
+0.07: Improved positioning.
+0.08: Select the color of widgets correctly. Additional settings to hide colon.
+0.09: Larger font size if colon is hidden to improve readability further.
+0.10: HomeAssistant integration if HomeAssistant is installed.
+0.11: Performance improvements.
+0.12: Implements a 2D menu.
+0.13: Clicks < 24px are for widgets, if fullscreen mode is disabled.
+0.14: Adds humidity to weather data.
+0.15: Added option for a dynamic mode to show widgets only if unlocked.
+0.16: You can now show your agenda if your calendar is synced with Gadgetbridge.
+0.17: Fix - Step count was no more shown in the menu.
+0.18: Set timer for an agenda entry by simply clicking in the middle of the screen. Only one timer can be set.
+0.19: Fix - Compatibility with "Digital clock widget"
+0.20: Better handling of async data such as getPressure.
+0.21: On the default menu the week of year can be shown.
+0.22: Use the new clkinfo module for the menu.
+0.23: Feedback of apps after run is now optional and decided by the corresponding clkinfo.
+0.24: Update clock_info to avoid a redraw
+0.25: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on fw2v16.
+      ClockInfo Fix: Use .get instead of .show as .show is not implemented for weather etc.
+0.26: Use clkinfo.addInteractive instead of a custom implementation
+0.27: Clean out some leftovers in the remove function after switching to
+clkinfo.addInteractive that would cause ReferenceError.
+0.28: Option to show (1) time only and (2) week of year.
+0.29: use setItem of clockInfoMenu to change the active item
+0.30: Use widget_utils
+0.31: Use clock_info module as an app
+0.32: Diverge from BW Clock. Change out the custom font for a standard bitmap one to speed up loading times.
+      Remove invertion of theme as this doesn'twork very well with fastloading.
+      Do an quick inital fillRect on theclock info area.
+0.33: Make the border of the clock_info box extend all the way to the right of the screen.
+0.34: Fix issue rendering ClockInfos with for fg+bg color set to the same (#2749)

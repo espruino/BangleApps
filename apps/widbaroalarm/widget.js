@@ -211,6 +211,28 @@ function calculcate3hAveragePressure() {
   }
 }
 
+function barometerPressureHandler(e) {
+  const MEDIANLENGTH = 20;
+  while (currentPressures.length > MEDIANLENGTH)
+    currentPressures.pop();
+
+  const pressure = e.pressure;
+  if (isValidPressureValue(pressure)) {
+    currentPressures.unshift(pressure);
+    median = currentPressures.slice().sort();
+
+    if (median.length > 10) {
+      var mid = median.length >> 1;
+      medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
+      if (medianPressure > 0) {
+        turnOff();
+        draw();
+        handlePressureValue(medianPressure);
+      }
+    }
+  }
+}
+
 /*
  turn on barometer power
  take multiple measurements
@@ -219,37 +241,15 @@ function calculcate3hAveragePressure() {
  turn off barometer power
 */
 function getPressureValue() {
-  if (stop)
-    return;
-  const MEDIANLENGTH = 20;
+  if (stop) return;
   Bangle.setBarometerPower(true, "widbaroalarm");
-  Bangle.on('pressure', function(e) {
-    while (currentPressures.length > MEDIANLENGTH)
-      currentPressures.pop();
-
-    const pressure = e.pressure;
-    if (isValidPressureValue(pressure)) {
-      currentPressures.unshift(pressure);
-      median = currentPressures.slice().sort();
-
-      if (median.length > 10) {
-        var mid = median.length >> 1;
-        medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
-        if (medianPressure > 0) {
-          turnOff();
-          draw();
-          handlePressureValue(medianPressure);
-        }
-      }
-    }
-  });
-
-  setTimeout(function() { turnOff(); }, 30000);
+  Bangle.on('pressure', barometerPressureHandler);
+  setTimeout(turnOff, 30000);
 }
 
 function turnOff() {
-  if (Bangle.isBarometerOn())
-    Bangle.setBarometerPower(false, "widbaroalarm");
+  Bangle.removeListener('pressure', barometerPressureHandler);
+  Bangle.setBarometerPower(false, "widbaroalarm");
 }
 
 function draw() {

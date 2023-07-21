@@ -23,10 +23,12 @@ if (!state) {
   state = {};
   initState();
 }
+state.started = false;
 let bgChanged = false;
 
 function saveState(){
   state.saved = Date.now();
+  if (state.route) delete state.route.indexToOffset;
   STORAGE.writeJSON("gpstrek.state.json", state);
 }
 
@@ -144,6 +146,9 @@ function start(bg){
   Bangle.setHRMPower(1, "gpstrek");
   Bangle.setCompassPower(1, "gpstrek");
   Bangle.setBarometerPower(1, "gpstrek");
+
+  state.started = true;
+
   if (bg){
     if (!state.active) bgChanged = true;
     state.active = true;
@@ -153,6 +158,7 @@ function start(bg){
 }
 
 function stop(bg){
+  state.started = true;
   if (bg){
     if (state.active) bgChanged = true;
     state.active = false;
@@ -177,12 +183,12 @@ if (state.active){
   start(false);
 }
 
-WIDGETS["gpstrek"]={
+WIDGETS.gpstrek={
   area:"tl",
   width:state.active?24:0,
   resetState: initState,
   getState: function() {
-    if (state.saved && Date.now() - state.saved > 60000 || !state){
+    if (!state.started && state.saved && Date.now() - state.saved > 60000 || !state){
       initState();
     }
     return state;

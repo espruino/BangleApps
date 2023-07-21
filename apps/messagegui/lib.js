@@ -29,7 +29,7 @@ exports.listener = function(type, msg) {
   }
 
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
-  let loadMessages = (Bangle.CLOCK || event.important); // should we load the messages app?
+  let loadMessages = (Bangle.CLOCK || msg.important); // should we load the messages app?
   if (type==="music") {
     if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;

@@ -3,9 +3,11 @@ Bangle.drawWidgets();
 
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
-const WORKDAYS = 62
+const WORKDAYS = 62;
 const WEEKEND = firstDayOfWeek ? 192 : 65;
 const EVERY_DAY = firstDayOfWeek ? 254 : 127;
+const INTERVALS = ["day", "week", "month", "year"];
+const INTERVAL_LABELS = [/*LANG*/"Day", /*LANG*/"Week", /*LANG*/"Month", /*LANG*/"Year"];
 
 const iconAlarmOn = "\0" + atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/n+B/n+B/h+B/4+A/+8A//8Af/4AP/wAH/gAB+AAAAAAAAAA==");
 const iconAlarmOff = "\0" + (g.theme.dark
@@ -40,6 +42,30 @@ function handleFirstDayOfWeek(dow) {
 // Check the first day of week and update the dow field accordingly (alarms only!)
 alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
+function getLabel(e) {
+  const dateStr = e.date && require("locale").date(new Date(e.date), 1);
+  return (e.timer
+      ? require("time_utils").formatDuration(e.timer)
+      : (dateStr ? `${dateStr}${e.rp?"*":""} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeRepeat(e)}` : ""))
+      ) + (e.msg ? ` ${e.msg}` : "");
+}
+
+function trimLabel(label, maxLength) {
+  return (label.length > maxLength
+      ? label.substring(0,maxLength-3) + "..."
+      : label.substring(0,maxLength));
+}
+
+function formatAlarmMessage(msg) {
+  if (msg == null) {
+    return msg;
+  } else if (msg.length > 7) {
+    return msg.substring(0,6)+"...";
+  } else {
+    return msg.substring(0,7);
+  }
+}
+
 function showMainMenu() {
   const menu = {
     "": { "title": /*LANG*/"Alarms & Timers" },
@@ -48,11 +74,7 @@ function showMainMenu() {
   };
 
   alarms.forEach((e, index) => {
-    var label = (e.timer
-      ? require("time_utils").formatDuration(e.timer)
-      : (e.date ? `${e.date.substring(5,10)} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeDOW(e)}` : ""))
-      ) + (e.msg ? " " + e.msg : "");
-    menu[label] = {
+    menu[trimLabel(getLabel(e),40)] = {
       value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
       onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
     };
@@ -133,6 +155,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     },
     /*LANG*/"Message": {
       value: alarm.msg,
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:alarm.msg}).then(result => {
@@ -148,8 +171,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
       onchange: v => alarm.on = v
     },
     /*LANG*/"Repeat": {
-      value: decodeDOW(alarm),
-      onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, alarm.dow, (repeat, dow) => {
+      value: decodeRepeat(alarm),
+      onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, date || alarm.dow, (repeat, dow) => {
         alarm.rp = repeat;
         alarm.dow = dow;
         prepareAlarmForSave(alarm, alarmIndex, time, date, true);
@@ -174,9 +197,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   };
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
-  if (alarm.date || withDate) {
-    delete menu[/*LANG*/"Repeat"];
-  } else {
+  if (!alarm.date) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
@@ -184,7 +205,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
 
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
+      E.showPrompt(getLabel(alarm) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Alarm" }).then((confirm) => {
         if (confirm) {
           alarms.splice(alarmIndex, 1);
           saveAndReload();
@@ -225,49 +246,77 @@ function saveAndReload() {
   alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 }
 
-function decodeDOW(alarm) {
+function decodeRepeat(alarm) {
   return alarm.rp
-    ? require("date_utils")
-      .dows(firstDayOfWeek, 2)
-      .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
-      .join("")
-      .toLowerCase()
-    : /*LANG*/"Once"
+    ? (alarm.date
+       ? `${alarm.rp.num}*${INTERVAL_LABELS[INTERVALS.indexOf(alarm.rp.interval)]}`
+       : require("date_utils")
+        .dows(firstDayOfWeek, 2)
+        .map((day, index) => alarm.dow & (1 << (index + firstDayOfWeek)) ? day : "_")
+        .join("")
+        .toLowerCase())
+    : /*LANG*/"Once";
 }
 
-function showEditRepeatMenu(repeat, dow, dowChangeCallback) {
+function showEditRepeatMenu(repeat, day, dowChangeCallback) {
   var originalRepeat = repeat;
-  var originalDow = dow;
-  var isCustom = repeat && dow != WORKDAYS && dow != WEEKEND && dow != EVERY_DAY;
+  var dow;
 
   const menu = {
     "": { "title": /*LANG*/"Repeat Alarm" },
     "< Back": () => dowChangeCallback(repeat, dow),
-    /*LANG*/"Once": {
+    /*LANG*/"Only Once": () => dowChangeCallback(false, EVERY_DAY)
       // The alarm will fire once. Internally it will be saved
       // as "fire every days" BUT the repeat flag is false so
       // we avoid messing up with the scheduler.
-      value: !repeat,
-      onchange: () => dowChangeCallback(false, EVERY_DAY)
-    },
-    /*LANG*/"Workdays": {
-      value: repeat && dow == WORKDAYS,
-      onchange: () => dowChangeCallback(true, WORKDAYS)
-    },
-    /*LANG*/"Weekends": {
-      value: repeat && dow == WEEKEND,
-      onchange: () => dowChangeCallback(true, WEEKEND)
-    },
-    /*LANG*/"Every Day": {
-      value: repeat && dow == EVERY_DAY,
-      onchange: () => dowChangeCallback(true, EVERY_DAY)
-    },
-    /*LANG*/"Custom": {
-      value: isCustom ? decodeDOW({ rp: true, dow: dow }) : false,
-      onchange: () => setTimeout(showCustomDaysMenu, 10, isCustom ? dow : EVERY_DAY, dowChangeCallback, originalRepeat, originalDow)
-    }
   };
 
+  let restOfMenu;
+  if (typeof day === "number") {
+    dow = day;
+    var originalDow = dow;
+    var isCustom = repeat && dow != WORKDAYS && dow != WEEKEND && dow != EVERY_DAY;
+
+    restOfMenu = {
+      /*LANG*/"Workdays": {
+        value: repeat && dow == WORKDAYS,
+        onchange: () => dowChangeCallback(true, WORKDAYS)
+      },
+      /*LANG*/"Weekends": {
+        value: repeat && dow == WEEKEND,
+        onchange: () => dowChangeCallback(true, WEEKEND)
+      },
+      /*LANG*/"Every Day": {
+        value: repeat && dow == EVERY_DAY,
+        onchange: () => dowChangeCallback(true, EVERY_DAY)
+      },
+      /*LANG*/"Custom": {
+        value: isCustom ? decodeRepeat({ rp: true, dow: dow }) : false,
+        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
+      }
+    };
+  } else {
+    // var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
+    dow = EVERY_DAY;
+    repeat = repeat || {interval: "month", num: 1};
+
+    restOfMenu = {
+      /*LANG*/"Every": {
+        value: repeat.num,
+        min: 1,
+        onchange: v => repeat.num = v
+      },
+      /*LANG*/"Interval": {
+        value: INTERVALS.indexOf(repeat.interval),
+        format: v => INTERVAL_LABELS[v],
+        min: 0,
+        max: INTERVALS.length - 1,
+        onchange: v => repeat.interval = INTERVALS[v]
+      }
+    };
+  }
+
+  Object.assign(menu, restOfMenu);
   E.showMenu(menu);
 }
 
@@ -278,7 +327,7 @@ function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow)
       // If the user unchecks all the days then we assume repeat = once
       // and we force the dow to every day.
       var repeat = dow > 0;
-      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY)
+      dowChangeCallback(repeat, repeat ? dow : EVERY_DAY);
     }
   };
 
@@ -289,7 +338,7 @@ function showCustomDaysMenu(dow, dowChangeCallback, originalRepeat, originalDow)
     };
   });
 
-  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback)
+  menu[/*LANG*/"Cancel"] = () => setTimeout(showEditRepeatMenu, 10, originalRepeat, originalDow, dowChangeCallback);
 
   E.showMenu(menu);
 }
@@ -338,6 +387,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     },
     /*LANG*/"Message": {
       value: timer.msg,
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:timer.msg}).then(result => {
@@ -372,14 +422,14 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
-      E.showPrompt(/*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
+      E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
         if (confirm) {
           alarms.splice(timerIndex, 1);
           saveAndReload();
           showMainMenu();
         } else {
           timer.timer = require("time_utils").encodeTime(time);
-          setTimeout(showEditTimerMenu, 10, timer, timerIndex)
+          setTimeout(showEditTimerMenu, 10, timer, timerIndex);
         }
       });
     };
@@ -426,9 +476,9 @@ function enableAll(on) {
           alarm.on = on;
           if (on) {
             if (alarm.timer) {
-              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer))
+              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer));
             } else {
-              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t))
+              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t));
             }
           }
         });

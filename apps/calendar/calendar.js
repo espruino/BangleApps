@@ -16,6 +16,7 @@ const white = "#ffffff";
 const red = "#d41706";
 const blue = "#0000ff";
 const yellow = "#ffff00";
+const cyan = "#00ffff";
 let bgColor = color4;
 let bgColorMonth = color1;
 let bgColorDow = color2;
@@ -23,12 +24,31 @@ let bgColorWeekend = color3;
 let fgOtherMonth = gray1;
 let fgSameMonth = white;
 let bgEvent = blue;
+let bgOtherEvent = "#ff8800";
 const eventsPerDay=6; // how much different events per day we can display
+const date = new Date();
 
 const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
-const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date); // all alarms that run on a specific date
+ // all alarms that run on a specific date
+const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
+  const date = new Date(a.date);
+  const time = timeutils.decodeTime(a.t);
+  date.setHours(time.h);
+  date.setMinutes(time.m);
+  date.setSeconds(time.s);
+  return {date: date, msg: a.msg, type: "e"};
+});
+// add holidays & other events
+(require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
+  const date = new Date(d.date);
+  const o = {date: date, msg: d.name, type: d.type};
+  if (d.repeat) {
+    o.repeat = d.repeat;
+  }
+  events.push(o);
+});
 
 if (settings.ndColors === undefined) {
   settings.ndColors = !g.theme.dark;
@@ -42,68 +62,16 @@ if (settings.ndColors === true) {
   fgOtherMonth = blue;
   fgSameMonth = black;
   bgEvent = color2;
+  bgOtherEvent = cyan;
 }
 
 function getDowLbls(locale) {
-  let dowLbls;
-  //TODO: Find some clever way to generate this programmatically from locale lib
-  switch (locale) {
-    case "de_AT":
-    case "de_CH":
-    case "de_DE":
-      if (startOnSun) {
-        dowLbls = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-      } else {
-        dowLbls = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
-      }
-      break;
-    case "nl_NL":
-      if (startOnSun) {
-        dowLbls = ["zo", "ma", "di", "wo", "do", "vr", "za"];
-      } else {
-        dowLbls = ["ma", "di", "wo", "do", "vr", "za", "zo"];
-      }
-      break;
-    case "fr_BE":
-    case "fr_CH":
-    case "fr_FR":
-      if (startOnSun) {
-        dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
-      }
-      break;
-    case "sv_SE":
-      if (startOnSun) {
-        dowLbls = ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
-      }
-      break;
-    case "it_CH":
-    case "it_IT":
-      if (startOnSun) {
-        dowLbls = ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"];
-      } else {
-        dowLbls = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"];
-      }
-      break;
-    case "oc_FR":
-      if (startOnSun) {
-        dowLbls = ["dg", "dl", "dm", "dc", "dj", "dv", "ds"];
-      } else {
-        dowLbls = ["dl", "dm", "dc", "dj", "dv", "ds", "dg"];
-      }
-      break;
-    default:
-      if (startOnSun) {
-        dowLbls = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-      } else {
-        dowLbls = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-      }
-      break;
-  }
-  return dowLbls;
+  let days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+  const d = new Date();
+  return days.map(i => {
+    d.setDate(d.getDate() + (i + 7 - d.getDay()) % 7);
+    return require("locale").dow(d, 1);
+  });
 }
 
 function sameDay(d1, d2) {
@@ -192,6 +160,17 @@ function drawCalendar(date) {
     }
   }
 
+  const weekBeforeMonth = new Date(date.getTime());
+  weekBeforeMonth.setDate(weekBeforeMonth.getDate() - 7);
+  const week2AfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+  week2AfterMonth.setDate(week2AfterMonth.getDate() + 14);
+  events.forEach(ev => {
+    if (ev.repeat === "y") {
+      ev.date.setFullYear(ev.date.getMonth() < 6 ? week2AfterMonth.getFullYear() : weekBeforeMonth.getFullYear());
+    }
+  });
+  const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
+  eventsThisMonth.sort((a,b) => a.date - b.date);
   let i = 0;
   for (y = 0; y < rowN - 1; y++) {
     for (x = 0; x < colN; x++) {
@@ -204,6 +183,33 @@ function drawCalendar(date) {
       const y1 = y * rowH + headerH + rowH;
       const x2 = x * colW + colW;
       const y2 = y * rowH + headerH + rowH + rowH;
+
+      if (eventsThisMonth.length > 0) {
+        // Display events for this day
+        eventsThisMonth.forEach((ev, idx) => {
+          if (sameDay(ev.date, curDay)) {
+            switch(ev.type) {
+              case "e": // alarm/event
+                const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
+                const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+                const height = (y2-2) - (y1+2); // height of a cell
+                const sliceHeight = height/eventsPerDay;
+                const ystart = (y1+2) + slice*sliceHeight;
+                g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+                break;
+              case "h": // holiday
+                g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
+                break;
+              case "o": // other
+                g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
+                break;
+            }
+
+            eventsThisMonth.splice(idx, 1); // this event is no longer needed
+          }
+        });
+      }
+
       if (isToday) {
         g.setColor(red);
         g.drawRect(x1, y1, x2, y2);
@@ -213,21 +219,6 @@ function drawCalendar(date) {
           x2 - 1,
           y2 - 1
         );
-      }
-
-      // Display events for this day
-      const eventsCurDay = events.filter(ev => ev.date === curDay.toLocalISOString().substr(0, 10));
-      if (eventsCurDay.length > 0) {
-        g.setColor(bgEvent);
-        eventsCurDay.forEach(ev => {
-          const time = timeutils.decodeTime(ev.t);
-          const hour = time.h + time.m/60.0;
-          const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
-          const height = (y2-2) - (y1+2); // height of a cell
-          const sliceHeight = height/eventsPerDay;
-          const ystart = (y1+2) + slice*sliceHeight;
-          g.fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
-        });
       }
 
       require("Font8x12").add(Graphics);
@@ -242,23 +233,52 @@ function drawCalendar(date) {
   }
 }
 
-const date = new Date();
-drawCalendar(date);
-clearWatch();
-Bangle.on("touch", area => {
-  const month = date.getMonth();
-  if (area == 1) {
-    let prevMonth = month > 0 ? month - 1 : 11;
-    if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
-    date.setMonth(prevMonth);
-  } else {
-    let nextMonth = month < 11 ? month + 1 : 0;
-    if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
-    date.setMonth(nextMonth);
-  }
-  drawCalendar(date);
-});
+function setUI() {
+  Bangle.setUI({
+    mode : "custom",
+    swipe: (dirLR, dirUD) => {
+      if (dirLR<0) { // left
+        const month = date.getMonth();
+        let prevMonth = month > 0 ? month - 1 : 11;
+        if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
+        date.setMonth(prevMonth);
+        drawCalendar(date);
+      } else if (dirLR>0) { // right
+        const month = date.getMonth();
+        let nextMonth = month < 11 ? month + 1 : 0;
+        if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
+        date.setMonth(nextMonth);
+        drawCalendar(date);
+      } else if (dirUD<0) { // up
+        date.setFullYear(date.getFullYear() - 1);
+        drawCalendar(date);
+      } else if (dirUD>0) { // down
+        date.setFullYear(date.getFullYear() + 1);
+        drawCalendar(date);
+      }
+    },
+    btn: (n) => n === (process.env.HWVERSION === 2 ? 1 : 3) && load(),
+    touch: (n,e) => {
+      events.sort((a,b) => a.date - b.date);
+      const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
+        const dateStr = require("locale").date(e.date, 1);
+        const timeStr = require("locale").time(e.date, 1);
+        return { title: `${dateStr} ${e.type === "e" ? timeStr : ""}` + (e.msg ? " " + e.msg : "") };
+      });
+      if (menu.length === 0) {
+        menu.push({title: /*LANG*/"No events"});
+      }
+      menu[""] = { title: require("locale").month(date) + " " + date.getFullYear() };
+      menu["< Back"] = () => {
+        E.showMenu();
+        drawCalendar(date);
+        setUI();
+      };
+      E.showMenu(menu);
+    }
+  });
+}
 
-// Show launcher when button pressed
-setWatch(() => load(), process.env.HWVERSION === 2 ? BTN : BTN3, { repeat: false, edge: "falling" });
+drawCalendar(date);
+setUI();
 // No space for widgets!
