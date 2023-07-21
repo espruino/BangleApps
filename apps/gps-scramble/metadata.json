@@ -8,6 +8,7 @@
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "type": "recorder",
   "storage": [
     {"name": "gps-scramble.recorder.js", "url": "recorder.js"}
   ]
