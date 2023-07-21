@@ -52,12 +52,19 @@
         }
       };
 
-    mainmenu['Hide "Fastloading..."'] = {
-        value: !!settings.hideLoading,
-        onchange: v => {
-          writeSettings("hideLoading",v);
-        }
-      };
+      mainmenu['Hide "Fastloading..."'] = {
+          value: !!settings.hideLoading,
+          onchange: v => {
+            writeSettings("hideLoading",v);
+          }
+        };
+
+        mainmenu['Detect settings changes'] = {
+            value: !!settings.detectSettingsChange,
+            onchange: v => {
+              writeSettings("detectSettingsChange",v);
+            }
+          };
 
     return mainmenu;
   }

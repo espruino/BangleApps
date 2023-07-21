@@ -19,7 +19,41 @@ let loadingScreen = function(){
 
 let cache = s.readJSON("fastload.cache") || {};
 
-let checkApp = function(n){
+let forceRealLoad = false;
+if (SETTINGS.detectSettingsChange){
+  const P = {};
+  P.eraseAll = s.eraseAll;
+  P.erase = s.erase;
+  P.read = s.read;
+  P.readJSON = s.readJSON;
+  P.readArrayBuffer = s.readArrayBuffer;
+  P.write = ()=>{
+    forceRealLoad = arguments[0].includes("boot.js") || arguments[0] == "setting.json";
+    return s.write.apply(s, arguments);
+  };
+  P.writeJSON = ()=>{
+    forceRealLoad = arguments[0].includes("boot.js") || arguments[0] == "setting.json";
+    return s.writeJSON.apply(s, arguments);
+  };
+  P.list = s.list;
+  P.hash = s.hash;
+  P.compact = s.compact;
+  P.debug = s.debug;
+  P.getFree = s.getFree;
+  P.getStats = s.getStats;
+  P.optimise = s.optimise;
+  P.open = s.open;
+
+  global.require = ((orig) => (n) => {
+    if (n == "Storage"){
+      return P;
+    }
+    return orig(n);
+  })(require);
+}
+
+let appFastloadPossible = function(n){
+  if (forceRealLoad) return false;
   // no widgets, no problem
   if (!global.WIDGETS) return true;
   let app = s.read(n);
@@ -39,7 +73,7 @@ let slowload = function(n){
 };
 
 let fastload = function(n){
-  if (!n || checkApp(n)){
+  if (!n || appFastloadPossible(n)){
     // Bangle.load can call load, to prevent recursion this must be the system load
     global.load = slowload;
     Bangle.load(n);
@@ -76,12 +110,16 @@ Bangle.load = (o => (name) => {
   }
   if (SETTINGS.autoloadLauncher && !name){
     let orig = Bangle.load;
-    Bangle.load = (n)=>{
-      Bangle.load = orig;
-      fastload(n);
-    };
+    if (!forceRealLoad){
+      Bangle.load = (n)=>{
+        Bangle.load = orig;
+        fastload(n);
+      };
+    }
     Bangle.showLauncher();
     Bangle.load = orig;
+  } else if (forceRealLoad) {
+    slowload(name);
   } else
     o(name);
 })(Bangle.load);
