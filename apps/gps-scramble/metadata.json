@@ -1,0 +1,14 @@
+{
+  "id": "gps-scramble",
+  "name": "GPS Scrambler",
+  "shortName": "GPS Scramble",
+  "version": "0.01",
+  "description": "Scramble GPS to maintain privacy if your watch is lost",
+  "icon": "TODO.png",
+  "tags": "tool,outdoors,gps",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name": "gps-scramble.recorder.js", "url": "recorder.js"}
+  ]
+}
