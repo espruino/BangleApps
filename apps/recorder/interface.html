@@ -160,11 +160,28 @@ function trackLineToObject(headers, l) {
 
 function downloadTrack(filename, callback) {
   Util.showModal("Downloading Track...");
+
+  const pacific = { lat: -4.21, lon: -146.25 };
+  const offset = {
+    lat: Number(document.getElementById("unscramble-lat").value),
+    lon: Number(document.getElementById("unscramble-lon").value),
+  };
+
   Util.readStorageFile(filename,data=>{
     Util.hideModal();
     var lines = data.trim().split("\n");
     var headers = lines.shift().split(",");
     var track = lines.map(l=>trackLineToObject(headers, l));
+
+    if (localStorage.getItem("recorder-unscramble-gps")=="true") {
+      for (const entry of track) {
+        if (entry.Latitude.length) {
+          entry.Latitude = Number(entry.Latitude) - pacific.lat + offset.lat;
+          entry.Longitude = Number(entry.Longitude) - pacific.lon + offset.lon;
+        }
+      }
+    }
+
     callback(track);
   });
 }
@@ -264,6 +281,20 @@ ${trackData.Latitude ? `
             <input type="checkbox" id="settings-allow-no-gps" ${(localStorage.getItem("recorder-allow-no-gps")=="true")?"checked":""}>
             <i class="form-icon"></i> Include GPX/KML entries even when there's no GPS info
           </label>
+          <div>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-unscramble-gps">
+              <i class="form-icon"></i> Unscramble/re-originate GPS
+            </label>
+
+            <div id="unscramble-cfg" class="d-hide">
+              <label class="form-label" for="unscramble-lat">Starting Latitude</label>
+              <input type="number" id="unscramble-lat" class="form-input" step="any">
+
+              <label class="form-label" for="unscramble-lon">Starting Longitude</label>
+              <input type="number" id="unscramble-lon" class="form-input" step="any">
+            </div>
+          </div>
         </div>
         </div>`;
         domTracks.innerHTML = html;
@@ -271,6 +302,15 @@ ${trackData.Latitude ? `
           var allowNoGPS = event.target.checked;
           localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
         });
+        document.getElementById("settings-unscramble-gps").addEventListener("change",event=>{
+          var unscramble = event.target.checked;
+          localStorage.setItem("recorder-unscramble-gps", unscramble);
+
+          document.getElementById("unscramble-cfg").classList.toggle("d-hide", !unscramble);
+        });
+        if (localStorage.getItem("recorder-unscramble-gps")=="true") {
+          document.getElementById("settings-unscramble-gps").click(); // trigger listener
+        }
         Util.hideModal();
         var buttons = domTracks.querySelectorAll("button");
         for (var i=0;i<buttons.length;i++) {
