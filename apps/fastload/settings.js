@@ -42,29 +42,29 @@
     }
 
     mainmenu['Force load to launcher'] = {
-        value: !!settings.autoloadLauncher,
-        onchange: v => {
-          writeSettings("autoloadLauncher",v);
-          if (v && settings.useAppHistory) {
-            writeSettings("useAppHistory",!v);
-            setTimeout(()=>E.showMenu(buildMainMenu()), 0); // Update the menu so it can be seen if a value was automatically set to false (app history vs load launcher).
-          } // Don't use app history and load to launcher together.
-        }
-      };
+      value: !!settings.autoloadLauncher,
+      onchange: v => {
+        writeSettings("autoloadLauncher",v);
+        if (v && settings.useAppHistory) {
+          writeSettings("useAppHistory",!v);
+          setTimeout(()=>E.showMenu(buildMainMenu()), 0); // Update the menu so it can be seen if a value was automatically set to false (app history vs load launcher).
+        } // Don't use app history and load to launcher together.
+      }
+    };
 
-      mainmenu['Hide "Fastloading..."'] = {
-          value: !!settings.hideLoading,
-          onchange: v => {
-            writeSettings("hideLoading",v);
-          }
-        };
+    mainmenu['Hide "Fastloading..."'] = {
+      value: !!settings.hideLoading,
+      onchange: v => {
+        writeSettings("hideLoading",v);
+      }
+    };
 
-        mainmenu['Detect settings changes'] = {
-            value: !!settings.detectSettingsChange,
-            onchange: v => {
-              writeSettings("detectSettingsChange",v);
-            }
-          };
+    mainmenu['Detect settings changes'] = {
+      value: !!settings.detectSettingsChange,
+      onchange: v => {
+        writeSettings("detectSettingsChange",v);
+      }
+    };
 
     return mainmenu;
   }
