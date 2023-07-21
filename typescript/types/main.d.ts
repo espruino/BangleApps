@@ -10589,6 +10589,11 @@ interface NumberConstructor {
    * @url http://www.espruino.com/Reference#l_Number_Number
    */
   new(...value: any[]): any;
+
+  /**
+   * Converts the given argument to a number
+   */
+  (value: any): number;
 }
 
 interface Number {
