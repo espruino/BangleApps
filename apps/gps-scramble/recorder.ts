@@ -9,6 +9,9 @@
 	if (!gpsRecorder) return;
 
 	// @ts-ignore index signature
+	delete recorders.gps;
+
+	// @ts-ignore index signature
 	recorders.gpsScramble = () => {
 		const gps = gpsRecorder();
 		let offset: undefined | [number, number];

@@ -4,6 +4,7 @@
     var gpsRecorder = recorders.gps;
     if (!gpsRecorder)
         return;
+    delete recorders.gps;
     recorders.gpsScramble = function () {
         var gps = gpsRecorder();
         var offset;
