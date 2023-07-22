@@ -186,6 +186,28 @@ function downloadTrack(filename, callback) {
   });
 }
 
+function scrambleInit() {
+  document.getElementById("settings-unscramble-gps").addEventListener("change", event => {
+    var unscramble = event.target.checked;
+    localStorage.setItem("recorder-unscramble-gps", unscramble);
+
+    document.getElementById("unscramble-cfg").classList.toggle("d-hide", !unscramble);
+  });
+
+  if (localStorage.getItem("recorder-unscramble-gps")=="true")
+    document.getElementById("settings-unscramble-gps").click(); // trigger listener
+
+  const bind = (el, storeKey) => {
+    el.value = localStorage.getItem(storeKey);
+    el.addEventListener("change", event => {
+      localStorage.setItem(storeKey, event.target.value);
+    });
+  };
+
+  bind(document.getElementById("unscramble-lat"), "recorder-unscramble-gps-lat");
+  bind(document.getElementById("unscramble-lon"), "recorder-unscramble-gps-lon");
+}
+
 function getTrackList() {
   Util.showModal("Loading Track List...");
   domTracks.innerHTML = "";
@@ -302,15 +324,8 @@ ${trackData.Latitude ? `
           var allowNoGPS = event.target.checked;
           localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
         });
-        document.getElementById("settings-unscramble-gps").addEventListener("change",event=>{
-          var unscramble = event.target.checked;
-          localStorage.setItem("recorder-unscramble-gps", unscramble);
+        scrambleInit();
 
-          document.getElementById("unscramble-cfg").classList.toggle("d-hide", !unscramble);
-        });
-        if (localStorage.getItem("recorder-unscramble-gps")=="true") {
-          document.getElementById("settings-unscramble-gps").click(); // trigger listener
-        }
         Util.hideModal();
         var buttons = domTracks.querySelectorAll("button");
         for (var i=0;i<buttons.length;i++) {
