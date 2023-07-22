@@ -7,6 +7,10 @@ var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
+// Icon for current location+direction: https://icons8.com/icon/13793/north-direction 32x32, 3 Bit + transparency
+const imgLoc = Bangle.setLCDOverlay ? require("heatshrink").decompress(atob("kEgwYspgmABacB2wLBm3ABYsN20kyE27ALFtuwBYMG7YKEgdtwMkyUA7dgBYcbsEBBYUDtgLDCIMJBYNADoJLDFIILDGoILDIIMJgECBYMNBYUGBYNIAoICBhuwBYhlFBYJ0BJoo7B23ABZYjLBZhTCBYprFUIoLEHYwLDTYILETYgRCgYOBDorLCBYLLGcYXbNAJNGPQR0DAAwLBIgYAFHYQLUACQA=")) : undefined;
+// overlay buffer for current location, image is 32x32, so rotated max is 46x46
+const ovLoc = Bangle.setLCDOverlay ? Graphics.createArrayBuffer(46,46,4,{msb:true}) : undefined;
 
 if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
   // restore last view
@@ -14,6 +18,9 @@ if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !
   m.lon = settings.lon;
   m.scale = settings.scale;
   checkMapPos = true;
+}
+if (settings.dirSrc === undefined) {
+  settings.dirSrc = 1; // Default=GPS
 }
 
 // Redraw the whole page
@@ -25,9 +32,9 @@ function redraw() {
     m.lat = m.map.lat;
     m.lon = m.map.lon;
     m.scale = m.map.scale;
-    checkMapPos = false;
     m.draw();
   }
+  checkMapPos = false;
   drawPOI();
   drawMarker();
   drawLocation();
@@ -67,21 +74,28 @@ function drawPOI() {
   })
 }
 
-// Draw the marker for where we are
+function isInside(rect, e, w, h) {
+  return e.x-w/2>=rect.x && e.x+w/2<rect.x+rect.w
+    && e.y-h/2>=rect.y && e.y+h/2<=rect.y+rect.h;
+}
+
+// Draw the location & direction marker for where we are
 function drawMarker() {
   if (!fix.fix || !settings.drawMarker) return;
   var p = m.latLonToXY(fix.lat, fix.lon);
-  g.setColor(1,0,0);
-  g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
+  if (isInside(R, p, 4, 4)) { // avoid drawing over widget area
+    g.setColor(1,0,0);
+    g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
+  }
 }
 
-// Draw current location with LCD Overlay (Bangle.js 2 only)
+// Draw current location+direction with LCD Overlay (Bangle.js 2 only)
 function drawLocation() {
   if (!Bangle.setLCDOverlay) {
     return; // Overlay not supported
   }
 
-  if (!fix.fix || !mapVisible) {
+  if (!fix.fix || !mapVisible || settings.dirSrc === 0) {
     if (this.hasOverlay) {
       Bangle.setLCDOverlay(); // clear if map is not visible or no fix
       this.hasOverlay = false;
@@ -89,9 +103,20 @@ function drawLocation() {
     return;
   }
 
-  const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
   var p = m.latLonToXY(fix.lat, fix.lon);
-  Bangle.setLCDOverlay(icon, p.x-24/2, p.y-24);
+
+  ovLoc.clear();
+  if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
+    const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
+    if (!isNaN(angle)) {
+      ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
+    }
+  }
+  Bangle.setLCDOverlay({width:ovLoc.getWidth(), height:ovLoc.getHeight(),
+          bpp:4, transparent:0,
+          buffer:ovLoc.buffer
+        }, p.x-ovLoc.getWidth()/2, p.y-ovLoc.getHeight()/2);
+
   this.hasOverlay = true;
 }
 
@@ -158,13 +183,31 @@ function showMenu() {
     value : !!settings.drawMarker,
     onchange : v => { settings.drawMarker=v; writeSettings(); }
   },
-  /*LANG*/"Center Map": () =>{
+  });
+
+  if (Bangle.setLCDOverlay) {
+    menu[/*LANG*/"Direction source"] = {
+      value: settings.dirSrc,
+      min: 0, max: 2,
+      format: v => [/*LANG*/"None", /*LANG*/"GPS", /*LANG*/"Compass"][v],
+      onchange: v => {
+        settings.dirSrc = v;
+        writeSettings();
+      }
+    };
+    menu[/*LANG*/"Reset compass"] = () => {
+      Bangle.resetCompass();
+      showMap();
+    };
+  }
+
+  menu[/*LANG*/"Center Map"] = () =>{
     m.lat = m.map.lat;
     m.lon = m.map.lon;
     m.scale = m.map.scale;
     showMap();
-  }
-  });
+  };
+
   // If we have the recorder widget, add a menu item to start/stop recording
   if (WIDGETS.recorder) {
     menu[/*LANG*/"Record"] = {
