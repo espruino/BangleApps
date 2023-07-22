@@ -16,8 +16,10 @@
 		return {
 			...gps,
 			name: "GPS (scramble)",
+			fields: gps.fields.concat("ScrambleStart"),
 			getValues: () => {
 				const values = gps.getValues() as string[];
+				values.push(String(!offset));
 
 				if (!values[0]!.length) {
 					// no change

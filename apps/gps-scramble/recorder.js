@@ -7,8 +7,9 @@
     recorders.gpsScramble = function () {
         var gps = gpsRecorder();
         var offset;
-        return __assign(__assign({}, gps), { name: "GPS (scramble)", getValues: function () {
+        return __assign(__assign({}, gps), { name: "GPS (scramble)", fields: gps.fields.concat("ScrambleStart"), getValues: function () {
                 var values = gps.getValues();
+                values.push(String(!offset));
                 if (!values[0].length) {
                 }
                 else if (offset) {
