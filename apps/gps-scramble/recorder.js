@@ -4,7 +4,7 @@
     var gpsRecorder = recorders.gps;
     if (!gpsRecorder)
         return;
-    recorders.gps = function () {
+    recorders.gpsScramble = function () {
         var gps = gpsRecorder();
         var offset;
         return __assign(__assign({}, gps), { name: "GPS (scramble)", getValues: function () {
