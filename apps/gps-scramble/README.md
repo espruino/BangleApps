@@ -16,4 +16,8 @@ The constraints on this design are:
 
 Initial discussion took place on the [espruino forum](https://forum.espruino.com/conversations/388489/).
 
+## Todo
+
+- [ ] Handle unscrambling a restart of GPS recording at a new location
+
 [GPS recorder]: https://github.com/espruino/BangleApps/blob/0eea248390f5245c8d5bceb3eb2e976fab193a45/apps/recorder/widget.js#L22-L58
