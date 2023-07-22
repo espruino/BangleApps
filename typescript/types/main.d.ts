@@ -10255,6 +10255,11 @@ interface StringConstructor {
    * @url http://www.espruino.com/Reference#l_String_String
    */
   new(...str: any[]): any;
+
+  /**
+   * Converts the given argument to a string
+   */
+  (s: any): string;
 }
 
 interface String {

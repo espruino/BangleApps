@@ -20,8 +20,8 @@
                         pacific.lat - Number(values[0]),
                         pacific.lon - Number(values[1]),
                     ];
-                    values[0] = "" + pacific.lat;
-                    values[1] = "" + pacific.lon;
+                    values[0] = String(pacific.lat);
+                    values[1] = String(pacific.lon);
                 }
                 return values;
             } });
