@@ -7,8 +7,8 @@ var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
-// Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
 if (Bangle.setLCDOverlay) {
+  // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
   var imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
   // overlay buffer for current location, a bit bigger then image so we can rotate
   const ovSize = Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]));
