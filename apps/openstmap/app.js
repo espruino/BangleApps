@@ -7,10 +7,13 @@ var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
-// Icon for current location+direction: https://icons8.com/icon/13793/north-direction 32x32, 3 Bit + transparency
-const imgLoc = Bangle.setLCDOverlay ? require("heatshrink").decompress(atob("kEgwYspgmABacB2wLBm3ABYsN20kyE27ALFtuwBYMG7YKEgdtwMkyUA7dgBYcbsEBBYUDtgLDCIMJBYNADoJLDFIILDGoILDIIMJgECBYMNBYUGBYNIAoICBhuwBYhlFBYJ0BJoo7B23ABZYjLBZhTCBYprFUIoLEHYwLDTYILETYgRCgYOBDorLCBYLLGcYXbNAJNGPQR0DAAwLBIgYAFHYQLUACQA=")) : undefined;
-// overlay buffer for current location, image is 32x32, so rotated max is 46x46
-const ovLoc = Bangle.setLCDOverlay ? Graphics.createArrayBuffer(46,46,4,{msb:true}) : undefined;
+// Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
+if (Bangle.setLCDOverlay) {
+  var imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
+  // overlay buffer for current location, a bit bigger then image so we can rotate
+  const ovSize = Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]));
+  var ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,imgLoc[2] & 0x7f,{msb:true});
+}
 
 if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
   // restore last view
@@ -113,7 +116,8 @@ function drawLocation() {
     }
   }
   Bangle.setLCDOverlay({width:ovLoc.getWidth(), height:ovLoc.getHeight(),
-          bpp:4, transparent:0,
+          bpp:ovLoc.getBPP(), transparent:0,
+          palette:new Uint16Array([0, g.toColor("#00F")]),
           buffer:ovLoc.buffer
         }, p.x-ovLoc.getWidth()/2, p.y-ovLoc.getHeight()/2);
 
