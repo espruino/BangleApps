@@ -57,7 +57,6 @@
   const itemSize = iconSize + whitespace;
 
   let drawItem = function(itemI, r) {
-    let t = Date.now();
     let x = 0;
     let apps = launchCache.items[itemI];
     let i = itemI * appsN;
