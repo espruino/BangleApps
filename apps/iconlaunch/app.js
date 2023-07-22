@@ -59,7 +59,7 @@
   let drawItem = function(itemI, r) {
     let x = 0;
     let apps = launchCache.items[itemI];
-    let i = itemI * appsN;
+    let i = itemI * appsN - 1;
     let selectedApp;
     let currentApp;
     let layers=[];
