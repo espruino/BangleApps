@@ -36,25 +36,27 @@
   // cache items
   const ICON_MISSING = atob("MDABAAAAAAAAAAAAAAAAAAABAAAAAAADgAAAAAAGwAAAAAAMYAAAAAAYMAAAAAAwGAAAAABgDAAAAADABgAAAAGAAwAAAAMAAYAAAAYP4MAAAAw//GAAABh4/jAAADD4fhgAAGD8PwwAAMD8PwYAAYD8PwMAAwD8PwGABgB4fwDADAAAfgBgGAAAfgAwMAAA+AAYGAAB8AAwDAABwABgBgADgADAAwADAAGAAYADAAMAAMAAAAYAAGAAAAwAADADgBgAABgHwDAAAAwPwGAAAAYP4MAAAAMPwYAAAAGPwwAAAADHhgAAAABgDAAAAAAwGAAAAAAYMAAAAAAMYAAAAAAGwAAAAAADgAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
   let count = 0;
+
+  let selectedItem = -1;
+  const R = Bangle.appRect;
+  const iconSize = 48;
+  const appsN = Math.floor(R.w / iconSize);
+  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
+  const iconYoffset = Math.floor(whitespace/4)-1;
+  const itemSize = iconSize + whitespace;
+
   launchCache.items = [];
   for (let c of launchCache.apps){
-    let i = Math.floor(count/3);
+    let i = Math.floor(count/appsN);
     if (!launchCache.items[i])
       launchCache.items.push([]);
-    launchCache.items[Math.floor(count/3)].push(c);
+    launchCache.items[Math.floor(count/appsN)].push(c);
     if (c.icon)
       c.icondata = s.read(c.icon);
     else
       c.icondata = ICON_MISSING;
     count++;
   }
-
-  let selectedItem = -1;
-  const R = Bangle.appRect;
-  const iconSize = 48;
-  const appsN = Math.floor(R.w / iconSize);
-  const whitespace = (R.w - appsN * iconSize) / (appsN + 1);
-  const itemSize = iconSize + whitespace;
 
   let drawItem = function(itemI, r) {
     let x = 0;
@@ -67,14 +69,14 @@
     for (currentApp of apps) {
       i++;
       x += whitespace;
-      layers.push({x:x+r.x,y:r.y,image:currentApp.icondata});
+      layers.push({x:x+r.x,y:r.y + iconYoffset,image:currentApp.icondata});
       if (selectedItem == i) {
         selectedApp = currentApp;
         selectedRect = [
           x + r.x - 1,
-          r.y - 1,
-          x + r.x + iconSize + 1,
-          r.y + iconSize + 1
+          r.y + iconYoffset - 1,
+          x + r.x + iconSize,
+          r.y + iconYoffset + iconSize
         ];
       }
       x += iconSize;
