@@ -27,23 +27,17 @@ var settings = Object.assign({
     s.readJSON("gipy.json", true) || {}
 );
 
-let profile_start_times = [];
+// let profile_start_times = [];
 
-let splashscreen = require("heatshrink").decompress(
-    atob(
-        "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"
-    )
-);
+// function start_profiling() {
+//     profile_start_times.push(getTime());
+// }
 
-function start_profiling() {
-    profile_start_times.push(getTime());
-}
-
-function end_profiling(label) {
-    let end_time = getTime();
-    let elapsed = end_time - profile_start_times.pop();
-    console.log("profile:", label, "took", elapsed);
-}
+// function end_profiling(label) {
+//     let end_time = getTime();
+//     let elapsed = end_time - profile_start_times.pop();
+//     console.log("profile:", label, "took", elapsed);
+// }
 
 // return the index of the largest element of the array which is <= x
 function binary_search(array, x) {
@@ -399,28 +393,20 @@ class Map {
         cos_direction,
         sin_direction
     ) {
-        "jit";
+        // "jit";
         let center_x = g.getWidth() / 2;
         let center_y = g.getHeight() / 2 + Y_OFFSET;
 
         let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
         let scaled_current_x = current_x * scale_factor;
         let scaled_current_y = current_y * scale_factor;
+        let recentered_points = g.transformVertices(points, [1, 0, 0, 1, -scaled_current_x, -scaled_current_y]);
+        let c = cos_direction;
+        let s = sin_direction;
+        let screen_points = g.transformVertices(recentered_points, [-c, s, s, c, center_x, center_y]);
 
-        for (let i = 0; i < points.length; i += 4) {
-            let scaled_x = points[i] - scaled_current_x;
-            let scaled_y = points[i + 1] - scaled_current_y;
-            let rotated_x = scaled_x * cos_direction - scaled_y * sin_direction;
-            let rotated_y = scaled_x * sin_direction + scaled_y * cos_direction;
-            let final_x = center_x - rotated_x;
-            let final_y = center_y + rotated_y;
-            scaled_x = points[i + 2] - scaled_current_x;
-            scaled_y = points[i + 3] - scaled_current_y;
-            rotated_x = scaled_x * cos_direction - scaled_y * sin_direction;
-            rotated_y = scaled_x * sin_direction + scaled_y * cos_direction;
-            let new_final_x = center_x - rotated_x;
-            let new_final_y = center_y + rotated_y;
-            g.drawLine(final_x, final_y, new_final_x, new_final_y);
+        for (let i = 0; i < screen_points.length; i += 4) {
+            g.drawLine(screen_points[i], screen_points[i + 1], screen_points[i + 2], screen_points[i + 3]);
         }
     }
 
@@ -433,26 +419,23 @@ class Map {
         cos_direction,
         sin_direction
     ) {
+        // "jit";
         let center_x = g.getWidth() / 2;
         let center_y = g.getHeight() / 2 + Y_OFFSET;
 
         let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
         let scaled_current_x = current_x * scale_factor;
         let scaled_current_y = current_y * scale_factor;
+        let recentered_points = g.transformVertices(points, [1, 0, 0, 1, -scaled_current_x, -scaled_current_y]);
+        let c = cos_direction;
+        let s = sin_direction;
+        let screen_points = g.transformVertices(recentered_points, [-c, s, s, c, center_x, center_y]);
 
-        for (let i = 0; i < points.length; i += 4) {
-            let scaled_x = points[i] - scaled_current_x;
-            let scaled_y = points[i + 1] - scaled_current_y;
-            let rotated_x = scaled_x * cos_direction - scaled_y * sin_direction;
-            let rotated_y = scaled_x * sin_direction + scaled_y * cos_direction;
-            let final_x = center_x - rotated_x;
-            let final_y = center_y + rotated_y;
-            scaled_x = points[i + 2] - scaled_current_x;
-            scaled_y = points[i + 3] - scaled_current_y;
-            rotated_x = scaled_x * cos_direction - scaled_y * sin_direction;
-            rotated_y = scaled_x * sin_direction + scaled_y * cos_direction;
-            let new_final_x = center_x - rotated_x;
-            let new_final_y = center_y + rotated_y;
+        for (let i = 0; i < screen_points.length; i += 4) {
+            let final_x = screen_points[i];
+            let final_y = screen_points[i + 1];
+            let new_final_x = screen_points[i + 2];
+            let new_final_y = screen_points[i + 3];
 
             let xdiff = new_final_x - final_x;
             let ydiff = new_final_y - final_y;
@@ -1156,7 +1139,15 @@ class Status {
 
 function load_gps(filename) {
     // let's display splash screen while loading file
+
+    let splashscreen = require("heatshrink").decompress(
+        atob(
+            "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"
+        )
+    );
+
     g.clear();
+
     g.drawImage(splashscreen, 0, 0);
     g.setFont("6x8:2")
         .setFontAlign(-1, -1, 0)
@@ -1314,9 +1305,9 @@ class Point {
     times(scalar) {
         return new Point(this.lon * scalar, this.lat * scalar);
     }
-    dot(other_point) {
-        return this.lon * other_point.lon + this.lat * other_point.lat;
-    }
+    // dot(other_point) {
+    //     return this.lon * other_point.lon + this.lat * other_point.lat;
+    // }
     distance(other_point) {
         //see https://www.movable-type.co.uk/scripts/latlong.html
         const R = 6371e3; // metres
@@ -1375,43 +1366,6 @@ class Point {
 
 let fake_gps_point = 0;
 
-function simulate_gps(status) {
-    if (status.path === null) {
-        let map = status.maps[0];
-        let p1 = new Point(map.start_coordinates[0], map.start_coordinates[1]);
-        let p2 = new Point(
-            map.start_coordinates[0] + map.side * map.grid_size[0],
-            map.start_coordinates[1] + map.side * map.grid_size[1]
-        );
-        let pos = p1.times(1 - fake_gps_point).plus(p2.times(fake_gps_point));
-        if (fake_gps_point < 1) {
-            fake_gps_point += 0.01;
-        }
-        status.update_position(pos);
-    } else {
-        if (fake_gps_point > status.path.len - 1 || fake_gps_point < 0) {
-            return;
-        }
-        let point_index = Math.floor(fake_gps_point);
-        if (point_index >= status.path.len / 2 - 1) {
-            return;
-        }
-        let p1 = status.path.point(2 * point_index); // use these to approximately follow path
-        let p2 = status.path.point(2 * (point_index + 1));
-        //let p1 = status.path.point(point_index); // use these to strictly follow path
-        //let p2 = status.path.point(point_index + 1);
-
-        let alpha = fake_gps_point - point_index;
-        let pos = p1.times(1 - alpha).plus(p2.times(alpha));
-
-        if (go_backwards) {
-            fake_gps_point -= 0.01; // advance simulation
-        } else {
-            fake_gps_point += 0.01; // advance simulation
-        }
-        status.update_position(pos);
-    }
-}
 
 function drawMenu() {
     const menu = {
@@ -1536,6 +1490,47 @@ function start_gipy(path, maps, interests) {
         // let's keep the screen on in simulations
         Bangle.setLCDTimeout(0);
         Bangle.setLCDPower(1);
+        Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
+
+
+        function simulate_gps(status) {
+            if (status.path === null) {
+                let map = status.maps[0];
+                let p1 = new Point(map.start_coordinates[0], map.start_coordinates[1]);
+                let p2 = new Point(
+                    map.start_coordinates[0] + map.side * map.grid_size[0],
+                    map.start_coordinates[1] + map.side * map.grid_size[1]
+                );
+                let pos = p1.times(1 - fake_gps_point).plus(p2.times(fake_gps_point));
+                if (fake_gps_point < 1) {
+                    fake_gps_point += 0.05;
+                }
+                status.update_position(pos);
+            } else {
+                if (fake_gps_point > status.path.len - 1 || fake_gps_point < 0) {
+                    return;
+                }
+                let point_index = Math.floor(fake_gps_point);
+                if (point_index >= status.path.len / 2 - 1) {
+                    return;
+                }
+                let p1 = status.path.point(2 * point_index); // use these to approximately follow path
+                let p2 = status.path.point(2 * (point_index + 1));
+                //let p1 = status.path.point(point_index); // use these to strictly follow path
+                //let p2 = status.path.point(point_index + 1);
+
+                let alpha = fake_gps_point - point_index;
+                let pos = p1.times(1 - alpha).plus(p2.times(alpha));
+
+                if (go_backwards) {
+                    fake_gps_point -= 0.05; // advance simulation
+                } else {
+                    fake_gps_point += 0.05; // advance simulation
+                }
+                status.update_position(pos);
+            }
+        }
+
         setInterval(simulate_gps, 500, status);
     } else {
         status.activate();
@@ -1550,7 +1545,7 @@ function start_gipy(path, maps, interests) {
             if (valid_coordinates) {
                 if (status.starting_time === null) {
                     status.starting_time = getTime();
-                    Bangle.loadWidgets(); // i don't know why i cannot load them at start : they would display on splash screen
+                    Bangle.loadWidgets(); // load them even in simulation to eat mem
                 }
                 status.update_position(new Point(data.lon, data.lat));
             }
