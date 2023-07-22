@@ -61,6 +61,8 @@
     let i = firstApp - 1;
     let selectedApp;
     let currentApp;
+    let layers=[];
+    let selectedRect;
     for (currentApp of apps) {
       i++;
       x += whitespace;
@@ -68,19 +70,21 @@
         g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
       } else {
         if (!currentApp.icondata) currentApp.icondata = s.read(currentApp.icon);
-        g.drawImage(currentApp.icondata, x + r.x, r.y);
+        layers.push({x:x+r.x,y:r.y,image:currentApp.icondata});
       }
       if (selectedItem == i) {
         selectedApp = currentApp;
-        g.drawRect(
+        selectedRect = [
           x + r.x - 1,
           r.y - 1,
           x + r.x + iconSize + 1,
           r.y + iconSize + 1
-        );
+        ];
       }
       x += iconSize;
     }
+    g.drawImages(layers);
+    if (selectedRect) g.drawRect.apply(null, selectedRect);
     if (selectedApp) drawText(itemI, r.y, selectedApp);
   };
 
