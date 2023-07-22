@@ -34,6 +34,7 @@
   }
 
   // cache items
+  const ICON_MISSING = atob("MDABAAAAAAAAAAAAAAAAAAABAAAAAAADgAAAAAAGwAAAAAAMYAAAAAAYMAAAAAAwGAAAAABgDAAAAADABgAAAAGAAwAAAAMAAYAAAAYP4MAAAAw//GAAABh4/jAAADD4fhgAAGD8PwwAAMD8PwYAAYD8PwMAAwD8PwGABgB4fwDADAAAfgBgGAAAfgAwMAAA+AAYGAAB8AAwDAABwABgBgADgADAAwADAAGAAYADAAMAAMAAAAYAAGAAAAwAADADgBgAABgHwDAAAAwPwGAAAAYP4MAAAAMPwYAAAAGPwwAAAADHhgAAAABgDAAAAAAwGAAAAAAYMAAAAAAMYAAAAAAGwAAAAAADgAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
   let count = 0;
   launchCache.items = [];
   for (let c of launchCache.apps){
@@ -41,7 +42,10 @@
     if (!launchCache.items[i])
       launchCache.items.push([]);
     launchCache.items[Math.floor(count/3)].push(c);
-    c.icondata = s.read(c.icon);
+    if (c.icon)
+      c.icondata = s.read(c.icon);
+    else
+      c.icondata = ICON_MISSING;
     count++;
   }
 
@@ -55,10 +59,8 @@
   let drawItem = function(itemI, r) {
     let t = Date.now();
     let x = 0;
-    let firstApp = itemI * appsN;
-    let numberOfApps = appsN * (itemI + 1);
     let apps = launchCache.items[itemI];
-    let i = firstApp - 1;
+    let i = itemI * appsN;
     let selectedApp;
     let currentApp;
     let layers=[];
@@ -66,11 +68,7 @@
     for (currentApp of apps) {
       i++;
       x += whitespace;
-      if (!currentApp.icon) {
-        g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
-      } else {
-        layers.push({x:x+r.x,y:r.y,image:currentApp.icondata});
-      }
+      layers.push({x:x+r.x,y:r.y,image:currentApp.icondata});
       if (selectedItem == i) {
         selectedApp = currentApp;
         selectedRect = [
