@@ -41,6 +41,7 @@
     if (!launchCache.items[i])
       launchCache.items.push([]);
     launchCache.items[Math.floor(count/3)].push(c);
+    c.icondata = s.read(c.icon);
     count++;
   }
 
@@ -53,7 +54,6 @@
 
   let drawItem = function(itemI, r) {
     let t = Date.now();
-    g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     let x = 0;
     let firstApp = itemI * appsN;
     let numberOfApps = appsN * (itemI + 1);
@@ -69,7 +69,6 @@
       if (!currentApp.icon) {
         g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
       } else {
-        if (!currentApp.icondata) currentApp.icondata = s.read(currentApp.icon);
         layers.push({x:x+r.x,y:r.y,image:currentApp.icondata});
       }
       if (selectedItem == i) {
@@ -83,6 +82,7 @@
       }
       x += iconSize;
     }
+    if (selectedRect) g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
     g.drawImages(layers);
     if (selectedRect) g.drawRect.apply(null, selectedRect);
     if (selectedApp) drawText(itemI, r.y, selectedApp);
