@@ -232,13 +232,6 @@ let next = function(ovr) {
   showMessage(ovr, eventQueue[0]);
 };
 
-let showMapMessage = function(ovr, msg) {
-  ovr.clearRect(2,2,ovr.getWidth()-3,ovr.getHeight()-3);
-  drawMessage(ovr, {
-    body: "Not implemented!"
-  });
-};
-
 let callBuzzTimer = null;
 let stopCallBuzz = function() {
   if (callBuzzTimer) {
