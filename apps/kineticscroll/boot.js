@@ -123,12 +123,6 @@
     let uiOpts = {
       mode : "custom",
       back : options.back,
-      remove : ()=>{
-        if (scheduledDraw)
-          clearTimeout(scheduledDraw);
-        clearInterval(scheduledBrake);
-        if (options.remove) options.remove();
-      },
       drag : dragHandler,
       touch : touchHandler
     }
