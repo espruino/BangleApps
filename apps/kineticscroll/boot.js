@@ -131,7 +131,7 @@
       if (scheduledDraw)
         clearTimeout(scheduledDraw);
       clearInterval(scheduledBrake);
-      if (options.remove) options.remove();
+      options.remove();
     }
 
     Bangle.setUI(uiOpts);
