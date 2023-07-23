@@ -436,14 +436,15 @@ exports.message = function(type, event) {
   if(event.handled) return;
 
   bpp = 4;
-  if (process.memory().free < LOW_MEM) bpp = 1;
+  if (process.memory().free < LOW_MEM)
+    bpp = 1;
 
   while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
     let dropped = eventQueue.pop();
     print("Dropped message because of memory constraints", dropped);
   }
 
-  if (!ovr || bpp==1) {
+  if (!ovr || ovr.getBPP() != bpp) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
