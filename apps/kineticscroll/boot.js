@@ -31,7 +31,7 @@
     let menuScrollMax = options.h*options.c - R.h;
     if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
     
-    let touchHandler = (_,e)=>{
+    const touchHandler = (_,e)=>{
       if (e.y<R.y-4) return;
       velocity = 0;
       accDy = 0;
@@ -39,11 +39,21 @@
       if ((menuScrollMin<0 || i>=0) && i<options.c){
         let yAbs = (e.y + rScroll - R.y);
         let yInElement = yAbs - i*options.h;
+        print("selected");
         options.select(i, {x:e.x, y:yInElement});
       }
     };
-    
-    let draw = () => {
+
+    const uiDraw = () => {
+      g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
+      var a = YtoIdx(R.y);
+      var b = Math.min(YtoIdx(R.y2),options.c-1);
+      for (var i=a;i<=b;i++)
+        options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
+      g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+    }
+
+    const draw = () => {
       let dy = velocity;
       if (s.scroll - dy > menuScrollMax){
         dy = s.scroll - menuScrollMax;
@@ -124,7 +134,8 @@
       mode : "custom",
       back : options.back,
       drag : dragHandler,
-      touch : touchHandler
+      touch : touchHandler,
+      redraw : uiDraw
     }
 
     if (options.remove) uiOpts.remove = () => {
@@ -135,6 +146,7 @@
     }
 
     Bangle.setUI(uiOpts);
+
 
     
     function idxToY(i) {
@@ -158,7 +170,7 @@
         g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-      }, isActive : () => Bangle.touchHandler == touchHandler
+  }, isActive : () => Bangle.uiRedraw == uiDraw
     };
     
     let rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
