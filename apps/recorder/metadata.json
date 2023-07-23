@@ -13,6 +13,7 @@
     {"name":"recorder.app.js","url":"app.js"},
     {"name":"recorder.img","url":"app-icon.js","evaluate":true},
     {"name":"recorder.wid.js","url":"widget.js"},
+    {"name":"recorder.clkinfo.js","url":"clkinfo.js"},
     {"name":"recorder.settings.js","url":"settings.js"}
   ],
   "data": [
