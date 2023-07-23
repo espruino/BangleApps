@@ -2,9 +2,12 @@
 	const recimg = () =>
 		require("heatshrink").decompress(atob("jEYxH+AHHCAAgVQ4fDCwYFCCpotFDQgZJCxYYLCxgYCOJgALFygwHLpphJIyJIFC9O72oXU3m02h3UC4O7U6m7FwhIQIwwwPCxJhMCwSNEDBm83hbBCxQZEDQQUCIhIZIAAO1UAwAzA="));
 
-	// TODO: deal with dark background - draw image instead?
-	const pauseimg = () =>
-		require("heatshrink").decompress(atob("jEYxH+AH4Am64ABAxQWLCIYGGC6AHEF9QX/C/4X/C64HEF8YRDAxQA/AEQA="));
+	const pauseimg = () => ({
+		palette: new Uint16Array([0, g.theme.fg]),
+		buffer: require("heatshrink").decompress(atob("jEYxH+AH4Am64ABAxQWLCIYGGC6AHEF9QX/C/4X/C64HEF8YRDAxQA/AEQA=")),
+		width: 16,
+		height: 20,
+	});
 
 	return {
 		name: "Recorder",
