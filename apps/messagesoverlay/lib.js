@@ -1,3 +1,5 @@
+const MIN_FREE_MEM = 1000;
+const LOW_MEM = 2000;
 const ovrx = 10;
 const ovry = 10;
 const ovrw = g.getWidth()-2*ovrx;
@@ -432,9 +434,14 @@ exports.message = function(type, event) {
   if(event.handled) return;
 
   bpp = 4;
-  if (process.memory().free < 2000) bpp = 1;
+  if (process.memory().free < LOW_MEM) bpp = 1;
 
-  if (!ovr) {
+  while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
+    let dropped = eventQueue.pop();
+    print("Dropped message because of memory constraints", dropped);
+  }
+
+  if (!ovr || bpp==1) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
