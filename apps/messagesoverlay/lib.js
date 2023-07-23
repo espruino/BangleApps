@@ -30,6 +30,7 @@ let callInProgress = false;
 
 let show = function(ovr){
   let img = ovr;
+  LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
     img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
@@ -164,8 +165,9 @@ let showMessage = function(ovr, msg) {
   drawMessage(ovr, msg);
 };
 
-let drawBorder = function(ovr) {
+let drawBorder = function(img) {
   LOG("drawBorder", isQuiet());
+  if (img) ovr=img;
   if (Bangle.isLocked())
     ovr.setColor(ovr.theme.fgH);
   else
@@ -402,7 +404,7 @@ let main = function(ovr, event) {
 
   if (!lockListener) {
     lockListener = function (){
-      drawBorder(ovr);
+      drawBorder();
     };
     Bangle.on('lock', lockListener);
   }
