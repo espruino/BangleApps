@@ -755,7 +755,7 @@ class Status {
                     wakeOnTouch: true,
                     powerSave: false,
                 });
-                Bangle.setPollInterval(4000); // disable accelerometer as much as we can
+                Bangle.setPollInterval(2000); // disable accelerometer as much as we can (a value of 4000 seem to cause hard reboot crashes (segfaults ?) so keep 2000)
             }
 
         }
