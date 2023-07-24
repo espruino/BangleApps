@@ -75,13 +75,14 @@ function getDowLbls(locale) {
 }
 
 function sameDay(d1, d2) {
-  "compiled";
+  "jit";
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 }
 
 function drawEvent(ev, curDay, x1, y1, x2, y2) {
+  "ram";
   switch(ev.type) {
     case "e": // alarm/event
       const hour = 0|ev.date.getHours() + 0|ev.date.getMinutes()/60.0;
