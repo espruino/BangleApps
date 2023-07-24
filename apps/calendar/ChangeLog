@@ -14,3 +14,4 @@
 0.13: Switch to swipe left/right for month and up/down for year selection
       Display events for current month on touch
 0.14: Add support for holidays
+0.15: Edit holidays on device in settings
