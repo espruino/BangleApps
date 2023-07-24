@@ -11,21 +11,17 @@
 
 	return {
 		name: "Bangle",
-		items: [
+		items: WIDGETS["recorder"] ? [
 			{
 				name: "Toggle",
-				get: () => {
-					const w = typeof WIDGETS !== "undefined" && WIDGETS["recorder"];
-
-					return w && w.isRecording() ? {
-						text: "Recording",
-						short: "rec",
-						img: recimg(),
-					} : {
-						text: "Paused",
-						short: "paused",
-						img: pauseimg(),
-					}
+				get: () => WIDGETS["recorder"].isRecording() ? {
+					text: "Recording",
+					short: "rec",
+					img: recimg(),
+				} : {
+					text: "Paused",
+					short: "paused",
+					img: pauseimg(),
 				},
 				run: () => {
 					const w = WIDGETS["recorder"];
@@ -35,6 +31,6 @@
 				show: () => {},
 				hide: () => {},
 			},
-		],
+		] : [],
 	};
 });
