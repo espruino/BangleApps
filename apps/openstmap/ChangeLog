@@ -26,3 +26,4 @@
       If 'Recorder' app installed, add a 'Record' menu item
 0.21: Draw a current position marker (Bangle.js 2 only)
       Enable/Disable previous position marker in new setting "Draw cont. position"
+0.22: Replace position marker with direction arrow
