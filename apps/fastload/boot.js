@@ -22,8 +22,8 @@ let cache = s.readJSON("fastload.cache") || {};
 const SYS_SETTINGS="setting.json";
 
 let appFastloadPossible = function(n){
-  if(SETTINGS.detectSettingsChange && (!cache[SYS_SETTINGS] || E.CRC32(SYS_SETTINGS) != cache[SYS_SETTINGS])){
-    cache[SYS_SETTINGS] = E.CRC32(SYS_SETTINGS);
+  if(SETTINGS.detectSettingsChange && (!cache[SYS_SETTINGS] || s.hash(SYS_SETTINGS) != cache[SYS_SETTINGS])){
+    cache[SYS_SETTINGS] = s.hash(SYS_SETTINGS);
     s.writeJSON("fastload.cache", cache);
     return false;
   }
@@ -31,11 +31,11 @@ let appFastloadPossible = function(n){
   // no widgets, no problem
   if (!global.WIDGETS) return true;
   let app = s.read(n);
-  if (cache[n] && E.CRC32(app) == cache[n].crc)
+  if (cache[n] && s.hash(app) == cache[n].hash)
     return cache[n].fast;
   cache[n] = {};
   cache[n].fast = app.includes("Bangle.loadWidgets");
-  cache[n].crc = E.CRC32(app);
+  cache[n].hash = s.hash(app);
   s.writeJSON("fastload.cache", cache);
   return cache[n].fast;
 };
