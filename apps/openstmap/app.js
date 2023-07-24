@@ -133,6 +133,7 @@ Bangle.on('GPS',function(f) {
   }
 });
 Bangle.setGPSPower(1, "app");
+Bangle.setCompassPower(settings.dirSrc === 2, "openstmap");
 
 if (HASWIDGETS) {
   Bangle.loadWidgets();
@@ -196,6 +197,7 @@ function showMenu() {
       format: v => [/*LANG*/"None", /*LANG*/"GPS", /*LANG*/"Compass"][v],
       onchange: v => {
         settings.dirSrc = v;
+        Bangle.setCompassPower(settings.dirSrc === 2, "openstmap");
         writeSettings();
       }
     };

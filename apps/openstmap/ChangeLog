@@ -27,3 +27,4 @@
 0.21: Draw a current position marker (Bangle.js 2 only)
       Enable/Disable previous position marker in new setting "Draw cont. position"
 0.22: Replace position marker with direction arrow
+0.23: Bugfix: Enable Compass if needed
