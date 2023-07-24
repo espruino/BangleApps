@@ -10,7 +10,7 @@
 	});
 
 	return {
-		name: "Recorder",
+		name: "Bangle",
 		items: [
 			{
 				name: "Toggle",
