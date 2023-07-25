@@ -45,18 +45,20 @@
   const iconYoffset = Math.floor(whitespace/4)-1;
   const itemSize = iconSize + whitespace;
 
-  launchCache.items = [];
+  let t = Date.now();
+  launchCache.items = {};
   for (let c of launchCache.apps){
     let i = Math.floor(count/appsN);
     if (!launchCache.items[i])
-      launchCache.items.push([]);
-    launchCache.items[Math.floor(count/appsN)].push(c);
+      launchCache.items[i] = {};
+    launchCache.items[i].push(count%3);
     if (c.icon)
       c.icondata = s.read(c.icon);
     else
       c.icondata = ICON_MISSING;
     count++;
   }
+
   let drawItem = function(itemI, r) {
     let x = 0;
     let apps = launchCache.items[itemI];
