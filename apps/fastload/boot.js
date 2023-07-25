@@ -19,15 +19,23 @@ let loadingScreen = function(){
 
 let cache = s.readJSON("fastload.cache") || {};
 
-let checkApp = function(n){
+const SYS_SETTINGS="setting.json";
+
+let appFastloadPossible = function(n){
+  if(SETTINGS.detectSettingsChange && (!cache[SYS_SETTINGS] || s.hash(SYS_SETTINGS) != cache[SYS_SETTINGS])){
+    cache[SYS_SETTINGS] = s.hash(SYS_SETTINGS);
+    s.writeJSON("fastload.cache", cache);
+    return false;
+  }
+
   // no widgets, no problem
   if (!global.WIDGETS) return true;
   let app = s.read(n);
-  if (cache[n] && E.CRC32(app) == cache[n].crc)
+  if (cache[n] && s.hash(app) == cache[n].hash)
     return cache[n].fast;
   cache[n] = {};
   cache[n].fast = app.includes("Bangle.loadWidgets");
-  cache[n].crc = E.CRC32(app);
+  cache[n].hash = s.hash(app);
   s.writeJSON("fastload.cache", cache);
   return cache[n].fast;
 };
@@ -39,7 +47,7 @@ let slowload = function(n){
 };
 
 let fastload = function(n){
-  if (!n || checkApp(n)){
+  if (!n || appFastloadPossible(n)){
     // Bangle.load can call load, to prevent recursion this must be the system load
     global.load = slowload;
     Bangle.load(n);
