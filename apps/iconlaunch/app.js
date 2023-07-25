@@ -45,33 +45,33 @@
   const iconYoffset = Math.floor(whitespace/4)-1;
   const itemSize = iconSize + whitespace;
 
-  let t = Date.now();
   launchCache.items = {};
   for (let c of launchCache.apps){
     let i = Math.floor(count/appsN);
     if (!launchCache.items[i])
       launchCache.items[i] = {};
-    launchCache.items[i].push(count%3);
-    if (c.icon)
-      c.icondata = s.read(c.icon);
-    else
-      c.icondata = ICON_MISSING;
+    launchCache.items[i][(count%3)] = c;
     count++;
   }
 
+  let texted;
   let drawItem = function(itemI, r) {
-    let x = 0;
-    let apps = launchCache.items[itemI];
+    let x = whitespace;
     let i = itemI * appsN - 1;
     let selectedApp;
-    let currentApp;
+    let c;
     let selectedRect;
-    for (currentApp of apps) {
+    let item = launchCache.items[itemI];
+    if (texted == itemI){
+      g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
+      texted = undefined;
+    }
+    for (c of item) {
       i++;
-      x += whitespace;
-      g.drawImage(currentApp.icondata,x + r.x - 1, r.y + iconYoffset - 1, x + r.x + iconSize, r.y + iconYoffset + iconSize);
+      let id = c.icondata || (c.iconData = (c.icon ? s.read(c.icon) : ICON_MISSING));
+      g.drawImage(id,x + r.x - 1, r.y + iconYoffset - 1, x + r.x + iconSize, r.y + iconYoffset + iconSize);
       if (selectedItem == i) {
-        selectedApp = currentApp;
+        selectedApp = c;
         selectedRect = [
           x + r.x - 1,
           r.y + iconYoffset - 1,
@@ -79,11 +79,13 @@
           r.y + iconYoffset + iconSize
         ];
       }
-      x += iconSize;
+      x += iconSize + whitespace;
     }
-    if (selectedRect) g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
-    if (selectedRect) g.drawRect.apply(null, selectedRect);
-    if (selectedApp) drawText(itemI, r.y, selectedApp);
+    if (selectedRect) {
+      g.drawRect.apply(null, selectedRect);
+      drawText(itemI, r.y, selectedApp);
+      texted=itemI;
+    }
   };
 
   let drawText = function(i, appY, selectedApp) {
