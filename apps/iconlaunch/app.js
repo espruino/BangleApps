@@ -56,6 +56,7 @@
 
   let texted;
   let drawItem = function(itemI, r) {
+    "jit";
     let x = whitespace;
     let i = itemI * appsN - 1;
     let selectedApp;
@@ -89,6 +90,7 @@
   };
 
   let drawText = function(i, appY, selectedApp) {
+    "jit";
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (i != idy) return;
     appY = appY + itemSize/2;
