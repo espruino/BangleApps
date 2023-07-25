@@ -16,49 +16,49 @@
     pos: 10,
     dir: -1,
     eventHandlerSet: false,
-    draw: function() {
+    draw: function(_w, scroll) {
       if (!this.eventHandlerSet) {
         Bangle.on('lock', (on) => {
           this.run(!on);
         });
         this.eventHandlerSet = true;
       }
+      if (scroll) {
+        const buf = Graphics.createArrayBuffer(WIDTH,24,1,{msb:true}).setFont("Teletext5x9Ascii:1x2").setFontAlign(-1, 0);
+        buf.drawString(this.text, this.pos, 12);
+
+        if (this.dir === 1 && this.pos === 0 || this.dir === -1 && Math.abs(this.pos) === buf.stringWidth(this.text) - WIDTH) {
+          if (CONTINOUS) {
+            this.dir*=-1;
+            this.text = getDateText();
+          } else {
+            this.pos = 0;
+            this.run(false);
+            return;
+          }
+        }
+        this.pos+=this.dir;
+
+        g.reset().drawImage({
+          width:buf.getWidth(), height:buf.getHeight(),
+          bpp:buf.getBPP(),
+          buffer:buf.buffer
+        }, this.x+1, this.y);
+      }
     },
     run: function (on) {
       if (!Bangle.CLOCK && on && !this.interval) {
         this.text = getDateText();
         this.interval = setInterval(() => {
-          this.scroll();
+          this.draw(this, true);
         }, 100);
         this.width = WIDTH+2; Bangle.drawWidgets();
       } else if (!on && this.interval) {
         clearInterval(this.interval);
-        this.interval = undefined;
-        this.width = 0; Bangle.drawWidgets();
+        delete this.interval;
         delete this.text;
+        this.width = 0; Bangle.drawWidgets();
       }
-    },
-    scroll: function() {
-      const buf = Graphics.createArrayBuffer(WIDTH,24,1,{msb:true}).setFont("Teletext5x9Ascii:1x2").setFontAlign(-1, 0);
-      buf.drawString(this.text, this.pos, 12);
-
-      if (this.dir === 1 && this.pos === 0 || this.dir === -1 && Math.abs(this.pos) === buf.stringWidth(this.text) - WIDTH) {
-        if (CONTINOUS) {
-          this.dir*=-1;
-          this.text = getDateText();
-        } else {
-          this.pos = 0;
-          this.run(false);
-          return;
-        }
-      }
-      this.pos+=this.dir;
-
-      g.reset().drawImage({
-        width:buf.getWidth(), height:buf.getHeight(),
-        bpp:buf.getBPP(),
-        buffer:buf.buffer
-      }, this.x+1, this.y);
     },
   };
 })();
