@@ -57,19 +57,17 @@
       c.icondata = ICON_MISSING;
     count++;
   }
-
   let drawItem = function(itemI, r) {
     let x = 0;
     let apps = launchCache.items[itemI];
     let i = itemI * appsN - 1;
     let selectedApp;
     let currentApp;
-    let layers=[];
     let selectedRect;
     for (currentApp of apps) {
       i++;
       x += whitespace;
-      layers.push({x:x+r.x,y:r.y + iconYoffset,image:currentApp.icondata});
+      g.drawImage(currentApp.icondata,x + r.x - 1, r.y + iconYoffset - 1, x + r.x + iconSize, r.y + iconYoffset + iconSize);
       if (selectedItem == i) {
         selectedApp = currentApp;
         selectedRect = [
@@ -82,7 +80,6 @@
       x += iconSize;
     }
     if (selectedRect) g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
-    g.drawImages(layers);
     if (selectedRect) g.drawRect.apply(null, selectedRect);
     if (selectedApp) drawText(itemI, r.y, selectedApp);
   };
