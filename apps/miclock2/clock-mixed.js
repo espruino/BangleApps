@@ -48,7 +48,6 @@ const setLineWidth = function(x1, y1, x2, y2, lw) {
 };
 
 const drawMixedClock = function() {
-  "ram";
   const date = new Date();
   const dateArray = date.toString().split(" ");
   const isEn = locale.name.startsWith("en");
@@ -113,11 +112,6 @@ const onLCDPower = function(on) {
 };
 Bangle.on('lcdPower', onLCDPower);
 
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-drawMixedClock(); // immediately draw
-
 Bangle.setUI({mode:"clock", remove:function() {
   if (timeoutId !== undefined) {
     delete buf.buffer;
@@ -126,4 +120,9 @@ Bangle.setUI({mode:"clock", remove:function() {
     Bangle.removeListener('lcdPower',onLCDPower);
   }
 }});
+
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+drawMixedClock(); // immediately draw
 }
