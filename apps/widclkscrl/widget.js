@@ -16,14 +16,14 @@
     pos: 10,
     dir: -1,
     eventHandlerSet: false,
-    draw: function(_w, scroll) {
+    draw: function() {
       if (!this.eventHandlerSet) {
         Bangle.on('lock', (on) => {
           this.run(!on);
         });
         this.eventHandlerSet = true;
       }
-      if (scroll) {
+      if (this.text) {
         const buf = Graphics.createArrayBuffer(WIDTH,24,1,{msb:true}).setFont("Teletext5x9Ascii:1x2").setFontAlign(-1, 0);
         buf.drawString(this.text, this.pos, 12);
 
@@ -50,7 +50,7 @@
       if (!Bangle.CLOCK && on && !this.interval) {
         this.text = getDateText();
         this.interval = setInterval(() => {
-          this.draw(this, true);
+          this.draw();
         }, 100);
         this.width = WIDTH+2; Bangle.drawWidgets();
       } else if (!on && this.interval) {
