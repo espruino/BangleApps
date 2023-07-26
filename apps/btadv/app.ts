@@ -43,6 +43,10 @@ const enum BleChar {
   // <see encode function>
   HRM = "0x2a37",
 
+  // org.bluetooth.characteristic.body_sensor_location
+  // u8
+  SensorLocation = "0x2a38",
+
   // org.bluetooth.characteristic.elevation
   // s24, meters 0.01
   Elevation = "0x2a6c",
@@ -82,6 +86,16 @@ type BleServAdvert = {
 type LenFunc<T> = {
   (_: T): Array<number>,
   maxLen: number,
+}
+
+const enum SensorLocations = {
+  Other = 0,
+  Chest = 1,
+  Wrist = 2,
+  Finger = 3,
+  Hand = 4,
+  EarLobe = 5,
+  Foot = 6,
 }
 
 let acc: undefined | AccelData;
@@ -515,12 +529,22 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
           readable: true,
           notify: true,
         };
+        const os: BleCharAdvert = {
+          maxLen: 1,
+          readable: true,
+          notify: true,
+        };
+
         if (hrm) {
           o.value = encodeHrm(hrm);
+          os.value = SensorLocations.Wrist;
           hrm = undefined;
         }
 
-        return { [BleChar.HRM]: o };
+        return {
+          [BleChar.HRM]: o,
+          [BleChar.SensorLocation]: os,
+        };
       }
       return {};
 
