@@ -73,6 +73,12 @@ let tagKeys = Object.keys(tags).filter(tag => tag !== "clock" || settings.showCl
 if (!settings.fullscreen)
   Bangle.loadWidgets();
 
+const unload = () => {
+    // cleanup the timeout to not leave anything behind after being removed from ram
+    if (lockTimeout) clearTimeout(lockTimeout);
+    Bangle.removeListener("lock", lockHandler);
+};
+
 let showTagMenu = (tag) => {
   E.showScroller({
     h : 64*scaleval, c : appsByTag[tag].length,
@@ -96,7 +102,8 @@ let showTagMenu = (tag) => {
         load(app.src);
       }
     },
-    back : showMainMenu
+    back : showMainMenu,
+    remove: unload
   });
 };
 
@@ -118,11 +125,7 @@ let showMainMenu = () => {
       showTagMenu(tag);
     },
     back : Bangle.showClock, // button press or tap in top left shows clock now
-    remove : () => {
-      // cleanup the timeout to not leave anything behind after being removed from ram
-      if (lockTimeout) clearTimeout(lockTimeout);
-      Bangle.removeListener("lock", lockHandler);
-  }
+    remove : unload
   });
 };
 showMainMenu();
