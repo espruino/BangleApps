@@ -4,7 +4,12 @@
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     var HRM_MIN_CONFIDENCE_1 = 75;
-    var services_1 = ["0x180d", "0x181a", "0x1819"];
+    var services_1 = [
+        "0x180d",
+        "0x181a",
+        "0x1819",
+        "0xE95D0753251D470AA062FA1922DFA9A8",
+    ];
     var acc_1;
     var bar_1;
     var gps_1;
@@ -215,13 +220,15 @@
         ];
     };
     encodeGpsHeadingOnly_1.maxLen = 17;
-    var encodeMag_1 = function (data) {
+    var encodeXYZ = function (data) {
         var x = toByteArray_1(data.x, 2, true);
         var y = toByteArray_1(data.y, 2, true);
         var z = toByteArray_1(data.z, 2, true);
         return [x[0], x[1], y[0], y[1], z[0], z[1]];
     };
-    encodeMag_1.maxLen = 6;
+    encodeXYZ.maxLen = 6;
+    var encodeMag_1 = encodeXYZ;
+    var encodeAcc_1 = encodeXYZ;
     var toByteArray_1 = function (value, numberOfBytes, isSigned) {
         var byteArray = new Array(numberOfBytes);
         if (isSigned && (value < 0)) {
@@ -251,6 +258,7 @@
             case "0x180d": return !!hrm_1;
             case "0x181a": return !!(bar_1 || mag_1);
             case "0x1819": return !!(gps_1 && gps_1.lat && gps_1.lon || mag_1);
+            case "0xE95D0753251D470AA062FA1922DFA9A8": return !!acc_1;
         }
     };
     var serviceToAdvert_1 = function (serv, initial) {
@@ -264,11 +272,20 @@
                         readable: true,
                         notify: true,
                     };
+                    var os = {
+                        maxLen: 1,
+                        readable: true,
+                        notify: true,
+                    };
                     if (hrm_1) {
                         o.value = encodeHrm_1(hrm_1);
+                        os.value = [2];
                         hrm_1 = undefined;
                     }
-                    return _a = {}, _a["0x2a37"] = o, _a;
+                    return _a = {},
+                        _a["0x2a37"] = o,
+                        _a["0x2a38"] = os,
+                        _a;
                 }
                 return {};
             case "0x1819":
@@ -327,6 +344,21 @@
                     };
                     if (mag_1) {
                         o["0x2aa1"].value = encodeMag_1(mag_1);
+                    }
+                }
+                return o;
+            }
+            case "0xE95D0753251D470AA062FA1922DFA9A8": {
+                var o = {};
+                if (acc_1 || initial) {
+                    o["0xE95DCA4B251D470AA062FA1922DFA9A8"] = {
+                        maxLen: encodeAcc_1.maxLen,
+                        readable: true,
+                        notify: true,
+                    };
+                    if (acc_1) {
+                        o["0xE95DCA4B251D470AA062FA1922DFA9A8"].value = encodeAcc_1(acc_1);
+                        acc_1 = undefined;
                     }
                 }
                 return o;

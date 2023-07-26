@@ -33,10 +33,17 @@ const enum BleServ {
   // contains: LocationAndSpeed
   LocationAndNavigation = "0x1819",
 
-  // Acc // none known for this
+  // org.microbit.service.accelerometer
+  // contains: Acc
+  Acc = "0xE95D0753251D470AA062FA1922DFA9A8",
 }
 
-const services = [BleServ.HRM, BleServ.EnvSensing, BleServ.LocationAndNavigation];
+const services = [
+    BleServ.HRM,
+    BleServ.EnvSensing,
+    BleServ.LocationAndNavigation,
+    BleServ.Acc,
+];
 
 const enum BleChar {
   // org.bluetooth.characteristic.heart_rate_measurement
@@ -69,6 +76,11 @@ const enum BleChar {
   // org.bluetooth.characteristic.magnetic_flux_density_3d
   // s16: x, y, z, tesla (10^-7)
   MagneticFlux3D = "0x2aa1",
+
+  // org.microbit.characteristic.accelerometer_data
+  // s16 x3, -1024 .. 1024
+  // docs: https://lancaster-university.github.io/microbit-docs/ble/accelerometer-service/
+  Acc = "0xE95DCA4B251D470AA062FA1922DFA9A8",
 }
 
 type BleCharAdvert = {
@@ -88,7 +100,7 @@ type LenFunc<T> = {
   maxLen: number,
 }
 
-const enum SensorLocations = {
+const enum SensorLocations {
   Other = 0,
   Chest = 1,
   Wrist = 2,
@@ -469,14 +481,19 @@ const encodeGpsHeadingOnly: LenFunc<CompassData> = (data: CompassData) => {
 };
 encodeGpsHeadingOnly.maxLen = 17;
 
-const encodeMag: LenFunc<CompassData> = (data: CompassData) => {
+type XYZ = { x: number, y: number, z: number };
+
+const encodeXYZ: LenFunc<XYZ> = (data: XYZ) => {
   const x = toByteArray(data.x, 2, true);
   const y = toByteArray(data.y, 2, true);
   const z = toByteArray(data.z, 2, true);
 
   return [ x[0]!, x[1]!, y[0]!, y[1]!, z[0]!, z[1]! ];
 };
-encodeMag.maxLen = 6;
+encodeXYZ.maxLen = 6;
+
+const encodeMag: LenFunc<CompassData> = encodeXYZ;
+const encodeAcc: LenFunc<AccelData> = encodeXYZ;
 
 const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) => {
   const byteArray: Array<number> = new Array(numberOfBytes);
@@ -517,6 +534,7 @@ const haveServiceData = (serv: BleServ): boolean => {
     case BleServ.HRM: return !!hrm;
     case BleServ.EnvSensing: return !!(bar || mag);
     case BleServ.LocationAndNavigation: return !!(gps && gps.lat && gps.lon || mag);
+    case BleServ.Acc: return !!acc;
   }
 };
 
@@ -537,7 +555,7 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
 
         if (hrm) {
           o.value = encodeHrm(hrm);
-          os.value = SensorLocations.Wrist;
+          os.value = [SensorLocations.Wrist];
           hrm = undefined;
         }
 
@@ -611,6 +629,25 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
         if (mag) {
           o[BleChar.MagneticFlux3D]!.value = encodeMag(mag);
         }
+      }
+
+      return o;
+    }
+
+    case BleServ.Acc: {
+      const o: BleServAdvert = {};
+
+      if (acc || initial) {
+          o[BleChar.Acc] = {
+            maxLen: encodeAcc.maxLen,
+            readable: true,
+            notify: true,
+          };
+
+          if (acc) {
+            o[BleChar.Acc]!.value = encodeAcc(acc);
+            acc = undefined;
+          }
       }
 
       return o;
