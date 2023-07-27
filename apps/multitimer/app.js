@@ -217,6 +217,7 @@ function timerMenu(idx) {
       }
     }
   });
+  setUI();
 }
 
 function editTimer(idx, a) {
@@ -376,6 +377,7 @@ function drawSw() {
       else if (idx > 0 && idx < sw.length+1) swMenu(idx-1);
     }
   });
+  setUI();
 }
 
 function swMenu(idx, a) {
@@ -499,6 +501,7 @@ function swMenu(idx, a) {
       }
     }
   });
+  setUI();
 }
 
 function drawAlarms() {
@@ -539,6 +542,7 @@ function drawAlarms() {
       else if (idx > 0 && idx < alarms.length+1) editAlarm(idx-1);
     }
   });
+  setUI();
 }
 
 function editDOW(dow, onchange) {
@@ -672,6 +676,7 @@ function editAlarm(idx, a) {
 function setUI() {
   // E.showMenu/E.showScroller/E.showAlert call setUI, so we register onDrag() separately
   // and tack on uiRemove after the fact to avoid interfering
+  Bangle.on("drag", onDrag);
   Bangle.uiRemove = () => {
     Bangle.removeListener("drag", onDrag);
     Object.values(timerInt1).forEach(clearTimeout);
@@ -703,6 +708,4 @@ function onDrag(e) {
 }
 
 drawTimers();
-
-Bangle.on("drag", onDrag);
 }
