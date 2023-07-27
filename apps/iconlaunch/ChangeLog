@@ -21,4 +21,5 @@
 0.15: Ensure that we hide widgets if in fullscreen mode
       (So that widgets are still hidden if launcher is fast-loaded)
 0.16: Use firmware provided E.showScroller method
-0.17: fix fullscreen with oneClickExit 
+0.17: fix fullscreen with oneClickExit
+0.18: Better performance

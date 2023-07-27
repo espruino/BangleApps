@@ -16,8 +16,7 @@
   }
   const timeOutChoices = [/*LANG*/"Off", "10s", "15s", "20s", "30s"];
   const appMenu = {
-    "": { "title": /*LANG*/"Launcher" },
-    /*LANG*/"< Back": back,
+    "": { "title": /*LANG*/"Launcher", back: back },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
       onchange: (m) => { 

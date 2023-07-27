@@ -9,7 +9,6 @@
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
 
-  
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
@@ -19,9 +18,9 @@
   let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
   let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
-  launchCache = {
-    hash : launchHash,
-    apps : s.list(/\.info$/)
+    launchCache = {
+      hash : launchHash,
+      apps : s.list(/\.info$/)
       .map(app=>{let a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
       .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
       .sort((a,b)=>{
@@ -34,42 +33,66 @@
     s.writeJSON("iconlaunch.cache.json", launchCache);
   }
 
+  // cache items
+  const ICON_MISSING = s.read("iconlaunch.na.img");
+  let count = 0;
+
   let selectedItem = -1;
   const R = Bangle.appRect;
   const iconSize = 48;
   const appsN = Math.floor(R.w / iconSize);
-  const whitespace = (R.w - appsN * iconSize) / (appsN + 1);
+  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
+  const iconYoffset = Math.floor(whitespace/4)-1;
   const itemSize = iconSize + whitespace;
 
+  launchCache.items = {};
+  for (let c of launchCache.apps){
+    let i = Math.floor(count/appsN);
+    if (!launchCache.items[i])
+      launchCache.items[i] = {};
+    launchCache.items[i][(count%3)] = c;
+    count++;
+  }
+
+  let texted;
   let drawItem = function(itemI, r) {
-    g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
-    let x = 0;
-    for (let i = itemI * appsN; i < appsN * (itemI + 1); i++) {
-      if (!launchCache.apps[i]) break;
-      x += whitespace;
-      if (!launchCache.apps[i].icon) {
-        g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
-      } else {
-        if (!launchCache.apps[i].icondata) launchCache.apps[i].icondata = s.read(launchCache.apps[i].icon);
-        g.drawImage(launchCache.apps[i].icondata, x + r.x, r.y);
-      }
-      if (selectedItem == i) {
-        g.drawRect(
-          x + r.x - 1,
-          r.y - 1,
-          x + r.x + iconSize + 1,
-          r.y + iconSize + 1
-        );
-      }
-      x += iconSize;
+    "jit";
+    let x = whitespace;
+    let i = itemI * appsN - 1;
+    let selectedApp;
+    let c;
+    let selectedRect;
+    let item = launchCache.items[itemI];
+    if (texted == itemI){
+      g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
+      texted = undefined;
     }
-    drawText(itemI, r.y);
+    for (c of item) {
+      i++;
+      let id = c.icondata || (c.iconData = (c.icon ? s.read(c.icon) : ICON_MISSING));
+      g.drawImage(id,x + r.x - 1, r.y + iconYoffset - 1, x + r.x + iconSize, r.y + iconYoffset + iconSize);
+      if (selectedItem == i) {
+        selectedApp = c;
+        selectedRect = [
+          x + r.x - 1,
+          r.y + iconYoffset - 1,
+          x + r.x + iconSize,
+          r.y + iconYoffset + iconSize
+        ];
+      }
+      x += iconSize + whitespace;
+    }
+    if (selectedRect) {
+      g.drawRect.apply(null, selectedRect);
+      drawText(itemI, r.y, selectedApp);
+      texted=itemI;
+    }
   };
 
-  let drawText = function(i, appY) {
-    const selectedApp = launchCache.apps[selectedItem];
+  let drawText = function(i, appY, selectedApp) {
+    "jit";
     const idy = (selectedItem - (selectedItem % 3)) / 3;
-    if (!selectedApp || i != idy) return;
+    if (i != idy) return;
     appY = appY + itemSize/2;
     g.setFontAlign(0, 0, 0);
     g.setFont("12x20");
