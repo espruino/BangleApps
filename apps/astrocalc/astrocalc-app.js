@@ -110,7 +110,7 @@ function drawPoints() {
 }
 
 function drawData(title, obj, startX, startY) {
-  g.clear();
+  g.clearRect(Bangle.appRect);
   drawTitle(title);
 
   let xPos, yPos;
@@ -154,9 +154,7 @@ function drawMoonPositionPage(gps, title) {
   drawPoints();
   drawPoint(azimuthDegrees, 8, moonColor);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 function drawMoonIlluminationPage(gps, title) {
@@ -174,9 +172,7 @@ function drawMoonIlluminationPage(gps, title) {
   drawData(title, pageData, null, 35);
   drawMoon(phaseIdx, g.getWidth() / 2, g.getHeight() / 2);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 
@@ -202,9 +198,7 @@ function drawMoonTimesPage(gps, title) {
   const setAzimuthDegrees = parseInt(setPos.azimuth * 180 / Math.PI);
   drawPoint(setAzimuthDegrees, 8, moonColor);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 function drawSunShowPage(gps, key, date) {
@@ -233,9 +227,7 @@ function drawSunShowPage(gps, key, date) {
   // Draw the suns position
   drawPoint(azimuthDegrees, 8, {r: 1, g: 1, b: 0});
 
-  m = setWatch(() => {
-    m = sunIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => sunIndexPageMenu(gps)});
 
   return null;
 }
@@ -314,7 +306,9 @@ function getCenterStringX(str) {
 
 function init() {
   let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  Bangle.loadWidgets();
   indexPageMenu(location);
+  Bangle.drawWidgets();
 }
 
 let m;
