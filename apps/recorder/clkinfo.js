@@ -7,7 +7,7 @@
 
 	return {
 		name: "Bangle",
-		items: WIDGETS["recorder"] ? [
+		items: typeof WIDGETS !== "undefined" && WIDGETS["recorder"] ? [
 			{
 				name: "Toggle",
 				get: () => WIDGETS["recorder"].isRecording() ? {
