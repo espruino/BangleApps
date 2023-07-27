@@ -7,65 +7,119 @@
 	// @ts-ignore
 	delete settings;
 
+	const enum State {
+		NoConn,
+		Idle,
+		TopDrag,
+		IgnoreCurrent,
+		Active,
+	}
+	let state = State.NoConn;
+	let startY = 0;
+	const initDistance = 30;
+
 	let anchor = {x:0,y:0};
 	let start = {x:0,y:0};
 	let dragging = false;
 	let activeTimeout: TimeoutId | undefined;
 	let waitForRelease = true;
 
-	const onSwipe = ((_lr, ud) => {
-		// do these checks in order of cheapness
-		if(ud! > 0 && !activeTimeout && !(Bangle as BangleExt).CLKINFO_FOCUS){
-			listen();
-			Bangle.buzz(20);
-		}
-	}) satisfies SwipeCallback;
-
 	const onDrag = (e => {
-		// Espruino/35c8cb9be11
-		E.stopEventPropagation && E.stopEventPropagation();
+		console.log("onDrag, state = " + state);
+		switch (state) {
+			case State.NoConn:
+				break;
 
-		if(e.b === 0){
-			// released
-			const wasDragging = dragging;
-			dragging = false;
+			case State.IgnoreCurrent:
+                if(e.b === 0) state = State.Idle;
+                break;
 
-			if(waitForRelease){
-				waitForRelease = false;
-				return;
-			}
+			case State.Idle:
+				if(e.b && !activeTimeout){ // no need to check Bangle.CLKINFO_FOCUS
+					// first touch
+					if (e.y <= 24){
+						state = State.TopDrag
+						startY = e.y;
+						console.log("  topdrag detected, starting @ " + startY);
+					}else{
+						console.log("  ignoring this drag (too low @ " + startY + ")");
+						state = State.IgnoreCurrent;
+					}
+				}
+				break;
 
-			if(!wasDragging // i.e. tap
-			|| (Math.abs(e.x - anchor.x) < 2 && Math.abs(e.y - anchor.y) < 2))
-			{
-				toggle();
-				onEvent();
-				return;
-			}
+			case State.TopDrag:
+				if(e.b === 0){
+					console.log("topdrag stopped, distance: " + (e.y - startY));
+					if(e.y > startY + initDistance){
+						state = State.Active;
+						listen();
+						Bangle.buzz(20);
+						break;
+					}
+					state = State.Idle;
+					Bangle.setLCDOverlay();
+				}else{
+					// partial drag, show UI feedback:
+					const height = 100;
+					const g2 = Graphics.createArrayBuffer(100, height, 1, { msb:true });
+					g2.drawLine(0, 0, 100, 100);
+					g2.drawRect(0, 0, 99, 99);
+					g2.drawString("widhid", 0, 0);
+					Bangle.setLCDOverlay(g2, 38, e.y - height - 30);
+				}
+				break;
+
+			case State.Active:
+				console.log("stolen drag handling, do whatever here");
+                return;
+				// Espruino/35c8cb9be11
+				E.stopEventPropagation && E.stopEventPropagation();
+
+				if(e.b === 0){
+					// released
+					const wasDragging = dragging;
+					dragging = false;
+
+					if(waitForRelease){
+						waitForRelease = false;
+						return;
+					}
+
+					if(!wasDragging // i.e. tap
+					|| (Math.abs(e.x - anchor.x) < 2 && Math.abs(e.y - anchor.y) < 2))
+					{
+						toggle();
+						onEvent();
+						return;
+					}
+				}
+				if(waitForRelease) return;
+
+				if(e.b && !dragging){
+					dragging = true;
+					setStart(e);
+					Object.assign(anchor, start);
+					return;
+				}
+
+				const dx = e.x - start.x;
+				const dy = e.y - start.y;
+
+				if(Math.abs(dy) > 25 && Math.abs(dx) > 25){
+					// diagonal, ignore
+					setStart(e);
+					waitForRelease = true;
+					return;
+				}
+
+				// had a drag in a single axis
+				if(dx > 40){       next(); onEvent(); waitForRelease = true; }
+				else if(dx < -40){ prev(); onEvent(); waitForRelease = true; }
+				else if(dy > 30){  down(); onEvent(); setStart(e); }
+				else if(dy < -30){ up();   onEvent(); setStart(e); }
+				break;
 		}
-		if(waitForRelease) return;
-
-		if(e.b && !dragging){
-			dragging = true;
-			setStart(e);
-			Object.assign(anchor, start);
-			return;
-		}
-
-		const dx = e.x - start.x;
-		const dy = e.y - start.y;
-
-		if(Math.abs(dy) > 25 && Math.abs(dx) > 25){
-			// diagonal, ignore
-			setStart(e);
-			return;
-		}
-
-		// had a drag in a single axis
-		if(dx > 40){       next(); onEvent(); waitForRelease = true; }
-		else if(dx < -40){ prev(); onEvent(); waitForRelease = true; }
-		else if(dy > 30){  down(); onEvent(); setStart(e); }
-		else if(dy < -30){ up();   onEvent(); setStart(e); }
 	}) satisfies DragCallback;
 
 	const setStart = ({ x, y }: { x: number, y: number }) => {
@@ -83,7 +137,7 @@
 		if(!wasActive){
 			waitForRelease = true; // wait for first touch up before accepting gestures
 
-			Bangle.on("drag", onDrag);
+			//Bangle.on("drag", onDrag);
 
 			// move our drag to the start of the event listener array
 			const dragHandlers = (Bangle as BangleEvents)["#ondrag"]
@@ -101,11 +155,13 @@
 		activeTimeout = setTimeout(() => {
 			activeTimeout = undefined;
 
-			Bangle.removeListener("drag", onDrag);
+			//Bangle.removeListener("drag", onDrag);
 
 			redraw();
 		}, 3000);
 	};
+
+	Bangle.on("drag", onDrag);
 
 	const redraw = () => setTimeout(Bangle.drawWidgets, 50);
 
@@ -126,19 +182,19 @@
 		width: connected ? 24 : 0,
 	};
 
-	if(connected)
-		Bangle.on("swipe", onSwipe);
+	state = connected ? State.Idle : State.NoConn;
+
 	// @ts-ignore
 	delete connected;
 
 	NRF.on("connect", () => {
 		WIDGETS["hid"]!.width = 24;
-		Bangle.on("swipe", onSwipe);
+		state = State.Idle;
 		redraw();
 	});
 	NRF.on("disconnect", () => {
 		WIDGETS["hid"]!.width = 0;
-		Bangle.removeListener("swipe", onSwipe);
+		state = State.NoConn;
 		redraw();
 	});
 
