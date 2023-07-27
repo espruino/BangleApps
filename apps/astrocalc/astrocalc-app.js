@@ -11,7 +11,6 @@
 
 const SunCalc = require("suncalc"); // from modules folder
 const storage = require("Storage");
-const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
