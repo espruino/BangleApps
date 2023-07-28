@@ -1,3 +1,4 @@
+{
 const CONFIGFILE = "stopwatch.json";
 
 const now = Date.now();
@@ -20,6 +21,7 @@ let timeY = 2*h/5;
 let displayInterval;
 let redrawButtons = true;
 const iconScale = g.getWidth() / 178; // scale up/down based on Bangle 2 size
+const origTheme = g.theme;
 
 // 24 pixel images, scale to watch
 // 1 bit optimal, image string, no E.toArrayBuffer()
@@ -27,19 +29,19 @@ const pause_img = atob("GBiBAf////////////////wYP/wYP/wYP/wYP/wYP/wYP/wYP/wYP/wY
 const play_img = atob("GBjBAP//AAAAAAAAAAAIAAAOAAAPgAAP4AAP+AAP/AAP/wAP/8AP//AP//gP//gP//AP/8AP/wAP/AAP+AAP4AAPgAAOAAAIAAAAAAAAAAA=");
 const reset_img = atob("GBiBAf////////////AAD+AAB+f/5+f/5+f/5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+cA5+f/5+f/5+f/5+AAB/AAD////////////w==");
 
-function saveState() {
+const saveState = function() {
     config.state.total = tTotal;
     config.state.start = tStart;
     config.state.current = tCurrent;
     config.state.running = running;
     require("Storage").writeJSON(CONFIGFILE, config);
-}
+};
 
-function log_debug(o) {
+const log_debug = function(o) {
   //console.log(o);
-}
+};
 
-function timeToText(t) {
+const timeToText = function(t) {
   let hrs = Math.floor(t/3600000);
   let mins = Math.floor(t/60000)%60;
   let secs = Math.floor(t/1000)%60;
@@ -53,9 +55,9 @@ function timeToText(t) {
 
   //log_debug(text);
   return text;
-}
+};
 
-function drawButtons() {
+const drawButtons = function() {
   log_debug("drawButtons()");
   if (!running && tCurrent == tTotal) {
     bigPlayPauseBtn.draw();
@@ -65,11 +67,11 @@ function drawButtons() {
   } else {
     bigPlayPauseBtn.draw();
   }
-  
-  redrawButtons = false;
-}
 
-function drawTime() {
+  redrawButtons = false;
+};
+
+const drawTime = function() {
   log_debug("drawTime()");
   let Tt = tCurrent-tTotal;
   let Ttxt = timeToText(Tt);
@@ -80,32 +82,32 @@ function drawTime() {
   g.clearRect(0, timeY - 21, w, timeY + 21);
   g.setColor(g.theme.fg); 
   g.drawString(Ttxt, w/2, timeY);
-}
+};
 
-function draw() {
+const draw = function() {
   let last = tCurrent;
   if (running) tCurrent = Date.now();
   g.setColor(g.theme.fg);
   if (redrawButtons) drawButtons();
   drawTime();
-}
+};
 
-function startTimer() {
+const startTimer = function() {
   log_debug("startTimer()");
   draw();
   displayInterval = setInterval(draw, 100);
-}
+};
 
-function stopTimer() {
+const stopTimer = function() {
   log_debug("stopTimer()");
   if (displayInterval) {
     clearInterval(displayInterval);
     displayInterval = undefined;
   }
-}
+};
 
 // BTN stop start
-function stopStart() {
+const stopStart = function() {
   log_debug("stopStart()");
 
   if (running)
@@ -127,9 +129,9 @@ function stopStart() {
     draw();
   }
   saveState();
-}
+};
 
-function setButtonImages() {
+const setButtonImages = function() {
   if (running) {
     bigPlayPauseBtn.setImage(pause_img);
     smallPlayPauseBtn.setImage(pause_img);
@@ -139,10 +141,10 @@ function setButtonImages() {
     smallPlayPauseBtn.setImage(play_img);
     resetBtn.setImage(reset_img);
   }
-}
+};
 
 // lap or reset
-function lapReset() {
+const lapReset = function() {
   log_debug("lapReset()");
   if (!running && tStart != tCurrent) {
     redrawButtons = true;
@@ -152,10 +154,10 @@ function lapReset() {
     draw();
   }
   saveState();
-}
+};
 
 // simple on screen button class
-function BUTTON(name,x,y,w,h,c,f,i) {
+const BUTTON = function(name,x,y,w,h,c,f,i) {
   this.name = name;
   this.x = x;
   this.y = y;
@@ -164,16 +166,16 @@ function BUTTON(name,x,y,w,h,c,f,i) {
   this.color = c;
   this.callback = f;
   this.img = i;
-}
+};
 
 BUTTON.prototype.setImage = function(i) {
   this.img = i;
-}
+};
 
 // if pressed the callback
 BUTTON.prototype.check = function(x,y) {
   //console.log(this.name + ":check() x=" + x + " y=" + y +"\n");
-  
+
   if (x>= this.x && x<= (this.x + this.w) && y>= this.y && y<= (this.y + this.h)) {
     log_debug(this.name + ":callback\n");
     this.callback();
@@ -197,48 +199,52 @@ BUTTON.prototype.draw = function() {
 };
 
 
-var bigPlayPauseBtn = new BUTTON("big",0, 3*h/4 ,w, h/4, "#0ff", stopStart, play_img);
-var smallPlayPauseBtn = new BUTTON("small",w/2, 3*h/4 ,w/2, h/4, "#0ff", stopStart, play_img);
-var resetBtn = new BUTTON("rst",0, 3*h/4, w/2, h/4, "#ff0", lapReset, pause_img);
+const bigPlayPauseBtn = new BUTTON("big",0, 3*h/4 ,w, h/4, "#0ff", stopStart, play_img);
+const smallPlayPauseBtn = new BUTTON("small",w/2, 3*h/4 ,w/2, h/4, "#0ff", stopStart, play_img);
+const resetBtn = new BUTTON("rst",0, 3*h/4, w/2, h/4, "#ff0", lapReset, pause_img);
 
 bigPlayPauseBtn.setImage(play_img);
 smallPlayPauseBtn.setImage(play_img);
 resetBtn.setImage(pause_img);
 
+Bangle.setUI({mode:"custom", btn:() => load(), touch: (button,xy) => {
+    let x = xy.x;
+    let y = xy.y;
 
-Bangle.on('touch', function(button, xy) {
-  var x = xy.x;
-  var y = xy.y;
+    // adjust for outside the dimension of the screen
+    // http://forum.espruino.com/conversations/371867/#comment16406025
+    if (y > h) y = h;
+    if (y < 0) y = 0;
+    if (x > w) x = w;
+    if (x < 0) x = 0;
 
-  // adjust for outside the dimension of the screen
-  // http://forum.espruino.com/conversations/371867/#comment16406025
-  if (y > h) y = h;
-  if (y < 0) y = 0;
-  if (x > w) x = w;
-  if (x < 0) x = 0;
+    // not running, and reset
+    if (!running && tCurrent == tTotal && bigPlayPauseBtn.check(x, y)) return;
 
-  // not running, and reset
-  if (!running && tCurrent == tTotal && bigPlayPauseBtn.check(x, y)) return;
+    // paused and hit play
+    if (!running && tCurrent != tTotal && smallPlayPauseBtn.check(x, y)) return;
 
-  // paused and hit play
-  if (!running && tCurrent != tTotal && smallPlayPauseBtn.check(x, y)) return;
+    // paused and press reset
+    if (!running && tCurrent != tTotal && resetBtn.check(x, y)) return;
 
-  // paused and press reset
-  if (!running && tCurrent != tTotal && resetBtn.check(x, y)) return;
-
-  // must be running
-  if (running && bigPlayPauseBtn.check(x, y)) return;
-});
+    // must be running
+    if (running && bigPlayPauseBtn.check(x, y)) return;
+  }, remove: () => {
+  if (displayInterval) {
+    clearInterval(displayInterval);
+    displayInterval = undefined;
+  }
+  Bangle.removeListener('lcdPower',onLCDPower);
+  g.setTheme(origTheme);
+}});
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+const onLCDPower = (on) => {
   if (on) {
     draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
   }
-});
+};
+Bangle.on('lcdPower',onLCDPower);
 
 // Clear the screen once, at startup
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
@@ -254,4 +260,4 @@ if (running) {
 } else {
     draw();
 }
-setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
+}
