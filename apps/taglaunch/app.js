@@ -79,6 +79,17 @@ const unload = () => {
     Bangle.removeListener("lock", lockHandler);
 };
 
+// 10s of inactivity goes back to clock
+Bangle.setLocked(false); // unlock initially
+let lockTimeout;
+let lockHandler = function(locked) {
+  if (lockTimeout) clearTimeout(lockTimeout);
+  lockTimeout = undefined;
+  if (locked) {
+    lockTimeout = setTimeout(Bangle.showClock, 10000);
+  }
+};
+
 let showTagMenu = (tag) => {
   E.showScroller({
     h : 64*scaleval, c : appsByTag[tag].length,
@@ -105,6 +116,7 @@ let showTagMenu = (tag) => {
     back : showMainMenu,
     remove: unload
   });
+  Bangle.on("lock", lockHandler);
 };
 
 let showMainMenu = () => {
@@ -127,21 +139,11 @@ let showMainMenu = () => {
     back : Bangle.showClock, // button press or tap in top left shows clock now
     remove : unload
   });
+  Bangle.on("lock", lockHandler);
 };
 showMainMenu();
 g.flip(); // force a render before widgets have finished drawing
 
-// 10s of inactivity goes back to clock
-Bangle.setLocked(false); // unlock initially
-let lockTimeout;
-let lockHandler = function(locked) {
-  if (lockTimeout) clearTimeout(lockTimeout);
-  lockTimeout = undefined;
-  if (locked) {
-    lockTimeout = setTimeout(Bangle.showClock, 10000);
-  }
-};
-Bangle.on("lock", lockHandler);
 if (!settings.fullscreen) // finally draw widgets
   Bangle.drawWidgets();
 }
