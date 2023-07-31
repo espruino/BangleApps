@@ -7,22 +7,28 @@
 
 	return {
 		name: "Bangle",
-		items: typeof WIDGETS !== "undefined" && WIDGETS["recorder"] ? [
+		items: require("Storage").readJSON("recorder.json") ? [
 			{
 				name: "Toggle",
-				get: () => WIDGETS["recorder"].isRecording() ? {
-					text: "Recording",
-					short: "rec",
-					img: recimg(),
-				} : {
-					text: "Paused",
-					short: "paused",
-					img: pauseimg(),
+				get: () => {
+					const w = WIDGETS && WIDGETS["recorder"];
+
+					return w && w.isRecording() ? {
+						text: "Recording",
+						short: "Rec",
+						img: recimg(),
+					} : {
+						text: w ? "Paused" : "No rec",
+						short: w ? "Paused" : "No rec",
+						img: pauseimg(),
+					};
 				},
 				run: () => {
-					const w = WIDGETS["recorder"];
-					Bangle.buzz();
-					w.setRecording(!w.isRecording(), { force: "append" });
+					const w = WIDGETS && WIDGETS["recorder"];
+					if(w){
+						Bangle.buzz();
+						w.setRecording(!w.isRecording(), { force: "append" });
+					}
 				},
 				show: () => {},
 				hide: () => {},
