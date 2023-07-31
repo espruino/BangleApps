@@ -2,7 +2,7 @@
   "id": "taglaunch",
   "name": "Tag Launcher",
   "shortName": "Taglauncher",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Launcher that puts all applications into submenus based on their tag. With many applications installed this can result in a faster application selection than the linear access of the default launcher.",
   "readme": "README.md",
   "icon": "app.png",
@@ -12,8 +12,7 @@
   "screenshots": [ {"url":"screenshot.png"} ],
   "storage": [
     {"name":"taglaunch.app.js","url":"app.js"},
-    {"name":"taglaunch.settings.js","url":"settings.js"},
-    {"name":"taglaunch.health.img","url":"health-icon.js","evaluate":true}
+    {"name":"taglaunch.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"taglaunch.json"},{"name":"taglaunch.cache.json"}]
 }
