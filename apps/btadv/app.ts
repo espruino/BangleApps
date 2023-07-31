@@ -763,16 +763,35 @@ enableSensors();
   // must have fixed services from the start:
   const ad = getBleAdvert(serv => serviceToAdvert(serv, true), /*all*/true);
 
-  const adServices = Object
-        .keys(ad)
-        .map((k: string) => k.replace("0x", ""));
-
   NRF.setServices(
     ad,
     {
-      advertise: adServices,
       uart: false,
     },
+  );
+
+  if(!(Bangle as any).bleAdvert)
+    (Bangle as any).bleAdvert = {};
+
+  const cycle = [];
+  for(const id in ad){
+    const serv = ad[id as BleServ];
+    let value;
+
+    // pick the first characteristic to advertise
+    for(const ch in serv){
+      value = serv[ch as BleChar]!.value;
+      break;
+    }
+
+    cycle.push({ [id]: value || [] });
+  }
+
+  NRF.setAdvertising(
+    cycle,
+    {
+      interval: 100,
+    }
   );
 }
 }
