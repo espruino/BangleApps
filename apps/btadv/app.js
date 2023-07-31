@@ -221,15 +221,20 @@ var _a;
         ];
     };
     encodeGpsHeadingOnly_1.maxLen = 17;
-    var encodeXYZ = function (data) {
+    var encodeMag_1 = function (data) {
         var x = toByteArray_1(data.x, 2, true);
         var y = toByteArray_1(data.y, 2, true);
         var z = toByteArray_1(data.z, 2, true);
         return [x[0], x[1], y[0], y[1], z[0], z[1]];
     };
-    encodeXYZ.maxLen = 6;
-    var encodeMag_1 = encodeXYZ;
-    var encodeAcc_1 = encodeXYZ;
+    encodeMag_1.maxLen = 6;
+    var encodeAcc_1 = function (data) {
+        var x = toByteArray_1(data.x * 1000, 2, true);
+        var y = toByteArray_1(data.y * 1000, 2, true);
+        var z = toByteArray_1(data.z * 1000, 2, true);
+        return [x[0], x[1], y[0], y[1], z[0], z[1]];
+    };
+    encodeAcc_1.maxLen = 6;
     var toByteArray_1 = function (value, numberOfBytes, isSigned) {
         var byteArray = new Array(numberOfBytes);
         if (isSigned && (value < 0)) {

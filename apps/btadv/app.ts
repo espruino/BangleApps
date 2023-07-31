@@ -481,19 +481,23 @@ const encodeGpsHeadingOnly: LenFunc<CompassData> = (data: CompassData) => {
 };
 encodeGpsHeadingOnly.maxLen = 17;
 
-type XYZ = { x: number, y: number, z: number };
-
-const encodeXYZ: LenFunc<XYZ> = (data: XYZ) => {
+const encodeMag: LenFunc<CompassData> = (data: CompassData) => {
   const x = toByteArray(data.x, 2, true);
   const y = toByteArray(data.y, 2, true);
   const z = toByteArray(data.z, 2, true);
 
   return [ x[0]!, x[1]!, y[0]!, y[1]!, z[0]!, z[1]! ];
 };
-encodeXYZ.maxLen = 6;
+encodeMag.maxLen = 6;
 
-const encodeMag: LenFunc<CompassData> = encodeXYZ;
-const encodeAcc: LenFunc<AccelData> = encodeXYZ;
+const encodeAcc: LenFunc<AccelData> = (data: AccelData) => {
+  const x = toByteArray(data.x * 1000, 2, true);
+  const y = toByteArray(data.y * 1000, 2, true);
+  const z = toByteArray(data.z * 1000, 2, true);
+
+  return [ x[0]!, x[1]!, y[0]!, y[1]!, z[0]!, z[1]! ];
+};
+encodeAcc.maxLen = 6;
 
 const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) => {
   const byteArray: Array<number> = new Array(numberOfBytes);
