@@ -103,26 +103,7 @@ exports.input = function(options) {
   initDraw();
   //setTimeout(initDraw, 0); // So Bangle.appRect reads the correct environment. It would draw off to the side sometimes otherwise.
 
-  function changeCase(abcHL) {
-    if (settings.uppercase) return;
-    g.setColor(BGCOLOR);
-    g.setFontAlign(-1, -1, 0);
-    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
-    if (ABC.charAt(abcHL) == ABC.charAt(abcHL).toUpperCase()) ABC = ABC.toLowerCase();
-    else ABC = ABC.toUpperCase();
-    g.setColor(ABCCOLOR);
-    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
-  }
-  return new Promise((resolve,reject) => {
-    // Interpret touch input
-    Bangle.setUI({
-      mode: 'custom',
-      back: ()=>{
-        Bangle.setUI();
-        g.clearRect(Bangle.appRect);
-        resolve(text);
-      },
-      drag: function(event) {
+  let dragHandlerDB = function(event) {
         "ram";
         // ABCDEFGHIJKLMNOPQRSTUVWXYZ
         // Choose character by draging along red rectangle at bottom of screen
@@ -243,7 +224,34 @@ exports.input = function(options) {
             }
           }
         }
-      }
+      };
+
+  let catchSwipe = (_,__)=>{
+    E.stopEventPropagation&&E.stopEventPropagation();
+  };
+
+  function changeCase(abcHL) {
+    if (settings.uppercase) return;
+    g.setColor(BGCOLOR);
+    g.setFontAlign(-1, -1, 0);
+    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
+    if (ABC.charAt(abcHL) == ABC.charAt(abcHL).toUpperCase()) ABC = ABC.toLowerCase();
+    else ABC = ABC.toUpperCase();
+    g.setColor(ABCCOLOR);
+    g.drawString(ABC, ABCPADDING, (R.y+R.h)/2);
+  }
+  return new Promise((resolve,reject) => {
+    // Interpret touch input
+    Bangle.setUI({
+      mode: 'custom',
+      back: ()=>{
+        Bangle.setUI();
+        Bangle.prependListener&&Bangle.removeListener('swipe', catchSwipe); // Remove swipe lister if it was added with `Bangle.prependListener()` (fw2v19 and up).
+        g.clearRect(Bangle.appRect);
+        resolve(text);
+      },
+      drag: dragHandlerDB,
     });
+    Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
   });
 };
