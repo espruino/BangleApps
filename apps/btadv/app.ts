@@ -80,7 +80,7 @@ const enum BleChar {
   // org.microbit.characteristic.accelerometer_data
   // s16 x3, -1024 .. 1024
   // docs: https://lancaster-university.github.io/microbit-docs/ble/accelerometer-service/
-  Acc = "0xE95DCA4B251D470AA062FA1922DFA9A8",
+  Acc = "E95DCA4B251D470AA062FA1922DFA9A8",
 }
 
 type BleCharAdvert = {

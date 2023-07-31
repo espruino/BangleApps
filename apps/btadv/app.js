@@ -352,13 +352,13 @@ var _a;
             case "E95D0753251D470AA062FA1922DFA9A8": {
                 var o = {};
                 if (acc_1 || initial) {
-                    o["0xE95DCA4B251D470AA062FA1922DFA9A8"] = {
+                    o["E95DCA4B251D470AA062FA1922DFA9A8"] = {
                         maxLen: encodeAcc_1.maxLen,
                         readable: true,
                         notify: true,
                     };
                     if (acc_1) {
-                        o["0xE95DCA4B251D470AA062FA1922DFA9A8"].value = encodeAcc_1(acc_1);
+                        o["E95DCA4B251D470AA062FA1922DFA9A8"].value = encodeAcc_1(acc_1);
                         acc_1 = undefined;
                     }
                 }
