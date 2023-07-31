@@ -1,3 +1,4 @@
+var _a;
 {
     var __assign = Object.assign;
     var Layout_1 = require("Layout");
@@ -8,7 +9,7 @@
         "0x180d",
         "0x181a",
         "0x1819",
-        "0xE95D0753251D470AA062FA1922DFA9A8",
+        "E95D0753251D470AA062FA1922DFA9A8",
     ];
     var acc_1;
     var bar_1;
@@ -258,7 +259,7 @@
             case "0x180d": return !!hrm_1;
             case "0x181a": return !!(bar_1 || mag_1);
             case "0x1819": return !!(gps_1 && gps_1.lat && gps_1.lon || mag_1);
-            case "0xE95D0753251D470AA062FA1922DFA9A8": return !!acc_1;
+            case "E95D0753251D470AA062FA1922DFA9A8": return !!acc_1;
         }
     };
     var serviceToAdvert_1 = function (serv, initial) {
@@ -348,7 +349,7 @@
                 }
                 return o;
             }
-            case "0xE95D0753251D470AA062FA1922DFA9A8": {
+            case "E95D0753251D470AA062FA1922DFA9A8": {
                 var o = {};
                 if (acc_1 || initial) {
                     o["0xE95DCA4B251D470AA062FA1922DFA9A8"] = {
@@ -434,12 +435,23 @@
     enableSensors_1();
     {
         var ad = getBleAdvert_1(function (serv) { return serviceToAdvert_1(serv, true); }, true);
-        var adServices = Object
-            .keys(ad)
-            .map(function (k) { return k.replace("0x", ""); });
         NRF.setServices(ad, {
-            advertise: adServices,
             uart: false,
+        });
+        if (!Bangle.bleAdvert)
+            Bangle.bleAdvert = {};
+        var cycle = [];
+        for (var id in ad) {
+            var serv = ad[id];
+            var value = void 0;
+            for (var ch in serv) {
+                value = serv[ch].value;
+                break;
+            }
+            cycle.push((_a = {}, _a[id] = value || [], _a));
+        }
+        NRF.setAdvertising(cycle, {
+            interval: 100,
         });
     }
 }
