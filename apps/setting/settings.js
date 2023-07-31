@@ -193,7 +193,7 @@ function showBLEMenu() {
     /*LANG*/'Whitelist': {
       value:
         (
-          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
+          (settings.whitelist_disabled || !settings.whitelist) ? /*LANG*/"off" : /*LANG*/"on"
         ) + (
           settings.whitelist
           ? " (" + settings.whitelist.length + ")"
