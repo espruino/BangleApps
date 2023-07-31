@@ -35,7 +35,7 @@ const enum BleServ {
 
   // org.microbit.service.accelerometer
   // contains: Acc
-  Acc = "0xE95D0753251D470AA062FA1922DFA9A8",
+  Acc = "E95D0753251D470AA062FA1922DFA9A8",
 }
 
 const services = [
