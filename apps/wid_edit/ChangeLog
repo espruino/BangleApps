@@ -3,3 +3,4 @@
       Change back entry to menu option
       Allow changing widgets into all areas, including bottom widget bar
 0.03: Fix editing widgets whose draw method takes the widget
+0.04: Remove double-sort
