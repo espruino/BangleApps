@@ -3,19 +3,19 @@
 // https://icons8.com/icon/ISAVBnskZod0/resistor
 
 let colorData = {
-  black: { value: 0, multiplier: 1, hex: '#000' },
-  brown: { value: 1, multiplier: 10, tolerance: 1, hex: '#8B4513' },
-  red: { value: 2, multiplier: 100, tolerance: 2, hex: '#f00' },
-  orange: { value: 3, multiplier: 1000, hex: '#FF9900' },
-  yellow: { value: 4, multiplier: 10000, hex: '#ff0' },
-  green: { value: 5, multiplier: 100000, tolerance: 0.5, hex: '#0f0' },
-  blue: { value: 6, multiplier: 1000000, tolerance: 0.25, hex: '#00f' },
-  violet: { value: 7, multiplier: 10000000, tolerance: 0.1, hex: '#f0f' },
-  grey: { value: 8, multiplier: 100000000, tolerance: 0.05, hex: '#808080' },
-  white: { value: 9, multiplier: 1000000000, hex: '#fff' },
-  gold: { multiplier: 0.1, tolerance: 5, hex: '#FFD700' },
-  silver: { multiplier: 0.01, tolerance: 10, hex: '#C0C0C0' },
-  none: { tolerance: 20 },
+  Black: { value: 0, multiplier: 1, hex: '#000' },
+  Brown: { value: 1, multiplier: 10, tolerance: 1, hex: '#8B4513' },
+  Red: { value: 2, multiplier: 100, tolerance: 2, hex: '#f00' },
+  Orange: { value: 3, multiplier: 1000, hex: '#FF9900' },
+  Yellow: { value: 4, multiplier: 10000, hex: '#ff0' },
+  Green: { value: 5, multiplier: 100000, tolerance: 0.5, hex: '#0f0' },
+  Blue: { value: 6, multiplier: 1000000, tolerance: 0.25, hex: '#00f' },
+  Violet: { value: 7, multiplier: 10000000, tolerance: 0.1, hex: '#f0f' },
+  Grey: { value: 8, multiplier: 100000000, tolerance: 0.05, hex: '#808080' },
+  White: { value: 9, multiplier: 1000000000, hex: '#fff' },
+  Gold: { multiplier: 0.1, tolerance: 5, hex: '#FFD700' },
+  Silver: { multiplier: 0.01, tolerance: 10, hex: '#C0C0C0' },
+  None: { tolerance: 20 },
 };
 
 function clearScreen() { // Except Back Button
@@ -27,7 +27,7 @@ function colorBandsToResistance(colorBands) {
   let firstBand = colorBands[0];
   let secondBand = colorBands[1];
   let multiplierBand = colorBands[2];
-  let toleranceBand = colorBands[3] || 'none'; // Add a default value for toleranceBand
+  let toleranceBand = colorBands[3] || 'None'; // Add a default value for toleranceBand
   let significantDigits = colorData[firstBand].value * 10 + colorData[secondBand].value;
   let multiplier = colorData[multiplierBand].multiplier;
   let resistance = significantDigits * multiplier;
@@ -35,55 +35,63 @@ function colorBandsToResistance(colorBands) {
   return [resistance, tolerance];
 }
 
+// Function to get color bands based on resistance and tolerance
 function resistanceToColorBands(resistance, tolerance) {
   let firstDigit, secondDigit, multiplier;
-  if (resistance < 1) {
-    // The resistance is less than 1, so we need to handle this case specially
-    let count = 0;
-    while (resistance < 1) {
-      resistance *= 10;
-      count++;
-    }
-    // Now, resistance is a whole number and count is how many times we had to multiply by 10
-    let resistanceStr = resistance.toString();
-    firstDigit = 0; // Set the first band color to be black
-    secondDigit = Number(resistanceStr.charAt(0)); // Set the second band color to be the significant digit
-    // Use count to determine the multiplier
-    multiplier = count === 1 ? 0.1 : 0.01;
-  } else {
-    // Convert the resistance to a string so we can manipulate it easily
-    let resistanceStr = resistance.toString();
-    if (resistanceStr.length === 1) { // Check if resistance is a single digit
-      firstDigit = 0;
-      secondDigit = Number(resistanceStr.charAt(0));
-      multiplier = 1; // Set multiplier to 1 for single digit resistance values
+  let resistanceStr = resistance.toString();
+  let decimalIndex = resistanceStr.indexOf('.');
+
+  // Handle resistance with decimal
+  if (decimalIndex !== -1) {
+    let integerDigits = resistanceStr.substring(0, decimalIndex);
+    let decimalDigits = resistanceStr.substring(decimalIndex + 1);
+    let leadingZeros = decimalDigits.match(/^0*/)[0].length;
+
+    // If resistance is less than 1
+    if (parseInt(integerDigits) === 0) {
+      if (leadingZeros === decimalDigits.length - 1) {
+        // If only one significant digit
+        firstDigit = 0;
+        secondDigit = parseInt(decimalDigits.charAt(leadingZeros));
+        multiplier = 1 / Math.pow(10, leadingZeros + 1);
+      } else {
+        // If more than one significant digit
+        firstDigit = parseInt(decimalDigits.charAt(leadingZeros));
+        secondDigit = parseInt(decimalDigits.charAt(leadingZeros + 1));
+        multiplier = 1 / Math.pow(10, leadingZeros + 2);
+      }
     } else {
-      // Extract the first two digits from the resistance value
-      firstDigit = Number(resistanceStr.charAt(0));
-      secondDigit = Number(resistanceStr.charAt(1));
-      // Calculate the multiplier by matching it directly with the length of digits
-      multiplier = resistanceStr.length - 2 >= 0 ? Math.pow(10, resistanceStr.length - 2) : Math.pow(10, resistanceStr.length - 1);
+      // If resistance is greater than 1
+      firstDigit = parseInt(integerDigits.charAt(0));
+      secondDigit = parseInt(decimalDigits.charAt(0));
+      multiplier = 1 / Math.pow(10, decimalDigits.length);
     }
+  } else {
+    // Handle resistance without decimal
+    firstDigit = resistanceStr.length === 1 ? 0 : parseInt(resistanceStr.charAt(0));
+    secondDigit = parseInt(resistanceStr.charAt(resistanceStr.length === 1 ? 0 : 1));
+    multiplier = Math.pow(10, resistanceStr.length - 2);
   }
-  let firstBandEntry = Object.entries(colorData).find(function (entry) {
-    return entry[1].value === firstDigit;
-  });
-  let firstBand = firstBandEntry ? firstBandEntry[1].hex : undefined;
-  let secondBandEntry = Object.entries(colorData).find(function (entry) {
-    return entry[1].value === secondDigit;
-  });
-  let secondBand = secondBandEntry ? secondBandEntry[1].hex : undefined;
-  let multiplierBandEntry = Object.entries(colorData).find(function (entry) {
-    return entry[1].multiplier === multiplier;
-  });
-  let multiplierBand = multiplierBandEntry ? multiplierBandEntry[1].hex : undefined;
-  let toleranceBandEntry = Object.entries(colorData).find(function (entry) {
-    return entry[1].tolerance === tolerance;
-  });
-  let toleranceBand = toleranceBandEntry ? toleranceBandEntry[1].hex : undefined;
-  let bands = [firstBand, secondBand, multiplierBand];
+
+  // Generate color bands array
+  let bands = [
+    getBandColor('value', firstDigit),
+    getBandColor('value', secondDigit),
+    getBandColor('multiplier', multiplier),
+  ];
+
+  // Add tolerance color band if provided
+  let toleranceBand = getBandColor('tolerance', tolerance);
   if (toleranceBand) bands.push(toleranceBand);
   return bands;
+}
+
+// Helper function to get color band based on property and value
+function getBandColor(property, value) {
+  let entry = Object.entries(colorData).find(function (entry) {
+    return entry[1][property] === value;
+  });
+  return entry ? entry[1].hex : undefined;
 }
 
 function drawResistor(colorBands, tolerance) {
@@ -208,17 +216,17 @@ function drawResistance(resistance, tolerance) {
     // Populate colorBandMenu with colors from colorData
     for (let color in colorData) {
       if (bandNumber === 1 || bandNumber === 2) {
-        if (color !== 'none' && color !== 'gold' && color !== 'silver') {
+        if (color !== 'None' && color !== 'Gold' && color !== 'Silver') {
           (function (color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
+            colorBandMenu[color] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
         }
       } else if (bandNumber === 3) {
-        if (color !== 'none') {
+        if (color !== 'None') {
           (function (color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
+            colorBandMenu[color] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
@@ -226,7 +234,7 @@ function drawResistance(resistance, tolerance) {
       } else if (bandNumber === 4) {
         if (colorData[color].hasOwnProperty('tolerance')) {
           (function (color) {
-            colorBandMenu[color.charAt(0).toUpperCase() + color.slice(1)] = function () {
+            colorBandMenu[color] = function () {
               setBandColor(bandNumber, color);
             };
           })(color);
@@ -407,7 +415,6 @@ function drawResistance(resistance, tolerance) {
   };
 
   function showResistanceEntryMenu() {
-    // Update the 'Ohms' field
     resistanceEntryMenu['Ohms'].value = settings.resistance;
     resistanceEntryMenu['Ohms'].format = v => {
       let multipliedValue = v * (settings.multiplier || 1);
