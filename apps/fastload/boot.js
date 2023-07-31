@@ -30,12 +30,13 @@ let appFastloadPossible = function(n){
 
   // no widgets, no problem
   if (!global.WIDGETS) return true;
-  let app = s.read(n);
-  if (cache[n] && s.hash(app) == cache[n].hash)
+  let hash = s.hash(n);
+  if (cache[n] && hash == cache[n].hash)
     return cache[n].fast;
+  let app = s.read(n);
   cache[n] = {};
   cache[n].fast = app.includes("Bangle.loadWidgets");
-  cache[n].hash = s.hash(app);
+  cache[n].hash = hash;
   s.writeJSON("fastload.cache", cache);
   return cache[n].fast;
 };
