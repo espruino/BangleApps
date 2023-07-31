@@ -5,3 +5,6 @@
 0.05: Now scrolls text when string gets longer than screen width.
 0.06: The code is now more reliable and the input snappier. Widgets will be drawn if present.
 0.07: Settings for display colors
+some characters.
+0.08: Catch and discard swipe events on fw2v19 and up (as well as some cutting
+	edge 2v18 ones), allowing compatability with the Back Swipe app.
