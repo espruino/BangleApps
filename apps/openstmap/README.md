@@ -29,6 +29,7 @@ and marks the path that you've been travelling (if enabled), and
 displays waypoints in the watch (if dependencies exist).
 
 * Drag on the screen to move the map
+* Click bottom left to zoom in, bottom right to zoom out
 * Press the button to bring up a menu, where you can zoom, go to GPS location,
 put the map back in its default location, or choose whether to draw the currently
 recording GPS track (from the `Recorder` app).

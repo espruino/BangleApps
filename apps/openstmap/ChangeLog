@@ -16,7 +16,7 @@
       Support for zooming in on map
       Satellite count moved to widget bar to leave more room for the map
 0.15: Make track drawing an option (default off)
-0.16: Draw waypoints, too.
+0.16: Draw waypoints, too
 0.17: With new Recorder app allow track to be drawn in the background
       Switch tile layer URL for faster/more reliable map tiles
 0.18: Prefer map with highest resolution
@@ -28,3 +28,4 @@
       Enable/Disable previous position marker in new setting "Draw cont. position"
 0.22: Replace position marker with direction arrow
 0.23: Bugfix: Enable Compass if needed
+0.24: Allow zooming by clicking the screen
