@@ -56,7 +56,6 @@
 
   let texted;
   let drawItem = function(itemI, r) {
-    "jit";
     let x = whitespace;
     let i = itemI * appsN - 1;
     let selectedApp;
@@ -145,21 +144,21 @@
     },
     btn:Bangle.showClock
   };
-  
+
   //work both the fullscreen and the oneClickExit
   if( settings.fullscreen && settings.oneClickExit)
   {
-      idWatch=setWatch(function(e) { 
+      idWatch=setWatch(function(e) {
         Bangle.showClock();
       }, BTN, {repeat:false, edge:'rising' });
-    
+
   }
-  else if( settings.oneClickExit ) 
+  else if( settings.oneClickExit )
   {
       options.back=Bangle.showClock;
   }
 
-  
+
 
 
   let scroller = E.showScroller(options);
@@ -174,7 +173,7 @@
   };
 
   let swipeHandler = (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } };
-  
+
   Bangle.on("swipe", swipeHandler)
   Bangle.on("drag", updateTimeout);
   Bangle.on("touch", updateTimeout);
