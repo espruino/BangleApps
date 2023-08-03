@@ -6,3 +6,5 @@
 0.06: Support input of numbers and uppercase characters.
 0.07: Support input of symbols.
 0.08: Redone patterns a,e,m,w,z.
+0.09: Catch and discard swipe events on fw2v19 and up (as well as some cutting
+	edge 2v18 ones), allowing compatability with the Back Swipe app.
