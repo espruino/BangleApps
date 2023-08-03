@@ -226,7 +226,7 @@ exports.input = function(options) {
     }
   };
 
-  let catchSwipe = (_,__)=>{
+  let catchSwipe = ()=>{
     E.stopEventPropagation&&E.stopEventPropagation();
   };
 
