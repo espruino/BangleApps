@@ -7,6 +7,8 @@ var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
+var startDrag = 0;
+
 if (Bangle.setLCDOverlay) {
   // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
   var imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
@@ -235,6 +237,8 @@ function showMap() {
   Bangle.setUI({mode:"custom",drag:e=>{
     if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
+      if (!startDrag)
+        startDrag = getTime();
       g.setClipRect(R.x,R.y,R.x2,R.y2);
       g.scroll(e.dx,e.dy);
       m.scroll(e.dx,e.dy);
@@ -242,7 +246,19 @@ function showMap() {
       hasScrolled = true;
       drawLocation();
     } else if (hasScrolled) {
+      delta = getTime() - startDrag;
+      startDrag = 0;
       hasScrolled = false;
+      if (delta < 0.2) {
+        if (e.y > g.getHeight() / 2) {
+          if (e.x < g.getWidth() / 2) {
+            m.scale /= 2;
+          } else {
+            m.scale *= 2;
+          }
+        }
+        g.reset().clearRect(R);
+      }
       redraw();
     }
   }, btn: () => showMenu() });
