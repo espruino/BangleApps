@@ -253,6 +253,7 @@
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
+    gbSend({t: "ver", fw: process.env.VERSION, hw: process.env.HWVERSION});
     GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
   }, 2000));
   NRF.on("disconnect", () => {
