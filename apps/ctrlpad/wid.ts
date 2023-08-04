@@ -8,7 +8,6 @@
         constructor() {
             // x padding: 10 each side
             // y top: 24, y bottom: 10
-
             this.width = g.getWidth() - 10 * 2;
             this.height = g.getHeight() - 24 - 10;
 
@@ -41,6 +40,10 @@
             const centreY = this.height / 2;
             const circleGapY = 30;
 
+            g
+                .setFontAlign(0, 0)
+                .setFont("Vector:20");
+
             this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
             this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
             this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, ">");
@@ -56,11 +59,10 @@
                 .setColor("#fff")
                 .fillCircle(x, y, 23)
                 .setColor("#000")
-                .setFontAlign(0, 0)
-                .setFont("Vector:20")
                 .drawString(label, x, y);
         }
     }
+
 	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
