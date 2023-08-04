@@ -1,4 +1,66 @@
 (() => {
+
+    class Overlay {
+        g2: Graphics;
+        width: number;
+        height: number;
+
+        constructor() {
+            // x padding: 10 each side
+            // y top: 24, y bottom: 10
+
+            this.width = g.getWidth() - 10 * 2;
+            this.height = g.getHeight() - 24 - 10;
+
+            this.g2 = Graphics.createArrayBuffer(
+                this.width,
+                this.height,
+                /*bpp*/1,
+                { msb: true }
+            );
+
+            this.renderG2();
+        }
+
+        setBottom(bottom: number): void {
+            const { g2 } = this;
+            const y = bottom - this.height;
+
+            Bangle.setLCDOverlay(g2, 10, y - 10);
+        }
+
+        renderG2(): void {
+            const g = this.g2;
+
+            g
+                .reset()
+                .clearRect(0, 0, this.width, this.height)
+                .drawRect(0, 0, this.width - 1, this.height - 1)
+                .drawRect(1, 1, this.width - 2, this.height - 2);
+
+            const centreY = this.height / 2;
+            const circleGapY = 30;
+
+            this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
+            this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
+            this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, ">");
+
+            this.drawCtrl(this.width / 3,   centreY + circleGapY, "-");
+            this.drawCtrl(this.width * 2/3, centreY + circleGapY, "+");
+        }
+
+        drawCtrl(x: number, y: number, label: string): void {
+            const g = this.g2;
+
+            g
+                .setColor("#fff")
+                .fillCircle(x, y, 23)
+                .setColor("#000")
+                .setFontAlign(0, 0)
+                .setFont("Vector:20")
+                .drawString(label, x, y);
+        }
+    }
 	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
 	if (settings.HID !== "kbmedia") {
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
@@ -23,9 +85,9 @@
 	let dragging = false;
 	let activeTimeout: TimeoutId | undefined;
 	let waitForRelease = true;
+    let overlay: Overlay | undefined;
 
 	const onDrag = (e => {
-		console.log("onDrag, state = " + state);
 		switch (state) {
 			case State.NoConn:
 				break;
@@ -37,12 +99,12 @@
 			case State.Idle:
 				if(e.b && !activeTimeout){ // no need to check Bangle.CLKINFO_FOCUS
 					// first touch
-					if (e.y <= 24){
+					if (e.y <= 40){
 						state = State.TopDrag
 						startY = e.y;
 						console.log("  topdrag detected, starting @ " + startY);
 					}else{
-						console.log("  ignoring this drag (too low @ " + startY + ")");
+						console.log("  ignoring this drag (too low @ " + e.y + ")");
 						state = State.IgnoreCurrent;
 					}
 				}
@@ -52,27 +114,28 @@
 				if(e.b === 0){
 					console.log("topdrag stopped, distance: " + (e.y - startY));
 					if(e.y > startY + initDistance){
+                        console.log("activating");
 						state = State.Active;
-						listen();
-						Bangle.buzz(20);
+                        overlay!.setBottom(g.getHeight());
+                        activate();
 						break;
 					}
+					console.log("returning to idle");
 					state = State.Idle;
 					Bangle.setLCDOverlay();
 				}else{
-					// partial drag, show UI feedback:
-					const height = 100;
-					const g2 = Graphics.createArrayBuffer(100, height, 1, { msb:true });
-					g2.drawLine(0, 0, 100, 100);
-					g2.drawRect(0, 0, 99, 99);
-					g2.drawString("widhid", 0, 0);
-					Bangle.setLCDOverlay(g2, 38, e.y - height - 30);
+                    // partial drag, show UI feedback:
+                    const dragOffset = 38;
+
+                    // @ts-ignore
+                    if (!overlay) global.overlay = overlay = new Overlay();
+                    overlay.setBottom(e.y - dragOffset);
 				}
 				break;
 
 			case State.Active:
 				console.log("stolen drag handling, do whatever here");
-                return;
+                if(1)return;
 				// Espruino/35c8cb9be11
 				E.stopEventPropagation && E.stopEventPropagation();
 
@@ -121,6 +184,11 @@
 				break;
 		}
 	}) satisfies DragCallback;
+
+    const activate = () => {
+        listen();
+        Bangle.buzz(20);
+    };
 
 	const setStart = ({ x, y }: { x: number, y: number }) => {
 		start.x = x;
