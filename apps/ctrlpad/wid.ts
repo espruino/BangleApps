@@ -9,7 +9,15 @@
             // move our drag to the start of the event listener array
             const handlers = (Bangle as BangleEvents)[`#on${evt}`]
 
-            if(handlers && typeof handlers !== "function"){
+            if(!handlers){
+                Bangle.on(evt as any, listener);
+            }else{
+                if(typeof handlers === "function"){
+                    // get Bangle to convert to array
+                    Bangle.on(evt as any, listener);
+                }
+
+                // shuffle array
                 (Bangle as BangleEvents)[`#on${evt}`] = [listener as any].concat(
                     (handlers as Array<any>).filter((f: unknown) => f !== listener)
                 );
@@ -102,13 +110,15 @@
 	}
 	let state = State.NoConn;
 	let startY = 0;
+    let startedUpDrag = false;
+    let upDragAnim: IntervalId | undefined;
     let overlay: Overlay | undefined;
     let touchDown = false;
 
 	const onDrag = (e => {
         const dragDistance = 30;
 
-        if (e.b === 0) touchDown = false;
+        if (e.b === 0) touchDown = startedUpDrag = false;
 
 		switch (state) {
 			case State.NoConn:
@@ -165,9 +175,24 @@
                     }else if(startY){
                         const dist = Math.max(0, startY - e.y);
 
-                        overlay!.setBottom(g.getHeight() - dist);
+                        if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
+                            overlay!.setBottom(g.getHeight() - dist);
                     }
                 }else if(e.b === 0 && startY > dragDistance){
+                    let bottom = g.getHeight() - Math.max(0, startY - e.y);
+
+                    if (upDragAnim) clearInterval(upDragAnim);
+                    upDragAnim = setInterval(() => {
+                        if (!overlay || bottom <= 0) {
+                            clearInterval(upDragAnim!);
+                            upDragAnim = undefined;
+                            overlay?.hide();
+                            overlay = undefined;
+                            return;
+                        }
+                        overlay?.setBottom(bottom)
+                        bottom -= 10;
+                    }, 50)
                     deactivate();
                 }
                 break;
@@ -190,7 +215,6 @@
     const deactivate = () => {
         Bangle.removeListener("touch", onTouch);
         state = State.Idle;
-        overlay?.hide();
     };
 
     Bangle.prependListener("drag", onDrag);
@@ -231,6 +255,7 @@
 	});
 
 	//const DEBUG = true;
+    /*
 	const sendHid = (code: number) => {
 		//if(DEBUG) return;
 		try{
@@ -244,10 +269,11 @@
 	};
 
     const hid = {
-		next: () => /*DEBUG ? console.log("next") : */ sendHid(0x01),
-		prev: () => /*DEBUG ? console.log("prev") : */ sendHid(0x02),
-		toggle: () => /*DEBUG ? console.log("toggle") : */ sendHid(0x10),
-		up: () => /*DEBUG ? console.log("up") : */ sendHid(0x40),
-		down: () => /*DEBUG ? console.log("down") : */ sendHid(0x80),
+		next: () => sendHid(0x01),
+		prev: () => sendHid(0x02),
+		toggle: () => sendHid(0x10),
+		up: () => sendHid(0x40),
+		down: () => sendHid(0x80),
     };
+    */
 })()
