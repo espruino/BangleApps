@@ -3,6 +3,7 @@
   "mapScale":0.5,
   "mapRefresh":1000,
   "mapChunkSize": 15,
+  "mapDirection": true,
   "overviewScroll": 30,
   "overviewScale": 0.02,
   "refresh":500,

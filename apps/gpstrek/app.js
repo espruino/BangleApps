@@ -170,11 +170,6 @@ let getDoubleLineSlice = function(title1,title2,provider1,provider2){
   };
 };
 
-const dot = Graphics.createImage(`
-XX
-XX
-`);
-
 const arrow = Graphics.createImage(`
      X
     XXX
@@ -182,6 +177,14 @@ const arrow = Graphics.createImage(`
   XXX XXX
  XXX   XXX
 XXX     XXX
+`);
+
+const thinarrow = Graphics.createImage(`
+    X
+   XXX
+  XX XX
+ XX   XX
+XX     XX
 `);
 
 const cross = Graphics.createImage(`
@@ -458,7 +461,8 @@ let getMapSlice = function(){
             i:startingIndex,
             poly:[],
             maxWaypoints: maxWaypoints,
-            breakLoop: false
+            breakLoop: false,
+            dist: 0
           };
 
           let drawChunk = function(data){
@@ -469,6 +473,7 @@ let getMapSlice = function(){
             let last;
             let toDraw;
             let named = [];
+            let dir = [];
             for (let j = 0; j < SETTINGS.mapChunkSize; j++){
               data.i = data.i + (reverse?-1:1);
               let p = get(route, data.i);
@@ -483,7 +488,17 @@ let getMapSlice = function(){
                 break;
               }
               toDraw = Bangle.project(p);
-              if (p.name) named.push({i:data.poly.length,n:p.name});
+
+              if (SETTINGS.mapDirection){
+                let lastWp = get(route, data.i - (reverse?-1:1));
+                if (lastWp) data.dist+=distance(lastWp,p);
+                if (!isMapOverview && data.dist > 20/mapScale){
+                  dir.push({i:data.poly.length,b:require("graphics_utils").degreesToRadians(bearing(lastWp,p)-(reverse?0:180))});
+                  data.dist=0;
+                }
+              }
+              if (p.name)
+                named.push({i:data.poly.length,n:p.name});
               data.poly.push(startingPoint.x-toDraw.x);
               data.poly.push((startingPoint.y-toDraw.y)*-1);
             }
@@ -504,7 +519,11 @@ let getMapSlice = function(){
               }
               graphics.drawString(c.n, data.poly[c.i] + 10, data.poly[c.i+1]);
             }
-            
+
+            for (let c of dir){
+              graphics.drawImage(thinarrow, data.poly[c.i], data.poly[c.i+1], {rotate: c.b});
+            }
+
             if (finish)
               graphics.drawImage(finishIcon, data.poly[data.poly.length - 2] -5, data.poly[data.poly.length - 1] - 4);
             else if (last) {

@@ -54,6 +54,12 @@
         onchange: v => {
           writeSettings("overviewScale",v);
         }
+      },
+      'Show direction': {
+        value: !!settings.mapDirection,
+        onchange: v => {
+          writeSettings("mapDirection",v);
+        }
       }
     };
     E.showMenu(menu);
