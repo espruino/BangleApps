@@ -1,0 +1,14 @@
+{ "id": "usgs",
+  "name": "USGS Data fetching app",
+  "shortName":"USGS",
+  "version":"0.01",
+  "description": "App that fetches USGS data from configurable location",
+  "icon": "app.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"usgs.app.js","url":"app.js"},
+    {"name":"usgs.img","url":"app-icon.js","evaluate":true}
+  ]
+}
