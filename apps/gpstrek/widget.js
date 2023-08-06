@@ -45,7 +45,12 @@ function onPulse(e){
 }
 
 function onGPS(fix) {
-  if(fix.fix) state.currentPos = fix;
+  if(fix.fix) {
+    state.currentPos = fix;
+    Bangle.setCompassPower(0, "gpstrek");
+  } else {
+    Bangle.setCompassPower(1, "gpstrek");
+  }
 }
 
 let radians = function(a) {
