@@ -55,6 +55,12 @@ function displayData() {
     string += name+": "+value+" "+unit+"\n";
     //g.drawString(name+": "+value+" "+unit, width, height*key+10);
     }
+  var date = new Date();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  // Format the time as a string
+  var timeString = hours.toString().padStart(2, "0") + ":" +
+                   minutes.toString().padStart(2, "0");
   E.showMessage(string,"Data");
 }
 
