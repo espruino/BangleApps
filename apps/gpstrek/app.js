@@ -7,25 +7,12 @@ const MODE_SLICES = 2;
 
 const STORAGE = require("Storage");
 const BAT_FULL = require("Storage").readJSON("setting.json").batFullVoltage || 0.3144;
-const SETTINGS = {
-  mapCompass: true,
-  mapScale:0.2, //initial value
-  mapRefresh:1000, //minimum time in ms between refreshs of the map
-  mapChunkSize: 5, //render this many waypoints at a time
-  overviewScroll: 30, //scroll this amount on swipe in pixels
-  overviewScale: 0.02, //initial value
-  refresh:500, //general refresh interval in ms
-  refreshLocked:3000, //general refresh interval when Bangle is locked
-  cacheMinFreeMem:2000,
-  cacheMaxEntries:0,
-  minCourseChange: 5, //course change needed in degrees before redrawing the map
-  minPosChange: 5, //position change needed in pixels before redrawing the map
-  waypointChangeDist: 50, //distance in m to next waypoint before advancing automatically
-  queueWaitingTime: 5, // waiting time during processing of task queue items when running with timeouts
-  autosearch: true,
-  maxDistForAutosearch: 300,
-  autosearchLimit: 3
-};
+
+
+const SETTINGS = Object.assign(
+  require('Storage').readJSON("gpstrek.default.json", true) || {},
+  require('Storage').readJSON("gpstrek.json", true) || {}
+);
 
 let init = function(){
   global.screen = 1;
@@ -38,7 +25,6 @@ let init = function(){
 
   Bangle.loadWidgets();
   WIDGETS.gpstrek.start(false);
-  if (!WIDGETS.gpstrek.getState().numberOfSlices) WIDGETS.gpstrek.getState().numberOfSlices = 2;
   if (!WIDGETS.gpstrek.getState().mode) WIDGETS.gpstrek.getState().mode = MODE_MENU;
 };
 
@@ -459,7 +445,7 @@ let getMapSlice = function(){
         if (!isMapOverview){
           drawCurrentPos();
         }
-        if (!isMapOverview && renderInTimeouts){
+        if (SETTINGS.mapCompass && !isMapOverview && renderInTimeouts){
           drawMapCompass();
         }
         if (renderInTimeouts) drawInterface();
@@ -1254,11 +1240,6 @@ let showMenu = function(){
     "Background" : showBackgroundMenu,
     "Calibration": showCalibrationMenu,
     "Reset" : ()=>{ E.showPrompt("Do Reset?").then((v)=>{ if (v) {WIDGETS.gpstrek.resetState(); removeMenu();} else {E.showMenu(mainmenu);}}).catch(()=>{E.showMenu(mainmenu);});},
-    "Info rows" : {
-      value : WIDGETS.gpstrek.getState().numberOfSlices,
-      min:1,max:6,step:1,
-      onchange : v => { WIDGETS.gpstrek.getState().numberOfSlices = v; }
-    },
   };
 
   E.showMenu(mainmenu);
@@ -1374,7 +1355,7 @@ const finishData = {
 };
 
 let getSliceHeight = function(number){
-  return Math.floor(Bangle.appRect.h/WIDGETS.gpstrek.getState().numberOfSlices);
+  return Math.floor(Bangle.appRect.h/SETTINGS.numberOfSlices);
 };
 
 let compassSlice = getCompassSlice();
@@ -1455,7 +1436,6 @@ let updateRouting = function() {
       lastSearch = Date.now();
       autosearchCounter++;
     }
-    let counter = 0;
     while (hasNext(s.route) && distance(s.currentPos,get(s.route)) < SETTINGS.waypointChangeDist) {
       next(s.route);
       minimumDistance = Number.MAX_VALUE;
@@ -1479,7 +1459,7 @@ let updateSlices = function(){
   slices.push(healthSlice);
   slices.push(systemSlice);
   slices.push(system2Slice);
-  maxSlicePages = Math.ceil(slices.length/s.numberOfSlices);
+  maxSlicePages = Math.ceil(slices.length/SETTINGS.numberOfSlices);
 };
 
 let page_slices = 0;
@@ -1515,9 +1495,9 @@ let drawSlices = function(){
   if (force){
     clear();
   }
-  let firstSlice = page_slices*s.numberOfSlices;
+  let firstSlice = page_slices*SETTINGS.numberOfSlices;
   let sliceHeight = getSliceHeight();
-  let slicesToDraw = slices.slice(firstSlice,firstSlice + s.numberOfSlices);
+  let slicesToDraw = slices.slice(firstSlice,firstSlice + SETTINGS.numberOfSlices);
   for (let slice of slicesToDraw) {
     g.reset();
     if (!slice.refresh || slice.refresh() || force)
