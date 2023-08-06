@@ -38,10 +38,6 @@ function handleStartup(data) {
 }
 
 function displayData() {
-  num = keys.length;
-  width  = g.getWidth()/(2);
-  height = g.getHeight()/(num);
-  console.log(g.getHeight());
   g.clear();
   g.setFont("Vector",20);
   g.setFontAlign(0,0);
