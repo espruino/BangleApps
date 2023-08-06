@@ -1,3 +1,4 @@
+exports.interface = function(cb, useMap) {
 // Constants for the indicator:
 const X_START = 87;
 const WIDTH = 50;
@@ -15,16 +16,17 @@ let smoothpastedge = true;
 
 let continDrag = (e)=>{
   // If draging on the indicator, adjust one-to-one.
-    if (e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
+    if (useMap && e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
       draw('map', e.y);
     } else if (true) {
 
       dy += e.dy;
       //if (!e.b) dy=0;
       while (Math.abs(dy)>32) {
-        if (dy>0) { dy-=32; draw('incr',1) }
-        else { dy+=32; draw('incr',-1) }
+        if (dy>0) { dy-=32; draw('incr',1); cb(1); }
+        else { dy+=32; draw('incr',-1); cb(-1); }
         Bangle.buzz(20);
+        
       }
     }
  E.stopEventPropagation&&E.stopEventPropagation();
@@ -51,8 +53,7 @@ let draw = (mode, input)=>{
     if (level == lastLevel) return;
   }
 
-  levelHeight = level==0?WIDTH:level*STEP_SIZE; 
-  //levelHeight = Math.max(level*STEP_SIZE,STEP_SIZE);
+  levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   lastLevel = level;
 
   ovr.clear().setColor(1).
@@ -73,4 +74,5 @@ let draw = (mode, input)=>{
 
 let dy = 0;
 Bangle.prependListener('drag', continDrag);
-g.setColor(1,0,0).fillRect(Bangle.appRect).reset();
+g.reset();
+}
