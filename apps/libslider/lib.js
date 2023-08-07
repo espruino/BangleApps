@@ -1,10 +1,11 @@
-exports.interface = function(cb, useMap) {
-// Constants for the indicator:
+exports.interface = function(cb, useMap, useIncr) {
+// TODO: make configurable
+// Constants for the indicator: 
 const X_START = 87;
 const WIDTH = 50;
 const Y_START = 5;
 const HEIGHT = 165;
-const STEPS = 10;
+const STEPS = 100;
 const STEP_SIZE = HEIGHT/STEPS;
 const OVERSIZE = 0.5;
 
@@ -12,21 +13,19 @@ const OVERSIZE = 0.5;
 let level = 0; // TODO: Depend on parameter.
 let lastLevel;
 let levelHeight;
-let smoothpastedge = true;
 
 let continDrag = (e)=>{
+  "ram";
   // If draging on the indicator, adjust one-to-one.
     if (useMap && e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
       draw('map', e.y);
-    } else if (true) {
-
+    } else if (useIncr) {
       dy += e.dy;
       //if (!e.b) dy=0;
       while (Math.abs(dy)>32) {
         if (dy>0) { dy-=32; draw('incr',1); cb(1); }
         else { dy+=32; draw('incr',-1); cb(-1); }
         Bangle.buzz(20);
-        
       }
     }
  E.stopEventPropagation&&E.stopEventPropagation();
@@ -35,6 +34,7 @@ let continDrag = (e)=>{
 let ovr = Graphics.createArrayBuffer(WIDTH,HEIGHT,1,{msb:true});
 
 let draw = (mode, input)=>{
+  "ram";
   input = Math.min(input,170);
   // Draw the indicator.
     // Should be displayed when a relevant drag event is detected.
@@ -51,6 +51,7 @@ let draw = (mode, input)=>{
     input = Math.round(input/STEP_SIZE);
     level = Math.min(Math.max(STEPS-input,0),STEPS);
     if (level == lastLevel) return;
+    cb(level);
   }
 
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
@@ -68,7 +69,7 @@ let draw = (mode, input)=>{
       buffer:ovr.buffer
     },X_START,Y_START);
 
-  print(level, input);
+  //print(level, input);
   //print(process.memory().usage);
 };
 

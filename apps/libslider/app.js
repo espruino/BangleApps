@@ -1,6 +1,8 @@
-let callback = (ud)=>{
-  if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
-  print("hi");
+let callback = (mode, ud)=>{
+  if (mode == "map") Bangle.musicControl({cmd:"volumesetlevel", extra:ud});
+  if (mode == "incr") Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
 };
 
-require("SliderInput").interface(callback, false);
+g.reset().clear().setColor(1,0,0).fillRect(0,0,176,176);
+
+require("SliderInput").interface(callback, true, true);
