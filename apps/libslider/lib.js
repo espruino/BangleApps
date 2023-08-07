@@ -23,8 +23,8 @@ let continDrag = (e)=>{
       dy += e.dy;
       //if (!e.b) dy=0;
       while (Math.abs(dy)>32) {
-        if (dy>0) { dy-=32; draw('incr',1); cb(1); }
-        else { dy+=32; draw('incr',-1); cb(-1); }
+        if (dy>0) { dy-=32; draw('incr',1); cb("incr",1); }
+        else { dy+=32; draw('incr',-1); cb("incr",-1); }
         Bangle.buzz(20);
       }
     }
@@ -51,7 +51,7 @@ let draw = (mode, input)=>{
     input = Math.round(input/STEP_SIZE);
     level = Math.min(Math.max(STEPS-input,0),STEPS);
     if (level == lastLevel) return;
-    cb(level);
+    cb("map",level);
   }
 
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
