@@ -75,9 +75,30 @@ function getDowLbls(locale) {
 }
 
 function sameDay(d1, d2) {
+  "jit";
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
+}
+
+function drawEvent(ev, curDay, x1, y1, x2, y2) {
+  "ram";
+  switch(ev.type) {
+    case "e": // alarm/event
+      const hour = 0|ev.date.getHours() + 0|ev.date.getMinutes()/60.0;
+      const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
+      const height = (y2-2) - (y1+2); // height of a cell
+      const sliceHeight = height/eventsPerDay;
+      const ystart = (y1+2) + slice*sliceHeight;
+      g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
+      break;
+    case "h": // holiday
+      g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
+      break;
+    case "o": // other
+      g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
+      break;
+  }
 }
 
 function drawCalendar(date) {
@@ -118,7 +139,6 @@ function drawCalendar(date) {
     true
   );
 
-  g.setFont("6x8", fontSize);
   let dowLbls = getDowLbls(require('locale').name);
   dowLbls.forEach((lbl, i) => {
     g.drawString(lbl, i * colW + colW / 2, headerH + rowH / 2);
@@ -172,6 +192,7 @@ function drawCalendar(date) {
   const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
   eventsThisMonth.sort((a,b) => a.date - b.date);
   let i = 0;
+  g.setFont("8x12", fontSize);
   for (y = 0; y < rowN - 1; y++) {
     for (x = 0; x < colN; x++) {
       i++;
@@ -188,22 +209,7 @@ function drawCalendar(date) {
         // Display events for this day
         eventsThisMonth.forEach((ev, idx) => {
           if (sameDay(ev.date, curDay)) {
-            switch(ev.type) {
-              case "e": // alarm/event
-                const hour = ev.date.getHours() + ev.date.getMinutes()/60.0;
-                const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
-                const height = (y2-2) - (y1+2); // height of a cell
-                const sliceHeight = height/eventsPerDay;
-                const ystart = (y1+2) + slice*sliceHeight;
-                g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
-                break;
-              case "h": // holiday
-                g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
-                break;
-              case "o": // other
-                g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
-                break;
-            }
+            drawEvent(ev, curDay, x1, y1, x2, y2);
 
             eventsThisMonth.splice(idx, 1); // this event is no longer needed
           }
@@ -221,17 +227,15 @@ function drawCalendar(date) {
         );
       }
 
-      require("Font8x12").add(Graphics);
-      g.setFont("8x12", fontSize);
       g.setColor(day < 50 ? fgOtherMonth : fgSameMonth);
       g.drawString(
         (day > 50 ? day - 50 : day).toString(),
         x * colW + colW / 2,
         headerH + rowH + y * rowH + rowH / 2
       );
-    }
-  }
-}
+    } // end for (x = 0; x < colN; x++)
+  } // end for (y = 0; y < rowN - 1; y++)
+} // end function drawCalendar
 
 function setUI() {
   Bangle.setUI({
@@ -279,6 +283,7 @@ function setUI() {
   });
 }
 
+require("Font8x12").add(Graphics);
 drawCalendar(date);
 setUI();
 // No space for widgets!
