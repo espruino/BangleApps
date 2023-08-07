@@ -5,7 +5,7 @@ const X_START = 87;
 const WIDTH = 50;
 const Y_START = 5;
 const HEIGHT = 165;
-const STEPS = 100;
+const STEPS = 30; //Currently corresponds to my phones volume range, from 0 to 30. Maybe it should be 31. Math is hard sometimes...
 const STEP_SIZE = HEIGHT/STEPS;
 const OVERSIZE = 0.5;
 
@@ -16,6 +16,8 @@ let levelHeight;
 
 let continDrag = (e)=>{
   "ram";
+  if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*1);}
+
   // If draging on the indicator, adjust one-to-one.
     if (useMap && e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
       draw('map', e.y);
@@ -72,8 +74,17 @@ let draw = (mode, input)=>{
   //print(level, input);
   //print(process.memory().usage);
 };
+  
+let remove = ()=> {
+  ovr.clear().reset();
+  Bangle.setLCDOverlay();
+  Bangle.removeListener('drag', continDrag);
+};
+
+let timeout = setTimeout(remove, 1000*1);
 
 let dy = 0;
-Bangle.prependListener('drag', continDrag);
 g.reset();
+Bangle.prependListener('drag', continDrag);
+
 }
