@@ -2,3 +2,4 @@
 0.02: Use Bangle.showClock for changing to clock (Backport from launch)
 0.03: Remove app from 'tool' when it has at least one other known tag
       Add tag 'health' for apps like Heart Rate Monitor
+0.04: Fix remove handler

@@ -22,3 +22,7 @@
 0.21: Update boot.min.js.
 0.22: Fix timeout for heartrate sensor on 3 minute setting (#2435)
 0.23: Fix HRM logic
+0.24: Correct daily health summary for movement (some logic errors resulted in garbage data being written)
+0.25: lib.read* methods now return correctly scaled movement
+      movement graph in app is now an average, not sum
+      fix 11pm slot for daily HRM

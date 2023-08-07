@@ -7,6 +7,15 @@ var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
+var startDrag = 0;
+
+if (Bangle.setLCDOverlay) {
+  // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
+  var imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
+  // overlay buffer for current location, a bit bigger then image so we can rotate
+  const ovSize = Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]));
+  var ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,imgLoc[2] & 0x7f,{msb:true});
+}
 
 if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
   // restore last view
@@ -14,6 +23,9 @@ if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !
   m.lon = settings.lon;
   m.scale = settings.scale;
   checkMapPos = true;
+}
+if (settings.dirSrc === undefined) {
+  settings.dirSrc = 1; // Default=GPS
 }
 
 // Redraw the whole page
@@ -27,8 +39,10 @@ function redraw() {
     m.scale = m.map.scale;
     m.draw();
   }
+  checkMapPos = false;
   drawPOI();
   drawMarker();
+  drawLocation();
   // if track drawing is enabled...
   if (settings.drawTrack) {
     if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
@@ -65,20 +79,63 @@ function drawPOI() {
   })
 }
 
-// Draw the marker for where we are
+function isInside(rect, e, w, h) {
+  return e.x-w/2>=rect.x && e.x+w/2<rect.x+rect.w
+    && e.y-h/2>=rect.y && e.y+h/2<=rect.y+rect.h;
+}
+
+// Draw the location & direction marker for where we are
 function drawMarker() {
-  if (!fix.fix) return;
+  if (!fix.fix || !settings.drawMarker) return;
   var p = m.latLonToXY(fix.lat, fix.lon);
-  g.setColor(1,0,0);
-  g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
+  if (isInside(R, p, 4, 4)) { // avoid drawing over widget area
+    g.setColor(1,0,0);
+    g.fillRect(p.x-2, p.y-2, p.x+2, p.y+2);
+  }
+}
+
+// Draw current location+direction with LCD Overlay (Bangle.js 2 only)
+function drawLocation() {
+  if (!Bangle.setLCDOverlay) {
+    return; // Overlay not supported
+  }
+
+  if (!fix.fix || !mapVisible || settings.dirSrc === 0) {
+    if (this.hasOverlay) {
+      Bangle.setLCDOverlay(); // clear if map is not visible or no fix
+      this.hasOverlay = false;
+    }
+    return;
+  }
+
+  var p = m.latLonToXY(fix.lat, fix.lon);
+
+  ovLoc.clear();
+  if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
+    const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
+    if (!isNaN(angle)) {
+      ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
+    }
+  }
+  Bangle.setLCDOverlay({width:ovLoc.getWidth(), height:ovLoc.getHeight(),
+          bpp:ovLoc.getBPP(), transparent:0,
+          palette:new Uint16Array([0, g.toColor("#00F")]),
+          buffer:ovLoc.buffer
+        }, p.x-ovLoc.getWidth()/2, p.y-ovLoc.getHeight()/2);
+
+  this.hasOverlay = true;
 }
 
 Bangle.on('GPS',function(f) {
   fix=f;
   if (HASWIDGETS && WIDGETS["sats"]) WIDGETS["sats"].draw(WIDGETS["sats"]);
-  if (mapVisible) drawMarker();
+  if (mapVisible) {
+    drawMarker();
+    drawLocation();
+  }
 });
 Bangle.setGPSPower(1, "app");
+Bangle.setCompassPower(settings.dirSrc === 2, "openstmap");
 
 if (HASWIDGETS) {
   Bangle.loadWidgets();
@@ -105,6 +162,7 @@ function showMenu() {
   if (plotTrack && plotTrack.stop)
     plotTrack.stop();
   mapVisible = false;
+  drawLocation();
   var menu = {
     "":{title:/*LANG*/"Map"},
     "< Back": ()=> showMap(),
@@ -128,13 +186,36 @@ function showMenu() {
     value : !!settings.drawTrack,
     onchange : v => { settings.drawTrack=v; writeSettings(); }
   },
-  /*LANG*/"Center Map": () =>{
+  /*LANG*/"Draw cont. position": {
+    value : !!settings.drawMarker,
+    onchange : v => { settings.drawMarker=v; writeSettings(); }
+  },
+  });
+
+  if (Bangle.setLCDOverlay) {
+    menu[/*LANG*/"Direction source"] = {
+      value: settings.dirSrc,
+      min: 0, max: 2,
+      format: v => [/*LANG*/"None", /*LANG*/"GPS", /*LANG*/"Compass"][v],
+      onchange: v => {
+        settings.dirSrc = v;
+        Bangle.setCompassPower(settings.dirSrc === 2, "openstmap");
+        writeSettings();
+      }
+    };
+    menu[/*LANG*/"Reset compass"] = () => {
+      Bangle.resetCompass();
+      showMap();
+    };
+  }
+
+  menu[/*LANG*/"Center Map"] = () =>{
     m.lat = m.map.lat;
     m.lon = m.map.lon;
     m.scale = m.map.scale;
     showMap();
-  }
-  });
+  };
+
   // If we have the recorder widget, add a menu item to start/stop recording
   if (WIDGETS.recorder) {
     menu[/*LANG*/"Record"] = {
@@ -145,6 +226,7 @@ function showMenu() {
       }
     };
   }
+  menu[/*LANG*/"Exit"] = () => load();
   E.showMenu(menu);
 }
 
@@ -155,13 +237,28 @@ function showMap() {
   Bangle.setUI({mode:"custom",drag:e=>{
     if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
+      if (!startDrag)
+        startDrag = getTime();
       g.setClipRect(R.x,R.y,R.x2,R.y2);
       g.scroll(e.dx,e.dy);
       m.scroll(e.dx,e.dy);
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
       hasScrolled = true;
+      drawLocation();
     } else if (hasScrolled) {
+      delta = getTime() - startDrag;
+      startDrag = 0;
       hasScrolled = false;
+      if (delta < 0.2) {
+        if (e.y > g.getHeight() / 2) {
+          if (e.x < g.getWidth() / 2) {
+            m.scale /= 2;
+          } else {
+            m.scale *= 2;
+          }
+        }
+        g.reset().clearRect(R);
+      }
       redraw();
     }
   }, btn: () => showMenu() });

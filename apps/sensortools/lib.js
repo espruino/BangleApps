@@ -20,37 +20,44 @@ exports.enable = () => {
   Bangle.sensortoolsOrigEmit = Bangle.emit;
   Bangle.sensortoolsOrigRemoveListener = Bangle.removeListener;
 
+  const modifyArguments = function(args, value) {
+    if (args.length >= 1)
+      args[0] = value;
+    return args;
+  };
+
   Bangle.on = function(name, callback) {
     if (onEvents[name]) {
       log("Redirecting listener for", name, "to", name + "_mod");
-      Bangle.sensortoolsOrigOn(name + "_mod", callback);
-      Bangle.sensortoolsOrigOn(name, (e) => {
-        log("Redirected event for", name, "to", name + "_mod");
-        Bangle.sensortoolsOrigEmit(name + "_mod", onEvents[name](e));
+      let origName = name;    
+      Bangle.sensortoolsOrigOn(origName, (e) => {
+        log("Redirected event for", origName, "to", origName + "_mod");
+        Bangle.sensortoolsOrigEmit(origName + "_mod", onEvents[origName](e));
       });
+      Bangle.sensortoolsOrigOn.apply(this, modifyArguments(arguments, name + "_mod"));
     } else {
       log("Pass through on call for", name, callback);
-      Bangle.sensortoolsOrigOn(name, callback);
+      Bangle.sensortoolsOrigOn.apply(this, arguments);
     }
   };
 
-  Bangle.removeListener = function(name, callback) {
+  Bangle.removeListener = function(name) {
     if (onEvents[name]) {
       log("Removing augmented listener for", name, onEvents[name]);
-      Bangle.sensortoolsOrigRemoveListener(name + "_mod", callback);
+      Bangle.sensortoolsOrigRemoveListener.apply(this, modifyArguments(arguments, name + "_mod"));
     } else {
       log("Pass through remove listener for", name);
-      Bangle.sensortoolsOrigRemoveListener(name, callback);
+      Bangle.sensortoolsOrigRemoveListener.apply(this, arguments);
     }
   };
 
-  Bangle.emit = function(name, event) {
+  Bangle.emit = function(name) {
     if (onEvents[name]) {
       log("Augmenting emit call for", name, onEvents[name]);
-      Bangle.sensortoolsOrigEmit(name + "_mod", event);
+      Bangle.sensortoolsOrigEmit.apply(this, modifyArguments(arguments, name + "_mod"));
     } else {
       log("Pass through emit call for", name);
-      Bangle.sensortoolsOrigEmit(name, event);
+      Bangle.sensortoolsOrigEmit.apply(this, arguments);
     }
   };
 

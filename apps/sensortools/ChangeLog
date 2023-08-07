@@ -4,3 +4,4 @@
 0.04: Correct type of time attribute in gps to Date
 0.05: Fix gps emulation interpolation
       Add setting for log output
+0.06: Fix sensortools breaking Bangle.emit with multiple arguments (e.g. "message")

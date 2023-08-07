@@ -9,7 +9,8 @@
     showLaunchers: true,
     direct: false,
     swipeExit: false,
-    timeOut: "Off"
+    timeOut: "Off",
+    interactionBuzz: false,
   }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
   let s = require("Storage");
@@ -89,6 +90,13 @@
     g.flip();
   };
 
+  let buzzShort = function() {
+    if (settings.interactionBuzz) Bangle.buzz(20);
+  };
+  let buzzLong = function() {
+    if (settings.interactionBuzz) Bangle.buzz(100);
+  };
+
   Bangle.drawWidgets(); // To immediately update widget field to follow current theme - remove leftovers if previous app set custom theme.
   Bangle.loadWidgets();
   drawPage(0);
@@ -100,9 +108,11 @@
     if(settings.swipeExit && dirLeftRight==1) Bangle.showClock();
     if (dirUpDown==-1||dirLeftRight==-1){
       ++page; if (page>maxPage) page=0;
+      buzzShort();
       drawPage(page);
     } else if (dirUpDown==1||(dirLeftRight==1 && !settings.swipeExit)){
       --page; if (page<0) page=maxPage;
+      buzzShort();
       drawPage(page);
     }
   };
@@ -123,8 +133,10 @@
           drawIcon(page,i,true && !settings.direct);
           if (selected>=0 || settings.direct) {
             if (selected!=i && !settings.direct){
+              buzzShort();
               drawIcon(page,selected,false);
             } else {
+              buzzLong();
               load(apps[page*4+i].src);
             }
           }
@@ -134,6 +146,7 @@
       }
     }
     if ((i==4 || (page*4+i)>Napps) && selected>=0) {
+      buzzShort();
       drawIcon(page,selected,false);
       selected=-1;
     }

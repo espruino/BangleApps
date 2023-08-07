@@ -68,3 +68,4 @@ of 'Select Clock'
 0.60: Moved LCD calibration to top of menu, and use 12 taps (not 8)
       LCD calibration will now error if the calibration is obviously wrong
 0.61: Permit temporary bypass of the BLE whitelist
+0.62: Fix whitelist showing as 'on' by default when it's not after 0.59

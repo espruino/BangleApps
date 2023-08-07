@@ -29,7 +29,7 @@ exports.readAllRecords = function(d, cb) {
             day:day+1, hr : hr, min:m*10,
             steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
             bpm : h.charCodeAt(2),
-            movement : h.charCodeAt(3)
+            movement : h.charCodeAt(3)*8
           });
         }
         idx += DB_RECORD_LEN;
@@ -53,7 +53,7 @@ exports.readDailySummaries = function(d, cb) {
         day:day+1,
         steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
         bpm : h.charCodeAt(2),
-        movement : h.charCodeAt(3)
+        movement : h.charCodeAt(3)*8
       });
     }
     idx += DB_RECORDS_PER_DAY*DB_RECORD_LEN;
@@ -75,7 +75,7 @@ exports.readDay = function(d, cb) {
           hr : hr, min:m*10,
           steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
           bpm : h.charCodeAt(2),
-          movement : h.charCodeAt(3)
+          movement : h.charCodeAt(3)*8
         });
       }
       idx += DB_RECORD_LEN;

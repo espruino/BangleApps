@@ -104,45 +104,53 @@ exports.input = function(options) {
     }
   }
 
+  let dragHandlerUB = function(event) {
+    "ram";
+
+    // drag on middle bottom rectangle
+    if (event.x > MIDPADDING - 2 && event.x < (R.x2-MIDPADDING + 2) && event.y >= ( (R.y2) - 12 )) {
+      moveCharPos(MIDDLE, event.b == 0, (event.x-middleStart)/(middleWidth/MIDDLE.length));
+    }
+    // drag on left or right rectangle
+    else if (event.y > R.y && (event.x < MIDPADDING-2 || event.x > (R.x2-MIDPADDING + 2))) {
+      moveCharPos(event.x<MIDPADDING-2 ? LEFT : RIGHT, event.b == 0, (event.y-topStart)/((R.y2 - topStart)/vLength));
+    }
+    // drag on top rectangle for number or punctuation
+    else if ((event.y < ( (R.y2) - 12 )) && (event.y > ( (R.y2) - 52 ))) {
+      moveCharPos(NUM, event.b == 0, (event.x-NUMPADDING)/6);
+    }
+    // Make a space or backspace by tapping right or left on screen above green rectangle
+    else if (event.y > R.y && event.b == 0) {
+      if (event.x < (R.x2)/2) {
+        showChars('<-');
+        text = text.slice(0, -1);
+      } else {
+        //show space sign
+        showChars('->');
+        text += ' ';
+      }
+      prevChar = null;
+      updateTopString();
+    }
+  };
+
+  let catchSwipe = ()=>{
+    E.stopEventPropagation&&E.stopEventPropagation();
+  };
+
   return new Promise((resolve,reject) => {
     // Interpret touch input
     Bangle.setUI({
       mode: 'custom',
       back: ()=>{
         Bangle.setUI();
+        Bangle.prependListener&&Bangle.removeListener('swipe', catchSwipe); // Remove swipe lister if it was added with `Bangle.prependListener()` (fw2v19 and up).
         g.clearRect(Bangle.appRect);
         resolve(text);
       },
-      drag: function(event) {
-        "ram";
-
-        // drag on middle bottom rectangle
-        if (event.x > MIDPADDING - 2 && event.x < (R.x2-MIDPADDING + 2) && event.y >= ( (R.y2) - 12 )) {
-          moveCharPos(MIDDLE, event.b == 0, (event.x-middleStart)/(middleWidth/MIDDLE.length));
-        }
-        // drag on left or right rectangle
-        else if (event.y > R.y && (event.x < MIDPADDING-2 || event.x > (R.x2-MIDPADDING + 2))) {
-          moveCharPos(event.x<MIDPADDING-2 ? LEFT : RIGHT, event.b == 0, (event.y-topStart)/((R.y2 - topStart)/vLength));
-        }
-        // drag on top rectangle for number or punctuation
-        else if ((event.y < ( (R.y2) - 12 )) && (event.y > ( (R.y2) - 52 ))) {
-          moveCharPos(NUM, event.b == 0, (event.x-NUMPADDING)/6);
-        }
-        // Make a space or backspace by tapping right or left on screen above green rectangle
-        else if (event.y > R.y && event.b == 0) {
-          if (event.x < (R.x2)/2) {
-            showChars('<-');
-            text = text.slice(0, -1);
-          } else {
-            //show space sign
-            showChars('->');
-            text += ' ';
-          }
-          prevChar = null;
-          updateTopString();
-        }
-      }
+      drag: dragHandlerDB
     });
+    Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
 
     R = Bangle.appRect;
     MIDPADDING = R.x + 35;

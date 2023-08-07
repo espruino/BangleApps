@@ -87,3 +87,14 @@
 	* Reduce framerate if locked
 	* Stroke to move around in the map
 	* Fix for missing paths in display
+
+0.20:
+	* Large display for instant speed
+	* Bugfix for negative coordinates
+	* Disable menu while the map is not loaded
+	* Turn screen off while idling to save battery (with setting)
+	* New setting : disable buzz on turns
+	* New setting : turn bluetooth off to save battery
+	* New setting : power screen off between points to save battery
+	* Color change for lost direction (now purple)
+	* Adaptive screen powersaving
