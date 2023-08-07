@@ -47,7 +47,10 @@ function onPulse(e){
 function onGPS(fix) {
   if(fix.fix) {
     state.currentPos = fix;
-    Bangle.setCompassPower(0, "gpstrek");
+    if (Bangle.isCompassOn()){
+      Bangle.setCompassPower(0, "gpstrek");
+      state.compassSamples = new Array(SAMPLES).fill(0)
+    }
   } else {
     Bangle.setCompassPower(1, "gpstrek");
   }
