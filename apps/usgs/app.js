@@ -1,74 +1,67 @@
-var loc = '03272100'; // Configurable location
-var keys = ['Gage', 'Discharge', 'Temperature']; // Configurable values
-var shortenedName = {"Gage":"Ga","Discharge":"Dis","Temperature":"Temp"};
 var dataStreams = {}; // Will hold directions to Datastreams and units, with above keys
-//var http = require("http");
+var FILE = "usgs.json";
+  // Load settings
+  var settings = Object.assign({
+    loc: '03272100',
+    keys: {'Gage height': true, 'Discharge': true, 'Temperature, water': true},
+    shortenedName: {"Gage height":"Ga","Discharge":"Dis","Temperature, water":"Temp"},
+    tempUnitF: true,
+  }, require('Storage').readJSON(FILE, true) || {});
 function fetchStartup() {
-	/*http.get(
-  "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
-    loc +
-    "')/Datastreams?$expand=Observations($orderby=phenomenonTime%20desc;$top=1;$select=result)&$select=unitOfMeasurement,description"
-).then(d => handleStartup(d.json().value));
-*/
-  handleStartup(JSON.parse(`{"value":[{"unitOfMeasurement":{"name":"V","symbol":"V","definition":""},"description":"DCP battery voltage / USGS-03272100-1964fee2501b43c5b7b807b687319588","Observations":[{"result":"13.4"}],"Observations@iot.nextLink":"https://labs.waterdata.usgs.gov/sta/v1.1/Datastreams('1964fee2501b43c5b7b807b687319588')/Observations?$top=1&$skip=1&$select=result&$orderby=phenomenonTime+desc,%40iot.id+asc"},{"unitOfMeasurement":{"name":"Cubic Feet per Second","symbol":"ft^3/s","definition":""},"description":"Discharge / USGS-03272100-1db72201226e4f50a94d0b65abc8e7a5","Observations":[{"result":"665"}],"Observations@iot.nextLink":"https://labs.waterdata.usgs.gov/sta/v1.1/Datastreams('1db72201226e4f50a94d0b65abc8e7a5')/Observations?$top=1&$skip=1&$select=result&$orderby=phenomenonTime+desc,%40iot.id+asc"},{"unitOfMeasurement":{"name":"Feet","symbol":"ft","definition":""},"description":"Gage height / USGS-03272100-56a7245f4b47438cb79c40f0d00605ba","Observations":[{"result":"1.92"}],"Observations@iot.nextLink":"https://labs.waterdata.usgs.gov/sta/v1.1/Datastreams('56a7245f4b47438cb79c40f0d00605ba')/Observations?$top=1&$skip=1&$select=result&$orderby=phenomenonTime+desc,%40iot.id+asc"},{"unitOfMeasurement":{"name":"Degrees Centigrade","symbol":"degC","definition":""},"description":"Temperature, water / USGS-03272100-f8e8a724a5c3498ca11bf1a31be5a537","Observations":[{"result":"26.1"}],"Observations@iot.nextLink":"https://labs.waterdata.usgs.gov/sta/v1.1/Datastreams('f8e8a724a5c3498ca11bf1a31be5a537')/Observations?$top=1&$skip=1&$select=result&$orderby=phenomenonTime+desc,%40iot.id+asc"}]}`).value);
+  uri = "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
+    settings.loc +
+    "')/Datastreams?$expand=Observations($orderby=phenomenonTime%20desc;$top=1;$select=result)&$select=unitOfMeasurement,description";
+  if (Bangle.http) {
+    Bangle.http(uri, {timeout:10000}).then(d => handleStartup(JSON.parse(d.resp).value));
+  }
 }
 function handleStartup(data) {
   for (var key1 in data) {
-    desc = data[key1].description;
-    for (var key2 in keys) {
-      if (desc.indexOf(keys[key2]) != -1) {
-        if (data[key1].unitOfMeasurement.symbol === "degC") {
-          symbol = "F";
-          result = (data[key1].Observations[0].result * 9 / 5) + 32;
-        } else {
-          symbol = data[key1].unitOfMeasurement.symbol;
-          result = data[key1].Observations[0].result;
-        }
-        dataStreams[keys[key2]] = JSON.parse(
+    desc = data[key1].description.split(" / ")[0];
+    if (settings.keys[desc]) {
+      if (data[key1].unitOfMeasurement.symbol === "degC" && settings.tempUnitF) {
+        symbol = "F";
+        result = (data[key1].Observations[0].result * 9 / 5) + 32;
+      } else {
+        symbol = data[key1].unitOfMeasurement.symbol;
+        result = data[key1].Observations[0].result;
+      }
+      dataStreams[desc] = JSON.parse(
           '{"unit":"' +
             symbol +
             '","value":"' +
             result +
             '"}'
         );
-      }
     }
   }
-  console.log(dataStreams);
+  displayData(dataStreams);
 }
 
-function displayData() {
+function displayData(dataStreams) {
   g.clear();
   g.setFont("Vector",20);
   g.setFontAlign(0,0);
   string = "";
-  for (var key in keys) {
-    unit = dataStreams[keys[key]].unit;
-    value = dataStreams[keys[key]].value;
-    if (shortenedName[keys[key]]) {
-      name = shortenedName[keys[key]];
+  for (var key in dataStreams) {
+    unit = dataStreams[key].unit;
+    value = dataStreams[key].value;
+    if (settings.shortenedName[key]) {
+      name = settings.shortenedName[key];
     } else {
-      name = keys[key];
+      name = key;
     }
     string += name+": "+value+" "+unit+"\n";
     }
   var date = new Date();
   var hours = date.getHours();
   var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
   // Format the time as a string
   var timeString = hours.toString().padStart(2, "0") + ":" +
-                   minutes.toString().padStart(2, "0");
+                   minutes.toString().padStart(2, "0") + ":" +
+                   seconds.toString().padStart(2,"0");
   E.showMessage(string,timeString);
 }
 
-
 fetchStartup();
-
-
-displayData();
-
-setWatch(() => {
-  console.log("button");
-  fetchStartup();
-  displayData();
-}, BTN1, {repeat:true});
