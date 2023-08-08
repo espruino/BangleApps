@@ -5,4 +5,4 @@ let callback = (mode,fb)=>{
 
 g.reset().clear().setColor(1,0,0).fillRect(0,0,176,176);
 
-Bangle.on('drag', ()=>{require("SliderInput").interface(callback,true,true);});
+Bangle.on('drag', ()=>{require("SliderInput").interface(callback, {useMap:true});});

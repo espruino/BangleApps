@@ -1,34 +1,39 @@
-exports.interface = function(cb, useMap, useIncr) {
-// TODO: make configurable
-// Constants for the indicator: 
-const X_START = 176-55;
-const WIDTH = 50;
-const Y_START = 5;
-const HEIGHT = 165;
-const STEPS = 30; //Currently corresponds to my phones volume range, from 0 to 30. Maybe it should be 31. Math is hard sometimes...
+exports.interface = function(cb, conf) {
+// Configuration for the indicator:
+conf = conf?conf:{};
+const USE_MAP = conf.useMap || false;
+const USE_INCR = conf.useIncr || true;
+const X_START = conf.xStart || 176-55;
+const WIDTH = conf.width || 50;
+const Y_START = conf.yStart || 5;
+const HEIGHT = conf.height || 165;
+const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
+const OVERSIZE_R = conf.oversizeR || 0;
+const OVERSIZE_L = conf.oversizeL || 0;
+const TIMEOUT = conf.timeout || 1;
+
 const STEP_SIZE = HEIGHT/STEPS;
-const OVERSIZE = 0.65;
 
 // Initialize the level
 let level; // TODO: Depend on parameter.
 let lastLevel=10;
 let levelHeight;
 
-let continDrag = e=>{
+let dragSlider = e=>{
   "ram";
-  if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*1);}
+  if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*TIMEOUT);}
   let input = Math.min(e.y,170);
   input = Math.round(input/STEP_SIZE);
 
   // If draging on the indicator, adjust one-to-one.
-    if (useMap && e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
+    if (USE_MAP && e.x>X_START-OVERSIZE_L*WIDTH && e.x<X_START+WIDTH+OVERSIZE_R*WIDTH) {
 
       level = Math.min(Math.max(STEPS-input,0),STEPS);
 
       cb("map",level);
       draw(level);
 
-    } else if (useIncr) { // Heavily inspired by "updown" mode of setUI.
+    } else if (USE_INCR) { // Heavily inspired by "updown" mode of setUI.
 
       dy += e.dy;
       //if (!e.b) dy=0;
@@ -82,12 +87,12 @@ let draw = (level)=>{
 let remove = ()=> {
   ovr.clear().reset();
   Bangle.setLCDOverlay();
-  Bangle.removeListener('drag', continDrag);
+  Bangle.removeListener('drag', dragSlider);
 };
 
-let timeout = setTimeout(remove, 1000*1);
+let timeout = setTimeout(remove, 1000*TIMEOUT);
 
 let dy = 0;
 g.reset();
-Bangle.prependListener('drag', continDrag);
+Bangle.prependListener('drag', dragSlider);
 }
