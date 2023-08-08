@@ -33,15 +33,26 @@ const enum BleServ {
   // contains: LocationAndSpeed
   LocationAndNavigation = "0x1819",
 
-  // Acc // none known for this
+  // org.microbit.service.accelerometer
+  // contains: Acc
+  Acc = "E95D0753251D470AA062FA1922DFA9A8",
 }
 
-const services = [BleServ.HRM, BleServ.EnvSensing, BleServ.LocationAndNavigation];
+const services = [
+    BleServ.HRM,
+    BleServ.EnvSensing,
+    BleServ.LocationAndNavigation,
+    BleServ.Acc,
+];
 
 const enum BleChar {
   // org.bluetooth.characteristic.heart_rate_measurement
   // <see encode function>
   HRM = "0x2a37",
+
+  // org.bluetooth.characteristic.body_sensor_location
+  // u8
+  SensorLocation = "0x2a38",
 
   // org.bluetooth.characteristic.elevation
   // s24, meters 0.01
@@ -65,6 +76,11 @@ const enum BleChar {
   // org.bluetooth.characteristic.magnetic_flux_density_3d
   // s16: x, y, z, tesla (10^-7)
   MagneticFlux3D = "0x2aa1",
+
+  // org.microbit.characteristic.accelerometer_data
+  // s16 x3, -1024 .. 1024
+  // docs: https://lancaster-university.github.io/microbit-docs/ble/accelerometer-service/
+  Acc = "E95DCA4B251D470AA062FA1922DFA9A8",
 }
 
 type BleCharAdvert = {
@@ -82,6 +98,16 @@ type BleServAdvert = {
 type LenFunc<T> = {
   (_: T): Array<number>,
   maxLen: number,
+}
+
+const enum SensorLocations {
+  Other = 0,
+  Chest = 1,
+  Wrist = 2,
+  Finger = 3,
+  Hand = 4,
+  EarLobe = 5,
+  Foot = 6,
 }
 
 let acc: undefined | AccelData;
@@ -104,8 +130,7 @@ const settings: BtAdvMap<boolean> = {
   mag: false,
 };
 
-const idToName: BtAdvMap<string, true> = {
-  acc: "Acceleration",
+const idToName: BtAdvMap<string> = {
   bar: "Barometer",
   gps: "GPS",
   hrm: "HRM",
@@ -197,15 +222,6 @@ const btnLayout = new Layout(
       {
         type: "h",
         c: [
-          {
-            type: "btn",
-            label: idToName.acc,
-            id: "acc",
-            cb: () => {},
-            ...btnStyle,
-            col: colour.on,
-            btnBorder: colour.on,
-          },
           {
             type: "btn",
             label: "Back",
@@ -464,6 +480,15 @@ const encodeMag: LenFunc<CompassData> = (data: CompassData) => {
 };
 encodeMag.maxLen = 6;
 
+const encodeAcc: LenFunc<AccelData> = (data: AccelData) => {
+  const x = toByteArray(data.x * 1000, 2, true);
+  const y = toByteArray(data.y * 1000, 2, true);
+  const z = toByteArray(data.z * 1000, 2, true);
+
+  return [ x[0]!, x[1]!, y[0]!, y[1]!, z[0]!, z[1]! ];
+};
+encodeAcc.maxLen = 6;
+
 const toByteArray = (value: number, numberOfBytes: number, isSigned: boolean) => {
   const byteArray: Array<number> = new Array(numberOfBytes);
 
@@ -503,6 +528,7 @@ const haveServiceData = (serv: BleServ): boolean => {
     case BleServ.HRM: return !!hrm;
     case BleServ.EnvSensing: return !!(bar || mag);
     case BleServ.LocationAndNavigation: return !!(gps && gps.lat && gps.lon || mag);
+    case BleServ.Acc: return !!acc;
   }
 };
 
@@ -515,12 +541,22 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
           readable: true,
           notify: true,
         };
+        const os: BleCharAdvert = {
+          maxLen: 1,
+          readable: true,
+          notify: true,
+        };
+
         if (hrm) {
           o.value = encodeHrm(hrm);
+          os.value = [SensorLocations.Wrist];
           hrm = undefined;
         }
 
-        return { [BleChar.HRM]: o };
+        return {
+          [BleChar.HRM]: o,
+          [BleChar.SensorLocation]: os,
+        };
       }
       return {};
 
@@ -587,6 +623,25 @@ const serviceToAdvert = (serv: BleServ, initial = false): BleServAdvert => {
         if (mag) {
           o[BleChar.MagneticFlux3D]!.value = encodeMag(mag);
         }
+      }
+
+      return o;
+    }
+
+    case BleServ.Acc: {
+      const o: BleServAdvert = {};
+
+      if (acc || initial) {
+          o[BleChar.Acc] = {
+            maxLen: encodeAcc.maxLen,
+            readable: true,
+            notify: true,
+          };
+
+          if (acc) {
+            o[BleChar.Acc]!.value = encodeAcc(acc);
+            acc = undefined;
+          }
       }
 
       return o;
@@ -702,16 +757,39 @@ enableSensors();
   // must have fixed services from the start:
   const ad = getBleAdvert(serv => serviceToAdvert(serv, true), /*all*/true);
 
-  const adServices = Object
-        .keys(ad)
-        .map((k: string) => k.replace("0x", ""));
-
   NRF.setServices(
     ad,
     {
-      advertise: adServices,
       uart: false,
     },
+  );
+
+  type BleAdvert = { [key: string]: number[] };
+  const bangle2 = Bangle as {
+    bleAdvert?: BleAdvert | BleAdvert[];
+  };
+  const cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
+
+  for(const id in ad){
+    const serv = ad[id as BleServ];
+    let value;
+
+    // pick the first characteristic to advertise
+    for(const ch in serv){
+      value = serv[ch as BleChar]!.value;
+      break;
+    }
+
+    cycle.push({ [id]: value || [] });
+  }
+
+  bangle2.bleAdvert = cycle;
+
+  NRF.setAdvertising(
+    cycle,
+    {
+      interval: 100,
+    }
   );
 }
 }

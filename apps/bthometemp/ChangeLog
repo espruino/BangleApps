@@ -1,1 +1,2 @@
 0.01: New App!
+0.02: Handle the case where other apps have set bleAdvert to an array

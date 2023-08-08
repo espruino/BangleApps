@@ -86,7 +86,7 @@
           var a = require("sched").newDefaultAlarm();
           a.id = "gb"+j;
           a.appid = "gbalarms";
-          a.on = true;
+          a.on = event.d[j].on !== undefined ? event.d[j].on : true;
           a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
           a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
           a.last = last;
@@ -253,6 +253,7 @@
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
+    gbSend({t: "ver", fw: process.env.VERSION, hw: process.env.HWVERSION});
     GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
   }, 2000));
   NRF.on("disconnect", () => {
