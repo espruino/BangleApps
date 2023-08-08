@@ -9,6 +9,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"usgs.app.js","url":"app.js"},
+    {"name":"usgs.settings.js","url":"settings.js"},
     {"name":"usgs.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"myapp.json"}]
 }
