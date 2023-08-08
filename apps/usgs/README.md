@@ -1,17 +1,18 @@
-# App Name
+# USGS Data reporting
 
 More information on making apps:
 
 * http://www.espruino.com/Bangle.js+First+App
 * http://www.espruino.com/Bangle.js+App+Loader
 
-Describe the app...
-
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
+Simple app that pulls data from internet API regarding water/stream/river conditions. Useful for fishing or other water sports.
 
 ## Usage
 
-Describe how to use it
+API information can be found here:
+https://labs.waterdata.usgs.gov/docs/sensorthings/index.html
+
+Location can be found
 
 ## Features
 
