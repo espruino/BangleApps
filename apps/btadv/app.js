@@ -27,7 +27,6 @@ var _a;
         mag: false,
     };
     var idToName = {
-        acc: "Acceleration",
         bar: "Barometer",
         gps: "GPS",
         hrm: "HRM",
@@ -75,7 +74,6 @@ var _a;
             {
                 type: "h",
                 c: [
-                    __assign(__assign({ type: "btn", label: idToName.acc, id: "acc", cb: function () { } }, btnStyle), { col: colour_1.on, btnBorder: colour_1.on }),
                     __assign({ type: "btn", label: "Back", cb: function () {
                             setBtnsShown_1(false);
                         } }, btnStyle),
@@ -443,9 +441,8 @@ var _a;
         NRF.setServices(ad, {
             uart: false,
         });
-        if (!Bangle.bleAdvert)
-            Bangle.bleAdvert = {};
-        var cycle = [];
+        var bangle2 = Bangle;
+        var cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
         for (var id in ad) {
             var serv = ad[id];
             var value = void 0;
@@ -455,6 +452,7 @@ var _a;
             }
             cycle.push((_a = {}, _a[id] = value || [], _a));
         }
+        bangle2.bleAdvert = cycle;
         NRF.setAdvertising(cycle, {
             interval: 100,
         });
