@@ -1,33 +1,47 @@
 exports.interface = function(cb, useMap, useIncr) {
 // TODO: make configurable
 // Constants for the indicator: 
-const X_START = 87;
+const X_START = 176-55;
 const WIDTH = 50;
 const Y_START = 5;
 const HEIGHT = 165;
 const STEPS = 30; //Currently corresponds to my phones volume range, from 0 to 30. Maybe it should be 31. Math is hard sometimes...
 const STEP_SIZE = HEIGHT/STEPS;
-const OVERSIZE = 0.5;
+const OVERSIZE = 0.65;
 
 // Initialize the level
-let level = 0; // TODO: Depend on parameter.
-let lastLevel;
+let level; // TODO: Depend on parameter.
+let lastLevel=10;
 let levelHeight;
 
-let continDrag = (e)=>{
+let continDrag = e=>{
   "ram";
   if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*1);}
+  let input = Math.min(e.y,170);
+  input = Math.round(input/STEP_SIZE);
 
   // If draging on the indicator, adjust one-to-one.
     if (useMap && e.x>X_START-OVERSIZE*WIDTH && e.x<X_START+OVERSIZE*WIDTH) {
-      draw('map', e.y);
-    } else if (useIncr) {
+
+      level = Math.min(Math.max(STEPS-input,0),STEPS);
+
+      cb("map",level);
+      draw(level);
+
+    } else if (useIncr) { // Heavily inspired by "updown" mode of setUI.
+
       dy += e.dy;
       //if (!e.b) dy=0;
+
+      let incr;
       while (Math.abs(dy)>32) {
-        if (dy>0) { dy-=32; draw('incr',1); cb("incr",1); }
-        else { dy+=32; draw('incr',-1); cb("incr",-1); }
+        if (dy>0) { dy-=32; incr = 1;}
+        else { dy+=32; incr = -1;}
         Bangle.buzz(20);
+
+        level = Math.min(Math.max(lastLevel-incr,0),STEPS);
+        cb("incr",incr);
+        draw(level);
       }
     }
  E.stopEventPropagation&&E.stopEventPropagation();
@@ -35,9 +49,8 @@ let continDrag = (e)=>{
 
 let ovr = Graphics.createArrayBuffer(WIDTH,HEIGHT,1,{msb:true});
 
-let draw = (mode, input)=>{
+let draw = (level)=>{
   "ram";
-  input = Math.min(input,170);
   // Draw the indicator.
     // Should be displayed when a relevant drag event is detected.
     // Should time out.
@@ -45,16 +58,7 @@ let draw = (mode, input)=>{
     // Pauses and resets the time out when interacted with.
     // TODO: Lazy, keep track of last level and only draw again if it changed.
 
-    if (mode=='incr') {
-      level = Math.min(Math.max(level-input,0),STEPS);
-    }
-
-  if (mode=='map') {
-    input = Math.round(input/STEP_SIZE);
-    level = Math.min(Math.max(STEPS-input,0),STEPS);
-    if (level == lastLevel) return;
-    cb("map",level);
-  }
+  if (level == lastLevel) {print("hi"); return;}
 
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   lastLevel = level;
@@ -74,7 +78,7 @@ let draw = (mode, input)=>{
   //print(level, input);
   //print(process.memory().usage);
 };
-  
+
 let remove = ()=> {
   ovr.clear().reset();
   Bangle.setLCDOverlay();
@@ -86,5 +90,4 @@ let timeout = setTimeout(remove, 1000*1);
 let dy = 0;
 g.reset();
 Bangle.prependListener('drag', continDrag);
-
 }
