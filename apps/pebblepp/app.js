@@ -97,10 +97,10 @@ let clockInfoDraw = (itm, info, options) => {
   }
   g.setFontLECO1976Regular22().setFontAlign(0, 0);
   var txt = info.text.toString().toUpperCase();
-  if (g.stringWidth(txt) > options.w-4) // if too big, smaller font
+  if (g.stringWidth(txt) > options.w) // if too big, smaller font
     g.setFontLECO1976Regular14();
-  if (g.stringWidth(txt) > options.w-4) {// if still too big, split to 2 lines
-    var l = g.wrapString(txt, options.w-2);
+  if (g.stringWidth(txt) > options.w) {// if still too big, split to 2 lines
+    var l = g.wrapString(txt, options.w);
     txt = l.slice(0,2).join("\n") + (l.length>2)?"...":"";
   }
   g.drawString(txt, midx,options.y+options.h-12); // draw the text
