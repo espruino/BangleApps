@@ -130,8 +130,7 @@ const settings: BtAdvMap<boolean> = {
   mag: false,
 };
 
-const idToName: BtAdvMap<string, true> = {
-  acc: "Acceleration",
+const idToName: BtAdvMap<string> = {
   bar: "Barometer",
   gps: "GPS",
   hrm: "HRM",
@@ -223,15 +222,6 @@ const btnLayout = new Layout(
       {
         type: "h",
         c: [
-          {
-            type: "btn",
-            label: idToName.acc,
-            id: "acc",
-            cb: () => {},
-            ...btnStyle,
-            col: colour.on,
-            btnBorder: colour.on,
-          },
           {
             type: "btn",
             label: "Back",
