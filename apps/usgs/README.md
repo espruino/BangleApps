@@ -15,6 +15,7 @@ https://labs.waterdata.usgs.gov/docs/sensorthings/index.html
 Location can be found via map here:
 https://maps.waterdata.usgs.gov/mapper/
 Find the site you're looking for and note the "site number". This will be the "location" setting.
+
 ![image](https://github.com/inhof009/BangleApps/assets/141580984/e16b79ba-a442-480f-b481-b866a10c9c13)
 
 Keyboard is required to change location setting.
