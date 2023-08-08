@@ -54,7 +54,7 @@ a.btn.btn-link.dropdown-toggle {
 #toastcontainer {
   position:fixed;
   bottom:8px;left:0px;right:0px;
-  z-index: 100;
+  z-index: 500;
 }
 .hero {
   padding-bottom: 1rem;
