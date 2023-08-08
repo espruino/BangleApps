@@ -30,24 +30,6 @@ let draw = function() {
   }, 60000 - (Date.now() % 60000));
 };
 
-// Show launcher when middle button pressed
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    // Called to unload all of the clock app
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-    delete Graphics.prototype.setFont7Seg;
-    // remove info menu
-    clockInfoMenu.remove();
-    delete clockInfoMenu;
-    clockInfoMenu2.remove();
-    delete clockInfoMenu2;
-    // reset theme
-    g.setTheme(oldTheme);
-  }});
-// Load widgets
-Bangle.loadWidgets();
 var R = Bangle.appRect;
 R.x+=1;
 R.y+=1;
@@ -57,12 +39,6 @@ R.w-=2;
 R.h-=2;
 var midX = R.x+R.w/2;
 var barY = 80;
-// Clear the screen once, at startup
-let oldTheme = g.theme;
-g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear(1);
-g.fillRect({x:R.x, y:R.y, w:R.w, h:R.h, r:8}).clearRect(R.x,barY,R.w,barY+1).clearRect(midX,R.y,midX+1,barY);
-draw();
-setTimeout(Bangle.drawWidgets,0);
 
 let clockInfoDraw = (itm, info, options) => {
   let texty = options.y+41;
@@ -81,4 +57,29 @@ let clockInfoDraw = (itm, info, options) => {
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
+
+// Show launcher when middle button pressed
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    delete Graphics.prototype.setFont7Seg;
+    // remove info menu
+    clockInfoMenu.remove();
+    delete clockInfoMenu;
+    clockInfoMenu2.remove();
+    delete clockInfoMenu2;
+    // reset theme
+    g.setTheme(oldTheme);
+  }});
+// Load widgets
+Bangle.loadWidgets();
+// Clear the screen once, at startup
+let oldTheme = g.theme;
+g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear(1);
+g.fillRect({x:R.x, y:R.y, w:R.w, h:R.h, r:8}).clearRect(R.x,barY,R.w,barY+1).clearRect(midX,R.y,midX+1,barY);
+draw();
+setTimeout(Bangle.drawWidgets,0);
 }
