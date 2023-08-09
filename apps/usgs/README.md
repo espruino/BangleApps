@@ -26,7 +26,7 @@ Simple interface will display most current data for the specified location when 
 
 ## Controls
 
-No controls currently
+Press button (middle on Bangle 1) once to refresh data, twice to return to launcher.
 
 ## Creator
 
