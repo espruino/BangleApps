@@ -33,3 +33,7 @@ For requests or bug reports, please [submit an issue](https://github.com/espruin
 ## Creator
 
 Spencer Churchill
+
+## Attributions
+
+All icons used in this app are from [icons8](https://icons8.com/). All artwork is from [Pokemon](https://www.pokemon.com/).
