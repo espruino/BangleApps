@@ -1,41 +1,35 @@
 # Pokemon Battle
 
-This watch face seamlessly displays the time, date, battery level, temperature, storage, and RAM usage within a pokemon battle.
+This app presents a comprehensive watch face embedded in a Pokemon battle scene. It uses custom fonts and images to create a seamlessly themed clock face.
 
-![Watch Face](screenshot.png)
+![Screenshot](screenshot.png)
 
 ## Usage
 
-Download this app to your watch and follow Settings -> System -> Select Clock -> PkMn Btl. The watch face should now be set to the Pokemon Battle.
-
-## Features
-
-A tried and true format including:
-
-- Time
-- Date
-- Battery level
-- Temperature
-- Storage available
-- RAM usage
-
-### Important
+To use this app, you'll need to install it on your Bangle.js compatible device. Once installed, follow Settings -> System -> Select Clock -> PkMn Btl. The watch face should now be set to the Pokemon Battle.
 
 1. The opponent pokemon's name is the **current time**
 2. The opponent pokemon's HP is the **available storage**
-2. The player pokemon's name is the **date**
-3. The player pokemon's HP is the **battery life**
-4. The player pokemon's EXP is the **RAM usage**
-5. The information box shows the **temperature**
+3. The player pokemon's name is the **date**
+4. The player pokemon's HP is the **battery life**
+5. The player pokemon's EXP is the **RAM usage**
+6. The information box shows the **temperature**
+
+## Features
+
+- **Time and Date Display:** Shows the current time and date in a Pokemon-themed font.
+- **System Information:** Provides information such as battery level, storage space, RAM usage, and temperature.
+- **Pokemon Battle Theme:** Aesthetic elements reminiscent of Pokemon battles.
+
+## Controls
+
+- **Middle Button:** Pressing the middle button will show the launcher.
+- **LCD Power Controls:** Stops updates when the LCD is off and restarts when on.
 
 ## Requests
 
-For requests or bug reports please [submit an issue](https://github.com/splch/pokebtl/issues/new) on the GitHub page.
+For requests or bug reports, please [submit an issue](https://github.com/espruino/BangleApps/issues/new?title=Pokemon%20Battle) on the GitHub page.
 
 ## Creator
 
 Spencer Churchill
-
-## Attributions
-
-All icons used in this app are from [icons8](https://icons8.com/). All artwork is from [Pokemon](https://www.pokemon.com/).
