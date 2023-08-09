@@ -9,7 +9,7 @@
   
   var submenu = {
     "" : {
-      "title" : "-- DataStreams --"
+      "title" : "DataStreams"
     },
     "< Back" : function() { E.showMenu(menu); },
   };
@@ -38,7 +38,7 @@ function popSubMenuData(data) {
   E.showMenu(submenu);
   }
   var menu = {
-    "" : { "title" : "App Name" },
+    "" : { "title" : "USGS" },
     "< Back" : () => back(),
     'Temp unit': {
       value: !!settings.tempUnitF,  // !! converts undefined to false
@@ -59,7 +59,7 @@ function popSubMenuData(data) {
         }, 100);
       }
     },
-    "Submenu" : function() { popSubMenu();},
+    "DataStreams" : function() { popSubMenu();},
   };
   
   var keyboard = "textinput";
