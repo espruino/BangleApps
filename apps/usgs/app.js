@@ -63,5 +63,27 @@ function displayData(dataStreams) {
                    seconds.toString().padStart(2,"0");
   E.showMessage(string,timeString);
 }
+function handleButton() {
+  switch(nPress) {
+    case 1:
+      fetchStartup();
+      break;
+    case 2:
+      Bangle.showLauncher();
+      break;
+    default:
+      Bangle.buzz(50);
+  }
+  nPress=0;
+}
 
 fetchStartup();
+
+nPress = 0;
+tPress = 0;
+
+setWatch(() => {
+    nPress++;
+    clearTimeout(tPress);
+    tPress = setTimeout(() => {handleButton();}, 500);
+  }, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat: true, edge: "rising"});
