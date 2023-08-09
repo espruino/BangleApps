@@ -7,7 +7,24 @@
   "icon": "app.png",
   "type": "bootloader",
   "tags": "alarm,tool",
-  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
   "readme": "README.md",
-  "storage": [{ "name": "twenties.boot.js", "url": "boot.js" }]
+  "storage": [
+    {
+      "name": "twenties.boot.js",
+      "url": "boot.js"
+    },
+    {
+      "name": "twenties.settings.js",
+      "url": "settings.js"
+    }
+  ],
+  "data": [
+    {
+      "name": "twenties.json"
+    }
+  ]
 }

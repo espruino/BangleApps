@@ -1,0 +1,32 @@
+{
+  "id": "pkmnbtl",
+  "name": "Pokemon Battle",
+  "shortName": "pkmnbtl",
+  "version": "0.01",
+  "description": "A comprehensive watch face embedded in a Pokemon battle scene.",
+  "icon": "app.png",
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    }
+  ],
+  "type": "clock",
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "pkmnbtl.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "pkmnbtl.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}

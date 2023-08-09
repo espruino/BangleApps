@@ -1,19 +1,23 @@
-(() => {
-  const move = 20 * 60 * 1000; // 20 minutes
-  const look = 20 * 1000;      // 20 seconds
+const buzz = _ => {
+  const settings = Object.assign({
+    move: 20 * 60 * 1000,
+    look: 20 * 1000,
+    startDay: 1,
+    endDay: 5,
+    startHour: 8,
+    endHour: 17
+  }, require('Storage').readJSON("twenties.json", true) || {});
 
-  const buzz = _ => {
-    const date = new Date();
-    const day = date.getDay();
-    const hour = date.getHours();
-    // buzz at work
-    if (day >= 1 && day <= 5 &&
-      hour >= 8 && hour <= 17) {
-      Bangle.buzz().then(_ => {
-        setTimeout(Bangle.buzz, look);
-      });
-    }
-  };
+  const date = new Date();
+  const day = date.getDay();
+  const hour = date.getHours();
 
-  setInterval(buzz, move); // buzz to stand / sit
-})();
+  if (day >= settings.startDay && day <= settings.endDay &&
+    hour >= settings.startHour && hour <= settings.endHour) {
+    Bangle.buzz().then(_ => {
+      setTimeout(Bangle.buzz, settings.look);
+    });
+  }
+};
+
+setInterval(buzz, settings.move);
