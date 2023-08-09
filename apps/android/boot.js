@@ -193,9 +193,36 @@
         Bangle.on('HRM',actHRMHandler);
         actInterval = setInterval(function() {
           var steps = Bangle.getStepCount();
-          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM });
+          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM, rt:1 });
           lastSteps = steps;
         }, event.int*1000);
+      },
+      // {t:"actfetch", ts:long}
+      "actfetch": function() {
+        gbSend({t: "actfetch", state: "start"});
+        var actCount = 0;
+        var actCb = function(r) {
+          // The health lib saves the samples at the start of the 10-minute block
+          // However, GB expects them at the end of the block, so let's offset them
+          // here to keep a consistent API in the health lib
+          var sampleTs = r.date.getTime() + 600000;
+          if (sampleTs >= event.ts) {
+            gbSend({
+              t: "act",
+              ts: sampleTs,
+              stp: r.steps,
+              hrm: r.bpm,
+              mov: r.movement
+            });
+            actCount++;
+          }
+        }
+        if (event.ts != 0) {
+          require("health").readAllRecordsSince(new Date(event.ts - 600000), actCb);
+        } else {
+          require("health").readFullDatabase(actCb);
+        }
+        gbSend({t: "actfetch", state: "end", count: actCount});
       },
       "nav": function() {
         event.id="nav";

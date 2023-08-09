@@ -263,7 +263,7 @@
   function sendActivity(hrm) {
     var steps = currentSteps - lastSentSteps;
     lastSentSteps = currentSteps;
-    gbSend({ t: "act", stp: steps, hrm:hrm });
+    gbSend({ t: "act", stp: steps, hrm:hrm, rt:1 });
   }
 
   // Battery monitor
