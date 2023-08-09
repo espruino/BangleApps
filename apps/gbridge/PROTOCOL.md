@@ -59,6 +59,26 @@ Send a response to a notification from phone
 * n can be one of "dismiss", "dismiss all", "open", "mute", "reply"
 * id, tel and message are optional
 
+## activity data
+
+```json
+{
+  "t": "act",
+  "ts": 1692226800000,
+  "stp": 26,
+  "hrm": 70,
+  "mov": 10,
+  "rt": 1
+}
+```
+
+* `ts` is the sample timestamp, in milliseconds since the unix epoch
+* `stp` is the number of steps
+* `hrm` is heart rate, in bpm
+* `mov` is the movement intensity (todo: range?)
+* `rt` whether it is a real-time sample
+
+
 # Phone -> Watch
 
 ## show notification
@@ -177,3 +197,14 @@ n is the intensity
 * hum is the humidity
 * txt is the weather condition
 * loc is the location
+
+## fetch activity data
+
+```json
+{
+  "t": "actfetch",
+  "ts": 1692226800000
+}
+```
+
+* `ts` is the start timestamp, in milliseconds since the unix epoch

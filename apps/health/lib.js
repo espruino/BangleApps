@@ -37,7 +37,36 @@ exports.readAllRecords = function(d, cb) {
     }
     idx += DB_RECORD_LEN; // +1 because we have an extra record with totals for the end of the day
   }
-}
+};
+
+// Read the entire database. There is no guarantee that the months are read in order.
+exports.readFullDatabase = function(cb) {
+  require("Storage").list(/health-[0-9]+-[0-9]+.raw/).forEach(val => {
+    console.log(val);
+    var parts = val.split('-');
+    var y = parseInt(parts[1]);
+    var mo = parseInt(parts[2].replace('.raw', ''));
+
+    exports.readAllRecords(new Date(y, mo, 1), (r) => {
+      r.date = new Date(y, mo, r.day, r.hr, r.min);
+      cb(r);
+    });
+  });
+};
+
+// Read all records per day, until the current time.
+// There may be some records for the day of the timestamp previous to the timestamp
+exports.readAllRecordsSince = function(d, cb) {
+  var currentDate = new Date().getTime();
+  var di = d;
+  while (di.getTime() <= currentDate) {
+    exports.readDay(di, (r) => {
+      r.date = new Date(di.getFullYear(), di.getMonth(), di.getDate(), r.hr, r.min);
+      cb(r);
+    });
+    di.setDate(di.getDate() + 1);
+  }
+};
 
 // Read daily summaries from the given month
 exports.readDailySummaries = function(d, cb) {

@@ -26,3 +26,4 @@
 0.25: lib.read* methods now return correctly scaled movement
       movement graph in app is now an average, not sum
       fix 11pm slot for daily HRM
+0.26: Implement API for activity fetching
