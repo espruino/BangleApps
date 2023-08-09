@@ -1,4 +1,12 @@
 (function(back) {
+  var FILE = "usgs.json";
+  var settings = Object.assign({
+    loc: '03272100',
+    keys: {'Gage height': true, 'Discharge': true, 'Temperature, water': true},
+    shortenedName: {"Gage height":"Ga","Discharge":"Dis","Temperature, water":"Temp"},
+    tempUnitF: true,
+  }, require('Storage').readJSON(FILE, true) || {});
+  
   var submenu = {
     "" : {
       "title" : "-- DataStreams --"

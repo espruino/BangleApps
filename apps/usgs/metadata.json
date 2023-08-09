@@ -2,9 +2,9 @@
   "name": "USGS Data fetching app",
   "shortName":"USGS",
   "version":"0.01",
-  "description": "App that fetches USGS data from configurable location",
+  "description": "App that fetches [USGS water data](https://maps.waterdata.usgs.gov/) for a configurable location (requires connection to Android phone)",
   "icon": "app.png",
-  "tags": "",
+  "tags": "outdoors,exercise,http",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
@@ -12,5 +12,5 @@
     {"name":"usgs.settings.js","url":"settings.js"},
     {"name":"usgs.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"myapp.json"}]
+  "data": [{"name":"usgs.json"}]
 }
