@@ -292,10 +292,9 @@
       require("messages").clearAll();
   });
   setInterval(sendBattery, 10*60*1000);
-  // Health tracking
-  Bangle.on('health', health=>{
-    if (actInterval===undefined) // if 'realtime' we do it differently
-      gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
+  // Health tracking - if 'realtime' data is sent with 'rt:1', but let's still send our activity log every 10 mins
+  Bangle.on('health', h=>{
+    gbSend({ t: "act", stp: h.steps, hrm: h.bpm, mov: h.movement });
   });
   // Music control
   Bangle.musicControl = cmd => {
