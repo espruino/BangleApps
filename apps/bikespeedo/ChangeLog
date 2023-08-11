@@ -3,3 +3,4 @@
 0.03: Use default Bangle formatter for booleans
 0.04: Add options for units in locale and recording GPS
 0.05: Allow toggling of "max" values (screen tap) and recording (button press)
+0.06: Fix local unit setting
