@@ -1,0 +1,20 @@
+{
+  "id": "edgeclk",
+  "name": "Edge Clock",
+  "shortName": "Edge Clock",
+  "version": "0.01",
+  "description": "Crisp clock with perfect readability.",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot2.png"}, {"url":"screenshot3.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"edgeclk.app.js", "url": "app.js"},
+    {"name":"edgeclk.settings.js", "url": "settings.js"},
+    {"name":"edgeclk.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "data": [{"name":"edgeclk.settings.json"}]
+}
