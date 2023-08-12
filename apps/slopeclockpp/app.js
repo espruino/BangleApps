@@ -48,13 +48,7 @@ let bgColor = bgColors[(Math.random()*bgColors.length)|0]||"#000";
 // Draw the hour, and the minute into an offscreen buffer
 let draw = function() {
   // queue next draw
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    animate(false, function() {
-      draw();
-    });
-  }, 60000 - (Date.now() % 60000));
+  drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
   // Now draw this one
   R = Bangle.appRect;
   x = R.w / 2;
@@ -78,49 +72,23 @@ let draw = function() {
   g2.setColor(0).fillRect(0,0,g2.getWidth(),g2.getHeight()).setFontAlign(1, 0).setFont("PaytoneOne");
   g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2).setFont("4x6"); // draw and unload custom font
   g2.setColor(0).fillPoly([0,0, g2.getWidth(),0, 0,slope*2]);
+
+  drawMinute();
   // redraw the top widget
   clockInfoMenu.redraw();
-  // start the animation *in*
-  animate(true);
+  clockInfoMenu2.redraw();
+  g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
 };
 
 let isAnimIn = true;
 let animInterval;
 // Draw *just* the minute image
 let drawMinute = function() {
-  var yo = slopeBorder + offsy + y - 2*slope*minuteX/R.w;
+  var yo = slopeBorder + offsy + y;
   // draw over the slanty bit
   g.setColor(bgColor).fillPoly([0,y+slope, R.w,y-slope, R.w,R.h+R.y, 0,R.h+R.y]);
   // draw the minutes
-  g.setColor(g.theme.bg).drawImage(g2img, x+minuteX-(g2.getWidth()/2), yo-(g2.getHeight()/2));
-};
-let animate = function(isIn, callback) {
-  if (animInterval) clearInterval(animInterval);
-  isAnimIn = isIn;
-  minuteX = isAnimIn ? -g2.getWidth() : 0;
-  drawMinute();
-  animInterval = setInterval(function() {
-    minuteX += 8;
-    let stop = false;
-    if (isAnimIn && minuteX>=0) {
-      minuteX=0;
-      stop = true;
-    } else if (!isAnimIn && minuteX>=R.w)
-      stop = true;
-    drawMinute();
-    if (stop) {
-      clearInterval(animInterval);
-      animInterval=undefined;
-      if (isAnimIn) {
-        // draw the date
-        g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
-        // draw the menu items
-        clockInfoMenu.redraw();
-        clockInfoMenu2.redraw();
-      }
-      if (callback) callback();
-    }
-  }, 20);
+  g.setColor(g.theme.bg).drawImage(g2img, x-(g2.getWidth()/2), yo-(g2.getHeight()/2));
 };
 
 // clock info menus (scroll up/down for info)
@@ -175,4 +143,5 @@ Bangle.loadWidgets();
 if (settings.hideWidgets) require("widget_utils").swipeOn();
 else setTimeout(Bangle.drawWidgets,0);
 draw();
+
 }
