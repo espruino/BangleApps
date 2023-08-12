@@ -135,7 +135,8 @@
     g.setFontAlign(-1, 1); // left bottom
 
     const steps = Bangle.getHealthStatus('day').steps;
-    g.drawString(steps.toString().padEnd(5, '_'), iconSize[0] + 6, g.getHeight() - 1, true);
+    g.drawString((steps < 100000 ? steps.toString() : ((steps / 1000).toFixed(0) + 'K')).padEnd(5, '_'),
+                 iconSize[0] + 6, g.getHeight() - 1, true);
 
     if (onlyCount === true) {
       return;
@@ -169,17 +170,22 @@
   };
 
   const drawBar = function (top, progress) {
-    g.drawRect(0, top, g.getWidth()-1, top + 5);
-    g.drawRect(1, top+1, g.getWidth()-2, top + 4);
-    const barLen = progress > 1 ? g.getWidth() : g.getWidth() * progress;
-    g.drawLine(2, top+2, barLen, top + 2);
-    g.drawLine(2, top+3, barLen, top + 3);
+    // draw frame
+    g.drawRect(0, top,      g.getWidth() - 1, top + 5);
+    g.drawRect(1, top + 1,  g.getWidth() - 2, top + 4);
+    // clear bar area
+    g.clearRect(2, top + 2, g.getWidth() - 3, top + 3);
+    // draw bar
+    const barLen = progress >= 1 ? g.getWidth() : (g.getWidth() - 4) * progress;
+    if (barLen < 1) return;
+    g.drawLine(2, top + 2,  barLen + 2,       top + 2);
+    g.drawLine(2, top + 3,  barLen + 2,       top + 3);
   };
 
   const drawLine = function (top) {
     const width = g.getWidth();
-    g.drawLine(0, top+2, width, top + 2);
-    g.drawLine(0, top+3, width, top + 3);
+    g.drawLine(0, top + 2, width, top + 2);
+    g.drawLine(0, top + 3, width, top + 3);
   };
 
 
@@ -251,7 +257,7 @@
     // This is for original Bangle.js; version two has always-on display:
     Bangle.on('lcdPower', onLcdPower);
 
-    // Midnight event is triggered qhen health data is reset and a new day begins:
+    // Midnight event is triggered when health data is reset and a new day begins:
     Bangle.on('midnight', onMidnight);
 
     // Health data is published via 10 mins interval:

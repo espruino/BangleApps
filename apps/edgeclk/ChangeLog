@@ -1,1 +1,2 @@
 0.01: Initial release.
+0.02: Fix reset of progress bars on midnight. Fix display of 100k+ steps.
