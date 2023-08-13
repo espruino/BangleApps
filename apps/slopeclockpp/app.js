@@ -75,13 +75,11 @@ let draw = function() {
 
   drawMinute();
   // redraw the top widget
-  clockInfoMenu.redraw();
-  clockInfoMenu2.redraw();
+  clockInfoMenu && clockInfoMenu.redraw();
+  clockInfoMenu2 && clockInfoMenu2.redraw();
   g.setColor(g.theme.bg).setFontAlign(0, 0).setFont("6x15").drawString(dateStr, R.x + R.w/2, R.y+R.h-9);
 };
 
-let isAnimIn = true;
-let animInterval;
 // Draw *just* the minute image
 let drawMinute = function() {
   var yo = slopeBorder + offsy + y;
@@ -111,30 +109,35 @@ let clockInfoDraw = (itm, info, options) => {
   // return ClipRect
   g.setClipRect(0,0,g.getWidth()-1, g.getHeight()-1);
 };
-let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // top right
-  app:"slopeclockpp",x:132, y:settings.hideWidgets ? 12 : 24, w:44, h:40,
-  draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
-});
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
-  app:"slopeclockpp",x:0, y:115, w:50, h:40,
-  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg
-});
+let clockInfoItems, clockInfoMenu, clockInfoMenu2;
+if (settings.topClockInfo || settings.bottomClockInfo) {
+  clockInfoItems = require("clock_info").load();
+  if (settings.topClockInfo) {
+    clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // top right
+      app:"slopeclockpp",x:132, y:settings.hideWidgets ? 12 : 24, w:44, h:40,
+      draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
+    });
+  }
+  if (settings.bottomClockInfo) {
+    clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
+      app:"slopeclockpp",x:0, y:115, w:50, h:40,
+      draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg
+    });
+  }
+}
 
 // Show launcher when middle button pressed
 Bangle.setUI({
   mode : "clock",
   remove : function() {
     // Called to unload all of the clock app
-    if (animInterval) clearInterval(animInterval);
-    animInterval = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     delete Graphics.prototype.setFontPaytoneOne;
     // remove info menu
-    clockInfoMenu.remove();
+    clockInfoMenu && clockInfoMenu.remove();
     delete clockInfoMenu;
-    clockInfoMenu2.remove();
+    clockInfoMenu2 && clockInfoMenu2.remove();
     delete clockInfoMenu2;
   }
 });

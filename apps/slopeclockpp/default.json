@@ -1,4 +1,6 @@
 {
+  "topClockInfo": true,
+  "bottomClockInfo": true,
   "colorRed": true,
   "colorGreen": true,
   "colorBlue": true,

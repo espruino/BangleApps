@@ -12,3 +12,4 @@
 0.09: Use clock_info module as an app
 0.10: Option to hide widgets, tweak top widget width to avoid overlap with hour text at 9am
 0.11: Remove animation
+0.12: WIP - allow hiding clock info

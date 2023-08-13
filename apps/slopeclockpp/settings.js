@@ -19,6 +19,14 @@
         value: !!settings.hideWidgets,
         onchange: x => save('hideWidgets', x),
       },
+      /*LANG*/'Top Clock Info': {
+        value: !!settings.topClockInfo,
+        onchange: x => save('topClockInfo', x),
+      },
+      /*LANG*/'Bottom Clock Info': {
+        value: !!settings.bottomClockInfo,
+        onchange: x => save('bottomClockInfo', x),
+      },
       /*LANG*/'Red': {
         value: !!settings.colorRed,
         format: () => (settings.colorRed ? 'Yes' : 'No'),
