@@ -7,3 +7,4 @@
 0.07: Fixed position after unlocking
 0.08: Handling exceptions
 0.09: Add option for showing battery high mark
+0.10: Fix background color
