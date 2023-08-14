@@ -63,19 +63,21 @@ let draw = (level)=>{
     // Should time out.
     // If user drags directly on the draw area, adjust level one-to-one.
     // Pauses and resets the time out when interacted with.
-    // TODO: Lazy, keep track of last level and only draw again if it changed.
+
+  if (firstRun) {
+    ovr.setColor(1).
+    fillRect({x:0,y:0,w:WIDTH,y2:HEIGHT,r:30}); // To get outer border...
+  }
 
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
 
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   prevLevel = level;
 
-  ovr.clear().setColor(1).
-    fillRect({x:0,y:0,w:WIDTH,y2:HEIGHT,r:30}). // To get outer border...
-    setColor(0).
+    ovr.setColor(0).
     fillRect({x:2,y:2,w:WIDTH-5,y2:HEIGHT-2,r:30}). // ... and here it's made hollow.
     setColor(0==level?0:1).
-    fillRect({x:4,y:HEIGHT-levelHeight+4,w:WIDTH-9,y2:ovr.getHeight()-4,r:30}); // Here the bar is drawn.
+    fillRect({x:4,y:HEIGHT-levelHeight+4,w:WIDTH-9,y2:HEIGHT-4,r:30}); // Here the bar is drawn.
     Bangle.setLCDOverlay({
       width:WIDTH, height:HEIGHT,
       bpp:1, transparent:0,
@@ -90,7 +92,7 @@ let remove = ()=> {
   ovr.clear().reset();
   Bangle.setLCDOverlay();
   Bangle.removeListener('drag', dragSlider);
-  cb("remove", level);
+  cb("remove", prevLevel);
 };
 
 let timeout = setTimeout(remove, 1000*TIMEOUT);
