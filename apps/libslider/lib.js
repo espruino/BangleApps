@@ -66,7 +66,7 @@ let draw = (level)=>{
 
   if (firstRun) {
     ovr.setColor(1).
-    fillRect({x:0,y:0,w:WIDTH,y2:HEIGHT,r:30}); // To get outer border...
+    fillRect({x:0,y:0,w:WIDTH,y2:HEIGHT,r:0}); // To get outer border...
   }
 
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
@@ -75,9 +75,9 @@ let draw = (level)=>{
   prevLevel = level;
 
     ovr.setColor(0).
-    fillRect({x:2,y:2,w:WIDTH-5,y2:HEIGHT-2,r:30}). // ... and here it's made hollow.
+    fillRect({x:2,y:2,w:WIDTH-5,y2:HEIGHT-2,r:0}). // ... and here it's made hollow.
     setColor(0==level?0:1).
-    fillRect({x:4,y:HEIGHT-levelHeight+4,w:WIDTH-9,y2:HEIGHT-4,r:30}); // Here the bar is drawn.
+    fillRect({x:4,y:HEIGHT-levelHeight+4,w:WIDTH-9,y2:HEIGHT-4,r:0}); // Here the bar is drawn.
     Bangle.setLCDOverlay({
       width:WIDTH, height:HEIGHT,
       bpp:1, transparent:0,
