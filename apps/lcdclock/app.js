@@ -30,16 +30,6 @@ let draw = function() {
   }, 60000 - (Date.now() % 60000));
 };
 
-var R = Bangle.appRect;
-R.x+=1;
-R.y+=1;
-R.x2-=1;
-R.y2-=1;
-R.w-=2;
-R.h-=2;
-var midX = R.x+R.w/2;
-var barY = 80;
-
 let clockInfoDraw = (itm, info, options) => {
   let texty = options.y+41;
   g.reset().setFont("7Seg").setColor(g.theme.bg).setBgColor(g.theme.fg);
@@ -52,11 +42,7 @@ let clockInfoDraw = (itm, info, options) => {
   if (title!="Bangle") g.setFontAlign(1,0).drawString(title.toUpperCase(), options.x+options.w-2, options.y+14);
   if (g.setFont("7Seg:2").stringWidth(text)+8>options.w) g.setFont("7Seg");
   g.setFontAlign(0,0).drawString(text, options.x+options.w/2, options.y+40);
-
 };
-let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 
 // Show launcher when middle button pressed
 Bangle.setUI({
@@ -76,10 +62,24 @@ Bangle.setUI({
   }});
 // Load widgets
 Bangle.loadWidgets();
+// Work out sizes
+let R = Bangle.appRect;
+R.x+=1;
+R.y+=1;
+R.x2-=1;
+R.y2-=1;
+R.w-=2;
+R.h-=2;
+let midX = R.x+R.w/2;
+let barY = 80;
 // Clear the screen once, at startup
 let oldTheme = g.theme;
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear(1);
 g.fillRect({x:R.x, y:R.y, w:R.w, h:R.h, r:8}).clearRect(R.x,barY,R.w,barY+1).clearRect(midX,R.y,midX+1,barY);
 draw();
-setTimeout(Bangle.drawWidgets,0);
+Bangle.drawWidgets();
+// Allocate and draw clockinfos
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 }
