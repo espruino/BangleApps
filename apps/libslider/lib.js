@@ -101,7 +101,8 @@ let remove = ()=> {
   cb("remove", prevLevel);
 };
 
-let timeout = setTimeout(remove, 1000*TIMEOUT);
+let timeout;
+if (TIMEOUT!=='no') timeout = setTimeout(remove, 1000*TIMEOUT);
 
 let dy = 0;
 g.reset();
