@@ -20,6 +20,8 @@ let prevLevel = conf.currLevel || 0;
 let levelHeight;
 
 let firstRun = true;
+let ebLast = 0;
+let exFirst;
 
 let dragSlider = e=>{
   "ram";
@@ -27,8 +29,10 @@ let dragSlider = e=>{
   let input = Math.min(e.y,170);
   input = Math.round(input/STEP_SIZE);
 
+  if (ebLast==0) exFirst = e.x;
+
   // If draging on the indicator, adjust one-to-one.
-    if (USE_MAP && e.x>X_START-OVERSIZE_L*WIDTH && e.x<X_START+WIDTH+OVERSIZE_R*WIDTH) {
+    if (USE_MAP && exFirst>X_START-OVERSIZE_L*WIDTH && exFirst<X_START+WIDTH+OVERSIZE_R*WIDTH) {
 
       level = Math.min(Math.max(STEPS-input,0),STEPS);
 
@@ -51,6 +55,7 @@ let dragSlider = e=>{
         draw(level);
       }
     }
+  ebLast = e.b;
  E.stopEventPropagation&&E.stopEventPropagation();
 };
 
