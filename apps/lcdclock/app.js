@@ -30,16 +30,6 @@ let draw = function() {
   }, 60000 - (Date.now() % 60000));
 };
 
-var R = Bangle.appRect;
-R.x+=1;
-R.y+=1;
-R.x2-=1;
-R.y2-=1;
-R.w-=2;
-R.h-=2;
-var midX = R.x+R.w/2;
-var barY = 80;
-
 let clockInfoDraw = (itm, info, options) => {
   let texty = options.y+41;
   g.reset().setFont("7Seg").setColor(g.theme.bg).setBgColor(g.theme.fg);
@@ -54,9 +44,6 @@ let clockInfoDraw = (itm, info, options) => {
   g.setFontAlign(0,0).drawString(text, options.x+options.w/2, options.y+40);
 
 };
-let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 
 // Show launcher when middle button pressed
 Bangle.setUI({
@@ -74,6 +61,23 @@ Bangle.setUI({
     // reset theme
     g.setTheme(oldTheme);
   }});
+
+// calculate appRect after setUI
+var R = Bangle.appRect;
+R.x+=1;
+R.y+=1;
+R.x2-=1;
+R.y2-=1;
+R.w-=2;
+R.h-=2;
+var midX = R.x+R.w/2;
+var barY = 80;
+
+// Load clock info after appRect, but before widgets
+let clockInfoItems = require("clock_info").load();
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
+
 // Load widgets
 Bangle.loadWidgets();
 // Clear the screen once, at startup
