@@ -1,6 +1,6 @@
 # Cards
 
-Basic viewer for loyalty cards synced from Catima through GadgetBridge.
+Simple app to display loyalty cards synced from Catima through GadgetBridge.
 The app can display the cards' info (balance, expiration, note, etc.) and tapping on the appropriate field will display the code, if the type is supported.
 
 Double tapping on the code will come back to the visualization of the card's details.
@@ -42,3 +42,9 @@ _android.cards.json_
   }
 ]
 ```
+
+### Credits
+
+Barcode generation adapted from [lindell/JsBarcode](https://github.com/lindell/JsBarcode)
+
+QR code generation adapted from [ricmoo/QRCode](https://github.com/ricmoo/QRCode)

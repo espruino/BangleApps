@@ -4,7 +4,7 @@
   "version": "0.1",
   "description": "Display loyalty cards",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot_cards_overview.png"}, {"url":"screenshot_cards_event1.png"}, {"url":"screenshot_cards_barcode.png"}, {"url":"screenshot_cards_qrcode.png"}],
+  "screenshots": [{"url":"screenshot_cards_overview.png"}, {"url":"screenshot_cards_card1.png"}, {"url":"screenshot_cards_barcode.png"}, {"url":"screenshot_cards_qrcode.png"}],
   "tags": "cards",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
