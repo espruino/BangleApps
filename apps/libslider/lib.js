@@ -25,6 +25,8 @@ let exFirst;
 
 let dragSlider = e=>{
   "ram";
+  E.stopEventPropagation&&E.stopEventPropagation();
+
   if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*TIMEOUT);}
   let input = Math.min(e.y,170);
   input = Math.round(input/STEP_SIZE);
@@ -56,7 +58,6 @@ let dragSlider = e=>{
       }
     }
   ebLast = e.b;
- E.stopEventPropagation&&E.stopEventPropagation();
 };
 
 let ovr = Graphics.createArrayBuffer(WIDTH+9,HEIGHT+5,1,{msb:true});
