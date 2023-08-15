@@ -4,9 +4,9 @@ conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
 const USE_INCR = conf.useIncr || true;
 const X_START = conf.xStart || 176-55;
-const WIDTH = conf.width || 50;
+const WIDTH = conf.width-9 || 50-9; // -9 to compensate for the border.
 const Y_START = conf.yStart || 5;
-const HEIGHT = conf.height || 165;
+const HEIGHT = conf.height-5 || 165-5; // -5 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
@@ -54,7 +54,7 @@ let dragSlider = e=>{
  E.stopEventPropagation&&E.stopEventPropagation();
 };
 
-let ovr = Graphics.createArrayBuffer(WIDTH,HEIGHT,1,{msb:true});
+let ovr = Graphics.createArrayBuffer(WIDTH+9,HEIGHT+5,1,{msb:true});
 
 let draw = (level)=>{
   "ram";
@@ -66,7 +66,7 @@ let draw = (level)=>{
 
   if (firstRun) {
     ovr.setColor(1).
-    fillRect({x:0,y:0,w:WIDTH,y2:HEIGHT,r:0}); // To get outer border...
+    fillRect({x:0,y:0,w:WIDTH+9,y2:HEIGHT+5,r:0}); // To get outer border...
   }
 
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
@@ -75,16 +75,16 @@ let draw = (level)=>{
   prevLevel = level;
 
     ovr.setColor(0).
-    fillRect({x:2,y:2,w:WIDTH-5,y2:HEIGHT-2,r:0}). // ... and here it's made hollow.
+    fillRect({x:2,y:2,w:WIDTH+4,y2:HEIGHT+2,r:0}). // ... and here it's made hollow.
     setColor(0==level?0:1).
-    fillRect({x:4,y:HEIGHT-levelHeight+4,w:WIDTH-9,y2:HEIGHT-4,r:0}); // Here the bar is drawn.
+    fillRect({x:4,y:4+HEIGHT-levelHeight,w:WIDTH,y2:HEIGHT,r:0}); // Here the bar is drawn.
     Bangle.setLCDOverlay({
-      width:WIDTH, height:HEIGHT,
+      width:WIDTH+9, height:HEIGHT+5,
       bpp:1, transparent:0,
       buffer:ovr.buffer
     },X_START,Y_START);
 
-  //print(level, input);
+  //print(level);
   //print(process.memory().usage);
 };
 
