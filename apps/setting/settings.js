@@ -186,7 +186,7 @@ function showBLEMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Passkey BETA': {
+    /*LANG*/'Passkey': {
       value: settings.passkey?settings.passkey:/*LANG*/"none",
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
