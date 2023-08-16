@@ -79,7 +79,7 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
-if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist && !(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
+if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist) { let whitelist = (require('Storage').readJSON('setting.json',1)||{}).whitelist; if (NRF.resolveAddress !== undefined) { let resolvedAddr = NRF.resolveAddress(addr); if (resolvedAddr !== undefined) addr = resolvedAddr + " (resolved)"; } if (!whitelist.includes(addr)) NRF.disconnect(); }});\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
 // ================================================== FIXING OLDER FIRMWARES
 if (FWVERSION<215.068) // 2v15.68 and before had compass heading inverted.

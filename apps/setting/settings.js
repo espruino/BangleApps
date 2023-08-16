@@ -383,6 +383,12 @@ function showWhitelistMenu() {
     NRF.on('connect', function(addr) {
       if (!settings.whitelist) settings.whitelist=[];
       delete settings.whitelist_disabled;
+      if (NRF.resolveAddress !== undefined) {
+        let resolvedAddr = NRF.resolveAddress(addr);
+        if (resolvedAddr !== undefined) {
+          addr = resolvedAddr + " (resolved)";
+        }
+      }
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
