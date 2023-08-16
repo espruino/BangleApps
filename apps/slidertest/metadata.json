@@ -5,13 +5,11 @@
   "description": "A detailed description of my great app",
   "icon": "app.png",
   "tags": "ui",
-  "supports" : ["BANGLEJS2"],  
-  "provides_modules": ["SliderInput"],
+  "supports": ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [
-    {"name":"libslider.img","url":"app-icon.js","evaluate":true},
-    {"name":"libslider.app.js","url":"app.js"},
-    {"name":"SliderInput","url":"lib.js"}
+    {"name":"slidertest.img","url":"app-icon.js","evaluate":"true"},
+    {"name":"slidertest.app.js","url":"app.js"}
   ]
 }
 
