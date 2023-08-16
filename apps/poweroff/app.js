@@ -1,3 +1,4 @@
+{ // must be inside our own scope here so that when we are unloaded everything disappears
 g.clear();
 
 let settings = require('Storage').readJSON("poweroff.json", true) || {};
@@ -26,3 +27,4 @@ if (showPrompt) {
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+}
