@@ -47,27 +47,30 @@ function formatDay(date) {
 }
 
 function printSquareCode(binary, size) {
-  var ratio = g.getWidth()/size;
+  var padding = 5;
+  var ratio = (g.getWidth()-(2*padding))/size;
+  g.setColor(g.theme.fg).fillRect(0, 0, g.getWidth(), g.getHeight());
   for (var y = 0; y < size; y++) {
     for (var x = 0; x < size; x++) {
       if (binary[x + y * size]) {
-        g.setColor(g.theme.bg).fillRect({x:x*ratio, y:y*ratio, w:ratio, h:ratio});
+        g.setColor(g.theme.bg).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
       } else {
-        g.setColor(g.theme.fg).fillRect({x:x*ratio, y:y*ratio, w:ratio, h:ratio});
+        g.setColor(g.theme.fg).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
       }
     }
   }
 }
 function printLinearCode(binary) {
-  var yFrom = 0;
+  var yFrom = 15;
+  var yTo = 28;
   var width = g.getWidth()/binary.length;
   for(var b = 0; b < binary.length; b++){
     var x = b * width;
     if(binary[b] === "1"){
-      g.setColor(g.theme.fg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight()});
+      g.setColor(g.theme.fg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
     else if(binary[b]){
-      g.setColor(g.theme.bg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight()});
+      g.setColor(g.theme.bg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
   }
 }
@@ -80,6 +83,8 @@ function showCode(card) {
     Bangle.removeListener("tap", listener);
   };
   Bangle.on("tap", listener);
+  E.showScroller();
+  g.clear(true);
   switch (card.type) {
     case "QR_CODE":
       const getBinaryQR = require("cards.qrcode.js");
@@ -87,18 +92,23 @@ function showCode(card) {
       printSquareCode(code.data, code.size);
       break;
     case "CODE_39":
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
       const CODE39 = require("cards.code39.js");
       code = new CODE39(card.value, {});
       printLinearCode(code.encode().data);
       break;
     case "CODABAR":
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
       const codabar = require("cards.codabar.js");
       code = new codabar(card.value, {});
       printLinearCode(code.encode().data);
       break;
     default:
-      g.clear(true);
-      g.setFont("Vector:15");
+      g.setFont("Vector:30");
       g.setFontAlign(0,0);
       g.drawString(card.value, g.getWidth()/2, g.getHeight()/2);
   }
@@ -114,8 +124,7 @@ function showCard(card) {
   var titleCnt = lines.length;
   var start = getDate(card.expiration);
   var includeDay = true;
-  if (titleCnt) lines.push(""); // add blank line after name
-  lines = lines.concat("", /*LANG*/"Tap here to see the value");
+  lines = lines.concat("", /*LANG*/"View code");
   var valueLine = lines.length - 1;
   if (card.expiration)
     lines = lines.concat("",/*LANG*/"Expires"+": ", g.wrapString(formatDay(getDate(card.expiration)), g.getWidth()-10));
