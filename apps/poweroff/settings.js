@@ -1,7 +1,7 @@
 (function(back) {
   var FILE = "poweroff.json";
   var settings = Object.assign({
-    secondsOnUnlock: false,
+    showPrompt: true,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
