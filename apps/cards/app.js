@@ -14,6 +14,10 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+//may make it configurable in the future
+const WHITE=-1
+const BLACK=0
+
 var FILE = "android.cards.json";
 
 var Locale = require("locale");
@@ -49,13 +53,12 @@ function formatDay(date) {
 function printSquareCode(binary, size) {
   var padding = 5;
   var ratio = (g.getWidth()-(2*padding))/size;
-  g.setColor(g.theme.fg).fillRect(0, 0, g.getWidth(), g.getHeight());
   for (var y = 0; y < size; y++) {
     for (var x = 0; x < size; x++) {
       if (binary[x + y * size]) {
-        g.setColor(g.theme.bg).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
+        g.setColor(BLACK).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
       } else {
-        g.setColor(g.theme.fg).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
+        g.setColor(WHITE).fillRect({x:x*ratio+padding, y:y*ratio+padding, w:ratio, h:ratio});
       }
     }
   }
@@ -67,47 +70,51 @@ function printLinearCode(binary) {
   for(var b = 0; b < binary.length; b++){
     var x = b * width;
     if(binary[b] === "1"){
-      g.setColor(g.theme.fg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(BLACK).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
     else if(binary[b]){
-      g.setColor(g.theme.bg).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(WHITE).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
   }
 }
 
 function showCode(card) {
-  var code;
-  //FIXME doesn't work..
+  //FIXME tap doesn't work..
   var listener = (data) => {
     if(data.double) showCard(card);
     Bangle.removeListener("tap", listener);
   };
   Bangle.on("tap", listener);
   E.showScroller();
-  g.clear(true);
+  // theme independent
+  g.setColor(WHITE).fillRect(0, 0, g.getWidth(), g.getHeight());
   switch (card.type) {
-    case "QR_CODE":
+    case "QR_CODE": {
       const getBinaryQR = require("cards.qrcode.js");
-      code = getBinaryQR(card.value);
+      let code = getBinaryQR(card.value);
       printSquareCode(code.data, code.size);
       break;
-    case "CODE_39":
+    }
+    case "CODE_39": {
       g.setFont("Vector:20");
-      g.setFontAlign(0,1);
+      g.setFontAlign(0,1).setColor(BLACK);
       g.drawString(card.value, g.getWidth()/2, g.getHeight());
       const CODE39 = require("cards.code39.js");
-      code = new CODE39(card.value, {});
+      let code = new CODE39(card.value, {});
       printLinearCode(code.encode().data);
       break;
-    case "CODABAR":
+    }
+    case "CODABAR": {
       g.setFont("Vector:20");
-      g.setFontAlign(0,1);
+      g.setFontAlign(0,1).setColor(BLACK);
       g.drawString(card.value, g.getWidth()/2, g.getHeight());
       const codabar = require("cards.codabar.js");
-      code = new codabar(card.value, {});
+      let code = new codabar(card.value, {});
       printLinearCode(code.encode().data);
       break;
+    }
     default:
+      g.clear(true);
       g.setFont("Vector:30");
       g.setFontAlign(0,0);
       g.drawString(card.value, g.getWidth()/2, g.getHeight()/2);
@@ -146,7 +153,7 @@ function showCard(card) {
     }, select : function(idx) {
       if (idx>=lines.length-2)
         showList();
-      if (idx>=valueLine)
+      else if (idx==valueLine)
         showCode(card);
     },
     back : () => showList()
