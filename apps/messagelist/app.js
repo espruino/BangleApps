@@ -59,8 +59,10 @@
       })
     );
   };
+  let noRemove = false;
   const uiRemove = function() {
     debug('uiRemove()');
+    if (noRemove) return;
     if (musicTimeout) clearTimeout(musicTimeout);
     layout = undefined;
     Bangle.removeListener("message", onMessage);
@@ -92,9 +94,17 @@
   const setUI = function(options, cb) {
     debug('setUI(', options, cb?'<callback>':cb)
     delete Bangle.uiRemove; // don't clear out things when switching UI within the app
-    options = Object.assign({mode:"custom", remove: () => uiRemove()}, options);
     // If options={} assume we still want `remove` to be called when leaving via fast load (so we must have 'mode:custom')
+    options = Object.assign({mode:"custom", remove: () => uiRemove()}, options);
+    debug('Bangle.uiRemove:', Bangle.uiRemove);
+    debug("call Bangle.setUI(", options, cb ? "<callback>" : cb);
+    // For some reason uiRemove() was called by Bangle.setUI() anyway *after setUI finishes*
+    // as a workaround: only set Bangle.uiRemove in setTimeout
+    const remove = options.remove;
+    delete options.remove;
     Bangle.setUI(options, cb);
+    debug('Bangle.setUI() done!');
+    if (remove) setTimeout(() => Bangle.uiRemove = remove); // needs to happen in a timeout, see above
   };
 
   const remove = function(msg) {
