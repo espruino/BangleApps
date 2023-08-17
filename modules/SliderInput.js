@@ -3,9 +3,10 @@ exports.interface = function(cb, conf) {
 conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
 const USE_INCR = conf.useIncr || true;
-const X_START = conf.xStart || 176-55;
+const ROTATE = conf.horizontal || false;
+const X_START = ROTATE?(conf.yStart || 5):(conf.xStart || 176-55);
 const WIDTH = conf.width-9 || 50-9; // -9 to compensate for the border.
-const Y_START = conf.yStart || 5;
+const Y_START = ROTATE?(conf.xStart || 176-55):(conf.yStart || 5);
 const HEIGHT = conf.height-5 || 165-5; // -5 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
@@ -28,10 +29,10 @@ let dragSlider = e=>{
   E.stopEventPropagation&&E.stopEventPropagation();
 
   if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*TIMEOUT);}
-  let input = Math.min(e.y,170);
+  let input = Math.min(ROTATE?175-e.x:e.y, 170);
   input = Math.round(input/STEP_SIZE);
 
-  if (ebLast==0) exFirst = e.x;
+  if (ebLast==0) exFirst = ROTATE?175-e.y:e.x;
 
   // If draging on the indicator, adjust one-to-one.
     if (USE_MAP && exFirst>X_START-OVERSIZE_L*WIDTH && exFirst<X_START+WIDTH+OVERSIZE_R*WIDTH) {
@@ -43,7 +44,7 @@ let dragSlider = e=>{
 
     } else if (USE_INCR) { // Heavily inspired by "updown" mode of setUI.
 
-      dy += e.dy;
+      dy += ROTATE?-e.dx:e.dy;
       //if (!e.b) dy=0;
 
       let incr;
@@ -60,7 +61,7 @@ let dragSlider = e=>{
   ebLast = e.b;
 };
 
-let ovr = Graphics.createArrayBuffer(WIDTH+9,HEIGHT+5,1,{msb:true});
+let ovr = Graphics.createArrayBuffer(ROTATE?HEIGHT+5:WIDTH+9, ROTATE?WIDTH+9:HEIGHT+5, 1, {msb:true});
 
 let draw = (level)=>{
   "ram";
@@ -71,7 +72,7 @@ let draw = (level)=>{
     // Pauses and resets the time out when interacted with.
 
   if (firstRun) {
-    ovr.setColor(1).
+    ovr.setColor(1).setRotation(ROTATE).
     fillRect({x:0,y:0,w:WIDTH+9,y2:HEIGHT+5,r:0}); // To get outer border...
   }
 
@@ -80,15 +81,15 @@ let draw = (level)=>{
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   prevLevel = level;
 
-    ovr.setColor(0).
+    ovr.setColor(0).setRotation(ROTATE).
     fillRect({x:2,y:2,w:WIDTH+4,y2:HEIGHT+2,r:0}). // ... and here it's made hollow.
     setColor(0==level?0:1).
     fillRect({x:4,y:4+HEIGHT-levelHeight,w:WIDTH,y2:HEIGHT,r:0}); // Here the bar is drawn.
     Bangle.setLCDOverlay({
-      width:WIDTH+9, height:HEIGHT+5,
+      width:ROTATE?HEIGHT+5:WIDTH+9, height:ROTATE?WIDTH+9:HEIGHT+5,
       bpp:1, transparent:0,
       buffer:ovr.buffer
-    },X_START,Y_START);
+    }, X_START, Y_START);
 
   //print(level);
   //print(process.memory().usage);
