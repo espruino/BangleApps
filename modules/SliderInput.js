@@ -38,7 +38,7 @@ let dragSlider = e=>{
 
       level = Math.min(Math.max(STEPS-input,0),STEPS);
 
-      cb("map",level);
+      if (level != prevLevel) cb("map",level);
       draw(level);
 
     } else if (USE_INCR) { // Heavily inspired by "updown" mode of setUI.
