@@ -16,7 +16,7 @@ const STEP_SIZE = HEIGHT/STEPS;
 
 // Initialize the level
 let level;
-let prevLevel = conf.currLevel || 0;
+let prevLevel = conf.currLevel || STEPS/2;
 let levelHeight;
 
 let firstRun = true;
