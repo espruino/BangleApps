@@ -8,10 +8,10 @@
     twentyFourH: true,
     showAmPm: false,
     showSeconds: true,
+    showWeather: false,
     stepGoal: 10000,
     stepBar: true,
     weekBar: true,
-    showWeather: false,
     mondayFirst: true,
     dayBar: true,
   };
