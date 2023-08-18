@@ -16,18 +16,16 @@ function tileToLatLon(x, y, z, x_, y_) {
     var [ w, s, e, n ] = merc.bbox(x, y, z);
     var lon = (e - w) * (x_ / 4096) + w;
     var lat = (n - s) * (1-(y_ / 4096)) + s;
-    //console.log("to ", lon, lat);
     return [ lon, lat ];
 }
 
 function convGeom(tile, geom) {
     var g = [];
     for (i = 0; i< geom.length; i++) {
-	var x = geom[i][0];
-	var y = geom[i][1];
-	//console.log("Geometry: ", geom, geom.length, "X,y", x, y);
-	var pos = tileToLatLon(tile.x, tile.y, tile.z, x, y);
-	g.push(pos);
+        var x = geom[i][0];
+        var y = geom[i][1];
+        var pos = tileToLatLon(tile.x, tile.y, tile.z, x, y);
+        g.push(pos);
     }
     return g;
 }
@@ -91,36 +89,36 @@ function toGjson(name, d, tile) {
     var cnt = 0;
     var feat = [];
     for (var a of d) {
-	var f = {};
-	var zoom = 99;
-	var p = {};
-	f.properties = a.tags;
-	f.type = "Feature";
-	f.geometry = {};
-	if (a.type == 1) {
-	    f.geometry.type = "Point";
-	    f.geometry.coordinates = convGeom(tile, a.geometry)[0];
-	    zoom = zoomPoint(a.tags);
-	    p = paintPoint(a.tags);
-	} else if (a.type == 2) {
-	    f.geometry.type = "LineString";
-	    f.geometry.coordinates = convGeom(tile, a.geometry[0]);
-	    zoom = zoomWay(a.tags);
-	    p = paintWay(a.tags);
-	} else {
-	    //console.log("Unknown type", a.type);
-	}
-	//zoom -= 4; // Produces way nicer map, at expense of space.
-	if (tile.z < zoom)
-	    continue;
-	f.properties = Object.assign({}, f.properties, p);
-	feat.push(f);
-	var s = JSON.stringify(feat);
-	if (s.length > 6000) {
-	    console.log("tile too big, splitting", cnt);
-	    writeFeatures(name+'-'+cnt++, feat);
-	    feat = [];
-	}
+        var f = {};
+        var zoom = 99;
+        var p = {};
+        f.properties = a.tags;
+        f.type = "Feature";
+        f.geometry = {};
+        if (a.type == 1) {
+            f.geometry.type = "Point";
+            f.geometry.coordinates = convGeom(tile, a.geometry)[0];
+            zoom = zoomPoint(a.tags);
+            p = paintPoint(a.tags);
+        } else if (a.type == 2) {
+            f.geometry.type = "LineString";
+            f.geometry.coordinates = convGeom(tile, a.geometry[0]);
+            zoom = zoomWay(a.tags);
+            p = paintWay(a.tags);
+        } else {
+            //console.log("Unknown type", a.type);
+        }
+        //zoom -= 4; // Produces way nicer map, at expense of space.
+        if (tile.z < zoom)
+            continue;
+        f.properties = Object.assign({}, f.properties, p);
+        feat.push(f);
+        var s = JSON.stringify(feat);
+        if (s.length > 6000) {
+            console.log("tile too big, splitting", cnt);
+            writeFeatures(name+'-'+cnt++, feat);
+            feat = [];
+        }
     }
     writeFeatures(name+'-'+cnt, feat);
     return n;
@@ -135,11 +133,6 @@ var merc = new sphm({
     size: 256,
     antimeridian: true
 });
-
-//console.log(merc.ll([124, 123], 15));
-//console.log(merc.px([17734, 11102], 15));
-//console.log(merc.bbox(17734, 11102, 15));
-//return;
 
 console.log("Splitting data");
 var meta = {}
@@ -167,10 +160,7 @@ for (const id in index.tiles) {
     const z = tile.z;
     console.log(num++, ":", tile.x, tile.y, z);
     var d = index.getTile(z, tile.x, tile.y).features;
-    //console.log(d);
     var n = `delme/z${z}-${tile.x}-${tile.y}` ;
-    //output[n] = d;
-    //console.log(n);
     writeTile(n, d, tile)
 }
 

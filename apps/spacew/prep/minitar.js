@@ -11,13 +11,11 @@ if (pc) {
   
 }
 
-print("hello world");
-
 function writeDir(json) {
     json_str = JSON.stringify(json, "", " ");
     dirent = '' + json_str.length;
     while (dirent.length < 6)
-	dirent = dirent + ' ';
+        dirent = dirent + ' ';
     return dirent + json_str;
 }
 
@@ -29,23 +27,23 @@ function writeTar(tar, dir) {
     var directory = '';
     var json = {};
     for (f of files) {
-	d = fs.readFileSync(dir+f);
-	cs = d;
-	//cs = String.fromCharCode.apply(null, hs.compress(d))
-	print("Processing", f, cur, d.length, cs.length);
-	//if (d.length == 42) continue;
-	data = data + cs;
-	var f_rec = {};
-	f_rec.st = cur;
-	var len = d.length;
-	f_rec.si = len;
-	cur = cur + len;
-	json[f] = f_rec;
-	json_str = JSON.stringify(json, "", " ");
-	if (json_str.length < 16000)
-	    continue;
-	directory += writeDir(json);
-	json = {};
+        d = fs.readFileSync(dir+f);
+        cs = d;
+        //cs = String.fromCharCode.apply(null, hs.compress(d))
+        print("Processing", f, cur, d.length, cs.length);
+        //if (d.length == 42) continue;
+        data = data + cs;
+        var f_rec = {};
+        f_rec.st = cur;
+        var len = d.length;
+        f_rec.si = len;
+        cur = cur + len;
+        json[f] = f_rec;
+        json_str = JSON.stringify(json, "", " ");
+        if (json_str.length < 16000)
+            continue;
+        directory += writeDir(json);
+        json = {};
     }
     directory += writeDir(json);
     directory += '-1    ';
@@ -53,12 +51,12 @@ function writeTar(tar, dir) {
     size = cur;
     header = '' + size;
     while (header.length < h_len) {
-	header = header+' ';
+        header = header+' ';
     }
     if (!hack)
-	fs.writeFileSync(tar, header+data+directory);
+        fs.writeFileSync(tar, header+data+directory);
     else
-	fs.writeFileSync(tar, directory);
+        fs.writeFileSync(tar, directory);
 }
 
 function readTarFile(tar, f) {
@@ -66,9 +64,7 @@ function readTarFile(tar, f) {
   json_off = st.read(tar, 0, 16) * 1;
   print(json_off);
   json = st.read(tar, json_off, -1);
-  //print(json);
   files = JSON.parse(json);
-  //print(files);
   rec = files[f];
   return st.read(tar, rec.st, rec.si);
 }
