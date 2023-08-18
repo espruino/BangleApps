@@ -96,6 +96,19 @@
     // If options={} assume we still want `remove` to be called when leaving via fast load (so we must have 'mode:custom')
     Bangle.setUI(options, cb);
   };
+  /**
+   * Same as calling `new Layout(layout, options)`, except Bangle.uiRemove is not called
+   * @param {object} layout 
+   * @param {object} options 
+   * @returns {Layout}
+   */
+  const makeLayout = function(layout, options) {
+    const remove = Bangle.uiRemove;
+    delete Bangle.uiRemove; // don't clear out things when setting up new Layout
+    const result = new Layout(layout, options);
+    if (remove) Bangle.uiRemove = remove;
+    return result;
+  }
 
   const remove = function(msg) {
     if (msg.id==="call") call = undefined;
@@ -267,7 +280,7 @@
     } else {
       target = map.body;
     }
-    let layout = new Layout({
+    let layout = makeLayout({
       type: "v", c: [
         {type: "txt", font: fontNormal, label: target, bgCol: g.theme.bg2, col: g.theme.fg2, fillx: 1, pad: 2},
         {
@@ -369,7 +382,7 @@
     else if (dur) info = dur;
     else info = {};
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -613,7 +626,7 @@
       }
       l.c.push(row);
     }
-    layout = new Layout(l, {back: back});
+    layout = makeLayout(l, {back: back});
     layout.render();
 
     if (B2) {
@@ -697,7 +710,7 @@
       ];
     }
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -751,7 +764,7 @@
     const w = g.getWidth()-48,
       lines = g.setFont(fontNormal).wrapString(alarm.title, w),
       title = (lines.length>2) ? lines.slice(0, 2).join("\n")+"..." : lines.join("\n");
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -1114,7 +1127,7 @@
     let imageCol = getImageColor(msg);
     if (g.setColor(imageCol).getColor()==hBg) imageCol = hCol;
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: hBg, col: hCol, c: [
