@@ -24,3 +24,8 @@ The appearance is highly configurable. In the settings menu you can:
 *) Hiding seconds should further reduce power consumption as the draw interval is prolonged as well.
 
 The clock implements Fast Loading for faster switching to and fro.
+
+## Contributors
+ - [tinxx](https://github.com/tinxx)
+ - [peerdavid](https://github.com/peerdavid)
+ 
