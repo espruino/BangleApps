@@ -5,7 +5,8 @@
   "icon": "app.png",
   "readme": "README.md",
   "supports" : ["BANGLEJS2"],
-  "tags": "",
+  "type": "clock",
+  "tags": "clock",
   "storage": [
       {"name":"orloj.app.js","url":"app.js"},
       {"name":"orloj.img","url":"app-icon.js","evaluate":true}
