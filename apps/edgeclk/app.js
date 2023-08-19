@@ -73,7 +73,7 @@
       
       // clear icon area in case weather condition changed
       g.clearRect(g.getWidth()-40, g.getHeight()-30, g.getWidth(), g.getHeight());
-      weather.drawIcon(w, g.getWidth()-20, g.getHeight()-15, 13);
+      weather.drawIcon(w, g.getWidth()-20, g.getHeight()-15, 14);
 
     } catch(e) {
       g.drawString("ERR", g.getWidth()-3, g.getHeight() - 1, true);
