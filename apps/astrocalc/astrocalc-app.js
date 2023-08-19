@@ -143,10 +143,10 @@ function drawMoonPositionPage(gps, title) {
   const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
   const pageData = {
-    Azimuth: parseInt(azimuth * 180 / Math.PI + 0.5) + '°',
-    Altitude: parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°',
+    Azimuth: parseInt(azimuth * 180 / Math.PI + 0.5) + 'Â°',
+    Altitude: parseInt(pos.altitude * 180 / Math.PI + 0.5) + 'Â°',
     Distance: `${pos.distance.toFixed(0)} km`,
-    "Parallactic Ang": parseInt(pos.parallacticAngle * 180 / Math.PI + 0.5) + '°',
+    "Parallactic Ang": parseInt(pos.parallacticAngle * 180 / Math.PI + 0.5) + 'Â°',
   };
   const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5);
 
@@ -212,8 +212,8 @@ function drawSunShowPage(gps, key, date) {
   const time = `${hrs}:${mins}:${secs}`;
   const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
-  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5) + '°';
-  const altitude = parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°';
+  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5) + 'Â°';
+  const altitude = parseInt(pos.altitude * 180 / Math.PI + 0.5) + 'Â°';
 
   const pageData = {
     Time: time,
