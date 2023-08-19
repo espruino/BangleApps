@@ -18,6 +18,10 @@ if (process.env.HWVERSION==2) {
 }
 var W = g.getWidth();
 var H = g.getHeight();
+var SS = W/11;  // ship back length
+var SL = W/15;  // ship side length
+var AS = W/18;  // asteroid radius
+
 g.clear().setFontAlign(0,-1);
 
 function newAst(x,y) {
@@ -25,7 +29,7 @@ function newAst(x,y) {
     x:x,y:y,
     vx:Math.random()-0.5,
     vy:Math.random()-0.5,
-    rad:3+Math.random()*5
+    rad:3+Math.random()*AS
   };
   return a;
 }
@@ -42,7 +46,9 @@ var lastFrame;
 function gameStop() {
   running = false;
   g.clear();
-  g.drawString("Game Over!",120,(H-6)/2);
+  g.setFont('Vector', W/7);
+  g.setFontAlign(0,0);
+  g.drawString("Game Over!", W/2, H/2);
   g.flip();
 }
 
@@ -104,12 +110,13 @@ function onFrame() {
   }
 
   g.clear();
-  g.drawString(score,W-20,0);
+  g.setFont('Vector', 16);
+  g.drawString(score,W-20,16);
   var rs = Math.PI*0.8;
   g.drawPoly([
-    ship.x+Math.cos(ship.r)*4, ship.y+Math.sin(ship.r)*4,
-    ship.x+Math.cos(ship.r+rs)*3, ship.y+Math.sin(ship.r+rs)*3,
-    ship.x+Math.cos(ship.r-rs)*3, ship.y+Math.sin(ship.r-rs)*3,
+    ship.x+Math.cos(ship.r)*SS, ship.y+Math.sin(ship.r)*SS,
+    ship.x+Math.cos(ship.r+rs)*SL, ship.y+Math.sin(ship.r+rs)*SL,
+    ship.x+Math.cos(ship.r-rs)*SL, ship.y+Math.sin(ship.r-rs)*SL,
   ],true);
   var na = [];
   ammo.forEach(function(a) {
