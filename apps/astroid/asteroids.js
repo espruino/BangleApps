@@ -48,10 +48,9 @@ var lastFrame;
 
 function gameStop() {
   running = false;
-  //g.clear();
   g.setFont('Vector', W/7);
   g.setFontAlign(0,0);
-  g.drawString("Game Over!", W/2, H/2);
+  g.drawString("Game Over", W/2, H/2);
   g.flip();
 }
 
@@ -116,7 +115,7 @@ function onFrame() {
   g.setFont('Vector', 16);
   g.drawString(score,W-20,16);
   var rs = Math.PI*0.8;
-  g.drawPoly([
+  g.fillPoly([
     ship.x+Math.cos(ship.r)*SS, ship.y+Math.sin(ship.r)*SS,
     ship.x+Math.cos(ship.r+rs)*SL, ship.y+Math.sin(ship.r+rs)*SL,
     ship.x+Math.cos(ship.r-rs)*SL, ship.y+Math.sin(ship.r-rs)*SL,
@@ -147,7 +146,18 @@ function onFrame() {
   ast.forEach(function(a) {
     a.x += a.vx*d;
     a.y += a.vy*d;
-    g.drawCircle(a.x, a.y, a.rad);
+    //g.drawCircle(a.x, a.y, a.rad);
+    // a 7 point asteroid with rough circle radius of scale 2
+    g.drawPoly([
+      a.x           , a.y - 1.5 * a.rad,
+      a.x + a.rad   , a.y              ,
+      a.x + a.rad/2 , a.y              ,
+      a.x + a.rad/2 , a.y + a.rad/2    ,
+      a.x           , a.y + a.rad      ,
+      a.x - a.rad   , a.y              ,
+      a.x - a.rad   , a.y - a.rad
+    ],true);
+    
     if (a.x<0) a.x+=W;
     if (a.y<0) a.y+=H;
     if (a.x>=W) a.x-=W;
