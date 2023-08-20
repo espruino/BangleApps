@@ -1,7 +1,7 @@
 {
   "id": "astroid",
   "name": "Asteroids!",
-  "version": "0.03",
+  "version": "0.05",
   "description": "Retro asteroids game",
   "icon": "asteroids.png",
   "screenshots": [{"url":"screenshot_asteroids.png"}],

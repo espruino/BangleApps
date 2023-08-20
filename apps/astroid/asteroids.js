@@ -21,6 +21,9 @@ var H = g.getHeight();
 var SS = W/11;  // ship back length
 var SL = W/15;  // ship side length
 var AS = W/18;  // asteroid radius
+// radius of ship, assumed a circle inside equilateral traingle of side SS
+// r = a / root 3 where a is length of equilateral triangle
+var SR = SS / Math.sqrt(3);  
 
 g.clear().setFontAlign(0,-1);
 
@@ -45,7 +48,7 @@ var lastFrame;
 
 function gameStop() {
   running = false;
-  g.clear();
+  //g.clear();
   g.setFont('Vector', W/7);
   g.setFontAlign(0,0);
   g.drawString("Game Over!", W/2, H/2);
@@ -172,7 +175,7 @@ function onFrame() {
     var dx = a.x-ship.x;
     var dy = a.y-ship.y;
     var d = Math.sqrt(dx*dx+dy*dy);
-    if (d < a.rad) crashed = true;
+    if (d < a.rad + SR) crashed = true;
   });
   ast=na;
   if (!ast.length) {
