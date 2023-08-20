@@ -61,9 +61,9 @@ function next_map_offsets(filename, start_offset) {
 
 let config = s.readJSON("sokoban.json", true);
 if (config === undefined) {
-    let initial_offsets = next_map_offsets("Microban.sok", 0);
+    let initial_offsets = next_map_offsets("sokoban.microban.sok", 0);
     config = {
-        levels_sets: ["Microban.sok"], // all known files containing levels
+        levels_sets: ["sokoban.microban.sok"], // all known files containing levels
         levels_set: 0, // which set are we using ?
         current_maps: [0], // what is current map on each set ?
         offsets: [initial_offsets], // known offsets for each levels set (binary positions of maps in each file)
