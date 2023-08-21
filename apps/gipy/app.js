@@ -139,6 +139,19 @@ class TilesOffsets {
     }
 }
 
+// this function is not inlined to avoid array declaration in jit
+function center_points(points, scaled_current_x, scaled_current_y) {
+ return g.transformVertices(points, [1, 0, 0, 1, -scaled_current_x, -scaled_current_y]);
+}
+
+// this function is not inlined to avoid array declaration in jit
+function rotate_points(points, c, s) {
+  let center_x = g.getWidth() / 2;
+  let center_y = g.getHeight() / 2 + Y_OFFSET;
+
+  return g.transformVertices(points, [-c, s, s, c, center_x, center_y]);
+}
+
 class Map {
     constructor(buffer, offset, filename) {
         this.points_cache = []; // don't refetch points all the time
@@ -393,17 +406,12 @@ class Map {
         cos_direction,
         sin_direction
     ) {
-        // "jit";
-        let center_x = g.getWidth() / 2;
-        let center_y = g.getHeight() / 2 + Y_OFFSET;
-
+        "jit";
         let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
         let scaled_current_x = current_x * scale_factor;
         let scaled_current_y = current_y * scale_factor;
-        let recentered_points = g.transformVertices(points, [1, 0, 0, 1, -scaled_current_x, -scaled_current_y]);
-        let c = cos_direction;
-        let s = sin_direction;
-        let screen_points = g.transformVertices(recentered_points, [-c, s, s, c, center_x, center_y]);
+        let recentered_points = center_points(points, scaled_current_x, scaled_current_y);
+        let screen_points = rotate_points(recentered_points, cos_direction, sin_direction);
 
         for (let i = 0; i < screen_points.length; i += 4) {
             g.drawLine(screen_points[i], screen_points[i + 1], screen_points[i + 2], screen_points[i + 3]);
@@ -419,17 +427,13 @@ class Map {
         cos_direction,
         sin_direction
     ) {
-        // "jit";
-        let center_x = g.getWidth() / 2;
-        let center_y = g.getHeight() / 2 + Y_OFFSET;
+        "jit";
 
         let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
         let scaled_current_x = current_x * scale_factor;
         let scaled_current_y = current_y * scale_factor;
-        let recentered_points = g.transformVertices(points, [1, 0, 0, 1, -scaled_current_x, -scaled_current_y]);
-        let c = cos_direction;
-        let s = sin_direction;
-        let screen_points = g.transformVertices(recentered_points, [-c, s, s, c, center_x, center_y]);
+        let recentered_points = center_points(points, scaled_current_x, scaled_current_y);
+        let screen_points = rotate_points(recentered_points, cos_direction, sin_direction);
 
         for (let i = 0; i < screen_points.length; i += 4) {
             let final_x = screen_points[i];

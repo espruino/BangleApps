@@ -98,3 +98,6 @@
 	* New setting : power screen off between points to save battery
 	* Color change for lost direction (now purple)
 	* Adaptive screen powersaving
+
+0.21:
+	* Jit is back for display functions (10% speed increase)

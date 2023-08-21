@@ -36,10 +36,20 @@ my conclusion is that:
 
 **************************
 
+JIT: array declaration in jit is buggy
+(especially several declarations)
+
+**************************
+
++ there is still a bug with negative remaining distances (when lost and nearest point is endpoint ?)
++ when lost we still get powersaving
++ try disabling gps for more powersaving
+
++ add heights
+
 + when you walk the direction still has a tendency to shift
 
 + put back foot only ways
-+ try fiddling with jit
 + put back street names
 + put back shortest paths but with points cache this time and jit
 + how to display paths from shortest path ?
