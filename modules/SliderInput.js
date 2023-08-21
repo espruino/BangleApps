@@ -12,6 +12,9 @@ const STEPS = conf.steps || 30; //Default corresponds to my phones volume range,
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
 const TIMEOUT = conf.timeout || 1;
+const COL_FG = conf.colorFG || g.theme.fg2;
+const COL_BG = conf.colorBG || g.theme.bg2;
+const LAZY = conf.lazy || true;
 
 const STEP_SIZE = HEIGHT/STEPS;
 
@@ -28,7 +31,9 @@ let dragSlider = e=>{
   "ram";
   E.stopEventPropagation&&E.stopEventPropagation();
 
-  if (timeout) {clearTimeout(timeout); timeout = setTimeout(remove, 1000*TIMEOUT);}
+  if (timeout) {clearTimeout(timeout); timeout = undefined;}
+  if (e.b==0 && !timeout) timeout = setTimeout(remove, 1000*TIMEOUT);
+
   let input = Math.min(ROTATE?175-e.x:e.y, 170);
   input = Math.round(input/STEP_SIZE);
 
@@ -61,8 +66,6 @@ let dragSlider = e=>{
   ebLast = e.b;
 };
 
-let ovr = Graphics.createArrayBuffer(ROTATE?HEIGHT+5:WIDTH+9, ROTATE?WIDTH+9:HEIGHT+5, 1, {msb:true});
-
 let draw = (level)=>{
   "ram";
   // Draw the indicator.
@@ -71,33 +74,24 @@ let draw = (level)=>{
     // If user drags directly on the draw area, adjust level one-to-one.
     // Pauses and resets the time out when interacted with.
 
-  if (firstRun) {
-    ovr.setColor(1).setRotation(ROTATE).
-    fillRect({x:0,y:0,w:WIDTH+9,y2:HEIGHT+5,r:0}); // To get outer border...
+  if (firstRun || !LAZY) {
+    g.setColor(COL_FG).fillRect({x:X_START,y:Y_START,w:WIDTH+8,y2:Y_START+HEIGHT+5,r:0}); // To get outer border...
   }
-
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
 
   levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   prevLevel = level;
 
-    ovr.setColor(0).setRotation(ROTATE).
-    fillRect({x:2,y:2,w:WIDTH+4,y2:HEIGHT+2,r:0}). // ... and here it's made hollow.
-    setColor(0==level?0:1).
-    fillRect({x:4,y:4+HEIGHT-levelHeight,w:WIDTH,y2:HEIGHT,r:0}); // Here the bar is drawn.
-    Bangle.setLCDOverlay({
-      width:ROTATE?HEIGHT+5:WIDTH+9, height:ROTATE?WIDTH+9:HEIGHT+5,
-      bpp:1, transparent:0,
-      buffer:ovr.buffer
-    }, X_START, Y_START);
+    g.setColor(COL_BG).
+    fillRect({x:X_START+2,y:Y_START+2,w:WIDTH+4,y2:Y_START+HEIGHT+2,r:0}). // ... and here it's made hollow.
+    setColor(0==level?COL_BG:COL_FG).
+    fillRect({x:X_START+4,y:Y_START+4+HEIGHT-levelHeight,w:WIDTH,y2:Y_START+HEIGHT,r:0}); // Here the bar is drawn.
 
   //print(level);
   //print(process.memory().usage);
 };
 
 let remove = ()=> {
-  ovr.clear().reset();
-  Bangle.setLCDOverlay();
   Bangle.removeListener('drag', dragSlider);
   cb("remove", prevLevel);
 };
