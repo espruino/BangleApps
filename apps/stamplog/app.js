@@ -110,6 +110,7 @@ class StampLog {
         this.isDirty = false;
       } else {
         console.log('stamplog: save to storage FAILED');
+        this.emit('saveError');
       }
     } else {
       console.log('stamplog: skipping save to storage because no changes made');
@@ -335,6 +336,15 @@ class MainScreen {
 }
 
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
 stampLog = new StampLog();
+E.on('kill', stampLog.save.bind(stampLog));
+stampLog.on('saveError', () => {
+  E.showAlert('Trouble saving timestamp log: Data may be lost!',
+              "Can't save log");
+});
+
 mainScreen = new MainScreen(stampLog);
 mainScreen.start();
