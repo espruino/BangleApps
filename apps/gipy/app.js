@@ -593,13 +593,14 @@ class Interests {
 }
 
 class Status {
-    constructor(path, maps, interests) {
+    constructor(path, maps, interests, heights) {
         this.path = path;
         this.default_options = true; // do we still have default options ?
         this.active = false; // should we have screen on
         this.last_activity = getTime();
         this.maps = maps;
         this.interests = interests;
+        this.heights = heights;
         let half_screen_width = g.getWidth() / 2;
         let half_screen_height = g.getHeight() / 2;
         let half_screen_diagonal = Math.sqrt(
@@ -1164,6 +1165,7 @@ function load_gps(filename) {
     let offset = 0;
 
     let path = null;
+    let heights = null;
     let maps = [];
     let interests = null;
     while (offset < file_size) {
@@ -1186,6 +1188,11 @@ function load_gps(filename) {
             let res = new Interests(buffer, offset);
             interests = res[0];
             offset = res[1];
+        } else if (block_type == 4) {
+            console.log("loading heights");
+            let heights_number = path.points.length / 2;
+            heights = Float64Array(buffer, offset, heights_number);
+            offset += 8 * heights_number;
         } else {
             console.log("todo : block type", block_type);
         }
@@ -1197,10 +1204,10 @@ function load_gps(filename) {
         let msg = "invalid file\nsize " + file_size + "\ninstead of" + offset;
         E.showAlert(msg).then(function() {
             E.showAlert();
-            start_gipy(path, maps, interests);
+            start_gipy(path, maps, interests, heights);
         });
     } else {
-        start_gipy(path, maps, interests);
+        start_gipy(path, maps, interests, heights);
     }
 }
 
@@ -1394,14 +1401,14 @@ function start(fn) {
     load_gps(fn);
 }
 
-function start_gipy(path, maps, interests) {
+function start_gipy(path, maps, interests, heights) {
     console.log("starting");
 
     if (!simulated && settings.disable_bluetooth) {
         NRF.sleep(); // disable bluetooth completely
     }
 
-    status = new Status(path, maps, interests);
+    status = new Status(path, maps, interests, heights);
 
     setWatch(
         function() {
