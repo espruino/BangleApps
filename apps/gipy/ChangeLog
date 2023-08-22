@@ -101,3 +101,4 @@
 
 0.21:
 	* Jit is back for display functions (10% speed increase)
+	* Store, parse and display elevation data
