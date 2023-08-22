@@ -103,3 +103,5 @@
 	* Jit is back for display functions (10% speed increase)
 	* Store, parse and display elevation data
 	* Removed 'lost' indicator (we now change position to purple when lost)
+	* Powersaving fix : don't powersave when lost
+	* Bugfix for negative remaining distance when going backwards

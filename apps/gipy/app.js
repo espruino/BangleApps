@@ -847,7 +847,6 @@ class Status {
       // now check if we strayed away from path or back to it
       let lost = this.is_lost(next_segment);
       if (this.on_path == lost) {
-        this.activate();
         // if status changes
         if (lost) {
           Bangle.buzz(); // we lost path
@@ -856,6 +855,9 @@ class Status {
           setTimeout(() => Bangle.buzz(), 1500);
         }
         this.on_path = !lost;
+      }
+      if (!this.on_path) {
+        this.activate();
       }
 
       this.current_segment = next_segment;
@@ -959,14 +961,12 @@ class Status {
     ]);
   }
   remaining_distance() {
-    let remaining_in_correct_orientation =
-      this.remaining_distances[this.current_segment + 1] +
-      this.position.distance(this.path.point(this.current_segment + 1));
-
     if (go_backwards) {
-      return this.remaining_distances[0] - remaining_in_correct_orientation;
+      return this.remaining_distances[0] - this.remaining_distances[this.current_segment] +
+      this.position.distance(this.path.point(this.current_segment));
     } else {
-      return remaining_in_correct_orientation;
+      return this.remaining_distances[this.current_segment + 1] +
+      this.position.distance(this.path.point(this.current_segment + 1));
     }
   }
   // check if we are lost (too far from segment we think we are on)

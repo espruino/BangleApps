@@ -41,8 +41,6 @@ JIT: array declaration in jit is buggy
 
 **************************
 
-+ there is still a bug with negative remaining distances (when lost and nearest point is endpoint ?)
-+ when lost we still get powersaving
 + try disabling gps for more powersaving
 
 + when you walk the direction still has a tendency to shift
