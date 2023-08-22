@@ -103,8 +103,8 @@ function movementPerDay() {
   var data = new Uint16Array(31);
   var cnt = new Uint8Array(31);
   require("health").readDailySummaries(new Date(), h=>{
-    data[h.hr]+=h.movement
-    cnt[h.hr]++;
+    data[h.day]+=h.movement
+    cnt[h.day]++;
   });
   data.forEach((d,i)=>data[i] = d/cnt[i]);
   setButton(menuMovement);
