@@ -50,6 +50,17 @@ function formatDay(date) {
   }
 }
 
+function getColor(intColor) {
+  return "#"+(0x1000000+Number(intColor)).toString(16).padStart(6,"0");
+}
+function isLight(color) {
+  var r = +("0x"+color.slice(1,3));
+  var g = +("0x"+color.slice(3,5));
+  var b = +("0x"+color.slice(5,7));
+  var threshold = 0x88 * 3;
+  return (r+g+b) > threshold;
+}
+
 function printSquareCode(binary, size) {
   var padding = 5;
   var ratio = (g.getWidth()-(2*padding))/size;
@@ -79,7 +90,6 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
-  //FIXME tap doesn't work..
   var listener = (data) => {
     if(data.double) showCard(card);
     Bangle.removeListener("tap", listener);
@@ -140,14 +150,18 @@ function showCard(card) {
   if(card.note && card.note.trim())
     lines = lines.concat("",g.wrapString(card.note, g.getWidth()-10));
   lines = lines.concat("",/*LANG*/"< Back");
+  var titleBgColor = card.color ? getColor(card.color) : g.theme.bg2;
+  var titleColor = g.theme.fg2;
+  if (card.color)
+    titleColor = isLight(titleBgColor) ? BLACK : WHITE;
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
     c : lines.length, // number of menu items
     // a function to draw a menu item
     draw : function(idx, r) {
       // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
-        setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
+      g.setBgColor(idx<titleCnt ? titleBgColor : g.theme.bg).
+        setColor(idx<titleCnt ? titleColor : g.theme.fg).
         clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
       g.setFont(bodyFont).drawString(lines[idx], r.x, r.y);
     }, select : function(idx) {
@@ -188,7 +202,7 @@ function showList() {
       }
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
       if(card.color) {
-        g.setColor("#"+(0x1000000+Number(card.color)).toString(16).padStart(6,"0"));
+        g.setColor(getColor(card.color));
         g.fillRect(r.x,r.y+4,r.x+3, r.y+r.h-4);
       }
     },
