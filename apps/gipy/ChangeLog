@@ -102,3 +102,4 @@
 0.21:
 	* Jit is back for display functions (10% speed increase)
 	* Store, parse and display elevation data
+	* Removed 'lost' indicator (we now change position to purple when lost)

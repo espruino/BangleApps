@@ -79,17 +79,16 @@ On your screen you can see:
     * green: artwork
 - a *turn* indicator on the top right when you reach a turning point
 - a *gps* indicator (blinking) on the top right if you lose gps signal
-- a *lost* indicator on the top right if you stray too far away from path
 
 ### Lost
 
 If you stray away from path we will rescale the display to continue displaying nearby segments and
-display the direction to follow as a purple segment.
+display the direction to follow as a purple segment. Your main position will also turn to purple.
 
 Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
 are. On path it just needed to scan a few points ahead and behind.
 
-The distance to next point displayed corresponds to the length of the black segment.
+The distance to next point displayed corresponds to the length of the purple segment.
 
 ### Menu
 

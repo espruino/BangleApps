@@ -1126,7 +1126,11 @@ class Status {
         previous_y = y;
       }
     }
-    g.setColor(0, 0, 0);
+    if (this.on_path) {
+      g.setColor(0, 0, 0);
+    } else {
+      g.setColor(1, 0, 1);
+    }
     g.fillCircle(current_x, current_y, 5);
 
     // display min dist/max dist and min height/max height
@@ -1267,11 +1271,6 @@ class Status {
           .drawString("turn", g.getWidth() - 50, 30);
       }
     }
-    if (!this.on_path) {
-      g.setColor(1.0, 0.0, 0.0)
-        .setFont("6x15")
-        .drawString("lost", g.getWidth() - 55, 35);
-    }
   }
   display_path() {
     // don't display all segments, only those neighbouring current segment
@@ -1329,7 +1328,11 @@ class Status {
     }
 
     // now display ourselves
-    g.setColor(0, 0, 0);
+    if (this.on_path) {
+      g.setColor(0, 0, 0);
+    } else {
+      g.setColor(1, 0, 1);
+    }
     g.fillCircle(half_width, half_height, 5);
   }
 }
