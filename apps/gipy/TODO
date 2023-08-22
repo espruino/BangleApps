@@ -45,9 +45,6 @@ JIT: array declaration in jit is buggy
 + when lost we still get powersaving
 + try disabling gps for more powersaving
 
-+ add heights
-  -> have two views: zoomed in and zoomed out
-
 + remove "lost" indicator and change position point's color instead
 
 + when you walk the direction still has a tendency to shift

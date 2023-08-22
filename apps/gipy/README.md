@@ -28,6 +28,7 @@ It provides the following features :
     - toilets
     - artwork
     - bakeries
+- display elevation data if available in the trace
 
 ## Usage
 
@@ -94,6 +95,12 @@ The distance to next point displayed corresponds to the length of the black segm
 
 If you click the button you'll reach a menu where you can currently zoom out to see more of the map
 (with a slower refresh rate), reverse the path direction and disable power saving (keeping backlight on).
+
+### Elevation
+
+If you touch the screen you will switch between display modes.
+The first one displays the map, the second one the nearby elevation and the last one the elevation
+for the whole path.
 
 ### Settings
 

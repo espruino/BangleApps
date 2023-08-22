@@ -4,6 +4,7 @@
   "files": [
     "gps_bg.wasm",
     "gps.js",
+    "gps_bg.js",
     "gps.d.ts"
   ],
   "module": "gps.js",
