@@ -1043,6 +1043,12 @@ class Status {
       max_height = Math.max(max_height, height);
       min_height = Math.min(min_height, height);
     }
+    // we'll set the displayed height to a minimum value of 100m
+    // if we don't, then we'll see too much noise
+    if (max_height - min_height < 100) {
+      min_height = min_height - 10;
+      max_height = min_height + 110;
+    }
 
     let displayed_height = max_height - min_height;
     let height_per_pixel = displayed_height / graph_height;
