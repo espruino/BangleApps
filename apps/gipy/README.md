@@ -101,6 +101,10 @@ If you touch the screen you will switch between display modes.
 The first one displays the map, the second one the nearby elevation and the last one the elevation
 for the whole path.
 
+![Screenshot](heights.png)
+
+Colors correspond to slopes.
+
 ### Settings
 
 Few settings for now (feel free to suggest me more) :

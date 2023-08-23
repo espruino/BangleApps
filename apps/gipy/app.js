@@ -1082,7 +1082,7 @@ class Status {
           if (steepness > 0.15) {
             color = "#ff0000";
           } else if (steepness > 0.8) {
-            color = "#aa0000";
+            color = "#ff8000";
           } else if (steepness > 0.03) {
             color = "#ffff00";
           } else if (steepness > -0.03) {
