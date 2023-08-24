@@ -197,9 +197,6 @@ class MainScreen {
     // Kill layout handlers
     Bangle.removeListener('drag', this.listeners.drag);
     Bangle.setUI();
-
-    // Probably not necessary, but provides feedback for debugging :-)
-    g.clear();
   }
 
   // Generate the layout structure for the main UI
@@ -336,15 +333,25 @@ class MainScreen {
 }
 
 
+function saveErrorAlert() {
+  currentUI.stop();
+  E.showPrompt(
+    'Trouble saving timestamp log; data may be lost!',
+    {title: "Can't save log",
+     img: '',
+     buttons: {'Ok': true},
+    }
+  ).then(currentUI.start.bind(currentUI));
+}
+
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 stampLog = new StampLog();
 E.on('kill', stampLog.save.bind(stampLog));
-stampLog.on('saveError', () => {
-  E.showAlert('Trouble saving timestamp log: Data may be lost!',
-              "Can't save log");
-});
+stampLog.on('saveError', saveErrorAlert);
 
-mainScreen = new MainScreen(stampLog);
-mainScreen.start();
+var currentUI = new MainScreen(stampLog);
+currentUI.start();
+
