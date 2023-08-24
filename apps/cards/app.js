@@ -90,12 +90,9 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
-  var listener = (data) => {
-    if(data.double) showCard(card);
-    Bangle.removeListener("tap", listener);
-  };
-  Bangle.on("tap", listener);
   E.showScroller();
+  // keeping it on rising edge would come back twice..
+  setWatch(()=>showCard(card), BTN, {edge:"falling"});
   // theme independent
   g.setColor(WHITE).fillRect(0, 0, g.getWidth(), g.getHeight());
   switch (card.type) {

@@ -3,7 +3,7 @@
 Simple app to display loyalty cards synced from Catima through GadgetBridge.
 The app can display the cards' info (balance, expiration, note, etc.) and tapping on the appropriate field will display the code, if the type is supported.
 
-Double tapping on the code will come back to the visualization of the card's details.
+To come back to the visualization of the card's details from the code view, simply press the button.
 
 Beware that the small screen of the Banglejs 2 cannot render properly complex barcodes (in fact the resolution is very limited to render most barcodes).
 
