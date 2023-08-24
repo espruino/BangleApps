@@ -56,6 +56,9 @@ function next_map_offsets(filename, start_offset) {
             }
         }
     }
+    if (offsets.length == 1) {
+        offsets.push(raw_maps.length);
+    }
     return offsets;
 }
 
@@ -88,7 +91,7 @@ function load_current_map() {
     let current_set = config.levels_set;
     let offsets = config.offsets[current_set];
     let set_filename = config.levels_sets[current_set];
-    let set_name = set_filename.substring(0, set_filename.length - 4); // remove '.txt'
+    let set_name = set_filename.substring(8, set_filename.length - 4); // remove '.txt' and 'sokoban.'
     let current_map = config.current_maps[current_set];
     map = load_map(set_filename, offsets[2 * current_map], offsets[2 * current_map + 1], set_name + " " + (current_map + 1));
     map.display();
@@ -98,10 +101,12 @@ function next_map() {
     let current_set = config.levels_set;
     let current_map = config.current_maps[current_set];
     let offsets = config.offsets[current_set];
+    let won = false;
     if (2 * (current_map + 1) >= offsets.length) {
         // we parse some new offsets
         let new_offsets = next_map_offsets(config.levels_sets[current_set], offsets[offsets.length - 1] + 2); // +2 since we need to start at ';' (we did -2 from ';' in previous parser call)
-        if (new_offsets.length == 0) {
+        if (new_offsets.length != 2) {
+            won = true;
             E.showAlert("You Win", "All levels completed").then(function() {
                 load();
             });
@@ -110,9 +115,11 @@ function next_map() {
             config.offsets[current_set].push(new_offsets[1]);
         }
     }
-    config.current_maps[current_set]++;
-    s.writeJSON("sokoban.json", config);
-    load_current_map();
+    if (!won) {
+        config.current_maps[current_set]++;
+        s.writeJSON("sokoban.json", config);
+        load_current_map();
+    }
 }
 
 function previous_map() {
