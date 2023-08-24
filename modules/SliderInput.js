@@ -4,10 +4,10 @@ conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
 const USE_INCR = conf.useIncr || true;
 const ROTATE = conf.horizontal || false;
-const X_START = ROTATE?(conf.yStart || 5):(conf.xStart || 176-55);
-const WIDTH = conf.width-9 || 50-9; // -9 to compensate for the border.
-const Y_START = ROTATE?(conf.xStart || 176-55):(conf.yStart || 5);
-const HEIGHT = conf.height-5 || 165-5; // -5 to compensate for the border.
+let X_START = (conf.xStart || 176-55);
+let WIDTH = conf.width-9 || 50-9; // -9 to compensate for the border.
+let Y_START = (conf.yStart || 5);
+let HEIGHT = conf.height-5 || 165-5; // -5 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
@@ -18,6 +18,16 @@ const LAZY = conf.lazy || true;
 
 const STEP_SIZE = HEIGHT/STEPS;
 
+if (ROTATE) {
+  let mediator = X_START;
+  X_START = Y_START;
+  Y_START = mediator;
+  mediator = WIDTH;
+  WIDTH = HEIGHT;
+  HEIGHT = mediator;
+  delete mediator;
+}
+
 // Initialize the level
 let level;
 let prevLevel = conf.currLevel || STEPS/2;
@@ -26,6 +36,19 @@ let levelHeight;
 let firstRun = true;
 let ebLast = 0;
 let exFirst;
+
+let wasOnIndicator = (exFirst)=>{
+  "ram";
+  if (!ROTATE) return exFirst>X_START-OVERSIZE_L*WIDTH && exFirst<X_START+WIDTH+OVERSIZE_R*WIDTH;
+  if (ROTATE) return exFirst>Y_START-OVERSIZE_L*HEIGHT && exFirst<Y_START+HEIGHT+OVERSIZE_R*HEIGHT;
+};
+
+let updateBar = (levelHeight)=>{
+  "ram";
+  if (!ROTATE) return {x:X_START+4,y:Y_START+4+HEIGHT-levelHeight,w:WIDTH,y2:Y_START+HEIGHT,r:0};
+  if (ROTATE) return {x:X_START+4,y:Y_START+4,w:X_START+4+levelHeight-2,y2:Y_START+HEIGHT,r:0};
+};
+
 
 let dragSlider = e=>{
   "ram";
@@ -37,10 +60,10 @@ let dragSlider = e=>{
   let input = Math.min(ROTATE?175-e.x:e.y, 170);
   input = Math.round(input/STEP_SIZE);
 
-  if (ebLast==0) exFirst = ROTATE?175-e.y:e.x;
+  if (ebLast==0) exFirst = ROTATE?e.y:e.x;
 
   // If draging on the indicator, adjust one-to-one.
-    if (USE_MAP && exFirst>X_START-OVERSIZE_L*WIDTH && exFirst<X_START+WIDTH+OVERSIZE_R*WIDTH) {
+    if (USE_MAP && wasOnIndicator(exFirst)) {
 
       level = Math.min(Math.max(STEPS-input,0),STEPS);
 
@@ -79,13 +102,13 @@ let draw = (level)=>{
   }
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
 
-  levelHeight = level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
+  levelHeight = level*STEP_SIZE; //level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   prevLevel = level;
 
     g.setColor(COL_BG).
     fillRect({x:X_START+2,y:Y_START+2,w:WIDTH+4,y2:Y_START+HEIGHT+2,r:0}). // ... and here it's made hollow.
     setColor(0==level?COL_BG:COL_FG).
-    fillRect({x:X_START+4,y:Y_START+4+HEIGHT-levelHeight,w:WIDTH,y2:Y_START+HEIGHT,r:0}); // Here the bar is drawn.
+    fillRect(updateBar(levelHeight)); // Here the bar is drawn.
 
   //print(level);
   //print(process.memory().usage);
