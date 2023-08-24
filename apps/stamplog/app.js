@@ -180,8 +180,8 @@ class MainScreen {
   // Launch this UI and make it live
   start() {
     this.layout = this.getLayout();
-    mainScreen.scrollLog('b');
-    mainScreen.render();
+    this.scrollLog('b');
+    this.render();
 
     Object.assign(this.listeners, this.getTouchListeners());
     Bangle.on('drag', this.listeners.drag);
