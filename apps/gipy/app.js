@@ -996,8 +996,12 @@ class Status {
     } else {
       let current_position = 0;
       if (this.current_segment !== null) {
+        if (go_backwards) {
+          current_position = this.remaining_distance();
+        } else {
         current_position =
           this.remaining_distances[0] - this.remaining_distance();
+        }
       }
       if (this.screen == HEIGHTS_FULL) {
         this.display_heights(0, current_position, this.remaining_distances[0]);
