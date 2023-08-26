@@ -6,10 +6,10 @@ conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
 const USE_INCR = conf.useIncr || true;
 const ROTATE = conf.horizontal || false;
-let X_START = (conf.xStart || 176-55);
-let WIDTH = conf.width-9 || 50-9; // -9 to compensate for the border.
-let Y_START = (conf.yStart || 5);
-let HEIGHT = conf.height-5 || 165-5; // -5 to compensate for the border.
+let X_START = (conf.xStart+4 || 176-54+4); // +4 to compensate for the border.
+let WIDTH = conf.width-8 || 50-8; // -8 to compensate for the border.
+let Y_START = (conf.yStart+4 || 5+4); // +4 to compensate for the border.
+let HEIGHT = conf.height-8 || 164-8; // -8 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
@@ -17,6 +17,7 @@ const TIMEOUT = conf.timeout || 1;
 const COL_FG = conf.colorFG || g.theme.fg2;
 const COL_BG = conf.colorBG || g.theme.bg2;
 const LAZY = conf.lazy || true;
+const ROUND = conf.rounded?40:0;
 
 const STEP_SIZE = HEIGHT/STEPS;
 
@@ -38,21 +39,20 @@ let firstRun = true;
 let ebLast = 0;
 let exFirst;
 
-const borderRect = {x:X_START,y:Y_START,w:WIDTH+8,y2:Y_START+HEIGHT+5,r:0};
-const hollowRect = {x:X_START+2,y:Y_START+2,w:WIDTH+4,y2:Y_START+HEIGHT+2,r:0};
-
 let wasOnIndicator = (exFirst)=>{
   "ram";
   if (!ROTATE) return exFirst>X_START-OVERSIZE_L*WIDTH && exFirst<X_START+WIDTH+OVERSIZE_R*WIDTH;
   if (ROTATE) return exFirst>Y_START-OVERSIZE_L*HEIGHT && exFirst<Y_START+HEIGHT+OVERSIZE_R*HEIGHT;
 };
 
+const borderRect = {x:X_START-4,y:Y_START-4,w:WIDTH+8,h:HEIGHT+8,r:ROUND};
+const hollowRect = {x:X_START-2,y:Y_START-2,w:WIDTH+4,h:HEIGHT+4,r:ROUND};
+
 let updateBar = (levelHeight)=>{
   "ram";
-  if (!ROTATE) return {x:X_START+4,y:Y_START+4+HEIGHT-levelHeight,w:WIDTH,y2:Y_START+HEIGHT,r:0};
-  if (ROTATE) return {x:X_START+4,y:Y_START+4,w:X_START+4+levelHeight-2,y2:Y_START+HEIGHT,r:0};
+  if (!ROTATE) return {x:X_START,y:Y_START+HEIGHT-levelHeight,w:WIDTH,y2:Y_START+HEIGHT,r:ROUND};
+  if (ROTATE) return {x:X_START,y:Y_START,w:levelHeight,h:HEIGHT,r:ROUND};
 };
-
 
 let dragSlider = e=>{
   "ram";
