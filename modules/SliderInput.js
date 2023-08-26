@@ -4,7 +4,7 @@ exports.interface = function(cb, conf) {
 // Configuration for the indicator:
 conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
-const USE_INCR = conf.useIncr || true;
+const USE_INCR = conf.useIncr===false?false:true;
 const ROTATE = conf.horizontal || false;
 let X_START = (conf.xStart+4 || 176-54+4); // +4 to compensate for the border.
 let WIDTH = conf.width-8 || 50-8; // -8 to compensate for the border.
@@ -13,11 +13,13 @@ let HEIGHT = conf.height-8 || 164-8; // -8 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
-const TIMEOUT = conf.timeout || 1;
+const TIMEOUT = conf.timeout===false?false:(conf.timeout===0?0:(conf.timeout || 1));
 const COL_FG = conf.colorFG || g.theme.fg2;
 const COL_BG = conf.colorBG || g.theme.bg2;
-const LAZY = conf.lazy || true;
+const LAZY = conf.lazy===false?false:true;
 const ROUND = conf.rounded?40:0;
+const PROPAGATE = conf.propagateDrag || false;
+const IMMEDIATE_DRAW = conf.immediateDraw || false;
 
 const STEP_SIZE = HEIGHT/STEPS;
 
@@ -56,10 +58,10 @@ let updateBar = (levelHeight)=>{
 
 let dragSlider = e=>{
   "ram";
-  E.stopEventPropagation&&E.stopEventPropagation();
+  if (!PROPAGATE) E.stopEventPropagation&&E.stopEventPropagation();
 
   if (timeout) {clearTimeout(timeout); timeout = undefined;}
-  if (e.b==0 && !timeout) timeout = setTimeout(remove, 1000*TIMEOUT);
+  if (e.b==0 && !timeout && TIMEOUT) timeout = setTimeout(remove, 1000*TIMEOUT);
 
   let input = Math.min(ROTATE?175-e.x:e.y, 170);
   input = Math.round(input/STEP_SIZE);
@@ -123,11 +125,15 @@ let remove = ()=> {
 };
 
 let timeout;
-if (TIMEOUT!=='no') timeout = setTimeout(remove, 1000*TIMEOUT);
+if (TIMEOUT) timeout = setTimeout(remove, 1000*TIMEOUT);
 
 let dy = 0;
 g.reset();
 Bangle.prependListener('drag', dragSlider);
+if (IMMEDIATE_DRAW) draw(prevLevel);
 }
 
-} catch (e) {eval(require("Storage").read("slidertest.app.js"));}
+} catch (e) {
+  print(e);
+  eval(require("Storage").read("slidertest.app.js"));
+}
