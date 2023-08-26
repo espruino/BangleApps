@@ -164,6 +164,7 @@ function renderLogItem(elem) {
 
 // Main app screen interface, launched by calling start()
 class MainScreen {
+
   constructor(stampLog) {
     this.stampLog = stampLog;
 
@@ -179,12 +180,11 @@ class MainScreen {
 
   // Launch this UI and make it live
   start() {
-    this.layout = this.getLayout();
+    this._initLayout();
     this.scrollLog('b');
     this.render();
 
-    Object.assign(this.listeners, this.getTouchListeners());
-    Bangle.on('drag', this.listeners.drag);
+    this._initTouch();
   }
 
   // Stop this UI, shut down all timers/listeners, and otherwise clean up
@@ -199,8 +199,7 @@ class MainScreen {
     Bangle.setUI();
   }
 
-  // Generate the layout structure for the main UI
-  getLayout() {
+  _initLayout() {
     let layout = new Layout(
       {type: 'v',
        c: [
@@ -244,7 +243,7 @@ class MainScreen {
     }
     layout.update();
 
-    return layout;
+    this.layout = layout;
   }
 
   // Redraw a particular display `item`, or everything if `item` is falsey
@@ -263,7 +262,8 @@ class MainScreen {
       this.layout.addBtn.label = getIcon('add') + ' ' + locale.time(new Date(), 1).trim();
       this.layout.render(this.layout.buttons);
 
-      // Auto-update time of day indication on log-add button upon next minute
+      // Auto-update time of day indication on log-add button upon
+      // next minute
       if (!this.buttonTimeoutId) {
         this.buttonTimeoutId = setTimeout(
           () => {
@@ -277,7 +277,7 @@ class MainScreen {
 
   }
 
-  getTouchListeners() {
+  _initTouch() {
     let distanceY = null;
 
     function dragHandler(ev) {
@@ -300,9 +300,8 @@ class MainScreen {
       }
     }
 
-    return {
-      'drag': dragHandler.bind(this),
-    };
+    this.listeners.drag = dragHandler.bind(this);
+    Bangle.on('drag', this.listeners.drag);
   }
 
   // Add current timestamp to log and update UI display
@@ -335,12 +334,12 @@ class MainScreen {
 
 function saveErrorAlert() {
   currentUI.stop();
+  // Not `showAlert` because the icon plus message don't fit the
+  // screen well
   E.showPrompt(
     'Trouble saving timestamp log; data may be lost!',
     {title: "Can't save log",
-     img: '',
-     buttons: {'Ok': true},
-    }
+     buttons: {'Ok': true}}
   ).then(currentUI.start.bind(currentUI));
 }
 
