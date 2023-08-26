@@ -1,15 +1,18 @@
-try { // for making it possiblie to run the test app in the following catch statement. It would complaing on `exported` not being defined.
+try { // for making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined.
 
 exports.interface = function(cb, conf) {
+
+const R = Bangle.appRect;
+
 // Configuration for the indicator:
 conf = conf?conf:{};
 const USE_MAP = conf.useMap || false;
 const USE_INCR = conf.useIncr===false?false:true;
 const ROTATE = conf.horizontal || false;
-let X_START = (conf.xStart+4 || 176-54+4); // +4 to compensate for the border.
-let WIDTH = conf.width-8 || 50-8; // -8 to compensate for the border.
-let Y_START = (conf.yStart+4 || 5+4); // +4 to compensate for the border.
-let HEIGHT = conf.height-8 || 164-8; // -8 to compensate for the border.
+let X_START = (conf.xStart+4 || R.x2-R.w/4-4+4); // +4 to compensate for the border.
+let WIDTH = conf.width-8 || R.w/4-8; // -8 to compensate for the border.
+let Y_START = (conf.yStart+4 || R.y+4+4); // +4 to compensate for the border.
+let HEIGHT = conf.height-8 || R.h-10-8; // -8 to compensate for the border.
 const STEPS = conf.steps || 30; //Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
 const OVERSIZE_R = conf.oversizeR || 0;
 const OVERSIZE_L = conf.oversizeL || 0;
