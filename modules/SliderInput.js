@@ -1,3 +1,5 @@
+try { // for making it possiblie to run the test app in the following catch statement. It would complaing on `exported` not being defined.
+
 exports.interface = function(cb, conf) {
 // Configuration for the indicator:
 conf = conf?conf:{};
@@ -127,3 +129,5 @@ let dy = 0;
 g.reset();
 Bangle.prependListener('drag', dragSlider);
 }
+
+} catch (e) {eval(require("Storage").read("slidertest.app.js"));}
