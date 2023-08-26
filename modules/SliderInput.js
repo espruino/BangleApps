@@ -31,11 +31,13 @@ if (ROTATE) {
 // Initialize the level
 let level;
 let prevLevel = conf.currLevel || STEPS/2;
-let levelHeight;
 
 let firstRun = true;
 let ebLast = 0;
 let exFirst;
+
+const borderRect = {x:X_START,y:Y_START,w:WIDTH+8,y2:Y_START+HEIGHT+5,r:0};
+const hollowRect = {x:X_START+2,y:Y_START+2,w:WIDTH+4,y2:Y_START+HEIGHT+2,r:0};
 
 let wasOnIndicator = (exFirst)=>{
   "ram";
@@ -98,17 +100,16 @@ let draw = (level)=>{
     // Pauses and resets the time out when interacted with.
 
   if (firstRun || !LAZY) {
-    g.setColor(COL_FG).fillRect({x:X_START,y:Y_START,w:WIDTH+8,y2:Y_START+HEIGHT+5,r:0}); // To get outer border...
+    g.setColor(COL_FG).fillRect(borderRect); // To get outer border...
   }
   if (level == prevLevel) {if (!firstRun) return; if (firstRun) firstRun = false;}
 
-  levelHeight = level*STEP_SIZE; //level==0?WIDTH:level*STEP_SIZE; // Math.max(level*STEP_SIZE,STEP_SIZE);
   prevLevel = level;
 
     g.setColor(COL_BG).
-    fillRect({x:X_START+2,y:Y_START+2,w:WIDTH+4,y2:Y_START+HEIGHT+2,r:0}). // ... and here it's made hollow.
+    fillRect(hollowRect). // ... and here it's made hollow.
     setColor(0==level?COL_BG:COL_FG).
-    fillRect(updateBar(levelHeight)); // Here the bar is drawn.
+    fillRect(updateBar(level*STEP_SIZE)); // Here the bar is drawn.
 
   //print(level);
   //print(process.memory().usage);
