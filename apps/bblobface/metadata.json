@@ -4,6 +4,7 @@
   "icon": "app.png",
   "version": "1.00",
   "description": "A fully featured watch face with a playable game on the side.",
+  "readme":"README.md",
   "type": "clock",
   "tags": "clock, game",
   "supports" : ["BANGLEJS2"],
