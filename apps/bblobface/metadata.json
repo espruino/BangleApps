@@ -5,7 +5,7 @@
   "version": "1.00",
   "description": "A fully featured watch face with a playable game on the side.",
   "type": "clock",
-  "tags": ["clock", "game"],
+  "tags": "clock, game",
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"bblobface.app.js","url":"app.js"},
