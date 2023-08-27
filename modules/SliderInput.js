@@ -23,6 +23,7 @@ const LAZY = conf.lazy===false?false:true;
 const ROUND = conf.rounded?40:0;
 const PROPAGATE = conf.propagateDrag || false;
 const IMMEDIATE_DRAW = conf.immediateDraw || false;
+const AUTO_PROGRESS = conf.autoProgress || false;
 
 const STEP_SIZE = HEIGHT/STEPS;
 
@@ -37,8 +38,8 @@ if (ROTATE) {
 }
 
 // Initialize the level
-let level;
-let prevLevel = conf.currLevel || STEPS/2;
+let level = conf.currLevel || STEPS/2;
+let prevLevel;
 
 let firstRun = true;
 let ebLast = 0;
@@ -90,7 +91,7 @@ let dragSlider = e=>{
         else { dy+=32; incr = -1;}
         Bangle.buzz(20);
 
-        level = Math.min(Math.max(prevLevel-incr,0),STEPS);
+        level = Math.min(Math.max(level-incr,0),STEPS);
         cb("incr",incr);
         draw(level);
       }
@@ -133,7 +134,18 @@ if (TIMEOUT) timeout = setTimeout(remove, 1000*TIMEOUT);
 let dy = 0;
 g.reset();
 Bangle.prependListener('drag', dragSlider);
-if (IMMEDIATE_DRAW) draw(prevLevel);
+if (IMMEDIATE_DRAW) draw(level);
+
+if (AUTO_PROGRESS) {
+  draw(level);
+  let autoUpdate = ()=>{
+    level = level?level+1:0;
+    draw(level);
+    if (level==STEPS) {clearInterval(autoInterval); return;}
+  };
+  let autoInterval;
+  autoInterval = setInterval(autoUpdate,1000);
+}
 }
 
 } catch (e) {
