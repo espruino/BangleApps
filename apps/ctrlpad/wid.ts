@@ -146,7 +146,11 @@
 				console.log("topdrag stopped, distance: " + (e.y - startY));
 				if(e.y > startY + dragDistance){
 					console.log("activating");
-					activate();
+					state = State.Active;
+					startY = 0;
+					Bangle.prependListener("touch", onTouch);
+					Bangle.buzz(20);
+					overlay!.setBottom(g.getHeight());
 					break;
 				}
 				console.log("returning to idle");
@@ -186,10 +190,12 @@
 						overlay = undefined;
 						return;
 					}
-					overlay?.setBottom(bottom)
+					overlay?.setBottom(bottom);
 					bottom -= 10;
 				}, 50)
-				deactivate();
+
+				Bangle.removeListener("touch", onTouch);
+				state = State.Idle;
 			}
 			break;
 		}
@@ -199,19 +205,6 @@
 	const onTouch = ((_btn, _xy) => {
 		// TODO: button presses
 	}) satisfies TouchCallback;
-
-	const activate = () => {
-		state = State.Active;
-		startY = 0;
-		Bangle.prependListener("touch", onTouch);
-		Bangle.buzz(20);
-		overlay!.setBottom(g.getHeight());
-	};
-
-	const deactivate = () => {
-		Bangle.removeListener("touch", onTouch);
-		state = State.Idle;
-	};
 
 	Bangle.prependListener("drag", onDrag);
 
