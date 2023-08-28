@@ -102,13 +102,12 @@
 	delete settings;
 
 	const enum State {
-		NoConn,
 		Idle,
 		TopDrag,
 		IgnoreCurrent,
 		Active,
 	}
-	let state = State.NoConn;
+	let state = State.Idle;
 	let startY = 0;
 	let startedUpDrag = false;
 	let upDragAnim: IntervalId | undefined;
@@ -121,9 +120,6 @@
 		if (e.b === 0) touchDown = startedUpDrag = false;
 
 		switch (state) {
-			case State.NoConn:
-				break;
-
 			case State.IgnoreCurrent:
 				if(e.b === 0){
 				state = State.Idle;
@@ -219,40 +215,12 @@
 
 	Bangle.prependListener("drag", onDrag);
 
-	const redraw = () => setTimeout(Bangle.drawWidgets, 10);
-
-	const connected = NRF.getSecurityStatus().connected;
 	WIDGETS["hid"] = {
 		area: "tr",
 		sortorder: -20,
-		draw: function() {
-			if(this.width === 0) return;
-			g.drawImage(
-				state === State.Active
-					? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
-					: require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")),
-					this.x! + 2,
-					this.y! + 2
-			);
-		},
-		width: connected ? 24 : 0,
+		draw: () => {},
+			width: 0,
 	};
-
-	state = connected ? State.Idle : State.NoConn;
-
-	// @ts-ignore
-	delete connected;
-
-	NRF.on("connect", () => {
-		WIDGETS["hid"]!.width = 24;
-		state = State.Idle;
-		redraw();
-	});
-	NRF.on("disconnect", () => {
-		WIDGETS["hid"]!.width = 0;
-		state = State.NoConn;
-		redraw();
-	});
 
 	//const DEBUG = true;
 	/*
