@@ -8,6 +8,9 @@ const LOG_FILENAME = 'stamplog.json';
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 10;
 
+// Width of scroll indicators
+const SCROLL_BAR_WIDTH = 12;
+
 var settings = {
   logItemFont: '12x20'
 };
@@ -162,6 +165,42 @@ function renderLogItem(elem) {
   }
 }
 
+// Render a scroll indicator
+// `scroll` format: {
+//   pos: int,
+//   min: int,
+//   max: int,
+//   itemsPerPage: int,
+// }
+function renderScrollBar(elem, scroll) {
+  const border = 1;
+  const boxArea = elem.h - 2 * border;
+  const boxSize = E.clip(
+    Math.round(
+      scroll.itemsPerPage / (scroll.max - scroll.min + 1) * (elem.h - 2)
+    ),
+    3,
+    boxArea
+  );
+  const boxTop =  (scroll.max - scroll.min) ?
+    Math.round(
+      (scroll.pos - scroll.min) / (scroll.max - scroll.min)
+      * (boxArea - boxSize) + elem.y + border
+    ) : elem.y + border;
+
+  // Draw border
+  g.setColor(g.theme.fg)
+   .fillRect(elem.x, elem.y, elem.x + elem.w - 1, elem.y + elem.h - 1)
+   // Draw scroll box area
+   .setColor(g.theme.bg)
+   .fillRect(elem.x + border, elem.y + border,
+             elem.x + elem.w - border - 1, elem.y + elem.h - border - 1)
+   // Draw scroll box
+   .setColor(g.blendColor(g.theme.bg, g.theme.fg, 0.5))
+   .fillRect(elem.x + border, boxTop,
+             elem.x + elem.w - border - 1, boxTop + boxSize - 1);
+}
+
 // Main app screen interface, launched by calling start()
 class MainScreen {
 
@@ -207,14 +246,21 @@ class MainScreen {
          // vertical screen space
          {type: '', id: 'placeholder', fillx: 1, filly: 1},
 
-         {type: 'v',
-          id: 'logItems',
+         {type: 'h',
+          c: [
+            {type: 'v',
+             id: 'logItems',
 
-          // To be filled in with log item elements once we determine
-          // how many will fit on screen
-          c: [],
+             // To be filled in with log item elements once we
+             // determine how many will fit on screen
+             c: [],
+            },
+            {type: 'custom',
+             id: 'logScroll',
+             render: elem => { renderScrollBar(elem, this.logScrollInfo()); }
+            },
+          ],
          },
-
          {type: 'h',
           id: 'buttons',
           c: [
@@ -241,6 +287,8 @@ class MainScreen {
         {type: 'custom', render: renderLogItem, item: undefined, fillx: 1, height: logItemHeight}
       );
     }
+    layout.logScroll.height = logItemHeight * this.logItemsPerPage;
+    layout.logScroll.width = SCROLL_BAR_WIDTH;
     layout.update();
 
     this.layout = layout;
@@ -256,6 +304,7 @@ class MainScreen {
         elem.item = this.stampLog.log[logIdx];
       }
       this.layout.render(layLogItems);
+      this.layout.render(this.layout.logScroll);
     }
 
     if (!item || item == 'buttons') {
@@ -311,23 +360,32 @@ class MainScreen {
     this.render('log');
   }
 
+  // Get scroll information for log display
+  logScrollInfo() {
+    return {
+      pos: this.logScrollPos,
+      min: (this.stampLog.log.length - 1) % this.logItemsPerPage,
+      max: this.stampLog.log.length - 1,
+      itemsPerPage: this.logItemsPerPage
+    };
+  }
+
   // Scroll display in given direction or to given position:
   // 'u': up, 'd': down, 't': to top, 'b': to bottom
   scrollLog(how) {
-    top = (this.stampLog.log.length - 1) % this.logItemsPerPage;
-    bottom = this.stampLog.log.length - 1;
+    let scroll = this.logScrollInfo();
 
     if (how == 'u') {
-      this.logScrollPos -= this.logItemsPerPage;
+      this.logScrollPos -= scroll.itemsPerPage;
     } else if (how == 'd') {
-      this.logScrollPos += this.logItemsPerPage;
+      this.logScrollPos += scroll.itemsPerPage;
     } else if (how == 't') {
-      this.logScrollPos = top;
+      this.logScrollPos = scroll.min;
     } else if (how == 'b') {
-      this.logScrollPos = bottom;
+      this.logScrollPos = scroll.max;
     }
 
-    this.logScrollPos = E.clip(this.logScrollPos, top, bottom);
+    this.logScrollPos = E.clip(this.logScrollPos, scroll.min, scroll.max);
   }
 }
 
