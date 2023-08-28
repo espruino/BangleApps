@@ -208,8 +208,8 @@ class MainScreen {
     this.stampLog = stampLog;
 
     // Values set up by start()
-    this.logItemsPerPage = null;
-    this.logScrollPos = null;
+    this.itemsPerPage = null;
+    this.scrollPos = null;
     this.layout = null;
 
     // Handlers/listeners
@@ -220,7 +220,7 @@ class MainScreen {
   // Launch this UI and make it live
   start() {
     this._initLayout();
-    this.scrollLog('b');
+    this.scroll('b');
     this.render();
 
     this._initTouch();
@@ -257,7 +257,7 @@ class MainScreen {
             },
             {type: 'custom',
              id: 'logScroll',
-             render: elem => { renderScrollBar(elem, this.logScrollInfo()); }
+             render: elem => { renderScrollBar(elem, this.scrollInfo()); }
             },
           ],
          },
@@ -279,15 +279,15 @@ class MainScreen {
     let availableHeight = layout.placeholder.h;
     g.setFont(settings.logItemFont);
     let logItemHeight = g.getFontHeight() * 2;
-    this.logItemsPerPage = Math.floor(availableHeight / logItemHeight);
+    this.itemsPerPage = Math.floor(availableHeight / logItemHeight);
 
     // Populate log items in layout
-    for (i = 0; i < this.logItemsPerPage; i++) {
+    for (i = 0; i < this.itemsPerPage; i++) {
       layout.logItems.c.push(
         {type: 'custom', render: renderLogItem, item: undefined, fillx: 1, height: logItemHeight}
       );
     }
-    layout.logScroll.height = logItemHeight * this.logItemsPerPage;
+    layout.logScroll.height = logItemHeight * this.itemsPerPage;
     layout.logScroll.width = SCROLL_BAR_WIDTH;
     layout.update();
 
@@ -298,7 +298,7 @@ class MainScreen {
   render(item) {
     if (!item || item == 'log') {
       let layLogItems = this.layout.logItems;
-      let logIdx = this.logScrollPos - this.logItemsPerPage;
+      let logIdx = this.scrollPos - this.itemsPerPage;
       for (let elem of layLogItems.c) {
         logIdx++;
         elem.item = this.stampLog.log[logIdx];
@@ -342,7 +342,7 @@ class MainScreen {
       } else {
         // Drag ended
         if (Math.abs(distanceY) > DRAG_THRESHOLD) {
-          this.scrollLog(distanceY > 0 ? 'u' : 'd');
+          this.scroll(distanceY > 0 ? 'u' : 'd');
           this.render('log');
         }
         distanceY = null;
@@ -356,36 +356,36 @@ class MainScreen {
   // Add current timestamp to log and update UI display
   addTimestamp() {
     this.stampLog.addEntry();
-    this.scrollLog('b');
+    this.scroll('b');
     this.render('log');
   }
 
   // Get scroll information for log display
-  logScrollInfo() {
+  scrollInfo() {
     return {
-      pos: this.logScrollPos,
-      min: (this.stampLog.log.length - 1) % this.logItemsPerPage,
+      pos: this.scrollPos,
+      min: (this.stampLog.log.length - 1) % this.itemsPerPage,
       max: this.stampLog.log.length - 1,
-      itemsPerPage: this.logItemsPerPage
+      itemsPerPage: this.itemsPerPage
     };
   }
 
   // Scroll display in given direction or to given position:
   // 'u': up, 'd': down, 't': to top, 'b': to bottom
-  scrollLog(how) {
-    let scroll = this.logScrollInfo();
+  scroll(how) {
+    let scroll = this.scrollInfo();
 
     if (how == 'u') {
-      this.logScrollPos -= scroll.itemsPerPage;
+      this.scrollPos -= scroll.itemsPerPage;
     } else if (how == 'd') {
-      this.logScrollPos += scroll.itemsPerPage;
+      this.scrollPos += scroll.itemsPerPage;
     } else if (how == 't') {
-      this.logScrollPos = scroll.min;
+      this.scrollPos = scroll.min;
     } else if (how == 'b') {
-      this.logScrollPos = scroll.max;
+      this.scrollPos = scroll.max;
     }
 
-    this.logScrollPos = E.clip(this.logScrollPos, scroll.min, scroll.max);
+    this.scrollPos = E.clip(this.scrollPos, scroll.min, scroll.max);
   }
 }
 
