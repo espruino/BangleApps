@@ -6,7 +6,7 @@ storage = require('Storage');
 const LOG_FILENAME = 'stamplog.json';
 
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
-const DRAG_THRESHOLD = 10;
+const DRAG_THRESHOLD = 30;
 
 // Width of scroll indicators
 const SCROLL_BAR_WIDTH = 12;
@@ -340,10 +340,13 @@ class MainScreen {
           distanceY += ev.dy;
         }
       } else {
-        // Drag ended
-        if (Math.abs(distanceY) > DRAG_THRESHOLD) {
-          this.scroll(distanceY > 0 ? 'u' : 'd');
-        }
+        // Drag released
+        distanceY = null;
+      }
+      if (Math.abs(distanceY) > DRAG_THRESHOLD) {
+        // Scroll threshold reached
+        Bangle.buzz(50, .2);
+        this.scroll(distanceY > 0 ? 'u' : 'd');
         distanceY = null;
       }
     }
