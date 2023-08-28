@@ -62,17 +62,17 @@
 			const g = this.g2;
 
 			g
-			.reset()
-			.clearRect(0, 0, this.width, this.height)
-			.drawRect(0, 0, this.width - 1, this.height - 1)
-			.drawRect(1, 1, this.width - 2, this.height - 2);
+				.reset()
+				.clearRect(0, 0, this.width, this.height)
+				.drawRect(0, 0, this.width - 1, this.height - 1)
+				.drawRect(1, 1, this.width - 2, this.height - 2);
 
 			const centreY = this.height / 2;
 			const circleGapY = 30;
 
 			g
-			.setFontAlign(0, 0)
-			.setFont("Vector:20");
+				.setFontAlign(0, 0)
+				.setFont("Vector:20");
 
 			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
 			this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
@@ -122,82 +122,82 @@
 		switch (state) {
 			case State.IgnoreCurrent:
 				if(e.b === 0){
-				state = State.Idle;
-				overlay = undefined;
-			}
-			break;
+					state = State.Idle;
+					overlay = undefined;
+				}
+				break;
 
 			case State.Idle:
 				if(e.b && !touchDown){ // no need to check Bangle.CLKINFO_FOCUS
-				if(e.y <= 40){
-					state = State.TopDrag
-					startY = e.y;
-					console.log("  topdrag detected, starting @ " + startY);
-				}else{
-					console.log("  ignoring this drag (too low @ " + e.y + ")");
-					state = State.IgnoreCurrent;
-					overlay = undefined
+					if(e.y <= 40){
+						state = State.TopDrag
+						startY = e.y;
+						console.log("  topdrag detected, starting @ " + startY);
+					}else{
+						console.log("  ignoring this drag (too low @ " + e.y + ")");
+						state = State.IgnoreCurrent;
+						overlay = undefined
+					}
 				}
-			}
-			break;
+				break;
 
 			case State.TopDrag:
 				if(e.b === 0){
-				console.log("topdrag stopped, distance: " + (e.y - startY));
-				if(e.y > startY + dragDistance){
-					console.log("activating");
-					state = State.Active;
-					startY = 0;
-					Bangle.prependListener("touch", onTouch);
-					Bangle.buzz(20);
-					overlay!.setBottom(g.getHeight());
-					break;
-				}
-				console.log("returning to idle");
-				state = State.Idle;
-				overlay?.hide();
-				overlay = undefined;
-			}else{
-				// partial drag, show UI feedback:
-				const dragOffset = 32;
+					console.log("topdrag stopped, distance: " + (e.y - startY));
+					if(e.y > startY + dragDistance){
+						console.log("activating");
+						state = State.Active;
+						startY = 0;
+						Bangle.prependListener("touch", onTouch);
+						Bangle.buzz(20);
+						overlay!.setBottom(g.getHeight());
+						break;
+					}
+					console.log("returning to idle");
+					state = State.Idle;
+					overlay?.hide();
+					overlay = undefined;
+				}else{
+					// partial drag, show UI feedback:
+					const dragOffset = 32;
 
-				if (!overlay) overlay = new Overlay();
-				overlay.setBottom(e.y - dragOffset);
-			}
-			break;
+					if (!overlay) overlay = new Overlay();
+					overlay.setBottom(e.y - dragOffset);
+				}
+				break;
 
 			case State.Active:
 				console.log("stolen drag handling, do whatever here");
-			E.stopEventPropagation?.();
-			if(e.b){
-				if(!touchDown){
-					startY = e.y;
-				}else if(startY){
-					const dist = Math.max(0, startY - e.y);
+				E.stopEventPropagation?.();
+				if(e.b){
+					if(!touchDown){
+						startY = e.y;
+					}else if(startY){
+						const dist = Math.max(0, startY - e.y);
 
-					if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
-						overlay!.setBottom(g.getHeight() - dist);
-				}
-			}else if(e.b === 0 && startY > dragDistance){
-				let bottom = g.getHeight() - Math.max(0, startY - e.y);
-
-				if (upDragAnim) clearInterval(upDragAnim);
-				upDragAnim = setInterval(() => {
-					if (!overlay || bottom <= 0) {
-						clearInterval(upDragAnim!);
-						upDragAnim = undefined;
-						overlay?.hide();
-						overlay = undefined;
-						return;
+						if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
+							overlay!.setBottom(g.getHeight() - dist);
 					}
-					overlay?.setBottom(bottom);
-					bottom -= 10;
-				}, 50)
+				}else if(e.b === 0 && startY > dragDistance){
+					let bottom = g.getHeight() - Math.max(0, startY - e.y);
 
-				Bangle.removeListener("touch", onTouch);
-				state = State.Idle;
-			}
-			break;
+					if (upDragAnim) clearInterval(upDragAnim);
+					upDragAnim = setInterval(() => {
+						if (!overlay || bottom <= 0) {
+							clearInterval(upDragAnim!);
+							upDragAnim = undefined;
+							overlay?.hide();
+							overlay = undefined;
+							return;
+						}
+						overlay?.setBottom(bottom);
+						bottom -= 10;
+					}, 50)
+
+					Bangle.removeListener("touch", onTouch);
+					state = State.Idle;
+				}
+				break;
 		}
 		if(e.b) touchDown = true;
 	}) satisfies DragCallback;
@@ -212,7 +212,7 @@
 		area: "tr",
 		sortorder: -20,
 		draw: () => {},
-			width: 0,
+		width: 0,
 	};
 
 	//const DEBUG = true;
