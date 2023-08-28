@@ -67,12 +67,16 @@
 				.drawRect(0, 0, this.width - 1, this.height - 1)
 				.drawRect(1, 1, this.width - 2, this.height - 2);
 
-			const centreY = this.height / 2;
-			const circleGapY = 30;
-
 			g
 				.setFontAlign(0, 0)
 				.setFont("Vector:20");
+
+			this.drawCtrls();
+		}
+
+		drawCtrls(): void {
+			const centreY = this.height / 2;
+			const circleGapY = 30;
 
 			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
 			this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
