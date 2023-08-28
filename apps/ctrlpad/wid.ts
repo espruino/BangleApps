@@ -25,6 +25,10 @@
 		};
 	}
 
+	type Control = {
+		text: string,
+		cb: () => void,
+	};
 
 	class Overlay {
 		g2: Graphics;
@@ -78,12 +82,14 @@
 			const centreY = this.height / 2;
 			const circleGapY = 30;
 
-			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
-			this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
-			this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, ">");
+			const controls = getControls();
 
-			this.drawCtrl(this.width / 3,   centreY + circleGapY, "-");
-			this.drawCtrl(this.width * 2/3, centreY + circleGapY, "+");
+			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, controls[0].text);
+			this.drawCtrl(this.width / 2,        centreY - circleGapY, controls[1].text);
+			this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, controls[2].text);
+
+			this.drawCtrl(this.width / 3,   centreY + circleGapY, controls[3].text);
+			this.drawCtrl(this.width * 2/3, centreY + circleGapY, controls[4].text);
 		}
 
 		drawCtrl(x: number, y: number, label: string): void {
@@ -117,6 +123,28 @@
 	let upDragAnim: IntervalId | undefined;
 	let overlay: Overlay | undefined;
 	let touchDown = false;
+
+	type Controls = [Control, Control, Control, Control, Control];
+	const getControls = (): Controls => {
+		const connected = NRF.getSecurityStatus().connected;
+
+		if (connected) {
+			return [
+				{ text: "<", cb: hid.next },
+				{ text: "@", cb: hid.toggle },
+				{ text: ">", cb: hid.prev },
+				{ text: "-", cb: hid.down },
+				{ text: "+", cb: hid.up },
+			];
+		}
+		return [
+			{ text: "a", cb: () => {} },
+			{ text: "b", cb: () => {} },
+			{ text: "c", cb: () => {} },
+			{ text: "d", cb: () => {} },
+			{ text: "e", cb: () => {} },
+		];
+	};
 
 	const onDrag = (e => {
 		const dragDistance = 30;
@@ -220,25 +248,23 @@
 	};
 
 	//const DEBUG = true;
-	/*
-		 const sendHid = (code: number) => {
-	//if(DEBUG) return;
-	try{
-	NRF.sendHIDReport(
-	[1, code],
-	() => NRF.sendHIDReport([1, 0]),
-	);
-	}catch(e){
-	console.log("sendHIDReport:", e);
-	}
+	const sendHid = (code: number) => {
+		//if(DEBUG) return;
+		try{
+			NRF.sendHIDReport(
+				[1, code],
+				() => NRF.sendHIDReport([1, 0]),
+			);
+		}catch(e){
+			console.log("sendHIDReport:", e);
+		}
 	};
 
 	const hid = {
-	next: () => sendHid(0x01),
-	prev: () => sendHid(0x02),
-	toggle: () => sendHid(0x10),
-	up: () => sendHid(0x40),
-	down: () => sendHid(0x80),
+		next: () => sendHid(0x01),
+		prev: () => sendHid(0x02),
+		toggle: () => sendHid(0x10),
+		up: () => sendHid(0x40),
+		down: () => sendHid(0x80),
 	};
-	*/
 })()
