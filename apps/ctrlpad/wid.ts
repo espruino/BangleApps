@@ -25,11 +25,6 @@
 		};
 	}
 
-	type Control = {
-		text: string,
-		cb: () => void,
-	};
-
 	class Overlay {
 		g2: Graphics;
 		width: number;
@@ -63,43 +58,73 @@
 		}
 
 		renderG2(): void {
-			const g = this.g2;
-
-			g
+			this.g2
 				.reset()
 				.clearRect(0, 0, this.width, this.height)
 				.drawRect(0, 0, this.width - 1, this.height - 1)
 				.drawRect(1, 1, this.width - 2, this.height - 2);
+		}
+	}
 
+	type Control = {
+		x: number,
+		y: number,
+		text: string,
+		cb: () => void,
+	};
+
+	class Controls {
+		controls: [Control, Control, Control, Control, Control];
+
+		constructor(g: Graphics) {
+			// const connected = NRF.getSecurityStatus().connected;
+			// if (0&&connected) {
+			// 	// TODO
+			// 	return [
+			// 		{ text: "<", cb: hid.next },
+			// 		{ text: "@", cb: hid.toggle },
+			// 		{ text: ">", cb: hid.prev },
+			// 		{ text: "-", cb: hid.down },
+			// 		{ text: "+", cb: hid.up },
+			// 	];
+			// }
+
+			const height = g.getHeight();
+			const centreY = height / 2;
+			const circleGapY = 30;
+			const width = g.getWidth();
+
+			this.controls = [
+				{ x: width / 4 - 10,   y: centreY - circleGapY, text: "BLE", cb: function() { console.log(this.text); } },
+				{ x: width / 2,        y: centreY - circleGapY, text: "DnD", cb: function() { console.log(this.text); } },
+				{ x: width * 3/4 + 10, y: centreY - circleGapY, text: "?",   cb: function() { console.log(this.text); } },
+				{ x: width / 3,        y: centreY + circleGapY, text: "B-",  cb: function() { console.log(this.text); } },
+				{ x: width * 2/3,      y: centreY + circleGapY, text: "B+",  cb: function() { console.log(this.text); } },
+			];
+		}
+
+		draw(g: Graphics): void {
 			g
 				.setFontAlign(0, 0)
 				.setFont("Vector:20");
 
-			this.drawCtrls();
+			for(const ctrl of this.controls){
+				g
+					.setColor("#fff")
+					.fillCircle(ctrl.x, ctrl.y, 23)
+					.setColor("#000")
+					.drawString(ctrl.text, ctrl.x, ctrl.y);
+			}
 		}
 
-		drawCtrls(): void {
-			const centreY = this.height / 2;
-			const circleGapY = 30;
+		hitTest(x: number, y: number): Control | undefined {
+			const radius = 25;
 
-			const controls = getControls();
+			for(const ctrl of this.controls)
+				if(Math.abs(y - ctrl.y) < radius && Math.abs(x - ctrl.x) < radius)
+					return ctrl;
 
-			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, controls[0].text);
-			this.drawCtrl(this.width / 2,        centreY - circleGapY, controls[1].text);
-			this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, controls[2].text);
-
-			this.drawCtrl(this.width / 3,   centreY + circleGapY, controls[3].text);
-			this.drawCtrl(this.width * 2/3, centreY + circleGapY, controls[4].text);
-		}
-
-		drawCtrl(x: number, y: number, label: string): void {
-			const g = this.g2;
-
-			g
-			.setColor("#fff")
-			.fillCircle(x, y, 23)
-			.setColor("#000")
-			.drawString(label, x, y);
+			return undefined;
 		}
 	}
 
@@ -121,30 +146,8 @@
 	let startY = 0;
 	let startedUpDrag = false;
 	let upDragAnim: IntervalId | undefined;
-	let overlay: Overlay | undefined;
+	let ui: undefined | { overlay: Overlay, ctrls: Controls };
 	let touchDown = false;
-
-	type Controls = [Control, Control, Control, Control, Control];
-	const getControls = (): Controls => {
-		const connected = NRF.getSecurityStatus().connected;
-
-		if (connected) {
-			return [
-				{ text: "<", cb: hid.next },
-				{ text: "@", cb: hid.toggle },
-				{ text: ">", cb: hid.prev },
-				{ text: "-", cb: hid.down },
-				{ text: "+", cb: hid.up },
-			];
-		}
-		return [
-			{ text: "a", cb: () => {} },
-			{ text: "b", cb: () => {} },
-			{ text: "c", cb: () => {} },
-			{ text: "d", cb: () => {} },
-			{ text: "e", cb: () => {} },
-		];
-	};
 
 	const onDrag = (e => {
 		const dragDistance = 30;
@@ -155,7 +158,7 @@
 			case State.IgnoreCurrent:
 				if(e.b === 0){
 					state = State.Idle;
-					overlay = undefined;
+					ui = undefined;
 				}
 				break;
 
@@ -168,7 +171,7 @@
 					}else{
 						console.log("  ignoring this drag (too low @ " + e.y + ")");
 						state = State.IgnoreCurrent;
-						overlay = undefined
+						ui = undefined
 					}
 				}
 				break;
@@ -182,24 +185,31 @@
 						startY = 0;
 						Bangle.prependListener("touch", onTouch);
 						Bangle.buzz(20);
-						overlay!.setBottom(g.getHeight());
+						ui!.overlay.setBottom(g.getHeight());
 						break;
 					}
 					console.log("returning to idle");
 					state = State.Idle;
-					overlay?.hide();
-					overlay = undefined;
+					ui?.overlay.hide();
+					ui = undefined;
 				}else{
 					// partial drag, show UI feedback:
 					const dragOffset = 32;
 
-					if (!overlay) overlay = new Overlay();
-					overlay.setBottom(e.y - dragOffset);
+					if (!ui) {
+						const overlay = new Overlay();
+						ui = {
+							overlay,
+							ctrls: new Controls(overlay.g2),
+						};
+						ui.ctrls.draw(ui.overlay.g2);
+					}
+					ui.overlay.setBottom(e.y - dragOffset);
 				}
 				break;
 
 			case State.Active:
-				console.log("stolen drag handling, do whatever here");
+				//console.log("stolen drag handling, do whatever here");
 				E.stopEventPropagation?.();
 				if(e.b){
 					if(!touchDown){
@@ -208,34 +218,44 @@
 						const dist = Math.max(0, startY - e.y);
 
 						if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
-							overlay!.setBottom(g.getHeight() - dist);
+							ui!.overlay.setBottom(g.getHeight() - dist);
 					}
-				}else if(e.b === 0 && startY > dragDistance){
-					let bottom = g.getHeight() - Math.max(0, startY - e.y);
+				}else if(e.b === 0){
+					if((startY - e.y) > dragDistance){
+						let bottom = g.getHeight() - Math.max(0, startY - e.y);
 
-					if (upDragAnim) clearInterval(upDragAnim);
-					upDragAnim = setInterval(() => {
-						if (!overlay || bottom <= 0) {
-							clearInterval(upDragAnim!);
-							upDragAnim = undefined;
-							overlay?.hide();
-							overlay = undefined;
-							return;
-						}
-						overlay?.setBottom(bottom);
-						bottom -= 10;
-					}, 50)
+						if (upDragAnim) clearInterval(upDragAnim);
+						upDragAnim = setInterval(() => {
+							if (!ui || bottom <= 0) {
+								clearInterval(upDragAnim!);
+								upDragAnim = undefined;
+								ui?.overlay.hide();
+								ui = undefined;
+								return;
+							}
+							ui!.overlay.setBottom(bottom);
+							bottom -= 30;
+						}, 50)
 
-					Bangle.removeListener("touch", onTouch);
-					state = State.Idle;
+						Bangle.removeListener("touch", onTouch);
+						state = State.Idle;
+					}else{
+						ui!.overlay.setBottom(g.getHeight());
+					}
 				}
 				break;
 		}
 		if(e.b) touchDown = true;
 	}) satisfies DragCallback;
 
-	const onTouch = ((_btn, _xy) => {
-		// TODO: button presses
+	const onTouch = ((_btn, xy) => {
+		if(!ui || !xy) return;
+
+		const top = g.getHeight() - ui.overlay.height; // assumed anchored to bottom
+		const left = (g.getWidth() - ui.overlay.width) / 2; // more assumptions
+
+		const ctrl = ui.ctrls.hitTest(xy.x - left, xy.y - top);
+		ctrl?.cb();
 	}) satisfies TouchCallback;
 
 	Bangle.prependListener("drag", onDrag);
@@ -248,23 +268,23 @@
 	};
 
 	//const DEBUG = true;
-	const sendHid = (code: number) => {
-		//if(DEBUG) return;
-		try{
-			NRF.sendHIDReport(
-				[1, code],
-				() => NRF.sendHIDReport([1, 0]),
-			);
-		}catch(e){
-			console.log("sendHIDReport:", e);
-		}
-	};
+	//const sendHid = (code: number) => {
+	//	//if(DEBUG) return;
+	//	try{
+	//		NRF.sendHIDReport(
+	//			[1, code],
+	//			() => NRF.sendHIDReport([1, 0]),
+	//		);
+	//	}catch(e){
+	//		console.log("sendHIDReport:", e);
+	//	}
+	//};
 
-	const hid = {
-		next: () => sendHid(0x01),
-		prev: () => sendHid(0x02),
-		toggle: () => sendHid(0x10),
-		up: () => sendHid(0x40),
-		down: () => sendHid(0x80),
-	};
+	// const hid = {
+	// 	next: () => sendHid(0x01),
+	// 	prev: () => sendHid(0x02),
+	// 	toggle: () => sendHid(0x10),
+	// 	up: () => sendHid(0x40),
+	// 	down: () => sendHid(0x80),
+	// };
 })()
