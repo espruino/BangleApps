@@ -221,7 +221,7 @@ class MainScreen {
   start() {
     this._initLayout();
     this.scroll('b');
-    this.render();
+    this.render('buttons');
 
     this._initTouch();
   }
@@ -343,7 +343,6 @@ class MainScreen {
         // Drag ended
         if (Math.abs(distanceY) > DRAG_THRESHOLD) {
           this.scroll(distanceY > 0 ? 'u' : 'd');
-          this.render('log');
         }
         distanceY = null;
       }
@@ -357,7 +356,6 @@ class MainScreen {
   addTimestamp() {
     this.stampLog.addEntry();
     this.scroll('b');
-    this.render('log');
   }
 
   // Get scroll information for log display
@@ -386,6 +384,8 @@ class MainScreen {
     }
 
     this.scrollPos = E.clip(this.scrollPos, scroll.min, scroll.max);
+
+    this.render('log');
   }
 }
 
