@@ -1,97 +1,97 @@
 (() => {
-    if(!Bangle.prependListener){
-        type Event<T> = T extends `#on${infer Evt}` ? Evt : never;
+	if(!Bangle.prependListener){
+		type Event<T> = T extends `#on${infer Evt}` ? Evt : never;
 
-        Bangle.prependListener = function(
-            evt: Event<keyof BangleEvents>,
-            listener: () => void
-        ){
-            // move our drag to the start of the event listener array
-            const handlers = (Bangle as BangleEvents)[`#on${evt}`]
+		Bangle.prependListener = function(
+			evt: Event<keyof BangleEvents>,
+			listener: () => void
+		){
+			// move our drag to the start of the event listener array
+			const handlers = (Bangle as BangleEvents)[`#on${evt}`]
 
-            if(!handlers){
-                Bangle.on(evt as any, listener);
-            }else{
-                if(typeof handlers === "function"){
-                    // get Bangle to convert to array
-                    Bangle.on(evt as any, listener);
-                }
+			if(!handlers){
+				Bangle.on(evt as any, listener);
+			}else{
+				if(typeof handlers === "function"){
+					// get Bangle to convert to array
+					Bangle.on(evt as any, listener);
+				}
 
-                // shuffle array
-                (Bangle as BangleEvents)[`#on${evt}`] = [listener as any].concat(
-                    (handlers as Array<any>).filter((f: unknown) => f !== listener)
-                );
-            }
-        };
-    }
+				// shuffle array
+				(Bangle as BangleEvents)[`#on${evt}`] = [listener as any].concat(
+					(handlers as Array<any>).filter((f: unknown) => f !== listener)
+				);
+			}
+		};
+	}
 
 
-    class Overlay {
-        g2: Graphics;
-        width: number;
-        height: number;
+	class Overlay {
+		g2: Graphics;
+		width: number;
+		height: number;
 
-        constructor() {
-            // x padding: 10 each side
-            // y top: 24, y bottom: 10
-            this.width = g.getWidth() - 10 * 2;
-            this.height = g.getHeight() - 24 - 10;
+		constructor() {
+			// x padding: 10 each side
+			// y top: 24, y bottom: 10
+			this.width = g.getWidth() - 10 * 2;
+			this.height = g.getHeight() - 24 - 10;
 
-            this.g2 = Graphics.createArrayBuffer(
-                this.width,
-                this.height,
-                /*bpp*/1,
-                { msb: true }
-            );
+			this.g2 = Graphics.createArrayBuffer(
+				this.width,
+				this.height,
+				/*bpp*/1,
+				{ msb: true }
+			);
 
-            this.renderG2();
-        }
+			this.renderG2();
+		}
 
-        setBottom(bottom: number): void {
-            const { g2 } = this;
-            const y = bottom - this.height;
+		setBottom(bottom: number): void {
+			const { g2 } = this;
+			const y = bottom - this.height;
 
-            Bangle.setLCDOverlay(g2, 10, y - 10);
-        }
+			Bangle.setLCDOverlay(g2, 10, y - 10);
+		}
 
-        hide(): void {
-            Bangle.setLCDOverlay();
-        }
+		hide(): void {
+			Bangle.setLCDOverlay();
+		}
 
-        renderG2(): void {
-            const g = this.g2;
+		renderG2(): void {
+			const g = this.g2;
 
-            g
-                .reset()
-                .clearRect(0, 0, this.width, this.height)
-                .drawRect(0, 0, this.width - 1, this.height - 1)
-                .drawRect(1, 1, this.width - 2, this.height - 2);
+			g
+			.reset()
+			.clearRect(0, 0, this.width, this.height)
+			.drawRect(0, 0, this.width - 1, this.height - 1)
+			.drawRect(1, 1, this.width - 2, this.height - 2);
 
-            const centreY = this.height / 2;
-            const circleGapY = 30;
+			const centreY = this.height / 2;
+			const circleGapY = 30;
 
-            g
-                .setFontAlign(0, 0)
-                .setFont("Vector:20");
+			g
+			.setFontAlign(0, 0)
+			.setFont("Vector:20");
 
-            this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
-            this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
-            this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, ">");
+			this.drawCtrl(this.width / 4 - 10,   centreY - circleGapY, "<");
+			this.drawCtrl(this.width / 2,        centreY - circleGapY, "@");
+			this.drawCtrl(this.width * 3/4 + 10, centreY - circleGapY, ">");
 
-            this.drawCtrl(this.width / 3,   centreY + circleGapY, "-");
-            this.drawCtrl(this.width * 2/3, centreY + circleGapY, "+");
-        }
+			this.drawCtrl(this.width / 3,   centreY + circleGapY, "-");
+			this.drawCtrl(this.width * 2/3, centreY + circleGapY, "+");
+		}
 
-        drawCtrl(x: number, y: number, label: string): void {
-            const g = this.g2;
+		drawCtrl(x: number, y: number, label: string): void {
+			const g = this.g2;
 
-            g
-                .setColor("#fff")
-                .fillCircle(x, y, 23)
-                .setColor("#000")
-                .drawString(label, x, y);
-        }
-    }
+			g
+			.setColor("#fff")
+			.fillCircle(x, y, 23)
+			.setColor("#000")
+			.drawString(label, x, y);
+		}
+	}
 
 	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
 	if (settings.HID !== "kbmedia") {
@@ -110,114 +110,114 @@
 	}
 	let state = State.NoConn;
 	let startY = 0;
-    let startedUpDrag = false;
-    let upDragAnim: IntervalId | undefined;
-    let overlay: Overlay | undefined;
-    let touchDown = false;
+	let startedUpDrag = false;
+	let upDragAnim: IntervalId | undefined;
+	let overlay: Overlay | undefined;
+	let touchDown = false;
 
 	const onDrag = (e => {
-        const dragDistance = 30;
+		const dragDistance = 30;
 
-        if (e.b === 0) touchDown = startedUpDrag = false;
+		if (e.b === 0) touchDown = startedUpDrag = false;
 
 		switch (state) {
 			case State.NoConn:
 				break;
 
 			case State.IgnoreCurrent:
-                if(e.b === 0){
-                    state = State.Idle;
-                    overlay = undefined;
-                }
-                break;
+				if(e.b === 0){
+				state = State.Idle;
+				overlay = undefined;
+			}
+			break;
 
 			case State.Idle:
 				if(e.b && !touchDown){ // no need to check Bangle.CLKINFO_FOCUS
-					if(e.y <= 40){
-						state = State.TopDrag
-						startY = e.y;
-						console.log("  topdrag detected, starting @ " + startY);
-					}else{
-						console.log("  ignoring this drag (too low @ " + e.y + ")");
-						state = State.IgnoreCurrent;
-                        overlay = undefined
-					}
-                }
-				break;
+				if(e.y <= 40){
+					state = State.TopDrag
+					startY = e.y;
+					console.log("  topdrag detected, starting @ " + startY);
+				}else{
+					console.log("  ignoring this drag (too low @ " + e.y + ")");
+					state = State.IgnoreCurrent;
+					overlay = undefined
+				}
+			}
+			break;
 
 			case State.TopDrag:
 				if(e.b === 0){
-					console.log("topdrag stopped, distance: " + (e.y - startY));
-					if(e.y > startY + dragDistance){
-                        console.log("activating");
-                        activate();
-						break;
-					}
-					console.log("returning to idle");
-					state = State.Idle;
-                    overlay?.hide();
-                    overlay = undefined;
-				}else{
-                    // partial drag, show UI feedback:
-                    const dragOffset = 32;
-
-                    if (!overlay) overlay = new Overlay();
-                    overlay.setBottom(e.y - dragOffset);
+				console.log("topdrag stopped, distance: " + (e.y - startY));
+				if(e.y > startY + dragDistance){
+					console.log("activating");
+					activate();
+					break;
 				}
-				break;
+				console.log("returning to idle");
+				state = State.Idle;
+				overlay?.hide();
+				overlay = undefined;
+			}else{
+				// partial drag, show UI feedback:
+				const dragOffset = 32;
+
+				if (!overlay) overlay = new Overlay();
+				overlay.setBottom(e.y - dragOffset);
+			}
+			break;
 
 			case State.Active:
 				console.log("stolen drag handling, do whatever here");
-				E.stopEventPropagation?.();
-                if(e.b){
-                    if(!touchDown){
-                        startY = e.y;
-                    }else if(startY){
-                        const dist = Math.max(0, startY - e.y);
+			E.stopEventPropagation?.();
+			if(e.b){
+				if(!touchDown){
+					startY = e.y;
+				}else if(startY){
+					const dist = Math.max(0, startY - e.y);
 
-                        if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
-                            overlay!.setBottom(g.getHeight() - dist);
-                    }
-                }else if(e.b === 0 && startY > dragDistance){
-                    let bottom = g.getHeight() - Math.max(0, startY - e.y);
+					if (startedUpDrag || (startedUpDrag = dist > 10)) // ignore small drags
+						overlay!.setBottom(g.getHeight() - dist);
+				}
+			}else if(e.b === 0 && startY > dragDistance){
+				let bottom = g.getHeight() - Math.max(0, startY - e.y);
 
-                    if (upDragAnim) clearInterval(upDragAnim);
-                    upDragAnim = setInterval(() => {
-                        if (!overlay || bottom <= 0) {
-                            clearInterval(upDragAnim!);
-                            upDragAnim = undefined;
-                            overlay?.hide();
-                            overlay = undefined;
-                            return;
-                        }
-                        overlay?.setBottom(bottom)
-                        bottom -= 10;
-                    }, 50)
-                    deactivate();
-                }
-                break;
+				if (upDragAnim) clearInterval(upDragAnim);
+				upDragAnim = setInterval(() => {
+					if (!overlay || bottom <= 0) {
+						clearInterval(upDragAnim!);
+						upDragAnim = undefined;
+						overlay?.hide();
+						overlay = undefined;
+						return;
+					}
+					overlay?.setBottom(bottom)
+					bottom -= 10;
+				}, 50)
+				deactivate();
+			}
+			break;
 		}
-        if(e.b) touchDown = true;
+		if(e.b) touchDown = true;
 	}) satisfies DragCallback;
 
-    const onTouch = ((_btn, _xy) => {
-        // TODO: button presses
-    }) satisfies TouchCallback;
+	const onTouch = ((_btn, _xy) => {
+		// TODO: button presses
+	}) satisfies TouchCallback;
 
-    const activate = () => {
-        state = State.Active;
-        startY = 0;
-        Bangle.prependListener("touch", onTouch);
-        Bangle.buzz(20);
-        overlay!.setBottom(g.getHeight());
-    };
+	const activate = () => {
+		state = State.Active;
+		startY = 0;
+		Bangle.prependListener("touch", onTouch);
+		Bangle.buzz(20);
+		overlay!.setBottom(g.getHeight());
+	};
 
-    const deactivate = () => {
-        Bangle.removeListener("touch", onTouch);
-        state = State.Idle;
-    };
+	const deactivate = () => {
+		Bangle.removeListener("touch", onTouch);
+		state = State.Idle;
+	};
 
-    Bangle.prependListener("drag", onDrag);
+	Bangle.prependListener("drag", onDrag);
 
 	const redraw = () => setTimeout(Bangle.drawWidgets, 10);
 
@@ -229,10 +229,10 @@
 			if(this.width === 0) return;
 			g.drawImage(
 				state === State.Active
-				? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
-				: require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")),
-				this.x! + 2,
-				this.y! + 2
+					? require("heatshrink").decompress(atob("jEYxH+AEfH44XXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA=="))
+					: require("heatshrink").decompress(atob("jEYxH+AEcdjoXXAAYXXDKIXZDYp3pC/6KHUMwWHC/4XvUy4YGdqoA/AFoA==")),
+					this.x! + 2,
+					this.y! + 2
 			);
 		},
 		width: connected ? 24 : 0,
@@ -255,25 +255,25 @@
 	});
 
 	//const DEBUG = true;
-    /*
-	const sendHid = (code: number) => {
-		//if(DEBUG) return;
-		try{
-			NRF.sendHIDReport(
-				[1, code],
-				() => NRF.sendHIDReport([1, 0]),
-			);
-		}catch(e){
-			console.log("sendHIDReport:", e);
-		}
+	/*
+		 const sendHid = (code: number) => {
+	//if(DEBUG) return;
+	try{
+	NRF.sendHIDReport(
+	[1, code],
+	() => NRF.sendHIDReport([1, 0]),
+	);
+	}catch(e){
+	console.log("sendHIDReport:", e);
+	}
 	};
 
-    const hid = {
-		next: () => sendHid(0x01),
-		prev: () => sendHid(0x02),
-		toggle: () => sendHid(0x10),
-		up: () => sendHid(0x40),
-		down: () => sendHid(0x80),
-    };
-    */
+	const hid = {
+	next: () => sendHid(0x01),
+	prev: () => sendHid(0x02),
+	toggle: () => sendHid(0x10),
+	up: () => sendHid(0x40),
+	down: () => sendHid(0x80),
+	};
+	*/
 })()
