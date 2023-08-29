@@ -1,0 +1,16 @@
+{
+  "id":"nightwatch",
+  "readme":"README.md",
+  "name":"The Nightwatch",
+  "shortName":"Nightwatch",
+  "supports" : ["BANGLEJS2"],
+  "icon":"nightwatch.icon.png",
+  "screenshots" : [ { "url":"screenshot.png","url":"screenshot2.png" } ],
+  "version":"1.0",
+  "description":"Logs sensor readings (currently T and p), show min/max and graph.",
+  "tags": "tools,outdoors",
+  "storage": [
+    {"name":"nightwatch.app.js","url":"nightwatch.app.js"},
+    {"name":"nightwatch.img","url":"nightwatch.icon.js","evaluate":true}
+  ]
+}
