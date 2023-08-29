@@ -23,6 +23,8 @@ let settings = {
   fontMedium:"Vector:14",
   fontBig:"Vector:20",
   fontLarge:"Vector:30",
+  timeout: 10,
+  reemit: true
 };
 
 let eventQueue = [];
@@ -230,10 +232,11 @@ let next = function(ovr) {
   if (eventQueue.length == 0) {
     LOG("no element in queue - closing");
     cleanup();
-    return;
+    return false;
   }
 
   showMessage(ovr, eventQueue[0]);
+  return true;
 };
 
 let callBuzzTimer = null;
@@ -427,6 +430,7 @@ let main = function(ovr, event) {
 };
 
 let ovr;
+let clearingTimeout;
 
 exports.message = function(type, event) {
   LOG("Got message", type, event);
@@ -434,6 +438,7 @@ exports.message = function(type, event) {
   if(!(type=="text" || type == "call")) return;
   if(type=="text" && event.id == "nav") return;
   if(event.handled) return;
+  if(event.messagesoverlayignore) return;
 
   bpp = 4;
   if (process.memory().free < LOW_MEM)
@@ -460,6 +465,25 @@ exports.message = function(type, event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   main(ovr, event);
+
+
+  let updateClearingTimeout = ()=>{
+    LOG("updateClearingTimeout");
+    if (clearingTimeout) clearTimeout(clearingTimeout);
+    clearingTimeout = setTimeout(()=>{
+      LOG("setNewTimeut");
+      let current = eventQueue.pop();
+      if (eventQueue.length > 0){
+        LOG("still got elements");
+        updateClearingTimeout();
+      } else {
+        cleanup();
+      }
+    }, settings.timeout * 1000);
+  };
+
+  updateClearingTimeout();
+
   if (!isQuiet()) Bangle.setLCDPower(1);
   event.handled = true;
   g = _g;
