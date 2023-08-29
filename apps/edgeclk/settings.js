@@ -8,6 +8,7 @@
     twentyFourH: true,
     showAmPm: false,
     showSeconds: true,
+    showWeather: false,
     stepGoal: 10000,
     stepBar: true,
     weekBar: true,
@@ -57,6 +58,7 @@
         settings.showAmPm = !settings.showAmPm;
         // TODO can this be visually changed?
         if (settings.showAmPm && settings.showSeconds) settings.showSeconds = false;
+        if (settings.showAmPm && settings.showWeather) settings.showWeather = false;
         save();
       },
     },
@@ -66,6 +68,17 @@
         settings.showSeconds = !settings.showSeconds;
         // TODO can this be visually changed?
         if (settings.showSeconds && settings.showAmPm) settings.showAmPm = false;
+        if (settings.showSeconds && settings.showWeather) settings.showWeather = false;
+        save();
+      },
+    },
+    'Show Weather': {
+      value: settings.showWeather,
+      onchange: () => {
+        settings.showWeather = !settings.showWeather;
+        // TODO can this be visually changed?
+        if (settings.showWeather && settings.showAmPm) settings.showAmPm = false;
+        if (settings.showWeather && settings.showSeconds) settings.showSeconds = false;
         save();
       },
     },

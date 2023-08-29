@@ -8,13 +8,13 @@
     twentyFourH: true,
     showAmPm: false,
     showSeconds: true,
+    showWeather: false,
     stepGoal: 10000,
     stepBar: true,
     weekBar: true,
     mondayFirst: true,
     dayBar: true,
   }, require('Storage').readJSON('edgeclk.settings.json', true) || {});
-
 
   /* Runtime Variables
   ------------------------------------------------------------------------------*/
@@ -50,6 +50,33 @@
       drawCharge();
     } else {
       drawSteps(stepsOnlyCount);
+    }
+
+    drawWeather();
+  };
+
+  const drawWeather = function () {
+    if (!settings.showWeather){
+      return;
+    }
+
+    g.setFontCustom(font, 48, 10, 512 + 12); // double size (1<<9)
+    g.setFontAlign(1, 1); // right bottom
+    
+    try{
+      const weather = require('weather');
+      const w = weather.get();
+      let temp = parseInt(w.temp-273.15);
+      temp = temp < 0 ? '\\' + String(temp*-1) : String(temp);
+
+      g.drawString(temp, g.getWidth()-40, g.getHeight() - 1, true);
+      
+      // clear icon area in case weather condition changed
+      g.clearRect(g.getWidth()-40, g.getHeight()-30, g.getWidth(), g.getHeight());
+      weather.drawIcon(w, g.getWidth()-20, g.getHeight()-15, 14);
+
+    } catch(e) {
+      g.drawString("???", g.getWidth()-3, g.getHeight() - 1, true);
     }
   };
 
@@ -135,7 +162,8 @@
     g.setFontAlign(-1, 1); // left bottom
 
     const steps = Bangle.getHealthStatus('day').steps;
-    g.drawString((steps < 100000 ? steps.toString() : ((steps / 1000).toFixed(0) + 'K')).padEnd(5, '_'),
+    const toKSteps = settings.showWeather ? 1000 : 100000;
+    g.drawString((steps < toKSteps ? steps.toString() : ((steps / 1000).toFixed(0) + 'K')).padEnd(5, '_'),
                  iconSize[0] + 6, g.getHeight() - 1, true);
 
     if (onlyCount === true) {
@@ -229,12 +257,14 @@
     // However, to save power while on battery only step count will get updated.
     // This will update icon and progress bar as well:
     if (!charging) drawSteps();
+    drawWeather();
   };
 
   const onHealth = function () {
     if (!lcdPower || charging) return;
     // This will update progress bar and icon:
     drawSteps();
+    drawWeather();
   };
 
   const onLock = function (locked) {
