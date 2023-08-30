@@ -105,3 +105,5 @@
 	* Removed 'lost' indicator (we now change position to purple when lost)
 	* Powersaving fix : don't powersave when lost
 	* Bugfix for negative remaining distance when going backwards
+	* New settings for powersaving
+	* Adjustments to powersaving algorithm

@@ -26,6 +26,8 @@ let s = require("Storage");
 var settings = Object.assign(
   {
     lost_distance: 50,
+    wake_up_speed: 13,
+    active_time: 10,
     brightness: 0.5,
     buzz_on_turns: false,
     disable_bluetooth: true,
@@ -692,7 +694,7 @@ class Status {
     if (!this.active || !powersaving) {
       return;
     }
-    if (getTime() - this.last_activity > 30) {
+    if (getTime() - this.last_activity > settings.active_time) {
       this.active = false;
       Bangle.setLCDBrightness(0);
       if (settings.power_lcd_off) {
@@ -772,13 +774,13 @@ class Status {
     if (in_menu) {
       return;
     }
-    if (this.instant_speed * 3.6 < 13) {
+    if (this.instant_speed * 3.6 < settings.wake_up_speed) {
       this.activate(); // if we go too slow turn on, we might be looking for the direction to follow
       if (!this.default_options) {
         this.default_options = true;
 
         Bangle.setOptions({
-          lockTimeout: 10000,
+          lockTimeout: 0,
           backlightTimeout: 10000,
           wakeOnTwist: true,
           powerSave: true,
@@ -798,7 +800,6 @@ class Status {
           wakeOnTouch: true,
           powerSave: false,
         });
-        Bangle.setPollInterval(2000); // disable accelerometer as much as we can (a value of 4000 seem to cause hard reboot crashes (segfaults ?) so keep 2000)
       }
     }
     this.check_activity(); // if we don't move or are in menu we should stay on
@@ -879,8 +880,10 @@ class Status {
       //     }, time_to_next_point);
       //   }
       // }
-      if (this.reaching != next_point && this.distance_to_next_point <= 100) {
+      if (this.distance_to_next_point <= 100) {
         this.activate();
+      }
+      if (this.reaching != next_point && this.distance_to_next_point <= 100) {
         this.reaching = next_point;
         let reaching_waypoint = this.path.is_waypoint(next_point);
         if (reaching_waypoint) {
@@ -1029,8 +1032,8 @@ class Status {
     let distance_per_pixel = displayed_length / graph_width;
 
     let start_point_index = 0;
-    let end_point_index = this.remaining_distances.length - 1;
-    for (let i = 0; i < this.remaining_distances.length; i++) {
+    let end_point_index = this.path.len - 1;
+    for (let i = 0; i < this.path.len; i++) {
       let point_distance = path_length - this.remaining_distances[i];
       if (point_distance <= display_start) {
         start_point_index = i;
@@ -1040,6 +1043,7 @@ class Status {
         break;
       }
     }
+    end_point_index = Math.min(end_point_index+1, this.path.len -1);
     let max_height = Number.NEGATIVE_INFINITY;
     let min_height = Number.POSITIVE_INFINITY;
     for (let i = start_point_index; i <= end_point_index; i++) {
