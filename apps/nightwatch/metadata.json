@@ -13,5 +13,6 @@
     {"name":"nightwatch.app.js","url":"nightwatch.app.js"},
     {"name":"nightwatch.settings.js","url":"nightwatch.settings.js"},
     {"name":"nightwatch.img","url":"nightwatch.icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"nightwatch.json"}]
 }

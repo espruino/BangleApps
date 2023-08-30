@@ -2,7 +2,7 @@
   var FILE = "nightwatch.json";
   // Load settings
   var settings = Object.assign({
-    dt: 30,
+    dt: 5,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
