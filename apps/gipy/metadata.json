@@ -8,7 +8,7 @@
   "icon": "gipy.png",
   "type": "app",
   "tags": "tool,outdoors,gps",
-  "screenshots": [{"url":"splash.png"}],
+  "screenshots": [{"url":"splash.png"}, {"url":"heights.png"}, {"url":"shot.png"}],
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",

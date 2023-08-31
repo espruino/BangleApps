@@ -42,7 +42,7 @@ also a nice open source option.
 Note that *mapstogpx* has a super nice feature in its advanced settings.
 You can turn on 'next turn info' and be warned by the watch when you need to turn.
 
-Once you have your gpx file you need to convert it to *gpc* which is my custom file format.
+Once you have your gpx file you need to convert it to *gps* which is my custom file format.
 They are smaller than gpx and reduce the number of computations left to be done on the watch.
 
 Just click the disk icon and select your gpx file.
@@ -82,8 +82,7 @@ On your screen you can see:
 
 ### Lost
 
-If you stray away from path we will rescale the display to continue displaying nearby segments and
-display the direction to follow as a purple segment. Your main position will also turn to purple.
+If you stray away from path we will display the direction to follow as a purple segment. Your main position will also turn to purple.
 
 Note that while lost, the app will slow down a lot since it will start scanning all possible points to figure out where you
 are. On path it just needed to scan a few points ahead and behind.
@@ -104,6 +103,11 @@ for the whole path.
 ![Screenshot](heights.png)
 
 Colors correspond to slopes.
+Above 15% will be red, above 8% orange, above 3% yellow, below 3% and -3% is green and shades of blue
+are for descents.
+
+You should note that the precision is not very good. The input data is not very precise and you only get the
+slopes between path points. Don't expect to see small bumps on the road.
 
 ### Settings
 
@@ -117,6 +121,32 @@ Few settings for now (feel free to suggest me more) :
 - brightness : how bright should screen be ? (by default 0.5, again saving power)
 - power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points,
 when you touch the screen and when speed is below 13km/h.
+
+### Powersaving
+
+Starting with release 0.20 we experiment with power saving.
+
+There are now two display modes :
+
+- active : the screen is lit back (default at 50% light but can be configured with the *brightness* setting)
+- inactive : by default the screen is not lit but you can also power it off completely (with the *power lcd off* setting)
+
+The algorithm works in the following ways :
+
+- some events will *activate* : the display will turn *active* 
+- if no activation event occur for at least 10 seconds (or *active-time* setting) we switch back to *inactive*
+
+Activation events are the following :
+
+- you are near (< 100m) the next point on path
+- you are slow (< *wake-up speed* setting (13 km/h by default))
+- you press the button / touch the screen
+
+
+Power saving has been tested on a very long trip with several benefits
+
+- longer battery life
+- waking up near path points will attract your attention more easily when needed
 
 ### Caveats
 
