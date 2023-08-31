@@ -103,7 +103,7 @@ for the whole path.
 ![Screenshot](heights.png)
 
 Colors correspond to slopes.
-Above 15% will be red, above 8% orange, above 3% yellow, below 3% and -3% is green and shades of blue
+Above 15% will be red, above 8% orange, above 3% yellow, between 3% and -3% is green and shades of blue
 are for descents.
 
 You should note that the precision is not very good. The input data is not very precise and you only get the
