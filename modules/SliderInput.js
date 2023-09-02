@@ -11,24 +11,24 @@ o.f = {}; // functions go here.
 // configuration for the indicator:
 
 o.c = Object.assign({ // constants go here.
-useMap:false,
-useIncr:true,
-horizontal:false,
-xStart:R.x2-R.w/4-4,
-width:R.w/4,
-yStart:R.y+4,
-height:R.h-10,
-steps:30, // Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
-oversizeR:0,
-oversizeL:0,
-timeout:1,
-colorFG:g.theme.fg2,
-colorBG:g.theme.bg2,
-lazy:true,
-rounded:0,
-propagateDrag:false,
-immediatedraw:false,
-autoProgress:false,
+  useMap:false,
+  useIncr:true,
+  horizontal:false,
+  xStart:R.x2-R.w/4-4,
+  width:R.w/4,
+  yStart:R.y+4,
+  height:R.h-10,
+  steps:30, // Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
+  oversizeR:0,
+  oversizeL:0,
+  timeout:1,
+  colorFG:g.theme.fg2,
+  colorBG:g.theme.bg2,
+  lazy:true,
+  rounded:0,
+  propagateDrag:false,
+  immediatedraw:false,
+  autoProgress:false,
 },conf);
 
 o.c._xStart = o.c.xStart + 4; // +4 to compensate for the border.
@@ -89,29 +89,29 @@ o.f.dragSlider = e=>{
 
   if (o.v.ebLast==0) exFirst = o.c.horizontal?e.y:e.x;
 
-    if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+  if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
-      o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
+    o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
 
-      if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
+    if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
+    o.f.draw(o.v.level);
+
+  } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
+
+    o.v.dy += o.c.horizontal?-e.dx:e.dy;
+    //if (!e.b) o.v.dy=0;
+
+    let incr;
+    while (Math.abs(o.v.dy)>32) {
+      if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
+      else { o.v.dy+=32; incr = -1;}
+      Bangle.buzz(20);
+
+      o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
+      cb("incr",incr);
       o.f.draw(o.v.level);
-
-    } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
-
-      o.v.dy += o.c.horizontal?-e.dx:e.dy;
-      //if (!e.b) o.v.dy=0;
-
-      let incr;
-      while (Math.abs(o.v.dy)>32) {
-        if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
-        else { o.v.dy+=32; incr = -1;}
-        Bangle.buzz(20);
-
-        o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
-        cb("incr",incr);
-        o.f.draw(o.v.level);
-      }
     }
+  }
   o.v.ebLast = e.b;
 };
 
@@ -125,7 +125,7 @@ o.f.draw = (level)=>{
 
   o.v.prevLevel = level;
 
-    g.setColor(o.c.colorBG).
+  g.setColor(o.c.colorBG).
     fillRect(o.c.hollowRect). // ... and here it's made hollow.
     setColor(0==level?o.c.colorBG:o.c.colorFG).
     fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
@@ -155,6 +155,6 @@ return o;
 }
 
 } catch (e) {
-  print(e);
-  eval(require("Storage").read("slidertest.app.js"));
+print(e);
+eval(require("Storage").read("slidertest.app.js"));
 }
