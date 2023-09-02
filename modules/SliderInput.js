@@ -79,6 +79,7 @@ o.f.updateBar = (levelHeight)=>{
 
 o.f.dragSlider = e=>{
   "ram";
+  o.v.dragActive = true;
   if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
 
   if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
@@ -136,6 +137,7 @@ o.f.draw = (level)=>{
 
 o.f.remove = ()=> {
   Bangle.removeListener('drag', o.f.dragSlider);
+  o.v.dragActive = false;
   cb("remove", o.v.prevLevel);
 };
 
