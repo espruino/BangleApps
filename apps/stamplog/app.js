@@ -12,7 +12,8 @@ const DRAG_THRESHOLD = 30;
 const SCROLL_BAR_WIDTH = 12;
 
 var settings = {
-  logItemFont: '12x20'
+  logItemFont: '12x20',
+  maxLogLength: 6
 };
 
 
@@ -68,9 +69,12 @@ function getIcon(id) {
 // UI for managing log entries and automatically loading/saving
 // changes to flash storage.
 class StampLog {
-  constructor(filename) {
+  constructor(filename, maxLength) {
     // Name of file to save log to
     this.filename = filename;
+    // Maximum entries for log before old entries are overwritten with
+    // newer ones
+    this.maxLength = maxLength;
 
     // `true` when we have changes that need to be saved
     this.isDirty = false;
@@ -130,6 +134,13 @@ class StampLog {
 
   // Add a timestamp for the current time to the end of the log
   addEntry() {
+    // If log full, purge an old entry to make room for new one
+    if (this.maxLength) {
+      while (this.log.length + 1 > this.maxLength) {
+        this.log.shift();
+      }
+    }
+    // Add new entry
     this.log.push({
       stamp: new Date()
     });
@@ -408,7 +419,7 @@ function saveErrorAlert() {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-stampLog = new StampLog();
+stampLog = new StampLog(LOG_FILENAME, settings.maxLogLength);
 E.on('kill', stampLog.save.bind(stampLog));
 stampLog.on('saveError', saveErrorAlert);
 
