@@ -1,10 +1,6 @@
 (function(){
-  function setWidth() {
-    WIDGETS["bat"].width = 40 + (Bangle.isCharging()?16:0);
-  }
   Bangle.on('charging',function(charging) {
     if(charging) Bangle.buzz();
-    setWidth();
     Bangle.drawWidgets(); // re-layout widgets
     g.flip();
   });
@@ -40,5 +36,4 @@
       g.setColor(g.theme.fg).fillPoly(flash);
     }
   }};
-  setWidth();
 })()
