@@ -268,7 +268,7 @@ class MainScreen {
             },
             {type: 'custom',
              id: 'logScroll',
-             render: elem => { renderScrollBar(elem, this.scrollInfo()); }
+             render: elem => { renderScrollBar(elem, this.scrollBarInfo()); }
             },
           ],
          },
@@ -379,6 +379,25 @@ class MainScreen {
       min: (this.stampLog.log.length - 1) % this.itemsPerPage,
       max: this.stampLog.log.length - 1,
       itemsPerPage: this.itemsPerPage
+    };
+  }
+
+  // Like scrollInfo, but adjust the data so as to suggest scrollbar
+  // geometry that accurately reflects the nature of the scrolling
+  // (page by page rather than item by item)
+  scrollBarInfo() {
+    const info = this.scrollInfo();
+
+    function toPage(scrollPos) {
+      return Math.floor(scrollPos / info.itemsPerPage);
+    }
+
+    return {
+    // Define 1 “screenfull” as the unit here
+      itemsPerPage: 1,
+      pos: toPage(info.pos),
+      min: toPage(info.min),
+      max: toPage(info.max),
     };
   }
 
