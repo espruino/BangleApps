@@ -59,7 +59,7 @@ if (o.c.horizontal) {
 o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
 
 // Initialize the level
-o.v.level = o.c.currLevel || o.c.steps/2;
+o.v.level = (o.c.currLevel||o.c.currLevel===0)?o.c.currLevel:o.c.steps/2;
 
 o.v.firstRun = true;
 o.v.ebLast = 0;
