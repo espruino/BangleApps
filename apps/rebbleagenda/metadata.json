@@ -13,7 +13,6 @@
   "tags": "agenda,tool",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
-  "allow_emulator": true,
   "dependencies" : { "weather":"app" },
   "storage": [
     {"name":"rebbleagenda.app.js","url":"app.js"},

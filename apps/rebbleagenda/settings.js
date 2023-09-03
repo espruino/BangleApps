@@ -30,7 +30,7 @@
 
   E.showMenu({
     '': { 'title': 'Rebble Agenda' },
-    ['< '+/*LANG*/'Back']: back,
+    /*LANG*/'< Back': back,
     /*LANG*/'Use system theme': {
       value: !!s.system,
       onchange: v => {
