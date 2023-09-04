@@ -140,14 +140,15 @@ function drawData(title, obj, startX, startY) {
 function drawMoonPositionPage(gps, title) {
   const pos = SunCalc.getMoonPosition(new Date(), gps.lat, gps.lon);
   const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
+  const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
   const pageData = {
-    Azimuth: pos.azimuth.toFixed(2),
-    Altitude: pos.altitude.toFixed(2),
+    Azimuth: parseInt(azimuth * 180 / Math.PI + 0.5) + '°',
+    Altitude: parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°',
     Distance: `${pos.distance.toFixed(0)} km`,
-    "Parallactic Ang": pos.parallacticAngle.toFixed(2),
+    "Parallactic Ang": parseInt(pos.parallacticAngle * 180 / Math.PI + 0.5) + '°',
   };
-  const azimuthDegrees = parseInt(pos.azimuth * 180 / Math.PI);
+  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5);
 
   drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20);
   drawPoints();
@@ -189,12 +190,14 @@ function drawMoonTimesPage(gps, title) {
 
   // Draw the moon rise position
   const risePos = SunCalc.getMoonPosition(times.rise, gps.lat, gps.lon);
-  const riseAzimuthDegrees = parseInt(risePos.azimuth * 180 / Math.PI);
+  const riseAzimuth = risePos.azimuth + Math.PI; // 0 is south, we want 0 to be north
+  const riseAzimuthDegrees = parseInt(riseAzimuth * 180 / Math.PI);
   drawPoint(riseAzimuthDegrees, 8, moonColor);
 
   // Draw the moon set position
   const setPos = SunCalc.getMoonPosition(times.set, gps.lat, gps.lon);
-  const setAzimuthDegrees = parseInt(setPos.azimuth * 180 / Math.PI);
+  const setAzimuth = setPos.azimuth + Math.PI; // 0 is south, we want 0 to be north
+  const setAzimuthDegrees = parseInt(setAzimuth * 180 / Math.PI);
   drawPoint(setAzimuthDegrees, 8, moonColor);
 
   Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
@@ -207,16 +210,15 @@ function drawSunShowPage(gps, key, date) {
   const mins = ("0" + date.getMinutes()).substr(-2);
   const secs = ("0" + date.getMinutes()).substr(-2);
   const time = `${hrs}:${mins}:${secs}`;
+  const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
-  const azimuth = Number(pos.azimuth.toFixed(2));
-  const azimuthDegrees = parseInt(pos.azimuth * 180 / Math.PI);
-  const altitude = Number(pos.altitude.toFixed(2));
+  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5) + '°';
+  const altitude = parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°';
 
   const pageData = {
     Time: time,
     Altitude: altitude,
-    Azimumth: azimuth,
-    Degrees: azimuthDegrees
+    Azimuth: azimuthDegrees,
   };
 
   drawData(key, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);

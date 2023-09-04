@@ -27,3 +27,5 @@
       movement graph in app is now an average, not sum
       fix 11pm slot for daily HRM
 0.26: Implement API for activity fetching
+0.27: Fix typo in daily summary graph code causing graph not to load
+      Fix daily summaries for 31st of the month

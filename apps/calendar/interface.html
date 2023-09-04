@@ -28,11 +28,16 @@ function readFile(input) {
   for(let i=0; i<input.files.length; i++) {
     const reader = new FileReader();
     reader.addEventListener("load", () => {
-      const jCalData = ICAL.parse(reader.result);
+      const icalText = reader.result.substring(reader.result.indexOf("BEGIN:VCALENDAR")); // remove html before data
+      const jCalData = ICAL.parse(icalText);
       const comp = new ICAL.Component(jCalData);
+      const vtz = comp.getFirstSubcomponent('vtimezone');
+      const tz = new ICAL.Timezone(vtz);
+
       // Fetch the VEVENT part
       comp.getAllSubcomponents('vevent').forEach(vevent => {
-        event = new ICAL.Event(vevent);
+        const event = new ICAL.Event(vevent);
+        event.startDate.zone = tz;
         holidays = holidays.filter(holiday => !sameDay(new Date(holiday.date), event.startDate.toJSDate())); // remove if already exists
 
         const holiday = eventToHoliday(event);

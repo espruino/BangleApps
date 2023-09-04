@@ -98,3 +98,12 @@
 	* New setting : power screen off between points to save battery
 	* Color change for lost direction (now purple)
 	* Adaptive screen powersaving
+
+0.21:
+	* Jit is back for display functions (10% speed increase)
+	* Store, parse and display elevation data
+	* Removed 'lost' indicator (we now change position to purple when lost)
+	* Powersaving fix : don't powersave when lost
+	* Bugfix for negative remaining distance when going backwards
+	* New settings for powersaving
+	* Adjustments to powersaving algorithm
