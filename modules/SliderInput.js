@@ -56,6 +56,8 @@ if (o.c.horizontal) {
   delete mediator;
 }
 
+o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
+
 // Initialize the level
 o.v.level = o.c.currLevel || o.c.steps/2;
 
