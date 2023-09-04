@@ -263,12 +263,25 @@ function addTimer() {
   alarms.push(timer);
 }
 
+function readStorageIfExists(filename, cb) {
+  Puck.write(`\x10(function() {
+    Bluetooth.print(JSON.stringify(require("Storage").list("${filename}").sort()));
+    })()\n`, contents => {
+      const fileNames = JSON.parse(contents);
+      if (fileNames.length > 0) {
+        Util.readStorage(filename,cb);
+      } else {
+        cb();
+      }
+  });
+}
+
 function getData() {
   Util.showModal("Loading...");
-  Util.readStorage('sched.json',data=>{
+  readStorageIfExists('sched.json',data=>{
     alarms = JSON.parse(data || "[]") || [];
 
-    Util.readStorage('sched.settings.json',data=>{
+    readStorageIfExists('sched.settings.json',data=>{
       schedSettings = JSON.parse(data || "{}") || {};
       Util.hideModal();
       alarms.sort((a, b) => {
