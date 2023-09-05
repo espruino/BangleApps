@@ -268,7 +268,7 @@ function readStorageIfExists(filename, cb) {
     Bluetooth.print(JSON.stringify(require("Storage").list("${filename}")));
     })()\n`, contents => {
       const fileNames = JSON.parse(contents);
-      if (fileNames.length > 0 && fileNames.includes(filename)) {
+      if (fileNames.includes(filename)) {
         Util.readStorage(filename,cb);
       } else {
         cb();
