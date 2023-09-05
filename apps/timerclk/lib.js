@@ -87,7 +87,7 @@ exports.registerControls = function(o) {
         }
       }
     });
-    var absX, lastX, lastY;
+    var absX, lastX=0, lastY=0;
     Bangle.on('drag', e=>{
       if (!e.b) {
         if (lastX > 40) { // right

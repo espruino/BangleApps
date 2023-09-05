@@ -67,3 +67,4 @@
 0.56: Settings.log = 0,1,2,3 for off,display, log, both
 0.57: Handle the whitelist being disabled
 0.58: "Make Connectable" temporarily bypasses the whitelist
+0.59: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds

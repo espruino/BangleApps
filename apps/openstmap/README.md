@@ -22,6 +22,11 @@ quality, but uploads faster and takes less space). Bangle.js 2 is limited to 3bp
 can change settings, move the map around, and click `Get Map` again.
 * When you're ready, click `Upload`
 
+**Note:** By default on Bangle.js, pre-dithered 3 bpp bitmaps will be uploaded
+(which match the screen bit depth). However you can untick the `3 bit` checkbox
+to use 8 bit maps, which take up 2.6x more space but look much better when
+zoomed in/out.
+
 ## Bangle.js App
 
 The Bangle.js app allows you to view a map. It also turns the GPS on
@@ -29,6 +34,7 @@ and marks the path that you've been travelling (if enabled), and
 displays waypoints in the watch (if dependencies exist).
 
 * Drag on the screen to move the map
+* Click bottom left to zoom in, bottom right to zoom out
 * Press the button to bring up a menu, where you can zoom, go to GPS location,
 put the map back in its default location, or choose whether to draw the currently
 recording GPS track (from the `Recorder` app).

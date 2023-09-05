@@ -124,10 +124,11 @@ TODO:
       // ---------------------------------------- Run at startup
       function onInit(device) {
         if (device && device.info && device.info.g) {
-          // On 3 bit devices, don't even offer the option. 3 bit is the only way
+          // On 3 bit devices, 3 bit is the best way
+          // still allow 8 bit as it makes zoom out much nicer
           if (device.info.g.bpp==3) {
             document.getElementById("3bit").checked = true;
-            document.getElementById("3bitdiv").style = "display:none";
+            //document.getElementById("3bitdiv").style = "display:none";
           }
         }
 
@@ -258,15 +259,16 @@ TODO:
             mode:"3bit",
             diffusion:"bayer2"
           };
-          /* If in 3 bit mode, go through all the data beforehand and
-          turn the saturation up to maximum, so when thresholded it
-          works a lot better */
-          var imageData = ctx.getImageData(0,0,width,height);
-          var dstData = ctx.createImageData(width, height);
-          var filterOptions = {};
-          imageFilterFor3BPP(imageData, dstData, filterOptions);
-          ctx.putImageData(dstData,0,0);
         }
+        /* Go through all the data beforehand and
+        turn the saturation up to maximum, so if thresholded to 3 bits it
+        works a lot better */
+        var imageData = ctx.getImageData(0,0,width,height);
+        var dstData = ctx.createImageData(width, height);
+        var filterOptions = {};
+        imageFilterFor3BPP(imageData, dstData, filterOptions);
+        ctx.putImageData(dstData,0,0);
+
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);

@@ -12,6 +12,7 @@ This allows fast loading of all apps with two conditions:
 * If Quick Launch is installed it can be excluded from app history
 * Allows to redirect all loads usually loading the clock to the launcher instead
 * The "Fastloading..." screen can be switched off
+* Enable checking `setting.json` and force a complete load on changes
 
 ## App history
 

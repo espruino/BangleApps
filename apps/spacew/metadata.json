@@ -1,0 +1,13 @@
+{ "id": "spacew",
+  "name": "Space Weaver",
+  "version":"0.01",
+  "description": "Application for displaying vector maps",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "outdoors,gps,osm",
+  "storage": [
+      {"name":"spacew.app.js","url":"app.js"},
+      {"name":"spacew.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -48,7 +48,7 @@ function stepsPerHour() {
 function stepsPerDay() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "stepsPerDay";
-  var data = new Uint16Array(31);
+  var data = new Uint16Array(32);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
   setButton(menuStepCount);
   barChart(/*LANG*/"DAY", data);
@@ -59,7 +59,7 @@ function hrmPerHour() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "hrmPerHour";
   var data = new Uint16Array(24);
-  var cnt = new Uint8Array(23);
+  var cnt = new Uint8Array(24);
   require("health").readDay(new Date(), h=>{
     data[h.hr]+=h.bpm;
     if (h.bpm) cnt[h.hr]++;
@@ -72,8 +72,8 @@ function hrmPerHour() {
 function hrmPerDay() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "hrmPerDay";
-  var data = new Uint16Array(31);
-  var cnt = new Uint8Array(31);
+  var data = new Uint16Array(32);
+  var cnt = new Uint8Array(32);
   require("health").readDailySummaries(new Date(), h=>{
     data[h.day]+=h.bpm;
     if (h.bpm) cnt[h.day]++;
@@ -87,7 +87,12 @@ function movementPerHour() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "movementPerHour";
   var data = new Uint16Array(24);
-  require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
+  var cnt = new Uint8Array(24);
+  require("health").readDay(new Date(), h=>{
+    data[h.hr]+=h.movement;
+    cnt[h.hr]++;
+  });
+  data.forEach((d,i)=>data[i] = d/cnt[i]);
   setButton(menuMovement);
   barChart(/*LANG*/"HOUR", data);
 }
@@ -95,8 +100,13 @@ function movementPerHour() {
 function movementPerDay() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "movementPerDay";
-  var data = new Uint16Array(31);
-  require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
+  var data = new Uint16Array(32);
+  var cnt = new Uint8Array(32);
+  require("health").readDailySummaries(new Date(), h=>{
+    data[h.day]+=h.movement;
+    cnt[h.day]++;
+  });
+  data.forEach((d,i)=>data[i] = d/cnt[i]);
   setButton(menuMovement);
   barChart(/*LANG*/"DAY", data);
 }

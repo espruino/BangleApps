@@ -68,3 +68,6 @@ of 'Select Clock'
 0.60: Moved LCD calibration to top of menu, and use 12 taps (not 8)
       LCD calibration will now error if the calibration is obviously wrong
 0.61: Permit temporary bypass of the BLE whitelist
+0.62: Fix whitelist showing as 'on' by default when it's not after 0.59
+0.63: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds
+      Remove 'beta' label from passkey - it's been around for a while and works ok

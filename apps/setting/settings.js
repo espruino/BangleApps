@@ -186,14 +186,14 @@ function showBLEMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Passkey BETA': {
+    /*LANG*/'Passkey': {
       value: settings.passkey?settings.passkey:/*LANG*/"none",
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
       value:
         (
-          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
+          (settings.whitelist_disabled || !settings.whitelist) ? /*LANG*/"off" : /*LANG*/"on"
         ) + (
           settings.whitelist
           ? " (" + settings.whitelist.length + ")"
@@ -383,6 +383,12 @@ function showWhitelistMenu() {
     NRF.on('connect', function(addr) {
       if (!settings.whitelist) settings.whitelist=[];
       delete settings.whitelist_disabled;
+      if (NRF.resolveAddress !== undefined) {
+        let resolvedAddr = NRF.resolveAddress(addr);
+        if (resolvedAddr !== undefined) {
+          addr = resolvedAddr + " (resolved)";
+        }
+      }
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');

@@ -21,7 +21,7 @@ This is Bangle.js's settings menu
 * **Programmable** if BLE is on, can the watch be connected to in order to program/upload apps? As long as your watch firmware is up to date, Gadgetbridge will work even with `Programmable` set to `Off`.
 * **HID** When Bluetooth is enabled, Bangle.js can appear as a Bluetooth Keyboard/Joystick/etc to send keypresses to a connected device.
   * **NOTE:** on some platforms enabling HID can cause you problems when trying to connect to Bangle.js to upload apps.
-* **Passkey BETA** allows you to set a passkey that is required to connect and pair to Bangle.js. **Note:** This is Beta and you will almost certainly encounter issues connecting with Web Bluetooth using this option.
+* **Passkey** allows you to set a passkey that is required to connect and pair to Bangle.js.
 * **Whitelist** allows you to specify only specific devices that you will let connect to your Bangle.js. Simply choose the menu item, then `Add Device`, and then connect to Bangle.js with the device you want to add. If you are already connected you will have to disconnect first. Changes will take effect when you exit the `Settings` app.
   * **NOTE:** iOS devices and newer Android devices often implement Address Randomisation and change their Bluetooth address every so often. If you device's address changes, you will be unable to connect until you update the whitelist again.
 
@@ -62,7 +62,7 @@ The exact effects depend on the app.  In general the watch will not wake up by i
   * `Both` Log and display on Bangle's screen
 * **Compact Storage** Removes deleted/old files from Storage - this will speed up your Bangle.js
 * **Rewrite Settings** Should not normally be required, but if `.boot0` has been deleted/corrupted (and so no settings are being loaded) this will fix it.
-* **Flatten Battery** Turns on all devices and draws as much power as possible, attempting to flatten the Bangle.js battery. This can still take 5+ hours.  
+* **Flatten Battery** Turns on all devices and draws as much power as possible, attempting to flatten the Bangle.js battery. This can still take 5+ hours.
 * **Calibrate Battery** If you're finding your battery percentage meter isn't accurate, leave your Bangle.js on charge for at least 3 hours, and then choose this menu option. It will measure the battery voltage when full and will allow Bangle.js to report a more accurate battery percentage.
 * **Reset Settings** Reset the settings (as set in this app) to defaults. Does not reset settings for other apps.
 * **Factory Reset** (not available on Bangle.js 1) - wipe **everything** and return to a factory state

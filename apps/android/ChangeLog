@@ -28,3 +28,6 @@
 0.27: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.28: Navigation messages no longer launch the Maps view unless they're new
 0.29: Support for http request xpath return format
+0.30: Send firmware and hardware versions on connection
+      Allow alarm enable/disable
+0.31: Implement API for activity fetching

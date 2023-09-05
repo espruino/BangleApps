@@ -141,7 +141,7 @@ exports.load = function() {
       if(b) b.items = b.items.concat(a.items);
       else menu = menu.concat(a);
     } catch(e){
-      console.log("Could not load clock info "+E.toJS(fn));
+      console.log("Could not load clock info "+E.toJS(fn)+": "+e);
     }
   });
 

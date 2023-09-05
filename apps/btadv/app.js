@@ -1,10 +1,16 @@
+var _a;
 {
     var __assign = Object.assign;
     var Layout_1 = require("Layout");
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     var HRM_MIN_CONFIDENCE_1 = 75;
-    var services_1 = ["0x180d", "0x181a", "0x1819"];
+    var services_1 = [
+        "0x180d",
+        "0x181a",
+        "0x1819",
+        "E95D0753251D470AA062FA1922DFA9A8",
+    ];
     var acc_1;
     var bar_1;
     var gps_1;
@@ -21,7 +27,6 @@
         mag: false,
     };
     var idToName = {
-        acc: "Acceleration",
         bar: "Barometer",
         gps: "GPS",
         hrm: "HRM",
@@ -69,7 +74,6 @@
             {
                 type: "h",
                 c: [
-                    __assign(__assign({ type: "btn", label: idToName.acc, id: "acc", cb: function () { } }, btnStyle), { col: colour_1.on, btnBorder: colour_1.on }),
                     __assign({ type: "btn", label: "Back", cb: function () {
                             setBtnsShown_1(false);
                         } }, btnStyle),
@@ -222,6 +226,13 @@
         return [x[0], x[1], y[0], y[1], z[0], z[1]];
     };
     encodeMag_1.maxLen = 6;
+    var encodeAcc_1 = function (data) {
+        var x = toByteArray_1(data.x * 1000, 2, true);
+        var y = toByteArray_1(data.y * 1000, 2, true);
+        var z = toByteArray_1(data.z * 1000, 2, true);
+        return [x[0], x[1], y[0], y[1], z[0], z[1]];
+    };
+    encodeAcc_1.maxLen = 6;
     var toByteArray_1 = function (value, numberOfBytes, isSigned) {
         var byteArray = new Array(numberOfBytes);
         if (isSigned && (value < 0)) {
@@ -251,6 +262,7 @@
             case "0x180d": return !!hrm_1;
             case "0x181a": return !!(bar_1 || mag_1);
             case "0x1819": return !!(gps_1 && gps_1.lat && gps_1.lon || mag_1);
+            case "E95D0753251D470AA062FA1922DFA9A8": return !!acc_1;
         }
     };
     var serviceToAdvert_1 = function (serv, initial) {
@@ -264,11 +276,20 @@
                         readable: true,
                         notify: true,
                     };
+                    var os = {
+                        maxLen: 1,
+                        readable: true,
+                        notify: true,
+                    };
                     if (hrm_1) {
                         o.value = encodeHrm_1(hrm_1);
+                        os.value = [2];
                         hrm_1 = undefined;
                     }
-                    return _a = {}, _a["0x2a37"] = o, _a;
+                    return _a = {},
+                        _a["0x2a37"] = o,
+                        _a["0x2a38"] = os,
+                        _a;
                 }
                 return {};
             case "0x1819":
@@ -327,6 +348,21 @@
                     };
                     if (mag_1) {
                         o["0x2aa1"].value = encodeMag_1(mag_1);
+                    }
+                }
+                return o;
+            }
+            case "E95D0753251D470AA062FA1922DFA9A8": {
+                var o = {};
+                if (acc_1 || initial) {
+                    o["E95DCA4B251D470AA062FA1922DFA9A8"] = {
+                        maxLen: encodeAcc_1.maxLen,
+                        readable: true,
+                        notify: true,
+                    };
+                    if (acc_1) {
+                        o["E95DCA4B251D470AA062FA1922DFA9A8"].value = encodeAcc_1(acc_1);
+                        acc_1 = undefined;
                     }
                 }
                 return o;
@@ -402,12 +438,23 @@
     enableSensors_1();
     {
         var ad = getBleAdvert_1(function (serv) { return serviceToAdvert_1(serv, true); }, true);
-        var adServices = Object
-            .keys(ad)
-            .map(function (k) { return k.replace("0x", ""); });
         NRF.setServices(ad, {
-            advertise: adServices,
             uart: false,
+        });
+        var bangle2 = Bangle;
+        var cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
+        for (var id in ad) {
+            var serv = ad[id];
+            var value = void 0;
+            for (var ch in serv) {
+                value = serv[ch].value;
+                break;
+            }
+            cycle.push((_a = {}, _a[id] = value || [], _a));
+        }
+        bangle2.bleAdvert = cycle;
+        NRF.setAdvertising(cycle, {
+            interval: 100,
         });
     }
 }

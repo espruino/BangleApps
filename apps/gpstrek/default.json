@@ -1,0 +1,21 @@
+{
+  "mapCompass": true,
+  "mapScale":0.5,
+  "mapRefresh":1000,
+  "mapChunkSize": 15,
+  "mapDirection": true,
+  "overviewScroll": 30,
+  "overviewScale": 0.02,
+  "refresh":500,
+  "refreshLocked":3000,
+  "cacheMinFreeMem":2000,
+  "cacheMaxEntries":0,
+  "minCourseChange": 5,
+  "minPosChange": 5,
+  "waypointChangeDist": 50,
+  "queueWaitingTime": 5,
+  "autosearch": true,
+  "maxDistForAutosearch": 300,
+  "autosearchLimit": 3,
+  "numberOfSlices": 3
+}

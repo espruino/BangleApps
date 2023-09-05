@@ -1,6 +1,6 @@
 { "id": "kbswipe",
   "name": "Swipe keyboard",
-  "version":"0.08",
+  "version":"0.09",
   "description": "A library for text input via PalmOS style swipe gestures (beta!)",
   "icon": "app.png",
   "type":"textinput",

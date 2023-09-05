@@ -190,7 +190,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     },
     /*LANG*/"Cancel": () => showMainMenu(),
     /*LANG*/"Confirm": () => {
-      prepareAlarmForSave(alarm, alarmIndex, time);
+      prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
       showMainMenu();
     }

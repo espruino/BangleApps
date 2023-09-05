@@ -86,7 +86,7 @@
           var a = require("sched").newDefaultAlarm();
           a.id = "gb"+j;
           a.appid = "gbalarms";
-          a.on = true;
+          a.on = event.d[j].on !== undefined ? event.d[j].on : true;
           a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
           a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
           a.last = last;
@@ -193,9 +193,36 @@
         Bangle.on('HRM',actHRMHandler);
         actInterval = setInterval(function() {
           var steps = Bangle.getStepCount();
-          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM });
+          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM, rt:1 });
           lastSteps = steps;
         }, event.int*1000);
+      },
+      // {t:"actfetch", ts:long}
+      "actfetch": function() {
+        gbSend({t: "actfetch", state: "start"});
+        var actCount = 0;
+        var actCb = function(r) {
+          // The health lib saves the samples at the start of the 10-minute block
+          // However, GB expects them at the end of the block, so let's offset them
+          // here to keep a consistent API in the health lib
+          var sampleTs = r.date.getTime() + 600000;
+          if (sampleTs >= event.ts) {
+            gbSend({
+              t: "act",
+              ts: sampleTs,
+              stp: r.steps,
+              hrm: r.bpm,
+              mov: r.movement
+            });
+            actCount++;
+          }
+        }
+        if (event.ts != 0) {
+          require("health").readAllRecordsSince(new Date(event.ts - 600000), actCb);
+        } else {
+          require("health").readFullDatabase(actCb);
+        }
+        gbSend({t: "actfetch", state: "end", count: actCount});
       },
       "nav": function() {
         event.id="nav";
@@ -253,6 +280,7 @@
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
+    gbSend({t: "ver", fw: process.env.VERSION, hw: process.env.HWVERSION});
     GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
   }, 2000));
   NRF.on("disconnect", () => {
@@ -264,10 +292,9 @@
       require("messages").clearAll();
   });
   setInterval(sendBattery, 10*60*1000);
-  // Health tracking
-  Bangle.on('health', health=>{
-    if (actInterval===undefined) // if 'realtime' we do it differently
-      gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
+  // Health tracking - if 'realtime' data is sent with 'rt:1', but let's still send our activity log every 10 mins
+  Bangle.on('health', h=>{
+    gbSend({ t: "act", stp: h.steps, hrm: h.bpm, mov: h.movement });
   });
   // Music control
   Bangle.musicControl = cmd => {
