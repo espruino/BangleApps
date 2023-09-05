@@ -393,7 +393,7 @@ class MainScreen {
     }
 
     return {
-    // Define 1 “screenfull” as the unit here
+    // Define 1 "screenfull" as the unit here
       itemsPerPage: 1,
       pos: toPage(info.pos),
       min: toPage(info.min),
