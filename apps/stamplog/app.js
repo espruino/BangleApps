@@ -3,7 +3,7 @@ locale = require('locale');
 storage = require('Storage');
 
 // Storage filename to store user's timestamp log
-const LOG_FILENAME = 'stamplog.json';
+const LOG_FILENAME = 'timestamplog.json';
 
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 30;
@@ -13,7 +13,7 @@ const SCROLL_BAR_WIDTH = 12;
 
 var settings = {
   logItemFont: '12x20',
-  maxLogLength: 6
+  maxLogLength: 30
 };
 
 
@@ -444,4 +444,3 @@ stampLog.on('saveError', saveErrorAlert);
 
 var currentUI = new MainScreen(stampLog);
 currentUI.start();
-
