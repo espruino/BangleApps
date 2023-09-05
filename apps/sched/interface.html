@@ -265,10 +265,10 @@ function addTimer() {
 
 function readStorageIfExists(filename, cb) {
   Puck.write(`\x10(function() {
-    Bluetooth.print(JSON.stringify(require("Storage").list("${filename}").sort()));
+    Bluetooth.print(JSON.stringify(require("Storage").list("${filename}")));
     })()\n`, contents => {
       const fileNames = JSON.parse(contents);
-      if (fileNames.length > 0) {
+      if (fileNames.length > 0 && fileNames.includes(filename)) {
         Util.readStorage(filename,cb);
       } else {
         cb();
