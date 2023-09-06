@@ -6,7 +6,7 @@
     if (settings.vibrate===undefined) settings.vibrate=":";
     if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
     if (settings.repeat===undefined) settings.repeat=4;
-    if (settings.repeatCalls===undefined) settings.repeatCalls=4;
+    if (settings.repeatCalls===undefined) settings.repeatCalls=settings.repeat;
     if (settings.vibrateTimeout===undefined) settings.vibrateTimeout=60;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
     if (settings.maxMessages===undefined) settings.maxMessages=3;
