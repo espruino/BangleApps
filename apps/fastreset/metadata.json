@@ -1,12 +1,12 @@
 { "id": "fastreset",
   "name": "Fast Reset",
   "shortName":"Fast Reset",
-  "version":"0.01",
-  "description": "Reset the watch by holding the hardware button for half a second. If 'Fastload Utils' is installed this will typically be done with fastloading. A buzz acts as indicator.",
+  "version":"0.02",
+  "description": "Reset the watch by pressing the hardware button just a little bit longer than a click. If 'Fastload Utils' is installed this will typically be done with fastloading. A buzz acts as indicator.",
   "icon": "app.png",
   "type": "bootloader",
   "tags": "system",
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"fastreset.boot.js","url":"boot.js"}
