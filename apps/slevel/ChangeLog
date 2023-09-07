@@ -2,3 +2,4 @@
 0.02: Updated to work with both Bangle.js 1 and 2.
 0.03: Now also visible on Bangle.js 2
 0.04: Now work with different themes
+0.05: Take default rotation/reflection into account

@@ -2,6 +2,7 @@ g.clear();
 var old = {x:0,y:0};
 var W = g.getWidth();
 var H = g.getHeight();
+var defaultRotation = 0 | require('Storage').readJSON("setting.json").rotate;
 
 Bangle.on('accel',function(v) {
   var max = Math.max(Math.abs(v.x),Math.abs(v.y),Math.abs(v.z));
@@ -20,6 +21,17 @@ Bangle.on('accel',function(v) {
   var n = {
     x:E.clip(W/2+v.x*256,4,W-4),
     y:E.clip(H/2+v.y*256,4,H-4)};
+
+  if (defaultRotation === 1) {
+    n = {x:n.y,y:H-n.x};
+  } else if (defaultRotation === 2) {
+    n = {x:W-n.x,y:H-n.y};
+  } else if (defaultRotation === 3) {
+    n = {x:W-n.y,y:n.x};
+  } else if (defaultRotation === 4) {
+    n = {x:W-n.x,y:n.y};
+  }
+
   g.clearRect(old.x-3,old.y-3,old.x+6,old.y+6); // clear old marker
   g.setColor("#0f0");
   g.fillRect(n.x-3,n.y-3,n.x+6,n.y+6); // draw new marker
