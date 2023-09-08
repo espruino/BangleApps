@@ -6,6 +6,7 @@
   "icon": "Tyreid.img",
   "tags": "",
   "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
   "storage": [
     {"name":"Tyreid.app.js","url":"app.js"},
     {"name":"Tyreid.img","url":"app-icon.js","evaluate":true}
