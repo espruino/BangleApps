@@ -174,8 +174,8 @@ const frameDelay = 16 * frameRate / 15;
 const soundOptionBit = 0;
 const musicOptionBit = 1; 
 
-var levelLocksPacked = new Uint32Array(3);
-var options = 0; //bit 0 sound on/off, bit 1 music on/off
+var levelLocks = new Uint8Array(gmCount * diffCount);
+var options = new Uint8Array(2);
 
 //game
 
@@ -1688,165 +1688,102 @@ function printCongratsScreen(ax, ay, amsg)
 // save state
 // --------------------------------------------------------------------------------------------------
 
-
-function clearBit8(val, bit)
-{
-    if(bit > 7)
-        return val;
-    return val & (~(1 << bit));
-}
-
-function setBit8(val, bit)
-{
-    if (bit > 7)
-        return val;
-    return val | (1 << bit);
-}
-
-function checkBit8(val, bit)
- {
-    if (bit > 7)
-        return 0; 
-    return ((val >> bit) & 1);
- }
-
-function clearBit32(val, bit)
-{
-    if(bit > 31)
-        return val;
-    return val & (~(1 << bit));
-}
-
-function setBit32(val, bit)
-{
-    if (bit > 31)
-        return val;
-    return val | (1 << bit);
-}
-
-function checkBit32(val, bit)
- {
-    if (bit > 31)
-        return 0; 
-    return ((val >> bit) & 1);
- }
-
-function packLevelLock(mode, diff, level)
-{
-    var levelIndex = (mode * diffCount) + diff;
-    var pack = Math.floor(levelIndex / 6); // 6 x 5 bit nr in a pack so have to divide levelindex by 6 to get packnr
-    var bit = (levelIndex * 5) - (pack * 30); //6 x 5 bit nr in a pack so level index * 5 = bit nr acrross all packs - pack * 30 to know bit for current pack 
-    for (var i = 0; i<5; i++)
-    {
-        if (checkBit8(level, i))
-            levelLocksPacked[pack] = setBit32(levelLocksPacked[pack], bit + i);
-        else
-            levelLocksPacked[pack] = clearBit32(levelLocksPacked[pack], bit + i);
-    }
-}
-
-function unPackLevelLock(mode, diff)
-{
-    var levelIndex = (mode * diffCount) + diff;
-    var pack = Math.floor(levelIndex / 6); // 6 x 5 bit nr in a pack so have to divide levelindex by 6 to get packnr
-    var bit = (levelIndex * 5) - (pack * 30); //6 x 5 bit nr in a pack so level index * 5 = bit nr acrross all packs - pack * 30 to know bit for current pack 
-    var result = 0;
-    for (var i = 0; i<5; i++)
-    {
-        if (checkBit32(levelLocksPacked[pack], bit+i))
-            result = setBit8(result, i);
-    }
-    return result;
-}
-
 function validateSaveState()
 {
-    var levelsUnlocked = 0;
     for (var j=0; j<gmCount; j++)
     {
         for (var i=0; i<diffCount; i++)
         {
-            levelsUnlocked = unPackLevelLock(j, i);
-            if ((levelsUnlocked == 0) || (levelsUnlocked > levelCount))
+            if ((levelLocks[(j * diffCount) + i] == 0) || (levelLocks[(j * diffCount) + i] > levelCount))
                 return 0;
         }
     }
-    if (options > 3) //bit 0 & 1 set = 3
+    if (options[musicOptionBit] > 1)
         return 0;
+    if (options[soundOptionBit] > 1)
+        return 0;
+
     return 1;
 }
 
 function initSaveState()
 {
     //read from file 
-
-    //then
-    if(true || !validateSaveState())
+    var file = require("Storage").open("waternet.data.dat","r");
     {
-        levelLocksPacked[0] = 0;
-        levelLocksPacked[1] = 0;
-        levelLocksPacked[2] = 0;
+      var index = 0;
+      for (index = 0; index < gmCount * diffCount; index++)
+      {
+        tmp = file.readLine();
+        if(tmp !== undefined)
+          levelLocks[index] = Number(tmp);
+      }
+
+      for (index = 0; index < 2; index++)
+      {
+        tmp = file.readLine();
+        if(tmp !== undefined)
+          options[index] = Number(tmp);
+      }
+    }
+    //then
+    if(!validateSaveState())
+    {
         for (var j=0; j<gmCount; j++)
             for (var i=0; i<diffCount; i++)
-                packLevelLock(j, i, 1); //1st level unlocked
-        options = 3; //bit 0 & 1 set = music & sound on
+                levelLocks[(j * diffCount) + i] =  1; //1st level unlocked
+        options[musicOptionBit] = 1; //bit 0 & 1 set = music & sound on
+        options[soundOptionBit] = 1;
     }
 }
 
 function saveSaveState()
 {
     //save to file
-    //EEPROM.put(addrLevelLocksPacked, levelLocksPacked);
-    //EEPROM.put(addrOptions, options);
+    var file = require("Storage").open("waternet.data.dat", "w");
+    for (var index = 0; index < gmCount * diffCount; index++)
+      file.write(levelLocks[index].toString() + "\n");
+    file.write(options[musicOptionBit].toString() + "\n");
+    file.write(options[soundOptionBit].toString() + "\n");
 }
 
 function setMusicOnSaveState(value)
 {
-    if (value)
-    {
-        options = setBit8(options, musicOptionBit);
-    }
-    else
-    {
-        options = clearBit8(options, musicOptionBit);
-    }
-    saveSaveState();  
+    options[musicOptionBit] = value;
+    saveSaveState();
 }
 
 function isMusicOnSaveState()
 {
-    return checkBit8(options, musicOptionBit);
+    return options[musicOptionBit] == 1;
 }
 
 function setSoundOnSaveState(value)
 {
-    if (value)
-        options = setBit8(options, soundOptionBit);
-    else
-        options = clearBit8(options, soundOptionBit);
+    options[soundOptionBit] = value;
     saveSaveState();
 }
 
 function isSoundOnSaveState()
 {
-    return checkBit8(options, soundOptionBit);
+    return options[soundOptionBit] == 1;
 }
 
 function levelUnlocked(mode, diff, level)
 {
-    return (unPackLevelLock(mode, diff) > level);
+    return levelLocks[(mode * diffCount) + diff] > level;
 }
 
 function lastUnlockedLevel(mode, diff)
 {
-    return unPackLevelLock(mode, diff);
+    return levelLocks[(mode * diffCount) + diff];
 }
 
 function unlockLevel(mode, diff, level)
 {
     if (level + 1> lastUnlockedLevel(mode, diff))
     {
-        packLevelLock(mode, diff, level + 1);
+        levelLocks[(mode * diffCount) + diff] = level + 1;
         saveSaveState();
     }
 }
