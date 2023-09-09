@@ -148,6 +148,7 @@ if (o.c.autoProgress) {
     //if (o.v.level===undefined) o.v.level = -1;
     o.v.level = o.v.level+1;
     o.f.draw(o.v.level);
+    cb("auto");
     if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
   };
   o.f.startAutoUpdate = ()=>{o.f.stopAutoUpdate(); o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);};
