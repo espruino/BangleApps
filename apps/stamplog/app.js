@@ -2,8 +2,9 @@ Layout = require('Layout');
 locale = require('locale');
 storage = require('Storage');
 
-// Storage filename to store user's timestamp log
+// Storage filenames
 const LOG_FILENAME = 'timestamplog.json';
+const SETTINGS_FILENAME = 'timestamplog.settings.json';
 
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 30;
@@ -11,10 +12,20 @@ const DRAG_THRESHOLD = 30;
 // Width of scroll indicators
 const SCROLL_BAR_WIDTH = 12;
 
-var settings = {
+
+// Settings
+
+const SETTINGS = Object.assign({
   logItemFont: '12x20',
+  logItemFontSize: 1,
   maxLogLength: 30
-};
+}, storage.readJSON(SETTINGS_FILENAME, true) || {});
+
+function saveSettings() {
+  if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
+    E.showAlert('Trouble saving settings', "Can't save settings");
+  }
+}
 
 
 // Fetch a stringified image
@@ -278,7 +289,7 @@ class MainScreen {
             {type: 'btn', font: '6x8:2', fillx: 1, label: '+ XX:XX', id: 'addBtn',
              cb: this.addTimestamp.bind(this)},
             {type: 'btn', font: '6x8:2', label: getIcon('menu'), id: 'menuBtn',
-             cb: L => console.log(L)},
+             cb: settingsMenu},
           ],
          },
        ],
@@ -288,7 +299,7 @@ class MainScreen {
     // Calculate how many log items per page we have space to display
     layout.update();
     let availableHeight = layout.placeholder.h;
-    g.setFont(settings.logItemFont);
+    g.setFont(SETTINGS.logItemFont);
     let logItemHeight = g.getFontHeight() * 2;
     this.itemsPerPage = Math.floor(availableHeight / logItemHeight);
 
@@ -423,6 +434,30 @@ class MainScreen {
 }
 
 
+function settingsMenu() {
+  function endMenu() {
+    saveSettings();
+    currentUI.start();
+  }
+
+  currentUI.stop();
+  E.showMenu({
+    '': {
+      title: 'Timestamp Logger',
+      back: endMenu,
+    },
+    'Max log size': {
+      value: SETTINGS.maxLogLength,
+      min: 5, max: 100, step: 5,
+      onchange: v => {
+        SETTINGS.maxLogLength = v;
+        stampLog.maxLength = v;
+      }
+    },
+  });
+}
+
+
 function saveErrorAlert() {
   currentUI.stop();
   // Not `showAlert` because the icon plus message don't fit the
@@ -438,7 +473,7 @@ function saveErrorAlert() {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-stampLog = new StampLog(LOG_FILENAME, settings.maxLogLength);
+stampLog = new StampLog(LOG_FILENAME, SETTINGS.maxLogLength);
 E.on('kill', stampLog.save.bind(stampLog));
 stampLog.on('saveError', saveErrorAlert);
 
