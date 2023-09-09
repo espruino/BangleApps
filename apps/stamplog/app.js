@@ -367,7 +367,7 @@ class MainScreen {
       }
       if (Math.abs(distanceY) > DRAG_THRESHOLD) {
         // Scroll threshold reached
-        Bangle.buzz(50, .2);
+        Bangle.buzz(50, .5);
         this.scroll(distanceY > 0 ? 'u' : 'd');
         distanceY = null;
       }
