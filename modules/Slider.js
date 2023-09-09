@@ -1,6 +1,6 @@
 try { // for making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined.
 
-exports.interface = function(cb, conf) {
+exports.create = function(cb, conf) {
 
 const R = Bangle.appRect;
 
