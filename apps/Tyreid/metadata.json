@@ -1,7 +1,7 @@
 { "id": "Tyreid",
   "name": "Tyreid",
   "shortName":"Tyreid",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Bluetooth war-driving app for Bangle.js 2",
   "icon": "Tyreid.img",
   "tags": "",
