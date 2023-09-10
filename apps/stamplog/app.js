@@ -16,8 +16,8 @@ const SCROLL_BAR_WIDTH = 12;
 // Settings
 
 const SETTINGS = Object.assign({
-  logItemFont: '12x20',
-  logItemFontSize: 1,
+  logFont: '12x20',
+  logFontSize: 1,
   maxLogLength: 30
 }, storage.readJSON(SETTINGS_FILENAME, true) || {});
 
@@ -173,7 +173,7 @@ function renderLogItem(elem) {
   if (elem.item) {
     g.setColor(g.theme.bg)
      .fillRect(elem.x, elem.y, elem.x + elem.w - 1, elem.y + elem.h - 1)
-     .setFont('12x20')
+     .setFont(SETTINGS.logFont)
      .setFontAlign(-1, -1)
      .setColor(g.theme.fg)
      .drawLine(elem.x, elem.y, elem.x + elem.w - 1, elem.y)
@@ -299,7 +299,7 @@ class MainScreen {
     // Calculate how many log items per page we have space to display
     layout.update();
     let availableHeight = layout.placeholder.h;
-    g.setFont(SETTINGS.logItemFont);
+    g.setFont(SETTINGS.logFont);
     let logItemHeight = g.getFontHeight() * 2;
     this.itemsPerPage = Math.floor(availableHeight / logItemHeight);
 
@@ -439,12 +439,21 @@ function settingsMenu() {
     saveSettings();
     currentUI.start();
   }
+  const fonts = g.getFonts();
 
   currentUI.stop();
   E.showMenu({
     '': {
       title: 'Timestamp Logger',
       back: endMenu,
+    },
+    'Log font': {
+      value: fonts.indexOf(SETTINGS.logFont),
+      min: 0, max: fonts.length - 1,
+      format: v => fonts[v],
+      onchange: v => {
+        SETTINGS.logFont = fonts[v];
+      },
     },
     'Max log size': {
       value: SETTINGS.maxLogLength,
