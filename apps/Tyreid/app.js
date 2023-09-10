@@ -207,21 +207,21 @@ WIDGETS["widTyreid"]={
 		width: 24, // width of the widget
 		draw: function() {
       let disp_dev_val = "-";
-			g.reset(); // reset the graphics context to defaults (color/font/etc)
-      if (gpsFix_flag == 1) {
-        g.setColor(0,1,0); // green
-      } else {
-        g.setColor(1,0,0); // red
-      }
+
       if (num_bt_devices < 99) {
         disp_dev_val = num_bt_devices.toString();
       } else {
         disp_dev_val = "99+";
       }
+
       g.setFont("6x8",3);
-			g.drawString(disp_dev_val, this.x+24/2, this.y);
-		}
-	};
+      if (gpsFix_flag == 1) {
+        g.setColor(0,1,0).drawString(disp_dev_val, this.x+24/2, this.y); // green
+      } else {
+        g.setColor(1,0,0).drawString(disp_dev_val, this.x+24/2, this.y); // red
+      }
+      }
+};
 
 
 let init_menu = {
