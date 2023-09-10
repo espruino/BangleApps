@@ -29,6 +29,8 @@ o.c = Object.assign({ // constants go here.
   propagateDrag:false,
   immediatedraw:false,
   autoProgress:false,
+  noOuterBorder:false,
+  noInnerBorder:false
 },conf);
 
 o.c._xStart = o.c.xStart + 4; // +4 to compensate for the border.
@@ -121,16 +123,16 @@ o.f.dragSlider = e=>{
 o.f.draw = (level)=>{
   "ram";
 
-  if (true || o.v.firstRun || !o.c.lazy) {
+  if (true && !o.c.noOuterBorder /*|| o.v.firstRun || !o.c.lazy*/) {
     g.setColor(o.c.colorFG).fillRect(o.c.borderRect); // To get outer border...
   }
   if (false && level == o.v.prevLevel) {if (!o.v.firstRun) return; if (o.v.firstRun) o.v.firstRun = false;}
 
   o.v.prevLevel = level;
 
-  g.setColor(o.c.colorBG).
-    fillRect(o.c.hollowRect). // ... and here it's made hollow.
-    setColor(0==level?o.c.colorBG:o.c.colorFG).
+  g.setColor(o.c.colorBG);
+  if (!o.c.noOuterBorder || !o.c.noInnerBorder) g.fillRect(o.c.hollowRect); // ... and here it's made hollow.
+  g.setColor(0==level?o.c.colorBG:o.c.colorFG).
     fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
 
   //print(level);
