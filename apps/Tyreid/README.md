@@ -10,6 +10,7 @@ Menu options:
 - Exit: This exits the app.
 
 The current number of discovered devices is displayed in the top left corner.
+This value is displayed in green when the GPS has a fix, or red otherwise.
 
 To retrieve the CSV file, connect to the watch through the Espruino web IDE (https://www.espruino.com/ide/). From there the files stored on the watch can be downloaded by clicking the storage icon in the IDE's central column.
 
