@@ -180,7 +180,7 @@ function renderLogItem(elem) {
      .drawString(locale.date(elem.item.stamp, 1)
                  + '\n'
                  + locale.time(elem.item.stamp).trim(),
-                 elem.x, elem.y);
+                 elem.x, elem.y + 1);
   } else {
     g.setColor(g.blendColor(g.theme.bg, g.theme.fg, 0.25))
      .fillRect(elem.x, elem.y, elem.x + elem.w - 1, elem.y + elem.h - 1);
@@ -242,6 +242,7 @@ class MainScreen {
   // Launch this UI and make it live
   start() {
     this._initLayout();
+    this.layout.clear();
     this.scroll('b');
     this.render('buttons');
 
