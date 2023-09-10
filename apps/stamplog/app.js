@@ -17,7 +17,8 @@ const SCROLL_BAR_WIDTH = 12;
 
 const SETTINGS = Object.assign({
   logFont: '12x20',
-  logFontSize: 1,
+  logFontHSize: 1,
+  logFontVSize: 1,
   maxLogLength: 30
 }, storage.readJSON(SETTINGS_FILENAME, true) || {});
 
@@ -25,6 +26,10 @@ function saveSettings() {
   if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
     E.showAlert('Trouble saving settings', "Can't save settings");
   }
+}
+
+function fontSpec(name, hsize, vsize) {
+  return name + ':' + hsize + 'x' + vsize;
 }
 
 
@@ -173,7 +178,8 @@ function renderLogItem(elem) {
   if (elem.item) {
     g.setColor(g.theme.bg)
      .fillRect(elem.x, elem.y, elem.x + elem.w - 1, elem.y + elem.h - 1)
-     .setFont(SETTINGS.logFont)
+     .setFont(fontSpec(SETTINGS.logFont,
+                       SETTINGS.logFontHSize, SETTINGS.logFontVSize))
      .setFontAlign(-1, -1)
      .setColor(g.theme.fg)
      .drawLine(elem.x, elem.y, elem.x + elem.w - 1, elem.y)
@@ -300,9 +306,11 @@ class MainScreen {
     // Calculate how many log items per page we have space to display
     layout.update();
     let availableHeight = layout.placeholder.h;
-    g.setFont(SETTINGS.logFont);
+    g.setFont(fontSpec(SETTINGS.logFont,
+                       SETTINGS.logFontHSize, SETTINGS.logFontVSize));
     let logItemHeight = g.getFontHeight() * 2;
-    this.itemsPerPage = Math.floor(availableHeight / logItemHeight);
+    this.itemsPerPage = Math.max(1,
+                                 Math.floor(availableHeight / logItemHeight));
 
     // Populate log items in layout
     for (i = 0; i < this.itemsPerPage; i++) {
@@ -448,6 +456,14 @@ function settingsMenu() {
       title: 'Timestamp Logger',
       back: endMenu,
     },
+    'Max log size': {
+      value: SETTINGS.maxLogLength,
+      min: 5, max: 100, step: 5,
+      onchange: v => {
+        SETTINGS.maxLogLength = v;
+        stampLog.maxLength = v;
+      }
+    },
     'Log font': {
       value: fonts.indexOf(SETTINGS.logFont),
       min: 0, max: fonts.length - 1,
@@ -456,13 +472,19 @@ function settingsMenu() {
         SETTINGS.logFont = fonts[v];
       },
     },
-    'Max log size': {
-      value: SETTINGS.maxLogLength,
-      min: 5, max: 100, step: 5,
+    'Log font H size': {
+      value: SETTINGS.logFontHSize,
+      min: 1, max: 50,
       onchange: v => {
-        SETTINGS.maxLogLength = v;
-        stampLog.maxLength = v;
-      }
+        SETTINGS.logFontHSize = v;
+      },
+    },
+    'Log font V size': {
+      value: SETTINGS.logFontVSize,
+      min: 1, max: 50,
+      onchange: v => {
+        SETTINGS.logFontVSize = v;
+      },
     },
   });
 }
