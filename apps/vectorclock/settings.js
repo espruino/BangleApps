@@ -57,7 +57,7 @@
       min: 0, max: dateFormats.length-1,
       format: v => dateFormats[v],
       onchange: v => {
-        settings.chimetype = dateFormats[v];
+        settings.dateFormat = dateFormats[v];
         writeSettings();
       }
     },
@@ -66,7 +66,7 @@
       min: 0, max: dateSeparators.length-1,
       format: v => dateSeparators[v],
       onchange: v => {
-        settings.chimetype = dateSeparators[v];
+        settings.dateSeparator = dateSeparators[v];
         writeSettings();
       }
     },
