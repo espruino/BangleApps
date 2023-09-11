@@ -26,8 +26,8 @@ const SELECTORTILES = {
   width: 10,
   height: 10,
   bpp: 8,
-  transparent: 0,
-  buffer: require("heatshrink").decompress(atob("AH4AP64IIBJQKIAH5tQMhISaAH51ZAH5Z/KNYJdAH4A/Z/7P/AC4"))
+  transparent: 185,
+  buffer: require("heatshrink").decompress(atob("3IA/AB3XBBAJKBRAA/NqBkJCTQA/OrIA/LP5RrBLoA/AH7P/Z/4A/AE8ABBAJKBRAA/NqBkJCTQA/OrIA/LP5RrBLoA/AH7P/Z/4AXA="))
 };
 
 const TITLE = {
@@ -40,11 +40,9 @@ const TITLE = {
 // --------------------------------------------------------------------------------------------------
 // global variables and consts
 // --------------------------------------------------------------------------------------------------
-//need to call this first otherwise 
-//Bangle.apprect is not updated and i can't calculate SCREENOFFSETY
-Bangle.loadWidgets();
-
-const DEBUGMODE = 0;
+const DEBUGMODE = 1;
+const DEBUGMODEINPUT = 0;
+const DEBUGMODESPEED = 1;
 const DEBUGMODERAMUSE = 0;
 
 const SCREENWIDTH = 176;
@@ -53,7 +51,6 @@ const SCREENHEIGHT = 176;
 const TILESIZE = 10;
 
 const SCREENOFFSETX = ((SCREENWIDTH - 16 * TILESIZE) >> 1);
-const SCREENOFFSETY = ((SCREENHEIGHT + Bangle.appRect.y - 8 * TILESIZE) >> 1);
 const MAXBOARDWIDTH = 10;
 const MAXBOARDHEIGHT = 8;
 
@@ -119,7 +116,9 @@ const MMCREDITS = 3;
 const MMCOUNT = 4;
 
 const OPSOUND = 0;
-const OPCOUNT = 1;
+const OPINPUTRECTS = 1;
+const OPWIDGETS = 2;
+const OPCOUNT = 3;
 
 const TSMAINMENU = 0;
 const TSGAMEMODE = 1;
@@ -134,6 +133,7 @@ const ARROWUP = 120;
 const ARROWLEFT = 123;
 const ARROWRIGHT = 121;
 const LEFTMENU = 118;
+const EMPTY = 61;
 
 const FRAMERATE = 15;
 
@@ -160,16 +160,16 @@ var selectionX, selectionY;
 var moves;
 var randomSeedGame;
 var level = new Uint8Array(MAXBOARDSIZE);
+var redrawPartial;
+var screenOffsetY;
 
 // Cursor
 const maxCursorFrameCount = (10 * FRAMERATE / 60);
 const cursorAnimCount = 2; //blink on & off
-const cursorNumTiles = 16; //for the max 2 cursors shown at once (on help screens) 
+const cursorNumTiles = 16; //for the max 2 cursors shown at once (on help screens)
 
 var cursorFrameCount, cursorFrame, showCursor;
 var spritePos = [];
-for (var i = 0; i < cursorNumTiles; i++)
-  spritePos.push(new Int8Array(2));
 
 //intro
 var frames;
@@ -177,10 +177,8 @@ var titlePosY;
 const frameDelay = 16 * FRAMERATE / 15;
 
 //savestate
-const soundOptionBit = 0;
-
 var levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
-var options = new Uint8Array(2);
+var options = new Uint8Array(OPCOUNT);
 
 //sound
 var soundon = 1;
@@ -203,76 +201,25 @@ var btnb = false;
 
 // --------------------------------------------------------------------------------------------------
 // random stuff
-// https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
+// https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript#72732727
 // --------------------------------------------------------------------------------------------------
 
 var randfunc;
 
-Math.imul = Math.imul || function(a, b) {
-  var ah = (a >>> 16) & 0xffff;
-  var al = a & 0xffff;
-  var bh = (b >>> 16) & 0xffff;
-  var bl = b & 0xffff;
-  // the shift by 0 fixes the sign on the high part
-  // the final |0 converts the unsigned value into a signed value
-  return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0) | 0);
-};
-
-function cyrb128(str) {
-  let h1 = 1779033703,
-    h2 = 3144134277,
-    h3 = 1013904242,
-    h4 = 2773480762;
-  for (let i = 0, k; i < str.length; i++) {
-    k = str.charCodeAt(i);
-    h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-    h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-    h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-    h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
-  }
-  h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-  h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-  h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-  h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-  h1 ^= (h2 ^ h3 ^ h4);
-  h2 ^= h1;
-  h3 ^= h1;
-  h4 ^= h1;
-  return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
-}
-
-//based on code from pracrand https://pracrand.sourceforge.net/ (public domain)
-function sfc32(a, b, c, d) {
-  return function() {
-    a >>>= 0;
-    b >>>= 0;
-    c >>>= 0;
-    d >>>= 0;
-    var t = (a + b) | 0;
-    a = b ^ b >>> 9;
-    b = c + (c << 3) | 0;
-    c = (c << 21 | c >>> 11);
-    d = d + 1 | 0;
-    t = t + d | 0;
-    c = c + t | 0;
-    return (t >>> 0) / 4294967296;
+function srand(seed) {
+  var m = Math.pow(2, 35) - 31;
+  var a = 185852;
+  var s = seed % m;
+  randfunc = function() {
+    return (s = s * a % m);
   };
 }
 
-function randomIntFromInterval(min, max) { // min and max included 
-  return Math.floor(randfunc() * (max - min + 1) + min);
-}
-
-function srand(seed) {
-  // Create cyrb128 state:
-  var aseed = cyrb128("applespairs" + seed.toString());
-  // Four 32-bit component hashes provide the seed for sfc32.
-  randfunc = sfc32(aseed[0], aseed[1], aseed[2], aseed[3]);
-}
-
 function random(value) {
-  return randomIntFromInterval(0, value - 1);
+  return Math.floor(randfunc()) % value;
 }
+
+srand(Date().getTime());
 
 // --------------------------------------------------------------------------------------------------
 // Sound stuff
@@ -332,14 +279,14 @@ function move_sprite(sprite, x, y) {
   spritePos[sprite][1] = y;
 }
 
-function drawCursors() {
+function drawCursors(clear) {
   if ((showCursor == 0) || (cursorFrame & 1)) // 2nd or to add blink effect, it will skip drawing if bit 1 is set
     return;
   g.setColor(1, 0, 0);
   for (var i = 0; i < cursorNumTiles; i++)
     if (spritePos[i][1] < SCREENHEIGHT)
-      g.drawImage(SELECTORTILES, SCREENOFFSETX + spritePos[i][0], SCREENOFFSETY + spritePos[i][1], {
-        frame: ((i % 8))
+      g.drawImage(SELECTORTILES, SCREENOFFSETX + spritePos[i][0], screenOffsetY + spritePos[i][1], {
+        frame: ((clear ? 8 : 0) + (i % 8))
       });
   g.setColor(1, 1, 1);
 }
@@ -399,7 +346,7 @@ function initCursors() {
 // --------------------------------------------------------------------------------------------------
 
 function set_bkg_tile_xy(x, y, tile) {
-  g.drawImage(currentTiles, SCREENOFFSETX + x * TILESIZE, SCREENOFFSETY + y * TILESIZE, {
+  g.drawImage(currentTiles, SCREENOFFSETX + x * TILESIZE, screenOffsetY + y * TILESIZE, {
     frame: tile
   });
 }
@@ -413,7 +360,7 @@ function get_bkg_data() {
 }
 
 function set_bkg_tiles(x, y, map) {
-  g.drawImage(map, SCREENOFFSETX + x, SCREENOFFSETY + y);
+  g.drawImage(map, SCREENOFFSETX + x, screenOffsetY + y);
 }
 
 function setBlockTilesAsBackground() {
@@ -811,7 +758,7 @@ function intro() {
     } else {
       requiresFlip = 1;
       g.drawImage(TITLE, SCREENOFFSETX, titlePosY);
-      if (titlePosY > SCREENOFFSETY) {
+      if (titlePosY > screenOffsetY) {
         titlePosY -= 60 / FRAMERATE;
       } else {
         gameState = GSINITTITLE;
@@ -1008,7 +955,7 @@ function handleConnectPoint(currentPoint, cellStack, cc) {
 
   }
 
-  //if tile has passage to the east and east neigbour passage to the west 
+  //if tile has passage to the east and east neigbour passage to the west
   if ((lookUpX + 1 < boardWidth) && (!(level[currentPoint] & 2))) {
     tmp = currentPoint + 1;
     tmp2 = level[tmp];
@@ -1027,7 +974,7 @@ function handleConnectPoint(currentPoint, cellStack, cc) {
     }
   }
 
-  //if tile has passage to the south and south neigbour passage to the north 
+  //if tile has passage to the south and south neigbour passage to the north
   if ((lookUpY + 1 < boardHeight) && (!(level[currentPoint] & 4))) {
     tmp = currentPoint + boardWidth;
     tmp2 = level[tmp];
@@ -1045,7 +992,7 @@ function handleConnectPoint(currentPoint, cellStack, cc) {
     }
   }
 
-  //if tile has passage to the west and west neigbour passage to the east 
+  //if tile has passage to the west and west neigbour passage to the east
   if ((lookUpX > 0) && (!(level[currentPoint] & 8))) {
     tmp = currentPoint - 1;
     tmp2 = level[tmp];
@@ -1193,7 +1140,7 @@ function generateLevel() {
 }
 
 //when all board tiles are not below 16, the level is cleared
-//as there are 16 tiles per tilegroup (no water, water, special start with water) 
+//as there are 16 tiles per tilegroup (no water, water, special start with water)
 function isLevelDone() {
   for (var i = 0; i != boardSize; i++)
     if (level[i] < 16)
@@ -1202,15 +1149,17 @@ function isLevelDone() {
   return 1;
 }
 
-function initLevel(aRandomSeed) {
-  //g.setColor(0,0,0);
-  //g.fillRect(SCREENOFFSETX + ((16 - 10) >> 1) * TILESIZE,  SCREENOFFSETY + ((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE, SCREENOFFSETX + (((16 - 10) >> 1) * TILESIZE) + (10*TILESIZE), SCREENOFFSETY + (((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE) +(3*TILESIZE));
-  //g.setColor(1,1,1);
-  printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 1, "[*********]");
-  printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 0, "| LOADING +");
-  printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) + 1, "<#########>");
-  g.flip();
-
+function initLevel(aRandomSeed, noLoading) {
+  var startTime = Date().getTime();
+  if (!noLoading) {
+    //g.setColor(0,0,0);
+    //g.fillRect(SCREENOFFSETX + ((16 - 10) >> 1) * TILESIZE,  screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE, SCREENOFFSETX + (((16 - 10) >> 1) * TILESIZE) + (10*TILESIZE), screenOffsetY + (((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE) +(3*TILESIZE));
+    //g.setColor(1,1,1);
+    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 1, "[*********]");
+    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 0, "| LOADING +");
+    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) + 1, "<#########>");
+    g.flip();
+  }
   levelDone = 0;
   moves = 0;
   if (difficulty != DIFFRANDOM)
@@ -1269,6 +1218,8 @@ function initLevel(aRandomSeed) {
   shuffleLevel();
   //update possibly connected tiles already starting from startpoint
   updateConnected();
+  if (DEBUGMODESPEED)
+    debugLog("Level Generated in " + (Date().getTime() - startTime).toString() + " ms");
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -1279,7 +1230,7 @@ function initLevel(aRandomSeed) {
 function initLevelsCleared() {
   set_bkg_data(CONGRATSTILES);
   g.clearRect(Bangle.appRect);
-  g.drawImage(CONGRATSSCREEN, SCREENOFFSETX, SCREENOFFSETY);
+  g.drawImage(CONGRATSSCREEN, SCREENOFFSETX, screenOffsetY);
   switch (difficulty) {
     case DIFFVERYEASY:
       printCongratsScreen(0, 3, "VERY EASY LEVELS");
@@ -1514,63 +1465,79 @@ function printDebug(ax, ay, amsg) {
 function printMessage(ax, ay, amsg) {
   var index = 0;
   var p = 0;
-  while (1) {
-    var fChar = amsg.charAt(p++);
+  var aCode = 'A'.charCodeAt(0);
+  var zCode = 'Z'.charCodeAt(0);
+  var zeroCode = '0'.charCodeAt(0);
+  var nineCode = '9'.charCodeAt(0);
+  while (p < amsg.length) {
+    var fCharCode = amsg.charCodeAt(p++);
     var tile = 61;
-    switch (fChar) {
-      case '':
+    switch (fCharCode) {
+      case 0:
         return;
 
-      case '[':
+        // '['
+      case 91:
         tile = 70;
         break;
 
-      case ']':
+        //']'
+      case 93:
         tile = 64;
         break;
 
-      case '<':
+        //'<'
+      case 60:
         tile = 73;
         break;
 
-      case '>':
+        //'>'
+      case 62:
         tile = 67;
         break;
 
-      case '+':
+        //'+'
+      case 43:
         tile = 63;
         break;
 
-      case '*':
+        //'*'
+      case 42:
         tile = 62;
         break;
 
-      case '|':
+        //'|'
+      case 124:
         tile = 69;
         break;
 
-      case '#':
+        //'#'
+      case 35:
         tile = 65;
         break;
 
-      case ':':
+        //':'
+      case 58:
         tile = 116;
         break;
 
-      case 'a':
+        //'a'
+      case 97:
         tile = 119;
         break;
 
-      case 'b':
+        //'b'
+      case 98:
         tile = 117;
         break;
 
       default:
-        if ((fChar.charCodeAt(0) >= 'A'.charCodeAt(0)) && (fChar.charCodeAt(0) <= 'Z'.charCodeAt(0)))
-          tile = fChar.charCodeAt(0) + 25;
-
-        if ((fChar.charCodeAt(0) >= '0'.charCodeAt(0)) && (fChar.charCodeAt(0) <= '9'.charCodeAt(0)))
-          tile = fChar.charCodeAt(0) + 32;
+        if ((fCharCode >= aCode) && (fCharCode <= zCode)) {
+          tile = fCharCode + 25;
+        } else {
+          if ((fCharCode >= zeroCode) && (fCharCode <= nineCode))
+            tile = fCharCode + 32;
+        }
         break;
     }
     set_bkg_tile_xy(ax + index, ay, tile);
@@ -1583,18 +1550,15 @@ function printCongratsScreen(ax, ay, amsg) {
   // based on input form @Pharap
   var index = 0;
   var p = 0;
-  while (1) {
-    var fChar = amsg.charAt(p++);
+  var aCode = 'A'.charCodeAt(0);
+  var zCode = 'Z'.charCodeAt(0);
+  while (p < amsg.length) {
+    var fCharCode = amsg.charCodeAt(p++);
     var tile = 26;
-    switch (fChar) {
-      case '':
-        return;
-
-      default:
-        if ((fChar.charCodeAt(0) >= 'A'.charCodeAt(0)) && (fChar.charCodeAt(0) <= 'Z'.charCodeAt(0)))
-          tile = fChar.charCodeAt(0) - 'A'.charCodeAt(0);
-        break;
-    }
+    if (fCharCode == 0)
+      return;
+    if ((fCharCode >= aCode) && (fCharCode <= zCode))
+      tile = fCharCode - aCode;
     set_bkg_tile_xy(ax + index, ay, tile);
     ++index;
   }
@@ -1611,53 +1575,77 @@ function validateSaveState() {
         return 0;
     }
   }
-  if (options[soundOptionBit] > 1)
+  if (options[OPSOUND] > 1)
+    return 0;
+  if (options[OPWIDGETS] > 1)
+    return 0;
+  if (options[OPINPUTRECTS] > 1)
     return 0;
 
   return 1;
 }
 
 function initSaveState() {
-  //read from file 
+  //read from file
   var file = require("Storage").open("waternet.data.dat", "r");
-  {
-    var index = 0;
-    for (index = 0; index < GMCOUNT * DIFFCOUNT; index++) {
-      tmp = file.readLine();
-      if (tmp !== undefined)
-        levelLocks[index] = Number(tmp);
-    }
+  var index = 0;
+  for (index = 0; index < GMCOUNT * DIFFCOUNT; index++) {
+    tmp = file.readLine();
+    if (tmp !== undefined)
+      levelLocks[index] = Number(tmp);
+  }
 
-    for (index = 0; index < 2; index++) {
-      tmp = file.readLine();
-      if (tmp !== undefined)
-        options[index] = Number(tmp);
-    }
+  for (index = 0; index < OPCOUNT; index++) {
+    tmp = file.readLine();
+    if (tmp !== undefined)
+      options[index] = Number(tmp);
   }
   //then
   if (!validateSaveState()) {
     for (var j = 0; j < GMCOUNT; j++)
       for (var i = 0; i < DIFFCOUNT; i++)
         levelLocks[(j * DIFFCOUNT) + i] = 1; //1st level unlocked
-    options[soundOptionBit] = 1;
+    options[OPSOUND] = 1;
+    options[OPWIDGETS] = 0;
+    options[OPINPUTRECTS] = 0;
   }
 }
 
 function saveSaveState() {
   //save to file
   var file = require("Storage").open("waternet.data.dat", "w");
-  for (var index = 0; index < GMCOUNT * DIFFCOUNT; index++)
+  var index;
+  for (index = 0; index < GMCOUNT * DIFFCOUNT; index++)
     file.write(levelLocks[index].toString() + "\n");
-  file.write(options[soundOptionBit].toString() + "\n");
+  for (index = 0; index < OPCOUNT; index++)
+    file.write(options[index].toString() + "\n");
 }
 
 function setSoundOnSaveState(value) {
-  options[soundOptionBit] = value;
+  options[OPSOUND] = value;
   saveSaveState();
 }
 
 function isSoundOnSaveState() {
-  return options[soundOptionBit] == 1;
+  return options[OPSOUND] == 1;
+}
+
+function setWidgetsOnSaveState(value) {
+  options[OPWIDGETS] = value;
+  saveSaveState();
+}
+
+function isWidgetsOnSaveState() {
+  return options[OPWIDGETS] == 1;
+}
+
+function setInputRectsOnSaveState(value) {
+  options[OPINPUTRECTS] = value;
+  saveSaveState();
+}
+
+function isInputRectsOnSaveState() {
+  return options[OPINPUTRECTS] == 1;
 }
 
 function levelUnlocked(mode, diff, level) {
@@ -1679,68 +1667,108 @@ function unlockLevel(mode, diff, level) {
 // titlescreen
 // --------------------------------------------------------------------------------------------------
 
-function drawTitleScreen() {
-  g.clearRect(Bangle.appRect);
-  g.drawImage(TITLE, SCREENOFFSETX, SCREENOFFSETY);
-
-  switch (titleStep) {
-    case TSMAINMENU:
-      printMessage(5, 4, "START");
-      printMessage(5, 5, "HELP");
-      printMessage(5, 6, "OPTIONS");
-      printMessage(5, 7, "CREDITS");
-      break;
-    case TSDIFFICULTY:
-      printMessage(3, 3, "VERY EASY");
-      printMessage(3, 4, "EASY");
-      printMessage(3, 5, "NORMAL");
-      printMessage(3, 6, "HARD");
-      if (difficulty <= DIFFVERYHARD)
-        printMessage(3, 7, "VERY HARD");
-      else
-        printMessage(3, 7, "RANDOM");
-      break;
-    case TSGAMEMODE:
-      printMessage(5, 4, "ROTATE");
-      printMessage(5, 5, "SLIDE");
-      printMessage(5, 6, "ROSLID");
-      break;
-    case TSCREDITS:
-      printMessage(3, 5, "CREATED BY");
-      printMessage(2, 6, "WILLEMS DAVY");
-      printMessage(2, 7, "JOYRIDER3774");
-      break;
-    case TSOPTIONS:
-      if (isSoundOn())
-        printMessage(4, 4, "SOUND ON");
-      else
-        printMessage(4, 4, "SOUND OFF");
-      break;
-  }
-
+function drawMenuSelector(tile) {
   //set menu tile
   switch (titleStep) {
     case TSMAINMENU:
-      set_bkg_tile_xy(4, 4 + mainMenu, LEFTMENU);
+      set_bkg_tile_xy(4, 4 + mainMenu, tile);
       break;
     case TSGAMEMODE:
-      set_bkg_tile_xy(4, 4 + gameMode, LEFTMENU);
+      set_bkg_tile_xy(4, 4 + gameMode, tile);
       break;
     case TSDIFFICULTY:
-      if (difficulty >= DIFFVERYHARD)
-        set_bkg_tile_xy(2, 7, LEFTMENU);
-      else
-        set_bkg_tile_xy(2, 3 + difficulty, LEFTMENU);
+      set_bkg_tile_xy(2, 3 + difficulty, tile);
       break;
     case TSOPTIONS:
-      set_bkg_tile_xy(2, 4 + option, LEFTMENU);
+      set_bkg_tile_xy(1, 4 + option, tile);
       break;
   }
+}
+
+function drawMenuItems(clear) {
+  if (clear) {
+    g.setColor(0, 0, 0);
+    switch (titleStep) {
+      case TSMAINMENU:
+        g.fillRect(SCREENOFFSETX + 5 * TILESIZE, screenOffsetY + 4 * TILESIZE, SCREENOFFSETX + 13 * TILESIZE, screenOffsetY + 8 * TILESIZE);
+        break;
+      case TSDIFFICULTY:
+        g.fillRect(SCREENOFFSETX + 3 * TILESIZE, screenOffsetY + 3 * TILESIZE, SCREENOFFSETX + 12 * TILESIZE, screenOffsetY + 9 * TILESIZE);
+        break;
+      case TSGAMEMODE:
+        g.fillRect(SCREENOFFSETX + 5 * TILESIZE, screenOffsetY + 4 * TILESIZE, SCREENOFFSETX + 12 * TILESIZE, screenOffsetY + 7 * TILESIZE);
+        break;
+      case TSCREDITS:
+        g.fillRect(SCREENOFFSETX + 2 * TILESIZE, screenOffsetY + 5 * TILESIZE, SCREENOFFSETX + 15 * TILESIZE, screenOffsetY + 8 * TILESIZE);
+        break;
+      case TSOPTIONS:
+        g.fillRect(SCREENOFFSETX + 3 * TILESIZE, screenOffsetY + 4 * TILESIZE, SCREENOFFSETX + 11 * TILESIZE, screenOffsetY + 5 * TILESIZE);
+        g.fillRect(SCREENOFFSETX + 2 * TILESIZE, screenOffsetY + 5 * TILESIZE, SCREENOFFSETX + 15 * TILESIZE, screenOffsetY + 10 * TILESIZE);
+        break;
+    }
+  } else {
+    switch (titleStep) {
+      case TSMAINMENU:
+        printMessage(5, 4, "START");
+        printMessage(5, 5, "HELP");
+        printMessage(5, 6, "OPTIONS");
+        printMessage(5, 7, "CREDITS");
+        break;
+      case TSDIFFICULTY:
+        printMessage(3, 3, "VERY EASY");
+        printMessage(3, 4, "EASY");
+        printMessage(3, 5, "NORMAL");
+        printMessage(3, 6, "HARD");
+        printMessage(3, 7, "VERY HARD");
+        printMessage(3, 8, "RANDOM");
+        break;
+      case TSGAMEMODE:
+        printMessage(5, 4, "ROTATE");
+        printMessage(5, 5, "SLIDE");
+        printMessage(5, 6, "ROSLID");
+        break;
+      case TSCREDITS:
+        printMessage(3, 5, "CREATED BY");
+        printMessage(2, 6, "WILLEMS DAVY");
+        printMessage(2, 7, "JOYRIDER3774");
+        break;
+      case TSOPTIONS:
+        if (isSoundOn())
+          printMessage(3, 4, "BUZZ ON");
+        else
+          printMessage(3, 4, "BUZZ OFF");
+        if (isInputRectsOnSaveState())
+          printMessage(3, 5, "INPUTRECT ON");
+        else
+          printMessage(3, 5, "INPUTRECT OFF");
+        if (isWidgetsOnSaveState()) {
+          printMessage(3, 6, "WIDGETS ON");
+        } else
+          printMessage(3, 6, "WIDGETS OFF");
+        printMessage(2, 8, "MUST RESTART");
+        printMessage(2, 9, "FOR WIDGETS");
+        break;
+    }
+  }
+}
+
+function drawTitleScreen(partial) {
+  if (partial > 2) {
+    g.clearRect(Bangle.appRect);
+    g.drawImage(TITLE, SCREENOFFSETX, screenOffsetY);
+  }
+
+  if (partial > 1)
+    drawMenuItems(false);
+
+  drawMenuSelector(LEFTMENU);
+  redrawPartial = 3;
 }
 
 function initTitleScreen() {
   setBlockTilesAsBackground();
   needRedraw = 1;
+  redrawPartial = 3;
 }
 
 function titleScreen() {
@@ -1754,29 +1782,41 @@ function titleScreen() {
       case TSMAINMENU:
         if (mainMenu > MMSTARTGAME) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           mainMenu--;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSGAMEMODE:
         if (gameMode > GMROTATE) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           gameMode--;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSDIFFICULTY:
         if (difficulty > DIFFVERYEASY) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           difficulty--;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSOPTIONS:
         if (option > OPSOUND) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           option--;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
     }
@@ -1787,29 +1827,41 @@ function titleScreen() {
       case TSMAINMENU:
         if (mainMenu < MMCOUNT - 1) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           mainMenu++;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSGAMEMODE:
         if (gameMode < GMCOUNT - 1) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           gameMode++;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSDIFFICULTY:
         if (difficulty < DIFFCOUNT - 1) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           difficulty++;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
       case TSOPTIONS:
         if (option < OPCOUNT - 1) {
           playMenuSelectSound();
+          //clear
+          drawMenuSelector(EMPTY);
           option++;
           needRedraw = 1;
+          redrawPartial = 1;
         }
         break;
     }
@@ -1819,15 +1871,23 @@ function titleScreen() {
     switch (titleStep) {
       case TSOPTIONS:
       case TSCREDITS:
+        //clear
+        drawMenuSelector(EMPTY);
+        drawMenuItems(true);
         titleStep = TSMAINMENU;
         playMenuBackSound();
         needRedraw = 1;
+        redrawPartial = 2;
         break;
       case TSGAMEMODE:
       case TSDIFFICULTY:
+        //clear
+        drawMenuSelector(EMPTY);
+        drawMenuItems(true);
         titleStep--;
         playMenuBackSound();
         needRedraw = 1;
+        redrawPartial = 2;
         break;
     }
   }
@@ -1837,14 +1897,33 @@ function titleScreen() {
     switch (mainMenu) {
       case MMOPTIONS:
         if (titleStep != TSOPTIONS) {
+          //clear
+          drawMenuSelector(EMPTY);
+          drawMenuItems(true);
           titleStep = TSOPTIONS;
           needRedraw = 1;
+          redrawPartial = 2;
         } else {
           switch (option) {
             case OPSOUND:
               setSoundOn(!isSoundOn());
               setSoundOnSaveState(isSoundOn());
+              //clear
+              drawMenuItems(true);
               needRedraw = 1;
+              redrawPartial = 2;
+              break;
+            case OPWIDGETS:
+              setWidgetsOnSaveState(!isWidgetsOnSaveState());
+              needRedraw = 1;
+              //needs 3 because text crosses input rect lines
+              redrawPartial = 3;
+              break;
+            case OPINPUTRECTS:
+              setInputRectsOnSaveState(!isInputRectsOnSaveState());
+              needRedraw = 1;
+              //needs 3 because text crosses input rect lines
+              redrawPartial = 3;
               break;
           }
         }
@@ -1852,18 +1931,29 @@ function titleScreen() {
 
       case MMCREDITS:
         if (titleStep != TSCREDITS) {
+          //clear
+          drawMenuSelector(EMPTY);
+          drawMenuItems(true);
           titleStep = TSCREDITS;
           needRedraw = 1;
+          redrawPartial = 2;
         } else {
+          //clear
+          drawMenuItems(true);
           titleStep = TSMAINMENU;
           needRedraw = 1;
+          redrawPartial = 2;
         }
         break;
 
       case MMHELP:
         if (titleStep < TSGAMEMODE) {
+          //clear
+          drawMenuSelector(EMPTY);
+          drawMenuItems(true);
           titleStep++;
           needRedraw = 1;
+          redrawPartial = 2;
         } else {
           switch (gameMode) {
             case GMROTATE:
@@ -1881,8 +1971,12 @@ function titleScreen() {
 
       case MMSTARTGAME:
         if (titleStep < TSDIFFICULTY) {
+          //clear
+          drawMenuSelector(EMPTY);
+          drawMenuItems(true);
           titleStep++;
           needRedraw = 1;
+          redrawPartial = 2;
         } else {
           if (difficulty == DIFFRANDOM)
             selectedLevel = 1;
@@ -1909,7 +2003,7 @@ function titleScreen() {
   }
 
   if (needRedraw) {
-    drawTitleScreen();
+    drawTitleScreen(redrawPartial);
     needRedraw = 0;
     requiresFlip = 1;
   }
@@ -1920,65 +2014,79 @@ function titleScreen() {
 // game
 // --------------------------------------------------------------------------------------------------
 
-function drawGame() {
+function drawGame(partial) {
   //background
   if (!paused && !redrawLevelDoneBit) {
-    g.clearRect(Bangle.appRect);
+    if (partial > 2)
+      g.clearRect(Bangle.appRect);
 
     //LEVEL:
-    printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
-
-    //[LEVEL NR] 2 chars
-    printNumber(MAXBOARDBGWIDTH + 4, 1, selectedLevel, 2);
-
+    if (partial > 2) {
+      printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
+      //[LEVEL NR] 2 chars
+      printNumber(MAXBOARDBGWIDTH + 4, 1, selectedLevel, 2);
+    }
 
     //MOVES:
-    printMessage(MAXBOARDBGWIDTH, 2, "MOVES:");
+    if (partial > 2)
+      printMessage(MAXBOARDBGWIDTH, 2, "MOVES:");
 
-    printNumber(MAXBOARDBGWIDTH + 1, 3, moves, 5);
+    if (partial > 1)
+      printNumber(MAXBOARDBGWIDTH + 1, 3, moves, 5);
 
     //A:XXXXXX (XXXXXX="ROTATE" or XXXXXX="SLIDE " or XXXXXX="ROSLID")
-    switch (gameMode) {
-      case GMROTATE:
-        printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-        printMessage(MAXBOARDBGWIDTH, 5, "ROTATE");
-        break;
-      case GMSLIDE:
-        printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-        printMessage(MAXBOARDBGWIDTH, 5, "SLIDE");
-        break;
-      case GMROTATESLIDE:
-        printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-        printMessage(MAXBOARDBGWIDTH, 5, "ROSLID");
-        break;
-    }
-
-    //B:BACK
-    printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
-    printMessage(MAXBOARDBGWIDTH, 7, "BACK");
-
-    //Draw arrows for vertical / horizontal movement
-    if (gameMode != GMROTATE) {
-
-      for (var x = 0; x != boardWidth; x++) {
-        set_bkg_tile_xy(boardX + x, boardY - 1, ARROWDOWN);
-        set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
-      }
-
-      for (var y = 0; y != boardHeight; y++) {
-        set_bkg_tile_xy(boardX - 1, boardY + y, ARROWRIGHT);
-        set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
+    if (partial > 2) {
+      switch (gameMode) {
+        case GMROTATE:
+          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDBGWIDTH, 5, "ROTATE");
+          break;
+        case GMSLIDE:
+          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDBGWIDTH, 5, "SLIDE");
+          break;
+        case GMROTATESLIDE:
+          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDBGWIDTH, 5, "ROSLID");
+          break;
       }
     }
 
-    //level
+    if (partial > 2) {
+      //B:BACK
+      printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
+      printMessage(MAXBOARDBGWIDTH, 7, "BACK");
+    }
+
+    if (partial > 2) {
+      //Draw arrows for vertical / horizontal movement
+      if (gameMode != GMROTATE) {
+
+        for (var x = 0; x != boardWidth; x++) {
+          set_bkg_tile_xy(boardX + x, boardY - 1, ARROWDOWN);
+          set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
+        }
+
+        for (var y = 0; y != boardHeight; y++) {
+          set_bkg_tile_xy(boardX - 1, boardY + y, ARROWRIGHT);
+          set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
+        }
+      }
+    }
+
+    //complete level
     var i16 = 0;
-    for (var yy = 0; yy < boardHeight; yy++) {
-      for (var xx = 0; xx < boardWidth; xx++) {
-        set_bkg_tile_xy(boardX + xx, boardY + yy, level[i16 + xx]);
+    var yy;
+    var xx;
+    if (partial > 1) {
+      for (yy = 0; yy < boardHeight; yy++) {
+        for (xx = 0; xx < boardWidth; xx++) {
+          set_bkg_tile_xy(boardX + xx, boardY + yy, level[i16 + xx]);
+        }
+        i16 += boardWidth;
       }
-      i16 += boardWidth;
     }
+    redrawPartial = 3;
   }
 }
 
@@ -1992,6 +2100,7 @@ function initGame() {
   showCursors();
   redrawLevelDoneBit = 0;
   needRedraw = 1;
+  redrawPartial = 3;
 }
 
 function doPause() {
@@ -2002,7 +2111,7 @@ function doPause() {
   setSoundOn(0);
   hideCursors();
   //g.setColor(0,0,0);
-  // g.fillRect(SCREENOFFSETX, SCREENOFFSETY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE, SCREENOFFSETX + 16* TILESIZE, SCREENOFFSETY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE +  (6* TILESIZE));
+  // g.fillRect(SCREENOFFSETX, screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE, SCREENOFFSETX + 16* TILESIZE, screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE +  (6* TILESIZE));
   //g.setColor(1,1,1);
   printMessage(0, (MAXBOARDBGHEIGHT >> 1) - 3, "[**************]");
   printMessage(0, (MAXBOARDBGHEIGHT >> 1) - 2, "|PLEASE CONFIRM+");
@@ -2033,66 +2142,90 @@ function game() {
       playGameMoveSound();
       //if not touching border on bottom
       if (selectionY + 1 < boardHeight + posAdd) {
+        //clear cursor
+        drawCursors(true);
         selectionY += 1;
         needRedraw = 1;
+        redrawPartial = 0;
       } else
       //set to border on top
       {
+        //clear cursor
+        drawCursors(true);
         selectionY = -posAdd;
         needRedraw = 1;
+        redrawPartial = 0;
       }
       setCursorPos(0, boardX + selectionX, boardY + selectionY);
     }
-  }
-
-  if (dragup) {
-    if (!levelDone && !paused) {
-      //if not touching border on top
-      playGameMoveSound();
-      if (selectionY - 1 >= -posAdd) {
-        selectionY -= 1;
-        needRedraw = 1;
-      } else
-      //set to border on bottom
-      {
-        selectionY = boardHeight - 1 + posAdd;
-        needRedraw = 1;
+  } else {
+    if (dragup) {
+      if (!levelDone && !paused) {
+        //if not touching border on top
+        playGameMoveSound();
+        if (selectionY - 1 >= -posAdd) {
+          //clear cursor
+          drawCursors(true);
+          selectionY -= 1;
+          needRedraw = 1;
+          redrawPartial = 0;
+        } else
+        //set to border on bottom
+        {
+          //clear cursor
+          drawCursors(true);
+          selectionY = boardHeight - 1 + posAdd;
+          needRedraw = 1;
+          redrawPartial = 0;
+        }
+        setCursorPos(0, boardX + selectionX, boardY + selectionY);
       }
-      setCursorPos(0, boardX + selectionX, boardY + selectionY);
-    }
-  }
-
-  if (dragright) {
-    if (!levelDone && !paused) {
-      playGameMoveSound();
-      //if not touching border on right
-      if (selectionX + 1 < boardWidth + posAdd) {
-        selectionX += 1;
-        needRedraw = 1;
-      } else
-      //set to border on left
-      {
-        selectionX = -posAdd;
-        needRedraw = 1;
+    } else {
+      if (dragright) {
+        if (!levelDone && !paused) {
+          playGameMoveSound();
+          //if not touching border on right
+          if (selectionX + 1 < boardWidth + posAdd) {
+            //clear cursor
+            drawCursors(true);
+            selectionX += 1;
+            needRedraw = 1;
+            redrawPartial = 0;
+          } else
+          //set to border on left
+          {
+            //clear cursor
+            drawCursors(true);
+            selectionX = -posAdd;
+            needRedraw = 1;
+            redrawPartial = 0;
+          }
+          setCursorPos(0, boardX + selectionX, boardY + selectionY);
+        }
+      } else {
+        if (dragleft) {
+          if (!levelDone && !paused) {
+            playGameMoveSound();
+            //if not touching border on left
+            if (selectionX - 1 >= -posAdd) {
+              //clear cursor
+              drawCursors(true);
+              selectionX -= 1;
+              needRedraw = 1;
+              redrawPartial = 0;
+            }
+            //set to border on right
+            else {
+              //clear cursor
+              drawCursors(true);
+              selectionX = boardWidth - 1 + posAdd;
+              needRedraw = 1;
+              redrawPartial = 0;
+            }
+            setCursorPos(0, boardX + selectionX, boardY + selectionY);
+          }
+        }
       }
-      setCursorPos(0, boardX + selectionX, boardY + selectionY);
-    }
-  }
-
-  if (dragleft) {
-    if (!levelDone && !paused) {
-      playGameMoveSound();
-      //if not touching border on left
-      if (selectionX - 1 >= -posAdd) {
-        selectionX -= 1;
-        needRedraw = 1;
-      }
-      //set to border on right
-      else {
-        selectionX = boardWidth - 1 + posAdd;
-        needRedraw = 1;
-      }
-      setCursorPos(0, boardX + selectionX, boardY + selectionY);
     }
   }
 
@@ -2101,6 +2234,7 @@ function game() {
       doUnPause();
       playMenuAcknowlege();
       needRedraw = 1;
+      redrawPartial = 3;
     } else {
       if (!levelDone) {
         if ((selectionX > -1) && (selectionX < boardWidth) &&
@@ -2110,6 +2244,7 @@ function game() {
             moves++;
             playGameAction();
             needRedraw = 1;
+            redrawPartial = 2;
           } else {
             playErrorSound();
           }
@@ -2120,12 +2255,14 @@ function game() {
               moves++;
               playGameAction();
               needRedraw = 1;
+              redrawPartial = 2;
             } else {
               if (selectionY == boardHeight) {
                 moveBlockUp(selectionX + ((selectionY - 1) * boardWidth));
                 moves++;
                 playGameAction();
                 needRedraw = 1;
+                redrawPartial = 2;
               }
             }
           } else {
@@ -2135,12 +2272,14 @@ function game() {
                 moves++;
                 playGameAction();
                 needRedraw = 1;
+                redrawPartial = 2;
               } else {
                 if (selectionX == boardWidth) {
                   moveBlockLeft((selectionX - 1) + (selectionY * boardWidth));
                   moves++;
                   playGameAction();
                   needRedraw = 1;
+                  redrawPartial = 2;
                 }
               }
             } else {
@@ -2154,11 +2293,11 @@ function game() {
           //update level one last time so we are at final state
           //as it won't be updated anymore as long as level done is displayed
           //1 forces level to be drawn (only) one last time the other call uses levelDone
-          drawGame();
+          drawGame(1);
           //hide cursor it's only sprite we use
           hideCursors();
           //g.setColor(0,0,0);
-          //g.fillRect(SCREENOFFSETX + ((16 - 13) >> 1) * TILESIZE,  SCREENOFFSETY + ((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE, SCREENOFFSETX + (((16 - 13) >> 1) * TILESIZE) + (14*TILESIZE), SCREENOFFSETY + (((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE) +(5*TILESIZE));
+          //g.fillRect(SCREENOFFSETX + ((16 - 13) >> 1) * TILESIZE,  screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE, SCREENOFFSETX + (((16 - 13) >> 1) * TILESIZE) + (14*TILESIZE), screenOffsetY + (((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE) +(5*TILESIZE));
           //g.setColor(1,1,1);
           printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) - 2, "[************]");
           printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) - 1, "| LEVEL DONE +");
@@ -2178,6 +2317,7 @@ function game() {
           setCursorPos(0, boardX + selectionX, boardY + selectionY);
           showCursors();
           needRedraw = 1;
+          redrawPartial = 3;
         } else {
           //goto next level if any
           if (selectedLevel < maxLevel) {
@@ -2188,6 +2328,7 @@ function game() {
             setCursorPos(0, boardX + selectionX, boardY + selectionY);
             showCursors();
             needRedraw = 1;
+            redrawPartial = 3;
           } else //Goto some congrats screen
           {
             gameState = GSINITLEVELSCLEARED;
@@ -2227,7 +2368,7 @@ function game() {
   }
 
   if (needRedraw) {
-    drawGame();
+    drawGame(redrawPartial);
     drawCursors();
     needRedraw = 0;
     requiresFlip = 1;
@@ -2239,6 +2380,7 @@ function game() {
 // main game start
 // --------------------------------------------------------------------------------------------------
 function setup() {
+  redrawPartial = 0;
   setBlockTilesAsBackground();
   option = 0;
   difficulty = DIFFNORMAL;
@@ -2247,15 +2389,23 @@ function setup() {
   gameState = GSINITINTRO;
   titleStep = TSMAINMENU;
   gameMode = GMROTATE;
+  posAdd = 0;
   //has to be called first because initsound read savestate sound to set intial flags
   initSaveState();
   //initSound();
   setSoundOn(isSoundOnSaveState());
+  if (isWidgetsOnSaveState()) {
+    //need to call this first otherwise
+    Bangle.loadWidgets();
+    //only once they update themselves
+    Bangle.drawWidgets();
+  }
+  screenOffsetY = ((SCREENHEIGHT + Bangle.appRect.y - 8 * TILESIZE) >> 1);
 }
 
 function loop() {
   //soundTimer();
-
+  var startTime = Date().getTime();
   g.reset();
   g.setColor(1, 1, 1);
   g.setBgColor(0, 0, 0);
@@ -2329,7 +2479,7 @@ function loop() {
   }
 
   if (requiresFlip) {
-    if (DEBUGMODE) {
+    if (isInputRectsOnSaveState()) {
       const offsetvalue = 0.20;
       var x1 = SCREENWIDTH * offsetvalue;
       var x2 = SCREENWIDTH - SCREENWIDTH * offsetvalue;
@@ -2352,8 +2502,11 @@ function loop() {
   //when switching gamestate we need a redraw
   if ((gameState != prevGameState) && (gameState >= GSINITDIFF))
     needRedraw = 1;
+  if (DEBUGMODESPEED)
+    debugLog("loop done: " + (Date().getTime() - startTime).toString());
+  else
+    debugLog("loop done");
 
-  debugLog("loop");
   if (DEBUGMODERAMUSE) {
     var memTmp = process.memory(false);
     var used = memTmp.usage - memStart.usage;
@@ -2378,8 +2531,10 @@ function handleTouch(button, data) {
   dragdown = data.y > y2;
   btna = ((data.x <= x2) && (data.x >= x1) && (data.y >= y1) && (data.y <= y2) && (data.type == 0));
   btnb = ((data.x <= x2) && (data.x >= x1) && (data.y >= y1) && (data.y <= y2) && (data.type == 2));
-  debugLog("tap button:" + button.toString() + " x:" + data.x.toString() + " y:" + data.y.toString() + " x1:" + x1.toString() + " x2:" + x2.toString() + " y1:" + y1.toString() + " y2:" + y2.toString() + " type:" + data.type.toString());
-  debugLog("l:" + dragleft.toString() + " u:" + dragup.toString() + " r:" + dragright.toString() + " d:" + dragdown.toString() + " a:" + btna.toString() + " b:" + btnb.toString());
+  if (DEBUGMODEINPUT) {
+    debugLog("tap button:" + button.toString() + " x:" + data.x.toString() + " y:" + data.y.toString() + " x1:" + x1.toString() + " x2:" + x2.toString() + " y1:" + y1.toString() + " y2:" + y2.toString() + " type:" + data.type.toString());
+    debugLog("l:" + dragleft.toString() + " u:" + dragup.toString() + " r:" + dragright.toString() + " d:" + dragdown.toString() + " a:" + btna.toString() + " b:" + btnb.toString());
+  }
   loop();
   dragleft = false;
   dragright = false;
@@ -2389,7 +2544,8 @@ function handleTouch(button, data) {
   btnb = false;
   while (needRedraw)
     loop();
-  debugLog("handleTouch done");
+  if (DEBUGMODEINPUT)
+    debugLog("handleTouch done");
 }
 
 function btnPressed() {
@@ -2403,17 +2559,21 @@ function btnPressed() {
   btnb = false;
   while (needRedraw)
     loop();
-  debugLog("btnPressed done");
+  if (DEBUGMODEINPUT)
+    debugLog("btnPressed done");
 }
 
 var memStart;
 if (DEBUGMODERAMUSE)
   memStart = process.memory(true);
 
+
+//initialize spritepos arrays
+for (var i = 0; i < cursorNumTiles; i++)
+  spritePos.push(new Int8Array(2));
+
 //clear one time entire screen
 g.clear();
-//only once they update themselves
-Bangle.drawWidgets();
 //setup game and run loop it will repeat during intro
 //otherwise only as long as redraw is needed after input was detected
 setup();
