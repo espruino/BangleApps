@@ -79,6 +79,44 @@ var locales = {
     day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
     // No translation for english...
   },
+  "en_US": {
+    lang: "en_US",
+    notes: "USA with MM/DD/YY date",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "$", currency_first: true,
+    int_curr_symbol: "USD",
+    speed: "mph",
+    distance: { 0: "ft", 1: "mi" },
+    temperature: "°F",
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%b %d, %Y", 1: "%m/%d/%y" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "en_US 2": {
+    lang: "en_US 2", icon:"🇺🇸",
+    notes: "USA with YYYY-MM-DD date",
+    decimal_point: ".",
+    thousands_sep: ",",
+    currency_symbol: "$", currency_first: true,
+    int_curr_symbol: "USD",
+    speed: "mph",
+    distance: { 0: "ft", 1: "mi" },
+    temperature: "°F",
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
+    datePattern: { 0: "%b %d, %Y", 1: "%Y-%m-%d" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
   "en_IN": {
     lang: "en_IN",
     decimal_point: ".",
@@ -118,7 +156,7 @@ var locales = {
     // No translation for english...
   },
   "en_NAV": { // navigation units nautical miles and knots
-    lang: "en_NAV",
+    lang: "en_NAV", icon: "&#9973;&#9992;&#65039;",
     decimal_point: ".",
     thousands_sep: ",",
     currency_symbol: "£", currency_first: true,
@@ -153,24 +191,6 @@ var locales = {
     day: "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
     trans: { yes: "ja", Yes: "Ja", no: "nein", No: "Nein", ok: "ok", on: "an", off: "aus",
 			"< Back": "< Zurück", "Delete": "Löschen", "Mark Unread": "Als ungelesen markieren" }
-  },
-  "en_US": {
-    lang: "en_US",
-    decimal_point: ".",
-    thousands_sep: ",",
-    currency_symbol: "$", currency_first: true,
-    int_curr_symbol: "USD",
-    speed: "mph",
-    distance: { 0: "ft", 1: "mi" },
-    temperature: "°F",
-    ampm: { 0: "am", 1: "pm" },
-    timePattern: { 0: "%HH:%MM:%SS ", 1: "%HH:%MM" },
-    datePattern: { 0: "%b %d, %Y", 1: "%m/%d/%y" },
-    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
-    month: "January,February,March,April,May,June,July,August,September,October,November,December",
-    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
-    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    // No translation for english...
   },
   "en_JP": { // we do not have the font, so it is not ja_JP
     lang: "en_JP",
