@@ -23,7 +23,16 @@ var SL = W/15;  // ship side length
 var AS = W/18;  // asteroid radius
 // radius of ship, assumed a circle inside equilateral traingle of side SS
 // r = a / root 3 where a is length of equilateral triangle
-var SR = SS / Math.sqrt(3);  
+var SR = SS / Math.sqrt(3);
+var AST = [ // asteroid polygon as X/Y pairs
+  0  ,-1.5,
+  1  ,   0,
+  0.5,   0,
+  0.5, 0.5,
+  0  ,   1,
+  -1 ,   0,
+  -1 ,  -1
+];
 
 g.clear().setFontAlign(0,-1);
 
@@ -148,15 +157,7 @@ function onFrame() {
     a.y += a.vy*d;
     //g.drawCircle(a.x, a.y, a.rad);
     // a 7 point asteroid with rough circle radius of scale 2
-    g.drawPoly([
-      a.x           , a.y - 1.5 * a.rad,
-      a.x + a.rad   , a.y              ,
-      a.x + a.rad/2 , a.y              ,
-      a.x + a.rad/2 , a.y + a.rad/2    ,
-      a.x           , a.y + a.rad      ,
-      a.x - a.rad   , a.y              ,
-      a.x - a.rad   , a.y - a.rad
-    ],true);
+    g.drawPoly(g.transformVertices(AST,{x:a.x,y:a.y,scale:a.rad,rotate:t}),true);
     
     if (a.x<0) a.x+=W;
     if (a.y<0) a.y+=H;
