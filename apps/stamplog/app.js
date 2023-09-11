@@ -24,7 +24,7 @@ const SETTINGS = Object.assign({
 
 function saveSettings() {
   if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
-    E.showAlert('Trouble saving settings', "Can't save settings");
+    E.showAlert('Trouble saving settings');
   }
 }
 
