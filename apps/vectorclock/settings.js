@@ -11,6 +11,8 @@
   var colnames = ["white", "yellow", "green", "cyan", "red", "orange", "magenta", "black"];
   var colvalues = [0xFFFF, 0xFFE0, 0x07E0, 0x07FF, 0xF800, 0xFD20, 0xF81F, 0x0000];
   var chimenames = ["off", "buzz", "beep"];
+  var dateFormats = ["DDMMYYYY", "MMDDYYYY", "YYYYMMDD"];
+  var dateSeparators = ["/", "-"];
   // Show the menu
   E.showMenu({
     "" : { "title" : "VectorClock settings" },
@@ -47,6 +49,24 @@
       format: v => chimenames[v],
       onchange: v => {
         settings.chimetype = chimenames[v];
+        writeSettings();
+      }
+    },
+    'Date Format': {
+      value: Math.max(0 | dateFormats.indexOf(settings.dateFormat),0),
+      min: 0, max: dateFormats.length-1,
+      format: v => dateFormats[v],
+      onchange: v => {
+        settings.chimetype = dateFormats[v];
+        writeSettings();
+      }
+    },
+    'Date Separator': {
+      value: Math.max(0 | dateSeparators.indexOf(settings.dateSeparator),0),
+      min: 0, max: dateSeparators.length-1,
+      format: v => dateSeparators[v],
+      onchange: v => {
+        settings.chimetype = dateSeparators[v];
         writeSettings();
       }
     },
