@@ -1,7 +1,8 @@
 #!/usr/bin/nodejs
 
+// https://stackoverflow.com/questions/49129643/how-do-i-merge-an-array-of-uint8arrays
+
 var pc = 1;
-var hack = 0;
 const hs = require('./heatshrink.js');
 
 if (pc) {
@@ -23,19 +24,21 @@ function writeTar(tar, dir) {
     var h_len = 16;
     var cur = h_len;
     files = fs.readdirSync(dir);
-    data = '';
+    let data = [];
     var directory = '';
     var json = {};
     for (f of files) {
+        let f_rec = {};
         d = fs.readFileSync(dir+f);
-        cs = d;
-        //cs = String.fromCharCode.apply(null, hs.compress(d))
+        if (0) {
+            cs = hs.compress(d);
+            f_rec.comp = "hs";
+        } else
+            cs = d;
         print("Processing", f, cur, d.length, cs.length);
-        //if (d.length == 42) continue;
-        data = data + cs;
-        var f_rec = {};
+        data.push(cs);
         f_rec.st = cur;
-        var len = d.length;
+        var len = cs.length;
         f_rec.si = len;
         cur = cur + len;
         json[f] = f_rec;
@@ -53,10 +56,10 @@ function writeTar(tar, dir) {
     while (header.length < h_len) {
         header = header+' ';
     }
-    if (!hack)
-        fs.writeFileSync(tar, header+data+directory);
-    else
-        fs.writeFileSync(tar, directory);
+    fs.writeFileSync(tar, header);
+    for (d of data)
+        fs.appendFileSync(tar, Buffer.from(d));
+    fs.appendFileSync(tar, directory);
 }
 
 function readTarFile(tar, f) {
@@ -70,7 +73,7 @@ function readTarFile(tar, f) {
 }
 
 if (pc)
-  writeTar("delme.mtaz", "delme/");
+  writeTar("delme.mtar", "delme/");
 else {
   print(readTarFile("delme.mtar", "ahoj"));
   print(readTarFile("delme.mtar", "nazdar"));
