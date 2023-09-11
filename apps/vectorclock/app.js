@@ -5,6 +5,8 @@ var dowcol = settings.dowcol || g.theme.fg;
 var timecol = settings.timecol || g.theme.fg;
 var datecol = settings.datecol || g.theme.fg;
 var chimetype = settings.chimetype;
+var dateFormat = settings.dateFormat;
+var dateSeparator = settings.dateSeparator;
 
 function padNum(n, l) {
   return ("0".repeat(l)+n).substr(-l);
@@ -52,6 +54,16 @@ function draw() {
   let secondsText = padNum(d.getSeconds(), 2);
   let dowText = locale.dow(d);
   let dateText = locale.date(d, true);
+  let day = dateText.substr(0,2);
+  let month = dateText.substr(3,2);
+  let year = dateText.substr(6,4);
+  if (dateFormat=="DDMMYYYY") {
+    dateText = day + dateSeparator + month + dateSeparator + year;
+  } else if (dateFormat=="MMDDYYYY") {
+    dateText = month + dateSeparator + day + dateSeparator + year;
+  } else if (dateFormat=="YYYYMMDD") {
+    dateText = year + dateSeparator + month + dateSeparator + day;
+  }
   let width = g.getWidth() - 2;
 
   g.setFont("Vector", 256);
