@@ -2,6 +2,10 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      table { width:100%;}
+      .table_t {font-weight:bold;width:40%;};
+    </style>
   </head>
   <body>
 
@@ -13,6 +17,11 @@
     <div class="form-group">
       <input id="translations" type="checkbox" /> <label for="translations">Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
     </div>
+    <p>
+      <table id="examples">
+    </p>
+
+    </table>
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -93,21 +102,8 @@ exports = { name : "en_GB", currencySym:"£",
         checkChars(locale,localeName);
       });
 
-      var languageSelector = document.getElementById("languages");
-      languageSelector.innerHTML = Object.keys(locales).map(l=>{
-        var localeParts = l.split("_"); // en_GB -> ["en","GB"]
-        var icon = "";
-        // If we have a 2 char ISO country code, use it to get the unicode flag
-        if (localeParts[1] && localeParts[1].length==2)
-          icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
-        if (localeParts[1]=="NAV")
-          icon = "&#9973;&#9992;&#65039; ";
-        return `<option value="${l}">${icon}${l}</option>`
-      }).join("\n");
 
-      document.getElementById("upload").addEventListener("click", function() {
-
-        const lang = languageSelector.options[languageSelector.selectedIndex].value;
+      function createLocaleModule(lang) {
         console.log(`Language ${lang}`);
 
         const translations = document.getElementById('translations').checked;
@@ -151,7 +147,7 @@ exports = { name : "en_GB", currencySym:"£",
 
         var replaceList  = {
           "%Y":  "d.getFullYear()",
-          "%y":  "(d.getFullYear().toString()).slice(-2)",
+          "%y":  "d.getFullYear().toString().slice(-2)",
           "%m":  "('0'+(d.getMonth()+1).toString()).slice(-2)",
           "%-m": "d.getMonth()+1",
           "%d":  "('0'+d.getDate()).slice(-2)",
@@ -182,16 +178,17 @@ exports = { name : "en_GB", currencySym:"£",
           `exports.number(n) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
-        var localeModule = `
+        function getLocaleModule(isLocal) {
+          return `
 function round(n, dp) {
   if (dp===undefined) dp=0;
-  var p = Math.min(dp,dp - Math.floor(Math.log(n)/Math.log(10)));
+  var p = Math.max(0,Math.min(dp,dp - Math.floor(Math.log(n)/Math.log(10))));
   return n.toFixed(p);
 }
 var is12;
 function getHours(d) {
   var h = d.getHours();
-  if (is12 === undefined) is12 = (require('Storage').readJSON('setting.json', 1) || {})["12hour"];
+  if (is12 === undefined) is12 = ${isLocal ? "false" : `(require('Storage').readJSON('setting.json', 1) || {})["12hour"]`};
   if (!is12) return ('0' + h).slice(-2);
   return ((h % 12 == 0) ? 12 : h % 12).toString();
 }
@@ -224,7 +221,54 @@ exports = {
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
   meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
 };
-`.trim();
+`.trim()
+        };
+
+        var exports;
+        eval(getLocaleModule(true));
+        console.log("exports:",exports);
+
+        var date = new Date();
+        document.getElementById("examples").innerHTML = `
+<tr><td class="table_t"></td><td style="font-weight:bold">Short</td><td style="font-weight:bold">Long</td></tr>
+<tr><td class="table_t">Day</td><td>${exports.dow(date,1)}</td><td>${exports.dow(date,0)}</td></tr>
+<tr><td class="table_t">Month</td><td>${exports.month(date,1)}</td><td>${exports.month(date,0)}</td></tr>
+<tr><td class="table_t">Date</td><td>${exports.date(date,1)}</td><td>${exports.date(date,0)}</td></tr>
+<tr><td class="table_t">Time</td><td>${exports.time(date,1)}</td><td>${exports.time(date,0)}</td></tr>
+<tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
+<tr><td class="table_t">Currency</td><td></td><td>${exports.currency(12.34)}</td></tr>
+<tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
+<tr><td class="table_t">Speed</td><td></td><td>${exports.speed(123)}</td></tr>
+<tr><td class="table_t">Temperature</td><td></td><td>${exports.temp(12,0)}</td></tr>
+`;
+        return getLocaleModule(false);
+      }
+
+      var languageSelector = document.getElementById("languages");
+      languageSelector.innerHTML = Object.keys(locales).map(l=>{
+        var locale = locales[l];
+        var localeParts = l.split("_"); // en_GB -> ["en","GB"]
+        var icon = "";
+        // If we have a 2 char ISO country code, use it to get the unicode flag
+        if (locale.icon)
+          icon = locale.icon+" ";
+        else if (localeParts[1] && localeParts[1].length==2)
+          icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
+        return `<option value="${l}">${icon}${l}${locale.notes?" - "+locale.notes:""}</option>`
+      }).join("\n");
+      languageSelector.addEventListener('change', function() {
+        const lang = languageSelector.options[languageSelector.selectedIndex].value;
+        createLocaleModule(lang);
+      });
+      // initial value
+      createLocaleModule(languageSelector.options[languageSelector.selectedIndex].value);
+
+
+
+      document.getElementById("upload").addEventListener("click", function() {
+
+        const lang = languageSelector.options[languageSelector.selectedIndex].value;
+        var localeModule = createLocaleModule(lang);
 
         console.log("Locale Module is:",localeModule);
         sendCustomizedApp({
