@@ -1,9 +1,0 @@
-0.01: New watch face
-0.02: Use Bangle.setUI for button/launcher handling
-0.03: Bangle.js 2 support
-0.04: Adds costumizable colours and the respective settings menu
-0.05: "Chime the time" (buzz or beep) with up/down swipe added
-0.06: Redraw widgets when time is updated
-0.07: Fix problem with "Bangle.CLOCK": github.com/espruino/BangleApps/issues/1437
-0.08: Redraw widgets only once per minute
-0.09: Workaround for issue in 2v14 firmware (fix #1959)
