@@ -148,7 +148,7 @@ exports.input = function(options) {
         g.clearRect(Bangle.appRect);
         resolve(text);
       },
-      drag: dragHandlerDB
+      drag: dragHandlerUB
     });
     Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
 
