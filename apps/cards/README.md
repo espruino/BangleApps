@@ -13,9 +13,13 @@ Beware that the small screen of the Banglejs 2 cannot render properly complex ba
 * `CODABAR`
 * `QR_CODE`
 
+### Disclaimer
+
+This app is a proof of concept, many codes are too complex to be rendered by the bangle's screen or hardware (at least with the current logic), keep that in mind.
+
 ### How to sync
 
-_WIP: we currently cannot synchronize cards_
+_WIP: we currently cannot synchronize cards, a PR is under review in GadgetBridge repo, soon we will see support on nightly builds_
 
 You can test it by sending on your bangle a file like this:
 
