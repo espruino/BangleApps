@@ -3,3 +3,4 @@
 0.03: Update help screen with more details.
 0.04: Update cards to draw rounded on newer firmware. Make sure in-game menu can't be pulled up during end of game.
 0.05: add confirmation prompt to new game to prevent fat fingering new game during existing one.
+0.06: fix AI logic typo and add prompt to show what AI played each turn.
