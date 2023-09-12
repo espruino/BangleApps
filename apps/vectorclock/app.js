@@ -54,9 +54,9 @@ function draw() {
   let secondsText = padNum(d.getSeconds(), 2);
   let dowText = locale.dow(d);
   let dateText = locale.date(d, true);
-  let day = dateText.substr(0,2);
-  let month = dateText.substr(3,2);
-  let year = dateText.substr(6,4);
+  let day = dateText.substr(3,2);
+  let month = dateText.substr(0,2);
+  let year = "20" + dateText.substr(6,4);
   if (dateFormat=="DDMMYYYY") {
     dateText = day + dateSeparator + month + dateSeparator + year;
   } else if (dateFormat=="MMDDYYYY") {
@@ -64,6 +64,7 @@ function draw() {
   } else if (dateFormat=="YYYYMMDD") {
     dateText = year + dateSeparator + month + dateSeparator + day;
   }
+  //let dateText = locale.month(d, 1);
   let width = g.getWidth() - 2;
 
   g.setFont("Vector", 256);
