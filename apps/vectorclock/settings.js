@@ -11,8 +11,8 @@
   var colnames = ["white", "yellow", "green", "cyan", "red", "orange", "magenta", "black"];
   var colvalues = [0xFFFF, 0xFFE0, 0x07E0, 0x07FF, 0xF800, 0xFD20, 0xF81F, 0x0000];
   var chimenames = ["off", "buzz", "beep"];
-  var dateFormats = ["DDMMYYYY", "MMDDYYYY", "YYYYMMDD"];
-  var dateSeparators = ["/", "-"];
+  var dateFormats = ["YYYYMMDD", "DDMMYYYY", "MMDDYYYY"];
+  var dateSeparators = ["-", "/"];
   // Show the menu
   E.showMenu({
     "" : { "title" : "VectorClock settings" },
