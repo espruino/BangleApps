@@ -29,14 +29,15 @@ o.c = Object.assign({ // constants go here.
   propagateDrag:false,
   immediatedraw:false,
   autoProgress:false,
-  noOuterBorder:false,
-  noInnerBorder:false
+  outerBorderSize:2,
+  innerBorderSize:2,
 },conf);
 
-o.c._xStart = o.c.xStart + 4; // +4 to compensate for the border.
-o.c._width = o.c.width - 8; // -8 to compensate for the border.
-o.c._yStart = o.c.yStart + 4; // +4 to compensate for the border.
-o.c._height = o.c.height - 8; // -8 to compensate for the border.
+let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
+o.c._xStart = o.c.xStart + totalBorderSize;
+o.c._width = o.c.width - 2*totalBorderSize;
+o.c._yStart = o.c.yStart + totalBorderSize;
+o.c._height = o.c.height - 2*totalBorderSize;
 if (o.c.rounded) o.c.rounded = 40;
 
 o.c.STEP_SIZE = o.c._height/o.c.steps;
@@ -72,8 +73,8 @@ o.f.wasOnIndicator = (exFirst)=>{
   if (o.c.horizontal) return exFirst>o.c._yStart-o.c.oversizeL*o.c._height && exFirst<o.c._yStart+o.c._height+o.c.oversizeR*o.c._height;
 };
 
-o.c.borderRect = {x:o.c._xStart-4,y:o.c._yStart-4,w:o.c._width+8,h:o.c._height+8,r:o.c.rounded};
-o.c.hollowRect = {x:o.c._xStart-2,y:o.c._yStart-2,w:o.c._width+4,h:o.c._height+4,r:o.c.rounded};
+o.c.borderRect = {x:o.c._xStart-totalBorderSize,y:o.c._yStart-totalBorderSize,w:o.c._width+2*totalBorderSize,h:o.c._height+2*totalBorderSize,r:o.c.rounded};
+o.c.hollowRect = {x:o.c._xStart-o.c.innerBorderSize,y:o.c._yStart-o.c.innerBorderSize,w:o.c._width+2*o.c.innerBorderSize,h:o.c._height+2*o.c.innerBorderSize,r:o.c.rounded};
 
 o.f.updateBar = (levelHeight)=>{
   "ram";
@@ -123,16 +124,16 @@ o.f.dragSlider = e=>{
 o.f.draw = (level)=>{
   "ram";
 
-  if (true && !o.c.noOuterBorder /*|| o.v.firstRun || !o.c.lazy*/) {
+  if (true || o.v.firstRun || !o.c.lazy) {
     g.setColor(o.c.colorFG).fillRect(o.c.borderRect); // To get outer border...
   }
   if (false && level == o.v.prevLevel) {if (!o.v.firstRun) return; if (o.v.firstRun) o.v.firstRun = false;}
 
   o.v.prevLevel = level;
 
-  g.setColor(o.c.colorBG);
-  if (!o.c.noOuterBorder || !o.c.noInnerBorder) g.fillRect(o.c.hollowRect); // ... and here it's made hollow.
-  g.setColor(0==level?o.c.colorBG:o.c.colorFG).
+  g.setColor(o.c.colorBG).
+    fillRect(o.c.hollowRect). // ... and here it's made hollow.
+    setColor(0==level?o.c.colorBG:o.c.colorFG).
     fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
 
   //print(level);
