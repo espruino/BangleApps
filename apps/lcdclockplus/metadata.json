@@ -7,6 +7,7 @@
   "type": "clock",
   "tags": "clock,clkinfo",
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "dependencies" : { "clock_info":"module" },
   "storage": [
     {"name":"lcdclockplus.app.js","url":"app.js"},
