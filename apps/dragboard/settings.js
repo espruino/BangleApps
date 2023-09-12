@@ -21,7 +21,7 @@
         value: settings[key] == color,
         onchange: () => {
           if (color >= 0) {
-            settings[key] = parseInt(color);
+            settings[key] = color;
           } else {
             delete settings[key];
           }

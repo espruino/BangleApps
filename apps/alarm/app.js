@@ -1,7 +1,6 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-const settings = require('Storage').readJSON('alarm.json',1)||{};
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
 const WORKDAYS = 62;
@@ -52,14 +51,12 @@ function getLabel(e) {
 }
 
 function trimLabel(label, maxLength) {
-  if(settings.showOverflow) return label;
   return (label.length > maxLength
       ? label.substring(0,maxLength-3) + "..."
       : label.substring(0,maxLength));
 }
 
-function formatAlarmProperty(msg) {
-  if(settings.showOverflow) return msg;
+function formatAlarmMessage(msg) {
   if (msg == null) {
     return msg;
   } else if (msg.length > 7) {
@@ -158,24 +155,11 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     },
     /*LANG*/"Message": {
       value: alarm.msg,
-      format: formatAlarmProperty,
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:alarm.msg}).then(result => {
             alarm.msg = result;
-            prepareAlarmForSave(alarm, alarmIndex, time, date, true);
-            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
-          });
-        }, 100);
-      }
-    },
-    /*LANG*/"Group": {
-      value: alarm.group,
-      format: formatAlarmProperty,
-      onchange: () => {
-        setTimeout(() => {
-          keyboard.input({text:alarm.group}).then(result => {
-            alarm.group = result;
             prepareAlarmForSave(alarm, alarmIndex, time, date, true);
             setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
           });
@@ -213,10 +197,6 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   };
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
-  if (!keyboard || !settings.showGroup) delete menu[/*LANG*/"Group"];
-  if (!(settings.showConfirm == null ? true : settings.showConfirm)) delete menu[/*LANG*/"Confirm"];
-  if (!(settings.showAutoSnooze == null ? true : settings.showAutoSnooze)) delete menu[/*LANG*/"Auto Snooze"];
-  if (!(settings.showHidden == null ? true : settings.showHidden)) delete menu[/*LANG*/"Hidden"];
   if (!alarm.date) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
@@ -407,7 +387,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
     },
     /*LANG*/"Message": {
       value: timer.msg,
-      format: formatAlarmProperty,
+      format: formatAlarmMessage,
       onchange: () => {
         setTimeout(() => {
           keyboard.input({text:timer.msg}).then(result => {
@@ -440,8 +420,6 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   };
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
-  if (!(settings.showConfirm == null ? true : settings.showConfirm)) delete menu[/*LANG*/"Confirm"];
-  if (!(settings.showHidden == null ? true : settings.showHidden)) delete menu[/*LANG*/"Hidden"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
       E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
