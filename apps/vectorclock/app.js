@@ -56,7 +56,7 @@ function draw() {
   let dateText = locale.date(d, true);
   let day = dateText.substr(3,2);
   let month = dateText.substr(0,2);
-  let year = "20" + dateText.substr(6,4);
+  let year = "20" + dateText.substr(6,2);
   if (dateFormat=="DDMMYYYY") {
     dateText = day + dateSeparator + month + dateSeparator + year;
   } else if (dateFormat=="MMDDYYYY") {
