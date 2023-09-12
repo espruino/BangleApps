@@ -69,7 +69,7 @@ function draw() {
 
   g.setFont("Vector", 256);
   let timeFontSize = width / ((g.stringWidth(timeText) / 256) + (Math.max(g.stringWidth(meridian), g.stringWidth(secondsText)) / 512 * 9 / 10));
-  let dowFontSize = width / (g.stringWidth(dowText) / 256);
+  let dowFontSize = 30;
   let dateFontSize = width / (g.stringWidth(dateText) / 256);
 
   let timeHeight = g.setFont("Vector", timeFontSize).getFontHeight() * 9 / 10;
