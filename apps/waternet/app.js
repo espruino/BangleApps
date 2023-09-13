@@ -126,8 +126,9 @@ const MMCOUNT = 4;
 
 const OPSOUND = 0;
 const OPINPUTRECTS = 1;
-const OPWIDGETS = 2;
-const OPCOUNT = 3;
+const OPTHEMING = 2;
+const OPWIDGETS = 3;
+const OPCOUNT = 4;
 
 const TSMAINMENU = 0;
 const TSGAMEMODE = 1;
@@ -1292,7 +1293,7 @@ function drawLevelSelect(partial) {
 
   if(partial == 2) {
     //clear parts of loading text
-    g.setColor(g.theme.bg);
+    g.setColor(g.getBgColor());
     g.fillRect(SCREENOFFSETX + (boardX + boardWidth) * TILESIZE, screenOffsetY + 3 * TILESIZE, SCREENOFFSETX - 1 + (boardX + MAXBOARDWIDTH + 5) * TILESIZE, screenOffsetY - 1 + 6 * TILESIZE);
   }
 
@@ -1629,6 +1630,8 @@ function validateSaveState() {
     return 0;
   if (options[OPINPUTRECTS] > 1)
     return 0;
+  if (options[OPTHEMING] > 1)
+    return 0;
 
   return 1;
 }
@@ -1654,8 +1657,9 @@ function initSaveState() {
       for (let i = 0; i < DIFFCOUNT; i++)
         levelLocks[(j * DIFFCOUNT) + i] = 1; //1st level unlocked
     options[OPSOUND] = 1;
-    options[OPWIDGETS] = 0;
+    options[OPWIDGETS] = 1;
     options[OPINPUTRECTS] = 0;
+    options[OPTHEMING] = 1;
   }
 }
 
@@ -1676,6 +1680,15 @@ function setSoundOnSaveState(value) {
 
 function isSoundOnSaveState() {
   return options[OPSOUND] == 1;
+}
+
+function setThemingOnSaveState(value) {
+  options[OPTHEMING] = value;
+  saveSaveState();
+}
+
+function isThemingOnSaveState() {
+  return options[OPTHEMING] == 1;
 }
 
 function setWidgetsOnSaveState(value) {
@@ -1735,7 +1748,7 @@ function drawMenuSelector(tile) {
 
 function drawMenuItems(clear) {
   if (clear) {
-    g.setColor(g.theme.bg);
+    g.setColor(g.getBgColor());
     switch (titleStep) {
       case TSMAINMENU:
         g.fillRect(SCREENOFFSETX + 5 * TILESIZE, screenOffsetY + 4 * TILESIZE, SCREENOFFSETX + 13 * TILESIZE, screenOffsetY + 8 * TILESIZE);
@@ -1751,7 +1764,7 @@ function drawMenuItems(clear) {
         break;
       case TSOPTIONS:
         g.fillRect(SCREENOFFSETX + 3 * TILESIZE, screenOffsetY + 4 * TILESIZE, SCREENOFFSETX + 11 * TILESIZE, screenOffsetY + 5 * TILESIZE);
-        g.fillRect(SCREENOFFSETX + 2 * TILESIZE, screenOffsetY + 5 * TILESIZE, SCREENOFFSETX + 16 * TILESIZE, screenOffsetY + 10 * TILESIZE);
+        g.fillRect(SCREENOFFSETX + 1 * TILESIZE, screenOffsetY + 5 * TILESIZE, SCREENOFFSETX + 16 * TILESIZE, screenOffsetY + 11 * TILESIZE);
         break;
     }
   } else {
@@ -1789,12 +1802,17 @@ function drawMenuItems(clear) {
           printMessage(3, 5, "INPUTRECT ON");
         else
           printMessage(3, 5, "INPUTRECT OFF");
+        if (isThemingOnSaveState()) {
+          printMessage(3, 6, "THEMING ON");
+        } else {
+          printMessage(3, 6, "THEMING OFF");
+        }
         if (isWidgetsOnSaveState()) {
-          printMessage(3, 6, "WIDGETS ON");
+          printMessage(3, 7, "WIDGETS ON");
         } else
-          printMessage(3, 6, "WIDGETS OFF");
-        printMessage(2, 8, "MUST RESTART");
-        printMessage(2, 9, "FOR WIDGETS");
+          printMessage(3, 7, "WIDGETS OFF");
+        printMessage(1, 9, "RESTART NEEDED");
+        printMessage(2, 10, "FOR WIDGETS");
         break;
     }
   }
@@ -1973,6 +1991,24 @@ function titleScreen() {
               //needs 3 because text crosses input rect lines
               redrawPartial = 3;
               break;
+            case OPTHEMING:
+              setThemingOnSaveState(!isThemingOnSaveState());
+              setThemingOn(isThemingOnSaveState());
+              //needs a clear to set background color
+              if(isThemingOnSaveState()) {
+                g.setBgColor(g.theme.bg);
+              } else {
+                g.setBgColor(0x0000);
+              }
+              g.clearRect(g.appRect);
+              //probably need to call this again as i think
+              //a copy is kept in currenttiles but i'm not sure of that
+              //but it's a small call so should be fine
+              setBlockTilesAsBackground();
+              needRedraw = 1;
+              //needs 3 because we need to redraw everything
+              redrawPartial = 3;
+
           }
         }
         break;
@@ -2427,9 +2463,38 @@ function game() {
 // --------------------------------------------------------------------------------------------------
 // main game start
 // --------------------------------------------------------------------------------------------------
+function setThemingOn(value)
+{
+  //change color palette to theming options for the images
+  if(value && (g.theme.bg != g.theme.fg)) {
+    SELECTORTILES.palette[1] = g.theme.bg;
+    SELECTORTILES.palette[2] = g.theme.fg;
+    TITLE.palette[3] = g.theme.bg;
+    TITLE.palette[2] = g.theme.bg;
+    TITLE.palette[1] = g.theme.fg;
+    BLOCKTILES.palette[0] = g.theme.bg;
+    BLOCKTILES.palette[1] = g.theme.fg;
+    CONGRATSSCREEN.palette[0] = g.theme.bg;
+    CONGRATSSCREEN.palette[1] = g.theme.fg;
+    CONGRATSTILES.palette[0] = g.theme.bg;
+    CONGRATSTILES.palette[1] = g.theme.fg;
+  } else {
+    SELECTORTILES.palette[1] = 0x0000;
+    SELECTORTILES.palette[2] = 0xFFFF;
+    TITLE.palette[3] = 0x0000;
+    TITLE.palette[2] = 0x0000;
+    TITLE.palette[1] = 0xFFFF;
+    BLOCKTILES.palette[0] = 0x0000;
+    BLOCKTILES.palette[1] = 0xFFFF;
+    CONGRATSSCREEN.palette[0] = 0x0000;
+    CONGRATSSCREEN.palette[1] = 0xFFFF;
+    CONGRATSTILES.palette[0] = 0x0000;
+    CONGRATSTILES.palette[1] = 0xFFFF;
+  }
+}
+
 function setup() {
   redrawPartial = 0;
-  setBlockTilesAsBackground();
   option = 0;
   difficulty = DIFFNORMAL;
   selectedLevel = 1;
@@ -2448,31 +2513,24 @@ function setup() {
     //only once they update themselves
     Bangle.drawWidgets();
   }
+  setThemingOn(isThemingOnSaveState());
+  //has to be called after applying theming
+  setBlockTilesAsBackground();
   //calculate screenoffset y position taking apprect into account
   screenOffsetY = ((SCREENHEIGHT + Bangle.appRect.y - 8 * TILESIZE) >> 1);
-
-  //change color palette to theming options for the images
-  if(g.theme.bg != g.theme.fg) {
-    SELECTORTILES.palette[1] = g.theme.bg;
-    SELECTORTILES.palette[2] = g.theme.fg;
-    TITLE.palette[3] = g.theme.bg;
-    TITLE.palette[2] = g.theme.bg;
-    TITLE.palette[1] = g.theme.fg;
-    BLOCKTILES.palette[0] = g.theme.bg;
-    BLOCKTILES.palette[1] = g.theme.fg;
-    CONGRATSSCREEN.palette[0] = g.theme.bg;
-    CONGRATSSCREEN.palette[1] = g.theme.fg;
-    CONGRATSTILES.palette[0] = g.theme.bg;
-    CONGRATSTILES.palette[1] = g.theme.fg;
-  }
 }
 
 function loop() {
   //soundTimer();
   let startTime = Date().getTime();
   g.reset();
-  g.setColor(g.theme.fg);
-  g.setBgColor(g.theme.bg);
+  if(isThemingOnSaveState())  {
+    g.setColor(g.theme.fg);
+    g.setBgColor(g.theme.bg);
+  } else {
+    g.setColor(0xFFFF);
+    g.setBgColor(0x0000);
+  }
 
 
   //gamestate handling
