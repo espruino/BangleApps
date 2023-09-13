@@ -49,7 +49,7 @@ let TITLE = {
 // --------------------------------------------------------------------------------------------------
 // global variables and consts
 // --------------------------------------------------------------------------------------------------
-const DEBUGMODE = 1;
+const DEBUGMODE = 0;
 const DEBUGMODEINPUT = 0;
 const DEBUGMODESPEED = 1;
 const DEBUGMODERAMUSE = 1;
@@ -291,13 +291,11 @@ function move_sprite(sprite, x, y) {
 function drawCursors(clear) {
   if ((showCursor == 0) || (cursorFrame & 1)) // 2nd or to add blink effect, it will skip drawing if bit 1 is set
     return;
-  g.setColor(1, 0, 0);
   for (let i = 0; i < cursorNumTiles; i++)
     if (spritePos[i][1] < SCREENHEIGHT)
       g.drawImage(SELECTORTILES, SCREENOFFSETX + spritePos[i][0], screenOffsetY + spritePos[i][1], {
         frame: ((clear ? 8 : 0) + (i % 8))
       });
-  g.setColor(g.theme.bg);
 }
 
 //returns 1 if cursor has changed / needs redraw
@@ -2473,8 +2471,6 @@ function loop() {
   //soundTimer();
   let startTime = Date().getTime();
   g.reset();
-  //print(g.theme.bg);
-  //print(g.theme.fg);
   g.setColor(g.theme.fg);
   g.setBgColor(g.theme.bg);
 
