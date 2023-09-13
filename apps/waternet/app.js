@@ -43,7 +43,7 @@ const TITLE = {
 const DEBUGMODE = 1;
 const DEBUGMODEINPUT = 0;
 const DEBUGMODESPEED = 1;
-const DEBUGMODERAMUSE = 0;
+const DEBUGMODERAMUSE = 1;
 
 const SCREENWIDTH = 176;
 const SCREENHEIGHT = 176;
@@ -137,79 +137,79 @@ const EMPTY = 61;
 
 const FRAMERATE = 15;
 
-var startPos;
-var menuPos;
-var maxLevel;
-var selectedLevel;
-var boardX;
-var boardY;
-var difficulty;
-var gameState;
-var boardWidth;
-var boardHeight;
-var boardSize;
-var levelDone;
-var titleStep;
-var gameMode;
-var posAdd;
-var mainMenu;
-var option;
-var needRedraw;
-var requiresFlip;
-var selectionX, selectionY;
-var moves;
-var randomSeedGame;
-var level = new Uint8Array(MAXBOARDSIZE);
-var redrawPartial;
-var screenOffsetY;
+let startPos;
+let menuPos;
+let maxLevel;
+let selectedLevel;
+let boardX;
+let boardY;
+let difficulty;
+let gameState;
+let boardWidth;
+let boardHeight;
+let boardSize;
+let levelDone;
+let titleStep;
+let gameMode;
+let posAdd;
+let mainMenu;
+let option;
+let needRedraw;
+let requiresFlip;
+let selectionX, selectionY;
+let moves;
+let randomSeedGame;
+let level = new Uint8Array(MAXBOARDSIZE);
+let redrawPartial;
+let screenOffsetY;
 
 // Cursor
 const maxCursorFrameCount = (10 * FRAMERATE / 60);
 const cursorAnimCount = 2; //blink on & off
 const cursorNumTiles = 16; //for the max 2 cursors shown at once (on help screens)
 
-var cursorFrameCount, cursorFrame, showCursor;
-var spritePos = [];
+let cursorFrameCount, cursorFrame, showCursor;
+let spritePos = [];
 
 //intro
-var frames;
-var titlePosY;
+let frames;
+let titlePosY;
 const frameDelay = 16 * FRAMERATE / 15;
 
 //savestate
-var levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
-var options = new Uint8Array(OPCOUNT);
+let levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
+let options = new Uint8Array(OPCOUNT);
 
 //sound
-var soundon = 1;
+let soundon = 1;
 
 
 //game
 
-var paused;
-var wasSoundOn;
-var redrawLevelDoneBit;
-var currentTiles = {};
+let paused;
+let wasSoundOn;
+let redrawLevelDoneBit;
+let currentTiles = {};
 
 //general input
-var dragleft = false;
-var dragright = false;
-var dragup = false;
-var dragdown = false;
-var btna = false;
-var btnb = false;
+let dragleft = false;
+let dragright = false;
+let dragup = false;
+let dragdown = false;
+let btna = false;
+let btnb = false;
 
 // --------------------------------------------------------------------------------------------------
 // random stuff
 // https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript#72732727
 // --------------------------------------------------------------------------------------------------
 
-var randfunc;
+let randfunc;
 
 function srand(seed) {
-  var m = Math.pow(2, 35) - 31;
-  var a = 185852;
-  var s = seed % m;
+  let m = Math.pow(2, 35) - 31;
+  let a = 185852;
+  let s = seed % m;
   randfunc = function() {
     return (s = s * a % m);
   };
@@ -283,7 +283,7 @@ function drawCursors(clear) {
   if ((showCursor == 0) || (cursorFrame & 1)) // 2nd or to add blink effect, it will skip drawing if bit 1 is set
     return;
   g.setColor(1, 0, 0);
-  for (var i = 0; i < cursorNumTiles; i++)
+  for (let i = 0; i < cursorNumTiles; i++)
     if (spritePos[i][1] < SCREENHEIGHT)
       g.drawImage(SELECTORTILES, SCREENOFFSETX + spritePos[i][0], screenOffsetY + spritePos[i][1], {
         frame: ((clear ? 8 : 0) + (i % 8))
@@ -773,29 +773,29 @@ function intro() {
 
 
 function moveBlockDown(aTile) {
-  var tmp = level[aTile + boardSize - boardWidth];
-  for (var i = boardSize - boardWidth; i != 0; i -= boardWidth)
+  let tmp = level[aTile + boardSize - boardWidth];
+  for (let i = boardSize - boardWidth; i != 0; i -= boardWidth)
     level[aTile + i] = level[aTile + i - boardWidth];
   level[aTile] = tmp;
 }
 
 function moveBlockUp(aTile) {
-  var tmp = level[aTile - boardSize + boardWidth];
-  for (var i = boardSize - boardWidth; i != 0; i -= boardWidth)
+  let tmp = level[aTile - boardSize + boardWidth];
+  for (let i = boardSize - boardWidth; i != 0; i -= boardWidth)
     level[aTile - i] = level[aTile - i + boardWidth];
   level[aTile] = tmp;
 }
 
 function moveBlockRight(aTile) {
-  var tmp = level[aTile + boardWidth - 1];
-  for (var i = 0; i < boardWidth - 1; i++)
+  let tmp = level[aTile + boardWidth - 1];
+  for (let i = 0; i < boardWidth - 1; i++)
     level[aTile + boardWidth - 1 - i] = level[aTile + boardWidth - 2 - i];
   level[aTile] = tmp;
 }
 
 function moveBlockLeft(aTile) {
-  var tmp = level[aTile - boardWidth + 1];
-  for (var i = 0; i < boardWidth - 1; i++)
+  let tmp = level[aTile - boardWidth + 1];
+  for (let i = 0; i < boardWidth - 1; i++)
     level[aTile - boardWidth + 1 + i] = level[aTile - boardWidth + 2 + i];
   level[aTile] = tmp;
 }
@@ -880,7 +880,7 @@ function rotateBlock(aTile) {
 }
 
 function shuffleSlide(aTile) {
-  var rnd = random(3);
+  let rnd = random(3);
   switch (rnd) {
     case 0:
       moveBlockUp((aTile % boardWidth) + boardSize - boardWidth);
@@ -898,14 +898,14 @@ function shuffleSlide(aTile) {
 }
 
 function shuffleRotate(aTile) {
-  var rnd = random(3);
-  for (var i = 0; i < rnd; i++)
+  let rnd = random(3);
+  for (let i = 0; i < rnd; i++)
     rotateBlock(aTile);
 }
 
 function shuffleLevel() {
-  var rnd;
-  var j = 0;
+  let rnd;
+  let j = 0;
   while (j < boardSize) {
     switch (gameMode) {
       case GMROTATE:
@@ -933,10 +933,10 @@ function shuffleLevel() {
 }
 
 function handleConnectPoint(currentPoint, cellStack, cc) {
-  var lookUpX = currentPoint % boardWidth;
-  var lookUpY = Math.floor(currentPoint / boardWidth);
-  var tmp;
-  var tmp2;
+  let lookUpX = currentPoint % boardWidth;
+  let lookUpY = Math.floor(currentPoint / boardWidth);
+  let tmp;
+  let tmp2;
   if ((lookUpY > 0) && (!(level[currentPoint] & 1))) {
     tmp = currentPoint - boardWidth;
     tmp2 = level[tmp];
@@ -1013,9 +1013,9 @@ function handleConnectPoint(currentPoint, cellStack, cc) {
 }
 
 function updateConnected() {
-  var cellStack = [];
+  let cellStack = [];
   //reset all tiles to default not filled one
-  for (var i = 0; i != boardSize; i++) {
+  for (let i = 0; i != boardSize; i++) {
     if (level[i] > 31) {
       level[i] -= 32;
     } else {
@@ -1026,7 +1026,7 @@ function updateConnected() {
   }
 
   //start with start tile
-  var cc = 1;
+  let cc = 1;
   cc = handleConnectPoint(startPos, cellStack, cc);
   while (--cc > 0) {
     //if tile is bigger then 15 we already handled this one, continue with next one
@@ -1044,16 +1044,16 @@ function updateConnected() {
 }
 
 function generateLevel() {
-  var neighbours = new Uint8Array(4);
-  var cellStack = new Uint8Array(MAXBOARDSIZE + 1);
-  var cc = 0;
-  var currentPoint = 0;
-  var visitedRooms = 1;
-  var tmp, tmp2;
-  var selectedNeighbour;
-  var neighboursFound;
-  var lookUpX, lookUpY;
-  var rnd;
+  let neighbours = new Uint8Array(4);
+  let cellStack = new Uint8Array(MAXBOARDSIZE + 1);
+  let cc = 0;
+  let currentPoint = 0;
+  let visitedRooms = 1;
+  let tmp, tmp2;
+  let selectedNeighbour;
+  let neighboursFound;
+  let lookUpX, lookUpY;
+  let rnd;
   //generate a lookup table so we don't have to use modulus or divide constantly
   //generateLookupTable(boardWidth, boardHeight);
 
@@ -1142,7 +1142,7 @@ function generateLevel() {
 //when all board tiles are not below 16, the level is cleared
 //as there are 16 tiles per tilegroup (no water, water, special start with water)
 function isLevelDone() {
-  for (var i = 0; i != boardSize; i++)
+  for (let i = 0; i != boardSize; i++)
     if (level[i] < 16)
       return 0;
 
@@ -1150,7 +1150,7 @@ function isLevelDone() {
 }
 
 function initLevel(aRandomSeed, noLoading) {
-  var startTime = Date().getTime();
+  let startTime = Date().getTime();
   if (!noLoading) {
     //g.setColor(0,0,0);
     //g.fillRect(SCREENOFFSETX + ((16 - 10) >> 1) * TILESIZE,  screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE, SCREENOFFSETX + (((16 - 10) >> 1) * TILESIZE) + (10*TILESIZE), screenOffsetY + (((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE) +(3*TILESIZE));
@@ -1193,7 +1193,7 @@ function initLevel(aRandomSeed, noLoading) {
       boardHeight = 8;
       break;
     case DIFFRANDOM:
-      var rnd = random(255);
+      let rnd = random(255);
       boardWidth = 5 + (rnd % (MAXBOARDWIDTH - 5 + 1)); //5 is smallest level width from very easy
       rnd = random(255);
       boardHeight = 5 + (rnd % (MAXBOARDHEIGHT - 5 + 1)); //5 is smallest level height from very easy
@@ -1275,54 +1275,90 @@ function levelsCleared() {
 // level select
 // --------------------------------------------------------------------------------------------------
 
-function drawLevelSelect() {
-  g.clearRect(Bangle.appRect);
-  //LEVEL:
-  printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
+function drawLevelSelect(partial) {
+  if(partial > 2)
+  {
+    g.clearRect(Bangle.appRect);
+    //LEVEL:
+    printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
+  }
+
+  if(partial == 2) {
+    //clear parts of loading text
+    g.setColor(0,0,0);
+    g.fillRect(SCREENOFFSETX + (boardX + boardWidth) * TILESIZE, screenOffsetY + 3 * TILESIZE, SCREENOFFSETX - 1 + (boardX + MAXBOARDWIDTH + 5) * TILESIZE, screenOffsetY - 1 + 6 * TILESIZE);
+  }
 
   //[LEVEL NR] 2 chars
+  if(partial == 2)
+    set_bkg_tile_xy(MAXBOARDBGWIDTH + 4, 1, EMPTY);
+
   printNumber(MAXBOARDBGWIDTH + 4, 1, selectedLevel, 2);
 
-  //B:BACK
-  printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
-  printMessage(MAXBOARDBGWIDTH, 7, "BACK");
+  if(partial > 2)
+  {
+    //B:BACK
+    printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
+    printMessage(MAXBOARDBGWIDTH, 7, "BACK");
+  }
 
-  //A:PLAY
-  printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-  printMessage(MAXBOARDBGWIDTH, 5, "PLAY");
+
+  if(partial > 1) {
+    //A:PLAY
+    printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
+    printMessage(MAXBOARDBGWIDTH, 5, "PLAY");
+  }
 
   //Locked & Unlocked keywoard
-  var tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
+  let tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
   if (!tmpUnlocked)
     printMessage(MAXBOARDBGWIDTH, 2, "LOCKED");
   else
-    printMessage(MAXBOARDBGWIDTH, 2, "OPEN");
+    printMessage(MAXBOARDBGWIDTH, 2, "OPEN  ");
 
-  //Draw arrows for vertical / horizontal movement
-  if (gameMode != GMROTATE) {
-    for (var x = 0; x != boardWidth; x++) {
-      set_bkg_tile_xy(boardX + x, boardY - 1, ARROWDOWN);
-      set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
-    }
+  if(partial > 2) {
+    //Draw arrows for vertical / horizontal movement
+    if (gameMode != GMROTATE) {
+      for (let x = 0; x != boardWidth; x++) {
+        set_bkg_tile_xy(boardX + x, boardY - 1, ARROWDOWN);
+        set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
+      }
 
-    for (var y = 0; y != boardHeight; y++) {
-      set_bkg_tile_xy(boardX - 1, boardY + y, ARROWRIGHT);
-      set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
+      for (let y = 0; y != boardHeight; y++) {
+        set_bkg_tile_xy(boardX - 1, boardY + y, ARROWRIGHT);
+        set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
+      }
     }
   }
 
-  var i16 = 0;
-  for (var yy = 0; yy < boardHeight; yy++) {
-    for (var xx = 0; xx < boardWidth; xx++) {
+  //only draw right and bottom arrows 
+  if(partial == 2) {
+    //Draw arrows for vertical / horizontal movement
+    if (gameMode != GMROTATE) {
+      for (let x = 0; x != boardWidth; x++) {
+        set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
+      }
+
+      for (let y = 0; y != boardHeight; y++) {
+        set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
+      }
+    }
+  }
+
+  let i16 = 0;
+  for (let yy = 0; yy < boardHeight; yy++) {
+    for (let xx = 0; xx < boardWidth; xx++) {
       set_bkg_tile_xy(boardX + xx, boardY + yy, level[i16 + xx]);
     }
     i16 += boardWidth;
   }
+  redrawPartial = 3;
 }
 
 function initLevelSelect() {
   setBlockTilesAsBackground();
   needRedraw = 1;
+  redrawPartial = 3;
 }
 
 function levelSelect() {
@@ -1331,7 +1367,7 @@ function levelSelect() {
     gameState -= GSINITDIFF;
   }
 
-  var tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
+  let tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
 
 
   if (btnb) {
@@ -1354,12 +1390,14 @@ function levelSelect() {
       randomSeedGame = Date.now();
       initLevel(randomSeedGame);
       needRedraw = 1;
+      redrawPartial = 3;
     } else {
       if (selectedLevel > 1) {
         playMenuSelectSound();
         selectedLevel--;
         initLevel(randomSeedGame);
         needRedraw = 1;
+        redrawPartial = 2;
       }
     }
   }
@@ -1370,18 +1408,20 @@ function levelSelect() {
       randomSeedGame = Date.now();
       initLevel(randomSeedGame);
       needRedraw = 1;
+      redrawPartial = 3;
     } else {
       if (selectedLevel < maxLevel) {
         playMenuSelectSound();
         selectedLevel++;
         initLevel(randomSeedGame);
         needRedraw = 1;
+        redrawPartial = 2;
       }
     }
   }
 
   if (needRedraw) {
-    drawLevelSelect();
+    drawLevelSelect(redrawPartial);
     needRedraw = 0;
     requiresFlip = 1;
   }
@@ -1398,7 +1438,7 @@ function setCharAt(str, index, chr) {
 
 function formatInteger(valinteger) {
   const maxDigits = 10;
-  var array = "          ";
+  let array = "          ";
 
   const maxCharacters = (maxDigits);
 
@@ -1414,10 +1454,10 @@ function formatInteger(valinteger) {
     };
   }
 
-  var digits = 0;
-  var integer = valinteger;
+  let digits = 0;
+  let integer = valinteger;
   do {
-    var digit = integer % 10;
+    let digit = integer % 10;
     integer = Math.floor(integer / 10);
 
     array = setCharAt(array, lastIndex - digits, digit.toString());
@@ -1435,11 +1475,11 @@ function formatInteger(valinteger) {
 function printNumber(ax, ay, aNumber, maxDigits) {
   const buffSize = 10;
 
-  var ret = formatInteger(aNumber);
-  var maxFor = ret.digits;
+  let ret = formatInteger(aNumber);
+  let maxFor = ret.digits;
   if (ret.digits > maxDigits)
     maxFor = maxDigits;
-  for (var c = 0; c < maxFor; c++) {
+  for (let c = 0; c < maxFor; c++) {
     if (ret.string.charAt(buffSize - ret.digits + c) == '')
       return;
     set_bkg_tile_xy(ax + (maxDigits - ret.digits) + c, ay, ret.string.charCodeAt(buffSize - ret.digits + c) + 32);
@@ -1449,7 +1489,7 @@ function printNumber(ax, ay, aNumber, maxDigits) {
 function printDebug(ax, ay, amsg) {
   if (DEBUGMODE) {
     //rememvber current tiles
-    var tiles = get_bkg_data();
+    let tiles = get_bkg_data();
     setBlockTilesAsBackground();
     g.clearRect(Bangle.appRect);
     printMessage(ax, ay, amsg);
@@ -1463,16 +1503,17 @@ function printDebug(ax, ay, amsg) {
 
 //print a message on the title screen on ax,ay, the tileset from titlescreen contains an alphabet
 function printMessage(ax, ay, amsg) {
-  var index = 0;
-  var p = 0;
-  var aCode = 'A'.charCodeAt(0);
-  var zCode = 'Z'.charCodeAt(0);
-  var zeroCode = '0'.charCodeAt(0);
-  var nineCode = '9'.charCodeAt(0);
+  let index = 0;
+  let p = 0;
+  let aCode = 'A'.charCodeAt(0);
+  let zCode = 'Z'.charCodeAt(0);
+  let zeroCode = '0'.charCodeAt(0);
+  let nineCode = '9'.charCodeAt(0);
   while (p < amsg.length) {
-    var fCharCode = amsg.charCodeAt(p++);
-    var tile = 61;
+    let fCharCode = amsg.charCodeAt(p++);
+    let tile = 61;
     switch (fCharCode) {
+      case -1:
       case 0:
         return;
 
@@ -1548,14 +1589,14 @@ function printMessage(ax, ay, amsg) {
 //print a message on the CongratsScreen on ax,ay, the tileset from Congrats Screen contains an alphabet in another font
 function printCongratsScreen(ax, ay, amsg) {
   // based on input form @Pharap
-  var index = 0;
-  var p = 0;
-  var aCode = 'A'.charCodeAt(0);
-  var zCode = 'Z'.charCodeAt(0);
+  let index = 0;
+  let p = 0;
+  let aCode = 'A'.charCodeAt(0);
+  let zCode = 'Z'.charCodeAt(0);
   while (p < amsg.length) {
-    var fCharCode = amsg.charCodeAt(p++);
-    var tile = 26;
-    if (fCharCode == 0)
+    let fCharCode = amsg.charCodeAt(p++);
+    let tile = 26;
+    if ((fCharCode == 0) || (fCharCode == -1))
       return;
     if ((fCharCode >= aCode) && (fCharCode <= zCode))
       tile = fCharCode - aCode;
@@ -1569,8 +1610,8 @@ function printCongratsScreen(ax, ay, amsg) {
 // --------------------------------------------------------------------------------------------------
 
 function validateSaveState() {
-  for (var j = 0; j < GMCOUNT; j++) {
-    for (var i = 0; i < DIFFCOUNT; i++) {
+  for (let j = 0; j < GMCOUNT; j++) {
+    for (let i = 0; i < DIFFCOUNT; i++) {
       if ((levelLocks[(j * DIFFCOUNT) + i] == 0) || (levelLocks[(j * DIFFCOUNT) + i] > LEVELCOUNT))
         return 0;
     }
@@ -1587,8 +1628,8 @@ function validateSaveState() {
 
 function initSaveState() {
   //read from file
-  var file = require("Storage").open("waternet.data.dat", "r");
-  var index = 0;
+  let file = require("Storage").open("waternet.data.dat", "r");
+  let index = 0;
   for (index = 0; index < GMCOUNT * DIFFCOUNT; index++) {
     tmp = file.readLine();
     if (tmp !== undefined)
@@ -1602,8 +1643,8 @@ function initSaveState() {
   }
   //then
   if (!validateSaveState()) {
-    for (var j = 0; j < GMCOUNT; j++)
-      for (var i = 0; i < DIFFCOUNT; i++)
+    for (let j = 0; j < GMCOUNT; j++)
+      for (let i = 0; i < DIFFCOUNT; i++)
         levelLocks[(j * DIFFCOUNT) + i] = 1; //1st level unlocked
     options[OPSOUND] = 1;
     options[OPWIDGETS] = 0;
@@ -1613,8 +1654,8 @@ function initSaveState() {
 
 function saveSaveState() {
   //save to file
-  var file = require("Storage").open("waternet.data.dat", "w");
-  var index;
+  let file = require("Storage").open("waternet.data.dat", "w");
+  let index;
   for (index = 0; index < GMCOUNT * DIFFCOUNT; index++)
     file.write(levelLocks[index].toString() + "\n");
   for (index = 0; index < OPCOUNT; index++)
@@ -2062,12 +2103,12 @@ function drawGame(partial) {
       //Draw arrows for vertical / horizontal movement
       if (gameMode != GMROTATE) {
 
-        for (var x = 0; x != boardWidth; x++) {
+        for (let x = 0; x != boardWidth; x++) {
           set_bkg_tile_xy(boardX + x, boardY - 1, ARROWDOWN);
           set_bkg_tile_xy(boardX + x, boardY + boardHeight, ARROWUP);
         }
 
-        for (var y = 0; y != boardHeight; y++) {
+        for (let y = 0; y != boardHeight; y++) {
           set_bkg_tile_xy(boardX - 1, boardY + y, ARROWRIGHT);
           set_bkg_tile_xy(boardX + boardWidth, boardY + y, ARROWLEFT);
         }
@@ -2075,9 +2116,9 @@ function drawGame(partial) {
     }
 
     //complete level
-    var i16 = 0;
-    var yy;
-    var xx;
+    let i16 = 0;
+    let yy;
+    let xx;
     if (partial > 1) {
       for (yy = 0; yy < boardHeight; yy++) {
         for (xx = 0; xx < boardWidth; xx++) {
@@ -2086,8 +2127,8 @@ function drawGame(partial) {
         i16 += boardWidth;
       }
     }
-    redrawPartial = 3;
   }
+  redrawPartial = 3;
 }
 
 function initGame() {
@@ -2292,8 +2333,8 @@ function game() {
         if (levelDone) {
           //update level one last time so we are at final state
           //as it won't be updated anymore as long as level done is displayed
-          //1 forces level to be drawn (only) one last time the other call uses levelDone
-          drawGame(1);
+          //2 forces level to be drawn (only) one last time the other call uses levelDone
+          drawGame(2);
           //hide cursor it's only sprite we use
           hideCursors();
           //g.setColor(0,0,0);
@@ -2405,14 +2446,14 @@ function setup() {
 
 function loop() {
   //soundTimer();
-  var startTime = Date().getTime();
+  let startTime = Date().getTime();
   g.reset();
   g.setColor(1, 1, 1);
   g.setBgColor(0, 0, 0);
 
 
   //gamestate handling
-  var prevGameState = gameState;
+  let prevGameState = gameState;
 
   switch (gameState) {
     case GSINITTITLE:
@@ -2481,10 +2522,10 @@ function loop() {
   if (requiresFlip) {
     if (isInputRectsOnSaveState()) {
       const offsetvalue = 0.20;
-      var x1 = SCREENWIDTH * offsetvalue;
-      var x2 = SCREENWIDTH - SCREENWIDTH * offsetvalue;
-      var y1 = Bangle.appRect.y + SCREENHEIGHT * offsetvalue;
-      var y2 = SCREENHEIGHT - SCREENHEIGHT * offsetvalue;
+      let x1 = SCREENWIDTH * offsetvalue;
+      let x2 = SCREENWIDTH - SCREENWIDTH * offsetvalue;
+      let y1 = Bangle.appRect.y + SCREENHEIGHT * offsetvalue;
+      let y2 = SCREENHEIGHT - SCREENHEIGHT * offsetvalue;
       g.setColor(1, 0, 1);
       //up
       g.drawRect(0, Bangle.appRect.y, SCREENWIDTH - 1, y1);
@@ -2508,8 +2549,8 @@ function loop() {
     debugLog("loop done");
 
   if (DEBUGMODERAMUSE) {
-    var memTmp = process.memory(false);
-    var used = memTmp.usage - memStart.usage;
+    let memTmp = process.memory(false);
+    let used = memTmp.usage - memStart.usage;
     debugLog("Udiff:" + used.toString() + " used:" + memTmp.usage.toString() + " free:" + memTmp.free.toString() + " total:" + memTmp.total.toString());
   }
 }
@@ -2521,10 +2562,10 @@ function debugLog(val) {
 
 function handleTouch(button, data) {
   const offsetvalue = 0.20;
-  var x1 = SCREENWIDTH * offsetvalue;
-  var x2 = SCREENWIDTH - SCREENWIDTH * offsetvalue;
-  var y1 = Bangle.appRect.y + SCREENHEIGHT * offsetvalue;
-  var y2 = SCREENHEIGHT - SCREENHEIGHT * offsetvalue;
+  let x1 = SCREENWIDTH * offsetvalue;
+  let x2 = SCREENWIDTH - SCREENWIDTH * offsetvalue;
+  let y1 = Bangle.appRect.y + SCREENHEIGHT * offsetvalue;
+  let y2 = SCREENHEIGHT - SCREENHEIGHT * offsetvalue;
   dragleft = data.x < x1;
   dragright = data.x > x2;
   dragup = data.y < y1;
@@ -2563,13 +2604,13 @@ function btnPressed() {
     debugLog("btnPressed done");
 }
 
-var memStart;
+let memStart;
 if (DEBUGMODERAMUSE)
   memStart = process.memory(true);
 
 
 //initialize spritepos arrays
-for (var i = 0; i < cursorNumTiles; i++)
+for (let i = 0; i < cursorNumTiles; i++)
   spritePos.push(new Int8Array(2));
 
 //clear one time entire screen
@@ -2578,7 +2619,7 @@ g.clear();
 //otherwise only as long as redraw is needed after input was detected
 setup();
 //for intro only
-var intervalTimer = setInterval(loop, 66); // 15 fps
+let intervalTimer = setInterval(loop, 66); // 15 fps
 //for handling input
 Bangle.on('touch', handleTouch);
 setWatch(btnPressed, BTN, {
