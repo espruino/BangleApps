@@ -8,9 +8,8 @@ WIDGETS["casiologo"]={
         return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
       }
       if (!this.width) return;
-      g.reset()
-        .drawImage(
-          atob("OgwCAAAAAAAAAAAAAAAAAAAA///wA//AD//8D8D///A////AP/wD///w/D///8P9B/wL//A/AD8Pw/wC/D8AD8D8PwPwAAD8PwAPw/AAAA/D8D///A/D8AD8PwAAA/gPwP//8Pw/AA/D8AD8P//8AAA/T8PwAPw/wD/P///z8AP0/D/Af8P///z/AL8///8Pw////A///w/AA/T///D8D///AAAAAAAAAAAAAAAAAAAA"),
+      g.reset().setColor(g.theme.dark?"#fff":"#000").drawImage(
+        atob("OgwCAAAAAAAAAAAAAAAAAAAA///wA//AD//8D8D///A////AP/wD///w/D///8P9B/wL//A/AD8Pw/wC/D8AD8D8PwPwAAD8PwAPw/AAAA/D8D///A/D8AD8PwAAA/gPwP//8Pw/AA/D8AD8P//8AAA/T8PwAPw/wD/P///z8AP0/D/Af8P///z/AL8///8Pw////A///w/AA/T///D8D///AAAAAAAAAAAAAAAAAAAA"),
         this.x+10,
         this.y+6)
     }
