@@ -100,3 +100,4 @@
       On 2v18.64+ firmware, 'No Messages' now has a 'back' button
 0.72: Nav message updastes don't automatically launch navigation menu unless they're new
 0.73: Add sharp left+right nav icons
+0.74: Add option for driving on left (affects roundabout icons in navigation)

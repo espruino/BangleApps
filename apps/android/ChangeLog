@@ -31,3 +31,4 @@
 0.30: Send firmware and hardware versions on connection
       Allow alarm enable/disable
 0.31: Implement API for activity fetching
+0.32: Added support for loyalty cards from gadgetbridge

@@ -236,6 +236,11 @@
           event.t="remove";
         }
         require("messages").pushMessage(event);
+      },
+      "cards" : function() {
+        // we receive all, just override what we have
+        if (Array.isArray(event.d))
+          require("Storage").writeJSON("android.cards.json", event.d);
       }
     };
     var h = HANDLERS[event.t];

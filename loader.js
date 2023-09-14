@@ -16,7 +16,7 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v18";
+var RECOMMENDED_VERSION = "2v19";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -236,7 +236,7 @@ window.addEventListener('load', (event) => {
     });
   });
 
-  
+
   // Button to install all default apps in one go
   el = document.getElementById("installdefault");
   if (el) el.addEventListener("click", event=>{
@@ -262,7 +262,7 @@ window.addEventListener('load', (event) => {
       showToast("Settings reset!", "success");
     }, function() { /* cancelled */ });
   });
-  
+
 
   // BLE Compatibility
   var selectBLECompat = document.getElementById("settings-ble-compat");
