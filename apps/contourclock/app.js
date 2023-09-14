@@ -29,7 +29,7 @@
   }
   let showExtras = function() { //show extras for a limited time
     drawExtras();
-    //if (extrasTimeout) clearTimeout(extrasTimeout);
+    if (extrasTimeout) clearTimeout(extrasTimeout);
     extrasTimeout = setTimeout(() => {
       extrasTimeout = undefined;
       hideExtras();
