@@ -187,8 +187,8 @@ Layout.prototype.render = function (l) {
         x,y+h-5,
         x,y+4
       ], bg = l.bgCol!==undefined?l.bgCol:gfx.theme.bg,
-      btnborder = l.btnBorder!==undefined?l.btnBorder:gfx.theme.fg2,
-      btnface = l.btnFace!==undefined?l.btnFace:gfx.theme.bg2;
+      btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
+      btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
     if(l.selected){
       btnface = gfx.theme.bgH, btnborder = gfx.theme.fgH;
     }
