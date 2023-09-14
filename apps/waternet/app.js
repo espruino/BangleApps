@@ -6,16 +6,16 @@ const BLOCKTILES = {
   height: 10,
   bpp: 2,
   transparent: -1,
-  palette: new Uint16Array([0,65535,0,0]),
+  palette: new Uint16Array([0, 65535, 0, 0]),
   buffer: require("heatshrink").decompress(atob("gsFgFQqFVgtVAYIOEBIgTEBwoADDBwxGgoiCBIIKBBIgxLFAQYOMZ5UIMZ4JIMZ5UEGJRjIDBBoGGoYXCBwQ/ESo57DDB4EYGIxmBDqaUEJQxUDSpJjKDBBAPKgYxLMZAYIBIg9BABgdJDCYxGPwoEGGJYYRMaaVJDCZjTGJYYRNAw0OcpIYRAjBPLAiZKMSpIYTLzAdTCY0BqtUHoIAMitVoAdDDCwxGooELGJYYRMax+DDC0FqhKOoJKEGJBjPY4wJBqJADAgyVKDBrHKBIJZEAhIxJDCJjSY5QYTMawxIDCYAWqEUgsBoEFoNQEwIEBKoNABwMABIYOCModVDCdQitFgNUBINAqg5BoIJCBwIJEAgRKQIAQABe4UQikBBwMVoNRDAIECBIIOCBIhjDVwLRBDCg7BMap8PoonBIQLgCMaJZCPgYA/AEblEACsQcQIETGIYYUIqsFF4JjVDARFVfYIxEDClAgEEA4IETDQNUDCoEBig7BAiYxDDChFVY4hjTDARFVVwT2SAAreBAQMUiEEagNAqraBglUgsAiIzBiAzCBoQTBDAsQDBpKYgtUZQJLBgojBAhAOBCYJkFHwIERAAMVGISjFBIQIEBwIJBDBzGEDA8AAgMVoEFBwNBSoITGG4gxGdooxNCYhZGGwUUDBBjJRYQlHAgJKHMYYxTDAxjMitVfI4JJAgIxGBwwsBCYYOCJRR0IfJVQDAcVFgoECBIIYCT4LgNGJoYJHYRPHAAUFRYcVBwhPDiqQBE4MFGIbCEawwJFAgYyDNAK1CAiBKDoFVHIJaFfwpoBBYRKCUgwTCXBQYDbZauLGIkVawQEBT4NEcowxELINRSAZFCSpsFLIizGXAwTBfIxAFJQQiCfJIYCqjvBoNQAgyuDYQQxCJRYTBfwwxGPgIHBFIMBegTlDBwRjEqtBfIQTCBQIELVwiQJfwRAEcAgYPPgYxEdQoEFfIKzDqEFPgbWJDYKfJDBhFCbwwECSoY7CAoKpCVwQaBBAIOCCYL6DYQa/CRAYJKAAgiBO4NBopOBqJTBqgEEgoxEIAJSBqsFUIJwCbgRYBotQAwILBcoQxDioxHAgYJBGIoYGCYMQgFBgEEBIVQJQwYGJQIYFXgIYPqgYEaoQYORYIYFJREFqkBqITBitBgNUioEBBITIBqtACYIYFCYVFoNUDAYMBDBI="))
 };
 
 const CONGRATSTILES = {
   width: 10,
   height: 10,
-  bpp : 2,
+  bpp: 2,
   transparent: -1,
-  palette: new Uint16Array([0,65535,0,0]),
+  palette: new Uint16Array([0, 65535, 0, 0]),
   buffer: require("heatshrink").decompress(atob("gtUgFQoEFggEFqoJIDAVQDBEQDowTDGIoEBA4IEJGwQTBGJhPHGKAJGGI4YJHYRPIAAQYJihKFgtACYQxCLxK4LAAQfBAwQEQJQkBAgLCBAgzMCDAzbHqJbDAgT5JbZauMgNAqlUgsRoFRigJCqAEIJQlUEQKpBqL+NAATWCCZpSEGIQYLqr5LGKL5GGJxjJDoKpGAQb3DDoRjEWwL5LAg75HAhbgHDCCuHd5b+Cor5KFgy4MGI0AoiNBXoZ8MNAQTBDQI9CGIILBMAR8GADAA=="))
 };
 
@@ -24,8 +24,8 @@ const CONGRATSSCREEN = {
   height: 80,
   bpp: 2,
   transparent: -1,
-  palette : new Uint16Array([0,65535,0,0]),
-  buffer : require("heatshrink").decompress(atob("AFUECaVUAokVCRcFqoUFB5FAE40FqAn1CgQWCAQIgCDAMUE44KBE4I0EgInIKQVAqtVDINUgNVBIdUiodBBQVAipPCAYIIBqAUBE4wYCqoTBEAMBqkFooVBEAInDBAQnCqEUCYInMIgITDMoI9CE4gIDE4tACIQntSAgTFMQJ3HE5Z3FqAnKiqfHBAYnHOQYABHIIUBbgInCY4RPEBwhPGCYZPGBYIdBRwInCionFAgVRE4VQBAInCioOCE94AHgItBAEhKBE8oAegkBQoIEBggJCUwVAAgawCLQIEECYSbBoC/DE9gJBE4gDCE4IEDBwYJCCYcAFgIOCcwgTCE8htCE5R8DBwZ3BE46BCO4YxFJ5aaEJ6An5T6oJCiqVDAAIECRYifGKgQnGT4oA/AH4A/AH4A/AH4A/AH4A/AH4AOqoCBqgn/E88UE81VoAndgoGGoNQGZcFE6BHGE8YhDisAiAnTNowABgNQqgTEiEEZBQRBipdGWpEBdAMVgoMCE4MEE6RFCCQ8BisQiIUCiEBogNCIo0BqpHGgIdBE4xFBoInnqEQYQQCBO4S9HE5BtBS4InIoEEE46pEXwlVDpAGDHwQJBgIbBE458BE6BPDLwInOqCpDAAcUCIQnJPoIiBE97XBigEBVIh3RTwInJgoEDE47OBgpYFE4tQigNBD4InGoIZCBIjfFLoQnKCwIHBiogBDodVdQQnGgIyCKQInFR4InCgInCqFUE88QC4ZoEE46LCRoSoDCwhIEI4MVHYgnKDoMVE4LIEIoQnHCgMFBYYhEDoy9CaI6NDE44HCE4yIBSownIDoQnGCgIntA4SWBco4nNS4IhCD4QcGCoSpEBQUVIQgVGAgQhCgInKLIrvDQIIKFCokFRwYnCHQhyEDgoSCPIYKHAgNVBIonsDAgcGFwTRFE4rICD4iyFAAYcFC4cUBIonJDYQTGAAQxGJgMFQIp+GHwzUEE5cAqqRDMJInuABKpJABiYFA=="))
+  palette: new Uint16Array([0, 65535, 0, 0]),
+  buffer: require("heatshrink").decompress(atob("AFUECaVUAokVCRcFqoUFB5FAE40FqAn1CgQWCAQIgCDAMUE44KBE4I0EgInIKQVAqtVDINUgNVBIdUiodBBQVAipPCAYIIBqAUBE4wYCqoTBEAMBqkFooVBEAInDBAQnCqEUCYInMIgITDMoI9CE4gIDE4tACIQntSAgTFMQJ3HE5Z3FqAnKiqfHBAYnHOQYABHIIUBbgInCY4RPEBwhPGCYZPGBYIdBRwInCionFAgVRE4VQBAInCioOCE94AHgItBAEhKBE8oAegkBQoIEBggJCUwVAAgawCLQIEECYSbBoC/DE9gJBE4gDCE4IEDBwYJCCYcAFgIOCcwgTCE8htCE5R8DBwZ3BE46BCO4YxFJ5aaEJ6An5T6oJCiqVDAAIECRYifGKgQnGT4oA/AH4A/AH4A/AH4A/AH4A/AH4AOqoCBqgn/E88UE81VoAndgoGGoNQGZcFE6BHGE8YhDisAiAnTNowABgNQqgTEiEEZBQRBipdGWpEBdAMVgoMCE4MEE6RFCCQ8BisQiIUCiEBogNCIo0BqpHGgIdBE4xFBoInnqEQYQQCBO4S9HE5BtBS4InIoEEE46pEXwlVDpAGDHwQJBgIbBE458BE6BPDLwInOqCpDAAcUCIQnJPoIiBE97XBigEBVIh3RTwInJgoEDE47OBgpYFE4tQigNBD4InGoIZCBIjfFLoQnKCwIHBiogBDodVdQQnGgIyCKQInFR4InCgInCqFUE88QC4ZoEE46LCRoSoDCwhIEI4MVHYgnKDoMVE4LIEIoQnHCgMFBYYhEDoy9CaI6NDE44HCE4yIBSownIDoQnGCgIntA4SWBco4nNS4IhCD4QcGCoSpEBQUVIQgVGAgQhCgInKLIrvDQIIKFCokFRwYnCHQhyEDgoSCPIYKHAgNVBIonsDAgcGFwTRFE4rICD4iyFAAYcFC4cUBIonJDYQTGAAQxGJgMFQIp+GHwzUEE5cAqqRDMJInuABKpJABiYFA=="))
 };
 
 const SELECTORTILES = {
@@ -33,7 +33,7 @@ const SELECTORTILES = {
   height: 10,
   bpp: 2,
   transparent: 0,
-  palette: new Uint16Array([63519,0,65535,0]),
+  palette: new Uint16Array([63519, 0, 65535, 0]),
   buffer: require("heatshrink").decompress(atob("ACeAgEogEC0AaUhQdGHCozYFSYWCAggApGd9AgEUgEBqAaUgodGHCozYFSYWCAggApGbYA=="))
 };
 
@@ -42,7 +42,7 @@ const TITLE = {
   height: 50,
   bpp: 2,
   transparent: 0,
-  palette : new Uint16Array([63519,65535,0,0]),
+  palette: new Uint16Array([63519, 65535, 0, 0]),
   buffer: require("heatshrink").decompress(atob("AAUC1WglQCBhWoE78KqtoktV0GprREXBQ8JE4mVE61VsAnSHoJ9PNgInL0onHqtawAnNlInMyonD1QABxVVqzTCwACBAAOgAQJMBLwJpBtQnP1NVqoCBq2qLYICBrVVytqBQQOBrQNBHIInOCQIADrICBtWlAgOVsoHB1QCBqwZBPBAnftSyGaQNqBoOiNAISCAAVpAQIxDBgaICE4eVE4zkCBoI7BE4YkBqxVDSgQnGAAQRBUA0COQJlBXINqywrCJYVWDwInBHIQGBAIIRBPwKFBUA4nByzhCtWqE4YVBE4mqfwYnDMIL9BE+CDBRQQhBAYQFEE4NWE4yxDE4KfGE4waBE5ahBE5DvHE4pCD0p3EP4J7DBgJ3D1QDCrQnHEgQnDEYQnUrAmGgEJE9CMCE4SfDqtlAQIiBE46fDtQnkBwNWE5TlCE4rSBE5QRDE4THIhVaSIKKCTATzBSAIMBBoNqSwWlBAKfDAoOVE48CE8+aCgOlAQNltQnCEIIuCAoVptWmy2qAgLvC1OlE48AIoOm1InBtJJCrSWCDgOVa4JHB02V1NqNATMCE5BMBzUKdQK7CJANW0x/BOIOW02KAYJjB0QTBq2JqwnJlVVtECEQOKFANW0RHBgQGB1ApBB4NYlNWwShBtUJUgInIgVVsB7BAQISBqwDBrAGCwElAoInBhINBDAQNB0AmHBwOqBYICChSfBAYOoAwWAlQFB1WoA4IYDE4NoE5AAblNVLYIAjkrdBT5Andd5IAagWlE4KsBE8QmBUEgnrrQnmqwn/E/4n/E4elE8sAkonprQnjlNWqtoE8cKJ4NgE8cCyta0AnjgGVrAmkgGq1AFDA="))
 };
 
@@ -54,21 +54,14 @@ const DEBUGMODEINPUT = 0;
 const DEBUGMODESPEED = 1;
 const DEBUGMODERAMUSE = 1;
 
-const SCREENWIDTH = 176;
-const SCREENHEIGHT = 176;
-
 const TILESIZE = 10;
-
+const SCREENWIDTH = g.getWidth();
+const SCREENHEIGHT = g.getHeight();
 const SCREENOFFSETX = ((SCREENWIDTH - 16 * TILESIZE) >> 1);
+
 const MAXBOARDWIDTH = 10;
 const MAXBOARDHEIGHT = 8;
-
-const MAXBOARDBGWIDTH = 10;
-const MAXBOARDBGHEIGHT = 8;
-
 const MAXBOARDSIZE = MAXBOARDWIDTH * MAXBOARDHEIGHT;
-
-
 
 const GSGAME = 0;
 const GSTITLE = 1;
@@ -103,7 +96,6 @@ const GSINITHELPSLIDE = GSINITDIFF + GSHELPSLIDE;
 const GSINITHELPSLIDE2 = GSINITDIFF + GSHELPSLIDE2;
 const GSINITHELPSLIDE3 = GSINITDIFF + GSHELPSLIDE3;
 const GSINITINTRO = GSINITDIFF + GSINTRO;
-
 
 const DIFFVERYEASY = 0;
 const DIFFEASY = 1;
@@ -145,8 +137,6 @@ const ARROWRIGHT = 121;
 const LEFTMENU = 118;
 const EMPTY = 61;
 
-const FRAMERATE = 15;
-
 let startPos;
 let menuPos;
 let maxLevel;
@@ -174,17 +164,13 @@ let redrawPartial;
 let screenOffsetY;
 
 // Cursor
-const maxCursorFrameCount = (10 * FRAMERATE / 60);
-const cursorAnimCount = 2; //blink on & off
 const cursorNumTiles = 16; //for the max 2 cursors shown at once (on help screens)
-
-let cursorFrameCount, cursorFrame, showCursor;
+let showCursor;
 let spritePos = [];
 
 //intro
 let frames;
 let titlePosY;
-const frameDelay = 16 * FRAMERATE / 15;
 
 //savestate
 let levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
@@ -193,9 +179,7 @@ let options = new Uint8Array(OPCOUNT);
 //sound
 let soundon = 1;
 
-
 //game
-
 let paused;
 let wasSoundOn;
 let redrawLevelDoneBit;
@@ -213,13 +197,12 @@ let btnb = false;
 // random stuff
 // https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript#72732727
 // --------------------------------------------------------------------------------------------------
-
 let randfunc;
 
 function srand(seed) {
-  let m = Math.pow(2, 35) - 31;
-  let a = 185852;
-  let s = seed % m;
+  var m = Math.pow(2, 35) - 31;
+  var a = 185852;
+  var s = seed % m;
   randfunc = function() {
     return (s = s * a % m);
   };
@@ -234,7 +217,6 @@ srand(Date().getTime());
 // --------------------------------------------------------------------------------------------------
 // Sound stuff
 // --------------------------------------------------------------------------------------------------
-
 function setSoundOn(val) {
   soundOn = val;
 }
@@ -282,34 +264,19 @@ function playGameAction() {
 // --------------------------------------------------------------------------------------------------
 // Cursor stuff
 // --------------------------------------------------------------------------------------------------
-
-
 function move_sprite(sprite, x, y) {
   spritePos[sprite][0] = x;
   spritePos[sprite][1] = y;
 }
 
 function drawCursors(clear) {
-  if ((showCursor == 0) || (cursorFrame & 1)) // 2nd or to add blink effect, it will skip drawing if bit 1 is set
+  if (showCursor == 0)
     return;
   for (let i = 0; i < cursorNumTiles; i++)
     if (spritePos[i][1] < SCREENHEIGHT)
       g.drawImage(SELECTORTILES, SCREENOFFSETX + spritePos[i][0], screenOffsetY + spritePos[i][1], {
         frame: ((clear ? 8 : 0) + (i % 8))
       });
-}
-
-//returns 1 if cursor has changed / needs redraw
-function updateCursorFrame() {
-  cursorFrameCount++;
-  if (cursorFrameCount >= maxCursorFrameCount) {
-    cursorFrame++;
-    cursorFrameCount = 0;
-    if (cursorFrame >= cursorAnimCount)
-      cursorFrame = 0;
-    return 1;
-  }
-  return 0;
 }
 
 function hideCursors() {
@@ -344,15 +311,11 @@ function setCursorPos(cursorNr, xPos, yPos) {
 
 function initCursors() {
   hideCursors();
-
-  cursorFrameCount = 0;
-  cursorFrame = 0;
 }
 
 // --------------------------------------------------------------------------------------------------
 // helper funcs
 // --------------------------------------------------------------------------------------------------
-
 function set_bkg_tile_xy(x, y, tile) {
   g.drawImage(currentTiles, SCREENOFFSETX + x * TILESIZE, screenOffsetY + y * TILESIZE, {
     frame: tile
@@ -378,8 +341,6 @@ function setBlockTilesAsBackground() {
 // --------------------------------------------------------------------------------------------------
 // help screens
 // --------------------------------------------------------------------------------------------------
-
-
 //LEGEND STATE
 function inithelpLegend() {
   setBlockTilesAsBackground();
@@ -400,6 +361,11 @@ function helpLegend(nextState) {
     gameState = nextState;
   }
 
+  if (btnb) {
+    playMenuBackSound();
+    gameState = GSINITTITLE;
+  }
+
   if (needRedraw) {
     g.clearRect(Bangle.appRect);
     switch (gameState) {
@@ -414,27 +380,27 @@ function helpLegend(nextState) {
         break;
     }
 
-    set_bkg_tile_xy(0, 1, 33);
-    printMessage(1, 1, ":WATER SOURCE");
-    set_bkg_tile_xy(0, 2, 11);
-    set_bkg_tile_xy(1, 2, 6);
-    set_bkg_tile_xy(2, 2, 12);
-    printMessage(3, 2, ":NOT FILLED");
-    set_bkg_tile_xy(0, 3, 27);
-    set_bkg_tile_xy(1, 3, 22);
-    set_bkg_tile_xy(2, 3, 28);
-    printMessage(3, 3, ":FILLED");
+    set_bkg_tile_xy(0, 2, 33);
+    printMessage(1, 2, ":WATER SOURCE");
+    set_bkg_tile_xy(0, 3, 11);
+    set_bkg_tile_xy(1, 3, 6);
+    set_bkg_tile_xy(2, 3, 12);
+    printMessage(3, 3, ":NOT FILLED");
+    set_bkg_tile_xy(0, 4, 27);
+    set_bkg_tile_xy(1, 4, 22);
+    set_bkg_tile_xy(2, 4, 28);
+    printMessage(3, 4, ":FILLED");
 
     if ((gameState == GSHELPROTATESLIDE) ||
       (gameState == GSHELPSLIDE)) {
-      set_bkg_tile_xy(0, 4, 121);
-      printMessage(1, 4, ":SLID ROW RIGHT");
-      set_bkg_tile_xy(0, 5, 123);
-      printMessage(1, 5, ":SLID ROW LEFT");
-      set_bkg_tile_xy(0, 6, 122);
-      printMessage(1, 6, ":SLID COL DOWN");
-      set_bkg_tile_xy(0, 7, 120);
-      printMessage(1, 7, ":SLID COL UP");
+      set_bkg_tile_xy(0, 5, 121);
+      printMessage(1, 5, ":SLID ROW RIGHT");
+      set_bkg_tile_xy(0, 6, 123);
+      printMessage(1, 6, ":SLID ROW LEFT");
+      set_bkg_tile_xy(0, 7, 122);
+      printMessage(1, 7, ":SLID COL DOWN");
+      set_bkg_tile_xy(0, 8, 120);
+      printMessage(1, 8, ":SLID COL UP");
     }
     needRedraw = 0;
     requiresFlip = 1;
@@ -459,6 +425,11 @@ function helpFinishLevel(nextState) {
   if (btna) {
     playMenuAcknowlege();
     gameState = nextState;
+  }
+
+  if (btnb) {
+    playMenuBackSound();
+    gameState = GSINITTITLE;
   }
 
   if (needRedraw) {
@@ -552,6 +523,11 @@ function helpDoSlideRotate(nextState) {
     playMenuAcknowlege();
     gameState = nextState;
     hideCursors();
+  }
+
+  if (btnb) {
+    playMenuBackSound();
+    gameState = GSINITTITLE;
   }
 
   if (needRedraw) {
@@ -659,7 +635,6 @@ function helpDoSlideRotate(nextState) {
       set_bkg_tile_xy(3, 6, 7);
     }
 
-
     //2nd grid
 
     set_bkg_tile_xy(12, 4, 25);
@@ -678,10 +653,7 @@ function helpDoSlideRotate(nextState) {
     needRedraw = 0;
     requiresFlip = 1;
   }
-
-  //needRedraw = updateCursorFrame();
 }
-
 
 //LEGEND STATE
 function helpRotateSlide() {
@@ -735,7 +707,6 @@ function helpSlide3() {
 // --------------------------------------------------------------------------------------------------
 // Intro
 // --------------------------------------------------------------------------------------------------
-
 function initIntro() {
   setBlockTilesAsBackground();
   titlePosY = g.getHeight();
@@ -754,12 +725,12 @@ function intro() {
 
   frames++;
   g.clearRect(Bangle.appRect);
-  if (frames < frameDelay) {
+  if (frames < 16) {
     //16-12
     printMessage(4 >> 1, 4, "WILLEMS DAVY");
     requiresFlip = 1;
   } else {
-    if (frames < frameDelay * 2) {
+    if (frames < 16 * 2) {
       //16-8
       printMessage(8 >> 1, 4, "PRESENTS");
       requiresFlip = 1;
@@ -767,7 +738,7 @@ function intro() {
       requiresFlip = 1;
       g.drawImage(TITLE, SCREENOFFSETX, titlePosY);
       if (titlePosY > screenOffsetY) {
-        titlePosY -= 60 / FRAMERATE;
+        titlePosY -= 4;
       } else {
         gameState = GSINITTITLE;
       }
@@ -778,8 +749,6 @@ function intro() {
 // --------------------------------------------------------------------------------------------------
 // Level Stuff
 // --------------------------------------------------------------------------------------------------
-
-
 function moveBlockDown(aTile) {
   let tmp = level[aTile + boardSize - boardWidth];
   for (let i = boardSize - boardWidth; i != 0; i -= boardWidth)
@@ -942,7 +911,7 @@ function shuffleLevel() {
 
 function handleConnectPoint(currentPoint, cellStack, cc) {
   let lookUpX = currentPoint % boardWidth;
-  let lookUpY = Math.floor(currentPoint / boardWidth);
+  let lookUpY = (currentPoint / boardWidth) | 0;
   let tmp;
   let tmp2;
   if ((lookUpY > 0) && (!(level[currentPoint] & 1))) {
@@ -1021,7 +990,7 @@ function handleConnectPoint(currentPoint, cellStack, cc) {
 }
 
 function updateConnected() {
-  let cellStack = [];
+  let cellStack = [];//new Uint8Array(boardSize + 1);
   //reset all tiles to default not filled one
   for (let i = 0; i != boardSize; i++) {
     if (level[i] > 31) {
@@ -1044,16 +1013,17 @@ function updateConnected() {
   }
 
   //add start pos special tile
-  if (level[startPos] > 15)
+  if (level[startPos] > 15) {
     level[startPos] += 16;
-  else
-  if (level[startPos] < 16)
-    level[startPos] += 32;
+  } else {
+    if (level[startPos] < 16)
+      level[startPos] += 32;
+  }
 }
 
 function generateLevel() {
   let neighbours = new Uint8Array(4);
-  let cellStack = new Uint8Array(MAXBOARDSIZE + 1);
+  let cellStack = [];//new Uint8Array(boardSize + 1);
   let cc = 0;
   let currentPoint = 0;
   let visitedRooms = 1;
@@ -1062,17 +1032,14 @@ function generateLevel() {
   let neighboursFound;
   let lookUpX, lookUpY;
   let rnd;
-  //generate a lookup table so we don't have to use modulus or divide constantly
-  //generateLookupTable(boardWidth, boardHeight);
 
   //intial all walls value in every room we will remove bits of this value to remove walls
-  for (tmp = 0; tmp < boardSize; tmp++)
-    level[tmp] = 0xf;
+  level.fill(0xf, 0, boardSize);
 
   while (visitedRooms != boardSize) {
     neighboursFound = 0;
     lookUpX = currentPoint % boardWidth;
-    lookUpY = Math.floor(currentPoint / boardWidth);
+    lookUpY = (currentPoint / boardWidth) | 0;
 
     tmp = currentPoint + 1;
     //tile has neighbour to the right which we did not handle yet
@@ -1094,14 +1061,14 @@ function generateLevel() {
     if ((lookUpY + 1 < boardHeight) && (level[tmp] == 0xf))
       neighbours[neighboursFound++] = tmp;
 
-    switch (neighboursFound) {
-      case 0:
-        currentPoint = cellStack[--cc];
-        continue;
-      default:
-        rnd = random(neighboursFound);
-        break;
+    if (neighboursFound == 0)
+    {
+      currentPoint = cellStack[--cc];
+      continue;
+    } else {
+      rnd = random(neighboursFound);
     }
+
     selectedNeighbour = neighbours[rnd];
     tmp = (selectedNeighbour % boardWidth);
     //tile has neighbour to the east
@@ -1110,23 +1077,23 @@ function generateLevel() {
       level[selectedNeighbour] &= ~(8);
       //remove east wall tile
       level[currentPoint] &= ~(2);
-    } else // tile has neighbour to the west
-    {
+    } else {
+      // tile has neighbour to the west
       if (tmp < lookUpX) {
         //remove east wall neighbour
         level[selectedNeighbour] &= ~(2);
         //remove west wall tile
         level[currentPoint] &= ~(8);
-      } else // tile has neighbour to the north
-      {
+      } else {
+        // tile has neighbour to the north
         tmp2 = selectedNeighbour / boardWidth;
         if (tmp2 < lookUpY) {
           //remove south wall neighbour
           level[selectedNeighbour] &= ~(4);
           //remove north wall tile
           level[currentPoint] &= ~(1);
-        } else // tile has neighbour to the south
-        {
+        } else {
+          // tile has neighbour to the south
           if (tmp2 > lookUpY) {
             //remove north wall neighbour
             level[selectedNeighbour] &= ~(1);
@@ -1160,12 +1127,9 @@ function isLevelDone() {
 function initLevel(aRandomSeed, noLoading) {
   let startTime = Date().getTime();
   if (!noLoading) {
-    //g.setColor(0,0,0);
-    //g.fillRect(SCREENOFFSETX + ((16 - 10) >> 1) * TILESIZE,  screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE, SCREENOFFSETX + (((16 - 10) >> 1) * TILESIZE) + (10*TILESIZE), screenOffsetY + (((MAXBOARDBGHEIGHT >> 1) - 1) * TILESIZE) +(3*TILESIZE));
-    //g.setColor(1,1,1);
-    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 1, "[*********]");
-    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) - 0, "| LOADING +");
-    printMessage(((16 - 10) >> 1), (MAXBOARDBGHEIGHT >> 1) + 1, "<#########>");
+    printMessage(((16 - 10) >> 1), (MAXBOARDHEIGHT >> 1) - 1, "[*********]");
+    printMessage(((16 - 10) >> 1), (MAXBOARDHEIGHT >> 1) - 0, "| LOADING +");
+    printMessage(((16 - 10) >> 1), (MAXBOARDHEIGHT >> 1) + 1, "<#########>");
     g.flip();
   }
   levelDone = 0;
@@ -1215,8 +1179,8 @@ function initLevel(aRandomSeed, noLoading) {
   //generate the level
   generateLevel();
   //startpoint of of level in center of screen
-  boardX = (MAXBOARDBGWIDTH - boardWidth) >> 1;
-  boardY = (MAXBOARDBGHEIGHT - boardHeight) >> 1;
+  boardX = (MAXBOARDWIDTH - boardWidth) >> 1;
+  boardY = (MAXBOARDHEIGHT - boardHeight) >> 1;
   startPos = (boardWidth >> 1) + (boardHeight >> 1) * (boardWidth);
   //startpoint of tile with water and our cursor
   selectionX = boardWidth >> 1;
@@ -1233,8 +1197,6 @@ function initLevel(aRandomSeed, noLoading) {
 // --------------------------------------------------------------------------------------------------
 // levels cleared
 // --------------------------------------------------------------------------------------------------
-
-
 function initLevelsCleared() {
   set_bkg_data(CONGRATSTILES);
   g.clearRect(Bangle.appRect);
@@ -1278,53 +1240,48 @@ function levelsCleared() {
   needRedraw = 0;
 }
 
-
 // --------------------------------------------------------------------------------------------------
 // level select
 // --------------------------------------------------------------------------------------------------
-
 function drawLevelSelect(partial) {
-  if(partial > 2)
-  {
+  if (partial > 2) {
     g.clearRect(Bangle.appRect);
     //LEVEL:
-    printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
+    printMessage(MAXBOARDWIDTH, 0, "LEVEL:");
   }
 
-  if(partial == 2) {
+  if (partial == 2) {
     //clear parts of loading text
     g.setColor(g.getBgColor());
     g.fillRect(SCREENOFFSETX + (boardX + boardWidth) * TILESIZE, screenOffsetY + 3 * TILESIZE, SCREENOFFSETX - 1 + (boardX + MAXBOARDWIDTH + 5) * TILESIZE, screenOffsetY - 1 + 6 * TILESIZE);
   }
 
   //[LEVEL NR] 2 chars
-  if(partial == 2)
-    set_bkg_tile_xy(MAXBOARDBGWIDTH + 4, 1, EMPTY);
+  if (partial == 2)
+    set_bkg_tile_xy(MAXBOARDWIDTH + 4, 1, EMPTY);
 
-  printNumber(MAXBOARDBGWIDTH + 4, 1, selectedLevel, 2);
+  printNumber(MAXBOARDWIDTH + 4, 1, selectedLevel, 2);
 
-  if(partial > 2)
-  {
+  if (partial > 2) {
     //B:BACK
-    printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
-    printMessage(MAXBOARDBGWIDTH, 7, "BACK");
+    printMessage(MAXBOARDWIDTH, 6, "BTN:");
+    printMessage(MAXBOARDWIDTH, 7, "BACK");
   }
 
-
-  if(partial > 1) {
+  if (partial > 1) {
     //A:PLAY
-    printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-    printMessage(MAXBOARDBGWIDTH, 5, "PLAY");
+    printMessage(MAXBOARDWIDTH, 4, "TOUCH:");
+    printMessage(MAXBOARDWIDTH, 5, "PLAY");
   }
 
   //Locked & Unlocked keywoard
   let tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
   if (!tmpUnlocked)
-    printMessage(MAXBOARDBGWIDTH, 2, "LOCKED");
+    printMessage(MAXBOARDWIDTH, 2, "LOCKED");
   else
-    printMessage(MAXBOARDBGWIDTH, 2, "OPEN  ");
+    printMessage(MAXBOARDWIDTH, 2, "OPEN  ");
 
-  if(partial > 2) {
+  if (partial > 2) {
     //Draw arrows for vertical / horizontal movement
     if (gameMode != GMROTATE) {
       for (let x = 0; x != boardWidth; x++) {
@@ -1340,7 +1297,7 @@ function drawLevelSelect(partial) {
   }
 
   //only draw right and bottom arrows 
-  if(partial == 2) {
+  if (partial == 2) {
     //Draw arrows for vertical / horizontal movement
     if (gameMode != GMROTATE) {
       for (let x = 0; x != boardWidth; x++) {
@@ -1376,7 +1333,6 @@ function levelSelect() {
   }
 
   let tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel - 1);
-
 
   if (btnb) {
     playMenuBackSound();
@@ -1438,7 +1394,6 @@ function levelSelect() {
 // --------------------------------------------------------------------------------------------------
 // printing functions
 // --------------------------------------------------------------------------------------------------
-
 function setCharAt(str, index, chr) {
   if (index > str.length - 1) return str;
   return str.substring(0, index) + chr + str.substring(index + 1);
@@ -1450,9 +1405,7 @@ function formatInteger(valinteger) {
 
   const maxCharacters = (maxDigits);
 
-
   const lastIndex = (maxCharacters - 1);
-
 
   if (valinteger == 0) {
     array = setCharAt(array, lastIndex, '0');
@@ -1494,31 +1447,14 @@ function printNumber(ax, ay, aNumber, maxDigits) {
   }
 }
 
-function printDebug(ax, ay, amsg) {
-  if (DEBUGMODE) {
-    //rememvber current tiles
-    let tiles = get_bkg_data();
-    setBlockTilesAsBackground();
-    g.clearRect(Bangle.appRect);
-    printMessage(ax, ay, amsg);
-    setTimeout(() => {
-      g.flip();
-    }, 2500);
-    //restore the previous tiles
-    set_bkg_data(tiles);
-  }
-}
-
 //print a message on the title screen on ax,ay, the tileset from titlescreen contains an alphabet
 function printMessage(ax, ay, amsg) {
-  let index = 0;
-  let p = 0;
   let aCode = 'A'.charCodeAt(0);
   let zCode = 'Z'.charCodeAt(0);
   let zeroCode = '0'.charCodeAt(0);
   let nineCode = '9'.charCodeAt(0);
-  while (p < amsg.length) {
-    let fCharCode = amsg.charCodeAt(p++);
+  for (let p = 0; p < amsg.length; p++) {
+    let fCharCode = amsg.charCodeAt(p);
     let tile = 61;
     switch (fCharCode) {
       case -1:
@@ -1589,34 +1525,29 @@ function printMessage(ax, ay, amsg) {
         }
         break;
     }
-    set_bkg_tile_xy(ax + index, ay, tile);
-    ++index;
+    set_bkg_tile_xy(ax + p, ay, tile);
   }
 }
 
 //print a message on the CongratsScreen on ax,ay, the tileset from Congrats Screen contains an alphabet in another font
 function printCongratsScreen(ax, ay, amsg) {
-  // based on input form @Pharap
-  let index = 0;
-  let p = 0;
+  // based on input from @Pharap
   let aCode = 'A'.charCodeAt(0);
   let zCode = 'Z'.charCodeAt(0);
-  while (p < amsg.length) {
-    let fCharCode = amsg.charCodeAt(p++);
+  for (let p = 0; p < amsg.length; p++) {
+    let fCharCode = amsg.charCodeAt(p);
     let tile = 26;
     if ((fCharCode == 0) || (fCharCode == -1))
       return;
     if ((fCharCode >= aCode) && (fCharCode <= zCode))
       tile = fCharCode - aCode;
-    set_bkg_tile_xy(ax + index, ay, tile);
-    ++index;
+    set_bkg_tile_xy(ax + p, ay, tile);
   }
 }
 
 // --------------------------------------------------------------------------------------------------
 // save state
 // --------------------------------------------------------------------------------------------------
-
 function validateSaveState() {
   for (let j = 0; j < GMCOUNT; j++) {
     for (let i = 0; i < DIFFCOUNT; i++) {
@@ -1727,7 +1658,6 @@ function unlockLevel(mode, diff, level) {
 // --------------------------------------------------------------------------------------------------
 // titlescreen
 // --------------------------------------------------------------------------------------------------
-
 function drawMenuSelector(tile) {
   //set menu tile
   switch (titleStep) {
@@ -1809,8 +1739,9 @@ function drawMenuItems(clear) {
         }
         if (isWidgetsOnSaveState()) {
           printMessage(3, 7, "WIDGETS ON");
-        } else
+        } else {
           printMessage(3, 7, "WIDGETS OFF");
+        }
         printMessage(1, 9, "RESTART NEEDED");
         printMessage(2, 10, "FOR WIDGETS");
         break;
@@ -1995,7 +1926,7 @@ function titleScreen() {
               setThemingOnSaveState(!isThemingOnSaveState());
               setThemingOn(isThemingOnSaveState());
               //needs a clear to set background color
-              if(isThemingOnSaveState()) {
+              if (isThemingOnSaveState()) {
                 g.setBgColor(g.theme.bg);
               } else {
                 g.setBgColor(0x0000);
@@ -2097,7 +2028,6 @@ function titleScreen() {
 // --------------------------------------------------------------------------------------------------
 // game
 // --------------------------------------------------------------------------------------------------
-
 function drawGame(partial) {
   //background
   if (!paused && !redrawLevelDoneBit) {
@@ -2106,40 +2036,40 @@ function drawGame(partial) {
 
     //LEVEL:
     if (partial > 2) {
-      printMessage(MAXBOARDBGWIDTH, 0, "LEVEL:");
+      printMessage(MAXBOARDWIDTH, 0, "LEVEL:");
       //[LEVEL NR] 2 chars
-      printNumber(MAXBOARDBGWIDTH + 4, 1, selectedLevel, 2);
+      printNumber(MAXBOARDWIDTH + 4, 1, selectedLevel, 2);
     }
 
     //MOVES:
     if (partial > 2)
-      printMessage(MAXBOARDBGWIDTH, 2, "MOVES:");
+      printMessage(MAXBOARDWIDTH, 2, "MOVES:");
 
     if (partial > 1)
-      printNumber(MAXBOARDBGWIDTH + 1, 3, moves, 5);
+      printNumber(MAXBOARDWIDTH + 1, 3, moves, 5);
 
     //A:XXXXXX (XXXXXX="ROTATE" or XXXXXX="SLIDE " or XXXXXX="ROSLID")
     if (partial > 2) {
       switch (gameMode) {
         case GMROTATE:
-          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-          printMessage(MAXBOARDBGWIDTH, 5, "ROTATE");
+          printMessage(MAXBOARDWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDWIDTH, 5, "ROTATE");
           break;
         case GMSLIDE:
-          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-          printMessage(MAXBOARDBGWIDTH, 5, "SLIDE");
+          printMessage(MAXBOARDWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDWIDTH, 5, "SLIDE");
           break;
         case GMROTATESLIDE:
-          printMessage(MAXBOARDBGWIDTH, 4, "TOUCH:");
-          printMessage(MAXBOARDBGWIDTH, 5, "ROSLID");
+          printMessage(MAXBOARDWIDTH, 4, "TOUCH:");
+          printMessage(MAXBOARDWIDTH, 5, "ROSLID");
           break;
       }
     }
 
     if (partial > 2) {
       //B:BACK
-      printMessage(MAXBOARDBGWIDTH, 6, "BTN:");
-      printMessage(MAXBOARDBGWIDTH, 7, "BACK");
+      printMessage(MAXBOARDWIDTH, 6, "BTN:");
+      printMessage(MAXBOARDWIDTH, 7, "BACK");
     }
 
     if (partial > 2) {
@@ -2188,21 +2118,16 @@ function initGame() {
 }
 
 function doPause() {
-  //drawGame();
-  //drawCursors();
   paused = 1;
   wasSoundOn = isSoundOn();
   setSoundOn(0);
   hideCursors();
-  //g.setColor(0,0,0);
-  // g.fillRect(SCREENOFFSETX, screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE, SCREENOFFSETX + 16* TILESIZE, screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 3) * TILESIZE +  (6* TILESIZE));
-  //g.setColor(1,1,1);
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) - 3, "[**************]");
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) - 2, "|PLEASE CONFIRM+");
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) - 1, "|              +");
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) + 0, "|  TOUCH PLAY  +");
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) + 1, "|  BTN TO QUIT +");
-  printMessage(0, (MAXBOARDBGHEIGHT >> 1) + 2, "<##############>");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) - 3, "[**************]");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) - 2, "|PLEASE CONFIRM+");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) - 1, "|              +");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) + 0, "|  TOUCH PLAY  +");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) + 1, "|  BTN TO QUIT +");
+  printMessage(0, (MAXBOARDHEIGHT >> 1) + 2, "<##############>");
   requiresFlip = 1;
 }
 
@@ -2219,8 +2144,6 @@ function game() {
     gameState -= GSINITDIFF;
   }
 
-  //needRedraw = updateCursorFrame();
-
   if (dragdown) {
     if (!levelDone && !paused) {
       playGameMoveSound();
@@ -2231,9 +2154,8 @@ function game() {
         selectionY += 1;
         needRedraw = 1;
         redrawPartial = 0;
-      } else
-      //set to border on top
-      {
+      } else {
+        //set to border on top
         //clear cursor
         drawCursors(true);
         selectionY = -posAdd;
@@ -2253,9 +2175,8 @@ function game() {
           selectionY -= 1;
           needRedraw = 1;
           redrawPartial = 0;
-        } else
-        //set to border on bottom
-        {
+        } else {
+          //set to border on bottom
           //clear cursor
           drawCursors(true);
           selectionY = boardHeight - 1 + posAdd;
@@ -2275,9 +2196,8 @@ function game() {
             selectionX += 1;
             needRedraw = 1;
             redrawPartial = 0;
-          } else
-          //set to border on left
-          {
+          } else {
+            //set to border on left
             //clear cursor
             drawCursors(true);
             selectionX = -posAdd;
@@ -2297,9 +2217,7 @@ function game() {
               selectionX -= 1;
               needRedraw = 1;
               redrawPartial = 0;
-            }
-            //set to border on right
-            else {
+            } else { //set to border on right
               //clear cursor
               drawCursors(true);
               selectionX = boardWidth - 1 + posAdd;
@@ -2380,14 +2298,11 @@ function game() {
           drawGame(2);
           //hide cursor it's only sprite we use
           hideCursors();
-          //g.setColor(0,0,0);
-          //g.fillRect(SCREENOFFSETX + ((16 - 13) >> 1) * TILESIZE,  screenOffsetY + ((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE, SCREENOFFSETX + (((16 - 13) >> 1) * TILESIZE) + (14*TILESIZE), screenOffsetY + (((MAXBOARDBGHEIGHT >> 1) - 2) * TILESIZE) +(5*TILESIZE));
-          //g.setColor(1,1,1);
-          printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) - 2, "[************]");
-          printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) - 1, "| LEVEL DONE +");
-          printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) - 0, "|  TOUCH TO  +");
-          printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) + 1, "|  CONTINUE  +");
-          printMessage(((16 - 13) >> 1), (MAXBOARDBGHEIGHT >> 1) + 2, "<############>");
+          printMessage(((16 - 13) >> 1), (MAXBOARDHEIGHT >> 1) - 2, "[************]");
+          printMessage(((16 - 13) >> 1), (MAXBOARDHEIGHT >> 1) - 1, "| LEVEL DONE +");
+          printMessage(((16 - 13) >> 1), (MAXBOARDHEIGHT >> 1) - 0, "|  TOUCH TO  +");
+          printMessage(((16 - 13) >> 1), (MAXBOARDHEIGHT >> 1) + 1, "|  CONTINUE  +");
+          printMessage(((16 - 13) >> 1), (MAXBOARDHEIGHT >> 1) + 2, "<############>");
           redrawLevelDoneBit = 1;
         }
       } else {
@@ -2413,8 +2328,7 @@ function game() {
             showCursors();
             needRedraw = 1;
             redrawPartial = 3;
-          } else //Goto some congrats screen
-          {
+          } else {
             gameState = GSINITLEVELSCLEARED;
           }
         }
@@ -2459,14 +2373,12 @@ function game() {
   }
 }
 
-
 // --------------------------------------------------------------------------------------------------
 // main game start
 // --------------------------------------------------------------------------------------------------
-function setThemingOn(value)
-{
+function setThemingOn(value) {
   //change color palette to theming options for the images
-  if(value && (g.theme.bg != g.theme.fg)) {
+  if (value && (g.theme.bg != g.theme.fg)) {
     SELECTORTILES.palette[1] = g.theme.bg;
     SELECTORTILES.palette[2] = g.theme.fg;
     TITLE.palette[3] = g.theme.bg;
@@ -2524,14 +2436,13 @@ function loop() {
   //soundTimer();
   let startTime = Date().getTime();
   g.reset();
-  if(isThemingOnSaveState())  {
+  if (isThemingOnSaveState()) {
     g.setColor(g.theme.fg);
     g.setBgColor(g.theme.bg);
   } else {
     g.setColor(0xFFFF);
     g.setBgColor(0x0000);
   }
-
 
   //gamestate handling
   let prevGameState = gameState;
@@ -2688,7 +2599,6 @@ function btnPressed() {
 let memStart;
 if (DEBUGMODERAMUSE)
   memStart = process.memory(true);
-
 
 //initialize spritepos arrays
 for (let i = 0; i < cursorNumTiles; i++)
