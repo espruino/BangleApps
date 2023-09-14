@@ -190,7 +190,7 @@ Layout.prototype.render = function (l) {
       btnborder = l.btnBorder!==undefined?l.btnBorder:gfx.theme.fg2,
       btnface = l.btnFace!==undefined?l.btnFace:gfx.theme.bg2;
     if(l.selected){
-      bg = gfx.theme.bgH, btnborder = gfx.theme.fgH;
+      btnface = gfx.theme.bgH, btnborder = gfx.theme.fgH;
     }
     gfx.setColor(btnface).fillPoly(poly).setColor(btnborder).drawPoly(poly);
     if (l.col!==undefined) gfx.setColor(l.col);
