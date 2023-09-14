@@ -89,7 +89,12 @@
       min: 0, max: iconColorModes.length - 1,
       format: v => iconColorModes[v],
       onchange: v => updateSetting("iconColorMode", iconColorModes[v])
-    }
+    },
+    /*LANG*/'Car driver pos': { // used by messagegui
+      value:!!settings().carIsRHD,
+      format: v => v ? /*LANG*/"Right" :/*LANG*/"Left",
+      onchange: v => updateSetting("carIsRHD", v)
+    },
   };
   E.showMenu(mainmenu);
 });

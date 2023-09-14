@@ -1,0 +1,13 @@
+{
+  "id": "widcasiologo",
+  "name": "Casio Logo Widget",
+  "version": "0.01",
+  "description": "A simple widget that displays Casio logo when clock screen is active.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,clock",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"widcasiologo.wid.js","url":"widget.js"}
+  ]
+}
