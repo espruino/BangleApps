@@ -166,5 +166,6 @@ return o;
 
 } catch (e) {
 print(e);
-eval(require("Storage").read("slidertest.app.js"));
+let appName = "spotrem";
+eval(require("Storage").read(appName+".app.js"));
 }
