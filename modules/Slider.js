@@ -155,7 +155,11 @@ if (o.c.autoProgress) {
     cb("auto");
     if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
   };
-  o.f.startAutoUpdate = ()=>{o.f.stopAutoUpdate(); o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);};
+  o.f.startAutoUpdate = ()=>{
+      o.f.stopAutoUpdate();
+      if (o.v.shouldAutoDraw) o.f.draw(o.v.level);
+      o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);
+  };
   o.f.stopAutoUpdate = ()=>{if (o.v.autoIntervalID) {clearInterval(o.v.autoIntervalID); o.v.autoIntervalID = undefined;}};
 }
 
