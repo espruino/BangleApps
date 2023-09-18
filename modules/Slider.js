@@ -31,6 +31,8 @@ o.c = Object.assign({ // constants go here.
   autoProgress:false,
   outerBorderSize:2,
   innerBorderSize:2,
+  drawableSlider:true,
+  dragableSlider:true,
 },conf);
 
 let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
@@ -67,97 +69,103 @@ o.v.level = (o.c.currLevel||o.c.currLevel===0)?o.c.currLevel:o.c.steps/2;
 o.v.firstRun = true;
 o.v.ebLast = 0;
 
-o.f.wasOnIndicator = (exFirst)=>{
-  "ram";
-  if (!o.c.horizontal) return exFirst>o.c._xStart-o.c.oversizeL*o.c._width && exFirst<o.c._xStart+o.c._width+o.c.oversizeR*o.c._width;
-  if (o.c.horizontal) return exFirst>o.c._yStart-o.c.oversizeL*o.c._height && exFirst<o.c._yStart+o.c._height+o.c.oversizeR*o.c._height;
-};
+if (o.c.dragableSlider) { 
+  o.f.wasOnIndicator = (exFirst)=>{
+    "ram";
+    if (!o.c.horizontal) return exFirst>o.c._xStart-o.c.oversizeL*o.c._width && exFirst<o.c._xStart+o.c._width+o.c.oversizeR*o.c._width;
+    if (o.c.horizontal) return exFirst>o.c._yStart-o.c.oversizeL*o.c._height && exFirst<o.c._yStart+o.c._height+o.c.oversizeR*o.c._height;
+  };
 
-o.c.borderRect = {x:o.c._xStart-totalBorderSize,y:o.c._yStart-totalBorderSize,w:o.c._width+2*totalBorderSize,h:o.c._height+2*totalBorderSize,r:o.c.rounded};
-o.c.hollowRect = {x:o.c._xStart-o.c.innerBorderSize,y:o.c._yStart-o.c.innerBorderSize,w:o.c._width+2*o.c.innerBorderSize,h:o.c._height+2*o.c.innerBorderSize,r:o.c.rounded};
+  o.f.dragSlider = e=>{
+    "ram";
+    o.v.dragActive = true;
+    if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
 
-o.f.updateBar = (levelHeight)=>{
-  "ram";
-  if (!o.c.horizontal) return {x:o.c._xStart,y:o.c._yStart+o.c._height-levelHeight,w:o.c._width,y2:o.c._yStart+o.c._height,r:o.c.rounded};
-  if (o.c.horizontal) return {x:o.c._xStart,y:o.c._yStart,w:levelHeight,h:o.c._height,r:o.c.rounded};
-};
+    if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
+    if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
-o.f.dragSlider = e=>{
-  "ram";
-  o.v.dragActive = true;
-  if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
+    let input = Math.min(o.c.horizontal?175-e.x:e.y, 170);
+    input = Math.round(input/o.c.STEP_SIZE);
 
-  if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
-  if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
+    if (o.v.ebLast==0) exFirst = o.c.horizontal?e.y:e.x;
 
-  let input = Math.min(o.c.horizontal?175-e.x:e.y, 170);
-  input = Math.round(input/o.c.STEP_SIZE);
+    if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
-  if (o.v.ebLast==0) exFirst = o.c.horizontal?e.y:e.x;
+      o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
 
-  if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+      if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
+      o.f.draw&&o.f.draw(o.v.level);
 
-    o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
+    } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
 
-    if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
-    o.f.draw(o.v.level);
+      o.v.dy += o.c.horizontal?-e.dx:e.dy;
+      //if (!e.b) o.v.dy=0;
 
-  } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
+      let incr;
+      while (Math.abs(o.v.dy)>32) {
+        if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
+        else { o.v.dy+=32; incr = -1;}
+        Bangle.buzz(20);
 
-    o.v.dy += o.c.horizontal?-e.dx:e.dy;
-    //if (!e.b) o.v.dy=0;
-
-    let incr;
-    while (Math.abs(o.v.dy)>32) {
-      if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
-      else { o.v.dy+=32; incr = -1;}
-      Bangle.buzz(20);
-
-      o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
-      cb("incr",incr);
-      o.f.draw(o.v.level);
+        o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
+        cb("incr",incr);
+        o.f.draw&&o.f.draw(o.v.level);
+      }
     }
-  }
-  o.v.ebLast = e.b;
-};
+    o.v.ebLast = e.b;
+  };
 
-o.f.draw = (level)=>{
-  "ram";
+  o.f.remove = ()=> {
+    Bangle.removeListener('drag', o.f.dragSlider);
+    o.v.dragActive = false;
+    cb("remove", o.v.prevLevel);
+  };
+}
 
-  if (true || o.v.firstRun || !o.c.lazy) {
-    g.setColor(o.c.colorFG).fillRect(o.c.borderRect); // To get outer border...
-  }
-  if (false && level == o.v.prevLevel) {if (!o.v.firstRun) return; if (o.v.firstRun) o.v.firstRun = false;}
+if (o.c.drawableSlider) { 
 
-  o.v.prevLevel = level;
+  o.f.updateBar = (levelHeight)=>{
+    "ram";
+    if (!o.c.horizontal) return {x:o.c._xStart,y:o.c._yStart+o.c._height-levelHeight,w:o.c._width,y2:o.c._yStart+o.c._height,r:o.c.rounded};
+    if (o.c.horizontal) return {x:o.c._xStart,y:o.c._yStart,w:levelHeight,h:o.c._height,r:o.c.rounded};
+  };
 
-  g.setColor(o.c.colorBG).
-    fillRect(o.c.hollowRect). // ... and here it's made hollow.
-    setColor(0==level?o.c.colorBG:o.c.colorFG).
-    fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
+  o.c.borderRect = {x:o.c._xStart-totalBorderSize,y:o.c._yStart-totalBorderSize,w:o.c._width+2*totalBorderSize,h:o.c._height+2*totalBorderSize,r:o.c.rounded};
 
-  //print(level);
-  //print(process.memory().usage);
-};
+  o.c.hollowRect = {x:o.c._xStart-o.c.innerBorderSize,y:o.c._yStart-o.c.innerBorderSize,w:o.c._width+2*o.c.innerBorderSize,h:o.c._height+2*o.c.innerBorderSize,r:o.c.rounded};
 
-o.f.remove = ()=> {
-  Bangle.removeListener('drag', o.f.dragSlider);
-  o.v.dragActive = false;
-  cb("remove", o.v.prevLevel);
-};
+  o.f.draw = (level)=>{
+    "ram";
+
+    if (true || o.v.firstRun || !o.c.lazy) {
+      g.setColor(o.c.colorFG).fillRect(o.c.borderRect); // To get outer border...
+    }
+    if (false && level == o.v.prevLevel) {if (!o.v.firstRun) return; if (o.v.firstRun) o.v.firstRun = false;}
+
+    o.v.prevLevel = level;
+
+    g.setColor(o.c.colorBG).
+      fillRect(o.c.hollowRect). // ... and here it's made hollow.
+      setColor(0==level?o.c.colorBG:o.c.colorFG).
+      fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
+
+    //print(level);
+    //print(process.memory().usage);
+  };
+}
 
 if (o.c.autoProgress) {
   o.v.shouldAutoDraw = true;
   o.f.autoUpdate = ()=>{
     //if (o.v.level===undefined) o.v.level = -1;
     o.v.level = o.v.level+1;
-    if (o.v.shouldAutoDraw) o.f.draw(o.v.level);
+    if (o.v.shouldAutoDraw) o.f.draw&&o.f.draw(o.v.level);
     cb("auto");
     if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
   };
   o.f.startAutoUpdate = ()=>{
       o.f.stopAutoUpdate();
-      if (o.v.shouldAutoDraw) o.f.draw(o.v.level);
+      if (o.v.shouldAutoDraw) o.f.draw&&o.f.draw(o.v.level);
       o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);
   };
   o.f.stopAutoUpdate = ()=>{if (o.v.autoIntervalID) {clearInterval(o.v.autoIntervalID); o.v.autoIntervalID = undefined;}};
