@@ -823,7 +823,7 @@ function showAppSettings(app) {
   try {
     appSettings = eval(appSettings);
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError(/*LANG*/'Error in settings');
   }
   if (typeof appSettings !== "function") {
@@ -833,7 +833,7 @@ function showAppSettings(app) {
     // pass showAppSettingsMenu as "back" argument
     appSettings(()=>showAppSettingsMenu());
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError(/*LANG*/'Error in settings');
   }
 }
