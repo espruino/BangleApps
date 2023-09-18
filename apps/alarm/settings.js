@@ -1,5 +1,9 @@
 (function(back) {
-  let settings = require('Storage').readJSON('alarm.json',1)||{};
+  let settings = Object.assign({
+    showConfirm : true,
+    showAutoSnooze : true,
+    showHidden : true
+  }, require('Storage').readJSON('alarm.json',1)||{});
 
   const save = () => require('Storage').write('alarm.json', settings);
   const DATE_FORMATS = ['default', 'mmdd'];
@@ -22,15 +26,15 @@
         }
       },
       /*LANG*/'Show Menu Auto Snooze': {
-        value : settings.showAutoSnooze == null ? true : settings.showAutoSnooze,
+        value : settings.showAutoSnooze,
         onchange : v => { settings.showAutoSnooze=v; save();}
       },
       /*LANG*/'Show Menu Confirm': {
-        value : settings.showConfirm == null ? true : settings.showConfirm,
+        value : settings.showConfirm,
         onchange : v => { settings.showConfirm=v; save();}
       },
       /*LANG*/'Show Menu Hidden': {
-        value : settings.showHidden == null ? true : settings.showHidden,
+        value : settings.showHidden,
         onchange : v => { settings.showHidden=v; save();}
       },
       /*LANG*/'Show Menu Group': {

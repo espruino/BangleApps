@@ -26,5 +26,6 @@
     { "url": "screenshot-9.png" },
     { "url": "screenshot-10.png" },
     { "url": "screenshot-11.png" }
-  ]
+  ],
+  "data":[ {"name":"alarm.settings.json"} ]
 }

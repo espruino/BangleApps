@@ -1,7 +1,11 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-const settings = require('Storage').readJSON('alarm.json',1)||{};
+const settings = Object.assign({
+  showConfirm : true,
+  showAutoSnooze : true,
+  showHidden : true
+}, require('Storage').readJSON('alarm.json',1)||{});
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
 const WORKDAYS = 62;
@@ -214,9 +218,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!keyboard || !settings.showGroup) delete menu[/*LANG*/"Group"];
-  if (!(settings.showConfirm == null ? true : settings.showConfirm)) delete menu[/*LANG*/"Confirm"];
-  if (!(settings.showAutoSnooze == null ? true : settings.showAutoSnooze)) delete menu[/*LANG*/"Auto Snooze"];
-  if (!(settings.showHidden == null ? true : settings.showHidden)) delete menu[/*LANG*/"Hidden"];
+  if (!settings.showConfirm) delete menu[/*LANG*/"Confirm"];
+  if (!settings.showAutoSnooze) delete menu[/*LANG*/"Auto Snooze"];
+  if (!settings.showHidden) delete menu[/*LANG*/"Hidden"];
   if (!alarm.date) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
