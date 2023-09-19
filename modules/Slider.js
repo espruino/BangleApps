@@ -33,6 +33,7 @@ o.c = Object.assign({ // constants go here.
   innerBorderSize:2,
   drawableSlider:true,
   dragableSlider:true,
+  currLevel:undefined,
 },conf);
 
 let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
