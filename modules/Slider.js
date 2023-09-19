@@ -69,6 +69,7 @@ o.v.level = (o.c.currLevel||o.c.currLevel===0)?o.c.currLevel:o.c.steps/2;
 
 o.v.firstRun = true;
 o.v.ebLast = 0;
+o.v.dy = 0;
 
 if (o.c.dragableSlider) { 
   o.f.wasOnIndicator = (exFirst)=>{
