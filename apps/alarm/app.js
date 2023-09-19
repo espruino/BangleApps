@@ -444,8 +444,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
   };
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
-  if (!(settings.showConfirm == null ? true : settings.showConfirm)) delete menu[/*LANG*/"Confirm"];
-  if (!(settings.showHidden == null ? true : settings.showHidden)) delete menu[/*LANG*/"Hidden"];
+  if (!settings.showConfirm) delete menu[/*LANG*/"Confirm"];
+  if (!settings.showHidden) delete menu[/*LANG*/"Hidden"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
       E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
