@@ -26,15 +26,15 @@
         }
       },
       /*LANG*/'Show Menu Auto Snooze': {
-        value : settings.showAutoSnooze,
+        value : !!settings.showAutoSnooze,
         onchange : v => { settings.showAutoSnooze=v; save();}
       },
       /*LANG*/'Show Menu Confirm': {
-        value : settings.showConfirm,
+        value : !!settings.showConfirm,
         onchange : v => { settings.showConfirm=v; save();}
       },
       /*LANG*/'Show Menu Hidden': {
-        value : settings.showHidden,
+        value : !!settings.showHidden,
         onchange : v => { settings.showHidden=v; save();}
       },
       /*LANG*/'Show Menu Group': {
