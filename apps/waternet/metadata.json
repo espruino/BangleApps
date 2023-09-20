@@ -9,7 +9,7 @@
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "allow_emulator":true,
-  "data": [{"name":"waternet.data.dat"}],
+  "data": [{"name":"waternet.data.dat", "storageFile":true}],
   "storage": [
     {"name":"waternet.app.js","url":"app.js"},
     {"name":"waternet.img","url":"app-icon.js","evaluate":true}
