@@ -34,6 +34,7 @@ o.c = Object.assign({ // constants go here.
   drawableSlider:true,
   dragableSlider:true,
   currLevel:undefined,
+  dragRect:R,
 },conf);
 
 let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
@@ -72,6 +73,11 @@ o.v.ebLast = 0;
 o.v.dy = 0;
 
 if (o.c.dragableSlider) { 
+  o.f.wasOnDragRect = (exFirst, eyFirst)=>{
+    "ram";
+    return exFirst>o.c.dragRect.x && exFirst<o.c.dragRect.x2 && eyFirst>o.c.dragRect.y && eyFirst<o.c.dragRect.y2;
+  };
+
   o.f.wasOnIndicator = (exFirst)=>{
     "ram";
     if (!o.c.horizontal) return exFirst>o.c._xStart-o.c.oversizeL*o.c._width && exFirst<o.c._xStart+o.c._width+o.c.oversizeR*o.c._width;
@@ -80,42 +86,47 @@ if (o.c.dragableSlider) {
 
   o.f.dragSlider = e=>{
     "ram";
-    o.v.dragActive = true;
-    if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
-
-    if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
-    if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
-
-    let input = Math.min(o.c.horizontal?175-e.x:e.y, 170);
-    input = Math.round(input/o.c.STEP_SIZE);
-
-    if (o.v.ebLast==0) exFirst = o.c.horizontal?e.y:e.x;
-
-    if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
-
-      o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
-
-      if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
-      o.f.draw&&o.f.draw(o.v.level);
-
-    } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
-
-      o.v.dy += o.c.horizontal?-e.dx:e.dy;
-      //if (!e.b) o.v.dy=0;
-
-      let incr;
-      while (Math.abs(o.v.dy)>32) {
-        if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
-        else { o.v.dy+=32; incr = -1;}
-        Bangle.buzz(20);
-
-        o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
-        cb("incr",incr);
-        o.f.draw&&o.f.draw(o.v.level);
-      }
+    if (o.v.ebLast==0) {
+      exFirst = o.c.horizontal?e.y:e.x;
+      eyFirst = o.c.horizontal?e.x:e.y;
     }
-    o.v.ebLast = e.b;
-  };
+
+    if (o.f.wasOnDragRect(exFirst, eyFirst)) {
+      o.v.dragActive = true;
+      if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
+
+      if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
+      if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
+
+      let input = Math.min(o.c.horizontal?175-e.x:e.y, 170);
+      input = Math.round(input/o.c.STEP_SIZE);
+
+      if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+
+        o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
+
+        if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
+        o.f.draw&&o.f.draw(o.v.level);
+
+      } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
+
+        o.v.dy += o.c.horizontal?-e.dx:e.dy;
+        //if (!e.b) o.v.dy=0;
+
+        let incr;
+        while (Math.abs(o.v.dy)>32) {
+          if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
+          else { o.v.dy+=32; incr = -1;}
+          Bangle.buzz(20);
+
+          o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
+          cb("incr",incr);
+          o.f.draw&&o.f.draw(o.v.level);
+        }
+      }
+      o.v.ebLast = e.b;
+    };
+  }
 
   o.f.remove = ()=> {
     Bangle.removeListener('drag', o.f.dragSlider);
