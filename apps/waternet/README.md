@@ -9,17 +9,17 @@ The aim of the game, in any game mode is always to connect all pipes so that wat
 ### Rotate Mode
 ![rotate legend](rotate-legend.png) ![rotate finish](rotate-finish.png) ![rotate](rotate.png) 
 
-You need to connect all the pipes so water flows through them, by pressing the A button on a pipe, to rotate the single pipe.
+You need to connect all the pipes so water flows through them, by touching the middle of the screen when the selector is on a pipe, to rotate the single pipe.
 
 ### Slide Mode
 ![slide legend](slide-legend.png) ![slide finish](slide-finish.png) ![slide](slide.png)
 
-You need to connect all the pipes so water flows through them, by pressing the A on the arrows of a row or column. The row or column will move all pipes in the direction the arrow is pointing at.
+You need to connect all the pipes so water flows through them, by touching the middle of the screen when the selector is on the arrows of a row or column. The row or column will move all pipes in the direction the arrow is pointing at.
 
 ### Roslid Mode
 ![roslid legend](roslid-legend.png) ![roslid finish](roslid-finish.png) ![roslid rotate](roslid-rotate.png) ![roslid slide](roslid-slide.png)
 
-You need to connect all the pipes so water flows through them, by pressing the A on the arrows of a row or column. The row or column will move all pipes in the direction the arrow is pointing at. You can also press the A on a pipe, to rotate the single pipe. This is a combination Rotate and Slide mode.
+You need to connect all the pipes so water flows through them, by touching the middle of the screen when the selector is on the arrows of a row or column. The row or column will move all pipes in the direction the arrow is pointing at. You can also touch the middle of the screen when the selector is on a pipe, to rotate the single pipe. This is a combination Rotate and Slide mode.
 
 ## Features
 * 3 game modes (rotate, slide, roslid)
