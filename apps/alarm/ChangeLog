@@ -45,3 +45,4 @@
 0.40: Use substring of message when it's longer than fits the designated menu entry.
 0.41: Fix a menu bug affecting alarms with empty messages.
 0.42: Fix date not getting saved in event edit menu when tapping Confirm
+0.43: New settings: Show confirm, Show Overflow, Show Type.

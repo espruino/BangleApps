@@ -45,9 +45,10 @@ layout.render();
 - A `scale` field, eg `2` to set scale of an image
 - A `r` field to set rotation of text or images (0: 0°, 1: 90°, 2: 180°, 3: 270°).
 - A `wrap` field to enable line wrapping. Requires some combination of `width`/`height` and `fillx`/`filly` to be set. Not compatible with text rotation.
-- A `col` field, eg `#f00` for red
-- A `bgCol` field for background color (will automatically fill on render). When `type:"btn"`, this sets the background color of the button, and will not change color on press
-- A `btnBorder` field for button border color (will default to theme if not set)
+- A `col` field, eg `#f00` for red. When `type:"btn"`, this sets the color of the button's text label (defaults to `Graphics.theme.fg2` if not set)
+- A `bgCol` field for background color (will automatically fill on render). When `type:"btn"`, this sets the color of the space outside the button border (defaults to parent layoutObject's `bgCol` if not set)
+- A `btnBorderCol` field for button border color (defaults to `Graphics.theme.fg2` if not set)
+- A `btnFaceCol` field for the background color of the area inside the button border (defaults to `Graphics.theme.bg2` if not set)
 - A `halign` field to set horizontal alignment WITHIN a `v` container. `-1`=left, `1`=right, `0`=center
 - A `valign` field to set vertical alignment WITHIN a `h` container. `-1`=top, `1`=bottom, `0`=center
 - A `pad` integer field to set pixels padding

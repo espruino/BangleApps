@@ -13,7 +13,7 @@ It uses the [`sched` library](https://github.com/espruino/BangleApps/blob/master
     - `Repeat` &rarr; Select when the alarm will fire. You can select a predefined option (_Once_, _Every Day_, _Workdays_ or _Weekends_ or you can configure the days freely)
   - `New Timer` &rarr; Configure a new timer (triggered based on amount of time elapsed in hours/minutes/seconds)
   - `New Event` &rarr; Configure a new event (triggered based on time and date)
-    - `Repeat` &rarr; Alarm can be be fired only once or repeated (every X number of _days_, _weeks_, _months_ or _years_)
+    - `Repeat` &rarr; Alarm can be fired only once or repeated (every X number of _days_, _weeks_, _months_ or _years_)
 - `Advanced`
   - `Scheduler settings` &rarr; Open the [Scheduler](https://github.com/espruino/BangleApps/tree/master/apps/sched) settings page, see its [README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for details
   - `Enable All` &rarr; Enable _all_ disabled alarms & timers
