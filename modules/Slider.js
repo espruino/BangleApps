@@ -125,8 +125,8 @@ try { // for making it possiblie to run the test app in the following catch stat
             }
           }
           o.v.ebLast = e.b;
-        };
-      }
+        }
+      };
 
       o.f.remove = ()=> {
         Bangle.removeListener('drag', o.f.dragSlider);
@@ -187,7 +187,7 @@ try { // for making it possiblie to run the test app in the following catch stat
     //o.f.printThis = ()=>(print(this));
 
     return o;
-  }
+  };
 
 } catch (e) {
   print(e);
