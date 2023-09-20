@@ -1,5 +1,5 @@
 # Waternet
-This is the Bangle Js 2 version of my Waternet game which is a multiplatform puzzle game initially written for old consoles and handhelds.
+This is the Bangle Js 2 version of my Waternet game which is a multi platform puzzle game initially written for old consoles and handhelds.
 
 ![screenshot 1](screenshot1.png) ![screenshot 2](screenshot2.png) ![screenshot 3](screenshot3.png)
 
@@ -24,9 +24,11 @@ You need to connect all the pipes so water flows through them, by pressing the A
 ## Features
 * 3 game modes (rotate, slide, roslid)
 * 5 difficulties per game mode (very easy, easy, normal, hard, very hard)
-* 375 levels spread over all difficulaties and game modes (25 levels per difficulty and game mode)
+* 375 levels spread over all difficulties and game modes (25 levels per difficulty and game mode)
 * Random mode to generate random levels for each game mode
 * Touch controls + option to display up / down / left / right / middle rects of where to touch (to simulate a dpad and button)
+* Option to use theming support or not
+* Option to Play with or without widgets loaded (full screen)
 
 ## Controls
 | Button | Action                                                                   |
@@ -43,8 +45,8 @@ You can contact me on my [github](https://github.com/joyrider3774)
 
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/),
-it's my own re-implementation of these 2 game concepts mixed into one game
+it's my own re-implementation of these two game concepts mixed into one game
 
 ## Creator
+[Willems Davy](https://github.com/joyrider3774)
 
-Willems Davy
