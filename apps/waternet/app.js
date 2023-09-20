@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------------
 // global variables and consts
 // --------------------------------------------------------------------------------------------------
-const DEBUGMODERAMUSE = 1;
+const DEBUGMODERAMUSE = 0;
 
 let memStart;
 if (DEBUGMODERAMUSE)
@@ -9,7 +9,7 @@ if (DEBUGMODERAMUSE)
 
 const DEBUGMODE = 0;
 const DEBUGMODEINPUT = 0;
-const DEBUGMODESPEED = 1;
+const DEBUGMODESPEED = 0;
 
 const TILESIZE = 10;
 const SCREENWIDTH = g.getWidth();
