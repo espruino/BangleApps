@@ -114,3 +114,4 @@
 	* Better position in elevation profiles
 	* Integrating fixes in upstream rust heatshrink crate
 	* Small path optimisations with brouter (removing looplets)
+	* Bugfix in nearest segment detection

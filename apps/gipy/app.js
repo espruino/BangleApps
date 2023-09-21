@@ -822,28 +822,24 @@ class Status {
 
     if (this.path !== null) {
       // detect segment we are on now
-      let res = this.path.nearest_segment(
+      let next_segment = this.path.nearest_segment(
         this.displayed_position,
         Math.max(0, this.current_segment - 1),
         Math.min(this.current_segment + 2, this.path.len - 1),
         cos_direction,
         sin_direction
       );
-      let orientation = res[0];
-      let next_segment = res[1];
 
       if (this.is_lost(next_segment)) {
         // start_profiling();
         // it did not work, try anywhere
-        res = this.path.nearest_segment(
+        next_segment = this.path.nearest_segment(
           this.displayed_position,
           0,
           this.path.len - 1,
           cos_direction,
           sin_direction
         );
-        orientation = res[0];
-        next_segment = res[1];
         // end_profiling("repositioning");
       }
       // now check if we strayed away from path or back to it
@@ -865,7 +861,7 @@ class Status {
       this.current_segment = next_segment;
 
       // check if we are nearing the next point on our path and alert the user
-      let next_point = this.current_segment + (1 - orientation);
+      let next_point = this.current_segment + (go_backwards ? 0 : 1);
       this.distance_to_next_point = Math.ceil(
         this.position.distance(this.path.point(next_point))
       );
@@ -1459,7 +1455,7 @@ class Path {
   }
 
   // return index of segment which is nearest from point.
-  // we need a direction because we need there is an ambiguity
+  // we need a direction because there is an ambiguity
   // for overlapping segments which are taken once to go and once to come back.
   // (in the other direction).
   nearest_segment(point, start, end, cos_direction, sin_direction) {
@@ -1476,7 +1472,7 @@ class Path {
 
       let dot =
         cos_direction * (p2.lon - p1.lon) + sin_direction * (p2.lat - p1.lat);
-      let orientation = +(dot < 0); // index 0 is good orientation
+      let orientation = +(dot < 0); // index 0 is good orientation (if you go forward)
       if (distance <= mins[orientation]) {
         mins[orientation] = distance;
         indices[orientation] = i - 1;
@@ -1485,12 +1481,13 @@ class Path {
       p1 = p2;
     }
 
-    // by default correct orientation (0) wins
+    // by default correct orientation (0 forward, 1 backward) wins
     // but if other one is really closer, return other one
-    if (mins[1] < mins[0] / 100.0) {
-      return [1, indices[1]];
+    let good_orientation = go_backwards ? 1 : 0;
+    if (mins[1-good_orientation] < mins[good_orientation] / 100.0) {
+      return indices[1-good_orientation];
     } else {
-      return [0, indices[0]];
+      return indices[good_orientation];
     }
   }
   get len() {
