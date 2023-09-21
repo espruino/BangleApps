@@ -1002,10 +1002,11 @@ class Status {
       let current_position = 0;
       if (this.current_segment !== null) {
         current_position =
-          this.remaining_distances[this.current_segment + 1] +
-          this.projected_point.distance(
-            this.path.point(this.current_segment + 1)
-          );
+          this.remaining_distances[0] -
+          (this.remaining_distances[this.current_segment + 1] +
+            this.projected_point.distance(
+              this.path.point(this.current_segment + 1)
+            ));
       }
       if (this.screen == HEIGHTS_FULL) {
         this.display_heights(0, current_position, this.remaining_distances[0]);
@@ -1484,8 +1485,8 @@ class Path {
     // by default correct orientation (0 forward, 1 backward) wins
     // but if other one is really closer, return other one
     let good_orientation = go_backwards ? 1 : 0;
-    if (mins[1-good_orientation] < mins[good_orientation] / 100.0) {
-      return indices[1-good_orientation];
+    if (mins[1 - good_orientation] < mins[good_orientation] / 100.0) {
+      return indices[1 - good_orientation];
     } else {
       return indices[good_orientation];
     }
