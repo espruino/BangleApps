@@ -639,7 +639,7 @@ class Status {
   constructor(path, maps, interests, heights) {
     this.path = path;
     this.default_options = true; // do we still have default options ?
-    this.active = false; // should we have screen on
+    this.active = true; // should we have screen on
     this.last_activity = getTime();
     this.maps = maps;
     this.interests = interests;
