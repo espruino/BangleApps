@@ -966,11 +966,16 @@ class Status {
   }
   remaining_distance() {
     if (go_backwards) {
-      return this.remaining_distances[0] - this.remaining_distances[this.current_segment] +
-      this.position.distance(this.path.point(this.current_segment));
+      return (
+        this.remaining_distances[0] -
+        this.remaining_distances[this.current_segment] +
+        this.position.distance(this.path.point(this.current_segment))
+      );
     } else {
-      return this.remaining_distances[this.current_segment + 1] +
-      this.position.distance(this.path.point(this.current_segment + 1));
+      return (
+        this.remaining_distances[this.current_segment + 1] +
+        this.position.distance(this.path.point(this.current_segment + 1))
+      );
     }
   }
   // check if we are lost (too far from segment we think we are on)
@@ -1000,12 +1005,11 @@ class Status {
     } else {
       let current_position = 0;
       if (this.current_segment !== null) {
-        if (go_backwards) {
-          current_position = this.remaining_distance();
-        } else {
         current_position =
-          this.remaining_distances[0] - this.remaining_distance();
-        }
+          this.remaining_distances[this.current_segment + 1] +
+          this.projected_point.distance(
+            this.path.point(this.current_segment + 1)
+          );
       }
       if (this.screen == HEIGHTS_FULL) {
         this.display_heights(0, current_position, this.remaining_distances[0]);
@@ -1044,7 +1048,7 @@ class Status {
         break;
       }
     }
-    end_point_index = Math.min(end_point_index+1, this.path.len -1);
+    end_point_index = Math.min(end_point_index + 1, this.path.len - 1);
     let max_height = Number.NEGATIVE_INFINITY;
     let min_height = Number.POSITIVE_INFINITY;
     for (let i = start_point_index; i <= end_point_index; i++) {
