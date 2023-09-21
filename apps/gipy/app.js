@@ -3,8 +3,9 @@ let displaying = false;
 let in_menu = false;
 let go_backwards = false;
 let zoomed = true;
-let powersaving = true;
 let status;
+
+let initial_options = Bangle.getOptions();
 
 let interests_colors = [
   0xffff, // Waypoints, white
@@ -32,9 +33,12 @@ var settings = Object.assign(
     buzz_on_turns: false,
     disable_bluetooth: true,
     power_lcd_off: false,
+    powersave_by_default: false,
   },
   s.readJSON("gipy.json", true) || {}
 );
+
+let powersaving = settings.powersave_by_default;
 
 // let profile_start_times = [];
 
@@ -678,6 +682,9 @@ class Status {
     this.old_times = []; // the corresponding times
   }
   activate() {
+    if (!powersaving) {
+      return;
+    }
     this.last_activity = getTime();
     if (this.active) {
       return;
@@ -778,16 +785,10 @@ class Status {
       this.activate(); // if we go too slow turn on, we might be looking for the direction to follow
       if (!this.default_options) {
         this.default_options = true;
-
-        Bangle.setOptions({
-          lockTimeout: 0,
-          backlightTimeout: 10000,
-          wakeOnTwist: true,
-          powerSave: true,
-        });
+        Bangle.setOptions(initial_options);
       }
     } else {
-      if (this.default_options) {
+      if (this.default_options && powersaving) {
         this.default_options = false;
 
         Bangle.setOptions({
