@@ -1,6 +1,7 @@
 {
   "id": "antonclk_spotrem",
   "name": "Anton Clock + Remote for Spotify",
+  "shortName": "Anton Spotify",
   "version": "0.01",
   "description": "A merge of the UI of `Anton Clock` with the tap and swipe controls from `Remote for Spotify` for seeing the time and to control Spotify at the same time.",
   "icon": "app.png",

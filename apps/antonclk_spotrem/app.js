@@ -1,11 +1,3 @@
-// Add clock to launcher menu
-require("Storage").write("antonclk_spotrem.info",{
-  "id":"antonclk_spotrem",
-  "name":"Anton + Spot",
-  "type":"clock",
-  "src":"antonclk_spotrem.app.js"
-});
-
 // Clock: Set font to Anton
 Graphics.prototype.setFontAnton = function(scale) {
   // Actual height 69 (68 - 0)
