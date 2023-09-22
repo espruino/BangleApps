@@ -19,33 +19,11 @@ This app is a proof of concept, many codes are too complex to be rendered by the
 
 ### How to sync
 
-_WIP: we currently cannot synchronize cards, a PR is under review in GadgetBridge repo, soon we will see support on nightly builds_
+We can synchronize cards with GadgetBridge and Catima, refer to those projects for further information.
+The feature is currently available on nightly builds only.
+It should be released from version 0.77 (not yet out at the time of writing).
 
-You can test it by sending on your bangle a file like this:
-
-_android.cards.json_
-
-```json
-[
-  {
-    "id": 1,
-    "name": "First card",
-    "value": "01234",
-    "note": "Some stuff",
-    "type": "CODE_39",
-    "balance": "15 EUR",
-    "expiration": "1691102081"
-  },
-  {
-    "id": 2,
-    "name": "Second card",
-    "value": "Hello world",
-    "note": "This is a qr generated on the bangle!",
-    "type": "QR_CODE",
-    "balance": "2 P"
-  }
-]
-```
+GadgetBridge syncronizes all cards at once, if you have too many cards you may want to explicitly select which ones to syncronize, keep in mind the limitations of the Banglejs.
 
 ### Credits
 
