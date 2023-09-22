@@ -121,10 +121,14 @@ Few settings for now (feel free to suggest me more) :
 - brightness : how bright should screen be ? (by default 0.5, again saving power)
 - power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points,
 when you touch the screen and when speed is below 13km/h.
+- powersave by default: when gipy starts is powersaving activated ? (see below)
 
 ### Powersaving
 
 Starting with release 0.20 we experiment with power saving.
+
+By default, powersaving is **disabled**. You can turn it on in the menu by checking the powersaving box.
+You can also change the default choice in the app settings (*powersave by default* setting).
 
 There are now two display modes :
 
@@ -140,6 +144,7 @@ Activation events are the following :
 
 - you are near (< 100m) the next point on path
 - you are slow (< *wake-up speed* setting (13 km/h by default))
+- you are lost
 - you press the button / touch the screen
 
 

@@ -9,6 +9,7 @@
             disable_bluetooth: true,
             brightness: 0.5,
             power_lcd_off: false,
+            powersave_by_default: false,
         },
         require("Storage").readJSON(FILE, true) || {}
     );
@@ -82,5 +83,12 @@
                 writeSettings();
             }
         },
+        "powersave by default": {
+            value: settings.powersave_by_default == true,
+            onchange: (v) => {
+                settings.powersave_by_default = v;
+                writeSettings();
+            }
+        }
     });
 });
