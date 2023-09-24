@@ -2,7 +2,7 @@
   var STORAGE = require('Storage')
 
   var FILE = "mtnclock.json";
-  
+
   // Load settings
   var SETTINGS  = Object.assign({
     // default values
