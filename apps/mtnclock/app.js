@@ -198,7 +198,6 @@ g.clear();
   g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(87));
 
   if (data.showWidgets) {
-    Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
 }
@@ -372,3 +371,8 @@ queueDraw();
 readWeather();
 setWeather();
 Bangle.setUI("clock");
+
+if (data.showWidgets) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}
