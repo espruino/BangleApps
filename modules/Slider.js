@@ -131,6 +131,7 @@ try { // for making it possiblie to run the test app in the following catch stat
       o.f.remove = ()=> {
         Bangle.removeListener('drag', o.f.dragSlider);
         o.v.dragActive = false;
+        o.v.timeoutID = undefined;
         cb("remove", o.v.prevLevel);
       };
     }
