@@ -100,10 +100,12 @@ try { // for making it possiblie to run the test app in the following catch stat
 
           if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
-            let input = Math.max(0,Math.min((o.c.horizontal?175-e.x:e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height));
+            let input = !o.c.horizontal?
+              Math.min((175-e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height):
+              Math.min(e.x-o.c.xStart-3*o.c.rounded/4, o.c.width);
             input = Math.round(input/o.c.STEP_SIZE);
 
-            o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
+            o.v.level = Math.min(Math.max(input,0),o.c.steps);
 
             if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
             o.f.draw&&o.f.draw(o.v.level);
