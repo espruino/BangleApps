@@ -107,3 +107,11 @@
 	* Bugfix for negative remaining distance when going backwards
 	* New settings for powersaving
 	* Adjustments to powersaving algorithm
+
+0.22:
+	* Powersaving disabled by default
+	* Default choice for powersaving in the settings
+	* Better position in elevation profiles
+	* Integrating fixes in upstream rust heatshrink crate
+	* Small path optimisations with brouter (removing looplets)
+	* Bugfix in nearest segment detection

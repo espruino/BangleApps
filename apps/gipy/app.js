@@ -3,8 +3,9 @@ let displaying = false;
 let in_menu = false;
 let go_backwards = false;
 let zoomed = true;
-let powersaving = true;
 let status;
+
+let initial_options = Bangle.getOptions();
 
 let interests_colors = [
   0xffff, // Waypoints, white
@@ -32,9 +33,12 @@ var settings = Object.assign(
     buzz_on_turns: false,
     disable_bluetooth: true,
     power_lcd_off: false,
+    powersave_by_default: false,
   },
   s.readJSON("gipy.json", true) || {}
 );
+
+let powersaving = settings.powersave_by_default;
 
 // let profile_start_times = [];
 
@@ -635,7 +639,7 @@ class Status {
   constructor(path, maps, interests, heights) {
     this.path = path;
     this.default_options = true; // do we still have default options ?
-    this.active = false; // should we have screen on
+    this.active = true; // should we have screen on
     this.last_activity = getTime();
     this.maps = maps;
     this.interests = interests;
@@ -678,6 +682,9 @@ class Status {
     this.old_times = []; // the corresponding times
   }
   activate() {
+    if (!powersaving) {
+      return;
+    }
     this.last_activity = getTime();
     if (this.active) {
       return;
@@ -778,16 +785,10 @@ class Status {
       this.activate(); // if we go too slow turn on, we might be looking for the direction to follow
       if (!this.default_options) {
         this.default_options = true;
-
-        Bangle.setOptions({
-          lockTimeout: 0,
-          backlightTimeout: 10000,
-          wakeOnTwist: true,
-          powerSave: true,
-        });
+        Bangle.setOptions(initial_options);
       }
     } else {
-      if (this.default_options) {
+      if (this.default_options && powersaving) {
         this.default_options = false;
 
         Bangle.setOptions({
@@ -821,28 +822,24 @@ class Status {
 
     if (this.path !== null) {
       // detect segment we are on now
-      let res = this.path.nearest_segment(
+      let next_segment = this.path.nearest_segment(
         this.displayed_position,
         Math.max(0, this.current_segment - 1),
         Math.min(this.current_segment + 2, this.path.len - 1),
         cos_direction,
         sin_direction
       );
-      let orientation = res[0];
-      let next_segment = res[1];
 
       if (this.is_lost(next_segment)) {
         // start_profiling();
         // it did not work, try anywhere
-        res = this.path.nearest_segment(
+        next_segment = this.path.nearest_segment(
           this.displayed_position,
           0,
           this.path.len - 1,
           cos_direction,
           sin_direction
         );
-        orientation = res[0];
-        next_segment = res[1];
         // end_profiling("repositioning");
       }
       // now check if we strayed away from path or back to it
@@ -864,7 +861,7 @@ class Status {
       this.current_segment = next_segment;
 
       // check if we are nearing the next point on our path and alert the user
-      let next_point = this.current_segment + (1 - orientation);
+      let next_point = this.current_segment + (go_backwards ? 0 : 1);
       this.distance_to_next_point = Math.ceil(
         this.position.distance(this.path.point(next_point))
       );
@@ -965,11 +962,16 @@ class Status {
   }
   remaining_distance() {
     if (go_backwards) {
-      return this.remaining_distances[0] - this.remaining_distances[this.current_segment] +
-      this.position.distance(this.path.point(this.current_segment));
+      return (
+        this.remaining_distances[0] -
+        this.remaining_distances[this.current_segment] +
+        this.position.distance(this.path.point(this.current_segment))
+      );
     } else {
-      return this.remaining_distances[this.current_segment + 1] +
-      this.position.distance(this.path.point(this.current_segment + 1));
+      return (
+        this.remaining_distances[this.current_segment + 1] +
+        this.position.distance(this.path.point(this.current_segment + 1))
+      );
     }
   }
   // check if we are lost (too far from segment we think we are on)
@@ -999,12 +1001,12 @@ class Status {
     } else {
       let current_position = 0;
       if (this.current_segment !== null) {
-        if (go_backwards) {
-          current_position = this.remaining_distance();
-        } else {
         current_position =
-          this.remaining_distances[0] - this.remaining_distance();
-        }
+          this.remaining_distances[0] -
+          (this.remaining_distances[this.current_segment + 1] +
+            this.projected_point.distance(
+              this.path.point(this.current_segment + 1)
+            ));
       }
       if (this.screen == HEIGHTS_FULL) {
         this.display_heights(0, current_position, this.remaining_distances[0]);
@@ -1043,7 +1045,7 @@ class Status {
         break;
       }
     }
-    end_point_index = Math.min(end_point_index+1, this.path.len -1);
+    end_point_index = Math.min(end_point_index + 1, this.path.len - 1);
     let max_height = Number.NEGATIVE_INFINITY;
     let min_height = Number.POSITIVE_INFINITY;
     for (let i = start_point_index; i <= end_point_index; i++) {
@@ -1454,7 +1456,7 @@ class Path {
   }
 
   // return index of segment which is nearest from point.
-  // we need a direction because we need there is an ambiguity
+  // we need a direction because there is an ambiguity
   // for overlapping segments which are taken once to go and once to come back.
   // (in the other direction).
   nearest_segment(point, start, end, cos_direction, sin_direction) {
@@ -1471,7 +1473,7 @@ class Path {
 
       let dot =
         cos_direction * (p2.lon - p1.lon) + sin_direction * (p2.lat - p1.lat);
-      let orientation = +(dot < 0); // index 0 is good orientation
+      let orientation = +(dot < 0); // index 0 is good orientation (if you go forward)
       if (distance <= mins[orientation]) {
         mins[orientation] = distance;
         indices[orientation] = i - 1;
@@ -1480,12 +1482,13 @@ class Path {
       p1 = p2;
     }
 
-    // by default correct orientation (0) wins
+    // by default correct orientation (0 forward, 1 backward) wins
     // but if other one is really closer, return other one
-    if (mins[1] < mins[0] / 100.0) {
-      return [1, indices[1]];
+    let good_orientation = go_backwards ? 1 : 0;
+    if (mins[1 - good_orientation] < mins[good_orientation] / 100.0) {
+      return indices[1 - good_orientation];
     } else {
-      return [0, indices[0]];
+      return indices[good_orientation];
     }
   }
   get len() {
