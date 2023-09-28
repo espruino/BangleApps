@@ -42,9 +42,9 @@ try { // for making it possiblie to run the test app in the following catch stat
     o.c._width = o.c.width - 2*totalBorderSize;
     o.c._yStart = o.c.yStart + totalBorderSize;
     o.c._height = o.c.height - 2*totalBorderSize;
-    if (o.c.rounded) o.c.rounded = 40;
+    o.c.rounded = o.c.rounded?20:0;
 
-    o.c.STEP_SIZE = o.c._height/o.c.steps;
+    o.c.STEP_SIZE = (o.c._height-(2*o.c.rounded-7))/o.c.steps;
 
     if (o.c.horizontal) {
       let mediator = o.c._xStart;
@@ -161,7 +161,11 @@ try { // for making it possiblie to run the test app in the following catch stat
         g.setColor(o.c.colorBG).
           fillRect(o.c.hollowRect). // ... and here it's made hollow.
           setColor(0==level?o.c.colorBG:o.c.colorFG).
-          fillRect(o.f.updateBar(level*o.c.STEP_SIZE)); // Here the bar is drawn.
+          fillRect(o.f.updateBar(2*o.c.rounded-7+level*o.c.STEP_SIZE)); // Here the bar is drawn.
+        if (o.c.rounded && level===0) {
+          g.setColor(o.c.colorFG).fillCircle(o.c._xStart+o.c._width/2,o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize);
+          g.setColor(o.c.colorBG).fillCircle(o.c._xStart+o.c._width/2,o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize-2);
+        }
 
         //print(level);
         //print(process.memory().usage);
@@ -192,6 +196,6 @@ try { // for making it possiblie to run the test app in the following catch stat
 
 } catch (e) {
   print(e);
-  let appName = "spotrem";
+  let appName = "slidertest";
   eval(require("Storage").read(appName+".app.js"));
 }
