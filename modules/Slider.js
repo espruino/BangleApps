@@ -98,10 +98,10 @@ try { // for making it possiblie to run the test app in the following catch stat
           if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
           if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
-          let input = Math.min(o.c.horizontal?175-e.x:e.y, 170);
-          input = Math.round(input/o.c.STEP_SIZE);
-
           if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+
+            let input = Math.max(0,Math.min((o.c.horizontal?175-e.x:e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height));
+            input = Math.round(input/o.c.STEP_SIZE);
 
             o.v.level = Math.min(Math.max(o.c.steps-input,0),o.c.steps);
 
