@@ -2,6 +2,10 @@
 
 A Naughts and Crosses game that learns as it goes
 
+![](screenshot.png)
+![](screenshot1.png)
+![](screenshot2.png)
+
 To start with the computer will play random moves and slowly increase
 its skill based on a set of logic rules.  During your first few games
 the playing logic will apply a new logic rule after each time you
