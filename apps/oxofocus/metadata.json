@@ -4,6 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "Play the computer while it learns to play Naughts and Crosses!",
+  "readme": "README.md",
   "tags": "game",
   "storage": [
     {"name":"oxofocus.app.js","url":"app.js"},
