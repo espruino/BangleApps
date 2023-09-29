@@ -455,7 +455,7 @@ Bangle.on('touch', function(zone,e) {
 
   if (game_state == GAME_OVER) {
     new_game();
-    return();
+    return;
   }
 
   get_move();
