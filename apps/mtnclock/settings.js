@@ -19,7 +19,6 @@
     "< Back" : () => back(),
     'Show widgets': {
       value: !!SETTINGS.showWidgets,  // !! converts undefined to false
-      format: value => value ? "On" : "Off",
       onchange: value => {
         SETTINGS.showWidgets = value;
         writeSettings();
