@@ -107,9 +107,11 @@ try { // for making it possiblie to run the test app in the following catch stat
 
             o.v.level = Math.min(Math.max(input,0),o.c.steps);
 
-            if (o.v.level != o.v.prevLevel) cb("map",o.v.level);
-            o.f.draw&&o.f.draw(o.v.level);
-
+            if (o.v.level != o.v.prevLevel) {
+              cb("map",o.v.level);
+              o.f.draw&&o.f.draw(o.v.level);
+            }
+            o.v.prevLevel = o.v.level;
           } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
 
             o.v.dy += o.c.horizontal?-e.dx:e.dy;
@@ -124,6 +126,7 @@ try { // for making it possiblie to run the test app in the following catch stat
               o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
               cb("incr",incr);
               o.f.draw&&o.f.draw(o.v.level);
+              o.v.prevLevel = o.v.level;
             }
           }
           o.v.ebLast = e.b;
@@ -134,7 +137,7 @@ try { // for making it possiblie to run the test app in the following catch stat
         Bangle.removeListener('drag', o.f.dragSlider);
         o.v.dragActive = false;
         o.v.timeoutID = undefined;
-        cb("remove", o.v.prevLevel);
+        cb("remove", o.v.level);
       };
     }
 
@@ -153,17 +156,9 @@ try { // for making it possiblie to run the test app in the following catch stat
       o.f.draw = (level)=>{
         "ram";
 
-        if (true || o.v.firstRun || !o.c.lazy) {
-          g.setColor(o.c.colorFG).fillRect(o.c.borderRect); // To get outer border...
-        }
-        if (false && level == o.v.prevLevel) {if (!o.v.firstRun) return; if (o.v.firstRun) o.v.firstRun = false;}
-
-        o.v.prevLevel = level;
-
-        g.setColor(o.c.colorBG).
-          fillRect(o.c.hollowRect). // ... and here it's made hollow.
-          setColor(0==level?o.c.colorBG:o.c.colorFG).
-          fillRect(o.f.updateBar((!o.c.rounded?0:(2*o.c.rounded-7))+level*o.c.STEP_SIZE)); // Here the bar is drawn.
+        g.setColor(o.c.colorFG).fillRect(o.c.borderRect). // To get outer border...
+          setColor(o.c.colorBG).fillRect(o.c.hollowRect). // ... and here it's made hollow.
+          setColor(0==level?o.c.colorBG:o.c.colorFG).fillRect(o.f.updateBar((!o.c.rounded?0:(2*o.c.rounded-7))+level*o.c.STEP_SIZE)); // Here the bar is drawn.
         if (o.c.rounded && level===0) {
           g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize);
           g.setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize-2);
