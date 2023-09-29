@@ -110,8 +110,8 @@ try { // for making it possiblie to run the test app in the following catch stat
             o.v.dy += o.c.horizontal?-e.dx:e.dy;
             //if (!e.b) o.v.dy=0;
 
-            let incr;
             while (Math.abs(o.v.dy)>32) {
+              let incr;
               if (o.v.dy>0) { o.v.dy-=32; incr = 1;}
               else { o.v.dy+=32; incr = -1;}
               Bangle.buzz(20);
