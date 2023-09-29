@@ -37,24 +37,8 @@ try { // for making it possiblie to run the test app in the following catch stat
       dragRect:R,
     },conf);
 
-    let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
-    o.c._xStart = o.c.xStart + totalBorderSize;
-    o.c._width = o.c.width - 2*totalBorderSize;
-    o.c._yStart = o.c.yStart + totalBorderSize;
-    o.c._height = o.c.height - 2*totalBorderSize;
-    o.c.rounded = o.c.rounded?20:0;
-
-    o.c.STEP_SIZE = (o.c._height-(!o.c.rounded?0:(2*o.c.rounded-7)))/o.c.steps;
-
     if (o.c.horizontal) {
-      let mediator = o.c._xStart;
-      o.c._xStart = o.c._yStart;
-      o.c._yStart = mediator;
-      mediator = o.c._width;
-      o.c._width = o.c._height;
-      o.c._height = mediator;
-
-      mediator = o.c.xStart;
+      let mediator = o.c.xStart;
       o.c.xStart = o.c.yStart;
       o.c.yStart = mediator;
       mediator = o.c.width;
@@ -62,6 +46,15 @@ try { // for making it possiblie to run the test app in the following catch stat
       o.c.height = mediator;
       delete mediator;
     }
+
+    let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
+    o.c._xStart = o.c.xStart + totalBorderSize;
+    o.c._width = o.c.width - 2*totalBorderSize;
+    o.c._yStart = o.c.yStart + totalBorderSize;
+    o.c._height = o.c.height - 2*totalBorderSize;
+    o.c.rounded = o.c.rounded?20:0;
+
+    o.c.STEP_SIZE = ((!o.c.horizontal?o.c._height:o.c._width)-(!o.c.rounded?0:(2*o.c.rounded-7)))/o.c.steps;
 
     o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
 
