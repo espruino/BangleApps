@@ -224,8 +224,9 @@ function computer_move() {
 
   if (win_count > 7) {
     if (player_has_corner_and_centre("X")) {
-      mv = get_a_corner_move();
-      if (mv != -1) {
+      mvs = get_free_corner();
+      if (mvs.length > 0) {
+	mv = select_random_move_from(mvs);
 	make_my_move(mv);
 	debug("RULE 7: compluter played a corner");
 	return;
@@ -246,7 +247,7 @@ function computer_move() {
   // default rule
   mvs = get_free_cells();
   mv = select_random_move_from(mvs);
-  debug("RULE 8: computer played a random cell");
+  debug("RULE 9: computer played a random cell");
   make_my_move(mv);
 }
 
@@ -418,11 +419,11 @@ function get_free_sides() {
 
 function get_free_corner() {
   var frees = new Array();
-  var sides = [1,3,7,9];
+  var corners = [1,3,7,9];
 
-  for (var i in sides) {
-    if (cell_is_free(sides[i]))
-      frees.push(sides[i]);
+  for (var i in corners) {
+    if (cell_is_free(corners[i]))
+      frees.push(corners[i]);
   }
   return frees;
 }
