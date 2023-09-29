@@ -159,9 +159,9 @@ try { // for making it possiblie to run the test app in the following catch stat
         g.setColor(o.c.colorFG).fillRect(o.c.borderRect). // To get outer border...
           setColor(o.c.colorBG).fillRect(o.c.hollowRect). // ... and here it's made hollow.
           setColor(0==level?o.c.colorBG:o.c.colorFG).fillRect(o.f.updateBar((!o.c.rounded?0:(2*o.c.rounded-7))+level*o.c.STEP_SIZE)); // Here the bar is drawn.
-        if (o.c.rounded && level===0) {
-          g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize);
-          g.setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize-2);
+        if (o.c.rounded && level===0) { // Hollow circle indicates level zero when slider is rounded.
+          g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize).
+            setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize-2);
         }
 
         //print(level);
