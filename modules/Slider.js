@@ -163,17 +163,21 @@ try { // for making it possiblie to run the test app in the following catch stat
     }
 
     if (o.c.autoProgress) {
-      o.v.shouldAutoDraw = true;
       o.f.autoUpdate = ()=>{
         //if (o.v.level===undefined) o.v.level = -1;
-        o.v.level = o.v.level+1;
-        if (o.v.shouldAutoDraw) o.f.draw&&o.f.draw(o.v.level);
+        o.v.level = o.c.currLevel + Math.round((Date.now()-o.v.initTime)/1000)
+        if (o.v.level>o.c.steps) o.v.level=o.c.steps;
+        o.f.draw&&o.f.draw(o.v.level);
         cb("auto");
         if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
       };
+      o.f.updateInitTime = ()=>{
+        o.v.initTime=Date.now();
+      }
       o.f.startAutoUpdate = ()=>{
         o.f.stopAutoUpdate();
-        if (o.v.shouldAutoDraw) o.f.draw&&o.f.draw(o.v.level);
+        !o.v.initTime&&o.f.updateInitTime();
+        o.f.draw&&o.f.draw(o.v.level);
         o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);
       };
       o.f.stopAutoUpdate = ()=>{if (o.v.autoIntervalID) {clearInterval(o.v.autoIntervalID); o.v.autoIntervalID = undefined;}};
