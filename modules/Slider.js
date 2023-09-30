@@ -4,6 +4,8 @@ try { // for making it possiblie to run the test app in the following catch stat
 
     const R = Bangle.appRect;
 
+    if (!cb) cb = ()=>{};
+
     let o = {};
     o.v = {}; // variables go here.
     o.f = {}; // functions go here.
