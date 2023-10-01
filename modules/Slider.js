@@ -26,10 +26,8 @@ try { // for making it possiblie to run the test app in the following catch stat
       timeout:1,
       colorFG:g.theme.fg2,
       colorBG:g.theme.bg2,
-      lazy:true,
-      rounded:0,
+      rounded:true,
       propagateDrag:false,
-      immediatedraw:false,
       autoProgress:false,
       outerBorderSize:2,
       innerBorderSize:2,
@@ -63,7 +61,6 @@ try { // for making it possiblie to run the test app in the following catch stat
     // Initialize the level
     o.v.level = (o.c.currLevel||o.c.currLevel===0)?o.c.currLevel:o.c.steps/2;
 
-    o.v.firstRun = true;
     o.v.ebLast = 0;
     o.v.dy = 0;
 
