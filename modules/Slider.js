@@ -64,11 +64,11 @@ try { // For making it possiblie to run the test app in the following catch stat
     // Initialize the level
     o.v.level = (o.c.currLevel||o.c.currLevel===0)?o.c.currLevel:o.c.steps/2;
 
-    o.v.ebLast = 0;
-    o.v.dy = 0;
-
     // Only add interactivity if wanted.
     if (o.c.dragableSlider) { 
+
+      o.v.ebLast = 0;
+      o.v.dy = 0;
 
       o.f.wasOnDragRect = (exFirst, eyFirst)=>{
         "ram";
