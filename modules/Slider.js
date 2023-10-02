@@ -1,17 +1,17 @@
-try { // for making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined.
+try { // For making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined when uploading from Web IDE and not run otherwise.
 
   exports.create = function(cb, conf) {
 
     const R = Bangle.appRect;
 
+    // Empty function added to cb if it's undefined.
     if (!cb) cb = ()=>{};
 
     let o = {};
     o.v = {}; // variables go here.
     o.f = {}; // functions go here.
 
-    // configuration for the indicator:
-
+    // Default configuration for the indicator, modified by parameter `conf`:
     o.c = Object.assign({ // constants go here.
       useMap:false,
       useIncr:true,
@@ -37,6 +37,7 @@ try { // for making it possiblie to run the test app in the following catch stat
       dragRect:R,
     },conf);
 
+    // If horizontal, flip things around.
     if (o.c.horizontal) {
       let mediator = o.c.xStart;
       o.c.xStart = o.c.yStart;
@@ -47,6 +48,7 @@ try { // for making it possiblie to run the test app in the following catch stat
       delete mediator;
     }
 
+    // Make room for the border. Underscore indicates the area for the actual indicator bar without borders.
     let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
     o.c._xStart = o.c.xStart + totalBorderSize;
     o.c._width = o.c.width - 2*totalBorderSize;
@@ -56,6 +58,7 @@ try { // for making it possiblie to run the test app in the following catch stat
 
     o.c.STEP_SIZE = ((!o.c.horizontal?o.c._height:o.c._width)-(!o.c.rounded?0:(2*o.c.rounded-7)))/o.c.steps;
 
+    // Add a rectangle object with x, y, x2, y2, w and h values.
     o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
 
     // Initialize the level
@@ -64,7 +67,9 @@ try { // for making it possiblie to run the test app in the following catch stat
     o.v.ebLast = 0;
     o.v.dy = 0;
 
+    // Only add interactivity if wanted.
     if (o.c.dragableSlider) { 
+
       o.f.wasOnDragRect = (exFirst, eyFirst)=>{
         "ram";
         return exFirst>o.c.dragRect.x && exFirst<o.c.dragRect.x2 && eyFirst>o.c.dragRect.y && eyFirst<o.c.dragRect.y2;
@@ -76,6 +81,7 @@ try { // for making it possiblie to run the test app in the following catch stat
         if (o.c.horizontal) return exFirst>o.c._yStart-o.c.oversizeL*o.c._height && exFirst<o.c._yStart+o.c._height+o.c.oversizeR*o.c._height;
       };
 
+      // Function to pass to `Bangle.on('drag', )`
       o.f.dragSlider = e=>{
         "ram";
         if (o.v.ebLast==0) {
@@ -83,6 +89,7 @@ try { // for making it possiblie to run the test app in the following catch stat
           eyFirst = o.c.horizontal?e.x:e.y;
         }
 
+        // Only react if on allowed area.
         if (o.f.wasOnDragRect(exFirst, eyFirst)) {
           o.v.dragActive = true;
           if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
@@ -125,6 +132,7 @@ try { // for making it possiblie to run the test app in the following catch stat
         }
       };
 
+      // Cleanup.
       o.f.remove = ()=> {
         Bangle.removeListener('drag', o.f.dragSlider);
         o.v.dragActive = false;
@@ -133,8 +141,10 @@ try { // for making it possiblie to run the test app in the following catch stat
       };
     }
 
+    // Add standard slider graphics only if wanted.
     if (o.c.drawableSlider) { 
 
+      // Function for getting the indication bars size.
       o.f.updateBar = (levelHeight)=>{
         "ram";
         if (!o.c.horizontal) return {x:o.c._xStart,y:o.c._yStart+o.c._height-levelHeight,w:o.c._width,y2:o.c._yStart+o.c._height,r:o.c.rounded};
@@ -145,6 +155,7 @@ try { // for making it possiblie to run the test app in the following catch stat
 
       o.c.hollowRect = {x:o.c._xStart-o.c.innerBorderSize,y:o.c._yStart-o.c.innerBorderSize,w:o.c._width+2*o.c.innerBorderSize,h:o.c._height+2*o.c.innerBorderSize,r:o.c.rounded};
 
+      // Standard slider drawing method.
       o.f.draw = (level)=>{
         "ram";
 
@@ -161,9 +172,9 @@ try { // for making it possiblie to run the test app in the following catch stat
       };
     }
 
+    // Add logic for auto progressing the slider only if wanted.
     if (o.c.autoProgress) {
       o.f.autoUpdate = ()=>{
-        //if (o.v.level===undefined) o.v.level = -1;
         o.v.level = o.c.currLevel + Math.round((Date.now()-o.v.initTime)/1000)
         if (o.v.level>o.c.steps) o.v.level=o.c.steps;
         o.f.draw&&o.f.draw(o.v.level);
@@ -181,8 +192,6 @@ try { // for making it possiblie to run the test app in the following catch stat
       };
       o.f.stopAutoUpdate = ()=>{if (o.v.autoIntervalID) {clearInterval(o.v.autoIntervalID); o.v.autoIntervalID = undefined;}};
     }
-
-    //o.f.printThis = ()=>(print(this));
 
     return o;
   };
