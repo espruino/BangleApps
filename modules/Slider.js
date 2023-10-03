@@ -175,22 +175,30 @@ try { // For making it possiblie to run the test app in the following catch stat
     // Add logic for auto progressing the slider only if wanted.
     if (o.c.autoProgress) {
       o.f.autoUpdate = ()=>{
-        o.v.level = o.c.currLevel + Math.round((Date.now()-o.v.initTime)/1000)
+        o.v.level = o.v.autoInitLevel + Math.round((Date.now()-o.v.autoInitTime)/1000)
         if (o.v.level>o.c.steps) o.v.level=o.c.steps;
         o.f.draw&&o.f.draw(o.v.level);
         cb("auto");
         if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
       };
-      o.f.updateInitTime = ()=>{
-        o.v.initTime=Date.now();
-      }
+      o.f.initAutoValues = ()=>{
+        o.v.autoInitTime=Date.now();
+        o.v.autoInitLevel=o.v.level;
+      };
       o.f.startAutoUpdate = ()=>{
         o.f.stopAutoUpdate();
-        !o.v.initTime&&o.f.updateInitTime();
+        o.f.initAutoValues();
         o.f.draw&&o.f.draw(o.v.level);
         o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);
       };
-      o.f.stopAutoUpdate = ()=>{if (o.v.autoIntervalID) {clearInterval(o.v.autoIntervalID); o.v.autoIntervalID = undefined;}};
+      o.f.stopAutoUpdate = ()=>{
+        if (o.v.autoIntervalID) {
+          clearInterval(o.v.autoIntervalID);
+          o.v.autoIntervalID = undefined;
+        }
+        o.v.autoInitLevel = undefined;
+        o.v.autoInitTime = undefined;
+      };
     }
 
     return o;
