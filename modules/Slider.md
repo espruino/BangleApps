@@ -16,7 +16,7 @@ Bangle.on("drag", slider.f.dragSlider);
 // Bangle.prependListener("drag", slider.f.dragSlider);
 ```
 
-`callbackFunction` (first argument) determines what `slider` is used for. `slider` will pass two arguments, `mode` and `feedback` into `callbackFunction` (if `slider` is interactive). The different `mode`/`feedback` combinations to expect are:
+`callbackFunction` (first argument) determines what `slider` is used for. `slider` will pass two arguments, `mode` and `feedback`, into `callbackFunction` (if `slider` is interactive or auto progressing). The different `mode`/`feedback` combinations to expect are:
 - `"map", o.v.level` | current level when interacting by mapping interface.
 - `"incr", incr` | where incr = +-1, when interacting by incrementing interface.
 - `"remove", o.v.level` | last level when the slider times out.
@@ -28,28 +28,31 @@ Bangle.on("drag", slider.f.dragSlider);
 R = Bangle.appRect; // For use when determining defaults below.
 
 {
-useMap:          false,        // Use the mapping feature?
-useIncr:         true,         // Use the incementing feature?
+currLevel:       undefined,    // The level to initate the slider with.
 horizontal:      false,        // Slider should be horizontal?
 xStart:          R.x2-R.w/4-4, // Leftmost x-coordinate. (Uppermost y-coordinate if horizontal)
 width:           R.w/4,        // Width of the slider. (Height if horizontal)
 yStart:          R.y+4,        // Uppermost y-coordinate. (Rightmost x-coordinate if horizontal)
 height:          R.h-10,       // Height of the slider. (Width if horizontal)
 steps:           30,           // Number of discrete steps of the slider.
+
+dragableSlider:  true,         // Should supply the sliders standard interaction mechanisms?
+dragRect:        R,            // Accept input within this rectangle.
+useIncr:         true,         // Use the incrementing feature?
+useMap:          false,        // Use the mapping feature?
 oversizeR:       0,            // Determines if the mapping area should be extend outside the indicator (Right/Up).
 oversizeL:       0,            // Determines if the mapping area should be extend outside the indicator (Left/Down).
+propagateDrag:   false,        // Pass the drag event on down the handler chain?
 timeout:         1,            // Seconds untill the slider times out.
+
+drawableSlider:  true,         // Should supply the sliders standard drawing mechanism?
 colorFG:         g.theme.fg2,  // Foreground color.
 colorBG:         g.theme.bg2,  // Background color.
 rounded:         true,         // Slider should have rounded corners?
-propagateDrag:   false,        // Pass the drag event on down the handler chain?
-autoProgress:    false,        // The slider should be able to progress automatically?
 outerBorderSize: 2,            // The size of the visual border.
 innerBorderSize: 2,            // The distance between visual border and the slider.
-drawableSlider:  true,         // Should supply the sliders standard drawing mechanism?
-dragableSlider:  true,         // Should supply the sliders standard interaction mechanisms?
-currLevel:       undefined,    // The level to initate the slider with.
-dragRect:        R,            // Accept input within this rectangle.
+
+autoProgress:    false,        // The slider should be able to progress automatically?
 }
 ```
 
@@ -66,7 +69,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     updateBar: function (levelHeight) { ... },
     draw: function (level) { ... },
     autoUpdate: function () { ... },
-    updateInitTime: function () { ... },
+    initAutoValues: function () { ... },
     startAutoUpdate: function () { ... },
     stopAutoUpdate: function () { ... }
    },
