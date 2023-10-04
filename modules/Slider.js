@@ -13,28 +13,31 @@ try { // For making it possiblie to run the test app in the following catch stat
 
     // Default configuration for the indicator, modified by parameter `conf`:
     o.c = Object.assign({ // constants go here.
-      useMap:false,
-      useIncr:true,
+      currLevel:undefined,
       horizontal:false,
       xStart:R.x2-R.w/4-4,
       width:R.w/4,
       yStart:R.y+4,
       height:R.h-10,
-      steps:30, // Default corresponds to my phones volume range, [0,30]. Maybe it should be 31. Math is hard sometimes...
+      steps:30,
+
+      dragableSlider:true,
+      dragRect:R,
+      useIncr:true,
+      useMap:false,
       oversizeR:0,
       oversizeL:0,
+      propagateDrag:false,
       timeout:1,
+
+      drawableSlider:true,
       colorFG:g.theme.fg2,
       colorBG:g.theme.bg2,
       rounded:true,
-      propagateDrag:false,
-      autoProgress:false,
       outerBorderSize:2,
       innerBorderSize:2,
-      drawableSlider:true,
-      dragableSlider:true,
-      currLevel:undefined,
-      dragRect:R,
+
+      autoProgress:false,
     },conf);
 
     // If horizontal, flip things around.
