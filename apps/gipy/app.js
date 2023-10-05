@@ -31,9 +31,10 @@ var settings = Object.assign(
     active_time: 10,
     brightness: 0.5,
     buzz_on_turns: false,
-    disable_bluetooth: true,
+    disable_bluetooth: false,
     power_lcd_off: false,
     powersave_by_default: false,
+    sleep_between_waypoints: false,
   },
   s.readJSON("gipy.json", true) || {}
 );
@@ -877,14 +878,15 @@ class Status {
       //     }, time_to_next_point);
       //   }
       // }
+      let reaching_waypoint = this.path.is_waypoint(next_point);
       if (this.distance_to_next_point <= 100) {
-        this.activate();
-      }
-      if (this.reaching != next_point && this.distance_to_next_point <= 100) {
-        this.reaching = next_point;
-        let reaching_waypoint = this.path.is_waypoint(next_point);
-        if (reaching_waypoint) {
-          if (settings.buzz_on_turns) {
+        if (reaching_waypoint || !settings.sleep_between_waypoints) {
+          this.activate();
+        }
+
+        if (this.reaching != next_point) {
+          this.reaching = next_point;
+          if (reaching_waypoint && settings.buzz_on_turns) {
             Bangle.buzz();
             setTimeout(() => Bangle.buzz(), 500);
             setTimeout(() => Bangle.buzz(), 1000);
