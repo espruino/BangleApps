@@ -211,8 +211,8 @@ document
         request_map(gps_data, key1, value1, key2, value2, key3, value3, key4, value4).then(
             () => {
 
-        status.innerHTML = "file converted";
         gps_content = get_gps_content(gps_data);
+        status.innerHTML = "file converted (" + gps_content.length + " bytes)";
         let svg_string = get_gps_map_svg(gps_data);
         let img = document.getElementById("svgmap");
         img.innerHTML = svg_string;

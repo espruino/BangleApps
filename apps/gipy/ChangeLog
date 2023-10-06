@@ -121,3 +121,4 @@
 	* Waypoints autodetection using the map
 	* New option: sleep between waypoints
 	* Removed sharp turns auto-detection
+	* Interface: centered svg preview + display file sizes
