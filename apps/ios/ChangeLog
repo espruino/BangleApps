@@ -11,3 +11,5 @@
 0.11: Added letters with caron to unicodeRemap, to properly display messages in Czech language
 0.12: Use new message library
 0.13: Making ANCS message receive more resilient (#2402)
+0.14: Add settings page, allow time sync
+      Allow negative/positive actions to pass through to message GUI
