@@ -162,7 +162,6 @@ Math.mod = function (a, b) {
   return result;
 };
 
-const delta = 2;
 const sunrise = new Date().sunrise(lat, lon);
 const sr = sunrise.getHours() + ':' + sunrise.getMinutes();
 console.log('sunrise', sunrise);
@@ -176,25 +175,18 @@ const oy = h / 1.7;
 
 let sunRiseX = 0;
 let sunSetX = 0;
-const sinStep = 12;
+const sinStep = 13;
 
 function drawSinuses () {
   let x = 0;
 
-  g.setColor(0, 0, 0);
-  // g.fillRect(0,oy,w, h);
   g.setColor(1, 1, 1);
-  let y = oy;
-  for (i = 0; i < w; i++) {
-    x = i;
-    x2 = x + sinStep + 1;
-    y2 = ypos(i);
-    if (x == 0) {
-      y = y2;
-    }
-    g.drawLine(x, y, x2, y2);
+  let y = ypos(x);
+  while (x < w) {
+    y2 = ypos(x);
+    g.drawLine(x, y, x + sinStep, y2);
     y = y2;
-    i += sinStep; // no need to draw all steps
+    x += sinStep; // no need to draw all steps
   }
 
   // sea level line
@@ -206,7 +198,6 @@ function drawSinuses () {
   sunSetX = xfromTime(hh1) + (r / 2);
   g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0, w, sl1);
-  g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0 + 1, w, sl1 + 1);
   /*
   g.setColor(0, 0, 1);
@@ -295,27 +286,19 @@ function drawClock () {
   } else {
     ypos = 32;
     fhours = 24 * (pos / w);
-    if (fhours > 23) {
-      fhours = 0;
-    }
     const nexth = 24 * 60 * (pos / w);
     fmins = 59 - ((24 * 60) - nexth) % 60;
-    if (fmins < 0) {
-      fmins = 0;
+
+    // this prevents the displayed time to jump from 11:50 to 12:59 to 12:07
+    if (fmins == 59) {
+      fhours--;
     }
-  }
-  if (fmins > 59) {
-    fmins = 59;
   }
   const hours = ((fhours < 10) ? '0' : '') + (0 | fhours);
   const mins = ((fmins < 10) ? '0' : '') + (0 | fmins);
   curTime = hours + ':' + mins;
   g.setFont('Vector', 30);
-  if (realTime) {
-    g.setColor(1, 1, 1);
-  } else {
-    g.setColor(0, 1, 1);
-  }
+  g.setColor(realTime, 1, 1);
   g.drawString(curTime, w / 1.9, ypos);
   // day-month
   if (realTime) {
@@ -361,8 +344,6 @@ Bangle.on('lock', () => {
 
 renderScreen();
 
-realPos = xfromTime((new Date()).getHours());
-
 function initialAnimationFrame () {
   let distance = (realPos - curPos) / 4;
   if (distance > 20) {
@@ -371,10 +352,6 @@ function initialAnimationFrame () {
   curPos += distance;
   pos = curPos;
   renderScreen();
-  if (curPos >= realPos) {
-    frame = 0;
-  }
-  frames--;
   if (frames-- > 0) {
     setTimeout(initialAnimationFrame, 50);
   } else {
