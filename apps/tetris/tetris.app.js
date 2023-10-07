@@ -143,24 +143,32 @@ function gameStep() {
   }
 }
 
-Bangle.setUI();
-Bangle.on("touch", (e) => {
+function rotate() {
   t = rotateTile(ct, 3);
   if (moveOk(t, 0, 0)) {
     drawTile(ct, ctn, ox+px*8, oy+py*8, true);
     ct = t;
     drawTile(ct, ctn, ox+px*8, oy+py*8, false);
   }
-});
+}
 
-Bangle.on("swipe", (x,y) => {
-  if (y<0) y = 0;
+function move(x, y) {
   if (moveOk(ct, x, y)) {
     drawTile(ct, ctn, ox+px*8, oy+py*8, true);
     px += x;
     py += y;
     drawTile(ct, ctn, ox+px*8, oy+py*8, false);
   }
+}
+
+Bangle.setUI();
+Bangle.on("touch", (e) => {
+  rotate();
+});
+
+Bangle.on("swipe", (x,y) => {
+  if (y<0) y = 0;
+  move(x, y);
 });
 
 drawBoundingBox();
