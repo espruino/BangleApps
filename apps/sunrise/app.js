@@ -183,7 +183,7 @@ function drawSinuses () {
   g.setColor(1, 1, 1);
   let y = ypos(x);
   while (x < w) {
-    y2 = ypos(x);
+    y2 = ypos(x + sinStep);
     g.drawLine(x, y, x + sinStep, y2);
     y = y2;
     x += sinStep; // no need to draw all steps
@@ -225,7 +225,7 @@ function drawGlow () {
   }
   const rh = r / 2;
   const x = pos;
-  const y = ypos(x - r);
+  const y = ypos(x);
   const r2 = 0;
   if (x > sunRiseX && x < sunSetX) {
     g.setColor(0.2, 0.2, 0);
@@ -246,8 +246,7 @@ function seaLevel (hour) {
 }
 
 function ypos (x) {
-  const pc = (x * 100 / w);
-  return oy + (32 * Math.sin(1.7 + (pc / 16)));
+  return oy + (32 * Math.sin(1.7 + (x * 100 / (16 * w))));
 }
 
 function xfromTime (t) {
@@ -260,7 +259,7 @@ function drawBall () {
   if (frames < 1 && realTime) {
     x = xfromTime(now.getHours());
   }
-  const y = ypos(x - r);
+  const y = ypos(x);
 
   // glow
   if (x < sunRiseX || x > sunSetX) {
