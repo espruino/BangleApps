@@ -69,6 +69,7 @@ try { // For making it possiblie to run the test app in the following catch stat
 
     // Only add interactivity if wanted.
     if (o.c.dragableSlider) { 
+      const Y_MAX = g.getHeight()-1; // Should this take users screen calibration into account?
 
       o.v.ebLast = 0;
       o.v.dy = 0;
@@ -104,7 +105,7 @@ try { // For making it possiblie to run the test app in the following catch stat
           if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
             let input = !o.c.horizontal?
-              Math.min((175-e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height):
+              Math.min((Y_MAX-e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height):
               Math.min(e.x-o.c.xStart-3*o.c.rounded/4, o.c.width);
             input = Math.round(input/o.c.STEP_SIZE);
 
