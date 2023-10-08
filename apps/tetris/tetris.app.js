@@ -177,8 +177,13 @@ Bangle.on("drag", (e) => {
   if (e.y < h) {
     if (e.x < h)
       rotate();
-    else
-      move(0, 1);
+    else {
+      let i = 0;
+      for (i=0; i<10; i++) {
+        move(0, 1);
+        g.flip();
+      }
+    }
   } else {
     if (e.x < h)
       move(-1, 0);
