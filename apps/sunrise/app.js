@@ -182,20 +182,20 @@ function drawSinuses () {
 
   g.setColor(1, 1, 1);
   let y = ypos(x);
-  while (x < w) {
+  // until drawn line touches right side of the screen
+  while ((x - sinStep / 2) < w) {
     y2 = ypos(x + sinStep);
-    g.drawLine(x, y, x + sinStep, y2);
+    // both x are offset by -sinStep/2
+    g.drawLine(x - sinStep / 2, y, x + sinStep / 2, y2);
     y = y2;
     x += sinStep; // no need to draw all steps
   }
 
   // sea level line
-  const hh0 = sunrise.getHours();
-  const hh1 = sunset.getHours();
-  const sl0 = seaLevel(hh0);
-  const sl1 = seaLevel(hh1);
-  sunRiseX = xfromTime(hh0) + (r / 2);
-  sunSetX = xfromTime(hh1) + (r / 2);
+  const sl0 = seaLevel(sunrise.getHours());
+  const sl1 = seaLevel(sunset.getHours());
+  sunRiseX = xfromTime(sunrise.getHours() + sunrise.getMinutes() / 60);
+  sunSetX = xfromTime(sunset.getHours() + sunset.getMinutes() / 60);
   g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0, w, sl1);
   g.drawLine(0, sl0 + 1, w, sl1 + 1);
@@ -221,19 +221,16 @@ const r = 10;
 function drawGlow () {
   const now = new Date();
   if (frames < 1 && realTime) {
-    pos = xfromTime(now.getHours());
+    pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
-  const rh = r / 2;
   const x = pos;
-  const y = ypos(x);
-  const r2 = 0;
+  const y = ypos(x + sinStep / 2);
+
+  g.setColor(0.2, 0.2, 0);
+  // wide glow
   if (x > sunRiseX && x < sunSetX) {
-    g.setColor(0.2, 0.2, 0);
     g.fillCircle(x, y, r + 20);
     g.setColor(0.5, 0.5, 0);
-    // wide glow
-  } else {
-    g.setColor(0.2, 0.2, 0);
   }
   // smol glow
   g.fillCircle(x, y, r + 8);
@@ -254,20 +251,18 @@ function xfromTime (t) {
 }
 
 function drawBall () {
-  let x = pos;
   const now = new Date();
   if (frames < 1 && realTime) {
-    x = xfromTime(now.getHours());
+    pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
-  const y = ypos(x);
-
+  const x = pos;
+  const y = ypos(x + sinStep / 2);
   // glow
-  if (x < sunRiseX || x > sunSetX) {
-    g.setColor(0.5, 0.5, 0);
-  } else {
+  if (x > sunRiseX && x < sunSetX) {
     g.setColor(1, 1, 1);
+  } else {
+    g.setColor(0.5, 0.5, 0);
   }
-  const rh = r / 2;
   g.fillCircle(x, y, r);
   g.setColor(1, 1, 0);
   g.drawCircle(x, y, r);
@@ -275,44 +270,41 @@ function drawBall () {
 function drawClock () {
   const now = new Date();
 
-  let curTime = '';
-  let fhours = 0.0;
-  let fmins = 0.0;
-  let ypos = 32;
+  let hours = 0.0;
+  let mins = 0.0;
   if (realTime) {
-    fhours = now.getHours();
-    fmins = now.getMinutes();
+    hours = now.getHours();
+    mins = now.getMinutes();
   } else {
-    ypos = 32;
-    fhours = 24 * (pos / w);
+    hours = 24 * (pos / w);
     const nexth = 24 * 60 * (pos / w);
-    fmins = 59 - ((24 * 60) - nexth) % 60;
+    mins = 59 - ((24 * 60) - nexth) % 60;
 
     // this prevents the displayed time to jump from 11:50 to 12:59 to 12:07
-    if (fmins == 59) {
-      fhours--;
+    if (mins == 59) {
+      hours--;
     }
   }
-  const hours = ((fhours < 10) ? '0' : '') + (0 | fhours);
-  const mins = ((fmins < 10) ? '0' : '') + (0 | fmins);
-  curTime = hours + ':' + mins;
+
+  hours = ((hours < 10) ? '0' : '') + (0 | hours);
+  mins = ((mins < 10) ? '0' : '') + (0 | mins);
   g.setFont('Vector', 30);
   g.setColor(realTime, 1, 1);
-  g.drawString(curTime, w / 1.9, ypos);
+  g.drawString('' + hours + ':' + mins, w / 1.9, 32);
   // day-month
   if (realTime) {
     const mo = now.getMonth() + 1;
     const da = now.getDate();
-    const daymonth = '' + da + '/' + mo;
     g.setFont('6x8', 2);
-    g.drawString(daymonth, 5, 30);
+    g.drawString('' + da + '/' + mo, 5, 30);
   }
 }
 
 function renderScreen () {
+  const now = new Date();
   g.setColor(0, 0, 0);
   g.fillRect(0, 30, w, h);
-  realPos = xfromTime((new Date()).getHours());
+  realPos = xfromTime(now.getHours() + now.getMinutes() / 60);
   g.setFontAlign(-1, -1, 0);
 
   Bangle.drawWidgets();
@@ -329,7 +321,7 @@ Bangle.on('drag', function (tap, top) {
     curPos = pos;
     initialAnimation();
   } else {
-    pos = tap.x - 5;
+    pos = tap.x;
     realTime = false;
   }
   renderScreen();
