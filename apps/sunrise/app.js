@@ -182,11 +182,10 @@ function drawSinuses () {
 
   g.setColor(1, 1, 1);
   let y = ypos(x);
-  // until drawn line touches right side of the screen
-  while ((x - sinStep / 2) < w) {
+  while (x < w) {
     y2 = ypos(x + sinStep);
     // both x are offset by -sinStep/2
-    g.drawLine(x - sinStep / 2, y, x + sinStep / 2, y2);
+    g.drawLine(x, y, x + sinStep, y2);
     y = y2;
     x += sinStep; // no need to draw all steps
   }
@@ -224,7 +223,7 @@ function drawGlow () {
     pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
   const x = pos;
-  const y = ypos(x + sinStep / 2);
+  const y = ypos(x);
 
   g.setColor(0.2, 0.2, 0);
   // wide glow
@@ -256,7 +255,8 @@ function drawBall () {
     pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
   const x = pos;
-  const y = ypos(x + sinStep / 2);
+  const y = ypos(x);
+
   // glow
   if (x > sunRiseX && x < sunSetX) {
     g.setColor(1, 1, 1);
