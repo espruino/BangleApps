@@ -95,6 +95,11 @@ function redrawPF(ly) {
     }
 }
 
+function gameOver() {
+  g.setColor(1, 1, 1).setFontAlign(0, 1, 0).setFont("Vector",22)
+  .drawString("Game Over", 176/2, 76);
+}
+
 function insertAndCheck() {
   for (y=0; y<ct.length; ++y) 
     for (x=0; x<ct[y].length; ++x)
@@ -119,6 +124,9 @@ function insertAndCheck() {
   ct = rotateTile(tiles[ctn], ntr);
   ntr = Math.floor(Math.random()*4);
   showNext(ntn, ntr);
+  if (!moveOk(ct, 0, 0)) {
+    gameOver();
+  }
 }
 
 function moveOk(t, dx, dy) {
@@ -143,24 +151,50 @@ function gameStep() {
   }
 }
 
-Bangle.setUI();
-Bangle.on("touch", (e) => {
+function rotate() {
   t = rotateTile(ct, 3);
   if (moveOk(t, 0, 0)) {
     drawTile(ct, ctn, ox+px*8, oy+py*8, true);
     ct = t;
     drawTile(ct, ctn, ox+px*8, oy+py*8, false);
   }
-});
+}
 
-Bangle.on("swipe", (x,y) => {
-  if (y<0) y = 0;
+function move(x, y) {
   if (moveOk(ct, x, y)) {
     drawTile(ct, ctn, ox+px*8, oy+py*8, true);
     px += x;
     py += y;
     drawTile(ct, ctn, ox+px*8, oy+py*8, false);
   }
+}
+
+Bangle.setUI();
+Bangle.on("drag", (e) => {
+  let h = 176/2;
+  if (!e.b)
+    return;
+  if (e.y < h) {
+    if (e.x < h)
+      rotate();
+    else {
+      let i = 0;
+      for (i=0; i<10; i++) {
+        move(0, 1);
+        g.flip();
+      }
+    }
+  } else {
+    if (e.x < h)
+      move(-1, 0);
+    else
+      move(1, 0);
+  }
+});
+
+Bangle.on("swipe", (x,y) => {
+  if (y<0) y = 0;
+  move(x, y);
 });
 
 drawBoundingBox();
