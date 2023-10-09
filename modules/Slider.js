@@ -101,7 +101,7 @@ try { // For making it possiblie to run the test app in the following catch stat
           if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
           if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
-          let cbObj;
+          o.v.cbObj;
           if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
             let input = !o.c.horizontal?
@@ -111,7 +111,7 @@ try { // For making it possiblie to run the test app in the following catch stat
 
             o.v.level = Math.min(Math.max(input,0),o.c.steps);
 
-            cbObj = {mode:"map", value:o.v.level};
+            o.v.cbObj = {mode:"map", value:o.v.level};
 
           } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
 
@@ -126,12 +126,12 @@ try { // For making it possiblie to run the test app in the following catch stat
 
               o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
 
-              cbObj = {mode:"incr", value:incr};
+              o.v.cbObj = {mode:"incr", value:incr};
             }
           }
           if (o.v.level!==o.v.prevLevel || o.v.level===0 || o.v.level===o.c.steps) {
             o.f.draw&&o.f.draw(o.v.level);
-            cb(cbObj.mode, cbObj.value);
+            cb(o.v.cbObj.mode, o.v.cbObj.value);
           }
           o.v.prevLevel = o.v.level;
           o.v.ebLast = e.b;
