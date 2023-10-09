@@ -130,8 +130,8 @@ try { // For making it possiblie to run the test app in the following catch stat
             }
           }
           if (o.v.level!==o.v.prevLevel || o.v.level===0 || o.v.level===o.c.steps) {
-            o.f.draw&&o.f.draw(o.v.level);
             cb(o.v.cbObj.mode, o.v.cbObj.value);
+            o.f.draw&&o.f.draw(o.v.level);
           }
           o.v.prevLevel = o.v.level;
           o.v.ebLast = e.b;
@@ -183,8 +183,8 @@ try { // For making it possiblie to run the test app in the following catch stat
       o.f.autoUpdate = ()=>{
         o.v.level = o.v.autoInitLevel + Math.round((Date.now()-o.v.autoInitTime)/1000)
         if (o.v.level>o.c.steps) o.v.level=o.c.steps;
-        o.f.draw&&o.f.draw(o.v.level);
         cb("auto");
+        o.f.draw&&o.f.draw(o.v.level);
         if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
       };
       o.f.initAutoValues = ()=>{
