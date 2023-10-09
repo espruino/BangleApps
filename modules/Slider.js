@@ -129,7 +129,7 @@ try { // For making it possiblie to run the test app in the following catch stat
               cbObj = {mode:"incr", value:incr};
             }
           }
-          if (o.v.level != o.v.prevLevel) {
+          if (o.v.level!==o.v.prevLevel || o.v.level===0 || o.v.level===o.c.steps) {
             o.f.draw&&o.f.draw(o.v.level);
             cb(cbObj.mode, cbObj.value);
           }
