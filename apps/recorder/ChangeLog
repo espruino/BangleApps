@@ -36,3 +36,5 @@
 0.28: Automatically create new track if the filename is different
 0.29: When plotting with OpenStMap scale map to track width & height
 0.30: Add clock info for showing and toggling recording state
+0.31: Ensure that background-drawn tracks can get cancelled, and draw less at a time to make updates smoother
+      plotTrack now draws the current track even if you're not actively recording
