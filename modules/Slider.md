@@ -28,7 +28,7 @@ Bangle.on("drag", slider.f.dragSlider);
 R = Bangle.appRect; // For use when determining defaults below.
 
 {
-currLevel:       undefined,    // The level to initate the slider with.
+currLevel:       undefined,    // The level to initialize the slider with.
 horizontal:      false,        // Slider should be horizontal?
 xStart:          R.x2-R.w/4-4, // Leftmost x-coordinate. (Uppermost y-coordinate if horizontal)
 width:           R.w/4,        // Width of the slider. (Height if horizontal)
@@ -38,12 +38,11 @@ steps:           30,           // Number of discrete steps of the slider.
 
 dragableSlider:  true,         // Should supply the sliders standard interaction mechanisms?
 dragRect:        R,            // Accept input within this rectangle.
-useIncr:         true,         // Use the incrementing feature?
-useMap:          false,        // Use the mapping feature?
+mode:            "incr",       // What mode of draging to use: "map", "incr" or "mapincr".
 oversizeR:       0,            // Determines if the mapping area should be extend outside the indicator (Right/Up).
 oversizeL:       0,            // Determines if the mapping area should be extend outside the indicator (Left/Down).
 propagateDrag:   false,        // Pass the drag event on down the handler chain?
-timeout:         1,            // Seconds untill the slider times out.
+timeout:         1,            // Seconds until the slider times out.
 
 drawableSlider:  true,         // Should supply the sliders standard drawing mechanism?
 colorFG:         g.theme.fg2,  // Foreground color.
@@ -73,7 +72,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     startAutoUpdate: function () { ... },
     stopAutoUpdate: function () { ... }
    },
-  c: { useMap: false, useIncr: true, horizontal: false, xStart: 127,
+  c: { mode: "incr", horizontal: false, xStart: 127,
     width: 44, yStart: 28, height: 142, steps: 30, oversizeR: 0,
     oversizeL: 0, timeout: 1, colorFG: 65535, colorBG: 8, rounded: 20,
     propagateDrag: false, autoProgress: true, outerBorderSize: 2, innerBorderSize: 2,
