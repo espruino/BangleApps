@@ -159,9 +159,6 @@ Math.mod = function (a, b) {
   return result;
 };
 
-const sunrise = new Date().sunrise(lat, lon);
-const sunset = new Date().sunset(lat, lon);
-
 const w = g.getWidth();
 const h = g.getHeight();
 
@@ -176,18 +173,25 @@ let frames = 0; // amount of pending frames to render (0 if none)
 let curPos = 0; // x position of the sun
 let realPos = 0; // x position of the sun depending on currentime
 
+let day = 0;
+let sineLUT = []; // x & y axes of sine function
+let now = new Date();
+
+const sunrise = now.sunrise(lat, lon);
+const sunset = now.sunset(lat, lon);
+
 function drawSinuses () {
-  let x = 0;
-  const sinStep = 13;
-  let y = ypos(x);
-  
+  // messy because 1d array for 2 axes
+  const sinStep = 20;
+  let i;
   g.setColor(1, 1, 1);
-  while (x < w) {
-    y2 = ypos(x + sinStep);
-    g.drawLine(x, y, x + sinStep, y2);
-    y = y2;
-    x += sinStep; // no need to draw all steps
+
+  for (i = 0; i <= sineLUT.length - sinStep; i += sinStep) {
+    g.drawLine(sineLUT[i], sineLUT[1 + i],
+               sineLUT[sinStep + i], sineLUT[sinStep + 1 + i]);
   }
+  g.drawLine(sineLUT[i], sineLUT[1 + i],
+             sineLUT[sineLUT.length - 2], sineLUT[sineLUT.length - 1]);
 }
 
 function drawSeaLevel () {
@@ -195,8 +199,8 @@ function drawSeaLevel () {
   sunRiseX = xfromTime(sunrise.getHours(), sunrise.getMinutes());
   sunSetX = xfromTime(sunset.getHours(), sunset.getMinutes());
 
-  const sunRiseY = ypos(sunRiseX);
-  const sunSetY = ypos(sunSetX);
+  const sunRiseY = sineLUT[1 + Math.floor(sunRiseX) * 2];
+  const sunSetY = sineLUT[1 + Math.floor(sunSetX) * 2];
 
   g.setColor(0, 0.5, 1);
 
@@ -214,19 +218,20 @@ function drawTimes () {
   g.setColor(1, 1, 1);
   g.setFont('6x8', 2);
   g.drawString(require("locale").time(new Date((sunrise.getHours() * 3600 + 
-    sunrise.getMinutes() * 60 + new Date().getTimezoneOffset() * 60) * 1000), 1),
+    sunrise.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1),
     6, h - 20);
   g.drawString(require("locale").time(new Date((sunset.getHours() * 3600 + 
-    sunset.getMinutes() * 60 + new Date().getTimezoneOffset() * 60) * 1000), 1),
+    sunset.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1),
     w - 64, h - 20);
 }
 
 function drawGlow () {
-   if (realTime) {
-    pos = xfromTime(new Date().getHours(), new Date().getMinutes());
+  let x = pos;
+
+  if (realTime) {
+    x = Math.floor(xfromTime(now.getHours(), now.getMinutes()));
   }
-  const x = pos;
-  const y = ypos(x);
+  const y = sineLUT[1 + x * 2];
 
   g.setColor(0.2, 0.2, 0);
   // wide glow
@@ -247,12 +252,21 @@ function xfromTime (hours, minutes) {
   return (w / 24) * (hours + minutes / 60);
 }
 
+function fillSineLUT () {
+  sineLUT = [];
+  for (let i = 0; i <= w; i++) {
+    sineLUT.push(i, ypos(i));
+    }
+  print(sineLUT);
+}
+
 function drawBall () {
+  let x = pos;
+
   if (realTime) {
-    pos = xfromTime(new Date().getHours(), new Date().getMinutes());
+    x = Math.floor(xfromTime(now.getHours(), now.getMinutes()));
   }
-  const x = pos;
-  const y = ypos(x);
+  const y = sineLUT[1 + x * 2];
 
   // glow
   if (x > sunRiseX && x < sunSetX) {
@@ -265,7 +279,6 @@ function drawBall () {
   g.drawCircle(x, y, r);
 }
 function drawClock () {
-  const now = new Date();
   let posTime= now;
 
   if (!realTime) {
@@ -286,10 +299,16 @@ function drawClock () {
 }
 
 function renderScreen () {
+  now = new Date();
+
+  if (day != now.getDate()) {
+    day = now.getDate();
+    fillSineLUT();
+  }
+
   g.setColor(0, 0, 0);
   g.fillRect(0, 30, w, h);
-  realPos = xfromTime(new Date().getHours(), new Date().getMinutes());
-  g.setFontAlign(-1, -1, 0);
+  realPos = xfromTime(now.getHours(), now.getMinutes());
 
   Bangle.drawWidgets();
 
@@ -331,7 +350,7 @@ function initialAnimationFrame () {
 }
 
 function initialAnimation () {
-  realPos = xfromTime(new Date().getHours(), new Date().getMinutes());
+  realPos = xfromTime(now.getHours(), now.getMinutes());
   const distance = Math.abs(realPos - pos);
   frames = distance / 16;
   realTime = false;
@@ -344,6 +363,8 @@ function main () {
 
   g.setBgColor(0, 0, 0);
   g.clear();
+  day = now.getDate();
+  fillSineLUT();
   setInterval(renderScreen, 60 * 1000);
   initialAnimation();
 }
