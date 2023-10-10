@@ -71,3 +71,4 @@ of 'Select Clock'
 0.62: Fix whitelist showing as 'on' by default when it's not after 0.59
 0.63: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds
       Remove 'beta' label from passkey - it's been around for a while and works ok
+0.64: Default to wakeOnTwist being off
