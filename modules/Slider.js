@@ -23,8 +23,7 @@ try { // For making it possiblie to run the test app in the following catch stat
 
       dragableSlider:true,
       dragRect:R,
-      useIncr:true,
-      useMap:false,
+      mode:"incr",
       oversizeR:0,
       oversizeL:0,
       propagateDrag:false,
@@ -93,6 +92,9 @@ try { // For making it possiblie to run the test app in the following catch stat
           eyFirst = o.c.horizontal?e.x:e.y;
         }
 
+        let useMap = (o.c.mode==="map"||o.c.mode==="mapincr")?true:false;
+        let useIncr = (o.c.mode==="incr"||o.c.mode==="mapincr")?true:false;
+
         // Only react if on allowed area.
         if (o.f.wasOnDragRect(exFirst, eyFirst)) {
           o.v.dragActive = true;
@@ -101,7 +103,7 @@ try { // For making it possiblie to run the test app in the following catch stat
           if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
           if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
-          if (o.c.useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+          if (useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
             let input = !o.c.horizontal?
               Math.min((Y_MAX-e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height):
@@ -112,7 +114,7 @@ try { // For making it possiblie to run the test app in the following catch stat
 
             o.v.cbObj = {mode:"map", value:o.v.level};
 
-          } else if (o.c.useIncr) { // Heavily inspired by "updown" mode of setUI.
+          } else if (useIncr) { // Heavily inspired by "updown" mode of setUI.
 
             o.v.dy += o.c.horizontal?-e.dx:e.dy;
             //if (!e.b) o.v.dy=0;
