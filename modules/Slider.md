@@ -24,7 +24,7 @@ Bangle.on("drag", slider.f.dragSlider);
 
 `configObject` (second argument, optional) has the following defaults:
 
-```JSON
+```js
 R = Bangle.appRect; // For use when determining defaults below.
 
 {
@@ -57,7 +57,7 @@ autoProgress:    false,        // The slider should be able to progress automati
 ```
 
 A slider initiated in the Web IDE terminal window reveals its internals to a degree:
-```
+```js
 >slider = require("Slider").create(()=>{}, {autoProgress:true})
 ={
   v: { level: 15, ebLast: 0, dy: 0 },
