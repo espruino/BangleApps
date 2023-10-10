@@ -1,5 +1,5 @@
 Slider Library
-========================
+==============
 
 > Take a look at README.md for hints on developing with this library.
 
@@ -28,7 +28,7 @@ Bangle.on("drag", slider.f.dragSlider);
 R = Bangle.appRect; // For use when determining defaults below.
 
 {
-currLevel:       undefined,    // The level to initialize the slider with.
+initLevel:       0,            // The level to initialize the slider with.
 horizontal:      false,        // Slider should be horizontal?
 xStart:          R.x2-R.w/4-4, // Leftmost x-coordinate. (Uppermost y-coordinate if horizontal)
 width:           R.w/4,        // Width of the slider. (Height if horizontal)
@@ -76,7 +76,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     width: 44, yStart: 28, height: 142, steps: 30, oversizeR: 0,
     oversizeL: 0, timeout: 1, colorFG: 65535, colorBG: 8, rounded: 20,
     propagateDrag: false, autoProgress: true, outerBorderSize: 2, innerBorderSize: 2,
-    drawableSlider: true, dragableSlider: true, currLevel: undefined,
+    drawableSlider: true, dragableSlider: true, initLevel: undefined,
     dragRect: { x: 0, y: 24, w: 176, h: 152,
       x2: 175, y2: 175 },
     _xStart: 131, _width: 36, _yStart: 32, _height: 134, STEP_SIZE: 3.36666666666,
