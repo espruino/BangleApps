@@ -16,13 +16,13 @@ Bangle.on("drag", slider.f.dragSlider);
 // Bangle.prependListener("drag", slider.f.dragSlider);
 ```
 
-`callbackFunction` (first argument) determines what `slider` is used for. `slider` will pass two arguments, `mode` and `feedback`, into `callbackFunction` (if `slider` is interactive or auto progressing). The different `mode`/`feedback` combinations to expect are:
+`callbackFunction` (`cb`) (first argument) determines what `slider` is used for. `slider` will pass two arguments, `mode` and `feedback` (`fb`), into `callbackFunction` (if `slider` is interactive or auto progressing). The different `mode`/`feedback` combinations to expect are:
 - `"map", o.v.level` | current level when interacting by mapping interface.
-- `"incr", incr` | where incr = +-1, when interacting by incrementing interface.
+- `"incr", incr` | where `incr` == +/-1, when interacting by incrementing interface.
 - `"remove", o.v.level` | last level when the slider times out.
 - `"auto"` | on its own, when auto progressing.
 
-`configObject` (second argument, optional) has the following defaults:
+`configObject` (`conf`) (second argument, optional) has the following defaults:
 
 ```js
 R = Bangle.appRect; // For use when determining defaults below.
@@ -90,6 +90,10 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
  }
 >
 ```
+Tips
+----
+
+You can implement custom graphics for a slider in the `callbackFunction`. The slider test app mentioned in the links below do this. To draw on top of the included slider graphics you need to wrap the drawing code in a timeout somewhat like so: `setTimeout(drawingFunction,0,fb)` (see [`setTimeout` documentation](https://www.espruino.com/Reference#l__global_setTimeout)).
 
 Links
 -----
