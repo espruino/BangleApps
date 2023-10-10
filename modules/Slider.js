@@ -184,7 +184,7 @@ try { // For making it possiblie to run the test app in the following catch stat
       o.f.autoUpdate = ()=>{
         o.v.level = o.v.autoInitLevel + Math.round((Date.now()-o.v.autoInitTime)/1000)
         if (o.v.level>o.c.steps) o.v.level=o.c.steps;
-        cb("auto");
+        cb("auto", o.v.level);
         o.f.draw&&o.f.draw(o.v.level);
         if (o.v.level==o.c.steps) {o.f.stopAutoUpdate();}
       };

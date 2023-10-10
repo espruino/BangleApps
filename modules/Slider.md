@@ -20,7 +20,7 @@ Bangle.on("drag", slider.f.dragSlider);
 - `"map", o.v.level` | current level when interacting by mapping interface.
 - `"incr", incr` | where `incr` == +/-1, when interacting by incrementing interface.
 - `"remove", o.v.level` | last level when the slider times out.
-- `"auto"` | on its own, when auto progressing.
+- `"auto", o.v.level` | when auto progressing.
 
 `configObject` (`conf`) (second argument, optional) has the following defaults:
 
