@@ -173,9 +173,12 @@ let frames = 0; // amount of pending frames to render (0 if none)
 let curPos = 0; // x position of the sun
 let realPos = 0; // x position of the sun depending on currentime
 
-let day = 0;
-let sineLUT = []; // x & y axes of sine function
+let day;
+let sineLUT = new Uint8Array(w * 2); // x & y axes of sine function
 let now = new Date();
+
+let sr;
+let ss;
 
 const sunrise = now.sunrise(lat, lon);
 const sunset = now.sunset(lat, lon);
@@ -196,11 +199,9 @@ function drawSinuses () {
 
 function drawSeaLevel () {
   // sea level line
-  sunRiseX = xfromTime(sunrise.getHours(), sunrise.getMinutes());
-  sunSetX = xfromTime(sunset.getHours(), sunset.getMinutes());
 
-  const sunRiseY = sineLUT[1 + Math.floor(sunRiseX) * 2];
-  const sunSetY = sineLUT[1 + Math.floor(sunSetX) * 2];
+  const sunRiseY = sineLUT[1 + sunRiseX * 2];
+  const sunSetY = sineLUT[1 + sunSetX * 2];
 
   g.setColor(0, 0.5, 1);
 
@@ -217,30 +218,19 @@ function drawSeaLevel () {
 function drawTimes () {
   g.setColor(1, 1, 1);
   g.setFont('6x8', 2);
-  g.drawString(require("locale").time(new Date((sunrise.getHours() * 3600 + 
-    sunrise.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1),
-    6, h - 20);
-  g.drawString(require("locale").time(new Date((sunset.getHours() * 3600 + 
-    sunset.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1),
-    w - 64, h - 20);
+  g.drawString(sr, 6, h - 20);
+  g.drawString(ss, w - 64, h - 20);
 }
 
 function drawGlow () {
-  let x = pos;
-
-  if (realTime) {
-    x = Math.floor(xfromTime(now.getHours(), now.getMinutes()));
-  }
-  const y = sineLUT[1 + x * 2];
-
   g.setColor(0.2, 0.2, 0);
   // wide glow
-  if (x > sunRiseX && x < sunSetX) {
-    g.fillCircle(x, y, r + 20);
+  if (pos > sunRiseX && pos < sunSetX) {
+    g.fillCircle(pos, sineLUT[1 + pos * 2], r + 20);
     g.setColor(0.5, 0.5, 0);
   }
   // smol glow
-  g.fillCircle(x, y, r + 8);
+  g.fillCircle(pos, sineLUT[1 + pos * 2], r + 8);
 }
 
 function ypos (x) {
@@ -249,66 +239,73 @@ function ypos (x) {
 }
 
 function xfromTime (hours, minutes) {
-  return (w / 24) * (hours + minutes / 60);
+  return Math.round((w / 24) * (hours + minutes / 60));
 }
 
 function fillSineLUT () {
-  sineLUT = [];
-  for (let i = 0; i <= w; i++) {
-    sineLUT.push(i, ypos(i));
-    }
-  print(sineLUT);
+  for (let i = 0; i < w; i++) {
+    sineLUT[i * 2] = i;
+    sineLUT[1 + i * 2] = ypos(i);
+  }
 }
 
 function drawBall () {
-  let x = pos;
-
-  if (realTime) {
-    x = Math.floor(xfromTime(now.getHours(), now.getMinutes()));
-  }
-  const y = sineLUT[1 + x * 2];
-
   // glow
-  if (x > sunRiseX && x < sunSetX) {
+  if (pos > sunRiseX && pos < sunSetX) {
     g.setColor(1, 1, 1);
   } else {
     g.setColor(0.5, 0.5, 0);
   }
-  g.fillCircle(x, y, r);
+  g.fillCircle(pos, sineLUT[1 + pos * 2], r);
   g.setColor(1, 1, 0);
-  g.drawCircle(x, y, r);
+  g.drawCircle(pos, sineLUT[1 + pos * 2], r);
 }
 function drawClock () {
-  let posTime= now;
+  let posTime;
 
-  if (!realTime) {
+  if (realTime) {
+    posTime = now;
+
+    // day-month
+    const mo = now.getMonth() + 1;
+    const da = now.getDate();
+    g.setFont('6x8', 2);
+    g.drawString('' + da + '/' + mo, 6, 30);
+
+  } else {
     posTime = new Date(24 * 3600 * (pos / w) * 1000 +
                        60 * now.getTimezoneOffset() * 1000);
   }
   g.setFont('Vector', 30);
   g.setColor(realTime, 1, 1);
   g.drawString(require("locale").time(posTime, 1), w / 1.9, 32);
+}
 
-  // day-month
-  if (realTime) {
-    const mo = now.getMonth() + 1;
-    const da = now.getDate();
-    g.setFont('6x8', 2);
-    g.drawString('' + da + '/' + mo, 6, 30);
-  }
+function initDay () {
+  sunRiseX = xfromTime(sunrise.getHours(), sunrise.getMinutes());
+  sunSetX = xfromTime(sunset.getHours(), sunset.getMinutes());
+  sr = require("locale").time(new Date((sunrise.getHours() * 3600 + 
+    sunrise.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1);
+  ss = require("locale").time(new Date((sunset.getHours() * 3600 + 
+    sunset.getMinutes() * 60 + now.getTimezoneOffset() * 60) * 1000), 1);
+  day = now.getDate();
+  fillSineLUT();
 }
 
 function renderScreen () {
   now = new Date();
 
   if (day != now.getDate()) {
-    day = now.getDate();
-    fillSineLUT();
+    initDay();
   }
 
   g.setColor(0, 0, 0);
   g.fillRect(0, 30, w, h);
   realPos = xfromTime(now.getHours(), now.getMinutes());
+
+  if (realTime) {
+    pos = realPos;
+  }
 
   Bangle.drawWidgets();
 
@@ -320,18 +317,19 @@ function renderScreen () {
   drawBall();
 }
 
+//TOOO: use another function for this?
 Bangle.on('drag', function (tap, top) {
   if (tap.y < h / 3) {
     initialAnimation();
   } else {
     pos = tap.x;
+
     realTime = false;
     renderScreen();
   }
 });
 
 Bangle.on('lock', () => {
-  // TODO: render animation here
   realTime = true;
   renderScreen();
 });
@@ -358,13 +356,9 @@ function initialAnimation () {
 }
 
 function main () {
-  sunRiseX = xfromTime(sunrise.getHours(), sunrise.getMinutes());
-  sunSetX = xfromTime(sunset.getHours(), sunset.getMinutes());
-
   g.setBgColor(0, 0, 0);
   g.clear();
-  day = now.getDate();
-  fillSineLUT();
+
   setInterval(renderScreen, 60 * 1000);
   initialAnimation();
 }
