@@ -99,9 +99,11 @@ function btn2Pressed() {
 }
 
 function fmtMSS(e) {
-    var m = Math.floor(e % 3600 / 60).toString().padStart(2, '0'),
-        s = Math.floor(e % 60).toString().padStart(2, '0');
-    return m + ':' + s;
+    h = Math.floor(e / 3600);
+    e %= 3600;
+    m = Math.floor(e / 60);
+    s = e % 60;
+    return h + ":" +  m + ':' + s;
 }
 
 function countDown() {
