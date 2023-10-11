@@ -68,6 +68,10 @@ try { // For making it possiblie to run the test app in the following catch stat
 
     // Only add interactivity if wanted.
     if (o.c.dragableSlider) { 
+
+      let useMap = (o.c.mode==="map"||o.c.mode==="mapincr")?true:false;
+      let useIncr = (o.c.mode==="incr"||o.c.mode==="mapincr")?true:false;
+
       const Y_MAX = g.getHeight()-1; // Should this take users screen calibration into account?
 
       o.v.ebLast = 0;
@@ -91,9 +95,6 @@ try { // For making it possiblie to run the test app in the following catch stat
           exFirst = o.c.horizontal?e.y:e.x;
           eyFirst = o.c.horizontal?e.x:e.y;
         }
-
-        let useMap = (o.c.mode==="map"||o.c.mode==="mapincr")?true:false;
-        let useIncr = (o.c.mode==="incr"||o.c.mode==="mapincr")?true:false;
 
         // Only react if on allowed area.
         if (o.f.wasOnDragRect(exFirst, eyFirst)) {
