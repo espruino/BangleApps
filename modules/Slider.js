@@ -131,7 +131,7 @@ try { // For making it possiblie to run the test app in the following catch stat
             }
           }
           if (o.v.level!==o.v.prevLevel || o.v.level===0 || o.v.level===o.c.steps) {
-            cb(o.v.cbObj.mode, o.v.cbObj.value);
+            cb(o.v.cbObj.mode, o.v.cbObj.value); // FIXME: Can cause error when using "incr" since it's not sure that o.v.cbObj has been initialized thanks to how the while-logic above works. (Can also do callback with faulty feedback since it didn't update)
             o.f.draw&&o.f.draw(o.v.level);
           }
           o.v.prevLevel = o.v.level;
