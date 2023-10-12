@@ -49,3 +49,9 @@ night.
 I'd like to make display nicer, and likely more dynamic, displaying
 whatever application believes is most important at the time (and
 possibly allowing scrolling).
+
+Todo:
+
+*) only turn on compass when needed
+
+*) adjust draw timeouts to save power

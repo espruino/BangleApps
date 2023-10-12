@@ -5,7 +5,8 @@
   "icon": "app.png",
   "readme": "README.md",
   "supports" : ["BANGLEJS2"],
-  "tags": "",
+  "type": "clock",
+  "tags": "clock",
   "storage": [
       {"name":"sixths.app.js","url":"app.js"},
       {"name":"sixths.img","url":"app-icon.js","evaluate":true}
