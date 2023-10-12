@@ -13,6 +13,10 @@ var wp = require('Storage').readJSON("waypoints.json", true) || [];
    2 .. DD MM'ss"
 */
 var mode = 1;
+var key; /* Shared between functions, typically wp name */
+var fix; /* GPS fix */
+var cancel_gps;
+var gps_start;
 
 function writeWP() {
   require('Storage').writeJSON("waypoints.json", wp);
@@ -30,12 +34,72 @@ function mainMenu() {
   menu["Add"]=addCard;
   menu["Remove"]=removeCard;
   menu["Format"]=setFormat;
+  menu["Mark GPS"]=markGps;
   g.clear();
   E.showMenu(menu);
 }
 
+function updateGps() {
+  let have = false, lat = "lat", lon = "lon", alt = "alt", speed = "speed";
+  
+  if (cancel_gps)
+    return;
+  fix = Bangle.getGPSFix();
+  
+  speed = getTime() - gps_start;
+  
+  if (fix && fix.fix && fix.lat) {
+    lat = "" + fix.lat;
+    lon = "" + fix.lon;
+    alt = "" + fix.alt;
+    speed = "" + fix.speed;
+    have = true;
+  }
+  
+  g.reset().setFont("Vector", 20)
+    .setColor(1,1,1)
+    .fillRect(0, 0, 176, 120)
+    .setColor(0,0,0)
+    .drawString(key, 0, 0)
+    .drawString(lat, 0, 20)
+    .drawString(lon, 0, 40)
+    .drawString(alt, 0, 60)
+    .drawString(speed, 0, 80);
+
+  setTimeout(updateGps, 100);
+}
+
+function stopGps() {
+  cancel_gps=true;
+  Bangle.setGPSPower(0, "waypoint_editor");
+}
+
+function confirmGps() {
+        var la = new Layout (
+          {type:"v", c: [
+            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+            {type:"h", c: [
+              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+                print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
+              }},
+              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
+            ]}
+          ], lazy:true});
+  g.clear();
+  la.render();
+  updateGps();
+}
+
+function markGps() {
+  cancel_gps = false;
+  Bangle.setGPSPower(1, "waypoint_editor");
+  gps_start = getTime();
+  showNumpad("mkXX", "mark", confirmGps);
+}
+
 function setFormat() {
-  var confirmRemove = new Layout (
+  var la = new Layout (
         {type:"v", c: [
           {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Format"},
           {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "DD.dddd", cb:l=>{  mode = 0; mainMenu(); }},
@@ -43,7 +107,7 @@ function setFormat() {
           {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "DD MM'ss"+'"', cb:l=>{  mode = 2; mainMenu(); }},
         ], lazy:true});
   g.clear();
-  confirmRemove.render();
+  la.render();
 }
 
 function format(x) {
@@ -87,14 +151,14 @@ function lon(x) {
 function decode(pin) {
       print(pin);
       var i = wp[pin];
-      var pinDecrypted=i["name"] + "\n" + lat(i["lat"]) + "\n" + lon(i["lon"]);
-      var showPin = new Layout ({
+      var l = i["name"] + "\n" + lat(i["lat"]) + "\n" + lon(i["lon"]);
+      var la = new Layout ({
         type:"v", c: [
-          {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: pinDecrypted},
+          {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: l},
           {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"OK", cb:l=>{mainMenu();}}
         ], lazy:true});
       g.clear();
-      showPin.render();
+      la.render();
 }
 
 function showNumpad(text, key_, callback) {
@@ -155,10 +219,10 @@ function showNumpad(text, key_, callback) {
 
 function removeCard() {
   var menu = {
-    "" : {title : "select card"},
+    "" : {title : "Select WP"},
     "< Back" : mainMenu
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"NO CARDS":""});
+  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
   else {
     wp.forEach((val, card) => {
       const name = wp[card].name;
@@ -186,14 +250,14 @@ function removeCard() {
 }
 
 function ask01(t, cb) {
-  var confirmRemove = new Layout (
+  var la = new Layout (
         {type:"v", c: [
-          {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Format"},
+          {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Select"},
           {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: t[0], cb:l=>{ cb(1); }},
           {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: t[1], cb:l=>{ cb(-1); }},
         ], lazy:true});
   g.clear();
-  confirmRemove.render();
+  la.render();
 }
 
 
@@ -237,6 +301,16 @@ function askPosition(callback) {
   });
 }
 
+function createWP(lat, lon, name) {
+      let n = {};
+      n["name"] = name;
+      n["lat"] = lat;
+      n["lon"] = lon;
+      wp.push(n);
+      print("add -- waypoints", wp);
+      writeWP();
+}
+
 function addCard() {
   showNumpad("wpXX", "wp", function() {
     result = key;
@@ -257,13 +331,7 @@ function addCard() {
     g.clear();
     askPosition(function(lat, lon) {
       print("position -- ", lat, lon);
-      let n = {};
-      n["name"] = result;
-      n["lat"] = lat;
-      n["lon"] = lon;
-      wp.push(n);
-      print("add -- waypoints", wp);
-      writeWP();
+      createWP(lat, lon, result);
       mainMenu();
     });
   });

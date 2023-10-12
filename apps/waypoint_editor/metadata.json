@@ -5,6 +5,7 @@
   "icon": "app.png",
   "readme": "README.md",
   "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
   "tags": "tool,outdoors,gps",
   "storage": [
       {"name":"waypoint_editor.app.js","url":"app.js"},
