@@ -2,7 +2,7 @@
   "id": "hrrawexp",
   "name": "HRM Data Exporter",
   "shortName": "HRM Data Exporter",
-  "version": "0.01",
+  "version": "0.03",
   "description": "export raw hrm signal data to a csv file",
   "icon": "app-icon.png",
   "tags": "",
