@@ -179,9 +179,13 @@
             </label>
             <label class="form-switch">
               <input type="checkbox" id="settings-alwaysAllowUpdate">
-              <i class="form-icon"></i> Always allow to reinstall apps in place regardless of the version
+              <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
             </label>
-            <button class="btn" id="defaultsettings">Reset to default App Loader settings</button>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-autoReload">
+              <i class="form-icon"></i> Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+            </label>
+            <button class="btn" id="defaultsettings">Reset App Loader settings to defaults</button>
           </details>
         </div>
         <div id="more-deviceinfo" style="display:none">
