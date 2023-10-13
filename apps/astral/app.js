@@ -534,7 +534,7 @@ function mean_sidereal_time(lon) {
     var mst = 280.46061837 + 360.98564736629 * jd
         + 0.000387933 * jt * jt - jt * jt * jt / 38710000 + lon;
 
-    mst = mst%360;
+    mst %=360;
     return mst;
 }
 
