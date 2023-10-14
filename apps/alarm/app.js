@@ -106,6 +106,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
+  if (withDate) {
+    alarm.del = require("sched").getSettings().defaultDeleteExpiredTimers;
+  }
   alarm.dow = handleFirstDayOfWeek(alarm.dow);
 
   if (selectedAlarm) {
@@ -193,6 +196,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     /*LANG*/"Repeat": {
       value: decodeRepeat(alarm),
       onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, date || alarm.dow, (repeat, dow) => {
+        if (repeat) {
+          alarm.del = false; // do not auto delete a repeated alarm
+        }
         alarm.rp = repeat;
         alarm.dow = dow;
         prepareAlarmForSave(alarm, alarmIndex, time, date, true);
@@ -203,6 +209,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     /*LANG*/"Auto Snooze": {
       value: alarm.as,
       onchange: v => alarm.as = v
+    },
+    /*LANG*/"Delete After Expiration": {
+      value: alarm.del,
+      onchange: v => alarm.del = v
     },
     /*LANG*/"Hidden": {
       value: alarm.hidden || false,
@@ -225,6 +235,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
+    delete menu[/*LANG*/"Delete After Expiration"];
   }
 
   if (!isNew) {
