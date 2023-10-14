@@ -294,7 +294,6 @@ function decodeRepeat(alarm) {
 }
 
 function showEditRepeatMenu(repeat, day, dowChangeCallback) {
-  var originalRepeat = repeat;
   var dow;
 
   const menu = {
@@ -327,26 +326,32 @@ function showEditRepeatMenu(repeat, day, dowChangeCallback) {
       },
       /*LANG*/"Custom": {
         value: isCustom ? decodeRepeat({ rp: true, dow: dow }) : false,
-        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
+        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, repeat, originalDow)
       }
     };
   } else {
     // var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
     dow = EVERY_DAY;
-    repeat = repeat || {interval: "month", num: 1};
+    const repeatObj = repeat || {interval: "month", num: 1};
 
     restOfMenu = {
       /*LANG*/"Every": {
-        value: repeat.num,
+        value: repeatObj.num,
         min: 1,
-        onchange: v => repeat.num = v
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.num = v;
+        }
       },
       /*LANG*/"Interval": {
-        value: INTERVALS.indexOf(repeat.interval),
+        value: INTERVALS.indexOf(repeatObj.interval),
         format: v => INTERVAL_LABELS[v],
         min: 0,
         max: INTERVALS.length - 1,
-        onchange: v => repeat.interval = INTERVALS[v]
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.interval = INTERVALS[v];
+        }
       }
     };
   }
