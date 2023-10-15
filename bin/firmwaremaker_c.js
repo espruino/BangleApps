@@ -103,7 +103,15 @@ Promise.all(APPS.map(appid => {
   var app = apploader.apps.find(a => a.id==appid);
   if (!app) throw new Error(`App ${appid} not found`);
   return apploader.getAppFiles(app).then(files => {
-    appfiles = appfiles.concat(files);
+    files.forEach(f => {
+      var existing = appfiles.find(a=> a.name==f.name);
+      if (existing) {
+        if (existing.content !== f.content)
+          throw new Error(`Duplicate file ${f.name} is different`)
+      } else {
+        appfiles.push(f);
+      }
+    });
   });
 })).then(() => {
   // work out what goes in storage

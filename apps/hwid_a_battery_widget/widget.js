@@ -26,6 +26,7 @@
 	var	y = this.y;
 	if ((typeof x === 'undefined') || (typeof y === 'undefined')) {
 	} else {
+		g.setBgColor(COLORS.white);
 		g.clearRect(old_x, old_y, old_x + width, old_y + height);
 
 		const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);

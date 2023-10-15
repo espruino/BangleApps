@@ -288,8 +288,8 @@
       }
      */
     options = options||{};
-    if (!activeRecorders.length) return; // not recording
     var settings = loadSettings();
+    if (!settings.file) return; // no file specified
     // keep function to draw track in RAM
     function plot(g) { "ram";
       var f = require("Storage").open(settings.file,"r");
@@ -311,7 +311,7 @@
         mp = m.latLonToXY(+c[la], +c[lo]);
         g.moveTo(mp.x,mp.y).setColor(color);
         l = f.readLine(f);
-        var n = options.async ? 20 : 200; // only plot first 200 points to keep things fast(ish)
+        var n = options.async ? 10 : 200; // only plot first 200 points to keep things fast(ish)
         while(l && n--) {
           c = l.split(",");
           if (c[la]) {
@@ -333,7 +333,7 @@
         }
       };
     }
-    plot(g);
+    return plot(g);
   }};
   // load settings, set correct widget width
   reload();

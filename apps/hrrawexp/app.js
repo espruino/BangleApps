@@ -1,12 +1,25 @@
-var counter = 1;
+var counter = 15;
 var logging_started;
 var interval;
 var value;
+var filt;
 
-var file = require("Storage").open("hrm_log.csv", "w");
-file.write("");
+var fileClosed = 0;
+var Storage = require("Storage");
+var file;
 
-file = require("Storage").open("hrm_log.csv", "a");
+function exists(name){
+  s = require('Storage');
+  var fileList = s.list();
+  var fileExists = false;
+  for (let i = 0; i < fileList.length; i++) {
+        fileExists = fileList[i].includes(name);
+        if(fileExists){
+          break;
+        }
+  }
+  return fileExists;
+}
 
 function update_timer() {
     g.clear();
@@ -33,47 +46,75 @@ function update_timer() {
 
 function btn1Pressed() {
     if (!logging_started) {
-        if (counter < 60)
-            counter += 1;
+        if (counter < 120)
+            counter += 15;
         else
-            counter = 1;
+            counter = 15;
         update_timer();
     }
 }
 
 function btn3Pressed() {
     if (!logging_started) {
-        if (counter > 1)
-            counter -= 1;
+        if (counter > 15)
+            counter -= 15;
         else
-            counter = 60;
+            counter = 120;
         update_timer();
     }
 }
 
 function btn2Pressed() {
-    launchtime = 0 | getTime();
-    file.write(launchtime + "," + "\n");
-    logging_started = true;
-    counter = counter * 60;
-    interval = setInterval(countDown, 1000);
-    Bangle.setHRMPower(1);
+  if (!logging_started) {
+      var filename = "";
+      var fileset = false;
+
+      for (let i = 0; i < 5; i++) {
+        filename = "HRM_data" + i.toString() + ".csv";
+        if(exists(filename) == 0){
+          file = require("Storage").open(filename,"w");
+          console.log("creating new file " + filename);
+          fileset = true;
+        }
+        if(fileset){
+          break;
+        }
+      }
+
+      if (!fileset){
+        console.log("overwiting file");
+        file = require("Storage").open("HRM_data.csv","w");
+      }
+
+      file.write("");
+      file = require("Storage").open(filename,"a");
+
+      //launchtime = 0 | getTime();
+      //file.write(launchtime + "," + "\n");
+      logging_started = true;
+      counter = counter * 60;
+      interval = setInterval(countDown, 1000);
+      Bangle.setHRMPower(1);
+  }
 }
 
 function fmtMSS(e) {
-    var m = Math.floor(e % 3600 / 60).toString().padStart(2, '0'),
-        s = Math.floor(e % 60).toString().padStart(2, '0');
-    return m + ':' + s;
+    h = Math.floor(e / 3600);
+    e %= 3600;
+    m = Math.floor(e / 60);
+    s = e % 60;
+    return h + ":" +  m + ':' + s;
 }
 
 function countDown() {
     g.clear();
     counter--;
-    if (counter == 0) {
+    if (counter <= 0 && fileClosed == 0) {
         Bangle.setHRMPower(0);
         clearInterval(interval);
         g.drawString("Finished", g.getWidth() / 2, g.getHeight() / 2);
         Bangle.buzz(500, 1);
+        fileClosed = 1;
     }
     else
         g.drawString(fmtMSS(counter), g.getWidth() / 2, g.getHeight() / 2);
@@ -85,13 +126,8 @@ setWatch(btn1Pressed, BTN1, { repeat: true });
 setWatch(btn2Pressed, BTN2, { repeat: true });
 setWatch(btn3Pressed, BTN3, { repeat: true });
 
-Bangle.on('HRM', function (hrm) {
-    for (let i = 0; i < hrm.raw.length; i++) {
-        value = hrm.raw[i];
-        if (value < -2)
-            value = -2;
-        if (value > 6)
-            value = 6;
-        file.write(value + "," + "\n");
-    }
+Bangle.on('HRM-raw', function (hrm) {
+        value = hrm.raw;
+        filt = hrm.filt;
+        file.write(value + "," + filt + "," + "\n");
 });

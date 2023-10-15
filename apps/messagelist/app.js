@@ -24,6 +24,9 @@
     RIGHT = 1, LEFT = -1, // swipe directions
     UP = -1, DOWN = 1;    // updown directions
   const Layout = require("Layout");
+  const debug = function() {
+    if (global.DEBUG_MESSAGELIST) console.log.apply(console, ['messagelist:'].concat(arguments));
+  }
 
   const settings = () => require("messagegui").settings();
   const fontTiny = "6x8"; // fixed size, don't use this for important things
@@ -45,6 +48,7 @@
   /// List of all our messages
   let MESSAGES;
   const saveMessages = function() {
+    debug('saveMessages()');
     const noSave = ["alarm", "call", "music"]; // assume these are outdated once we close the app
     noSave.forEach(id => remove({id: id}));
     require("messages").write(MESSAGES
@@ -56,6 +60,7 @@
     );
   };
   const uiRemove = function() {
+    debug('uiRemove()');
     if (musicTimeout) clearTimeout(musicTimeout);
     layout = undefined;
     Bangle.removeListener("message", onMessage);
@@ -85,11 +90,25 @@
   }
 
   const setUI = function(options, cb) {
+    debug('setUI(', options, cb?'<callback>':cb)
     delete Bangle.uiRemove; // don't clear out things when switching UI within the app
     options = Object.assign({mode:"custom", remove: () => uiRemove()}, options);
     // If options={} assume we still want `remove` to be called when leaving via fast load (so we must have 'mode:custom')
     Bangle.setUI(options, cb);
   };
+  /**
+   * Same as calling `new Layout(layout, options)`, except Bangle.uiRemove is not called
+   * @param {object} layout 
+   * @param {object} options 
+   * @returns {Layout}
+   */
+  const makeLayout = function(layout, options) {
+    const remove = Bangle.uiRemove;
+    delete Bangle.uiRemove; // don't clear out things when setting up new Layout
+    const result = new Layout(layout, options);
+    if (remove) Bangle.uiRemove = remove;
+    return result;
+  }
 
   const remove = function(msg) {
     if (msg.id==="call") call = undefined;
@@ -111,6 +130,7 @@
   };
 
   const onMessage = function(type, msg) {
+    debug(`onMessage(${type}`, msg);
     if (msg.handled) return;
     msg.handled = true;
     switch(type) {
@@ -135,6 +155,7 @@
   Bangle.on("message", onMessage);
 
   const onCall = function(msg) {
+    debug('onCall(', msg);
     if (msg.t==="remove") {
       call = undefined;
       return exitScreen("call");
@@ -145,6 +166,7 @@
     showCall();
   };
   const onAlarm = function(msg) {
+    debug('onAlarm(', msg);
     if (msg.t==="remove") {
       alarm = undefined;
       return exitScreen("alarm");
@@ -155,6 +177,7 @@
   };
   let musicTimeout;
   const onMusic = function(msg) {
+    debug('onMusic(', msg);
     const hadMusic = !!music;
     if (musicTimeout) clearTimeout(musicTimeout);
     musicTimeout = undefined;
@@ -184,6 +207,7 @@
     }
   };
   const onMap = function(msg) {
+    debug('onMap(', msg);
     const hadMap = !!map;
     if (msg.t==="remove") {
       map = undefined;
@@ -196,6 +220,7 @@
     else if (active==="main" && !hadMap) showMain(); // refresh menu: add "Map" entry
   };
   const onText = function(msg) {
+    debug('onText(', msg);
     require("messages").apply(msg, MESSAGES);
     const mIdx = MESSAGES.findIndex(m => m.id===msg.id);
     if (!MESSAGES[mIdx]) if (back==="messages") back = undefined;
@@ -237,6 +262,7 @@
   };
 
   const showMap = function() {
+    debug('showMap()');
     setActive("map");
     delete map.new;
     let m, distance, street, target, eta;
@@ -254,7 +280,7 @@
     } else {
       target = map.body;
     }
-    let layout = new Layout({
+    let layout = makeLayout({
       type: "v", c: [
         {type: "txt", font: fontNormal, label: target, bgCol: g.theme.bg2, col: g.theme.fg2, fillx: 1, pad: 2},
         {
@@ -319,6 +345,7 @@
     else Bangle.musicControl(action);
   };
   const showMusic = function() {
+    debug('showMusic()', music);
     if (active!==music) setActive("music");
     if (!music) music = {track: "<unknown>", artist: "<unknown>", album: "", state: "pause"};
     delete music.new;
@@ -355,7 +382,7 @@
     else if (dur) info = dur;
     else info = {};
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -442,12 +469,14 @@
   let layout;
 
   const clearStuff = function() {
+    debug('clearStuff()');
     delete Bangle.appRect;
     layout = undefined;
     setUI();
     g.reset().clearRect(Bangle.appRect);
   };
   const setActive = function(screen, args) {
+    debug(`setActive(${screen}`, args);
     clearStuff();
     if (active && screen!==active) back = active;
     if (screen==="messages") messageNum = args;
@@ -476,6 +505,7 @@
     }
   };
   const showMain = function() {
+    debug('showMain()');
     setActive("main");
     let grid = {"": {title:/*LANG*/"Messages", align: 0, back: load}};
     if (call) grid[/*LANG*/"Incoming Call"] = {icon: "Phone", cb: showCall};
@@ -596,7 +626,7 @@
       }
       l.c.push(row);
     }
-    layout = new Layout(l, {back: back});
+    layout = makeLayout(l, {back: back});
     layout.render();
 
     if (B2) {
@@ -640,6 +670,7 @@
   };
 
   const showSettings = function() {
+    debug('showSettings()');
     setActive("settings");
     eval(require("Storage").read("messagelist.settings.js"))(() => {
       setFont();
@@ -647,6 +678,7 @@
     });
   };
   const showCall = function() {
+    debug('showCall()');
     setActive("call");
     delete call.new;
     Bangle.setLocked(false);
@@ -678,7 +710,7 @@
       ];
     }
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -722,6 +754,7 @@
     });
   };
   const showAlarm = function() {
+    debug('showAlarm()');
     // dismissing alarms doesn't seem to work, so this is simple */
     setActive("alarm");
     delete alarm.new;
@@ -731,7 +764,7 @@
     const w = g.getWidth()-48,
       lines = g.setFont(fontNormal).wrapString(alarm.title, w),
       title = (lines.length>2) ? lines.slice(0, 2).join("\n")+"..." : lines.join("\n");
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: g.theme.bg2, col: g.theme.fg2, c: [
@@ -830,6 +863,7 @@
       );
   };
   const showMessage = function(num, bottom) {
+    debug(`showMessage(${num}, ${!!bottom})`);
     if (num<0) num = 0;
     if (!num) num = 0; // no number: show first
     if (num>=MESSAGES.length) num = MESSAGES.length-1;
@@ -1093,7 +1127,7 @@
     let imageCol = getImageColor(msg);
     if (g.setColor(imageCol).getColor()==hBg) imageCol = hCol;
 
-    layout = new Layout({
+    layout = makeLayout({
       type: "v", c: [
         {
           type: "h", fillx: 1, bgCol: hBg, col: hCol, c: [
@@ -1133,6 +1167,7 @@
    * Stop auto-unload timeout and buzzing, remove listeners for this function
    */
   const clearUnreadStuff = function() {
+    debug('clearUnreadStuff()');
     require("messages").stopBuzz();
     if (unreadTimeout) clearTimeout(unreadTimeout);
     unreadTimeout = undefined;

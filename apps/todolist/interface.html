@@ -95,17 +95,7 @@
         Util.showModal("Downloading...");
         let jsonTodos = getEditableContent();
         if (isJsonString(jsonTodos)) {
-          var a = document.createElement("a"),
-            file = new Blob([jsonTodos], { type: "application/json" });
-          var url = URL.createObjectURL(file);
-          a.href = url;
-          a.download = fileTodoList;
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          }, 0);
+          Util.saveFile(fileTodoList, "application/json", jsonTodos);
         } else {
           document.getElementById("info").innerHTML = errorFormat();
         }

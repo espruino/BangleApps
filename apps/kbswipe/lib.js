@@ -253,28 +253,38 @@ exports.input = function(options) {
   };
   Bangle.drawWidgets();
 
+  let dragHandlerKB = e=>{
+    "ram";
+    if (isInside(R, e)) {
+      if (lastDrag) g.reset().setColor("#f00").drawLine(lastDrag.x,lastDrag.y,e.x,e.y);
+      lastDrag = e.b ? e : 0;
+    }
+  }
+
+  let touchHandlerKB = (n,e) => {
+    if (WIDGETS.kbswipe && isInside({x: WIDGETS.kbswipe.x, y: WIDGETS.kbswipe.y, w: WIDGETS.kbswipe.width, h: 24}, e)) {
+      // touch inside widget
+      cycleInput();
+    } else if (isInside(R, e)) {
+      // touch inside app area
+      show();
+    }
+  }
+
+  let catchSwipe = ()=>{
+    E.stopEventPropagation&&E.stopEventPropagation();
+  };
+
   return new Promise((resolve,reject) => {
-    Bangle.setUI({mode:"custom", drag:e=>{
-      "ram";
-      if (isInside(R, e)) {
-        if (lastDrag) g.reset().setColor("#f00").drawLine(lastDrag.x,lastDrag.y,e.x,e.y);
-        lastDrag = e.b ? e : 0;
-      }
-    },touch:(n,e) => {
-      if (WIDGETS.kbswipe && isInside({x: WIDGETS.kbswipe.x, y: WIDGETS.kbswipe.y, w: WIDGETS.kbswipe.width, h: 24}, e)) {
-        // touch inside widget
-        cycleInput();
-      } else if (isInside(R, e)) {
-        // touch inside app area
-        show();
-      }
-    }, back:()=>{
+    Bangle.setUI({mode:"custom", drag:dragHandlerKB, touch:touchHandlerKB, back:()=>{
       delete WIDGETS.kbswipe;
       Bangle.removeListener("stroke", strokeHandler);
+      Bangle.prependListener&&Bangle.removeListener('swipe', catchSwipe); // Remove swipe lister if it was added with `Bangle.prependListener()` (fw2v19 and up).
       if (flashInterval) clearInterval(flashInterval);
       Bangle.setUI();
       g.clearRect(Bangle.appRect);
       resolve(text);
     }});
+    Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
   });
 };

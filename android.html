@@ -135,15 +135,17 @@
         <h3>Utilities</h3>
         <p>
            <button class="btn tooltip" id="settime" data-tooltip="Set the Bangle's time to your Browser's time">Set Bangle.js Time</button>
+           <button class="btn tooltip" id="screenshot" data-tooltip="Create screenshot">Screenshot</button>
+           <button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
+           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button>
+        </p><p>
            <button class="btn tooltip" id="removeall" data-tooltip="Delete everything, leave it blank">Remove all Apps</button>
            <button class="btn tooltip" id="reinstallall" data-tooltip="Re-install every app, leave all data">Reinstall apps</button>
            <button class="btn tooltip" id="installdefault" data-tooltip="Delete everything, install default apps">Install default apps</button>
            <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
+           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
         </p><p>
            <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button>
-           <button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
-           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button>
-           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
            <button class="btn tooltip" id="webideremote" data-tooltip="Enable the Web IDE remote server">Web IDE Remote</button>
         </p>
         <h3>Settings</h3>
@@ -171,6 +173,10 @@
             <label class="form-switch">
               <input type="checkbox" id="settings-minify">
               <i class="form-icon"></i> Minify apps before upload (⚠️DANGER⚠️: Not recommended. Uploads smaller, faster apps but this <b>will</b> break many apps)
+            </label>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-alwaysAllowUpdate">
+              <i class="form-icon"></i> Always allow to reinstall apps in place regardless of the version
             </label>
             <button class="btn" id="defaultsettings">Reset to default App Loader settings</button>
           </details>

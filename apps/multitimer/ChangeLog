@@ -4,3 +4,5 @@
 0.04: Remove copied sched alarm.js & import newer features (oneshot alarms)
 0.05: Fix creating new alarms/timers in hardmode
 0.06: Support fastloading
+0.07: Fix fastloading support - ensure drag handler's restored after
+      menu display/fastload removes it

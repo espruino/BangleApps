@@ -4,3 +4,5 @@
 0.58: show/hide "messages" widget directly, instead of through library stub
 0.59: fixes message timeout by using setinterval, as it was intended. So the buzz is triggered every x seconds until the timeout occours.
 0.60: Bump version to allow new buzz.js module to be loaded - fixes memory/performance hog when buzz called
+0.61: Add repeatCalls option to allow different repeat settings for messages vs calls
+0.62: Add option for driving on left (affects roundabout icons in navigation)

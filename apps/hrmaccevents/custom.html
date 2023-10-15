@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="../../css/spectre.min.css">
  </head>
  <body>
+<script src="../../core/lib/customize.js"></script>
 <script src="https://www.puck-js.com/puck.js"></script>
 <p>
 <div class="form-group">
@@ -23,20 +24,6 @@
 <p id="result"></p>
 <script>
 
-function saveCSV(filename, csvData) {
-  let a = document.createElement("a"),
-    file = new Blob([csvData], {type: "Comma-separated value file"});
-  let url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = filename+".csv";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  }, 0);
-}
-  
 function createCode(){
   //modes: 1 BT, 2 File
   return "var method=" + (document.getElementById("chkLocal").checked ? 2 : 1) + ";\n" + String.raw`
@@ -48,7 +35,7 @@ function createCode(){
   var gotBTHRM = false;
   var gotHRM = false;
   var gotAcc = false;
-  
+
   var events = -1;
   var hrmRaw,hrmPulse,bthrmPulse
 
@@ -59,9 +46,9 @@ function createCode(){
   let bthrmSettings = (require("Storage").readJSON("bthrm.json",1) || {});
 
   Bangle.setHRMPower(1);
-  
+
   if (bthrmSettings.replace) Bangle.origSetHRMPower(1);
-  
+
   if (Bangle.setBTHRMPower){
     Bangle.setBTHRMPower(1);
   } else {
@@ -166,7 +153,7 @@ function createCode(){
       drawStatus(free>0.25*process.env.STORAGE, h++, Math.floor(free/1024) + "K");
     }
   }
-  
+
   var intervalId = -1;
 
   g.setFont12x20();
@@ -181,7 +168,7 @@ function createCode(){
   drawStatusText("Events", h++);
   if (method == 2) drawStatusText("Storage", h++);
   updateStatus();
-  
+
   intervalId = setInterval(()=>{
     updateStatus();
   }, 1000);
@@ -221,8 +208,8 @@ document.getElementById("chkLocal").addEventListener("click", function() {
 
 window.addEventListener("message", function(event) {
   let msg = event.data;
-   if (msg.type=="readstoragefilersp") {
-    saveCSV("log.csv", msg.data);
+  if (msg.type=="readstoragefilersp") {
+    Util.saveCSV("log", msg.data);
   }
 }, false);
 
@@ -240,7 +227,7 @@ document.getElementById("btnDownload").addEventListener("click", function() {
 });
 
 document.getElementById("btnSave").addEventListener("click", function() {
-  saveCSV("log.csv", localStorage.getItem("data"));
+  Util.saveCSV("log", localStorage.getItem("data"));
 });
 
 function reset(){
@@ -289,7 +276,7 @@ document.getElementById("btnConnect").addEventListener("click", function() {
       l.forEach(onLine);
     });
     connection.write("reset();\n", function() {
-      setTimeout(function() {    
+      setTimeout(function() {
         connection.write("\x03\x10if(1){"+createCode()+"}\n",
           function() { console.log("Ready..."); });
       }, 1500);

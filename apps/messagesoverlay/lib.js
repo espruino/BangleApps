@@ -1,3 +1,5 @@
+const MIN_FREE_MEM = 1000;
+const LOW_MEM = 2000;
 const ovrx = 10;
 const ovry = 10;
 const ovrw = g.getWidth()-2*ovrx;
@@ -28,6 +30,7 @@ let callInProgress = false;
 
 let show = function(ovr){
   let img = ovr;
+  LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
     img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
@@ -162,8 +165,9 @@ let showMessage = function(ovr, msg) {
   drawMessage(ovr, msg);
 };
 
-let drawBorder = function(ovr) {
+let drawBorder = function(img) {
   LOG("drawBorder", isQuiet());
+  if (img) ovr=img;
   if (Bangle.isLocked())
     ovr.setColor(ovr.theme.fgH);
   else
@@ -230,13 +234,6 @@ let next = function(ovr) {
   }
 
   showMessage(ovr, eventQueue[0]);
-};
-
-let showMapMessage = function(ovr, msg) {
-  ovr.clearRect(2,2,ovr.getWidth()-3,ovr.getHeight()-3);
-  drawMessage(ovr, {
-    body: "Not implemented!"
-  });
 };
 
 let callBuzzTimer = null;
@@ -407,7 +404,7 @@ let main = function(ovr, event) {
 
   if (!lockListener) {
     lockListener = function (){
-      drawBorder(ovr);
+      drawBorder();
     };
     Bangle.on('lock', lockListener);
   }
@@ -439,9 +436,15 @@ exports.message = function(type, event) {
   if(event.handled) return;
 
   bpp = 4;
-  if (process.memory().free < 2000) bpp = 1;
+  if (process.memory().free < LOW_MEM)
+    bpp = 1;
 
-  if (!ovr) {
+  while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
+    let dropped = eventQueue.pop();
+    print("Dropped message because of memory constraints", dropped);
+  }
+
+  if (!ovr || ovr.getBPP() != bpp) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });

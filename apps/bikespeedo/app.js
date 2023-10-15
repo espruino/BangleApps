@@ -420,7 +420,7 @@ function updateClock() {
 // Read settings.
 let cfg = require('Storage').readJSON('bikespeedo.json',1)||{};
 
-cfg.spd = !cfg.localeUnits;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
+cfg.spd = cfg.localeUnits ? 0 : 1;  // Multiplier for speed unit conversions. 0 = use the locale values for speed
 cfg.spd_unit = 'km/h';  // Displayed speed unit
 cfg.alt = 1; // Multiplier for altitude unit conversions. (feet:'0.3048')
 cfg.alt_unit = 'm';  // Displayed altitude units ('feet')

@@ -1,3 +1,5 @@
+g.clear();
+
 Bangle.POMOPLUS_ACTIVE = true;  //Prevent the boot code from running. To avoid having to reload on every interaction, we'll control the vibrations from here when the user is in the app.
 
 const storage = require("Storage");
@@ -13,32 +15,36 @@ if (
 }
 
 function drawButtons() {
+  let w = g.getWidth();
+  let h = g.getHeight();
   //Draw the backdrop
-  const BAR_TOP = g.getHeight() - 24;
+  const BAR_TOP = h - 24;
   g.setColor(0, 0, 1).setFontAlign(0, -1)
-    .clearRect(0, BAR_TOP, g.getWidth(), g.getHeight())
-    .fillRect(0, BAR_TOP, g.getWidth(), g.getHeight())
+    .clearRect(0, BAR_TOP, w, h)
+    .fillRect(0, BAR_TOP, w, h)
     .setColor(1, 1, 1);
 
   if (!common.state.wasRunning) {  //If the timer was never started, only show a play button
-    g.drawImage(common.BUTTON_ICONS.play, g.getWidth() / 2, BAR_TOP);
+    g.drawImage(common.BUTTON_ICONS.play, w / 2, BAR_TOP);
   } else {
-    g.drawLine(g.getWidth() / 2, BAR_TOP, g.getWidth() / 2, g.getHeight());
+    g.drawLine(w / 2, BAR_TOP, w / 2, h);
     if (common.state.running) {
-      g.drawImage(common.BUTTON_ICONS.pause, g.getWidth() / 4, BAR_TOP)
-        .drawImage(common.BUTTON_ICONS.skip, g.getWidth() * 3 / 4, BAR_TOP);
+      g.drawImage(common.BUTTON_ICONS.pause, w / 4, BAR_TOP)
+        .drawImage(common.BUTTON_ICONS.skip, w * 3 / 4, BAR_TOP);
     } else {
-      g.drawImage(common.BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP)
-        .drawImage(common.BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP);
+      g.drawImage(common.BUTTON_ICONS.reset, w / 4, BAR_TOP)
+        .drawImage(common.BUTTON_ICONS.play, w * 3 / 4, BAR_TOP);
     }
   }
 }
 
 function drawTimerAndMessage() {
+  let w = g.getWidth();
+  let h = g.getHeight();
   g.reset()
     .setFontAlign(0, 0)
     .setFont("Vector", 36)
-    .clearRect(0, 24, 176, 152)
+    .clearRect(w / 2 - 60, h / 2 - 34, w / 2 + 60, h / 2 + 34)
 
     //Draw the timer
     .drawString((() => {
@@ -53,7 +59,7 @@ function drawTimerAndMessage() {
 
       if (hours >= 1) return `${parseInt(hours)}:${pad(minutes)}:${pad(seconds)}`;
       else return `${parseInt(minutes)}:${pad(seconds)}`;
-    })(), g.getWidth() / 2, g.getHeight() / 2)
+    })(), w / 2, h / 2)
 
     //Draw the phase label
     .setFont("Vector", 12)
@@ -63,7 +69,7 @@ function drawTimerAndMessage() {
       else if (currentPhase == common.PHASE_SHORT_BREAK) return `Short break ${numShortBreaks + 1}/${common.settings.numShortBreaks}`;
       else return "Long break!";
     })(common.state.phase, common.state.numShortBreaks),
-      g.getWidth() / 2, g.getHeight() / 2 + 18);
+      w / 2, h / 2 + 18);
 
   //Update phase with vibation if needed
   if (common.getTimeLeft() <= 0) {
@@ -91,6 +97,7 @@ Bangle.on("touch", (button, xy) => {
     };
     setupTimerInterval();
     drawButtons();
+    if (common.settings.showClock) Bangle.showClock();
 
   } else if (common.state.running) {
     //If we are running, there are two buttons: pause and skip
@@ -127,6 +134,7 @@ Bangle.on("touch", (button, xy) => {
       drawTimerAndMessage();
       setupTimerInterval();
       drawButtons();
+      if (common.settings.showClock) Bangle.showClock();
     }
   }
 });

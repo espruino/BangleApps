@@ -12,11 +12,12 @@ This allows fast loading of all apps with two conditions:
 * If Quick Launch is installed it can be excluded from app history
 * Allows to redirect all loads usually loading the clock to the launcher instead
 * The "Fastloading..." screen can be switched off
+* Enable checking `setting.json` and force a complete load on changes
 
 ## App history
 
 * Long press of hardware button clears the app history and loads the clock face
-* Installing the 'Fast Reset' app allows doing fastloads directly to the clock face by pressing the hardware button for one second. Useful if there are many apps in the history and the user want to access the clock quickly.
+* Installing the 'Fast Reset' app allows doing fastloads directly to the clock face by pressing the hardware button just a little longer than a click. Useful if there are many apps in the history and the user want to access the clock quickly.
 
 ## Technical infos
 

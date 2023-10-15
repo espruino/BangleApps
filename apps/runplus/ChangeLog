@@ -22,3 +22,4 @@ Write to correct settings file, fixing settings not working.
 0.20: Tweak HRM min/max defaults. Extend min/max intervals in settings. Fix
 	another typo.
 0.21: Rebase on "Run" app ver. 0.16.
+0.22: Ensure screen redraws after "Resume run?" menu (#3044)

@@ -5,3 +5,5 @@
 0.05: Prevent drawing into app area.
 0.06: Fix issue where .draw was being called by reference (not allowing widgets to be hidden)
 0.07: Handle the swipe event that is generated when draging to change light intensity, so it doesn't trigger some other swipe handler.
+0.08: Ensure boot code doesn't allocate and leave a gloval variable named 'settings'
+0.09: Handle lightswitch logic running before its widget has loaded

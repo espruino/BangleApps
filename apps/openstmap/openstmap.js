@@ -52,6 +52,7 @@ exports.draw = function() {
     if (d!=1) { // if the two are different, add scaling
       s *= d;
       o.scale = d;
+      o.filter = true; // on 2v19+ enables supersampling
     }
     //console.log(ix,iy);
     var tx = 0|(ix/s);
