@@ -66,7 +66,7 @@ if (settings.ndColors === true) {
   bgOtherEvent = cyan;
 }
 
-getDowLbls = function(locale) {
+const getDowLbls = function(locale) {
   let days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
   const d = new Date();
   return days.map(i => {
@@ -75,14 +75,14 @@ getDowLbls = function(locale) {
   });
 };
 
-sameDay = function(d1, d2) {
+const sameDay = function(d1, d2) {
   "jit";
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 };
 
-drawEvent = function(ev, curDay, x1, y1, x2, y2) {
+const drawEvent = function(ev, curDay, x1, y1, x2, y2) {
   "ram";
   switch(ev.type) {
     case "e": // alarm/event
@@ -102,7 +102,7 @@ drawEvent = function(ev, curDay, x1, y1, x2, y2) {
   }
 }
 
-drawCalendar = function(date) {
+const drawCalendar = function(date) {
   g.setBgColor(bgColor);
   g.clearRect(0, 0, maxX, maxY);
   g.setBgColor(bgColorMonth);
@@ -238,7 +238,7 @@ drawCalendar = function(date) {
   } // end for (y = 0; y < rowN - 1; y++)
 }; // end function drawCalendar
 
-showMenu = function() {
+const showMenu = function() {
   const menu = {
     "" : {
       title : "Calendar",
@@ -268,7 +268,7 @@ showMenu = function() {
   E.showMenu(menu);
 };
 
-setUI = function() {
+const setUI = function() {
   Bangle.setUI({
     mode : "custom",
     swipe: (dirLR, dirUD) => {
