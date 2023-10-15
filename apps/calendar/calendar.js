@@ -1,3 +1,4 @@
+{
 const maxX = g.getWidth();
 const maxY = g.getHeight();
 const fontSize = g.getWidth() > 200 ? 2 : 1;
@@ -65,22 +66,22 @@ if (settings.ndColors === true) {
   bgOtherEvent = cyan;
 }
 
-function getDowLbls(locale) {
+getDowLbls = function(locale) {
   let days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
   const d = new Date();
   return days.map(i => {
     d.setDate(d.getDate() + (i + 7 - d.getDay()) % 7);
     return require("locale").dow(d, 1);
   });
-}
+};
 
-function sameDay(d1, d2) {
+sameDay = function(d1, d2) {
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
-}
+};
 
-function drawCalendar(date) {
+drawCalendar = function(date) {
   g.setBgColor(bgColor);
   g.clearRect(0, 0, maxX, maxY);
   g.setBgColor(bgColorMonth);
@@ -231,9 +232,39 @@ function drawCalendar(date) {
       );
     }
   }
-}
+};
 
-function setUI() {
+showMenu = function() {
+  const menu = {
+    "" : {
+      title : "Calendar",
+      remove: () => {
+        require("widget_utils").show();
+      }
+    },
+    "< Back": () => {
+      require("widget_utils").hide();
+      E.showMenu();
+      drawCalendar(date);
+      setUI();
+    },
+    /*LANG*/"Settings": () => {
+      const appSettings = eval(require('Storage').read('calendar.settings.js'));
+      appSettings(showMenu);
+    },
+    /*LANG*/"Launch Alarms": () => {
+      load("alarm.app.js");
+    },
+    /*LANG*/"Exit": () => load(),
+  };
+  if (!require("Storage").read("alarm.app.js")) {
+    delete menu[/*LANG*/"Launch Alarms"];
+  }
+  require("widget_utils").show();
+  E.showMenu(menu);
+};
+
+setUI = function() {
   Bangle.setUI({
     mode : "custom",
     swipe: (dirLR, dirUD) => {
@@ -257,7 +288,14 @@ function setUI() {
         drawCalendar(date);
       }
     },
-    btn: (n) => n === (process.env.HWVERSION === 2 ? 1 : 3) && load(),
+    btn: (n) => {
+      if (process.env.HWVERSION === 2 || n === 2) {
+        showMenu();
+      } else if (n === 3) {
+        // directly exit only on Bangle.js 1
+        load();
+      }
+    },
     touch: (n,e) => {
       events.sort((a,b) => a.date - b.date);
       const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
@@ -270,15 +308,19 @@ function setUI() {
       }
       menu[""] = { title: require("locale").month(date) + " " + date.getFullYear() };
       menu["< Back"] = () => {
+        require("widget_utils").hide();
         E.showMenu();
         drawCalendar(date);
         setUI();
       };
+      require("widget_utils").show();
       E.showMenu(menu);
     }
   });
-}
+};
 
 drawCalendar(date);
 setUI();
-// No space for widgets!
+Bangle.loadWidgets();
+require("widget_utils").hide(); // No space for widgets!
+}

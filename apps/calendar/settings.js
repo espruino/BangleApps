@@ -1,6 +1,6 @@
 (function (back) {
-  var FILE = "calendar.json";
-  var settings = require('Storage').readJSON(FILE, true) || {};
+  const FILE = "calendar.json";
+  const settings = require('Storage').readJSON(FILE, true) || {};
   if (settings.ndColors === undefined)
     if (process.env.HWVERSION == 2) {
       settings.ndColors = true;
