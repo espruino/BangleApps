@@ -56,9 +56,9 @@ try { // For making it possiblie to run the test app in the following catch stat
     o.c._width = o.c.width - 2*totalBorderSize;
     o.c._yStart = o.c.yStart + totalBorderSize;
     o.c._height = o.c.height - 2*totalBorderSize;
-    o.c.rounded = o.c.rounded?20:0;
+    o.c.rounded = o.c.rounded?o.c._width/2:0;
 
-    o.c.STEP_SIZE = ((!o.c.horizontal?o.c._height:o.c._width)-(!o.c.rounded?0:(2*o.c.rounded-7)))/o.c.steps;
+    o.c.STEP_SIZE = ((!o.c.horizontal?o.c._height:o.c._width)-(!o.c.rounded?0:(2*o.c.rounded)))/o.c.steps;
 
     // Add a rectangle object with x, y, x2, y2, w and h values.
     o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
@@ -170,10 +170,10 @@ try { // For making it possiblie to run the test app in the following catch stat
 
         g.setColor(o.c.colorFG).fillRect(o.c.borderRect). // To get outer border...
           setColor(o.c.colorBG).fillRect(o.c.hollowRect). // ... and here it's made hollow.
-          setColor(0==level?o.c.colorBG:o.c.colorFG).fillRect(o.f.updateBar((!o.c.rounded?0:(2*o.c.rounded-7))+level*o.c.STEP_SIZE)); // Here the bar is drawn.
+          setColor(0==level?o.c.colorBG:o.c.colorFG).fillRect(o.f.updateBar((!o.c.rounded?0:(2*o.c.rounded))+level*o.c.STEP_SIZE)); // Here the bar is drawn.
         if (o.c.rounded && level===0) { // Hollow circle indicates level zero when slider is rounded.
-          g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize).
-            setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded+2, o.c.rounded-o.c.innerBorderSize-2);
+          g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded, o.c.rounded).
+            setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded, o.c.rounded-o.c.outerBorderSize);
         }
 
         //print(level);
@@ -215,6 +215,6 @@ try { // For making it possiblie to run the test app in the following catch stat
 
 } catch (e) {
   print(e);
-  let appName = "spotrem";
+  let appName = "slidertest";
   eval(require("Storage").read(appName+".app.js"));
 }
