@@ -1689,11 +1689,12 @@ function start_gipy(path, maps, interests, heights) {
   status.display();
 
   Bangle.on("touch", () => {
+    let active = this.active;
     status.activate();
     if (in_menu) {
       return;
     }
-    if (status.heights !== null) {
+    if (active && status.heights !== null) {
       status.screen = (status.screen + 1) % 3;
       status.display();
     }

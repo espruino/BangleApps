@@ -122,3 +122,5 @@
 	* New option: sleep between waypoints
 	* Removed sharp turns auto-detection
 	* Interface: centered svg preview + display file sizes
+	* Interface: disable/enable waypoints detection and elevation
+	* Touching the screen when sleeping will wake up but not change screen
