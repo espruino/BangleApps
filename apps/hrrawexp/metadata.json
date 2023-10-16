@@ -6,7 +6,6 @@
   "description": "export raw hrm signal data to a csv file",
   "icon": "app-icon.png",
   "tags": "",
-  "supports": ["BANGLEJS"],
   "readme": "README.md",
   "interface": "interface.html",
   "supports": ["BANGLEJS","BANGLEJS2"],
