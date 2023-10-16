@@ -186,9 +186,6 @@ try { // For making it possiblie to run the test app in the following catch stat
           g.setColor(o.c.colorFG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded, o.c.rounded).
             setColor(o.c.colorBG).fillCircle(o.c._xStart+(!o.c.horizontal?o.c._width/2:o.c.rounded-2), o.c._yStart+o.c._height-o.c.rounded, o.c.rounded-o.c.outerBorderSize);
         }
-
-        //print(level);
-        //print(process.memory().usage);
       };
     }
 
