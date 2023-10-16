@@ -54,6 +54,8 @@ try { // For making it possiblie to run the test app in the following catch stat
     o.c.rounded = o.c.rounded?o.c.width/2:0;
     if (o.c.rounded) o.c._rounded = (o.c.width-2*totalBorderSize)/2;
 
+    o.c.STEP_SIZE = ((o.c.height-2*totalBorderSize)-(!o.c.rounded?0:(2*o.c._rounded)))/o.c.steps;
+
     // If horizontal, flip things around.
     if (o.c.horizontal) {
       let mediator = o.c.xStart;
@@ -70,8 +72,6 @@ try { // For making it possiblie to run the test app in the following catch stat
     o.c._width = o.c.width - 2*totalBorderSize;
     o.c._yStart = o.c.yStart + totalBorderSize;
     o.c._height = o.c.height - 2*totalBorderSize;
-
-    o.c.STEP_SIZE = ((!o.c.horizontal?o.c._height:o.c._width)-(!o.c.rounded?0:(2*o.c._rounded)))/o.c.steps;
 
     // Add a rectangle object with x, y, x2, y2, w and h values.
     o.c.r = {x:o.c.xStart, y:o.c.yStart, x2:o.c.xStart+o.c.width, y2:o.c.yStart+o.c.height, w:o.c.width, h:o.c.height};
