@@ -28,30 +28,30 @@ Bangle.on("drag", slider.f.dragSlider);
 R = Bangle.appRect; // For use when determining defaults below.
 
 {
-initLevel:       0,            // The level to initialize the slider with.
-horizontal:      false,        // Slider should be horizontal?
-xStart:          R.x2-R.w/4-4, // Leftmost x-coordinate. (Uppermost y-coordinate if horizontal)
-width:           R.w/4,        // Width of the slider. (Height if horizontal)
-yStart:          R.y+4,        // Uppermost y-coordinate. (Rightmost x-coordinate if horizontal)
-height:          R.h-10,       // Height of the slider. (Width if horizontal)
-steps:           30,           // Number of discrete steps of the slider.
+initLevel:       0,                     // The level to initialize the slider with.
+horizontal:      false,                 // Slider should be horizontal?
+xStart:          R.x2-R.w/4-4,          // Leftmost x-coordinate. (Uppermost y-coordinate if horizontal)
+width:           R.w/4,                 // Width of the slider. (Height if horizontal)
+yStart:          R.y+4,                 // Uppermost y-coordinate. (Rightmost x-coordinate if horizontal)
+height:          R.h-10,                // Height of the slider. (Width if horizontal)
+steps:           30,                    // Number of discrete steps of the slider.
 
-dragableSlider:  true,         // Should supply the sliders standard interaction mechanisms?
-dragRect:        R,            // Accept input within this rectangle.
-mode:            "incr",       // What mode of draging to use: "map", "incr" or "mapincr".
-oversizeR:       0,            // Determines if the mapping area should be extend outside the indicator (Right/Up).
-oversizeL:       0,            // Determines if the mapping area should be extend outside the indicator (Left/Down).
-propagateDrag:   false,        // Pass the drag event on down the handler chain?
-timeout:         1,            // Seconds until the slider times out.
+dragableSlider:  true,                  // Should supply the sliders standard interaction mechanisms?
+dragRect:        R,                     // Accept input within this rectangle.
+mode:            "incr",                // What mode of draging to use: "map", "incr" or "mapincr".
+oversizeR:       0,                     // Determines if the mapping area should be extend outside the indicator (Right/Up).
+oversizeL:       0,                     // Determines if the mapping area should be extend outside the indicator (Left/Down).
+propagateDrag:   false,                 // Pass the drag event on down the handler chain?
+timeout:         1,                     // Seconds until the slider times out.
 
-drawableSlider:  true,         // Should supply the sliders standard drawing mechanism?
-colorFG:         g.theme.fg2,  // Foreground color.
-colorBG:         g.theme.bg2,  // Background color.
-rounded:         true,         // Slider should have rounded corners?
-outerBorderSize: 2,            // The size of the visual border.
-innerBorderSize: 2,            // The distance between visual border and the slider.
+drawableSlider:  true,                  // Should supply the sliders standard drawing mechanism?
+colorFG:         g.theme.fg2,           // Foreground color.
+colorBG:         g.theme.bg2,           // Background color.
+rounded:         true,                  // Slider should have rounded corners?
+outerBorderSize: Math.round(2*R.w/176), // The size of the visual border. Scaled in relation to Bangle.js 2 screen width/typical app rectangle widths.
+innerBorderSize: Math.round(2*R.w/176), // The distance between visual border and the slider.
 
-autoProgress:    false,        // The slider should be able to progress automatically?
+autoProgress:    false,                 // The slider should be able to progress automatically?
 }
 ```
 
@@ -59,7 +59,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
 ```js
 >slider = require("Slider").create(()=>{}, {autoProgress:true})
 ={
-  v: { level: 15, ebLast: 0, dy: 0 },
+  v: { level: 0, ebLast: 0, dy: 0 },
   f: {
     wasOnDragRect: function (exFirst,eyFirst) { ... },
     wasOnIndicator: function (exFirst) { ... },
@@ -72,20 +72,21 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     startAutoUpdate: function () { ... },
     stopAutoUpdate: function () { ... }
    },
-  c: { mode: "incr", horizontal: false, xStart: 127,
-    width: 44, yStart: 28, height: 142, steps: 30, oversizeR: 0,
-    oversizeL: 0, timeout: 1, colorFG: 65535, colorBG: 8, rounded: 20,
-    propagateDrag: false, autoProgress: true, outerBorderSize: 2, innerBorderSize: 2,
-    drawableSlider: true, dragableSlider: true, initLevel: undefined,
-    dragRect: { x: 0, y: 24, w: 176, h: 152,
+  c: { initLevel: 0, horizontal: false, xStart: 127, width: 44,
+    yStart: 4, height: 166, steps: 30, dragableSlider: true,
+    dragRect: { x: 0, y: 0, w: 176, h: 176,
       x2: 175, y2: 175 },
-    _xStart: 131, _width: 36, _yStart: 32, _height: 134, STEP_SIZE: 3.36666666666,
-    r: { x: 127, y: 28, x2: 171, y2: 170,
-      w: 44, h: 142 },
-    borderRect: { x: 127, y: 28, w: 44, h: 142,
-      r: 20 },
-    hollowRect: { x: 129, y: 30, w: 40, h: 138,
-      r: 20 }
+    mode: "incr",
+    oversizeR: 0, oversizeL: 0, propagateDrag: false, timeout: 1, drawableSlider: true,
+    colorFG: 63488, colorBG: 8, rounded: 22, outerBorderSize: 2, innerBorderSize: 2,
+    autoProgress: true, _rounded: 18, _xStart: 131, _width: 36, _yStart: 8,
+    _height: 158, STEP_SIZE: 4.06666666666,
+    r: { x: 127, y: 4, x2: 171, y2: 170,
+      w: 44, h: 166 },
+    borderRect: { x: 127, y: 4, w: 44, h: 166,
+      r: 22 },
+    hollowRect: { x: 129, y: 6, w: 40, h: 162,
+      r: 22 }
    }
  }
 >
