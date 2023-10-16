@@ -6,7 +6,6 @@
   "icon": "app-icon.png",
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS"],
   "readme": "README.md",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
