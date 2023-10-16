@@ -2,7 +2,7 @@
 
 // See Slider.md for documentation
 
-/* Minify to 'Slider.min.js' by: // FIXME: Should we do this for Slider module?
+/* Minify to 'Slider.min.js' by: // TODO: Should we do this for Slider module?
 
    * checking out: https://github.com/espruino/EspruinoDocs
    * run: ../EspruinoDocs/bin/minify.js modules/Slider.js modules/Slider.min.js
@@ -83,7 +83,7 @@ try { // For making it possiblie to run the test app in the following catch stat
       let useMap = (o.c.mode==="map"||o.c.mode==="mapincr")?true:false;
       let useIncr = (o.c.mode==="incr"||o.c.mode==="mapincr")?true:false;
 
-      const Y_MAX = g.getHeight()-1; // Should this take users screen calibration into account?
+      const Y_MAX = g.getHeight()-1; // TODO: Should this take users screen calibration into account?
 
       o.v.ebLast = 0;
       o.v.dy = 0;
