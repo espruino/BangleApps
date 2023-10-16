@@ -44,8 +44,8 @@ try { // For making it possiblie to run the test app in the following catch stat
       colorFG:g.theme.fg2,
       colorBG:g.theme.bg2,
       rounded:true,
-      outerBorderSize:2,
-      innerBorderSize:2,
+      outerBorderSize:Math.round(2*R.w/176), // 176 is the # of pixels in a row on the Bangle.js 2's screen and typically also its app rectangles, used here to rescale to whatever pixel count is on the current app rectangle.
+      innerBorderSize:Math.round(2*R.w/176),
 
       autoProgress:false,
     },conf);
