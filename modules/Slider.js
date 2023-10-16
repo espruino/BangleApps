@@ -1,4 +1,15 @@
-try { // For making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined when uploading from Web IDE and not run otherwise.
+/* Copyright (c) 2023 Bangle.js contributors. See the file LICENSE for copying permission. */
+
+// See Slider.md for documentation
+
+/* Minify to 'Slider.min.js' by: // FIXME: Should we do this for Slider module?
+
+   * checking out: https://github.com/espruino/EspruinoDocs
+   * run: ../EspruinoDocs/bin/minify.js modules/Slider.js modules/Slider.min.js
+
+*/
+
+try { // For making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined when uploading from Web IDE and not run otherwise. // FIXME: This try-catch logic should be removed once development on this module slows down.
 
   exports.create = function(cb, conf) {
 
