@@ -32,30 +32,30 @@ const date = new Date();
 const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
- // all alarms that run on a specific date
-const events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
-  const date = new Date(a.date);
-  const time = timeutils.decodeTime(a.t);
-  date.setHours(time.h);
-  date.setMinutes(time.m);
-  date.setSeconds(time.s);
-  return {date: date, msg: a.msg, type: "e"};
-});
-// add holidays & other events
-(require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
-  const date = new Date(d.date);
-  const o = {date: date, msg: d.name, type: d.type};
-  if (d.repeat) {
-    o.repeat = d.repeat;
-  }
-  events.push(o);
-});
+let events;
 
-if (settings.ndColors === undefined) {
-  settings.ndColors = !g.theme.dark;
-}
+const loadEvents = () => {
+  // all alarms that run on a specific date
+  events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
+    const date = new Date(a.date);
+    const time = timeutils.decodeTime(a.t);
+    date.setHours(time.h);
+    date.setMinutes(time.m);
+    date.setSeconds(time.s);
+    return {date: date, msg: a.msg, type: "e"};
+  });
+  // add holidays & other events
+  (require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
+    const date = new Date(d.date);
+    const o = {date: date, msg: d.name, type: d.type};
+    if (d.repeat) {
+      o.repeat = d.repeat;
+    }
+    events.push(o);
+  });
+};
 
-if (settings.ndColors === true) {
+if (!g.theme.dark) {
   bgColor = white;
   bgColorMonth = blue;
   bgColorDow = black;
@@ -249,26 +249,30 @@ const showMenu = function() {
     "< Back": () => {
       require("widget_utils").hide();
       E.showMenu();
-      drawCalendar(date);
       setUI();
     },
+    /*LANG*/"Exit": () => load(),
     /*LANG*/"Settings": () => {
       const appSettings = eval(require('Storage').read('calendar.settings.js'));
-      appSettings(showMenu);
+      appSettings(() => {
+        loadEvents();
+        showMenu();
+      });
     },
-    /*LANG*/"Launch Alarms": () => {
-      load("alarm.app.js");
-    },
-    /*LANG*/"Exit": () => load(),
   };
-  if (!require("Storage").read("alarm.app.js")) {
-    delete menu[/*LANG*/"Launch Alarms"];
+  if (require("Storage").read("alarm.app.js")) {
+    menu[/*LANG*/"Launch Alarms"] = () => {
+      load("alarm.app.js");
+    };
   }
   require("widget_utils").show();
   E.showMenu(menu);
 };
 
 const setUI = function() {
+  require("widget_utils").hide(); // No space for widgets!
+  drawCalendar(date);
+
   Bangle.setUI({
     mode : "custom",
     swipe: (dirLR, dirUD) => {
@@ -314,7 +318,6 @@ const setUI = function() {
       menu["< Back"] = () => {
         require("widget_utils").hide();
         E.showMenu();
-        drawCalendar(date);
         setUI();
       };
       require("widget_utils").show();
@@ -323,9 +326,8 @@ const setUI = function() {
   });
 };
 
-require("Font8x12").add(Graphics);
-drawCalendar(date);
-setUI();
+loadEvents();
 Bangle.loadWidgets();
-require("widget_utils").hide(); // No space for widgets!
+require("Font8x12").add(Graphics);
+setUI();
 }

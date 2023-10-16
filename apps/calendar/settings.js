@@ -2,12 +2,6 @@
   var FILE = "calendar.json";
   const HOLIDAY_FILE = "calendar.days.json";
   var settings = require('Storage').readJSON(FILE, true) || {};
-  if (settings.ndColors === undefined)
-    if (process.env.HWVERSION == 2) {
-      settings.ndColors = true;
-    } else {
-      settings.ndColors = false;
-    }
   const holidays = require("Storage").readJSON(HOLIDAY_FILE,1).sort((a,b) => new Date(a.date) - new Date(b.date)) || [];
 
   function writeSettings() {
@@ -132,13 +126,6 @@
     E.showMenu({
       "": { "title": "Calendar" },
       "< Back": () => back(),
-      'B2 Colors': {
-        value: settings.ndColors,
-        onchange: v => {
-          settings.ndColors = v;
-          writeSettings();
-        }
-      },
       /*LANG*/"Edit Holidays": () => editdates(),
       /*LANG*/"Add Holiday": () => {
         holidays.push({
