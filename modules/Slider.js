@@ -11,8 +11,6 @@
 
 */
 
-try { // For making it possiblie to run the test app in the following catch statement. It would complain on `exports` not being defined when uploading from Web IDE and not run otherwise. // FIXME: This try-catch logic should be removed once development on this module slows down.
-
   exports.create = function(cb, conf) {
 
     const R = Bangle.appRect;
@@ -233,9 +231,3 @@ try { // For making it possiblie to run the test app in the following catch stat
 
     return o;
   };
-
-} catch (e) {
-  print(e);
-  let appName = "slidertest";
-  eval(require("Storage").read(appName+".app.js"));
-}
