@@ -1,5 +1,7 @@
 /* Copyright (c) 2023 Bangle.js contributors. See the file LICENSE for copying permission. */
 
+// At time of writing in October 2023 this module is new and things are more likely to change during the coming weeks than in a month or two.
+
 // See Slider.md for documentation
 
 /* Minify to 'Slider.min.js' by: // TODO: Should we do this for Slider module?

@@ -1,6 +1,8 @@
 Slider Library
 ==============
 
+*At time of writing in October 2023 this module is new and things are more likely to change during the coming weeks than in a month or two.*
+
 > Take a look at README.md for hints on developing with this library.
 
 Usage
@@ -57,7 +59,7 @@ autoProgress:    false,                 // The slider should be able to progress
 
 A slider initiated in the Web IDE terminal window reveals its internals to a degree:
 ```js
->slider = require("Slider").create(()=>{}, {autoProgress:true})
+slider = require("Slider").create(()=>{}, {autoProgress:true})
 ={
   v: { level: 0, ebLast: 0, dy: 0 },
   f: {
@@ -69,7 +71,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     draw: function (level) { ... },
     autoUpdate: function () { ... },
     initAutoValues: function () { ... },
-    startAutoUpdate: function () { ... },
+    startAutoUpdate: function (intervalSeconds) { ... },
     stopAutoUpdate: function () { ... }
    },
   c: { initLevel: 0, horizontal: false, xStart: 127, width: 44,
@@ -79,8 +81,8 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
     mode: "incr",
     oversizeR: 0, oversizeL: 0, propagateDrag: false, timeout: 1, drawableSlider: true,
     colorFG: 63488, colorBG: 8, rounded: 22, outerBorderSize: 2, innerBorderSize: 2,
-    autoProgress: true, _rounded: 18, _xStart: 131, _width: 36, _yStart: 8,
-    _height: 158, STEP_SIZE: 4.06666666666,
+    autoProgress: true, _rounded: 18, STEP_SIZE: 4.06666666666, _xStart: 131, _width: 36,
+    _yStart: 8, _height: 158,
     r: { x: 127, y: 4, x2: 171, y2: 170,
       w: 44, h: 166 },
     borderRect: { x: 127, y: 4, w: 44, h: 166,
@@ -89,7 +91,7 @@ A slider initiated in the Web IDE terminal window reveals its internals to a deg
       r: 22 }
    }
  }
->
+> 
 ```
 Tips
 ----
