@@ -127,9 +127,9 @@ var HRConfidence = 0;
 
 update_timer();
 
-setWatch(btn1Pressed, BTN1, { repeat: true });
-setWatch(btn2Pressed, BTN2, { repeat: true });
-setWatch(btn3Pressed, BTN3, { repeat: true });
+setWatch(btn1Pressed, btn2Pressed, { repeat: true });
+//setWatch(btn2Pressed, BTN2, { repeat: true });
+//setWatch(btn3Pressed, BTN3, { repeat: true });
 
 Bangle.on("swipe",function(directionLR, directionUD){
     if (1==directionLR){
