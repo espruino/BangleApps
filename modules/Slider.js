@@ -88,7 +88,7 @@ try { // For making it possiblie to run the test app in the following catch stat
     o.v.level = o.c.initLevel;
 
     // Only add interactivity if wanted.
-    if (o.c.dragableSlider) { 
+    if (o.c.dragableSlider) {
 
       let useMap = (o.c.mode==="map"||o.c.mode==="mapincr")?true:false;
       let useIncr = (o.c.mode==="incr"||o.c.mode==="mapincr")?true:false;
@@ -172,7 +172,7 @@ try { // For making it possiblie to run the test app in the following catch stat
     }
 
     // Add standard slider graphics only if wanted.
-    if (o.c.drawableSlider) { 
+    if (o.c.drawableSlider) {
 
       // Function for getting the indication bars size.
       o.f.updateBar = (levelHeight)=>{
