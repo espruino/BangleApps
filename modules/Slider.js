@@ -212,11 +212,12 @@ try { // For making it possiblie to run the test app in the following catch stat
         o.v.autoInitTime=Date.now();
         o.v.autoInitLevel=o.v.level;
       };
-      o.f.startAutoUpdate = ()=>{
+      o.f.startAutoUpdate = (intervalSeconds)=>{
+        if (!intervalSeconds) intervalSeconds = 1;
         o.f.stopAutoUpdate();
         o.f.initAutoValues();
         o.f.draw&&o.f.draw(o.v.level);
-        o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000);
+        o.v.autoIntervalID = setInterval(o.f.autoUpdate,1000*intervalSeconds);
       };
       o.f.stopAutoUpdate = ()=>{
         if (o.v.autoIntervalID) {
