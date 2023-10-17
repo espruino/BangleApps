@@ -55,8 +55,8 @@ try { // For making it possiblie to run the test app in the following catch stat
       o.c.outerBorderSize--;
       o.c.innerBorderSize--;
     }
-    o.c.outerBorderSize = Math.max(0,o.c.outerBorderSize)
-    o.c.innerBorderSize = Math.max(0,o.c.innerBorderSize)
+    o.c.outerBorderSize = Math.max(0,o.c.outerBorderSize);
+    o.c.innerBorderSize = Math.max(0,o.c.innerBorderSize);
 
     let totalBorderSize = o.c.outerBorderSize + o.c.innerBorderSize;
     o.c.rounded = o.c.rounded?o.c.width/2:0;
@@ -202,7 +202,7 @@ try { // For making it possiblie to run the test app in the following catch stat
     // Add logic for auto progressing the slider only if wanted.
     if (o.c.autoProgress) {
       o.f.autoUpdate = ()=>{
-        o.v.level = o.v.autoInitLevel + Math.round((Date.now()-o.v.autoInitTime)/1000)
+        o.v.level = o.v.autoInitLevel + Math.round((Date.now()-o.v.autoInitTime)/1000);
         if (o.v.level>o.c.steps) o.v.level=o.c.steps;
         cb("auto", o.v.level);
         o.f.draw&&o.f.draw(o.v.level);
