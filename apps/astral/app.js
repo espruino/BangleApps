@@ -870,6 +870,7 @@ Bangle.setUI("clock");
 autoUpdate();
 
 setWatch(SwitchSensorState, BTN1, { repeat: true });
+setWatch(autoUpdate, BTN2, { repeat: true });
 
 // Show launcher when button pressed
 //Bangle.setClockMode();
