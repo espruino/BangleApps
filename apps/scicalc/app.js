@@ -69,8 +69,8 @@ function compute() {
   var res;
   console.log(processInp(inputStr));
   try { res = eval(processInp(inputStr)); }
-  catch(e) { res = "error"; } 
-  inputStr = res;
+  catch(e) { res = "error"; }
+  inputStr = res === undefined ? '' : res;
   qResult = true;
   updateDisp(inputStr, 19);
 }
@@ -105,6 +105,11 @@ function swipeHandler(e,d) {
   if (curPage<0) curPage = buttons.length-1;
   drawPage(curPage);
   if (d==1) compute();
+  else if (d==-1) {
+    if (inputStr.length>0) inputStr = inputStr.slice(0, -1); // delete last character
+    qResult = false;
+    updateDisp(inputStr, 32);
+  }
 }
 
 Bangle.on("touch", touchHandler);
