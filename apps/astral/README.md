@@ -1,5 +1,7 @@
 Astral Clock
 ============
+NOTE FOR THE BANGLE 2 THIS APP ONLY SUPPORTS USING THE BLACK BACKGROUND CURRENTLY
+
 Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting.
 
 ![screenshot](./Example.PNG)  
@@ -7,10 +9,10 @@ Clock that calculates and displays Alt Az positions of all planets, Sun as well 
 
 Functions
 --------- 
-**BTN2**: Load side-menu as standard for clocks.  
+**BTN2**: Load side-menu as standard for clocks.
 Swiping left or right will alternate between planets and other astronomy targets, see below for how to change these addtional ones.
 
-The data is refreshed automatically every 2 minutes. You can force a refresh as well by swiping up.
+The data is refreshed automatically every 2 minutes. You can force a refresh as well by swiping up or, on Bangle 1, pressing Button 3.
 
 Swiping down will disable/enable the compass and GPS.
 
