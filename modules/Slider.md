@@ -44,7 +44,7 @@ mode:            "incr",                // What mode of draging to use: "map", "
 oversizeR:       0,                     // Determines if the mapping area should be extend outside the indicator (Right/Up).
 oversizeL:       0,                     // Determines if the mapping area should be extend outside the indicator (Left/Down).
 propagateDrag:   false,                 // Pass the drag event on down the handler chain?
-timeout:         1,                     // Seconds until the slider times out.
+timeout:         1,                     // Seconds until the slider times out. If set to `false` the slider stays active. The callback function is responsible for repainting over the slider graphics.
 
 drawableSlider:  true,                  // Should supply the sliders standard drawing mechanism?
 colorFG:         g.theme.fg2,           // Foreground color.
