@@ -8,7 +8,7 @@ Slider Library
 Usage
 -----
 
-```JS
+```js
 var Slider = require("Slider");
 var slider =  Slider(callbackFunction, configObject);
 
@@ -63,16 +63,16 @@ slider = require("Slider").create(()=>{}, {autoProgress:true})
 ={
   v: { level: 0, ebLast: 0, dy: 0 },
   f: {
-    wasOnDragRect: function (exFirst,eyFirst) { ... },
-    wasOnIndicator: function (exFirst) { ... },
-    dragSlider: function (e) { ... },
-    remove: function () { ... },
-    updateBar: function (levelHeight) { ... },
-    draw: function (level) { ... },
-    autoUpdate: function () { ... },
-    initAutoValues: function () { ... },
-    startAutoUpdate: function (intervalSeconds) { ... },
-    stopAutoUpdate: function () { ... }
+    wasOnDragRect: function (exFirst,eyFirst) { ... }, // Used internally.
+    wasOnIndicator: function (exFirst) { ... }, // Used internally.
+    dragSlider: function (e) { ... }, // The drag handler.
+    remove: function () { ... }, // Used to remove the drag handler and run the callback function.
+    updateBar: function (levelHeight) { ... }, // Used internally to get the variable height rectangle for the indicator.
+    draw: function (level) { ... }, // Draw the slider with the supplied level.
+    autoUpdate: function () { ... }, // Used to update the slider when auto progressing.
+    initAutoValues: function () { ... }, // Used internally.
+    startAutoUpdate: function (intervalSeconds) { ... }, // `intervalSeconds` defaults to 1 second if it's not supplied when `startAutoUpdate` is called.
+    stopAutoUpdate: function () { ... } // Stop auto progressing and clear some related values.
    },
   c: { initLevel: 0, horizontal: false, xStart: 127, width: 44,
     yStart: 4, height: 166, steps: 30, dragableSlider: true,
