@@ -33,6 +33,15 @@ const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 let events;
+const dowLbls = () => {
+  const locale = require('locale').name;
+  const days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+  const d = new Date();
+  return days.map(i => {
+    d.setDate(d.getDate() + (i + 7 - d.getDay()) % 7);
+    return require("locale").dow(d, 1);
+  });
+}();
 
 const loadEvents = () => {
   // all alarms that run on a specific date
@@ -70,15 +79,6 @@ if (settings.ndColors === true) {
   bgOtherEvent = cyan;
 }
 
-const getDowLbls = function(locale) {
-  let days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
-  const d = new Date();
-  return days.map(i => {
-    d.setDate(d.getDate() + (i + 7 - d.getDay()) % 7);
-    return require("locale").dow(d, 1);
-  });
-};
-
 const sameDay = function(d1, d2) {
   "jit";
   return d1.getFullYear() === d2.getFullYear() &&
@@ -104,6 +104,30 @@ const drawEvent = function(ev, curDay, x1, y1, x2, y2) {
       g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
       break;
   }
+};
+
+const calcDays = (month, monthMaxDayMap, dowNorm) => {
+  "jit";
+  const maxDay = colN * (rowN - 1) + 1;
+  const days = [];
+  let nextMonthDay = 1;
+  let thisMonthDay = 51;
+  const month2 = month;
+  let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm + 1;
+
+  for (let i = 0; i < maxDay; i++) {
+    if (i < dowNorm) {
+      days.push(prevMonthDay);
+      prevMonthDay++;
+    } else if (thisMonthDay <= monthMaxDayMap[month] + 50) {
+      days.push(thisMonthDay);
+      thisMonthDay++;
+    } else {
+      days.push(nextMonthDay);
+      nextMonthDay++;
+    }
+  }
+  return days;
 };
 
 const drawCalendar = function(date) {
@@ -144,7 +168,6 @@ const drawCalendar = function(date) {
     true
   );
 
-  let dowLbls = getDowLbls(require('locale').name);
   dowLbls.forEach((lbl, i) => {
     g.drawString(lbl, i * colW + colW / 2, headerH + rowH / 2);
   });
@@ -168,23 +191,7 @@ const drawCalendar = function(date) {
     11: 31
   };
 
-  let days = [];
-  let nextMonthDay = 1;
-  let thisMonthDay = 51;
-  let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm + 1;
-  for (let i = 0; i < colN * (rowN - 1) + 1; i++) {
-    if (i < dowNorm) {
-      days.push(prevMonthDay);
-      prevMonthDay++;
-    } else if (thisMonthDay <= monthMaxDayMap[month] + 50) {
-      days.push(thisMonthDay);
-      thisMonthDay++;
-    } else {
-      days.push(nextMonthDay);
-      nextMonthDay++;
-    }
-  }
-
+  const days = calcDays(month, monthMaxDayMap, dowNorm);
   const weekBeforeMonth = new Date(date.getTime());
   weekBeforeMonth.setDate(weekBeforeMonth.getDate() - 7);
   const week2AfterMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
@@ -194,8 +201,15 @@ const drawCalendar = function(date) {
       ev.date.setFullYear(ev.date.getMonth() < 6 ? week2AfterMonth.getFullYear() : weekBeforeMonth.getFullYear());
     }
   });
-  const eventsThisMonth = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth);
-  eventsThisMonth.sort((a,b) => a.date - b.date);
+
+  const eventsThisMonthPerDay = events.filter(ev => ev.date > weekBeforeMonth && ev.date < week2AfterMonth).reduce((acc, ev) => {
+    const day = ev.date.getDate();
+    if (!acc[day]) {
+      acc[day] = [];
+    }
+    acc[day].push(ev);
+    return acc;
+  }, []);
   let i = 0;
   g.setFont("8x12", fontSize);
   for (y = 0; y < rowN - 1; y++) {
@@ -210,13 +224,14 @@ const drawCalendar = function(date) {
       const x2 = x * colW + colW;
       const y2 = y * rowH + headerH + rowH + rowH;
 
-      if (eventsThisMonth.length > 0) {
+      const eventsThisDay = eventsThisMonthPerDay[curDay.getDate()];
+      if (eventsThisDay && eventsThisDay.length > 0) {
+        eventsThisDay.sort((a,b) => a.date - b.date);
         // Display events for this day
-        eventsThisMonth.forEach((ev, idx) => {
+        eventsThisDay.forEach((ev, idx) => {
           if (sameDay(ev.date, curDay)) {
             drawEvent(ev, curDay, x1, y1, x2, y2);
-
-            eventsThisMonth.splice(idx, 1); // this event is no longer needed
+            eventsThisDay.splice(idx, 1); // this event is no longer needed
           }
         });
       }
