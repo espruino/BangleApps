@@ -55,7 +55,11 @@ const loadEvents = () => {
   });
 };
 
-if (!g.theme.dark) {
+if (settings.ndColors === undefined) {
+  settings.ndColors = !g.theme.dark;
+}
+
+if (settings.ndColors === true) {
   bgColor = white;
   bgColorMonth = blue;
   bgColorDow = black;
@@ -100,7 +104,7 @@ const drawEvent = function(ev, curDay, x1, y1, x2, y2) {
       g.setColor(bgOtherEvent).fillRect(x1+1, y1+1, x2-1, y2-1);
       break;
   }
-}
+};
 
 const drawCalendar = function(date) {
   g.setBgColor(bgColor);
