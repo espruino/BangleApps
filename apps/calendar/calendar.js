@@ -33,7 +33,7 @@ const timeutils = require("time_utils");
 let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 let events;
-const dowLbls = () => {
+const dowLbls = function() {
   const locale = require('locale').name;
   const days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
   const d = new Date();
