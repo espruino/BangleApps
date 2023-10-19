@@ -1,7 +1,7 @@
 {
   "id": "astral",
   "name": "Astral Clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting. See Readme before using.",
   "icon": "app-icon.png",
   "type": "clock",

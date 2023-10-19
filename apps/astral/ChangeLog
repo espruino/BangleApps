@@ -3,3 +3,4 @@
 0.03: Update to use Bangle.setUI instead of setWatch
 0.04: Tell clock widgets to hide.
 0.05: Added adjustment for Bangle.js magnetometer heading fix
+0.06: optimized to update much faster
