@@ -18,19 +18,18 @@ const red = "#d41706";
 const blue = "#0000ff";
 const yellow = "#ffff00";
 const cyan = "#00ffff";
-let bgColor = color4;
-let bgColorMonth = color1;
-let bgColorDow = color2;
-let bgColorWeekend = color3;
-let fgOtherMonth = gray1;
-let fgSameMonth = white;
-let bgEvent = blue;
-let bgOtherEvent = "#ff8800";
+let bgColor;
+let bgColorMonth;
+let bgColorDow;
+let bgColorWeekend;
+let fgOtherMonth;
+let fgSameMonth;
+let bgEvent;
+let bgOtherEvent;
 const eventsPerDay=6; // how much different events per day we can display
 const date = new Date();
 
 const timeutils = require("time_utils");
-let settings = require('Storage').readJSON("calendar.json", true) || {};
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 let events;
 const dowLbls = function() {
@@ -64,20 +63,31 @@ const loadEvents = () => {
   });
 };
 
-if (settings.ndColors === undefined) {
-  settings.ndColors = !g.theme.dark;
-}
-
-if (settings.ndColors === true) {
-  bgColor = white;
-  bgColorMonth = blue;
-  bgColorDow = black;
-  bgColorWeekend = yellow;
-  fgOtherMonth = blue;
-  fgSameMonth = black;
-  bgEvent = color2;
-  bgOtherEvent = cyan;
-}
+const loadSettings = () => {
+  let settings = require('Storage').readJSON("calendar.json", true) || {};
+  if (settings.ndColors === undefined) {
+    settings.ndColors = !g.theme.dark;
+  }
+  if (settings.ndColors === true) {
+    bgColor = white;
+    bgColorMonth = blue;
+    bgColorDow = black;
+    bgColorWeekend = yellow;
+    fgOtherMonth = blue;
+    fgSameMonth = black;
+    bgEvent = color2;
+    bgOtherEvent = cyan;
+  } else {
+    bgColor = color4;
+    bgColorMonth = color1;
+    bgColorDow = color2;
+    bgColorWeekend = color3;
+    fgOtherMonth = gray1;
+    fgSameMonth = white;
+    bgEvent = blue;
+    bgOtherEvent = "#ff8800";
+  }
+};
 
 const sameDay = function(d1, d2) {
   "jit";
@@ -274,6 +284,7 @@ const showMenu = function() {
     /*LANG*/"Settings": () => {
       const appSettings = eval(require('Storage').read('calendar.settings.js'));
       appSettings(() => {
+        loadSettings();
         loadEvents();
         showMenu();
       });
@@ -345,6 +356,7 @@ const setUI = function() {
   });
 };
 
+loadSettings();
 loadEvents();
 Bangle.loadWidgets();
 require("Font8x12").add(Graphics);
