@@ -15,3 +15,5 @@
       Display events for current month on touch
 0.14: Add support for holidays
 0.15: Edit holidays on device in settings
+0.16: Add menu to fast open settings to edit holidays
+      Display Widgets in menus

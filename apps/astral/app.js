@@ -534,14 +534,7 @@ function mean_sidereal_time(lon) {
     var mst = 280.46061837 + 360.98564736629 * jd
         + 0.000387933 * jt * jt - jt * jt * jt / 38710000 + lon;
 
-    if (mst > 0.0) {
-        while (mst > 360.0)
-            mst = mst - 360.0;
-    }
-    else {
-        while (mst < 0.0)
-            mst = mst + 360.0;
-    }
+    mst %=360;
     return mst;
 }
 

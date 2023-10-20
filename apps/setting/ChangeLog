@@ -72,3 +72,5 @@ of 'Select Clock'
 0.63: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds
       Remove 'beta' label from passkey - it's been around for a while and works ok
 0.64: Default to wakeOnTwist being off
+0.65: Prepend 'LCD->Calibration' touch listener and stop event propagation.
+

@@ -3,3 +3,4 @@
 0.03: Do not clear outside of widget bar
 0.04: Fork `widminbat`->`widminbate`. Only use the system theme foreground
 	colour.
+0.05: Fix broken fork which removed the `update` function
