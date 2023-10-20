@@ -236,7 +236,6 @@ const drawCalendar = function(date) {
 
       const eventsThisDay = eventsThisMonthPerDay[curDay.getDate()];
       if (eventsThisDay && eventsThisDay.length > 0) {
-        eventsThisDay.sort((a,b) => a.date - b.date);
         // Display events for this day
         eventsThisDay.forEach((ev, idx) => {
           if (sameDay(ev.date, curDay)) {
