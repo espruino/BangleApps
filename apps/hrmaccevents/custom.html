@@ -5,7 +5,6 @@
  </head>
  <body>
 <script src="../../core/lib/customize.js"></script>
-<script src="https://www.puck-js.com/puck.js"></script>
 <p>
 <div class="form-group">
   <label class="form-switch">
@@ -15,7 +14,7 @@
 </div>
 </p>
 <p>
-  <button id="btnConnect" class="btn btn-primary">Start</button>
+  <button id="btnStart" class="btn btn-primary">Start</button>
   <button id="btnStop" class="btn btn-secondary">Stop</button>
   <button id="btnReset" class="btn btn-secondary">Reset</button>
   <button id="btnSave" class="btn btn-primary">Save CSV</button>
@@ -181,15 +180,11 @@ function createCode(){
   `;
 }
 
-var connection;
+var isConnected = false;
 var lineCount=-1;
 
 function stop (){
-  connection.reconnect((c)=>{
-    c.write("load();\n");
-    c.close();
-    connection = undefined;
-  });
+  Puck.write("load();\n");
 }
 
 function updateButtons(){
@@ -206,24 +201,15 @@ document.getElementById("chkLocal").addEventListener("click", function() {
   updateButtons();
 });
 
-window.addEventListener("message", function(event) {
-  let msg = event.data;
-  if (msg.type=="readstoragefilersp") {
-    Util.saveCSV("log", msg.data);
-  }
-}, false);
-
 document.getElementById("btnDownload").addEventListener("click", function() {
-  if (connection) {
-    stop();
-  }
+  stop();
   console.log("Loading data from BangleJs...");
-  try {
-    window.postMessage({type:"readstoragefile",data:"log.csv",id:0});
-  } catch(ex) {
-      console.log("(Warning) Could not load apikey from BangleJs.");
-      console.log(ex);
-  }
+  isConnected = false;
+  setTimeout(function() {
+    Util.readStorageFile("log.csv",function(data) {
+      Util.saveCSV("log", data);
+    });
+  }, 1000);
 });
 
 document.getElementById("btnSave").addEventListener("click", function() {
@@ -235,62 +221,56 @@ function reset(){
 }
 
 document.getElementById("btnReset").addEventListener("click", function() {
-  if (connection) {
-    stop();
-  }
+  Puck.write("load();\n");
+  isConnected = false;
   lineCount=-1;
   localStorage.removeItem("data");
   reset();
 });
 
 document.getElementById("btnStop").addEventListener("click", function() {
-  if (connection) {
-    stop();
-  }
+  stop();
+  isConnected = false;
 });
 
-function connect(connectionHandler){
-  Puck.connect(function(c) {
-    if (!c) {
-      console.log("Couldn't connect!\n");
-      return;
-    }
-    connection = c;
-    connectionHandler(c);
-  });
-}
-
-document.getElementById("btnConnect").addEventListener("click", function() {
+document.getElementById("btnStart").addEventListener("click", function() {
   localStorage.setItem("data", "");
   lineCount=-1;
-  if (connection) {
-    stop();
-    document.getElementById("result").innerText="0";
-  }
-  connect(function(connection) {
-    var buf = "";
-    connection.on("data", function(d) {
-      buf += d;
-      var l = buf.split("\n");
-      buf = l.pop();
-      l.forEach(onLine);
-    });
-    connection.write("reset();\n", function() {
-      setTimeout(function() {
-        connection.write("\x03\x10if(1){"+createCode()+"}\n",
-          function() { console.log("Ready..."); });
-      }, 1500);
-    });
+  document.getElementById("result").innerText="0";
+
+  Puck.write("reset();\n", function() {
+    setTimeout(function() {
+      Puck.write("\x03\x10if(1){"+createCode()+"}\n",
+        function() {
+          console.log("Ready...");
+          isConnected = true;
+        }
+      );
+    }, 1500);
   });
 });
 
 function onLine(line) {
   console.log("RECEIVED:"+line);
+  if (!isConnected) return;
   if (line.startsWith("DATA:")){
     localStorage.setItem("data", localStorage.getItem("data") + line.substr(5) + "\n");
     lineCount++;
     document.getElementById("result").innerText="Captured events: " + lineCount;
   }
+}
+
+var buf = "";
+Puck.on("data", function(d) {
+  buf += d;
+  var l = buf.split("\n");
+  buf = l.pop();
+  l.forEach(onLine);
+});
+
+
+function onInit(info) {
+
 }
 </script>
  </body>
