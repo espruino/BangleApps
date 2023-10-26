@@ -114,5 +114,6 @@ function swipeHandler(e,d) {
 
 Bangle.on("touch", touchHandler);
 Bangle.on("swipe", swipeHandler);
+setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
 g.clear();
 drawPage(curPage);
