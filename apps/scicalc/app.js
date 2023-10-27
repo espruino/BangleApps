@@ -70,7 +70,7 @@ function compute() {
   console.log(processInp(inputStr));
   try { res = eval(processInp(inputStr)); }
   catch(e) { res = "error"; }
-  inputStr = res === undefined ? '' : res;
+  inputStr = res === undefined ? '' : res.toString();
   qResult = true;
   updateDisp(inputStr, 19);
 }
@@ -99,7 +99,7 @@ function touchHandler(e, d) {
   updateDisp(inputStr, 32);
 }
 
-function swipeHandler(e,d) {
+function swipeHandler(d,e) {
   curPage -= e;
   if (curPage>buttons.length-1) curPage = 0;
   if (curPage<0) curPage = buttons.length-1;
@@ -112,8 +112,12 @@ function swipeHandler(e,d) {
   }
 }
 
-Bangle.on("touch", touchHandler);
-Bangle.on("swipe", swipeHandler);
-setWatch(() => load(), BTN, { repeat: false, edge: "falling" });
+Bangle.setUI({
+  mode : "custom",
+  touch : touchHandler,
+  swipe : swipeHandler,
+  btn : () => load(),
+});
+
 g.clear();
 drawPage(curPage);
