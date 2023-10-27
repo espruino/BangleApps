@@ -8,6 +8,9 @@ var fileClosed = 0;
 var Storage = require("Storage");
 var file;
 
+var screenSize = g.getHeight();
+
+
 function exists(name){
   s = require('Storage');
   var fileList = s.list();
@@ -23,28 +26,27 @@ function exists(name){
 
 function update_timer() {
     g.clear();
-    g.setColor("#00ff7f");
+    g.setColor("#CC00CC");
     g.setFont("6x8", 4);
     g.setFontAlign(0, 0); // center font
 
-    g.drawString(counter, 120, 120);
+    g.drawString(counter, screenSize/2, screenSize/2);
     g.setFont("6x8", 2);
-    g.setFontAlign(-1, -1);
-    g.drawString("-", 220, 200);
-    g.drawString("+", 220, 40);
-    g.drawString("GO", 210, 120);
-
-    g.setColor("#ffffff");
-    g.setFontAlign(0, 0); // center font
-    g.drawString("Timer (minutes)", 120, 90);
-
-    g.setFont("6x8", 4); // bitmap font, 8x magnified
+    //g.setFontAlign(-1, -1);
+    g.drawString("+", screenSize-10, screenSize/2);
+    g.drawString("-", 10, screenSize/2);
+    g.drawString("GO",screenSize/2 , (screenSize/2)+(screenSize/5));
+    //g.setColor("#ffffff");
+    //g.setFontAlign(0, 0); // center font
+    g.drawString("Timer(minutes)", screenSize/2+5,screenSize/4 );
+    g.setFont("6x8", 4);
+    g.drawString("^",screenSize/2 , 150);
 
     if (!logging_started)
         g.flip();
 }
 
-function btn1Pressed() {
+function btn2Pressed() {
     if (!logging_started) {
         if (counter < 120)
             counter += 15;
@@ -64,7 +66,7 @@ function btn3Pressed() {
     }
 }
 
-function btn2Pressed() {
+function btn1Pressed() {
   if (!logging_started) {
       var filename = "";
       var fileset = false;
@@ -112,7 +114,7 @@ function countDown() {
     if (counter <= 0 && fileClosed == 0) {
         Bangle.setHRMPower(0);
         clearInterval(interval);
-        g.drawString("Finished", g.getWidth() / 2, g.getHeight() / 2);
+        g.drawString("Done", g.getWidth() / 2, g.getHeight() / 2);
         Bangle.buzz(500, 1);
         fileClosed = 1;
     }
@@ -120,14 +122,36 @@ function countDown() {
         g.drawString(fmtMSS(counter), g.getWidth() / 2, g.getHeight() / 2);
 }
 
+var HRVal = 0;
+var HRConfidence = 0;
+
 update_timer();
 
 setWatch(btn1Pressed, BTN1, { repeat: true });
-setWatch(btn2Pressed, BTN2, { repeat: true });
-setWatch(btn3Pressed, BTN3, { repeat: true });
+//setWatch(btn2Pressed, BTN2, { repeat: true });
+//setWatch(btn3Pressed, BTN3, { repeat: true });
+
+Bangle.on("swipe",function(directionLR, directionUD){
+    if (1==directionLR){
+        btn1Pressed();
+    }
+    else if (-1==directionUD || directionUD==1){
+        btn2Pressed();
+    }
+   else if(directionLR == -1){
+        btn3Pressed();
+     }
+ });
 
 Bangle.on('HRM-raw', function (hrm) {
         value = hrm.raw;
         filt = hrm.filt;
-        file.write(value + "," + filt + "," + "\n");
+        //var dataArray = [value,filt,HRVal,HRConfidence];
+        file.write(value + "," + filt + "\n");
 });
+/*
+Bangle.on('HRM', function (hrmB) {
+        HRVal = hrmB.bpm;
+        HRConfidence = hrmB.confidence;
+});
+*/
