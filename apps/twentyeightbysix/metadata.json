@@ -8,10 +8,7 @@
   "type":"clock",
   "storage": [
     {"name":"twentyeightbysix.app.js","url":"app.js"},
-    {"name":"twentyeightbysix.boot.js","url":"boot.js"},
-    {"name":"twentyeightbysix.js","url":"twentyeightbysix.js"},
-    {"name":"twentyeightbysix.img","url":"app-icon.js","evaluate":true},
-    {"name":"twentyeightbysix.wid.js","url":"widget.js"}
+    {"name":"twentyeightbysix.img","url":"app-icon.js","evaluate":true}
   ],
   "supports": ["BANGLEJS"]
 }
