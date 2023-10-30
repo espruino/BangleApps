@@ -45,7 +45,7 @@ let yint; // y-intercept for sea leve line
 const Locale = require("locale");
 const SunCalc = require("suncalc");
 
-let alt; // altitude
+let alt = 0; // altitude
 
 let daystart = new Date();
 daystart.setHours(0);
@@ -53,9 +53,12 @@ daystart.setMinutes(0);
 daystart.setSeconds(0);
 
 function getAltitude () {
-  Bangle.getPressure().then(d=>{
-    alt = d.altitude;
-  });
+  const p = Bangle.getPressure();
+  if (p) {
+    p.then(d => {
+      if (d) alt = d.altitude;
+    });
+  }
 }
 
 function drawSinuses () {
