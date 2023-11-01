@@ -236,13 +236,18 @@ function initialAnimation () {
   initialAnimationFrame();
 }
 
+function renderAndQueue() {
+  setTimeout(renderAndQueue, 60000 - (Date.now() % 60000));
+  renderScreen();
+}
+
 function main () {
   g.setBgColor(0, 0, 0);
   g.clear();
 
   initDay();
-
-  setInterval(renderScreen, 60 * 1000);
+  
+  renderAndQueue();
   initialAnimation();
 }
 
