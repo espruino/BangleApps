@@ -358,13 +358,18 @@ function initialAnimation () {
   initialAnimationFrame();
 }
 
+function renderAndQueue() {
+  setTimeout(renderAndQueue, 60000 - (Date.now() % 60000));
+  renderScreen();
+}
+
 function main () {
   sunRiseX = xfromTime(sunrise.getHours() + sunrise.getMinutes() / 60);
   sunSetX = xfromTime(sunset.getHours() + sunset.getMinutes() / 60);
   
   g.setBgColor(0, 0, 0);
   g.clear();
-  setInterval(renderScreen, 60 * 1000);
+  renderAndQueue();
   initialAnimation();
 }
 
