@@ -63,16 +63,16 @@ function getAltitude () {
 
 function drawSinuses () {
   // messy because 1d array for 2 axes
-  const sinStep = 20;
+  let array = [];
+  const sinStep = 12;
   let i;
   g.setColor(1, 1, 1);
 
   for (i = 0; i <= sineLUT.length - sinStep; i += sinStep) {
-    g.drawLine(sineLUT[i], sineLUT[1 + i],
-               sineLUT[sinStep + i], sineLUT[sinStep + 1 + i]);
+    array.push(sineLUT[i], sineLUT[1 + i]);
   }
-  g.drawLine(sineLUT[i], sineLUT[1 + i],
-             sineLUT[sineLUT.length - 2], sineLUT[sineLUT.length - 1]);
+  array.push(sineLUT[sineLUT.length - 2], sineLUT[sineLUT.length - 1]);
+  g.drawPoly(array, false);
 }
 
 function calcSeaLevel () {
