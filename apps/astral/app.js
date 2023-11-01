@@ -850,6 +850,8 @@ g.setBgColor(0, 0, 0);
 g.fillRect(0, 0, 175, 175);
 current_moonphase = getMoonPhase();
 
+Bangle.setUI("clock");
+
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -864,8 +866,6 @@ Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
 
 var secondInterval;
-
-Bangle.setUI("clock");
 
 autoUpdate();
 
