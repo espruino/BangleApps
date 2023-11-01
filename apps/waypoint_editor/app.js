@@ -26,8 +26,10 @@ function mainMenu() {
   var menu = {
     "< Back" : Bangle.load
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"NO WPs":""});
-  else for (let id in wp) {
+  if (Object.keys(wp).length==0) {
+    //Object.assign(menu, {"NO WPs":""});
+    print("(no waypoints)");
+  } else for (let id in wp) {
     let i = id;
     menu[wp[id]["name"]]=()=>{ decode(i); };
   }
@@ -74,7 +76,8 @@ function stopGps() {
   Bangle.setGPSPower(0, "waypoint_editor");
 }
 
-function confirmGps() {
+function confirmGps(s) {
+  key = s;
         var la = new Layout (
           {type:"v", c: [
             {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
@@ -95,7 +98,9 @@ function markGps() {
   cancel_gps = false;
   Bangle.setGPSPower(1, "waypoint_editor");
   gps_start = getTime();
-  showNumpad("mkXX", "mark", confirmGps);
+  require("textinput").input({text:"wp"}).then(key => {
+    confirmGps(key);
+  });
 }
 
 function setFormat() {
@@ -311,8 +316,17 @@ function createWP(lat, lon, name) {
       writeWP();
 }
 
+function addCardName(name) {
+    g.clear();
+    askPosition(function(lat, lon) {
+      print("position -- ", lat, lon);
+      createWP(lat, lon, result);
+      mainMenu();
+    });
+}
+
 function addCard() {
-  showNumpad("wpXX", "wp", function() {
+  require("textinput").input({text:"wp"}).then(key => {
     result = key;
     if (wp[result]!=undefined) {
             E.showMenu();
@@ -321,19 +335,14 @@ function addCard() {
                 {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
                 {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
                 {type:"h", c: [
-                  {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{encodeCard(result);}},
+                  {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{addCardName(result);}},
                   {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
                 ]}
               ], lazy:true});
             g.clear();
             alreadyExists.render();
-          }
-    g.clear();
-    askPosition(function(lat, lon) {
-      print("position -- ", lat, lon);
-      createWP(lat, lon, result);
-      mainMenu();
-    });
+    }
+    addCardName(result);
   });
 }
 
