@@ -41,23 +41,25 @@ const minutesByQuarterString = {
 
 const width = g.getWidth();
 const height = g.getHeight();
-let idTimeout = null;
+let drawTimeout;
 
 const getNearestHour = (hours, minutes) => {
-  if (minutes > 49){
+  if (minutes > 54) {
     return hours + 1;
   }
   return hours;
 };
 
 const getApproximatePrefix = (minutes, minutesByQuarter) => {
-  if (minutes === minutesByQuarter){
+  if (minutes === minutesByQuarter) {
     return " exactly";
-  } else if (minutesByQuarter - minutes < -5){
+  } else if (minutesByQuarter - minutes < -54) {
+    return " nearly";
+  } else if (minutesByQuarter - minutes < -5) {
     return " after";
-  } else if (minutesByQuarter - minutes < 0){
-           return " just after";
-  } else if (minutesByQuarter - minutes > 5){
+  } else if (minutesByQuarter - minutes < 0) {
+    return " just after";
+  } else if (minutesByQuarter - minutes > 5) {
     return " before";
   } else {
     return " nearly";
@@ -65,16 +67,27 @@ const getApproximatePrefix = (minutes, minutesByQuarter) => {
 };
 
 const getMinutesByQuarter = minutes => {
-  if (minutes < 10){
+  if (minutes < 10) {
     return 0;
   } else if (minutes < 20) {
     return 15;
-  } else if (minutes < 40){
+  } else if (minutes < 40) {
     return 30;
-  } else {
+  } else if (minutes < 55) {
     return 45;
+  } else {
+    return 0;
   }
 };
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function () {
+    drawTimeout = undefined;
+    drawTime();
+  }, 60000 - (Date.now() % 60000));
+}
 
 const drawTime = () => {
   //Grab time vars
@@ -82,34 +95,33 @@ const drawTime = () => {
   var hour = date.getHours();
   var minutes = date.getMinutes();
   var minutesByQuarter = getMinutesByQuarter(minutes);
-  
+
   //reset graphics
   g.clear();
   g.reset();
-  
+
   //Build watch face
-  g.setBgColor(0,0,0);
+  g.setBgColor(0, 0, 0);
   g.clearRect(0, 0, width, height);
   g.setFont("Vector", 22);
-  g.setColor(1,1,1);
-  g.drawString("It's" + getApproximatePrefix(minutes, minutesByQuarter), (width - g.stringWidth("It's" + getApproximatePrefix(minutes, minutesByQuarter)))/2, height * 0.25, false);
+  g.setColor(1, 1, 1);
+  g.drawString("It's" + getApproximatePrefix(minutes, minutesByQuarter), (width - g.stringWidth("It's" + getApproximatePrefix(minutes, minutesByQuarter))) / 2, height * 0.25, false);
   g.setFont("Vector", 30);
-  g.drawString(numbers[getNearestHour(hour, minutes)], (width - g.stringWidth(numbers[getNearestHour(hour, minutes)]))/2, height * 0.45, false);
+  g.drawString(numbers[getNearestHour(hour, minutes)], (width - g.stringWidth(numbers[getNearestHour(hour, minutes)])) / 2, height * 0.45, false);
   g.setFont("Vector", 22);
-  g.drawString(minutesByQuarterString[minutesByQuarter], (width - g.stringWidth(minutesByQuarterString[minutesByQuarter]))/2, height * 0.7, false);
-  let d = Date();
-  let t = d.getSeconds()*1000 + d.getMilliseconds();
-  idTimeout = setTimeout(drawTime, 60000 - t);
+  g.drawString(minutesByQuarterString[minutesByQuarter], (width - g.stringWidth(minutesByQuarterString[minutesByQuarter])) / 2, height * 0.7, false);
+
+  queueDraw();
 };
 
 g.clear();
 drawTime();
 
-Bangle.on('lcdPower', function(on){
+Bangle.on('lcdPower', function (on) {
   if (on) {
     drawTime();
   } else {
-    if(idTimeout) {
+    if (idTimeout) {
       clearTimeout(idTimeout);
     }
   }
