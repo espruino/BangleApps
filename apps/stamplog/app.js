@@ -19,7 +19,8 @@ const SETTINGS = Object.assign({
   logFont: '12x20',
   logFontHSize: 1,
   logFontVSize: 1,
-  maxLogLength: 30
+  maxLogLength: 30,
+  rotateLog: false,
 }, storage.readJSON(SETTINGS_FILENAME, true) || {});
 
 function saveSettings() {
@@ -167,6 +168,11 @@ class StampLog {
   deleteEntries(entries) {
     this.log = this.log.filter(entry => !entries.includes(entry));
     this.setDirty();
+  }
+  
+  // Does the log currently contain the maximum possible number of entries?
+  isFull() {
+    return this.log.length >= this.maxLength;
   }
 }
 
@@ -339,7 +345,21 @@ class MainScreen {
     }
 
     if (!item || item == 'buttons') {
-      this.layout.addBtn.label = getIcon('add') + ' ' + locale.time(new Date(), 1).trim();
+      let addBtn = this.layout.addBtn;
+
+      if (!SETTINGS.rotateLog && this.stampLog.isFull()) {
+        // Dimmed appearance for unselectable button
+        addBtn.btnFaceCol = g.blendColor(g.theme.bg2, g.theme.bg, 0.5);
+        addBtn.btnBorderCol = g.blendColor(g.theme.fg2, g.theme.bg, 0.5);
+
+        addBtn.label = 'Log full';
+      } else {
+        addBtn.btnFaceCol = g.theme.bg2;
+        addBtn.btnBorderCol = g.theme.fg2;
+
+        addBtn.label = getIcon('add') + ' ' + locale.time(new Date(), 1).trim();
+      }
+
       this.layout.render(this.layout.buttons);
 
       // Auto-update time of day indication on log-add button upon
@@ -386,10 +406,13 @@ class MainScreen {
     Bangle.on('drag', this.listeners.drag);
   }
 
-  // Add current timestamp to log and update UI display
+  // Add current timestamp to log if possible and update UI display
   addTimestamp() {
-    this.stampLog.addEntry();
-    this.scroll('b');
+    if (SETTINGS.rotateLog || !this.stampLog.isFull()) {
+      this.stampLog.addEntry();
+      this.scroll('b');
+      this.render('buttons');
+    }
   }
 
   // Get scroll information for log display
@@ -462,6 +485,12 @@ function settingsMenu() {
       onchange: v => {
         SETTINGS.maxLogLength = v;
         stampLog.maxLength = v;
+      }
+    },
+    'Rotate log entries': {
+      value: SETTINGS.rotateLog,
+      onchange: v => {
+        SETTINGS.rotateLog = !SETTINGS.rotateLog;
       }
     },
     'Log font': {
