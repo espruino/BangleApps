@@ -3,3 +3,4 @@
 0.03: Swipe down to see widgets
       Support for fast loading
 0.04: Localisation request: added Miles and AM/PM
+0.05: Prevent exceptions from halting the draw cycle
