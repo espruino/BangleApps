@@ -2,20 +2,23 @@ const HARDWARE_VERSION = process.env.HWVERSION;
 
 
 const timeWidth = 42;
-const screenWidth = HARDWARE_VERSION == 1 ? 239: 176;
-const screenHeight = HARDWARE_VERSION == 1 ? 239: 176;
+const screenWidth = HARDWARE_VERSION == 1 ? 239: 175;
+const screenHeight = HARDWARE_VERSION == 1 ? 239: 175;
 
 const weirdDayWidth = 28;
-const weirdWeekDayHeight = HARDWARE_VERSION == 1 ? 230: 172;
-const weirdSleepDayHeight = HARDWARE_VERSION == 1 ? 213: 159;
+const weirdWeekDayHeight = HARDWARE_VERSION == 1 ? 230: 166;
+const weirdSleepDayHeight = HARDWARE_VERSION == 1 ? 213: 149;
 const weirdAwakeHours = 19;
 const weirdSleepHours = 9;
 
-const normalDayWidth = 24;
+const normalDayWidth = HARDWARE_VERSION == 1 ? 24: 28;
 const normalWeekDayHeight = 10;
 const normalSleepDayHeight = 28;
 const normalAwakeHours = 15;
 const normalSleepHours = 9;
+
+const timeSetHeight = HARDWARE_VERSION == 1 ? 30: 34;
+const timeSetDistance = HARDWARE_VERSION == 1 ? 50: 29;
 
 const backgroundColor = "#2c2e3a";
 const mainTextColor = "#FFFFFF";
@@ -431,7 +434,7 @@ function getNormalEvent(date) {
     }
     return "Lunch";
   }
-  else if(date.hour == 7) {
+  else if(date.hour == 18) {
     if(date.minute <= 15) {
       return "Starting Dinner";
     }
@@ -459,7 +462,10 @@ function getNormalEvent(date) {
 }
 
 function getWeirdEvent(date) {
-  if(date.hour == 8) {
+  if (date.hour == 0) {
+    return "The Void";
+  }
+  else if(date.hour == 8) {
     if(date.minute <= 15) {
       return "Starting Breakfast";
     }
@@ -468,6 +474,9 @@ function getWeirdEvent(date) {
     }
     return "Breakfast";
   }
+  else if(date.hour == 13) {
+    return "Mid-day Nothingness";
+  }
   else if(date.hour == 14) {
     if(date.minute <= 15) {
       return "Starting Lincoln Lunch";
@@ -475,7 +484,7 @@ function getWeirdEvent(date) {
     else if(date.minute >= 45) {
       return "Ending Lincoln Lunch";
     }
-    return "Lincoln Lunch";
+    return "Forescoreteen! Lincoln Lunch";
   }
   else if(date.hour == 23) {
     if(date.minute <= 15) {
@@ -485,6 +494,9 @@ function getWeirdEvent(date) {
       return "Ending Dinner";
     }
     return "Dinner";
+  }
+  else if(date.hour == 27) {
+    return "Threeteen";
   }
   else if(date.dayText == "Saturday" || date.dayText == "Sunday") {
     if(date.dayText == "Sunday" && date.hour == 27 && date.minute >= 45) {
@@ -513,7 +525,7 @@ function getWeirdHourLabel(hour){
   }
   else if(hour == 27) {
     return ["", "Threeteen", ""];
-  } else if (hour == 28) {
+  } else if (hour == 0) {
     return ["", "The Void", ""];
   }
   return ["", "", ""];
@@ -537,26 +549,45 @@ function printTime(thisDate, isShowTime) {
     g.drawString(weirdTime, (screenWidth / 2) + 3,  (screenHeight / 2) + 3);
 
     g.setFont("6x8", 2);
-    g.drawString(normalTime, screenWidth / 2 + 3, 84);
+    if (HARDWARE_VERSION == 1) {
+      g.drawString(normalTime, screenWidth / 2 + 3, 84);
 
-    g.setFont("6x8", 1);
-    var threeLabels = getWeirdHourLabel(weirdDate.hour);
-    g.drawString(threeLabels[0], screenWidth / 2 + 3, weirdSleepDayHeight - 70);
-    g.drawString(threeLabels[1], screenWidth / 2 + 3, weirdSleepDayHeight - 60);
-    g.drawString(threeLabels[2], screenWidth / 2 + 3, weirdSleepDayHeight - 50);
+      g.setFont("6x8", 1);
+      var threeLabels = getWeirdHourLabel(weirdDate.hour);
+      g.drawString(threeLabels[0], screenWidth / 2 + 3, weirdSleepDayHeight - 70);
+      g.drawString(threeLabels[1], screenWidth / 2 + 3, weirdSleepDayHeight - 60);
+      g.drawString(threeLabels[2], screenWidth / 2 + 3, weirdSleepDayHeight - 50);
+  
+    } 
+    else {
+      g.drawString(normalTime, screenWidth / 2 + 3, 64);
+    }
 
   } else {
-    g.setFont("6x8", 1);
-    g.drawString(quotes[quoteId][0], (screenWidth / 2) + 1,  (screenHeight / 2) - 25);
-    g.drawString(quotes[quoteId][1], (screenWidth / 2) + 1,  (screenHeight / 2) - 15);
-    g.drawString(quotes[quoteId][2], (screenWidth / 2) + 1,  (screenHeight / 2) - 5);
-    g.drawString(quotes[quoteId][3], (screenWidth / 2) + 1,  (screenHeight / 2) + 5);
-    g.drawString(quotes[quoteId][4], (screenWidth / 2) + 1,  (screenHeight / 2) + 15);
-    g.drawString(quotes[quoteId][5], (screenWidth / 2) + 1,  (screenHeight / 2) + 25);
 
-    g.setFont("6x8", 1);
-    g.drawString("Forward ->", screenWidth - 40, normalSleepDayHeight + 35);
-    g.drawString("Backwards ->", screenWidth - 40, weirdSleepDayHeight - 35);
+    if (HARDWARE_VERSION == 1) {
+
+      g.setFont("6x8", 1);
+      g.drawString(quotes[quoteId][0], (screenWidth / 2) + 1,  (screenHeight / 2) - 25);
+      g.drawString(quotes[quoteId][1], (screenWidth / 2) + 1,  (screenHeight / 2) - 15);
+      g.drawString(quotes[quoteId][2], (screenWidth / 2) + 1,  (screenHeight / 2) - 5);
+      g.drawString(quotes[quoteId][3], (screenWidth / 2) + 1,  (screenHeight / 2) + 5);
+      g.drawString(quotes[quoteId][4], (screenWidth / 2) + 1,  (screenHeight / 2) + 15);
+      g.drawString(quotes[quoteId][5], (screenWidth / 2) + 1,  (screenHeight / 2) + 25);
+
+      g.setFont("6x8", 1);
+      g.drawString("Forward ->", screenWidth - 40, normalSleepDayHeight + 35);
+      g.drawString("Backwards ->", screenWidth - 40, weirdSleepDayHeight - 35);
+
+    } else {
+      g.setFont("Vector", 36);
+      g.drawString(weirdTime, (screenWidth / 2) + 3,  (screenHeight / 2) + 3);
+  
+      g.setFont("6x8", 2);
+      g.drawString(normalTime, screenWidth / 2 + 3, 64);
+    
+    }
+
   }
 
   g.setFont("6x8", 1);
@@ -579,19 +610,27 @@ function printBackground() {
   g.fillRect(0, normalSleepDayHeight + 9, screenWidth, weirdSleepDayHeight - 9);
 
   g.setColor(mainTextColor);
-  g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
-  g.drawLine(173, screenHeight / 2, screenWidth, screenHeight / 2);
+  if (HARDWARE_VERSION == 1) {
+    g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
+    g.drawLine(173, screenHeight / 2, screenWidth, screenHeight / 2);
+  } else {
+    g.drawLine(0, screenHeight / 2, 32, screenHeight / 2);
+    g.drawLine(140, screenHeight / 2, screenWidth, screenHeight / 2);
+  }
 
   g.setFont("6x8", 2);
-  g.drawString("24x7", 30, normalSleepDayHeight + 50);
-  g.drawString("28x6", 30, weirdSleepDayHeight - 50);
+  g.drawString("24x7", timeSetHeight, normalSleepDayHeight + timeSetDistance);
+  g.drawString("28x6", timeSetHeight, weirdSleepDayHeight - timeSetDistance);
 
   g.setColor(watchColor);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 55);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 54);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 53);
+  if (HARDWARE_VERSION == 1) {
+ 
+    g.drawCircle(screenWidth / 2, screenHeight / 2, 55);
+    g.drawCircle(screenWidth / 2, screenHeight / 2, 54);
+    g.drawCircle(screenWidth / 2, screenHeight / 2, 53);
+    drawClockPointer();
+  }
 
-  drawClockPointer();
 }
 
 var now = new Date();
@@ -670,7 +709,7 @@ if (HARDWARE_VERSION == 1) {
 }
 
 let onSwipe = (x, y) => {
-    if (x == -1) {
+    if (x == 1) {
       var timeBehind = 3600000 * 1;
       if(quoteId <= 0) {
         quoteId = quotes.length - 1;
@@ -687,7 +726,7 @@ let onSwipe = (x, y) => {
       }
       timeout = setTimeout(()=>lookCurrent(), 6000);
     }
-    else if (x == 1) {
+    else if (x == -1) {
       var timeAhead = 3600000 * 1;
       if(quoteId >= quotes.length - 1) {
         quoteId = 0;
@@ -705,7 +744,7 @@ let onSwipe = (x, y) => {
       timeout = setTimeout(()=>lookCurrent(), 6000);
 
     }
-}
+};
 Bangle.on("swipe", onSwipe);
 
 setWatch(Bangle.showLauncher, BTN, { repeat: false, edge: "falling" });
