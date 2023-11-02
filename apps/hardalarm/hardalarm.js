@@ -61,6 +61,25 @@ function showPrompt(msg, buzzCount, alarm) {
   });
 }
 
+function buzz() {
+  Bangle.buzz(500).then(()=>{
+    setTimeout(()=>{
+      Bangle.buzz(500).then(function() {
+        setTimeout(()=>{
+          Bangle.buzz(2000).then(function() {
+            if (buzzCount--)
+              setTimeout(buzz, 2000);
+            else if(alarm.as) { // auto-snooze
+              buzzCount = 20;
+              setTimeout(buzz, 600000); // 10 minutes
+            }
+          });
+        },100);
+      });
+    },100);
+  });
+}
+
 function showAlarm(alarm) {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
   var msg = formatTime(alarm.hr);
@@ -96,26 +115,11 @@ function showAlarm(alarm) {
     }
   }, BTN, {repeat: true, edge: 'rising'});
 
-  function buzz() {
-    Bangle.buzz(500).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(500).then(function() {
-          setTimeout(()=>{
-            Bangle.buzz(2000).then(function() {
-              if (buzzCount--)
-                setTimeout(buzz, 2000);
-              else if(alarm.as) { // auto-snooze
-                buzzCount = 20;
-                setTimeout(buzz, 600000); // 10 minutes
-              }
-            });
-          },100);
-        });
-      },100);
-    });
-  }
+
   buzz();
 }
+
+
 
 // Check for alarms
 var day = (new Date()).getDate();
