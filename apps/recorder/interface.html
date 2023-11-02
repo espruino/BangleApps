@@ -100,6 +100,7 @@ function saveGPX(track, title) {
     let cadence;
     if (pt.Steps && lastTime != 0){
       cadence = pt.Steps * 60000 / (pt.Time.getTime() - lastTime);
+      cadence = cadence / 2; /*Convert from rpm to spm (one cycle is two steps), see https://github.com/espruino/BangleApps/pull/3068#issuecomment-1790041058*/
     }
     lastTime = pt.Time.getTime();
 
