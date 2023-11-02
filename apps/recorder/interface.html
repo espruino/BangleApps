@@ -99,11 +99,11 @@ function saveGPX(track, title) {
   track.forEach(pt=>{
     let cadence;
     if (pt.Steps && lastTime != 0){
-      cadence = pt.Steps * 60000 / (pt.Time.getUTCMilliseconds() - lastTime);
+      cadence = pt.Steps * 60000 / (pt.Time.getTime() - lastTime);
     }
 
-    console.log("lt: " +lastTime + " steps: " + pt.Steps + " cadence: " + cadence + " dt: " + (pt.Time.getUTCMilliseconds() - lastTime) + " pt time " + pt.Time.getUTCMilliseconds() + " last time " + lastTime);
-    lastTime = pt.Time.getUTCMilliseconds();
+    console.log("lt: " +lastTime + " steps: " + pt.Steps + " cadence: " + cadence + " dt: " + (pt.Time.getTime() - lastTime) + " pt time " + pt.Time.getTime() + " last time " + lastTime);
+    lastTime = pt.Time.getTime();
 
     gpx += `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
