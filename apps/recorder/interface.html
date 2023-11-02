@@ -98,9 +98,7 @@ function saveGPX(track, title) {
   let lastTime = 0;
   track.forEach(pt=>{
     let cadence;
-    if (!pt.Steps || lastTime === 0){
-
-    } else {
+    if (pt.Steps && lastTime != 0){
       cadence = pt.Steps * 60000 / (pt.Time.getUTCMilliseconds() - lastTime);
     }
     lastTime = pt.Time.getUTCMilliseconds();
@@ -112,8 +110,7 @@ function saveGPX(track, title) {
         <extensions>
             <gpxtpx:TrackPointExtension>
                 ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}
-                ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>`:``}
-                ${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
+                ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>`:``} ${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
             </gpxtpx:TrackPointExtension>
         </extensions>
       </trkpt>`;
