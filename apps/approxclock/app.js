@@ -32,24 +32,16 @@ const numbers = {
   "24": "Twelve",
 };
 
+const minutesByQuarterString = {
+  0: "O'Clock",
+  15: "Fifteen",
+  30: "Thirty",
+  45: "Fourty-Five"
+};
+
 const width = g.getWidth();
 const height = g.getHeight();
 let idTimeout = null;
-
-const getMinuteString = (minutes) => {
-  if (minutes >= 10 && minutes < 20){
-    return "Fifteen";
-  }
-  else if (minutes >= 20 && minutes < 40) {
-    return "Thirty";
-  }
-  else if (minutes >= 40 && minutes < 50){
-    return "Fourty-Five";
-  }
-  else {
-    return "O'Clock";
-  }
-};
 
 const getNearestHour = (hours, minutes) => {
   if (minutes > 49){
@@ -58,15 +50,29 @@ const getNearestHour = (hours, minutes) => {
   return hours;
 };
 
-const getApproximatePrefix = () => {
-  var date = Date();
-  var minutes = date.getMinutes();
-  
-  if(minutes === 0 || minutes === 15 || minutes === 30 || minutes === 45){
+const getApproximatePrefix = (minutes, minutesByQuarter) => {
+  if (minutes === minutesByQuarter){
     return " exactly";
+  } else if (minutesByQuarter - minutes < -5){
+    return " after";
+  } else if (minutesByQuarter - minutes < 0){
+           return " just after";
+  } else if (minutesByQuarter - minutes > 5){
+    return " before";
+  } else {
+    return " nearly";
   }
-  else{
-    return " about";
+};
+
+const getMinutesByQuarter = minutes => {
+  if (minutes < 10){
+    return 0;
+  } else if (minutes < 20) {
+    return 15;
+  } else if (minutes < 40){
+    return 30;
+  } else {
+    return 45;
   }
 };
 
@@ -75,20 +81,21 @@ const drawTime = () => {
   var date = Date();
   var hour = date.getHours();
   var minutes = date.getMinutes();
+  var minutesByQuarter = getMinutesByQuarter(minutes);
   
   //reset graphics
   g.clear();
   g.reset();
   
-  g.setColor(0,0,0);
-  g.fillRect(0, 0, width, height);
-  g.setFont("Vector", 24);
+  g.setBgColor(0,0,0);
+  g.clearRect(0, 0, width, height);
+  g.setFont("Vector", 22);
   g.setColor(1,1,1);
-  g.drawString("It's about", (width - g.stringWidth("It's" + getApproximatePrefix()))/2, height * 0.2, false);
-  g.setFont("Vector", 24);
-  g.drawString(numbers[getNearestHour(hour, minutes)], (width - g.stringWidth(numbers[getNearestHour(hour, minutes)]))/2, height * 0.4, false);
-  g.setFont("Vector", 24);
-  g.drawString(getMinuteString(minutes), (width - g.stringWidth(getMinuteString(minutes)))/2, height * 0.6, false);
+  g.drawString("It's" + getApproximatePrefix(minutes, minutesByQuarter), (width - g.stringWidth("It's" + getApproximatePrefix(minutes, minutesByQuarter)))/2, height * 0.25, false);
+  g.setFont("Vector", 30);
+  g.drawString(numbers[getNearestHour(hour, minutes)], (width - g.stringWidth(numbers[getNearestHour(hour, minutes)]))/2, height * 0.45, false);
+  g.setFont("Vector", 22);
+  g.drawString(minutesByQuarterString[minutesByQuarter], (width - g.stringWidth(minutesByQuarterString[minutesByQuarter]))/2, height * 0.7, false);
   let d = Date();
   let t = d.getSeconds()*1000 + d.getMilliseconds();
   idTimeout = setTimeout(drawTime, 60000 - t);
