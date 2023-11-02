@@ -95,17 +95,29 @@ function saveGPX(track, title) {
   <trk>
     <name>${title}</name>
     <trkseg>`;
+  let lastTime = 0;
   track.forEach(pt=>{
+    let cadence;
+    if (!pt.Steps || lastTime === 0){
+
+    } else {
+      cadence = pt.Steps * 60000 / (pt.Time.getUTCMilliseconds() - lastTime);
+    }
+    lastTime = pt.Time.getUTCMilliseconds();
+
     gpx += `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
         <ele>${pt.Altitude}</ele>
         <time>${pt.Time.toISOString()}</time>
         <extensions>
             <gpxtpx:TrackPointExtension>
-                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
+                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}
+                ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>`:``}
+                ${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
             </gpxtpx:TrackPointExtension>
         </extensions>
       </trkpt>`;
+
   });
   // https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd
   gpx += `
