@@ -2,6 +2,8 @@
 // 'load(hardalarm.js)' - so let's remove it first!
 clearInterval();
 
+var okClicked = false;
+
 function formatTime(t) {
   var hrs = 0|t;
   var mins = Math.round((t-hrs)*60);
@@ -67,11 +69,8 @@ function buzz() {
       Bangle.buzz(500).then(function() {
         setTimeout(()=>{
           Bangle.buzz(2000).then(function() {
-            if (buzzCount--)
-              setTimeout(buzz, 2000);
-            else if(alarm.as) { // auto-snooze
-              buzzCount = 20;
-              setTimeout(buzz, 600000); // 10 minutes
+            if(!okClicked) {
+              buzz();
             }
           });
         },100);
@@ -86,7 +85,7 @@ function showAlarm(alarm) {
   var buzzCount = 20;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
-  var okClicked = false;
+  okClicked = false;
   var currentGuess = 10;
   var randomNum = getRandomFromRange(0, 7, 13, 20);
   showNumberPicker(currentGuess, randomNum)
