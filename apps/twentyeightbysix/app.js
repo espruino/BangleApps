@@ -1,12 +1,13 @@
 const HARDWARE_VERSION = process.env.HWVERSION;
 
+
 const timeWidth = 42;
-const screenWidth = 239;
-const screenHeight = 239;
+const screenWidth = HARDWARE_VERSION == 1 ? 239: 176;
+const screenHeight = HARDWARE_VERSION == 1 ? 239: 176;
 
 const weirdDayWidth = 28;
-const weirdWeekDayHeight = 230;
-const weirdSleepDayHeight = 213;
+const weirdWeekDayHeight = HARDWARE_VERSION == 1 ? 230: 172;
+const weirdSleepDayHeight = HARDWARE_VERSION == 1 ? 213: 159;
 const weirdAwakeHours = 19;
 const weirdSleepHours = 9;
 
