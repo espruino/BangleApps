@@ -1,3 +1,5 @@
+const HARDWARE_VERSION = process.env.HWVERSION;
+
 const timeWidth = 42;
 const screenWidth = 239;
 const screenHeight = 239;
@@ -627,41 +629,82 @@ function lookCurrent() {
   lookBack = true;
 }
 
-setWatch(() => {
-  var timeAhead = 3600000 * 12;
-  if(quoteId >= quotes.length - 1) {
-    quoteId = 0;
-  } else {
-    quoteId = quoteId + 1;
-  }
-  if(!lookingDate) {
-    lookingDate = new Date();
-  }
-  lookingDate = new Date(lookingDate.getTime() + timeAhead);
-  printTime(lookingDate, false);
-  if(timeout) {
-    clearTimeout(timeout);
-  }
-  timeout = setTimeout(()=>lookCurrent(), 3000);
-}, BTN1, { repeat: true, edge: "falling" });
+if (HARDWARE_VERSION == 1) {
+  setWatch(() => {
 
-setWatch(() => {
+    var timeBehind = 3600000 * 12;
+    if(quoteId <= 0) {
+      quoteId = quotes.length - 1;
+    } else {
+      quoteId = quoteId - 1;
+    }
+    if(!lookingDate) {
+      lookingDate = new Date();
+    }
+    lookingDate = new Date(lookingDate.getTime() - timeBehind);
+    printTime(lookingDate, false);
+    if(timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(()=>lookCurrent(), 6000);
+  }, BTN2, { repeat: true, edge: "falling" });
 
-  var timeBehind = 3600000 * 12;
-  if(quoteId <= 0) {
-    quoteId = quotes.length - 1;
-  } else {
-    quoteId = quoteId - 1;
-  }
-  if(!lookingDate) {
-    lookingDate = new Date();
-  }
-  lookingDate = new Date(lookingDate.getTime() - timeBehind);
-  printTime(lookingDate, false);
-  if(timeout) {
-    clearTimeout(timeout);
-  }
-  timeout = setTimeout(()=>lookCurrent(), 3000);
-}, BTN3, { repeat: true, edge: "falling" });
+  setWatch(() => {
+    var timeAhead = 3600000 * 12;
+    if(quoteId >= quotes.length - 1) {
+      quoteId = 0;
+    } else {
+      quoteId = quoteId + 1;
+    }
+    if(!lookingDate) {
+      lookingDate = new Date();
+    }
+    lookingDate = new Date(lookingDate.getTime() + timeAhead);
+    printTime(lookingDate, false);
+    if(timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(()=>lookCurrent(), 6000);
+  }, BTN3, { repeat: true, edge: "falling" });
+}
 
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+let onSwipe = (x, y) => {
+    if (x == -1) {
+      var timeBehind = 3600000 * 1;
+      if(quoteId <= 0) {
+        quoteId = quotes.length - 1;
+      } else {
+        quoteId = quoteId - 1;
+      }
+      if(!lookingDate) {
+        lookingDate = new Date();
+      }
+      lookingDate = new Date(lookingDate.getTime() - timeBehind);
+      printTime(lookingDate, false);
+      if(timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(()=>lookCurrent(), 6000);
+    }
+    else if (x == 1) {
+      var timeAhead = 3600000 * 1;
+      if(quoteId >= quotes.length - 1) {
+        quoteId = 0;
+      } else {
+        quoteId = quoteId + 1;
+      }
+      if(!lookingDate) {
+        lookingDate = new Date();
+      }
+      lookingDate = new Date(lookingDate.getTime() + timeAhead);
+      printTime(lookingDate, false);
+      if(timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(()=>lookCurrent(), 6000);
+
+    }
+}
+Bangle.on("swipe", onSwipe);
+
+setWatch(Bangle.showLauncher, BTN, { repeat: false, edge: "falling" });

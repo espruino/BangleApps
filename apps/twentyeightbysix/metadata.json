@@ -10,5 +10,5 @@
     {"name":"twentyeightbysix.app.js","url":"app.js"},
     {"name":"twentyeightbysix.img","url":"app-icon.js","evaluate":true}
   ],
-  "supports": ["BANGLEJS"]
+  "supports": ["BANGLEJS", "BANGLEJS2"]
 }

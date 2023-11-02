@@ -6,7 +6,7 @@
   "description": "Make sure you wake up! Count to the right number to turn off the alarm",
   "icon": "app.png",
   "tags": "tool,alarm,widget",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
     {"name":"hardalarm.app.js","url":"app.js"},
     {"name":"hardalarm.boot.js","url":"boot.js"},
