@@ -12,7 +12,8 @@ const weirdAwakeHours = 19;
 const weirdSleepHours = 9;
 
 const normalDayWidth = HARDWARE_VERSION == 1 ? 24: 28;
-const normalWeekDayHeight = 10;
+const normalWeekDayHeight = HARDWARE_VERSION == 1 ? 10: 11;
+const normalDayBoxHeight = HARDWARE_VERSION == 1 ? 9: 5;
 const normalSleepDayHeight = 28;
 const normalAwakeHours = 15;
 const normalSleepHours = 9;
@@ -73,13 +74,20 @@ function normalTo28HourDate(date) {
   var weirdDate = {
     "dayText": getWeirdDayName(weirdDayOfTheWeek),
     "day": weirdDayOfTheWeek,
-    "hourText": addLeadingZero(hourCount - (weirdDayOfTheWeek * 28)),
-    "hour": hourCount - (weirdDayOfTheWeek * 28),
+    "hourText": addLeadingZero(zeroTo28(hourCount - (weirdDayOfTheWeek * 28))),
+    "hour": zeroTo28(hourCount - (weirdDayOfTheWeek * 28)),
     "minuteText": addLeadingZero(date.getMinutes()),
     "minute": date.getMinutes(),
     "secondText": addLeadingZero(date.getSeconds()),
   };
   return weirdDate;
+}
+
+function zeroTo28(hour) {
+  if (hour == 0) {
+    return 28;
+  }
+  return hour;
 }
 
 function getWeirdDayName(weirdDayOfTheWeek) {
@@ -462,8 +470,8 @@ function getNormalEvent(date) {
 }
 
 function getWeirdEvent(date) {
-  if (date.hour == 0) {
-    return "The Void";
+  if (date.hour == 28) {
+    return "THE VOID";
   }
   else if(date.hour == 8) {
     if(date.minute <= 15) {
@@ -525,8 +533,8 @@ function getWeirdHourLabel(hour){
   }
   else if(hour == 27) {
     return ["", "Threeteen", ""];
-  } else if (hour == 0) {
-    return ["", "The Void", ""];
+  } else if (hour == 28) {
+    return ["", "THE VOID", ""];
   }
   return ["", "", ""];
 }
@@ -607,7 +615,7 @@ function printTime(thisDate, isShowTime) {
 function printBackground() {
   g.setFontAlign(0, 0, 0);
   g.setColor(backgroundColor);
-  g.fillRect(0, normalSleepDayHeight + 9, screenWidth, weirdSleepDayHeight - 9);
+  g.fillRect(0, normalSleepDayHeight + normalDayBoxHeight, screenWidth, weirdSleepDayHeight - 9);
 
   g.setColor(mainTextColor);
   if (HARDWARE_VERSION == 1) {
