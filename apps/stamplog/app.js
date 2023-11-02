@@ -169,7 +169,7 @@ class StampLog {
     this.log = this.log.filter(entry => !entries.includes(entry));
     this.setDirty();
   }
-  
+
   // Does the log currently contain the maximum possible number of entries?
   isFull() {
     return this.log.length >= this.maxLength;
@@ -467,55 +467,80 @@ class MainScreen {
 
 
 function settingsMenu() {
+  const fonts = g.getFonts();
+
+  function topMenu() {
+    E.showMenu({
+      '': {
+        title: 'Stamplog',
+        back: endMenu,
+      },
+      'Log': logMenu,
+      'Appearance': appearanceMenu,
+    });
+  }
+
+  function logMenu() {
+    E.showMenu({
+      '': {
+        title: 'Log',
+        back: topMenu,
+      },
+      'Max entries': {
+        value: SETTINGS.maxLogLength,
+        min: 5, max: 100, step: 5,
+        onchange: v => {
+          SETTINGS.maxLogLength = v;
+          stampLog.maxLength = v;
+        }
+      },
+      'Auto-delete oldest': {
+        value: SETTINGS.rotateLog,
+        onchange: v => {
+          SETTINGS.rotateLog = !SETTINGS.rotateLog;
+        }
+      },
+    });
+  }
+
+  function appearanceMenu() {
+    E.showMenu({
+      '': {
+        title: 'Appearance',
+        back: topMenu,
+      },
+      'Log font': {
+        value: fonts.indexOf(SETTINGS.logFont),
+        min: 0, max: fonts.length - 1,
+        format: v => fonts[v],
+        onchange: v => {
+          SETTINGS.logFont = fonts[v];
+        },
+      },
+      'Log font H size': {
+        value: SETTINGS.logFontHSize,
+        min: 1, max: 50,
+        onchange: v => {
+          SETTINGS.logFontHSize = v;
+        },
+      },
+      'Log font V size': {
+        value: SETTINGS.logFontVSize,
+        min: 1, max: 50,
+        onchange: v => {
+          SETTINGS.logFontVSize = v;
+        },
+      },
+    });
+  }
+
   function endMenu() {
     saveSettings();
     currentUI.start();
   }
-  const fonts = g.getFonts();
 
   currentUI.stop();
-  E.showMenu({
-    '': {
-      title: 'Timestamp Logger',
-      back: endMenu,
-    },
-    'Max log size': {
-      value: SETTINGS.maxLogLength,
-      min: 5, max: 100, step: 5,
-      onchange: v => {
-        SETTINGS.maxLogLength = v;
-        stampLog.maxLength = v;
-      }
-    },
-    'Rotate log entries': {
-      value: SETTINGS.rotateLog,
-      onchange: v => {
-        SETTINGS.rotateLog = !SETTINGS.rotateLog;
-      }
-    },
-    'Log font': {
-      value: fonts.indexOf(SETTINGS.logFont),
-      min: 0, max: fonts.length - 1,
-      format: v => fonts[v],
-      onchange: v => {
-        SETTINGS.logFont = fonts[v];
-      },
-    },
-    'Log font H size': {
-      value: SETTINGS.logFontHSize,
-      min: 1, max: 50,
-      onchange: v => {
-        SETTINGS.logFontHSize = v;
-      },
-    },
-    'Log font V size': {
-      value: SETTINGS.logFontVSize,
-      min: 1, max: 50,
-      onchange: v => {
-        SETTINGS.logFontVSize = v;
-      },
-    },
-  });
+  topMenu();
 }
 
 
