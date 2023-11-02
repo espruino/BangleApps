@@ -8,6 +8,7 @@ const screenHeight = HARDWARE_VERSION == 1 ? 239: 175;
 const weirdDayWidth = 28;
 const weirdWeekDayHeight = HARDWARE_VERSION == 1 ? 230: 166;
 const weirdSleepDayHeight = HARDWARE_VERSION == 1 ? 213: 149;
+const weirdDayBoxHeight = HARDWARE_VERSION == 1 ? 9: 7;
 const weirdAwakeHours = 19;
 const weirdSleepHours = 9;
 
@@ -615,7 +616,7 @@ function printTime(thisDate, isShowTime) {
 function printBackground() {
   g.setFontAlign(0, 0, 0);
   g.setColor(backgroundColor);
-  g.fillRect(0, normalSleepDayHeight + normalDayBoxHeight, screenWidth, weirdSleepDayHeight - 9);
+  g.fillRect(0, normalSleepDayHeight + normalDayBoxHeight, screenWidth, weirdSleepDayHeight - weirdDayBoxHeight);
 
   g.setColor(mainTextColor);
   if (HARDWARE_VERSION == 1) {
