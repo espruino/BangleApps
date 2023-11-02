@@ -89,6 +89,24 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
+const drawTimeExact = () => {
+  var dateTime = Date();
+  var hours = dateTime.getHours();
+  var minutes = dateTime.getMinutes().toString().padStart(2,0);
+  var day = dateTime.getDay();
+  var date = dateTime.getDate();
+  var month = dateTime.getMonth();
+  var year = dateTime.getFullYear();
+  g.clear();
+  g.setBgColor(0,0,0);
+  g.clearRect(0,0,width, height);
+  g.setColor(1,1,1);
+  g.setFont("Vector", 30);
+  g.drawString(hours + ":" + minutes, (width - g.stringWidth(hours + ":" + minutes))/2, height * 0.3, false);
+  g.setFont("Vector", 26);
+  g.drawString(month + 1 + "/" + date + "/" + year, (width - g.stringWidth(month + 1 + "/" + date + "/" + year))/2, height * 0.6, false);
+};
+
 const drawTime = () => {
   //Grab time vars
   var date = Date();
@@ -125,6 +143,11 @@ Bangle.on('lcdPower', function (on) {
       clearTimeout(idTimeout);
     }
   }
+});
+
+Bangle.on('touch', function(button, xy){
+  drawTimeExact();
+  setTimeout(drawTime, 7000);
 });
 
 // Show launcher when button pressed
