@@ -2,7 +2,7 @@
   "name": "Twenty-Eight Hour Clock",
   "shortName": "28x6",
   "icon": "app.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A 28 Hour, 6 Day Week Clock. Lines up with a 24 hour, 7 Day Week Clock every Monday.",
   "tags": "clock",
   "type":"clock",

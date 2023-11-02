@@ -2,10 +2,11 @@
   "id": "hardalarm",
   "name": "Hard Alarm",
   "shortName": "HardAlarm",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Make sure you wake up! Count to the right number to turn off the alarm",
   "icon": "app.png",
   "tags": "tool,alarm,widget",
+  "type": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
     {"name":"hardalarm.app.js","url":"app.js"},
