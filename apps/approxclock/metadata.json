@@ -4,6 +4,7 @@
   "version": "0.3",
   "icon": "app.png",
   "description": "A really basic spelled out time display for people looking for the vague time at a glance.",
+  "readme": "readme.md",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
