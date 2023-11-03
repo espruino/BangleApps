@@ -84,10 +84,10 @@ function confirmGps(s) {
        {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
        {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
        {type:"h", c: [
-	 {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-	   print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
-	 }},
-	 {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
+         {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+           print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
+         }},
+         {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
        ]}
      ], lazy:true});
   g.clear();
