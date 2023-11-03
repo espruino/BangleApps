@@ -18,9 +18,8 @@ Bangle.drawWidgets();
 const WHITE=-1
 const BLACK=0
 
-var FILE = "android.cards.json";
-
-var Locale = require("locale");
+const Locale = require("locale");
+const widget_utils = require('widget_utils');
 
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
@@ -90,6 +89,7 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
+  widget_utils.hide();
   E.showScroller();
   // keeping it on rising edge would come back twice..
   setWatch(()=>showCard(card), BTN, {edge:"falling"});
@@ -151,6 +151,7 @@ function showCard(card) {
   var titleColor = g.theme.fg2;
   if (card.color)
     titleColor = isLight(titleBgColor) ? BLACK : WHITE;
+  widget_utils.show();
   E.showScroller({
     h : g.getFontHeight(), // height of each menu item in pixels
     c : lines.length, // number of menu items
