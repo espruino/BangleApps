@@ -534,7 +534,7 @@ function draw() {
   if (getTime() - last_active > 15*60) {
     alt_adjust = cur_altitude - rest_altitude;
     alt_adjust_mode = "h";
-    msg = "H)" + fmtAlt(alt_adjust.toFixed(0));
+    msg = "H)" + fmtAlt(alt_adjust);
   } else {
     msg = alt_adjust_mode+")"+fmtAlt(cur_altitude - alt_adjust);
   }
