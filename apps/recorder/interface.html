@@ -95,17 +95,27 @@ function saveGPX(track, title) {
   <trk>
     <name>${title}</name>
     <trkseg>`;
+  let lastTime = 0;
   track.forEach(pt=>{
+    let cadence;
+    if (pt.Steps && lastTime != 0){
+      cadence = pt.Steps * 60000 / (pt.Time.getTime() - lastTime);
+      cadence = cadence / 2; /*Convert from rpm to spm (one cycle is two steps), see https://github.com/espruino/BangleApps/pull/3068#issuecomment-1790041058*/
+    }
+    lastTime = pt.Time.getTime();
+
     gpx += `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
         <ele>${pt.Altitude}</ele>
         <time>${pt.Time.toISOString()}</time>
         <extensions>
             <gpxtpx:TrackPointExtension>
-                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
+                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}
+                ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>`:``} ${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
             </gpxtpx:TrackPointExtension>
         </extensions>
       </trkpt>`;
+
   });
   // https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd
   gpx += `
