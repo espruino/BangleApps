@@ -48,13 +48,13 @@ function updateGps() {
     return;
   fix = Bangle.getGPSFix();
   
-  speed = getTime() - gps_start;
+  speed = "no fix for " + (getTime() - gps_start).toFixed(0) + "s";
   
   if (fix && fix.fix && fix.lat) {
-    lat = "" + fix.lat;
-    lon = "" + fix.lon;
-    alt = "" + fix.alt;
-    speed = "" + fix.speed;
+    lat = "" + lat(fix.lat);
+    lon = "" + lon(fix.lon);
+    alt = "alt " + fix.alt.toFixed(0) + "m";
+    speed = "speed " + fix.speed.toFixed(1) + "kt";
     have = true;
   }
   
@@ -80,6 +80,7 @@ function confirmGps(s) {
   key = s;
    var la = new Layout (
      {type:"v", c: [
+       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
        {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
        {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
        {type:"h", c: [
@@ -262,7 +263,6 @@ function ask01(t, cb) {
   g.clear();
   la.render();
 }
-
 
 function askCoordinate(t1, t2, callback) {
   let sign = 1;
