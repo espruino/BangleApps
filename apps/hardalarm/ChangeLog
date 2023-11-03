@@ -2,3 +2,4 @@
 0.02: Respect Quiet Mode
 0.03: Fix hour/minute wrapping code for new menu system
 0.04: Use default Bangle formatter for booleans
+0.05: Support BangleJS 2
