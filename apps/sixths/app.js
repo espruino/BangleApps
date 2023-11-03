@@ -41,6 +41,14 @@ var alt_adjust_mode = "";
 // Marks
 var cur_mark = null;
 
+// Icons
+
+icon_alt = "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
+icon_m = "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
+icon_km = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
+icon_kph = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3";
+icon_c = "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+
 function toMorse(x) {
   r = "";
   for (var i = 0; i < x.length; i++) {
@@ -82,8 +90,9 @@ function gpsOff() {
   Bangle.setGPSPower(0, "sixths");
   gps_on = 0;
 }
-function fmtDist(km) { return km.toFixed(1) + "km"; }
+function fmtDist(km) { return km.toFixed(1) + icon_km; }
 function fmtSteps(n) { return fmtDist(0.001 * 0.719 * n); }
+function fmtAlt(m) { return m.toFixed(0) + icon_alt; }
 function fmtTimeDiff(d) {
   if (d < 180)
     return ""+d.toFixed(0);
@@ -135,7 +144,7 @@ function gpsHandle() {
       fix = Bangle.getGPSFix();
       if (fix && fix.fix && fix.lat) {
         gpsHandleFix(fix);
-        msg = fix.speed.toFixed(1) + " km/h";
+        msg = fix.speed.toFixed(1) + icon_kph;
         print("GPS FIX", msg);
         
         if (!last_fstart)
@@ -163,7 +172,7 @@ function gpsHandle() {
         print("Pausing, next try", gps_needed);
       }
     }
-  msg += " "+gps_dist.toFixed(1)+"km";
+  msg += " "+gps_dist.toFixed(1)+icon_km;
   return msg;
 }
 function markNew() {
@@ -180,7 +189,7 @@ function markHandle() {
   let m = cur_mark;
   msg = m.name + ">" + fmtTimeDiff(getTime()- m.time);
   if (m.fix && m.fix.fix) {
-    let s = fmtDist(calcDistance(m.fix, prev_fix)/1000) + "km";
+    let s = fmtDist(calcDistance(m.fix, prev_fix)/1000) + icon_km;
     msg += " " + s;
     debug = "wp>" + s;
     mark_heading = 180 + calcBearing(m.fix, prev_fix);
@@ -525,11 +534,11 @@ function draw() {
   if (getTime() - last_active > 15*60) {
     alt_adjust = cur_altitude - rest_altitude;
     alt_adjust_mode = "h";
-    msg = "H)" + alt_adjust.toFixed(0) + "m";
+    msg = "H)" + fmtAlt(alt_adjust.toFixed(0));
   } else {
-    msg = alt_adjust_mode+")"+(cur_altitude - alt_adjust).toFixed(0) + "m";
+    msg = alt_adjust_mode+")"+fmtAlt(cur_altitude - alt_adjust);
   }
-  msg = msg + " " + cur_temperature.toFixed(1)+"C";
+  msg = msg + " " + cur_temperature.toFixed(1)+icon_c;
   if (cur_mark) {
     msg = markHandle();
   }
