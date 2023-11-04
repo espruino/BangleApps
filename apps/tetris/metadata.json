@@ -1,7 +1,7 @@
 { "id": "tetris",
   "name": "Tetris",
   "shortName":"Tetris",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Tetris",
   "icon": "tetris.png",
   "readme": "README.md",
