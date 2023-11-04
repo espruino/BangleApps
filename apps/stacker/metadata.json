@@ -6,6 +6,7 @@
   "icon": "app.png",
   "tags": "game",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"stacker.app.js","url":"app.js"},
