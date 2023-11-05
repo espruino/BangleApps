@@ -36,11 +36,27 @@ const tiles = [
 const ox = 176/2 - 5*8;
 const oy = 8;
 
-var pf = Array(23).fill().map(()=>Array(12).fill(0)); // field is really 10x20, but adding a border for collision checks
-pf[20].fill(1);
-pf[21].fill(1);
-pf[22].fill(1);
-pf.forEach((x,i) => { pf[i][0] = 1; pf[i][11] = 1; });
+/* 0 .. simulated arrows
+   1 .. drag piece
+   2 .. accelerometer. 12 lines record.
+   3 .. altimeter
+ */
+var control = 0, level = 0;
+var alt_start = -9999; /* For altimeter control */
+/* 0 .. menu
+   1 .. game
+   2 .. game over */
+var state = 0;
+
+var pf;
+
+function initGame() {
+  pf = Array(23).fill().map(()=>Array(12).fill(0)); // field is really 10x20, but adding a border for collision checks
+  pf[20].fill(1);
+  pf[21].fill(1);
+  pf[22].fill(1);
+  pf.forEach((x,i) => { pf[i][0] = 1; pf[i][11] = 1; });
+}
 
 function rotateTile(t, r) {
   var nt = JSON.parse(JSON.stringify(t));
@@ -98,6 +114,8 @@ function redrawPF(ly) {
 function gameOver() {
   g.setColor(1, 1, 1).setFontAlign(0, 1, 0).setFont("Vector",22)
   .drawString("Game Over", 176/2, 76);
+  state = 0;
+  E.showAlert("Game Over").then(selectGame, print);
 }
 
 function insertAndCheck() {
@@ -138,6 +156,8 @@ function moveOk(t, dx, dy) {
 }
 
 function gameStep() {
+  if (state != 1)
+    return;
   if (Date.now()-time > dropInterval) { // drop one step
     time = Date.now();
     if (moveOk(ct, 0, 1)) {
@@ -169,12 +189,50 @@ function move(x, y) {
   }
 }
 
-Bangle.setUI();
-Bangle.on("drag", (e) => {
-  let h = 176/2;
-  if (!e.b)
+function linear(x) {
+  print("Linear: ", x);
+  let now = px / 10;
+  if (x < now-0.06)
+    move(-1, 0);
+  if (x > now+0.06)
+    move(1, 0);
+}
+
+function newGame() {
+  E.showMenu();
+  Bangle.setUI();
+  if (control == 2) {
+    Bangle.on("accel", (e) => {
+      if (state != 1) return;
+      if (control != 2) return;
+      print(e.x);
+      linear((0.2-e.x) * 2.5);
+    });
+  }
+  if (control == 3) {
+   Bangle.setBarometerPower(true);
+   Bangle.on("pressure", (e) => {
+     if (state != 1) return;
+     if (control != 3) return;
+    let a = e.altitude;
+    if (alt_start == -9999)
+      alt_start = a;
+    a = a - alt_start;
+      print(e.altitude, a);
+    linear(a);
+   });
+  }
+  Bangle.on("drag", (e) => {
+   let h = 176/2;
+   if (state == 2) {
+     if (e.b)
+       selectGame();
+     return;
+   }
+   if (!e.b)
     return;
-  if (e.y < h) {
+   if (state == 0) return;
+   if (e.y < h) {
     if (e.x < h)
       rotate();
     else {
@@ -184,21 +242,60 @@ Bangle.on("drag", (e) => {
         g.flip();
       }
     }
-  } else {
+   } else {
+    if (control == 1)
+      linear((e.x - 20) / 156);
+    if (control != 0)
+      return;
     if (e.x < h)
       move(-1, 0);
     else
       move(1, 0);
-  }
-});
+   }
+  });
 
-Bangle.on("swipe", (x,y) => {
-  if (y<0) y = 0;
-  move(x, y);
-});
+  initGame();
+  drawGame();
+  state = 1;
+  var step = 450 - 50*level;
+  if (control == 3)
+    step = step*2;
+  dropInterval = step;
+  var gi = setInterval(gameStep, 50);
+}
 
-drawBoundingBox();
-g.setColor(1, 1, 1).setFontAlign(0, 1, 0).setFont("6x15", 1).drawString("Lines", 22, 30).drawString("Next", 176-22, 30);
-showNext(ntn, ntr);
-g.setColor(0).fillRect(5, 30, 41, 80).setColor(1, 1, 1).drawString(nlines.toString(), 22, 50);
-var gi = setInterval(gameStep, 20);
+function drawGame() {
+  drawBoundingBox();
+  g.setColor(1, 1, 1).setFontAlign(0, 1, 0)
+    .setFont("6x15", 1).drawString("Lines", 22, 30)
+    .drawString("Next", 176-22, 30);
+  showNext(ntn, ntr);
+  g.setColor(0).fillRect(5, 30, 41, 80)
+    .setColor(1, 1, 1).drawString(nlines.toString(), 22, 50);
+}
+
+function selectLevel() {
+  print("Level selection menu");
+  
+  var menu = {};
+  menu["Level 1"] = () => { level = 0; selectGame(); };
+  menu["Level 2"] = () => { level = 1; selectGame(); };
+  menu["Level 3"] = () => { level = 2; selectGame(); };
+  E.showMenu(menu);
+}
+
+function selectGame() {
+  state = 0;
+  print("Game selection menu");
+  //for (let i = 0; i < 100000; i++) ;
+  
+  var menu = {};
+  menu["Normal"] = () => { control = 0; newGame(); };
+  menu["Drag"] = () => { control = 1; newGame(); };
+  menu["Tilt"] = () => { control = 2; newGame(); };
+  menu["Move"] = () => { control = 3; newGame(); };
+  menu["Level"] = () => { selectLevel(); };
+  E.showMenu(menu);
+}
+
+selectGame();

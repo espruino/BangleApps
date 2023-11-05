@@ -25,8 +25,9 @@ minutes, real distance will be usually higher than approximation.
 Useful gestures:
 
 F -- disable GPS.
-G -- enable GPS for 4 hours.
+G -- enable GPS for 4 hours in low power mode.
 N -- take a note and write it to the log.
+S -- enable GPS for 30 minutes in high power mode.
 
 When application detects watch is being worn, it will use vibrations
 to communicate back to the user.
@@ -49,3 +50,9 @@ night.
 I'd like to make display nicer, and likely more dynamic, displaying
 whatever application believes is most important at the time (and
 possibly allowing scrolling).
+
+Todo:
+
+*) only turn on compass when needed
+
+*) adjust draw timeouts to save power
