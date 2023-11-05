@@ -22,18 +22,18 @@ const normalSleepHours = 9;
 const timeSetHeight = HARDWARE_VERSION == 1 ? 30: 34;
 const timeSetDistance = HARDWARE_VERSION == 1 ? 50: 29;
 
-const backgroundColor = "#2c2e3a";
+const backgroundColor = HARDWARE_VERSION == 1 ? "#2c2e3a": "#000000";
 const mainTextColor = "#FFFFFF";
-const watchColor = "#aaaaaa";
+const watchColor = HARDWARE_VERSION == 1 ? "#aaaaaa": "#FFFFFF";
 
-const sleepTextColor = "#000000";
-const sleepBlockColor = "#D8D8D8";
+const sleepTextColor = "#FFFFFF";
+const sleepBlockColor = HARDWARE_VERSION == 1 ? "#D8D8D8": "#000000";
 
 const awakeTextColor = "#000000";
 const awakeBlockColor = "#FFFFFF";
 
 const dayTextColor = "#FFFFFF";
-const dayBlockColor = "#2c2e3a";
+const dayBlockColor = HARDWARE_VERSION == 1 ? "#2c2e3a": "#000000";
 
 const quotes = [
   ["", "Drop the", "ancient", "way of", "sleeping", ""],
