@@ -159,6 +159,21 @@
     return recorders;
   }
 
+  let getActiveRecorders = function() {
+    let activeRecorders = [];
+    let recorders = getRecorders();
+    settings.record.forEach(r => {
+      var recorder = recorders[r];
+      if (!recorder) {
+        console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
+        return;
+      }
+      activeRecorders.push(recorder());
+    });
+    return activeRecorders;
+  };
+  let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
+
   let writeLog = function() {
     entriesWritten++;
     WIDGETS["recorder"].draw();
@@ -189,17 +204,9 @@
 
     if (settings.recording) {
       // set up recorders
-      var recorders = getRecorders(); // TODO: order??
-      settings.record.forEach(r => {
-        var recorder = recorders[r];
-        if (!recorder) {
-          console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
-          return;
-        }
-        var activeRecorder = recorder();
+      activeRecorders = getActiveRecorders();
+      activeRecorders.forEach(activeRecorder => {
         activeRecorder.start();
-        activeRecorders.push(activeRecorder);
-        // TODO: write field names?
       });
       WIDGETS["recorder"].width = 15 + ((activeRecorders.length+1)>>1)*12; // 12px per recorder
       // open/create file
@@ -209,9 +216,7 @@
       } else {
         storageFile = require("Storage").open(settings.file,"w");
         // New file - write headers
-        var fields = ["Time"];
-        activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.fields));
-        storageFile.write(fields.join(",")+"\n");
+        storageFile.write(getCSVHeaders(activeRecorders).join(",")+"\n");
       }
       // start recording...
       WIDGETS["recorder"].draw();
@@ -246,7 +251,8 @@
         // if no filename set or date different, set up a new filename
         settings.file = getTrackFilename();
       }
-      if (require("Storage").list(settings.file).length){ // if file exists
+      var headers = require("Storage").open(settings.file,"r").readLine();
+      if (headers && headers.trim()==getCSVHeaders(getActiveRecorders()).join(",")){ // if file exists AND the headers match (#3081)
         if (!options.force) { // if not forced, ask the question
           g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
           return E.showPrompt(
