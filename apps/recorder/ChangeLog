@@ -39,3 +39,4 @@
 0.31: Ensure that background-drawn tracks can get cancelled, and draw less at a time to make updates smoother
       plotTrack now draws the current track even if you're not actively recording
 0.32: Add cadence data to output files
+0.33: Ensure that a new file is always created if the stuff that's being recorded has changed (fix #3081)
