@@ -73,4 +73,6 @@ of 'Select Clock'
       Remove 'beta' label from passkey - it's been around for a while and works ok
 0.64: Default to wakeOnTwist being off
 0.65: Prepend 'LCD->Calibration' touch listener and stop event propagation.
+0.66: Fix LCD calibration bug where it would come on again after the
+	calibration was done.
 
