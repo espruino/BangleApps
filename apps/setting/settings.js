@@ -922,7 +922,7 @@ function showTouchscreenCalibration() {
     }
     showTapSpot();
   }
-  Bangle.prependListener&&Bangle.prependListener('touch',touchHandler)||Bangle.on('touch',touchHandler);
+  Bangle.prependListener?Bangle.prependListener('touch',touchHandler):Bangle.on('touch',touchHandler);
 
   showTapSpot();
 }
