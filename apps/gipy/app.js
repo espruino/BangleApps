@@ -407,10 +407,11 @@ class Map {
 
   fetch_points(tile_x, tile_y, scaled_side) {
     let tile_num = tile_x + tile_y * this.grid_size[0];
-    for (let i = 0; i < this.points_cache.length; i++) {
-      if (this.points_cache[i][0] == tile_num) {
-        return this.points_cache[i][1];
-      }
+    let existing_entry = this.points_cache.find(c => {
+      c[0] == tile_num
+    });
+    if (existing_entry !== undefined) {
+      return existing_entry[1];
     }
     if (this.points_cache.length > 40) {
       this.points_cache.shift();
