@@ -231,7 +231,7 @@ function draw() {
   if (ATID) ATID = clearTimeout(ATID);
 
   // clear app area
-  g.reset().clearRect(0, 24, width, width);
+  g.reset().clearRect(0, 24, width, g.getHeight());
 
   // set date to calculate data for
   var calcDate = new Date(startDate - prevDays * 864E5);
