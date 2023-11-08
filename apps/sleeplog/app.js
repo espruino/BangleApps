@@ -150,19 +150,19 @@ function drawingCycle(calcDate, thisID, cycle, log) {
     /* draw stats on second cycle */
 
     // read stats and process into info data
-    infoData = slMod.getStats(calcDate, 0, log);
+    var stats = slMod.getStats(calcDate, 0, log);
     infoData = [
       [
-        [ /*LANG*/"consecutive\nsleeping", infoData.consecSleep],
-        [ /*LANG*/"true\nsleeping", infoData.deepSleep + infoData.lightSleep]
+        [ /*LANG*/"consecutive\nsleeping", stats.consecSleep],
+        [ /*LANG*/"true\nsleeping", stats.deepSleep + stats.lightSleep]
       ],
       [
-        [ /*LANG*/"deep\nsleep", infoData.deepSleep],
-        [ /*LANG*/"light\nsleep", infoData.lightSleep]
+        [ /*LANG*/"deep\nsleep", stats.deepSleep],
+        [ /*LANG*/"light\nsleep", stats.lightSleep]
       ],
       [
-        [ /*LANG*/"awake", infoData.awakeTime],
-        [ /*LANG*/"not worn", infoData.notWornTime]
+        [ /*LANG*/"awake", stats.awakeTime],
+        [ /*LANG*/"not worn", stats.notWornTime]
       ]
     ];
     // draw info
