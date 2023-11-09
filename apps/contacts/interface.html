@@ -204,7 +204,13 @@
         for(let i=0; i<input.files.length; i++) {
           const reader = new FileReader();
           reader.addEventListener("load", () => {
-            const vcards = vcf.parse(reader.result);
+            let vcards;
+            try {
+              vcards = vcf.parse(reader.result);
+            } catch (error) {
+              alert(error);
+              return;
+            }
             vcards.forEach(vcard => {
               const name = vcard.get('fn')?.valueOf() || vcard.get('n')?.valueOf();
               const tels = Array.isArray(vcard.get('tel')) ? vcard.get('tel') : [vcard.get('tel')];
@@ -212,7 +218,7 @@
                 if (tel) {
                   const number = tel.valueOf();
                   contacts.push({name: name, number: number});
-		}
+                }
               });
             });
             renderAllContacts();
