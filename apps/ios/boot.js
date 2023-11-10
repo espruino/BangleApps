@@ -160,6 +160,22 @@ E.on('notify',msg=>{
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
+  if (msg.title === "BangleDumpCalendar") {
+    // parse the message body into json:
+    const d = JSON.parse(msg.message);
+    /* Example:
+    {
+    "title": "Test Event",
+    "start_time": "2023-11-10T11:00:00-08:00",
+    "duration":"1:00:00",
+    "notes": "This is a test event.",
+    "location": "Stonehenge Amesbury, Wiltshire, SP4 7DE, England",
+    "calName": "Home"
+    }
+     */
+    console.log(d, d.title, d.start_time, d.duration, d.notes, d.location, d.calName);
+
+  }
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
