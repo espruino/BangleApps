@@ -170,11 +170,39 @@ E.on('notify',msg=>{
     "duration":"1:00:00",
     "notes": "This is a test event.",
     "location": "Stonehenge Amesbury, Wiltshire, SP4 7DE, England",
-    "calName": "Home"
+    "calName": "Home",
+    "id": "1234567890"
     }
+    and we want to convert to:
+    {t:"calendar", id:int, type:int, timestamp:seconds, durationInSeconds, title:string, description:string,location:string,calName:string.color:int,allDay:bool
+    for gadgetbridge
      */
     console.log(d, d.title, d.start_time, d.duration, d.notes, d.location, d.calName);
+    calEvent = {
+      t: "calendar",
+      id: parseInt(d.id),
+      type: 0,
+      timestamp: Date.parse(d.start_time) / 1000,
+      durationInSeconds: d.duration ? d.duration.split(":").reduce((a, b) => a * 60 + parseInt(b)) : 0,
+      title: d.title,
+      description: d.notes,
+      location: d.location,
+      calName: d.calName,
+      color: 0,
+      allday: false
+    }
+    calEvent.allday = calEvent.durationInSeconds >= 24 * 56 * 60 - 1; // 24 hours for IOS is 23:59:59
 
+    var cal = require("Storage").readJSON("android.calendar.json",true);
+    if (!cal || !Array.isArray(cal)) cal = [];
+    var i = cal.findIndex(e=>e.id==calEvent.id);
+    if(i<0)
+      cal.push(calEvent);
+    else
+      cal[i] = calEvent;
+    require("Storage").writeJSON("android.calendar.json", cal);
+    NRF.ancsAction(msg.uid, false);
+    return;
   }
   require("messages").pushMessage({
     t : msg.event,
