@@ -177,12 +177,11 @@ E.on('notify',msg=>{
     {t:"calendar", id:int, type:int, timestamp:seconds, durationInSeconds, title:string, description:string,location:string,calName:string.color:int,allDay:bool
     for gadgetbridge
      */
-    console.log(d, d.title, d.start_time, d.duration, d.notes, d.location, d.calName);
     calEvent = {
       t: "calendar",
       id: parseInt(d.id),
       type: 0,
-      timestamp: Date.parse(d.start_time) / 1000,
+      timestamp: Date.parse(d.start_time.slice(0, -5)) / 1000,
       durationInSeconds: d.duration ? d.duration.split(":").reduce((a, b) => a * 60 + parseInt(b)) : 0,
       title: d.title,
       description: d.notes,
@@ -191,7 +190,7 @@ E.on('notify',msg=>{
       color: 0,
       allday: false
     }
-    Terminal.println("Calendar event " + calEvent.title + " received.")
+    Terminal.println("'" + msg.Title + "'");
     calEvent.allday = calEvent.durationInSeconds >= 24 * 56 * 60 - 1; // 24 hours for IOS is 23:59:59
 
     var cal = require("Storage").readJSON("android.calendar.json",true);
