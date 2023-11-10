@@ -160,7 +160,7 @@ E.on('notify',msg=>{
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
-  if (msg.title === "BangleDumpCalendar") {
+  if (msg.appId === "com.apple.shortcuts") {
     // parse the message body into json:
     const d = JSON.parse(msg.message);
     /* Example:
