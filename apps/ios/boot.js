@@ -190,7 +190,7 @@ E.on('notify',msg=>{
       color: 0,
       allday: false
     }
-    Terminal.println("'" + msg.name + "'");
+    Terminal.println("'" + msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) + "'");
     calEvent.allday = calEvent.durationInSeconds >= 24 * 56 * 60 - 1; // 24 hours for IOS is 23:59:59
 
     var cal = require("Storage").readJSON("android.calendar.json",true);
