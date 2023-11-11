@@ -199,6 +199,7 @@ E.on('notify',msg=>{
       cal.push(calEvent);
     else
       cal[i] = calEvent;
+    cal = cal.filter(e=>e.timestamp>=Date.now()/1000);
     require("Storage").writeJSON("android.calendar.json", cal);
     NRF.ancsAction(msg.uid, false);
     return;
