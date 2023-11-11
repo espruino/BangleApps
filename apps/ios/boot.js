@@ -226,6 +226,7 @@ E.on('notify',msg=>{
         loc: d.loc
     }
     require("weather").update(weatherEvent);
+    Terminal.println("received weather data");
     NRF.ancsAction(msg.uid, false);
     return;
   }
