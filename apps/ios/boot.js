@@ -160,7 +160,7 @@ E.on('notify',msg=>{
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
-  if (msg.appId === "com.apple.shortcuts") {
+  if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpCalendar") {
     // parse the message body into json:
     const d = JSON.parse(msg.message);
     /* Example:
@@ -204,6 +204,32 @@ E.on('notify',msg=>{
     NRF.ancsAction(msg.uid, false);
     return;
   }
+  else if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpWeather") {
+    const d = JSON.parse(msg.message);
+    /* Example:
+    {"temp":"291.07","hi":"293.02","lo":"288.18","hum":"49","rain":"0","uv":"0","wind":"1.54","code":"01d","txt":"Mostly Sunny","wdir":"303","loc":"Berlin"}
+    what we want:
+    t:"weather", temp,hi,lo,hum,rain,uv,code,txt,wind,wdir,loc
+     */
+    weatherEvent = {
+        t: "weather",
+        temp: d.temp,
+        hi: d.hi,
+        lo: d.lo,
+        hum: d.hum,
+        rain: d.rain,
+        uv: d.uv,
+        code: d.code,
+        txt: d.txt,
+        wind: d.wind,
+        wdir: d.wdir,
+        loc: d.loc
+    }
+    require("weather").update(weatherEvent);
+    NRF.ancsAction(msg.uid, false);
+    return;
+  }
+
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
