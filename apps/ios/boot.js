@@ -204,7 +204,6 @@ E.on('notify',msg=>{
     return;
   }
   if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpWeather") {
-    Terminal.println("Weather");
     const d = JSON.parse(msg.message);
     /* Example:
     {"temp":"291.07","hi":"293.02","lo":"288.18","hum":"49","rain":"0","uv":"0","wind":"1.54","code":"01d","txt":"Mostly Sunny","wdir":"303","loc":"Berlin"}
