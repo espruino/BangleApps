@@ -160,7 +160,6 @@ E.on('notify',msg=>{
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
-  Terminal.println("'" + msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) + "'");
   if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpCalendar") {
     // parse the message body into json:
     const d = JSON.parse(msg.message);
@@ -205,6 +204,7 @@ E.on('notify',msg=>{
     return;
   }
   if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpWeather") {
+    Terminal.println("Weather");
     const d = JSON.parse(msg.message);
     /* Example:
     {"temp":"291.07","hi":"293.02","lo":"288.18","hum":"49","rain":"0","uv":"0","wind":"1.54","code":"01d","txt":"Mostly Sunny","wdir":"303","loc":"Berlin"}
@@ -226,7 +226,6 @@ E.on('notify',msg=>{
         loc: d.loc
     }
     require("weather").update(weatherEvent);
-    Terminal.println("received weather data");
     NRF.ancsAction(msg.uid, false);
     return;
   }
