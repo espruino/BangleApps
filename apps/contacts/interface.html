@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <script type="module">
+      import vcf from 'https://cdn.jsdelivr.net/npm/vcf@2.1.1/+esm'
+      window.vcf = vcf;
+    </script>
 
     <style type="text/css">
         html, body { height: 100% }
@@ -36,16 +40,6 @@
             <span id="status"></span>
             <span id="routestatus"></span>
         </div>
-        <div>
-          <ul class="tab tab-block">
-            <li class="tab-item active" id="tabitem-map">
-              <a href="#">Map</a>
-            </li>
-            <li class="tab-item" id="tabitem-list">
-              <a href="#">List</a>
-            </li>
-          </ul>
-        </div>
         <div style="flex: 1">
           <div id="tab-list">
             <table class="table">
@@ -53,6 +47,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Number</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="contacts">
@@ -75,6 +70,17 @@
                 </div>
               </div>
             </form>
+            <div class="divider"></div>
+            <div class="form-horizontal">
+              <div class="form-group">
+                <div class="col-5 col-xs-12">
+                  <label class="form-label" for="fileinput">Add from vCard file</label>
+                </div>
+                <div class="col-7 col-xs-12">
+                  <input id="fileinput" class="form-input" type="file" onchange="readFile(this)" accept=".vcf" multiple/>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
     </div>
@@ -98,12 +104,6 @@
         }
 
         /*** contacts ***/
-
-        function addContact(arr, lat, lon, name) {
-            arr.push({number:lat, name:name});
-            renderAllContacts();
-            dirty();
-        }
 
         function deleteContact(arr, i) {
             arr.splice(i, 1);
@@ -187,7 +187,9 @@
           } else {
             $contact.innerHTML = `<td>${contact.name}</td><td><a href="tel:${contact.number}">${contact.number}</a></td>`;
           }
-          $contact.innerHTML += `<td><button class="btn btn-action btn-primary" onclick="removeContact(${index})"><i class="icon icon-delete"></i></button></td>`;
+          let buttons = `<button class="btn btn-action btn-error" onclick="removeContact(${index})"><i class="icon icon-delete"></i></button>`;
+          buttons += `<button class="btn btn-action" onclick="exportVcard(${index})" title="Export vCard"><i class="icon icon-download"></i></button>`;
+          $contact.innerHTML += `<td>${buttons}</td>`;
           $list.appendChild($contact)
         })
         $name.focus()
@@ -199,6 +201,41 @@
 
       function renderAllContacts() {
         renderContactsList();
+      }
+
+      function readFile(input) {
+        for(let i=0; i<input.files.length; i++) {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            let vcards;
+            try {
+              vcards = vcf.parse(reader.result);
+            } catch (error) {
+              alert(error);
+              return;
+            }
+            vcards.forEach(vcard => {
+              const name = vcard.get('fn')?.valueOf() || vcard.get('n')?.valueOf();
+              const tels = Array.isArray(vcard.get('tel')) ? vcard.get('tel') : [vcard.get('tel')];
+              tels.forEach(tel => {
+                if (tel) {
+                  const number = tel.valueOf();
+                  contacts.push({name: name, number: number});
+                }
+              });
+            });
+            renderAllContacts();
+            dirty();
+          }, false);
+          reader.readAsText(input.files[i], "UTF-8");
+        }
+      }
+
+      function exportVcard(index){
+        const vCard = new vcf();
+        vCard.set('n', contacts[index].name);
+        vCard.set('tel', contacts[index].number);
+        Util.saveFile(contacts[index].name+".vcf", "text/vcard", vCard.toString());
       }
 
       // ========================================================================== UPLOAD/DOWNLOAD
