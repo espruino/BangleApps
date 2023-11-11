@@ -160,6 +160,7 @@ E.on('notify',msg=>{
   };
   var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
   //if (appNames[msg.appId]) msg.a
+  Terminal.println("'" + msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) + "'");
   if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpCalendar") {
     // parse the message body into json:
     const d = JSON.parse(msg.message);
@@ -190,7 +191,6 @@ E.on('notify',msg=>{
       color: 0,
       allday: false
     }
-    Terminal.println("'" + msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) + "'");
     calEvent.allday = calEvent.durationInSeconds >= 24 * 56 * 60 - 1; // 24 hours for IOS is 23:59:59
 
     var cal = require("Storage").readJSON("android.calendar.json",true);
