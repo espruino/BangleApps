@@ -47,6 +47,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Number</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="contacts">
@@ -186,7 +187,9 @@
           } else {
             $contact.innerHTML = `<td>${contact.name}</td><td><a href="tel:${contact.number}">${contact.number}</a></td>`;
           }
-          $contact.innerHTML += `<td><button class="btn btn-action btn-primary" onclick="removeContact(${index})"><i class="icon icon-delete"></i></button></td>`;
+          let buttons = `<button class="btn btn-action btn-error" onclick="removeContact(${index})"><i class="icon icon-delete"></i></button>`;
+          buttons += `<button class="btn btn-action" onclick="exportVcard(${index})" title="Export vCard"><i class="icon icon-download"></i></button>`;
+          $contact.innerHTML += `<td>${buttons}</td>`;
           $list.appendChild($contact)
         })
         $name.focus()
@@ -226,6 +229,13 @@
           }, false);
           reader.readAsText(input.files[i], "UTF-8");
         }
+      }
+
+      function exportVcard(index){
+        const vCard = new vcf();
+        vCard.set('n', contacts[index].name);
+        vCard.set('tel', contacts[index].number);
+        Util.saveFile(contacts[index].name+".vcf", "text/vcard", vCard.toString());
       }
 
       // ========================================================================== UPLOAD/DOWNLOAD
