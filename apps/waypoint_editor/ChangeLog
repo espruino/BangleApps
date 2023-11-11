@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Display waypoint name instead of its index in remove menu and fix icon
+0.03: Use text input for waypoint names, allow marking waypoint with current GPS position

@@ -26,7 +26,7 @@
     if (Bangle["#on"+eventType] === undefined) {
       return 0;
     } else if (Bangle["#on"+eventType] instanceof Array) {
-      return Bangle["#on"+eventType].length;
+      return Bangle["#on"+eventType].filter(x=>x).length;
     } else if (Bangle["#on"+eventType] !== undefined) {
       return 1;
     }

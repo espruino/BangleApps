@@ -106,6 +106,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
+  if (withDate || selectedAlarm.date) {
+    alarm.del = require("sched").getSettings().defaultDeleteExpiredTimers;
+  }
   alarm.dow = handleFirstDayOfWeek(alarm.dow);
 
   if (selectedAlarm) {
@@ -193,6 +196,9 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     /*LANG*/"Repeat": {
       value: decodeRepeat(alarm),
       onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, date || alarm.dow, (repeat, dow) => {
+        if (repeat) {
+          alarm.del = false; // do not auto delete a repeated alarm
+        }
         alarm.rp = repeat;
         alarm.dow = dow;
         prepareAlarmForSave(alarm, alarmIndex, time, date, true);
@@ -203,6 +209,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     /*LANG*/"Auto Snooze": {
       value: alarm.as,
       onchange: v => alarm.as = v
+    },
+    /*LANG*/"Delete After Expiration": {
+      value: alarm.del,
+      onchange: v => alarm.del = v
     },
     /*LANG*/"Hidden": {
       value: alarm.hidden || false,
@@ -225,6 +235,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
+    delete menu[/*LANG*/"Delete After Expiration"];
   }
 
   if (!isNew) {
@@ -283,7 +294,6 @@ function decodeRepeat(alarm) {
 }
 
 function showEditRepeatMenu(repeat, day, dowChangeCallback) {
-  var originalRepeat = repeat;
   var dow;
 
   const menu = {
@@ -316,26 +326,32 @@ function showEditRepeatMenu(repeat, day, dowChangeCallback) {
       },
       /*LANG*/"Custom": {
         value: isCustom ? decodeRepeat({ rp: true, dow: dow }) : false,
-        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
+        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, repeat, originalDow)
       }
     };
   } else {
     // var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
     dow = EVERY_DAY;
-    repeat = repeat || {interval: "month", num: 1};
+    const repeatObj = repeat || {interval: "month", num: 1};
 
     restOfMenu = {
       /*LANG*/"Every": {
-        value: repeat.num,
+        value: repeatObj.num,
         min: 1,
-        onchange: v => repeat.num = v
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.num = v;
+        }
       },
       /*LANG*/"Interval": {
-        value: INTERVALS.indexOf(repeat.interval),
+        value: INTERVALS.indexOf(repeatObj.interval),
         format: v => INTERVAL_LABELS[v],
         min: 0,
         max: INTERVALS.length - 1,
-        onchange: v => repeat.interval = INTERVALS[v]
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.interval = INTERVALS[v];
+        }
       }
     };
   }
