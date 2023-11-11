@@ -2,14 +2,13 @@
   require("Font4x8Numeric").add(Graphics);
 
   var settings = require("Storage").readJSON("clkinfocal.json",1)||{};
-  settings.fmt = settings.fmt||0;
+  settings.fmt = settings.fmt||"DDD";
   
   var getDateString = function(dt) {
-    var fmt = 1;  // get from settings
     switch(settings.fmt) {
-    case 2:  // dd MMM
+    case "dd MMM":
       return '' + dt.getDate() + ' ' + require("locale").month(dt,1).toUpperCase();
-    case 1:  // DDD dd
+    case "DDD dd":
       return require("locale").dow(dt,1).toUpperCase() + ' ' + dt.getDate();
     default: // DDD
       return require("locale").dow(dt,1).toUpperCase();
