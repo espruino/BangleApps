@@ -278,6 +278,7 @@ and which gives information about the app for the Launcher.
                               //   'bluetooth' - uses Bluetooth LE
                               //   'system' - used by the system
                               //   'clkinfo' - provides or uses clock_info module for data on your clock face or clocks that support it (see apps/clock_info/README.md)
+                              //   'health' - e.g. heart rate monitors or step counting
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
