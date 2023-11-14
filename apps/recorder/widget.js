@@ -176,11 +176,11 @@
   };
   let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
 
-  let writeLog = function() {
+  let writeLog = function(period) {
     entriesWritten++;
     WIDGETS["recorder"].draw();
     try {
-      var fields = [Math.round(getTime())];
+      var fields = [period===1?getTime().toFixed(1):Math.round(getTime())];
       activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
       if (storageFile) storageFile.write(fields.join(",")+"\n");
     } catch(e) {
@@ -222,7 +222,7 @@
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000);
+      writeInterval = setInterval(writeLog, settings.period*1000, settings.period);
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
