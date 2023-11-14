@@ -1,4 +1,4 @@
-// Devel app -- app forge? 
+// App Forge
 
 st = require('Storage');
 
@@ -8,8 +8,7 @@ l = st.list(l, {sf:false});
 
 print(l);
 
-function on_load(x)
-{
+function on_load(x) {
   print("Loading", x);
   Bangle.buzz(50, 1); // Won't happen because load() is quicker
   g.reset().clear()
