@@ -1,18 +1,17 @@
-let simulated = false;
+let simulated = true;
 let displaying = false;
 let in_menu = false;
 let go_backwards = false;
-let zoomed = true;
 let status;
 
 let initial_options = Bangle.getOptions();
 
 let interests_colors = [
-  0xffff, // Waypoints, white
-  0xf800, // Bakery, red
-  0x001f, // DrinkingWater, blue
-  0x07ff, // Toilets, cyan
-  0x07e0, // Artwork, green
+  [1, 1, 1], // Waypoints, white
+  [1, 0, 0], // Bakery, red
+  [0, 0, 1], // DrinkingWater, blue
+  [1, 0, 1], // Toilets, purple
+  [0, 1, 0], // Artwork, green
 ];
 
 let Y_OFFSET = 20;
@@ -263,123 +262,16 @@ class Map {
     // offset += encoded_blocks_size;
   }
 
-  display(
-    displayed_x,
-    displayed_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    g.setColor(this.color[0], this.color[1], this.color[2]);
-    let local_x = displayed_x - this.start_coordinates[0];
-    let local_y = displayed_y - this.start_coordinates[1];
-    let tile_x = Math.floor(local_x / this.side);
-    let tile_y = Math.floor(local_y / this.side);
+  add_to_tile_image(img, absolute_tile_x, absolute_tile_y) {
+    let tile_x = absolute_tile_x - this.first_tile[0];
+    let tile_y = absolute_tile_y - this.first_tile[1];
+    let side = img.getWidth();
 
-    let limit = 1;
-    if (!zoomed) {
-      limit = 2;
-    }
-    for (let y = tile_y - limit; y <= tile_y + limit; y++) {
-      if (y < 0 || y >= this.grid_size[1]) {
-        continue;
-      }
-      for (let x = tile_x - limit; x <= tile_x + limit; x++) {
-        if (x < 0 || x >= this.grid_size[0]) {
-          continue;
-        }
-        if (
-          this.tile_is_on_screen(
-            x,
-            y,
-            local_x,
-            local_y,
-            scale_factor,
-            cos_direction,
-            sin_direction
-          )
-        ) {
-          //           let colors = [
-          //             [0, 0, 0],
-          //             [0, 0, 1],
-          //             [0, 1, 0],
-          //             [0, 1, 1],
-          //             [1, 0, 0],
-          //             [1, 0, 1],
-          //             [1, 1, 0],
-          //             [1, 1, 0.5],
-          //             [0.5, 0, 0.5],
-          //             [0, 0.5, 0.5],
-          //           ];
-          if (this.color[0] == 1 && this.color[1] == 0 && this.color[2] == 0) {
-            this.display_thick_tile(
-              x,
-              y,
-              local_x,
-              local_y,
-              scale_factor,
-              cos_direction,
-              sin_direction
-            );
-          } else {
-            this.display_tile(
-              x,
-              y,
-              local_x,
-              local_y,
-              scale_factor,
-              cos_direction,
-              sin_direction
-            );
-          }
-        }
-      }
-    }
-  }
+    let thick = this.color[0] != 0;
+    img.setColor(this.color[0], this.color[1], this.color[2]);
 
-  tile_is_on_screen(
-    tile_x,
-    tile_y,
-    current_x,
-    current_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    let width = g.getWidth();
-    let height = g.getHeight();
-    let center_x = width / 2;
-    let center_y = height / 2 + Y_OFFSET;
-    let side = this.side;
-    let tile_center_x = (tile_x + 0.5) * side;
-    let tile_center_y = (tile_y + 0.5) * side;
-    let scaled_center_x = (tile_center_x - current_x) * scale_factor;
-    let scaled_center_y = (tile_center_y - current_y) * scale_factor;
-    let rotated_center_x =
-      scaled_center_x * cos_direction - scaled_center_y * sin_direction;
-    let rotated_center_y =
-      scaled_center_x * sin_direction + scaled_center_y * cos_direction;
-    let on_screen_center_x = center_x - rotated_center_x;
-    let on_screen_center_y = center_y + rotated_center_y;
+    let tile_num = tile_x + tile_y * this.grid_size[0];
 
-    let scaled_side = side * scale_factor * Math.sqrt(1 / 2);
-
-    if (on_screen_center_x + scaled_side <= 0) {
-      return false;
-    }
-    if (on_screen_center_x - scaled_side >= width) {
-      return false;
-    }
-    if (on_screen_center_y + scaled_side <= 0) {
-      return false;
-    }
-    if (on_screen_center_y - scaled_side >= height) {
-      return false;
-    }
-    return true;
-  }
-
-  tile_points(tile_num, tile_x, tile_y, scaled_side) {
     let line_start_offset = this.tiles_offsets.tile_start_offset(
       tile_y * this.grid_size[0]
     );
@@ -389,118 +281,37 @@ class Map {
       this.tiles_offsets.tile_end_offset(tile_num) - line_start_offset;
 
     let line = this.binary_lines[tile_y];
-    // we need to copy both for correct results and for performances
-    // let's precompute also.
-    let cached_tile = new Float64Array(upper_limit - offset);
-    for (let i = offset; i < upper_limit; i += 2) {
-      let x = (tile_x + line.buffer[i] / 255) * scaled_side;
-      let y = (tile_y + line.buffer[i + 1] / 255) * scaled_side;
-      cached_tile[i - offset] = x;
-      cached_tile[i + 1 - offset] = y;
-    }
-    return cached_tile;
-  }
+    for (let i = offset; i < upper_limit; i += 4) {
+      let x1 = (line.buffer[i] / 255) * side;
+      let y1 = ((255 - line.buffer[i + 1]) / 255) * side;
+      let x2 = (line.buffer[i + 2] / 255) * side;
+      let y2 = ((255 - line.buffer[i + 3]) / 255) * side;
 
-  invalidate_caches() {
-    this.points_cache = [];
-  }
+      let thickness = 1;
+      if (thick) {
+        thickness = 3.5;
+      }
 
-  fetch_points(tile_x, tile_y, scaled_side) {
-    let tile_num = tile_x + tile_y * this.grid_size[0];
-    let existing_entry = this.points_cache.find(c => {
-      c[0] == tile_num
-    });
-    if (existing_entry !== undefined) {
-      return existing_entry[1];
-    }
-    if (this.points_cache.length > 40) {
-      this.points_cache.shift();
-    }
-    let points = this.tile_points(tile_num, tile_x, tile_y, scaled_side);
-    this.points_cache.push([tile_num, points]);
-    return points;
-  }
-
-  display_tile(
-    tile_x,
-    tile_y,
-    current_x,
-    current_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    "jit";
-    let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
-    let scaled_current_x = current_x * scale_factor;
-    let scaled_current_y = current_y * scale_factor;
-    let recentered_points = center_points(
-      points,
-      scaled_current_x,
-      scaled_current_y
-    );
-    let screen_points = rotate_points(
-      recentered_points,
-      cos_direction,
-      sin_direction
-    );
-
-    for (let i = 0; i < screen_points.length; i += 4) {
-      g.drawLine(
-        screen_points[i],
-        screen_points[i + 1],
-        screen_points[i + 2],
-        screen_points[i + 3]
-      );
-    }
-  }
-
-  display_thick_tile(
-    tile_x,
-    tile_y,
-    current_x,
-    current_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    "jit";
-
-    let points = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
-    let scaled_current_x = current_x * scale_factor;
-    let scaled_current_y = current_y * scale_factor;
-    let recentered_points = center_points(
-      points,
-      scaled_current_x,
-      scaled_current_y
-    );
-    let screen_points = rotate_points(
-      recentered_points,
-      cos_direction,
-      sin_direction
-    );
-
-    for (let i = 0; i < screen_points.length; i += 4) {
-      let final_x = screen_points[i];
-      let final_y = screen_points[i + 1];
-      let new_final_x = screen_points[i + 2];
-      let new_final_y = screen_points[i + 3];
-
-      let xdiff = new_final_x - final_x;
-      let ydiff = new_final_y - final_y;
+      let xdiff = x2 - x1;
+      let ydiff = y2 - y1;
       let d = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-      let ox = (-ydiff / d) * 3;
-      let oy = (xdiff / d) * 3;
-      g.fillPoly([
-        final_x + ox,
-        final_y + oy,
-        new_final_x + ox,
-        new_final_y + oy,
-        new_final_x - ox,
-        new_final_y - oy,
-        final_x - ox,
-        final_y - oy,
+      let ox = (-ydiff / d) * thickness;
+      let oy = (xdiff / d) * thickness;
+      img.fillPoly([
+        x1 + ox,
+        y1 + oy,
+        x2 + ox,
+        y2 + oy,
+        x2 - ox,
+        y2 - oy,
+        x1 - ox,
+        y1 - oy,
       ]);
+
+      // } else {
+      // img.drawLine(x1, y1, x2, y2);
+
+      // }
     }
   }
 }
@@ -531,108 +342,27 @@ class Interests {
     return [this, offset];
   }
 
-  display(
-    displayed_x,
-    displayed_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    let local_x = displayed_x - this.start_coordinates[0];
-    let local_y = displayed_y - this.start_coordinates[1];
-    let tile_x = Math.floor(local_x / this.side);
-    let tile_y = Math.floor(local_y / this.side);
-    for (let y = tile_y - 1; y <= tile_y + 1; y++) {
-      if (y < 0 || y >= this.grid_size[1]) {
-        continue;
-      }
-      for (let x = tile_x - 1; x <= tile_x + 1; x++) {
-        if (x < 0 || x >= this.grid_size[0]) {
-          continue;
-        }
-        this.display_tile(
-          x,
-          y,
-          local_x,
-          local_y,
-          scale_factor,
-          cos_direction,
-          sin_direction
-        );
-      }
-    }
-  }
+  add_to_tile_image(img, absolute_tile_x, absolute_tile_y) {
+    let tile_x = absolute_tile_x - this.first_tile[0];
+    let tile_y = absolute_tile_y - this.first_tile[1];
+    let side = img.getWidth();
 
-  tile_points(tile_num, tile_x, tile_y, scaled_side) {
+    let tile_num = tile_x + tile_y * this.grid_size[0];
+
     let offset = this.offsets.tile_start_offset(tile_num);
     let upper_limit = this.offsets.tile_end_offset(tile_num);
 
-    let tile_interests = [];
+    let buffer = this.binary_interests;
     for (let i = offset; i < upper_limit; i += 3) {
-      let interest = this.binary_interests[i];
-      let x = (tile_x + this.binary_interests[i + 1] / 255) * scaled_side;
-      let y = (tile_y + this.binary_interests[i + 2] / 255) * scaled_side;
-      if (interest >= interests_colors.length) {
-        throw "bad interest" + interest + "at" + tile_num + "offset" + i;
-      }
-      tile_interests.push(interest);
-      tile_interests.push(x);
-      tile_interests.push(y);
-    }
-    return tile_interests;
-  }
-  fetch_points(tile_x, tile_y, scaled_side) {
-    //TODO: factorize with map ?
-    let tile_num = tile_x + tile_y * this.grid_size[0];
-    for (let i = 0; i < this.points_cache.length; i++) {
-      if (this.points_cache[i][0] == tile_num) {
-        return this.points_cache[i][1];
-      }
-    }
-    if (this.points_cache.length > 40) {
-      this.points_cache.shift();
-    }
-    let points = this.tile_points(tile_num, tile_x, tile_y, scaled_side);
-    this.points_cache.push([tile_num, points]);
-    return points;
-  }
-  invalidate_caches() {
-    this.points_cache = [];
-  }
-  display_tile(
-    tile_x,
-    tile_y,
-    displayed_x,
-    displayed_y,
-    scale_factor,
-    cos_direction,
-    sin_direction
-  ) {
-    let width = g.getWidth();
-    let half_width = width / 2;
-    let half_height = g.getHeight() / 2 + Y_OFFSET;
-    let interests = this.fetch_points(tile_x, tile_y, this.side * scale_factor);
-
-    let scaled_current_x = displayed_x * scale_factor;
-    let scaled_current_y = displayed_y * scale_factor;
-
-    for (let i = 0; i < interests.length; i += 3) {
-      let type = interests[i];
-      let x = interests[i + 1];
-      let y = interests[i + 2];
-
-      let scaled_x = x - scaled_current_x;
-      let scaled_y = y - scaled_current_y;
-      let rotated_x = scaled_x * cos_direction - scaled_y * sin_direction;
-      let rotated_y = scaled_x * sin_direction + scaled_y * cos_direction;
-      let final_x = half_width - rotated_x;
-      let final_y = half_height + rotated_y;
+      let type = buffer[i];
+      let x = (buffer[i + 1] / 255) * side;
+      let y = ((255 - buffer[i + 2]) / 255) * side;
 
       let color = interests_colors[type];
       if (type == 0) {
-        g.setColor(0, 0, 0).fillCircle(final_x, final_y, 6);
+        img.setColor(0, 0, 0).fillCircle(x, y, 6);
       }
-      g.setColor(color).fillCircle(final_x, final_y, 5);
+      img.setColor(color[0], color[1], color[2]).fillCircle(x, y, 5);
     }
   }
 }
@@ -647,13 +377,6 @@ class Status {
     this.interests = interests;
     this.heights = heights;
     this.screen = MAP;
-    let half_screen_width = g.getWidth() / 2;
-    let half_screen_height = g.getHeight() / 2;
-    let half_screen_diagonal = Math.sqrt(
-      half_screen_width * half_screen_width +
-        half_screen_height * half_screen_height
-    );
-    this.scale_factor = half_screen_diagonal / maps[0].side; // multiply geo coordinates by this to get pixels coordinates
     this.on_path = true; // are we on the path or lost ?
     this.position = null; // where we are
     this.adjusted_cos_direction = 1; // cos of where we look at
@@ -662,6 +385,12 @@ class Status {
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
     this.projected_point = null;
+    this.images_cache = [];
+
+    let width = g.getWidth();
+    let height = g.getHeight();
+    let diagonal_third = Math.sqrt(width * width + height * height) / 3;
+    this.scale_factor = diagonal_third / maps[0].side; // multiply geo coordinates by this to get pixels coordinates
 
     if (this.path !== null) {
       let r = [0];
@@ -709,14 +438,6 @@ class Status {
       if (settings.power_lcd_off) {
         Bangle.setLCDPower(false);
       }
-    }
-  }
-  invalidate_caches() {
-    for (let i = 0; i < this.maps.length; i++) {
-      this.maps[i].invalidate_caches();
-    }
-    if (this.interests !== null) {
-      this.interests.invalidate_caches();
     }
   }
   new_position_reached(position) {
@@ -780,6 +501,7 @@ class Status {
       }
       return;
     }
+    this.direction = direction;
     if (in_menu) {
       return;
     }
@@ -925,21 +647,12 @@ class Status {
     direction = Math.atan2(diff.lat, diff.lon);
 
     let full_angle = direction - this.angle;
-    // let c = towards.coordinates(p, this.adjusted_cos_direction, this.adjusted_sin_direction, this.scale_factor);
-    // g.setColor(1,0,1).fillCircle(c[0], c[1], 5);
-
-    let scale;
-    if (zoomed) {
-      scale = this.scale_factor;
-    } else {
-      scale = this.scale_factor / 2;
-    }
 
     c = this.projected_point.coordinates(
       this.displayed_position,
       this.adjusted_cos_direction,
       this.adjusted_sin_direction,
-      scale
+      this.scale_factor
     );
 
     let cos1 = Math.cos(full_angle + 0.6 + Math.PI / 2);
@@ -993,14 +706,93 @@ class Status {
       return false;
     }
   }
+
+  tile_image(absolute_tile_x, absolute_tile_y) {
+    let cached_img = this.images_cache.find((i) => {
+      return i.x == absolute_tile_x && i.y == absolute_tile_y;
+    });
+    if (cached_img === undefined) {
+      console.log("loading", absolute_tile_x, absolute_tile_y);
+      let img = this.compute_tile_image(absolute_tile_x, absolute_tile_y);
+      if (this.images_cache.length > 12) {
+        this.images_cache.shift();
+      }
+      this.images_cache.push({
+        image: img,
+        x: absolute_tile_x,
+        y: absolute_tile_y,
+      });
+      return img;
+    } else {
+      return cached_img.image;
+    }
+  }
+
+  compute_tile_image(absolute_tile_x, absolute_tile_y) {
+    let screen_width = g.getWidth();
+    let screen_height = g.getHeight();
+    let img_side = Math.ceil(
+      Math.sqrt(screen_width * screen_width + screen_height * screen_height) / 3
+    );
+
+    let img = Graphics.createArrayBuffer(img_side, img_side, 4, { msb: true });
+    img.setBgColor(1, 1, 1);
+    img.clear();
+
+    this.maps.forEach((m) => {
+      m.add_to_tile_image(img, absolute_tile_x, absolute_tile_y);
+    });
+    this.interests.add_to_tile_image(img, absolute_tile_x, absolute_tile_y);
+    return img;
+  }
   display() {
     if (displaying || in_menu) {
       return; // don't draw on drawings
     }
+    g.reset();
     displaying = true;
     g.clear();
     if (this.screen == MAP) {
-      this.display_map();
+      let start = getTime();
+
+      let displayed_x = this.displayed_position.lon;
+      let displayed_y = this.displayed_position.lat;
+      let tile_x_coord = displayed_x / this.maps[0].side;
+      let tile_y_coord = displayed_y / this.maps[0].side;
+      let absolute_tile_x = Math.floor(tile_x_coord);
+      let absolute_tile_y = Math.floor(tile_y_coord);
+
+      let diagonal = Math.ceil(
+        Math.sqrt(g.getWidth() * g.getWidth() + g.getHeight() * g.getHeight()) /
+          3
+      );
+      let angle = this.direction - Math.PI / 2;
+      let cos_direction = Math.cos(angle);
+      let sin_direction = Math.sin(angle);
+
+      for (let x = -1; x < 2; x++) {
+        for (let y = -1; y < 2; y++) {
+          let img = this.tile_image(absolute_tile_x + x, absolute_tile_y + y);
+
+          let screen_x = (absolute_tile_x + x + 0.5 - tile_x_coord) * diagonal;
+          let screen_y = -(absolute_tile_y + y + 0.5 - tile_y_coord) * diagonal;
+
+          let rotated_x = screen_x * cos_direction - screen_y * sin_direction;
+          let rotated_y = screen_x * sin_direction + screen_y * cos_direction;
+          let final_x = g.getWidth() / 2 + rotated_x;
+          let final_y = g.getHeight() / 2 + Y_OFFSET + rotated_y;
+
+          g.drawImage(img, final_x, final_y, { rotate: angle });
+        }
+      }
+
+      if (this.position !== null) {
+        this.display_path();
+      }
+
+      this.display_direction();
+      this.display_stats();
+      console.log("displayed in", getTime() - start);
     } else {
       let current_position = 0;
       if (this.current_segment !== null) {
@@ -1026,6 +818,7 @@ class Status {
       }
     }
     Bangle.drawWidgets();
+    g.flip();
     displaying = false;
   }
   display_heights(display_start, current_position, displayed_length) {
@@ -1178,39 +971,6 @@ class Status {
       widgets_height
     );
   }
-  display_map() {
-    let scale_factor = this.scale_factor;
-    if (!zoomed) {
-      scale_factor /= 2;
-    }
-
-    // start_profiling();
-    for (let i = 0; i < this.maps.length; i++) {
-      this.maps[i].display(
-        this.displayed_position.lon,
-        this.displayed_position.lat,
-        scale_factor,
-        this.adjusted_cos_direction,
-        this.adjusted_sin_direction
-      );
-    }
-    // end_profiling("map");
-    if (this.interests !== null) {
-      this.interests.display(
-        this.displayed_position.lon,
-        this.displayed_position.lat,
-        scale_factor,
-        this.adjusted_cos_direction,
-        this.adjusted_sin_direction
-      );
-    }
-    if (this.position !== null) {
-      this.display_path();
-    }
-
-    this.display_direction();
-    this.display_stats();
-  }
   display_stats() {
     let now = new Date();
     let minutes = now.getMinutes().toString();
@@ -1306,9 +1066,6 @@ class Status {
     let half_width = width / 2;
     let half_height = height / 2 + Y_OFFSET;
     let scale_factor = this.scale_factor;
-    if (!zoomed) {
-      scale_factor /= 2;
-    }
 
     if (this.path !== null) {
       // compute coordinate for projection on path
@@ -1640,14 +1397,6 @@ function start_gipy(path, maps, interests, heights) {
           format: (v) => (v ? "On" : "Off"),
           onchange: (v) => {
             go_backwards = v;
-          },
-        },
-        Zoom: {
-          value: zoomed,
-          format: (v) => (v ? "In" : "Out"),
-          onchange: (v) => {
-            status.invalidate_caches();
-            zoomed = v;
           },
         },
         /*LANG*/
