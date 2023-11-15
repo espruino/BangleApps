@@ -252,9 +252,8 @@ function onSwipe(dir) {
 
 Bangle.setUI({
   mode : "custom",
-  back : function() {}, // optional - add a 'back' icon in top-left widget area and call this function when it is pressed , also call it when the hardware button is clicked (does not override btn if defined)
-  swipe : onSwipe, // optional - (mode:custom only) handler for 'swipe' events
-  clock : 0 // optional - if set the behavior of 'clock' mode is added (does not override btn if defined)
+  swipe : onSwipe,
+  clock : 0
 });
 Bangle.loadWidgets();
 Bangle.drawWidgets();
