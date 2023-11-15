@@ -9,6 +9,8 @@
     settings.period = settings.period||10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
+    if (!settings.record)
+      settings.record = ["gps"];
     return settings;
   }
 
