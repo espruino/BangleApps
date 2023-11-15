@@ -252,7 +252,11 @@
         settings.file = getTrackFilename();
       }
       var headers = require("Storage").open(settings.file,"r").readLine();
-      if (headers && headers.trim()==getCSVHeaders(getActiveRecorders()).join(",")){ // if file exists AND the headers match (#3081)
+      if (headers){ // if file exists
+        if(headers.trim()!==getCSVHeaders(getActiveRecorders()).join(",")){
+          // headers don't match, reset (#3081)
+          options.force = "new";
+        }
         if (!options.force) { // if not forced, ask the question
           g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
           return E.showPrompt(
