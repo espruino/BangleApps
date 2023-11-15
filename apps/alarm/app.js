@@ -73,9 +73,9 @@ function formatAlarmProperty(msg) {
   }
 }
 
-function showMainMenu(group) {
+function showMainMenu(scroll, group) {
   const menu = {
-    "": { "title": group ? group : /*LANG*/"Alarms & Timers" },
+    "": { "title": group ? group : /*LANG*/"Alarms & Timers", scroll: scroll },
     "< Back": () => !group ? load() : showMainMenu(),
     /*LANG*/"New...": () => showNewMenu(group)
   };
@@ -88,7 +88,7 @@ function showMainMenu(group) {
     if(showAlarm) {
       menu[trimLabel(getLabel(e),40)] = {
         value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
-        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, group)
+        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller.scroll, group)
       };
     } else if (getGroups) {
       groups[e.group] = undefined;
@@ -96,11 +96,11 @@ function showMainMenu(group) {
   });
 
   if (!group) {
-    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(g));
+    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
 
-  E.showMenu(menu);
+  var scroller = E.showMenu(menu).scroller;
 }
 
 function showNewMenu(group) {
@@ -116,7 +116,7 @@ function showNewMenu(group) {
   E.showMenu(newMenu);
 }
 
-function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, group) {
+function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
@@ -142,7 +142,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, group) {
     "< Back": () => {
       prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
-      showMainMenu(group);
+      showMainMenu(scroll, group);
     },
     /*LANG*/"Hour": {
       value: time.h,
@@ -233,11 +233,11 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, group) {
       value: alarm.hidden || false,
       onchange: v => alarm.hidden = v
     },
-    /*LANG*/"Cancel": () => showMainMenu(group),
+    /*LANG*/"Cancel": () => showMainMenu(scroll, group),
     /*LANG*/"Confirm": () => {
       prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
-      showMainMenu(group);
+      showMainMenu(scroll, group);
     }
   };
 
@@ -259,7 +259,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, group) {
         if (confirm) {
           alarms.splice(alarmIndex, 1);
           saveAndReload();
-          showMainMenu(group);
+          showMainMenu(scroll, group);
         } else {
           alarm.t = require("time_utils").encodeTime(time);
           setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
