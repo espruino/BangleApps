@@ -22,7 +22,7 @@ function on_load(x) {
 var menu = {
     "< Back" : Bangle.load
 };
-if (Object.keys(l).length==0) Object.assign(menu, {"No apps":""});
+if (l.length==0) Object.assign(menu, {"No apps":""});
 else for (let id in l) {
     let i = id;
     menu[l[id]]=()=>{ on_load(l[i]); };
