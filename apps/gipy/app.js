@@ -7,11 +7,11 @@ let status;
 let initial_options = Bangle.getOptions();
 
 let interests_colors = [
-  [1, 1, 1], // Waypoints, white
-  [1, 0, 0], // Bakery, red
-  [0, 0, 1], // DrinkingWater, blue
-  [1, 0, 1], // Toilets, purple
-  [0, 1, 0], // Artwork, green
+  [1,1,1], // Waypoints, white
+  [1,0,0], // Bakery, red
+  [0,0,1], // DrinkingWater, blue
+  [0,1,1], // Toilets, cyan
+  [0,1,0], // Artwork, green
 ];
 
 let Y_OFFSET = 20;
@@ -265,7 +265,7 @@ class Map {
   add_to_tile_image(img, absolute_tile_x, absolute_tile_y) {
     let tile_x = absolute_tile_x - this.first_tile[0];
     let tile_y = absolute_tile_y - this.first_tile[1];
-    let side = img.getWidth();
+    let side = img.getWidth() - 6;
 
     let thick = this.color[0] != 0;
     img.setColor(this.color[0], this.color[1], this.color[2]);
@@ -282,10 +282,10 @@ class Map {
 
     let line = this.binary_lines[tile_y];
     for (let i = offset; i < upper_limit; i += 4) {
-      let x1 = (line.buffer[i] / 255) * side;
-      let y1 = ((255 - line.buffer[i + 1]) / 255) * side;
-      let x2 = (line.buffer[i + 2] / 255) * side;
-      let y2 = ((255 - line.buffer[i + 3]) / 255) * side;
+      let x1 = (line.buffer[i] / 255) * side + 3;
+      let y1 = ((255 - line.buffer[i + 1]) / 255) * side + 3;
+      let x2 = (line.buffer[i + 2] / 255) * side + 3;
+      let y2 = ((255 - line.buffer[i + 3]) / 255) * side + 3;
 
       let thickness = 1;
       if (thick) {
@@ -345,7 +345,7 @@ class Interests {
   add_to_tile_image(img, absolute_tile_x, absolute_tile_y) {
     let tile_x = absolute_tile_x - this.first_tile[0];
     let tile_y = absolute_tile_y - this.first_tile[1];
-    let side = img.getWidth();
+    let side = img.getWidth() - 6;
 
     let tile_num = tile_x + tile_y * this.grid_size[0];
 
@@ -355,8 +355,8 @@ class Interests {
     let buffer = this.binary_interests;
     for (let i = offset; i < upper_limit; i += 3) {
       let type = buffer[i];
-      let x = (buffer[i + 1] / 255) * side;
-      let y = ((255 - buffer[i + 2]) / 255) * side;
+      let x = (buffer[i + 1] / 255) * side + 3;
+      let y = ((255 - buffer[i + 2]) / 255) * side + 3;
 
       let color = interests_colors[type];
       if (type == 0) {
@@ -380,10 +380,10 @@ class Status {
     this.on_path = true; // are we on the path or lost ?
     this.position = null; // where we are
     this.direction = 0;
-    this.adjusted_cos_direction = Math.cos(- Math.PI / 2.0);
-    this.adjusted_sin_direction = Math.sin(- Math.PI / 2.0);
-    this.zoomed_in = false;
-    
+    this.adjusted_cos_direction = Math.cos(-Math.PI / 2.0);
+    this.adjusted_sin_direction = Math.sin(-Math.PI / 2.0);
+    this.zoomed_in = true;
+
     this.current_segment = null; // which segment is closest
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
@@ -715,9 +715,8 @@ class Status {
       return i.x == absolute_tile_x && i.y == absolute_tile_y;
     });
     if (cached_img === undefined) {
-      console.log("loading", absolute_tile_x, absolute_tile_y);
       let img = this.compute_tile_image(absolute_tile_x, absolute_tile_y);
-      let limit = (this.zoomed_in)?12:30;
+      let limit = this.zoomed_in ? 12 : 30;
       if (this.images_cache.length > limit) {
         this.images_cache.shift();
       }
@@ -735,14 +734,15 @@ class Status {
   compute_tile_image(absolute_tile_x, absolute_tile_y) {
     let screen_width = g.getWidth();
     let screen_height = g.getHeight();
-    let tiles_per_diagonals = (this.zoomed_in)?3:5;
+    let tiles_per_diagonals = this.zoomed_in ? 3 : 5;
     let img_side = Math.ceil(
-      Math.sqrt(screen_width * screen_width + screen_height * screen_height) / tiles_per_diagonals
-    );
+      Math.sqrt(screen_width * screen_width + screen_height * screen_height) /
+        tiles_per_diagonals
+    ) + 6; // three extra pixels on each side to allow thick lines
 
     let img = Graphics.createArrayBuffer(img_side, img_side, 4, { msb: true });
-    img.setBgColor(1, 1, 1);
-    img.clear();
+    img.transparent = img.toColor(1,1,1);
+    img.setBgColor(1,1,1).clear();
 
     this.maps.forEach((m) => {
       m.add_to_tile_image(img, absolute_tile_x, absolute_tile_y);
@@ -758,7 +758,6 @@ class Status {
     displaying = true;
     g.clear();
     if (this.screen == MAP) {
-      let start = getTime();
 
       let displayed_x = this.displayed_position.lon;
       let displayed_y = this.displayed_position.lat;
@@ -767,7 +766,7 @@ class Status {
       let absolute_tile_x = Math.floor(tile_x_coord);
       let absolute_tile_y = Math.floor(tile_y_coord);
 
-      let tiles_per_diagonals = (this.zoomed_in)?3:5;
+      let tiles_per_diagonals = this.zoomed_in ? 3 : 5;
       let diagonal = Math.ceil(
         Math.sqrt(g.getWidth() * g.getWidth() + g.getHeight() * g.getHeight()) /
           tiles_per_diagonals
@@ -775,14 +774,14 @@ class Status {
       let angle = this.direction - Math.PI / 2;
       let cos_direction = Math.cos(angle);
       let sin_direction = Math.sin(angle);
-      let d = Math.floor(tiles_per_diagonals/2);
+      let d = Math.floor(tiles_per_diagonals / 2);
 
       for (let x = -d; x <= d; x++) {
         for (let y = -d; y <= d; y++) {
           let img = this.tile_image(absolute_tile_x + x, absolute_tile_y + y);
 
-          let screen_x = (absolute_tile_x + x + 0.5 - tile_x_coord) * diagonal;
-          let screen_y = -(absolute_tile_y + y + 0.5 - tile_y_coord) * diagonal;
+          let screen_x = (absolute_tile_x + x + 0.5 - tile_x_coord) * diagonal + 3;
+          let screen_y = -(absolute_tile_y + y + 0.5 - tile_y_coord) * diagonal - 3;
 
           let rotated_x = screen_x * cos_direction - screen_y * sin_direction;
           let rotated_y = screen_x * sin_direction + screen_y * cos_direction;
@@ -799,7 +798,6 @@ class Status {
 
       this.display_direction();
       this.display_stats();
-      console.log("displayed in", getTime() - start);
     } else {
       let current_position = 0;
       if (this.current_segment !== null) {
@@ -1454,7 +1452,7 @@ function start_gipy(path, maps, interests, heights) {
   status.display();
 
   Bangle.on("touch", () => {
-    let active = this.active;
+    let active = status.active;
     status.activate();
     if (in_menu) {
       return;
