@@ -1,4 +1,4 @@
-let simulated = true;
+let simulated = false;
 let displaying = false;
 let in_menu = false;
 let go_backwards = false;
@@ -379,8 +379,11 @@ class Status {
     this.screen = MAP;
     this.on_path = true; // are we on the path or lost ?
     this.position = null; // where we are
-    this.adjusted_cos_direction = 1; // cos of where we look at
-    this.adjusted_sin_direction = 0; // sin of where we look at
+    this.direction = 0;
+    this.adjusted_cos_direction = Math.cos(- Math.PI / 2.0);
+    this.adjusted_sin_direction = Math.sin(- Math.PI / 2.0);
+    this.zoomed_in = false;
+    
     this.current_segment = null; // which segment is closest
     this.reaching = null; // which waypoint are we reaching ?
     this.distance_to_next_point = null; // how far are we from next point ?
@@ -714,7 +717,8 @@ class Status {
     if (cached_img === undefined) {
       console.log("loading", absolute_tile_x, absolute_tile_y);
       let img = this.compute_tile_image(absolute_tile_x, absolute_tile_y);
-      if (this.images_cache.length > 12) {
+      let limit = (this.zoomed_in)?12:30;
+      if (this.images_cache.length > limit) {
         this.images_cache.shift();
       }
       this.images_cache.push({
@@ -731,8 +735,9 @@ class Status {
   compute_tile_image(absolute_tile_x, absolute_tile_y) {
     let screen_width = g.getWidth();
     let screen_height = g.getHeight();
+    let tiles_per_diagonals = (this.zoomed_in)?3:5;
     let img_side = Math.ceil(
-      Math.sqrt(screen_width * screen_width + screen_height * screen_height) / 3
+      Math.sqrt(screen_width * screen_width + screen_height * screen_height) / tiles_per_diagonals
     );
 
     let img = Graphics.createArrayBuffer(img_side, img_side, 4, { msb: true });
@@ -762,16 +767,18 @@ class Status {
       let absolute_tile_x = Math.floor(tile_x_coord);
       let absolute_tile_y = Math.floor(tile_y_coord);
 
+      let tiles_per_diagonals = (this.zoomed_in)?3:5;
       let diagonal = Math.ceil(
         Math.sqrt(g.getWidth() * g.getWidth() + g.getHeight() * g.getHeight()) /
-          3
+          tiles_per_diagonals
       );
       let angle = this.direction - Math.PI / 2;
       let cos_direction = Math.cos(angle);
       let sin_direction = Math.sin(angle);
+      let d = Math.floor(tiles_per_diagonals/2);
 
-      for (let x = -1; x < 2; x++) {
-        for (let y = -1; y < 2; y++) {
+      for (let x = -d; x <= d; x++) {
+        for (let y = -d; y <= d; y++) {
           let img = this.tile_image(absolute_tile_x + x, absolute_tile_y + y);
 
           let screen_x = (absolute_tile_x + x + 0.5 - tile_x_coord) * diagonal;
@@ -1397,6 +1404,14 @@ function start_gipy(path, maps, interests, heights) {
           format: (v) => (v ? "On" : "Off"),
           onchange: (v) => {
             go_backwards = v;
+          },
+        },
+        Zoom: {
+          value: status.zoomed_in,
+          format: (v) => (v ? "In" : "Out"),
+          onchange: (v) => {
+            status.images_cache = [];
+            status.zoomed_in = v;
           },
         },
         /*LANG*/

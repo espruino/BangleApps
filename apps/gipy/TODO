@@ -2,9 +2,6 @@
 urgent TODO:
 
 - update documentation to reflect new display
-- update javascript to generate tiles at different scale
-- update tile compression scheme to code coordinates on 4 points
- both in rust and js code
 
 *** thoughts on lcd power ***
 
