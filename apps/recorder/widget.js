@@ -9,6 +9,8 @@
     settings.period = settings.period||10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
+    if (!settings.record)
+      settings.record = ["gps"];
     return settings;
   }
 
@@ -159,7 +161,7 @@
     return recorders;
   }
 
-  let getActiveRecorders = function() {
+  let getActiveRecorders = function(settings) {
     let activeRecorders = [];
     let recorders = getRecorders();
     settings.record.forEach(r => {
@@ -204,7 +206,7 @@
 
     if (settings.recording) {
       // set up recorders
-      activeRecorders = getActiveRecorders();
+      activeRecorders = getActiveRecorders(settings);
       activeRecorders.forEach(activeRecorder => {
         activeRecorder.start();
       });
@@ -253,7 +255,7 @@
       }
       var headers = require("Storage").open(settings.file,"r").readLine();
       if (headers){ // if file exists
-        if(headers.trim()!==getCSVHeaders(getActiveRecorders()).join(",")){
+        if(headers.trim()!==getCSVHeaders(getActiveRecorders(settings)).join(",")){
           // headers don't match, reset (#3081)
           options.force = "new";
         }
