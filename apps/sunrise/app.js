@@ -13,6 +13,7 @@ function loadLocation () {
     return { lat: 41.38, lon: 2.168 };
   }
 }
+
 const latlon = loadLocation() || {};
 const lat = latlon.lat || 41.38;
 const lon = latlon.lon || 2.168;
@@ -33,7 +34,6 @@ let curPos = 0; // x position of the sun
 let realPos = 0; // x position of the sun depending on currentime
 
 let day;
-let sineLUT = new Uint8Array(w * 2); // x & y axes of sine function
 let now = new Date();
 
 let sr; // sunrise formatted as time
@@ -63,22 +63,22 @@ function getAltitude () {
 
 function drawSinuses () {
   // messy because 1d array for 2 axes
-  let array = [];
+  const array = [];
   const sinStep = 12;
   let i;
   g.setColor(1, 1, 1);
 
-  for (i = 0; i <= sineLUT.length - sinStep; i += sinStep) {
-    array.push(sineLUT[i], sineLUT[1 + i]);
+  for (i = 0; i < w; i++) {
+    array.push(i, ypos(i));
   }
-  array.push(sineLUT[sineLUT.length - 2], sineLUT[sineLUT.length - 1]);
+  array.push(w, ypos(w));
   g.drawPoly(array, false);
 }
 
 function calcSeaLevel () {
-  slope = (sineLUT[1 + sunSetX * 2] - sineLUT[1 + sunRiseX * 2]) /
+  slope = (ypos(sunSetX * 2) - ypos(sunRiseX * 2)) /
           (sunSetX - sunRiseX);
-  yint = sineLUT[1 + sunSetX * 2] - slope * sunSetX;
+  yint = ypos(sunSetX * 2) - slope * sunSetX;
 }
 
 function drawSeaLevel () {
@@ -101,11 +101,11 @@ function drawGlow () {
   g.setColor(0.2, 0.2, 0);
   // wide glow
   if (pos > sunRiseX && pos < sunSetX) {
-    g.fillCircle(pos, sineLUT[1 + pos * 2], r + 20);
+    g.fillCircle(pos, ypos(pos * 2), r + 20);
     g.setColor(0.5, 0.5, 0);
   }
   // smol glow
-  g.fillCircle(pos, sineLUT[1 + pos * 2], r + 8);
+  g.fillCircle(pos, ypos(pos * 2), r + 8);
 }
 
 function ypos (x) {
@@ -117,13 +117,6 @@ function xFromTime (time) {
   return Math.round((w / 24) * (time.getHours() + time.getMinutes() / 60));
 }
 
-function fillSineLUT () {
-  for (let i = 0; i < w; i++) {
-    sineLUT[i * 2] = i;
-    sineLUT[1 + i * 2] = ypos(i);
-  }
-}
-
 function drawBall () {
   // glow
   if (pos > sunRiseX && pos < sunSetX) {
@@ -131,10 +124,11 @@ function drawBall () {
   } else {
     g.setColor(0.5, 0.5, 0);
   }
-  g.fillCircle(pos, sineLUT[1 + pos * 2], r);
+  g.fillCircle(pos, ypos(pos * 2), r);
   g.setColor(1, 1, 0);
-  g.drawCircle(pos, sineLUT[1 + pos * 2], r);
+  g.drawCircle(pos, ypos(pos * 2), r);
 }
+
 function drawClock () {
   let posTime;
 
@@ -246,7 +240,7 @@ function main () {
   g.clear();
 
   initDay();
-  
+
   renderAndQueue();
   initialAnimation();
 }
