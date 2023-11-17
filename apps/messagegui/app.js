@@ -474,8 +474,8 @@ function checkMessages(options) {
       if (body) {
         g.setFontAlign(-1,-1).setFont("6x8");
         // if the body includes an image, it probably won't be small enough to allow>1 line
-        var maxLines = 3;
-        if (body.includes("\0")) maxLines=1;
+        let maxLines = 3, pady = 0;
+        if (body.includes("\0")) { maxLines=1; pady=4; }
         var l = g.wrapString(body, r.w-(x+14));
         if (l.length>maxLines) {
           l = l.slice(0,maxLines);
@@ -483,7 +483,7 @@ function checkMessages(options) {
         }
         longBody = l.length>2;
         // draw the body
-        g.drawString(l.join("\n"), x+10,r.y+20);
+        g.drawString(l.join("\n"), x+10,r.y+20+pady);
       }
       if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
