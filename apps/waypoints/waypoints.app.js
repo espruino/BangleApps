@@ -1,6 +1,7 @@
 /* Thanks to pinsafe from BangleApps repository */
 
 var Layout = require("Layout");
+const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 const W = g.getWidth();
 const H = g.getHeight();
@@ -36,7 +37,7 @@ function mainMenu() {
     let i = id;
     menu[wp[id]["name"]]=()=>{ show(i); };
   }
-  if (textInputInstalled) {
+  if (textInputInstalled && BANGLEJS2) {
     menu["Add"]=addCard;
   }
   menu["Remove"]=removeCard;
