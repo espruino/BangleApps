@@ -9,7 +9,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-menu.png"},{"url":"screenshot-delete.png"}],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "storage": [
     {"name":"wpmoto.app.js","url":"app.js"},
     {"name":"wpmoto.img","url":"icon.js","evaluate":true}

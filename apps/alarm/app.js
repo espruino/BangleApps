@@ -106,7 +106,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
-  if (withDate || selectedAlarm.date) {
+  if (withDate || (selectedAlarm && selectedAlarm.date)) {
     alarm.del = require("sched").getSettings().defaultDeleteExpiredTimers;
   }
   alarm.dow = handleFirstDayOfWeek(alarm.dow);

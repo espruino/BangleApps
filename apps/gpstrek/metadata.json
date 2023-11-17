@@ -8,7 +8,7 @@
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "interface" : "interface.html",
   "storage": [
     {"name":"gpstrek.app.js","url":"app.js"},

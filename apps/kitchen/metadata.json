@@ -8,7 +8,7 @@
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "storage": [
     {"name":"kitchen.app.js","url":"kitchen.app.js"},
     {"name":"stepo2.kit.js","url":"stepo2.kit.js"},

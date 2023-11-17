@@ -1,6 +1,7 @@
 /* Thanks to pinsafe from BangleApps repository */
 
 var Layout = require("Layout");
+const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 const W = g.getWidth();
 const H = g.getHeight();
@@ -23,20 +24,27 @@ function writeWP() {
 }
 
 function mainMenu() {
+  let textInputInstalled = true;
+  try {
+    require("textinput")
+  } catch(err) {
+    textInputInstalled = false;
+  }
   var menu = {
-    "< Back" : Bangle.load
+    "< Back" : () => load()
   };
-  if (Object.keys(wp).length==0) {
-    //Object.assign(menu, {"NO WPs":""});
-    print("(no waypoints)");
-  } else for (let id in wp) {
+  for (let id in wp) {
     let i = id;
     menu[wp[id]["name"]]=()=>{ show(i); };
   }
-  menu["Add"]=addCard;
+  if (textInputInstalled && BANGLEJS2) {
+    menu["Add"]=addCard;
+  }
   menu["Remove"]=removeCard;
   menu["Format"]=setFormat;
-  menu["Mark GPS"]=markGps;
+  if (textInputInstalled) {
+    menu["Mark GPS"]=markGps;
+  }
   g.clear();
   E.showMenu(menu);
 }
@@ -153,16 +161,14 @@ function lon(x) {
 }
 
 function show(pin) {
-  print(pin);
   var i = wp[pin];
-  var l = i["name"] + "\n" + lat(i["lat"]) + "\n" + lon(i["lon"]);
-  var la = new Layout ({
-    type:"v", c: [
-      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: l},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"OK", cb:l=>{mainMenu();}}
-    ], lazy:true});
-  g.clear();
-  la.render();
+  var l = lat(i["lat"]) + "\n" + lon(i["lon"]);
+  E.showPrompt(l,{
+    title:i["name"],
+    buttons : {"Ok":true}
+  }).then(function(v) {
+    mainMenu();
+  });
 }
 
 function showNumpad(text, key_, callback) {
@@ -231,22 +237,17 @@ function removeCard() {
     wp.forEach((val, card) => {
       const name = wp[card].name;
       menu[name]=()=>{
-        E.showMenu();
-        var confirmRemove = new Layout (
-          {type:"v", c: [
-            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Delete"},
-            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:name},
-            {type:"h", c: [
-              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-                wp.splice(card, 1);
-                writeWP();
-                mainMenu();
-              }},
-              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
-            ]}
-          ], lazy:true});
-        g.clear();
-        confirmRemove.render();
+        E.showPrompt(name,{
+          title:"Delete",
+        }).then(function(v) {
+          if (v) {
+            wp.splice(card, 1);
+            writeWP();
+            mainMenu();
+          } else {
+            mainMenu();
+          }
+        });
       };
     });
   }
@@ -345,5 +346,4 @@ function addCard() {
 }
 
 g.reset();
-Bangle.setUI();
 mainMenu();

@@ -76,4 +76,4 @@ of 'Select Clock'
 0.66: Fix LCD calibration bug where it would come on again after the
 	calibration was done.
 0.67: Rename 'Wake on BTN1/Touch' to 'Wake on Button/Tap' on Bangle.js 2
-
+0.68: Fix syntax error

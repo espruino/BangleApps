@@ -459,13 +459,13 @@ function showLCDMenu() {
           settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
           updateOptions();
         }
-      }
-    },
-    /*LANG*/'Wake on Tap': {
-      value: settings.options.wakeOnTouch,
-      onchange: () => {
-        settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
-        updateOptions();
+      },
+      /*LANG*/'Wake on Tap': {
+        value: settings.options.wakeOnTouch,
+        onchange: () => {
+          settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
+          updateOptions();
+        }
       }
     });
   else
