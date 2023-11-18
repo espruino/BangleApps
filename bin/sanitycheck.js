@@ -81,13 +81,12 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
   'textinput' : ['textinput'],
-  'waypoints' : ['waypoints'],
   // notify?
 };
 /* These are warnings we know about but don't want in our output */
@@ -98,6 +97,7 @@ var KNOWN_WARNINGS = [
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
+  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
 ];
 
 function globToRegex(pattern) {
@@ -334,7 +334,11 @@ apps.forEach((app,appIdx) => {
     })
   })
   //console.log(fileNames);
-  if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  const filenamesIncludesApp = fileNames.includes(app.id+".app.js");
+  if (isApp && !filenamesIncludesApp)
+    ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  else if (!isApp && !["clock", "bootloader", "launch"].includes(app.type) && filenamesIncludesApp)
+    WARN(`${app.id} isn't an app (${app.type}) but has an app.js file (${app.id+"app.js"})`, {file:metadataFile});
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`, {file:metadataFile});
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`, {file:metadataFile});
   for (const key in app) {
