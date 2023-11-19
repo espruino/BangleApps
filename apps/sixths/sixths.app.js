@@ -13,7 +13,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "(NOTEHERE)",
-    debug = "v930", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v1119", debug2 = "(otherdb)", debug3 = "(short)";
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
 
@@ -482,7 +482,7 @@ function drawBackground() {
       g.setColor(0.5, 0.5, 1);
       drawDot(h, 0.7, 10);
     }
-  }
+  }      
   if (prev_fix && prev_fix.fix) {
     g.setColor(0.5, 1, 0.5);
     drawDot(prev_fix.course, 0.5, 6);
@@ -698,7 +698,7 @@ function start() {
   Bangle.on("lock", lockHandler);
   if (0)
     Bangle.on("accel", accelHandler);
-  if (1) {
+  if (0) {
     Bangle.setCompassPower(1, "sixths");
     Bangle.setBarometerPower(1, "sixths");
   }
