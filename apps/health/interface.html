@@ -152,7 +152,9 @@ function getDailyData(data) {
             movement : h.charCodeAt(3)
           };
           dayData.steps += h.steps; // sum
-          dayData.bpm = (dayData.bpm + h.bpm) / 2; // average
+          if (h.bpm > 0) {
+            dayData.bpm = dayData.bpm > 0 ? (dayData.bpm + h.bpm) / 2 : h.bpm; // average
+          }
           dayData.movement += h.movement; // sum
         }
         idx += DB_RECORD_LEN;
