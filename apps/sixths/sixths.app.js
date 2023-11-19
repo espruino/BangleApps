@@ -30,7 +30,7 @@ var gps_dist = 0;
 var mark_heading = -1;
 
 // Is the human present?
-var is_active = false, last_active = getTime();
+var is_active = false, last_active = getTime(), last_unlocked = getTime();
 var is_level = false;
 
 // For altitude handling.
@@ -61,8 +61,15 @@ function toMorse(x) {
   }
   return r;
 }
+function doBuzz(s) {
+  if (buzz == "") {
+    buzz = s;
+    buzzTask();
+  } else
+    buzz += s;
+}
 function aload(s) {
-  buzz += toMorse(' E');
+  doBuzz(toMorse(' E'));
   load(s);
 }
 function gpsRestart() {
@@ -102,7 +109,7 @@ function fmtTimeDiff(d) {
 function gpsHandleFix(fix) {
   if (!prev_fix) {
     show("GPS acquired", 10);
-    buzz += " .";
+    doBuzz(" .");
     prev_fix = fix;
   }
   if (0) {
@@ -201,7 +208,7 @@ function markHandle() {
 }
 function entryDone() {
   show(":" + in_str);
-  buzz += " .";
+  doBuzz(" .");
   switch (mode) {
   case 1: logstamp(">" + in_str); break;
   case 2: cur_mark.name = in_str; break;
@@ -232,7 +239,7 @@ function inputHandler(s) {
         s += 'E';
       else
         s = s+(bat/5);
-      buzz += toMorse(s);
+      doBuzz(toMorse(s));
       show("Bat "+bat+"%", 60);
       break;
     case 'F': gpsOff(); show("GPS off", 3); break;
@@ -253,10 +260,10 @@ function inputHandler(s) {
       d = new Date();
       s += d.getHours() % 10;
       s += add0(d.getMinutes());
-      buzz += toMorse(s);
+      doBuzz(toMorse(s));
       break;
     case 'R': aload("run.app.js"); break;
-    case 'Y': buzz += " ."; Bangle.resetCompass(); break;
+    case 'Y': doBuzz(buzz); Bangle.resetCompass(); break;
   }
 }
 const morseDict = {
@@ -375,7 +382,7 @@ function hourly() {
   print("hourly");
   s = ' T';
   if (is_active)
-    buzz += toMorse(s);
+    doBuzz(toMorse(s));
   logstamp("");
 }
 function show(msg, timeout) {
@@ -387,7 +394,7 @@ function fivemin() {
   bat = E.getBattery();
   if (bat < 25) {
       if (is_active)
-        buzz += toMorse(s);
+        doBuzz(toMorse(s));
       show("Bat "+bat+"%", 60);
   }
   try {
@@ -614,17 +621,17 @@ function accelTask() {
   en = !Bangle.isLocked();
   if (en && acc.z < -0.95) {
     msg = "Level";
-    buzz = ".-..";
+    doBuzz(".-..");
     tm = 3000;
   }
   if (en && acc.x < -0.80) {
     msg = "Down";
-    buzz = "-..";
+    doBuzz("-..");
     tm = 3000;
   }
   if (en && acc.x > 0.95) {
     msg = "Up";
-    buzz = "..-";
+    doBuzz("..-");
     tm = 3000;
   }
 
@@ -646,8 +653,7 @@ function buzzTask() {
     } else if (now == "/") {
       setTimeout(buzzTask, 6*dot);
     } else print("Unknown character -- ", now, buzz);
-  } else
-  setTimeout(buzzTask, 1000);
+  }
 }
 function aliveTask() {
   function cmp(s) {
@@ -666,23 +672,30 @@ function aliveTask() {
 
   setTimeout(aliveTask, 60000);
 }
-
-var drawTimeout;
+function lockHandler(locked) {
+  if (!locked) {
+    last_Unlocked = getTime();
+    draw();
+  }
+}
 
 function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  if (0) // FIXME
+  if (getTime() - last_unlocked > 5*60)
     next = 60000;
   else
     next =  1000;
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, next - (Date.now() % next));
-
+  setTimeout(draw, (Date.now() % next));
 }
 function start() {
+  g.reset();
+  Bangle.setUI({
+    mode : "clock"
+  });
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+
   Bangle.on("drag", touchHandler);
+  Bangle.on("lock", lockHandler);
   if (0)
     Bangle.on("accel", accelHandler);
   if (1) {
@@ -705,12 +718,6 @@ function start() {
   }
 }
 
-g.reset();
-Bangle.setUI({
-    mode : "clock"
-});
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 let logfile = require("Storage").open("sixths.egt", "a");
 
 if (0) {
