@@ -30,13 +30,13 @@ var gps_dist = 0;
 var mark_heading = -1;
 
 // Is the human present?
-var is_active = false, last_active = getTime(), last_unlocked = getTime();
+var is_active = false, last_active = getTime() - 14*60, last_unlocked = getTime();
+var draw_dot = false;
 var is_level = false;
 
 // For altitude handling.
 var cur_altitude = 0;
-var cur_temperature = 0, alt_adjust = 0;
-var alt_adjust_mode = "";
+var cur_temperature = 0;
 
 // Marks
 var cur_mark = null;
@@ -116,9 +116,6 @@ function gpsHandleFix(fix) {
     /* GPS altitude fluctuates a lot, not really usable */
     alt_adjust = cur_altitude - (fix.alt + geoid_to_sea_level);
     alt_adjust_mode = "g";
-  }
-  if (1) {
-    debug = ""+fix.alt+"m "+alt_adjust;
   }
   if (1) {
     let now1 = Date();
@@ -498,7 +495,18 @@ function drawTime(now) {
   else
     g.setFont('Vector', 26);  
   g.setFontAlign(1, 1);
-  g.drawString(now.getHours() + ":" + add0(now.getMinutes()), W, 90);
+  draw_dot = !draw_dot;
+  let dot = ":";
+  if (!draw_dot)
+    dot = ".";
+  g.drawString(now.getHours() + dot + add0(now.getMinutes()), W, 90);
+}
+function adjPressure(a) {
+  o = Bangle.getOptions();
+  print(o);
+  o.seaLevelPressure = o.seaLevelPressure * m + a;
+  Bangle.setOptions(o);
+  avr = [];
 }
 function draw() {
   if (disp_mode == 2) {
@@ -539,11 +547,21 @@ function draw() {
   g.drawString(msg, 10, 145);
   
   if (getTime() - last_active > 15*60) {
-    alt_adjust = cur_altitude - rest_altitude;
-    alt_adjust_mode = "h";
-    msg = "H)" + fmtAlt(alt_adjust);
+    let alt_adjust = cur_altitude - rest_altitude;
+    let abs = Math.abs(alt_adjust);
+    print("adj", alt_adjust);
+    o = Bangle.getOptions();
+    if (abs > 10 && abs < 150) {
+      let a = 0.01;
+      // FIXME: draw is called often compared to alt reading
+      if (cur_altitude > rest_altitude)
+        a = -a;
+      o.seaLevelPressure = o.seaLevelPressure + a;
+      Bangle.setOptions(o);
+    }
+    msg = o.seaLevelPressure.toFixed(1) + "hPa";
   } else {
-    msg = alt_adjust_mode+")"+fmtAlt(cur_altitude - alt_adjust);
+    msg = fmtAlt(cur_altitude);
   }
   msg = msg + " " + cur_temperature.toFixed(1)+icon_c;
   if (cur_mark) {
@@ -674,7 +692,7 @@ function aliveTask() {
 }
 function lockHandler(locked) {
   if (!locked) {
-    last_Unlocked = getTime();
+    last_unlocked = getTime();
     draw();
   }
 }
