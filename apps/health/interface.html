@@ -139,6 +139,7 @@ function getDailyData(data) {
   var idx = DB_HEADER_LEN;
   for (var day = 0; day < 31; day++) {
     var dayData = {steps: 0, bpm: 0, movement: 0};
+    let bpmCnt = 0;
     for (var hr = 0; hr < 24; hr++) { // actually 25, see below
       for (var m = 0; m < DB_RECORDS_PER_HR; m++) {
         var h = data.substr(idx, DB_RECORD_LEN);
@@ -153,7 +154,8 @@ function getDailyData(data) {
           };
           dayData.steps += h.steps; // sum
           if (h.bpm > 0) {
-            dayData.bpm = dayData.bpm > 0 ? (dayData.bpm + h.bpm) / 2 : h.bpm; // average
+            dayData.bpm = dayData.bpm + h.bpm;
+            bpmCnt++;
           }
           dayData.movement += h.movement; // sum
         }
@@ -162,7 +164,9 @@ function getDailyData(data) {
     }
     idx += DB_RECORD_LEN; // +1 because we have an extra record with totals
                           // for the end of the day
-                          
+    if (bpmCnt > 0) {
+      dayData.bpm = Math.round(dayData.bpm/bpmCnt); // average
+    }
     dailyData[day + 1] = dayData;
    }
    return dailyData;
