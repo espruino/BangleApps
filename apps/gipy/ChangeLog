@@ -117,7 +117,8 @@
 	* Bugfix in nearest segment detection
 
 0.23:
-	* New display algorithm : way faster, larger roads
+	* New display algorithm : way faster, larger roads, zooming out is now ok
+	* You will need to re-generate your maps because the new algorithm uses a different scale
 	* Better path simplification
 	* Waypoints autodetection using the map
 	* New option: sleep between waypoints
