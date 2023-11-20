@@ -1,0 +1,16 @@
+{
+  "id": "widhid",
+  "name": "Bluetooth Music Swipe Control Widget",
+  "shortName": "BLE Swipe Widget",
+  "version": "0.03",
+  "description": "Based on Swipe Bluetooth Music Controls (based on Bluetooth Music Controls). Swipe down to enable, then swipe up/down for volume, left/right for previous and next and tap for play/pause. Enable HID in settings, pair with your phone/computer, then use this widget to control music from your watch!",
+  "icon": "icon.png",
+  "readme": "README.md",
+  "type": "widget",
+  "tags": "widget,bluetooth,music",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"widhid.wid.js","url":"wid.js"},
+    {"name":"widhid.img","url":"icon.js","evaluate":true}
+  ]
+}

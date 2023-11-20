@@ -1,12 +1,10 @@
 # Run App
 
-This app allows you to display the status of your run, it
-shows distance, time, steps, cadence, pace and more.
+Displays distance, time, steps, cadence, pace and heart rate for runners. Based on the Run app, but extended with additional screen for heart rate based training, based on the Karvonnen calculation method.
+It requires the input of your minimum and maximum heart rate in the settings for the app to work. You can come back back to the initial run screen anytime by swimping left.
+To use it, start the app and press the middle button so that the red STOP in the bottom right turns to a green `RUN`.
 
-To use it, start the app and press the middle button so that
-the red `STOP` in the bottom right turns to a green `RUN`.
-
-## Display
+## Display 1st screen
 
 * `DIST` - the distance travelled based on the GPS (if you have a GPS lock).
   * NOTE: this is based on the GPS coordinates which are not 100% accurate, especially initially. As
@@ -22,6 +20,11 @@ the red `STOP` in the bottom right turns to a green `RUN`.
 so if you have no GPS lock you just need to wait.
 * The current time is displayed right at the bottom of the screen
 * `RUN/STOP` - whether the distance for your run is being displayed or not
+
+## Display 2nd screen
+
+Unlock the screen and navigate between displays by swiping left or right.
+The upper number is the limit before next heart rate zone. The lower number is the limit before previous heart rate zone. The number in the middle is the heart rate. The Z1 to Z5 number indicates the heart rate zone where you are. The circle provides a quick visualisation of the hr zone in which you are.
 
 ## Recording Tracks
 
@@ -55,10 +58,12 @@ your distance, steps, or time repeatedly pass your configured thresholds
     * `Dist Pattern`: The vibration pattern to use to notify you about meeting your distance threshold
     * `Step Pattern`: The vibration pattern to use to notify you about meeting your step threshold
     * `Time Pattern`: The vibration pattern to use to notify you about meeting your time threshold
+    * `min hr`: Input your minimum heart rate (measure it as you wake up, prior to any movement)
+    * `max hr`: Input your maximum heart rate
 
 ## TODO
 
-* Keep a log of each run's stats (distance/steps/etc)
+* Keep a log of each run's stats (distance/steps/time in each hr zone/etc)
 
 ## Development
 

@@ -15,6 +15,10 @@
     let menu ={
       '': { 'title': 'Slope Clock ++' },
       /*LANG*/'< Back': back,
+      /*LANG*/'Hide Widgets': {
+        value: !!settings.hideWidgets,
+        onchange: x => save('hideWidgets', x),
+      },
       /*LANG*/'Red': {
         value: !!settings.colorRed,
         format: () => (settings.colorRed ? 'Yes' : 'No'),

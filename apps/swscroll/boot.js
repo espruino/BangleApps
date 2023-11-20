@@ -1,4 +1,4 @@
-E.showScroller = (function(options) {    
+E.showScroller = (function(options) {
   /* options = {
     h = height
     c = # of items
@@ -10,16 +10,29 @@ E.showScroller = (function(options) {
   }
 
   returns {
-    draw  = draw all
-    drawItem(idx) = draw specific item
+    scroll: int                // current scroll amount
+    draw: function()           // draw all
+    drawItem : function(idx)   // draw specific item
+    isActive : function()      // is this scroller still active?
   }
+
   */
 if (!options) return Bangle.setUI(); // remove existing handlers
+
+var draw = () => {
+  g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
+  var a = YtoIdx(R.y);
+  var b = Math.min(YtoIdx(R.y2),options.c-1);
+  for (var i=a;i<=b;i++)
+    options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+};
 
 Bangle.setUI({
   mode : "custom",
   back : options.back,
   remove : options.remove,
+  redraw : draw,
   swipe : (_,UD)=>{
     pixels = 120;
     var dy = UD*pixels;
@@ -32,13 +45,13 @@ Bangle.setUI({
     rScroll = s.scroll &~1;
     dy = oldScroll-rScroll;
     if (!dy || options.c<=3) return; //options.c<=3 should maybe be dynamic, so 3 would be replaced by a variable dependent on R=Bangle.appRect. It's here so we don't try to scroll if all entries fit in the app rectangle.
-    g.reset().setClipRect(R.x,R.y,R.x2,R.y2);
-    g.scroll(0,dy);
+    g.reset().setClipRect(R.x,R.y,R.x2,R.y2).scroll(0,dy);
     var d = UD*pixels;
     if (d < 0) {
-      g.setClipRect(R.x,R.y2-(1-d),R.x2,R.y2);
-      let i = YtoIdx(R.y2-(1-d));
-      let y = idxToY(i);
+      let y = Math.max(R.y2-(1-d), R.y);
+      g.setClipRect(R.x,y,R.x2,R.y2);
+      let i = YtoIdx(y);
+      y = idxToY(i);
       //print(i, options.c, options.c-i); //debugging info
       while (y < R.y2 - (options.h*((options.c-i)<=0)) ) { //- (options.h*((options.c-i)<=0)) makes sure we don't go beyond the menu entries in the menu object "options". This has to do with "dy = s.scroll - menuScrollMax-8" above.
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
@@ -46,10 +59,10 @@ Bangle.setUI({
         y += options.h;
       }
     } else { // d>0
-      g.setClipRect(R.x,R.y,R.x2,R.y+d);
-      let i = YtoIdx(R.y+d);
-      let y = idxToY(i);
-      //print(i, options.c, options.c-i); //debugging info
+      let y = Math.min(R.y+d, R.y2);
+      g.setClipRect(R.x,R.y,R.x2,y);
+      let i = YtoIdx(y);
+      y = idxToY(i);
       while (y > R.y-options.h) {
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
         y -= options.h;
@@ -66,8 +79,8 @@ Bangle.setUI({
       options.select(i, {x:e.x, y:yInElement});
     }
   }
-});  
-  
+});
+
 var menuShowing = false;
 var R = Bangle.appRect;
 var Y = R.y;
@@ -82,23 +95,16 @@ function idxToY(i) {
 function YtoIdx(y) {
   return Math.floor((y + rScroll - R.y)/options.h);
 }
-  
-var s = {  
+
+var s = {
   scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
-  draw : () => {
-  g.reset().clearRect(R.x,R.y,R.x2,R.y2);
-  g.setClipRect(R.x,R.y,R.x2,R.y2);
-  var a = YtoIdx(R.y);
-  var b = Math.min(YtoIdx(R.y2),options.c-1);
-  for (var i=a;i<=b;i++)
-    options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-}, drawItem : i => {
-  var y = idxToY(i);
-  g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
-  options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
-  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-}};
+  draw : draw, drawItem : i => {
+    var y = idxToY(i);
+    g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
+    options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
+    g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+  }, isActive : () => Bangle.uiRedraw == draw
+};
 var rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
 s.draw(); // draw the full scroller
 g.flip(); // force an update now to make this snappier

@@ -1,7 +1,7 @@
 (() => {
   let recordingInterval = null;
   const Storage = require("Storage");
-  
+
   const switchableConsumers = {
     none: 0,
     lcd: 1,
@@ -96,15 +96,14 @@
       let logPercent = E.getBattery();
       let logTemperature = E.getTemperature();
       let logConsumers = getEnabledConsumersValue();
-      
+
       let logString = [logTime, logPercent, logTemperature, logConsumers].join(",");
-      
+
       bcLogFileA.write(logString + "\n");
     }
   }
 
   function reload() {
-    console.log("Reloading BatteryChart widget");
     WIDGETS["batchart"].width = 0;
 
     if (recordingInterval) {

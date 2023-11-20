@@ -1,20 +1,31 @@
+const heatshrink = require("heatshrink");
+const BUTTON_ICONS = {
+    play: heatshrink.decompress(atob("jEYwMAkAGBnACBnwCBn+AAQPgAQPwAQP8AQP/AQXAAQPwAQP8AQP+AQgICBwQUCEAn4FggyBHAQ+CIgQ")),
+    pause: heatshrink.decompress(atob("jEYwMA/4BBAX4CEA")),
+    reset: heatshrink.decompress(atob("jEYwMA/4BB/+BAQPDAQPnAQIAKv///0///8j///EP//wAQQICBwQUCEhgyCHAQ+CIgI="))
+};
+
 let common;
+
+let s = require("Storage").readJSON("setting.json");
 
 function drawButtons() {
     //Draw the backdrop
     const BAR_TOP = g.getHeight() - 24;
-    g.setColor(0, 0, 1).setFontAlign(0, -1)
+    g.setBgColor(s.theme.bg2).setColor(s.theme.fg2).setFontAlign(0, -1)
         .clearRect(0, BAR_TOP, g.getWidth(), g.getHeight())
-        .fillRect(0, BAR_TOP, g.getWidth(), g.getHeight())
-        .setColor(1, 1, 1)
+        .setColor(s.theme.fg2)
         .drawLine(g.getWidth() / 2, BAR_TOP, g.getWidth() / 2, g.getHeight())
 
         //Draw the buttons
-        .drawImage(common.BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP);
-    if (common.state.running) {
-        g.drawImage(common.BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP);
+        .setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.reset, g.getWidth() / 4, BAR_TOP + 12, {rotate:0}); // rotate option centers the image
+    if (common.running()) {
+        g.setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.pause, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     } else {
-        g.drawImage(common.BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP);
+        g.setColor(s.theme.fg2)
+        .drawImage(BUTTON_ICONS.play, g.getWidth() * 3 / 4, BAR_TOP + 12, {rotate:0});
     }
 }
 
@@ -38,8 +49,6 @@ function drawTimer() {
             if (hours >= 1) return `${parseInt(hours)}:${pad(minutes)}:${pad(seconds)}`;
             else return `${parseInt(minutes)}:${pad(seconds)}`;
         })(), g.getWidth() / 2, g.getHeight() / 2)
-
-    if (timeLeft <= 0) load('keytimer-ring.js');
 }
 
 let timerInterval;
@@ -51,14 +60,14 @@ function setupTimerInterval() {
     setTimeout(() => {
         timerInterval = setInterval(drawTimer, 1000);
         drawTimer();
-    }, common.timeLeft % 1000);
+    }, common.getTimeLeft() % 1000);
 }
 
 exports.show = function (callerCommon) {
     common = callerCommon;
     drawButtons();
     drawTimer();
-    if (common.state.running) {
+    if (common.running()) {
         setupTimerInterval();
     }
 }
@@ -71,37 +80,22 @@ function clearTimerInterval() {
 }
 
 exports.touch = (button, xy) => {
-    if (xy.y < 152) return;
+    if (xy !== undefined && xy.y < 152) return;
 
     if (button == 1) {
         //Reset the timer
-        let setTime = common.state.setTime;
-        let inputString = common.state.inputString;
-        common.state = common.STATE_DEFAULT;
-        common.state.setTime = setTime;
-        common.state.inputString = inputString;
+        common.deleteTimer();
         clearTimerInterval();
         require('keytimer-keys.js').show(common);
     } else {
-        if (common.state.running) {
-            //Record the exact moment that we paused
-            let now = (new Date()).getTime();
-            common.state.pausedTime = now;
-
-            //Stop the timer
-            common.state.running = false;
+        if (common.running()) {
+            common.pauseTimer();
             clearTimerInterval();
-            drawTimer();
-            drawButtons();
         } else {
-            //Start the timer and record when we started
-            let now = (new Date()).getTime();
-            common.state.elapsedTime += common.state.pausedTime - common.state.startTime;
-            common.state.startTime = now;
-            common.state.running = true;
-            drawTimer();
+            common.startTimer(common.getTimeLeft());
             setupTimerInterval();
-            drawButtons();
         }
+        drawTimer();
+        drawButtons();
     }
 };

@@ -1,9 +1,16 @@
 (function() {
   var sui = Bangle.setUI;
+  var oldSwipe;
+
   Bangle.setUI = function(mode, cb) {
+    if (oldSwipe && oldSwipe !== Bangle.swipeHandler)
+      Bangle.removeListener("swipe", oldSwipe);
     sui(mode,cb);
-    if(!mode) return;
+    oldSwipe = Bangle.swipeHandler;
+
     if ("object"==typeof mode) mode = mode.mode;
+    if (!mode) return;
+
     if (mode.startsWith("clock")) {
       // clock -> launcher
       Bangle.swipeHandler = dir => { if (dir<0) Bangle.showLauncher(); };

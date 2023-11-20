@@ -81,20 +81,23 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
   'textinput' : ['textinput'],
-  'waypoints' : ['waypoints'],
   // notify?
 };
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
-"App gpsrec data file wildcard .gpsrc? does not include app ID",
-"App owmweather data file weather.json is also listed as data file for app weather",
+  "App gpsrec data file wildcard .gpsrc? does not include app ID",
+  "App owmweather data file weather.json is also listed as data file for app weather",
   "App messagegui storage file messagegui is also listed as storage file for app messagelist",
+  "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
+  "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
+  "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
+  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
 ];
 
 function globToRegex(pattern) {
@@ -116,7 +119,7 @@ apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
   var appDir = APPSDIR+app.id+"/";
-  var metadataFile = appDirRelative+"metadata.json";  
+  var metadataFile = appDirRelative+"metadata.json";
   if (existingApps.includes(app.id)) ERROR(`Duplicate app '${app.id}'`, {file:metadataFile});
   existingApps.push(app.id);
   //console.log(`Checking ${app.id}...`);
@@ -164,11 +167,11 @@ apps.forEach((app,appIdx) => {
     });
   }
   if (app.readme) {
-    if (!fs.existsSync(appDir+app.readme)) 
+    if (!fs.existsSync(appDir+app.readme))
       ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
   } else {
     let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
-    if (readme) 
+    if (readme)
       ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
   }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
@@ -253,6 +256,10 @@ apps.forEach((app,appIdx) => {
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
+      // if settings, suggest adding to datafiles
+      if (/\.settings?\.js$/.test(file.name) && (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json")))) {
+        WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+      }
     }
     for (const key in file) {
       if (!STORAGE_KEYS.includes(key)) ERROR(`App ${app.id} file ${file.name} has unknown key ${key}`, {file:appDirRelative+file.url});
@@ -327,7 +334,11 @@ apps.forEach((app,appIdx) => {
     })
   })
   //console.log(fileNames);
-  if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  const filenamesIncludesApp = fileNames.includes(app.id+".app.js");
+  if (isApp && !filenamesIncludesApp)
+    ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  else if (!isApp && !["clock", "bootloader", "launch"].includes(app.type) && filenamesIncludesApp)
+    WARN(`${app.id} isn't an app (${app.type}) but has an app.js file (${app.id+"app.js"})`, {file:metadataFile});
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`, {file:metadataFile});
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`, {file:metadataFile});
   for (const key in app) {

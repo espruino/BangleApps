@@ -70,13 +70,13 @@ exports.swipeOn = function(autohide) {
   // force app rect to be fullscreen
   Bangle.appRect = { x: 0, y: 0, w: g.getWidth(), h: g.getHeight(), x2: g.getWidth()-1, y2: g.getHeight()-1 };
   // setup offscreen graphics for widgets
-  let og = Graphics.createArrayBuffer(g.getWidth(),24,16,{msb:true});
+  let og = Graphics.createArrayBuffer(g.getWidth(),26,16,{msb:true});
   og.theme = g.theme;
   og._reset = og.reset;
   og.reset = function() {
     return this._reset().setColor(g.theme.fg).setBgColor(g.theme.bg);
   };
-  og.reset().clearRect(0,0,og.getWidth(),og.getHeight());
+  og.reset().clearRect(0,0,og.getWidth(),23).fillRect(0,24,og.getWidth(),25);
   let _g = g;
   let offset = -24; // where on the screen are we? -24=hidden, 0=full visible
 
@@ -88,7 +88,7 @@ exports.swipeOn = function(autohide) {
   }
 
   for (var w of global.WIDGETS) {
-    if (w._draw) return; // already hidden
+    if (w._draw) continue; // already hidden
     w._draw = w.draw;
     w.draw = function() {
       g=og;

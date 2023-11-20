@@ -1,6 +1,6 @@
 (() => {
   let durationOnPause = "---";
-  let redrawInterval: number | undefined;
+  let redrawInterval: IntervalId | undefined;
   let startTime: number | undefined;
   let showMillis = true;
   const milliTime = 60;
@@ -16,7 +16,7 @@
         if (startTime) {
             if (showMillis && Date.now() - startTime > milliTime * 1000) {
                 showMillis = false;
-                changeInterval(redrawInterval, 1000);
+                changeInterval(redrawInterval!, 1000);
             }
         } else {
             unqueueRedraw();

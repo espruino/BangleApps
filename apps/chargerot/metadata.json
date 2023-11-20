@@ -1,0 +1,16 @@
+{
+  "id": "chargerot",
+  "name": "Charge LCD rotation",
+  "version": "0.02",
+  "description": "When charging, this app can rotate your screen and revert it when unplugged. Made for all sort of cradles.",
+  "icon": "icon.png",
+  "tags": "battery",
+  "readme": "README.md",
+  "type": "bootloader",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"chargerot.boot.js","url":"boot.js"},
+    {"name":"chargerot.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":"chargerot.settings.json"}]
+}

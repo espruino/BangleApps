@@ -14,5 +14,8 @@
     {"name":"mysticclock.app.js","url":"mystic-clock-app.js"},
     {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
     {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"mysticclock.settings.json"}
   ]
 }

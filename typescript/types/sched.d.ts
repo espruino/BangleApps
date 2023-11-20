@@ -9,30 +9,67 @@ declare module Sched {
     SAT = 64,
   }
 
-  type VibratePattern = "." | "," | "-" | ":" | ";" | "=";
+  type Dows = number;
+  type Milliseconds = number;
+
+  // slight hack - all objects have a `on()`, this unions with that type so we can add it to an object
+  type OnBoolean<T extends boolean = boolean>
+    = T | Object["on"];
+
+  type VibratePattern = string; // "." | "," | "-" | ":" | ";" | "="
+
+  type DateString = `${number}-${number}-${number}`;
+
+  type NewSched = {
+    msg?: string,
+    appid?: string,
+    dow?: Dows,
+    on?: OnBoolean<false>,
+    js?: string,
+  } & (NewTimer | NewAlarm);
+
+  type NewTimer = { timer: number };
+  type NewAlarm = { t: number, date?: DateString };
+
+  type DefaultSched = {
+    on: OnBoolean<true>,
+    del: boolean,
+    rp: false,
+    as: false,
+    dow: Dows,
+    last: number,
+    vibrate: VibratePattern,
+  };
+
+  type DefaultAlarm = DefaultSched & { t: number };
+
+  type DefaultTimer = DefaultSched & { timer: number };
 
   type Sched = {
-    id?: string,
-    appid?: string,
-    on: boolean,
-    dow?: number,
+    // from NewSched / set in setAlarm()
     msg: string,
-    last: number,
+    appid?: string,
+    dow: Dows,
+    on: OnBoolean,
+    timer?: Milliseconds, // this is a timer
+
+    // setAlarm adds:
+    id: string,
+    t: Milliseconds, // time of day since midnight (in ms)
+
+    // optional NewSched
     vibrate?: VibratePattern,
     hidden?: boolean,
     as?: boolean, // auto snooze
     del?: boolean,
     js?: string,
     data?: unknown,
+
+    // set by sched
+    last?: number,
   } & (
     {
-      t: number, // time of day since midnight (in ms, set automatically when timer starts)
-    } | {
-      timer: number, // this is a timer - the time in ms
-    }
-  ) & (
-    {
-      date: `${number}-${number}-${number}`,
+      date: DateString,
       rp?: Repeat,
     } | {
       date: undefined,
@@ -62,18 +99,18 @@ declare module Sched {
 
   function getAlarm(id: string): Sched | undefined;
 
-  function getActiveAlarms (alarms: Sched[], time?: Date): Sched[];
+  function getActiveAlarms(alarms: Sched[], time?: Date): Sched[];
 
-  function setAlarm(id: string, alarm?: Sched): void;
+  function setAlarm(id: string, alarm?: NewSched): void;
 
-  function getTimeToAlarm(alarm: Sched, time?: Date): number | undefined;
+  function getTimeToAlarm(alarm: Sched | undefined | null, time?: Date): number | undefined;
   function getTimeToAlarm(alarm?: undefined | null, time?: Date): undefined;
 
   function reload(): void;
 
-  function newDefaultAlarm(): Sched;
+  function newDefaultAlarm(): DefaultAlarm;
 
-  function newDefaultTimer(): Sched;
+  function newDefaultTimer(): DefaultTimer;
 
   function getSettings(): SchedSettings;
 

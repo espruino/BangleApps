@@ -1,15 +1,5 @@
-/* MESSAGES is a list of:
-  {id:int,
-    src,
-    title,
-    subject,
-    body,
-    sender,
-    tel:string,
-    new:true // not read yet
-  }
-*/
-
+const MIN_FREE_MEM = 1000;
+const LOW_MEM = 2000;
 const ovrx = 10;
 const ovry = 10;
 const ovrw = g.getWidth()-2*ovrx;
@@ -40,6 +30,7 @@ let callInProgress = false;
 
 let show = function(ovr){
   let img = ovr;
+  LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
     img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
@@ -84,18 +75,8 @@ let manageEvent = function(ovr, event) {
 
       if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
         next(ovr);
-
-      else {
-        eventQueue.length = 0; // empty existing queue
-        eventQueue.forEach(element => {
-          if (element.id != event.id)
-            neweventQueue.push(element);
-        });
-      }
-
-      break;
-    case "musicstate":
-    case "musicinfo":
+      else 
+        eventQueue = [];
 
       break;
   }
@@ -184,7 +165,9 @@ let showMessage = function(ovr, msg) {
   drawMessage(ovr, msg);
 };
 
-let drawBorder = function(ovr) {
+let drawBorder = function(img) {
+  LOG("drawBorder", isQuiet());
+  if (img) ovr=img;
   if (Bangle.isLocked())
     ovr.setColor(ovr.theme.fgH);
   else
@@ -192,7 +175,6 @@ let drawBorder = function(ovr) {
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   show(ovr);
-  if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
 let showCall = function(ovr, msg) {
@@ -252,13 +234,6 @@ let next = function(ovr) {
   }
 
   showMessage(ovr, eventQueue[0]);
-};
-
-let showMapMessage = function(ovr, msg) {
-  ovr.clearRect(2,2,ovr.getWidth()-3,ovr.getHeight()-3);
-  drawMessage(ovr, {
-    body: "Not implemented!"
-  });
 };
 
 let callBuzzTimer = null;
@@ -429,7 +404,7 @@ let main = function(ovr, event) {
 
   if (!lockListener) {
     lockListener = function (){
-      drawBorder(ovr);
+      drawBorder();
     };
     Bangle.on('lock', lockListener);
   }
@@ -453,13 +428,23 @@ let main = function(ovr, event) {
 
 let ovr;
 
-exports.pushMessage = function(event) {
-  if( event.id=="music") return require_real("messages").pushMessage(event);
+exports.message = function(type, event) {
+  LOG("Got message", type, event);
+  // only handle some event types
+  if(!(type=="text" || type == "call")) return;
+  if(type=="text" && event.id == "nav") return;
+  if(event.handled) return;
 
   bpp = 4;
-  if (process.memory().free < 2000) bpp = 1;
+  if (process.memory().free < LOW_MEM)
+    bpp = 1;
 
-  if (!ovr) {
+  while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
+    let dropped = eventQueue.pop();
+    print("Dropped message because of memory constraints", dropped);
+  }
+
+  if (!ovr || ovr.getBPP() != bpp) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
@@ -475,14 +460,7 @@ exports.pushMessage = function(event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   main(ovr, event);
-
+  if (!isQuiet()) Bangle.setLCDPower(1);
+  event.handled = true;
   g = _g;
 };
-
-
-//Call original message library
-exports.clearAll = function() { return require_real("messages").clearAll();};
-exports.getMessages = function() { return require_real("messages").getMessages();};
-exports.status = function() { return require_real("messages").status();};
-exports.buzz = function() { return require_real("messages").buzz(msgSrc);};
-exports.stopBuzz = function() { return require_real("messages").stopBuzz();};

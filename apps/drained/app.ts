@@ -1,7 +1,7 @@
 const app = "drained";
 
 // from boot.js
-declare var drainedInterval: number | undefined;
+declare var drainedInterval: IntervalId | undefined;
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
 
@@ -41,7 +41,7 @@ Bangle.setOptions({
 });
 
 // clock
-let nextDraw: number | undefined;
+let nextDraw: TimeoutId | undefined;
 const draw = () => {
   const x = g.getWidth() / 2;
   const y = g.getHeight() / 2 - 48;
@@ -52,6 +52,8 @@ const draw = () => {
   const dateStr = require("locale").date(date, 0).toUpperCase() +
     "\n" +
     require("locale").dow(date, 0).toUpperCase();
+  const x2 = x + 6;
+  const y2 = y + 66;
 
   g.reset()
     .clearRect(Bangle.appRect)
@@ -59,8 +61,8 @@ const draw = () => {
     .setFontAlign(0, 0)
     .drawString(timeStr, x, y)
     .setFont("Vector", 24)
-    .drawString(dateStr, x, y + 56)
-    .drawString(`${E.getBattery()}%`, x, y + 104);
+    .drawString(dateStr, x2, y2)
+    .drawString(`${E.getBattery()}%`, x2, y2 + 48);
 
   if(nextDraw) clearTimeout(nextDraw);
   nextDraw = setTimeout(() => {
@@ -97,12 +99,12 @@ reload();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { disableBoot = false, restore = 20 }: DrainedSettings
+const { keepStartup = true, restore = 20, exceptions = ["widdst.0"] }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:
 function drainedRestore() { // "public", to allow users to call
-  if(disableBoot){
+  if(!keepStartup){
     try{
       eval(require('Storage').read('bootupdate.js'));
     }catch(e){
@@ -112,16 +114,26 @@ function drainedRestore() { // "public", to allow users to call
   load(); // necessary after updating boot.0
 }
 
-if(disableBoot){
-  const checkCharge = () => {
-    if(E.getBattery() < restore) return;
-    drainedRestore();
-  };
+const checkCharge = () => {
+  if(E.getBattery() < restore) return;
+  drainedRestore();
+};
 
-  if (Bangle.isCharging())
-    checkCharge();
+if (Bangle.isCharging())
+  checkCharge();
 
-  Bangle.on("charging", charging => {
-    if(charging) checkCharge();
-  });
+Bangle.on("charging", charging => {
+  if(charging) checkCharge();
+});
+
+if(!keepStartup){
+  const storage = require("Storage");
+  for(const boot of exceptions){
+    try{
+      const js = storage.read(`${boot}.boot.js`);
+      if(js) eval(js);
+    }catch(e){
+      console.log(`error loading boot exception "${boot}": ${e}`);
+    }
+  }
 }

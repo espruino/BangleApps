@@ -102,7 +102,7 @@ function showAlarm(alarm) {
         date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
         if (date.getDate() != alarm.od) date.setDate(0);
         break;
-      default: 
+      default:
         console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
         break;
     }

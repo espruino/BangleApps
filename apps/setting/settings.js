@@ -50,7 +50,7 @@ function resetSettings() {
       wakeOnBTN3: true,
       wakeOnFaceUp: false,
       wakeOnTouch: false,
-      wakeOnTwist: true,
+      wakeOnTwist: false,
       twistThreshold: 819.2,
       twistMaxY: -800,
       twistTimeout: 1000
@@ -186,14 +186,14 @@ function showBLEMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Passkey BETA': {
+    /*LANG*/'Passkey': {
       value: settings.passkey?settings.passkey:/*LANG*/"none",
       onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
       value:
         (
-          settings.whitelist_disabled ? /*LANG*/"off" : /*LANG*/"on"
+          (settings.whitelist_disabled || !settings.whitelist) ? /*LANG*/"off" : /*LANG*/"on"
         ) + (
           settings.whitelist
           ? " (" + settings.whitelist.length + ")"
@@ -383,6 +383,12 @@ function showWhitelistMenu() {
     NRF.on('connect', function(addr) {
       if (!settings.whitelist) settings.whitelist=[];
       delete settings.whitelist_disabled;
+      if (NRF.resolveAddress !== undefined) {
+        let resolvedAddr = NRF.resolveAddress(addr);
+        if (resolvedAddr !== undefined) {
+          addr = resolvedAddr + " (resolved)";
+        }
+      }
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
@@ -403,6 +409,12 @@ function showLCDMenu() {
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
+  };
+  if (BANGLEJS2)
+    Object.assign(lcdMenu, {
+    /*LANG*/'Calibrate': () => showTouchscreenCalibration()
+    });
+  Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
       min: 0.1,
@@ -436,17 +448,35 @@ function showLCDMenu() {
         g.setRotation(settings.rotate&3,settings.rotate>>2).clear();
         Bangle.drawWidgets();
       }
-    },
-    /*LANG*/'Wake on BTN1': {
+    }
+  });
+
+  if (BANGLEJS2)
+    Object.assign(lcdMenu, {
+      /*LANG*/'Wake on Button': {
+        value: settings.options.wakeOnBTN1,
+        onchange: () => {
+          settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
+          updateOptions();
+        }
+      },
+      /*LANG*/'Wake on Tap': {
+        value: settings.options.wakeOnTouch,
+        onchange: () => {
+          settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
+          updateOptions();
+        }
+      }
+    });
+  else
+    Object.assign(lcdMenu, {
+     /*LANG*/'Wake on BTN1': {
       value: settings.options.wakeOnBTN1,
       onchange: () => {
         settings.options.wakeOnBTN1 = !settings.options.wakeOnBTN1;
         updateOptions();
       }
-    }
-  };
-  if (!BANGLEJS2)
-    Object.assign(lcdMenu, {
+    },
     /*LANG*/'Wake on BTN2': {
       value: settings.options.wakeOnBTN2,
       onchange: () => {
@@ -460,19 +490,19 @@ function showLCDMenu() {
         settings.options.wakeOnBTN3 = !settings.options.wakeOnBTN3;
         updateOptions();
       }
+    },
+    /*LANG*/'Wake on Touch': {
+      value: settings.options.wakeOnTouch,
+      onchange: () => {
+        settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
+        updateOptions();
+      }
     }});
   Object.assign(lcdMenu, {
     /*LANG*/'Wake on FaceUp': {
       value: settings.options.wakeOnFaceUp,
       onchange: () => {
         settings.options.wakeOnFaceUp = !settings.options.wakeOnFaceUp;
-        updateOptions();
-      }
-    },
-    /*LANG*/'Wake on Touch': {
-      value: settings.options.wakeOnTouch,
-      onchange: () => {
-        settings.options.wakeOnTouch = !settings.options.wakeOnTouch;
         updateOptions();
       }
     },
@@ -514,10 +544,7 @@ function showLCDMenu() {
       }
     }
   });
-  if (BANGLEJS2)
-    Object.assign(lcdMenu, {
-    /*LANG*/'Calibrate': () => showTouchscreenCalibration()
-    });
+
   return E.showMenu(lcdMenu)
 }
 
@@ -655,6 +682,7 @@ function showUtilMenu() {
 function makeConnectable() {
   try { NRF.wake(); } catch (e) { }
   Bluetooth.setConsole(1);
+  NRF.ignoreWhitelist = 1;
   var name = "Bangle.js " + NRF.getAddress().substr(-5).replace(":", "");
   E.showPrompt(name + /*LANG*/"\nStay Connectable?", { title: /*LANG*/"Connectable" }).then(r => {
     if (settings.ble != r) {
@@ -662,6 +690,7 @@ function makeConnectable() {
       updateSettings();
     }
     if (!r) try { NRF.sleep(); } catch (e) { }
+    delete NRF.ignoreWhitelist;
     showMainMenu();
   });
 }
@@ -812,7 +841,7 @@ function showAppSettings(app) {
   try {
     appSettings = eval(appSettings);
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError(/*LANG*/'Error in settings');
   }
   if (typeof appSettings !== "function") {
@@ -822,7 +851,7 @@ function showAppSettings(app) {
     // pass showAppSettingsMenu as "back" argument
     appSettings(()=>showAppSettingsMenu());
   } catch (e) {
-    console.log(`${app.name} settings error:`, e)
+    console.log(`${app.name} settings error:`, e);
     return showError(/*LANG*/'Error in settings');
   }
 }
@@ -852,17 +881,17 @@ function showTouchscreenCalibration() {
     g.drawLine(spot[0]-32,spot[1],spot[0]+32,spot[1]);
     g.drawLine(spot[0],spot[1]-32,spot[0],spot[1]+32);
     g.drawCircle(spot[0],spot[1], 16);
-    var tapsLeft = (1-currentTry)*4+(4-currentCorner);
+    var tapsLeft = (2-currentTry)*4+(4-currentCorner);
     g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+/*LANG*/" taps\nto go", g.getWidth()/2, g.getHeight()/2);
   }
 
   function calcCalibration() {
     g.clear(1);
-    // we should now have 4 of each tap in 'pt'
-    pt.x1 /= 4;
-    pt.y1 /= 4;
-    pt.x2 /= 4;
-    pt.y2 /= 4;
+    // we should now have 6 of each tap in 'pt'
+    pt.x1 /= 6;
+    pt.y1 /= 6;
+    pt.x2 /= 6;
+    pt.y2 /= 6;
     // work out final values
     var calib = {
       x1 : Math.round(pt.x1 - (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
@@ -870,18 +899,25 @@ function showTouchscreenCalibration() {
       x2 : Math.round(pt.x2 + (pt.x2-pt.x1)*P/(g.getWidth()-P*2)),
       y2 : Math.round(pt.y2 + (pt.y2-pt.y1)*P/(g.getHeight()-P*2))
     };
-    Bangle.setOptions({
-      touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
-    });
-    var s = storage.readJSON("setting.json",1)||{};
-    s.touch = calib;
-    storage.writeJSON("setting.json",s);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    var dx = calib.x2-calib.x1;
+    var dy = calib.y2-calib.y1;
+    if(dx<100 || dx>280 || dy<100 || dy>280) {
+      g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Out of Range.\nPlease\ntry again", g.getWidth()/2, g.getHeight()/2);
+    } else {
+      Bangle.setOptions({
+        touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2
+      });
+      var s = storage.readJSON("setting.json",1)||{};
+      s.touch = calib;
+      storage.writeJSON("setting.json",s);
+      g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
+    }
     // now load the main menu again
     setTimeout(showLCDMenu, 500);
   }
 
   function touchHandler(_,e) {
+    E.stopEventPropagation&&E.stopEventPropagation();
     var spot = corners[currentCorner];
     // store averages
     if (spot[0]*2 < g.getWidth())
@@ -897,14 +933,14 @@ function showTouchscreenCalibration() {
     if (currentCorner>=corners.length) {
       currentCorner = 0;
       currentTry++;
-      if (currentTry==2) {
+      if (currentTry==3) {
         Bangle.removeListener('touch', touchHandler);
         return calcCalibration();
       }
     }
     showTapSpot();
   }
-  Bangle.on('touch', touchHandler);
+  Bangle.prependListener?Bangle.prependListener('touch',touchHandler):Bangle.on('touch',touchHandler);
 
   showTapSpot();
 }

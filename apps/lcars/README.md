@@ -25,7 +25,8 @@ the "sched" app must be installed on your device.
 ## Data that can be configured
  * Steps - Steps loaded via the wpedom app.
  * Battery - Current battery level in %
- * VREF - Voltage of battery
+ * BattVolt - Voltage of battery
+ * VREF - Internal Voltage Reference
  * HRM - Last measured HRM
  * Temp - Weather temperature loaded via the weather module + gadgetbridge
  * Humidity - Humidity loaded via the weather module + gadgetbridge

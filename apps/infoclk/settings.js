@@ -2,71 +2,7 @@
     const SETTINGS_FILE = "infoclk.json";
     const storage = require('Storage');
 
-    let config = Object.assign({
-        seconds: {
-            // Displaying the seconds can reduce battery life because the CPU must wake up more often to update the display.
-            // The seconds will be shown unless one of these conditions is enabled here, and currently true.
-            hideLocked: false,  // Hide the seconds when the display is locked.
-            hideBattery: 20,    // Hide the seconds when the battery is at or below a defined percentage.
-            hideTime: true,     // Hide the seconds when between a certain period of time. Useful for when you are sleeping and don't need the seconds
-            hideStart: 2200,    //    The time when the seconds are hidden: first 2 digits are hours on a 24 hour clock, last 2 are minutes
-            hideEnd: 700,       //    The time when the seconds are shown again
-            hideAlways: false,  // Always hide (never show) the seconds
-        },
-
-        date: {
-            // Settings related to the display of the date
-            mmdd: true,           // If true, display the month first. If false, display the date first.
-            separator: '-',       // The character that goes between the month and date
-            monthName: false,     // If false, display the month as a number. If true, display the name.
-            monthFullName: false, //    If displaying the name: If false, display an abbreviation. If true, display a full name.
-            dayFullName: false,   // If false, display the day of the week's abbreviation. If true, display the full name.
-        },
-
-        bottomLocked: {
-            display: 'weather'    // What to display in the bottom row when locked:
-            //    'weather': The current temperature and weather description
-            //    'steps': Step count
-            //    'health': Step count and bpm
-            //    'progress': Day progress bar
-            //    false: Nothing
-        },
-
-        shortcuts: [
-            //8 shortcuts, displayed in the bottom half of the screen (2 rows of 4 shortcuts) when unlocked
-            //    false = no shortcut
-            //    '#LAUNCHER' = open the launcher
-            //    any other string = name of app to open
-            'stlap', 'keytimer', 'pomoplus', 'alarm',
-            'rpnsci', 'calendar', 'torch', 'weather'
-        ],
-
-        swipe: {
-            // 3 shortcuts to launch upon swiping:
-            //    false = no shortcut
-            //    '#LAUNCHER' = open the launcher
-            //    any other string = name of app to open
-            up: 'messages',       // Swipe up or swipe down, due to limitation of event handler
-            left: '#LAUNCHER',
-            right: '#LAUNCHER',
-        },
-
-        dayProgress: {
-            // A progress bar representing how far through the day you are
-            enabledLocked: true,    // Whether this bar is enabled when the watch is locked
-            enabledUnlocked: false, // Whether the bar is enabled when the watch is unlocked
-            color: [0, 0, 1],      // The color of the bar
-            start: 700,            // The time of day that the bar starts filling
-            end: 2200,              // The time of day that the bar becomes full
-            reset: 300             // The time of day when the progress bar resets from full to empty
-        },
-
-        lowBattColor: {
-            // The text can change color to indicate that the battery is low
-            level: 20,        // The percentage where this happens
-            color: [1, 0, 0]  // The color that the text changes to
-        }
-    }, storage.readJSON(SETTINGS_FILE));
+    let config = require('infoclk-config.js').getConfig();
 
     function saveSettings() {
         storage.writeJSON(SETTINGS_FILE, config);
@@ -172,6 +108,18 @@
                         }
                     }
                 });
+            },
+            '...unconditionally when unlocked': {
+                value: config.seconds.forceWhenUnlocked,
+                format: value => ['No', 'First or second stage', 'Second stage only'][value],
+                onchange: value => {
+                    config.seconds.forceWhenUnlocked = value;
+                    saveSettings();
+                },
+                min: 0,
+                max: 2,
+                step: 1,
+                wrap: false
             }
         });
     }
@@ -190,7 +138,7 @@
         { name: 'Weather', val: 'weather' },
         { name: 'Step count', val: 'steps' },
         { name: 'Steps + BPM', val: 'health' },
-        { name: 'Day progresss bar', val: 'progress' },
+        { name: 'Bar', val: 'progress' },
         { name: 'Nothing', val: false }
     ];
 
@@ -222,126 +170,258 @@
             },
             'Top first': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[0]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[0] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[0] = false;
                     saveSettings();
                 }
             },
             'Top second': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[1]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[1] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[1] = false;
                     saveSettings();
                 }
             },
             'Top third': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[2]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[2] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[2] = false;
                     saveSettings();
                 }
             },
             'Top fourth': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[3]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[3] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[3] = false;
                     saveSettings();
                 }
             },
             'Bottom first': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[4]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[4] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[4] = false;
                     saveSettings();
                 }
             },
             'Bottom second': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[5]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[5] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[5] = false;
                     saveSettings();
                 }
             },
             'Bottom third': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[6]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[6] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[6] = false;
                     saveSettings();
                 }
             },
             'Bottom fourth': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.shortcuts[7]),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.shortcuts[7] = shortcutOptions[value].val;
+                    config.fastLoad.shortcuts[7] = false;
                     saveSettings();
                 }
             },
             'Swipe up': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.swipe.up),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.swipe.up = shortcutOptions[value].val;
+                    config.fastLoad.swipe.up = false;
+                    saveSettings();
+                }
+            },
+            'Swipe down': {
+                value: shortcutOptions.map(item => item.val).indexOf(config.swipe.down),
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
+                min: 0,
+                max: shortcutOptions.length - 1,
+                wrap: false,
+                onchange: value => {
+                    config.swipe.down = shortcutOptions[value].val;
+                    config.fastLoad.swipe.down = false;
                     saveSettings();
                 }
             },
             'Swipe left': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.swipe.left),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.swipe.left = shortcutOptions[value].val;
+                    config.fastLoad.swipe.left = false;
                     saveSettings();
                 }
             },
             'Swipe right': {
                 value: shortcutOptions.map(item => item.val).indexOf(config.swipe.right),
-                format: value => shortcutOptions[value].name,
+                format: value => (value == -1) ? 'Unknown app!' : shortcutOptions[value].name,
                 min: 0,
                 max: shortcutOptions.length - 1,
                 wrap: false,
                 onchange: value => {
                     config.swipe.right = shortcutOptions[value].val;
+                    config.fastLoad.swipe.right = false;
                     saveSettings();
                 }
-            },
+            }
         });
+    }
+
+    // The menu for configuring which apps can be fast loaded
+    function showFastLoadMenu() {
+        E.showMenu();
+        E.showAlert(/*LANG*/"WARNING! Only enable fast loading for apps that use widgets.").then(() => {
+            E.showMenu({
+                '': {
+                    'title': 'Shortcuts',
+                    'back': showMainMenu
+                },
+                'Top first': {
+                    value: config.fastLoad.shortcuts[0],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[0] = value;
+                        saveSettings();
+                    }
+                },
+                'Top second': {
+                    value: config.fastLoad.shortcuts[1],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[1] = value;
+                        saveSettings();
+                    }
+                },
+                'Top third': {
+                    value: config.fastLoad.shortcuts[2],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[2] = value;
+                        saveSettings();
+                    }
+                },
+                'Top fourth': {
+                    value: config.fastLoad.shortcuts[3],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[3] = value;
+                        saveSettings();
+                    }
+                },
+                'Bottom first': {
+                    value: config.fastLoad.shortcuts[4],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[4] = value;
+                        saveSettings();
+                    }
+                },
+                'Bottom second': {
+                    value: config.fastLoad.shortcuts[5],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[5] = value;
+                        saveSettings();
+                    }
+                },
+                'Bottom third': {
+                    value: config.fastLoad.shortcuts[6],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[6] = value;
+                        saveSettings();
+                    }
+                },
+                'Bottom fourth': {
+                    value: config.fastLoad.shortcuts[7],
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.shortcuts[7] = value;
+                        saveSettings();
+                    }
+                },
+                'Swipe up': {
+                    value: config.fastLoad.swipe.up,
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.swipe.up = value;
+                        saveSettings();
+                    }
+                },
+                'Swipe down': {
+                    value: config.fastLoad.swipe.down,
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.swipe.down = value;
+                        saveSettings();
+                    }
+                },
+                'Swipe left': {
+                    value: config.fastLoad.swipe.left,
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.swipe.left = value;
+                        saveSettings();
+                    }
+                },
+                'Swipe right': {
+                    value: config.fastLoad.swipe.right,
+                    format: value => value ? 'Fast' : 'Slow',
+                    onchange: value => {
+                        config.fastLoad.swipe.right = value;
+                        saveSettings();
+                    }
+                }
+            });
+        })
     }
 
     const COLOR_OPTIONS = [
@@ -355,9 +435,195 @@
         { name: 'White', val: [1, 1, 1] }
     ];
 
+    const BAR_MODE_OPTIONS = [
+        { name: 'None', val: 'off' },
+        { name: 'Day progress only', val: 'dayProgress' },
+        { name: 'Calendar only', val: 'calendar' },
+        { name: 'Split', val: 'split' }
+    ];
+
     // Workaround for being unable to use == on arrays: convert them into strings
     function colorString(color) {
         return `${color[0]} ${color[1]} ${color[2]}`;
+    }
+
+    //Menu to configure the bar
+    function showBarMenu() {
+        E.showMenu({
+            '': {
+                'title': 'Bar',
+                'back': showMainMenu
+            },
+            'Enable while locked': {
+                value: config.bar.enabledLocked,
+                onchange: value => {
+                    config.bar.enableLocked = value;
+                    saveSettings();
+                }
+            },
+            'Enable while unlocked': {
+                value: config.bar.enabledUnlocked,
+                onchange: value => {
+                    config.bar.enabledUnlocked = value;
+                    saveSettings();
+                }
+            },
+            'Mode': {
+                value: BAR_MODE_OPTIONS.map(item => item.val).indexOf(config.bar.type),
+                format: value => BAR_MODE_OPTIONS[value].name,
+                onchange: value => {
+                    config.bar.type = BAR_MODE_OPTIONS[value].val;
+                    saveSettings();
+                },
+                min: 0,
+                max: BAR_MODE_OPTIONS.length - 1,
+                wrap: true
+            },
+            'Day progress': () => {
+                E.showMenu({
+                    '': {
+                        'title': 'Day progress',
+                        'back': showBarMenu
+                    },
+                    'Color': {
+                        value: COLOR_OPTIONS.map(item => colorString(item.val)).indexOf(colorString(config.bar.dayProgress.color)),
+                        format: value => COLOR_OPTIONS[value].name,
+                        min: 0,
+                        max: COLOR_OPTIONS.length - 1,
+                        wrap: false,
+                        onchange: value => {
+                            config.bar.dayProgress.color = COLOR_OPTIONS[value].val;
+                            saveSettings();
+                        }
+                    },
+                    'Start hour': {
+                        value: Math.floor(config.bar.dayProgress.start / 100),
+                        format: hourToString,
+                        min: 0,
+                        max: 23,
+                        wrap: true,
+                        onchange: hour => {
+                            minute = config.bar.dayProgress.start % 100;
+                            config.bar.dayProgress.start = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    },
+                    'Start minute': {
+                        value: config.bar.dayProgress.start % 100,
+                        min: 0,
+                        max: 59,
+                        wrap: true,
+                        onchange: minute => {
+                            hour = Math.floor(config.bar.dayProgress.start / 100);
+                            config.bar.dayProgress.start = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    },
+                    'End hour': {
+                        value: Math.floor(config.bar.dayProgress.end / 100),
+                        format: hourToString,
+                        min: 0,
+                        max: 23,
+                        wrap: true,
+                        onchange: hour => {
+                            minute = config.bar.dayProgress.end % 100;
+                            config.bar.dayProgress.end = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    },
+                    'End minute': {
+                        value: config.bar.dayProgress.end % 100,
+                        min: 0,
+                        max: 59,
+                        wrap: true,
+                        onchange: minute => {
+                            hour = Math.floor(config.bar.dayProgress.end / 100);
+                            config.bar.dayProgress.end = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    },
+                    'Reset hour': {
+                        value: Math.floor(config.bar.dayProgress.reset / 100),
+                        format: hourToString,
+                        min: 0,
+                        max: 23,
+                        wrap: true,
+                        onchange: hour => {
+                            minute = config.bar.dayProgress.reset % 100;
+                            config.bar.dayProgress.reset = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    },
+                    'Reset minute': {
+                        value: config.bar.dayProgress.reset % 100,
+                        min: 0,
+                        max: 59,
+                        wrap: true,
+                        onchange: minute => {
+                            hour = Math.floor(config.bar.dayProgress.reset / 100);
+                            config.bar.dayProgress.reset = (100 * hour) + minute;
+                            saveSettings();
+                        }
+                    }
+                });
+            },
+            'Calendar bar': () => {
+                E.showMenu({
+                    '': {
+                        'title': 'Calendar bar',
+                        'back': showBarMenu
+                    },
+                    'Look ahead duration': {
+                        value: config.bar.calendar.duration,
+                        format: value => {
+                            let hours = value / 3600;
+                            let minutes = (value % 3600) / 60;
+                            let seconds = value % 60;
+
+                            let result = (hours == 0) ? '' : `${hours} hr`;
+                            if (minutes != 0) {
+                                if (result == '') result = `${minutes} min`;
+                                else result += `, ${minutes} min`;
+                            }
+                            if (seconds != 0) {
+                                if (result == '') result = `${seconds} sec`;
+                                else result += `, ${seconds} sec`;
+                            }
+                            return result;
+                        },
+                        onchange: value => {
+                            config.bar.calendar.duration = value;
+                            saveSettings();
+                        },
+                        min: 900,
+                        max: 86400,
+                        step: 900
+                    },
+                    'Pipe color': {
+                        value: COLOR_OPTIONS.map(color => colorString(color.val)).indexOf(colorString(config.bar.calendar.pipeColor)),
+                        format: value => COLOR_OPTIONS[value].name,
+                        onchange: value => {
+                            config.bar.calendar.pipeColor = COLOR_OPTIONS[value].val;
+                            saveSettings();
+                        },
+                        min: 0,
+                        max: COLOR_OPTIONS.length - 1,
+                        wrap: true
+                    },
+                    'Default color': {
+                        value: COLOR_OPTIONS.map(color => colorString(color.val)).indexOf(colorString(config.bar.calendar.defaultColor)),
+                        format: value => COLOR_OPTIONS[value].name,
+                        onchange: value => {
+                            config.bar.calendar.defaultColor = COLOR_OPTIONS[value].val;
+                            saveSettings();
+                        },
+                        min: 0,
+                        max: COLOR_OPTIONS.length - 1,
+                        wrap: true
+                    }
+                });
+            }
+        });
     }
 
     //Shows the top level menu
@@ -366,6 +632,16 @@
             '': {
                 'title': 'Informational Clock',
                 'back': back
+            },
+            'Dual stage unlock': {
+                value: config.dualStageUnlock,
+                format: value => (value == 0) ? "Off" : `${value} taps`,
+                min: 0,
+                step: 1,
+                onchange: value => {
+                    config.dualStageUnlock = value;
+                    saveSettings();
+                }
             },
             'Seconds display': showSecondsMenu,
             'Day of week format': {
@@ -433,108 +709,8 @@
                 }
             },
             'Shortcuts': showShortcutMenu,
-            'Day progress': () => {
-                E.showMenu({
-                    '': {
-                        'title': 'Day progress',
-                        'back': showMainMenu
-                    },
-                    'Enable while locked': {
-                        value: config.dayProgress.enabledLocked,
-                        onchange: value => {
-                            config.dayProgress.enableLocked = value;
-                            saveSettings();
-                        }
-                    },
-                    'Enable while unlocked': {
-                        value: config.dayProgress.enabledUnlocked,
-                        onchange: value => {
-                            config.dayProgress.enabledUnlocked = value;
-                            saveSettings();
-                        }
-                    },
-                    'Color': {
-                        value: COLOR_OPTIONS.map(item => colorString(item.val)).indexOf(colorString(config.dayProgress.color)),
-                        format: value => COLOR_OPTIONS[value].name,
-                        min: 0,
-                        max: COLOR_OPTIONS.length - 1,
-                        wrap: false,
-                        onchange: value => {
-                            config.dayProgress.color = COLOR_OPTIONS[value].val;
-                            saveSettings();
-                        }
-                    },
-                    'Start hour': {
-                        value: Math.floor(config.dayProgress.start / 100),
-                        format: hourToString,
-                        min: 0,
-                        max: 23,
-                        wrap: true,
-                        onchange: hour => {
-                            minute = config.dayProgress.start % 100;
-                            config.dayProgress.start = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    },
-                    'Start minute': {
-                        value: config.dayProgress.start % 100,
-                        min: 0,
-                        max: 59,
-                        wrap: true,
-                        onchange: minute => {
-                            hour = Math.floor(config.dayProgress.start / 100);
-                            config.dayProgress.start = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    },
-                    'End hour': {
-                        value: Math.floor(config.dayProgress.end / 100),
-                        format: hourToString,
-                        min: 0,
-                        max: 23,
-                        wrap: true,
-                        onchange: hour => {
-                            minute = config.dayProgress.end % 100;
-                            config.dayProgress.end = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    },
-                    'End minute': {
-                        value: config.dayProgress.end % 100,
-                        min: 0,
-                        max: 59,
-                        wrap: true,
-                        onchange: minute => {
-                            hour = Math.floor(config.dayProgress.end / 100);
-                            config.dayProgress.end = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    },
-                    'Reset hour': {
-                        value: Math.floor(config.dayProgress.reset / 100),
-                        format: hourToString,
-                        min: 0,
-                        max: 23,
-                        wrap: true,
-                        onchange: hour => {
-                            minute = config.dayProgress.reset % 100;
-                            config.dayProgress.reset = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    },
-                    'Reset minute': {
-                        value: config.dayProgress.reset % 100,
-                        min: 0,
-                        max: 59,
-                        wrap: true,
-                        onchange: minute => {
-                            hour = Math.floor(config.dayProgress.reset / 100);
-                            config.dayProgress.reset = (100 * hour) + minute;
-                            saveSettings();
-                        }
-                    }
-                });
-            },
+            'Fast load shortcuts': showFastLoadMenu,
+            'Bar': showBarMenu,
             'Low battery color': () => {
                 E.showMenu({
                     '': {

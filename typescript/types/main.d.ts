@@ -180,6 +180,7 @@ type SetUIArg<Mode> = Mode | {
   mode: Mode,
   back?: () => void,
   remove?: () => void,
+  redraw?: () => void,
 };
 
 type NRFFilters = {
@@ -259,6 +260,9 @@ type Theme = {
   bgH: number;
   dark: boolean;
 };
+
+type IntervalId = number & { _brand: "interval" };
+type TimeoutId = number & { _brand: "timeout" };
 
 type PinMode =
   | "analog"
@@ -464,6 +468,46 @@ declare class ESP32 {
    * @url http://www.espruino.com/Reference#l_ESP32_deepSleep
    */
   static deepSleep(us: number): void;
+
+  /**
+   * Put device in deepsleep state until interrupted by pin "pin".
+   * Eligible pin numbers are restricted to those [GPIOs designated
+   * as RTC GPIOs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#gpio-summary).
+   *
+   * @param {Pin} pin - Pin to trigger wakeup
+   * @param {number} level - Logic level to trigger
+   * @url http://www.espruino.com/Reference#l_ESP32_deepSleepExt0
+   */
+  static deepSleepExt0(pin: Pin, level: number): void;
+
+  /**
+   * Put device in deepsleep state until interrupted by pins in the "pinVar" array.
+   * The trigger "mode" determines the pin state which will wake up the device.
+   * Valid modes are:
+   * * `0: ESP_EXT1_WAKEUP_ALL_LOW` - all nominated pins must be set LOW to trigger wakeup
+   * * `1: ESP_EXT1_WAKEUP_ANY_HIGH` - any of nominated pins set HIGH will trigger wakeup
+   * Eligible pin numbers are restricted to those [GPIOs designated
+   * as RTC GPIOs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#gpio-summary).
+   *
+   * @param {any} pinVar - Array of Pins to trigger wakeup
+   * @param {number} mode - Trigger mode
+   * @url http://www.espruino.com/Reference#l_ESP32_deepSleepExt1
+   */
+  static deepSleepExt1(pinVar: any, mode: number): void;
+
+  /**
+   * Returns a variable identifying the cause of wakeup from deep sleep.
+   * Possible causes include:
+   * * `0: ESP_SLEEP_WAKEUP_UNDEFINED` - reset was not caused by exit from deep sleep
+   * * `2: ESP_SLEEP_WAKEUP_EXT0` - Wakeup caused by external signal using RTC_IO
+   * * `3: ESP_SLEEP_WAKEUP_EXT1` - Wakeup caused by external signal using RTC_CNTL
+   * * `4: ESP_SLEEP_WAKEUP_TIMER` - Wakeup caused by timer
+   * * `5: ESP_SLEEP_WAKEUP_TOUCHPAD` - Wakeup caused by touchpad
+   * * `6: ESP_SLEEP_WAKEUP_ULP` - Wakeup caused by ULP program
+   * @returns {number} The cause of the ESP32's wakeup from sleep
+   * @url http://www.espruino.com/Reference#l_ESP32_getWakeupCause
+   */
+  static getWakeupCause(): number;
 
   /**
    * Returns an object that contains details about the state of the ESP32 with the
@@ -799,6 +843,16 @@ declare class NRF {
   static on(event: "disconnect", callback: (reason: number) => void): void;
 
   /**
+   * Called when the Nordic Bluetooth stack (softdevice) generates an error. In pretty
+   * much all cases an Exception will also have been thrown.
+   * @param {string} event - The event to listen to.
+   * @param {(msg: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `msg` The error string
+   * @url http://www.espruino.com/Reference#l_NRF_error
+   */
+  static on(event: "error", callback: (msg: any) => void): void;
+
+  /**
    * Contains updates on the security of the current Bluetooth link.
    * See Nordic's `ble_gap_evt_auth_status_t` structure for more information.
    * @param {string} event - The event to listen to.
@@ -920,6 +974,17 @@ declare class NRF {
    * @url http://www.espruino.com/Reference#l_NRF_restart
    */
   static restart(callback?: any): void;
+
+  /**
+   * Delete all data stored for all peers (bonding data used for secure connections). This cannot be done
+   * while a connection is active, so if there is a connection it will be postponed until everything is disconnected
+   * (which can be done by calling `NRF.disconnect()` and waiting).
+   * Booting your device while holding all buttons down together should also have the same effect.
+   *
+   * @param {any} [callback] - [optional] A function to be called while the softdevice is uninitialised. Use with caution - accessing console/bluetooth will almost certainly result in a crash.
+   * @url http://www.espruino.com/Reference#l_NRF_eraseBonds
+   */
+  static eraseBonds(callback?: any): void;
 
   /**
    * Get this device's default Bluetooth MAC address.
@@ -1179,8 +1244,9 @@ declare class NRF {
    *   hid : new Uint8Array(...), // optional, default is undefined. Enable BLE HID support
    *   uart : true, // optional, default is true. Enable BLE UART support
    *   advertise: [ '180D' ] // optional, list of service UUIDs to advertise
-   *   ancs : true, // optional, Bangle.js-only, enable Apple ANCS support for notifications
-   *   ams : true // optional, Bangle.js-only, enable Apple AMS support for media control
+   *   ancs : true, // optional, Bangle.js-only, enable Apple ANCS support for notifications (see `NRF.ancs*`)
+   *   ams : true // optional, Bangle.js-only, enable Apple AMS support for media control (see `NRF.ams*`)
+   *   cts : true // optional, Bangle.js-only, enable Apple Current Time Service support (see `NRF.ctsGetTime`)
    * });
    * ```
    * To enable BLE HID, you must set `hid` to an array which is the BLE report
@@ -1584,7 +1650,7 @@ declare class NRF {
    * @param {any} callback - A callback function to be called when the data is sent
    * @url http://www.espruino.com/Reference#l_NRF_sendHIDReport
    */
-  static sendHIDReport(data: any, callback: any): void;
+  static sendHIDReport(data: number[], callback?: () => void): void
 
   /**
    * Check if Apple Notification Center Service (ANCS) is currently active on the BLE
@@ -1703,6 +1769,55 @@ declare class NRF {
    * @url http://www.espruino.com/Reference#l_NRF_amsCommand
    */
   static amsCommand(id: any): void;
+
+  /**
+   * Check if Apple Current Time Service (CTS) is currently active on the BLE connection
+   *
+   * @returns {boolean} True if Apple Current Time Service (CTS) has been initialised and is active
+   * @url http://www.espruino.com/Reference#l_NRF_ctsIsActive
+   */
+  static ctsIsActive(): boolean;
+
+  /**
+   * Returns time information from the Current Time Service
+   * (if requested with `NRF.ctsGetTime` and is activated by calling `NRF.setServices(..., {..., cts:true})`)
+   * ```
+   * {
+   *   date : // Date object with the current date
+   *   day :  // if known, 0=sun,1=mon (matches JS `Date`)
+   *   reason : [ // reason for the date change
+   *       "external", // External time change
+   *       "manual",   // Manual update
+   *       "timezone", // Timezone changed
+   *       "DST",      // Daylight savings
+   *     ]
+   *   timezone // if LTI characteristic exists, this is the timezone
+   *   dst      // if LTI characteristic exists, this is the dst adjustment
+   * }
+   * ```
+   * For instance this can be used as follows to update Espruino's time:
+   * ```
+   * E.on('CTS',e=>{
+   *   setTime(e.date.getTime()/1000);
+   * });
+   * NRF.ctsGetTime(); // also returns a promise with CTS info
+   * ```
+   * @param {string} event - The event to listen to.
+   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `info` An object (see below)
+   * @url http://www.espruino.com/Reference#l_NRF_CTS
+   */
+  static on(event: "CTS", callback: (info: any) => void): void;
+
+  /**
+   * Read the time from CTS - creates an `NRF.on('CTS', ...)` event as well
+   * ```
+   * NRF.ctsGetTime(); // also returns a promise
+   * ```
+   * @returns {any} A `Promise` that is resolved (or rejected) when time is received
+   * @url http://www.espruino.com/Reference#l_NRF_ctsGetTime
+   */
+  static ctsGetTime(): Promise<void>;
 
   /**
    * Search for available devices matching the given filters. Since we have no UI
@@ -3188,8 +3303,10 @@ declare class Puck {
    * Check out [the Puck.js page on the
    * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
    * information.
+   * **Note:** Puck.js cannot currently read every sample from the
+   * accelerometer at sample rates above 208Hz.
    *
-   * @param {number} samplerate - The sample rate in Hz, or undefined
+   * @param {number} samplerate - The sample rate in Hz, or `undefined` (default is 12.5 Hz)
    * @url http://www.espruino.com/Reference#l_Puck_accelOn
    */
   static accelOn(samplerate: number): void;
@@ -3494,6 +3611,16 @@ declare class Bangle {
   static on(event: "lcdPower", callback: (on: boolean) => void): void;
 
   /**
+   * Has the backlight been turned on or off? Can be used to stop tasks that are no
+   * longer useful if want to see in sun screen only. Also see `Bangle.isBacklightOn()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if backlight is on
+   * @url http://www.espruino.com/Reference#l_Bangle_backlight
+   */
+  static on(event: "backlight", callback: (on: boolean) => void): void;
+
+  /**
    * Has the screen been locked? Also see `Bangle.isLocked()`
    * @param {string} event - The event to listen to.
    * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
@@ -3618,6 +3745,26 @@ declare class Bangle {
    * @url http://www.espruino.com/Reference#l_Bangle_midnight
    */
   static on(event: "midnight", callback: () => void): void;
+
+  /**
+   * This function can be used to turn Bangle.js's LCD backlight off or on.
+   * This function resets the Bangle's 'activity timer' (like pressing a button or
+   * the screen would) so after a time period of inactivity set by
+   * `Bangle.setOptions({backlightTimeout: X});` the backlight will turn off.
+   * If you want to keep the backlight on permanently (until apps are changed) you can
+   * do:
+   * ```
+   * Bangle.setOptions({backlightTimeout: 0}) // turn off the timeout
+   * Bangle.setBacklight(1); // keep screen on
+   * ```
+   * Of course, the backlight depends on `Bangle.setLCDPower` too, so any lcdPowerTimeout/setLCDTimeout will
+   * also turn the backlight off. The use case is when you require the backlight timeout
+   * to be shorter than the power timeout.
+   *
+   * @param {boolean} isOn - True if the LCD backlight should be on, false if not
+   * @url http://www.espruino.com/Reference#l_Bangle_setBacklight
+   */
+  static setBacklight(isOn: boolean): void;
 
   /**
    * This function can be used to turn Bangle.js's LCD off or on.
@@ -3760,7 +3907,7 @@ declare class Bangle {
   static setLCDTimeout(isOn: number): void;
 
   /**
-   * Set how often the watch should poll for new acceleration/gyro data and kick the
+   * Set how often the watch should poll its sensors (accel/hr/mag) for new data and kick the
    * Watchdog timer. It isn't recommended that you make this interval much larger
    * than 1000ms, but values up to 4000ms are allowed.
    * Calling this will set `Bangle.setOptions({powerSave: false})` - disabling the
@@ -3819,6 +3966,9 @@ declare class Bangle {
    *   and polling rate may not be exact. The algorithm's filtering is tuned for
    *   20-40ms poll intervals, so higher/lower intervals may effect the reliability
    *   of the BPM reading.
+   * * `hrmSportMode` - on the newest Bangle.js 2 builds with with the proprietary
+   *   heart rate algorithm, this is the sport mode passed to the algorithm. See `libs/misc/vc31_binary/algo.h`
+   *   for more info. -1 = auto, 0 = normal (default), 1 = running, 2 = ...
    * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for
    *   calculating altitude with the pressure sensor
    * Where accelerations are used they are in internal units, where `8192 = 1g`
@@ -3841,6 +3991,13 @@ declare class Bangle {
    * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
    */
   static isLCDOn(): boolean;
+
+  /**
+   * Also see the `Bangle.backlight` event
+   * @returns {boolean} Is the backlight on or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_isBacklightOn
+   */
+  static isBacklightOn(): boolean;
 
   /**
    * This function can be used to lock or unlock Bangle.js (e.g. whether buttons and
@@ -4047,7 +4204,8 @@ declare class Bangle {
   static getHealthStatus(range?: "current" | "last" | "day"): HealthStatus;
 
   /**
-   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount` and `pollInterval`.
+   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount`, `pollInterval` and others.
+   * Please see the declaration of this function for more information (click the `==>` link above [this description](http://www.espruino.com/Reference#l_Bangle_dbg))
    * @returns {any}
    * @url http://www.espruino.com/Reference#l_Bangle_dbg
    */
@@ -4253,6 +4411,13 @@ declare class Bangle {
   static showClock(): void;
 
   /**
+   * Show a 'recovery' menu that allows you to perform certain tasks on your Bangle.
+   * You can also enter this menu by restarting while holding down the `BTN1`
+   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
+   */
+  static showRecoveryMenu(): void;
+
+  /**
    * This behaves the same as the global `load()` function, but if fast
    * loading is possible (`Bangle.setUI` was called with a `remove` handler)
    * then instead of a complete reload, the `remove` handler will be
@@ -4305,7 +4470,8 @@ declare class Bangle {
    * (function() {
    *   var sui = Bangle.setUI;
    *   Bangle.setUI = function(mode, cb) {
-   *     if (mode!="clock") return sui(mode,cb);
+   *     var m = ("object"==typeof mode) ? mode.mode : mode;
+   *     if (m!="clock") return sui(mode,cb);
    *     sui(); // clear
    *     Bangle.CLOCK=1;
    *     Bangle.swipeHandler = Bangle.showLauncher;
@@ -4320,10 +4486,11 @@ declare class Bangle {
    *   mode : "custom",
    *   back : function() {}, // optional - add a 'back' icon in top-left widget area and call this function when it is pressed , also call it when the hardware button is clicked (does not override btn if defined)
    *   remove : function() {}, // optional - add a handler for when the UI should be removed (eg stop any intervals/timers here)
-   *   touch : function(n,e) {}, // optional - handler for 'touch' events
-   *   swipe : function(dir) {}, // optional - handler for 'swipe' events
-   *   drag : function(e) {}, // optional - handler for 'drag' events (Bangle.js 2 only)
-   *   btn : function(n) {}, // optional - handler for 'button' events (n==1 on Bangle.js 2, n==1/2/3 depending on button for Bangle.js 1)
+   *   redraw : function() {}, // optional - add a handler to redraw the UI. Not needed but it can allow widgets/etc to provide other functionality that requires the screen to be redrawn
+   *   touch : function(n,e) {}, // optional - (mode:custom only) handler for 'touch' events
+   *   swipe : function(dir) {}, // optional - (mode:custom only) handler for 'swipe' events
+   *   drag : function(e) {}, // optional - (mode:custom only) handler for 'drag' events (Bangle.js 2 only)
+   *   btn : function(n) {}, // optional - (mode:custom only) handler for 'button' events (n==1 on Bangle.js 2, n==1/2/3 depending on button for Bangle.js 1)
    *   clock : 0 // optional - if set the behavior of 'clock' mode is added (does not override btn if defined)
    * });
    * ```
@@ -4331,7 +4498,7 @@ declare class Bangle {
    * may choose to just call the `remove` function and then load a new app without resetting Bangle.js.
    * As a result, **if you specify 'remove' you should make sure you test that after calling `Bangle.setUI()`
    * without arguments your app is completely unloaded**, otherwise you may end up with memory leaks or
-   * other issues when switching apps.
+   * other issues when switching apps. Please see http://www.espruino.com/Bangle.js+Fast+Load for more details on this.
    *
    * @param {any} type - The type of UI input: 'updown', 'leftright', 'clock', 'clockupdown' or undefined to cancel. Can also be an object (see below)
    * @param {any} callback - A function with one argument which is the direction
@@ -4926,11 +5093,19 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * XXXXXXXXX
    * `);
    * g.drawImage(img, x,y);
+   * var img = Graphics.createImage(`
+   * .....
+   * .XXX.
+   * .X.X.
+   * .XXX.
+   * .....
+   * `);
+   * g.drawImage(img, x,y);
    * ```
    * If the characters at the beginning and end of the string are newlines, they will
    * be ignored. Spaces are treated as `0`, and any other character is a `1`
    *
-   * @param {any} str - A String containing a newline-separated image - space is 0, anything else is 1
+   * @param {any} str - A String containing a newline-separated image - space/. is 0, anything else is 1
    * @returns {any} An Image object that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_createImage
    */
@@ -5308,6 +5483,14 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   setFontCustom(bitmap: ArrayBuffer, firstChar: number, width: number | string, height: number): Graphics;
 
   /**
+   *
+   * @param {any} file - The font as a PBF file
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontPBF
+   */
+  setFontPBF(file: any): Graphics;
+
+  /**
    * Set the alignment for subsequent calls to `drawString`
    *
    * @param {number} x - X alignment. -1=left (default), 0=center, 1=right
@@ -5592,7 +5775,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    *   `width,height,bpp,[transparent,]image_bytes...`. If a transparent colour is
    *   specified the top bit of `bpp` should be set.
    * * An ArrayBuffer Graphics object (if `bpp<8`, `msb:true` must be set) - this is
-   *   disabled on devices without much flash memory available
+   *   disabled on devices without much flash memory available. If a Graphics object
+   *   is supplied, it can also contain transparent/palette fields as if it were
+   *   an image.
    * Draw an image at the specified position.
    * * If the image is 1 bit, the graphics foreground/background colours will be
    *   used.
@@ -5673,6 +5858,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
+   * If the `Graphics` object contains `transparent` or `pelette` fields,
+   * [as you might find in an image](http://www.espruino.com/Graphics#images-bitmaps),
+   * those will be included in the generated image too.
    *
    * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
    * @returns {any} An Image that can be used with `Graphics.drawImage`
@@ -5794,6 +5982,19 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_transformVertices
    */
   transformVertices(arr: number[], transformation: { x?: number, y?: number, scale?: number, rotate?: number } | [number, number, number, number, number, number]): number[];
+
+  /**
+   * Flood fills the given Graphics instance out from a particular point.
+   * **Note:** This only works on Graphics instances that support readback with `getPixel`. It
+   * is also not capable of filling over dithered patterns (eg non-solid colours on Bangle.js 2)
+   *
+   * @param {number} x - X coordinate to start from
+   * @param {number} y - Y coordinate to start from
+   * @param {any} col - The color to fill with (if undefined, foreground is used)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_floodFill
+   */
+  floodFill(x: number, y: number, col: any): Graphics;
 
   /**
    * Returns an object of the form:
@@ -6782,6 +6983,7 @@ interface DateConstructor {
   new(): Date;
   new(value: number | string): Date;
   new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date;
+  (arg?: any): string;
 }
 
 interface Date {
@@ -8034,21 +8236,96 @@ declare class E {
   static toArrayBuffer(str: string): ArrayBuffer;
 
   /**
-   * Returns a 'flat' string representing the data in the arguments, or return
-   * `undefined` if a flat string cannot be created.
-   * This creates a string from the given arguments. If an argument is a String or an
-   * Array, each element is traversed and added as an 8 bit character. If it is
-   * anything else, it is converted to a character directly.
+   * Returns a `String` representing the data in the arguments.
+   * This creates a string from the given arguments in the same way as `E.toUint8Array`. If each argument is:
+   * * A String or an Array, each element is traversed and added as an 8 bit character
+   * * `{data : ..., count : N}` causes `data` to be repeated `count` times
+   * * `{callback : fn}` calls the function and adds the result
+   * * Anything else is converted to a character directly.
    * In the case where there's one argument which is an 8 bit typed array backed by a
    * flat string of the same length, the backing string will be returned without
    * doing a copy or other allocation. The same applies if there's a single argument
    * which is itself a flat string.
+   * ```JS
+   * E.toString(0,1,2,"Hi",3)
+   * "\0\1\2Hi\3"
+   * E.toString(1,2,{data:[3,4], count:4},5,6)
+   * "\1\2\3\4\3\4\3\4\3\4\5\6"
+   * >E.toString(1,2,{callback : () => "Hello World"},5,6)
+   * ="\1\2Hello World\5\6"
+   * ```
+   * **Note:** Prior to Espruino 2v18 `E.toString` would always return a flat string,
+   * or would return `undefined` if one couldn't be allocated. Now, it will return
+   * a normal (fragmented) String if a contiguous chunk of memory cannot be allocated.
+   * You can still check if the returned value is a Flat string using `E.getAddressOf(str, true)!=0`,
+   * or can use `E.toFlatString` instead.
    *
    * @param {any} args - The arguments to convert to a String
-   * @returns {any} A String (or `undefined` if a Flat String cannot be created)
+   * @returns {any} A String
    * @url http://www.espruino.com/Reference#l_E_toString
    */
-  static toString(...args: any[]): string | undefined;
+  static toString(...args: any[]): string;
+
+  /**
+   * Returns a Flat `String` representing the data in the arguments, or `undefined` if one can't be allocated.
+   * This provides the same behaviour that `E.toString` had in Espruino before 2v18 - see `E.toString` for
+   * more information.
+   *
+   * @param {any} args - The arguments to convert to a Flat String
+   * @returns {any} A Flat String (or undefined)
+   * @url http://www.espruino.com/Reference#l_E_toFlatString
+   */
+  static toFlatString(...args: any[]): string | undefined;
+
+  /**
+   * By default, strings in Espruino are standard 8 bit binary strings
+   * unless they contain Unicode chars or a `\u####` escape code
+   * that doesn't map to the range 0..255.
+   * However calling E.asUTF8 will convert one of those strings to
+   * UTF8.
+   * ```
+   * var s = String.fromCharCode(0xF0,0x9F,0x8D,0x94);
+   * var u = E.asUTF8(s);
+   * s.length // 4
+   * s[0] // "\xF0"
+   * u.length // 1
+   * u[0] // hamburger emoji
+   * ```
+   * **NOTE:** UTF8 is currently only available on Bangle.js devices
+   *
+   * @param {any} str - The string to turn into a UTF8 Unicode String
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_E_asUTF8
+   */
+  static asUTF8(str: any): string;
+
+  /**
+   * Given a UTF8 String (see `E.asUTF8`) this returns the underlying representation
+   * of that String.
+   * ```
+   * E.fromUTF8("\u03C0") == "\xCF\x80"
+   * ```
+   * **NOTE:** UTF8 is currently only available on Bangle.js devices
+   *
+   * @param {any} str - The string to check
+   * @returns {any} A String
+   * @url http://www.espruino.com/Reference#l_E_fromUTF8
+   */
+  static fromUTF8(str: any): string;
+
+  /**
+   * By default, strings in Espruino are standard 8 bit binary strings
+   * unless they contain Unicode chars or a `\u####` escape code
+   * that doesn't map to the range 0..255.
+   * This checks if a String is being treated by Espruino as a UTF8 String
+   * See `E.asUTF8` to convert to a UTF8 String
+   * **NOTE:** UTF8 is currently only available on Bangle.js devices
+   *
+   * @param {any} str - The string to check
+   * @returns {boolean} True if the given String is treated as UTF8 by Espruino
+   * @url http://www.espruino.com/Reference#l_E_isUTF8
+   */
+  static isUTF8(str: any): boolean;
 
   /**
    * This creates a Uint8Array from the given arguments. These are handled as
@@ -8218,6 +8495,10 @@ declare class E {
   /**
    * Dump any locked variables that aren't referenced from `global` - for debugging
    * memory leaks only.
+   * **Note:** This does a linear scan over memory, finding variables
+   * that are currently locked. In some cases it may show variables
+   * like `Unknown 66` which happen when *part* of a string has ended
+   * up placed in memory ahead of the String that it's part of. See https://github.com/espruino/Espruino/issues/2345
    * @url http://www.espruino.com/Reference#l_E_dumpLockedVars
    */
   static dumpLockedVars(): void;
@@ -8650,6 +8931,24 @@ declare class E {
    */
   static decodeUTF8(str: string, lookup: string[], replaceFn: string | ((charCode: number) => string)): string;
 
+  /**
+   * When using events with `X.on('foo', function() { ... })`
+   * and then `X.emit('foo')` you might want to stop subsequent
+   * event handlers from being executed.
+   * Calling this function doing the execution of events will
+   * ensure that no subsequent event handlers are executed.
+   * ```
+   * var X = {}; // in Espruino all objects are EventEmitters
+   * X.on('foo', function() { print("A"); })
+   * X.on('foo', function() { print("B"); E.stopEventPropagation(); })
+   * X.on('foo', function() { print("C"); })
+   * X.emit('foo');
+   * // prints A,B but not C
+   * ```
+   * @url http://www.espruino.com/Reference#l_E_stopEventPropagation
+   */
+  static stopEventPropagation(): void;
+
 
 }
 
@@ -8954,12 +9253,35 @@ interface Object {
    * o.emit('answer', 44);
    * // nothing printed
    * ```
+   * If you have more than one handler for an event, and you'd
+   * like that handler to stop the event being passed to other handlers
+   * then you can call `E.stopEventPropagation()` in that handler.
    *
    * @param {any} event - The name of the event, for instance 'data'
    * @param {any} listener - The listener to call when this event is received
    * @url http://www.espruino.com/Reference#l_Object_on
    */
   on(event: any, listener: any): void;
+
+  /**
+   * Register an event listener for this object, for instance `Serial1.addListener('data', function(d) {...})`.
+   * An alias for `Object.on`
+   *
+   * @param {any} event - The name of the event, for instance 'data'
+   * @param {any} listener - The listener to call when this event is received
+   * @url http://www.espruino.com/Reference#l_Object_addListener
+   */
+  addListener(event: any, listener: any): void;
+
+  /**
+   * Register an event listener for this object, for instance `Serial1.addListener('data', function(d) {...})`.
+   * An alias for `Object.on`
+   *
+   * @param {any} event - The name of the event, for instance 'data'
+   * @param {any} listener - The listener to call when this event is received
+   * @url http://www.espruino.com/Reference#l_Object_prependListener
+   */
+  prependListener(event: any, listener: any): void;
 
   /**
    * Call any event listeners that were added to this object with `Object.on`, for
@@ -9648,21 +9970,22 @@ declare const Promise: PromiseConstructor
  * This means that while `StorageFile` files exist in the same area as those from
  * `Storage`, they should be read using `Storage.open` (and not `Storage.read`).
  * ```
- * f = s.open("foobar","w");
+ * f = require("Storage").open("foobar","w");
  * f.write("Hell");
  * f.write("o World\n");
  * f.write("Hello\n");
  * f.write("World 2\n");
+ * f.write("Hello World 3\n");
  * // there's no need to call 'close'
  * // then
- * f = s.open("foobar","r");
+ * f = require("Storage").open("foobar","r");
  * f.read(13) // "Hello World\nH"
  * f.read(13) // "ello\nWorld 2\n"
  * f.read(13) // "Hello World 3"
  * f.read(13) // "\n"
  * f.read(13) // undefined
  * // or
- * f = s.open("foobar","r");
+ * f = require("Storage").open("foobar","r");
  * f.readLine() // "Hello World\n"
  * f.readLine() // "Hello\n"
  * f.readLine() // "World 2\n"
@@ -10069,6 +10392,12 @@ declare class Serial {
    * @url http://www.espruino.com/Reference#l_Serial_pipe
    */
   pipe(destination: any, options?: PipeOptions): void
+
+  /**
+   * Flush this serial stream (pause execution until all data has been sent)
+   * @url http://www.espruino.com/Reference#l_Serial_flush
+   */
+  flush(): void;
 }
 
 interface StringConstructor {
@@ -10090,6 +10419,7 @@ interface StringConstructor {
    * @url http://www.espruino.com/Reference#l_String_String
    */
   new(...str: any[]): any;
+  (arg?: any): string;
 }
 
 interface String {
@@ -10334,7 +10664,8 @@ interface RegExpConstructor {
    * @returns {any} A RegExp object
    * @url http://www.espruino.com/Reference#l_RegExp_RegExp
    */
-  new(regex: any, flags: any): RegExp;
+  new(...value: any[]): RegExp;
+  (value: any): RegExp;
 }
 
 interface RegExp {
@@ -10423,7 +10754,8 @@ interface NumberConstructor {
    * @returns {any} A Number object
    * @url http://www.espruino.com/Reference#l_Number_Number
    */
-  new(...value: any[]): any;
+  new(...value: any[]): Number;
+  (value: any): number;
 }
 
 interface Number {
@@ -10563,7 +10895,8 @@ interface BooleanConstructor {
    * @returns {boolean} A Boolean object
    * @url http://www.espruino.com/Reference#l_Boolean_Boolean
    */
-  new(value: any): boolean;
+  new(...value: any[]): Number;
+  (value: any): boolean;
 }
 
 interface Boolean {
@@ -11132,7 +11465,7 @@ declare function getSerial(): any;
  * @returns {any} An ID that can be passed to clearInterval
  * @url http://www.espruino.com/Reference#l__global_setInterval
  */
-declare function setInterval(func: any, timeout: number, ...args: any[]): any;
+declare function setInterval(func: string | Function, timeout: number, ...args: any[]): IntervalId;
 
 /**
  * Call the function (or evaluate the string) specified ONCE after the timeout in
@@ -11167,7 +11500,7 @@ declare function setInterval(func: any, timeout: number, ...args: any[]): any;
  * @returns {any} An ID that can be passed to clearTimeout
  * @url http://www.espruino.com/Reference#l__global_setTimeout
  */
-declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
+declare function setTimeout(func: string | Function, timeout: number, ...args: any[]): TimeoutId;
 
 /**
  * Clear the Interval that was created with `setInterval`, for example:
@@ -11179,7 +11512,7 @@ declare function setTimeout(func: any, timeout: number, ...args: any[]): any;
  * @param {any} id - The id returned by a previous call to setInterval. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearInterval
  */
-declare function clearInterval(...id: any[]): void;
+declare function clearInterval(id: IntervalId): void;
 
 /**
  * Clear the Timeout that was created with `setTimeout`, for example:
@@ -11191,7 +11524,7 @@ declare function clearInterval(...id: any[]): void;
  * @param {any} id - The id returned by a previous call to setTimeout. **Only one argument is allowed.**
  * @url http://www.espruino.com/Reference#l__global_clearTimeout
  */
-declare function clearTimeout(...id: any[]): void;
+declare function clearTimeout(id: TimeoutId): void;
 
 /**
  * Change the Interval on a callback created with `setInterval`, for example:
@@ -11205,7 +11538,7 @@ declare function clearTimeout(...id: any[]): void;
  * @param {number} time - The new time period in ms
  * @url http://www.espruino.com/Reference#l__global_changeInterval
  */
-declare function changeInterval(id: any, time: number): void;
+declare function changeInterval(id: IntervalId, time: number): void;
 
 /**
  * Read 8 bits of memory at the given location - DANGEROUS!
@@ -13061,10 +13394,13 @@ declare module "tensorflow" {
  * Functions here take and return buffers of data. There is no support for
  * streaming, so both the compressed and decompressed data must be able to fit in
  * memory at the same time.
+ * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
  * @url http://www.espruino.com/Reference#heatshrink
  */
 declare module "heatshrink" {
   /**
+   * Compress the heatshrink-encoded data supplied as input.
+   * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to compress
    * @returns {any} Returns the result as an ArrayBuffer
@@ -13073,6 +13409,8 @@ declare module "heatshrink" {
   function compress(data: any): ArrayBuffer;
 
   /**
+   * Decompress the heatshrink-encoded data supplied as input.
+   * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to decompress
    * @returns {any} Returns the result as an ArrayBuffer
@@ -13222,7 +13560,8 @@ declare module "Storage" {
    * @returns {any} An object containing parsed JSON from the file, or undefined
    * @url http://www.espruino.com/Reference#l_Storage_readJSON
    */
-  function readJSON(name: string, noExceptions: boolean): any;
+  function readJSON(name: string, noExceptions?: false | 0): unknown;
+  function readJSON(name: string, noExceptions?: ShortBoolean): unknown | undefined;
 
   /**
    * Read a file from the flash storage area that has been written with
@@ -13323,7 +13662,7 @@ declare module "Storage" {
    * List all files in the flash storage area matching the specified regex (ignores
    * StorageFiles), and then hash their filenames *and* file locations.
    * Identical files may have different hashes (e.g. if Storage is compacted and the
-   * file moves) but the changes of different files having the same hash are
+   * file moves) but the chances of different files having the same hash are
    * extremely small.
    * ```
    * // Hash files

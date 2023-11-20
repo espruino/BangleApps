@@ -1,4 +1,4 @@
-# Recorder
+**# Recorder
 
 ![icon](app.png)
 
@@ -15,10 +15,11 @@ You can record
 
 * **Time** The current time
 * **GPS** GPS Latitude, Longitude and Altitude
-* **Steps** Steps counted by the step counter
 * **HR** Heart rate and confidence
 * **BAT** Battery percentage and voltage
-* **Core** CoreTemp body temperature
+* **Steps** Steps counted by the step counter
+* **Baro** (Bangle.js 2) Using the built-in barometer to record Temperature, Pressure and Altitude
+* **Core** CoreTemp body temperature *if* you have a CoreTemp device and the https://banglejs.com/apps/?id=coretemp app installed
 
 You can then start/stop recording from the Recorder app itself (and as long as widgets are
 enabled in the app you're using, you can move to another app and continue recording).
@@ -42,6 +43,16 @@ You can also view some information on the watch.
   * `Plot Alt` plots altitude over time
   * `Plot Speed` plots speed over time
   * `Plot HRM` plots heart rate over time
+
+## Usage in code
+
+As long as widgets are loaded, you can:
+
+* Call `WIDGETS["recorder"].setRecording(true)` to start recording (it returns a promise, and may show a menu)
+* Call `WIDGETS["recorder"].setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
+* Call `WIDGETS["recorder"].setRecording(false)` to stop recording
+
+
 
 ## Tips
 

@@ -23,7 +23,7 @@ function onTemperature(p) {
   var temp100 = Math.round(avrTemp*100);
   var pressure100 = Math.round(avrPressure*100);
 
-  Bangle.bleAdvert[0xFCD2] = [ 0x40, /* BTHome Device Information
+  var advert = [ 0x40, /* BTHome Device Information
               bit 0: "Encryption flag"
               bit 1-4: "Reserved for future use"
               bit 5-7: "BTHome Version" */
@@ -37,6 +37,21 @@ function onTemperature(p) {
               0x04, // Pressure, 16 bit
               pressure100&255,(pressure100>>8)&255,pressure100>>16
   ];
+
+  if(Array.isArray(Bangle.bleAdvert)){
+    var found = false;
+    for(var ad in Bangle.bleAdvert){
+      if(ad[0xFCD2]){
+        ad[0xFCD2] = advert;
+        found = true;
+        break;
+      }
+    }
+    if(!found)
+      Bangle.bleAdvert.push({ 0xFCD2: advert });
+  }else{
+    Bangle.bleAdvert[0xFCD2] = advert;
+  }
   NRF.setAdvertising(Bangle.bleAdvert);
 }
 

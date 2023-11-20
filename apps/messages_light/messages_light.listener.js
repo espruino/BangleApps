@@ -3,11 +3,11 @@ let overlayTimeout=undefined;
 exports.listener = function(type, event) {
 
     
-    //salva gli eventi che arrivano su file
-   /* events=require("Storage").readJSON("events_log",true) || [];
+    //salva gli eventi che arrivano su file TOREMOVE
+    /*events=require("Storage").readJSON("events_log",true) || [];
     events.push ( event)
-    require("Storage").writeJSON("events_log",events);
-  */
+    require("Storage").writeJSON("events_log",events);*/
+  
     //if (event.handled) return; // already handled/app open
     if( type=="clearAll" || type=="music" || event.id=="music") return; //lo lascio gestire a qualcun altro
 

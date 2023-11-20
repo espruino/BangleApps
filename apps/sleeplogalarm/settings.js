@@ -1,6 +1,6 @@
 (function(back) {
   // read settings
-  var settings = require("sleeplogalarm").getSettings();
+  let settings = require("sleeplogalarm").getSettings();
 
   // write change to storage
   function writeSetting() {
@@ -23,7 +23,7 @@
   // show widget menu
   function showFilterMenu() {
     // set menu
-    var filterMenu = {
+    let filterMenu = {
       "": {
         title: "Filter Alarm"
       },
@@ -64,22 +64,22 @@
         })
       }
     };
-    var menu = E.showMenu(filterMenu);
+    let menu = E.showMenu(filterMenu);
   }
 
   // show widget menu
   function showWidMenu() {
     // define color values and names
-    var colName = ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"];
-    var colVal = [63488, 65504, 2016, 2047, 31, 63519, 0, 65535];
+    let colName = ["red", "yellow", "green", "cyan", "blue", "magenta", "black", "white"];
+    let colVal = [63488, 65504, 2016, 2047, 31, 63519, 0, 65535];
 
     // set menu
-    var widgetMenu = {
+    let widgetMenu = {
       "": {
         title: "Widget Settings"
       },
       /*LANG*/"< Back": () => showMain(9),
-      /*LANG*/"hide": {
+      /*LANG*/"hide always": {
         value: settings.wid.hide,
         onchange: v => {
           settings.wid.hide = v;
@@ -105,13 +105,13 @@
         }
       }
     };
-    var menu = E.showMenu(widgetMenu);
+    let menu = E.showMenu(widgetMenu);
   }
 
   // show main menu
   function showMain(selected) {
     // set menu
-    var mainMenu = {
+    let mainMenu = {
       "": {
         title: "Sleep Log Alarm",
         selected: selected
@@ -184,7 +184,7 @@
         }
       }
     };
-    var menu = E.showMenu(mainMenu);
+    let menu = E.showMenu(mainMenu);
   }
 
   // draw main menu

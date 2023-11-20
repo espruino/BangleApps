@@ -6,11 +6,12 @@
     drawBell: false,
     padHours: true,
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
-    font: 0, // 0=segment style font, 1=teletest font, 2=4x5
+    font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2
   }, require("Storage").readJSON(CONFIGFILE,1) || {});
 
   function writeSettings() {
     require('Storage').writeJSON(CONFIGFILE, settings);
+    WIDGETS["widalarmeta"].reload();
   }
 
   // Show the menu
@@ -52,7 +53,7 @@
     /*LANG*/'Font': {
       value: settings.font,
       min: 0, max: 2,
-      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"4x5"][v || 0],
+      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8"][v === undefined ? 1 : v],
       onchange: v => {
         settings.font = v;
         writeSettings();

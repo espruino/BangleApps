@@ -1,0 +1,35 @@
+{
+  "id": "shadowclk",
+  "name": "Shadow Clock",
+  "version": "0.04",
+  "description": "A simple clock using the Londrina font in color with a shadowed outline. Based on the Anton Clock.",
+  "icon": "app.png",
+  "screenshots": [{
+    "url": "screenshot.png"
+  }, {
+    "url": "screenshot-1.png"
+  }],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "allow_emulator": true,
+  "storage": [{
+      "name": "shadowclk.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "shadowclk.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "shadowclk.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [{
+    "name": "shadowclk.json"
+  }]
+}

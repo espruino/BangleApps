@@ -88,3 +88,17 @@
 0.63: Fix messages app loading on clock without fast load
 0.64: Ensure we don't get 'undefined' as the message body
 0.65: Make sure messages are saved if not in the clock app (fix #2460)
+0.66: Updated Navigation handling to work with new Gadgetbridge release
+0.67: Support for 'Ignore' for messages from Gadgetbridge
+      Message view is now taller, and we use swipe left/right to dismiss messages rather than buttons
+0.68: More navigation icons (for roundabouts)
+0.69: More navigation icons (keep/uturn left/right)
+      Nav messages with '/' now get split on newlines
+0.70: Handle nav messages from newer Gadgetbridge builds that output distance as a String
+      If we receive a 'music' message and we're in the messages app (but not showing a message) show music (#2814)
+0.71: Cancel buzzing when watch unlocked, or when different messages viewed
+      On 2v18.64+ firmware, 'No Messages' now has a 'back' button
+0.72: Nav message updastes don't automatically launch navigation menu unless they're new
+0.73: Add sharp left+right nav icons
+0.74: Add option for driving on left (affects roundabout icons in navigation)
+0.75: Handle text with images in messages list by just displaying the first line

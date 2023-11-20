@@ -51,7 +51,22 @@ function setStatus(running) {
 // Called to start/stop running
 function onStartStop() {
   var running = !exs.state.active;
-  var prepPromises = [];
+  var shouldResume = false;
+  var promise = Promise.resolve();
+
+  if (running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
+    promise = promise.
+      then(() => {
+        isMenuDisplayed = true;
+        return E.showPrompt("Resume run?",{title:"Run"});
+      }).then(r => {
+        isMenuDisplayed = false;
+        layout.setUI(); // grab our input handling again
+        layout.forgetLazyState();
+        layout.render();
+        shouldResume = r;
+      });
+  }
 
   // start/stop recording
   // Do this first in case recorder needs to prompt for
@@ -59,35 +74,34 @@ function onStartStop() {
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
-      prepPromises.push(
-        WIDGETS["recorder"].setRecording(true).then(() => {
+      promise = promise.
+        then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
+        then(() => {
           isMenuDisplayed = false;
           layout.setUI(); // grab our input handling again
           layout.forgetLazyState();
           layout.render();
-        })
-      );
+        });
     } else {
-      prepPromises.push(
-        WIDGETS["recorder"].setRecording(false)
+      promise = promise.then(
+        () => WIDGETS["recorder"].setRecording(false)
       );
     }
   }
 
-  if (!prepPromises.length) // fix for Promise.all bug in 2v12
-    prepPromises.push(Promise.resolve());
-
-  Promise.all(prepPromises)
-    .then(() => {
-      if (running) {
+  promise = promise.then(() => {
+    if (running) {
+      if (shouldResume)
+        exs.resume()
+      else
         exs.start();
-      } else {
-        exs.stop();
-      }
-      // if stopping running, don't clear state
-      // so we can at least refer to what we've done
-      setStatus(running);
-    });
+    } else {
+      exs.stop();
+    }
+    // if stopping running, don't clear state
+    // so we can at least refer to what we've done
+    setStatus(running);
+  });
 }
 
 var lc = [];

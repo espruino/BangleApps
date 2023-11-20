@@ -67,7 +67,6 @@ let touchHandler = function(_, xy) {
   } else if ((R.x-1<x && x<R.x+len) && (R.y2-len<y && y<R.y2+1)) {
     //Wake 
     gadgetbridgeWake();
-    gadgetbridgeWake();
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y-1<y && y<R.y+len)) {
     //Srch
     Bangle.removeListener("touch", touchHandler);
@@ -144,6 +143,7 @@ let simpleSearchTerm = function() { // input a simple search term without tags, 
 
 let searchPlayWOTags = function() { //make a search and play using entered terms
   searchString = simpleSearch;
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: "android.media.action.MEDIA_PLAY_FROM_SEARCH",
@@ -157,6 +157,7 @@ let searchPlayWOTags = function() { //make a search and play using entered terms
 };
 
 let gadgetbridgeWake = function() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     target: "activity",
@@ -174,6 +175,7 @@ let actFn = function(actName, activOrServ) {
 // Send the intent message to Gadgetbridge
 let btMsg = function(activOrServ, cls, actName, xtra) {
 
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: actFn(actName, activOrServ),

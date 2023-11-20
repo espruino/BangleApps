@@ -73,5 +73,45 @@
 	* Display current and next segment in red so that you know where to go.
 	* Avoid angles flickering at low speed at the cost of less refresh.
 	* Splash screen while waiting for gps signal.
-  
-0.17: Convert Yes/No On/Off in settings to checkboxes
+
+0.17:
+	* Convert Yes/No On/Off in settings to checkboxes
+
+0.18:
+	* Major rewrite of display : now tile based
+	* We have a map. Never get lost again.
+
+0.19:
+	* Several fixes for osm requests and map computations
+	* Display path in leaflet
+	* Reduce framerate if locked
+	* Stroke to move around in the map
+	* Fix for missing paths in display
+
+0.20:
+	* Large display for instant speed
+	* Bugfix for negative coordinates
+	* Disable menu while the map is not loaded
+	* Turn screen off while idling to save battery (with setting)
+	* New setting : disable buzz on turns
+	* New setting : turn bluetooth off to save battery
+	* New setting : power screen off between points to save battery
+	* Color change for lost direction (now purple)
+	* Adaptive screen powersaving
+
+0.21:
+	* Jit is back for display functions (10% speed increase)
+	* Store, parse and display elevation data
+	* Removed 'lost' indicator (we now change position to purple when lost)
+	* Powersaving fix : don't powersave when lost
+	* Bugfix for negative remaining distance when going backwards
+	* New settings for powersaving
+	* Adjustments to powersaving algorithm
+
+0.22:
+	* Powersaving disabled by default
+	* Default choice for powersaving in the settings
+	* Better position in elevation profiles
+	* Integrating fixes in upstream rust heatshrink crate
+	* Small path optimisations with brouter (removing looplets)
+	* Bugfix in nearest segment detection

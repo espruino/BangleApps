@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-exp.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <style>
+    .badgeerror[data-badge]::after { background-color: red; }
+    </style>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      var converted;
+      var filename;
+
+      function handleOnload(readerEvent){
+        var content = readerEvent.target.result;
+
+        // Replace the gpx version 1.0 with 1.1 to allow parsing older gpx files. The nodes referenced by the xsl exist in both versions.
+        content = content.replaceAll("http://www.topografix.com/GPX/1/0", "http://www.topografix.com/GPX/1/1");
+
+        var xsltProcessor = new XSLTProcessor();
+
+        var myXMLHTTPRequest = new XMLHttpRequest();
+        myXMLHTTPRequest.open("GET", "convert.xsl", false);
+        myXMLHTTPRequest.send(null);
+
+        var xslRef = myXMLHTTPRequest.responseXML;
+
+        xsltProcessor.importStylesheet(xslRef);
+
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(content, "text/xml");
+
+        var fragment = xsltProcessor.transformToFragment(doc, document);
+
+        var serializer = new XMLSerializer();
+        converted = serializer.serializeToString(fragment);
+
+        document.getElementById('upload').disabled = false;
+      }
+
+      function handleFileChange(event){
+        document.getElementById('error').innerHTML = "";
+        var file = event.target.files[0];
+        if (!file) {
+          document.getElementById('error').innerHTML = "No valid file selected";
+          return;
+        }
+
+        filename = file.name.replace(/\.gpx/,".trf");
+        document.getElementById('fileName').value = filename;
+
+        var reader = new FileReader();
+
+        reader.onload = handleOnload;
+
+        reader.readAsText(file,'UTF-8');
+      }
+
+      function handleClick(event){
+        if (converted){
+          Util.showModal("Saving...");
+          var name = document.getElementById('fileName').value;
+          if (!name || name.length == 0)
+            name = document.getElementById('fileName').placeholder;
+          if (name){
+            Util.writeStorage(name, converted, function() {
+                Util.hideModal();
+            });
+          }
+        } else {
+          document.getElementById('status').innerHTML += "error" + "</br>";
+          document.getElementById('error').innerHTML = "File could not be converted correctly.";
+        }
+      }
+      function onInit() {}
+    </script>
+  </head>
+  <body>
+    <h1>Upload tracks to your watch</h1>
+    <p>Allows uploading a GPX format track file to your watch. Converts tracks containing "trkpt"-nodes into the GPS Trekking format.</p>
+    <form>
+      <input class="form-input" type="file" id="fileSelector"><br/>
+      <label class="form-label" for="fileName">Filename on watch (must end with .trf an be shorter than 28 characters total)</label>
+      <input class="form-input" placeholder="route.trf" id="fileName" pattern="^.{0,24}\.trf$"><br/>
+      <button class="btn btn-primary" type="button" id="upload">Upload</button><br/>
+    </form>
+    <div id="error"></div>
+    <div id="status"></div>
+    <script>
+      document.getElementById('upload').disabled = true;
+      document.getElementById('fileSelector').addEventListener('change', handleFileChange);
+      document.getElementById('upload').addEventListener('click', handleClick);
+    </script>
+  </body>
+</html>

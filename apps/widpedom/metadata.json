@@ -10,5 +10,6 @@
   "storage": [
     {"name":"widpedom.wid.js","url":"widget.js"},
     {"name":"widpedom.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data":[{"name":"wpedom.json"}]
 }

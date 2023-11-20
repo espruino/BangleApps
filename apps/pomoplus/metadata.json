@@ -1,7 +1,7 @@
 {
   "id": "pomoplus",
   "name": "Pomodoro Plus",
-  "version": "0.05",
+  "version": "0.06",
   "description": "A configurable pomodoro timer that runs in the background.",
   "icon": "icon.png",
   "type": "app",
@@ -32,5 +32,8 @@
       "name": "pomoplus.settings.js",
       "url": "settings.js"
     }
+  ],
+  "data": [
+    {"name":"pomoplus.settings.json"}
   ]
 }

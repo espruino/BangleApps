@@ -30,6 +30,20 @@ let draw = function() {
   }, 60000 - (Date.now() % 60000));
 };
 
+let clockInfoDraw = (itm, info, options) => {
+  let texty = options.y+41;
+  g.reset().setFont("7Seg").setColor(g.theme.bg).setBgColor(g.theme.fg);
+  if (options.focus) g.setBgColor("#FF0");
+  g.clearRect({x:options.x,y:options.y,w:options.w,h:options.h,r:8});
+
+  if (info.img) g.drawImage(info.img, options.x+2, options.y+2);
+  var title = clockInfoItems[options.menuA].name;
+  var text = info.text.toString().toUpperCase();
+  if (title!="Bangle") g.setFontAlign(1,0).drawString(title.toUpperCase(), options.x+options.w-2, options.y+14);
+  if (g.setFont("7Seg:2").stringWidth(text)+8>options.w) g.setFont("7Seg");
+  g.setFontAlign(0,0).drawString(text, options.x+options.w/2, options.y+40);
+};
+
 // Show launcher when middle button pressed
 Bangle.setUI({
   mode : "clock",
@@ -48,37 +62,24 @@ Bangle.setUI({
   }});
 // Load widgets
 Bangle.loadWidgets();
-var R = Bangle.appRect;
+// Work out sizes
+let R = Bangle.appRect;
 R.x+=1;
 R.y+=1;
 R.x2-=1;
 R.y2-=1;
 R.w-=2;
 R.h-=2;
-var midX = R.x+R.w/2;
-var barY = 80;
+let midX = R.x+R.w/2;
+let barY = 80;
 // Clear the screen once, at startup
 let oldTheme = g.theme;
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear(1);
 g.fillRect({x:R.x, y:R.y, w:R.w, h:R.h, r:8}).clearRect(R.x,barY,R.w,barY+1).clearRect(midX,R.y,midX+1,barY);
 draw();
-setTimeout(Bangle.drawWidgets,0);
-
-let clockInfoDraw = (itm, info, options) => {
-  let texty = options.y+41;
-  g.reset().setFont("7Seg").setColor(g.theme.bg).setBgColor(g.theme.fg);
-  if (options.focus) g.setBgColor("#FF0");
-  g.clearRect({x:options.x,y:options.y,w:options.w,h:options.h,r:8});
-
-  if (info.img) g.drawImage(info.img, options.x+2, options.y+2);
-  var title = clockInfoItems[options.menuA].name;
-  var text = info.text.toString().toUpperCase();
-  if (title!="Bangle") g.setFontAlign(1,0).drawString(title.toUpperCase(), options.x+options.w-2, options.y+14);
-  if (g.setFont("7Seg:2").stringWidth(text)+8>options.w) g.setFont("7Seg");
-  g.setFontAlign(0,0).drawString(text, options.x+options.w/2, options.y+40);
-
-};
+Bangle.drawWidgets();
+// Allocate and draw clockinfos
 let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 }

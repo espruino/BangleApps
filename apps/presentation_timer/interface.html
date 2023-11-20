@@ -96,17 +96,7 @@
         Util.showModal("Downloading...");
         let csvTimes = getEditableContent();
         if (isCorrectCsvString(csvTimes)) {
-          var a = document.createElement("a"),
-            file = new Blob([csvTimes], { type: "text/csv" });
-          var url = URL.createObjectURL(file);
-          a.href = url;
-          a.download = filePresentationTimer;
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          }, 0);
+          Util.saveFile(filePresentationTimer, "text/csv", csvTimes);
         } else {
           document.getElementById("info").innerHTML = errorFormat();
         }

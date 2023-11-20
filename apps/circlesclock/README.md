@@ -23,7 +23,7 @@ To change what is shown:
 
 * Unlock the watch
 * Tap on the circle to change (a border is drawn around it)
-* Swipe up/down to change the guage within the given group
+* Swipe up/down to change the gauge within the given group
 * Swipe left/right to change the group (eg. between standard Bangle.js and Alarms/etc)
 
 Data is provided by ['Clock Info'](http://www.espruino.com/Bangle.js+Clock+Info)

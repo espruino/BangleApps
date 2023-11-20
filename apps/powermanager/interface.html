@@ -1,6 +1,15 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+
+    <style> 
+      .table_wrapper{
+        display: block;
+        overflow-x: auto;
+        margin-right: 0.8rem;
+        white-space: nowrap;
+      }
+    </style>
   </head>
   <body>
     <div id="content"></div>
@@ -108,7 +117,7 @@ function viewDeferredTable(filename) {
           for (var i in rows) {
             let c = rows[i];
             tableRows += `<tr>
-            <td>${(c.time/1000).toFixed(2)}s</td>
+            <td>${timeFormat(c.time)}</td>
             <td>${(c.time/sum*100).toFixed(2)}%</td>
             <td><pre>${c.func}</pre></td>`
           }
@@ -118,19 +127,22 @@ function viewDeferredTable(filename) {
           var htmlOverview = `<h1>Deferred function calls</h1>
             <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
             <div>
-              This are functions used in timeouts and intervals and their accumulated execution times. Recorded in a time span of <b>${Math.round((duration)/1000)}s</b>. Timeouts/intervals have run for <b>${Math.round(sum/1000)}s (${(sum/duration*100).toFixed(2)}%)</b>. Percentages are calculated from summarized timeout/interval running time.
-            </div>
-            <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Percentage</th>
-                <th>Function</th>
-              </tr>
-            </thead>
-            <tbody>\n`;
+              This are functions used in timeouts and intervals and their accumulated execution times. Recorded in a time span of <b>${timeFormat(duration)}</b>. Timeouts/intervals have run for <b>${timeFormat(sum)} (${(sum/duration*100).toFixed(2)}%)</b>. Percentages are calculated from summarized timeout/interval running time.
+            </div>           
+
+            <div class="table_wrapper">
+
+              <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Percentage</th>
+                  <th>Function</th>
+                </tr>
+              </thead>
+              <tbody>\n`;
           htmlOverview += tableRows;
-          htmlOverview += `</tbody></table>`;
+          htmlOverview += `</tbody></table></div>`;
           domContent.innerHTML = htmlOverview;
           domContent.querySelector("#back").addEventListener("click",event => {
             show();
@@ -185,7 +197,7 @@ function viewHardwareTable(filename) {
           for (var i in rows) {
             let c = rows[i];
             tableRows += `<tr>
-            <td>${(c.time/1000).toFixed(2)}s</td>
+            <td>${timeFormat(c.time)}</td>
             <td>${(c.time/duration*100).toFixed(2)}%</td>
             <td>${c.func}</td>`
           }
@@ -194,7 +206,7 @@ function viewHardwareTable(filename) {
           var htmlOverview = `<h1>Hardware power</h1>
             <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
             <div>
-              Recorded in a time span of <b>${Math.round(duration/1000)}s</b>. Percentages are calculated from recording time.
+              Recorded in a time span of <b>${timeFormat(duration)}</b>. Percentages are calculated from recording time.
             </div>
             <table class="table table-striped table-hover">
             <thead>
@@ -234,24 +246,46 @@ function viewDetailsTable(filename) {
       Util.hideModal();
       
       var htmlOverview = `<h1>Detailed logging</h1>
-
-      This is a trace log of all logged power entries, first column denotes the type. p for power, i for interval and t for timeout. Power is logged with old state, new state and calling app if available. Functions are logged with execution duraion and source if available.
-
       <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
-      <table class="table table-striped table-hover">
-      <tbody>\n`;
+      <div>
+        This is a trace log of all logged entries. Power is logged with type, state transition (old &rarr; new) and calling app if available. Functions are logged with execution duration and source if available.
+      </div>
+      <div class="table_wrapper">
+
+        <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>\n`;
         let rows = data.trim().split("\n");
+        let firstTimestamp;
         for (var row of rows) {
           let cols = row.split(",");
-          htmlOverview += `<tr>
-          <td>${cols[0]}</td>
-          <td>${cols[1]}</td>
-          <td>${cols[2]}</td>
-          <td>${cols[3]}</td>
-          <td>${cols[4]}</td>
-          </tr>`
+          let col = 0;
+          if (!firstTimestamp) firstTimestamp = cols[0];
+
+          if (cols[1] == "p"){
+            cols[1] = "Power";
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]}</td>
+            <td>${cols[col++]}</br>${cols[col++]} &rarr; ${cols[col++]}</br>${cols[col++]}</td>
+            </tr>`
+          } else {
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]=="t"?"Timeout":"Interval"}</td>
+            <td>${new Number(cols[col++]).toFixed(0)}ms</br><pre>${cols[col++]}</pre></td>
+            </tr>`
+          }
       }
-      htmlOverview += `</tbody></table>`;
+      htmlOverview += `</tbody></table></div>`;
+
+
       domContent.innerHTML = htmlOverview;
       domContent.querySelector("#back").addEventListener("click",event => {
          show();
@@ -261,6 +295,27 @@ function viewDetailsTable(filename) {
 
 function onInit() {
   show();
+}
+
+function timeFormat(time) {
+  let secs = time / 1000;
+
+  if (secs < 60)
+    return secs.toFixed(2) + "s";
+
+  let mins = secs / 60;
+  secs %= 60;
+  if (mins < 60)
+    return mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
+
+  let hrs = mins / 60;
+  mins %= 60;
+  if (hrs < 24)
+    return hrs.toFixed(0) + "h" + mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
+
+  let days = hrs / 24;
+  hrs %= 24;
+  return days.toFixed(0) + "d" + hrs.toFixed(0) + "h" + mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
 }
 
     </script>

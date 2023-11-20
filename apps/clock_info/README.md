@@ -25,7 +25,7 @@ By default Clock Info provides:
 But by installing other apps that are tagged with the type `clkinfo` you can
 add extra features. For example [Sunrise Clockinfo](http://banglejs.com/apps/?id=clkinfosunrise)
 
-A full list is available at https://banglejs.com/apps/?q=clkinfo
+A full list is available at https://banglejs.com/apps/?c=clkinfo
 
 ## Settings
 
