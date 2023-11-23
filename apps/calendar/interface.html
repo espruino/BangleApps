@@ -178,9 +178,8 @@ function getData() {
     })()\n`, contents => {
       const fileNames = JSON.parse(contents);
       if (fileNames.length > 0) {
-        Util.readStorage('calendar.days.json',data=>{
-          holidays = JSON.parse(data || "[]") || [];
-
+        Util.readStorageJSON('calendar.days.json',data=>{
+          holidays = data || [];
           Util.hideModal();
           render();
         });
