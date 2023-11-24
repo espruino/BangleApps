@@ -76,7 +76,7 @@ function formatAlarmProperty(msg) {
 function showMainMenu(scroll, group) {
   const menu = {
     "": { "title": group ? group : /*LANG*/"Alarms & Timers", scroll: scroll },
-    "< Back": () => !group ? load() : showMainMenu(),
+    "< Back": () => group ? showMainMenu() : load(),
     /*LANG*/"New...": () => showNewMenu(group)
   };
   const getGroups = settings.showGroup && !group;
