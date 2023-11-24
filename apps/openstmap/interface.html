@@ -151,7 +151,7 @@ TODO:
             if (filename=="") return;
             promise = promise.then(() => new Promise(resolve => {
               Util.readStorageJSON(filename, mapInfo => {
-                console.log(filename + " => " + mapInfo);
+                console.log(filename + " => " + JSON.stringify(mapInfo));
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
