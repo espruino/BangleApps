@@ -84,7 +84,7 @@ function showMainMenu(scroll, group) {
   var showAlarm;
 
   alarms.forEach((e, index) => {
-    showAlarm = !settings.showGroup || (getGroups && !e.group) || (settings.showGroup && !getGroups && e.group === group);
+    showAlarm = !settings.showGroup || (!group && !e.group) || (group && e.group === group);
     if(showAlarm) {
       menu[trimLabel(getLabel(e),40)] = {
         value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
