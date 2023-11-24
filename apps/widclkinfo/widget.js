@@ -42,7 +42,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
         var availableWidth = o.x+clockInfoMenu.w - (x+2);
         g.setFont("6x8:2").setFontAlign(-1,0);
         if (g.stringWidth(clockInfoInfo.text) > availableWidth)
-          g.setFont("6x8");
+          g.setFont("6x8:1x2");
         g.drawString(clockInfoInfo.text, x+2,o.y+12); // draw the text
       }
     }
