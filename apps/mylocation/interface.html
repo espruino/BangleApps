@@ -98,11 +98,10 @@
 
       function onInit() {
         // read existing location
-        Util.readStorage("mylocation.json", function(data) {
+        Util.readStorageJSON("mylocation.json", function(data) {
           if (data===undefined) return; // no file
           try {
-            var j = JSON.parse(data);
-            setPosition(j);
+            setPosition(data);
           } catch (e) {
             console.error(e);
           }

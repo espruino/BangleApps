@@ -150,15 +150,9 @@ TODO:
           files.trim().split(",").forEach(filename => {
             if (filename=="") return;
             promise = promise.then(() => new Promise(resolve => {
-              Util.readStorage(filename, fileContents => {
-                console.log(filename + " => " + fileContents);
+              Util.readStorageJSON(filename, mapInfo => {
+                console.log(filename + " => " + JSON.stringify(mapInfo));
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
-                let mapInfo;
-                try {
-                  mapInfo = JSON.parse(fileContents);
-                } catch (e) {
-                  console.error(e);
-                }
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
                   let latlon = L.latLng(mapInfo.lat, mapInfo.lon);

@@ -211,9 +211,9 @@
         this.editSong = song;
       },
       loadSongs: function () {
-        Util.readStorage('guitar_songs.json', (contents) => {
+        Util.readStorageJSON('guitar_songs.json', (contents) => {
           this.songsState = 'loaded';
-          this.localSongs = JSON.parse(contents) || [];
+          this.localSongs = contents || [];
           this.watchSongs = JSON.parse(JSON.stringify(this.localSongs));
         });
         window.setTimeout(() => {

@@ -265,11 +265,11 @@ function addTimer() {
 
 function getData() {
   Util.showModal("Loading...");
-  Util.readStorage('sched.json',data=>{
-    alarms = JSON.parse(data || "[]") || [];
+  Util.readStorageJSON('sched.json',data=>{
+    alarms = data || [];
 
-    Util.readStorage('sched.settings.json',data=>{
-      schedSettings = JSON.parse(data || "{}") || {};
+    Util.readStorageJSON('sched.settings.json',data=>{
+      schedSettings = data || {};
       Util.hideModal();
       alarms.sort((a, b) => {
         let x;
