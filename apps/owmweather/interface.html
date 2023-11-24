@@ -28,8 +28,9 @@
         function onInit(){
           console.log("Loading settings from BangleJs...");
           try {
-            Util.readStorageJSON("owmweather.json", settings=>{
-              if(settings){
+            Util.readStorageJSON("owmweather.json", data=>{
+              if(data){
+                settings = data;
                 console.log("Got settings", settings);
                 document.getElementById("apikey").value = settings.apikey;
                 console.log("Loaded apikey from BangleJs.");
