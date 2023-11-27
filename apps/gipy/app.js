@@ -1411,8 +1411,8 @@ function start_gipy(path, maps, interests, heights) {
           value: status.zoomed_in,
           format: (v) => (v ? "In" : "Out"),
           onchange: (v) => {
-            status.reset_images_cache();
             status.zoomed_in = v;
+            status.reset_images_cache();
           },
         },
         /*LANG*/
@@ -1461,6 +1461,8 @@ function start_gipy(path, maps, interests, heights) {
       return;
     }
     if (active && status.heights !== null) {
+      g.clear();
+      g.flip();
       status.screen = (status.screen + 1) % 3;
       status.display();
     }
