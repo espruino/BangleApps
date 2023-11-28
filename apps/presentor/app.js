@@ -90,6 +90,8 @@ let trackPadMode = false;
 let timeoutId = -1;
 let timeoutHolding = -1;
 let timeoutDraw = -1;
+let timeoutSendMouse = -1;
+let timeoutHoldMouse = -1;
 
 
 let homeRoll = 0;
@@ -291,9 +293,20 @@ function stopHolding() {
   timeoutHolding = -1;
 }
 
+function releaseMouseButtons() {
+  bt.releaseButton(bt.BUTTON.ALL);
+  clearTimeout(timeoutHoldMouse)
+  timeoutHoldMouse = -1;
+}
+
 Bangle.on('drag', function(e) {
   if (cttl == 0) { cttl = getTime(); }
   if (trackPadMode) {
+    // Upon other drag event: push holding further into the future.
+    if (timeoutHoldMouse != -1) {
+      clearTimeout(timeoutHoldMouse);
+      timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
+    }
     if (lastx + lasty == 0) {
       lastx = e.x;
       lasty = e.y;
@@ -308,24 +321,28 @@ Bangle.on('drag', function(e) {
       //let qY = getSign(difY) * Math.pow(Math.abs(difY), 1.2);
       let qX = difX + 0.02 * vX, qY = difY + 0.02 * vY;
       bt.moveMouse(qX, qY, 0, 0, 0, function() {
-        setTimeout(function() {clearToSend = true;}, 50);
+        timeoutSendMouse = setTimeout(function() {clearToSend = true; timeoutSendMouse = -1;}, 50);
       });
       lastx = e.x;
       lasty = e.y;
       mttl = getTime();
       console.log("Dx: " + (qX) + " Dy: " + (qY));
+    } else if (timeoutSendMouse == -1) { // Can happen perhaps on single bluetooth failure.
+      timeoutSendMouse = setTimeout(function() {clearToSend = true; timeoutSendMouse = -1;}, 50);
     }
     if (!e.b) {
       // short press
       if (getTime() - cttl < 0.2) {
-        bt.clickButton(bt.BUTTON.LEFT);
+        bt.holdButton(bt.BUTTON.LEFT);
         console.log("click left");
+        timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
         clearToSend = true;
       }
       // longer press in center
       else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
-        bt.clickButton(bt.BUTTON.RIGHT);
+        bt.holdButton(bt.BUTTON.RIGHT);
         console.log("click right");
+        timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
         clearToSend = true;
       }
       cttl = 0;
