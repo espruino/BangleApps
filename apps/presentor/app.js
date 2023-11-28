@@ -264,7 +264,7 @@ Bangle.on('lock', function(on) {
 });
 
 function startHolding() {
-  bt.tapKey(bt.KEY.F10);
+  bt.tapKey(0, bt.MODIFY.CTRL, () => bt.tapKey(0, bt.MODIFY.CTRL));
   holding = true;
   Bangle.buzz();
   E.showMessage('Holding');
@@ -274,7 +274,8 @@ function startHolding() {
 function stopHolding() {
   clearTimeout(timeoutHolding);
   if (holding) {
-    bt.tapKey(bt.KEY.F10);
+    bt.tapKey(0, bt.MODIFY.CTRL);
+    // bt.tapKey(bt.KEY.F10);
     homePitch = 0;
     homeRoll = 0;
     holding = false;
@@ -319,11 +320,13 @@ Bangle.on('drag', function(e) {
       if (getTime() - cttl < 0.2) {
         bt.clickButton(bt.BUTTON.LEFT);
         console.log("click left");
+        clearToSend = true;
       }
       // longer press in center
       else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
         bt.clickButton(bt.BUTTON.RIGHT);
         console.log("click right");
+        clearToSend = true;
       }
       cttl = 0;
       lastx = 0;
@@ -385,5 +388,6 @@ function onBtn() {
 }
 setWatch(onBtn, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat: true});
 
+// Start App
 loadSettings();
 drawMain();
