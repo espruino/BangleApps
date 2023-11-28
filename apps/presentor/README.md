@@ -3,15 +3,15 @@ Use your Bangle to present!
 This app basically turns your BangleJS watch into a presentor tool.
 Very useful for presentations or when you are teaching a lesson.
 
-## Features:
+### Features:
 + Control your (powerpoint) slides by swiping left and right.
 + See pre-programmed presentation notes by swiping up and down.
 + See if you are on time in your presentation.
-+ Get notified if you go over-time for a certain subject or the whole presentation.
++ Get notified if you go over-time for a certain subject.
 + Control cursor or spotlight in mouse mode (pressing the button).
 
-## Usage:
-Here is a step by step guide (thanks Mu1)
+### Usage:
+Here is a step by step guide (thanks mu1)
 1. If bluetooth connected to PC/laptop (check in bluetooth settings):
 Select Bangle.js > Remove Device
 
@@ -66,3 +66,7 @@ In timer/presentation mode, hold one finger on your Bangle screen, point your ar
 Switch bluetooth PC/laptop off or see step 1
 
 19. Re-activate smartphone bluetooth (incl. Gadgetbridge)
+
+### Creator
+[7kasper](https://github.com/7kasper)  
+Issues or feature requests are welcome on my [Github](https://github.com/7kasper/BangleApps) or on the [Espruino Forums](https://forum.espruino.com/conversations/371443/)!
