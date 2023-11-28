@@ -272,7 +272,7 @@ function startHolding() {
   Bangle.setLCDPower(1);
 }
 function stopHolding() {
-  clearTimeout(startHolding);
+  clearTimeout(timeoutHolding);
   if (holding) {
     bt.tapKey(bt.KEY.F10);
     homePitch = 0;
@@ -282,9 +282,10 @@ function stopHolding() {
     Bangle.removeListener('accel', handleAcc);
     Bangle.buzz();
     drawMain();
-  } else {
-    timeoutId = setTimeout(drawMain, 1000);
-  }
+  } 
+  // else {
+  //   timeoutId = setTimeout(drawMain, 1000);
+  // }
   clearTimeout(timeoutHolding);
   timeoutHolding = -1;
 }
@@ -345,10 +346,12 @@ Bangle.on('drag', function(e) {
         // E.showMessage('left');
         //kb.tap(kb.KEY.LEFT, 0);
         bt.scroll(1);
-      } else if(lastx==0 && lasty==0 && holding == false){
-        // E.showMessage('press');
-        clickMouse(MouseButton.LEFT);
-      }
+      } 
+      // Todo re-implement? Seems bit buggy or unnecessary for now.
+      // else if(lastx==0 && lasty==0 && holding == false){
+      //   // E.showMessage('press');
+      //   bt.clickButton(bt.BUTTON.LEFT);
+      // }
       stopHolding();
       lastx = 0;
       lasty = 0;
@@ -368,9 +371,15 @@ function onBtn() {
     stopHolding();
     drawMain();
   } else {
+    stopHolding();
     clearToSend = true;
     trackPadMode = true;
     E.showMessage('Mouse');
+    // Also skip drawing thingy for now.
+    if (timeoutDraw != -1) {
+      clearTimeout(timeoutDraw);
+      timeoutDraw = -1;
+    } 
   }
   Bangle.buzz();
 }

@@ -1,6 +1,6 @@
 # Presentor
 Use your Bangle to present!
-This app basically turns your BangleJS watch into a presntor tool.
+This app basically turns your BangleJS watch into a presentor tool.
 Very useful for presentations or when you are teaching a lesson.
 
 ## Features:
@@ -27,6 +27,7 @@ Select Bangle.js > Remove Device
 
 7. Fill the subjects, times in minutes (seconds optional) and Notes (optional)
 The subject/times are on your watch displayed in a tall font, the notes in a very small font
+Note: If you don't fill in any notes you can still save and the presentor will be for input only and not give any timing details.
 
 8. Select "Save" and exit the pop-up window
 
@@ -40,27 +41,26 @@ The subject/times are on your watch displayed in a tall font, the notes in a ver
 If "Try connecting your device again." is shown, switch PC/laptop bluetooth off and on again
 
 13. Start your presentation.
-Swipe up to start timer for first subject
-Swipe down to pause
-Push button to switch between mouse mode and timer/presentation mode
+ - Swipe up to start timer for first subject
+ - Swipe down to pause
+ - Push button to switch between mouse mode and timer/presentation mode
 
 14. Timer function
-Next subject: Swipe up
-Previous subject: Swipe down
-Pause timer: Swipe down to begin
+ - Next subject: Swipe up
+ - Previous subject: Swipe down
+ - Pause timer: Swipe down to begin
 
 15. Presentation function
-Next presentation slide: Swipe right or just touch
-Previous presentation slide: Swipe left
+ - Next presentation slide: Swipe right or just touch
+ - Previous presentation slide: Swipe left
 
 16. Mouse mode
-Swipe to move pointer over the presentation screen
-Note: sometimes "Holding" shows in Bangle screen (see Holding mode)
+ - Swipe to move pointer over the presentation screen
 
 17. Holding mode
 In timer/presentation mode, hold one finger on your Bangle screen, point your arm foreward
-Mouse up/down on screen: Tilt your hand up/down
-Mouse left/right on screen: Rotate your hand counterclockwise/clockwise
+ - Mouse up/down on screen: Tilt your hand up/down
+ - Mouse left/right on screen: Rotate your hand counterclockwise/clockwise
 
 18. End of presentation?
 Switch bluetooth PC/laptop off or see step 1
