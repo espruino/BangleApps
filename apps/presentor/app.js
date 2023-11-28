@@ -91,14 +91,13 @@ let timeoutId = -1;
 let timeoutHolding = -1;
 let timeoutDraw = -1;
 let timeoutSendMouse = -1;
-let timeoutHoldMouse = -1;
-
 
 let homeRoll = 0;
 let homePitch = 0;
 let mCal = 0;
 let mttl = 0;
 let cttl = 0;
+let httl = 0;
 
 // BT helper.
 let clearToSend = true;
@@ -293,19 +292,15 @@ function stopHolding() {
   timeoutHolding = -1;
 }
 
-function releaseMouseButtons() {
-  bt.releaseButton(bt.BUTTON.ALL);
-  clearTimeout(timeoutHoldMouse)
-  timeoutHoldMouse = -1;
-}
-
 Bangle.on('drag', function(e) {
   if (cttl == 0) { cttl = getTime(); }
   if (trackPadMode) {
-    // Upon other drag event: push holding further into the future.
-    if (timeoutHoldMouse != -1) {
-      clearTimeout(timeoutHoldMouse);
-      timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
+    // When we are dragging mouse release after small time amount otherwise keep dragging.
+    if (getTime() - httl < 0.2) {
+      httl = getTime();
+    } else if (httl != 0) {
+      httl = 0;
+      bt.releaseButton(bt.BUTTON.ALL);
     }
     if (lastx + lasty == 0) {
       lastx = e.x;
@@ -335,14 +330,14 @@ Bangle.on('drag', function(e) {
       if (getTime() - cttl < 0.2) {
         bt.holdButton(bt.BUTTON.LEFT);
         console.log("click left");
-        timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
+        httl = getTime();
         clearToSend = true;
       }
       // longer press in center
       else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
         bt.holdButton(bt.BUTTON.RIGHT);
         console.log("click right");
-        timeoutHoldMouse = setTimeout(releaseMouseButtons, 200);
+        httl = getTime();
         clearToSend = true;
       }
       cttl = 0;
