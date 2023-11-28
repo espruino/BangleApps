@@ -1,80 +1,12 @@
 // Presentor by 7kasper (Kasper Müller)
-// Version 3.0
+// Version 4.0
 
-const SpecialReport = new Uint8Array([
-  0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
-  0x09, 0x02,                    // USAGE (Mouse)
-  0xa1, 0x01,                    // COLLECTION (Application)
-  0x85, 0x01,                    //   REPORT_ID (1)
-  0x09, 0x01,                    //   USAGE (Pointer)
-  0xa1, 0x00,                    //   COLLECTION (Physical)
-  0x05, 0x09,                    //     USAGE_PAGE (Button)
-  0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
-  0x29, 0x05,                    //     USAGE_MAXIMUM (Button 5)
-  0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
-  0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
-  0x95, 0x05,                    //     REPORT_COUNT (5)
-  0x75, 0x01,                    //     REPORT_SIZE (1)
-  0x81, 0x02,                    //     INPUT (Data,Var,Abs)
-  0x95, 0x01,                    //     REPORT_COUNT (1)
-  0x75, 0x03,                    //     REPORT_SIZE (3)
-  0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
-  0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
-  0x09, 0x30,                    //     USAGE (X)
-  0x09, 0x31,                    //     USAGE (Y)
-  0x09, 0x38,                    //     USAGE (Wheel)
-  0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
-  0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
-  0x75, 0x08,                    //     REPORT_SIZE (8)
-  0x95, 0x03,                    //     REPORT_COUNT (3)
-  0x81, 0x06,                    //     INPUT (Data,Var,Rel)
-  0x05, 0x0c,                    //     USAGE_PAGE (Consumer Devices)
-  0x0a, 0x38, 0x02,              //     USAGE (AC Pan)
-  0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
-  0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
-  0x75, 0x08,                    //     REPORT_SIZE (8)
-  0x95, 0x01,                    //     REPORT_COUNT (1)
-  0x81, 0x06,                    //     INPUT (Data,Var,Rel)
-  0xc0,                          //     END_COLLECTION
-  0xc0,                          // END_COLLECTION
-  0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
-  0x09, 0x06,                    // USAGE (Keyboard)
-  0xa1, 0x01,                    // COLLECTION (Application)
-  0x85, 0x02,                    //   REPORT_ID (2)
-  0x05, 0x07,                    //   USAGE_PAGE (Keyboard)
-  0x19, 0xe0,                    //   USAGE_MINIMUM (Keyboard LeftControl)
-  0x29, 0xe7,                    //   USAGE_MAXIMUM (Keyboard Right GUI)
-  0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
-  0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
-  0x75, 0x01,                    //   REPORT_SIZE (1)
-  0x95, 0x08,                    //   REPORT_COUNT (8)
-  0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-  0x75, 0x08,                    //   REPORT_SIZE (8)
-  0x95, 0x01,                    //   REPORT_COUNT (1)
-  0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
-  0x19, 0x00,                    //   USAGE_MINIMUM (Reserved (no event indicated))
-  0x29, 0x73,                    //   USAGE_MAXIMUM (Keyboard F24)
-  0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
-  0x25, 0x73,                    //   LOGICAL_MAXIMUM (115)
-  0x95, 0x05,                    //   REPORT_COUNT (5)
-  0x75, 0x08,                    //   REPORT_SIZE (8)
-  0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
-  0xc0                           // END_COLLECTION
-]);
-
-const MouseButton = {
-  NONE : 0,
-  LEFT : 1,
-  RIGHT : 2,
-  MIDDLE : 4,
-  BACK : 8,
-  FORWARD: 16
-};
-
-const kb = require("ble_hid_keyboard");
-
+// Imports
+const bt = require("ble_hid_combo");
 const Layout = require("Layout");
 const Locale = require("locale");
+
+// App Layout
 let mainLayout = new Layout({
   'type': 'v', 
   filly: 1, 
@@ -174,7 +106,7 @@ let ptimers = [];
 
 function delay(t, v) {
   return new Promise((resolve) => { 
-      setTimeout(resolve, t)
+      setTimeout(resolve, t);
   });
 }
 
@@ -289,56 +221,34 @@ function doPPart(r) {
   drawMainFrame();
 }
 
-NRF.setServices(undefined, { hid : SpecialReport });
-// TODO: figure out how to detect HID.
+// Turn on Bluetooth as presentor.
+NRF.setServices(undefined, { hid : bt.report });
 NRF.on('HID', function() {
-  HIDenabled = true;
+  if (!HIDenabled) {
+    Bangle.buzz(200);
+    HIDenabled = true;
+  }
 });
-
-function moveMouse(x,y,b,wheel,hwheel,callback) {
-  if (!HIDenabled) return;
-  if (!b) b = 0;
-  if (!wheel) wheel = 0;
-  if (!hwheel) hwheel = 0;
-  NRF.sendHIDReport([1,b,x,y,wheel,hwheel,0,0], function() {
-    if (callback) callback();
-  });
-}
+// 
+NRF.setAdvertising([
+  {}, // include original Advertising packet
+  [   // second packet containing 'appearance'
+    2, 1, 6,  // standard Bluetooth flags
+    3,3,0x12,0x18, // HID Service
+    3,0x19,0xCA,0x03 // Appearance: Presentation Remote
+  ]
+]);
 
 // function getSign(x) {
 //   return ((x > 0) - (x < 0)) || +x;
 // }
-
-function scroll(wheel,hwheel,callback) {
-  moveMouse(0,0,0,wheel,hwheel,callback);
-}
-
-// Single click a certain button (immidiatly release).
-function clickMouse(b, callback) {
-  if (!HIDenabled) return;
-  NRF.sendHIDReport([1,b,0,0,0,0,0,0], function() {
-    NRF.sendHIDReport([1,0,0,0,0,0,0,0], function() {
-      if (callback) callback();
-    });
-  });
-}
-
-function pressKey(keyCode, modifiers, callback) {
-  if (!HIDenabled) return;
-  if (!modifiers) modifiers = 0;
-  NRF.sendHIDReport([2, modifiers,0,keyCode,0,0,0,0], function() {
-    NRF.sendHIDReport([2,0,0,0,0,0,0,0], function() {
-      if (callback) callback();
-    });
-  });
-}
 
 function handleAcc(acc) {
   let rRoll  = acc.y *  -50;
   let rPitch = acc.x * -100;
   if (mCal > 10) {
     //console.log("x: " +  (rRoll - homeRoll) + " y:" + (rPitch - homePitch));
-    moveMouse(acc.y * -50 - homeRoll, acc.x * -100 - homePitch);
+    bt.moveMouse(acc.y * -50 - homeRoll, acc.x * -100 - homePitch);
   } else {
     //console.log("homeroll: " +homeRoll +"homepitch: " + homePitch);
     homeRoll  = rRoll  * 0.7 + homeRoll  * 0.3;
@@ -354,7 +264,7 @@ Bangle.on('lock', function(on) {
 });
 
 function startHolding() {
-  pressKey(kb.KEY.F10);
+  bt.tapKey(bt.KEY.F10);
   holding = true;
   Bangle.buzz();
   E.showMessage('Holding');
@@ -362,9 +272,9 @@ function startHolding() {
   Bangle.setLCDPower(1);
 }
 function stopHolding() {
-  clearTimeout(timeoutId);
+  clearTimeout(startHolding);
   if (holding) {
-    pressKey(kb.KEY.F10);
+    bt.tapKey(bt.KEY.F10);
     homePitch = 0;
     homeRoll = 0;
     holding = false;
@@ -395,7 +305,7 @@ Bangle.on('drag', function(e) {
       //let qX = getSign(difX) * Math.pow(Math.abs(difX), 1.2);
       //let qY = getSign(difY) * Math.pow(Math.abs(difY), 1.2);
       let qX = difX + 0.02 * vX, qY = difY + 0.02 * vY;
-      moveMouse(qX, qY, 0, 0, 0, function() {
+      bt.moveMouse(qX, qY, 0, 0, 0, function() {
         setTimeout(function() {clearToSend = true;}, 50);
       });
       lastx = e.x;
@@ -406,12 +316,12 @@ Bangle.on('drag', function(e) {
     if (!e.b) {
       // short press
       if (getTime() - cttl < 0.2) {
-        clickMouse(MouseButton.LEFT);
+        bt.clickButton(bt.BUTTON.LEFT);
         console.log("click left");
       }
       // longer press in center
       else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
-        clickMouse(MouseButton.RIGHT);
+        bt.clickButton(bt.BUTTON.RIGHT);
         console.log("click right");
       }
       cttl = 0;
@@ -430,11 +340,11 @@ Bangle.on('drag', function(e) {
       } else if(lastx > 40){
         // E.showMessage('right');
         //kb.tap(kb.KEY.RIGHT, 0);
-        scroll(-1);
+        bt.scroll(-1);
       } else if(lastx < -40){
         // E.showMessage('left');
         //kb.tap(kb.KEY.LEFT, 0);
-        scroll(1);
+        bt.scroll(1);
       } else if(lastx==0 && lasty==0 && holding == false){
         // E.showMessage('press');
         clickMouse(MouseButton.LEFT);
@@ -451,7 +361,6 @@ Bangle.on('drag', function(e) {
     }
   }
 });
-
 
 function onBtn() {
   if (trackPadMode) {
