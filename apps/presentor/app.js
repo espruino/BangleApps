@@ -1,5 +1,5 @@
 // Presentor by 7kasper (Kasper Müller)
-// Version 4.0
+// Version 0.14
 
 // Imports
 const bt = require("ble_hid_combo");
@@ -85,6 +85,7 @@ let lasty = 0;
 // Mouse states
 let holding = false;
 let trackPadMode = false;
+let focusMode = false;
 
 // Timeout IDs.
 let timeoutId = -1;
@@ -97,6 +98,7 @@ let homePitch = 0;
 let mCal = 0;
 let mttl = 0;
 let cttl = 0;
+let bttl = 0;
 
 // BT helper.
 let clearToSend = true;
@@ -198,6 +200,11 @@ function drawMain() {
 
 function doPPart(r) {
   pparti += r;
+  if (settings.pparts.length == 0) {
+    mainLayout.Subject.label = 'PRESENTOR';
+    mainLayout.Notes.label = '';
+    return;
+  }
   if (pparti < 0) {
     pparti = -1;
     mainLayout.Subject.label = 'PAUSED';
@@ -264,21 +271,22 @@ Bangle.on('lock', function(on) {
 });
 
 function startHolding() {
-  bt.tapKey(0xE0, () => bt.tapKey(0xE0));
+  bt.tapKey(bt.KEY.F10, bt.MODIFY.SHIFT);
   holding = true;
+  focusMode = true;
   Bangle.buzz();
   E.showMessage('Holding');
   Bangle.on('accel', handleAcc);
   Bangle.setLCDPower(1);
 }
 function stopHolding() {
-  clearTimeout(timeoutHolding);
   if (holding) {
-    bt.tapKey(0xE0);
+    bt.tapKey(bt.KEY.F10);
     // bt.tapKey(bt.KEY.F10);
     homePitch = 0;
     homeRoll = 0;
     holding = false;
+    focusMode = false;
     mCal = 0;
     Bangle.removeListener('accel', handleAcc);
     Bangle.buzz();
@@ -318,17 +326,17 @@ Bangle.on('drag', function(e) {
       timeoutSendMouse = setTimeout(function() {clearToSend = true; timeoutSendMouse = -1;}, 50);
     }
     if (!e.b) {
-      // short press
-      if (getTime() - cttl < 0.2) {
-        bt.holdButton(bt.BUTTON.LEFT);
-        console.log("click left");
-        clearToSend = true;
-      }
-      // longer press in center
-      else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
-        bt.holdButton(bt.BUTTON.RIGHT);
-        console.log("click right");
-        clearToSend = true;
+      if (!focusMode) {
+        // short press
+        if (getTime() - cttl < 0.2) {
+          bt.clickButton(bt.BUTTON.LEFT);
+          console.log("click left");
+        }
+        // longer press in center
+        else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
+          bt.clickButton(bt.BUTTON.RIGHT);
+          console.log("click right");
+        }
       }
       cttl = 0;
       lastx = 0;
@@ -372,9 +380,19 @@ Bangle.on('drag', function(e) {
 
 function onBtn() {
   if (trackPadMode) {
-    trackPadMode = false;
-    stopHolding();
-    drawMain();
+    if ((getTime() - bttl < 0.4 && !focusMode)) {
+      E.showMessage('Pointer');
+      focusMode = true;
+      bt.tapKey(bt.KEY.F10, bt.MODIFY.SHIFT);
+    } else {
+      trackPadMode = false;
+      stopHolding();
+      drawMain();
+      if (focusMode) {
+        bt.tapKey(bt.KEY.F10);
+        focusMode = false;
+      }
+    }
   } else {
     stopHolding();
     clearToSend = true;
@@ -384,7 +402,8 @@ function onBtn() {
     if (timeoutDraw != -1) {
       clearTimeout(timeoutDraw);
       timeoutDraw = -1;
-    } 
+    }
+    bttl = getTime();
   }
   Bangle.buzz();
 }

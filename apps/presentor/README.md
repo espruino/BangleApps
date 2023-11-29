@@ -56,16 +56,24 @@ If "Try connecting your device again." is shown, switch PC/laptop bluetooth off 
 
 16. Mouse mode
  - Swipe to move pointer over the presentation screen
+ - Tap to left click.
+ - Hold longer to right click.
 
 17. Holding mode
 In timer/presentation mode, hold one finger on your Bangle screen, point your arm foreward
  - Mouse up/down on screen: Tilt your hand up/down
  - Mouse left/right on screen: Rotate your hand counterclockwise/clockwise
 
-18. End of presentation?
+18. Spotlight mode
+ - Dubble press button to go into presentor mode.
+ - Allows to move mouse but no clicking.
+ - Presses SHIFT+F10 on start (you can use app such as powertoys to set spotlight to this combo)
+ - Presses F10 at the end (will dis-engage spotlight for instance in powertoys)
+
+19. End of presentation?
 Switch bluetooth PC/laptop off or see step 1
 
-19. Re-activate smartphone bluetooth (incl. Gadgetbridge)
+20. Re-activate smartphone bluetooth (incl. Gadgetbridge)
 
 ### Creator
 [7kasper](https://github.com/7kasper)  
