@@ -97,7 +97,6 @@ let homePitch = 0;
 let mCal = 0;
 let mttl = 0;
 let cttl = 0;
-let httl = 0;
 
 // BT helper.
 let clearToSend = true;
@@ -258,14 +257,14 @@ function handleAcc(acc) {
   }
 }
 Bangle.on('lock', function(on) {
-  if (on && holding) {
+  if (on && (holding || trackPadMode)) {
     Bangle.setLocked(false);
     Bangle.setLCDPower(1);
   }
 });
 
 function startHolding() {
-  bt.tapKey(bt.KEY.A, bt.MODIFY.CTRL, () => bt.tapKey(bt.KEY.A, bt.MODIFY.CTRL));
+  bt.tapKey(0xE0, () => bt.tapKey(0xE0));
   holding = true;
   Bangle.buzz();
   E.showMessage('Holding');
@@ -275,7 +274,7 @@ function startHolding() {
 function stopHolding() {
   clearTimeout(timeoutHolding);
   if (holding) {
-    bt.tapKey(0, bt.MODIFY.CTRL);
+    bt.tapKey(0xE0);
     // bt.tapKey(bt.KEY.F10);
     homePitch = 0;
     homeRoll = 0;
@@ -295,13 +294,6 @@ function stopHolding() {
 Bangle.on('drag', function(e) {
   if (cttl == 0) { cttl = getTime(); }
   if (trackPadMode) {
-    // When we are dragging mouse release after small time amount otherwise keep dragging.
-    if (getTime() - httl < 0.2) {
-      httl = getTime();
-    } else if (httl != 0) {
-      httl = 0;
-      bt.releaseButton(bt.BUTTON.ALL);
-    }
     if (lastx + lasty == 0) {
       lastx = e.x;
       lasty = e.y;
@@ -330,14 +322,12 @@ Bangle.on('drag', function(e) {
       if (getTime() - cttl < 0.2) {
         bt.holdButton(bt.BUTTON.LEFT);
         console.log("click left");
-        httl = getTime();
         clearToSend = true;
       }
       // longer press in center
       else if (getTime() - cttl < 0.6 && e.x > g.getWidth()/4 && e.x < 3 * g.getWidth()/4 && e.y > g.getHeight() / 4 && e.y < 3 * g.getHeight() / 4) {
         bt.holdButton(bt.BUTTON.RIGHT);
         console.log("click right");
-        httl = getTime();
         clearToSend = true;
       }
       cttl = 0;
