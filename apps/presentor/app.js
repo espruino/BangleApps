@@ -265,7 +265,7 @@ Bangle.on('lock', function(on) {
 });
 
 function startHolding() {
-  bt.tapKey(0, bt.MODIFY.CTRL, () => bt.tapKey(0, bt.MODIFY.CTRL));
+  bt.tapKey(bt.KEY.A, bt.MODIFY.CTRL, () => bt.tapKey(bt.KEY.A, bt.MODIFY.CTRL));
   holding = true;
   Bangle.buzz();
   E.showMessage('Holding');
