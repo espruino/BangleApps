@@ -68,7 +68,7 @@ function drawSinuses () {
   let i;
   g.setColor(1, 1, 1);
 
-  for (i = 0; i < w; i++) {
+  for (i = 0; i <= w - sinStep; i += sinStep) {
     array.push(i, ypos(i));
   }
   array.push(w, ypos(w));
@@ -76,9 +76,9 @@ function drawSinuses () {
 }
 
 function calcSeaLevel () {
-  slope = (ypos(sunSetX * 2) - ypos(sunRiseX * 2)) /
+  slope = (ypos(sunSetX) - ypos(sunRiseX)) /
           (sunSetX - sunRiseX);
-  yint = ypos(sunSetX * 2) - slope * sunSetX;
+  yint = ypos(sunSetX) - slope * sunSetX;
 }
 
 function drawSeaLevel () {
@@ -101,11 +101,11 @@ function drawGlow () {
   g.setColor(0.2, 0.2, 0);
   // wide glow
   if (pos > sunRiseX && pos < sunSetX) {
-    g.fillCircle(pos, ypos(pos * 2), r + 20);
+    g.fillCircle(pos, ypos(pos), r + 20);
     g.setColor(0.5, 0.5, 0);
   }
   // smol glow
-  g.fillCircle(pos, ypos(pos * 2), r + 8);
+  g.fillCircle(pos, ypos(pos), r + 8);
 }
 
 function ypos (x) {
@@ -124,9 +124,9 @@ function drawBall () {
   } else {
     g.setColor(0.5, 0.5, 0);
   }
-  g.fillCircle(pos, ypos(pos * 2), r);
+  g.fillCircle(pos, ypos(pos), r);
   g.setColor(1, 1, 0);
-  g.drawCircle(pos, ypos(pos * 2), r);
+  g.drawCircle(pos, ypos(pos), r);
 }
 
 function drawClock () {
