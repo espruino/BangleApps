@@ -156,7 +156,6 @@ function initDay () {
   solarNoonX = xFromTime(SunCalc.getTimes(now, lat, lon, alt).solarNoon);
   sr = Locale.time(SunCalc.getTimes(now, lat, lon, alt).sunrise, 1);
   ss = Locale.time(SunCalc.getTimes(now, lat, lon, alt).sunset, 1);
-  fillSineLUT();
   calcSeaLevel();
 
   day = now.getDate();
