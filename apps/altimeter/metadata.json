@@ -1,6 +1,6 @@
 { "id": "altimeter",
   "name": "Altimeter",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Simple altimeter that can display height changed using Bangle.js 2's built in pressure sensor.",
   "icon": "app.png",
   "tags": "tool,outdoors",

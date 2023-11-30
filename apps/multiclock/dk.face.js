@@ -27,7 +27,6 @@
           d[0] = locale.dow(now,3);    
           var dt=d[0]+" "+d[1]+" "+d[2];//+" "+d[3];
           g.drawString(dt,W/2,H/2+24);
-          g.flip();
         }
 
 
