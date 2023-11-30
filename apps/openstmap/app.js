@@ -268,7 +268,12 @@ function showMap() {
   }, btn: () => showMenu() });
 }
 
-showMap();
+
+if (m.maps.length === 0) {
+  E.showPrompt(/*LANG*/'Please upload a map first.', {buttons : {/*LANG*/"Ok":true}}).then(v => load());
+} else {
+  showMap();
+}
 
 // Write settings on exit via button
 setWatch(() => writeSettings(), BTN, { repeat: true, edge: "rising" });

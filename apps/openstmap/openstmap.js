@@ -33,9 +33,11 @@ m.maps = require("Storage").list(/openstmap\.\d+\.json/).map(f=>{
 m.maps.sort((a,b) => b.scale-a.scale); // sort by scale so highest resolution is drawn last
 // we base our start position on the middle of the first map
 m.map = m.maps[0];
-m.scale = m.map.scale; // current scale (based on first map)
-m.lat = m.map.lat; // position of middle of screen
-m.lon = m.map.lon;  // position of middle of screen
+if (m.map) {
+  m.scale = m.map.scale; // current scale (based on first map)
+  m.lat = m.map.lat; // position of middle of screen
+  m.lon = m.map.lon;  // position of middle of screen
+}
 
 // return number of tiles drawn
 exports.draw = function() {

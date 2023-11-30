@@ -2,7 +2,7 @@
   "id": "openstmap",
   "name": "OpenStreetMap",
   "shortName": "OpenStMap",
-  "version": "0.26",
+  "version": "0.27",
   "description": "Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are. Once installed this also adds map functionality to `GPS Recorder` and `Recorder` apps",
   "readme": "README.md",
   "icon": "app.png",
