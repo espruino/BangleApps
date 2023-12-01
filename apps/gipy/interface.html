@@ -51,6 +51,10 @@
 
 
     <input type="button" id="upload" name="upload" value="Upload" disabled>
+    <input type="checkbox" id="autodetect_waypoints" name="autodetect_waypoints" checked/>
+    <label for="autodetect_waypoints">detect waypoints</label>
+    <input type="checkbox" id="include_elevation" name="include_elevation" checked/>
+    <label for="include_elevation">include elevation</label>
     <div id="status"></div>
     <div id="svgmap"></div>
 
@@ -111,10 +115,11 @@ function display_polygon(map) {
       }
 
       map.fitBounds(L.latLngBounds(L.latLng(min_lat, min_lng), L.latLng(max_lat, max_lng)));
+
 	  document.getElementById('convert').disabled = false;
 }
 
-import init, { load_gps_from_string, get_polygon, get_polyline, request_map, get_gps_content, get_gps_map_svg, gps_from_area } from "./pkg/gps.js";
+import init, { disable_elevation, load_gps_from_string, get_polygon, get_polyline, request_map, get_gps_content, get_gps_map_svg, gps_from_area } from "./pkg/gps.js";
 console.log("imported wasm");
 
 // start map
@@ -187,7 +192,8 @@ document
       status.innerHTML = "file reading completed";
 	  let gpx_content = reader.result;
 
-      gps_data = load_gps_from_string(gpx_content);
+      let autodetect_waypoints = document.getElementById("autodetect_waypoints").checked;
+      gps_data = load_gps_from_string(gpx_content, autodetect_waypoints);
       display_polygon(map);
 	};
     reader.readAsText(this.files[0]);
@@ -211,8 +217,12 @@ document
         request_map(gps_data, key1, value1, key2, value2, key3, value3, key4, value4).then(
             () => {
 
-        status.innerHTML = "file converted";
+        let include_elevation = document.getElementById("include_elevation").checked;
+        if (!include_elevation) {
+          disable_elevation(gps_data);
+        }
         gps_content = get_gps_content(gps_data);
+        status.innerHTML = "file converted (" + gps_content.length + " bytes)";
         let svg_string = get_gps_map_svg(gps_data);
         let img = document.getElementById("svgmap");
         img.innerHTML = svg_string;

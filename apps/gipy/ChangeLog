@@ -115,3 +115,16 @@
 	* Integrating fixes in upstream rust heatshrink crate
 	* Small path optimisations with brouter (removing looplets)
 	* Bugfix in nearest segment detection
+
+0.23:
+	* New display algorithm : way faster, larger roads, zooming out is now ok
+	* You will need to re-generate your maps because the new algorithm uses a different scale
+	* Better path simplification
+	* Removed sharp turns auto-detection
+	* Waypoints autodetection using the map : this will generate more points than really needed but can still be effective.
+	* New option: sleep between waypoints
+	* Interface: centered svg preview + display file sizes
+	* Interface: disable/enable waypoints detection and elevation
+	* Touching the screen when sleeping will wake up but not change screen
+	* Removing footways (if bicycles not allowed) to reduce resource usage
+	* Switching screen will clear the screen immediately so you can know your screen touch has been received

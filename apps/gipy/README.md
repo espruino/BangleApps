@@ -18,7 +18,6 @@ It provides the following features :
 - display the path with current position from gps
 - display a local map around you, downloaded from openstreetmap
 - detects and buzzes if you leave the path
-- (optional) buzzes before sharp turns
 - (optional) buzzes before waypoints
 (for example when you need to turn in https://mapstogpx.com/)
 - display instant / average speed
@@ -122,6 +121,7 @@ Few settings for now (feel free to suggest me more) :
 - power lcd off (disabled by default): turn lcd off when inactive to save power. the watch will wake up when reaching points,
 when you touch the screen and when speed is below 13km/h.
 - powersave by default: when gipy starts is powersaving activated ? (see below)
+- sleep between waypoints: instead of powersaving between points save power between waypoints (crossroads). this way you can save more. waypoints autodetection is WIP.
 
 ### Powersaving
 
@@ -142,7 +142,7 @@ The algorithm works in the following ways :
 
 Activation events are the following :
 
-- you are near (< 100m) the next point on path
+- you are near (< 100m) the next point (only waypoints of *sleep between waypoints* is on) on path
 - you are slow (< *wake-up speed* setting (13 km/h by default))
 - you are lost
 - you press the button / touch the screen
