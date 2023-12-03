@@ -43,3 +43,5 @@
 0.34: Avoid prompting when creating a new file (#3081)
 0.35: Handle loading without a settings file (default record setting)
 0.36: When recording with 1 second periods, log time with one decimal.
+0.37: 1 second periods + gps log => log when gps event is received, not with
+	setInterval.
