@@ -1,3 +1,5 @@
+let settings;
+
 function menuMain() {
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
@@ -5,16 +7,30 @@ function menuMain() {
     /*LANG*/"Step Counting": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
-    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>menuMain())
+    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>{loadSettings();menuMain();})
   });
 }
 
 function menuStepCount() {
-  E.showMenu({
+  const menu = {
     "": { title:/*LANG*/"Steps" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => stepsPerHour(),
-    /*LANG*/"per day": () => stepsPerDay()
+    /*LANG*/"per hour": () => stepsPerHour(menuStepCount),
+    /*LANG*/"per day": () => stepsPerDay(menuStepCount)
+  };
+  if (settings.strideLength) {
+      menu[/*LANG*/"distance"] = () => menuDistance();
+  }
+
+  E.showMenu(menu);
+}
+
+function menuDistance() {
+  E.showMenu({
+    "": { title:/*LANG*/"Distance" },
+    /*LANG*/"< Back": () => menuStepCount(),
+    /*LANG*/"per hour": () => stepsPerHour(menuDistance, settings.strideLength),
+    /*LANG*/"per day": () => stepsPerDay(menuDistance, settings.strideLength)
   });
 }
 
@@ -36,23 +52,23 @@ function menuHRM() {
   });
 }
 
-function stepsPerHour() {
+function stepsPerHour(back, mult) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "stepsPerHour";
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
-  setButton(menuStepCount);
-  barChart(/*LANG*/"HOUR", data);
+  setButton(back, mult);
+  barChart(/*LANG*/"HOUR", data, mult);
 }
 
-function stepsPerDay() {
+function stepsPerDay(back, mult) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "stepsPerDay";
   var data = new Uint16Array(32);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
-  setButton(menuStepCount);
-  barChart(/*LANG*/"DAY", data);
-  drawHorizontalLine(settings.stepGoal);
+  setButton(back, mult);
+  barChart(/*LANG*/"DAY", data, mult);
+  drawHorizontalLine(settings.stepGoal * (mult || 1));
 }
 
 function hrmPerHour() {
@@ -139,7 +155,11 @@ function get_data_length(arr) {
   return nlen;
 }
 
-function barChart(label, dt) {
+function barChart(label, dt, mult) {
+  if (mult !== undefined) {
+    // Calculate distance from steps
+    dt.forEach((val, i) => dt[i] = val*mult);
+  }
   data_len = get_data_length(dt);
   chart_index = Math.max(data_len - 5, -5);  // choose initial index that puts the last day on the end
   chart_max_datum = max(dt);                 // find highest bar, for scaling
@@ -180,7 +200,7 @@ function drawHorizontalLine(value) {
   g.setColor(g.theme.fg).drawLine(0, top ,g.getWidth(), top);
 }
 
-function setButton(fn) {
+function setButton(fn, mult) {
   Bangle.setUI({mode:"custom",
                 back:fn,
                 swipe:(lr,ud) => {
@@ -194,12 +214,16 @@ function setButton(fn) {
     }
     drawBarChart();
     if (current_selection == "stepsPerDay") {
-      drawHorizontalLine(settings.stepGoal);
+      drawHorizontalLine(settings.stepGoal * (mult || 1));
     }
   }});
 }
 
+function loadSettings() {
+  settings = require("Storage").readJSON("health.json",1)||{};
+}
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-var settings = require("Storage").readJSON("health.json",1)||{};
+loadSettings();
 menuMain();
