@@ -88,7 +88,7 @@ const rows = 10;
 
 
 // initialise
-g.clear(reset);
+g.clear(true);
 g.setFont('6x8').setFontAlign(-1, -1);
 
 // calc some values required to draw the grid
