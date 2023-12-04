@@ -1,0 +1,17 @@
+{
+  "id": "coloursdemo",
+  "name": "Colours Demo",
+  "shortName":"Colours Demo",
+  "version":"1.00",
+  "description": "Simple app to demonstrate colours",
+  "icon": "coloursdemo.png",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "type": "app",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name":"coloursdemo.app.js", "url":"coloursdemo.app.js" },
+    { "name":"coloursdemo.img",    "url":"coloursdemo-icon.js", "evaluate":true }
+  ]
+}
