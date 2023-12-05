@@ -26,11 +26,12 @@ function menuStepCount() {
 }
 
 function menuDistance() {
+  const distMult = 1*require("locale").distance(settings.strideLength, 2); // hackish: this removes the distance suffix, e.g. 'm'
   E.showMenu({
     "": { title:/*LANG*/"Distance" },
     /*LANG*/"< Back": () => menuStepCount(),
-    /*LANG*/"per hour": () => stepsPerHour(menuDistance, settings.strideLength),
-    /*LANG*/"per day": () => stepsPerDay(menuDistance, settings.strideLength)
+    /*LANG*/"per hour": () => stepsPerHour(menuDistance, distMult),
+    /*LANG*/"per day": () => stepsPerDay(menuDistance, distMult)
   });
 }
 
@@ -57,6 +58,10 @@ function stepsPerHour(back, mult) {
   current_selection = "stepsPerHour";
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
+  if (mult !== undefined) {
+    // Calculate distance from steps
+    data.forEach((d, i) => data[i] = d*mult+0.5);
+  }
   setButton(back, mult);
   barChart(/*LANG*/"HOUR", data, mult);
 }
@@ -66,6 +71,10 @@ function stepsPerDay(back, mult) {
   current_selection = "stepsPerDay";
   var data = new Uint16Array(32);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
+  if (mult !== undefined) {
+    // Calculate distance from steps
+    data.forEach((d, i) => data[i] = d*mult+0.5);
+  }
   setButton(back, mult);
   barChart(/*LANG*/"DAY", data, mult);
   drawHorizontalLine(settings.stepGoal * (mult || 1));
@@ -80,7 +89,7 @@ function hrmPerHour() {
     data[h.hr]+=h.bpm;
     if (h.bpm) cnt[h.hr]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuHRM);
   barChart(/*LANG*/"HOUR", data);
 }
@@ -94,7 +103,7 @@ function hrmPerDay() {
     data[h.day]+=h.bpm;
     if (h.bpm) cnt[h.day]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuHRM);
   barChart(/*LANG*/"DAY", data);
 }
@@ -108,7 +117,7 @@ function movementPerHour() {
     data[h.hr]+=h.movement;
     cnt[h.hr]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuMovement);
   barChart(/*LANG*/"HOUR", data);
 }
@@ -122,7 +131,7 @@ function movementPerDay() {
     data[h.day]+=h.movement;
     cnt[h.day]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuMovement);
   barChart(/*LANG*/"DAY", data);
 }
@@ -155,11 +164,7 @@ function get_data_length(arr) {
   return nlen;
 }
 
-function barChart(label, dt, mult) {
-  if (mult !== undefined) {
-    // Calculate distance from steps
-    dt.forEach((val, i) => dt[i] = val*mult);
-  }
+function barChart(label, dt) {
   data_len = get_data_length(dt);
   chart_index = Math.max(data_len - 5, -5);  // choose initial index that puts the last day on the end
   chart_max_datum = max(dt);                 // find highest bar, for scaling

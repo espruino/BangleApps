@@ -54,6 +54,7 @@
       value : settings.strideLength || 0.0,
       min:0.01,
       step:0.01,
+      format: v => require("locale").distance(v, 2),
       onchange : v => {
         settings.strideLength=v;
         setSettings();
