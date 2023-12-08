@@ -1,0 +1,16 @@
+{
+  "id": "binaryclk",
+  "name": "Bin Clock",
+  "version": "0.01",
+  "description": "Clock face to binary time in 24 hr format",
+  "icon": "binaryclk.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"binaryclk.app.js","url":"app.js"},
+    {"name":"binaryclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}
