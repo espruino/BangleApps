@@ -101,3 +101,4 @@
 0.72: Nav message updastes don't automatically launch navigation menu unless they're new
 0.73: Add sharp left+right nav icons
 0.74: Add option for driving on left (affects roundabout icons in navigation)
+0.75: Handle text with images in messages list by just displaying the first line

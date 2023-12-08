@@ -73,39 +73,57 @@ function formatAlarmProperty(msg) {
   }
 }
 
-function showMainMenu() {
+function showMainMenu(scroll, group) {
   const menu = {
-    "": { "title": /*LANG*/"Alarms & Timers" },
-    "< Back": () => load(),
-    /*LANG*/"New...": () => showNewMenu()
+    "": { "title": group || /*LANG*/"Alarms & Timers", scroll: scroll },
+    "< Back": () => group ? showMainMenu() : load(),
+    /*LANG*/"New...": () => showNewMenu(group)
   };
+  const getGroups = settings.showGroup && !group;
+  const groups = getGroups ? {} : undefined;
+  var showAlarm;
 
   alarms.forEach((e, index) => {
-    menu[trimLabel(getLabel(e),40)] = {
-      value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
-      onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index)
-    };
+    showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
+    if(showAlarm) {
+      menu[trimLabel(getLabel(e),40)] = {
+        value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
+        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller.scroll, group)
+      };
+    } else if (getGroups) {
+      groups[e.group] = undefined;
+    }
   });
 
-  menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
+  if (!group) {
+    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g));
+    menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
+  }
 
-  E.showMenu(menu);
+  var scroller = E.showMenu(menu).scroller;
 }
 
-function showNewMenu() {
-  E.showMenu({
+function showNewMenu(group) {
+  const newMenu = {
     "": { "title": /*LANG*/"New..." },
-    "< Back": () => showMainMenu(),
-    /*LANG*/"Alarm": () => showEditAlarmMenu(undefined, undefined),
+    "< Back": () => showMainMenu(group),
+    /*LANG*/"Alarm": () => showEditAlarmMenu(undefined, undefined, false, null, group),
     /*LANG*/"Timer": () => showEditTimerMenu(undefined, undefined),
-    /*LANG*/"Event": () => showEditAlarmMenu(undefined, undefined, true)
-  });
+    /*LANG*/"Event": () => showEditAlarmMenu(undefined, undefined, true, null, group)
+  };
+
+  if (group) delete newMenu[/*LANG*/"Timer"];
+  E.showMenu(newMenu);
 }
 
-function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
+function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
+  if (isNew && group) alarm.group = group;
+  if (withDate || (selectedAlarm && selectedAlarm.date)) {
+    alarm.del = require("sched").getSettings().defaultDeleteExpiredTimers;
+  }
   alarm.dow = handleFirstDayOfWeek(alarm.dow);
 
   if (selectedAlarm) {
@@ -124,7 +142,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     "< Back": () => {
       prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
-      showMainMenu();
+      showMainMenu(scroll, group);
     },
     /*LANG*/"Hour": {
       value: time.h,
@@ -168,7 +186,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
           keyboard.input({text:alarm.msg}).then(result => {
             alarm.msg = result;
             prepareAlarmForSave(alarm, alarmIndex, time, date, true);
-            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
+            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
           });
         }, 100);
       }
@@ -181,7 +199,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
           keyboard.input({text:alarm.group}).then(result => {
             alarm.group = result;
             prepareAlarmForSave(alarm, alarmIndex, time, date, true);
-            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
+            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
           });
         }, 100);
       }
@@ -193,10 +211,13 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     /*LANG*/"Repeat": {
       value: decodeRepeat(alarm),
       onchange: () => setTimeout(showEditRepeatMenu, 100, alarm.rp, date || alarm.dow, (repeat, dow) => {
+        if (repeat) {
+          alarm.del = false; // do not auto delete a repeated alarm
+        }
         alarm.rp = repeat;
         alarm.dow = dow;
         prepareAlarmForSave(alarm, alarmIndex, time, date, true);
-        setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
+        setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
       })
     },
     /*LANG*/"Vibrate": require("buzz_menu").pattern(alarm.vibrate, v => alarm.vibrate = v),
@@ -204,15 +225,19 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
       value: alarm.as,
       onchange: v => alarm.as = v
     },
+    /*LANG*/"Delete After Expiration": {
+      value: alarm.del,
+      onchange: v => alarm.del = v
+    },
     /*LANG*/"Hidden": {
       value: alarm.hidden || false,
       onchange: v => alarm.hidden = v
     },
-    /*LANG*/"Cancel": () => showMainMenu(),
+    /*LANG*/"Cancel": () => showMainMenu(scroll, group),
     /*LANG*/"Confirm": () => {
       prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
-      showMainMenu();
+      showMainMenu(scroll, group);
     }
   };
 
@@ -225,6 +250,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
+    delete menu[/*LANG*/"Delete After Expiration"];
   }
 
   if (!isNew) {
@@ -233,10 +259,10 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate) {
         if (confirm) {
           alarms.splice(alarmIndex, 1);
           saveAndReload();
-          showMainMenu();
+          showMainMenu(scroll, group);
         } else {
           alarm.t = require("time_utils").encodeTime(time);
-          setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate);
+          setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
         }
       });
     };
@@ -283,7 +309,6 @@ function decodeRepeat(alarm) {
 }
 
 function showEditRepeatMenu(repeat, day, dowChangeCallback) {
-  var originalRepeat = repeat;
   var dow;
 
   const menu = {
@@ -316,26 +341,32 @@ function showEditRepeatMenu(repeat, day, dowChangeCallback) {
       },
       /*LANG*/"Custom": {
         value: isCustom ? decodeRepeat({ rp: true, dow: dow }) : false,
-        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, originalRepeat, originalDow)
+        onchange: () => setTimeout(showCustomDaysMenu, 10, dow, dowChangeCallback, repeat, originalDow)
       }
     };
   } else {
     // var date = day; // eventually: detect day of date and configure a repeat e.g. 3rd Monday of Month
     dow = EVERY_DAY;
-    repeat = repeat || {interval: "month", num: 1};
+    const repeatObj = repeat || {interval: "month", num: 1};
 
     restOfMenu = {
       /*LANG*/"Every": {
-        value: repeat.num,
+        value: repeatObj.num,
         min: 1,
-        onchange: v => repeat.num = v
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.num = v;
+        }
       },
       /*LANG*/"Interval": {
-        value: INTERVALS.indexOf(repeat.interval),
+        value: INTERVALS.indexOf(repeatObj.interval),
         format: v => INTERVAL_LABELS[v],
         min: 0,
         max: INTERVALS.length - 1,
-        onchange: v => repeat.interval = INTERVALS[v]
+        onchange: v => {
+          repeat = repeatObj;
+          repeat.interval = INTERVALS[v];
+        }
       }
     };
   }

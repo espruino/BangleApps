@@ -8,7 +8,7 @@
   "type": "app",
   "tags": "tool,outdoors",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "readme": "README.md",
   "allow_emulator": true,
   "storage": [

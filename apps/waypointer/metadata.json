@@ -6,7 +6,7 @@
   "icon": "waypointer.png",
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS", "BANGLEJS2"],
-  "dependencies" : { "waypoints":"type", "magnav" : "app" },
+  "dependencies" : { "waypoints":"app", "magnav" : "app" },
   "readme": "README.md",
   "storage": [
     {"name":"waypointer.app.js","url":"app.js"},

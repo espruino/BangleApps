@@ -1,0 +1,14 @@
+{ "id": "clockswitch",
+  "name": "Clock Switcher",
+  "shortName":"Switch Clock",
+  "version":"0.01",
+  "description": "Switch to the next installed clock",
+  "icon": "icon.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"clockswitch.app.js","url":"app.js"},
+    {"name":"clockswitch.img","url":"icon.js","evaluate":true}
+  ]
+}

@@ -9,6 +9,8 @@
     settings.period = settings.period||10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
+    if (!settings.record)
+      settings.record = ["gps"];
     return settings;
   }
 
@@ -159,11 +161,26 @@
     return recorders;
   }
 
-  let writeLog = function() {
+  let getActiveRecorders = function(settings) {
+    let activeRecorders = [];
+    let recorders = getRecorders();
+    settings.record.forEach(r => {
+      var recorder = recorders[r];
+      if (!recorder) {
+        console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
+        return;
+      }
+      activeRecorders.push(recorder());
+    });
+    return activeRecorders;
+  };
+  let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
+
+  let writeLog = function(period) {
     entriesWritten++;
     WIDGETS["recorder"].draw();
     try {
-      var fields = [Math.round(getTime())];
+      var fields = [period===1?getTime().toFixed(1):Math.round(getTime())];
       activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
       if (storageFile) storageFile.write(fields.join(",")+"\n");
     } catch(e) {
@@ -189,17 +206,9 @@
 
     if (settings.recording) {
       // set up recorders
-      var recorders = getRecorders(); // TODO: order??
-      settings.record.forEach(r => {
-        var recorder = recorders[r];
-        if (!recorder) {
-          console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
-          return;
-        }
-        var activeRecorder = recorder();
+      activeRecorders = getActiveRecorders(settings);
+      activeRecorders.forEach(activeRecorder => {
         activeRecorder.start();
-        activeRecorders.push(activeRecorder);
-        // TODO: write field names?
       });
       WIDGETS["recorder"].width = 15 + ((activeRecorders.length+1)>>1)*12; // 12px per recorder
       // open/create file
@@ -209,13 +218,11 @@
       } else {
         storageFile = require("Storage").open(settings.file,"w");
         // New file - write headers
-        var fields = ["Time"];
-        activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.fields));
-        storageFile.write(fields.join(",")+"\n");
+        storageFile.write(getCSVHeaders(activeRecorders).join(",")+"\n");
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000);
+      writeInterval = setInterval(writeLog, settings.period*1000, settings.period);
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
@@ -246,7 +253,12 @@
         // if no filename set or date different, set up a new filename
         settings.file = getTrackFilename();
       }
-      if (require("Storage").list(settings.file).length){ // if file exists
+      var headers = require("Storage").open(settings.file,"r").readLine();
+      if (headers){ // if file exists
+        if(headers.trim()!==getCSVHeaders(getActiveRecorders(settings)).join(",")){
+          // headers don't match, reset (#3081)
+          options.force = "new";
+        }
         if (!options.force) { // if not forced, ask the question
           g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
           return E.showPrompt(
@@ -288,8 +300,8 @@
       }
      */
     options = options||{};
-    if (!activeRecorders.length) return; // not recording
     var settings = loadSettings();
+    if (!settings.file) return; // no file specified
     // keep function to draw track in RAM
     function plot(g) { "ram";
       var f = require("Storage").open(settings.file,"r");
@@ -311,7 +323,7 @@
         mp = m.latLonToXY(+c[la], +c[lo]);
         g.moveTo(mp.x,mp.y).setColor(color);
         l = f.readLine(f);
-        var n = options.async ? 20 : 200; // only plot first 200 points to keep things fast(ish)
+        var n = options.async ? 10 : 200; // only plot first 200 points to keep things fast(ish)
         while(l && n--) {
           c = l.split(",");
           if (c[la]) {
@@ -333,7 +345,7 @@
         }
       };
     }
-    plot(g);
+    return plot(g);
   }};
   // load settings, set correct widget width
   reload();

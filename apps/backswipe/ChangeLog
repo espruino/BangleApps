@@ -1,2 +1,3 @@
 0.01: New App!
 0.02: Don't fire if the app uses swipes already.
+0.03: Only count defined handlers in the handler array.

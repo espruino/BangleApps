@@ -36,11 +36,12 @@ function update(weatherEvent) {
     delete json.weather;
   }
 
+
   storage.write('weather.json', json);
   scheduleExpiry(json);
   exports.emit("update", json.weather);
 }
-
+exports.update = update;
 const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="weather") update(event);

@@ -87,6 +87,8 @@ var manageEvent = function(event) {
           showMessage(event);
     }
     else if(event.t=="remove"){       
+      
+
         //se non c'è niente nella queue e non c'è una chiamata in corso
         if( EventQueue.length==0 && !callInProgress)
           next();
@@ -104,7 +106,8 @@ var manageEvent = function(event) {
           });
 
           //non sovrascrivo, cosi uso lo stesso oggetto in memoria e dovrei avere meno problemi di memory leak
-          EventQueue.length=0;
+          //EventQueue.length=0; // non più funzionante!
+          EventQueue.splice(0,EventQueue.length);
           newEventQueue.forEach(element => {
             EventQueue.push(element);
           });

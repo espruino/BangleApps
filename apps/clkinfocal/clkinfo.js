@@ -1,5 +1,20 @@
 (function() {
   require("Font4x8Numeric").add(Graphics);
+
+  var settings = require("Storage").readJSON("clkinfocal.json",1)||{};
+  settings.fmt = settings.fmt||"DDD";
+  
+  var getDateString = function(dt) {
+    switch(settings.fmt) {
+    case "dd MMM":
+      return '' + dt.getDate() + ' ' + require("locale").month(dt,1).toUpperCase();
+    case "DDD dd":
+      return require("locale").dow(dt,1).toUpperCase() + ' ' + dt.getDate();
+    default: // DDD
+      return require("locale").dow(dt,1).toUpperCase();
+    }
+  };
+
   return {
     name: "Bangle",
     items: [
@@ -10,7 +25,7 @@
           g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
           g.setFont("6x15").setFontAlign(0,0).drawString(d.getDate(),11,17);
           return {
-            text : require("locale").dow(d,1).toUpperCase(),
+            text : getDateString(d),
             img : g.asImage("string")
           };
         },
