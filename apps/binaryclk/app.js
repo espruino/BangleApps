@@ -1,5 +1,5 @@
 function draw() {
-  var dt = new Date();
+	var dt = new Date();
   var h = dt.getHours(), m = dt.getMinutes();
   const t = [];
   t[0] = Math.floor(h/10);
