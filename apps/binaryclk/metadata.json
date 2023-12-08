@@ -3,7 +3,7 @@
   "name": "Bin Clock",
   "version": "0.01",
   "description": "Clock face to binary time in 24 hr format",
-  "icon": "binaryclk.png",
+  "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
