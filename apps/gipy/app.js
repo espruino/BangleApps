@@ -95,26 +95,30 @@ function compute_eta(hour, minutes, approximate_speed, remaining_distance) {
 }
 
 class TilesOffsets {
-  constructor(buffer, offset) {
-    let type_size = Uint8Array(buffer, offset, 1)[0];
+  constructor(filename, offset) {
+    let header = E.toArrayBuffer(s.read(filename, offset, 4));
+    let type_size = Uint8Array(header, 0, 1)[0];
     offset += 1;
-    this.entry_size = Uint8Array(buffer, offset, 1)[0];
+    this.entry_size = Uint8Array(header, 1, 1)[0];
     offset += 1;
-    let non_empty_tiles_number = Uint16Array(buffer, offset, 1)[0];
+    let non_empty_tiles_number = Uint16Array(header, 2, 1)[0];
     offset += 2;
-    this.non_empty_tiles = Uint16Array(buffer, offset, non_empty_tiles_number);
+
+    let bytes = (type_size==24)?3:2;
+    let buffer = E.toArrayBuffer(s.read(filename, offset, 2*non_empty_tiles_number+bytes*non_empty_tiles_number));
+    this.non_empty_tiles = Uint16Array(buffer, 0, non_empty_tiles_number);
     offset += 2 * non_empty_tiles_number;
     if (type_size == 24) {
       this.non_empty_tiles_ends = Uint24Array(
         buffer,
-        offset,
+        2*non_empty_tiles_number,
         non_empty_tiles_number
       );
       offset += 3 * non_empty_tiles_number;
     } else if (type_size == 16) {
       this.non_empty_tiles_ends = Uint16Array(
         buffer,
-        offset,
+        2*non_empty_tiles_number,
         non_empty_tiles_number
       );
       offset += 2 * non_empty_tiles_number;
@@ -153,27 +157,29 @@ class TilesOffsets {
 }
 
 class Map {
-  constructor(buffer, offset, filename) {
+  constructor(filename, offset) {
     // header
-    let color_array = Uint8Array(buffer, offset, 3);
+
+    let header = E.toArrayBuffer(s.read(filename, offset, 43));
+    let color_array = Uint8Array(header, 0, 3);
     this.color = [
       color_array[0] / 255,
       color_array[1] / 255,
       color_array[2] / 255,
     ];
     offset += 3;
-    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
+    this.first_tile = Int32Array(header, 3, 2); // absolute tile id of first tile
     offset += 2 * 4;
-    this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
+    this.grid_size = Uint32Array(header, 11, 2); // tiles width and height
     offset += 2 * 4;
-    this.start_coordinates = Float64Array(buffer, offset, 2); // min x and y coordinates
+    this.start_coordinates = Float64Array(header, 19, 2); // min x and y coordinates
     offset += 2 * 8;
-    let side_array = Float64Array(buffer, offset, 1); // side of a tile
+    let side_array = Float64Array(header, 35, 1); // side of a tile
     this.side = side_array[0];
     offset += 8;
 
     // tiles offsets
-    let res = new TilesOffsets(buffer, offset);
+    let res = new TilesOffsets(filename, offset);
     this.tiles_offsets = res[0];
     offset = res[1];
 
@@ -296,26 +302,30 @@ class Map {
 }
 
 class Interests {
-  constructor(buffer, offset) {
-    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
+  constructor(filename, offset) {
+    let header = E.toArrayBuffer(s.read(filename, offset, 40));
+    this.first_tile = Int32Array(header, 0, 2); // absolute tile id of first tile
     offset += 2 * 4;
-    this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
+    this.grid_size = Uint32Array(header, 8, 2); // tiles width and height
     offset += 2 * 4;
-    this.start_coordinates = Float64Array(buffer, offset, 2); // min x and y coordinates
+    this.start_coordinates = Float64Array(header, 16, 2); // min x and y coordinates
     offset += 2 * 8;
-    let side_array = Float64Array(buffer, offset, 1); // side of a tile
+    let side_array = Float64Array(header, 32, 1); // side of a tile
     this.side = side_array[0];
     offset += 8;
 
-    let res = new TilesOffsets(buffer, offset);
+    let res = new TilesOffsets(filename, offset);
     offset = res[1];
     this.offsets = res[0];
     let end = this.offsets.end_offset();
     this.binary_interests = new Uint8Array(end);
+    let buffer = E.toArrayBuffer(s.read(filename, offset, end));
     let binary_interests = Uint8Array(buffer, offset, end);
-    for (let i = 0; i < end; i++) {
-      this.binary_interests[i] = binary_interests[i];
-    }
+    this.binary_interests = binary_interests;
+    //TODO: check we don't need copy anymore
+    // for (let i = 0; i < end; i++) {
+    //   this.binary_interests[i] = binary_interests[i];
+    // }
     offset += end;
     return [this, offset];
   }
@@ -374,14 +384,15 @@ class Status {
     this.scale_factor = diagonal_third / maps[0].side; // multiply geo coordinates by this to get pixels coordinates
 
     if (this.path !== null) {
-      let r = [0];
+      //TODO: float32 ??
+      let r = new Float64Array(this.path.len);
       // let's do a reversed prefix computations on all distances:
       // loop on all segments in reversed order
       let previous_point = null;
       for (let i = this.path.len - 1; i >= 0; i--) {
         let point = this.path.point(i);
         if (previous_point !== null) {
-          r.unshift(r[0] + point.distance(previous_point));
+          r[i] = r[i+1] + point.distance(previous_point);
         }
         previous_point = point;
       }
@@ -792,7 +803,9 @@ class Status {
     displaying = true;
     g.clear();
     if (this.screen == MAP) {
+      console.log("displaying map");
       this.display_map();
+      console.log("done displaying map");
       if (this.position !== null) {
         // start_profiling();
         this.display_path();
@@ -1141,8 +1154,11 @@ function load_gps(filename) {
     .drawString(filename, 0, g.getHeight() - 30);
   g.flip();
 
-  let buffer = s.readArrayBuffer(filename);
-  let file_size = buffer.length;
+  let file_size;
+  {
+    let buffer = s.readArrayBuffer(filename);
+    file_size = buffer.length;
+  }
   let offset = 0;
 
   let path = null;
@@ -1150,60 +1166,52 @@ function load_gps(filename) {
   let maps = [];
   let interests = null;
   while (offset < file_size) {
-    let block_type = Uint8Array(buffer, offset, 1)[0];
+    let block_type = Uint8Array(E.toArrayBuffer(s.read(filename, offset, 1)))[0];
     offset += 1;
     if (block_type == 0) {
       // it's a map
       console.log("loading map");
-      let res = new Map(buffer, offset, filename);
+      let res = new Map(filename, offset);
       let map = res[0];
       offset = res[1];
       maps.push(map);
     } else if (block_type == 2) {
       console.log("loading path");
-      let res = new Path(buffer, offset);
+      let res = new Path(filename, offset);
       path = res[0];
       offset = res[1];
     } else if (block_type == 3) {
       console.log("loading interests");
-      let res = new Interests(buffer, offset);
+      let res = new Interests(filename, offset);
       interests = res[0];
       offset = res[1];
     } else if (block_type == 4) {
       console.log("loading heights");
       let heights_number = path.points.length / 2;
-      heights = Int16Array(buffer, offset, heights_number);
+      let buffer = E.toArrayBuffer(s.read(filename, offset, heights_number*2));
+      heights = Int16Array(buffer);
       offset += 2 * heights_number;
     } else {
       console.log("todo : block type", block_type);
     }
   }
 
-  // checksum file size
-  if (offset != file_size) {
-    console.log("invalid file size", file_size, "expected", offset);
-    let msg = "invalid file\nsize " + file_size + "\ninstead of" + offset;
-    E.showAlert(msg).then(function () {
-      E.showAlert();
-      start_gipy(path, maps, interests, heights);
-    });
-  } else {
-    start_gipy(path, maps, interests, heights);
-  }
+  start_gipy(path, maps, interests, heights);
 }
 
 class Path {
-  constructor(buffer, offset) {
-    let points_number = Uint16Array(buffer, offset, 1)[0];
+  constructor(filename, offset) {
+    let points_number = Uint16Array(E.toArrayBuffer(s.read(filename, offset, 2)))[0];
     offset += 2;
+    let waypoints_len = Math.ceil(points_number / 8.0);
+    let buffer = E.toArrayBuffer(s.read(filename, offset, points_number * 2 + waypoints_len));
 
     // path points
-    this.points = Float64Array(buffer, offset, points_number * 2);
+    this.points = Float64Array(buffer, 0, points_number);
     offset += 8 * points_number * 2;
 
     // path waypoints
-    let waypoints_len = Math.ceil(points_number / 8.0);
-    this.waypoints = Uint8Array(buffer, offset, waypoints_len);
+    this.waypoints = Uint8Array(buffer, points_number * 2, waypoints_len);
     offset += waypoints_len;
 
     return [this, offset];
@@ -1387,7 +1395,9 @@ function start_gipy(path, maps, interests, heights) {
     NRF.sleep(); // disable bluetooth completely
   }
 
+  console.log("creating status");
   status = new Status(path, maps, interests, heights);
+  console.log("done creating status");
 
   setWatch(
     function () {
