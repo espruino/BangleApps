@@ -16,21 +16,26 @@ let settings = {
   themeColor3BG: "#0094FF",
   disableAlarms: false,
   disableData: false,
+  randomColors: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
   settings[key] = saved_settings[key];
 }
 
-/*
- * Colors to use
- */
+
+//Colors to use
+var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White','Purple','Pink','Light Green','Dark Green', 'Brown', 'Turquoise', 'Magenta', 'Gold', 'Silver', 'Violet', 'Teal', 'Maroon', 'Lavender'];
+var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00','#556B2F', '#8B4513', '#40E0D0', '#FF00FF', '#FFD700', '#C0C0C0', '#EE82EE', '#008080', '#800000', '#E6E6FA'];
+  
 let color1 = settings.themeColor3BG;
 let color2 = settings.themeColor1BG;
 let color3 = settings.themeColor2BG;
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
 let cGrey = "#424242";
+
+randomColors();
 
 /*
  * Global lcars variables
@@ -185,6 +190,14 @@ let queueDraw = function() {
     drawTimeout = undefined;
     draw();
   }, timeout - (Date.now() % timeout));
+};
+
+let randomColors = function(){
+  if(settings.randomColors == true){
+    let color1 = bg_code[Math.floor(Math.random() * bg_code.length)];
+    let color2 = bg_code[Math.floor(Math.random() * bg_code.length)];
+    let color3 = bg_code[Math.floor(Math.random() * bg_code.length)];
+  }
 };
 
 /**
