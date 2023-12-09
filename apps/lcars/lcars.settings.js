@@ -15,6 +15,7 @@
     themeColor3BG: "#0094FF",
     disableAlarms: false,
     disableData: false,
+    randomColors: false,
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -28,8 +29,8 @@
 
   var dataOptions = ["Steps", "Battery", "BattVolt", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
-  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White','Purple','Pink','Light Green','Dark Green'];
-  var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00','#556B2F'];
+  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White','Purple','Pink','Light Green','Dark Green', 'Brown', 'Turquoise', 'Magenta', 'Gold', 'Silver', 'Violet', 'Teal', 'Maroon', 'Lavender'];
+  var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00','#556B2F', '#8B4513', '#40E0D0', '#FF00FF', '#FFD700', '#C0C0C0', '#EE82EE', '#008080', '#800000', '#E6E6FA'];
 
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
@@ -118,6 +119,14 @@
       format: () => (settings.disableData ? 'Yes' : 'No'),
       onchange: () => {
         settings.disableData = !settings.disableData;
+        save();
+      },
+    },
+    'Random colors on open': {
+      value: settings.randomColors,
+      format: () => (settings.randomColors ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.randomColors = !settings.randomColors;
         save();
       },
     },
