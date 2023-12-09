@@ -35,8 +35,6 @@ let cWhite = "#FFFFFF";
 let cBlack = "#000000";
 let cGrey = "#424242";
 
-randomColors();
-
 /*
  * Global lcars variables
  */
@@ -192,7 +190,7 @@ let queueDraw = function() {
   }, timeout - (Date.now() % timeout));
 };
 
-let randomColors = function(){
+function randomColors() {
   if(settings.randomColors == true){
     let color1 = bg_code[Math.floor(Math.random() * bg_code.length)];
     let color2 = bg_code[Math.floor(Math.random() * bg_code.length)];
@@ -786,7 +784,8 @@ Bangle.setUI({mode:"clock",remove:function() {
     widget_utils.cleanup();
 }});
 Bangle.loadWidgets();
-
+  
+randomColors();//Apply random colors if applied
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
