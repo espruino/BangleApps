@@ -196,7 +196,7 @@ function randomColors() {
     let color2 = bg_code[Math.floor(Math.random() * bg_code.length)];
     let color3 = bg_code[Math.floor(Math.random() * bg_code.length)];
   }
-};
+}
 
 /**
  * This function plots a data row in LCARS style.
