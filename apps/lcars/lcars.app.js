@@ -77,35 +77,8 @@ let convert24to16 = function(input)
 };
 
 //Converting colors to the correct format.
-/*let color1C;
-let color2C;
-let color3C;
 
 let randomColors = function () {
-  console.log("called");
-
-  if (settings.randomColors) {
-    do {
-      color1 = bg_code[Math.floor(Math.random() * bg_code.length)];
-      color2 = bg_code[Math.floor(Math.random() * bg_code.length)];
-      color3 = bg_code[Math.floor(Math.random() * bg_code.length)];
-    } while (color1 === color2 || color2 === color3 || color1 === color3);
-
-    console.log("random called");
-  } else {
-    color1 = settings.themeColor3BG;
-    color2 = settings.themeColor1BG;
-    color3 = settings.themeColor2BG;
-  }
-
-  //Converting colors to the correct format.
-  color1C = convert24to16(color1);
-  color2C = convert24to16(color2);
-  color3C = convert24to16(color3);
-};*/
-
-let randomColors = function () {
-  console.log("called");
 
   if (settings.randomColors) {
     do {
@@ -114,7 +87,6 @@ let randomColors = function () {
       color3 = getRandomColor();
     } while (!areColorsDistinct(color1, color2, color3));
 
-    console.log("random called");
   } else {
     color1 = settings.themeColor3BG;
     color2 = settings.themeColor1BG;
