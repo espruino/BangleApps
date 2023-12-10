@@ -16,18 +16,36 @@ let settings = {
   themeColor3BG: "#0094FF",
   disableAlarms: false,
   disableData: false,
+  randomColors: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
   settings[key] = saved_settings[key];
 }
 
-/*
- * Colors to use
- */
-let color1 = settings.themeColor3BG;
-let color2 = settings.themeColor1BG;
-let color3 = settings.themeColor2BG;
+
+//Colors to use
+var color_options = [
+  'Green', 'Orange', 'Cyan', 'Purple', 'Red', 'Blue', 'Yellow', 'White',
+  'Purple', 'Pink', 'Light Green', 'Brown', 'Turquoise', 'Magenta', 'Lime',
+  'Gold', 'Sky Blue', 'Rose', 'Lavender', 'Amber', 'Indigo', 'Teal',
+  'Crimson', 'Maroon', 'Firebrick', 'Dark Red', 'Aqua', 'Emerald', 'Royal Blue',
+  'Sunset Orange', 'Turquoise Blue', 'Hot Pink', 'Goldenrod', 'Deep Sky Blue'
+];
+
+var bg_code = [
+  '#00ff00', '#FF9900', '#0094FF', '#FF00DC', '#ff0000', '#0000ff', '#ffef00', '#FFFFFF',
+  '#FF00FF', '#6C00FF', '#99FF00', '#8B4513', '#40E0D0', '#FF00FF', '#00FF00', '#FFD700',
+  '#87CEEB', '#FF007F', '#E6E6FA', '#FFBF00', '#4B0082', '#008080', '#DC143C', '#800000',
+  '#B22222', '#8B0000', '#00FFFF', '#008000', '#4169E1', '#FF4500', '#40E0D0', '#FF69B4',
+  '#DAA520', '#00BFFF'
+];
+
+
+
+let color1;
+let color2;
+let color3;
 let cWhite = "#FFFFFF";
 let cBlack = "#000000";
 let cGrey = "#424242";
@@ -58,10 +76,77 @@ let convert24to16 = function(input)
   return "0x"+RGB565.toString(16);
 };
 
-let color1C = convert24to16(color1);//Converting colors to the correct format.
-let color2C = convert24to16(color2);
-let color3C = convert24to16(color3);
+//Converting colors to the correct format.
 
+let randomColors = function () {
+
+  if (settings.randomColors) {
+    do {
+      color1 = getRandomColor();
+      color2 = getRandomColor();
+      color3 = getRandomColor();
+    } while (!areColorsDistinct(color1, color2, color3));
+
+  } else {
+    color1 = settings.themeColor3BG;
+    color2 = settings.themeColor1BG;
+    color3 = settings.themeColor2BG;
+  }
+
+  // Converting colors to the correct format.
+  color1C = convert24to16(color1);
+  color2C = convert24to16(color2);
+  color3C = convert24to16(color3);
+};
+
+// Function to get a random color from the bg_code array.
+let getRandomColor = function () {
+  return bg_code[Math.floor(Math.random() * bg_code.length)];
+};
+
+// Function to check if three colors are distinct enough.
+let areColorsDistinct = function (color1, color2, color3) {
+  return (
+    color1 !== color2 &&
+    color2 !== color3 &&
+    color1 !== color3 &&
+    hasSufficientContrast(color1, color2) &&
+    hasSufficientContrast(color2, color3) &&
+    hasSufficientContrast(color1, color3)
+  );
+};
+
+// Function to calculate contrast between two colors.
+let hasSufficientContrast = function (color1, color2) {
+  const contrastThreshold = 0.10; // Adjust this threshold based on your preference.
+
+  // Calculate the luminance values (for simplicity, assuming sRGB color space).
+  const luminance1 = getLuminance(color1);
+  const luminance2 = getLuminance(color2);
+
+  // Calculate the contrast ratio.
+  const contrastRatio = (Math.max(luminance1, luminance2) + 0.05) / (Math.min(luminance1, luminance2) + 0.05);
+
+  // Check if the contrast ratio meets the threshold.
+  return contrastRatio >= contrastThreshold;
+};
+
+// Function to calculate luminance from a hex color.
+let getLuminance = function (hexColor) {
+  const rgb = hexToRgb(hexColor);
+  return 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+};
+
+// Function to convert hex color to RGB.
+let hexToRgb = function (hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return { r, g, b };
+};
+
+randomColors();//Apply random colors if applied
 /*
 * Requirements and globals
 */
@@ -224,7 +309,7 @@ let drawData = function(key, y, c){
 
 
 let _drawData = function(key, y, c){
-  key = key.toUpperCase()
+  key = key.toUpperCase();
   let text = key;
   let value = "ERR";
   let should_print= true;
@@ -271,7 +356,7 @@ let _drawData = function(key, y, c){
         value = Math.round(data.altitude);
         printRow(text, value, y, c);
       }
-    })
+    });
 
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
@@ -374,7 +459,7 @@ let drawPosition0 = function(){
   drawHorizontalBgLine(color2, batStart, batX2, 171, 5);
   drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
   for(let i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
-    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
+    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8);
   }
 
   // Draw Infos
@@ -603,7 +688,7 @@ let getWeather = function(){
     let speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
     weather.wind = Math.round(wind[1] * speedFactor);
 
-    return weather
+    return weather;
 
   } catch(ex) {
     // Return default
@@ -649,7 +734,7 @@ let getAlarmMinutes = function(){
 let increaseAlarm = function(){
   try{
       let minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-      let alarm = require('sched')
+      let alarm = require('sched');
       alarm.setAlarm(TIMER_IDX, {
         timer : (minutes+5)*60*1000,
       });
@@ -662,7 +747,7 @@ let decreaseAlarm = function(){
       let minutes = getAlarmMinutes();
       minutes -= 5;
 
-      let alarm = require('sched')
+      let alarm = require('sched');
       alarm.setAlarm(TIMER_IDX, undefined);
 
       if(minutes > 0){
@@ -773,7 +858,6 @@ Bangle.setUI({mode:"clock",remove:function() {
     widget_utils.cleanup();
 }});
 Bangle.loadWidgets();
-
 // Clear the screen once, at startup and draw clock
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 draw();
