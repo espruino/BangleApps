@@ -1,0 +1,11 @@
+# My Profile
+
+Configure your personal profile. All settings are optional and are only stored on the watch.
+
+## Available settings
+
+| Setting       | Description                   | Displayed in        | Stored in | Default value | How to measure                                                    |
+| ------------- | ----------------------------- | ------------------- | --------- | ------------- | ----------------------------------------------------------------- |
+| HR max        | maximum heart rate            | BPM                 | BPM       | 60            | Use maximum value when exercising.<br/> If unsure set to 220-age. |
+| HR min        | minimum heart rate            | BPM                 | BPM       | 200           | Measure your heart rate after waking up                           |
+| Stride length | distance travel with one step | local length unit   | meter     | 0 (=not set)  | Walk 10 steps and divide the travelled distance by 10             |
