@@ -43,7 +43,6 @@
       step:0.01,
       format: v => v ? require("locale").distance(v, 2) : '-',
       onchange: v => {
-        console.log(v);
         myprofile.strideLength=v;
         writeProfile();
       },
