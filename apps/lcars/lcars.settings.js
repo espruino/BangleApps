@@ -29,9 +29,21 @@
 
   var dataOptions = ["Steps", "Battery", "BattVolt", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
-  var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White','Purple','Pink','Light Green','Dark Green', 'Brown', 'Turquoise', 'Magenta', 'Gold', 'Silver', 'Violet', 'Teal', 'Maroon', 'Lavender'];
-  var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF','#FF00FF','#6C00FF','#99FF00','#556B2F', '#8B4513', '#40E0D0', '#FF00FF', '#FFD700', '#C0C0C0', '#EE82EE', '#008080', '#800000', '#E6E6FA'];
+  var color_options = [
+  'Green', 'Orange', 'Cyan', 'Purple', 'Red', 'Blue', 'Yellow', 'White',
+  'Purple', 'Pink', 'Light Green', 'Brown', 'Turquoise', 'Magenta', 'Lime',
+  'Gold', 'Sky Blue', 'Rose', 'Lavender', 'Amber', 'Indigo', 'Teal',
+  'Crimson', 'Maroon', 'Firebrick', 'Dark Red', 'Aqua', 'Emerald', 'Royal Blue',
+  'Sunset Orange', 'Turquoise Blue', 'Hot Pink', 'Goldenrod', 'Deep Sky Blue'
+];
 
+var bg_code = [
+  '#00ff00', '#FF9900', '#0094FF', '#FF00DC', '#ff0000', '#0000ff', '#ffef00', '#FFFFFF',
+  '#FF00FF', '#6C00FF', '#99FF00', '#8B4513', '#40E0D0', '#FF00FF', '#00FF00', '#FFD700',
+  '#87CEEB', '#FF007F', '#E6E6FA', '#FFBF00', '#4B0082', '#008080', '#DC143C', '#800000',
+  '#B22222', '#8B0000', '#00FFFF', '#008000', '#4169E1', '#FF4500', '#40E0D0', '#FF69B4',
+  '#DAA520', '#00BFFF'
+];
   E.showMenu({
     '': { 'title': 'LCARS Clock' },
     '< Back': back,
