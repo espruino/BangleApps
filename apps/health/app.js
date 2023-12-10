@@ -1,4 +1,5 @@
 let settings;
+const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 
 function menuMain() {
   E.showMenu({
@@ -18,7 +19,7 @@ function menuStepCount() {
     /*LANG*/"per hour": () => stepsPerHour(menuStepCount),
     /*LANG*/"per day": () => stepsPerDay(menuStepCount)
   };
-  if (settings.strideLength) {
+  if (myprofile.strideLength) {
       menu[/*LANG*/"distance"] = () => menuDistance();
   }
 
@@ -26,7 +27,7 @@ function menuStepCount() {
 }
 
 function menuDistance() {
-  const distMult = 1*require("locale").distance(settings.strideLength, 2); // hackish: this removes the distance suffix, e.g. 'm'
+  const distMult = 1*require("locale").distance(myprofile.strideLength, 2); // hackish: this removes the distance suffix, e.g. 'm'
   E.showMenu({
     "": { title:/*LANG*/"Distance" },
     /*LANG*/"< Back": () => menuStepCount(),

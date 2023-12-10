@@ -13,7 +13,7 @@ To view data, run the `Health` app from your watch.
 Stores:
 
 * Heart rate
-* Step count
+* Step count (can calculate distance if myprofile is installed and stride length is set)
 * Movement
 
 ## Settings
