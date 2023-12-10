@@ -20,7 +20,7 @@ function readFile(input) {
       const jCalData = ICAL.parse(icalText);
       const comp = new ICAL.Component(jCalData);
       const vtz = comp.getFirstSubcomponent('vtimezone');
-      const tz = new ICAL.Timezone(vtz);
+      const tz = vtz != null ? new ICAL.Timezone(vtz) : null;
 
       // Fetch the VEVENT part
       comp.getAllSubcomponents('vevent').forEach(vevent => {
@@ -73,7 +73,9 @@ function getAlarmDefaults() {
 }
 
 function eventToAlarm(event, tz, offsetMs) {
-  event.startDate.zone = tz;
+  if (tz != null) {
+    event.startDate.zone = tz;
+  }
   const dateOrig = event.startDate.toJSDate();
   const date = offsetMs ? new Date(dateOrig - offsetMs) : dateOrig;
 
