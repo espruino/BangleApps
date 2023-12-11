@@ -320,12 +320,7 @@ class Interests {
     let end = this.offsets.end_offset();
     this.binary_interests = new Uint8Array(end);
     let buffer = E.toArrayBuffer(s.read(filename, offset, end));
-    let binary_interests = Uint8Array(buffer, offset, end);
-    this.binary_interests = binary_interests;
-    //TODO: check we don't need copy anymore
-    // for (let i = 0; i < end; i++) {
-    //   this.binary_interests[i] = binary_interests[i];
-    // }
+    this.binary_interests = Uint8Array(buffer);
     offset += end;
     return [this, offset];
   }
@@ -803,9 +798,7 @@ class Status {
     displaying = true;
     g.clear();
     if (this.screen == MAP) {
-      console.log("displaying map");
       this.display_map();
-      console.log("done displaying map");
       if (this.position !== null) {
         // start_profiling();
         this.display_path();
@@ -1186,7 +1179,6 @@ function load_gps(filename) {
       interests = res[0];
       offset = res[1];
     } else if (block_type == 4) {
-      console.log("loading heights");
       let heights_number = path.points.length / 2;
       let buffer = E.toArrayBuffer(s.read(filename, offset, heights_number*2));
       heights = Int16Array(buffer);
@@ -1204,10 +1196,10 @@ class Path {
     let points_number = Uint16Array(E.toArrayBuffer(s.read(filename, offset, 2)))[0];
     offset += 2;
     let waypoints_len = Math.ceil(points_number / 8.0);
-    let buffer = E.toArrayBuffer(s.read(filename, offset, points_number * 2 + waypoints_len));
+    let buffer = E.toArrayBuffer(s.read(filename, offset, points_number * 16 + waypoints_len));
 
     // path points
-    this.points = Float64Array(buffer, 0, points_number);
+    this.points = Float64Array(buffer, 0, 2 * points_number);
     offset += 8 * points_number * 2;
 
     // path waypoints

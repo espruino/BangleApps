@@ -128,3 +128,6 @@
 	* Touching the screen when sleeping will wake up but not change screen
 	* Removing footways (if bicycles not allowed) to reduce resource usage
 	* Switching screen will clear the screen immediately so you can know your screen touch has been received
+	
+0.24:
+	* Fix for loading very large files (> 65kb)
