@@ -72,6 +72,10 @@ function stepsPerDay(back, mult) {
   current_selection = "stepsPerDay";
   var data = new Uint16Array(32);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
+  // Include data for today
+  if (data[(new Date()).getDate()] === 0) {
+    data[(new Date()).getDate()] = Bangle.getHealthStatus("day").steps;
+  }
   if (mult !== undefined) {
     // Calculate distance from steps
     data.forEach((d, i) => data[i] = d*mult+0.5);
