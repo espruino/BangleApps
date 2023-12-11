@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# aplay -r 4000 /tmp/0.raw
+#bug: Terminal exists on b.js, it is dumb terminal, not vt100.
+
+rm image_*.png image_*.png.raw output.wav ../bad.araw ../bad.vraw
+
+I=bad.mp4
+S=1:18
+E=1:50
+
+ffmpeg -i $I -ss $S -to $E -vn -acodec pcm_u8 -ar 4000 -ac 1 -y output.wav
+./wav_divider.py
+mv output.raw ../bad.araw
+
+ffmpeg -i $I -ss $S -to $E -r 5 -vf fps=5 image_%04d.png
+./img_convert.py
+cat *.png.raw > ../bad.vraw
+
+ls -al ../bad.*
