@@ -1370,14 +1370,47 @@ function drawMenu() {
   menu["Exit"] = function () {
     load();
   };
+  Bangle.setLCDBrightness(settings.brightness);
+  Bangle.setLocked(false);
   E.showMenu(menu);
+}
+
+
+function ask_options(fn) {
+  g.clear();
+  let height = g.getHeight();
+  let width = g.getWidth();
+  g.drawRect(10, 10, width - 10, height / 2 - 10);
+  g.drawRect(10, height/2 + 10, width - 10, height - 10);
+  g.setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
+  g.drawString("Backward", width/2, 3*height/4);
+  g.flip();
+
+  function options_select(b, xy) {
+    end = false;
+    if (xy.y < height / 2 - 10) {
+      g.setColor(0, 0, 0).fillRect(10, 10, width - 10, height / 2 - 10);
+      g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
+      end = true;
+    } else if (xy.y > height/2 + 10) {
+      g.setColor(0, 0, 0).fillRect(10, height/2 + 10, width - 10, height - 10);
+      g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Backward", width/2, 3*height/4);
+      go_backwards = true;
+      end = true;
+    }
+    if (end) {
+      g.flip();
+      Bangle.removeListener("touch", options_select);
+      console.log("loading", fn);
+      load_gps(fn);
+    }
+  }
+  Bangle.on("touch", options_select);
 }
 
 function start(fn) {
   E.showMenu();
-  console.log("loading", fn);
-
-  load_gps(fn);
+  ask_options(fn);
 }
 
 function start_gipy(path, maps, interests, heights) {

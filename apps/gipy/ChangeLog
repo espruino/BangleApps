@@ -131,3 +131,4 @@
 	
 0.24:
 	* Fix for loading very large files (> 65kb)
+	* new menu on file selection : reverse path without waiting for file to load
