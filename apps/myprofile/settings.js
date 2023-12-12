@@ -6,6 +6,7 @@
     maxHrm: 200,
     strideLength: 0, // 0 = not set
     birthday: '1970-01-01',
+    height: 0, // 0 = not set
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeProfile() {
@@ -20,20 +21,20 @@
 
       "< Back" : () => {
         if (date != new Date(myprofile.birthday)) {
+          // Birthday changed
           if (date > new Date()) {
             E.showPrompt(/*LANG*/"Birthday must not be in future!", {
               buttons : {"Ok":true},
             }).then(() => ageMenu());
           } else {
-            // Birthday changed
             const age = (new Date()).getFullYear() - date.getFullYear();
             const newMaxHRM = 220-age;
             E.showPrompt(/*LANG*/`Set HR max to ${newMaxHRM} calculated from age?`).then(function(v) {
               myprofile.birthday = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
               if (v) {
                 myprofile.maxHrm = newMaxHRM;
-                writeProfile();
               }
+              writeProfile();
               mainMenu();
             });
           }
@@ -76,6 +77,29 @@
       "< Back" : () => back(),
 
       /*LANG*/"Birthday" : () => ageMenu(),
+
+      /*LANG*/'Height': {
+        value: myprofile.height,
+        min: 0, max: 300,
+        step:0.01,
+        format: v => v ? require("locale").distance(v, 2) : '-',
+        onchange: v => {
+          if (v !== myprofile.height) {
+            // height changed
+            myprofile.height = v;
+            setTimeout(() => {
+              const newStrideLength = myprofile.height * 0.414;
+              E.showPrompt(/*LANG*/`Set Stride length to ${require("locale").distance(newStrideLength, 2)} calculated from height?`).then(function(v) {
+                if (v) {
+                  myprofile.strideLength = newStrideLength;
+                }
+                writeProfile();
+                mainMenu();
+              });
+            }, 1);
+          }
+        }
+      },
 
       /*LANG*/'HR max': {
         format: v => /*LANG*/`${v} BPM`,
