@@ -9,3 +9,4 @@ when fastloading.
 0.08: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.09: Don't send the gadgetbridge wake command twice. Once should do since we
 	issue newline before GB commands.
+0.10: Some refactoring to shorten the code.
