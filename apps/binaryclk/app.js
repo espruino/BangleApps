@@ -26,7 +26,10 @@ function draw() {
 		}
 		i++;
 	}
+  g.clearRect(mgn/2 + gap, mgn + gap, mgn/2 + gap + sq, mgn + 2 * gap + 2 * sq);
+  g.clearRect(mgn/2 + 3 * gap + 2 * sq, mgn + gap, mgn/2 + 3 * gap + 3 * sq, mgn + gap + sq);
 }
+
 
 g.clear();
 draw();
