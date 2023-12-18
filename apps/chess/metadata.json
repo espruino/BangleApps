@@ -2,7 +2,7 @@
   "id": "chess",
   "name": "Chess",
   "shortName": "Chess",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Chess game based on the [p4wn engine](https://p4wn.sourceforge.net/). Drag on the touchscreen to move the green cursor onto a piece, select it with a single touch and drag the now red cursor around. Release the piece with another touch to finish the move. The button opens a menu.",
   "icon": "app.png",
   "tags": "game",

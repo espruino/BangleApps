@@ -6,7 +6,6 @@ Bangle.loadWidgets(); // load before first appRect call
 const FIELD_WIDTH = Bangle.appRect.w/8;
 const FIELD_HEIGHT = Bangle.appRect.h/8;
 const SETTINGS_FILE = "chess.json";
-const DEFAULT_TIMEOUT = Bangle.getOptions().lockTimeout;
 const ICON_SIZE=45;
 const ICON_BISHOP = require("heatshrink").decompress(atob("lstwMB/4Ac/wFE4IED/kPAofgn4FDGon8j4QEBQgQE4EHBQcACwfAgF/BQYWD8EAHAX+NgI4C+AQEwAQDDYIhDDYMDCAQKBGQQsHHogKDCAJODCAI3CHoQKCHoIQDHoIQCFgoQBFgfgIQYmBEIQECKgIrCBYQKDC4OBg/8iCvEAC+AA="));
 const ICON_PAWN = require("heatshrink").decompress(atob("lstwMB/4At/AFEGon4h4FDwE/AgX8CAngCAkAv4bDgYbECAf4gAhD4AhD/kAg4mDCAkACAYbBEIYQBG4gbDEII9DFhXAgEfBQYWDEwJUC/wKBGQXwCAgEBE4RCBCAYmBCAQmCCAQmBCAbdCCAIbCQ4gAYwA="));
@@ -192,6 +191,7 @@ Bangle.drawWidgets();
 
 // drag selected field
 Bangle.on('drag', (ev) => {
+  if (showmenu) return;
   const newx = curfield[0]+ev.dx;
   const newy = curfield[1]+ev.dy;
   if (newx >= 0 && newx <= 7*FIELD_WIDTH) {
@@ -230,7 +230,7 @@ Bangle.on('touch', (button, xy) => {
             drawSelectedField();
             if (!finished) {
               // do computer move
-              Bangle.setLCDTimeout(0.1); // this can take some time, turn off to save power
+              Bangle.setBacklight(false); // this can take some time, turn off to save power
               showMessage(/*LANG*/"Calculating..");
               setTimeout(() => {
                 const compMove = state.findmove(settings.computer_level+1);
@@ -240,15 +240,15 @@ Bangle.on('touch', (button, xy) => {
                 }
                 Bangle.setLCDPower(true);
                 Bangle.setLocked(false);
-                Bangle.setLCDTimeout(DEFAULT_TIMEOUT/1000); // restore
+                Bangle.setBacklight(true);
                 if (!showmenu) {
                   showAlert(result.string);
                 }
-              }, 200); // execute after display update
+              }, 300); // execute after display update
             }
           };
           move(posFrom, posTo,cb);
-        }, 200); // execute after display update
+        }, 100); // execute after display update
       } // piece_sel === 0
       startfield[0] = startfield[1] = undefined;
       piece_sel = 0;
@@ -277,7 +277,9 @@ setWatch(() => {
   E.showMenu({
     "" : { title : /*LANG*/"Chess settings" },
     "< Back" : () => closeMenu(),
+    /*LANG*/"Exit" : () => load(),
     /*LANG*/"New Game" : () => {
+      finished = false;
       state = engine.p4_fen2state(engine.P4_INITIAL_BOARD);
       writeSettings();
       closeMenu();
@@ -296,6 +298,5 @@ setWatch(() => {
         writeSettings();
       }
     },
-    /*LANG*/"Exit" : () => load(),
   });
 }, BTN, { repeat: true, edge: "falling" });

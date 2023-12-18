@@ -119,10 +119,12 @@ function fullRedraw() {
 
 function buzzForEvents() {
   let nextEvent = next[0]; if (!nextEvent) return;
-  if (nextEvent.allDay) return;
+  // No buzz for all day events or events before 7am
+  // TODO: make this configurable
+  if (nextEvent.allDay || (new Date(nextEvent.timestamp * 1000)).getHours() < 7) return;
   let minToEvent = Math.round((nextEvent.timestamp - getTime()) / 60.0);
   switch (minToEvent) {
-    case 30: require("buzz").pattern(","); break;
+    case 30: require("buzz").pattern(":"); break;
     case 15: require("buzz").pattern(", ,"); break;
     case 1: require("buzz").pattern(": : :"); break;
   }
