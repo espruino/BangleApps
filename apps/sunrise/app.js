@@ -68,7 +68,7 @@ function drawSinuses () {
   let i;
   g.setColor(1, 1, 1);
 
-  for (i = 0; i <= w - sinStep; i += sinStep) {
+  for (i = 0; i <= w; i += sinStep) {
     array.push(i, ypos(i));
   }
   array.push(w, ypos(w));
