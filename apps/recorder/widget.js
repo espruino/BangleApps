@@ -256,10 +256,36 @@
     options = options||{};
     if (isOn && !settings.recording) {
       var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
-      function getTrackFilename() { return "recorder.log" + date + trackNo.toString(36) + ".csv"; }
-      if (!settings.file || !settings.file.startsWith("recorder.log" + date)) {
-        // if no filename set or date different, set up a new filename
-        settings.file = getTrackFilename();
+      function nextTrackFilename() { return "recorder.log" + date + trackNo.toString(36) + ".csv"; }
+      function mostRecentFile() {
+        const logs = require("Storage")
+          .list(/^recorder\.log/)
+          .map(x => x.replace(/^recorder\.log/, ""));
+
+        if(logs.length > 0){
+          logs.sort();
+          const latest = "recorder.log" + logs[logs.length-1].replace("\1", "");
+          const f = require("Storage").open(latest, "r");
+          const timeIdx = f.readLine().replace("\n", "").split(",").indexOf("Time");
+          if(timeIdx >= 0){
+            let last, tmp;
+            while(tmp = f.readLine())
+              last = tmp;
+
+            const when = new Date(last.replace("\n", "").split(",")[timeIdx]);
+            const now = new Date;
+            const age = now.getTime() - when.getTime();
+            if (age < 14400000) { // 4 hours
+              return latest;
+            }
+          }
+        }
+      }
+      const recentlyRecorded = mostRecentFile();
+      if (recentlyRecorded) {
+        settings.file = recentlyRecorded;
+      } else if (!settings.file) {
+        settings.file = nextTrackFilename();
       }
       var headers = require("Storage").open(settings.file,"r").readLine();
       if (headers){ // if file exists
@@ -289,7 +315,7 @@
           // new file - use the current date
           var newFileName;
           do { // while a file exists, add one to the letter after the date
-            newFileName = getTrackFilename();
+            newFileName = nextTrackFilename();
             trackNo++;
           } while (require("Storage").list(newFileName).length);
           settings.file = newFileName;
