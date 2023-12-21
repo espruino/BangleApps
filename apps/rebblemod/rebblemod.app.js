@@ -142,7 +142,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     let mm= require("date_utils").month(date.getMonth()+1,1).toUpperCase();
     let yy = date.getFullYear();
 
-    drawDateAndCalendar(145, 46, dy, dd, mm, yy);
+    drawDateAndCalendar(145, 44, dy, dd, mm, yy);
   }
 
   let drawSideBar2=function() {
