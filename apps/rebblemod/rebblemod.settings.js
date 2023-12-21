@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "rebble.json";
+  const SETTINGS_FILE = "rebblemod.json";
 
   // initialize with default settings...
   let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'sideTap':0};
@@ -26,7 +26,7 @@
   function showMenu()
   {
     const menu={
-      '': { 'title': 'Rebble Clock' },
+      '': { 'title': 'Rebble Clock Mod' },
       '< Back': back,
       'Colour': {
         value: 0 | color_options.indexOf(localSettings.color),
