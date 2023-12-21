@@ -280,9 +280,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     }
 
     Bangle.loadWidgets();
+    Bangle.drawWidgets();
     draw();
-
   }
-  g.clear();
   main();
 }
