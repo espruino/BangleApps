@@ -1,0 +1,22 @@
+{
+  "id": "rebblemod",
+  "name": "Rebble Clock Mod",
+  "shortName": "Rebble Mod",
+  "version": "0.1",
+  "description": "Rebble Clock but widgets are visible and the battery was removed, long live the rebellion.",
+  "readme": "README.md",
+  "icon": "rebblemod.png",
+  "dependencies": {"mylocation":"app"},
+  "screenshots": [{"url":"rebblemod_1.png"}, {"url":"rebblemod_2.png"}, {"url":"rebblemod_3.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"rebblemod.app.js","url":"rebblemod.app.js"},
+    {"name":"rebblemod.settings.js","url":"rebblemod.settings.js"},
+    {"name":"rebblemod.img","url":"rebblemod.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"rebblemod.settings.json"}
+  ]
+}
