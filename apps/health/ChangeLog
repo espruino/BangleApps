@@ -29,3 +29,4 @@
 0.26: Implement API for activity fetching
 0.27: Fix typo in daily summary graph code causing graph not to load
       Fix daily summaries for 31st of the month
+0.28: Calculate distance from steps if myprofile is installed and stride length is set

@@ -31,3 +31,4 @@
 0.24: Allow zooming by clicking the screen
 0.25: Enable scaled image filtering on 2v19+ firmware
 0.26: Ensure that when redrawing, we always cancel any in-progress track draw
+0.27: Display message if no map is installed

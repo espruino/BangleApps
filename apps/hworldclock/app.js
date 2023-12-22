@@ -443,7 +443,7 @@ Bangle.setUI({
     drawTimeout = undefined;
     //if (BANGLEJS2)
     Bangle.removeListener("drag",onDrag);
-    Bangle.removeListener("onLock",onLock);
+    Bangle.removeListener("lock",onLock);
   }});
 
 g.clear().setRotation(defaultRotation); // clean app screen and make sure the default rotation is set

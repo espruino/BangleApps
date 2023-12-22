@@ -2,7 +2,7 @@
   let storageFile; // file for GPS track
   let entriesWritten = 0;
   let activeRecorders = [];
-  let writeInterval;
+  let writeSetup;
 
   let loadSettings = function() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
@@ -194,11 +194,14 @@
     }
   }
 
+  let writeOnGPS = function() {writeLog(settings.period);};
+
   // Called by the GPS app to reload settings and decide what to do
   let reload = function() {
     var settings = loadSettings();
-    if (writeInterval) clearInterval(writeInterval);
-    writeInterval = undefined;
+    if (typeof writeSetup === "number") clearInterval(writeSetup);
+    writeSetup = undefined;
+    Bangle.removeListener('GPS', writeOnGPS);
 
     activeRecorders.forEach(rec => rec.stop());
     activeRecorders = [];
@@ -222,7 +225,12 @@
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000, settings.period);
+      if (settings.period===1 && settings.record.includes("gps")) {
+        Bangle.on('GPS', writeOnGPS);
+        writeSetup = true;
+      } else {
+        writeSetup = setInterval(writeLog, settings.period*1000, settings.period);
+      }
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
@@ -230,7 +238,7 @@
   }
   // add the widget
   WIDGETS["recorder"]={area:"tl",width:0,draw:function() {
-    if (!writeInterval) return;
+    if (!writeSetup) return;
     g.reset().drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
     activeRecorders.forEach((recorder,i)=>{
       recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
@@ -239,7 +247,7 @@
     reload();
     Bangle.drawWidgets(); // relayout all widgets
   },isRecording:function() {
-    return !!writeInterval;
+    return !!writeSetup;
   },setRecording:function(isOn, options) {
     /* options = {
       force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested
