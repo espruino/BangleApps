@@ -144,22 +144,22 @@ let assembleSearchString = function() {
   return (artist=="" ? "":("artist:\""+artist+"\"")) + ((artist!="" && track!="") ? " ":"") + (track=="" ? "":("track:\""+track+"\"")) + (((artist!="" && album!="") || (track!="" && album!="")) ? " ":"") + (album=="" ? "":(" album:\""+album+"\""));
 };
 
-simpleSearch = "";
+let simpleSearch = "";
 let simpleSearchTerm = function() { // input a simple search term without tags, overrides search with tags (artist and track)
   require("textinput").input({text:simpleSearch}).then(result => {simpleSearch = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-artist = "";
+let artist = "";
 let artistSearchTerm = function() { // input artist to search for
   require("textinput").input({text:artist}).then(result => {artist = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-track = "";
+let track = "";
 let trackSearchTerm = function() { // input track to search for
   require("textinput").input({text:track}).then(result => {track = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-album = "";
+let album = "";
 let albumSearchTerm = function() { // input album to search for
   require("textinput").input({text:album}).then(result => {album = result;}).then(() => {E.showMenu(searchMenu);});
 };
