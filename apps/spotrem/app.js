@@ -134,9 +134,11 @@ The functions for interacting with Android and the Spotify app
 */
 
 let createCommand = function(o) {
+  let boilerplateO = {t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"]};
+  let assembledO = Object.assign(boilerplateO, o)
   return ()=>{
   Bluetooth.println("");
-  Bluetooth.println(JSON.stringify(o));
+  Bluetooth.println(JSON.stringify(assembledO));
   };
 };
 
@@ -144,64 +146,61 @@ let assembleSearchString = function() {
   return (artist=="" ? "":("artist:\""+artist+"\"")) + ((artist!="" && track!="") ? " ":"") + (track=="" ? "":("track:\""+track+"\"")) + (((artist!="" && album!="") || (track!="" && album!="")) ? " ":"") + (album=="" ? "":(" album:\""+album+"\""));
 };
 
-simpleSearch = "";
+let simpleSearch = "";
 let simpleSearchTerm = function() { // input a simple search term without tags, overrides search with tags (artist and track)
   require("textinput").input({text:simpleSearch}).then(result => {simpleSearch = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-artist = "";
+let artist = "";
 let artistSearchTerm = function() { // input artist to search for
   require("textinput").input({text:artist}).then(result => {artist = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-track = "";
+let track = "";
 let trackSearchTerm = function() { // input track to search for
   require("textinput").input({text:track}).then(result => {track = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-album = "";
+let album = "";
 let albumSearchTerm = function() { // input album to search for
   require("textinput").input({text:album}).then(result => {album = result;}).then(() => {E.showMenu(searchMenu);});
 };
 
-let searchPlayWOTags = createCommand({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:simpleSearch}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
+let searchPlayWOTags = ()=>(createCommand({action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", extra:{query:simpleSearch}, flags:["FLAG_ACTIVITY_NEW_TASK"]})());
 
-let searchPlayWTags = createCommand({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:assembleSearchString()}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
+let searchPlayWTags = createCommand({action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", extra:{query:assembleSearchString()}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
 
-let playVreden = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:track:5QEFFJ5tAeRlVquCUNpAJY:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"]});
+let playVreden = createCommand({data:"spotify:track:5QEFFJ5tAeRlVquCUNpAJY:play"});
 
-let playVredenAlternate = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:track:5QEFFJ5tAeRlVquCUNpAJY:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK"]});
+//let searchPlayVreden = createCommand({action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", extra:{query:'artist:"Sara Parkman" track:"Vreden"'}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
 
-let searchPlayVreden = createCommand({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:'artist:"Sara Parkman" track:"Vreden"'}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
+let openAlbum = createCommand({data:"spotify:album:3MVb2CWB36x7VwYo5sZmf2", flags:["FLAG_ACTIVITY_NEW_TASK"]});
 
-let openAlbum = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:album:3MVb2CWB36x7VwYo5sZmf2", target:"activity", flags:["FLAG_ACTIVITY_NEW_TASK"]});
-
-let searchPlayAlbum = createCommand({t:"intent", action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", target:"activity", extra:{query:'album:"The blue room" artist:"Coldplay"', "android.intent.extra.focus":"vnd.android.cursor.item/album"}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
-
-let spotifyWidget = function(action) {
-  Bluetooth.println("");
-  Bluetooth.println(JSON.stringify({t:"intent", action:("com.spotify.mobile.android.ui.widget."+action), package:"com.spotify.music", target:"broadcastreceiver"}));
+let spotifyWidget = (action)=>{
+  createCommand({t:"intent", action:("com.spotify.mobile.android.ui.widget."+action), categories:[], target:"broadcastreceiver", flags:[]})();
 };
 
-let gadgetbridgeWake = createCommand({t:"intent", target:"activity", flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_CLEAR_TASK", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS", "FLAG_ACTIVITY_NO_ANIMATION"], package:"gadgetbridge", class:"nodomain.freeyourgadget.gadgetbridge.activities.WakeActivity"});
+let searchPlayAlbum = createCommand({action:"android.media.action.MEDIA_PLAY_FROM_SEARCH", extra:{query:'album:"The blue room" artist:"Coldplay"', "android.intent.extra.focus":"vnd.android.cursor.item/album"}, flags:["FLAG_ACTIVITY_NEW_TASK"]});
 
-let spotifyPlaylistDW = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let gadgetbridgeWake = createCommand({flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_CLEAR_TASK", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS", "FLAG_ACTIVITY_NO_ANIMATION"], package:"gadgetbridge", class:"nodomain.freeyourgadget.gadgetbridge.activities.WakeActivity"});
 
-let spotifyPlaylistDM1 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E365VyzxE0mxF:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDW = createCommand({data:"spotify:user:spotify:playlist:37i9dQZEVXcRfaeEbxXIgb:play"});
 
-let spotifyPlaylistDM2 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E38LZHLFnrM61:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM1 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E365VyzxE0mxF:play"});
 
-let spotifyPlaylistDM3 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36RU87qzgBFP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM2 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E38LZHLFnrM61:play"});
 
-let spotifyPlaylistDM4 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E396gGyCXEBFh:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM3 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E36RU87qzgBFP:play"});
 
-let spotifyPlaylistDM5 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E37a0Tt6CKJLP:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM4 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E396gGyCXEBFh:play"});
 
-let spotifyPlaylistDM6 = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1E36UIQLQK79od:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM5 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E37a0Tt6CKJLP:play"});
 
-let spotifyPlaylistDD = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZF1EfWFiI7QfIAKq:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDM6 = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1E36UIQLQK79od:play"});
 
-let spotifyPlaylistRR = createCommand({t:"intent", action:"android.intent.action.VIEW", categories:["android.intent.category.DEFAULT"], package:"com.spotify.music", data:"spotify:user:spotify:playlist:37i9dQZEVXbs0XkE2V8sMO:play", target:"activity" , flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_NO_ANIMATION"/*,  "FLAG_ACTIVITY_CLEAR_TOP", "FLAG_ACTIVITY_PREVIOUS_IS_TOP"*/]});
+let spotifyPlaylistDD = createCommand({data:"spotify:user:spotify:playlist:37i9dQZF1EfWFiI7QfIAKq:play"});
+
+let spotifyPlaylistRR = createCommand({data:"spotify:user:spotify:playlist:37i9dQZEVXbs0XkE2V8sMO:play"});
 
 // Spotify Remote Menu
 let spotifyMenu = {
