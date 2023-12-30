@@ -43,7 +43,7 @@
     "< Back" : () => back(),
     /*LANG*/'Sport mode': {
       value: settings.mode,
-      min: -1, max: 25,
+      min: -1, max: SPORT_MODES.length-1,
       format: v => v === -1 ? /*LANG*/"Auto" : SPORT_MODES[v],
       onchange: v => {
         settings.mode = v;
