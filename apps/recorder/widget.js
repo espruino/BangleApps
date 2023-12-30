@@ -258,13 +258,11 @@
       var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
       function nextTrackFilename() { return "recorder.log" + date + trackNo.toString(36) + ".csv"; }
       function mostRecentFile() {
-        const logs = require("Storage")
-          .list(/^recorder\.log/)
-          .map(x => x.replace(/^recorder\.log/, ""));
+        const logs = require("Storage").list(/^recorder\.log/);
 
         if(logs.length > 0){
           logs.sort();
-          const latest = "recorder.log" + logs[logs.length-1].replace("\1", "");
+          const latest = logs[logs.length-1].replace("\1", "");
           const f = require("Storage").open(latest, "r");
           const timeIdx = f.readLine().replace("\n", "").split(",").indexOf("Time");
           if(timeIdx >= 0){
