@@ -39,7 +39,10 @@
   ];
 
   E.showMenu({
-    "" : { "title" : /*LANG*/"HRM sport mode" },
+    "" : { "title" : /*LANG*/"HRM sport mode", remove: () => {
+      // nothing to do
+      }
+    },
     "< Back" : () => back(),
     /*LANG*/'Sport mode': {
       value: settings.mode,
@@ -48,6 +51,7 @@
       onchange: v => {
         settings.mode = v;
         writeSettings();
+        Bangle.setOptions({hrmSportMode: settings.mode});
       }
     },
   });
