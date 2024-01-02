@@ -327,7 +327,7 @@ let _drawData = function(key, y, c){
 
   } else if (key =="BATTVOLT" ) {
     text = "BATV";
-    value = (E.getAnalogVRef()*analogRead(3)*4).toFixed(2) + "V";
+    value = (3.3*analogRead(3)*4).toFixed(2) + "V";
   } else if(key == "HRM"){
     value = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
 
