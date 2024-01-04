@@ -1,9 +1,9 @@
 var option = null;
 
 //debugging or analysis files
-var logfile = require("Storage").open("HRV_log.csv", "w");
+//var logfile = require("Storage").open("HRV_log.csv", "w");
 
-logfile = require("Storage").open("HRV_log.csv", "a");
+var logfile = require("Storage").open("HRV_log.csv", "a");
 
 var csv = [
           "time",
@@ -16,11 +16,9 @@ var csv = [
           ];
 logfile.write(csv.join(",")+"\n");
 
-var debugging = true;
 var samples = 0; // how many samples have we connected?
 var collectData = false; // are we currently collecting data?
 
-var BPM_array = [];
 var raw_HR_array = new Float32Array(1536);
 var alternate_array = new Float32Array(3072);
 var pulse_array = [];
@@ -43,12 +41,6 @@ function storeMyData(data, file_type) { "ram"
 
 function average(samples) {
   return E.sum(samples) / samples.length; // faster builtin
-   /* var sum = 0;
-    for (var i = 0; i < samples.length; i++) {
-        sum += parseFloat(samples[i]);
-    }
-    var avg = sum / samples.length;
-    return avg;*/
 }
 
 function StandardDeviation (array) {
@@ -216,25 +208,11 @@ function calculate_HRV() {
           movement.toFixed(5)
           ];
       logfile.write(csv.join(",")+"\n");
-
-
-   //   for (let i = 0; i < raw_HR_array.length; i++) {
-     //     raw_HR_array[i] = null;
-      //}
-
       turn_on();
     }
 }
 
-function btn1Pressed() {
-  if(option === null){
-    g.clear();
-    g.drawString("one-off assessment", px, py);
-    option = 0;
 
-    turn_on();
-  }
-}
 
 function btn3Pressed() {
   if(option === null){
@@ -248,7 +226,7 @@ function btn3Pressed() {
 }
 
 function turn_on() {
-  BPM_array = [];
+
   pulse_array = [];
   samples = 0;
   if (accel) clearInterval(accel);
@@ -265,7 +243,6 @@ function drawButtons() {
   g.setFont("6x8", 2);
   g.setFontAlign(-1,1);
   g.drawString("continuous", 120, 210);
-  g.drawString("one-time", 140, 50);
   g.setColor("#ffffff");
   g.setFontAlign(0, 0);
 }
@@ -277,11 +254,8 @@ drawButtons();
 g.setFont("6x8", 2);
 g.setColor("#ffffff");
 g.setFontAlign(0, 0); // center font
-g.drawString("check app README\nfor more info", px, py);
 
-setWatch(btn1Pressed, BTN1, {repeat:true});
 setWatch(btn3Pressed, BTN3, {repeat:true});
-
 
 
 Bangle.on('HRM-raw', function (e) {
