@@ -3,7 +3,7 @@
     "name": "Quote Clock",
     "version": "0.01",
     "description": "A clock showing quotes every hour",
-    "icon": "app.img",
+    "icon": "app.png",
     "type": "clock",
     "tags": "clock,shakespeare",
     "supports": ["BANGLEJS2"],
