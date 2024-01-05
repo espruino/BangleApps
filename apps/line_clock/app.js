@@ -9,9 +9,17 @@ const hourOffset = 32;
 const numberOffset = 85;
 const numberSize = 22;
 
+const SETTINGS_FILE = "line_clock.setting.json";
+
 let settings = {
-  showLock: true
+  showLock: true,
+  showMinute: true,
 };
+
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+for (const key in saved_settings) {
+  settings[key] = saved_settings[key];
+}
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
 let gHeight = g.getHeight(), gCenterY = gHeight/2;
@@ -218,7 +226,7 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-function lockListenerBw(isLocked) {
+function lockListenerBw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   draw();
@@ -267,7 +275,10 @@ function draw() {
 
 
   drawHand();
-  drawNumber(currentMinute);
+
+  if(settings.showMinute){
+    drawNumber(currentMinute);
+  }
 }
 
 draw();

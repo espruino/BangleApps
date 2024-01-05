@@ -12,6 +12,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"line_clock.app.js","url":"app.js"},
-    {"name":"line_clock.img","url":"app-icon.js","evaluate":true}
-  ]
+    {"name":"line_clock.img","url":"app-icon.js","evaluate":true},
+    {"name":"line_clock.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":"line_clock.setting.json"}]
 }
