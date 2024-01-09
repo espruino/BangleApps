@@ -109,7 +109,7 @@ exports.swipeOn = function(autohide) {
   };
 
   function anim(dir, callback) {
-    if (exports.animInterval) clearInterval(exports.interval);
+    if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
       offset += dir;
       let stop = false;
