@@ -17,7 +17,7 @@
   </ul>
     <div id="fw-ok" style="display:none">
       <p  id="fw-old-bootloader-msg">If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
-        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to DFU 2v12</a> and then click the 'Upload' button that appears.</p>
+        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v20_banglejs2.hex" class="fw-link">click here to update to DFU 2v20</a> and then click the 'Upload' button that appears.</p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
         <ul id="latest-firmware-list">
@@ -32,7 +32,8 @@
         bit of code that runs when Bangle.js starts, and it is able to update the
         Bangle.js firmware. Normally you would update firmware via this Firmware
         Updater app, but if for some reason Bangle.js will not boot, you can
-        <a href="https://www.espruino.com/Bangle.js2#firmware-updates">always use DFU to to the update manually</a>.</p>
+        <a href="https://www.espruino.com/Bangle.js2#firmware-updates">always use DFU to do the update manually</a>.
+        On DFU 2v19 and earlier, iOS devices could have issues updating firmware - 2v20 fixes this.</p>
         <p>DFU is itself a bootloader, but here we're calling it DFU to avoid confusion
         with the Bootloader app in the app loader (which prepares Bangle.js for running apps).</p>
       </div>
@@ -103,7 +104,7 @@ function onInit(device) {
     if (crc==156320890) version = "2v17";
     if (crc==4012421318) version = "2v18";
     if (crc==1856454048) version = "2v19";
-    if (crc==2893810756) version = "2v20";
+    if (crc==2893810756 || crc==1273571156) version = "2v20";
     if (!ok) {
       version += 	`(&#9888; update required)`;
     }
