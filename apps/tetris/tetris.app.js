@@ -200,59 +200,80 @@ function linear(x) {
 
 function newGame() {
   E.showMenu();
-  Bangle.setUI();
-  if (control == 2) {
-    Bangle.on("accel", (e) => {
+  Bangle.setUI({mode : "custom", btn: () => load()});
+  if (control == 4) { // Swipe
+    Bangle.on("touch", (e) => {
+      t = rotateTile(ct, 3);
+      if (moveOk(t, 0, 0)) {
+        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        ct = t;
+        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+      }
+    });
+
+    Bangle.on("swipe", (x,y) => {
+      if (y<0) y = 0;
+      if (moveOk(ct, x, y)) {
+        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        px += x;
+        py += y;
+        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+      }
+    });
+  } else { // control != 4
+    if (control == 2) { // Tilt
+      Bangle.on("accel", (e) => {
+        if (state != 1) return;
+        if (control != 2) return;
+        print(e.x);
+        linear((0.2-e.x) * 2.5);
+      });
+    }
+    if (control == 3) { // Move
+    Bangle.setBarometerPower(true);
+    Bangle.on("pressure", (e) => {
       if (state != 1) return;
-      if (control != 2) return;
-      print(e.x);
-      linear((0.2-e.x) * 2.5);
+      if (control != 3) return;
+      let a = e.altitude;
+      if (alt_start == -9999)
+        alt_start = a;
+      a = a - alt_start;
+        print(e.altitude, a);
+      linear(a);
+    });
+    }
+    Bangle.on("drag", (e) => {
+    let h = 176/2;
+    if (state == 2) {
+      if (e.b)
+        selectGame();
+      return;
+    }
+    if (!e.b)
+      return;
+    if (state == 0) return;
+    if (e.y < h) {
+      if (e.x < h)
+        rotate();
+      else {
+        let i = 0;
+        for (i=0; i<10; i++) {
+          move(0, 1);
+          g.flip();
+        }
+      }
+    } else {
+      if (control == 1)
+        linear((e.x - 20) / 156);
+      if (control != 0)
+        return;
+      if (e.x < h)
+        move(-1, 0);
+      else
+        move(1, 0);
+    }
     });
   }
-  if (control == 3) {
-   Bangle.setBarometerPower(true);
-   Bangle.on("pressure", (e) => {
-     if (state != 1) return;
-     if (control != 3) return;
-    let a = e.altitude;
-    if (alt_start == -9999)
-      alt_start = a;
-    a = a - alt_start;
-      print(e.altitude, a);
-    linear(a);
-   });
-  }
-  Bangle.on("drag", (e) => {
-   let h = 176/2;
-   if (state == 2) {
-     if (e.b)
-       selectGame();
-     return;
-   }
-   if (!e.b)
-    return;
-   if (state == 0) return;
-   if (e.y < h) {
-    if (e.x < h)
-      rotate();
-    else {
-      let i = 0;
-      for (i=0; i<10; i++) {
-        move(0, 1);
-        g.flip();
-      }
-    }
-   } else {
-    if (control == 1)
-      linear((e.x - 20) / 156);
-    if (control != 0)
-      return;
-    if (e.x < h)
-      move(-1, 0);
-    else
-      move(1, 0);
-   }
-  });
 
   initGame();
   drawGame();
@@ -276,11 +297,12 @@ function drawGame() {
 
 function selectLevel() {
   print("Level selection menu");
-  
+
   var menu = {};
-  menu["Level 1"] = () => { level = 0; selectGame(); };
-  menu["Level 2"] = () => { level = 1; selectGame(); };
-  menu["Level 3"] = () => { level = 2; selectGame(); };
+  menu["< Back"] = () => {selectGame();};
+  menu[/*LANG*/"Level 1"] = () => { level = 0; selectGame(); };
+  menu[/*LANG*/"Level 2"] = () => { level = 1; selectGame(); };
+  menu[/*LANG*/"Level 3"] = () => { level = 2; selectGame(); };
   E.showMenu(menu);
 }
 
@@ -290,11 +312,12 @@ function selectGame() {
   //for (let i = 0; i < 100000; i++) ;
   
   var menu = {};
-  menu["Normal"] = () => { control = 0; newGame(); };
-  menu["Drag"] = () => { control = 1; newGame(); };
-  menu["Tilt"] = () => { control = 2; newGame(); };
-  menu["Move"] = () => { control = 3; newGame(); };
-  menu["Level"] = () => { selectLevel(); };
+  menu[/*LANG*/"Normal"] = () => { control = 0; newGame(); };
+  menu[/*LANG*/"Drag"] = () => { control = 1; newGame(); };
+  menu[/*LANG*/"Tilt"] = () => { control = 2; newGame(); };
+  menu[/*LANG*/"Move"] = () => { control = 3; newGame(); };
+  menu[/*LANG*/"Swipe"] = () => { control = 4; newGame(); };
+  menu[/*LANG*/"Level"] = () => { selectLevel(); };
   E.showMenu(menu);
 }
 
