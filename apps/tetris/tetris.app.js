@@ -220,7 +220,7 @@ function newGame() {
         drawTile(ct, ctn, ox+px*8, oy+py*8, false);
       }
     });
-  } else {
+  } else { // control != 4
     if (control == 2) { // Tilt
       Bangle.on("accel", (e) => {
         if (state != 1) return;
