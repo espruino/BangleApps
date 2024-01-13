@@ -1,7 +1,7 @@
 {
   "id": "calendar",
   "name": "Calendar",
-  "version": "0.16",
+  "version": "0.17",
   "description": "Monthly calendar, displays holidays uploaded from the web interface and scheduled events.",
   "icon": "calendar.png",
   "screenshots": [{"url":"screenshot_calendar.png"}],
