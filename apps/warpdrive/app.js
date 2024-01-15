@@ -232,40 +232,30 @@ void v_project(Point* p){
 }
 
 void stars() {
-  f += 5;
+  f += 7;
   _rngState = 1013904223;
 
-  // rng(); rng(); rng();
-
   for (int i = 0; i < 100; ++i) {
-    int s = rng();
-    int a = rng();
+    int a = rng() + ((i & 1 ? f : -f) << 7);
     int ca = cos(a);
     int sa = sin(a);
-    int r = ((rng() & 0xFF) + 0xFF) << 9;
-    position.x = ca << 9;
-    position.y = sa << 9;
-    position.x = ((signed char)(s & 0xFF)) << 9;
-    s = rng();
-    position.y = ((signed char)(s & 0xFF)) << 9;
-    s = rng();
-    position.z = 0xFF - ((s + f) & 0xFF);
+    int r = ((rng() & 0xFF) + 0xFF);
+    position.x = r*ca;
+    position.y = r*sa;
+    position.z = 0xFF - ((rng() + f) & 0xFF);
     position.z <<= 12;
     position.z -= 100 << 8;
-
     int light = position.z < (800 << 8);
     int dark =  position.z > ((800 + 500) << 8);
-
     scale = position;
-    scale.z += 30 << 10;
 
     v_project(&position);
+    int s = 32 * position.z >> 8;
+    if (!s)
+      continue;
+
+    scale.z += 30 << 10;
     v_project(&scale);
-
-    s = (((s & 3) + 3) * position.z + 256) >> 7;
-    if (s < 1) s = 1;
-    if (s > 10) s = 10;
-
     int rx = s*sa >> 8;
     int ry = s*ca >> 8;
 
