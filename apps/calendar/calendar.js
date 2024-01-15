@@ -280,18 +280,12 @@ const showMenu = function() {
       setUI();
     },
     /*LANG*/"Exit": () => load(),
-    /*LANG*/"Settings": () => {
-      const appSettings = () => eval(require('Storage').read('calendar.settings.js'))(() => {
+    /*LANG*/"Settings": () =>
+      eval(require('Storage').read('calendar.settings.js'))(() => {
         loadSettings();
         loadEvents();
         showMenu();
-      });
-      appSettings(() => {
-        loadSettings();
-        loadEvents();
-        showMenu();
-      });
-    },
+      }),
   };
   if (require("Storage").read("alarm.app.js")) {
     menu[/*LANG*/"Launch Alarms"] = () => {
