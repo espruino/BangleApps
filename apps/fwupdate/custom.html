@@ -88,23 +88,28 @@ function onInit(device) {
     document.getElementById("fw-unknown").style = "display:none";
     document.getElementById("fw-ok").style = "";
   }
-  Puck.eval("E.CRC32(E.memoryArea(0xF7000,0x7000))", crc => {
-    console.log("DFU CRC = "+crc);
-    var version = `unknown (CRC ${crc})`;
+  Puck.eval("[E.CRC32(E.memoryArea(0xF7000,0x6000)),E.CRC32(E.memoryArea(0xF7000,0x7000))]", crcs => {
+    console.log("DFU CRC (6 pages) = "+crcs[0]);
+    console.log("DFU CRC (7 pages) = "+crcs[1]);
+    var version = `unknown (CRC ${crcs[1]})`;
     var ok = true;
-    if (crc==1339551013) { version = "2v10.219"; ok = false; }
-    if (crc==1207580954) { version = "2v10.236"; ok = false; }
-    if (crc==3435933210) version = "2v11.52";
-    if (crc==46757280) version = "2v11.58";
-    if (crc==3508163280 || crc==1418074094) version = "2v12";
-    if (crc==4056371285) version = "2v13";
-    if (crc==1038322422) version = "2v14";
-    if (crc==2560806221) version = "2v15";
-    if (crc==2886730689) version = "2v16";
-    if (crc==156320890) version = "2v17";
-    if (crc==4012421318) version = "2v18";
-    if (crc==1856454048) version = "2v19";
-    if (crc==2893810756 || crc==1273571156) version = "2v20";
+    if (crcs[0] == 1787004733) { // check 6 page CRC - the 7th page isn't used in 2v20
+      version = "2v20";
+    } else { // for other versions all 7 pages are used, check those
+      var crc = crcs[2]; 
+      if (crc==1339551013) { version = "2v10.219"; ok = false; }
+      if (crc==1207580954) { version = "2v10.236"; ok = false; }
+      if (crc==3435933210) version = "2v11.52";
+      if (crc==46757280) version = "2v11.58";
+      if (crc==3508163280 || crc==1418074094) version = "2v12";
+      if (crc==4056371285) version = "2v13";
+      if (crc==1038322422) version = "2v14";
+      if (crc==2560806221) version = "2v15";
+      if (crc==2886730689) version = "2v16";
+      if (crc==156320890) version = "2v17";
+      if (crc==4012421318) version = "2v18";
+      if (crc==1856454048) version = "2v19";      
+    }
     if (!ok) {
       version += 	`(&#9888; update required)`;
     }
