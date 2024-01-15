@@ -239,6 +239,12 @@ void stars() {
 
   for (int i = 0; i < 100; ++i) {
     int s = rng();
+    int a = rng();
+    int ca = cos(a);
+    int sa = sin(a);
+    int r = ((rng() & 0xFF) + 0xFF) << 9;
+    position.x = ca << 9;
+    position.y = sa << 9;
     position.x = ((signed char)(s & 0xFF)) << 9;
     s = rng();
     position.y = ((signed char)(s & 0xFF)) << 9;
@@ -260,6 +266,9 @@ void stars() {
     if (s < 1) s = 1;
     if (s > 10) s = 10;
 
+    int rx = s*sa >> 8;
+    int ry = s*ca >> 8;
+
     position.x >>= 8;
     position.y >>= 8;
     scale.x >>= 8;
@@ -270,8 +279,8 @@ void stars() {
     int color = 4 | (i & 1);
     fillTriangle(
       scale.x, scale.y,
-      position.x - s, position.y,
-      position.x + s, position.y,
+      position.x - rx, position.y - ry,
+      position.x + rx, position.y + ry,
       light ? alternate(color, 7) :
       dark ? alternate(color, 0) :
                  solid(color)
