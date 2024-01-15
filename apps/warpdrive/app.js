@@ -498,23 +498,12 @@ let locked = false,
 var interval = 30,
   timeout;
 
-function setupInterval() {
+function setupInterval(force) {
   if (timeout)
     clearTimeout(timeout);
-  if (!locked || charging)
-    tick(locked);
-  let trigger;
-  let schedule = interval => {
-    timeout = setTimeout(trigger, interval | 0);
-    // print(interval);
-  };
-  trigger = _ => {
-    if (!locked || charging) interval = 30;
-    else interval -= (interval - 130) * 0.15;
-    tick(locked);
-    schedule(interval > 120 ? 60000 : interval);
-  };
-  schedule(interval);
+  let stopped = locked && !charging;
+  timeout = setTimeout(setupInterval, stopped ? 60000 : 30);
+  tick(stopped && !force);
 }
 
 function test(addr, y) {
@@ -581,7 +570,7 @@ function probe() {
   print('Found lcdBuffer at ' + lcdBuffer.toString(16) + ' stride=' + stride);
   gfx.init(start, stride, E.getAddressOf(sintable, true));
   gfx.setCamera(0, 0, -300 << 8);
-  setupInterval();
+  setupInterval(true);
 }
 
 function init() {
