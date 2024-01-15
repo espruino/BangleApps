@@ -1,6 +1,6 @@
 const gfx = E.compiledC(`
 // void init(int, int, int)
-// void clear()
+// void clear(int)
 // void render(int, int)
 // void setCamera(int, int, int)
 // void stars()
@@ -51,15 +51,6 @@ int sin(int angle) {
 
 int cos(int angle) {
   return sin(angle + 0x8000);
-}
-
-void clear() {
-  unsigned short* cursor = (unsigned short*) fb;
-  for (int y = 0; y < 176; ++y) {
-    for (int x = 0; x < 66/2; ++x)
-      *cursor++ = 0;
-    cursor++;
-  }
 }
 
 void setCamera(int x, int y, int z) {
@@ -125,6 +116,76 @@ void drawHLine(int x, unsigned int y, int l, unsigned int c) {
   for (int x = bitstart; x < bitend; x += 10 * 3) {
     unsigned int R = x & 31;
     row[x >> 5] = (c << R) | (c >> (36 - R)) | (c >> (30 - R)) | (c << (R - 6));
+  }
+}
+
+void fillRect(int x, unsigned int y, int w, int h, unsigned int c) {
+  if (x < 0) {
+    w += x;
+    x = 0;
+  }
+  if (x + w >= 176) {
+    w = 176 - x;
+  }
+  if (w <= 0 || y >= 176)
+    return;
+
+  if (y < 0) {
+    h += y;
+    y = 0;
+  }
+  if (y + h >= 176) {
+    h = 176 - y;
+  }
+  if (h <= 0 || y >= 176)
+    return;
+
+  int bitstart = x * 3;
+  int bitend = (x + w) * 3;
+  int wstart = bitstart >> 5;
+  int wend = bitend >> 5;
+  int padstart = bitstart & 31;
+  int padend = bitend & 31;
+  int maskstart = -1 << padstart;
+  int maskend = unsigned(-1) >> (32 - padend);
+  if (wstart == wend) {
+    maskstart &= maskend;
+    maskend = 0;
+  }
+
+  int* row = (int*) &fb[y * stride];
+  if (maskstart) {
+    for (int i = 0; i < h; ++i)
+      row[wstart + (i*stride>>2)] = (row[wstart + (i*stride>>2)] & ~maskstart) | ((c << padstart) & maskstart);
+    while (bitstart >> 5 == wstart)
+        bitstart += 3;
+  }
+  if (maskend) {
+    for (int i = 0; i < h; ++i)
+      row[wend + (i*stride>>2)] = (row[wend + (i*stride>>2)] & ~maskend) |
+        (((c >> (30 - padend)) | (c >> (36 - padend))) & maskend);
+  }
+  bitend -= padend;
+  for (int x = bitstart; x < bitend; x += 10 * 3) {
+    unsigned int R = x & 31;
+    R = (c << R) | (c >> (36 - R)) | (c >> (30 - R)) | (c << (R - 6));
+    for (int i = 0; i < h; ++i)
+      row[(x >> 5) + (i*stride>>2)] = R;
+  }
+}
+
+void clear(int c) {
+  c &= 7;
+  if (!c || c==7) {
+    c = solid(c);
+    unsigned short* cursor = (unsigned short*) fb;
+    for (int y = 0; y < 176; ++y) {
+      for (int x = 0; x < 66/2; ++x)
+        *cursor++ = c;
+      cursor++;
+    }
+  } else {
+    fillRect(0, 0, 176, 176, solid(c));
   }
 }
 
@@ -426,6 +487,7 @@ const nodeCount = 4;
 const nodes = new Array(nodeCount);
 const sintable = new Uint8Array(256);
 const translation = new Uint32Array(10);
+let bgColor = 0;
 const BLACK = g.setColor.bind(g, 0);
 const WHITE = g.setColor.bind(g, 0xFFFF);
 let lcdBuffer = 0,
@@ -433,7 +495,8 @@ let lcdBuffer = 0,
 
 let locked = false,
   charging = false;
-var interval = 30, timeout;
+var interval = 30,
+  timeout;
 
 function setupInterval() {
   if (timeout)
@@ -522,6 +585,9 @@ function probe() {
 }
 
 function init() {
+  bgColor = g.theme.bg & 0x8410;
+  bgColor = ((bgColor >> 15) | (bgColor >> 9) | (bgColor >> 2));
+
   g.clear();
   g.setFont('6x8', 2);
   g.setFontAlign(0, 0.5);
@@ -601,9 +667,8 @@ function drawNode(index) {
 function tick(widgets) {
   if (lcdBuffer && !widgets) {
     BLACK().drawRect(-1, -1, 0, 177); // dirty all the rows
-    gfx.clear();
+    gfx.clear(bgColor);
     gfx.stars();
-    // gfx.setCamera(0, 0, 0);
     for (let i = 0; i < nodeCount; ++i)
       updateNode(i);
     for (let i = 0; i < nodeCount; ++i)
@@ -614,9 +679,7 @@ function tick(widgets) {
   var h = d.getHours(),
     m = d.getMinutes();
   var time = (" " + h).substr(-2) + ":" + m.toString().padStart(2, 0);
-  WHITE()
-    .setBgColor(0)
-    .setFontAlign(0, 0.5)
+  g.setFontAlign(0, 0.5)
     .setFont('6x8', 2)
     .drawString(time, 176 / 2, 176 - 16, true);
 
