@@ -679,7 +679,8 @@ function tick(widgets) {
   var h = d.getHours(),
     m = d.getMinutes();
   var time = (" " + h).substr(-2) + ":" + m.toString().padStart(2, 0);
-  g.setFontAlign(0, 0.5)
+  g.setColor(g.theme.fg)
+    .setFontAlign(0, 0.5)
     .setFont('6x8', 2)
     .drawString(time, 176 / 2, 176 - 16, true);
 
