@@ -43,24 +43,24 @@ const dowLbls = function() {
 }();
 
 const loadEvents = () => {
+  // add holidays & other events
+  events = (require("Storage").readJSON("calendar.days.json",1) || []).map(d => {
+    const date = new Date(d.date);
+    const o = {date: date, msg: d.name, type: d.type};
+    if (d.repeat) {
+      o.repeat = d.repeat;
+    }
+    return o;
+  });
   // all alarms that run on a specific date
-  events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
+  events = events.concat((require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
     const date = new Date(a.date);
     const time = timeutils.decodeTime(a.t);
     date.setHours(time.h);
     date.setMinutes(time.m);
     date.setSeconds(time.s);
     return {date: date, msg: a.msg, type: "e"};
-  });
-  // add holidays & other events
-  (require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
-    const date = new Date(d.date);
-    const o = {date: date, msg: d.name, type: d.type};
-    if (d.repeat) {
-      o.repeat = d.repeat;
-    }
-    events.push(o);
-  });
+  }));
 };
 
 const loadSettings = () => {
@@ -280,14 +280,12 @@ const showMenu = function() {
       setUI();
     },
     /*LANG*/"Exit": () => load(),
-    /*LANG*/"Settings": () => {
-      const appSettings = eval(require('Storage').read('calendar.settings.js'));
-      appSettings(() => {
+    /*LANG*/"Settings": () =>
+      eval(require('Storage').read('calendar.settings.js'))(() => {
         loadSettings();
         loadEvents();
         showMenu();
-      });
-    },
+      }),
   };
   if (require("Storage").read("alarm.app.js")) {
     menu[/*LANG*/"Launch Alarms"] = () => {

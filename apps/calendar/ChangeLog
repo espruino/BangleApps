@@ -17,3 +17,4 @@
 0.15: Edit holidays on device in settings
 0.16: Add menu to fast open settings to edit holidays
       Display Widgets in menus
+0.17: Load holidays before events so the latter is not overpainted
