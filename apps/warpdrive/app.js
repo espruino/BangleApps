@@ -621,3 +621,8 @@ Bangle.on("lock", l => {
   locked = l;
   setupInterval();
 });
+
+Bangle.on('charging', c => {
+  charging = c;
+  setupInterval();
+});
