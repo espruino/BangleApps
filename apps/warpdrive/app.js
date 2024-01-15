@@ -439,7 +439,7 @@ function setupInterval() {
   if (timeout)
     clearTimeout(timeout);
   if (!locked || charging)
-    tick(1);
+    tick(locked);
   let trigger;
   let schedule = interval => {
     timeout = setTimeout(trigger, interval | 0);
@@ -448,7 +448,7 @@ function setupInterval() {
   trigger = _ => {
     if (!locked || charging) interval = 30;
     else interval -= (interval - 130) * 0.15;
-    tick(1);
+    tick(locked);
     schedule(interval > 120 ? 60000 : interval);
   };
   schedule(interval);
@@ -598,11 +598,8 @@ function drawNode(index) {
   gfx.render(E.getAddressOf(translation, true));
 }
 
-function tick(full) {
-  if (!lcdBuffer)
-    full = false;
-
-  if (full) {
+function tick(widgets) {
+  if (lcdBuffer) {
     BLACK().drawRect(-1, -1, 0, 177); // dirty all the rows
     gfx.clear();
     gfx.stars();
@@ -617,11 +614,19 @@ function tick(full) {
   var h = d.getHours(),
     m = d.getMinutes();
   var time = (" " + h).substr(-2) + ":" + m.toString().padStart(2, 0);
-  WHITE().drawString(time, 176 / 2, 176 - 16, true);
+  WHITE()
+    .setFontAlign(0, 0.5)
+    .setFont('6x8', 2)
+    .drawString(time, 176 / 2, 176 - 16, true);
+
+  if (widgets)
+    Bangle.drawWidgets();
 }
 
 init();
 
+Bangle.setUI("clock");
+Bangle.loadWidgets();
 Bangle.on("lock", l => {
   locked = l;
   setupInterval();
