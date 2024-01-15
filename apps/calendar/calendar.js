@@ -141,7 +141,6 @@ const calcDays = (month, monthMaxDayMap, dowNorm) => {
 };
 
 const drawCalendar = function(date) {
-  d1 = new Date();
   g.setBgColor(bgColor);
   g.clearRect(0, 0, maxX, maxY);
   g.setBgColor(bgColorMonth);
