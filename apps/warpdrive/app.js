@@ -431,15 +431,27 @@ const WHITE = g.setColor.bind(g, 0xFFFF);
 let lcdBuffer = 0,
   start = 0;
 
-let locked = false;
-var interval;
+let locked = false,
+  charging = false;
+var interval = 30, timeout;
 
 function setupInterval() {
-  if (interval)
-    clearInterval(interval);
-  if (!locked)
-    tick();
-  interval = setInterval(tick.bind(null, !locked), locked ? 60 * 1000 : 70);
+  if (timeout)
+    clearTimeout(timeout);
+  if (!locked || charging)
+    tick(1);
+  let trigger;
+  let schedule = interval => {
+    timeout = setTimeout(trigger, interval | 0);
+    // print(interval);
+  };
+  trigger = _ => {
+    if (!locked || charging) interval = 30;
+    else interval -= (interval - 130) * 0.15;
+    tick(1);
+    schedule(interval > 120 ? 60000 : interval);
+  };
+  schedule(interval);
 }
 
 function test(addr, y) {
