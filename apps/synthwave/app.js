@@ -47,7 +47,7 @@ void shiftTerrain() {
   }
 
   for (int x = 0; x < terrainWidth; ++x)
-    terrain[0][x] = (rng() & 0x3F) + 0xF;
+    terrain[0][x] = (int(terrain[0][x]) + ((rng() & 0x7F) + 0x7)) >> 1;
   int mid = terrainWidth >> 1;
   terrain[0][mid-1] >>= 1;
   terrain[0][mid  ] = 0;
