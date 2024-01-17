@@ -11,6 +11,8 @@
 	"allow_emulator": true,
 	"storage": [
 		{"name":"binaryclk.app.js","url":"app.js"},
+		{"name":"binaryclk.settings.js","url":"settings.js"},
 		{"name":"binaryclk.img","url":"app-icon.js","evaluate":true}
-	]
+	],
+	"data": [{"name":"binaryclk.json"}]
 }
