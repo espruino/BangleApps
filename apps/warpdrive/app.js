@@ -519,7 +519,9 @@ function test(addr, y) {
 function probe() {
   if (!start) {
     start = 0x20000000;
-    if (test(0x2002d3fe, 0)) // try to skip loading if possible
+    if (test(Bangle.getOptions().lcdBufferPtr, 0))
+      start = Bangle.getOptions().lcdBufferPtr; // FW=2v21
+    else if (test(0x2002d3fe, 0)) // try to skip loading if possible
       start = 0x2002d3fe; // FW=2v20
   }
   const end = Math.min(start + 0x800, 0x20038000);

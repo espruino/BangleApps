@@ -29,8 +29,6 @@ const unsigned char ship[] = {
 const unsigned int terrainLength = 12;
 const unsigned int terrainWidth = 12;
 unsigned char terrain[terrainLength][terrainWidth];
-unsigned int travel = 0;
-
 unsigned int _rngState;
 unsigned int rng() {
     _rngState ^= _rngState << 17;
@@ -40,7 +38,6 @@ unsigned int rng() {
 }
 
 void shiftTerrain() {
-  travel++;
   for (int i = terrainLength - 1; i > 0; --i) {
     for (int x = 0; x < terrainWidth; ++x)
       terrain[i][x] = terrain[i-1][x];
@@ -651,7 +648,9 @@ function test(addr, y) {
 function probe() {
   if (!start) {
     start = 0x20000000;
-    if (test(0x2002d3fe, 0)) // try to skip loading if possible
+    if (test(Bangle.getOptions().lcdBufferPtr, 0))
+      start = Bangle.getOptions().lcdBufferPtr; // FW=2v21
+    else if (test(0x2002d3fe, 0)) // try to skip loading if possible
       start = 0x2002d3fe; // FW=2v20
   }
   const end = Math.min(start + 0x800, 0x20038000);
