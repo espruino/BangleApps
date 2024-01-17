@@ -325,6 +325,8 @@ void drawTerrain() {
 
   int dist[] = {
     solid(7),
+    solid(7),
+    alternate(5, 7),
     alternate(5, 7),
     solid(5),
     solid(5),
@@ -333,39 +335,63 @@ void drawTerrain() {
   };
   int line = solid(5);
 
-  int fovz;
-  int prvz = ((90 << 16) / ((90 << 8) + ((terrainLength) * tileSize - camera.z))); // 16:16 / 16:8 = 16:8
-  for (int i = 0; i < terrainLength - 1; ++i, prvz = fovz) {
-    fovz = ((90 << 16) / ((90 << 8) + ((terrainLength - (i + 1)) * tileSize - camera.z))); // 16:16 / 16:8 = 16:8
-    int lum = i < 3 ? i - 3 : 3;
+  int fovz, fz;
+  int pz = (terrainLength) * tileSize - camera.z;
+  int prvz = ((90 << 16) / ((90 << 8) + pz)); // 16:16 / 16:8 = 16:8
+  for (int i = 0; i < terrainLength - 1; ++i, prvz = fovz, pz = fz) {
+    fz = (terrainLength - (i + 1)) * tileSize - camera.z;
+    fovz = ((90 << 16) / ((90 << 8) + fz)); // 16:16 / 16:8 = 16:8
+    int lum = i < 7 ? i : 7;
     for (int x = 0; x < terrainWidth - 1; ++x) {
-      int ax = (((((x    ) * tileSize - camera.x) >> 8) * prvz) >> 8) + (176/2); // int * 16:8 = 16:8 -> int
-      int bx = (((((x + 1) * tileSize - camera.x) >> 8) * prvz) >> 8) + (176/2); // int * 16:8 = 16:8 -> int
-      int cx = (((((x    ) * tileSize - camera.x) >> 8) * fovz) >> 8) + (176/2); // int * 16:8 = 16:8 -> int
-      int dx = (((((x + 1) * tileSize - camera.x) >> 8) * fovz) >> 8) + (176/2); // int * 16:8 = 16:8 -> int
+      int ax = ((x    ) * tileSize - camera.x) >> 8;
+      int bx = ((x + 1) * tileSize - camera.x) >> 8;
+      int cx = ((x    ) * tileSize - camera.x) >> 8;
+      int dx = ((x + 1) * tileSize - camera.x) >> 8;
 
-      int ay = (176/2) - ((((terrain[i    ][x    ] << 8) - camera.y) >> 8) * prvz >> 8);
-      int by = (176/2) - ((((terrain[i    ][x + 1] << 8) - camera.y) >> 8) * prvz >> 8);
-      int cy = (176/2) - ((((terrain[i + 1][x    ] << 8) - camera.y) >> 8) * fovz >> 8);
-      int dy = (176/2) - ((((terrain[i + 1][x + 1] << 8) - camera.y) >> 8) * fovz >> 8);
+      int ay = ((terrain[i    ][x    ] << 8) - camera.y) >> 8;
+      int by = ((terrain[i    ][x + 1] << 8) - camera.y) >> 8;
+      int cy = ((terrain[i + 1][x    ] << 8) - camera.y) >> 8;
+      int dy = ((terrain[i + 1][x + 1] << 8) - camera.y) >> 8;
 
-      int na = (ax - bx)*(ay - cy) - (ay - by)*(ax - cx);
-      if (na > 0) {
-        int c = (lum + (na >> 8));
-        if (c < 0) c = 0;
-        else if (c > 5) c = 5;
-        c = dist[c];
-        fillTriangle(ax, ay, bx, by, cx, cy, c);
+      int na = ((ax - bx)*(ay - cy) - (ay - by)*(ax - cx)) >> 8;
+      int nb = ((bx - dx)*(by - cy) - (by - dy)*(bx - cx)) >> 8;
+      int ca = lum - na;
+      int cb = lum - nb;
+
+      ax = 88 + (ax * prvz >> 8);
+      bx = 88 + (bx * prvz >> 8);
+      cx = 88 + (cx * fovz >> 8);
+      dx = 88 + (dx * fovz >> 8);
+      ay = 88 - (ay * prvz >> 8);
+      by = 88 - (by * prvz >> 8);
+      cy = 88 - (cy * fovz >> 8);
+      dy = 88 - (dy * fovz >> 8);
+
+      int av = (ax - bx)*(ay - cy) - (ay - by)*(ax - cx);
+      int bv = (bx - dx)*(by - cy) - (by - dy)*(bx - cx);
+
+      if (av > 0) {
+        if (ca < 0) ca = 0;
+        else if (ca >= 7) ca = 7;
+        if (ca >= 6 && x >= terrainWidth/2 && x < terrainWidth/2+2) ca = 6;
+        ca = dist[ca];
+        fillTriangle(ax, ay, bx, by, cx, cy, ca);
       }
 
-      na = (bx - dx)*(by - cy) - (by - dy)*(bx - cx);
-      if (na > 0) {
-        int c = (lum + (na >> 8));
-        if (c < 0) c = 0;
-        else if (c > 5) c = 5;
-        c = dist[c];
-        fillTriangle(bx, by, cx, cy, dx, dy, c);
-        if (!c) {
+      if (bv > 0) {
+        int hasLine = false;
+        if (cb < 0) cb = 0;
+        else if (cb >= 7) {
+          cb = 7;
+          hasLine = true;
+        }
+        if (cb >= 6 && x >= terrainWidth/2 && x < terrainWidth/2+2) {
+          cb = 6;
+          hasLine = true;
+        }
+        cb = dist[cb];
+        fillTriangle(bx, by, cx, cy, dx, dy, cb);
+        if (hasLine) {
           fillTriangle(ax, ay, bx, by, bx, by - 1, line);
           fillTriangle(ax, ay, cx, cy, cx, cy - 1, line);
         }
