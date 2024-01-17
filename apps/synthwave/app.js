@@ -48,10 +48,12 @@ void shiftTerrain() {
 
   for (int x = 0; x < terrainWidth; ++x)
     terrain[0][x] = (rng() & 0x3F) + 0xF;
-  for (int x = 0; x < (terrainWidth >> 3); ++x)
-    terrain[0][((terrainWidth>>1)-(terrainWidth>>4)) + x] >>= 1;
-  for (int x = 0; x < (terrainWidth >> 2); ++x)
-    terrain[0][((terrainWidth>>1)-(terrainWidth>>5)) + x] = 0;
+  int mid = terrainWidth >> 1;
+  terrain[0][mid-1] >>= 1;
+  terrain[0][mid  ] = 0;
+  terrain[0][mid+1] = 0;
+  terrain[0][mid+2] = 0;
+  terrain[0][mid+3] >>= 1;
 }
 
 void init(unsigned char* _fb, int _stride, unsigned char* _sint) {
