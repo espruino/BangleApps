@@ -656,6 +656,8 @@ function drawNode(index) {
 }
 
 function tick(widgets) {
+  g.reset();
+
   if (lcdBuffer && !widgets) {
     BLACK().drawRect(-1, -1, 0, 177); // dirty all the rows
     gfx.clear(bgColor);
