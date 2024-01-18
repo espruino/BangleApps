@@ -1,5 +1,7 @@
 // App Forge
 
+"Bangle.loadWidgets()"; // Facilitates fastloading to this app via Fastload Utils, while still not loading widgets on standard `load` calls.
+
 st = require('Storage');
 
 l = /^a\..*\.js$/;
