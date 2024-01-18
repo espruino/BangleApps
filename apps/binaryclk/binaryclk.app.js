@@ -1,6 +1,7 @@
 var settings = Object.assign({
   fullscreen: false,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
+var full = settings.fullscreen;
 
 function draw() {
 	var dt = new Date();
@@ -17,12 +18,12 @@ function draw() {
 	let i = 0;
 	var gap = 8;
 	var mgn = 20;
-	if (settings.fullscreen) {
+	if (full) {
 		gap = 12;
 		mgn = 0;
 	}
 	const sq = 29;
-	var pos = sq + gap;
+	const pos = sq + gap;
 
 	for (let r = 3; r >= 0; r--) {
 		for (let c = 0; c < 4; c++) {
@@ -42,7 +43,7 @@ g.clear();
 draw();
 var secondInterval = setInterval(draw, 60000);
 Bangle.setUI("clock");
-if (!settings.fullscreen) {
+if (!full) {
 	Bangle.loadWidgets();
 	Bangle.drawWidgets();
 } 
