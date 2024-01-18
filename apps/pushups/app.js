@@ -9,13 +9,7 @@ const DETECTORS = [
     return (xyz.y > 0.4)?1:0;
   },
   (xyz) => {
-    if (xyz.y > 0.4 && xyz.z > -1) {
-      return 1;
-    } else if (xyz.x < 0.4 && xyz.z < -1) {
-      return 0;
-    } else {
-      return null;
-    }
+    return (xyz.x > 0)?1:0;
   },
   (xyz) => {
     if (xyz.z > -1) {
