@@ -729,9 +729,10 @@ function tick(widgets) {
   var d = new Date();
   var h = d.getHours(), m = d.getMinutes();
     g.setColor(widgets ? g.theme.fg : g.toColor(1,0,1))
-    .setFontCustom(fontNum, 48, 28, 41)
-    .setFontAlign(-1, -1)
-    .drawString(("0" + h).substr(-2) + ("0"+m).substr(-2), 30, 30, true);
+     .setBgColor(g.theme.bg)
+     .setFontCustom(fontNum, 48, 28, 41)
+     .setFontAlign(-1, -1)
+     .drawString(("0" + h).substr(-2) + ("0"+m).substr(-2), 30, 30, true);
 
   if (widgets)
     Bangle.drawWidgets();
