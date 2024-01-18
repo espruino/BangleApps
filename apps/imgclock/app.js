@@ -8,6 +8,7 @@ var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
 var IW = 174, IH = 45, OY = 24;
+if (inf.hideWidgets) OY=0;
 var bgwidth = img.charCodeAt(0);
 var bgoptions;
 if (bgwidth<g.getWidth())
@@ -76,6 +77,8 @@ var secondInterval = setInterval(draw,1000);
 Bangle.setUI("clock");
 // load widgets
 Bangle.loadWidgets();
+if (inf.hideWidgets)
+  require("widget_utils").swipeOn();
 Bangle.drawWidgets();
 // Stop when LCD goes off
 Bangle.on('lcdPower',on=>{

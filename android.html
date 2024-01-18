@@ -248,12 +248,14 @@ if (typeof Android!=="undefined") {
     hadData : false,
     handlers : []
   }
+  connection.on("data", function(d) {
+    connection.received += d;
+    connection.hadData = true;
+    if (connection.cb)  connection.cb(d);
+  });
 
   function bangleRx(data) {
 //    document.getElementById("status").innerText = "RX:"+data;
-    connection.received += data;
-    connection.hadData = true;
-    if (connection.cb)  connection.cb(data);
     // call data event
     if (connection.handlers["data"])
       connection.handlers["data"](data);

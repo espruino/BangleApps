@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+        #responseContainer {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+    
+        .meal {
+          flex: 1 0 calc(33.333% - 20px);
+          box-sizing: border-box;
+        }
+
+        .meal:hover {
+          background-color: cornflowerblue;
+        }
+    
+        .meal img {
+          max-width: 100%;
+          height: auto;
+        }
+      </style>
+  </head>
+  <body>
+    <h3>Choose your recipe</h3>
+    <p>
+        <input id="recipeLink" type="text" autocomplete="off" placeholder="Search a Recipe" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+        <p>Recipe to be imported to BangleJs: <span id="mealSelected">-</span></p>
+        <button id="upload" class="btn btn-primary">Save recipe into BangleJs</button>
+    </p>
+    <p id="testUtil">
+
+    </p>
+
+    <div id="responseContainer">
+
+    </div>
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+        let uri = "";
+        let recipe = null;
+        const fileRecipeJson = "followtherecipe.json";
+
+        function checkInput(){
+            let inputStr = document.getElementById("recipeLink").value;
+            if(inputStr != "") {
+                getRecipe(inputStr);
+            }
+        }
+
+        function getRecipe(inputStr){
+            const Http = new XMLHttpRequest();
+            const url='https://www.themealdb.com/api/json/v1/1/search.php?s='+inputStr;
+            Http.open("GET", url);
+            Http.send();
+
+            
+            Http.onreadystatechange = (e) => {
+                try{
+                    const obj = JSON.parse(Http.response);
+                    console.log("debug");
+                    console.log(obj);
+                    displayResponseData(obj)
+                }catch(e){
+                    console.log("Error: "+e);
+                }
+            }
+        }
+
+        function displayResponseData(data){
+            const mealsContainer = document.getElementById('responseContainer');
+            while (mealsContainer.firstChild) {
+            mealsContainer.removeChild(mealsContainer.firstChild);
+            }
+            data.meals.forEach((meal) => {
+                const mealDiv = document.createElement('div');
+                mealDiv.classList.add('meal');
+
+                const imgElement = document.createElement('img');
+                imgElement.src = meal.strMealThumb;
+                imgElement.alt = meal.strMeal;
+
+                const titleP = document.createElement('p');
+                titleP.textContent = meal.strMeal;
+
+                // Append the image and title to the meal div
+                mealDiv.appendChild(imgElement);
+                mealDiv.appendChild(titleP);
+
+                mealDiv.onclick = function () {
+                    document.getElementById("mealSelected").innerText = meal.strMeal;
+                    let linkMeal = meal.strMeal.replaceAll(" ", "_");
+                    uri = 'https://www.themealdb.com/api/json/v1/1/search.php?s='+linkMeal;
+                    recipe = meal;
+                };
+
+                // Append the meal div to the container
+                mealsContainer.appendChild(mealDiv);
+            });
+        }
+
+        var settings = {};
+        function loadRecipe(){
+          try {
+            Util.showModal("Loading...");
+            Util.readStorageJSON(`${fileRecipeJson}`, data=>{
+              if(data){
+                settings = data;
+                document.getElementById("mealSelected").innerHTML = settings.strMeal;
+                checkInput();
+              }else{
+                console.log("NO data found");
+              }
+            });
+          } catch(ex) {
+              console.log("(Warning) Could not load data from BangleJs.");
+              console.log(ex);
+          }
+          Util.hideModal();
+        }
+
+        document.getElementById("upload").addEventListener("click", function() {
+            if(recipe != null){
+                try {
+                    settings = recipe;
+                    Util.showModal("Saving...");
+                    Util.writeStorage("followtherecipe.json", JSON.stringify(settings), ()=>{
+                        Util.hideModal();
+                    });
+                    console.log("Sent settings!");
+                } catch(ex) {
+                    console.log("(Warning) Could not write settings to BangleJs.");
+                    console.log(ex);
+                }
+            }
+        });
+
+        function onInit() {
+            loadRecipe();
+        }
+        onInit();
+    </script>
+  </body>
+</html>
