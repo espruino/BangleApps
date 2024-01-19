@@ -622,7 +622,7 @@ const WHITE = g.setColor.bind(g, 0xFFFF);
 let lcdBuffer = 0,
   start = 0;
 
-let locked = false,
+let locked = false;
 let charging = false;
 let stopped = true;
 let interval = 30;
