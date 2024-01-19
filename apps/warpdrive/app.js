@@ -493,17 +493,24 @@ const WHITE = g.setColor.bind(g, 0xFFFF);
 let lcdBuffer = 0,
   start = 0;
 
-let locked = false,
-  charging = false;
-var interval = 30,
-  timeout;
+let locked = false;
+let charging = false;
+let stopped = true;
+let interval = 30;
+let timeout;
 
 function setupInterval(force) {
   if (timeout)
     clearTimeout(timeout);
-  let stopped = locked && !charging;
-  timeout = setTimeout(setupInterval, stopped ? 60000 : 30);
-  tick(stopped && !force);
+  let stop = locked && !charging;
+  timeout = setTimeout(setupInterval, stop ? 60000 : 60);
+  tick(stop && !force);
+  if (stop != stopped) {
+    stopped = stop;
+    let widget_utils = require("widget_utils");
+    if (stop) widget_utils.show();
+    else if (widget_utils.hide) widget_utils.hide();
+  }
 }
 
 function test(addr, y) {
@@ -655,10 +662,10 @@ function drawNode(index) {
   gfx.render(E.getAddressOf(translation, true));
 }
 
-function tick(widgets) {
+function tick(locked) {
   g.reset();
 
-  if (lcdBuffer && !widgets) {
+  if (lcdBuffer && !locked) {
     BLACK().drawRect(-1, -1, 0, 177); // dirty all the rows
     gfx.clear(bgColor);
     gfx.stars();
@@ -677,15 +684,11 @@ function tick(widgets) {
     .setFontAlign(0, 0.5)
     .setFont('6x8', 2)
     .drawString(time, 176 / 2, 176 - 16, true);
-
-  if (widgets)
-    Bangle.drawWidgets();
 }
-
-init();
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();
+
 Bangle.on("lock", l => {
   locked = l;
   setupInterval();
@@ -695,3 +698,5 @@ Bangle.on('charging', c => {
   charging = c;
   setupInterval();
 });
+
+init();
