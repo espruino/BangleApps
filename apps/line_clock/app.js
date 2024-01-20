@@ -13,14 +13,14 @@ const storage = require('Storage');
 
 const SETTINGS_FILE = "line_clock.setting.json";
 
-let settings = {
+let initialSettings = {
   showLock: true,
   showMinute: true,
 };
 
-let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
+let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
 for (const key in saved_settings) {
-  settings[key] = saved_settings[key];
+  initialSettings[key] = saved_settings[key];
 }
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
@@ -237,11 +237,12 @@ Bangle.on('lock', lockListenerBw);
 
 Bangle.setUI({
   mode : "clock",
-  remove : function() {
-    Bangle.removeListener('lock', lockListenerBw);
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
+  // TODO implement https://www.espruino.com/Bangle.js+Fast+Load
+  // remove : function() {
+  //   Bangle.removeListener('lock', lockListenerBw);
+  //   if (drawTimeout) clearTimeout(drawTimeout);
+  //   drawTimeout = undefined;
+  // }
 });
 
 /**
@@ -266,7 +267,7 @@ function draw() {
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, gWidth, gHeight);
 
-  if(settings.showLock && Bangle.isLocked()){
+  if(initialSettings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
     g.drawImage(imgLock(), gWidth-16, 2);
   }
@@ -278,7 +279,7 @@ function draw() {
 
   drawHand();
 
-  if(settings.showMinute){
+  if(initialSettings.showMinute){
     drawNumber(currentMinute);
   }
 }
