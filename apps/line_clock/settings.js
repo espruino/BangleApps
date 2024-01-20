@@ -21,7 +21,6 @@
       '< Back': back,
       'Show Lock': {
         value: settings.showLock,
-        format: () => (settings.showLock ? 'Yes' : 'No'),
         onchange: () => {
           settings.showLock = !settings.showLock;
           save();
@@ -29,7 +28,6 @@
       },
       'Show Minute': {
         value: settings.showMinute,
-        format: () => (settings.showMinute ? 'Yes' : 'No'),
         onchange: () => {
           settings.showMinute = !settings.showMinute;
           save();
