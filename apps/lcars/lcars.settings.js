@@ -76,7 +76,6 @@ var bg_code = [
     },
     'Full Screen': {
       value: settings.fullscreen,
-      format: () => (settings.fullscreen ? 'Yes' : 'No'),
       onchange: () => {
         settings.fullscreen = !settings.fullscreen;
         save();
@@ -120,7 +119,6 @@ var bg_code = [
     },
     'Disable alarm functionality': {
       value: settings.disableAlarms,
-      format: () => (settings.disableAlarms ? 'Yes' : 'No'),
       onchange: () => {
         settings.disableAlarms = !settings.disableAlarms;
         save();
@@ -128,7 +126,6 @@ var bg_code = [
     },
     'Disable data pages functionality': {
       value: settings.disableData,
-      format: () => (settings.disableData ? 'Yes' : 'No'),
       onchange: () => {
         settings.disableData = !settings.disableData;
         save();
@@ -136,7 +133,6 @@ var bg_code = [
     },
     'Random colors on open': {
       value: settings.randomColors,
-      format: () => (settings.randomColors ? 'Yes' : 'No'),
       onchange: () => {
         settings.randomColors = !settings.randomColors;
         save();
