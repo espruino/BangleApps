@@ -380,7 +380,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     drawTimeout = undefined;
     delete Graphics.prototype.setFontKdamThmor;
     
-    if (settings.fullScreen)
+    if (settings.fullScreen) {
       Bangle.removeListener('charging',chargingListener);
     }
   }

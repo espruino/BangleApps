@@ -45,7 +45,7 @@
           save();
           showMenu();
         }
-      }
+      },
       'Auto Cycle': {
         value: localSettings.autoCycle,
         onchange: (v) => {
