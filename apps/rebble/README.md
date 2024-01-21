@@ -10,13 +10,21 @@
 * Tap top or bottom right to instantly cycle to the next sidebar
 * Uses pedometer widget to get latest step count
 * Dependant apps are installed when Rebble installs
-* Uses the whole screen, widgets are made invisible but still run in the background
+* When in fullscreen widgets are made invisible but still run in the background
 * The icon is James Dean - 'Rebel Without a Cause'
+
+## Fullscreen
 
 ![](screenshot_rebble.png)
 ![](screenshot_rebble2.png)
 ![](screenshot_rebble3.png)
 ![](screenshot_rebble4.png)
+
+## With widgets
+
+![](screenshot_rebble_w1.png)
+![](screenshot_rebble_w2.png)
+![](screenshot_rebble_w3.png)
 
 ## Future Enhancements
 
