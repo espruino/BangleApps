@@ -2,7 +2,9 @@ let h = require("heatshrink");
 
 Bangle.loadWidgets();
 
-const ACTIVITIES = ["pushups", "situps", "squats", "plank"];
+//TODO: should we force not moving for planks and rests
+
+const ACTIVITIES = ["pushups", "situps", "squats", "plank", "jacks", "rest"];
 const IMAGES = [
   h.decompress(
     atob(
@@ -23,6 +25,16 @@ const IMAGES = [
     atob(
       "mEwwhC/AH4A/AH4A/AHkEolAC6lEAAIuVAAIwTC6nd7oXTCoIAB6AXPgVNCwYwCO5siCopIEFxUCkUtC44AMkQX/CowACUogXLQAIXHbAgAHV4QXFTwa7IbwdEoQWCEg4sIC4kgHhAtJC4RULAAJQBC4qZKE4oXENwYXPP5KGLFJgA/AH4A/AH4AUA=="
     )
+  ),
+  h.decompress(
+    atob(
+      "mEwwhC/AFdEogWUggXBoAuVC7BIUC7RHPE4h3GAwKJPIwiVLBYQMHMgZNJBoY+EBBAYKoUikUkSaAXJSRxjBCwIXCeKMEC4UiCyIABC4bvTC/4AGhvdAAQXX6AXRCwYwSFwgwSCwoXQFwfQAgYXSGggwOFIowQCAQoEGB4nHD44XJBwxINEwRQOBo4MIJBouDmYACBQwAKgYWDAAMwa5wXCAoYXRADBIEIyQAGDJoWCCAgHHCxANIDBkDBawA/ADQA=="
+    )
+  ),
+  h.decompress(
+    atob(
+      "mEwwhC/AH4AU1QAGC/4XXAAkKC6wWB0Au/F3KvPFw4XOLpAXOLpaBKRhgMBEZAKKHYYKKK5IjLC5alNC5BSOC5AuLe5guKABQuWd54XYgUiAAUgC7IAPC64ACC4IWUGIIu/F2a/va7QA/AH4AGA="
+    )
   )
 ];
 
@@ -42,16 +54,28 @@ const DETECTORS = [
       return null;
     }
   },
+  null,
+  (xyz) => {
+    if ((xyz.x > 0) && (xyz.y < 0) && xyz.z < -0.25) {
+      return 0;
+    }
+    if ((xyz.x < 0) && (xyz.y > 0) && xyz.z > -0.25) {
+      return 1;
+    }
+    return null;
+  },
   null
 ];
 
 class FitnessStatus {
-  constructor() {
+  constructor(duration) {
     this.routine = [
       [0, 10],
       [1, 10],
       [2, 10],
-      [3, 30]
+      [3, 30],
+      [4, 10],
+      [5, 30],
     ];
     this.routine_step = 0;
     this.current_status = 0;
@@ -60,11 +84,20 @@ class FitnessStatus {
     this.counts_in_opposite_status = 0;
     this.remaining = this.routine[this.routine_step][1];
     this.activity_start = getTime();
+    this.starting_time = this.activity_start;
+    this.duration = duration;
+    this.completed = false;
   }
 
   display() {
     g.clear();
     g.setColor(0, 0, 0);
+    if (this.completed) {
+      g.setFont("Vector:40")
+        .setFontAlign(0, 0)
+        .drawString("Good Job!", g.getWidth()/2, g.getHeight()/2);
+      return;
+    }
     let activity = this.routine[this.routine_step][0];
     let countdown = this.remaining;
     if (DETECTORS[activity] === null) {
@@ -72,18 +105,29 @@ class FitnessStatus {
     }
     g.setFont("Vector:70")
       .setFontAlign(0, 0)
-      .drawString(
-        "" + countdown,
-        (g.getWidth() * 3) / 10,
-        g.getHeight() / 2
-      );
+      .drawString("" + countdown, (g.getWidth() * 3) / 10, g.getHeight() / 2);
     let activity_name = ACTIVITIES[activity];
     g.drawImage(IMAGES[activity], g.getWidth() / 2, (g.getHeight() * 1) / 5, {
       scale: 2,
     });
+    let global_countdown = "";
+    if (this.duration !== null) {
+      let elapsed = getTime() - this.starting_time;
+      let remaining = Math.max(0, this.duration - elapsed);
+      let seconds = Math.floor(remaining % 60);
+      let minutes = Math.floor(remaining / 60) % 60;
+      let hours = Math.floor(remaining / 3600);
+      if (hours > 0) {
+        global_countdown = " / " + hours + "h" + minutes +"m" + seconds + "s";
+      } else if (minutes > 0) {
+        global_countdown = " / " + minutes +"m" + seconds + "s";
+      } else {
+        global_countdown = " / " + seconds + "s";
+      }
+    }
     g.setFont("6x8:2")
       .setFontAlign(0, 1)
-      .drawString(activity_name, g.getWidth() / 2, g.getHeight());
+      .drawString(activity_name+global_countdown, g.getWidth() / 2, g.getHeight());
     Bangle.drawWidgets();
     g.flip();
   }
@@ -98,9 +142,16 @@ class FitnessStatus {
 
   next_activity() {
     this.routine_step += 1;
-    if (this.routine_step >= this.routine.length) {
-      load();
+
+    this.completed = (this.duration===null)?(this.routine_step >= this.routine_length):(getTime() - this.starting_time > this.duration);
+
+    if (this.completed) {
+      Bangle.buzz(1000).then(() => {
+        load();
+      });
+      return;
     }
+    this.routine_step = this.routine_step % this.routine.length;
     this.remaining = this.routine[this.routine_step][1];
     // this.display();
     this.activity_start = getTime();
@@ -159,7 +210,7 @@ class FitnessStatus {
   }
 }
 
-let status = new FitnessStatus();
+let status = new FitnessStatus(10 * 60);
 // status.display();
 
 Bangle.setPollInterval(80);
