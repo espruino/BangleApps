@@ -115,7 +115,7 @@ function calculateSpeed() {
     step = 20; // usually limited by the hardware
     // levels 15+ are programmed to go faster by skipping lines
   }
-  print(`level ${level}: drop interval ${step}ms`)
+  print(`level ${level}: drop interval ${step}ms`);
   if (control == 3)
     step = step*2;
   dropInterval = step;
@@ -272,59 +272,80 @@ function linear(x) {
 
 function newGame() {
   E.showMenu();
-  Bangle.setUI();
-  if (control == 2) {
-    Bangle.on("accel", (e) => {
-      if (state != 1) return;
-      if (control != 2) return;
-      print(e.x);
-      linear((0.2-e.x) * 2.5);
-    });
-  }
-  if (control == 3) {
-    Bangle.setBarometerPower(true);
-    Bangle.on("pressure", (e) => {
-      if (state != 1) return;
-      if (control != 3) return;
-      let a = e.altitude;
-      if (alt_start == -9999)
-        alt_start = a;
-      a = a - alt_start;
-      //print(e.altitude, a);
-      linear(a);
-    });
-  }
-  Bangle.on("drag", (e) => {
-   let h = 176/2;
-   if (state == 2) {
-     if (e.b)
-       selectGame();
-     return;
-   }
-   if (!e.b)
-    return;
-   if (state == 0) return;
-   if (e.y < h) {
-    if (e.x < h)
-      rotate();
-    else {
-      while (move(0, 1)) {
-        score++;
-        g.flip();
+  Bangle.setUI({mode : "custom", btn: () => load()});
+  if (control == 4) { // Swipe
+    Bangle.on("touch", (e) => {
+      t = rotateTile(ct, 3);
+      if (moveOk(t, 0, 0)) {
+        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        ct = t;
+        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
       }
-      redrawStats(true);
+    });
+
+    Bangle.on("swipe", (x,y) => {
+      if (y<0) y = 0;
+      if (moveOk(ct, x, y)) {
+        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        px += x;
+        py += y;
+        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+      }
+    });
+  } else { // control != 4
+    if (control == 2) { // Tilt
+      Bangle.on("accel", (e) => {
+        if (state != 1) return;
+        if (control != 2) return;
+        print(e.x);
+        linear((0.2-e.x) * 2.5);
+      });
     }
-   } else {
-    if (control == 1)
-      linear((e.x - 20) / 156);
-    if (control != 0)
-      return;
-    if (e.x < h)
-      move(-1, 0);
-    else
-      move(1, 0);
-   }
-  });
+    if (control == 3) { // Move
+      Bangle.setBarometerPower(true);
+      Bangle.on("pressure", (e) => {
+        if (state != 1) return;
+        if (control != 3) return;
+        let a = e.altitude;
+        if (alt_start == -9999)
+          alt_start = a;
+        a = a - alt_start;
+        //print(e.altitude, a);
+        linear(a);
+      });
+    }
+    Bangle.on("drag", (e) => {
+      let h = 176/2;
+      if (state == 2) {
+        if (e.b)
+          selectGame();
+        return;
+      }
+      if (!e.b)
+        return;
+      if (state == 0) return;
+      if (e.y < h) {
+        if (e.x < h)
+          rotate();
+        else {
+          while (move(0, 1)) {
+            score++;
+            g.flip();
+          }
+          redrawStats(true);
+        }
+      } else {
+        if (control == 1)
+          linear((e.x - 20) / 156);
+        if (control != 0)
+          return;
+        if (e.x < h)
+          move(-1, 0);
+        else
+          move(1, 0);
+      }
+    });
+  }
   setWatch(() => {
     if (state == 1)
       pauseGame();
@@ -333,9 +354,9 @@ function newGame() {
   }, BTN1, {repeat: true});
 
   initGame();
-  drawGame();
-  state = 1;
   calculateSpeed();
+  state = 1;
+  drawGame();
   var gi = setInterval(gameStep, 20);
 }
 
@@ -346,8 +367,8 @@ function drawGame() {
     .drawString("Level", 22, 80)
     .drawString("Lines", 22, 130)
     .drawString("Next", 176-22, 30);
-  showNext(ntn, ntr);
   redrawStats();
+  showNext(ntn, ntr);
 }
 
 function selectGame() {
@@ -359,6 +380,7 @@ function selectGame() {
   menu["Drag"] = () => { control = 1; newGame(); };
   menu["Tilt"] = () => { control = 2; newGame(); };
   menu["Pressure"] = () => { control = 3; newGame(); };
+  menu["Swipe"] = () => { control = 4; newGame(); };
   level = 1;
   menu["Level"] = {
     value : 1,
