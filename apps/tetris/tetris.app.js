@@ -134,7 +134,8 @@ function gameOver() {
   state = 0;
   g.setColor(1, 1, 1).setFontAlign(0, 1, 0).setFont("Vector",22)
   .drawString("Game Over", 176/2, 76);
-  E.showAlert("Game Over").then(selectGame, print);
+  // this cannot allow changing game controls because it would set up duplicate events
+  E.showAlert("Game Over").then(startGame, print);
   lines = 0;
   score = 0;
 }
@@ -151,19 +152,26 @@ function redrawStats(onlyScore) {
 }
 
 function insertAndCheck() {
-  for (y=0; y<ct.length; ++y)
-    for (x=0; x<ct[y].length; ++x)
+  // stop pieces from falling into each other
+  for (let y=0; y<ct.length; ++y)
+    for (let x=0; x<ct[y].length; ++x)
       if (ct[y][x]>0) pf[py+y][px+x+1] = ctn+1;
-  // check for full lines
   let clearCount = 0;
-  for (y=19; y>0; y--) {
+  let linesToClear = [];
+  let yReal = 19; // the y for display purposes
+  // check for full lines
+  for (let y=19; y>0; y--) {
     var qFull = true;
-    for (x=1; x<11; ++x) qFull &= pf[y][x]>0;
+    for (let x=1; x<11; ++x) qFull &= pf[y][x]>0;
     if (qFull) {
       clearCount++;
+      linesToClear.push([y, yReal]);
+      print(`linesToClear.push(${y})`);
+      // clear the line, but do not display it yet
       for (ny=y; ny>0; ny--) pf[ny] = JSON.parse(JSON.stringify(pf[ny-1]));
-      redrawPF(y);
+      y++;
     }
+    yReal--;
   }
   if (clearCount) {
     lines += clearCount;
@@ -178,11 +186,32 @@ function insertAndCheck() {
     }
     else if (clearCount == 3) { // triple
       score += 500 * effectiveLevel;
-      Bangle.buzz(150);
+      Bangle.buzz(200);
     }
     else if (clearCount >= 4) { // tetris
       score += 800 * effectiveLevel;
-      Bangle.buzz(300);
+      Bangle.buzz(500);
+    }
+    // the score will not be shown yet because redrawStats was not called
+
+    // clear effect
+    let timer = getTime();
+    g.setColor(0, 0, 0);
+    while (true) {
+      var rectLength = (getTime()-timer)/0.05 + 1;
+      if (rectLength > 6)
+        break;
+      var x1 = 6 - rectLength;
+      var x2 = 4 + rectLength;
+      for (let line of linesToClear) {
+        let y = line[1];
+        g.fillRect(ox+x1*8, oy+y*8, ox+x2*8-1, oy+(y+1)*8-1);
+      }
+      g.flip();
+    }
+    // display the cleared lines
+    for (let line of linesToClear) {
+      redrawPF(line[0]);
     }
     if (lines != 0 && lines % 10 == 0) {
       level++;
@@ -301,7 +330,7 @@ function newGame() {
         linear((0.2-e.x) * 2.5);
       });
     }
-    if (control == 3) { // Move
+    if (control == 3) { // Pressure
       Bangle.setBarometerPower(true);
       Bangle.on("pressure", (e) => {
         if (state != 1) return;
@@ -352,7 +381,10 @@ function newGame() {
     else if (state == 3)
       resumeGame();
   }, BTN1, {repeat: true});
+  startGame();
+}
 
+function startGame() {
   initGame();
   calculateSpeed();
   state = 1;
