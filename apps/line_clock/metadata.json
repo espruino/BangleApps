@@ -1,0 +1,19 @@
+{ "id": "line_clock",
+  "name": "Line Clock",
+  "shortName":"Line Clock",
+  "version":"0.1",
+  "description": "a readable analog clock",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [{"url":"app-screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"line_clock.app.js","url":"app.js"},
+    {"name":"line_clock.img","url":"app-icon.js","evaluate":true},
+    {"name":"line_clock.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":"line_clock.setting.json"}]
+}

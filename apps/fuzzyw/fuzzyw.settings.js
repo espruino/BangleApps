@@ -23,7 +23,6 @@
     '< Back': back,
     'Show Widgets': {
       value: settings.showWidgets,
-      format: () => (settings.showWidgets ? 'Yes' : 'No'),
       onchange: () => {
         settings.showWidgets = !settings.showWidgets;
         save();
