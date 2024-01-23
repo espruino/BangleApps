@@ -79,6 +79,7 @@ class FitnessStatus {
     ];
     this.routine_step = 0;
     this.current_status = 0;
+    this.buzzing = false;
 
     // to get rid of noise we'll need to count how many measures confirm where we think we are
     this.counts_in_opposite_status = 0;
@@ -157,6 +158,7 @@ class FitnessStatus {
     this.activity_start = getTime();
     this.current_status = 0;
     this.counts_in_opposite_status = 0;
+    this.buzzing = false;
   }
 
   previous_activity() {
@@ -169,12 +171,16 @@ class FitnessStatus {
   }
 
   detect(xyz) {
+    if (this.buzzing) {
+      return;
+    }
     let activity = this.routine[this.routine_step][0];
     let detector = DETECTORS[activity];
     if (detector === null) {
       // it's time based
       let activity_duration = getTime() - this.activity_start;
       if (activity_duration > this.remaining) {
+        this.buzzing = true;
         Bangle.buzz(500).then(() => {
           status.next_activity();
         });
@@ -197,6 +203,7 @@ class FitnessStatus {
           this.remaining -= 1;
           // this.display();
           if (this.remaining == 0) {
+            this.buzzing = true;
             Bangle.buzz(500).then(() => {
               status.next_activity();
             });
