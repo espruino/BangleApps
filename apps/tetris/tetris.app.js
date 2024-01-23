@@ -46,6 +46,7 @@ const settings = Object.assign({
  */
   control: 0,
   level: 0,
+  initialLevel: 0,
   lines: 0,
   score: 0,
   pf: undefined,
@@ -151,6 +152,7 @@ function gameOver() {
   E.showAlert("Game Over").then(newGame, print);
   settings.lines = 0;
   settings.score = 0;
+  settings.level = settings.initialLevel;
 }
 
 function redrawStats(onlyScore) {
@@ -402,6 +404,7 @@ function setupControls() {
 function newGame() {
   settings.lines = 0;
   settings.score = 0;
+  settings.level = settings.initialLevel;
   initGame();
   startGame();
 }
@@ -461,7 +464,10 @@ function selectGame() {
     min : 0,
     max : 10,
     wrap : true,
-    onchange : (l) => { settings.level = l; writeSettings(); }
+    onchange : (l) => {
+      settings.initialLevel = l;
+      writeSettings();
+    }
   };
   E.showMenu(menu);
 }
