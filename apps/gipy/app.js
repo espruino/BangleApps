@@ -252,7 +252,7 @@ class Map {
     let tile_y = absolute_tile_y - this.first_tile[1];
     let side = img.getWidth() - 6;
 
-    let thick = this.color[0] != 0;
+    let thick = this.color[0] != 255;
     img.setColor(this.color[0], this.color[1], this.color[2]);
 
     let tile_num = tile_x + tile_y * this.grid_size[0];
