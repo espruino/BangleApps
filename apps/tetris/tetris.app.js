@@ -36,26 +36,45 @@ const tiles = [
 const ox = 176/2 - 5*8;
 const oy = 8;
 
+const FILE = "tetris.json";
+
+const settings = Object.assign({
 /* 0 .. simulated arrows
    1 .. drag piece
    2 .. accelerometer. 12 lines record.
    3 .. altimeter
  */
-var control = 0, level = 0, lines = 0, score = 0;
+  control: 0,
+  level: 0,
+  initialLevel: 0,
+  lines: 0,
+  score: 0,
+  pf: undefined,
+  ctn: Math.floor(Math.random()*7), // current tile number
+  ntn: Math.floor(Math.random()*7), // next tile number
+  ntr: Math.floor(Math.random()*4), // next tile rotation
+  dropInterval: undefined,
+}, require('Storage').readJSON(FILE, true) || {});
+
 var alt_start = -9999; /* For altimeter control */
 /* 0 .. menu
    1 .. game
    2 .. game over */
 var state = 0;
 
-var pf;
+var px=4, py=0;
+
+function writeSettings() {
+  require('Storage').writeJSON(FILE, settings);
+}
+
 
 function initGame() {
-  pf = Array(23).fill().map(()=>Array(12).fill(0)); // field is really 10x20, but adding a border for collision checks
-  pf[20].fill(1);
-  pf[21].fill(1);
-  pf[22].fill(1);
-  pf.forEach((x,i) => { pf[i][0] = 1; pf[i][11] = 1; });
+  settings.pf = Array(23).fill().map(()=>Array(12).fill(0)); // field is really 10x20, but adding a border for collision checks
+  settings.pf[20].fill(1);
+  settings.pf[21].fill(1);
+  settings.pf[22].fill(1);
+  settings.pf.forEach((x,i) => { settings.pf[i][0] = 1; settings.pf[i][11] = 1; });
 }
 
 function rotateTile(t, r) {
@@ -70,6 +89,9 @@ function rotateTile(t, r) {
   }
   return nt;
 }
+
+var time = Date.now();
+var ct = rotateTile(tiles[settings.ctn], Math.floor(Math.random()*4)); // current tile (rotated)
 
 function drawBoundingBox() {
   g.setBgColor(0, 0, 0).clear().setColor(1, 1, 1);
@@ -92,31 +114,23 @@ function drawTile(tile, n, x, y, qClear) {
 function showNext(n, r) {
   var nt = rotateTile(tiles[n], r);
   g.setColor(0).fillRect(176-33, 40, 176-33+33, 82);
-  drawTile(nt, ntn, 176-33, 40);
+  drawTile(nt, settings.ntn, 176-33, 40);
 }
-
-var time = Date.now();
-var px=4, py=0;
-var ctn = Math.floor(Math.random()*7); // current tile number
-var ntn = Math.floor(Math.random()*7); // next tile number
-var ntr = Math.floor(Math.random()*4); // next tile rotation
-var ct = rotateTile(tiles[ctn], Math.floor(Math.random()*4)); // current tile (rotated)
-var dropInterval;
 
 function calculateSpeed() {
   let step = 500;
-  if (level <= 6) // 200-500ms
-    step = step - 50*level;
-  else if (level <= 13) { // 25-175ms
+  if (settings.level <= 6) // 200-500ms
+    step = step - 50*settings.level;
+  else if (settings.level <= 13) { // 25-175ms
     step = 200;
-    step = step - 25*(level - 6);
+    step = step - 25*(settings.level - 6);
   }
   else {
     step = 20; // usually limited by the hardware
     // levels 15+ are programmed to go faster by skipping lines
   }
-  print(`level ${level}: drop interval ${step}ms`);
-  if (control == 3)
+  print(`level ${settings.level}: drop interval ${step}ms`);
+  if (settings.control == 3)
     step = step*2;
   dropInterval = step;
 }
@@ -124,7 +138,7 @@ function calculateSpeed() {
 function redrawPF(ly) {
   for (y=0; y<=ly; ++y)
     for (x=1; x<11; ++x) {
-      c = pf[y][x];
+      c = settings.pf[y][x];
       if (c>0) g.setColor(tcols[c-1].r, tcols[c-1].g, tcols[c-1].b).drawImage(block, ox+(x-1)*8, oy+y*8);
       else g.setColor(0, 0, 0).fillRect(ox+(x-1)*8, oy+y*8, ox+x*8-1, oy+(y+1)*8-1);
     }
@@ -135,19 +149,20 @@ function gameOver() {
   g.setColor(1, 1, 1).setFontAlign(0, 1, 0).setFont("Vector",22)
   .drawString("Game Over", 176/2, 76);
   // this cannot allow changing game controls because it would set up duplicate events
-  E.showAlert("Game Over").then(startGame, print);
-  lines = 0;
-  score = 0;
+  E.showAlert("Game Over").then(newGame, print);
+  settings.lines = 0;
+  settings.score = 0;
+  settings.level = settings.initialLevel;
 }
 
 function redrawStats(onlyScore) {
   g.setColor(0).fillRect(5, 30, 41, 60)
-    .setColor(1, 1, 1).drawString(score.toString(), 22, 50);
+    .setColor(1, 1, 1).drawString(settings.score.toString(), 22, 50);
   if (!onlyScore) {
       g.setColor(0).fillRect(5, 80, 41, 110)
-      .setColor(1, 1, 1).drawString(level.toString(), 22, 100)
+      .setColor(1, 1, 1).drawString(settings.level.toString(), 22, 100)
       .setColor(0).fillRect(5, 130, 41, 160)
-      .setColor(1, 1, 1).drawString(lines.toString(), 22, 150);
+      .setColor(1, 1, 1).drawString(settings.lines.toString(), 22, 150);
   }
 }
 
@@ -155,41 +170,41 @@ function insertAndCheck() {
   // stop pieces from falling into each other
   for (let y=0; y<ct.length; ++y)
     for (let x=0; x<ct[y].length; ++x)
-      if (ct[y][x]>0) pf[py+y][px+x+1] = ctn+1;
+      if (ct[y][x]>0) settings.pf[py+y][px+x+1] = settings.ctn+1;
   let clearCount = 0;
   let linesToClear = [];
   let yReal = 19; // the y for display purposes
   // check for full lines
   for (let y=19; y>0; y--) {
     var qFull = true;
-    for (let x=1; x<11; ++x) qFull &= pf[y][x]>0;
+    for (let x=1; x<11; ++x) qFull &= settings.pf[y][x]>0;
     if (qFull) {
       clearCount++;
       linesToClear.push([y, yReal]);
       print(`linesToClear.push(${y})`);
       // clear the line, but do not display it yet
-      for (ny=y; ny>0; ny--) pf[ny] = JSON.parse(JSON.stringify(pf[ny-1]));
+      for (ny=y; ny>0; ny--) settings.pf[ny] = JSON.parse(JSON.stringify(settings.pf[ny-1]));
       y++;
     }
     yReal--;
   }
   if (clearCount) {
-    lines += clearCount;
-    let effectiveLevel = Math.max(level, 1);
+    settings.lines += clearCount;
+    let effectiveLevel = Math.max(settings.level, 1);
     if (clearCount == 1) { // single
-      score += 100 * effectiveLevel;
+      settings.score += 100 * effectiveLevel;
       Bangle.buzz(80, 0.5);
     }
     else if (clearCount == 2) { // double
-      score += 300 * effectiveLevel;
+      settings.score += 300 * effectiveLevel;
       Bangle.buzz(80);
     }
     else if (clearCount == 3) { // triple
-      score += 500 * effectiveLevel;
+      settings.score += 500 * effectiveLevel;
       Bangle.buzz(200);
     }
     else if (clearCount >= 4) { // tetris
-      score += 800 * effectiveLevel;
+      settings.score += 800 * effectiveLevel;
       Bangle.buzz(500);
     }
     // the score will not be shown yet because redrawStats was not called
@@ -213,19 +228,19 @@ function insertAndCheck() {
     for (let line of linesToClear) {
       redrawPF(line[0]);
     }
-    if (lines != 0 && lines % 10 == 0) {
-      level++;
+    if (settings.lines != 0 && settings.lines % 10 == 0) {
+      settings.level++;
       calculateSpeed();
     }
     redrawStats();
   }
   // spawn new tile
   px = 4; py = 0;
-  ctn = ntn;
-  ntn = Math.floor(Math.random()*7);
-  ct = rotateTile(tiles[ctn], ntr);
-  ntr = Math.floor(Math.random()*4);
-  showNext(ntn, ntr);
+  settings.ctn = settings.ntn;
+  settings.ntn = Math.floor(Math.random()*7);
+  ct = rotateTile(tiles[settings.ctn], settings.ntr);
+  settings.ntr = Math.floor(Math.random()*4);
+  showNext(settings.ntn, settings.ntr);
   if (!moveOk(ct, 0, 0)) {
     gameOver();
   }
@@ -235,18 +250,29 @@ function moveOk(t, dx, dy) {
   var ok = true;
   for (y=0; y<t.length; ++y)
     for (x=0; x<t[y].length; ++x)
-      if (t[y][x]*pf[py+dy+y][px+dx+x+1] > 0) ok = false;
+      if (t[y][x]*settings.pf[py+dy+y][px+dx+x+1] > 0) ok = false;
   return ok;
 }
 
 function pauseGame() {
-  print("Paused");
+  //print("Paused");
   state = 3;
+  E.showMenu({
+    "" : { "title" : /*LANG*/"Pause menu" },
+    "< Back" : () => resumeGame(),
+    /*LANG*/"Exit" : () => {
+      writeSettings();
+      load();
+    },
+    /*LANG*/"New game": () => newGame(),
+  });
 }
 
 function resumeGame() {
-  print("Resumed");
+  //print("Resumed");
   state = 1;
+  drawGame();
+  redrawPF(19);
 }
 
 function gameStep() {
@@ -254,38 +280,38 @@ function gameStep() {
     return;
   if (Date.now()-time > dropInterval) { // drop one step
     time = Date.now();
-    if (level >= 15 && moveOk(ct, 0, 2)) {
+    if (settings.level >= 15 && moveOk(ct, 0, 2)) {
       // at level 15, pieces drop twile as quickly
-      drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+      drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
       py += 2;
     }
     else if (moveOk(ct, 0, 1)) {
-      drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+      drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
       py++;
     }
     else { // reached the bottom
-      insertAndCheck(ct, ctn, px, py);
+      insertAndCheck(ct, settings.ctn, px, py);
     }
-    drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+    drawTile(ct, settings.ctn, ox+px*8, oy+py*8, false);
   }
 }
 
 function rotate() {
   t = rotateTile(ct, 3);
   if (moveOk(t, 0, 0)) {
-    drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+    drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
     ct = t;
-    drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+    drawTile(ct, settings.ctn, ox+px*8, oy+py*8, false);
   }
 }
 
 function move(x, y) {
   r = moveOk(ct, x, y);
   if (r) {
-    drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+    drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
     px += x;
     py += y;
-    drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+    drawTile(ct, settings.ctn, ox+px*8, oy+py*8, false);
   }
   return r;
 }
@@ -299,42 +325,40 @@ function linear(x) {
     move(1, 0);
 }
 
-function newGame() {
-  E.showMenu();
-  Bangle.setUI({mode : "custom", btn: () => load()});
-  if (control == 4) { // Swipe
+function setupControls() {
+  if (settings.control == 4) { // Swipe
     Bangle.on("touch", (e) => {
       t = rotateTile(ct, 3);
       if (moveOk(t, 0, 0)) {
-        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
         ct = t;
-        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+        drawTile(ct, settings.ctn, ox+px*8, oy+py*8, false);
       }
     });
 
     Bangle.on("swipe", (x,y) => {
       if (y<0) y = 0;
       if (moveOk(ct, x, y)) {
-        drawTile(ct, ctn, ox+px*8, oy+py*8, true);
+        drawTile(ct, settings.ctn, ox+px*8, oy+py*8, true);
         px += x;
         py += y;
-        drawTile(ct, ctn, ox+px*8, oy+py*8, false);
+        drawTile(ct, settings.ctn, ox+px*8, oy+py*8, false);
       }
     });
   } else { // control != 4
-    if (control == 2) { // Tilt
+    if (settings.control == 2) { // Tilt
       Bangle.on("accel", (e) => {
         if (state != 1) return;
-        if (control != 2) return;
+        if (settings.control != 2) return;
         print(e.x);
         linear((0.2-e.x) * 2.5);
       });
     }
-    if (control == 3) { // Pressure
+    if (settings.control == 3) { // Pressure
       Bangle.setBarometerPower(true);
       Bangle.on("pressure", (e) => {
         if (state != 1) return;
-        if (control != 3) return;
+        if (settings.control != 3) return;
         let a = e.altitude;
         if (alt_start == -9999)
           alt_start = a;
@@ -358,15 +382,15 @@ function newGame() {
           rotate();
         else {
           while (move(0, 1)) {
-            score++;
+            settings.score++;
             g.flip();
           }
           redrawStats(true);
         }
       } else {
-        if (control == 1)
+        if (settings.control == 1)
           linear((e.x - 20) / 156);
-        if (control != 0)
+        if (settings.control != 0)
           return;
         if (e.x < h)
           move(-1, 0);
@@ -375,17 +399,17 @@ function newGame() {
       }
     });
   }
-  setWatch(() => {
-    if (state == 1)
-      pauseGame();
-    else if (state == 3)
-      resumeGame();
-  }, BTN1, {repeat: true});
+}
+
+function newGame() {
+  settings.lines = 0;
+  settings.score = 0;
+  settings.level = settings.initialLevel;
+  initGame();
   startGame();
 }
 
 function startGame() {
-  initGame();
   calculateSpeed();
   state = 1;
   drawGame();
@@ -393,6 +417,11 @@ function startGame() {
 }
 
 function drawGame() {
+  Bangle.setUI({mode : "custom", btn: () => {
+    if (state == 1) {
+      pauseGame();
+    }
+  }});
   drawBoundingBox();
   g.setColor(1, 1, 1).setFontAlign(0, 1, 0)
     .setFont("6x15", 1).drawString("Score", 22, 30)
@@ -400,26 +429,45 @@ function drawGame() {
     .drawString("Lines", 22, 130)
     .drawString("Next", 176-22, 30);
   redrawStats();
-  showNext(ntn, ntr);
+  showNext(settings.ntn, settings.ntr);
 }
+
 
 function selectGame() {
   state = 0;
-  print("Game selection menu");
+  //print("Game selection menu");
 
   var menu = {};
-  menu["Normal"] = () => { control = 0; newGame(); };
-  menu["Drag"] = () => { control = 1; newGame(); };
-  menu["Tilt"] = () => { control = 2; newGame(); };
-  menu["Pressure"] = () => { control = 3; newGame(); };
-  menu["Swipe"] = () => { control = 4; newGame(); };
-  level = 1;
-  menu["Level"] = {
+  menu[/*LANG*/"New game"] = () => {
+    setupControls();
+    newGame();
+    resumeGame();
+  };
+  if (settings.pf !== undefined) {
+    menu[/*LANG*/"Resume game"] = () => {
+      setupControls();
+      startGame();
+      resumeGame();
+    };
+  }
+  menu[/*LANG*/"Controls"] = {
+    value: settings.control,
+    min: 0, max: 4,
+    format: v => [/*LANG*/"Normal", /*LANG*/"Drag", /*LANG*/"Tilt", /*LANG*/"Pressure", /*LANG*/"Swipe"][v],
+    onchange: v => {
+      settings.control = v;
+      writeSettings();
+    }
+  };
+  menu[/*LANG*/"Level"] = {
     value : 1,
     min : 0,
     max : 10,
     wrap : true,
-    onchange : (l) => { level = l; }
+    onchange : (l) => {
+      settings.initialLevel = l;
+      writeSettings();
+    }
   };
   E.showMenu(menu);
 }
