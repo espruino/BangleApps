@@ -7,6 +7,20 @@ heap.push(undefined, null, true, false);
 
 function getObject(idx) { return heap[idx]; }
 
+let heap_next = heap.length;
+
+function dropObject(idx) {
+    if (idx < 36) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+}
+
 let WASM_VECTOR_LEN = 0;
 
 let cachedUint8Memory0 = new Uint8Array();
@@ -82,20 +96,6 @@ function getInt32Memory0() {
         cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
     }
     return cachedInt32Memory0;
-}
-
-let heap_next = heap.length;
-
-function dropObject(idx) {
-    if (idx < 36) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
-}
-
-function takeObject(idx) {
-    const ret = getObject(idx);
-    dropObject(idx);
-    return ret;
 }
 
 function addHeapObject(obj) {
@@ -205,7 +205,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_24(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures__invoke1_mut__hb9556e00aeed619f(arg0, arg1, addHeapObject(arg2));
+    wasm.wasm_bindgen__convert__closures__invoke1_mut__hc18aa489d857d6a0(arg0, arg1, addHeapObject(arg2));
 }
 
 function _assertClass(instance, klass) {
@@ -373,10 +373,11 @@ export function load_gps_from_string(input, autodetect_waypoints) {
 * @param {number} ymin
 * @param {number} xmax
 * @param {number} ymax
+* @param {boolean} ski
 * @returns {Gps}
 */
-export function gps_from_area(xmin, ymin, xmax, ymax) {
-    const ret = wasm.gps_from_area(xmin, ymin, xmax, ymax);
+export function gps_from_area(xmin, ymin, xmax, ymax, ski) {
+    const ret = wasm.gps_from_area(xmin, ymin, xmax, ymax, ski);
     return Gps.__wrap(ret);
 }
 
@@ -388,7 +389,7 @@ function handleError(f, args) {
     }
 }
 function __wbg_adapter_86(arg0, arg1, arg2, arg3) {
-    wasm.wasm_bindgen__convert__closures__invoke2_mut__h05b9ac778f1bc584(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
+    wasm.wasm_bindgen__convert__closures__invoke2_mut__h41c3b5af183df3b2(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 /**
@@ -452,6 +453,9 @@ function getImports() {
     imports.wbg.__wbg_log_d04343b58be82b0f = function(arg0, arg1) {
         console.log(getStringFromWasm0(arg0, arg1));
     };
+    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
+        takeObject(arg0);
+    };
     imports.wbg.__wbindgen_string_get = function(arg0, arg1) {
         const obj = getObject(arg1);
         const ret = typeof(obj) === 'string' ? obj : undefined;
@@ -459,9 +463,6 @@ function getImports() {
         var len0 = WASM_VECTOR_LEN;
         getInt32Memory0()[arg0 / 4 + 1] = len0;
         getInt32Memory0()[arg0 / 4 + 0] = ptr0;
-    };
-    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
-        takeObject(arg0);
     };
     imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
         const ret = getObject(arg0);
@@ -694,7 +695,7 @@ function getImports() {
         const ret = wasm.memory;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper2328 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper2355 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 292, __wbg_adapter_24);
         return addHeapObject(ret);
     };
