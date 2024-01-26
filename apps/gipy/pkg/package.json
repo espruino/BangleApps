@@ -8,7 +8,5 @@
   ],
   "module": "gps.js",
   "types": "gps.d.ts",
-  "sideEffects": [
-    "./snippets/*"
-  ]
+  "sideEffects": false
 }
