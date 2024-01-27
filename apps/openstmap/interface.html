@@ -45,7 +45,11 @@
       <div id="map">
       </div>
       <div id="controls">
-        <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+        <div style="display:inline-block;text-align:left;vertical-align: top;" id="3bitdiv">
+          <input type="checkbox" id="3bit"></input><span>3 bit</span>
+          <br>
+          <input type="checkbox" id="preview"><span>Preview</span>
+        </div>
         <div class="form-group" style="display:inline-block;">
         <select class="form-select" id="mapSize">
           <option value="4">Small (4x4)</option>
@@ -275,7 +279,9 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            //ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            if (document.getElementById("preview").checked) {
+              ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            }
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/

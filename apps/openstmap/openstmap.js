@@ -76,7 +76,7 @@ exports.draw = function() {
     for (var x=ox,ttx=tx; x<mx && ttx<map.w; x+=s,ttx++) {
       for (var y=oy,tty=ty;y<my && tty<map.h;y+=s,tty++) {
         o.frame = ttx+(tty*map.w);
-        g.drawImage(img,x,y,o);
+        g.drawImage(img,Math.round(x),Math.round(y),o);
         count++;
       }
     }
@@ -91,8 +91,8 @@ exports.latLonToXY = function(lat, lon) {
   var cx = g.getWidth()/2;
   var cy = g.getHeight()/2;
   return {
-    x : (q.x-p.x)/m.scale + cx,
-    y : cy - (q.y-p.y)/m.scale
+    x : Math.round((q.x-p.x)/m.scale + cx),
+    y : Math.round(cy - (q.y-p.y)/m.scale)
   };
 };
 
