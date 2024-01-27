@@ -172,6 +172,7 @@ function showMenu() {
   var menu = {
     "":{title:/*LANG*/"Map"},
     "< Back": ()=> showMap(),
+    /*LANG*/"Exit": () => load(),
   };
   // If we have a GPS fix, add a menu item to center it
   if (fix.fix) menu[/*LANG*/"Center GPS"]=() =>{
@@ -179,6 +180,7 @@ function showMenu() {
     m.lon = fix.lon;
     showMap();
   };
+
   menu = Object.assign(menu, {
   /*LANG*/"Zoom In": () =>{
     m.scale /= 2;
@@ -232,7 +234,6 @@ function showMenu() {
       }
     };
   }
-  menu[/*LANG*/"Exit"] = () => load();
   E.showMenu(menu);
 }
 
