@@ -40,7 +40,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
   }
 
   let loadSettings=function() {
-    settings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true,'sideTap':0};
+    settings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'fullScreen': true, 'sideTap':0};
     //sideTap 0 = on | 1 = sidebar1...
 
     let tmp =  require('Storage').readJSON(SETTINGS_FILE, 1) || settings;
@@ -118,31 +118,59 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
     if (drawCount % 60 == 0)
       updateSunRiseSunSet(location.lat, location.lon);
-
+    
     g.reset();
-    g.setColor(g.theme.bg);
-    g.fillRect(0, 0, w2, h);
-    g.setColor(settings.bg);
-    g.fillRect(w2, 0, w, h);
+    
+    if (settings.fullScreen) {
+      g.setColor(g.theme.bg);
+      g.fillRect(0, 0, w2, h);
+      g.setColor(settings.bg);
+      g.fillRect(w2, 0, w, h);
 
-    // time
-    g.setColor(g.theme.fg);
-    g.setFontKdamThmor();
-    g.setFontAlign(0, -1);
-    g.drawString(hh, w2/2, 10 + 0);
-    g.drawString(mm, w2/2, 10 + h/2);
+      // time
+      g.setColor(g.theme.fg);
+      g.setFontKdamThmor();
+      g.setFontAlign(0, -1);
+      g.drawString(hh, w2/2, 10 + 0);
+      g.drawString(mm, w2/2, 10 + h/2);
 
-    switch(sideBar) {
-    case 0:
-      drawSideBar1();
-      break;
-    case 1:
-      drawSideBar2();
-      break;
-    case 2:
-      drawSideBar3();
-      break;
+      switch(sideBar) {
+      case 0:
+        drawSideBar1();
+        break;
+      case 1:
+        drawSideBar2();
+        break;
+      case 2:
+        drawSideBar3();
+        break;
+      }
+    } else {
+      g.setColor(g.theme.bg);
+      g.fillRect(0, 24, 113, 176);
+      g.setColor(settings.bg);
+      g.fillRect(113, 24, 176, 176);
+
+      // time
+      g.setColor(g.theme.fg);
+      g.setFontKdamThmor();
+      g.setFontAlign(0, -1);
+      g.drawString(hh, 57, 24);
+      g.drawString(mm, 57, 100);
+
+      switch(sideBar) {
+      case 0:
+        drawSideBar1Alt();
+        break;
+      case 1:
+        drawSideBar2Alt();
+        break;
+      case 2:
+        drawSideBar3();
+        break;
+      }
     }
+
 
     drawCount++;
     queueDraw();
@@ -164,6 +192,16 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
 
     drawDateAndCalendar(w3, h/2, dy, dd, mm);
   }
+  
+  let drawSideBar1Alt=function() {
+    let date = new Date();
+    let dy= require("date_utils").dow(date.getDay(),1).toUpperCase();
+    let dd= date.getDate();
+    let mm= require("date_utils").month(date.getMonth()+1,1).toUpperCase();
+    let yy = date.getFullYear();
+
+    drawDateAndCalendarAlt(145, 46, dy, dd, mm, yy);
+  }
 
   let drawSideBar2=function() {
     drawBattery(w2 + (w-w2-wb)/2,  h/10, wb, 17);
@@ -178,6 +216,14 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     setSmallFont();
     g.setFontAlign(0, -1);
     g.drawString(formatSteps(), w3, 7*h/8);
+  }  
+  
+  let drawSideBar2Alt=function() {
+    // steps
+    g.drawImage(boot_img, 113, 59, { scale: 1 });
+    setSmallFont();
+    g.setFontAlign(0, -1);
+    g.drawString(formatSteps(), 145, 122);
   }
 
   // sunrise, sunset times
@@ -211,6 +257,28 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     setSmallFont();
     g.setFontAlign(0, -1);
     g.drawString(mm.toUpperCase(), x, y + 70);
+  }
+  
+  let drawDateAndCalendarAlt=function(x, y, dy, dd, mm, yy) {
+    // day
+    setTextColor();
+    setSmallFont();
+    g.setFontAlign(0, -1);
+    g.drawString(dy.toUpperCase(), x, y);
+
+    drawCalendar(x - 18, y + 28, 35, 3, dd);
+
+    // month
+    setTextColor();
+    setSmallFont();
+    g.setFontAlign(0, -1);
+    g.drawString(mm.toUpperCase(), x, y + 70);
+
+    // year
+    setTextColor();
+    setSmallFont();
+    g.setFontAlign(0, -1);
+    g.drawString(yy, x, y + 94);
   }
 
   // at x,y width:wi thicknes:th
@@ -311,7 +379,10 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     delete Graphics.prototype.setFontKdamThmor;
-    Bangle.removeListener('charging',chargingListener);
+    
+    if (settings.fullScreen) {
+      Bangle.removeListener('charging',chargingListener);
+    }
   }
 
   let main=function(){
@@ -341,17 +412,17 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
       });
     }
 
-
-
-    Bangle.on('charging',chargingListener);
-
-
     Bangle.loadWidgets();
-    require("widget_utils").hide();
+    
+    if (settings.fullScreen) {
+      Bangle.on('charging',chargingListener);
+      require("widget_utils").hide();
+    } else {
+      Bangle.drawWidgets();
+    }
+    
     draw();
-
   }
-
 
   main();
 }

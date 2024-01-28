@@ -14,3 +14,4 @@
 0.14: cleanup code and fix fastload issue
 0.15: fix draw before widget hide
 0.16: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.17: Add fullscreen option (on by default) to show widgets, adjust sidebar 1 and 2 when fullscreen is off
