@@ -36,7 +36,7 @@
             },
         },
         'Step length': {
-            value: 0.75 || s.avStep,
+            value: s.avStep || 0.75,
             min: 0.2,
             max: 1.5,
             step: 0.01,

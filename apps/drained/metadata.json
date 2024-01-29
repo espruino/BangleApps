@@ -1,12 +1,10 @@
 {
   "id": "drained",
   "name": "Drained",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Switches to displaying a simple clock when the battery percentage is low, and disables some peripherals",
   "readme": "README.md",
   "icon": "icon.png",
-  "type": "clock",
-  "tags": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
