@@ -263,7 +263,7 @@ apps.forEach((app,appIdx) => {
           WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
         }
         // check for manual boolean formatter
-        const m = fileContents.match(/format: *\(\) *=>.*["'](yes|on)["']/i);
+        const m = fileContents.match(/format: *\(?\w*\)? *=>.*["'](yes|on)["']/i);
         if (m) {
           WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
         }
