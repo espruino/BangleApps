@@ -147,9 +147,11 @@ TODO:
         let mapsLoadedContainer = document.getElementById("mapsLoadedContainer");
         mapsLoadedContainer.innerHTML = "";
         loadedMaps = [];
+        const mapsLoaded = [];
 
         Puck.eval(`require("Storage").list(/openstmap\\.\\d+\\.json/)\n`,function(files) {
           console.log("MAPS:",files);
+          files.sort();
           let promise = Promise.resolve();
           files.forEach(filename => {
             if (filename=="") return;
@@ -159,7 +161,7 @@ TODO:
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
-                  let latlon = L.latLng(mapInfo.lat, mapInfo.lon);
+                  mapsLoaded.push({mapNumber: mapNumber, mapInfo: mapInfo});
                   mapsLoadedContainer.innerHTML += `
 <div class="tile">
   <div class="tile-icon">
@@ -175,19 +177,27 @@ TODO:
   </div>
 </div>
                   `;
-                  setTimeout(function() {
-                    let map = L.map(`tile-map-${mapNumber}`);
-                    L.tileLayer(PREVIEWTILELAYER, {
-                      maxZoom: 18
-                    }).addTo(map);
-                    let marker = new L.marker(latlon).addTo(map);
-                    map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
-                  }, 500);
                 }
                 resolve();
               });
             }));
           });
+          promise = promise.then(() => new Promise(resolve => {
+            setTimeout(() => {
+              mapsLoaded.forEach(mapLoaded => {
+                let latlon = L.latLng(mapLoaded.mapInfo.lat, mapLoaded.mapInfo.lon);
+                let map = L.map(`tile-map-${mapLoaded.mapNumber}`);
+                L.tileLayer(PREVIEWTILELAYER, {
+                  maxZoom: 18
+                }).addTo(map);
+                let marker = new L.marker(latlon).addTo(map);
+                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w / 2;
+                map.fitBounds(latlon.toBounds(dist/*meters*/), {animation: false});
+              });
+            }, 0);
+
+            resolve();
+          }));
           promise = promise.then(() => new Promise(resolve => {
             if (!loadedMaps.length) {
               mapsLoadedContainer.innerHTML += `
