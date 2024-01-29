@@ -148,10 +148,10 @@ TODO:
         mapsLoadedContainer.innerHTML = "";
         loadedMaps = [];
 
-        Puck.write(`\x10Bluetooth.println(require("Storage").list(/openstmap\\.\\d+\\.json/))\n`,function(files) {
+        Puck.eval(`require("Storage").list(/openstmap\\.\\d+\\.json/)\n`,function(files) {
           console.log("MAPS:",files);
           let promise = Promise.resolve();
-          files.trim().split(",").forEach(filename => {
+          files.forEach(filename => {
             if (filename=="") return;
             promise = promise.then(() => new Promise(resolve => {
               Util.readStorageJSON(filename, mapInfo => {
