@@ -169,6 +169,7 @@ function drawSeconds() {
   let seconds = now.getSeconds().toString();
   if (seconds.length == 1) seconds = '0' + seconds;
   let y = Bangle.appRect.y + mainTimeHeight - 3;
+  g.setBgColor(g.theme.bg);
   g.setFontAlign(-1, 1).setFont("Vector", secondaryFontHeight).setColor(COLOUR_GREY);
   g.drawString(seconds, horizontalCenter + 54, y, true);
 }
@@ -232,10 +233,10 @@ function draw() {
 // initialise
 g.clear(true);
 
-// scroll METAR lines on taps
-Bangle.setUI("clockupdown", action => {
+// scroll METAR lines (either by touch or tap)
+function scrollAVWX(action) {
   switch (action) {
-    case -1:  // top tap
+    case -1:  // top touch/tap
       if (settings.invertScrolling) {
         if (METARscollLines > 0)
           METARscollLines--;
@@ -244,7 +245,7 @@ Bangle.setUI("clockupdown", action => {
           METARscollLines++;
       }
       break;
-    case 1:   // bottom tap
+    case 1:   // bottom touch/tap
       if (settings.invertScrolling) {
         if (METARscollLines < METARlinesCount - 4)
           METARscollLines++;
@@ -254,10 +255,40 @@ Bangle.setUI("clockupdown", action => {
       }
       break;
     default:
-      // ignore
+      // ignore other actions
   }
   drawAVWX();
+}
+
+Bangle.on('tap', data => {
+  switch (data.dir) {
+    case 'top':
+      scrollAVWX(-1);
+      break;
+    case 'bottom':
+      scrollAVWX(1);
+      break;
+    case 'left':
+    case 'right':
+      // toggle seconds display on double taps left or right
+      if (data.double) {
+        if (settings.showSeconds) {
+          clearInterval(secondsInterval);
+          let y = Bangle.appRect.y + mainTimeHeight - 3;
+          g.clearRect(horizontalCenter + 54, y - secondaryFontHeight, g.getWidth(), y);
+          settings.showSeconds = false;
+        } else {
+          settings.showSeconds = true;
+          syncSecondsUpdate();
+        }
+      }
+      break;
+    default:
+      // ignore other taps
+  }
 });
+
+Bangle.setUI("clockupdown", scrollAVWX);
 
 // load widgets
 Bangle.loadWidgets();
@@ -276,8 +307,8 @@ updateAVWX();
 
 
 // TMP for debugging:
-//METAR = 'YAAA 011100Z 21014KT CAVOK 23/08 Q1018 RMK RF000/0000';
-//METAR = 'YAAA 150900Z 14012KT 9999 SCT045 BKN064 26/14 Q1012 RMK RF000/0000 DL-W/DL-NW';
-//METAR = 'YAAA 020030Z VRB CAVOK';
+//METAR = 'YAAA 011100Z 21014KT CAVOK 23/08 Q1018 RMK RF000/0000'; drawAVWX();
+//METAR = 'YAAA 150900Z 14012KT 9999 SCT045 BKN064 26/14 Q1012 RMK RF000/0000 DL-W/DL-NW'; drawAVWX();
+//METAR = 'YAAA 020030Z VRB CAVOK'; drawAVWX();
 //METARts = new Date(Date.now() - 61 * 60000);   // 61 to trigger warning, 91 to trigger alert
 
