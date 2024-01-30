@@ -191,8 +191,8 @@ TODO:
                   maxZoom: 18
                 }).addTo(map);
                 let marker = new L.marker(latlon).addTo(map);
-                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w / 2;
-                map.fitBounds(latlon.toBounds(dist/*meters*/), {animation: false});
+                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w;
+                map.fitBounds(latlon.toBounds(dist/2/*meters*/), {animation: false});
               });
             }, 0);
 
