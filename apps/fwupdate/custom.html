@@ -115,7 +115,7 @@ function onInit(device) {
     }
     document.getElementById("boot-version").innerHTML = version;
     var versionNumber = parseFloat(version.replace(".","").replace("v","."));
-    if (versionNumber>=2.15)
+    if (versionNumber>=2.20)
       document.getElementById("fw-old-bootloader-msg").style.display = "none";
   });
 }
