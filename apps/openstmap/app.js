@@ -65,14 +65,16 @@ function redraw() {
 
 // Draw the POIs
 function drawPOI() {
+  let waypoints;
   try {
-    var waypoints = require("waypoints").load();
+    waypoints = require("waypoints").load();
   } catch (ex) {
     // Waypoints module not available.
     return;
   }
   g.setFont("Vector", 18);
   waypoints.forEach((wp, idx) => {
+    if (wp.lat === undefined || wp.lon === undefined) return;
     var p = m.latLonToXY(wp.lat, wp.lon);
     var sz = 2;
     g.setColor(0,0,0);
@@ -80,7 +82,7 @@ function drawPOI() {
     g.setColor(0,0,0);
     g.drawString(wp.name, p.x, p.y);
     //print(wp.name);
-  })
+  });
 }
 
 function isInside(rect, e, w, h) {
@@ -170,6 +172,7 @@ function showMenu() {
   var menu = {
     "":{title:/*LANG*/"Map"},
     "< Back": ()=> showMap(),
+    /*LANG*/"Exit": () => load(),
   };
   // If we have a GPS fix, add a menu item to center it
   if (fix.fix) menu[/*LANG*/"Center GPS"]=() =>{
@@ -177,6 +180,7 @@ function showMenu() {
     m.lon = fix.lon;
     showMap();
   };
+
   menu = Object.assign(menu, {
   /*LANG*/"Zoom In": () =>{
     m.scale /= 2;
@@ -230,7 +234,6 @@ function showMenu() {
       }
     };
   }
-  menu[/*LANG*/"Exit"] = () => load();
   E.showMenu(menu);
 }
 
