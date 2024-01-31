@@ -6,6 +6,6 @@
     "supports" : ["BANGLEJS2"],  
   "tags": "",
   "storage": [
-    {"name":"rellotge.js","url":"rellotge.js"}
+    {"name":"rellotge.js","url":"https://enricpineda.github.io/BangleApps/apps/rellotge/rellotge.js"}
   ]
 }
