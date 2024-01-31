@@ -6,7 +6,7 @@
   "description": "This is a description of my awesome timer app",
   "tags": "",
   "storage": [
-    {"name":"rellotge.app.js","url":"rellotge.js"},
+    {"name":"rellotge.js","url":"rellotge.js"},
     {"name":"timer.img","url":"app-icon.js","evaluate":true}
   ]
 }
