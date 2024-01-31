@@ -3,6 +3,7 @@
   "shortName":"Rellotge",
   "version":"0.1",
   "description": "This is a description of my awesome timer app",
+    "supports" : ["BANGLEJS2"],  
   "tags": "",
   "storage": [
     {"name":"rellotge.js","url":"rellotge.js"}
