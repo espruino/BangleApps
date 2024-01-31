@@ -113,7 +113,8 @@ setTimeout(drawWidgets, 100);
   // handle switch display on by pressing BTN1
   Bangle.on('lcdPower', function(on) {
     if (on) {
-      drawWidgets();
+      Bangle.loadWidgets();
+      Bangle.drawWidgets();
       //drawSimpleClock();
     }
   });
