@@ -114,7 +114,7 @@ setTimeout(drawWidgets, 100);
   Bangle.on('lcdPower', function(on) {
     if (on) {
       drawWidgets();
-      drawSimpleClock();
+      //drawSimpleClock();
     }
   });
 
