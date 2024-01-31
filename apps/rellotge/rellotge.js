@@ -20,18 +20,18 @@ setTimeout(drawWidgets, 100);
 // Taken from https://github.com/espruino/BangleApps/blob/master/apps/sclock/clock-simple.js
 (function() {
 
-  const timeFontSize = 15;
-  const dateFontSize = 10;
+  const timeFontSize = 1;
+  const dateFontSize = 2;
   const gmtFontSize = 10;
-  const font = "Vector";
+  const font = "12x20";
 
-  const xyCenter = g.getWidth() / 2;
-  const yposTime = 50;
+  const xyCenter = g.getWidth() /9;
+  const yposTime = 55;
   const yposDate = 130;
   const yposYear = 175;
   const yposGMT = 220;
   const leshores = ["Les dotze","La una","Les dues","les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
-  const leshores2 = ["d\'una del mati","de dues del mati","de tres del mati","de quatre del mati","de cinc del mati","de sis del mati","de set del mati","de vuit del mati","de nou del mati","de deu del mati","d'onze del mati","de dotze del mati","d'una de la tarda","de dues de la tarda","de tres de la tarda","de quatre de la tarda","de cinc de la tarda","de sis de la tarda","de set de la tarda","de vuit de la tarda","de nou del vespre","de deu del vespre","d'onze del vespre","de dotze"];
+  const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
 
   function drawSimpleClock() {
     g.clear();
@@ -41,7 +41,7 @@ setTimeout(drawWidgets, 100);
     var m = d.getMinutes();
 
     // drawSting centered
-    g.setFontAlign(0, 0);
+    g.setFontAlign(-1, 0);
 
     // draw time
     var time = da[4].substr(0, 5);
@@ -55,13 +55,13 @@ setTimeout(drawWidgets, 100);
     } else if (m >= 7 && m < 10) {
       t = "Mig quart\r\n" + leshores2[d.getHours()];
     } else if (m >= 10 && m < 12) {
-      t = "Mig quart tocat\r\n" + leshores2[d.getHours()];
+      t = "Mig quart\r\ntocat\r\n" + leshores2[d.getHours()];
     } else if (m >= 12 && m < 15) {
       t = "Mig quart\r\nben tocat\r\n" + leshores2[d.getHours()];
     } else if (m >= 15 && m < 17) {
       t = "Un quart\r\n" + leshores2[d.getHours()];
     } else if (m >= 17 && m < 20) {
-      t = "Un quart tocat\r\n" + leshores2[d.getHours()];
+      t = "Un quart\r\ntocat\r\n" + leshores2[d.getHours()];
     } else if (m >= 20 && m < 22) {
       t = "Un quart\r\nben tocat\r\n" + leshores2[d.getHours()];
     } else if (m >= 22 && m < 25) {
@@ -73,7 +73,7 @@ setTimeout(drawWidgets, 100);
     } else if (m >= 30 && m < 32) {
       t = "Dos quarts\r\n" + leshores2[d.getHours()];
     } else if (m >= 32 && m < 35) {
-      t = "Dos quarts tocats\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts\r\ntocats\r\n" + leshores2[d.getHours()];
     } else if (m >= 35 && m < 37) {
       t = "Dos quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
     } else if (m >= 37 && m < 40) {
@@ -85,7 +85,7 @@ setTimeout(drawWidgets, 100);
     } else if (m >= 45 && m < 47) {
       t = "Tres quarts\r\n" + leshores2[d.getHours()];
     } else if (m >= 47 && m < 50) {
-      t = "Tres quarts tocats\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts\r\ntocats\r\n" + leshores2[d.getHours()];
     } else if (m >= 50 && m < 52) {
       t = "Tres quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
     } else if (m >= 52 && m < 55) {
@@ -101,17 +101,12 @@ setTimeout(drawWidgets, 100);
     // draw Day, name of month, Date
     var date = [da[0], da[1], da[2]].join(" ");
     g.setFont(font, dateFontSize);
+    
+    var mu = "";
+    if (m < 10) {mu = "0"+m;} else {mu = m;}
 
-    g.drawString(date, xyCenter, yposDate, true);
+    g.drawString(d.getHours()+":"+mu, xyCenter, yposDate, true);
 
-    // draw year
-    g.setFont(font, dateFontSize);
-    g.drawString(d.getFullYear(), xyCenter, yposYear, true);
-
-    // draw gmt
-    var gmt = da[5];
-    g.setFont(font, gmtFontSize);
-    g.drawString(gmt, xyCenter, yposGMT, true);
 
   }
 
