@@ -96,7 +96,7 @@ function onInit(device) {
     if (crcs[0] == 1787004733) { // check 6 page CRC - the 7th page isn't used in 2v20
       version = "2v20";
     } else { // for other versions all 7 pages are used, check those
-      var crc = crcs[2]; 
+      var crc = crcs[1]; 
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
       if (crc==1207580954) { version = "2v10.236"; ok = false; }
       if (crc==3435933210) version = "2v11.52";
@@ -115,7 +115,7 @@ function onInit(device) {
     }
     document.getElementById("boot-version").innerHTML = version;
     var versionNumber = parseFloat(version.replace(".","").replace("v","."));
-    if (versionNumber>=2.15)
+    if (versionNumber>=2.20)
       document.getElementById("fw-old-bootloader-msg").style.display = "none";
   });
 }
