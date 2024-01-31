@@ -1,11 +1,13 @@
 { "id": "rellotge",
-  "name": "Rellotge",
+  "name": "Rellotge en catala",
   "shortName":"Rellotge",
-  "version":"0.1",
-  "description": "This is a description of my awesome timer app",
-    "supports" : ["BANGLEJS2"],  
+  "version":"0.01",
+  "description": "A catalan clock with traditional naming of hous",
+  "icon": "icona.js",
   "tags": "",
-  "storage": [
-    {"name":"rellotge.js","url":"https://enricpineda.github.io/BangleApps/apps/rellotge/rellotge.js"}
+  "supports" : ["BANGLEJS2"],  
+   "storage": [
+    {"name":"rellotge.js","url":"rellotge.js"},
+    {"name":"rellotge.img","url":"icona.js","evaluate":true}
   ]
 }
