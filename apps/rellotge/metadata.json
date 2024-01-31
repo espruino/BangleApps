@@ -4,6 +4,7 @@
   "version":"0.01",
   "description": "A catalan clock with traditional naming of hous",
   "icon": "icona.js",
+  "readme": "README.md",
   "type": "clock",
   "tags": "",
   "supports" : ["BANGLEJS2"],  
