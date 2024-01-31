@@ -1,0 +1,10 @@
+{ "id": "rellotge",
+  "name": "Rellotge català",
+  "shortName":"Rellotge",
+  "version":"0.1",
+  "description": "Rellotge català per a Bangle JS 2",
+  "tags": "",
+  "storage": [
+    {"name":"rellotge.rellotge.js","url":"rellotge.js"}
+  ]
+}
