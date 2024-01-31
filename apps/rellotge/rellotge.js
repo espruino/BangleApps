@@ -31,7 +31,7 @@ setTimeout(drawWidgets, 100);
   const yposYear = 175;
   const yposGMT = 220;
   const leshores = ["Les dotze","La una","Les dues","les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
-  const leshores2 = ["de dotze","d\'una del mati","de dues del mati","de tres del mati","de quatre del mati","de cinc del mati","de sis del mati","de set del mati","de vuit del mati","de nou del mati","de deu del mati","d'onze del mati","de dotze del mati","d'una de la tarda","de dues de la tarda","de tres de la tarda","de quatre de la tarda","de cinc de la tarda","de sis de la tarda","de set de la tarda","de vuit de la tarda","de nou del vespre","de deu del vespre","d'onze del vespre","de dotze"];
+  const leshores2 = ["d\'una del mati","de dues del mati","de tres del mati","de quatre del mati","de cinc del mati","de sis del mati","de set del mati","de vuit del mati","de nou del mati","de deu del mati","d'onze del mati","de dotze del mati","d'una de la tarda","de dues de la tarda","de tres de la tarda","de quatre de la tarda","de cinc de la tarda","de sis de la tarda","de set de la tarda","de vuit de la tarda","de nou del vespre","de deu del vespre","d'onze del vespre","de dotze"];
 
   function drawSimpleClock() {
     g.clear();
@@ -126,8 +126,8 @@ setTimeout(drawWidgets, 100);
   // clean app screen
   //g.clear();
 
-  // refesh every 15 sec
-  setInterval(drawSimpleClock, 15E3);
+  // refesh every 60 sec
+  setInterval(drawSimpleClock, 60E3);
 
   // draw now
   drawSimpleClock();
