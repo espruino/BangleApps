@@ -1,21 +1,3 @@
-// drawWidgets() is added by bootloader.js when loading a clock app, but when you upload via the IDE it just 
-// resets the watch and skips out running bootloader.js completely. So add the relevant code from the bootloader. 
-var WIDGETPOS = {
-  tl: 32,
-  tr: g.getWidth() - 32,
-  bl: 32,
-  br: g.getWidth() - 32
-};
-var WIDGETS = {};
-
-function drawWidgets() {
-  for (var w of WIDGETS) w.draw();
-}
-
-require("Storage").list().filter(a => a[0] == '=').forEach(
-  widget => eval(require("Storage").read(widget)));
-setTimeout(drawWidgets, 100);
-
 // Example application code
 // Taken from https://github.com/espruino/BangleApps/blob/master/apps/sclock/clock-simple.js
 (function() {
@@ -34,7 +16,7 @@ setTimeout(drawWidgets, 100);
   const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
 
   function drawSimpleClock() {
-    g.clear();
+    g.clearRect(Bangle.appRect);
     // get date
     var d = new Date();
     var da = d.toString().split(" ");
@@ -111,16 +93,18 @@ setTimeout(drawWidgets, 100);
   }
 
   // handle switch display on by pressing BTN1
-  Bangle.on('lcdPower', function(on) {
+  function onLcd(on) {
     if (on) {
       Bangle.loadWidgets();
       Bangle.drawWidgets();
       //drawSimpleClock();
+      Bangle.removeListener('lcdPower', onLcd);
     }
-  });
+  }
+  Bangle.on('lcdPower', onLcd);
 
   // clean app screen
-  //g.clear();
+  g.clear();
 
   // refesh every 60 sec
   setInterval(drawSimpleClock, 60E3);
