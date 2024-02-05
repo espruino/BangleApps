@@ -10,8 +10,21 @@ in the future this app will be able to support other types of remote (see below)
 
 ## Usage
 
-Run the app, and ensure you're not connected to your watch via Bluetooth
-(a warning will pop up if so).
+Run the app, then choose the type of controls you want and ensure you're not connected
+to your watch via Bluetooth (a warning will pop up if so).
+
+Linear mode controls A/B axes individually, and allows you to vary the speed of the
+motors based on the distance you drag from the centre. Other modes just use on/off
+buttons.
+
+| Mode       | up   | down | left | right |
+|------------|------|------|------|-------|
+| **Linear** | +A   | -A   |  -B  |  +B   |
+| **Normal** | +A   | -A   |  -B  |  +B   |
+| **Tank**   | -A+B | +A-B | +A+B | -A-B  |
+| **Merged** | -A-B | +A+B | +A-B | -A+B  |
+
+In all cases pressing the C/D buttons will turn on C/D outputs
 
 Now press the arrow keys on the screen to control the robot.
 
