@@ -38,17 +38,17 @@ if (m.map) {
   m.lat = m.map.lat; // position of middle of screen
   m.lon = m.map.lon;  // position of middle of screen
 }
+var CX = g.getWidth()/2;
+var CY = g.getHeight()/2;
 
 // return number of tiles drawn
 exports.draw = function() {
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
   var p = Bangle.project({lat:m.lat,lon:m.lon});
   let count = 0;
   m.maps.forEach((map,idx) => {
     var d = map.scale/m.scale;
-    var ix = (p.x-map.center.x)/m.scale + (map.imgx*d/2) - cx;
-    var iy = (map.center.y-p.y)/m.scale + (map.imgy*d/2) - cy;
+    var ix = (p.x-map.center.x)/m.scale + (map.imgx*d/2) - CX;
+    var iy = (map.center.y-p.y)/m.scale + (map.imgy*d/2) - CY;
     var o = {};
     var s = map.tilesize;
     if (d!=1) { // if the two are different, add scaling
@@ -85,14 +85,12 @@ exports.draw = function() {
 };
 
 /// Convert lat/lon to pixels on the screen
-exports.latLonToXY = function(lat, lon) {
-  var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var q = Bangle.project({lat:lat, lon:lon});
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
+exports.latLonToXY = function(lat, lon) { "ram"
+  var p = Bangle.project({lat:m.lat,lon:m.lon}),
+      q = Bangle.project({lat:lat, lon:lon});
   return {
-    x : Math.round((q.x-p.x)/m.scale + cx),
-    y : Math.round(cy - (q.y-p.y)/m.scale)
+    x : Math.round((q.x-p.x)/m.scale + CX),
+    y : Math.round(CY - (q.y-p.y)/m.scale)
   };
 };
 

@@ -33,3 +33,5 @@
 0.26: Ensure that when redrawing, we always cancel any in-progress track draw
 0.27: Display message if no map is installed
 0.28: Fix rounding errors
+0.29: Keep exit at bottom of menu
+      Speed up latLonToXY for track rendering

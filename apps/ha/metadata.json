@@ -2,7 +2,7 @@
   "id": "ha",
   "name": "Home Assistant",
   "version": "0.10",
-  "description": "Integrates your Bangle.js into Home Assistant.",
+  "description": "Integrates your Bangle.js into Home Assistant using Android Integration/Gadgetbridge",
   "icon": "ha.png",
   "type": "app",
   "tags": "tool,clkinfo,bluetooth",

@@ -32,3 +32,4 @@
       Allow alarm enable/disable
 0.31: Implement API for activity fetching
 0.32: Added support for loyalty cards from gadgetbridge
+0.33: Fix alarms created in Gadgetbridge not repeating

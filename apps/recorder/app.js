@@ -213,229 +213,229 @@ function viewTrack(filename, info) {
     });
   };
   menu['< Back'] = () => { viewTracks(); };
+  return E.showMenu(menu);
+}
 
-  function plotTrack(info) { "ram"
-    function distance(lat1,long1,lat2,long2) { "ram"
-      var x = (long1-long2) * Math.cos((lat1+lat2)*Math.PI/360);
-      var y = lat2 - lat1;
-      return Math.sqrt(x*x + y*y) * 6371000 * Math.PI / 180;
-    }
+function plotTrack(info) { "ram"
+  function distance(lat1,long1,lat2,long2) { "ram"
+    var x = (long1-long2) * Math.cos((lat1+lat2)*Math.PI/360);
+    var y = lat2 - lat1;
+    return Math.sqrt(x*x + y*y) * 6371000 * Math.PI / 180;
+  }
 
-    // Function to convert lat/lon to XY
-    var getMapXY;
-    if (info.qOSTM) {
-      // scale map to view full track
-      const max = Bangle.project({lat: info.maxLat, lon: info.maxLong});
-      const min = Bangle.project({lat: info.minLat, lon: info.minLong});
-      const scaleX = (max.x-min.x)/Bangle.appRect.w;
-      const scaleY = (max.y-min.y)/Bangle.appRect.h;
-      osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
-      getMapXY = osm.latLonToXY.bind(osm);
-    } else {
-      getMapXY = function(lat, lon) { "ram"
-        return {x:cx + Math.round((long - info.lon)*info.lfactor*info.scale),
-                y:cy + Math.round((info.lat - lat)*info.scale)};
-      };
-    }
+  // Function to convert lat/lon to XY
+  var XY;
+  if (info.qOSTM) {
+    // scale map to view full track
+    const max = Bangle.project({lat: info.maxLat, lon: info.maxLong});
+    const min = Bangle.project({lat: info.minLat, lon: info.minLong});
+    const scaleX = (max.x-min.x)/Bangle.appRect.w;
+    const scaleY = (max.y-min.y)/Bangle.appRect.h;
+    osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
+    XY = osm.latLonToXY.bind(osm);
+  } else {
+    XY = function(lat, lon) { "ram"
+      return {x:cx + Math.round((long - info.lon)*info.lfactor*info.scale),
+              y:cy + Math.round((info.lat - lat)*info.scale)};
+    };
+  }
 
-    E.showMenu(); // remove menu
-    E.showMessage(/*LANG*/"Drawing...",/*LANG*/"Track "+info.fn);
-    g.flip(); // on buffered screens, draw a not saying we're busy
-    g.clear(1);
-    var s = require("Storage");
-    var W = g.getWidth();
-    var H = g.getHeight();
-    var cx = W/2;
-    var cy = 24 + (H-24)/2;
-    if (!info.qOSTM) {
-      g.setColor("#f00").fillRect(9,80,11,120).fillPoly([9,60,19,80,0,80]);
-      g.setColor(g.theme.fg).setFont("6x8").setFontAlign(0,0).drawString("N",10,50);
-    } else {
-      osm.lat = info.lat;
-      osm.lon = info.lon;
-      osm.draw();
-      g.setColor("#000");
+  E.showMenu(); // remove menu
+  E.showMessage(/*LANG*/"Drawing...",/*LANG*/"Track "+info.fn);
+  g.flip(); // on buffered screens, draw a not saying we're busy
+  g.clear(1);
+  var s = require("Storage");
+  var G = g;
+  var W = g.getWidth();
+  var H = g.getHeight();
+  var cx = W/2;
+  var cy = 24 + (H-24)/2;
+  if (!info.qOSTM) {
+    g.setColor("#f00").fillRect(9,80,11,120).fillPoly([9,60,19,80,0,80]);
+    g.setColor(g.theme.fg).setFont("6x8").setFontAlign(0,0).drawString("N",10,50);
+  } else {
+    osm.lat = info.lat;
+    osm.lon = info.lon;
+    osm.draw();
+    g.setColor("#000");
+  }
+  var latIdx = info.fields.indexOf("Latitude");
+  var lonIdx = info.fields.indexOf("Longitude");
+  g.drawString(asTime(info.duration),10,220);
+  var f = require("Storage").open(info.filename,"r");
+  if (f===undefined) return;
+  var l = f.readLine(f);
+  l = f.readLine(f); // skip headers
+  var ox=0;
+  var oy=0;
+  var olat,olong,dist=0;
+  var i=0, c = l.split(",");
+  // skip until we find our first data
+  while(l!==undefined && c[latIdx]=="") {
+    c = l.split(",");
+    l = f.readLine(f);
+  }
+  // now start plotting
+  var lat = +c[latIdx];
+  var long = +c[lonIdx];
+  var mp = XY(lat, long);
+  g.moveTo(mp.x,mp.y);
+  g.setColor("#0f0");
+  g.fillCircle(mp.x,mp.y,5);
+  if (info.qOSTM) g.setColor("#f09");
+  else g.setColor(g.theme.fg);
+  l = f.readLine(f);
+  g.flip(); // force update
+  while(l!==undefined) {
+    c = l.split(",");l = f.readLine(f);
+    if (c[latIdx]=="")continue;
+    lat = +c[latIdx];
+    long = +c[lonIdx];
+    mp = XY(lat, long);
+    G.lineTo(mp.x,mp.y);
+    if (info.qOSTM) G.fillCircle(mp.x,mp.y,2); // make the track more visible
+    var d = distance(olat,olong,lat,long);
+    if (!isNaN(d)) dist+=d;
+    olat = lat;
+    olong = long;
+    ox = mp.x;
+    oy = mp.y;
+    if (++i > 100) { G.flip();i=0; }
+  }
+  g.setColor("#f00");
+  g.fillCircle(ox,oy,5);
+  if (info.qOSTM) g.setColor("#000");
+  else g.setColor(g.theme.fg);
+  g.drawString(require("locale").distance(dist,2),g.getWidth() / 2, g.getHeight() - 20);
+  g.setFont("6x8",2);
+  g.setFontAlign(0,0,3);
+  var isBTN3 = "BTN3" in global;
+  g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
+  setWatch(function() {
+    viewTrack(info.fn, info);
+  }, isBTN3?BTN3:BTN1);
+  Bangle.drawWidgets();
+  g.flip();
+}
+
+function plotGraph(info, style) { "ram"
+  E.showMenu(); // remove menu
+  E.showMessage(/*LANG*/"Calculating...",/*LANG*/"Track "+info.fn);
+  var filename = info.filename;
+  var infn = new Float32Array(80);
+  var infc = new Uint16Array(80);
+  var title;
+  var lt = 0; // last time
+  var tn = 0; // count for each time period
+  var strt, dur = info.duration;
+  var f = require("Storage").open(filename,"r");
+  if (f===undefined) return;
+  var l = f.readLine(f);
+  l = f.readLine(f); // skip headers
+  var nl = 0, c, i;
+  var factor = 1; // multiplier used for values when graphing
+  var timeIdx = info.fields.indexOf("Time");
+  if (l!==undefined) {
+    c = l.split(",");
+    strt = c[timeIdx];
+  }
+  if (style=="Heartrate") {
+    title = /*LANG*/"Heartrate (bpm)";
+    var hrmIdx = info.fields.indexOf("Heartrate");
+    while(l!==undefined) {
+      ++nl;c=l.split(",");l = f.readLine(f);
+      if (c[hrmIdx]=="") continue;
+      i = Math.round(80*(c[timeIdx] - strt)/dur);
+      infn[i]+=+c[hrmIdx];
+      infc[i]++;
     }
+  } else if (style=="Altitude") {
+    title = /*LANG*/"Altitude (m)";
+    var altIdx = info.fields.indexOf("Barometer Altitude");
+    if (altIdx<0) altIdx = info.fields.indexOf("Altitude");
+    while(l!==undefined) {
+      ++nl;c=l.split(",");l = f.readLine(f);
+      if (c[altIdx]=="") continue;
+      i = Math.round(80*(c[timeIdx] - strt)/dur);
+      infn[i]+=+c[altIdx];
+      infc[i]++;
+    }
+  } else if (style=="Speed") {
+    // use locate to work out units
+    var localeStr = require("locale").speed(1,5); // get what 1kph equates to
+    let units = localeStr.replace(/[0-9.]*/,"");
+    factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
+    // title
+    title = /*LANG*/"Speed"+` (${units})`;
     var latIdx = info.fields.indexOf("Latitude");
     var lonIdx = info.fields.indexOf("Longitude");
-    g.drawString(asTime(info.duration),10,220);
-    var f = require("Storage").open(info.filename,"r");
-    if (f===undefined) return;
-    var l = f.readLine(f);
-    l = f.readLine(f); // skip headers
-    var ox=0;
-    var oy=0;
-    var olat,olong,dist=0;
-    var i=0, c = l.split(",");
     // skip until we find our first data
     while(l!==undefined && c[latIdx]=="") {
       c = l.split(",");
       l = f.readLine(f);
     }
-    // now start plotting
-    var lat = +c[latIdx];
-    var long = +c[lonIdx];
-    var mp = getMapXY(lat, long);
-    g.moveTo(mp.x,mp.y);
-    g.setColor("#0f0");
-    g.fillCircle(mp.x,mp.y,5);
-    if (info.qOSTM) g.setColor("#f09");
-    else g.setColor(g.theme.fg);
-    l = f.readLine(f);
-    g.flip(); // force update
+    // now iterate
+    var p,lp = Bangle.project({lat:c[1],lon:c[2]});
+    var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {
-      c = l.split(",");l = f.readLine(f);
-      if (c[latIdx]=="")continue;
-      lat = +c[latIdx];
-      long = +c[lonIdx];
-      mp = getMapXY(lat, long);
-      g.lineTo(mp.x,mp.y);
-      if (info.qOSTM) g.fillCircle(mp.x,mp.y,2); // make the track more visible
-      var d = distance(olat,olong,lat,long);
-      if (!isNaN(d)) dist+=d;
-      olat = lat;
-      olong = long;
-      ox = mp.x;
-      oy = mp.y;
-      if (++i > 100) { g.flip();i=0; }
-    }
-    g.setColor("#f00");
-    g.fillCircle(ox,oy,5);
-    if (info.qOSTM) g.setColor("#000");
-    else g.setColor(g.theme.fg);
-    g.drawString(require("locale").distance(dist,2),g.getWidth() / 2, g.getHeight() - 20);
-    g.setFont("6x8",2);
-    g.setFontAlign(0,0,3);
-    var isBTN3 = "BTN3" in global;
-    g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
-    setWatch(function() {
-      viewTrack(info.fn, info);
-    }, isBTN3?BTN3:BTN1);
-    Bangle.drawWidgets();
-    g.flip();
-  }
-
-  function plotGraph(info, style) { "ram"
-    E.showMenu(); // remove menu
-    E.showMessage(/*LANG*/"Calculating...",/*LANG*/"Track "+info.fn);
-    var filename = info.filename;
-    var infn = new Float32Array(80);
-    var infc = new Uint16Array(80);
-    var title;
-    var lt = 0; // last time
-    var tn = 0; // count for each time period
-    var strt, dur = info.duration;
-    var f = require("Storage").open(filename,"r");
-    if (f===undefined) return;
-    var l = f.readLine(f);
-    l = f.readLine(f); // skip headers
-    var nl = 0, c, i;
-    var factor = 1; // multiplier used for values when graphing
-    var timeIdx = info.fields.indexOf("Time");
-    if (l!==undefined) {
-      c = l.split(",");
-      strt = c[timeIdx];
-    }
-    if (style=="Heartrate") {
-      title = /*LANG*/"Heartrate (bpm)";
-      var hrmIdx = info.fields.indexOf("Heartrate");
-      while(l!==undefined) {
-        ++nl;c=l.split(",");l = f.readLine(f);
-        if (c[hrmIdx]=="") continue;
-        i = Math.round(80*(c[timeIdx] - strt)/dur);
-        infn[i]+=+c[hrmIdx];
+      ++nl;c=l.split(",");
+      l = f.readLine(f);
+      if (c[latIdx] == "") {
+        continue;
+      }
+      t = c[timeIdx];
+      i = Math.round(80*(t - strt)/dur);
+      p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
+      dx = p.x-lp.x;
+      dy = p.y-lp.y;
+      d = Math.sqrt(dx*dx+dy*dy);
+      if (t!=lt) {
+        infn[i]+=d / (t-lt); // speed
         infc[i]++;
       }
-    } else if (style=="Altitude") {
-      title = /*LANG*/"Altitude (m)";
-      var altIdx = info.fields.indexOf("Barometer Altitude");
-      if (altIdx<0) altIdx = info.fields.indexOf("Altitude");
-      while(l!==undefined) {
-        ++nl;c=l.split(",");l = f.readLine(f);
-        if (c[altIdx]=="") continue;
-        i = Math.round(80*(c[timeIdx] - strt)/dur);
-        infn[i]+=+c[altIdx];
-        infc[i]++;
-      }
-    } else if (style=="Speed") {
-      // use locate to work out units
-      var localeStr = require("locale").speed(1,5); // get what 1kph equates to
-      let units = localeStr.replace(/[0-9.]*/,"");
-      factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
-      // title
-      title = /*LANG*/"Speed"+` (${units})`;
-      var latIdx = info.fields.indexOf("Latitude");
-      var lonIdx = info.fields.indexOf("Longitude");
-      // skip until we find our first data
-      while(l!==undefined && c[latIdx]=="") {
-        c = l.split(",");
-        l = f.readLine(f);
-      }
-      // now iterate
-      var p,lp = Bangle.project({lat:c[1],lon:c[2]});
-      var t,dx,dy,d,lt = c[timeIdx];
-      while(l!==undefined) {
-        ++nl;c=l.split(",");
-        l = f.readLine(f);
-        if (c[latIdx] == "") {
-          continue;
-        }
-        t = c[timeIdx];
-        i = Math.round(80*(t - strt)/dur);
-        p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
-        dx = p.x-lp.x;
-        dy = p.y-lp.y;
-        d = Math.sqrt(dx*dx+dy*dy);
-        if (t!=lt) {
-          infn[i]+=d / (t-lt); // speed
-          infc[i]++;
-        }
-        lp = p;
-        lt = t;
-      }
-    } else throw new Error("Unknown type "+style);
-    var min=100000,max=-100000;
-    for (var i=0;i<infn.length;i++) {
-      if (infc[i]>0) infn[i]=factor*infn[i]/infc[i];
-      else { // no data - search back and see if we can find something
-        for (var j=i-1;j>=0;j--)
-          if (infc[j]) { infn[i]=infn[j]; break; }
-      }
-      var n = infn[i];
-      if (n>max) max=n;
-      if (n<min) min=n;
+      lp = p;
+      lt = t;
     }
-    // work out a nice grid value
-    var heightDiff = max-min;
-    var grid = 1;
-    while (heightDiff/grid > 8) {
-      grid*=2;
+  } else throw new Error("Unknown type "+style);
+  var min=100000,max=-100000;
+  for (var i=0;i<infn.length;i++) {
+    if (infc[i]>0) infn[i]=factor*infn[i]/infc[i];
+    else { // no data - search back and see if we can find something
+      for (var j=i-1;j>=0;j--)
+        if (infc[j]) { infn[i]=infn[j]; break; }
     }
-    // draw
-    g.clear(1).setFont("6x8",1);
-    var r = require("graph").drawLine(g, infn, {
-      x:4,y:24,
-      width: g.getWidth()-24,
-      height: g.getHeight()-(24+8),
-      axes : true,
-      gridy : grid,
-      gridx : infn.length / 3,
-      title: title,
-      miny: min,
-      maxy: max,
-      xlabel : x=>Math.round(x*dur/(60*infn.length))+/*LANG*/" min" // minutes
-    });
-    g.setFont("6x8",2);
-    g.setFontAlign(0,0,3);
-    var isBTN3 = "BTN3" in global;
-    g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
-    setWatch(function() {
-      viewTrack(info.filename, info);
-    }, isBTN3?BTN3:BTN1);
-    g.flip();
+    var n = infn[i];
+    if (n>max) max=n;
+    if (n<min) min=n;
   }
-
-  return E.showMenu(menu);
+  // work out a nice grid value
+  var heightDiff = max-min;
+  var grid = 1;
+  while (heightDiff/grid > 8) {
+    grid*=2;
+  }
+  // draw
+  g.clear(1).setFont("6x8",1);
+  var r = require("graph").drawLine(g, infn, {
+    x:4,y:24,
+    width: g.getWidth()-24,
+    height: g.getHeight()-(24+8),
+    axes : true,
+    gridy : grid,
+    gridx : infn.length / 3,
+    title: title,
+    miny: min,
+    maxy: max,
+    xlabel : x=>Math.round(x*dur/(60*infn.length))+/*LANG*/" min" // minutes
+  });
+  g.setFont("6x8",2);
+  g.setFontAlign(0,0,3);
+  var isBTN3 = "BTN3" in global;
+  g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
+  setWatch(function() {
+    viewTrack(info.filename, info);
+  }, isBTN3?BTN3:BTN1);
+  g.flip();
 }
 
 
