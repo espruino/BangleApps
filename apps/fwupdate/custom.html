@@ -436,13 +436,15 @@ function handleUpload() {
 
 document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
 document.getElementById("upload").addEventListener("click", handleUpload);
-document.getElementById("info-btn").addEventListener("click", function() {
+document.getElementById("info-btn").addEventListener("click", function(e) {
   document.getElementById("info-btn").style = "display:none";
   document.getElementById("info-div").style = "";
+  e.preventDefault();
 });
-document.getElementById("advanced-btn").addEventListener("click", function() {
+document.getElementById("advanced-btn").addEventListener("click", function(e) {
   document.getElementById("advanced-btn").style = "display:none";
   document.getElementById("advanced-div").style = "";
+  e.preventDefault();
 });
 setTimeout(checkForFileOnServer, 10);
 
