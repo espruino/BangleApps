@@ -7,7 +7,7 @@
   "type": "app",
   "tags": "clkinfo,bthome,bluetooth",
   "supports" : ["BANGLEJS2"],
-  "dependencies": {"textinput":"type"},
+  "dependencies": {"textinput":"type", "icons":"module"},
   "readme": "README.md",
   "storage": [
     {"name":"bthome.img","url":"app-icon.js","evaluate":true},
