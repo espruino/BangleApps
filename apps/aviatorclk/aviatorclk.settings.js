@@ -17,7 +17,6 @@
     "< Back" : () => back(),
     'Show Seconds': {
       value: !!settings.showSeconds,  // !! converts undefined to false
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.showSeconds = v;
         writeSettings();
@@ -25,7 +24,6 @@
     },
     'Invert Scrolling': {
       value: !!settings.invertScrolling,  // !! converts undefined to false
-      format: v => v ? "On" : "Off",
       onchange: v => {
         settings.invertScrolling = v;
         writeSettings();
