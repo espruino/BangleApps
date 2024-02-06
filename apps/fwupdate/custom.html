@@ -58,6 +58,15 @@
 
     <pre id="log"></pre>
 
+    <p><a href="#" id="changelog-btn">Firmware ChangeLog ▼</a></p>
+    <div id="changelog-div" style="display:none">
+      <p><b>Firmware ChangeLog</b></p>
+      <ul>
+        <li><a href="https://www.espruino.com/ChangeLog" target="_blank">Released</a></li>
+        <li><a href="https://github.com/espruino/Espruino/blob/master/ChangeLog" target="_blank">Cutting Edge</a></li>
+      </ul>
+    </div>
+
     <script src="../../core/lib/customize.js"></script>
     <script src="../../core/lib/espruinotools.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.js"></script>
@@ -444,6 +453,11 @@ document.getElementById("info-btn").addEventListener("click", function(e) {
 document.getElementById("advanced-btn").addEventListener("click", function(e) {
   document.getElementById("advanced-btn").style = "display:none";
   document.getElementById("advanced-div").style = "";
+  e.preventDefault();
+});
+document.getElementById("changelog-btn").addEventListener("click", function(e) {
+  document.getElementById("changelog-btn").style = "display:none";
+  document.getElementById("changelog-div").style = "";
   e.preventDefault();
 });
 setTimeout(checkForFileOnServer, 10);
