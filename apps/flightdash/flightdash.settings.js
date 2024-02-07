@@ -102,9 +102,9 @@
     for (let i in nearest) {
       let airport = nearest[i];
       eval('airportCBs['+i+'] = function() { '+
-        'settings.destID = "'+airport.i+'"; '+
-        'settings.destLat = "'+airport.la+'"; '+
-        'settings.destLon = "'+airport.lo+'"; '+
+        'settings.destID = "'+airport.i.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
+        'settings.destLat = "'+parseFloat(airport.la)+'"; '+
+        'settings.destLon = "'+parseFloat(airport.lo)+'"; '+
         'writeSettings(); '+
         'createDestMainMenu(); '+
       '}');
@@ -127,9 +127,9 @@
       let airport = AVWXairports[i].station;
       let airport_id = ( airport.icao ? airport.icao : airport.gps );
       eval('airportCBs['+i+'] = function() { '+
-        'settings.destID = "'+airport_id+'"; '+
-        'settings.destLat = "'+airport.latitude+'"; '+
-        'settings.destLon = "'+airport.longitude+'"; '+
+        'settings.destID = "'+airport_id.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
+        'settings.destLat = "'+parseFloat(airport.latitude)+'"; '+
+        'settings.destLon = "'+parseFloat(airport.longitude)+'"; '+
         'writeSettings(); '+
         'createDestMainMenu(); '+
       '}');
@@ -149,9 +149,9 @@
       '< Back' : () => showUserWaypoints(),
     };
     eval('let wayptUseCB = function() { '+
-      'settings.destID = "'+wayptID+'"; '+
-      'settings.destLat = "'+wayptLat+'"; '+
-      'settings.destLon = "'+wayptLon+'"; '+
+      'settings.destID = "'+wayptID.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
+      'settings.destLat = "'+parseFloat(wayptLat)+'"; '+
+      'settings.destLon = "'+parseFloat(wayptLon)+'"; '+
       'writeSettings(); '+
       'createDestMainMenu(); '+
     '}');
@@ -260,9 +260,9 @@
           for (let i in matches) {
             let airport = matches[i];
             eval('airportCBs['+i+'] = function() { '+
-              'settings.destID = "'+airport.i+'"; '+
-              'settings.destLat = "'+airport.la+'"; '+
-              'settings.destLon = "'+airport.lo+'"; '+
+              'settings.destID = "'+airport.i.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
+              'settings.destLat = "'+parseFloat(airport.la)+'"; '+
+              'settings.destLon = "'+parseFloat(airport.lo)+'"; '+
               'writeSettings(); '+
               'createDestMainMenu(); '+
             '}');
