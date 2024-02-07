@@ -24,6 +24,15 @@
     require('Storage').writeJSON(FILE, settings);
   }
 
+  // update the nav destination
+  function updateNavDest(destID, destLat, destLon) {
+    settings.destID = destID.replace(/[\W]+/g, '').slice(0, 7);
+    settings.destLat = parseFloat(destLat);
+    settings.destLon = parseFloat(destLon);
+    writeSettings();
+    createDestMainMenu();
+  }
+
   var airports;    // cache list of airports
   function readAirportsList(empty_cb) {
     if (airports) {  // airport list has already been read in
@@ -98,17 +107,10 @@
       '' : { 'title' : 'Nearest' },
       '< Back' : () => createDestMainMenu(),
     };
-    let airportCBs = [];
     for (let i in nearest) {
       let airport = nearest[i];
-      eval('airportCBs['+i+'] = function() { '+
-        'settings.destID = "'+airport.i.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
-        'settings.destLat = "'+parseFloat(airport.la)+'"; '+
-        'settings.destLon = "'+parseFloat(airport.lo)+'"; '+
-        'writeSettings(); '+
-        'createDestMainMenu(); '+
-      '}');
-      destNearest[airport.i+' - '+airport.n] = airportCBs[i];
+      destNearest[airport.i+' - '+airport.n] =
+        () => setTimeout(updateNavDest, 10, airport.i, airport.la, airport.lo);
     }
 
     E.showMenu(destNearest);
@@ -122,18 +124,11 @@
       '' : { 'title' : 'Nearest (AVWX)' },
       '< Back' : () => createDestMainMenu(),
     };
-    let airportCBs = [];
     for (let i in AVWXairports) {
       let airport = AVWXairports[i].station;
       let airport_id = ( airport.icao ? airport.icao : airport.gps );
-      eval('airportCBs['+i+'] = function() { '+
-        'settings.destID = "'+airport_id.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
-        'settings.destLat = "'+parseFloat(airport.latitude)+'"; '+
-        'settings.destLon = "'+parseFloat(airport.longitude)+'"; '+
-        'writeSettings(); '+
-        'createDestMainMenu(); '+
-      '}');
-      destAVWX[airport_id+' - '+airport.name] = airportCBs[i];
+      destAVWX[airport_id+' - '+airport.name] =
+        () => setTimeout(updateNavDest, 10, airport_id, airport.latitude, airport.longitude);
     }
 
     E.showMenu(destAVWX);
@@ -148,14 +143,8 @@
       '' : { 'title' : wayptID },
       '< Back' : () => showUserWaypoints(),
     };
-    eval('let wayptUseCB = function() { '+
-      'settings.destID = "'+wayptID.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
-      'settings.destLat = "'+parseFloat(wayptLat)+'"; '+
-      'settings.destLon = "'+parseFloat(wayptLon)+'"; '+
-      'writeSettings(); '+
-      'createDestMainMenu(); '+
-    '}');
-    destUser['Set as Dest.'] = wayptUseCB;
+    destUser['Set as Dest.'] =
+        () => setTimeout(updateNavDest, 10, wayptID, wayptLat, wayptLon);
     destUser['Edit ID'] = function() {
       require('textinput').input({text: wayptID}).then(result => {
         if (result) {
@@ -197,11 +186,11 @@
       '' : { 'title' : 'User Waypoints' },
       '< Back' : () => createDestMainMenu(),
     };
-    let wayptCBs = [];
     for (let i in settings.userWaypoints) {
       let waypt = settings.userWaypoints[i];
-      eval('wayptCBs['+i+'] = function() { showUserWaypoint('+i+'); }');
-      destUser[waypt.ID] = wayptCBs[i];
+      let idx = i;
+      destUser[waypt.ID] =
+        () => setTimeout(showUserWaypoint, 10, idx);
     }
     destUser['Create New'] = function() {
       E.showMessage('Waiting for GPS fix', {title: 'Flight-Dash'});
@@ -256,17 +245,10 @@
             '' : { 'title' : 'Search Results' },
             '< Back' : () => createDestMainMenu(),
           };
-          let airportCBs = [];
           for (let i in matches) {
             let airport = matches[i];
-            eval('airportCBs['+i+'] = function() { '+
-              'settings.destID = "'+airport.i.replace(/[\W]+/g, '').slice(0, 7)+'"; '+
-              'settings.destLat = "'+parseFloat(airport.la)+'"; '+
-              'settings.destLon = "'+parseFloat(airport.lo)+'"; '+
-              'writeSettings(); '+
-              'createDestMainMenu(); '+
-            '}');
-            destSearch[airport.i+' - '+airport.n] = airportCBs[i];
+            destSearch[airport.i+' - '+airport.n] =
+              () => setTimeout(updateNavDest, 10, airport.i, airport.la, airport.lo);
           }
           if (tooManyFound) {
             destSearch['More than 15 airports found!'] = {};
