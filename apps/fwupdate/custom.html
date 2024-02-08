@@ -102,9 +102,9 @@ function onInit(device) {
     console.log("DFU CRC (7 pages) = "+crcs[1]);
     var version = `unknown (CRC ${crcs[1]})`;
     var ok = true;
-    if (crcs[0] == 1787004733) { // check 6 page CRC - the 7th page isn't used in 2v20
-      version = "2v20";
-    } else { // for other versions all 7 pages are used, check those
+    if (crcs[0] == 1787004733) version = "2v20"; // check 6 page CRCs - the 7th page isn't used in 2v20+
+    else if (crcs[0] == 3816337552) version = "2v21";
+    else { // for other versions all 7 pages are used, check those
       var crc = crcs[1]; 
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
       if (crc==1207580954) { version = "2v10.236"; ok = false; }
