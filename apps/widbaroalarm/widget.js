@@ -293,8 +293,18 @@ WIDGETS["baroalarm"] = {
   draw : draw
 };
 
-if (interval > 0) {
-  setInterval(getPressureValue, interval * 60000);
+// delay pressure measurement by interval-lastrun
+const lastRun = history3.length > 0 ? history3[history3.length-1].ts : 0;
+const lastRunAgo = Math.round(Date.now() / 1000) - lastRun;
+let diffNextRun = interval*60-lastRunAgo;
+if (diffNextRun < 0) {
+  diffNextRun = 0; // run asap
 }
-getPressureValue();
+setTimeout(() => {
+  if (interval > 0) {
+    setInterval(getPressureValue, interval * 60000);
+  }
+  getPressureValue();
+}, diffNextRun*1000);
+
 })();

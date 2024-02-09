@@ -107,7 +107,7 @@
         return x + " min";
       }
     },
-    'Log graph': () => {E.showMenu(); draw();},
+    'Plot history': () => {E.showMenu(); draw();},
     };
     E.showMenu(menu);
   }
