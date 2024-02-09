@@ -114,8 +114,18 @@
 
   function draw() {
     const history3 = require('Storage').readJSON("widbaroalarm.log.json", true) || []; // history of recent 3 hours
-    const data = history3.map(o => o.p);
-    const now = new Date()/1000;
+
+    const now = new Date()/(1000);
+    let curtime = now-3*60*60; // 3h ago
+    const data = [];
+    while (curtime < now) {
+      // find closest value in history for this timestamp
+      const closest = history3.reduce((prev, curr) => {
+        return (Math.abs(curr.ts - curtime) < Math.abs(prev.ts - curtime) ? curr : prev);
+      });
+      data.push(closest.p);
+      curtime += settings.interval*60;
+    }
 
     Bangle.setUI({
       mode: "custom",
@@ -130,16 +140,16 @@
       height: Bangle.appRect.h-20,
       gridx: 1,
       gridy: 1,
-      miny: Math.min.apply(null, data),
-      maxy: Math.max.apply(null, data),
+      miny: Math.min.apply(null, data)-1,
+      maxy: Math.max.apply(null, data)+1,
       title: /*LANG*/"Barometer history (mBar)",
       ylabel: y => y,
       xlabel: i => {
-        if (i % 4 === 0) {
-          return "-" + Math.round((now-history3[i].ts)/(60*60));
-        } else {
-          return "";
+        const t = -3*60 + settings.interval*i;
+        if (t % 60 === 0) {
+          return "-" + t/60 + "h";
         }
+        return "";
       },
     });
   }
