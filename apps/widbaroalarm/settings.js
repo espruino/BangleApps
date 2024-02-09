@@ -107,8 +107,41 @@
         return x + " min";
       }
     },
+    'Log graph': () => {E.showMenu(); draw();},
     };
     E.showMenu(menu);
+  }
+
+  function draw() {
+    const history3 = require('Storage').readJSON("widbaroalarm.log.json", true) || []; // history of recent 3 hours
+    const data = history3.map(o => o.p);
+    const now = new Date()/1000;
+
+    Bangle.setUI({
+      mode: "custom",
+      back: () => showMainMenu(),
+    });
+
+    g.reset().setFont("6x8",1);
+    require("graph").drawLine(g, data, {
+      axes: true,
+      x: 4,
+      y: Bangle.appRect.y+8,
+      height: Bangle.appRect.h-20,
+      gridx: 1,
+      gridy: 1,
+      miny: Math.min.apply(null, data),
+      maxy: Math.max.apply(null, data),
+      title: /*LANG*/"Barometer history (mBar)",
+      ylabel: y => y,
+      xlabel: i => {
+        if (i % 4 === 0) {
+          return "-" + Math.round((now-history3[i].ts)/(60*60));
+        } else {
+          return "";
+        }
+      },
+    });
   }
 
   showMainMenu();
