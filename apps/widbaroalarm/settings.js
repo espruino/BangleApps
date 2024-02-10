@@ -118,7 +118,7 @@
     const now = new Date()/(1000);
     let curtime = now-3*60*60; // 3h ago
     const data = [];
-    while (curtime < now) {
+    while (curtime <= now) {
       // find closest value in history for this timestamp
       const closest = history3.reduce((prev, curr) => {
         return (Math.abs(curr.ts - curtime) < Math.abs(prev.ts - curtime) ? curr : prev);
