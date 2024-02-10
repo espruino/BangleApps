@@ -894,7 +894,7 @@
         g.setFontAlign(-1,0);
         g.drawString('9', CenterX-outerRadius,CenterY);
         break;
-      case '1-12':
+      case '1-12': {
         let innerRadius = outerRadius * 0.9 - 10;
 
         let dark = g.theme.dark;
@@ -942,6 +942,7 @@
 
           g.drawString(i == 0 ? '12' : '' + i, x,y);
         }
+      }
     }
 
     let now = new Date();

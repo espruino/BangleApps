@@ -54,7 +54,7 @@ let manageEvent = function(ovr, event) {
         showMessage(ovr, event);
       break;
 
-    case "modify":
+    case "modify": {
       let find = false;
       eventQueue.forEach(element => {
         if (element.id == event.id) {
@@ -68,7 +68,7 @@ let manageEvent = function(ovr, event) {
       if (!callInProgress)
         showMessage(ovr, event);
       break;
-
+    }
     case "remove":
       if (eventQueue.length == 0 && !callInProgress)
         next(ovr);

@@ -1391,13 +1391,14 @@ function initLevel(aRandomSeed, noLoading) {
       boardWidth = 10;
       boardHeight = 8;
       break;
-    case DIFFRANDOM:
+    case DIFFRANDOM: {
       let rnd = random(255);
       boardWidth = 5 + (rnd % (MAXBOARDWIDTH - 5 + 1)); //5 is smallest level width from very easy
       rnd = random(255);
       boardHeight = 5 + (rnd % (MAXBOARDHEIGHT - 5 + 1)); //5 is smallest level height from very easy
       maxLevel = 0; //special value with random
       break;
+    }
   }
   //add space for arrows based on same posadd value (1 or 0 depending if sliding is allowed)
   boardWidth -= posAdd + posAdd;
