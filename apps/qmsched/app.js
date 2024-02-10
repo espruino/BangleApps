@@ -7,7 +7,6 @@ const B2 = process.env.HWVERSION===2;
 const STORAGE = require('Storage');
 let bSettings = STORAGE.readJSON('setting.json',true)||{};
 let current = 0|bSettings.quiet;
-delete bSettings; // we don't need any other global settings
 
 
 

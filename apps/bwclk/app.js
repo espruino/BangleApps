@@ -332,7 +332,6 @@ Bangle.on('charging', charging);
 
 let kill = function(){
   clockInfoMenu.remove();
-  delete clockInfoMenu;
 };
 E.on("kill", kill);
 

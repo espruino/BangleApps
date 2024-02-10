@@ -6,7 +6,6 @@
 		show: true,
 	}, require('Storage').readJSON("gpsautotime.json", true) || {});
 	const show = settings.show;
-	delete settings;
 
 	Bangle.on('GPS',function(fix) {
 		if (fix.fix && fix.time) {

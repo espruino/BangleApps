@@ -124,7 +124,6 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
       drawTimeout = undefined;
       // remove info menu
       clockInfoMenu.remove();
-      delete clockInfoMenu;
       // delete the custom fonts
       delete Graphics.prototype.setFontLato;
       delete Graphics.prototype.setFontLatoSmall;

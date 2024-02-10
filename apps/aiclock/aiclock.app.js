@@ -172,7 +172,6 @@ Bangle.on('lock', function(isLocked) {
 
 E.on("kill", function(){
     clockInfoMenu.remove();
-    delete clockInfoMenu;
 });
 
 

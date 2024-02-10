@@ -129,7 +129,6 @@ lc.push({ type:"h", filly:1, c:[
 var layout = new Layout( {
   type:"v", c: lc
 },{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
-delete lc;
 setStatus(exs.state.active);
 layout.render();
 

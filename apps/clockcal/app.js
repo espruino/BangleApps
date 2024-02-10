@@ -83,7 +83,6 @@ function drawFullCalendar(monthOffset) {
             rD.setDate(rDate + 1);
         }
     }
-    delete addMonths;
     if (DEBUG) console.log("Calendar performance (ms):" + (Date().getTime() - start));
 }
 function caldrawMonth(rDate, c, m, rD) {

@@ -379,7 +379,4 @@
       if (!Bangle.isGPSOn()) gbSend({ t: "gps_power", status: false });
     },3000);
   }
-
-  // remove settings object so it's not taking up RAM
-  delete settings;
 })();

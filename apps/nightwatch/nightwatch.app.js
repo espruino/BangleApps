@@ -8,7 +8,6 @@ var settings = Object.assign({
 }, require('Storage').readJSON("nightwatch.json", true) || {});
 
 let dt = settings.dt;
-delete settings;
 
 var timerID;
 

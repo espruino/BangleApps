@@ -2,7 +2,6 @@
   var alarms = require('Storage').readJSON('hardalarm.json',1)||[];
   alarms = alarms.filter(alarm=>alarm.on);
   if (!alarms.length) return; // no alarms, no widget!
-  delete alarms;
   // add the widget
   WIDGETS["alarm"]={area:"tl",width:24,draw:function() {
     g.setColor(-1);

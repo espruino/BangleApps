@@ -32,7 +32,6 @@ function getRocketSequences() {
 let rocketSequence = 1;
 let settings = storage.readJSON("cassioWatch.settings.json", true) || {};
 let rocketSpeed = settings.rocketSpeed || 700;
-delete settings;
 
 // schedule a draw for the next minute
 let rocketInterval;

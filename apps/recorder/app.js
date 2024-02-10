@@ -85,7 +85,6 @@ function showMainMenu() {
   Object.keys(recorders).forEach(id=>{
     mainmenu[/*LANG*/"Log "+recorders[id]().name] = menuRecord(id);
   });
-  delete recorders;
   return E.showMenu(mainmenu);
 }
 

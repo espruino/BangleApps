@@ -25,7 +25,6 @@ if(settings.minute){
   watch.dateRing.numbers = settings.date.numbers;
   watch.screen.bubble = settings.bubble;
 }
-delete settings;
 const month= ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY",
             "AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
 

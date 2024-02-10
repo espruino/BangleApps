@@ -138,7 +138,6 @@
     if (pedomData.lastUpdate)
       lastUpdate = new Date(pedomData.lastUpdate);
     stp_today = pedomData.stepsToday|0;
-    delete pedomData;
   }
   WIDGETS["wpedom"].width = WIDGETS["wpedom"].getWidth();
 })()

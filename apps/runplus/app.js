@@ -140,7 +140,6 @@ lc.push({ type:"h", filly:1, c:[
 let layout = new Layout( {
   type:"v", c: lc
 },{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {stopKarvonenUI();run();} onStartStop();}), id:"button"}]});
-delete lc;
 setStatus(exs.state.active);
 layout.render();
 

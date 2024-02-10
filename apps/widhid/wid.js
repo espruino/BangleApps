@@ -4,7 +4,6 @@
         console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
         return;
     }
-    delete settings;
     var anchor = { x: 0, y: 0 };
     var start = { x: 0, y: 0 };
     var dragging = false;
@@ -111,7 +110,6 @@
     };
     if (connected)
         Bangle.on("swipe", onSwipe);
-    delete connected;
     NRF.on("connect", function () {
         WIDGETS["hid"].width = 24;
         Bangle.on("swipe", onSwipe);

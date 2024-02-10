@@ -4,7 +4,6 @@
   delete Bangle.qmTimeout;
   let bSettings = require('Storage').readJSON('setting.json',true)||{};
   const curr = 0|bSettings.quiet;
-  delete bSettings;
   if (curr) require("qmsched").applyOptions(curr); // no need to re-apply default options
 
   let settings = require('Storage').readJSON('qmsched.json',true)||{};

@@ -5,7 +5,6 @@
     flash: (settings.flash === undefined) ? true : !!settings.flash,
     showRead: !!settings.showRead,
   };
-  delete settings;
   // widget name needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
   WIDGETS["messages"] = {
     area: "tl", width: 0,
@@ -95,7 +94,6 @@
       delete w.hidden; // always set by w.hide(), but we checked it wasn't there before
     }
   };
-  delete s;
   const w = WIDGETS["messages"];
   Bangle.on("message", w.listener);
 })();

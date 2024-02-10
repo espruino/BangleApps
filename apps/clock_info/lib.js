@@ -352,7 +352,6 @@ exports.addInteractive = function(menu, options) {
 
     return true;
   };
-  delete settings; // don't keep settings in RAM - save space
   return options;
 };
 

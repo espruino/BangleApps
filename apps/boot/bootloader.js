@@ -23,7 +23,5 @@ if (!_clkApp) {
     require("Storage").writeJSON("setting.json", s);
   }
 }
-delete s;
 if (!_clkApp) _clkApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
 eval(_clkApp);
-delete _clkApp;

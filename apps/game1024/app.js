@@ -11,8 +11,6 @@ const debugMode = settings.debugMode!==undefined ? settings.debugMode : false; /
 const maxUndoLevels = settings.maxUndoLevels!==undefined ? settings.maxUndoLevels : 4; // #settings
 const charIndex = settings.charIndex!==undefined ? settings.charIndex : 0; // #settings -- plain numbers on the grid
 
-delete settings; // remove unneeded settings from memory
-
 const middle = {x:Math.floor(g.getWidth()/2)-20, y: Math.floor(g.getHeight()/2)};
 const rows = 4, cols = 4; // #settings
 const borderWidth = 6; 

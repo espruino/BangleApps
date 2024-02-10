@@ -165,9 +165,7 @@ Bangle.setUI({
     delete Graphics.prototype.setFontPaytoneOne;
     // remove info menu
     clockInfoMenu.remove();
-    delete clockInfoMenu;
     clockInfoMenu2.remove();
-    delete clockInfoMenu2;
   }
 });
 // Load widgets

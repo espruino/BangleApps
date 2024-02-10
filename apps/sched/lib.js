@@ -75,8 +75,6 @@ exports.newDefaultAlarm = function () {
     vibrate: settings.defaultAlarmPattern,
   };
 
-  delete settings;
-
   return alarm;
 }
 // Factory that creates a new timer with default values
@@ -93,8 +91,6 @@ exports.newDefaultTimer = function () {
     last: 0,
     vibrate: settings.defaultTimerPattern
   }
-
-  delete settings;
 
   return timer;
 };

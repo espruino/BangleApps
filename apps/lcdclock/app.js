@@ -54,9 +54,7 @@ Bangle.setUI({
     delete Graphics.prototype.setFont7Seg;
     // remove info menu
     clockInfoMenu.remove();
-    delete clockInfoMenu;
     clockInfoMenu2.remove();
-    delete clockInfoMenu2;
     // reset theme
     g.setTheme(oldTheme);
   }});

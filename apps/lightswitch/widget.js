@@ -270,7 +270,4 @@
     if (locked === false) Bangle.setLCDBrightness(w.isOn ? w.value : 0);
     w.draw()
   });
-
-  // clear variable
-  delete settings;
 })()

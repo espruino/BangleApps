@@ -110,7 +110,4 @@ currently-running apps */
   };
 
   Bangle.on("lock", ()=>{WIDGETS.powermanager.draw(WIDGETS.powermanager);});
-
-  // conserve memory
-  delete settings;
 })();
