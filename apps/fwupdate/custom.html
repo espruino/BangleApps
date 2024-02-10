@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p>This tool allows you to update the firmware on <a href="https://www.espruino.com/Bangle.js2">Bangle.js 2</a> devices
+    <p>This tool allows you to update the firmware on <a href="https://www.espruino.com/Bangle.js2" target="_blank">Bangle.js 2</a> devices
       from within the App Loader.</p>
 
     <div id="fw-unknown">
@@ -32,7 +32,7 @@
         bit of code that runs when Bangle.js starts, and it is able to update the
         Bangle.js firmware. Normally you would update firmware via this Firmware
         Updater app, but if for some reason Bangle.js will not boot, you can
-        <a href="https://www.espruino.com/Bangle.js2#firmware-updates">always use DFU to do the update manually</a>.
+        <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">always use DFU to do the update manually</a>.
         On DFU 2v19 and earlier, iOS devices could have issues updating firmware - 2v20 fixes this.</p>
         <p>DFU is itself a bootloader, but here we're calling it DFU to avoid confusion
         with the Bootloader app in the app loader (which prepares Bangle.js for running apps).</p>
@@ -42,7 +42,7 @@
       <div id="advanced-div" style="display:none">
         <p><b>Advanced</b></p>
         <p>Firmware updates via this tool work differently to the NRF Connect method mentioned on
-          <a href="https://www.espruino.com/Bangle.js2#firmware-updates">the Bangle.js 2 page</a>. Firmware
+          <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">the Bangle.js 2 page</a>. Firmware
           is uploaded to a file on the Bangle. Once complete the Bangle reboots and DFU copies
           the new firmware into internal Storage.</p>
         <p>In addition to the links above, you can upload a hex or zip file directly below. This file should be an <code>.app_hex</code>
@@ -57,6 +57,15 @@
 
 
     <pre id="log"></pre>
+
+    <p><a href="#" id="changelog-btn">Firmware ChangeLog ▼</a></p>
+    <div id="changelog-div" style="display:none">
+      <p><b>Firmware ChangeLog</b></p>
+      <ul>
+        <li><a href="https://www.espruino.com/ChangeLog" target="_blank">Released</a></li>
+        <li><a href="https://github.com/espruino/Espruino/blob/master/ChangeLog" target="_blank">Cutting Edge</a></li>
+      </ul>
+    </div>
 
     <script src="../../core/lib/customize.js"></script>
     <script src="../../core/lib/espruinotools.js"></script>
@@ -93,9 +102,9 @@ function onInit(device) {
     console.log("DFU CRC (7 pages) = "+crcs[1]);
     var version = `unknown (CRC ${crcs[1]})`;
     var ok = true;
-    if (crcs[0] == 1787004733) { // check 6 page CRC - the 7th page isn't used in 2v20
-      version = "2v20";
-    } else { // for other versions all 7 pages are used, check those
+    if (crcs[0] == 1787004733) version = "2v20"; // check 6 page CRCs - the 7th page isn't used in 2v20+
+    else if (crcs[0] == 3816337552) version = "2v21";
+    else { // for other versions all 7 pages are used, check those
       var crc = crcs[1]; 
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
       if (crc==1207580954) { version = "2v10.236"; ok = false; }
@@ -436,13 +445,20 @@ function handleUpload() {
 
 document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
 document.getElementById("upload").addEventListener("click", handleUpload);
-document.getElementById("info-btn").addEventListener("click", function() {
+document.getElementById("info-btn").addEventListener("click", function(e) {
   document.getElementById("info-btn").style = "display:none";
   document.getElementById("info-div").style = "";
+  e.preventDefault();
 });
-document.getElementById("advanced-btn").addEventListener("click", function() {
+document.getElementById("advanced-btn").addEventListener("click", function(e) {
   document.getElementById("advanced-btn").style = "display:none";
   document.getElementById("advanced-div").style = "";
+  e.preventDefault();
+});
+document.getElementById("changelog-btn").addEventListener("click", function(e) {
+  document.getElementById("changelog-btn").style = "display:none";
+  document.getElementById("changelog-div").style = "";
+  e.preventDefault();
 });
 setTimeout(checkForFileOnServer, 10);
 
