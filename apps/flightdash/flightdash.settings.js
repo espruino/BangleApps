@@ -60,17 +60,19 @@
         loadNearest(fix.lat, fix.lon);
         break;
       case 'createUserWaypoint':
-        if (!('userWaypoints' in settings))
-          settings.userWaypoints = [];
-        let newIdx = settings.userWaypoints.length;
-        settings.userWaypoints[newIdx] = {
-          'ID': 'USER'+(newIdx + 1),
-          'lat': fix.lat,
-          'lon': fix.lon,
-        };
-        writeSettings();
-        showUserWaypoints();
-        break;
+        {
+          if (!('userWaypoints' in settings))
+            settings.userWaypoints = [];
+          let newIdx = settings.userWaypoints.length;
+          settings.userWaypoints[newIdx] = {
+            'ID': 'USER'+(newIdx + 1),
+            'lat': fix.lat,
+            'lon': fix.lon,
+          };
+          writeSettings();
+          showUserWaypoints();
+          break;
+        }
       case 'destAVWX':
         // the free ("hobby") account of AVWX is limited to 10 nearest stations
         avwx.request('station/near/'+fix.lat+','+fix.lon, 'n=10&airport=true&reporting=false', data => {
