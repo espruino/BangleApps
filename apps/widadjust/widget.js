@@ -85,15 +85,16 @@
   }
 
   function draw() {
-    if (settings.hide !== true) {
-      g.reset().setFont('6x8').setFontAlign(0, 0);
-      g.clearRect(this.x, this.y, this.x + WIDTH - 1, this.y + 23);
-      g.drawString(Math.round(clockError), this.x + WIDTH/2, this.y + 9);
+    if (settings.hide === true) {
+      return;
+    }
+    g.reset().setFont('6x8').setFontAlign(0, 0);
+    g.clearRect(this.x, this.y, this.x + WIDTH - 1, this.y + 23);
+    g.drawString(Math.round(clockError), this.x + WIDTH/2, this.y + 9);
 
-      if (lastPpm !== null) {
-        g.setFont('4x6').setFontAlign(0, 1);
-        g.drawString(lastPpm.toFixed(1), this.x + WIDTH/2, this.y + 23);
-      }
+    if (lastPpm !== null) {
+      g.setFont('4x6').setFontAlign(0, 1);
+      g.drawString(lastPpm.toFixed(1), this.x + WIDTH/2, this.y + 23);
     }
   }
 
