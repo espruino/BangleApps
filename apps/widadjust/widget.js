@@ -78,20 +78,22 @@
   }
 
   function debug(line) {
-    console.log(line);
+    //console.log(line);
     if (debugLogFile !== null) {
       debugLogFile.write(line + '\n');
     }
   }
 
   function draw() {
-    g.reset().setFont('6x8').setFontAlign(0, 0);
-    g.clearRect(this.x, this.y, this.x + WIDTH - 1, this.y + 23);
-    g.drawString(Math.round(clockError), this.x + WIDTH/2, this.y + 9);
+    if (settings.hide !== true) {
+      g.reset().setFont('6x8').setFontAlign(0, 0);
+      g.clearRect(this.x, this.y, this.x + WIDTH - 1, this.y + 23);
+      g.drawString(Math.round(clockError), this.x + WIDTH/2, this.y + 9);
 
-    if (lastPpm !== null) {
-      g.setFont('4x6').setFontAlign(0, 1);
-      g.drawString(lastPpm.toFixed(1), this.x + WIDTH/2, this.y + 23);
+      if (lastPpm !== null) {
+        g.setFont('4x6').setFontAlign(0, 1);
+        g.drawString(lastPpm.toFixed(1), this.x + WIDTH/2, this.y + 23);
+      }
     }
   }
 
@@ -208,7 +210,7 @@
       let updatedClockError = clockError + (now - lastClockErrorUpdateTime) * ppm / 1000000;
       return now - updatedClockError;
     },
-    width: WIDTH,
+    width: settings.hide === true ? 0 : WIDTH,
   };
 
   if (settings.saveState) {
