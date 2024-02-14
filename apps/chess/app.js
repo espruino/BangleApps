@@ -298,7 +298,7 @@ setWatch(() => {
         writeSettings();
       }
     },
-    /*LANG*/'Buzz on next turn: {
+    /*LANG*/'Buzz on next turn': {
       value: !!settings.buzz,
       onchange: v => {
         settings.buzz = v;
