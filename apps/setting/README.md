@@ -35,6 +35,8 @@ This is Bangle.js's settings menu
     `Wake on Touch` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js (we recently renamed the menu item to `Wake on Tap`).
 * **Twist X** these options adjust the sensitivity of `Wake on Twist` to ensure Bangle.js wakes up with just the right amount of wrist movement.
 * **Calibrate** on Bangle.js 2, pop up a screen allowing you to calibrate the touchscreen (calibration only works on 2v16 or 2v15 cutting edge builds)
+* **Scroll Direction** on Bangle.js 2, switch between natural (down motion scrolls down) and reverse (down motion scrolls up) vertical scrolling (depends on app support)
+* **Swipe Direction** on Bangle.js 2, switch between natural (left motion swipes left) and reverse (left motion swipes right) horizontal swiping (depends on app support)
 
 ## Locale
 

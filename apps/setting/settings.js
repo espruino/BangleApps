@@ -406,6 +406,9 @@ function showLCDMenu() {
 
   var rotNames = [/*LANG*/"No",/*LANG*/"Rotate CW",/*LANG*/"Left Handed",/*LANG*/"Rotate CCW",/*LANG*/"Mirror"];
 
+  var scrollDirections = [/*LANG*/"Natural",/*LANG*/"Reverse"];
+  var swipeDirections = [/*LANG*/"Natural",/*LANG*/"Reverse"];
+
   const lcdMenu = {
     '': { 'title': 'LCD' },
     '< Back': ()=>showSystemMenu(),
@@ -554,6 +557,31 @@ function showLCDMenu() {
       }
     }
   });
+
+  if (BANGLEJS2) {
+    Object.assign(lcdMenu, {
+      /*LANG*/'Scroll Direction': {
+        value: 0|settings.scrolldir,
+        min: 0,
+        max: scrollDirections.length-1,
+        format: v=> scrollDirections[v],
+        onchange: v => {
+          settings.rotate = 0 | v;
+          updateSettings();
+        }
+      },
+      /*LANG*/'Swipe Direction': {
+        value: 0|settings.swipedir,
+        min: 0,
+        max: swipeDirections.length-1,
+        format: v=> swipeDirections[v],
+        onchange: v => {
+          settings.rotate = 0 | v;
+          updateSettings();
+        }
+      }
+    });
+  }
 
   return E.showMenu(lcdMenu)
 }
