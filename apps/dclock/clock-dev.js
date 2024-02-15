@@ -70,7 +70,7 @@ function drawSimpleClock() {
   var dom = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
 
   //Days since full moon
-  var knownnew = new Date(2020,02,24,09,28,0);
+  var knownnew = new Date(2020,2,24,9,28,0);
 
   // Get millisecond difference and divide down to cycles
   var cycles = (d.getTime()-knownnew.getTime())/1000/60/60/24/29.53;

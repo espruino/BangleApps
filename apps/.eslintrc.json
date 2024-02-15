@@ -148,7 +148,6 @@
         "no-empty": "off",
         "no-global-assign": "off",
         "no-inner-declarations": "off",
-        "no-octal": "off",
         "no-prototype-builtins": "off",
         "no-redeclare": "off",
         "no-unreachable": "warn",
