@@ -1,0 +1,186 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="jquery-csv.min.js"></script>
+  </head>
+  <body>
+
+    <p>You can upload a list of airports, which can then be used as the
+    navigation destinations in the Flight-Dash. It is recommended to only
+    upload up to 100 - 150 airports max. Due to memory contraints on the
+    Bangle, no more than 500 airports can be uploaded.</p>
+
+    <p>The database of airports is based on <a href="https://ourairports.com/data/">OurAirports</a>.
+
+    <h2>Filter Airports</h2>
+    <div class="form-group row">
+      <label for="filter_range">Within:</label>
+      <input type="text" id="filter_range" size="4" />nm of 
+      <label for="filter_lat">Lat:</label>
+      <input type="text" id="filter_lat" size="10" /> / 
+      <label for="filter_lon">Lon:</label>
+      <input type="text" id="filter_lon" size="10" />
+      <div>
+        <small class="text-muted">This is using a simple lat/lon "block" - and
+        not within a proper radius around the given lat/lon position. An easy
+        way to find a lat/lon pair is to search for an airport based on ident
+        or name, and then use the found coordinates.</small>
+      </div>
+    </div>
+    <p>- or -</p>
+    <p>
+      <label for="filter_ident">Ident:</label>
+      <input type="text" id="filter_ident" />
+    </p>
+    <p>- or -</p>
+    <p>
+      <label for="filter_name">Name:</label>
+      <input type="text" id="filter_name" />
+    </p>
+    <p>Only 1 of the above filters is applied, with higher up in the list taking precedence.</p>
+    <div class="form-group row">
+      <label for="filter_country">Limit airports to within this country:</label>
+      <input type="text" id="filter_country" size="2" />
+      <div>
+        <small class="form-text text-muted">Use the 
+        <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes">ISO-3166 2-letter code</a>, 
+        eg. "AU"</small>
+      </div>
+    </div>
+
+    <p>
+      <button id="getAndFilter" class="btn btn-primary" onClick="getAndFilter();">Filter</button>
+      <button id="uploadButton" class="btn btn-primary" onClick="uploadAirports();" style="display: none;">Upload to Bangle</button>
+    </p>
+
+    <hr />
+
+    <h2>Results:</h2>
+    <p><div id="status"></div></p>
+    <div id="resultsTable"></div>
+
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      var airports = [];
+
+      function getAndFilter() {
+        let filterRange = $("#filter_range").val();
+        let filterLat = $("#filter_lat").val();
+        let filterLatMin, filterLatMax;
+        let filterLon = $("#filter_lon").val();
+        let filterLonMin, filterLonMax;
+        let filterIdent = $("#filter_ident").val().toUpperCase();
+        let filterName = $("#filter_name").val().toUpperCase();
+        let filterCountry = $("#filter_country").val().toUpperCase();
+
+        if (filterRange && (! filterLat || ! filterLon)) {
+          alert('When filtering by Range, set both a Latitude and a Longitude!');
+          return;
+        }
+        if (filterRange) {
+          filterLatMin = parseFloat(filterLat) - (parseInt(filterRange) / 60);
+          filterLatMax = parseFloat(filterLat) + (parseInt(filterRange) / 60);
+          filterLonMin = parseFloat(filterLon) - (parseInt(filterRange) / 60);
+          filterLonMax = parseFloat(filterLon) + (parseInt(filterRange) / 60);
+        }
+
+        $("#status").html($("<em>").text('Fetching and filtering airports ...'));
+
+        $.get('https://davidmegginson.github.io/ourairports-data/airports.csv', function (data) {
+          let allAirports = $.csv.toObjects(data);
+
+          airports = allAirports.filter((item) => {
+            if (filterRange) {
+              let lat = parseFloat(item.latitude_deg);
+              let lon = parseFloat(item.longitude_deg);
+              if (lat > filterLatMin && lat < filterLatMax &&
+                  lon > filterLonMin && lon < filterLonMax) {
+                if (filterCountry) {
+                  return item.iso_country == filterCountry;
+                } else {
+                  return true;
+                }
+              } else {
+                return false;
+              }
+            }
+            if (filterIdent) {
+              if (item.ident.toUpperCase().includes(filterIdent)) {
+                if (filterCountry) {
+                  return item.iso_country == filterCountry;
+                } else {
+                  return true;
+                }
+              } else {
+                return false;
+              }
+            }
+            if (filterName) {
+              if (item.name.toUpperCase().includes(filterName)) {
+                if (filterCountry) {
+                  return item.iso_country == filterCountry;
+                } else {
+                  return true;
+                }
+              } else {
+                return false;
+              }
+            }
+            if (filterCountry) {
+              return item.iso_country == filterCountry;
+            }
+          }).map((item) => {
+            return {
+              'i': item.ident,
+              'n': item.name,
+              'la': item.latitude_deg,
+              'lo': item.longitude_deg
+            };
+          });
+
+          let container = $("#resultsTable");
+
+          if (airports.length == 0) {
+            $("#status").html($("<strong>").text('No airports matched the filter criteria!'));
+            return;
+          } else if (airports.length > 500) {
+            $("#status").html($("<strong>").text(airports.length+' airports matched the filter criteria - your Bangle can only handle a maximum of 500!'));
+            return;
+          } else if (airports.length > 150) {
+            $("#status").html($("<strong>").text(airports.length+" airports matched the filter criteria - your Bangle will struggle with more than 150 airports. You can try, but it's recommended to reduce the number of airports."));
+          }
+
+          container.html($("<p>").text('Number of matching airports: '+airports.length));
+
+          let table = $("<table>");
+          table.addClass('table');
+          let cols = Object.keys(airports[0]);
+
+          $.each(airports, function(i, item){
+            let tr = $("<tr>");
+            let vals = Object.values(item);
+            $.each(vals, (i, elem) => {
+              tr.append($("<td>").text(elem));
+            });
+            table.append(tr);
+          });
+
+          container.append(table)
+
+          $("#status").html('');
+          $("#uploadButton").show();
+        });
+      }
+
+      function uploadAirports() {
+        $("#status").html($("<em>").text('Uploading airports to Bangle ...'));
+        Util.writeStorage('flightdash.airports.json', JSON.stringify(airports), () => {
+          $('#status').html('Airports successfully uploaded to Bangle!');
+        });
+      }
+    </script>
+
+  </body>
+</html>
