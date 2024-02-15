@@ -4,7 +4,7 @@ Logs health data to a file in a defined interval, and provides an app to view it
 
 ## Usage
 
-Once installed, health data is logged automatically.
+Once installed, health data is logged automatically. Entries are stored with a 10 minute interval.
 
 To view data, run the `Health` app from your watch.
 
@@ -39,6 +39,8 @@ to grab historical health info.
 minifier used in the App Loader, so we use the closure compiler to pre-minify them.
 The easiest way to use it is to install `https://github.com/espruino/EspruinoDocs`
 and run `EspruinoDocs/bin/minify.js lib.js lib.min.js`
+
+HRM data is stored as a number representing the best/average value from a 10 minute period.
 
 ## TODO
 
