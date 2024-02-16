@@ -1,6 +1,5 @@
 let h = require("heatshrink");
 
-Bangle.loadWidgets();
 
 //TODO: should we force not moving for planks and rests
 
@@ -56,10 +55,10 @@ const DETECTORS = [
   },
   null,
   (xyz) => {
-    if ((xyz.x > 0) && (xyz.y < 0) && xyz.z < -0.25) {
+    if (xyz.y > 0.2) {
       return 0;
     }
-    if ((xyz.x < 0) && (xyz.y > 0) && xyz.z > -0.25) {
+    if (xyz.y < 0) {
       return 1;
     }
     return null;
@@ -94,7 +93,7 @@ class FitnessStatus {
     g.clear();
     g.setColor(0, 0, 0);
     if (this.completed) {
-      g.setFont("Vector:40")
+      g.setFont("Vector:32")
         .setFontAlign(0, 0)
         .drawString("Good Job!", g.getWidth()/2, g.getHeight()/2);
       return;
@@ -220,39 +219,105 @@ class FitnessStatus {
 let status = new FitnessStatus(10 * 60);
 // status.display();
 
-Bangle.setPollInterval(80);
+Bangle.setPollInterval(10);
 
-setWatch(
-  function () {
-    load();
+
+function start_routine() {
+
+  Bangle.loadWidgets();
+  
+  Bangle.on("swipe", function (directionLR, directionUD) {
+    if (directionUD == -1) {
+      status.remaining += 1;
+    } else if (directionUD == 1) {
+      status.remaining = Math.max(status.remaining - 1, 1);
+    } else if (directionLR == -1) {
+      if (!status.last_activity()) {
+        status.next_activity();
+      }
+    } else if (directionLR == 1) {
+      if (!status.first_activity()) {
+        status.previous_activity();
+      }
+    }
+    // status.display();
+  });
+    
+  Bangle.on("accel", function (xyz) {
+    status.detect(xyz);
+  });
+    
+  setInterval(() => {
+    status.display();
+  }, 250);
+
+}
+
+
+function edit_menu() {
+  let w = g.getWidth();
+  let h = g.getHeight();
+  let routine = [
+      [0, 10],
+      [1, 10],
+      [2, 10],
+      [3, 30],
+      [4, 10],
+      [5, 30]
+  ];
+
+  E.showScroller({
+  h : 60,
+  c : routine.length+2,
+  draw : function(idx, r) { 
+    g.setColor(1).drawRect(r.x, r.y, r.w, r.h);
+    if (idx == routine.length + 1) {
+      g.setFont("Vector:28").setFontAlign(0, 0).drawString("Ok", r.x+r.w/2, r.y+r.h/2);
+    } else if (idx == routine.length) {
+      g.setFont("Vector:28").setFontAlign(0, 0).drawString("Add", r.x+r.w/2, r.y+r.h/2);
+    } else {
+      let activity = routine[idx][0];
+      let count = routine[idx][1];
+      let activity_name = ACTIVITIES[activity];
+      let img = IMAGES[activity];
+      g.drawImage(img, r.x + r.w / 5, r.y + 10);
+      g.setFont("6x8:2").setFontAlign(0, 0).drawString(""+count, r.x+r.w*4/5, r.y+r.h/2);
+    }
   },
-  BTN1,
-  {
-    repeat: true,
-  }
-);
-
-Bangle.on("swipe", function (directionLR, directionUD) {
-  if (directionUD == -1) {
-    status.remaining += 1;
-  } else if (directionUD == 1) {
-    status.remaining = Math.max(status.remaining - 1, 1);
-  } else if (directionLR == -1) {
-    if (!status.last_activity()) {
-      status.next_activity();
-    }
-  } else if (directionLR == 1) {
-    if (!status.first_activity()) {
-      status.previous_activity();
+  select : function(idx) {
+    if (idx == routine.length + 1) {
+      E.showScroller();    
+      start_routine();
+    } else if (idx == routine.length) {
+      console.log("TODO: add");
+    } else {
+      console.log("TODO: change counter");
     }
   }
-  // status.display();
-});
+  });
+}
 
-Bangle.on("accel", function (xyz) {
-  status.detect(xyz);
-});
+function main_menu() {
+  let w = g.getWidth();
+  let h = g.getHeight();
+  g.clear();
+  g.setColor(1);
+  g.drawRect(10, 10, w-10, h/2-10);
+  g.drawRect(10, h/2+10, w-10, h-10);
+  g.setFont("Vector:32")
+   .setFontAlign(0, 0)
+   .drawString("Start", w/2, h/4);
+  g.drawString("Edit", w/2, 3*h/4);
+  Bangle.on("touch", function(button, xy) {
+    if (xy.y > h/2+10) {
+      Bangle.removeAllListeners("touch");
+      edit_menu();
+    } else if (xy.y < h/2-10) {
+      Bangle.removeAllListeners("touch");
+      start_routine();
+    }
+  })
+}
 
-setInterval(() => {
-  status.display();
-}, 250);
+
+main_menu();
