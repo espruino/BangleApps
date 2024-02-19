@@ -789,6 +789,25 @@ var locales = {
     day: "Søndag,Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag",
     trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
   },
+  "ca_ES": {
+    lang: "es_ES",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%A, %d de %B %Y", "1": "%d/%m/%y" },
+    abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
+    month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octobre,novembre,desembre",
+    abday: "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
+    day: "diumenge,dilluns,dimarts,dimecres,dijous,divendres,dissabte",
+    trans: { yes: "sí", Yes: "Sí", no: "no", No: "No", ok: "d'acord", on: "on", off: "off",
+			"< Back": "< Enrere", "Delete": "Esborra", "Mark Unread": "Marca com a no llegit" }
+  },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",

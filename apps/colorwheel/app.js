@@ -64,13 +64,14 @@
       switch (true) {
         case (Radius > outerRadius): Color = '#000000'; break;
         case (Radius < innerRadius): Color = '#FFFFFF'; break;
-        default:
+        default: {
           let Phi = Math.atan2(dy,dx) + halfPi;
           if (Phi < 0)     { Phi += twoPi; }
           if (Phi > twoPi) { Phi -= twoPi; }
 
           let Index = Math.floor(12*Phi/twoPi);
           Color = ColorList[Index];
+        }
       }
     g.setColor(1,1,1);
     g.fillCircle(CenterX,CenterY, innerRadius);
