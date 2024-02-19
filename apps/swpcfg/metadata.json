@@ -1,0 +1,33 @@
+{
+  "id": "swpcfg",
+  "name": "Swipe Settings",
+  "version": "0.01",
+  "description": "A service for configuring the Bangle.js scroll and swipe directions",
+  "icon": "app.png",
+  "tags": "tool,system",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "type": "bootloader",
+  "storage": [
+    {
+      "name": "swpcfg.boot.js",
+      "url": "boot.js"
+    },
+    {
+      "name": "swpcfg.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "swpcfg.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "swpcfg.json"
+    }
+  ]
+}

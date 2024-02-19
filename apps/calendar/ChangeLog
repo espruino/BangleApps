@@ -18,3 +18,5 @@
 0.16: Add menu to fast open settings to edit holidays
       Display Widgets in menus
 0.17: Load holidays before events so the latter is not overpainted
+0.18: Default to natural scroll and swipe directions for year and month selection
+      (Use new Scroll Settings app to configure reverse scrolling and swiping)

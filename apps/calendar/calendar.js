@@ -306,21 +306,21 @@ const setUI = function() {
     swipe: (dirLR, dirUD) => {
       if (dirLR<0) { // left
         const month = date.getMonth();
-        let prevMonth = month > 0 ? month - 1 : 11;
-        if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
-        date.setMonth(prevMonth);
-        drawCalendar(date);
-      } else if (dirLR>0) { // right
-        const month = date.getMonth();
         let nextMonth = month < 11 ? month + 1 : 0;
         if (nextMonth === 0) date.setFullYear(date.getFullYear() + 1);
         date.setMonth(nextMonth);
         drawCalendar(date);
+      } else if (dirLR>0) { // right
+        const month = date.getMonth();
+        let prevMonth = month > 0 ? month - 1 : 11;
+        if (prevMonth === 11) date.setFullYear(date.getFullYear() - 1);
+        date.setMonth(prevMonth);
+        drawCalendar(date);
       } else if (dirUD<0) { // up
-        date.setFullYear(date.getFullYear() - 1);
+        date.setFullYear(date.getFullYear() + 1);
         drawCalendar(date);
       } else if (dirUD>0) { // down
-        date.setFullYear(date.getFullYear() + 1);
+        date.setFullYear(date.getFullYear() - 1);
         drawCalendar(date);
       }
     },
