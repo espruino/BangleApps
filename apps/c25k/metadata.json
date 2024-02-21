@@ -2,7 +2,7 @@
   "id": "c25k",
   "name": "C25K",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Unofficial app for the Couch to 5k training plan",
   "readme": "README.md",
   "type": "app",

@@ -3,7 +3,8 @@ var day = 1;
 var time;
 
 var loop; // To store how many times we will have to do a countdown
-var counter = 0; // To keep count of how many iterations we have in the current countdown
+var rep = 0; // The current rep counter
+var counter = 0; // The seconds counter
 var currentMode; // Either "run" or "walk"
 var mainInterval; // Ticks every second, checking if a new countdown is needed
 var activityInterval; // Ticks every second, doing the countdown
@@ -31,21 +32,20 @@ function outOfTime() {
 }
 
 function countDown() {
-  text = (currentMode === "run") ? "Run\n" + counter : "Walk\n" + counter; // Switches output text
+  var text = "";
+  var textsize = (process.env.HWVERSION == 2) ? 7 : 8; // Default font size, Banglejs 2 has smaller screen
+  if (time) {
+    var w = week -1;
+    var d = day - 1;
+    var total = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition : 1;
+    text += rep + "/" + total + "\n"; // Show the current/total rep count when time is shown
+    textsize -= (process.env.HWVERSION == 2) ? 2 : 1; // Use smaller font size to fit everything nicely on the screen
+  }
+  text += (currentMode === "run") ? "Run\n" + counter : "Walk\n" + counter; // Switches output text
   if (time) text += "\n" + time;
   g.clear();
-  g.setFontAlign(0,0); // center font
-  if (process.env.HWVERSION == 2) { // To accomodate the Bangle.js 2 screen
-    if (time) {
-      g.setFont("6x8",5); // when time is shown
-    }
-    else {
-      g.setFont("6x8",7); // when time is not shown
-    }
-  }
-  else {
-    g.setFont("6x8",8); // bitmap font, 8x magnified
-  }
+  g.setFontAlign(0, 0); // center font
+  g.setFont("6x8", textsize);
   g.drawString(text, g.getWidth() / 2, g.getHeight() / 2); // draw the current mode and seconds
   Bangle.setLCDPower(1); // keep the watch LCD lit up
 
@@ -69,6 +69,7 @@ function startTimer(w, d) {
   // Switches between the two modes
   if (!currentMode || currentMode === "walk") {
     currentMode = "run";
+    rep++; // Increase the rep counter every time a "run" activity starts
     counter = PLAN[w][d].run * 60;
     g.setBgColor("#ff5733");
   }

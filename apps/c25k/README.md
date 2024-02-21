@@ -55,6 +55,8 @@ For example `w6d1(r:6|w:3|x2)` means:
 If you ever need to peek at the time, just press the middle (or only) physical button on the watch:  
 ![](c25k-scrn7.png)
 
+This view also shows `current rep / total reps` at the top.  
+
 ---
 
 ## Disclaimer
