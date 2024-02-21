@@ -640,6 +640,10 @@ class Status {
     this.display();
   }
   display_direction() {
+    let scale_factor = this.scale_factor;
+    if (!this.zoomed_in) {
+      scale_factor *= 3/5;
+    }
     //TODO: go towards point on path at 20 meter
     if (this.current_segment === null) {
       return;
@@ -664,7 +668,7 @@ class Status {
       this.displayed_position,
       this.adjusted_cos_direction,
       this.adjusted_sin_direction,
-      this.scale_factor
+      scale_factor
     );
 
     let cos1 = Math.cos(full_angle + 0.6 + Math.PI / 2);
@@ -1082,6 +1086,9 @@ class Status {
     let half_width = width / 2;
     let half_height = height / 2 + Y_OFFSET;
     let scale_factor = this.scale_factor;
+    if (!this.zoomed_in) {
+      scale_factor *= 3/5;
+    }
 
     if (this.path !== null) {
       // compute coordinate for projection on path
@@ -1526,6 +1533,7 @@ function start_gipy(path, maps, interests, heights) {
   });
 
   if (simulated) {
+    console.log("un-comment simulator to use it");
     // status.starting_time = getTime();
     // // let's keep the screen on in simulations
     // Bangle.setLCDTimeout(0);
@@ -1553,8 +1561,8 @@ function start_gipy(path, maps, interests, heights) {
     //     if (point_index >= status.path.len / 2 - 1) {
     //       return;
     //     }
-    //     let p1 = status.path.point(2 * point_index); // use these to approximately follow path
-    //     let p2 = status.path.point(2 * (point_index + 1));
+    //     let p1 = status.path.point(8 * point_index); // use these to approximately follow path
+    //     let p2 = status.path.point(8 * (point_index + 1));
     //     //let p1 = status.path.point(point_index); // use these to strictly follow path
     //     //let p2 = status.path.point(point_index + 1);
 

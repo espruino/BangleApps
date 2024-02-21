@@ -133,3 +133,5 @@
 	* Fix for loading very large files (> 65kb)
 	* New menu on file selection : reverse path without waiting for file to load
 	* Fix for files converted from maps2gpx : path was not reduced in size correctly
+	* Experimental ski mode : have a ski slopes map
+	* Fix for path projection display when lost and zoomed out
