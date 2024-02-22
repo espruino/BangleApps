@@ -47,7 +47,7 @@ exports.cleanup = function() {
     Bangle.drawWidgets = exports.origDraw;
     delete exports.origDraw;
   }
-}
+};
 
 /** Put widgets offscreen, and allow them to be swiped
 back onscreen with a downwards swipe. Use .show to undo.
@@ -87,8 +87,7 @@ exports.swipeOn = function(autohide) {
     else Bangle.setLCDOverlay();
   }
 
-  for (var w of global.WIDGETS) {
-    if (w._draw) continue; // already hidden
+  for (var w of global.WIDGETS) if (!w._draw) { // already hidden
     w._draw = w.draw;
     w.draw = function() {
       g=og;
@@ -109,7 +108,7 @@ exports.swipeOn = function(autohide) {
   };
 
   function anim(dir, callback) {
-    if (exports.animInterval) clearInterval(exports.interval);
+    if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
       offset += dir;
       let stop = false;
@@ -139,10 +138,9 @@ exports.swipeOn = function(autohide) {
       exports.hideTimeout = setTimeout(function() {
         anim(-4);
       }, exports.autohide);
-    }
+    };
     if (ud>0 && offset<0) anim(4, cb);
     if (ud<0 && offset>-24) anim(-4);
-
   };
   Bangle.on("swipe", exports.swipeHandler);
   Bangle.drawWidgets();

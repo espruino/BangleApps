@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Bugfixes
 0.03: Use Bangle.setBacklight()
+0.04: Add option to buzz after computer move

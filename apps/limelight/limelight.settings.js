@@ -27,13 +27,12 @@
   }
 
   var font_options = ["Limelight","GochiHand","Grenadier","Monoton"];
-  
+
   E.showMenu({
     '': { 'title': 'Limelight Clock' },
     '< Back': back,
     'Full Screen': {
       value: s.fullscreen,
-      format: () => (s.fullscreen ? 'Yes' : 'No'),
       onchange: () => {
         s.fullscreen = !s.fullscreen;
         save();
@@ -50,7 +49,6 @@
     },
     'Vector Font': {
       value: s.vector,
-      format: () => (s.vector ? 'Yes' : 'No'),
       onchange: () => {
         s.vector = !s.vector;
         save();
@@ -68,7 +66,6 @@
     },
     'Second Hand': {
       value: s.secondhand,
-      format: () => (s.secondhand ? 'Yes' : 'No'),
       onchange: () => {
         s.secondhand = !s.secondhand;
         save();

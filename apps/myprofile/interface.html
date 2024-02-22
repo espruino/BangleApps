@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+
+    <style type="text/css">
+      .alert {
+        padding: 20px;
+        background-color: #f44336; /* Red */
+        color: white;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info"></div>
+
+    <button id="btnReload" class="btn btn-primary">Reload from watch</button>
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+    <button id="btnDownload" class="btn btn-primary">Download</button>
+
+    <pre id="myprofile" contenteditable></pre>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      const myProfileFile = "myprofile.json";
+
+      function errorFormat() {
+        var date = new Date();
+        var error =
+          '<p class="alert">' +
+          date.toUTCString() +
+          " : Wrong format, it should be JSON" +
+          "</p>";
+        return error;
+      }
+
+      function getEditableContent() {
+        return document.getElementById("myprofile").innerHTML.replace(/<[^>]*>/g, '');;
+      }
+
+      function isJsonString(str) {
+        try {
+          JSON.parse(str);
+        } catch (e) {
+          console.log(str)
+          console.log(e)
+          return false;
+        }
+        return true;
+      }
+
+      function uploadFile(fileid, contents) {
+        Puck.write(
+          `\x10(function() {
+          require("Storage").write("${fileid}",'${contents}');
+          Bluetooth.print("OK");
+         })()\n`,
+          (ret) => {
+            console.log("uploadFile", ret);
+          }
+        );
+      }
+
+      /* Load settings JSON file from the watch.
+       */
+      function loadMyProfile() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Loading...");
+        Puck.eval(`require('Storage').readJSON("${myProfileFile}")`, (data) => {
+          document.getElementById("myprofile").innerHTML = JSON.stringify(
+            data,
+            null,
+            2
+          );
+          Util.hideModal();
+        });
+      }
+      /* Save settings as a JSON file on the watch.
+       */
+      function uploadMyProfile() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Uploading...");
+        let myProfileJson = getEditableContent();
+        if (isJsonString(myProfileJson)) {
+          let shortMedicalInfoJson = JSON.stringify(JSON.parse(myProfileJson));
+          uploadFile(myProfileFile, shortMedicalInfoJson);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      function downloadMyProfile() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Downloading...");
+        let myProfileJson = getEditableContent();
+        if (isJsonString(myProfileJson)) {
+          Util.saveFile(myProfileFile, "application/json", myProfileJson);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      document
+        .getElementById("btnUpload")
+        .addEventListener("click", function () {
+          uploadMyProfile();
+        });
+      document
+        .getElementById("btnDownload")
+        .addEventListener("click", function () {
+          downloadMyProfile();
+        });
+      document
+        .getElementById("btnReload")
+        .addEventListener("click", function () {
+          loadMyProfile();
+        });
+      function onInit() {
+        loadMyProfile();
+      }
+    </script>
+  </body>
+</html>

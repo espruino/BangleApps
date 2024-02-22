@@ -256,9 +256,17 @@ apps.forEach((app,appIdx) => {
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
-      // if settings, suggest adding to datafiles
-      if (/\.settings?\.js$/.test(file.name) && (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json")))) {
-        WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+      // if settings
+      if (/\.settings?\.js$/.test(file.name)) {
+        // suggest adding to datafiles
+        if (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+          WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+        }
+        // check for manual boolean formatter
+        const m = fileContents.match(/format: *\(?\w*\)? *=>.*["'](yes|on)["']/i);
+        if (m) {
+          WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
+        }
       }
     }
     for (const key in file) {

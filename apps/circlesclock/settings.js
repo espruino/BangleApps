@@ -30,7 +30,6 @@
       },
       /*LANG*/'show widgets': {
         value: !!settings.showWidgets,
-        format: () => (settings.showWidgets ? 'Yes' : 'No'),
         onchange: x => save('showWidgets', x),
       },
       /*LANG*/'update interval': {
@@ -45,7 +44,6 @@
       },
       /*LANG*/'show big weather': {
         value: !!settings.showBigWeather,
-        format: () => (settings.showBigWeather ? 'Yes' : 'No'),
         onchange: x => save('showBigWeather', x),
       },
       /*LANG*/'colorize icons': ()=>showCircleMenus()
@@ -87,8 +85,7 @@
       const colorizeIconKey = circleName + "colorizeIcon";
       menu[/*LANG*/'circle ' + circleId] = {
         value: settings[colorizeIconKey] || false,
-          format: () => (settings[colorizeIconKey]? /*LANG*/'Yes': /*LANG*/'No'),
-          onchange: x => save(colorizeIconKey, x),
+        onchange: x => save(colorizeIconKey, x),
       };
     }
     E.showMenu(menu);

@@ -14,3 +14,4 @@
 0.14: Add settings page, allow time sync
       Allow negative/positive actions to pass through to message GUI
 0.15: Enable calendar and weather updates via custom notifications (via shortcuts app)
+0.16: Always request Current Time service from iOS

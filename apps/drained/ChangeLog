@@ -2,3 +2,4 @@
 0.02: Allow boot exceptions, e.g. to load DST
 0.03: Permit exceptions to load in low-power mode, e.g. daylight saving time.
       Also avoid polluting global scope.
+0.04: Enhance menu: enable bluetooth, visit settings & visit recovery

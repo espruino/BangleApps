@@ -3,11 +3,12 @@
   "shortName":"My Profile",
   "icon": "app.png",
   "type": "settings",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Configure your personal profile. All settings are optional and only stored on the watch.",
   "readme": "README.md",
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
+  "interface": "interface.html",
   "storage": [
     {"name":"myprofile.settings.js","url":"settings.js"}
   ],
@@ -15,4 +16,3 @@
     {"name":"myprofile.json"}
   ]
 }
-

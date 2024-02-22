@@ -1,3 +1,7 @@
+var settings = Object.assign({
+  fullscreen: false,
+}, require('Storage').readJSON("binaryclk.json", true) || {});
+
 function draw() {
 	var dt = new Date();
 	var h = dt.getHours(), m = dt.getMinutes();
@@ -11,10 +15,14 @@ function draw() {
 	g.clearRect(Bangle.appRect);
 
 	let i = 0;
+	var gap = 8;
+	var mgn = 20;
+	if (settings.fullscreen) {
+		gap = 12;
+		mgn = 0;
+	}
 	const sq = 29;
-	const gap = 8;
-	const mgn = 20;
-	const pos = sq + gap;
+	var pos = sq + gap;
 
 	for (let r = 3; r >= 0; r--) {
 		for (let c = 0; c < 4; c++) {
@@ -26,14 +34,15 @@ function draw() {
 		}
 		i++;
 	}
-  g.clearRect(mgn/2 + gap, mgn + gap, mgn/2 + gap + sq, mgn + 2 * gap + 2 * sq);
-  g.clearRect(mgn/2 + 3 * gap + 2 * sq, mgn + gap, mgn/2 + 3 * gap + 3 * sq, mgn + gap + sq);
+	g.clearRect(mgn/2 + gap, mgn + gap, mgn/2 + gap + sq, mgn + 2 * gap + 2 * sq);
+	g.clearRect(mgn/2 + 3 * gap + 2 * sq, mgn + gap, mgn/2 + 3 * gap + 3 * sq, mgn + gap + sq);
 }
-
 
 g.clear();
 draw();
 var secondInterval = setInterval(draw, 60000);
 Bangle.setUI("clock");
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+if (!settings.fullscreen) {
+	Bangle.loadWidgets();
+	Bangle.drawWidgets();
+} 

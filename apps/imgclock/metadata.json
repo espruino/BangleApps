@@ -2,7 +2,7 @@
   "id": "imgclock",
   "name": "Image background clock",
   "shortName": "Image Clock",
-  "version": "0.10",
+  "version": "0.11",
   "description": "A clock with an image as a background",
   "icon": "app.png",
   "type": "clock",

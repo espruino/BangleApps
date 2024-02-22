@@ -1,6 +1,6 @@
 { "id": "forge",
   "name": "App Forge",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Easy way to run development versions of your apps",
   "icon": "app.png",
   "readme": "README.md",

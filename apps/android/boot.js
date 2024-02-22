@@ -81,7 +81,12 @@
         for (var j = 0; j < event.d.length; j++) {
           // prevents all alarms from going off at once??
           var dow = event.d[j].rep;
-          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var rp = false;
+          if (!dow) {
+            dow = 127; //if no DOW selected, set alarm to all DOW
+          } else {
+            rp = true;
+          }
           var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
           var a = require("sched").newDefaultAlarm();
           a.id = "gb"+j;
@@ -89,6 +94,7 @@
           a.on = event.d[j].on !== undefined ? event.d[j].on : true;
           a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
           a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
+          a.rp = rp;
           a.last = last;
           alarms.push(a);
         }
