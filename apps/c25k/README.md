@@ -50,12 +50,21 @@ For example `w6d1(r:6|w:3|x2)` means:
 
 ---
 
-### Show the time:
+### Show extra info:
 
 If you ever need to peek at the time, just press the middle (or only) physical button on the watch:  
 ![](c25k-scrn7.png)
 
 This view also shows `current rep / total reps` at the top.  
+
+---
+
+### Pause/resume workout:
+
+**This is currently only available on Bangle.js 1.**
+
+Press the top button to pause or to resume the active programme:  
+![](c25k-scrn8.png)
 
 ---
 
@@ -69,4 +78,4 @@ It *should* work fine on the Bangle.js 2, but I couldn't test it on real hardwar
 
 ---
 
-Made with <3 by [Erovia](https://github.com/Erovia)
+Made with <3 by [Erovia](https://github.com/Erovia/BangleApps/tree/c25k)

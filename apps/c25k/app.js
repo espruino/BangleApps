@@ -3,27 +3,26 @@ var day = 1;
 var time;
 
 var loop; // To store how many times we will have to do a countdown
-var rep = 0; // The current rep counter
-var counter = 0; // The seconds counter
+var rep; // The current rep counter
+var counter; // The seconds counter
 var currentMode; // Either "run" or "walk"
 var mainInterval; // Ticks every second, checking if a new countdown is needed
 var activityInterval; // Ticks every second, doing the countdown
-var buttonWatch; // Watch for button presses
+var extraInfoWatch; // Watch for button presses to show additional info
+var paused = false; // Track pause state
+var pauseOrResumeWatch; // Watch for button presses to pause/resume countdown
+var defaultFontSize = (process.env.HWVERSION == 2) ? 7 : 8; // Default font size, Banglejs 2 has smaller
+var activityBgColour; // Background colour of current activity
 
 function outOfTime() {
-  // Buzz 3 times on state transitions
-  Bangle.buzz(500)
-  .then(() => new Promise(resolve => setTimeout(resolve, 200)))
-  .then(() => Bangle.buzz(500))
-  .then(() => new Promise(resolve => setTimeout(resolve, 200)))
-  .then(() => Bangle.buzz(500));
+  buzz();
 
   // Once we're done
   if (loop == 0) {
-    clearWatch(buttonWatch); // Don't watch for button presses anymore
+    clearWatch(extraInfoWatch); // Don't watch for button presses anymore
+    if (pauseOrResumeWatch) clearWatch(pauseOrResumeWatch); // Don't watch for button presses anymore
     g.setBgColor("#75C0E0"); // Blue background for the "Done" text
-    g.clear();
-    g.drawString("Done", g.getWidth()/2, g.getHeight()/2); // Write "Done" to screen
+    drawText("Done", defaultFontSize); // Write "Done" to screen
     g.reset();
     setTimeout(E.showMenu, 5000, mainmenu); // Show the main menu again after 5secs
     clearInterval(mainInterval); // Stop the main interval from starting a new activity
@@ -31,54 +30,69 @@ function outOfTime() {
   }
 }
 
-function countDown() {
-  var text = "";
-  var textsize = (process.env.HWVERSION == 2) ? 7 : 8; // Default font size, Banglejs 2 has smaller screen
-  if (time) {
-    var w = week -1;
-    var d = day - 1;
-    var total = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition : 1;
-    text += rep + "/" + total + "\n"; // Show the current/total rep count when time is shown
-    textsize -= (process.env.HWVERSION == 2) ? 2 : 1; // Use smaller font size to fit everything nicely on the screen
-  }
-  text += (currentMode === "run") ? "Run\n" + counter : "Walk\n" + counter; // Switches output text
-  if (time) text += "\n" + time;
+// Buzz 3 times on state transitions
+function buzz() {
+  Bangle.buzz(500)
+  .then(() => new Promise(resolve => setTimeout(resolve, 200)))
+  .then(() => Bangle.buzz(500))
+  .then(() => new Promise(resolve => setTimeout(resolve, 200)))
+  .then(() => Bangle.buzz(500));
+}
+
+function drawText(text, size){
   g.clear();
   g.setFontAlign(0, 0); // center font
-  g.setFont("6x8", textsize);
-  g.drawString(text, g.getWidth() / 2, g.getHeight() / 2); // draw the current mode and seconds
-  Bangle.setLCDPower(1); // keep the watch LCD lit up
+  g.setFont("6x8", size);
+  g.drawString(text, g.getWidth() / 2, g.getHeight() / 2);
+}
 
-  counter--; // Reduce the seconds
+function countDown() {
+  if (!paused) {
+    var text = "";
+    var size = defaultFontSize;
+    if (time) {
+      var w = week -1;
+      var d = day - 1;
+      var total = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition : 1;
+      text += rep + "/" + total + "\n"; // Show the current/total rep count when time is shown
+      size -= (process.env.HWVERSION == 2) ? 2 : 1; // Use smaller font size to fit everything nicely on the screen
+    }
+    text += (currentMode === "run") ? "Run\n" + counter : "Walk\n" + counter; // Switches output text
+    if (time) text += "\n" + time;
+    drawText(text, size); // draw the current mode and seconds
+    Bangle.setLCDPower(1); // keep the watch LCD lit up
 
-  // If the current activity is done
-  if (counter < 0) {
-    clearInterval(activityInterval);
-    activityInterval = undefined;
-    outOfTime();
-    return;
+    counter--; // Reduce the seconds
+
+    // If the current activity is done
+    if (counter < 0) {
+      clearInterval(activityInterval);
+      activityInterval = undefined;
+      outOfTime();
+      return;
+    }
   }
 }
 
 function startTimer(w, d) {
   // If something is already running, do nothing
-  if (activityInterval) {
-    return;
-  }
+  if (activityInterval) return;
 
   // Switches between the two modes
   if (!currentMode || currentMode === "walk") {
     currentMode = "run";
     rep++; // Increase the rep counter every time a "run" activity starts
     counter = PLAN[w][d].run * 60;
-    g.setBgColor("#ff5733");
+    activityBgColour = "#ff5733"; // Red background for running
   }
   else {
     currentMode = "walk";
     counter = PLAN[w][d].walk * 60;
-    g.setBgColor("#4da80a");
+    activityBgColour = "#4da80a"; // Green background for walking
+
   }
 
+  g.setBgColor(activityBgColour);
   countDown();
   if (!activityInterval) {
     loop--; // Reduce the number of iterations
@@ -103,9 +117,7 @@ function populatePlan() {
       // Ever line will have the following format:
       // w{week}d{day}(r:{run mins}|w:{walk mins}|x{number of reps})
       var name = "w" + (i + 1) + "d" + (j + 1);
-      if (process.env.HWVERSION == 2) {
-        name += "\n"; // Print in 2 lines to accomodate the Bangle.js 2 screen
-      }
+      if (process.env.HWVERSION == 2) name += "\n"; // Print in 2 lines to accomodate the Bangle.js 2 screen
       name += "(r:" + PLAN[i][j].run;
       if ("walk" in PLAN[i][j]) name += "|w:" + PLAN[i][j].walk;
       if ("repetition" in PLAN[i][j]) name += "|x" + PLAN[i][j].repetition;
@@ -129,15 +141,27 @@ function startActivity() {
   var w = week - 1;
   var d = day - 1;
 
-  if ("walk" in PLAN[w][d]) {
-    loop = PLAN[w][d].repetition * 2;
+  loop = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition * 2 : 1;
+  rep = 0;
+
+  E.showMenu(); // Hide the main menu
+  extraInfoWatch = setWatch(showTime, (process.env.HWVERSION == 2) ? BTN1 : BTN2, {repeat: true}); // Show the clock on button press
+  if (process.env.HWVERSION == 1) pauseOrResumeWatch = setWatch(pauseOrResumeActivity, BTN1, {repeat: true}); // Pause or resume on button press (Bangle.js 1 only)
+  buzz();
+  mainInterval = setInterval(function() {startTimer(w, d);}, 1000); // Check every second if we need to do something
+}
+
+// Pause or resume current activity
+function pauseOrResumeActivity() {
+  paused = !paused;
+  buzz();
+  if (paused) {
+    g.setBgColor("#fdd835"); // Yellow background for pause screen
+    drawText("Paused", (process.env.HWVERSION == 2) ? defaultFontSize - 3 : defaultFontSize - 2); // Although the font size is configured here, this feature does not work on Bangle.js 2 as the only physical button is tied to the extra info screen already
   }
   else {
-    loop = 1;
+    g.setBgColor(activityBgColour);
   }
-  E.showMenu(); // Hide the main menu
-  buttonWatch = setWatch(showTime, (process.env.HWVERSION == 2) ? BTN1 : BTN2, {repeat: true}); // Show the clock on button press
-  mainInterval = setInterval(function() {startTimer(w, d);}, 1000); // Check every second if we need to do something
 }
 
 const PLAN = [
