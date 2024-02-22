@@ -316,7 +316,6 @@
     },
     'Use Baro': {
       value: !!settings.useBaro,  // !! converts undefined to false
-      format: v => v ? 'On' : 'Off',
       onchange: v => {
         settings.useBaro = v;
         writeSettings();
