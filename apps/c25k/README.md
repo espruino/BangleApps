@@ -50,6 +50,21 @@ For example `w6d1(r:6|w:3|x2)` means:
 
 ---
 
+### Create a custom excercise
+
+Under the `Custom run` menu, it's possible to create a custom excercise.   
+![](c25k-scrn9.png)
+
+Some important details/limitations:  
+
+- To disable walking: set `walk` to `0`  
+- When walking is set to `0`, the repetition count is set to `1`.
+- When repetition is set to `2` or higher, `walk` is set to `1`.
+
+**Unfortunately, the value in the menu do not update to reflect the changes, so I recommend setting the values with the rules above in mind.**
+
+---
+
 ### Show extra info:
 
 If you ever need to peek at the time, just press the middle (or only) physical button on the watch:  

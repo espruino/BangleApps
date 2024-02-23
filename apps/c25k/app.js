@@ -1,6 +1,10 @@
-var week = 1;
-var day = 1;
-var time;
+var week = 1; // Stock plan: programme week
+var day = 1; // Stock plan: programe day
+var run = 1; // Custom plan: running time
+var walk = 0; // Custom plan: walking time
+var reps = 1; // Custom plan: repetition count
+
+var time; // To store the date
 
 var loop; // To store how many times we will have to do a countdown
 var rep; // The current rep counter
@@ -11,8 +15,9 @@ var activityInterval; // Ticks every second, doing the countdown
 var extraInfoWatch; // Watch for button presses to show additional info
 var paused = false; // Track pause state
 var pauseOrResumeWatch; // Watch for button presses to pause/resume countdown
-var defaultFontSize = (process.env.HWVERSION == 2) ? 7 : 8; // Default font size, Banglejs 2 has smaller
+var defaultFontSize = (process.env.HWVERSION == 2) ? 7 : 9; // Default font size, Banglejs 2 has smaller
 var activityBgColour; // Background colour of current activity
+var currentActivity; // To store the current activity
 
 function outOfTime() {
   buzz();
@@ -27,6 +32,7 @@ function outOfTime() {
     setTimeout(E.showMenu, 5000, mainmenu); // Show the main menu again after 5secs
     clearInterval(mainInterval); // Stop the main interval from starting a new activity
     mainInterval = undefined;
+    currentMode = undefined;
   }
 }
 
@@ -51,11 +57,9 @@ function countDown() {
     var text = "";
     var size = defaultFontSize;
     if (time) {
-      var w = week -1;
-      var d = day - 1;
-      var total = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition : 1;
+      var total = ("walk" in currentActivity) ? currentActivity.repetition : 1;
       text += rep + "/" + total + "\n"; // Show the current/total rep count when time is shown
-      size -= (process.env.HWVERSION == 2) ? 2 : 1; // Use smaller font size to fit everything nicely on the screen
+      size -= 2; // Use smaller font size to fit everything nicely on the screen
     }
     text += (currentMode === "run") ? "Run\n" + counter : "Walk\n" + counter; // Switches output text
     if (time) text += "\n" + time;
@@ -74,7 +78,7 @@ function countDown() {
   }
 }
 
-function startTimer(w, d) {
+function startTimer() {
   // If something is already running, do nothing
   if (activityInterval) return;
 
@@ -82,12 +86,12 @@ function startTimer(w, d) {
   if (!currentMode || currentMode === "walk") {
     currentMode = "run";
     rep++; // Increase the rep counter every time a "run" activity starts
-    counter = PLAN[w][d].run * 60;
+    counter = currentActivity.run * 60;
     activityBgColour = "#ff5733"; // Red background for running
   }
   else {
     currentMode = "walk";
-    counter = PLAN[w][d].walk * 60;
+    counter = currentActivity.walk * 60;
     activityBgColour = "#4da80a"; // Green background for walking
 
   }
@@ -128,27 +132,23 @@ function populatePlan() {
   }
 }
 
-// Helper function to generate functions for the PLAN menu
+// Helper function to generate functions for the activePlan menu
 function getFunc(i, j) {
   return function() {
-    week = i + 1;
-    day = j + 1;
+    currentActivity = PLAN[i][j];
     startActivity();
   };
 }
 
 function startActivity() {
-  var w = week - 1;
-  var d = day - 1;
-
-  loop = ("walk" in PLAN[w][d]) ? PLAN[w][d].repetition * 2 : 1;
+  loop = ("walk" in currentActivity) ? currentActivity.repetition * 2 : 1;
   rep = 0;
 
   E.showMenu(); // Hide the main menu
   extraInfoWatch = setWatch(showTime, (process.env.HWVERSION == 2) ? BTN1 : BTN2, {repeat: true}); // Show the clock on button press
   if (process.env.HWVERSION == 1) pauseOrResumeWatch = setWatch(pauseOrResumeActivity, BTN1, {repeat: true}); // Pause or resume on button press (Bangle.js 1 only)
   buzz();
-  mainInterval = setInterval(function() {startTimer(w, d);}, 1000); // Check every second if we need to do something
+  mainInterval = setInterval(function() {startTimer();}, 1000); // Check every second if we need to do something
 }
 
 // Pause or resume current activity
@@ -207,35 +207,84 @@ const PLAN = [
   ],
 ];
 
+var customRun = {"run": 1};
+
 // Main menu
 var mainmenu = {
-  "" : {
-    "title" : "-- C25K --"
-  },
-  "Week" : {
-    value : week,
-    min:1,max:PLAN.length,step:1,
+  "": { "title": "-- C25K --" },
+  "Week": {
+    value: week,
+    min: 1, max: PLAN.length, step: 1,
     onchange : v => { week = v; }
   },
-  "Day" : {
-    value : day,
-    min:1,max:3,step:1,
-    onchange : v => { day = v; }
+  "Day": {
+    value: day,
+    min: 1, max: 3, step: 1,
+    onchange: v => { day = v; }
   },
-  "View plan" : function() { E.showMenu(planmenu); },
-  "Start" : function() { startActivity(); },
-  "Exit" : function() { load(); },
+  "View plan": function() { E.showMenu(planmenu); },
+  "Custom run": function() { E.showMenu(custommenu); },
+  "Start": function() {
+    currentActivity = PLAN[week - 1][day -1];
+    startActivity();
+  },
+  "Exit": function() { load(); },
 };
 
 // Plan view
 var planmenu = {
-  "" : {
-    title : "-- Plan --",
-    back : function() { E.showMenu(mainmenu);},
-  }
+  "": { title: "-- Plan --" },
+  "< Back": function() { E.showMenu(mainmenu);},
 };
 
-// Populate the PLAN menu view
+// Custom view
+var custommenu = {
+  "": { title : "-- Cust. run --" },
+  "< Back": function() { E.showMenu(mainmenu);},
+  "Run (mins)": {
+    value: run,
+    min: 1, max: 150, step: 1,
+    wrap: true,
+    onchange: v => { customRun.run = v; }
+  },
+  "Walk (mins)": {
+    value: walk,
+    min: 0, max: 10, step: 1,
+    onchange: v => {
+      if (v > 0) {
+        if (reps == 1) { reps = 2; } // Walking only makes sense with multiple reps
+        customRun.repetition = reps;
+        customRun.walk = v;
+      }
+      else {
+        // If no walking, delete both the reps and walk data
+        delete customRun.repetition;
+        delete customRun.walk;
+      }
+      walk = v;
+    }
+  },
+  "Reps": {
+    value: reps,
+    min: 1, max: 10, step: 1,
+    onchange: v => {
+      if (v > 1) {
+        if (walk == 0) { walk = 1; } // Multiple reps only make sense with walking phases
+        customRun.walk = walk;
+        customRun.repetition = v;
+      }
+      else {
+        // If no multiple reps, delete both the reps and walk data
+        delete customRun.repetition;
+        delete customRun.walk;
+      }
+      reps = v;
+    }
+  },
+  "Start": function() { currentActivity = customRun; startActivity(); }
+};
+
+// Populate the activePlan menu view
 populatePlan();
 // Actually display the menu
 E.showMenu(mainmenu);
