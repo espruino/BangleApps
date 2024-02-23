@@ -1,0 +1,8 @@
+{
+    "dial": "numeric",
+    "gps": false,
+    "compass": false,
+    "language": "en",
+    "fgColor": "#FFFF00",
+    "bgColor": "#000000"
+}
