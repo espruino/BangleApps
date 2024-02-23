@@ -2,7 +2,7 @@
 
 Inspired by the aesthetic of the Fallout series, this clock face looks to emulate the color and feel of a PipBoy.
 
-Add screen shots (if possible) to the app folder and link then  into this file with ![clockface](./res/screenshot.png)
+![clockface](./res/screenshot.png)
 
 ## Usage
 
