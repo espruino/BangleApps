@@ -10,8 +10,8 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"regattatimer.app.js","url":"app.js"},
-    {"name":"regattatimer.settings.js","url":"settings.js"},
+    {"name":"regattatimer.app.js","url":"regattatimer.app.js"},
+    {"name":"regattatimer.settings.js","url":"regattatimer.settings.js"},
     {"name":"regattatimer.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name": "regattatimer.json"}]
