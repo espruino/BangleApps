@@ -2,7 +2,7 @@
  * Regatta Timer
  *
  */
-const DEBUG = true;
+const DEBUG = false;
 const Layout = require("Layout");
 const locale = require("locale").name.substring(0, 2);
 
