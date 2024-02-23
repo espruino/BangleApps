@@ -26,12 +26,12 @@
       }
     },
     'COMPASS': {
-      value: !!settings.gps,  // 0| converts undefined to 0
+      value: !!settings.compass,  // 0| converts undefined to 0
       onchange: v => {
         settings.compass = v;
         writeSettings();
       }
-    }
+    },
     "DIAL": {
       value: settings.dial,
       min: 0,
