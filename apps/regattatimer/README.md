@@ -23,11 +23,12 @@
 
 ## Localization
 
-1 Go to: https://banglejs.com/apps/
-2 Search for app: Languages
-3 Click the "arrow up" or "burger" icon
-4 Choose your language from the dropdown
-5 Click `upload`
+Localization is done by the Bangle.js 2 app "Languages"
+* Go to: https://banglejs.com/apps/
+* Search for app: Languages
+* Click the "arrow up" or "burger" icon
+* Choose your language from the dropdown
+* Click `upload`
 
 ## Feedback
 
@@ -35,4 +36,4 @@ Report bugs, request a feature at https://www.github.com/naden
 
 ## Created by
 
-&copy; 2021-2023 https://naden.de
+&copy; 2021 - 2023 https://naden.de
