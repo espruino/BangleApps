@@ -2,7 +2,7 @@
   "id": "regattatimer",
   "name": "Regatta Timer",
   "shortName": "Regatta Timer",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Regatta Timer with classic 5-4-1 Countdown",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
