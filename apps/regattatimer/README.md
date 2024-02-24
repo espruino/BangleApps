@@ -1,4 +1,4 @@
-# Regatta Timer with 5-4-1 countdown
+# Regatta Timer 5-4-1 countdown
 
 ## Modes
 

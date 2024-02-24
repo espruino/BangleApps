@@ -2,10 +2,10 @@
   var file = "regattatimer.json";
   // Load settings
   var settings = Object.assign({
+    "debug": false,
     "dial": "numeric",
     "gps": false,
     "compass": false,
-    "language": "en",
     "fgColor": "#FFFF00",
     "bgColor": "#000000"
   }, require('Storage').readJSON(file, true) || {});
@@ -41,6 +41,13 @@
         settings.dial = v;
         writeSettings();
       }
-    }
+    },
+    'DEBUG': {
+      value: !!settings.debug,  // 0| converts undefined to 0
+      onchange: v => {
+        settings.debug = v;
+        writeSettings();
+      }
+    },
   });
 })

@@ -1,8 +1,7 @@
 /**
  * Regatta Timer
- *
+ * speed of advance
  */
-const DEBUG = false;
 const Layout = require("Layout");
 const locale = require("locale").name.substring(0, 2);
 
@@ -37,7 +36,7 @@ function Regattatimer() {
   return {
     layout: undefined,
     mode: "idle", // idle, start, race"
-    countdown: DEBUG ? 1 : 300, // 5 minutes
+    countdown: 300, // 5 minutes
     counter: undefined,
     interval: undefined,
     raceTimeStart: undefined,
@@ -64,10 +63,10 @@ function Regattatimer() {
     ],
 
     settings: Object.assign({
+      "debug": false,
       "dial": "numeric",
       "gps": false,
       "compass": false,
-      "language": "en",
       "fgColor": "#FFFF00",
       "bgColor": "#000000"
     }, require('Storage').readJSON("regattatimer.json", true) || {}),
@@ -84,7 +83,7 @@ function Regattatimer() {
     }, require('Storage').readJSON("translations.json", true) || {}),
 
     translate: function(slug) {
-      return this.translations[this.settings.language][slug];
+      return this.translations[locale][slug];
     },
     /**
      * During the start phase, the the clock counts down 5 4 1 minutes.
@@ -261,7 +260,6 @@ function Regattatimer() {
             {type: "txt", font: "10%", label: "-", col: this.settings.fgColor, pad: 4, filly: 1, fillx: 1, id: "satellites"},
             {type: "txt", font: "10%", label: "00:00", col: this.settings.fgColor, pad: 4, filly: 1, fillx: 1, halign: 1, id: "daytime"},
           ]}
-
       ]},{lazy:true});
     },
     onGPS: function(fix) {
@@ -269,7 +267,7 @@ function Regattatimer() {
         if(fix.fix && isFinite(fix.speed)) {
           this.layout.speed.label = fix.speed.toFixed(2); //m[1];
         }
-        this. layout.satellites.label = "Satellites ".concat(fix.satellites);
+        this. layout.satellites.label = "Sats: ".concat(fix.satellites);
       }
     },
     /*
@@ -307,6 +305,10 @@ function Regattatimer() {
     },
     */
     init: function() {
+
+      if(this.settings.debug) {
+        this.countdown = 1;
+      }
 
       this.setLayoutIdle();
 
@@ -347,22 +349,22 @@ var regattatimer = Regattatimer()
 
 regattatimer.init();
 
-if(regattatimer.gps) {
+if(regattatimer.settings.gps) {
   Bangle.setGPSPower(1);
   Bangle.on('GPS', regattatimer.onGPS.bind(regattatimer));
 }
 
-if(regattatimer.compass) {
+if(regattatimer.settings.compass) {
   Bangle.setCompassPower(1);
   Bangle.on('mag', regattatimer.onCompass.bind(regattatimer));
 }
 
 Bangle.on('kill',function() {
-  if(regattatimer.gps) {
+  if(regattatimer.settings.gps) {
     Bangle.setGPSPower(0);
   }
 
-  if(regattatimer.compass) {
+  if(regattatimer.settings.compass) {
     Bangle.setCompassPower(0);
   }
 });

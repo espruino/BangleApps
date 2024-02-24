@@ -1,9 +1,9 @@
 {
   "id": "regattatimer",
   "name": "Regatta Timer",
-  "shortName": "Regatta T.",
+  "shortName": "RegattaTimer",
   "version": "0.2",
-  "description": "Regatta Timer with classic 5-4-1 Countdown",
+  "description": "Regatta Timer with 5-4-1 Countdown",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
   "tags": "tool,outdoors,sailing,race,regatta,boat,timer",
