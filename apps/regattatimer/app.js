@@ -310,9 +310,10 @@ function Regattatimer() {
         this.countdown = 1;
       }
 
-      this.setLayoutIdle();
-
       Bangle.setLCDPower(1);
+      Bangle.setLCDTimeout(0);
+
+      this.setLayoutIdle();
 
       var onButtonClick = ((ev) => {
 
