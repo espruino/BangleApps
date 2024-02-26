@@ -289,7 +289,8 @@ function showMessageSettings(msg) {
 }
 
 function showMessage(msgid) {
-  var msg = MESSAGES.find(m=>m.id==msgid);
+  let idx = MESSAGES.findIndex(m=>m.id==msgid);
+  var msg = MESSAGES[idx];
   if (updateLabelsInterval) {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval=undefined;
@@ -389,9 +390,11 @@ function showMessage(msgid) {
     {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
 
-  Bangle.swipeHandler = lr => {
+  Bangle.swipeHandler = (lr,ud) => {
     if (lr>0 && posHandler) posHandler();
     if (lr<0 && negHandler) negHandler();
+    if (ud>0 && idx<MESSAGES.length-1) showMessage(MESSAGES[idx+1].id);
+    if (ud<0 && idx>0) showMessage(MESSAGES[idx-1].id);
   };
   Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
