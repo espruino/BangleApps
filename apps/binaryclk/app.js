@@ -46,7 +46,7 @@ function draw() {
 
 	if (settings.hidesq) {
 		c1sqhide = 2;
-  	c3sqhide = 1;
+		c3sqhide = 1;
 	}
 
 	if (settings.hidesq) {
