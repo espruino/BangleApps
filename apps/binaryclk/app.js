@@ -1,5 +1,5 @@
-var settingsclk = Object.assign({
-  fullscreen: false,
+var settings = Object.assign({
+	fullscreen: false,
 	hidesq: false,
 	showdate: false,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
@@ -22,7 +22,7 @@ function draw() {
 	var gap = 8;
 	var mgn = 20;
 
-	if (settingsclk.fullscreen) {
+	if (settings.fullscreen) {
 		gap = 12;
 		mgn = 0;
 	}
@@ -44,16 +44,16 @@ function draw() {
 	var c1sqhide = 0;
 	var c3sqhide = 0;
 
-	if (settingsclk.hidesq) {
+	if (settings.hidesq) {
 		c1sqhide = 2;
   	c3sqhide = 1;
 	}
 
-	if (settingsclk.hidesq) {
+	if (settings.hidesq) {
 		g.clearRect(Math.floor(mgn/2), mgn, Math.floor(mgn/2) + pos, mgn + c1sqhide * pos);
 		g.clearRect(Math.floor(mgn/2) + 2 * pos + gap, mgn, Math.floor(mgn/2) + 3 * pos, mgn + c3sqhide * pos);
 	}
-	if (settingsclk.showdate) {
+	if (settings.showdate) {
 		g.setFontAlign(0, 0);
 		g.setFont("Vector",20);
 		g.drawRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + sq);
@@ -65,7 +65,7 @@ g.clear();
 draw();
 var secondInterval = setInterval(draw, 60000);
 Bangle.setUI("clock");
-if (!settingsclk.fullscreen) {
+if (!settings.fullscreen) {
 	Bangle.loadWidgets();
 	Bangle.drawWidgets();
 } 
