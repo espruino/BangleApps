@@ -2,7 +2,7 @@
   "id": "tabanchi",
   "name": "Tabanchi",
   "shortName": "Tabanchi",
-  "version": "0.03",
+  "version": "0.04",
   "type": "app",
   "description": "Tamagotchi WatchApp",
   "icon": "app.png",
