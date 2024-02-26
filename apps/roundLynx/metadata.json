@@ -1,0 +1,17 @@
+{
+  "id": "roundboy",
+  "name": "Round Boy",
+  "version": "0.0.1",
+  "description": "A clock using a round lynx image",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"roundboy.app.js","url":"app.js"},
+    {"name":"roundboy.img","url":"app-icon.js","evaluate":true}
+  ]
+}
