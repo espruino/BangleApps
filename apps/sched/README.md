@@ -17,7 +17,7 @@ Global Settings
 - `Delete Expired Timers` - Default for whether expired timers are removed after firing.
 - `Default Auto Snooze` - Default _Auto Snooze_ value for newly created alarms (_Alarms_ only)
 - `Default Snooze` - Default _Snooze_ value for newly created alarms/timers
-- `Buzz Count` - The number of buzzes before the watch goes silent
+- `Buzz Count` - The number of buzzes before the watch goes silent, or "forever" to buzz until stopped.
 - `Buzz Interval` - The interval between one buzz and the next
 - `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
 
