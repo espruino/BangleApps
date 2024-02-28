@@ -1,0 +1,17 @@
+{
+  "id": "swipeinv",
+  "name": "Swipe inversion",
+  "shortName":"Swipe inv.",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Inverts swipe direction globally or per app, see settings. If global inversion is enabled, you can unselect the inversion per app and vice versa.",
+  "type": "bootloader",
+  "tags": "system",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"swipeinv.boot.js","url":"boot.js"},
+    {"name":"swipeinv.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"swipeinv.json"}]
+}
+
