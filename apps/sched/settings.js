@@ -43,7 +43,7 @@
     },
 
     /*LANG*/"Buzz Count": {
-      value: settings.buzzCount,
+      value: settings.buzzCount == null ? 4 : settings.buzzCount,
       min: 4,
       max: 15,
       step: 1,
