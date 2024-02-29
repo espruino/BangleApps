@@ -328,9 +328,21 @@ function editTimer(idx, a) {
   setUI();
 }
 
+function readAndConvJson() {
+  let json = require("Storage").readJSON("multitimer.json", true);
+
+  if (Array.isArray(json)) {
+    // old format, convert
+    json = { sw: json };
+    require("Storage").writeJSON("multitimer.json", json);
+  }
+
+  return json;
+}
+
 function drawSw() {
   layer = 1;
-  const sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const sw = readAndConvJson().sw;
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -382,12 +394,14 @@ function drawSw() {
 
 function swMenu(idx, a) {
   layer = -1;
-  const sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const json = require("Storage").readJSON("multitimer.json", true) || {};
+  json.sw = json.sw || [];
+  const sw = json.sw;
   if (sw[idx]) a = sw[idx];
   else {
     a = {"t" : 0, "on" : false, "msg" : ""};
     sw[idx] = a;
-    require("Storage").writeJSON("multitimer.json", sw);
+    require("Storage").writeJSON("multitimer.json", json);
   }
 
   function updateTimer() {
@@ -408,7 +422,7 @@ function swMenu(idx, a) {
     }
     else delete a.msg;
     sw[idx] = a;
-    require("Storage").writeJSON("multitimer.json", sw);
+    require("Storage").writeJSON("multitimer.json", json);
     swMenu(idx, a);
     });
   }
@@ -458,7 +472,7 @@ function swMenu(idx, a) {
     select : (i) => {
 
       function saveAndReload() {
-        require("Storage").writeJSON("multitimer.json", sw);
+        require("Storage").writeJSON("multitimer.json", json);
         s.draw();
       }
 
@@ -707,5 +721,17 @@ function onDrag(e) {
   }
 }
 
-drawTimers();
+switch (readAndConvJson().initialScreen) {
+  case 0:
+  case undefined:
+  default:
+    drawTimers();
+    break;
+  case 1:
+    drawSw();
+    break;
+  case 2:
+    drawAlarms();
+    break;
+}
 }
