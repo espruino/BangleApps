@@ -722,16 +722,16 @@ function onDrag(e) {
 }
 
 switch (readAndConvJson().initialScreen) {
-  case 0:
-  case undefined:
-  default:
-    drawTimers();
-    break;
   case 1:
     drawSw();
     break;
   case 2:
     drawAlarms();
+    break;
+  case 0:
+  case undefined:
+  default:
+    drawTimers();
     break;
 }
 }
