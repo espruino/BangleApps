@@ -78,7 +78,7 @@ function drawTimers() {
     }, 1000 - (timers[idx].t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : timers.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -138,7 +138,7 @@ function timerMenu(idx) {
     }, 1000 - (a.t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
@@ -353,7 +353,7 @@ function drawSw() {
     }, 1000 - (sw[idx].t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : sw.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -434,7 +434,7 @@ function swMenu(idx, a) {
     setUI();
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
