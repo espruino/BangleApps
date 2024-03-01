@@ -20,24 +20,31 @@
 ## Screenshots
 
 *Idle mode: showing a big 5 and time of day below*
+
 ![Idle mode: showing a big 5 and time of day below](screenshot-1.png)
 
 *Start mode: minutes and seconds*
+
 ![Start mode: minutes and seconds](screenshot-2.png)
 
 *Start mode: seconds*
+
 ![Start mode: seconds](screenshot-3.png)
 
 *Race mode: elapsed time, time of day, speed, satellites, battery*
+
 ![Race mode: elapsed time, time of day, speed, satellites, battery](screenshot-4.png)
 
 *Race mode: with german abbreviations*
+
 ![Race mode: with german abbreviations](screenshot-5.png)
 
 *Settings page: main*
+
 ![Settings page: main](screenshot-6.png)
 
 *Settings page: choose the theme*
+
 ![Settings page: choose the theme](screenshot-7.png)
 
 ## Localization
@@ -56,7 +63,8 @@ Localization is done by the Bangle.js 2 app "Languages"
 Report bugs or request a feature at [github.com/naden](https://github.com/naden)
 
 ## Roadmap
-* adding a seconds coundown layout to mimic a classic regatta chronograph
+* add a seconds coundown layout to mimic a classic regatta chronograph
+* add recording of gps course and race time
 
 ## Created by
 
