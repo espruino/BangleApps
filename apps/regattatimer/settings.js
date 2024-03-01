@@ -12,7 +12,7 @@
       "debug": false,
       "buzzer": true,
       "dial": "Numeric",
-      "gps": false,
+      "gps": true,
       "record": false,
       "theme": "Dark",
       "fgColor": "#FFFF00",
