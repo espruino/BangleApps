@@ -1,8 +1,10 @@
 {
     "debug": false,
-    "dial": "numeric",
+    "buzzer": true,
+    "dial": "Numeric",
     "gps": false,
-    "compass": false,
+    "record": false,
+    "theme": "Dark",
     "fgColor": "#FFFF00",
     "bgColor": "#000000"
 }

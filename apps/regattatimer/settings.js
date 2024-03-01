@@ -1,52 +1,79 @@
 (function(back) {
-  var file = "regattatimer.json";
-  // Load settings
-  var settings = Object.assign({
-    "debug": false,
-    "dial": "numeric",
-    "gps": false,
-    "compass": false,
-    "fgColor": "#FFFF00",
-    "bgColor": "#000000"
-  }, require('Storage').readJSON(file, true) || {});
+  var
+    file = "regattatimer.json",
 
-  function writeSettings() {
-    require('Storage').writeJSON(file, settings);
+    storage = require("Storage"),
+
+    dials = ["Numeric", "Discs"],
+
+    themes = ["Light", "Dark"],
+
+    settings = Object.assign({
+      "debug": false,
+      "buzzer": true,
+      "dial": "Numeric",
+      "gps": false,
+      "record": false,
+      "theme": "Dark",
+      "fgColor": "#FFFF00",
+      "bgColor": "#000000"
+    }, storage.readJSON(file, true) || {});
+
+  function save(key, value) {
+    settings[key] = value;
+    storage.writeJSON(file, settings);
   }
 
-  // Show the menu
   E.showMenu({
     "" : { "title" : "Regatta Timer" },
     "< Back" : () => back(),
-    'GPS': {
+    "GPS": {
       value: !!settings.gps,  // !! converts undefined to false
       onchange: v => {
-        settings.gps = v;
-        writeSettings();
+        save("gps", v);
       }
     },
-    'COMPASS': {
-      value: !!settings.compass,  // 0| converts undefined to 0
-      onchange: v => {
-        settings.compass = v;
-        writeSettings();
-      }
-    },
-    "DIAL": {
-      value: settings.dial,
+    "THEME": {
+      value: themes.indexOf(settings.theme),
       min: 0,
-      max: 1,
-      format: v => ["Numeric", "Disc"][v],
-      onchange: v => {
-        settings.dial = v;
-        writeSettings();
+      max: themes.length - 1,
+      step: 1,
+      wrap: true,
+      format: v => themes[v],
+      onchange: (d) => {
+        save("theme", themes[d]);
       }
     },
-    'DEBUG': {
+    "BUZZER": {
+      value: !!settings.buzzer,  // !! converts undefined to false
+      onchange: v => {
+        save("buzzer", v);
+      }
+    },
+    /*
+    "DIAL": {
+      value: dials.indexOf(settings.dial),
+      min: 0,
+      max: dials.length - 1,
+      step: 1,
+      wrap: true,
+      format: v => dials[v],
+      onchange: (d) => {
+        save("dial", dials[d]);
+      }
+    },
+    "RECORD": {
+      value: !!settings.record,  // 0| converts undefined to 0
+      onchange: v => {
+        settings.record = v;
+        save("record", v);
+      }
+    },
+    */
+    "DEBUG": {
       value: !!settings.debug,  // 0| converts undefined to 0
       onchange: v => {
-        settings.debug = v;
-        writeSettings();
+        save("debug", v);
       }
     },
   });
