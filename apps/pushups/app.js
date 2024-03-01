@@ -1,6 +1,5 @@
 let h = require("heatshrink");
 
-
 //TODO: should we force not moving for planks and rests
 
 const ACTIVITIES = ["pushups", "situps", "squats", "plank", "jacks", "rest"];
@@ -219,6 +218,9 @@ class FitnessStatus {
 let status = new FitnessStatus(10 * 60);
 // status.display();
 
+  Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
+  Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
+  Bangle.accelWr(0x18,0b11110100); // +-8g
 Bangle.setPollInterval(10);
 
 
@@ -249,7 +251,7 @@ function start_routine() {
     
   setInterval(() => {
     status.display();
-  }, 250);
+  }, 350);
 
 }
 
@@ -257,14 +259,7 @@ function start_routine() {
 function edit_menu() {
   let w = g.getWidth();
   let h = g.getHeight();
-  let routine = [
-      [0, 10],
-      [1, 10],
-      [2, 10],
-      [3, 30],
-      [4, 10],
-      [5, 30]
-  ];
+  let routine = status.routine;
 
   E.showScroller({
   h : 60,
@@ -291,10 +286,48 @@ function edit_menu() {
     } else if (idx == routine.length) {
       console.log("TODO: add");
     } else {
-      console.log("TODO: change counter");
+      E.showScroller();    
+      set_counter(idx);
     }
   }
   });
+}
+
+function set_counter(index) {
+  let w = g.getWidth();
+  let h = g.getHeight();
+  let counter = status.routine[index][1];
+  g.setFont("Vector:64")
+   .setFontAlign(0, 0);
+  g.clear();
+  g.drawString(""+counter, w/2, h/2);
+  Bangle.on("swipe", function (directionLR, directionUD) {
+    if (directionUD == -1) {
+      counter += 5;
+    } else if (directionUD == 1) {
+      counter -= 5;
+    } else if (directionLR == -1) {
+      counter -= 1;
+    } else if (directionLR == 1) {
+      counter += 1;
+    }
+    if (counter < 0) {
+      counter = 0;
+    }
+    g.clear();
+    g.drawString(""+counter, w/2, h/2);
+  });
+  Bangle.on("touch", function(button, xy) {
+    if (counter == 0) {
+      status.routine.splice(index, 1);
+    } else {
+      status.routine[index][1] = counter;
+    }
+    Bangle.removeAllListeners("touch");
+    Bangle.removeAllListeners("swipe");
+    edit_menu();
+  });
+  
 }
 
 function main_menu() {
@@ -308,11 +341,22 @@ function main_menu() {
    .setFontAlign(0, 0)
    .drawString("Start", w/2, h/4);
   g.drawString("Edit", w/2, 3*h/4);
+  Bangle.setLocked(false);
   Bangle.on("touch", function(button, xy) {
     if (xy.y > h/2+10) {
+      g.fillRect(10, h/2+10, w-10, h-10);
+      g.setColor(1, 1, 1)
+       .setFont("Vector:32")
+       .setFontAlign(0, 0)
+       .drawString("Edit", w/2, 3*h/4);
       Bangle.removeAllListeners("touch");
       edit_menu();
     } else if (xy.y < h/2-10) {
+      g.fillRect(10, 10, w-10, h/2-10);
+      g.setColor(1, 1, 1)
+       .setFont("Vector:32")
+       .setFontAlign(0, 0)
+       .drawString("Start", w/2, h/4);
       Bangle.removeAllListeners("touch");
       start_routine();
     }
