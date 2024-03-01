@@ -56,18 +56,17 @@ Localization is done by the Bangle.js 2 app "Languages"
 * Choose your language from the dropdown
 * Click `upload`
 
-**Some nautical abbreviations which are not part of the banglejs2 Languages packages are stored in `translations.json`.**
+**Some nautical abbreviations which are not part of the Bangle.js 2 app "Languages" app are stored in `translations.json`.**
 
 ## Feedback
 
 Report bugs or request a feature at [github.com/naden](https://github.com/naden)
 
 ## Roadmap
-* add a seconds coundown layout to mimic a classic regatta chronograph
+* add a seconds coundown layout; mimic a classic regatta chronograph
 * add recording of gps course and race time
 
 ## Created by
-
 &copy; 2021 - 2024 [naden.de](https://naden.de)
 
 Icons by [Icons8](https://icons8.com/)
