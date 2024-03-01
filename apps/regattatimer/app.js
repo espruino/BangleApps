@@ -90,7 +90,7 @@ function Regattatimer() {
 
       Bangle.setLCDPower(1);
       Bangle.setLCDTimeout(0);
-      /*
+
       // in "idle", "start" or "stoped" mode, a button click (re)starts the countdown
       // in "race" mode, a button click stops the counter
       var onButtonClick = (function(ev) {
@@ -116,33 +116,8 @@ function Regattatimer() {
       }).bind(this);
 
       setWatch(onButtonClick, BTN1, true);
-      */
-
-      setWatch(this.onButtonClick.binf(this), BTN1, true);
 
       this.setLayoutIdle();
-    },
-
-    onButtonClick: function(ev) {
-      switch(this.mode) {
-        case "idle":
-          this.resetCounter();
-          this.mode = "start";
-          this.setLayoutStartMinSec();
-          this.startCounter();
-          this.interval = setInterval((function() {
-            this.startCounter();
-          }).bind(this), 1000);
-          break;
-        case "stoped":
-        case "start":
-          this.resetCounter();
-          this.setLayoutIdle();
-          break;
-        case "race":
-          this.raceCounterStop();
-          break;
-      }
     },
 
     onGPS: function(fix) {
