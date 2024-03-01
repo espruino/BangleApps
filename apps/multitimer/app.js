@@ -328,21 +328,22 @@ function editTimer(idx, a) {
   setUI();
 }
 
-function readAndConvJson() {
-  let json = require("Storage").readJSON("multitimer.json", true);
+function readJson() {
+  let json = require("Storage").readJSON("multitimer.json", true) || {};
 
   if (Array.isArray(json)) {
     // old format, convert
     json = { sw: json };
     require("Storage").writeJSON("multitimer.json", json);
   }
+  if (!json.sw) json.sw = [];
 
   return json;
 }
 
 function drawSw() {
   layer = 1;
-  const sw = readAndConvJson().sw;
+  const sw = readJson().sw;
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -394,8 +395,7 @@ function drawSw() {
 
 function swMenu(idx, a) {
   layer = -1;
-  const json = require("Storage").readJSON("multitimer.json", true) || {};
-  json.sw = json.sw || [];
+  const json = readJson();
   const sw = json.sw;
   if (sw[idx]) a = sw[idx];
   else {
@@ -721,7 +721,7 @@ function onDrag(e) {
   }
 }
 
-switch (readAndConvJson().initialScreen) {
+switch (readJson().initialScreen) {
   case 1:
     drawSw();
     break;
