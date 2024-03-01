@@ -790,7 +790,8 @@ var locales = {
     trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
   },
   "ca_ES": {
-    lang: "es_ES",
+    lang: "ca_ES",
+    icon: "🇪🇺",
     decimal_point: ",",
     thousands_sep: ".",
     currency_symbol: "€",
@@ -800,7 +801,7 @@ var locales = {
     temperature: "°C",
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
-    datePattern: { 0: "%A, %d de %B %Y", "1": "%d/%m/%y" },
+    datePattern: { 0: "%d %B %Y", "1": "%d/%m/%y" },
     abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
     month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octobre,novembre,desembre",
     abday: "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
