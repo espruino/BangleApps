@@ -34,7 +34,7 @@ switch (current) {
 	
 console.log("new: " + bSettings.quiet);
 
-E.showMessage(modeNames[current] + " -> " + modeNames[bSettings.quiet]);
+E.showMessage(modeNames[current] + " -> \n" + modeNames[bSettings.quiet]);
 setTimeout('exitApp();', 2000);
 
 
