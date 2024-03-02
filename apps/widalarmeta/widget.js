@@ -19,7 +19,10 @@
   loadSettings();
 
   function getNextAlarm(date) {
-    const alarms = (require("Storage").readJSON("sched.json",1) || []).filter(alarm => alarm.on && alarm.hidden !== true);
+    const alarms = require("sched")
+      .getAlarms()
+      .filter(alarm => alarm.on && alarm.hidden !== true);
+
     WIDGETS["widalarmeta"].numActiveAlarms = alarms.length;
     if (alarms.length > 0) {
       const times = alarms.map(alarm => require("sched").getTimeToAlarm(alarm, date) || Number.POSITIVE_INFINITY);
@@ -116,7 +119,6 @@
   } /* draw */
 
   if (config.maxhours > 0) {
-    // add your widget
     WIDGETS["widalarmeta"]={
       area:"tl",
       width: 0, // hide by default = assume no timer
