@@ -175,9 +175,11 @@ function renderAlarm(alarm, exists) {
     option.value = day;
     option.text = day;
     option.selected = alarm.dow & (1 << i);
-    selectDays.appendChild(option);
+    if(day !== "Sun")
+      selectDays.appendChild(option);
     return option;
   });
+  selectDays.appendChild(options.find(o => o.text === "Sun"));
   selectDays.onchange = (e => {
     alarm.dow = options.reduce((bits, opt, i) => bits | (opt.selected ? 1 << i : 0), 0);
   });
