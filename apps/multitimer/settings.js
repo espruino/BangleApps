@@ -1,10 +1,11 @@
 (function(back) {
   const file = "multitimer.json";
-  let json = require('Storage').readJSON(file, true);
+  let json = require('Storage').readJSON(file, true) || {};
   if (Array.isArray(json)) {
     // old format, convert
     json = { sw: json };
   }
+  if (!json.sw) json.sw = [];
 
   function writeSettings() {
     require('Storage').writeJSON(file, json);
