@@ -163,6 +163,26 @@ function renderAlarm(alarm, exists) {
   tr.appendChild(tdTime);
   tdTime.appendChild(inputTime);
 
+  const tdDays = document.createElement('td');
+  tr.appendChild(tdDays);
+  const selectDays = document.createElement('select');
+  selectDays.multiple = true;
+  selectDays.classList.add('form-input');
+  selectDays.dataset.uid = alarm.id;
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const options = days.map((day, i) => {
+    const option = document.createElement('option');
+    option.value = day;
+    option.text = day;
+    option.selected = alarm.dow & (1 << i);
+    selectDays.appendChild(option);
+    return option;
+  });
+  selectDays.onchange = (e => {
+    alarm.dow = options.reduce((bits, opt, i) => bits | (opt.selected ? 1 << i : 0), 0);
+  });
+  tdDays.appendChild(selectDays);
+
   const tdSummary = document.createElement('td');
   tr.appendChild(tdSummary);
   const inputSummary = document.createElement('input');
@@ -320,6 +340,7 @@ function onInit() {
         <tr>
           <th>Type</th>
           <th>Date/Time</th>
+          <th>Days</th>
           <th>Summary</th>
           <th>On?</th>
           <th></th>
