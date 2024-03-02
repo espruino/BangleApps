@@ -2,6 +2,11 @@
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <style>
+      .multi-select {
+        height: 100%;
+      }
+    </style>
     <script src="../../core/lib/interface.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
     <script>
@@ -115,12 +120,13 @@ function renderAlarm(alarm, exists) {
   const localDate = alarm.date ? dateFromAlarm(alarm) : null;
 
   const tr = document.createElement('tr');
+  const tr2 = document.createElement('tr');
   tr.classList.add('event-row');
   tr.dataset.uid = alarm.id;
   const tdType = document.createElement('td');
   tdType.type = "text";
   tdType.classList.add('event-summary');
-  tr.appendChild(tdType);
+  tr.appendChild(tdType); tdType.rowSpan = 2;
   const inputTime = document.createElement('input');
   if (localDate) {
     tdType.textContent = "Event";
@@ -160,14 +166,14 @@ function renderAlarm(alarm, exists) {
   inputTime.classList.add('form-input');
   inputTime.dataset.uid = alarm.id;
   const tdTime = document.createElement('td');
-  tr.appendChild(tdTime);
+  tr.appendChild(tdTime); tdTime.rowSpan = 2;
   tdTime.appendChild(inputTime);
 
   const tdDays = document.createElement('td');
-  tr.appendChild(tdDays);
+  tr.appendChild(tdDays); tdDays.rowSpan = 2;
   const selectDays = document.createElement('select');
   selectDays.multiple = true;
-  selectDays.classList.add('form-input');
+  selectDays.classList.add('form-input', 'multi-select');
   selectDays.dataset.uid = alarm.id;
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const options = days.map((day, i) => {
@@ -186,7 +192,7 @@ function renderAlarm(alarm, exists) {
   tdDays.appendChild(selectDays);
 
   const tdSummary = document.createElement('td');
-  tr.appendChild(tdSummary);
+  tr.appendChild(tdSummary); tdSummary.rowSpan = 2;
   const inputSummary = document.createElement('input');
   inputSummary.type = "text";
   inputSummary.classList.add('event-summary');
@@ -203,7 +209,7 @@ function renderAlarm(alarm, exists) {
   inputSummary.onchange();
 
   const tdOptions = document.createElement('td');
-  tr.appendChild(tdOptions);
+  tr.appendChild(tdOptions); tdOptions.rowSpan = 1;
 
   const onOffCheck = document.createElement('input');
   onOffCheck.type = 'checkbox';
@@ -221,7 +227,7 @@ function renderAlarm(alarm, exists) {
   tdOptions.appendChild(onOff);
 
   const tdInfo = document.createElement('td');
-  tr.appendChild(tdInfo);
+  tr2.appendChild(tdInfo); tdInfo.rowSpan = 1;
 
   const buttonDelete = document.createElement('button');
   buttonDelete.classList.add('btn');
@@ -237,6 +243,7 @@ function renderAlarm(alarm, exists) {
   });
 
   document.getElementById('events').appendChild(tr);
+  document.getElementById('events').appendChild(tr2);
   document.getElementById('upload').disabled = false;
 }
 
@@ -344,8 +351,7 @@ function onInit() {
           <th>Date/Time</th>
           <th>Days</th>
           <th>Summary</th>
-          <th>On?</th>
-          <th></th>
+          <th>State</th>
         </tr>
       </thead>
       <tbody id="events">
