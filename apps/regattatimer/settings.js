@@ -15,8 +15,6 @@
       "gps": true,
       "record": false,
       "theme": "Dark",
-      "fgColor": "#FFFF00",
-      "bgColor": "#000000"
     }, storage.readJSON(file, true) || {});
 
   function save(key, value) {
@@ -77,4 +75,4 @@
       }
     },
   });
-})
+})(load)

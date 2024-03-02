@@ -13,14 +13,6 @@ Graphics.prototype.setFontAnton = function(scale) {
 
 function Regattatimer() {
   return {
-    icons: {
-      "satellite": function() {
-        return hs.decompress(atob("jEYxH+AH4Ab6QIIBJAfNAAQtSC4gxSCwgYHHBYYMC6IYPC5AZOC8QYMC5YYLC5inSDH4waVbAYJCpgA/AAI="));
-      },
-      "battery": function() {
-        return hs.decompress(atob("jEYxH+AHHSAAgXmCgoaRC/4X/C/4X/C/4X/C64Ap"));
-      }
-    },
     layout: undefined,
     /*
     layouts: {
@@ -51,6 +43,33 @@ function Regattatimer() {
     countdown: 300, // 5 minutes
     counter: undefined,
     interval: undefined,
+    theme: null,
+    themes: {
+      "Light": {
+        "fgColor": "#000000",
+        "bgColor": "#FFFF00",
+        "icons": {
+          "satellites": function() {
+            return hs.decompress(atob("jEYxH+AH4Ab6QIIBJAfNAAQtSC4gxSCwgYHHBYYMC6IYPC5AZOC8QYMC5YYLC5inSDH4waVbAYJCpgA/AAI="));
+          },
+          "battery": function() {
+            return hs.decompress(atob("jEYxH+AHHSAAgXmCgoaRC/4X/C/4X/C/4X/C64Ap"));
+          }
+        }
+      },
+      "Dark": {
+        "fgColor": "#FFFF00",
+        "bgColor": "#000000",
+        "icons": {
+          "satellites": function() {
+            return hs.decompress(atob("jEYxH+AH4Ab6QIIBJAfNAAQtSC4gxSCwgYHHBYYMC6IYPC5AZOC8QYMC5YYLC5inSDH4waVbAYJCpgA/AAI="));
+          },
+          "battery": function() {
+            return hs.decompress(atob("jEYxH+AHHSAAgXmCgoaRC/4X/C/4X/C/4X/C64Ap"));
+          }
+        }
+      }
+    },
     settings: Object.assign({
       "debug": false,
       "buzzer": true,
@@ -58,8 +77,6 @@ function Regattatimer() {
       "gps": true,
       "record": false,
       "theme": "Dark",
-      "fgColor": "#FFFF00",
-      "bgColor": "#000000"
     }, require('Storage').readJSON("regattatimer.json", true) || {}),
 
     translations: Object.assign({
@@ -79,14 +96,7 @@ function Regattatimer() {
         this.countdown = 1;
       }
 
-      if(this.settings.theme == "Dark") {
-        this.settings.fgColor = "#FFFF00";
-        this.settings.bgColor = "#000000";
-      }
-      else {
-        this.settings.fgColor = "#000000";
-        this.settings.bgColor = "#FFFF00";
-      }
+      this.theme = this.themes[this.settings.theme];
 
       Bangle.setLCDPower(1);
       Bangle.setLCDTimeout(0);
@@ -202,7 +212,7 @@ function Regattatimer() {
         this.interval = undefined;
       }
 
-      if(settings.buzzer) {
+      if(this.settings.buzzer) {
         Bangle.buzz();
       }
 
@@ -232,13 +242,13 @@ function Regattatimer() {
 
       this.layout = new Layout({
         type: "v",
-        bgCol: this.settings.bgColor,
+        bgCol: this.theme.bgColor,
         c: [
           {
             type: "v",
             c: [
-              {type: "txt", font: "Anton", label: "5", col: this.settings.fgColor, id: "minutes", fillx: 1, filly: 1},
-              {type: "txt", font: "20%", label: "--:--", col: this.settings.fgColor, id: "daytime", fillx: 1, filly: 1}
+              {type: "txt", font: "Anton", label: "5", col: this.theme.fgColor, id: "minutes", fillx: 1, filly: 1},
+              {type: "txt", font: "20%", label: "--:--", col: this.theme.fgColor, id: "daytime", fillx: 1, filly: 1}
             ]
           }
         ]}, {lazy: true});
@@ -256,13 +266,13 @@ function Regattatimer() {
 
       this.layout = new Layout({
         type: "v",
-        bgCol: this.settings.bgColor,
+        bgCol: this.theme.bgColor,
         c: [
           {
             type: "h",
             c: [
-              {type: "txt", font: "Anton", label: "4", col: this.settings.fgColor, id: "minutes", fillx: 1, filly: 1},
-              {type: "txt", font: "Anton", label: "59", col: this.settings.fgColor, id: "seconds", fillx: 1, filly: 1},
+              {type: "txt", font: "Anton", label: "4", col: this.theme.fgColor, id: "minutes", fillx: 1, filly: 1},
+              {type: "txt", font: "Anton", label: "59", col: this.theme.fgColor, id: "seconds", fillx: 1, filly: 1},
             ]
           }
         ]}, {lazy: true}
@@ -273,9 +283,9 @@ function Regattatimer() {
 
       this.layout = new Layout({
         type: "v",
-        bgCol: this.settings.bgColor,
+        bgCol: this.theme.bgColor,
         c:[
-          {type: "txt", font: "Anton", label: "", fillx: true, filly: true, col: this.settings.fgColor, id: "seconds"},
+          {type: "txt", font: "Anton", label: "", fillx: true, filly: true, col: this.theme.fgColor, id: "seconds"},
         ]}, {lazy: true});
     },
     setLayoutRace: function() {
@@ -283,23 +293,23 @@ function Regattatimer() {
 
       this.layout = new Layout({
         type: "v",
-        bgCol: this.settings.bgColor,
+        bgCol: this.theme.bgColor,
         c: [
-          {type: "txt", font: "20%", label: "00:00:00", col: this.settings.fgColor, pad: 4, filly: 1, fillx: 1, id: "racetime"},
-          {type: "txt", font: "15%", label: "-", col: this.settings.fgColor, pad: 4, filly:1, fillx:1, id: "daytime"},
+          {type: "txt", font: "20%", label: "00:00:00", col: this.theme.fgColor, pad: 4, filly: 1, fillx: 1, id: "racetime"},
+          {type: "txt", font: "15%", label: "-", col: this.theme.fgColor, pad: 4, filly:1, fillx:1, id: "daytime"},
           // horizontal
           {type: "h", c: [
-            {type: "txt", font: "10%", label: this.translate("speed"), col: this.settings.fgColor, pad:4, fillx:1, filly:1},
-            {type: "txt", font: "20%", label: "0", col: this.settings.fgColor, pad:4, fillx:1, filly:1, id: "speed"},
-            {type: "txt", font: "10%", label: this.translate("speed_unit"), col: this.settings.fgColor, pad:4, fillx:1, filly:1},
+            {type: "txt", font: "10%", label: this.translate("speed"), col: this.theme.fgColor, pad:4, fillx:1, filly:1},
+            {type: "txt", font: "20%", label: "0", col: this.theme.fgColor, pad:4, fillx:1, filly:1, id: "speed"},
+            {type: "txt", font: "10%", label: this.translate("speed_unit"), col: this.theme.fgColor, pad:4, fillx:1, filly:1},
           ]},
           {type: "h", c: [
-            {type:"img", pad: 2, src: this.icons.satellite()},
-            {type: "txt", font: "10%", label: "0", col: this.settings.fgColor, pad: 2, filly:1, id: "satellites"},
+            {type:"img", pad: 2, src: this.theme["icons"].satellites()},
+            {type: "txt", font: "10%", label: "0", col: this.theme.fgColor, pad: 2, filly:1, id: "satellites"},
             // hacky, use empty element with fillx to push the other elments to the left an right side
             {type: undefined, pad: 2, fillx: 1},
-            {type:"img", pad: 2, src: this.icons.battery()},
-            {type: "txt", font: "10%", label: "-", col: this.settings.fgColor, pad: 2, filly: 1, id: "battery"},
+            {type:"img", pad: 2, src: this.theme["icons"].battery()},
+            {type: "txt", font: "10%", label: "-", col: this.theme.fgColor, pad: 2, filly: 1, id: "battery"},
           ]}
       ]}, {lazy: true});
     }

@@ -4,7 +4,5 @@
     "dial": "Numeric",
     "gps": true,
     "record": false,
-    "theme": "Dark",
-    "fgColor": "#FFFF00",
-    "bgColor": "#000000"
+    "theme": "Dark"
 }

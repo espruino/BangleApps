@@ -65,6 +65,8 @@ Report bugs or request a feature at [github.com/naden](https://github.com/naden)
 ## Roadmap
 * add a seconds coundown layout; mimic a classic regatta chronograph
 * add recording of gps course and race time
+* add icons for light mode
+* add flag icons
 
 ## Created by
 &copy; 2021 - 2024 [naden.de](https://naden.de)
