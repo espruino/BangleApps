@@ -126,7 +126,7 @@ function renderAlarm(alarm, exists) {
   const tdType = document.createElement('td');
   tdType.type = "text";
   tdType.classList.add('event-summary');
-  tr.appendChild(tdType); tdType.rowSpan = 2;
+  tr.appendChild(tdType); tdType.rowSpan = 1;
   const inputTime = document.createElement('input');
   if (localDate) {
     tdType.textContent = "Event";
@@ -166,7 +166,7 @@ function renderAlarm(alarm, exists) {
   inputTime.classList.add('form-input');
   inputTime.dataset.uid = alarm.id;
   const tdTime = document.createElement('td');
-  tr.appendChild(tdTime); tdTime.rowSpan = 2;
+  tr2.appendChild(tdTime); tdTime.rowSpan = 1;
   tdTime.appendChild(inputTime);
 
   const tdDays = document.createElement('td');
@@ -347,7 +347,6 @@ function onInit() {
     <table class="table">
       <thead>
         <tr>
-          <th>Type</th>
           <th>Date/Time</th>
           <th>Days</th>
           <th>Summary</th>
