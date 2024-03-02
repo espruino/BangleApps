@@ -4,7 +4,7 @@ When Quiet mode is off, just start this app to set quiet mode. Start it again to
 Work in progress.
 
 #ToDo
-Settings page, current status indicator.
+Current status indicator
 
 ## Creator
 

@@ -6,11 +6,16 @@ let current = 0|bSettings.quiet;
 //1 alarms
 //2 silent
 
+const dndSettings = Object.assign(
+		require('Storage').readJSON("a_dndtoggle.default.json", true) || {},
+		require('Storage').readJSON("a_dndtoggle.settings.json", true) || {}
+  );
+
 console.log("old: " + current);
 
 switch (current) {
 	case 0:
-		bSettings.quiet = 2;
+		bSettings.quiet = dndSettings.mode;
 		Bangle.buzz();
 		setTimeout('Bangle.buzz();',500);
 		break;
@@ -35,9 +40,9 @@ setTimeout('exitApp();', 2000);
 
 function exitApp(){
 
-require("Storage").writeJSON("setting.json", bSettings);
-// reload clocks with new theme, otherwise just wait for user to switch apps
-
+  require("Storage").writeJSON("setting.json", bSettings);
+	// reload clocks with new theme, otherwise just wait for user to switch apps
+	
 load()
  
 }
