@@ -78,7 +78,7 @@ function drawTimers() {
     }, 1000 - (timers[idx].t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : timers.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -138,7 +138,7 @@ function timerMenu(idx) {
     }, 1000 - (a.t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
@@ -328,9 +328,22 @@ function editTimer(idx, a) {
   setUI();
 }
 
+function readJson() {
+  let json = require("Storage").readJSON("multitimer.json", true) || {};
+
+  if (Array.isArray(json)) {
+    // old format, convert
+    json = { sw: json };
+    require("Storage").writeJSON("multitimer.json", json);
+  }
+  if (!json.sw) json.sw = [];
+
+  return json;
+}
+
 function drawSw() {
   layer = 1;
-  const sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const sw = readJson().sw;
 
   function updateTimers(idx) {
     if (!timerInt1[idx]) timerInt1[idx] = setTimeout(function() {
@@ -341,7 +354,7 @@ function drawSw() {
     }, 1000 - (sw[idx].t % 1000));
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : sw.length+2,
     back : function() {load();},
     draw : (idx, r) => {
@@ -382,12 +395,13 @@ function drawSw() {
 
 function swMenu(idx, a) {
   layer = -1;
-  const sw = require("Storage").readJSON("multitimer.json", true) || [];
+  const json = readJson();
+  const sw = json.sw;
   if (sw[idx]) a = sw[idx];
   else {
     a = {"t" : 0, "on" : false, "msg" : ""};
     sw[idx] = a;
-    require("Storage").writeJSON("multitimer.json", sw);
+    require("Storage").writeJSON("multitimer.json", json);
   }
 
   function updateTimer() {
@@ -408,7 +422,7 @@ function swMenu(idx, a) {
     }
     else delete a.msg;
     sw[idx] = a;
-    require("Storage").writeJSON("multitimer.json", sw);
+    require("Storage").writeJSON("multitimer.json", json);
     swMenu(idx, a);
     });
   }
@@ -420,7 +434,7 @@ function swMenu(idx, a) {
     setUI();
   }
 
-  E.showScroller({
+  const s = E.showScroller({
     h : 40, c : 5,
     back : function() {
       clearInt();
@@ -458,7 +472,7 @@ function swMenu(idx, a) {
     select : (i) => {
 
       function saveAndReload() {
-        require("Storage").writeJSON("multitimer.json", sw);
+        require("Storage").writeJSON("multitimer.json", json);
         s.draw();
       }
 
@@ -707,5 +721,17 @@ function onDrag(e) {
   }
 }
 
-drawTimers();
+switch (readJson().initialScreen) {
+  case 1:
+    drawSw();
+    break;
+  case 2:
+    drawAlarms();
+    break;
+  case 0:
+  case undefined:
+  default:
+    drawTimers();
+    break;
+}
 }
