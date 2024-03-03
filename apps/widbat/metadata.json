@@ -1,11 +1,13 @@
 {
   "id": "widbat",
   "name": "Battery Level Widget",
-  "version": "0.09",
+  "version": "0.12",
   "description": "Show the current battery level and charging status in the top right of the clock",
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
+  "default" : true,
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widbat.wid.js","url":"widget.js"}

@@ -1,0 +1,16 @@
+{
+  "id": "pinsafe",
+  "name": "PIN safe",
+  "version": "0.01",
+  "description": "Store encrypted numerical PINs on your Watch.",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"pinsafe.app.js","url":"app.js"},
+    {"name":"pinsafe.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"pinsafe.json"}],
+  "dependencies": {"textinput":"type"}
+}

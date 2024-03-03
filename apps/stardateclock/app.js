@@ -334,10 +334,10 @@ updateStardate();
 updateConventionalTime();
 // Make sure widgets can be shown.
 //g.setColor("#FF0000"); g.fillRect(0, 0, g.getWidth(), widgetsHeight); // debug
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 // Show launcher on button press as usual for a clock face
 Bangle.setUI("clock", Bangle.showLauncher);
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', on => {
   if (on) {

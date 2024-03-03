@@ -9,6 +9,7 @@ exports.input = function(options) {
   if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
   if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
   if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
+  if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -17,7 +18,7 @@ exports.input = function(options) {
     "4":"GHI4","5":"JKL5","6":"MNO6",
     "7":"PQRS7","8":"TUV80","9":"WXYZ9",
   };
-  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp: Caps lock\nDown:Move mode';
+  var helpMessage = 'Swipe:\nRight: Space\nLeft:Backspace\nUp: Move mode\nDown:Caps lock';
 
   var charTimeout; // timeout after a key is pressed
   var charCurrent; // current character (index in letters)
@@ -89,19 +90,21 @@ exports.input = function(options) {
   }
 
   function newCharacter(ch) {
-    displayText();
+    displayText(false);
     if (ch && textIndex < text.length) textIndex ++;
     charCurrent = ch;
     charIndex = 0;
   }
 
   function onKeyPad(key) {
+    var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
     if (key==charCurrent) {
       charIndex = (charIndex+1) % letters[charCurrent].length;
       text = text.slice(0, -1);
     } else {
+      retire = charCurrent !== undefined;
       newCharacter(key);
     }
     var newLetter = letters[charCurrent][charIndex];
@@ -109,23 +112,32 @@ exports.input = function(options) {
     let post = text.slice(textIndex, text.length);
     
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
+
+    if(retire)
+      retireCurrent();
     
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
       newCharacter();
+      retireCurrent();
     }, settings.charTimeout);
-    displayText(charTimeout);
+    displayText(true);
+  }
+
+  function retireCurrent(why) {
+    if (caps && settings.autoLowercase)
+      setCaps();
   }
 
   var moveMode = false;
 
   function onSwipe(dirLeftRight, dirUpDown) {
     if (dirUpDown == -1) {
-      setCaps();
-    } else if (dirUpDown == 1) {
       moveMode = !moveMode;
       displayText(false);
+    } else if (dirUpDown == 1) {
+      setCaps();
     } else if (dirLeftRight == 1) {
       if (!moveMode){
         text = text.slice(0, textIndex + 1) + " " + text.slice(++textIndex);
@@ -142,6 +154,7 @@ exports.input = function(options) {
         displayText(false);
       }
     }
+    E.stopEventPropagation&&E.stopEventPropagation();
   }
 
   function onHelp(resolve,reject) {
@@ -149,7 +162,7 @@ exports.input = function(options) {
     E.showPrompt(
       helpMessage, {title: "Help", buttons : {"Ok":true}}
     ).then(function(v) {
-      Bangle.on('swipe', onSwipe);
+      if (Bangle.prependListener) {Bangle.prependListener('swipe', onSwipe);} else {Bangle.on('swipe', onSwipe);}
       generateLayout(resolve,reject);
       layout.render();
     });
@@ -196,7 +209,7 @@ exports.input = function(options) {
     } else {
       generateLayout(resolve,reject);
       displayText(false);
-      Bangle.on('swipe', onSwipe);
+      if (Bangle.prependListener) {Bangle.prependListener('swipe', onSwipe);} else {Bangle.on('swipe', onSwipe);}
       layout.render();
     }
   });

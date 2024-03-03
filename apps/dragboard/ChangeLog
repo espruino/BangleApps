@@ -3,3 +3,9 @@
 0.03: Made the code shorter and somewhat more readable by writing some functions. Also made it work as a library where it returns the text once finished. The keyboard is now made to exit correctly when the 'back' event is called. The keyboard now uses theme colors correctly, although it still looks best with dark theme. The numbers row is now solidly green - except for highlights.
 0.04: Now displays the opened text string at launch.
 0.05: Now scrolls text when string gets longer than screen width.
+0.06: The code is now more reliable and the input snappier. Widgets will be drawn if present.
+0.07: Settings for display colors
+0.08: Catch and discard swipe events on fw2v19 and up (as well as some cutting
+	edge 2v18 ones), allowing compatability with the Back Swipe app.
+0.09: Fix colors settings, where color was stored as string instead of the expected int.
+0.10: Fix touch region for letters

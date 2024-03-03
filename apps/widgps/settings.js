@@ -20,9 +20,13 @@ var mainmenu = {
   '' : {'title' : 'GPS widget'},
   '< Back' : back,
   "Cross icon" : {
-    value : !!settings.crossIcon ,
+    value : settings.crossIcon ,
       onchange : v => { writeSettings("crossIcon", v); }
     },
+  "Hide icon when GPS off" : {
+      value : settings.hideWhenGpsOff ,
+        onchange : v => { writeSettings("hideWhenGpsOff", v); }
+      },
 };
 E.showMenu(mainmenu);
 });

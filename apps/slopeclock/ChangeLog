@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Reset font to save some memory during remove
+0.03: Added support for locale based time
+0.04: Stability improvements

@@ -1,31 +1,16 @@
-(function() {
-  // don't show widget if we know we have a clock app running
-  if (Bangle.CLOCK) return;
-
-  let intervalRef = null;
-  var width = 5 * 6*2;
-  var text_color=0x07FF;//cyan 
-
-  function draw() {
-    g.reset().setFont("6x8", 2).setFontAlign(-1, 0).setColor(text_color);
-    var time = require("locale").time(new Date(),1);
-    g.drawString(time, this.x, this.y+11, true); // 5 * 6*2 = 60
+WIDGETS["wdclkbttm"]={area:"br",width:Bangle.CLOCK?0:60,draw:function() {
+  if (!Bangle.CLOCK == !this.width) { // if we're the wrong size for if we have a clock or not...
+    this.width = Bangle.CLOCK?0:60;
+    return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
   }
-  function clearTimers(){
-    if(intervalRef) {
-      clearInterval(intervalRef);
-      intervalRef = null;
-    }
-  }
-  function startTimers(){
-    intervalRef = setInterval(()=>WIDGETS["wdclkbttm"].draw(), 60*1000);
-    WIDGETS["wdclkbttm"].draw();
-  }
-  Bangle.on('lcdPower', (on) => {
-    clearTimers();
-    if (on) startTimers();
-  });
-
-  WIDGETS["wdclkbttm"]={area:"br",width:width,draw:draw};
-  if (Bangle.isLCDOn) intervalRef = setInterval(()=>WIDGETS["wdclkbttm"].draw(), 60*1000);
-})()
+  if (!this.width) return; // if not visible, return
+  g.reset().setFont("6x8", 2).setFontAlign(-1, 0).clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
+  var time = require("locale").time(new Date(),1);
+  g.drawString(time, this.x, this.y+11, true); // 5 * 6*2 = 60
+  // queue draw in one minute
+  if (this.drawTimeout) clearTimeout(this.drawTimeout);
+  this.drawTimeout = setTimeout(()=>{
+    this.drawTimeout = undefined;
+    this.draw();
+  }, 60000 - (Date.now() % 60000));
+}};

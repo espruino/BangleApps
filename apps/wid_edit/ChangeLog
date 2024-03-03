@@ -1,1 +1,7 @@
 0.01: new Widget Editor!
+0.02: Wrap loadWidgets instead of replacing to keep original functionality intact
+      Change back entry to menu option
+      Allow changing widgets into all areas, including bottom widget bar
+0.03: Fix editing widgets whose draw method takes the widget
+0.04: Remove double-sort
+0.05: Restore alphabetical sort

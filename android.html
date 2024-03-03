@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.8,maximum-scale=0.8, minimum-scale=0.8, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-exp.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
@@ -20,12 +20,9 @@
     <title>Bangle.js App Loader</title>
   </head>
   <body>
-<!--<button id="test">Test</button>
-<div id="status"></div>-->
-
     <header class="navbar-primary navbar">
       <section class="navbar-section" >
-        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2" ><img src="img/banglejs-logo-sml.png" alt="Bangle.js">
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-small.svg" alt="Bangle.js">
         <div>App Loader</div></a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
@@ -76,20 +73,27 @@
           </ul>
         </div>
         <div class="filter-nav">
-          <label class="chip active" filterid="">Default</label>
-          <label class="chip" filterid="clock">Clocks</label>
-          <label class="chip" filterid="game">Games</label>
-          <label class="chip" filterid="tool">Tools</label>
-          <label class="chip" filterid="widget">Widgets</label>
-          <label class="chip" filterid="bluetooth">Bluetooth</label>
-          <label class="chip" filterid="outdoors">Outdoors</label>
-          <label class="chip" filterid="favourites">Favourites</label>
+          <label class="chip active" filterid="" data-tooltip="Show all apps">All</label>
+          <label class="chip tooltip" filterid="clock" data-tooltip="To tell the time!">Clocks</label>
+          <label class="chip tooltip" filterid="launch" data-tooltip="Choose which apps to launch">Launchers</label>
+          <label class="chip tooltip" filterid="game" data-tooltip="Have fun!">Games</label>
+          <label class="chip tooltip" filterid="tool" data-tooltip="Useful applications">Tools</label>
+          <label class="chip tooltip" filterid="textinput" data-tooltip="To allow you to enter text">Keyboards</label>
+          <label class="chip tooltip" filterid="widget" data-tooltip="Appear in the top bar of Bangle.js apps">Widgets</label>
+          <label class="chip tooltip" filterid="bluetooth" data-tooltip="Using Bluetooth Functionality">Bluetooth</label>
+          <label class="chip tooltip" filterid="outdoors" data-tooltip="For outdoor use">Outdoors</label>
+          <label class="chip tooltip" filterid="ram" data-tooltip="Apps that don't save anything to flash memory">Online</label>
+          <label class="chip tooltip" filterid="clkinfo" data-tooltip="Info displayed on clocks, or clocks with info">Clock Info</label>
+          <label class="chip tooltip" filterid="health" data-tooltip="Apps for your health">Health</label>
+          <label class="chip tooltip" filterid="favourites" data-tooltip="Apps that you've liked ❤️">Favourites</label>
         </div>
         <div class="sort-nav hidden">
           <span>Sort by:</span>
           <label class="chip active" sortid="">None</label>
-          <label class="chip" sortid="created">New</label>
-          <label class="chip" sortid="modified">Updated</label>
+          <label class="chip hidden tooltip" sortid="created"  data-tooltip="Most recent apps">New</label>
+          <label class="chip hidden tooltip" sortid="modified" data-tooltip="Most recently changed">Updated</label>
+          <label class="chip hidden tooltip" sortid="installs" data-tooltip="Most installed by users">Installed</label>
+          <label class="chip hidden tooltip" sortid="favourites" data-tooltip="Most liked by users">Favourited</label>
         </div>
       </div>
 
@@ -130,13 +134,21 @@
         <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
-        <p><button class="btn" id="settime">Set Bangle.js Time</button>
-           <button class="btn" id="removeall" data-tooltip="Delete everything from your Bangle, leaving it blank">Remove all Apps</button>
-           <button class="btn" id="reinstallall" data-tooltip="Remove and re-install every app, leaving all other data intact">Reinstall apps</button>
-           <button class="btn" id="installdefault">Install default apps</button>
-           <button class="btn" id="installfavourite" data-tooltip="Delete everything, install apps you've marked as favourites">Install favourite apps</button></p>
-        <p><button class="btn tooltip tooltip-right" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
-           <button class="btn tooltip tooltip-right" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button></p>
+        <p>
+           <button class="btn tooltip" id="settime" data-tooltip="Set the Bangle's time to your Browser's time">Set Bangle.js Time</button>
+           <button class="btn tooltip" id="screenshot" data-tooltip="Create screenshot">Screenshot</button>
+           <button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
+           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button>
+        </p><p>
+           <button class="btn tooltip" id="removeall" data-tooltip="Delete everything, leave it blank">Remove all Apps</button>
+           <button class="btn tooltip" id="reinstallall" data-tooltip="Re-install every app, leave all data">Reinstall apps</button>
+           <button class="btn tooltip" id="installdefault" data-tooltip="Delete everything, install default apps">Install default apps</button>
+           <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
+           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
+        </p><p>
+           <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button>
+           <button class="btn tooltip" id="webideremote" data-tooltip="Enable the Web IDE remote server">Web IDE Remote</button>
+        </p>
         <h3>Settings</h3>
         <div class="form-group">
           <label class="form-switch">
@@ -147,12 +159,32 @@
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
           </label>
+          <label class="form-switch">
+            <input type="checkbox" id="settings-usage-stats">
+            <i class="form-icon"></i> Send app analytics to banglejs.com (apps installed, favourites, firmware version).<br/>
+              <small>Used for 'Sort by Installed/Favourited' functionality. See the <a href="http://www.espruino.com/Privacy">privacy policy</a></small>.
+          </label>
           <div class="form-group">
             <select class="form-select form-inline"  id="settings-lang" style="width: 10em">
               <option value="">None (English)</option>
             </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
           </div>
-          <button class="btn" id="defaultsettings">Default settings</button>
+          <details>
+            <summary>Advanced Options</summary>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-minify">
+              <i class="form-icon"></i> Minify apps before upload (⚠️DANGER⚠️: Not recommended. Uploads smaller, faster apps but this <b>will</b> break many apps)
+            </label>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-alwaysAllowUpdate">
+              <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
+            </label>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-autoReload">
+              <i class="form-icon"></i> Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+            </label>
+            <button class="btn" id="defaultsettings">Reset App Loader settings to defaults</button>
+          </details>
         </div>
         <div id="more-deviceinfo" style="display:none">
         <h3>Device info</h3>
@@ -170,10 +202,10 @@
       </div>
     </footer>
 
-    <script src="https://www.puck-js.com/puck.js"></script>
+    <script src="webtools/puck.js"></script>
+    <script src="webtools/heatshrink.js"></script>    
     <script src="core/lib/marked.min.js"></script>
     <script src="core/lib/espruinotools.js"></script>
-    <script src="core/lib/heatshrink.js"></script>
     <script src="core/js/utils.js"></script>
     <script src="loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script> <!-- for backup.js -->
@@ -183,6 +215,9 @@
     <script src="core/js/appinfo.js"></script>
     <script src="core/js/index.js"></script>
     <script src="core/js/pwa.js" defer></script>
+    <!-- FIXME - use espruino.com/ide, github -->
+    <script src="https://espruino.github.io/EspruinoWebIDE/js/libs/peerjs.min.js"></script>
+    <script src="https://espruino.github.io/EspruinoWebIDE/EspruinoTools/libs/webrtc-connection.js"></script>
 <script>
 /*Android = {
   bangleTx : function(data) {
@@ -208,15 +243,22 @@ if (typeof Android!=="undefined") {
       if (writecb) setTimeout(writecb,10);
     },
     close : function() {},
+    on : function(evt,cb) { connection.handlers[evt] = cb; },
     received : "",
-    hadData : false
+    hadData : false,
+    handlers : []
   }
+  connection.on("data", function(d) {
+    connection.received += d;
+    connection.hadData = true;
+    if (connection.cb)  connection.cb(d);
+  });
 
   function bangleRx(data) {
 //    document.getElementById("status").innerText = "RX:"+data;
-    connection.received += data;
-    connection.hadData = true;
-    if (connection.cb)  connection.cb(data);
+    // call data event
+    if (connection.handlers["data"])
+      connection.handlers["data"](data);
   }
 
   function log(level, s) {
@@ -301,6 +343,7 @@ if (typeof Android!=="undefined") {
 
   // ----------------------------------------------------------
 
+
   Puck = {
     /// Are we writing debug information? 0 is no, 1 is some, 2 is more, 3 is all.
     debug : Puck.debug,
@@ -311,7 +354,8 @@ if (typeof Android!=="undefined") {
     /// Called with the current send progress or undefined when done - you can replace this with your own function
     writeProgress : Puck.writeProgress,
     connect : function(callback) {
-      setTimeout(callback, 10);
+      setTimeout(callback, 10, connection);
+      return connection;
     },
     write : write,
     eval : function(expr, cb) {
@@ -346,7 +390,57 @@ if (typeof Android!=="undefined") {
       if ("object"==typeof err) console.log(err.stack);
     });
   }, 500);
+} else {
+  showToast("You're running the App Loader version for Gadgetbridge, but you don't seem to be in Gadgetbridge!","error");
 }
+
+function showWebRTCID(id) {
+  showToast("Bridge's Peer ID: "+id);
+      showPrompt("Web IDE Remote Access",`
+Remote access enabled. Peer ID:
+<br/><br/>
+<b>${id}</b>
+<br/><br/>
+Go to <b>espruino.com/ide</b> on your
+desktop and enter this code under
+<b>Remote Connection Bridge Peer ID</b> in Settings.
+Then connect to the <b>Android</b> device.
+`,{ok:1},false/*shouldEscapeHtml*/).then(() => {
+      }, function() { /* cancelled */ });
+}
+
+// Button to Enable Remote Web IDE
+var el = document.getElementById("webideremote");
+var webrtc;
+if (el) el.addEventListener("click", event=>{
+  if (webrtc) showWebRTCID(webrtc.peerId);
+  else {
+    webrtc = webrtcInit({
+      bridge:true, 
+      onStatus : function(s) {
+        showToast(s);
+      },
+      onPeerID : function(id) {
+        showWebRTCID(id);
+      },
+      onGetPorts : function(cb) {
+        cb([{path:"Android",description:"Remote Device Connection",type:"socket"}]);
+        },
+      onPortConnect : function(serialPort, cb) {
+        cb(); // we're already connected...
+      },
+      onPortDisconnect : function(serialPort) {
+      },
+      onPortWrite : function(data, cb) {
+        Puck.write(data, cb);        
+      }
+    });
+    connection.on("data", function(d) {
+      webrtc.onPortReceived(d);
+    });
+  }
+});
+
 </script>
   </body>
 </html>

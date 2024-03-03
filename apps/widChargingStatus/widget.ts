@@ -6,16 +6,17 @@
   );
   const iconWidth = 18;
 
-  function draw(this: { x: number; y: number }) {
+  function draw(this: { x?: number; y?: number }) {
     g.reset();
     if (Bangle.isCharging()) {
       g.setColor('#FD0');
-      g.drawImage(icon, this.x + 1, this.y + 1, {
+      g.drawImage(icon, this.x! + 1, this.y! + 1, {
         scale: 0.6875,
       });
     }
   }
 
+  // @ts-ignore
   WIDGETS.chargingStatus = {
     area: 'tr',
     width: Bangle.isCharging() ? iconWidth : 0,
@@ -23,6 +24,7 @@
   };
 
   Bangle.on('charging', (charging) => {
+    // @ts-ignore
     const widget = WIDGETS.chargingStatus;
     if (widget) {
       if (charging) {

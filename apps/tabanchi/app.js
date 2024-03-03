@@ -968,8 +968,7 @@ function activateItem () {
       animateToClock();
       break;
     case 0: // food
-      if (tama.sleep) {
-      } else {
+      if (!tama.sleep) {
       // evolution = 0;
         mode = 'food';
         lightSelect = 0;
@@ -979,8 +978,7 @@ function activateItem () {
       mode = 'light';
       break;
     case 2: // game
-      if (tama.sleep) {
-      } else {
+      if (!tama.sleep) {
         animateToGame();
       }
       break;

@@ -9,27 +9,38 @@ var blankImage = Graphics.createImage(` `);
 var rowHeight = g.getHeight()/3;
 
 // Load apps list
-var apps = Storage.list(/\.info$/).map(app=>{
-  var a=Storage.readJSON(app,1);
-  return a&&{
-    name:a.name,
-    type:a.type,
-    icon:a.icon ? Storage.read(a.icon) : a.icon,
-    sortorder:a.sortorder,
-    src:a.src
-  };
-}).filter(app=>app && (
-  app.type=="app"
-//  || (app.type=="clock" && settings.showClocks)
-  || !app.type
-));
-apps.sort((a,b)=>{
-  var n=(0|a.sortorder)-(0|b.sortorder);
-  if (n) return n; // do sortorder first
-  if (a.name<b.name) return -1;
-  if (a.name>b.name) return 1;
-  return 0;
-});
+var apps;
+
+var launchCache = s.readJSON("launch.cache.json", true)||{};
+var launchHash = require("Storage").hash(/\.info/);
+if (launchCache.hash==launchHash) {
+  apps = launchCache.apps;
+} else {
+  apps = Storage.list(/\.info$/).map(app=>{
+    var a=Storage.readJSON(app,1);
+    return a&&{
+      name:a.name,
+      type:a.type,
+      icon:a.icon ? Storage.read(a.icon) : a.icon,
+      sortorder:a.sortorder,
+      src:a.src
+    };
+  }).filter(app=>app && (
+    app.type=="app"
+  //  || (app.type=="clock" && settings.showClocks)
+    || !app.type
+  ));
+  apps.sort((a,b)=>{
+    var n=(0|a.sortorder)-(0|b.sortorder);
+    if (n) return n; // do sortorder first
+    if (a.name<b.name) return -1;
+    if (a.name>b.name) return 1;
+    return 0;
+  });
+
+  launchCache = { apps, hash: launchHash };
+  s.writeJSON("launch.cache.json", launchCache);
+}
 
 // Uncomment for testing in the emulator without apps:
 // apps = [

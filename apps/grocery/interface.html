@@ -1,0 +1,137 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <h4>List of products</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>quantity</th>
+          <th>done</th>
+          <th>actions</th>
+        </tr>
+      </thead>
+      <tbody id="products">
+
+      </tbody>
+    </table>
+    <br><br>
+    <h4>Add a new product</h4>
+    <form id="add_product_form">
+      <div class="columns">
+        <div class="column col-4 col-xs-12">
+          <input class="form-input input-sm" type="text" id="add_product_name" placeholder="Name">
+        </div>
+        <div class="column col-4 col-xs-12">
+          <input class="form-input input-sm" value="1" type="number" id="add_product_quantity" placeholder="Quantity">
+        </div>
+        <div class="column col-4 col-xs-12">
+          <button id="add_product_button" class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </div>
+    </form>
+    <br><br>
+    <button id="reset" class="btn btn-error">Reload</button>
+    <button id="removeChecked" class="btn">Clear checked</button>
+    <button id="save" class="btn btn-primary">Save</button>
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      let settings;
+      let products;
+
+      var $name = document.getElementById('add_product_name')
+      var $form = document.getElementById('add_product_form')
+      var $quantity = document.getElementById('add_product_quantity')
+      var $list = document.getElementById('products')
+      var $reset = document.getElementById('reset')
+
+      $reset.addEventListener('click', reset)
+      document.getElementById('save').addEventListener('click', save);
+      document.getElementById('removeChecked').addEventListener('click', removeChecked);
+
+      $form.addEventListener('submit', event => {
+        event.preventDefault()
+
+        var name = $name.value.trim()
+        if(!name) return;
+
+        var quantity = parseInt($quantity.value)
+
+        products.push({
+          name, quantity,
+          ok: false
+        })
+
+        renderProducts();
+        window.scrollTo(0, document.body.scrollHeight);
+        $name.value = ''
+        $quantity.value = 1
+      })
+
+      function getData() {
+        // show loading window
+        Util.showModal("Loading...");
+        Util.readStorageJSON('grocery_list.json', data=>{
+          // remove window
+          Util.hideModal();
+
+          settings = data || {"products": []};
+          products = settings.products;
+          renderProducts();
+        });
+      }
+
+      function save(){
+        settings.products = products;
+        Util.showModal("Saving...");
+        Util.writeStorage("grocery_list.json", JSON.stringify(settings), () => {
+          Util.hideModal();
+        });
+      }
+
+      function reset(){
+        getData();
+      }
+
+      function removeProduct(index){
+        products = products.filter((p,i) => i!==index)
+        renderProducts()
+      }
+
+      function handleChecked(index) {
+        products[index].ok = !products[index].ok;
+      }
+
+      function removeChecked() {
+        products = products.filter(p => !p.ok);
+        renderProducts()
+      }
+
+      function renderProducts(){
+        $list.innerHTML = ''
+        products.forEach((product,index) => {
+          var $product = document.createElement('tr')
+          $product.innerHTML = `<td>${product.name}</td>
+                                <td>${product.quantity}</td>
+                                <td><input type="checkbox" ${product.ok ? "checked" : ""} onchange="handleChecked(${index})"></td>
+                                <td><button class="btn btn-error" onclick="removeProduct(${index})">remove</button></td>`
+          $list.appendChild($product)
+        })
+
+        $name.focus()
+
+      }
+
+      // Called when app starts
+      function onInit() {
+        getData();
+      }
+    </script>
+  </body>
+</html>
+

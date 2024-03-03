@@ -23,7 +23,10 @@
     '': {
       'title': 'Power Manager'
     },
-    '< Back': back,
+    "< Back" : back,
+    'Widget': function() {
+      E.showMenu(submenu_widget);
+    },
     'Monotonic percentage': {
       value: !!settings.forceMonoPercentage,
       onchange: v => {
@@ -41,32 +44,35 @@
     },
     'Calibrate': function() {
       E.showMenu(submenu_calibrate);
+    },
+    'Logging': function() {
+      E.showMenu(submenu_logging);
     }
   };
-
 
   function roundToDigits(number, stepsize) {
     return Math.round(number / stepsize) * stepsize;
   }
 
-  function getCurrentVoltageDirect() {
-    return (analogRead(D3) + analogRead(D3) + analogRead(D3) + analogRead(D3)) / 4;
-  }
-
   var stepsize = 0.0002;
-  var full = 0.32;
+  var full = 0.3144;
 
   function getInitialCalibrationOffset() {
     return roundToDigits(systemsettings.batFullVoltage - full, stepsize) || 0;
   }
 
-
   var submenu_calibrate = {
     '': {
-      title: "Calibrate"
+      title: "Calibrate",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
     },
-    '< Back': function() {
-      E.showMenu(mainmenu);
+    'Autodetect': {
+      value: !!settings.autoCalibration,
+      onchange: v => {
+        writeSettings("autoCalibration", v);
+      }
     },
     'Offset': {
       min: -0.05,
@@ -75,24 +81,8 @@
       value: getInitialCalibrationOffset(),
       format: v => roundToDigits(v, stepsize).toFixed((""+stepsize).length - 2),
       onchange: v => {
-        print(typeof v);
-        systemsettings.batFullVoltage = v + full;
-        require("Storage").writeJSON("setting.json", systemsettings);
+        require("powermanager").setCalibration(v + full);
       }
-    },
-    'Auto': function() {
-      var newVoltage = getCurrentVoltageDirect();
-      E.showAlert("Please charge fully before auto setting").then(() => {
-        E.showPrompt("Set current charge as full").then((r) => {
-          if (r) {
-            systemsettings.batFullVoltage = newVoltage;
-            require("Storage").writeJSON("setting.json", systemsettings);
-            //reset value shown in menu to the newly set one
-            submenu_calibrate.Offset.value = getInitialCalibrationOffset();
-            E.showMenu(mainmenu);
-          }
-        });
-      });
     },
     'Clear': function() {
       E.showPrompt("Clear charging offset?").then((r) => {
@@ -109,14 +99,13 @@
 
   var submenu_chargewarn = {
     '': {
-      title: "Charge warning"
-    },
-    '< Back': function() {
-      E.showMenu(mainmenu);
+      title: "Charge warning",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
     },
     'Enabled': {
       value: !!settings.warnEnabled,
-      format: v => settings.warnEnabled ? "On" : "Off",
       onchange: v => {
         writeSettings("warnEnabled", v);
       }
@@ -132,6 +121,75 @@
       }
     }
   };
+
+  var submenu_logging = {
+    '': {
+      title: "Logging",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
+    },
+    'Enabled': {
+      value: !!settings.log,
+      onchange: v => {
+        writeSettings("log", v);
+      }
+    },
+    'Trace': {
+      value: !!settings.logDetails,
+      onchange: v => {
+        writeSettings("logDetails", v);
+      }
+    },
+    'Clear logs': function (){
+      E.showPrompt("Delete logs and reload?").then((v)=>{
+        if (v) {
+          require('Storage').open("powermanager.log","w").erase();
+          require("Storage").erase("powermanager.def.json");
+          require("Storage").erase("powermanager.hw.json");
+          load();
+        } else 
+          E.showMenu(submenu_logging); 
+       }).catch(()=>{
+        E.showMenu(submenu_logging);
+      });
+    }
+  }
+
+  var submenu_widget = {
+    '': {
+      title: "Widget",
+      back: function() {
+        E.showMenu(mainmenu);
+      },
+    },
+    'Enabled': {
+      value: !!settings.widget,
+      onchange: v => {
+        writeSettings("widget", v);
+      }
+    },
+    'Refresh': {
+      min: 0.5,
+      max: 60,
+      step: 0.5,
+      value: settings.refreshUnlocked || 1,
+      format: v => v + "s",
+      onchange: v => {
+        writeSettings("refreshUnlocked", v);
+      }
+    },
+    'Refresh locked': {
+      min: 5,
+      max: 120,
+      step: 5,
+      value: settings.refreshLocked || 60,
+      format: v => v + "s",
+      onchange: v => {
+        writeSettings("refreshLocked", v);
+      }
+    }
+  }
 
   E.showMenu(mainmenu);
 })

@@ -2,14 +2,14 @@
   "id": "wpmoto",
   "name": "Waypointer Moto",
   "shortName": "Waypointer Moto",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Waypoint-based motorcycle navigation aid",
   "icon": "wpmoto.png",
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-menu.png"},{"url":"screenshot-delete.png"}],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "storage": [
     {"name":"wpmoto.app.js","url":"app.js"},
     {"name":"wpmoto.img","url":"icon.js","evaluate":true}

@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env nodejs
 /* Quick hack to add proper 'supports' field to apps.json
 */
 

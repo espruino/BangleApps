@@ -1,0 +1,24 @@
+{ "id": "saclock",
+  "name": "Simple analog clock",
+  "shortName":"Analog clock",
+  "version":"0.03", 
+  "description": "A very basic analog clock",
+  "screenshots": [
+    {"url":"screenshot1.png"},
+    {"url":"screenshot2.png"},
+    {"url":"screenshot3.png"}
+  ],
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock,analog",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator":true,
+  "storage": [
+    {"name":"saclock.app.js","url":"app.js"},
+    {"name":"saclock.settings.js","url":"settings.js"},
+    {"name":"saclock.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name": "saclock.settings.json"}
+  ]
+}

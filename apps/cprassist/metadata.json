@@ -13,5 +13,6 @@
     {"name":"cprassist.app.js","url":"cprassist.js"},
     {"name":"cprassist.img","url":"cprassist-icon.js","evaluate":true},
     {"name":"cprassist.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data":[{"name":"cprassist.settings.json"}]
 }

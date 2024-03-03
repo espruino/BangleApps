@@ -1,12 +1,10 @@
 # Health Tracking
 
-Logs health data to a file every 10 minutes, and provides an app to view it
-
-**BETA - requires firmware 2v11 or later**
+Logs health data to a file in a defined interval, and provides an app to view it
 
 ## Usage
 
-Once installed, health data is logged automatically.
+Once installed, health data is logged automatically. Entries are stored with a 10 minute interval.
 
 To view data, run the `Health` app from your watch.
 
@@ -15,16 +13,18 @@ To view data, run the `Health` app from your watch.
 Stores:
 
 * Heart rate
-* Step count
+* Step count (can calculate distance if myprofile is installed and stride length is set)
 * Movement
 
 ## Settings
 
 * **Heart Rt** - Whether to monitor heart rate or not
   * **Off** - Don't turn HRM on, but record heart rate if the HRM was turned on by another app/widget
+  * **3 Min** - Turn HRM on every 3 minutes (for each heath entry) and turn it off after 1 minute, or when a good reading is found
   * **10 Min** - Turn HRM on every 10 minutes (for each heath entry) and turn it off after 2 minutes, or when a good reading is found
   * **Always** - Keep HRM on all the time (more accurate recording, but reduces battery life to ~36 hours)
-* **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use
+* **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use and for the step goal notification
+* **Step Goal Notification** - True if you want a notification when the daily step goal is reached
 
 
 ## Technical Info
@@ -40,6 +40,8 @@ minifier used in the App Loader, so we use the closure compiler to pre-minify th
 The easiest way to use it is to install `https://github.com/espruino/EspruinoDocs`
 and run `EspruinoDocs/bin/minify.js lib.js lib.min.js`
 
+HRM data is stored as a number representing the best/average value from a 10 minute period.
+
 ## TODO
 
 * `interface` page for desktop to allow data to be viewed and exported in common formats
@@ -49,3 +51,7 @@ and run `EspruinoDocs/bin/minify.js lib.js lib.min.js`
   * Yearly view
   * Heart rate 'zone' graph
   * .. other
+
+## License
+
+The graphs on the web interface use Chart.js, licensed under MIT License.

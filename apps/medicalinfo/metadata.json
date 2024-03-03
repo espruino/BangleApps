@@ -1,0 +1,21 @@
+{ "id": "medicalinfo",
+  "name": "Medical Information",
+  "version":"0.02",
+  "description": "Provides 'medicalinfo.json' used by various health apps, as well as a way to edit it from the App Loader",
+  "icon": "app.png",
+  "tags": "health,medical",
+  "type": "app",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"screenshot_light.png"}],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"medicalinfo.app.js","url":"app.js"},
+    {"name":"medicalinfo.img","url":"app-icon.js","evaluate":true},
+    {"name":"medicalinfo","url":"lib.js"}
+  ],
+  "data": [
+    {"name":"medicalinfo.json","url":"medicalinfo.json"}
+  ],
+  "dependencies": {"myprofile":"app"}
+}

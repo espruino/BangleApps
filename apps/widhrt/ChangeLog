@@ -1,5 +1,7 @@
 0.01: First version
 0.02: Don't break if running on 2v08 firmware (just don't display anything)
 0.03: Works with light theme
-      Doesn't drain battery by updating every 2 secs
-      fix alignment
+0.04: Doesn't drain battery by updating every 2 secs
+0.05: fix alignment
+0.06: changed to solid red heart image when HRM is on
+	

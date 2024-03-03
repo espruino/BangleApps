@@ -1,0 +1,19 @@
+{
+  "id": "widhr",
+  "name": "Last announced heartrate BPM Widget",
+  "shortName":"Last Heartrate BPM",
+  "icon": "widhr.icon.png",
+  "screenshots": [{"url":"screenshot_widhr.png"}],
+  "version":"0.01",
+  "type": "widget",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "description": "Displays the last announced heartrate BPM from `Bangle.on(\"HRM\", ...);` (it does not enable the hrm sensor it expects the system or other app todo so)",
+  "tags": "widget",
+  "data": [
+	{"name":"widhr.data.json"}
+  ],
+  "storage": [
+    {"name":"widhr.wid.js","url":"widhr.wid.js"}
+   ]
+ }

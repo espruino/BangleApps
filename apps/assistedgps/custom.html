@@ -31,7 +31,7 @@
       <div class="form-group">
         <label class="form-label">Select which GNSS system you want.</label>
         <label class="form-radio">
-          <input type="radio" name="gnss_select" value="1" checked><i class="form-icon"></i> GPS
+          <input type="radio" name="gnss_select" value="1" checked><i class="form-icon"></i> GPS (fastest to get a fix)
         </label>
         <label class="form-radio">
           <input type="radio" name="gnss_select" value="2"><i class="form-icon"></i> BDS
@@ -133,7 +133,7 @@
       function jsFromBase64(b64) {
         var bin = atob(b64);
         var chunkSize = 128;
-        var js = "\x10Bangle.setGPSPower(1);\n"; // turn GPS on
+        var js = "\x10Bangle.setGPSPower(1,'agps');\n"; // turn GPS on
         if (isB1) { // UBLOX
           //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
           //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
@@ -147,7 +147,10 @@
           for (var i=0; i<radios.length; i++)
             if (radios[i].checked)
               gnss_select=radios[i].value;
+          js += `\x10var t=getTime()+0.5;while (getTime()<t);\n`; // This is nasty - but we just wait here until the GPS has had time to boot
           js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`; // set GNSS mode
+          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS03,1,0,0,1,1,0,0,0")}")\n`; // enable GGA,GSV,RMC packets (new Bangle.js 2 GPS firmwares don't include RMC by default!)
+          // Serial1.println("$PCAS06,0*1B") gets the current firmware version
           // What about:
           // NAV-TIMEUTC (0x01 0x10)
           // NAV-PV (0x01 0x03)
@@ -158,6 +161,7 @@
           var chunk = bin.substr(i,chunkSize);
           js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
         }
+        js += "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
         return js;
       }
 

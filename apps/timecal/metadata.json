@@ -12,5 +12,6 @@
   "storage": [
     {"name":"timecal.app.js","url":"timecal.app.js"},
     {"name":"timecal.settings.js","url":"timecal.settings.js"}
-  ]
+  ],
+  "data":[{"name":"timecal.settings.json"}]
 }

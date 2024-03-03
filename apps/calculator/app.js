@@ -3,6 +3,8 @@
  *
  * Original Author: Frederic Rousseau https://github.com/fredericrous
  * Created: April 2020
+ * 
+ * Contributors: thyttan https://github.com/thyttan
  */
 
 g.clear();
@@ -367,7 +369,7 @@ function buttonPress(val) {
       }
       hasPressedNumber = false;
       break;
-    default:
+    default: {
       specials.R.val = 'C';
       if (!swipeEnabled) drawKey('R', specials.R);
       const is0Negative = (currNumber === 0 && 1/currNumber === -Infinity);
@@ -383,6 +385,7 @@ function buttonPress(val) {
       hasPressedNumber = currNumber;
       displayOutput(currNumber);
       break;
+    }
   }
 }
 
@@ -402,43 +405,42 @@ if (process.env.HWVERSION==1) {
   swipeEnabled = false;
   drawGlobal();
 } else { // touchscreen?
-  selected = "NONE";
+    selected = "NONE";
   swipeEnabled = true;
   prepareScreen(numbers, numbersGrid, COLORS.DEFAULT);
   prepareScreen(operators, operatorsGrid, COLORS.OPERATOR);
   prepareScreen(specials, specialsGrid, COLORS.SPECIAL);
   drawNumbers();
-  Bangle.on('touch',(n,e)=>{
-    for (var key in screen) {
-      if (typeof screen[key] == "undefined") break;
-      var r = screen[key].xy;
-      if (e.x>=r[0] && e.y>=r[1] &&
-          e.x<r[2] && e.y<r[3]) {
-        //print("Press "+key);
-        buttonPress(""+key);
-      }
-    }
-  });
-  var lastX = 0, lastY = 0;
-  Bangle.on('drag', (e) => {
-    if (!e.b) {
-      if (lastX > 50) { // right
-        drawSpecials();
-      } else if (lastX < -50) { // left
-        drawOperators();
-      } else if (lastY > 50) { // down
-        drawNumbers();
-      } else if (lastY < -50) { // up
-        drawNumbers();
-      }
-      lastX = 0;
-      lastY = 0;
-    } else {
-      lastX = lastX + e.dx;
-      lastY = lastY + e.dy;
-    }
-  });
-}
 
+  Bangle.setUI({ 
+    mode : 'custom',
+    back : load, // Clicking physical button or pressing upper left corner turns off (where red back button would be)
+    touch : (n,e)=>{
+      for (var key in screen) {
+        if (typeof screen[key] == "undefined") break;
+        var r = screen[key].xy;
+        if (e.x>=r[0] && e.y>=r[1] && e.x<r[2] && e.y<r[3]) {
+          //print("Press "+key);
+          buttonPress(""+key);
+        }
+      }
+    },
+    swipe : (LR, UD) => {
+      if (LR == 1) { // right
+        drawSpecials();
+      }
+      if (LR == -1) { // left
+        drawOperators();
+      }
+      if (UD == 1) { // down
+        drawNumbers();
+      }
+      if (UD == -1) { // up
+        drawNumbers();
+      }
+    }
+  });
+
+}
 
 displayOutput(0);

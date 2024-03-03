@@ -9,7 +9,7 @@ function ClockFace(options) {
     if (![
       "precision",
       "init", "draw", "update",
-      "pause", "resume",
+      "pause", "resume", "remove",
       "up", "down", "upDown",
       "settingsFile",
     ].includes(k)) throw `Invalid ClockFace option: ${k}`;
@@ -27,6 +27,7 @@ function ClockFace(options) {
   if (options.init) this.init = options.init;
   if (options.pause) this._pause = options.pause;
   if (options.resume) this._resume = options.resume;
+  if (options.remove) this._remove = options.remove;
   if ((options.up || options.down) && options.upDown) throw "ClockFace up/down and upDown cannot be used together";
   if (options.up || options.down) this._upDown = (dir) => {
     if (dir<0 && options.up) options.up.apply(this);
@@ -40,16 +41,19 @@ function ClockFace(options) {
       this[k] = settings[k];
     });
   }
-  // these default to true
-  ["showDate", "loadWidgets"].forEach(k => {
-    if (this[k]===undefined) this[k] = true;
-  });
+  // showDate defaults to true
+  if (this.showDate===undefined) this.showDate = true;
+  // if (old) setting was to not load widgets, default to hiding them
+  if (this.hideWidgets===undefined && this.loadWidgets===false) this.hideWidgets = 1;
+
+  let s = require("Storage").readJSON("setting.json",1)||{};
   // use global 24/12-hour setting if not set by clock-settings
-  if (!('is12Hour' in this)) this.is12Hour = !!(require("Storage").readJSON("setting.json", true) || {})["12hour"];
+  if (!('is12Hour' in this)) this.is12Hour = !!(s["12hour"]);
 }
 
 ClockFace.prototype.tick = function() {
   "ram"
+  if (this._removed) return;
   const time = new Date();
   const now = {
     d: `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`,
@@ -82,19 +86,32 @@ ClockFace.prototype.start = function() {
   /* Some widgets want to know if we're in a clock or not (like chrono, widget clock, etc). Normally
   .CLOCK is set by Bangle.setUI('clock') but we want to load widgets so we can check appRect and *then*
   call setUI. see #1864 */
-  Bangle.CLOCK = 1; 
-  if (this.loadWidgets) Bangle.loadWidgets();
+  Bangle.CLOCK = 1;
+  Bangle.loadWidgets();
+  const widget_util = ["show", "hide", "swipeOn"][this.hideWidgets|0];
+  require("widget_utils")[widget_util]();
   if (this.init) this.init.apply(this);
-  if (this._upDown) Bangle.setUI("clockupdown", d=>this._upDown.apply(this,[d]));
-  else Bangle.setUI("clock");
+  const uiRemove = this._remove ? () => this.remove() : undefined;
+  if (this._upDown) {
+    Bangle.setUI({
+      mode: "clockupdown",
+      remove: uiRemove,
+    }, d => this._upDown.apply(this, [d]));
+  } else {
+    Bangle.setUI({
+      mode: "clock",
+      remove: uiRemove,
+    });
+  }
   delete this._last;
   this.paused = false;
   this.tick();
 
-  Bangle.on("lcdPower", on => {
+  this._onLcd = on => {
     if (on) this.resume();
     else this.pause();
-  });
+  };
+  Bangle.on("lcdPower", this._onLcd);
 };
 
 ClockFace.prototype.pause = function() {
@@ -110,6 +127,13 @@ ClockFace.prototype.resume = function() {
   this.paused = false;
   if (this._resume) this._resume.apply(this);
   this.tick();
+};
+ClockFace.prototype.remove = function() {
+  this._removed = true;
+  require("widget_utils").show();
+  if (this._timeout) clearTimeout(this._timeout);
+  Bangle.removeListener("lcdPower", this._onLcd);
+  if (this._remove) this._remove.apply(this);
 };
 
 /**

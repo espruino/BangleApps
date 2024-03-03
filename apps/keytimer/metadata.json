@@ -1,0 +1,41 @@
+{
+  "id": "keytimer",
+  "name": "Keypad Timer",
+  "version": "0.04",
+  "description": "A timer with a keypad that runs in the background",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "tools",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "dependencies": {"scheduler":"type"},
+  "storage": [
+    {
+      "name": "keytimer.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "keytimer.img",
+      "url": "icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "keytimer-com.js",
+      "url": "common.js"
+    },
+    {
+      "name": "keytimer-ring.js",
+      "url": "ring.js"
+    },
+    {
+      "name": "keytimer-keys.js",
+      "url": "keypad.js"
+    },
+    {
+      "name": "keytimer-tview.js",
+      "url": "timerview.js"
+    }
+  ]
+}

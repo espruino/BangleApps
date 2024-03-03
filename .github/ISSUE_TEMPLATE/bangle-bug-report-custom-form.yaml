@@ -58,3 +58,7 @@ body:
 
     validations:
       required: true
+  - type: textarea
+    id: apps
+    attributes:
+      label: Installed apps

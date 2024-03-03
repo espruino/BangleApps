@@ -196,6 +196,10 @@ g.clear();
   (color.clock == undefined) ? g.setColor(0xFFFF) : g.setColor(color.clock);
   g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(67));
   g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(87));
+
+  if (data.showWidgets) {
+    Bangle.drawWidgets();
+  }
 }
 
 var i = 0;
@@ -323,11 +327,28 @@ function setWeather() {
   draw(a);
 }
 
+function readWeather() {
+  var weatherJson = require("Storage").readJSON('weather.json', 1);
+  // save updated weather data if available and it has been an hour since last updated
+  if (weatherJson && weatherJson.weather && weatherJson.weather.time && (data.time === undefined || (data.time + 3600000) < weatherJson.weather.time)) {
+    data = {
+      time: weatherJson.weather.time,
+      temp: weatherJson.weather.temp,
+      code: weatherJson.weather.code
+    };
+    require("Storage").writeJSON('mtnclock.json', data);
+  }
+}
+
 const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="weather") {
-    data = event;
-    require("Storage").write('mtnclock.json', event);
+    data = {
+      temp: event.temp,
+      code: event.code,
+      time: Date.now()
+    };
+    require("Storage").writeJSON('mtnclock.json', data);
     setWeather();
   }
   if (_GB) setTimeout(_GB, 0, event);
@@ -340,11 +361,18 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
+    readWeather();
     setWeather();
     queueDraw();
   }, 60000 - (Date.now() % 60000));
 }
 
 queueDraw();
+readWeather();
 setWeather();
 Bangle.setUI("clock");
+
+if (data.showWidgets) {
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}

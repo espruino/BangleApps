@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Allow redirection of loads to the launcher
+0.03: Allow hiding the fastloading info screen
+0.04: (WIP) Allow use of app history when going back (`load()` or `Bangle.load()` calls without specified app).
+0.05: Check for changes in setting.js and force real reload if needed
+0.06: Fix caching whether an app is fastloadable

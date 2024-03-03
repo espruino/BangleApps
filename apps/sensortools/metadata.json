@@ -1,0 +1,21 @@
+{
+  "id": "sensortools",
+  "name": "Sensor tools",
+  "shortName": "Sensor tools",
+  "version": "0.06",
+  "description": "Tools for testing and debugging apps that use sensor input",
+  "icon": "icon.png",
+  "type": "bootloader",
+  "tags": "tool,boot,debug",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"sensortools.0.boot.js","url":"boot.js"},
+    {"name":"sensortools.settings.js","url":"settings.js"},
+    {"name":"sensortools","url":"lib.js"},
+    {"name":"sensortools.default.json","url":"default.json"}
+  ],
+  "data": [
+    {"name":"sensortools.settings.json"}
+  ]
+}

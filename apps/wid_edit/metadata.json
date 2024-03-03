@@ -1,6 +1,6 @@
 {
   "id": "wid_edit",
-  "version": "0.01",
+  "version": "0.05",
   "name": "Widget Editor",
   "icon": "icon.png",
   "description": "Customize widget locations",

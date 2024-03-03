@@ -1,7 +1,7 @@
 {
   "id": "route",
   "name": "Route Viewer",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Upload a KML file of a route, and have your watch display a map with how far around it you are",
   "icon": "app.png",
   "tags": "",

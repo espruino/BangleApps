@@ -1,0 +1,28 @@
+{
+  "id": "stlap",
+  "name": "Stopwatch",
+  "version": "0.04",
+  "description": "A stopwatch that remembers its state, with a lap timer and a gesture mode (enable by swiping)",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "tools,app",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "stlap.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "stlap.img",
+      "url": "icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {"name":"stlap.state.json"},
+    {"wildcard":"stlap-*.json"}
+  ]
+}

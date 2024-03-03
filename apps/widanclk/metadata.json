@@ -1,0 +1,13 @@
+{
+  "id": "widanclk",
+  "name": "Analog clock widget",
+  "version": "0.03",
+  "description": "A simple analog clock widget that appears when not showing a fullscreen clock. Todays date sits behind the clock hands.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widanclk.wid.js","url":"widget.js"}
+  ]
+}

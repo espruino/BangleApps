@@ -2,3 +2,9 @@
 0.02: Now keeps user input trace intact by changing how the screen is updated.
 0.03: Positioning of marker now takes the height of the widget field into account.
 0.04: Fix issue if going back without typing.
+0.05: Keep drag-function in ram, hopefully improving performance and input reliability somewhat.
+0.06: Support input of numbers and uppercase characters.
+0.07: Support input of symbols.
+0.08: Redone patterns a,e,m,w,z.
+0.09: Catch and discard swipe events on fw2v19 and up (as well as some cutting
+	edge 2v18 ones), allowing compatability with the Back Swipe app.

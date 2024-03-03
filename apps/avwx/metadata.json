@@ -1,0 +1,18 @@
+{
+  "id": "avwx",
+  "name": "AVWX Module",
+  "shortName":"AVWX",
+  "version":"1.00",
+  "description": "Module/library for the AVWX API",
+  "icon": "avwx.png",
+  "type": "module",
+  "tags": "outdoors",
+  "supports": ["BANGLEJS2"],
+  "provides_modules": ["avwx"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    { "name":"avwx", "url":"avwx.js" }
+  ],
+  "data": [{ "name":"avwx.json" }]
+}

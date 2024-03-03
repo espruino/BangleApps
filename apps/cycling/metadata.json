@@ -13,5 +13,8 @@
     {"name":"cycling.settings.js","url":"settings.js"},
     {"name":"blecsc","url":"blecsc.js"},
     {"name":"cycling.img","url":"cycling.icon.js","evaluate": true}
+  ],
+  "data": [
+    {"name":"cycling.json"}
   ]
 }

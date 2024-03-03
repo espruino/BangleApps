@@ -1,0 +1,4 @@
+0.01: New App based on dragboard, but with a U shaped drag area
+0.02: Catch and discard swipe events on fw2v19 and up (as well as some cutting
+	edge 2v18 ones), allowing compatability with the Back Swipe app.
+0.03: Fix "Uncaught Error: Unhandled promise rejection: ReferenceError: "dragHandlerDB" is not defined"

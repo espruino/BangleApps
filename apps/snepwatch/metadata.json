@@ -1,0 +1,19 @@
+{
+  "id": "snepwatch",
+  "name": "Snepwatch",
+  "version": "1.00",
+  "description": "A configurable watch face using the Terminus font",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"snepwatch.app.js","url":"app.js"},
+    {"name":"snepwatch.settings.js","url":"settings.js"},
+    {"name":"snepwatch.img","url":"snepwatch.img","evaluate":false}
+  ],
+  "data":[{"name":"snepwatch.settings.json"}]
+}

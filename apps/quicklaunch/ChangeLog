@@ -1,2 +1,18 @@
 0.01: Initial version
 0.02: Moved settings from launcher to settings->apps menu
+0.03: Better performance by not scanning on every boot
+0.04: Better performace by not scanning on boot at all
+0.05: Update to work with new 'fast switch' clock->launcher functionality
+0.06: Use Bangle.load() to allow 'fast switch' for apps where it's available.
+0.07: Revert version 0.06. This version is the same as 0.05.
+0.08: Respect appRect on touch events
+0.09: Do not react if clkinfo is focused
+0.10: Extend the functionality via a quicklaunch.app.js file that can be launched
+	with quicklaunch itself.
+0.11: Add hints to the extension app. Tweak remove function.
+0.12: Stackable extension screens. After updating, please visit the quicklaunch
+	settings page to prompt an automatic update of the quicklaunch.json settings file with
+	new key names.
+0.13: Touch and hold to pause the timeout to clock temporarily.
+0.14: Extension: Don't go down a path if nothing waits at the end. Revisit the current intersection instead.
+0.15: Extension: Compatibility with "Fastload Utils" app history feature.

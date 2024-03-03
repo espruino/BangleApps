@@ -2,7 +2,7 @@
   "id": "pebbled",
   "name": "Pebble Clock with distance",
   "shortName": "Pebble + distance",
-  "version": "0.01",
+  "version": "0.06",
   "description": "Fork of Pebble Clock with distance in KM. Both step count and the distance are on the main screen. Default step length = 0.75m (can be changed in settings).",
   "readme": "README.md",
   "icon": "pebbled.png",
@@ -14,5 +14,6 @@
     {"name":"pebbled.app.js","url":"pebbled.app.js"},
     {"name":"pebbled.settings.js","url":"pebbled.settings.js"},
     {"name":"pebbled.img","url":"pebbled.icon.js","evaluate":true}
-  ]
+  ],
+  "data":[{"name":"pebbleDistance.json"}]
 }

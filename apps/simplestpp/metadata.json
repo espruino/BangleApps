@@ -1,0 +1,18 @@
+{
+  "id": "simplestpp",
+  "name": "Simplest++ Clock",
+  "shortName": "Simplest++",
+  "version": "0.04",
+  "description": "The simplest working clock, with clock_info, acts as a tutorial piece",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot3.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports": ["BANGLEJS2"],
+  "dependencies" : { "clock_info":"module" },
+  "storage": [
+    {"name":"simplestpp.app.js","url":"app.js"},
+    {"name":"simplestpp.img","url":"icon.js","evaluate":true}
+  ]
+}
