@@ -40,9 +40,9 @@ setTimeout('exitApp();', 2000);
 
 function exitApp(){
 
-  require("Storage").writeJSON("setting.json", bSettings);
-	// reload clocks with new theme, otherwise just wait for user to switch apps
-	
+require("Storage").writeJSON("setting.json", bSettings);
+// reload clocks with new theme, otherwise just wait for user to switch apps
+
 load()
  
 }
