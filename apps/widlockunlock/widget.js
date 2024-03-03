@@ -1,6 +1,8 @@
 Bangle.on("lock", () => Bangle.drawWidgets());
 
 Bangle.on('touch', (_btn, xy) => {
+  if (WIDGETS["back"]) return;
+
   const oversize = 5;
 
   const w = WIDGETS.lockunlock;
