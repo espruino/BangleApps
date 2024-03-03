@@ -15,7 +15,7 @@ console.log("old: " + current);
 
 switch (current) {
 	case 0:
-		bSettings.quiet = dndSettings.mode;
+		bSettings.quiet = dndSettings.mode || 2;
 		Bangle.buzz();
 		setTimeout('Bangle.buzz();',500);
 		break;
