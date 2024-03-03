@@ -1,3 +1,5 @@
+require("bthrm").enable();
+
 const BPM_FONT_SIZE="19%";
 const VALUE_TIMEOUT=3000;
 
