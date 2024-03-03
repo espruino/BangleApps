@@ -255,6 +255,7 @@ function renderAlarm(alarm, exists) {
   buttonDelete.onclick = (e => {
     alarms = alarms.filter(a => a !== alarm);
     document.getElementById('events').removeChild(tr);
+    document.getElementById('events').removeChild(tr2);
   });
 
   document.getElementById('events').appendChild(tr);
