@@ -7,15 +7,15 @@
         height: 100%; /* e.g. day <select> */
       }
 
-      #events > tr.event-row {
-        /* thick borders between double-rows */
-        border-top: 2px solid grey;
-      }
-
       #events > tr.event-row > td:last-child,
       #events > tr.event-row > td:first-child {
         /* no border between single rowspans, 1st & $th */
         border-bottom: none;
+      }
+
+      #events > tr:nth-child(2n) > td:nth-child(2) {
+        justify-content: center;
+        display: flex;
       }
 
       .event-summary {
@@ -207,7 +207,7 @@ function renderAlarm(alarm, exists) {
   tdDays.appendChild(selectDays);
 
   const tdSummary = document.createElement('td');
-  tr.appendChild(tdSummary); tdSummary.rowSpan = 2;
+  tr.appendChild(tdSummary); tdSummary.rowSpan = 1; tdSummary.colSpan = 2;
   const inputSummary = document.createElement('input');
   inputSummary.type = "text";
   inputSummary.classList.add('event-summary');
@@ -224,7 +224,7 @@ function renderAlarm(alarm, exists) {
   inputSummary.onchange();
 
   const tdOptions = document.createElement('td');
-  tr.appendChild(tdOptions); tdOptions.rowSpan = 1;
+  tr2.appendChild(tdOptions); tdOptions.rowSpan = 1;
 
   const onOffCheck = document.createElement('input');
   onOffCheck.type = 'checkbox';
@@ -366,7 +366,7 @@ function onInit() {
           <th>Date/Time</th>
           <th>Days</th>
           <th>Summary</th>
-          <th>State</th>
+          <th></th>
         </tr>
       </thead>
       <tbody id="events">
