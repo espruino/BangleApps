@@ -21,6 +21,7 @@
   function getNextAlarm(date) {
     const alarms = require("sched")
       .getAlarms()
+      // more precise filtering is done using getTimeToAlarm() below
       .filter(alarm => alarm.on && alarm.hidden !== true);
 
     WIDGETS["widalarmeta"].numActiveAlarms = alarms.length;
@@ -123,11 +124,15 @@
       area:"tl",
       width: 0, // hide by default = assume no timer
       draw:draw,
-      reload: () => {
+      reload: function () {
+        this.nextAlarm = undefined;
+
         loadSettings();
         g.clear();
         Bangle.drawWidgets();
       },
     };
+
+    Bangle.on("alarmReload", () => WIDGETS["widalarmeta"].reload());
   }
 })();

@@ -2,7 +2,7 @@
   "id": "widalarmeta",
   "name": "Alarm & Timer ETA",
   "shortName": "Alarm ETA",
-  "version": "0.10",
+  "version": "0.11",
   "description": "A widget that displays the time to the next Alarm or Timer in hours and minutes, maximum 24h (configurable).",
   "icon": "widget.png",
   "type": "widget",
