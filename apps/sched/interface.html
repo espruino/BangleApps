@@ -4,7 +4,22 @@
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <style>
       .multi-select {
-        height: 100%;
+        height: 100%; /* e.g. day <select> */
+      }
+
+      #events > tr.event-row {
+        /* thick borders between double-rows */
+        border-top: 2px solid grey;
+      }
+
+      #events > tr.event-row > td:last-child,
+      #events > tr.event-row > td:first-child {
+        /* no border between single rowspans, 1st & $th */
+        border-bottom: none;
+      }
+
+      .event-summary {
+        text-align: center;
       }
     </style>
     <script src="../../core/lib/interface.js"></script>
