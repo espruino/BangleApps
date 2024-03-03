@@ -24,3 +24,4 @@
 0.21: Fix crash in clock_info
 0.22: Dated event repeat option
 0.23: Allow buzzing forever when an alarm fires
+0.24: Emit alarmReload when alarms change (used by widalarm)
