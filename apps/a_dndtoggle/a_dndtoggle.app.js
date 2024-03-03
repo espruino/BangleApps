@@ -6,10 +6,8 @@ let current = 0|bSettings.quiet;
 //1 alarms
 //2 silent
 
-const dndSettings = Object.assign(
-		require('Storage').readJSON("a_dndtoggle.default.json", true) || {},
-		require('Storage').readJSON("a_dndtoggle.settings.json", true) || {}
-  );
+const dndSettings = 
+	require('Storage').readJSON("a_dndtoggle.settings.json", true) || {};
 
 console.log("old: " + current);
 

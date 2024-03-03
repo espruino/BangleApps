@@ -1,9 +1,7 @@
 (function(back) {
 
-    const settings = Object.assign(
-        require('Storage').readJSON("a_dndtoggle.default.json", true) || {},
-        require('Storage').readJSON("a_dndtoggle.settings.json", true) || {}
-      );
+    const settings = 
+        require('Storage').readJSON("a_dndtoggle.settings.json", true) || {};
   
     function updateSettings() {
       require('Storage').writeJSON("a_dndtoggle.settings.json", settings);
@@ -15,7 +13,7 @@
         '': { 'title': 'A_DND Toggle' },
         '< Back': back,
         /*LANG*/"Quiet Mode": {
-          value: settings.mode,
+          value: settings.mode || 2,
           min: 1, max: modes.length - 1,
           format: v => modes[v],
           onchange: v => {
