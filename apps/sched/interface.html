@@ -142,8 +142,9 @@ function renderAlarm(alarm, exists) {
   tdType.type = "text";
   tdType.classList.add('event-summary');
   const inputTime = document.createElement('input');
+  let type;
   if (localDate) {
-    tdType.textContent = "Event";
+    type = "Event";
     inputTime.type = "datetime-local";
     inputTime.value = localDate.toISOString().slice(0,16);
     inputTime.onchange = (e => {
@@ -159,18 +160,19 @@ function renderAlarm(alarm, exists) {
     inputTime.value = `${hours}:${mins}:${secs}`;
 
     if (alarm.timer) {
-      tdType.textContent = "Timer";
+      type = "Timer";
       inputTime.onchange = e => {
         alarm.timer = hmsToMs(inputTime.value);
         // alarm.t is set on upload
       };
     } else {
-      tdType.textContent = "Alarm";
+      type = "Alarm";
       inputTime.onchange = e => {
         alarm.t = hmsToMs(inputTime.value);
       };
     }
   }
+  tdType.textContent = type;
   if (!exists) {
     const asterisk = document.createElement('sup');
     asterisk.textContent = '*';
@@ -182,26 +184,29 @@ function renderAlarm(alarm, exists) {
   const tdTime = document.createElement('td');
   tdTime.appendChild(inputTime);
 
-  const tdDays = document.createElement('td');
-  const selectDays = document.createElement('select');
-  selectDays.multiple = true;
-  selectDays.classList.add('form-input', 'multi-select');
-  selectDays.dataset.uid = alarm.id;
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const options = days.map((day, i) => {
-    const option = document.createElement('option');
-    option.value = day;
-    option.text = day;
-    option.selected = alarm.dow & (1 << i);
-    if(day !== "Sun")
-      selectDays.appendChild(option);
-    return option;
-  });
-  selectDays.appendChild(options.find(o => o.text === "Sun"));
-  selectDays.onchange = (e => {
-    alarm.dow = options.reduce((bits, opt, i) => bits | (opt.selected ? 1 << i : 0), 0);
-  });
-  tdDays.appendChild(selectDays);
+  let tdDays;
+  if (type === "Alarm") {
+    tdDays = document.createElement('td');
+    const selectDays = document.createElement('select');
+    selectDays.multiple = true;
+    selectDays.classList.add('form-input', 'multi-select');
+    selectDays.dataset.uid = alarm.id;
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const options = days.map((day, i) => {
+      const option = document.createElement('option');
+      option.value = day;
+      option.text = day;
+      option.selected = alarm.dow & (1 << i);
+      if(day !== "Sun")
+        selectDays.appendChild(option);
+      return option;
+    });
+    selectDays.appendChild(options.find(o => o.text === "Sun"));
+    selectDays.onchange = (e => {
+      alarm.dow = options.reduce((bits, opt, i) => bits | (opt.selected ? 1 << i : 0), 0);
+    });
+    tdDays.appendChild(selectDays);
+  }
 
   const tdSummary = document.createElement('td');
   const inputSummary = document.createElement('input');
@@ -255,7 +260,9 @@ function renderAlarm(alarm, exists) {
   tr.appendChild(tdOptions); tdType.classList.add('single-row');
   tr.appendChild(tdInfo); tdType.classList.add('single-row');
   tr2.appendChild(tdTime); tdTime.colSpan = 3;
-  tr.appendChild(tdDays); tdDays.rowSpan = 2;
+  if (tdDays) {
+    tr.appendChild(tdDays); tdDays.rowSpan = 2;
+  }
   tr.appendChild(tdSummary); tdType.classList.add('single-row');
 
   document.getElementById('events').appendChild(tr);
