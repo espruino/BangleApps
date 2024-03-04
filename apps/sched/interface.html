@@ -257,10 +257,10 @@ function renderAlarm(alarm, exists) {
     document.getElementById('events').removeChild(tr2);
   });
 
-  tr.appendChild(tdOptions); tdType.classList.add('single-row');
-  tr.appendChild(tdType); tdType.classList.add('single-row');
-  tr.appendChild(tdInfo); tdType.classList.add('single-row');
-  tr2.appendChild(tdTime); tdTime.colSpan = 3;
+  tr.appendChild(tdTime); tdTime.colSpan = 3; tdTime.classList.add('single-row');
+  tr2.appendChild(tdOptions);
+  tr2.appendChild(tdType);
+  tr2.appendChild(tdInfo);
   if (tdDays) {
     tr.appendChild(tdDays); tdDays.rowSpan = 2;
   } else {
@@ -373,9 +373,7 @@ function onInit() {
     <table class="table">
       <thead>
         <tr>
-          <th>Options</th>
-          <th>Type</th>
-          <th></th>
+          <th colspan="3">Time & Options</th>
           <th>Days</th>
           <th>Summary</th>
         </tr>
