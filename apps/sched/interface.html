@@ -4,11 +4,12 @@
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <style>
       .multi-select {
-        height: 100%; /* e.g. day <select> */
+        /* e.g. day <select> */
+        height: 100%;
       }
 
       .single-row {
-        /* no border between single rowspans, 1st & $th */
+        /* no border between single rowspans */
         border-bottom: none;
       }
 
@@ -256,14 +257,16 @@ function renderAlarm(alarm, exists) {
     document.getElementById('events').removeChild(tr2);
   });
 
-  tr.appendChild(tdType); tdType.classList.add('single-row');
   tr.appendChild(tdOptions); tdType.classList.add('single-row');
+  tr.appendChild(tdType); tdType.classList.add('single-row');
   tr.appendChild(tdInfo); tdType.classList.add('single-row');
   tr2.appendChild(tdTime); tdTime.colSpan = 3;
   if (tdDays) {
     tr.appendChild(tdDays); tdDays.rowSpan = 2;
+  } else {
+    tdSummary.colSpan = 2;
   }
-  tr.appendChild(tdSummary); tdType.classList.add('single-row');
+  tr.appendChild(tdSummary); tdSummary.rowSpan = 2;
 
   document.getElementById('events').appendChild(tr);
   document.getElementById('events').appendChild(tr2);
@@ -370,10 +373,11 @@ function onInit() {
     <table class="table">
       <thead>
         <tr>
-          <th>Date/Time</th>
+          <th>Options</th>
+          <th>Type</th>
+          <th></th>
           <th>Days</th>
           <th>Summary</th>
-          <th></th>
         </tr>
       </thead>
       <tbody id="events">
