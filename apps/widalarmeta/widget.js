@@ -128,7 +128,6 @@
         this.nextAlarm = undefined;
 
         loadSettings();
-        g.clear();
         Bangle.drawWidgets();
       },
     };
