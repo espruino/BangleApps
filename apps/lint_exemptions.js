@@ -119,12 +119,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "locale/locales.js": {
-    "hash": "c89110fccb76824508aab0ed8374eb06843a9173262fd3a93cf3a67b098ee5a3",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "legoremote/app.js": {
     "hash": "af12068cd1b84369aa8416a82e9335298f6a4b69b56aa7bc70b9eb0d91e6d78e",
     "rules": [
@@ -265,12 +259,6 @@ module.exports = {
   },
   "widagps/widget.js": {
     "hash": "a58cdc481962575ef0aa0bfaedcc1f9de3ce966218c5b16168d8ed8b4b9672b8",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "sleeplog/lib.js": {
-    "hash": "5210446eb507f62897782735e7d56a2e84ea5f9dba557ef67a977f53065f3461",
     "rules": [
       "no-unused-vars"
     ]
@@ -449,12 +437,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "doztime/app-bangle1.js": {
-    "hash": "ba263e0ff80cb0ab1df9fe19e62a4972bb8646ea709af8bc41206e9a6395d539",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "devstopwatch/app.js": {
     "hash": "bb75693cc6ed2ffef0d227a40b53079e06d1ebcc7c2d9eed671b5401a8e06433",
     "rules": [
@@ -499,12 +481,6 @@ module.exports = {
   },
   "chess/engine.js": {
     "hash": "5ab335ed76f39b69e5b3436325229d8b3bd2c20a5da6d32bcb7c194f79c9f89c",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "carcrazy/app.js": {
-    "hash": "82b9b291ad6e2efcb689e5bb7f48a5ba1a3b59f740a5ab4634006f3d413cee7e",
     "rules": [
       "no-unused-vars"
     ]
@@ -563,14 +539,38 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "a_dndtoggle/a_dndtoggle.app.js": {
-    "hash": "8ba115261df8ddb14bf7d16a300a114a1e59ace4da478657968390b62ba53cbb",
+  "HRV/app.js": {
+    "hash": "265b4b0272c43126670b5026079711354cee0a211096bcd2c18139b7a3ee774a",
     "rules": [
       "no-unused-vars"
     ]
   },
-  "HRV/app.js": {
-    "hash": "265b4b0272c43126670b5026079711354cee0a211096bcd2c18139b7a3ee774a",
+  "locale/locales.js": {
+    "hash": "bf2fd659e673b34a1ffa98c7ae7ca89de86a4ff9f823244d028e85bc465ed3c7",
+    "rules": [
+      "no-unused-vars"
+    ]
+  },
+  "sleeplog/lib.js": {
+    "hash": "755e0d4c02b92181281fd6990df39c9446c73ff896b50b64d7e14cb1c0188556",
+    "rules": [
+      "no-unused-vars"
+    ]
+  },
+  "doztime/app-bangle1.js": {
+    "hash": "1e9598c201175180ae77d1c3bc47e8138b339b72eb58782b5057fb7aefdc88a1",
+    "rules": [
+      "no-unused-vars"
+    ]
+  },
+  "carcrazy/app.js": {
+    "hash": "fd9f98f4f9e24c63a8fa02918dceab4503edf88e06537922caf86e85884408f3",
+    "rules": [
+      "no-unused-vars"
+    ]
+  },
+  "a_dndtoggle/a_dndtoggle.app.js": {
+    "hash": "190b2416e57db0886ffbbe94d86fc05779b69802d9b94561588baeb756cc3d90",
     "rules": [
       "no-unused-vars"
     ]
