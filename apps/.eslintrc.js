@@ -6,9 +6,6 @@ module.exports = {
         // TODO: "banglejs": false
     },
     "extends": "eslint:recommended",
-    "plugins": [
-        
-    ],
     "globals": {
         // Methods and Fields at https://banglejs.com/reference
         "Array": "readonly",
