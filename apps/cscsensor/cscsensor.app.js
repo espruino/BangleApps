@@ -226,7 +226,7 @@ function getSensorBatteryLevel(gatt) {
 function connection_setup() {
   mySensor.screenInit = true;
   E.showMessage("Scanning for CSC sensor...");
-  NRF.requestDevice({ filters: [{services:["1816"]}]}).then(function(d) {
+  NRF.requestDevice({ filters: [{services:["1816"]}], maxInterval: 100}).then(function(d) {
     device = d;
     E.showMessage("Found device");
     return device.gatt.connect();
@@ -249,6 +249,7 @@ function connection_setup() {
   }).catch(function(e) {
     E.showMessage(e.toString(), "ERROR");
     console.log(e);
+    setTimeout(connection_setup, 1000);
   });
 }
 
