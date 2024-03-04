@@ -7,3 +7,4 @@
 0.07: Handle the swipe event that is generated when draging to change light intensity, so it doesn't trigger some other swipe handler.
 0.08: Ensure boot code doesn't allocate and leave a gloval variable named 'settings'
 0.09: Handle lightswitch logic running before its widget has loaded
+0.10: Minor code improvements

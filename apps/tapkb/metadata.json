@@ -1,7 +1,7 @@
 {
   "id": "tapkb",
   "name": "Tap keyboard",
-  "version":"0.01",
+  "version": "0.02",
   "description": "An onscreen tap keyboard.",
   "icon": "app.png",
   "type":"textinput",

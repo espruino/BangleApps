@@ -2,7 +2,7 @@
   "id": "supf",
   "name": "Simple Clock with Date",
   "shortName": "supf Clock",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Simple Clock with seconds and date in custom language. Install 'Languages' to get localized names.",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot_supf.png"}],

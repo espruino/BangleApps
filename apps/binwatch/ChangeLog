@@ -4,3 +4,4 @@
 0.04: corrected format of background image (raw binary)
 0.05: move setUI() up before draw() as to not have a false positive 'sanity
 check' when building on github.
+0.06: Minor code improvements

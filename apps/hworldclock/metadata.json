@@ -2,7 +2,7 @@
   "id": "hworldclock",
   "name": "Hanks World Clock",
   "shortName": "Hanks World Clock",
-  "version": "0.34",
+  "version": "0.35",
   "description": "Current time zone plus up to three others",
   "allow_emulator":true,
   "icon": "app.png",

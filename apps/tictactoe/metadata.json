@@ -2,7 +2,7 @@
   "name": "TicTacToe",
   "shortName":"TicTacToe",
   "icon": "app.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "Tic Tac Toe for two players!",
   "tags": "game",
   "storage": [

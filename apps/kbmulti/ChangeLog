@@ -7,3 +7,4 @@
 0.07: Add compatability with `backswipe` app by using `Bangle.prependListener()` and `E.stopEventPropagation`- requires fw 2v19 or cutting
 	edge versions of 2v18. Falls back on `Bangle.on()` for backwards
 	compatability.
+0.08: Minor code improvements

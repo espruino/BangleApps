@@ -1,7 +1,7 @@
 {
   "id": "messages_light",
   "name": "Messages Light",
-  "version": "1.7",
+  "version": "1.08",
   "description": "A light implementation of messages App (display notifications from iOS and Gadgetbridge/Android)",
   "icon": "app.png",
   "type": "app",

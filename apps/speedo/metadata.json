@@ -1,7 +1,7 @@
 {
   "id": "speedo",
   "name": "Speedo",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Show the current speed according to the GPS",
   "icon": "speedo.png",
   "tags": "tool,outdoors,gps",

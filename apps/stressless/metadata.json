@@ -2,7 +2,7 @@
   "name": "Stressless",
   "shortName":"Stressless",
   "icon": "stressless.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "This is a heart activity tracker for PIIS stressless project",
    "tags": "health",
   "supports": ["BANGLEJS"],

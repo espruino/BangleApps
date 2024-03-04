@@ -2,7 +2,7 @@
   "id": "edisonsball",
   "name": "Edison's Ball",
   "shortName": "Edison's Ball",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Hypnagogia/Micro-Sleep alarm for experimental use in exploring sleep transition and combating drowsiness",
   "icon": "app-icon.png",
   "tags": "sleep,hyponagogia,quick,nap",

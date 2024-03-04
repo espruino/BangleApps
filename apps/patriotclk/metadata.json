@@ -1,7 +1,7 @@
 { "id": "patriotclk",
   "name": "Patriotic Clock",
   "shortName":"Patriot",
-  "version":"0.02",
+  "version": "0.03",
   "description": "Show your Patriotism with your Country's flag as a clock face (configurable). Swipe down to show widgets and date.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
