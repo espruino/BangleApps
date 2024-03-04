@@ -18,16 +18,8 @@ Bangle.drawWidgets();
 let brightness;
 
 function loadBrightness() {
-  try {
-      const d = require('Storage').readJSON("setting.json", 1) || {};
-      brightness = Object.assign({
-          'brightness': 0.1
-      }, d || {});
-      return d;
-  } catch(e){
-    console.log(e.toString());
-    return;
-  }
+    const getBrightness = require('Storage').readJSON("setting.json", 1) || {};
+    brightness = getBrightness.brightness || 0.1;
 }
 
 //may make it configurable in the future
@@ -105,6 +97,7 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
+  // set to full bright when the setting is true
   if(settings.fullBrightness) {
     Bangle.setLCDBrightness(1);
   }
@@ -148,8 +141,9 @@ function showCode(card) {
 }
 
 function showCard(card) {
+  // reset brightness to old value after maxing it out
   if(settings.fullBrightness) {
-    Bangle.setLCDBrightness(brightness.brightness);
+    Bangle.setLCDBrightness(brightness);
   }
   var lines = [];
   var bodyFont = fontBig;
