@@ -1,0 +1,30 @@
+{
+  "id": "c25k",
+  "name": "C25K",
+  "icon": "app.png",
+  "version":"0.04",
+  "description": "Unofficial app for the Couch to 5k training plan",
+  "readme": "README.md",
+  "type": "app",
+  "tags": "running,c25k,tool,outdoors,exercise",
+  "allow_emulator": true,
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
+  "storage": [
+    {"name": "c25k.app.js", "url": "app.js"},
+    {"name": "c25k.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "screenshots": [
+    {"url": "c25k-scrn1.png"},
+    {"url": "c25k-scrn2.png"},
+    {"url": "c25k-scrn3.png"},
+    {"url": "c25k-scrn4.png"},
+    {"url": "c25k-scrn5.png"},
+    {"url": "c25k-scrn6.png"},
+    {"url": "c25k-scrn7.png"},
+    {"url": "c25k-scrn8.png"},
+    {"url": "c25k-scrn9.png"}
+  ]
+}

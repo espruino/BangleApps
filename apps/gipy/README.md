@@ -33,7 +33,7 @@ It provides the following features :
 
 ### Preparing the file
 
-You first need to have a trace file in *gpx* format.
+You typically want to use a trace file in *gpx* format.
 Usually I download from [komoot](https://www.komoot.com/) or I export
 from google maps using [mapstogpx](https://mapstogpx.com/). [Brouter](https://brouter.damsy.net) is
 also a nice open source option.
@@ -47,6 +47,11 @@ They are smaller than gpx and reduce the number of computations left to be done 
 Just click the disk icon and select your gpx file.
 This will request additional information from openstreetmap.
 Your path will be displayed in svg.
+
+Note that it is also possible to just hit the shift key and drag the mouse on the map
+to download a map (with no trace). If you want a map, hitting the "ski" checkbox
+before selecting the area will parse openstreetmap data in order to get the pistes and
+the lifts. Colors will correspond to difficulty levels.
 
 ### Starting Gipy
 

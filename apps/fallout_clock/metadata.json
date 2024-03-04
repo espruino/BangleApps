@@ -1,0 +1,18 @@
+{
+  "id":"fallout_clock",
+  "name":"Fallout Clock",
+  "version":"0.21",
+  "description":"A simple clock for the Fallout fan",
+  "icon":"icon.png",
+  "type":"clock",
+  "tags": "clock,fallout,green,retro",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"fallout_clock.app.js", "url":"clock.js"},
+    {"name":"fallout_clock.img", "url":"app-icon.js", "evaluate":true}
+  ],
+  "screenshots": [
+    {"url":"./screenshot.png", "name":"Fallout Clock Screenshot"}
+  ]
+}

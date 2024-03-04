@@ -95,26 +95,30 @@ function compute_eta(hour, minutes, approximate_speed, remaining_distance) {
 }
 
 class TilesOffsets {
-  constructor(buffer, offset) {
-    let type_size = Uint8Array(buffer, offset, 1)[0];
+  constructor(filename, offset) {
+    let header = E.toArrayBuffer(s.read(filename, offset, 4));
+    let type_size = Uint8Array(header, 0, 1)[0];
     offset += 1;
-    this.entry_size = Uint8Array(buffer, offset, 1)[0];
+    this.entry_size = Uint8Array(header, 1, 1)[0];
     offset += 1;
-    let non_empty_tiles_number = Uint16Array(buffer, offset, 1)[0];
+    let non_empty_tiles_number = Uint16Array(header, 2, 1)[0];
     offset += 2;
-    this.non_empty_tiles = Uint16Array(buffer, offset, non_empty_tiles_number);
+
+    let bytes = (type_size==24)?3:2;
+    let buffer = E.toArrayBuffer(s.read(filename, offset, 2*non_empty_tiles_number+bytes*non_empty_tiles_number));
+    this.non_empty_tiles = Uint16Array(buffer, 0, non_empty_tiles_number);
     offset += 2 * non_empty_tiles_number;
     if (type_size == 24) {
       this.non_empty_tiles_ends = Uint24Array(
         buffer,
-        offset,
+        2*non_empty_tiles_number,
         non_empty_tiles_number
       );
       offset += 3 * non_empty_tiles_number;
     } else if (type_size == 16) {
       this.non_empty_tiles_ends = Uint16Array(
         buffer,
-        offset,
+        2*non_empty_tiles_number,
         non_empty_tiles_number
       );
       offset += 2 * non_empty_tiles_number;
@@ -153,27 +157,29 @@ class TilesOffsets {
 }
 
 class Map {
-  constructor(buffer, offset, filename) {
+  constructor(filename, offset) {
     // header
-    let color_array = Uint8Array(buffer, offset, 3);
+
+    let header = E.toArrayBuffer(s.read(filename, offset, 43));
+    let color_array = Uint8Array(header, 0, 3);
     this.color = [
       color_array[0] / 255,
       color_array[1] / 255,
       color_array[2] / 255,
     ];
     offset += 3;
-    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
+    this.first_tile = Int32Array(header, 3, 2); // absolute tile id of first tile
     offset += 2 * 4;
-    this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
+    this.grid_size = Uint32Array(header, 11, 2); // tiles width and height
     offset += 2 * 4;
-    this.start_coordinates = Float64Array(buffer, offset, 2); // min x and y coordinates
+    this.start_coordinates = Float64Array(header, 19, 2); // min x and y coordinates
     offset += 2 * 8;
-    let side_array = Float64Array(buffer, offset, 1); // side of a tile
+    let side_array = Float64Array(header, 35, 1); // side of a tile
     this.side = side_array[0];
     offset += 8;
 
     // tiles offsets
-    let res = new TilesOffsets(buffer, offset);
+    let res = new TilesOffsets(filename, offset);
     this.tiles_offsets = res[0];
     offset = res[1];
 
@@ -246,7 +252,7 @@ class Map {
     let tile_y = absolute_tile_y - this.first_tile[1];
     let side = img.getWidth() - 6;
 
-    let thick = this.color[0] != 0;
+    let thick = this.color[0] == 1;
     img.setColor(this.color[0], this.color[1], this.color[2]);
 
     let tile_num = tile_x + tile_y * this.grid_size[0];
@@ -296,26 +302,25 @@ class Map {
 }
 
 class Interests {
-  constructor(buffer, offset) {
-    this.first_tile = Int32Array(buffer, offset, 2); // absolute tile id of first tile
+  constructor(filename, offset) {
+    let header = E.toArrayBuffer(s.read(filename, offset, 40));
+    this.first_tile = Int32Array(header, 0, 2); // absolute tile id of first tile
     offset += 2 * 4;
-    this.grid_size = Uint32Array(buffer, offset, 2); // tiles width and height
+    this.grid_size = Uint32Array(header, 8, 2); // tiles width and height
     offset += 2 * 4;
-    this.start_coordinates = Float64Array(buffer, offset, 2); // min x and y coordinates
+    this.start_coordinates = Float64Array(header, 16, 2); // min x and y coordinates
     offset += 2 * 8;
-    let side_array = Float64Array(buffer, offset, 1); // side of a tile
+    let side_array = Float64Array(header, 32, 1); // side of a tile
     this.side = side_array[0];
     offset += 8;
 
-    let res = new TilesOffsets(buffer, offset);
+    let res = new TilesOffsets(filename, offset);
     offset = res[1];
     this.offsets = res[0];
     let end = this.offsets.end_offset();
     this.binary_interests = new Uint8Array(end);
-    let binary_interests = Uint8Array(buffer, offset, end);
-    for (let i = 0; i < end; i++) {
-      this.binary_interests[i] = binary_interests[i];
-    }
+    let buffer = E.toArrayBuffer(s.read(filename, offset, end));
+    this.binary_interests = Uint8Array(buffer);
     offset += end;
     return [this, offset];
   }
@@ -374,14 +379,15 @@ class Status {
     this.scale_factor = diagonal_third / maps[0].side; // multiply geo coordinates by this to get pixels coordinates
 
     if (this.path !== null) {
-      let r = [0];
+      //TODO: float32 ??
+      let r = new Float64Array(this.path.len);
       // let's do a reversed prefix computations on all distances:
       // loop on all segments in reversed order
       let previous_point = null;
       for (let i = this.path.len - 1; i >= 0; i--) {
         let point = this.path.point(i);
         if (previous_point !== null) {
-          r.unshift(r[0] + point.distance(previous_point));
+          r[i] = r[i+1] + point.distance(previous_point);
         }
         previous_point = point;
       }
@@ -634,6 +640,10 @@ class Status {
     this.display();
   }
   display_direction() {
+    let scale_factor = this.scale_factor;
+    if (!this.zoomed_in) {
+      scale_factor *= 3/5;
+    }
     //TODO: go towards point on path at 20 meter
     if (this.current_segment === null) {
       return;
@@ -658,7 +668,7 @@ class Status {
       this.displayed_position,
       this.adjusted_cos_direction,
       this.adjusted_sin_direction,
-      this.scale_factor
+      scale_factor
     );
 
     let cos1 = Math.cos(full_angle + 0.6 + Math.PI / 2);
@@ -1076,6 +1086,9 @@ class Status {
     let half_width = width / 2;
     let half_height = height / 2 + Y_OFFSET;
     let scale_factor = this.scale_factor;
+    if (!this.zoomed_in) {
+      scale_factor *= 3/5;
+    }
 
     if (this.path !== null) {
       // compute coordinate for projection on path
@@ -1141,8 +1154,11 @@ function load_gps(filename) {
     .drawString(filename, 0, g.getHeight() - 30);
   g.flip();
 
-  let buffer = s.readArrayBuffer(filename);
-  let file_size = buffer.length;
+  let file_size;
+  {
+    let buffer = s.readArrayBuffer(filename);
+    file_size = buffer.length;
+  }
   let offset = 0;
 
   let path = null;
@@ -1150,60 +1166,51 @@ function load_gps(filename) {
   let maps = [];
   let interests = null;
   while (offset < file_size) {
-    let block_type = Uint8Array(buffer, offset, 1)[0];
+    let block_type = Uint8Array(E.toArrayBuffer(s.read(filename, offset, 1)))[0];
     offset += 1;
     if (block_type == 0) {
       // it's a map
       console.log("loading map");
-      let res = new Map(buffer, offset, filename);
+      let res = new Map(filename, offset);
       let map = res[0];
       offset = res[1];
       maps.push(map);
     } else if (block_type == 2) {
       console.log("loading path");
-      let res = new Path(buffer, offset);
+      let res = new Path(filename, offset);
       path = res[0];
       offset = res[1];
     } else if (block_type == 3) {
       console.log("loading interests");
-      let res = new Interests(buffer, offset);
+      let res = new Interests(filename, offset);
       interests = res[0];
       offset = res[1];
     } else if (block_type == 4) {
-      console.log("loading heights");
       let heights_number = path.points.length / 2;
-      heights = Int16Array(buffer, offset, heights_number);
+      let buffer = E.toArrayBuffer(s.read(filename, offset, heights_number*2));
+      heights = Int16Array(buffer);
       offset += 2 * heights_number;
     } else {
       console.log("todo : block type", block_type);
     }
   }
 
-  // checksum file size
-  if (offset != file_size) {
-    console.log("invalid file size", file_size, "expected", offset);
-    let msg = "invalid file\nsize " + file_size + "\ninstead of" + offset;
-    E.showAlert(msg).then(function () {
-      E.showAlert();
-      start_gipy(path, maps, interests, heights);
-    });
-  } else {
-    start_gipy(path, maps, interests, heights);
-  }
+  start_gipy(path, maps, interests, heights);
 }
 
 class Path {
-  constructor(buffer, offset) {
-    let points_number = Uint16Array(buffer, offset, 1)[0];
+  constructor(filename, offset) {
+    let points_number = Uint16Array(E.toArrayBuffer(s.read(filename, offset, 2)))[0];
     offset += 2;
+    let waypoints_len = Math.ceil(points_number / 8.0);
+    let buffer = E.toArrayBuffer(s.read(filename, offset, points_number * 16 + waypoints_len));
 
     // path points
-    this.points = Float64Array(buffer, offset, points_number * 2);
+    this.points = Float64Array(buffer, 0, 2 * points_number);
     offset += 8 * points_number * 2;
 
     // path waypoints
-    let waypoints_len = Math.ceil(points_number / 8.0);
-    this.waypoints = Uint8Array(buffer, offset, waypoints_len);
+    this.waypoints = Uint8Array(buffer, points_number * 2, waypoints_len);
     offset += waypoints_len;
 
     return [this, offset];
@@ -1370,14 +1377,47 @@ function drawMenu() {
   menu["Exit"] = function () {
     load();
   };
+  Bangle.setLCDBrightness(settings.brightness);
+  Bangle.setLocked(false);
   E.showMenu(menu);
+}
+
+
+function ask_options(fn) {
+  g.clear();
+  let height = g.getHeight();
+  let width = g.getWidth();
+  g.drawRect(10, 10, width - 10, height / 2 - 10);
+  g.drawRect(10, height/2 + 10, width - 10, height - 10);
+  g.setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
+  g.drawString("Backward", width/2, 3*height/4);
+  g.flip();
+
+  function options_select(b, xy) {
+    end = false;
+    if (xy.y < height / 2 - 10) {
+      g.setColor(0, 0, 0).fillRect(10, 10, width - 10, height / 2 - 10);
+      g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
+      end = true;
+    } else if (xy.y > height/2 + 10) {
+      g.setColor(0, 0, 0).fillRect(10, height/2 + 10, width - 10, height - 10);
+      g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Backward", width/2, 3*height/4);
+      go_backwards = true;
+      end = true;
+    }
+    if (end) {
+      g.flip();
+      Bangle.removeListener("touch", options_select);
+      console.log("loading", fn);
+      load_gps(fn);
+    }
+  }
+  Bangle.on("touch", options_select);
 }
 
 function start(fn) {
   E.showMenu();
-  console.log("loading", fn);
-
-  load_gps(fn);
+  ask_options(fn);
 }
 
 function start_gipy(path, maps, interests, heights) {
@@ -1387,7 +1427,9 @@ function start_gipy(path, maps, interests, heights) {
     NRF.sleep(); // disable bluetooth completely
   }
 
+  console.log("creating status");
   status = new Status(path, maps, interests, heights);
+  console.log("done creating status");
 
   setWatch(
     function () {
@@ -1491,6 +1533,7 @@ function start_gipy(path, maps, interests, heights) {
   });
 
   if (simulated) {
+    console.log("un-comment simulator to use it");
     // status.starting_time = getTime();
     // // let's keep the screen on in simulations
     // Bangle.setLCDTimeout(0);
@@ -1518,8 +1561,8 @@ function start_gipy(path, maps, interests, heights) {
     //     if (point_index >= status.path.len / 2 - 1) {
     //       return;
     //     }
-    //     let p1 = status.path.point(2 * point_index); // use these to approximately follow path
-    //     let p2 = status.path.point(2 * (point_index + 1));
+    //     let p1 = status.path.point(8 * point_index); // use these to approximately follow path
+    //     let p2 = status.path.point(8 * (point_index + 1));
     //     //let p1 = status.path.point(point_index); // use these to strictly follow path
     //     //let p2 = status.path.point(point_index + 1);
 

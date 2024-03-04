@@ -641,7 +641,7 @@ function showUtilMenu() {
           storage.writeJSON("setting.json",s);
           E.showAlert(/*LANG*/"Calibrated!").then(() => load("setting.app.js"));
         } else {
-          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("settings.app.js"));
+          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("setting.app.js"));
         }
       });
     };

@@ -128,3 +128,10 @@
 	* Touching the screen when sleeping will wake up but not change screen
 	* Removing footways (if bicycles not allowed) to reduce resource usage
 	* Switching screen will clear the screen immediately so you can know your screen touch has been received
+	
+0.24:
+	* Fix for loading very large files (> 65kb)
+	* New menu on file selection : reverse path without waiting for file to load
+	* Fix for files converted from maps2gpx : path was not reduced in size correctly
+	* Experimental ski mode : have a ski slopes map
+	* Fix for path projection display when lost and zoomed out
