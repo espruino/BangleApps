@@ -486,8 +486,7 @@ function canPlay(hand, palette, otherPalette) {
       } else {
         //Check if any palette play can win with rule.
         for(let h of hand.handCards) {
-          if(h === c) {}
-          else {
+          if(h !== c) {
             clonePalette.addCard(c);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               return true;
@@ -531,8 +530,7 @@ class AI {
       } else {
         //Check if any palette play can win with rule.
         for(let h of this.hand.handCards) {
-          if(h === c) {}
-          else {
+          if(h !== c) {
             clonePalette.addCard(h);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               ruleStack.addCard(c);

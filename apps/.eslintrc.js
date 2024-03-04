@@ -149,7 +149,7 @@ module.exports = {
         ],
         "no-constant-condition": "off",
         "no-delete-var": "off",
-        "no-empty": "off",
+        "no-empty": ["warn", { "allowEmptyCatch": true }],
         "no-global-assign": "off",
         "no-inner-declarations": "off",
         "no-prototype-builtins": "off",

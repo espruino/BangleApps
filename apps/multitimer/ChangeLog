@@ -6,3 +6,4 @@
 0.06: Support fastloading
 0.07: Fix fastloading support - ensure drag handler's restored after
       menu display/fastload removes it
+0.08: Add setting for initial page to display

@@ -270,8 +270,7 @@ function queueDraw() {
 
 
 function draw() {
-  if (pause){}
-  else{
+  if (!pause){
     // get date
     var d = new Date();
     var da = d.toString().split(" ");

@@ -104,7 +104,6 @@ Bangle.on('lcdPower',on=>{
   if (on) {
       secondInterval = setInterval(draw, 1000);
       draw(); // draw immediately
-  }else{
   }
 });
 Bangle.on('lock',on=>{

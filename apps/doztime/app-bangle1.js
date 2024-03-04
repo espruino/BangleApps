@@ -223,9 +223,8 @@ function fixTime() {
 	Bangle.on("GPS",function cb(g) {
 		Bangle.setGPSPower(0,"time");
 		Bangle.removeListener("GPS",cb);
-		if (!g.time || (g.time.getFullYear()<2000) ||
-			(g.time.getFullYear()>2200)) {
-		} else {
+		if (g.time && (g.time.getFullYear()>=2000) &&
+			(g.time.getFullYear()<=2200)) {
 			// We have a GPS time. Set time
 			setTime(g.time.getTime()/1000);
 		}

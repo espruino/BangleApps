@@ -66,10 +66,8 @@ function moveEnemyPosition(){
       enemyPositonCenterX2 = 120;
     }else if((randomRoadPositionIndicator2 == 3)){
       enemyPositonCenterX2 = 155;
-    }else if(level == 7||level == 8){
-
     }
-  }
+  } // TODO: else if(level == 7)
 }
 
 function collision(){
