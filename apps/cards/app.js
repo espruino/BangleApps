@@ -14,6 +14,14 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+// get brightness
+let brightness;
+
+function loadBrightness() {
+    const getBrightness = require('Storage').readJSON("setting.json", 1) || {};
+    brightness = getBrightness.brightness || 0.1;
+}
+
 //may make it configurable in the future
 const WHITE=-1
 const BLACK=0
@@ -89,6 +97,10 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
+  // set to full bright when the setting is true
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(1);
+  }
   widget_utils.hide();
   E.showScroller();
   // keeping it on rising edge would come back twice..
@@ -129,6 +141,10 @@ function showCode(card) {
 }
 
 function showCard(card) {
+  // reset brightness to old value after maxing it out
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(brightness);
+  }
   var lines = [];
   var bodyFont = fontBig;
   if(!card) return;
@@ -207,5 +223,8 @@ function showList() {
     select : idx => showCard(CARDS[idx]),
     back : () => load()
   });
+}
+if(settings.fullBrightness) {
+  loadBrightness();
 }
 showList();
