@@ -1,15 +1,15 @@
 /* UI GLOBALS */
 
-const HOUR_SCENE = 0;
-const MIN_SCENE = 1;
-const SEC_SCENE = 2;
+//const HOUR_SCENE = 0;
+//const MIN_SCENE = 1;
+//const SEC_SCENE = 2;
 const COUNTDOWN_SCENE = 3;
 
 var currentScene = 0;
 
-var btn1Watch;
-var btn2Watch;
-var btn3Watch;
+//var btn1Watch;
+//var btn2Watch;
+//var btn3Watch;
 
 var drawInterval;
 
@@ -203,14 +203,14 @@ function decrementMenuTime() {
 
 function setupMenuWatches() {
   clearWatch();
-  btn1Watch = setWatch(incrementMenuTime, BTN1, {repeat: true});
-  btn2Watch = setWatch(next, BTN2, {repeat: true});
-  btn3Watch = setWatch(decrementMenuTime, BTN3, {repeat: true});
+  /*btn1Watch =*/ setWatch(incrementMenuTime, BTN1, {repeat: true});
+  /*btn2Watch =*/ setWatch(next, BTN2, {repeat: true});
+  /*btn3Watch =*/ setWatch(decrementMenuTime, BTN3, {repeat: true});
 }
 
 function setupCountdownWatches() {
   clearWatch();
-  btn2Watch = setWatch(main, BTN2, {repeat: true});
+  /*btn2Watch =*/ setWatch(main, BTN2, {repeat: true});
 }
 
 /* scenes */

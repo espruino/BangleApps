@@ -21,7 +21,6 @@ var val = 0;
 var player;
 var active = false;
 var select = false;
-var next = 0;
 var winval =0;
 var ex = require("heatshrink").decompress(atob("mEwwI63jACEngCEvwCEv4CB/wCBn+AgP8AoMf4ED/AFBh/gg/wAoIDBA4IFBB4ITBAoIbBD4I8C/wrCGAQuCGAQuCGAQuCGAQuCAo4RFDoopFGohBFJopZFMopxFPoqJFSoqhFVooA0A"));
 var oh = require("heatshrink").decompress(atob("mEwwIdah/wAof//4ECgYFB4AFBg4FB8AFBj/wh/4AoM/wEB/gFBvwCB/wCBBAU/AQIUCj8AgIzCh+AgYmCg/AgYyCAYIHBAoXgg+AAoMBApkPLgZKBAtBBRLIprDMoJxFPoqJFSoyhCAQStFXIrFFaIrdFdIwAVA"));

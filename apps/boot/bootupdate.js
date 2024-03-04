@@ -4,7 +4,7 @@ of the time. */
 { // execute in our own scope so we don't have to free variables...
 E.showMessage(/*LANG*/"Updating boot0...");
 let s = require('Storage').readJSON('setting.json',1)||{};
-const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
+//const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 const FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
 const DEBUG = s.bootDebug; // we can set this to enable debugging output in boot0
 let boot = "", bootPost = "";

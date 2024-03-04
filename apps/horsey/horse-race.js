@@ -32,10 +32,10 @@ function drawPlayers() {
   g.setFont("6x8");
   g.setFontAlign(0,0);
   var max = mycounter;
-  var playerCount=0;
+  //var playerCount=0;
   for (var player of players) {
     max = Math.max(player.cnt, mycounter);
-    playerCount++;
+    //playerCount++;
   }
   var offset = 0;
   if (max > 200)
@@ -50,7 +50,7 @@ function drawPlayers() {
   g.drawString("You",p-16,y+20);
   g.drawImage(img, p,y);
 
-  var spacing = (120-20)/(playerCount+1);
+  //var spacing = (120-20)/(playerCount+1);
   for (var player of players) {
     y+=45;
     var p = player.cnt-offset;

@@ -147,7 +147,7 @@ function startTerminal(dataOutCallback) {
   term.fgCol = g.theme.fg;
   term.bgCol = g.theme.bg;
   draw();
-  var flashInterval = setInterval(() => {
+  setInterval(() => {
     flashToggle = !flashToggle;
     draw();
   }, 1000);

@@ -146,7 +146,7 @@ function renderData(dataArray) {
   const belowMinIndicatorValue = minTemperature - 1;
   const aboveMaxIndicatorValue = maxTemparature + 1;
   
-  var allConsumers = switchableConsumers.none | switchableConsumers.lcd | switchableConsumers.compass | switchableConsumers.bluetooth | switchableConsumers.gps | switchableConsumers.hrm;
+  //var allConsumers = switchableConsumers.none | switchableConsumers.lcd | switchableConsumers.compass | switchableConsumers.bluetooth | switchableConsumers.gps | switchableConsumers.hrm;
   
   for (let i = 0; i < dataArray.length; i++) {
     const element = dataArray[i];

@@ -154,7 +154,7 @@ function connect() {
         offs += 4;
       }
     } else {
-      var cmd = dv.getUint8(4); // cmd
+      /*var cmd =*/ dv.getUint8(4); // cmd
       //print("CMD",dv.buffer);
     }
   }

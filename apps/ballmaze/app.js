@@ -25,6 +25,7 @@
     10: "Medium", 16: "Small", 20: "Tiny", 40: "Trivial",
   };
   // even size 1 actually works, but larger mazes take forever to generate
+  // TODO: should `sizes`, `minSize` and `defaultSize` have been declared outside the if block?
   if (!BANGLEJS2) {
     const sizes = [1, 2, 4, 5, 8, 10, 16, 20, 40].reverse(), minSize = 4, defaultSize = 10;
   } else {

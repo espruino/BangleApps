@@ -11,13 +11,13 @@
 
     g.setFont("Vector", 100);
     //variabangle.Sensorss
-    let acclS, bttS, compssS, gpsS, hrmS, stepS; //Strings
+    //let acclS, bttS, compssS, gpsS, hrmS, stepS; //Strings
     let accelN, compssN, gpsN, hrmN, stepN; //Num
-    let prueba = 1;
+    //let prueba = 1;
     let data = [0, 0, 0, 0, 0, 0];
     //Constants for redabangle.Sensors code
     let storage = require('Storage');
-    let deCom = require('heatshrink');
+    //let deCom = require('heatshrink');
 
 
 
@@ -129,10 +129,10 @@
                 finalS = s;
             }
             var z = d.getMilliseconds();
-            var zFinal = new String(z);
-            zFinal = zFinal.replace('.', '');
+            //var zFinal = new String(z);
+            //zFinal = zFinal.replace('.', '');
             var completeTime = year + "-" + finalMonth + "-" + finalDay + "T" + finalh + ":" + finalM + ":" + finalS + "." + z + "Z";
-            var time = h + ":" + ("0" + m).substr(-2);
+            //var time = h + ":" + ("0" + m).substr(-2);
             gpsN.time = completeTime;
             data[5] = gpsN;
         }, 2 * 1000);

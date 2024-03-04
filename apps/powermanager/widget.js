@@ -78,14 +78,12 @@ currently-running apps */
     if (s2Timeout) clearTimeout(s2Timeout);
     if (sTimeout) clearTimeout(sTimeout);
 
-    let t,systickNow;
+    let systickNow;
     sTimeout = setTimeout(()=>{
       systickNow = peek32(0xE000E018);
-      t = Date.now();
     }, nextRefresh - SYSTICKWAIT - 100);
 
     s2Timeout = setTimeout(() => {
-      let tLater = Date.now();
       let systickLater = peek32(0xE000E018);
       systickDiff = systickLater - systickNow;
       if (systickDiff < 0) systickDiff += SYSTICKMAX;

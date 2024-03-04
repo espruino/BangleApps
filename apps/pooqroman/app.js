@@ -781,4 +781,4 @@ class Clock {
 //////////////////////////////////////////////////////////////////////////////
 /*                                 Main                                     */
 
-const clock = new Clock(new Roman(g, events)).start();
+new Clock(new Roman(g, events)).start();

@@ -20,9 +20,11 @@ function flip2(x,y) {
  buf2.clear();
 }
 
+/*
 function radians(d) {
   return (d*Math.PI) / 180;
 }
+*/
 
 // takes 32ms
 function drawCompass(hd) {
@@ -60,7 +62,7 @@ function newHeading(m,h){
 
 // takes approx 7ms
 function tiltfixread(O,S){
-  var start = Date.now();
+  //var start = Date.now();
   var m = Bangle.getCompass();
   var g = Bangle.getAccel();
   m.dx =(m.x-O.x)*S.x; m.dy=(m.y-O.y)*S.y; m.dz=(m.z-O.z)*S.z;

@@ -3,7 +3,7 @@
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var timerResetActive = 0; //timer to reset active
-  var timerStoreData = 0; //timer to store data
+  //var timerStoreData = 0; //timer to store data
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var active = 0; //x steps in y seconds achieved
@@ -234,7 +234,7 @@
   pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
-  timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
+  /*timerStoreData =*/ setInterval(storeData, storeDataInterval); //store data regularly
   //Add widget, use: WIDGETS.activepedom.getSteps() inside another App to return todays step count
   WIDGETS["activepedom"]={area:"tl",width:width,draw:draw, getSteps:()=>stepsCounted};
 })();

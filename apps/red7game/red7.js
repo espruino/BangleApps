@@ -556,7 +556,7 @@ function shuffleDeck(deckArray) {
 }
 
 var deck = [];
-var screen = 1;
+//var screen = 1;
 var startedGame = false;
 var playerHand = new Hand();
 var playerPalette = new Hand();
@@ -621,10 +621,10 @@ function drawScreen1() {
   Bangle.on('swipe', function(direction){
     if(direction === -1) {
       drawScreen2();
-      screen = 2;
+      //screen = 2;
     } else if(direction === 1) {
       drawScreen1();
-      screen = 1;
+      //screen = 1;
     }
   });
   g.setBgColor(0,0,0);

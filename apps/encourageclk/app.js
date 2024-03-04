@@ -3,7 +3,6 @@
 require("FontHaxorNarrow7x17").add(Graphics);
 require("FontDylex7x13").add(Graphics);
 
-const storage = require('Storage');
 const locale = require("locale");
 const dateutil = require("date_utils");
 const currentFont=g.getFont();
@@ -52,7 +51,7 @@ function queueDraw() {
 
 function draw() {
   var time = locale.time(d, 1);
-  var date = locale.date(d);
+  //var date = locale.date(d);
   var mo = dateutil.month(d.getMonth() + 1, 1);
 
   g.drawImage(bgimg,0,offset); //bg

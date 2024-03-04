@@ -164,7 +164,7 @@ function drawTime()
 		x =
 		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
 		let msg = "00000"+Math.floor(x).toString(12);
-		let time = msg.substr(-5,3)+"."+msg.substr(-2);
+		let time = msg.substr(-5,3)+"."+msg.substr(-2); //TODO: should `time` and `wait` have been defined outside the if block? 
 		let wait = 347*(1-(x%1));
 		timeDef = time6;
 	} else {
@@ -210,8 +210,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // Functions for weather mode - TODO
-function drawWeather() {}
-function modeWeather() {}
+//function drawWeather() {}
+//function modeWeather() {}
 
 // Start time on twist
 Bangle.on('twist', function() {

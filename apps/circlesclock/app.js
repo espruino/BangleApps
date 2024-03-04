@@ -11,7 +11,6 @@ Graphics.prototype.setFontRobotoRegular21 = function(scale) {
 };
 
 {
-let clock_info = require("clock_info");
 let locale = require("locale");
 let storage = require("Storage");
 
@@ -26,7 +25,7 @@ const showWidgets = settings.showWidgets || false;
 const circleCount = settings.circleCount || 3;
 const showBigWeather = settings.showBigWeather || false;
 
-let now = Math.round(new Date().getTime() / 1000);
+//let now = Math.round(new Date().getTime() / 1000);
 
 // layout values:
 let colorFg = g.theme.dark ? '#fff' : '#000';
@@ -87,7 +86,7 @@ let draw = function() {
     g.setFontAlign(-1, -1);
     g.drawString(locale.time(new Date(), 1), 2, h1 + 6);
   }
-  now = Math.round(new Date().getTime() / 1000);
+  //now = Math.round(new Date().getTime() / 1000);
 
   // date & dow
   g.setFontRobotoRegular21();
@@ -171,6 +170,7 @@ let getCircleIconColor = function(index, color, percent) {
   }
 }
 
+/*
 let drawEmpty = function(img, w, color) {
   drawGauge(w, h3, 0, color);
   drawInnerCircleAndTriangle(w);
@@ -179,6 +179,7 @@ let drawEmpty = function(img, w, color) {
     g.setColor(getGradientColor(color, 0))
       .drawImage(img, w - iconOffset, h3 + radiusOuter - iconOffset, {scale: 16/24});
 }
+*/
 
 let drawCircle = function(index, item, data, clkmenu) {
   var w = circlePosX[index-1];

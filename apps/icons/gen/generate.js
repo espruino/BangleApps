@@ -16,7 +16,7 @@ const imgOptions = {
 var PNG = require('png-js');
 var IMAGE_BYTES = 76;
 
-var iconTests = [];
+//var iconTests = [];
 
 var promises = [];
 

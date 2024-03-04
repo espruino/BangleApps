@@ -10,7 +10,7 @@ getFL = () => (44330 * (1.0 - Math.pow(pressure/1013.25, 0.1903))).toFixed(0);
 getTimeString = () => (settings.localTime) ? (require("locale").time(Date(),1)):(Date().toUTCString().slice(Date().toUTCString().length-12,Date().toUTCString().length-7));
 
 var fg=g.getColor();
-var bg=g.getBgColor();
+//var bg=g.getBgColor();
 var red="#F00",green="#0F0";
 
 const unitsRoc=[
@@ -40,11 +40,13 @@ const unitsAlt=[
   {name:"m", factor:1, precision:0, layoutCode:{type:"txt", font:"12%", halign:0, filly:0, label:"m"}},
   {name:"ft", factor:3.280839895013123, precision:0, layoutCode:{type:"txt", font:"12%", halign:0, filly:0, label:"ft"}}
   ];
+/*
 const unitROC={type:"v", halign:1, c: [
             {type:"txt", font:"12%", halign:0, filly:0, label:"m"},
             {type:"", height:1,width:"20", bgCol:fg},
             {type:"txt", font:"12%", halign:0, filly:0, label:"s"}
           ]};
+*/
 
 const ground=0, flying=1, landed=2, maybeFlying=3, maybeLanded=4;
 
@@ -65,7 +67,7 @@ var altH = [];
 var altRaw=-9999, altFast=0, altSlow=0;
 var fastGain=0.5, slowGain=0.3;
 var roc=0,rocAvg=0, gs;
-var lastPressure = Date.now();
+//var lastPressure = Date.now();
 var pressure = 1000;
 var state=ground;
 var takeoffTime=0, landingTime=0, flyingTime;
@@ -224,7 +226,7 @@ function initPFD() {
 }
 
 function initAltMenu() {
-  var oldQnh=qnh;
+  //var oldQnh=qnh;
   function updateAltMenu() {
     altMenu.clear();
     altMenu.alt.label=

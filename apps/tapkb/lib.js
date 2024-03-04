@@ -119,7 +119,6 @@ g.clear();
 renderKeys();
 
 var drag;
-var e;
 
 return new Promise((resolve,reject) => {
 
