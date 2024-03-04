@@ -7,13 +7,12 @@
         height: 100%; /* e.g. day <select> */
       }
 
-      #events > tr.event-row > td:last-child,
-      #events > tr.event-row > td:first-child {
+      .single-row {
         /* no border between single rowspans, 1st & $th */
         border-bottom: none;
       }
 
-      #events > tr:nth-child(2n) > td:nth-child(2) {
+      .btn-center {
         justify-content: center;
         display: flex;
       }
@@ -138,10 +137,10 @@ function renderAlarm(alarm, exists) {
   const tr2 = document.createElement('tr');
   tr.classList.add('event-row');
   tr.dataset.uid = alarm.id;
+
   const tdType = document.createElement('td');
   tdType.type = "text";
   tdType.classList.add('event-summary');
-  tr.appendChild(tdType); tdType.rowSpan = 1;
   const inputTime = document.createElement('input');
   if (localDate) {
     tdType.textContent = "Event";
@@ -181,11 +180,9 @@ function renderAlarm(alarm, exists) {
   inputTime.classList.add('form-input');
   inputTime.dataset.uid = alarm.id;
   const tdTime = document.createElement('td');
-  tr2.appendChild(tdTime); tdTime.rowSpan = 1;
   tdTime.appendChild(inputTime);
 
   const tdDays = document.createElement('td');
-  tr.appendChild(tdDays); tdDays.rowSpan = 2;
   const selectDays = document.createElement('select');
   selectDays.multiple = true;
   selectDays.classList.add('form-input', 'multi-select');
@@ -207,7 +204,6 @@ function renderAlarm(alarm, exists) {
   tdDays.appendChild(selectDays);
 
   const tdSummary = document.createElement('td');
-  tr.appendChild(tdSummary); tdSummary.rowSpan = 1; tdSummary.colSpan = 2;
   const inputSummary = document.createElement('input');
   inputSummary.type = "text";
   inputSummary.classList.add('event-summary');
@@ -224,9 +220,8 @@ function renderAlarm(alarm, exists) {
   inputSummary.onchange();
 
   const tdOptions = document.createElement('td');
-  tr2.appendChild(tdOptions); tdOptions.rowSpan = 1;
-
   const onOffCheck = document.createElement('input');
+  tdOptions.classList.add('btn-center');
   onOffCheck.type = 'checkbox';
   onOffCheck.checked = alarm.on;
   onOffCheck.onchange = e => {
@@ -242,8 +237,6 @@ function renderAlarm(alarm, exists) {
   tdOptions.appendChild(onOff);
 
   const tdInfo = document.createElement('td');
-  tr2.appendChild(tdInfo); tdInfo.rowSpan = 1;
-
   const buttonDelete = document.createElement('button');
   buttonDelete.classList.add('btn');
   buttonDelete.classList.add('btn-action');
@@ -257,6 +250,13 @@ function renderAlarm(alarm, exists) {
     document.getElementById('events').removeChild(tr);
     document.getElementById('events').removeChild(tr2);
   });
+
+  tr.appendChild(tdType); tdType.classList.add('single-row');
+  tr.appendChild(tdOptions); tdType.classList.add('single-row');
+  tr.appendChild(tdInfo); tdType.classList.add('single-row');
+  tr2.appendChild(tdTime); tdTime.colSpan = 3;
+  tr.appendChild(tdDays); tdDays.rowSpan = 2;
+  tr.appendChild(tdSummary); tdType.classList.add('single-row');
 
   document.getElementById('events').appendChild(tr);
   document.getElementById('events').appendChild(tr2);
