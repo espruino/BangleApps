@@ -1,9 +1,14 @@
-{
+const lintExemptions = require("./lint_exemptions.js");
+
+module.exports = {
     "env": {
         // TODO: "espruino": false
         // TODO: "banglejs": false
     },
     "extends": "eslint:recommended",
+    "plugins": [
+        
+    ],
     "globals": {
         // Methods and Fields at https://banglejs.com/reference
         "Array": "readonly",
@@ -157,5 +162,11 @@
         "no-unused-vars": ["warn", { "args": "none" } ],
         "no-useless-escape": "off",
         "no-control-regex" : "off"
-    }
+    },
+    overrides: [
+        ...Object.entries(lintExemptions).map(([filePath, {rules}]) => ({
+            files: [filePath],
+            rules: Object.fromEntries(rules.map(rule => [rule, "off"])),
+        })),
+    ],
 }
