@@ -1,0 +1,23 @@
+{
+  "name": "eslint-plugin-espruino",
+  "version": "0.0.1",
+  "description": "Eslint configurations for the Espruino ecosystem",
+  "repository": "https://github.com/espruino/eslint-plugin-espruino",
+  "keywords": [
+    "espruino",
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin"
+  ],
+  "author": "Gordon Williams <gw@pur3.co.uk> (http://espruino.com)",
+  "main": "./lib/index.js",
+  "exports": "./lib/index.js",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-eslint-plugin": "^5.4.0"
+  },
+  "license": "MIT"
+}
