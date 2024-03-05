@@ -315,7 +315,17 @@
   // Message response
   Bangle.messageResponse = (msg,response) => {
     if (msg.id=="call") return gbSend({ t: "call", n:response?"ACCEPT":"REJECT" });
-    if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
+    if (isFinite(msg.id)) {
+      return ()=>{
+        gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
+        // Wake the android device - if paired as Companion Device it will bypass keyguard and display the associated app screen directly.
+        gbSend({t:"intent", action:"android.intent.action.VIEW",
+          package:"gadgetbridge", class:"nodomain.freeyourgadget.gadgetbridge.activities.WakeActivity",
+          categories:["android.intent.category.DEFAULT"], target:"activity",
+          flags:["FLAG_ACTIVITY_NEW_TASK", "FLAG_ACTIVITY_CLEAR_TASK", "FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS", "FLAG_ACTIVITY_NO_ANIMATION"]
+        });
+      }();
+    }
     // error/warn here?
   };
   Bangle.messageIgnore = msg => {
