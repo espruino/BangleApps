@@ -1,6 +1,6 @@
 const FIELD_WIDTH = [11, 11, 15]; // for each phase
 const FIELD_HEIGHT = FIELD_WIDTH;
-const FIELD_LINE_WIDTH = 2;
+//const FIELD_LINE_WIDTH = 2;
 const FIELD_MARGIN = 2;
 const FIELD_COUNT_X = 10;
 const FIELD_COUNT_Y = FIELD_COUNT_X;

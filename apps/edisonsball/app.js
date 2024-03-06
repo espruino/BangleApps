@@ -104,10 +104,10 @@ function getStandardDeviation (array) {
 }
 
 function checkHR() {
-  var bpm = currentBPM, isCurrent = true;
+  var bpm = currentBPM; //isCurrent = true;
   if (bpm===undefined) {
     bpm = lastBPM;
-    isCurrent = false;
+    //isCurrent = false;
   }
   if (bpm===undefined || bpm < lower_limit_BPM || bpm > upper_limit_BPM)
      bpm = "--";

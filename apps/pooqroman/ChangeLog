@@ -2,3 +2,4 @@
 0.02: Make internal menu time out + small fixes.
 0.03: Autolight feature.
 0.04: Added adjustment for Bangle.js magnetometer heading fix
+0.05: Minor code improvements

@@ -44,7 +44,7 @@ exports.input = function(options) {
   function displayText(hideMarker) {
     layout.clear(layout.text);
 
-    let charsBeforeCursor = textIndex;
+    //let charsBeforeCursor = textIndex;
     let charsAfterCursor = Math.min(text.length - textIndex, (textWidth)/2);
     
 

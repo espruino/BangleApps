@@ -57,7 +57,7 @@ function drawWordClock() {
   var h = t.getHours();
   var m = t.getMinutes();
   var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
-  var day = t.getDay();
+  //var day = t.getDay();
 
   var hidx;
 

@@ -4,3 +4,4 @@
 0.04: Fixed a bug, doesn't run while display's on now 2021-01-18
 0.05: Fixed a bug, doesn't count the time it was asleep when calculating the update time 2021-01-19
 0.06: Use Bangle.set UI, change to unminified upload to ensure this works ok on Bangle.js
+0.07: Minor code improvements

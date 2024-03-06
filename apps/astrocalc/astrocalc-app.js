@@ -10,7 +10,6 @@
  */
 
 const SunCalc = require("suncalc"); // from modules folder
-const storage = require("Storage");
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
@@ -52,7 +51,7 @@ function drawTitle(key) {
   const x = 0;
   const x2 = g.getWidth() - 1;
   const y = fontHeight + 26;
-  const y2 = g.getHeight() - 1;
+  //const y2 = g.getHeight() - 1;
   const title = titlizeKey(key);
 
   g.setFont("6x8", 2);

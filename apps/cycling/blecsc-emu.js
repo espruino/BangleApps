@@ -1,5 +1,5 @@
 // UUID of the Bluetooth CSC Service
-const SERVICE_UUID = "1816";
+//const SERVICE_UUID = "1816";
 // UUID of the CSC measurement characteristic
 const MEASUREMENT_UUID = "2a5b";
 

@@ -1,3 +1,4 @@
 0.01: Submitted to App Loader
 0.02: Removed unneded code, added HID controlls thanks to t0m1o1 for his code :p
 0.03: Load widgets after Bangle.setUI to ensure widgets know if they're on a clock or not (fix #970)
+0.04: Minor code improvements

@@ -16,7 +16,6 @@ const imgOptions = {
 var PNG = require('png-js');
 var IMAGE_BYTES = 76;
 
-var iconTests = [];
 var iconImages = []; // array of converted icons
 var iconIndices = {}; // maps filename -> index in iconImages
 

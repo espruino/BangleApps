@@ -1,11 +1,6 @@
 var d = require("dane_arwes");
 var Arwes = d.default();
 
-const yOffset = 23;
-const width = g.getWidth();
-const height = g.getHeight();
-const xyCenter = width / 2 + 4;
-
 const Storage = require("Storage");
 const filename = 'dane_tcr.json';
 let settings = Storage.readJSON(filename,1) || {

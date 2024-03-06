@@ -496,7 +496,6 @@ let lcdBuffer = 0,
 let locked = false;
 let charging = false;
 let stopped = true;
-let interval = 30;
 let timeout;
 
 function setupInterval(force) {
@@ -596,7 +595,6 @@ function init() {
     sintable[i] = Math.sin((i * Math.PI * 0.5) / sintable.length) * ((1 << 8) - 1);
 
   // setup nodes
-  let o = 0;
   for (let i = 0; i < nodeCount; ++i) {
     nodes[i] = {
       rx: 0,

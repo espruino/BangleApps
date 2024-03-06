@@ -8,7 +8,7 @@
  var v_str_version='v0.06'; //testing purpose
  
  var x_max_screen=g.getWidth();//240;
- var y_max_screen=g.getHeight(); //240; 
+ //var y_max_screen=g.getHeight(); //240; 
  var y_wg_bottom=g.getHeight()-25;
  var y_wg_top=25; 
  if (v_model=='BANGLEJS') {

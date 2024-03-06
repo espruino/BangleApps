@@ -2,7 +2,7 @@
   "id": "cliclockJS2Enhanced",
   "name": "Commandline-Clock JS2 Enhanced",
   "shortName": "CLI-Clock JS2",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Simple CLI-Styled Clock with enhancements. Modes that are hard to use and unneded are removed (BPM, battery info, memory ect) credit to hughbarney for the original code and design. Also added HID media controlls, just swipe on the clock face to controll the media! Gadgetbride support coming soon(hopefully) Thanks to t0m1o1 for media controls!",
   "icon": "app.png",
   "screenshots": [{"url":"screengrab.png"}],

@@ -31,7 +31,7 @@ if (g.getWidth() < 200) { // Bangle.js 2
   baseUnit3 = 7;
 }
 
-const widgetsHeight = 24;
+//const widgetsHeight = 24;
 const sbarWid = baseUnit3 * 5;
 const hbarHt = baseUnit1;
 const outRad = baseUnit1 * 5;

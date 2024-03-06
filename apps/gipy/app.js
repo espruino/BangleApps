@@ -18,7 +18,7 @@ let Y_OFFSET = 20;
 
 // some constants for screen types
 let MAP = 0;
-let HEIGHTS_ZOOMED_IN = 1;
+//let HEIGHTS_ZOOMED_IN = 1;
 let HEIGHTS_FULL = 2;
 
 let s = require("Storage");
@@ -1362,7 +1362,7 @@ class Point {
   }
 }
 
-let fake_gps_point = 0;
+//let fake_gps_point = 0;
 
 function drawMenu() {
   const menu = {

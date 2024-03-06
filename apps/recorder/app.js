@@ -31,7 +31,6 @@ function updateSettings() {
 }
 
 function getTrackNumber(filename) {
-  var trackNum = 0;
   var matches = filename.match(/^recorder\.log(.*)\.csv$/);
   if (matches) return matches[1];
   return 0;
@@ -244,7 +243,6 @@ function plotTrack(info) { "ram"
   E.showMessage(/*LANG*/"Drawing...",/*LANG*/"Track "+info.fn);
   g.flip(); // on buffered screens, draw a not saying we're busy
   g.clear(1);
-  var s = require("Storage");
   var G = g;
   var W = g.getWidth();
   var H = g.getHeight();
@@ -326,7 +324,7 @@ function plotGraph(info, style) { "ram"
   var infc = new Uint16Array(80);
   var title;
   var lt = 0; // last time
-  var tn = 0; // count for each time period
+  //var tn = 0; // count for each time period
   var strt, dur = info.duration;
   var f = require("Storage").open(filename,"r");
   if (f===undefined) return;
@@ -416,7 +414,7 @@ function plotGraph(info, style) { "ram"
   }
   // draw
   g.clear(1).setFont("6x8",1);
-  var r = require("graph").drawLine(g, infn, {
+  require("graph").drawLine(g, infn, {
     x:4,y:24,
     width: g.getWidth()-24,
     height: g.getHeight()-(24+8),

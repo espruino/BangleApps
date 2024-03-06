@@ -2,3 +2,4 @@
 0.02: Merge waypoint_editor here, so waypoints can be edited on device, too.
 0.03: Do not register as type waypoint - show in launcher
       Fixes for Bangle.js 1 & not installed textinput
+0.04: Minor code improvements

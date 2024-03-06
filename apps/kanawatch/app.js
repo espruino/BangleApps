@@ -1,6 +1,6 @@
-const stripe_width = 32;
-const stripe_pos = 40;
-const stripe2_pos = 110;
+//const stripe_width = 32;
+//const stripe_pos = 40;
+//const stripe2_pos = 110;
 const h = g.getHeight();
 const w = g.getWidth();
 const decompress = require("heatshrink").decompress;
@@ -143,7 +143,6 @@ const keys = [
   "WA","WO","YO","YU","N",
  ];
 let kana = katakana.KA;
-let scroll = 0;
 // const keys = Object.keys(katakana).sort();
 // console.log(keys);
 let hiramode = false;

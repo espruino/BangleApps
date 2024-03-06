@@ -282,7 +282,7 @@ function drawWidgeds() {
   //print(BluetoothDevice.connected);
   var x1Bt = 160;
   var y1Bt = 0;
-  var x2Bt = x1Bt + 30;
+  //var x2Bt = x1Bt + 30;
   var y2Bt = y2Bt;
 
   if (NRF.getSecurityStatus().connected)
@@ -391,4 +391,4 @@ Bangle.on('lock', function(on) {
 
 SetFull(Bangle.isLocked());
 
-var secondInterval = setInterval(draw, 1000);
+/*var secondInterval =*/ setInterval(draw, 1000);

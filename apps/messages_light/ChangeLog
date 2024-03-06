@@ -9,3 +9,4 @@
 1.5: Fix graphic bug; View via popup while there are other open apps
 1.6: fix for #2689; ( white screen )
 1.7: Fix removal notification from the list of current notifications
+1.08: Minor code improvements

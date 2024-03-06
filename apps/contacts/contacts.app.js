@@ -2,8 +2,8 @@
 
 var Layout = require("Layout");
 
-const W = g.getWidth();
-const H = g.getHeight();
+//const W = g.getWidth();
+//const H = g.getHeight();
 
 var wp = require('Storage').readJSON("contacts.json", true) || [];
 // Use this with corrupted contacts
@@ -131,7 +131,6 @@ function removeCard() {
 }
 
 function askPosition(callback) {
-  let full = "";
   showNumpad("dddDDDddd", "", function() {
     callback(key, "");
   });

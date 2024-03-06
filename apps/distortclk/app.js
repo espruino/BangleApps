@@ -26,7 +26,7 @@ function time() {
   var d = new Date();
   var day = d.getDate();
   var time = require("locale").time(d,1);
-  var date = require("locale").date(d);
+  //var date = require("locale").date(d);
   var mo = require("date_utils").month(d.getMonth()+1,0);
 
   g.setFontAlign(0,0);

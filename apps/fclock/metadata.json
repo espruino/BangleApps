@@ -2,7 +2,7 @@
   "id": "fclock",
   "name": "fclock",
   "shortName": "F Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Simple design of a digital clock",
   "icon": "app.png",
   "type": "clock",

@@ -112,8 +112,8 @@ function read_compass() {
 
 /***** END Compass ***********/
 
-var speed = 0;
-var satellites = 0;
+//var speed = 0;
+//var satellites = 0;
 var wp;
 var dist=0;
 
@@ -190,9 +190,9 @@ var savedfix;
 
 function onGPS(fix) {
   savedfix = fix;
-  if (fix!==undefined){
+  /*if (fix!==undefined){
     satellites = fix.satellites;
-  }
+  }*/
 
   if (candraw) {
     if (fix!==undefined && fix.fix==1){

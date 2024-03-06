@@ -625,7 +625,6 @@ let lcdBuffer = 0,
 let locked = false;
 let charging = false;
 let stopped = true;
-let interval = 30;
 let timeout;
 
 function setupInterval(force) {

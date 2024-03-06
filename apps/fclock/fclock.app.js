@@ -2,7 +2,7 @@ var minutes;
 var seconds;
 var hours;
 var date;
-var first = true;
+//var first = true;
 var locale = require('locale');
 var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
