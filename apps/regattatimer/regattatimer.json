@@ -1,0 +1,8 @@
+{
+    "debug": false,
+    "buzzer": true,
+    "dial": "Numeric",
+    "gps": true,
+    "record": false,
+    "theme": "Dark"
+}
