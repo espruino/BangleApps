@@ -327,9 +327,9 @@ if(regattatimer.settings.gps) {
 Bangle.on('kill', function() {
   Bangle.setLCDPower(0);
   Bangle.setLCDTimeout(10);
-
+  /*
   if(regattatimer.settings.gps) {
     Bangle.setGPSPower(0);
   }
+  */
 });
-
