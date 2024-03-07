@@ -158,11 +158,12 @@ if (sleeplog.conf.enabled) {
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
 
       // add preliminary status depending on charging and movement thresholds
+      // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
       data.status = Bangle.isCharging() ? 1 :
         data.movement <= sleeplog.conf.deepTh ? 4 :
         data.movement <= sleeplog.conf.lightTh ? 3 : 2;
 
-      // check if changing to deep sleep from non sleepling
+      // check if changing to deep sleep from non sleeping
       if (data.status === 4 && sleeplog.status <= 2) {
         // check wearing status
         sleeplog.checkIsWearing((isWearing, data) => {
