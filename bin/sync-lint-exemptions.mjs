@@ -11,6 +11,9 @@
 
 import fs from "node:fs/promises";
 
+// Nodejs v18 compatibility (v18 is end-of-life in april 2025)
+if(!("crypto" in globalThis)) globalThis.crypto = (await import("node:crypto")).webcrypto;
+
 const exemptionsFilePath = "../apps/lint_exemptions.js";
 
 const exemptions = (await import(exemptionsFilePath)).default;
