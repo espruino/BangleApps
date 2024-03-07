@@ -16,6 +16,9 @@
 
 import fs from "node:fs/promises";
 
+// Nodejs v18 compatibility (v18 is end-of-life in april 2025)
+if(!("crypto" in globalThis)) globalThis.crypto = (await import("node:crypto")).webcrypto;
+
 const lintRule = process.argv[2];
 if (!lintRule) {
   throw new Error(
