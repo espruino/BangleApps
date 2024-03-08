@@ -4,7 +4,7 @@
 
     storage = require("Storage"),
 
-    dials = ["Numeric", "Discs"],
+    //dials = ["Numeric", "Discs"],
 
     themes = ["Light", "Dark"],
 
