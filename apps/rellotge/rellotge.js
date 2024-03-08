@@ -4,14 +4,11 @@
 
   const timeFontSize = 1;
   const dateFontSize = 2;
-  const gmtFontSize = 10;
   const font = "12x20";
 
   const xyCenter = g.getWidth() /9;
   const yposTime = 55;
   const yposDate = 130;
-  const yposYear = 175;
-  const yposGMT = 220;
   const leshores = ["Les dotze","La una","Les dues","les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
   const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
 
@@ -19,15 +16,12 @@
     g.clearRect(Bangle.appRect);
     // get date
     var d = new Date();
-    var da = d.toString().split(" ");
     var m = d.getMinutes();
 
     // drawSting centered
     g.setFontAlign(-1, 0);
 
     // draw time
-    var time = da[4].substr(0, 5);
-    var hora = time.split(":");
     if (m >= 0 && m < 2) {
       t = leshores[d.getHours()] + "\r\nen punt";
     } else if (m >= 2 && m < 5) {
@@ -80,16 +74,12 @@
     g.setFont(font, timeFontSize);
     g.drawString(t, xyCenter, yposTime, true);
 
-    // draw Day, name of month, Date
-    var date = [da[0], da[1], da[2]].join(" ");
-    g.setFont(font, dateFontSize);
-    
+    // draw Hours
+    g.setFont(font, dateFontSize);    
     var mu = "";
     if (m < 10) {mu = "0"+m;} else {mu = m;}
 
     g.drawString(d.getHours()+":"+mu, xyCenter, yposDate, true);
-
-
   }
 
   // handle switch display on by pressing BTN1
