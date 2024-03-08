@@ -1,0 +1,4 @@
+0.1: Llançament inicial
+0.2: Esmenat problema amb les hores passada l'hora en punt (apareixia l'hora anterior)
+0.3: Redisseny de l'aplicatiu, text alineat a l'esquerra, font canviada, treiem dades innecessàries
+0.4: Afegits suggeriments de l'usuari @bobrippling al codi
