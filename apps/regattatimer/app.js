@@ -3,7 +3,6 @@
  */
 const Layout = require("Layout");
 const locale = require("locale").name == "system" ? "en" : require("locale").name.substring(0, 2);
-const hs = require("heatshrink");
 
 // "Anton" bold font
 Graphics.prototype.setFontAnton = function(scale) {
