@@ -154,8 +154,7 @@ module.exports = {
         "no-unreachable": "warn",
         "no-cond-assign": "warn",
         "no-useless-catch": "warn",
-        // TODO: "no-undef": "warn",
-        "no-undef": "off",
+        "no-undef": "warn",
         "no-unused-vars": ["warn", { "args": "none" } ],
         "no-useless-escape": "off",
         "no-control-regex" : "off"
