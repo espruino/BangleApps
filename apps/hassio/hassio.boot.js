@@ -117,7 +117,7 @@ const runHassio = () => {
 
     log();
   }
-}
+};
 
 (function () {
   if (!hassioRunning) {
