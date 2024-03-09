@@ -106,10 +106,12 @@ const runHassio = () => {
 
     const log = () => {
       Bangle.setCompassPower(true, "hassio");
+      Bangle.setHRMPower(true, "hassio");
 
       setTimeout(() => {
         updateSensor();
         Bangle.setCompassPower(false, "hassio");
+        Bangle.setHRMPower(false, "hassio");
       }, 30 * 1000);
     };
 
