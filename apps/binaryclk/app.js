@@ -63,7 +63,7 @@ function draw() {
 
 g.clear();
 draw();
-var secondInterval = setInterval(draw, 60000);
+/*var secondInterval =*/ setInterval(draw, 60000);
 Bangle.setUI("clock");
 if (!settings.fullscreen) {
 	Bangle.loadWidgets();

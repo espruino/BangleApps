@@ -29,10 +29,10 @@ const BLACK=0
 const Locale = require("locale");
 const widget_utils = require('widget_utils');
 
-var fontSmall = "6x8";
+//var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+//var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 
 var CARDS = require("Storage").readJSON("android.cards.json",true)||[];
 var settings = require("Storage").readJSON("cards.settings.json",true)||{};
@@ -152,8 +152,6 @@ function showCard(card) {
   //var lines = [];
   if (card.name) lines = g.wrapString(card.name, g.getWidth()-10);
   var titleCnt = lines.length;
-  var start = getDate(card.expiration);
-  var includeDay = true;
   lines = lines.concat("", /*LANG*/"View code");
   var valueLine = lines.length - 1;
   if (card.expiration)

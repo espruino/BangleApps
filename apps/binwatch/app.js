@@ -63,8 +63,8 @@ const V2_BAT_SIZE_Y = 2;
 const V2_SCREEN_SIZE_X = 176;
 const V2_SCREEN_SIZE_Y = 176;
 const V2_BACKGROUND_IMAGE = "binwatch.bg176.img";
-const V2_BG_COLOR = 0;
-const V2_FG_COLOR = 1;
+//const V2_BG_COLOR = 0;
+//const V2_FG_COLOR = 1;
 
 /* Bangle 1: 240 x 240 */
 
@@ -91,15 +91,15 @@ const V1_BAT_SIZE_Y = 5;
 const V1_SCREEN_SIZE_X = 240;
 const V1_SCREEN_SIZE_Y = 240;
 const V1_BACKGROUND_IMAGE = "binwatch.bg240.img";
-const V1_BG_COLOR = 1;
-const V1_FG_COLOR = 0;
+//const V1_BG_COLOR = 1;
+//const V1_FG_COLOR = 0;
 
 /* runtime settings */
 
 var x_step = 0;
 var y_step = 0;
 
-var time_y_offset = 0;
+//var time_y_offset = 0;
 var hx = 0, hy = 0;
 var mx = 0, my = 0;
 var sx = 0, sy = 0;
@@ -110,10 +110,9 @@ var bat_pos_x, bat_pos_y, bat_size_x, bat_size_y;
 var backgroundImage = "";
 var screen_size_x = 0;
 var screen_size_y = 0;
-var bg_color = 0;
-var fg_color = 1;
+//var bg_color = 0;
+//var fg_color = 1;
 
-/* global variables */
 
 var showDateTime = 2;    /* show noting, time or date */
 var cg;
@@ -271,7 +270,7 @@ function setRuntimeValues(resolution) {
     x_step = V1_X_STEP;
     y_step = V1_Y_STEP;
 
-    time_y_offset = V1_TIME_Y_OFFSET;
+    //time_y_offset = V1_TIME_Y_OFFSET;
     hx = V1_HX;
     hy = V1_HY;
     mx = V1_MX;
@@ -298,7 +297,7 @@ function setRuntimeValues(resolution) {
     x_step = V2_X_STEP;
     y_step = V2_Y_STEP;
 
-    time_y_offset = V2_TIME_Y_OFFSET;
+    //time_y_offset = V2_TIME_Y_OFFSET;
 
     hx = V2_HX;
     hy = V2_HY;

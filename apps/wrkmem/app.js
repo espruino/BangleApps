@@ -14,7 +14,7 @@ const savedData     = {
 Object.assign(savedData, require("Storage")
 .readJSON(localTaskFile, true) || {});
 
-let currentMenu;
+//let currentMenu;
 
 const allTasks = savedData.tasks;
 const SWIPE    = {
@@ -365,7 +365,7 @@ function setMenu(menu) {
   save();
   g.reset();
   g.clearRect(Bangle.appRect);
-  currentMenu = menu;
+  //currentMenu = menu;
   menu.render();
   menu.setUI();
   Bangle.drawWidgets();

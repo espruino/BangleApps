@@ -45,7 +45,7 @@ var booster = { x : g.getWidth()/4 + Math.random()*g.getWidth()/2,
 
 var exploded = false;
 var nExplosions = 0;
-var landed = false;
+//var landed = false;
 var lightning = 0;
 
 var settings = require("Storage").readJSON('f9settings.json', 1) || {};

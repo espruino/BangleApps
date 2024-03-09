@@ -81,7 +81,7 @@
       };
     for(var circleId=1; circleId<=4; ++circleId) {
       const circleName = "circle" + circleId;
-      const colorKey = circleName + "color";
+      //const colorKey = circleName + "color";
       const colorizeIconKey = circleName + "colorizeIcon";
       menu[/*LANG*/'circle ' + circleId] = {
         value: settings[colorizeIconKey] || false,

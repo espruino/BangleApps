@@ -3,7 +3,7 @@
     "name": "RPN Scientific Calculator",
     "shortName": "Calculator",
     "icon": "icon.png",
-    "version": "0.03",
+    "version": "0.04",
     "description": "RPN scientific calculator with memory function.",
     "tags": "",
     "supports": [

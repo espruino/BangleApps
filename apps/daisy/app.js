@@ -1,6 +1,4 @@
 var SunCalc = require("suncalc"); // from modules folder
-const storage = require('Storage');
-const locale = require("locale");
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
 const LOCATION_FILE = "mylocation.json";
@@ -196,9 +194,9 @@ function draw() {
 
 function drawClock() {
   var date = new Date();
-  var timeStr = require("locale").time(date,1);
+  //var timeStr = require("locale").time(date,1);
   var da = date.toString().split(" ");
-  var time = da[4].substr(0,5);
+  //var time = da[4].substr(0,5);
   var hh = da[4].substr(0,2);
   var mm = da[4].substr(3,2);
   var steps = getSteps();

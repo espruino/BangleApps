@@ -125,7 +125,7 @@ function formatDate(res,dateFormat){
 }
 
 function writeDozTime(text,def){
-  let pts = def.pts;
+  //let pts = def.pts;
   let x=def.pt0[0];
   let y=def.pt0[1];
   g_t.clear();
@@ -141,7 +141,7 @@ function writeDozTime(text,def){
 function writeDozDate(text,def,colour){
   
   dateColour = colour;
-  let pts = def.pts;
+  //let pts = def.pts;
   let x=def.pt0[0];
   let y=def.pt0[1];
   g_d.clear();
@@ -174,7 +174,7 @@ function drawTime()
     x =
     10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
     let msg = "00000"+Math.floor(x).toString(12);
-    let time = msg.substr(-5,3)+"."+msg.substr(-2);
+    let time = msg.substr(-5,3)+"."+msg.substr(-2); //TODO: should `time` and `wait` have been defined outside the if block?
     let wait = 347*(1-(x%1));
     timeDef = time6;
   } else {

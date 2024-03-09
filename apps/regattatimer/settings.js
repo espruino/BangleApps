@@ -1,13 +1,9 @@
 (function(back) {
   var
     file = "regattatimer.json",
-
     storage = require("Storage"),
-
-    dials = ["Numeric", "Discs"],
-
+    /*dials = ["Numeric", "Discs"],*/
     themes = ["Light", "Dark"],
-
     settings = Object.assign({
       "debug": false,
       "buzzer": true,

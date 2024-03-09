@@ -20,3 +20,4 @@
 0.17: Use default Bangle formatter for booleans
 0.18: fix idle option always getting defaulted to true
 0.19: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.20: Minor code improvements

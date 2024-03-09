@@ -1,7 +1,6 @@
 // basic shapes
 const SPACE = 0;
 const WALL = 1;
-const PLAYER = 2;
 const BOX = 3;
 const HOLE = 4;
 const FILLED = 5;

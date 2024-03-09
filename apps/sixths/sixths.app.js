@@ -519,7 +519,7 @@ function draw() {
 
   every(now);
 
-  let km = 0.001 * 0.719 * Bangle.getHealthStatus("day").steps;
+  //let km = 0.001 * 0.719 * Bangle.getHealthStatus("day").steps;
 
   g.setFontAlign(-1, 1);
   g.setFont('Vector', 26);

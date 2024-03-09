@@ -166,17 +166,17 @@ var playerCarRightX;
 var playerCarFrontY;
 
 var playerCarFrontY;
-var playerCarBackY;
+//var playerCarBackY;
 var playerCarLeftX;
 var playerCarRightX;
 
 var enemyCarFrontY;
-var enemyCarBackY;
+//var enemyCarBackY;
 var enemyCarLeftX;
 var enemyCarRightX;
 
 var enemyCarFrontY2;
-var enemyCarBackY2;
+//var enemyCarBackY2;
 var enemyCarLeftX2;
 var enemyCarRightX2;
 
@@ -237,17 +237,17 @@ function draw(){
     }
 
     playerCarFrontY = playerCarCenterY-carHeight/2;
-    playerCarBackY = playerCarCenterY+carHeight/2;
+    //playerCarBackY = playerCarCenterY+carHeight/2;
     playerCarLeftX = playerCarCenterX-carWidth/2;
     playerCarRightX = playerCarCenterX+carWidth/2;
 
     enemyCarFrontY = enemyPositonCenterY+carHeight/2;
-    enemyCarBackY = enemyPositonCenterY-carHeight/2;
+    //enemyCarBackY = enemyPositonCenterY-carHeight/2;
     enemyCarLeftX = enemyPositonCenterX-carWidth/2;
     enemyCarRightX = enemyPositonCenterX+carWidth/2;
 
     enemyCarFrontY2 = enemyPositonCenterY2+carHeight/2;
-    enemyCarBackY2 = enemyPositonCenterY2-carHeight/2;
+    //enemyCarBackY2 = enemyPositonCenterY2-carHeight/2;
     enemyCarLeftX2 = enemyPositonCenterX2-carWidth/2;
     enemyCarRightX2 = enemyPositonCenterX2+carWidth/2;
 

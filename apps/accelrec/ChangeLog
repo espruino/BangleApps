@@ -3,3 +3,4 @@
       Calculate the time moving in graph display
       Trigger on 1.04g now, and record 10 samples before trigger
 0.03: Bangle.js 2 compatibility
+0.04: Minor code improvements

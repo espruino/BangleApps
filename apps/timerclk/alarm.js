@@ -18,7 +18,7 @@ var editIndex = 0;
 var drawInterval;
 var drawIntervalTimeout;
 var buttons;
-var dragBorderHrsMins=0, dragBorderMinsSecs=0;
+//var dragBorderHrsMins=0, dragBorderMinsSecs=0;
 
 function update() {
   if (drawInterval) clearInterval(drawInterval);
@@ -103,8 +103,8 @@ function draw() {
   else if (editIndex == 1) x = start + g.stringMetrics(timeStr[0]+":"+timeStr[1]+":"+timeStr[2]).width - markerPosChange;
   else x = 0;
   if (x) g.drawString("__", x, y);
-  dragBorderHrsMins = start+g.stringMetrics(timeStr[0]).width+g.stringMetrics(":").width/2;
-  dragBorderMinsSecs = start+g.stringMetrics(timeStr[0]+":"+timeStr[1]).width+g.stringMetrics(":").width/2;
+  //dragBorderHrsMins = start+g.stringMetrics(timeStr[0]).width+g.stringMetrics(":").width/2;
+  //dragBorderMinsSecs = start+g.stringMetrics(timeStr[0]+":"+timeStr[1]).width+g.stringMetrics(":").width/2;
 }
 
 if (all.length == 0) {

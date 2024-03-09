@@ -4,3 +4,4 @@
 0.04: setUI, different screen sizes
 0.05: Now update *on* the minute rather than every 15 secs
       Fix rendering of single extra timezone on Bangle.js 2
+0.06: Minor code improvements

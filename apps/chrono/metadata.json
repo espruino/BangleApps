@@ -2,7 +2,7 @@
   "id": "chrono",
   "name": "Chrono",
   "shortName": "Chrono",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Single click BTN1 to add 5 minutes. Single click BTN2 to add 30 seconds. Single click BTN3 to add 5 seconds. Tap to pause or play to timer. Double click BTN1 to reset. When timer finishes the watch vibrates.",
   "icon": "chrono.png",
   "tags": "tool",

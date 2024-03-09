@@ -203,8 +203,8 @@ function drawApp(lyricsLines, chordsDraw, scrollY, chordScrollX) {
 
 let currentScrollY = 0;
 let chordScrollX = 0;
-let currentChordScroll = 0;
-let lyricsHeight = 0;
+//let currentChordScroll = 0;
+//let lyricsHeight = 0;
 
 function main(song) {
   const lyrics = song.lyrics;
@@ -214,7 +214,7 @@ function main(song) {
   const R = Bangle.appRect;
   g.clear();
   drawApp(lyricsLines, chordsDraw, currentScrollY, chordScrollX);
-  lyricsHeight = g.stringMetrics(lyrics).height;
+  /*lyricsHeight =*/ g.stringMetrics(lyrics).height;
   Bangle.on('drag', (event) => {
     currentScrollY = Math.min(0, currentScrollY + event.dy);
     chordScrollX = Math.max(Math.min(0, chordScrollX + event.dx), -(song.chords.length*chordWidth - R.x2));

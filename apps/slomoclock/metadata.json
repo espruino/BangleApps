@@ -2,7 +2,7 @@
   "id": "slomoclock",
   "name": "SloMo Clock",
   "shortName": "SloMo Clock",
-  "version": "0.10",
+  "version": "0.11",
   "description": "Simple 24h clock face with large digits, hour above minute. Uses Layout library.",
   "icon": "watch.png",
   "type": "clock",

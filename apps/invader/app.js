@@ -28,8 +28,8 @@ var inv_fire_pause    = 30;
 var inv_fired         = false;  // invader fired state
 // - explode variables
 var been_hit          = false;  // invader hit state
-var bx                = -32;    // blast x
-var by                = -32;    // blast y
+//var bx                = -32;    // blast x
+//var by                = -32;    // blast y
 var blast_delay       = 15;     // invader blast delay - pause after explosion
 var boom_play         = false;
 
@@ -49,7 +49,7 @@ var explosion_play      = false;
 var score               = 0;     // starting score
 var lives               = 3;     // starting lives
 var game_state          = 0;     // game state - 0 = game not started, 1 = game running, 3 = game over
-var ang                 = 0.1;
+//var ang                 = 0.1;
 var start_been_pressed  = false; // stops double press on restart
 var fire_been_pressed   = false; // stops auto fire
 
@@ -186,8 +186,8 @@ function invader_hit() {
       blast_delay = 15;
       boom_play = false;
       been_hit = false;
-      bx = -32;                         // move boom off screen (following invader)
-      by = -32;
+      //bx = -32;                         // move boom off screen (following invader)
+      //by = -32;
       // generate a random rounded number between 10 and 142;
       inv_x = Math.floor(Math.random() * 142) + 10;
       inv_y = 20;                       // move invader back up after being hit

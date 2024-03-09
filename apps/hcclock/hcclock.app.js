@@ -70,7 +70,7 @@ const numbers =
 const months = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
 
 const interval = 1000; // in ms
-const top = 32;
+//const top = 32;
 
 let ampm = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 

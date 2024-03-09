@@ -247,7 +247,6 @@ g.setFont("6x8", 4);
 g.setColor("#FFF");
 var open = false;
 var timemode = true;
-var clockmode;
 var novaYPos = -7;
 Bangle.setUI("clock");
 g.clear();
@@ -263,7 +262,7 @@ g.drawImage(star(), 120, -5, {scale:0.8});
 
 
 
-var secondInterval = setInterval(function() {
+setInterval(function() {
   timedraw();
   g.drawImage(novaTopRedraw(), -10, novaYPos, {
     scale: 2.2

@@ -54,7 +54,7 @@ function Maze(n) {
     // Abort if BTN1 pressed [grace period for menu]
     // (for some reason setWatch() fails inside constructor)
     if (ngroups<n*n-16 && digitalRead(BTN1)) {
-      aborting = true;
+      //aborting = true;
       return;
     }
     from_group = to_group = -1;
@@ -243,7 +243,7 @@ function timeToText(t) { // Courtesy of stopwatch app
   return text;
 }
 
-let aborting = false;
+//let aborting = false;
 let start_time = 0;
 let duration = 0;
 let maze=null;
@@ -261,13 +261,13 @@ Bangle.drawWidgets();
 Bangle.setLocked(false);
 Bangle.setLCDTimeout(0);
 E.showMenu(mazeMenu);
-let maze_interval = setInterval(
+/*let maze_interval =*/ setInterval(
   function() {
     if (maze) {
       if (digitalRead(BTN1) || maze.status==STATUS_ABORTED) {
         maze = null;
         start_time = duration = 0;
-        aborting = false;
+        //aborting = false;
         setTimeout(function() {E.showMenu(mazeMenu); }, 100);
         return;
       }

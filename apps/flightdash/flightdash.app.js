@@ -13,7 +13,7 @@ const COLOUR_LIGHT_BLUE    = 0x841f;   // same as: g.setColor(0.5, 0.5, 1)
 const APP_NAME = 'flightdash';
 
 const horizontalCenter = g.getWidth() / 2;
-const verticalCenter = g.getHeight() / 2;
+//const verticalCenter = g.getHeight() / 2;
 
 const dataFontHeight = 22;
 const secondaryFontHeight = 18;
@@ -23,7 +23,7 @@ const labelFontHeight = 12;
 //globals
 var settings = {};
 
-var updateInterval;
+//var updateInterval;
 
 var speed = '-'; var speedPrev = -1;
 var track = '-'; var trackPrev = -1;

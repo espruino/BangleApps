@@ -2,7 +2,7 @@
 { "id": "homework",
   "name": "Homework",
   "shortName":"Homework",
-  "version":"0.10",
+  "version": "0.11",
   "description": "A simple app to manage homework",
   "icon": "app.png",
   "tags": "tool",

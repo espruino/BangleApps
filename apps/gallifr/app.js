@@ -3,7 +3,7 @@
 // Written May 2020 by Richard Hopkins
 // based on a skeleton app by Gordon Williams
 //
-const locale = require('locale');
+//const locale = require('locale');
 let timer = null;
 let currentDate = new Date();
 const cirRad = 2*Math.PI;

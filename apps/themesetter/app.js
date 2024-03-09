@@ -1,7 +1,7 @@
   let Layout = require('Layout');
 
   let ScreenWidth  = g.getWidth(),  halfWidth = ScreenWidth/2;
-  let ScreenHeight = g.getHeight();
+  //let ScreenHeight = g.getHeight();
 
   let normalizedColorSet = {
     black:g.toColor(0,0,0), white:  g.toColor(1,1,1),

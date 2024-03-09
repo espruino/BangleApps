@@ -1,7 +1,7 @@
 {
   "id": "berlinc",
   "name": "Berlin Clock",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
   "icon": "berlin-clock.png",
   "type": "clock",

@@ -12,7 +12,6 @@ const lon = 14.45;
 const h = g.getHeight();
 const w = g.getWidth();
 const sm = 15;
-let settings, location, mode = 0;
 var altitude, temperature;
 
 var img_north = Graphics.createImage(`
@@ -136,7 +135,6 @@ function fracHour(d) {
 
   let twoPi  = 2*Math.PI;
   let Pi     = Math.PI;
-  let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 

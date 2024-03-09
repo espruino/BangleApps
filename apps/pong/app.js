@@ -366,7 +366,7 @@ var ai;
 var ball = new Ball();
 var state = 0;
 var prevScores = [0, 0];
-var playerBle = null;
+//var playerBle = null;
 var startOption = 0;
 
 g.clear();
@@ -404,7 +404,7 @@ setWatch(o => {
     g.fillRect(0, 0, 240, 240);
     ball.show(true);
     scores = [0, 0];
-    playerBle = null;
+    //playerBle = null;
     ball = new Ball();
     state = 1;
     startThatGame();

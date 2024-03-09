@@ -81,10 +81,9 @@ Bangle.setUI({
   }
 });
 
-var menuShowing = false;
 var R = Bangle.appRect;
-var Y = R.y;
-var n = Math.ceil(R.h/options.h);
+//var Y = R.y;
+//var n = Math.ceil(R.h/options.h);
 var menuScrollMin = 0|options.scrollMin;
 var menuScrollMax = options.h*options.c - R.h;
 if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;

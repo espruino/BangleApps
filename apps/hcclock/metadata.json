@@ -1,7 +1,7 @@
 {
   "id": "hcclock",
   "name": "Hi-Contrast Clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Hi-Contrast Clock : A simple yet very bold clock that aims to be readable in high luninosity environments. Uses big 10x5 pixel digits. Use BTN 1 to switch background and foreground colors.",
   "icon": "hcclock-icon.png",
   "type": "clock",

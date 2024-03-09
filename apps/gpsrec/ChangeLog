@@ -31,3 +31,4 @@
 0.27: Map drawing with light theme (fix #1023)
 0.28: Show distance more accurately in conjunction with new locale app (fix #1523)
 0.29: Use default Bangle formatter for booleans
+0.30: Minor code improvements

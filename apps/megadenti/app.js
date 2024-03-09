@@ -1,4 +1,3 @@
-var i = 0;
 var counter = 10;
 var counterInterval;
 

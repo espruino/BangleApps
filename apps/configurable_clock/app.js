@@ -748,7 +748,6 @@
 
   let twoPi  = 2*Math.PI, deg2rad = Math.PI/180;
   let Pi     = Math.PI;
-  let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 

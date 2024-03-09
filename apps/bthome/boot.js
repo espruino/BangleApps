@@ -19,12 +19,16 @@ Bangle.btHomeData = [];
 
 /* Global function to allow advertising BTHome adverts
   extras = array of extra data, see require("BTHome").getAdvertisement - can add {n:0/1/2} for different instances
-  options = { event : an event - advertise fast, and when connected
+  options = {
+    event : an event - advertise fast, and when connected
   }
 */
 Bangle.btHome = function(extras, options) {
   options = options||{};
-  if(extras) { // update with extras
+  // clear any existing events
+  Bangle.btHomeData.forEach(d => {if (d.type=="button_event") d.v="none";});
+  // update with extras
+  if (extras) {
     extras.forEach(extra => {
       var n = Bangle.btHomeData.find(b=>b.type==extra.type && b.n==extra.n);
       if (n) Object.assign(n, extra);
@@ -60,9 +64,7 @@ Bangle.btHome = function(extras, options) {
   if (Bangle.btHomeTimeout) clearTimeout(Bangle.btHomeTimeout);
   Bangle.btHomeTimeout = setTimeout(function() {
     delete Bangle.btHomeTimeout;
-    // clear events
-    Bangle.btHomeData.forEach(d => {if (d.type=="button_event") d.v="none";});
     // update
     Bangle.btHome();
-  },updateTimeout);
+  }, updateTimeout);
 };
