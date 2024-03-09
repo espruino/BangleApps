@@ -93,6 +93,7 @@
   Bangle.on('lcdPower', onLcd);
   Bangle.setUI("clock");
   Bangle.loadWidgets();
+  require("widget_utils").swipeOn();
 
   // clean app screen
   g.clear();
