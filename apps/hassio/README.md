@@ -2,7 +2,7 @@
 
 This app provides two features:
 
-- Sending health, compass, accelerometer, and battery information to [Home Assistant](https://www.home-assistant.io/)
+- Sending health, compass, accelerator, and battery information to [Home Assistant](https://www.home-assistant.io/)
 - Displaying [Home Assistant](https://www.home-assistant.io/) templates
 
 This is done through rest api calls to your [Home Assistant](https://www.home-assistant.io/) server. This means the app requires using the [Android Integration](/?id=android) and for your server to be accessible from your phone.
