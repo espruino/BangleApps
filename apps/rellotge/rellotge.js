@@ -85,7 +85,6 @@
   // handle switch display on by pressing BTN1
   function onLcd(on) {
     if (on) {
-      Bangle.loadWidgets();
       Bangle.drawWidgets();
       //drawSimpleClock();
       Bangle.removeListener('lcdPower', onLcd);
@@ -93,6 +92,7 @@
   }
   Bangle.on('lcdPower', onLcd);
   Bangle.setUI("clock");
+  Bangle.loadWidgets();
 
   // clean app screen
   g.clear();
