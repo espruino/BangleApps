@@ -9,7 +9,7 @@
   const xyCenter = g.getWidth() /9;
   const yposTime = 55;
   const yposDate = 130;
-  const leshores = ["Les dotze","La una","Les dues","les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
+  const leshores = ["Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
   const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
 
   function drawSimpleClock() {
@@ -85,13 +85,15 @@
   // handle switch display on by pressing BTN1
   function onLcd(on) {
     if (on) {
-      Bangle.loadWidgets();
       Bangle.drawWidgets();
       //drawSimpleClock();
       Bangle.removeListener('lcdPower', onLcd);
     }
   }
   Bangle.on('lcdPower', onLcd);
+  Bangle.setUI("clock");
+  Bangle.loadWidgets();
+  require("widget_utils").swipeOn();
 
   // clean app screen
   g.clear();
