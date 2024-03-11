@@ -12,8 +12,7 @@
   "storage": [
     {"name":"hassio.app.js","url":"hassio.app.js"},
     {"name":"hassio.boot.js","url":"hassio.boot.js"},
-    {"name":"hassio.img","url":"hassio.img"},
-    {"name":"hassio.json","url":"hassio.json"}
-  ]
-
+    {"name":"hassio.img","url":"hassio.img"}
+  ],
+  "data": [{"name":"hassio.json"}]
 }
