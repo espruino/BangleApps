@@ -3,7 +3,7 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 type ExtractIds<T extends Layout.Hierarchy, Depth extends Prev[number] = 9> =
   [Depth] extends [never]
   ? never
-  : (T extends { id: infer Id extends string }
+  : (T extends { id?: infer Id extends string }
     ? { [k in Id]: T }
     : never)
   |
