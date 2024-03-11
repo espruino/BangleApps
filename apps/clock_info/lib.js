@@ -287,22 +287,21 @@ exports.addInteractive = function(menu, options) {
   const blur = () => {
     options.focus=false;
     delete Bangle.CLKINFO_FOCUS;
-    options.redraw();
     const itm = menu[options.menuA].items[options.menuB];
-    if (itm.blur) itm.blur(options);
+    let redraw = true;
+    if (itm.blur && itm.blur(options) === false)
+      redraw = false;
+    if (redraw) options.redraw();
   };
   const focus = (redraw) => {
-    let shown = false;
     if (!options.focus) {
       options.focus=true;
       Bangle.CLKINFO_FOCUS=true;
-      shown = true;
+      const itm = menu[options.menuA].items[options.menuB];
+      if (itm.focus && itm.focus(options) === false)
+        redraw = false;
     }
     if (redraw) options.redraw();
-    if (shown) {
-      const itm = menu[options.menuA].items[options.menuB];
-      if (itm.focus) itm.focus(options);
-    }
   };
   let touchHandler, lockHandler;
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
