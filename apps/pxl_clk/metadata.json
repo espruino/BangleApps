@@ -6,7 +6,7 @@
   "description": "This is a clock in style of Pixel watch",
   "type":"clock",
   "tags": "clock,clkinfo",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
   "supports" : ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module" },
   "readme": "README.md",
