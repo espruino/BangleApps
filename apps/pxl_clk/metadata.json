@@ -11,5 +11,6 @@
   "storage": [
     {"name":"pxl_clk.app.js","url":"app.js"},
     {"name":"pxl_clk.img","url":"app-icon.js","evaluate":true}
+    {"name":"pxl_clk.settings.js","url":"settings.js"}
   ]
 }
