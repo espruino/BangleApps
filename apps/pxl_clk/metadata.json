@@ -9,6 +9,7 @@
   "screenshots": [{"url":"screenshot.png"}],
   "supports" : ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module" },
+  "readme": "README.md",
   "storage": [
     {"name":"pxl_clk.app.js","url":"app.js"},
     {"name":"pxl_clk.img","url":"app-icon.js","evaluate":true},
