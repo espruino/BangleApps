@@ -1,0 +1,16 @@
+{ "id": "andark_w",
+  "name": "Analog Dark with widgets support",
+  "shortName":"AnDarkW",
+  "version":"0.01",
+  "description": "analog clock face with swipeable widgets",
+  "icon": "andark_w_icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"andark_w_screen.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"andark_w.app.js","url":"app.js"},
+    {"name":"andark_w.img","url":"app_icon.js","evaluate":true}
+  ]
+}
