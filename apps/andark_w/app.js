@@ -85,6 +85,9 @@ function setlet(){
   }
 }
 setlet();
+// Prepare widgets
+Bangle.loadWidgets();
+require("widget_utils").swipeOn();
 // Clear the screen once, at startup
 g.setBgColor(0,0,0);
 g.clear();
