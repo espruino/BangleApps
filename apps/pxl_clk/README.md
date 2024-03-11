@@ -2,7 +2,7 @@
 
 A clock in style of Pixel Watch ones.
 
-![](screenshot.png)
+![](screenshot.png) ![](screenshot.png)
 
 ## Creator
 
