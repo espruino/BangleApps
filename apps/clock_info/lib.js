@@ -234,7 +234,7 @@ exports.addInteractive = function(menu, options) {
     options.redrawHandler = ()=>drawItem(itm);
     itm.on('redraw', options.redrawHandler);
     itm.uses = (0|itm.uses)+1;
-    if (itm.uses==1) itm.show();
+    if (itm.uses==1) itm.show(options);
     itm.emit("redraw");
   }
   function menuHideItem(itm) {
@@ -242,7 +242,7 @@ exports.addInteractive = function(menu, options) {
     delete options.redrawHandler;
     itm.uses--;
     if (!itm.uses)
-      itm.hide();
+      itm.hide(options);
   }
   // handling for swipe between menu items
   function swipeHandler(lr,ud){
@@ -307,7 +307,7 @@ exports.addInteractive = function(menu, options) {
         focus(true);
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
-        menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
+        menu[options.menuA].items[options.menuB].run(options); // allow tap on an item to run it (eg home assistant)
       } else {
         focus();
       }
