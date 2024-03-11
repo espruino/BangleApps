@@ -284,12 +284,12 @@ exports.addInteractive = function(menu, options) {
     E.stopEventPropagation&&E.stopEventPropagation();
   }
   Bangle.on("swipe",swipeHandler);
-  const unfocus = () => {
+  const blur = () => {
     options.focus=false;
     delete Bangle.CLKINFO_FOCUS;
     options.redraw();
     const itm = menu[options.menuA].items[options.menuB];
-    if (itm.unfocus) itm.unfocus(options);
+    if (itm.blur) itm.blur(options);
   };
   const focus = (redraw) => {
     if (!options.focus) {
@@ -306,7 +306,7 @@ exports.addInteractive = function(menu, options) {
       if (e.x<options.x || e.y<options.y ||
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
         if (options.focus)
-          unfocus();
+          blur();
         return; // outside area
       }
       if (!options.focus) {
@@ -322,7 +322,7 @@ exports.addInteractive = function(menu, options) {
     if (settings.defocusOnLock) {
       lockHandler = function() {
         if(options.focus)
-          unfocus();
+          blur();
       };
       Bangle.on("lock", lockHandler);
     }

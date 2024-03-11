@@ -16,7 +16,7 @@ declare module ClockInfo {
     on(what: "redraw", cb: () => void): void, // extending from Object
     run?(options: InteractiveOptions): void,
     focus?(options: InteractiveOptions): void,
-    unfocus?(options: InteractiveOptions): void,
+    blur?(options: InteractiveOptions): void,
   } & (
     {
       hasRange: true,
