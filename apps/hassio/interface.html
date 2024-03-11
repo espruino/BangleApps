@@ -70,11 +70,11 @@
       function getData() {
         // show loading window
         Util.showModal("Loading...");
-        Util.readStorage('hassio.json', data=>{
+        Util.readStorageJSON('hassio.json', data=>{
           // remove window
           Util.hideModal();
 
-          document.getElementById('json').value = JSON.stringify(JSON.parse(data), null, 1);
+          document.getElementById('json').value = JSON.stringify(data, null, 1);
         });
       }
 
