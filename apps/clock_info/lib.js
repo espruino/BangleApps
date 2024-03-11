@@ -288,10 +288,16 @@ exports.addInteractive = function(menu, options) {
     options.focus=false;
     delete Bangle.CLKINFO_FOCUS;
     options.redraw();
+    const itm = menu[options.menuA].items[options.menuB];
+    if (itm.unfocus) itm.unfocus(options);
   };
   const focus = (redraw) => {
-    options.focus=true;
-    Bangle.CLKINFO_FOCUS=true;
+    if (!options.focus) {
+      options.focus=true;
+      Bangle.CLKINFO_FOCUS=true;
+      const itm = menu[options.menuA].items[options.menuB];
+      if (itm.focus) itm.focus(options);
+    }
     if (redraw) options.redraw();
   };
   let touchHandler, lockHandler;
