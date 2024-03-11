@@ -79,8 +79,6 @@ const runHassio = () => {
     const getBattery = () => {
       const b = E.getBattery(), 
           c = Bangle.isCharging();
-      let i = "mdi:battery";
-      if (c) i += "-charging";
 
       return {
         state: c ? "charging" : "discharging",
