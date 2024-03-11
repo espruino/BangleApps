@@ -219,7 +219,7 @@ if (sleeplog.conf.enabled) {
     // Determine if Bangle.JS is worn based on temperature (same strategy as in activityreminder)
     // https://github.com/espruino/BangleApps/blob/master/apps/activityreminder/boot.js#L37
     isNotWorn: function() {
-      return (Bangle.isCharging() || this.conf.wearTemp >= E.getTemperature());
+      return (Bangle.isCharging() || this.conf.wearTemp > E.getTemperature());
     },
 
     // define function to set the status
