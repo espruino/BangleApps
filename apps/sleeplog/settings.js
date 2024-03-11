@@ -347,7 +347,7 @@
         }
       },
       /*LANG*/"Wear Temperature": {
-        value: settings.w,
+        value: settings.wearTemp,
         step: 0.5,
         min: 20,
         max: 40,
