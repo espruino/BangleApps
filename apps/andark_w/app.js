@@ -29,27 +29,31 @@ function draw(){
   m=2*Math.PI/60*(m)-Math.PI/2;
 
   s=2*Math.PI/60*s-Math.PI/2;
-  g.setFontAlign(0,0);
-  g.setFont("Vector",10);
-  let dateStr = "    "+require("locale").date(d)+"    ";
-  g.drawString(dateStr, c.x, c.y+20, true);
- // g.drawString(d.getDate(),1.4*c.x,c.y,true);
-  g.drawString(Math.round(E.getBattery()/5)*5+"%",c.x,c.y+40,true);
-  drawlet();
   //g.setColor(1,0,0);
-  const hz = zeiger(100,5,h);
+  const hz = zeiger(85,5,h);
   g.fillPoly(hz,true);
  // g.setColor(1,1,1);
   const minz = zeiger(150,5,m);
   g.fillPoly(minz,true);
   if (unlock){
-  const sekz = zeiger(150,2,s);
-  g.fillPoly(sekz,true);
+    const sekz = zeiger(150,2,s);
+    g.fillPoly(sekz,true);
   }
   g.fillCircle(c.x,c.y,4);
 
+  g.setFontAlign(0,0);
+  g.setFont("Vector",10);
+  g.setBgColor(0,0,0);
+  let dateStr = require("locale").date(d);
+  g.drawString(dateStr, c.x, c.y+20, true);
+ // g.drawString(d.getDate(),1.4*c.x,c.y,true);
+  g.drawString(Math.round(E.getBattery()/5)*5+"%",c.x,c.y+40,true);
 
-
+  //draws the numbers on the screen
+  g.setFont("Vector",20);
+  for(let i = 0;i<12;i++){
+     g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2],true);
+  }
 }
 //draws the scale once the app is startet
 function drawScale(){
@@ -64,15 +68,7 @@ function drawScale(){
   }
 }
 
-//draws the numbers on the screen
-
-function drawlet(){
-  g.setFont("Vector",20);
-  for(let i = 0;i<12;i++){
-     g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2]);
-  }
-}
-//calcultes the Position of the numbers when app starts and saves them in an array
+//calculates the Position of the numbers when app starts and saves them in an array
 function setlet(){
   let sk=1;
   for(let i=-10;i<50;i+=5){
