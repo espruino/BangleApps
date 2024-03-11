@@ -2,3 +2,4 @@
 0.02: Fixed screen flicker
 0.03: Added display of GPS fix lat/lon and course
 0.04: Don't buzz for GPS fix in Quiet Mode
+0.05: Minor code improvements

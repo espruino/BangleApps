@@ -1,4 +1,3 @@
-var Layout = require("Layout");
 
 var homework = require("Storage").readJSON("homework.txt", "r");
 var mainCheckHomeworkMenu;
@@ -18,12 +17,12 @@ function newHomeworkMenu() {
   var splitsubjects = rawsubjects.split(",");
   var lastItem = splitsubjects[splitsubjects.length - 1];
   var thiscurrentsubject;
-  var command;
+  //var command;
   lastItem = lastItem.slice(0, -1);
   splitsubjects[splitsubjects.length - 1] = lastItem;
   for (let i = 0; i < splitsubjects.length; i++) { // loop through array and add to menu
     thiscurrentsubject = splitsubjects[i];
-    command = addNewHomework(thiscurrentsubject);
+    /*command =*/ addNewHomework(thiscurrentsubject);
     nhwmn[splitsubjects[i]] = addNewHomework.bind(null, thiscurrentsubject);
   }
   nhwmn["Back"] = function() {E.showMenu(mainMenu);};

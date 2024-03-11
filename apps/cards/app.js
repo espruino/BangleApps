@@ -14,6 +14,14 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+// get brightness
+let brightness;
+
+function loadBrightness() {
+    const getBrightness = require('Storage').readJSON("setting.json", 1) || {};
+    brightness = getBrightness.brightness || 0.1;
+}
+
 //may make it configurable in the future
 const WHITE=-1
 const BLACK=0
@@ -21,10 +29,10 @@ const BLACK=0
 const Locale = require("locale");
 const widget_utils = require('widget_utils');
 
-var fontSmall = "6x8";
+//var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+//var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 
 var CARDS = require("Storage").readJSON("android.cards.json",true)||[];
 var settings = require("Storage").readJSON("cards.settings.json",true)||{};
@@ -89,6 +97,10 @@ function printLinearCode(binary) {
 }
 
 function showCode(card) {
+  // set to full bright when the setting is true
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(1);
+  }
   widget_utils.hide();
   E.showScroller();
   // keeping it on rising edge would come back twice..
@@ -129,6 +141,10 @@ function showCode(card) {
 }
 
 function showCard(card) {
+  // reset brightness to old value after maxing it out
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(brightness);
+  }
   var lines = [];
   var bodyFont = fontBig;
   if(!card) return;
@@ -136,8 +152,6 @@ function showCard(card) {
   //var lines = [];
   if (card.name) lines = g.wrapString(card.name, g.getWidth()-10);
   var titleCnt = lines.length;
-  var start = getDate(card.expiration);
-  var includeDay = true;
   lines = lines.concat("", /*LANG*/"View code");
   var valueLine = lines.length - 1;
   if (card.expiration)
@@ -207,5 +221,8 @@ function showList() {
     select : idx => showCard(CARDS[idx]),
     back : () => load()
   });
+}
+if(settings.fullBrightness) {
+  loadBrightness();
 }
 showList();

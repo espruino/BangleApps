@@ -1,7 +1,7 @@
 { "id": "Uke",
   "name": "Uke Chords",
   "shortName":"Uke",
-  "version":"0.03",
+  "version": "0.04",
   "description": "Wrist mounted ukulele chords",
   "icon": "app.png",
   "tags": "uke, chords",

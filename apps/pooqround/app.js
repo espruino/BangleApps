@@ -261,7 +261,7 @@ const lockSI = dec('hMNwMAjkfjHMt/8g1zgOc4FnmEf/AA==');
 const batteryI = dec('hERwMAjH/ABw');
 const chargeI = dec('g8NwMAgkYsHDh0fw8MmFhwUA');
 const HRMI = dec('iERwMAjk4l10t/29/3AIfn+ek6VTlPX9d3/U3/Ef/EP+EH8ED4EBwAA=');
-const compassI = dec('hMJwMAhEEg8Dwfh2Pc43BwA=');
+//const compassI = dec('hMJwMAhEEg8Dwfh2Pc43BwA=');
 const y100I = dec('h8RwMAvk5/n6nOwm9w9lnzH+mO4sc4405xk7jE2mEssEd4EbgE+gE4A=');
 const y100sI = dec('hcKwMAsOWvHZ+c2s1s4uYmcD4EwA');
 
@@ -367,7 +367,7 @@ class Round {
     }
 
     render(d, rate) {
-        const g = this.g, b = this.b, bI = this.bI, c = this.c, cI = this.cI,
+        const g = this.g, b = this.b, bI = this.bI,
               e = d < this.enhance,
               state = this.state, options = this.options,
               cal = options.calendric, res = options.resolution,
@@ -378,8 +378,8 @@ class Round {
               dd = (e || cal > 1) && d.getDate(),
               dm = (e || cal > 3) && d.getMonth(),
               dy = (e || cal > 4) && d.getFullYear();
-        const xc = this.xc, yc = this.yc, r = this.r,
-              dlr = xc * 3/4, dlw = 8, dlhw = 4;
+        const r = this.r;
+             
 
         // Restore saveunders for fast-moving, overdrawing indicators.
         if (state.sd) g.drawImage.apply(g, state.sd);
@@ -409,7 +409,7 @@ class Round {
                 let x = 172, y = 5;
                 x = doLocked(g, x, y, true);
                 x = doPower(g, x, y, true);
-                x = doHRM(g, x, y, true);
+                /*x =*/ doHRM(g, x, y, true);
                 if (dy === +dy) {
                     g.setColor(g.theme.fg).drawImage(y100sI, 145, 23);
                     g.setFontCustom.apply(g, y10sF).drawString((dy - u) / 10 % 10, 157, 23);
@@ -629,4 +629,4 @@ class Clock {
 //////////////////////////////////////////////////////////////////////////////
 /*                                   Main                                   */
 
-const clock = new Clock(new Round(g)).start();
+new Clock(new Round(g)).start();

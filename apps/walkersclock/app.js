@@ -49,7 +49,6 @@ let infoMode = INFO_NONE;
 let functionMode = FN_MODE_OFF;
 let gpsDisplay = GDISP_OS;
 let prevInfoStr = "clear";
-let prevActivityStr = "clear";
 let prevSteps = "clear";
 let clearActivityArea = true;
 
@@ -194,7 +193,6 @@ function drawAll(){
 }
 
 function drawInfo() {
-  let val;
   let str = "";
   let col = 0x07E0; // green
 
@@ -565,7 +563,7 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
-var click = setInterval(onTick, 5000);
+setInterval(onTick, 5000);
 
 setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
 setWatch(() => { changeFunctionMode(); drawAll(); }, BTN3, {repeat: true});

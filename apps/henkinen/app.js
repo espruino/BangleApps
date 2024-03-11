@@ -53,7 +53,7 @@ function queueDraw() {
 // main function
 function draw() {
   // make date object
-  var date = new Date();
+  //var date = new Date();
   
   // update current time
   time += wait - (Date.now() % wait);

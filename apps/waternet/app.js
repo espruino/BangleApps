@@ -94,7 +94,6 @@ const LEFTMENU = 118;
 const EMPTY = 61;
 
 let startPos;
-let menuPos;
 let maxLevel;
 let selectedLevel;
 let boardX;
@@ -133,7 +132,7 @@ let levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
 let options = new Uint8Array(OPCOUNT);
 
 //sound
-let soundon = 1;
+let soundon = 1; // TODO: Should this be 'soundOn' ?
 
 //game
 let paused;
@@ -533,14 +532,18 @@ function set_bkg_data(tiles) {
   currentTiles = tiles;
 }
 
+/*
 function get_bkg_data() {
   return currentTiles;
 }
+*/
 
+/*
 function set_bkg_tiles(x, y, map) {
   "RAM";
   g.drawImage(map, SCREENOFFSETX + x, screenOffsetY + y);
 }
+*/
 
 function setBlockTilesAsBackground() {
   set_bkg_data(BLOCKTILES);
@@ -1056,8 +1059,8 @@ function generateLevel()
   "RAM";
   if(USECCODE)
   {
-    var cellstack = new Uint8Array(MAXBOARDSIZE + 1);
-    var neighbours = new Uint8Array(4);
+    //var cellstack = new Uint8Array(MAXBOARDSIZE + 1);
+    //var neighbours = new Uint8Array(4);
     var addrLevel = E.getAddressOf(level,true);
     c.generateLevel(addrLevel, boardWidth, boardHeight);
   }
@@ -1621,6 +1624,7 @@ function levelSelect() {
 // --------------------------------------------------------------------------------------------------
 // printing functions
 // --------------------------------------------------------------------------------------------------
+/*
 function setCharAt(str, index, chr) {
   "RAM";
   if (index > str.length - 1) return str;
@@ -1676,6 +1680,7 @@ function printNumber(ax, ay, aNumber, maxDigits, noScreenOffset) {
     set_bkg_tile_xy(ax + (maxDigits - ret.digits) + c, ay, ret.string.charCodeAt(buffSize - ret.digits + c) + 32, noScreenOffset);
   }
 }
+*/
 
 //print a message on the title screen on ax,ay, the tileset from titlescreen contains an alphabet
 function printMessage(ax, ay, amsg, noScreenOffset) {

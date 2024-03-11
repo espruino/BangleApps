@@ -2,7 +2,6 @@
 // sunrise/sunset script by Matt Kane from https://github.com/Triggertrap/sun-js
 
 const LOCATION_FILE = 'mylocation.json';
-let location;
 
 Bangle.setUI('clock');
 Bangle.loadWidgets();

@@ -3,7 +3,7 @@
   "name": "Time and Life",
   "shortName": "Time and Life",
   "icon": "app.png",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A simple watchface which displays the time when the screen is tapped and decay according to the rules of Conway's game of life.",
   "type": "clock",
   "tags": "clock",

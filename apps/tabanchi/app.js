@@ -12,9 +12,9 @@ let vd = 1;
 let x = 20;
 let sx = 0; // screen scroll x position
 let cacaLevel = 0;
-let cacaBirth = null;
+//let cacaBirth = null;
 let angryState = 0;
-let animated = true;
+//let animated = true;
 let transition = false;
 let caca = null;
 let egg = null;
@@ -506,10 +506,12 @@ const shower = {
   buffer: atob('5cuXy+XLl8vly5fL5cuXyw==')
 };
 
+/*
 const tools = [
   tool00, tool01, tool02, tool03,
   tool10, tool11, tool12, tool13
 ];
+*/
 
 const tamabg = {
   width: 176,
@@ -954,10 +956,12 @@ function nextItem () {
   if (tool > 6) tool = 0;
 }
 
+/*
 function prevItem () {
   tool--;
   if (tool < 0) tool = 7;
 }
+*/
 
 function activateItem () {
   if (mode != '') {
@@ -1106,8 +1110,8 @@ function animateHappy () {
   angryState = 0;
   mode = 'happy';
   transition = true;
-  const width = w / scale;
-  const cx = w;
+  //const width = w / scale;
+  //const cx = w;
   var iv = setInterval(function () {
     angryState++;
     if (angryState > 3) {
@@ -1130,8 +1134,8 @@ function animateAngry () {
   angryState = 0;
   mode = 'angry';
   transition = true;
-  const width = w / scale;
-  const cx = w;
+  //const width = w / scale;
+  //const cx = w;
   var iv = setInterval(function () {
     angryState++;
     if (angryState > 3) {
@@ -1162,8 +1166,8 @@ function animateFood () {
   }
   frame = 0;
   transition = true;
-  const width = w / scale;
-  const cx = w;
+  //const width = w / scale;
+  //const cx = w;
   var iv = setInterval(function () {
     angryState++;
     if (angryState > 3) {
@@ -1193,7 +1197,7 @@ function animateShower () {
       clearInterval(iv);
       mode = '';
       transition = false;
-      animated = true;
+      //animated = true;
       sx += width;
       if (sx < 0) sx = 0;
       if (tama.cacas > 0) {
@@ -1214,7 +1218,7 @@ function animateToGame () {
   transition = true;
   let cx = 0;
   sx = -w;
-  animated = false;
+  //animated = false;
   var iv = setInterval(function () {
     sx += scale * 2;
     updateAnimation();
@@ -1223,7 +1227,7 @@ function animateToGame () {
     if (cx > w) {
       clearInterval(iv);
       sx = 0;
-      animated = true;
+      //animated = true;
       transition = false;
       drawScene();
     }
@@ -1239,10 +1243,10 @@ function animateToClock () {
   }
   mode = 'clock';
   transition = true;
-  const width = w / scale;
+  //const width = w / scale;
   let cx = w;
   sx = 0;
-  animated = false;
+  //animated = false;
   var iv = setInterval(function () {
     sx -= scale * 4;
     drawScene();
@@ -1252,7 +1256,7 @@ function animateToClock () {
       clearInterval(iv);
       mode = 'clock';
       transition = false;
-      animated = true;
+      //animated = true;
       drawScene();
     }
   }, 100);
@@ -1267,8 +1271,8 @@ function animateFromClock () {
   }
   transition = true;
   let cx = 0;
-  const width = w / scale;
-  animated = false;
+  //const width = w / scale;
+  //animated = false;
   var iv = setInterval(function () {
     sx += scale * 4;
     drawScene();
@@ -1277,7 +1281,7 @@ function animateFromClock () {
       clearInterval(iv);
       mode = '';
       sx = 0;
-      animated = true;
+      //animated = true;
       transition = false;
       drawScene();
     }
@@ -1511,9 +1515,9 @@ function pooMaker() {
     const b = 0 | ((cacaLevel + tama.hungry) / tama.tummy);
     cacaLevel += tama.hungry;
     if (a != b) {
-      if (tama.cacas == 0) {
+      /*if (tama.cacas == 0) {
         cacaBirth = new Date();
-      }
+      }*/
       tama.hungry--;
       tama.cacas++;
     }

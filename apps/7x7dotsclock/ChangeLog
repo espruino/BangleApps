@@ -1,3 +1,4 @@
 0.01: Initial version for upload
 0.02: Better theme support, configurable colors, small improvements
 0.03: Use `messages` library to check for new messages
+0.04: Minor code improvements

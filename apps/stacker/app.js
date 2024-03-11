@@ -7,7 +7,6 @@ const GAMEBOARD_WIDTH = g.getWidth() - 16 - BLOCK_SIZE;
 const START_Y = g.getHeight() - BLOCK_SIZE - 1;
 const START_LENGTH = 4;
 var length;
-var updateTimeout;
 var rows = [];
 var gameState = ""; //win, lose, play
 

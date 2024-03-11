@@ -1,7 +1,7 @@
 {
   "id": "cards",
   "name": "Cards",
-  "version": "0.02",
+  "version": "0.04",
   "description": "Display loyalty cards",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_cards_overview.png"}, {"url":"screenshot_cards_card1.png"}, {"url":"screenshot_cards_card2.png"}, {"url":"screenshot_cards_barcode.png"}, {"url":"screenshot_cards_qrcode.png"}],

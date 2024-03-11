@@ -57,7 +57,7 @@ function updateScale(){
 
 var rawMax = 0;
 var scale = 2000;
-var MID = (g.getHeight()+80)/2;
+//var MID = (g.getHeight()+80)/2;
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
 Bangle.on('HRM-raw', function(v) {
@@ -105,9 +105,9 @@ g.drawString(/*LANG*/"Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 countDown();
 
 
-var wasHigh = 0, wasLow = 0;
-var lastHigh = getTime();
-var hrmList = [];
+//var wasHigh = 0, wasLow = 0;
+//var lastHigh = getTime();
+//var hrmList = [];
 var hrmInfo;
 
 function readHRM() {

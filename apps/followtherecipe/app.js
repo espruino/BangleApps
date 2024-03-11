@@ -1,10 +1,7 @@
-const storage = require("Storage");
 const settings = require("Storage").readJSON("followtherecipe.json");
-const locale = require('locale');
-var ENV = process.env;
+//const locale = require('locale');
 var W = g.getWidth(), H = g.getHeight();
 var screen = 0;
-var Layout = require("Layout");
 
 let maxLenghtHorizontal = 16;
 let maxLenghtvertical = 6;

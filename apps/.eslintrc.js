@@ -1,4 +1,6 @@
-{
+const lintExemptions = require("./lint_exemptions.js");
+
+module.exports = {
     "env": {
         // TODO: "espruino": false
         // TODO: "banglejs": false
@@ -154,8 +156,14 @@
         "no-useless-catch": "warn",
         // TODO: "no-undef": "warn",
         "no-undef": "off",
-        "no-unused-vars": "off",
+        "no-unused-vars": ["warn", { "args": "none" } ],
         "no-useless-escape": "off",
         "no-control-regex" : "off"
-    }
+    },
+    overrides: [
+        ...Object.entries(lintExemptions).map(([filePath, {rules}]) => ({
+            files: [filePath],
+            rules: Object.fromEntries(rules.map(rule => [rule, "off"])),
+        })),
+    ],
 }

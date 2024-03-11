@@ -7,3 +7,4 @@
 0.07: Add settings file with the option to disable the slow direction updates
 0.08: Use tilt compensation from new magnav library
 0.09: Convert Yes/No On/Off in settings to checkboxes
+0.10: Minor code improvements

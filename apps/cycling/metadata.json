@@ -2,7 +2,7 @@
   "id": "cycling",
   "name": "Bangle Cycling",
   "shortName": "Cycling",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Display live values from a BLE CSC sensor",
   "icon": "icons8-cycling-48.png",
   "tags": "outdoors,exercise,ble,bluetooth",

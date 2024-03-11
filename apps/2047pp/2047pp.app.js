@@ -122,13 +122,13 @@
     }
   }
 
-  function swipeHandler() {
+  /*function swipeHandler() {
     
-  }
+  }*/
 
-  function buttonHandler() {
+  /*function buttonHandler() {
     
-  }
+  }*/
 
   var twok = new TwoK();
   twok.addDigit(); twok.addDigit();

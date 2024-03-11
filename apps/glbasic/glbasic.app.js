@@ -93,7 +93,7 @@ function drawCal() {
     const nrgb = ["#000", "#FFF", "#F00", "#0F0", "#00F", "#FF0"]; //fg, r ,g , b
     const suClr = 5; // sunday color fg
     const tdyMrkClr = 3; // today bk
-    const tdyNumClr = 0; // today fg
+    //const tdyNumClr = 0; // today fg
 
     g.setFont("Vector", DAY_NAME_FONT_SIZE + 3);
     
@@ -193,8 +193,7 @@ function draw() {
     var date = new Date();
     var h = date.getHours(),
       m = date.getMinutes();
-    var d = date.getDate(),
-      w = date.getDay(); // d=1..31; w=0..6
+    var d = date.getDate()/*,w = date.getDay()*/; // d=1..31; w=0..6
 
     g.setBgColor(0, 0, 0);
     g.setColor(1, 1, 1);

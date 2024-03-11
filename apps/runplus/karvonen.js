@@ -54,7 +54,6 @@
   
   //Test input to verify the zones work. The following value for "hr" has to be deleted and replaced with the Heart Rate Monitor input.
   let hr = exsHrmStats.getValue();
-  let hr1 = hr;
   // These letiables display next and previous HR zone.
   //get the hrzones right. The calculation of the Heart rate zones here is based on the Karvonen method
   //60-70% of HRR+minHR = zone2. //70-80% of HRR+minHR = zone3. //80-90% of HRR+minHR = zone4. //90-99% of HRR+minHR = zone5. //=>99% of HRR+minHR = serious risk of heart attack
@@ -157,7 +156,6 @@
 
   function getZoneAlert() {
    const HRzonemax = require("graphics_utils");
-   let centreX1,centreY1,maxRadius1 = 1;
    let minRadius = 0.40 * R.h;
    let startAngle1 = HRzonemax.degreesToRadians(-90);
    let endAngle1 = HRzonemax.degreesToRadians(270);

@@ -12,3 +12,4 @@
 0.09: Accidental version bump
 0.10: Use charging state on boot for auto calibration
       Log additional timestamp for trace log
+0.11: Minor code improvements

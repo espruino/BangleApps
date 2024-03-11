@@ -2,7 +2,7 @@
   "id": "testuserinput",
   "name": "Test User Input",
   "shortName": "Test User Input",
-  "version": "0.06",
+  "version": "0.07",
   "description": "App to test the bangle.js input interface. It displays the user action in text, circle buttons or on/off switch UI elements.",
   "icon": "app.png",
   "tags": "input,interface,buttons,touch,UI",

@@ -12,3 +12,4 @@
 0.12: Actual pixels as of 29th Nov 2021
 0.13: Bangle.js 2: Use setUI to add software back button
 0.14: Add automatic translation of more strings
+0.15: Minor code improvements

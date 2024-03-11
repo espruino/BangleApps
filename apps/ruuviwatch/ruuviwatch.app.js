@@ -486,6 +486,6 @@ g.drawImage(
 g.setFont(FONT_M);
 g.drawString("Ruuvi Watch", CENTER, HUMID_PRESSURE_Y);
 
-var ageInterval = setInterval(redrawAge, 1000);
-var scanInterval = setInterval(scan, SCAN_FREQ);
+setInterval(redrawAge, 1000);
+setInterval(scan, SCAN_FREQ);
 scan();

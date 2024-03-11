@@ -26,7 +26,7 @@ let drawTimeout;
 
 const h = g.getHeight();
 const w = g.getWidth();
-const ha = 2*h/5 - 4;
+//const ha = 2*h/5 - 4;
 const h2 = 3*h/5 - 10;
 const h3 = 7*h/8;
 

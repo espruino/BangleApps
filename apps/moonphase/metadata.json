@@ -1,7 +1,7 @@
 {
   "id": "moonphase",
   "name": "Moonphase",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Shows current moon phase. Now with GPS function.",
   "icon": "app.png",
   "tags": "",

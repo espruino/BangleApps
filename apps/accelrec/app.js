@@ -1,4 +1,4 @@
-var acc;
+//var acc;
 var HZ = 100;
 var SAMPLES = 5*HZ; // 5 seconds
 var SCALE = 5000;

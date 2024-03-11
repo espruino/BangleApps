@@ -1,3 +1,4 @@
 0.01: Initial release on the app repository for Bangle.js 1 and 2
 0.02: Fixed let/const usage while using firmware version >=2v14
 0.03: Tell clock widgets to hide.
+0.04: Minor code improvements

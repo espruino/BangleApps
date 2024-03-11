@@ -9,3 +9,4 @@
 0.09: Optimize loading and rendering times, introduce transition animations
 0.10: Swipe up/down for Hiragana/Katakana, right/left for next/prev letter
 0.11: Sort by 'AIUEO' instead of 'AEIOU', draw Widgets every minute :?
+0.12: Minor code improvements
