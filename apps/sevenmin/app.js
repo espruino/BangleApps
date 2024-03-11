@@ -67,7 +67,7 @@ Once you've completed all 12 exercises, take a break for 1–2 minutes and repea
       // buzzes before start
       setTimeout(()=>{let j = 0; let buzzes = setInterval(()=>{Bangle.buzz(200*scaling); j++; if (j==5) clearInterval(buzzes);}, 1*1000*scaling);}, 4*1000*scaling);
       // timeout till first excercise
-      let timeout = setTimeout(()=>{draw(instructions[i]);i++;}, 10*1000*scaling);
+      setTimeout(()=>{draw(instructions[i]);i++;}, 10*1000*scaling);
       // buzzes before first rest
       setTimeout(()=>{let j = 0; let buzzes = setInterval(()=>{Bangle.buzz(200*scaling); j++; if (j==5) clearInterval(buzzes);}, 1*1000*scaling);}, 34*1000*scaling);
       // interval containing rest and excercises 10+30=40
@@ -88,9 +88,11 @@ Once you've completed all 12 exercises, take a break for 1–2 minutes and repea
     }
   };
 
+  /*
   let swipeHandler = function() {
     
   };
+  */
 
   let uiMode = { 
     mode : 'custom',

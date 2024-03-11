@@ -376,7 +376,7 @@ if ( emulator ) {
     fix.smoothed = 0;
   }
 
-  var m;
+  //var m;
 
   var sp = '---';
   var al = sp;

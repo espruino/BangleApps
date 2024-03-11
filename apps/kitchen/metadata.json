@@ -1,14 +1,14 @@
 {
   "id": "kitchen",
   "name": "Kitchen Combo",
-  "version": "0.14",
+  "version": "0.15",
   "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'",
   "icon": "kitchen.png",
   "type": "clock",
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "storage": [
     {"name":"kitchen.app.js","url":"kitchen.app.js"},
     {"name":"stepo2.kit.js","url":"stepo2.kit.js"},

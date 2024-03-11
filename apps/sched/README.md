@@ -14,10 +14,10 @@ Global Settings
 ---------------
 
 - `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
+- `Delete Expired Timers` - Default for whether expired timers are removed after firing.
 - `Default Auto Snooze` - Default _Auto Snooze_ value for newly created alarms (_Alarms_ only)
 - `Default Snooze` - Default _Snooze_ value for newly created alarms/timers
-- `Default Repeat` - Default _Repeat_ value for newly created alarms (_Alarms_ only)
-- `Buzz Count` - The number of buzzes before the watch goes silent
+- `Buzz Count` - The number of buzzes before the watch goes silent, or "forever" to buzz until stopped.
 - `Buzz Interval` - The interval between one buzz and the next
 - `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
 
@@ -45,7 +45,9 @@ Alarms are stored in an array in `sched.json`, and take the form:
                        // eg (new Date()).toISOString().substr(0,10)
   msg : "Eat food",    // message to display.
   last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (No change from 0 on timers)
-  rp : true,           // repeat the alarm every day?
+  rp : true,           // repeat the alarm every day? If date is given, pass an object instead of a boolean,
+                       // e.g. repeat every 2 months: { interval: "month", num: 2 }.
+                       // Supported intervals: day, week, month, year
   vibrate : "...",     // OPTIONAL pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
   hidden : false,      // OPTIONAL if false, the widget should not show an icon for this alarm
   as : false,          // auto snooze

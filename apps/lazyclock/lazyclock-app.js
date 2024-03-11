@@ -209,7 +209,7 @@ function refreshTime(force) {
 
 
 function startClock() {
-  const secondsToRefresh = refreshTime();
+  /*const secondsToRefresh =*/ refreshTime();
 }
 
 function addEvents() {

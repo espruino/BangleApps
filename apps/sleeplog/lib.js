@@ -123,7 +123,7 @@ exports = {
         // free ram
         files = undefined;
 
-        // check if log from files is available 
+        // check if log from files is available
         if (filesLog.length) {
           // remove unwanted entries
           filesLog = filesLog.filter((entry, index, filesLog) => (
@@ -169,7 +169,8 @@ exports = {
         // check if before this fortnight period
         if (firstDay < thisFirstDay) {
           // write log in seperate file
-          require("Storage").writeJSON("sleeplog_" + this.msToFn(firstDay) + ".log", log);
+          if(log.length > 0)
+            require("Storage").writeJSON("sleeplog_" + this.msToFn(firstDay) + ".log", log);
           // set last day as first
           firstDay = lastDay;
         } else {

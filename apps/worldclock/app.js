@@ -123,7 +123,6 @@ function draw() {
 
     if (offsets.length === 1) {
       // For a single secondary timezone, draw it bigger and drop time zone to second line
-      const xOffset = 30;
       g.setFont(font, secondaryTimeFontSize);
       g.drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
       g.setFont(font, secondaryTimeZoneFontSize);

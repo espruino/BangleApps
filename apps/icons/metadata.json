@@ -1,0 +1,17 @@
+{
+  "id": "icons",
+  "name": "Icons",
+  "version": "0.02",
+  "description": "Library containing useful icons for apps",
+  "icon": "app.png",
+  "type": "module",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_modules" : ["icons"],
+  "default": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"icons","url":"lib.js"},
+    {"name":"icons.img","url":"icons.img"}
+  ]
+}

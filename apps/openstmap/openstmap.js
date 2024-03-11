@@ -30,25 +30,31 @@ m.maps = require("Storage").list(/openstmap\.\d+\.json/).map(f=>{
   map.center = Bangle.project({lat:map.lat,lon:map.lon});
   return map;
 });
+m.maps.sort((a,b) => b.scale-a.scale); // sort by scale so highest resolution is drawn last
 // we base our start position on the middle of the first map
 m.map = m.maps[0];
-m.scale = m.map.scale; // current scale (based on first map)
-m.lat = m.map.lat; // position of middle of screen
-m.lon = m.map.lon;  // position of middle of screen
+if (m.map) {
+  m.scale = m.map.scale; // current scale (based on first map)
+  m.lat = m.map.lat; // position of middle of screen
+  m.lon = m.map.lon;  // position of middle of screen
+}
+var CX = g.getWidth()/2;
+var CY = g.getHeight()/2;
 
+// return number of tiles drawn
 exports.draw = function() {
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
   var p = Bangle.project({lat:m.lat,lon:m.lon});
+  let count = 0;
   m.maps.forEach((map,idx) => {
     var d = map.scale/m.scale;
-    var ix = (p.x-map.center.x)/m.scale + (map.imgx*d/2) - cx;
-    var iy = (map.center.y-p.y)/m.scale + (map.imgy*d/2) - cy;
+    var ix = (p.x-map.center.x)/m.scale + (map.imgx*d/2) - CX;
+    var iy = (map.center.y-p.y)/m.scale + (map.imgy*d/2) - CY;
     var o = {};
     var s = map.tilesize;
     if (d!=1) { // if the two are different, add scaling
       s *= d;
       o.scale = d;
+      o.filter = true; // on 2v19+ enables supersampling
     }
     //console.log(ix,iy);
     var tx = 0|(ix/s);
@@ -67,23 +73,24 @@ exports.draw = function() {
     }
     var mx = g.getWidth();
     var my = g.getHeight();
-    for (var x=ox,ttx=tx; x<mx && ttx<map.w; x+=s,ttx++)
+    for (var x=ox,ttx=tx; x<mx && ttx<map.w; x+=s,ttx++) {
       for (var y=oy,tty=ty;y<my && tty<map.h;y+=s,tty++) {
         o.frame = ttx+(tty*map.w);
-        g.drawImage(img,x,y,o);
+        g.drawImage(img,Math.round(x),Math.round(y),o);
+        count++;
       }
+    }
   });
+  return count;
 };
 
 /// Convert lat/lon to pixels on the screen
-exports.latLonToXY = function(lat, lon) {
-  var p = Bangle.project({lat:m.lat,lon:m.lon});
-  var q = Bangle.project({lat:lat, lon:lon});
-  var cx = g.getWidth()/2;
-  var cy = g.getHeight()/2;
+exports.latLonToXY = function(lat, lon) { "ram"
+  var p = Bangle.project({lat:m.lat,lon:m.lon}),
+      q = Bangle.project({lat:lat, lon:lon});
   return {
-    x : (q.x-p.x)/m.scale + cx,
-    y : cy - (q.y-p.y)/m.scale
+    x : Math.round((q.x-p.x)/m.scale + CX),
+    y : Math.round(CY - (q.y-p.y)/m.scale)
   };
 };
 

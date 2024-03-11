@@ -98,7 +98,7 @@ This is the best way to test...
 
 **Note:** It's a great idea to get a local copy of the repository on your PC,
 then run `bin/sanitycheck.js` - it'll run through a bunch of common issues
-that there might be. To get the project running locally, you have to initialize and update the git submodules first: `git submodule --init && git submodule update`.
+that there might be. To get the project running locally, you have to initialize and update the git submodules first: `git submodule update --init`.
 
 Be aware of the delay between commits and updates on github.io - it can take a few minutes (and a 'hard refresh' of your browser) for changes to take effect.
 
@@ -277,7 +277,8 @@ and which gives information about the app for the Launcher.
                               //   'game' - a game
                               //   'bluetooth' - uses Bluetooth LE
                               //   'system' - used by the system
-                              //   'clkinfo' - provides or uses clock_info module for data on your clock face (see modules/clock_info.js)
+                              //   'clkinfo' - provides or uses clock_info module for data on your clock face or clocks that support it (see apps/clock_info/README.md)
+                              //   'health' - e.g. heart rate monitors or step counting
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID

@@ -28,6 +28,10 @@ The CSV data contains the following columns:
 * PPG_o - `e.vcPPGoffs` from the `Bangle.on("HRM-raw"` event. This is the PPG offset used to map `e.vcPPG` to `e.raw` so there are no glitches when the exposure values in the sensor change.
 * BTHRM - BPM figure from external Bluetooth HRM device (this is our reference BPM)
 
+## FIXME
+
+The `custom.html` for the app uses the Puck.js lib directly when it should just use `customize.js` - it won't work well under Gadgetbridge and may fail on other platforms too
+
 ## Creator
 
 [halemmerich](https://github.com/halemmerich)

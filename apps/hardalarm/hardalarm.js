@@ -2,6 +2,8 @@
 // 'load(hardalarm.js)' - so let's remove it first!
 clearInterval();
 
+var okClicked = false;
+
 function formatTime(t) {
   var hrs = 0|t;
   var mins = Math.round((t-hrs)*60);
@@ -61,57 +63,62 @@ function showPrompt(msg, buzzCount, alarm) {
   });
 }
 
+function buzz() {
+  Bangle.buzz(500).then(()=>{
+    setTimeout(()=>{
+      Bangle.buzz(500).then(function() {
+        setTimeout(()=>{
+          Bangle.buzz(2000).then(function() {
+            if(!okClicked) {
+              buzz();
+            }
+          });
+        },100);
+      });
+    },100);
+  });
+}
+
 function showAlarm(alarm) {
   if ((require('Storage').readJSON('setting.json',1)||{}).quiet>1) return; // total silence
   var msg = formatTime(alarm.hr);
   var buzzCount = 20;
   if (alarm.msg)
     msg += "\n"+alarm.msg;
-  var okClicked = false;
+  okClicked = false;
   var currentGuess = 10;
   var randomNum = getRandomFromRange(0, 7, 13, 20);
   showNumberPicker(currentGuess, randomNum)
-  setWatch(o => {
-    if(!okClicked && currentGuess < 20) {
-      currentGuess = currentGuess + 1;
-      showNumberPicker(currentGuess, randomNum);
+
+  let onSwipe = (x, y) => {
+    if (y == 1) {
+      if(!okClicked && currentGuess < 20) {
+        currentGuess = currentGuess + 1;
+        showNumberPicker(currentGuess, randomNum);
+      }
     }
-  }, BTN1, {repeat: true, edge: 'rising'});
+    else if (y == -1) {
+      if(!okClicked && currentGuess > 0) {
+        currentGuess = currentGuess - 1;
+        showNumberPicker(currentGuess, randomNum);
+      }
+    }
+  };
+  Bangle.on("swipe", onSwipe);
+
 
   setWatch(o => {
     if(currentGuess == randomNum) {
       okClicked = true;
       showPrompt(msg, buzzCount, alarm);
     }
-  }, BTN2, {repeat: true, edge: 'rising'});
+  }, BTN, {repeat: true, edge: 'rising'});
 
-  setWatch(o => {
-    if(!okClicked && currentGuess > 0) {
-      currentGuess = currentGuess - 1;
-      showNumberPicker(currentGuess, randomNum);
-    }
-  }, BTN3, {repeat: true, edge: 'rising'});
 
-  function buzz() {
-    Bangle.buzz(500).then(()=>{
-      setTimeout(()=>{
-        Bangle.buzz(500).then(function() {
-          setTimeout(()=>{
-            Bangle.buzz(2000).then(function() {
-              if (buzzCount--)
-                setTimeout(buzz, 2000);
-              else if(alarm.as) { // auto-snooze
-                buzzCount = 20;
-                setTimeout(buzz, 600000); // 10 minutes
-              }
-            });
-          },100);
-        });
-      },100);
-    });
-  }
   buzz();
 }
+
+
 
 // Check for alarms
 var day = (new Date()).getDate();

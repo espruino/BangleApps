@@ -1,0 +1,5 @@
+0.1: Initial release
+0.2: Added more descriptive approximations
+0.2f: Bug fixes: Incorrect hour drawn after 50 mins, incorrect quarter minute drawn after 50 mins
+0.3: Added touch interaction to display exact time and date.
+0.04: Minor code improvements

@@ -12,7 +12,7 @@
   }
   const appMenu = {
     "": { "title": /*LANG*/"Tag Launcher" },
-    /*LANG*/"< Back": back,
+    "< Back": back,
     /*LANG*/"Font": {
       value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf("12x20"),
       min:0, max:fonts.length-1, step:1,wrap:true,

@@ -81,20 +81,23 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
   'textinput' : ['textinput'],
-  'waypoints' : ['waypoints'],
   // notify?
 };
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
-"App gpsrec data file wildcard .gpsrc? does not include app ID",
-"App owmweather data file weather.json is also listed as data file for app weather",
+  "App gpsrec data file wildcard .gpsrc? does not include app ID",
+  "App owmweather data file weather.json is also listed as data file for app weather",
   "App messagegui storage file messagegui is also listed as storage file for app messagelist",
+  "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
+  "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
+  "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
+  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
 ];
 
 function globToRegex(pattern) {
@@ -124,6 +127,7 @@ apps.forEach((app,appIdx) => {
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
+  var appTags = app.tags ? app.tags.split(",") : [];
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -146,10 +150,13 @@ apps.forEach((app,appIdx) => {
     } else {
       var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
       var versions = changeLog.match(/\d+\.\d+:/g);
-      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
-      var lastChangeLog = versions.pop().slice(0,-1);
-      if (lastChangeLog != app.version)
-        ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      if (!versions) {
+        ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
+      } else {
+        var lastChangeLog = versions.pop().slice(0,-1);
+        if (lastChangeLog != app.version)
+          ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      }
     }
   }
   if (!app.description) ERROR(`App ${app.id} has no description`, {file:metadataFile});
@@ -162,11 +169,20 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} screenshot file ${screenshot.url} not found`, {file:metadataFile});
     });
   }
-  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  if (app.readme) {
+    if (!fs.existsSync(appDir+app.readme))
+      ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  } else {
+    let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
+    if (readme)
+      ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
+  }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
   if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`, {file:metadataFile});
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`, {file:metadataFile});
   if (app.dependencies) {
+    if (app.dependencies.clock_info && !appTags.includes("clkinfo"))
+      WARN(`App ${app.id} uses clock_info but doesn't have clkinfo tag`, {file:metadataFile});
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
         if (!["type","app","module","widget"].includes(app.dependencies[dependency]))
@@ -178,6 +194,8 @@ apps.forEach((app,appIdx) => {
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
 
+  if (app.storage.find(f=>f.name.endsWith(".clkinfo.js")) && !appTags.includes("clkinfo"))
+    WARN(`App ${app.id} provides ...clkinfo.js but doesn't have clkinfo tag`, {file:metadataFile});
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
@@ -240,6 +258,18 @@ apps.forEach((app,appIdx) => {
         var b = fileContents.indexOf("Bangle.setUI(");
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
+      }
+      // if settings
+      if (/\.settings?\.js$/.test(file.name)) {
+        // suggest adding to datafiles
+        if (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+          WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+        }
+        // check for manual boolean formatter
+        const m = fileContents.match(/format: *\(?\w*\)? *=>.*["'](yes|on)["']/i);
+        if (m) {
+          WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
+        }
       }
     }
     for (const key in file) {
@@ -315,7 +345,11 @@ apps.forEach((app,appIdx) => {
     })
   })
   //console.log(fileNames);
-  if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  const filenamesIncludesApp = fileNames.includes(app.id+".app.js");
+  if (isApp && !filenamesIncludesApp)
+    ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  else if (!isApp && !["clock", "bootloader", "launch"].includes(app.type) && filenamesIncludesApp)
+    WARN(`${app.id} isn't an app (${app.type}) but has an app.js file (${app.id+"app.js"})`, {file:metadataFile});
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`, {file:metadataFile});
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`, {file:metadataFile});
   for (const key in app) {

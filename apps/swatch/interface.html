@@ -75,7 +75,7 @@ function getLapTimes() {
           });
         }
         if (task=="download") {
-          Util.saveCSV(lap.n.slice(0,-5)+".csv", lap.d.map((d,n)=>[n+1,d].join(",")).join("\n"));
+          Util.saveCSV(lap.n.slice(0,-5), lap.d.map((d,n)=>[n+1,d].join(",")).join("\n"));
         }
       });
     }

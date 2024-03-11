@@ -14,5 +14,6 @@
     {"name":"getup.app.js","url":"app.js"},
     {"name":"getup.settings.js","url":"settings.js"},
     {"name":"getup.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data":[{"name":"getup.settings.json"}]
 }

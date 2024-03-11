@@ -21,7 +21,6 @@
       '< Back': back,
       'Full Screen': {
         value: settings.fullscreen,
-        format: () => (settings.fullscreen ? 'Yes' : 'No'),
         onchange: () => {
           settings.fullscreen = !settings.fullscreen;
           save();

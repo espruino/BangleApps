@@ -6,6 +6,7 @@
     if (settings.vibrate===undefined) settings.vibrate=":";
     if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
     if (settings.repeat===undefined) settings.repeat=4;
+    if (settings.repeatCalls===undefined) settings.repeatCalls=settings.repeat;
     if (settings.vibrateTimeout===undefined) settings.vibrateTimeout=60;
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
     if (settings.maxMessages===undefined) settings.maxMessages=3;
@@ -32,6 +33,12 @@
       min: 0, max: 10,
       format: v => v?v+"s":/*LANG*/"Off",
       onchange: v => updateSetting("repeat", v)
+    },
+    /*LANG*/'Repeat for calls': {
+      value: settings().repeatCalls,
+      min: 0, max: 10,
+      format: v => v?v+"s":/*LANG*/"Off",
+      onchange: v => updateSetting("repeatCalls", v)
     },
     /*LANG*/'Vibrate timer': {
       value: settings().vibrateTimeout,
@@ -82,7 +89,12 @@
       min: 0, max: iconColorModes.length - 1,
       format: v => iconColorModes[v],
       onchange: v => updateSetting("iconColorMode", iconColorModes[v])
-    }
+    },
+    /*LANG*/'Car driver pos': { // used by messagegui
+      value:!!settings().carIsRHD,
+      format: v => v ? /*LANG*/"Right" :/*LANG*/"Left",
+      onchange: v => updateSetting("carIsRHD", v)
+    },
   };
   E.showMenu(mainmenu);
 });

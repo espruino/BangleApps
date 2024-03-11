@@ -1,0 +1,3 @@
+0.01: Initial version of Waternet port for Bangle JS 2
+0.02: Bigger play field tiles (more readable on watch), Always run without widgets visible
+0.03: Minor code improvements

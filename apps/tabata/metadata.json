@@ -2,7 +2,7 @@
   "id": "tabata",
   "name": "Tabata",
   "shortName": "Tabata - Control High-Intensity Interval Training",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Control high-intensity interval training (according to tabata: https://en.wikipedia.org/wiki/Tabata_method).",
   "icon": "tabata.png",
   "tags": "workout,health",

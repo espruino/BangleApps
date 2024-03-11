@@ -2,7 +2,7 @@
     "id": "aptsciclk",
     "name": "Apeture Science Clock",
     "shortName":"AptSci Clock",
-    "version": "0.08",
+    "version": "0.09",
     "description": "A clock based on the portal series",
     "icon": "app.png",
     "screenshots": [{"url":"screenshot.png"}],

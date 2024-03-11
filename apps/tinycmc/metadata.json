@@ -1,0 +1,30 @@
+{
+  "id": "tinycmc",
+  "name": "Tiny CMC",
+  "shortName":"tinycmc",
+  "icon": "icon.png",
+  "version": "0.02",
+  "description": "TinyCMC is a bangle.js Coinmarketcap API client",
+  "type": "app",
+  "tags": "tools",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": false,
+  "interface": "interface.html",
+  "readme": "README.md",
+  "data": [
+    {"name":"tinycmc.json"}
+  ],
+  "storage": [
+    {
+      "name": "tinycmc.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "tinycmc.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}

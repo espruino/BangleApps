@@ -15,18 +15,28 @@
 
     var currentFile = global.__FILE__ || "";
 
-    if(global.BACK) delete global.BACK;
+    if (global.BACK) delete global.BACK;
     if (options && options.back && enabledForApp(currentFile)) {
       global.BACK = options.back;
     }
     setUI(mode, cb);
   };
 
-  function goBack(lr, ud) {
+  function countHandlers(eventType) {
+    if (Bangle["#on"+eventType] === undefined) {
+      return 0;
+    } else if (Bangle["#on"+eventType] instanceof Array) {
+      return Bangle["#on"+eventType].filter(x=>x).length;
+    } else if (Bangle["#on"+eventType] !== undefined) {
+      return 1;
+    }
+  }
+
+  function goBack(lr, _) {
     // if it is a left to right swipe
     if (lr === 1) {
       // if we're in an app that has a back button, run the callback for it
-      if (global.BACK) {
+      if (global.BACK && countHandlers("swipe")<=settings.standardNumSwipeHandlers && countHandlers("drag")<=settings.standardNumDragHandlers) {
         global.BACK();
       }
     }

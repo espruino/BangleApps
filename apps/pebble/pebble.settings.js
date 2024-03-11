@@ -23,7 +23,7 @@
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var theme_options = ['System', 'Light', 'Dark'];
-  
+
   E.showMenu({
     '': { 'title': 'Pebble Clock' },
     /*LANG*/'< Back': back,
@@ -48,7 +48,6 @@
     },
     /*LANG*/'Show Lock': {
       value: settings.showlock,
-      format: () => (settings.showlock ? /*LANG*/'Yes' : /*LANG*/'No'),
       onchange: () => {
         settings.showlock = !settings.showlock;
         save();

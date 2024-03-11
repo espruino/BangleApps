@@ -1,0 +1,48 @@
+{
+  "id": "bwclklite",
+  "name": "BW Clock Lite",
+  "version": "0.34",
+  "description": "A very minimalistic clock. This version of BW Clock is quicker at the cost of the custom font.",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    },
+    {
+      "url": "screenshot_2.png"
+    },
+    {
+      "url": "screenshot_3.png"
+    }
+  ],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "dependencies": {
+    "clock_info": "module"
+  },
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "bwclklite.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "bwclklite.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "bwclklite.settings.js",
+      "url": "settings.js"
+    }
+  ],
+  "data": [
+    {
+      "name": "bwclklite.setting.json"
+    }
+  ]
+}

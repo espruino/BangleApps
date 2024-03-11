@@ -103,7 +103,7 @@ exports.show = function(options) {
   b -= 2;h -= 2;
   // title bar
   if (options.title || options.src) {
-    g.setColor(options.titleBgColor||0x39C7).fillRect(x,y, r,y+20);
+    g.setColor("titleBgColor" in options ? options.titleBgColor : g.theme.dark ? 0x1 : 0x39C7).fillRect(x,y, r,y+20);
     const title = options.title||options.src;
     g.setColor(g.theme.fg).setFontAlign(-1, -1, 0).setFont("6x8", 2);
     g.drawString(title.trim().substring(0, 13), x+25,y+3);

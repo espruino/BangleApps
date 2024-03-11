@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Fixes temperature not loading at start.
+0.03: reduces energy consumption, fixes bug where app thinks that screen is still unlocked after receiving a message
+0.04: Minor code improvements

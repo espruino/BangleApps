@@ -2,8 +2,8 @@
   let drawTimeout;
   let extrasTimeout;
   let onLock;
-  let onTap;
-  let onTwist;
+  //let onTap;
+  //let onTwist;
   let settings = require('Storage').readJSON("contourclock.json", true) || {};
   if (settings.fontIndex == undefined) {
     settings.fontIndex = 0;
@@ -34,9 +34,12 @@
       extrasTimeout = undefined;
       hideExtras();
     }, 5000);
+    extrasShown = false;
   };
   let drawExtras = function() { //draw date, day of the week and widgets
     let date = new Date();
+    g.reset();
+    g.clearRect(0, 138, g.getWidth() - 1, 176);
     g.setFont("Teletext10x18Ascii").setFontAlign(0, 1);
     if (settings.weekday) g.drawString(require("locale").dow(date).toUpperCase(), g.getWidth() / 2, g.getHeight() - 18);
     if (settings.date) g.drawString(require('locale').date(date, 1), g.getWidth() / 2, g.getHeight());
@@ -45,21 +48,22 @@
   };
   let hideExtras = function() {
     if (extrasTimeout) clearTimeout(extrasTimeout);
+    extrasTimeout = undefined; //NEW
+    g.reset();
     g.clearRect(0, 138, g.getWidth() - 1, 176);
     require("widget_utils").hide();
-    extrasShown = false;
+    extrasShown = false; ///NEW
   };
   let draw = function() {
-    let date = new Date();
-    g.reset();
-    if (extrasShown) drawExtras();
-    else hideExtras();
-    require('contourclock').drawClock(settings.fontIndex);
-    if (drawTimeout) clearTimeout(drawTimeout);
+    if (drawTimeout) clearTimeout(drawTimeout); //NEW
     drawTimeout = setTimeout(function() {
       drawTimeout = undefined;
       draw();
     }, 60000 - (Date.now() % 60000));
+    g.reset();
+    if (extrasShown) drawExtras();
+    else hideExtras();
+    require('contourclock').drawClock(settings.fontIndex);
   };
   if (settings.hideWhenLocked) {
     onLock = locked => {
@@ -83,6 +87,8 @@
       Bangle.removeListener('twist', showExtras);
       if (drawTimeout) clearTimeout(drawTimeout);
       if (extrasTimeout) clearTimeout(extrasTimeout);
+      drawTimeout = undefined;
+      extrasTimeout = undefined;
       if (settings.hideWhenLocked) require("widget_utils").show();
       g.reset();
       g.clear();
@@ -91,7 +97,7 @@
   g.clear();
   if (settings.widgets) {
     Bangle.loadWidgets();
-    Bangle.drawWidgets();
+    setTimeout(Bangle.drawWidgets,0); //NEW
   }
   draw();
 }

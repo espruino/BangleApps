@@ -16,7 +16,6 @@ const imgOptions = {
 var PNG = require('png-js');
 var IMAGE_BYTES = 76;
 
-var iconTests = [];
 var iconImages = []; // array of converted icons
 var iconIndices = {}; // maps filename -> index in iconImages
 
@@ -72,7 +71,9 @@ Promise.all(promises).then(function() {
   require("fs").writeFileSync(__dirname+"/../icons.img", Buffer.from(iconData,"binary"));
 
   console.log("Saving library");
-  require("fs").writeFileSync(__dirname+"/../lib.js", `exports.getImage = function(msg) {
+  require("fs").writeFileSync(__dirname+"/../lib.js", `// This file is auto-generated - DO NOT MODIFY
+// If you want to add icons, change icons/icon_names.json and re-run icons/generate.js
+exports.getImage = function(msg) {
   if (msg.img) return atob(msg.img);
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (msg.id=="music") s="music";
@@ -87,15 +88,15 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
-    // generic colors, using B2-safe colors
-    // DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used
+    /* generic colors, using B2-safe colors */ ${ /* DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used */"" }
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
-    "sms message": "#0ff",
-    // brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
-    // all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
+    "sms message": "#0ff", ${ /*
+    brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
+    all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
+*/""}
     "bibel": "#54342c",
     "bring": "#455a64",
     "discord": "#5865f2", // https://discord.com/branding
@@ -107,6 +108,7 @@ exports.getColor = function(msg,options) {
     "google home": "#fbbc05",
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
+    "jira": "#0052cc", //https://atlassian.design/resources/logo-library
     "lieferando": "#ff8000",
     "linkedin": "#0a66c2", // https://brand.linkedin.com/
     "messenger": "#0078ff",

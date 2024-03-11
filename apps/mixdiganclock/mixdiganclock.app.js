@@ -2,7 +2,7 @@
 compatible with BJS1, BJS2 and bottom widgets
 */
 var locale = require("locale");
-var v_mode_debug=0 //, 0=no, 1 min, 2 prone detail
+var v_mode_debug=0; //, 0=no, 1 min, 2 prone detail
 var v_model=process.env.BOARD;
 var v_array4colors=0; // 0 undef, 1 forDark, 2 forLight
 var a_colors=[]; //new Array(), values will depend on b_isarray4dark
@@ -23,8 +23,25 @@ var v_center_y;
 
 g.clear(); //ONLY 1ST TIME
 //show the exit button
-Bangle.setUI("clock"); //implies center button for launcher
 
+function setMainBtn() { 
+//if messages app installed shortcut otherwise default access to launcher 
+if  (require("Storage").read("messagegui.app.js")===undefined) 
+{
+  if (require("Storage").read("messagelist.app.js")===undefined)  Bangle.setUI("clock"); // implies btn2(js1)  btn(js2)- launcher
+   else if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') setWatch(function (){load("messagelist.app.js");}, BTN2, { repeat: true });   
+      else setWatch(function (){load("messagelist.app.js");}, BTN1, { repeat: true });
+}
+else if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') setWatch(function (){load("messagegui.app.js");}, BTN2, { repeat: true });   
+        else setWatch(function (){load("messagegui.app.js");}, BTN1, { repeat: true });
+}
+
+function setBJS1Btns() { 
+  //only for bjs1, btns complementary to touch 
+   setWatch(changeFGcolor, BTN1, { repeat: true });        
+   setWatch(changeBGcolor, BTN3, { repeat: true });             
+  }
+  
 Bangle.loadWidgets();
 
 function getColorArray4BG() {    //1st=0 1st compatible color (dark/light theme)
@@ -211,6 +228,42 @@ function drawMixedClock() {
    g.setColor(a_colors[v_color1]);
    g.fillCircle(v_center_x, v_center_y, Radius.center);
 }
+
+function changeFGcolor(){
+ //change color but monocolor watchface
+ if (v_mode_debug>0) console.log("v_count_col/total: "+v_count_col+"/"+a_colors.length);
+ if (v_count_col<a_colors.length){
+  v_color1=v_count_col;
+  v_color2=v_count_col;
+  v_color3=v_count_col;
+  v_count_col++; //next color
+ }
+ else setVariables();   //v_count_col=3; //reset to 1st common color
+ if (v_mode_debug>0) console.log("paint on color: "+v_count_col);
+ drawStaticRing(a_colors[v_color1]);
+ drawDailyTxt();
+}
+function changeBGcolor(){
+  //pend to refactor
+  //if black  bg
+ if (v_array4colors==1) v_array4colors=2; // then white
+ else if (v_array4colors==2) v_array4colors=1; //if white  bg         
+ getColorArray4BG(); //set new list of colors
+ g.setBgColor( v_color_erase);// 0 white, 1 black
+ ClearScreen();
+ //g.clear();//impact on widgets
+ drawStaticRing(a_colors[v_color1]);
+ drawDailyTxt(); //1st time
+ drawMixedClock();
+}
+function changeRadiusRing(){
+  drawStaticRing(v_color_erase);
+  if (Radius.circleH<13) Radius.circleH++;
+  else Radius.circleH=2;
+  if (v_mode_debug>0)  console.log("radio: "+Radius.circleH);
+  drawStaticRing(a_colors[v_color1]);
+}
+
 function UserInput(){
   Bangle.on('touch', function(button){
       switch(button){
@@ -218,55 +271,21 @@ function UserInput(){
             Bangle.showLauncher();
                break;
           case 2:
-            //change color but monocolor watchface
-               if (v_mode_debug>0) console.log("v_count_col/total: "+v_count_col+"/"+a_colors.length);
-               if (v_count_col<a_colors.length){
-                v_color1=v_count_col;
-                v_color2=v_count_col;
-                v_color3=v_count_col;
-                v_count_col++; //next color
-               }
-               else setVariables();   //v_count_col=3; //reset to 1st common color
-               if (v_mode_debug>0) console.log("paint on color: "+v_count_col);
-               drawStaticRing(a_colors[v_color1]);
-               drawDailyTxt();
+            changeFGcolor();
                break;
           case 3:
              //console.log("Touch 3 aka 1+2 not for BJS1 emul");//center 1+2
               break;
       }
   });
-  //changing dimensions
+  //changing dimensions right
   Bangle.on('swipe', dir => {
     if(dir == 1) {
-      drawStaticRing(v_color_erase);
-      if (Radius.circleH<13) Radius.circleH++
-      else Radius.circleH=2;
-      if (v_mode_debug>0)  console.log("radio: "+Radius.circleH);
-      drawStaticRing(a_colors[v_color1]);
+      changeRadiusRing();      
        }
-    else { //swipe left, pend to refactor
-      if (v_array4colors==1) { //if black  bg
-         v_array4colors=2; // then white
-         getColorArray4BG(); //set new list of colors
-         g.setBgColor( v_color_erase);// 0 white, 1 black
-         ClearScreen();
-         //g.clear();//impact on widgets
-         drawStaticRing(a_colors[v_color1]);
-         drawDailyTxt(); //1st time
-         drawMixedClock();
-      } else if (v_array4colors==2) { //if white  bg
-        v_array4colors=1;
-        getColorArray4BG();
-        console.log(a_colors[1]);
-         g.setBgColor(v_color_erase);// 0 white, 1 black
-         //g.clear();
-         ClearScreen();
-         drawStaticRing(a_colors[v_color1]);
-         drawDailyTxt(); //1st time
-         drawMixedClock(); //or just wait?
-        }
-       }
+    else { //swipe left,bg color 
+      changeBGcolor();
+        }      
   });
 }
 Bangle.on('lcdPower', function(on) {
@@ -274,9 +293,11 @@ Bangle.on('lcdPower', function(on) {
     drawMixedClock();
 });
 
+setMainBtn(); //assign btn to messages when installed
 setVariables();
 Bangle.drawWidgets();
 UserInput();
+if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') setBJS1Btns(); //assign btn1 and btn3
 setInterval(drawMixedClock, 30000);//not realtime update
 drawStaticRing(a_colors[v_color1]);
 drawDailyTxt();

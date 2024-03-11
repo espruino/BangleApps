@@ -58,7 +58,8 @@ let draw = function() {
   // Now draw this one
   R = Bangle.appRect;
   x = R.w / 2;
-  y = R.y + R.h / 2 - 12; // 12 = room for date
+  y = R.y + R.h / 2 - 6;
+  if (!settings.hideWidgets) y-= 6; // extra room for date
   var date = new Date();
   var local_time = require("locale").time(date, 1);
   var hourStr = local_time.split(":")[0].trim().padStart(2,'0');
@@ -77,6 +78,8 @@ let draw = function() {
   g2.setColor(0).fillRect(0,0,g2.getWidth(),g2.getHeight()).setFontAlign(1, 0).setFont("PaytoneOne");
   g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2).setFont("4x6"); // draw and unload custom font
   g2.setColor(0).fillPoly([0,0, g2.getWidth(),0, 0,slope*2]);
+  // redraw the top widget
+  clockInfoMenu.redraw();
   // start the animation *in*
   animate(true);
 };
@@ -141,8 +144,14 @@ let clockInfoDraw = (itm, info, options) => {
   g.setClipRect(0,0,g.getWidth()-1, g.getHeight()-1);
 };
 let clockInfoItems = require("clock_info").load();
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"slopeclockpp",x:126, y:24, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/ });
-let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { app:"slopeclockpp",x:0, y:115, w:50, h:40, draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg });
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // top right
+  app:"slopeclockpp",x:132, y:settings.hideWidgets ? 12 : 24, w:44, h:40,
+  draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
+});
+let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
+  app:"slopeclockpp",x:0, y:115, w:50, h:40,
+  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg
+});
 
 // Show launcher when middle button pressed
 Bangle.setUI({
@@ -163,6 +172,7 @@ Bangle.setUI({
 });
 // Load widgets
 Bangle.loadWidgets();
+if (settings.hideWidgets) require("widget_utils").swipeOn();
+else setTimeout(Bangle.drawWidgets,0);
 draw();
-setTimeout(Bangle.drawWidgets,0);
 }

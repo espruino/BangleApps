@@ -2,7 +2,7 @@
   "name": "Ruuvi Watch",
   "shortName":"Ruuvi Watch",
   "icon": "ruuviwatch.png",
-  "version":"0.04",
+  "version": "0.05",
   "description": "Keep an eye on RuuviTag devices (https://ruuvi.com). For RuuviTags using the v5 format.",
   "readme":"README.md",
   "tags": "bluetooth",

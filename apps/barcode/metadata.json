@@ -2,7 +2,7 @@
   "name": "Barcode clock",
   "shortName":"Barcode clock",
   "icon": "barcode.icon.png",
-  "version":"0.10",
+  "version": "0.11",
   "description": "EAN-8 compatible barcode clock.",
   "tags": "barcode,ean,ean-8,watchface,clock,clockface",
   "type": "clock",

@@ -13,5 +13,6 @@
     {"name":"metronome.app.js","url":"metronome.js"},
     {"name":"metronome.img","url":"metronome-icon.js","evaluate":true},
     {"name":"metronome.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data":[{"name":"metronome.settings.json"}]
 }

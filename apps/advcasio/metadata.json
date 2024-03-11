@@ -1,7 +1,7 @@
 { "id": "advcasio",
   "name": "Advanced Casio Clock",
   "shortName":"advcasio",
-  "version":"0.04",
+  "version":"0.05",
   "description": "An over-engineered clock inspired by Casio watches. It has a 4 days weather, a  timer using swipe and a scratchpad. Can be updated using a dedicated webapp.",
   "icon": "app.png",
   "tags": "clock",

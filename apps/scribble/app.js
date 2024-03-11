@@ -1,12 +1,12 @@
 const black = "#000000";
 const white = "#ffffff";
-const gray1 = "#444444";
+//const gray1 = "#444444";
 const gray2 = "#888888";
-const gray3 = "#bbbbbb";
+//const gray3 = "#bbbbbb";
 
 const red = "#FF0000";
-const green = "#00FF00";
-const blue = "#0000FF";
+//const green = "#00FF00";
+//const blue = "#0000FF";
 
 const transp = -1;
 const abc = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -23,7 +23,7 @@ const editable_buf = "Scribble";
 
 const left = 3;
 const _screen_mid = g.getWidth() / 2;
-const right = 176 - 4;
+//const right = 176 - 4;
 
 const box_size = {
   w: _screen_mid - 6,
@@ -31,7 +31,7 @@ const box_size = {
 };
 
 const spacing = 4;
-const border = 4;
+//const border = 4;
 const top_start = 25;
 
 const pos_y = [
@@ -63,12 +63,12 @@ g.theme = {
 
 const maxX = g.getWidth();
 const maxY = g.getHeight();
-const fontSize = g.getWidth() > 200 ? 2 : 1;
+//const fontSize = g.getWidth() > 200 ? 2 : 1;
 const rowN = 7;
 const colN = 7;
 const headerH = maxY / 7;
-const rowH = (maxY - headerH) / rowN;
-const colW = maxX / colN;
+//const rowH = (maxY - headerH) / rowN;
+//const colW = maxX / colN;
 
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -105,10 +105,10 @@ class Window {
     }
 
 
-    let i = 0;
+    //let i = 0;
     this.layers.forEach((lyr) => {
       // console.log(`Rendering Layer ${i} ${lyr.label}`)
-      i++;
+      //i++;
       lyr.render();
     });
   }

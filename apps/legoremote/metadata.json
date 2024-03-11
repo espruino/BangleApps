@@ -1,0 +1,14 @@
+{ "id": "legoremote",
+  "name": "LEGO Remote control",
+  "shortName":"LEGO Remote",
+  "version": "0.03",
+  "description": "Use your Bangle.js to control LEGO models. See the README for compatibility",
+  "icon": "app.png",
+  "tags": "toy,lego,bluetooth",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"legoremote.app.js","url":"app.js"},
+    {"name":"legoremote.img","url":"app-icon.js","evaluate":true}
+  ]
+}

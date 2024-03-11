@@ -1,0 +1,17 @@
+{
+	"id": "rep",
+	"name": "Rep",
+	"version":"0.02",
+	"description": "Time running reps, using a rep schedule/program uploaded via the app loader",
+	"icon": "app.png",
+	"tags": "run,running,fitness,outdoors",
+	"supports" : ["BANGLEJS2"],
+	"readme": "README.md",
+	"interface": "interface.html",
+	"storage": [
+		{"name":"rep.app.js","url":"app.js"},
+		{"name":"rep.settings.js","url":"settings.js"},
+		{"name":"rep.img","url":"app-icon.js","evaluate":true}
+	],
+	"data": [{"name":"rep.json"}]
+}

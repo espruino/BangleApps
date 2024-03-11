@@ -27,7 +27,7 @@
     let W = global.WIDGETS;
     global.WIDGETS = {};
     Object.keys(W)
-      .sort()
+      .sort() // see comment in boot.js
       .sort((a, b) => (0|W[b].sortorder)-(0|W[a].sortorder))
       .forEach(k => {global.WIDGETS[k] = W[k];});
     Bangle.drawWidgets();
@@ -67,7 +67,7 @@
     function highlight() {
       if (WIDGET.width > 0) {
         // draw widget, then draw a highlighted border on top
-        WIDGET.draw();
+        WIDGET.draw(WIDGET);
         g.setColor(g.theme.fgH)
           .drawRect(WIDGET.x, WIDGET.y, WIDGET.x+WIDGET.width-1, WIDGET.y+23);
       } else {

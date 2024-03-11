@@ -45,7 +45,11 @@
       <div id="map">
       </div>
       <div id="controls">
-        <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+        <div style="display:inline-block;text-align:left;vertical-align: top;" id="3bitdiv">
+          <input type="checkbox" id="3bit"></input><span>3 bit</span>
+          <br>
+          <input type="checkbox" id="preview"><span>Preview</span>
+        </div>
         <div class="form-group" style="display:inline-block;">
         <select class="form-select" id="mapSize">
           <option value="4">Small (4x4)</option>
@@ -69,7 +73,7 @@
     <script src="../../webtools/heatshrink.js"></script>
     <script src="../../webtools/imageconverter.js"></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.6.0/dist/bundle.min.js"></script>
-
+    <script src="imagefilter.js"></script>
     <script>
     /*
 
@@ -87,8 +91,8 @@ TODO:
       However some don't allow cross-origin use */
       //var TILELAYER = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'; // simple, high contrast, TOO SLOW
       //var TILELAYER = 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png'; // black and white
-      var TILELAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var PREVIEWTILELAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var TILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var PREVIEWTILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
       var loadedMaps = [];
 
@@ -124,10 +128,11 @@ TODO:
       // ---------------------------------------- Run at startup
       function onInit(device) {
         if (device && device.info && device.info.g) {
-          // On 3 bit devices, don't even offer the option. 3 bit is the only way
+          // On 3 bit devices, 3 bit is the best way
+          // still allow 8 bit as it makes zoom out much nicer
           if (device.info.g.bpp==3) {
             document.getElementById("3bit").checked = true;
-            document.getElementById("3bitdiv").style = "display:none";
+            //document.getElementById("3bitdiv").style = "display:none";
           }
         }
 
@@ -142,25 +147,21 @@ TODO:
         let mapsLoadedContainer = document.getElementById("mapsLoadedContainer");
         mapsLoadedContainer.innerHTML = "";
         loadedMaps = [];
+        const mapsLoaded = [];
 
-        Puck.write(`\x10Bluetooth.println(require("Storage").list(/openstmap\\.\\d+\\.json/))\n`,function(files) {
+        Puck.eval(`require("Storage").list(/openstmap\\.\\d+\\.json/)\n`,function(files) {
           console.log("MAPS:",files);
+          files.sort();
           let promise = Promise.resolve();
-          files.trim().split(",").forEach(filename => {
+          files.forEach(filename => {
             if (filename=="") return;
             promise = promise.then(() => new Promise(resolve => {
-              Util.readStorage(filename, fileContents => {
-                console.log(filename + " => " + fileContents);
+              Util.readStorageJSON(filename, mapInfo => {
+                console.log(filename + " => " + JSON.stringify(mapInfo));
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
-                let mapInfo;
-                try {
-                  mapInfo = JSON.parse(fileContents);
-                } catch (e) {
-                  console.error(e);
-                }
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
-                  let latlon = L.latLng(mapInfo.lat, mapInfo.lon);
+                  mapsLoaded.push({mapNumber: mapNumber, mapInfo: mapInfo});
                   mapsLoadedContainer.innerHTML += `
 <div class="tile">
   <div class="tile-icon">
@@ -176,19 +177,27 @@ TODO:
   </div>
 </div>
                   `;
-                  setTimeout(function() {
-                    let map = L.map(`tile-map-${mapNumber}`);
-                    L.tileLayer(PREVIEWTILELAYER, {
-                      maxZoom: 18
-                    }).addTo(map);
-                    let marker = new L.marker(latlon).addTo(map);
-                    map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
-                  }, 100);
                 }
                 resolve();
               });
             }));
           });
+          promise = promise.then(() => new Promise(resolve => {
+            setTimeout(() => {
+              mapsLoaded.forEach(mapLoaded => {
+                let latlon = L.latLng(mapLoaded.mapInfo.lat, mapLoaded.mapInfo.lon);
+                let map = L.map(`tile-map-${mapLoaded.mapNumber}`);
+                L.tileLayer(PREVIEWTILELAYER, {
+                  maxZoom: 18
+                }).addTo(map);
+                let marker = new L.marker(latlon).addTo(map);
+                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w;
+                map.fitBounds(latlon.toBounds(dist/2/*meters*/), {animation: false});
+              });
+            }, 0);
+
+            resolve();
+          }));
           promise = promise.then(() => new Promise(resolve => {
             if (!loadedMaps.length) {
               mapsLoadedContainer.innerHTML += `
@@ -239,6 +248,8 @@ TODO:
         document.getElementById("mapContainer").style.display = "";
         document.getElementById("maptiles").style.display="none";
         document.getElementById("uploadbuttons").style.display="none";
+        map.invalidateSize();
+        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       }
 
       // -----------------------------------------------------
@@ -256,32 +267,16 @@ TODO:
             mode:"3bit",
             diffusion:"bayer2"
           };
-          /* If in 3 bit mode, go through all the data beforehand and
-          turn the saturation up to maximum, so when thresholded it
-          works a lot better */
-          var imageData = ctx.getImageData(0,0,width,height);
-          var rgba = imageData.data;
-          var l = width*height*4;
-          for (var i=0;i<l;i+=4) {
-             var min = Math.min(rgba[i+0],rgba[i+1],rgba[i+2]);
-             var max = Math.max(rgba[i+0],rgba[i+1],rgba[i+2]);
-             var d = max-min;
-             if (max<120 || (d<8 && max<215)) { // black, or a darker grey
-               rgba[i+0]=0;
-               rgba[i+1]=0;
-               rgba[i+2]=0;
-             } else if (min>240 || d<8) { // white or grey
-               rgba[i+0]=255;
-               rgba[i+1]=255;
-               rgba[i+2]=255;
-             } else { // another colour - use max saturation
-               rgba[i+0] = (rgba[i+0]-min) * 255 / d;
-               rgba[i+1] = (rgba[i+1]-min) * 255 / d;
-               rgba[i+2] = (rgba[i+2]-min) * 255 / d;
-             }
-          }
-          ctx.putImageData(imageData,0,0);
         }
+        /* Go through all the data beforehand and
+        turn the saturation up to maximum, so if thresholded to 3 bits it
+        works a lot better */
+        var imageData = ctx.getImageData(0,0,width,height);
+        var dstData = ctx.createImageData(width, height);
+        var filterOptions = {};
+        imageFilterFor3BPP(imageData, dstData, filterOptions);
+        ctx.putImageData(dstData,0,0);
+
         console.log("Compression options", options);
         var w = Math.round(width / TILESIZE);
         var h = Math.round(height / TILESIZE);
@@ -294,7 +289,9 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            if (document.getElementById("preview").checked) {
+              ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            }
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/

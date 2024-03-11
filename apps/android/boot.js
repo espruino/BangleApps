@@ -6,6 +6,7 @@
   var lastMsg; // for music messages - may not be needed now...
   var actInterval; // Realtime activity reporting interval when `act` is true
   var actHRMHandler; // For Realtime activity reporting
+  var gpsState = {}; // keep information on GPS via Gadgetbridge
 
   // this settings var is deleted after this executes to save memory
   var settings = require("Storage").readJSON("android.settings.json",1)||{};
@@ -80,14 +81,20 @@
         for (var j = 0; j < event.d.length; j++) {
           // prevents all alarms from going off at once??
           var dow = event.d[j].rep;
-          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var rp = false;
+          if (!dow) {
+            dow = 127; //if no DOW selected, set alarm to all DOW
+          } else {
+            rp = true;
+          }
           var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
           var a = require("sched").newDefaultAlarm();
           a.id = "gb"+j;
           a.appid = "gbalarms";
-          a.on = true;
+          a.on = event.d[j].on !== undefined ? event.d[j].on : true;
           a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
           a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
+          a.rp = rp;
           a.last = last;
           alarms.push(a);
         }
@@ -137,16 +144,38 @@
       },
       // {t:"gps", lat, lon, alt, speed, course, time, satellites, hdop, externalSource:true }
       "gps": function() {
-        const settings = require("Storage").readJSON("android.settings.json",1)||{};
         if (!settings.overwriteGps) return;
+        // modify event for using it as Bangle GPS event
         delete event.t;
-        event.satellites = NaN;
+        if (!isFinite(event.satellites)) event.satellites = NaN;
         if (!isFinite(event.course)) event.course = NaN;
         event.fix = 1;
         if (event.long!==undefined) { // for earlier Gadgetbridge implementations
           event.lon = event.long;
           delete event.long;
         }
+        if (event.time){
+          event.time = new Date(event.time);
+        }
+
+        if (!gpsState.lastGPSEvent) {
+          // this is the first event, save time of arrival and deactivate internal GPS
+          Bangle.moveGPSPower(0);
+        } else {
+          // this is the second event, store the intervall for expecting the next GPS event
+          gpsState.interval = Date.now() - gpsState.lastGPSEvent;
+        }
+        gpsState.lastGPSEvent = Date.now();
+        // in any case, cleanup the GPS state in case no new events arrive
+        if (gpsState.timeoutGPS) clearTimeout(gpsState.timeoutGPS);
+        gpsState.timeoutGPS = setTimeout(()=>{
+          // reset state
+          gpsState.lastGPSEvent = undefined;
+          gpsState.timeoutGPS = undefined;
+          gpsState.interval = undefined;
+          // did not get an expected GPS event but have GPS clients, switch back to internal GPS
+          if (Bangle.isGPSOn()) Bangle.moveGPSPower(1);
+        }, (gpsState.interval || 10000) + 1000);
         Bangle.emit('GPS', event);
       },
       // {t:"is_gps_active"}
@@ -170,9 +199,54 @@
         Bangle.on('HRM',actHRMHandler);
         actInterval = setInterval(function() {
           var steps = Bangle.getStepCount();
-          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM });
+          gbSend({ t: "act", stp: steps-lastSteps, hrm: lastBPM, rt:1 });
           lastSteps = steps;
         }, event.int*1000);
+      },
+      // {t:"actfetch", ts:long}
+      "actfetch": function() {
+        gbSend({t: "actfetch", state: "start"});
+        var actCount = 0;
+        var actCb = function(r) {
+          // The health lib saves the samples at the start of the 10-minute block
+          // However, GB expects them at the end of the block, so let's offset them
+          // here to keep a consistent API in the health lib
+          var sampleTs = r.date.getTime() + 600000;
+          if (sampleTs >= event.ts) {
+            gbSend({
+              t: "act",
+              ts: sampleTs,
+              stp: r.steps,
+              hrm: r.bpm,
+              mov: r.movement
+            });
+            actCount++;
+          }
+        }
+        if (event.ts != 0) {
+          require("health").readAllRecordsSince(new Date(event.ts - 600000), actCb);
+        } else {
+          require("health").readFullDatabase(actCb);
+        }
+        gbSend({t: "actfetch", state: "end", count: actCount});
+      },
+      "nav": function() {
+        event.id="nav";
+        if (event.instr) {
+          event.t="add";
+          event.src="maps"; // for the icon
+          event.title="Navigation";
+          if (require("messages").getMessages().find(m=>m.id=="nav"))
+            event.t = "modify";
+        } else {
+          event.t="remove";
+        }
+        require("messages").pushMessage(event);
+      },
+      "cards" : function() {
+        // we receive all, just override what we have
+        if (Array.isArray(event.d))
+          require("Storage").writeJSON("android.cards.json", event.d);
       }
     };
     var h = HANDLERS[event.t];
@@ -195,6 +269,7 @@
     //send the request
     var req = {t: "http", url:url, id:options.id};
     if (options.xpath) req.xpath = options.xpath;
+    if (options.return) req.return = options.return; // for xpath
     if (options.method) req.method = options.method;
     if (options.body) req.body = options.body;
     if (options.headers) req.headers = options.headers;
@@ -216,6 +291,7 @@
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
+    gbSend({t: "ver", fw: process.env.VERSION, hw: process.env.HWVERSION});
     GB({t:"force_calendar_sync_start"}); // send a list of our calendar entries to start off the sync process
   }, 2000));
   NRF.on("disconnect", () => {
@@ -227,10 +303,9 @@
       require("messages").clearAll();
   });
   setInterval(sendBattery, 10*60*1000);
-  // Health tracking
-  Bangle.on('health', health=>{
-    if (actInterval===undefined) // if 'realtime' we do it differently
-      gbSend({ t: "act", stp: health.steps, hrm: health.bpm });
+  // Health tracking - if 'realtime' data is sent with 'rt:1', but let's still send our activity log every 10 mins
+  Bangle.on('health', h=>{
+    gbSend({ t: "act", stp: h.steps, hrm: h.bpm, mov: h.movement });
   });
   // Music control
   Bangle.musicControl = cmd => {
@@ -243,11 +318,13 @@
     if (isFinite(msg.id)) return gbSend({ t: "notify", n:response?"OPEN":"DISMISS", id: msg.id });
     // error/warn here?
   };
+  Bangle.messageIgnore = msg => {
+    if (isFinite(msg.id)) return gbSend({ t: "notify", n:"MUTE", id: msg.id });
+  };
   // GPS overwrite logic
-  if (settings.overwriteGps) { // if the overwrite option is set../
+  if (settings.overwriteGps) { // if the overwrite option is set..
     const origSetGPSPower = Bangle.setGPSPower;
-    // migrate all GPS clients to the other variant on connection events
-    let handleConnection = (state) => {
+    Bangle.moveGPSPower = (state) => {
       if (Bangle.isGPSOn()){
         let orig = Bangle._PWR.GPS;
         delete Bangle._PWR.GPS;
@@ -255,39 +332,45 @@
         Bangle._PWR.GPS = orig;
       }
     };
-    NRF.on('connect', ()=>{handleConnection(0);});
-    NRF.on('disconnect', ()=>{handleConnection(1);});
 
-    // Work around Serial1 for GPS not working when connected to something
+    // work around Serial1 for GPS not working when connected to something
     let serialTimeout;
     let wrap = function(f){
       return (s)=>{
         if (serialTimeout) clearTimeout(serialTimeout);
-        handleConnection(1);
+        origSetGPSPower(1, "androidgpsserial");
         f(s);
         serialTimeout = setTimeout(()=>{
           serialTimeout = undefined;
-          if (NRF.getSecurityStatus().connected) handleConnection(0);
+          origSetGPSPower(0, "androidgpsserial");
         }, 10000);
       };
     };
     Serial1.println = wrap(Serial1.println);
     Serial1.write = wrap(Serial1.write);
 
-    // Replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
-    Bangle.setGPSPower = (isOn, appID) => {
-      // if not connected use internal GPS power function
-      if (!NRF.getSecurityStatus().connected) return origSetGPSPower(isOn, appID);
-      if (!Bangle._PWR) Bangle._PWR={};
-      if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
-      if (!appID) appID="?";
-      if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);
-      if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);
-      let pwr = Bangle._PWR.GPS.length>0;
+    // replace set GPS power logic to suppress activation of gps (and instead request it from the phone)
+    Bangle.setGPSPower = ((isOn, appID) => {
+      let pwr;
+      if (!this.lastGPSEvent){
+        // use internal GPS power function if no gps event has arrived from GadgetBridge
+        pwr = origSetGPSPower(isOn, appID);
+      } else {
+        // we are currently expecting the next GPS event from GadgetBridge, keep track of GPS state per app
+        if (!Bangle._PWR) Bangle._PWR={};
+        if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];
+        if (!appID) appID="?";
+        if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);
+        if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);
+        pwr = Bangle._PWR.GPS.length>0;
+        // stop internal GPS, no clients left
+        if (!pwr) origSetGPSPower(0);
+      }
+      // always update Gadgetbridge on current power state
       gbSend({ t: "gps_power", status: pwr });
       return pwr;
-    };
-    // Allow checking for GPS via GadgetBridge
+    }).bind(gpsState);
+    // allow checking for GPS via GadgetBridge
     Bangle.isGPSOn = () => {
       return !!(Bangle._PWR && Bangle._PWR.GPS && Bangle._PWR.GPS.length>0);
     };

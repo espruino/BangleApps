@@ -1,0 +1,60 @@
+{
+  "time": {
+    "font": "BrunoAce",
+    "fontSize": 1,
+    "outline": 2,
+    "color": "#000",
+    "outlineColor": "#fff",
+    "border": "#000",
+    "xPadding": 0,
+    "yPadding": -4,
+    "xOffset": 0,
+    "yOffset": 3,
+    "boxPos": { "x": 0.633, "y": 0.16 }
+  },
+  "dow": {
+    "font": "6x8",
+    "fontSize": 2,
+    "outline": 1,
+    "color": "#000",
+    "outlineColor": "#fff",
+    "border": "#000",
+    "xPadding": -0.5,
+    "yPadding": 0.5,
+    "xOffset": 1,
+    "yOffset": 1,
+    "boxPos": { "x": 0.633, "y": 0.3 },
+    "short": false
+  },
+  "date": {
+    "font": "6x8",
+    "fontSize": 1,
+    "outline": 1,
+    "color": "#000",
+    "outlineColor": "#fff",
+    "border": "#000",
+    "xPadding": 0,
+    "yPadding": 0.5,
+    "xOffset": 1,
+    "yOffset": 1,
+    "boxPos": { "x": 0.633, "y": 0.39 },
+    "short": false
+  },
+  "batt": {
+    "font": "4x6",
+    "fontSize": 2,
+    "outline": 1,
+    "color": "#0ff",
+    "outlineColor": "#000",
+    "border": "#fff",
+    "xPadding": -0.5,
+    "yPadding": -0.5,
+    "xOffset": 1,
+    "yOffset": 1,
+    "boxPos": { "x": 0.9, "y": 0.95 },
+    "suffix": "%"
+  },
+  "bg": {
+    "img": "boxclk.beachhouse.img"
+  }
+}

@@ -1,0 +1,240 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+    <script>
+let dataElement = document.getElementById("data");
+let holidays;
+
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+}
+
+function render() {
+  holidays.sort((a,b) => new Date(a.date) - new Date(b.date));
+  document.getElementById('events').innerHTML = "";
+  holidays.forEach(holiday => {
+    renderHoliday(holiday);
+  });
+}
+
+function readFile(input) {
+  document.getElementById('upload').disabled = true;
+
+  for(let i=0; i<input.files.length; i++) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const icalText = reader.result.substring(reader.result.indexOf("BEGIN:VCALENDAR")); // remove html before data
+      const jCalData = ICAL.parse(icalText);
+      const comp = new ICAL.Component(jCalData);
+      const vtz = comp.getFirstSubcomponent('vtimezone');
+      const tz = vtz != null ? new ICAL.Timezone(vtz) : null;
+
+      // Fetch the VEVENT part
+      comp.getAllSubcomponents('vevent').forEach(vevent => {
+        const event = new ICAL.Event(vevent);
+        if (tz != null) {
+          event.startDate.zone = tz;
+        }
+        holidays = holidays.filter(holiday => !sameDay(new Date(holiday.date), event.startDate.toJSDate())); // remove if already exists
+
+        const holiday = eventToHoliday(event);
+
+        holidays.push(holiday);
+      });
+
+      render();
+    }, false);
+
+    reader.readAsText(input.files[i], "UTF-8");
+  }
+}
+
+function eventToHoliday(event) {
+  const date = event.startDate.toJSDate();
+
+  const holiday = {
+    date: formatDate(date),
+    name: event.summary,
+    type: 'h',
+  };
+  return holiday;
+}
+
+function formatDate(d) {
+  return d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + d.getDate().toString().padStart(2, '0');
+}
+
+function upload() {
+  Util.showModal("Saving...");
+  Util.writeStorage("calendar.days.json", JSON.stringify(holidays), () => {
+    location.reload(); // reload so we see current data
+  });
+}
+
+function renderHoliday(holiday) {
+  const localDate = new Date(holiday.date);
+
+  const tr = document.createElement('tr');
+  tr.classList.add('event-row');
+  const tdTime = document.createElement('td');
+  tr.appendChild(tdTime);
+  const inputTime = document.createElement('input');
+  inputTime.type = "date";
+  inputTime.classList.add('event-date');
+  inputTime.classList.add('form-input');
+  inputTime.value = formatDate(localDate)
+  inputTime.onchange = (e => {
+    const date = new Date(inputTime.value);
+    holiday.date = formatDate(date);
+  });
+  tdTime.appendChild(inputTime);
+
+  const tdSummary = document.createElement('td');
+  tr.appendChild(tdSummary);
+  const inputSummary = document.createElement('input');
+  inputSummary.type = "text";
+  inputSummary.classList.add('event-summary');
+  inputSummary.classList.add('form-input');
+  inputSummary.maxLength=40;
+  const summary = (holiday.name?.substring(0, inputSummary.maxLength) || "");
+  inputSummary.value = summary;
+  inputSummary.onchange = (e => {
+    holiday.name = inputSummary.value;
+  });
+  tdSummary.appendChild(inputSummary);
+  inputSummary.onchange();
+
+  const tdType = document.createElement('td');
+  tr.appendChild(tdType);
+  const selectType = document.createElement("select");
+  selectType.classList.add('form-select');
+  tdType.prepend(selectType);
+  const optionHoliday = document.createElement("option");
+  optionHoliday.text = "Holiday";
+  optionHoliday.value = "h";
+  optionHoliday.selected = holiday.type === "h";
+  selectType.add(optionHoliday);
+  const optionOther = document.createElement("option");
+  optionOther.text = "Other";
+  optionOther.value = "o";
+  optionOther.selected = holiday.type === "o";
+  selectType.add(optionOther);
+  selectType.onchange = (e => {
+    holiday.type = e.target.value;
+  });
+
+  const tdRepeat = document.createElement('td');
+  tr.appendChild(tdRepeat);
+  const selectRepeat = document.createElement("select");
+  selectRepeat.classList.add('form-select');
+  tdRepeat.prepend(selectRepeat);
+  const optionNever = document.createElement("option");
+  optionNever.text = "Never";
+  optionNever.selected = !holiday.repeat;
+  selectRepeat.add(optionNever);
+  const optionYearly = document.createElement("option");
+  optionYearly.text = "Yearly";
+  optionYearly.value = "y";
+  optionYearly.selected = holiday.repeat === "y";
+  selectRepeat.add(optionYearly);
+  selectRepeat.onchange = (e => {
+    holiday.repeat = e.target.value;
+  });
+
+  const tdAction = document.createElement('td');
+  tr.appendChild(tdAction);
+
+  const buttonDelete = document.createElement('button');
+  buttonDelete.classList.add('btn');
+  buttonDelete.classList.add('btn-action');
+  tdAction.prepend(buttonDelete);
+  const iconDelete = document.createElement('i');
+  iconDelete.classList.add('icon');
+  iconDelete.classList.add('icon-delete');
+  buttonDelete.appendChild(iconDelete);
+  buttonDelete.onclick = (e => {
+    holidays = holidays.filter(a => a !== holiday);
+    document.getElementById('events').removeChild(tr);
+  });
+
+  document.getElementById('events').appendChild(tr);
+  document.getElementById('upload').disabled = false;
+}
+
+function addHoliday() {
+  const holiday = {date: formatDate(new Date()), type: 'h'};
+  renderHoliday(holiday);
+  holidays.push(holiday);
+  render();
+}
+
+function getData() {
+  Util.showModal("Loading...");
+  Puck.write(`\x10(function() {
+    Bluetooth.print(JSON.stringify(require("Storage").list("calendar.days.json").sort()));
+    })()\n`, contents => {
+      const fileNames = JSON.parse(contents);
+      if (fileNames.length > 0) {
+        Util.readStorageJSON('calendar.days.json',data=>{
+          holidays = data || [];
+          Util.hideModal();
+          render();
+        });
+      } else {
+        holidays = [];
+        Util.hideModal();
+      }
+  });
+}
+
+// Called when app starts
+function onInit() {
+  getData();
+}
+    </script>
+  </head>
+  <body>
+    <h4 class="float-left">Holidays</h4>
+
+    <div class="float-right">
+      <button class="btn" onclick="addHoliday();">
+        <i class="icon icon-plus"></i>
+      </button>
+    </div>
+
+    <table class="table table-scroll" style="clear:both;">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Holiday</th>
+          <th>Type</th>
+          <th>Repeat</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="events">
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-5 col-xs-12">
+          <label class="form-label" for="fileinput">Add from iCalendar file</label>
+        </div>
+        <div class="col-7 col-xs-12">
+          <input id="fileinput" class="form-input" type="file" onchange="readFile(this)" accept=".ics,.ifb,.ical,.ifbf" multiple/>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <button id="upload" class="btn btn-primary" onClick="upload()" disabled>Upload</button>
+    <button id="reload" class="btn" onClick="location.reload()">Reload</button>
+  </body>
+</html>

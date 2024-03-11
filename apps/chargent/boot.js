@@ -2,7 +2,7 @@
   const pin = process.env.HWVERSION === 2 ? D3 : D30;
 
   var id;
-  Bangle.on('charging', (charging) => {
+  function gent(charging) {
     if (charging) {
       if (!id) {
         var max = 0;
@@ -24,17 +24,21 @@
               lim = sum / cnt;
               require('Storage').writeJSON('chargent.json', {limit: lim});
             }
+            require('notify').show({id: 'chargent', title: 'Fully charged'});
             // TODO ? customizable
             Bangle.buzz(500);
             setTimeout(() => Bangle.buzz(500), 1000);
           }
-        }, 30*1000);
+        }, 3e4);
       }
     } else {
       if (id) {
-        clearInterval(id);
-        id = undefined;
+        id = clearInterval(id);
+        require('notify').hide({id: 'chargent'});
       }
     }
-  });
+  }
+
+  Bangle.on('charging', gent);
+  if (Bangle.isCharging()) gent(true);
 })();

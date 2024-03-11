@@ -318,7 +318,7 @@ function handleInput(button) {
       showSettingsMenu();
       return;
     case 3:
-    case 4:
+    case 4: {
       let hLimit = currentSet() - setsPerPage() + 1;
       let lLimit = 0;
       let val = (button * 2 - 7);
@@ -326,6 +326,7 @@ function handleInput(button) {
       if (firstShownSet > hLimit) firstShownSet = hLimit;
       if (firstShownSet < lLimit) firstShownSet = lLimit;
       break;
+    }
   }
 
   draw();

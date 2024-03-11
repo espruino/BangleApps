@@ -2,7 +2,7 @@
   "id": "walkersclock",
   "name": "Walkers Clock",
   "shortName": "Walkers Clock",
-  "version": "0.04",
+  "version": "0.05",
   "description": "A large font watch, displays steps, can switch GPS on/off, displays grid reference",
   "icon": "walkersclock48.png",
   "type": "clock",

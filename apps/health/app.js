@@ -1,3 +1,6 @@
+let settings;
+const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
+
 function menuMain() {
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
@@ -5,16 +8,31 @@ function menuMain() {
     /*LANG*/"Step Counting": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
-    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>menuMain())
+    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>{loadSettings();menuMain();})
   });
 }
 
 function menuStepCount() {
-  E.showMenu({
+  const menu = {
     "": { title:/*LANG*/"Steps" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => stepsPerHour(),
-    /*LANG*/"per day": () => stepsPerDay()
+    /*LANG*/"per hour": () => stepsPerHour(menuStepCount),
+    /*LANG*/"per day": () => stepsPerDay(menuStepCount)
+  };
+  if (myprofile.strideLength) {
+      menu[/*LANG*/"distance"] = () => menuDistance();
+  }
+
+  E.showMenu(menu);
+}
+
+function menuDistance() {
+  const distMult = 1*require("locale").distance(myprofile.strideLength, 2); // hackish: this removes the distance suffix, e.g. 'm'
+  E.showMenu({
+    "": { title:/*LANG*/"Distance" },
+    /*LANG*/"< Back": () => menuStepCount(),
+    /*LANG*/"per hour": () => stepsPerHour(menuDistance, distMult),
+    /*LANG*/"per day": () => stepsPerDay(menuDistance, distMult)
   });
 }
 
@@ -36,35 +54,47 @@ function menuHRM() {
   });
 }
 
-function stepsPerHour() {
+function stepsPerHour(back, mult) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "stepsPerHour";
   var data = new Uint16Array(24);
   require("health").readDay(new Date(), h=>data[h.hr]+=h.steps);
-  setButton(menuStepCount);
-  barChart(/*LANG*/"HOUR", data);
+  if (mult !== undefined) {
+    // Calculate distance from steps
+    data.forEach((d, i) => data[i] = d*mult+0.5);
+  }
+  setButton(back, mult);
+  barChart(/*LANG*/"HOUR", data, mult);
 }
 
-function stepsPerDay() {
+function stepsPerDay(back, mult) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "stepsPerDay";
-  var data = new Uint16Array(31);
+  var data = new Uint16Array(32);
   require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.steps);
-  setButton(menuStepCount);
-  barChart(/*LANG*/"DAY", data);
-  drawHorizontalLine(settings.stepGoal);
+  // Include data for today
+  if (data[(new Date()).getDate()] === 0) {
+    data[(new Date()).getDate()] = Bangle.getHealthStatus("day").steps;
+  }
+  if (mult !== undefined) {
+    // Calculate distance from steps
+    data.forEach((d, i) => data[i] = d*mult+0.5);
+  }
+  setButton(back, mult);
+  barChart(/*LANG*/"DAY", data, mult);
+  drawHorizontalLine(settings.stepGoal * (mult || 1));
 }
 
 function hrmPerHour() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "hrmPerHour";
   var data = new Uint16Array(24);
-  var cnt = new Uint8Array(23);
+  var cnt = new Uint8Array(24);
   require("health").readDay(new Date(), h=>{
     data[h.hr]+=h.bpm;
     if (h.bpm) cnt[h.hr]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuHRM);
   barChart(/*LANG*/"HOUR", data);
 }
@@ -72,13 +102,13 @@ function hrmPerHour() {
 function hrmPerDay() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "hrmPerDay";
-  var data = new Uint16Array(31);
-  var cnt = new Uint8Array(31);
+  var data = new Uint16Array(32);
+  var cnt = new Uint8Array(32);
   require("health").readDailySummaries(new Date(), h=>{
     data[h.day]+=h.bpm;
     if (h.bpm) cnt[h.day]++;
   });
-  data.forEach((d,i)=>data[i] = d/cnt[i]);
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuHRM);
   barChart(/*LANG*/"DAY", data);
 }
@@ -87,7 +117,12 @@ function movementPerHour() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "movementPerHour";
   var data = new Uint16Array(24);
-  require("health").readDay(new Date(), h=>data[h.hr]+=h.movement);
+  var cnt = new Uint8Array(24);
+  require("health").readDay(new Date(), h=>{
+    data[h.hr]+=h.movement;
+    cnt[h.hr]++;
+  });
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuMovement);
   barChart(/*LANG*/"HOUR", data);
 }
@@ -95,8 +130,13 @@ function movementPerHour() {
 function movementPerDay() {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = "movementPerDay";
-  var data = new Uint16Array(31);
-  require("health").readDailySummaries(new Date(), h=>data[h.day]+=h.movement);
+  var data = new Uint16Array(32);
+  var cnt = new Uint8Array(32);
+  require("health").readDailySummaries(new Date(), h=>{
+    data[h.day]+=h.movement;
+    cnt[h.day]++;
+  });
+  data.forEach((d,i)=>data[i] = d/cnt[i]+0.5);
   setButton(menuMovement);
   barChart(/*LANG*/"DAY", data);
 }
@@ -170,7 +210,7 @@ function drawHorizontalLine(value) {
   g.setColor(g.theme.fg).drawLine(0, top ,g.getWidth(), top);
 }
 
-function setButton(fn) {
+function setButton(fn, mult) {
   Bangle.setUI({mode:"custom",
                 back:fn,
                 swipe:(lr,ud) => {
@@ -184,12 +224,16 @@ function setButton(fn) {
     }
     drawBarChart();
     if (current_selection == "stepsPerDay") {
-      drawHorizontalLine(settings.stepGoal);
+      drawHorizontalLine(settings.stepGoal * (mult || 1));
     }
   }});
 }
 
+function loadSettings() {
+  settings = require("Storage").readJSON("health.json",1)||{};
+}
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-var settings = require("Storage").readJSON("health.json",1)||{};
+loadSettings();
 menuMain();

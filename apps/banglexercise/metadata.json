@@ -1,7 +1,7 @@
 { "id": "banglexercise",
   "name": "BanglExercise",
   "shortName":"BanglExercise",
-  "version":"0.03",
+  "version": "0.04",
   "description": "Can automatically track exercises while wearing the Bangle.js watch.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

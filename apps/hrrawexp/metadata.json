@@ -2,13 +2,13 @@
   "id": "hrrawexp",
   "name": "HRM Data Exporter",
   "shortName": "HRM Data Exporter",
-  "version": "0.01",
+  "version": "0.05",
   "description": "export raw hrm signal data to a csv file",
   "icon": "app-icon.png",
   "tags": "",
-  "supports": ["BANGLEJS"],
   "readme": "README.md",
   "interface": "interface.html",
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"hrrawexp.app.js","url":"app.js"},
     {"name":"hrrawexp.img","url":"app-icon.js","evaluate":true}

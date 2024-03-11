@@ -1,0 +1,15 @@
+{ "id": "stacker",
+  "name": "Stacker",
+  "shortName":"Stacker",
+  "version": "0.03",
+  "description": "Game of Stacking",
+  "icon": "app.png",
+  "tags": "game",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"stacker.app.js","url":"app.js"},
+    {"name":"stacker.img","url":"app-icon.js","evaluate":true}
+  ]
+}

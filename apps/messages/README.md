@@ -1,6 +1,6 @@
 # Messages library
 
-This library handles the passing of messages. It can storess a list of messages 
+This library handles the passing of messages. It can stores a list of messages
 and allows them to be retrieved by other apps.
 
 ## Example
@@ -37,19 +37,33 @@ myMessageListener = Bangle.on("message", (type, message)=>{
 });
 ```
 
-Apps can launch the full GUI by calling `require("messages").openGUI()`, if you
-want to write your own GUI, it should include boot code that listens for
-`"messageGUI"` events:
+Apps can launch the currently installed Message GUI by calling `require("messages").openGUI()`.
+If you want to write your own GUI, it should include a library called `messagegui`
+with a method called `open` that will cause it to be opened, with the
+optionally supplied message. See `apps/messagegui/lib.js` for an example.
 
-```js
-Bangle.on("messageGUI", message=>{
-  if (message.handled) return; // another app already opened it's GUI
-  message.handled = true; // prevent other apps form launching
-  Bangle.load("my_message_gui.app.js");
-})
 
-```
+## Settings
 
+You can configure settings by going to `Settings ->  Apps -> Messages`
+
+There are several options to choose from:
+
+* **Vibrate** : Vibration pattern to use for messages
+* **Vibrate for calls** : Vibration pattern to use for calls
+* **Repeat** : How many times to vibrate for messages
+* **Repeat for calls** : How many times to vibrate for calls
+* **Vibrate timer** : How many seconds should we vibrate for?
+* **Unread timer** : How long should the Messages app show an unread message for before going back to the clock?
+* **Min Font** : Minimum font size for messages
+* **Auto-Open Music** : Should the messages music screen auto open when music is played?
+* **Unlock Watch** : When a message arrives should the watch be unlocked?
+* **Flash Icon** : Should the messages icon in the widget flash when a message arrives?
+* **Quiet mode disables auto-open** : When in quiet mode, should we not open the messages app for new messages?
+* **Disable auto-open** : Should we not open the messages app for new messages?
+* **Widget messages** : How many message icons should the widget show?
+* **Icon color mode** : Should icons in widgets be coloured?
+* **Car driver pos** : What side of the car is the driver on? This affects navigation icons for roundabouts
 
 ## Requests
 

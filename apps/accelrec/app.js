@@ -1,4 +1,4 @@
-var acc;
+//var acc;
 var HZ = 100;
 var SAMPLES = 5*HZ; // 5 seconds
 var SCALE = 5000;
@@ -102,7 +102,7 @@ function showData() {
   g.drawString("FINISH",g.getWidth()-4,g.getHeight()/2);
   setWatch(function() {
     showMenu();
-  }, BTN2);
+  }, global.BTN2?BTN2:BTN);
 }
 
 function showBig(txt) {

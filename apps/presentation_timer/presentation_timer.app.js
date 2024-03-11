@@ -148,7 +148,6 @@ function drawTime() {
 }
 
 function draw() {
-  let last = tCurrent;
   if (running) tCurrent = Date.now();
   g.setColor(g.theme.fg);
   if (redrawButtons) drawButtons();

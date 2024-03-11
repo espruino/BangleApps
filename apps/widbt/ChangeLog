@@ -5,3 +5,4 @@
 0.06: Tweaking colors for dark/light themes and low bpp screens
 0.07: Memory usage improvements
 0.08: Disable LCD on, on bluetooth status change
+0.09: Fix widget not showing on blue background

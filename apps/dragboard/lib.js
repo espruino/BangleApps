@@ -103,6 +103,133 @@ exports.input = function(options) {
   initDraw();
   //setTimeout(initDraw, 0); // So Bangle.appRect reads the correct environment. It would draw off to the side sometimes otherwise.
 
+  let dragHandlerDB = function(event) {
+    "ram";
+    // ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    // Choose character by draging along red rectangle at bottom of screen
+    if (event.y >= ( (R.y+R.h) - 26 )) {
+      // Translate x-position to character
+      if (event.x < ABCPADDING) { abcHL = 0; }
+      else if (event.x >= 176-ABCPADDING) { abcHL = 25; }
+      else { abcHL = Math.floor((event.x-ABCPADDING)/6); }
+
+      // Datastream for development purposes
+      //print(event.x, event.y, event.b, ABC.charAt(abcHL), ABC.charAt(abcHLPrev));
+
+      // Unmark previous character and mark the current one...
+      // Handling switching between letters and numbers/punctuation
+      if (typePrev != 'abc') resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
+
+      if (abcHL != abcHLPrev) {
+        resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
+        showChars(ABC.charAt(abcHL), abcHL, ABCPADDING, 2);
+      }
+      // Print string at top of screen
+      if (event.b == 0) {
+        text = text + ABC.charAt(abcHL);
+        updateTopString();
+
+        // Autoswitching letter case
+        if (ABC.charAt(abcHL) == ABC.charAt(abcHL).toUpperCase()) changeCase(abcHL);
+      }
+      // Update previous character to current one
+      abcHLPrev = abcHL;
+      typePrev = 'abc';
+    }
+
+    // 12345678901234567890
+    // Choose number or puctuation by draging on green rectangle
+    else if ((event.y < ( (R.y+R.h) - 26 )) && (event.y > ( (R.y+R.h) - 52 ))) {
+      // Translate x-position to character
+      if (event.x < NUMPADDING) { numHL = 0; }
+      else if (event.x > 176-NUMPADDING) { numHL = NUM.length-1; }
+      else { numHL = Math.floor((event.x-NUMPADDING)/6); }
+
+      // Datastream for development  purposes
+      //print(event.x, event.y, event.b, NUM.charAt(numHL), NUM.charAt(numHLPrev));
+
+      // Unmark previous character and mark the current one...
+      // Handling switching between letters and numbers/punctuation
+      if (typePrev != 'num') resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
+
+      if (numHL != numHLPrev) {
+        resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
+        showChars(NUM.charAt(numHL), numHL, NUMPADDING, 4);
+      }
+      // Print string at top of screen
+      if (event.b == 0) {
+        g.setColor(HLCOLOR);
+        // Backspace if releasing before list of numbers/punctuation
+        if (event.x < NUMPADDING) {
+          // show delete sign
+          showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
+          delSpaceLast = 1;
+          text = text.slice(0, -1);
+          updateTopString();
+          //print(text);
+        }
+        // Append space if releasing after list of numbers/punctuation
+        else if (event.x > (R.x+R.w)-NUMPADDING) {
+          //show space sign
+          showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
+          delSpaceLast = 1;
+          text = text + ' ';
+          updateTopString();
+          //print(text);
+        }
+        // Append selected number/punctuation
+        else {
+          text = text + NUMHIDDEN.charAt(numHL);
+          updateTopString();
+
+          // Autoswitching letter case
+          if ((text.charAt(text.length-1) == '.') || (text.charAt(text.length-1) == '!')) changeCase();
+        }
+      }
+      // Update previous character to current one
+      numHLPrev = numHL;
+      typePrev = 'num';
+    }
+
+    // Make a space or backspace by swiping right or left on screen above green rectangle
+    else if (event.y > 20+4) {
+      if (event.b == 0) {
+        g.setColor(HLCOLOR);
+        if (event.x < (R.x+R.w)/2) {
+          resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
+          resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
+
+          // show delete sign
+          showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
+          delSpaceLast = 1;
+
+          // Backspace and draw string upper right corner
+          text = text.slice(0, -1);
+          updateTopString();
+          if (text.length==0) changeCase(abcHL);
+          //print(text, 'undid');
+        }
+        else {
+          resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
+          resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
+
+          //show space sign
+          showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
+          delSpaceLast = 1;
+
+          // Append space and draw string upper right corner
+          text = text + NUMHIDDEN.charAt(0);
+          updateTopString();
+          //print(text, 'made space');
+        }
+      }
+    }
+  };
+
+  let catchSwipe = ()=>{
+    E.stopEventPropagation&&E.stopEventPropagation();
+  };
+
   function changeCase(abcHL) {
     if (settings.uppercase) return;
     g.setColor(BGCOLOR);
@@ -119,131 +246,12 @@ exports.input = function(options) {
       mode: 'custom',
       back: ()=>{
         Bangle.setUI();
+        Bangle.prependListener&&Bangle.removeListener('swipe', catchSwipe); // Remove swipe lister if it was added with `Bangle.prependListener()` (fw2v19 and up).
         g.clearRect(Bangle.appRect);
         resolve(text);
       },
-      drag: function(event) {
-        "ram";
-        // ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        // Choose character by draging along red rectangle at bottom of screen
-        if (event.y >= ( (R.y+R.h) - 12 )) {
-          // Translate x-position to character
-          if (event.x < ABCPADDING) { abcHL = 0; }
-          else if (event.x >= 176-ABCPADDING) { abcHL = 25; }
-          else { abcHL = Math.floor((event.x-ABCPADDING)/6); }
-
-          // Datastream for development purposes
-          //print(event.x, event.y, event.b, ABC.charAt(abcHL), ABC.charAt(abcHLPrev));
-
-          // Unmark previous character and mark the current one...
-          // Handling switching between letters and numbers/punctuation
-          if (typePrev != 'abc') resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
-
-          if (abcHL != abcHLPrev) {
-            resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
-            showChars(ABC.charAt(abcHL), abcHL, ABCPADDING, 2);
-          }
-          // Print string at top of screen
-          if (event.b == 0) {
-            text = text + ABC.charAt(abcHL);
-            updateTopString();
-
-            // Autoswitching letter case
-            if (ABC.charAt(abcHL) == ABC.charAt(abcHL).toUpperCase()) changeCase(abcHL);
-          }
-          // Update previous character to current one
-          abcHLPrev = abcHL;
-          typePrev = 'abc';
-        }
-
-        // 12345678901234567890
-        // Choose number or puctuation by draging on green rectangle
-        else if ((event.y < ( (R.y+R.h) - 12 )) && (event.y > ( (R.y+R.h) - 52 ))) {
-          // Translate x-position to character
-          if (event.x < NUMPADDING) { numHL = 0; }
-          else if (event.x > 176-NUMPADDING) { numHL = NUM.length-1; }
-          else { numHL = Math.floor((event.x-NUMPADDING)/6); }
-
-          // Datastream for development  purposes
-          //print(event.x, event.y, event.b, NUM.charAt(numHL), NUM.charAt(numHLPrev));
-
-          // Unmark previous character and mark the current one...
-          // Handling switching between letters and numbers/punctuation
-          if (typePrev != 'num') resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
-
-          if (numHL != numHLPrev) {
-            resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
-            showChars(NUM.charAt(numHL), numHL, NUMPADDING, 4);
-          }
-          // Print string at top of screen
-          if (event.b == 0) {
-            g.setColor(HLCOLOR);
-            // Backspace if releasing before list of numbers/punctuation
-            if (event.x < NUMPADDING) {
-              // show delete sign
-              showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
-              delSpaceLast = 1;
-              text = text.slice(0, -1);
-              updateTopString();
-              //print(text);
-            }
-            // Append space if releasing after list of numbers/punctuation
-            else if (event.x > (R.x+R.w)-NUMPADDING) {
-              //show space sign
-              showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
-              delSpaceLast = 1;
-              text = text + ' ';
-              updateTopString();
-              //print(text);
-            }
-            // Append selected number/punctuation
-            else {
-              text = text + NUMHIDDEN.charAt(numHL);
-              updateTopString();
-
-              // Autoswitching letter case
-              if ((text.charAt(text.length-1) == '.') || (text.charAt(text.length-1) == '!')) changeCase();
-            }
-          }
-          // Update previous character to current one
-          numHLPrev = numHL;
-          typePrev = 'num';
-        }
-
-        // Make a space or backspace by swiping right or left on screen above green rectangle
-        else if (event.y > 20+4) {
-          if (event.b == 0) {
-            g.setColor(HLCOLOR);
-            if (event.x < (R.x+R.w)/2) {
-              resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
-              resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
-
-              // show delete sign
-              showChars('del', 0, (R.x+R.w)/2 +6 -27 , 4);
-              delSpaceLast = 1;
-
-              // Backspace and draw string upper right corner
-              text = text.slice(0, -1);
-              updateTopString();
-              if (text.length==0) changeCase(abcHL);
-              //print(text, 'undid');
-            }
-            else {
-              resetChars(ABC.charAt(abcHLPrev), abcHLPrev, ABCPADDING, 2, ABCCOLOR);
-              resetChars(NUM.charAt(numHLPrev), numHLPrev, NUMPADDING, 4, NUMCOLOR);
-
-              //show space sign
-              showChars('space', 0, (R.x+R.w)/2 +6 -6*3*5/2 , 4);
-              delSpaceLast = 1;
-
-              // Append space and draw string upper right corner
-              text = text + NUMHIDDEN.charAt(0);
-              updateTopString();
-              //print(text, 'made space');
-            }
-          }
-        }
-      }
+      drag: dragHandlerDB,
     });
+    Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
   });
 };

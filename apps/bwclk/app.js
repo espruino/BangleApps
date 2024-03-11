@@ -151,7 +151,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
 
     g.reset().setBgColor(g.theme.fg).clearRect(options.x, options.y, options.x+options.w, options.y+options.h);
     g.setFontAlign(0,0).setColor(g.theme.bg);
-    
+
     if (options.focus){
       var y = hideClkInfo ? options.y+20 : options.y+2;
       var h = hideClkInfo ? options.h-20 : options.h-2;

@@ -6,11 +6,14 @@ let current = 0|bSettings.quiet;
 //1 alarms
 //2 silent
 
+const dndSettings = 
+	require('Storage').readJSON("a_dndtoggle.settings.json", true) || {};
+
 console.log("old: " + current);
 
 switch (current) {
 	case 0:
-		bSettings.quiet = 2;
+		bSettings.quiet = dndSettings.mode || 2;
 		Bangle.buzz();
 		setTimeout('Bangle.buzz();',500);
 		break;
@@ -29,7 +32,7 @@ switch (current) {
 	
 console.log("new: " + bSettings.quiet);
 
-E.showMessage(modeNames[current] + " -> " + modeNames[bSettings.quiet]);
+E.showMessage(modeNames[current] + " -> \n" + modeNames[bSettings.quiet]);
 setTimeout('exitApp();', 2000);
 
 

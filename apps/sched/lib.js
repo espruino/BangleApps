@@ -55,10 +55,7 @@ exports.getTimeToAlarm = function(alarm, time) {
 /// Force a reload of the current alarms and widget
 exports.reload = function() {
   eval(require("Storage").read("sched.boot.js"));
-  if (global.WIDGETS && WIDGETS["alarm"]) {
-    WIDGETS["alarm"].reload();
-    Bangle.drawWidgets();
-  }
+  Bangle.emit("alarmReload");
 };
 // Factory that creates a new alarm with default values
 exports.newDefaultAlarm = function () {

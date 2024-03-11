@@ -112,7 +112,7 @@ function getTime(){
 
 function getDate(){
   var date = new Date();
-  return twoD(date.getDate()) + "." + twoD(date.getMonth());
+  return twoD(date.getDate()) + "." + twoD(date.getMonth() + 1);
 }
 
 function getDay(){

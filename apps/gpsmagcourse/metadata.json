@@ -1,0 +1,19 @@
+{
+  "id": "gpsmagcourse",
+  "name": "GPS Compass course switcher",
+  "shortName":"GPS/Compass course",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Replaces the GPS course with the compass heading when speed is slow or standing still to avoid the value from jumping randomly. For best experience also install \"Navigation Compass\", although not a requirement (see README).",
+  "type": "bootloader",
+  "tags": "outdoors,widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"gpsmagcourse.boot.js","url":"boot.js"},
+    {"name":"gpsmagcourse.wid.js","url":"widget.js"},
+    {"name":"gpsmagcourse.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"gpsmagcourse.json"}]
+}
+

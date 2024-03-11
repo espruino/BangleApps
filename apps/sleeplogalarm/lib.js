@@ -1,5 +1,5 @@
 // load library
-var sched = require("sched");
+let sched = require("sched");
 
 // find next active alarm in range
 function getNextAlarm(allAlarms, fo, withId) {
@@ -10,7 +10,7 @@ function getNextAlarm(allAlarms, fo, withId) {
   // return next active alarms in range, filter for
   //  active && not timer && not own alarm &&
   //  after from && before to && includes msg
-  var ret = allAlarms.filter(
+  let ret = allAlarms.filter(
       a => a.on && !a.timer && a.id !== "sleeplog" &&
       a.t >= fo.from && a.t < fo.to && (!fo.msg || a.msg.includes(fo.msg))
     ).map(a => { // add time to alarm
@@ -21,7 +21,7 @@ function getNextAlarm(allAlarms, fo, withId) {
     ).sort((a, b) => a.tTo - b.tTo);
   // prevent triggering for an already triggered alarm again if available
   if (fo.lastDate) {
-    var toLast = fo.lastDate - new Date().valueOf() + 1000;
+    let toLast = fo.lastDate - new Date().valueOf() + 1000;
     if (toLast > 0) ret = ret.filter(a => a.tTo > toLast);
   }
   // return first entry
@@ -59,7 +59,7 @@ exports = {
     if (typeof (global.sleeplog || {}).trigger !== "object") return;
 
     // read settings to calculate alarm range
-    var settings = exports.getSettings();
+    let settings = exports.getSettings();
 
     // set the alarm time
     this.time = getNextAlarm(sched.getAlarms(), settings.filter).t;
@@ -68,7 +68,7 @@ exports = {
     if (!this.time) return;
 
     // set widget width if not hidden
-    if (!this.hidden) this.width = 8;
+    if (!settings.wid.hide) this.width = 8;
 
     // insert sleeplogalarm conditions and function
     sleeplog.trigger.sleeplogalarm = {
@@ -87,22 +87,22 @@ exports = {
   // trigger function
   trigger: function() {
     // read settings
-    var settings = exports.getSettings();
+    let settings = exports.getSettings();
 
     // read all alarms
-    var allAlarms = sched.getAlarms();
+    let allAlarms = sched.getAlarms();
 
     // find first active alarm
-    var alarm = getNextAlarm(sched.getAlarms(), settings.filter, settings.disableOnAlarm);
+    let alarm = getNextAlarm(sched.getAlarms(), settings.filter, settings.disableOnAlarm);
 
     // return if no alarm is found
     if (!alarm) return;
 
     // get now
-    var now = new Date();
+    let now = new Date();
 
     // get date of the alarm
-    var aDate = new Date(now + alarm.tTo);
+    let aDate = new Date(now + alarm.tTo);
 
     // disable earlier triggered alarm if set
     if (settings.disableOnAlarm) {

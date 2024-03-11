@@ -20,11 +20,11 @@ function getVersion(name,file) {
   return v?(name+" "+(v?"v"+v:"Unknown")):"NO "+name;
 }
 
-var versions = [
+/*var versions = [
   getVersion("Bootloader","boot.info"),
   getVersion("Launcher","launch.info"),
   getVersion("Settings","setting.info")
-];
+];*/
 var logo = E.toArrayBuffer(atob("PBwBAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAD/w+AAAAQAHA4hAAAAQAMAMhAAAAQAYBmhAAAAQAYBGiAAAAQAQCD/H74+R4wGDhoKJCSEwEDgoKJCT8wFDgoKJCSAwHDhoKJCSEQHj/H6I+R4YHmAAAACAAYEGAAABCAAMEMAAAA8AAHA4AAAAAAAD/wAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/g"));
 
 var imageTop = 24;

@@ -10,11 +10,11 @@ The file has the following contents:
 ```
 {
     "bloodType": "",
-    "height": "",
-    "weight": "",
     "medicalAlert": [ "" ]
 }
 ```
+
+Weight and height are read from myprofile.
 
 ## Medical information editor
 

@@ -201,7 +201,7 @@ max.n = 0;    // counter. Only start comparing for max after a certain number of
 var emulator = (process.env.BOARD=="EMSCRIPTEN" || process.env.BOARD=="EMSCRIPTEN2")?1:0;  // 1 = running in emulator. Supplies test values;
 
 var wp = {};        // Waypoint to use for distance from cur position.
-var SATinView = 0;
+//var SATinView = 0;
 
 function nxtWp(inc){
   cfg.wp+=inc;

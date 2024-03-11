@@ -16,3 +16,22 @@
       Support for zooming in on map
       Satellite count moved to widget bar to leave more room for the map
 0.15: Make track drawing an option (default off)
+0.16: Draw waypoints, too
+0.17: With new Recorder app allow track to be drawn in the background
+      Switch tile layer URL for faster/more reliable map tiles
+0.18: Prefer map with highest resolution
+0.19: Remember latitude, longitude & scale
+0.20: Make Satellite counter widget 24px wide (was 48)
+      Move 'Center GPS' to the top of the menu
+      If 'Recorder' app installed, add a 'Record' menu item
+0.21: Draw a current position marker (Bangle.js 2 only)
+      Enable/Disable previous position marker in new setting "Draw cont. position"
+0.22: Replace position marker with direction arrow
+0.23: Bugfix: Enable Compass if needed
+0.24: Allow zooming by clicking the screen
+0.25: Enable scaled image filtering on 2v19+ firmware
+0.26: Ensure that when redrawing, we always cancel any in-progress track draw
+0.27: Display message if no map is installed
+0.28: Fix rounding errors
+0.29: Keep exit at bottom of menu
+      Speed up latLonToXY for track rendering

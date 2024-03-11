@@ -1,0 +1,18 @@
+{ "id": "patriotclk",
+  "name": "Patriotic Clock",
+  "shortName":"Patriot",
+  "version": "0.03",
+  "description": "Show your Patriotism with your Country's flag as a clock face (configurable). Swipe down to show widgets and date.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock,flag",
+  "supports" : ["BANGLEJS2"],  
+  "custom": "custom.html",
+  "storage": [
+    {"name":"patriotclk.app.js","url":"app.js"},
+    {"name":"patriotclk.bg.img"},
+    {"name":"patriotclk.opts"},
+    {"name":"patriotclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

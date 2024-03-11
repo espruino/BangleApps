@@ -1,7 +1,7 @@
 { "id": "tempgraph",
   "name": "Temperature Graph",
   "shortName":"Temp Graph",
-  "version":"0.01",
+  "version":"0.03",
   "description": "An app for recording the temperature for time periods ranging from 10 minutes to 7 days.",
   "icon": "app.png",  
   "type": "app",

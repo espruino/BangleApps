@@ -1,0 +1,13 @@
+{ "id": "stressless",
+  "name": "Stressless",
+  "shortName":"Stressless",
+  "icon": "stressless.png",
+  "version": "0.02",
+  "description": "This is a heart activity tracker for PIIS stressless project",
+   "tags": "health",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"stressless.app.js","url":"app.js"},
+    {"name":"stressless.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+    "id": "encourageclk",
+    "name": "Encouragement & Positivity Clock",
+    "shortName":"Encouragement Clock",
+    "version": "0.04",
+    "description": "Tap on the watch for a note of encouragement",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme":"README.md",
+    "storage": [
+      {"name":"encourageclk.app.js","url":"app.js"},
+      {"name":"encourageclk.img","url":"app-icon.js","evaluate":true}
+    ]
+}

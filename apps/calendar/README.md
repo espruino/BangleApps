@@ -1,14 +1,17 @@
 # Calendar
 
-Basic calendar
+Monthly calendar, displays holidays uploaded from the web interface and scheduled events.
 
 ## Usage
 
-- Use `BTN4` (left screen tap) to go to the previous month
-- Use `BTN5` (right screen tap) to go to the next month
+- Swipe left to go to the previous month
+- Swipe right to go to the next month
+- Swipe up (Bangle.js 2 only) to go to the previous year
+- Swipe down (Bangle.js 2 only) to go to the next year
+- Touch to display events for current month
+- Press the button (button 3 on Bangle.js 1) to exit
+- Holidays have same color as weekends and can be edited with the 'Download'-interface, e.g. by uploading an iCalendar file.
 
 ## Settings
 
-- Starts Sunday: whether the calendar should start on Sunday (default is Monday).
-- B2 Colors: use non-dithering colors (default, recommended for Bangle 2) or the original color scheme.
-
+B2 Colors: use non-dithering colors (default, recommended for Bangle 2) or the original color scheme.

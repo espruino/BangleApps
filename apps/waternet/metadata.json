@@ -1,0 +1,17 @@
+{ "id": "waternet",
+  "name": "Waternet",
+  "shortName":"Waternet",
+  "version": "0.03",
+  "description": "Puzzle game where water needs to flow through pipes by sliding or rotating them",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot2.png"},{"url":"screenshot1.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"},{"url":"screenshot5.png"},{"url":"screenshot6.png"}],
+  "tags": "game",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "allow_emulator":true,
+  "data": [{"name":"waternet.data.dat", "storageFile":true}],
+  "storage": [
+    {"name":"waternet.app.js","url":"app.js"},
+    {"name":"waternet.img","url":"app-icon.js","evaluate":true}
+  ]
+}

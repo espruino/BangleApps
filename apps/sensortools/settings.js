@@ -88,6 +88,12 @@
           writeSettings("enabled",v);
         },
       },
+      'Log': {
+        value: !!settings.log,
+        onchange: v => {
+          writeSettings("log",v);
+        },
+      },
       'GPS': ()=>{showSubMenu("GPS","gps",["nop", "staticfix", "nofix", "changingfix", "route", "routeFuzzy"],[]);},
       'Compass': ()=>{showSubMenu("Compass","mag",["nop", "static", "rotate"],[]);},
       'HRM': ()=>{showSubMenu("HRM","hrm",["nop", "static"],["bpmtrippled"],["sin"]);}

@@ -1,0 +1,15 @@
+{
+  "id": "widhrtplus",
+  "name": "HRM Widget+",
+  "icon": "widget.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "version":"0.01",
+  "type": "widget",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "description": "Widget to display heart rate and status of Heart Rate Monitor",
+  "tags": "widget",
+  "storage": [
+    {"name":"widhrtplus.wid.js","url":"widget.js"}
+   ]
+ }

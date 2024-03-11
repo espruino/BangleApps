@@ -1,23 +1,65 @@
 {
   "compilerOptions": {
+    // input/output
+    "target": "es5",
+    "noLib": true, // "lib": ["es5"],
+    "skipLibCheck": false,
+
     "module": "commonjs",
+
+    // toggle these to check everything (and optionally change the include below to "apps/myapp/*.js")
+    // "checkJs": true,
+    // "noEmit": true,
+
+    // code-gen
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "removeComments": true,
+    "noImplicitUseStrict": true, // disable "use strict"
+
+    "newLine": "lf",
+    "noEmitHelpers": true, // we link to specific banglejs implementations
+    "noEmitOnError": false,
+    "preserveConstEnums": false,
+    "importsNotUsedAsValues": "error",
+    "preserveValueImports": false,
+
+    // interop constraints
+    "isolatedModules": false, // we're global scripts
+
+    // type checking
     "noImplicitAny": true,
-    "target": "es6",
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noLib": true,
     "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    //"strict": true, // can't have this with noImplicitUseStrict, instead:
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+
+    // simple type checking
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true,
-    "typeRoots": ["./typescript/types"]
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    // paths
+    "rootDir": "./",
+    "typeRoots": ["./typescript/types/"]
   },
-  "include": ["./**/*"],
-  "exclude": [
-        "**/gpconv.d.ts",
-        "**/gpconv_bg.wasm.d.ts"
-    ]
+  "include": [
+    "*/*/*.ts",
+    "apps/*/*.js", // with checkJs: true
+    "*/*/*.d.ts",
+    "modules/*.d.ts",
+    "typescript/types/*.d.ts"
+  ]
 }

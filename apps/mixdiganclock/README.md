@@ -9,6 +9,13 @@ Compatible with BangleJS1,BangleJS2,and EMSCRIPTENx emulators
 Bangle.JS1
 ![](photo_mixdigan_bjs1.jpg)
 
+
+UI for bangleJS1
+![](bangle.js_UI.png)
+
+UI for bangleJS2
+![](bangle.js2_UI.png)
+
 Screenshot emulator (BJS2)
 ![](ss_mixdigan_ems2.png)
 
@@ -36,19 +43,26 @@ Open and see
 
 ## Features
 
-Compatibility with devices
-Dynamic positions x,y for different devices
-Dynamic Colours (FG and BG) and positions
-Support for bottom widgets
+ - Compatibility with different smartwatch models
+  - Dynamic positions x,y for different devices
+  - Dynamic Colours (FG and BG) and positions
+ - Realtime configuration
+ - Support for bottom widgets
+ - Shortcut to messages app
 
 
-## Controls
+## Controls/UI
 
-Exit : BTN2 (BJS1)
-Exit/launcher : left area 
-Change FG Color : right area
-Increase/Decrease Hour circle/Points : swipe right
-Change BG Color : swipe left
+ - BTN1 (BJS2): "Launcher" / open "Messages"
+ - BTN2 (BJS1): "Launcher" / open "Messages"
+ - BTN1 (BJS1): Change FG Color
+ - BTN3 (BJS1): Change BG Color
+ - Left area: Back/Exit/launcher 
+ - Right area: Change FG Color 
+ - Swipe left: Change BG Color 
+ - Swipe right: Increase/Decrease Hour circle/Points 
+ 
+ - BTN3 (long press)(BJS1): default Exit/kill app 
 
 
 ## Coming soon

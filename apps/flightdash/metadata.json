@@ -1,0 +1,21 @@
+{
+  "id": "flightdash",
+  "name": "Flight Dashboard",
+  "shortName":"Flight-Dash",
+  "version": "1.01",
+  "description": "Basic flight and navigation instruments",
+  "icon": "flightdash.png",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "type": "app",
+  "tags": "outdoors",
+  "supports": ["BANGLEJS2"],
+  "dependencies": { "textinput": "type" },
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    { "name":"flightdash.app.js",      "url":"flightdash.app.js" },
+    { "name":"flightdash.settings.js", "url":"flightdash.settings.js" },
+    { "name":"flightdash.img",         "url":"flightdash-icon.js", "evaluate":true }
+  ],
+  "data": [{ "name":"flightdash.json" },{ "name":"flightdash.airports.json" }]
+}
