@@ -167,9 +167,12 @@ if (sleeplog.conf.enabled) {
       // check if changing to deep sleep from non sleeping
       if (data.status === 4 && sleeplog.status <= 2) {
         // check wearing status
+        // if not worn set status to not worn
         if (sleeplog.isNotWorn()) {
           data.status = 1;
         }
+          
+        sleeplog.setStatus(data);
 
         /*
         sleeplog.checkIsWearing((isWearing, data) => {
