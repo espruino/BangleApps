@@ -284,38 +284,39 @@ exports.addInteractive = function(menu, options) {
     E.stopEventPropagation&&E.stopEventPropagation();
   }
   Bangle.on("swipe",swipeHandler);
+  const unfocus = () => {
+    options.focus=false;
+    delete Bangle.CLKINFO_FOCUS;
+    options.redraw();
+  };
+  const focus = (redraw) => {
+    options.focus=true;
+    Bangle.CLKINFO_FOCUS=true;
+    if (redraw) options.redraw();
+  };
   let touchHandler, lockHandler;
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
     touchHandler = function(_,e) {
       if (e.x<options.x || e.y<options.y ||
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
-        if (options.focus) {
-          options.focus=false;
-          delete Bangle.CLKINFO_FOCUS;
-          options.redraw();
-        }
+        if (options.focus)
+          unfocus();
         return; // outside area
       }
       if (!options.focus) {
-        options.focus=true; // if not focussed, set focus
-        Bangle.CLKINFO_FOCUS=true;
-        options.redraw();
+        focus(true);
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
       } else {
-        options.focus=true;
-        Bangle.CLKINFO_FOCUS=true;
+        focus();
       }
     };
     Bangle.on("touch",touchHandler);
     if (settings.defocusOnLock) {
       lockHandler = function() {
-        if(options.focus) {
-          options.focus=false;
-          delete Bangle.CLKINFO_FOCUS;
-          options.redraw();
-        }
+        if(options.focus)
+          unfocus();
       };
       Bangle.on("lock", lockHandler);
     }
