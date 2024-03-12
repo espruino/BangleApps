@@ -293,7 +293,8 @@ exports.addInteractive = function(menu, options) {
       redraw = false;
     if (redraw) options.redraw();
   };
-  const focus = (redraw) => {
+  const focus = () => {
+    let redraw = true;
     Bangle.CLKINFO_FOCUS=true;
     if (!options.focus) {
       options.focus=true;
@@ -313,12 +314,10 @@ exports.addInteractive = function(menu, options) {
         return; // outside area
       }
       if (!options.focus) {
-        focus(true);
+        focus();
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(options); // allow tap on an item to run it (eg home assistant)
-      } else {
-        focus();
       }
     };
     Bangle.on("touch",touchHandler);
