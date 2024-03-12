@@ -294,9 +294,9 @@ exports.addInteractive = function(menu, options) {
     if (redraw) options.redraw();
   };
   const focus = (redraw) => {
+    Bangle.CLKINFO_FOCUS=true;
     if (!options.focus) {
       options.focus=true;
-      Bangle.CLKINFO_FOCUS=true;
       const itm = menu[options.menuA].items[options.menuB];
       if (itm.focus && itm.focus(options) === false)
         redraw = false;
@@ -362,6 +362,7 @@ exports.addInteractive = function(menu, options) {
 
     return true;
   };
+  if (options.focus) focus();
   delete settings; // don't keep settings in RAM - save space
   return options;
 };
