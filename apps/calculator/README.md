@@ -20,9 +20,9 @@ Bangle.js 1
 - SELECT: BTN2
 
 Bangle.js 2
-- Swipes to change visible buttons
-- Click physical button to exit
-- Press upper left corner of screen to exit (where the red back button would be)
+- Swipe up or down to go back to the number input
+- Swipe to the left for operators, swipe to the right for the special functions
+- Exit by pressing the physical button or the upper left corner of screen to exit (where the red back button would be)
 ## Creator
 
 <https://twitter.com/fredericrous>
