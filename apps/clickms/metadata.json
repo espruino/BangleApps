@@ -1,7 +1,7 @@
 {
   "id": "clickms",
   "name": "Click Master",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Get several friends to start the game, then compete to see who can press BTN1 the most!",
   "icon": "click-master.png",
   "tags": "game",

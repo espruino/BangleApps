@@ -17,3 +17,4 @@
 0.17: Use default Bangle formatter for booleans
 0.18: Move waypoints.json to 'waypoints' app (with editor)
 0.19: Minor code improvements
+0.20: Minor code improvements

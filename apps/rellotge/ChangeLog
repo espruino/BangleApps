@@ -4,3 +4,4 @@
 0.40: Afegits suggeriments de l'usuari @bobrippling al codi
 0.50: Fixing lint warnings for unused vars
 0.60: Fixes typos, BTN1 to show launcher and show app icon
+0.61: Minor code improvements

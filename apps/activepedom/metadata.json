@@ -2,7 +2,7 @@
   "id": "activepedom",
   "name": "Active Pedometer",
   "shortName": "Active Pedometer",
-  "version": "0.10",
+  "version": "0.11",
   "description": "(NOT RECOMMENDED) Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph. The `Health` app now provides step logging and graphs.",
   "icon": "app.png",
   "tags": "outdoors,widget",

@@ -1,7 +1,7 @@
 {
   "id": "xxlmessage",
   "name": "XXL Message",
-  "version": "0.02",
+  "version": "0.03",
   "shortName": "XXL Msg",
   "description": "App to display large notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",

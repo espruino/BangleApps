@@ -2,7 +2,7 @@
   "name": "MacWatch",
   "shortName":"MacWatch",
   "icon": "app.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "Simple clock with classic Mac font",
   "type": "clock",
   "tags": "clock",

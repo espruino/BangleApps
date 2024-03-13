@@ -8,3 +8,4 @@
 0.08: Allow setting location from webinterface in the AppLoader
 0.09: Fix web interface so app can be installed (replaced custom with interface html)
 0.10: Add waypoints as location source
+0.11: Minor code improvements

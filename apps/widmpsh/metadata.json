@@ -1,7 +1,7 @@
 {
   "id": "widmpsh",
   "name": "Moon Phase Widget Southern Hemisphere",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Display the current moon phase in blueish for the southern hemisphere in eight phases",
   "icon": "widget.png",
   "type": "widget",

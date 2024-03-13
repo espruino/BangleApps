@@ -1,7 +1,7 @@
 { "id": "rebbleagenda",
   "name": "Rebble Agenda",
   "shortName":"Agenda",
-  "version":"0.01",
+  "version": "0.02",
   "description": "A pebble-inspired animated agenda",
   "icon": "app.png",
   "screenshots" : [ 
