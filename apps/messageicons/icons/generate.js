@@ -5,6 +5,8 @@
 
 // default icon must come first in icon_names
 
+/* eslint-env node */
+
 var imageconverter = require("../../../webtools/imageconverter.js");
 var icons = JSON.parse(require("fs").readFileSync(__dirname+"/icon_names.json"));
 const imgOptions = {

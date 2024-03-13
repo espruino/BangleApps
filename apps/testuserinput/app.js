@@ -156,6 +156,7 @@ function PrintUserInput(boton){
             //Call info banner
             g.setFontVector(30).drawString(boton, 63, 55);
             if ((boton=='Touch 1')||(boton=='Touch 2')){
+                let v_y_opt;
                 if (v_selected_row==1) v_y_opt=v_y_optionrow1;
                     else if (v_selected_row==2) v_y_opt=v_y_optionrow2;         
                 DrawRoundOption(20,v_y_opt,190,v_y_opt,boton);

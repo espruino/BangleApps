@@ -86,7 +86,7 @@ const drawSec = function (sections, color) {
 
 const drawClock = function () {
 
-  currentTime = new Date();
+  const currentTime = new Date();
 
   //Get date as a string
   date = dateStr(currentTime);
@@ -163,11 +163,11 @@ const drawHR = function () {
   }
 
   if (grow) {
-    color = settings.hr.color;
+    const color = settings.hr.color;
     g.setColor(color);
     g.fillCircle(settings.hr.x, settings.hr.y, size);
   } else {
-    color = "#000000";
+    const color = "#000000";
     g.setColor(color);
     g.drawCircle(settings.hr.x, settings.hr.y, size);
   }

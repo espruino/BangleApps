@@ -70,7 +70,7 @@
           E.showMenu(buildMainMenu());
         });
       } else {
-        E.showPrompt("Install a text input lib"),then(()=>{
+        E.showPrompt("Install a text input lib"),then(()=>{ // TODO: Should `,then` have been `.then` ?
           E.showMenu(buildMainMenu());
         });
       }

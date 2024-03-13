@@ -109,7 +109,7 @@ function isDictionary(object) {
 function merge(overlay, base) {
     let result = base;
 
-    for (objectKey in overlay) {
+    for (const objectKey in overlay) {
         if (!Object.keys(base).includes(objectKey)) result[objectKey] = overlay[objectKey];     // If the key isn't there, add it
         else if (isDictionary(base[objectKey]) && isDictionary(overlay[objectKey]))             // If the key is a dictionary in both, do recursive call
             result[objectKey] = merge(overlay[objectKey], base[objectKey]);

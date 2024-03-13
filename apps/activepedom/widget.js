@@ -32,10 +32,10 @@
   }
 
   function storeData()  {
-    now = new Date();
-    month = now.getMonth() + 1; //month is 0-based
+    let now = new Date();
+    let month = now.getMonth() + 1; //month is 0-based
     if (month < 10) month = "0" + month; //leading 0
-    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
+    let filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
     dataFile = s.open(filename,"a");
     if (dataFile) { //check if filen already exists
       if (dataFile.getLength() == 0) {
@@ -231,7 +231,7 @@
     stepsTooLong = pedomData.stepsTooLong;
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
-  pedomdata = 0; //reset pedomdata to save memory
+  pedomdata = 0; //reset pedomdata to save memory - TODO: Should `pedomdata` have been `pedomData` here?
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
   /*timerStoreData =*/ setInterval(storeData, storeDataInterval); //store data regularly

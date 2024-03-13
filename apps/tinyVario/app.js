@@ -5,9 +5,9 @@ To do:
   -navigation
 */
 
-getAltitude = (p,baseP) => (44330 * (1.0 - Math.pow(p/baseP, 0.1903)));
-getFL = () => (44330 * (1.0 - Math.pow(pressure/1013.25, 0.1903))).toFixed(0);
-getTimeString = () => (settings.localTime) ? (require("locale").time(Date(),1)):(Date().toUTCString().slice(Date().toUTCString().length-12,Date().toUTCString().length-7));
+const getAltitude = (p,baseP) => (44330 * (1.0 - Math.pow(p/baseP, 0.1903)));
+//const getFL = () => (44330 * (1.0 - Math.pow(pressure/1013.25, 0.1903))).toFixed(0);
+const getTimeString = () => (settings.localTime) ? (require("locale").time(Date(),1)):(Date().toUTCString().slice(Date().toUTCString().length-12,Date().toUTCString().length-7));
 
 var fg=g.getColor();
 //var bg=g.getBgColor();
@@ -146,7 +146,7 @@ function initPFD() {
   //samples=1;
   //--------------------
   pfdHandle = setInterval(function() {
-    t1=Date().getTime();
+    //const t1=Date().getTime();
     //process pressure readings
     if (samples) {
       pressure=rawP/samples;

@@ -513,11 +513,12 @@ function encodeAcceleration() {
 function updateSensorData() {
   
   // Update the battery measurement each time the cyclic count resets
+  let encodedBattery;
   if(cyclicCount === 0) {
     encodedBattery = encodeBatteryPercentage();
   }
 
-  encodedAcceleration = encodeAcceleration();
+  let encodedAcceleration = encodeAcceleration();
 
   sensorData[0] = ((encodedAcceleration.x << 2) & 0xfc) |
                   ((encodedAcceleration.y >> 4) & 0x3f);

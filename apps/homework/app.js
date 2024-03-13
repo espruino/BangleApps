@@ -135,7 +135,7 @@ function checkPreciseHomework(subjectnum) { // P A I N
   checkPreciseHomeworkMenu[subject] = function() {},
     checkPreciseHomeworkMenu[taskmsg] = function() {},
     checkPreciseHomeworkMenu[statusmsg] = function() {
-      status = "Status: Finished";
+      status = "Status: Finished"; // TODO: Should this have been called `statusmsg`?
       var d = new Date();
       var currenttime = require("locale").time(d, 1);
       var currentdate = require("locale").date(d);

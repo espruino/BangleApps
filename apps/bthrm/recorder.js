@@ -16,7 +16,7 @@
       name : "BT HR",
       fields : ["BT Heartrate", "BT Battery", "Energy expended", "Contact", "RR"],
       getValues : () => {
-        result = [bpm,bat,energy,contact,rr];
+        const result = [bpm,bat,energy,contact,rr];
         bpm = "";
         rr = "";
         bat = "";

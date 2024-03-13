@@ -22,6 +22,7 @@
     g.setFontAlign(-1, 0);
 
     // draw time
+    let t;
     if (m >= 0 && m < 2) {
       t = leshores[d.getHours()] + "\r\nen punt";
     } else if (m >= 2 && m < 5) {

@@ -313,7 +313,7 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
     if( Bangle.isCharging() )
     {
       g.setBgColor(settings.bg);
-      image = ()=> { return require("heatshrink").decompress(atob("j8OwMB/4AD94DC44DCwP//n/gH//EOgE/+AdBh/gAYMH4EAvkDAYP/+/AFAX+FgfzGAnAA=="));}
+      const image = ()=> { return require("heatshrink").decompress(atob("j8OwMB/4AD94DC44DCwP//n/gH//EOgE/+AdBh/gAYMH4EAvkDAYP/+/AFAX+FgfzGAnAA=="));}
       g.drawImage(image(),x+3,y+4);
     }
 

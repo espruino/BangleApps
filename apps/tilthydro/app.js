@@ -48,7 +48,7 @@ var TILT_DEVICES = {
 function takeReading() {
   // scan for 5 seconds max
   NRF.setScan(function(device) {
-    d = new DataView(device.manufacturerData);
+    const d = new DataView(device.manufacturerData);
     if (d.getUint8(4) == 0xbb) {
       var hexData = arrayBufferToHex(device.manufacturerData);
       var tempF = d.getUint16(18);

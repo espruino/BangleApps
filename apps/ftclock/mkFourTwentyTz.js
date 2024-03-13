@@ -1,3 +1,4 @@
+/* eslint-env node */
 let fs = require('fs');
 let csv = require('csv');
 
