@@ -70,10 +70,12 @@ Note that each item is an object with:
 }
 ```
 
-* `item.show` : called when item should be shown. Enables updates. Call BEFORE 'get'
-* `item.hide` : called when item should be hidden. Disables updates.
+* `item.show` : called when item should be shown. Enables updates. Call BEFORE 'get'. Passed the clockinfo options (same as what's returned from `addInteractive`).
+* `item.hide` : called when item should be hidden. Disables updates. Passed the clockinfo options.
 * `.on('redraw', ...)` : event that is called when 'get' should be called again (only after 'item.show')
 * `item.run` : (optional) called if the info screen is tapped - can perform some action. Return true if the caller should feedback the user.
+* `item.focus` : called when the item is focussed (the user has tapped on it). Passed the clockinfo options.
+* `item.blur` : called when the item is unfocussed (the user has tapped elsewhere, the screen has locked, etc). Passed the clockinfo options.
 
 See the bottom of `lib.js` for example usage...
 
