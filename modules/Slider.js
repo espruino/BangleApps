@@ -112,6 +112,7 @@ exports.create = function(cb, conf) {
     // Function to pass to `Bangle.on('drag', )`
     o.f.dragSlider = e=>{
       "ram";
+      let exFirst, eyFirst;
       if (o.v.ebLast==0) {
         exFirst = o.c.horizontal?e.y:e.x;
         eyFirst = o.c.horizontal?e.x:e.y;
