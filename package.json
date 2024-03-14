@@ -14,7 +14,8 @@
   },
   "scripts": {
     "lint-apps": "node bin/sync-lint-exemptions.mjs && eslint ./apps --ext .js",
-    "test": "node bin/sanitycheck.js && npm run lint-apps && eslint ./modules --ext .js",
+    "lint-modules": "eslint ./modules --ext .js",
+    "test": "node bin/sanitycheck.js && npm run lint-apps && npm run lint-modules",
     "update-local-apps": "./bin/create_apps_json.sh apps.local.json",
     "local": "npm-watch & npx http-server -a localhost -c-1",
     "start": "npx http-server -c-1"
