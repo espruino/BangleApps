@@ -4,3 +4,4 @@
 0.03: Fix messages not showing if UI auto-open is disabled
 0.04: Now shows message icons again (#2416)
 0.05: Match draw() API e.g. to allow wid_edit to alter this widget
+0.06: Fix bug that meant that only one widget was shown (now 3 unless changed in Settings->Apps->Messages->Widget messages)

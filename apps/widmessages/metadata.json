@@ -1,7 +1,7 @@
 {
   "id": "widmessages",
   "name": "Message Widget",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Widget showing new messages",
   "icon": "app.png",
   "type": "widget",
