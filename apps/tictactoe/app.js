@@ -69,7 +69,7 @@ function calcWin(){
   
   //draw check
   // drawChk is sum absolute value of array, if drawChk = 9 then there is a draw
-  drawChk = 0;
+  let drawChk = 0;
   for(let i = 0; i<3; i++){
     for(let j = 0; j<3; j++){
       drawChk = drawChk + Math.abs(arr[i][j]);
@@ -94,6 +94,7 @@ function calcWin(){
 
 function draw(){
   g.clear();
+  let playerIcon;
   if (player ==1){
     playerIcon = "X";
   } else if(player == -1){

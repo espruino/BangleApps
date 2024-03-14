@@ -274,7 +274,7 @@ function handleState(fastUpdate){
     // Set weather
     state.has_weather = true;
     try {
-        weather = require('weather').get();
+        const weather = require('weather').get();
         if (weather === undefined){
             state.has_weather = false;
             state.temp = "-";

@@ -6,7 +6,7 @@ exports.enable = () => {
 
   var log = function(text, param){
     if (global.showStatusInfo)
-      showStatusInfo(text);
+      global.showStatusInfo(text);
     if (settings.debuglog){
       var logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);

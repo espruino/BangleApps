@@ -147,7 +147,7 @@ function drawDigits(x, value)
 function drawChar(i, xMin, yMin, xMax, yMax)
 {
    numbers[i].forEach(rect => {
-     r = place(rect, xMin, yMin, xMax, yMax);
+     const r = place(rect, xMin, yMin, xMax, yMax);
      g.setColor(fg,fg,fg);
      g.fillRect(r[0], r[1], r[2], r[3]);
     });

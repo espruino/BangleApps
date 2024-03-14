@@ -136,6 +136,7 @@ else if (img == "apetureLaboratoriesLight"){
 function drawStart(){
   g.clear();
   g.reset();
+  let apSciLab;
   if (g.theme.dark){apSciLab = getImg("apetureLaboratories");}
   else {apSciLab = getImg("apetureLaboratoriesLight");}
   g.drawImage(apSciLab, xyCenter-apSciLab.width/2, xyCenter-apSciLab.height/2);
@@ -241,7 +242,7 @@ function buttonPressed(){
   if (curWarning < maxWarning) curWarning += 1;
   else curWarning = 0;
   g.reset();
-  buttonImg = getImg("butPress");
+  const buttonImg = getImg("butPress");
   g.drawImage(buttonImg, 0, 0);
 
   warningImg = getImg("w"+String(curWarning));
@@ -251,7 +252,7 @@ function buttonPressed(){
 }
 function buttonUnpressed(){
   if (!pause){
-    buttonImg = getImg("butUnpress");
+    const buttonImg = getImg("butUnpress");
     g.drawImage(buttonImg, 0, 0);
   }
   else{
@@ -277,11 +278,12 @@ function draw() {
 
     g.reset(); // default draw styles
     //draw watchface
+    let apSciWatch;
     if (g.theme.dark){apSciWatch = getImg("apetureWatch");}
     else {apSciWatch = getImg("apetureWatchLight");}
     g.drawImage(apSciWatch, xyCenter-apSciWatch.width/2, xyCenter-apSciWatch.height/2);
 
-    potato = getImg("potato");
+    const potato = getImg("potato");
     g.drawImage(potato, 118, 118);
 
     g.drawImage(warningImg, 1, g.getWidth()-61);//update warning

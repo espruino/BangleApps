@@ -761,7 +761,7 @@ function showLauncherMenu() {
 }
 
 function showSetTimeMenu() {
-  d = new Date();
+  let d = new Date();
   const timemenu = {
     '': { 'title': /*LANG*/'Date & Time' },
     '< Back': function () {

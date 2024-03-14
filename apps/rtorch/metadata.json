@@ -2,7 +2,7 @@
   "id": "rtorch",
   "name": "Red Torch",
   "shortName": "RedTorch",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Turns screen RED to help you see in the dark without breaking your night vision. Select from the launcher or on Bangle 1 press BTN3,BTN1,BTN3,BTN1 quickly to start when in any app that shows widgets",
   "icon": "app.png",
   "tags": "tool,torch",

@@ -3,7 +3,7 @@
  * configured and send a trigger to homeassistant.
  */
 function _getIcon(trigger){
-    icon = trigger.icon;
+    const icon = trigger.icon;
     if(icon == "light"){
       return {
         width : 48, height : 48, bpp : 1,

@@ -1,3 +1,4 @@
 0.01: Initial version of Balltastic released! Happy!
 0.02: Set LCD timeout for Espruino 2v10 compatibility
 0.03: Now also works on Bangle.js 2
+0.04: Minor code improvements

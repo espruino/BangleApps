@@ -69,7 +69,7 @@ const drawMixedClock = function() {
   buf.drawString(dateArray[3], 237, 176, true);
 
   // draw hour and minute dots
-  for (i = 0; i < 60; i++) {
+  for (let i = 0; i < 60; i++) {
       radius = (i % 5) ? 2 : 4;
       rotatePoint(0, Radius.dots, i * 6, Center, point);
       buf.fillCircle(point[0], point[1], radius);

@@ -101,6 +101,7 @@ function loadLinesFromFile(requestedLineCount, fileName) {
 
   var readFile = Storage.open(fileName, "r");
   
+  let nextLine;
   while ((nextLine = readFile.readLine())) {
     if(nextLine) {
       allLines.push(nextLine);

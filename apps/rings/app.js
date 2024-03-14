@@ -145,7 +145,7 @@ function drawMonthCircleText( text, circleSize, range, value){
     grimg.transparent = 1;  
     monthCircleTextBuffer.setColor(1,1,1);
 
-    for(z=0; z < text.length; z++){
+    for(let z=0; z < text.length; z++){
       tobj = { x:watch.screen.centerX, y:watch.screen.centerY, scale:1, rotate: ((z + 1) / range) * (Math.PI * 2) };
       tver = [-1, 0, 1, 0, 1, -circleSize, -1, -(circleSize -21)];
       tran = monthCircleTextBuffer.transformVertices(tver, tobj);

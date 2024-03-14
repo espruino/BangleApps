@@ -116,7 +116,7 @@ function drawChordCached(chord, x, y, options) {
   if (chordCache[chord[0]]) {
     image = chordCache[chord[0]]
   } else {
-    arrbuff = Graphics.createArrayBuffer(chordWidth,chordHeight,1,{msb:true});
+    let arrbuff = Graphics.createArrayBuffer(chordWidth,chordHeight,1,{msb:true});
     drawChord(arrbuff, chord, 0, 0, options);
     image = {width: arrbuff.getWidth(), height: arrbuff.getHeight(), bpp:arrbuff.getBPP(), buffer: arrbuff.buffer, transparent:0}
     chordCache[chord[0]] = image;

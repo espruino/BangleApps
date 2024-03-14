@@ -66,7 +66,7 @@ function showNumpad(text, key_, callback) {
     s = key + text.substr(key.length, 999);
     g.setFont("Vector:24").setFontAlign(1,0).drawString(s,g.getWidth(),12);
   }
-  ds="12%";
+  const ds="12%";
   var numPad = new Layout ({
     type:"v", c: [{
       type:"v", c: [

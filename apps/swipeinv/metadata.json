@@ -3,7 +3,7 @@
   "name": "Swipe inversion",
   "shortName":"Swipe inv.",
   "icon": "app.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "Inverts swipe direction globally or per app, see settings. If global inversion is enabled, you can unselect the inversion per app and vice versa.",
   "readme":"README.md",
   "type": "bootloader",

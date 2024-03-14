@@ -8,7 +8,7 @@ var FILE = "usgs.json";
     tempUnitF: true,
   }, require('Storage').readJSON(FILE, true) || {});
 function fetchStartup() {
-  uri = "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
+  const uri = "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
     settings.loc +
     "')/Datastreams?$expand=Observations($orderby=phenomenonTime%20desc;$top=1;$select=result)&$select=unitOfMeasurement,description";
   if (Bangle.http) {
@@ -17,8 +17,10 @@ function fetchStartup() {
 }
 function handleStartup(data) {
   for (var key1 in data) {
-    desc = data[key1].description.split(" / ")[0];
+    const desc = data[key1].description.split(" / ")[0];
     if (settings.keys[desc]) {
+      let symbol;
+      let result;
       if (data[key1].unitOfMeasurement.symbol === "degC" && settings.tempUnitF) {
         symbol = "F";
         result = (data[key1].Observations[0].result * 9 / 5) + 32;
@@ -42,10 +44,11 @@ function displayData(dataStreams) {
   g.clear();
   g.setFont("Vector",20);
   g.setFontAlign(0,0);
-  string = "";
+  let string = "";
   for (var key in dataStreams) {
-    unit = dataStreams[key].unit;
-    value = dataStreams[key].value;
+    const unit = dataStreams[key].unit;
+    const value = dataStreams[key].value;
+    let name;
     if (settings.shortenedName[key]) {
       name = settings.shortenedName[key];
     } else {

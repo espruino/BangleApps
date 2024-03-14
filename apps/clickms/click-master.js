@@ -19,7 +19,7 @@ function drawPlayers() {
   g.clear(1);
   g.setFont("6x8",2);
   var l = [{name:ME,cnt:mycounter}];
-  for (p of players) l.push(p);
+  for (const p of players) l.push(p);
   l.sort((a,b)=>a.cnt-b.cnt);
   var y=0;
   l.forEach(player=>{

@@ -1,7 +1,7 @@
 { "id": "widmnth",
   "name": "Days left in month widget",
   "shortName":"Month Countdown",
-  "version":"0.01",
+  "version": "0.02",
   "description": "A simple widget that displays the number of days left in the month.",
   "icon": "widget.png",  
   "type": "widget",

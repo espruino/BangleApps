@@ -2,9 +2,9 @@
 
 "Bangle.loadWidgets()"; // Facilitates fastloading to this app via Fastload Utils, while still not loading widgets on standard `load` calls.
 
-st = require('Storage');
+const st = require('Storage');
 
-l = /^a\..*\.js$/;
+let l = /^a\..*\.js$/;
 //l = /.*\.js/;
 l = st.list(l, {sf:false});
 

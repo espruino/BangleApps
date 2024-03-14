@@ -143,7 +143,7 @@
     showMainMenu();
   };
   let timeoutvalues = [10,20,30,60];
-  for (c in timeoutvalues){
+  for (const c in timeoutvalues){
     let v = timeoutvalues[c];
     timeoutMenu[v+"s"] = function () {
       save("timeout", v);

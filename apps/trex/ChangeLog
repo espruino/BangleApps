@@ -1,3 +1,4 @@
 0.02: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
 0.03: Enabled BTN2 and BTN3, added highscore (score is saved to storage and can be reset in app settings menu)
 0.04: Bangle.js 2 support
+0.05: Minor code improvements
