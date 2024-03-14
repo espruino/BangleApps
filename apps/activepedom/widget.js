@@ -222,16 +222,17 @@
     if (on) WIDGETS["activepedom"].draw();
   });
 
-  //Read data from file and set variables
-  let pedomData = s.readJSON(PEDOMFILE,1);
-  if (pedomData) {
-    if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
-    stepsCounted = pedomData.stepsToday|0;
-    stepsTooShort = pedomData.stepsTooShort;
-    stepsTooLong = pedomData.stepsTooLong;
-    stepsOutsideTime = pedomData.stepsOutsideTime;
+  // Read data from file and set variables
+  { // new scope ensures pedomData gets freed
+    let pedomData = s.readJSON(PEDOMFILE,1);
+    if (pedomData) {
+      if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
+      stepsCounted = pedomData.stepsToday|0;
+      stepsTooShort = pedomData.stepsTooShort;
+      stepsTooLong = pedomData.stepsTooLong;
+      stepsOutsideTime = pedomData.stepsOutsideTime;
+    }
   }
-  pedomdata = 0; //reset pedomdata to save memory - TODO: Should `pedomdata` have been `pedomData` here?
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
   /*timerStoreData =*/ setInterval(storeData, storeDataInterval); //store data regularly

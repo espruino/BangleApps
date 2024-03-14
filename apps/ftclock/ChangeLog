@@ -2,4 +2,3 @@
 0.02: RAM efficient version of `fourTwentyTz.js` (as suggested by @gfwilliams).
 0.03: `mkFourTwentyTz.js` now handles new timezonedb.com CSV format
 0.04: Tell clock widgets to hide.
-0.05: Minor code improvements

@@ -353,13 +353,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "homework/app.js": {
-    "hash": "4bc5694ed77e47f116d2b9cbdb5083c6b218e09899809f977f1a2cbcc53318cf",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "hidmsicswipe/hidmsicswipe.js": {
     "hash": "8c8c2058315c6debaec71b65b1409ebf5725233c72dbcc2ac921bec0d238fd4f",
     "rules": [
@@ -687,12 +680,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "testuserinput/app.js": {
-    "hash": "83ec7fe0b9f0590715d47fc362fe48caf5b33af0f3d840acc70f16be72a0cef9",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "terminal/app.js": {
     "hash": "19d4913fed5a8817e3e60caf04aa6b45413ed683cf5b2c5b6859bd9080d37a34",
     "rules": [
@@ -911,12 +898,6 @@ module.exports = {
   },
   "pastel/pastel.app.js": {
     "hash": "c5d2f1e179a7c0dec451e590659ff3080249d59d069b3b738c20dd6068ac98ce",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "owmweather/settings.js": {
-    "hash": "e1df731fee42428a0a45e8bba2415d48c82b357df56806555bab70682f1e7236",
     "rules": [
       "no-undef"
     ]
@@ -1221,12 +1202,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "ftclock/mkFourTwentyTz.js": {
-    "hash": "c1db4878121aea068481bcdb83a2725755032c6a56250c698fe2d5f96135cd7c",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "fontclock/fontclock.js": {
     "hash": "478c96b1319d548a79727c5af3191b77ac9753c6314789570e900e512a99a152",
     "rules": [
@@ -1383,12 +1358,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "bigdclock/bigdclock.app.js": {
-    "hash": "f7bde42d4a5b95e1b11dbe79b6c7a885900678828abb893375d2492fb25efca8",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "beebclock/beebclock.js": {
     "hash": "f2860eb523d6394de737d249303a87a96c619ce925943026238d2aedc2441133",
     "rules": [
@@ -1469,12 +1438,6 @@ module.exports = {
   },
   "activepedom/app.js": {
     "hash": "c57c787ac33834dce2291562af8106b7a9de1f7116cdeab2a4236004e723273a",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "activepedom/widget.js": {
-    "hash": "b60792cb3017f9b7ce43471828434501bfa255f327fde6c52ae36a7a06f84d6f",
     "rules": [
       "no-undef"
     ]

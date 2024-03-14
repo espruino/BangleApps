@@ -163,12 +163,10 @@ const drawHR = function () {
   }
 
   if (grow) {
-    const color = settings.hr.color;
-    g.setColor(color);
+    g.setColor(settings.hr.color);
     g.fillCircle(settings.hr.x, settings.hr.y, size);
   } else {
-    const color = "#000000";
-    g.setColor(color);
+    g.setColor("#000000");
     g.drawCircle(settings.hr.x, settings.hr.y, size);
   }
 };
