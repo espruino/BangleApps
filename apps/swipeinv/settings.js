@@ -11,7 +11,7 @@
   }
 
   function appMenu() {
-    menu = {
+    let menu = {
       "" : { "title" : /*LANG*/"Swipe inversion apps" },
       "< Back" : () => { writeSettings(); mainMenu();}
     };

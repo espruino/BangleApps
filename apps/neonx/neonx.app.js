@@ -115,7 +115,7 @@ function drawAnimated(){
   queueDraw();
 
   // Animate draw through different colors
-  speed = 25;
+  const speed = 25;
   setTimeout(function() {
     _draw(false, 1);
     setTimeout(function() {

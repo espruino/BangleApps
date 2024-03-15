@@ -14,7 +14,7 @@ if (this.imports !== undefined &&
     this.printerr !== undefined){//seed or gjs
     p4_log = function(){
         var args = Array.prototype.slice.call(arguments);
-        printerr(args.join(', '));
+        this.printerr(args.join(', '));
     };
 }
 else if (this.console === undefined){//MSIE

@@ -136,7 +136,7 @@ var cgimg;
 */
 function drawSquare(gfx, x, y, data, numOfBits) {
 
-  for(i = numOfBits; i > 0 ; i--) {
+  for(let i = numOfBits; i > 0 ; i--) {
     if( (data & 1) != 0) {
       gfx.fillRect(x + (i - 1) * x_step, y, 
                    x + i * x_step , y + y_step);
@@ -245,7 +245,7 @@ function drawBattery(gfx, level) {
   var pos_y = bat_pos_y - 1;
   var stepLevel = Math.round((level + 10) / 20);
 
-  for(i = 0; i < stepLevel; i++) {
+  for(let i = 0; i < stepLevel; i++) {
     pos_y -= bat_size_y + 2;
     gfx.fillRect(bat_pos_x, pos_y, 
                  bat_pos_x + bat_size_x, pos_y + bat_size_y);

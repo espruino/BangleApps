@@ -2,3 +2,4 @@
 0.02: Bugfixes
 0.03: Use Bangle.setBacklight()
 0.04: Add option to buzz after computer move
+0.05: Minor code improvements

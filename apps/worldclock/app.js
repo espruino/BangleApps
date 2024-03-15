@@ -117,7 +117,7 @@ function draw() {
 
   // Loop through offset(s) and render
   offsets.forEach((offset, index) => {
-    dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
+    const dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
     hours = doublenum(dx.getHours());
     minutes = doublenum(dx.getMinutes());
 

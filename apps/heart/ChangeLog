@@ -14,3 +14,4 @@
 0.06: Tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
 0.07: Theme support
 0.08: Use default Bangle formatter for booleans
+0.09: Minor code improvements

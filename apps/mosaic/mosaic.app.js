@@ -76,7 +76,7 @@ g.clear();
 loadSettings();
 loadThemeColors();
 
-offset_widgets = settings.showWidgets ? 24 : 0;
+const offset_widgets = settings.showWidgets ? 24 : 0;
 let available_height = g.getHeight() - offset_widgets;
 
 // Calculate grid size and offsets

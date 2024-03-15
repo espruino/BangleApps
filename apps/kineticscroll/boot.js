@@ -124,7 +124,7 @@
       }
     
       velocity = E.clip(velocity,-MAX_VELOCITY,MAX_VELOCITY);
-      lastDrag=Date.now();
+      //lastDrag=Date.now();
       if (!scheduledDraw){
         scheduledDraw = setTimeout(draw,0);
       }

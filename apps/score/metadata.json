@@ -1,7 +1,7 @@
 {
   "id": "score",
   "name": "Score Tracker",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Score Tracker for sports that use plain numbers (e.g. Badminton, Volleyball, Soccer, Table Tennis, ...). Also supports tennis scoring.",
   "icon": "score.app.png",
   "screenshots": [{"url":"screenshot_score.png"}],

@@ -40,8 +40,8 @@ function rotateVec(a, theta) {
         x: 0,
         y: 0
     };
-    c = Math.cos(theta);
-    s = Math.sin(theta);
+    const c = Math.cos(theta);
+    const s = Math.sin(theta);
     pt.x = c * a.x - s * a.y;
     pt.y = s * a.x + c * a.y;
     return pt;

@@ -250,8 +250,8 @@
     let oldPoly2 = CLEAR_POLYS_2[0];
     doAnim(i => {
       i = ease(i);
-      poly1 = interpolatePoly(CLEAR_POLYS_1, i);
-      poly2 = interpolatePoly(CLEAR_POLYS_2, i);
+      const poly1 = interpolatePoly(CLEAR_POLYS_1, i);
+      const poly2 = interpolatePoly(CLEAR_POLYS_2, i);
       // Fill in black line
       g.setColor(TEXT_COLOR);
       g.fillPoly(poly1);

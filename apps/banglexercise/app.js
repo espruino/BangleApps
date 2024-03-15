@@ -148,7 +148,7 @@ function accelHandler(accel) {
 
   // slope for Z
   if (exerciseType.useZaxis) {
-    l = historyAvgZ.length;
+    let l = historyAvgZ.length;
     if (l > 1) {
       const p1 = historyAvgZ[l - 2];
       const p2 = historyAvgZ[l - 1];

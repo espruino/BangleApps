@@ -11,3 +11,4 @@
       Option to show the seconds when unlocked, even when otherwise hidden by other settings
       Broke out config loading into separate file to avoid duplicating a whole bunch of code
       Added support for fast loading
+0.10: Minor code improvements

@@ -2,7 +2,7 @@
   "id": "rings",
   "name": "Rings - an animated watchface",
   "shortName": "Rings",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Ring based watchface that animates to show the date when unlocked. Inspired by / remixed from Rinkulainen.",
   "icon": "app.png",
   "screenshots": [{

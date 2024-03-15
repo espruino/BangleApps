@@ -41,8 +41,8 @@ function rotateVec(a, theta) {
     x: 0,
     y: 0
   };
-  c = Math.cos(theta);
-  s = Math.sin(theta);
+  const c = Math.cos(theta);
+  const s = Math.sin(theta);
   pt.x = c * a.x - s * a.y;
   pt.y = s * a.x + c * a.y;
   return pt;
@@ -124,7 +124,7 @@ function drawHole(l) {
       nodelist.push(node.x);
       nodelist.push(node.y);
     });
-    newnodelist = g.transformVertices(nodelist, transform);
+    const newnodelist = g.transformVertices(nodelist, transform);
 
     g.fillPoly(newnodelist, true);
     //console.log(feature.type);
@@ -139,7 +139,7 @@ function drawHole(l) {
     waynodelist.push(node.y);
   });
 
-  newnodelist = g.transformVertices(waynodelist, transform);
+  const newnodelist = g.transformVertices(waynodelist, transform);
   g.setColor(0, 1, 1); // cyan
   g.drawPoly(newnodelist);
 }

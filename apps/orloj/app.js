@@ -297,17 +297,17 @@ function drawBorders() {
   }
   {
     d = new Date();
-    sun = SunCalc.getTimes(d, lat, lon);
+    const sun = SunCalc.getTimes(d, lat, lon);
     g.setColor(0.5, 0.5, 0);
     print("sun", sun);
     drawTimeIcon(sun.sunset, img_sunrise, { rotate: Math.PI, scale: 2 });
     drawTimeIcon(sun.sunrise, img_sunrise, { scale: 2 });
     g.setColor(0, 0, 0);
-    moon = SunCalc.getMoonTimes(d, lat, lon);
+    const moon = SunCalc.getMoonTimes(d, lat, lon);
     print("moon", moon);
     drawTimeIcon(moon.set, img_moonrise, { rotate: Math.PI, scale: 2 });
     drawTimeIcon(moon.rise, img_sunrise, { scale: 2 });
-    pos = SunCalc.getPosition(d, lat, lon);
+    let pos = SunCalc.getPosition(d, lat, lon);
     print("sun:", pos);
     if (pos.altitude > -0.1) {
       g.setColor(0.5, 0.5, 0);

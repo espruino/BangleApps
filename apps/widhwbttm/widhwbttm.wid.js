@@ -26,7 +26,7 @@
          }
        else {
             // text prefix has to be 4char
-            stor=require("Storage").getStats();        
+            const stor=require("Storage").getStats();        
             if (v_count==4) { 
               v_str_hw="Fre "+process.memory().free;
               //+"/"+process.memory().total;

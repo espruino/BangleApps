@@ -1,7 +1,7 @@
 { "id": "usgs",
   "name": "USGS Data fetching app",
   "shortName":"USGS",
-  "version":"0.02",
+  "version": "0.03",
   "description": "App that fetches [USGS water data](https://maps.waterdata.usgs.gov/) for a configurable location (requires connection to Android phone)",
   "icon": "app.png",
   "tags": "outdoors,exercise,http",

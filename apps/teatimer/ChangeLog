@@ -2,3 +2,4 @@
 0.02: Fix issue setting colors after showMessage
 0.03: Fix BG/FG Color if e.g. theme background is black
 0.04: Get time zone from settings for showing the clock
+0.05: Minor code improvements

@@ -2,7 +2,7 @@
   "id": "showimg",
   "name": "simple image viewer",
   "shortName":"showImage",
-  "version":"0.02",
+  "version": "0.03",
   "description": "Displays the image in \"showimg.user.img\". The file has to be uploaded via the espruino IDE. Returns to watch face after 60s or button push. I use it to display my vaccination certificate.",
   "icon": "app.png",
   "tags": "tool",

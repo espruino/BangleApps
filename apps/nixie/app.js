@@ -237,7 +237,7 @@ for (let idx=0; idx*2 < points6.length; idx++) {
    points9[idx*2+1] = 99-points6[idx*2+1];
 }
 
-pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
+const pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
 
 function eraseDigit(d, x, y) {
   if(d < 0 || d > 9) return;

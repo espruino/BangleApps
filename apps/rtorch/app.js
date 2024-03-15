@@ -1,7 +1,7 @@
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
 g.reset();
-c = 1;
+let c = 1;
 
 function setColor(delta){
   c+=delta;
