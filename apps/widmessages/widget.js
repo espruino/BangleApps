@@ -1,13 +1,5 @@
-(() => {
-  if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessages===0) return;
-
-  function filterMessages(msgs) {
-    return msgs.filter(msg => msg.new && msg.id != "music")
-      .map(m => m.src) // we only need this for icon/color
-      .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
-  }
-
-  // NOTE when adding a custom "essages" widget:
+if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessages!==0) {
+  // NOTE when adding a custom "messages" widget:
   // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
   // see e.g. widmsggrid
   WIDGETS["messages"] = {
@@ -48,6 +40,9 @@
       if (this.hidden) return;
       if (type==="music") return;
       if (msg.id && !msg.new && msg.t!=="remove") return;
+      let filterMessages = msgs => msgs.filter(msg => msg.new && msg.id != "music")
+        .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i) // only include one of each type
+        .map(m => m.src); // we only need this for icon/color;
       this.srcs = filterMessages(require("messages").getMessages(msg));
       const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
       this.width = 24 * E.clip(this.srcs.length, 0, settings.maxMessages);
@@ -66,11 +61,11 @@
         Bangle.drawWidgets();
       }
     }, show() {
-      delete this.hidden
+      delete this.hidden;
       this.onMsg("show", {}); // reload messages+redraw
     }
   };
 
   Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
   WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
-})();
+}

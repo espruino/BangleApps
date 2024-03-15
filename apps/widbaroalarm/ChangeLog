@@ -11,3 +11,4 @@
 0.08: Compatibility with hideable Widgets
 0.09: Do not immediately measure on start, keep interval
       Add plot history to settings
+0.10: Minor code improvements

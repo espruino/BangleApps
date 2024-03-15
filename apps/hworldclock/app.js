@@ -4,6 +4,7 @@
 const SETTINGSFILE = "hworldclock.json";
 let secondsMode;
 let showSunInfo;
+let singleOffsetSmall;
 let colorWhenDark;
 let rotationTarget;
 // ------- Settings file
@@ -155,7 +156,7 @@ let updatePos = function() {
 	let coord = require("Storage").readJSON(LOCATION_FILE,1)||  {"lat":0,"lon":0,"location":"-"}; //{"lat":53.3,"lon":10.1,"location":"Pattensen"};
 	if (coord.lat != 0 && coord.lon != 0) {
 	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);
-	times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
+	const times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
 	rise = "^" + times.sunrise.toString().split(" ")[4].substr(0,5);
 	set	= "v" + times.sunset.toString().split(" ")[4].substr(0,5);
 	//noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
@@ -253,7 +254,7 @@ let draw = function() {
 
 	// Loop through offset(s) and render
 	offsets.forEach((offset, index) => {
-	dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
+	const dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
 	hours = doublenum(dx.getHours());
 	minutes = doublenum(dx.getMinutes());
 

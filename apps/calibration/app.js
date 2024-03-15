@@ -129,7 +129,7 @@ class BanglejsApp {
 
 E.srand(Date.now());
 
-calibration = new BanglejsApp();
+const calibration = new BanglejsApp();
 calibration.load_settings();
 Bangle.disableCalibration = true;
 

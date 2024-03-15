@@ -21,7 +21,7 @@ function parseDevice(device) {
     var l = d.getUint8(offset+2);
     var code = d.getUint16(offset,true);
     if (!deviceInfo[device.id]) deviceInfo[device.id]={id:device.id};
-    event = deviceInfo[device.id];
+    let event = deviceInfo[device.id];
     switch (code) {
       case 0x1004: event.temperature = d.getInt16(offset+3,true)/10; break;
       case 0x1006: event.humidity = d.getInt16(offset+3)/10; break;

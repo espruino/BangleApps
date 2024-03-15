@@ -5,7 +5,7 @@
 
   function getDaysLeft(day) {
     let year = day.getMonth() == 11 ? day.getFullYear() + 1 : day.getFullYear(); // rollover if december.
-    next_month = new Date(year, (day.getMonth() + 1) % 12, 1, 0, 0, 0);
+    const next_month = new Date(year, (day.getMonth() + 1) % 12, 1, 0, 0, 0);
     let days_left = Math.floor((next_month - day) / 86400000); // ms left in month divided by ms in a day
     return days_left;
   }

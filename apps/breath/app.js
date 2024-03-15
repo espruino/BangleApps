@@ -51,9 +51,9 @@ g.setFont("6x8", 2);
 function circle() {
 
     g.clear();
-    adjusted_radius = max_radius * Math.abs(origin);
+    const adjusted_radius = max_radius * Math.abs(origin);
     g.drawCircle(120, 120, adjusted_radius);
-    radius = Math.abs(Math.sin(origin));
+    //const radius = Math.abs(Math.sin(origin));
     angle += 2;
     origin = angle * (Math.PI / 180);
     if (angle >= 0 && angle < 90) {

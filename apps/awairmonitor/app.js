@@ -80,7 +80,7 @@ function draw() {
   g.drawString(""+bt_current_humi, 123, 110);
   g.drawString(""+bt_current_temp, 158, 110);
 
-  for (i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     if (display_frozen) { g.setColor("#888"); }
 
     // max height = 32

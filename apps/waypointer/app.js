@@ -209,13 +209,13 @@ var intervalRef;
 
 function stopdraw() {
   candraw=false;
-  prev_course = -1;
+  //prev_course = -1;
   if(intervalRef) {clearInterval(intervalRef);}
 }
 
 function startTimers() {
   candraw=true;
-  intervalRefSec = setInterval(function() {
+  /*intervalRefSec =*/ setInterval(function() {
     read_compass();
   }, 500);
 }

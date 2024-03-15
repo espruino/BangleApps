@@ -68,7 +68,7 @@ function popSubMenuData(data) {
 
 
 function getDataStreams() {
-  uri = "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
+  const uri = "https://labs.waterdata.usgs.gov/sta/v1.1/Things('USGS-" +
     settings.loc +
     "')/Datastreams?$select=description";
   if (Bangle.http) {

@@ -92,7 +92,7 @@ const prepFont = (name, data) => {
     //const w0 = lengths[min];
     let widths = '';
     for (c = min, o = 0; c <= max; c++) {
-        for (i = 0, j = offsets[c]; i < lengths[c]; i++) {
+        for (let i = 0, j = offsets[c]; i < lengths[c]; i++) {
             xoffs[j] = asc + body + adjustments[c] - 1;
             ypos[j++] = o++;
         }
@@ -113,7 +113,7 @@ const prepFont = (name, data) => {
     return x;
 };
 
-res = `
+let res = `
 const heatshrink = require('heatshrink');
 const dec = x => E.toString(heatshrink.decompress(atob(x)));
 `;

@@ -157,7 +157,7 @@ function stopdraw() {
 
 function startTimers() {
   candraw=true;
-  intervalRefSec = setInterval(function() {
+  /*intervalRefSec =*/ setInterval(function() {
     heading = newHeading(course,heading);
     if (course!=heading) drawCompass(heading);
   },200);

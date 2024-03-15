@@ -572,7 +572,7 @@ function probe() {
       stride = 68;
     }
     */
-  stride = 68;
+  let stride = 68;
 
   lcdBuffer = start;
   print('Found lcdBuffer at ' + lcdBuffer.toString(16) + ' stride=' + stride);
