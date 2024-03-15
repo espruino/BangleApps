@@ -6,6 +6,7 @@ BangleApps Utilities
 * `find_banglejs1_only_apps.sh` - show apps that only work on Bangle.js 1 (and not 2)
 * `firmwaremaker_c.js` - create the binary blob needed for the Bangle.js firmware (containing default apps)
 * `pre-publish.sh` - this is run before we publish to https://banglejs.com/apps/ - it works out how recently all the apps were updated and writes it to `appdates.csv`
+* `font_creator.js` - creates PBF-format fonts for font libraries like `apps/fontsall`
 
 **You should also check out https://github.com/espruino/EspruinoAppLoaderCore/tree/master/tools** (available in `core/tools` in this repo) - this contains tools for handling languages, as well as a command-line based app loader
 

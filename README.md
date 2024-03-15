@@ -251,7 +251,7 @@ and which gives information about the app for the Launcher.
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
   "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app
-  "type":"...",               // optional(if app) -  
+  "type":"...",               // optional(if app) -
                               //   'app' - an application
                               //   'clock' - a clock - required for clocks to automatically start
                               //   'widget' - a widget
@@ -300,7 +300,7 @@ and which gives information about the app for the Launcher.
   "customConnect": true,      // if supplied, ensure we are connected to a device
                               // before the "custom.html" iframe is loaded. An
                               // onInit function in "custom.html" is then called
-                              // with info on the currently connected device.                 
+                              // with info on the currently connected device.
 
   "interface": "interface.html",   // if supplied, apps/interface.html is loaded in an
                               // iframe, and it may interact with the connected Bangle
@@ -328,9 +328,9 @@ and which gives information about the app for the Launcher.
     {"name":"appid.data.json",  // filename used in storage
      "storageFile":true       // if supplied, file is treated as storageFile
      "url":"",                // if supplied URL of file to load (currently relative to apps/)
-     "content":"...",         // if supplied, this content is loaded directly     
+     "content":"...",         // if supplied, this content is loaded directly
      "evaluate":true,         // if supplied, data isn't quoted into a String before upload
-                              // (eg it's evaluated as JS)     
+                              // (eg it's evaluated as JS)
     },
     {"wildcard":"appid.data.*" // wildcard of filenames used in storage
     },                         // this is mutually exclusive with using "name"
@@ -424,9 +424,9 @@ See [apps/gpsrec/interface.html](the GPS Recorder) for a full example.
 
 ### Adding configuration to the "Settings" menu
 
-Apps (or widgets) can add their own settings to the "Settings" menu under "App/widget settings".   
+Apps (or widgets) can add their own settings to the "Settings" menu under "App/widget settings".
 To do so, the app needs to include a `settings.js` file, containing a single function
-that handles configuring the app.   
+that handles configuring the app.
 When the app settings are opened, this function is called with one
 argument, `back`: a callback to return to the settings menu.
 
@@ -449,12 +449,12 @@ Example `settings.js`
     'Monkeys': {
       value: settings.monkeys,
       onchange: (m) => {save('monkeys', m)}
-    }   
+    }
   };
   E.showMenu(appMenu)
 })
 ```
-In this example the app needs to add `myappid.settings.js` to `storage` in `metadata.json`.   
+In this example the app needs to add `myappid.settings.js` to `storage` in `metadata.json`.
 It should also add `myappid.json` to `data`, to make sure it is cleaned up when the app is uninstalled.
 ```json
   { "id": "myappid",
@@ -553,6 +553,30 @@ You can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bi
 | Orange | 0xFD20 |
 | GreenYellow | 0xAFE5 |
 | Pink | 0xF81F |
+
+## Fonts
+
+A recent addition to Bangle.js is the ability to use extra fonts with support for more characters.
+For example [all regions](https://banglejs.com/apps/?id=fontall) or [extended](https://banglejs.com/apps/?id=fontext) fonts.
+
+Once installed, these apps cause a new font, `Intl` to be added to `Graphics`, which can be used with just `g.setFont("Intl")`.
+
+There is also a `font` library - this is not implemented yet, but more information about the planned implementation
+is available at https://github.com/espruino/BangleApps/issues/3109
+
+For now, to make your app work with the international font, you can check if `Graphics.prototype.setFontIntl` exists,
+and if so you can change the font you plan on using:
+
+```JS
+myFont = "6x8:2";
+if (Graphics.prototype.setFontIntl)
+  myFont = "Intl";
+```
+
+Any new Font library must contain the metadata `"icon": "app.png", "tags": "font", "type": "module", "provides_modules" : ["fonts"],`
+and should provide a `font` library, as well as a `boot.js` that adds `Graphics.prototype.setFontIntl`. If you plan on
+making a new library it's best to just copy one of the existing ones for now.
+
 
 ## API Reference
 

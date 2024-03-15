@@ -1010,12 +1010,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "messagegui/app.js": {
-    "hash": "6ffb405ae2f1e62f5d1ff19888cbfd71e40850752ea8c49a1cc2e358fca7de80",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "marioclock/marioclock-app.js": {
     "hash": "d46990c757fd217593c6966c82f421bcd51a4d073109dea2cbc398a0f6064602",
     "rules": [
@@ -1072,12 +1066,6 @@ module.exports = {
   },
   "kanawatch/app.js": {
     "hash": "01c3fede367b7cbdbaf6b532ebfd4e6ffff61b2e20ce44b25dd04117853a44f2",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "ios/boot.js": {
-    "hash": "875f34ea333f9e1c28dd0cf0c0a73ec7003bd8f03e2ed6632b7978ce7b5f5c7e",
     "rules": [
       "no-undef"
     ]
