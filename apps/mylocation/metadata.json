@@ -4,7 +4,7 @@
   "icon": "app.png",
   "type": "settings",
   "screenshots": [{"url":"screenshot_1.png"}],
-  "version":"0.10",
+  "version": "0.11",
   "description": "Sets and stores the latitude and longitude of your preferred City. It can be set from GPS, waypoints or webinterface. `mylocation.json` can be used by other apps that need your main location. See README for details.",
   "readme": "README.md",
   "tags": "tool,utility",

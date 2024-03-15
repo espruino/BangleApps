@@ -325,7 +325,7 @@ function calculateValue(calculatedVariable, variableValues) {
 
         // Move down for the next entry
         let nextTitleY = (i + 1 < titlePositions.length) ? titlePositions[i + 1] : titleY + 1.5 * fontSize + lineSpacing;
-        yPosition = nextTitleY;
+        //yPosition = nextTitleY;
       }
       g.flip();
     };

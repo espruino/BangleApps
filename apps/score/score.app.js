@@ -96,7 +96,6 @@ function setupMatch() {
 
 function showSettingsMenu() {
   settingsMenuOpened = getSecondsTime();
-  l = null;
   settingsMenu(function (s, reset) {
     E.showMenu();
 

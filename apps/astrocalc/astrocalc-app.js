@@ -23,7 +23,7 @@ function drawMoon(phase, x, y) {
     "waning-crescent",
   ];
 
-  img = require("Storage").read(`${moonImgFiles[phase]}.img`);
+  const img = require("Storage").read(`${moonImgFiles[phase]}.img`);
   // image width & height = 92px
   g.drawImage(img, x - parseInt(92 / 2), y);
 }

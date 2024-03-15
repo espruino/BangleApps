@@ -409,7 +409,8 @@ function updateClock() {
 
   if ( emulator ) {
     max.spd++; max.alt++;
-    d=new Date(); sec=d.getSeconds();
+    const d=new Date(); 
+    sec=d.getSeconds();
     onGPS(lf);
   }
 }

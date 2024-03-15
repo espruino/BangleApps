@@ -31,7 +31,7 @@ function draw() {
     var dow = require("date_utils").dows(0,1)[date.getDay()];
 
     if ((date.getTime() >= lastBattCheck + 15*60000) || Bangle.isCharging()) {
-      lastBattcheck = date.getTime();
+      lastBattCheck = date.getTime();
       width = E.getBattery();
       width += width/2;
     }

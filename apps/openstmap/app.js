@@ -252,7 +252,7 @@ function showMap() {
       hasScrolled = true;
       drawLocation();
     } else if (hasScrolled) {
-      delta = getTime() - startDrag;
+      const delta = getTime() - startDrag;
       startDrag = 0;
       hasScrolled = false;
       if (delta < 0.2) {

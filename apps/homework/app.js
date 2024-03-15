@@ -135,7 +135,7 @@ function checkPreciseHomework(subjectnum) { // P A I N
   checkPreciseHomeworkMenu[subject] = function() {},
     checkPreciseHomeworkMenu[taskmsg] = function() {},
     checkPreciseHomeworkMenu[statusmsg] = function() {
-      status = "Status: Finished";
+      statusmsg = "Status: Finished";
       var d = new Date();
       var currenttime = require("locale").time(d, 1);
       var currentdate = require("locale").date(d);
@@ -160,11 +160,11 @@ function checkPreciseHomework(subjectnum) { // P A I N
 
 
 }
-
+/*
 function pushHomework(subject, status, datetimehwdone) {
   homework = require("Storage").readJSON("homework.txt", "r");
-
 }
+*/
 
 function addNewHomework(subject) { // Pass subject
   console.log(subject);

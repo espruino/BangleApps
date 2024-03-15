@@ -7,7 +7,7 @@
     const F = 132*H/240; // reasonable approximation
 
     function drawTime() {
-        d = new Date()
+        const d = new Date()
         g.reset();
         var da = d.toString().split(" ");
         var time = da[4].substr(0, 5).split(":");

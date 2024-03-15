@@ -1,7 +1,7 @@
 {
   "id": "synthwave",
   "name": "synthwave clock",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A watchface with an animated 3D scene.",
   "readme": "README.md",
   "icon": "app.png",

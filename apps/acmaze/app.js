@@ -206,7 +206,7 @@ function Maze(n) {
     return false;
   };
   this.tick = function() {
-    accel = Bangle.getAccel();
+    let accel = Bangle.getAccel();
     if (this.ball_x%this.wall_length) {
       this.try_move_horizontally(accel.x);
     } else if (this.ball_y%this.wall_length) {

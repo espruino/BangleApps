@@ -16,9 +16,9 @@ let paused = false;
 const SCAN_FREQ = 1000 * 30;
 
 // ALERT LIMITS
-LIMIT_SAUNA = 60;
-LIMIT_FRIDGE = 4;
-LIMIT_FREEZER = -18;
+const LIMIT_SAUNA = 60;
+const LIMIT_FRIDGE = 4;
+const LIMIT_FREEZER = -18;
 // TODO add wine cellar limits
 // TODO configurable limits
 

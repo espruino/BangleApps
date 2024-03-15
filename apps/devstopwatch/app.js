@@ -65,7 +65,7 @@ function chronometer() {
   }
 
   currentLap = calculateLap(state.whenStarted);
-  total = calculateLap(state.whenStartedTotal);
+  const total = calculateLap(state.whenStartedTotal);
 
   state.laps[0] = total;
   state.laps[1] = currentLap;
