@@ -1,6 +1,6 @@
 { "id": "chargent",
   "name": "Charge Gently",
-  "version": "0.05",
+  "version": "0.06",
   "description": "When charging, reminds you to disconnect the watch to prolong battery life.",
   "icon": "icon.png",
   "type": "bootloader",

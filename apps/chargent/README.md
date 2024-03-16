@@ -6,6 +6,8 @@ The first stage of charging Li-ion ends at ~80% capacity when the charge voltage
 
 This app has no UI and no configuration. To disable the app, you have to uninstall it.
 
+Tap the charged notification to prevent buzzing for this charging session.
+
 New in v0.03: before the very first buzz, the average value after the peak is written to chargent.json and used as threshold for future charges. This reduces the time spent in the second charge stage.
 
 Side notes
