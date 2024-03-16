@@ -1,5 +1,5 @@
 (function() {
-  WIDGETS["qmsched"] = {
+  WIDGETS["slpquiet"] = {
     area: "tl",
     width: ((require("Storage").readJSON("setting.json", 1) || {}).quiet|0) ? 24 : 0,
     draw: function() {

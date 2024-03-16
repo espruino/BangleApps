@@ -5,6 +5,7 @@
   "description": "Set Quiet mode (or alarms only mode), when the sleep tracking app detects sleep (each 10 min evaluated)",
   "icon": "app.png",
   "tags": "tool,widget",
+  "dependencies": {"sleeplog":"app"},
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "storage": [

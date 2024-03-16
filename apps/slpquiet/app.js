@@ -1,6 +1,5 @@
 const SETTINGS_FILE = "quietSwitch.json";
 const storage = require("Storage");
-let settings = storage.readJSON('setting.json', 1);
 let saved = storage.readJSON(SETTINGS_FILE, 1) || {};
 
 // Main menu
