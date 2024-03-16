@@ -224,6 +224,12 @@ exports.addInteractive = function(menu, options) {
       options.menuB = b;
     }
   }
+  options.save = () => {
+    // save the currently showing clock_info
+    const settings = exports.loadSettings();
+    settings.apps[appName] = {a:options.menuA, b:options.menuB};
+    require("Storage").writeJSON("clock_info.json",settings);
+  };
 
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
@@ -276,10 +282,7 @@ exports.addInteractive = function(menu, options) {
       oldMenuItem.removeAllListeners("draw");
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
-    // save the currently showing clock_info
-    let settings = exports.loadSettings();
-    settings.apps[appName] = {a:options.menuA,b:options.menuB};
-    require("Storage").writeJSON("clock_info.json",settings);
+    options.save();
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
     E.stopEventPropagation&&E.stopEventPropagation();
   }
