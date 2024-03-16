@@ -1,7 +1,10 @@
-{
+const lintExemptions = require("./lint_exemptions.js");
+
+module.exports = {
     "env": {
         // TODO: "espruino": false
         // TODO: "banglejs": false
+        // For a prototype of the above, see https://github.com/espruino/BangleApps/pull/3237
     },
     "extends": "eslint:recommended",
     "globals": {
@@ -23,10 +26,8 @@
         "Flash": "readonly",
         "Float32Array": "readonly",
         "Float64Array": "readonly",
-        "fs": "readonly",
         "Function": "readonly",
         "Graphics": "readonly",
-        "heatshrink": "readonly",
         "I2C": "readonly",
         "Int16Array": "readonly",
         "Int32Array": "readonly",
@@ -46,11 +47,9 @@
         "RegExp": "readonly",
         "Serial": "readonly",
         "SPI": "readonly",
-        "Storage": "readonly",
         "StorageFile": "readonly",
         "String": "readonly",
         "SyntaxError": "readonly",
-        "tensorflow": "readonly",
         "TFMicroInterpreter": "readonly",
         "TypeError": "readonly",
         "Uint16Array": "readonly",
@@ -58,8 +57,10 @@
         "Uint32Array": "readonly",
         "Uint8Array": "readonly",
         "Uint8ClampedArray": "readonly",
+        "Unistroke": "readonly",
         "Waveform": "readonly",
         // Methods and Fields at https://banglejs.com/reference
+        "__FILE__": "readonly",
         "analogRead": "readonly",
         "analogWrite": "readonly",
         "arguments": "readonly",
@@ -129,7 +130,43 @@
         "VIBRATE": "readonly",
         // Aliases and not defined at https://banglejs.com/reference
         "g": "readonly",
-        "WIDGETS": "readonly"
+        "WIDGETS": "readonly",
+        "module": "readonly",
+        "exports": "writable",
+        "D0": "readonly",
+        "D1": "readonly",
+        "D2": "readonly",
+        "D3": "readonly",
+        "D4": "readonly",
+        "D5": "readonly",
+        "D6": "readonly",
+        "D7": "readonly",
+        "D8": "readonly",
+        "D9": "readonly",
+        "D10": "readonly",
+        "D11": "readonly",
+        "D12": "readonly",
+        "D13": "readonly",
+        "D14": "readonly",
+        "D15": "readonly",
+        "D16": "readonly",
+        "D17": "readonly",
+        "D18": "readonly",
+        "D19": "readonly",
+        "D20": "readonly",
+        "D21": "readonly",
+        "D22": "readonly",
+        "D23": "readonly",
+        "D24": "readonly",
+        "D25": "readonly",
+        "D26": "readonly",
+        "D27": "readonly",
+        "D28": "readonly",
+        "D29": "readonly",
+        "D30": "readonly",
+        "D31": "readonly",
+
+        "bleServiceOptions": "writable", // available in boot.js code that's called ad part of bootupdate
     },
     "parserOptions": {
         "ecmaVersion": 11
@@ -142,22 +179,25 @@
                 "SwitchCase": 1
             }
         ],
-        "no-case-declarations": "off",
         "no-constant-condition": "off",
         "no-delete-var": "off",
-        "no-empty": "off",
+        "no-empty": ["warn", { "allowEmptyCatch": true }],
         "no-global-assign": "off",
         "no-inner-declarations": "off",
-        "no-octal": "off",
         "no-prototype-builtins": "off",
         "no-redeclare": "off",
         "no-unreachable": "warn",
         "no-cond-assign": "warn",
         "no-useless-catch": "warn",
-        // TODO: "no-undef": "warn",
-        "no-undef": "off",
-        "no-unused-vars": "off",
+        "no-undef": "warn",
+        "no-unused-vars": ["warn", { "args": "none" } ],
         "no-useless-escape": "off",
         "no-control-regex" : "off"
-    }
+    },
+    overrides: [
+        ...Object.entries(lintExemptions).map(([filePath, {rules}]) => ({
+            files: [filePath],
+            rules: Object.fromEntries(rules.map(rule => [rule, "off"])),
+        })),
+    ],
 }

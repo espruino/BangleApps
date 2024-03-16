@@ -2,7 +2,7 @@
     "id":"mosaic",
     "name":"Mosaic Clock",
     "shortName": "Mosaic Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A fabulously colourful clock",
     "readme": "README.md",
     "icon":"mosaic.png",

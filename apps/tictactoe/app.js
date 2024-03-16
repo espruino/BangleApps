@@ -21,7 +21,6 @@ var val = 0;
 var player;
 var active = false;
 var select = false;
-var next = 0;
 var winval =0;
 var ex = require("heatshrink").decompress(atob("mEwwI63jACEngCEvwCEv4CB/wCBn+AgP8AoMf4ED/AFBh/gg/wAoIDBA4IFBB4ITBAoIbBD4I8C/wrCGAQuCGAQuCGAQuCGAQuCAo4RFDoopFGohBFJopZFMopxFPoqJFSoqhFVooA0A"));
 var oh = require("heatshrink").decompress(atob("mEwwIdah/wAof//4ECgYFB4AFBg4FB8AFBj/wh/4AoM/wEB/gFBvwCB/wCBBAU/AQIUCj8AgIzCh+AgYmCg/AgYyCAYIHBAoXgg+AAoMBApkPLgZKBAtBBRLIprDMoJxFPoqJFSoyhCAQStFXIrFFaIrdFdIwAVA"));
@@ -70,7 +69,7 @@ function calcWin(){
   
   //draw check
   // drawChk is sum absolute value of array, if drawChk = 9 then there is a draw
-  drawChk = 0;
+  let drawChk = 0;
   for(let i = 0; i<3; i++){
     for(let j = 0; j<3; j++){
       drawChk = drawChk + Math.abs(arr[i][j]);
@@ -95,6 +94,7 @@ function calcWin(){
 
 function draw(){
   g.clear();
+  let playerIcon;
   if (player ==1){
     playerIcon = "X";
   } else if(player == -1){

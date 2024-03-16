@@ -2,3 +2,4 @@
 0.02: Redraw only when seconds change
 0.03: Fix typo in redraw check
 0.04: Register as clock and implement fast loading
+0.05: Minor code improvements

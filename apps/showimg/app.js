@@ -1,7 +1,7 @@
 g.reset();
 g.clear();
 g.drawImage(require("Storage").read("showimg.user.img"),0,0);
-drawTimeout = setTimeout(function() {
+/*let drawTimeout =*/ setTimeout(function() {
 	load();
 }, 60000);
 setWatch(function() {

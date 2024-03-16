@@ -34,7 +34,7 @@ Bangle.setUI({
   remove : options.remove,
   redraw : draw,
   swipe : (_,UD)=>{
-    pixels = 120;
+    const pixels = 120;
     var dy = UD*pixels;
     if (s.scroll - dy > menuScrollMax)
       dy = s.scroll - menuScrollMax-8; // Makes it so the last 'page' has the same position as previous pages. This should be done dynamically (change the static 8 to be a variable) so the offset is correct even when no widget field or title field is present.
@@ -81,10 +81,9 @@ Bangle.setUI({
   }
 });
 
-var menuShowing = false;
 var R = Bangle.appRect;
-var Y = R.y;
-var n = Math.ceil(R.h/options.h);
+//var Y = R.y;
+//var n = Math.ceil(R.h/options.h);
 var menuScrollMin = 0|options.scrollMin;
 var menuScrollMax = options.h*options.c - R.h;
 if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;

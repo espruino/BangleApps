@@ -1,7 +1,7 @@
 {
   "id": "ballmaze",
   "name": "Ball Maze",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Navigate a ball through a maze by tilting your watch.",
   "icon": "icon.png",
   "type": "app",

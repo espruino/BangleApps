@@ -29,7 +29,7 @@ Graphics.prototype.setFontAudiowide = function() {
     // work out locale-friendly date/time
     var date = new Date();
     var timeStr = require("locale").time(date,1);
-    var dateStr = require("locale").date(date);
+    //var dateStr = require("locale").date(date);
     // draw time
     g.setFontAlign(0,0).setFont("Audiowide");
     // draw a shadow by shifting left/right/up/down

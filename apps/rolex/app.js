@@ -96,7 +96,6 @@ function drawHands() {
 
   let twoPi = 2*Math.PI;
   let Pi = Math.PI;
-  let halfPi = Math.PI/2;
 
   let hourAngle = (hour+(min/60))/12 * twoPi - Pi;
   let minAngle = (min/60) * twoPi - Pi;

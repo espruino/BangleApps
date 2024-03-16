@@ -66,10 +66,12 @@
         }
         // turn the arrow thanks to (https://forum.espruino.com/conversations/344607/)
         const p180 = Math.PI / 180;
+        /*
         // a is defined above
         var r = 21;
         var x = r * Math.sin(a * p180);
         var y = r * Math.cos(a * p180);
+        */
 
         return a * p180;
     }
@@ -114,7 +116,7 @@
         console.log(settings.unitIsMmol.toString());
         loadVals();
 
-        outpt = getBG(storedData.bg);
+        let outpt = getBG(storedData.bg);
 
         if (outpt === null) { // this means no value has been received yet
             outpt = "BG";

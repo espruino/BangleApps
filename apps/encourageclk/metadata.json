@@ -2,7 +2,7 @@
     "id": "encourageclk",
     "name": "Encouragement & Positivity Clock",
     "shortName":"Encouragement Clock",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Tap on the watch for a note of encouragement",
     "icon": "app.png",
     "type": "clock",

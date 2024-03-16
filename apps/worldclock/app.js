@@ -117,13 +117,12 @@ function draw() {
 
   // Loop through offset(s) and render
   offsets.forEach((offset, index) => {
-    dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
+    const dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
     hours = doublenum(dx.getHours());
     minutes = doublenum(dx.getMinutes());
 
     if (offsets.length === 1) {
       // For a single secondary timezone, draw it bigger and drop time zone to second line
-      const xOffset = 30;
       g.setFont(font, secondaryTimeFontSize);
       g.drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
       g.setFont(font, secondaryTimeZoneFontSize);

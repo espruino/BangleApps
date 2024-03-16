@@ -31,4 +31,4 @@ g.clear();
 
 // draw immediately at first
 draw();
-var secondInterval = setInterval(draw, 1000);
+setInterval(draw, 1000);

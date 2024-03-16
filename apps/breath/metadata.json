@@ -2,7 +2,7 @@
   "id": "breath",
   "name": "Breathing App",
   "shortName": "Breathing App",
-  "version": "0.01",
+  "version": "0.03",
   "description": "app to aid relaxation and train breath syncronicity using haptics and visualisation, also displays HR",
   "icon": "app-icon.png",
   "tags": "tools,health",

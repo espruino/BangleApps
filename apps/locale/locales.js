@@ -13,6 +13,7 @@ const speedUnits = { // how many kph per X?
   "kph": 1,
   "km/h": 1,
   "kmt": 1,
+  "km/t": 1,
   "km/tim": 1,
   "mph": 1.60934,
   "kts": 1.852
@@ -312,6 +313,42 @@ var locales = {
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%B %d %Y", "1": "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "da_DK": {
+    lang: "da_DK",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "kr",
+    int_curr_symbol: "DKK",
+    speed: "km/t",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b. %Y", 1: "%d/%m %Y" }, // 1. feb. 2020 // 01/02 2020 // a better short ver. is 1/2 2020 but its not supported
+    abmonth: "jan,feb,mar,apr,maj,jun,jul,aug,sep,okt,nov,dec",
+    month: "januar,februar,marts,april,maj,juni,juli,august,september,oktober,november,december",
+    abday: "søn,man,tir,ons,tor,fre,lør",
+    day: "søndag,mandag,tirsdag,onsdag,torsdag,fredag,lørdag",
+    trans: { yes: "ja", Yes: "Ja", no: "nej", No: "Nej", ok: "ok", on: "tændt", off: "slukket" } // no single danish translation for "on"/"off", should not be used
+  },
+  "en_DK": { // Danish units with english language
+    lang: "en_DK",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "kr",
+    int_curr_symbol: "DKK",
+    speed: "km/h",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d. %b. %Y", 1: "%d/%m %Y" }, // 1. feb. 2020 // 01/02 2020 // a better short ver. is 1/2 2020 but its not supported
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
@@ -751,6 +788,26 @@ var locales = {
     abday: "Sø,Ma,Ti,On,To,Fr,Lø",
     day: "Søndag,Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag",
     trans: { yes: "ja", Yes: "Ja", no: "nei", No: "Nei", ok: "ok", on: "på", off: "av", "< Back": "< Tilbake", "Delete": "Slett", "Mark Unread": "Merk som ulest" }
+  },
+  "ca_ES": {
+    lang: "ca_ES",
+    icon: "🇪🇺",
+    decimal_point: ",",
+    thousands_sep: ".",
+    currency_symbol: "€",
+    int_curr_symbol: "EUR",
+    speed: "kmh",
+    distance: { 0: "m", 1: "km" },
+    temperature: "°C",
+    ampm: { 0: "", 1: "" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%d %B %Y", "1": "%d/%m/%y" },
+    abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
+    month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octobre,novembre,desembre",
+    abday: "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
+    day: "diumenge,dilluns,dimarts,dimecres,dijous,divendres,dissabte",
+    trans: { yes: "sí", Yes: "Sí", no: "no", No: "No", ok: "d'acord", on: "on", off: "off",
+			"< Back": "< Enrere", "Delete": "Esborra", "Mark Unread": "Marca com a no llegit" }
   },
 /*,
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399

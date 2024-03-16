@@ -1,7 +1,7 @@
 { "id": "pooqround",
   "name": "pooq Round watch face",
   "shortName":"pooq Round",
-  "version":"0.02",
+  "version": "0.04",
   "description": "A 24 hour analogue watchface with high legibility and a novel style.",
   "icon": "app.png",
   "type": "clock",

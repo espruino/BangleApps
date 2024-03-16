@@ -35,7 +35,7 @@
       function onInit(device) {
         if (device && device.id=="BANGLEJS2") {
           faces = FACES_BANGLE2;
-          recommendedUploadStyle = "176x152 3 bits per pixel (8 color)";
+          recommendedUploadStyle = "176x152 or 176x176(hidden widgets) 3bpp (8 color)";
           defaultBPP = 8;
           defaultImageMode = "web";
           defaultPositions = {
@@ -44,7 +44,7 @@
           };
         } else {
           faces = FACES_BANGLE1;
-          recommendedUploadStyle = "240x192 or 240x216 8 bit web palette";
+          recommendedUploadStyle = "240x192 or 240x216 8bpp web palette";
           defaultBPP = 8;
           defaultImageMode = "web";
           defaultPositions = {
@@ -56,7 +56,7 @@
         }
         updateFaces();
       }
-
+hazel
       function updateFaces() {
       document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
 <div class="column col-6 col-xs-12">
@@ -81,7 +81,7 @@
     </div>
     <div class="card-header">
       <div class="card-title h5">Custom</div>
-      <div class="card-subtitle text-gray">(${recommendedUploadStyle})</div>
+      <div class="card-subtitle text-gray">${recommendedUploadStyle}</div>
     </div>
     <div class="card-body">
     <div class="form-group">
@@ -93,11 +93,17 @@
       </div>
     </div>
     <div class="form-group">
-    <label class="form-switch">
-      <input type="checkbox" id="cusom16bit">
-      <i class="form-icon"></i> 16 bit images (look better, slower, not recommended)
-    </label>
-  </div>
+      <label class="form-switch">
+        <input type="checkbox" id="custom16bit">
+        <i class="form-icon"></i> 16 bit images (look better, slower, not recommended)
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-switch">
+        <input type="checkbox" id="hideWidgets">
+        <i class="form-icon"></i> Hide Widgets (use a square image)
+      </label>
+    </div>
     <div class="form-group">
       <label class="form-label" for="customcolor">Clock color</label>
       <select class="form-select" id="customcolor">
@@ -126,16 +132,18 @@
           // build app text
           var facenumber = btn.target.getAttribute("face");
           var face;
+          var hideWidgets = true;
           if (facenumber=="custom") {
             var select = document.getElementById("customlocation");
             var pos = select.options[select.selectedIndex].value.split(",").map(x=>parseInt(x));
             select = document.getElementById("customcolor");
             var col = select.options[select.selectedIndex].value;
+            hideWidgets = document.getElementById('hideWidgets').checked;
             face = {
               x : pos[0],
               y : pos[1],
               align: pos[2],
-              bpp : document.getElementById('cusom16bit').checked ? 16 : defaultBPP,
+              bpp : document.getElementById('custom16bit').checked ? 16 : defaultBPP,
               col : col
             };
           } else {
@@ -146,7 +154,8 @@
             x : face.x,
             y : face.y,
             align : face.align,
-            col : face.col
+            col : face.col,
+            hideWidgets : hideWidgets
           };
           var imgMode = faceInfo.bpp==16 ? "rgb565" : defaultImageMode;
           var img = document.querySelector(`img[face='${facenumber}']`);

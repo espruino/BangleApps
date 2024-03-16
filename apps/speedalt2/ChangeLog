@@ -16,3 +16,5 @@
 0.16: Add configuration item Wpt File Suffix. A one character suffix to append to the waypoints.json file. A number of other apps also use this file name. Using the file name suffix allows the speedalt2 waypoints to be retained if one of these other apps is installed for a different use.
 0.17: Use default Bangle formatter for booleans
 0.18: Move waypoints.json to 'waypoints' app (with editor)
+0.19: Minor code improvements
+0.20: Minor code improvements

@@ -1,7 +1,7 @@
 {
   "id": "infoclk",
   "name": "Informational clock",
-  "version": "0.09",
+  "version": "0.10",
   "description": "A configurable clock with extra info and shortcuts when unlocked, but large time when locked",
   "readme": "README.md",
   "icon": "icon.png",

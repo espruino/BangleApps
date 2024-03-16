@@ -107,7 +107,7 @@ let isoStr = function(date) {
 
 let calWeekBuffer = [false,false,false]; //buffer tz, date, week no (once calculated until other tz or date is requested)
 let ISO8601calWeek = function(date) { //copied from: https://gist.github.com/IamSilviu/5899269#gistcomment-3035480
-  dateNoTime = date; dateNoTime.setHours(0,0,0,0);
+  const dateNoTime = date; dateNoTime.setHours(0,0,0,0);
   if (calWeekBuffer[0] === date.getTimezoneOffset() && calWeekBuffer[1] === dateNoTime) return calWeekBuffer[2];
   calWeekBuffer[0] = date.getTimezoneOffset();
   calWeekBuffer[1] = dateNoTime;

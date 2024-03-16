@@ -10,6 +10,7 @@
         "BANGLEJS2"
     ],
     "readme": "README.md",
+    "interface": "interface.html",
     "storage": [
         {
             "name": "folderlaunch.app.js",

@@ -11,7 +11,7 @@ let historySlopeY = [];
 let historySlopeZ = [];
 
 let lastZeroPassCameFromPositive;
-let lastZeroPassTime = 0;
+//let lastZeroPassTime = 0;
 
 let lastExerciseCompletionTime = 0;
 let lastExerciseHalfCompletionTime = 0;
@@ -148,7 +148,7 @@ function accelHandler(accel) {
 
   // slope for Z
   if (exerciseType.useZaxis) {
-    l = historyAvgZ.length;
+    let l = historyAvgZ.length;
     if (l > 1) {
       const p1 = historyAvgZ[l - 2];
       const p2 = historyAvgZ[l - 1];
@@ -198,7 +198,7 @@ function isValidExercise(slope, t) {
         }
 
         lastZeroPassCameFromPositive = true;
-        lastZeroPassTime = t;
+        //lastZeroPassTime = t;
       }
       if (p2 > 0 && p1 < 0) {
         if (lastZeroPassCameFromPositive == true) {
@@ -256,7 +256,7 @@ function isValidExercise(slope, t) {
         }
 
         lastZeroPassCameFromPositive = false;
-        lastZeroPassTime = t;
+        //lastZeroPassTime = t;
       }
     }
   }
@@ -272,7 +272,7 @@ function reset() {
   historySlopeZ = [];
 
   lastZeroPassCameFromPositive = undefined;
-  lastZeroPassTime = 0;
+  //lastZeroPassTime = 0;
   lastExerciseHalfCompletionTime = 0;
   lastExerciseCompletionTime = 0;
   exerciseCounter = 0;

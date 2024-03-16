@@ -33,7 +33,6 @@ const timeutils = require("time_utils");
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 let events;
 const dowLbls = function() {
-  const locale = require('locale').name;
   const days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
   const d = new Date();
   return days.map(i => {
@@ -43,24 +42,24 @@ const dowLbls = function() {
 }();
 
 const loadEvents = () => {
+  // add holidays & other events
+  events = (require("Storage").readJSON("calendar.days.json",1) || []).map(d => {
+    const date = new Date(d.date);
+    const o = {date: date, msg: d.name, type: d.type};
+    if (d.repeat) {
+      o.repeat = d.repeat;
+    }
+    return o;
+  });
   // all alarms that run on a specific date
-  events = (require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
+  events = events.concat((require("Storage").readJSON("sched.json",1) || []).filter(a => a.on && a.date).map(a => {
     const date = new Date(a.date);
     const time = timeutils.decodeTime(a.t);
     date.setHours(time.h);
     date.setMinutes(time.m);
     date.setSeconds(time.s);
     return {date: date, msg: a.msg, type: "e"};
-  });
-  // add holidays & other events
-  (require("Storage").readJSON("calendar.days.json",1) || []).forEach(d => {
-    const date = new Date(d.date);
-    const o = {date: date, msg: d.name, type: d.type};
-    if (d.repeat) {
-      o.repeat = d.repeat;
-    }
-    events.push(o);
-  });
+  }));
 };
 
 const loadSettings = () => {
@@ -99,7 +98,7 @@ const sameDay = function(d1, d2) {
 const drawEvent = function(ev, curDay, x1, y1, x2, y2) {
   "ram";
   switch(ev.type) {
-    case "e": // alarm/event
+    case "e": { // alarm/event
       const hour = 0|ev.date.getHours() + 0|ev.date.getMinutes()/60.0;
       const slice = hour/24*(eventsPerDay-1); // slice 0 for 0:00 up to eventsPerDay for 23:59
       const height = (y2-2) - (y1+2); // height of a cell
@@ -107,6 +106,7 @@ const drawEvent = function(ev, curDay, x1, y1, x2, y2) {
       const ystart = (y1+2) + slice*sliceHeight;
       g.setColor(bgEvent).fillRect(x1+1, ystart, x2-2, ystart+sliceHeight);
       break;
+    }
     case "h": // holiday
       g.setColor(bgColorWeekend).fillRect(x1+1, y1+1, x2-1, y2-1);
       break;
@@ -122,7 +122,6 @@ const calcDays = (month, monthMaxDayMap, dowNorm) => {
   const days = [];
   let nextMonthDay = 1;
   let thisMonthDay = 51;
-  const month2 = month;
   let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm + 1;
 
   for (let i = 0; i < maxDay; i++) {
@@ -280,14 +279,12 @@ const showMenu = function() {
       setUI();
     },
     /*LANG*/"Exit": () => load(),
-    /*LANG*/"Settings": () => {
-      const appSettings = eval(require('Storage').read('calendar.settings.js'));
-      appSettings(() => {
+    /*LANG*/"Settings": () =>
+      eval(require('Storage').read('calendar.settings.js'))(() => {
         loadSettings();
         loadEvents();
         showMenu();
-      });
-    },
+      }),
   };
   if (require("Storage").read("alarm.app.js")) {
     menu[/*LANG*/"Launch Alarms"] = () => {

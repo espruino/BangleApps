@@ -23,3 +23,4 @@ Write to correct settings file, fixing settings not working.
 	another typo.
 0.21: Rebase on "Run" app ver. 0.16.
 0.22: Ensure screen redraws after "Resume run?" menu (#3044)
+0.23: Minor code improvements

@@ -49,7 +49,8 @@
           let day = true;
           let d = date.getTime();
           let dayLength = sunset.getTime()-sunrise.getTime();
-          let timeUntil, timeTotal;
+          let timePast;
+          let timeTotal;
           if (d < sunrise.getTime()) {
             day = false; // early morning
             timePast = sunrise.getTime()-d;

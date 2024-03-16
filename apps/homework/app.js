@@ -1,4 +1,3 @@
-var Layout = require("Layout");
 
 var homework = require("Storage").readJSON("homework.txt", "r");
 var mainCheckHomeworkMenu;
@@ -18,12 +17,12 @@ function newHomeworkMenu() {
   var splitsubjects = rawsubjects.split(",");
   var lastItem = splitsubjects[splitsubjects.length - 1];
   var thiscurrentsubject;
-  var command;
+  //var command;
   lastItem = lastItem.slice(0, -1);
   splitsubjects[splitsubjects.length - 1] = lastItem;
   for (let i = 0; i < splitsubjects.length; i++) { // loop through array and add to menu
     thiscurrentsubject = splitsubjects[i];
-    command = addNewHomework(thiscurrentsubject);
+    /*command =*/ addNewHomework(thiscurrentsubject);
     nhwmn[splitsubjects[i]] = addNewHomework.bind(null, thiscurrentsubject);
   }
   nhwmn["Back"] = function() {E.showMenu(mainMenu);};
@@ -136,7 +135,7 @@ function checkPreciseHomework(subjectnum) { // P A I N
   checkPreciseHomeworkMenu[subject] = function() {},
     checkPreciseHomeworkMenu[taskmsg] = function() {},
     checkPreciseHomeworkMenu[statusmsg] = function() {
-      status = "Status: Finished";
+      statusmsg = "Status: Finished";
       var d = new Date();
       var currenttime = require("locale").time(d, 1);
       var currentdate = require("locale").date(d);
@@ -161,11 +160,11 @@ function checkPreciseHomework(subjectnum) { // P A I N
 
 
 }
-
+/*
 function pushHomework(subject, status, datetimehwdone) {
   homework = require("Storage").readJSON("homework.txt", "r");
-
 }
+*/
 
 function addNewHomework(subject) { // Pass subject
   console.log(subject);

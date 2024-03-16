@@ -64,8 +64,8 @@ function calcAlt(alt, cur_altitude) {
     return ddalt;
 }
 function updateGps() {
-  let have = false, lat = "lat", lon = "lon", alt = "alt",
-      speed = "speed", hdop = "hdop", balt = "balt";
+  let /*have = false,*/ lat = "lat", lon = "lon", alt = "alt",
+      speed = "speed", hdop = "hdop"; // balt = "balt";
 
   if (cancel_gps)
     return;
@@ -87,7 +87,7 @@ function updateGps() {
     alt = "" + fix.alt.toFixed(1);
     speed = "" + fix.speed.toFixed(1);
     hdop = "" + fix.hdop.toFixed(1);
-    have = true;
+    //have = true;
   }
 
   let ddalt = calcAlt(alt, cur_altitude);
@@ -154,9 +154,9 @@ function drawSat(s) {
   if (s.snr == "")
     g.setColor(1, 0.25, 0.25);
   else {
-    let snr = 1*s.snr;
+    //let snr = 1*s.snr;
     g.setColor(0, 0, 0);
-    sats_receiving ++;
+    //sats_receiving ++;
   }
   g.drawString(s.id, x, y);
 
@@ -165,7 +165,7 @@ function drawSat(s) {
 // Should correspond to view from below.
 // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
 function drawSats(sats) {
-  sats_receiving = 0;
+  //sats_receiving = 0;
   g.reset().setFont("Vector", 20)
     .setColor(1,1,1)
     .fillRect(0, 30, 176, 176);
@@ -184,7 +184,7 @@ function drawSats(sats) {
 
 var sats = [];
 var snum = 0;
-var sats_receiving = 0;
+//var sats_receiving = 0;
 
 function parseRaw(msg, lost) {
   if (lost)

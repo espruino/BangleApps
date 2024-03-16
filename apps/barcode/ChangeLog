@@ -8,3 +8,4 @@
 0.08: Step count stored in memory to survive reloads. Now shows step count daily and since last reboot.
 0.09: NOW it really should reset daily (instead of every other day...)
 0.10: Tell clock widgets to hide.
+0.11: Minor code improvements

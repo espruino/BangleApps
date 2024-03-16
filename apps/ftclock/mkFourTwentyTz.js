@@ -1,3 +1,5 @@
+/* This file is designed to be run on the desktop, not Bangle.js */
+/* eslint-env node */
 let fs = require('fs');
 let csv = require('csv');
 
@@ -30,7 +32,7 @@ fs.createReadStream(__dirname+'/country.csv')
         } else {
           country = countries[r[1]]; // e.g. United States
         }
-        zone = zones[r[0]] || { "name": `${city}, ${country}` };
+        let zone = zones[r[0]] || { "name": `${city}, ${country}` };
         let starttime = parseInt(r[3] || "0"), // Bugger. They're feeding us blanks for UTC now
             offs = parseInt(r[4]);
         if (offs<0) {
@@ -43,15 +45,15 @@ fs.createReadStream(__dirname+'/country.csv')
         zones[r[0]] = zone;
       })
       .on('end', () => {
-        for (z in zones) {
-          zone = zones[z];
+        for (let z in zones) {
+          let zone = zones[z];
           if (zone.offs%60) continue; // One a dem funky timezones. Ignore.
-          zonelist = offsdict[zone.offs] || [];
+          let zonelist = offsdict[zone.offs] || [];
           zonelist.push(zone.name);
           offsdict[zone.offs] = zonelist;
         }
-        offsets = [];
-        for (o in offsdict) {
+        let offsets = [];
+        for (let o in offsdict) {
           offsets.unshift(parseInt(o));
         }
         fs.open("fourTwentyTz.js","w", (err, fd) => {
@@ -67,7 +69,7 @@ fs.createReadStream(__dirname+'/country.csv')
           fs.write(fd, ";\n", handleWrite);
           fs.write(fd, "exports.timezones = function(offs) {\n", handleWrite);
           fs.write(fd, "  switch (offs) {\n", handleWrite);
-          for (i=0; i<offsets.length; i++) {
+          for (let i=0; i<offsets.length; i++) {
             let o = offsets[i].toString();
             fs.write(fd, `    case ${o}: return ${JSON.stringify(offsdict[o])};\n`, handleWrite);
           }

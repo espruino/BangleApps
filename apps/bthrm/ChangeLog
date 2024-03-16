@@ -41,3 +41,4 @@
       Additional logging on errors
       Add debug option for disabling active scanning
 0.17: New GUI based on layout library
+0.18: Minor code improvements

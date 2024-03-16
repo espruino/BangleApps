@@ -329,7 +329,7 @@ function drawClock() {
   y=0;
   buf.setFontAlign(1,-1);
   buf.setFontVector(94);
-  time = require("locale").time(new Date(),1);
+  const time = require("locale").time(new Date(),1);
 
   buf.setColor(1);
 
@@ -376,7 +376,7 @@ if ( emulator ) {
     fix.smoothed = 0;
   }
 
-  var m;
+  //var m;
 
   var sp = '---';
   var al = sp;

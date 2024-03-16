@@ -1,7 +1,7 @@
 { "id": "poweroff",
 "name": "Poweroff",
 "shortName":"Poweroff",
-"version":"0.03",
+"version": "0.04",
 "description": "Simple app to power off your Bangle.js",
 "icon": "app.png",
 "tags": "tool, poweroff, shutdown",

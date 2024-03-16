@@ -19,7 +19,7 @@ if (process.env.HWVERSION==2) {
   BTNR = { read : _=>tap.b && tap.x > 88};
   // use button for jump
   BTNU = BTN1;
-  greal = g;
+  const greal = g;
   g = Graphics.createArrayBuffer(88,64,1,{msb:true});
   g.flip = function() {
     greal.drawImage({
@@ -33,7 +33,7 @@ if (process.env.HWVERSION==2) {
   BTNL = BTN2;
   BTNR = BTN3;
   BTNU = BTN1;
-  greal = g;
+  const greal = g;
   g = Graphics.createArrayBuffer(120,64,1,{msb:true});
   g.flip = function() {
     greal.drawImage({

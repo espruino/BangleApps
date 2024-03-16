@@ -1,7 +1,7 @@
 { "id": "tinyVario",
   "name": "Tiny Vario",
   "shortName" : "tinyVario",
-  "version":"0.05",
+  "version": "0.07",
   "icon": "app.png",
   "readme": "README.md",
   "description": "A very simple app for gliding / paragliding / hang gliding etc.",

@@ -88,7 +88,7 @@ let trackPadMode = false;
 let focusMode = false;
 
 // Timeout IDs.
-let timeoutId = -1;
+//let timeoutId = -1;
 let timeoutHolding = -1;
 let timeoutDraw = -1;
 let timeoutSendMouse = -1;

@@ -1,7 +1,7 @@
 {
   "id": "1button",
   "name": "One-Button-Tracker",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A widget that turns BTN1 into a tracker, records time of button press/release.",
   "icon": "widget.png",
   "type": "widget",

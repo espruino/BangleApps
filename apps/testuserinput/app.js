@@ -8,7 +8,7 @@
  var v_str_version='v0.06'; //testing purpose
  
  var x_max_screen=g.getWidth();//240;
- var y_max_screen=g.getHeight(); //240; 
+ //var y_max_screen=g.getHeight(); //240; 
  var y_wg_bottom=g.getHeight()-25;
  var y_wg_top=25; 
  if (v_model=='BANGLEJS') {
@@ -156,8 +156,9 @@ function PrintUserInput(boton){
             //Call info banner
             g.setFontVector(30).drawString(boton, 63, 55);
             if ((boton=='Touch 1')||(boton=='Touch 2')){
+                let v_y_opt;
                 if (v_selected_row==1) v_y_opt=v_y_optionrow1;
-                    else if (v_selected_row==2) v_y_opt=v_y_optionrow2;         
+                else if (v_selected_row==2) v_y_opt=v_y_optionrow2;         
                 DrawRoundOption(20,v_y_opt,190,v_y_opt,boton);
                 //set the option value in an array
                 array_r_option[v_selected_row]=boton;
@@ -248,6 +249,7 @@ function DrawRowSelArrow(v_drawRow, v_clearRow){
   //for clear previous draw arrow 
   if (v_clearRow!== undefined) {     
     g.setColor(colbackg); 
+    let v_y_arrow;
     if  (v_clearRow==1) v_y_arrow=v_y_optionrow1+14;
     else if (v_clearRow==2) v_y_arrow=v_y_optionrow2+14;
     else if (v_clearRow==3) v_y_arrow=v_y_optionrow3+14;     
@@ -256,6 +258,7 @@ function DrawRowSelArrow(v_drawRow, v_clearRow){
   }
    //draw an arrow to select a row
   if (v_drawRow!== undefined) {     
+    let v_y_arrow;
     if (v_drawRow==1) v_y_arrow=v_y_optionrow1+14;            
     else if (v_drawRow==2) v_y_arrow=v_y_optionrow2+14;
     else if (v_drawRow==3) v_y_arrow=v_y_optionrow3+14;

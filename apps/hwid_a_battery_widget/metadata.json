@@ -3,7 +3,7 @@
   "name": "A Battery Widget (with percentage) - Hanks Mod",
   "shortName":"H Battery Widget",
   "icon": "widget.png",
-  "version":"0.10",
+  "version":"0.11",
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",

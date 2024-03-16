@@ -169,7 +169,8 @@ exports = {
         // check if before this fortnight period
         if (firstDay < thisFirstDay) {
           // write log in seperate file
-          require("Storage").writeJSON("sleeplog_" + this.msToFn(firstDay) + ".log", log);
+          if(log.length > 0)
+            require("Storage").writeJSON("sleeplog_" + this.msToFn(firstDay) + ".log", log);
           // set last day as first
           firstDay = lastDay;
         } else {

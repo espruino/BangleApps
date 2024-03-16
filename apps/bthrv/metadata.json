@@ -2,7 +2,7 @@
   "id": "bthrv",
   "name": "Bluetooth Heart Rate variance calculator",
   "shortName": "BT HRV",
-  "version": "0.03",
+  "version": "0.05",
   "description": "Calculates HRV from a a BT HRM with interval data",
   "icon": "app.png",
   "type": "app",

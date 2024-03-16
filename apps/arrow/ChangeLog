@@ -4,3 +4,4 @@
 0.04: removed LED1.write() as it was keeping LCD on
 0.05: Turn compass off when screen off
       Calibrate at start if no info
+0.06: Minor code improvements

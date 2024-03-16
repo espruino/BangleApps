@@ -11,7 +11,7 @@
     var a_colors= Array(0xFFFF,0xFD20,0x03E0,0xFFE0,0x7800,0x001F,0x07E0,0x780F,0x07FF,0x7BE0,0x03EF,0xF81F);
     
     var x_max_screen=g.getWidth();
-    var y_max_screen=g.getHeight(); 
+    //var y_max_screen=g.getHeight(); 
     var y_wg_bottom=g.getHeight()-25;
     var y_wg_top=25; 
     

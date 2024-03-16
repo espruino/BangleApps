@@ -113,19 +113,19 @@ exports.create = function(cb, conf) {
     o.f.dragSlider = e=>{
       "ram";
       if (o.v.ebLast==0) {
-        exFirst = o.c.horizontal?e.y:e.x;
-        eyFirst = o.c.horizontal?e.x:e.y;
+        o.v.exFirst = o.c.horizontal?e.y:e.x;
+        o.v.eyFirst = o.c.horizontal?e.x:e.y;
       }
 
       // Only react if on allowed area.
-      if (o.f.wasOnDragRect(exFirst, eyFirst)) {
+      if (o.f.wasOnDragRect(o.v.exFirst, o.v.eyFirst)) {
         o.v.dragActive = true;
         if (!o.c.propagateDrag) E.stopEventPropagation&&E.stopEventPropagation();
 
         if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
         if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
-        if (useMap && o.f.wasOnIndicator(exFirst)) { // If draging starts on the indicator, adjust one-to-one.
+        if (useMap && o.f.wasOnIndicator(o.v.exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
           let input = !o.c.horizontal?
             Math.min((Y_MAX-e.y)-o.c.yStart-3*o.c.rounded/4, o.c.height):

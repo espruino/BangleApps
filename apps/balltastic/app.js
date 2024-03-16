@@ -1,4 +1,4 @@
-BANGLEJS2 = process.env.HWVERSION==2;
+const BANGLEJS2 = process.env.HWVERSION==2;
 Bangle.setLCDBrightness(1);
 if (!BANGLEJS2) Bangle.setLCDMode("doublebuffered");
 Bangle.setLCDTimeout(0);

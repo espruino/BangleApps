@@ -11,7 +11,7 @@ var v_model=process.env.BOARD;
  console.log("device="+v_model);
   
  var x_max_screen=g.getWidth();//240;
- var y_max_screen=g.getHeight(); //240; 
+ //var y_max_screen=g.getHeight(); //240; 
  var y_wg_bottom=g.getHeight()-25;
  var y_wg_top=25; 
  if (v_model=='BANGLEJS') {
@@ -20,7 +20,7 @@ var v_model=process.env.BOARD;
     var y_btn2=124; //harcoded for bangle.js  cuz it is not the half of
  } else x_max_usable_area=240;
  
-    var contador=1; 
+    //var contador=1; 
     var cont_items=0; 
     var cont_row=0;
     var v_boxes_row=4;
@@ -31,7 +31,7 @@ var v_model=process.env.BOARD;
     var v_font1size=11;
     var v_fontsize=13;
     var v_color_b_area='#111111';//black
-    var v_color_b_area2=0x5AEB;//Dark
+    //var v_color_b_area2=0x5AEB;//Dark
     var v_color_text='#FB0E01';
     var v_color_statictxt='#e56e06'; //orange RGB format rrggbb 
     //RGB565 requires only 16 (5+6+5) bits/2 bytes

@@ -2,7 +2,7 @@
   "id": "pong",
   "name": "Pong",
   "shortName": "Pong",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A clone of the Atari game Pong",
   "icon": "pong.png",
   "type": "app",

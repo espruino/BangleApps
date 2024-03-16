@@ -1,3 +1,4 @@
 0.01: Launch app
 0.02: Fix bug with the elusive one o'clock monster; Only change template when going over boundaries; Re-jig wording options
 0.03: Use Bangle.setUI for launcher/buttons
+0.04: Minor code improvements

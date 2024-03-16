@@ -1,7 +1,7 @@
 { "id": "guitarsongs",
   "name": "Guitar Songs",
   "shortName":"Guitar Songs",
-  "version":"0.02",
+  "version": "0.04",
   "description": "Songs lyrics and guitar chords",
   "icon": "app.png",
   "screenshots": [{"url": "screenshot.png"}],

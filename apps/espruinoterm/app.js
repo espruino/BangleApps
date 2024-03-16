@@ -7,7 +7,7 @@ var R = Bangle.appRect;
 var termg = Graphics.createArrayBuffer(R.w, R.h, 1, {msb:true});
 var termVisible = false;
 termg.setFont("6x8");
-term = require("VT100").connect(termg, {
+let term = require("VT100").connect(termg, {
   charWidth : 6,
   charHeight : 8
 });

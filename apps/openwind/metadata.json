@@ -1,7 +1,7 @@
 { "id": "openwind",
   "name": "OpenWind",
   "shortName":"OpenWind",
-  "version":"0.03",
+  "version": "0.04",
   "description": "OpenWind",
   "icon": "openwind.png",
   "readme": "README.md",

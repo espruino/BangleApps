@@ -61,14 +61,13 @@ var reload = function () {
             nextDraw = undefined;
         },
         btn: function () {
-            E.showPrompt("Restore watch to full power?").then(function (v) {
-                if (v) {
-                    drainedRestore();
-                }
-                else {
-                    reload();
-                }
-            });
+            var menu = {
+                "Restore to full power": drainedRestore,
+                "Enable BLE": function () { return NRF.wake(); },
+                "Settings": function () { return load("setting.app.js"); },
+                "Recovery": function () { return Bangle.showRecoveryMenu(); },
+            };
+            E.showMenu(menu);
         }
     });
     Bangle.CLOCK = 1;

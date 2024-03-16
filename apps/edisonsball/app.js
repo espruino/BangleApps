@@ -104,10 +104,10 @@ function getStandardDeviation (array) {
 }
 
 function checkHR() {
-  var bpm = currentBPM, isCurrent = true;
+  var bpm = currentBPM; //isCurrent = true;
   if (bpm===undefined) {
     bpm = lastBPM;
-    isCurrent = false;
+    //isCurrent = false;
   }
   if (bpm===undefined || bpm < lower_limit_BPM || bpm > upper_limit_BPM)
      bpm = "--";
@@ -118,8 +118,8 @@ function checkHR() {
 
   if(HR_samples.length == 5){
      g.clear();
-     average_HR = average(HR_samples).toFixed(0);
-     stdev_HR = getStandardDeviation (HR_samples).toFixed(1);
+     let average_HR = average(HR_samples).toFixed(0);
+     let stdev_HR = getStandardDeviation (HR_samples).toFixed(1);
 
     if (ISBANGLEJS1) {
       g.drawString("HR: " + average_HR, 120,100);

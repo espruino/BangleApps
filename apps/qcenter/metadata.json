@@ -2,7 +2,7 @@
   "id": "qcenter",
   "name": "Quick Center",
   "shortName": "QCenter",
-  "version": "0.04",
+  "version": "0.05",
   "description": "An app for quickly launching your favourite apps, inspired by the control centres of other watches.",
   "icon": "app.png",
   "tags": "",

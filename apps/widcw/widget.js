@@ -7,7 +7,7 @@
     var date = new Date();
 
     // Calculate calendar week (https://stackoverflow.com/a/6117889)
-    getCW= function(date){
+    const getCW = function(date){
       var d=new Date(date.getFullYear(), date.getMonth(), date.getDate());
       var dayNum = d.getDay() || 7;
       d.setDate(d.getDate() + 4 - dayNum);

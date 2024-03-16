@@ -112,8 +112,8 @@ function read_compass() {
 
 /***** END Compass ***********/
 
-var speed = 0;
-var satellites = 0;
+//var speed = 0;
+//var satellites = 0;
 var wp;
 var dist=0;
 
@@ -190,9 +190,9 @@ var savedfix;
 
 function onGPS(fix) {
   savedfix = fix;
-  if (fix!==undefined){
+  /*if (fix!==undefined){
     satellites = fix.satellites;
-  }
+  }*/
 
   if (candraw) {
     if (fix!==undefined && fix.fix==1){
@@ -209,13 +209,13 @@ var intervalRef;
 
 function stopdraw() {
   candraw=false;
-  prev_course = -1;
+  //prev_course = -1;
   if(intervalRef) {clearInterval(intervalRef);}
 }
 
 function startTimers() {
   candraw=true;
-  intervalRefSec = setInterval(function() {
+  /*intervalRefSec =*/ setInterval(function() {
     read_compass();
   }, 500);
 }
