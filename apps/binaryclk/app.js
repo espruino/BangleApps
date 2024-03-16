@@ -2,12 +2,17 @@ var settings = Object.assign({
 	fullscreen: false,
 	hidesq: false,
 	showdate: false,
+	showbat: false,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
 
 function draw() {
 
+	var cnt = 0;
 	var dt = new Date();
-	var h = dt.getHours(), m = dt.getMinutes(), d = dt.getDate();
+	var h = dt.getHours();
+	var m = dt.getMinutes();
+	var d = dt.getDate();
+	var mon = dt.toString().substring(4,7);
 	const t = [];
 
 	t[0] = Math.floor(h/10);
@@ -19,15 +24,16 @@ function draw() {
 	g.clearRect(Bangle.appRect);
 
 	let i = 0;
-	var gap = 8;
-	var mgn = 20;
+	var gap = 4;
+	var mgn = 24;
+	var sq = 33;
 
 	if (settings.fullscreen) {
-		gap = 12;
+		gap = 8;
 		mgn = 0;
+		sq = 34;
 	}
 
-	const sq = 29;
 	var pos = sq + gap;
 
 	for (let r = 3; r >= 0; r--) {
@@ -53,11 +59,50 @@ function draw() {
 		g.clearRect(Math.floor(mgn/2), mgn, Math.floor(mgn/2) + pos, mgn + c1sqhide * pos);
 		g.clearRect(Math.floor(mgn/2) + 2 * pos + gap, mgn, Math.floor(mgn/2) + 3 * pos, mgn + c3sqhide * pos);
 	}
+
 	if (settings.showdate) {
-		g.setFontAlign(0, 0);
+		g.setColor(-1).fillRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + sq);
+		g.setColor('#FF0000').fillRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + 12);
+		g.setFontAlign(0, -1);
+		g.setFont("Vector",12);
+		g.setColor(-1).drawString(mon, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + 1);
+		g.setFontAlign(0, 1);
 		g.setFont("Vector",20);
+		g.setColor(1).drawString(d, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + sq + 2);
+		if (g.theme.dark) {
+			g.setColor(-1);
+		} else {
+			g.setColor(1);
+			g.drawLine(Math.floor(mgn/2) + gap, mgn + gap + 13, Math.floor(mgn/2) + gap + sq, mgn + gap + 13);
+		}
 		g.drawRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + sq);
-		g.drawString(d, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + Math.ceil(sq/2) + 1);
+	}
+
+	if (cnt == 0) {
+		if (settings.showbat) {
+			var bat = E.getBattery();
+			if (bat > 50) {
+				g.setColor('#00FF00').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+			} else if (bat < 51 && bat > 21) {
+				g.setColor('#FFA500').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+			} else {
+				g.setColor('#FF0000').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+			}
+			bat = bat + '%';
+			if (g.theme.dark) {
+				g.setColor(-1);
+			} else {
+				g.setColor(1);
+			}
+			g.setFontAlign(0, 0);
+			g.setFont("Vector",14);
+			g.drawString(bat, Math.ceil(mgn/2) + gap + 2 * pos + Math.ceil(sq/2) + 1, mgn + gap + Math.ceil(sq/2) + 1);
+			g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
+		}
+		cnt =+ cnt;
+		if (cnt > 599999) {
+			cnt = 0;
+		}
 	}
 }
 
