@@ -24,7 +24,7 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
         delete aSettings;
         if ((data.status === 3 || data.status === 4)
           && (data.prevStatus !== 3 && data.prevStatus !== 4)) {
-          bSettings = require("Storage").readJSON('setting.json', true) || {};
+          let bSettings = require("Storage").readJSON('setting.json', true) || {};
           let current = 0 | bSettings.quiet;
           console.log("quiet mode is:" + current);
           if (current !== quietMode) {
@@ -37,7 +37,7 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
         if ((data.status === 2 || data.status === 1)
           && (data.prevStatus !== 2 && data.prevStatus !== 1)) {
           let bSettings = require("Storage").readJSON('setting.json', true) || {};
-          current = 0 | bSettings.quiet;
+          let current = 0 | bSettings.quiet;
           console.log("quiet mode is:" + current);
           if (current !== 0) {
             console.log("woken up");

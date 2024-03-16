@@ -91,7 +91,7 @@
 		nextH = dmH;
 		nextM = dmM;
 	}
-	nextDecH = parseFloat(nextH) + parseFloat(nextM) / parseFloat(60);
+	let nextDecH = parseFloat(nextH) + parseFloat(nextM) / parseFloat(60);
 	let t = 3600000 * (nextDecH - hr); // timeout in milliseconds
 	if (t < 0) { t += 86400000; } // scheduled for tomorrow: add a day
 	/* update theme mode at the correct time. */

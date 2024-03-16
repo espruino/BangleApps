@@ -9,6 +9,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"thmswtch.app.js","url":"app.js"},
+    {"name":"thmswtch.settings.js","url":"settings.js"},
     {"name":"thmswtch.boot.js","url":"boot.js"},
     {"name":"thmswtch.img","url":"app-icon.js","evaluate":true}   
   ]
