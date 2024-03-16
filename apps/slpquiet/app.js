@@ -31,14 +31,3 @@ var mainmenu = {
 
 // Actually display the menu
 E.showMenu(mainmenu);
-
-// Function to fix time format
-function fixTime(h, m) {
-  if (h.toString().length < 2) {
-    h = "0" + h.toString();
-  }
-  if (m.toString().length < 2) {
-    m = "0" + m.toString();
-  }
-  return h.toString() + ":" + m.toString();
-}

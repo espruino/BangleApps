@@ -2,14 +2,14 @@ const SETTINGS_FILE = "themeSwitch.json";
 const storage = require("Storage");
 var sunrise, sunset, date;
 var SunCalc = require("suncalc"); // from modules folder
-const locale = require("locale");
 let settings = storage.readJSON('setting.json', 1);
 let saved = storage.readJSON(SETTINGS_FILE, 1) || {};
 if (settings.theme.fg > 0) {
-  saved.darkModeActive = 1
+  saved.darkModeActive = 1;
 } else {
-  saved.darkModeActive = 0
+  saved.darkModeActive = 0;
 }
+let dmH, dmM, lmH, lmM;
 if (require("Storage").readJSON("themeSwitch.json", 1) !== undefined) {
   dmH = parseInt(saved.darkModeAt.split(":")[0] | 0);
   dmM = parseInt(saved.darkModeAt.split(":")[1] | 0);
@@ -47,11 +47,9 @@ var mainmenu = {
       if (v !== 0) {
         setDarkTheme();
         Bangle.drawWidgets();
-        delete m.lastIdx;
       } else {
         setLightTheme();
         Bangle.drawWidgets();
-        delete m.lastIdx;
       }
     }
   },
@@ -68,9 +66,6 @@ var mainmenu = {
         saved.darkModeAt = sunset;
         //print("sunrise" +sunrise);
         //print("sunset" +sunset);
-
-
-
       }
       storage.writeJSON(SETTINGS_FILE, saved);
     },
@@ -101,7 +96,6 @@ var mainmenu = {
     }
   },
   "Exit": function () { load(); },
-
 };
 
 var lightModeAtMenu = {
@@ -185,23 +179,24 @@ function upd(th) {
   g.clear(1);
 }
 
-function flipTheme() {
-  if (!g.theme.dark) {
-    upd({
-      fg: cl("#fff"), bg: cl("#000"),
-      fg2: cl("#fff"), bg2: cl("#004"),
-      fgH: cl("#fff"), bgH: cl("#00f"),
-      dark: true
-    });
-  } else {
-    upd({
-      fg: cl("#000"), bg: cl("#fff"),
-      fg2: cl("#000"), bg2: cl("#cff"),
-      fgH: cl("#000"), bgH: cl("#0ff"),
-      dark: false
-    });
-  }
-}
+//flipTheme function to be used in future version 
+// function flipTheme() {
+//   if (!g.theme.dark) {
+//     upd({
+//       fg: cl("#fff"), bg: cl("#000"),
+//       fg2: cl("#fff"), bg2: cl("#004"),
+//       fgH: cl("#fff"), bgH: cl("#00f"),
+//       dark: true
+//     });
+//   } else {
+//     upd({
+//       fg: cl("#000"), bg: cl("#fff"),
+//       fg2: cl("#000"), bg2: cl("#cff"),
+//       fgH: cl("#000"), bgH: cl("#0ff"),
+//       dark: false
+//     });
+//   }
+// }
 
 function setDarkTheme() {
   if (!g.theme.dark) {

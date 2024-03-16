@@ -8,6 +8,7 @@
 			return "lightN";
 		}
 	}
+
 	function setDarkTheme() {
 		if (!g.theme.dark) {
 			upd({
@@ -52,7 +53,7 @@
 	function cl(x) { return g.setColor(x).getColor(); }
 	function upd(th) {
 		g.theme = th;
-		settings = storage.readJSON('setting.json', 1)
+		let settings = storage.readJSON('setting.json', 1)
 		settings.theme = th;
 		storage.write('setting.json', settings);
 		delete g.reset;
@@ -71,18 +72,18 @@
 	const storage = require("Storage");
 	var sunrise, sunset, date;
 	var SunCalc = require("suncalc"); // from modules folder
-	const locale = require("locale");
 	let bSettings = storage.readJSON(SETTINGS_FILE, true) || {};
 	const now = new Date();
-	hr = now.getHours() + (now.getMinutes() / 60) + (now.getSeconds() / 3600); // current (decimal) hour
-	dmH = parseFloat(bSettings.darkModeAt.split(":")[0]);
-	dmM = parseFloat(bSettings.darkModeAt.split(":")[1]);
-	lmH = parseFloat(bSettings.lightModeAt.split(":")[0]);
-	lmM = parseFloat(bSettings.lightModeAt.split(":")[1]);
+	let hr = now.getHours() + (now.getMinutes() / 60) + (now.getSeconds() / 3600); // current (decimal) hour
+	let dmH = parseFloat(bSettings.darkModeAt.split(":")[0]);
+	let dmM = parseFloat(bSettings.darkModeAt.split(":")[1]);
+	let lmH = parseFloat(bSettings.lightModeAt.split(":")[0]);
+	let lmM = parseFloat(bSettings.lightModeAt.split(":")[1]);
 	print("reading switch timeslots.....");
 	let dmDec = parseFloat(dmH) + parseFloat(dmM) / parseFloat(60);
 	let lmDec = parseFloat(lmH) + parseFloat(lmM) / parseFloat(60);
-	targetMode = selectRightMode(parseFloat(lmDec), parseFloat(dmDec), parseFloat(hr));
+	let targetMode = selectRightMode(parseFloat(lmDec), parseFloat(dmDec), parseFloat(hr));
+	let nextH, nextM;
 	if (targetMode === "lightT" || targetMode === "lightN") {
 		nextH = lmH;
 		nextM = lmM;

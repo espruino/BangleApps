@@ -9,7 +9,7 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
     to: 0,
     // reference time to from & to is rounded to full minutes
     fn: function (data, thisTriggerEntry) {
-      aSettings = require('Storage').readJSON('quietSwitch.json', 1) || {};
+      let aSettings = require('Storage').readJSON('quietSwitch.json', 1) || {};
       const DEFAULTS = {
         'quietWhenSleep': false,
         'quietMode': 1
@@ -20,12 +20,12 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
 
       if (aSettings && aSettings['quietWhenSleep']) {
         console.log("the sleep status is: " + data.status);
-        quietMode = aSettings['quietMode'];
+        let quietMode = aSettings['quietMode'];
         delete aSettings;
         if ((data.status === 3 || data.status === 4)
           && (data.prevStatus !== 3 && data.prevStatus !== 4)) {
           bSettings = require("Storage").readJSON('setting.json', true) || {};
-          current = 0 | bSettings.quiet;
+          let current = 0 | bSettings.quiet;
           console.log("quiet mode is:" + current);
           if (current !== quietMode) {
             console.log("fallen asleep");
@@ -36,7 +36,7 @@ if (typeof (global.sleeplog || {}).trigger === "object") {
         }
         if ((data.status === 2 || data.status === 1)
           && (data.prevStatus !== 2 && data.prevStatus !== 1)) {
-          bSettings = require("Storage").readJSON('setting.json', true) || {};
+          let bSettings = require("Storage").readJSON('setting.json', true) || {};
           current = 0 | bSettings.quiet;
           console.log("quiet mode is:" + current);
           if (current !== 0) {
