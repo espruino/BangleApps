@@ -6,6 +6,9 @@
   "license": "MIT",
   "repository": "https://github.com/espruino/BangleApps",
   "devDependencies": {
+    "@types/cldr": "^7.1.4",
+    "cldr": "^7.5.0",
+    "country-locale-map": "^1.9.4",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
@@ -16,11 +19,13 @@
     "lint-apps": "node bin/sync-lint-exemptions.mjs && eslint ./apps --ext .js",
     "test": "node bin/sanitycheck.js && npm run lint-apps && eslint ./modules --ext .js",
     "update-local-apps": "./bin/create_apps_json.sh apps.local.json",
+    "update-locales": "./bin/create-locales-js.mjs",
     "local": "npm-watch & npx http-server -a localhost -c-1",
     "start": "npx http-server -c-1"
   },
   "watch": {
-    "update-local-apps": "apps/*/metadata.json"
+    "update-local-apps": "apps/*/metadata.json",
+    "update-locales": "apps/locale/locales-meta.js"
   },
   "dependencies": {
     "acorn": "^7.2.0"
