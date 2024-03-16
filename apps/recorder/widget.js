@@ -267,7 +267,7 @@
           const timeIdx = f.readLine().replace("\n", "").split(",").indexOf("Time");
           if(timeIdx >= 0){
             let last, tmp;
-            while(tmp = f.readLine())
+            while((tmp = f.readLine()))
               last = tmp;
 
             const when = new Date(last.replace("\n", "").split(",")[timeIdx]);
