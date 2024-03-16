@@ -38,28 +38,6 @@ function flipTheme(saved) {
     return saved;
 }
 
-function setDarkTheme() {
-    if (!g.theme.dark) {
-        upd({
-            fg: cl("#fff"), bg: cl("#000"),
-            fg2: cl("#fff"), bg2: cl("#004"),
-            fgH: cl("#fff"), bgH: cl("#00f"),
-            dark: true
-        });
-    }
-}
-
-function setLightTheme() {
-    if (g.theme.dark) {
-        upd({
-            fg: cl("#000"), bg: cl("#fff"),
-            fg2: cl("#000"), bg2: cl("#cff"),
-            fgH: cl("#000"), bgH: cl("#0ff"),
-            dark: false
-        });
-    }
-}
-
 if (settings.theme.fg > 0) {
     saved.darkModeActive = 1;
 } else {

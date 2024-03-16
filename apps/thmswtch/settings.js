@@ -30,7 +30,7 @@ var mainmenu = {
   "< Back": function () { load(); },
   "Automatic Dark Mode": {
     value: saved.darkMode | false,
-    format: v => v ? "On" : "Off",
+    //format: v => v ? "On" : "Off",
     min: 0, max: 1, step: 1,
     onchange: v => {
       saved.darkMode = v;
