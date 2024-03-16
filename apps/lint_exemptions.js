@@ -1471,5 +1471,35 @@ module.exports = {
     "rules": [
       "no-undef"
     ]
+  },
+  "animclk/V29.LBM.js": {
+    "hash": "fe32a40d1c2df6080ffefb2f1b38125eb8f81b903267a08a2865ca7b21d33a27",
+    "rules": [
+      "no-undef"
+    ]
+  },
+  "authentiwatch/qr_packed.js": {
+    "hash": "0a7c15fc47973ceb47c1bae99471ef9f208569bfd46b361c7d130cf0ec35dcce",
+    "rules": [
+      "no-undef",
+      "no-unused-vars",
+      "no-cond-assign",
+      "no-useless-catch"
+    ]
+  },
+  "qrcode/qr-scanner.umd.min.js": {
+    "hash": "f4c10bc0c41322e7b588619e03a736ff85fad851ac4f104449c743a0f36735a4",
+    "rules": [
+      "no-undef",
+      "no-cond-assign"
+    ]
+  },
+  "schoolCalendar/fullcalendar/main.js": {
+    "hash": "04dcd3cb3025c7aa67631d287b025a897b1cd984b8ea306abae2d722976fb7c5",
+    "rules": [
+      "no-undef",
+      "no-unused-vars",
+      "no-cond-assign"
+    ]
   }
 };
