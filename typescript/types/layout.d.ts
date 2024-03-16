@@ -7,7 +7,7 @@ type ExtractIds<T extends Layout.Hierarchy, Depth extends Prev[number] = 9> =
   [Depth] extends [never]
   ? never
   : (T extends { id?: infer Id extends string }
-    ? { [k in Id]: T }
+    ? { [k in Id]: { -readonly [P in keyof T]: T[P] }  }
     : never)
   |
   (
@@ -34,6 +34,7 @@ declare module Layout {
       setUI(): void;
     };
 
+  // Note: you must use new Layout({...} as const) to have ids inferred
   var Layout: {
     new <T extends Hierarchy>(
       hier: T,
