@@ -20,7 +20,6 @@ var FullCalendar = (function (exports) {
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
-    /* global Reflect, Promise */
 
     var extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -7312,7 +7311,6 @@ var FullCalendar = (function (exports) {
             var _this = _super.call(this, props) || this;
             _this.handleData = function (data) {
                 if (!_this.dataManager) { // still within initial run, before assignment in constructor
-                    // eslint-disable-next-line react/no-direct-mutation-state
                     _this.state = data; // can't use setState yet
                 }
                 else {
