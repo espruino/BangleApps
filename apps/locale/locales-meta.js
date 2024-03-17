@@ -598,6 +598,7 @@ exports.locales = {
     },
   },
   ca_ES: {
+    icon: "🇪🇺",
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
