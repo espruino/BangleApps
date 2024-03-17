@@ -803,7 +803,7 @@ var locales = {
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %B %Y", "1": "%d/%m/%y" },
     abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
-    month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octobre,novembre,desembre",
+    month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octubre,novembre,desembre",
     abday: "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
     day: "diumenge,dilluns,dimarts,dimecres,dijous,divendres,dissabte",
     trans: { yes: "sí", Yes: "Sí", no: "no", No: "No", ok: "d'acord", on: "on", off: "off",
