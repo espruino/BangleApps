@@ -4,3 +4,4 @@
 0.04: Added settings to hide unused squares and show date
 0.05: Minor code improvements
 0.06: Added setting to show battery and added artwork to date
+0.07: Removed percentage from battery and cleaned up logic

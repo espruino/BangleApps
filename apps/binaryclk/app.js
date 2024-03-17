@@ -1,8 +1,8 @@
 var settings = Object.assign({
-	fullscreen: false,
+	fullscreen: true,
 	hidesq: false,
-	showdate: false,
-	showbat: false,
+	showdate: true,
+	showbat: true,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
 
 function draw() {
@@ -81,22 +81,19 @@ function draw() {
 	if (cnt == 0) {
 		if (settings.showbat) {
 			var bat = E.getBattery();
-			if (bat > 50) {
-				g.setColor('#00FF00').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
-			} else if (bat < 51 && bat > 21) {
-				g.setColor('#FFA500').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+			if (bat < 20) {
+				g.setColor('#FF0000');
+			} else if (bat < 40) {
+				g.setColor('#FFA500');
 			} else {
-				g.setColor('#FF0000').fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+				g.setColor('#00FF00');
 			}
-			bat = bat + '%';
+			g.fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
 			if (g.theme.dark) {
 				g.setColor(-1);
 			} else {
 				g.setColor(1);
 			}
-			g.setFontAlign(0, 0);
-			g.setFont("Vector",14);
-			g.drawString(bat, Math.ceil(mgn/2) + gap + 2 * pos + Math.ceil(sq/2) + 1, mgn + gap + Math.ceil(sq/2) + 1);
 			g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
 		}
 		cnt =+ cnt;
