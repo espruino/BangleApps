@@ -26,7 +26,7 @@ exports.addItems = function(menu, callback, items) {
         };
         break;
 
-      case "hideWidgets":
+      case "hideWidgets": {
         let options = [/*LANG*/"Show",/*LANG*/"Hide"];
         if (process.env.HWVERSION===2) options.push(/*LANG*/"Swipe");
         menu[label] = {
@@ -35,6 +35,7 @@ exports.addItems = function(menu, callback, items) {
           format: v => options[v|0],
           onchange: v => callback(key, v),
         };
+      }
     }
   });
 };
