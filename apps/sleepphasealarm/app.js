@@ -136,7 +136,7 @@ function buzz() {
 }
 
 function addLog(time, type) {
-  logs.push({time: time, type: type});
+  logs.push({time: time.toISOString(), type: type});
   if (logs.length > 1) { // Do not write if there is only one state
     require("Storage").writeJSON(CONFIGFILE, config);
   }

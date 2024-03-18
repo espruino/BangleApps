@@ -35,7 +35,7 @@ function getData() {
     logs.forEach((log, i) => {
       const timeStr = log.filter(entry => entry.type === "alarm")[0]?.time;
       if (timeStr) {
-        const date = new Date(timeStr);
+        const date = new Date(typeof timeStr === 'string' ? timeStr : timeStr.ms);
         let option = document.createElement("option");
         option.text = date.toLocaleDateString();
         option.value = i;
@@ -89,10 +89,10 @@ function getData() {
 
     select.onchange = () => {
       const log = logs[select.value];
-      chart.data.labels = log.map(entry => new Date(entry.time));
+      chart.data.labels = log.map(entry => new Date(typeof entry.time === 'string' ? entry.time : entry.time.ms));
       chart.data.datasets[0].data = log.map(entry => yTicks.indexOf(entry.type));
       const timeStr = log.filter(entry => entry.type === "alarm")[0]?.time;
-      chart.data.datasets[0].label = new Date(timeStr).toLocaleDateString();
+      chart.data.datasets[0].label = new Date(typeof timeStr === 'string' ? timeStr : timeStr.ms).toLocaleDateString();
       chart.update();
     }
   });
