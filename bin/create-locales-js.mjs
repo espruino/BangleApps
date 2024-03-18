@@ -352,7 +352,7 @@ function generateLocale(localeName, locales) {
   if (!locale.ampm?.["0"] || !locale.ampm?.["1"]) {
     locale.ampm ||= {};
     if (checkCLDR(localeId)) {
-      const dayPeriods = cldr.extractDayPeriods(localeId, calendar)?.format
+      const dayPeriods = cldr.extractDayPeriods(localeId, calendar)?.standAlone
         ?.abbreviated;
       locale.ampm["0"] ||= dayPeriods.am;
       locale.ampm["1"] ||= dayPeriods.pm;
@@ -398,8 +398,8 @@ function generateLocale(localeName, locales) {
   if (!locale.abmonth || !locale.month) {
     if (checkCLDR(localeId)) {
       const months = cldr.extractMonthNames(localeId, calendar);
-      locale.abmonth ||= months?.format?.abbreviated?.join(",");
-      locale.month ||= months?.format?.wide?.join(",");
+      locale.abmonth ||= months?.standAlone?.abbreviated?.join(",");
+      locale.month ||= months?.standAlone?.wide?.join(",");
     }
     locale.abmonth ||= fallbackLocale?.abmonth;
     locale.month ||= fallbackLocale?.month;
@@ -412,8 +412,8 @@ function generateLocale(localeName, locales) {
   if (!locale.abday || !locale.day) {
     if (checkCLDR(localeId)) {
       const days = cldr.extractDayNames(localeId, calendar);
-      locale.abday ||= days?.format?.abbreviated?.join(",");
-      locale.day ||= days?.format?.wide?.join(",");
+      locale.abday ||= days?.standAlone?.abbreviated?.join(",");
+      locale.day ||= days?.standAlone?.wide?.join(",");
     }
     locale.abday ||= fallbackLocale?.abday;
     locale.day ||= fallbackLocale?.day;
