@@ -59,13 +59,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "sleepphasealarm/app.js": {
-    "hash": "d234fea5d711ae5a149879e53b28bc9002860c6b6a75285e1fc04093fe400a88",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "sleeplog/settings.js": {
     "hash": "bd5e3e1382321df6682ef1cb718b0e15ab355422bef77278eb086f213f643021",
     "rules": [
@@ -580,12 +573,6 @@ module.exports = {
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "locale/locales.js": {
-    "hash": "bf2fd659e673b34a1ffa98c7ae7ca89de86a4ff9f823244d028e85bc465ed3c7",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "sleeplog/lib.js": {

@@ -105,8 +105,8 @@ function drawApp() {
     }
 
     const period = drawSeconds ? 1000 : 60000;
-    if (this.drawTimeTimeout !== undefined) {
-      clearTimeout(this.drawTimeTimeout);
+    if (drawTimeTimeout !== undefined) {
+      clearTimeout(drawTimeTimeout);
     }
     drawTimeTimeout = setTimeout(()=>{
       drawTimeTimeout = undefined;
@@ -156,7 +156,7 @@ if (nextAlarmDate !== undefined) {
 
   // minimum alert 30 minutes early
   minAlarm.setTime(nextAlarmDate.getTime() - (30*60*1000));
-  run = () => {
+  let run = () => {
     layout.state.label = /*LANG*/"Start";
     layout.render();
     Bangle.setOptions({powerSave: false}); // do not dynamically change accelerometer poll interval

@@ -1,4 +1,8 @@
 /* jshint esversion: 6 */
+/* exported distanceUnits */
+/* exported speedUnits */
+/* exported codePages */
+/* exported locales */
 const distanceUnits = { // how many meters per X?
   "m": 1,
   "ft": 0.3048,
@@ -59,6 +63,14 @@ timePattern / datePattern:
     %S	second (00..60)
     %p	locale's equivalent of either AM or PM; blank if not known
     %P  like %p, but lower case
+    
+    
+in locales:
+
+  abmonth: short months (must be <5 chars, ideally 3)
+  month: normal month names
+  abday: short days (must be <5 chars, ideally 3)  
+  day: normal day names  
 */
 
 var locales = {
@@ -459,7 +471,7 @@ var locales = {
     ampm: { 0: "", 1: "" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%y" }, // dimanche 1 mars 2020 // 01/03/20
-    abmonth: "anv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    abmonth: "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
     month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     abday: "dim,lun,mar,mer,jeu,ven,sam",
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -513,7 +525,7 @@ var locales = {
     ampm: { 0: "AM", 1: "PM" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %d %B %Y", "1": "%d/%m/%y" }, // dimanche 1 mars 2020 //  01/03/20
-    abmonth: "anv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    abmonth: "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
     month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     abday: "dim,lun,mar,mer,jeu,ven,sam",
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
