@@ -3,10 +3,12 @@ declare module Locale {
 
   type Locale = {
     name: string,
+    /** @deprecated */
     currencySym: string,
     dow(date: Date, short?: ShortBoolean): string,
     month(date: Date, short?: ShortBoolean): string,
     number(n: number): string,
+    /** @deprecated */
     currency(c: number): string,
     distance(d: number): string,
     speed(s: number): string,
