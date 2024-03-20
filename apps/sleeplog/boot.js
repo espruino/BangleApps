@@ -13,6 +13,7 @@ global.sleeplog = {
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 100, //     threshold for deep sleep
     lightTh: 200, //    threshold for light sleep
+    tempWearCheck: false, // use temperature to detect if worn
     wearTemp: 29, //    temperature threshold to count as worn
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
@@ -166,22 +167,23 @@ if (sleeplog.conf.enabled) {
 
       // check if changing to deep sleep from non sleeping
       if (data.status === 4 && sleeplog.status <= 2) {
-        // check wearing status
-        // if not worn set status to not worn
-        if (sleeplog.isNotWorn()) {
-          data.status = 1;
-        }
-          
-        sleeplog.setStatus(data);
-
-        /*
-        sleeplog.checkIsWearing((isWearing, data) => {
-          // correct status
-          if (!isWearing) data.status = 1;
-          // set status
+        // check wearing status either based on HRM or temperature as set in settings
+        if (this.conf.tempWearCheck) {
+          // if not worn set status to not worn
+          if (!sleeplog.isWornByTemp()) {
+            data.status = 1;
+          }
+            
           sleeplog.setStatus(data);
-        }, data);
-        */
+        } else {
+          // if not worn set status to not worn
+          sleeplog.checkIsWearing((isWearing, data) => {
+            // correct status
+            if (!isWearing) data.status = 1;
+            // set status
+            sleeplog.setStatus(data);
+          }, data);
+        }
       } else {
         // set status
         sleeplog.setStatus(data);
@@ -221,8 +223,8 @@ if (sleeplog.conf.enabled) {
 
     // Determine if Bangle.JS is worn based on temperature (same strategy as in activityreminder)
     // https://github.com/espruino/BangleApps/blob/master/apps/activityreminder/boot.js#L37
-    isNotWorn: function() {
-      return (Bangle.isCharging() || this.conf.wearTemp > E.getTemperature());
+    isWornByTemp: function() {
+      return (!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp);
     },
 
     // define function to set the status
