@@ -19,3 +19,5 @@
       Add plot logged data to settings
 0.15: Convert Yes/No On/Off in settings to checkboxes
 0.16: Fix Keep alarm enabled inverted settings
+0.17: Fix handle dates saved as object with milliseconds
+0.18: Fix lint warnings
