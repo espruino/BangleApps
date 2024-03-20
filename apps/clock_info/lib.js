@@ -224,12 +224,13 @@ exports.addInteractive = function(menu, options) {
       options.menuB = b;
     }
   }
-  options.save = () => {
+  const save = () => {
     // save the currently showing clock_info
     const settings = exports.loadSettings();
     settings.apps[appName] = {a:options.menuA, b:options.menuB};
     require("Storage").writeJSON("clock_info.json",settings);
   };
+  E.on("kill", save);
 
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
@@ -282,7 +283,6 @@ exports.addInteractive = function(menu, options) {
       oldMenuItem.removeAllListeners("draw");
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
-    options.save();
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
     E.stopEventPropagation&&E.stopEventPropagation();
   }
@@ -336,6 +336,7 @@ exports.addInteractive = function(menu, options) {
   menuShowItem(menu[options.menuA].items[options.menuB]);
   // return an object with info that can be used to remove the info
   options.remove = function() {
+    save();
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
