@@ -59,13 +59,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "sleepphasealarm/app.js": {
-    "hash": "d234fea5d711ae5a149879e53b28bc9002860c6b6a75285e1fc04093fe400a88",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "sleeplog/settings.js": {
     "hash": "bd5e3e1382321df6682ef1cb718b0e15ab355422bef77278eb086f213f643021",
     "rules": [
@@ -183,7 +176,7 @@ module.exports = {
     ]
   },
   "timerclk/timer.js": {
-    "hash": "f44702e61ad833b53fb28d222ff0fbd77d0307c6eb69c5ecebb8626a1cb20ed4",
+    "hash": "3b70606f1742b34bf4769f6e8703144ff0c3ba401a3a21f97ddcab5432c94db5",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -197,7 +190,7 @@ module.exports = {
     ]
   },
   "timerclk/alarm.js": {
-    "hash": "6f521742cc6a6d6f215e499084a596ffc3494d1e1f950b204368c051a18773de",
+    "hash": "3c280b0858d43f10b12947e5ae939c6825a620e6cb3687c6a7549c1a000b6241",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -580,12 +573,6 @@ module.exports = {
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "locale/locales.js": {
-    "hash": "bf2fd659e673b34a1ffa98c7ae7ca89de86a4ff9f823244d028e85bc465ed3c7",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "sleeplog/lib.js": {
@@ -1010,12 +997,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "messagegui/app.js": {
-    "hash": "6ffb405ae2f1e62f5d1ff19888cbfd71e40850752ea8c49a1cc2e358fca7de80",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "marioclock/marioclock-app.js": {
     "hash": "d46990c757fd217593c6966c82f421bcd51a4d073109dea2cbc398a0f6064602",
     "rules": [
@@ -1072,12 +1053,6 @@ module.exports = {
   },
   "kanawatch/app.js": {
     "hash": "01c3fede367b7cbdbaf6b532ebfd4e6ffff61b2e20ce44b25dd04117853a44f2",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "ios/boot.js": {
-    "hash": "875f34ea333f9e1c28dd0cf0c0a73ec7003bd8f03e2ed6632b7978ce7b5f5c7e",
     "rules": [
       "no-undef"
     ]
@@ -1482,6 +1457,36 @@ module.exports = {
     "hash": "37283d6c44810b82586b191dd50fe2e6ceab68685653ac520cfde723f56f2605",
     "rules": [
       "no-undef"
+    ]
+  },
+  "animclk/V29.LBM.js": {
+    "hash": "fe32a40d1c2df6080ffefb2f1b38125eb8f81b903267a08a2865ca7b21d33a27",
+    "rules": [
+      "no-undef"
+    ]
+  },
+  "authentiwatch/qr_packed.js": {
+    "hash": "0a7c15fc47973ceb47c1bae99471ef9f208569bfd46b361c7d130cf0ec35dcce",
+    "rules": [
+      "no-undef",
+      "no-unused-vars",
+      "no-cond-assign",
+      "no-useless-catch"
+    ]
+  },
+  "qrcode/qr-scanner.umd.min.js": {
+    "hash": "f4c10bc0c41322e7b588619e03a736ff85fad851ac4f104449c743a0f36735a4",
+    "rules": [
+      "no-undef",
+      "no-cond-assign"
+    ]
+  },
+  "schoolCalendar/fullcalendar/main.js": {
+    "hash": "04dcd3cb3025c7aa67631d287b025a897b1cd984b8ea306abae2d722976fb7c5",
+    "rules": [
+      "no-undef",
+      "no-unused-vars",
+      "no-cond-assign"
     ]
   }
 };

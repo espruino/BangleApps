@@ -16,8 +16,8 @@
   function draw(log) {
     const step = 10*60*1000; // resolution 10min
     const yTicks = ["sleep", "awake", "alarm"];
-    const starttime = new Date(log[0].time);
-    const endtime = new Date(log[log.length-1].time);
+    const starttime = dateFromJson(log[0].time);
+    const endtime = dateFromJson(log[log.length-1].time);
 
     let logidx = 0;
     let curtime = starttime;
@@ -29,7 +29,7 @@
       if (logtime === undefined || curtime > logtime) {
         curval = yTicks.indexOf(log[logidx].type);
         logidx++;
-        logtime = new Date(log[logidx].time);
+        logtime = dateFromJson(log[logidx].time);
       }
 
       data[i++] = curval;
@@ -70,8 +70,8 @@
 
     const logs = config.logs.filter(log => log != null && log.filter(entry => entry.type === "alarm").length > 0);
     logs.sort(function(a, b) { // sort by alarm date desc
-      const adate = new Date(a.filter(entry => entry.type === "alarm")[0].time);
-      const bdate = new Date(b.filter(entry => entry.type === "alarm")[0].time);
+      const adate = dateFromJson(a.filter(entry => entry.type === "alarm")[0].time);
+      const bdate = dateFromJson(b.filter(entry => entry.type === "alarm")[0].time);
       return bdate - adate;
     });
 
@@ -79,10 +79,14 @@
     menu[""] = { title: /*LANG*/"Select day" };
     menu["< Back"] = () => settingsmenu();
     logs.forEach((log, i) => {
-      const date = new Date(log.filter(entry => entry.type === "alarm")[0].time);
+      const date = dateFromJson(log.filter(entry => entry.type === "alarm")[0].time);
       menu[require("locale").date(date, 1)] = () => { E.showMenu(); draw(log); };
     });
     E.showMenu(menu);
+  }
+
+  function dateFromJson(o) {
+    return new Date(typeof o === 'string' ? o : o.ms);
   }
 
   function settingsmenu() {

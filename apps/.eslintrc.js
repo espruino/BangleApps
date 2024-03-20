@@ -164,7 +164,9 @@ module.exports = {
         "D28": "readonly",
         "D29": "readonly",
         "D30": "readonly",
-        "D31": "readonly"
+        "D31": "readonly",
+
+        "bleServiceOptions": "writable", // available in boot.js code that's called ad part of bootupdate
     },
     "parserOptions": {
         "ecmaVersion": 11

@@ -15,3 +15,5 @@
       Allow negative/positive actions to pass through to message GUI
 0.15: Enable calendar and weather updates via custom notifications (via shortcuts app)
 0.16: Always request Current Time service from iOS
+0.17: Default to passing full UTF8 strings into messages app (which can now process them with an international font)
+0.18: Fix UTF8 conversion (check for `font` library, not `fonts`)
