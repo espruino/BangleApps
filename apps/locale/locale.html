@@ -173,9 +173,6 @@ exports = { name : "en_GB", currencySym:"£",
           dateN = dateN.replace(e,"${"+replaceList[e]+"}");
           dateS = dateS.replace(e,"${"+replaceList[e]+"}");
         });
-        var currency = locale.currency_first ?
-          `${js(locale.currency_symbol)} + exports.number(n)`:
-          `exports.number(n) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         function getLocaleModule(isLocal) {
@@ -194,7 +191,8 @@ function getHours(d) {
 }
 exports = {
   name: ${js(locale.lang)},
-  currencySym: ${js(locale.currency_symbol)},
+  get currencySym(){console.log("Warning: Currency information is deprecated");return ${js("£")}},
+  set currencySym(v){},
   dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
@@ -212,7 +210,7 @@ exports = {
     }
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
-  currency: n => ${currency},
+  currency: n => {console.log("Warning: Currency information is deprecated");return ${js("£")}+exports.number(n)},
   distance: (n,dp) => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])},dp) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])},dp) + ${js(locale.distance[1])},
   speed: (n,dp) => round(${unitConv(speedUnits[locale.speed])},dp) + ${js(locale.speed)},
   temp: (t,dp) => round(${temperature},dp) + ${js(locale.temperature)},
