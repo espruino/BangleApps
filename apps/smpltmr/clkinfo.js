@@ -73,7 +73,6 @@
 
   const restoreMainItem = function(clkinfo) {
     clkinfo.menuB = 0;
-    clkinfo.save();
     // clock info redraws after this
   };
 
