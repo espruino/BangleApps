@@ -13,7 +13,7 @@
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 100, //     threshold for deep sleep
     lightTh: 200, //    threshold for light sleep
-    wearTemp: 28, //    temperature threshold to count as worn
+    wearTemp: 29, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
     appTimeout: 0 //   lock and backlight timeouts for the app
