@@ -337,6 +337,7 @@ exports.addInteractive = function(menu, options) {
   // return an object with info that can be used to remove the info
   options.remove = function() {
     save();
+    E.removeListener("kill", save);
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
