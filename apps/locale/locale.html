@@ -191,8 +191,7 @@ function getHours(d) {
 }
 exports = {
   name: ${js(locale.lang)},
-  get currencySym(){console.log("Warning: Currency information is deprecated");return ${js("£")}},
-  set currencySym(v){},
+  currencySym: ${js("£")},
   dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
