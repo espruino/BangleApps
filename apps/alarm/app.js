@@ -28,6 +28,8 @@ const iconTimerOff = "\0" + (g.theme.dark
 
 // An array of alarm objects (see sched/README.md)
 var alarms = require("sched").getAlarms();
+// Fix possible wrap around in existing alarms #3281
+alarms.forEach(e => e.t %= 86400000);
 
 function handleFirstDayOfWeek(dow) {
   if (firstDayOfWeek == 1) {

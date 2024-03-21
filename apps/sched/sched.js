@@ -36,6 +36,7 @@ function showAlarm(alarm) {
         alarm.ot = alarm.t;
       }
       alarm.t += settings.defaultSnoozeMillis;
+      alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
     } else {
       let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
