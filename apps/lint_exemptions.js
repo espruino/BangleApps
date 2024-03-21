@@ -59,13 +59,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "sleepphasealarm/app.js": {
-    "hash": "d234fea5d711ae5a149879e53b28bc9002860c6b6a75285e1fc04093fe400a88",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "sleeplog/settings.js": {
     "hash": "bd5e3e1382321df6682ef1cb718b0e15ab355422bef77278eb086f213f643021",
     "rules": [
@@ -183,7 +176,7 @@ module.exports = {
     ]
   },
   "timerclk/timer.js": {
-    "hash": "f44702e61ad833b53fb28d222ff0fbd77d0307c6eb69c5ecebb8626a1cb20ed4",
+    "hash": "3b70606f1742b34bf4769f6e8703144ff0c3ba401a3a21f97ddcab5432c94db5",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -197,7 +190,7 @@ module.exports = {
     ]
   },
   "timerclk/alarm.js": {
-    "hash": "6f521742cc6a6d6f215e499084a596ffc3494d1e1f950b204368c051a18773de",
+    "hash": "3c280b0858d43f10b12947e5ae939c6825a620e6cb3687c6a7549c1a000b6241",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -580,12 +573,6 @@ module.exports = {
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "locale/locales.js": {
-    "hash": "bf2fd659e673b34a1ffa98c7ae7ca89de86a4ff9f823244d028e85bc465ed3c7",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "sleeplog/lib.js": {
