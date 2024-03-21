@@ -96,7 +96,7 @@ function draw() {
 			}
 			g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
 		}
-		cnt =+ cnt;
+		cnt++;
 		if (cnt > 599999) {
 			cnt = 0;
 		}
