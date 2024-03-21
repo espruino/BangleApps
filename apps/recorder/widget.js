@@ -194,6 +194,7 @@
     }
   }
 
+  let settings = loadSettings();
   let writeOnGPS = function() {writeLog(settings.period);};
 
   // Called by the GPS app to reload settings and decide what to do
