@@ -167,37 +167,27 @@ if (sleeplog.conf.enabled) {
 
       // check if changing to deep sleep from non sleeping
       if (data.status === 4 && sleeplog.status <= 2) {
-        // check wearing status either based on HRM or temperature as set in settings
-        if (this.conf.tempWearCheck) {
-          // if not worn set status to not worn
-          if (!sleeplog.isWornByTemp()) {
-            data.status = 1;
-          }
-            
+        sleeplog.checkIsWearing((isWearing, data) => {
+          // correct status
+          if (!isWearing) data.status = 1;
+          // set status
           sleeplog.setStatus(data);
-        } else {
-          // if not worn set status to not worn
-          sleeplog.checkIsWearing((isWearing, data) => {
-            // correct status
-            if (!isWearing) data.status = 1;
-            // set status
-            sleeplog.setStatus(data);
-          }, data);
-        }
-      } else {
-        // set status
-        sleeplog.setStatus(data);
+        }, data);
       }
     },
 
-    // define function to check if the bangle is worn by using the hrm
+    // check wearing status either based on HRM or temperature as set in settings
     checkIsWearing: function(returnFn, data) {
+      if (this.conf.tempWearCheck) {
+        return returnFn(!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp, data);
+      }
+
       // create a temporary object to store data and functions
       global.tmpWearingCheck = {
-        // define temporary hrm listener function to read the wearing status
-        hrmListener: hrm => tmpWearingCheck.isWearing = hrm.isWearing,
-        // set default wearing status
-        isWearing: false,
+      // define temporary hrm listener function to read the wearing status
+      hrmListener: hrm => tmpWearingCheck.isWearing = hrm.isWearing,
+      // set default wearing status
+      isWearing: false,
       };
 
       // enable HRM
@@ -219,12 +209,6 @@ if (sleeplog.conf.enabled) {
           returnFn(isWearing, data);
         }, 34, returnFn, data);
       }, 2500, returnFn, data);
-    },
-
-    // Determine if Bangle.JS is worn based on temperature (same strategy as in activityreminder)
-    // https://github.com/espruino/BangleApps/blob/master/apps/activityreminder/boot.js#L37
-    isWornByTemp: function() {
-      return (!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp);
     },
 
     // define function to set the status
