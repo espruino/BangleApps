@@ -209,7 +209,7 @@ exports = {
     }
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
-  currency: n => {console.log("Warning: Currency information is deprecated");return ${js("£")}+exports.number(n)},
+  currency: n => {console.log("Warning: Currency information is deprecated, see https://github.com/espruino/BangleApps/issues/3269");return ${js("£")}+exports.number(n)},
   distance: (n,dp) => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])},dp) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])},dp) + ${js(locale.distance[1])},
   speed: (n,dp) => round(${unitConv(speedUnits[locale.speed])},dp) + ${js(locale.speed)},
   temp: (t,dp) => round(${temperature},dp) + ${js(locale.temperature)},
