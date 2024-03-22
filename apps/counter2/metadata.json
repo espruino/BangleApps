@@ -7,7 +7,7 @@
   "icon": "counter2-icon.png",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
-  "screenshots": [{"url":"counter2-screenshot.png"}],
+  "screenshots": [{"url":"counter2-screenshot.png"},{"url":"counter2dark-screenshot.png"}],
   "allow_emulator": true,
   "storage": [
     {"name":"counter2.app.js","url":"app.js"},
