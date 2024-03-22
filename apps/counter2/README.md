@@ -10,7 +10,7 @@ The counter state gets saved. Best to use this with pattern launcher or ClockCal
 
 ## Howto
  - Tap top side or swipe up to increase counter
- - Tap top side or swipe down to decrease counter
+ - Tap bottom side or swipe down to decrease counter
  - Hold (600ms) to reset to default value (configurable)
  - Press button to exit
 
