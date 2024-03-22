@@ -3,10 +3,10 @@
 I needed an HP/XP-Tracker for a game, so i made one.
 The counter state gets saved. Best to use this with pattern launcher or ClockCal
 
-- Colored Text Mode
-- ![color text](https://stuff-etc.github.io/BangleApps/apps/counter2/counter2-screenshot.png)
 - Colored Background Mode
-- ![color background](https://stuff-etc.github.io/BangleApps/apps/counter2/counter2dark-screenshot.png)
+- ![color bg](https://stuff-etc.github.io/BangleApps/apps/counter2/counter2-screenshot.png)
+- Colored Text Mode
+- ![color text](https://stuff-etc.github.io/BangleApps/apps/counter2/counter2dark-screenshot.png)
 
 ## Howto
  - Tap top side or swipe up to increase counter
