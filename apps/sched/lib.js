@@ -4,6 +4,7 @@ exports.getAlarms = function() {
 };
 // Write a list of alarms back to storage
 exports.setAlarms = function(alarms) {
+  alarms.forEach(e => e.t %= 86400000); // Also fix #3281 from other apps, e.g. multitimer
   return require("Storage").writeJSON("sched.json",alarms);
 };
 // Return an alarm object based on ID
