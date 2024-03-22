@@ -187,10 +187,10 @@ if (sleeplog.conf.enabled) {
 
       // create a temporary object to store data and functions
       global.tmpWearingCheck = {
-      // define temporary hrm listener function to read the wearing status
-      hrmListener: hrm => tmpWearingCheck.isWearing = hrm.isWearing,
-      // set default wearing status
-      isWearing: false,
+        // define temporary hrm listener function to read the wearing status
+        hrmListener: hrm => tmpWearingCheck.isWearing = hrm.isWearing,
+        // set default wearing status
+        isWearing: false,
       };
 
       // enable HRM
