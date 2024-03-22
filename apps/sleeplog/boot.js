@@ -180,7 +180,7 @@ if (sleeplog.conf.enabled) {
 
     // check wearing status either based on HRM or temperature as set in settings
     checkIsWearing: function(returnFn, data) {
-      if (!!this.conf.wearTemp) {
+      if (this.conf.wearTemp !== null) {
         return returnFn(!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp, data);
       }
 
