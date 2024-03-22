@@ -34,7 +34,7 @@
             }
         },
         'Color Text': {
-            value: settings[colortext],
+            value: settings.colortext,
             format: v => v?"Text":"Background",            
             onchange: v => {
                 settings.colortext = v;
