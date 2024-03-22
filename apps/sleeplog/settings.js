@@ -353,7 +353,6 @@
         max: 40,
         wrap: true,
         noList: true,
-        format: v => v + "°C",
         format: v => v === 19.5 ? "Disabled" : v + "°C",
         onchange: v => {
           settings.wearTemp = v === 19.5 ? null : v;
