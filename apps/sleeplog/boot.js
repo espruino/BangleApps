@@ -173,6 +173,9 @@ if (sleeplog.conf.enabled) {
           // set status
           sleeplog.setStatus(data);
         }, data);
+      } else {
+        // set status
+        sleeplog.setStatus(data);
       }
     },
 
