@@ -41,9 +41,8 @@
                 writeSettings();
             }
         },
-        'Buzz': {
+        'Vibrate': {
             value: settings.buzz,
-            format: v => v?"On":"Off",
             onchange: v => {
                 settings.buzz = v;
                 writeSettings();

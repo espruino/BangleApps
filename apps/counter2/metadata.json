@@ -1,8 +1,9 @@
 {
   "id": "counter2",
   "name": "Counter2",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Dual Counter",
+  "readme":"README.md",
   "icon": "counter2-icon.png",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
