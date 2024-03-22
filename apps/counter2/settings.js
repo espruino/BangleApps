@@ -33,11 +33,12 @@
                 writeSettings();
             }
         },
-        'Color Text': {
+        'Color': {
             value: settings.colortext,
-            format: v => v?"Text":"Background",            
+            format: v => v?"Text":"Backg",            
             onchange: v => {
                 settings.colortext = v;
+                console.log("Color",v);
                 writeSettings();
             }
         },
