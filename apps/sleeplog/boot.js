@@ -13,7 +13,6 @@ global.sleeplog = {
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 100, //     threshold for deep sleep
     lightTh: 200, //    threshold for light sleep
-    tempWearCheck: false, // use temperature to detect if worn
     wearTemp: 29, //    temperature threshold to count as worn
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
@@ -181,7 +180,7 @@ if (sleeplog.conf.enabled) {
 
     // check wearing status either based on HRM or temperature as set in settings
     checkIsWearing: function(returnFn, data) {
-      if (this.conf.tempWearCheck) {
+      if (!!this.conf.wearTemp) {
         return returnFn(!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp, data);
       }
 
