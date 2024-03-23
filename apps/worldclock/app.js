@@ -97,7 +97,7 @@ function draw() {
   var time = require("locale").time(d, 1);
   g.setFont(font, primaryTimeFontSize);
 
-  fontHeight = g.getFontHeight();
+  const fontHeight = g.getFontHeight();
   g.clearRect(0, yposTime - fontHeight / 2, g.getWidth(), yposTime + fontHeight / 2);
   g.drawString(`${time}`, xyCenter, yposTime, true);
   var month = require("locale").month(d, 1);
