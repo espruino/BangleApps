@@ -233,6 +233,12 @@ function action(a) {
                 load(l[0]);
             } else E.showAlert("Message app not found", "Not found").then(drawWatch);
             break;
+        case "[AI:agenda]":
+            l = require("Storage").list(RegExp("agenda.*app.js"));
+            if (l.length > 0) {
+                load(l[0]);
+            } else E.showAlert("Agenda app not found", "Not found").then(drawWatch);
+            break;            
         default:
             l = require("Storage").list(RegExp(a + ".app.js"));
             if (l.length > 0) {
