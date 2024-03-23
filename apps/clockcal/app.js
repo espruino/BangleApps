@@ -156,7 +156,7 @@ function drawSeconds() {
 }
 
 function drawWatch() {
-    if (DEBUG) console.log("CALENDAR");
+    if (DEBUG) console.log("DRAWWATCH");
     monthOffset = 0;
     state = "watch";
     var d = new Date();
@@ -197,6 +197,7 @@ function drawWatch() {
     if (DEBUG) console.log("Next Day:" + (nextday / 3600));
     if (typeof dayInterval !== "undefined") clearTimeout(dayInterval);
     dayInterval = setTimeout(drawWatch, nextday * 1000);
+    if (DEBUG) console.log("ended DRAWWATCH. next refresh in " + nextday + "s");
 }
 
 function BTevent() {
@@ -211,8 +212,11 @@ function action(a) {
     g.reset();
     if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
     if (DEBUG) console.log("action:" + a);
+    state = "unknown";
+    console.log("state -> unknown");
     switch (a) {
         case "[ignore]":
+            drawWatch();
             break;
         case "[calend.]":
             drawFullCalendar();
@@ -276,7 +280,6 @@ function input(dir) {
                 drawWatch();
             }
             break;
-
     }
 }
 
@@ -309,3 +312,10 @@ NRF.on('disconnect', BTevent);
 dimSeconds = Bangle.isLocked();
 drawWatch();
 
+setWatch(function() {
+    if (state == "watch") {
+        Bangle.showLauncher()
+    } else if (state == "calendar") {
+        drawWatch();
+    }
+}, BTN1, {repeat:true, edge:"falling"});
