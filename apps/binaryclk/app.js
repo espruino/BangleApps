@@ -65,10 +65,10 @@ function draw() {
 		g.setColor('#FF0000').fillRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + 12);
 		g.setFontAlign(0, -1);
 		g.setFont("Vector",12);
-		g.setColor(1).drawString(day, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + 1);
+		g.setColor(-1).drawString(day, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + 1);
 		g.setFontAlign(0, 1);
 		g.setFont("Vector",20);
-		g.drawString(d, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + sq + 2);
+		g.setColor(1).drawString(d, Math.ceil(mgn/2) + gap + Math.ceil(sq/2) + 1, mgn + gap + sq + 2);
 		if (g.theme.dark) {
 			g.setColor(-1);
 		} else {
