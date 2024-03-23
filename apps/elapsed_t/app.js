@@ -212,7 +212,7 @@ var menu = {
     format: function (v) { return pad2(v); }
   },
   'Seconds': {
-    value: 0,
+    value: data.target.s,
     min: 0, max: 59, wrap: true,
     onchange: v => {
       data.target.s = v;
