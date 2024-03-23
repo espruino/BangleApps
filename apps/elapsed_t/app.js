@@ -358,7 +358,6 @@ function diffToTarget() {
 }
 
 function draw() {
-
   var nowFormatted = formatDateTime(new Date(), settings.dateFormat, settings.time24, temp_displaySeconds);
   var targetFormatted = formatDateTime(target, settings.dateFormat, settings.time24, true);
   var diff = diffToTarget();
@@ -394,20 +393,19 @@ function draw() {
     // draw target date
     g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
     g.drawString(targetFormatted.date, 4 + 16 + 6, y);
+    y += SMALL_FONT_SIZE;
+
+    // draw target time
+    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
+    g.drawString(targetFormatted.time, 4, y);
+    y += SMALL_FONT_SIZE + 4;
+
   } else {
     // draw NOT SET
     g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
     g.drawString("NOT SET", 4 + 16 + 6, y);
+    y += 2 * SMALL_FONT_SIZE + 4;
   }
-
-  y += SMALL_FONT_SIZE;
-
-  // draw target time
-  if (data.target.isSet) {
-    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
-    g.drawString(targetFormatted.time, 4, y);
-  }
-  y += SMALL_FONT_SIZE + 4;
 
   // draw separator
   g.setColor(COLOUR_BLACK);
