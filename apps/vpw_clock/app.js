@@ -138,8 +138,6 @@ function draw() {
   g.drawString(dowStr, 8, g.getHeight() / 2);
   // queue draw in one minute
   queueDraw();
-  // queue draw in one minute
-  queueDraw();
 }
 
 // Clear the screen once, at startup
