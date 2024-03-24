@@ -16,6 +16,6 @@
   "data": [{"name":"vpw_clock.settings.json"}],
   "icon": "app.png",
   "readme": "README.md",
-  "screenshots": [{ "url": "screenshot.png" }],
+  "screenshots": [{ "url": "screenshot.png" }, { "url": "screenshot2.png" }, { "url": "screenshot3.png" }],
   "allow_emulator":true
 }
