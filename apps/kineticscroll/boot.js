@@ -9,17 +9,17 @@
       remove = function()
       select = function(idx, touch)
     }
-  
+
     returns {
       scroll: int                // current scroll amount
       draw: function()           // draw all
       drawItem : function(idx)   // draw specific item
       isActive : function()      // is this scroller still active?
     }
-  
+
     */
     if (!options) return Bangle.setUI(); // remove existing handlers
-    
+
     const MAX_VELOCITY=100;
     let scheduledDraw;
     let velocity = 0;
@@ -30,7 +30,7 @@
     let menuScrollMin = 0|options.scrollMin;
     let menuScrollMax = options.h*options.c - R.h;
     if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
-    
+
     const touchHandler = (_,e)=>{
       if (e.y<R.y-4) return;
       velocity = 0;
@@ -51,7 +51,7 @@
       for (var i=a;i<=b;i++)
         options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-    }
+    };
 
     const draw = () => {
       let dy = velocity;
@@ -63,18 +63,18 @@
         dy = s.scroll - menuScrollMin;
         velocity = 0;
       }
-    
+
       s.scroll -= dy;
-    
+
       let oldScroll = rScroll;
       rScroll = s.scroll &~1;
       let d = oldScroll-rScroll;
-    
+
       if (Math.abs(velocity) > 0.01)
         scheduledDraw = setTimeout(draw,0);
       else
         scheduledDraw = undefined;
-    
+
       if (!d) {
         return;
       }
@@ -83,7 +83,7 @@
         let y = Math.max(R.y2-(1-d), R.y);
         g.setClipRect(R.x,y,R.x2,R.y2);
         let i = YtoIdx(y);
-    
+
         for (y = idxToY(i);y < R.y2;y+=options.h) {
           options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
           i++;
@@ -93,7 +93,7 @@
         g.setClipRect(R.x,R.y,R.x2,y);
         let i = YtoIdx(y);
         y = idxToY(i);
-    
+
         for (y = idxToY(i);y > R.y-options.h;y-=options.h) {
           options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
           i--;
@@ -101,7 +101,7 @@
       }
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
     };
-    
+
     const dragHandler = e=>{
       if ((velocity <0 && e.dy>0) || (velocity > 0 && e.dy<0)){
         velocity *= -1;
@@ -117,45 +117,46 @@
         accDy += e.dy;
       }
       velocity = accDy / (Date.now() - lastDragStart) * MAX_VELOCITY;
-    
+
       if (lastDragStart && e.b == 0){
         accDy = 0;
         lastDragStart = 0;
       }
-    
+
       velocity = E.clip(velocity,-MAX_VELOCITY,MAX_VELOCITY);
       //lastDrag=Date.now();
       if (!scheduledDraw){
         scheduledDraw = setTimeout(draw,0);
       }
     };
-    
+
     let uiOpts = {
       mode : "custom",
       back : options.back,
       drag : dragHandler,
       touch : touchHandler,
       redraw : uiDraw
-    }
+    };
 
     if (options.remove) uiOpts.remove = () => {
       if (scheduledDraw)
         clearTimeout(scheduledDraw);
       clearInterval(scheduledBrake);
       options.remove();
-    }
+    };
 
     Bangle.setUI(uiOpts);
 
 
-    
+
     function idxToY(i) {
       return i*options.h + R.y - rScroll;
     }
+
     function YtoIdx(y) {
       return Math.floor((y + rScroll - R.y)/options.h);
     }
-    
+
     let s = {
       scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
       draw : () => {
@@ -172,7 +173,7 @@
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
   }, isActive : () => Bangle.uiRedraw == uiDraw
     };
-    
+
     let rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
     s.draw(); // draw the full scroller
     g.flip(); // force an update now to make this snappier
