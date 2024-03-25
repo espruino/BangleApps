@@ -1,3 +1,5 @@
+require("FontVGA8").add(Graphics);
+
 const COLOUR_BLACK = 0x0;
 const COLOUR_WHITE = 0xffff;
 //const COLOUR_DARK_GREY = "#3F3F3F";
@@ -25,15 +27,15 @@ switch (settings.foregroundColor) {
   case 0:
     foregroundColor = COLOUR_RED;
     break;
-    
+
   case 1:
     foregroundColor = COLOUR_PURPLE;
     break;
-    
+
   case 2:
     foregroundColor = COLOUR_WHITE;
     break;
-    
+
   default:
     foregroundColor = COLOUR_BLACK; // to detect problems
     break;
@@ -132,11 +134,11 @@ function draw() {
   g.drawString(timeStr, x, y + 20);
   // draw date
   y += 35;
-  g.setFontAlign(0, 0, 1).setFont("6x8");
-  g.drawString(dateStr, g.getWidth() - 8, g.getHeight() / 2);
+  g.setFontAlign(0, 0, 1).setFont("VGA8");
+  g.drawString(dateStr, g.getWidth() - 8, g.getHeight() / 2 - 10);
   // draw the day of the week
-  g.setFontAlign(0, 0, 3).setFont("6x8");
-  g.drawString(dowStr, 8, g.getHeight() / 2);
+  g.setFontAlign(0, 0, 3).setFont("VGA8");
+  g.drawString(dowStr, 8, g.getHeight() / 2 - 10);
   // queue draw in one minute
   queueDraw();
 }
