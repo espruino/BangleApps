@@ -221,7 +221,7 @@
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeSubSecs = period===1;
+      writeSubSecs = settings.period===1;
       if (settings.period===1 && settings.record.includes("gps")) {
         Bangle.on('GPS', writeLog);
         writeSetup = true;
