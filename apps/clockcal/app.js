@@ -28,11 +28,11 @@ var monthOffset = 0;
  *   Calendar features
  */
 function drawFullCalendar(monthOffset) {
-    addMonths = function (_d, _am) {
-        var ay = 0, m = _d.getMonth(), y = _d.getFullYear();
+    const addMonths = function (_d, _am) {
+        let ay = 0, m = _d.getMonth(), y = _d.getFullYear();
         while ((m + _am) > 11) { ay++; _am -= 12; }
         while ((m + _am) < 0) { ay--; _am += 12; }
-        n = new Date(_d.getTime());
+        let n = new Date(_d.getTime());
         n.setMonth(m + _am);
         n.setFullYear(y + ay);
         return n;
@@ -45,7 +45,7 @@ function drawFullCalendar(monthOffset) {
     if (typeof dayInterval !== "undefined") clearTimeout(dayInterval);
     if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
     if (typeof minuteInterval !== "undefined") clearTimeout(minuteInterval);
-    d = addMonths(Date(), monthOffset);
+    var d = addMonths(Date(), monthOffset);
     tdy = Date().getDate() + "." + Date().getMonth();
     newmonth = false;
     c_y = 0;
