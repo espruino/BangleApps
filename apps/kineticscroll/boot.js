@@ -20,16 +20,35 @@
     */
     if (!options) return Bangle.setUI(); // remove existing handlers
 
-    const MAX_VELOCITY=100;
+    const SPEED=100;
+    const LAST_DRAG_WAIT=150;
+    const MIN_VELOCITY=0.1;
+
     let scheduledDraw;
     let velocity = 0;
     let accDy = 0;
-    let scheduledBrake = setInterval(()=>{velocity*=0.9;}, 50);
+    let direction = 0;
+    let scheduledBrake;
+    let lastTouchedDrag = 0;
     let lastDragStart = 0;
     let R = Bangle.appRect;
     let menuScrollMin = 0|options.scrollMin;
     let menuScrollMax = options.h*options.c - R.h;
     if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
+
+    const startBrake = () => {
+      if (!scheduledBrake){
+        scheduledBrake = setInterval(()=>{
+          velocity *= 0.9;
+          if (velocity <= MIN_VELOCITY){
+            velocity = 0;
+            if (scheduledBrake)
+              clearInterval(scheduledBrake);
+            scheduledBrake = undefined;
+          }
+        }, 50);
+      }
+    };
 
     const touchHandler = (_,e)=>{
       if (e.y<R.y-4) return;
@@ -53,23 +72,24 @@
     };
 
     const draw = () => {
-      let dy = velocity;
-      if (s.scroll - dy > menuScrollMax){
-        dy = s.scroll - menuScrollMax;
-        velocity = 0;
-      }
-      if (s.scroll - dy < menuScrollMin){
-        dy = s.scroll - menuScrollMin;
-        velocity = 0;
+      if (velocity > MIN_VELOCITY){
+        s.scroll -= velocity * direction;
       }
 
-      s.scroll -= dy;
+      if (s.scroll > menuScrollMax){
+        s.scroll = menuScrollMax;
+        velocity = 0;
+      }
+      if (s.scroll < menuScrollMin){
+        s.scroll = menuScrollMin;
+        velocity = 0;
+      }
 
       let oldScroll = rScroll;
       rScroll = s.scroll &~1;
       let d = oldScroll-rScroll;
 
-      if (Math.abs(velocity) > 0.01)
+      if (velocity > MIN_VELOCITY)
         scheduledDraw = setTimeout(draw,0);
       else
         scheduledDraw = undefined;
@@ -102,30 +122,33 @@
     };
 
     const dragHandler = e=>{
-      if ((velocity <0 && e.dy>0) || (velocity > 0 && e.dy<0)){
-        velocity *= -1;
-        accDy = 5 * velocity;
-      }
-      //velocity += e.dy * (Date.now() - lastDrag);
+      direction = e.dy > 0 ? 1 : -1;
       if (e.b > 0){
+        // Finger touches the display
+        lastTouchedDrag = Date.now();
         if (!lastDragStart){
-          lastDragStart = Date.now();
-          velocity = 0;
+          lastDragStart = lastTouchedDrag;
           accDy = 0;
         }
+
+        // Direction has been reversed, reset accumulated y-values and time of first touch
+        if (accDy * direction < 0 && e.dy * direction > 0){
+          lastDragStart = Date.now();
+          accDy = 0;
+        }
+
         accDy += e.dy;
+        s.scroll -= e.dy;
+      } else {
+        // Finger has left the display, only start scrolling kinetically when the last drag event is close enough
+        if (Date.now() - lastTouchedDrag < LAST_DRAG_WAIT){
+          velocity = direction * accDy / (Date.now() - lastDragStart) * SPEED;
+          startBrake();
+        }
       }
-      velocity = accDy / (Date.now() - lastDragStart) * MAX_VELOCITY;
 
-      if (lastDragStart && e.b == 0){
-        accDy = 0;
-        lastDragStart = 0;
-      }
-
-      velocity = E.clip(velocity,-MAX_VELOCITY,MAX_VELOCITY);
-      //lastDrag=Date.now();
       if (!scheduledDraw){
-        scheduledDraw = setTimeout(draw,0);
+        scheduledDraw = setTimeout(draw, 0);
       }
     };
 
@@ -140,7 +163,8 @@
     if (options.remove) uiOpts.remove = () => {
       if (scheduledDraw)
         clearTimeout(scheduledDraw);
-      clearInterval(scheduledBrake);
+      if (scheduledBrake)
+        clearInterval(scheduledBrake);
       options.remove();
     };
 
