@@ -289,13 +289,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "recorder/widget.js": {
-    "hash": "b48698bab90fc4f38f880b6663eda108b8d31ce929ba1d32d815aa4ec8c74bca",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "qmsched/app.js": {
     "hash": "4b7dbabed6c252021531d6b0449c16a3adc2e405f2ddda33ca0a65f5fa42c663",
     "rules": [
