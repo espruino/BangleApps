@@ -15,6 +15,6 @@
   "data": [{"name":"elapsed_t.data.json"}],
   "icon": "app.png",
   "readme": "README.md",
-  "screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }, { "url": "screenshot3.png" }],
+  "screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }, { "url": "screenshot3.png" }, { "url": "screenshot4.png" }],
   "allow_emulator":true
 }

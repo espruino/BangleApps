@@ -1,15 +1,16 @@
 const APP_NAME = "elapsed_t";
 
-const COLOUR_BLACK = 0x0;
-const COLOUR_DARK_GREY = 0x4208;   // same as: g.setColor(0.25, 0.25, 0.25)
+//const COLOUR_BLACK = 0x0;
+//const COLOUR_DARK_GREY = 0x4208;   // same as: g.setColor(0.25, 0.25, 0.25)
 const COLOUR_GREY = 0x8410;   // same as: g.setColor(0.5, 0.5, 0.5)
 const COLOUR_LIGHT_GREY = 0xc618;   // same as: g.setColor(0.75, 0.75, 0.75)
 const COLOUR_RED = 0xf800;   // same as: g.setColor(1, 0, 0)
 const COLOUR_BLUE = 0x001f;   // same as: g.setColor(0, 0, 1)
-const COLOUR_YELLOW = 0xffe0;   // same as: g.setColor(1, 1, 0)
-const COLOUR_LIGHT_CYAN = 0x87ff;   // same as: g.setColor(0.5, 1, 1)
-const COLOUR_DARK_YELLOW = 0x8400;   // same as: g.setColor(0.5, 0.5, 0)
-const COLOUR_DARK_CYAN = 0x0410;   // same as: g.setColor(0, 0.5, 0.5)
+//const COLOUR_YELLOW = 0xffe0;   // same as: g.setColor(1, 1, 0)
+//const COLOUR_LIGHT_CYAN = 0x87ff;   // same as: g.setColor(0.5, 1, 1)
+//const COLOUR_DARK_YELLOW = 0x8400;   // same as: g.setColor(0.5, 0.5, 0)
+//const COLOUR_DARK_CYAN = 0x0410;   // same as: g.setColor(0, 0.5, 0.5)
+const COLOUR_CYAN = "#00FFFF";
 const COLOUR_ORANGE = 0xfc00;   // same as: g.setColor(1, 0.5, 0)
 
 const SCREEN_WIDTH = g.getWidth();
@@ -376,53 +377,53 @@ function draw() {
   let y = 24; //Bangle.getAppRect().y;
 
   // draw current date
-  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_BLUE);
+  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_CYAN : COLOUR_BLUE);
   g.drawString(nowFormatted.date, 4, y);
   y += SMALL_FONT_SIZE;
 
   // draw current time
-  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_BLUE);
+  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_CYAN : COLOUR_BLUE);
   g.drawString(nowFormatted.time, 4, y);
   y += SMALL_FONT_SIZE;
 
   // draw arrow
-  g.setFontCustom(arrowFont, 62, 16, 13).setFontAlign(-1, -1).setColor(COLOUR_RED);
+  g.setFontCustom(arrowFont, 62, 16, 13).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_ORANGE : COLOUR_RED);
   g.drawString(">", 4, y + 3);
 
   if (data.target.isSet) {
     // draw target date
-    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
+    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_ORANGE : COLOUR_RED);
     g.drawString(targetFormatted.date, 4 + 16 + 6, y);
     y += SMALL_FONT_SIZE;
 
     // draw target time
-    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
+    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_ORANGE : COLOUR_RED);
     g.drawString(targetFormatted.time, 4, y);
     y += SMALL_FONT_SIZE + 4;
 
   } else {
     // draw NOT SET
-    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_RED);
+    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_ORANGE : COLOUR_RED);
     g.drawString("NOT SET", 4 + 16 + 6, y);
     y += 2 * SMALL_FONT_SIZE + 4;
   }
 
   // draw separator
-  g.setColor(COLOUR_BLACK);
+  g.setColor(g.theme.fg);
   g.drawLine(0, y - 4, SCREEN_WIDTH, y - 4);
 
   // draw diffYMD
-  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(0, -1).setColor(COLOUR_BLACK);
+  g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(0, -1).setColor(g.theme.fg);
   g.drawString(diffYMD, SCREEN_WIDTH / 2, y);
   y += SMALL_FONT_SIZE;
 
   // draw diff_hhmm
-  g.setFont("Vector", BIG_FONT_SIZE).setFontAlign(0, -1).setColor(COLOUR_BLACK);
+  g.setFont("Vector", BIG_FONT_SIZE).setFontAlign(0, -1).setColor(g.theme.fg);
   g.drawString(diff_hhmm, SCREEN_WIDTH / 2, y);
 
   // draw diff_ss
   if (temp_displaySeconds) {
-    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(COLOUR_GREY);
+    g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_LIGHT_GREY : COLOUR_GREY);
     g.drawString(diff.ss, SCREEN_WIDTH / 2 + 52, y + 13);
   }
 
