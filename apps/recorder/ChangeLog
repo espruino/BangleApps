@@ -47,3 +47,5 @@
 	setInterval.
 0.38: Tweaks to speed up track rendering
 0.39: Minor code improvements
+0.40: Fix reference error from missing `settings` object in widget on 1 sec	recordings with gps.
+      Fix HRM source never being set in output data
