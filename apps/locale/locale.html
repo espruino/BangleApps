@@ -195,9 +195,6 @@ exports = { name : "system", currencySym:"£",
           dateN = dateN.replace(e,"${"+replaceList[e]+"}");
           dateS = dateS.replace(e,"${"+replaceList[e]+"}");
         });
-        var currency = locale.currency_first ?
-          `${js(locale.currency_symbol)} + exports.number(n)`:
-          `exports.number(n) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         function getLocaleModule(isLocal) {
@@ -216,7 +213,7 @@ function getHours(d) {
 }
 exports = {
   name: ${js(locale.lang)},
-  currencySym: ${js(locale.currency_symbol)},
+  currencySym: ${js("£")},
   dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
@@ -233,7 +230,7 @@ exports = {
       r = '${locale.thousands_sep}' + s.substr(i, 3) + r;
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
-  currency: n => ${currency},
+  currency: n => {console.log("Warning: Currency information is deprecated, see https://github.com/espruino/BangleApps/issues/3269");return ${js("£")}+exports.number(n)},
   distance: (n,dp) => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])},dp) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])},dp) + ${js(locale.distance[1])},
   speed: (n,dp) => round(${unitConv(speedUnits[locale.speed])},dp) + ${js(locale.speed)},
   temp: (t,dp) => round(${temperature},dp) + ${js(locale.temperature)},
@@ -257,7 +254,6 @@ exports = {
 <tr><td class="table_t">Date</td><td>${exports.date(date,1)}</td><td>${exports.date(date,0)}</td></tr>
 <tr><td class="table_t">Time</td><td>${exports.time(date,1)}</td><td>${exports.time(date,0)}</td></tr>
 <tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
-<tr><td class="table_t">Currency</td><td></td><td>${exports.currency(12.34)}</td></tr>
 <tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
 <tr><td class="table_t">Speed</td><td></td><td>${exports.speed(123)}</td></tr>
 <tr><td class="table_t">Temperature</td><td></td><td>${exports.temp(12,0)}</td></tr>
