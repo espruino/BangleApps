@@ -7,3 +7,4 @@
 0.06: When >1 clockinfo, swiping one back tries to ensure they don't display the same thing
 0.07: Developer tweak: clkinfo load errors are emitted
 0.08: Pass options to show(), hide() and run(), and add focus() and blur() item methods
+0.09: Save clkinfo settings on kill and remove
