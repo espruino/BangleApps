@@ -1,17 +1,18 @@
 const COLOUR_BLACK = 0x0;
 const COLOUR_WHITE = 0xffff;
-const COLOUR_DARK_GREY = "#3F3F3F";
-const COLOUR_GREY = "#7F7F7F";
-const COLOUR_LIGHT_GREY = "#BFBFBF";
+//const COLOUR_DARK_GREY = "#3F3F3F";
+//const COLOUR_GREY = "#7F7F7F";
+//const COLOUR_LIGHT_GREY = "#BFBFBF";
 const COLOUR_RED = "#FF0000";
-const COLOUR_BLUE = "#0000FF";
-const COLOUR_YELLOW = "#FFFF00";
-const COLOUR_LIGHT_CYAN = "#7FFFFF";
-const COLOUR_DARK_YELLOW = "#7F7F00";
-const COLOUR_DARK_CYAN = "#007F7F";
-const COLOUR_ORANGE = "#FF7F00";
+//const COLOUR_BLUE = "#0000FF";
+//const COLOUR_YELLOW = "#FFFF00";
+//const COLOUR_LIGHT_CYAN = "#7FFFFF";
+//const COLOUR_DARK_YELLOW = "#7F7F00";
+//const COLOUR_DARK_CYAN = "#007F7F";
+//const COLOUR_ORANGE = "#FF7F00";
 const COLOUR_VPW_GREEN = 0xf0f;
-const COLOUR_MAGENTA = "#ff00ff";
+//const COLOUR_MAGENTA = "#ff00ff";
+const COLOUR_PURPLE = "#8000FF";
 
 var settings = Object.assign({
   // default values
@@ -26,7 +27,7 @@ switch (settings.foregroundColor) {
     break;
     
   case 1:
-    foregroundColor = "#8000FF";
+    foregroundColor = COLOUR_PURPLE;
     break;
     
   case 2:
