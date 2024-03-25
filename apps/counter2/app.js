@@ -11,8 +11,8 @@ var s = Object.assign({
 
 f1 = (s.colortext) ? "#f00" : "#fff";
 f2 = (s.colortext) ? "#00f" : "#fff";
-b1 = (s.colortext) ? "#000" : "#f00";
-b2 = (s.colortext) ? "#000" : "#00f";
+b1 = (s.colortext) ? g.theme.bg : "#f00";
+b2 = (s.colortext) ? g.theme.bg : "#00f";
 
 var counter = 0;
 var drag;
