@@ -21,3 +21,7 @@ You can select if the difference is shown with years, months and days, or just d
 # TODO
 - add the option to set an alarm to the target date
 - add an offset to said alarm (e.g. x hours/days... before/after)
+
+# Author
+
+paul-arg [github](https://github.com/paul-arg)
