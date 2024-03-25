@@ -6,7 +6,6 @@
   "version":"0.01",
   "description": "A clock that calculates the time difference between now and any given target date.",
   "tags": "clock,tool",
-  "src": "elapsed_t.app.js",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"elapsed_t.app.js","url":"app.js"},
