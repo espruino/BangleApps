@@ -47,3 +47,4 @@
 	setInterval.
 0.38: Tweaks to speed up track rendering
 0.39: Minor code improvements
+0.40: Resume previous recorder logs, if within four hours - regardless of date
