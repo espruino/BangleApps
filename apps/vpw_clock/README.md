@@ -15,3 +15,7 @@ You can select the text color:
 # Todo
 
 - add support for AM/PM time
+
+# Author
+
+paul-arg [github](https://github.com/paul-arg)
