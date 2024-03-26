@@ -136,7 +136,7 @@ function draw() {
         true
       );
       g.setFontAlign(1, 0);
-      g.drawString(`${time}`, xcol2, yposWorld + index * 15, true);
+      g.drawString(time, xcol2, yposWorld + index * 15, true);
     }
   });
 
