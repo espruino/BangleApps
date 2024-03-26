@@ -115,6 +115,7 @@
 
     const dragHandler = e=>{
       direction = e.dy > 0 ? 1 : -1;
+      s.scroll -= e.dy;
       if (e.b > 0){
         // Finger touches the display
         lastTouchedDrag = Date.now();
@@ -132,7 +133,6 @@
         }
 
         accDy += e.dy;
-        s.scroll -= e.dy;
       } else {
         // Finger has left the display, only start scrolling kinetically when the last drag event is close enough
         if (Date.now() - lastTouchedDrag < LAST_DRAG_WAIT){
