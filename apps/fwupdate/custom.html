@@ -227,8 +227,15 @@ function convertZipFile(binary) {
   Promise.resolve(binary).then(binary => {
     info.binary = binary;
     return JSZip.loadAsync(binary)
-  }).then(function(zipFile) {
-    info.zipFile = zipFile;
+  }).then(async function(zipFile) {
+    const fileArray = Object.values(zipFile.files);
+    // If the contents are zipped twice, extract the contents of the inner zip file
+    if(fileArray.length === 1 && fileArray[0].name?.endsWith(".zip")){
+      const zipBlob = await zipFile.file(fileArray[0].name).async("blob");
+      info.zipFile = await JSZip.loadAsync(zipBlob);
+    }else{
+      info.zipFile = zipFile;
+    }
     return info.zipFile.file("manifest.json").async("string");
   }).then(function(content) {
     info.manifest = JSON.parse(content).manifest;
