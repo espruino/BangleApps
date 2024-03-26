@@ -61,11 +61,14 @@
 
     const draw = () => {
       if (velocity > MIN_VELOCITY){
+        if (!scheduledDraw)
+          scheduledDraw = setTimeout(draw, 0);
         velocity *= 1-((Date.now() - lastTouchedDrag) / 8000);
         if (velocity <= MIN_VELOCITY){
           velocity = 0;
+        } else {
+          s.scroll -= velocity * direction;
         }
-        s.scroll -= velocity * direction;
       }
 
       if (s.scroll > menuScrollMax){
@@ -80,11 +83,6 @@
       let oldScroll = rScroll;
       rScroll = s.scroll &~1;
       let d = oldScroll-rScroll;
-
-      if (velocity > MIN_VELOCITY)
-        scheduledDraw = setTimeout(draw, 0);
-      else
-        scheduledDraw = undefined;
 
       if (!d) {
         return;
@@ -111,11 +109,12 @@
         }
       }
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+      scheduledDraw = undefined;
     };
 
     const dragHandler = e=>{
       let now=Date.now();
-      direction = e.dy > 0 ? 1 : -1;
+      direction = Math.sign(e.dy);
       s.scroll -= e.dy;
       if (e.b > 0){
         // Finger touches the display or direction has been reversed
@@ -134,10 +133,7 @@
         }
         lastDragStart = 0;
       }
-
-      if (!scheduledDraw){
-        scheduledDraw = setTimeout(draw, 0);
-      }
+      draw();
     };
 
     let uiOpts = {
