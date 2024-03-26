@@ -3,3 +3,4 @@
 0.03: Use new message library
 0.04: Remove library stub
 0.05: Don't turn on LCD
+0.06: Don't draw outside of widget field
