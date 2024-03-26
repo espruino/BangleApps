@@ -1,6 +1,6 @@
 # Fast Reset
 
-Reset the watch by pressing the hardware button just a little bit longer than a click. If 'Fastload Utils' is installed this will typically be done with fastloading. A buzz acts as indicator.
+Reset the watch to the clock face by pressing the hardware button just a little bit longer than a click. If 'Fastload Utils' is installed this will typically be done with fastloading. A buzz acts as indicator.
 
 Fast Reset was developed with the app history feature of 'Fastload Utils' in mind. If many apps are in the history stack, the user may want a fast way to exit directly to the clock face without using the firmwares reset function.
 
