@@ -1,0 +1,16 @@
+{ "id": "poke_album",
+  "name": "Pokemon",
+  "shortName":"Pokemon",
+  "version":"0.01",
+  "description": "A simple clock that displays a different Pokemon every minute",
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"poke_album.app.js","url":"app.js"},
+    {"name":"poke_album.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [{ "url": "screenshot.png" }, { "url": "screenshot1.png" }, { "url": "screenshot2.png" }, { "url": "screenshot3.png" }, { "url": "screenshot4.png" }, { "url": "screenshot5.png" }, { "url": "screenshot6.png" }]
+}
