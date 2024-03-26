@@ -114,20 +114,14 @@
     };
 
     const dragHandler = e=>{
+      let now=Date.now();
       direction = e.dy > 0 ? 1 : -1;
       s.scroll -= e.dy;
       if (e.b > 0){
-        // Finger touches the display
-        lastTouchedDrag = Date.now();
-        if (!lastDragStart){
+        // Finger touches the display or direction has been reversed
+        lastTouchedDrag = now;
+        if (!lastDragStart || (accDy * direction < 0 && e.dy * direction > 0)){
           lastDragStart = lastTouchedDrag;
-          velocity = 0;
-          accDy = 0;
-        }
-
-        if (accDy * direction < 0 && e.dy * direction > 0){
-          // Direction has been reversed, reset accumulated y-values and time of first touch
-          lastDragStart = Date.now();
           velocity = 0;
           accDy = 0;
         }
@@ -135,9 +129,10 @@
         accDy += e.dy;
       } else {
         // Finger has left the display, only start scrolling kinetically when the last drag event is close enough
-        if (Date.now() - lastTouchedDrag < LAST_DRAG_WAIT){
-          velocity = direction * accDy / (Date.now() - lastDragStart) * SPEED;
+        if (now - lastTouchedDrag < LAST_DRAG_WAIT){
+          velocity = direction * accDy / (now - lastDragStart) * SPEED;
         }
+        lastDragStart = 0;
       }
 
       if (!scheduledDraw){
