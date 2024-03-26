@@ -118,7 +118,7 @@ function draw() {
     if (offsets.length === 1) {
       // For a single secondary timezone, draw it bigger and drop time zone to second line
       g.setFont(font, secondaryTimeFontSize);
-      g.drawString(`${time}`, xyCenter, yposTime2, true);
+      g.drawString(time, xyCenter, yposTime2, true);
       g.setFont(font, secondaryTimeZoneFontSize);
       g.drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime2 + 30, true);
 
