@@ -311,7 +311,7 @@ function plotTrack(info) { "ram"
   g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, isBTN3?BTN3:BTN1);
+  }, isBTN3?BTN3:BTN1, {edge:"falling"});
   Bangle.drawWidgets();
   g.flip();
 }
@@ -432,7 +432,7 @@ function plotGraph(info, style) { "ram"
   g.drawString(/*LANG*/"Back",g.getWidth() - 10, isBTN3 ? (g.getHeight() - 40) : (g.getHeight()/2));
   setWatch(function() {
     viewTrack(info.filename, info);
-  }, isBTN3?BTN3:BTN1);
+  }, isBTN3?BTN3:BTN1, {edge:"falling"});
   g.flip();
 }
 
