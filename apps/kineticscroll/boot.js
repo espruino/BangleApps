@@ -25,30 +25,18 @@
     const MIN_VELOCITY=0.1;
 
     let scheduledDraw;
+
     let velocity = 0;
     let accDy = 0;
     let direction = 0;
-    let scheduledBrake;
+
     let lastTouchedDrag = 0;
     let lastDragStart = 0;
+
     let R = Bangle.appRect;
     let menuScrollMin = 0|options.scrollMin;
     let menuScrollMax = options.h*options.c - R.h;
     if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
-
-    const startBrake = () => {
-      if (!scheduledBrake){
-        scheduledBrake = setInterval(()=>{
-          velocity *= 0.9;
-          if (velocity <= MIN_VELOCITY){
-            velocity = 0;
-            if (scheduledBrake)
-              clearInterval(scheduledBrake);
-            scheduledBrake = undefined;
-          }
-        }, 50);
-      }
-    };
 
     const touchHandler = (_,e)=>{
       if (e.y<R.y-4) return;
@@ -73,6 +61,10 @@
 
     const draw = () => {
       if (velocity > MIN_VELOCITY){
+        velocity *= 1-((Date.now() - lastTouchedDrag) / 8000);
+        if (velocity <= MIN_VELOCITY){
+          velocity = 0;
+        }
         s.scroll -= velocity * direction;
       }
 
@@ -90,7 +82,7 @@
       let d = oldScroll-rScroll;
 
       if (velocity > MIN_VELOCITY)
-        scheduledDraw = setTimeout(draw,0);
+        scheduledDraw = setTimeout(draw, 0);
       else
         scheduledDraw = undefined;
 
@@ -128,12 +120,14 @@
         lastTouchedDrag = Date.now();
         if (!lastDragStart){
           lastDragStart = lastTouchedDrag;
+          velocity = 0;
           accDy = 0;
         }
 
-        // Direction has been reversed, reset accumulated y-values and time of first touch
         if (accDy * direction < 0 && e.dy * direction > 0){
+          // Direction has been reversed, reset accumulated y-values and time of first touch
           lastDragStart = Date.now();
+          velocity = 0;
           accDy = 0;
         }
 
@@ -143,7 +137,6 @@
         // Finger has left the display, only start scrolling kinetically when the last drag event is close enough
         if (Date.now() - lastTouchedDrag < LAST_DRAG_WAIT){
           velocity = direction * accDy / (Date.now() - lastDragStart) * SPEED;
-          startBrake();
         }
       }
 
@@ -163,14 +156,10 @@
     if (options.remove) uiOpts.remove = () => {
       if (scheduledDraw)
         clearTimeout(scheduledDraw);
-      if (scheduledBrake)
-        clearInterval(scheduledBrake);
       options.remove();
     };
 
     Bangle.setUI(uiOpts);
-
-
 
     function idxToY(i) {
       return i*options.h + R.y - rScroll;
@@ -189,12 +178,14 @@
         for (let i=a;i<=b;i++)
           options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-      }, drawItem : i => {
+      },
+      drawItem : i => {
         let y = idxToY(i);
         g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-  }, isActive : () => Bangle.uiRedraw == uiDraw
+      },
+      isActive : () => Bangle.uiRedraw == uiDraw
     };
 
     let rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
