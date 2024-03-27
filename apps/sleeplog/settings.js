@@ -13,6 +13,7 @@
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 100, //     threshold for deep sleep
     lightTh: 200, //    threshold for light sleep
+    wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
     appTimeout: 0 //   lock and backlight timeouts for the app
@@ -342,6 +343,19 @@
         noList: true,
         onchange: v => {
           settings.lightTh = v;
+          writeSetting();
+        }
+      },
+      /*LANG*/"Wear Temperature": {
+        value: settings.wearTemp,
+        step: 0.5,
+        min: 19.5,
+        max: 40,
+        wrap: true,
+        noList: true,
+        format: v => v === 19.5 ? "Disabled" : v + "°C",
+        onchange: v => {
+          settings.wearTemp = v;
           writeSetting();
         }
       },

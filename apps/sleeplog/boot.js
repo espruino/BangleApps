@@ -13,6 +13,7 @@ global.sleeplog = {
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 100, //     threshold for deep sleep
     lightTh: 200, //    threshold for light sleep
+    wearTemp: 19.5, //    temperature threshold to count as worn
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
 
@@ -158,13 +159,13 @@ if (sleeplog.conf.enabled) {
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
 
       // add preliminary status depending on charging and movement thresholds
+      // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
       data.status = Bangle.isCharging() ? 1 :
         data.movement <= sleeplog.conf.deepTh ? 4 :
         data.movement <= sleeplog.conf.lightTh ? 3 : 2;
 
-      // check if changing to deep sleep from non sleepling
+      // check if changing to deep sleep from non sleeping
       if (data.status === 4 && sleeplog.status <= 2) {
-        // check wearing status
         sleeplog.checkIsWearing((isWearing, data) => {
           // correct status
           if (!isWearing) data.status = 1;
@@ -177,8 +178,12 @@ if (sleeplog.conf.enabled) {
       }
     },
 
-    // define function to check if the bangle is worn by using the hrm
+    // check wearing status either based on HRM or temperature as set in settings
     checkIsWearing: function(returnFn, data) {
+      if (this.conf.wearTemp !== 19.5) {
+        return returnFn(!Bangle.isCharging() && E.getTemperature() >= this.conf.wearTemp, data);
+      }
+
       // create a temporary object to store data and functions
       global.tmpWearingCheck = {
         // define temporary hrm listener function to read the wearing status
