@@ -41,7 +41,7 @@ var data = Object.assign({
     D: now.getDate(),
     h: now.getHours(),
     m: now.getMinutes(),
-    s: now.getSeconds()
+    s: 0
   }
 }, require('Storage').readJSON(APP_NAME + ".data.json", true) || {});
 
