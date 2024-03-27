@@ -106,7 +106,7 @@ function formatDateTime(date, dateFormat, time24, showSeconds) {
     var ampm = (h >= 12 ? 'PM' : 'AM');
     var h_ampm = h % 12;
     h_ampm = (h_ampm == 0 ? 12 : h_ampm);
-    formattedDateTime.time = `${h_ampm}:${mm}${showSeconds ? `:${ss}` : ''}${ampm}`;
+    formattedDateTime.time = `${h_ampm}:${mm}${showSeconds ? `:${ss}` : ''} ${ampm}`;
   }
 
   return formattedDateTime;
