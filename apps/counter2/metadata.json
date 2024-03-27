@@ -1,0 +1,18 @@
+{
+  "id": "counter2",
+  "name": "Counter2",
+  "version": "0.02",
+  "description": "Dual Counter",
+  "readme":"README.md",
+  "icon": "counter2-icon.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"counter2-screenshot.png"},{"url":"counter2dark-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"counter2.app.js","url":"app.js"},
+    {"name":"counter2.settings.js","url":"settings.js"},
+    {"name":"counter2.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"counter2.json"}]
+}
