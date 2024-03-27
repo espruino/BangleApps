@@ -41,7 +41,7 @@ var data = Object.assign({
     D: now.getDate(),
     h: now.getHours(),
     m: now.getMinutes(),
-    s: now.getSeconds()
+    s: 0
   }
 }, require('Storage').readJSON(APP_NAME + ".data.json", true) || {});
 
@@ -106,10 +106,17 @@ function formatDateTime(date, dateFormat, time24, showSeconds) {
     var ampm = (h >= 12 ? 'PM' : 'AM');
     var h_ampm = h % 12;
     h_ampm = (h_ampm == 0 ? 12 : h_ampm);
-    formattedDateTime.time = `${h_ampm}:${mm}${showSeconds ? `:${ss}` : ''}${ampm}`;
+    formattedDateTime.time = `${h_ampm}:${mm}${showSeconds ? `:${ss}` : ''} ${ampm}`;
   }
 
   return formattedDateTime;
+}
+
+function formatHourToAMPM(h){
+  var ampm = (h >= 12 ? 'PM' : 'AM');
+  var h_ampm = h % 12;
+  h_ampm = (h_ampm == 0 ? 12 : h_ampm);
+  return `${h_ampm} ${ampm}`
 }
 
 function howManyDaysInMonth(month, year) {
@@ -124,44 +131,6 @@ function handleExceedingDay() {
     data.target.D = maxDays;
   }
 }
-
-function setTarget(set) {
-  if (set) {
-    target = new Date(
-      data.target.Y,
-      data.target.M - 1,
-      data.target.D,
-      data.target.h,
-      data.target.m,
-      data.target.s
-    );
-    data.target.isSet = true;
-  } else {
-    target = new Date();
-    Object.assign(
-      data,
-      {
-        target: {
-          isSet: false,
-          Y: now.getFullYear(),
-          M: now.getMonth() + 1, // Month is zero-based, so add 1
-          D: now.getDate(),
-          h: now.getHours(),
-          m: now.getMinutes(),
-          s: now.getSeconds()
-        }
-      }
-    );
-  }
-
-  writeData();
-}
-
-var target;
-setTarget(data.target.isSet);
-
-var drawTimeout;
-var queueMillis = 1000;
 
 var menu = {
   "": {
@@ -202,7 +171,7 @@ var menu = {
     onchange: v => {
       data.target.h = v;
     },
-    format: function (v) { return pad2(v); }
+    format: function (v) {return(settings.time24 ? pad2(v) : formatHourToAMPM(v))}
   },
   'Minutes': {
     value: data.target.m,
@@ -239,6 +208,51 @@ var menu = {
     draw();
   }
 };
+
+function setTarget(set) {
+  if (set) {
+    target = new Date(
+      data.target.Y,
+      data.target.M - 1,
+      data.target.D,
+      data.target.h,
+      data.target.m,
+      data.target.s
+    );
+    data.target.isSet = true;
+  } else {
+    target = new Date();
+    Object.assign(
+      data,
+      {
+        target: {
+          isSet: false,
+          Y: now.getFullYear(),
+          M: now.getMonth() + 1, // Month is zero-based, so add 1
+          D: now.getDate(),
+          h: now.getHours(),
+          m: now.getMinutes(),
+          s: 0
+        }
+      }
+    );
+    menu.Day.value = data.target.D;
+    menu.Month.value = data.target.M;
+    menu.Year.value = data.target.Y;
+    menu.Hours.value = data.target.h;
+    menu.Minutes.value = data.target.m;
+    menu.Seconds.value = 0;
+  }
+
+  writeData();
+}
+
+var target;
+setTarget(data.target.isSet);
+
+var drawTimeout;
+var queueMillis = 1000;
+
 
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -359,9 +373,18 @@ function diffToTarget() {
 }
 
 function draw() {
-  var nowFormatted = formatDateTime(new Date(), settings.dateFormat, settings.time24, temp_displaySeconds);
+  var now = new Date();
+  var nowFormatted = formatDateTime(now, settings.dateFormat, settings.time24, temp_displaySeconds);
   var targetFormatted = formatDateTime(target, settings.dateFormat, settings.time24, true);
   var diff = diffToTarget();
+
+  const nowY = now.getFullYear();
+  const nowM = now.getMonth();
+  const nowD = now.getDate();
+
+  const targetY = target.getFullYear();
+  const targetM = target.getMonth();
+  const targetD = target.getDate();
 
   var diffYMD;
   if (settings.displayMonthsYears)
@@ -391,9 +414,23 @@ function draw() {
   g.drawString(">", 4, y + 3);
 
   if (data.target.isSet) {
-    // draw target date
     g.setFont("Vector", SMALL_FONT_SIZE).setFontAlign(-1, -1).setColor(g.theme.dark ? COLOUR_ORANGE : COLOUR_RED);
-    g.drawString(targetFormatted.date, 4 + 16 + 6, y);
+
+    if (nowY == targetY && nowM == targetM && nowD == targetD) {
+      // today
+      g.drawString("TODAY", 4 + 16 + 6, y);
+    } else if (nowY == targetY && nowM == targetM && nowD - targetD == 1) {
+      // yesterday
+      g.drawString("YESTERDAY", 4 + 16 + 6, y);
+    } else if (nowY == targetY && nowM == targetM && targetD - nowD == 1) {
+      // tomorrow
+      g.drawString("TOMORROW", 4 + 16 + 6, y);
+    } else {
+      // general case
+      // draw target date
+      g.drawString(targetFormatted.date, 4 + 16 + 6, y);
+    }
+
     y += SMALL_FONT_SIZE;
 
     // draw target time
