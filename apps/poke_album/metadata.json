@@ -1,6 +1,6 @@
 { "id": "poke_album",
-  "name": "Pokemon",
-  "shortName":"Pokemon",
+  "name": "Pokemon Album",
+  "shortName":"Pokemon Album",
   "version":"0.01",
   "description": "A simple clock that displays a different Pokemon every minute",
   "icon": "icon.png",
