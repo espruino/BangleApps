@@ -72,21 +72,31 @@ const draw = () => {
 };
 
 const reload = () => {
+  const showMenu = () => {
+    const menu: { [k: string]: () => void } = {
+      "Restore to full power": drainedRestore,
+    };
+
+    if (NRF.getSecurityStatus().advertising)
+      menu["Disable BLE"] = () => { NRF.sleep(); showMenu(); };
+    else
+      menu["Enable BLE"] = () => { NRF.wake(); showMenu(); };
+
+    menu["Settings"] = () => load("setting.app.js");
+    menu["Recovery"] = () => Bangle.showRecoveryMenu();
+    menu["Exit menu"] = reload;
+
+    if(nextDraw) clearTimeout(nextDraw);
+    E.showMenu(menu);
+  };
+
   Bangle.setUI({
     mode: "custom",
     remove: () => {
       if (nextDraw) clearTimeout(nextDraw);
       nextDraw = undefined;
     },
-    btn: () => {
-      const menu = {
-          "Restore to full power": drainedRestore,
-          "Enable BLE": () => NRF.wake(),
-          "Settings": () => load("setting.app.js"),
-          "Recovery": () => Bangle.showRecoveryMenu(),
-      };
-      E.showMenu(menu);
-    }
+    btn: showMenu
   });
   Bangle.CLOCK=1;
 

@@ -1,7 +1,7 @@
 {
   "id": "drained",
   "name": "Drained",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Switches to displaying a simple clock when the battery percentage is low, and disables some peripherals",
   "readme": "README.md",
   "icon": "icon.png",
