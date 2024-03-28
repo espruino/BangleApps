@@ -1,13 +1,25 @@
-const MIN_FREE_MEM = 1000;
-const LOW_MEM = 2000;
-const ovrx = 10;
-const ovry = 10;
-const ovrw = g.getWidth()-2*ovrx;
-const ovrh = g.getHeight()-2*ovry;
 let _g = g;
 
 let lockListener;
 let quiet;
+
+var settings = Object.assign(
+  require('Storage').readJSON("messagesoverlay.default.json", true) || {},
+  require('Storage').readJSON("messagesoverlay.json", true) || {}
+);
+
+settings = Object.assign({
+  fontSmall:"6x8",
+  fontMedium:"Vector:14",
+  fontBig:"Vector:20",
+  fontLarge:"Vector:30",
+  reemit: true
+}, settings);
+
+const ovrx = settings.border;
+const ovry = ovrx;
+const ovrw = g.getWidth()-2*ovrx;
+const ovrh = g.getHeight()-2*ovry;
 
 let LOG = function() {
   //print.apply(null, arguments);
@@ -16,15 +28,6 @@ let LOG = function() {
 let isQuiet = function(){
   if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
   return quiet;
-};
-
-let settings = {
-  fontSmall:"6x8",
-  fontMedium:"Vector:14",
-  fontBig:"Vector:20",
-  fontLarge:"Vector:30",
-  timeout: 10,
-  reemit: true
 };
 
 let eventQueue = [];
@@ -441,10 +444,10 @@ exports.message = function(type, event) {
   if(event.messagesoverlayignore) return;
 
   bpp = 4;
-  if (process.memory().free < LOW_MEM)
+  if (process.memory().free < settings.lowmwm)
     bpp = 1;
 
-  while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
+  while (process.memory().free < settings.minfreemem && eventQueue.length > 0){
     let dropped = eventQueue.pop();
     print("Dropped message because of memory constraints", dropped);
   }
@@ -479,7 +482,7 @@ exports.message = function(type, event) {
       } else {
         cleanup();
       }
-    }, settings.timeout * 1000);
+    }, settings.autoclear * 1000);
   };
 
   updateClearingTimeout();
