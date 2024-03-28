@@ -300,7 +300,7 @@ let drawMessage = function(ovr, msg) {
   if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
 
   let bodyFont = typeof msg.bodyFont === "undefined" ? settings.fontMedium : msg.bodyFont;
-  let Padding = 3;
+  let Padding = 3 + eventQueue.length > 1 ? 2 : 0;
   if (typeof msg.lines === "undefined") {
     ovr.setFont(bodyFont);
     msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
@@ -321,6 +321,16 @@ let drawMessage = function(ovr, msg) {
   ovr.setBgColor(ovr.theme.bg);
   ovr.setColor(ovr.theme.fg);
   ovr.clearRect(2, yText, ovrw-3, ovrh-3);
+
+  if (eventQueue.length > 1){
+    ovr.drawLine(ovr.getWidth()-4,ovr.getHeight()/2,ovr.getWidth()-4,ovr.getHeight()-4);
+    ovr.drawLine(ovr.getWidth()/2,ovr.getHeight()-4,ovr.getWidth()-4,ovr.getHeight()-4);
+  }
+  if (eventQueue.length > 3){
+    ovr.drawLine(ovr.getWidth()-6,ovr.getHeight()*0.6,ovr.getWidth()-6,ovr.getHeight()-6);
+    ovr.drawLine(ovr.getWidth()*0.6,ovr.getHeight()-6,ovr.getWidth()-6,ovr.getHeight()-6);
+  }
+
   let xText = Padding;
   yText += Padding;
   ovr.setFont(bodyFont);
