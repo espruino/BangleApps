@@ -36,6 +36,10 @@ switch (settings.foregroundColor) {
     foregroundColor = COLOUR_WHITE;
     break;
 
+  case 3:
+    foregroundColor = COLOUR_BLACK;
+    break;
+    
   default:
     foregroundColor = COLOUR_BLACK; // to detect problems
     break;
@@ -144,7 +148,7 @@ function draw() {
 }
 
 // Clear the screen once, at startup
-g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: true }).clear();
+g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: false }).clear();
 // draw immediately at first, queue update
 draw();
 // Stop updates when LCD is off, restart when on
