@@ -21,8 +21,8 @@
             true: "#fff",
         },
         _a[2] = {
-            false: "#0ff",
-            true: "#00f",
+            false: "#00f",
+            true: "#0ff",
         },
         _a);
     WIDGETS["bluetooth"] = {
