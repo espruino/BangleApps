@@ -57,7 +57,7 @@ function writeSettings() {
 let inMenu = false;
 
 Bangle.on('touch', function (zone, e) {
-  if (!inMenu) {
+  if (!inMenu && e.y > 24) {
     if (drawTimeout) clearTimeout(drawTimeout);
     E.showMenu(menu);
     inMenu = true;
@@ -276,6 +276,10 @@ function updateQueueMillis(displaySeconds) {
 }
 
 Bangle.on('lock', function (on, reason) {
+  if (inMenu) { // if already in a menu, nothing to do
+    return;
+  }
+
   if (on) { // screen is locked
     temp_displaySeconds = false;
     updateQueueMillis(false);
