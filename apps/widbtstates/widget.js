@@ -17,7 +17,7 @@
     };
     var colours = (_a = {},
         _a[1] = {
-            false: "#fff",
+            false: "#000",
             true: "#fff",
         },
         _a[2] = {
