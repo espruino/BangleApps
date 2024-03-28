@@ -11,7 +11,7 @@ var settings = Object.assign(
 settings = Object.assign({
   fontSmall:"6x8",
   fontMedium:"Vector:14",
-  fontBig:"Vector:20",
+  fontBig:g.getFonts().includes("Vector") ? "Vector:20" : "6x8:3",
   fontLarge:"Vector:30",
   reemit: true
 }, settings);
@@ -107,6 +107,8 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setBgColor(ovr.theme.bg2);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
 
+  ovr.drawRect(2,38,ovr.getWidth()-2,39);
+  
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
@@ -139,7 +141,6 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
 let showMessage = function(ovr, msg) {
   LOG("showMessage");
-  ovr.setBgColor(ovr.theme.bg);
 
   if (typeof msg.CanscrollDown === "undefined")
     msg.CanscrollDown = false;
@@ -162,12 +163,12 @@ let showMessage = function(ovr, msg) {
 
   drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
+  drawMessage(ovr, msg);
+
   if (!isQuiet() && msg.new) {
     msg.new = false;
     Bangle.buzz();
   }
-
-  drawMessage(ovr, msg);
 };
 
 let drawBorder = function(img) {
@@ -251,12 +252,10 @@ let stopCallBuzz = function() {
 };
 
 let drawTriangleUp = function(ovr) {
-  ovr.reset();
   ovr.fillPoly([ovr.getWidth()-9, 46,ovr.getWidth()-14, 56,ovr.getWidth()-4, 56]);
 };
 
 let drawTriangleDown = function(ovr) {
-  ovr.reset();
   ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
 };
 
@@ -292,35 +291,55 @@ let scrollDown = function(ovr) {
 };
 
 let drawMessage = function(ovr, msg) {
-  let MyWrapString = function(str, maxWidth) {
+  let wrapString = function(str, maxWidth) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
   };
 
   if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
 
-  let bodyFont = typeof msg.bodyFont === "undefined" ? settings.fontMedium : msg.bodyFont;
-  let Padding = 3 + eventQueue.length > 1 ? 2 : 0;
+  let padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
+  
+  let yText = 40;
+  let yLine = yText + 3;
+
   if (typeof msg.lines === "undefined") {
+    let bodyFont = settings.fontBig;
     ovr.setFont(bodyFont);
-    msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
-    if (msg.lines.length <= 2) {
-      bodyFont = ovr.getFonts().includes("Vector") ? "Vector:20" : "6x8:3";
+    msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
+    if (msg.lines.length * (ovr.getFontHeight() + 1) > ovr.getHeight() - yLine - padding) {
+      bodyFont = settings.fontMedium;
       ovr.setFont(bodyFont);
-      msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
-      msg.bodyFont = bodyFont;
+      msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
     }
+    msg.bodyFont = bodyFont;
   }
 
-  let NumLines = 7;
+  ovr.setFont(msg.bodyFont);
+  
+  let textHeight = ovr.getFontHeight() + 1;
 
-  let linesToPrint = (msg.lines.length > NumLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + NumLines) : msg.lines;
+  let numLines = Math.floor((ovr.getHeight() - yText - padding - 4)/textHeight);
 
-  let yText = 40;
+  let linesToPrint = (msg.lines.length > numLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + numLines + 1) : msg.lines;
 
   ovr.setBgColor(ovr.theme.bg);
   ovr.setColor(ovr.theme.fg);
-  ovr.clearRect(2, yText, ovrw-3, ovrh-3);
+  ovr.clearRect(2, yText, ovr.getWidth()-3, ovr.getHeight()-3);
+
+  let xText = 4;
+
+  if (msg.bodyFont == settings.fontBig) {
+    ovr.setFontAlign(0, -1);
+    xText = Math.round(ovr.getWidth() / 2 - (padding - 3) / 2) + 1;
+    yLine = (ovr.getHeight() + yLine) / 2 - (textHeight * msg.lines.length / 2);
+  } else
+    ovr.setFontAlign(-1, -1);
+
+  linesToPrint.forEach((line, i) => {
+    ovr.drawString(line, xText, yLine);
+    yLine += textHeight;
+  });
 
   if (eventQueue.length > 1){
     ovr.drawLine(ovr.getWidth()-4,ovr.getHeight()/2,ovr.getWidth()-4,ovr.getHeight()-4);
@@ -331,24 +350,7 @@ let drawMessage = function(ovr, msg) {
     ovr.drawLine(ovr.getWidth()*0.6,ovr.getHeight()-6,ovr.getWidth()-6,ovr.getHeight()-6);
   }
 
-  let xText = Padding;
-  yText += Padding;
-  ovr.setFont(bodyFont);
-  let HText = ovr.getFontHeight();
-
-  yText = ((ovrh - yText) / 2) - (linesToPrint.length * HText / 2) + yText;
-
-  if (linesToPrint.length <= 3) {
-    ovr.setFontAlign(0, -1);
-    xText = ovr.getWidth() / 2;
-  } else
-    ovr.setFontAlign(-1, -1);
-
-
-  linesToPrint.forEach((line, i) => {
-    ovr.drawString(line, xText, yText + HText * i);
-  });
-
+  ovr.setColor(ovr.theme.fg2);
   if (msg.FirstLine != 0) {
     msg.CanscrollUp = true;
     drawTriangleUp(ovr);
@@ -360,6 +362,7 @@ let drawMessage = function(ovr, msg) {
     drawTriangleDown(ovr);
   } else
     msg.CanscrollDown = false;
+
   show(ovr);
   if (!isQuiet()) Bangle.setLCDPower(1);
 };
