@@ -419,7 +419,8 @@ let main = function(ovr, event) {
   LOG("Main", event, settings);
 
   if (!lockListener) {
-    lockListener = function (){
+    lockListener = function (e){
+      updateClearingTimeout();
       drawBorder();
     };
     Bangle.on('lock', lockListener);
@@ -444,6 +445,27 @@ let main = function(ovr, event) {
 
 let ovr;
 let clearingTimeout;
+
+let updateClearingTimeout = ()=>{
+  LOG("updateClearingTimeout");
+  if (settings.autoclear >= 0)
+    return;
+  if (clearingTimeout) clearTimeout(clearingTimeout);
+  if (Bangle.isLocked()){
+    clearingTimeout = setTimeout(()=>{
+      LOG("setNewTimeut");
+      let current = eventQueue.pop();
+      if (eventQueue.length > 0){
+        LOG("still got elements");
+        updateClearingTimeout();
+      } else {
+        cleanup();
+      }
+    }, settings.autoclear * 1000);
+  } else {
+    clearingTimeout = undefined;
+  }
+};
 
 exports.message = function(type, event) {
   LOG("Got message", type, event);
@@ -478,22 +500,6 @@ exports.message = function(type, event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   main(ovr, event);
-
-
-  let updateClearingTimeout = ()=>{
-    LOG("updateClearingTimeout");
-    if (clearingTimeout) clearTimeout(clearingTimeout);
-    clearingTimeout = setTimeout(()=>{
-      LOG("setNewTimeut");
-      let current = eventQueue.pop();
-      if (eventQueue.length > 0){
-        LOG("still got elements");
-        updateClearingTimeout();
-      } else {
-        cleanup();
-      }
-    }, settings.autoclear * 1000);
-  };
 
   updateClearingTimeout();
 
