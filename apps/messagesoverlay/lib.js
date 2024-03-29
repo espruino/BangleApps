@@ -262,7 +262,6 @@ let drawTriangleDown = function(ovr) {
   ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
 };
 
-let linesScroll = 6;
 
 let scrollUp = function(ovr) {
   msg = eventQueue[0];
@@ -274,7 +273,7 @@ let scrollUp = function(ovr) {
 
   if (!msg.CanscrollUp) return;
 
-  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - linesScroll : 0;
+  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
 
   drawMessage(ovr, msg);
 };
@@ -289,7 +288,7 @@ let scrollDown = function(ovr) {
 
   if (!msg.CanscrollDown) return;
 
-  msg.FirstLine = msg.FirstLine + linesScroll;
+  msg.FirstLine = msg.FirstLine + 1;
   drawMessage(ovr, msg);
 };
 
@@ -298,6 +297,14 @@ let drawMessage = function(ovr, msg) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
   };
+  let wrappedStringHeight = function(strArray){
+    let r = 0;
+    strArray.forEach((line, i) => {
+      let metrics = ovr.stringMetrics(line);
+      r += Math.max(metrics.height, metrics.maxImageHeight);
+    });
+    return r;
+  }
 
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
@@ -309,28 +316,29 @@ let drawMessage = function(ovr, msg) {
   let yText = 40;
   let yLine = yText + 3;
 
+  let maxTextHeight = ovr.getHeight() - yLine - padding;
+
   if (typeof msg.lines === "undefined") {
     let bodyFont = settings.fontBig;
     ovr.setFont(bodyFont);
     msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
-    if (msg.lines.length * (ovr.getFontHeight() + 1) > ovr.getHeight() - yLine - padding) {
+
+    if (wrappedStringHeight(msg.lines) > maxTextHeight) {
       bodyFont = settings.fontMedium;
       ovr.setFont(bodyFont);
       msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
     }
     msg.bodyFont = bodyFont;
-  }
+    msg.lineHeights = [];
+    msg.lines.forEach((line, i) => {
+      let metrics = ovr.stringMetrics(line);
+      msg.lineHeights[i] = Math.max(metrics.height, metrics.maxImageHeight);
+    });
+  }  
 
   ovr.setFont(msg.bodyFont);
-  
-  let textHeight = ovr.getFontHeight() + 1;
-
-  let numLines = Math.floor((ovr.getHeight() - yText - padding - 4)/textHeight);
-
-  let linesToPrint = (msg.lines.length > numLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + numLines + 1) : msg.lines;
-
-  ovr.setBgColor(ovr.theme.bg);
   ovr.setColor(ovr.theme.fg);
+  ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2, yText, ovr.getWidth()-3, ovr.getHeight()-3);
 
   let xText = 4;
@@ -338,14 +346,26 @@ let drawMessage = function(ovr, msg) {
   if (msg.bodyFont == settings.fontBig) {
     ovr.setFontAlign(0, -1);
     xText = Math.round(ovr.getWidth() / 2 - (padding - 3) / 2) + 1;
-    yLine = (ovr.getHeight() + yLine) / 2 - (textHeight * msg.lines.length / 2);
-  } else
+    yLine = (ovr.getHeight() + yLine) / 2 - (wrappedStringHeight(msg.lines) / 2);
+    ovr.drawString(msg.lines.join("\n"), xText, yLine);
+  } else {
     ovr.setFontAlign(-1, -1);
+  }
 
-  linesToPrint.forEach((line, i) => {
-    ovr.drawString(line, xText, yLine);
-    yLine += textHeight;
-  });
+  let currentLine = msg.FirstLine;
+
+  let drawnHeight = 0;
+  
+  while(drawnHeight < maxTextHeight) {
+    let lineHeight = msg.lineHeights[currentLine];
+    if (drawnHeight + lineHeight < maxTextHeight) {
+      ovr.drawString(msg.lines[currentLine], xText, yLine + drawnHeight);
+      drawnHeight += lineHeight;
+      currentLine++;
+    } else {
+      break;
+    }
+  }
 
   if (eventQueue.length > 1){
     ovr.drawLine(ovr.getWidth()-4,ovr.getHeight()/2,ovr.getWidth()-4,ovr.getHeight()-4);
@@ -363,7 +383,7 @@ let drawMessage = function(ovr, msg) {
   } else
     msg.CanscrollUp = false;
 
-  if (msg.FirstLine + linesToPrint.length < msg.lines.length) {
+  if (currentLine < msg.lines.length) {
     msg.CanscrollDown = true;
     drawTriangleDown(ovr);
   } else
@@ -372,11 +392,11 @@ let drawMessage = function(ovr, msg) {
   show(ovr);
 };
 
-let getSwipeHandler = function(ovr){
-  return (lr, ud) => {
-    if (ud == 1) {
+let getDragHandler = function(ovr){
+  return (e) => {
+    if (e.dy > 0) {
       scrollUp(ovr);
-    } else if (ud == -1){
+    } else if (e.dy < 0){
       scrollDown(ovr);
     }
   };
@@ -438,7 +458,7 @@ let main = function(ovr, event) {
   backupHandler("drag");
   if (!backupDone){
     Bangle.on('touch', getTouchHandler(ovr));
-    Bangle.on('swipe', getSwipeHandler(ovr));
+    Bangle.on('drag', getDragHandler(ovr));
   }
   backupDone=true;
 
