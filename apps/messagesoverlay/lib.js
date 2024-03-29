@@ -19,9 +19,8 @@ const ovry = ovrx;
 const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
 
-let LOG = function() {
-  //print.apply(null, arguments);
-};
+let LOG=()=>{};
+//LOG = function() { print.apply(null, arguments);};
 
 let isQuiet = function(){
   if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
