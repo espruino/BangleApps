@@ -101,10 +101,9 @@ let roundedRect = function(ovr, x,y,w,h,filled){
 };
 
 let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
+  ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
-
-  ovr.drawRect(2,38,ovr.getWidth()-2,39);
   
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
@@ -123,7 +122,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setFont(titleFont);
   if (title) ovr.drawString(title, textCenter, 38/2 + 5);
 
-  ovr.setColor(ovr.theme.fg2);
+  ovr.setColor(ovr.theme.fg);
 
   ovr.setFont(settings.fontMedium);
   roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
@@ -171,13 +170,15 @@ let showMessage = function(ovr, msg) {
 
 let drawBorder = function(img) {
   LOG("drawBorder", isQuiet());
+  ovr.setBgColor(ovr.theme.bg);
   if (img) ovr=img;
   if (Bangle.isLocked())
-    ovr.setColor(ovr.theme.fgH);
-  else
     ovr.setColor(ovr.theme.fg);
+  else
+    ovr.setColor(ovr.theme.fgH);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
+  ovr.drawRect(2,38,ovr.getWidth()-2,39);
   show(ovr);
 };
 
@@ -293,6 +294,9 @@ let drawMessage = function(ovr, msg) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
   };
+
+  ovr.setColor(ovr.theme.fg);
+  ovr.setBgColor(ovr.theme.bg);
 
   if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
 
@@ -491,6 +495,8 @@ exports.message = function(type, event) {
       msb: true
     });
   }
+
+  ovr.reset();
 
   if (bpp == 4)
     ovr.theme = g.theme;
