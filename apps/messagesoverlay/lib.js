@@ -101,7 +101,7 @@ let roundedRect = function(ovr, x,y,w,h,filled){
 };
 
 let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
-  ovr.setBgColor(ovr.theme.bg2);
+  ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
 
   ovr.drawRect(2,38,ovr.getWidth()-2,39);
