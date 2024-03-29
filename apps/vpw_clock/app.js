@@ -151,14 +151,18 @@ Graphics.prototype.setFontMadeSunflower = function () {
 
   // store the theme before drawing
   let orignalTheme = g.theme;
+
   // Clear the screen once, at startup
   g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: false }).clear();
+
   // draw immediately at first, queue update
   draw();
+
   // Show launcher when middle button pressed
   // handle fast loading
   Bangle.setUI({
-    mode: "clock", remove: function () {
+    mode: "clock",
+    remove: function () {
       // clear timeout
       if (drawTimeout) clearTimeout(drawTimeout);
       // remove custom font
@@ -167,6 +171,7 @@ Graphics.prototype.setFontMadeSunflower = function () {
       g.setTheme({ bg: orignalTheme.bg, fg: orignalTheme.fb, dark: orignalTheme.dark });
     }
   });
+
   // Load widgets
   Bangle.loadWidgets();
   Bangle.drawWidgets();
