@@ -1,5 +1,3 @@
-let _g = g;
-
 let lockListener;
 let quiet;
 
@@ -38,7 +36,7 @@ let show = function(ovr){
   LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
-    img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
+    img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
   Bangle.setLCDOverlay(img, ovrx, ovry);
 };
@@ -386,7 +384,7 @@ let getTouchHandler = function(ovr){
 };
 
 let restoreHandler = function(event){
-  LOG("Restore", event, backup[event]);
+  LOG("Restore", backup[event]);
   Bangle.removeAllListeners(event);
   Bangle["#on" + event]=backup[event];
   backup[event] = undefined;
@@ -419,7 +417,7 @@ let backup = {};
 let backupDone = false;
 
 let main = function(ovr, event) {
-  LOG("Main", event, settings);
+  LOG("Main", event.t);
 
   if (!lockListener) {
     lockListener = function (e){
@@ -471,7 +469,7 @@ let updateClearingTimeout = ()=>{
 };
 
 exports.message = function(type, event) {
-  LOG("Got message", type, event);
+  LOG("Got message", type);
   // only handle some event types
   if(!(type=="text" || type == "call")) return;
   if(type=="text" && event.id == "nav") return;
@@ -491,16 +489,14 @@ exports.message = function(type, event) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
-  } else {
-    ovr.clear();
   }
-
-  g = ovr;
 
   if (bpp == 4)
     ovr.theme = g.theme;
   else
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+
+  ovr.clear();
 
   main(ovr, event);
 
@@ -508,5 +504,4 @@ exports.message = function(type, event) {
 
   if (!isQuiet()) Bangle.setLCDPower(1);
   event.handled = true;
-  g = _g;
 };
