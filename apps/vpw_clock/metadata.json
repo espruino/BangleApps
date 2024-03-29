@@ -3,7 +3,7 @@
   "name": "Vaporwave Sunset Clock",
   "shortName": "Vaporwave Sunset",
   "type": "clock",
-  "version":"0.04",
+  "version":"0.05",
   "description": "A clock with a vaporwave sunset theme.",
   "tags": "clock",
   "supports": ["BANGLEJS2"],

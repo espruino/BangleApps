@@ -150,7 +150,7 @@ Graphics.prototype.setFontMadeSunflower = function () {
   };
 
   // store the theme before drawing
-  let orignalTheme = g.theme;
+  let originalTheme = g.theme;
 
   // Clear the screen once, at startup
   g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: false }).clear();
@@ -167,8 +167,9 @@ Graphics.prototype.setFontMadeSunflower = function () {
       if (drawTimeout) clearTimeout(drawTimeout);
       // remove custom font
       delete Graphics.prototype.setFontMadeSunflower;
+      delete Graphics.prototype.setFontVGA8;
       // revert theme to how it was before
-      g.setTheme({ bg: orignalTheme.bg, fg: orignalTheme.fb, dark: orignalTheme.dark });
+      g.setTheme(originalTheme);
     }
   });
 
