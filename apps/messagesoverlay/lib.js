@@ -448,13 +448,15 @@ let clearingTimeout;
 
 let updateClearingTimeout = ()=>{
   LOG("updateClearingTimeout");
-  if (settings.autoclear >= 0)
+  if (settings.autoclear <= 0)
     return;
+  LOG("Remove clearing timeout", clearingTimeout);
   if (clearingTimeout) clearTimeout(clearingTimeout);
   if (Bangle.isLocked()){
+    LOG("Set new clearing timeout");
     clearingTimeout = setTimeout(()=>{
-      LOG("setNewTimeut");
-      let current = eventQueue.pop();
+      LOG("setNewTimeout");
+      eventQueue.pop();
       if (eventQueue.length > 0){
         LOG("still got elements");
         updateClearingTimeout();
