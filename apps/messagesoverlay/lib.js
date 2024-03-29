@@ -165,6 +165,7 @@ let showMessage = function(ovr, msg) {
   if (!isQuiet() && msg.new) {
     msg.new = false;
     Bangle.buzz();
+    Bangle.setLCDPower(1);
   }
 };
 
@@ -361,7 +362,6 @@ let drawMessage = function(ovr, msg) {
     msg.CanscrollDown = false;
 
   show(ovr);
-  if (!isQuiet()) Bangle.setLCDPower(1);
 };
 
 let getSwipeHandler = function(ovr){
