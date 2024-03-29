@@ -29,6 +29,7 @@ let isQuiet = function(){
 
 let eventQueue = [];
 let callInProgress = false;
+let buzzing = false;
 
 let show = function(ovr){
   let img = ovr;
@@ -163,7 +164,10 @@ let showMessage = function(ovr, msg) {
 
   if (!isQuiet() && msg.new) {
     msg.new = false;
-    Bangle.buzz();
+    if (!buzzing){
+      buzzing = true;
+      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000)});
+    }
     Bangle.setLCDPower(1);
   }
 };
