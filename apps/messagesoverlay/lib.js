@@ -484,7 +484,7 @@ let updateClearingTimeout = ()=>{
     LOG("Set new clearing timeout");
     clearingTimeout = setTimeout(()=>{
       LOG("setNewTimeout");
-      eventQueue.pop();
+      drawMessage(ovr, eventQueue.pop());
       if (eventQueue.length > 0){
         LOG("still got elements");
         updateClearingTimeout();
