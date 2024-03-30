@@ -264,7 +264,7 @@ let drawTriangleDown = function(ovr) {
 
 
 let scrollUp = function(ovr) {
-  msg = eventQueue[0];
+  let msg = eventQueue[0];
   LOG("up", msg);
   if (typeof msg.FirstLine === "undefined")
     msg.FirstLine = 0;
@@ -279,7 +279,7 @@ let scrollUp = function(ovr) {
 };
 
 let scrollDown = function(ovr) {
-  msg = eventQueue[0];
+  let msg = eventQueue[0];
   LOG("down", msg);
   if (typeof msg.FirstLine === "undefined")
     msg.FirstLine = 0;
