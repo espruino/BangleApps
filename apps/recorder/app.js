@@ -330,7 +330,7 @@ function plotGraph(info, style) { "ram"
   if (f===undefined) return;
   var l = f.readLine(f);
   l = f.readLine(f); // skip headers
-  var nl = 0, c, i;
+  var c, i;
   var factor = 1; // multiplier used for values when graphing
   var timeIdx = info.fields.indexOf("Time");
   if (l!==undefined) {
@@ -341,7 +341,7 @@ function plotGraph(info, style) { "ram"
     title = /*LANG*/"Heartrate (bpm)";
     var hrmIdx = info.fields.indexOf("Heartrate");
     while(l!==undefined) {
-      ++nl;c=l.split(",");l = f.readLine(f);
+      c=l.split(",");l = f.readLine(f);
       if (c[hrmIdx]=="") continue;
       i = Math.round(80*(c[timeIdx] - strt)/dur);
       infn[i]+=+c[hrmIdx];
@@ -352,7 +352,7 @@ function plotGraph(info, style) { "ram"
     var altIdx = info.fields.indexOf("Barometer Altitude");
     if (altIdx<0) altIdx = info.fields.indexOf("Altitude");
     while(l!==undefined) {
-      ++nl;c=l.split(",");l = f.readLine(f);
+      c=l.split(",");l = f.readLine(f);
       if (c[altIdx]=="") continue;
       i = Math.round(80*(c[timeIdx] - strt)/dur);
       infn[i]+=+c[altIdx];
@@ -376,7 +376,7 @@ function plotGraph(info, style) { "ram"
     var p,lp = Bangle.project({lat:c[1],lon:c[2]});
     var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {
-      ++nl;c=l.split(",");
+      c=l.split(",");
       l = f.readLine(f);
       if (c[latIdx] == "") {
         continue;
