@@ -7,3 +7,4 @@
 0.07: Removed percentage from battery and cleaned up logic
 0.08: Changed month to day and text color to black on date
 0.09: Changed day color back to white
+0.10: Add blinking when charging
