@@ -1,7 +1,7 @@
 { "id": "rellotge",
   "name": "Rellotge en catala",
   "shortName":"Rellotge",
-  "version": "0.61",
+  "version": "0.70",
   "description": "A clock with traditional naming of hours in Catalan",
   "icon": "icona.png",
   "readme": "README.md",
