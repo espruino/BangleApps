@@ -174,8 +174,8 @@
     }
 
     // get thresholds
-    var deepTh = global.sleeplog ? sleeplog.conf.deepTh : defaults.deepTh;
-    var lightTh = global.sleeplog ? sleeplog.conf.lightTh : defaults.lightTh;
+    var deepTh = global.sleeplog ? global.sleeplog.conf.deepTh : defaults.deepTh;
+    var lightTh = global.sleeplog ? global.sleeplog.conf.lightTh : defaults.lightTh;
     // set lowest movement displayed
     var minMove = deepTh - 20;
     // set start point
@@ -240,8 +240,8 @@
     // check if sleeplog is available
     if (global.sleeplog) {
       // get debug status, file and duration
-      var enabled = !!sleeplog.debug;
-      var file = typeof sleeplog.debug === "object";
+      var enabled = !!global.sleeplog.debug;
+      var file = typeof global.sleeplog.debug === "object";
       var duration = 0;
       // setup debugging menu
       var debugMenu = {
@@ -250,7 +250,7 @@
         },
         /*LANG*/"< Back": () => {
           // check if some value has changed
-          if (enabled !== !!sleeplog.debug || file !== (typeof sleeplog.debug === "object") || duration)
+          if (enabled !== !!global.sleeplog.debug || file !== (typeof global.sleeplog.debug === "object") || duration)
             require("sleeplog").setDebug(enabled, file ? duration || 12 : undefined);
           // redraw main menu
           showMain(7);
@@ -265,7 +265,7 @@
           onchange: v => file = v
         },
         /*LANG*/"Duration": {
-          value: file ? (sleeplog.debug.writeUntil - Date.now()) / 36E5 | 0 : 12,
+          value: file ? (global.sleeplog.debug.writeUntil - Date.now()) / 36E5 | 0 : 12,
           min: 1,
           max: 96,
           wrap: true,
@@ -275,7 +275,7 @@
         /*LANG*/"Cancel": () => showMain(7),
       };
       // show menu
-      var menu = E.showMenu(debugMenu);
+      /*var menu =*/ E.showMenu(debugMenu);
     } else {
       // show error prompt
       E.showPrompt("Sleeplog" + /*LANG*/"not enabled!", {
@@ -290,7 +290,7 @@
   // show menu to change thresholds
   function showThresholds() {
     // setup logging menu
-    var menu;
+    //var menu;
     var thresholdsMenu = {
       "": {
         title: /*LANG*/"Thresholds"
@@ -377,9 +377,9 @@
         buttons: {
           /*LANG*/"Ok": 0
         }
-      }).then(() => menu = E.showMenu(thresholdsMenu));
+      }).then(() => /*menu =*/ E.showMenu(thresholdsMenu));
     } else {
-      menu = E.showMenu(thresholdsMenu);
+      /*menu =*/ E.showMenu(thresholdsMenu);
     }
   }
 
@@ -388,9 +388,9 @@
     // set debug image
     var debugImg = !global.sleeplog ?
       "FBSBAOAAfwAP+AH3wD4+B8Hw+A+fAH/gA/wAH4AB+AA/wAf+APnwHw+D4Hx8A++AH/AA/gAH" : // X
-      typeof sleeplog.debug === "object" ?
+      typeof global.sleeplog.debug === "object" ?
       "FBSBAB/4AQDAF+4BfvAX74F+CBf+gX/oFJKBf+gUkoF/6BSSgX/oFJ6Bf+gX/oF/6BAAgf/4" : // file
-      sleeplog.debug ?
+      global.sleeplog.debug ?
       "FBSBAP//+f/V///4AAGAABkAAZgAGcABjgAYcAGDgBhwAY4AGcABmH+ZB/mAABgAAYAAH///" : // console
       0; // off
     debugImg = debugImg ? "\0" + atob(debugImg) : false;
@@ -440,7 +440,7 @@
         onchange: () => setTimeout(showDebug, 10)
       }
     };
-    var menu = E.showMenu(mainMenu);
+    /*var menu =*/ E.showMenu(mainMenu);
   }
 
   // draw main menu
