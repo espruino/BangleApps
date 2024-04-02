@@ -67,24 +67,31 @@
   }
 
   function showMenu() {
-    var menu = { "": {title:"BTHome", back:back},
-      /*LANG*/"Show Battery" : {
-        value : !!settings.showBattery,
-        onchange : v=>{
-          settings.showBattery = v;
-          saveSettings();
-        }
+    var menu = [];
+    menu[""] = {title:"BTHome", back:back};
+    menu.push({
+      title : /*LANG*/"Show Battery",
+      value : !!settings.showBattery,
+      onchange : v=>{
+        settings.showBattery = v;
+        saveSettings();
       }
-    };
+    });
     settings.buttons.forEach((button,idx) => {
       var img = require("icons").getIcon(button.icon);
-      menu[/*LANG*/"Button"+(img ? " \0"+img : (idx+1))] = function() {
-        showButtonMenu(button, false);
-      };
+      menu.push({
+        title : /*LANG*/"Button"+(img ? " \0"+img : (idx+1)),
+        onchange : function() {
+          showButtonMenu(button, false);
+        }
+      });
     });
-    menu[/*LANG*/"Add Button"] = function() {
-      showButtonMenu(undefined, true);
-    };
+    menu.push({
+      title : /*LANG*/"Add Button",
+      onchange : function() {
+        showButtonMenu(undefined, true);
+      }
+    });
     E.showMenu(menu);
   }
   showMenu();

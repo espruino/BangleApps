@@ -1,2 +1,4 @@
 0.01: New App!
 0.02: Fix double-button press if you press the next button within 30s (#3243)
+0.03: Cope with identical duplicate buttons (fix #3260)
+      Set 'n' for buttons in Bangle.btHomeData correctly (avoids adding extra buttons on end of advertising)
