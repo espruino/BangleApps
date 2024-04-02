@@ -2,7 +2,7 @@
   "id": "recorder",
   "name": "Recorder",
   "shortName": "Recorder",
-  "version": "0.41",
+  "version": "0.42",
   "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
   "icon": "app.png",
   "tags": "tool,outdoors,gps,widget,clkinfo",

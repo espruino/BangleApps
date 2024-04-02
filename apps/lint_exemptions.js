@@ -86,12 +86,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "recorder/app.js": {
-    "hash": "64c838b63a756a712555ae54d0bae89f0373ce317c289f7b19a583d3f91d473b",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "podadrem/app.js": {
     "hash": "f7392e74974f69553aade2dcc07527b5d3b71a9b84e6dc5e0dd995e78dff8007",
     "rules": [
