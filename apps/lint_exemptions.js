@@ -1086,12 +1086,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "health/app.js": {
-    "hash": "6d612eed04ee5a844be6ad47c326624cd3e204fecf1c28c99a57ca963b3d7a7b",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "hassio/hassio.app.js": {
     "hash": "b8fbb03cf4a7595299e65a46c4f850394bf57cd4cba879d5524eafbf40ccc32e",
     "rules": [
