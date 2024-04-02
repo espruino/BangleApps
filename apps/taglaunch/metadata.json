@@ -2,7 +2,7 @@
   "id": "taglaunch",
   "name": "Tag Launcher",
   "shortName": "Taglauncher",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Launcher that puts all applications into submenus based on their tag. With many applications installed this can result in a faster application selection than the linear access of the default launcher.",
   "readme": "README.md",
   "icon": "app.png",
