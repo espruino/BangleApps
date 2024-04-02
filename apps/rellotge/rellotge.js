@@ -10,7 +10,33 @@
   const yposTime = 55;
   const yposDate = 130;
   const leshores = ["Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
-  const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
+  const leshores2 = ["d'una","de dues","de tres","de quatre","de cinc","de sis","de set","de vuit","de nou","de deu","d'onze","de dotze"];
+  const fontWeight = 12;
+  const maxChars = Math.floor(Bangle.appRect.w / fontWeight);
+
+  function getHora(hour) {
+    if (hour >= 12) {
+      hour -= 12;
+    }
+    return leshores2[hour];
+  }
+
+  function addLineFeeds(inputString) {
+      const words = inputString.split(' ');
+      let lines = "";
+      let line = "";
+
+      for (let i = 0; i < words.length; i++) {
+          const word = words[i];
+          if (line.length + word.length > maxChars) {
+              lines += line.trim() + "\r\n";
+              line = "";
+          }
+          line += word + " ";
+      }
+      lines += line.trim();
+      return lines;
+  }
 
   function drawSimpleClock() {
     g.clearRect(Bangle.appRect);
@@ -24,54 +50,55 @@
     // draw time
     let t;
     if (m >= 0 && m < 2) {
-      t = leshores[d.getHours()] + "\r\nen punt";
+      t = leshores[d.getHours()] + " en punt";
     } else if (m >= 2 && m < 5) {
-      t = leshores[d.getHours()] + "\r\ntocades";
+      t = leshores[d.getHours()] + " tocades";
     } else if (m >= 5 && m < 7) {
-      t = leshores[d.getHours()] + "\r\nben tocades";
+      t = leshores[d.getHours()] + " ben tocades";
     } else if (m >= 7 && m < 10) {
-      t = "Mig quart\r\n" + leshores2[d.getHours()];
+      t = "Mig quart " + getHora(d.getHours());
     } else if (m >= 10 && m < 12) {
-      t = "Mig quart\r\ntocat\r\n" + leshores2[d.getHours()];
+      t = "Mig quart tocat " + getHora(d.getHours());
     } else if (m >= 12 && m < 15) {
-      t = "Mig quart\r\nben tocat\r\n" + leshores2[d.getHours()];
+      t = "Mig quart ben tocat " + getHora(d.getHours());
     } else if (m >= 15 && m < 17) {
-      t = "Un quart\r\n" + leshores2[d.getHours()];
+      t = "Un quart " + getHora(d.getHours());
     } else if (m >= 17 && m < 20) {
-      t = "Un quart\r\ntocat\r\n" + leshores2[d.getHours()];
+      t = "Un quart tocat " + getHora(d.getHours());
     } else if (m >= 20 && m < 22) {
-      t = "Un quart\r\nben tocat\r\n" + leshores2[d.getHours()];
+      t = "Un quart ben tocat " + getHora(d.getHours());
     } else if (m >= 22 && m < 25) {
-      t = "Un quart i mig\r\n" + leshores2[d.getHours()];
+      t = "Un quart i mig " + getHora(d.getHours());
     } else if (m >= 25 && m < 27) {
-      t = "Un quart i mig\r\ntocat\r\n" + leshores2[d.getHours()];
+      t = "Un quart i mig tocat " + getHora(d.getHours());
     } else if (m >= 27 && m < 30) {
-      t = "Un quart i mig\r\nben tocat\r\n" + leshores2[d.getHours()];
+      t = "Un quart i mig ben tocat " + getHora(d.getHours());
     } else if (m >= 30 && m < 32) {
-      t = "Dos quarts\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts " + getHora(d.getHours());
     } else if (m >= 32 && m < 35) {
-      t = "Dos quarts\r\ntocats\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts tocats " + getHora(d.getHours());
     } else if (m >= 35 && m < 37) {
-      t = "Dos quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts ben tocats " + getHora(d.getHours());
     } else if (m >= 37 && m < 40) {
-      t = "Dos quarts i mig\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts i mig " + getHora(d.getHours());
     } else if (m >= 40 && m < 42) {
-      t = "Dos quarts i mig\r\ntocats\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts i mig tocats " + getHora(d.getHours());
     } else if (m >= 42 && m < 45) {
-      t = "Dos quarts i mig\r\nben tocats\r\n" + leshores2[d.getHours()];
+      t = "Dos quarts i mig ben tocats " + getHora(d.getHours());
     } else if (m >= 45 && m < 47) {
-      t = "Tres quarts\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts " + getHora(d.getHours());
     } else if (m >= 47 && m < 50) {
-      t = "Tres quarts\r\ntocats\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts tocats " + getHora(d.getHours());
     } else if (m >= 50 && m < 52) {
-      t = "Tres quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts ben tocats " + getHora(d.getHours());
     } else if (m >= 52 && m < 55) {
-      t = "Tres quarts i mig\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts i mig " + getHora(d.getHours());
     } else if (m >= 55 && m < 57) {
-      t = "Tres quarts i mig\r\ntocats\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts i mig tocats " + getHora(d.getHours());
     } else if (m >= 57) {
-      t = "Tres quarts i mig\r\nben tocats\r\n" + leshores2[d.getHours()];
+      t = "Tres quarts i mig ben tocats " + getHora(d.getHours());
     }
+    t = addLineFeeds(t)
     g.setFont(font, timeFontSize);
     g.drawString(t, xyCenter, yposTime, true);
 
