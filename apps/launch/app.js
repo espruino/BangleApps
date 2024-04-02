@@ -59,6 +59,7 @@ const drawMenu = () => {
       var app = apps[i];
       if (!app) return;
       if (!app.src || require("Storage").read(app.src)===undefined) {
+        E.showScroller();
         E.showMessage(/*LANG*/"App Source\nNot found");
         setTimeout(drawMenu, 2000);
       } else {
