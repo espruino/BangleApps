@@ -2,7 +2,7 @@
   "id": "ratchet_launch",
   "name": "Ratchet Launcher",
   "shortName": "Ratchet",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Launcher with discrete scrolling for quicker app selection",
   "icon": "app.png",
   "type": "launch",
