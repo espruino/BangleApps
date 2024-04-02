@@ -9,3 +9,4 @@
 0.10: Show satellites "in view" separated by GNS-system
 0.11: Show number of packets received
 0.12: Fix number of packets received
+0.13: Minor code improvements

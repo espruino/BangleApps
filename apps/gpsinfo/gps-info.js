@@ -42,21 +42,21 @@ function getMaidenHead(param1,param2){
 
   lon = lon + 180;
   var t = lon/20;
-  fLon = Math.floor(t);
+  const fLon = Math.floor(t);
   t = (t % fLon)*10;
-  sqLon = Math.floor(t);
+  const sqLon = Math.floor(t);
   t = (t-sqLon)*24;
-  subLon = Math.floor(t);
-  extLon = Math.floor((t-subLon)*10);
+  const subLon = Math.floor(t);
+  const extLon = Math.floor((t-subLon)*10);
 
   lat = lat + 90;
   t = lat/10;
-  fLat = Math.floor(t);
+  const fLat = Math.floor(t);
   t = (t % fLat)*10;
-  sqLat = Math.floor(t);
+  const sqLat = Math.floor(t);
   t=(t-sqLat)*24;
-  subLat = Math.floor(t);
-  extLat = Math.floor((t-subLat)*10);
+  const subLat = Math.floor(t);
+  const extLat = Math.floor((t-subLat)*10);
 
   return U[fLon]+U[fLat]+sqLon+sqLat+L[subLon]+L[subLat]+extLon+extLat;
 }
