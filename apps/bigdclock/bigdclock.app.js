@@ -12,7 +12,7 @@ Graphics.prototype.setFontOpenSans = function(scale) {
 
 var drawTimeout;
 var lastBattCheck = 0;
-var width = 0;
+var batteryUsedWidth = 0;
 
 function queueDraw(millis_now) {
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -32,8 +32,8 @@ function draw() {
 
     if ((date.getTime() >= lastBattCheck + 15*60000) || Bangle.isCharging()) {
       lastBattCheck = date.getTime();
-      width = E.getBattery();
-      width += width/2;
+      batteryUsedWidth = E.getBattery();
+      batteryUsedWidth += batteryUsedWidth/2;
     }
 
     g.reset();
@@ -58,7 +58,7 @@ function draw() {
     g.fillRect(167,163,170,167);
     if (Bangle.isCharging()) {
       g.setColor(1,1,0);
-      g.fillRect(12,162,12+width,168);
+      g.fillRect(12,162,12+batteryUsedWidth,168);
     } else {
       g.setColor(1,0,0);
       g.fillRect(12,162,57,168);
@@ -67,16 +67,16 @@ function draw() {
       g.setColor(0,1,0);
       g.fillRect(73,162,162,168);
     }
-    if (width < 150) {
+    if (batteryUsedWidth < 150) {
       g.setColor(g.theme.bg);
-      g.fillRect(12+width+1,162,162,168);
+      g.fillRect(12+batteryUsedWidth+1,162,162,168);
     }
 
     if (Bangle.isCharging()) {
       g.setColor(1,1,0);
-    } else if (width <= 45) {
+    } else if (batteryUsedWidth <= 45) {
       g.setColor(1,0,0);
-    } else if (width <= 60) {
+    } else if (batteryUsedWidth <= 60) {
       g.setColor(1,1,0);
     } else {
       g.setColor(0, 1, 0);
