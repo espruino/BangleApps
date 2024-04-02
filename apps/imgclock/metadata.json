@@ -3,7 +3,7 @@
   "name": "Image background clock",
   "shortName": "Image Clock",
   "version": "0.11",
-  "description": "A clock with an image as a background",
+  "description": "A clock with an image as a background. **Note:** this clock shows seconds, so has higher than average power consumption.",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
