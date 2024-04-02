@@ -1068,12 +1068,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "hrm/heartrate.js": {
-    "hash": "beb8e433f10d3639b343b060f0d5583ea665445f92b2171daff7612eaf135596",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "hebrew_calendar/app.js": {
     "hash": "3077d581b9fcf73816e265e61105a0692356b89e8ed41a82be51960ae26fc8de",
     "rules": [
