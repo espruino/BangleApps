@@ -5,8 +5,46 @@ var settings = Object.assign({
 	showbat: true,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
 
+var gap = 4;
+var mgn = 24;
+var sq = 33;
+
+if (settings.fullscreen) {
+	gap = 8;
+	mgn = 0;
+	sq = 34;
+}
+
+var pos = sq + gap;
+
+function drawbat() {
+	var bat = E.getBattery();
+	if (bat < 20) {
+		g.setColor('#FF0000');
+	} else if (bat < 40) {
+		g.setColor('#FFA500');
+	} else {
+		g.setColor('#00FF00');
+	}
+	g.fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
+}
+
+function drawbatrect() {
+	if (g.theme.dark) {
+		g.setColor(-1);
+	} else {
+		g.setColor(1);
+	}
+	g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
+}
+
+function clearbat() {
+	g.clearRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
+}
+
 function draw() {
 
+	let i = 0;
 	var cnt = 0;
 	var dt = new Date();
 	var h = dt.getHours();
@@ -22,19 +60,6 @@ function draw() {
 
 	g.reset();
 	g.clearRect(Bangle.appRect);
-
-	let i = 0;
-	var gap = 4;
-	var mgn = 24;
-	var sq = 33;
-
-	if (settings.fullscreen) {
-		gap = 8;
-		mgn = 0;
-		sq = 34;
-	}
-
-	var pos = sq + gap;
 
 	for (let r = 3; r >= 0; r--) {
 		for (let c = 0; c < 4; c++) {
@@ -53,9 +78,6 @@ function draw() {
 	if (settings.hidesq) {
 		c1sqhide = 2;
 		c3sqhide = 1;
-	}
-
-	if (settings.hidesq) {
 		g.clearRect(Math.floor(mgn/2), mgn, Math.floor(mgn/2) + pos, mgn + c1sqhide * pos);
 		g.clearRect(Math.floor(mgn/2) + 2 * pos + gap, mgn, Math.floor(mgn/2) + 3 * pos, mgn + c3sqhide * pos);
 	}
@@ -80,24 +102,11 @@ function draw() {
 
 	if (cnt == 0) {
 		if (settings.showbat) {
-			var bat = E.getBattery();
-			if (bat < 20) {
-				g.setColor('#FF0000');
-			} else if (bat < 40) {
-				g.setColor('#FFA500');
-			} else {
-				g.setColor('#00FF00');
-			}
-			g.fillRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + Math.floor(bat * sq / 100), mgn + gap + sq);
-			if (g.theme.dark) {
-				g.setColor(-1);
-			} else {
-				g.setColor(1);
-			}
-			g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
+			drawbat();
+			drawbatrect();
 		}
 		cnt++;
-		if (cnt > 599999) {
+		if (cnt > 29) {
 			cnt = 0;
 		}
 	}
@@ -105,9 +114,28 @@ function draw() {
 
 g.clear();
 draw();
-/*var secondInterval =*/ setInterval(draw, 60000);
+setInterval(draw, 60000);
 Bangle.setUI("clock");
 if (!settings.fullscreen) {
 	Bangle.loadWidgets();
 	Bangle.drawWidgets();
-} 
+}
+
+var blink = true;
+
+function blinkbat() {
+	if (blink) {
+		clearbat();
+	} else {
+		drawbat();
+	}
+	drawbatrect();
+	blink = !blink;
+}
+
+function getcharging() {
+	if (Bangle.isCharging()) {
+		blinkbat();
+	}
+}
+setInterval(getcharging, 1000);

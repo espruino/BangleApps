@@ -1,7 +1,7 @@
 {
 	"id": "binaryclk",
 	"name": "Bin Clock",
-	"version": "0.09",
+	"version": "0.10",
 	"description": "Binary clock with date and battery",
 	"icon": "app-icon.png",
 	"screenshots": [{"url":"screenshot.png"}],
