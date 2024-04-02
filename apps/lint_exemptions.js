@@ -1469,5 +1469,11 @@ module.exports = {
       "no-unused-vars",
       "no-cond-assign"
     ]
+  },
+  "kineticscroll/boot.min.js": {
+    "hash": "a5106fa601cdbd2179e32265a8b77e2df62ba44ca0f4b94ce1e594c95a47e20d",
+    "rules": [
+      "no-cond-assign"
+    ]
   }
 };
