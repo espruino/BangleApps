@@ -2,7 +2,7 @@
   "id": "health",
   "name": "Health Tracking",
   "shortName": "Health",
-  "version": "0.29",
+  "version": "0.30",
   "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
   "tags": "tool,system,health",
