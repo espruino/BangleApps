@@ -106,8 +106,9 @@ let showTagMenu = (tag) => {
       let app = appsByTag[tag][i];
       if (!app) return;
       if (!app.src || require("Storage").read(app.src)===undefined) {
+        Bangle.setUI();
         E.showMessage(/*LANG*/"App Source\nNot found");
-        setTimeout(drawMenu, 2000);
+        setTimeout(showMainMenu, 2000);
       } else {
         load(app.src);
       }

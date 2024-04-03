@@ -666,12 +666,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "taglaunch/app.js": {
-    "hash": "944689f0600e59bbe4d9e5e2684baeefabe4457a6edd938aae451dc4cd659ad3",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "tabanchi/app.js": {
     "hash": "6ad6dc1d6b0f539f9f659d5773b5a26d19eb6dacafe7b4682469e6f3c412647e",
     "rules": [
