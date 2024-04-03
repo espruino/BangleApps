@@ -10,6 +10,6 @@
   "interface": "interface.html",
   "storage": [
     {"name":"heartrate.app.js","url":"app.js"},
-    {"name":"heartrate.img","url":"app-icon.js","evaluate":true}
+    {"name":"app.png","url":"app-icon.js","evaluate":true}
   ]
 }
