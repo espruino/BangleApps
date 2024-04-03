@@ -798,12 +798,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "ratchet_launch/app.js": {
-    "hash": "592d432301d7836aa54e288d465ae8952ecb891d628f824ea9f62479a2a01631",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "rclock/rclock.app.js": {
     "hash": "8e698787730601a1bba71aff03204c2adfaf7eeb77b35dc706534755f63f613b",
     "rules": [
