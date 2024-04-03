@@ -166,7 +166,7 @@ let showMessage = function(ovr, msg) {
     msg.new = false;
     if (!buzzing){
       buzzing = true;
-      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000)});
+      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000);});
     }
     Bangle.setLCDPower(1);
   }
@@ -304,7 +304,7 @@ let drawMessage = function(ovr, msg) {
       r += Math.max(metrics.height, metrics.maxImageHeight);
     });
     return r;
-  }
+  };
 
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
@@ -312,7 +312,7 @@ let drawMessage = function(ovr, msg) {
   if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
 
   let padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
-  
+
   let yText = 40;
   let yLine = yText + 3;
 
@@ -334,7 +334,7 @@ let drawMessage = function(ovr, msg) {
       let metrics = ovr.stringMetrics(line);
       msg.lineHeights[i] = Math.max(metrics.height, metrics.maxImageHeight);
     });
-  }  
+  }
 
   ovr.setFont(msg.bodyFont);
   ovr.setColor(ovr.theme.fg);
@@ -355,7 +355,7 @@ let drawMessage = function(ovr, msg) {
   let currentLine = msg.FirstLine;
 
   let drawnHeight = 0;
-  
+
   while(drawnHeight < maxTextHeight) {
     let lineHeight = msg.lineHeights[currentLine];
     if (drawnHeight + lineHeight < maxTextHeight) {
@@ -484,7 +484,9 @@ let updateClearingTimeout = ()=>{
     LOG("Set new clearing timeout");
     clearingTimeout = setTimeout(()=>{
       LOG("setNewTimeout");
-      drawMessage(ovr, eventQueue.pop());
+      let event = eventQueue.pop();
+      if (event)
+        drawMessage(ovr, event);
       if (eventQueue.length > 0){
         LOG("still got elements");
         updateClearingTimeout();
@@ -498,7 +500,7 @@ let updateClearingTimeout = ()=>{
 };
 
 exports.message = function(type, event) {
-  LOG("Got message", type);
+  LOG("Got message", type, event);
   // only handle some event types
   if(!(type=="text" || type == "call")) return;
   if(type=="text" && event.id == "nav") return;
@@ -528,7 +530,6 @@ exports.message = function(type, event) {
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
   ovr.clear();
-
   main(ovr, event);
 
   updateClearingTimeout();
