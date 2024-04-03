@@ -4,7 +4,7 @@
   "version":"0.01",
   "description": "Tracking physiological measurements to support active learning in classrooms",
   "icon": "app.png",
-  "tags": "",
+  "tags": "health",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "interface": "interface.html",
