@@ -28,11 +28,11 @@ var monthOffset = 0;
  *   Calendar features
  */
 function drawFullCalendar(monthOffset) {
-    addMonths = function (_d, _am) {
-        var ay = 0, m = _d.getMonth(), y = _d.getFullYear();
+    const addMonths = function (_d, _am) {
+        let ay = 0, m = _d.getMonth(), y = _d.getFullYear();
         while ((m + _am) > 11) { ay++; _am -= 12; }
         while ((m + _am) < 0) { ay--; _am += 12; }
-        n = new Date(_d.getTime());
+        let n = new Date(_d.getTime());
         n.setMonth(m + _am);
         n.setFullYear(y + ay);
         return n;
@@ -45,7 +45,7 @@ function drawFullCalendar(monthOffset) {
     if (typeof dayInterval !== "undefined") clearTimeout(dayInterval);
     if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
     if (typeof minuteInterval !== "undefined") clearTimeout(minuteInterval);
-    d = addMonths(Date(), monthOffset);
+    var d = addMonths(Date(), monthOffset);
     tdy = Date().getDate() + "." + Date().getMonth();
     newmonth = false;
     c_y = 0;
@@ -124,7 +124,7 @@ function drawMinutes() {
     var d = new Date();
     var hours = s.MODE24 ? d.getHours().toString().padStart(2, ' ') : ((d.getHours() + 24) % 12 || 12).toString().padStart(2, ' ');
     var minutes = d.getMinutes().toString().padStart(2, '0');
-    var textColor = NRF.getSecurityStatus().connected ? '#99f' : '#fff';
+    var textColor = NRF.getSecurityStatus().connected ? '#fff' : '#f00';
     var size = 50;
     var clock_x = (w - 20) / 2;
     if (dimSeconds) {
@@ -156,7 +156,7 @@ function drawSeconds() {
 }
 
 function drawWatch() {
-    if (DEBUG) console.log("CALENDAR");
+    if (DEBUG) console.log("DRAWWATCH");
     monthOffset = 0;
     state = "watch";
     var d = new Date();
@@ -197,6 +197,7 @@ function drawWatch() {
     if (DEBUG) console.log("Next Day:" + (nextday / 3600));
     if (typeof dayInterval !== "undefined") clearTimeout(dayInterval);
     dayInterval = setTimeout(drawWatch, nextday * 1000);
+    if (DEBUG) console.log("ended DRAWWATCH. next refresh in " + nextday + "s");
 }
 
 function BTevent() {
@@ -211,8 +212,11 @@ function action(a) {
     g.reset();
     if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
     if (DEBUG) console.log("action:" + a);
+    state = "unknown";
+    console.log("state -> unknown");
     switch (a) {
         case "[ignore]":
+            drawWatch();
             break;
         case "[calend.]":
             drawFullCalendar();
@@ -229,6 +233,12 @@ function action(a) {
                 load(l[0]);
             } else E.showAlert("Message app not found", "Not found").then(drawWatch);
             break;
+        case "[AI:agenda]":
+            l = require("Storage").list(RegExp("agenda.*app.js"));
+            if (l.length > 0) {
+                load(l[0]);
+            } else E.showAlert("Agenda app not found", "Not found").then(drawWatch);
+            break;            
         default:
             l = require("Storage").list(RegExp(a + ".app.js"));
             if (l.length > 0) {
@@ -276,7 +286,6 @@ function input(dir) {
                 drawWatch();
             }
             break;
-
     }
 }
 
@@ -309,3 +318,10 @@ NRF.on('disconnect', BTevent);
 dimSeconds = Bangle.isLocked();
 drawWatch();
 
+setWatch(function() {
+    if (state == "watch") {
+        Bangle.showLauncher()
+    } else if (state == "calendar") {
+        drawWatch();
+    }
+}, BTN1, {repeat:true, edge:"falling"});

@@ -9,12 +9,12 @@
         REDSAT: true, // Use red color for saturday?
         DRAGDOWN: "[AI:messg]",
         DRAGRIGHT: "[AI:music]",
-        DRAGLEFT: "[ignore]",
+        DRAGLEFT: "[AI:agenda]",
         DRAGUP: "[calend.]"
     };
     settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
 
-    actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]"];
+    actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]","[AI:agenda]"];
     require("Storage").list(RegExp(".app.js")).forEach(element => actions.push(element.replace(".app.js","")));
 
     function writeSettings() {
