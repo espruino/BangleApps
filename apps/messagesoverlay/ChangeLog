@@ -9,3 +9,4 @@
       Automatic discard of oldest messages
       Indicator for multiple messages in queue
       Some optimization in the rendering code
+      Track handler changes done by background code
