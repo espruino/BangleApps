@@ -325,9 +325,11 @@ const drawMessage = function(ovr, msg) {
   const padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
 
   const yText = 40;
-  let yLine = yText + 3;
+  let yLine = yText + 4;
 
-  const maxTextHeight = ovr.getHeight() - yLine - padding;
+  ovr.setClipRect(2,2,ovr.getWidth() - 4, ovr.getHeight() - 4);
+
+  const maxTextHeight = ovr.getHeight() - yLine - padding + 2;
 
   if (!msg.lines) {
     let bodyFont = settings.fontBig;
@@ -368,15 +370,11 @@ const drawMessage = function(ovr, msg) {
 
   let drawnHeight = 0;
 
-  while(drawnHeight < maxTextHeight) {
+  while(drawnHeight < maxTextHeight && msg.lines.length > currentLine) {
     const lineHeight = msg.lineHeights[currentLine];
-    if (drawnHeight + lineHeight < maxTextHeight) {
-      ovr.drawString(msg.lines[currentLine], xText, yLine + drawnHeight);
-      drawnHeight += lineHeight;
-      currentLine++;
-    } else {
-      break;
-    }
+    ovr.drawString(msg.lines[currentLine], xText, yLine + drawnHeight);
+    drawnHeight += lineHeight;
+    currentLine++;
   }
 
   if (eventQueue.length > 1){
