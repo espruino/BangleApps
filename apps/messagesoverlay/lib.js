@@ -410,7 +410,7 @@ let getTouchHandler = function(ovr){
   };
 };
 
-const EVENTS=["touch", "drag", "swipe", "lock"];
+const EVENTS=["touch", "drag", "swipe"];
 
 let hasBackup = false;
 
