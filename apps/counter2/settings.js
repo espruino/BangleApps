@@ -1,6 +1,6 @@
 (function (back) {
     var FILE = "counter2.json";
-    defaults={
+    const defaults={
         counter0:12,
         counter1:0,
         max0:12,
@@ -8,13 +8,13 @@
         buzz: true,
         colortext: true,
     };
-    settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
+    const settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
 
     function writeSettings() {
         require('Storage').writeJSON(FILE, settings);
     }
 
-    menu = {
+    const menu = {
         "": { "title": "Counter2" },
         "< Back": () => back(),
         'Default C1': {
