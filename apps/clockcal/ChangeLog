@@ -7,3 +7,4 @@
 0.07: Convert Yes/No On/Off in settings to checkboxes
 0.08: Fixed typo in settings.js for DRAGDOWN to make option work
 0.09: You can now back out of the calendar using the button
+0.10: Fix linter warnings

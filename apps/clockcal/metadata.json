@@ -1,7 +1,7 @@
 {
   "id": "clockcal",
   "name": "Clock & Calendar",
-  "version": "0.09",
+  "version": "0.10",
   "description": "Clock with Calendar",
   "readme":"README.md",
   "icon": "app.png",

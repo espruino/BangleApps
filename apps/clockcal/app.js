@@ -24,6 +24,16 @@ const DEBUG = false;
 var state = "watch";
 var monthOffset = 0;
 
+// FIXME: These variables should maybe be defined inside relevant functions below. The linter complained they were not defined (i.e. they were added to global scope if I understand correctly).
+let dayInterval;
+let secondInterval;
+let minuteInterval;
+let newmonth;
+let bottomrightY;
+let bottomrightX;
+let rMonth;
+let dimSeconds;
+
 /*
  *   Calendar features
  */
@@ -46,9 +56,9 @@ function drawFullCalendar(monthOffset) {
     if (typeof secondInterval !== "undefined") clearTimeout(secondInterval);
     if (typeof minuteInterval !== "undefined") clearTimeout(minuteInterval);
     var d = addMonths(Date(), monthOffset);
-    tdy = Date().getDate() + "." + Date().getMonth();
+    let tdy = Date().getDate() + "." + Date().getMonth();
     newmonth = false;
-    c_y = 0;
+    let c_y = 0;
     g.reset();
     g.setBgColor(0);
     g.clear();
@@ -60,8 +70,8 @@ function drawFullCalendar(monthOffset) {
     rD.setDate(rD.getDate() - dow);
     var rDate = rD.getDate();
     bottomrightY = c_y - 3;
-    clrsun = s.REDSUN ? '#f00' : '#fff';
-    clrsat = s.REDSUN ? '#f00' : '#fff';
+    let clrsun = s.REDSUN ? '#f00' : '#fff';
+    let clrsat = s.REDSUN ? '#f00' : '#fff';
     var fg = [clrsun, '#fff', '#fff', '#fff', '#fff', '#fff', clrsat];
     for (var y = 1; y <= 11; y++) {
         bottomrightY += CELL_H;
@@ -90,7 +100,7 @@ function caldrawMonth(rDate, c, m, rD) {
     g.setColor(c);
     g.setFont("Vector", 18);
     g.setFontAlign(-1, 1, 1);
-    drawyear = ((rMonth % 11) == 0) ? String(rD.getFullYear()).substr(-2) : "";
+    let drawyear = ((rMonth % 11) == 0) ? String(rD.getFullYear()).substr(-2) : "";
     g.drawString(m + drawyear, bottomrightX, bottomrightY - CELL_H, 1);
     newmonth = false;
 }
@@ -214,6 +224,7 @@ function action(a) {
     if (DEBUG) console.log("action:" + a);
     state = "unknown";
     console.log("state -> unknown");
+    let l;
     switch (a) {
         case "[ignore]":
             drawWatch();
