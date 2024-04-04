@@ -9,3 +9,4 @@
 0.09: New app screen (instead of showing settings or the alert) and some optimisations
 0.10: Add software back button via setUI
 0.11: Add setting to unlock screen
+0.12: Fix handling that dates can be given as ms since epoch.

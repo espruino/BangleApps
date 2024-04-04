@@ -59,13 +59,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "sleeplog/settings.js": {
-    "hash": "bd5e3e1382321df6682ef1cb718b0e15ab355422bef77278eb086f213f643021",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "showimg/app.js": {
     "hash": "71cbbaa488e2d08c5bf28f7d56178d5e7694eb9761cd4752bbc9733e825d4bcf",
     "rules": [
@@ -271,13 +264,6 @@ module.exports = {
   },
   "widagps/widget.js": {
     "hash": "a58cdc481962575ef0aa0bfaedcc1f9de3ce966218c5b16168d8ed8b4b9672b8",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "sleeplog/app.js": {
-    "hash": "336da552e4b04677447cf76a253b40bc259a597ea11d455121933f93afe99794",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -562,13 +548,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "sleeplog/lib.js": {
-    "hash": "755e0d4c02b92181281fd6990df39c9446c73ff896b50b64d7e14cb1c0188556",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "doztime/app-bangle1.js": {
     "hash": "1e9598c201175180ae77d1c3bc47e8138b339b72eb58782b5057fb7aefdc88a1",
     "rules": [
@@ -666,12 +645,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "taglaunch/app.js": {
-    "hash": "944689f0600e59bbe4d9e5e2684baeefabe4457a6edd938aae451dc4cd659ad3",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "tabanchi/app.js": {
     "hash": "6ad6dc1d6b0f539f9f659d5773b5a26d19eb6dacafe7b4682469e6f3c412647e",
     "rules": [
@@ -762,12 +735,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "sleeplog/boot.js": {
-    "hash": "b4c9d8e3c3e7cdf44ea10e29a9e3b53f958b86c21ca91d88e4efb85901c3bde9",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "scicalc/app.js": {
     "hash": "416c7b2eb12a5d10bcc3a99d89d8f6f54ecd2b47cce2d1f4d55c3e3bc602b31a",
     "rules": [
@@ -794,12 +761,6 @@ module.exports = {
   },
   "regattatimer/app.js": {
     "hash": "8d579cc62d82599f776e5e230651f03481f18c3934f35f4fedfb6382a46db861",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "ratchet_launch/app.js": {
-    "hash": "592d432301d7836aa54e288d465ae8952ecb891d628f824ea9f62479a2a01631",
     "rules": [
       "no-undef"
     ]

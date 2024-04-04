@@ -104,3 +104,4 @@
 0.75: Handle text with images in messages list by just displaying the first line
 0.76: Swipe up/down on a shown message to show the next newer/older message.
 0.77: Messages can now use international fonts if they are installed
+0.78: Fix: When user taps on a new message, clear the unread timeout
