@@ -59,13 +59,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "sleeplog/settings.js": {
-    "hash": "bd5e3e1382321df6682ef1cb718b0e15ab355422bef77278eb086f213f643021",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "showimg/app.js": {
     "hash": "71cbbaa488e2d08c5bf28f7d56178d5e7694eb9761cd4752bbc9733e825d4bcf",
     "rules": [
@@ -271,13 +264,6 @@ module.exports = {
   },
   "widagps/widget.js": {
     "hash": "a58cdc481962575ef0aa0bfaedcc1f9de3ce966218c5b16168d8ed8b4b9672b8",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "sleeplog/app.js": {
-    "hash": "336da552e4b04677447cf76a253b40bc259a597ea11d455121933f93afe99794",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -562,13 +548,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "sleeplog/lib.js": {
-    "hash": "755e0d4c02b92181281fd6990df39c9446c73ff896b50b64d7e14cb1c0188556",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "doztime/app-bangle1.js": {
     "hash": "1e9598c201175180ae77d1c3bc47e8138b339b72eb58782b5057fb7aefdc88a1",
     "rules": [
@@ -752,12 +731,6 @@ module.exports = {
   },
   "sleeplogalarm/lib.js": {
     "hash": "9f865aaf07755f52b4cdc52fb884784bfec0404b271a48868d489403290bbbd7",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "sleeplog/boot.js": {
-    "hash": "b4c9d8e3c3e7cdf44ea10e29a9e3b53f958b86c21ca91d88e4efb85901c3bde9",
     "rules": [
       "no-undef"
     ]

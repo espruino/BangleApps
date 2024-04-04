@@ -245,13 +245,13 @@ function draw() {
   g.reset();
   var imgStr = "";
   // check which icon to set
-  if (!global.sleeplog || sleeplog.conf.enabled !== true) {
+  if (!global.sleeplog || global.sleeplog.conf.enabled !== true) {
     // set color and disabled service icon
     g.setColor(1, 0, 0);
     imgStr = "FBSBAOAAfwAP+AH3wD4+B8Hw+A+fAH/gA/wAH4AB+AA/wAf+APnwHw+D4Hx8A++AH/AA/gAH";
-  } else if (sleeplog.debug) {
+  } else if (global.sleeplog.debug) {
     // set debugging icon
-    imgStr = typeof sleeplog.debug === "object" ?
+    imgStr = typeof global.sleeplog.debug === "object" ?
       "FBSBAB/4AQDAF+4BfvAX74F+CBf+gX/oFJKBf+gUkoF/6BSSgX/oFJ6Bf+gX/oF/6BAAgf/4" : // file
       "FBSBAP//+f/V///4AAGAABkAAZgAGcABjgAYcAGDgBhwAY4AGcABmH+ZB/mAABgAAYAAH///"; // console
   }
@@ -297,7 +297,7 @@ var ATID; //          analysis timeout ID
 var drawingID = 0; // drawing ID for ongoing process
 // get screen width and center (zero based)
 var width = g.getWidth() - 1;
-var center = width / 2 - 1;
+//var center = width / 2 - 1;
 
 // set areas and actions array
 var aaa = [
