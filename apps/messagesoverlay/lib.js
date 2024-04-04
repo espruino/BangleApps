@@ -25,8 +25,8 @@ var settings = Object.assign(
 
 settings = Object.assign({
   fontSmall:"6x8",
-  fontMedium:"Vector:14",
-  fontBig:g.getFonts().includes("Vector") ? "Vector:20" : "6x8:3",
+  fontMedium:"6x15",
+  fontBig: "12x20",
   fontLarge:"Vector:30",
   reemit: true
 }, settings);
