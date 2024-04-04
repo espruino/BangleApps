@@ -1,6 +1,5 @@
 { "id": "phystrax",
   "name": "PhysTrax",
-  "entry": "app.js",
   "shortName":"PhysTrax",
   "version":"0.01",
   "description": "Tracking physiological measurements to support active learning in classrooms",
@@ -11,6 +10,6 @@
   "interface": "interface.html",
   "storage": [
     {"name":"phystrax.app.js","url":"app.js"},
-    {"name":"app-icon.js","url":"app-icon.js","evaluate":true}
+    {"name":"app-icon.img","url":"app-icon.js","evaluate":true}
   ]
 }
