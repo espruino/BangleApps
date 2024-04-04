@@ -23,7 +23,7 @@ function getData() {
     Util.hideModal();
     // If no data, report it and exit
     if (data.length === 0) {
-      dataElement.innerHTML = "<b>No data found</b>";
+      dataElement.innerHTML = "<b>There is no data</b>";
       return;
     }
     // Otherwise parse the data and output it as a table
