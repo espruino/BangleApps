@@ -10,6 +10,6 @@
   "interface": "interface.html",
   "storage": [
     {"name":"phystrax.app.js","url":"app.js"},
-    {"name":"app.img","url":"app-icon.js","evaluate":true}
+    {"name":"app-icon.js","url":"app-icon.js","evaluate":true}
   ]
 }
