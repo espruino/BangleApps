@@ -71,7 +71,6 @@ function drawScreen(message) {
             g.setFont('6x8', 1.6);
             g.drawString(' BPM', g.getWidth() / 2 + 42, g.getHeight() / 2 + 20);
         }
-
         // Draw instructions
         g.setFont('6x8', 1.5);
         g.drawString('Press button to stop', g.getWidth() / 2, g.getHeight() / 2 + 42);
