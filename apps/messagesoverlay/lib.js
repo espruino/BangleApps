@@ -105,7 +105,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
-  
+
   ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
@@ -138,11 +138,6 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
 
 let showMessage = function(ovr, msg) {
   LOG("showMessage");
-
-  if (typeof msg.CanscrollDown === "undefined")
-    msg.CanscrollDown = false;
-  if (typeof msg.CanscrollUp === "undefined")
-    msg.CanscrollUp = false;
 
   // Normal text message display
   let title = msg.title,
@@ -266,25 +261,16 @@ let drawTriangleDown = function(ovr) {
 let scrollUp = function(ovr) {
   let msg = eventQueue[0];
   LOG("up", msg);
-  if (typeof msg.FirstLine === "undefined")
-    msg.FirstLine = 0;
-  if (typeof msg.CanscrollUp === "undefined")
-    msg.CanscrollUp = false;
 
   if (!msg.CanscrollUp) return;
 
   msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
-
   drawMessage(ovr, msg);
 };
 
 let scrollDown = function(ovr) {
   let msg = eventQueue[0];
   LOG("down", msg);
-  if (typeof msg.FirstLine === "undefined")
-    msg.FirstLine = 0;
-  if (typeof msg.CanscrollDown === "undefined")
-    msg.CanscrollDown = false;
 
   if (!msg.CanscrollDown) return;
 
@@ -309,7 +295,7 @@ let drawMessage = function(ovr, msg) {
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
 
-  if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
+  if (msg.FirstLine === undefined) msg.FirstLine = 0;
 
   let padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
 
@@ -318,7 +304,7 @@ let drawMessage = function(ovr, msg) {
 
   let maxTextHeight = ovr.getHeight() - yLine - padding;
 
-  if (typeof msg.lines === "undefined") {
+  if (!msg.lines) {
     let bodyFont = settings.fontBig;
     ovr.setFont(bodyFont);
     msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
@@ -331,10 +317,11 @@ let drawMessage = function(ovr, msg) {
     msg.bodyFont = bodyFont;
     msg.lineHeights = [];
     msg.lines.forEach((line, i) => {
-      let metrics = ovr.stringMetrics(line);
-      msg.lineHeights[i] = Math.max(metrics.height, metrics.maxImageHeight);
+      msg.lineHeights[i] = getStringHeight(line);
     });
   }
+
+  LOG("Prepared message", msg);
 
   ovr.setFont(msg.bodyFont);
   ovr.setColor(ovr.theme.fg);
