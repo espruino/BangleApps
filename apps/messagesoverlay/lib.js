@@ -327,7 +327,7 @@ const drawMessage = function(ovr, msg) {
   const yText = 40;
   let yLine = yText + 4;
 
-  ovr.setClipRect(2,2,ovr.getWidth() - 4, ovr.getHeight() - 4);
+  ovr.setClipRect(2,2,ovr.getWidth() - 3, ovr.getHeight() - 3);
 
   const maxTextHeight = ovr.getHeight() - yLine - padding + 2;
 
