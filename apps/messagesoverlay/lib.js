@@ -113,16 +113,20 @@ const roundedRect = function(ovr, x,y,w,h,filled){
     x,y+h-5,
     x,y+4
   ];
+  if (filled){
+    let c = ovr.getColor();
+    ovr.setColor(ovr.getBgColor());
+    ovr.fillPoly(poly,true);
+    ovr.setColor(c);
+  }
   ovr.drawPoly(poly,true);
-  if (filled) ovr.fillPoly(poly,true);
 };
 
 const drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
-  ovr.setColor(ovr.theme.fg);
-  ovr.setBgColor(ovr.theme.bg);
+  ovr.setColor(ovr.theme.fg2);
+  ovr.setBgColor(ovr.theme.bg2);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
 
-  ovr.setColor(ovr.theme.fg2);
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
 
@@ -140,15 +144,17 @@ const drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   if (title) ovr.drawString(title, textCenter, 38/2 + 5);
 
   ovr.setColor(ovr.theme.fg);
+  ovr.setBgColor(ovr.theme.bg);
 
   ovr.setFont(settings.fontMedium);
-  roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
+  roundedRect(ovr, ovr.getWidth()-26,5,22,30,true);
   ovr.setFont("Vector:16");
   ovr.drawString("X",ovr.getWidth()-14,21);
 
-  ovr.setColor("#888");
+  ovr.setBgColor("#888");
   roundedRect(ovr, 5,5,30,30,true);
-  ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.bg2);
+  ovr.setBgColor(ovr.theme.bg);
+  ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.fg);
   ovr.drawImage(icon,8,8);
 };
 
@@ -183,14 +189,18 @@ const showMessage = function(ovr, msg) {
   }
 };
 
+const getBorderColor = function() {
+  if (Bangle.isLocked())
+    return ovr.theme.fg;
+  else
+    return ovr.theme.fgH;
+};
+
 const drawBorder = function(img) {
   LOG("drawBorder", isQuiet());
   ovr.setBgColor(ovr.theme.bg);
   if (img) ovr=img;
-  if (Bangle.isLocked())
-    ovr.setColor(ovr.theme.fg);
-  else
-    ovr.setColor(ovr.theme.fgH);
+  ovr.setColor(getBorderColor());
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   ovr.drawRect(2,38,ovr.getWidth()-2,39);
@@ -266,11 +276,11 @@ const stopCallBuzz = function() {
 };
 
 const drawTriangleUp = function(ovr) {
-  ovr.fillPoly([ovr.getWidth()-9, 46,ovr.getWidth()-14, 56,ovr.getWidth()-4, 56]);
+  ovr.fillPoly([ovr.getWidth()-10, 46,ovr.getWidth()-15, 56,ovr.getWidth()-5, 56]);
 };
 
 const drawTriangleDown = function(ovr) {
-  ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
+  ovr.fillPoly([ovr.getWidth()-10, ovr.getHeight()-6, ovr.getWidth()-15, ovr.getHeight()-16, ovr.getWidth()-5, ovr.getHeight()-16]);
 };
 
 
@@ -327,7 +337,7 @@ const drawMessage = function(ovr, msg) {
   const yText = 40;
   let yLine = yText + 4;
 
-  ovr.setClipRect(2,2,ovr.getWidth() - 3, ovr.getHeight() - 3);
+  ovr.setClipRect(2, yText, ovr.getWidth() - 3, ovr.getHeight() - 3);
 
   const maxTextHeight = ovr.getHeight() - yLine - padding + 2;
 
@@ -386,7 +396,7 @@ const drawMessage = function(ovr, msg) {
     ovr.drawLine(ovr.getWidth()*0.6,ovr.getHeight()-6,ovr.getWidth()-6,ovr.getHeight()-6);
   }
 
-  ovr.setColor(ovr.theme.fg2);
+  ovr.setColor(ovr.theme.fg);
   if (msg.FirstLine != 0) {
     msg.CanscrollUp = true;
     drawTriangleUp(ovr);
@@ -529,8 +539,8 @@ const main = function(ovr, event) {
   }
 
   if (event !== undefined){
-    drawBorder(ovr);
     manageEvent(ovr, event);
+    drawBorder(ovr);
   } else {
     LOG("No event given");
     cleanup();
