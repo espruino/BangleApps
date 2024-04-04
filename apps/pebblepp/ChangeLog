@@ -4,3 +4,4 @@
 0.03: Use smaller font if clock_info test doesn't fit in area
 0.04: Ensure we only scale down clockinfo text if it really won't fit
 0.05: Minor code improvements
+0.06: Use the clockbg library to allow custom image backgrounds

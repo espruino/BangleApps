@@ -20,7 +20,8 @@ Graphics.prototype.setFontLECO1976Regular14 = function() {
 
 {
 const SETTINGS_FILE = "pebblepp.json";
-let settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'bg': '#0f0', 'color': 'Green', 'theme':'System', 'showlock':false};
+let settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'theme':'System', 'showlock':false};
+let background = require("clockbg");
 let theme;
 let drawTimeout;
 
@@ -50,7 +51,7 @@ let draw = function() {
 };
 
 let loadThemeColors = function() {
-  theme = {fg: g.theme.fg, bg: g.theme.bg, day: g.toColor(0,0,0)};
+  theme = {fg: g.theme.fg, bg: g.theme.bg };
   if (settings.theme === "Dark") {
     theme.fg = g.toColor(1,1,1);
     theme.bg = g.toColor(0,0,0);
@@ -58,13 +59,15 @@ let loadThemeColors = function() {
     theme.fg = g.toColor(0,0,0);
     theme.bg = g.toColor(1,1,1);
   }
-  // day and steps
-  if (settings.color == 'Blue' || settings.color == 'Red')
-    theme.day = g.toColor(1,1,1); // white on blue or red best contrast
 };
 loadThemeColors();
 
 // Load the clock infos
+let clockInfoW = 0|(w/2);
+let clockInfoH = 0|(h/2);
+let clockInfoG = Graphics.createArrayBuffer(25, 25, 2, {msb:true});
+clockInfoG.transparent = 3;
+clockInfoG.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor("#888"), g.toColor("#888")]);
 let clockInfoItems = require("clock_info").load();
 let clockInfoDraw = (itm, info, options) => {
   // itm: the item containing name/hasRange/etc
@@ -72,25 +75,26 @@ let clockInfoDraw = (itm, info, options) => {
   // options: options passed into addInteractive
   // Clear the background - if focussed, add a border
   g.reset().setBgColor(theme.bg).setColor(theme.fg);
-  var b = 0; // border
+  var y,b = 0; // border
   if (options.focus) { // white border
     b = 4;
     g.clearRect(options.x, options.y, options.x+options.w-1, options.y+options.h-1);
   }
-  g.setBgColor(settings.bg).clearRect(options.x+b, options.y+b, options.x+options.w-1-b, options.y+options.h-1-b);
+  background.fillRect(options.x+b, options.y+b, options.x+options.w-1-b, options.y+options.h-1-b);
   // we're drawing center-aligned here
   var midx = options.x+options.w/2;
   if (info.img) { // draw the image
     // TODO: we could replace certain images with our own ones here...
-    var y = options.y+8;
+    y = options.y+8;
     if (g.floodFill) {
       /* img is (usually) a black and white transparent image. But we really would like the bits in
       the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
       draw the image, and then flood-fill the rectangle back to the background color. floodFill
       was only added in 2v18 so we have to check for it and fallback if not. */
-      g.setBgColor(theme.bg).clearRect(midx-25,y-1,midx+24,y+48);
-      g.drawImage(info.img, midx-24,y,{scale:2});
-      g.floodFill(midx-25,y,settings.bg);
+      clockInfoG.setBgColor(0).clearRect(0,0,24,24);
+      clockInfoG.setColor(1).drawImage(info.img, 0,0);
+      clockInfoG.floodFill(24,24,3);
+      g.drawImage(clockInfoG, midx-24,y,{scale:2});
     } else { // fallback
       g.drawImage(info.img, midx-24,y,{scale:2});
     }
@@ -103,17 +107,18 @@ let clockInfoDraw = (itm, info, options) => {
     var l = g.wrapString(txt, options.w);
     txt = l.slice(0,2).join("\n") + (l.length>2)?"...":"";
   }
-  g.drawString(txt, midx,options.y+options.h-12); // draw the text
+  y = options.y+options.h-12;
+  g.drawString(txt, midx, y); // draw the text
 };
 
 let clockInfoMenuA = require("clock_info").addInteractive(clockInfoItems, {
   app:"pebblepp",
-  x : 0, y: 0, w: w/2, h:h/2,
+  x : 0, y: 0, w: clockInfoW, h:clockInfoH,
   draw : clockInfoDraw
 });
 let clockInfoMenuB = require("clock_info").addInteractive(clockInfoItems, {
   app:"pebblepp",
-  x : w/2, y: 0, w: w/2, h:h/2,
+  x : w/2, y: 0, w: clockInfoW, h:clockInfoH,
   draw : clockInfoDraw
 });
 
@@ -134,7 +139,7 @@ Bangle.setUI({
 
 Bangle.loadWidgets();
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-g.setBgColor(settings.bg).clear(); // start off with completely clear background
+background.fillRect(Bangle.appRect); // start off with completely clear background
 // contrast bar (top)
 g.setColor(theme.fg).fillRect(0, h2 - 6, w, h2);
 // contrast bar (bottom)
