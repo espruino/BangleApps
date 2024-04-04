@@ -14,9 +14,14 @@ function saveSettings() {
 }
 
 function getColorsImage(cols) {
-  var b = Graphics.createArrayBuffer(16*cols.length,16,16);
+  var bpp = 1;
+  if (cols.length>4) bpp=4;
+  else if (cols.length>2) bpp=2;
+  var b = Graphics.createArrayBuffer(16*cols.length,16,bpp);
+  b.palette = new Uint16Array(1<<bpp);
   cols.forEach((c,i)=>{
-    b.setColor(c).fillRect(i*16,0,i*16+15,15);
+    b.setColor(i).fillRect(i*16,0,i*16+15,15);
+    b.palette[i] = g.toColor(c);
   });
   return "\0"+b.asImage("string");
 }
