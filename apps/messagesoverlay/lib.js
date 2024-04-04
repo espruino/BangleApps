@@ -1,7 +1,7 @@
 let lockListener;
 let quiet;
 
-let toSemantic = function (espruinoVersion){
+const toSemantic = function (espruinoVersion){
   return {
     major: espruinoVersion.substring(0,espruinoVersion.indexOf("v")),
     minor: espruinoVersion.substring(espruinoVersion.indexOf("v") + 1, espruinoVersion.includes(".") ? espruinoVersion.indexOf(".") : espruinoVersion.length),
@@ -9,16 +9,16 @@ let toSemantic = function (espruinoVersion){
   };
 };
 
-let isNewer = function(espruinoVersion, baseVersion){
-  let s = toSemantic(espruinoVersion);
-  let b = toSemantic(baseVersion);
+const isNewer = function(espruinoVersion, baseVersion){
+  const s = toSemantic(espruinoVersion);
+  const b = toSemantic(baseVersion);
 
   return s.major >= b.major &&
     s.minor >= b.major &&
     s.patch > b.patch;
 };
 
-var settings = Object.assign(
+let settings = Object.assign(
   require('Storage').readJSON("messagesoverlay.default.json", true) || {},
   require('Storage').readJSON("messagesoverlay.json", true) || {}
 );
@@ -27,8 +27,7 @@ settings = Object.assign({
   fontSmall:"6x8",
   fontMedium:"6x15",
   fontBig: "12x20",
-  fontLarge:"Vector:30",
-  reemit: true
+  fontLarge:"Vector:30"
 }, settings);
 
 const ovrx = settings.border;
@@ -36,10 +35,10 @@ const ovry = ovrx;
 const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
 
-let LOG=()=>{};
+const LOG=()=>{};
 //LOG = function() { print.apply(null, arguments);};
 
-let isQuiet = function(){
+const isQuiet = function(){
   if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
   return quiet;
 };
@@ -48,17 +47,17 @@ let eventQueue = [];
 let callInProgress = false;
 let buzzing = false;
 
-let show = function(ovr){
+const show = function(ovr){
   let img = ovr;
   LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
-    img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
+    img.paconstte = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
   Bangle.setLCDOverlay(img, ovrx, ovry);
 };
 
-let manageEvent = function(ovr, event) {
+const manageEvent = function(ovr, event) {
   event.new = true;
 
   LOG("manageEvent");
@@ -102,7 +101,7 @@ let manageEvent = function(ovr, event) {
   }
 };
 
-let roundedRect = function(ovr, x,y,w,h,filled){
+const roundedRect = function(ovr, x,y,w,h,filled){
   var poly = [
     x,y+4,
     x+4,y,
@@ -118,7 +117,7 @@ let roundedRect = function(ovr, x,y,w,h,filled){
   if (filled) ovr.fillPoly(poly,true);
 };
 
-let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
+const drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2,2,ovr.getWidth()-3,37);
@@ -127,7 +126,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
 
-  let textCenter = (ovr.getWidth()+35-26)/2;
+  const textCenter = (ovr.getWidth()+35-26)/2;
 
   if (src) {
     let shortened = src;
@@ -153,7 +152,7 @@ let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
   ovr.drawImage(icon,8,8);
 };
 
-let showMessage = function(ovr, msg) {
+const showMessage = function(ovr, msg) {
   LOG("showMessage");
 
   // Normal text message display
@@ -161,7 +160,7 @@ let showMessage = function(ovr, msg) {
     titleFont = settings.fontLarge,
     lines;
   if (title) {
-    let w = ovr.getWidth() - 35 - 26;
+    const w = ovr.getWidth() - 35 - 26;
     if (ovr.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (ovr.setFont(titleFont).stringWidth(title) > w) {
@@ -184,7 +183,7 @@ let showMessage = function(ovr, msg) {
   }
 };
 
-let drawBorder = function(img) {
+const drawBorder = function(img) {
   LOG("drawBorder", isQuiet());
   ovr.setBgColor(ovr.theme.bg);
   if (img) ovr=img;
@@ -198,7 +197,7 @@ let drawBorder = function(img) {
   show(ovr);
 };
 
-let showCall = function(ovr, msg) {
+const showCall = function(ovr, msg) {
   LOG("showCall");
   LOG(msg);
 
@@ -214,7 +213,7 @@ let showCall = function(ovr, msg) {
     titleFont = settings.fontLarge,
     lines;
   if (title) {
-    let w = ovr.getWidth() - 35 -26;
+    const w = ovr.getWidth() - 35 -26;
     if (ovr.setFont(titleFont).stringWidth(title) > w)
       titleFont = settings.fontMedium;
     if (ovr.setFont(titleFont).stringWidth(title) > w) {
@@ -240,7 +239,7 @@ let showCall = function(ovr, msg) {
   drawMessage(ovr, msg);
 };
 
-let next = function(ovr) {
+const next = function(ovr) {
   LOG("next");
   stopCallBuzz();
 
@@ -259,24 +258,24 @@ let next = function(ovr) {
 };
 
 let callBuzzTimer = null;
-let stopCallBuzz = function() {
+const stopCallBuzz = function() {
   if (callBuzzTimer) {
     clearInterval(callBuzzTimer);
     callBuzzTimer = undefined;
   }
 };
 
-let drawTriangleUp = function(ovr) {
+const drawTriangleUp = function(ovr) {
   ovr.fillPoly([ovr.getWidth()-9, 46,ovr.getWidth()-14, 56,ovr.getWidth()-4, 56]);
 };
 
-let drawTriangleDown = function(ovr) {
+const drawTriangleDown = function(ovr) {
   ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
 };
 
 
-let scrollUp = function(ovr) {
-  let msg = eventQueue[0];
+const scrollUp = function(ovr) {
+  const msg = eventQueue[0];
   LOG("up", msg);
 
   if (!msg.CanscrollUp) return;
@@ -285,8 +284,8 @@ let scrollUp = function(ovr) {
   drawMessage(ovr, msg);
 };
 
-let scrollDown = function(ovr) {
-  let msg = eventQueue[0];
+const scrollDown = function(ovr) {
+  const msg = eventQueue[0];
   LOG("down", msg);
 
   if (!msg.CanscrollDown) return;
@@ -295,10 +294,10 @@ let scrollDown = function(ovr) {
   drawMessage(ovr, msg);
 };
 
-let drawMessage = function(ovr, msg) {
-  let getStringHeight = function(str){
+const drawMessage = function(ovr, msg) {
+  const getStringHeight = function(str){
     "jit";
-    let metrics = ovr.stringMetrics(str);
+    const metrics = ovr.stringMetrics(str);
     if (isNewer("2v21.13", process.version)){
       if (metrics.maxImageHeight > 16)
         metrics.maxImageHeight = metrics.height;
@@ -306,11 +305,11 @@ let drawMessage = function(ovr, msg) {
     return Math.max(metrics.height, metrics.maxImageHeight);
   };
 
-  let wrapString = function(str, maxWidth) {
+  const wrapString = function(str, maxWidth) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
   };
-  let wrappedStringHeight = function(strArray){
+  const wrappedStringHeight = function(strArray){
     let r = 0;
     strArray.forEach((line, i) => {
       r += getStringHeight(line);
@@ -323,12 +322,12 @@ let drawMessage = function(ovr, msg) {
 
   if (msg.FirstLine === undefined) msg.FirstLine = 0;
 
-  let padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
+  const padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
 
-  let yText = 40;
+  const yText = 40;
   let yLine = yText + 3;
 
-  let maxTextHeight = ovr.getHeight() - yLine - padding;
+  const maxTextHeight = ovr.getHeight() - yLine - padding;
 
   if (!msg.lines) {
     let bodyFont = settings.fontBig;
@@ -370,7 +369,7 @@ let drawMessage = function(ovr, msg) {
   let drawnHeight = 0;
 
   while(drawnHeight < maxTextHeight) {
-    let lineHeight = msg.lineHeights[currentLine];
+    const lineHeight = msg.lineHeights[currentLine];
     if (drawnHeight + lineHeight < maxTextHeight) {
       ovr.drawString(msg.lines[currentLine], xText, yLine + drawnHeight);
       drawnHeight += lineHeight;
@@ -405,7 +404,7 @@ let drawMessage = function(ovr, msg) {
   show(ovr);
 };
 
-let getDragHandler = function(ovr){
+const getDragHandler = function(ovr){
   return (e) => {
     if (e.dy > 0) {
       scrollUp(ovr);
@@ -415,7 +414,7 @@ let getDragHandler = function(ovr){
   };
 };
 
-let getTouchHandler = function(ovr){
+const getTouchHandler = function(ovr){
   return (_, xy) => {
     if (xy.y < ovry + 40){
       next(ovr);
@@ -427,8 +426,8 @@ const EVENTS=["touch", "drag", "swipe"];
 
 let hasBackup = false;
 
-let origOn = Bangle.on;
-let backupOn = function(event, handler){
+const origOn = Bangle.on;
+const backupOn = function(event, handler){
   if (EVENTS.includes(event)){
     if (!backup[event])
       backup[event] = [];
@@ -437,8 +436,8 @@ let backupOn = function(event, handler){
   else origOn.call(Bangle, event, handler);
 };
 
-let origRemove = Bangle.removeListener;
-let backupRemove = function(event, handler){
+const origRemove = Bangle.removeListener;
+const backupRemove = function(event, handler){
   if (EVENTS.includes(event) && backup[event]){
     LOG("backup for " + event + ": " + backup[event]);
     backup[event] = backup[event].filter(e=>e!==handler);
@@ -446,20 +445,20 @@ let backupRemove = function(event, handler){
   else origRemove.call(Bangle, event, handler);
 };
 
-let origRemoveAll = Bangle.removeAllListeners;
-let backupRemoveAll = function(event){
+const origRemoveAll = Bangle.removeAllListeners;
+const backupRemoveAll = function(event){
   if (backup[event])
     backup[event] = undefined;
   origRemoveAll.call(Bangle);
 };
 
-let restoreHandlers = function(){
+const restoreHandlers = function(){
   if (!hasBackup){
     LOG("No backup available");
     return;
   }
 
-  for (let event of EVENTS){
+  for (const event of EVENTS){
     LOG("Restore", backup[event]);
     origRemoveAll.call(Bangle, event);
     if (backup[event] && backup[event].length == 1)
@@ -475,13 +474,13 @@ let restoreHandlers = function(){
   hasBackup = false;
 };
 
-let backupHandlers = function(){
+const backupHandlers = function(){
   if (hasBackup){
     LOG("Backup already exists");
     return false; // do not backup, overlay is already up
   }
 
-  for (let event of EVENTS){
+  for (const event of EVENTS){
     backup[event] = Bangle["#on" + event];
     if (typeof backup[event] == "function")
       backup[event] = [ backup[event] ];
@@ -498,7 +497,7 @@ let backupHandlers = function(){
   return true;
 };
 
-let cleanup = function(){
+const cleanup = function(){
   if (lockListener) {
     Bangle.removeListener("lock", lockListener);
     lockListener = undefined;
@@ -510,11 +509,11 @@ let cleanup = function(){
   quiet = undefined;
 };
 
-let backup = {};
+const backup = {};
 
-let main = function(ovr, event) {
+const main = function(ovr, event) {
   LOG("Main", event.t);
-  let didBackup = backupHandlers();
+  const didBackup = backupHandlers();
 
   if (!lockListener) {
     lockListener = function (e){
@@ -543,7 +542,7 @@ let main = function(ovr, event) {
 let ovr;
 let clearingTimeout;
 
-let updateClearingTimeout = ()=>{
+const updateClearingTimeout = ()=>{
   LOG("updateClearingTimeout");
   if (settings.autoclear <= 0)
     return;
@@ -553,7 +552,7 @@ let updateClearingTimeout = ()=>{
     LOG("Set new clearing timeout");
     clearingTimeout = setTimeout(()=>{
       LOG("setNewTimeout");
-      let event = eventQueue.pop();
+      const event = eventQueue.pop();
       if (event)
         drawMessage(ovr, event);
       if (eventQueue.length > 0){
@@ -581,7 +580,7 @@ exports.message = function(type, event) {
     bpp = 1;
 
   while (process.memory().free < settings.minfreemem && eventQueue.length > 0){
-    let dropped = eventQueue.pop();
+    const dropped = eventQueue.pop();
     print("Dropped message because of memory constraints", dropped);
   }
 
