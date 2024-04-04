@@ -1,6 +1,23 @@
 let lockListener;
 let quiet;
 
+let toSemantic = function (espruinoVersion){
+  return {
+    major: espruinoVersion.substring(0,espruinoVersion.indexOf("v")),
+    minor: espruinoVersion.substring(espruinoVersion.indexOf("v") + 1, espruinoVersion.includes(".") ? espruinoVersion.indexOf(".") : espruinoVersion.length),
+    patch: espruinoVersion.includes(".") ? espruinoVersion.substring(espruinoVersion.indexOf(".") + 1, espruinoVersion.length) : 0
+  };
+};
+
+let isNewer = function(espruinoVersion, baseVersion){
+  let s = toSemantic(espruinoVersion);
+  let b = toSemantic(baseVersion);
+
+  return s.major >= b.major &&
+    s.minor >= b.major &&
+    s.patch > b.patch;
+};
+
 var settings = Object.assign(
   require('Storage').readJSON("messagesoverlay.default.json", true) || {},
   require('Storage').readJSON("messagesoverlay.json", true) || {}
@@ -279,6 +296,16 @@ let scrollDown = function(ovr) {
 };
 
 let drawMessage = function(ovr, msg) {
+  let getStringHeight = function(str){
+    "jit";
+    let metrics = ovr.stringMetrics(str);
+    if (isNewer("2v21.13", process.version)){
+      if (metrics.maxImageHeight > 16)
+        metrics.maxImageHeight = metrics.height;
+    }
+    return Math.max(metrics.height, metrics.maxImageHeight);
+  };
+
   let wrapString = function(str, maxWidth) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
@@ -286,8 +313,7 @@ let drawMessage = function(ovr, msg) {
   let wrappedStringHeight = function(strArray){
     let r = 0;
     strArray.forEach((line, i) => {
-      let metrics = ovr.stringMetrics(line);
-      r += Math.max(metrics.height, metrics.maxImageHeight);
+      r += getStringHeight(line);
     });
     return r;
   };
