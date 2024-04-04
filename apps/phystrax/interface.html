@@ -41,12 +41,12 @@ function getData() {
   });
 }
 
-// You can call a utility function to save the data
+// Call a utility function to save the data
 document.getElementById("btnSave").addEventListener("click", function() {
   Util.saveCSV("heart_rate_data", csvData);
 });
 
-// Or you can also delete the file
+// Or delete the file
 document.getElementById("btnDelete").addEventListener("click", function() {
   Util.showModal("Deleting...");
   Util.eraseStorageFile("heart_rate_data.csv", function() {
