@@ -35,12 +35,12 @@ function handleHeartRate(hrm) {
         var date = new Date();
         var dateStr = require("locale").date(date);
         var timeStr = require("locale").time(date, 1);
-        var timestamp = dateStr + " " + timeStr; // Concatenate date and time
+        var seconds = ('0' + date.getSeconds()).slice(-2); // Get seconds and pad with leading zero if necessary
+        var timestamp = dateStr + " " + timeStr + ":" + seconds; // Concatenate date, time, and seconds
         logData.push({ timestamp: timestamp, heartRate: currentHeartRate });
         drawScreen();
     }
 }
-
 
 function drawScreen(message) {
     g.clear(); // Clear the display
