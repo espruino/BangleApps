@@ -122,60 +122,69 @@ const roundedRect = function(ovr, x,y,w,h,filled){
   ovr.drawPoly(poly,true);
 };
 
-const drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
+const divider = 38;
+
+const drawScreen = function(ovr, title, src, iconcolor, icon){
   ovr.setColor(ovr.theme.fg2);
   ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(2,2,ovr.getWidth()-3,37);
+  ovr.clearRect(2,2,ovr.getWidth()-3, divider - 1);
 
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
 
-  const textCenter = (ovr.getWidth()+35-26)/2;
+  const textCenter = (ovr.getWidth()+34-24)/2-1;
 
-  if (src) {
-    let shortened = src;
-    while (ovr.stringWidth(shortened) > ovr.getWidth()-80) shortened = shortened.substring(0,shortened.length-2);
-    if (shortened.length != src.length) shortened += "...";
-    ovr.drawString(shortened, textCenter, 2);
-  }
+  const w = ovr.getWidth() - 35 - 26;
 
-  ovr.setFontAlign(0,0);
-  ovr.setFont(titleFont);
-  if (title) ovr.drawString(title, textCenter, 38/2 + 5);
+  if (title)
+    drawTitle(title, textCenter, w, divider, 1);
+
+  if (src)
+    drawSource(src, textCenter, w, 2, -1);
 
   ovr.setColor(ovr.theme.fg);
   ovr.setBgColor(ovr.theme.bg);
 
-  ovr.setFont(settings.fontMedium);
   roundedRect(ovr, ovr.getWidth()-26,5,22,30,true);
+  ovr.setFontAlign(0,0);
   ovr.setFont("Vector:16");
-  ovr.drawString("X",ovr.getWidth()-14,21);
+  ovr.drawString("X",ovr.getWidth()-14,20);
 
   ovr.setBgColor("#888");
-  roundedRect(ovr, 5,5,30,30,true);
+  roundedRect(ovr, 4, 5, 30, 30,true);
   ovr.setBgColor(ovr.theme.bg);
   ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.fg);
-  ovr.drawImage(icon,8,8);
+  ovr.drawImage(icon,7,8);
+};
+
+const drawSource = function(src, center, w, y, align) {
+  ovr.setFont(settings.fontSmall);
+  while (ovr.stringWidth(src) > w) src = src.substring(0,src.length-2);
+  if (src.length != src.length) src += "...";
+  ovr.setFontAlign(0,align);
+  ovr.drawString(src, center, y);
+};
+
+const drawTitle = function(title, center, w, y, align) {
+  let titleFont = settings.fontLarge,
+    lines;
+  if (ovr.setFont(titleFont).stringWidth(title) > w)
+    titleFont = settings.fontMedium;
+  if (ovr.setFont(titleFont).stringWidth(title) > w) {
+    lines = ovr.wrapString(title, w);
+    title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
+  }
+
+  ovr.setFontAlign(0,align);
+  ovr.setFont(titleFont);
+  ovr.drawString(title, center, y+2);
 };
 
 const showMessage = function(ovr, msg) {
   LOG("showMessage");
 
-  // Normal text message display
-  let title = msg.title,
-    titleFont = settings.fontLarge,
-    lines;
-  if (title) {
-    const w = ovr.getWidth() - 35 - 26;
-    if (ovr.setFont(titleFont).stringWidth(title) > w)
-      titleFont = settings.fontMedium;
-    if (ovr.setFont(titleFont).stringWidth(title) > w) {
-      lines = ovr.wrapString(title, w);
-      title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
-    }
-  }
-
-  drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+  ovr.setClipRect(0,0,ovr.getWidth(),ovr.getHeight());
+  drawScreen(ovr, msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
   drawMessage(ovr, msg);
 
@@ -203,7 +212,7 @@ const drawBorder = function(img) {
   ovr.setColor(getBorderColor());
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  ovr.drawRect(2,38,ovr.getWidth()-2,39);
+  ovr.drawRect(2,divider,ovr.getWidth()-2,divider+1);
   show(ovr);
 };
 
@@ -219,20 +228,7 @@ const showCall = function(ovr, msg) {
 
   callInProgress = true;
 
-  let title = msg.title,
-    titleFont = settings.fontLarge,
-    lines;
-  if (title) {
-    const w = ovr.getWidth() - 35 -26;
-    if (ovr.setFont(titleFont).stringWidth(title) > w)
-      titleFont = settings.fontMedium;
-    if (ovr.setFont(titleFont).stringWidth(title) > w) {
-      lines = ovr.wrapString(title, w);
-      title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
-    }
-  }
-
-  drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+  drawScreen(ovr, msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
   stopCallBuzz();
   if (!isQuiet()) {
