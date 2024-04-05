@@ -12,6 +12,8 @@
     if (settings.maxMessages===undefined) settings.maxMessages=3;
     if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
     settings.unlockWatch=!!settings.unlockWatch;
+    settings.tempWakeOnFaceUp=!!settings.tempWakeOnFaceUp;
+    settings.tempWakeOnTwist=!!settings.tempWakeOnTwist;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
     if (settings.flash===undefined) settings.flash=true;
@@ -65,6 +67,14 @@
     /*LANG*/'Unlock Watch': {
       value: !!settings().unlockWatch,
       onchange: v => updateSetting("unlockWatch", v)
+    },
+    /*LANG*/'Temporary Wake on Face Up': {
+      value: !!settings().tempWakeOnFaceUp,
+      onchange: v => updateSetting("tempWakeOnFaceUp", v)
+    },
+    /*LANG*/'Temporary Wake on Twist': {
+      value: !!settings().tempWakeOnTwist,
+      onchange: v => updateSetting("tempWakeOnTwist", v)
     },
     /*LANG*/'Flash Icon': {
       value: !!settings().flash,
