@@ -13,3 +13,5 @@
 0.15: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.16: Only write logs if we have a non-empty log to write
 0.17: Minor code improvements
+0.18: Revert wear detection based on temperature (was introduced without a
+	version bump before version 0.17)
