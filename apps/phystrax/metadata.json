@@ -6,6 +6,7 @@
   "description": "Tracking physiological measurements to support active learning in classrooms",
   "tags": "health",
   "interface": "interface.html",
+  "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"phystrax.app.js","url":"app.js"},
