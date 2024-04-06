@@ -3,7 +3,7 @@ exports = {
   // define en-/disable function, restarts the service to make changes take effect
   setEnabled: function(enable) {
     // stop if enabled
-    if (global.sleeplog && sleeplog.enabled) sleeplog.stop();
+    if (global.sleeplog && global.sleeplog.enabled) global.sleeplog.stop();
 
     // define settings filename
     var settings = "sleeplog.json";
@@ -138,7 +138,7 @@ exports = {
     }
 
     // define last index
-    var lastIndex = log.length - 1;
+    //var lastIndex = log.length - 1;
     // set timestamp of first entry to since if first entry before since
     if (log[0] && log[0][0] < since) log[0][0] = since;
     // add timestamp at now with unknown status if until after now
@@ -251,7 +251,7 @@ exports = {
     // set default date or correct date type if needed
     if (!date || !date.getDay) date = date ? new Date(date) : new Date();
     // set default ToD as set in sleeplog.conf or settings if available
-    if (ToD === undefined) ToD = (global.sleeplog && sleeplog.conf ? sleeplog.conf.breakToD :
+    if (ToD === undefined) ToD = (global.sleeplog && global.sleeplog.conf ? global.sleeplog.conf.breakToD :
       (require("Storage").readJSON("sleeplog.json", true) || {}).breakToD) || 12;
     // calculate last break time and return
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), ToD);
@@ -274,24 +274,24 @@ exports = {
 
     // check if nothing has to be changed
     if (!duration &&
-      (enable && sleeplog.debug === true) ||
-      (!enable && !sleeplog.debug)) return;
+      (enable && global.sleeplog.debug === true) ||
+      (!enable && !global.sleeplog.debug)) return;
 
     // check if en- or disable debugging
     if (enable) {
       // define debug object
-      sleeplog.debug = {};
+      global.sleeplog.debug = {};
 
       // check if a file should be generated
       if (typeof duration === "number") {
         // check duration boundaries, 0 => 8
         duration = duration > 96 ? 96 : duration || 12;
         // calculate and set writeUntil in 10min steps
-        sleeplog.debug.writeUntil = ((Date.now() / 6E5 | 0) + duration * 6) * 6E5;
+        global.sleeplog.debug.writeUntil = ((Date.now() / 6E5 | 0) + duration * 6) * 6E5;
         // set fileid to "{hours since 1970}"
-        sleeplog.debug.fileid = Date.now() / 36E5 | 0;
+        global.sleeplog.debug.fileid = Date.now() / 36E5 | 0;
         // write csv header on empty file
-        var file = require("Storage").open("sleeplog_" + sleeplog.debug.fileid + ".csv", "a");
+        var file = require("Storage").open("sleeplog_" + global.sleeplog.debug.fileid + ".csv", "a");
         if (!file.getLength()) file.write(
           "timestamp,movement,status,consecutive,asleepSince,awakeSince,bpm,bpmConfidence\n"
         );
@@ -299,21 +299,21 @@ exports = {
         file = undefined;
       } else {
         // set debug as active
-        sleeplog.debug = true;
+        global.sleeplog.debug = true;
       }
     } else {
       // disable debugging
-      delete sleeplog.debug;
+      delete global.sleeplog.debug;
     }
 
     // save status forced
-    sleeplog.saveStatus(true);
+    global.sleeplog.saveStatus(true);
   },
 
   // define debugging function, called after logging if debug is set
   debug: function(data) {
     // check if global variable accessable and debug active
-    if (!global.sleeplog || !sleeplog.debug) return;
+    if (!global.sleeplog || !global.sleeplog.debug) return;
 
     // set functions to convert timestamps
     function localTime(timestamp) {
@@ -328,10 +328,10 @@ exports = {
     var console = "sleeplog: " +
       localTime(data.timestamp) + " > " +
       "movement: " + ("" + data.movement).padStart(4) + ", " +
-      "unknown    ,non consec.,consecutive".split(",")[sleeplog.consecutive] + " " +
+      "unknown    ,non consec.,consecutive".split(",")[global.sleeplog.consecutive] + " " +
       "unknown,not worn,awake,light sleep,deep sleep".split(",")[data.status].padEnd(12) + ", " +
-      "asleep since: " + localTime(sleeplog.info.asleepSince) + ", " +
-      "awake since: " + localTime(sleeplog.info.awakeSince);
+      "asleep since: " + localTime(global.sleeplog.info.asleepSince) + ", " +
+      "awake since: " + localTime(global.sleeplog.info.awakeSince);
     // add bpm if set
     if (data.bpm) console += ", " +
       "bpm: " + ("" + data.bpm).padStart(3) + ", " +
@@ -340,24 +340,24 @@ exports = {
     print(console);
 
     // check if debug is set as object with a file id and it is not past writeUntil
-    if (typeof sleeplog.debug === "object" && sleeplog.debug.fileid &&
-      Date.now() < sleeplog.debug.writeUntil) {
+    if (typeof global.sleeplog.debug === "object" && global.sleeplog.debug.fileid &&
+      Date.now() < global.sleeplog.debug.writeUntil) {
       // generate next csv line
       var csv = [
         officeTime(data.timestamp),
         data.movement,
         data.status,
-        sleeplog.consecutive,
-        sleeplog.info.asleepSince ? officeTime(sleeplog.info.asleepSince) : "",
-        sleeplog.info.awakeSince ? officeTime(sleeplog.info.awakeSince) : "",
+        global.sleeplog.consecutive,
+        global.sleeplog.info.asleepSince ? officeTime(global.sleeplog.info.asleepSince) : "",
+        global.sleeplog.info.awakeSince ? officeTime(global.sleeplog.info.awakeSince) : "",
         data.bpm || "",
         data.bpmConfidence || ""
       ].join(",");
       // write next line to log if set
-      require("Storage").open("sleeplog_" + sleeplog.debug.fileid + ".csv", "a").write(csv + "\n");
+      require("Storage").open("sleeplog_" + global.sleeplog.debug.fileid + ".csv", "a").write(csv + "\n");
     } else {
       // clear file setting in debug
-      sleeplog.debug = true;
+      global.sleeplog.debug = true;
     }
 
   },
