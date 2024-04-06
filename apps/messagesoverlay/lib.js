@@ -26,8 +26,7 @@ let settings = Object.assign(
 settings = Object.assign({
   fontSmall:"6x8",
   fontMedium:"6x15",
-  fontBig: "12x20",
-  fontLarge:"Vector:30"
+  fontBig: "12x20"
 }, settings);
 
 const ovrx = settings.border;
@@ -35,7 +34,7 @@ const ovry = ovrx;
 const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
 
-const LOG=()=>{};
+let LOG=()=>{};
 //LOG = function() { print.apply(null, arguments);};
 
 const isQuiet = function(){
@@ -94,7 +93,7 @@ const manageEvent = function(ovr, event) {
 
       if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
         next(ovr);
-      else 
+      else
         eventQueue = [];
 
       break;
@@ -137,7 +136,7 @@ const drawScreen = function(ovr, title, src, iconcolor, icon){
   const w = ovr.getWidth() - 35 - 26;
 
   if (title)
-    drawTitle(title, textCenter, w, divider, 1);
+    drawTitle(title, textCenter, w, 8, divider - 8, 0);
 
   if (src)
     drawSource(src, textCenter, w, 2, -1);
@@ -165,19 +164,31 @@ const drawSource = function(src, center, w, y, align) {
   ovr.drawString(src, center, y);
 };
 
-const drawTitle = function(title, center, w, y, align) {
-  let titleFont = settings.fontLarge,
-    lines;
-  if (ovr.setFont(titleFont).stringWidth(title) > w)
-    titleFont = settings.fontMedium;
-  if (ovr.setFont(titleFont).stringWidth(title) > w) {
-    lines = ovr.wrapString(title, w);
-    title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
+const drawTitle = function(title, center, w, y, h) {
+  let size = 30;
+
+  while (ovr.setFont("Vector:" + size).stringWidth(title) > w){
+    size -= 2;
+    if (size < 14){
+      ovr.setFont(settings.fontMedium);
+      break;
+    }
   }
 
-  ovr.setFontAlign(0,align);
-  ovr.setFont(titleFont);
-  ovr.drawString(title, center, y+2);
+  if (ovr.stringWidth(title) > w) {
+    let ws = ovr.wrapString(title, w);
+    if (ws.length >= 2 && ovr.stringWidth(ws[1]) > w - 8){
+      ws[1] = ws[1].substring(0, ws[1].length - 2);
+      ws[1] += "...";
+    }
+    title = ws.slice(0, 2).join("\n");
+
+    ovr.setFontAlign(0,-1);
+    ovr.drawString(title, center, y + 2);
+  } else {
+    ovr.setFontAlign(0,0);
+    ovr.drawString(title, center, y + h/2);
+  }
 };
 
 const showMessage = function(ovr, msg) {
