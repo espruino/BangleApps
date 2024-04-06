@@ -62,7 +62,7 @@ function drawScreen(message) {
     if (isMeasuring) {
         // Draw measuring status
         g.setFont('6x8', 2);
-        g.drawString('Measuring...', g.getWidth() / 2, g.getHeight() / 2 - 10);
+        g.drawString('Measuring..', g.getWidth() / 2, g.getHeight() / 2 - 10);
 
         // Draw current heart rate if available
         g.setFont('6x8', 4);
