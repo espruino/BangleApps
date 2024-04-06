@@ -18,6 +18,8 @@ const isNewer = function(espruinoVersion, baseVersion){
     s.patch > b.patch;
 };
 
+let needsWorkaround;
+
 let settings = Object.assign(
   require('Storage').readJSON("messagesoverlay.default.json", true) || {},
   require('Storage').readJSON("messagesoverlay.json", true) || {}
@@ -315,10 +317,10 @@ const drawMessage = function(ovr, msg) {
   const getStringHeight = function(str){
     "jit";
     const metrics = ovr.stringMetrics(str);
-    if (isNewer("2v21.13", process.version)){
-      if (metrics.maxImageHeight > 16)
-        metrics.maxImageHeight = metrics.height;
-    }
+    if (needsWorkaround === undefined)
+      needsWorkaround = isNewer("2v21.13", process.version);
+    if (needsWorkaround && metrics.maxImageHeight > 16)
+      metrics.maxImageHeight = metrics.height;
     return Math.max(metrics.height, metrics.maxImageHeight);
   };
 
