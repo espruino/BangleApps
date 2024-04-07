@@ -586,7 +586,7 @@ const main = function(event) {
   if (!lockListener) {
     lockListener = function (e){
       updateClearingTimeout();
-      showMessage(eventQueue[eventQueue.length - 1]);
+      showMessage(eventQueue[0]);
     };
     LOG("Add overlay lock handlers");
     origOn.call(Bangle, 'lock', lockListener);
