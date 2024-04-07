@@ -23,7 +23,7 @@ require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bo
 */
 var Layout = require("Layout");
 var layout; // global var containing the layout for the currently displayed message
-var settings = require('Storage').readJSON("messages.settings.json", true) || {};
+var settings = require('Storage').readJSON("messages.settings.json", true) || {}; // For future reference: Changing to init with `let` here will break/require refactor of "app-newmessage.js".
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
