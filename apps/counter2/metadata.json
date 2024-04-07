@@ -1,7 +1,7 @@
 {
   "id": "counter2",
   "name": "Counter2",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Dual Counter",
   "readme":"README.md",
   "icon": "counter2-icon.png",

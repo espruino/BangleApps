@@ -9,23 +9,22 @@ var s = Object.assign({
   colortext: true,
 }, require('Storage').readJSON("counter2.json", true) || {});
 
-f1 = (s.colortext) ? "#f00" : "#fff";
-f2 = (s.colortext) ? "#00f" : "#fff";
-b1 = (s.colortext) ? g.theme.bg : "#f00";
-b2 = (s.colortext) ? g.theme.bg : "#00f";
+const f1 = (s.colortext) ? "#f00" : "#fff";
+const f2 = (s.colortext) ? "#00f" : "#fff";
+const b1 = (s.colortext) ? g.theme.bg : "#f00";
+const b2 = (s.colortext) ? g.theme.bg : "#00f";
 
-var counter = 0;
 var drag;
 
-screenwidth = g.getWidth();
-screenheight = g.getHeight();
-halfwidth = screenwidth / 2;
-halfheight = screenheight / 2;
+const screenwidth = g.getWidth();
+const screenheight = g.getHeight();
+const halfwidth = screenwidth / 2;
+const halfheight = screenheight / 2;
 
 counter = [];
 counter[0] = s.counter0;
 counter[1] = s.counter1;
-defaults = [];
+const defaults = [];
 defaults[0] = s.max0;
 defaults[1] = s.max1;
 
@@ -37,7 +36,7 @@ function saveSettings() {
   require('Storage').writeJSON("counter2.json", s);
 }
 
-ignoreonce = false;
+let ignoreonce = false;
 var dragtimeout;
 
 function updateScreen() {
@@ -56,7 +55,7 @@ function updateScreen() {
 }
 
 Bangle.on("drag", e => {
-  c = (e.x < halfwidth) ? 0 : 1;
+  const c = (e.x < halfwidth) ? 0 : 1;
   if (!drag) {
     if (ignoreonce) {
       ignoreonce = false;
@@ -66,7 +65,7 @@ Bangle.on("drag", e => {
     dragtimeout = setTimeout(function () { resetcounter(c); }, 600); //if dragging for 500ms, reset counter
   }
   else if (drag && !e.b) { // released
-      adjust = 0;
+      let adjust = 0;
       const dx = e.x - drag.x, dy = e.y - drag.y;
       if (Math.abs(dy) > Math.abs(dx) + 30) {
         adjust = (dy > 0) ? -1 : 1;
