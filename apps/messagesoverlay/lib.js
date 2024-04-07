@@ -1,5 +1,6 @@
 let lockListener;
-let quiet;
+let ovr;
+let clearingTimeout;
 
 // Converts a espruino version to a semantiv versioning object
 const toSemantic = function (v){
@@ -41,30 +42,28 @@ let LOG=()=>{};
 //LOG = function() { print.apply(null, arguments);};
 
 const isQuiet = function(){
-  if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
-  return quiet;
+  return (require('Storage').readJSON('setting.json', 1) || {}).quiet;
 };
 
 let eventQueue = [];
 let callInProgress = false;
 let buzzing = false;
 
-const show = function(ovr){
-  let img = ovr;
-  LOG("show", img.getBPP());
+const show = function(){
+  let img = ovr.asImage();
+  LOG("show", img.bpp);
   if (ovr.getBPP() == 1) {
-    img = ovr.asImage();
     img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
   Bangle.setLCDOverlay(img, ovrx, ovry);
 };
 
-const manageEvent = function(ovr, event) {
+const manageEvent = function(event) {
   event.new = true;
 
   LOG("manageEvent");
   if (event.id == "call") {
-    showCall(ovr, event);
+    showCall(event);
     return;
   }
   switch (event.t) {
@@ -72,7 +71,7 @@ const manageEvent = function(ovr, event) {
       eventQueue.unshift(event);
 
       if (!callInProgress)
-        showMessage(ovr, event);
+        showMessage(event);
       break;
 
     case "modify": {
@@ -87,15 +86,15 @@ const manageEvent = function(ovr, event) {
         eventQueue.unshift(event);
 
       if (!callInProgress)
-        showMessage(ovr, event);
+        showMessage(event);
       break;
     }
     case "remove":
       if (eventQueue.length == 0 && !callInProgress)
-        next(ovr);
+        next();
 
       if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
-        next(ovr);
+        next();
       else
         eventQueue = [];
 
@@ -103,7 +102,7 @@ const manageEvent = function(ovr, event) {
   }
 };
 
-const roundedRect = function(ovr, x,y,w,h,filled){
+const roundedRect = function(x,y,w,h,filled){
   var poly = [
     x,y+4,
     x+4,y,
@@ -126,9 +125,7 @@ const roundedRect = function(ovr, x,y,w,h,filled){
 
 const DIVIDER = 38;
 
-const drawScreen = function(ovr, title, src, iconcolor, icon){
-  ovr.setColor(ovr.theme.fg2);
-  ovr.setBgColor(ovr.theme.bg2);
+const drawScreen = function(title, src, iconcolor, icon){
   ovr.clearRect(2,2,ovr.getWidth()-3, DIVIDER - 1);
 
   ovr.setFont(settings.fontSmall);
@@ -144,19 +141,24 @@ const drawScreen = function(ovr, title, src, iconcolor, icon){
   if (src)
     drawSource(src, textCenter, w, 2, -1);
 
-  ovr.setColor(ovr.theme.fg);
-  ovr.setBgColor(ovr.theme.bg);
+  if (ovr.getBPP() > 1) {
+    let old = ovr.getBgColor();
+    ovr.setBgColor("#888");
+    roundedRect(4, 5, 30, 30,true);
+    ovr.setBgColor(old);
+    old = ovr.getColor();
+    ovr.setColor(iconcolor);
+    ovr.drawImage(icon,7,8);
+    ovr.setColor(old);
+  } else {
+    roundedRect(4, 5, 30, 30,true);
+    ovr.drawImage(icon,7,8);
+  }
 
-  roundedRect(ovr, ovr.getWidth()-26,5,22,30,true);
+  roundedRect(ovr.getWidth()-26,5,22,30,true);
   ovr.setFontAlign(0,0);
   ovr.setFont("Vector:16");
   ovr.drawString("X",ovr.getWidth()-14,20);
-
-  ovr.setBgColor("#888");
-  roundedRect(ovr, 4, 5, 30, 30,true);
-  ovr.setBgColor(ovr.theme.bg);
-  ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.fg);
-  ovr.drawImage(icon,7,8);
 };
 
 const drawSource = function(src, center, w, y, align) {
@@ -198,13 +200,28 @@ const drawTitle = function(title, center, w, y, h) {
   ovr.drawString(title, center, dh);
 };
 
-const showMessage = function(ovr, msg) {
+const showMessage = function(msg) {
   LOG("showMessage");
 
   ovr.setClipRect(0,0,ovr.getWidth(),ovr.getHeight());
-  drawScreen(ovr, msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
-  drawMessage(ovr, msg);
+  if (Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  } else {
+    ovr.setColor(ovr.theme.fg2);
+    ovr.setBgColor(ovr.theme.bg2);
+  }
+
+  drawScreen(msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+
+
+  if (!Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  }
+
+  drawMessage(msg);
 
   if (!isQuiet() && msg.new) {
     msg.new = false;
@@ -216,37 +233,34 @@ const showMessage = function(ovr, msg) {
   }
 };
 
-const getBorderColor = function() {
-  if (Bangle.isLocked())
-    return ovr.theme.fg;
-  else
-    return ovr.theme.fgH;
-};
-
-const drawBorder = function(img) {
+const drawBorder = function() {
   LOG("drawBorder", isQuiet());
-  ovr.setBgColor(ovr.theme.bg);
-  if (img) ovr=img;
-  ovr.setColor(getBorderColor());
+  if (Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  } else {
+    ovr.setColor(ovr.theme.fg2);
+    ovr.setBgColor(ovr.theme.bg2);
+  }
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   ovr.drawRect(2,DIVIDER,ovr.getWidth()-2,DIVIDER+1);
-  show(ovr);
+  show();
 };
 
-const showCall = function(ovr, msg) {
+const showCall = function(msg) {
   LOG("showCall");
   LOG(msg);
 
   if (msg.t == "remove") {
     LOG("hide call screen");
-    next(ovr); //dont shift
+    next(); //dont shift
     return;
   }
 
   callInProgress = true;
 
-  drawScreen(ovr, msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+  drawScreen(msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
   stopCallBuzz();
   if (!isQuiet()) {
@@ -260,10 +274,10 @@ const showCall = function(ovr, msg) {
       Bangle.buzz(500);
     }
   }
-  drawMessage(ovr, msg);
+  drawMessage(msg);
 };
 
-const next = function(ovr) {
+const next = function() {
   LOG("next");
   stopCallBuzz();
 
@@ -277,7 +291,7 @@ const next = function(ovr) {
     return false;
   }
 
-  showMessage(ovr, eventQueue[0]);
+  showMessage(eventQueue[0]);
   return true;
 };
 
@@ -289,36 +303,36 @@ const stopCallBuzz = function() {
   }
 };
 
-const drawTriangleUp = function(ovr) {
+const drawTriangleUp = function() {
   ovr.fillPoly([ovr.getWidth()-10, 46,ovr.getWidth()-15, 56,ovr.getWidth()-5, 56]);
 };
 
-const drawTriangleDown = function(ovr) {
+const drawTriangleDown = function() {
   ovr.fillPoly([ovr.getWidth()-10, ovr.getHeight()-6, ovr.getWidth()-15, ovr.getHeight()-16, ovr.getWidth()-5, ovr.getHeight()-16]);
 };
 
 
-const scrollUp = function(ovr) {
+const scrollUp = function() {
   const msg = eventQueue[0];
   LOG("up", msg);
 
   if (!msg.CanscrollUp) return;
 
   msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
-  drawMessage(ovr, msg);
+  drawMessage(msg);
 };
 
-const scrollDown = function(ovr) {
+const scrollDown = function() {
   const msg = eventQueue[0];
   LOG("down", msg);
 
   if (!msg.CanscrollDown) return;
 
   msg.FirstLine = msg.FirstLine + 1;
-  drawMessage(ovr, msg);
+  drawMessage(msg);
 };
 
-const drawMessage = function(ovr, msg) {
+const drawMessage = function(msg) {
   const getStringHeight = function(str){
     "jit";
     const metrics = ovr.stringMetrics(str);
@@ -340,9 +354,6 @@ const drawMessage = function(ovr, msg) {
     });
     return r;
   };
-
-  ovr.setColor(ovr.theme.fg);
-  ovr.setBgColor(ovr.theme.bg);
 
   if (msg.FirstLine === undefined) msg.FirstLine = 0;
 
@@ -375,8 +386,6 @@ const drawMessage = function(ovr, msg) {
   LOG("Prepared message", msg);
 
   ovr.setFont(msg.bodyFont);
-  ovr.setColor(ovr.theme.fg);
-  ovr.setBgColor(ovr.theme.bg);
   ovr.clearRect(2, yText, ovr.getWidth()-3, ovr.getHeight()-3);
 
   let xText = 4;
@@ -410,36 +419,35 @@ const drawMessage = function(ovr, msg) {
     ovr.drawLine(ovr.getWidth()*0.6,ovr.getHeight()-6,ovr.getWidth()-6,ovr.getHeight()-6);
   }
 
-  ovr.setColor(ovr.theme.fg);
   if (msg.FirstLine != 0) {
     msg.CanscrollUp = true;
-    drawTriangleUp(ovr);
+    drawTriangleUp();
   } else
     msg.CanscrollUp = false;
 
   if (currentLine < msg.lines.length) {
     msg.CanscrollDown = true;
-    drawTriangleDown(ovr);
+    drawTriangleDown();
   } else
     msg.CanscrollDown = false;
 
-  show(ovr);
+  show();
 };
 
-const getDragHandler = function(ovr){
+const getDragHandler = function(){
   return (e) => {
     if (e.dy > 0) {
-      scrollUp(ovr);
+      scrollUp();
     } else if (e.dy < 0){
-      scrollDown(ovr);
+      scrollDown();
     }
   };
 };
 
-const getTouchHandler = function(ovr){
+const getTouchHandler = function(){
   return (_, xy) => {
     if (xy.y < ovry + DIVIDER){
-      next(ovr);
+      next();
     }
   };
 };
@@ -571,14 +579,14 @@ const cleanup = function(){
 
 const backup = {};
 
-const main = function(ovr, event) {
+const main = function(event) {
   LOG("Main", event.t);
   const didBackup = backupHandlers();
 
   if (!lockListener) {
     lockListener = function (e){
       updateClearingTimeout();
-      drawBorder();
+      showMessage(eventQueue[eventQueue.length - 1]);
     };
     LOG("Add overlay lock handlers");
     origOn.call(Bangle, 'lock', lockListener);
@@ -591,16 +599,12 @@ const main = function(ovr, event) {
   }
 
   if (event !== undefined){
-    manageEvent(ovr, event);
-    drawBorder(ovr);
+    manageEvent(event);
   } else {
     LOG("No event given");
     cleanup();
   }
 };
-
-let ovr;
-let clearingTimeout;
 
 const updateClearingTimeout = ()=>{
   LOG("updateClearingTimeout");
@@ -614,7 +618,7 @@ const updateClearingTimeout = ()=>{
       LOG("setNewTimeout");
       const event = eventQueue.pop();
       if (event)
-        drawMessage(ovr, event);
+        showMessage(event);
       if (eventQueue.length > 0){
         LOG("still got elements");
         updateClearingTimeout();
@@ -635,8 +639,8 @@ exports.message = function(type, event) {
   if(event.handled) return;
   if(event.messagesoverlayignore) return;
 
-  bpp = 4;
-  if (process.memory().free < settings.lowmwm)
+  bpp = 16;
+  if (process.memory().free < settings.lowmem)
     bpp = 1;
 
   while (process.memory().free < settings.minfreemem && eventQueue.length > 0){
@@ -652,12 +656,17 @@ exports.message = function(type, event) {
 
   ovr.reset();
 
-  if (bpp == 4)
+  if (bpp > 1){
     ovr.theme = g.theme;
-  else
-    ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+  }
+  else {
+    if (g.theme.dark)
+      ovr.theme = { fg:1, bg:0, fg2:0, bg2:1, fgH:0, bgH:1 };
+    else
+      ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+  }
 
-  main(ovr, event);
+  main(event);
 
   updateClearingTimeout();
 
