@@ -1,11 +1,12 @@
 let lockListener;
 let quiet;
 
-const toSemantic = function (espruinoVersion){
+// Converts a espruino version to a semantiv versioning object
+const toSemantic = function (v){
   return {
-    major: espruinoVersion.substring(0,espruinoVersion.indexOf("v")),
-    minor: espruinoVersion.substring(espruinoVersion.indexOf("v") + 1, espruinoVersion.includes(".") ? espruinoVersion.indexOf(".") : espruinoVersion.length),
-    patch: espruinoVersion.includes(".") ? espruinoVersion.substring(espruinoVersion.indexOf(".") + 1, espruinoVersion.length) : 0
+    major: v.substring(0,v.indexOf("v")),
+    minor: v.substring(v.indexOf("v") + 1, v.includes(".") ? v.indexOf(".") : v.length),
+    patch: v.includes(".") ? v.substring(v.indexOf(".") + 1, v.length) : 0
   };
 };
 
@@ -53,7 +54,7 @@ const show = function(ovr){
   LOG("show", img.getBPP());
   if (ovr.getBPP() == 1) {
     img = ovr.asImage();
-    img.paconstte = new Uint16Array([g.theme.fg,g.theme.bg]);
+    img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
   Bangle.setLCDOverlay(img, ovrx, ovry);
 };
@@ -123,12 +124,12 @@ const roundedRect = function(ovr, x,y,w,h,filled){
   ovr.drawPoly(poly,true);
 };
 
-const divider = 38;
+const DIVIDER = 38;
 
 const drawScreen = function(ovr, title, src, iconcolor, icon){
   ovr.setColor(ovr.theme.fg2);
   ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(2,2,ovr.getWidth()-3, divider - 1);
+  ovr.clearRect(2,2,ovr.getWidth()-3, DIVIDER - 1);
 
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
@@ -138,7 +139,7 @@ const drawScreen = function(ovr, title, src, iconcolor, icon){
   const w = ovr.getWidth() - 35 - 26;
 
   if (title)
-    drawTitle(title, textCenter, w, 8, divider - 8, 0);
+    drawTitle(title, textCenter, w, 8, DIVIDER - 8, 0);
 
   if (src)
     drawSource(src, textCenter, w, 2, -1);
@@ -177,6 +178,8 @@ const drawTitle = function(title, center, w, y, h) {
     }
   }
 
+  let dh;
+  let a;
   if (ovr.stringWidth(title) > w) {
     let ws = ovr.wrapString(title, w);
     if (ws.length >= 2 && ovr.stringWidth(ws[1]) > w - 8){
@@ -185,12 +188,14 @@ const drawTitle = function(title, center, w, y, h) {
     }
     title = ws.slice(0, 2).join("\n");
 
-    ovr.setFontAlign(0,-1);
-    ovr.drawString(title, center, y + 2);
+    a = -1;
+    dh = y + 2;
   } else {
-    ovr.setFontAlign(0,0);
-    ovr.drawString(title, center, y + h/2);
+    a = 0;
+    dh = y + h/2;
   }
+  ovr.setFontAlign(0, a);
+  ovr.drawString(title, center, dh);
 };
 
 const showMessage = function(ovr, msg) {
@@ -225,7 +230,7 @@ const drawBorder = function(img) {
   ovr.setColor(getBorderColor());
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  ovr.drawRect(2,divider,ovr.getWidth()-2,divider+1);
+  ovr.drawRect(2,DIVIDER,ovr.getWidth()-2,DIVIDER+1);
   show(ovr);
 };
 
@@ -343,7 +348,7 @@ const drawMessage = function(ovr, msg) {
 
   const padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
 
-  const yText = 40;
+  const yText = DIVIDER+2;
   let yLine = yText + 4;
 
   ovr.setClipRect(2, yText, ovr.getWidth() - 3, ovr.getHeight() - 3);
@@ -433,7 +438,7 @@ const getDragHandler = function(ovr){
 
 const getTouchHandler = function(ovr){
   return (_, xy) => {
-    if (xy.y < ovry + 40){
+    if (xy.y < ovry + DIVIDER){
       next(ovr);
     }
   };
@@ -652,7 +657,6 @@ exports.message = function(type, event) {
   else
     ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
 
-  ovr.clear();
   main(ovr, event);
 
   updateClearingTimeout();
