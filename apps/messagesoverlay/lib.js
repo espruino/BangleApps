@@ -126,6 +126,7 @@ const roundedRect = function(x,y,w,h,filled){
 const DIVIDER = 38;
 
 const drawScreen = function(title, src, iconcolor, icon){
+  setColors(true);
   ovr.clearRect(2,2,ovr.getWidth()-3, DIVIDER - 1);
 
   ovr.setFont(settings.fontSmall);
@@ -134,6 +135,8 @@ const drawScreen = function(title, src, iconcolor, icon){
   const textCenter = (ovr.getWidth()+34-24)/2-1;
 
   const w = ovr.getWidth() - 35 - 26;
+
+  drawBorder();
 
   if (title)
     drawTitle(title, textCenter, w, 8, DIVIDER - 8, 0);
@@ -200,18 +203,20 @@ const drawTitle = function(title, center, w, y, h) {
   ovr.drawString(title, center, dh);
 };
 
+const setColors = function(lockRelevant) {
+  if (lockRelevant && !Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg2);
+    ovr.setBgColor(ovr.theme.bg2);
+  } else {
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  }
+};
+
 const showMessage = function(msg) {
   LOG("showMessage");
 
   ovr.setClipRect(0,0,ovr.getWidth(),ovr.getHeight());
-
-  if (Bangle.isLocked()){
-    ovr.setColor(ovr.theme.fg);
-    ovr.setBgColor(ovr.theme.bg);
-  } else {
-    ovr.setColor(ovr.theme.fg2);
-    ovr.setBgColor(ovr.theme.bg2);
-  }
 
   drawScreen(msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
@@ -235,13 +240,7 @@ const showMessage = function(msg) {
 
 const drawBorder = function() {
   LOG("drawBorder", isQuiet());
-  if (Bangle.isLocked()){
-    ovr.setColor(ovr.theme.fg);
-    ovr.setBgColor(ovr.theme.bg);
-  } else {
-    ovr.setColor(ovr.theme.fg2);
-    ovr.setBgColor(ovr.theme.bg2);
-  }
+  setColors();
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   ovr.drawRect(2,DIVIDER,ovr.getWidth()-2,DIVIDER+1);
@@ -333,6 +332,7 @@ const scrollDown = function() {
 };
 
 const drawMessage = function(msg) {
+  setColors(false);
   const getStringHeight = function(str){
     "jit";
     const metrics = ovr.stringMetrics(str);
@@ -639,7 +639,7 @@ exports.message = function(type, event) {
   if(event.handled) return;
   if(event.messagesoverlayignore) return;
 
-  bpp = 16;
+  bpp = settings.systemTheme ? 16 : 4;
   if (process.memory().free < settings.lowmem)
     bpp = 1;
 
@@ -657,7 +657,18 @@ exports.message = function(type, event) {
   ovr.reset();
 
   if (bpp > 1){
-    ovr.theme = g.theme;
+    if (settings.systemTheme){
+      ovr.theme = g.theme;
+    } else {
+      ovr.theme = {
+        fg: g.theme.dark ? 15: 0,
+        bg: g.theme.dark ? 0: 15,
+        fg2: g.theme.dark ? 15: 0,
+        bg2: g.theme.dark ? 9 : 8,
+        fgH: g.theme.dark ? 15 : 0,
+        bgH: g.theme.dark ? 9: 8,
+      };
+    }
   }
   else {
     if (g.theme.dark)

@@ -2,13 +2,17 @@
 
 This app handles the display of messages and message notifications as an overlay pop up. 
 
-It is a GUI replacement for the `messages` apps.
+It is a GUI replacement for the `messagesgui` app.
 
 Messages are ephemeral and not stored on the Bangle.
 
 ## Usage
 
 Close app by tapping the X and scroll by swiping. The border of the pop up changes color if the Bangle is locked. The color depends on your currently active theme.
+
+## Theme support
+
+Using the system theme needs more RAM since it uses a 16 bit color buffer for normal message display. Selecting the "low RAM" theme reduces that to a 4 bit buffer.
 
 ## Low memory mode
 

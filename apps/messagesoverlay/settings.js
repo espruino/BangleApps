@@ -41,6 +41,13 @@
           writeSettings("autoclear",v);
         }
       },
+      'Theme': {
+        value: settings.systemTheme,
+        format: v=>v?"System":"low RAM",
+        onchange: v => {
+          writeSettings("systemTheme",v);
+        }
+      },
       'Min. free RAM': {
         value: settings.minfreemem,
         min: 0,
