@@ -1,15 +1,15 @@
 { "id": "lift",
-  "name": "Lift Workout App",
+  "name": "Lift - Workout Timer App",
   "shortName":"Lift",
   "version": "0.01",
   "description": "Rest and Set counter for workout, fitness and lifting things.",
   "icon": "app.png",
   "screenshots": [{"url": "screenshot.png"}, {"url": "screenshot2.png"}, {"url": "screenshot3.png"}, {"url": "screenshot4.png"}],
-  "tags": "workout, weight lifting, rest, fitness",
+  "tags": "workout,weight lifting,rest,fitness,timer",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"app.js","url":"app.js"},
+    {"name":"lift.app.js","url":"lift.app.js"},
     {"name":"lift.img","url":"app-icon.js","evaluate":true}
   ]
 }
