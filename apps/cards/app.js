@@ -132,6 +132,60 @@ function showCode(card) {
       printLinearCode(code.encode().data);
       break;
     }
+    case "EAN_2": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN2 = require("cards.EAN2.js");
+      let code = new EAN2(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_5": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN5 = require("cards.EAN5.js");
+      let code = new EAN5(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_8": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN8 = require("cards.EAN8.js");
+      let code = new EAN8(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_13": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN13 = require("cards.EAN13.js");
+      let code = new EAN13(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_A": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPC = require("cards.UPC.js");
+      let code = new UPC.UPC(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_E": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPCE = require("cards.UPCE.js");
+      let code = new UPCE(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
     default:
       g.clear(true);
       g.setFont("Vector:30");
