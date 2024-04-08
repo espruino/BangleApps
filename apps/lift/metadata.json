@@ -1,16 +1,15 @@
-{ "id": "guitarsongs",
-  "name": "Guitar Songs",
-  "shortName":"Guitar Songs",
-  "version": "0.04",
-  "description": "Songs lyrics and guitar chords",
+{ "id": "lift",
+  "name": "Lift Workout App",
+  "shortName":"Lift",
+  "version": "0.01",
+  "description": "Rest and Set counter for workout, fitness and lifting things.",
   "icon": "app.png",
-  "screenshots": [{"url": "screenshot.png"}],
-  "tags": "guitar, song, lyrics, chords",
+  "screenshots": [{"url": "screenshot.png"}, {"url": "screenshot2.png"}, {"url": "screenshot3.png"}, {"url": "screenshot4.png"}],
+  "tags": "workout, weight lifting, rest, fitness",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"guitarsongs.app.js","url":"app.js"},
-    {"name":"guitarsongs.img","url":"app-icon.js","evaluate":true}
-  ],
-  "data": [{"name":  "guitar_songs.json"}]
+    {"name":"app.js","url":"app.js"},
+    {"name":"lift.img","url":"app-icon.js","evaluate":true}
+  ]
 }
