@@ -466,12 +466,22 @@ const backupOn = function(event, handler){
   else origOn.call(Bangle, event, handler);
 };
 
+const origClearWatch = clearWatch;
+const backupClearWatch = function(w) {
+  if (w)
+    backup.watches.filter((e)=>e.index != w);
+  else
+    backup.watches = [];
+};
+
 const origSetWatch = setWatch;
 const backupSetWatch = function(){
   if (!backup.watches)
     backup.watches = [];
   LOG("backup for watch", arguments);
-  backup.watches.push(arguments);
+  let i = backup.watches.map((e)=>e.index).sort().pop() + 1;
+  backup.watches.push({index:i, args:arguments});
+  return i;
 };
 
 const origRemove = Bangle.removeListener;
@@ -506,13 +516,29 @@ const restoreHandlers = function(){
   }
 
   if (backup.watches){
-    for (let w of backup.watches){
-      LOG("Restore watch", w);
-      origSetWatch.apply(global, w);
+    toRemove = [];
+
+    origClearWatch.call(global);
+
+    for(let i = 0; i < backup.watches.length; i++){
+      let w = backup.watches[i];
+      LOG("Restoring watch", w);
+      if (w) {
+        origSetWatch.apply(global, w);
+      } else {
+        toRemove.push(i+1);
+        origSetWatch.call(global, ()=>{}, BTN);
+      }
+    }
+
+    LOG("Remove watches", toRemove, global["\xff"].watches);
+    for(let c of toRemove){
+      origClearWatch.call(global, c);
     }
   }
 
   global.setWatch = origSetWatch;
+  global.clearWatch = origClearWatch;
   Bangle.on = origOn;
   Bangle.removeListener = origRemove;
   Bangle.removeAllListeners = origRemoveAll;
@@ -536,26 +562,30 @@ const backupHandlers = function(){
 
   backup.watches = [];
 
-  for (let w of global["\xff"].watches){
+  for (let i = 1; i < global["\xff"].watches.length; i++){
+    let w = global["\xff"].watches[i];
     LOG("Transform watch", w);
     if (w) {
-      let args = [
+      w = [
         w.callback,
         w.pin,
         w
       ];
-      delete args[2].callback;
-      delete args[2].pin;
-      args[2].debounce = Math.round(args[2].debounce / 1048.576);
-      LOG("Transformed to", args);
-      backup.watches.push(args);
+      delete w[2].callback;
+      delete w[2].pin;
+      w[2].debounce = Math.round(w[2].debounce / 1048.576);
+    } else {
+      w = null;
     }
+    LOG("Transformed to", w);
+    backup.watches.push(w);
   }
 
   LOG("Backed up watches", backup.watches);
   clearWatch();
 
   global.setWatch = backupSetWatch;
+  global.clearWatch = backupClearWatch;
   Bangle.on = backupOn;
   Bangle.removeListener = backupRemove;
   Bangle.removeAllListeners = backupRemoveAll;
