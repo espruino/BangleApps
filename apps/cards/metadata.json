@@ -7,6 +7,7 @@
   "screenshots": [{"url":"screenshot_cards_overview.png"}, {"url":"screenshot_cards_card1.png"}, {"url":"screenshot_cards_card2.png"}, {"url":"screenshot_cards_barcode.png"}, {"url":"screenshot_cards_qrcode.png"}],
   "tags": "cards",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"cards.app.js","url":"app.js"},
