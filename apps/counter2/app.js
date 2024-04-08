@@ -21,7 +21,7 @@ const screenheight = g.getHeight();
 const halfwidth = screenwidth / 2;
 const halfheight = screenheight / 2;
 
-counter = [];
+const counter = [];
 counter[0] = s.counter0;
 counter[1] = s.counter1;
 const defaults = [];
