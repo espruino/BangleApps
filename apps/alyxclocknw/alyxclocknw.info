@@ -1,0 +1,10 @@
+{
+  "id":"alyxclocknw",
+  "name":"Alyx Clock No Widgets",
+  "type":"clock",
+  "src":"alyxclocknw.app.js",
+  "icon":"alyxclocknw.img",
+  "version":"1.1",
+  "tags":"clock",
+  "files":"alyxclocknw.info,alyxclocknw.app.js,alyxclocknw.img"
+}
