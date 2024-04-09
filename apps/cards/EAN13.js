@@ -60,33 +60,6 @@ class EAN13 extends EAN {
 		return super.rightEncode(data, 'RRRRRR');
 	}
 
-	// The "standard" way of printing EAN13 barcodes with guard bars
-	encodeGuarded() {
-		const data = super.encodeGuarded();
-
-		// Extend data with left digit & last character
-		if (this.options.displayValue) {
-			data.unshift({
-				data: '000000000000',
-				text: this.text.substr(0, 1),
-				options: { textAlign: 'left', fontSize: this.fontSize }
-			});
-
-			if (this.options.lastChar) {
-				data.push({
-					data: '00'
-				});
-				data.push({
-					data: '00000',
-					text: this.options.lastChar,
-					options: { fontSize: this.fontSize }
-				});
-			}
-		}
-
-		return data;
-	}
-
 }
 
 module.exports = EAN13;

@@ -12,19 +12,6 @@ class UPC extends Barcode{
 		}
 
 		super(data, options);
-
-		this.displayValue = options.displayValue;
-
-		// Make sure the font is not bigger than the space between the guard bars
-		if(options.fontSize > options.width * 10){
-			this.fontSize = options.width * 10;
-		}
-		else{
-			this.fontSize = options.fontSize;
-		}
-
-		// Make the guard bars go down half the way of the text
-		this.guardHeight = options.height + this.fontSize / 2 + options.textMargin;
 	}
 
 	valid(){
@@ -33,15 +20,6 @@ class UPC extends Barcode{
 	}
 
 	encode(){
-		if(this.options.flat){
-			return this.flatEncoding();
-		}
-		else{
-			return this.guardedEncoding();
-		}
-	}
-
-	flatEncoding(){
 		var result = "";
 
 		result += "101";
@@ -54,62 +32,6 @@ class UPC extends Barcode{
 			data: result,
 			text: this.text
 		};
-	}
-
-	guardedEncoding(){
-		var result = [];
-
-		// Add the first digit
-		if(this.displayValue){
-			result.push({
-				data: "00000000",
-				text: this.text.substr(0, 1),
-				options: {textAlign: "left", fontSize: this.fontSize}
-			});
-		}
-
-		// Add the guard bars
-		result.push({
-			data: "101" + encode(this.data[0], "L"),
-			options: {height: this.guardHeight}
-		});
-
-		// Add the left side
-		result.push({
-			data: encode(this.data.substr(1, 5), "LLLLL"),
-			text: this.text.substr(1, 5),
-			options: {fontSize: this.fontSize}
-		});
-
-		// Add the middle bits
-		result.push({
-			data: "01010",
-			options: {height: this.guardHeight}
-		});
-
-		// Add the right side
-		result.push({
-			data: encode(this.data.substr(6, 5), "RRRRR"),
-			text: this.text.substr(6, 5),
-			options: {fontSize: this.fontSize}
-		});
-
-		// Add the end bits
-		result.push({
-			data: encode(this.data[11], "R") + "101",
-			options: {height: this.guardHeight}
-		});
-
-		// Add the last digit
-		if(this.displayValue){
-			result.push({
-				data: "00000000",
-				text: this.text.substr(11, 1),
-				options: {textAlign: "right", fontSize: this.fontSize}
-			});
-		}
-
-		return result;
 	}
 }
 

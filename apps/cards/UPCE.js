@@ -60,22 +60,6 @@ class UPCE extends Barcode{
 				return;
 			}
 		}
-		else{
-			return;
-		}
-
-		this.displayValue = options.displayValue;
-
-		// Make sure the font is not bigger than the space between the guard bars
-		if(options.fontSize > options.width * 10){
-			this.fontSize = options.width * 10;
-		}
-		else{
-			this.fontSize = options.fontSize;
-		}
-
-		// Make the guard bars go down half the way of the text
-		this.guardHeight = options.height + this.fontSize / 2 + options.textMargin;
 	}
 
 	valid(){
@@ -83,15 +67,6 @@ class UPCE extends Barcode{
 	}
 
 	encode(){
-		if(this.options.flat){
-			return this.flatEncoding();
-		}
-		else{
-			return this.guardedEncoding();
-		}
-	}
-
-	flatEncoding(){
 		var result = "";
 
 		result += "101";
@@ -102,49 +77,6 @@ class UPCE extends Barcode{
 			data: result,
 			text: this.text
 		};
-	}
-
-	guardedEncoding(){
-		var result = [];
-
-		// Add the UPC-A number system digit beneath the quiet zone
-		if(this.displayValue){
-			result.push({
-				data: "00000000",
-				text: this.text[0],
-				options: {textAlign: "left", fontSize: this.fontSize}
-			});
-		}
-
-		// Add the guard bars
-		result.push({
-			data: "101",
-			options: {height: this.guardHeight}
-		});
-
-		// Add the 6 UPC-E digits
-		result.push({
-			data: this.encodeMiddleDigits(),
-			text: this.text.substring(1, 7),
-			options: {fontSize: this.fontSize}
-		});
-
-		// Add the end bits
-		result.push({
-			data: "010101",
-			options: {height: this.guardHeight}
-		});
-
-		// Add the UPC-A check digit beneath the quiet zone
-		if(this.displayValue){
-			result.push({
-				data: "00000000",
-				text: this.text[7],
-				options: {textAlign: "right", fontSize: this.fontSize}
-			});
-		}
-
-		return result;
 	}
 
 	encodeMiddleDigits() {
