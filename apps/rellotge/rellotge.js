@@ -1,14 +1,15 @@
-// Example application code
-// Taken from https://github.com/espruino/BangleApps/blob/master/apps/sclock/clock-simple.js
-(function() {
 
-  const timeFontSize = 1;
+
+const timeFontSize = 1;
   const dateFontSize = 2;
   const font = "12x20";
 
   const xyCenter = g.getWidth() /9;
   const yposTime = 55;
   const yposDate = 130;
+  
+
+  
   const leshores = ["Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
   const leshores2 = ["d'una","de dues","de tres","de quatre","de cinc","de sis","de set","de vuit","de nou","de deu","d'onze","de dotze"];
   const fontWeight = 12;
@@ -110,26 +111,35 @@
     g.drawString(d.getHours()+":"+mu, xyCenter, yposDate, true);
   }
 
-  // handle switch display on by pressing BTN1
-  function onLcd(on) {
-    if (on) {
-      Bangle.drawWidgets();
-      //drawSimpleClock();
-      Bangle.removeListener('lcdPower', onLcd);
-    }
+// timeout used to update every minute
+var drawTimeout;
+
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    drawSimpleClock();
+  }, 60000 - (Date.now() % 60000));
+}
+
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',on=>{
+  if (on) {
+    drawSimpleClock(); // draw immediately, queue redraw
+  } else { // stop draw timer
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
   }
-  Bangle.on('lcdPower', onLcd);
-  Bangle.setUI("clock");
-  Bangle.loadWidgets();
-  require("widget_utils").swipeOn();
+});
 
-  // clean app screen
-  g.clear();
+g.clear();
 
-  // refesh every 60 sec
-  setInterval(drawSimpleClock, 60E3);
-
-  // draw now
+// Show launcher when middle button pressed
+// Bangle.setUI("clock");
+// use  clockupdown as it tests for issue #1249
+Bangle.setUI("clockupdown", btn=> {
   drawSimpleClock();
+});
 
-})();
