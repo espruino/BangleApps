@@ -16,7 +16,7 @@ function roundRect (x1, y1, x2, y2, halfrad) {
 }
 
 function center(r) {
-  return {x: r.x + (r.x2 - r.x)/2, y: r.y + (r.y2 - r.y)/2}
+  return {x: r.x + (r.x2 - r.x)/2 + 1, y: r.y + (r.y2 - r.y)/2 + 1}
 }
 function inRect(r, xy) {
   return xy.x >= r.x && xy.x <= r.x2 && xy.y >= r.y && xy.y <= r.y2;
@@ -28,93 +28,90 @@ let setsCount = 3;
 let currentSet = 1;
 let restUntil = 0;
 
+Bangle.loadWidgets();
 
+const m = 2; // margin
 const R = Bangle.appRect;
-const spacing = 2;
-const q1 = {x: R.x, y: R.y, x2: R.x2/2 - spacing, y2: R.y2 / 2 - spacing};
-const q2 = {x: R.x2/2 + spacing, y: R.y, x2: R.x2, y2: R.y2 / 2 - spacing};
-const q3 = {x: R.x, y: R.y2/2 + spacing, x2: R.x2/2 - spacing, y2: R.y2};
-const q4 = {x: R.x2/2 + spacing, y: R.y2/2 + spacing, x2: R.x2, y2: R.y2};
+const r = {x:R.x+m, x2:R.x2-m, y:R.y+m, y2:R.y2-m};
+const s = 2; // spacing
+const h = r.y2 - r.y;
+const w = r.x2 - r.x;
+const cx = r.x + w/2; // center x
+const cy = r.y + h/2; // center y
+const q1 = {x: r.x,    y: r.y,    x2: cx - s,  y2: cy - s};
+const q2 = {x: cx + s, y: r.y,    x2: r.x2,    y2: cy - s};
+const q3 = {x: r.x,    y: cy + s, x2: cx - s,  y2: r.y2};
+const q4 = {x: cx + s, y: cy + s, x2: r.x2,    y2: r.y2};
 const quadrants = [q1,q2,q3,q4];
 const c1 = center(q1)
 const c2 = center(q2)
 const c3 = center(q3)
 const c4 = center(q4)
 
-const SET_COLOR = '#880088';
-const REST_COLOR = '#008888';
+const GREY_COLOR = '#CCCCCC';
+const SET_COLOR = '#FF00FF';
+const REST_COLOR = '#00FFFF';
+const REST_COLOR_MUTED = '#008888';
+const RED_COLOR = '#FF0000';
+const GREEN_COLOR = '#00FF00';
+const GREEN_COLOR_MUTED = '#008800';
+const BIG_FONT = "6x8:2x2";
 
 function drawMainMenu() {
-  g.setBgColor(-1).clear();
-  g.setColor('#888888');
+  g.setColor(REST_COLOR);
   roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(SET_COLOR);
   roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
-  g.setColor(REST_COLOR);
+  g.setColor(GREY_COLOR);
   roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
-  g.setColor('#008800');
+  g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Lift", c1.x, c1.y)
-  g.setFont("6x8").drawString("Tap to\nConfigure", c2.x, c2.y-25)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Sets\n" + setsCount, c2.x, c2.y + 10)
-  g.setFont("6x8").drawString("Tap to\nConfigure", c3.x, c3.y-25)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Rest\n" +restSeconds+ "s", c3.x, c3.y + 10)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Go", c4.x, c4.y)
+  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c1.x, c1.y-25)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST\n" +restSeconds+ "s", c1.x, c1.y + 10)
+  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c2.x, c2.y-25)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS\n" + setsCount, c2.x, c2.y + 10)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("Lift", c3.x, c3.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("GO", c4.x, c4.y)
 }
 
 function drawSetRest() {
-  g.setBgColor(-1).clear();
-  g.setColor('#888888');
-  roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(REST_COLOR);
-  roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
-  g.setColor('#880000');
+  roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
+  g.setColor(RED_COLOR);
   roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
-  g.setColor('#008800');
+  g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("OK", c1.x, c1.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Rest\n" +restSeconds+ "s", c2.x, c2.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("-", c3.x, c3.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("+", c4.x, c4.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST\n" +restSeconds+ "s", c1.x, c1.y)
+  // g.setFont(BIG_FONT).setFontAlign(0,0).drawString("OK", c2.x, c2.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("-", c3.x, c3.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("+", c4.x, c4.y)
 }
 
 function drawSetSets() {
-  g.setBgColor(-1).clear();
-  g.setColor('#888888');
-  roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(SET_COLOR);
   roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
-  g.setColor('#880000');
+  g.setColor(RED_COLOR);
   roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
-  g.setColor('#008800');
+  g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("OK", c1.x, c1.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Sets\n" +setsCount, c2.x, c2.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("-", c3.x, c3.y)
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("+", c4.x, c4.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS\n" +setsCount, c2.x, c2.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("-", c3.x, c3.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("+", c4.x, c4.y)
 }
 
 function drawExercise() {
-  g.setBgColor(-1).clear();
-  g.setColor('#000000');
+  g.setColor(REST_COLOR_MUTED);
   roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(SET_COLOR);
   roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
-  g.setColor('#000000');
-  roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
-  // g.setColor('#FF0000');
-  // roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
+  g.setColor(GREEN_COLOR_MUTED);
+  roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1);
-  g.setFont("Vector:15").setFontAlign(0,0).drawString("START", c1.x, c1.y)
-  g.setColor(-1);
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("Set\n#"+currentSet, c2.x, c2.y)
-  g.setColor(-1);
-  g.setFont("Vector:15").setFontAlign(0,0).drawString("EXERCISE", c3.x, c3.y)
-  g.setColor(0);
-  g.setFont("6x8").drawString("Push button \nwhen done ->", c4.x, c4.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SET\n#"+currentSet, c2.x, c2.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("PUSH >\nBUTTON\nWHEN\nDONE", c4.x, c4.y)
 }
 
 function circlePoints (cx, cy, r, points) {
@@ -126,51 +123,47 @@ function circlePoints (cx, cy, r, points) {
   return circlePoints;
 }
 
-const smallQ3Circle = circlePoints(c3.x, c3.y, (q1.x - q1.x2)/2, 60);
+const smallQ3Circle = [c2.x, c2.y].concat(circlePoints(c2.x, c2.y, (q2.y - q2.y2)/2, 60));
 
 
 function drawRest() {
   const start = Date.now();
   const secondsRemaining = Math.max(0, ((restUntil - Date.now()) / 1000) | 0);
 
-  g.setBgColor(-1).clear();
-  g.setColor('#888888');
-  roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(REST_COLOR);
-  roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
-  // g.setColor('#888888');
-  // roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
-  // g.setColor('#FFFFFF');
-  // roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
-
-  g.setColor(-1);
-  g.setFont("Vector:25").setFontAlign(0,0).drawString("REST", c1.x, c1.y)
-  g.setColor(-1);
-  g.setFont("Vector:25").setFontAlign(0,0).drawString(secondsRemaining, c2.x, c2.y)
+  roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
+  g.setColor(-1).setFont(BIG_FONT).setFontAlign(0,0).drawString(secondsRemaining, c1.x, c1.y)
 
   const factor = 1 - secondsRemaining / restSeconds;
   const circleParts = (((factor * smallQ3Circle.length) | 0) >> 1) << 1
-  const poly = [c3.x, c3.y].concat(smallQ3Circle.slice(0, circleParts))
-  g.setColor(REST_COLOR);
+  const poly = smallQ3Circle.slice(0, circleParts + 2)
+  g.setColor(SET_COLOR);
   g.fillPoly(poly);
+
+  g.setColor(GREY_COLOR);
+  roundRect(q3.x, q3.y, q3.x2, q3.y2, 20);
+  g.setColor(-1).setFont(BIG_FONT).setFontAlign(0,0).drawString("REST", c3.x, c3.y)
 
   g.setColor(0);
   g.setFont("6x8").drawString("Push button\nto skip ->", c4.x, c4.y);
 
   if (secondsRemaining > 0) {
-    const renderTime = Date.now() - start;
-    if (secondsRemaining < 3) {
-      Bangle.buzz();
+    if (secondsRemaining < 5) {
+      if (secondsRemaining > 1) {
+        Bangle.buzz(100);
+      } else {
+        Bangle.buzz(1000);
+      }
     }
+    const renderTime = Date.now() - start;
     setTimeout(redrawApp, Math.max(10, 1000 - renderTime));
   } else {
-    Bangle.buzz(1000);
     currentSet += 1;
     if (currentSet > setsCount) {
       currentSet = 1;
-      mode = MAIN_MENU;
+      setMode(MAIN_MENU);
     } else {
-      mode = EXERCISE;
+      setMode(EXERCISE);
     }
     redrawApp();
   }
@@ -179,20 +172,23 @@ function drawRest() {
 function drawDoIt() {
   g.setBgColor('#00FF00').clear();
   g.drawImage(getImg(), 44, 44);
-  g.setFont("Vector:25")
+  g.setFont(BIG_FONT)
   g.setColor(0);
-  g.drawString('just', 40, 20);
-  Bangle.buzz(100, 0.5);
   setTimeout(() => {
+    g.drawString('just', 40, 20);
+    Bangle.buzz(150, 0.5);
+  }, 200);
+  setTimeout(() => {
+    g.drawImage(getImg(), 22, 44, {scale: 1.5});
     g.drawString('DO', 100, 20);
     Bangle.buzz(200);
   }, 1000);
   setTimeout(() => {
     g.drawString('IT', 150, 20);
     Bangle.buzz(200);
-  },  1100);
+  },  1300);
   setTimeout(() => {
-    mode = MAIN_MENU;
+    setMode(MAIN_MENU);
     redrawApp();
   }, 2000);
 }
@@ -205,6 +201,11 @@ const REST = 'REST';
 const DOIT = 'DOIT';
 
 let mode = MAIN_MENU;
+let lastRender = MAIN_MENU;
+
+function setMode(newMode){
+  mode = newMode;
+}
 
 function getImg() {
   return require("heatshrink").decompress(atob("rFYwcBpMkyQCB6QFDmnStsk6dpmmatO2AoMm7VpkmapMm6Vp02TEAmSCIIFB2mbEYPbtu07VJmwFCzYRD0gdB0gmBEAgCCtoOBtIOBIIPTpo1BHwJQCAQMmydNI4RBFLIILDmnaps2L4Om7ZEBI4IgCAQNN0g+GJQKJDKwIaB0iJCJQQmBCgWmHAIdEHYKnFDQSbBkBcE0wOBFgImBSoMmQZJTE6VAbYMJPQRHBDQKMBmmTtoUCEBPSJQT8CgKPCcAJQEIILFHMohxDEAUANwZ9E0wdBUhDLGyAgDO4LIByYOBAQLpEL45KEm2AQIMkwEEYQZTB7Vt23TC4wCHCgOAgRUBEAL+CzVtkwRCHw4CJEANNm2QggXEX4jpBIJgCBgESOoKHB6RiByYCBDQSGCMoIdJHAQgCkmCgALCZALpCd4RiNYoKkCkESpC8CEYm2QByDDgEBkETpBWDtukKYZBOHAKkBgIGBIIRNC0wFEIKCDCyVEBASbLAReQEAXSghKCzQ7BQYIgUoAGBEARuDIKmSgAAByAgFASwgCgALFmikUEBRBYgggcwBBDtDrDASwfDgFIgAgYkAfDgVAgEJECw6BAAcSEAKGXDIUAhEgZIcEYS4ABAwwgUyAgFAwjIUDIifBdQggUDIkBZIjKBECYZEAA4gSHQogoRYIgQD5gghgIgQpAg/QeAgRQcNAggeLECQDBwAgryIgTxAgKwAgQpQgKgMhkmQIKcIIJEgEA+kEBNApMgdJBhBgkQIKFCpMAEBUAMQ+aIJUioAgKIItpIJkCEBEAIJIgKhIgMyRBFmikLMRMAgkEEAmTUhogRARlAhIggkAgLUiNIpMgD5AgWXQIgcpMJED8BEBmAED0kwIgRkAgLkAgSkMkwAhKxIgRkgggXIIcFgIEDaYIgRwggGgBKDECcEyVAgEQEIkSpIgUgADCQwzSBEC0gD4pBBkQdQDgYgIBAIgVHAJFBcYgMBgQgUPQIgFFINIBQQgQTYYgfXQIgFFYggPGgIVCgmQDogFCECr8CII4KCECUBED4AKFYQgOoAYFggIGEC4XDEDgLDkAgVD4kCBYgKEECsSBYmAEDILFEEGQEBYA=="));
@@ -213,42 +214,38 @@ function getImg() {
 const onTouchPerQuadrantPerMode = {
   // mode -> [[nextMode on touch, custom function], ... for all quadrants]
   MAIN_MENU: [
-    [DOIT, null],
-    [SET_SETS, null],
-    [SET_REST, null],
-    [EXERCISE, null]
+    [SET_REST, null], [SET_SETS, null],
+    [DOIT, null], [EXERCISE, null]
   ],
   SET_REST: [
-    [MAIN_MENU, Bangle.buzz],
-    [null, null],
+    [MAIN_MENU, Bangle.buzz], [null, null],
     [null, () => {
       restSeconds = Math.min(120, Math.max(0, restSeconds - 15));
+      Bangle.buzz(100);
     }],
     [null, () => {
       restSeconds = Math.min(120, Math.max(0, restSeconds + 15));
+      Bangle.buzz(100);
     }],
   ],
   SET_SETS: [
-    [MAIN_MENU, Bangle.buzz],
-    [null, null],
+    [null, null], [MAIN_MENU, Bangle.buzz],
     [null, () => {
       setsCount = Math.min(15, Math.max(0, setsCount - 1));
+      Bangle.buzz(100);
     }],
     [null, () => {
       setsCount = Math.min(15, Math.max(0, setsCount + 1));
+      Bangle.buzz(100);
     }],
   ],
   EXERCISE: [
-      [null, null],
-      [null, null],
-      [null, null],
-      [null, null],
+      [null, null], [null, null],
+      [null, null], [null, null],
   ],
   REST: [
-      [null, null],
-      [null, null],
-      [null, null],
-      [null, null],
+      [null, null], [null, null],
+      [null, null], [null, null],
   ]
 }
 
@@ -262,13 +259,15 @@ const drawFuncPerMode = {
 }
 
 function redrawApp(){
-  g.clear();
+  g.setBgColor(-1).clear();
+  Bangle.drawWidgets();
   drawFuncPerMode[mode]();
+  lastRender = mode;
 }
 
 function buttonPress () {
   if (mode === EXERCISE) {
-    mode = REST;
+    setMode(REST);
     restUntil = Date.now() + (restSeconds * 1000);
     redrawApp();
     return;
@@ -280,25 +279,19 @@ function buttonPress () {
   }
 }
 
-setWatch(buttonPress, BTN, { repeat: true});
+setWatch(buttonPress, BTN, { repeat: true, debounce: 25});
 
 Bangle.on('touch', (button, xy) => {
   for (let qidx=0; qidx<4; qidx++) {
     if (inRect(quadrants[qidx], xy)) {
       const nextMode = onTouchPerQuadrantPerMode[mode][qidx][0];
       const func = onTouchPerQuadrantPerMode[mode][qidx][1];
-      if (func) {
-        func();
-      }
-      if (nextMode) {
-        mode = nextMode;
-        redrawApp();
-      }
-      return;
+      if (func) func();
+      if (nextMode) setMode(nextMode);
+      redrawApp();
     }
   }
 });
 
-Bangle.loadWidgets();
 redrawApp();
 
