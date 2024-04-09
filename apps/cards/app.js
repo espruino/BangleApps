@@ -82,16 +82,17 @@ function printSquareCode(binary, size) {
   }
 }
 function printLinearCode(binary) {
+  var padding = 5;
   var yFrom = 15;
   var yTo = 28;
-  var width = g.getWidth()/binary.length;
+  var width = (g.getWidth()-(2*padding))/binary.length;
   for(var b = 0; b < binary.length; b++){
     var x = b * width;
     if(binary[b] === "1"){
-      g.setColor(BLACK).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(BLACK).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
     else if(binary[b]){
-      g.setColor(WHITE).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(WHITE).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
   }
 }
