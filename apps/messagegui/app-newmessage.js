@@ -11,11 +11,9 @@ if (settings.tempWakeOnFaceUp || settings.tempWakeOnTwist) {
   if (!options.wakeOnFaceUp && !options.wakeOnTwist) { // If the user already uses a one arm method of unlocking it's unnecessary to do anything more.
     if (settings.tempWakeOnFaceUp) {
       Bangle.setOptions({wakeOnFaceUp:true});
-      E.on("kill", ()=>{Bangle.setOptions({wakeOnFaceUp:false});});
     }
     if (settings.tempWakeOnTwist) {
       Bangle.setOptions({wakeOnTwist:true});
-      E.on("kill", ()=>{Bangle.setOptions({wakeOnTwist:false});});
     }
   }
 }
