@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "An elegant clock",
   "screenshots": [{ "url": "screenshot.png" }],
-  "icon": "screenshot.png",
+  "icon": "icon.png",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
