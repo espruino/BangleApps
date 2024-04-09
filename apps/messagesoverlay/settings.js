@@ -57,16 +57,6 @@
         onchange: v => {
           writeSettings("minfreemem",v);
         }
-      },
-      'Low RAM mode': {
-        value: settings.lowmem,
-        min: 0,
-        max: process.memory().total/1000,
-        step: 1,
-        format: v=>v + "k free",
-        onchange: v => {
-          writeSettings("lowmem",v);
-        }
       }
     };
     return mainmenu;

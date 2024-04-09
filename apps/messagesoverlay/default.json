@@ -2,6 +2,5 @@
     "autoclear": 30,
     "border": 10,
     "minfreemem": 2,
-    "lowmem": 4,
     "systemTheme": true
 }

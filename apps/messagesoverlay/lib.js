@@ -669,11 +669,37 @@ exports.message = function(type, event) {
   if(event.handled) return;
   if(event.messagesoverlayignore) return;
 
+  let free = process.memory().free;
   bpp = settings.systemTheme ? 16 : 4;
-  if (process.memory().free < settings.lowmem)
-    bpp = 1;
 
-  while (process.memory().free < settings.minfreemem && eventQueue.length > 0){
+  let estimatedMemUse = bpp == 16 ? 4096 : (bpp == 4 ? 1536 : 768);
+  // reduce estimation if ovr already exists and uses memory;
+  if (ovr)
+    estimatedMemUse -= ovr.getBPP() == 16 ? 4096 : (ovr.getBPP() == 4 ? 1536 : 768);
+
+  if (process.memory().free - estimatedMemUse < settings.minfreemem * 1024) {
+    // we are going to be under our minfreemem setting if we proceed
+    bpp = 1;
+    if (ovr && ovr.getBPP() > 1){
+      // can reduce memory by going 1 bit
+      let saves = ovr.getBPP() == 16 ? 4096 - 768 : 768;
+      estimatedMemUse -= saves;
+      LOG("Go to 1 bit, saving", saves);
+    } else {
+      estimatedMemUse = 768;
+    }
+  }
+
+
+  if (E.getSizeOf){
+    let e = E.getSizeOf(eventQueue);
+    estimatedMemUse += e;
+    LOG("EventQueue has", e, "blocks");
+  }
+
+  LOG("Free ", free, "estimated use", estimatedMemUse, "for", bpp, "BPP");
+
+  while (process.memory().free - estimatedMemUse < settings.minfreemem * 1024 && eventQueue.length > 0){
     const dropped = eventQueue.pop();
     print("Dropped message because of memory constraints", dropped);
   }
@@ -682,6 +708,8 @@ exports.message = function(type, event) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
+    if(E.getSizeOf)
+       LOG("New overlay uses", E.getSizeOf(ovr), "blocks");
   }
 
   ovr.reset();
@@ -713,4 +741,5 @@ exports.message = function(type, event) {
 
   if (!isQuiet()) Bangle.setLCDPower(1);
   event.handled = true;
+  g.flip();
 };
