@@ -20,7 +20,7 @@ class EAN8 extends EAN {
 
 	constructor(data, options) {
 		// Add checksum if it does not exist
-		if (data.search(/^[0-9]{7}$/) !== -1) {
+		if (/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(data)) {
 			data += checksum(data);
 		}
 
@@ -29,7 +29,7 @@ class EAN8 extends EAN {
 
 	valid() {
 		return (
-			this.data.search(/^[0-9]{8}$/) !== -1 &&
+			/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(this.data) &&
 			+this.data[7] === checksum(this.data)
 		);
 	}

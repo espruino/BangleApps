@@ -24,7 +24,7 @@ class EAN13 extends EAN {
 
 	constructor(data, options) {
 		// Add checksum if it does not exist
-		if (data.search(/^[0-9]{12}$/) !== -1) {
+		if (/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(data)) {
 			data += checksum(data);
 		}
 
@@ -36,7 +36,7 @@ class EAN13 extends EAN {
 
 	valid() {
 		return (
-			this.data.search(/^[0-9]{13}$/) !== -1 &&
+			/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(this.data) &&
 			+this.data[12] === checksum(this.data)
 		);
 	}

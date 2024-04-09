@@ -41,14 +41,14 @@ class UPCE extends Barcode{
 		// is a UPC-A check or number system digit.
 		super(data, options);
 		this.isValid = false;
-		if(data.search(/^[0-9]{6}$/) !== -1){
+		if(/^[0-9][0-9][0-9][0-9][0-9][0-9]$/.test(data)){
 			this.middleDigits = data;
 			this.upcA = expandToUPCA(data, "0");
 			this.text = options.text ||
 				`${this.upcA[0]}${data}${this.upcA[this.upcA.length - 1]}`;
 			this.isValid = true;
 		}
-		else if(data.search(/^[01][0-9]{7}$/) !== -1){
+		else if(/^[01][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(data)){
 			this.middleDigits = data.substring(1, data.length - 1);
 			this.upcA = expandToUPCA(this.middleDigits, data[0]);
 

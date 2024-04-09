@@ -7,7 +7,7 @@ const Barcode = require("cards.Barcode.js");
 class UPC extends Barcode{
 	constructor(data, options){
 		// Add checksum if it does not exist
-		if(data.search(/^[0-9]{11}$/) !== -1){
+		if(/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(data)){
 			data += checksum(data);
 		}
 
@@ -15,7 +15,7 @@ class UPC extends Barcode{
 	}
 
 	valid(){
-		return this.data.search(/^[0-9]{12}$/) !== -1 &&
+		return /^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/.test(this.data) &&
 			this.data[11] == checksum(this.data);
 	}
 

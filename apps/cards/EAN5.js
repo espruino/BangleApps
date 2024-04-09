@@ -24,7 +24,7 @@ class EAN5 extends Barcode {
 	}
 
 	valid() {
-		return this.data.search(/^[0-9]{5}$/) !== -1;
+		return /^[0-9][0-9][0-9][0-9][0-9]$/.test(this.data);
 	}
 
 	encode() {
