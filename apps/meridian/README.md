@@ -1,25 +1,11 @@
-# Clock Name
+# Meridian Clock
 
-More info on making Clock Faces: https://www.espruino.com/Bangle.js+Clock
-
-Describe the Clock...
+An elegant clock with 2 clock info
 
 ## Usage
 
-Describe how to use it
-
-## Features
-
-Name the function
-
-## Controls
-
-Name the buttons and what they are used for
-
-## Requests
-
-Name who should be contacted for support/update requests
+Tap on a widget and swipe left/right/up/down to change the displayed info
 
 ## Creator
 
-Your name
+Spioune
