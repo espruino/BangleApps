@@ -1,4 +1,3 @@
-// modified version from rebble
 // single screen, clock on the right, sidebar without image (date/steps/sunrise/sunset/batt%)
 
 Graphics.prototype.setFontKdamThmor = function(scale) {
@@ -37,8 +36,19 @@ function draw() {
   g.setColor('#000');
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
+  g.setFont('Vector', 20).setFontAlign(0, -1).drawString(E.getBattery() + '%', widthBar/2,  152);
 }
 
 draw();
 
 Bangle.setUI("clock");
+
+/*
+2 	day of week
+27 	day
+52 	month
+77 	steps
+102 	sunrise
+127 	sunset
+152 	batt%
+*/
