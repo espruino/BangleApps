@@ -25,12 +25,15 @@ function saveCSV(data, title) {
 }
 
 function downloadHeartRateData() {
+  console.log("starting download...");
   Util.showModal("Downloading Heart Rate Data...");
   Util.readStorageFile("heart_rate_data.csv", data => { // Read data from specified file
+    console.log("Data received: ", data);
     Util.hideModal();
     if (data) {
       saveCSV(data, "Heart Rate Data"); 
     } else {
+      console.log("no data in csv");
       domContent.innerHTML = "<b>No heart rate data found</b>";
     }
   });
