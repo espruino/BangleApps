@@ -262,12 +262,15 @@
           log("Found device", d);
           let shown = (d.name || d.id.substr(0, 17));
           submenu_scan[shown] = function () {
-            E.showPrompt("Set " + shown + "?").then((r) => {
+            E.showPrompt("Connect to\n" + shown + "?", {title: "Pairing"}).then((r) => {
               if (r) {
-                E.showMessage("Connecting...");
+                E.showMessage("Connecting...", {img:require("Storage").read("bthrm.img")});
                 let count = 0;
                 const successHandler = ()=>{
-                  E.showAlert("Success").then(()=>{
+                  E.showPrompt("Success!", {
+                    img:require("Storage").read("bthrm.img"),
+                    buttons: { "OK":true }
+                  }).then(()=>{
                   writeSettings("btid", d.id);
                   // Store the name for displaying later. Will connect by ID
                   if (d.name) {
@@ -280,7 +283,7 @@
                   count++;
                   log("ERROR", e);
                   if (count <= 10){
-                    E.showMessage("Error during caching, Retry " + count + "/10", e);
+                    E.showMessage("Error during caching\nRetry " + count + "/10", e);
                     return cacheDevice(d.id).then(successHandler).catch(errorHandler);
                   } else {
                     E.showAlert("Error during caching", e).then(()=>{
