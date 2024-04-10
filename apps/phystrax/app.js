@@ -96,7 +96,7 @@ function drawScreen(message) {
 }
 
 function saveDataToCSV() {
-    let csvContent = "Timestamp,Heart Rate\n";
+    let csvContent = "Date,Time,Heart Rate\n";
     logData.forEach(entry => {
         csvContent += `${entry.timestamp},${entry.heartRate}\n`;
     });

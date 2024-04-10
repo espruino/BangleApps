@@ -13,7 +13,7 @@ const DB_HEADER_LEN = 1; // Adjust header length for heart rate data
 var domContent = document.getElementById("content");
 
 function saveCSV(data, title) {
-  var csv = "Timestamp,Heart Rate\n"; // Adjust CSV header for heart rate data
+  var csv = "Date,Time,Heart Rate\n";
   var lines = data.split("\n");
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
@@ -26,10 +26,10 @@ function saveCSV(data, title) {
 
 function downloadHeartRateData() {
   Util.showModal("Downloading Heart Rate Data...");
-  Util.readStorageFile("heart_rate_data.csv", data => {
+  Util.readStorageFile("heart_rate_data.csv", data => { // Read data from specified file
     Util.hideModal();
     if (data) {
-      saveCSV(data, "Heart Rate Data"); // Provide a title for the CSV file
+      saveCSV(data, "Heart Rate Data"); 
     } else {
       domContent.innerHTML = "<b>No heart rate data found</b>";
     }
