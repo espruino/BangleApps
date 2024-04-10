@@ -2,8 +2,6 @@
 
 More information on making apps:
 
-* http://www.espruino.com/Bangle.js+First+App
-* http://www.espruino.com/Bangle.js+App+Loader
 
 Describe the app...
 
