@@ -44,7 +44,7 @@ function draw() {
   g.drawString(E.getBattery() + '%', widthBar/2,  153);
 
   // if (NRF.getSecurityStatus().connected)) g.setColor('#f00').drawString('BT ON', widthBar/2, 128);
-  // if (Bangle.isCharging()) g.setColor('#f00').drawString('C', 20, 128);
+  if (Bangle.isCharging()) g.setColor('#f00').drawString('CHG', widthBar/2, 128);
 }
 
 draw();
