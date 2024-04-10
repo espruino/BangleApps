@@ -1,28 +1,21 @@
-# App Name
+# jclock
 
-More information on making apps:
+Inspired by Rebble clock
 
-
-Describe the app...
-
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
-
-## Usage
-
-Describe how to use it
 
 ## Features
+- Single screen
+- Time on the right side with big font
+- On the sidebar on the left
+  - Day of week
+  - Day
+  - Month
+  - Sunrise time (`My Location` should be installed and set)
+  - Sunset time (`My Location` should be installed and set)
+  - Steps
+  - Battery % (`CHG` appears when charge)
 
-Name the function
-
-## Controls
-
-Name the buttons and what they are used for
-
-## Requests
-
-Name who should be contacted for support/update requests
 
 ## Creator
 
-Your name
+Written by JeonLab
