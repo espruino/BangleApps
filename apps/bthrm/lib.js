@@ -16,55 +16,20 @@ exports.enable = () => {
 
   log("Settings: ", settings);
 
-  if (settings.enabled){
+  if (settings.enabled && settings.cache){
 
-    var clearCache = function() {
-      return require('Storage').erase("bthrm.cache.json");
-    };
-
-    var getCache = function() {
-      var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
-      if (settings.btid && settings.btid === cache.id) return cache;
-      clearCache();
-      return {};
-    };
+    log("Start");
 
     var addNotificationHandler = function(characteristic) {
       log("Setting notification handler"/*supportedCharacteristics[characteristic.uuid].handler*/);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     };
 
-    var writeCache = function(cache) {
-      var oldCache = getCache();
-      if (oldCache !== cache) {
-        log("Writing cache");
-        require('Storage').writeJSON("bthrm.cache.json", cache);
-      } else {
-        log("No changes, don't write cache");
-      }
-    };
-
-    var characteristicsToCache = function(characteristics) {
-      log("Cache characteristics");
-      var cache = getCache();
-      if (!cache.characteristics) cache.characteristics = {};
-      for (var c of characteristics){
-        //"handle_value":16,"handle_decl":15
-        log("Saving handle " + c.handle_value + " for characteristic: ", c);
-        cache.characteristics[c.uuid] = {
-          "handle": c.handle_value,
-          "uuid": c.uuid,
-          "notify": c.properties.notify,
-          "read": c.properties.read
-        };
-      }
-      writeCache(cache);
-    };
 
     var characteristicsFromCache = function(device) {
       var service = { device : device }; // fake a BluetoothRemoteGATTService
       log("Read cached characteristics");
-      var cache = getCache();
+      var cache = settings.cache;
       if (!cache.characteristics) return [];
       var restored = [];
       for (var c in cache.characteristics){
@@ -83,18 +48,6 @@ exports.enable = () => {
       }
       return restored;
     };
-
-    log("Start");
-
-    var lastReceivedData={
-    };
-
-    var supportedServices = [
-      "0x180d", // Heart Rate
-      "0x180f", // Battery
-    ];
-
-    var bpmTimeout;
 
     var supportedCharacteristics = {
       "0x2a37": {
@@ -177,6 +130,7 @@ exports.enable = () => {
         //Body sensor location
         handler: function(dv){
           if (!lastReceivedData["0x180d"]) lastReceivedData["0x180d"] = {};
+          log("Got location", dv);
           lastReceivedData["0x180d"]["0x2a38"] = parseInt(dv.buffer, 10);
         }
       },
@@ -189,6 +143,11 @@ exports.enable = () => {
       }
     };
 
+    var lastReceivedData={
+    };
+
+    var bpmTimeout;
+
     var device;
     var gatt;
     var characteristics = [];
@@ -197,11 +156,6 @@ exports.enable = () => {
     var initialRetryTime = 40;
     var maxRetryTime = 60000;
     var retryTime = initialRetryTime;
-
-    var connectSettings = {
-      minInterval: 7.5,
-      maxInterval: 1500
-    };
 
     var waitingPromise = function(timeout) {
       return new Promise(function(resolve){
@@ -317,7 +271,7 @@ exports.enable = () => {
         result = result.then(()=>{
           log("Starting notifications", newCharacteristic);
           var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
-          
+
           if (settings.gracePeriodNotification){
             log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
             startPromise = startPromise.then(()=>{
@@ -395,7 +349,7 @@ exports.enable = () => {
           onDisconnect(e);
           return;
         }
-        
+
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
           promise = promise.then(()=>{
@@ -416,22 +370,13 @@ exports.enable = () => {
 
       promise = promise.then(()=>{
         gatt = device.gatt;
-
-        let cache = getCache();
-        if (device.id !== cache.id){
-          log("Device ID changed from " + cache.id + " to " + device.id + ", clearing cache");
-          clearCache();
-          var newCache = getCache();
-          newCache.id = device.id;
-          writeCache(newCache);
-        }
         return Promise.resolve(gatt);
       });
 
       promise = promise.then((gatt)=>{
         if (!gatt.connected){
           log("Connecting...");
-          var connectPromise = gatt.connect(connectSettings).then(function() {
+          var connectPromise = gatt.connect().then(function() {
             log("Connected.");
           });
           if (settings.gracePeriodConnect){
@@ -446,56 +391,14 @@ exports.enable = () => {
           return Promise.resolve();
         }
       });
-      
-      if (settings.bonding){
-        promise = promise.then(() => {
-          log(JSON.stringify(gatt.getSecurityStatus()));
-          if (gatt.getSecurityStatus()['bonded']) {
-            log("Already bonded");
-            return Promise.resolve();
-          } else {
-            log("Start bonding");
-            return gatt.startBonding()
-              .then(() => log("Security status after bonding" + gatt.getSecurityStatus()));
-          }
-        });
-      }
 
       promise = promise.then(()=>{
         if (!characteristics || characteristics.length == 0){
           characteristics = characteristicsFromCache(device);
         }
-      });
-
-      promise = promise.then(()=>{
-        var characteristicsPromise = Promise.resolve();
-        if (characteristics.length == 0){
-          characteristicsPromise = characteristicsPromise.then(()=>{
-            log("Getting services");
-            return gatt.getPrimaryServices();
-          });
-
-          characteristicsPromise = characteristicsPromise.then((services)=>{
-            log("Got services", services);
-            var result = Promise.resolve();
-            for (var service of services){
-              if (!(supportedServices.includes(service.uuid))) continue;
-              log("Supporting service", service.uuid);
-              result = attachServicePromise(result, service);
-            }
-            if (settings.gracePeriodService){
-              log("Add " + settings.gracePeriodService + "ms grace period after services");
-              result = result.then(()=>{
-                log("Wait after services");
-                return waitingPromise(settings.gracePeriodService);
-              });
-            }
-            return result;
-          });
-        } else {
-          for (var characteristic of characteristics){
-            characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
-          }
+        let characteristicsPromise = Promise.resolve();
+        for (var characteristic of characteristics){
+          characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
         }
 
         return characteristicsPromise;
@@ -503,7 +406,6 @@ exports.enable = () => {
 
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
-        characteristicsToCache(characteristics);
         clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
