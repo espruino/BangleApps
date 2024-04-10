@@ -361,9 +361,9 @@ exports.enable = () => {
 
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
-          promise = promise.then(()=>{
+          promise = promise.then((d)=>{
             log("Wait after request");
-            return waitingPromise(settings.gracePeriodRequest);
+            return waitingPromise(settings.gracePeriodRequest).then(()=>Promise.resolve(d));
           });
         }
 
