@@ -36,12 +36,15 @@ function draw() {
   g.setColor('#000');
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
-  g.setFont('Vector', 20).setFontAlign(0, -1).setColor('#000');
+  g.setFont('Vector', 20).setFontAlign(0, -1);
   g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), widthBar/2, 3);
   g.drawString(date.getDate(), widthBar/2, 28);
   g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), widthBar/2, 53);
   g.drawString(Bangle.getHealthStatus("day").steps, widthBar/2, 103);
-  g.drawString('B ' + E.getBattery() + '%', widthBar/2,  153);
+  g.drawString(E.getBattery() + '%', widthBar/2,  153);
+
+  if (NRF.getSecurityStatus().connected) g.setColor('#f00').drawString('B', 3, 128);
+  if (Bangle.isCharging() g.setColor('#f00').drawString('C', 20, 128);
 }
 
 draw();
