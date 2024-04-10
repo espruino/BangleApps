@@ -1,8 +1,8 @@
-# Lift
+# Rest - Workout Timer
 
-An app to keep track of your sets when lifting things and to keep track of your rest when not lifting things.
+An app to keep track of time when not lifting things and keep track of your sets when lifting things.
 
-![screenshot](screenshot.png)
+![screenshot](screenshot1.png)
 
 ## Usage
 

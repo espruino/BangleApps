@@ -50,14 +50,17 @@ const c4 = center(q4)
 
 const GREY_COLOR = '#CCCCCC';
 const SET_COLOR = '#FF00FF';
+const SET_COLOR_MUTED = '#FF88FF';
 const REST_COLOR = '#00FFFF';
-const REST_COLOR_MUTED = '#008888';
+const REST_COLOR_MUTED = '#88FFFF';
 const RED_COLOR = '#FF0000';
 const GREEN_COLOR = '#00FF00';
-const GREEN_COLOR_MUTED = '#008800';
+const GREEN_COLOR_MUTED = '#88FF88';
 const BIG_FONT = "6x8:2x2";
+const HUGE_FONT = "6x8:3x3";
+const BIGHUGE_FONT = "6x8:6x6";
 
-function drawMainMenu() {
+function drawMainMenu(splash) {
   g.setColor(REST_COLOR);
   roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
   g.setColor(SET_COLOR);
@@ -67,12 +70,24 @@ function drawMainMenu() {
   g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c1.x, c1.y-25)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST\n" +restSeconds+ "s", c1.x, c1.y + 10)
-  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c2.x, c2.y-25)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS\n" + setsCount, c2.x, c2.y + 10)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("Lift", c3.x, c3.y)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("GO", c4.x, c4.y)
+
+  if (splash) {
+    g.setFont(BIGHUGE_FONT).setFontAlign(0,0).drawString("R", c1.x, c1.y)
+    g.setFont(BIGHUGE_FONT).setFontAlign(0,0).drawString("E", c2.x, c2.y)
+    g.setFont(BIGHUGE_FONT).setFontAlign(0,0).drawString("S", c3.x, c3.y)
+    g.setFont(BIGHUGE_FONT).setFontAlign(0,0).drawString("T", c4.x, c4.y)
+  } else {
+    g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c1.x, c1.y-25)
+    g.setFont(HUGE_FONT).setFontAlign(0,0).drawString(restSeconds+ "s", c1.x, c1.y)
+    g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST", c1.x, c1.y + 25)
+
+    g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfigure", c2.x, c2.y-25)
+    g.setFont(HUGE_FONT).setFontAlign(0,0).drawString(setsCount, c2.x, c2.y)
+    g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS", c2.x, c2.y + 25)
+
+    g.setFont(BIG_FONT).setFontAlign(0,0).drawString("JUST\nDO\nIT", c3.x, c3.y)
+    g.setFont(HUGE_FONT).setFontAlign(0,0).drawString("GO", c4.x, c4.y)
+  }
 }
 
 function drawSetRest() {
@@ -83,7 +98,9 @@ function drawSetRest() {
   g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST\n" +restSeconds+ "s", c1.x, c1.y)
+  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfirm", c1.x, c1.y-25)
+  g.setFont(HUGE_FONT).setFontAlign(0,0).drawString(restSeconds+ "s", c1.x, c1.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("REST", c1.x, c1.y + 25)
   // g.setFont(BIG_FONT).setFontAlign(0,0).drawString("OK", c2.x, c2.y)
   g.setFont(BIG_FONT).setFontAlign(0,0).drawString("-", c3.x, c3.y)
   g.setFont(BIG_FONT).setFontAlign(0,0).drawString("+", c4.x, c4.y)
@@ -97,7 +114,9 @@ function drawSetSets() {
   g.setColor(GREEN_COLOR);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1)
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS\n" +setsCount, c2.x, c2.y)
+  g.setFont("6x8").setFontAlign(0,0).drawString("Tap to\nConfirm", c2.x, c2.y-25)
+  g.setFont(HUGE_FONT).setFontAlign(0,0).drawString(setsCount, c2.x, c2.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SETS", c2.x, c2.y + 25)
   g.setFont(BIG_FONT).setFontAlign(0,0).drawString("-", c3.x, c3.y)
   g.setFont(BIG_FONT).setFontAlign(0,0).drawString("+", c4.x, c4.y)
 }
@@ -110,7 +129,8 @@ function drawExercise() {
   g.setColor(GREEN_COLOR_MUTED);
   roundRect(q4.x, q4.y, q4.x2, q4.y2, 20);
   g.setColor(-1);
-  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SET\n#"+currentSet, c2.x, c2.y)
+  g.setFont(BIG_FONT).setFontAlign(0,0).drawString("SET", c2.x, c2.y-25)
+  g.setFont(HUGE_FONT).setFontAlign(0,0).drawString("#"+currentSet, c2.x, c2.y)
   g.setFont(BIG_FONT).setFontAlign(0,0).drawString("PUSH >\nBUTTON\nWHEN\nDONE", c4.x, c4.y)
 }
 
@@ -123,7 +143,7 @@ function circlePoints (cx, cy, r, points) {
   return circlePoints;
 }
 
-const smallQ3Circle = [c2.x, c2.y].concat(circlePoints(c2.x, c2.y, (q2.y - q2.y2)/2, 60));
+const smallQ3Circle = [c2.x, c2.y].concat(circlePoints(c2.x, c2.y, ((q2.y - q2.y2)/2) + 10, 60));
 
 
 function drawRest() {
@@ -132,8 +152,10 @@ function drawRest() {
 
   g.setColor(REST_COLOR);
   roundRect(q1.x, q1.y, q1.x2, q1.y2, 20);
-  g.setColor(-1).setFont(BIG_FONT).setFontAlign(0,0).drawString(secondsRemaining, c1.x, c1.y)
+  g.setColor(-1).setFont(HUGE_FONT).setFontAlign(0,0).drawString(secondsRemaining, c1.x, c1.y)
 
+  g.setColor(SET_COLOR_MUTED);
+  roundRect(q2.x, q2.y, q2.x2, q2.y2, 20);
   const factor = 1 - secondsRemaining / restSeconds;
   const circleParts = (((factor * smallQ3Circle.length) | 0) >> 1) << 1
   const poly = smallQ3Circle.slice(0, circleParts + 2)
@@ -175,18 +197,19 @@ function drawDoIt() {
   g.setFont(BIG_FONT)
   g.setColor(0);
   setTimeout(() => {
-    g.drawString('just', 40, 20);
+    g.setFontAlign(0, 0)
+    g.drawString('just      ', R.x2/2, 20);
     Bangle.buzz(150, 0.5);
   }, 200);
   setTimeout(() => {
     g.drawImage(getImg(), 22, 44, {scale: 1.5});
-    g.drawString('DO', 100, 20);
+    g.drawString('     DO   ', R.x2/2, 20);
     Bangle.buzz(200);
   }, 1000);
   setTimeout(() => {
-    g.drawString('IT', 150, 20);
+    g.drawString('        IT', R.x2/2, 20);
     Bangle.buzz(200);
-  },  1300);
+  },  1400);
   setTimeout(() => {
     setMode(MAIN_MENU);
     redrawApp();
@@ -293,5 +316,7 @@ Bangle.on('touch', (button, xy) => {
   }
 });
 
-redrawApp();
+g.clear();
+drawMainMenu(true);
+setTimeout(redrawApp, 1000);
 
