@@ -7,13 +7,13 @@
 
     <script src="../../core/lib/interface.js"></script>
     <script>
-const DB_RECORD_LEN = 2; // Adjust record length for heart rate data
-const DB_HEADER_LEN = 1; // Adjust header length for heart rate data
+const DB_RECORD_LEN = 2; 
+const DB_HEADER_LEN = 1; 
 
 var domContent = document.getElementById("content");
 
 function saveCSV(data, title) {
-  var csv = "Date,Time,Heart Rate\n";
+  var csv = "Timestamp,Heart Rate\n";
   var lines = data.split("\n");
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
@@ -28,14 +28,16 @@ function downloadHeartRateData() {
   console.log("starting download...");
   Util.showModal("Downloading Heart Rate Data...");
   Util.readStorageFile("heart_rate_data.csv", data => { // Read data from specified file
-    console.log("Data received: ", data);
     Util.hideModal();
     if (data) {
-      saveCSV(data, "Heart Rate Data"); 
+      saveCSV(data, "Heart Rate Data");
     } else {
-      console.log("no data in csv");
       domContent.innerHTML = "<b>No heart rate data found</b>";
     }
+  }, error => {
+    console.error("Error reading heart rate data:", error);
+    domContent.innerHTML = "<b>Error reading Heart Rate data</b>";
+    Util.hideModal();
   });
 }
 
