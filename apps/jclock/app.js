@@ -43,7 +43,7 @@ function draw() {
   g.drawString(Bangle.getHealthStatus("day").steps, widthBar/2, 103);
   g.drawString(E.getBattery() + '%', widthBar/2,  153);
 
-  if (NRF.getSecurityStatus().connected) g.setColor('#00f').drawString('BT', widthBar/2, 78);
+  if (NRF.getSecurityStatus().connected) g.setColor('#00f').drawString('BT >>', widthBar/2, 78);
   if (Bangle.isCharging()) g.setColor('#f00').drawString('CHG', widthBar/2, 128);
 }
 
