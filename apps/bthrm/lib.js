@@ -16,6 +16,14 @@ exports.enable = () => {
 
   log("Settings: ", settings);
 
+  //this is for compatibility with 0.18 and older
+  let oldCache = require('Storage').readJSON("bthrm.cache.json", true);
+  if(oldCache){
+    settings.cache = oldCache;
+    require('Storage').writeJSON("bthrm.json", settings);
+    require('Storage').erase("bthrm.cache.json");
+  }
+
   if (settings.enabled && settings.cache){
 
     log("Start");

@@ -129,11 +129,9 @@
     "0x2a19", // Battery
   ];
 
-  var characteristicsToCache = function(characteristics, deviceId) {
+  var characteristicsToCache = function(characteristics) {
     log("Cache characteristics");
-    let cache = {
-      id: deviceId
-    };
+    let cache = {};
     if (!cache.characteristics) cache.characteristics = {};
     for (var c of characteristics){
       //"handle_value":16,"handle_decl":15
@@ -240,7 +238,7 @@
 
     return promise.then(()=>{
       log("Connection established, saving cache");
-      characteristicsToCache(characteristics, deviceId);
+      characteristicsToCache(characteristics);
     });
   }
 
