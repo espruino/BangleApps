@@ -36,7 +36,10 @@ function draw() {
   g.setColor('#000');
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
-  g.setFont('Vector', 20).setFontAlign(0, -1).drawString(E.getBattery() + '%', widthBar/2,  152);
+  g.setFont('Vector', 20).setFontAlign(0, -1);
+  g.drawString(E.getBattery() + '%', widthBar/2,  152);
+  g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), widthBar/2, 2);
+  g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), widthBar/2, 52);
 }
 
 draw();
