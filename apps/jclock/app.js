@@ -32,7 +32,7 @@ function draw() {
   queueDraw();
   g.reset().clearRect(Bangle.appRect);
   g.setColor(colorBar);
-  g.fillRect(0, 0, widthBar, g.getHeight());
+  g.fillRect(0, 0, barWidth, g.getHeight());
   g.setColor('#000');
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
