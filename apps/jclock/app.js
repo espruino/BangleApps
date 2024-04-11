@@ -25,7 +25,7 @@ function queueDraw() {
 const zeroPad = (num, places) => String(num).padStart(places, '0');
 
 function draw() {
-  let widthBar = 64;
+  let barWidth = 64;
   let colorBar = '#3be';
   let date = new Date();
   // queue next draw in one minute
@@ -37,14 +37,15 @@ function draw() {
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
   g.setFont('Vector', 20).setFontAlign(0, -1);
-  g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), widthBar/2, 3);
-  g.drawString(date.getDate(), widthBar/2, 28);
-  g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), widthBar/2, 53);
-  g.drawString(Bangle.getHealthStatus("day").steps, widthBar/2, 103);
-  g.drawString(E.getBattery() + '%', widthBar/2,  153);
+  g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), barWidth/2, 3);
+  g.drawString(date.getDate(), barWidth/2, 28);
+  g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), barWidth/2, 53);
+  g.drawString('=====', barWidth/2, 78);
+  g.drawString(Bangle.getHealthStatus("day").steps, barWidth/2, 103);
+  g.drawString(E.getBattery() + '%', barWidth/2,  153);
 
-  if (NRF.getSecurityStatus().connected) g.setColor('#00f').drawString('>BT<', widthBar/2, 78);
-  //if (Bangle.isCharging()) g.setColor('#f00').drawString('CHG', widthBar/2, 128);
+  if (NRF.getSecurityStatus().connected) g.setColor('#00f').drawString('>BT<', barWidth/2, 128);
+  //if (Bangle.isCharging()) g.setColor('#f00').drawString('CHG', barWidth/2, 128);
 }
 
 draw();
@@ -55,8 +56,8 @@ Bangle.setUI("clock");
 3 	day of week
 28 	day
 53 	month
-78 	steps
-103 	sunrise
-128 	sunset
+78 	=====
+103 	steps
+128 	BT status
 153 	batt%
 */
