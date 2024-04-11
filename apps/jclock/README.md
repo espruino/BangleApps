@@ -10,8 +10,7 @@ Inspired by Rebble clock
   - Day of week
   - Day
   - Month
-  - Sunrise time (`My Location` should be installed and set)
-  - Sunset time (`My Location` should be installed and set)
+  - Bluetooth connection status
   - Steps
   - Battery % (`CHG` appears when charge)
 
