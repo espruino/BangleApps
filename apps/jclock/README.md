@@ -10,9 +10,9 @@ Inspired by Rebble clock
   - Day of week
   - Day
   - Month
-  - Bluetooth connection status
   - Steps
-  - Battery % (`CHG` appears when charge)
+  - Bluetooth connection status
+  - Battery %
 
 
 ## Creator
