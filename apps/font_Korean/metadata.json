@@ -5,7 +5,7 @@
   "icon": "font_Korean_icon.png",
   "tags": "font",
   "type": "module",
-  "provides_modules" : ["font_Korean"],
+  "provides_modules" : ["font"],
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
