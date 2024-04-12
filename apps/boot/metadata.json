@@ -1,7 +1,7 @@
 {
   "id": "boot",
   "name": "Bootloader",
-  "version": "0.60",
+  "version": "0.61",
   "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
   "icon": "bootloader.png",
   "type": "bootloader",

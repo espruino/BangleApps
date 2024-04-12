@@ -69,3 +69,6 @@
 0.58: "Make Connectable" temporarily bypasses the whitelist
 0.59: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds
 0.60: Minor code improvements
+0.61: Fix `throw` would stop clocks without widgets from being loaded if
+	called by `load(".bootcde")` which is the case when using
+	`Bangle.showClock()`.
