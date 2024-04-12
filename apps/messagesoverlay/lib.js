@@ -126,6 +126,10 @@ const roundedRect = function(x,y,w,h,filled){
 const DIVIDER = 38;
 
 const drawScreen = function(title, src, iconcolor, icon){
+  setColors(false);
+
+  drawBorder();
+
   setColors(true);
   ovr.clearRect(2,2,ovr.getWidth()-3, DIVIDER - 1);
 
@@ -135,8 +139,6 @@ const drawScreen = function(title, src, iconcolor, icon){
   const textCenter = (ovr.getWidth()+34-24)/2-1;
 
   const w = ovr.getWidth() - 35 - 26;
-
-  drawBorder();
 
   if (title)
     drawTitle(title, textCenter, w, 8, DIVIDER - 8, 0);
@@ -240,7 +242,6 @@ const showMessage = function(msg) {
 
 const drawBorder = function() {
   LOG("drawBorder", isQuiet());
-  setColors();
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
   ovr.drawRect(2,DIVIDER,ovr.getWidth()-2,DIVIDER+1);
@@ -739,7 +740,6 @@ exports.message = function(type, event) {
 
   updateClearingTimeout();
 
-  if (!isQuiet()) Bangle.setLCDPower(1);
   event.handled = true;
   g.flip();
 };
