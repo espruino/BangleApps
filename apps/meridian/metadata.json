@@ -1,0 +1,17 @@
+{
+  "id": "meridian",
+  "name": "Meridian Clock",
+  "shortName": "Meridian",
+  "version": "0.01",
+  "description": "An elegant clock",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "meridian.app.js", "url": "app.js" },
+    { "name": "meridian.img", "url": "app-icon.js", "evaluate": true }
+  ]
+}
