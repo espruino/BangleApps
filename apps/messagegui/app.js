@@ -448,7 +448,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (options.showMsgIfUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessage(newMessages[0].id, true);
+    showMessage(newMessages[0].id, false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
