@@ -517,7 +517,7 @@ const restoreHandlers = function(){
   }
 
   if (backup.watches){
-    toRemove = [];
+    let toRemove = [];
 
     origClearWatch.call(global);
 
@@ -605,7 +605,6 @@ const cleanup = function(){
 
   Bangle.setLCDOverlay();
   ovr = undefined;
-  quiet = undefined;
 };
 
 const backup = {};
@@ -671,7 +670,7 @@ exports.message = function(type, event) {
   if(event.messagesoverlayignore) return;
 
   let free = process.memory().free;
-  bpp = settings.systemTheme ? 16 : 4;
+  let bpp = settings.systemTheme ? 16 : 4;
 
   let estimatedMemUse = bpp == 16 ? 4096 : (bpp == 4 ? 1536 : 768);
   // reduce estimation if ovr already exists and uses memory;
