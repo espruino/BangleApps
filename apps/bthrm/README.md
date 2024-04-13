@@ -21,6 +21,10 @@ Once installed you will have to go into this app's settings while your heart rat
 
 **To disable this and return to normal HRM, uninstall the app or change the settings**
 
+The characteristics of your selected sensor are cached in the settings. That means if your sensor changes, e.g. by firmware updates or similar, you will need to re-scan in the settings to update the cache of characteristics. This is done to take some complexity (and time) out of the boot process.
+
+Scanning in the settings will do 10 retries and then give up on adding the sensor. Usually that works fine, if it does not for you just try multiple times. Currently saved sensor information is only replaced on a successful pairing. There are additional options in the Debug entry of the menu that can help with specific sensor oddities. Bonding and active scanning can help with connecting, but can also prevent some sensors from working. The "Grace Periods" just add some additional time at certain steps in the connection process which can help with stability or reconnect speed of some finicky sensors. Defaults should be fine for most.
+
 ### Modes
 
 * Off - Internal HRM is used, no attempt on connecting to BT HRM.
@@ -57,3 +61,7 @@ This replaces `Bangle.setHRMPower` with its own implementation.
 ## Creator
 
 Gordon Williams
+
+## Contributer
+
+[halemmerich](https://github.com/halemmerich)
