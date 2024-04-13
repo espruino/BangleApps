@@ -305,6 +305,7 @@ function showMessageSettings(msg) {
 }
 
 function showMessage(msgid) {
+  resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   var msg = MESSAGES[idx];
   if (updateLabelsInterval) {
@@ -522,6 +523,13 @@ function cancelReloadTimeout() {
   unreadTimeout = undefined;
 }
 
+function resetReloadTimeout(){
+  cancelReloadTimeout();
+  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
+  if (settings.unreadTimeout)
+    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
+}
+
 g.clear();
 
 Bangle.loadWidgets();
@@ -529,9 +537,7 @@ require("messages").toggleWidget(false);
 Bangle.drawWidgets();
 
 setTimeout(() => {
-  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
-  if (settings.unreadTimeout)
-    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
+  resetReloadTimeout();
   // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({
