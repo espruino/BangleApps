@@ -21,8 +21,6 @@
   if (settings.debuglog)
     log = print;
 
-  const bthrm = require("bthrm");
-
   function applyCustomSettings(){
     writeSettings("enabled",true);
     writeSettings("replace",settings.custom_replace);

@@ -318,20 +318,6 @@ exports.enable = () => {
       return result.then(()=>log("Handled characteristics"));
     };
 
-    let createServicePromise = function(service) {
-      log("Create service promise", service);
-      let result = Promise.resolve();
-      result = result.then(()=>{
-        log("Handling service" + service.uuid);
-        return service.getCharacteristics().then((c)=>createCharacteristicsPromise(c));
-      });
-      return result.then(()=>log("Handled service" + service.uuid));
-    };
-
-    let attachServicePromise = function(promise, service) {
-      return promise.then(()=>createServicePromise(service));
-    };
-
     let initBt = function () {
       log("initBt with blockInit: " + blockInit);
       if (blockInit && !powerdownRequested){
