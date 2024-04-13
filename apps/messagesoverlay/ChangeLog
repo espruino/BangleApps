@@ -10,3 +10,4 @@
       Indicator for multiple messages in queue
       Some optimization in the rendering code
       Track handler changes done by background code
+0.08: Fix linter warnings
