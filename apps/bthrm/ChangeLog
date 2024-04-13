@@ -42,3 +42,4 @@
       Add debug option for disabling active scanning
 0.17: New GUI based on layout library
 0.18: Minor code improvements
+0.19: Fix setHRMPower method not returning new state

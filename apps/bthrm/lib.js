@@ -318,12 +318,13 @@ exports.enable = () => {
           log("Starting notifications", newCharacteristic);
           var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
           
-          log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
-          startPromise = startPromise.then(()=>{
-            log("Wait after connect");
-            return waitingPromise(settings.gracePeriodNotification);
-          });
-          
+          if (settings.gracePeriodNotification){
+            log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
+            startPromise = startPromise.then(()=>{
+              log("Wait after connect");
+              return waitingPromise(settings.gracePeriodNotification);
+            });
+          }
           return startPromise;
         });
       }
@@ -397,6 +398,10 @@ exports.enable = () => {
         
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
+          promise = promise.then(()=>{
+            log("Wait after request");
+            return waitingPromise(settings.gracePeriodRequest);
+          });
         }
 
         promise = promise.then((d)=>{
@@ -404,33 +409,22 @@ exports.enable = () => {
           d.on('gattserverdisconnected', onDisconnect);
           device = d;
         });
-
-        promise = promise.then(()=>{
-          log("Wait after request");
-          return waitingPromise(settings.gracePeriodRequest);
-        });
       } else {
         promise = Promise.resolve();
         log("Reuse device", device);
       }
 
       promise = promise.then(()=>{
-        if (gatt){
-          log("Reuse GATT", gatt);
-        } else {
-          log("GATT is new", gatt);
-          characteristics = [];
-          var cachedId = getCache().id;
-          if (device.id !== cachedId){
-            log("Device ID changed from " + cachedId + " to " + device.id + ", clearing cache");
-            clearCache();
-          }
+        gatt = device.gatt;
+
+        let cache = getCache();
+        if (device.id !== cache.id){
+          log("Device ID changed from " + cache.id + " to " + device.id + ", clearing cache");
+          clearCache();
           var newCache = getCache();
           newCache.id = device.id;
           writeCache(newCache);
-          gatt = device.gatt;
         }
-
         return Promise.resolve(gatt);
       });
 
@@ -440,11 +434,13 @@ exports.enable = () => {
           var connectPromise = gatt.connect(connectSettings).then(function() {
             log("Connected.");
           });
-          log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
-          connectPromise = connectPromise.then(()=>{
-            log("Wait after connect");
-            return waitingPromise(settings.gracePeriodConnect);
-          });
+          if (settings.gracePeriodConnect){
+            log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
+            connectPromise = connectPromise.then(()=>{
+              log("Wait after connect");
+              return waitingPromise(settings.gracePeriodConnect);
+            });
+          }
           return connectPromise;
         } else {
           return Promise.resolve();
@@ -460,20 +456,20 @@ exports.enable = () => {
           } else {
             log("Start bonding");
             return gatt.startBonding()
-              .then(() => log("Security status" + gatt.getSecurityStatus()));
+              .then(() => log("Security status after bonding" + gatt.getSecurityStatus()));
           }
         });
       }
 
       promise = promise.then(()=>{
-        if (!characteristics || characteristics.length === 0){
+        if (!characteristics || characteristics.length == 0){
           characteristics = characteristicsFromCache(device);
         }
       });
 
       promise = promise.then(()=>{
         var characteristicsPromise = Promise.resolve();
-        if (characteristics.length === 0){
+        if (characteristics.length == 0){
           characteristicsPromise = characteristicsPromise.then(()=>{
             log("Getting services");
             return gatt.getPrimaryServices();
@@ -487,11 +483,13 @@ exports.enable = () => {
               log("Supporting service", service.uuid);
               result = attachServicePromise(result, service);
             }
-            log("Add " + settings.gracePeriodService + "ms grace period after services");
-            result = result.then(()=>{
-              log("Wait after services");
-              return waitingPromise(settings.gracePeriodService);
-            });
+            if (settings.gracePeriodService){
+              log("Add " + settings.gracePeriodService + "ms grace period after services");
+              result = result.then(()=>{
+                log("Wait after services");
+                return waitingPromise(settings.gracePeriodService);
+              });
+            }
             return result;
           });
         } else {
@@ -598,9 +596,10 @@ exports.enable = () => {
             Bangle.setBTHRMPower(0);
             if (!isOn) stopFallback();
           }
+          return Bangle.isBTHRMOn() || Bangle.isHRMOn();
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
-          Bangle.origSetHRMPower(isOn, app);
+          return Bangle.origSetHRMPower(isOn, app);
         }
       };
     }
