@@ -302,22 +302,6 @@ exports.enable = () => {
       });
     };
 
-    let createCharacteristicsPromise = function(newCharacteristics) {
-      log("Create characteristics promis ", newCharacteristics);
-      let result = Promise.resolve();
-      for (let c of newCharacteristics){
-        if (!supportedCharacteristics[c.uuid]) continue;
-        log("Supporting characteristic", c);
-        characteristics.push(c);
-        if (c.properties.notify){
-          addNotificationHandler(c);
-        }
-
-        result = attachCharacteristicPromise(result, c);
-      }
-      return result.then(()=>log("Handled characteristics"));
-    };
-
     let initBt = function () {
       log("initBt with blockInit: " + blockInit);
       if (blockInit && !powerdownRequested){
