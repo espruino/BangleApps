@@ -239,6 +239,7 @@ exports.enable = () => {
       }
     };
 
+    let initialDisconnects = true;
     let buzzing = false;
     let onDisconnect = function(reason) {
       log("Disconnect: " + reason);
@@ -252,7 +253,7 @@ exports.enable = () => {
       supportedCharacteristics["0x2a37"].active = false;
       if (!powerdownRequested) startFallback();
       blockInit = false;
-      if (settings.warnDisconnect && !buzzing){
+      if (settings.warnDisconnect && !buzzing && !initialDisconnects){
         buzzing = true;
         Bangle.buzz(500,0.3).then(()=>waitingPromise(4500)).then(()=>{buzzing = false;});
       }
@@ -415,6 +416,7 @@ exports.enable = () => {
 
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
+        initialDisconnects = false;
         clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
@@ -435,6 +437,7 @@ exports.enable = () => {
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        initialDisconnects = true;
         powerdownRequested = false;
         switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
