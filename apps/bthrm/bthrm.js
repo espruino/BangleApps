@@ -123,7 +123,7 @@ function draw(){
 
 
 // This can get called for the boot code to show what's happening
-function showStatusInfo(txt) {
+global.showStatusInfo = function(txt) {
   var R = Bangle.appRect;
   g.reset().clearRect(R.x,R.y2-8,R.x2,R.y2).setFont("6x8");
   txt = g.wrapString(txt, R.w)[0];
