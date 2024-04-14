@@ -57,7 +57,7 @@ var layout = new Layout( {
     { type:undefined, height:8 } //dummy to protect debug output
   ]
 }, {
-  lazy:true
+  lazy:false
 });
 
 var int,agg,bt;
@@ -108,6 +108,7 @@ function draw(){
   }
 
   layout.update();
+  layout.clear();
   layout.render();
   let first = true;
   for (let c of layout.l.c){
