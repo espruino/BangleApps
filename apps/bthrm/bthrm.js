@@ -106,8 +106,6 @@ function draw(){
     layout.btContact.label = "--";
     layout.btEnergy.label = "--";
   }
-
-  layout.update();
   layout.clear();
   layout.render();
   let first = true;
@@ -128,7 +126,7 @@ global.showStatusInfo = function(txt) {
   g.reset().clearRect(R.x,R.y2-8,R.x2,R.y2).setFont("6x8");
   txt = g.wrapString(txt, R.w)[0];
   g.setFontAlign(0,1).drawString(txt, (R.x+R.x2)/2, R.y2);
-}
+};
 
 function onBtHrm(e) {
   bt = e;
