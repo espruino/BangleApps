@@ -45,4 +45,5 @@
 0.19: Move caching of characteristics into settings app
       Changed default of active scanning to false
       Fix setHRMPower method not returning new state
-      Only buzz  for disconnect after switching on if there already was an actual connection
+      Only buzz for disconnect after switching on if there already was an actual connection
+      Fix recorder not switching BTHRM on and off
