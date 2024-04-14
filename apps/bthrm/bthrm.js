@@ -133,16 +133,19 @@ function showStatusInfo(txt) {
 function onBtHrm(e) {
   bt = e;
   bt.time = Date.now();
+  draw();
 }
 
 function onInt(e) {
   int = e;
   int.time = Date.now();
+  draw();
 }
 
 function onAgg(e) {
   agg = e;
   agg.time = Date.now();
+  draw();
 }
 
 var settings = require('Storage').readJSON("bthrm.json", true) || {};
@@ -163,7 +166,6 @@ Bangle.drawWidgets();
 if (Bangle.setBTHRMPower){
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2);
-  setInterval(draw, 1000);
 } else {
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("BTHRM disabled",g.getWidth()/2,g.getHeight()/2);
