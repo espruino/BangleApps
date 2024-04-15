@@ -1,5 +1,6 @@
-// single screen, clock on the right, sidebar without image (date/steps/sunrise/sunset/batt%)
+// single screen, clock on the right, sidebar without image (date/steps/bluetooth connection status/batt%)
 
+// Large font KdamThmor taken from Rebble clock
 Graphics.prototype.setFontKdamThmor = function(scale) {
   // Actual height 70 (69 - 0)
   this.setFontCustom(
@@ -26,38 +27,41 @@ const zeroPad = (num, places) => String(num).padStart(places, '0');
 
 function draw() {
   let barWidth = 64;
-  let colorBar = '#3be';
   let date = new Date();
+  
   // queue next draw in one minute
   queueDraw();
+  
+  // clean screen
   g.reset().clearRect(Bangle.appRect);
-  g.setColor(colorBar);
-  g.fillRect(0, 0, barWidth, g.getHeight());
+  
+  // draw side bar in black
   g.setColor('#000');
+  g.fillRect(0, 0, barWidth, g.getHeight());
+  
+  // show time on the right
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
-  g.setFont('Vector', 20).setFontAlign(0, -1);
+  
+  // show date
+  g.setFont('Vector', 20).setFontAlign(0, -1).setColor('#fff');
   g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), barWidth/2, 3);
   g.drawString(date.getDate(), barWidth/2, 28);
   g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), barWidth/2, 53);
+  
+  // divider, place holder for any other info
   g.drawString('=====', barWidth/2, 78);
+  
+  // show daily steps
   g.drawString(Bangle.getHealthStatus("day").steps, barWidth/2, 103);
+  
+  // show battery remaining percentage
   g.drawString(E.getBattery() + '%', barWidth/2,  153);
-
-  if (NRF.getSecurityStatus().connected) g.setColor('#00f').drawString('>BT<', barWidth/2, 128);
-  //if (Bangle.isCharging()) g.setColor('#f00').drawString('CHG', barWidth/2, 128);
+  
+  // Bluetooth connection status
+  if (NRF.getSecurityStatus().connected) g.drawString('>BT<', barWidth/2, 128);
 }
 
 draw();
 
 Bangle.setUI("clock");
-
-/*
-3 	day of week
-28 	day
-53 	month
-78 	=====
-103 	steps
-128 	BT status
-153 	batt%
-*/
