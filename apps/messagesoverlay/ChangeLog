@@ -5,3 +5,9 @@
 0.05: Fix the overlay keeping the LCD on
 0.06: Better low memory handling
       Fix first message beeing displayed again on unlock
+0.07: Adds settings
+      Automatic discard of oldest messages
+      Indicator for multiple messages in queue
+      Some optimization in the rendering code
+      Track handler changes done by background code
+0.08: Fix linter warnings

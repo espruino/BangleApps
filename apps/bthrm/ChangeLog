@@ -42,3 +42,8 @@
       Add debug option for disabling active scanning
 0.17: New GUI based on layout library
 0.18: Minor code improvements
+0.19: Move caching of characteristics into settings app
+      Changed default of active scanning to false
+      Fix setHRMPower method not returning new state
+      Only buzz for disconnect after switching on if there already was an actual connection
+      Fix recorder not switching BTHRM on and off
