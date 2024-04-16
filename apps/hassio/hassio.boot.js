@@ -91,7 +91,7 @@ const runHassio = () => {
     });
 
     const updateSensor = () => {
-      hassioAttributes.health = Bangle.getHealthStatus();
+      hassioAttributes.health = Bangle.getHealthStatus("day");
       hassioAttributes.accel = Bangle.getAccel();
       hassioAttributes.battery = getBattery();
       hassioAttributes.compass = Bangle.getCompass();
