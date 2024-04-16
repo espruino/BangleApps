@@ -9,36 +9,54 @@
     <script>
 var dataElement = document.getElementById("data");
 
-function getHeartRateData() {
+function getData() {
+  // show loading window
   Util.showModal("Loading...");
+  // get the data
   dataElement.innerHTML = "";
+  var promise = Promise.resolve();
   Puck.eval('require("Storage").list(/heart_rate_data\\.csv\\x01/)', files => {
     if (files.length == 0) {
       dataElement.innerHTML = "<p>No heart rate data found</p>";
     } else {
       files.forEach(fn => {
         fn = fn.slice(0, -1);
-        var link = document.createElement("a");
-        link.setAttribute("href", "#");
-        link.textContent = fn;
-        link.addEventListener("click", function() {
-          Util.showModal("Downloading...");
-          Util.readStorageFile(fn, function(data) {
-            Util.saveCSV(fn.slice(0, -4), data);
-            Util.hideModal();
+        dataElement.innerHTML += `
+<div class="card">
+  <div class="card-header">
+    <div class="card-title h5">${fn}</div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" fn="${fn}" act="save">Save</button>
+    <button class="btn" fn="${fn}" act="delete">Delete</button>
+  </div>
+</div>`;
+        promise = promise.then(function() {
+          document.querySelector(`.btn[fn='${fn}'][act='save']`).addEventListener("click", function() {
+            Util.showModal("Downloading...");
+            Util.readStorageFile(fn, function(data) {
+              Util.saveCSV(fn.slice(0, -4), data);
+              Util.hideModal();
+            });
+          });
+          document.querySelector(`.btn[fn='${fn}'][act='delete']`).addEventListener("click", function() {
+            Util.showModal("Deleting...");
+            Util.eraseStorageFile(fn, function() {
+              Util.hideModal();
+              getData();
+            });
           });
         });
-        dataElement.appendChild(link);
-        dataElement.appendChild(document.createElement("br"));
       });
     }
+    // remove window
     Util.hideModal();
   });
 }
 
 // Called when app starts
 function onInit() {
-  getHeartRateData();
+  getData();
 }
     </script>
   </body>

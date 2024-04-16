@@ -4,6 +4,7 @@ let lcdTimeout;
 let logData = [];
 let bpmValues = [];
 let lastLogTime = 0;
+const MAX_LOGS = 9;
 
 function startMeasure() {
     isMeasuring = true;
@@ -58,7 +59,6 @@ function handleHeartRate(hrm) {
     }
 }
 
-
 function calcSDNN() {
     if (bpmValues.length < 5) return 0; // No calculation if insufficient data
 
@@ -87,14 +87,14 @@ function drawScreen(message) {
     g.clear(); // Clear the display
 
     // Set the background color
-    g.setColor('#95E7FF'); 
+    g.setColor('#95E7FF');
 
     // Fill the entire display with the background color
     g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
     // Set font and alignment for drawing text
     g.setFontAlign(0, 0);
-    g.setFont('Vector', 15); 
+    g.setFont('Vector', 15);
 
     // Draw the title
     g.setColor('#000000'); // Set text color to black
@@ -111,7 +111,6 @@ function drawScreen(message) {
             g.drawString(currentHR.toString(), g.getWidth() / 2, g.getHeight() / 2 + 20);
             g.setFont('6x8', 1.6);
             g.drawString(' BPM', g.getWidth() / 2 + 42, g.getHeight() / 2 + 20);
-
         }
 
         // Draw instructions
@@ -126,7 +125,6 @@ function drawScreen(message) {
             g.drawString(currentHR.toString(), g.getWidth() / 2, g.getHeight() / 2 + 10);
             g.setFont('6x8', 1.6);
             g.drawString(' BPM', g.getWidth() / 2 + 42, g.getHeight() / 2 + 12);
-
         } else {
             g.setFont('6x8', 2);
             g.drawString('No data', g.getWidth() / 2, g.getHeight() / 2 + 10);
@@ -144,7 +142,15 @@ function saveDataToCSV() {
     logData.forEach(entry => {
         csvContent += `${entry.timestamp},${entry.heartRate},${entry.hrv}\n`;
     });
-    require("Storage").write("heart_rate_data.csv", csvContent);
+
+    // Find an available file number
+    let fileNum = 0;
+    while (require("Storage").read(`heart_rate_data_${fileNum}.csv`) !== undefined && fileNum <= MAX_LOGS) {
+        fileNum++;
+    }
+
+    // Write data to a CSV file
+    require("Storage").write(`heart_rate_data_${fileNum}.csv`, csvContent);
 }
 
 setWatch(function() {
