@@ -1,6 +1,6 @@
 { "id": "font_Korean",
   "name": "Korean font",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Installs a font data, Unifont characters for Korean **Requires 420 KB storage**",
   "icon": "fontKorean_icon.png",
   "tags": "font",
