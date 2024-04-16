@@ -1,4 +1,4 @@
-{ "id": "font_Korean",
+{ "id": "fontKorean",
   "name": "Korean font",
   "version":"0.01",
   "description": "Installs a font data, Unifont characters for Korean **Requires 420 KB storage**",
