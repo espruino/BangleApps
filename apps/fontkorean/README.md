@@ -14,4 +14,4 @@ for more information on fonts.
 ## Recreating fontkorean.pbf
 
 * Go to `bin` directory
-* Run `./font_creator.js "Korean" ../apps/fontkorean/fontkorean.pbf`
+* Run `./font_creator.js "Korean" ../apps/fontkorean/font.pbf`
