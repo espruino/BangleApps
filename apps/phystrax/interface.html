@@ -9,87 +9,42 @@
     <script>
 var dataElement = document.getElementById("data");
 
-function getHeartRateData() {
-  // show loading window
-  Util.showModal("Loading...");
-  // get the data
-  dataElement.innerHTML = "";
-  var promise = Promise.resolve();
-  Puck.eval('require("Storage").list(/heart_rate_data\\.csv\\x01/)', files => {
-    console.log("Files found:", files); // Print files to console
-    if (files.length == 0) {
-      dataElement.innerHTML = "<p>No heart rate data found</p>";
+function saveHeartRateData() {
+  Util.showModal("Saving...");
+  var csvContent = "Timestamp,Heart Rate(bpm),HRV(ms)\n";
+  // Assuming logData contains the heart rate data
+  logData.forEach(entry => {
+    csvContent += `${entry.timestamp},${entry.heartRate},${entry.hrv}\n`;
+  });
+  var fileName = "heart_rate_data.csv"; // Set the desired file name
+  Util.saveCSV(fileName, csvContent, function(success) {
+    if (success) {
+      dataElement.innerHTML = "<p>Heart rate data saved successfully</p>";
     } else {
-      files.forEach(fn => {
-        fn = fn.slice(0, -1);
-        dataElement.innerHTML += `
-<div class="card">
-  <div class="card-header">
-    <div class="card-title h5">${fn}</div>
-  </div>
-  <div class="card-footer">
-    <button class="btn btn-primary" fn="${fn}" act="save">Save</button>
-    <button class="btn" fn="${fn}" act="delete">Delete</button>
-  </div>
-</div>`;
-        promise = promise.then(function() {
-          document.querySelector(`.btn[fn='${fn}'][act='save']`).addEventListener("click", function() {
-            Util.showModal("Downloading...");
-            console.log("Downloaded file path:", fn); // Print file path to console
-            Util.readStorageFile(fn, function(data) {
-              Util.saveCSV(fn.slice(0, -4), data);
-            });
-          });
-          document.querySelector(`.btn[fn='${fn}'][act='delete']`).addEventListener("click", function() {
-            Util.showModal("Deleting...");
-            Util.eraseStorageFile(fn, function() {
-              Util.hideModal();
-              getHeartRateData();
-            });
-          });
-          return new Promise(resolve=>{
-            Puck.eval(`require("Storage").read(${JSON.stringify(fn)})`, csv=>{
-              var el = document.querySelector(`.card-body[fn='${fn}']`);
-              el.innerHTML = '<canvas width="400" height="100"></canvas>';
-              var c = el.firstChild;
-              var ctx = c.getContext("2d");
-              var lines = csv.split("\n");
-              var y = 50, sx = 400/lines.length, sy = 50/8;
-              function plot(n) {
-                var last;
-                ctx.beginPath();
-                lines.map((l,x)=>{
-                  l = l.split(",");
-                  var yc = y + parseFloat(l[n])*sy;
-                  if (!last) {
-                    ctx.moveTo(0, yc);
-                  } else {
-                    ctx.lineTo(x*sx, yc);
-                  }
-                  last = l;
-                });
-                ctx.stroke();
-              };
-              ctx.strokeStyle = 'red';
-              plot(0);
-              ctx.strokeStyle = 'green';
-              plot(1);
-              ctx.strokeStyle = 'blue';
-              plot(2);
-              resolve();
-            });
-          });
-        });
-      });
+      dataElement.innerHTML = "<p>Error saving heart rate data</p>";
     }
-    // remove window
+    Util.hideModal();
+  });
+}
+
+function deleteHeartRateData() {
+  Util.showModal("Deleting...");
+  var fileName = "heart_rate_data.csv"; // Set the desired file name
+  Util.eraseStorageFile(fileName, function(success) {
+    if (success) {
+      dataElement.innerHTML = "<p>Heart rate data deleted successfully</p>";
+    } else {
+      dataElement.innerHTML = "<p>Error deleting heart rate data</p>";
+    }
     Util.hideModal();
   });
 }
 
 // Called when app starts
 function onInit() {
-  getHeartRateData();
+  // Only show options to save or delete data
+  saveHeartRateData();
+  deleteHeartRateData();
 }
 
     </script>

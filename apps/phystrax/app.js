@@ -37,9 +37,9 @@ function handleHeartRate(hrm) {
         currentHR = hrm.bpm;
         let currentTime = Date.now();
         let elaspedTime = currentTime - lastLogTime;
-        let nextLog = 5 * 1000 - (elaspedTime % (5 * 1000)); // Calculate time to next log
-        if (elaspedTime >= 5 * 1000) { // Check if it's time for the next log
-            lastLogTime = currentTime - (elaspedTime % (5 * 1000)); // Set last log time to the previous 5-second boundary
+        let nextLog = 3000 - (elaspedTime % 3000); // Calculate time to next log (3 seconds)
+        if (elaspedTime >= 3000) { // Check if it's time for the next log
+            lastLogTime = currentTime - (elaspedTime % 3000); // Set last log time to the previous 3-second boundary
             let date = new Date(lastLogTime);
             let dateStr = require("locale").date(date);
             let timeStr = require("locale").time(date, 1);
@@ -143,22 +143,8 @@ function saveDataToCSV() {
         csvContent += `${entry.timestamp},${entry.heartRate},${entry.hrv}\n`;
     });
 
-    // Check if the file already exists
-    let fileNum = 0;
-    let fileName = `heart_rate_data_${fileNum}.csv`;
-    while (require("Storage").read(fileName) !== undefined && fileNum <= MAX_LOGS) {
-        fileNum++;
-        fileName = `heart_rate_data_${fileNum}.csv`;
-    }
-
-    // Prompt user for confirmation before overwriting existing file
-    if (require("Storage").read(fileName) !== undefined) {
-        if (!confirm("Overwrite existing file?")) {
-            return; // Do not overwrite file if user cancels
-        }
-    }
-
     // Write data to the CSV file
+    let fileName = "heart_rate_data.csv"; // Use consistent file name
     require("Storage").write(fileName, csvContent);
 }
 
