@@ -2,7 +2,7 @@
   "name": "Korean font",
   "version":"0.01",
   "description": "Installs a font data, Unifont characters for Korean **Requires 420 KB storage**",
-  "icon": "font_Korean_icon.png",
+  "icon": "fontKorean_icon.png",
   "tags": "font",
   "type": "module",
   "provides_modules" : ["font"],
@@ -10,7 +10,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"font","url":"lib.js"},
-    {"name":"font_Korean.boot.js","url":"boot.js"},
-    {"name":"font_Korean.pbf","url":"font_Korean.pbf"}
+    {"name":"fontKorean.boot.js","url":"boot.js"},
+    {"name":"fontKorean.pbf","url":"fontKorean.pbf"}
   ]
 }
