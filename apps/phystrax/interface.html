@@ -20,10 +20,11 @@ function saveHeartRateData() {
   Util.saveCSV(fileName, csvContent, function(success) {
     if (success) {
       dataElement.innerHTML = "<p>Heart rate data saved successfully</p>";
+      Util.hideModal(); // Move hideModal() call inside the success callback
     } else {
       dataElement.innerHTML = "<p>Error saving heart rate data</p>";
+      Util.hideModal(); // Move hideModal() call inside the error callback
     }
-    Util.hideModal();
   });
 }
 
@@ -36,7 +37,7 @@ function deleteHeartRateData() {
     } else {
       dataElement.innerHTML = "<p>Error deleting heart rate data</p>";
     }
-    Util.hideModal();
+    Util.hideModal(); // Always hide the modal after the operation completes
   });
 }
 
