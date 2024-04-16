@@ -10,32 +10,33 @@
       var dataElement = document.getElementById("data");
 
       function getHeartRateData() {
-        Util.showModal("Loading...");
-        dataElement.innerHTML = "";
-        Puck.eval('require("Storage").list(/heart_rate_data\\.csv\\x01/)', files => {
-          if (files.length == 0) {
+    Util.showModal("Loading...");
+    dataElement.innerHTML = "";
+    Puck.eval('require("Storage").list(/heart_rate_data\\.csv\\x01/)', files => {
+        console.log("Files found:", files); // Add this line to check files
+        if (files.length == 0) {
             dataElement.innerHTML = "<p>No heart rate data found</p>";
-          } else {
+        } else {
             files.forEach(fn => {
-              fn = fn.slice(0, -1);
-              var link = document.createElement("a");
-              link.setAttribute("href", "#");
-              link.textContent = fn;
-              link.addEventListener("click", function() {
-                Util.showModal("Downloading...");
-                Util.readStorageFile(fn, function(data) {
-                  Util.saveCSV(fn.slice(0, -4), data);
-                  console.log("Downloaded file path:", fn); // Print file path to console
-                  Util.hideModal();
+                fn = fn.slice(0, -1);
+                var link = document.createElement("a");
+                link.setAttribute("href", "#");
+                link.textContent = fn;
+                link.addEventListener("click", function() {
+                    Util.showModal("Downloading...");
+                    Util.readStorageFile(fn, function(data) {
+                        Util.saveCSV(fn.slice(0, -4), data);
+                        console.log("Downloaded file path:", fn); // Print file path to console
+                        Util.hideModal();
+                    });
                 });
-              });
-              dataElement.appendChild(link);
-              dataElement.appendChild(document.createElement("br"));
+                dataElement.appendChild(link);
+                dataElement.appendChild(document.createElement("br"));
             });
-          }
-          Util.hideModal();
-        });
-      }
+        }
+        Util.hideModal();
+    });
+}
 
       function deleteHeartRateData() {
         Util.showModal("Deleting...");
