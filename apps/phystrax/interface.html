@@ -3,63 +3,43 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <div id="content"></div>
+    <div id="data"></div>
 
     <script src="../../core/lib/interface.js"></script>
     <script>
-const DB_RECORD_LEN = 2; 
-const DB_HEADER_LEN = 1; 
+var dataElement = document.getElementById("data");
 
-var domContent = document.getElementById("content");
-
-function saveCSV(data, title) {
-  var csv = "Timestamp,Heart Rate\n";
-  var lines = data.split("\n");
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    if (line) {
-      csv += line + "\n";
-    }
-  }
-
-  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  if (navigator.msSaveBlob) { // IE 10+
-    navigator.msSaveBlob(blob, title + ".csv");
-  } else {
-    var link = document.createElement("a");
-    if (link.download !== undefined) {
-      var url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", title + ".csv");
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }
-}
-
-function downloadHeartRateData() {
-  console.log("starting download...");
-  Util.showModal("Downloading Heart Rate Data...");
-  Util.readStorageFile("heart_rate_data.csv", data => { // Read data from specified file
-    Util.hideModal();
-    if (data) {
-      saveCSV(data, "Heart Rate Data");
+function getHeartRateData() {
+  Util.showModal("Loading...");
+  dataElement.innerHTML = "";
+  Puck.eval('require("Storage").list(/heart_rate_data\\.csv\\x01/)', files => {
+    if (files.length == 0) {
+      dataElement.innerHTML = "<p>No heart rate data found</p>";
     } else {
-      domContent.innerHTML = "<b>No heart rate data found!</b>";
+      files.forEach(fn => {
+        fn = fn.slice(0, -1);
+        var link = document.createElement("a");
+        link.setAttribute("href", "#");
+        link.textContent = fn;
+        link.addEventListener("click", function() {
+          Util.showModal("Downloading...");
+          Util.readStorageFile(fn, function(data) {
+            Util.saveCSV(fn.slice(0, -4), data);
+            Util.hideModal();
+          });
+        });
+        dataElement.appendChild(link);
+        dataElement.appendChild(document.createElement("br"));
+      });
     }
-  }, error => {
-    console.error("Error reading heart rate data:", error);
-    domContent.innerHTML = "<b>Error reading Heart Rate data</b>";
     Util.hideModal();
   });
 }
 
+// Called when app starts
 function onInit() {
-  downloadHeartRateData();
+  getHeartRateData();
 }
-
     </script>
   </body>
 </html>
