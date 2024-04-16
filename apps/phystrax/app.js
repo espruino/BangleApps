@@ -143,15 +143,25 @@ function saveDataToCSV() {
         csvContent += `${entry.timestamp},${entry.heartRate},${entry.hrv}\n`;
     });
 
-    // Find an available file number
+    // Check if the file already exists
     let fileNum = 0;
-    while (require("Storage").read(`heart_rate_data_${fileNum}.csv`) !== undefined && fileNum <= MAX_LOGS) {
+    let fileName = `heart_rate_data_${fileNum}.csv`;
+    while (require("Storage").read(fileName) !== undefined && fileNum <= MAX_LOGS) {
         fileNum++;
+        fileName = `heart_rate_data_${fileNum}.csv`;
     }
 
-    // Write data to a CSV file
-    require("Storage").write(`heart_rate_data_${fileNum}.csv`, csvContent);
+    // Prompt user for confirmation before overwriting existing file
+    if (require("Storage").read(fileName) !== undefined) {
+        if (!confirm("Overwrite existing file?")) {
+            return; // Do not overwrite file if user cancels
+        }
+    }
+
+    // Write data to the CSV file
+    require("Storage").write(fileName, csvContent);
 }
+
 
 setWatch(function() {
     if (!isMeasuring) {
