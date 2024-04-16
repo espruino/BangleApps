@@ -35,11 +35,12 @@ function draw() {
   // clean screen
   g.reset().clearRect(Bangle.appRect);
   
-  // draw side bar in black
-  g.setColor('#000');
+  // draw side bar in blue
+  g.setColor('#00f');
   g.fillRect(0, 0, barWidth, g.getHeight());
   
   // show time on the right
+  g.setColor('#000');
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
   
