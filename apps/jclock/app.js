@@ -40,7 +40,7 @@ function draw() {
   g.fillRect(0, 0, barWidth, g.getHeight());
   
   // show time on the right
-  g.setColor('#000');
+  g.setColor(g.theme.fg);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
   g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
   
