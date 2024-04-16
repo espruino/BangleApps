@@ -81,7 +81,7 @@ function drawScreen(message) {
             g.setFont('6x8', 2);
             g.drawString('No data', g.getWidth() / 2, g.getHeight() / 2 + 10);
             g.setFont('6x8', 1);
-            g.drawString(message || 'Press button to start', g.getWidth() / 2, g.getHeight() / 2 + 30);
+            g.drawString(message || 'Press button to start!', g.getWidth() / 2, g.getHeight() / 2 + 30);
         }
     }
 
