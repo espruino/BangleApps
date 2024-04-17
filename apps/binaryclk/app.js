@@ -5,6 +5,7 @@ var settings = Object.assign({
 	showbat: true,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
 
+var cnt = 0;
 var gap = 4;
 var mgn = 24;
 var sq = 33;
@@ -38,14 +39,8 @@ function drawbatrect() {
 	g.drawRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
 }
 
-function clearbat() {
-	g.clearRect(Math.floor(mgn/2) + gap + 2 * pos, mgn + gap, Math.floor(mgn/2) + gap + 2 * pos + sq, mgn + gap + sq);
-}
-
 function draw() {
-
 	let i = 0;
-	var cnt = 0;
 	var dt = new Date();
 	var h = dt.getHours();
 	var m = dt.getMinutes();
@@ -100,15 +95,17 @@ function draw() {
 		g.drawRect(Math.floor(mgn/2) + gap, mgn + gap, Math.floor(mgn/2) + gap + sq, mgn + gap + sq);
 	}
 
-	if (cnt == 0) {
-		if (settings.showbat) {
+	if (settings.showbat) {
+		var batcnt = cnt;
+		if (batcnt == 0) {
 			drawbat();
 			drawbatrect();
 		}
 		cnt++;
-		if (cnt > 29) {
-			cnt = 0;
-		}
+	}
+
+	if (cnt > 29) {
+		cnt = 0;
 	}
 }
 
@@ -121,21 +118,6 @@ if (!settings.fullscreen) {
 	Bangle.drawWidgets();
 }
 
-var blink = true;
-
-function blinkbat() {
-	if (blink) {
-		clearbat();
-	} else {
-		drawbat();
-	}
-	drawbatrect();
-	blink = !blink;
-}
-
-function getcharging() {
-	if (Bangle.isCharging()) {
-		blinkbat();
-	}
-}
-setInterval(getcharging, 1000);
+Bangle.on('charging', function(charging) {
+	if(charging) Bangle.buzz();
+});
