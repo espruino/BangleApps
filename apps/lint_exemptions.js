@@ -1059,12 +1059,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "gpsinfo/gps-info.js": {
-    "hash": "1eb77f45d4182613879b8214dc174f84c7333b4a541c2b43cba6014a16f470ee",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "glbasic/glbasic.app.js": {
     "hash": "7d12a030d6f0ef69a0e5a9783229fd49c0a6a06bf751e3ac562145d2ce8350e9",
     "rules": [
