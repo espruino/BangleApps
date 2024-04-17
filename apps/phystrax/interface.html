@@ -4,39 +4,60 @@
   </head>
   <body>
     <div id="data"></div>
+    <button class="btn btn-default" id="btnSave">Save</button>
+    <button class="btn btn-default" id="btnDelete">Delete</button>
 
     <script src="../../core/lib/interface.js"></script>
     <script>
 var dataElement = document.getElementById("data");
+var csvData = "";
 
-function displayOptions() {
-  // Display options to save the heart rate data file
-  dataElement.innerHTML = `
-    <button class="btn btn-primary" onclick="saveHeartRateData()">Save</button>
-  `;
-}
-
-function saveHeartRateData() {
-  Util.showModal("Saving...");
-  var fileName = "heart_rate_data.csv"; // Set the file name to save
-  // Read the heart rate data from the watch's storage
-  Util.readStorageFile(fileName, function(data) {
-    // Save the data to the device through app loader
-    Util.saveFileToDevice(fileName, data, function(success) {
-      if (success) {
-        dataElement.innerHTML = "<p>Heart rate data saved successfully</p>";
-      } else {
-        dataElement.innerHTML = "<p>Error saving heart rate data</p>";
-      }
-      Util.hideModal();
-    });
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  dataElement.innerHTML = "";
+  Util.readStorageFile(`heart_rate_data.csv`,data=>{
+    csvData = data.trim();
+    // remove window
+    Util.hideModal();
+    // If no data, report it and exit
+    if (data.length==0) {
+      dataElement.innerHTML = "<b>No data found</b>";
+      return;
+    }
+    // Otherwise parse the data and output it as a table
+    dataElement.innerHTML = `<table>
+    <tr>
+      <th>Timestamp</th>
+      <th>Heart Rate (bpm)</th>
+      <th>HRV (ms)</th>
+    </tr>`+data.trim().split("\n").map(l=>{
+      l = l.split(",");
+      return `<tr>
+      <td>${l[0]}</td>
+      <td>${l[1]}</td>
+      <td>${l[2]}</td>
+      </tr>`
+    }).join("\n")+"</table>";
   });
 }
 
+// You can call a utility function to save the data
+document.getElementById("btnSave").addEventListener("click", function() {
+  Util.saveCSV("heart_rate_data.csv", csvData);
+});
+// Or you can also delete the file
+document.getElementById("btnDelete").addEventListener("click", function() {
+  Util.showModal("Deleting...");
+  Util.eraseStorageFile("heart_rate_data.csv", function() {
+    Util.hideModal();
+    getData();
+  });
+});
 // Called when app starts
 function onInit() {
-  // Display option to save data
-  displayOptions();
+  getData();
 }
 
     </script>

@@ -145,9 +145,9 @@ function saveDataToCSV() {
 
     // Write data to the CSV file
     let fileName = "heart_rate_data.csv"; // Use consistent file name
-    require("Storage").write(fileName, csvContent);
+    var file = require("Storage").open(fileName,"a"); // Open file in append mode
+    file.write(csvContent);
 }
-
 
 setWatch(function() {
     if (!isMeasuring) {
