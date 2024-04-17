@@ -128,7 +128,7 @@ function drawScreen(message) {
             g.drawString(' BPM', g.getWidth() / 2 + 42, g.getHeight() / 2 + 12);
         } else {
             g.setFont('6x8', 2);
-            g.drawString('No data', g.getWidth() / 2, g.getHeight() / 2 + 10);
+            g.drawString('No data', g.getWidth() / 2, g.getHeight() / 2 + 5);
             g.setFont('6x8', 1);
             g.drawString(message || 'Press button to start', g.getWidth() / 2, g.getHeight() / 2 + 30);
         }
@@ -139,18 +139,21 @@ function drawScreen(message) {
 }
 
 function saveDataToCSV() {
-    let csvContent = "Timestamp,Heart Rate(bpm),HRV(ms)\n";
+    let fileName = "heart_rate_data.csv";
+    let file = require("Storage").open(fileName, "a"); // Open the file for appending
+
+    // Check if the file is empty (i.e., newly created)
+    if (file.getLength() === 0) {
+        // Write the header if the file is empty
+        file.write("Timestamp,Heart Rate(bpm),HRV(ms)\n");
+    }
+
+    // Append the data
     logData.forEach(entry => {
-        // Scale HRV - placeholder
-        let scaledHRV = entry.hrv * 13.16; 
-        csvContent += `${entry.timestamp},${entry.heartRate},${scaledHRV}\n`;
+        file.write(`${entry.timestamp},${entry.heartRate},${entry.hrv}\n`);
     });
 
-    // Write data to the CSV file with the desired file name
-    let fileName = "heart_rate_data.csv"; 
-    require("Storage").write(fileName, csvContent);
 }
-
 
 setWatch(function() {
     if (!isMeasuring) {
