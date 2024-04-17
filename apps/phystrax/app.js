@@ -4,9 +4,9 @@ let lcdTimeout;
 let logData = [];
 let bpmValues = [];
 let lastLogTime = 0;
-const MAX_LOGS = 9;
 
 function startMeasure() {
+    logData = [];
     isMeasuring = true;
     Bangle.setLCDTimeout(0);
     lcdTimeout = setTimeout(() => {
@@ -33,8 +33,7 @@ function stopMeasure() {
 }
 
 function handleHeartRate(hrm) {
-    if (hrm.confidence > 90) {
-        currentHR = hrm.bpm;
+    if (isMeasuring && hrm.confidence > 85) {
         let currentTime = Date.now();
         let elaspedTime = currentTime - lastLogTime;
         let nextLog = 3000 - (elaspedTime % 3000); // Calculate time to next log (3 seconds)
@@ -45,6 +44,8 @@ function handleHeartRate(hrm) {
             let timeStr = require("locale").time(date, 1);
             let seconds = date.getSeconds();
             let timestamp = `${dateStr} ${timeStr}:${seconds}`; // Concatenate date, time, and seconds
+            currentHR = hrm.bpm;
+
             logData.push({ timestamp: timestamp, heartRate: currentHR });
             bpmValues.push(currentHR); // Store heart rate for HRV calculation
             if (bpmValues.length > 30) bpmValues.shift(); // Keep last 30 heart rate values
@@ -118,9 +119,9 @@ function drawScreen(message) {
         g.drawString('Press button to stop', g.getWidth() / 2, g.getHeight() / 2 + 42);
     } else {
         // Draw last heart rate
-        g.setFont('Vector', 12);
-        g.drawString('Last Heart Rate:', g.getWidth() / 2, g.getHeight() / 2 - 20);
         if (currentHR !== null && currentHR > 0) {
+            g.setFont('Vector', 12);
+            g.drawString('Last Heart Rate:', g.getWidth() / 2, g.getHeight() / 2 - 20);
             g.setFont('6x8', 4);
             g.drawString(currentHR.toString(), g.getWidth() / 2, g.getHeight() / 2 + 10);
             g.setFont('6x8', 1.6);
@@ -140,14 +141,16 @@ function drawScreen(message) {
 function saveDataToCSV() {
     let csvContent = "Timestamp,Heart Rate(bpm),HRV(ms)\n";
     logData.forEach(entry => {
-        csvContent += `${entry.timestamp},${entry.heartRate},${entry.hrv}\n`;
+        // Scale HRV - placeholder
+        let scaledHRV = entry.hrv * 13.16; 
+        csvContent += `${entry.timestamp},${entry.heartRate},${scaledHRV}\n`;
     });
 
-    // Write data to the CSV file
-    let fileName = "heart_rate_data.csv"; // Use consistent file name
-    var file = require("Storage").open(fileName,"a"); // Open file in append mode
-    file.write(csvContent);
+    // Write data to the CSV file with the desired file name
+    let fileName = "heart_rate_data.csv"; 
+    require("Storage").write(fileName, csvContent);
 }
+
 
 setWatch(function() {
     if (!isMeasuring) {
