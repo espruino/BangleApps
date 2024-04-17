@@ -150,7 +150,8 @@ function saveDataToCSV() {
 
     // Append the data
     logData.forEach(entry => {
-        file.write(`${entry.timestamp},${entry.heartRate},${entry.hrv}\n`);
+        let scaledHRV = entry.hrv * 13.61;
+        file.write(`${entry.timestamp},${entry.heartRate},${scaledHRV}\n`);
     });
 
 }
