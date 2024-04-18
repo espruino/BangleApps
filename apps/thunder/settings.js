@@ -15,7 +15,7 @@
   };
 
   const showMenu = function() {
-    const unitOptions = ['kms','miles'];
+    const unitOptions = [/*LANG*/'Auto','kms','miles'];
 
     const menu = {
       '': {'title': 'Thunder'},
