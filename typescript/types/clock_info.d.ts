@@ -61,5 +61,5 @@ declare module ClockInfo {
 }
 
 interface BangleExt {
-  CLKINFO_FOCUS?: true;
+  CLKINFO_FOCUS?: number;
 }
