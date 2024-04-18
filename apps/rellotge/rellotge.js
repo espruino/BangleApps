@@ -16,7 +16,6 @@
   const timeTextMagin = 15;
   const xyCenter = timeTextMagin;
   const yposTime = 45;
-  const yposDate = 130;
   const leshores = ["Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
   const leshores2 = ["d'una","de dues","de tres","de quatre","de cinc","de sis","de set","de vuit","de nou","de deu","d'onze","de dotze"];
   const RED = '#f00';
