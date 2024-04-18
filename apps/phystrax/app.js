@@ -33,30 +33,21 @@ function stopMeasure() {
 }
 
 function handleHeartRate(hrm) {
-    if (isMeasuring && hrm.confidence > 85) {
-        let currentTime = Date.now();
-        let elaspedTime = currentTime - lastLogTime;
-        let nextLog = 3000 - (elaspedTime % 3000); // Calculate time to next log (3 seconds)
-        if (elaspedTime >= 3000) { // Check if it's time for the next log
-            lastLogTime = currentTime - (elaspedTime % 3000); // Set last log time to the previous 3-second boundary
-            let date = new Date(lastLogTime);
-            let dateStr = require("locale").date(date);
-            let timeStr = require("locale").time(date, 1);
-            let seconds = date.getSeconds();
-            let timestamp = `${dateStr} ${timeStr}:${seconds}`; // Concatenate date, time, and seconds
-            currentHR = hrm.bpm;
+    if (isMeasuring && hrm.confidence > 90) {
+        let date = new Date();
+        let dateStr = require("locale").date(date);
+        let timeStr = require("locale").time(date, 1);
+        let seconds = date.getSeconds();
+        let timestamp = `${dateStr} ${timeStr}:${seconds}`; // Concatenate date, time, and seconds
+        currentHR = hrm.bpm;
 
-            logData.push({ timestamp: timestamp, heartRate: currentHR });
-            bpmValues.push(currentHR); // Store heart rate for HRV calculation
-            if (bpmValues.length > 30) bpmValues.shift(); // Keep last 30 heart rate values
-            // Calculate and add SDNN (standard deviation of NN intervals) to the last log entry
-            logData[logData.length - 1].hrv = calcSDNN();
-            drawScreen();
-        }
-        // Schedule next measurement
-        setTimeout(() => {
-            handleHeartRate(hrm);
-        }, nextLog);
+        logData.push({ timestamp: timestamp, heartRate: currentHR });
+        bpmValues.push(currentHR); // Store heart rate for HRV calculation
+        if (bpmValues.length > 30) bpmValues.shift(); // Keep last 30 heart rate values
+        // Calculate and add SDNN (standard deviation of NN intervals) to the last log entry
+        logData[logData.length - 1].hrv = calcSDNN();
+        drawScreen();
+        
     }
 }
 
