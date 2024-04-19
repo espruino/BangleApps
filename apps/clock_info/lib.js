@@ -298,7 +298,7 @@ exports.addInteractive = function(menu, options) {
   };
   const focus = () => {
     let redraw = true;
-    Bangle.CLKINFO_FOCUS = (Bangle.CLKINFO_FOCUS || 0) + 1;
+    Bangle.CLKINFO_FOCUS = (0 | Bangle.CLKINFO_FOCUS) + 1;
     if (!options.focus) {
       options.focus=true;
       const itm = menu[options.menuA].items[options.menuB];
