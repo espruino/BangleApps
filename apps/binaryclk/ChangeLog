@@ -8,3 +8,5 @@
 0.08: Changed month to day and text color to black on date
 0.09: Changed day color back to white
 0.10: Add blinking when charging
+0.11: Changed battery to buzz instead of blink and fixed battery counter
+0.12: Got rid of battery counter

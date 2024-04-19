@@ -12,3 +12,4 @@
 0.14: Add "Delete all logfiles before" to interface.html, display all logfiles in the interface
 0.15: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.16: Only write logs if we have a non-empty log to write
+0.17: Minor code improvements

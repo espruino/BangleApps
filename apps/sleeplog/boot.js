@@ -18,14 +18,14 @@ global.sleeplog = {
 };
 
 // check if service is enabled
-if (sleeplog.conf.enabled) {
+if (global.sleeplog.conf.enabled) {
   // assign functions to global object
   global.sleeplog = Object.assign({
     // define function to initialy start or restart the service
     start: function() {
       // add kill and health listener
-      E.on('kill', sleeplog.saveStatus);
-      Bangle.on('health', sleeplog.health);
+      E.on('kill', global.sleeplog.saveStatus);
+      Bangle.on('health', global.sleeplog.health);
 
       // restore saved status
       this.restoreStatus();
@@ -34,8 +34,8 @@ if (sleeplog.conf.enabled) {
     // define function to stop the service, it will be restarted on reload if enabled
     stop: function() {
       // remove all listeners
-      Bangle.removeListener('health', sleeplog.health);
-      E.removeListener('kill', sleeplog.saveStatus);
+      Bangle.removeListener('health', global.sleeplog.health);
+      E.removeListener('kill', global.sleeplog.saveStatus);
 
       // save active values
       this.saveStatus();
@@ -122,11 +122,11 @@ if (sleeplog.conf.enabled) {
       if (!global.sleeplog) return new Error("sleeplog: Can't save status, global object missing!");
 
       // check saveUpToDate is not set or forced
-      if (!sleeplog.info.saveUpToDate || force) {
+      if (!global.sleeplog.info.saveUpToDate || force) {
         // save status, consecutive status and info timestamps to restore on reload
-        var save = [sleeplog.info.lastCheck, sleeplog.info.awakeSince, sleeplog.info.asleepSince];
+        var save = [global.sleeplog.info.lastCheck, global.sleeplog.info.awakeSince, global.sleeplog.info.asleepSince];
         // add debuging status if active
-        if (sleeplog.debug) save.push(sleeplog.debug.writeUntil, sleeplog.debug.fileid);
+        if (global.sleeplog.debug) save.push(global.sleeplog.debug.writeUntil, global.sleeplog.debug.fileid);
 
         // stringify entries
         save = "," + save.map((entry, index) => {
@@ -135,8 +135,8 @@ if (sleeplog.conf.enabled) {
         }).join(",") + "\n";
 
         // add present status if forced
-        if (force) save = (sleeplog.info.lastChange / 6E5) + "," +
-          sleeplog.status + "," + sleeplog.consecutive + "\n" + save;
+        if (force) save = (global.sleeplog.info.lastChange / 6E5) + "," +
+          global.sleeplog.status + "," + global.sleeplog.consecutive + "\n" + save;
 
         // append saved data to StorageFile
         require("Storage").open("sleeplog.log", "a").write(save);
@@ -161,20 +161,20 @@ if (sleeplog.conf.enabled) {
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
       data.status = Bangle.isCharging() ? 1 :
-        data.movement <= sleeplog.conf.deepTh ? 4 :
-        data.movement <= sleeplog.conf.lightTh ? 3 : 2;
+        data.movement <= global.sleeplog.conf.deepTh ? 4 :
+        data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
 
       // check if changing to deep sleep from non sleeping
-      if (data.status === 4 && sleeplog.status <= 2) {
-        sleeplog.checkIsWearing((isWearing, data) => {
+      if (data.status === 4 && global.sleeplog.status <= 2) {
+        global.sleeplog.checkIsWearing((isWearing, data) => {
           // correct status
           if (!isWearing) data.status = 1;
           // set status
-          sleeplog.setStatus(data);
+          global.sleeplog.setStatus(data);
         }, data);
       } else {
         // set status
-        sleeplog.setStatus(data);
+        global.sleeplog.setStatus(data);
       }
     },
 
@@ -185,7 +185,7 @@ if (sleeplog.conf.enabled) {
       }
 
       // create a temporary object to store data and functions
-      global.tmpWearingCheck = {
+      const tmpWearingCheck = {
         // define temporary hrm listener function to read the wearing status
         hrmListener: hrm => tmpWearingCheck.isWearing = hrm.isWearing,
         // set default wearing status
@@ -195,22 +195,18 @@ if (sleeplog.conf.enabled) {
       // enable HRM
       Bangle.setHRMPower(true, "wearingCheck");
       // wait until HRM is initialised
-      setTimeout((returnFn, data) => {
+      setTimeout((returnFn, data, tmpWearingCheck) => {
         // add HRM listener
         Bangle.on('HRM-raw', tmpWearingCheck.hrmListener);
         // wait for two cycles (HRM working on 60Hz)
-        setTimeout((returnFn, data) => {
+        setTimeout((returnFn, data, tmpWearingCheck) => {
           // remove listener and disable HRM
           Bangle.removeListener('HRM-raw', tmpWearingCheck.hrmListener);
           Bangle.setHRMPower(false, "wearingCheck");
-          // cache wearing status
-          var isWearing = tmpWearingCheck.isWearing;
-          // clear temporary object
-          delete global.tmpWearingCheck;
           // call return function with status
-          returnFn(isWearing, data);
-        }, 34, returnFn, data);
-      }, 2500, returnFn, data);
+          returnFn(tmpWearingCheck.isWearing, data);
+        }, 34, returnFn, data, tmpWearingCheck);
+      }, 2500, returnFn, data, tmpWearingCheck);
     },
 
     // define function to set the status
@@ -361,7 +357,7 @@ if (sleeplog.conf.enabled) {
 
     // define trigger object
     trigger: {}
-  }, sleeplog);
+  }, global.sleeplog);
 
   // initial starting
   global.sleeplog.start();

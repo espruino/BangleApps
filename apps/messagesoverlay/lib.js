@@ -1,49 +1,69 @@
-const MIN_FREE_MEM = 1000;
-const LOW_MEM = 2000;
-const ovrx = 10;
-const ovry = 10;
+let lockListener;
+let ovr;
+let clearingTimeout;
+
+// Converts a espruino version to a semantiv versioning object
+const toSemantic = function (v){
+  return {
+    major: v.substring(0,v.indexOf("v")),
+    minor: v.substring(v.indexOf("v") + 1, v.includes(".") ? v.indexOf(".") : v.length),
+    patch: v.includes(".") ? v.substring(v.indexOf(".") + 1, v.length) : 0
+  };
+};
+
+const isNewer = function(espruinoVersion, baseVersion){
+  const s = toSemantic(espruinoVersion);
+  const b = toSemantic(baseVersion);
+
+  return s.major >= b.major &&
+    s.minor >= b.major &&
+    s.patch > b.patch;
+};
+
+let needsWorkaround;
+
+let settings = Object.assign(
+  require('Storage').readJSON("messagesoverlay.default.json", true) || {},
+  require('Storage').readJSON("messagesoverlay.json", true) || {}
+);
+
+settings = Object.assign({
+  fontSmall:"6x8",
+  fontMedium:"6x15",
+  fontBig: "12x20"
+}, settings);
+
+const ovrx = settings.border;
+const ovry = ovrx;
 const ovrw = g.getWidth()-2*ovrx;
 const ovrh = g.getHeight()-2*ovry;
-let _g = g;
 
-let lockListener;
-let quiet;
+let LOG=()=>{};
+//LOG = function() { print.apply(null, arguments);};
 
-let LOG = function() {
-  //print.apply(null, arguments);
-};
-
-let isQuiet = function(){
-  if (quiet == undefined) quiet = (require('Storage').readJSON('setting.json', 1) || {}).quiet;
-  return quiet;
-};
-
-let settings = {
-  fontSmall:"6x8",
-  fontMedium:"Vector:14",
-  fontBig:"Vector:20",
-  fontLarge:"Vector:30",
+const isQuiet = function(){
+  return (require('Storage').readJSON('setting.json', 1) || {}).quiet;
 };
 
 let eventQueue = [];
 let callInProgress = false;
+let buzzing = false;
 
-let show = function(ovr){
-  let img = ovr;
-  LOG("show", img.getBPP());
+const show = function(){
+  let img = ovr.asImage();
+  LOG("show", img.bpp);
   if (ovr.getBPP() == 1) {
-    img = ovr.asImage();
-    img.palette = new Uint16Array([_g.theme.fg,_g.theme.bg]);
+    img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
   Bangle.setLCDOverlay(img, ovrx, ovry);
 };
 
-let manageEvent = function(ovr, event) {
+const manageEvent = function(event) {
   event.new = true;
 
   LOG("manageEvent");
   if (event.id == "call") {
-    showCall(ovr, event);
+    showCall(event);
     return;
   }
   switch (event.t) {
@@ -51,7 +71,7 @@ let manageEvent = function(ovr, event) {
       eventQueue.unshift(event);
 
       if (!callInProgress)
-        showMessage(ovr, event);
+        showMessage(event);
       break;
 
     case "modify": {
@@ -66,23 +86,23 @@ let manageEvent = function(ovr, event) {
         eventQueue.unshift(event);
 
       if (!callInProgress)
-        showMessage(ovr, event);
+        showMessage(event);
       break;
     }
     case "remove":
       if (eventQueue.length == 0 && !callInProgress)
-        next(ovr);
+        next();
 
       if (!callInProgress && eventQueue[0] !== undefined && eventQueue[0].id == event.id)
-        next(ovr);
-      else 
+        next();
+      else
         eventQueue = [];
 
       break;
   }
 };
 
-let roundedRect = function(ovr, x,y,w,h,filled){
+const roundedRect = function(x,y,w,h,filled){
   var poly = [
     x,y+4,
     x+4,y,
@@ -94,115 +114,153 @@ let roundedRect = function(ovr, x,y,w,h,filled){
     x,y+h-5,
     x,y+4
   ];
+  if (filled){
+    let c = ovr.getColor();
+    ovr.setColor(ovr.getBgColor());
+    ovr.fillPoly(poly,true);
+    ovr.setColor(c);
+  }
   ovr.drawPoly(poly,true);
-  if (filled) ovr.fillPoly(poly,true);
 };
 
-let drawScreen = function(ovr, title, titleFont, src, iconcolor, icon){
-  ovr.setBgColor(ovr.theme.bg2);
-  ovr.clearRect(2,2,ovr.getWidth()-3,37);
+const DIVIDER = 38;
 
-  ovr.setColor(ovr.theme.fg2);
+const drawScreen = function(title, src, iconcolor, icon){
+  setColors(false);
+
+  drawBorder();
+
+  setColors(true);
+  ovr.clearRect(2,2,ovr.getWidth()-3, DIVIDER - 1);
+
   ovr.setFont(settings.fontSmall);
   ovr.setFontAlign(0,-1);
 
-  let textCenter = (ovr.getWidth()+35-26)/2;
+  const textCenter = (ovr.getWidth()+34-24)/2-1;
 
-  if (src) {
-    let shortened = src;
-    while (ovr.stringWidth(shortened) > ovr.getWidth()-80) shortened = shortened.substring(0,shortened.length-2);
-    if (shortened.length != src.length) shortened += "...";
-    ovr.drawString(shortened, textCenter, 2);
+  const w = ovr.getWidth() - 35 - 26;
+
+  if (title)
+    drawTitle(title, textCenter, w, 8, DIVIDER - 8, 0);
+
+  if (src)
+    drawSource(src, textCenter, w, 2, -1);
+
+  if (ovr.getBPP() > 1) {
+    let old = ovr.getBgColor();
+    ovr.setBgColor("#888");
+    roundedRect(4, 5, 30, 30,true);
+    ovr.setBgColor(old);
+    old = ovr.getColor();
+    ovr.setColor(iconcolor);
+    ovr.drawImage(icon,7,8);
+    ovr.setColor(old);
+  } else {
+    roundedRect(4, 5, 30, 30,true);
+    ovr.drawImage(icon,7,8);
   }
 
+  roundedRect(ovr.getWidth()-26,5,22,30,true);
   ovr.setFontAlign(0,0);
-  ovr.setFont(titleFont);
-  if (title) ovr.drawString(title, textCenter, 38/2 + 5);
-
-  ovr.setColor(ovr.theme.fg2);
-
-  ovr.setFont(settings.fontMedium);
-  roundedRect(ovr, ovr.getWidth()-26,5,22,30,false);
   ovr.setFont("Vector:16");
-  ovr.drawString("X",ovr.getWidth()-14,21);
-
-  ovr.setColor("#888");
-  roundedRect(ovr, 5,5,30,30,true);
-  ovr.setColor(ovr.getBPP() != 1 ? iconcolor : ovr.theme.bg2);
-  ovr.drawImage(icon,8,8);
+  ovr.drawString("X",ovr.getWidth()-14,20);
 };
 
-let showMessage = function(ovr, msg) {
-  LOG("showMessage");
-  ovr.setBgColor(ovr.theme.bg);
+const drawSource = function(src, center, w, y, align) {
+  ovr.setFont(settings.fontSmall);
+  while (ovr.stringWidth(src) > w) src = src.substring(0,src.length-2);
+  if (src.length != src.length) src += "...";
+  ovr.setFontAlign(0,align);
+  ovr.drawString(src, center, y);
+};
 
-  if (typeof msg.CanscrollDown === "undefined")
-    msg.CanscrollDown = false;
-  if (typeof msg.CanscrollUp === "undefined")
-    msg.CanscrollUp = false;
+const drawTitle = function(title, center, w, y, h) {
+  let size = 30;
 
-  // Normal text message display
-  let title = msg.title,
-    titleFont = settings.fontLarge,
-    lines;
-  if (title) {
-    let w = ovr.getWidth() - 35 - 26;
-    if (ovr.setFont(titleFont).stringWidth(title) > w)
-      titleFont = settings.fontMedium;
-    if (ovr.setFont(titleFont).stringWidth(title) > w) {
-      lines = ovr.wrapString(title, w);
-      title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
+  while (ovr.setFont("Vector:" + size).stringWidth(title) > w){
+    size -= 2;
+    if (size < 14){
+      ovr.setFont(settings.fontMedium);
+      break;
     }
   }
 
-  drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+  let dh;
+  let a;
+  if (ovr.stringWidth(title) > w) {
+    let ws = ovr.wrapString(title, w);
+    if (ws.length >= 2 && ovr.stringWidth(ws[1]) > w - 8){
+      ws[1] = ws[1].substring(0, ws[1].length - 2);
+      ws[1] += "...";
+    }
+    title = ws.slice(0, 2).join("\n");
+
+    a = -1;
+    dh = y + 2;
+  } else {
+    a = 0;
+    dh = y + h/2;
+  }
+  ovr.setFontAlign(0, a);
+  ovr.drawString(title, center, dh);
+};
+
+const setColors = function(lockRelevant) {
+  if (lockRelevant && !Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg2);
+    ovr.setBgColor(ovr.theme.bg2);
+  } else {
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  }
+};
+
+const showMessage = function(msg) {
+  LOG("showMessage");
+
+  ovr.setClipRect(0,0,ovr.getWidth(),ovr.getHeight());
+
+  drawScreen(msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+
+
+  if (!Bangle.isLocked()){
+    ovr.setColor(ovr.theme.fg);
+    ovr.setBgColor(ovr.theme.bg);
+  }
+
+  drawMessage(msg);
 
   if (!isQuiet() && msg.new) {
     msg.new = false;
-    Bangle.buzz();
+    if (!buzzing){
+      buzzing = true;
+      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000);});
+    }
+    Bangle.setLCDPower(1);
   }
-
-  drawMessage(ovr, msg);
 };
 
-let drawBorder = function(img) {
+const drawBorder = function() {
   LOG("drawBorder", isQuiet());
-  if (img) ovr=img;
-  if (Bangle.isLocked())
-    ovr.setColor(ovr.theme.fgH);
-  else
-    ovr.setColor(ovr.theme.fg);
   ovr.drawRect(0,0,ovr.getWidth()-1,ovr.getHeight()-1);
   ovr.drawRect(1,1,ovr.getWidth()-2,ovr.getHeight()-2);
-  show(ovr);
+  ovr.drawRect(2,DIVIDER,ovr.getWidth()-2,DIVIDER+1);
+  show();
 };
 
-let showCall = function(ovr, msg) {
+const showCall = function(msg) {
   LOG("showCall");
   LOG(msg);
 
   if (msg.t == "remove") {
     LOG("hide call screen");
-    next(ovr); //dont shift
+    next(); //dont shift
     return;
   }
 
   callInProgress = true;
 
-  let title = msg.title,
-    titleFont = settings.fontLarge,
-    lines;
-  if (title) {
-    let w = ovr.getWidth() - 35 -26;
-    if (ovr.setFont(titleFont).stringWidth(title) > w)
-      titleFont = settings.fontMedium;
-    if (ovr.setFont(titleFont).stringWidth(title) > w) {
-      lines = ovr.wrapString(title, w);
-      title = (lines.length > 2) ? lines.slice(0, 2).join("\n") + "..." : lines.join("\n");
-    }
-  }
-
-  drawScreen(ovr, title, titleFont, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
+  drawScreen(msg.title, msg.src || /*LANG*/ "Message", require("messageicons").getColor(msg), require("messageicons").getImage(msg));
 
   stopCallBuzz();
   if (!isQuiet()) {
@@ -216,10 +274,10 @@ let showCall = function(ovr, msg) {
       Bangle.buzz(500);
     }
   }
-  drawMessage(ovr, msg);
+  drawMessage(msg);
 };
 
-let next = function(ovr) {
+const next = function() {
   LOG("next");
   stopCallBuzz();
 
@@ -230,203 +288,378 @@ let next = function(ovr) {
   if (eventQueue.length == 0) {
     LOG("no element in queue - closing");
     cleanup();
-    return;
+    return false;
   }
 
-  showMessage(ovr, eventQueue[0]);
+  showMessage(eventQueue[0]);
+  return true;
 };
 
 let callBuzzTimer = null;
-let stopCallBuzz = function() {
+const stopCallBuzz = function() {
   if (callBuzzTimer) {
     clearInterval(callBuzzTimer);
     callBuzzTimer = undefined;
   }
 };
 
-let drawTriangleUp = function(ovr) {
-  ovr.reset();
-  ovr.fillPoly([ovr.getWidth()-9, 46,ovr.getWidth()-14, 56,ovr.getWidth()-4, 56]);
+const drawTriangleUp = function() {
+  ovr.fillPoly([ovr.getWidth()-10, 46,ovr.getWidth()-15, 56,ovr.getWidth()-5, 56]);
 };
 
-let drawTriangleDown = function(ovr) {
-  ovr.reset();
-  ovr.fillPoly([ovr.getWidth()-9, ovr.getHeight()-6, ovr.getWidth()-14, ovr.getHeight()-16, ovr.getWidth()-4, ovr.getHeight()-16]);
+const drawTriangleDown = function() {
+  ovr.fillPoly([ovr.getWidth()-10, ovr.getHeight()-6, ovr.getWidth()-15, ovr.getHeight()-16, ovr.getWidth()-5, ovr.getHeight()-16]);
 };
 
-let linesScroll = 6;
 
-let scrollUp = function(ovr) {
-  msg = eventQueue[0];
+const scrollUp = function() {
+  const msg = eventQueue[0];
   LOG("up", msg);
-  if (typeof msg.FirstLine === "undefined")
-    msg.FirstLine = 0;
-  if (typeof msg.CanscrollUp === "undefined")
-    msg.CanscrollUp = false;
 
   if (!msg.CanscrollUp) return;
 
-  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - linesScroll : 0;
-
-  drawMessage(ovr, msg);
+  msg.FirstLine = msg.FirstLine > 0 ? msg.FirstLine - 1 : 0;
+  drawMessage(msg);
 };
 
-let scrollDown = function(ovr) {
-  msg = eventQueue[0];
+const scrollDown = function() {
+  const msg = eventQueue[0];
   LOG("down", msg);
-  if (typeof msg.FirstLine === "undefined")
-    msg.FirstLine = 0;
-  if (typeof msg.CanscrollDown === "undefined")
-    msg.CanscrollDown = false;
 
   if (!msg.CanscrollDown) return;
 
-  msg.FirstLine = msg.FirstLine + linesScroll;
-  drawMessage(ovr, msg);
+  msg.FirstLine = msg.FirstLine + 1;
+  drawMessage(msg);
 };
 
-let drawMessage = function(ovr, msg) {
-  let MyWrapString = function(str, maxWidth) {
+const drawMessage = function(msg) {
+  setColors(false);
+  const getStringHeight = function(str){
+    "jit";
+    const metrics = ovr.stringMetrics(str);
+    if (needsWorkaround === undefined)
+      needsWorkaround = isNewer("2v21.13", process.version);
+    if (needsWorkaround && metrics.maxImageHeight > 16)
+      metrics.maxImageHeight = metrics.height;
+    return Math.max(metrics.height, metrics.maxImageHeight);
+  };
+
+  const wrapString = function(str, maxWidth) {
     str = str.replace("\r\n", "\n").replace("\r", "\n");
     return ovr.wrapString(str, maxWidth);
   };
+  const wrappedStringHeight = function(strArray){
+    let r = 0;
+    strArray.forEach((line, i) => {
+      r += getStringHeight(line);
+    });
+    return r;
+  };
 
-  if (typeof msg.FirstLine === "undefined") msg.FirstLine = 0;
+  if (msg.FirstLine === undefined) msg.FirstLine = 0;
 
-  let bodyFont = typeof msg.bodyFont === "undefined" ? settings.fontMedium : msg.bodyFont;
-  let Padding = 3;
-  if (typeof msg.lines === "undefined") {
+  const padding = eventQueue.length > 1 ? (eventQueue.length > 3 ? 7 : 5) : 3;
+
+  const yText = DIVIDER+2;
+  let yLine = yText + 4;
+
+  ovr.setClipRect(2, yText, ovr.getWidth() - 3, ovr.getHeight() - 3);
+
+  const maxTextHeight = ovr.getHeight() - yLine - padding + 2;
+
+  if (!msg.lines) {
+    let bodyFont = settings.fontBig;
     ovr.setFont(bodyFont);
-    msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
-    if (msg.lines.length <= 2) {
-      bodyFont = ovr.getFonts().includes("Vector") ? "Vector:20" : "6x8:3";
+    msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
+
+    if (wrappedStringHeight(msg.lines) > maxTextHeight) {
+      bodyFont = settings.fontMedium;
       ovr.setFont(bodyFont);
-      msg.lines = MyWrapString(msg.body, ovr.getWidth() - (Padding * 2));
-      msg.bodyFont = bodyFont;
+      msg.lines = wrapString(msg.body, ovr.getWidth() - 4 - padding);
     }
+    msg.bodyFont = bodyFont;
+    msg.lineHeights = [];
+    msg.lines.forEach((line, i) => {
+      msg.lineHeights[i] = getStringHeight(line);
+    });
   }
 
-  let NumLines = 7;
+  LOG("Prepared message", msg);
 
-  let linesToPrint = (msg.lines.length > NumLines) ? msg.lines.slice(msg.FirstLine, msg.FirstLine + NumLines) : msg.lines;
+  ovr.setFont(msg.bodyFont);
+  ovr.clearRect(2, yText, ovr.getWidth()-3, ovr.getHeight()-3);
 
-  let yText = 40;
+  let xText = 4;
 
-  ovr.setBgColor(ovr.theme.bg);
-  ovr.setColor(ovr.theme.fg);
-  ovr.clearRect(2, yText, ovrw-3, ovrh-3);
-  let xText = Padding;
-  yText += Padding;
-  ovr.setFont(bodyFont);
-  let HText = ovr.getFontHeight();
-
-  yText = ((ovrh - yText) / 2) - (linesToPrint.length * HText / 2) + yText;
-
-  if (linesToPrint.length <= 3) {
+  if (msg.bodyFont == settings.fontBig) {
     ovr.setFontAlign(0, -1);
-    xText = ovr.getWidth() / 2;
-  } else
+    xText = Math.round(ovr.getWidth() / 2 - (padding - 3) / 2) + 1;
+    yLine = (ovr.getHeight() + yLine) / 2 - (wrappedStringHeight(msg.lines) / 2);
+    ovr.drawString(msg.lines.join("\n"), xText, yLine);
+  } else {
     ovr.setFontAlign(-1, -1);
+  }
 
+  let currentLine = msg.FirstLine;
 
-  linesToPrint.forEach((line, i) => {
-    ovr.drawString(line, xText, yText + HText * i);
-  });
+  let drawnHeight = 0;
+
+  while(drawnHeight < maxTextHeight && msg.lines.length > currentLine) {
+    const lineHeight = msg.lineHeights[currentLine];
+    ovr.drawString(msg.lines[currentLine], xText, yLine + drawnHeight);
+    drawnHeight += lineHeight;
+    currentLine++;
+  }
+
+  if (eventQueue.length > 1){
+    ovr.drawLine(ovr.getWidth()-4,ovr.getHeight()/2,ovr.getWidth()-4,ovr.getHeight()-4);
+    ovr.drawLine(ovr.getWidth()/2,ovr.getHeight()-4,ovr.getWidth()-4,ovr.getHeight()-4);
+  }
+  if (eventQueue.length > 3){
+    ovr.drawLine(ovr.getWidth()-6,ovr.getHeight()*0.6,ovr.getWidth()-6,ovr.getHeight()-6);
+    ovr.drawLine(ovr.getWidth()*0.6,ovr.getHeight()-6,ovr.getWidth()-6,ovr.getHeight()-6);
+  }
 
   if (msg.FirstLine != 0) {
     msg.CanscrollUp = true;
-    drawTriangleUp(ovr);
+    drawTriangleUp();
   } else
     msg.CanscrollUp = false;
 
-  if (msg.FirstLine + linesToPrint.length < msg.lines.length) {
+  if (currentLine < msg.lines.length) {
     msg.CanscrollDown = true;
-    drawTriangleDown(ovr);
+    drawTriangleDown();
   } else
     msg.CanscrollDown = false;
-  show(ovr);
-  if (!isQuiet()) Bangle.setLCDPower(1);
+
+  show();
 };
 
-let getSwipeHandler = function(ovr){
-  return (lr, ud) => {
-    if (ud == 1) {
-      scrollUp(ovr);
-    } else if (ud == -1){
-      scrollDown(ovr);
+const getDragHandler = function(){
+  return (e) => {
+    if (e.dy > 0) {
+      scrollUp();
+    } else if (e.dy < 0){
+      scrollDown();
     }
   };
 };
 
-let getTouchHandler = function(ovr){
+const getTouchHandler = function(){
   return (_, xy) => {
-    if (xy.y < ovry + 40){
-      next(ovr);
+    if (xy.y < ovry + DIVIDER){
+      next();
     }
   };
 };
 
-let restoreHandler = function(event){
-  LOG("Restore", event, backup[event]);
-  Bangle.removeAllListeners(event);
-  Bangle["#on" + event]=backup[event];
-  backup[event] = undefined;
+const EVENTS=["touch", "drag", "swipe"];
+
+let hasBackup = false;
+
+const origOn = Bangle.on;
+const backupOn = function(event, handler){
+  if (EVENTS.includes(event)){
+    if (!backup[event])
+      backup[event] = [];
+    backup[event].push(handler);
+  }
+  else origOn.call(Bangle, event, handler);
 };
 
-let backupHandler = function(event){
-  if (backupDone) return; // do not backup, overlay is already up
-  backup[event] = Bangle["#on" + event];
-  LOG("Backed up", backup[event]);
-  Bangle.removeAllListeners(event);
+const origClearWatch = clearWatch;
+const backupClearWatch = function(w) {
+  if (w)
+    backup.watches.filter((e)=>e.index != w);
+  else
+    backup.watches = [];
 };
 
-let cleanup = function(){
+const origSetWatch = setWatch;
+const backupSetWatch = function(){
+  if (!backup.watches)
+    backup.watches = [];
+  LOG("backup for watch", arguments);
+  let i = backup.watches.map((e)=>e.index).sort().pop() + 1;
+  backup.watches.push({index:i, args:arguments});
+  return i;
+};
+
+const origRemove = Bangle.removeListener;
+const backupRemove = function(event, handler){
+  if (EVENTS.includes(event) && backup[event]){
+    LOG("backup for " + event + ": " + backup[event]);
+    backup[event] = backup[event].filter(e=>e!==handler);
+  }
+  else origRemove.call(Bangle, event, handler);
+};
+
+const origRemoveAll = Bangle.removeAllListeners;
+const backupRemoveAll = function(event){
+  if (backup[event])
+    backup[event] = undefined;
+  origRemoveAll.call(Bangle);
+};
+
+const restoreHandlers = function(){
+  if (!hasBackup){
+    LOG("No backup available");
+    return;
+  }
+
+  for (const event of EVENTS){
+    LOG("Restore", backup[event]);
+    origRemoveAll.call(Bangle, event);
+    if (backup[event] && backup[event].length == 1)
+      backup[event] = backup[event][0];
+    Bangle["#on" + event]=backup[event];
+    backup[event] = undefined;
+  }
+
+  if (backup.watches){
+    let toRemove = [];
+
+    origClearWatch.call(global);
+
+    for(let i = 0; i < backup.watches.length; i++){
+      let w = backup.watches[i];
+      LOG("Restoring watch", w);
+      if (w) {
+        origSetWatch.apply(global, w);
+      } else {
+        toRemove.push(i+1);
+        origSetWatch.call(global, ()=>{}, BTN);
+      }
+    }
+
+    LOG("Remove watches", toRemove, global["\xff"].watches);
+    for(let c of toRemove){
+      origClearWatch.call(global, c);
+    }
+  }
+
+  global.setWatch = origSetWatch;
+  global.clearWatch = origClearWatch;
+  Bangle.on = origOn;
+  Bangle.removeListener = origRemove;
+  Bangle.removeAllListeners = origRemoveAll;
+
+  hasBackup = false;
+};
+
+const backupHandlers = function(){
+  if (hasBackup){
+    LOG("Backup already exists");
+    return false; // do not backup, overlay is already up
+  }
+
+  for (const event of EVENTS){
+    backup[event] = Bangle["#on" + event];
+    if (typeof backup[event] == "function")
+      backup[event] = [ backup[event] ];
+    LOG("Backed up", backup[event], event);
+    Bangle.removeAllListeners(event);
+  }
+
+  backup.watches = [];
+
+  for (let i = 1; i < global["\xff"].watches.length; i++){
+    let w = global["\xff"].watches[i];
+    LOG("Transform watch", w);
+    if (w) {
+      w = [
+        w.callback,
+        w.pin,
+        w
+      ];
+      delete w[2].callback;
+      delete w[2].pin;
+      w[2].debounce = Math.round(w[2].debounce / 1048.576);
+    } else {
+      w = null;
+    }
+    LOG("Transformed to", w);
+    backup.watches.push(w);
+  }
+
+  LOG("Backed up watches", backup.watches);
+  clearWatch();
+
+  global.setWatch = backupSetWatch;
+  global.clearWatch = backupClearWatch;
+  Bangle.on = backupOn;
+  Bangle.removeListener = backupRemove;
+  Bangle.removeAllListeners = backupRemoveAll;
+
+  hasBackup = true;
+
+  return true;
+};
+
+const cleanup = function(){
   if (lockListener) {
     Bangle.removeListener("lock", lockListener);
     lockListener = undefined;
   }
-  restoreHandler("touch");
-  restoreHandler("swipe");
-  restoreHandler("drag");
+  restoreHandlers();
 
   Bangle.setLCDOverlay();
-  backupDone = false;
   ovr = undefined;
-  quiet = undefined;
 };
 
-let backup = {};
+const backup = {};
 
-let backupDone = false;
-
-let main = function(ovr, event) {
-  LOG("Main", event, settings);
+const main = function(event) {
+  LOG("Main", event.t);
+  const didBackup = backupHandlers();
 
   if (!lockListener) {
-    lockListener = function (){
-      drawBorder();
+    lockListener = function (e){
+      updateClearingTimeout();
+      showMessage(eventQueue[0]);
     };
-    Bangle.on('lock', lockListener);
+    LOG("Add overlay lock handlers");
+    origOn.call(Bangle, 'lock', lockListener);
   }
-  backupHandler("touch");
-  backupHandler("swipe");
-  backupHandler("drag");
-  if (!backupDone){
-    Bangle.on('touch', getTouchHandler(ovr));
-    Bangle.on('swipe', getSwipeHandler(ovr));
+
+  if (didBackup){
+    LOG("Add overlay UI handlers");
+    origOn.call(Bangle, 'touch', getTouchHandler(ovr));
+    origOn.call(Bangle, 'drag', getDragHandler(ovr));
   }
-  backupDone=true;
 
   if (event !== undefined){
-    drawBorder(ovr);
-    manageEvent(ovr, event);
+    manageEvent(event);
   } else {
     LOG("No event given");
     cleanup();
   }
 };
 
-let ovr;
+const updateClearingTimeout = ()=>{
+  LOG("updateClearingTimeout");
+  if (settings.autoclear <= 0)
+    return;
+  LOG("Remove clearing timeout", clearingTimeout);
+  if (clearingTimeout) clearTimeout(clearingTimeout);
+  if (Bangle.isLocked()){
+    LOG("Set new clearing timeout");
+    clearingTimeout = setTimeout(()=>{
+      LOG("setNewTimeout");
+      const event = eventQueue.pop();
+      if (event)
+        showMessage(event);
+      if (eventQueue.length > 0){
+        LOG("still got elements");
+        updateClearingTimeout();
+      } else {
+        cleanup();
+      }
+    }, settings.autoclear * 1000);
+  } else {
+    clearingTimeout = undefined;
+  }
+};
 
 exports.message = function(type, event) {
   LOG("Got message", type, event);
@@ -434,13 +667,40 @@ exports.message = function(type, event) {
   if(!(type=="text" || type == "call")) return;
   if(type=="text" && event.id == "nav") return;
   if(event.handled) return;
+  if(event.messagesoverlayignore) return;
 
-  bpp = 4;
-  if (process.memory().free < LOW_MEM)
+  let free = process.memory().free;
+  let bpp = settings.systemTheme ? 16 : 4;
+
+  let estimatedMemUse = bpp == 16 ? 4096 : (bpp == 4 ? 1536 : 768);
+  // reduce estimation if ovr already exists and uses memory;
+  if (ovr)
+    estimatedMemUse -= ovr.getBPP() == 16 ? 4096 : (ovr.getBPP() == 4 ? 1536 : 768);
+
+  if (process.memory().free - estimatedMemUse < settings.minfreemem * 1024) {
+    // we are going to be under our minfreemem setting if we proceed
     bpp = 1;
+    if (ovr && ovr.getBPP() > 1){
+      // can reduce memory by going 1 bit
+      let saves = ovr.getBPP() == 16 ? 4096 - 768 : 768;
+      estimatedMemUse -= saves;
+      LOG("Go to 1 bit, saving", saves);
+    } else {
+      estimatedMemUse = 768;
+    }
+  }
 
-  while (process.memory().free < MIN_FREE_MEM && eventQueue.length > 0){
-    let dropped = eventQueue.pop();
+
+  if (E.getSizeOf){
+    let e = E.getSizeOf(eventQueue);
+    estimatedMemUse += e;
+    LOG("EventQueue has", e, "blocks");
+  }
+
+  LOG("Free ", free, "estimated use", estimatedMemUse, "for", bpp, "BPP");
+
+  while (process.memory().free - estimatedMemUse < settings.minfreemem * 1024 && eventQueue.length > 0){
+    const dropped = eventQueue.pop();
     print("Dropped message because of memory constraints", dropped);
   }
 
@@ -448,19 +708,37 @@ exports.message = function(type, event) {
     ovr = Graphics.createArrayBuffer(ovrw, ovrh, bpp, {
       msb: true
     });
-  } else {
-    ovr.clear();
+    if(E.getSizeOf)
+       LOG("New overlay uses", E.getSizeOf(ovr), "blocks");
   }
 
-  g = ovr;
+  ovr.reset();
 
-  if (bpp == 4)
-    ovr.theme = g.theme;
-  else
-    ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+  if (bpp > 1){
+    if (settings.systemTheme){
+      ovr.theme = g.theme;
+    } else {
+      ovr.theme = {
+        fg: g.theme.dark ? 15: 0,
+        bg: g.theme.dark ? 0: 15,
+        fg2: g.theme.dark ? 15: 0,
+        bg2: g.theme.dark ? 9 : 8,
+        fgH: g.theme.dark ? 15 : 0,
+        bgH: g.theme.dark ? 9: 8,
+      };
+    }
+  }
+  else {
+    if (g.theme.dark)
+      ovr.theme = { fg:1, bg:0, fg2:0, bg2:1, fgH:0, bgH:1 };
+    else
+      ovr.theme = { fg:0, bg:1, fg2:1, bg2:0, fgH:1, bgH:0 };
+  }
 
-  main(ovr, event);
-  if (!isQuiet()) Bangle.setLCDPower(1);
+  main(event);
+
+  updateClearingTimeout();
+
   event.handled = true;
-  g = _g;
+  g.flip();
 };

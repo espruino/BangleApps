@@ -233,6 +233,7 @@ function showMusicMessage(msg) {
 }
 
 function showMessageScroller(msg) {
+  cancelReloadTimeout();
   active = "scroller";
   var bodyFont = fontBig;
   g.setFont(bodyFont);

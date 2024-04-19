@@ -6,3 +6,4 @@
 0.60: Fixes typos, BTN1 to show launcher and show app icon
 0.61: Minor code improvements
 0.70: Better wrapping of the text base (dynamic instead of hardcoded)
+0.80: Add analog watch, steps and date
