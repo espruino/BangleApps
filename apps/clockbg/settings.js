@@ -1,3 +1,4 @@
+(function(back) {
 let settings = Object.assign({
   style : "randomcolor",
   colors : ["#F00","#0F0","#00F"]
@@ -82,7 +83,7 @@ function showModeMenu() {
 
 function showMainMenu() {
   E.showMenu({
-    "" : {title:/*LANG*/"Clock Background", back:load},
+    "" : {title:/*LANG*/"Clock Background", back:back},
     /*LANG*/"Mode" : {
       value : settings.style,
       onchange : showModeMenu
@@ -91,3 +92,4 @@ function showMainMenu() {
 }
 
 showMainMenu();
+})
