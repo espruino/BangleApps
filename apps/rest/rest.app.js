@@ -192,6 +192,7 @@ function drawRest() {
 }
 
 function drawDoIt() {
+  const oldBgColor = g.getBgColor();
   g.setBgColor('#00FF00').clear();
   g.drawImage(getImg(), 44, 44);
   g.setFont(BIG_FONT)
@@ -212,6 +213,7 @@ function drawDoIt() {
   },  1400);
   setTimeout(() => {
     setMode(MAIN_MENU);
+    g.setBgColor(oldBgColor);
     redrawApp();
   }, 2000);
 }
@@ -281,7 +283,7 @@ const drawFuncPerMode = {
 }
 
 function redrawApp(){
-  g.setBgColor(-1).clear();
+  g.clear();
   Bangle.drawWidgets();
   drawFuncPerMode[mode]();
 }
