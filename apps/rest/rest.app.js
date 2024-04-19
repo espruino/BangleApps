@@ -224,7 +224,6 @@ const REST = 'REST';
 const DOIT = 'DOIT';
 
 let mode = MAIN_MENU;
-let lastRender = MAIN_MENU;
 
 function setMode(newMode){
   mode = newMode;
@@ -285,7 +284,6 @@ function redrawApp(){
   g.setBgColor(-1).clear();
   Bangle.drawWidgets();
   drawFuncPerMode[mode]();
-  lastRender = mode;
 }
 
 function buttonPress () {
@@ -302,7 +300,7 @@ function buttonPress () {
   }
 }
 
-setWatch(buttonPress, BTN, { repeat: true, debounce: 25});
+setWatch(buttonPress, BTN, { repeat: true, debounce: 25, edge:"falling"});
 
 Bangle.on('touch', (button, xy) => {
   for (let qidx=0; qidx<4; qidx++) {
