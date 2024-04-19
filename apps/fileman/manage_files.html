@@ -60,9 +60,10 @@
       },
       deleteFile: function (file) {
         if(confirm(`Really delete ${file}?`)) {
-          Puck.eval(`require("Storage").erase("${file}")`);
-          this.loadFiles();
-          this.getStats();
+          Puck.eval(`require("Storage").erase("${file}")`, () => {
+            this.loadFiles();
+            this.getStats();
+          });
         }
       },
       showFile: function (file) {
