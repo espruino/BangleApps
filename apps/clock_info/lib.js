@@ -289,7 +289,7 @@ exports.addInteractive = function(menu, options) {
   Bangle.on("swipe",swipeHandler);
   const blur = () => {
     options.focus=false;
-    delete Bangle.CLKINFO_FOCUS;
+    Bangle.CLKINFO_FOCUS--;
     const itm = menu[options.menuA].items[options.menuB];
     let redraw = true;
     if (itm.blur && itm.blur(options) === false)
@@ -298,7 +298,7 @@ exports.addInteractive = function(menu, options) {
   };
   const focus = () => {
     let redraw = true;
-    Bangle.CLKINFO_FOCUS=true;
+    Bangle.CLKINFO_FOCUS = (0 | Bangle.CLKINFO_FOCUS) + 1;
     if (!options.focus) {
       options.focus=true;
       const itm = menu[options.menuA].items[options.menuB];
@@ -341,7 +341,7 @@ exports.addInteractive = function(menu, options) {
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
-    delete Bangle.CLKINFO_FOCUS;
+    Bangle.CLKINFO_FOCUS--;
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];
