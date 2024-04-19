@@ -1,5 +1,5 @@
 // timeout used to update every minute
-var drawTimeout;
+let drawTimeout;
 
 // schedule a draw for the next minute
 function queueDraw() {
