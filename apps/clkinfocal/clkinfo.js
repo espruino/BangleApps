@@ -1,9 +1,7 @@
 (function() {
-  require("Font4x8Numeric").add(Graphics);
-
   var settings = require("Storage").readJSON("clkinfocal.json",1)||{};
   settings.fmt = settings.fmt||"DDD";
-  
+
   var getDateString = function(dt) {
     switch(settings.fmt) {
     case "dd MMM":
@@ -22,6 +20,7 @@
         get : () => {
           let d = new Date();
           let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
+          g.transparent = 1;
           g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
           g.setFont("6x15").setFontAlign(0,0).drawString(d.getDate(),11,17);
           return {
