@@ -7,6 +7,8 @@ Bangle.setLCDTimeout(undefined);
 let renderIntervalId;
 let startTime;
 
+const locale = require("locale");
+
 const DEFAULTS = {
   units: 0,
 };
@@ -29,6 +31,9 @@ var layout = new Layout( {
   back: load,
 });
 
+// TODO The code in this function appears in various apps so it might be
+// nice to add something to the time_utils module. (There is already a
+// formatDuration function but that doesn't quite work the same way.)
 const getTime = function(milliseconds) {
   let hrs = Math.floor(milliseconds/3600000);
   let mins = Math.floor(milliseconds/60000)%60;
@@ -52,12 +57,15 @@ const getDistance = function(milliseconds) {
   let secs = milliseconds/1000;
   let distance;
 
-  if (settings.units === 0) {
+  if (settings.units === 1) {
     let kms = Math.round((secs / 2.91) * 10) / 10;
     distance = kms.toFixed(1) + "km";
-  } else {
+  } else if (settings.units === 2) {
     let miles = Math.round((secs / 4.69) * 10) / 10;
     distance = miles.toFixed(1) + "mi";
+  } else {
+    let meters = (secs / 2.91) * 1000;
+    distance = locale.distance(meters);
   }
 
   return distance;

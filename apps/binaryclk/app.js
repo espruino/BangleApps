@@ -5,7 +5,6 @@ var settings = Object.assign({
 	showbat: true,
 }, require('Storage').readJSON("binaryclk.json", true) || {});
 
-var cnt = 0;
 var gap = 4;
 var mgn = 24;
 var sq = 33;
@@ -96,16 +95,8 @@ function draw() {
 	}
 
 	if (settings.showbat) {
-		var batcnt = cnt;
-		if (batcnt == 0) {
-			drawbat();
-			drawbatrect();
-		}
-		cnt++;
-	}
-
-	if (cnt > 29) {
-		cnt = 0;
+		drawbat();
+		drawbatrect();
 	}
 }
 

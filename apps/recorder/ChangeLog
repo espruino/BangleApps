@@ -52,3 +52,4 @@
 0.41: Fix exit from plots and graphs would easily react twice, going back two
 	levels instead of one.
 0.42: Minor code improvements
+0.43: Fix interaction on clocks without widgets

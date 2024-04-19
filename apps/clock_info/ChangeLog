@@ -8,4 +8,5 @@
 0.07: Developer tweak: clkinfo load errors are emitted
 0.08: Pass options to show(), hide() and run(), and add focus() and blur() item methods
 0.09: Save clkinfo settings on kill and remove
-0.10: Prepend swipe listener if possible
+0.10: Fix focus bug when changing focus between two clock infos
+0.11: Prepend swipe listener if possible
