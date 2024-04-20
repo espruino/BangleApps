@@ -10,6 +10,7 @@ exports.input = function(options) {
     showHelpBtn: true,
     charTimeout: 500,
     autoLowercase: true,
+    vibrate: false,
   }, require('Storage').readJSON("kbmulti.settings.json", true));
 
   var fontSize = "6x15";
@@ -99,7 +100,12 @@ exports.input = function(options) {
     charIndex = 0;
   }
 
+  function onInteract() {
+    if (settings.vibrate) Bangle.buzz(20);
+  }
+
   function onKeyPad(key) {
+    onInteract();
     var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
@@ -136,6 +142,7 @@ exports.input = function(options) {
   var moveMode = false;
 
   function onSwipe(dirLeftRight, dirUpDown) {
+    onInteract();
     if (dirUpDown == -1) {
       moveMode = !moveMode;
       displayText(false);

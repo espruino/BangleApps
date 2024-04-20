@@ -4,6 +4,7 @@
         showHelpBtn: true,
         charTimeout: 500,
         autoLowercase: true,
+        vibrate: false,
       }, require('Storage').readJSON("kbmulti.settings.json", true));
 
       return settings;
@@ -29,6 +30,10 @@
       /*LANG*/'Lowercase after first uppercase': {
         value: !!settings().autoLowercase,
         onchange: v =>  updateSetting("autoLowercase", v)
+      },
+      /*LANG*/'Vibrate on keypress': {
+        value: !!settings().vibrate,
+        onchange: v =>  updateSetting("vibrate", v)
       },
       /*LANG*/'Show help button?': {
         value: !!settings().showHelpBtn,
