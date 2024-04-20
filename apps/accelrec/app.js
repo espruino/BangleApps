@@ -27,7 +27,7 @@ function accelHandlerRecord(a) {"ram"
   accelx[i] = a.x*SCALE*2;
   accely[i] = -a.y*SCALE*2;
   accelz[i] = a.z*SCALE*2;
-  timestep[i] = getTime();
+  timestep[i] = Date.prototype.getTime();
   if (accelIdx>=SAMPLES) recordStop();
 }
 function recordStart() {"ram"
