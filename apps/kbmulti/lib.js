@@ -76,7 +76,7 @@ exports.input = function(options) {
     deactivateTimeout(charTimeout);
     if (textIndex > -1){
       text = text.slice(0, textIndex) + text.slice(textIndex + 1);
-      if (textIndex > -1) textIndex --;
+      textIndex--;
       newCharacter();
     }
   }
