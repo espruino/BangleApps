@@ -6,13 +6,13 @@
       if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
       return settings;
     }
-      
+
     function updateSetting(setting, value) {
       var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
       settings[setting] = value;
       require('Storage').writeJSON("kbmulti.settings.json", settings);
     }
-    
+
     var mainmenu = {
       "" : { "title" : /*LANG*/"Multitap keyboard" },
       "< Back" : back,

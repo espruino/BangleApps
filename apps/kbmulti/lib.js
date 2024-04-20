@@ -28,25 +28,25 @@ exports.input = function(options) {
   var caps = true;
   var layout;
   var btnWidth = g.getWidth()/3;
-  
+
   function getMoveChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00@\x1F\xE1\x00\x10\x00\x10\x01\x0F\xF0\x04\x01\x00";
   }
-  
+
   function getMoreChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xDB\x1B`\x00\x00\x00";
   }
 
-  
   function getCursorChar(){
-    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";  }
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";
+  }
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
 
     //let charsBeforeCursor = textIndex;
     let charsAfterCursor = Math.min(text.length - textIndex, (textWidth)/2);
-    
+
 
     let start = textIndex - Math.ceil(textWidth - charsAfterCursor);
     let startMore = false;
@@ -110,12 +110,12 @@ exports.input = function(options) {
     var newLetter = letters[charCurrent][charIndex];
     let pre = text.slice(0, textIndex);
     let post = text.slice(textIndex, text.length);
-    
+
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
 
     if(retire)
       retireCurrent();
-    
+
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
