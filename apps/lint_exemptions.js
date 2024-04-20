@@ -495,12 +495,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "bthrm/bthrm.js": {
-    "hash": "0ad6b3150200efa959096d239a136865fc0ee1df0c50ebaae76693c07df7a02e",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "bowserWF/app.js": {
     "hash": "83feae92eda4c25028892b5b8b7d1b04f7ec3bb45f51eeba517a80b3ab2053cf",
     "rules": [
@@ -927,12 +921,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "messagesoverlay/lib.js": {
-    "hash": "16b61778a78b52043d32adaeca25591aa695d171b91dcef2313ce26ccf5f4495",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "messages_light/messages_light.listener.js": {
     "hash": "8226cf170d50a30257f3dfdc1dc7cc0e54539aaad263e21340f6d7aa91db8f65",
     "rules": [
@@ -1211,18 +1199,6 @@ module.exports = {
   },
   "contacts/contacts.app.js": {
     "hash": "f105adae91ef5bb79266bd20b8f1f5aaebe9863853c714d1f2b22c97d9ff7773",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "clockcal/settings.js": {
-    "hash": "2065b3e1e978cd0b04dabd51e2dec7475ec72784312f9598039c048f0fa2b387",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "clockcal/app.js": {
-    "hash": "645b7186be93cfe80c288dac7834e10d1f653eea6bea8522e2f916ea97db246d",
     "rules": [
       "no-undef"
     ]
