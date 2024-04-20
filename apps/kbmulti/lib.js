@@ -125,7 +125,7 @@ exports.input = function(options) {
     displayText(true);
   }
 
-  function retireCurrent(why) {
+  function retireCurrent() {
     if (caps && settings.autoLowercase)
       setCaps();
   }
