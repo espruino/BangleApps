@@ -77,6 +77,8 @@ exports.input = function(options) {
     if (textIndex > -1){
       text = text.slice(0, textIndex) + text.slice(textIndex + 1);
       textIndex--;
+      if (textIndex == -1 && !caps)
+        setCaps()
       newCharacter();
     }
   }
