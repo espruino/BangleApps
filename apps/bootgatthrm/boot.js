@@ -53,14 +53,14 @@
     } catch (error) {
       if (error.message.includes("BLE restart")) {
         /*
-         * BLE has to restart after service setup.  
+         * BLE has to restart after service setup.
          */
         if(!settings.keepConnected)
           NRF.disconnect();
       }
       else if (error.message.includes("UUID 0x2a37")) {
         /*
-         * Setup service if it wasn't setup correctly for some reason 
+         * Setup service if it wasn't setup correctly for some reason
          */
         setupHRMAdvertising();
       } else {
