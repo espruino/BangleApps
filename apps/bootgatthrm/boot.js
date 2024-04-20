@@ -30,6 +30,9 @@
     });
 
   }
+
+  const keepConnected = (require("Storage").readJSON("gatthrm.settings.json", 1) || {}).keepConnected;
+
   function updateBLEHeartRate(hrm) {
     /*
      * Send updated heart rate measurement via BLE
@@ -52,7 +55,8 @@
         /*
          * BLE has to restart after service setup.  
          */
-        NRF.disconnect();
+        if(!settings.keepConnected)
+          NRF.disconnect();
       }
       else if (error.message.includes("UUID 0x2a37")) {
         /*
