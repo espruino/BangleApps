@@ -246,14 +246,14 @@
       // setup debugging menu
       var debugMenu = {
         "": {
-          title: /*LANG*/"Debugging"
-        },
-        /*LANG*/"< Back": () => {
-          // check if some value has changed
-          if (enabled !== !!global.sleeplog.debug || file !== (typeof global.sleeplog.debug === "object") || duration)
-            require("sleeplog").setDebug(enabled, file ? duration || 12 : undefined);
-          // redraw main menu
-          showMain(7);
+          title: /*LANG*/"Debugging",
+          back: () => {
+            // check if some value has changed
+            if (enabled !== !!global.sleeplog.debug || file !== (typeof global.sleeplog.debug === "object") || duration)
+              require("sleeplog").setDebug(enabled, file ? duration || 12 : undefined);
+            // redraw main menu
+            showMain(7);
+          }
         },
         /*LANG*/"View log": () => selectDebug(),
         /*LANG*/"Enable": {
@@ -293,9 +293,9 @@
     //var menu;
     var thresholdsMenu = {
       "": {
-        title: /*LANG*/"Thresholds"
+        title: /*LANG*/"Thresholds",
+        back: () => showMain(2)
       },
-      /*LANG*/"< Back": () => showMain(2),
       /*LANG*/"Max Awake": {
         value: settings.maxAwake / 6E4,
         step: 10,
@@ -398,9 +398,9 @@
     var mainMenu = {
       "": {
         title: "Sleep Log",
+        back: back,
         selected: selected
       },
-      /*LANG*/"< Back": () => back(),
       /*LANG*/"Thresholds": () => showThresholds(),
       /*LANG*/"Break ToD": {
         value: settings.breakToD,
