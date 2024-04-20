@@ -6,6 +6,7 @@ var THRESH = 1.04;
 var accelx = new Int16Array(SAMPLES);
 var accely = new Int16Array(SAMPLES); // North
 var accelz = new Int16Array(SAMPLES); // Into clock face
+var timestep = new Int16Array(SAMPLES); // Into clock face
 var accelIdx = 0;
 var lastAccel;
 function accelHandlerTrigger(a) {"ram"
@@ -26,6 +27,7 @@ function accelHandlerRecord(a) {"ram"
   accelx[i] = a.x*SCALE*2;
   accely[i] = -a.y*SCALE*2;
   accelz[i] = a.z*SCALE*2;
+  timestep[i] = getTime();
   if (accelIdx>=SAMPLES) recordStop();
 }
 function recordStart() {"ram"
@@ -167,7 +169,7 @@ function showSaveMenu() {
     menu["Recording "+i+(exists?" *":"")] = function() {
       var csv = "";
       for (var i=0;i<SAMPLES;i++)
-        csv += `${accelx[i]/SCALE},${accely[i]/SCALE},${accelz[i]/SCALE}\n`;
+        csv += `${timestep[i]},${accelx[i]/SCALE},${accely[i]/SCALE},${accelz[i]/SCALE}\n`;
       require("Storage").write(fn,csv);
       showMenu();
     };
