@@ -1,9 +1,11 @@
 (function(back) {
     function settings() {
-      var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-      if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
-      if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-      if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
+      var settings = Object.assign({
+        showHelpBtn: true,
+        charTimeout: 500,
+        autoLowercase: true,
+      }, require('Storage').readJSON("kbmulti.settings.json", true));
+
       return settings;
     }
 

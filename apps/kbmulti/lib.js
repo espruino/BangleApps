@@ -5,11 +5,12 @@ exports.input = function(options) {
   var text = options.text;
   if ("string"!=typeof text) text="";
 
-  var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
-  if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
-  if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
+  var settings = Object.assign({
+    firstLaunch: true,
+    showHelpBtn: true,
+    charTimeout: 500,
+    autoLowercase: true,
+  }, require('Storage').readJSON("kbmulti.settings.json", true));
 
   var fontSize = "6x15";
   var Layout = require("Layout");
