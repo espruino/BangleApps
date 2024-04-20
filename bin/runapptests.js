@@ -20,33 +20,6 @@ TODO:
 
 */
 
-// A simpletest
-/*var TEST = {
-  app : "android",
-  tests : [ {
-    steps : [
-      {t:"load", fn:"messagesgui.app.js"},
-      {t:"gb", "obj":{"t":"notify","id":1234,"src":"Twitter","title":"A Name","body":"message contents"}},
-      {t:"cmd", "js":"X='hello';"},
-      {t:"eval", "js":"X", eq:"hello"}
-    ]
-  }]
-};*/
-var TEST = {
-  app : "antonclk",
-  tests : [ {
-    steps : [
-      {t:"cmd", "js": "Bangle.loadWidgets()"},
-      {t:"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
-      {t:"cmd", "js":"Bangle.setUI()"}, // load and free
-      {t:"saveMemoryUsage"},
-      {t:"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
-      {t:"cmd", "js":"Bangle.setUI()"}, // load and free
-      {t:"checkMemoryUsage"}, // check memory usage is the same
-    ]
-  }]
-};
-
 var EMULATOR = "banglejs2";
 var DEVICEID = "BANGLEJS2";
 
@@ -76,15 +49,115 @@ function ERROR(s) {
   process.exit(1);
 }
 
+function getValue(js){
+  //console.log(`> Getting value for "${js}"`);
+  emu.tx(`\x10print(JSON.stringify(${js}))\n`);
+  var result = emu.getLastLine();
+  try {
+    return JSON.parse(result);
+  } catch (e) {
+    console.log("Error during getValue", e);
+  }
+}
+
+function assertFail(text){
+  console.log("> FAIL: " + text);
+  ok = false;
+}
+
+function assertCondition(condition, text) {
+  if (!condition) {
+    assertFail(text);
+  } else console.log("OK: " + text);
+}
+
+function assertArray(step){
+  let array = step.value;
+  if (step.value === undefined)
+    array = getValue(step.js);
+  switch (step.is){
+    case "notempty": assertCondition(array && array.length > 0, step.text); break;
+    case "undefinedorempty": assertCondition(array && array.length == 0, step.text); break;
+  }
+}
+
+function assertValue(step){
+  console.debug("assertValue", step);
+  let value = step.js;
+  if (value === undefined)
+    value = step.value;
+  switch (step.is){
+    case "truthy": assertCondition(getValue(`!!${value}`), step.text); break;
+    case "falsy": assertCondition(getValue(`!${value}`), step.text); break;
+    case "true": assertCondition(getValue(`${value} === true`), step.text); break;
+    case "false": assertCondition(getValue(`${value} === false`), step.text); break;
+    case "equal": assertCondition(getValue(`${value} == ${step.to}`), step.text); break;
+  }
+}
+
+function wrap(func, id){
+  console.log(`> Wrapping "${func}"`);
+
+  let wrappingCode = `
+  if(!global.APPTESTS) global.APPTESTS={};
+  if(!global.APPTESTS.funcCalls) global.APPTESTS.funcCalls={};
+  if(!global.APPTESTS.funcArgs) global.APPTESTS.funcArgs={};
+  global.APPTESTS.funcCalls.${id}=0;
+  (function(o) {
+    ${func} = function() {
+      global.APPTESTS.funcCalls.${id}++;
+      global.APPTESTS.funcArgs.${id}=arguments;
+      return o.apply(this, arguments);
+    };
+  }(${func}));`;
+
+  emu.tx(wrappingCode);
+}
+
+function assertCall(step){
+  let id = step.id;
+  let args = step.argAsserts;
+  let calls = getValue(`global.APPTESTS.funcCalls.${id}`);
+  if ((args.count && args.count == calls) || (!args.count && calls > 0)){
+    if (args) {
+      let callArgs = getValue(`global.APPTESTS.funcArgs.${id}`);
+      for (let a of args){
+        let current = {
+          value: callArgs[a.arg],
+          is: a.is,
+          to: a.to,
+          text: step.text
+        };
+        switch(a.t){
+          case "assertArray":
+            assertArray(current);
+            break;
+          case "assert":
+            assertValue(current);
+            break;
+        }
+      }
+    } else {
+      console.log("OK", step.text);
+    }
+  } else
+  assertFail(step.text)
+}
+
 function runTest(test) {
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
+  
   return apploader.getAppFilesString(app).then(command => {
+    console.log("Handling command", command);
+  
     // What about dependencies??
     test.tests.forEach((subtest,subtestIdx) => {
       console.log(`==============================`);
       console.log(`"${test.app}" Test ${subtestIdx}`);
+      if (test.description)
+        console.log(`"${test.description}`);
       console.log(`==============================`);
       emu.factoryReset();
       console.log("> Sending app "+test.app);
@@ -103,6 +176,9 @@ function runTest(test) {
             console.log(`> Sending JS "${step.js}"`);
             emu.tx(`${step.js}\n`);
             break;
+          case "wrap" :
+            wrap(step.fn, step.id);
+            break;
           case "gb" : emu.tx(`GB(${JSON.stringify(step.obj)})\n`); break;
           case "tap" : emu.tx(`Bangle.emit(...)\n`); break;
           case "eval" :
@@ -118,6 +194,15 @@ function runTest(test) {
             break;
             // tap/touch/drag/button press
             // delay X milliseconds?
+          case "assertArray":
+            assertArray(step);
+            break;
+          case "assertCall":
+            assertCall(step);
+            break;
+          case "assert":
+            assertValue(step);
+            break;
           case "screenshot" :
             console.log(`> Compare screenshots - UNIMPLEMENTED`);
             break;
@@ -151,16 +236,13 @@ emu.init({
 }).then(function() {
   // Emulator is now loaded
   console.log("Loading tests");
-  var tests = [];
   apploader.apps.forEach(app => {
     var testFile = APP_DIR+"/"+app.id+"/test.json";
     if (!require("fs").existsSync(testFile)) return;
     var test = JSON.parse(require("fs").readFileSync(testFile).toString());
     test.app = app.id;
-    tests.push(test);
+    runTest(test);
   });
-  // Running tests
-  runTest(TEST);
 });
 /*
   if (erroredApps.length) {
