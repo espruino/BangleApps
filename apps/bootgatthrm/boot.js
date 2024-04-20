@@ -70,5 +70,5 @@
   }
 
   setupHRMAdvertising();
-  Bangle.on("HRM", function (hrm) { updateBLEHeartRate(hrm); });
+  Bangle.on("HRM", updateBLEHeartRate);
 })();
