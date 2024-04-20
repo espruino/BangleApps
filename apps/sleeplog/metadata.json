@@ -2,7 +2,7 @@
   "id":"sleeplog",
   "name":"Sleep Log",
   "shortName": "SleepLog",
-  "version": "0.17",
+  "version": "0.18",
   "description": "Log and view your sleeping habits. This app is using the built in movement calculation.",
   "icon": "app.png",
   "type": "app",
