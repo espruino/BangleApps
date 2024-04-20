@@ -14,8 +14,10 @@
     }
 
     var mainmenu = {
-      "" : { "title" : /*LANG*/"Multitap keyboard" },
-      "< Back" : back,
+      "" : {
+        "title" : /*LANG*/"Multitap keyboard",
+        "back": back,
+      },
       /*LANG*/'Character selection timeout [ms]': {
         value: settings().charTimeout,
         min: 200, max: 1500, step : 50,
