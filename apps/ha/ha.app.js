@@ -80,8 +80,11 @@ function draw() {
 }
 
 var lastLevel;
+var lastTouch;
 
 function onSlide(mode, level, e) {
+  lastTouch = Date.now();
+
   if (e.b !== 0) {
     if (lastLevel == null)
       lastLevel = level;
@@ -119,6 +122,9 @@ function sendTrigger() {
 }
 
 Bangle.on('touch', (btn, e) => {
+  if (Date.now() - lastTouch < 250) return;
+  lastTouch = Date.now();
+
   var left = g.getWidth() * 0.3;
   var right = g.getWidth() - left;
   var isLeft = e.x < left;
