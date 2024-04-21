@@ -33,15 +33,17 @@ function _getIcon(trigger){
 }
 
 exports.getTriggers = function(){
-    var triggers = [
-        {display: "Empty", trigger: "NOP", icon: "ha"},
-    ];
+    var triggers;
 
     try{
         triggers = require("Storage").read("ha.trigger.json");
         triggers = JSON.parse(triggers);
     } catch(e) {
         // In case there are no user triggers yet, we show the default...
+        console.log("ha: error loading triggers:", e);
+        triggers = [
+            {display: "Empty", trigger: "NOP", icon: "ha"},
+        ];
     }
 
     // We lazy load all icons, otherwise, we have to keep
