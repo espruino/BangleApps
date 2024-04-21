@@ -1,6 +1,6 @@
 //var acc;
 var HZ = 100;
-var SAMPLES = 5*HZ; // 5 seconds
+var SAMPLES = 8*HZ; // 8 seconds
 var SCALE = 5000;
 var THRESH = 1.04;
 var accelx = new Int16Array(SAMPLES);
@@ -27,7 +27,7 @@ function accelHandlerRecord(a) {"ram"
   accelx[i] = a.x*SCALE*2;
   accely[i] = -a.y*SCALE*2;
   accelz[i] = a.z*SCALE*2;
-  timestep[i] = (getTime() - tStart)*100;
+  timestep[i] = (getTime() - tStart)*1000;
   if (accelIdx>=SAMPLES) recordStop();
 }
 function recordStart() {"ram"
