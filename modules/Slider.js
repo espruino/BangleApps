@@ -154,7 +154,7 @@ exports.create = function(cb, conf) {
           }
         }
         if (cbObj && (o.v.level!==o.v.prevLevel||o.v.level===0||o.v.level===o.c.steps)) {
-          cb(cbObj.mode, cbObj.value);
+          cb(cbObj.mode, cbObj.value, e);
           o.f.draw&&o.f.draw(o.v.level);
         }
         o.v.prevLevel = o.v.level;
