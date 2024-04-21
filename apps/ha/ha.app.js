@@ -64,7 +64,7 @@ function sendTrigger() {
 }
 
 Bangle.on('touch', function(btn, e){
-  var left = parseInt(g.getWidth() * 0.3);
+  var left = g.getWidth() * 0.3;
   var right = g.getWidth() - left;
   var isLeft = e.x < left;
   var isRight = e.x > right;
