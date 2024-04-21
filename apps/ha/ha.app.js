@@ -63,7 +63,7 @@ function sendTrigger() {
     });
 }
 
-Bangle.on('touch', function(btn, e){
+Bangle.on('touch', (btn, e) => {
   var left = g.getWidth() * 0.3;
   var right = g.getWidth() - left;
   var isLeft = e.x < left;
