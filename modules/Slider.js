@@ -159,6 +159,7 @@ exports.create = function(cb, conf) {
         }
         o.v.prevLevel = o.v.level;
         o.v.ebLast = e.b;
+        if (e.b==0) o.v.dragActive = false;
       }
     };
 
