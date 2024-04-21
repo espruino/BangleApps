@@ -67,11 +67,11 @@ exports.sendTrigger = function(triggerName){
             // Now lets send the trigger that we sould send.
             Bluetooth.println("");
             Bluetooth.println(JSON.stringify({
-            t:"intent",
-            action:"com.espruino.gadgetbridge.banglejs.HA",
-            extra:{
-                trigger: triggerName
-            }})
+                t:"intent",
+                action:"com.espruino.gadgetbridge.banglejs.HA",
+                extra:{
+                    trigger: triggerName
+                }})
             );
             retries = -1;
 
