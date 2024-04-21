@@ -71,7 +71,7 @@ exports.sendTrigger = function(triggerName){
                     trigger: triggerName
                 }})
             );
-            retries = -1;
+            break;
 
         } catch(e){
             retries--;
