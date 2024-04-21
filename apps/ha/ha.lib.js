@@ -36,8 +36,7 @@ exports.getTriggers = function(){
     var triggers;
 
     try{
-        triggers = require("Storage").read("ha.trigger.json");
-        triggers = JSON.parse(triggers);
+        triggers = JSON.parse(require("Storage").read("ha.trigger.json"));
     } catch(e) {
         // In case there are no user triggers yet, we show the default...
         console.log("ha: error loading triggers:", e);
