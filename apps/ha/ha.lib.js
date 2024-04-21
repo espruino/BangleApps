@@ -78,3 +78,13 @@ exports.sendTrigger = function(triggerName){
         }
     }
 }
+
+exports.sendValue = function(trigger, value){
+    Bluetooth.println(
+        JSON.stringify({
+            t: "intent",
+            action: "com.espruino.gadgetbridge.banglejs.HA",
+            extra: { trigger, value },
+        })
+    );
+};
