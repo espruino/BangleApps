@@ -3,7 +3,6 @@ let currentHR = null;
 let lcdTimeout;
 let logData = [];
 let bpmValues = [];
-let lastLogTime = 0;
 
 function startMeasure() {
     logData = [];
