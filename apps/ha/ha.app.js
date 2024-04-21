@@ -5,7 +5,7 @@ var ha = require("ha.lib.js");
 var W = g.getWidth(), H = g.getHeight();
 var position=0;
 var triggers = ha.getTriggers();
-
+var slider;
 
 function draw() {
   g.reset().clearRect(Bangle.appRect);
@@ -17,15 +17,60 @@ function draw() {
 
   g.setFontAlign(-1,-1);
   var icon = trigger.getIcon();
-  g.setColor(g.theme.fg).drawImage(icon, 12, H/5-2-5);
-  g.drawString("Home", icon.width + 20, H/5-5);
-  g.drawString("Assistant", icon.width + 18, H/5+24-5);
+  var iconY = H / 5 - 2 - 5;
+  g.setColor(g.theme.fg).drawImage(icon, 12, iconY);
 
-  g.setFontAlign(0,0);
-  var ypos = H/5*3+23;
-  g.drawRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+5, ypos+h/2+5);
-  g.fillRect(W/2-w/2-6, ypos-h/2-6, W/2+w/2+3, ypos+h/2+3);
-  g.setColor(g.theme.bg).drawString(trigger.display, W/2, ypos);
+  if (trigger.value) {
+    if (!slider) {
+      const R = Bangle.appRect;
+      console.log("R", R);
+      const w = 50;
+
+      slider = require("Slider").create(onSlide, {
+        initLevel: 0, // TODO: fetch this?
+
+        mode: "map",
+        steps: 100,
+        timeout: false,
+
+        width: w,
+        xStart: R.w / 2 - w / 2,
+        yStart: R.y,
+        height: R.h - 24,
+
+        dragRect: {
+          x: R.w * 0.3,
+          x2: R.w * 0.6,
+          y: R.y,
+          y2: R.h,
+        },
+      });
+      const onDrag = e => {
+        slider.f.dragSlider(e);
+        if(e.b === 0)
+          ha.sendValue(trigger.trigger, slider.v.level);
+      };
+      Bangle.prependListener('drag', onDrag);
+    }
+
+    const r = slider.c.borderRect;
+    g.setColor(g.theme.fg)
+      .setFontAlign(0, 0)
+      .drawString("HA", (r.x + r.w + W) / 2, iconY + g.imageMetrics(icon).height / 2)
+      .setFontAlign(0, 1)
+      .drawString(trigger.display, W / 2, H);
+
+    slider.f.draw(slider.v.level);
+  }else{
+    g.drawString("Home", icon.width + 20, H/5-5);
+    g.drawString("Assistant", icon.width + 18, H/5+24-5);
+
+    g.setFontAlign(0,0);
+    var ypos = H/5*3+23;
+    g.drawRect(W/2-w/2-8, ypos-h/2-8, W/2+w/2+5, ypos+h/2+5);
+    g.fillRect(W/2-w/2-6, ypos-h/2-6, W/2+w/2+3, ypos+h/2+3);
+    g.setColor(g.theme.bg).drawString(trigger.display, W/2, ypos);
+  }
 
   // draw arrows
   g.setColor(g.theme.fg);
@@ -37,6 +82,9 @@ function draw() {
     g.drawLine(W - 10, H/2, W - 20, H/2 - 10);
     g.drawLine(W - 10, H/2, W - 20, H/2 + 10);
   }
+}
+
+function onSlide(mode, feedback) {
 }
 
 function toLeft() {
