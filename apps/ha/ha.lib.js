@@ -40,20 +40,20 @@ exports.getTriggers = function(){
     try{
         triggers = require("Storage").read("ha.trigger.json");
         triggers = JSON.parse(triggers);
-
-        // We lazy load all icons, otherwise, we have to keep
-        // all the icons n times in memory which can be
-        // problematic for embedded devices. Therefore,
-        // we lazy load icons only if needed using the getIcon
-        // method of each trigger...
-        triggers.forEach(trigger => {
-            trigger.getIcon = function(){
-                return _getIcon(trigger);
-            }
-        })
     } catch(e) {
         // In case there are no user triggers yet, we show the default...
     }
+
+    // We lazy load all icons, otherwise, we have to keep
+    // all the icons n times in memory which can be
+    // problematic for embedded devices. Therefore,
+    // we lazy load icons only if needed using the getIcon
+    // method of each trigger...
+    triggers.forEach(trigger => {
+        trigger.getIcon = function(){
+            return _getIcon(trigger);
+        }
+    })
 
     return triggers;
 }
