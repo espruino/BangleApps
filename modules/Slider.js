@@ -153,7 +153,7 @@ exports.create = function(cb, conf) {
             cbObj = {mode:"incr", value:incr};
           }
         }
-        if (cbObj && (o.v.level!==o.v.prevLevel||o.v.level===0||o.v.level===o.c.steps)) {
+        if (cbObj && (o.v.level!==o.v.prevLevel||o.v.level===0||o.v.level===o.c.steps||e.b===0)) {
           cb(cbObj.mode, cbObj.value, e);
           o.f.draw&&o.f.draw(o.v.level);
         }
