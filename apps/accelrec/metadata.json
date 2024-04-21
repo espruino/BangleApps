@@ -2,7 +2,7 @@
   "id": "accelrec",
   "name": "Acceleration Recorder",
   "shortName": "Accel Rec",
-  "version": "0.04",
+  "version": "0.05",
   "description": "This app puts the Bangle's accelerometer into 100Hz mode and reads 2 seconds worth of data after movement starts. The data can then be exported back to the PC.",
   "icon": "app.png",
   "tags": "",
