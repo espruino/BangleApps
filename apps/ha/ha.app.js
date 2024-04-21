@@ -45,12 +45,7 @@ function draw() {
           y2: R.h,
         },
       });
-      const onDrag = e => {
-        slider.f.dragSlider(e);
-        if(e.b === 0)
-          ha.sendValue(trigger.trigger, slider.v.level);
-      };
-      Bangle.prependListener('drag', onDrag);
+      Bangle.prependListener('drag', slider.f.dragSlider);
     }
 
     const r = slider.c.borderRect;
@@ -84,7 +79,19 @@ function draw() {
   }
 }
 
-function onSlide(mode, feedback) {
+var lastLevel;
+
+function onSlide(mode, level, e) {
+  if (e.b !== 0) {
+    if (lastLevel == null)
+      lastLevel = level;
+  } else {
+    if (lastLevel != null && lastLevel !== level) {
+      // we've had a drag and level has changed
+      ha.sendValue(triggers[position].trigger, level);
+      lastLevel = null;
+    }
+  }
 }
 
 function toLeft() {
