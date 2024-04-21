@@ -71,23 +71,20 @@ Bangle.on('touch', function(btn, e){
 
   if(isLeft){
     toLeft();
-  }
-  if(isRight){
+  }else if (isRight){
     toRight();
-  }
-  if(!isRight && !isLeft){
+  }else{
     sendTrigger();
   }
 });
 
 Bangle.on("swipe", (lr,ud) => {
-    if (lr == -1) {
-      toLeft();
-    }
-    if (lr == 1) {
-      toRight();
-    }
-  });
+  if (lr == -1) {
+    toLeft();
+  } else if (lr == 1) {
+    toRight();
+  }
+});
 
 
 // Send intent that the we started the app.
