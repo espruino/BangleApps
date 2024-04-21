@@ -2,8 +2,8 @@
  * This library can be used to read all triggers that a user
  * configured and send a trigger to homeassistant.
  */
-function _getIcon(trigger){
-    const icon = trigger.icon;
+function _getIcon(){
+    const icon = this.icon;
     if(icon == "light"){
       return {
         width : 48, height : 48, bpp : 1,
@@ -51,9 +51,7 @@ exports.getTriggers = function(){
     // we lazy load icons only if needed using the getIcon
     // method of each trigger...
     triggers.forEach(trigger => {
-        trigger.getIcon = function(){
-            return _getIcon(trigger);
-        }
+        trigger.getIcon = _getIcon.bind(trigger);
     })
 
     return triggers;
