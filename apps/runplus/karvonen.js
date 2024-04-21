@@ -4,6 +4,8 @@
 let wu = require("widget_utils");
 let R;
 
+const ICON_LOCK = atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g==");
+
 const x = "x"; const y = "y";
 function Rdiv(axis, divisor) { // Used when placing things on the screen
   return axis=="x" ? (R.x + (R.w-1)/divisor):(R.y + (R.h-1)/divisor);
@@ -185,6 +187,13 @@ function drawZones() {
 let karvonenInterval;
 let hrmstat;
 
+function drawIndicator() {
+  if (Bangle.isLocked())
+    g.setColor(g.theme.fg).drawImage(ICON_LOCK, 6, 8);
+  else
+    g.setColor(g.theme.bg).drawImage(ICON_LOCK, 6, 8);
+}
+
 function init(hrmSettings, exsHrmStats) {
   R = Bangle.appRect;
   hrmstat = exsHrmStats;
@@ -209,8 +218,10 @@ function start(hrmSettings, exsHrmStats) {
 
   g.reset().clearRect(R).setFontAlign(0,0,0);
 
+  drawIndicator();
   //draw every second
   setTimeout(updateUI,0,true);
+  Bangle.on("lock", drawIndicator);
   karvonenInterval = setInterval(function() {
     updateUI(false);
   }, 1000);
@@ -240,6 +251,7 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
 function stop(){
   if (karvonenInterval) clearInterval(karvonenInterval);
   karvonenInterval = undefined;
+  Bangle.removeListener("lock", drawIndicator);
   wu.show();
 }
 
