@@ -38,7 +38,8 @@ function recordStart() {"ram"
   //Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
   Bangle.accelWr(0x1B,0x05 | 0x40); // 400hz output, ODR/2 filter
   Bangle.accelWr(0x18,0b11110100); // +-8g
-  Bangle.setPollInterval(10); // 100hz input
+  //Bangle.setPollInterval(10); // 100hz input
+  Bangle.setPollInterval(2.5); // 400hz input
   setTimeout(function() {
     Bangle.on('accel',accelHandlerTrigger);
     g.clear(1).setFont("6x8",2).setFontAlign(0,0);
