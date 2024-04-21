@@ -1,6 +1,6 @@
 //var acc;
 var HZ = 400;
-var SAMPLES = 5*HZ; // 5 seconds
+var SAMPLES = 4*HZ; // 5 seconds
 var SCALE = 5000;
 var THRESH = 1.04;
 var accelx = new Int16Array(SAMPLES);
@@ -39,7 +39,7 @@ function recordStart() {"ram"
   Bangle.accelWr(0x1B,0x05 | 0x40); // 400hz output, ODR/2 filter
   Bangle.accelWr(0x18,0b11110100); // +-8g
   //Bangle.setPollInterval(10); // 100hz input
-  Bangle.setPollInterval(2.5); // 400hz input
+  Bangle.setPollInterval(2.5); // 400hz input 
   setTimeout(function() {
     Bangle.on('accel',accelHandlerTrigger);
     g.clear(1).setFont("6x8",2).setFontAlign(0,0);
