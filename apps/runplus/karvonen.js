@@ -270,7 +270,6 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
   }
   hr = hrmstat.getValue();
   //if (h!=0) hr = h;
-  drawArrows();
   if (hr && hr!=hrLast) {
     drawHR();
     drawZones();
@@ -279,6 +278,7 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
     drawWaitHR();
   }
 
+  drawArrows();
   //g.setColor(g.theme.fg).drawLine(175/2,0,175/2,175).drawLine(0,175/2,175,175/2); // Used to align UI elements.
 }
 
