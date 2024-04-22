@@ -148,6 +148,8 @@ Bangle.on('touch', (btn, e) => {
 
 Bangle.on("swipe", (lr,ud) => {
   if (slider) return; // "disable" swiping on sliders
+  if (Date.now() - lastTouch < 250) return;
+  lastTouch = Date.now();
 
   if (lr == -1) {
     toLeft();
