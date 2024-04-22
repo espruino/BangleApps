@@ -5,6 +5,8 @@ let wu = require("widget_utils");
 let R;
 
 const ICON_LOCK = atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g==");
+const ICON_HEART = atob("Dw4BODj4+fv3///////f/z/+P/g/4D+APgA4ACAA");
+const ICON_LOCATION = atob("CxABP4/7x/B+D8H8e/5/x/D+D4HwHAEAIA==");
 
 const x = "x"; const y = "y";
 function Rdiv(axis, divisor) { // Used when placing things on the screen
@@ -187,11 +189,41 @@ function drawZones() {
 let karvonenInterval;
 let hrmstat;
 
-function drawIndicator() {
+function drawLockIndicator() {
   if (Bangle.isLocked())
     g.setColor(g.theme.fg).drawImage(ICON_LOCK, 6, 8);
   else
     g.setColor(g.theme.bg).drawImage(ICON_LOCK, 6, 8);
+}
+
+let gpsTimeout;
+function drawGpsIndicator(e) {
+  if (e.fix){
+    if (gpsTimeout)
+      clearTimeout(gpsTimeout);
+    g.setColor(g.theme.fg).drawImage(ICON_LOCATION, 8, R.y2 - 23);
+    gpsTimeout = setTimeout(()=>{
+      g.setColor(g.theme.dark?"#ccc":"#444").drawImage(ICON_LOCATION, 8, R.y2 - 23);
+      gpsTimeout = setTimeout(()=>{
+        g.setColor(g.theme.bg).drawImage(ICON_LOCATION, 8, R.y2 - 23);
+      }, 3900);
+    }, 1100);
+  }
+}
+
+let pulseTimeout;
+function drawPulseIndicator() {
+  if (hr){
+    if (pulseTimeout)
+      clearTimeout(pulseTimeout);
+    g.setColor(g.theme.fg).drawImage(ICON_HEART, R.x2 - 21, R.y2 - 21);
+    pulseTimeout = setTimeout(()=>{
+      g.setColor(g.theme.dark?"#ccc":"#444").drawImage(ICON_HEART, R.x2 - 21, R.y2 - 21);
+      pulseTimeout = setTimeout(()=>{
+        g.setColor(g.theme.bg).drawImage(ICON_HEART, R.x2 - 21, R.y2 - 21);
+      }, 3900);
+    }, 1100);
+  }
 }
 
 function init(hrmSettings, exsHrmStats) {
@@ -218,10 +250,12 @@ function start(hrmSettings, exsHrmStats) {
 
   g.reset().clearRect(R).setFontAlign(0,0,0);
 
-  drawIndicator();
+  drawLockIndicator();
   //draw every second
   setTimeout(updateUI,0,true);
-  Bangle.on("lock", drawIndicator);
+  Bangle.on("lock", drawLockIndicator);
+  Bangle.on("HRM", drawPulseIndicator);
+  Bangle.on("GPS", drawGpsIndicator);
   karvonenInterval = setInterval(function() {
     updateUI(false);
   }, 1000);
@@ -251,7 +285,13 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
 function stop(){
   if (karvonenInterval) clearInterval(karvonenInterval);
   karvonenInterval = undefined;
-  Bangle.removeListener("lock", drawIndicator);
+  if (pulseTimeout) clearTimeout(pulseTimeout);
+  pulseTimeout = undefined;
+  if (gpsTimeout) clearTimeout(gpsTimeout);
+  gpsTimeout = undefined;
+  Bangle.removeListener("lock", drawLockIndicator);
+  Bangle.removeListener("GPS", drawGpsIndicator);
+  Bangle.removeListener("HRM", drawPulseIndicator);
   wu.show();
 }
 
