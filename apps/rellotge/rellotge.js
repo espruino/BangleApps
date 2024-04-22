@@ -135,43 +135,43 @@
       t = leshores[d.getHours()] + " tocades";
     } else if (m >= 4 && m < 7) {
       t = leshores[d.getHours()] + " ben tocades";
-    } else if (m = 7) {
+    } else if (m == 7) {
       t = "Mig quart " + getHora(d.getHours());
     } else if (m >= 8 && m < 12) {
       t = "Mig quart tocat " + getHora(d.getHours());
     } else if (m >= 12 && m < 15) {
       t = "Mig quart ben tocat " + getHora(d.getHours());
-    } else if (m = 15) {
+    } else if (m == 15) {
       t = "Un quart " + getHora(d.getHours());
     } else if (m >= 16 && m < 19) {
       t = "Un quart tocat " + getHora(d.getHours());
     } else if (m >= 19 && m < 22) {
       t = "Un quart ben tocat " + getHora(d.getHours());
-    } else if (m = 22) {
+    } else if (m == 22) {
       t = "Un quart i mig " + getHora(d.getHours());
     } else if (m >= 23 && m < 26) {
       t = "Un quart i mig tocat " + getHora(d.getHours());
     } else if (m >= 26 && m < 30) {
       t = "Un quart i mig ben tocat " + getHora(d.getHours());
-    } else if (m = 30) {
+    } else if (m == 30) {
       t = "Dos quarts " + getHora(d.getHours());
     } else if (m >= 31 && m < 34) {
       t = "Dos quarts tocats " + getHora(d.getHours());
     } else if (m >= 34 && m < 37) {
       t = "Dos quarts ben tocats " + getHora(d.getHours());
-    } else if (m >= 37) {
+    } else if (m == 37) {
       t = "Dos quarts i mig " + getHora(d.getHours());
     } else if (m >= 38 && m < 42) {
       t = "Dos quarts i mig tocats " + getHora(d.getHours());
     } else if (m >= 42 && m < 45) {
       t = "Dos quarts i mig ben tocats " + getHora(d.getHours());
-    } else if (m >= 45) {
+    } else if (m == 45) {
       t = "Tres quarts " + getHora(d.getHours());
     } else if (m >= 46 && m < 49) {
       t = "Tres quarts tocats " + getHora(d.getHours());
     } else if (m >= 49 && m < 52) {
       t = "Tres quarts ben tocats " + getHora(d.getHours());
-    } else if (m = 52) {
+    } else if (m == 52) {
       t = "Tres quarts i mig " + getHora(d.getHours());
     } else if (m >= 53 && m < 56) {
       t = "Tres quarts i mig tocats " + getHora(d.getHours());
