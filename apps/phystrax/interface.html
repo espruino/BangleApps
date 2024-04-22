@@ -17,7 +17,7 @@ function getData() {
   Util.showModal("Loading...");
   // get the data
   dataElement.innerHTML = "";
-  Util.readStorageFile(`heart_rate_data.csv`,data=>{
+  Util.readStorageFile(`phystrax_hrm.csv`,data=>{
     csvData = data.trim();
     // remove window
     Util.hideModal();
@@ -45,12 +45,12 @@ function getData() {
 
 // You can call a utility function to save the data
 document.getElementById("btnSave").addEventListener("click", function() {
-  Util.saveCSV("heart_rate_data.csv", csvData);
+  Util.saveCSV("phystrax_hrm.csv", csvData);
 });
 // Or you can also delete the file
 document.getElementById("btnDelete").addEventListener("click", function() {
   Util.showModal("Deleting...");
-  Util.eraseStorageFile("heart_rate_data.csv", function() {
+  Util.eraseStorageFile("phystrax_hrm.csv", function() {
     Util.hideModal();
     getData();
   });

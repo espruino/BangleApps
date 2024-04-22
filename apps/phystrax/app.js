@@ -46,7 +46,7 @@ function handleHeartRate(hrm) {
         // Calculate and add SDNN (standard deviation of NN intervals) to the last log entry
         logData[logData.length - 1].hrv = calcSDNN();
         drawScreen();
-        
+
     }
 }
 
@@ -129,7 +129,7 @@ function drawScreen(message) {
 }
 
 function saveDataToCSV() {
-    let fileName = "heart_rate_data.csv";
+    let fileName = "phystrax_hrm.csv";
     let file = require("Storage").open(fileName, "a"); // Open the file for appending
 
     // Check if the file is empty (i.e., newly created)
