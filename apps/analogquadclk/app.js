@@ -32,7 +32,6 @@ const hand_hour_bg = get_hand(HOUR_LEN, HOUR_W, 8, HOUR_BACK);
 const hand_minute = get_hand(MIN_LEN, 4, 3, MIN_BACK);
 const hand_minute_bg = get_hand(MIN_LEN, MIN_W, 6, MIN_BACK);
 
-
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -212,7 +211,6 @@ if (clockInfoItemsBangle) {
       });
   }
 }
-
 
 // Add the 4 clockinfos
 const CLOCKINFOSIZE = 50;
