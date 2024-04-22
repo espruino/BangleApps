@@ -129,7 +129,7 @@
     var m = d.getMinutes();
 
     let t;
-    if (m = 0) {
+    if (m == 0) {
       t = leshores[d.getHours()] + " en punt";
     } else if (m >= 1 && m < 4) {
       t = leshores[d.getHours()] + " tocades";
