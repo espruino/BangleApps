@@ -3,10 +3,12 @@ This app integrates your Bangle.js into the Home Assistant.
 
 
 # How to use
-Click on the left or right side of the screen to select the triggers that you configured. 
+Click on the left or right side of the screen to select the triggers that you configured.
 Swiping left or right works as well.
 
 Click in the middle of the screen to send the trigger to Home Assistant via Gadgetbridge.
+
+If the trigger is a value one (has `.value = true` in the config), a slider will be displayed for you to alter the value that's sent along with the trigger.
 
 ![](screenshot.png)
 
