@@ -30,7 +30,7 @@ declare module ClockInfo {
   type Item = {
     text: string,
     short?: string,
-    img?: string,
+    img?: Image,
   };
 
   type RangeItem =
