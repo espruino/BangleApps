@@ -72,6 +72,7 @@ function drawHR() {
   g.setColor(g.theme.fg);
   g.setFont("Vector",50);
   g.drawString(hr, Rdiv(x,11/4), Rdiv(y,2)+4);
+  drawArrows();
 }
 
 function drawWaitHR() {
@@ -89,6 +90,8 @@ function drawWaitHR() {
   g.setFont("Vector",20);
   g.drawString("--", Rdiv(x,2)+2, Rdiv(y,9/2));
   g.drawString("--", Rdiv(x,2)+2, Rdiv(y,9/7));
+
+  drawArrows();
 }
 
 //These functions call arcs to show different HR zones.
@@ -138,8 +141,7 @@ function clearCurrentZone() { // Clears the extension of the current zone by pai
   HRzones.fillArc(g, centreX, centreY, minRadius-1, minRadiusz, startAngle, endAngle);
 }
 
-function getZone(zone) {
-  drawBgArc();
+function drawZone(zone) {
   clearCurrentZone();
   if (zone >= 0)  {zoning(minzone2, minhr);g.setColor("#00ffff");simplify(-88.5, -45, "Z1", 0, zone);}
   if (zone >= 1)  {zoning(maxzone2, minzone2);g.setColor("#00ff00");simplify(-43.5, -21.5, "Z2", 1, zone);}
@@ -156,7 +158,7 @@ function getZone(zone) {
   if (zone == 12) {zoning(maxzone5, maxzone4);g.setColor("#ff0000");simplify(206.5, 227.5, "Z5", 12, zone);}
   }
 
-function getZoneAlert() {
+function drawZoneAlert() {
   const HRzonemax = require("graphics_utils");
   let minRadius = 0.40 * R.h;
   let startAngle1 = HRzonemax.degreesToRadians(-90);
@@ -166,24 +168,48 @@ function getZoneAlert() {
   g.setFontAlign(0,0).drawString("ALERT", centreX, centreY);
 }
 
+function drawWaitUI(){
+  g.clearRect(R);
+  drawLockIndicator();
+  drawPulseIndicator();
+  drawBgArc();
+  drawWaitHR();
+  drawArrows();
+}
+
+function drawBase() {
+  g.clearRect(R);
+  drawLockIndicator();
+  drawPulseIndicator();
+  drawBgArc();
+}
+
+function drawZoneUI(full){
+  if (full) {
+    drawBase();
+  }
+  drawHR();
+  drawZones();
+}
+
 //Subdivided zones for better readability of zones when calling the images. //Changing HR zones will trigger the function with the image and previous&next HR zones.
 let subZoneLast;
 function drawZones() {
-  if ((hr < maxhr - 2) && subZoneLast==13) {g.clear(); drawArrows(); drawHR();} // Reset UI when coming down from zone alert.
-  if (hr <= hrr * 0.6 + minhr) {if (subZoneLast!=0) {subZoneLast=0; getZone(subZoneLast);}} // Z1
-  else if (hr <= hrr * 0.64 + minhr) {if (subZoneLast!=1) {subZoneLast=1; getZone(subZoneLast);}} // Z2a
-  else if (hr <= hrr * 0.67 + minhr) {if (subZoneLast!=2) {subZoneLast=2; getZone(subZoneLast);}} // Z2b
-  else if (hr <= hrr * 0.70 + minhr) {if (subZoneLast!=3) {subZoneLast=3; getZone(subZoneLast);}} // Z2c
-  else if (hr <= hrr * 0.74 + minhr) {if (subZoneLast!=4) {subZoneLast=4; getZone(subZoneLast);}} // Z3a
-  else if (hr <= hrr * 0.77 + minhr) {if (subZoneLast!=5) {subZoneLast=5; getZone(subZoneLast);}} // Z3b
-  else if (hr <= hrr * 0.80 + minhr) {if (subZoneLast!=6) {subZoneLast=6; getZone(subZoneLast);}} // Z3c
-  else if (hr <= hrr * 0.84 + minhr) {if (subZoneLast!=7) {subZoneLast=7; getZone(subZoneLast);}} // Z4a
-  else if (hr <= hrr * 0.87 + minhr) {if (subZoneLast!=8) {subZoneLast=8; getZone(subZoneLast);}} // Z4b
-  else if (hr <= hrr * 0.90 + minhr) {if (subZoneLast!=9) {subZoneLast=9; getZone(subZoneLast);}} // Z4c
-  else if (hr <= hrr * 0.94 + minhr) {if (subZoneLast!=10) {subZoneLast=10; getZone(subZoneLast);}} // Z5a
-  else if (hr <= hrr * 0.96 + minhr) {if (subZoneLast!=11) {subZoneLast=11; getZone(subZoneLast);}} // Z5b
-  else if (hr <= hrr * 0.98 + minhr) {if (subZoneLast!=12) {subZoneLast=12; getZone(subZoneLast);}} // Z5c
-  else if (hr >= maxhr - 2) {subZoneLast=13; g.clear();getZoneAlert();} // Alert
+  if ((hr < maxhr - 2) && subZoneLast==13) { drawZoneUI(true); } // Reset UI when coming down from zone alert.
+  if (hr <= hrr * 0.6 + minhr) {if (subZoneLast!=0) {subZoneLast=0; drawZone(subZoneLast);}} // Z1
+  else if (hr <= hrr * 0.64 + minhr) {if (subZoneLast!=1) {subZoneLast=1; drawZone(subZoneLast);}} // Z2a
+  else if (hr <= hrr * 0.67 + minhr) {if (subZoneLast!=2) {subZoneLast=2; drawZone(subZoneLast);}} // Z2b
+  else if (hr <= hrr * 0.70 + minhr) {if (subZoneLast!=3) {subZoneLast=3; drawZone(subZoneLast);}} // Z2c
+  else if (hr <= hrr * 0.74 + minhr) {if (subZoneLast!=4) {subZoneLast=4; drawZone(subZoneLast);}} // Z3a
+  else if (hr <= hrr * 0.77 + minhr) {if (subZoneLast!=5) {subZoneLast=5; drawZone(subZoneLast);}} // Z3b
+  else if (hr <= hrr * 0.80 + minhr) {if (subZoneLast!=6) {subZoneLast=6; drawZone(subZoneLast);}} // Z3c
+  else if (hr <= hrr * 0.84 + minhr) {if (subZoneLast!=7) {subZoneLast=7; drawZone(subZoneLast);}} // Z4a
+  else if (hr <= hrr * 0.87 + minhr) {if (subZoneLast!=8) {subZoneLast=8; drawZone(subZoneLast);}} // Z4b
+  else if (hr <= hrr * 0.90 + minhr) {if (subZoneLast!=9) {subZoneLast=9; drawZone(subZoneLast);}} // Z4c
+  else if (hr <= hrr * 0.94 + minhr) {if (subZoneLast!=10) {subZoneLast=10; drawZone(subZoneLast);}} // Z5a
+  else if (hr <= hrr * 0.96 + minhr) {if (subZoneLast!=11) {subZoneLast=11; drawZone(subZoneLast);}} // Z5b
+  else if (hr <= hrr * 0.98 + minhr) {if (subZoneLast!=12) {subZoneLast=12; drawZone(subZoneLast);}} // Z5c
+  else if (hr >= maxhr - 2) {subZoneLast=13; g.clear();drawZoneAlert();} // Alert
 }
 
 let karvonenInterval;
@@ -250,17 +276,15 @@ function start(hrmSettings, exsHrmStats) {
 
   g.reset().clearRect(R).setFontAlign(0,0,0);
 
-  drawLockIndicator();
   //draw every second
-  setTimeout(updateUI,0,true);
   Bangle.on("lock", drawLockIndicator);
   Bangle.on("HRM", drawPulseIndicator);
+  Bangle.on("HRM", updateUI);
   Bangle.on("GPS", drawGpsIndicator);
-  karvonenInterval = setInterval(function() {
-    updateUI(false);
-  }, 1000);
-}
 
+  setTimeout(drawWaitUI,0);
+}
+let waitTimeout;
 let hrLast;
 //h = 0; // Used to force hr update via web ui console field to trigger draws, together with `if (h!=0) hr = h;` below.
 function updateUI(resetHrLast) { // Update UI, only draw if warranted by change in HR.
@@ -268,17 +292,21 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
     hrLast = 0; // Handles correct updating on init depending on if we've got HRM readings yet or not.
     subZoneLast = undefined;
   }
+
+  if (waitTimeout) clearTimeout(waitTimeout);
+  waitTimeout = setTimeout(() => {drawWaitUI(); waitTimeout = undefined;}, 2000);
+
   hr = hrmstat.getValue();
   //if (h!=0) hr = h;
-  if (hr && hr!=hrLast) {
-    drawHR();
-    drawZones();
-  } else {
-    drawBgArc();
-    drawWaitHR();
+
+  if (hrLast != hr){
+    if (hr && hrLast != hr){
+      drawZoneUI(true);
+    } else if (!hr)
+      drawWaitUI();
   }
 
-  drawArrows();
+  hrLast = hr;
   //g.setColor(g.theme.fg).drawLine(175/2,0,175/2,175).drawLine(0,175/2,175,175/2); // Used to align UI elements.
 }
 
@@ -292,6 +320,7 @@ function stop(){
   Bangle.removeListener("lock", drawLockIndicator);
   Bangle.removeListener("GPS", drawGpsIndicator);
   Bangle.removeListener("HRM", drawPulseIndicator);
+  Bangle.removeListener("HRM", updateUI);
   wu.show();
 }
 
