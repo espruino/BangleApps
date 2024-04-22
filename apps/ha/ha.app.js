@@ -100,6 +100,7 @@ function onSlide(mode, level, e) {
       // we've had a drag and level has changed
       ha.sendValue(triggers[position].trigger, level);
       lastLevel = null;
+      Bangle.buzz(80, 0.6);
     }
   }
 }
