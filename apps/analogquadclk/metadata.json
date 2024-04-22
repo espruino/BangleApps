@@ -1,7 +1,7 @@
 { "id": "analogquadclk",
   "name": "Analog Quad Clock",
   "shortName":"Quad Clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "An analog clock with clockinfos in each of the 4 corners, allowing 4 different data types to be rendered at once",
   "icon": "icon.png",
   "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" } ],
