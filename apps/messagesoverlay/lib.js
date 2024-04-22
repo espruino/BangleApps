@@ -426,7 +426,7 @@ const drawMessage = function(msg) {
   } else
     msg.CanscrollUp = false;
 
-  if (currentLine < msg.lines.length) {
+  if (drawnHeight >= maxTextHeight) {
     msg.CanscrollDown = true;
     drawTriangleDown();
   } else
