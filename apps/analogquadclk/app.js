@@ -236,6 +236,10 @@ Bangle.setUI({
   remove: function() {
     if (drawTimeout) clearTimeout(drawTimeout);
     clockInfoMenuA.remove();
+    clockInfoMenuB.remove();
+    clockInfoMenuC.remove();
+    clockInfoMenuD.remove();
+    require("widget_utils").show(); // re-show widgets
   }
 });
 // Load widgets
