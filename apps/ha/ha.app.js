@@ -57,6 +57,11 @@ function draw() {
 
     slider.f.draw(slider.v.level);
   }else{
+    if (slider) {
+      slider.f.remove();
+      slider = undefined;
+    }
+
     g.drawString("Home", icon.width + 20, H/5-5);
     g.drawString("Assistant", icon.width + 18, H/5+24-5);
 
@@ -84,6 +89,8 @@ var lastTouch;
 
 function onSlide(mode, level, e) {
   lastTouch = Date.now();
+
+  if (!e) return;
 
   if (e.b !== 0) {
     if (lastLevel == null)
