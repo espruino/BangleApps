@@ -8,3 +8,5 @@
 	edge versions of 2v18. Falls back on `Bangle.on()` for backwards
 	compatability.
 0.08: Minor code improvements
+0.09: Recapitalise when returning to the start, and add setting to vibrate on
+	interaction

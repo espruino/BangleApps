@@ -5,11 +5,13 @@ exports.input = function(options) {
   var text = options.text;
   if ("string"!=typeof text) text="";
 
-  var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
-  if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
-  if (settings.autoLowercase===undefined) { settings.autoLowercase = true; }
+  var settings = Object.assign({
+    firstLaunch: true,
+    showHelpBtn: true,
+    charTimeout: 500,
+    autoLowercase: true,
+    vibrate: false,
+  }, require('Storage').readJSON("kbmulti.settings.json", true));
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -28,25 +30,25 @@ exports.input = function(options) {
   var caps = true;
   var layout;
   var btnWidth = g.getWidth()/3;
-  
+
   function getMoveChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00@\x1F\xE1\x00\x10\x00\x10\x01\x0F\xF0\x04\x01\x00";
   }
-  
+
   function getMoreChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xDB\x1B`\x00\x00\x00";
   }
 
-  
   function getCursorChar(){
-    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";  }
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";
+  }
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
 
     //let charsBeforeCursor = textIndex;
     let charsAfterCursor = Math.min(text.length - textIndex, (textWidth)/2);
-    
+
 
     let start = textIndex - Math.ceil(textWidth - charsAfterCursor);
     let startMore = false;
@@ -76,7 +78,9 @@ exports.input = function(options) {
     deactivateTimeout(charTimeout);
     if (textIndex > -1){
       text = text.slice(0, textIndex) + text.slice(textIndex + 1);
-      if (textIndex > -1) textIndex --;
+      textIndex--;
+      if (textIndex == -1 && !caps)
+        setCaps()
       newCharacter();
     }
   }
@@ -96,7 +100,12 @@ exports.input = function(options) {
     charIndex = 0;
   }
 
+  function onInteract() {
+    if (settings.vibrate) Bangle.buzz(20);
+  }
+
   function onKeyPad(key) {
+    onInteract();
     var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
@@ -110,12 +119,12 @@ exports.input = function(options) {
     var newLetter = letters[charCurrent][charIndex];
     let pre = text.slice(0, textIndex);
     let post = text.slice(textIndex, text.length);
-    
+
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
 
     if(retire)
       retireCurrent();
-    
+
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
@@ -125,7 +134,7 @@ exports.input = function(options) {
     displayText(true);
   }
 
-  function retireCurrent(why) {
+  function retireCurrent() {
     if (caps && settings.autoLowercase)
       setCaps();
   }
@@ -133,6 +142,7 @@ exports.input = function(options) {
   var moveMode = false;
 
   function onSwipe(dirLeftRight, dirUpDown) {
+    onInteract();
     if (dirUpDown == -1) {
       moveMode = !moveMode;
       displayText(false);
