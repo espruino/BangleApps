@@ -87,6 +87,21 @@ function draw() {
   lastModified = getHandBounds();
   //g.drawRect(lastModified); // debug
 }
+// Show launcher when middle button pressed
+Bangle.setUI({
+  mode: "clock",
+  remove: function() {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    clockInfoMenuA.remove();
+    clockInfoMenuB.remove();
+    clockInfoMenuC.remove();
+    clockInfoMenuD.remove();
+    require("widget_utils").show(); // re-show widgets
+  }
+});
+// Load widgets
+Bangle.loadWidgets();
+require("widget_utils").hide();
 
 // Clear the screen once, at startup
 background.fillRect(0, 0, W - 1, H - 1);
@@ -229,20 +244,4 @@ let clockInfoMenuD = require("clock_info").addInteractive(clockInfoItems, {
   h: CLOCKINFOSIZE,
   draw: clockInfoDraw
 });
-
-// Show launcher when middle button pressed
-Bangle.setUI({
-  mode: "clock",
-  remove: function() {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    clockInfoMenuA.remove();
-    clockInfoMenuB.remove();
-    clockInfoMenuC.remove();
-    clockInfoMenuD.remove();
-    require("widget_utils").show(); // re-show widgets
-  }
-});
-// Load widgets
-Bangle.loadWidgets();
-require("widget_utils").hide();
 }
