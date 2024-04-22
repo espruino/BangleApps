@@ -24,3 +24,4 @@ Write to correct settings file, fixing settings not working.
 0.21: Rebase on "Run" app ver. 0.16.
 0.22: Ensure screen redraws after "Resume run?" menu (#3044)
 0.23: Minor code improvements
+0.24: Add indicators for lock,gps and pulse to karvonen screen

@@ -25,6 +25,7 @@ so if you have no GPS lock you just need to wait.
 
 Unlock the screen and navigate between displays by swiping left or right.
 The upper number is the limit before next heart rate zone. The lower number is the limit before previous heart rate zone. The number in the middle is the heart rate. The Z1 to Z5 number indicates the heart rate zone where you are. The circle provides a quick visualisation of the hr zone in which you are.
+Indicator icons for lock, heartrate and location are updated on arrival off internal system events. The heart icon shows if the exstats module decided that the heart rate value is usable. The location icon shows if there was an GPS event with a position fix in it.
 
 ## Recording Tracks
 
