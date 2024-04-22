@@ -158,8 +158,16 @@ function drawZone(zone) {
   if (zone == 12) {zoning(maxzone5, maxzone4);g.setColor("#ff0000");simplify(206.5, 227.5, "Z5", 12, zone);}
   }
 
+function drawIndicators(){
+  drawLockIndicator();
+  drawPulseIndicator();
+  drawGpsIndicator();
+}
+
 function drawZoneAlert() {
   const HRzonemax = require("graphics_utils");
+  drawIndicators();
+  g.clearRect(R);
   let minRadius = 0.40 * R.h;
   let startAngle1 = HRzonemax.degreesToRadians(-90);
   let endAngle1 = HRzonemax.degreesToRadians(270);
@@ -170,8 +178,7 @@ function drawZoneAlert() {
 
 function drawWaitUI(){
   g.clearRect(R);
-  drawLockIndicator();
-  drawPulseIndicator();
+  drawIndicators();
   drawBgArc();
   drawWaitHR();
   drawArrows();
@@ -179,8 +186,7 @@ function drawWaitUI(){
 
 function drawBase() {
   g.clearRect(R);
-  drawLockIndicator();
-  drawPulseIndicator();
+  drawIndicators();
   drawBgArc();
 }
 
@@ -209,7 +215,7 @@ function drawZones() {
   else if (hr <= hrr * 0.94 + minhr) {if (subZoneLast!=10) {subZoneLast=10; drawZone(subZoneLast);}} // Z5a
   else if (hr <= hrr * 0.96 + minhr) {if (subZoneLast!=11) {subZoneLast=11; drawZone(subZoneLast);}} // Z5b
   else if (hr <= hrr * 0.98 + minhr) {if (subZoneLast!=12) {subZoneLast=12; drawZone(subZoneLast);}} // Z5c
-  else if (hr >= maxhr - 2) {subZoneLast=13; g.clear();drawZoneAlert();} // Alert
+  else if (hr >= maxhr - 2) {subZoneLast=13; drawZoneAlert();} // Alert
 }
 
 let karvonenInterval;
@@ -223,17 +229,27 @@ function drawLockIndicator() {
 }
 
 let gpsTimeout;
+let lastGps;
 function drawGpsIndicator(e) {
-  if (e.fix){
+  if (e && e.fix){
     if (gpsTimeout)
       clearTimeout(gpsTimeout);
     g.setColor(g.theme.fg).drawImage(ICON_LOCATION, 8, R.y2 - 23);
+    lastGps = 0;
     gpsTimeout = setTimeout(()=>{
       g.setColor(g.theme.dark?"#ccc":"#444").drawImage(ICON_LOCATION, 8, R.y2 - 23);
+      lastGps = 1;
       gpsTimeout = setTimeout(()=>{
         g.setColor(g.theme.bg).drawImage(ICON_LOCATION, 8, R.y2 - 23);
+        lastGps = 2;
       }, 3900);
     }, 1100);
+  } else if (lastGps !== undefined){
+    switch (lastGps) {
+      case 0: g.setColor(g.theme.fg).drawImage(ICON_LOCATION, 8, R.y2 - 23); break;
+      case 1: g.setColor(g.theme.dark?"#ccc":"#444").drawImage(ICON_LOCATION, 8, R.y2 - 23); break;
+      case 2: g.setColor(g.theme.bg).drawImage(ICON_LOCATION, 8, R.y2 - 23); break;
+    }
   }
 }
 
@@ -299,7 +315,7 @@ function updateUI(resetHrLast) { // Update UI, only draw if warranted by change 
   hr = hrmstat.getValue();
   //if (h!=0) hr = h;
 
-  if (hrLast != hr){
+  if (hrLast != hr || resetHrLast){
     if (hr && hrLast != hr){
       drawZoneUI(true);
     } else if (!hr)
@@ -317,6 +333,8 @@ function stop(){
   pulseTimeout = undefined;
   if (gpsTimeout) clearTimeout(gpsTimeout);
   gpsTimeout = undefined;
+  if (waitTimeout) clearTimeout(waitTimeout);
+  waitTimeout = undefined;
   Bangle.removeListener("lock", drawLockIndicator);
   Bangle.removeListener("GPS", drawGpsIndicator);
   Bangle.removeListener("HRM", drawPulseIndicator);
