@@ -8,3 +8,5 @@
       menu display/fastload removes it
 0.08: Add setting for initial page to display
 0.09: Minor code improvements
+0.10: Handle missing alarm data, e.g. when our reset is fired from
+      non-multitimer alarms
