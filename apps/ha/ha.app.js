@@ -147,11 +147,14 @@ Bangle.on('touch', (btn, e) => {
 });
 
 Bangle.on("swipe", (lr,ud) => {
+  if (slider) return; // "disable" swiping on sliders
+
   if (lr == -1) {
     toLeft();
   } else if (lr == 1) {
     toRight();
   }
+  E.stopEventPropagation && E.stopEventPropagation();
 });
 
 
