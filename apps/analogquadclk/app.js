@@ -37,7 +37,7 @@ const hand_minute_bg = get_hand(MIN_LEN, MIN_W, 6, MIN_BACK);
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
+    //drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
 }
