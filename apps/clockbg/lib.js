@@ -19,7 +19,9 @@ exports.fillRect = function(rect,y,x2,y2) {
     g.setClipRect(rect.x, rect.y, rect.x+rect.w-1, rect.y+rect.h-1).drawImage(settings.img).setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
   } else if (settings.style == "color") {
     g.setBgColor(settings.color).clearRect(rect);
-  } else
-    console.log("No background set");
+  } else {
+    console.log("clockbg: No background set!");
+    g.setBgColor(g.theme.bg).clearRect(rect);
+  }
 };
 
