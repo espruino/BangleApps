@@ -286,7 +286,7 @@ exports.addInteractive = function(menu, options) {
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
     E.stopEventPropagation&&E.stopEventPropagation();
   }
-  Bangle.on("swipe",swipeHandler);
+  if (Bangle.prependListener) {Bangle.prependListener("swipe",swipeHandler);} else {Bangle.on("swipe",swipeHandler);}
   const blur = () => {
     options.focus=false;
     Bangle.CLKINFO_FOCUS--;

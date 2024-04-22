@@ -1,7 +1,7 @@
 { "id": "clock_info",
   "name": "Clock Info Module",
   "shortName": "Clock Info",
-  "version":"0.10",
+  "version":"0.11",
   "description": "A library used by clocks to provide extra information on the clock face (Altitude, BPM, etc)",
   "icon": "app.png",
   "type": "module",
