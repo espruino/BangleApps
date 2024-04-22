@@ -168,6 +168,7 @@ function drawZoneAlert() {
   const HRzonemax = require("graphics_utils");
   drawIndicators();
   g.clearRect(R);
+  drawIndicators();
   let minRadius = 0.40 * R.h;
   let startAngle1 = HRzonemax.degreesToRadians(-90);
   let endAngle1 = HRzonemax.degreesToRadians(270);
@@ -292,13 +293,12 @@ function start(hrmSettings, exsHrmStats) {
 
   g.reset().clearRect(R).setFontAlign(0,0,0);
 
-  //draw every second
   Bangle.on("lock", drawLockIndicator);
   Bangle.on("HRM", drawPulseIndicator);
   Bangle.on("HRM", updateUI);
   Bangle.on("GPS", drawGpsIndicator);
 
-  setTimeout(drawWaitUI,0);
+  setTimeout(updateUI,0,true);
 }
 let waitTimeout;
 let hrLast;
@@ -339,6 +339,7 @@ function stop(){
   Bangle.removeListener("GPS", drawGpsIndicator);
   Bangle.removeListener("HRM", drawPulseIndicator);
   Bangle.removeListener("HRM", updateUI);
+  lastGps = undefined;
   wu.show();
 }
 
