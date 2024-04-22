@@ -1,3 +1,4 @@
+{
 const W = g.getWidth();
 const H = g.getHeight();
 const background = require("clockbg"); // image backgrounds
@@ -240,3 +241,4 @@ Bangle.setUI({
 // Load widgets
 Bangle.loadWidgets();
 require("widget_utils").hide();
+}
