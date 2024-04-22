@@ -11,6 +11,5 @@
   "storage": [
     {"name":"phystrax.app.js","url":"app.js"},
     {"name":"phystrax.img","url":"app-icon.js","evaluate":true}
-  ],
-  "data": [{"wildcard":"heart_rate_data.?.csv"}]
+  ]
 }
