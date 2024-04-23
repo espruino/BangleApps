@@ -35,7 +35,9 @@ function showAlarm(alarm) {
       if (alarm.ot === undefined) {
         alarm.ot = alarm.t;
       }
-      alarm.t += settings.defaultSnoozeMillis;
+      let time = new Date();
+      let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+      alarm.t = currentTime + settings.defaultSnoozeMillis;
       alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
     } else {
