@@ -67,7 +67,7 @@
     // queue next draw in one minute
     queueDraw();
     // work out locale-friendly date/time
-    //date = new Date();
+    date = new Date();
     //var timeStr = require("locale").time(date,1);
     //var dateStr = require("locale").date(date);
     // fill in area that we changed last time
