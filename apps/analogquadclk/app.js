@@ -44,7 +44,7 @@
 
   // draw the clock hands
   let drawHands = function() {
-    let h = date.getHours()*Math.PI/6, m = date.getMinutes()*Math.PI/30;
+    let h = (date.getHours()  + date.getMinutes()/60)*Math.PI/6, m = date.getMinutes()*Math.PI/30;
     g.setColor(g.theme.bg).fillPolyAA(g.transformVertices(hand_hour_bg,{x:W/2,y:H/2,rotate:h}));
     g.fillPolyAA(g.transformVertices(hand_minute_bg,{x:W/2,y:H/2,rotate:m}));
     g.setColor("#f00").fillPolyAA(g.transformVertices(hand_hour,{x:W/2,y:H/2,rotate:h}));
