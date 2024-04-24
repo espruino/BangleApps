@@ -330,6 +330,10 @@
 	};
 
 	Bangle.prependListener("drag", onDrag);
+	Bangle.on("lock", () => {
+		ui?.overlay.hide();
+		ui = undefined;
+	});
 
 	WIDGETS["hid"] = {
 		area: "tr",
