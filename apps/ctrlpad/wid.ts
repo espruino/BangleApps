@@ -39,7 +39,7 @@
 			this.g2 = Graphics.createArrayBuffer(
 				this.width,
 				this.height,
-				/*bpp*/1,
+				/*bpp*/4,
 				{ msb: true }
 			);
 
@@ -76,12 +76,12 @@
 
 	const colour = {
 		on: {
-			fg: "#000",
-			bg: "#fff", //"#00f",
+			fg: "#fff",
+			bg: "#00a",
 		},
 		off: {
-			fg: "#fff",
-			bg: "#000", // "#222",
+			fg: "#000",
+			bg: "#bbb",
 		},
 	};
 
