@@ -55,7 +55,7 @@
         /*
          * BLE has to restart after service setup.
          */
-        if(!settings.keepConnected)
+        if(!keepConnected)
           NRF.disconnect();
       }
       else if (error.message.includes("UUID 0x2a37")) {
