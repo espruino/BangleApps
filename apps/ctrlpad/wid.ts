@@ -179,9 +179,9 @@
 					if(e.y <= 40){
 						state = State.TopDrag
 						startY = e.y;
-						console.log("  topdrag detected, starting @ " + startY);
+						//console.log("  topdrag detected, starting @ " + startY);
 					}else{
-						console.log("  ignoring this drag (too low @ " + e.y + ")");
+						//console.log("  ignoring this drag (too low @ " + e.y + ")");
 						state = State.IgnoreCurrent;
 						ui = undefined
 					}
@@ -190,9 +190,9 @@
 
 			case State.TopDrag:
 				if(e.b === 0){
-					console.log("topdrag stopped, distance: " + (e.y - startY));
+					//console.log("topdrag stopped, distance: " + (e.y - startY));
 					if(e.y > startY + dragDistance){
-						console.log("activating");
+						//console.log("activating");
 						state = State.Active;
 						startY = 0;
 						Bangle.prependListener("touch", onTouch);
@@ -200,7 +200,7 @@
 						ui!.overlay.setBottom(g.getHeight());
 						break;
 					}
-					console.log("returning to idle");
+					//console.log("returning to idle");
 					state = State.Idle;
 					ui?.overlay.hide();
 					ui = undefined;
