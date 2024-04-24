@@ -204,6 +204,7 @@
     var origBuzz;
     var onCtrlTap = function (ctrl, ui) {
         var _a;
+        Bangle.buzz(80);
         var on = true;
         switch (ctrl.text) {
             case "BLE":
@@ -224,6 +225,12 @@
                 else {
                     origBuzz = Bangle.buzz;
                     Bangle.buzz = function () { return Promise.resolve(); };
+                    setTimeout(function () {
+                        if (!origBuzz)
+                            return;
+                        Bangle.buzz = origBuzz;
+                        origBuzz = undefined;
+                    }, 1000 * 60 * 10);
                 }
                 break;
             case "HRM": {
@@ -248,6 +255,10 @@
         ui.ctrls.draw(ui.overlay.g2, ctrl);
     };
     Bangle.prependListener("drag", onDrag);
+    Bangle.on("lock", function () {
+        ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
+        ui = undefined;
+    });
     WIDGETS["hid"] = {
         area: "tr",
         sortorder: -20,
