@@ -1,2 +1,3 @@
 0.01: Initial release.
 0.02: Added compatibility to OpenTracks and added HRM Location
+0.03: Allow setting to keep BLE connected
