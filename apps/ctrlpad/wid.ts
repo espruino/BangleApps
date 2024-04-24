@@ -331,6 +331,7 @@
 		width: 0,
 	};
 	(WIDGETS["hid"] as any).getUI = () => ui;
+	(WIDGETS["hid"] as any).col = colour;
 
 	/*
 	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
