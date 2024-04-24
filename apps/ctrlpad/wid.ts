@@ -218,6 +218,7 @@
 					}
 					ui.overlay.setBottom(e.y - dragOffset);
 				}
+				E.stopEventPropagation?.();
 				break;
 
 			case State.Active:
@@ -269,6 +270,7 @@
 		const ctrl = ui.ctrls.hitTest(xy.x - left, xy.y - top);
 		if(ctrl){
 			onCtrlTap(ctrl, ui);
+			E.stopEventPropagation?.();
 		}
 	}) satisfies TouchCallback;
 
