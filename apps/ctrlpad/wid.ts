@@ -118,13 +118,20 @@
 		}
 
 		hitTest(x: number, y: number): Control | undefined {
-			const radius = 25;
+			let dist = Infinity;
+			let closest;
 
-			for(const ctrl of this.controls)
-				if(Math.abs(y - ctrl.y) < radius && Math.abs(x - ctrl.x) < radius)
-					return ctrl;
+			for(const ctrl of this.controls){
+				const dx = x-ctrl.x;
+				const dy = y-ctrl.y;
+				const d = Math.sqrt(dx*dx + dy*dy);
+				if(d < dist){
+					dist = d;
+					closest = ctrl;
+				}
+			}
 
-			return undefined;
+			return dist < 30 ? closest : undefined;
 		}
 	}
 
