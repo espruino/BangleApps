@@ -118,7 +118,7 @@
 		draw(g: Graphics, single?: Control): void {
 			g
 				.setFontAlign(0, 0)
-				.setFont("Vector:20");
+				.setFont("4x6:3" as any /* FIXME */);
 
 			for(const ctrl of single ? [single] : this.controls){
 				g
