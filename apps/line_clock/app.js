@@ -10,10 +10,12 @@ const numberOffset = 85;
 const numberSize = 22;
 
 const storage = require('Storage');
+const widget_utils = require("widget_utils");
 
 const SETTINGS_FILE = "line_clock.setting.json";
 
 let initialSettings = {
+  screen: "Full",
   showLock: true,
   showMinute: true,
 };
@@ -22,6 +24,11 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
 for (const key in saved_settings) {
   initialSettings[key] = saved_settings[key];
 }
+
+let isFullscreen = function() {
+  const s = initialSettings.screen.toLowerCase();
+  return s === "full";
+};
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
 let gHeight = g.getHeight(), gCenterY = gHeight/2;
@@ -235,6 +242,14 @@ function lockListenerBw() {
 }
 Bangle.on('lock', lockListenerBw);
 
+function drawWidgets() {
+  if(isFullscreen()){
+    widget_utils.hide();
+  } else {
+    Bangle.drawWidgets();
+  }
+}
+
 Bangle.setUI({
   mode : "clock",
   // TODO implement https://www.espruino.com/Bangle.js+Fast+Load
@@ -267,7 +282,7 @@ function draw() {
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, gWidth, gHeight);
 
-  if(initialSettings.showLock && Bangle.isLocked()){
+  if(initialSettings.showLock && Bangle.isLocked() && isFullscreen()){
     g.setColor(g.theme.fg);
     g.drawImage(imgLock(), gWidth-16, 2);
   }
@@ -282,6 +297,9 @@ function draw() {
   if(initialSettings.showMinute){
     drawNumber(currentMinute);
   }
+  drawWidgets()
 }
+
+Bangle.loadWidgets();
 
 draw();
