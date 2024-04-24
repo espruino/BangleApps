@@ -128,14 +128,6 @@
 		}
 	}
 
-	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
-	if (settings.HID !== "kbmedia") {
-		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
-		return;
-	}
-	// @ts-ignore
-	delete settings;
-
 	const enum State {
 		Idle,
 		TopDrag,
@@ -267,24 +259,29 @@
 		width: 0,
 	};
 
-	//const DEBUG = true;
-	//const sendHid = (code: number) => {
-	//	//if(DEBUG) return;
-	//	try{
-	//		NRF.sendHIDReport(
-	//			[1, code],
-	//			() => NRF.sendHIDReport([1, 0]),
-	//		);
-	//	}catch(e){
-	//		console.log("sendHIDReport:", e);
-	//	}
-	//};
+	/*
+	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
+	const haveMedia = settings.HID === "kbmedia";
+	// @ts-ignore
+	delete settings;
 
-	// const hid = {
-	// 	next: () => sendHid(0x01),
-	// 	prev: () => sendHid(0x02),
-	// 	toggle: () => sendHid(0x10),
-	// 	up: () => sendHid(0x40),
-	// 	down: () => sendHid(0x80),
-	// };
+	const sendHid = (code: number) => {
+		try{
+			NRF.sendHIDReport(
+				[1, code],
+				() => NRF.sendHIDReport([1, 0]),
+			);
+		}catch(e){
+			console.log("sendHIDReport:", e);
+		}
+	};
+
+	const hid = haveMedia ? {
+		next: () => sendHid(0x01),
+		prev: () => sendHid(0x02),
+		toggle: () => sendHid(0x10),
+		up: () => sendHid(0x40),
+		down: () => sendHid(0x80),
+	} : null;
+	*/
 })()
