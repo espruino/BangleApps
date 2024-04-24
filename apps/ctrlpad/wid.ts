@@ -265,6 +265,7 @@
 		draw: () => {},
 		width: 0,
 	};
+	(WIDGETS["hid"] as any).getUI = () => ui;
 
 	/*
 	const settings = require("Storage").readJSON("setting.json", true) as Settings || ({ HID: false } as Settings);
