@@ -17,7 +17,7 @@
         function Overlay() {
             this.width = g.getWidth() - 10 * 2;
             this.height = g.getHeight() - 24 - 10;
-            this.g2 = Graphics.createArrayBuffer(this.width, this.height, 1, { msb: true });
+            this.g2 = Graphics.createArrayBuffer(this.width, this.height, 4, { msb: true });
             this.renderG2();
         }
         Overlay.prototype.setBottom = function (bottom) {
@@ -39,12 +39,12 @@
     }());
     var colour = {
         on: {
-            fg: "#000",
-            bg: "#fff",
+            fg: "#fff",
+            bg: "#00a",
         },
         off: {
-            fg: "#fff",
-            bg: "#000",
+            fg: "#000",
+            bg: "#bbb",
         },
     };
     var Controls = (function () {
@@ -254,6 +254,4 @@
         draw: function () { },
         width: 0,
     };
-    WIDGETS["hid"].getUI = function () { return ui; };
-    WIDGETS["hid"].col = colour;
 })();
