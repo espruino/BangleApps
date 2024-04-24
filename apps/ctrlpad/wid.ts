@@ -296,6 +296,11 @@
 				}else{
 					origBuzz = Bangle.buzz;
 					Bangle.buzz = () => (Promise as any).resolve(); // FIXME
+					setTimeout(() => {
+						if(!origBuzz) return;
+						Bangle.buzz = origBuzz;
+						origBuzz = undefined;
+					}, 1000 * 60 * 10);
 				}
 				break;
 
