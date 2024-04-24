@@ -69,8 +69,20 @@
 	type Control = {
 		x: number,
 		y: number,
+		fg: string, //ColorResolvable, TODO
+		bg: string, //ColorResolvable,
 		text: string,
-		cb: () => void,
+	};
+
+	const colour = {
+		on: {
+			fg: "#000",
+			bg: "#fff", //"#00f",
+		},
+		off: {
+			fg: "#fff",
+			bg: "#000", // "#222",
+		},
 	};
 
 	class Controls {
@@ -95,24 +107,24 @@
 			const width = g.getWidth();
 
 			this.controls = [
-				{ x: width / 4 - 10,   y: centreY - circleGapY, text: "BLE", cb: function() { console.log(this.text); } },
-				{ x: width / 2,        y: centreY - circleGapY, text: "DnD", cb: function() { console.log(this.text); } },
-				{ x: width * 3/4 + 10, y: centreY - circleGapY, text: "?",   cb: function() { console.log(this.text); } },
-				{ x: width / 3,        y: centreY + circleGapY, text: "B-",  cb: function() { console.log(this.text); } },
-				{ x: width * 2/3,      y: centreY + circleGapY, text: "B+",  cb: function() { console.log(this.text); } },
+				{ x: width / 4 - 10,   y: centreY - circleGapY, text: "BLE", fg: colour.on.fg, bg: colour.on.bg }, // FIXME: init
+				{ x: width / 2,        y: centreY - circleGapY, text: "DnD", fg: colour.off.fg, bg: colour.off.bg },
+				{ x: width * 3/4 + 10, y: centreY - circleGapY, text: "HRM", fg: colour.off.fg, bg: colour.off.bg }, // FIXME: init
+				{ x: width / 3,        y: centreY + circleGapY, text: "B-",  fg: colour.on.fg, bg: colour.on.bg },
+				{ x: width * 2/3,      y: centreY + circleGapY, text: "B+",  fg: colour.on.fg, bg: colour.on.bg },
 			];
 		}
 
-		draw(g: Graphics): void {
+		draw(g: Graphics, single?: Control): void {
 			g
 				.setFontAlign(0, 0)
 				.setFont("Vector:20");
 
-			for(const ctrl of this.controls){
+			for(const ctrl of single ? [single] : this.controls){
 				g
-					.setColor("#fff")
+					.setColor(ctrl.bg as any) // FIXME
 					.fillCircle(ctrl.x, ctrl.y, 23)
-					.setColor("#000")
+					.setColor(ctrl.fg as any) // FIXME
 					.drawString(ctrl.text, ctrl.x, ctrl.y);
 			}
 		}
@@ -141,11 +153,12 @@
 		IgnoreCurrent,
 		Active,
 	}
+	type UI = { overlay: Overlay, ctrls: Controls };
 	let state = State.Idle;
 	let startY = 0;
 	let startedUpDrag = false;
 	let upDragAnim: IntervalId | undefined;
-	let ui: undefined | { overlay: Overlay, ctrls: Controls };
+	let ui: undefined | UI;
 	let touchDown = false;
 
 	const onDrag = (e => {
@@ -254,8 +267,60 @@
 		const left = (g.getWidth() - ui.overlay.width) / 2; // more assumptions
 
 		const ctrl = ui.ctrls.hitTest(xy.x - left, xy.y - top);
-		ctrl?.cb();
+		if(ctrl){
+			onCtrlTap(ctrl, ui);
+		}
 	}) satisfies TouchCallback;
+
+	let origBuzz: undefined | (() => Promise<void>);
+	const onCtrlTap = (ctrl: Control, ui: UI) => {
+		let on = true;
+
+		switch(ctrl.text){
+			case "BLE":
+				if(NRF.getSecurityStatus().advertising){
+					NRF.sleep();
+					on = false;
+				}else{
+					NRF.wake();
+				}
+				break;
+
+			case "DnD":
+				if(origBuzz){
+					Bangle.buzz = origBuzz;
+					origBuzz = undefined;
+					on = false;
+				}else{
+					origBuzz = Bangle.buzz;
+					Bangle.buzz = () => (Promise as any).resolve(); // FIXME
+				}
+				break;
+
+			case "HRM": {
+				const id = "widhid";
+				const hrm: undefined | Array<string> = (Bangle as any)._PWR?.HRM;
+				if(!hrm || hrm.indexOf(id) === -1){
+					Bangle.setHRMPower(1, id);
+				}else{
+					Bangle.setHRMPower(0, id);
+					on = false;
+				}
+				break;
+			}
+
+			default:
+				console.log(`widhid: couldn't handle "${ctrl.text}" tap`);
+				on = ctrl.fg !== colour.on.fg;
+		}
+
+		const col = on ? colour.on : colour.off;
+		ctrl.fg = col.fg;
+		ctrl.bg = col.bg;
+		//console.log("hit on " + ctrl.text + ", col: " + ctrl.fg);
+
+		ui.ctrls.draw(ui.overlay.g2, ctrl);
+	};
 
 	Bangle.prependListener("drag", onDrag);
 
