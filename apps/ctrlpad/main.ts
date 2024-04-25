@@ -283,7 +283,7 @@
 
 	let origBuzz: undefined | (() => Promise<void>);
 	const onCtrlTap = (ctrl: Control, ui: UI) => {
-		Bangle.buzz(80);
+		Bangle.buzz(20);
 
 		let on = true;
 
