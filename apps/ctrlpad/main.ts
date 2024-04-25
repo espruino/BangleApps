@@ -60,7 +60,9 @@
 		renderG2(): void {
 			this.g2
 				.reset()
-				.clearRect(0, 0, this.width, this.height)
+				.setColor(g.theme.bg)
+				.fillRect(0, 0, this.width, this.height)
+				.setColor(colour.on.bg)
 				.drawRect(0, 0, this.width - 1, this.height - 1)
 				.drawRect(1, 1, this.width - 2, this.height - 2);
 		}
