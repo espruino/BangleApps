@@ -181,10 +181,8 @@
 
 		switch (state) {
 			case State.IgnoreCurrent:
-				if(e.b === 0){
+				if(e.b === 0)
 					state = State.Idle;
-					ui = undefined;
-				}
 				break;
 
 			case State.Idle:
@@ -196,7 +194,6 @@
 					}else{
 						//console.log("  ignoring this drag (too low @ " + e.y + ")");
 						state = State.IgnoreCurrent;
-						ui = undefined
 					}
 				}
 				break;
@@ -212,12 +209,13 @@
 						Bangle.prependListener("touch", onTouch);
 						Bangle.buzz(20);
 						ui!.overlay.setBottom(g.getHeight());
+					}else{
+						//console.log("returning to idle");
+						state = State.Idle;
+						ui?.overlay.hide();
+						ui = undefined;
 						break;
 					}
-					//console.log("returning to idle");
-					state = State.Idle;
-					ui?.overlay.hide();
-					ui = undefined;
 				}else{
 					// partial drag, show UI feedback:
 					const dragOffset = 32;
