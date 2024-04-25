@@ -163,6 +163,17 @@
 	let ui: undefined | UI;
 	let touchDown = false;
 
+	const initUI = () => {
+		if (ui) return;
+
+		const overlay = new Overlay();
+		ui = {
+			overlay,
+			ctrls: new Controls(overlay.g2, controls),
+		};
+		ui.ctrls.draw(ui.overlay.g2);
+	};
+
 	const onDrag = (e => {
 		const dragDistance = 30;
 
@@ -195,6 +206,7 @@
 					//console.log("topdrag stopped, distance: " + (e.y - startY));
 					if(e.y > startY + dragDistance){
 						//console.log("activating");
+						initUI();
 						state = State.Active;
 						startY = 0;
 						Bangle.prependListener("touch", onTouch);
@@ -210,15 +222,8 @@
 					// partial drag, show UI feedback:
 					const dragOffset = 32;
 
-					if (!ui) {
-						const overlay = new Overlay();
-						ui = {
-							overlay,
-							ctrls: new Controls(overlay.g2),
-						};
-						ui.ctrls.draw(ui.overlay.g2);
-					}
-					ui.overlay.setBottom(e.y - dragOffset);
+					initUI();
+					ui!.overlay.setBottom(e.y - dragOffset);
 				}
 				E.stopEventPropagation?.();
 				break;
@@ -248,7 +253,7 @@
 								ui = undefined;
 								return;
 							}
-							ui!.overlay.setBottom(bottom);
+							ui.overlay.setBottom(bottom);
 							bottom -= 30;
 						}, 50)
 
