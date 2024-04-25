@@ -69,8 +69,8 @@
 	type Control = {
 		x: number,
 		y: number,
-		fg: string, //ColorResolvable, TODO
-		bg: string, //ColorResolvable,
+		fg: ColorResolvable,
+		bg: ColorResolvable,
 		text: string,
 	};
 
@@ -83,7 +83,7 @@
 			fg: "#000",
 			bg: "#bbb",
 		},
-	};
+	} as const;
 
 	class Controls {
 		controls: [Control, Control, Control, Control, Control];
@@ -122,9 +122,9 @@
 
 			for(const ctrl of single ? [single] : this.controls){
 				g
-					.setColor(ctrl.bg as any) // FIXME
+					.setColor(ctrl.bg)
 					.fillCircle(ctrl.x, ctrl.y, 23)
-					.setColor(ctrl.fg as any) // FIXME
+					.setColor(ctrl.fg)
 					.drawString(ctrl.text, ctrl.x, ctrl.y);
 			}
 		}
