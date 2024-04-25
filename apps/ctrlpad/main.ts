@@ -206,7 +206,7 @@
 					}else{
 						if(tap){
 							origBuzz = Bangle.buzz;
-							Bangle.buzz = () => (Promise as any).resolve(); // FIXME
+							Bangle.buzz = () => Promise.resolve();
 							setTimeout(() => {
 								if(!origBuzz) return;
 								Bangle.buzz = origBuzz;
