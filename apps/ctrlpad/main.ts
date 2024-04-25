@@ -340,6 +340,7 @@
 
 	Bangle.prependListener("drag", onDrag);
 	Bangle.on("lock", () => {
+		state = State.Idle;
 		ui?.overlay.hide();
 		ui = undefined;
 	});
