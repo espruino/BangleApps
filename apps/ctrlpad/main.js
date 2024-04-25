@@ -31,7 +31,9 @@
         Overlay.prototype.renderG2 = function () {
             this.g2
                 .reset()
-                .clearRect(0, 0, this.width, this.height)
+                .setColor(g.theme.bg)
+                .fillRect(0, 0, this.width, this.height)
+                .setColor(colour.on.bg)
                 .drawRect(0, 0, this.width - 1, this.height - 1)
                 .drawRect(1, 1, this.width - 2, this.height - 2);
         };
@@ -48,18 +50,25 @@
         },
     };
     var Controls = (function () {
-        function Controls(g) {
+        function Controls(g, controls) {
             var height = g.getHeight();
             var centreY = height / 2;
             var circleGapY = 30;
             var width = g.getWidth();
             this.controls = [
-                { x: width / 4 - 10, y: centreY - circleGapY, text: "BLE", fg: colour.on.fg, bg: colour.on.bg },
-                { x: width / 2, y: centreY - circleGapY, text: "DnD", fg: colour.off.fg, bg: colour.off.bg },
-                { x: width * 3 / 4 + 10, y: centreY - circleGapY, text: "HRM", fg: colour.off.fg, bg: colour.off.bg },
-                { x: width / 3, y: centreY + circleGapY, text: "B-", fg: colour.on.fg, bg: colour.on.bg },
-                { x: width * 2 / 3, y: centreY + circleGapY, text: "B+", fg: colour.on.fg, bg: colour.on.bg },
-            ];
+                { x: width / 4 - 10, y: centreY - circleGapY },
+                { x: width / 2, y: centreY - circleGapY },
+                { x: width * 3 / 4 + 10, y: centreY - circleGapY },
+                { x: width / 3, y: centreY + circleGapY },
+                { x: width * 2 / 3, y: centreY + circleGapY },
+            ].map(function (xy, i) {
+                var ctrl = xy;
+                var from = controls[i];
+                ctrl.text = from.text;
+                ctrl.cb = from.cb;
+                Object.assign(ctrl, from.cb(false) ? colour.on : colour.off);
+                return ctrl;
+            });
         }
         Controls.prototype.draw = function (g, single) {
             g
@@ -97,6 +106,78 @@
     var upDragAnim;
     var ui;
     var touchDown = false;
+    var initUI = function () {
+        if (ui)
+            return;
+        function noop(tap) {
+            return (this.bg === colour.on.bg) !== tap;
+        }
+        var controls = [
+            {
+                text: "BLE",
+                cb: function (tap) {
+                    var on = NRF.getSecurityStatus().advertising;
+                    if (tap) {
+                        if (on)
+                            NRF.sleep();
+                        else
+                            NRF.wake();
+                    }
+                    return on !== tap;
+                }
+            },
+            {
+                text: "DnD",
+                cb: function (tap) {
+                    var on;
+                    if (on = !!origBuzz) {
+                        if (tap) {
+                            Bangle.buzz = origBuzz;
+                            origBuzz = undefined;
+                        }
+                    }
+                    else {
+                        if (tap) {
+                            origBuzz = Bangle.buzz;
+                            Bangle.buzz = function () { return Promise.resolve(); };
+                            setTimeout(function () {
+                                if (!origBuzz)
+                                    return;
+                                Bangle.buzz = origBuzz;
+                                origBuzz = undefined;
+                            }, 1000 * 60 * 10);
+                        }
+                    }
+                    return on !== tap;
+                }
+            },
+            {
+                text: "HRM",
+                cb: function (tap) {
+                    var _a;
+                    var id = "widhid";
+                    var hrm = (_a = Bangle._PWR) === null || _a === void 0 ? void 0 : _a.HRM;
+                    var off = !hrm || hrm.indexOf(id) === -1;
+                    if (off) {
+                        if (tap)
+                            Bangle.setHRMPower(1, id);
+                    }
+                    else if (tap) {
+                        Bangle.setHRMPower(0, id);
+                    }
+                    return !off !== tap;
+                }
+            },
+            { text: "B-", cb: noop },
+            { text: "B+", cb: noop },
+        ];
+        var overlay = new Overlay();
+        ui = {
+            overlay: overlay,
+            ctrls: new Controls(overlay.g2, controls),
+        };
+        ui.ctrls.draw(ui.overlay.g2);
+    };
     var onDrag = (function (e) {
         var _a, _b;
         var dragDistance = 30;
@@ -104,10 +185,8 @@
             touchDown = startedUpDrag = false;
         switch (state) {
             case 2:
-                if (e.b === 0) {
+                if (e.b === 0)
                     state = 0;
-                    ui = undefined;
-                }
                 break;
             case 0:
                 if (e.b && !touchDown) {
@@ -117,34 +196,29 @@
                     }
                     else {
                         state = 2;
-                        ui = undefined;
                     }
                 }
                 break;
             case 1:
                 if (e.b === 0) {
                     if (e.y > startY + dragDistance) {
+                        initUI();
                         state = 3;
                         startY = 0;
                         Bangle.prependListener("touch", onTouch);
                         Bangle.buzz(20);
                         ui.overlay.setBottom(g.getHeight());
+                    }
+                    else {
+                        state = 0;
+                        ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
+                        ui = undefined;
                         break;
                     }
-                    state = 0;
-                    ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
-                    ui = undefined;
                 }
                 else {
                     var dragOffset = 32;
-                    if (!ui) {
-                        var overlay = new Overlay();
-                        ui = {
-                            overlay: overlay,
-                            ctrls: new Controls(overlay.g2),
-                        };
-                        ui.ctrls.draw(ui.overlay.g2);
-                    }
+                    initUI();
                     ui.overlay.setBottom(e.y - dragOffset);
                 }
                 (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
@@ -203,66 +277,16 @@
     });
     var origBuzz;
     var onCtrlTap = function (ctrl, ui) {
-        var _a;
-        Bangle.buzz(80);
-        var on = true;
-        switch (ctrl.text) {
-            case "BLE":
-                if (NRF.getSecurityStatus().advertising) {
-                    NRF.sleep();
-                    on = false;
-                }
-                else {
-                    NRF.wake();
-                }
-                break;
-            case "DnD":
-                if (origBuzz) {
-                    Bangle.buzz = origBuzz;
-                    origBuzz = undefined;
-                    on = false;
-                }
-                else {
-                    origBuzz = Bangle.buzz;
-                    Bangle.buzz = function () { return Promise.resolve(); };
-                    setTimeout(function () {
-                        if (!origBuzz)
-                            return;
-                        Bangle.buzz = origBuzz;
-                        origBuzz = undefined;
-                    }, 1000 * 60 * 10);
-                }
-                break;
-            case "HRM": {
-                var id = "widhid";
-                var hrm = (_a = Bangle._PWR) === null || _a === void 0 ? void 0 : _a.HRM;
-                if (!hrm || hrm.indexOf(id) === -1) {
-                    Bangle.setHRMPower(1, id);
-                }
-                else {
-                    Bangle.setHRMPower(0, id);
-                    on = false;
-                }
-                break;
-            }
-            default:
-                console.log("widhid: couldn't handle \"".concat(ctrl.text, "\" tap"));
-                on = ctrl.fg !== colour.on.fg;
-        }
-        var col = on ? colour.on : colour.off;
+        Bangle.buzz(20);
+        var col = ctrl.cb(true) ? colour.on : colour.off;
         ctrl.fg = col.fg;
         ctrl.bg = col.bg;
         ui.ctrls.draw(ui.overlay.g2, ctrl);
     };
     Bangle.prependListener("drag", onDrag);
     Bangle.on("lock", function () {
+        state = 0;
         ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
         ui = undefined;
     });
-    WIDGETS["hid"] = {
-        area: "tr",
-        sortorder: -20,
-        draw: function () { },
-        width: 0,
-    };
 })();
