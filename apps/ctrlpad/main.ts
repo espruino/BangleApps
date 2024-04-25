@@ -68,12 +68,14 @@
 		}
 	}
 
+	type ControlCallback = (tap: boolean) => boolean | number;
 	type Control = {
 		x: number,
 		y: number,
 		fg: ColorResolvable,
 		bg: ColorResolvable,
 		text: string,
+		cb: ControlCallback,
 	};
 
 	const colour = {
@@ -87,10 +89,13 @@
 		},
 	} as const;
 
-	class Controls {
-		controls: [Control, Control, Control, Control, Control];
+	type FiveOf<X> = [X, X, X, X, X];
+	type ControlTemplate = { text: string, cb: ControlCallback };
 
-		constructor(g: Graphics) {
+	class Controls {
+		controls: FiveOf<Control>;
+
+		constructor(g: Graphics, controls: FiveOf<ControlTemplate>) {
 			// const connected = NRF.getSecurityStatus().connected;
 			// if (0&&connected) {
 			// 	// TODO
@@ -109,12 +114,19 @@
 			const width = g.getWidth();
 
 			this.controls = [
-				{ x: width / 4 - 10,   y: centreY - circleGapY, text: "BLE", fg: colour.on.fg, bg: colour.on.bg }, // FIXME: init
-				{ x: width / 2,        y: centreY - circleGapY, text: "DnD", fg: colour.off.fg, bg: colour.off.bg },
-				{ x: width * 3/4 + 10, y: centreY - circleGapY, text: "HRM", fg: colour.off.fg, bg: colour.off.bg }, // FIXME: init
-				{ x: width / 3,        y: centreY + circleGapY, text: "B-",  fg: colour.on.fg, bg: colour.on.bg },
-				{ x: width * 2/3,      y: centreY + circleGapY, text: "B+",  fg: colour.on.fg, bg: colour.on.bg },
-			];
+				{ x: width / 4 - 10,   y: centreY - circleGapY },
+				{ x: width / 2,        y: centreY - circleGapY },
+				{ x: width * 3/4 + 10, y: centreY - circleGapY },
+				{ x: width / 3,        y: centreY + circleGapY },
+				{ x: width * 2/3,      y: centreY + circleGapY },
+			].map((xy, i) => {
+				const ctrl = xy as Control;
+				const from = controls[i]!;
+				ctrl.text = from.text;
+				ctrl.cb = from.cb;
+				Object.assign(ctrl, from.cb(false) ? colour.on : colour.off);
+				return ctrl;
+			}) as FiveOf<Control>;
 		}
 
 		draw(g: Graphics, single?: Control): void {
@@ -165,6 +177,64 @@
 
 	const initUI = () => {
 		if (ui) return;
+
+		function noop(this: Control, tap: boolean) {
+			return (this.bg === colour.on.bg) !== tap; // on ^ tap
+		}
+
+		const controls: FiveOf<ControlTemplate> = [
+			{
+				text: "BLE",
+				cb: tap => {
+					const on = NRF.getSecurityStatus().advertising;
+					if(tap){
+						if(on) NRF.sleep();
+						else NRF.wake();
+					}
+					return on !== tap; // on ^ tap
+				}
+			},
+			{
+				text: "DnD",
+				cb: tap => {
+					let on;
+					if(on = !!origBuzz){
+						if(tap){
+							Bangle.buzz = origBuzz;
+							origBuzz = undefined;
+						}
+					}else{
+						if(tap){
+							origBuzz = Bangle.buzz;
+							Bangle.buzz = () => (Promise as any).resolve(); // FIXME
+							setTimeout(() => {
+								if(!origBuzz) return;
+								Bangle.buzz = origBuzz;
+								origBuzz = undefined;
+							}, 1000 * 60 * 10);
+						}
+					}
+					return on !== tap; // on ^ tap
+				}
+			},
+			{
+				text: "HRM",
+				cb: tap => {
+					const id = "widhid";
+					const hrm = (Bangle as any)._PWR?.HRM as undefined | Array<string> ;
+					const off = !hrm || hrm.indexOf(id) === -1;
+					if(off){
+						if(tap)
+							Bangle.setHRMPower(1, id);
+					}else if(tap){
+						Bangle.setHRMPower(0, id);
+					}
+					return !off !== tap; // on ^ tap
+				}
+			},
+			{ text: "B-",  cb: noop },
+			{ text: "B+",  cb: noop },
+		];
 
 		const overlay = new Overlay();
 		ui = {
@@ -283,52 +353,7 @@
 	const onCtrlTap = (ctrl: Control, ui: UI) => {
 		Bangle.buzz(20);
 
-		let on = true;
-
-		switch(ctrl.text){
-			case "BLE":
-				if(NRF.getSecurityStatus().advertising){
-					NRF.sleep();
-					on = false;
-				}else{
-					NRF.wake();
-				}
-				break;
-
-			case "DnD":
-				if(origBuzz){
-					Bangle.buzz = origBuzz;
-					origBuzz = undefined;
-					on = false;
-				}else{
-					origBuzz = Bangle.buzz;
-					Bangle.buzz = () => (Promise as any).resolve(); // FIXME
-					setTimeout(() => {
-						if(!origBuzz) return;
-						Bangle.buzz = origBuzz;
-						origBuzz = undefined;
-					}, 1000 * 60 * 10);
-				}
-				break;
-
-			case "HRM": {
-				const id = "widhid";
-				const hrm: undefined | Array<string> = (Bangle as any)._PWR?.HRM;
-				if(!hrm || hrm.indexOf(id) === -1){
-					Bangle.setHRMPower(1, id);
-				}else{
-					Bangle.setHRMPower(0, id);
-					on = false;
-				}
-				break;
-			}
-
-			default:
-				console.log(`widhid: couldn't handle "${ctrl.text}" tap`);
-				on = ctrl.fg !== colour.on.fg;
-		}
-
-		const col = on ? colour.on : colour.off;
+		const col = ctrl.cb(true) ? colour.on : colour.off;
 		ctrl.fg = col.fg;
 		ctrl.bg = col.bg;
 		//console.log("hit on " + ctrl.text + ", col: " + ctrl.fg);
