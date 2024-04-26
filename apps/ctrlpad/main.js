@@ -109,9 +109,6 @@
     var initUI = function () {
         if (ui)
             return;
-        function noop(tap) {
-            return (this.bg === colour.on.bg) !== tap;
-        }
         var controls = [
             {
                 text: "BLE",
@@ -168,8 +165,22 @@
                     return !off !== tap;
                 }
             },
-            { text: "B-", cb: noop },
-            { text: "B+", cb: noop },
+            {
+                text: "clk",
+                cb: function (tap) {
+                    if (tap)
+                        Bangle.showClock(), terminateUI();
+                    return true;
+                },
+            },
+            {
+                text: "lch",
+                cb: function (tap) {
+                    if (tap)
+                        Bangle.showLauncher(), terminateUI();
+                    return true;
+                },
+            },
         ];
         var overlay = new Overlay();
         ui = {
@@ -177,6 +188,11 @@
             ctrls: new Controls(overlay.g2, controls),
         };
         ui.ctrls.draw(ui.overlay.g2);
+    };
+    var terminateUI = function () {
+        state = 0;
+        ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
+        ui = undefined;
     };
     var onDrag = (function (e) {
         var _a, _b;
@@ -210,9 +226,7 @@
                         ui.overlay.setBottom(g.getHeight());
                     }
                     else {
-                        state = 0;
-                        ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
-                        ui = undefined;
+                        terminateUI();
                         break;
                     }
                 }
@@ -244,8 +258,7 @@
                             if (!ui || bottom_1 <= 0) {
                                 clearInterval(upDragAnim);
                                 upDragAnim = undefined;
-                                ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
-                                ui = undefined;
+                                terminateUI();
                                 return;
                             }
                             ui.overlay.setBottom(bottom_1);
@@ -284,9 +297,5 @@
         ui.ctrls.draw(ui.overlay.g2, ctrl);
     };
     Bangle.prependListener("drag", onDrag);
-    Bangle.on("lock", function () {
-        state = 0;
-        ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
-        ui = undefined;
-    });
+    Bangle.on("lock", terminateUI);
 })();
