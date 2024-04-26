@@ -12539,6 +12539,14 @@ declare const global: {
 }
 
 /**
+ * A reference to the global scope, where everything is defined.
+ * This is identical to `global` but was introduced in the ECMAScript spec.
+ * @returns {any} The global scope
+ * @url http://www.espruino.com/Reference#l__global_globalThis
+ */
+// globalThis - builtin
+
+/**
  * A variable containing the arguments given to the function:
  * ```
  * function hello() {
