@@ -178,10 +178,6 @@
 	const initUI = () => {
 		if (ui) return;
 
-		function noop(this: Control, tap: boolean) {
-			return (this.bg === colour.on.bg) !== tap; // on ^ tap
-		}
-
 		const controls: FiveOf<ControlTemplate> = [
 			{
 				text: "BLE",
@@ -232,8 +228,20 @@
 					return !off !== tap; // on ^ tap
 				}
 			},
-			{ text: "B-",  cb: noop },
-			{ text: "B+",  cb: noop },
+			{
+				text: "clk",
+				cb: tap => {
+					if (tap) Bangle.showClock(), terminateUI();
+					return true;
+				},
+			},
+			{
+				text: "lch",
+				cb: tap => {
+					if (tap) Bangle.showLauncher(), terminateUI();
+					return true;
+				},
+			},
 		];
 
 		const overlay = new Overlay();
