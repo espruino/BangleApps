@@ -244,6 +244,12 @@
 		ui.ctrls.draw(ui.overlay.g2);
 	};
 
+	const terminateUI = () => {
+		state = State.Idle;
+		ui?.overlay.hide();
+		ui = undefined;
+	};
+
 	const onDrag = (e => {
 		const dragDistance = 30;
 
@@ -281,9 +287,7 @@
 						ui!.overlay.setBottom(g.getHeight());
 					}else{
 						//console.log("returning to idle");
-						state = State.Idle;
-						ui?.overlay.hide();
-						ui = undefined;
+						terminateUI();
 						break;
 					}
 				}else{
@@ -317,8 +321,7 @@
 							if (!ui || bottom <= 0) {
 								clearInterval(upDragAnim!);
 								upDragAnim = undefined;
-								ui?.overlay.hide();
-								ui = undefined;
+								terminateUI();
 								return;
 							}
 							ui.overlay.setBottom(bottom);
@@ -362,11 +365,7 @@
 	};
 
 	Bangle.prependListener("drag", onDrag);
-	Bangle.on("lock", () => {
-		state = State.Idle;
-		ui?.overlay.hide();
-		ui = undefined;
-	});
+	Bangle.on("lock", terminateUI);
 
 
 	/*
