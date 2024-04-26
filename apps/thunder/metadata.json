@@ -1,7 +1,7 @@
 { "id": "thunder",
   "name": "Come on Thunder",
   "shortName":"Thunder",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Simple timer to calculate how far away lightning is",
   "icon": "app.png",
   "tags": "tool,weather",
