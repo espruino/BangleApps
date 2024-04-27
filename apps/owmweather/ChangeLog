@@ -3,3 +3,4 @@
 0.03: Fix updating weather too often
 0.04: Minor code improvements
 0.05: Upgrade OWM to One Call API 3.0. Add pressure to weather.json
+0.06: Fix One Call API 3.0 does not return city name but it is required by weather app

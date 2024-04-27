@@ -12,7 +12,7 @@ function parseWeather(response) {
     weather.code = owmData.current.weather[0].id;
     weather.wdir = owmData.current.wind_deg;
     weather.wind = owmData.current.wind_speed;
-    // weather.loc = owmData.name;
+    weather.loc = owmData.name ? owmData.name : "";
     weather.txt = owmData.current.weather[0].main;
     weather.hpa = owmData.current.pressure ? owmData.current.pressure : 0;
 
