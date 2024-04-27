@@ -258,6 +258,19 @@
 		ui = undefined;
 	};
 
+	const onSwipe = () => {
+		switch (state) {
+			case State.Idle:
+			case State.IgnoreCurrent:
+				return;
+
+			case State.TopDrag:
+			case State.Active:
+				E.stopEventPropagation?.();
+		}
+	};
+	Bangle.prependListener('swipe', onSwipe);
+
 	const onDrag = (e => {
 		const dragDistance = 30;
 
