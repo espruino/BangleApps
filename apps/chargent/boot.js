@@ -24,7 +24,7 @@
               lim = sum / cnt;
               require('Storage').writeJSON('chargent.json', {limit: lim});
             }
-            const onHide = () => { id = clearInterval(id) };
+            const onHide = () => { if(id) id = clearInterval(id) };
             require('notify').show({id: 'chargent', title: 'Fully charged', onHide });
             // TODO ? customizable
             Bangle.buzz(500);
