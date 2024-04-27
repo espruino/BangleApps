@@ -274,6 +274,7 @@
 					if(e.y <= 40){
 						state = State.TopDrag
 						startY = e.y;
+						E.stopEventPropagation?.();
 						//console.log("  topdrag detected, starting @ " + startY);
 					}else{
 						//console.log("  ignoring this drag (too low @ " + e.y + ")");
@@ -296,7 +297,7 @@
 					}else{
 						//console.log("returning to idle");
 						terminateUI();
-						break;
+						break; // skip stopEventPropagation
 					}
 				}else{
 					// partial drag, show UI feedback:
