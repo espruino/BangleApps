@@ -1,7 +1,10 @@
 function parseWeather(response) {
   let owmData = JSON.parse(response);
 
-  let isOwmData = (owmData.lat && owmData.lon) && owmData.current.weather && owmData.current;
+  let isOwmData = false;
+  try {
+    isOwmData = (owmData.lat && owmData.lon) && owmData.current.weather && owmData.current;
+  } catch (_e) {}
 
   if (isOwmData) {
     let json = require("Storage").readJSON('weather.json') || {};
@@ -12,9 +15,9 @@ function parseWeather(response) {
     weather.code = owmData.current.weather[0].id;
     weather.wdir = owmData.current.wind_deg;
     weather.wind = owmData.current.wind_speed;
-    weather.loc = owmData.name ? owmData.name : "";
+    weather.loc = owmData.name || "";
     weather.txt = owmData.current.weather[0].main;
-    weather.hpa = owmData.current.pressure ? owmData.current.pressure : 0;
+    weather.hpa = owmData.current.pressure || 0;
 
     if (weather.wdir != null) {
       let deg = weather.wdir;
