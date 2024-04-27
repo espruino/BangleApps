@@ -10335,7 +10335,7 @@ interface PromiseConstructor {
    * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_resolve
    */
-  resolve<T extends any>(promises: T): Promise<T>;
+  resolve<T extends any>(promises?: T): Promise<T>;
 
   /**
    * Return a new promise that is already rejected (at idle it'll call `.catch`)
