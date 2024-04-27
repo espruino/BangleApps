@@ -194,8 +194,20 @@
         ui === null || ui === void 0 ? void 0 : ui.overlay.hide();
         ui = undefined;
     };
+    var onSwipe = function () {
+        var _a;
+        switch (state) {
+            case 0:
+            case 2:
+                return;
+            case 1:
+            case 3:
+                (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
+        }
+    };
+    Bangle.prependListener('swipe', onSwipe);
     var onDrag = (function (e) {
-        var _a, _b;
+        var _a, _b, _c;
         var dragDistance = 30;
         if (e.b === 0)
             touchDown = startedUpDrag = false;
@@ -209,6 +221,7 @@
                     if (e.y <= 40) {
                         state = 1;
                         startY = e.y;
+                        (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
                     }
                     else {
                         state = 2;
@@ -235,10 +248,10 @@
                     initUI();
                     ui.overlay.setBottom(e.y - dragOffset);
                 }
-                (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
+                (_b = E.stopEventPropagation) === null || _b === void 0 ? void 0 : _b.call(E);
                 break;
             case 3:
-                (_b = E.stopEventPropagation) === null || _b === void 0 ? void 0 : _b.call(E);
+                (_c = E.stopEventPropagation) === null || _c === void 0 ? void 0 : _c.call(E);
                 if (e.b) {
                     if (!touchDown) {
                         startY = e.y;
