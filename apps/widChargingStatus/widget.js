@@ -23,6 +23,7 @@
                 widget.width = iconWidth;
             }
             else {
+                Promise.resolve().then(function () { return require("buzz").pattern("..;"); });
                 widget.width = 0;
             }
             Bangle.drawWidgets();
