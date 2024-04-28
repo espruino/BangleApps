@@ -31,6 +31,7 @@
         Bangle.buzz();
         widget.width = iconWidth;
       } else {
+        Promise.resolve().then(() => require("buzz").pattern("..;"));
         widget.width = 0;
       }
       Bangle.drawWidgets(); // re-layout widgets
