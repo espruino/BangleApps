@@ -1,0 +1,16 @@
+{
+  "id": "ctrlpad",
+  "name": "Control Panel",
+  "shortName": "ctrlpad",
+  "version": "0.01",
+  "description": "Fast access (via a downward swipe) to common functions, such as bluetooth/HRM power and Do Not Disturb",
+  "icon": "icon.png",
+  "readme": "README.md",
+  "type": "bootloader",
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"ctrlpad.boot.js","url":"main.js"},
+    {"name":"ctrlpad.img","url":"icon.js","evaluate":true}
+  ]
+}
