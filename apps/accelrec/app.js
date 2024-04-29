@@ -1,8 +1,8 @@
 //var acc;
 var HZ = 100;
 var SAMPLES = 5*HZ; // 5 seconds
-var SCALE = 5000;
-var THRESH = 1.04;
+var SCALE = 2000;
+var THRESH = 1.4;
 var accelx = new Int16Array(SAMPLES);
 var accely = new Int16Array(SAMPLES); // North
 var accelz = new Int16Array(SAMPLES); // Into clock face
@@ -24,7 +24,7 @@ function accelHandlerTrigger(a) {"ram"
 }
 function accelHandlerRecord(a) {"ram"
   var i = accelIdx++;
-  accelx[i] = a.x*SCALE*2;
+  accelx[i] = a.x*SCALE*2; // *2 because of 8g mode
   accely[i] = -a.y*SCALE*2;
   accelz[i] = a.z*SCALE*2;
   timestep[i] = (getTime() - tStart)*1000;
@@ -36,10 +36,8 @@ function recordStart() {"ram"
   lastAccel = [];
   Bangle.accelWr(0x18,0b01110100); // off, +-8g
   Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
-  //Bangle.accelWr(0x1B,0x05 | 0x40); // 400hz output, ODR/2 filter
   Bangle.accelWr(0x18,0b11110100); // +-8g
   Bangle.setPollInterval(10); // 100hz input
-  //Bangle.setPollInterval(2.5); // 100hz input
   setTimeout(function() {
     Bangle.on('accel',accelHandlerTrigger);
     g.clear(1).setFont("6x8",2).setFontAlign(0,0);
