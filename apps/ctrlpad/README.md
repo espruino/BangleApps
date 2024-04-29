@@ -21,3 +21,4 @@ The control pad disables drag and touch event handlers while active, preventing 
 # Todo
 
 - Handle rotated screen (`g.setRotation(...)`)
+- Handle notifications (sharing of `setLCDOverlay`)
