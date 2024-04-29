@@ -73,11 +73,6 @@ exports.character_fallback_map = {
   " ": " ",
   " ": " ",
   "’": "'",
-
-  // currencies
-  "₹": "Rs.",
-  "₪": "ILS",
-  "₺": "TL",
 };
 
 // charFallbacks is now in core/js/utils.js as CODEPAGE_CONVERSIONS
@@ -201,8 +196,6 @@ exports.locales = {
     fallbackLang: "en_GB", // en_JP is not supported by the generator, so we give it somewhere else to grab the english names from
     calendar: "gregory",
     numberingSystem: "latn",
-    currency_symbol: "¥",
-    currency_first: false,
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     datePattern: { 0: "%Y/%m/%d", 1: "%Y/%m/%d" },
@@ -226,7 +219,7 @@ exports.locales = {
     },
   },
   en_NL: {
-    // English date units with Dutch number, currency and navigation units.
+    // English date units with Dutch number and navigation units.
     calendar: "gregory",
     numberingSystem: "latn",
     datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)

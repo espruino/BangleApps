@@ -43,9 +43,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "£",
-    "currency_first": true,
-    "int_curr_symbol": "GBP",
     "speed": "mph",
     "distance": {
       "0": "yd",
@@ -77,9 +74,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "$",
-    "currency_first": true,
-    "int_curr_symbol": "USD",
     "speed": "mph",
     "distance": {
       "0": "ft",
@@ -111,9 +105,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "$",
-    "currency_first": true,
-    "int_curr_symbol": "USD",
     "speed": "mph",
     "distance": {
       "0": "ft",
@@ -144,9 +135,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "Rs.",
-    "currency_first": true,
-    "int_curr_symbol": "INR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -177,9 +165,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "€",
-    "currency_first": true,
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -210,9 +195,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "£",
-    "currency_first": true,
-    "int_curr_symbol": "GBP",
     "speed": "kts",
     "distance": {
       "0": "m",
@@ -243,8 +225,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -287,8 +267,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "¥",
-    "int_curr_symbol": "JPY",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -319,9 +297,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "currency_first": true,
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -364,9 +339,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "currency_first": true,
-    "int_curr_symbol": "EUR",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -397,9 +369,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "$",
-    "currency_first": true,
-    "int_curr_symbol": "CAD",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -430,8 +399,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -471,8 +438,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "kr",
-    "int_curr_symbol": "SEK",
     "speed": "km/tim",
     "distance": {
       "0": "m",
@@ -512,8 +477,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "kr",
-    "int_curr_symbol": "SEK",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -544,8 +507,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "kr.",
-    "int_curr_symbol": "DKK",
     "speed": "km/t",
     "distance": {
       "0": "m",
@@ -583,8 +544,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "kr.",
-    "int_curr_symbol": "DKK",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -615,9 +574,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "$",
-    "currency_first": true,
-    "int_curr_symbol": "NZD",
     "speed": "kph",
     "distance": {
       "0": "m",
@@ -648,9 +604,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "$",
-    "currency_first": true,
-    "int_curr_symbol": "AUD",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -681,9 +634,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "currency_first": true,
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -726,9 +676,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": ",",
-    "currency_symbol": "ILS",
-    "currency_first": true,
-    "int_curr_symbol": "ILS",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -759,8 +706,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -803,8 +748,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -844,8 +787,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -885,9 +826,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": "'",
-    "currency_symbol": "CHW",
-    "currency_first": true,
-    "int_curr_symbol": "CHW",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -927,8 +865,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "CHW",
-    "int_curr_symbol": "CHW",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -968,9 +904,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ".",
     "thousands_sep": "'",
-    "currency_symbol": "CHW",
-    "currency_first": true,
-    "int_curr_symbol": "CHW",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1010,8 +943,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1051,9 +982,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": "'",
-    "currency_symbol": "CHW",
-    "currency_first": true,
-    "int_curr_symbol": "CHW",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1093,9 +1021,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "TL",
-    "currency_first": true,
-    "int_curr_symbol": "TRY",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1135,8 +1060,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "Ft",
-    "int_curr_symbol": "HUF",
     "speed": "kph",
     "distance": {
       "0": "m",
@@ -1176,8 +1099,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -1217,9 +1138,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "R$",
-    "currency_first": true,
-    "int_curr_symbol": "BRL",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1259,8 +1177,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "Kc",
-    "int_curr_symbol": "CZK",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1300,8 +1216,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -1342,8 +1256,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -1384,8 +1296,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1425,8 +1335,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "zł",
-    "int_curr_symbol": "PLN",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1467,8 +1375,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1509,8 +1415,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "kr",
-    "int_curr_symbol": "NOK",
     "speed": "kmt",
     "distance": {
       "0": "m",
@@ -1553,8 +1457,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": " ",
-    "currency_symbol": "kr",
-    "int_curr_symbol": "NOK",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1597,8 +1499,6 @@ var locales = {
     "numberingSystem": "latn",
     "decimal_point": ",",
     "thousands_sep": ".",
-    "currency_symbol": "€",
-    "int_curr_symbol": "EUR",
     "speed": "kmh",
     "distance": {
       "0": "m",

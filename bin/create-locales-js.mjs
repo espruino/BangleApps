@@ -53,9 +53,6 @@ const localeKeys = [
   "numberingSystem",
   "decimal_point",
   "thousands_sep",
-  "currency_symbol",
-  "currency_first",
-  "int_curr_symbol",
   "speed",
   "distance",
   "temperature",
@@ -303,50 +300,6 @@ function generateLocale(localeName, locales) {
         `Could not determine the decimal and thousands separators for locale ${localeName}, please provide them manually`,
       );
     }
-  }
-  const currencyId =
-    locale.int_curr_symbol ||
-    clm.getCurrencyByAlpha2(countryId) ||
-    fallbackLocale?.int_curr_symbol;
-  if (!locale.currency_symbol) {
-    if (checkCLDR(localeId)) {
-      const currencyInfo = cldr.extractCurrencyInfoById(localeId)?.[currencyId];
-      locale.currency_symbol = currencyInfo?.symbol;
-    }
-    locale.currency_symbol ||= fallbackLocale?.currency_symbol || currencyId;
-    if (!locale.currency_symbol) {
-      throw new TypeError(
-        `Could not determine the currency symbol for locale ${localeName}, please provide it manually`,
-      );
-    }
-  }
-  if (!("currency_first" in locale) || locale.currency_first === undefined) {
-    if (checkCLDR(localeId)) {
-      const currencyFormat = cldr
-        .extractNumberFormats(localeId, numberingSystem)
-        ?.currency?.default?.split(";")?.[0];
-      if (currencyFormat?.includes("¤")) {
-        locale.currency_first = !Boolean(
-          Math.round(currencyFormat.indexOf("¤") / currencyFormat.length),
-        );
-      }
-    }
-    if (!("currency_first" in locale) || locale.currency_first === undefined) {
-      locale.currency_first = fallbackLocale?.currency_first;
-    }
-    if (!("currency_first" in locale) || locale.currency_first === undefined) {
-      throw new TypeError(
-        `Could not determine the position of the currency symbol for locale ${localeName}, please set this manually`,
-      );
-    }
-  }
-  if (!locale.int_curr_symbol) {
-    if (!currencyId) {
-      throw new TypeError(
-        `Could not determine currency id for locale ${localeName}, please provide it manually`,
-      );
-    }
-    locale.int_curr_symbol ||= currencyId;
   }
   locale.speed ||= fallbackLocale?.speed || "km/h"; // true 99% of the time, some locales prefer a translated name but often still accept the english version
   locale.distance ||= {};
