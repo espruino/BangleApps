@@ -120,11 +120,11 @@ exports.character_fallback_map = {
  * node bin/create-locales-js.mjs LOCALECODE
  *
  * LOCALECODE is the locale that you want to see the output for, e.g. "en_US".
- * 
+ *
  * In locales:
  * abmonth: short months (must be <5 chars, ideally 3)
  * month: normal month names
- * abday: short days (must be <5 chars, ideally 3)  
+ * abday: short days (must be <5 chars, ideally 3)
  * day: normal day names
  */
 exports.locales = {
@@ -135,6 +135,7 @@ exports.locales = {
     speed: "mph",
     distance: { 0: "yd", 1: "mi" },
     datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_US: {
     notes: "USA with MM/DD/YY date",
@@ -160,11 +161,13 @@ exports.locales = {
     numberingSystem: "latn",
     speed: "kmh",
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_IE: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_NAV: {
     // navigation units nautical miles and knots
@@ -208,6 +211,7 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "AM", 1: "PM" },
     trans: {
       yes: "ja",
       Yes: "Ja",
@@ -226,15 +230,19 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_CA: {
     calendar: "gregory",
     numberingSystem: "latn",
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
   },
   fr_FR: {
     calendar: "gregory",
     numberingSystem: "latn",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
+    abday: "dim,lun,mar,mer,jeu,ven,sam",
     trans: {
       yes: "oui",
       Yes: "Oui",
@@ -250,6 +258,7 @@ exports.locales = {
     numberingSystem: "latn",
     speed: "km/tim",
     datePattern: { 0: "%b %d %Y", 1: "%Y-%m-%d" }, // feb 1 2020 //  2020-03-01
+    abmonth: "jan,feb,mars,apr,maj,juni,juli,aug,sep,okt,nov,dec",
     trans: {
       yes: "ja",
       Yes: "Ja",
@@ -265,29 +274,35 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     datePattern: { 0: "%B %d %Y", 1: "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   da_DK: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "km/t",
+    abmonth: "jan,feb,mar,apr,maj,jun,jul,aug,sep,okt,nov,dec",
+    abday: "søn,man,tir,ons,tor,fre,lør",
     trans: { yes: "ja", Yes: "Ja", no: "nej", No: "Nej", ok: "ok" },
   },
   en_DK: {
     // Danish units with english language
     calendar: "gregory",
     numberingSystem: "latn",
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_NZ: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kph",
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_AU: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   de_AT: {
     calendar: "gregory",
@@ -310,11 +325,13 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   es_ES: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "AM", 1: "PM" },
     trans: {
       yes: "sí",
       Yes: "Sí",
@@ -332,6 +349,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
+    abday: "dim,lun,mar,mer,jeu,ven,sam",
     trans: {
       yes: "oui",
       Yes: "Oui",
@@ -346,6 +365,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "ap", 1: "ip" },
+    abmonth: "tamm,helm,maal,huht,touk,kesä,hein,elo,syys,loka,marr,joul",
     trans: {
       yes: "oui",
       Yes: "Oui",
@@ -360,7 +381,7 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
-    ampm: { 0: "vorm", 1: "nachm" },
+    ampm: { 0: "VM", 1: "NM" },
     trans: {
       yes: "ja",
       Yes: "Ja",
@@ -375,6 +396,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
+    abday: "dim,lun,mar,mer,jeu,ven,sam",
     trans: {
       yes: "oui",
       Yes: "Oui",
@@ -445,6 +468,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kph",
+    ampm: { 0: "de", 1: "du" },
+    abmonth: "jan,feb,már,ápr,máj,jún,júl,aug,szep,okt,nov,dec",
     trans: {
       yes: "igen",
       Yes: "Igen",
@@ -458,6 +483,8 @@ exports.locales = {
   oc_FR: {
     calendar: "gregory",
     numberingSystem: "latn",
+    abmonth: "gen,feb,març,abr,mai,junh,jul,ago,set,oct,nov,dec",
+    abday: "dg,dl,dm,dc,dj,dv,ds",
     trans: {
       yes: "òc",
       Yes: "Òc",
@@ -472,6 +499,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abmonth: "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez",
+    abday: "dom,seg,ter,qua,qui,sex,sáb",
     trans: {
       yes: "sim",
       Yes: "Sim",
@@ -486,6 +515,7 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "dop", 1: "odp" },
     trans: {
       yes: "ano",
       Yes: "Ano",
@@ -499,7 +529,7 @@ exports.locales = {
   hr_HR: {
     calendar: "gregory",
     numberingSystem: "latn",
-    ampm: { 0: "dop.", 1: "pop." },
+    ampm: { 0: "dop", 1: "pop" },
     trans: {
       yes: "da",
       Yes: "Da",
@@ -514,6 +544,9 @@ exports.locales = {
   sl_SI: {
     calendar: "gregory",
     numberingSystem: "latn",
+    ampm: { 0: "dop", 1: "pop" },
+    abmonth: "jan,feb,mar,apr,maj,jun,jul,avg,sep,okt,nov,dec",
+    abday: "ned,pon,tor,sre,čet,pet,sob",
     trans: {
       yes: "da",
       Yes: "Da",
@@ -529,6 +562,9 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "am", 1: "pm" },
+    abmonth: "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez",
+    abday: "dom,seg,ter,qua,qui,sex,sáb",
     trans: {
       yes: "sim",
       Yes: "Sim",
@@ -543,6 +579,7 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    abday: "ndz,pon,wt,śr,czw,pt,sob",
     trans: {
       yes: "tak",
       Yes: "Tak",
@@ -558,6 +595,9 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "pri", 1: "pēc" },
+    abmonth: "jan,feb,mar,apr,mai,jūn,jūl,aug,sep,okt,nov,dec",
+    abday: "sv,pr,ot,tr,ce,pk,se",
     trans: {
       yes: "jā",
       Yes: "Jā",
@@ -573,6 +613,7 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmt",
+    ampm: { 0: "FM", 1: "EM" },
     trans: {
       yes: "ja",
       Yes: "Ja",
@@ -590,6 +631,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "AM", 1: "PM" },
+    abday: "søn,man,tir,ons,tor,fre,lør",
     trans: {
       yes: "ja",
       Yes: "Ja",
@@ -608,6 +651,8 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    ampm: { 0: "AM", 1: "PM" },
+    abmonth: "gen,febr,març,abr,maig,juny,jul,ag,set,oct,nov,des",
     trans: {
       yes: "sí",
       Yes: "Sí",
