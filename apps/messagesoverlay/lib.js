@@ -467,6 +467,16 @@ const backupOn = function(event, handler){
   else origOn.call(Bangle, event, handler);
 };
 
+const origPrependListener = Bangle.prependListener;
+const backupPrependListener = function(event, handler){
+  if (EVENTS.includes(event)){
+    if (!backup[event])
+      backup[event] = [];
+    backup[event].unshift(handler);
+  }
+  else origPrependListener.call(Bangle, event, handler);
+};
+
 const origClearWatch = clearWatch;
 const backupClearWatch = function(w) {
   if (w)
@@ -541,6 +551,7 @@ const restoreHandlers = function(){
   global.setWatch = origSetWatch;
   global.clearWatch = origClearWatch;
   Bangle.on = origOn;
+  Bangle.prependListener = origPrependListener;
   Bangle.removeListener = origRemove;
   Bangle.removeAllListeners = origRemoveAll;
 
@@ -588,6 +599,7 @@ const backupHandlers = function(){
   global.setWatch = backupSetWatch;
   global.clearWatch = backupClearWatch;
   Bangle.on = backupOn;
+  Bangle.prependListener = backupPrependListener;
   Bangle.removeListener = backupRemove;
   Bangle.removeAllListeners = backupRemoveAll;
 
