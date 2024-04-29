@@ -24,7 +24,6 @@ import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";
 import cldr from "cldr";
-import clm from "country-locale-map";
 import meta from "../apps/locale/locales-meta.js";
 
 /**
@@ -254,13 +253,16 @@ function generateLocale(localeName, locales) {
   );
   const localeId = localeMatch?.groups?.localeId;
   const countryIdA2 = localeMatch?.groups?.countryIdA2;
+
+  // If ever needed, you can convert A3 locale id's to A2 here.
   const countryIdA3 = localeMatch?.groups?.countryIdA3;
-  if (!localeId || (!countryIdA2 && !countryIdA3)) {
+
+  if ((!localeId || !countryIdA2) && !locale.fallbackLang) {
     throw new TypeError(
       `The locale ${localeName} must start with a valid locale id, such as "en_US" or "da_DK"`,
     );
   }
-  const countryId = countryIdA2 || clm.getAlpha2ByAlpha3(countryIdA3);
+  const countryId = countryIdA2;
 
   if (locale.lang && locale.lang !== localeName) {
     throw new TypeError(
