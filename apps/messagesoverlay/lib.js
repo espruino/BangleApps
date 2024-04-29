@@ -579,11 +579,12 @@ const backupHandlers = function(){
     LOG("Transform watch", w);
     if (w) {
       w = [
-        w.callback,
+        w.callback ? w.callback : w.cb, // Handle change in name of callback variable to cb in 2v21.104
         w.pin,
         w
       ];
       delete w[2].callback;
+      delete w[2].cb;
       delete w[2].pin;
       w[2].debounce = Math.round(w[2].debounce / 1048.576);
     } else {
