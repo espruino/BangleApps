@@ -120,6 +120,12 @@ exports.character_fallback_map = {
  * node bin/create-locales-js.mjs LOCALECODE
  *
  * LOCALECODE is the locale that you want to see the output for, e.g. "en_US".
+ * 
+ * In locales:
+ * abmonth: short months (must be <5 chars, ideally 3)
+ * month: normal month names
+ * abday: short days (must be <5 chars, ideally 3)  
+ * day: normal day names
  */
 exports.locales = {
   en_GB: {
