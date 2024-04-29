@@ -1,10 +1,13 @@
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+type UnionToIntersection<U> =
+  (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+
 type ExtractIds<T extends Layout.Hierarchy, Depth extends Prev[number] = 9> =
   [Depth] extends [never]
   ? never
-  : (T extends { id: infer Id extends string }
-    ? { [k in Id]: T }
+  : (T extends { id?: infer Id extends string }
+    ? { [k in Id]: { -readonly [P in keyof T]: T[P] extends string ? string : T[P] }  }
     : never)
   |
   (
@@ -15,7 +18,7 @@ type ExtractIds<T extends Layout.Hierarchy, Depth extends Prev[number] = 9> =
 
 declare module Layout {
   type Layouter<T extends Hierarchy> =
-    ExtractIds<T>
+    UnionToIntersection<ExtractIds<T>>
     &
     {
       // these actually change T
@@ -31,6 +34,7 @@ declare module Layout {
       setUI(): void;
     };
 
+  // Note: you must use new Layout({...} as const) to have ids inferred
   var Layout: {
     new <T extends Hierarchy>(
       hier: T,

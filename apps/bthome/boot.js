@@ -13,7 +13,7 @@ Bangle.btHomeData = [];
   if (settings.buttons instanceof Array) {
     let n = settings.buttons.reduce((n,b)=>b.n>n?b.n:n,-1);
     for (var i=0;i<=n;i++)
-      Bangle.btHomeData.push({type:"button_event",v:"none",n:n});
+      Bangle.btHomeData.push({type:"button_event",v:"none",n:i});
   }
 }
 

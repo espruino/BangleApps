@@ -1,0 +1,21 @@
+{ "id": "clockbg",
+  "name": "Clock Backgrounds",
+  "shortName":"Backgrounds",
+  "version": "0.02",
+  "description": "Library that allows clocks to include a custom background, from a library or uploaded.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "module",
+  "readme": "README.md",
+  "provides_modules" : ["clockbg"],
+  "tags": "module,background",
+  "supports" : ["BANGLEJS2"],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"clockbg","url":"lib.js"},
+    {"name":"clockbg.settings.js","url":"settings.js"}
+  ], "data": [
+    {"wildcard":"clockbg.bg*.img"},
+    {"name":"clockbg.json"}
+  ]
+}

@@ -298,7 +298,7 @@ E.emit("ANCS", {
       NRF.ctsGetTime().then(ctsUpdate, function(){ /* */ })
     E.on('CTS',ctsUpdate);
   }
-  if (settings.no_utf8 || !require("Storage").read("fonts")) {
+  if (settings.no_utf8 || !require("Storage").read("font")) {
     // if UTF8 disabled or there is no fonts lib, convert UTF8 to ISO8859-1
     let unicodeRemap = {
       '2019':"'",

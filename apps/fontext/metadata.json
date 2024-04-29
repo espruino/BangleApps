@@ -6,6 +6,7 @@
   "tags": "font",
   "type": "module",
   "provides_modules" : ["font"],
+  "default" : true,
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

@@ -224,6 +224,13 @@ exports.addInteractive = function(menu, options) {
       options.menuB = b;
     }
   }
+  const save = () => {
+    // save the currently showing clock_info
+    const settings = exports.loadSettings();
+    settings.apps[appName] = {a:options.menuA, b:options.menuB};
+    require("Storage").writeJSON("clock_info.json",settings);
+  };
+  E.on("kill", save);
 
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
@@ -276,17 +283,13 @@ exports.addInteractive = function(menu, options) {
       oldMenuItem.removeAllListeners("draw");
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
-    // save the currently showing clock_info
-    let settings = exports.loadSettings();
-    settings.apps[appName] = {a:options.menuA,b:options.menuB};
-    require("Storage").writeJSON("clock_info.json",settings);
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
     E.stopEventPropagation&&E.stopEventPropagation();
   }
-  Bangle.on("swipe",swipeHandler);
+  if (Bangle.prependListener) {Bangle.prependListener("swipe",swipeHandler);} else {Bangle.on("swipe",swipeHandler);}
   const blur = () => {
     options.focus=false;
-    delete Bangle.CLKINFO_FOCUS;
+    Bangle.CLKINFO_FOCUS--;
     const itm = menu[options.menuA].items[options.menuB];
     let redraw = true;
     if (itm.blur && itm.blur(options) === false)
@@ -295,7 +298,7 @@ exports.addInteractive = function(menu, options) {
   };
   const focus = () => {
     let redraw = true;
-    Bangle.CLKINFO_FOCUS=true;
+    Bangle.CLKINFO_FOCUS = (0 | Bangle.CLKINFO_FOCUS) + 1;
     if (!options.focus) {
       options.focus=true;
       const itm = menu[options.menuA].items[options.menuB];
@@ -333,10 +336,12 @@ exports.addInteractive = function(menu, options) {
   menuShowItem(menu[options.menuA].items[options.menuB]);
   // return an object with info that can be used to remove the info
   options.remove = function() {
+    save();
+    E.removeListener("kill", save);
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
-    delete Bangle.CLKINFO_FOCUS;
+    Bangle.CLKINFO_FOCUS--;
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];

@@ -3,3 +3,4 @@
 0.03: Permit exceptions to load in low-power mode, e.g. daylight saving time.
       Also avoid polluting global scope.
 0.04: Enhance menu: enable bluetooth, visit settings & visit recovery
+0.05: Enhance menu: permit toggling bluetooth

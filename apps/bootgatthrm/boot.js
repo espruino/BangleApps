@@ -30,6 +30,9 @@
     });
 
   }
+
+  const keepConnected = (require("Storage").readJSON("gatthrm.settings.json", 1) || {}).keepConnected;
+
   function updateBLEHeartRate(hrm) {
     /*
      * Send updated heart rate measurement via BLE
@@ -50,13 +53,14 @@
     } catch (error) {
       if (error.message.includes("BLE restart")) {
         /*
-         * BLE has to restart after service setup.  
+         * BLE has to restart after service setup.
          */
-        NRF.disconnect();
+        if(!keepConnected)
+          NRF.disconnect();
       }
       else if (error.message.includes("UUID 0x2a37")) {
         /*
-         * Setup service if it wasn't setup correctly for some reason 
+         * Setup service if it wasn't setup correctly for some reason
          */
         setupHRMAdvertising();
       } else {
@@ -66,5 +70,5 @@
   }
 
   setupHRMAdvertising();
-  Bangle.on("HRM", function (hrm) { updateBLEHeartRate(hrm); });
+  Bangle.on("HRM", updateBLEHeartRate);
 })();

@@ -4,6 +4,7 @@
     fullscreen: false,
     hidesq: false,
     showdate: false,
+    showbat: false,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -31,6 +32,13 @@
       value: settings.showdate,
       onchange: v => {
         settings.showdate = v;
+        writeSettings();
+      },
+    },
+    'Show Battery': {
+      value: settings.showbat,
+      onchange: v => {
+        settings.showbat = v;
         writeSettings();
       },
     },

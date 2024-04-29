@@ -1,6 +1,6 @@
 { "id": "clkinfocal",
   "name": "Calendar Clockinfo",
-  "version":"0.02",
+  "version":"0.03",
   "description": "For clocks that display 'clockinfo' (messages that can be cycled through using the clock_info module) this displays the day of the month in the icon, and the weekday. There is also a settings menu to select the format of the text",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

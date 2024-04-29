@@ -1,7 +1,11 @@
 (function(back) {
-  var settings = require("Storage").readJSON("bthome.json",1)||{};
-  if (!(settings.buttons instanceof Array))
-    settings.buttons = [];
+  var settings;
+
+  function loadSettings() {
+    settings = require("Storage").readJSON("bthome.json",1)||{};
+    if (!(settings.buttons instanceof Array))
+      settings.buttons = [];
+  }
 
   function saveSettings() {
     require("Storage").writeJSON("bthome.json",settings)
@@ -15,7 +19,10 @@
     }
     var actions = ["press","double_press","triple_press","long_press","long_double_press","long_triple_press"];
     var menu = {
-      "":{title:isNew ? /*LANG*/"New Button" : /*LANG*/"Edit Button", back:showMenu},
+      "":{title:isNew ? /*LANG*/"New Button" : /*LANG*/"Edit Button", back: () => {
+        loadSettings(); // revert changes
+        showMenu();
+      }},
       /*LANG*/"Icon" : {
         value : "\0"+require("icons").getIcon(button.icon),
         onchange : () => {
@@ -49,7 +56,7 @@
         onchange : v => button.n=v
       },
       /*LANG*/"Save" : () => {
-        settings.buttons.push(button);
+        if (isNew) settings.buttons.push(button);
         saveSettings();
         showMenu();
       }
@@ -67,25 +74,34 @@
   }
 
   function showMenu() {
-    var menu = { "": {title:"BTHome", back:back},
-      /*LANG*/"Show Battery" : {
-        value : !!settings.showBattery,
-        onchange : v=>{
-          settings.showBattery = v;
-          saveSettings();
-        }
+    var menu = [];
+    menu[""] = {title:"BTHome", back:back};
+    menu.push({
+      title : /*LANG*/"Show Battery",
+      value : !!settings.showBattery,
+      onchange : v=>{
+        settings.showBattery = v;
+        saveSettings();
       }
-    };
+    });
     settings.buttons.forEach((button,idx) => {
       var img = require("icons").getIcon(button.icon);
-      menu[/*LANG*/"Button"+(img ? " \0"+img : (idx+1))] = function() {
-        showButtonMenu(button, false);
-      };
+      menu.push({
+        title : /*LANG*/"Button"+(img ? " \0"+img : (idx+1)),
+        onchange : function() {
+          showButtonMenu(button, false);
+        }
+      });
     });
-    menu[/*LANG*/"Add Button"] = function() {
-      showButtonMenu(undefined, true);
-    };
+    menu.push({
+      title : /*LANG*/"Add Button",
+      onchange : function() {
+        showButtonMenu(undefined, true);
+      }
+    });
     E.showMenu(menu);
   }
+
+  loadSettings();
   showMenu();
 })

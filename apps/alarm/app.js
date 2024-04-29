@@ -28,6 +28,8 @@ const iconTimerOff = "\0" + (g.theme.dark
 
 // An array of alarm objects (see sched/README.md)
 var alarms = require("sched").getAlarms();
+// Fix possible wrap around in existing alarms #3281, broken alarms still needs to be saved to get fixed
+alarms.forEach(e => e.t %= 86400000); // This can probably be removed in the future when we are sure there are no more broken alarms
 
 function handleFirstDayOfWeek(dow) {
   if (firstDayOfWeek == 1) {
@@ -497,7 +499,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
 
 function prepareTimerForSave(timer, timerIndex, time, temp) {
   timer.timer = require("time_utils").encodeTime(time);
-  timer.t = require("time_utils").getCurrentTimeMillis() + timer.timer;
+  timer.t = (require("time_utils").getCurrentTimeMillis() + timer.timer) % 86400000;
   timer.last = 0;
 
   if (!temp) {

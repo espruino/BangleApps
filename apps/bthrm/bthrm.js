@@ -57,7 +57,7 @@ var layout = new Layout( {
     { type:undefined, height:8 } //dummy to protect debug output
   ]
 }, {
-  lazy:true
+  lazy:false
 });
 
 var int,agg,bt;
@@ -106,8 +106,7 @@ function draw(){
     layout.btContact.label = "--";
     layout.btEnergy.label = "--";
   }
-
-  layout.update();
+  layout.clear();
   layout.render();
   let first = true;
   for (let c of layout.l.c){
@@ -122,26 +121,29 @@ function draw(){
 
 
 // This can get called for the boot code to show what's happening
-function showStatusInfo(txt) {
+global.showStatusInfo = function(txt) {
   var R = Bangle.appRect;
   g.reset().clearRect(R.x,R.y2-8,R.x2,R.y2).setFont("6x8");
   txt = g.wrapString(txt, R.w)[0];
   g.setFontAlign(0,1).drawString(txt, (R.x+R.x2)/2, R.y2);
-}
+};
 
 function onBtHrm(e) {
   bt = e;
   bt.time = Date.now();
+  draw();
 }
 
 function onInt(e) {
   int = e;
   int.time = Date.now();
+  draw();
 }
 
 function onAgg(e) {
   agg = e;
   agg.time = Date.now();
+  draw();
 }
 
 var settings = require('Storage').readJSON("bthrm.json", true) || {};
@@ -162,7 +164,6 @@ Bangle.drawWidgets();
 if (Bangle.setBTHRMPower){
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("Please wait...",g.getWidth()/2,g.getHeight()/2);
-  setInterval(draw, 1000);
 } else {
   g.reset().setFont("6x8",2).setFontAlign(0,0);
   g.drawString("BTHRM disabled",g.getWidth()/2,g.getHeight()/2);

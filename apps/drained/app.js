@@ -53,6 +53,21 @@ var draw = function () {
     }, 60000 - (date.getTime() % 60000));
 };
 var reload = function () {
+    var showMenu = function () {
+        var menu = {
+            "Restore to full power": drainedRestore,
+        };
+        if (NRF.getSecurityStatus().advertising)
+            menu["Disable BLE"] = function () { NRF.sleep(); showMenu(); };
+        else
+            menu["Enable BLE"] = function () { NRF.wake(); showMenu(); };
+        menu["Settings"] = function () { return load("setting.app.js"); };
+        menu["Recovery"] = function () { return Bangle.showRecoveryMenu(); };
+        menu["Exit menu"] = reload;
+        if (nextDraw)
+            clearTimeout(nextDraw);
+        E.showMenu(menu);
+    };
     Bangle.setUI({
         mode: "custom",
         remove: function () {
@@ -60,15 +75,7 @@ var reload = function () {
                 clearTimeout(nextDraw);
             nextDraw = undefined;
         },
-        btn: function () {
-            var menu = {
-                "Restore to full power": drainedRestore,
-                "Enable BLE": function () { return NRF.wake(); },
-                "Settings": function () { return load("setting.app.js"); },
-                "Recovery": function () { return Bangle.showRecoveryMenu(); },
-            };
-            E.showMenu(menu);
-        }
+        btn: showMenu
     });
     Bangle.CLOCK = 1;
     g.clear();

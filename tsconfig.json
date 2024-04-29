@@ -11,6 +11,8 @@
     // "checkJs": true,
     // "noEmit": true,
 
+    "ignoreDeprecations": "5.0",
+
     // code-gen
     "declaration": false,
     "emitDeclarationOnly": false,

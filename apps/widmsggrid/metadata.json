@@ -1,7 +1,7 @@
 {
   "id": "widmsggrid",
   "name": "Messages Grid Widget",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Widget that displays notification icons in a grid",
   "icon": "widget.png",
   "type": "widget",

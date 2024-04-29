@@ -30,7 +30,7 @@ declare module ClockInfo {
   type Item = {
     text: string,
     short?: string,
-    img?: string,
+    img?: Image,
   };
 
   type RangeItem =
@@ -61,5 +61,5 @@ declare module ClockInfo {
 }
 
 interface BangleExt {
-  CLKINFO_FOCUS?: true;
+  CLKINFO_FOCUS?: number;
 }
