@@ -163,11 +163,6 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
   l.draw();
 
-  Bangle.setUI("updown", dir => {
-    if (dir) l.move(dir);
-    else l.select();
-  });
-
   let back = options.back;
   if (!back) {
     const backItem = items["< Back"];
@@ -182,6 +177,17 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
       if (lr < 0) back_();
     })
   }
+
+  Bangle.setUI(
+      {
+          mode: "updown",
+          back,
+      },
+      dir => {
+          if (dir) l.move(dir);
+          else l.select();
+      }
+  );
 
   return l;
 };
