@@ -1,7 +1,7 @@
 { "id": "backswipe",
   "name": "Back Swipe",
   "shortName":"BackSwipe",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Service that allows you to use an app's back button using left to right swipe gesture",
   "icon": "app.png",
   "tags": "back,gesture,swipe",
