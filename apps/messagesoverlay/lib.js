@@ -480,7 +480,7 @@ const backupPrependListener = function(event, handler){
 const origClearWatch = clearWatch;
 const backupClearWatch = function(w) {
   if (w)
-    backup.watches.filter((e)=>e.index != w);
+    backup.watches[w] = null;
   else
     backup.watches = [];
 };
@@ -489,9 +489,10 @@ const origSetWatch = setWatch;
 const backupSetWatch = function(){
   if (!backup.watches)
     backup.watches = [];
-  LOG("backup for watch", arguments);
-  let i = backup.watches.map((e)=>e.index).sort().pop() + 1;
-  backup.watches.push({index:i, args:arguments});
+  LOG("current watches", backup.watches);
+  let i = backup.watches.length + 1;
+  LOG("backup for watch", arguments, "at index", i);
+  backup.watches.push(arguments);
   return i;
 };
 
@@ -531,6 +532,7 @@ const restoreHandlers = function(){
 
     origClearWatch.call(global);
 
+    LOG("Restoring", backup.watches.length, "watches");
     for(let i = 0; i < backup.watches.length; i++){
       let w = backup.watches[i];
       LOG("Restoring watch", w);
