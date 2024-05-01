@@ -131,7 +131,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
             item.value = !item.value;
 
           if (item.onchange)
-            (item.onchange as any)(item.value);
+            item.onchange(item.value as boolean);
         }
         l.draw();
       }
@@ -182,7 +182,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
       {
           mode: "updown",
           back,
-      },
+      } as SetUIArg<"updown">,
       dir => {
           if (dir) l.move(dir);
           else l.select();
