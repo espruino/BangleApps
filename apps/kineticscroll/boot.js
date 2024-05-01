@@ -33,12 +33,16 @@
     let lastTouchedDrag = 0;
     let lastDragStart = 0;
 
-    let R = Bangle.appRect;
     let menuScrollMin = 0|options.scrollMin;
-    let menuScrollMax = options.h*options.c - R.h;
-    if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
+
+    const getMenuScrollMax = () => {
+      let menuScrollMax = options.h*options.c - Bangle.appRect.h;
+      if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
+      return menuScrollMax;
+    };
 
     const touchHandler = (_,e)=>{
+      let R = Bangle.appRect;
       if (e.y<R.y-4) return;
       velocity = 0;
       accDy = 0;
@@ -51,6 +55,7 @@
     };
 
     const uiDraw = () => {
+      let R = Bangle.appRect;
       g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
       var a = YtoIdx(R.y);
       var b = Math.min(YtoIdx(R.y2),options.c-1);
@@ -60,6 +65,7 @@
     };
 
     const draw = () => {
+      let R = Bangle.appRect;
       if (velocity > MIN_VELOCITY){
         if (!scheduledDraw)
           scheduledDraw = setTimeout(draw, 0);
@@ -70,7 +76,7 @@
           s.scroll -= velocity * direction;
         }
       }
-
+      let menuScrollMax = getMenuScrollMax();
       if (s.scroll > menuScrollMax){
         s.scroll = menuScrollMax;
         velocity = 0;
@@ -153,16 +159,17 @@
     Bangle.setUI(uiOpts);
 
     function idxToY(i) {
-      return i*options.h + R.y - rScroll;
+      return i*options.h + Bangle.appRect.y - rScroll;
     }
 
     function YtoIdx(y) {
-      return Math.floor((y + rScroll - R.y)/options.h);
+      return Math.floor((y + rScroll - Bangle.appRect.y)/options.h);
     }
 
     let s = {
-      scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
+      scroll : E.clip(0|options.scroll,menuScrollMin,getMenuScrollMax()),
       draw : () => {
+        let R = Bangle.appRect;
         g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
         let a = YtoIdx(R.y);
         let b = Math.min(YtoIdx(R.y2),options.c-1);
@@ -171,6 +178,7 @@
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
       },
       drawItem : i => {
+        let R = Bangle.appRect;
         let y = idxToY(i);
         g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
