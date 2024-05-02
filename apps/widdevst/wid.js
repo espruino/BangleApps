@@ -3,7 +3,7 @@
 
   WIDGETS.devst = {area: "tr", width: 22, draw: function() {
     if (WIDGETS.devst._draw) return;
-    var d = new Date();
+    var d = Date.now();
     var t;
     if ((d - stat.date) < 6e4) {
       t = process.memory(false);
