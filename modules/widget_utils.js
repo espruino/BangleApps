@@ -32,12 +32,12 @@ exports.cleanup = function() {
   delete Bangle.appRect;
   if (exports.origSetLCDOverlay){
     Bangle.setLCDOverlay = exports.origSetLCDOverlay;
-    Bangle.setLCDOverlay();
-  }
-  if (exports.cleanUpOverlay){
-    delete exports.cleanUpOverlay;
   }
   delete exports.origSetLCDOverlay;
+  if (exports.cleanUpOverlay){
+    Bangle.setLCDOverlay();
+  }
+  delete exports.cleanUpOverlay;
   if (exports.swipeHandler) {
     Bangle.removeListener("swipe", exports.swipeHandler);
     delete exports.swipeHandler;
