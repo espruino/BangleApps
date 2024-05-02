@@ -5,3 +5,4 @@
 0.04: Ensure we only scale down clockinfo text if it really won't fit
 0.05: Minor code improvements
 0.06: Use the clockbg library to allow custom image backgrounds
+0.07: Fix automatic coloring of middle of clockinfo images if clockinfo image goes right to the top or left

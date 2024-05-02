@@ -65,7 +65,7 @@ loadThemeColors();
 // Load the clock infos
 let clockInfoW = 0|(w/2);
 let clockInfoH = 0|(h/2);
-let clockInfoG = Graphics.createArrayBuffer(25, 25, 2, {msb:true});
+let clockInfoG = Graphics.createArrayBuffer(26, 26, 2, {msb:true});
 clockInfoG.transparent = 3;
 clockInfoG.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor("#888"), g.toColor("#888")]);
 let clockInfoItems = require("clock_info").load();
@@ -91,10 +91,10 @@ let clockInfoDraw = (itm, info, options) => {
       the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
       draw the image, and then flood-fill the rectangle back to the background color. floodFill
       was only added in 2v18 so we have to check for it and fallback if not. */
-      clockInfoG.setBgColor(0).clearRect(0,0,24,24);
-      clockInfoG.setColor(1).drawImage(info.img, 0,0);
-      clockInfoG.floodFill(24,24,3);
-      g.drawImage(clockInfoG, midx-24,y,{scale:2});
+      clockInfoG.setBgColor(0).clearRect(0,0,25,25);
+      clockInfoG.setColor(1).drawImage(info.img, 1,1);
+      clockInfoG.floodFill(0,0,3);
+      g.drawImage(clockInfoG, midx-26,y-2,{scale:2});
     } else { // fallback
       g.drawImage(info.img, midx-24,y,{scale:2});
     }
