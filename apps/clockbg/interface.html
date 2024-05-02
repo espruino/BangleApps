@@ -7,8 +7,8 @@
         cursor: pointer;
       }
       #preview {
-        width : 176px;
-        height: 176px;
+        width : 178px; /* include the border */
+        height: 178px;
         border: 1px solid black;
       }
     </style>
@@ -19,10 +19,12 @@
     <p>If you'd like to contribute images you can <a href="https://github.com/espruino/BangleApps/tree/master/apps/patriotclk/img" target="_blank">add them on GitHub</a>!</p>
     <div style="float:right">Preview:<br/><canvas width="176" height="176" id="preview"></canvas></div>
     <div class="form-group">
-      <label class="form-switch">
-        <input type="checkbox" id="box_zoom">
-        <i class="form-icon"></i> Zoom
-      </label>
+      <select class="form-select" id="box_zoom" style="width:inherit">
+        <option value="0">No Zoom</option>
+        <option value="1">10% Zoom</option>
+        <option value="1.5">15% Zoom</option>
+        <option value="2">20% Zoom</option>
+      </select><br/>
       <label class="form-switch">
         <input type="checkbox" id="box_mirror">
         <i class="form-icon"></i> Mirror
@@ -100,7 +102,7 @@
         if (!selectedImage) return;
         var imgPath = selectedImage.getAttribute("data-file");
         var img = IMAGES.find(img => img.path == imgPath);
-        var zoom = document.getElementById("box_zoom").checked;
+        var zoom = document.getElementById("box_zoom").value;
         var dither = document.getElementById("box_dither").value;
         if (dither=="" && img.dither) dither="bayer2";
         if (dither=="no" || dither=="") dither=undefined;
@@ -115,8 +117,13 @@
         let imgW = selectedImage.naturalWidth;
         let imgH = selectedImage.naturalHeight;
         let border = 0;
-        if (imgW > 400) border = 20;
-        if (zoom) border = (border*5) >> 1;
+        let imgMin = Math.min(imgW,imgH);
+        switch (zoom) {
+          case "0": border = 0; break;
+          case "1": border = Math.round(imgMin*0.1); break;
+          case "1.5": border = Math.round(imgMin*0.15); break;
+          case "2": border = Math.round(imgMin*0.2); break;
+        }
         ctx.save(); // Save the current state
         if (mirror) {
           ctx.translate(canvas.width, 0);
