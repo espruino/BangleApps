@@ -275,12 +275,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "runplus/app.js": {
-    "hash": "fabec449552d17ceb5d510aa058e420757f3caba11999efbe6ebf2ac1a81eb32",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "powermanager/boot.js": {
     "hash": "662d9d29a80a4f2c2855097b4073a099604f4f6d444c13a33304346c788cc5cb",
     "rules": [
@@ -737,12 +731,6 @@ module.exports = {
   },
   "schoolCalendar/fullcalendar/locales-all.js": {
     "hash": "475805ad0fda6abafcaf2101619d6328ab2ef0bd758e2354983310c969a8e222",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "runplus/karvonen.js": {
-    "hash": "3011bbc5afc3e17bb873f4544d680acc8765105dd825417eadb01047ecadbcb7",
     "rules": [
       "no-undef"
     ]
