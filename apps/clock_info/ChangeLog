@@ -10,3 +10,4 @@
 0.09: Save clkinfo settings on kill and remove
 0.10: Fix focus bug when changing focus between two clock infos
 0.11: Prepend swipe listener if possible
+0.12: Add drawFilledImage to allow drawing icons with a separately coloured middle

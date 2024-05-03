@@ -86,18 +86,7 @@ let clockInfoDraw = (itm, info, options) => {
   if (info.img) { // draw the image
     // TODO: we could replace certain images with our own ones here...
     y = options.y+8;
-    if (g.floodFill) {
-      /* img is (usually) a black and white transparent image. But we really would like the bits in
-      the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
-      draw the image, and then flood-fill the rectangle back to the background color. floodFill
-      was only added in 2v18 so we have to check for it and fallback if not. */
-      clockInfoG.setBgColor(0).clearRect(0,0,25,25);
-      clockInfoG.setColor(1).drawImage(info.img, 1,1);
-      clockInfoG.floodFill(0,0,3);
-      g.drawImage(clockInfoG, midx-26,y-2,{scale:2});
-    } else { // fallback
-      g.drawImage(info.img, midx-24,y,{scale:2});
-    }
+    require("clock_info").drawFilledImage(info.img,midx-24,y,{scale:2});
   }
   g.setFontLECO1976Regular22().setFontAlign(0, 0);
   var txt = info.text.toString().toUpperCase();
@@ -125,6 +114,7 @@ let clockInfoMenuB = require("clock_info").addInteractive(clockInfoItems, {
 // Show launcher when middle button pressed
 Bangle.setUI({
   mode : "clock",
+  redraw : draw,
   remove : function() {
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
