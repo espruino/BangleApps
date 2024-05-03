@@ -208,7 +208,7 @@ function runStep(step, subtest, test, state){
   emu.idle();
 }
 
-function runTest(test) {
+function runTest(test, testState) {
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
@@ -234,11 +234,19 @@ function runTest(test) {
       subtest.steps.forEach(step => {
         runStep(step, subtest, test, state)
       });
+      console.log("RESULT for", test.app + (subtest.description ? (": " + subtest.description) : ""), "test", subtestIdx, "\n"+state.ok ? "OK": "FAIL");
+      testState.push({
+        app: test.app,
+        number: subtestIdx,
+        result: state.ok ? "SUCCESS": "FAILURE",
+        description: subtest.description
+      });
     });
     emu.stopIdle();
   });
 }
 
+let testState = [];
 
 emu.init({
   EMULATOR : EMULATOR,
@@ -246,14 +254,22 @@ emu.init({
 }).then(function() {
   // Emulator is now loaded
   console.log("Loading tests");
+  let p = Promise.resolve();
   apploader.apps.forEach(app => {
     var testFile = APP_DIR+"/"+app.id+"/test.json";
     if (!require("fs").existsSync(testFile)) return;
     var test = JSON.parse(require("fs").readFileSync(testFile).toString());
     test.app = app.id;
-    runTest(test);
+    p = p.then(() => runTest(test, testState));
   });
+  p.finally(()=>{
+    console.log("\n\n");
+    console.log("Overall results:");
+    console.table(testState);
+  });
+  return p;
 });
+
 /*
   if (erroredApps.length) {
     erroredApps.forEach(app => {
