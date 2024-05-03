@@ -1,0 +1,14 @@
+{
+  "app" : "antonclk",
+  "tests" : [{
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.loadWidgets()"},
+      {"t":"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {"t":"cmd", "js": "Bangle.setUI()"},
+      {"t":"saveMemoryUsage"},
+      {"t":"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {"t":"cmd", "js":"Bangle.setUI()"},
+      {"t":"checkMemoryUsage"}
+    ]
+  }]
+}
