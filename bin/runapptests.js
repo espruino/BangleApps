@@ -144,6 +144,70 @@ function assertCall(step){
   assertFail(step.text)
 }
 
+function runStep(step, subtest, test, state){
+  if (state.ok) switch(step.t) {
+    case "setup" :
+      test.setup.filter(e=>e.id==step.id)[0].steps.forEach(setupStep=>{
+        runStep(setupStep, subtest, test, state);
+      });
+      break;
+    case "load" :
+        console.log(`> Loading file "${step.fn}"`);
+        emu.tx(`load(${JSON.stringify(step.fn)})\n`);
+        break;
+    case "cmd" :
+      console.log(`> Sending JS "${step.js}"`);
+      emu.tx(`${step.js}\n`);
+      break;
+    case "wrap" :
+      wrap(step.fn, step.id);
+      break;
+    case "gb" : emu.tx(`GB(${JSON.stringify(step.obj)})\n`); break;
+    case "tap" : emu.tx(`Bangle.emit(...)\n`); break;
+    case "eval" :
+      console.log(`> Evaluate "${step.js}"`);
+      emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
+      var result = emu.getLastLine();
+      var expected = JSON.stringify(step.eq);
+      console.log("> GOT "+result);
+      if (result!=expected) {
+        console.log("> FAIL: EXPECTED "+expected);
+        state.ok = false;
+      }
+      break;
+      // tap/touch/drag/button press
+      // delay X milliseconds?
+    case "assertArray":
+      assertArray(step);
+      break;
+    case "assertCall":
+      assertCall(step);
+      break;
+    case "assert":
+      assertValue(step);
+      break;
+    case "screenshot" :
+      console.log(`> Compare screenshots - UNIMPLEMENTED`);
+      break;
+    case "saveMemoryUsage" :
+      emu.tx(`\x10print(process.memory().usage)\n`);
+      subtest.memUsage = parseInt( emu.getLastLine());
+      console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
+      break;
+    case "checkMemoryUsage" :
+      emu.tx(`\x10print(process.memory().usage)\n`);
+      var memUsage =  emu.getLastLine();
+      console.log("> CURRENT MEMORY USAGE", memUsage);
+      if (subtest.memUsage != memUsage ) {
+        console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
+        state.ok = false;
+      }
+      break;
+    default: ERROR("Unknown step type "+step.t);
+  }
+  emu.idle();
+}
+
 function runTest(test) {
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
@@ -164,65 +228,11 @@ function runTest(test) {
       emu.tx(command);
       console.log("> Sent app");
       emu.tx("reset()\n");
-      console.log("> Reset.");
-      var ok = true;
+      console.log("> Reset");
+
+      var state = { ok: true};
       subtest.steps.forEach(step => {
-        if (ok) switch(step.t) {
-          case "load" :
-            console.log(`> Loading file "${step.fn}"`);
-            emu.tx(`load(${JSON.stringify(step.fn)})\n`);
-            break;
-          case "cmd" :
-            console.log(`> Sending JS "${step.js}"`);
-            emu.tx(`${step.js}\n`);
-            break;
-          case "wrap" :
-            wrap(step.fn, step.id);
-            break;
-          case "gb" : emu.tx(`GB(${JSON.stringify(step.obj)})\n`); break;
-          case "tap" : emu.tx(`Bangle.emit(...)\n`); break;
-          case "eval" :
-            console.log(`> Evaluate "${step.js}"`);
-            emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
-            var result = emu.getLastLine();
-            var expected = JSON.stringify(step.eq);
-            console.log("> GOT "+result);
-            if (result!=expected) {
-              console.log("> FAIL: EXPECTED "+expected);
-              ok = false;
-            }
-            break;
-            // tap/touch/drag/button press
-            // delay X milliseconds?
-          case "assertArray":
-            assertArray(step);
-            break;
-          case "assertCall":
-            assertCall(step);
-            break;
-          case "assert":
-            assertValue(step);
-            break;
-          case "screenshot" :
-            console.log(`> Compare screenshots - UNIMPLEMENTED`);
-            break;
-          case "saveMemoryUsage" :
-            emu.tx(`\x10print(process.memory().usage)\n`);
-            subtest.memUsage = parseInt( emu.getLastLine());
-            console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
-            break;
-          case "checkMemoryUsage" :
-            emu.tx(`\x10print(process.memory().usage)\n`);
-            var memUsage =  emu.getLastLine();
-            console.log("> CURRENT MEMORY USAGE", memUsage);
-            if (subtest.memUsage != memUsage ) {
-              console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
-              ok = false;
-            }
-            break;
-          default: ERROR("Unknown step type "+step.t);
-        }
-        emu.idle();
+        runStep(step, subtest, test, state)
       });
     });
     emu.stopIdle();
