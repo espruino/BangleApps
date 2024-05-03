@@ -1131,12 +1131,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "drained/app.js": {
-    "hash": "2b609ca5bf414b0e400e25512bf396a01f8cb0365b4edd02ea1697b51907d36c",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "dinoClock/app.js": {
     "hash": "e97566aa4f586ef654e3fc1ec286376352762ed8e0ea2e685a7b3ae687f51552",
     "rules": [
