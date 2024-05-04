@@ -145,56 +145,84 @@ function assertCall(step){
 }
 
 function runStep(step, subtest, test, state){
+  let p = Promise.resolve();
   if (state.ok) switch(step.t) {
     case "setup" :
       test.setup.filter(e=>e.id==step.id)[0].steps.forEach(setupStep=>{
-        runStep(setupStep, subtest, test, state);
+        p = p.then(runStep(setupStep, subtest, test, state));
       });
       break;
     case "load" :
+      p = p.then(() => {
         console.log(`> Loading file "${step.fn}"`);
         emu.tx(`load(${JSON.stringify(step.fn)})\n`);
-        break;
+      });
+      break;
     case "cmd" :
-      console.log(`> Sending JS "${step.js}"`);
-      emu.tx(`${step.js}\n`);
+      p = p.then(() => {
+        console.log(`> Sending JS "${step.js}"`);
+        emu.tx(`${step.js}\n`);
+      });
       break;
     case "wrap" :
-      wrap(step.fn, step.id);
+      p = p.then(() => {
+        wrap(step.fn, step.id);
+      });
       break;
-    case "gb" : emu.tx(`GB(${JSON.stringify(step.obj)})\n`); break;
-    case "tap" : emu.tx(`Bangle.emit(...)\n`); break;
+    case "gb" : 
+      p = p.then(() => {
+        emu.tx(`GB(${JSON.stringify(step.obj)})\n`);
+      });
+      break;
+    case "tap" :
+      p = p.then(() => {
+        emu.tx(`Bangle.emit(...)\n`);
+      });
+      break;
     case "eval" :
-      console.log(`> Evaluate "${step.js}"`);
-      emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
-      var result = emu.getLastLine();
-      var expected = JSON.stringify(step.eq);
-      console.log("> GOT "+result);
-      if (result!=expected) {
-        console.log("> FAIL: EXPECTED "+expected);
-        state.ok = false;
-      }
+      p = p.then(() => {
+        console.log(`> Evaluate "${step.js}"`);
+        emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
+        var result = emu.getLastLine();
+        var expected = JSON.stringify(step.eq);
+        console.log("> GOT "+result);
+        if (result!=expected) {
+          console.log("> FAIL: EXPECTED "+expected);
+          state.ok = false;
+        }
+      });
       break;
       // tap/touch/drag/button press
       // delay X milliseconds?
     case "assertArray":
-      assertArray(step);
+      p = p.then(() => {
+        assertArray(step);
+      });
       break;
     case "assertCall":
-      assertCall(step);
+      p = p.then(() => {
+        assertCall(step);
+      });
       break;
     case "assert":
-      assertValue(step);
+      p = p.then(() => {
+        assertValue(step);
+      });
       break;
     case "screenshot" :
-      console.log(`> Compare screenshots - UNIMPLEMENTED`);
+      p = p.then(() => {
+        console.log(`> Compare screenshots - UNIMPLEMENTED`);
+      });
       break;
     case "saveMemoryUsage" :
-      emu.tx(`\x10print(process.memory().usage)\n`);
-      subtest.memUsage = parseInt( emu.getLastLine());
-      console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
+      p = p.then(() => {
+        emu.tx(`\x10print(process.memory().usage)\n`);
+        subtest.memUsage = parseInt( emu.getLastLine());
+        console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
+      });
       break;
     case "checkMemoryUsage" :
+      p = p.then(() => {
       emu.tx(`\x10print(process.memory().usage)\n`);
       var memUsage =  emu.getLastLine();
       console.log("> CURRENT MEMORY USAGE", memUsage);
@@ -202,6 +230,13 @@ function runStep(step, subtest, test, state){
         console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
         state.ok = false;
       }
+      });
+      break;
+    case "sleep" :
+      p = p.then(new Promise(resolve => {
+        console.log("Start waiting for", step.ms);
+        setTimeout(resolve, step.ms)
+      }));
       break;
     default: ERROR("Unknown step type "+step.t);
   }
@@ -217,32 +252,42 @@ function runTest(test, testState) {
     console.log("Handling command", command);
   
     // What about dependencies??
+    let p = Promise.resolve();
     test.tests.forEach((subtest,subtestIdx) => {
-      console.log(`==============================`);
-      console.log(`"${test.app}" Test ${subtestIdx}`);
-      if (test.description)
-        console.log(`"${test.description}`);
-      console.log(`==============================`);
-      emu.factoryReset();
-      console.log("> Sending app "+test.app);
-      emu.tx(command);
-      console.log("> Sent app");
-      emu.tx("reset()\n");
-      console.log("> Reset");
+      let state = { ok: true};
+      p = p.then(()=>{
+        console.log(`==============================`);
+        console.log(`"${test.app}" Test ${subtestIdx}`);
+        if (test.description)
+          console.log(`"${test.description}`);
+        console.log(`==============================`);
+        emu.factoryReset();
+        console.log("> Sending app "+test.app);
+        emu.tx(command);
+        console.log("> Sent app");
+        emu.tx("reset()\n");
+        console.log("> Reset");
 
-      var state = { ok: true};
-      subtest.steps.forEach(step => {
-        runStep(step, subtest, test, state)
       });
-      console.log("RESULT for", test.app + (subtest.description ? (": " + subtest.description) : ""), "test", subtestIdx, "\n"+state.ok ? "OK": "FAIL");
-      testState.push({
-        app: test.app,
-        number: subtestIdx,
-        result: state.ok ? "SUCCESS": "FAILURE",
-        description: subtest.description
+
+      subtest.steps.forEach(step => {
+        p = p.then(runStep(step, subtest, test, state));
+      });
+
+      p = p.then(() => {
+        console.log("RESULT for", test.app + (subtest.description ? (": " + subtest.description) : ""), "test", subtestIdx, "\n"+state.ok ? "OK": "FAIL");
+        testState.push({
+          app: test.app,
+          number: subtestIdx,
+          result: state.ok ? "SUCCESS": "FAILURE",
+          description: subtest.description
+        });
       });
     });
-    emu.stopIdle();
+    p = p.then(()=>{
+      emu.stopIdle();
+    });
+    return p;
   });
 }
 
