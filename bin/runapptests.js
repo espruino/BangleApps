@@ -35,6 +35,7 @@ if (!require("fs").existsSync(DIR_IDE)) {
   process.exit(1);
 }
 
+var AppInfo = require(BASE_DIR+"/core/js/appinfo.js");
 var apploader = require(BASE_DIR+"/core/lib/apploader.js");
 apploader.init({
   DEVICEID : DEVICEID
@@ -235,7 +236,13 @@ function runStep(step, subtest, test, state){
     case "sleep" :
       p = p.then(new Promise(resolve => {
         console.log("Start waiting for", step.ms);
-        setTimeout(resolve, step.ms)
+        setTimeout(resolve, step.ms);
+      }));
+      break;
+    case "upload" :
+      p = p.then(new Promise(() => {
+        console.log("Uploading", step.file);
+        emu.tx(AppInfo.getFileUploadCommands(step.as, require("fs").readFileSync(BASE_DIR + "/" + step.file).toString()));
       }));
       break;
     default: ERROR("Unknown step type "+step.t);
