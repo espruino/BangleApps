@@ -4,3 +4,15 @@ apps/gipy/pkg/gps.js
 
 # Needs to be ignored because it includes broken JS
 apps/health/chart.min.js
+
+# TypeScript
+apps/btadv/
+apps/clkinfostopw/
+apps/ctrlpad/
+apps/drained/
+apps/folderlaunch/
+apps/popconlaunch/
+apps/rep/
+apps/widChargingStatus/
+apps/widbtstates/
+apps/widhid/

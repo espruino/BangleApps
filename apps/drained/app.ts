@@ -1,9 +1,9 @@
 const app = "drained";
 
 // from boot.js
-const globals: { drainedInterval: IntervalId | undefined } = global as any;
-if(typeof globals.drainedInterval !== "undefined")
-  globals.drainedInterval = clearInterval(globals.drainedInterval) as undefined;
+declare var drainedInterval: IntervalId | undefined;
+if(typeof drainedInterval !== "undefined")
+  drainedInterval = clearInterval(drainedInterval) as undefined;
 
 // backlight
 Bangle.setLCDBrightness(0);

@@ -1,7 +1,6 @@
 var app = "drained";
-var globals = global;
-if (typeof globals.drainedInterval !== "undefined")
-    globals.drainedInterval = clearInterval(globals.drainedInterval);
+if (typeof drainedInterval !== "undefined")
+    drainedInterval = clearInterval(drainedInterval);
 Bangle.setLCDBrightness(0);
 var powerNoop = function () { return false; };
 var forceOff = function (name) {
