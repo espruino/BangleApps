@@ -187,8 +187,11 @@ function runStep(step, subtest, test, state){
       break;
     case "emit" :
       p = p.then(() => {
-        let parent = step.parent ? step.parent : "Bangle"
+        let parent = step.parent ? step.parent : "Bangle";
+        if (!step.paramsArray) step.paramsArray = [];
         let args = JSON.stringify([step.event].concat(step.paramsArray));
+        console.log(`> Emit "${step.event}" on ${parent} with parameters ${JSON.stringify(step.paramsArray)}`);
+        
         emu.tx(`${parent}.emit.apply(${parent}, ${args})\n`);
       });
       break;
