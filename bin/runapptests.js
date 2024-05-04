@@ -172,7 +172,15 @@ function runStep(step, subtest, test, state){
       break;
     case "gb" : 
       p = p.then(() => {
-        emu.tx(`GB(${JSON.stringify(step.obj)})\n`);
+        let obj = Object.apply({
+          src:'Messenger',
+          t: 'notify',
+          type: 'text',
+          id: Date.now().toFixed(0),
+          title:'title',
+          body:'body'
+        }, step.obj || {});
+        emu.tx(`GB(${JSON.stringify(obj)})\n`);
       });
       break;
     case "tap" :
