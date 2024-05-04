@@ -3,3 +3,4 @@
       launcher is active.
 0.03: Handle errors when sending input over BLE and the special-case of
       replacing a single handler
+0.04: Minor code improvements
