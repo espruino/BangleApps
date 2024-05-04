@@ -273,6 +273,7 @@ function runStep(step, subtest, test, state){
 }
 
 function runTest(test, testState) {
+  apploader.reset();
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
   if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
