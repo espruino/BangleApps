@@ -150,7 +150,9 @@ function runStep(step, subtest, test, state){
   if (state.ok) switch(step.t) {
     case "setup" :
       test.setup.filter(e=>e.id==step.id)[0].steps.forEach(setupStep=>{
-        p = p.then(runStep(setupStep, subtest, test, state));
+        p = p.then(()=>{
+          return runStep(setupStep, subtest, test, state);
+        });
       });
       break;
     case "load" :
@@ -234,30 +236,37 @@ function runStep(step, subtest, test, state){
       break;
     case "checkMemoryUsage" :
       p = p.then(() => {
-      emu.tx(`\x10print(process.memory().usage)\n`);
-      var memUsage =  emu.getLastLine();
-      console.log("> CURRENT MEMORY USAGE", memUsage);
-      if (subtest.memUsage != memUsage ) {
-        console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
-        state.ok = false;
-      }
+        emu.tx(`\x10print(process.memory().usage)\n`);
+        var memUsage =  emu.getLastLine();
+        console.log("> CURRENT MEMORY USAGE", memUsage);
+        if (subtest.memUsage != memUsage ) {
+          console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
+          state.ok = false;
+        }
       });
       break;
     case "sleep" :
-      p = p.then(new Promise(resolve => {
-        console.log("Start waiting for", step.ms);
-        setTimeout(resolve, step.ms);
-      }));
+      p = p.then(()=>{
+        return new Promise(resolve => {
+          setTimeout(()=>{
+            console.log("Waited for", step.ms);
+            resolve();
+          }, step.ms);
+        })
+      });
       break;
     case "upload" :
-      p = p.then(new Promise(() => {
+      p = p.then(()=>{
         console.log("Uploading", step.file);
         emu.tx(AppInfo.getFileUploadCommands(step.as, require("fs").readFileSync(BASE_DIR + "/" + step.file).toString()));
-      }));
+      });
       break;
     default: ERROR("Unknown step type "+step.t);
   }
-  emu.idle();
+  p = p.then(()=> {
+    emu.idle();
+  });
+  return p;
 }
 
 function runTest(test, testState) {
@@ -288,7 +297,9 @@ function runTest(test, testState) {
       });
 
       subtest.steps.forEach(step => {
-        p = p.then(runStep(step, subtest, test, state));
+        p = p.then(()=>{
+          return runStep(step, subtest, test, state)
+        });
       });
 
       p = p.then(() => {
@@ -322,7 +333,9 @@ emu.init({
     if (!require("fs").existsSync(testFile)) return;
     var test = JSON.parse(require("fs").readFileSync(testFile).toString());
     test.app = app.id;
-    p = p.then(() => runTest(test, testState));
+    p = p.then(()=>{
+      return runTest(test, testState)
+    });
   });
   p.finally(()=>{
     console.log("\n\n");
