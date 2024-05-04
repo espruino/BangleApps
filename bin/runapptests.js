@@ -51,49 +51,62 @@ function ERROR(s) {
 }
 
 function getValue(js){
-  //console.log(`> Getting value for "${js}"`);
+  console.log(`> Getting value for "${js}"`);
   emu.tx(`\x10print(JSON.stringify(${js}))\n`);
   var result = emu.getLastLine();
-  try {
-    return JSON.parse(result);
-  } catch (e) {
-    console.log("Error during getValue", e);
-  }
+  console.log(`> GOT "${result}"`);
+  return JSON.parse(result);
 }
 
 function assertFail(text){
   console.log("> FAIL: " + text);
-  ok = false;
+  return false;
 }
 
-function assertCondition(condition, text) {
+function assertCondition(condition) {
   if (!condition) {
-    assertFail(text);
-  } else console.log("OK: " + text);
+    return false;
+  }
+  return true;
 }
 
 function assertArray(step){
+  let isOK;
   let array = step.value;
   if (step.value === undefined)
     array = getValue(step.js);
-  switch (step.is){
-    case "notempty": assertCondition(array && array.length > 0, step.text); break;
-    case "undefinedorempty": assertCondition(array && array.length == 0, step.text); break;
+  switch (step.is.toLowerCase()){
+    case "notempty": isOK = assertCondition(array && array.length > 0, step.text); break;
+    case "undefinedorempty": isOK = assertCondition(array && array.length == 0 || !array, step.text); break;
   }
+
+  if (isOK)
+    console.log("OK - ASSERT ARRAY " + step.is.toUpperCase(), step.text);
+  else
+    console.log("FAIL - ASSERT ARRAY " + step.is.toUpperCase(), step.text);
+  return isOK;
 }
 
 function assertValue(step){
   console.debug("assertValue", step);
+  let isOK;
   let value = step.js;
   if (value === undefined)
     value = step.value;
   switch (step.is){
-    case "truthy": assertCondition(getValue(`!!${value}`), step.text); break;
-    case "falsy": assertCondition(getValue(`!${value}`), step.text); break;
-    case "true": assertCondition(getValue(`${value} === true`), step.text); break;
-    case "false": assertCondition(getValue(`${value} === false`), step.text); break;
-    case "equal": assertCondition(getValue(`${value} == ${step.to}`), step.text); break;
+    case "truthy": isOK = assertCondition(getValue(`!!${value}`), step.text); break;
+    case "falsy": isOK = assertCondition(getValue(`!${value}`), step.text); break;
+    case "true": isOK = assertCondition(getValue(`${value} === true`), step.text); break;
+    case "false": isOK = assertCondition(getValue(`${value} === false`), step.text); break;
+    case "equal": isOK = assertCondition(getValue(`${value} == ${step.to}`), step.text); break;
+    case "function": isOK = assertCondition(getValue(`typeof ${value} === "function"`), step.text); break;
   }
+
+  if (isOK)
+    console.log("OK - ASSERT " + step.is.toUpperCase(), step.text);
+  else
+    console.log("FAIL - ASSERT " + step.is.toUpperCase(), step.text);
+  return isOK;
 }
 
 function wrap(func, id){
@@ -116,6 +129,7 @@ function wrap(func, id){
 }
 
 function assertCall(step){
+  let isOK = false;
   let id = step.id;
   let args = step.argAsserts;
   let calls = getValue(`global.APPTESTS.funcCalls.${id}`);
@@ -131,18 +145,22 @@ function assertCall(step){
         };
         switch(a.t){
           case "assertArray":
-            assertArray(current);
+            isOK = assertArray(current);
             break;
           case "assert":
-            assertValue(current);
+            isOK =  assertValue(current);
             break;
         }
       }
     } else {
-      console.log("OK", step.text);
+      isOK = true;
     }
-  } else
-  assertFail(step.text)
+  }
+  if (isOK)
+    console.log("OK", step.text);
+  else
+    console.log("FAIL", step.text);
+  return isOK;
 }
 
 function runStep(step, subtest, test, state){
@@ -151,7 +169,9 @@ function runStep(step, subtest, test, state){
     case "setup" :
       test.setup.filter(e=>e.id==step.id)[0].steps.forEach(setupStep=>{
         p = p.then(()=>{
-          return runStep(setupStep, subtest, test, state);
+          let np = runStep(setupStep, subtest, test, state);
+          emu.idle();
+          return np;
         });
       });
       break;
@@ -212,17 +232,17 @@ function runStep(step, subtest, test, state){
       // delay X milliseconds?
     case "assertArray":
       p = p.then(() => {
-        assertArray(step);
+        state.ok &= assertArray(step);
       });
       break;
     case "assertCall":
       p = p.then(() => {
-        assertCall(step);
+        state.ok &= assertCall(step);
       });
       break;
     case "assert":
       p = p.then(() => {
-        assertValue(step);
+        state.ok &= assertValue(step);
       });
       break;
     case "screenshot" :
@@ -302,12 +322,15 @@ function runTest(test, testState) {
 
       subtest.steps.forEach(step => {
         p = p.then(()=>{
-          return runStep(step, subtest, test, state)
+          return runStep(step, subtest, test, state).catch((e)=>{
+            console.log("STEP FAILED:", e, step);
+            state.ok = false;
+          })
         });
       });
 
-      p = p.then(() => {
-        console.log("RESULT for", test.app + (subtest.description ? (": " + subtest.description) : ""), "test", subtestIdx, "\n"+state.ok ? "OK": "FAIL");
+      p = p.finally(()=>{
+        console.log("RESULT for", test.app + (subtest.description ? (": " + subtest.description) : ""), "test", subtestIdx, (state.ok ? "OK": "FAIL"));
         testState.push({
           app: test.app,
           number: subtestIdx,
@@ -338,7 +361,7 @@ emu.init({
     var test = JSON.parse(require("fs").readFileSync(testFile).toString());
     test.app = app.id;
     p = p.then(()=>{
-      return runTest(test, testState)
+      return runTest(test, testState);
     });
   });
   p.finally(()=>{
