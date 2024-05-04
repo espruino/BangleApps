@@ -183,9 +183,11 @@ function runStep(step, subtest, test, state){
         emu.tx(`GB(${JSON.stringify(obj)})\n`);
       });
       break;
-    case "tap" :
+    case "emit" :
       p = p.then(() => {
-        emu.tx(`Bangle.emit(...)\n`);
+        let parent = step.parent ? step.parent : "Bangle"
+        let args = JSON.stringify([step.event].concat(step.paramsArray));
+        emu.tx(`${parent}.emit.apply(${parent}, ${args})\n`);
       });
       break;
     case "eval" :
