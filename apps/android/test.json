@@ -17,6 +17,7 @@
     "description": "Check setGPSPower is replaced", 
     "steps" : [
       {"t":"cmd", "js": "Serial1.println = () => { }", "text": "Fake the serial port"},
+      {"t":"cmd", "js": "Bluetooth.println = () => { }", "text": "Fake the Bluetooth println"},
       {"t":"cmd", "js": "require('Storage').writeJSON('android.settings.json', {overwriteGps: true})", "text": "Enable GPS overwrite"},
       {"t":"cmd", "js": "eval(require('Storage').read('android.boot.js'))", "text": "Load the boot code"},
       {"t":"assert", "js": "Bangle.setGPSPower.toString().includes('native')", "is":"false", "text": "setGPSPower has been replaced"}
