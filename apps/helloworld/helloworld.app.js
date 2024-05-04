@@ -8,7 +8,7 @@
     var v_color_statictxt='#b30000';
     //var v_color_b_area='#111111';   
     //orange RGB format rrggbb     //white,Orange,DarkGreen,Yellow,Maroon,Blue,green,Purple,cyan,olive,DarkCyan,pink
-    var a_colors= Array(0xFFFF,0xFD20,0x03E0,0xFFE0,0x7800,0x001F,0x07E0,0x780F,0x07FF,0x7BE0,0x03EF,0xF81F);
+    var a_colors= [0xFFFF,0xFD20,0x03E0,0xFFE0,0x7800,0x001F,0x07E0,0x780F,0x07FF,0x7BE0,0x03EF,0xF81F];
     
     var x_max_screen=g.getWidth();
     //var y_max_screen=g.getHeight(); 
@@ -47,8 +47,8 @@ if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
     var v_arraypos=0;
     var v_acolorpos=0; //for fg
     var v_aBGcolorPos=5; //for bg
-    var a_string1 = Array('hola', 'hello', 'saluton', 'ola','ciao', 'salut','czesc','konnichiwa');
-    var a_string2 = Array('mundo!', 'world!', 'mondo!','mundo!','mondo!','monde!','swiat!','sekai!');
+    var a_string1 = ['hola', 'hello', 'saluton', 'ola','ciao', 'salut','czesc','konnichiwa'];
+    var a_string2 = ['mundo!', 'world!', 'mondo!','mundo!','mondo!','monde!','swiat!','sekai!'];
 
    
 }
