@@ -93,7 +93,7 @@ function assertValue(step){
   let value = step.js;
   if (value === undefined)
     value = step.value;
-  switch (step.is){
+  switch (step.is.toLowerCase()){
     case "truthy": isOK = assertCondition(getValue(`!!${value}`), step.text); break;
     case "falsy": isOK = assertCondition(getValue(`!${value}`), step.text); break;
     case "true": isOK = assertCondition(getValue(`${value} === true`), step.text); break;
@@ -355,7 +355,9 @@ emu.init({
   // Emulator is now loaded
   console.log("Loading tests");
   let p = Promise.resolve();
-  apploader.apps.forEach(app => {
+  let apps = apploader.apps;
+  if (process.argv.includes("--id")) apps = apps.filter(e=>e.id==process.argv[process.argv.indexOf("--id") + 1]);
+  apps.forEach(app => {
     var testFile = APP_DIR+"/"+app.id+"/test.json";
     if (!require("fs").existsSync(testFile)) return;
     var test = JSON.parse(require("fs").readFileSync(testFile).toString());
