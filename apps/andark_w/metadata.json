@@ -11,6 +11,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"andark_w.app.js","url":"app.js"},
+    {"name":"andark_w.settings.js","url":"settings.js"},
     {"name":"andark_w.img","url":"app_icon.js","evaluate":true}
   ]
+  "data": [{"name":"andark.json"}]
 }
