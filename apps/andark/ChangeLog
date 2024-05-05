@@ -1,4 +1,6 @@
 0.01: Release
 0.02: Rename app
 0.03: Add type "clock"
-0.04: changed update cylce, when locked 
+0.04: Changed update cylce, when locked
+0.05: Fix support for dark theme + support widgets +
+      add settings for widgets, order of drawing and hour hand length

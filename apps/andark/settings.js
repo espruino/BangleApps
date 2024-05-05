@@ -9,7 +9,7 @@
   const save = () => require('Storage').write('andark.json', settings);
 
   const appMenu = {
-    '': {title: 'alarm'}, '< Back': back,
+    '': {title: 'andark'}, '< Back': back,
     /*LANG*/'Load widgets': {
       value : !!settings.loadWidgets,
       onchange : v => { settings.loadWidgets=v; save();}
