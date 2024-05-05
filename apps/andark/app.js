@@ -7,9 +7,8 @@ const settings = Object.assign(defaultSettings, require('Storage').readJSON('and
 
 const c={"x":g.getWidth()/2,"y":g.getHeight()/2};
 
-let zahlpos=[];
-//calculates the Position of the numbers when app starts and saves them in an array
-function setlet(){
+const zahlpos=(function() {
+  let z=[];
   let sk=1;
   for(let i=-10;i<50;i+=5){
      let win=i*2*Math.PI/60;
@@ -20,11 +19,11 @@ function setlet(){
     if(sk==9){xsk+=10;}
     if(sk==12){ysk+=10;}
     if(sk==10){xsk+=3;}
-    zahlpos.push([sk,xsk,ysk]);
+    z.push([sk,xsk,ysk]);
     sk+=1;
   }
-}
-setlet();
+  return z;
+})();
 
 let unlock = false;
 
