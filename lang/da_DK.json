@@ -155,7 +155,19 @@
         "Yes": "Ja",
         "Ok": "Ok",
         "Off": "Off",
-        "Back": "Tilbage"
+        "Back": "Tilbage",
+        "one": "et",
+        "two": "to",
+        "three": "tre",
+        "four": "fire",
+        "five": "fem",
+        "six": "seks",
+        "seven": "syv",
+        "eight": "otte",
+        "nine": "ni",
+        "ten": "ti",
+        "eleven": "elleve",
+        "twelve": "tolv"
     },
     "alarm": {
         "//": "App-specific overrides"
