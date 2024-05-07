@@ -35,6 +35,8 @@ if (!require("fs").existsSync(DIR_IDE)) {
   process.exit(1);
 }
 
+const verbose = process.argv.includes("--verbose") || process.argv.includes("-v");
+
 var AppInfo = require(BASE_DIR+"/core/js/appinfo.js");
 var apploader = require(BASE_DIR+"/core/lib/apploader.js");
 apploader.init({
@@ -55,7 +57,7 @@ function ERROR(s) {
 }
 
 function getValue(js){
-  if (verbose)
+  if(verbose)
     console.log(`> GETTING VALUE FOR \`${js}\``);
   emu.tx(`\x10print(JSON.stringify(${js}))\n`);
   var result = getSanitizedLastLine();
@@ -344,7 +346,15 @@ emu.init({
   console.log("Loading tests");
   let p = Promise.resolve();
   let apps = apploader.apps;
-  if (process.argv.includes("--id")) apps = apps.filter(e=>e.id==process.argv[process.argv.indexOf("--id") + 1]);
+  if (process.argv.includes("--id")) {
+    let f = process.argv[process.argv.indexOf("--id") + 1];
+    apps = apps.filter(e=>e.id==f);
+    if (apps.length == 0){
+      console.log("No apps left after filtering for " + f);
+      process.exitCode(255);
+    }
+  }
+
   apps.forEach(app => {
     var testFile = APP_DIR+"/"+app.id+"/test.json";
     if (!require("fs").existsSync(testFile)) return;
