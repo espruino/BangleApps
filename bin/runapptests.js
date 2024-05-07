@@ -280,6 +280,49 @@ function runStep(step, subtest, test, state){
         }
       });
       break;
+    case "console" :
+      p = p.then(()=>{
+        return new Promise(resolve => {
+          if (process.stdin.isTTY){
+            console.log("> STARTING INTERACTIVE CONSOLE");
+
+            let shutdownHandler = function (code) {
+              console.log(" STOPPING INTERACTIVE CONSOLE");
+              process.stdin.removeListener("readable", stdinlistener)
+              process.stdin.setRawMode(false);
+              handleRx = ()=>{};
+              handleConsoleOutput = handleConsoleOutputCurrent;
+              resolve();
+            }
+
+            let stdinlistener = () => {
+              while ((chunk = process.stdin.read()) !== null) {
+                if (chunk === '\x03') {
+                  shutdownHandler();
+                }
+                emu.tx(chunk.toString());
+              }
+            };
+
+            handleRx = (c) => {
+              process.stdout.write(String.fromCharCode(c));
+            }
+
+            let handleConsoleOutputCurrent = handleConsoleOutput;
+            handleConsoleOutput = () => {};
+
+            process.stdin.setRawMode(true);
+            process.stdin.setEncoding('ASCII');
+            process.stdin.on("readable", stdinlistener);
+
+            process.stdout.write(">");
+          } else {
+            console.log("> TERMINAL NEEDS TO BE A TTY FOR INTERACTIVE CONSOLE");
+            resolve();
+          }
+        })
+      });
+      break;
     default: ERROR("Unknown step type "+step.t);
   }
   p = p.then(()=> {
@@ -339,11 +382,26 @@ function runTest(test, testState) {
   });
 }
 
+
+let handleRx = ()=>{};
+let handleConsoleOutput = () => {};
+if (verbose){
+  handleConsoleOutput = (d) => {
+    console.log("<", d);
+  }
+}
+
 let testState = [];
 
 emu.init({
   EMULATOR : EMULATOR,
-  DEVICEID : DEVICEID
+  DEVICEID : DEVICEID,
+  rxCallback : (ch)=>{
+    handleRx(ch);
+  },
+  consoleOutputCallback: (d)=>{
+    handleConsoleOutput(d);
+  }
 }).then(function() {
   // Emulator is now loaded
   console.log("Loading tests");
