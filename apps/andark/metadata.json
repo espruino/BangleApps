@@ -1,15 +1,18 @@
 { "id": "andark",
   "name": "Analog Dark",
   "shortName":"AnDark",
-  "version":"0.04",
+  "version":"0.05",
   "description": "analog clock face without disturbing widgets",
   "icon": "andark_icon.png",
   "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"andark_screen.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"andark.app.js","url":"app.js"},
+    {"name":"andark.settings.js","url":"settings.js"},
     {"name":"andark.img","url":"app_icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"andark.json"}]
 }
