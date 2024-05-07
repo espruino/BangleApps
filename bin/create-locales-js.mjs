@@ -24,6 +24,7 @@ import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";
 import cldr from "cldr";
+import Utils from "../core/js/utils.js";
 import meta from "../apps/locale/locales-meta.js";
 
 /**
@@ -129,7 +130,7 @@ const datetime_format_map = {
   cccc: "%A",
   ccccc: "%a",
   cccccc: "%a",
-  a: "%p",
+  a: "", // should be %p but espruino time pattern should not include am/pm
   h: "%HH",
   hh: "%HH",
   H: "%HH",
@@ -138,6 +139,27 @@ const datetime_format_map = {
   mm: "%MM",
   s: "%SS",
   ss: "%SS",
+};
+/**
+ * Maps the Espruino datetime format to max character lengths.
+ * Used when determining if a format is too long.
+ */
+const datetime_length_map = {
+  "%Y": 4,
+  "%y": 2,
+  "%m": 2,
+  "%-m": 2,
+  "%d": 2,
+  "%-d": 2,
+  "%A": 13,
+  "%a": 4,
+  "%B": 11,
+  "%b": 4,
+  "%HH": 2,
+  "%MM": 2,
+  "%SS": 2,
+  "%P": 0,
+  "%p": 0,
 };
 
 /**
@@ -169,7 +191,40 @@ function transformDatetimeFormat(datetimeUnicode) {
     formatBuffer += datetimeUnicode[i];
   }
   commitBuffer(datetimeUnicode.length);
+  // If we remove am/pm we sometimes need to remove some whitespace as well
+  datetimeEspruino = datetimeEspruino.trim();
   return datetimeEspruino;
+}
+
+/**
+ * Takes an Espruino datetime format string and returns the maximum possible length of characters that the format could use.
+ *
+ * @param {string} datetimeEspruino - The datetime Espruino format
+ * @returns {number} - The maximum possible length of the format
+ */
+function getLengthOfDatetimeFormat(datetimeEspruino) {
+  let formatLength = 0;
+  let formatBuffer = "";
+  function commitBuffer(i) {
+    if (formatBuffer.length === 0) {
+      if (datetimeEspruino[i] === "%") {
+        formatBuffer = "%";
+      } else {
+        formatLength++;
+      }
+    } else {
+      formatBuffer += datetimeEspruino[i];
+      const length = datetime_length_map[formatBuffer];
+      if (length !== undefined) {
+        formatLength += length;
+        formatBuffer = "";
+      }
+    }
+  }
+  for (let i = 0; i < datetimeEspruino.length; i++) {
+    commitBuffer(i);
+  }
+  return formatLength;
 }
 
 /**
@@ -409,76 +464,95 @@ function generateLocale(localeName, locales) {
  * It is possible that the CLDR data does not conform to a standard, in which case manual data must be entered.
  *
  * @param {object} locale - The locale to test.
- * @param {boolean} ideal - If true, logs comments about aspects that could be more ideal.
+ * @param {boolean} checkIdeal - If true, logs comments about aspects that could be more ideal.
  * @returns {boolean} - True if the locale is conformant, false if something needs to be changed.
  */
-function checkLocale(locale, ideal = false) {
+function checkLocale(locale, checkIdeal = false) {
   let localePasses = true;
-  for (const month of locale.abmonth.split(",")) {
-    if (month.length > 4) {
+  function checkLength(name, string, max, ideal) {
+    if (string.length > max) {
       console.error(
-        `abmonth "${month}" in locale ${locale.lang} must not be longer than 4 characters`,
+        `${name} "${string}" in locale ${locale.lang} must not be longer than ${max} characters`,
       );
       localePasses = false;
     }
-    if (ideal && month.length > 3) {
+    if (checkIdeal && ideal && string.length > ideal) {
       console.warn(
-        `abmonth "${month}" in locale ${locale.lang} should ideally not be longer than 3 characters`,
+        `${name} "${string}" in locale ${locale.lang} should ideally not be longer than ${ideal} characters`,
       );
     }
   }
-  for (const day of locale.abday.split(",")) {
-    if (day.length > 4) {
+  function checkFormatLength(name, format, max, ideal) {
+    const length = getLengthOfDatetimeFormat(format);
+    if (length > max) {
       console.error(
-        `abday "${day}" in locale ${locale.lang} must not be longer than 4 characters`,
+        `${name} "${format}" in locale ${locale.lang} must not be longer than ${max} characters`,
       );
       localePasses = false;
     }
-    if (ideal && day.length > 3) {
+    if (checkIdeal && ideal && length > ideal) {
       console.warn(
-        `abday "${day}" in locale ${locale.lang} should ideally not be longer than 3 characters`,
+        `${name} "${format}" in locale ${locale.lang} should ideally not be longer than ${ideal} characters`,
       );
     }
   }
-  if (locale.ampm["0"].length > 3) {
-    console.error(
-      `AM "${locale.ampm["0"]}" in locale ${locale.lang} must not be longer than 3 characters`,
-    );
-    localePasses = false;
+  function checkIsIn(name, value, listName, list) {
+    if (!list.includes(value)) {
+      console.error(
+        `${name} "${value}" must be included in the ${listName} map`,
+      );
+      localePasses = false;
+    }
   }
-  if (ideal && locale.ampm["0"].length > 2) {
-    console.warn(
-      `AM "${locale.ampm["0"]}" in locale ${locale.lang} should ideally not be longer than 2 characters`,
-    );
+  checkLength("decimal point", locale.decimal_point, 1);
+  checkLength("thousands separator", locale.decimal_point, 1);
+  checkLength("speed", locale.speed, 4);
+  const speedUnits = Object.keys(meta.speedUnits);
+  checkIsIn("speed", locale.speed, "speedUnits", speedUnits);
+  checkLength("distance", locale.distance["0"], 3, 2);
+  checkLength("distance", locale.distance["1"], 3, 2);
+  const distanceUnits = Object.keys(meta.distanceUnits);
+  checkIsIn("distance", locale.distance["0"], "distanceUnits", distanceUnits);
+  checkIsIn("distance", locale.distance["1"], "distanceUnits", distanceUnits);
+  checkLength("temperature", locale.temperature, 2);
+  checkLength("AM", locale.ampm["0"], 3, 2);
+  checkLength("PM", locale.ampm["1"], 3, 2);
+  checkFormatLength("long time", locale.timePattern["0"], 8);
+  checkFormatLength("short time", locale.timePattern["1"], 5);
+  checkFormatLength("long date", locale.datePattern["0"], 14, 12);
+  checkFormatLength("short date", locale.datePattern["1"], 11, 9);
+  for (const abmonth of locale.abmonth.split(",")) {
+    checkLength("abmonth", abmonth, 4, 3);
   }
-  if (locale.ampm["1"].length > 3) {
-    console.error(
-      `PM "${locale.ampm["1"]}" in locale ${locale.lang} must not be longer than 3 characters`,
-    );
-    localePasses = false;
+  for (const month of locale.month.split(",")) {
+    checkLength("month", month, 11);
   }
-  if (ideal && locale.ampm["1"].length > 2) {
-    console.warn(
-      `PM "${locale.ampm["1"]}" in locale ${locale.lang} should ideally not be longer than 2 characters`,
-    );
+  for (const abday of locale.abday.split(",")) {
+    checkLength("abday", abday, 4, 3);
+  }
+  for (const day of locale.day.split(",")) {
+    checkLength("day", day, 13);
   }
   return localePasses;
 }
 
 /**
  * Replaces unsupported string characters with similar characters that are supported.
- * WARNING: This only works for characters that have been defined in `character_fallback_map`.
  *
  * @param {object} object - The object where all strings should be checked for unsupported characters.
  * @returns {object} - The same object, strings are now using supported characters.
  */
 function approximateChars(object) {
   for (let [key, value] of Object.entries(object)) {
+    // emoji icons are not used on the watch, so they are free to use fancy chars
+    if (key === "icon") continue;
     if (typeof value === "string") {
-      for (const [char, repl] of Object.entries(meta.character_fallback_map)) {
-        value = value.replaceAll(char, repl);
+      const stringChars = value.split("");
+      let newString = "";
+      for (const char of stringChars) {
+        newString += codePageLookup(char);
       }
-      object[key] = value;
+      object[key] = newString;
     } else if (
       typeof value === "object" &&
       value !== null &&
@@ -488,6 +562,22 @@ function approximateChars(object) {
     }
   }
   return object;
+  function codePageLookup(char) {
+    const charCode = char.charCodeAt();
+    if (charCode >= 32 && charCode < 128) {
+      // ASCII - fully supported
+      return char;
+    } else if (meta.codePages["ISO8859-1"].map.indexOf(char) >= 0) {
+      // At upload time, the char can be converted to a custom codepage
+      return char;
+    } else if (Utils.CODEPAGE_CONVERSIONS[char]) {
+      // There is a custom fallback char for this, return it
+      return Utils.CODEPAGE_CONVERSIONS[char];
+    }
+    throw new Error(
+      `Character ${char} (${charCode}) is not supported by Banglejs. Please add it to CODEPAGE_CONVERSIONS.`,
+    );
+  }
 }
 
 /**
@@ -501,6 +591,9 @@ function outputLocales(meta, locales) {
 /* exported distanceUnits */
 /* exported speedUnits */
 /* exported codePages */
+/* exported datePatterns */
+/* exported timePatterns */
+/* exported meridians */
 /* exported locales */
 /**
  * THIS FILE IS AUTOGENERATED.
@@ -508,10 +601,39 @@ function outputLocales(meta, locales) {
  */
 `;
 
+  const localeValues = Object.values(locales);
+  const datePatterns = {
+    0: [
+      ...new Set(localeValues.map((locale) => locale.datePattern["0"])),
+    ].sort(),
+    1: [
+      ...new Set(localeValues.map((locale) => locale.datePattern["1"])),
+    ].sort(),
+  };
+  const timePatterns = {
+    0: [
+      ...new Set(localeValues.map((locale) => locale.timePattern["0"])),
+    ].sort(),
+    1: [
+      ...new Set(localeValues.map((locale) => locale.timePattern["1"])),
+    ].sort(),
+  };
+  const meridians = {
+    0: [
+      ...new Set(localeValues.map((locale) => locale.ampm["0"])),
+    ].sort(),
+    1: [
+      ...new Set(localeValues.map((locale) => locale.ampm["1"])),
+    ].sort(),
+  }
+
   const indent = 2;
   content += `\nconst distanceUnits = ${JSON.stringify(meta.distanceUnits, undefined, indent)};\n`;
   content += `const speedUnits = ${JSON.stringify(meta.speedUnits, undefined, indent)};\n`;
   content += `\nconst codePages = ${JSON.stringify(meta.codePages, undefined, indent)};\n`;
+  content += `\nconst datePatterns = ${JSON.stringify(datePatterns, undefined, indent)};\n`;
+  content += `\nconst timePatterns = ${JSON.stringify(timePatterns, undefined, indent)};\n`;
+  content += `\nconst meridians = ${JSON.stringify(meridians, undefined, indent)};\n`;
   content += `\nvar locales = ${JSON.stringify(locales, undefined, indent)};\n`;
 
   fs.writeFileSync(path.resolve(outputPath), content);
