@@ -39,77 +39,82 @@ const codePages = {
 
 const datePatterns = {
   "0": [
+    "%-d %b %Y",
+    "%-d. %-m. %Y",
     "%-d. %b %Y",
-    "%A %B %d %Y",
-    "%A %d %B %Y",
-    "%A %d %B de %Y",
-    "%A %d. %B %Y",
-    "%A, %B %d, %Y",
-    "%A, %d de %B de %Y",
-    "%A, %d. %B %Y",
-    "%B %d %Y",
-    "%Y %b %d, %A",
+    "%-d. %b %Y.",
+    "%-d.%-m.%Y",
+    "%Y. %-d. %b",
+    "%Y. %b %-d.",
     "%Y/%m/%d",
+    "%b %-d, %Y",
     "%b %d %Y",
     "%b %d, %Y",
-    "%d %B %Y",
-    "%d %b %Y",
-    "%d %w %Y %A",
+    "%b, %d, %Y",
     "%d. %b %Y",
-    "%d. %b. %Y"
+    "%d.%m.%Y",
+    "%d/%m/%Y"
   ],
   "1": [
+    "%-d. %-m. %y",
     "%-d.%-m.%Y",
-    "%-d/%-m/%Y",
+    "%-d.%-m.%y",
+    "%-d.%m.%Y",
+    "%-d/%-m/%y",
+    "%-d/%m/%Y",
+    "%-d/%m/%y",
+    "%-m/%-d/%y",
     "%Y-%m-%d",
-    "%Y.%m.%d",
+    "%Y.%m.%d.",
+    "%Y/%m/%d",
     "%d-%m-%Y",
+    "%d. %m %Y",
     "%d.%m.%Y",
+    "%d.%m.%Y.",
     "%d.%m.%y",
-    "%d/%m %Y",
     "%d/%m/%Y",
-    "%d/%m/%y",
-    "%m/%d/%y",
-    "%y/%m/%d"
+    "%d/%m/%y"
   ]
 };
 
 const timePatterns = {
   "0": [
     "%HH.%MM.%SS",
-    "%HH:%MM.%SS",
-    "%HH:%MM:%SS"
+    "%HH:%MM:%SS",
+    "%HHh%MM:%SS"
   ],
   "1": [
     "%HH.%MM",
-    "%HH:%MM"
+    "%HH:%MM",
+    "%HHh%MM"
   ]
 };
 
 const meridians = {
   "0": [
     "AM",
-    "[none]",
+    "FM",
+    "VM",
     "am",
     "ap",
     "de",
     "dop",
-    "dop.",
     "fm",
-    "vorm",
-    "öö"
+    "pri",
+    "ÖÖ"
   ],
   "1": [
-    " nachm",
+    "EM",
+    "NM",
     "PM",
-    "[none]",
     "du",
     "em",
     "ip",
     "odp",
+    "pec",
     "pm",
-    "pop.",
-    "ös"
+    "pop",
+    "ÖS"
   ]
 };
 
@@ -159,16 +164,16 @@ var locales = {
     },
     "temperature": "°F",
     "ampm": {
-      "0": "am",
-      "1": "pm"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%b %d, %Y",
-      "1": "%m/%d/%y"
+      "0": "%b %-d, %Y",
+      "1": "%-m/%-d/%y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     "month": "January,February,March,April,May,June,July,August,September,October,November,December",
@@ -190,8 +195,8 @@ var locales = {
     },
     "temperature": "°F",
     "ampm": {
-      "0": "am",
-      "1": "pm"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
@@ -228,8 +233,8 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
-      "1": "%d/%m/%Y"
+      "0": "%-d %b %Y",
+      "1": "%d/%m/%y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     "month": "January,February,March,April,May,June,July,August,September,October,November,December",
@@ -258,7 +263,7 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
+      "0": "%-d %b %Y",
       "1": "%d/%m/%Y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -268,7 +273,7 @@ var locales = {
   },
   "en_NAV": {
     "lang": "en_NAV",
-    "icon": "&#9973;&#9992;&#65039;",
+    "icon": "⛵✈️",
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ".",
@@ -310,8 +315,8 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
@@ -352,8 +357,8 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "am",
+      "1": "pm"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
@@ -361,7 +366,7 @@ var locales = {
     },
     "datePattern": {
       "0": "%Y/%m/%d",
-      "1": "%y/%m/%d"
+      "1": "%Y/%m/%d"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     "month": "January,February,March,April,May,June,July,August,September,October,November,December",
@@ -382,15 +387,15 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
+      "0": "%-d %b %Y",
       "1": "%d-%m-%Y"
     },
     "abmonth": "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
@@ -462,7 +467,7 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %B %d, %Y",
+      "0": "%b %-d, %Y",
       "1": "%Y-%m-%d"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -484,18 +489,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %B %Y",
+      "0": "%-d %b %Y",
       "1": "%d/%m/%Y"
     },
-    "abmonth": "janv,févr,mars,avril,mai,juin,juil,août,sept,oct,nov,déc",
+    "abmonth": "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     "month": "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     "abday": "dim,lun,mar,mer,jeu,ven,sam",
     "day": "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -509,14 +514,44 @@ var locales = {
       "off": "off"
     }
   },
+  "fr_MC": {
+    "lang": "fr_MC",
+    "icon": "🇲🇨",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "decimal_point": ",",
+    "thousands_sep": " ",
+    "speed": "km/h",
+    "distance": {
+      "0": "m",
+      "1": "km"
+    },
+    "temperature": "°C",
+    "ampm": {
+      "0": "AM",
+      "1": "PM"
+    },
+    "timePattern": {
+      "0": "%HH:%MM:%SS",
+      "1": "%HH:%MM"
+    },
+    "datePattern": {
+      "0": "%-d %b %Y",
+      "1": "%d/%m/%Y"
+    },
+    "abmonth": "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
+    "month": "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
+    "abday": "dim,lun,mar,mer,jeu,ven,sam",
+    "day": "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi"
+  },
   "sv_SE": {
     "lang": "sv_SE",
     "icon": "🇸🇪",
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
-    "speed": "km/tim",
+    "thousands_sep": " ",
+    "speed": "km/t",
     "distance": {
       "0": "m",
       "1": "km"
@@ -554,7 +589,7 @@ var locales = {
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": " ",
     "speed": "km/h",
     "distance": {
       "0": "m",
@@ -562,15 +597,15 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "am",
+      "1": "pm"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%B %d %Y",
+      "0": "%-d %b %Y",
       "1": "%Y-%m-%d"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -667,8 +702,8 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %B %d, %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%d/%m/%Y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     "month": "January,February,March,April,May,June,July,August,September,October,November,December",
@@ -697,8 +732,8 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %B %d, %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%-d/%-m/%y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     "month": "January,February,March,April,May,June,July,August,September,October,November,December",
@@ -711,7 +746,7 @@ var locales = {
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": " ",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -719,18 +754,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %d. %B %Y",
+      "0": "%d.%m.%Y",
       "1": "%d.%m.%y"
     },
-    "abmonth": "Jän,Feb,März,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
+    "abmonth": "Jän,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
     "month": "Jänner,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     "abday": "So,Mo,Di,Mi,Do,Fr,Sa",
     "day": "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
@@ -752,8 +787,8 @@ var locales = {
     "icon": "🇮🇱",
     "calendar": "gregory",
     "numberingSystem": "latn",
-    "decimal_point": ",",
-    "thousands_sep": ".",
+    "decimal_point": ".",
+    "thousands_sep": ",",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -769,7 +804,7 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %B %d, %Y",
+      "0": "%-d %b %Y",
       "1": "%d/%m/%Y"
     },
     "abmonth": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -791,16 +826,16 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %d de %B de %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%-d/%-m/%y"
     },
     "abmonth": "ene,feb,mar,abr,may,jun,jul,ago,sept,oct,nov,dic",
     "month": "enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre",
@@ -825,7 +860,7 @@ var locales = {
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": " ",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -833,18 +868,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A %B %d %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%-d/%m/%y"
     },
-    "abmonth": "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    "abmonth": "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     "month": "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     "abday": "dim,lun,mar,mer,jeu,ven,sam",
     "day": "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -858,13 +893,73 @@ var locales = {
       "off": "off"
     }
   },
+  "nl_BE": {
+    "lang": "nl_BE",
+    "icon": "🇧🇪",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "decimal_point": ",",
+    "thousands_sep": ".",
+    "speed": "km/h",
+    "distance": {
+      "0": "m",
+      "1": "km"
+    },
+    "temperature": "°C",
+    "ampm": {
+      "0": "AM",
+      "1": "PM"
+    },
+    "timePattern": {
+      "0": "%HH:%MM:%SS",
+      "1": "%HH:%MM"
+    },
+    "datePattern": {
+      "0": "%-d %b %Y",
+      "1": "%-d/%m/%Y"
+    },
+    "abmonth": "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
+    "month": "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december",
+    "abday": "zo,ma,di,wo,do,vr,za",
+    "day": "zondag,maandag,dinsdag,woensdag,donderdag,vrijdag,zaterdag"
+  },
+  "de_BE": {
+    "lang": "de_BE",
+    "icon": "🇧🇪",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "decimal_point": ",",
+    "thousands_sep": ".",
+    "speed": "km/h",
+    "distance": {
+      "0": "m",
+      "1": "km"
+    },
+    "temperature": "°C",
+    "ampm": {
+      "0": "AM",
+      "1": "PM"
+    },
+    "timePattern": {
+      "0": "%HH:%MM:%SS",
+      "1": "%HH:%MM"
+    },
+    "datePattern": {
+      "0": "%d.%m.%Y",
+      "1": "%d.%m.%y"
+    },
+    "abmonth": "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
+    "month": "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
+    "abday": "So,Mo,Di,Mi,Do,Fr,Sa",
+    "day": "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag"
+  },
   "fi_FI": {
     "lang": "fi_FI",
     "icon": "🇫🇮",
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": " ",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -876,17 +971,17 @@ var locales = {
       "1": "ip"
     },
     "timePattern": {
-      "0": "%HH:%MM:%SS",
-      "1": "%HH:%MM"
+      "0": "%HH.%MM.%SS",
+      "1": "%HH.%MM"
     },
     "datePattern": {
-      "0": "%A %d. %B %Y",
-      "1": "%-d/%-m/%Y"
+      "0": "%-d.%-m.%Y",
+      "1": "%-d.%-m.%Y"
     },
-    "abmonth": "tammik,helmik,maalisk,huhtik,toukok,kesäk,heinäk,elok,syysk,lokak,marrask,jouluk",
-    "month": "tammikuuta,helmikuuta,maaliskuuta,huhtikuuta,toukokuuta,kesäkuuta,heinäkuuta,elokuuta,syyskuuta,lokakuuta,marraskuuta,joulukuuta",
+    "abmonth": "tamm,helm,maal,huht,touk,kesä,hein,elo,syys,loka,marr,joul",
+    "month": "tammikuu,helmikuu,maaliskuu,huhtikuu,toukokuu,kesäkuu,heinäkuu,elokuu,syyskuu,lokakuu,marraskuu,joulukuu",
     "abday": "su,ma,ti,ke,to,pe,la",
-    "day": "sunnuntaina,maanantaina,tiistaina,keskiviikkona,torstaina,perjantaina,lauantaina",
+    "day": "sunnuntai,maanantai,tiistai,keskiviikko,torstai,perjantai,lauantai",
     "trans": {
       "yes": "oui",
       "Yes": "Oui",
@@ -902,8 +997,8 @@ var locales = {
     "icon": "🇨🇭",
     "calendar": "gregory",
     "numberingSystem": "latn",
-    "decimal_point": ",",
-    "thousands_sep": ".",
+    "decimal_point": ".",
+    "thousands_sep": "’",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -911,18 +1006,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "vorm",
-      "1": " nachm"
+      "0": "VM",
+      "1": "NM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %d. %B %Y",
-      "1": "%d.%m.%Y"
+      "0": "%d.%m.%Y",
+      "1": "%d.%m.%y"
     },
-    "abmonth": "Jan,Feb,März,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
+    "abmonth": "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
     "month": "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
     "abday": "So,Mo,Di,Mi,Do,Fr,Sa",
     "day": "Sonntag,Montag,Dienstag,Mittwoch,Donnerstag,Freitag,Samstag",
@@ -942,7 +1037,7 @@ var locales = {
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": " ",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -958,10 +1053,10 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A %d %B %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%d.%m.%y"
     },
-    "abmonth": "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    "abmonth": "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     "month": "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     "abday": "dim,lun,mar,mer,jeu,ven,sam",
     "day": "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -980,8 +1075,8 @@ var locales = {
     "icon": "🇨🇭",
     "calendar": "gregory",
     "numberingSystem": "latn",
-    "decimal_point": ",",
-    "thousands_sep": ".",
+    "decimal_point": ".",
+    "thousands_sep": "’",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -989,16 +1084,16 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
-      "0": "%HH:%MM.%SS",
+      "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
-      "1": "%d/%m/%Y"
+      "0": "%-d %b %Y",
+      "1": "%d.%m.%y"
     },
     "abmonth": "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     "month": "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
@@ -1028,16 +1123,16 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
-      "0": "%HH:%MM.%SS",
+      "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
-      "1": "%d/%m/%Y"
+      "0": "%-d %b %Y",
+      "1": "%d/%m/%y"
     },
     "abmonth": "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
     "month": "gennaio,febbraio,marzo,aprile,maggio,giugno,luglio,agosto,settembre,ottobre,novembre,dicembre",
@@ -1059,7 +1154,7 @@ var locales = {
     "calendar": "gregory",
     "numberingSystem": "latn",
     "decimal_point": ",",
-    "thousands_sep": ".",
+    "thousands_sep": "’",
     "speed": "kmh",
     "distance": {
       "0": "m",
@@ -1067,15 +1162,15 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
-      "0": "%HH.%MM.%SS",
-      "1": "%HH.%MM"
+      "0": "%HH:%MM:%SS",
+      "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%A, %d. %B %Y",
+      "0": "%-d. %b %Y",
       "1": "%Y-%m-%d"
     },
     "abmonth": "Jen,Hor,Mär,Abr,Mei,Brá,Hei,Öig,Her,Wím,Win,Chr",
@@ -1106,21 +1201,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "öö",
-      "1": "ös"
+      "0": "ÖÖ",
+      "1": "ÖS"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %w %Y %A",
-      "1": "%d/%m/%Y"
+      "0": "%-d %b %Y",
+      "1": "%-d.%m.%Y"
     },
     "abmonth": "Oca,Sub,Mar,Nis,May,Haz,Tem,Agu,Eyl,Eki,Kas,Ara",
-    "month": "Ocak,Subat,Mart,Nisan,Mayis,Haziran,Temmuz,Agustos,Eylul,Ekim,Kasim,Aralik",
-    "abday": "Paz,Pzt,Sal,Car,Per,Cum,Cmt",
-    "day": "Pazar,Pazartesi,Sali,Carsamba,Persembe,Cuma,Cumartesi",
+    "month": "Ocak,Subat,Mart,Nisan,Mayis,Haziran,Temmuz,Agustos,Eylül,Ekim,Kasim,Aralik",
+    "abday": "Paz,Pzt,Sal,Çar,Per,Cum,Cmt",
+    "day": "Pazar,Pazartesi,Sali,Çarsamba,Persembe,Cuma,Cumartesi",
     "trans": {
       "yes": "evet",
       "Yes": "Evet",
@@ -1153,13 +1248,13 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%Y %b %d, %A",
-      "1": "%Y.%m.%d"
+      "0": "%Y. %b %-d.",
+      "1": "%Y.%m.%d."
     },
-    "abmonth": "Jan,Feb,Már,Ápr,Máj,Jún,Júl,Aug,Szep,Okt,Nov,Dec",
-    "month": "Január,Február,Március,Április,Május,Június,Július,Augusztus,Szeptember,Október,November,December",
-    "abday": "Vas,Hét,Ke,Szer,Csüt,Pén,Szom",
-    "day": "Vasárnap,Hétfo,Kedd,Szerda,Csütörtök,Péntek,Szombat",
+    "abmonth": "jan,feb,már,ápr,máj,jún,júl,aug,szep,okt,nov,dec",
+    "month": "január,február,március,április,május,június,július,augusztus,szeptember,október,november,december",
+    "abday": "V,H,K,Sze,Cs,P,Szo",
+    "day": "vasárnap,hétfo,kedd,szerda,csütörtök,péntek,szombat",
     "trans": {
       "yes": "igen",
       "Yes": "Igen",
@@ -1184,18 +1279,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
-      "0": "%HH:%MM:%SS",
-      "1": "%HH:%MM"
+      "0": "%HHh%MM:%SS",
+      "1": "%HHh%MM"
     },
     "datePattern": {
-      "0": "%A %d %B de %Y",
-      "1": "%d/%m/%Y"
+      "0": "%-d %b %Y",
+      "1": "%-d/%m/%y"
     },
-    "abmonth": "gen.,febr.,març,abril,mai,junh,julh,ago.,set.,oct.,nov.,dec.",
+    "abmonth": "gen,feb,març,abr,mai,junh,jul,ago,set,oct,nov,dec",
     "month": "genièr,febrièr,març,abril,mai,junh,julhet,agost,setembre,octòbre,novembre,decembre",
     "abday": "dg,dl,dm,dc,dj,dv,ds",
     "day": "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
@@ -1223,21 +1318,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "am",
-      "1": "pm"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d. %b %Y",
+      "1": "%d/%m/%Y"
     },
-    "abmonth": "Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez",
-    "month": "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
-    "abday": "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
-    "day": "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
+    "abmonth": "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez",
+    "month": "janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro",
+    "abday": "dom,seg,ter,qua,qui,sex,sáb",
+    "day": "domingo,segunda-feira,terça-feira,quarta-feira,quinta-feira,sexta-feira,sábado",
     "trans": {
       "yes": "sim",
       "Yes": "Sim",
@@ -1270,8 +1365,8 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d. %b %Y",
-      "1": "%d.%m.%Y"
+      "0": "%-d. %-m. %Y",
+      "1": "%d.%m.%y"
     },
     "abmonth": "led,úno,bre,dub,kve,cvn,cvc,srp,zár,ríj,lis,pro",
     "month": "leden,únor,brezen,duben,kveten,cerven,cervenec,srpen,zárí,ríjen,listopad,prosinec",
@@ -1301,20 +1396,20 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "dop.",
-      "1": "pop."
+      "0": "dop",
+      "1": "pop"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%-d. %b %Y",
-      "1": "%-d.%-m.%Y"
+      "0": "%-d. %b %Y.",
+      "1": "%d.%m.%Y."
     },
-    "abmonth": "sij.,velj.,ožu.,tra.,svi,lip.,srp.,kol.,ruj.,lis.,stu.,pro.",
+    "abmonth": "sij,velj,ožu,tra,svi,lip,srp,kol,ruj,lis,stu,pro",
     "month": "sijecanj,veljaca,ožujak,travanj,svibanj,lipanj,srpanj,kolovoz,rujan,listopad,studeni,prosinac",
-    "abday": "ned.,pon.,uto.,sri.,cet.,pet.,sub.",
+    "abday": "ned,pon,uto,sri,cet,pet,sub",
     "day": "nedjelja,ponedjeljak,utorak,srijeda,cetvrtak,petak,subota",
     "trans": {
       "yes": "da",
@@ -1341,8 +1436,8 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "dop.",
-      "1": "pop."
+      "0": "dop",
+      "1": "pop"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
@@ -1350,11 +1445,11 @@ var locales = {
     },
     "datePattern": {
       "0": "%-d. %b %Y",
-      "1": "%-d.%-m.%Y"
+      "1": "%-d. %-m. %y"
     },
-    "abmonth": "jan.,feb.,mar.,apr.,maj,jun.,jul.,avg.,sep.,okt.,nov.,dec.",
+    "abmonth": "jan,feb,mar,apr,maj,jun,jul,avg,sep,okt,nov,dec",
     "month": "januar,februar,marec,april,maj,junij,julij,avgust,september,oktober,november,december",
-    "abday": "ned.,pon.,tor.,sre.,cet.,pet.,sob.",
+    "abday": "ned,pon,tor,sre,cet,pet,sob",
     "day": "nedelja,ponedeljek,torek,sreda,cetrtek,petek,sobota",
     "trans": {
       "yes": "da",
@@ -1389,13 +1484,13 @@ var locales = {
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %b %Y",
+      "0": "%d/%m/%Y",
       "1": "%d/%m/%y"
     },
-    "abmonth": "Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez",
-    "month": "Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro",
-    "abday": "Dom,Seg,Ter,Qua,Qui,Sex,Sab",
-    "day": "Domingo,Segunda-feira,Terça-feira,Quarta-feira,Quinta-feira,Sexta-feira,Sábado",
+    "abmonth": "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez",
+    "month": "janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro",
+    "abday": "dom,seg,ter,qua,qui,sex,sáb",
+    "day": "domingo,segunda-feira,terça-feira,quarta-feira,quinta-feira,sexta-feira,sábado",
     "trans": {
       "yes": "sim",
       "Yes": "Sim",
@@ -1420,21 +1515,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d. %b %Y",
-      "1": "%d.%m.%Y"
+      "0": "%-d %b %Y",
+      "1": "%-d.%m.%Y"
     },
-    "abmonth": "Sty,Lut,Mar,Kwi,Maj,Cze,Lip,Sie,Wrz,Paz,Lis,Gru",
-    "month": "Styczen,Luty,Marzec,Kwiecien,Maj,Czerwiec,Lipiec,Sierpien,Wrzesien,Pazdziernik,Listopad,Grudzien",
-    "abday": "Ndz,Pon,Wt,Sr,Czw,Pt,Sob",
-    "day": "Niedziela,Poniedzialek,Wtorek,Sroda,Czwartek,Piatek,Sobota",
+    "abmonth": "sty,lut,mar,kwi,maj,cze,lip,sie,wrz,paz,lis,gru",
+    "month": "styczen,luty,marzec,kwiecien,maj,czerwiec,lipiec,sierpien,wrzesien,pazdziernik,listopad,grudzien",
+    "abday": "ndz,pon,wt,sr,czw,pt,sob",
+    "day": "niedziela,poniedzialek,wtorek,sroda,czwartek,piatek,sobota",
     "trans": {
       "yes": "tak",
       "Yes": "Tak",
@@ -1460,21 +1555,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "pri",
+      "1": "pec"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d. %b %Y",
-      "1": "%d.%m.%Y"
+      "0": "%Y. %-d. %b",
+      "1": "%d.%m.%y"
     },
-    "abmonth": "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dec",
-    "month": "Janvaris,Februaris,Marts,Aprilis,Maijs,Junijs,Julijs,Augusts,Septemberis,Oktobris,Novembris,Decembris",
-    "abday": "Pr,Ot,Tr,Ce,Pk,Se,Sv",
-    "day": "Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena,Svetdiena",
+    "abmonth": "jan,feb,mar,apr,mai,jun,jul,aug,sep,okt,nov,dec",
+    "month": "janvaris,februaris,marts,aprilis,maijs,junijs,julijs,augusts,septembris,oktobris,novembris,decembris",
+    "abday": "sv,pr,ot,tr,ce,pk,se",
+    "day": "Svetdiena,Pirmdiena,Otrdiena,Trešdiena,Ceturtdiena,Piektdiena,Sestdiena",
     "trans": {
       "yes": "ja",
       "Yes": "Ja",
@@ -1500,21 +1595,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "FM",
+      "1": "EM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d. %b %Y",
+      "0": "%-d. %b %Y",
       "1": "%d.%m.%Y"
     },
-    "abmonth": "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
-    "month": "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
-    "abday": "Su,Må,Ty,On,To,Fr,La",
-    "day": "Sundag,Måndag,Tysdag,Onsdag,Torsdag,Fredag,Laurdag",
+    "abmonth": "jan,feb,mar,apr,mai,jun,jul,aug,sep,okt,nov,des",
+    "month": "januar,februar,mars,april,mai,juni,juli,august,september,oktober,november,desember",
+    "abday": "søn,mån,tys,ons,tor,fre,lau",
+    "day": "søndag,måndag,tysdag,onsdag,torsdag,fredag,laurdag",
     "trans": {
       "yes": "ja",
       "Yes": "Ja",
@@ -1542,21 +1637,21 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d. %b %Y",
+      "0": "%-d. %b %Y",
       "1": "%d.%m.%Y"
     },
-    "abmonth": "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
-    "month": "Januar,Februar,Mars,April,Mai,Juni,Juli,August,September,Oktober,November,Desember",
-    "abday": "Sø,Ma,Ti,On,To,Fr,Lø",
-    "day": "Søndag,Mandag,Tirsdag,Onsdag,Torsdag,Fredag,Lørdag",
+    "abmonth": "jan,feb,mar,apr,mai,jun,jul,aug,sep,okt,nov,des",
+    "month": "januar,februar,mars,april,mai,juni,juli,august,september,oktober,november,desember",
+    "abday": "søn,man,tir,ons,tor,fre,lør",
+    "day": "søndag,mandag,tirsdag,onsdag,torsdag,fredag,lørdag",
     "trans": {
       "yes": "ja",
       "Yes": "Ja",
@@ -1584,18 +1679,18 @@ var locales = {
     },
     "temperature": "°C",
     "ampm": {
-      "0": "[none]",
-      "1": "[none]"
+      "0": "AM",
+      "1": "PM"
     },
     "timePattern": {
       "0": "%HH:%MM:%SS",
       "1": "%HH:%MM"
     },
     "datePattern": {
-      "0": "%d %B %Y",
-      "1": "%d/%m/%y"
+      "0": "%-d %b %Y",
+      "1": "%-d/%-m/%y"
     },
-    "abmonth": "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
+    "abmonth": "gen,febr,març,abr,maig,juny,jul,ag,set,oct,nov,des",
     "month": "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octubre,novembre,desembre",
     "abday": "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
     "day": "diumenge,dilluns,dimarts,dimecres,dijous,divendres,dissabte",
@@ -1611,5 +1706,66 @@ var locales = {
       "Delete": "Esborra",
       "Mark Unread": "Marca com a no llegit"
     }
+  },
+  "sq_AL": {
+    "lang": "sq_AL",
+    "icon": "🇦🇱",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "decimal_point": ",",
+    "thousands_sep": " ",
+    "speed": "km/h",
+    "distance": {
+      "0": "m",
+      "1": "km"
+    },
+    "temperature": "°C",
+    "ampm": {
+      "0": "AM",
+      "1": "PM"
+    },
+    "timePattern": {
+      "0": "%HH:%MM:%SS",
+      "1": "%HH:%MM"
+    },
+    "datePattern": {
+      "0": "%-d %b %Y",
+      "1": "%-d.%-m.%y"
+    },
+    "abmonth": "jan,shk,mar,pri,maj,qer,korr,gush,sht,tet,nën,dhj",
+    "month": "janar,shkurt,mars,prill,maj,qershor,korrik,gusht,shtator,tetor,nëntor,dhjetor",
+    "abday": "die,hën,mar,mër,enj,pre,sht",
+    "day": "e diel,e hënë,e martë,e mërkurë,e enjte,e premte,e shtunë"
+  },
+  "ts_TS": {
+    "lang": "ts_TS",
+    "icon": "🐛",
+    "notes": "Produces the longest possible output. Useful for testing.",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "decimal_point": ".",
+    "thousands_sep": ",",
+    "speed": "km/h",
+    "distance": {
+      "0": "kmi",
+      "1": "kmi"
+    },
+    "temperature": "°C",
+    "ampm": {
+      "0": "dop",
+      "1": "pop"
+    },
+    "timePattern": {
+      "0": "%HHh%MM:%SS",
+      "1": "%HHh%MM"
+    },
+    "datePattern": {
+      "0": "%b, %d, %Y",
+      "1": "%d. %m %Y"
+    },
+    "abmonth": "mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema",
+    "month": "mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum",
+    "abday": "wewa,wewa,wewa,wewa,wewa,wewa,wewa",
+    "day": "weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom"
   }
 };
