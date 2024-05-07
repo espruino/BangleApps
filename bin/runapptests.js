@@ -446,6 +446,9 @@ emu.init({
   console.log("Loading tests");
   let p = Promise.resolve();
   let apps = apploader.apps;
+
+  apps.push(DEMOAPP);
+
   if (process.argv.includes("--id")) {
     let f = process.argv[process.argv.indexOf("--id") + 1];
     apps = apps.filter(e=>e.id==f);
@@ -455,17 +458,14 @@ emu.init({
     }
   }
 
-  apps.push(DEMOAPP);
-
-  p = p.then(()=>{
-    return runTest(DEMOTEST, testState);
-  });
-
   apps.forEach(app => {
-    var testFile = APP_DIR+"/"+app.id+"/test.json";
+    let test = DEMOTEST;
+    if (app.id != DEMOAPP.id){
+      let testFile = APP_DIR+"/"+app.id+"/test.json";
     if (!require("fs").existsSync(testFile)) return;
-    var test = JSON.parse(require("fs").readFileSync(testFile).toString());
+      test = JSON.parse(require("fs").readFileSync(testFile).toString());
     test.app = app.id;
+    }
     p = p.then(()=>{
       return runTest(test, testState);
     });
