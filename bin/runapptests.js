@@ -43,7 +43,9 @@ const DEMOTEST = {
     "description": "Optional description of the test, will be shown in results table",
     "steps" : [
       {"t":"setup", "id": "arbitraryid", "text": "Calls a set of predefined steps"},
-      {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and optionally compares the resulting string to the value in 'eq'"},
+//      {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and compares the resulting string to the value in 'eq'"},
+//      {"t":"console", "text": "Starts an interactive console for debugging"}
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
       {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
       {"t":"checkMemoryUsage", "text": "Checks the current memory to be equal to the stored value"},
       {"t":"assert", "js": "0", "is":"falsy", "text": "Evaluates the content of 'js' on the device and asserts if the result is falsy"},
@@ -51,9 +53,10 @@ const DEMOTEST = {
       {"t":"assert", "js": "false", "is":"false", "text": "Evaluates the content of 'js' on the device and asserts if the result is false"},
       {"t":"assert", "js": "true", "is":"true", "text": "Evaluates the content of 'js' on the device and asserts if the result is true"},
       {"t":"assert", "js": "()=>{}", "is":"function", "text": "Evaluates the content of 'js' and on the device and asserts if the result is a function"},
-      {"t":"assert", "js": "test", "is":"equal", "to": "test", "text": "Evaluates the content of 'js' and 'to' on the device and asserts if the result is equal"},
+      {"t":"assert", "js": "123", "is":"equal", "to": "123", "text": "Evaluates the content of 'js' and 'to' on the device and asserts if the result is equal"},
       {"t":"assertArray", "js": "[]", "is":"undefinedOrEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is undefined or an empty array"},
-      {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},,
+      {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},
+      {"t":"cmd", "js": "global.testfunction(1)", "text": "Call function for the following asserts"},
       {"t":"assertCall", "id": "testfunc", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "Asserts if a wrapped function has been called with the expected arguments"},
       {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"}
     ]
