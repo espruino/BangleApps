@@ -22,7 +22,6 @@ exports.speedUnits = {
   "km/h": 1,
   kmt: 1,
   "km/t": 1,
-  "km/tim": 1,
   mph: 1.60934,
   kts: 1.852,
 };
@@ -45,34 +44,6 @@ exports.codePages = {
   ðñòóôõö÷øùúûüýþÿ
   `.replace(/[ \n]/g, ""),
   },
-};
-
-/**
- * Espruino does not support all unicode characters.
- * This is a list of unsupported characters that map to a similar character which is supported.
- */
-exports.character_fallback_map = {
-  // letters
-  Č: "C",
-  č: "c",
-  Ě: "E",
-  ě: "e",
-  Ğ: "G",
-  ğ: "g",
-  ı: "i",
-  Ő: "Ö",
-  ő: "ö",
-  Ř: "R",
-  ř: "r",
-  Ś: "S",
-  ś: "s",
-  Ş: "S",
-  ş: "s",
-
-  // separators
-  " ": " ",
-  " ": " ",
-  "’": "'",
 };
 
 // charFallbacks is now in core/js/utils.js as CODEPAGE_CONVERSIONS
@@ -116,11 +87,21 @@ exports.character_fallback_map = {
  *
  * LOCALECODE is the locale that you want to see the output for, e.g. "en_US".
  *
- * In locales:
+ * Limits:
+ * decimal_point: must be 1 char
+ * thousands_sep: must be 1 char
+ * speed: must be <5 chars
+ * distance: must be <4 chars, ideally 2
+ * temperature: must be <4 chars, ideally 2
+ * am/pm: must be <4 chars, ideally 2
+ * long time: must be <9 chars
+ * short time: must be <6 char
+ * long date: must be <15 chars, ideally <13
+ * short date: must be <12 chars, ideally <10
  * abmonth: short months (must be <5 chars, ideally 3)
- * month: normal month names
+ * month: normal month names (current longest is 11 chars)
  * abday: short days (must be <5 chars, ideally 3)
- * day: normal day names
+ * day: normal day names (current longest is 13 chars)
  */
 exports.locales = {
   en_GB: {
@@ -139,7 +120,6 @@ exports.locales = {
     speed: "mph",
     distance: { 0: "ft", 1: "mi" },
     temperature: "°F",
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
   },
   "en_US 2": {
     notes: "USA with YYYY-MM-DD date",
@@ -148,14 +128,12 @@ exports.locales = {
     speed: "mph",
     distance: { 0: "ft", 1: "mi" },
     temperature: "°F",
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%b %d, %Y", 1: "%Y-%m-%d" },
   },
   en_IN: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_IE: {
@@ -229,7 +207,6 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     ampm: { 0: "am", 1: "pm" },
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
   },
   fr_FR: {
     calendar: "gregory",
@@ -246,10 +223,16 @@ exports.locales = {
       off: "off",
     },
   },
+  fr_MC: {
+    calendar: "gregory",
+    numberingSystem: "latn",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
+    abday: "dim,lun,mar,mer,jeu,ven,sam",
+  },
   sv_SE: {
     calendar: "gregory",
     numberingSystem: "latn",
-    speed: "km/tim",
+    speed: "km/t",
     datePattern: { 0: "%b %d %Y", 1: "%Y-%m-%d" }, // feb 1 2020 //  2020-03-01
     abmonth: "jan,feb,mars,apr,maj,juni,juli,aug,sep,okt,nov,dec",
     trans: {
@@ -266,7 +249,6 @@ exports.locales = {
     // Swedish localisation with English text
     calendar: "gregory",
     numberingSystem: "latn",
-    datePattern: { 0: "%B %d %Y", 1: "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   da_DK: {
@@ -287,14 +269,12 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kph",
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   en_AU: {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
-    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   },
   de_AT: {
@@ -353,6 +333,15 @@ exports.locales = {
       on: "on",
       off: "off",
     },
+  },
+  nl_BE: {
+    calendar: "gregory",
+    numberingSystem: "latn",
+    ampm: { 0: "AM", 1: "PM" },
+  },
+  de_BE: {
+    calendar: "gregory",
+    numberingSystem: "latn",
   },
   fi_FI: {
     calendar: "gregory",
@@ -462,6 +451,10 @@ exports.locales = {
     numberingSystem: "latn",
     speed: "kph",
     ampm: { 0: "de", 1: "du" },
+    datePattern: {
+      0: "%Y. %b %-d.",
+      1: "%Y.%m.%d.",
+    },
     abmonth: "jan,feb,már,ápr,máj,jún,júl,aug,szep,okt,nov,dec",
     trans: {
       yes: "igen",
@@ -492,6 +485,10 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     speed: "kmh",
+    datePattern: {
+      0: "%-d. %b %Y",
+      1: "%d/%m/%Y",
+    },
     abmonth: "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez",
     abday: "dom,seg,ter,qua,qui,sex,sáb",
     trans: {
@@ -523,6 +520,10 @@ exports.locales = {
     calendar: "gregory",
     numberingSystem: "latn",
     ampm: { 0: "dop", 1: "pop" },
+    datePattern: {
+      0: "%-d. %b %Y.",
+      1: "%d.%m.%Y.",
+    },
     trans: {
       yes: "da",
       Yes: "Da",
@@ -589,6 +590,10 @@ exports.locales = {
     numberingSystem: "latn",
     speed: "kmh",
     ampm: { 0: "pri", 1: "pēc" },
+    datePattern: {
+      0: "%Y. %-d. %b",
+      1: "%d.%m.%y",
+    },
     abmonth: "jan,feb,mar,apr,mai,jūn,jūl,aug,sep,okt,nov,dec",
     abday: "sv,pr,ot,tr,ce,pk,se",
     trans: {
@@ -659,6 +664,11 @@ exports.locales = {
       "Mark Unread": "Marca com a no llegit",
     },
   },
+  sq_AL: {
+    calendar: "gregory",
+    numberingSystem: "latn",
+    ampm: { 0: "AM", 1: "PM" },
+  },
   /*
   "he_IL": { // This won't work until we get a font - see https://github.com/espruino/BangleApps/issues/399
     codePage : "ISO8859-8",
@@ -676,4 +686,35 @@ exports.locales = {
     trans: { yes: "כן", Yes: "כן", no: "לא", No: "לא", ok: "אישור", on: "פעיל", off: "כבוי" }
   }
 */
+  "ts_TS": {
+    icon: "🐛",
+    notes: "Produces the longest possible output. Useful for testing.",
+    calendar: "gregory",
+    numberingSystem: "latn",
+    decimal_point: ".",
+    thousands_sep: ",",
+    speed: "km/h",
+    distance: {
+      0: "kmi",
+      1: "kmi",
+    },
+    temperature: "°C",
+    ampm: {
+      0: "dop",
+      1: "pop",
+    },
+    timePattern: {
+      0: "%HHh%MM:%SS",
+      1: "%HHh%MM",
+    },
+    datePattern: {
+      0: "%b, %d, %Y",
+      1: "%d. %m %Y",
+    },
+    abmonth: "mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema",
+    month:
+      "mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum",
+    abday: "wewa,wewa,wewa,wewa,wewa,wewa,wewa",
+    day: "weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom",
+  },
 };
