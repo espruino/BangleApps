@@ -162,32 +162,31 @@ function wrap(func, id){
 }
 
 function assertCall(step){
-  let isOK = false;
+  let isOK = true;
   let id = step.id;
   let args = step.argAsserts;
+  if (step.count !== undefined){
   let calls = getValue(`global.APPTESTS.funcCalls.${id}`);
-  if ((args.count && args.count == calls) || (!args.count && calls > 0)){
-    if (args) {
+    isOK = step.count == calls
+  }
+  if (args && args.length > 0){
       let callArgs = getValue(`global.APPTESTS.funcArgs.${id}`);
       for (let a of args){
         let current = {
-          value: callArgs[a.arg],
+        js: callArgs[a.arg],
           is: a.is,
           to: a.to,
           text: step.text
         };
         switch(a.t){
           case "assertArray":
-            isOK = assertArray(current);
+          isOK = isOK && assertArray(current);
             break;
           case "assert":
-            isOK =  assertValue(current);
+          isOK = isOK && assertValue(current);
             break;
         }
       }
-    } else {
-      isOK = true;
-    }
   }
   if (isOK)
     console.log("OK - ASSERT CALL", step.text ? "- " + step.text : "");
