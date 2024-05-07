@@ -2,7 +2,7 @@
   var stat = {date: 0};
   var d = Date.now();
   var settings = require("Storage").readJSON("widdevst.settings.json", 1)||{};
-  var redrawBars = "redrawBars" in settings ? settings.redrawBars : false;
+  var redrawBars = "redrawBars" in settings ? settings.redrawBars : true;
   delete settings;
 
   WIDGETS.devst = {area: "tr", width: 22, draw: function() {
