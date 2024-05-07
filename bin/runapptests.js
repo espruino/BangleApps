@@ -83,16 +83,13 @@ function assertArray(step){
 
 function assertValue(step){
   let isOK;
-  let value = step.js;
-  if (value === undefined)
-    value = step.value;
   switch (step.is.toLowerCase()){
-    case "truthy": isOK = getValue(`!!${value}`); break;
-    case "falsy": isOK = getValue(`!${value}`); break;
-    case "true": isOK = getValue(`${value} === true`); break;
-    case "false": isOK = getValue(`${value} === false`); break;
-    case "equal": isOK = getValue(`${value} == ${step.to}`); break;
-    case "function": isOK = getValue(`typeof ${value} === "function"`); break;
+    case "truthy": isOK = getValue(`!!${step.js}`); break;
+    case "falsy": isOK = getValue(`!${step.js}`); break;
+    case "true": isOK = getValue(`${step.js} === true`); break;
+    case "false": isOK = getValue(`${step.js} === false`); break;
+    case "equal": isOK = getValue(`${step.js} == ${step.to}`); break;
+    case "function": isOK = getValue(`typeof ${step.js} === "function"`); break;
   }
 
   if (isOK)
