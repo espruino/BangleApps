@@ -121,8 +121,10 @@ function drawScale(){
 
 //// main running sequence ////
 
+// Show launcher when middle button pressed, and widgets that we're clock
+Bangle.setUI("clock");
+// Load widgets if needed, and make them show swipeable
 if (settings.loadWidgets) {
-  // Prepare widgets
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
 }
@@ -148,6 +150,3 @@ Bangle.on('lock',on=>{
   draw(); // draw immediately
 });
 Bangle.on('charging',on=>{draw();});
-
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
