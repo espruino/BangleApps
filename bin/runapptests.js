@@ -8,6 +8,8 @@ IT IS UNFINISHED
 It searches for `test.json` in each app's directory and will
 run them in sequence.
 
+The return code is the number of failed tests.
+
 TODO:
 
 * more code to test with
@@ -19,6 +21,44 @@ TODO:
 * ...
 
 */
+
+const DEMOAPP = {
+  "id":"demoappfortestformat",
+  "name":"demo",
+  "version":"0.01",
+  "type":"app",
+  "supports":["BANGLEJS2"],
+  "storage":[],
+};
+const DEMOTEST = {
+  "app" : "demoappfortestformat",
+  "setup" : [{
+    "id": "arbitraryid",
+    "steps" : [
+      {"t":"cmd", "js": "global.testfunction = ()=>{}", "text": "Runs some code on the device"},
+      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"}
+    ]
+  }],
+  "tests" : [{
+    "description": "Optional description of the test, will be shown in results table",
+    "steps" : [
+      {"t":"setup", "id": "arbitraryid", "text": "Calls a set of predefined steps"},
+      {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and optionally compares the resulting string to the value in 'eq'"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"checkMemoryUsage", "text": "Checks the current memory to be equal to the stored value"},
+      {"t":"assert", "js": "0", "is":"falsy", "text": "Evaluates the content of 'js' on the device and asserts if the result is falsy"},
+      {"t":"assert", "js": "1", "is":"truthy", "text": "Evaluates the content of 'js' on the device and asserts if the result is truthy"},
+      {"t":"assert", "js": "false", "is":"false", "text": "Evaluates the content of 'js' on the device and asserts if the result is false"},
+      {"t":"assert", "js": "true", "is":"true", "text": "Evaluates the content of 'js' on the device and asserts if the result is true"},
+      {"t":"assert", "js": "()=>{}", "is":"function", "text": "Evaluates the content of 'js' and on the device and asserts if the result is a function"},
+      {"t":"assert", "js": "test", "is":"equal", "to": "test", "text": "Evaluates the content of 'js' and 'to' on the device and asserts if the result is equal"},
+      {"t":"assertArray", "js": "[]", "is":"undefinedOrEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is undefined or an empty array"},
+      {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},,
+      {"t":"assertCall", "id": "testfunc", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "Asserts if a wrapped function has been called with the expected arguments"},
+      {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"}
+    ]
+  }]
+}
 
 var EMULATOR = "banglejs2";
 var DEVICEID = "BANGLEJS2";
@@ -412,6 +452,12 @@ emu.init({
       process.exitCode(255);
     }
   }
+
+  apps.push(DEMOAPP);
+
+  p = p.then(()=>{
+    return runTest(DEMOTEST, testState);
+  });
 
   apps.forEach(app => {
     var testFile = APP_DIR+"/"+app.id+"/test.json";
