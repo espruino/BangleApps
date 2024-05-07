@@ -275,6 +275,9 @@ function runStep(step, subtest, test, state){
       p = p.then(()=>{
         console.log("> UPLOADING" + (step.load ? " AND LOADING" : ""), step.file);
         emu.tx(AppInfo.getFileUploadCommands(step.as, require("fs").readFileSync(BASE_DIR + "/" + step.file).toString()));
+        if (step.load){
+          emu.tx(`\x10load("${step.as}")`);
+        }
       });
       break;
     default: ERROR("Unknown step type "+step.t);
