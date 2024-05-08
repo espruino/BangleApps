@@ -58,20 +58,14 @@
   let getTimeString = function(date) {
     let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
     let hour = date.getHours() + Math.floor(segment/12);
-    let f_string = fuzzy_string.minutes[segment % 12];
-    for (let i = 0; i < f_string.length; i++) {
-      if (f_string.charAt(i) == '$') {
-        if (f_string.charAt(i+1) == '1') return f_string.slice(0, i) + fuzzy_string.hours[hour % 12] + f_string.slice(i+2);
-        return f_string.slice(0, i) + fuzzy_string.hours[(hour+1) % 12] + f_string.slice(i+2);
-      }
-    }
-    // the more elegant solution that unfortunately gets optimized to smithereens
-    /*
+    // add "" to load into RAM due to 2v21 firmware .replace on flashstring issue
+    f_string = ""+fuzzy_string.minutes[segment % 12]; 
     if (f_string.includes('$1')) {
-      //return f_string.replace('$1', fuzzy_string.hours[hour % 12]);
+      f_string = f_string.replace('$1', fuzzy_string.hours[(hour) % 12]);
     } else {
-      //return f_string.replace('$2', fuzzy_string.hours[(hour + 1) % 12]);
-    }*/
+      f_string = f_string.replace('$2', fuzzy_string.hours[(hour + 1) % 12]);
+    }
+    return f_string;
   };
 
   let draw = function() {
