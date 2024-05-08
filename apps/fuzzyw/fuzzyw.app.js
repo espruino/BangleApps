@@ -59,7 +59,7 @@
     let segment = Math.round((date.getMinutes()*60 + date.getSeconds() + 1)/300);
     let hour = date.getHours() + Math.floor(segment/12);
     // add "" to load into RAM due to 2v21 firmware .replace on flashstring issue
-    f_string = ""+fuzzy_string.minutes[segment % 12]; 
+    let f_string = ""+fuzzy_string.minutes[segment % 12]; 
     if (f_string.includes('$1')) {
       f_string = f_string.replace('$1', fuzzy_string.hours[(hour) % 12]);
     } else {
