@@ -43,9 +43,8 @@ const DEMOTEST = {
     "description": "Optional description of the test, will be shown in results table",
     "steps" : [
       {"t":"setup", "id": "arbitraryid", "text": "Calls a set of predefined steps"},
-//      {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and compares the resulting string to the value in 'eq'"},
-//      {"t":"console", "text": "Starts an interactive console for debugging"}
-      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and compares the resulting string to the value in 'eq'"},
+//      {"t":"console", "text": "Starts an interactive console for debugging"},
       {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
       {"t":"checkMemoryUsage", "text": "Checks the current memory to be equal to the stored value"},
       {"t":"assert", "js": "0", "is":"falsy", "text": "Evaluates the content of 'js' on the device and asserts if the result is falsy"},
@@ -156,7 +155,7 @@ function wrap(func, id){
       global.APPTESTS.funcArgs.${id}=arguments;
       return o.apply(this, arguments);
     };
-  }(${func}));`;
+  }(${func}));\n`;
 
   emu.tx(wrappingCode);
 }
