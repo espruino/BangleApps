@@ -285,7 +285,7 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         emu.tx(`\x10print(process.memory().usage)\n`);
         subtest.memUsage = parseInt( getSanitizedLastLine());
-        console.log("> CURRENT MEMORY USAGE", subtest.memUsage);
+        console.log("> SAVED MEMORY USAGE", subtest.memUsage);
       });
       break;
     case "checkMemoryUsage" :
@@ -314,7 +314,7 @@ function runStep(step, subtest, test, state){
         console.log("> UPLOADING" + (step.load ? " AND LOADING" : ""), step.file);
         emu.tx(AppInfo.getFileUploadCommands(step.as, require("fs").readFileSync(BASE_DIR + "/" + step.file).toString()));
         if (step.load){
-          emu.tx(`\x10load("${step.as}")`);
+          emu.tx(`\x10load("${step.as}")\n`);
         }
       });
       break;
