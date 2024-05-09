@@ -102,6 +102,7 @@ var stats = {};
 const DATA_FILE = "exstats.json";
 // Load the state from a saved file if there was one
 state = Object.assign(state, require("Storage").readJSON(DATA_FILE,1)||{});
+state.startSteps = Bangle.getStepCount()  - (state.lastSteps - state.startSteps);
 // force step history to a uint8array
 state.stepHistory = new Uint8Array(state.stepHistory);
 // when we exit, write the current state
