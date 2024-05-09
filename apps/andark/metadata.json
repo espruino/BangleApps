@@ -1,7 +1,7 @@
 { "id": "andark",
   "name": "Analog Dark",
   "shortName":"AnDark",
-  "version":"0.05",
+  "version":"0.06",
   "description": "analog clock face without disturbing widgets",
   "icon": "andark_icon.png",
   "type": "clock",

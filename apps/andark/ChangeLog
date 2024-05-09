@@ -4,3 +4,4 @@
 0.04: Changed update cylce, when locked
 0.05: Fix support for dark theme + support widgets +
       add settings for widgets, order of drawing and hour hand length
+0.06: Fix issue showing widgets when app is fast-loaded into from launcher with widgets disabled

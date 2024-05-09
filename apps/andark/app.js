@@ -127,7 +127,7 @@ Bangle.setUI("clock");
 if (settings.loadWidgets) {
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
-}
+} else if (global.WIDGETS) require("widget_utils").hide();
 // Clear the screen once, at startup
 drawScale();
 draw();
