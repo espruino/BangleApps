@@ -400,4 +400,7 @@ console.log(`${errorCount} errors, ${warningCount} warnings`);
 console.log("==================================");
 if (errorCount)  {
   process.exit(1);
+} else if ("CI" in process.env && warningCount) {
+  console.log("Running in CI, raising an error from warnings");
+  process.exit(1);
 }
