@@ -110,20 +110,23 @@ function getValue(js){
 }
 
 function assertArray(step){
+  console.log(`> ASSERT ARRAY ${step.js} IS`,step.is.toUpperCase(), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
     case "notempty": isOK = getValue(`${step.js} && ${step.js}.length > 0`); break;
     case "undefinedorempty": isOK = getValue(`!${step.js} || (${step.js} && ${step.js}.length === 0)`); break;
   }
 
-  if (isOK)
-    console.log("> OK - ASSERT ARRAY " + step.is.toUpperCase(), step.text ? "- " + step.text : "");
-  else
-    console.log("> FAIL - ASSERT ARRAY " + step.is.toUpperCase(), step.text ? "- " + step.text : "");
+  if (isOK) {
+    if (verbose)
+      console.log("> OK -", `\`${step.js}\``);
+  } else
+    console.log("> FAIL -", `\`${step.js}\``);
   return isOK;
 }
 
 function assertValue(step){
+  console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase(), step.to ? "TO " + `\`${step.js}\`` : "", step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
     case "truthy": isOK = getValue(`!!${step.js}`); break;
@@ -134,15 +137,16 @@ function assertValue(step){
     case "function": isOK = getValue(`typeof ${step.js} === "function"`); break;
   }
 
-  if (isOK)
-    console.log("> OK - ASSERT " + step.is.toUpperCase(), step.text ? "- " + step.text : "");
-  else
-    console.log("> FAIL - ASSERT " + step.is.toUpperCase(), step.text ? "- " + step.text : "");
+  if (isOK){
+    if (verbose)
+      console.log("> OK - " + `\`${step.js}\``, "IS", step.is.toUpperCase(), step.to ? "TO " + `\`${step.js}\`` : "");
+  } else
+    console.log("> FAIL - " + `\`${step.js}\``, "IS", step.is.toUpperCase(), step.to ? "TO " + `\`${step.js}\`` : "");
   return isOK;
 }
 
 function wrap(func, id){
-  console.log(`> Wrapping "${func}"`);
+  console.log(`> WRAPPING \`${func}\` AS ${id}`);
 
   let wrappingCode = `
   if(!global.APPTESTS) global.APPTESTS={};
@@ -161,35 +165,37 @@ function wrap(func, id){
 }
 
 function assertCall(step){
+  console.log("> ASSERT CALL", step.id, step.text ? "- " + step.text : "");
   let isOK = true;
   let id = step.id;
   let args = step.argAsserts;
   if (step.count !== undefined){
-  let calls = getValue(`global.APPTESTS.funcCalls.${id}`);
+    let calls = getValue(`global.APPTESTS.funcCalls.${id}`);
     isOK = step.count == calls
   }
   if (args && args.length > 0){
-      let callArgs = getValue(`global.APPTESTS.funcArgs.${id}`);
-      for (let a of args){
-        let current = {
+    let callArgs = getValue(`global.APPTESTS.funcArgs.${id}`);
+    for (let a of args){
+      let current = {
         js: callArgs[a.arg],
-          is: a.is,
-          to: a.to,
-          text: step.text
-        };
-        switch(a.t){
-          case "assertArray":
+        is: a.is,
+        to: a.to,
+        text: step.text
+      };
+      switch(a.t){
+        case "assertArray":
           isOK = isOK && assertArray(current);
-            break;
-          case "assert":
+          break;
+        case "assert":
           isOK = isOK && assertValue(current);
-            break;
-        }
+          break;
       }
+    }
   }
-  if (isOK)
-    console.log("OK - ASSERT CALL", step.text ? "- " + step.text : "");
-  else
+  if (isOK){
+    if (verbose)
+      console.log("OK - ASSERT CALL", step.text ? "- " + step.text : "");
+  } else
     console.log("FAIL - ASSERT CALL", step.text ? "- " + step.text : "");
   return isOK;
 }
@@ -248,14 +254,17 @@ function runStep(step, subtest, test, state){
       break;
     case "eval" :
       p = p.then(() => {
-        console.log(`> Evaluate "${step.js}"`);
+        console.log(`> EVAL \`${step.js}\``);
         emu.tx(`\x10print(JSON.stringify(${step.js}))\n`);
         var result = getSanitizedLastLine();
         var expected = JSON.stringify(step.eq);
-        console.log("> GOT `"+result+"`");
+        if (verbose)
+          console.log("> GOT `"+result+"`");
         if (result!=expected) {
           console.log("> FAIL: EXPECTED "+expected);
           state.ok = false;
+        } else if (verbose) {
+          console.log("> OK: EXPECTED "+expected);
         }
       });
       break;
@@ -284,15 +293,15 @@ function runStep(step, subtest, test, state){
     case "saveMemoryUsage" :
       p = p.then(() => {
         emu.tx(`\x10print(process.memory().usage)\n`);
-        subtest.memUsage = parseInt( getSanitizedLastLine());
+        subtest.memUsage = parseInt(getSanitizedLastLine());
         console.log("> SAVED MEMORY USAGE", subtest.memUsage);
       });
       break;
     case "checkMemoryUsage" :
       p = p.then(() => {
         emu.tx(`\x10print(process.memory().usage)\n`);
-        var memUsage =  getSanitizedLastLine();
-        console.log("> CURRENT MEMORY USAGE", memUsage);
+        var memUsage =  parseInt(getSanitizedLastLine());
+        console.log("> COMPARE MEMORY USAGE", memUsage);
         if (subtest.memUsage != memUsage ) {
           console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
           state.ok = false;
@@ -388,7 +397,8 @@ function runTest(test, testState) {
         emu.factoryReset();
         console.log("> SENDING APP "+test.app);
         emu.tx(command);
-        console.log("> SENT APP");
+        if (verbose)
+          console.log("> SENT APP");
         emu.tx("reset()\n");
         console.log("> RESET");
 
@@ -461,9 +471,9 @@ emu.init({
     let test = DEMOTEST;
     if (app.id != DEMOAPP.id){
       let testFile = APP_DIR+"/"+app.id+"/test.json";
-    if (!require("fs").existsSync(testFile)) return;
+      if (!require("fs").existsSync(testFile)) return;
       test = JSON.parse(require("fs").readFileSync(testFile).toString());
-    test.app = app.id;
+      test.app = app.id;
     }
     p = p.then(()=>{
       return runTest(test, testState);
