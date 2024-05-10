@@ -1,19 +1,22 @@
 const SETTINGSFILE = "smclock.json";
 const image3bit = {
   width : 176, height : 176, bpp : 3,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("2Gw4f/AoPX3sggf/A4QAFtu27YC/AX/bkmSpICcpdpEL5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INNt23bAX4C/7dsgAA+jZB/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INI="))
+  transparent : -1,
+  palette : new Uint16Array([0,48599,800,65535,0,0,0,0]),
+  buffer : require("heatshrink").decompress(atob("tu27YC/AX/bkmSpICcpdpEL5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INNt23bAX4C/7dsgAA+jZB/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/IP5B/INIA="))
 };
 const image4bit = {
   width : 176, height : 176, bpp : 4,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("/4A/AH4Au1QAp1/2swApK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K+//AH4A/AF8AAH4AUK/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/AA=="))
+  transparent : -1,
+  palette : new Uint16Array([0,48599,800,65535,0,0,0,0,0,0,0,0,0,0,0,0]),
+  buffer : require("heatshrink").decompress(atob("mYA/AH4AuiIApicykQApK/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K/5X/K+8zAH4A/AF8AAH4AUK/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/4A/K/5X/AH5X/K/5X/AH5X/K/5X/AH5X/K/4A/K/5X/K/4A/K/5X/K/AA=="))
 };
 const imagework = {
   width : 176, height : 176, bpp : 4,
-  transparent : 0,
-  buffer : require("heatshrink").decompress(atob("s1l4n/43ilkapcalHL9Mx83i9OqlFi1OCpkS9G68/alcig/bg/ThUqiIAS5GqACOCFCYAJvR7PqACB0gxcj9tWKXYkIybi8wGSUDuIyb/SHCACENt4xaiWNGKQAB6/BGTMUmoyUq1BGTP46AyUhuMGTNzGKkAgs0S7NlGSsA7HxGS8nS6oABgdxGS9GqAyWgtvGK0SxoxWTIQyWi8wGTEKoIyV/CXXAAMNxgxUjlzGLAAB04yUj9lgoyZ60hGSfIZTIABgdxGSdKZTIABguvGKUSxoxaAAPY4IyRiiXbAANaoIyRk3QGTkNxgxQjl9GLgABm6ZQillGT3W+IyP5CXdAAMDuIyPpVQGT0FsgxOj+NGLwAB7DMOi8wGUEKoIyN+yXfAAMNxgyNuYxgAAM3GJkUsAyiq3xGRco6AyigeCGRd6GMUAgukGReNEKVQCKE44L9dhqrRGRnID6MN9qYQt6YLimgXKPqTJ8DuIyLjjMS7U1CB3YS5YABowyRqZGP0gxMiMXZiVmCZsNwQyNj9lMyPXTJtWoIyNiNzdh4jCuYOMm4xOiP4TKWGCZcNt4yPiiFNAAcF09gBpUDuIyPjmNZiPYTI0FBgnxGR8R/TMRgd4TJMF0gxQiMXmCZRsllZROMGSMftqZRm6ZGAAXWS6IABDxIAIg1ITJE3FJXEogAG/C4JRpGEsczAA2CGJMcw1mAA10sBmR09Hu4AGoIyJik1qoAG0mNGSPYYKcoRxHYowyRgdxGSVDXBOHmDMRt4xRj9lDxEF06ZTkIyQ46XIAAPWudQGSFaZiNGEpUDvA/KTI+MGJ8SRZmnUpIAImgyPi7xM619ZiSZP/CKMgeGTKMDuIyOuYeMgs3GSMFsgxNj9gD5vatqZSGRsYKp0NsdQGSFaoIyMowfP7SZRhuMGJccxofPqflTKM3GRcXmDsQGSVW+IyK+yGRqoyRgdxGRX6diIASGRnIMqIAS7CYLimlGUb+MiWDGMUNxgyLf4LMiq1BGRkXmDKiGJkRj+NGMEFsgyNiNKGUEDuIyO5HQGT9Y+IyOillS780GJ0RjlzGT0NxgyPiP2TL1aS54ABi8wGTs44IyQj+NS7tvGKAAB+dQGTcDvgySlDMc7CXRTIWlGTekGKQABubKbxgyU+yZag1BGSkX0AyZm4xUiMcxoxYgtvGSsRpQaBGS0DuIyWjDMY7HxGS0fsovUqB8B0gxWAANzMi0NxgyY/CZWq1BGTEXmoyV64xYiMcxqXVtgyZiNKdQIASgaXZAAPHZinYkIyaj9tGSekGLQABuaXTvgyclHVqoAQq3xGTkUswARs4oTA="))
-}
+  transparent : -1,
+  palette : new Uint16Array([60003,4587,18953,57955,55908,41542,4619,29223,53860,8714,10762,51812,12810,45637,55907,43589]),
+  buffer : require("heatshrink").decompress(atob("swAfspCghpDgACfATcMmK+fQK8O2K2ViK0MAg5XytZXigmmK+NwK8UAqxWwtNAK8cCK+FlK0cAhpXw4BXkgF2K9/QK8uGK11nK0sAg5XutBXmgemK9twK80AqxWstUwK88CK9llK08AhZXskBXogF2K9fQK9NJK1VnK1MAg5XqyhXqgHGK9NwK9fWK1FsmBXrgRXot5WrgELK9EgK9kAuxXn2BXtpJWms5WtgEFK82UK90A4xXlqBXv6xWkthWvgECK8ltK+EIK8kgK+EAuxXjwBXxnRWis5WxgEFK8WkK+UAkxXhqBXz6xWgsRWzgEHK8FtK+kEyxXfuBX0gF2K7+AK+s8Kz1nK2sAgpXe0ZX2gEmK7tQK++2KzliK28Ag5XctZX4gmWK7dwK/EAqxWatNAK/MMK7VlK3MAhpXa4ZX6gEmK7PwK/e2KzFiK3cAg5XYtZX8gmmK69wK/kAqxWWtNAK/sMK61lK3sAhpXW4BX+gEmK6vQK/+GKyliK38Ag5XUtBW/gED0xXTuBW/AANWK6fQKv4ABhhXTkA2goggf2xXTspXghogfkxXTtUwGz8EqAfdgpWTAANwWEFbDzs8K6toK8EHDzt2K6tnK8ENaTkIyxXVs3QLEF7ZrhWWs0gK8GCmAca6xXXspXgg9wDjUmK69qoBXfgetDbMFKy4ABRrYAFrh6ZnRXZtZXggR6ZuxXZsRXghtvDK8IKzIAB6BYgvVAZK5Xb4BXgpMgDC3WK7dlK8EHES/GK7dpcq4AIgfJwAXUgpWbAANwWEFWkAWUpJXdtZXggVlCyl2K7tiK8ELs2wCqgAe+BYgu0gYqZXf4ZXgpNnCiX2K740TABsFs2wCaED4xXftNALEHGaaMHKz4ABuBXg6zTRpJXhtZXggVm6ASPuxXhsRXghdm4gRQAEVQLEF2s7BQACNlqoAMq9m0ZXgpNmkQANkxXSuCMfACMFesVpwA0OnlmCJ4AR4xXhTqENs0gK8HWK8PDGiF2tpXggRXhqA0QnlsK8EIK0FiGiMLNaTTQK79rGieUK8E6K79wGiUCs5XggpWetNAGiULs2wLEEmK7tlGilWkBXg6xXd4A0UgVtK8EHK7vQGikIzhXggmWKzdiGq1WqBYguxXbtY0WgWUK8E8K7dwcq+nK8EFKzVpoA1X+2wLEEmK7NlGjEHkBXg2xXZ4A0YgfFK8EHK7PQGrPcmBXfgmWKy9iRrdwWEFWK69oGjUDkhXghhXXSTm3K8ENKy1qmA1bg/QLEEmK6tlGrrNcAAm2K6sgGru1K8EHK6roeh8wK78EyxWTs42fO7wACqxXTyg1foBXghhXTuA2gAEEFK6ewKv4ABgRXTkBV/AAPWK6dtKv4ABkxXTthV/gEFKyYABqBX/pRXVyhX/uxXVs5W+hZWVAAOwK/sCK68gK/vWK69vK/vGK69smBW7gpWXAANwK/dJK7OUK/d2K7NnK3ULKzIAB6BX5gRXbkBX5qxXbspW4gfGK7dqmBX3g5WbAANwK+9JK7toK+92K7tiK20LKzoAB6BX1gRXf4BX1qxXfspW0gemK79poBXzg5WfAANwK+eGK8NrK+cmK8NiK2UNK0IAB6BXxgRXj4BXxqxXjspWwgmWK8dpoBXvg5WjAANwK9+2K8trK98mK8tiK10NK0oABqBXthhXn4ZXtqxXns5WsgmWK89pwBXrg5WnAANwK9e2K9NtK9cmK9NiK1UFK1IABqBXpnhXr0ZXpuxXrs5WogmWK9dmwBXng5Wss0gK8+2K9ttK88mK9tsK00FK1oABqBXlnRXvyhXluxXvs5WkhBWvAAOwK8cCK+MgK8fWK+NvK8fGK+NsmBWhgpWxAANQK8NJK+eUK8N2K+dnogAfpZHkA=="))
+};
 const monthName = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -88,12 +91,12 @@ function getBatteryColor(level) {
 
 function draw() {
   var background;
-  if (backgroundImage == "work") {
-    background = imagework;
-  } else if (backgroundImage == "3bit") {
+  if (backgroundImage == "3bit") {
     background = image3bit;
   } else if (backgroundImage == "4bit") {
     background = image4bit;
+  } else {
+    background = imagework;
   }
   g.drawImage(background);
 
@@ -118,13 +121,13 @@ function draw() {
     g.setColor("#ff0").drawImage(atob("DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
   } else {
     g.clearRect(x,y,x+14,y+24);
-    g.setColor("#fff").fillRect(x+2,y+2,x+12,y+22).clearRect(x+4,y+4,x+10,y+20).fillRect(x+5,y+1,x+9,y+2);
+    g.setColor("#000").fillRect(x+2,y+2,x+12,y+22).clearRect(x+4,y+4,x+10,y+20).fillRect(x+5,y+1,x+9,y+2);
     g.setColor(batColor).fillRect(x+4,y+20-(batLevel*16/100),x+10,y+20);
   }
   if (Bangle.isCharging()) {
     g.setColor("#ff0");
   } else {
-    g.setColor("#fff");
+    g.setColor(batColor);
   }
   if (useVectorFont == true) {
     g.setFont("Vector", 16);
@@ -175,11 +178,7 @@ function draw() {
   }
 
   // draw time
-  if (backgroundImage == "work") {
-    g.setColor("#000");
-  } else {
-    g.setColor("#fff");
-  }
+  g.setColor("#fff");
   if (useVectorFont == true) {
     g.setFont("Vector", 60);
     g.drawString(time, 10, 108, false);
