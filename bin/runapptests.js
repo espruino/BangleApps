@@ -485,7 +485,7 @@ emu.init({
     console.table(testState);
 
     process.exit(testState.reduce((a,c)=>{
-      return a + ((c.result == "SUCCESS") ? 0 : 1);
+      return a || ((c.result == "SUCCESS") ? 0 : 1);
     }, 0))
   });
   return p;
