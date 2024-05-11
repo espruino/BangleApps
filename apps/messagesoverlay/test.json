@@ -16,7 +16,7 @@
       {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
     ]
   },{
-    "description": "Test handler backgrounding with fastloading (setUI)", 
+    "description": "Test swipe handler backgrounding with fastloading (setUI)", 
     "steps" : [
       {"t":"cmd", "js": "Bangle.on('swipe',print)", "text": "Create listener for swipes"},
       {"t":"cmd", "js": "Bangle.setUI({mode: 'clock',remove: ()=>{}})", "text": "Init UI for clock"},
@@ -24,9 +24,17 @@
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "No swipe handlers while message overlay is on screen"},
       {"t":"cmd", "js": "Bangle.setUI()", "text": "Trigger removal of UI"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Still no swipe handlers"},
-      {"t":"cmd", "js": "Bangle.on('touch', print)"},
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
       {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
+    ]
+  },{
+    "description": "Test watch backgrounding", 
+    "steps" : [
+      {"t":"cmd", "js": "setWatch(print,BTN)", "text": "Create watch"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"assertArray", "js": "global[\"\\xff\"].watches", "is":"undefinedOrEmpty", "text": "No watches while message overlay is on screen"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"assert", "js": "global[\"\\xff\"].watches.length", "is":"equal", "to": "2", "text": "One watch restored, first entry is always empty"}
     ]
   }]
 }
