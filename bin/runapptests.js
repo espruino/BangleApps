@@ -310,9 +310,10 @@ function runStep(step, subtest, test, state){
       break;
     case "sleep" :
       p = p.then(()=>{
+        console.log("> SLEEP FOR", step.ms);
         return new Promise(resolve => {
           setTimeout(()=>{
-            console.log("> WAITED FOR", step.ms);
+            if (verbose) console.log("> SLEPT FOR", step.ms);
             resolve();
           }, step.ms);
         })
