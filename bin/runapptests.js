@@ -239,6 +239,7 @@ function runStep(step, subtest, test, state){
           title:'title',
           body:'body'
         }, step.obj || {});
+        console.log(`> GB with`, verbose ? "event " + JSON.stringify(obj, null, null) : "type " + obj.t);
         emu.tx(`GB(${JSON.stringify(obj)})\n`);
       });
       break;
