@@ -126,7 +126,7 @@ function assertArray(step){
 }
 
 function assertValue(step){
-  console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase(), step.to ? "TO " + `\`${step.js}\`` : "", step.text ? "- " + step.text : "");
+  console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase() + (step.to !== undefined ? " TO " + `\`${step.to}\`` : ""), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
     case "truthy": isOK = getValue(`!!${step.js}`); break;
