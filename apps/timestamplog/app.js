@@ -129,7 +129,15 @@ class StampLog {
     }
 
     if (this.isDirty) {
-      if (storage.writeJSON(this.filename, this.log)) {
+      let logToSave = [];
+      for (let logEntry of this.log) {
+        // Serialize each Date object into an ISO string before saving
+        let newEntry = Object.assign({}, logEntry);
+        newEntry.stamp = logEntry.stamp.toISOString();
+        logToSave.push(newEntry);
+      }
+
+      if (storage.writeJSON(this.filename, logToSave)) {
         console.log('stamplog: save to storage completed');
         this.isDirty = false;
       } else {
