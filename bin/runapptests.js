@@ -231,7 +231,7 @@ function runStep(step, subtest, test, state){
       break;
     case "gb" : 
       p = p.then(() => {
-        let obj = Object.apply({
+        let obj = Object.assign({
           src:'Messenger',
           t: 'notify',
           type: 'text',
