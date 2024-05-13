@@ -279,7 +279,7 @@ function runStep(step, subtest, test, state){
       });
       break;
     case "resetCall":
-      console.log(`> RESET CALL ${step.id}`);
+      console.log(`> RESET CALL ${step.id}`, step.text ? "- " + step.text : "");
       emu.tx(`global.APPTESTS.funcCalls.${step.id} = 0;\n`);
       emu.tx(`global.APPTESTS.funcArgs.${step.id} = undefined;\n`);
       break;
