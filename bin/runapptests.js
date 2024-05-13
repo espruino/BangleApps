@@ -312,12 +312,16 @@ function runStep(step, subtest, test, state){
     case "sleep" :
       p = p.then(()=>{
         console.log("> SLEEP FOR", step.ms);
-        return new Promise(resolve => {
-          setTimeout(()=>{
-            if (verbose) console.log("> SLEPT FOR", step.ms);
-            resolve();
-          }, step.ms);
-        })
+        if (!subtest.wrappedDateNow){
+          emu.tx(`Date.now = (o)=>{return ()=>{
+            return o() + global.APPTESTS.timeOffset;
+          };}(Date.now);\n`);
+          subtest.wrappedDateNow = true;
+        }
+        emu.tx(`global.APPTESTS.timeOffset += ${step.ms};
+        for(let c of global["\xff"].timers){
+          if(c) c.time -= ${step.ms * 1000};
+        }\n`);
       });
       break;
     case "upload" :
