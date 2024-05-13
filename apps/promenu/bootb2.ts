@@ -87,12 +87,10 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
         /*???*/{
           if(name.length >= 17 - v.length && typeof item === "object"){
             g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
+          }else if(name.length >= 15){
+            g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
           }else{
-            if(name.length >= 15){
-              g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
-            }else{
-              g.drawString(name, x + 3.7, iy + 2.7);
-            }
+            g.drawString(name, x + 3.7, iy + 2.7);
           }
 
           let xo = x2;
