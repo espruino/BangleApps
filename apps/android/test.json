@@ -86,12 +86,13 @@
       {"t":"setup", "id": "connected"},
       
       {"t":"assert", "js": "Bangle.setGPSPower(1, 'test')", "is":"truthy", "text": "setGPSPower returns truthy when switching on"},
-      
+
+      {"t":"resetCall", "id": "gpspower"},
       {"t":"gb", "obj":{"t":"gps"}, "text": "trigger switch"},
       {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS switched off"},
 
+      {"t":"resetCall", "id": "gpspower"},
       {"t":"sleep", "ms":"12000", "text": "wait for fallback"},
-
       {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ], "text": "internal GPS switched on caused by missing GB event"}
     ]
   }]
