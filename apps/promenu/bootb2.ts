@@ -80,6 +80,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
           v = "format" in item
             ? (item.format as any)(item.value) // <T>format(), value: T
             : item.value;
+          if (typeof v !== "string") v = `${v}`;
         } else {
           v = "";
         }
