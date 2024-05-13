@@ -311,11 +311,12 @@ function runStep(step, subtest, test, state){
       break;
     case "sleep" :
       p = p.then(()=>{
-        console.log("> SLEEP FOR", step.ms);
+        console.log("> SLEEP FOR", step.ms + "ms");
         if (!subtest.wrappedDateNow){
           emu.tx(`Date.now = (o)=>{return ()=>{
             return o() + global.APPTESTS.timeOffset;
-          };}(Date.now);\n`);
+          };}(Date.now);
+          global.APPTESTS.timeOffset = 0;\n`);
           subtest.wrappedDateNow = true;
         }
         emu.tx(`global.APPTESTS.timeOffset += ${step.ms};
