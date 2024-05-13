@@ -57,7 +57,9 @@ const DEMOTEST = {
       {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},
       {"t":"cmd", "js": "global.testfunction(1)", "text": "Call function for the following asserts"},
       {"t":"assertCall", "id": "testfunc", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "Asserts if a wrapped function has been called with the expected arguments"},
-      {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"}
+      {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"},
+      {"t":"resetCall", "id": "testfunc", "text": "Reset the recorded calls"},
+      {"t":"assertCall", "id": "testfunc", "count": 0 , "text": "Asserts if a wrapped function has been called the expected number of times"}
     ]
   }]
 }
@@ -275,6 +277,11 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         state.ok &= assertArray(step);
       });
+      break;
+    case "resetCall":
+      console.log(`> RESET CALL ${step.id}`);
+      emu.tx(`global.APPTESTS.funcCalls.${step.id} = 0;\n`);
+      emu.tx(`global.APPTESTS.funcArgs.${step.id} = undefined;\n`);
       break;
     case "assertCall":
       p = p.then(() => {
