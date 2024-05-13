@@ -1,4 +1,3 @@
-"use strict";
 E.showMenu = function (items) {
     var RectRnd = function (x1, y1, x2, y2, r) {
         var pp = [];
@@ -72,6 +71,8 @@ E.showMenu = function (items) {
                     v = "format" in item
                         ? item.format(item.value)
                         : item.value;
+                    if (typeof v !== "string")
+                        v = "".concat(v);
                 }
                 else {
                     v = "";
@@ -80,13 +81,11 @@ E.showMenu = function (items) {
                     if (name.length >= 17 - v.length && typeof item === "object") {
                         g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
                     }
+                    else if (name.length >= 15) {
+                        g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
+                    }
                     else {
-                        if (name.length >= 15) {
-                            g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
-                        }
-                        else {
-                            g.drawString(name, x + 3.7, iy + 2.7);
-                        }
+                        g.drawString(name, x + 3.7, iy + 2.7);
                     }
                     var xo = x2;
                     if (selectEdit && idx === selected) {
@@ -143,12 +142,6 @@ E.showMenu = function (items) {
         },
     };
     l.draw();
-    Bangle.setUI("updown", function (dir) {
-        if (dir)
-            l.move(dir);
-        else
-            l.select();
-    });
     var back = options.back;
     if (!back) {
         var backItem = items["< Back"];
@@ -164,5 +157,14 @@ E.showMenu = function (items) {
                 back_1();
         });
     }
+    Bangle.setUI({
+        mode: "updown",
+        back: back,
+    }, function (dir) {
+        if (dir)
+            l.move(dir);
+        else
+            l.select();
+    });
     return l;
 };
