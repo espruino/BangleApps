@@ -57,9 +57,16 @@ const DEMOTEST = {
       {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},
       {"t":"cmd", "js": "global.testfunction(1)", "text": "Call function for the following asserts"},
       {"t":"assertCall", "id": "testfunc", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "Asserts if a wrapped function has been called with the expected arguments"},
-      {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"},
       {"t":"resetCall", "id": "testfunc", "text": "Reset the recorded calls"},
       {"t":"assertCall", "id": "testfunc", "count": 0 , "text": "Asserts if a wrapped function has been called the expected number of times"}
+    ]
+  }, {
+    "description": "Emulator time can advanced by a given amount. This currently works for timeouts,intervals and Date.now() calls",
+    "steps": [
+      {"t":"cmd", "js":"setTimeout(()=>{global.waited = true},60000)", "text": "Set a timeout for 60 seconds"},
+      {"t":"assert", "js":"global.waited", "is": "falsy", "text": "Timeout has not yet fired"},
+      {"t":"advanceTime", "ms":60000},
+      {"t":"assert", "js":"global.waited", "is": "true", "text": "Timeout has fired"}
     ]
   }]
 }
@@ -316,9 +323,9 @@ function runStep(step, subtest, test, state){
         }
       });
       break;
-    case "sleep" :
+    case "advanceTime" :
       p = p.then(()=>{
-        console.log("> SLEEP FOR", step.ms + "ms");
+        console.log("> ADVANCE TIME BY", step.ms + "ms");
         if (!subtest.wrappedDateNow){
           emu.tx(`Date.now = (o)=>{return ()=>{
             return o() + global.APPTESTS.timeOffset;
