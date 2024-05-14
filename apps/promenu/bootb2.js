@@ -150,16 +150,21 @@ E.showMenu = function (items) {
         else if (backItem && "back" in backItem)
             back = backItem.back;
     }
+    var onSwipe;
     if (typeof back === "function") {
         var back_1 = back;
-        Bangle.on('swipe', function (lr, _ud) {
+        onSwipe = function (lr) {
             if (lr < 0)
                 back_1();
-        });
+        };
+        Bangle.on('swipe', onSwipe);
     }
     Bangle.setUI({
         mode: "updown",
         back: back,
+        remove: function () {
+            Bangle.removeListener("swipe", onSwipe);
+        },
     }, function (dir) {
         if (dir)
             l.move(dir);

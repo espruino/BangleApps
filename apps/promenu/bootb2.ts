@@ -170,17 +170,21 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
     else if (backItem && "back" in backItem)
       back = backItem.back;
   }
+  let onSwipe: SwipeCallback | undefined;
   if (typeof back === "function") {
     const back_ = back;
-    Bangle.on('swipe', (lr, _ud) => {
+    onSwipe = (lr/*, ud*/) => {
       if (lr < 0) back_();
-    })
+    };
+    Bangle.on('swipe', onSwipe);
   }
 
-  Bangle.setUI(
-      {
+  Bangle.setUI({
           mode: "updown",
           back,
+          remove: () => {
+              Bangle.removeListener("swipe", onSwipe);
+          },
       } as SetUIArg<"updown">,
       dir => {
           if (dir) l.move(dir);
