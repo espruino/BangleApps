@@ -1,5 +1,5 @@
 let runInterval;
-let karvonenActive = false;
+let screen = "main"; // main | karvonen | menu
 // Run interface wrapped in a function
 const ExStats = require("exstats");
 let B2 = process.env.HWVERSION===2;
@@ -9,7 +9,6 @@ let fontHeading = "6x8:2";
 let fontValue = B2 ? "6x15:2" : "6x8:3";
 let headingCol = "#888";
 let fixCount = 0;
-let isMenuDisplayed = false;
 const wu = require("widget_utils");
 
 g.reset().clear();
@@ -64,10 +63,10 @@ function onStartStop() {
   if (running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
     promise = promise.
       then(() => {
-        isMenuDisplayed = true;
+        screen = "menu";
         return E.showPrompt("Resume run?",{title:"Run"});
       }).then(r => {
-        isMenuDisplayed=false;
+        screen = "main";
         layout.setUI(); // grab our input handling again
         layout.forgetLazyState();
         layout.render();
@@ -80,11 +79,11 @@ function onStartStop() {
   // an overwrite before we start tracking exstats
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
-      isMenuDisplayed = true;
+      screen = "menu";
       promise = promise.
         then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
         then(() => {
-          isMenuDisplayed = false;
+          screen = "main";
           layout.setUI(); // grab our input handling again
           layout.forgetLazyState();
           layout.render();
@@ -168,7 +167,7 @@ Bangle.on("GPS", function(fix) {
 // run() function used to start updating traditional run ui
 function run() {
   require("runplus_karvonen").stop();
-  karvonenActive = false;
+  screen = "main";
   wu.show();
   Bangle.drawWidgets();
   g.reset().clearRect(Bangle.appRect);
@@ -179,7 +178,7 @@ function run() {
   if (!runInterval){
     runInterval = setInterval(function() {
       layout.clock.label = locale.time(new Date(),1);
-      if (!isMenuDisplayed) layout.render();
+      if (screen !== "menu") layout.render();
     }, 1000);
   }
 }
@@ -195,15 +194,15 @@ function karvonen(){
   runInterval = undefined;
   g.reset().clearRect(Bangle.appRect);
   require("runplus_karvonen").start(settings.HRM, exs.stats.bpm);
-  karvonenActive = true;
+  screen = "karvonen";
 }
 
 // Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
-  if (!isMenuDisplayed){
-    if (LR==-1 && karvonenActive)
-      run();
-    if (LR==1 && !karvonenActive)
+  if (screen !== "menu"){
+    if (LR < 0 && screen == "karvonen")
+      run(); // back to main screen
+    if (LR > 0 && screen !== "karvonen")
       karvonen();
   }
 }
