@@ -192,11 +192,15 @@ run();
 
 function karvonen(){
   // stop updating and drawing the traditional run app UI
+  setScreen("karvonen");
+  require("runplus_karvonen").start(settings.HRM, exs.stats.bpm);
+}
+
+function setScreen(to) {
   if (runInterval) clearInterval(runInterval);
   runInterval = undefined;
   g.reset().clearRect(Bangle.appRect);
-  require("runplus_karvonen").start(settings.HRM, exs.stats.bpm);
-  screen = "karvonen";
+  screen = to;
 }
 
 // Define the function to go back and forth between the different UI's
