@@ -56,6 +56,8 @@ function setStatus(running) {
 
 // Called to start/stop running
 function onStartStop() {
+  if (screen === "karvonen") run(); // stop karvonen display
+
   var running = !exs.state.active;
   var shouldResume = false;
   var promise = Promise.resolve();
@@ -134,7 +136,7 @@ lc.push({ type:"h", filly:1, c:[
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {run();} onStartStop();}), id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
 delete lc;
 setStatus(exs.state.active);
 layout.render();
