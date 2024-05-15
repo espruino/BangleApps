@@ -57,11 +57,9 @@ function setStatus(running) {
 
 // Called to start/stop running
 function onStartStop() {
-  switch (screen) {
-    case "karvonen":
-      // start/stop on the karvonen screen reverts us to the main screen
-      setScreen("main");
-      break;
+  if (screen === "karvonen") {
+    // start/stop on the karvonen screen reverts us to the main screen
+    setScreen("main");
   }
 
   var running = !exs.state.active;
@@ -218,12 +216,10 @@ Bangle.on("GPS", function(fix) {
 });
 
 function setScreen(to) {
-  switch (screen) {
-    case "karvonen":
-      require("runplus_karvonen").stop();
-      wu.show();
-      Bangle.drawWidgets();
-      break;
+  if (screen === "karvonen") {
+    require("runplus_karvonen").stop();
+    wu.show();
+    Bangle.drawWidgets();
   }
 
   if (runInterval) clearInterval(runInterval);
