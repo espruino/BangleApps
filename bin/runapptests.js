@@ -61,11 +61,11 @@ const DEMOTEST = {
       {"t":"assertCall", "id": "testfunc", "count": 0 , "text": "Asserts if a wrapped function has been called the expected number of times"}
     ]
   }, {
-    "description": "Emulator time can advanced by a given amount. This currently works for timeouts,intervals and Date.now() calls",
+    "description": "Emulator timers and intervals can advanced by a given time",
     "steps": [
       {"t":"cmd", "js":"setTimeout(()=>{global.waited = true},60000)", "text": "Set a timeout for 60 seconds"},
       {"t":"assert", "js":"global.waited", "is": "falsy", "text": "Timeout has not yet fired"},
-      {"t":"advanceTime", "ms":60000},
+      {"t":"advanceTimers", "ms":60000, "text": "Advance timers by 60000 ms to get the timer to fire in the next idle period"},
       {"t":"assert", "js":"global.waited", "is": "true", "text": "Timeout has fired"}
     ]
   }]
@@ -323,18 +323,10 @@ function runStep(step, subtest, test, state){
         }
       });
       break;
-    case "advanceTime" :
+    case "advanceTimers" :
       p = p.then(()=>{
-        console.log("> ADVANCE TIME BY", step.ms + "ms");
-        if (!subtest.wrappedDateNow){
-          emu.tx(`Date.now = (o)=>{return ()=>{
-            return o() + global.APPTESTS.timeOffset;
-          };}(Date.now);
-          global.APPTESTS.timeOffset = 0;\n`);
-          subtest.wrappedDateNow = true;
-        }
-        emu.tx(`global.APPTESTS.timeOffset += ${step.ms};
-        for(let c of global["\xff"].timers){
+        console.log("> ADVANCE TIMERS BY", step.ms + "ms");
+        emu.tx(`for(let c of global["\xff"].timers){
           if(c) c.time -= ${step.ms * 1000};
         }\n`);
       });

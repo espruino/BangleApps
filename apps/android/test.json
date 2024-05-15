@@ -92,7 +92,7 @@
       {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS switched off"},
 
       {"t":"resetCall", "id": "gpspower"},
-      {"t":"advanceTime", "ms":"12000", "text": "wait for fallback"},
+      {"t":"advanceTimers", "ms":"12000", "text": "wait for fallback"},
       {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ], "text": "internal GPS switched on caused by missing GB event"}
     ]
   }]
