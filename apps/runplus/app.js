@@ -149,7 +149,7 @@ function zoom(statID) {
       .setFont(zoomFont)
       .setColor(headingCol)
       .drawString(stat.title.toUpperCase(), R.x+R.w/2, R.y+R.h/3)
-      .setColor("#fff")
+      .setColor(g.theme.fg)
       .drawString(stat.getString(), R.x+R.w/2, R.y+R.h*2/3);
   };
   layout.lazy = false; // restored when we go back to "main"
