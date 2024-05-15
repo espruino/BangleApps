@@ -128,7 +128,7 @@ function zoom(statID) {
     runInterval = undefined;
     setScreen("main");
   };
-  Bangle.on("touch", onTouch); // queued after layout's touchHandler
+  Bangle.on("touch", onTouch); // queued after layout's touchHandler (otherwise we'd be removed then instantly re-zoomed)
 
   const onTwist = () => {
     Bangle.setLCDPower(1);
