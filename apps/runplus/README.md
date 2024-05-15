@@ -4,6 +4,8 @@ Displays distance, time, steps, cadence, pace and heart rate for runners. Based 
 It requires the input of your minimum and maximum heart rate in the settings for the app to work. You can come back back to the initial run screen anytime by swimping left.
 To use it, start the app and press the middle button so that the red STOP in the bottom right turns to a green `RUN`.
 
+To focus on a single stat, tap on the stat and it will take up the full screen. Tap again to return to the main screen.
+
 ## Display 1st screen
 
 * `DIST` - the distance travelled based on the GPS (if you have a GPS lock).
