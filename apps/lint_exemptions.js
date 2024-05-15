@@ -1269,12 +1269,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "android/test.js": {
-    "hash": "703dad907d9b17d281faca2ecd9099d9f127e7241b48c7617f9147978ddb7c43",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "android/boot.js": {
     "hash": "a537b3f7772e11f44615d80d6c6bacfa69c1854c6da3c01666863bcae8a18059",
     "rules": [

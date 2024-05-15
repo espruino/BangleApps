@@ -57,7 +57,16 @@ const DEMOTEST = {
       {"t":"assertArray", "js": "[1,2,3]", "is":"notEmpty", "text": "Evaluates the content of 'js' on the device and asserts if the result is an array with more than 0 entries"},
       {"t":"cmd", "js": "global.testfunction(1)", "text": "Call function for the following asserts"},
       {"t":"assertCall", "id": "testfunc", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "Asserts if a wrapped function has been called with the expected arguments"},
-      {"t":"assertCall", "id": "testfunc", "count": 1 , "text": "Asserts if a wrapped function has been called the expected number of times"}
+      {"t":"resetCall", "id": "testfunc", "text": "Reset the recorded calls"},
+      {"t":"assertCall", "id": "testfunc", "count": 0 , "text": "Asserts if a wrapped function has been called the expected number of times"}
+    ]
+  }, {
+    "description": "Emulator timers and intervals can advanced by a given time",
+    "steps": [
+      {"t":"cmd", "js":"setTimeout(()=>{global.waited = true},60000)", "text": "Set a timeout for 60 seconds"},
+      {"t":"assert", "js":"global.waited", "is": "falsy", "text": "Timeout has not yet fired"},
+      {"t":"advanceTimers", "ms":60000, "text": "Advance timers by 60000 ms to get the timer to fire in the next idle period"},
+      {"t":"assert", "js":"global.waited", "is": "true", "text": "Timeout has fired"}
     ]
   }]
 }
@@ -126,7 +135,7 @@ function assertArray(step){
 }
 
 function assertValue(step){
-  console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase(), step.to ? "TO " + `\`${step.js}\`` : "", step.text ? "- " + step.text : "");
+  console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase() + (step.to !== undefined ? " TO " + `\`${step.to}\`` : ""), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
     case "truthy": isOK = getValue(`!!${step.js}`); break;
@@ -231,7 +240,7 @@ function runStep(step, subtest, test, state){
       break;
     case "gb" : 
       p = p.then(() => {
-        let obj = Object.apply({
+        let obj = Object.assign({
           src:'Messenger',
           t: 'notify',
           type: 'text',
@@ -239,6 +248,7 @@ function runStep(step, subtest, test, state){
           title:'title',
           body:'body'
         }, step.obj || {});
+        console.log(`> GB with`, verbose ? "event " + JSON.stringify(obj, null, null) : "type " + obj.t);
         emu.tx(`GB(${JSON.stringify(obj)})\n`);
       });
       break;
@@ -275,6 +285,11 @@ function runStep(step, subtest, test, state){
         state.ok &= assertArray(step);
       });
       break;
+    case "resetCall":
+      console.log(`> RESET CALL ${step.id}`, step.text ? "- " + step.text : "");
+      emu.tx(`global.APPTESTS.funcCalls.${step.id} = 0;\n`);
+      emu.tx(`global.APPTESTS.funcArgs.${step.id} = undefined;\n`);
+      break;
     case "assertCall":
       p = p.then(() => {
         state.ok &= assertCall(step);
@@ -308,14 +323,12 @@ function runStep(step, subtest, test, state){
         }
       });
       break;
-    case "sleep" :
+    case "advanceTimers" :
       p = p.then(()=>{
-        return new Promise(resolve => {
-          setTimeout(()=>{
-            console.log("> WAITED FOR", step.ms);
-            resolve();
-          }, step.ms);
-        })
+        console.log("> ADVANCE TIMERS BY", step.ms + "ms");
+        emu.tx(`for(let c of global["\xff"].timers){
+          if(c) c.time -= ${step.ms * 1000};
+        }\n`);
       });
       break;
     case "upload" :
