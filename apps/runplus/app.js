@@ -124,8 +124,7 @@ function zoom(statID) {
   const onTouch = () => {
     Bangle.removeListener("touch", onTouch);
     Bangle.removeListener("twist", onTwist);
-    if (runInterval) clearInterval(runInterval);
-    runInterval = undefined;
+    stat.removeListener("changed", draw);
     setScreen("main");
   };
   Bangle.on("touch", onTouch); // queued after layout's touchHandler (otherwise we'd be removed then instantly re-zoomed)
@@ -135,7 +134,7 @@ function zoom(statID) {
   };
   Bangle.on("twist", onTwist);
 
-  const draw = () => {
+  const draw = stat => {
     const R = Bangle.appRect;
 
     g.reset()
@@ -144,7 +143,6 @@ function zoom(statID) {
 
     layout.render(layout.bottom);
 
-    const stat = exs.stats[statID];
     g
       .setFont(zoomFont)
       .setColor(headingCol)
@@ -154,9 +152,9 @@ function zoom(statID) {
   };
   layout.lazy = false; // restored when we go back to "main"
 
-  if (runInterval) clearInterval(runInterval);
-  runInterval = setInterval(draw, 1000);
-  draw();
+  const stat = exs.stats[statID];
+  stat.on("changed", draw);
+  draw(stat);
 }
 
 let lc = [];
