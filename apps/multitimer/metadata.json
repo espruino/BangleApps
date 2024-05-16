@@ -1,7 +1,7 @@
 {
   "id": "multitimer",
   "name": "Multi Timer",
-  "version": "0.10",
+  "version": "0.11",
   "description": "Set timers and chronographs (stopwatches) and watch them count down in real time. Pause, create, edit, and delete timers and chronos, and add custom labels/messages. Also sets alarms.",
   "icon": "app.png",
   "screenshots": [
