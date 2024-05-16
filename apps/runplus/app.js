@@ -8,6 +8,7 @@ let locale = require("locale");
 let fontHeading = "6x8:2";
 let fontValue = B2 ? "6x15:2" : "6x8:3";
 let zoomFont = "12x20:3";
+let zoomFontSmall = "12x20:2";
 let headingCol = "#888";
 let fixCount = 0;
 const wu = require("widget_utils");
@@ -144,7 +145,7 @@ function zoom(statID) {
     layout.render(layout.bottom);
 
     g
-      .setFont(zoomFont)
+      .setFont(stat.title.length > 5 ? zoomFontSmall : zoomFont)
       .setColor(headingCol)
       .drawString(stat.title.toUpperCase(), R.x+R.w/2, R.y+R.h/3)
       .setColor(g.theme.fg)
