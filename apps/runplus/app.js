@@ -144,12 +144,14 @@ function zoom(statID) {
 
     layout.render(layout.bottom);
 
+    const value = exs.state.active ? stat.getString() : "____";
+
     g
       .setFont(stat.title.length > 5 ? zoomFontSmall : zoomFont)
       .setColor(headingCol)
       .drawString(stat.title.toUpperCase(), R.x+R.w/2, R.y+R.h/3)
       .setColor(g.theme.fg)
-      .drawString(stat.getString(), R.x+R.w/2, R.y+R.h*2/3);
+      .drawString(value, R.x+R.w/2, R.y+R.h*2/3);
   };
   layout.lazy = false; // restored when we go back to "main"
 
