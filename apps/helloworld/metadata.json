@@ -2,7 +2,7 @@
   "id": "helloworld",
   "name": "hello, world!",
   "shortName": "hello world",
-  "version": "0.04",
+  "version": "0.05",
   "description": "A cross cultural hello world!/hola mundo! app with colors and languages",
   "icon": "app.png",
   "tags": "input,interface,buttons,touch",

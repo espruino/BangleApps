@@ -127,7 +127,7 @@
                 text: "DnD",
                 cb: function (tap) {
                     var on;
-                    if (on = !!origBuzz) {
+                    if ((on = !!origBuzz)) {
                         if (tap) {
                             Bangle.buzz = origBuzz;
                             origBuzz = undefined;

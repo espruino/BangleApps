@@ -80,7 +80,7 @@ function cleanAndSave(config: Config): Config {
 let infoFileSorter = (a: string, b: string): number => {
     let aJson = storage.readJSON(a, false) as AppInfo;
     let bJson = storage.readJSON(b, false) as AppInfo;
-    var n = (0 | aJson.sortorder!) - (0 | bJson.sortorder!);
+    const n = (0 | aJson.sortorder!) - (0 | bJson.sortorder!);
     if (n) return n; // do sortorder first
     if (aJson.name < bJson.name) return -1;
     if (aJson.name > bJson.name) return 1;
