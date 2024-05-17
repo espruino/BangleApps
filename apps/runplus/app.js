@@ -1,10 +1,7 @@
-// Use widget utils to show/hide widgets
-let wu = require("widget_utils");
-
 let runInterval;
 let karvonenActive = false;
 // Run interface wrapped in a function
-let ExStats = require("exstats");
+const ExStats = require("exstats");
 let B2 = process.env.HWVERSION===2;
 let Layout = require("Layout");
 let locale = require("locale");
@@ -13,11 +10,10 @@ let fontValue = B2 ? "6x15:2" : "6x8:3";
 let headingCol = "#888";
 let fixCount = 0;
 let isMenuDisplayed = false;
+const wu = require("widget_utils");
 
 g.reset().clear();
 Bangle.loadWidgets();
-Bangle.drawWidgets();
-wu.show();
 
 // ---------------------------
 let settings = Object.assign({
@@ -100,7 +96,7 @@ function onStartStop() {
     }
   }
 
-  promise = promise.then(() => {
+  promise.then(() => {
     if (running) {
       if (shouldResume)
         exs.resume()
@@ -139,7 +135,7 @@ lc.push({ type:"h", filly:1, c:[
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {stopKarvonenUI();run();} onStartStop();}), id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {run();} onStartStop();}), id:"button"}]});
 delete lc;
 setStatus(exs.state.active);
 layout.render();
@@ -169,9 +165,13 @@ Bangle.on("GPS", function(fix) {
   }
 });
 
-// run() function used to switch between traditional run UI and karvonen UI
+// run() function used to start updating traditional run ui
 function run() {
+  require("runplus_karvonen").stop();
+  karvonenActive = false;
   wu.show();
+  Bangle.drawWidgets();
+  g.reset().clearRect(Bangle.appRect);
   layout.lazy = false;
   layout.render();
   layout.lazy = true;
@@ -179,7 +179,7 @@ function run() {
   if (!runInterval){
     runInterval = setInterval(function() {
       layout.clock.label = locale.time(new Date(),1);
-      if (!isMenuDisplayed && !karvonenActive) layout.render();
+      if (!isMenuDisplayed) layout.render();
     }, 1000);
   }
 }
@@ -189,25 +189,23 @@ run();
 //                Karvonen
 ///////////////////////////////////////////////
 
-function stopRunUI() {
+function karvonen(){
   // stop updating and drawing the traditional run app UI
-  clearInterval(runInterval);
+  if (runInterval) clearInterval(runInterval);
   runInterval = undefined;
+  g.reset().clearRect(Bangle.appRect);
+  require("runplus_karvonen").start(settings.HRM, exs.stats.bpm);
   karvonenActive = true;
 }
 
-function stopKarvonenUI() {
-  g.reset().clear();
-  clearInterval(karvonenInterval);
-  karvonenInterval = undefined;
-  karvonenActive = false;
-}
-
-let karvonenInterval;
 // Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
-  if (LR==-1 && karvonenActive && !isMenuDisplayed) {stopKarvonenUI(); run();}
-  if (LR==1 && !karvonenActive && !isMenuDisplayed) {stopRunUI(); karvonenInterval = eval(require("Storage").read("runplus_karvonen"))(settings.HRM, exs.stats.bpm);}
+  if (!isMenuDisplayed){
+    if (LR==-1 && karvonenActive)
+      run();
+    if (LR==1 && !karvonenActive)
+      karvonen();
+  }
 }
 // Listen for swipes with the swipeHandler
 Bangle.on("swipe", swipeHandler);

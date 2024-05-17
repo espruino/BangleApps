@@ -371,6 +371,46 @@ exports.addInteractive = function(menu, options) {
   return options;
 };
 
+/* clockinfos usually return a 24x24 image. This draws that image but
+recolors it such that it is transparent, with the middle of the image as background
+and the image itself as foreground. options is passed to g.drawImage */
+exports.drawFilledImage = function(img,x,y,options) {
+  if (!img) return;
+  if (!g.floodFill/*2v18+*/) return g.drawImage(img,x,y,options);
+  let gfx = exports.imgGfx;
+  if (!gfx) {
+    gfx = exports.imgGfx = Graphics.createArrayBuffer(26, 26, 2, {msb:true});
+    gfx.transparent = 3;
+    gfx.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor("#888"), g.toColor("#888")]);
+  }
+  /* img is (usually) a black and white transparent image. But we really would like the bits in
+  the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
+  draw the image, and then flood-fill the rectangle back to the background color. floodFill
+  was only added in 2v18 so we have to check for it and fallback if not. */
+  gfx.clear(1).setColor(1).drawImage(img, 1,1).floodFill(0,0,3);
+  var scale = (options && options.scale) || 1;
+  return g.drawImage(gfx, x-scale,y-scale,options);
+};
+
+/* clockinfos usually return a 24x24 image. This creates a 26x26 gfx of the image but
+recolors it such that it is transparent, with the middle and border of the image as background
+and the image itself as foreground. options is passed to g.drawImage */
+exports.drawBorderedImage = function(img,x,y,options) {
+  if (!img) return;
+  if (!g.floodFill/*2v18+*/) return g.drawImage(img,x,y,options);
+  let gfx = exports.imgGfxB;
+  if (!gfx) {
+    gfx = exports.imgGfxB = Graphics.createArrayBuffer(28, 28, 2, {msb:true});
+    gfx.transparent = 3;
+    gfx.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.theme.bg/*border*/, g.toColor("#888")]);
+  }
+  gfx.clear(1).setColor(2).drawImage(img, 1,1).drawImage(img, 3,1).drawImage(img, 1,3).drawImage(img, 3,3); // border
+  gfx.setColor(1).drawImage(img, 2,2); // main image
+  gfx.floodFill(27,27,3); // flood fill edge to transparent
+  var o = ((options && options.scale) || 1)*2;
+  return g.drawImage(gfx, x-o,y-o,options);
+};
+
 // Code for testing (plots all elements from first list)
 /*
 g.clear();

@@ -102,6 +102,7 @@
   // Show launcher when middle button pressed
   Bangle.setUI({
     mode: "clock",
+    redraw : draw,
     remove: function() {
       if (drawTimeout) clearTimeout(drawTimeout);
       drawTimeout = undefined;
@@ -116,9 +117,6 @@
   Bangle.loadWidgets();
   require("widget_utils").hide();
 
-  // used for clockinfo image rendering
-  let clockInfoG = Graphics.createArrayBuffer(28, 28, 2, {msb:true});
-  clockInfoG.transparent = 3;
   // render clockinfos
   let clockInfoDraw = function(itm, info, options) {
     // itm: the item containing name/hasRange/etc
@@ -139,18 +137,8 @@
       fg = g.toColor("#f00");
     }
 
-    if (info.img) {
-      //g.drawImage(info.img, left ? 2 : W - 27, top ? 18 : H - 41); // draw the image
-      // fiddle around colouring the border and inside of the image
-      clockInfoG.clear(1);
-      // do a border - images need to be transparent for this
-      clockInfoG.setColor(2).drawImage(info.img, 1,1).drawImage(info.img, 3,1).
-                             drawImage(info.img, 1,3).drawImage(info.img, 3,3);
-      clockInfoG.setColor(1).drawImage(info.img, 2,2); // main image
-      clockInfoG.floodFill(27,27,3); // flood fill edge to transparent
-      clockInfoG.palette = new Uint16Array([bg,fg,bg/*border*/, g.toColor("#888")]);
-      g.drawImage(clockInfoG, imgx-1, imgy-1);
-    }
+    if (info.img)
+      require("clock_info").drawBorderedImage(info.img,imgx,imgy);
 
     g.setFont("6x8:2").setFontAlign(left ? -1 : 1, -1);
     g.setColor(bg).drawString(info.text, textx-2, texty). // draw the text background

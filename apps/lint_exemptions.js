@@ -275,12 +275,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "runplus/app.js": {
-    "hash": "fabec449552d17ceb5d510aa058e420757f3caba11999efbe6ebf2ac1a81eb32",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "powermanager/boot.js": {
     "hash": "662d9d29a80a4f2c2855097b4073a099604f4f6d444c13a33304346c788cc5cb",
     "rules": [
@@ -737,12 +731,6 @@ module.exports = {
   },
   "schoolCalendar/fullcalendar/locales-all.js": {
     "hash": "475805ad0fda6abafcaf2101619d6328ab2ef0bd758e2354983310c969a8e222",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "runplus/karvonen.js": {
-    "hash": "3011bbc5afc3e17bb873f4544d680acc8765105dd825417eadb01047ecadbcb7",
     "rules": [
       "no-undef"
     ]
@@ -1275,12 +1263,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "android/test.js": {
-    "hash": "703dad907d9b17d281faca2ecd9099d9f127e7241b48c7617f9147978ddb7c43",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "android/boot.js": {
     "hash": "a537b3f7772e11f44615d80d6c6bacfa69c1854c6da3c01666863bcae8a18059",
     "rules": [
@@ -1378,7 +1360,7 @@ module.exports = {
     ]
   },
   "kineticscroll/boot.min.js": {
-    "hash": "a5106fa601cdbd2179e32265a8b77e2df62ba44ca0f4b94ce1e594c95a47e20d",
+    "hash": "1345b3c556f1a268a81c3a57825d096d9bbce9740217339aa6d79223d9daad4d",
     "rules": [
       "no-cond-assign"
     ]

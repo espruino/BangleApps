@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: added settings options to change date format
 0.03: Remove un-needed font requirement, now outputs transparent image
+0.04: Fix image after 0.03 regression
