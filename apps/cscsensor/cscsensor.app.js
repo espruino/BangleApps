@@ -161,17 +161,7 @@ class CSCSensor {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
       let flags = event.target.value.getUint8(0);
-      if (flags & 2) {
-        // crank revolution - if enabled
-        const crankRevs = event.target.value.getUint16(1, true);
-        const crankTime = event.target.value.getUint16(3, true);
-        if (crankTime > this.lastCrankTime) {
-          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
-          qChanged = true;
-        }
-        this.lastCrankRevs = crankRevs;
-        this.lastCrankTime = crankTime;
-      }
+      let offs = 0;
       if (flags & 1) {
         // wheel revolution
         var wheelRevs = event.target.value.getUint32(1, true);
@@ -208,8 +198,21 @@ class CSCSensor {
         }
         this.lastSpeed = this.speed;
         if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
+        offs += 6;
+      }
+      if (flags & 2) {
+        // crank revolution - if enabled
+        const crankRevs = event.target.value.getUint16(offs + 1, true);
+        const crankTime = event.target.value.getUint16(offs + 3, true);
+        if (crankTime > this.lastCrankTime) {
+          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
+          qChanged = true;
+        }
+        this.lastCrankRevs = crankRevs;
+        this.lastCrankTime = crankTime;
       }
     }
+
     if (qChanged) this.updateScreen();
   }
 }
