@@ -10,6 +10,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"sleepasandroid.boot.js","url":"boot.js"}
+    {"name":"sleepasandroid.boot.js","url":"boot.js"},
+    {"name":"sleepasandroid.conf.js","url":"config.js"}
   ]
 }

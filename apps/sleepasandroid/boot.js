@@ -1,27 +1,31 @@
 (() => {
-  function gbSend(message) {
-    Bluetooth.println("");
-    Bluetooth.println(JSON.stringify(message));
-  }
+    eval(require("Storage").read("sleepasandroid.conf.js"));
+    var interval = null;
 
-  var accel_data = [];
+    function gbSend(message) {
+        // Helper function to send data to gadgetbridge
+        Bluetooth.println("");
+        Bluetooth.println(JSON.stringify(message));
+    }
 
-  function updateAccel(accel) {
-    accel_data.push(accel);
-  }
+    var config = new SleepAsAndroidConfig();
 
-  function update_sleep_accel() {
-    copy = accel_data.map((x) => x);
-    mean_x = E.sum(copy.map((x) => x.x)) / copy.length;
-    mean_y = E.sum(copy.map((x) => x.y)) / copy.length;
-    mean_z = E.sum(copy.map((x) => x.z)) / copy.length;
 
-    update_data = { t: "sleep_as_android", "accel": { "x": mean_x, "y": mean_y, "z": mean_z } };
-    gbSend(update_data);
-    accel_data = [];
-  }
+    function update_sleep_as_android() {
+        // send data to gadgetbridge
+        accel = Bangle.getAccel();
+        health = Bangle.getHealthStatus();
 
-  Bangle.on("accel", updateAccel);
+        update_data = {t: "sleep_as_android", "accel": {"x": accel.x, "y": accel.y, "z": accel.z}, "bpm": health.bpm};
+        gbSend(update_data);
+        accel_data = [];
+        if (!config.getEnabled()) {
+            clearInterval(interval);
+        }
+    }
 
-  setInterval(update_sleep_accel, 10000);
+    if (config.getEnabled()) {
+        interval = setInterval(update_sleep_as_android, 1000);
+    }
+
 })();
