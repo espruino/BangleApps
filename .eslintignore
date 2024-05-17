@@ -5,15 +5,22 @@ apps/gipy/pkg/gps.js
 # Needs to be ignored because it includes broken JS
 apps/health/chart.min.js
 
-# TypeScript
-apps/btadv/
-apps/clkinfostopw/
-apps/ctrlpad/
-apps/drained/
-apps/folderlaunch/
-apps/popconlaunch/
-apps/rep/
-apps/widChargingStatus/
-apps/widbtstates/
-apps/widhid/
+# Generated from TS files that have already been linted
+apps/btadv/app.js
+apps/clkinfostopw/clkinfo.js
+apps/ctrlpad/main.js
+apps/drained/app.js
+apps/drained/boot.js
+apps/drained/settings.js
+apps/folderlaunch/app.js
+apps/folderlaunch/configLoad.js
+apps/folderlaunch/settings.js
+apps/folderlaunch/types.d.js
+apps/popconlaunch/boot.js
+apps/popconlaunch/settings.js
+apps/rep/app.js
+apps/rep/settings.js
+apps/widChargingStatus/widget.js
+apps/widbtstates/widget.js
+apps/widhid/wid.js
 modules/ble_advert.js

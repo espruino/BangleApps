@@ -216,12 +216,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "promenu/bootb2.js": {
-    "hash": "4f7a0cb285c35a61e22325dafdd548845393df8d952d8934b04576efb4b19561",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "poweroff/settings.js": {
     "hash": "c197afe72c612a4b3825a3a12a628d0f4ed83823da3f28885bbf473037a02506",
     "rules": [
@@ -1071,12 +1065,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "fuzzyw/fuzzyw.app.js": {
-    "hash": "dbef30fe5639a240ada0968491c73242092bd2db7f3b060ef9c2f66a6cbbb19d",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "fontclock/fontclock.js": {
     "hash": "478c96b1319d548a79727c5af3191b77ac9753c6314789570e900e512a99a152",
     "rules": [
@@ -1121,12 +1109,6 @@ module.exports = {
   },
   "drinkcounter/app.js": {
     "hash": "6652cbf7d08583a5b6a07b90a89004f419adbc378673cd1f134c74976f5c421f",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "drained/boot.js": {
-    "hash": "914ea2c47aa6b9502b9dd354d490b2a8b838d4c6fafaa20e206f1f2396d4db40",
     "rules": [
       "no-undef"
     ]

@@ -1,3 +1,4 @@
 0.01: First release.
 0.02: No functional changes, just moved codebase to Typescript.
 0.03: Also buzz on disconnect from charging
+0.04: Minor code improvements

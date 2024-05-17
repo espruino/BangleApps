@@ -195,6 +195,28 @@ module.exports = {
         "no-control-regex" : "off"
     },
     overrides: [
+        {
+            files: ["*.ts"],
+            extends: [
+                "eslint:recommended",
+                "plugin:@typescript-eslint/recommended",
+            ],
+            "parser": "@typescript-eslint/parser",
+            "plugins": ["@typescript-eslint"],
+            rules: {
+                "no-delete-var": "off",
+                "no-empty": ["error", { "allowEmptyCatch": true }],
+                "no-prototype-builtins": "off",
+                "prefer-const": "off",
+                "prefer-rest-params": "off",
+                "no-control-regex" : "off",
+                "@typescript-eslint/no-delete-var": "off",
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-this-alias": "off",
+                "@typescript-eslint/no-unused-vars": ["error", { "args": "none" } ],
+                "@typescript-eslint/no-var-requires": "off",
+            }
+        },
         ...Object.entries(lintExemptions).map(([filePath, {rules}]) => ({
             files: [filePath],
             rules: Object.fromEntries(rules.map(rule => [rule, "off"])),

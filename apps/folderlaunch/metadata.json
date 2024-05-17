@@ -1,7 +1,7 @@
 {
     "id": "folderlaunch",
     "name": "Folder launcher",
-    "version": "0.03",
+    "version": "0.04",
     "description": "Launcher that allows you to put your apps into folders",
     "icon": "icon.png",
     "type": "launch",
