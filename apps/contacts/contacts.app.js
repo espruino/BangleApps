@@ -2,12 +2,8 @@
 
 var Layout = require("Layout");
 
-//const W = g.getWidth();
-//const H = g.getHeight();
-
 var wp = require('Storage').readJSON("contacts.json", true) || [];
-// Use this with corrupted contacts
-//var wp = [];
+// var wp = [];
 
 var key; /* Shared between functions, typically wp name */
 
@@ -15,81 +11,75 @@ function writeContact() {
   require('Storage').writeJSON("contacts.json", wp);
 }
 
+function callNumber (number) {
+  Bluetooth.println(JSON.stringify({
+    t:"intent",
+    target:"activity",
+    action:"android.intent.action.CALL",
+    flags:["FLAG_ACTIVITY_NEW_TASK"],
+    categories:["android.intent.category.DEFAULT"],
+    data: 'tel:' + number,
+  }))
+
+}
+
 function mainMenu() {
   var menu = {
     "< Back" : Bangle.load
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"NO Contacts":""});
-  else for (let id in wp) {
-    let i = id;
-    menu[wp[id]["name"]]=()=>{ decode(i); };
+  if (!wp.length) {
+    menu['No Contacts'] = () => {};
+  } else {
+    for (const e of wp) {
+      const closureE = e;
+      menu[e.name] = () => showContact(closureE);
+    }
   }
-  menu["Add"]=addCard;
-  menu["Remove"]=removeCard;
+  menu["Add"] = addCard;
+  menu["Remove"] = removeCard;
   g.clear();
   E.showMenu(menu);
 }
 
-function decode(pin) {
-  var i = wp[pin];
-  var l = i["name"] + "\n" + i["number"];
-  var la = new Layout ({
-    type:"v", c: [
-      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: l},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"OK", cb:l=>{mainMenu();}}
-    ], lazy:true});
+function showContact(i) {
   g.clear();
-  la.render();
+  (new Layout ({
+    type:"v",
+    c: [
+      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label:i["name"] + "\n" + i["number"]},
+      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"Call", cb:l=>{callNumber(i['number']);}},
+      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"Back to list", cb:l=>{mainMenu();}}
+    ],
+    lazy:true
+  })).render();
 }
 
-function showNumpad(text, key_, callback) {
-  key = key_;
+function showNumpad(prompt, callback) {
+  let number = ''
   E.showMenu();
   function addDigit(digit) {
-    key+=digit;
-    if (1) {
-      l = text[key.length];
-      switch (l) {
-        case '.': case ' ': case "'":
-          key+=l;
-          break;
-        case 'd': case 'D': default:
-          break;
-      }
-    }
+    number += digit;
     Bangle.buzz(20);
     update();
   }
   function update() {
     g.reset();
     g.clearRect(0,0,g.getWidth(),23);
-    s = key + text.substr(key.length, 999);
-    g.setFont("Vector:24").setFontAlign(1,0).drawString(s,g.getWidth(),12);
+    g.setFont("Vector:24").setFontAlign(1,0).drawString(prompt + number, g.getWidth(),12);
   }
   const ds="12%";
+  const digitBtn = (digit) => ({type:"btn", font:ds, width:58, label:digit, cb:l=>{addDigit(digit);}});
   var numPad = new Layout ({
     type:"v", c: [{
       type:"v", c: [
         {type:"", height:24},
+        {type:"h",filly:1, c: [digitBtn("1"), digitBtn("2"), digitBtn("3")]},
+        {type:"h",filly:1, c: [digitBtn("4"), digitBtn("5"), digitBtn("6")]},
+        {type:"h",filly:1, c: [digitBtn("7"), digitBtn("8"), digitBtn("9")]},
         {type:"h",filly:1, c: [
-          {type:"btn", font:ds, width:58, label:"7", cb:l=>{addDigit("7");}},
-          {type:"btn", font:ds, width:58, label:"8", cb:l=>{addDigit("8");}},
-          {type:"btn", font:ds, width:58, label:"9", cb:l=>{addDigit("9");}}
-        ]},
-        {type:"h",filly:1, c: [
-          {type:"btn", font:ds, width:58, label:"4", cb:l=>{addDigit("4");}},
-          {type:"btn", font:ds, width:58, label:"5", cb:l=>{addDigit("5");}},
-          {type:"btn", font:ds, width:58, label:"6", cb:l=>{addDigit("6");}}
-        ]},
-        {type:"h",filly:1, c: [
-          {type:"btn", font:ds, width:58, label:"1", cb:l=>{addDigit("1");}},
-          {type:"btn", font:ds, width:58, label:"2", cb:l=>{addDigit("2");}},
-          {type:"btn", font:ds, width:58, label:"3", cb:l=>{addDigit("3");}}
-        ]},
-        {type:"h",filly:1, c: [
-          {type:"btn", font:ds, width:58, label:"0", cb:l=>{addDigit("0");}},
           {type:"btn", font:ds, width:58, label:"C", cb:l=>{key=key.slice(0,-1); update();}},
-          {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb:callback}
+          {type:"btn", font:ds, width:58, label:"0", cb:l=>{addDigit("0");}},
+          {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb: callback}
         ]}
       ]}
     ], lazy:true});
@@ -103,7 +93,7 @@ function removeCard() {
     "" : {title : "Select Contact"},
     "< Back" : mainMenu
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No Contacts":""});
+  if (wp.length===0) Object.assign(menu, {"No Contacts":""});
   else {
     wp.forEach((val, card) => {
       const name = wp[card].name;
@@ -131,16 +121,13 @@ function removeCard() {
 }
 
 function askPosition(callback) {
-  showNumpad("dddDDDddd", "", function() {
+  showNumpad("", "", function() {
     callback(key, "");
   });
 }
 
 function createContact(lat, name) {
-  let n = {};
-  n["name"] = name;
-  n["number"] = lat;
-  wp.push(n);
+  wp.push({lat: lat, name: name});
   print("add -- contacts", wp);
   writeContact();
 }
@@ -156,7 +143,7 @@ function addCardName2(key) {
 
 function addCardName(key) {
   result = key;
-  if (wp[result]!=undefined) {
+  if (wp[result] !== undefined) {
   E.showMenu();
   var alreadyExists = new Layout (
     {type:"v", c: [
@@ -176,7 +163,7 @@ function addCardName(key) {
 
 function addCard() {
   require("textinput").input({text:""}).then(result => {
-    if (result != "") {
+    if (result !== "") {
       addCardName(result);
     } else
       mainMenu();
