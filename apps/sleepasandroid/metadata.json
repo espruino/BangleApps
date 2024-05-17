@@ -1,0 +1,15 @@
+{
+  "id": "sleepasandroid",
+  "name": "Send data to sleep as android",
+  "shortName": "BLE sleep as android",
+  "version": "0.01",
+  "description": "Send sensordata to sleep as android.\n",
+  "icon": "bluetooth.png",
+  "type": "bootloader",
+  "tags": "hrm,health,ble,bluetooth",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"sleepasandroid.boot.js","url":"boot.js"}
+  ]
+}
