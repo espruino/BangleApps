@@ -16,3 +16,4 @@ apps/rep/
 apps/widChargingStatus/
 apps/widbtstates/
 apps/widhid/
+modules/ble_advert.js

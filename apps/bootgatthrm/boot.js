@@ -4,18 +4,13 @@
      * This function prepares BLE heart rate Advertisement.
      */
 
-    NRF.setAdvertising(
-      {
-        0x180d: undefined
-      },
-      {
-        // We need custom Advertisement settings for Apps like OpenTracks
-        connectable: true,
-        discoverable: true,
-        scannable: true,
-        whenConnected: true,
-      }
-    );
+    require("ble_advert").set(0x180d, undefined, {
+      // We need custom Advertisement settings for Apps like OpenTracks
+      connectable: true,
+      discoverable: true,
+      scannable: true,
+      whenConnected: true,
+    });
 
     NRF.setServices({
       0x180D: { // heart_rate
@@ -28,7 +23,6 @@
         }
       }
     });
-
   }
 
   const keepConnected = (require("Storage").readJSON("gatthrm.settings.json", 1) || {}).keepConnected;
