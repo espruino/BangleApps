@@ -216,12 +216,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "promenu/bootb2.js": {
-    "hash": "4f7a0cb285c35a61e22325dafdd548845393df8d952d8934b04576efb4b19561",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "poweroff/settings.js": {
     "hash": "c197afe72c612a4b3825a3a12a628d0f4ed83823da3f28885bbf473037a02506",
     "rules": [
@@ -1067,12 +1061,6 @@ module.exports = {
   },
   "gallifr/app.js": {
     "hash": "710063b833ce75cae54a6d0b3309653c59ae5d0e4c2cccd930921621a74f316c",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "fuzzyw/fuzzyw.app.js": {
-    "hash": "dbef30fe5639a240ada0968491c73242092bd2db7f3b060ef9c2f66a6cbbb19d",
     "rules": [
       "no-undef"
     ]
