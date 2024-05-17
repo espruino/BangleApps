@@ -160,7 +160,8 @@ class CSCSensor {
   updateSensor(event) {
     var qChanged = false;
     if (event.target.uuid == "0x2a5b") {
-      if (event.target.value.getUint8(0, true) & 0x2) {
+      let flags = event.target.value.getUint8(0);
+      if (flags & 2) {
         // crank revolution - if enabled
         const crankRevs = event.target.value.getUint16(1, true);
         const crankTime = event.target.value.getUint16(3, true);
@@ -170,7 +171,8 @@ class CSCSensor {
         }
         this.lastCrankRevs = crankRevs;
         this.lastCrankTime = crankTime;
-      } else {
+      }
+      if (flags & 1) {
         // wheel revolution
         var wheelRevs = event.target.value.getUint32(1, true);
         var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
@@ -226,7 +228,7 @@ function getSensorBatteryLevel(gatt) {
 function connection_setup() {
   mySensor.screenInit = true;
   E.showMessage("Scanning for CSC sensor...");
-  NRF.requestDevice({ filters: [{services:["1816"]}], maxInterval: 100}).then(function(d) {
+  NRF.requestDevice({ filters: [{services:["1816"]}]}).then(function(d) {
     device = d;
     E.showMessage("Found device");
     return device.gatt.connect();
