@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "This is my test app",
   "tags": "tool",
-  "supports" : ("BANGLEJS", "BANGLEJS2"],
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
   "readme" : "README.md",
   "storage": [
   {"name":"ZoneArea.app.js","url":"app.js"},
