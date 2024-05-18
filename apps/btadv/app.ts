@@ -1,5 +1,6 @@
 {
-// @ts-ignore helper
+// @ts-expect-error helper
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const __assign = Object.assign;
 
 const Layout = require("Layout");

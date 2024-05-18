@@ -194,7 +194,7 @@
 				text: "DnD",
 				cb: tap => {
 					let on;
-					if(on = !!origBuzz){
+					if((on = !!origBuzz)){
 						if(tap){
 							Bangle.buzz = origBuzz;
 							origBuzz = undefined;

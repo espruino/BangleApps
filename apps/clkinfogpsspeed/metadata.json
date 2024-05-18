@@ -1,0 +1,13 @@
+{ "id": "clkinfogpsspeed",
+  "name": "GPS Speed Clockinfo",
+  "shortName":"GPS Speed",
+  "version":"0.01",
+  "description": "A Clockinfo that displays your current speed according to the GPS",
+  "icon": "icon.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfogpsspeed.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

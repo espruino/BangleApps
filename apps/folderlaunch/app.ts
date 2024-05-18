@@ -114,19 +114,21 @@
 
         // Get the icon and text, skip if the space is empty. Always draw text for folders even if disabled
         switch (entry.type) {
-          case 'app':
+          case 'app': {
             let app = storage.readJSON(entry.id + '.info', false) as AppInfo;
             icon = storage.read(app.icon!)!;
             text = app.name;
             empty = false;
             fontSize = config.display.font;
             break;
-          case 'folder':
+          }
+          case 'folder': {
             icon = FOLDER_ICON;
             text = entry.id;
             empty = false;
             fontSize = config.display.font ? config.display.font : 12;
             break;
+          }
           default:
             continue;
         }
@@ -184,12 +186,13 @@
     // Handle the grid cell
     let entry: GridEntry = grid[x]![y]!;
     switch (entry.type) {
-      case "app":
+      case "app": {
         buzz();
         let infoFile = storage.readJSON(entry.id + '.info', false) as AppInfo;
         load(infoFile.src);
         break;
-      case "folder":
+      }
+      case "folder": {
         buzz();
         resetTimeout();
         page = 0;
@@ -197,9 +200,11 @@
         folder = getFolder(folderPath);
         render();
         break;
-      default:
+      }
+      default: {
         resetTimeout();
         break;
+      }
     }
   }
 

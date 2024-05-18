@@ -10,13 +10,13 @@
             });
         }
     }
-    WIDGETS.chargingStatus = {
+    WIDGETS["chargingStatus"] = {
         area: 'tr',
         width: Bangle.isCharging() ? iconWidth : 0,
         draw: draw,
     };
     Bangle.on('charging', function (charging) {
-        var widget = WIDGETS.chargingStatus;
+        var widget = WIDGETS["chargingStatus"];
         if (widget) {
             if (charging) {
                 Bangle.buzz();

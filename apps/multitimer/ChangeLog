@@ -10,3 +10,4 @@
 0.09: Minor code improvements
 0.10: Handle missing alarm data, e.g. when our reset is fired from
       non-multitimer alarms
+0.11: Preserve setUI removal callbacks, e.g. those of showMenu
