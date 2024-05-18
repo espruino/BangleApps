@@ -3,11 +3,8 @@
 var Layout = require("Layout");
 
 var wp = require('Storage').readJSON("contacts.json", true) || [];
-// var wp = [];
 
-var key; /* Shared between functions, typically wp name */
-
-function writeContact() {
+function writeContacts() {
   require('Storage').writeJSON("contacts.json", wp);
 }
 
@@ -35,8 +32,8 @@ function mainMenu() {
       menu[e.name] = () => showContact(closureE);
     }
   }
-  menu["Add"] = addCard;
-  menu["Remove"] = removeCard;
+  menu["Add"] = addContact;
+  menu["Remove"] = removeContact;
   g.clear();
   E.showMenu(menu);
 }
@@ -46,49 +43,56 @@ function showContact(i) {
   (new Layout ({
     type:"v",
     c: [
-      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label:i["name"] + "\n" + i["number"]},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"Call", cb:l=>{callNumber(i['number']);}},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label:"Back to list", cb:l=>{mainMenu();}}
+      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: i["name"] + "\n" + i["number"]},
+      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Call", cb: l => callNumber(i['number'])},
+      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Back to list", cb: mainMenu}
     ],
     lazy:true
   })).render();
 }
 
-function showNumpad(prompt, callback) {
-  let number = ''
-  E.showMenu();
-  function addDigit(digit) {
-    number += digit;
-    Bangle.buzz(20);
-    update();
-  }
-  function update() {
-    g.reset();
-    g.clearRect(0,0,g.getWidth(),23);
-    g.setFont("Vector:24").setFontAlign(1,0).drawString(prompt + number, g.getWidth(),12);
-  }
-  const ds="12%";
-  const digitBtn = (digit) => ({type:"btn", font:ds, width:58, label:digit, cb:l=>{addDigit(digit);}});
-  var numPad = new Layout ({
-    type:"v", c: [{
-      type:"v", c: [
-        {type:"", height:24},
-        {type:"h",filly:1, c: [digitBtn("1"), digitBtn("2"), digitBtn("3")]},
-        {type:"h",filly:1, c: [digitBtn("4"), digitBtn("5"), digitBtn("6")]},
-        {type:"h",filly:1, c: [digitBtn("7"), digitBtn("8"), digitBtn("9")]},
-        {type:"h",filly:1, c: [
-          {type:"btn", font:ds, width:58, label:"C", cb:l=>{key=key.slice(0,-1); update();}},
-          {type:"btn", font:ds, width:58, label:"0", cb:l=>{addDigit("0");}},
-          {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb: callback}
+function showNumpad() {
+  return new Promise((resolve, reject) => {
+    let number = ''
+    E.showMenu();
+    function addDigit(digit) {
+      number += digit;
+      Bangle.buzz(20);
+      update();
+    }
+    function removeDigit() {
+      number = number.slice(0, -1);
+      Bangle.buzz(20);
+      update();
+    }
+    function update() {
+      g.reset();
+      g.clearRect(0,0,g.getWidth(),23);
+      g.setFont("Vector:24").setFontAlign(1,0).drawString(number, g.getWidth(),12);
+    }
+    const ds="12%";
+    const digitBtn = (digit) => ({type:"btn", font:ds, width:58, label:digit, cb:l=>{addDigit(digit);}});
+    var numPad = new Layout ({
+      type:"v", c: [{
+        type:"v", c: [
+          {type:"", height:24},
+          {type:"h",filly:1, c: [digitBtn("1"), digitBtn("2"), digitBtn("3")]},
+          {type:"h",filly:1, c: [digitBtn("4"), digitBtn("5"), digitBtn("6")]},
+          {type:"h",filly:1, c: [digitBtn("7"), digitBtn("8"), digitBtn("9")]},
+          {type:"h",filly:1, c: [
+            {type:"btn", font:ds, width:58, label:"C", cb: removeDigit},
+            digitBtn('0'),
+            {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb: l => resolve(number)}
+          ]}
         ]}
-      ]}
-    ], lazy:true});
-  g.clear();
-  numPad.render();  
-  update();
+      ], lazy:true});
+    g.clear();
+    numPad.render();
+    update();
+  });
 }
 
-function removeCard() {
+function removeContact() {
   var menu = {
     "" : {title : "Select Contact"},
     "< Back" : mainMenu
@@ -106,7 +110,7 @@ function removeCard() {
             {type:"h", c: [
               {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
                 wp.splice(card, 1);
-                writeContact();
+                writeContacts();
                 mainMenu();
               }},
               {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
@@ -120,51 +124,42 @@ function removeCard() {
   E.showMenu(menu);
 }
 
-function askPosition(callback) {
-  showNumpad("", "", function() {
-    callback(key, "");
-  });
-}
 
-function createContact(lat, name) {
-  wp.push({lat: lat, name: name});
-  print("add -- contacts", wp);
-  writeContact();
-}
-
-function addCardName2(key) {
+function addNewContact(name) {
   g.clear();
-  askPosition(function(lat, lon) {
-      print("position -- ", lat, lon);
-      createContact(lat, result);
+  showNumpad().then((number) => {
+      wp.push({name: name, number: number});
+      writeContacts();
       mainMenu();
-  });
+  })
+
+
+
 }
 
-function addCardName(key) {
-  result = key;
-  if (wp[result] !== undefined) {
-  E.showMenu();
-  var alreadyExists = new Layout (
-    {type:"v", c: [
-      {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
-      {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
-      {type:"h", c: [
-        {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{ addCardName2(key); }},
-        {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
-      ]}
-    ], lazy:true});
-  g.clear();
-  alreadyExists.render();
+function tryAddContact(name) {
+  if (wp.filter((e) => e.name === name).length) {
+    E.showMenu();
+    var alreadyExists = new Layout (
+      {type:"v", c: [
+        {type:"txt", font:Math.min(15,100/name.length)+"%", pad:1, fillx:1, filly:1, label:name},
+        {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
+        {type:"h", c: [
+          {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{ addNewContact(name); }},
+          {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
+        ]}
+      ], lazy:true});
+    g.clear();
+    alreadyExists.render();
      return;
   }
-  addCardName2(key);  
+  addNewContact(name);
 }
 
-function addCard() {
-  require("textinput").input({text:""}).then(result => {
-    if (result !== "") {
-      addCardName(result);
+function addContact() {
+  require("textinput").input({text:""}).then(name => {
+    if (name !== "") {
+      tryAddContact(name);
     } else
       mainMenu();
   });
