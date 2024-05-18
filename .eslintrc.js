@@ -1,4 +1,4 @@
-const lintExemptions = require("./lint_exemptions.js");
+const lintExemptions = require("./apps/lint_exemptions.js");
 const fs = require("fs");
 const path = require("path");
 
