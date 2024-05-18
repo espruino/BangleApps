@@ -9,6 +9,6 @@
   "storage": [
     {"name":"ZoneArea.app.js","url":"app.js"},
     {"name":"ZoneArea","url":"app-icon.js","evaluate":true},
-  ],
+  ]
   "data": [{"name":"ZoneArea.json"}]  
 }
