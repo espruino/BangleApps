@@ -1,0 +1,15 @@
+{
+  "id": "ZoneArea",
+  "name": "zone",
+  "version": "0.01",
+  "description": "...",
+  "icon": "vector-modern-smart-watch-icon-700-58676704.jpg",
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"ZoneArea.app.js","url":"app.js"},
+    {"name":"ZoneArea.settings.js","url":"settings.js"}, // < ------- HERE
+    {"name":"ZoneArea","url":"app-icon.js","evaluate":true},
+  ],
+  "data": [{"name":"ZoneArea.json"}]  // < ------- HERE
+}
