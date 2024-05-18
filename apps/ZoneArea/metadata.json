@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "This is a description of my awesome app",
-  "tags": "",
+  "tags": "...",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"zone.app.js","url":"app.js"},
