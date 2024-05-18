@@ -1,14 +1,13 @@
-{ "id": "ZoneArea",
+{ "id": "Zone",
   "name": "Test Zone",
   "shortName":"zzone",
-  "icon": "app.png",
-  "version": "0.01",
+  "icon": "ide_logo.png",
+  "version": "0.10",
   "description": "This is my test app",
   "tags": "tool",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
-  "readme" : "README.md",
   "storage": [
-    {"name":"ZoneArea.app.js","url":"app.js"},
-    {"name":"ZoneArea.img", "url":"app-icon.js","evaluate":true}
+    {"name":"Zone.app.js","url":"app.js"},
+    {"name":"Zone.img","url":"app-icon.js","evaluate":true}
   ]
 }
