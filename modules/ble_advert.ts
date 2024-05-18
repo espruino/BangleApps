@@ -4,6 +4,20 @@ type BleAdvert = { [key: string | number]: number[] };
 type BangleWithAdvert = (typeof Bangle) & { bleAdvert?: BleAdvert | BleAdvert[]; };
 type SetAdvertisingOptions = typeof NRF.setAdvertising extends (data: any, options: infer Opts) => any ? Opts : never;
 
+const clone = (obj: any): any => {
+	// just for our use-case
+	if(Array.isArray(obj)){
+		return obj.map(clone);
+	}else if(typeof obj === "object"){
+		const r = {};
+		for(const k in obj)
+			// @ts-expect-error implicitly
+			r[k] = clone(obj[k]);
+		return r;
+	}
+	return obj;
+};
+
 exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
 
@@ -26,7 +40,20 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 		};
 	}
 
-	NRF.setAdvertising(bangle.bleAdvert, options);
+	NRF.setAdvertising(clone(bangle.bleAdvert), options);
+	// clone the object, to avoid firmware behaving like so:
+	// bleAdvert = [Uint8Array, { [0x180f]: ... }]
+	//              ^           ^
+	//              |           |
+	//              |           +- added by this call
+	//              +- modified from a previous setAdvertising()
+	//
+	// The firmware (jswrap_ble_setAdvertising) will convert arrays within
+	// the advertising array to Uint8Array, but if this has already been done,
+	// we get iterator errors. So we clone the object to avoid these mutations
+	// taking effect for later calls.
+	//
+	// This also allows us to identify previous adverts correctly by id.
 };
 
 exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
