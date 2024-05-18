@@ -1,4 +1,4 @@
-declare var exports: any;
+declare let exports: any;
 
 type BleAdvert = { [key: string | number]: number[] };
 type BangleWithAdvert = (typeof Bangle) & { bleAdvert?: BleAdvert | BleAdvert[]; };
@@ -8,8 +8,8 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 	const bangle = Bangle as BangleWithAdvert;
 
 	if(Array.isArray(bangle.bleAdvert)){
-		var found = false;
-		for(var ad of bangle.bleAdvert){
+		let found = false;
+		for(let ad of bangle.bleAdvert){
 			if(ad[id]){
 				ad[id] = advert;
 				found = true;
@@ -33,12 +33,13 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
 
 	if(Array.isArray(bangle.bleAdvert)){
-		var i = 0;
-		for(var ad of bangle.bleAdvert){
+		let i = 0;
+		for(const ad of bangle.bleAdvert){
 			if(ad[id]){
 				delete ad[id];
-				var empty = true;
-				for(var _ in ad){
+				let empty = true;
+				// eslint-disable-next-line no-unused-vars
+				for(const _ in ad){
 					empty = false;
 					break;
 				}
