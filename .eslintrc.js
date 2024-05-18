@@ -1,4 +1,26 @@
-const lintExemptions = require("./lint_exemptions.js");
+const lintExemptions = require("./apps/lint_exemptions.js");
+const fs = require("fs");
+const path = require("path");
+
+function findGeneratedJS(roots) {
+    function* listFiles(dir, allow) {
+        for (const f of fs.readdirSync(dir)) {
+            const filepath = path.join(dir, f);
+            const stat = fs.statSync(filepath);
+
+            if (stat.isDirectory()) {
+                yield* listFiles(filepath, allow);
+            } else if(allow(filepath)) {
+                yield filepath;
+            }
+        }
+    }
+
+    return roots.flatMap(root =>
+        [...listFiles(root, f => f.endsWith(".ts"))]
+            .map(f => f.replace(/\.ts$/, ".js"))
+    );
+}
 
 module.exports = {
     "env": {
@@ -213,7 +235,7 @@ module.exports = {
                 "@typescript-eslint/no-delete-var": "off",
                 "@typescript-eslint/no-explicit-any": "off",
                 "@typescript-eslint/no-this-alias": "off",
-                "@typescript-eslint/no-unused-vars": ["error", { "args": "none" } ],
+                "@typescript-eslint/no-unused-vars": "off",
                 "@typescript-eslint/no-var-requires": "off",
             }
         },
@@ -222,4 +244,5 @@ module.exports = {
             rules: Object.fromEntries(rules.map(rule => [rule, "off"])),
         })),
     ],
+    ignorePatterns: findGeneratedJS(["apps/", "modules/"]),
 }
