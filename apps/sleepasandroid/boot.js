@@ -46,7 +46,10 @@
         max_acceleration = {x: 0, y: 0, z: 0, mag: 0};
     }
 
-    setInterval(sendSleepAsAndroidData, 10000); // Sleep as Android wants a 10-second maximum
-    Bangle.on("accel", updateAcceleration); // Log all acceleration events
+    var config = require("Storage").readJSON("sleepasandroid.json") || {};
+    if (config.enabled) { // Gadgetbridge needs to enable and disable tracking by writing {enabled: true} to "sleepasandroid.json" and reloading
+        setInterval(sendSleepAsAndroidData, 10000); // Sleep as Android wants a 10-second maximum
+        Bangle.on("accel", updateAcceleration); // Log all acceleration events
+    }
 
 })();
