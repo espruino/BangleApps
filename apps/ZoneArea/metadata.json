@@ -1,15 +1,14 @@
-{
-  "id": "ZoneArea",
-  "name": "zone",
-  "version": "0.01",
-  "description": "...",
+{ "id": "ZoneArea",
+  "name": "Test Zone",
+  "shortName":"zzone",
   "icon": "vector-modern-smart-watch-icon-700-58676704.jpg",
+  "version": "0.01",
+  "description": "This is my test app",
   "tags": "tool",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports" : ("BANGLEJS", "BANGLEJS2"],
+  "readme" : "README.md",
   "storage": [
-    {"name":"ZoneArea.app.js","url":"app.js"},
-    {"name":"ZoneArea.settings.js","url":"settings.js"}, 
-    {"name":"ZoneArea","url":"app-icon.js","evaluate":true},
-  ]
-  "data": [{"name":"ZoneArea.json"}]  
+  {"name":"ZoneArea.app.js","url":"app.js"},
+  {"name":"ZoneArea.img", "url":"app-icon.js","evaluate":true}
+]
 }
