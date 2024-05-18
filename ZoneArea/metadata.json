@@ -8,8 +8,8 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"ZoneArea.app.js","url":"app.js"},
-    {"name":"ZoneArea.settings.js","url":"settings.js"}, // < ------- HERE
+    {"name":"ZoneArea.settings.js","url":"settings.js"}, 
     {"name":"ZoneArea","url":"app-icon.js","evaluate":true},
   ],
-  "data": [{"name":"ZoneArea.json"}]  // < ------- HERE
+  "data": [{"name":"ZoneArea.json"}]  
 }
