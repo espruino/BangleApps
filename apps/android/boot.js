@@ -292,6 +292,10 @@
         // we receive all, just override what we have
         if (Array.isArray(event.d))
           require("Storage").writeJSON("android.cards.json", event.d);
+      },
+      "sleepasandroid": function () {
+        require("Storage").writeJSON("sleepasandroid.json", {enabled: event.enable});
+        load();
       }
     };
     var h = HANDLERS[event.t];
