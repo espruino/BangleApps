@@ -1,16 +1,21 @@
 {
   "id": "sleepasandroid",
-  "name": "Send data to sleep as android",
-  "shortName": "BLE sleep as android",
+  "name": "Sleep as Android data provider",
+  "shortName": "BLE Sleep as Android",
   "version": "0.01",
-  "description": "Send sensordata to sleep as android.\n",
+  "description": "This app sends accelerometer and heart rate data from your Bangle.js to the Sleep as Android app via Bluetooth (Gadgetbridge required), enabling advanced sleep tracking features.",
   "icon": "bluetooth.png",
   "type": "bootloader",
   "tags": "hrm,health,ble,bluetooth",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
   "readme": "README.md",
   "storage": [
-    {"name":"sleepasandroid.boot.js","url":"boot.js"},
-    {"name":"sleepasandroid.conf.js","url":"config.js"}
+    {
+      "name": "sleepasandroid.boot.js",
+      "url": "boot.min.js"
+    }
   ]
 }
