@@ -38,7 +38,21 @@ function onTemperature(p) {
               pressure100&255,(pressure100>>8)&255,pressure100>>16
   ];
 
-  require("ble_advert").set(0xFCD2, advert);
+  if(Array.isArray(Bangle.bleAdvert)){
+    var found = false;
+    for(var ad in Bangle.bleAdvert){
+      if(ad[0xFCD2]){
+        ad[0xFCD2] = advert;
+        found = true;
+        break;
+      }
+    }
+    if(!found)
+      Bangle.bleAdvert.push({ 0xFCD2: advert });
+  }else{
+    Bangle.bleAdvert[0xFCD2] = advert;
+  }
+  NRF.setAdvertising(Bangle.bleAdvert);
 }
 
 // Gets the temperature in the most accurate way with pressure sensor
@@ -46,6 +60,7 @@ function drawTemperature() {
   Bangle.getPressure().then(p =>{if (p) onTemperature(p);});
 }
 
+if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
 setInterval(function() {
   drawTemperature();
 }, 10000); // update every 10s

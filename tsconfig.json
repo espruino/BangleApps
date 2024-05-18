@@ -61,7 +61,7 @@
     "*/*/*.ts",
     "apps/*/*.js", // with checkJs: true
     "*/*/*.d.ts",
-    "modules/*.ts",
+    "modules/*.d.ts",
     "typescript/types/*.d.ts"
   ]
 }

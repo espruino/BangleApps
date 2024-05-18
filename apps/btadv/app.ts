@@ -667,8 +667,6 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
 
 // done via advertise in setServices()
 //const updateBleAdvert = () => {
-//  require("ble_advert").set(...)
-//
 //  let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
 //
 //  if (!(bleAdvert = (Bangle as any).bleAdvert)) {
