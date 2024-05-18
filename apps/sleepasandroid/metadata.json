@@ -16,7 +16,9 @@
     {
       "name": "sleepasandroid.boot.js",
       "url": "boot.min.js"
-    },
+    }
+  ],
+  "data": [
     {
       "name": "sleepasandroid.json",
       "url": "config.json"
