@@ -2,7 +2,7 @@ const lintExemptions = require("./apps/lint_exemptions.js");
 const fs = require("fs");
 const path = require("path");
 
-function findGeneratedJS(root) {
+function findGeneratedJS(roots) {
     function* listFiles(dir, allow) {
         for (const f of fs.readdirSync(dir)) {
             const filepath = path.join(dir, f);
@@ -16,14 +16,10 @@ function findGeneratedJS(root) {
         }
     }
 
-    return [...listFiles(root, f => f.endsWith(".ts"))]
-        .map(f => f.replace(/\.ts$/, ".js"))
-        .map(f => {
-            if (f.startsWith(root)) {
-                return f.substring(root.length);
-            }
-            return f;
-        });
+    return roots.flatMap(root =>
+        [...listFiles(root, f => f.endsWith(".ts"))]
+            .map(f => f.replace(/\.ts$/, ".js"))
+    );
 }
 
 module.exports = {
@@ -248,5 +244,5 @@ module.exports = {
             rules: Object.fromEntries(rules.map(rule => [rule, "off"])),
         })),
     ],
-    ignorePatterns: findGeneratedJS("apps/"),
+    ignorePatterns: findGeneratedJS(["apps/", "modules/"]),
 }
