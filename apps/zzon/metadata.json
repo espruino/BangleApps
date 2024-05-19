@@ -2,7 +2,7 @@
   "name": "test zzon",
   "shortName":"zon",
   "version":"0.01",
-  "description": "zone area projict",
+  "description": "test zone area",
   "icon": "app.png",
   "tags": "tool",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
