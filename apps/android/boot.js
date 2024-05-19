@@ -293,8 +293,8 @@
         if (Array.isArray(event.d))
           require("Storage").writeJSON("android.cards.json", event.d);
       },
-      "sleepasandroid": function () {
-        require("Storage").writeJSON("sleepasandroid.json", {enabled: event.enable});
+      "accelsender": function () {
+        require("Storage").writeJSON("accelsender.json", {enabled: event.enable, interval: event.interval});
         load();
       }
     };

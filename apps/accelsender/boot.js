@@ -12,13 +12,15 @@
         }
     }
 
-    var max_acceleration = {x: 0, y: 0, z: 0, mag: 0};
+    var max_acceleration = { x: 0, y: 0, z: 0, diff: 0, td: 0, mag: 0 };
+    var hasData = false;
 
     /**
      * Updates the maximum acceleration if the current acceleration is greater.
      * @param {Object} accel - The current acceleration object with x, y, z, and mag properties.
      */
     function updateAcceleration(accel) {
+        hasData = true;
         var current_max_raw = accel.mag;
         var max_raw = max_acceleration.mag;
 
@@ -28,27 +30,25 @@
     }
 
     /**
-     * Updates the Sleep as Android data and sends it to gadgetbridge.
+     * Updates the acceleration data and sends it to gadgetbridge.
      * Resets the maximum acceleration.
-     * Acceleration values in g are converted to m/s^2, as expected by Sleep as Android.
+     * Note: If your interval setting is too short, the last value gets sent again.
      */
-    function sendSleepAsAndroidData() {
-        var accel = Bangle.getAccel();
-        var health = Bangle.getHealthStatus();
+    function sendAccelerationData() {
+        accel = hasData ? max_acceleration : Banlejs.getAccel();
 
         var update_data = {
-            t: "sleep_as_android", accel: {
-                x: accel.x * 9.80665, y: accel.y * 9.80665, z: accel.z * 9.80665
-            }, bpm: health.bpm
+            t: "accel", accel: accel
         };
         gbSend(update_data);
 
-        max_acceleration = {x: 0, y: 0, z: 0, mag: 0};
+        max_acceleration = { x: 0, y: 0, z: 0, mag: 0, diff: 0, td: 0 };
+        hasData = false;
     }
 
     var config = require("Storage").readJSON("sleepasandroid.json") || {};
-    if (config.enabled) { // Gadgetbridge needs to enable and disable tracking by writing {enabled: true} to "sleepasandroid.json" and reloading
-        setInterval(sendSleepAsAndroidData, 10000); // Sleep as Android wants a 10-second maximum
+    if (config.enabled) { // Gadgetbridge needs to enable and disable tracking by writing {enabled: true} to "accelsender.json" and reloading
+        setInterval(sendAccelerationData, config.interval);
         Bangle.on("accel", updateAcceleration); // Log all acceleration events
     }
 
