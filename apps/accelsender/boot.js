@@ -46,7 +46,7 @@
         hasData = false;
     }
 
-    var config = require("Storage").readJSON("sleepasandroid.json") || {};
+    var config = require("Storage").readJSON("accelsender.json") || {};
     if (config.enabled) { // Gadgetbridge needs to enable and disable tracking by writing {enabled: true} to "accelsender.json" and reloading
         setInterval(sendAccelerationData, config.interval);
         Bangle.on("accel", updateAcceleration); // Log all acceleration events
