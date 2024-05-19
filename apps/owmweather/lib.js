@@ -3,21 +3,40 @@ function parseWeather(response) {
 
   let isOwmData = false;
   try {
-    isOwmData = (owmData.lat && owmData.lon) && owmData.current.weather && owmData.current;
+    isOwmData = (
+        // Paid API 3.0: onecall
+        (owmData.lat && owmData.lon && owmData.current.weather && owmData.current)
+        ||
+        // Free API 2.5
+        (owmData.coord && owmData.weather && owmData.main)
+  );
   } catch (_e) {}
 
   if (isOwmData) {
     let json = require("Storage").readJSON('weather.json') || {};
     let weather = {};
-    weather.time = Date.now();
-    weather.hum = owmData.current.humidity;
-    weather.temp = owmData.current.temp;
-    weather.code = owmData.current.weather[0].id;
-    weather.wdir = owmData.current.wind_deg;
-    weather.wind = owmData.current.wind_speed;
-    weather.loc = owmData.name || "";
-    weather.txt = owmData.current.weather[0].main;
-    weather.hpa = owmData.current.pressure || 0;
+    if (owmData.current) {
+      // API 3.0: paid onecall
+      weather.time = Date.now();
+      weather.hum = owmData.current.humidity;
+      weather.temp = owmData.current.temp;
+      weather.code = owmData.current.weather[0].id;
+      weather.wdir = owmData.current.wind_deg;
+      weather.wind = owmData.current.wind_speed;
+      weather.loc = owmData.name || "";
+      weather.txt = owmData.current.weather[0].main;
+      weather.hpa = owmData.current.pressure || 0;
+    } else {
+      // API 2.5: free
+      weather.time = Date.now();
+      weather.hum = owmData.main.humidity;
+      weather.temp = owmData.main.temp;
+      weather.code = owmData.weather[0].id;
+      weather.wdir = owmData.wind.deg;
+      weather.wind = owmData.wind.speed;
+      weather.loc = owmData.name;
+      weather.txt = owmData.weather[0].main;
+    }
 
     if (weather.wdir != null) {
       let deg = weather.wdir;
@@ -43,7 +62,13 @@ exports.pull = function(completionCallback) {
     "location": "London"
   };
   let settings = require("Storage").readJSON("owmweather.json", 1);
-  let uri = "https://api.openweathermap.org/data/3.0/onecall?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=minutely,hourly,daily,alerts&appid=" + settings.apikey;
+  let uri;
+  if (!!settings.useOneCall) {
+    uri = "https://api.openweathermap.org/data/3.0/onecall?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=minutely,hourly,daily,alerts&appid=" + settings.apikey;
+  } else {
+    uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey;
+  }
+
   if (Bangle.http){
     Bangle.http(uri, {timeout:10000}).then(event => {
       let result = parseWeather(event.resp);

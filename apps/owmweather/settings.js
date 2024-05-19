@@ -56,7 +56,13 @@
             }
           });
         }
-      }
+      },
+      "OneCall API3.0": {
+        value: !!settings.useOneCall,
+        onchange: v => {
+          writeSettings("useOneCall", v);
+        }
+      },
     };
 
     mainmenu["API key"] = function (){
