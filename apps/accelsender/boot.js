@@ -35,7 +35,7 @@
      * Note: If your interval setting is too short, the last value gets sent again.
      */
     function sendAccelerationData() {
-        accel = hasData ? max_acceleration : Banlejs.getAccel();
+        var accel = hasData ? max_acceleration : Banlejs.getAccel();
 
         var update_data = {
             t: "accel", accel: accel
