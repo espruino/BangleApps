@@ -1,0 +1,14 @@
+{ "id": "zzon",
+  "name": "test zzon",
+  "shortName":"zon",
+  "version":"0.01",
+  "description": "zone area projict",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"zzon.app.js","url":"app.js"},
+    {"name":"zzon.img","url":"app-icon.js","evaluate":true}
+  ]
+}
