@@ -1,4 +1,3 @@
-coordinates, replace with actual ones)
 const ummAlQuraCoordinates = [
   { lat: 21.3353, lon: 39.8262 },
   { lat: 21.4260, lon: 39.8280 },
