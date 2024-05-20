@@ -1,4 +1,3 @@
-exports.overlayRemoved = false;
 exports.offset = 0;
 exports.hide = function() {
   exports.cleanup();
@@ -28,9 +27,8 @@ exports.show = function() {
   }
 };
 
-/// Remove anthing not needed if the overlay was removed
+/// Remove anything not needed if the overlay was removed
 exports.cleanupOverlay = function() {
-  exports.overlayRemoved = true;
   exports.offset = -24;
   Bangle.setLCDOverlay(undefined, {id: "widget_utils"});
   delete exports.autohide;
@@ -48,7 +46,6 @@ exports.cleanupOverlay = function() {
 /// Remove any intervals/handlers/etc that we might have added. Does NOT re-show widgets that were hidden
 exports.cleanup = function() {
   exports.cleanupOverlay();
-  delete exports.overlayRemoved;
   delete exports.offset;
   if (exports.swipeHandler) {
     Bangle.removeListener("swipe", exports.swipeHandler);
@@ -92,11 +89,12 @@ exports.swipeOn = function(autohide) {
   exports.offset = -24; // where on the screen are we? -24=hidden, 0=full visible
 
   function queueDraw() {
-    if (!exports.overlayRemoved) {
-      Bangle.appRect.y = exports.offset+24;
+    const o = exports.offset;
+    if (o>-24) {
+      Bangle.appRect.y = o+24;
       Bangle.appRect.h = 1 + Bangle.appRect.y2 - Bangle.appRect.y;
-      if (exports.offset>-24) {
-        Bangle.setLCDOverlay(og, 0, exports.offset, {
+      if (o>-24) {
+        Bangle.setLCDOverlay(og, 0, o, {
           id:"widget_utils",
           remove:()=>{
             require("widget_utils").cleanupOverlay();
@@ -114,7 +112,7 @@ exports.swipeOn = function(autohide) {
       g=og;
       this._draw(this);
       g=_g;
-      if (exports.offset>-24) queueDraw();
+      if (o>-24) queueDraw();
     };
     w._area = w.area;
     if (w.area.startsWith("b"))
@@ -160,7 +158,6 @@ exports.swipeOn = function(autohide) {
         anim(-4);
       }, exports.autohide);
     };
-    exports.overlayRemoved = false;
     if (ud>0 && exports.offset<0) anim(4, cb);
     if (ud<0 && exports.offset>-24) anim(-4);
   };
