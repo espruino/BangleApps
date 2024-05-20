@@ -2,7 +2,7 @@
   "id": "color_catalog",
   "name": "Colors Catalog",
   "shortName": "Colors Catalog",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Displays RGB565 and RGB888 colors, its name and code in screen.",
   "icon": "app.png",
   "tags": "Color,input,buttons,touch,UI",
