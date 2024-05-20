@@ -112,7 +112,7 @@ exports.swipeOn = function(autohide) {
       g=og;
       this._draw(this);
       g=_g;
-      if (o>-24) queueDraw();
+      if (exports.offset>-24) queueDraw();
     };
     w._area = w.area;
     if (w.area.startsWith("b"))
