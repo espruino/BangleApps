@@ -1,3 +1,5 @@
+exports.overlayRemoved = false;
+exports.offset = 0;
 exports.hide = function() {
   exports.cleanup();
   if (!global.WIDGETS) return;
@@ -26,22 +28,13 @@ exports.show = function() {
   }
 };
 
-/// Remove any intervals/handlers/etc that we might have added. Does NOT re-show widgets that were hidden
-exports.cleanup = function() {
+/// Remove anthing not needed if the overlay was removed
+exports.cleanupOverlay = function() {
+  exports.overlayRemoved = true;
+  exports.offset = -24;
+  Bangle.setLCDOverlay(undefined, {id: "widget_utils"});
   delete exports.autohide;
   delete Bangle.appRect;
-  if (exports.origSetLCDOverlay){
-    Bangle.setLCDOverlay = exports.origSetLCDOverlay;
-  }
-  delete exports.origSetLCDOverlay;
-  if (exports.cleanUpOverlay){
-    Bangle.setLCDOverlay();
-  }
-  delete exports.cleanUpOverlay;
-  if (exports.swipeHandler) {
-    Bangle.removeListener("swipe", exports.swipeHandler);
-    delete exports.swipeHandler;
-  }
   if (exports.animInterval) {
     clearInterval(exports.animInterval);
     delete exports.animInterval;
@@ -49,6 +42,17 @@ exports.cleanup = function() {
   if (exports.hideTimeout) {
     clearTimeout(exports.hideTimeout);
     delete exports.hideTimeout;
+  }
+};
+
+/// Remove any intervals/handlers/etc that we might have added. Does NOT re-show widgets that were hidden
+exports.cleanup = function() {
+  exports.cleanupOverlay();
+  delete exports.overlayRemoved;
+  delete exports.offset;
+  if (exports.swipeHandler) {
+    Bangle.removeListener("swipe", exports.swipeHandler);
+    delete exports.swipeHandler;
   }
   if (exports.origDraw) {
     Bangle.drawWidgets = exports.origDraw;
@@ -74,14 +78,6 @@ exports.swipeOn = function(autohide) {
   /* TODO: maybe when widgets are offscreen we don't even
   store them in an offscreen buffer? */
 
-  if (!exports.origSetLCDOverlay) {
-    exports.origSetLCDOverlay = Bangle.setLCDOverlay;
-    Bangle.setLCDOverlay = function(){
-      require("widget_utils").origSetLCDOverlay.apply(Bangle, arguments);
-      require("widget_utils").cleanUpOverlay = false;
-    };
-  }
-
   // force app rect to be fullscreen
   Bangle.appRect = { x: 0, y: 0, w: g.getWidth(), h: g.getHeight(), x2: g.getWidth()-1, y2: g.getHeight()-1 };
   // setup offscreen graphics for widgets
@@ -93,16 +89,22 @@ exports.swipeOn = function(autohide) {
   };
   og.reset().clearRect(0,0,og.getWidth(),23).fillRect(0,24,og.getWidth(),25);
   let _g = g;
-  let offset = -24; // where on the screen are we? -24=hidden, 0=full visible
+  exports.offset = -24; // where on the screen are we? -24=hidden, 0=full visible
 
   function queueDraw() {
-    Bangle.appRect.y = offset+24;
-    Bangle.appRect.h = 1 + Bangle.appRect.y2 - Bangle.appRect.y;
-    if (offset>-24) {
-      Bangle.setLCDOverlay(og, 0, offset);
-      exports.cleanUpOverlay = true;
-    } else {
-      Bangle.setLCDOverlay();
+    if (!exports.overlayRemoved) {
+      Bangle.appRect.y = exports.offset+24;
+      Bangle.appRect.h = 1 + Bangle.appRect.y2 - Bangle.appRect.y;
+      if (exports.offset>-24) {
+        Bangle.setLCDOverlay(og, 0, exports.offset, {
+          id:"widget_utils",
+          remove:()=>{
+            require("widget_utils").cleanupOverlay();
+          }
+        });
+      } else {
+        Bangle.setLCDOverlay(undefined, {id: "widget_utils"});
+      }
     }
   }
 
@@ -112,7 +114,7 @@ exports.swipeOn = function(autohide) {
       g=og;
       this._draw(this);
       g=_g;
-      if (offset>-24) queueDraw();
+      if (exports.offset>-24) queueDraw();
     };
     w._area = w.area;
     if (w.area.startsWith("b"))
@@ -129,14 +131,14 @@ exports.swipeOn = function(autohide) {
   function anim(dir, callback) {
     if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
-      offset += dir;
+      exports.offset += dir;
       let stop = false;
-      if (dir>0 && offset>=0) { // fully down
+      if (dir>0 && exports.offset>=0) { // fully down
         stop = true;
-        offset = 0;
-      } else if (dir<0 && offset<-23) { // fully up
+        exports.offset = 0;
+      } else if (dir<0 && exports.offset<-23) { // fully up
         stop = true;
-        offset = -24;
+        exports.offset = -24;
       }
       if (stop) {
         clearInterval(exports.animInterval);
@@ -158,8 +160,9 @@ exports.swipeOn = function(autohide) {
         anim(-4);
       }, exports.autohide);
     };
-    if (ud>0 && offset<0) anim(4, cb);
-    if (ud<0 && offset>-24) anim(-4);
+    exports.overlayRemoved = false;
+    if (ud>0 && exports.offset<0) anim(4, cb);
+    if (ud<0 && exports.offset>-24) anim(-4);
   };
   Bangle.on("swipe", exports.swipeHandler);
   Bangle.drawWidgets();
