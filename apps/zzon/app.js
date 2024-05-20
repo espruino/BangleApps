@@ -26,7 +26,7 @@ const ummAlQuraCoordinates = [
       createAndUploadZoneArea(watch, zoneName, ummAlQuraCoordinates);
     }
   });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // function createAndUploadZoneArea(watch, zoneName, centerLat, centerLon, radius) {
   //   let newZone = {
   //     name: zoneName,
