@@ -9,7 +9,7 @@ function saveSettings() {
     delete settings.fn;
   if (settings.style!="color")
     delete settings.color;
-  if (settings.style!="randomcolor")
+  if (settings.style!="randomcolor" && settings.style!="squares")
     delete settings.colors;
   require("Storage").writeJSON("clockbg.json", settings);
 }
@@ -18,10 +18,11 @@ function getColorsImage(cols) {
   var bpp = 1;
   if (cols.length>4) bpp=4;
   else if (cols.length>2) bpp=2;
-  var b = Graphics.createArrayBuffer(16*cols.length,16,bpp);
+  var w = (cols.length>8)?8:16;
+  var b = Graphics.createArrayBuffer(w*cols.length,16,bpp);
   b.palette = new Uint16Array(1<<bpp);
   cols.forEach((c,i)=>{
-    b.setColor(i).fillRect(i*16,0,i*16+15,15);
+    b.setColor(i).fillRect(i*w,0,i*w+w-1,15);
     b.palette[i] = g.toColor(c);
   });
   return "\0"+b.asImage("string");
@@ -49,6 +50,7 @@ function showModeMenu() {
       var cols = [
         ["#F00","#0F0","#FF0","#00F","#F0F","#0FF"],
         ["#F00","#0F0","#00F"],
+        // Please add some more!
       ];
       var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
       cols.forEach(col => {
@@ -78,6 +80,31 @@ function showModeMenu() {
         E.showAlert("Please use App Loader to upload images").then(showModeMenu);
       }
     },
+    /*LANG*/"Squares" : function() {
+      /*
+      a = new Array(16);
+      a.fill(0);
+      print(a.map((n,i)=>E.HSBtoRGB(0 + i/16,1,1,24).toString(16).padStart(6,0).replace(/(.).(.).(.)./,"\"#$1$2$3\"")).join(","))
+      */
+      var cols = [ // list of color palettes used as possible square colours - either 4 or 16 entries
+        ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
+        ["#0FF","#0CC","#088","#044"],
+        ["#FFF","#FBB","#F66","#F44"],
+        ["#FFF","#BBB","#666","#000"]
+        // Please add some more!
+      ];
+      var menu =  {"":{title:/*LANG*/"Squares", back:showModeMenu}};
+      cols.forEach(col => {
+        menu[getColorsImage(col)] = () => {
+          settings.style = "squares";
+          settings.colors = col;
+          console.log(settings);
+          saveSettings();
+          showMainMenu();
+        };
+      });
+      E.showMenu(menu);
+    }
   });
 }
 
