@@ -1,6 +1,6 @@
 type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
-(E.showMenu as any) = (items: Menu): MenuInstance => {
+E.showMenu = (items?: Menu): MenuInstance => {
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
     const pp = [];
     pp.push(...g.quadraticBezier([x2 - r, y1, x2, y1, x2, y1 + r]));
@@ -14,12 +14,9 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
     g.fillPoly(RectRnd(x1, y1, x2, y2, r));
     g.setColor(255, 255, 255);
   };
+  let options = items && items[""] || {};
+  if (items) delete items[""];
   const menuItems = Object.keys(items);
-  let options = items[""] || {};
-  if (!(options instanceof Object)) options = {};
-
-  if (options)
-    menuItems.splice(menuItems.indexOf(""), 1);
 
   const fontHeight = options.fontHeight||25;
 
@@ -63,7 +60,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
       }
       while (rows--) {
         const name = menuItems[idx];
-        const item = items[name]! as ActualMenuItem;
+        const item = items![name]! as ActualMenuItem;
 
         const hl = (idx === selected && !selectEdit);
         if(g.theme.dark){
@@ -118,7 +115,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
       g.flip();
     },
     select: () => {
-      const item = items[menuItems[selected]] as ActualMenuItem;
+      const item = items![menuItems[selected]] as ActualMenuItem;
 
       if (typeof item === "function") {
         item();
@@ -164,7 +161,7 @@ type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
   let back = options.back;
   if (!back) {
-    const backItem = items["< Back"];
+    const backItem = items && items["< Back"];
     if (typeof backItem === "function")
       back = backItem;
     else if (backItem && "back" in backItem)
