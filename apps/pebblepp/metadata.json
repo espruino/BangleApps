@@ -7,7 +7,7 @@
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
-  "tags": "clock,clkinfo",
+  "tags": "clock,clkinfo,clockbg",
   "supports": ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module", "clockbg":"module" },
   "storage": [

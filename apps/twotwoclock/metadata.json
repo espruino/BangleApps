@@ -5,7 +5,7 @@
   "description": "A clock with the time split over two lines, with custom backgrounds and two ClockInfos",
   "icon": "icon.png",
   "type": "clock",
-  "tags": "clock,clkinfo",
+  "tags": "clock,clkinfo,clockbg",
   "supports" : ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module", "clockbg":"module" },
   "screenshots": [{"url":"screenshot.png"}],
