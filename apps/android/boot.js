@@ -1,3 +1,4 @@
+/* global GB */
 (function() {
   function gbSend(message) {
     Bluetooth.println("");
