@@ -20,7 +20,7 @@
         get : () => {
           let d = new Date();
           let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
-          g.transparent = 1;
+          g.transparent = 0;
           g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
           g.setFont("6x15").setFontAlign(0,0).drawString(d.getDate(),11,17);
           return {

@@ -1,7 +1,7 @@
 { "id": "owmweather",
   "name": "OpenWeatherMap weather provider",
   "shortName":"OWM Weather",
-  "version": "0.04",
+  "version": "0.06",
   "description": "Pulls weather from OpenWeatherMap (OWM) API",
   "icon": "app.png",
   "type": "bootloader",

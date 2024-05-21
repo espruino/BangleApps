@@ -1,3 +1,4 @@
+/* global GB */
 (function() {
   function gbSend(message) {
     Bluetooth.println("");
@@ -292,6 +293,10 @@
         // we receive all, just override what we have
         if (Array.isArray(event.d))
           require("Storage").writeJSON("android.cards.json", event.d);
+      },
+      "accelsender": function () {
+        require("Storage").writeJSON("accelsender.json", {enabled: event.enable, interval: event.interval});
+        load();
       }
     };
     var h = HANDLERS[event.t];

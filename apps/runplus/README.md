@@ -4,6 +4,8 @@ Displays distance, time, steps, cadence, pace and heart rate for runners. Based 
 It requires the input of your minimum and maximum heart rate in the settings for the app to work. You can come back back to the initial run screen anytime by swimping left.
 To use it, start the app and press the middle button so that the red STOP in the bottom right turns to a green `RUN`.
 
+To focus on a single stat, tap on the stat and it will take up the full screen. Tap again to return to the main screen.
+
 ## Display 1st screen
 
 * `DIST` - the distance travelled based on the GPS (if you have a GPS lock).
@@ -25,6 +27,7 @@ so if you have no GPS lock you just need to wait.
 
 Unlock the screen and navigate between displays by swiping left or right.
 The upper number is the limit before next heart rate zone. The lower number is the limit before previous heart rate zone. The number in the middle is the heart rate. The Z1 to Z5 number indicates the heart rate zone where you are. The circle provides a quick visualisation of the hr zone in which you are.
+Indicator icons for lock, heartrate and location are updated on arrival off internal system events. The heart icon shows if the exstats module decided that the heart rate value is usable. The location icon shows if there was an GPS event with a position fix in it.
 
 ## Recording Tracks
 

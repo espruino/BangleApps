@@ -1,2 +1,3 @@
 0.01: New Clock!
 0.02: Fix fastloading memory leak and clockinfo overwritten by hands
+0.03: Use new clockinfo lib with function to render images wirh borders

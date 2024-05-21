@@ -41,10 +41,35 @@ let font = fontconverter.load({
   height : 16, // actual used height of font map
   range : charCodeRanges[charCodeRange].range
 });
+/*let font = fontconverter.load({
+  fn : "fontname.bdf",
+});*/
 font.removeUnifontPlaceholders();
 // quick hack as space looks too long
-font.glyphs[32].width -= 3;
-font.glyphs[32].xEnd -= 3;
-font.glyphs[32].advance -= 3;
-//font.debugChars();
+font.glyphs[32].width -= 4;
+font.glyphs[32].xEnd -= 4;
+font.glyphs[32].advance -= 4;
+
+/* Another hack - because these are centered in the image
+they often don't start at the beginning of the char space.
+Move them all back and add 1px at the end */
+font.glyphs.forEach(g => {
+  if (g.xStart>0) {
+    var shift = g.xStart;
+    g.xStart -= shift;
+    g.xEnd -= shift;
+    g.advance = g.xEnd+2;
+    g.oldGetPixel = g.getPixel;
+    g.getPixel = (x,y) => g.oldGetPixel(x+shift,y);
+    //g.debug();
+    //console.log(g);
+    console.log();
+  }
+});
+
+/*var g = font.glyphs[":".charCodeAt()];
+g.debug();
+console.log(g);*/
+font.debugChars();
 require("fs").writeFileSync(outputFile, Buffer.from(font.getPBF()));
+//console.log(font.getJS());

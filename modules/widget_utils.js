@@ -1,4 +1,3 @@
-/// hide any visible widgets
 exports.hide = function() {
   exports.cleanup();
   if (!global.WIDGETS) return;
@@ -31,6 +30,14 @@ exports.show = function() {
 exports.cleanup = function() {
   delete exports.autohide;
   delete Bangle.appRect;
+  if (exports.origSetLCDOverlay){
+    Bangle.setLCDOverlay = exports.origSetLCDOverlay;
+  }
+  delete exports.origSetLCDOverlay;
+  if (exports.cleanUpOverlay){
+    Bangle.setLCDOverlay();
+  }
+  delete exports.cleanUpOverlay;
   if (exports.swipeHandler) {
     Bangle.removeListener("swipe", exports.swipeHandler);
     delete exports.swipeHandler;
@@ -67,6 +74,14 @@ exports.swipeOn = function(autohide) {
   /* TODO: maybe when widgets are offscreen we don't even
   store them in an offscreen buffer? */
 
+  if (!exports.origSetLCDOverlay) {
+    exports.origSetLCDOverlay = Bangle.setLCDOverlay;
+    Bangle.setLCDOverlay = function(){
+      require("widget_utils").origSetLCDOverlay.apply(Bangle, arguments);
+      require("widget_utils").cleanUpOverlay = false;
+    };
+  }
+
   // force app rect to be fullscreen
   Bangle.appRect = { x: 0, y: 0, w: g.getWidth(), h: g.getHeight(), x2: g.getWidth()-1, y2: g.getHeight()-1 };
   // setup offscreen graphics for widgets
@@ -83,8 +98,12 @@ exports.swipeOn = function(autohide) {
   function queueDraw() {
     Bangle.appRect.y = offset+24;
     Bangle.appRect.h = 1 + Bangle.appRect.y2 - Bangle.appRect.y;
-    if (offset>-24) Bangle.setLCDOverlay(og, 0, offset);
-    else Bangle.setLCDOverlay();
+    if (offset>-24) {
+      Bangle.setLCDOverlay(og, 0, offset);
+      exports.cleanUpOverlay = true;
+    } else {
+      Bangle.setLCDOverlay();
+    }
   }
 
   for (var w of global.WIDGETS) if (!w._draw) { // already hidden

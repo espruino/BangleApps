@@ -155,9 +155,36 @@
         "Yes": "Ja",
         "Ok": "Ok",
         "Off": "Off",
-        "Back": "Tilbage"
+        "Back": "Tilbage",
+        "one": "et",
+        "two": "to",
+        "three": "tre",
+        "four": "fire",
+        "five": "fem",
+        "six": "seks",
+        "seven": "syv",
+        "eight": "otte",
+        "nine": "ni",
+        "ten": "ti",
+        "eleven": "elleve",
+        "twelve": "tolv"
     },
     "alarm": {
         "//": "App-specific overrides"
+    },
+    "fuzzyw": {
+        "//": "App-specific overrides",
+        "*$1 o'clock": "klokken *$1",
+        "five past *$1": "fem over *$1",
+        "ten past *$1": "ti over *$1",
+        "quarter past *$1": "kvart over *$1",
+        "twenty past *$1": "tyve over *$1",
+        "twenty five past *$1": "fem i halv *$2",
+        "half past *$1": "halv *$2",
+        "twenty five to *$2": "fem over halv *$2",
+        "twenty to *$2": "tyve i *$2",
+        "quarter to *$2": "kvart i *$2",
+        "ten to *$2": "ti i *$2",
+        "five to *$2": "fem i *$2"
     }
 }
