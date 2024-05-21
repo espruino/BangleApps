@@ -1,6 +1,6 @@
 { "id": "contacts",
   "name": "Contacts",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Provides means of storing user contacts, viewing/editing them on device and from the App loader",
   "icon": "app.png",
   "tags": "tool",
