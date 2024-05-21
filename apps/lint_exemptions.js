@@ -1251,12 +1251,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/android/boot.js": {
-    "hash": "a537b3f7772e11f44615d80d6c6bacfa69c1854c6da3c01666863bcae8a18059",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/altimeter/app.js": {
     "hash": "054ac328db51034aa339f1d10b4d264badd49438b95f08bc6fbfb90bd88c6ae0",
     "rules": [
