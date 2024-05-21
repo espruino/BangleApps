@@ -26,3 +26,4 @@ Write to correct settings file, fixing settings not working.
 0.23: Minor code improvements
 0.24: Add indicators for lock,gps and pulse to karvonen screen
 0.25: Fix step count bug when runs are resumed after a long time
+0.26: Add ability to zoom in on a single stat by tapping it
