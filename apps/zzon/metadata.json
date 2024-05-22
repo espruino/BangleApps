@@ -1,7 +1,7 @@
 { "id": "zzon",
   "name": "test zzon",
   "shortName":"zon",
-  "version":"0.01",
+  "version":"0.03",
   "description": "zone area project",
   "icon": "app.png",
   "tags": "tool",
