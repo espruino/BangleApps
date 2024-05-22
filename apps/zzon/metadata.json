@@ -6,6 +6,7 @@
   "icon": "app.png",
   "tags": "tool",
   "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "interface": "interface.html",
   "readme": "README.md",
   "storage": [
     {"name":"zzon.app.js","url":"app.js"},
