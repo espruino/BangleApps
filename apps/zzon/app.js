@@ -29,7 +29,7 @@ function createAndUploadZoneArea(watch, zoneName, coordinates, radius) {
 
 const zoneName = 'Umm Al-Qura University Zone';
 
-bangalWatch.connect('your-watch-id', (error, watch) => {
+bangalWatch.connect('zzon', (error, watch) => {
   if (error) {
     console.log('Error connecting to watch:', error);
   } else {
