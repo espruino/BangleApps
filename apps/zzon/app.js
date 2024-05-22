@@ -1,7 +1,7 @@
 const googleMapsClient = require('@google/maps').createClient({
   key: 'AIzaSyCCeZg-o1jX4x1wjuKVdngEkFWHDBVn-I0',
 });
-const bangalWatch = require('bangalWatch'); // replace 'bangalWatch' with the actual module name
+const bangalWatch = require('BANGLEJS2');
 
 const ummAlQuraCoordinates = [
   { lat: 21.331115, lon: 39.946196 },
@@ -10,7 +10,7 @@ const ummAlQuraCoordinates = [
   { lat: 21.330485, lon: 39.945364 }
 ];
 
-const radius = 0.05; // radius in kilometers
+const radius = 0.05;
 
 function createAndUploadZoneArea(watch, zoneName, coordinates, radius) {
   let newZone = {
