@@ -12,7 +12,7 @@
     <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">see the Bangle.js 1 instructions</a></b></p>
   </div>
     <ul>
-    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span>. 
+    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span>.
     The DFU (bootloader) rarely changes, so it does not have to be the same version as your main firmware.</p>
   </ul>
     <div id="fw-ok" style="display:none">
@@ -104,8 +104,9 @@ function onInit(device) {
     var ok = true;
     if (crcs[0] == 1787004733) version = "2v20"; // check 6 page CRCs - the 7th page isn't used in 2v20+
     else if (crcs[0] == 3816337552) version = "2v21";
+    else if (crcs[0] == 3329616485) version = "2v22";
     else { // for other versions all 7 pages are used, check those
-      var crc = crcs[1]; 
+      var crc = crcs[1];
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
       if (crc==1207580954) { version = "2v10.236"; ok = false; }
       if (crc==3435933210) version = "2v11.52";
@@ -117,7 +118,7 @@ function onInit(device) {
       if (crc==2886730689) version = "2v16";
       if (crc==156320890) version = "2v17";
       if (crc==4012421318) version = "2v18";
-      if (crc==1856454048) version = "2v19";      
+      if (crc==1856454048) version = "2v19";
     }
     if (!ok) {
       version += 	`(&#9888; update required)`;
