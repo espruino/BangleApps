@@ -2,3 +2,4 @@
 0.02: added settings options to change date format
 0.03: Remove un-needed font requirement, now outputs transparent image
 0.04: Fix image after 0.03 regression
+0.05: Remove duplicated day in calendar when format setting is 'dd MMM'
