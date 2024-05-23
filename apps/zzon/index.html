@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <title>3 bit filter test</title>
+  </head>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <p>This file tests imagefilter.js to allow different filtering options
+      to be tested, so we can quickly see the easiest way of transforming OpenStreetMap tiles
+      into 3 bits
+    </p>
+    <canvas id="maptiles" style="display:none"></canvas>
+
+    <button id="getmap">Test</button><br/>
+    <input type="checkbox" id="finaldither" checked></input><span>Final dither (Bangle.js preview)</span><br/>
+    <input type="checkbox" id="sharpen" checked></input><span>Sharpen</span>
+    <input type="checkbox" id="dither"></input><span>Line Dither</span><br/>
+    <input type="range" id="slider_lo" min="0" max="255" value="140">Lo threshold<br/>
+    <input type="range" id="slider_hi" min="0" max="255" value="250">Hi threshold<br/>
+
+    <script src="../../../webtools/heatshrink.js"></script>
+    <script src="../../../webtools/imageconverter.js"></script>
+    <script src="../imagefilter.js"></script>
+    <script>
+      var TILESIZE = 96
+
+      // convert canvas into an actual tiled image file
+      function tilesLoaded(ctx, width, height, mapImageFile) {
+        var filterOptions = {
+          colLo : 0|document.getElementById("slider_lo").value,
+          colHi : 0|document.getElementById("slider_hi").value,
+          sharpen : 0|document.getElementById("sharpen").checked,
+          dither : 0|document.getElementById("dither").checked
+        }
+        console.log("filterOptions", filterOptions);
+        var preview = document.getElementById("finaldither").checked;
+
+
+        var options = {
+          compression:false, output:"raw",
+          mode:"3bit",
+          diffusion:"bayer2"
+        };
+        /* If in 3 bit mode, go through all the data beforehand and
+        turn the saturation up to maximum, so when thresholded it
+        works a lot better */
+        var imageData = ctx.getImageData(0,0,width,height);
+        var dstData = ctx.createImageData(width, height);
+        imageFilterFor3BPP(imageData, dstData, filterOptions);
+        ctx.putImageData(dstData,0,0);
+
+        console.log("Compression options", options);
+        var tiledImage;
+        if (preview) {
+          var w = Math.round(width / TILESIZE);
+          var h = Math.round(height / TILESIZE);
+
+          for (var y=0;y<h;y++) {
+            for (var x=0;x<w;x++) {
+              var imageData = ctx.getImageData(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
+              var rgba = imageData.data;
+              options.rgbaOut = rgba;
+              options.width = TILESIZE;
+              options.height = TILESIZE;
+              var imgstr = imageconverter.RGBAtoString(rgba, options);
+              ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+              /*var compress = 'require("heatshrink").decompress('
+              if (!imgstr.startsWith(compress)) throw "Data in wrong format";
+              imgstr = imgstr.slice(compress.length,-1);*/
+              if (tiledImage) tiledImage += imgstr.substr(3); // skip header
+              else tiledImage = imgstr; // for first image, keep the header
+            }
+          }
+        }
+        return [{
+          name:mapImageFile,
+          content:tiledImage
+        }];
+      }
+
+
+
+      // Render everything to a canvas...
+      var canvas = document.getElementById("maptiles");
+      canvas.style.display="";
+      var ctx = canvas.getContext('2d');
+
+
+      var img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = function(){
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img,0,0);
+        tilesLoaded(ctx, canvas.width, canvas.height, "");
+      };
+      img.src = "osm-test.png"
+
+      function update() {
+        ctx.drawImage(img,0,0);
+        tilesLoaded(ctx, canvas.width, canvas.height, "");
+      }
+
+      document.getElementById("getmap").addEventListener("click", update);
+      document.getElementById("slider_lo").addEventListener("change",update);
+      document.getElementById("slider_hi").addEventListener("change",update);
+      document.getElementById("finaldither").addEventListener("click",update);
+      document.getElementById("sharpen").addEventListener("click",update);
+      document.getElementById("dither").addEventListener("click",update);
+
+
+    </script>
+  </body>
+</html>
