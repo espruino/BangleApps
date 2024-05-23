@@ -118,7 +118,7 @@ function drawLocation() {
 
   ovLoc.clear();
   if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
-    const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
+    const angle = settings.dirSrc ===    1 ? fix.course : Bangle.getCompass().heading;
     if (!isNaN(angle)) {
       ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
     }
@@ -279,3 +279,8 @@ if (m.maps.length === 0) {
 
 // Write settings on exit via button
 setWatch(() => writeSettings(), BTN, { repeat: true, edge: "rising" });
+
+// Adding code for circle with a radius of 100 meters
+g.setColor(1, 1, 1); // Set color to white
+const circleCenter = m.latLonToXY(fix.lat, fix.lon); // Get the center point of the circle
+g.drawCircle(circleCenter.x, circleCenter.y, m.getDistanceX(100), 1); // Draw circle with a radius of 100 meters
