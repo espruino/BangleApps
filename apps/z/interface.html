@@ -149,7 +149,7 @@ TODO:
         loadedMaps = [];
         const mapsLoaded = [];
 
-        Puck.eval(`require("Storage").list(/zzone\\.\\d+\\.json/)\n`,function(files) {
+        Puck.eval(`require("Storage").list(/zzz\\.\\d+\\.json/)\n`,function(files) {
           console.log("MAPS:",files);
           files.sort();
           let promise = Promise.resolve();
@@ -235,8 +235,8 @@ TODO:
       function onMapDelete(mapNumber) {
         console.log("delete", mapNumber);
         Util.showModal(`Erasing map ${mapNumber}...`);
-        Util.eraseStorage(`zzone.${mapNumber}.json`, function() {
-          Util.eraseStorage(`zzone.${mapNumber}.img`, function() {
+        Util.eraseStorage(`zzz.${mapNumber}.json`, function() {
+          Util.eraseStorage(`zzz.${mapNumber}.img`, function() {
             Util.hideModal();
             showLoadedMaps();
           });
@@ -389,9 +389,9 @@ TODO:
           document.getElementById("uploadbuttons").style.display="";
           var mapNumber = 0;
           while (loadedMaps[mapNumber]) mapNumber++;
-          let mapImageFile = `zzone.${mapNumber}.img`;
+          let mapImageFile = `zzz.${mapNumber}.img`;
           mapFiles = tilesLoaded(ctx, canvas.width, canvas.height, mapImageFile);
-          mapFiles.unshift({name:`zzone.${mapNumber}.json`,content:JSON.stringify({
+          mapFiles.unshift({name:`zzz.${mapNumber}.json`,content:JSON.stringify({
             imgx : canvas.width,
             imgy : canvas.height,
             tilesize : TILESIZE,
