@@ -1,0 +1,22 @@
+{
+  "id": "zone",
+  "name": "zone",
+  "shortName": "zone",
+  "version": "0.30",
+  "description": "Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are. Once installed this also adds map functionality to `GPS Recorder` and `Recorder` apps",
+  "readme": "README.md",
+  "icon": "app.png",
+  "tags": "outdoors,gps,osm",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"zone","url":"zone.js"},
+    {"name":"zone.app.js","url":"app.js"},
+    {"name":"zone.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
+    {"name":"zone.json"},
+    {"wildcard":"zone.*.json"},
+    {"wildcard":"zone.*.img"}
+  ]
+}
