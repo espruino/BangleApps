@@ -1,7 +1,7 @@
 {
   "id": "zzz",
   "name": "vzone",
-  "shortName": "zo",
+  "shortName": "zone",
   "version": "0.01",
   "description": "Loads map tiles from OpenStreetMap onto your Bangle.js and displays a map of where you are. Once installed this also adds map functionality to `GPS Recorder` and `Recorder` apps",
   "readme": "README.md",
