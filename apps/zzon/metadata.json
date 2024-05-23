@@ -9,7 +9,12 @@
   "interface": "interface.html",
   "readme": "README.md",
   "storage": [
+    {"name":"zzon","url":"zzon.js"},
     {"name":"zzon.app.js","url":"app.js"},
     {"name":"zzon.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
+    {"name":"openstmap.json"},
+    {"wildcard":"openstmap.*.json"},
+    {"wildcard":"openstmap.*.img"}
   ]
 }
