@@ -157,8 +157,7 @@
         });
 
         function getMapTiles() {
-            const TILESIZE = 96; // Size of our tiles
-            const OSMTILESIZE = 256; // Size of openstreetmap tiles
+            const TILESIZE = 256; // Size of Google Maps tiles
             const MAPTILES = 5; // Number of tiles
             const MAPSIZE = TILESIZE * MAPTILES; // Size of map we download to Bangle in pixels
 
@@ -168,14 +167,12 @@
             const ctx = canvas.getContext('2d');
 
             const zoom = map.getZoom();
-            const center = map.getCenter();
-
             const bounds = map.getBounds();
             const topLeft = new google.maps.LatLng(bounds.getNorthEast().lat(), bounds.getSouthWest().lng());
             const bottomRight = new google.maps.LatLng(bounds.getSouthWest().lat(), bounds.getNorthEast().lng());
 
             const getTileUrl = (coord, zoom) => {
-                return `https://mt1.google.com/vt/lyrs=m&x=${coord.x}&y=${coord.y}&z=${zoom}`;
+                    return `https://mt1.google.com/vt/lyrs=m&x=${coord.x}&y=${coord.y}&z=${zoom}`;
             };
 
             const tileCoord = (latLng, zoom) => {
@@ -183,8 +180,8 @@
                 const worldCoordinate = map.getProjection().fromLatLngToPoint(latLng);
                 const pixelCoordinate = new google.maps.Point(worldCoordinate.x * scale, worldCoordinate.y * scale);
                 const tileCoordinate = new google.maps.Point(
-                    Math.floor(pixelCoordinate.x / OSMTILESIZE),
-                    Math.floor(pixelCoordinate.y / OSMTILESIZE)
+                    Math.floor(pixelCoordinate.x / TILESIZE),
+                    Math.floor(pixelCoordinate.y / TILESIZE)
                 );
                 return tileCoordinate;
             };
@@ -201,7 +198,7 @@
                         img.crossOrigin = "Anonymous";
                         img.src = getTileUrl({ x, y }, zoom);
                         img.onload = () => {
-                            ctx.drawImage(img, (x - topLeftTile.x) * OSMTILESIZE, (y - topLeftTile.y) * OSMTILESIZE);
+                            ctx.drawImage(img, (x - topLeftTile.x) * TILESIZE, (y - topLeftTile.y) * TILESIZE);
                             resolve();
                         };
                         img.onerror = reject;
