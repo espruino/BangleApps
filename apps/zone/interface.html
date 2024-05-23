@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps Circle and Geofencing Example</title>
+    <style>
+        /* Set the size of the map */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map, #controls {
+            height: 100%;
+            width: 100%;
+        }
+        #controls {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid black;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            background-color: rgb(255, 255, 255);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps Circle and Geofencing Example</h1>
+    <div id="map"></div>
+    <div id="controls">
+        <div class="form-group">
+            <label for="radius">Circle Radius (meters):</label>
+            <input type="number" id="radius" value="5000000">
+        </div>
+        <button id="updateCircle" class="btn btn-primary">Update Circle</button>
+    </div>
+
+    <script>
+        let map, circle;
+
+        function initMap() {
+            // Create a map centered at a specific location
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 21.331115, lng: 39.946196 },
+                zoom: 19,
+            });
+
+            // Create a circle overlay on the map
+            circle = new google.maps.Circle({
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                map,
+                center: { lat: 21.331115, lng: 39.946196 },
+                radius: parseFloat(document.getElementById("radius").value), // 50 meters radius
+            });
+
+            // Check user's position when the page loads
+            checkPosition(circle);
+
+            // Watch user's position continuously
+            navigator.geolocation.watchPosition((position) => {
+                const userLatLng = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                // Check if user is outside the circle
+                if (!google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(userLatLng), circle.getCenter()) <= circle.getRadius()) {
+                    alert("You are outside the geofenced area!");
+                }
+            }, (error) => {
+                console.error(error);
+            }, {
+                enableHighAccuracy: true
+            });
+        }
+
+        function checkPosition(circle) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const userLatLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // Check if user is outside the circle
+                    if (!google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(userLatLng), circle.getCenter()) <= circle.getRadius()) {
+                        alert("You are outside the geofenced area!");
+                    }
+                }, (error) => {
+                    console.error(error);
+                }, {
+                    enableHighAccuracy: true
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        document.getElementById("updateCircle").addEventListener("click", () => {
+            const newRadius = parseFloat(document.getElementById("radius").value);
+            circle.setRadius(newRadius);
+        });
+
+        // Load the Google Maps script dynamically
+        function loadScript() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCCeZg-o1jX4x1wjuKVdngEkFWHDBVn-I0&libraries=geometry&callback=initMap`;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Call the loadScript function when the window loads
+        window.onload = loadScript;
+    </script>
+</body>
+</html>
