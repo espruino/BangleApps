@@ -5,3 +5,5 @@
       functionality, both via `.back` and `"< Back"` items, displaying an
       entry and the `setUI` back widget. Fix `setUI`'s back overwrite. Add
       support for scroll.
+0.05: Fix display of final menu item when no options are given and
+      handling of E.showMenu() with no arguments
