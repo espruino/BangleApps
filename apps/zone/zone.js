@@ -100,4 +100,53 @@ exports.scroll = function(x,y) {
   var b = Bangle.project({lat:m.lat+1,lon:m.lon+1});
   this.lon += x * m.scale / (a.x-b.x);
   this.lat -= y * m.scale / (a.y-b.y);
-};
+};// Redraw the whole page
+function redraw() {
+  // ensure we do cancel track drawing
+  if (plotTrack && plotTrack.stop)
+    plotTrack.stop();
+  // set clip rect so we don't overwrite widgets
+  g.setClipRect(R.x,R.y,R.x2,R.y2);
+  const count = m.draw();
+  if (checkMapPos && count === 0) {
+    // no map at these coordinates, lets try again with first map
+    m.lat = m.map.lat;
+    m.lon = m.map.lon;
+    m.scale = m.map.scale;
+    m.draw();
+  }
+  checkMapPos = false;
+  drawPOI();
+  drawMarker();
+  drawLocation();
+
+  // Draw a red area
+  drawRedArea(); // Add this line to draw the red area
+
+  // if track drawing is enabled...
+  if (settings.drawTrack) {
+    if (HASWIDGETS && WIDGETS["gpsrec"] && WIDGETS["gpsrec"].plotTrack) {
+      g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
+      WIDGETS["gpsrec"].plotTrack(m);
+    }
+    if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
+      g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
+      plotTrack = WIDGETS["recorder"].plotTrack(m, { async : true, callback : function() {
+        plotTrack = undefined;
+      }});
+    }
+  }
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+}
+
+// Function to draw the red area
+function drawRedArea() {
+  // Example: Drawing a red rectangle
+  g.setColor(255, 0, 0); // Set color to red
+  // Coordinates of the rectangle (replace with your desired coordinates)
+  var x1 = 50; // top-left corner x-coordinate
+  var y1 = 50; // top-left corner y-coordinate
+  var x2 = 100; // bottom-right corner x-coordinate
+  var y2 = 100; // bottom-right corner y-coordinate
+  g.fillRect(x1, y1, x2, y2); // Draw the filled rectangle
+}
