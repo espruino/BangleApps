@@ -15,7 +15,7 @@
     {"name":"zzone.app.js","url":"app.js"},
     {"name":"zzone.img","url":"app-icon.js","evaluate":true}
   ], "data": [
-    {"name":"zone.json"},
+    {"name":"zzone.json"},
     {"wildcard":"zzone.*.json"},
     {"wildcard":"zzone.*.img"}
   ]
