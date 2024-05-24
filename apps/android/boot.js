@@ -1,22 +1,22 @@
 /* global GB */
-(function() {
-  function gbSend(message) {
+{
+  let gbSend = function(message) {
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
-  var lastMsg; // for music messages - may not be needed now...
-  var actInterval; // Realtime activity reporting interval when `act` is true
-  var actHRMHandler; // For Realtime activity reporting
-  var gpsState = {}; // keep information on GPS via Gadgetbridge
+  let lastMsg; // for music messages - may not be needed now...
+  let actInterval; // Realtime activity reporting interval when `act` is true
+  let actHRMHandler; // For Realtime activity reporting
+  let gpsState = {}; // keep information on GPS via Gadgetbridge
 
   // this settings var is deleted after this executes to save memory
-  var settings = require("Storage").readJSON("android.settings.json",1)||{};
+  let settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
   if (settings.rp == undefined) settings.rp = true;
   if (settings.as == undefined) settings.as = true;
   if (settings.vibrate == undefined) settings.vibrate = "..";
   require('Storage').writeJSON("android.settings.json", settings);
-  var _GB = global.GB;
+  let _GB = global.GB;
   let fetchRecInterval;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
@@ -337,7 +337,7 @@
   };
 
   // Battery monitor
-  function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
+  let sendBattery = function() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
@@ -432,4 +432,4 @@
 
   // remove settings object so it's not taking up RAM
   delete settings;
-})();
+}
